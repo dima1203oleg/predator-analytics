@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-macbook  # Назва Application для ArgoCD
+  namespace: argocd  # ArgoCD працює в цьому namespace
+spec:
+  project: default  # Проект ArgoCD (default для простоти)
+  source:
+    repoURL: https://github.com/dima1203oleg/predator-analytics  # URL GitHub-репозиторію
+    targetRevision: main  # Гілка для відстеження
+    path: environments/macbook  # Шлях до Helm-чарту або маніфестів
+    helm:  # Якщо це Helm-чарт
+      valueFiles:
+        - values-mac.yaml  # Файл значень для MacBook
+  destination:
+    server: https://kubernetes.default.svc  # Локальний кластер minikube
+    namespace: predator-dev  # Namespace для деплою застосунку
+  syncPolicy:
+    automated:  # Автоматична синхронізація
+      prune: true  # Видаляти ресурси, яких немає в Git
+      selfHeal: true  # Автоматично виправляти відхилення
