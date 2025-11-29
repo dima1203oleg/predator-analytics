@@ -1,0 +1,8 @@
+{
+  "name": "predator-analytics",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "sync:push": "bash scripts/sync_from_ai_studio.sh"
+  }
+}

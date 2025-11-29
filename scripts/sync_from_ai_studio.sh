@@ -32,7 +32,20 @@ if [ -d "ai-export/environments" ]; then
 fi
 
 echo "Git add змінених файлів..."
-git add frontend/ backend/ environments/
+# Build list of paths that exist before adding to git (avoid git pathspec errors)
+ADD_PATHS=()
+for p in frontend backend environments; do
+    if [ -d "$p" ]; then
+        ADD_PATHS+=("$p/")
+    fi
+done
+
+if [ ${#ADD_PATHS[@]} -eq 0 ]; then
+    echo "Немає змінних папок для додавання (frontend/backend/environments не існують)."
+else
+    echo "Додаю для гіта: ${ADD_PATHS[*]}"
+    git add "${ADD_PATHS[@]}"
+fi
 
 echo "Git commit, якщо є зміни..."
 if git diff --cached --quiet; then
