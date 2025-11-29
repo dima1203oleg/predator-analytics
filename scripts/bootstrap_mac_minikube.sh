@@ -31,9 +31,20 @@ else
     echo "helm вже встановлено."
 fi
 
-echo "Запуск кластера minikube з 4 CPU, 8GB RAM та драйвером docker..."
-# Драйвер docker підтримується на Mac M3; якщо проблеми — можна спробувати hyperkit
-minikube start --cpus=4 --memory=8g --driver=docker
+DOCKER_RAM=$(docker system info --format '{{.MemTotal}}' 2>/dev/null | awk '{print int($1/1024/1024)}')
+if [ -z "$DOCKER_RAM" ] || [ "$DOCKER_RAM" -lt 6000 ]; then
+    RAM=3072
+    echo "[INFO] Docker Desktop RAM: ${DOCKER_RAM:-unknown} MB. Запуск minikube з 3072MB RAM."
+else
+    RAM=8192
+    echo "[INFO] Docker Desktop RAM: $DOCKER_RAM MB. Запуск minikube з 8192MB RAM."
+fi
+
+echo "Запуск кластера minikube з 4 CPU, $RAM MB RAM та драйвером docker..."
+minikube start --cpus=4 --memory=${RAM}mb --driver=docker || {
+    echo "\n[ERROR] Не вдалося запустити minikube з $RAM MB RAM. Спробуйте вручну: minikube start --memory=3072mb"
+    exit 1
+}
 
 echo "Створення namespace argocd..."
 kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
