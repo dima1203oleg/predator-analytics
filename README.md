@@ -75,3 +75,4 @@ GitOps-розгортання для Predator Analytics з підтримкою 
 - Helm values у `environments/*/values.yaml`.
 - ArgoCD Applications у `argocd/*.yaml`.
 - Workflows у `.github/workflows/*.yml`.
+
