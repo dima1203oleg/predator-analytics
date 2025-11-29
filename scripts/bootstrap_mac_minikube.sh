@@ -63,9 +63,33 @@ echo "Інформація для доступу до ArgoCD:"
 echo "Команда для port-forward: kubectl port-forward svc/argocd-server -n argocd 8080:443"
 echo "Після запуску port-forward, відкрийте https://localhost:8080 у браузері"
 
-# Отримання admin-пароля
-ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
-echo "Admin-пароль ArgoCD: $ARGOCD_PASSWORD"
-echo "Логін: admin"
+# Отримання admin-пароля — пробуємо кілька відомих імен секретів та ключів
+echo "Отримую admin-пароль ArgoCD (перевірка відомих секретів)..."
+ARGOCD_PASSWORD=""
+for s in argocd-initial-admin-secret argocd-secret; do
+    if kubectl -n argocd get secret "$s" >/dev/null 2>&1; then
+        # спробуємо кілька ключів у секреті, які зустрічаються у різних версіях
+        for key in password admin\.password; do
+            val=$(kubectl -n argocd get secret "$s" -o jsonpath="{.data.$key}" 2>/dev/null || true)
+            if [ -n "$val" ]; then
+                # декодуємо base64 якщо потрібно
+                if echo "$val" | base64 --decode >/dev/null 2>&1; then
+                    ARGOCD_PASSWORD=$(echo "$val" | base64 --decode 2>/dev/null || true)
+                else
+                    ARGOCD_PASSWORD="$val"
+                fi
+                break 2
+            fi
+        done
+    fi
+done
+
+if [ -n "$ARGOCD_PASSWORD" ]; then
+    echo "Admin-пароль ArgoCD: $ARGOCD_PASSWORD"
+    echo "Логін: admin"
+else
+    echo "Увага: не вдалося знайти admin-пароль у відомих секретах argocd (argocd-initial-admin-secret, argocd-secret)."
+    echo "Виконайте: kubectl -n argocd get secrets і гляньте ім'я секрету для admin-пароля, або отримайте його вручну через kubectl describe secret <name> -n argocd"
+fi
 
 echo "Скрипт завершено успішно!"
