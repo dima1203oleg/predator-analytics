@@ -160,13 +160,10 @@ jobs:
             echo "No diff block found in AI output; skipping auto-apply." && exit 0
           fi
 
-          # Safety: refuse to auto-apply patches that delete Chart.yaml or templates
-          if grep -qE '\+\+\+ b/|deleted file mode' /tmp/ai_patch.diff; then
-            # detect deletion of critical helm files
-            if grep -qE '\+\+\+ b/environments/.+/Chart.yaml|\+\+\+ b/environments/.+/templates/' /tmp/ai_patch.diff || grep -qE 'deleted file mode.*environments/.+/Chart.yaml' /tmp/ai_patch.diff; then
-              echo "Patch attempts to remove Helm chart files — refusing to auto-apply."
-              exit 0
-            fi
+          # Safety: refuse to auto-apply patches that delete or modify Chart.yaml or templates
+          if grep -Eq '(^\\+\\+\\+\s+b/environments/.+/(Chart.yaml|templates/))|(^---\s+a/environments/.+/(Chart.yaml|templates/))|(^deleted file mode.*(environments/.+/(Chart.yaml|templates/)))' /tmp/ai_patch.diff; then
+            echo "Patch attempts to remove or modify Helm chart files — refusing to auto-apply."
+            exit 0
           fi
 
           BRANCH="ai-autofix/${{ github.run_id }}"
