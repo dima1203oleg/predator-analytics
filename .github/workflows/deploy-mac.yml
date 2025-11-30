@@ -84,7 +84,9 @@ jobs:
         git config --global user.email 'github-actions@github.com'
         git add environments/macbook/values-mac.yaml
         git commit -m "Update image tags to v18.4.${{ github.run_number }}" || echo "No changes"
-        git push
+        if ! git push; then
+          echo "git push failed (probably no write permission). Skipping push." >&2
+        fi
 
   argocd-sync:
     needs: build-and-push

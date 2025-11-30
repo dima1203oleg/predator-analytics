@@ -84,7 +84,9 @@ jobs:
         git config --global user.email 'github-actions@github.com'
         git add .
         git commit -m 'Update image tags' || echo "No changes to commit"
-        git push
+          if ! git push; then
+            echo "git push failed (probably missing write permissions for GITHUB_TOKEN). Skipping push." >&2
+          fi
 
   sync-argocd:
     needs: update-values
