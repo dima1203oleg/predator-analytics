@@ -30,8 +30,8 @@ jobs:
             BASE=${{ github.event.before }}
             HEAD=${{ github.sha }}
           fi
-          echo "base=$BASE" >> $GITHUB_OUTPUT
-          echo "head=$HEAD" >> $GITHUB_OUTPUT
+          echo "base=$BASE" >> "$GITHUB_OUTPUT"
+          echo "head=$HEAD" >> "$GITHUB_OUTPUT"
 
       - name: Fetch range and compute diff
         run: |
