@@ -27,7 +27,7 @@ jobs:
           GOBIN=$HOME/.local/bin
           mkdir -p "$GOBIN"
           GO111MODULE=on GOBIN="$GOBIN" go install github.com/rhysd/actionlint/cmd/actionlint@latest
-          echo "$GOBIN" >> $GITHUB_PATH
+          echo "$GOBIN" >> "$GITHUB_PATH"
 
       - name: Run actionlint
         run: |

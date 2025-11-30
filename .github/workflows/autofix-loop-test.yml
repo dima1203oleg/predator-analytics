@@ -29,11 +29,7 @@ jobs:
             echo "Found /tmp/ai_patch.diff, running safety checks..."
           else
             echo "No patch provided; creating a small harmless patch to modify README.md"
-            echo "--- a/README.md" > /tmp/ai_patch.diff
-            echo "+++ b/README.md" >> /tmp/ai_patch.diff
-            echo "@@" >> /tmp/ai_patch.diff
-            echo "-Old" >> /tmp/ai_patch.diff
-            echo "+New (test)" >> /tmp/ai_patch.diff
+            { echo '--- a/README.md'; echo '+++ b/README.md'; echo '@@'; echo '-Old'; echo '+New (test)'; } > /tmp/ai_patch.diff
           fi
 
           # Safety check similar to the real workflow — match added/modified/deleted Chart.yaml/templates patterns
