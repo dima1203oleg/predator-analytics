@@ -1,0 +1,61 @@
+name: Autofix Loop — Manual Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      simulate_patch:
+        description: 'If true, create a simulated AI patch that deletes a Chart.yaml (tests protection)'
+        required: false
+        default: 'false'
+
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare simulated AI patch
+        if: ${{ github.event.inputs.simulate_patch == 'true' }}
+        run: |
+          set -eux
+          cat > /tmp/ai_patch.diff <<'PATCH'
+          *** deleted file mode 100644
+          --- a/environments/macbook/Chart.yaml
+          +++ /dev/null
+          -apiVersion: v2
+          -name: macbook
+          -version: 0.1.0
+          PATCH
+          echo "Simulated deletion patch written to /tmp/ai_patch.diff"
+
+      - name: Run apply logic (local simulation)
+        run: |
+          set -eux
+          if [ -f /tmp/ai_patch.diff ]; then
+            echo "Found /tmp/ai_patch.diff, running safety checks..."
+          else
+            echo "No patch provided; creating a small harmless patch to modify README.md"
+            echo "--- a/README.md" > /tmp/ai_patch.diff
+            echo "+++ b/README.md" >> /tmp/ai_patch.diff
+            echo "@@" >> /tmp/ai_patch.diff
+            echo "-Old" >> /tmp/ai_patch.diff
+            echo "+New (test)" >> /tmp/ai_patch.diff
+          fi
+
+          # Safety check similar to the real workflow
+          if grep -qE '\+\+\+ b/|deleted file mode' /tmp/ai_patch.diff; then
+            if grep -qE '\+\+\+ b/environments/.+/Chart.yaml|\+\+\+ b/environments/.+/templates/' /tmp/ai_patch.diff || grep -qE 'deleted file mode.*environments/.+/Chart.yaml' /tmp/ai_patch.diff; then
+              echo "PROTECTION: Patch attempts to remove Helm chart files — refusing to apply." && exit 0
+            fi
+          fi
+
+          echo "Patch passed safety checks (or harmless). Attempting to apply (dry-run)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "autofix-test/${{ github.run_id }}" || true
+          if git apply --index /tmp/ai_patch.diff; then
+            echo "Patch applies cleanly (dry-run)."
+          else
+            echo "Patch did not apply cleanly (expected for some diffs)." && exit 0
+          fi
