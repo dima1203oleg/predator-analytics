@@ -78,8 +78,10 @@ jobs:
                - unsafe ports/Ingress
                - oversized resources (especially for dev/macbook).
             3. Produce a short list (per-cluster if applicable):
-               - [SEVERITY] issue description
-               - suggested fix.
+              - [SEVERITY] issue description
+              - suggested fix.
+            4. Format the comment as a short checklist and append a single-line machine-readable severity marker at the end of the comment in this exact format (use one of CRITICAL, HIGH, MEDIUM, LOW):
+              <!-- AI_REVIEW_SEVERITY: CRITICAL -->
             4. Post result as a comment on the PR.
 
   innovator-review:
@@ -136,6 +138,8 @@ jobs:
                - simplify YAML/Helm structure
                - enhance monitoring/alerts.
             3. Add concrete proposals (lists + examples).
+            4. Format the comment as a short checklist and append a single-line machine-readable severity marker at the end of the comment in this exact format (one of CRITICAL, HIGH, MEDIUM, LOW):
+              <!-- AI_REVIEW_SEVERITY: LOW -->
             4. Post result as a comment on the PR.
 
   summary-judge:
@@ -153,6 +157,40 @@ jobs:
     steps:
       - name: Checkout PR code
         uses: actions/checkout@v4
+
+  defender-evaluator:
+    name: "Defender evaluator (block on CRITICAL)"
+    runs-on: ubuntu-latest
+    needs: defender-review
+    steps:
+      - name: Check Defender severity in PR comments
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: prNumber, per_page: 200 });
+            // Find the latest comment that contains the marker
+            const marker = 'AI_REVIEW_SEVERITY:';
+            const reversed = comments.slice().reverse();
+            const found = reversed.find(c => c.body && c.body.includes(marker));
+            if (!found) {
+              core.info('No AI_REVIEW_SEVERITY marker found in PR comments — continuing.');
+              return {severity: 'NONE'};
+            }
+            const m = found.body.match(/AI_REVIEW_SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
+            if (!m) {
+              core.info('AI_REVIEW_SEVERITY marker present but no level parsed — continuing.');
+              return {severity: 'UNKNOWN'};
+            }
+            const level = m[1].toUpperCase();
+            core.info('Parsed severity: ' + level);
+            if (level === 'CRITICAL') {
+              core.setFailed('Defender reported CRITICAL severity — blocking PR (defender-evaluator).');
+            }
+            return {severity: level};
 
       - name: Gemini Judge summary
         uses: google-github-actions/run-gemini-cli@v0
@@ -187,3 +225,4 @@ jobs:
                - MUST FIX BEFORE MERGE
                - NICE TO HAVE
             3. Post as one summarizing comment in the PR.
+            4. At the end of your summary add the marker in the same format so automated checks can scan for it: <!-- AI_REVIEW_SEVERITY: HIGH -->
