@@ -47,28 +47,68 @@ jobs:
 
             - name: Generate token + save for mac
               run: |
-                  if [ -z "${{ secrets.ARGOCD_MAC_URL }}" ] || [ -z "${{ secrets.ARGOCD_MAC_USERNAME }}" ] || [ -z "${{ secrets.ARGOCD_MAC_PASSWORD }}" ]; then
-                    echo "Skipping mac token step because one or more secrets are missing: ARGOCD_MAC_URL/USERNAME/PASSWORD"
+                  MAC_MISSING=0
+                  [ -z "${{ secrets.ARGOCD_MAC_URL }}" ] && MAC_MISSING=1
+                  [ -z "${{ secrets.ARGOCD_MAC_USERNAME }}" ] && MAC_MISSING=1
+                  [ -z "${{ secrets.ARGOCD_MAC_PASSWORD }}" ] && MAC_MISSING=1
+                  if [ "$MAC_MISSING" -eq 1 ]; then
+                    echo "Skipping mac token step — some required secrets are missing"
+                    echo "  Missing: ARGOCD_MAC_URL / ARGOCD_MAC_USERNAME / ARGOCD_MAC_PASSWORD"
                   else
-                    bash "$SCRIPT" --account cicd --secret-name ARGOCD_MAC_TOKEN --repo "$REPO" --server "${{ secrets.ARGOCD_MAC_URL }}" --username "${{ secrets.ARGOCD_MAC_USERNAME }}" --password "${{ secrets.ARGOCD_MAC_PASSWORD }}" --insecure --url-secret-name ARGOCD_MAC_URL --url-value "${{ secrets.ARGOCD_MAC_URL }}"
+                    bash "$SCRIPT" --account cicd \
+                      --secret-name ARGOCD_MAC_TOKEN \
+                      --repo "$REPO" \
+                      --server "${{ secrets.ARGOCD_MAC_URL }}" \
+                      --username "${{ secrets.ARGOCD_MAC_USERNAME }}" \
+                      --password "${{ secrets.ARGOCD_MAC_PASSWORD }}" \
+                      --insecure \
+                      --url-secret-name ARGOCD_MAC_URL \
+                      --url-value "${{ secrets.ARGOCD_MAC_URL }}"
                   fi
 
             - name: Generate token + save for nvidia
               run: |
-                  if [ -z "${{ secrets.ARGOCD_NVIDIA_URL }}" ] || [ -z "${{ secrets.ARGOCD_NVIDIA_USERNAME }}" ] || [ -z "${{ secrets.ARGOCD_NVIDIA_PASSWORD }}" ]; then
-                    echo "Skipping nvidia token step because one or more secrets are missing: ARGOCD_NVIDIA_URL/USERNAME/PASSWORD"
+                  NVIDIA_MISSING=0
+                  [ -z "${{ secrets.ARGOCD_NVIDIA_URL }}" ] && NVIDIA_MISSING=1
+                  [ -z "${{ secrets.ARGOCD_NVIDIA_USERNAME }}" ] && NVIDIA_MISSING=1
+                  [ -z "${{ secrets.ARGOCD_NVIDIA_PASSWORD }}" ] && NVIDIA_MISSING=1
+                  if [ "$NVIDIA_MISSING" -eq 1 ]; then
+                    echo "Skipping nvidia token step — some required secrets are missing"
+                    echo "  Missing: ARGOCD_NVIDIA_URL / ARGOCD_NVIDIA_USERNAME / ARGOCD_NVIDIA_PASSWORD"
                   else
-                    bash "$SCRIPT" --account cicd --secret-name ARGOCD_NVIDIA_TOKEN --repo "$REPO" --server "${{ secrets.ARGOCD_NVIDIA_URL }}" --username "${{ secrets.ARGOCD_NVIDIA_USERNAME }}" --password "${{ secrets.ARGOCD_NVIDIA_PASSWORD }}" --insecure --url-secret-name ARGOCD_NVIDIA_URL --url-value "${{ secrets.ARGOCD_NVIDIA_URL }}"
+                    bash "$SCRIPT" --account cicd \
+                      --secret-name ARGOCD_NVIDIA_TOKEN \
+                      --repo "$REPO" \
+                      --server "${{ secrets.ARGOCD_NVIDIA_URL }}" \
+                      --username "${{ secrets.ARGOCD_NVIDIA_USERNAME }}" \
+                      --password "${{ secrets.ARGOCD_NVIDIA_PASSWORD }}" \
+                      --insecure \
+                      --url-secret-name ARGOCD_NVIDIA_URL \
+                      --url-value "${{ secrets.ARGOCD_NVIDIA_URL }}"
                   fi
 
             - name: Generate token + save for oracle
               run: |
-                  if [ -z "${{ secrets.ARGOCD_ORACLE_URL }}" ] || [ -z "${{ secrets.ARGOCD_ORACLE_USERNAME }}" ] || [ -z "${{ secrets.ARGOCD_ORACLE_PASSWORD }}" ]; then
-                    echo "Skipping oracle token step because one or more secrets are missing: ARGOCD_ORACLE_URL/USERNAME/PASSWORD"
+                  ORACLE_MISSING=0
+                  [ -z "${{ secrets.ARGOCD_ORACLE_URL }}" ] && ORACLE_MISSING=1
+                  [ -z "${{ secrets.ARGOCD_ORACLE_USERNAME }}" ] && ORACLE_MISSING=1
+                  [ -z "${{ secrets.ARGOCD_ORACLE_PASSWORD }}" ] && ORACLE_MISSING=1
+                  if [ "$ORACLE_MISSING" -eq 1 ]; then
+                    echo "Skipping oracle token step — some required secrets are missing"
+                    echo "  Missing: ARGOCD_ORACLE_URL / ARGOCD_ORACLE_USERNAME / ARGOCD_ORACLE_PASSWORD"
                   else
-                    bash "$SCRIPT" --account cicd --secret-name ARGOCD_ORACLE_TOKEN --repo "$REPO" --server "${{ secrets.ARGOCD_ORACLE_URL }}" --username "${{ secrets.ARGOCD_ORACLE_USERNAME }}" --password "${{ secrets.ARGOCD_ORACLE_PASSWORD }}" --insecure --url-secret-name ARGOCD_ORACLE_URL --url-value "${{ secrets.ARGOCD_ORACLE_URL }}"
+                    bash "$SCRIPT" --account cicd \
+                      --secret-name ARGOCD_ORACLE_TOKEN \
+                      --repo "$REPO" \
+                      --server "${{ secrets.ARGOCD_ORACLE_URL }}" \
+                      --username "${{ secrets.ARGOCD_ORACLE_USERNAME }}" \
+                      --password "${{ secrets.ARGOCD_ORACLE_PASSWORD }}" \
+                      --insecure \
+                      --url-secret-name ARGOCD_ORACLE_URL \
+                      --url-value "${{ secrets.ARGOCD_ORACLE_URL }}"
                   fi
 
             - name: Final status
               run: |
-                  echo "Token generation steps finished. Check workflow logs for details and verify repository secrets in Settings -> Secrets and variables -> Actions."
+                  echo "Token generation steps finished."
+                  echo "Check workflow logs for details and verify repository secrets in Settings -> Secrets and variables -> Actions."

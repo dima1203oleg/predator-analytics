@@ -29,7 +29,8 @@ jobs:
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         issue_number,
-                        body: 'This issue was automatically closed by repository automation (label: autoclose). Reopen or comment if needed.'
+                        body: 'This issue was automatically closed by repository automation (label: autoclose).' +
+                          ' Reopen or comment if needed.'
                       });
                       await github.rest.issues.update({
                         owner: context.repo.owner,

@@ -1,0 +1,25 @@
+name: Validate GitHub Actions (actionlint)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup actionlint
+        run: |
+          sudo apt-get update && sudo apt-get install -y curl ca-certificates
+          curl -sSLO "https://github.com/rhysd/actionlint/releases/latest/download/actionlint_linux_amd64.tar.gz"
+          tar xzf actionlint_linux_amd64.tar.gz
+          sudo mv actionlint /usr/local/bin/
+
+      - name: Run actionlint
+        run: |
+          actionlint -color

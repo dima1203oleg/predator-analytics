@@ -14,196 +14,62 @@ permissions:
   pull-requests: write
   checks: write
 
+env:
+  # Control whether autofix-created PRs should be auto-merged
+  ALLOW_AUTO_MERGE: ${{ secrets.ALLOW_AUTO_MERGE || 'false' }}
+
 jobs:
   autofix:
-    name: Try auto-fix (linters -> ai agents -> PR)
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    name: Try auto-fix -> open PR (safe)
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     steps:
-      - name: Checkout failed run commit
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_commit.id }}
 
-      - name: Run actionlint
-        uses: eifinger/actionlint-action@v1
-
-      - name: Run Super-Linter (subset)
-        uses: github/super-linter@v4
-        env:
-          RUN_LOCAL: true
-          VALIDATE_YAML: true
-          VALIDATE_MARKDOWN: true
-          VALIDATE_SHELL: true
-
-      - name: Attempt auto-fix using repo tools
-        id: local_auto_fix
+      - name: Run actionlint (non-blocking)
         run: |
-          set -e
+          echo 'actionlint (best-effort)' && actionlint || true
+
+      - name: Try local auto-fixes
+        id: local_fix
+        run: |
+          set -euo pipefail
           CHANGED=0
-          # Try common auto-fix tools (safe guards)
           if [ -f package.json ]; then
-            if npm run -s lint:fix 2>/dev/null; then CHANGED=1; fi
-            if npm run -s format 2>/dev/null; then CHANGED=1; fi
-          fi
-          if command -v shellcheck >/dev/null 2>&1; then
-            echo "ShellCheck installed, no auto-fix executed here" || true
+            npm run -s lint:fix 2>/dev/null && CHANGED=1 || true
+            npm run -s format 2>/dev/null && CHANGED=1 || true
           fi
           echo "changed=$CHANGED" >> $GITHUB_OUTPUT
 
-      - name: Commit auto-fixes (if any)
-        if: steps.local_auto_fix.outputs.changed == '1'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A || true
-          git commit -m "ci: auto-fixes from autofix loop" || true
-          git push --set-upstream origin HEAD:refs/heads/ai-autofix/${{ github.run_id }} || true
-
-      - name: Create PR for local auto-fixes
-        if: steps.local_auto_fix.outputs.changed == '1'
-        id: create_pr_local
+      - name: Open PR for local fixes
+        if: ${{ steps.local_fix.outputs.changed == '1' }}
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "ci: auto-fixes from autofix loop (${{ github.run_id }})"
           branch: ai-autofix/${{ github.run_id }}
-          # create PR against a staging branch by default to avoid direct main merges
           base: autofix/staging
           title: "Auto-fix (lint) — workflow run #${{ github.event.workflow_run.id }}"
-          body: "Automated fixes applied by autofix loop (lint/format)."
+          body: "Automated fixes from autofix loop"
           labels: ai-autofix
 
-      - name: Enable automerge for local auto-fix PR (optional)
-        if: steps.local_auto_fix.outputs.changed == '1' && steps.create_pr_local.outputs.pull-request-number != '' && startsWith(env.ALLOW_AUTO_MERGE,'true')
+      - name: Auto-merge PR (optional)
+        if: ${{ steps.local_fix.outputs.changed == '1' && env.ALLOW_AUTO_MERGE == 'true' }}
         uses: peter-evans/enable-pull-request-automerge@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ steps.create_pr_local.outputs.pull-request-number }}
+          pull-request-number: ${{ steps.create_pull_request.outputs.pull-request-number || '' }}
           merge-method: squash
-        env:
-          # Secret controls whether autofix can auto-merge into main/stable branches
-          ALLOW_AUTO_MERGE: ${{ secrets.ALLOW_AUTO_MERGE }}
 
-      - name: Create issue for auto-remediation
-        id: create_issue
-        if: steps.local_auto_fix.outputs.changed != '1'
+      - name: Create issue for human remediation (no local fix)
+        if: ${{ steps.local_fix.outputs.changed != '1' }}
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const core = require('@actions/core');
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const title = `Autofix needed: workflow_run #${{ github.event.workflow_run.id }} failed`;
-            const body = `Automated autofix loop detected a failed workflow run (ID: ${{ github.event.workflow_run.id }}). Local auto-fixes did not resolve the problem. The automated remediation agent will attempt to produce a patch and create a branch + PR.`;
-            const issue = await github.rest.issues.create({ owner, repo, title, body, labels: ['autofix-request'] });
-            core.info('Created issue ' + issue.data.number);
-            core.setOutput('issue_number', issue.data.number.toString());
-
-      - name: Run Gemini remediation advisor and post to issue
-        if: steps.local_auto_fix.outputs.changed != '1' && steps.create_issue.outputs.issue_number != ''
-        uses: google-github-actions/run-gemini-cli@v0
-        with:
-          gemini_cli_version: ${{ vars.GEMINI_CLI_VERSION }}
-          gcp_workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
-          gcp_project_id: ${{ vars.GOOGLE_CLOUD_PROJECT }}
-          gcp_location: ${{ vars.GOOGLE_CLOUD_LOCATION }}
-          gcp_service_account: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
-          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          use_vertex_ai: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}
-          use_gemini_code_assist: ${{ vars.GOOGLE_GENAI_USE_GCA }}
-          # Keep prompt wrapped to avoid long YAML lines and improve yamllint
-          prompt: |
-            CONTEXT: An automated pipeline detected a failing workflow run
-            (ID: ${{ github.event.workflow_run.id }}). Local auto-fixes
-            did not resolve the failure.
-            GOAL: Provide a remediation plan and, if possible, a small
-            patch in unified diff format. If you produce a patch,
-            include it inside a fenced ```diff block.
-            OUTPUT: Post a detailed comment to the GitHub issue whose
-            number appears in ISSUE_NUMBER env var.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ISSUE_NUMBER: ${{ steps.create_issue.outputs.issue_number }}
-
-      - name: Fetch latest AI comment from issue
-        if: steps.local_auto_fix.outputs.changed != '1' && steps.create_issue.outputs.issue_number != ''
-        id: fetch_comment
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const core = require('@actions/core');
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const issue_number = parseInt(process.env.ISSUE_NUMBER, 10);
-            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number, per_page: 100 });
-            if (!comments || comments.length === 0) {
-              core.setOutput('latest_comment', '');
-              return;
-            }
-            const last = comments[comments.length - 1];
-            core.setOutput('latest_comment', last.body || '');
-        env:
-          ISSUE_NUMBER: ${{ steps.create_issue.outputs.issue_number }}
-
-      - name: Try apply AI patch (if a ```diff block exists)
-        if: steps.local_auto_fix.outputs.changed != '1' && steps.fetch_comment.outputs.latest_comment != ''
-        run: |
-          set -eux
-          echo "Fetching AI comment body..."
-          COMMENT='${{ steps.fetch_comment.outputs.latest_comment }}'
-          printf "%s" "$COMMENT" > /tmp/ai_comment.txt
-          awk '/^```diff/{flag=1;next}/^```/{if(flag){flag=0; exit}}flag{print}' /tmp/ai_comment.txt > /tmp/ai_patch.diff || true
-          if [ ! -s /tmp/ai_patch.diff ]; then
-            echo "No diff block found in AI output; skipping auto-apply." && exit 0
-          fi
-
-          # Safety: refuse to auto-apply patches that delete or modify Chart.yaml or templates
-          if grep -Eq '(^\\+\\+\\+\s+b/environments/.+/(Chart.yaml|templates/))|(^---\s+a/environments/.+/(Chart.yaml|templates/))|(^deleted file mode.*(environments/.+/(Chart.yaml|templates/)))' /tmp/ai_patch.diff; then
-            echo "Patch attempts to remove or modify Helm chart files — refusing to auto-apply."
-            exit 0
-          fi
-
-          BRANCH="ai-autofix/${{ github.run_id }}"
-          echo "Creating branch $BRANCH and applying patch"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git switch -c "$BRANCH"
-          if git apply --index /tmp/ai_patch.diff; then
-            git commit -m "ci: apply AI autofix suggestions for workflow run ${{ github.event.workflow_run.id }}" || true
-            git push --set-upstream origin "$BRANCH"
-          else
-            echo "git apply failed — the patch couldn't be applied cleanly." && exit 0
-          fi
-
-      - name: Create PR from AI patch branch (if pushed)
-        id: create_pr
-        if: steps.local_auto_fix.outputs.changed != '1'
-        uses: peter-evans/create-pull-request@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "ci: apply ai autofix for failing workflow run ${{ github.event.workflow_run.id }}"
-          branch: ai-autofix/${{ github.run_id }}
-          # open PR against staging branch by default
-          base: autofix/staging
-          title: "Auto-fix (AI) — workflow run #${{ github.event.workflow_run.id }}"
-          body: "Automated AI-suggested patch applied by autofix loop."
-          labels: ai-autofix
-
-      - name: Enable automerge on created PR (optional)
-        if: steps.local_auto_fix.outputs.changed != '1' && steps.create_pr.outputs.pull-request-number != '' && startsWith(env.ALLOW_AUTO_MERGE,'true')
-        uses: peter-evans/enable-pull-request-automerge@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ steps.create_pr.outputs.pull-request-number }}
-          merge-method: squash
-        env:
-          ALLOW_AUTO_MERGE: ${{ secrets.ALLOW_AUTO_MERGE }}
-
-
-      - name: Create issue if still failing
-        if: ${{ always() }}
-        run: |
-          echo "If the fix didn't land or CI still fails, create an issue for human attention. (Placeholder step - respects repo settings)"
+            const title = `Autofix request: failing workflow run #${{ github.event.workflow_run.id }}`;
+            const body = `Autofix loop detected a failure on workflow run ${{ github.event.workflow_run.id }}\n`
+              + `and couldn't apply local fixes. Please review.`;
+            await github.rest.issues.create({ owner, repo, title, body, labels: ['autofix-request'] });

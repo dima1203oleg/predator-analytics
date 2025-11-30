@@ -38,7 +38,11 @@ jobs:
       - name: Create export tarball and optional upload
         run: |
           mkdir -p ./ai-export-push
-          bash scripts/push_to_ai_studio.sh --paths "${{ steps.paths.outputs.paths }}" --endpoint "${{ secrets.AI_STUDIO_UPLOAD_ENDPOINT || '' }}" --token "${{ secrets.AI_STUDIO_UPLOAD_TOKEN || '' }}"
+          # call push script with separate args per-line to keep yaml lines short
+          bash scripts/push_to_ai_studio.sh \
+            --paths "${{ steps.paths.outputs.paths }}" \
+            --endpoint "${{ secrets.AI_STUDIO_UPLOAD_ENDPOINT || '' }}" \
+            --token "${{ secrets.AI_STUDIO_UPLOAD_TOKEN || '' }}"
 
       - name: Upload artifact for manual download (for debugging / archives)
         uses: actions/upload-artifact@v4

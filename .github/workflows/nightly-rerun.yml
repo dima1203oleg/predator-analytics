@@ -39,7 +39,14 @@ jobs:
 
             for (const wf of workflows) {
               core.info(`Checking latest completed runs for workflow ${wf} on branch ${branch}`)
-              const runsResp = await github.rest.actions.listWorkflowRuns({ owner, repo, workflow_id: wf, branch, per_page: 10, status: 'completed' })
+              const runsResp = await github.rest.actions.listWorkflowRuns({
+                owner,
+                repo,
+                workflow_id: wf,
+                branch,
+                per_page: 10,
+                status: 'completed',
+              })
               const runs = runsResp.data.workflow_runs || []
 
               // choose the most recent non-successful run
@@ -67,7 +74,14 @@ jobs:
               core.info(`Re-running run ${lastFailed.id} for ${wf} (conclusion=${lastFailed.conclusion}, attempt=${runAttempt})`)
               await github.rest.actions.reRunWorkflowRun({ owner, repo, run_id: lastFailed.id })
 
-              summary.push({ workflow: wf, status: 're-ran', reran: 1, run_id: lastFailed.id, conclusion: lastFailed.conclusion, url: lastFailed.html_url })
+                summary.push({
+                  workflow: wf,
+                  status: 're-ran',
+                  reran: 1,
+                  run_id: lastFailed.id,
+                  conclusion: lastFailed.conclusion,
+                  url: lastFailed.html_url,
+                })
             }
 
             return JSON.stringify(summary)
