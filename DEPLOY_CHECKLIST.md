@@ -40,6 +40,10 @@
 - [ ] GitHub Actions workflows готові
 - [ ] Синхронізація з AI Studio працює: `./scripts/sync_from_ai_studio.sh`
 
+### Container registry & GHCR
+
+- [ ] Create a GitHub PAT with `packages:write` and save it as repo secret `GHCR_PAT` if you plan to push images to ghcr.io from GitHub Actions.
+- [ ] Make sure all clusters have an imagePull secret for ghcr.io if your images are private. Use `kubectl create secret docker-registry` to create a `dockerconfigjson`-type secret and add its name to `environments/*/values.yaml` under `imagePullSecrets`.
 ## AI Studio → GitHub → ArgoCD → MacBook (minikube)
 
 0. Передумови (перевірте перед початком)

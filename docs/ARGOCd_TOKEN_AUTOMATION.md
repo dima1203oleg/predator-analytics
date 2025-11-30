@@ -5,15 +5,11 @@
 > Примітка з безпеки: токени — чутливі секрети. Не зберігайте їх у публічних файлах або у коммітах. Використовуйте тільки захищені GitHub Secrets та переглядайте доступи
 
 ## Передумови
-- У вас встановлені та аутентифіковані CLI:
   - argocd (https://argo-cd.readthedocs.io/en/stable/)
   - gh (GitHub CLI) (https://cli.github.com/)
   - git (щоб скрипт міг визначити репозиторій автоматично)
-- Акаунт ArgoCD для якого генеруєте токен повинен мати можливість `apiKey` у `argocd-cm` (настройка через kubectl)
 
 ## Скрипти у репозиторії
-- `scripts/argocd_generate_token.sh` — простий скрипт, який генерує токен для вказаного ArgoCD-акаунта і виводить його у stdout.
-- `scripts/argocd_generate_and_set_secret.sh` — скрипт, що автоматично:
   1. генерує токен для вказаного акаунта (через argocd cli),
   2. записує цей токен у GitHub Actions secret (через gh CLI) у вказаний репозиторій.
 
@@ -54,14 +50,54 @@ kubectl -n argocd rollout restart deployment argocd-server
 ```
 
 ## Безпека та найкращі практики
-- Переконайтесь що GitHub token (gh auth) має лише необхідні права (repo: secrets для запису секретів).
-- Тримайте токени у GitHub Secrets, не в кодовому сховищі.
-- Оновлюйте токени регулярно і відкочуйте ключі, які не використовуються.
 
----
 
 Якщо хочеш, я можу:
-- Додати wrapper-скрипт для одночасної генерації для всіх середовищ у репозиторії (mac/nvidia/oracle).
-- Додати GitHub Actions workflow (manual) який при запуску у self-host runner з доступом до ArgoCD згенерує токени та встановить secrets (можливо небезпечно якщо runner не надійний).
+
+
+
+## Автоматичне через GitHub Actions
+
+У репозиторії додано ручний workflow `.github/workflows/generate-argocd-tokens.yml`, який дозволяє згенерувати токени та автоматично зберегти їх у GitHub Secrets.
+
+Перед запуском на GitHub переконайтесь, що у `Settings → Secrets and variables → Actions` додані наступні секрети (кожен для свого середовища):
+
+
+Після додавання секретів запустіть workflow в Actions → Generate and store ArgoCD tokens (manual). Рекомендується запускати його на self-hosted runner з мережею, яка має доступ до відповідних ArgoCD інстансів.
+
+Примітка з безпеки: runner має бути довіреним та мати мінімально потрібні права; збереження PAT у репозиторії — це привілейована дія, тому обмежуйте його до мінімуму прав.
+
+Як швидко додати секрети локально (gh CLI)
+
+Якщо ви знаходитеся у локальній середовищі з доступом до GitHub CLI (`gh`) й хочете самостійно встановити секрети для Nvidia та Oracle — можете виконати одну з команд нижче (замінивши значення):
+
+```bash
+gh secret set ARGOCD_NVIDIA_URL --repo dima1203oleg/predator-analytics --body 'https://argocd-nvidia.example.com'
+gh secret set ARGOCD_NVIDIA_USERNAME --repo dima1203oleg/predator-analytics --body 'admin'
+gh secret set ARGOCD_NVIDIA_PASSWORD --repo dima1203oleg/predator-analytics --body 'p@ssw0rd'
+
+gh secret set ARGOCD_ORACLE_URL --repo dima1203oleg/predator-analytics --body 'https://argocd-oracle.example.com'
+gh secret set ARGOCD_ORACLE_USERNAME --repo dima1203oleg/predator-analytics --body 'admin'
+gh secret set ARGOCD_ORACLE_PASSWORD --repo dima1203oleg/predator-analytics --body 'p@ssw0rd'
+```
+
+Більш зручно — використати інтерактивний скрипт, що додається у `scripts/`:
+
+```bash
+# виклик без аргументів виведе prompt для всіх значень, або
+./scripts/set_argocd_secrets.sh --repo dima1203oleg/predator-analytics
+
+# або в non-interactive режимі через env vars
+REPO=dima1203oleg/predator-analytics \
+ARGOCD_NVIDIA_URL='https://argocd-nvidia.example.com' \
+ARGOCD_NVIDIA_USERNAME='admin' \
+ARGOCD_NVIDIA_PASSWORD='p@ssw0rd' \
+ARGOCD_ORACLE_URL='https://argocd-oracle.example.com' \
+ARGOCD_ORACLE_USERNAME='admin' \
+ARGOCD_ORACLE_PASSWORD='p@ssw0rd' \
+./scripts/set_argocd_secrets.sh --non-interactive
+```
+
+Після додавання секретів ви зможете запустити `Generate and store ArgoCD tokens` workflow (Actions → Generate and store ArgoCD tokens) або запустити `scripts/argocd_generate_and_set_secret.sh` локально.
 
 Що робимо далі?
