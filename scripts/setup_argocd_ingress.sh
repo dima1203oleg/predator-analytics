@@ -61,14 +61,14 @@ echo "Applying cert-manager issuer & certificate..."
 kubectl apply -f "$REPO_ROOT/argocd/cert-manager-selfsigned-issuer.yaml"
 
 # Patch certificate dnsNames to use requested HOST
-kubectl -n argocd patch certificate argocd-cert --type=json -p "[( { \"op\": \"replace\", \"path\": \"/spec/dnsNames/0\", \"value\": \"$HOST\" } )]" || true
+kubectl -n argocd patch certificate argocd-cert --type=json -p "[{\"op\":\"replace\",\"path\":\"/spec/dnsNames/0\",\"value\":\"$HOST\"}]" || true
 
 # 5) Apply ArgoCD ingress manifest
 echo "Creating Ingress for argocd pointing to host $HOST"
 kubectl apply -f "$REPO_ROOT/argocd/ingress-argocd.yaml"
 
 # patch ingress host to requested HOST so the manifest matches the chosen host
-kubectl -n argocd patch ingress argocd-server-ingress --type=json -p "[( { \"op\": \"replace\", \"path\": \"/spec/rules/0/host\", \"value\": \"$HOST\" } , { \"op\": \"replace\", \"path\": \"/spec/tls/0/hosts/0\", \"value\": \"$HOST\" } )]" || true
+kubectl -n argocd patch ingress argocd-server-ingress --type=json -p "[{\"op\":\"replace\",\"path\":\"/spec/rules/0/host\",\"value\":\"$HOST\"},{\"op\":\"replace\",\"path\":\"/spec/tls/0/hosts/0\",\"value\":\"$HOST\"}]" || true
 
 # 6) Quick check
 echo "Waiting for TLS secret to be present (argocd-tls) in argocd namespace..."
@@ -85,3 +85,21 @@ echo "Ingress & certificate applied. If using minikube, add mapping in /etc/host
 kubectl -n argocd get ingress argocd-server-ingress -o wide || true
 
 echo "Done. You should be able to access ArgoCD at https://$HOST (TLS via cert-manager / self-signed)."
+
+# Provide helpful information about NodePort / minikube
+if command -v minikube >/dev/null 2>&1; then
+  MINIKUBE_IP=$(minikube ip 2>/dev/null || true)
+  if [[ -n "$MINIKUBE_IP" ]]; then
+    echo "Minikube IP: $MINIKUBE_IP"
+    # get nodePort for https from ingress-nginx controller
+    NP=$(kubectl -n ingress-nginx get svc ingress-nginx-controller -o jsonpath='{.spec.ports[?(@.name=="https")].nodePort}' 2>/dev/null || true)
+    if [[ -n "$NP" ]]; then
+      echo "Ingress controller https nodePort: $NP"
+      echo "You can test from this machine without editing /etc/hosts using curl (insecure for self-signed):"
+      echo "  curl -k --resolve $HOST:$NP:$MINIKUBE_IP https://$HOST:$NP/ -I"
+      echo "If you want plain https://$HOST in your browser, run: minikube tunnel (requires sudo) and add /etc/hosts mapping: $MINIKUBE_IP $HOST"
+    else
+      echo "Could not determine ingress-nginx https nodePort; check kubectl -n ingress-nginx get svc ingress-nginx-controller"
+    fi
+  fi
+fi
