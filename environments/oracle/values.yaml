@@ -5,6 +5,8 @@
 image:
   repository: nginx  # Використовуємо nginx як тестовий сервіс
   tag: latest  # Тег образу
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
 resources:
   limits:
     cpu: 1

@@ -5,6 +5,8 @@
 image:
   repository: nginx  # Використовуємо nginx як тестовий сервіс
   tag: latest  # Тег образу
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
 resources:
   limits:
     cpu: 1
@@ -13,3 +15,15 @@ resources:
     cpu: 0.5
     memory: 512Mi
 # Додайте інші параметри за потреби
+
+# GPU / node selector defaults (override per-cluster if needed)
+nodeSelector: {}
+tolerations: []
+resources:
+  limits:
+    cpu: 1
+    memory: 1Gi
+    nvidia.com/gpu: 0
+  requests:
+    cpu: 0.5
+    memory: 512Mi

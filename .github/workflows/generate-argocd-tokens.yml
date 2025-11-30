@@ -1,0 +1,74 @@
+name: Generate and store ArgoCD tokens (manual)
+
+on:
+    workflow_dispatch:
+        inputs:
+            runner:
+                description: "Runner label to use (self-hosted with network access), empty uses ubuntu-latest"
+                required: false
+                default: ""
+
+permissions:
+    contents: read
+    actions: read
+
+jobs:
+    generate-tokens:
+        runs-on: ${{ github.event.inputs.runner || 'ubuntu-latest' }}
+        env:
+            REPO: ${{ github.repository }}
+            SCRIPT: scripts/argocd_generate_and_set_secret.sh
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Ensure argocd client
+              run: |
+                  if ! command -v argocd >/dev/null 2>&1; then
+                    echo "Installing argocd client"
+                    curl -sSL -o /tmp/argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+                    chmod +x /tmp/argocd-linux-amd64 && sudo mv /tmp/argocd-linux-amd64 /usr/local/bin/argocd
+                  fi
+
+            - name: Ensure gh CLI
+              run: |
+                  if ! command -v gh >/dev/null 2>&1; then
+                    echo "Installing gh CLI"
+                    sudo apt-get update && sudo apt-get install -y gh
+                  fi
+
+            - name: Login to gh with GH_PAT
+              run: |
+                  if [ -z "${{ secrets.GH_PAT }}" ]; then
+                    echo "GH_PAT secret not provided; skipping gh auth login (gh CLI must be pre-authenticated on runner)."
+                  else
+                    echo "${{ secrets.GH_PAT }}" | gh auth login --with-token
+                  fi
+
+            - name: Generate token + save for mac
+              run: |
+                  if [ -z "${{ secrets.ARGOCD_MAC_URL }}" ] || [ -z "${{ secrets.ARGOCD_MAC_USERNAME }}" ] || [ -z "${{ secrets.ARGOCD_MAC_PASSWORD }}" ]; then
+                    echo "Skipping mac token step because one or more secrets are missing: ARGOCD_MAC_URL/USERNAME/PASSWORD"
+                  else
+                    bash "$SCRIPT" --account cicd --secret-name ARGOCD_MAC_TOKEN --repo "$REPO" --server "${{ secrets.ARGOCD_MAC_URL }}" --username "${{ secrets.ARGOCD_MAC_USERNAME }}" --password "${{ secrets.ARGOCD_MAC_PASSWORD }}" --insecure --url-secret-name ARGOCD_MAC_URL --url-value "${{ secrets.ARGOCD_MAC_URL }}"
+                  fi
+
+            - name: Generate token + save for nvidia
+              run: |
+                  if [ -z "${{ secrets.ARGOCD_NVIDIA_URL }}" ] || [ -z "${{ secrets.ARGOCD_NVIDIA_USERNAME }}" ] || [ -z "${{ secrets.ARGOCD_NVIDIA_PASSWORD }}" ]; then
+                    echo "Skipping nvidia token step because one or more secrets are missing: ARGOCD_NVIDIA_URL/USERNAME/PASSWORD"
+                  else
+                    bash "$SCRIPT" --account cicd --secret-name ARGOCD_NVIDIA_TOKEN --repo "$REPO" --server "${{ secrets.ARGOCD_NVIDIA_URL }}" --username "${{ secrets.ARGOCD_NVIDIA_USERNAME }}" --password "${{ secrets.ARGOCD_NVIDIA_PASSWORD }}" --insecure --url-secret-name ARGOCD_NVIDIA_URL --url-value "${{ secrets.ARGOCD_NVIDIA_URL }}"
+                  fi
+
+            - name: Generate token + save for oracle
+              run: |
+                  if [ -z "${{ secrets.ARGOCD_ORACLE_URL }}" ] || [ -z "${{ secrets.ARGOCD_ORACLE_USERNAME }}" ] || [ -z "${{ secrets.ARGOCD_ORACLE_PASSWORD }}" ]; then
+                    echo "Skipping oracle token step because one or more secrets are missing: ARGOCD_ORACLE_URL/USERNAME/PASSWORD"
+                  else
+                    bash "$SCRIPT" --account cicd --secret-name ARGOCD_ORACLE_TOKEN --repo "$REPO" --server "${{ secrets.ARGOCD_ORACLE_URL }}" --username "${{ secrets.ARGOCD_ORACLE_USERNAME }}" --password "${{ secrets.ARGOCD_ORACLE_PASSWORD }}" --insecure --url-secret-name ARGOCD_ORACLE_URL --url-value "${{ secrets.ARGOCD_ORACLE_URL }}"
+                  fi
+
+            - name: Final status
+              run: |
+                  echo "Token generation steps finished. Check workflow logs for details and verify repository secrets in Settings -> Secrets and variables -> Actions."
