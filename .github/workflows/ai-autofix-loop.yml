@@ -68,18 +68,22 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "ci: auto-fixes from autofix loop (${{ github.run_id }})"
           branch: ai-autofix/${{ github.run_id }}
-          base: main
+          # create PR against a staging branch by default to avoid direct main merges
+          base: autofix/staging
           title: "Auto-fix (lint) — workflow run #${{ github.event.workflow_run.id }}"
           body: "Automated fixes applied by autofix loop (lint/format)."
           labels: ai-autofix
 
-      - name: Enable automerge for local auto-fix PR
-        if: steps.local_auto_fix.outputs.changed == '1' && steps.create_pr_local.outputs.pull-request-number != ''
+      - name: Enable automerge for local auto-fix PR (optional)
+        if: steps.local_auto_fix.outputs.changed == '1' && steps.create_pr_local.outputs.pull-request-number != '' && startsWith(env.ALLOW_AUTO_MERGE,'true')
         uses: peter-evans/enable-pull-request-automerge@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ steps.create_pr_local.outputs.pull-request-number }}
           merge-method: squash
+        env:
+          # Secret controls whether autofix can auto-merge into main/stable branches
+          ALLOW_AUTO_MERGE: ${{ secrets.ALLOW_AUTO_MERGE }}
 
       - name: Create issue for auto-remediation
         id: create_issue
@@ -109,12 +113,16 @@ jobs:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
           use_vertex_ai: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}
           use_gemini_code_assist: ${{ vars.GOOGLE_GENAI_USE_GCA }}
+          # Keep prompt wrapped to avoid long YAML lines and improve yamllint
           prompt: |
-            CONTEXT: An automated pipeline detected a failing workflow run (ID: ${{ github.event.workflow_run.id }}).
-            Local auto-fixes did not resolve the failure.
-            GOAL: Provide a remediation plan and, if possible, a small patch in unified diff format.
-            If you produce a patch, include it inside a fenced ```diff block.
-            OUTPUT: Post a detailed comment to the GitHub issue whose number appears in ISSUE_NUMBER env var.
+            CONTEXT: An automated pipeline detected a failing workflow run
+            (ID: ${{ github.event.workflow_run.id }}). Local auto-fixes
+            did not resolve the failure.
+            GOAL: Provide a remediation plan and, if possible, a small
+            patch in unified diff format. If you produce a patch,
+            include it inside a fenced ```diff block.
+            OUTPUT: Post a detailed comment to the GitHub issue whose
+            number appears in ISSUE_NUMBER env var.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ steps.create_issue.outputs.issue_number }}
@@ -144,13 +152,21 @@ jobs:
         if: steps.local_auto_fix.outputs.changed != '1' && steps.fetch_comment.outputs.latest_comment != ''
         run: |
           set -eux
-          # extract the last ```diff block content
           echo "Fetching AI comment body..."
           COMMENT='${{ steps.fetch_comment.outputs.latest_comment }}'
           printf "%s" "$COMMENT" > /tmp/ai_comment.txt
           awk '/^```diff/{flag=1;next}/^```/{if(flag){flag=0; exit}}flag{print}' /tmp/ai_comment.txt > /tmp/ai_patch.diff || true
           if [ ! -s /tmp/ai_patch.diff ]; then
             echo "No diff block found in AI output; skipping auto-apply." && exit 0
+          fi
+
+          # Safety: refuse to auto-apply patches that delete Chart.yaml or templates
+          if grep -qE '\+\+\+ b/|deleted file mode' /tmp/ai_patch.diff; then
+            # detect deletion of critical helm files
+            if grep -qE '\+\+\+ b/environments/.+/Chart.yaml|\+\+\+ b/environments/.+/templates/' /tmp/ai_patch.diff || grep -qE 'deleted file mode.*environments/.+/Chart.yaml' /tmp/ai_patch.diff; then
+              echo "Patch attempts to remove Helm chart files — refusing to auto-apply."
+              exit 0
+            fi
           fi
 
           BRANCH="ai-autofix/${{ github.run_id }}"
@@ -173,18 +189,21 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "ci: apply ai autofix for failing workflow run ${{ github.event.workflow_run.id }}"
           branch: ai-autofix/${{ github.run_id }}
-          base: main
+          # open PR against staging branch by default
+          base: autofix/staging
           title: "Auto-fix (AI) — workflow run #${{ github.event.workflow_run.id }}"
           body: "Automated AI-suggested patch applied by autofix loop."
           labels: ai-autofix
 
-      - name: Enable automerge on created PR
-        if: steps.local_auto_fix.outputs.changed != '1' && steps.create_pr.outputs.pull-request-number != ''
+      - name: Enable automerge on created PR (optional)
+        if: steps.local_auto_fix.outputs.changed != '1' && steps.create_pr.outputs.pull-request-number != '' && startsWith(env.ALLOW_AUTO_MERGE,'true')
         uses: peter-evans/enable-pull-request-automerge@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ steps.create_pr.outputs.pull-request-number }}
           merge-method: squash
+        env:
+          ALLOW_AUTO_MERGE: ${{ secrets.ALLOW_AUTO_MERGE }}
 
 
       - name: Create issue if still failing
