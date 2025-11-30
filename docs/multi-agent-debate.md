@@ -49,6 +49,14 @@ If no environment paths are touched, the workflow falls back to a single `global
 
 The workflow also runs a linter job (Super-Linter) to validate `.github/workflows` YAML files and catch syntax or workflow issues early. Add the workflow to your CI checks to fail PRs that introduce broken workflow YAML.
 
+## Fail-fast and automatic issue creation on CRITICAL
+
+If any per-environment Defender analysis finds a CRITICAL issue, that environment job will fail and the env-analysis matrix is configured fail-fast — the workflow will stop further environment analyses quickly. When CRITICAL is detected the workflow will also automatically open an issue titled like:
+
+`AI Defender CRITICAL — PR #<N> (macbook|nvidia|oracle|global)`
+
+This gives an obvious triage item so you can track the problem separately from the PR discussion.
+
 ## Blocking on CRITICAL severity
 
 The workflow includes a small evaluator that scans PR comments for the special severity marker `<!-- AI_REVIEW_SEVERITY: <LEVEL> -->` and will fail the workflow when `LEVEL` is `CRITICAL`.
