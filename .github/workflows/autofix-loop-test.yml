@@ -43,11 +43,9 @@ jobs:
             echo "+New (test)" >> /tmp/ai_patch.diff
           fi
 
-          # Safety check similar to the real workflow
-          if grep -qE '\+\+\+ b/|deleted file mode' /tmp/ai_patch.diff; then
-            if grep -qE '\+\+\+ b/environments/.+/Chart.yaml|\+\+\+ b/environments/.+/templates/' /tmp/ai_patch.diff || grep -qE 'deleted file mode.*environments/.+/Chart.yaml' /tmp/ai_patch.diff; then
-              echo "PROTECTION: Patch attempts to remove Helm chart files — refusing to apply." && exit 0
-            fi
+          # Safety check similar to the real workflow — match added/modified/deleted Chart.yaml/templates patterns
+          if grep -Eq '(^\+\+\+\s+b/environments/.+/(Chart.yaml|templates/))|(^---\s+a/environments/.+/(Chart.yaml|templates/))|(^deleted file mode.*(environments/.+/(Chart.yaml|templates/)))' /tmp/ai_patch.diff; then
+            echo "PROTECTION: Patch attempts to remove Helm chart files — refusing to apply." && exit 0
           fi
 
           echo "Patch passed safety checks (or harmless). Attempting to apply (dry-run)"
