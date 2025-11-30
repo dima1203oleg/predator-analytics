@@ -21,17 +21,23 @@ jobs:
       - name: Install actionlint
         run: |
           set -eux
-          # Prefer the official prebuilt binary from releases
+          # Try downloading the prebuilt binary first, make it executable if present
           curl -sSL -o /usr/local/bin/actionlint \
             "https://github.com/rhysd/actionlint/releases/latest/download/actionlint_linux_amd64" || true
+          chmod +x /usr/local/bin/actionlint || true
           if [ ! -x /usr/local/bin/actionlint ]; then
-            # Fallback: try to download the tar.gz and extract
+            # Fallback: download the tar.gz and extract the binary
             curl -sSL -o /tmp/actionlint.tar.gz \
               "https://github.com/rhysd/actionlint/releases/latest/download/actionlint_linux_amd64.tar.gz"
-            tar -xzf /tmp/actionlint.tar.gz -C /tmp
-            mv /tmp/actionlint /usr/local/bin/actionlint
+            # Only try to extract if the file looks like a gzip
+            if file /tmp/actionlint.tar.gz | grep -q gzip; then
+              tar -xzf /tmp/actionlint.tar.gz -C /tmp
+              mv /tmp/actionlint /usr/local/bin/actionlint
+              chmod +x /usr/local/bin/actionlint
+            else
+              echo "Fallback archive not in gzip format, skipping extract" >&2
+            fi
           fi
-          chmod +x /usr/local/bin/actionlint
 
       - name: Run actionlint on workflow files
         run: |
