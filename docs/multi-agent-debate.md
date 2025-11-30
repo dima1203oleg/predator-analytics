@@ -34,10 +34,20 @@ The agents are aware of three environment profiles and will try to prioritize re
 - nvidia: GPU cluster. Recommendations: respect nodeSelector/tolerations for GPU nodes, use GPU resource requests/limits, watch cost and GPU quota.
 - oracle: cloud free-tier/minimal. Recommendations: avoid large PVs, avoid autoscaling that might exceed free capacity, watch networking/egress costs.
 
+## Per-environment analysis
+
+The workflow now detects which environment paths the PR touches and runs *environment-specific* analyses in parallel for each touched environment (macbook, nvidia, oracle). This keeps reviews focused and fast — agents only analyze what was changed.
+
+If no environment paths are touched, the workflow falls back to a single `global` analysis covering the whole PR.
+
 ## Testing the workflow
 1. Create a test pull request or push a branch with a small change that touches `environments/macbook` (or nvidia/oracle) to trigger cluster-specific analysis.
 2. Or run manually from Actions → Multi-Agent Debate → Run workflow (workflow_dispatch).
 3. Check the PR for comments from Defender, Innovator and Judge.
+
+## Workflow linting
+
+The workflow also runs a linter job (Super-Linter) to validate `.github/workflows` YAML files and catch syntax or workflow issues early. Add the workflow to your CI checks to fail PRs that introduce broken workflow YAML.
 
 ## Blocking on CRITICAL severity
 
