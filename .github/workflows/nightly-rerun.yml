@@ -21,7 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Re-run only failed workflow runs (per-workflow)
+      - name: Find latest failed run and optionally re-run (per-workflow)
         id: rerun
         uses: actions/github-script@v7
         with:
@@ -33,38 +33,44 @@ jobs:
             const workflows = ['deploy.yml','deploy-mac.yml','deploy-nvidia.yml','deploy-oracle.yml']
 
             const allowedBadConclusions = new Set(['failure','timed_out','cancelled','action_required','startup_failure'])
+            const retryLimit = 3 // max attempts for the same run
 
             const summary = []
 
             for (const wf of workflows) {
-              core.info(`Checking workflow ${wf} on branch ${branch}`)
-              // list recent completed runs for this workflow
+              core.info(`Checking latest completed runs for workflow ${wf} on branch ${branch}`)
               const runsResp = await github.rest.actions.listWorkflowRuns({ owner, repo, workflow_id: wf, branch, per_page: 10, status: 'completed' })
               const runs = runsResp.data.workflow_runs || []
-              const failed = runs.filter(r => r.conclusion !== 'success')
 
-              if (failed.length === 0) {
-                summary.push({ workflow: wf, reran: 0 })
+              // choose the most recent non-successful run
+              const lastFailed = runs.find(r => r.conclusion !== 'success')
+
+              if (!lastFailed) {
+                summary.push({ workflow: wf, status: 'ok', reran: 0 })
                 continue
               }
 
-              const details = []
-              for (const r of failed) {
-                // Only rerun runs with known bad conclusions to avoid rerunning transient 'skipped'
-                if (!allowedBadConclusions.has(r.conclusion)) {
-                  core.info(`Skipping rerun for ${wf} run ${r.id} — conclusion ${r.conclusion}`)
-                  continue
-                }
-                core.info(`Requesting rerun for ${wf} run ${r.id} (conclusion=${r.conclusion})`)
-                await github.rest.actions.reRunWorkflowRun({ owner, repo, run_id: r.id })
-                details.push({ run_id: r.id, conclusion: r.conclusion, url: r.html_url })
+              const runAttempt = lastFailed.run_attempt || 1
+              if (!allowedBadConclusions.has(lastFailed.conclusion)) {
+                core.info(`Found failure of type ${lastFailed.conclusion}, skipping rerun for ${wf}`)
+                summary.push({ workflow: wf, status: 'problem', reran: 0, reason: `conclusion=${lastFailed.conclusion}` })
+                continue
               }
 
-              summary.push({ workflow: wf, reran: details.length, details })
+              if (runAttempt >= retryLimit) {
+                core.info(`Run ${lastFailed.id} for ${wf} already tried ${runAttempt} times (>=${retryLimit}), not re-running`)
+                summary.push({ workflow: wf, status: 'problem', reran: 0, reason: `attempts=${runAttempt}` })
+                continue
+              }
+
+              // Re-run the single most-recent failed run
+              core.info(`Re-running run ${lastFailed.id} for ${wf} (conclusion=${lastFailed.conclusion}, attempt=${runAttempt})`)
+              await github.rest.actions.reRunWorkflowRun({ owner, repo, run_id: lastFailed.id })
+
+              summary.push({ workflow: wf, status: 're-ran', reran: 1, run_id: lastFailed.id, conclusion: lastFailed.conclusion, url: lastFailed.html_url })
             }
 
-            // Return the summary as action output
-            return JSON.stringify(summary, null, 2)
+            return JSON.stringify(summary)
 
       - name: Create/update nightly rerun report issue
         if: always()
@@ -80,17 +86,24 @@ jobs:
             const createdAt = new Date().toISOString()
             const summary = JSON.parse(process.env.SUMMARY_JSON || '[]')
 
+            // compute overall status
+            const problemCount = summary.filter(s => s.status !== 'ok' && s.status !== 're-ran').length
+            const overall = problemCount === 0 ? 'OK' : 'PROBLEMS'
+
             const bodyLines = [
+              `Overall status: **${overall}**`,
+              '',
               `Nightly rerun summary — ${createdAt}`,
               '',
             ]
 
             for (const s of summary) {
-              bodyLines.push(`- ${s.workflow}: reran ${s.reran} run(s)`)
-              if (s.details && s.details.length) {
-                for (const d of s.details) {
-                  bodyLines.push(`  - ${d.url} (${d.conclusion})`)
-                }
+              if (s.status === 'ok') {
+                bodyLines.push(`- ${s.workflow}: ✅ OK — no recent failures`)
+              } else if (s.status === 're-ran') {
+                bodyLines.push(`- ${s.workflow}: 🔁 Re-ran run <${s.url}|#${s.run_id}> (previous conclusion: ${s.conclusion})`)
+              } else {
+                bodyLines.push(`- ${s.workflow}: ⚠️ Problem — ${s.reason || 'see details'}`)
               }
             }
 
