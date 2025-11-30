@@ -1,0 +1,147 @@
+name: Deploy via ArgoCD
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+jobs:
+  deploy-argocd-macbook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Sync ArgoCD application
+        env:
+          ARGOCD_URL: ${{ secrets.ARGOCD_MAC_URL }}
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
+        run: |
+          if [ -z "$ARGOCD_URL" ] || [ -z "$ARGOCD_TOKEN" ]; then
+            echo "ARGOCD secrets not present; skipping sync"
+            exit 0
+          fi
+          curl -X POST "$ARGOCD_URL/api/v1/applications/predator-macbook/sync" \
+            -H "Authorization: Bearer $ARGOCD_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Wait for ArgoCD app to become healthy
+        env:
+          ARGOCD_URL: ${{ secrets.ARGOCD_MAC_URL }}
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
+        run: |
+          if [ -z "$ARGOCD_URL" ] || [ -z "$ARGOCD_TOKEN" ]; then
+            echo "ARGOCD secrets not present; skipping health check"
+            exit 0
+          fi
+          for i in {1..30}; do
+            RESPONSE=$(curl -sS "$ARGOCD_URL/api/v1/applications/predator-macbook" \
+              -H "Authorization: Bearer $ARGOCD_TOKEN" || true)
+            STATUS=$(echo "$RESPONSE" | jq -r '.status.health.status' 2>/dev/null || echo "<no-json>")
+            if [ "$STATUS" = "Healthy" ]; then
+              echo "Application is healthy"
+              exit 0
+            fi
+            echo "DEBUG: ArgoCD status (raw response): $RESPONSE"
+            echo "Waiting for healthy status... ($i/30)"
+            sleep 10
+          done
+          echo "Application did not become healthy"
+          exit 1
+
+  deploy-argocd-nvidia:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Sync ArgoCD application (nvidia)
+        env:
+          ARGOCD_URL: ${{ secrets.ARGOCD_NVIDIA_URL }}
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_NVIDIA_TOKEN }}
+        run: |
+          if [ -z "$ARGOCD_URL" ] || [ -z "$ARGOCD_TOKEN" ]; then
+            echo "ARGOCD secrets not present; skipping sync"
+            exit 0
+          fi
+          curl -X POST "$ARGOCD_URL/api/v1/applications/predator-nvidia/sync" \
+            -H "Authorization: Bearer $ARGOCD_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Wait for ArgoCD app to become healthy (nvidia)
+        env:
+          ARGOCD_URL: ${{ secrets.ARGOCD_NVIDIA_URL }}
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_NVIDIA_TOKEN }}
+        run: |
+          if [ -z "$ARGOCD_URL" ] || [ -z "$ARGOCD_TOKEN" ]; then
+            echo "ARGOCD secrets not present; skipping health check"
+            exit 0
+          fi
+          for i in {1..30}; do
+            RESPONSE=$(curl -sS "$ARGOCD_URL/api/v1/applications/predator-nvidia" \
+              -H "Authorization: Bearer $ARGOCD_TOKEN" || true)
+            STATUS=$(echo "$RESPONSE" | jq -r '.status.health.status' 2>/dev/null || echo "<no-json>")
+            if [ "$STATUS" = "Healthy" ]; then
+              echo "Application is healthy"
+              exit 0
+            fi
+            echo "DEBUG: ArgoCD status (raw response): $RESPONSE"
+            echo "Waiting for healthy status... ($i/30)"
+            sleep 10
+          done
+          echo "Application did not become healthy"
+          exit 1
+
+  deploy-argocd-oracle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Sync ArgoCD application (oracle)
+        env:
+          ARGOCD_URL: ${{ secrets.ARGOCD_ORACLE_URL }}
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_ORACLE_TOKEN }}
+        run: |
+          if [ -z "$ARGOCD_URL" ] || [ -z "$ARGOCD_TOKEN" ]; then
+            echo "ARGOCD secrets not present; skipping sync"
+            exit 0
+          fi
+          curl -X POST "$ARGOCD_URL/api/v1/applications/predator-oracle/sync" \
+            -H "Authorization: Bearer $ARGOCD_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Wait for ArgoCD app to become healthy (oracle)
+        env:
+          ARGOCD_URL: ${{ secrets.ARGOCD_ORACLE_URL }}
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_ORACLE_TOKEN }}
+        run: |
+          if [ -z "$ARGOCD_URL" ] || [ -z "$ARGOCD_TOKEN" ]; then
+            echo "ARGOCD secrets not present; skipping health check"
+            exit 0
+          fi
+          for i in {1..30}; do
+            RESPONSE=$(curl -sS "$ARGOCD_URL/api/v1/applications/predator-oracle" \
+              -H "Authorization: Bearer $ARGOCD_TOKEN" || true)
+            STATUS=$(echo "$RESPONSE" | jq -r '.status.health.status' 2>/dev/null || echo "<no-json>")
+            if [ "$STATUS" = "Healthy" ]; then
+              echo "Application is healthy"
+              exit 0
+            fi
+            echo "DEBUG: ArgoCD status (raw response): $RESPONSE"
+            echo "Waiting for healthy status... ($i/30)"
+            sleep 10
+          done
+          echo "Application did not become healthy"
+          exit 1
