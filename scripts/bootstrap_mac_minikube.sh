@@ -56,6 +56,30 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 echo "Очікування готовності ArgoCD..."
 kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
 
+# In-cluster HTTP health-check for ArgoCD API (runs a temporary curl pod inside the cluster)
+echo "Перевірка HTTP-здоров'я ArgoCD (in-cluster)..."
+TRIES=20
+SLEEP=5
+HC_OK=0
+for i in $(seq 1 "$TRIES"); do
+    HC_POD="argocd-healthcheck-$(date +%s%N)"
+    # run a short-lived pod that curls the internal service
+    OUT=$(kubectl -n argocd run --rm --restart=Never --image=curlimages/curl "$HC_POD" --command -- sh -c 'curl -skS https://argocd-server:8080/healthz' 2>/dev/null || true)
+    if [ -n "$OUT" ]; then
+        echo "ArgoCD health endpoint response: $OUT"
+        HC_OK=1
+        break
+    fi
+    echo "  waiting for ArgoCD HTTP health (attempt $i/$TRIES) ..."
+    sleep $SLEEP
+done
+
+if [ "$HC_OK" -ne 1 ]; then
+    echo "⚠️  Попередження: не вдалось перевірити HTTP-здоров'я ArgoCD за $((TRIES*SLEEP))s. Подивіться логи: kubectl -n argocd logs deployment/argocd-server"
+else
+    echo "✅ ArgoCD HTTP health-check в порядку"
+fi
+
 echo "Збереження kubeconfig у файл kubeconfig-mac.yaml..."
 cp ~/.kube/config kubeconfig-mac.yaml
 
