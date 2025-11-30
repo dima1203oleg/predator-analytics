@@ -19,8 +19,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run actionlint (via action)
         uses: eifinger/actionlint-action@v1
-        with:
-          path: '.github/workflows'
 
   yamllint:
     name: yamllint (YAML syntax & style)
