@@ -9,37 +9,38 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-      if: ${{ hashFiles('frontend/package.json') != '' }}
-    - name: Install frontend dependencies
-      if: ${{ hashFiles('frontend/package.json') != '' }}
-      run: |
-        cd frontend
-        npm install
-    - name: Test frontend
-      if: ${{ hashFiles('frontend/package.json') != '' }}
-      run: |
-        cd frontend
-        npm test
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-      if: ${{ hashFiles('backend/requirements.txt') != '' }}
-    - name: Install backend dependencies
-      if: ${{ hashFiles('backend/requirements.txt') != '' }}
-      run: |
-        cd backend
-        pip install -r requirements.txt
-    - name: Test backend
-      if: ${{ hashFiles('backend/requirements.txt') != '' }}
-      run: |
-        cd backend
-        python -m pytest
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+        if: ${{ hashFiles('frontend/package.json') != '' }}
+      - name: Install frontend dependencies
+        if: ${{ hashFiles('frontend/package.json') != '' }}
+        run: |
+          cd frontend
+          npm install
+      - name: Test frontend
+        if: ${{ hashFiles('frontend/package.json') != '' }}
+        run: |
+          cd frontend
+          npm test
+
+      - name: Setup Python
+        if: ${{ hashFiles('backend/requirements.txt') != '' }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install backend dependencies
+        if: ${{ hashFiles('backend/requirements.txt') != '' }}
+        run: |
+          cd backend
+          pip install -r requirements.txt
+      - name: Test backend
+        if: ${{ hashFiles('backend/requirements.txt') != '' }}
+        run: |
+          cd backend
+          python -m pytest
 
   build:
     needs: test
@@ -83,34 +84,34 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Update Helm values for macbook
-      run: |
-        if [ -f environments/macbook/values.yaml ]; then
-          sed -i 's|tag:.*|tag: latest|' environments/macbook/values.yaml || true
-        else
-          echo "environments/macbook/values.yaml not found; skipping"
-        fi
-    - name: Update for nvidia
-      run: |
-        if [ -f environments/nvidia/values.yaml ]; then
-          sed -i 's|tag:.*|tag: latest|' environments/nvidia/values.yaml || true
-        else
-          echo "environments/nvidia/values.yaml not found; skipping"
-        fi
-    - name: Update for oracle
-      run: |
-        if [ -f environments/oracle/values.yaml ]; then
-          sed -i 's|tag:.*|tag: latest|' environments/oracle/values.yaml || true
-        else
-          echo "environments/oracle/values.yaml not found; skipping"
-        fi
-    - name: Commit changes
-      run: |
-        git config --global user.name 'github-actions'
-        git config --global user.email 'github-actions@github.com'
-        git add .
-        git commit -m 'Update image tags' || echo "No changes to commit"
+      - uses: actions/checkout@v4
+      - name: Update Helm values for macbook
+        run: |
+          if [ -f environments/macbook/values.yaml ]; then
+            sed -i 's|tag:.*|tag: latest|' environments/macbook/values.yaml || true
+          else
+            echo "environments/macbook/values.yaml not found; skipping"
+          fi
+      - name: Update for nvidia
+        run: |
+          if [ -f environments/nvidia/values.yaml ]; then
+            sed -i 's|tag:.*|tag: latest|' environments/nvidia/values.yaml || true
+          else
+            echo "environments/nvidia/values.yaml not found; skipping"
+          fi
+      - name: Update for oracle
+        run: |
+          if [ -f environments/oracle/values.yaml ]; then
+            sed -i 's|tag:.*|tag: latest|' environments/oracle/values.yaml || true
+          else
+            echo "environments/oracle/values.yaml not found; skipping"
+          fi
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add .
+          git commit -m 'Update image tags' || echo "No changes to commit"
           if ! git push; then
             echo "git push failed (probably missing write permissions for GITHUB_TOKEN). Skipping push." >&2
           fi
@@ -119,50 +120,50 @@ jobs:
     needs: update-values
     runs-on: ubuntu-latest
     steps:
-    - name: Sync ArgoCD
-      env:
-        ARGOCD_MAC_URL: ${{ secrets.ARGOCD_MAC_URL }}
-        ARGOCD_MAC_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
-      run: |
-        if [ -z "$ARGOCD_MAC_URL" ] || [ -z "$ARGOCD_MAC_TOKEN" ]; then
-          echo "ARGOCD secrets not present; skipping sync"
-          exit 0
-        fi
-        curl -X POST "$ARGOCD_MAC_URL/api/v1/applications/predator-macbook/sync" \
-          -H "Authorization: Bearer $ARGOCD_MAC_TOKEN" \
-          -H "Content-Type: application/json" \
-          -d '{}'
-    - name: Install jq
-      env:
-        ARGOCD_MAC_URL: ${{ secrets.ARGOCD_MAC_URL }}
-        ARGOCD_MAC_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
-      run: |
-        if [ -z "$ARGOCD_MAC_URL" ] || [ -z "$ARGOCD_MAC_TOKEN" ]; then
-          echo "ARGOCD secrets not present; skipping jq/install"
-          exit 0
-        fi
-        sudo apt-get update && sudo apt-get install -y jq
-    - name: Wait for healthy
-      env:
-        ARGOCD_MAC_URL: ${{ secrets.ARGOCD_MAC_URL }}
-        ARGOCD_MAC_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
-      run: |
-        if [ -z "$ARGOCD_MAC_URL" ] || [ -z "$ARGOCD_MAC_TOKEN" ]; then
-          echo "ARGOCD secrets not present; skipping health check"
-          exit 0
-        fi
-        for i in {1..30}; do
-          # capture full response for debug, parse status via jq if possible
-          RESPONSE=$(curl -sS "$ARGOCD_MAC_URL/api/v1/applications/predator-macbook" \
-            -H "Authorization: Bearer $ARGOCD_MAC_TOKEN" || true)
-          STATUS=$(echo "$RESPONSE" | jq -r '.status.health.status' 2>/dev/null || echo "<no-json>")
-          if [ "$STATUS" = "Healthy" ]; then
-            echo "Application is healthy"
+      - name: Sync ArgoCD
+        env:
+          ARGOCD_MAC_URL: ${{ secrets.ARGOCD_MAC_URL }}
+          ARGOCD_MAC_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
+        run: |
+          if [ -z "$ARGOCD_MAC_URL" ] || [ -z "$ARGOCD_MAC_TOKEN" ]; then
+            echo "ARGOCD secrets not present; skipping sync"
             exit 0
           fi
-          echo "DEBUG: ArgoCD status (raw response): $RESPONSE"
-          echo "Waiting for healthy status... ($i/30)"
-          sleep 10
-        done
-        echo "Application did not become healthy"
-        exit 1
+          curl -X POST "$ARGOCD_MAC_URL/api/v1/applications/predator-macbook/sync" \
+            -H "Authorization: Bearer $ARGOCD_MAC_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+      - name: Install jq
+        env:
+          ARGOCD_MAC_URL: ${{ secrets.ARGOCD_MAC_URL }}
+          ARGOCD_MAC_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
+        run: |
+          if [ -z "$ARGOCD_MAC_URL" ] || [ -z "$ARGOCD_MAC_TOKEN" ]; then
+            echo "ARGOCD secrets not present; skipping jq/install"
+            exit 0
+          fi
+          sudo apt-get update && sudo apt-get install -y jq
+      - name: Wait for healthy
+        env:
+          ARGOCD_MAC_URL: ${{ secrets.ARGOCD_MAC_URL }}
+          ARGOCD_MAC_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
+        run: |
+          if [ -z "$ARGOCD_MAC_URL" ] || [ -z "$ARGOCD_MAC_TOKEN" ]; then
+            echo "ARGOCD secrets not present; skipping health check"
+            exit 0
+          fi
+          for i in {1..30}; do
+            # capture full response for debug, parse status via jq if possible
+            RESPONSE=$(curl -sS "$ARGOCD_MAC_URL/api/v1/applications/predator-macbook" \
+              -H "Authorization: Bearer $ARGOCD_MAC_TOKEN" || true)
+            STATUS=$(echo "$RESPONSE" | jq -r '.status.health.status' 2>/dev/null || echo "<no-json>")
+            if [ "$STATUS" = "Healthy" ]; then
+              echo "Application is healthy"
+              exit 0
+            fi
+            echo "DEBUG: ArgoCD status (raw response): $RESPONSE"
+            echo "Waiting for healthy status... ($i/30)"
+            sleep 10
+          done
+          echo "Application did not become healthy"
+          exit 1

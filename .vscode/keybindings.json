@@ -1,0 +1,7 @@
+[
+  {
+    "key": "ctrl+enter",
+    "command": "editor.action.inlineSuggest.commit",
+    "when": "editorTextFocus && inlineSuggestVisible"
+  }
+]
