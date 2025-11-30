@@ -39,6 +39,12 @@ The agents are aware of three environment profiles and will try to prioritize re
 2. Or run manually from Actions → Multi-Agent Debate → Run workflow (workflow_dispatch).
 3. Check the PR for comments from Defender, Innovator and Judge.
 
+## Blocking on CRITICAL severity
+
+The workflow includes a small evaluator that scans PR comments for the special severity marker `<!-- AI_REVIEW_SEVERITY: <LEVEL> -->` and will fail the workflow when `LEVEL` is `CRITICAL`.
+
+If you want merging to be blocked for `CRITICAL` findings, add this workflow as a required status check in your branch protection rules — the evaluator will make the workflow fail (and thus prevent the merge) when Defender posts a CRITICAL marker.
+
 ## Example outputs
 - Defender comment: short list of direct risks (secrets, ports, oversized resources) with severity and fixes.
 - Innovator comment: suggestions for performance/CI improvements with concrete examples.
