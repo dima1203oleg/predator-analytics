@@ -1,0 +1,15 @@
+# Codeowners: default reviewers for important areas
+# Use GitHub usernames (teams like @org/team are also supported)
+
+# Workflows and CI — route to repo owner
+.github/workflows/ @dima1203oleg
+
+# Helm charts and environment templates — protect deployments
+environments/ @dima1203oleg
+
+# Infrastructure / deployment manifests
+argo/ @dima1203oleg
+argocd/ @dima1203oleg
+
+# Autofix rules and scripts
+scripts/ @dima1203oleg
