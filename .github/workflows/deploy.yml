@@ -86,13 +86,25 @@ jobs:
     - uses: actions/checkout@v4
     - name: Update Helm values for macbook
       run: |
-        sed -i 's|tag:.*|tag: latest|' environments/macbook/values.yaml
+        if [ -f environments/macbook/values.yaml ]; then
+          sed -i 's|tag:.*|tag: latest|' environments/macbook/values.yaml || true
+        else
+          echo "environments/macbook/values.yaml not found; skipping"
+        fi
     - name: Update for nvidia
       run: |
-        sed -i 's|tag:.*|tag: latest|' environments/nvidia/values.yaml
+        if [ -f environments/nvidia/values.yaml ]; then
+          sed -i 's|tag:.*|tag: latest|' environments/nvidia/values.yaml || true
+        else
+          echo "environments/nvidia/values.yaml not found; skipping"
+        fi
     - name: Update for oracle
       run: |
-        sed -i 's|tag:.*|tag: latest|' environments/oracle/values.yaml
+        if [ -f environments/oracle/values.yaml ]; then
+          sed -i 's|tag:.*|tag: latest|' environments/oracle/values.yaml || true
+        else
+          echo "environments/oracle/values.yaml not found; skipping"
+        fi
     - name: Commit changes
       run: |
         git config --global user.name 'github-actions'
