@@ -18,31 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install actionlint
-        run: |
-          set -eux
-          # Try downloading the prebuilt binary first, make it executable if present
-          curl -sSL -o /usr/local/bin/actionlint \
-            "https://github.com/rhysd/actionlint/releases/latest/download/actionlint_linux_amd64" || true
-          chmod +x /usr/local/bin/actionlint || true
-          if [ ! -x /usr/local/bin/actionlint ]; then
-            # Fallback: download the tar.gz and extract the binary
-            curl -sSL -o /tmp/actionlint.tar.gz \
-              "https://github.com/rhysd/actionlint/releases/latest/download/actionlint_linux_amd64.tar.gz"
-            # Only try to extract if the file looks like a gzip
-            if file /tmp/actionlint.tar.gz | grep -q gzip; then
-              tar -xzf /tmp/actionlint.tar.gz -C /tmp
-              mv /tmp/actionlint /usr/local/bin/actionlint
-              chmod +x /usr/local/bin/actionlint
-            else
-              echo "Fallback archive not in gzip format, skipping extract" >&2
-            fi
-          fi
-
-      - name: Run actionlint on workflow files
-        run: |
-          set -eux
-          /usr/local/bin/actionlint .github/workflows
+      - name: Run actionlint (via action)
+        uses: rhysd/actionlint@v1
+        with:
+          path: '.github/workflows'
 
   yamllint:
     name: yamllint (YAML syntax & style)
