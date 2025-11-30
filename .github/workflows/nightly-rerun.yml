@@ -1,0 +1,47 @@
+name: Nightly re-run important workflows
+
+on:
+  schedule:
+    # Run daily at 03:00 UTC to re-check stability of key workflows
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  dispatch-key-workflows:
+    name: Dispatch key workflows (deploy / deploy-{mac,nvidia,oracle})
+    runs-on: ubuntu-latest
+    concurrency:
+      group: nightly-rerun
+      cancel-in-progress: false
+    steps:
+      - name: Trigger Deploy (top-level)
+        uses: peter-evans/workflow-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          workflow: deploy.yml
+          ref: main
+
+      - name: Trigger deploy-mac
+        uses: peter-evans/workflow-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          workflow: deploy-mac.yml
+          ref: main
+
+      - name: Trigger deploy-nvidia
+        uses: peter-evans/workflow-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          workflow: deploy-nvidia.yml
+          ref: main
+
+      - name: Trigger deploy-oracle
+        uses: peter-evans/workflow-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          workflow: deploy-oracle.yml
+          ref: main
