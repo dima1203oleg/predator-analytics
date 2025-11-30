@@ -95,6 +95,17 @@ jobs:
             // Create an alert issue for the ops team so it's visible in inboxes and monitoring
             await github.rest.issues.create({ owner, repo, title, body, labels: ['autofix-notification'] });
 
+      - name: (Optional) Slack alert for autofix PR
+        if: ${{ steps.local_fix.outputs.changed == '1' && steps.create_pull_request.outputs.pull-request-number != '' && secrets.SLACK_WEBHOOK != '' }}
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          set -eux
+          PR_NUMBER='${{ steps.create_pull_request.outputs.pull-request-number }}'
+          PR_URL='${{ steps.create_pull_request.outputs.pull-request-url }}'
+          PAYLOAD="{\"text\":\"Autofix PR created: ${PR_URL} (PR #${PR_NUMBER}) — please review.\"}"
+          curl -fsS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK" || true
+
       - name: Determine whether auto-merge is allowed
         id: check_automerge
         run: |
