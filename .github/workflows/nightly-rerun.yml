@@ -8,40 +8,110 @@ on:
 
 jobs:
   dispatch-key-workflows:
-    name: Dispatch key workflows (deploy / deploy-{mac,nvidia,oracle})
+    name: Nightly rerun of failed runs + reporting
     runs-on: ubuntu-latest
     concurrency:
       group: nightly-rerun
       cancel-in-progress: false
+    env:
+      TARGET_BRANCH: main
+      REPORT_ISSUE_TITLE: Nightly rerun report
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
     steps:
-      - name: Trigger Deploy (top-level)
-        uses: peter-evans/workflow-dispatch@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          workflow: deploy.yml
-          ref: main
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Trigger deploy-mac
-        uses: peter-evans/workflow-dispatch@v1
+      - name: Re-run only failed workflow runs (per-workflow)
+        id: rerun
+        uses: actions/github-script@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          workflow: deploy-mac.yml
-          ref: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner
+            const repo = context.repo.repo
+            const branch = process.env.TARGET_BRANCH || 'main'
+            const workflows = ['deploy.yml','deploy-mac.yml','deploy-nvidia.yml','deploy-oracle.yml']
 
-      - name: Trigger deploy-nvidia
-        uses: peter-evans/workflow-dispatch@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          workflow: deploy-nvidia.yml
-          ref: main
+            const allowedBadConclusions = new Set(['failure','timed_out','cancelled','action_required','startup_failure'])
 
-      - name: Trigger deploy-oracle
-        uses: peter-evans/workflow-dispatch@v1
+            const summary = []
+
+            for (const wf of workflows) {
+              core.info(`Checking workflow ${wf} on branch ${branch}`)
+              // list recent completed runs for this workflow
+              const runsResp = await github.rest.actions.listWorkflowRuns({ owner, repo, workflow_id: wf, branch, per_page: 10, status: 'completed' })
+              const runs = runsResp.data.workflow_runs || []
+              const failed = runs.filter(r => r.conclusion !== 'success')
+
+              if (failed.length === 0) {
+                summary.push({ workflow: wf, reran: 0 })
+                continue
+              }
+
+              const details = []
+              for (const r of failed) {
+                // Only rerun runs with known bad conclusions to avoid rerunning transient 'skipped'
+                if (!allowedBadConclusions.has(r.conclusion)) {
+                  core.info(`Skipping rerun for ${wf} run ${r.id} — conclusion ${r.conclusion}`)
+                  continue
+                }
+                core.info(`Requesting rerun for ${wf} run ${r.id} (conclusion=${r.conclusion})`)
+                await github.rest.actions.reRunWorkflowRun({ owner, repo, run_id: r.id })
+                details.push({ run_id: r.id, conclusion: r.conclusion, url: r.html_url })
+              }
+
+              summary.push({ workflow: wf, reran: details.length, details })
+            }
+
+            // Return the summary as action output
+            return JSON.stringify(summary, null, 2)
+
+      - name: Create/update nightly rerun report issue
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          SUMMARY_JSON: ${{ steps.rerun.outputs.result }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          workflow: deploy-oracle.yml
-          ref: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner
+            const repo = context.repo.repo
+            const title = process.env.REPORT_ISSUE_TITLE || 'Nightly rerun report'
+            const createdAt = new Date().toISOString()
+            const summary = JSON.parse(process.env.SUMMARY_JSON || '[]')
+
+            const bodyLines = [
+              `Nightly rerun summary — ${createdAt}`,
+              '',
+            ]
+
+            for (const s of summary) {
+              bodyLines.push(`- ${s.workflow}: reran ${s.reran} run(s)`)
+              if (s.details && s.details.length) {
+                for (const d of s.details) {
+                  bodyLines.push(`  - ${d.url} (${d.conclusion})`)
+                }
+              }
+            }
+
+            const body = bodyLines.join('\n')
+
+            // Find an existing open issue with the same title
+            const { data: issues } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 })
+            const found = issues.find(i => i.title === title)
+            if (found) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: found.number, body })
+              core.info(`Appended nightly summary to issue #${found.number}`)
+            } else {
+              const res = await github.rest.issues.create({ owner, repo, title, body })
+              core.info(`Created nightly summary issue #${res.data.number}`)
+            }
+
+      - name: Optional — post to Slack if webhook is configured
+        if: ${{ env.SLACK_WEBHOOK != '' }}
+        env:
+          SUMMARY: ${{ steps.rerun.outputs.result }}
+        run: |
+          echo "Posting summary to Slack"
+          payload=$(jq -n --arg txt "Nightly rerun: $SUMMARY" '{text: $txt}')
+          curl -sS -X POST -H 'Content-type: application/json' --data "$payload" "$SLACK_WEBHOOK"
