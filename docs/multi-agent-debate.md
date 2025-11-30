@@ -15,16 +15,8 @@ Location: `.github/workflows/multi-agent-debate.yml`
 Set these in GitHub: Settings → Secrets and variables → Actions
 
 Secrets
-- `GEMINI_API_KEY` — API key for Gemini CLI (used by the action)
 
 Repository variables (recommended)
-- `GEMINI_CLI_VERSION` — version of `run-gemini-cli` action (e.g. `v0.3.0`) or a pinned tag
-- `GCP_WIF_PROVIDER` — Workload Identity Provider (if using WIF)
-- `GOOGLE_CLOUD_PROJECT` — GCP project id used by WIF
-- `GOOGLE_CLOUD_LOCATION` — region (if required)
-- `SERVICE_ACCOUNT_EMAIL` — service account email for WIF (if used)
-- `GOOGLE_GENAI_USE_VERTEXAI` — `true`/`false` (optional)
-- `GOOGLE_GENAI_USE_GCA` — `true`/`false` (optional)
  - `AI_ISSUE_ASSIGNEES` — optional comma-separated list of GitHub usernames to assign created issues to (e.g. "alice,bob").
  - `AI_ISSUE_LABEL_PREFIX` — optional prefix for created labels (default prefix is `AI`, so labels become `AI-CRITICAL` and `AI-HIGH`).
 
@@ -32,17 +24,21 @@ If you do NOT use Workload Identity, ensure `GEMINI_API_KEY` is present and leav
 
 ## Cluster-aware behavior (Predator v18.2)
 The agents are aware of three environment profiles and will try to prioritize recommendations based on which environment path is affected in the PR:
-- macbook: dev, limited CPU/memory, single-node. Recommendations: small requests, replicas=1, avoid large images and heavy probes.
-- nvidia: GPU cluster. Recommendations: respect nodeSelector/tolerations for GPU nodes, use GPU resource requests/limits, watch cost and GPU quota.
-- oracle: cloud free-tier/minimal. Recommendations: avoid large PVs, avoid autoscaling that might exceed free capacity, watch networking/egress costs.
 
 ## Per-environment analysis
 
-The workflow now detects which environment paths the PR touches and runs *environment-specific* analyses in parallel for each touched environment (macbook, nvidia, oracle). This keeps reviews focused and fast — agents only analyze what was changed.
+The JSON must be valid and use this format exactly (example):
+```json
+{
+  "env": "macbook",
+  "severity": "CRITICAL",
+  "items": [
+    { "id": 1, "severity": "CRITICAL", "title": "Secret exposed in yaml", "fix": "Move secret to GitHub secret + reference via valueFrom" }
+  ]
+}
+```
 
-If no environment paths are touched, the workflow falls back to a single `global` analysis covering the whole PR.
-
-## Testing the workflow
+If any per-environment Defender analysis finds an issue with severity that meets or exceeds `AI_BLOCK_THRESHOLD`, that environment job will fail and the env-analysis matrix is configured fail-fast — the workflow will stop further environment analyses quickly. When severity is HIGH or CRITICAL the workflow will automatically open an issue titled like:
 1. Create a test pull request or push a branch with a small change that touches `environments/macbook` (or nvidia/oracle) to trigger cluster-specific analysis.
 2. Or run manually from Actions → Multi-Agent Debate → Run workflow (workflow_dispatch).
 3. Check the PR for comments from Defender, Innovator and Judge.

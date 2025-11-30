@@ -75,6 +75,7 @@ jobs:
       SERVICE_ACCOUNT_EMAIL: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
       AI_ISSUE_ASSIGNEES: ${{ vars.AI_ISSUE_ASSIGNEES }}
       AI_ISSUE_LABEL_PREFIX: ${{ vars.AI_ISSUE_LABEL_PREFIX }}
+      AI_BLOCK_THRESHOLD: ${{ vars.AI_BLOCK_THRESHOLD }}
       GOOGLE_GENAI_USE_VERTEXAI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}
       GOOGLE_GENAI_USE_GCA: ${{ vars.GOOGLE_GENAI_USE_GCA }}
     steps:
@@ -103,7 +104,9 @@ jobs:
             Focus ONLY on: security, stability, costs and resource limits for this environment.
             TASK:
             - Analyze changed files, check environment ${matrix.env} paths.
-            - Output a checklist, include severity marker: <!-- AI_REVIEW_SEVERITY: CRITICAL|HIGH|MEDIUM|LOW -->
+            - Output a checklist, then append a structured JSON summary in a fenced code block for reliable parsing.
+              The JSON must be valid and use this format exactly: ```json\n{\n  "env": "<environment>",\n  "severity": "CRITICAL|HIGH|MEDIUM|LOW",\n  "items": [ { "id": 1, "severity": "HIGH", "title": "short text", "fix": "short fix text" } ]\n}\n```
+              Example at the end of the comment (fenced code block, triple backticks, "json").
 
       - name: Check defender severity + create issue on CRITICAL
         uses: actions/github-script@v7
@@ -112,28 +115,66 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            // Helper: compare severities
+            const severityRank = { 'NONE':0, 'LOW':1, 'MEDIUM':2, 'HIGH':3, 'CRITICAL':4 };
+            const threshold = (process.env.AI_BLOCK_THRESHOLD || 'CRITICAL').toUpperCase();
+
             const prNumber = context.payload.pull_request.number;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: prNumber, per_page: 200 });
-            const marker = 'AI_REVIEW_SEVERITY:';
             const reversed = comments.slice().reverse();
-            // find latest comment that mentions this environment + marker (loose match for env name)
-            const found = reversed.find(c => c.body && c.body.includes(marker) && c.body.toLowerCase().includes(process.env.MATRIX_ENV.toLowerCase()));
+
+            // find latest JSON code block in comments that mentions the environment
+            function extractJsonFromBody(body) {
+              if (!body) return null;
+              // 1) Attempt to find a ```json block
+              const m = body.match(/```\s*json\s*([\s\S]*?)```/i);
+              if (m && m[1]) {
+                try { return JSON.parse(m[1]); } catch (e) { return null; }
+              }
+              // 2) Attempt to find inline HTML comment marker with JSON
+              const htmlM = body.match(/<!--\s*AI_REVIEW_JSON\s*([\s\S]*?)-->/i);
+              if (htmlM && htmlM[1]) {
+                try { return JSON.parse(htmlM[1]); } catch (e) { return null; }
+              }
+              return null;
+            }
+
+            const envName = (process.env.MATRIX_ENV || '').toLowerCase();
+            let found = null;
+            for (const c of reversed) {
+              const parsed = extractJsonFromBody(c.body);
+              if (parsed && parsed.env && parsed.env.toLowerCase() === envName) {
+                found = { body: c.body, json: parsed };
+                break;
+              }
+            }
+
+            // fallback: search for legacy marker (AI_REVIEW_SEVERITY) tied to env
             if (!found) {
-              core.info('No AI_REVIEW_SEVERITY marker found for env ' + process.env.MATRIX_ENV + ' — continuing.');
+              const marker = 'AI_REVIEW_SEVERITY:';
+              const fallback = reversed.find(c => c.body && c.body.includes(marker) && c.body.toLowerCase().includes(envName));
+              if (fallback) {
+                const m = fallback.body.match(/AI_REVIEW_SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
+                if (m) found = { body: fallback.body, json: { env: process.env.MATRIX_ENV, severity: m[1].toUpperCase(), items: [] } };
+              }
+            }
+
+            if (!found) {
+              core.info('No structured JSON comment found for env ' + process.env.MATRIX_ENV + ' — continuing.');
               return {severity: 'NONE'};
             }
-            const m = found.body.match(/AI_REVIEW_SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
-            if (!m) {
-              core.info('AI_REVIEW_SEVERITY marker present but no level parsed — continuing.');
-              return {severity: 'UNKNOWN'};
-            }
-            const level = m[1].toUpperCase();
-            core.info('Parsed severity for env ' + process.env.MATRIX_ENV + ': ' + level);
-            if (level === 'CRITICAL' || level === 'HIGH') {
-              // create issue if not exists
-              const issueLevel = (level === 'CRITICAL') ? 'CRITICAL' : 'HIGH';
+
+            const severity = (found.json.severity || 'NONE').toUpperCase();
+            core.info('Parsed severity for env ' + process.env.MATRIX_ENV + ': ' + severity);
+
+            // determine if we should create an issue (>= HIGH) and if severity meets or exceeds block threshold
+            const shouldCreateIssue = severityRank[severity] >= severityRank['HIGH'];
+            const shouldBlock = severityRank[severity] >= (severityRank[threshold] || severityRank['CRITICAL']);
+
+            if (shouldCreateIssue) {
+              const issueLevel = (severity === 'CRITICAL') ? 'CRITICAL' : 'HIGH';
               const labelName = (process.env.AI_ISSUE_LABEL_PREFIX ? process.env.AI_ISSUE_LABEL_PREFIX + '-' : 'AI') + issueLevel;
               const issueTitle = `AI Defender ${issueLevel} — PR #${prNumber} (${process.env.MATRIX_ENV})`;
               const { data: issues } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
@@ -148,19 +189,30 @@ jobs:
                     await github.rest.issues.createLabel({ owner, repo, name: labelName, color: (issueLevel === 'CRITICAL' ? 'b60205' : 'ff8c00'), description: 'AI review severity ' + issueLevel });
                   }
                 }
-                const assignees = process.env.AI_ISSUE_ASSIGNEES ? process.env.AI_ISSUE_ASSIGNEES.split(',').map(s=>s.trim()).filter(Boolean) : [];
+                // derive assignees from mapping: format macbook:alice,bob;nvidia:ops
+                let assignees = [];
+                if (process.env.AI_ISSUE_ASSIGNEES) {
+                  const mappings = process.env.AI_ISSUE_ASSIGNEES.split(';').map(s=>s.trim()).filter(Boolean);
+                  const map = {};
+                  for (const entry of mappings) {
+                    const [k,v] = entry.split(':');
+                    if (!k || !v) continue;
+                    map[k.trim().toLowerCase()] = v.split(',').map(x=>x.trim()).filter(Boolean);
+                  }
+                  assignees = map[process.env.MATRIX_ENV.toLowerCase()] || (map['default'] || []);
+                }
                 await github.rest.issues.create({ owner, repo, title: issueTitle, body: body, labels: [labelName], assignees });
                 core.info('Created issue: ' + issueTitle);
               } else {
                 core.info('Open issue already exists: ' + exists.html_url);
               }
-              if (level === 'CRITICAL') {
-                core.setFailed('Defender reported CRITICAL severity for env ' + process.env.MATRIX_ENV + ' — failing job.');
-              } else {
-                core.info('Severity is HIGH — issue created but not failing the job (env ' + process.env.MATRIX_ENV + ').');
-              }
             }
-            return {severity: level};
+
+            if (shouldBlock) {
+              core.setFailed('Defender reported severity ' + severity + ' for env ' + process.env.MATRIX_ENV + ' — meets block threshold (' + threshold + ') — failing job.');
+            }
+
+            return {severity: severity};
 
       - name: Innovator (env-aware)
         uses: google-github-actions/run-gemini-cli@v0
@@ -184,7 +236,7 @@ jobs:
             Focus ONLY on: performance, developer experience and scalability suggestions for this environment.
             TASK:
             - Analyze changed files, check environment ${matrix.env} paths.
-            - Output checklist + improvement suggestions and include severity marker.
+            - Output checklist + improvement suggestions and then append the same structured JSON summary as a fenced code block (see Defender example above). Use the environment from the matrix (e.g. "env":"macbook").
   # Fallback global analysis when no environment-specific paths are changed
   global-analysis:
     name: Global analysis (no environment paths changed)
@@ -199,6 +251,7 @@ jobs:
       SERVICE_ACCOUNT_EMAIL: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
       AI_ISSUE_ASSIGNEES: ${{ vars.AI_ISSUE_ASSIGNEES }}
       AI_ISSUE_LABEL_PREFIX: ${{ vars.AI_ISSUE_LABEL_PREFIX }}
+      AI_BLOCK_THRESHOLD: ${{ vars.AI_BLOCK_THRESHOLD }}
       GOOGLE_GENAI_USE_VERTEXAI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}
       GOOGLE_GENAI_USE_GCA: ${{ vars.GOOGLE_GENAI_USE_GCA }}
     steps:
@@ -241,47 +294,66 @@ jobs:
             const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: prNumber, per_page: 200 });
             const marker = 'AI_REVIEW_SEVERITY:';
             const reversed = comments.slice().reverse();
-            // find latest comment with marker
-            const found = reversed.find(c => c.body && c.body.includes(marker));
-            if (!found) {
-              core.info('No AI_REVIEW_SEVERITY marker found (global) — continuing.');
-              return {severity: 'NONE'};
-            }
-            const m = found.body.match(/AI_REVIEW_SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
-            if (!m) {
-              core.info('AI_REVIEW_SEVERITY marker present but no level parsed — continuing.');
-              return {severity: 'UNKNOWN'};
-            }
-            const level = m[1].toUpperCase();
-            core.info('Parsed severity (global): ' + level);
-            if (level === 'CRITICAL' || level === 'HIGH') {
-              const issueLevel = (level === 'CRITICAL') ? 'CRITICAL' : 'HIGH';
-              const labelName = (process.env.AI_ISSUE_LABEL_PREFIX ? process.env.AI_ISSUE_LABEL_PREFIX + '-' : 'AI') + issueLevel;
-              const issueTitle = `AI Defender ${issueLevel} — PR #${prNumber} (global)`;
-              const { data: issues } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
-              const exists = issues.find(i => i.title === issueTitle);
-              if (!exists) {
-                const body = 'Defender reported CRITICAL severity for the repository in PR #' + prNumber + "\n\nLatest defender comment:\n\n" + found.body + "\n\nPlease address immediately.";
-                try {
-                  await github.rest.issues.getLabel({ owner, repo, name: labelName });
-                } catch (err) {
-                  if (err.status === 404) {
-                    await github.rest.issues.createLabel({ owner, repo, name: labelName, color: (issueLevel === 'CRITICAL' ? 'b60205' : 'ff8c00'), description: 'AI review severity ' + issueLevel });
-                  }
+              const severityRank = { 'NONE':0, 'LOW':1, 'MEDIUM':2, 'HIGH':3, 'CRITICAL':4 };
+              const threshold = (process.env.AI_BLOCK_THRESHOLD || 'CRITICAL').toUpperCase();
+
+              // helper to extract json from body
+              function extractJsonFromBody(body) {
+                if (!body) return null;
+                const m = body.match(/```\s*json\s*([\s\S]*?)```/i);
+                if (m && m[1]) { try { return JSON.parse(m[1]); } catch(e){ return null; } }
+                const htmlM = body.match(/<!--\s*AI_REVIEW_JSON\s*([\s\S]*?)-->/i);
+                if (htmlM && htmlM[1]) { try { return JSON.parse(htmlM[1]); } catch(e){ return null; } }
+                return null;
+              }
+
+              // find latest json block anywhere
+              let found = null;
+              for (const c of reversed) {
+                const parsed = extractJsonFromBody(c.body);
+                if (parsed && parsed.severity) { found = { body: c.body, json: parsed }; break; }
+              }
+
+              // fallback: legacy marker
+              if (!found) {
+                const fallback = reversed.find(c => c.body && c.body.includes(marker));
+                if (fallback) {
+                  const m = fallback.body.match(/AI_REVIEW_SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
+                  if (m) found = { body: fallback.body, json: { env: 'global', severity: m[1].toUpperCase(), items: [] } };
                 }
-                const assignees = process.env.AI_ISSUE_ASSIGNEES ? process.env.AI_ISSUE_ASSIGNEES.split(',').map(s=>s.trim()).filter(Boolean) : [];
-                await github.rest.issues.create({ owner, repo, title: issueTitle, body: body, labels: [labelName], assignees });
-                core.info('Created issue: ' + issueTitle);
-              } else {
-                core.info('Open issue already exists: ' + exists.html_url);
               }
-              if (level === 'CRITICAL') {
-                core.setFailed('Defender reported CRITICAL severity (global) — failing job.');
-              } else {
-                core.info('Severity is HIGH (global) — issue created but not failing the job.');
+
+              if (!found) { core.info('No structured comment found for global — continuing.'); return {severity: 'NONE'}; }
+
+              const severity = (found.json.severity || 'NONE').toUpperCase();
+              core.info('Parsed global severity: ' + severity);
+
+              const shouldCreate = severityRank[severity] >= severityRank['HIGH'];
+              const shouldBlock = severityRank[severity] >= (severityRank[threshold] || severityRank['CRITICAL']);
+
+              if (shouldCreate) {
+                const issueLevel = (severity === 'CRITICAL') ? 'CRITICAL' : 'HIGH';
+                const labelName = (process.env.AI_ISSUE_LABEL_PREFIX ? process.env.AI_ISSUE_LABEL_PREFIX + '-' : 'AI') + issueLevel;
+                const issueTitle = `AI Defender ${issueLevel} — PR #${prNumber} (global)`;
+                const { data: issues } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
+                const exists = issues.find(i => i.title === issueTitle);
+                if (!exists) {
+                  const body = 'Defender reported ' + issueLevel + ' severity for the repository in PR #' + prNumber + "\n\nLatest defender comment:\n\n" + found.body + "\n\nPlease address immediately.";
+                  try { await github.rest.issues.getLabel({ owner, repo, name: labelName }); } catch (err) { if (err.status === 404) { await github.rest.issues.createLabel({ owner, repo, name: labelName, color: (issueLevel === 'CRITICAL'? 'b60205':'ff8c00'), description: 'AI review severity ' + issueLevel }); } }
+                  const mappings = process.env.AI_ISSUE_ASSIGNEES ? process.env.AI_ISSUE_ASSIGNEES.split(';').map(s=>s.trim()).filter(Boolean) : [];
+                  const map = {};
+                  for (const entry of mappings) { const [k,v] = entry.split(':'); if (!k||!v) continue; map[k.trim().toLowerCase()]= v.split(',').map(x=>x.trim()).filter(Boolean); }
+                  const assignees = map['global'] || map['default'] || [];
+                  await github.rest.issues.create({ owner, repo, title: issueTitle, body: body, labels: [labelName], assignees });
+                  core.info('Created issue: ' + issueTitle);
+                } else { core.info('Open issue already exists: ' + exists.html_url); }
               }
-            }
-            return {severity: level};
+
+              if (shouldBlock) {
+                core.setFailed('Defender reported severity ' + severity + ' (global) — meets threshold ' + threshold + ' — failing job.');
+              }
+
+              return {severity: severity};
 
       - name: Innovator (global)
         uses: google-github-actions/run-gemini-cli@v0
@@ -334,6 +406,8 @@ jobs:
   defender-evaluator:
     name: "Defender evaluator (block on CRITICAL)"
     runs-on: ubuntu-latest
+    env:
+      AI_BLOCK_THRESHOLD: ${{ vars.AI_BLOCK_THRESHOLD }}
     needs: [env-analysis, global-analysis]
     steps:
       - name: Check Defender severity in PR comments
@@ -341,27 +415,46 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const severityRank = { 'NONE':0, 'LOW':1, 'MEDIUM':2, 'HIGH':3, 'CRITICAL':4 };
+            const threshold = (process.env.AI_BLOCK_THRESHOLD || 'CRITICAL').toUpperCase();
+
             const prNumber = context.payload.pull_request.number;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: prNumber, per_page: 200 });
-            // Find the latest comment that contains the marker
-            const marker = 'AI_REVIEW_SEVERITY:';
             const reversed = comments.slice().reverse();
-            const found = reversed.find(c => c.body && c.body.includes(marker));
+
+            function extractJsonFromBody(body) {
+              if (!body) return null;
+              const m = body.match(/```\s*json\s*([\s\S]*?)```/i);
+              if (m && m[1]) { try { return JSON.parse(m[1]); } catch(e){ return null; } }
+              const htmlM = body.match(/<!--\s*AI_REVIEW_JSON\s*([\s\S]*?)-->/i);
+              if (htmlM && htmlM[1]) { try { return JSON.parse(htmlM[1]); } catch(e){ return null; } }
+              return null;
+            }
+
+            // find latest JSON with severity
+            let found = null;
+            for (const c of reversed) {
+              const parsed = extractJsonFromBody(c.body);
+              if (parsed && parsed.severity) { found = { body: c.body, json: parsed }; break; }
+            }
+
+            // fallback: marker
             if (!found) {
-              core.info('No AI_REVIEW_SEVERITY marker found in PR comments — continuing.');
-              return {severity: 'NONE'};
+              const fallback = reversed.find(c => c.body && c.body.includes('AI_REVIEW_SEVERITY:'));
+              if (fallback) {
+                const m = fallback.body.match(/AI_REVIEW_SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
+                if (m) found = { body: fallback.body, json: { severity: m[1].toUpperCase() } };
+              }
             }
-            const m = found.body.match(/AI_REVIEW_SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
-            if (!m) {
-              core.info('AI_REVIEW_SEVERITY marker present but no level parsed — continuing.');
-              return {severity: 'UNKNOWN'};
-            }
-            const level = m[1].toUpperCase();
-            core.info('Parsed severity: ' + level);
-            if (level === 'CRITICAL') {
-              core.setFailed('Defender reported CRITICAL severity — blocking PR (defender-evaluator).');
+
+            if (!found) { core.info('No AI review severity comments found — continuing.'); return {severity: 'NONE'}; }
+
+            const level = (found.json.severity || 'NONE').toUpperCase();
+            core.info('Parsed severity from comments: ' + level);
+            if (severityRank[level] >= (severityRank[threshold] || severityRank['CRITICAL'])) {
+              core.setFailed('Defender reported severity ' + level + ' which meets or exceeds block threshold ' + threshold + ' — failing.');
             }
             return {severity: level};
 
@@ -414,4 +507,11 @@ jobs:
                - MUST FIX BEFORE MERGE
                - NICE TO HAVE
             3. Post as one summarizing comment in the PR.
-            4. At the end of your summary add the marker in the same format so automated checks can scan for it: <!-- AI_REVIEW_SEVERITY: HIGH -->
+            4. Append a final structured JSON object inside a fenced code block (```json ... ```). Use this schema exactly:
+               {
+                 "envs": ["macbook","nvidia","oracle"],
+                 "must_fix": [ { "title": "short", "severity": "CRITICAL|HIGH", "why": "short" } ],
+                 "nice_to_have": [ { "title": "short", "severity": "MEDIUM|LOW", "why": "short" } ],
+                 "severity": "CRITICAL|HIGH|MEDIUM|LOW"
+               }
+              The top-level severity should reflect the most severe problem found.
