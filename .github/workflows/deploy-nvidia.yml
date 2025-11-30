@@ -101,12 +101,15 @@ jobs:
     - name: Wait for healthy
       run: |
         for i in {1..30}; do
-          STATUS=$(curl -s ${{ secrets.ARGOCD_NVIDIA_URL }}/api/v1/applications/predator-nvidia \
-            -H "Authorization: Bearer ${{ secrets.ARGOCD_NVIDIA_TOKEN }}" | jq -r '.status.health.status')
+          # capture full response for debug, parse status via jq if possible
+          RESPONSE=$(curl -sS ${{ secrets.ARGOCD_NVIDIA_URL }}/api/v1/applications/predator-nvidia \
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_NVIDIA_TOKEN }}" || true)
+          STATUS=$(echo "$RESPONSE" | jq -r '.status.health.status' 2>/dev/null || echo "<no-json>")
           if [ "$STATUS" = "Healthy" ]; then
             echo "Application is healthy"
             exit 0
           fi
+          echo "DEBUG: ArgoCD status (raw response): $RESPONSE"
           echo "Waiting for healthy status... ($i/30)"
           sleep 10
         done
