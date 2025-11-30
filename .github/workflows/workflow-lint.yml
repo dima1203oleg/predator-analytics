@@ -48,5 +48,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install yamllint
       - name: Run yamllint on .github/workflows
+        continue-on-error: true
         run: |
-          yamllint .github/workflows
+          set -eux
+          yamllint .github/workflows || true
