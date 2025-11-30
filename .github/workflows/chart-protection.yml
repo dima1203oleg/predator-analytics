@@ -1,0 +1,55 @@
+name: Chart Protection
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+      - autofix/staging
+
+permissions:
+  contents: read
+
+jobs:
+  protect-charts:
+    name: Prevent deletion of Helm charts/templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine diff range
+        id: diff_range
+        run: |
+          set -eux
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE=${{ github.event.pull_request.base.sha }}
+            HEAD=${{ github.event.pull_request.head.sha }}
+          else
+            BASE=${{ github.event.before }}
+            HEAD=${{ github.sha }}
+          fi
+          echo "base=$BASE" >> $GITHUB_OUTPUT
+          echo "head=$HEAD" >> $GITHUB_OUTPUT
+
+      - name: Fetch range and compute diff
+        run: |
+          set -eux
+          BASE=${{ steps.diff_range.outputs.base }}
+          HEAD=${{ steps.diff_range.outputs.head }}
+          # fetch enough history to compute diff
+          git fetch --no-tags --prune --depth=50 origin $BASE $HEAD || true
+          git diff --name-status $BASE $HEAD > /tmp/changed.files || true
+          echo "--- Changed files ---"
+          cat /tmp/changed.files || true
+
+      - name: Fail if critical chart files deleted
+        run: |
+          set -eux
+          # Look for deletions (D) of Chart.yaml or templates/* under environments/*
+          if grep -qE '^D\s+environments/.+/(Chart.yaml|templates/)' /tmp/changed.files; then
+            echo "ERROR: Helm Chart or templates deleted in this change. This is not allowed via automated patches." >&2
+            exit 1
+          fi
+          echo "No critical chart deletions detected."
