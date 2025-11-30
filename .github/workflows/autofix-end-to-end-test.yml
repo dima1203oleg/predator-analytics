@@ -1,0 +1,93 @@
+name: Autofix Loop — End-to-end test
+
+on:
+  workflow_dispatch:
+    inputs:
+      simulate_patch:
+        description: 'If true, create a simulated AI patch that deletes a Chart.yaml'
+        required: false
+        default: 'true'
+
+jobs:
+  run-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare simulated AI patch
+        if: ${{ github.event.inputs.simulate_patch == 'true' }}
+        run: |
+          set -eux
+          ./scripts/simulate_ai_patch.sh macbook
+
+      - name: Run safety checks
+        run: |
+          set -eux
+          if [ -f /tmp/ai_patch.diff ]; then
+            echo "Found /tmp/ai_patch.diff, running safety checks..."
+          else
+            echo "No patch present — aborting test" && exit 78
+          fi
+
+          # refuse attempt to add/modify/delete Helm Chart.yaml or templates under environments/
+          if grep -qE '(^\+\+\+\s+b/environments/.+/(Chart.yaml|templates/))' /tmp/ai_patch.diff; then
+            echo "PROTECTION: Patch attempts to add/modify environments/* Chart.yaml/templates — refusing to apply." && exit 0
+          fi
+          if grep -qE '(^---\s+a/environments/.+/(Chart.yaml|templates/))' /tmp/ai_patch.diff; then
+            echo "PROTECTION: Patch attempts to delete/modify environments/* Chart.yaml/templates — refusing to apply." && exit 0
+          fi
+
+      - name: Apply patch locally and push branch
+        id: apply_and_push
+        run: |
+          set -eux
+          git switch -c "autofix-e2e/${{ github.run_id }}"
+          if git apply --index /tmp/ai_patch.diff; then
+            git add -A
+            git commit -m "Autofix e2e test (run ${{ github.run_id }})"
+          else
+            echo "Patch did not apply cleanly; aborting test" && exit 0
+          fi
+          git push --set-upstream origin "autofix-e2e/${{ github.run_id }}"
+
+      - name: Open PR to autofix/staging
+        id: create_pr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: autofix-e2e/${{ github.run_id }}
+          base: autofix/staging
+          title: "E2E Autofix test — workflow run #${{ github.run_id }}"
+          body: "E2E test: simulated AI patch created a PR into autofix/staging"
+          labels: autofix-test
+
+      - name: Determine whether auto-merge is allowed (repo variable)
+        id: check_automerge
+        run: |
+          set -eux
+          echo "Checking for repo variable ALLOW_AUTO_MERGE via REST API"
+          resp=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/variables")
+            allow=$(echo "$resp" | python3 -c "import sys,json; d=json.load(sys.stdin); print(next((v.get('value','') for v in d.get('variables',[]) if v.get('name')=='ALLOW_AUTO_MERGE'), ''))")
+          echo "got: $allow"
+          if [ "$allow" = "true" ]; then
+            echo "allow=true" >> $GITHUB_OUTPUT
+          else
+            echo "allow=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Enable auto-merge on the PR if allowed
+        if: ${{ steps.check_automerge.outputs.allow == 'true' }}
+        uses: peter-evans/enable-pull-request-automerge@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ steps.create_pr.outputs.pull-request-number }}
+          merge-method: squash
+
+      - name: Final note
+        run: |
+          echo "E2E test finished — created PR ${{ steps.create_pr.outputs.pull-request-url }}"

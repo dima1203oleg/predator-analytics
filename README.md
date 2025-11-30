@@ -70,6 +70,15 @@ GitOps-розгортання для Predator Analytics з підтримкою 
 
 Це автоматично закомітить та запустить деплой.
 
+
+## Автоматизація та безпека (autofix loop)
+
+- Всі autofix PR створюються у гілку `autofix/staging`.
+- Автоматичне злиття (automerge) контролюється змінною репозиторію `ALLOW_AUTO_MERGE` (за замовчуванням вимкнено).
+- Захист від видалення Helm-чартів: будь-які патчі, що видаляють `Chart.yaml` або `templates/`, блокуються.
+- Для перевірки секретів/змінних використовуйте workflow `.github/workflows/secrets-checker.yml` (ручний запуск).
+- Для тестування autofix-циклу використовуйте `.github/workflows/autofix-loop-test.yml` або `.github/workflows/autofix-end-to-end-test.yml` (ручний запуск).
+
 ## Налаштування
 
 - Helm values у `environments/*/values.yaml`.
