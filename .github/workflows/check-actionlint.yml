@@ -32,4 +32,4 @@ jobs:
       - name: Run actionlint
         run: |
           set -eux
-          actionlint -no-color .github/workflows
+          actionlint -no-color .github/workflows/*.yml
