@@ -96,6 +96,8 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.ARGOCD_ORACLE_TOKEN }}" \
           -H "Content-Type: application/json" \
           -d '{}'
+    - name: Install jq
+      run: sudo apt-get update && sudo apt-get install -y jq
     - name: Wait for healthy
       run: |
         for i in {1..30}; do
