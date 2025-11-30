@@ -327,11 +327,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Run actionlint
-        uses: rhysd/actionlint@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          args: |
-            --config .actionlint.yml || true
+        uses: eifinger/actionlint-action@v1
 
   # summary-judge definition moved below (keeps full judge step)
 
