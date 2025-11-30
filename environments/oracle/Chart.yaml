@@ -1,6 +1,0 @@
-apiVersion: v2
-name: predator-macbook
-description: Helm chart for Predator Analytics on MacBook
-type: application
-version: 0.1.0
-appVersion: "1.0.0"

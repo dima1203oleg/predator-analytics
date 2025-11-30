@@ -20,26 +20,32 @@ done
 echo "Перехід у корінь репозиторію..."
 cd "$(dirname "$0")/.."
 
-echo "Git pull з origin main..."
-git pull origin main
+# detect current branch and pull the same branch (safer for feature branches)
+CURRENT_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null || echo "main")
+echo "Git pull from origin $CURRENT_BRANCH..."
+git pull origin "$CURRENT_BRANCH"
 
 echo "Копіювання файлів з ai-export..."
 
 # Копіювати frontend, якщо є
 if [ -d "ai-export/frontend" ]; then
     echo "Копіювання frontend..."
-    cp -r ai-export/frontend/* frontend/ 2>/dev/null || mkdir -p frontend && cp -r ai-export/frontend/* frontend/
-    fi
+    mkdir -p frontend
+    # rsync allows safer sync (deletes removed files when source changed)
+    rsync -a --delete ai-export/frontend/ frontend/
+fi
 # Копіювати backend, якщо є
 if [ -d "ai-export/backend" ]; then
     echo "Копіювання backend..."
-    cp -r ai-export/backend/* backend/ 2>/dev/null || mkdir -p backend && cp -r ai-export/backend/* backend/
+    mkdir -p backend
+    rsync -a --delete ai-export/backend/ backend/
 fi
 
 # Копіювати environments, якщо є конфіги
 if [ -d "ai-export/environments" ]; then
     echo "Копіювання environments..."
-    cp -r ai-export/environments/* environments/ 2>/dev/null || mkdir -p environments && cp -r ai-export/environments/* environments/
+    mkdir -p environments
+    rsync -a --delete ai-export/environments/ environments/
 fi
 
 echo "Git add змінених файлів..."
@@ -66,7 +72,7 @@ echo "Git commit, якщо є зміни..."
 if git diff --cached --quiet; then
     echo "Немає змін для коміту."
 else
-    if [ "$DRY_RUN" -eq 1 ]; then
+        if [ "$DRY_RUN" -eq 1 ]; then
         echo "--dry-run: є зміни для коміту. Ось список змінених файлів:" 
         git --no-pager diff --name-only --cached || true
     else
@@ -77,9 +83,9 @@ else
                 * ) echo "Відмінено користувачем."; exit 0 ;;
             esac
         fi
-        git commit -m "Sync from AI Studio: $(date +%Y-%m-%d_%H:%M)"
-        echo "Git push origin main..."
-        git push origin main
+        git commit -m "Sync from AI Studio: $(date +%Y-%m-%d_%H:%M)" || true
+        echo "Git push origin $CURRENT_BRANCH..."
+        git push origin "$CURRENT_BRANCH"
     fi
 fi
 
