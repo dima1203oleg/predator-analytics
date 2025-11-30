@@ -60,17 +60,22 @@ jobs:
           fi
           git push --set-upstream origin "autofix-e2e/${{ github.run_id }}"
 
-      - name: Open PR to autofix/staging
+      - name: Create PR to autofix/staging (github-script)
         id: create_pr
         if: ${{ steps.apply_and_push.outputs.applied == 'true' }}
-        uses: peter-evans/create-pull-request@v4
+        uses: actions/github-script@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: autofix-e2e/${{ github.run_id }}
-          base: autofix/staging
-          title: "E2E Autofix test — workflow run #${{ github.run_id }}"
-          body: "E2E test: simulated AI patch created a PR into autofix/staging"
-          labels: autofix-test
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const branch = `autofix-e2e/${{ github.run_id }}`;
+            const base = 'autofix/staging';
+            const title = `E2E Autofix test — workflow run #${{ github.run_id }}`;
+            const body = `E2E test: simulated AI patch created a PR into autofix/staging`;
+            const pr = await github.rest.pulls.create({ owner, repo, title, head: branch, base, body });
+            core.setOutput('pull-request-number', String(pr.data.number));
+            core.setOutput('pull-request-url', pr.data.html_url);
 
       - name: Determine whether auto-merge is allowed (repo variable)
         id: check_automerge
