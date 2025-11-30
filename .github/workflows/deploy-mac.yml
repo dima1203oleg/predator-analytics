@@ -89,21 +89,27 @@ jobs:
   argocd-sync:
     needs: build-and-push
     runs-on: ubuntu-latest
+    env:
+      ARGOCD_MAC_URL: ${{ secrets.ARGOCD_MAC_URL }}
+      ARGOCD_MAC_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
     steps:
     - name: Sync ArgoCD
+      if: ${{ env.ARGOCD_MAC_URL != '' && env.ARGOCD_MAC_TOKEN != '' }}
       run: |
-        curl -X POST ${{ secrets.ARGOCD_MAC_URL }}/api/v1/applications/predator-macbook/sync \
-          -H "Authorization: Bearer ${{ secrets.ARGOCD_MAC_TOKEN }}" \
+        curl -X POST "$ARGOCD_MAC_URL/api/v1/applications/predator-macbook/sync" \
+          -H "Authorization: Bearer $ARGOCD_MAC_TOKEN" \
           -H "Content-Type: application/json" \
           -d '{}'
     - name: Install jq
+      if: ${{ env.ARGOCD_MAC_URL != '' && env.ARGOCD_MAC_TOKEN != '' }}
       run: sudo apt-get update && sudo apt-get install -y jq
     - name: Wait for healthy
+      if: ${{ env.ARGOCD_MAC_URL != '' && env.ARGOCD_MAC_TOKEN != '' }}
       run: |
         for i in {1..30}; do
           # capture full response for debug, parse status via jq if possible
-          RESPONSE=$(curl -sS ${{ secrets.ARGOCD_MAC_URL }}/api/v1/applications/predator-macbook \
-            -H "Authorization: Bearer ${{ secrets.ARGOCD_MAC_TOKEN }}" || true)
+          RESPONSE=$(curl -sS "$ARGOCD_MAC_URL/api/v1/applications/predator-macbook" \
+            -H "Authorization: Bearer $ARGOCD_MAC_TOKEN" || true)
           STATUS=$(echo "$RESPONSE" | jq -r '.status.health.status' 2>/dev/null || echo "<no-json>")
           if [ "$STATUS" = "Healthy" ]; then
             echo "Application is healthy"
