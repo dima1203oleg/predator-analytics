@@ -55,7 +55,7 @@ jobs:
           if [ "${{ steps.filter.outputs.nvidia }}" = "true" ]; then envs="$envs\"nvidia\","; fi
           if [ "${{ steps.filter.outputs.oracle }}" = "true" ]; then envs="$envs\"oracle\","; fi
           envs="[${envs%,}]"
-          echo "envs=$envs" >> $GITHUB_OUTPUT
+          echo "envs=$envs" >> "$GITHUB_OUTPUT"
 
   # Per-environment analysis: Defender + Innovator run per touched environment (parallel)
   env-analysis:

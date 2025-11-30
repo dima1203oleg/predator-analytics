@@ -47,7 +47,7 @@ jobs:
               CHANGED=1
             fi
           fi
-          echo "changed=$CHANGED" >> $GITHUB_OUTPUT
+          echo "changed=$CHANGED" >> "$GITHUB_OUTPUT"
 
       - name: Commit and push local fixes (create branch)
         id: create_branch
@@ -101,9 +101,9 @@ jobs:
           # read repo variable (fallback to 'false') - use expression inside script to avoid env-expression lint warnings
           ALLOW_AUTO_MERGE="${{ vars.ALLOW_AUTO_MERGE || 'false' }}"
           if [ "${ALLOW_AUTO_MERGE}" = "true" ]; then
-            echo "allow=true" >> $GITHUB_OUTPUT
+            echo "allow=true" >> "$GITHUB_OUTPUT"
           else
-            echo "allow=false" >> $GITHUB_OUTPUT
+            echo "allow=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Auto-merge PR (optional)
