@@ -73,6 +73,8 @@ jobs:
       GOOGLE_CLOUD_PROJECT: ${{ vars.GOOGLE_CLOUD_PROJECT }}
       GOOGLE_CLOUD_LOCATION: ${{ vars.GOOGLE_CLOUD_LOCATION }}
       SERVICE_ACCOUNT_EMAIL: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
+      AI_ISSUE_ASSIGNEES: ${{ vars.AI_ISSUE_ASSIGNEES }}
+      AI_ISSUE_LABEL_PREFIX: ${{ vars.AI_ISSUE_LABEL_PREFIX }}
       GOOGLE_GENAI_USE_VERTEXAI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}
       GOOGLE_GENAI_USE_GCA: ${{ vars.GOOGLE_GENAI_USE_GCA }}
     steps:
@@ -116,8 +118,8 @@ jobs:
             const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: prNumber, per_page: 200 });
             const marker = 'AI_REVIEW_SEVERITY:';
             const reversed = comments.slice().reverse();
-            // find latest comment that mentions this environment + marker
-            const found = reversed.find(c => c.body && c.body.includes(marker) && c.body.includes(`environment: ${process.env.MATRIX_ENV}`));
+            // find latest comment that mentions this environment + marker (loose match for env name)
+            const found = reversed.find(c => c.body && c.body.includes(marker) && c.body.toLowerCase().includes(process.env.MATRIX_ENV.toLowerCase()));
             if (!found) {
               core.info('No AI_REVIEW_SEVERITY marker found for env ' + process.env.MATRIX_ENV + ' — continuing.');
               return {severity: 'NONE'};
@@ -129,19 +131,34 @@ jobs:
             }
             const level = m[1].toUpperCase();
             core.info('Parsed severity for env ' + process.env.MATRIX_ENV + ': ' + level);
-            if (level === 'CRITICAL') {
+            if (level === 'CRITICAL' || level === 'HIGH') {
               // create issue if not exists
-              const issueTitle = `AI Defender CRITICAL — PR #${prNumber} (${process.env.MATRIX_ENV})`;
+              const issueLevel = (level === 'CRITICAL') ? 'CRITICAL' : 'HIGH';
+              const labelName = (process.env.AI_ISSUE_LABEL_PREFIX ? process.env.AI_ISSUE_LABEL_PREFIX + '-' : 'AI') + issueLevel;
+              const issueTitle = `AI Defender ${issueLevel} — PR #${prNumber} (${process.env.MATRIX_ENV})`;
               const { data: issues } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
               const exists = issues.find(i => i.title === issueTitle);
               if (!exists) {
-                const body = 'Defender reported CRITICAL severity for environment ' + process.env.MATRIX_ENV + ' in PR #' + prNumber + "\n\nLatest defender comment:\n\n" + found.body + "\n\nPlease address immediately.";
-                await github.rest.issues.create({ owner, repo, title: issueTitle, body: body });
+                const body = 'Defender reported ' + issueLevel + ' severity for environment ' + process.env.MATRIX_ENV + ' in PR #' + prNumber + "\n\nLatest defender comment:\n\n" + found.body + "\n\nPlease address immediately.";
+                // ensure label exists
+                try {
+                  await github.rest.issues.getLabel({ owner, repo, name: labelName });
+                } catch (err) {
+                  if (err.status === 404) {
+                    await github.rest.issues.createLabel({ owner, repo, name: labelName, color: (issueLevel === 'CRITICAL' ? 'b60205' : 'ff8c00'), description: 'AI review severity ' + issueLevel });
+                  }
+                }
+                const assignees = process.env.AI_ISSUE_ASSIGNEES ? process.env.AI_ISSUE_ASSIGNEES.split(',').map(s=>s.trim()).filter(Boolean) : [];
+                await github.rest.issues.create({ owner, repo, title: issueTitle, body: body, labels: [labelName], assignees });
                 core.info('Created issue: ' + issueTitle);
               } else {
                 core.info('Open issue already exists: ' + exists.html_url);
               }
-              core.setFailed('Defender reported CRITICAL severity for env ' + process.env.MATRIX_ENV + ' — failing job.');
+              if (level === 'CRITICAL') {
+                core.setFailed('Defender reported CRITICAL severity for env ' + process.env.MATRIX_ENV + ' — failing job.');
+              } else {
+                core.info('Severity is HIGH — issue created but not failing the job (env ' + process.env.MATRIX_ENV + ').');
+              }
             }
             return {severity: level};
 
@@ -180,6 +197,8 @@ jobs:
       GOOGLE_CLOUD_PROJECT: ${{ vars.GOOGLE_CLOUD_PROJECT }}
       GOOGLE_CLOUD_LOCATION: ${{ vars.GOOGLE_CLOUD_LOCATION }}
       SERVICE_ACCOUNT_EMAIL: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
+      AI_ISSUE_ASSIGNEES: ${{ vars.AI_ISSUE_ASSIGNEES }}
+      AI_ISSUE_LABEL_PREFIX: ${{ vars.AI_ISSUE_LABEL_PREFIX }}
       GOOGLE_GENAI_USE_VERTEXAI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}
       GOOGLE_GENAI_USE_GCA: ${{ vars.GOOGLE_GENAI_USE_GCA }}
     steps:
@@ -235,18 +254,32 @@ jobs:
             }
             const level = m[1].toUpperCase();
             core.info('Parsed severity (global): ' + level);
-            if (level === 'CRITICAL') {
-              const issueTitle = `AI Defender CRITICAL — PR #${prNumber} (global)`;
+            if (level === 'CRITICAL' || level === 'HIGH') {
+              const issueLevel = (level === 'CRITICAL') ? 'CRITICAL' : 'HIGH';
+              const labelName = (process.env.AI_ISSUE_LABEL_PREFIX ? process.env.AI_ISSUE_LABEL_PREFIX + '-' : 'AI') + issueLevel;
+              const issueTitle = `AI Defender ${issueLevel} — PR #${prNumber} (global)`;
               const { data: issues } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
               const exists = issues.find(i => i.title === issueTitle);
               if (!exists) {
                 const body = 'Defender reported CRITICAL severity for the repository in PR #' + prNumber + "\n\nLatest defender comment:\n\n" + found.body + "\n\nPlease address immediately.";
-                await github.rest.issues.create({ owner, repo, title: issueTitle, body: body });
+                try {
+                  await github.rest.issues.getLabel({ owner, repo, name: labelName });
+                } catch (err) {
+                  if (err.status === 404) {
+                    await github.rest.issues.createLabel({ owner, repo, name: labelName, color: (issueLevel === 'CRITICAL' ? 'b60205' : 'ff8c00'), description: 'AI review severity ' + issueLevel });
+                  }
+                }
+                const assignees = process.env.AI_ISSUE_ASSIGNEES ? process.env.AI_ISSUE_ASSIGNEES.split(',').map(s=>s.trim()).filter(Boolean) : [];
+                await github.rest.issues.create({ owner, repo, title: issueTitle, body: body, labels: [labelName], assignees });
                 core.info('Created issue: ' + issueTitle);
               } else {
                 core.info('Open issue already exists: ' + exists.html_url);
               }
-              core.setFailed('Defender reported CRITICAL severity (global) — failing job.');
+              if (level === 'CRITICAL') {
+                core.setFailed('Defender reported CRITICAL severity (global) — failing job.');
+              } else {
+                core.info('Severity is HIGH (global) — issue created but not failing the job.');
+              }
             }
             return {severity: level};
 

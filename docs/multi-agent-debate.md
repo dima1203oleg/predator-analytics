@@ -25,6 +25,8 @@ Repository variables (recommended)
 - `SERVICE_ACCOUNT_EMAIL` — service account email for WIF (if used)
 - `GOOGLE_GENAI_USE_VERTEXAI` — `true`/`false` (optional)
 - `GOOGLE_GENAI_USE_GCA` — `true`/`false` (optional)
+ - `AI_ISSUE_ASSIGNEES` — optional comma-separated list of GitHub usernames to assign created issues to (e.g. "alice,bob").
+ - `AI_ISSUE_LABEL_PREFIX` — optional prefix for created labels (default prefix is `AI`, so labels become `AI-CRITICAL` and `AI-HIGH`).
 
 If you do NOT use Workload Identity, ensure `GEMINI_API_KEY` is present and leave WIF variables blank.
 
@@ -51,11 +53,11 @@ The workflow also runs a linter job (Super-Linter) to validate `.github/workflow
 
 ## Fail-fast and automatic issue creation on CRITICAL
 
-If any per-environment Defender analysis finds a CRITICAL issue, that environment job will fail and the env-analysis matrix is configured fail-fast — the workflow will stop further environment analyses quickly. When CRITICAL is detected the workflow will also automatically open an issue titled like:
+If any per-environment Defender analysis finds a CRITICAL issue, that environment job will fail and the env-analysis matrix is configured fail-fast — the workflow will stop further environment analyses quickly. When CRITICAL or HIGH is detected the workflow will also automatically open an issue titled like:
 
-`AI Defender CRITICAL — PR #<N> (macbook|nvidia|oracle|global)`
+`AI Defender CRITICAL — PR #<N> (macbook|nvidia|oracle|global)` (for CRITICAL) or `AI Defender HIGH — PR #<N> (macbook|nvidia|oracle|global)` (for HIGH).
 
-This gives an obvious triage item so you can track the problem separately from the PR discussion.
+This gives an obvious triage item so you can track the problem separately from the PR discussion; labels are applied (`AI-CRITICAL`/`AI-HIGH` by default) and assignees added if `AI_ISSUE_ASSIGNEES` is configured in repository variables.
 
 ## Blocking on CRITICAL severity
 
