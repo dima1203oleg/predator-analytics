@@ -1,41 +1,41 @@
 name: Auto-approve and optionally merge pull requests
 
 on:
-  pull_request:
-    types: [opened, reopened, labeled, ready_for_review, synchronize]
+    pull_request:
+        types: [opened, reopened, labeled, ready_for_review, synchronize]
 
 permissions:
-  pull-requests: write
-  contents: read
+    pull-requests: write
+    contents: read
 
 jobs:
-  auto-approve:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check if PR is eligible for auto-approve
-        id: check
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const pr = context.payload.pull_request || {};
-            const actor = context.actor;
-            const allowedAuthors = ["dependabot[bot]", "dependabot-preview[bot]"];
-            const labels = (pr.labels || []).map(l => l.name);
-            const hasAutoApproveLabel = labels.includes('auto-approve') || labels.includes('automerge');
-            const isAllowedAuthor = allowedAuthors.includes(actor) || allowedAuthors.includes(pr.user?.login);
-            core.setOutput('approve', (isAllowedAuthor || hasAutoApproveLabel).toString());
-            core.setOutput('shouldMerge', (labels.includes('automerge')).toString());
+    auto-approve:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check if PR is eligible for auto-approve
+              id: check
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      const pr = context.payload.pull_request || {};
+                      const actor = context.actor;
+                      const allowedAuthors = ["dependabot[bot]", "dependabot-preview[bot]"];
+                      const labels = (pr.labels || []).map(l => l.name);
+                      const hasAutoApproveLabel = labels.includes('auto-approve') || labels.includes('automerge');
+                      const isAllowedAuthor = allowedAuthors.includes(actor) || allowedAuthors.includes(pr.user?.login);
+                      core.setOutput('approve', (isAllowedAuthor || hasAutoApproveLabel).toString());
+                      core.setOutput('shouldMerge', (labels.includes('automerge')).toString());
 
-      - name: Approve pull request
-        if: steps.check.outputs.approve == 'true'
-        uses: hmarr/auto-approve-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+            - name: Approve pull request
+              if: steps.check.outputs.approve == 'true'
+              uses: hmarr/auto-approve-action@v2
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Merge pull request
-        if: steps.check.outputs.shouldMerge == 'true'
-        uses: peter-evans/merge-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          merge-method: squash
-          commit-title: 'Auto-merge PR by automation'
+            - name: Merge pull request
+              if: steps.check.outputs.shouldMerge == 'true'
+              uses: peter-evans/merge-pull-request@v3
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  merge-method: squash
+                  commit-title: "Auto-merge PR by automation"
