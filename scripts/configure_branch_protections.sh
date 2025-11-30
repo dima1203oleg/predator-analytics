@@ -15,24 +15,16 @@ fi
 
 echo "Configuring branch protection for $OWNER/$REPO on branch $BRANCH"
 
-PAYLOAD=$(cat <<JSON
-{
-  "required_status_checks": {
-    "strict": true,
-    "contexts": ["Validate GitHub Actions (actionlint)"]
-  },
-  "enforce_admins": true,
-  "required_pull_request_reviews": {
-    "dismiss_stale_reviews": true,
-    "required_approving_review_count": 1
-  },
-  "restrictions": null,
-  "allow_force_pushes": false
-}
-JSON
-)
-
-echo "$PAYLOAD" | gh api --method PUT /repos/${OWNER}/${REPO}/branches/${BRANCH}/protection -H "Accept: application/vnd.github+json" -f body@- || {
+# Use explicit gh api form params instead of attempting to pipe JSON into body@- which may not be supported on all gh versions
+gh api --method PUT /repos/${OWNER}/${REPO}/branches/${BRANCH}/protection \
+  -H "Accept: application/vnd.github+json" \
+  -f required_status_checks.strict=true \
+  -f required_status_checks.contexts='["Validate GitHub Actions (actionlint)"]' \
+  -f enforce_admins=true \
+  -f required_pull_request_reviews.dismiss_stale_reviews=true \
+  -f required_pull_request_reviews.required_approving_review_count=1 \
+  -f restrictions='null' \
+  -f allow_force_pushes=false || {
   echo "Failed to configure branch protection via API — this may be due to repository plan or permissions."
   echo "If you see a 403, either upgrade your plan, or configure protection manually in GitHub UI (Settings → Branches)."
   exit 1
