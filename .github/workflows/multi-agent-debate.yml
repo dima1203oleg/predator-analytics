@@ -26,9 +26,47 @@ permissions:
   statuses: write
 
 jobs:
-  defender-review:
-    name: "Defender: Security & Cost"
+  path-filter:
+    name: Detect changed environments
     runs-on: ubuntu-latest
+    outputs:
+      envs: ${{ steps.build.outputs.envs }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Filter paths for environments
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            macbook:
+              - 'environments/macbook/**'
+            nvidia:
+              - 'environments/nvidia/**'
+            oracle:
+              - 'environments/oracle/**'
+
+      - name: Build envs JSON list
+        id: build
+        run: |
+          envs=""
+          if [ "${{ steps.filter.outputs.macbook }}" = "true" ]; then envs="$envs\"macbook\","; fi
+          if [ "${{ steps.filter.outputs.nvidia }}" = "true" ]; then envs="$envs\"nvidia\","; fi
+          if [ "${{ steps.filter.outputs.oracle }}" = "true" ]; then envs="$envs\"oracle\","; fi
+          envs="[${envs%,}]"
+          echo "envs=$envs" >> $GITHUB_OUTPUT
+
+  # Per-environment analysis: Defender + Innovator run per touched environment (parallel)
+  env-analysis:
+    name: "Env analysis — ${{ matrix.env }}"
+    needs: path-filter
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        env: ${{ fromJson(needs.path-filter.outputs.envs) }}
+    if: ${{ needs.path-filter.outputs.envs != '[]' }}
     env:
       GEMINI_CLI_VERSION: ${{ vars.GEMINI_CLI_VERSION }}
       GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
@@ -41,7 +79,7 @@ jobs:
       - name: Checkout PR code
         uses: actions/checkout@v4
 
-      - name: Run Gemini Defender review
+      - name: Defender (env-aware)
         uses: google-github-actions/run-gemini-cli@v0
         id: gemini_defender
         env:
@@ -58,49 +96,14 @@ jobs:
           use_vertex_ai: ${{ env.GOOGLE_GENAI_USE_VERTEXAI }}
           use_gemini_code_assist: ${{ env.GOOGLE_GENAI_USE_GCA }}
           prompt: |
-            # CONTEXT: Predator v18.2 — cluster rules & expectations
-            CLUSTERS:
-            - macbook: dev cluster — very limited CPU/memory, single-node, prefer small resource requests, replicas=1, avoid heavy probes and large images
-            - nvidia: gpu cluster — workloads may request GPUs, allow GPU quotas, ensure nodeSelector/tolerations for GPU nodes
-            - oracle: cloud free-tier / minimal — limited IOPS and networking, avoid large PVs, avoid bursty autoscaling
-
+            CONTEXT: Running Defender analysis for environment: ${{ matrix.env }}
             ROLE: You are DEFENDER agent.
-            Focus ONLY on:
-            - security risks (secrets, tokens, network access, RBAC)
-            - stability and reliability of Kubernetes + ArgoCD
-            - cloud cost and resource limits (CPU, RAM, GPU)
-            - safety for MacBook dev cluster (low resources)
-
+            Focus ONLY on: security, stability, costs and resource limits for this environment.
             TASK:
-            1. Analyze the diff of this PR. Detect which environment(s) are touched by checking file paths (e.g. environments/macbook/, environments/nvidia/, environments/oracle/).
-            2. Find DIRECT risks for the clusters (call out which cluster is impacted):
-               - secret leakage
-               - unsafe ports/Ingress
-               - oversized resources (especially for dev/macbook).
-            3. Produce a short list (per-cluster if applicable):
-              - [SEVERITY] issue description
-              - suggested fix.
-            4. Format the comment as a short checklist and append a single-line machine-readable severity marker at the end of the comment in this exact format (use one of CRITICAL, HIGH, MEDIUM, LOW):
-              <!-- AI_REVIEW_SEVERITY: CRITICAL -->
-            4. Post result as a comment on the PR.
+            - Analyze changed files, check environment ${matrix.env} paths.
+            - Output a checklist, include severity marker: <!-- AI_REVIEW_SEVERITY: CRITICAL|HIGH|MEDIUM|LOW -->
 
-  innovator-review:
-    name: "Innovator: Performance & Features"
-    runs-on: ubuntu-latest
-    needs: defender-review
-    env:
-      GEMINI_CLI_VERSION: ${{ vars.GEMINI_CLI_VERSION }}
-      GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
-      GOOGLE_CLOUD_PROJECT: ${{ vars.GOOGLE_CLOUD_PROJECT }}
-      GOOGLE_CLOUD_LOCATION: ${{ vars.GOOGLE_CLOUD_LOCATION }}
-      SERVICE_ACCOUNT_EMAIL: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
-      GOOGLE_GENAI_USE_VERTEXAI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}
-      GOOGLE_GENAI_USE_GCA: ${{ vars.GOOGLE_GENAI_USE_GCA }}
-    steps:
-      - name: Checkout PR code
-        uses: actions/checkout@v4
-
-      - name: Run Gemini Innovator review
+      - name: Innovator (env-aware)
         uses: google-github-actions/run-gemini-cli@v0
         id: gemini_innovator
         env:
@@ -117,35 +120,18 @@ jobs:
           use_vertex_ai: ${{ env.GOOGLE_GENAI_USE_VERTEXAI }}
           use_gemini_code_assist: ${{ env.GOOGLE_GENAI_USE_GCA }}
           prompt: |
-            # CONTEXT: Predator v18.2 — cluster rules & expectations
-            CLUSTERS:
-            - macbook: dev cluster — very limited CPU/memory, single-node, prefer small resource requests, replicas=1, avoid heavy probes and large images
-            - nvidia: gpu cluster — workloads may request GPUs, allow GPU quotas, ensure nodeSelector/tolerations for GPU nodes
-            - oracle: cloud free-tier / minimal — limited IOPS and networking, avoid large PVs, avoid bursty autoscaling
-
+            CONTEXT: Running Innovator analysis for environment: ${{ matrix.env }}
             ROLE: You are INNOVATOR agent.
-            Focus ONLY on:
-            - performance improvement
-            - UX and DevEx
-            - auto-scaling, resilience, observability
-            - future features for Predator Analytics
-
+            Focus ONLY on: performance, developer experience and scalability suggestions for this environment.
             TASK:
-            1. Analyze the diff of this PR. Detect which environment(s) are touched by checking file paths (e.g. environments/macbook/, environments/nvidia/, environments/oracle/). Prioritize recommendations for the environments changed.
-            2. Suggest where to:
-               - speed up code
-               - improve CI/CD pipelines
-               - simplify YAML/Helm structure
-               - enhance monitoring/alerts.
-            3. Add concrete proposals (lists + examples).
-            4. Format the comment as a short checklist and append a single-line machine-readable severity marker at the end of the comment in this exact format (one of CRITICAL, HIGH, MEDIUM, LOW):
-              <!-- AI_REVIEW_SEVERITY: LOW -->
-            4. Post result as a comment on the PR.
-
-  summary-judge:
-    name: "Judge: Summary of Debate"
+            - Analyze changed files, check environment ${matrix.env} paths.
+            - Output checklist + improvement suggestions and include severity marker.
+  # Fallback global analysis when no environment-specific paths are changed
+  global-analysis:
+    name: Global analysis (no environment paths changed)
+    needs: path-filter
     runs-on: ubuntu-latest
-    needs: [defender-review, innovator-review]
+    if: ${{ needs.path-filter.outputs.envs == '[]' }}
     env:
       GEMINI_CLI_VERSION: ${{ vars.GEMINI_CLI_VERSION }}
       GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
@@ -158,10 +144,72 @@ jobs:
       - name: Checkout PR code
         uses: actions/checkout@v4
 
+      - name: Defender (global)
+        uses: google-github-actions/run-gemini-cli@v0
+        id: gemini_defender
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        with:
+          gemini_cli_version: ${{ env.GEMINI_CLI_VERSION }}
+          gcp_workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
+          gcp_project_id: ${{ env.GOOGLE_CLOUD_PROJECT }}
+          gcp_location: ${{ env.GOOGLE_CLOUD_LOCATION }}
+          gcp_service_account: ${{ env.SERVICE_ACCOUNT_EMAIL }}
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          use_vertex_ai: ${{ env.GOOGLE_GENAI_USE_VERTEXAI }}
+          use_gemini_code_assist: ${{ env.GOOGLE_GENAI_USE_GCA }}
+          prompt: |
+            CONTEXT: Running Defender global analysis (no env-specific files changed)
+            ROLE: You are DEFENDER agent.
+            Focus ONLY on: security, stability and cost impact at repo-level.
+            TASK:
+            - Analyze the full diff and surface any critical issues.
+
+      - name: Innovator (global)
+        uses: google-github-actions/run-gemini-cli@v0
+        id: gemini_innovator
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        with:
+          gemini_cli_version: ${{ env.GEMINI_CLI_VERSION }}
+          gcp_workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
+          gcp_project_id: ${{ env.GOOGLE_CLOUD_PROJECT }}
+          gcp_location: ${{ env.GOOGLE_CLOUD_LOCATION }}
+          gcp_service_account: ${{ env.SERVICE_ACCOUNT_EMAIL }}
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          use_vertex_ai: ${{ env.GOOGLE_GENAI_USE_VERTEXAI }}
+          use_gemini_code_assist: ${{ env.GOOGLE_GENAI_USE_GCA }}
+          prompt: |
+            CONTEXT: Running Innovator global analysis (no env-specific files changed)
+            ROLE: You are INNOVATOR agent.
+            Focus ONLY on: performance, CI/CD, and repository-level improvements.
+            TASK:
+            - Analyze the full diff and propose improvements.
+
+  workflow-lint:
+    name: "Workflow lint (super-linter)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Lint workflows with Super-Linter
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_WORKFLOW: true
+          INPUT_INCLUDE: .github/workflows
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # summary-judge definition moved below (keeps full judge step)
+
   defender-evaluator:
     name: "Defender evaluator (block on CRITICAL)"
     runs-on: ubuntu-latest
-    needs: defender-review
+    needs: [env-analysis, global-analysis]
     steps:
       - name: Check Defender severity in PR comments
         uses: actions/github-script@v7
@@ -191,6 +239,22 @@ jobs:
               core.setFailed('Defender reported CRITICAL severity — blocking PR (defender-evaluator).');
             }
             return {severity: level};
+
+  summary-judge:
+    name: "Judge: Summary of Debate"
+    runs-on: ubuntu-latest
+    needs: [env-analysis, global-analysis]
+    env:
+      GEMINI_CLI_VERSION: ${{ vars.GEMINI_CLI_VERSION }}
+      GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
+      GOOGLE_CLOUD_PROJECT: ${{ vars.GOOGLE_CLOUD_PROJECT }}
+      GOOGLE_CLOUD_LOCATION: ${{ vars.GOOGLE_CLOUD_LOCATION }}
+      SERVICE_ACCOUNT_EMAIL: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
+      GOOGLE_GENAI_USE_VERTEXAI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}
+      GOOGLE_GENAI_USE_GCA: ${{ vars.GOOGLE_GENAI_USE_GCA }}
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
 
       - name: Gemini Judge summary
         uses: google-github-actions/run-gemini-cli@v0
