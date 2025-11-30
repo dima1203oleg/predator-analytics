@@ -75,6 +75,9 @@ jobs:
 
       - name: Determine whether auto-merge is allowed (repo variable)
         id: check_automerge
+        if: ${{ steps.apply_and_push.outputs.applied == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -eux
           echo "Checking for repo variable ALLOW_AUTO_MERGE via REST API"
@@ -90,7 +93,7 @@ jobs:
           fi
 
       - name: Enable auto-merge on the PR if allowed
-        if: ${{ steps.check_automerge.outputs.allow == 'true' }}
+        if: ${{ steps.apply_and_push.outputs.applied == 'true' && steps.check_automerge.outputs.allow == 'true' }}
         uses: peter-evans/enable-pull-request-automerge@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -99,4 +102,8 @@ jobs:
 
       - name: Final note
         run: |
-          echo "E2E test finished — created PR ${{ steps.create_pr.outputs.pull-request-url }}"
+          if [ "${{ steps.apply_and_push.outputs.applied }}" = "true" ]; then
+            echo "E2E test finished — created PR ${{ steps.create_pr.outputs.pull-request-url }}"
+          else
+            echo "E2E test finished — no PR created (patch refused or did not apply)."
+          fi
