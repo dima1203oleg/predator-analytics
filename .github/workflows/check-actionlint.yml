@@ -16,8 +16,10 @@ jobs:
       - name: Setup actionlint
         run: |
           sudo apt-get update && sudo apt-get install -y curl ca-certificates
-          curl -sSLO "https://github.com/rhysd/actionlint/releases/latest/download/actionlint_linux_amd64.tar.gz"
-          tar xzf actionlint_linux_amd64.tar.gz
+          # follow redirects reliably and write to file
+          curl -fsSL -o actionlint_linux_amd64.tar.gz \
+            "https://github.com/rhysd/actionlint/releases/latest/download/actionlint_linux_amd64.tar.gz"
+          tar -xzf actionlint_linux_amd64.tar.gz
           sudo mv actionlint /usr/local/bin/
 
       - name: Run actionlint
