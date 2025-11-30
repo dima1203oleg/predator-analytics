@@ -1,0 +1,35 @@
+name: Workflow Lint
+
+on:
+  push:
+    paths:
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+  schedule:
+    # Run nightly to validate workflows on a schedule (UTC 02:00 daily)
+    - cron: '0 2 * * *'
+
+jobs:
+  actionlint:
+    name: actionlint (GitHub Actions workflows)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run actionlint on workflow files
+        uses: rhysd/actionlint@v1
+
+  yamllint:
+    name: yamllint (YAML syntax & style)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install python and yamllint
+        run: |
+          python -V
+          python -m pip install --upgrade pip
+          pip install yamllint
+      - name: Run yamllint on .github/workflows
+        run: |
+          yamllint .github/workflows

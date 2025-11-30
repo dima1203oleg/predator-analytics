@@ -5,6 +5,18 @@
 
 set -e
 
+# Args: --dry-run (only show what would change) --yes (skip commit confirmation)
+DRY_RUN=0
+ASSUME_YES=0
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --dry-run) DRY_RUN=1; shift ;;
+        --yes) ASSUME_YES=1; shift ;;
+        -h|--help) echo "Usage: $0 [--dry-run] [--yes]"; exit 0 ;;
+        *) echo "Unknown arg: $1"; echo "Usage: $0 [--dry-run] [--yes]"; exit 1 ;;
+    esac
+done
+
 echo "Перехід у корінь репозиторію..."
 cd "$(dirname "$0")/.."
 
@@ -17,8 +29,7 @@ echo "Копіювання файлів з ai-export..."
 if [ -d "ai-export/frontend" ]; then
     echo "Копіювання frontend..."
     cp -r ai-export/frontend/* frontend/ 2>/dev/null || mkdir -p frontend && cp -r ai-export/frontend/* frontend/
-fi
-
+    fi
 # Копіювати backend, якщо є
 if [ -d "ai-export/backend" ]; then
     echo "Копіювання backend..."
@@ -40,21 +51,36 @@ for p in frontend backend environments; do
     fi
 done
 
-if [ ${#ADD_PATHS[@]} -eq 0 ]; then
+    if [ ${#ADD_PATHS[@]} -eq 0 ]; then
     echo "Немає змінних папок для додавання (frontend/backend/environments не існують)."
-else
-    echo "Додаю для гіта: ${ADD_PATHS[*]}"
-    git add "${ADD_PATHS[@]}"
-fi
+    else
+        echo "Додаю для гіта: ${ADD_PATHS[*]}"
+        if [ "$DRY_RUN" -eq 1 ]; then
+            echo "--dry-run: пропускаю git add/commit/push (лише покажу зміни)..."
+        else
+            git add "${ADD_PATHS[@]}"
+        fi
+    fi
 
 echo "Git commit, якщо є зміни..."
 if git diff --cached --quiet; then
     echo "Немає змін для коміту."
 else
-    git commit -m "Sync from AI Studio: $(date +%Y-%m-%d_%H:%M)"
+    if [ "$DRY_RUN" -eq 1 ]; then
+        echo "--dry-run: є зміни для коміту. Ось список змінених файлів:" 
+        git --no-pager diff --name-only --cached || true
+    else
+        if [ "$ASSUME_YES" -eq 0 ]; then
+            read -p "Є зміни — виконати git commit і push? [y/N]: " yn
+            case "$yn" in
+                [Yy]* ) ;;
+                * ) echo "Відмінено користувачем."; exit 0 ;;
+            esac
+        fi
+        git commit -m "Sync from AI Studio: $(date +%Y-%m-%d_%H:%M)"
+        echo "Git push origin main..."
+        git push origin main
+    fi
 fi
-
-echo "Git push origin main..."
-git push origin main
 
 echo "Синхронізація завершена!"
