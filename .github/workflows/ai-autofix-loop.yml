@@ -27,7 +27,12 @@ jobs:
 
       - name: Run actionlint (non-blocking)
         run: |
-          echo 'actionlint (best-effort)' && actionlint || true
+          echo 'actionlint (best-effort)'
+          if command -v actionlint >/dev/null 2>&1; then
+            actionlint || true
+          else
+            echo 'actionlint not installed; skipping'
+          fi
 
       - name: Try local auto-fixes
         id: local_fix
@@ -35,22 +40,45 @@ jobs:
           set -euo pipefail
           CHANGED=0
           if [ -f package.json ]; then
-            npm run -s lint:fix 2>/dev/null && CHANGED=1 || true
-            npm run -s format 2>/dev/null && CHANGED=1 || true
+            if npm run -s lint:fix 2>/dev/null; then
+              CHANGED=1
+            fi
+            if npm run -s format 2>/dev/null; then
+              CHANGED=1
+            fi
           fi
           echo "changed=$CHANGED" >> $GITHUB_OUTPUT
 
-      - name: Open PR for local fixes
+      - name: Commit and push local fixes (create branch)
+        id: create_branch
+        if: ${{ steps.local_fix.outputs.changed == '1' }}
+        run: |
+          set -eux
+          # ensure git metadata for the bot
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          BRANCH="ai-autofix/${{ github.run_id }}"
+          git switch -c "$BRANCH"
+          git add -A
+          git commit -m "Auto-fix (lint) — workflow run #${{ github.event.workflow_run.id }}" || true
+          git push --set-upstream origin "$BRANCH"
+
+      - name: Create PR (github-script)
         id: create_pull_request
         if: ${{ steps.local_fix.outputs.changed == '1' }}
-        uses: peter-evans/create-pull-request@v4
+        uses: actions/github-script@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ai-autofix/${{ github.run_id }}
-          base: autofix/staging
-          title: "Auto-fix (lint) — workflow run #${{ github.event.workflow_run.id }}"
-          body: "Automated fixes from autofix loop"
-          labels: ai-autofix
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const branch = `ai-autofix/${{ github.run_id }}`;
+            const base = 'autofix/staging';
+            const title = `Auto-fix (lint) — workflow run #${{ github.event.workflow_run.id }}`;
+            const body = `Automated fixes from autofix loop`;
+            const pr = await github.rest.pulls.create({ owner, repo, title, head: branch, base, body });
+            core.setOutput('pull-request-number', String(pr.data.number));
+            core.setOutput('pull-request-url', pr.data.html_url);
 
       - name: Notify team about autofix PR
         if: ${{ steps.local_fix.outputs.changed == '1' && steps.create_pull_request.outputs.pull-request-number != '' }}
