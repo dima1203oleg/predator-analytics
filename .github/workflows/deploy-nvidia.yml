@@ -15,32 +15,32 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
-      if: exists('backend/requirements.txt')
+      if: ${{ hashFiles('backend/requirements.txt') != '' }}
     - name: Install backend dependencies
       run: |
         cd backend
         pip install -r requirements.txt
-      if: exists('backend/requirements.txt')
+      if: ${{ hashFiles('backend/requirements.txt') != '' }}
     - name: Test backend
       run: |
         cd backend
         python -m pytest
-      if: exists('backend/requirements.txt')
+      if: ${{ hashFiles('backend/requirements.txt') != '' }}
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-      if: exists('frontend/package.json')
+      if: ${{ hashFiles('frontend/package.json') != '' }}
     - name: Install frontend dependencies
       run: |
         cd frontend
         npm ci
-      if: exists('frontend/package.json')
+      if: ${{ hashFiles('frontend/package.json') != '' }}
     - name: Test frontend
       run: |
         cd frontend
         npm test
-      if: exists('frontend/package.json')
+      if: ${{ hashFiles('frontend/package.json') != '' }}
 
   build-and-push:
     needs: test
@@ -64,7 +64,7 @@ jobs:
         platforms: linux/amd64
         push: true
         tags: ghcr.io/${{ github.repository }}/frontend:v18.4.${{ github.run_number }}
-      if: exists('frontend/Dockerfile')
+      if: ${{ hashFiles('frontend/Dockerfile') != '' }}
     - name: Build and push backend
       uses: docker/build-push-action@v5
       with:
@@ -72,7 +72,7 @@ jobs:
         platforms: linux/amd64
         push: true
         tags: ghcr.io/${{ github.repository }}/backend:v18.4.${{ github.run_number }}
-      if: exists('backend/Dockerfile')
+      if: ${{ hashFiles('backend/Dockerfile') != '' }}
     - name: Update Helm values for nvidia
       run: |
         if [ -f environments/nvidia/values.yaml ]; then
@@ -96,6 +96,8 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.ARGOCD_NVIDIA_TOKEN }}" \
           -H "Content-Type: application/json" \
           -d '{}'
+    - name: Install jq
+      run: sudo apt-get update && sudo apt-get install -y jq
     - name: Wait for healthy
       run: |
         for i in {1..30}; do
