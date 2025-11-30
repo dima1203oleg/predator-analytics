@@ -1,4 +1,7 @@
 name: Deploy
+permissions:
+  contents: write
+  packages: write
 
 on:
   push:
@@ -60,7 +63,8 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          # Prefer an explicit PAT with packages:write permission
+          password: ${{ secrets.GHCR_PAT }}
 
       - name: Build and push frontend
         if: ${{ hashFiles('frontend/Dockerfile') != '' }}
@@ -87,7 +91,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Update Helm values for macbook
         run: |
-          if [ -f environments/macbook/values.yaml ]; then
+          if [ -f environments/macbook/values-mac.yaml ]; then
+            sed -i 's|tag:.*|tag: latest|' environments/macbook/values-mac.yaml || true
+          elif [ -f environments/macbook/values.yaml ]; then
             sed -i 's|tag:.*|tag: latest|' environments/macbook/values.yaml || true
           else
             echo "environments/macbook/values.yaml not found; skipping"
