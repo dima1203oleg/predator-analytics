@@ -17,6 +17,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run actionlint (via raven-actions/actionlint)
-        uses: raven-actions/actionlint@v1
-        # this action uses the runner's permissions by default
+      - name: Install actionlint (via go)
+        run: |
+          set -eux
+          # Ensure go is available on the runner, install if missing
+          if ! command -v go >/dev/null 2>&1; then
+            sudo apt-get update && sudo apt-get install -y golang-go
+          fi
+          GOBIN=$HOME/.local/bin
+          mkdir -p "$GOBIN"
+          GO111MODULE=on GOBIN="$GOBIN" go install github.com/rhysd/actionlint/cmd/actionlint@latest
+          echo "$GOBIN" >> $GITHUB_PATH
+
+      - name: Run actionlint
+        run: |
+          set -eux
+          actionlint -no-color .github/workflows
