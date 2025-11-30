@@ -63,7 +63,7 @@ jobs:
     needs: path-filter
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         env: ${{ fromJson(needs.path-filter.outputs.envs) }}
     if: ${{ needs.path-filter.outputs.envs != '[]' }}
@@ -102,6 +102,48 @@ jobs:
             TASK:
             - Analyze changed files, check environment ${matrix.env} paths.
             - Output a checklist, include severity marker: <!-- AI_REVIEW_SEVERITY: CRITICAL|HIGH|MEDIUM|LOW -->
+
+      - name: Check defender severity + create issue on CRITICAL
+        uses: actions/github-script@v7
+        env:
+          MATRIX_ENV: ${{ matrix.env }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: prNumber, per_page: 200 });
+            const marker = 'AI_REVIEW_SEVERITY:';
+            const reversed = comments.slice().reverse();
+            // find latest comment that mentions this environment + marker
+            const found = reversed.find(c => c.body && c.body.includes(marker) && c.body.includes(`environment: ${process.env.MATRIX_ENV}`));
+            if (!found) {
+              core.info('No AI_REVIEW_SEVERITY marker found for env ' + process.env.MATRIX_ENV + ' — continuing.');
+              return {severity: 'NONE'};
+            }
+            const m = found.body.match(/AI_REVIEW_SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
+            if (!m) {
+              core.info('AI_REVIEW_SEVERITY marker present but no level parsed — continuing.');
+              return {severity: 'UNKNOWN'};
+            }
+            const level = m[1].toUpperCase();
+            core.info('Parsed severity for env ' + process.env.MATRIX_ENV + ': ' + level);
+            if (level === 'CRITICAL') {
+              // create issue if not exists
+              const issueTitle = `AI Defender CRITICAL — PR #${prNumber} (${process.env.MATRIX_ENV})`;
+              const { data: issues } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
+              const exists = issues.find(i => i.title === issueTitle);
+              if (!exists) {
+                const body = 'Defender reported CRITICAL severity for environment ' + process.env.MATRIX_ENV + ' in PR #' + prNumber + "\n\nLatest defender comment:\n\n" + found.body + "\n\nPlease address immediately.";
+                await github.rest.issues.create({ owner, repo, title: issueTitle, body: body });
+                core.info('Created issue: ' + issueTitle);
+              } else {
+                core.info('Open issue already exists: ' + exists.html_url);
+              }
+              core.setFailed('Defender reported CRITICAL severity for env ' + process.env.MATRIX_ENV + ' — failing job.');
+            }
+            return {severity: level};
 
       - name: Innovator (env-aware)
         uses: google-github-actions/run-gemini-cli@v0
@@ -166,6 +208,47 @@ jobs:
             Focus ONLY on: security, stability and cost impact at repo-level.
             TASK:
             - Analyze the full diff and surface any critical issues.
+
+      - name: Check defender severity + create issue on CRITICAL
+        uses: actions/github-script@v7
+        env:
+          MATRIX_ENV: global
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: prNumber, per_page: 200 });
+            const marker = 'AI_REVIEW_SEVERITY:';
+            const reversed = comments.slice().reverse();
+            // find latest comment with marker
+            const found = reversed.find(c => c.body && c.body.includes(marker));
+            if (!found) {
+              core.info('No AI_REVIEW_SEVERITY marker found (global) — continuing.');
+              return {severity: 'NONE'};
+            }
+            const m = found.body.match(/AI_REVIEW_SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
+            if (!m) {
+              core.info('AI_REVIEW_SEVERITY marker present but no level parsed — continuing.');
+              return {severity: 'UNKNOWN'};
+            }
+            const level = m[1].toUpperCase();
+            core.info('Parsed severity (global): ' + level);
+            if (level === 'CRITICAL') {
+              const issueTitle = `AI Defender CRITICAL — PR #${prNumber} (global)`;
+              const { data: issues } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
+              const exists = issues.find(i => i.title === issueTitle);
+              if (!exists) {
+                const body = 'Defender reported CRITICAL severity for the repository in PR #' + prNumber + "\n\nLatest defender comment:\n\n" + found.body + "\n\nPlease address immediately.";
+                await github.rest.issues.create({ owner, repo, title: issueTitle, body: body });
+                core.info('Created issue: ' + issueTitle);
+              } else {
+                core.info('Open issue already exists: ' + exists.html_url);
+              }
+              core.setFailed('Defender reported CRITICAL severity (global) — failing job.');
+            }
+            return {severity: level};
 
       - name: Innovator (global)
         uses: google-github-actions/run-gemini-cli@v0
