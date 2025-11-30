@@ -1,6 +1,10 @@
 name: Deploy
 
 on:
+---
+name: Deploy
+
+on:
   push:
     branches:
       - main
@@ -25,8 +29,8 @@ jobs:
       run: |
         cd frontend
         npm test
-    - name: Setup Python
-      uses: actions/setup-python@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
       with:
         python-version: '3.9'
       if: ${{ hashFiles('backend/requirements.txt') != '' }}
