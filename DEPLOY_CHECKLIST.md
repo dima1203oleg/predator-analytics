@@ -69,6 +69,7 @@ kubectl get applications.argoproj.io -n argocd
 ```
 
 - [ ] Перевірити, що `predator-macbook` з'явився (Synced / Healthy або OutOfSync → Synced)
+	- ✅ predator-macbook is now Synced → Healthy (deployed from ai-sync/20251130_055839 → merged to main)
 
 3. Перевірити деплой тестового nginx
 
