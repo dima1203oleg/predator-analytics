@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run actionlint (via action)
-        uses: rhysd/actionlint@v1
+        uses: eifinger/actionlint-action@v1
         with:
           path: '.github/workflows'
 
