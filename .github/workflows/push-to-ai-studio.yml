@@ -1,0 +1,47 @@
+name: Push to AI Studio
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  package-and-send:
+    name: Package repo changes and publish to AI Studio
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect changed paths relative to previous commit
+        id: paths
+        run: |
+          # list changed files between previous and current commit (safe for initial push)
+          PREV=${{ github.event.before }}
+          CUR=${{ github.sha }}
+          if [ "$PREV" = 0000000000000000000000000000000000000000 ]; then
+            echo "first_commit=true" >> $GITHUB_OUTPUT
+            echo "paths=environments,frontend,backend" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          CHANGED=$(git diff --name-only $PREV $CUR || true)
+          echo "$CHANGED"
+          PATHS=""
+          echo "$CHANGED" | grep -q '^environments/' && PATHS="environments"
+          echo "$CHANGED" | grep -q '^frontend/' && PATHS=",${PATHS}frontend"
+          echo "$CHANGED" | grep -q '^backend/' && PATHS=",${PATHS}backend"
+          PATHS="${PATHS#,}"
+          echo "paths=$PATHS" >> $GITHUB_OUTPUT
+
+      - name: Create export tarball and optional upload
+        run: |
+          mkdir -p ./ai-export-push
+          bash scripts/push_to_ai_studio.sh --paths "${{ steps.paths.outputs.paths }}" --endpoint "${{ secrets.AI_STUDIO_UPLOAD_ENDPOINT || '' }}" --token "${{ secrets.AI_STUDIO_UPLOAD_TOKEN || '' }}"
+
+      - name: Upload artifact for manual download (for debugging / archives)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-export-push
+          path: ai-export-push
