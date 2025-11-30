@@ -105,7 +105,16 @@ jobs:
             TASK:
             - Analyze changed files, check environment ${matrix.env} paths.
             - Output a checklist, then append a structured JSON summary in a fenced code block for reliable parsing.
-              The JSON must be valid and use this format exactly: ```json\n{\n  "env": "<environment>",\n  "severity": "CRITICAL|HIGH|MEDIUM|LOW",\n  "items": [ { "id": 1, "severity": "HIGH", "title": "short text", "fix": "short fix text" } ]\n}\n```
+              The JSON must be valid and use this format exactly:
+              ```json
+              {
+                "env": "<environment>",
+                "severity": "CRITICAL|HIGH|MEDIUM|LOW",
+                "items": [
+                  { "id": 1, "severity": "HIGH", "title": "short text", "fix": "short fix text" }
+                ]
+              }
+              ```
               Example at the end of the comment (fenced code block, triple backticks, "json").
 
       - name: Check defender severity + create issue on CRITICAL
@@ -180,13 +189,26 @@ jobs:
               const { data: issues } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
               const exists = issues.find(i => i.title === issueTitle);
               if (!exists) {
-                const body = 'Defender reported ' + issueLevel + ' severity for environment ' + process.env.MATRIX_ENV + ' in PR #' + prNumber + "\n\nLatest defender comment:\n\n" + found.body + "\n\nPlease address immediately.";
+                let body = 'Defender reported ' + issueLevel + ' severity for ';
+                  if (process.env.MATRIX_ENV) {
+                    body += 'environment ' + process.env.MATRIX_ENV + ' in PR #' + prNumber + "\n\n";
+                  } else {
+                    body += 'the repository in PR #' + prNumber + "\n\n";
+                  }
+                  body += 'Latest defender comment:\n\n' + found.body + "\n\n";
+                  body += 'Please address immediately.';
                 // ensure label exists
                 try {
                   await github.rest.issues.getLabel({ owner, repo, name: labelName });
                 } catch (err) {
                   if (err.status === 404) {
-                    await github.rest.issues.createLabel({ owner, repo, name: labelName, color: (issueLevel === 'CRITICAL' ? 'b60205' : 'ff8c00'), description: 'AI review severity ' + issueLevel });
+                    await github.rest.issues.createLabel({
+                      owner,
+                      repo,
+                      name: labelName,
+                      color: (issueLevel === 'CRITICAL' ? 'b60205' : 'ff8c00'),
+                      description: 'AI review severity ' + issueLevel
+                    });
                   }
                 }
                 // derive assignees from mapping: format macbook:alice,bob;nvidia:ops
@@ -201,7 +223,14 @@ jobs:
                   }
                   assignees = map[process.env.MATRIX_ENV.toLowerCase()] || (map['default'] || []);
                 }
-                await github.rest.issues.create({ owner, repo, title: issueTitle, body: body, labels: [labelName], assignees });
+                await github.rest.issues.create({
+                  owner,
+                  repo,
+                  title: issueTitle,
+                  body: body,
+                  labels: [labelName],
+                  assignees,
+                });
                 core.info('Created issue: ' + issueTitle);
               } else {
                 core.info('Open issue already exists: ' + exists.html_url);
@@ -209,8 +238,12 @@ jobs:
             }
 
             if (shouldBlock) {
-              core.setFailed('Defender reported severity ' + severity + ' for env ' + process.env.MATRIX_ENV + ' — meets block threshold (' + threshold + ') — failing job.');
-            }
+                core.setFailed(
+                  'Defender reported severity ' + level
+                  + ' which meets or exceeds block threshold ' + threshold
+                  + ' — failing.'
+                );
+                }
 
             return {severity: severity};
 
@@ -236,7 +269,10 @@ jobs:
             Focus ONLY on: performance, developer experience and scalability suggestions for this environment.
             TASK:
             - Analyze changed files, check environment ${matrix.env} paths.
-            - Output checklist + improvement suggestions and then append the same structured JSON summary as a fenced code block (see Defender example above). Use the environment from the matrix (e.g. "env":"macbook").
+            - Output checklist + improvement suggestions.
+            - Then append the same structured JSON summary as a fenced code block
+              (see Defender example above). Use the environment from the matrix
+              (e.g. "env":"macbook").
   # Fallback global analysis when no environment-specific paths are changed
   global-analysis:
     name: Global analysis (no environment paths changed)
@@ -338,20 +374,59 @@ jobs:
                 const { data: issues } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
                 const exists = issues.find(i => i.title === issueTitle);
                 if (!exists) {
-                  const body = 'Defender reported ' + issueLevel + ' severity for the repository in PR #' + prNumber + "\n\nLatest defender comment:\n\n" + found.body + "\n\nPlease address immediately.";
-                  try { await github.rest.issues.getLabel({ owner, repo, name: labelName }); } catch (err) { if (err.status === 404) { await github.rest.issues.createLabel({ owner, repo, name: labelName, color: (issueLevel === 'CRITICAL'? 'b60205':'ff8c00'), description: 'AI review severity ' + issueLevel }); } }
-                  const mappings = process.env.AI_ISSUE_ASSIGNEES ? process.env.AI_ISSUE_ASSIGNEES.split(';').map(s=>s.trim()).filter(Boolean) : [];
+                  let body = 'Defender reported ' + issueLevel + ' severity for ';
+                  if (process.env.MATRIX_ENV) {
+                    body += 'environment ' + process.env.MATRIX_ENV + ' in PR #' + prNumber + "\n\n";
+                  } else {
+                    body += 'the repository in PR #' + prNumber + "\n\n";
+                  }
+                  body += 'Latest defender comment:\n\n' + found.body + "\n\n" + 'Please address immediately.';
+                  try {
+                    await github.rest.issues.getLabel({ owner, repo, name: labelName });
+                  } catch (err) {
+                    if (err.status === 404) {
+                      await github.rest.issues.createLabel({
+                        owner,
+                        repo,
+                        name: labelName,
+                        color: (issueLevel === 'CRITICAL' ? 'b60205' : 'ff8c00'),
+                        description: 'AI review severity ' + issueLevel,
+                      });
+                    }
+                  }
+                  const mappings = process.env.AI_ISSUE_ASSIGNEES
+                    ? process.env.AI_ISSUE_ASSIGNEES.split(';')
+                      .map(s => s.trim())
+                      .filter(Boolean)
+                    : [];
                   const map = {};
-                  for (const entry of mappings) { const [k,v] = entry.split(':'); if (!k||!v) continue; map[k.trim().toLowerCase()]= v.split(',').map(x=>x.trim()).filter(Boolean); }
+                  for (const entry of mappings) {
+                    const [k, v] = entry.split(':');
+                    if (!k || !v) continue;
+                    map[k.trim().toLowerCase()] = v
+                      .split(',')
+                      .map(x => x.trim())
+                      .filter(Boolean);
+                  }
                   const assignees = map['global'] || map['default'] || [];
-                  await github.rest.issues.create({ owner, repo, title: issueTitle, body: body, labels: [labelName], assignees });
+                  await github.rest.issues.create({
+                    owner,
+                    repo,
+                    title: issueTitle,
+                    body: body,
+                    labels: [labelName],
+                    assignees,
+                  });
                   core.info('Created issue: ' + issueTitle);
                 } else { core.info('Open issue already exists: ' + exists.html_url); }
               }
 
               if (shouldBlock) {
-                core.setFailed('Defender reported severity ' + severity + ' (global) — meets threshold ' + threshold + ' — failing job.');
-              }
+              core.setFailed(
+                'Defender reported severity ' + level
+                + ' which meets or exceeds block threshold ' + threshold
+                + ' — failing.'
+              );
 
               return {severity: severity};
 
@@ -454,7 +529,11 @@ jobs:
             const level = (found.json.severity || 'NONE').toUpperCase();
             core.info('Parsed severity from comments: ' + level);
             if (severityRank[level] >= (severityRank[threshold] || severityRank['CRITICAL'])) {
-              core.setFailed('Defender reported severity ' + level + ' which meets or exceeds block threshold ' + threshold + ' — failing.');
+              core.setFailed(
+                'Defender reported severity ' + level
+                + ' which meets or exceeds block threshold ' + threshold
+                + ' — failing.'
+              );
             }
             return {severity: level};
 
@@ -492,7 +571,8 @@ jobs:
           prompt: |
             # CONTEXT: Predator v18.2 — cluster rules & expectations
             CLUSTERS:
-            - macbook: dev cluster — very limited CPU/memory, single-node, prefer small resource requests, replicas=1, avoid heavy probes and large images
+            - macbook: dev cluster — very limited CPU/memory, single-node.
+              Prefer small resource requests, replicas=1, and avoid heavy probes and large images
             - nvidia: gpu cluster — workloads may request GPUs, allow GPU quotas, ensure nodeSelector/tolerations for GPU nodes
             - oracle: cloud free-tier / minimal — limited IOPS and networking, avoid large PVs, avoid bursty autoscaling
 

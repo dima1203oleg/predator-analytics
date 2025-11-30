@@ -19,15 +19,8 @@ jobs:
         if: ${{ github.event.inputs.simulate_patch == 'true' }}
         run: |
           set -eux
-          cat > /tmp/ai_patch.diff <<'PATCH'
-          *** deleted file mode 100644
-          --- a/environments/macbook/Chart.yaml
-          +++ /dev/null
-          -apiVersion: v2
-          -name: macbook
-          -version: 0.1.0
-          PATCH
-          echo "Simulated deletion patch written to /tmp/ai_patch.diff"
+          # Use a small helper script to produce an ai patch file to avoid embedding long heredocs in the workflow
+          scripts/simulate_ai_patch.sh macbook
 
       - name: Run apply logic (local simulation)
         run: |
@@ -44,8 +37,15 @@ jobs:
           fi
 
           # Safety check similar to the real workflow — match added/modified/deleted Chart.yaml/templates patterns
-          if grep -Eq '(^\+\+\+\s+b/environments/.+/(Chart.yaml|templates/))|(^---\s+a/environments/.+/(Chart.yaml|templates/))|(^deleted file mode.*(environments/.+/(Chart.yaml|templates/)))' /tmp/ai_patch.diff; then
-            echo "PROTECTION: Patch attempts to remove Helm chart files — refusing to apply." && exit 0
+          # break checks into several shorter grep calls to avoid long single lines
+          if grep -qE '^\+\+\+\s+b/environments/.+/(Chart.yaml|templates/)' /tmp/ai_patch.diff; then
+            echo "PROTECTION: Patch attempts to modify or add environments/* Chart.yaml/templates — refusing to apply." && exit 0
+          fi
+          if grep -qE '^---\s+a/environments/.+/(Chart.yaml|templates/)' /tmp/ai_patch.diff; then
+            echo "PROTECTION: Patch attempts to modify or delete environments/* Chart.yaml/templates — refusing to apply." && exit 0
+          fi
+          if grep -qE '^deleted file mode.*environments/.+/(Chart.yaml|templates/)' /tmp/ai_patch.diff; then
+            echo "PROTECTION: Patch deletes environments/* Chart.yaml — refusing to apply." && exit 0
           fi
 
           echo "Patch passed safety checks (or harmless). Attempting to apply (dry-run)"
