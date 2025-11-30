@@ -204,6 +204,19 @@ jobs:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  actionlint:
+    name: "Actionlint (validate workflows)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run actionlint
+        uses: rhysd/actionlint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          args: |
+            --config .actionlint.yml || true
+
   # summary-judge definition moved below (keeps full judge step)
 
   defender-evaluator:
