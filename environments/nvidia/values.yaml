@@ -7,6 +7,7 @@ namespace: predator-nvidia
 global:
   env: "lab-gpu"
   imageRegistry: ghcr.io/dima1203oleg
+  # Trigger deployment: 2025-12-02
 
 # ============ Backend ============
 backend:
