@@ -103,6 +103,104 @@ redis:
         cpu: "0.5"
         memory: "512Mi"
 
+# ============ MinIO (S3 Storage) ============
+minio:
+  enabled: true
+  auth:
+    rootUser: "minio-admin"
+    rootPassword: "minio-nvidia-secret"
+  persistence:
+    enabled: true
+    size: 20Gi
+  resources:
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+  service:
+    type: ClusterIP
+    ports:
+      api: 9000
+      console: 9001
+
+# ============ OpenSearch ============
+opensearch:
+  enabled: true
+  replicas: 1
+  persistence:
+    enabled: true
+    size: 10Gi
+  resources:
+    limits:
+      cpu: "2"
+      memory: "4Gi"
+    requests:
+      cpu: "1"
+      memory: "2Gi"
+  service:
+    type: ClusterIP
+    port: 9200
+
+# ============ Qdrant (Vector DB) ============
+qdrant:
+  enabled: true
+  replicas: 1
+  persistence:
+    enabled: true
+    size: 5Gi
+  resources:
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+    requests:
+      cpu: "0.5"
+      memory: "1Gi"
+  service:
+    type: ClusterIP
+    port: 6333
+
+# ============ Ollama (LLM Runtime) ============
+ollama:
+  enabled: true
+  image:
+    repository: ollama/ollama
+    tag: "latest"
+  resources:
+    limits:
+      cpu: "4"
+      memory: "16Gi"
+      nvidia.com/gpu: 1
+    requests:
+      cpu: "2"
+      memory: "8Gi"
+  persistence:
+    enabled: true
+    size: 50Gi
+  models:
+    - "llama3.2"
+    - "qwen2.5"
+    - "qwen3"
+    - "nomic-embed-text"
+  service:
+    type: ClusterIP
+    port: 11434
+
+# ============ Monitoring ============
+monitoring:
+  enabled: true
+  prometheus:
+    enabled: true
+    persistence:
+      size: 5Gi
+  grafana:
+    enabled: true
+    adminPassword: "grafana-nvidia-admin"
+    persistence:
+      size: 1Gi
+  loki:
+    enabled: true
+    persistence:
+      size: 5Gi
+
 # ============ Node Selector ============
 nodeSelector:
   gpu: "true"
