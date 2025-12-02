@@ -25,7 +25,10 @@
     docker-compose up --build
     ```
 
-3.  **Міграція (якщо структура папок стара):**
+3.  **Розгортання на NVIDIA (Self-Hosted):**
+    Див. [DEPLOY_CHECKLIST.md](DEPLOY_CHECKLIST.md) для інструкцій з налаштування раннера.
+
+4.  **Міграція (якщо структура папок стара):**
     ```bash
     ./scripts/migrate_structure.sh
     ```

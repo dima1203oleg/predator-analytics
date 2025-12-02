@@ -1,0 +1,39 @@
+name: Monitor NVIDIA Host Connectivity
+
+on:
+  schedule:
+    - cron: '*/15 * * * *' # Run every 15 minutes
+  workflow_dispatch:
+
+jobs:
+  check-connectivity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check SSH Reachability
+        id: check-ssh
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          chmod +x scripts/check_remote_ssh.sh
+          if [ -z "$SSH_HOST" ]; then
+            echo "SSH_HOST secret not set. Skipping check."
+            exit 0
+          fi
+          ./scripts/check_remote_ssh.sh "$SSH_HOST" 22 5 > ssh_check.log 2>&1 || true
+          cat ssh_check.log
+          if grep -q "SUCCESS" ssh_check.log; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Upload Diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nvidia-host-diagnostics
+          path: ssh_check.log
