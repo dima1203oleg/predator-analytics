@@ -1,0 +1,82 @@
+
+version: '3.8'
+
+# PREDATOR ANALYTICS v18.6 - LOCAL DEV ENVIRONMENT
+services:
+  # 1. POSTGRESQL (TimeScaleDB)
+  postgres:
+    image: timescale/timescaledb:latest-pg15
+    container_name: predator-postgres
+    environment:
+      POSTGRES_USER: ua_service
+      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: predator_ua
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - predator-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ua_service"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. REDIS
+  redis:
+    image: redis:7.2-alpine
+    container_name: predator-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - predator-net
+
+  # 3. BACKEND (UA-SOURCES)
+  ua-sources-api:
+    build: 
+      context: ./ua-sources
+      dockerfile: Dockerfile
+    container_name: predator-api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./ua-sources/app:/app/app
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://ua_service:dev_password@postgres:5432/predator_ua
+      - REDIS_URL=redis://redis:6379/0
+      - TRUTH_ONLY_MODE=true
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - predator-net
+
+  # 4. FRONTEND (Vite Dev)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: predator-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host
+    environment:
+      - VITE_API_URL=http://ua-sources-api:8000
+    depends_on:
+      - ua-sources-api
+    networks:
+      - predator-net
+
+networks:
+  predator-net:
+    driver: bridge
+
+volumes:
+  postgres_data:

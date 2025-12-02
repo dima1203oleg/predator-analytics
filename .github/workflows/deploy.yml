@@ -1,175 +1,84 @@
-name: Deploy
-permissions:
-  contents: write
-  packages: write
+
+name: Deploy Production (GitOps)
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  test:
+  # 1. Quality Gate (Test Only)
+  quality-gate:
+    uses: ./.github/workflows/test-only.yml
+
+  # 2. Build & Push
+  build-push:
+    needs: quality-gate
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-        if: ${{ hashFiles('frontend/package.json') != '' }}
-      - name: Install frontend dependencies
-        if: ${{ hashFiles('frontend/package.json') != '' }}
-        run: |
-          cd frontend
-          npm install
-      - name: Test frontend
-        if: ${{ hashFiles('frontend/package.json') != '' }}
-        run: |
-          cd frontend
-          npm test
-
-      - name: Setup Python
-        if: ${{ hashFiles('backend/requirements.txt') != '' }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-      - name: Install backend dependencies
-        if: ${{ hashFiles('backend/requirements.txt') != '' }}
-        run: |
-          cd backend
-          pip install -r requirements.txt
-      - name: Test backend
-        if: ${{ hashFiles('backend/requirements.txt') != '' }}
-        run: |
-          cd backend
-          python -m pytest
-
-  build:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
+      
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-
+        
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GHCR
+        
+      - name: Log in to Registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          # Prefer an explicit PAT with packages:write permission
-          password: ${{ secrets.GHCR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Build & Push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ua-sources
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:v18.4.${{ github.run_number }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Build and push frontend
-        if: ${{ hashFiles('frontend/Dockerfile') != '' }}
+      - name: Build & Push Frontend
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
-          platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository }}/frontend:latest
-
-      - name: Build and push backend
-        if: ${{ hashFiles('backend/Dockerfile') != '' }}
-        uses: docker/build-push-action@v5
-        with:
-          context: ./backend
           platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ghcr.io/${{ github.repository }}/backend:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:v18.4.${{ github.run_number }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-  update-values:
-    needs: build
+  # 3. Update GitOps Manifests
+  update-manifests:
+    needs: build-push
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Update Helm values for macbook
+      
+      - name: Update Helm Values
         run: |
-          if [ -f environments/macbook/values-mac.yaml ]; then
-            sed -i 's|tag:.*|tag: latest|' environments/macbook/values-mac.yaml || true
-          elif [ -f environments/macbook/values.yaml ]; then
-            sed -i 's|tag:.*|tag: latest|' environments/macbook/values.yaml || true
+          sed -i "s|tag: .*|tag: \"v18.4.${{ github.run_number }}\"|g" charts/predator/values.yaml
+          
+      - name: Commit & Push
+        run: |
+          git config user.name "Predator GitOps Bot"
+          git config user.email "bot@predator.system"
+          git add charts/predator/values.yaml
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
           else
-            echo "environments/macbook/values.yaml not found; skipping"
+            git commit -m "chore(release): update images to v18.4.${{ github.run_number }}"
+            git push
           fi
-      - name: Update for nvidia
-        run: |
-          if [ -f environments/nvidia/values.yaml ]; then
-            sed -i 's|tag:.*|tag: latest|' environments/nvidia/values.yaml || true
-          else
-            echo "environments/nvidia/values.yaml not found; skipping"
-          fi
-      - name: Update for oracle
-        run: |
-          if [ -f environments/oracle/values.yaml ]; then
-            sed -i 's|tag:.*|tag: latest|' environments/oracle/values.yaml || true
-          else
-            echo "environments/oracle/values.yaml not found; skipping"
-          fi
-      - name: Commit changes
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git add .
-          git commit -m 'Update image tags' || echo "No changes to commit"
-          if ! git push; then
-            echo "git push failed (probably missing write permissions for GITHUB_TOKEN). Skipping push." >&2
-          fi
-
-  sync-argocd:
-    needs: update-values
-    runs-on: ubuntu-latest
-    steps:
-      - name: Sync ArgoCD
-        env:
-          ARGOCD_MAC_URL: ${{ secrets.ARGOCD_MAC_URL }}
-          ARGOCD_MAC_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
-        run: |
-          if [ -z "$ARGOCD_MAC_URL" ] || [ -z "$ARGOCD_MAC_TOKEN" ]; then
-            echo "ARGOCD secrets not present; skipping sync"
-            exit 0
-          fi
-          curl -X POST "$ARGOCD_MAC_URL/api/v1/applications/predator-macbook/sync" \
-            -H "Authorization: Bearer $ARGOCD_MAC_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d '{}'
-      - name: Install jq
-        env:
-          ARGOCD_MAC_URL: ${{ secrets.ARGOCD_MAC_URL }}
-          ARGOCD_MAC_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
-        run: |
-          if [ -z "$ARGOCD_MAC_URL" ] || [ -z "$ARGOCD_MAC_TOKEN" ]; then
-            echo "ARGOCD secrets not present; skipping jq/install"
-            exit 0
-          fi
-          sudo apt-get update && sudo apt-get install -y jq
-      - name: Wait for healthy
-        env:
-          ARGOCD_MAC_URL: ${{ secrets.ARGOCD_MAC_URL }}
-          ARGOCD_MAC_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
-        run: |
-          if [ -z "$ARGOCD_MAC_URL" ] || [ -z "$ARGOCD_MAC_TOKEN" ]; then
-            echo "ARGOCD secrets not present; skipping health check"
-            exit 0
-          fi
-          for i in {1..30}; do
-            # capture full response for debug, parse status via jq if possible
-            RESPONSE=$(curl -sS "$ARGOCD_MAC_URL/api/v1/applications/predator-macbook" \
-              -H "Authorization: Bearer $ARGOCD_MAC_TOKEN" || true)
-            STATUS=$(echo "$RESPONSE" | jq -r '.status.health.status' 2>/dev/null || echo "<no-json>")
-            if [ "$STATUS" = "Healthy" ]; then
-              echo "Application is healthy"
-              exit 0
-            fi
-            echo "DEBUG: ArgoCD status (raw response): $RESPONSE"
-            echo "Waiting for healthy status... ($i/30)"
-            sleep 10
-          done
-          echo "Application did not become healthy"
-          exit 1

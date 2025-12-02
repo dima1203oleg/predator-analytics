@@ -1,26 +1,131 @@
+{{- if .Values.backend.enabled }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}
+  name: predator-backend
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: predator-backend
+    env: {{ .Values.global.env }}
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app: predator-backend
+  template:
+    metadata:
+      labels:
+        app: predator-backend
+        env: {{ .Values.global.env }}
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: backend
+        image: {{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}
+        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.backend.service.port }}
+        resources:
+          limits:
+            cpu: {{ .Values.backend.resources.limits.cpu }}
+            memory: {{ .Values.backend.resources.limits.memory }}
+            {{- if .Values.backend.gpu.enabled }}
+            {{ .Values.backend.gpu.resourceName }}: {{ .Values.backend.gpu.count }}
+            {{- end }}
+          requests:
+            cpu: {{ .Values.backend.resources.requests.cpu }}
+            memory: {{ .Values.backend.resources.requests.memory }}
+        {{- with .Values.backend.env }}
+        env:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+{{- end }}
+
+{{- if .Values.frontend.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predator-frontend
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: predator-frontend
+    env: {{ .Values.global.env }}
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  selector:
+    matchLabels:
+      app: predator-frontend
+  template:
+    metadata:
+      labels:
+        app: predator-frontend
+        env: {{ .Values.global.env }}
+    spec:
+      containers:
+      - name: frontend
+        image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}
+        imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.frontend.service.port }}
+        resources:
+          limits:
+            cpu: {{ .Values.frontend.resources.limits.cpu }}
+            memory: {{ .Values.frontend.resources.limits.memory }}
+          requests:
+            cpu: {{ .Values.frontend.resources.requests.cpu }}
+            memory: {{ .Values.frontend.resources.requests.memory }}
+{{- end }}
+
+{{- if .Values.nas.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predator-nas
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: predator-nas
+    env: {{ .Values.global.env }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}
+      app: predator-nas
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}
+        app: predator-nas
+        env: {{ .Values.global.env }}
     spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
-      - name: nginx
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        ports:
-        - containerPort: 80
+      - name: nas
+        image: {{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}
+        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+        command: ["python", "-m", "predator.nas"]
         resources:
-          limits:
-            cpu: {{ .Values.resources.limits.cpu }}
-            memory: {{ .Values.resources.limits.memory }}
-          requests:
-            cpu: {{ .Values.resources.requests.cpu }}
-            memory: {{ .Values.resources.requests.memory }}
+          {{- toYaml .Values.nas.resources | nindent 10 }}
+        env:
+          - name: NAS_AUTOML_ENABLED
+            value: "{{ .Values.nas.automl }}"
+          - name: NAS_DATASETS
+            value: "{{ join "," .Values.nas.datasets }}"
+          - name: ENV
+            value: {{ .Values.global.env }}
+{{- end }}

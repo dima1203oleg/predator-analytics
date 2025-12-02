@@ -1,0 +1,59 @@
+
+# Default values for ua-sources.
+# Optimized for Predator Analytics v18.4
+
+replicaCount: 1
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 85
+
+image:
+  # G-01: Use GHCR Registry instead of local
+  repository: ghcr.io/predator-analytics/ua-sources
+  pullPolicy: IfNotPresent
+  # Tag is updated automatically by GitHub Actions
+  tag: "v18.4.0"
+
+serviceAccount:
+  create: true
+  annotations: 
+    "vault.hashicorp.com/agent-inject": "true"
+    "vault.hashicorp.com/role": "predator-etl-role"
+  name: "predator-etl-sa"
+
+service:
+  type: ClusterIP
+  port: 8000
+
+# Optimized for Oracle Ampere A1 (ARM64) Free Tier
+resources: 
+  limits:
+    cpu: 2000m 
+    memory: 2Gi 
+  requests:
+    cpu: 100m 
+    memory: 256Mi
+
+# Environment
+env:
+  - name: TRUTH_ONLY_MODE
+    value: "true"
+
+database:
+  host: postgres-cluster-rw.predator-db.svc.cluster.local
+  port: 5432
+  name: predator_ua
+  user: ua_service
+
+redis:
+  url: redis://predator-redis-master.predator-db.svc.cluster.local:6379/0
+
+persistence:
+  enabled: true
+  storageClass: "local-path"
+  accessMode: ReadWriteOnce
+  size: 10Gi

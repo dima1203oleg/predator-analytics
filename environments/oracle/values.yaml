@@ -1,15 +1,105 @@
-# values-mac.yaml
-# Файл Helm-values для середовища MacBook.
-# Тут зберігаються налаштування для деплою застосунку на MacBook (dev).
+# values.yaml
+# Helm-values для середовища Oracle Cloud (cloud-canary)
+# Canary / "бідний прод" - обмежені ресурси без GPU
 
-image:
-  repository: nginx  # Використовуємо nginx як тестовий сервіс
-  tag: latest  # Тег образу
-resources:
-  limits:
-    cpu: 1
-    memory: 1Gi
-  requests:
-    cpu: 0.5
-    memory: 512Mi
-# Додайте інші параметри за потреби
+namespace: predator-oracle
+
+global:
+  env: "cloud-canary"
+  imageRegistry: ghcr.io/dima1203oleg
+
+# ============ Backend ============
+backend:
+  enabled: true
+  image:
+    repository: ghcr.io/dima1203oleg/predator-backend
+    tag: "v18.x"
+    pullPolicy: Always
+  replicas: 1
+  resources:
+    limits:
+      cpu: "0.5"
+      memory: "512Mi"
+    requests:
+      cpu: "0.25"
+      memory: "256Mi"
+  gpu:
+    enabled: false
+  service:
+    type: ClusterIP
+    port: 8000
+  env:
+    - name: ENV
+      value: "cloud-canary"
+    - name: DEBUG
+      value: "false"
+
+# ============ Frontend ============
+frontend:
+  enabled: true
+  image:
+    repository: ghcr.io/dima1203oleg/predator-frontend
+    tag: "v18.x"
+    pullPolicy: Always
+  replicas: 1
+  resources:
+    limits:
+      cpu: "0.25"
+      memory: "256Mi"
+    requests:
+      cpu: "0.1"
+      memory: "128Mi"
+  service:
+    type: ClusterIP
+    port: 80
+
+# ============ NAS / AutoML ============
+nas:
+  enabled: true
+  datasets:
+    - "/data/cloud-small.csv"
+  automl: false  # Легкий режим без GPU
+  resources:
+    limits:
+      cpu: "0.5"
+      memory: "512Mi"
+    requests:
+      cpu: "0.25"
+      memory: "256Mi"
+
+# ============ PostgreSQL ============
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "oracle-canary-password"
+    database: "predator"
+  primary:
+    persistence:
+      enabled: true
+      size: 5Gi
+    resources:
+      limits:
+        cpu: "0.5"
+        memory: "512Mi"
+
+# ============ Redis ============
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: false
+    resources:
+      limits:
+        cpu: "0.25"
+        memory: "128Mi"
+
+# ============ Node Selector ============
+nodeSelector: {}
+
+# ============ Tolerations ============
+tolerations: []
+
+# ============ Affinity ============
+affinity: {}

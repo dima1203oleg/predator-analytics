@@ -1,15 +1,117 @@
-# values-mac.yaml
-# Файл Helm-values для середовища MacBook.
-# Тут зберігаються налаштування для деплою застосунку на MacBook (dev).
+# values.yaml
+# Helm-values для середовища NVIDIA Server (lab-gpu)
+# GPU-лабораторія для NAS/AutoML, важких моделей, staging
 
-image:
-  repository: nginx  # Використовуємо nginx як тестовий сервіс
-  tag: latest  # Тег образу
-resources:
-  limits:
-    cpu: 1
-    memory: 1Gi
-  requests:
-    cpu: 0.5
-    memory: 512Mi
-# Додайте інші параметри за потреби
+namespace: predator-nvidia
+
+global:
+  env: "lab-gpu"
+  imageRegistry: ghcr.io/dima1203oleg
+
+# ============ Backend ============
+backend:
+  enabled: true
+  image:
+    repository: ghcr.io/dima1203oleg/predator-backend
+    tag: "v18.x"
+    pullPolicy: Always
+  replicas: 1
+  resources:
+    limits:
+      cpu: "2"
+      memory: "4Gi"
+    requests:
+      cpu: "1"
+      memory: "2Gi"
+  gpu:
+    enabled: true
+    resourceName: "nvidia.com/gpu"
+    count: 1
+  service:
+    type: ClusterIP
+    port: 8000
+  env:
+    - name: ENV
+      value: "lab-gpu"
+    - name: DEBUG
+      value: "false"
+    - name: CUDA_VISIBLE_DEVICES
+      value: "0"
+
+# ============ Frontend ============
+frontend:
+  enabled: true
+  image:
+    repository: ghcr.io/dima1203oleg/predator-frontend
+    tag: "v18.x"
+    pullPolicy: Always
+  replicas: 1
+  resources:
+    limits:
+      cpu: "0.5"
+      memory: "512Mi"
+    requests:
+      cpu: "0.25"
+      memory: "256Mi"
+  service:
+    type: ClusterIP
+    port: 80
+
+# ============ NAS / AutoML ============
+nas:
+  enabled: true
+  datasets:
+    - "/data/real-sales.csv"
+    - "/data/customs-ua-8y.parquet"
+  automl: true  # Повний AutoML з GPU
+  resources:
+    limits:
+      cpu: "4"
+      memory: "8Gi"
+      nvidia.com/gpu: 1
+    requests:
+      cpu: "2"
+      memory: "4Gi"
+
+# ============ PostgreSQL ============
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "nvidia-prod-password"
+    database: "predator"
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+    resources:
+      limits:
+        cpu: "1"
+        memory: "1Gi"
+
+# ============ Redis ============
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: "redis-nvidia-secret"
+  master:
+    persistence:
+      enabled: true
+      size: 1Gi
+    resources:
+      limits:
+        cpu: "0.5"
+        memory: "512Mi"
+
+# ============ Node Selector ============
+nodeSelector:
+  gpu: "true"
+
+# ============ Tolerations ============
+tolerations:
+  - key: "nvidia.com/gpu"
+    operator: "Exists"
+    effect: "NoSchedule"
+
+# ============ Affinity ============
+affinity: {}
