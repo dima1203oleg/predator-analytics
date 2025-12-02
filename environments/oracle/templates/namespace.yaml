@@ -1,4 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: predator-dev
+  name: {{ .Values.namespace }}
+  labels:
+    env: {{ .Values.global.env }}
+    managed-by: argocd

@@ -1,21 +1,33 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: predator-oracle  # Назва Application для ArgoCD на Oracle
-  namespace: argocd  # ArgoCD працює в цьому namespace
+  name: predator-oracle
+  namespace: argocd
+  labels:
+    env: cloud-canary
+    app: predator
 spec:
-  project: default  # Проект ArgoCD (default для простоти)
+  project: default
   source:
-    repoURL: https://github.com/dima1203oleg/predator-analytics  # URL GitHub-репозиторію
-    targetRevision: main  # Гілка для відстеження
-    path: environments/oracle  # Шлях до Helm-чарту для Oracle
-    helm:  # Якщо це Helm-чарт
+    repoURL: https://github.com/dima1203oleg/predator-analytics
+    targetRevision: main
+    path: environments/oracle
+    helm:
       valueFiles:
-        - values.yaml  # Файл значень для Oracle
+        - values.yaml
   destination:
-    server: https://kubernetes.default.svc  # Кластер Oracle (замінити на реальний)
-    namespace: predator-oracle  # Namespace для деплою на Oracle
+    server: https://kubernetes.default.svc
+    namespace: predator-oracle
   syncPolicy:
-    automated:  # Автоматична синхронізація
-      prune: true  # Видаляти ресурси, яких немає в Git
-      selfHeal: true  # Автоматично виправляти відхилення
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

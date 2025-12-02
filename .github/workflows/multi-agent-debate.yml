@@ -1,16 +1,3 @@
-# Multi-Agent Debate: Defender vs Innovator using Gemini CLI
-# Requirements (set these in repo Settings -> Secrets & variables -> Actions):
-# Secrets:
-#   - GEMINI_API_KEY
-# Variables:
-#   - GEMINI_CLI_VERSION
-#   - GCP_WIF_PROVIDER
-#   - GOOGLE_CLOUD_PROJECT
-#   - GOOGLE_CLOUD_LOCATION
-#   - SERVICE_ACCOUNT_EMAIL
-#   - GOOGLE_GENAI_USE_VERTEXAI
-#   - GOOGLE_GENAI_USE_GCA
-
 name: "🧠 Multi-Agent Debate (Defender vs Innovator)"
 
 on:
@@ -26,63 +13,15 @@ permissions:
   statuses: write
 
 jobs:
-  path-filter:
-    name: Detect changed environments
+  defender-review:
+    name: "🛡️ Defender: Security & Cost"
     runs-on: ubuntu-latest
-    outputs:
-      envs: ${{ steps.build.outputs.envs }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
-      - name: Filter paths for environments
-        id: filter
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            macbook:
-              - 'environments/macbook/**'
-            nvidia:
-              - 'environments/nvidia/**'
-            oracle:
-              - 'environments/oracle/**'
-
-      - name: Build envs JSON list
-        id: build
-        run: |
-          envs=""
-          if [ "${{ steps.filter.outputs.macbook }}" = "true" ]; then envs="$envs\"macbook\","; fi
-          if [ "${{ steps.filter.outputs.nvidia }}" = "true" ]; then envs="$envs\"nvidia\","; fi
-          if [ "${{ steps.filter.outputs.oracle }}" = "true" ]; then envs="$envs\"oracle\","; fi
-          envs="[${envs%,}]"
-          echo "envs=$envs" >> "$GITHUB_OUTPUT"
-
-  # Per-environment analysis: Defender + Innovator run per touched environment (parallel)
-  env-analysis:
-    name: "Env analysis — ${{ matrix.env }}"
-    needs: path-filter
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        env: ${{ fromJson(needs.path-filter.outputs.envs) }}
-    if: ${{ needs.path-filter.outputs.envs != '[]' }}
-    env:
-      GEMINI_CLI_VERSION: ${{ vars.GEMINI_CLI_VERSION }}
-      GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
-      GOOGLE_CLOUD_PROJECT: ${{ vars.GOOGLE_CLOUD_PROJECT }}
-      GOOGLE_CLOUD_LOCATION: ${{ vars.GOOGLE_CLOUD_LOCATION }}
-      SERVICE_ACCOUNT_EMAIL: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
-      AI_ISSUE_ASSIGNEES: ${{ vars.AI_ISSUE_ASSIGNEES }}
-      AI_ISSUE_LABEL_PREFIX: ${{ vars.AI_ISSUE_LABEL_PREFIX }}
-      AI_BLOCK_THRESHOLD: ${{ vars.AI_BLOCK_THRESHOLD }}
-      GOOGLE_GENAI_USE_VERTEXAI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}
-      GOOGLE_GENAI_USE_GCA: ${{ vars.GOOGLE_GENAI_USE_GCA }}
     steps:
       - name: Checkout PR code
         uses: actions/checkout@v4
 
-      - name: Defender (env-aware)
+      - name: Run Gemini Defender review
         uses: google-github-actions/run-gemini-cli@v0
         id: gemini_defender
         env:
@@ -90,347 +29,40 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPOSITORY: ${{ github.repository }}
         with:
-          gemini_cli_version: ${{ env.GEMINI_CLI_VERSION }}
-          gcp_workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
-          gcp_project_id: ${{ env.GOOGLE_CLOUD_PROJECT }}
-          gcp_location: ${{ env.GOOGLE_CLOUD_LOCATION }}
-          gcp_service_account: ${{ env.SERVICE_ACCOUNT_EMAIL }}
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          use_vertex_ai: ${{ env.GOOGLE_GENAI_USE_VERTEXAI }}
-          use_gemini_code_assist: ${{ env.GOOGLE_GENAI_USE_GCA }}
           prompt: |
-            CONTEXT: Running Defender analysis for environment: ${{ matrix.env }}
-            ROLE: You are DEFENDER agent.
-            Focus ONLY on: security, stability, costs and resource limits for this environment.
+            ROLE: You are DEFENDER agent for Predator Analytics v18.
+            
+            CONTEXT:
+            - This is a critical infrastructure project (K8s, ArgoCD, Python/FastAPI, React).
+            - Environments: MacBook M3 (Dev), NVIDIA GTX 1080 (Prod), Oracle Ampere (Cloud).
+            - Strict "Truth-Only" protocol. No hallucinations allowed.
+
+            Focus ONLY on:
+            - Security risks (secrets in code, unauthenticated endpoints, permissive RBAC).
+            - Stability (race conditions, lack of error handling).
+            - Cloud cost & Resource limits (prevent OOMKilled on Oracle Free Tier).
+            - Docker image size bloat.
+
             TASK:
-            - Analyze changed files, check environment ${matrix.env} paths.
-            - Output a checklist, then append a structured JSON summary in a fenced code block for reliable parsing.
-              The JSON must be valid and use this format exactly:
-              ```json
-              {
-                "env": "<environment>",
-                "severity": "CRITICAL|HIGH|MEDIUM|LOW",
-                "items": [
-                  { "id": 1, "severity": "HIGH", "title": "short text", "fix": "short fix text" }
-                ]
-              }
-              ```
-              Example at the end of the comment (fenced code block, triple backticks, "json").
+            1. Analyze the `git diff` of this PR.
+            2. Identify DIRECT risks.
+            3. Output a strict report:
+               - 🔴 [BLOCKER]: Critical security/stability issues.
+               - 🟡 [WARNING]: Resource or cost concerns.
+            4. If no issues, reply "✅ DEFENDER APPROVED".
 
-      - name: Check defender severity + create issue on CRITICAL
-        uses: actions/github-script@v7
-        env:
-          MATRIX_ENV: ${{ matrix.env }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // Helper: compare severities
-            const severityRank = { 'NONE':0, 'LOW':1, 'MEDIUM':2, 'HIGH':3, 'CRITICAL':4 };
-            const threshold = (process.env.AI_BLOCK_THRESHOLD || 'CRITICAL').toUpperCase();
-
-            const prNumber = context.payload.pull_request.number;
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: prNumber, per_page: 200 });
-            const reversed = comments.slice().reverse();
-
-            // find latest JSON code block in comments that mentions the environment
-            function extractJsonFromBody(body) {
-              if (!body) return null;
-              // 1) Attempt to find a ```json block
-              const m = body.match(/```\s*json\s*([\s\S]*?)```/i);
-              if (m && m[1]) {
-                try { return JSON.parse(m[1]); } catch (e) { return null; }
-              }
-              // 2) Attempt to find inline HTML comment marker with JSON
-              const htmlM = body.match(/<!--\s*AI_REVIEW_JSON\s*([\s\S]*?)-->/i);
-              if (htmlM && htmlM[1]) {
-                try { return JSON.parse(htmlM[1]); } catch (e) { return null; }
-              }
-              return null;
-            }
-
-            const envName = (process.env.MATRIX_ENV || '').toLowerCase();
-            let found = null;
-            for (const c of reversed) {
-              const parsed = extractJsonFromBody(c.body);
-              if (parsed && parsed.env && parsed.env.toLowerCase() === envName) {
-                found = { body: c.body, json: parsed };
-                break;
-              }
-            }
-
-            // fallback: search for legacy marker (AI_REVIEW_SEVERITY) tied to env
-            if (!found) {
-              const marker = 'AI_REVIEW_SEVERITY:';
-              const fallback = reversed.find(c => c.body && c.body.includes(marker) && c.body.toLowerCase().includes(envName));
-              if (fallback) {
-                const m = fallback.body.match(/AI_REVIEW_SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
-                if (m) found = { body: fallback.body, json: { env: process.env.MATRIX_ENV, severity: m[1].toUpperCase(), items: [] } };
-              }
-            }
-
-            if (!found) {
-              core.info('No structured JSON comment found for env ' + process.env.MATRIX_ENV + ' — continuing.');
-              return {severity: 'NONE'};
-            }
-
-            const severity = (found.json.severity || 'NONE').toUpperCase();
-            core.info('Parsed severity for env ' + process.env.MATRIX_ENV + ': ' + severity);
-
-            // determine if we should create an issue (>= HIGH) and if severity meets or exceeds block threshold
-            const shouldCreateIssue = severityRank[severity] >= severityRank['HIGH'];
-            const shouldBlock = severityRank[severity] >= (severityRank[threshold] || severityRank['CRITICAL']);
-
-            if (shouldCreateIssue) {
-              const issueLevel = (severity === 'CRITICAL') ? 'CRITICAL' : 'HIGH';
-              const labelName = (process.env.AI_ISSUE_LABEL_PREFIX ? process.env.AI_ISSUE_LABEL_PREFIX + '-' : 'AI') + issueLevel;
-              const issueTitle = `AI Defender ${issueLevel} — PR #${prNumber} (${process.env.MATRIX_ENV})`;
-              const { data: issues } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
-              const exists = issues.find(i => i.title === issueTitle);
-              if (!exists) {
-                let body = 'Defender reported ' + issueLevel + ' severity for ';
-                  if (process.env.MATRIX_ENV) {
-                    body += 'environment ' + process.env.MATRIX_ENV + ' in PR #' + prNumber + "\n\n";
-                  } else {
-                    body += 'the repository in PR #' + prNumber + "\n\n";
-                  }
-                  body += 'Latest defender comment:\n\n' + found.body + "\n\n";
-                  body += 'Please address immediately.';
-                // ensure label exists
-                try {
-                  await github.rest.issues.getLabel({ owner, repo, name: labelName });
-                } catch (err) {
-                  if (err.status === 404) {
-                    await github.rest.issues.createLabel({
-                      owner,
-                      repo,
-                      name: labelName,
-                      color: (issueLevel === 'CRITICAL' ? 'b60205' : 'ff8c00'),
-                      description: 'AI review severity ' + issueLevel
-                    });
-                  }
-                }
-                // derive assignees from mapping: format macbook:alice,bob;nvidia:ops
-                let assignees = [];
-                if (process.env.AI_ISSUE_ASSIGNEES) {
-                  const mappings = process.env.AI_ISSUE_ASSIGNEES.split(';').map(s=>s.trim()).filter(Boolean);
-                  const map = {};
-                  for (const entry of mappings) {
-                    const [k,v] = entry.split(':');
-                    if (!k || !v) continue;
-                    map[k.trim().toLowerCase()] = v.split(',').map(x=>x.trim()).filter(Boolean);
-                  }
-                  assignees = map[process.env.MATRIX_ENV.toLowerCase()] || (map['default'] || []);
-                }
-                await github.rest.issues.create({
-                  owner,
-                  repo,
-                  title: issueTitle,
-                  body: body,
-                  labels: [labelName],
-                  assignees,
-                });
-                core.info('Created issue: ' + issueTitle);
-              } else {
-                core.info('Open issue already exists: ' + exists.html_url);
-              }
-            }
-
-            if (shouldBlock) {
-                core.setFailed(
-                  'Defender reported severity ' + level
-                  + ' which meets or exceeds block threshold ' + threshold
-                  + ' — failing.'
-                );
-                }
-
-            return {severity: severity};
-
-      - name: Innovator (env-aware)
-        uses: google-github-actions/run-gemini-cli@v0
-        id: gemini_innovator
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPOSITORY: ${{ github.repository }}
-        with:
-          gemini_cli_version: ${{ env.GEMINI_CLI_VERSION }}
-          gcp_workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
-          gcp_project_id: ${{ env.GOOGLE_CLOUD_PROJECT }}
-          gcp_location: ${{ env.GOOGLE_CLOUD_LOCATION }}
-          gcp_service_account: ${{ env.SERVICE_ACCOUNT_EMAIL }}
-          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          use_vertex_ai: ${{ env.GOOGLE_GENAI_USE_VERTEXAI }}
-          use_gemini_code_assist: ${{ env.GOOGLE_GENAI_USE_GCA }}
-          prompt: |
-            CONTEXT: Running Innovator analysis for environment: ${{ matrix.env }}
-            ROLE: You are INNOVATOR agent.
-            Focus ONLY on: performance, developer experience and scalability suggestions for this environment.
-            TASK:
-            - Analyze changed files, check environment ${matrix.env} paths.
-            - Output checklist + improvement suggestions.
-            - Then append the same structured JSON summary as a fenced code block
-              (see Defender example above). Use the environment from the matrix
-              (e.g. "env":"macbook").
-  # Fallback global analysis when no environment-specific paths are changed
-  global-analysis:
-    name: Global analysis (no environment paths changed)
-    needs: path-filter
+  innovator-review:
+    name: "🚀 Innovator: Performance & Features"
     runs-on: ubuntu-latest
-    if: ${{ needs.path-filter.outputs.envs == '[]' }}
-    env:
-      GEMINI_CLI_VERSION: ${{ vars.GEMINI_CLI_VERSION }}
-      GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
-      GOOGLE_CLOUD_PROJECT: ${{ vars.GOOGLE_CLOUD_PROJECT }}
-      GOOGLE_CLOUD_LOCATION: ${{ vars.GOOGLE_CLOUD_LOCATION }}
-      SERVICE_ACCOUNT_EMAIL: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
-      AI_ISSUE_ASSIGNEES: ${{ vars.AI_ISSUE_ASSIGNEES }}
-      AI_ISSUE_LABEL_PREFIX: ${{ vars.AI_ISSUE_LABEL_PREFIX }}
-      AI_BLOCK_THRESHOLD: ${{ vars.AI_BLOCK_THRESHOLD }}
-      GOOGLE_GENAI_USE_VERTEXAI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}
-      GOOGLE_GENAI_USE_GCA: ${{ vars.GOOGLE_GENAI_USE_GCA }}
+    needs: defender-review
+    if: always()
+
     steps:
       - name: Checkout PR code
         uses: actions/checkout@v4
 
-      - name: Defender (global)
-        uses: google-github-actions/run-gemini-cli@v0
-        id: gemini_defender
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPOSITORY: ${{ github.repository }}
-        with:
-          gemini_cli_version: ${{ env.GEMINI_CLI_VERSION }}
-          gcp_workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
-          gcp_project_id: ${{ env.GOOGLE_CLOUD_PROJECT }}
-          gcp_location: ${{ env.GOOGLE_CLOUD_LOCATION }}
-          gcp_service_account: ${{ env.SERVICE_ACCOUNT_EMAIL }}
-          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          use_vertex_ai: ${{ env.GOOGLE_GENAI_USE_VERTEXAI }}
-          use_gemini_code_assist: ${{ env.GOOGLE_GENAI_USE_GCA }}
-          prompt: |
-            CONTEXT: Running Defender global analysis (no env-specific files changed)
-            ROLE: You are DEFENDER agent.
-            Focus ONLY on: security, stability and cost impact at repo-level.
-            TASK:
-            - Analyze the full diff and surface any critical issues.
-
-      - name: Check defender severity + create issue on CRITICAL
-        uses: actions/github-script@v7
-        env:
-          MATRIX_ENV: global
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const prNumber = context.payload.pull_request.number;
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: prNumber, per_page: 200 });
-            const marker = 'AI_REVIEW_SEVERITY:';
-            const reversed = comments.slice().reverse();
-              const severityRank = { 'NONE':0, 'LOW':1, 'MEDIUM':2, 'HIGH':3, 'CRITICAL':4 };
-              const threshold = (process.env.AI_BLOCK_THRESHOLD || 'CRITICAL').toUpperCase();
-
-              // helper to extract json from body
-              function extractJsonFromBody(body) {
-                if (!body) return null;
-                const m = body.match(/```\s*json\s*([\s\S]*?)```/i);
-                if (m && m[1]) { try { return JSON.parse(m[1]); } catch(e){ return null; } }
-                const htmlM = body.match(/<!--\s*AI_REVIEW_JSON\s*([\s\S]*?)-->/i);
-                if (htmlM && htmlM[1]) { try { return JSON.parse(htmlM[1]); } catch(e){ return null; } }
-                return null;
-              }
-
-              // find latest json block anywhere
-              let found = null;
-              for (const c of reversed) {
-                const parsed = extractJsonFromBody(c.body);
-                if (parsed && parsed.severity) { found = { body: c.body, json: parsed }; break; }
-              }
-
-              // fallback: legacy marker
-              if (!found) {
-                const fallback = reversed.find(c => c.body && c.body.includes(marker));
-                if (fallback) {
-                  const m = fallback.body.match(/AI_REVIEW_SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
-                  if (m) found = { body: fallback.body, json: { env: 'global', severity: m[1].toUpperCase(), items: [] } };
-                }
-              }
-
-              if (!found) { core.info('No structured comment found for global — continuing.'); return {severity: 'NONE'}; }
-
-              const severity = (found.json.severity || 'NONE').toUpperCase();
-              core.info('Parsed global severity: ' + severity);
-
-              const shouldCreate = severityRank[severity] >= severityRank['HIGH'];
-              const shouldBlock = severityRank[severity] >= (severityRank[threshold] || severityRank['CRITICAL']);
-
-              if (shouldCreate) {
-                const issueLevel = (severity === 'CRITICAL') ? 'CRITICAL' : 'HIGH';
-                const labelName = (process.env.AI_ISSUE_LABEL_PREFIX ? process.env.AI_ISSUE_LABEL_PREFIX + '-' : 'AI') + issueLevel;
-                const issueTitle = `AI Defender ${issueLevel} — PR #${prNumber} (global)`;
-                const { data: issues } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
-                const exists = issues.find(i => i.title === issueTitle);
-                if (!exists) {
-                  let body = 'Defender reported ' + issueLevel + ' severity for ';
-                  if (process.env.MATRIX_ENV) {
-                    body += 'environment ' + process.env.MATRIX_ENV + ' in PR #' + prNumber + "\n\n";
-                  } else {
-                    body += 'the repository in PR #' + prNumber + "\n\n";
-                  }
-                  body += 'Latest defender comment:\n\n' + found.body + "\n\n" + 'Please address immediately.';
-                  try {
-                    await github.rest.issues.getLabel({ owner, repo, name: labelName });
-                  } catch (err) {
-                    if (err.status === 404) {
-                      await github.rest.issues.createLabel({
-                        owner,
-                        repo,
-                        name: labelName,
-                        color: (issueLevel === 'CRITICAL' ? 'b60205' : 'ff8c00'),
-                        description: 'AI review severity ' + issueLevel,
-                      });
-                    }
-                  }
-                  const mappings = process.env.AI_ISSUE_ASSIGNEES
-                    ? process.env.AI_ISSUE_ASSIGNEES.split(';')
-                      .map(s => s.trim())
-                      .filter(Boolean)
-                    : [];
-                  const map = {};
-                  for (const entry of mappings) {
-                    const [k, v] = entry.split(':');
-                    if (!k || !v) continue;
-                    map[k.trim().toLowerCase()] = v
-                      .split(',')
-                      .map(x => x.trim())
-                      .filter(Boolean);
-                  }
-                  const assignees = map['global'] || map['default'] || [];
-                  await github.rest.issues.create({
-                    owner,
-                    repo,
-                    title: issueTitle,
-                    body: body,
-                    labels: [labelName],
-                    assignees,
-                  });
-                  core.info('Created issue: ' + issueTitle);
-                } else { core.info('Open issue already exists: ' + exists.html_url); }
-              }
-
-              if (shouldBlock) {
-              core.setFailed(
-                'Defender reported severity ' + level
-                + ' which meets or exceeds block threshold ' + threshold
-                + ' — failing.'
-              );
-
-              return {severity: severity};
-
-      - name: Innovator (global)
+      - name: Run Gemini Innovator review
         uses: google-github-actions/run-gemini-cli@v0
         id: gemini_innovator
         env:
@@ -438,117 +70,34 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPOSITORY: ${{ github.repository }}
         with:
-          gemini_cli_version: ${{ env.GEMINI_CLI_VERSION }}
-          gcp_workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
-          gcp_project_id: ${{ env.GOOGLE_CLOUD_PROJECT }}
-          gcp_location: ${{ env.GOOGLE_CLOUD_LOCATION }}
-          gcp_service_account: ${{ env.SERVICE_ACCOUNT_EMAIL }}
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          use_vertex_ai: ${{ env.GOOGLE_GENAI_USE_VERTEXAI }}
-          use_gemini_code_assist: ${{ env.GOOGLE_GENAI_USE_GCA }}
           prompt: |
-            CONTEXT: Running Innovator global analysis (no env-specific files changed)
-            ROLE: You are INNOVATOR agent.
-            Focus ONLY on: performance, CI/CD, and repository-level improvements.
+            ROLE: You are INNOVATOR agent for Predator Analytics v18.
+
+            CONTEXT:
+            - AI-Native platform. Focus on speed, UX, and AI capabilities.
+            - Tech stack: React/Vite, Python/FastAPI, Polars, Qdrant.
+
+            Focus ONLY on:
+            - Performance optimizations (React renders, Python async, Polars usage).
+            - Developer Experience (clean code, structure).
+            - New AI capabilities (Gemini 2.5/3 integration opportunities).
+            - Auto-scaling efficiency.
+
             TASK:
-            - Analyze the full diff and propose improvements.
-
-  workflow-lint:
-    name: "Workflow lint (super-linter)"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Lint workflows with Super-Linter
-        uses: github/super-linter@v4
-        env:
-          VALIDATE_WORKFLOW: true
-          INPUT_INCLUDE: .github/workflows
-          DEFAULT_BRANCH: main
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  actionlint:
-    name: "Actionlint (validate workflows)"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Run actionlint
-        uses: eifinger/actionlint-action@v1
-
-  # summary-judge definition moved below (keeps full judge step)
-
-  defender-evaluator:
-    name: "Defender evaluator (block on CRITICAL)"
-    runs-on: ubuntu-latest
-    env:
-      AI_BLOCK_THRESHOLD: ${{ vars.AI_BLOCK_THRESHOLD }}
-    needs: [env-analysis, global-analysis]
-    steps:
-      - name: Check Defender severity in PR comments
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const severityRank = { 'NONE':0, 'LOW':1, 'MEDIUM':2, 'HIGH':3, 'CRITICAL':4 };
-            const threshold = (process.env.AI_BLOCK_THRESHOLD || 'CRITICAL').toUpperCase();
-
-            const prNumber = context.payload.pull_request.number;
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number: prNumber, per_page: 200 });
-            const reversed = comments.slice().reverse();
-
-            function extractJsonFromBody(body) {
-              if (!body) return null;
-              const m = body.match(/```\s*json\s*([\s\S]*?)```/i);
-              if (m && m[1]) { try { return JSON.parse(m[1]); } catch(e){ return null; } }
-              const htmlM = body.match(/<!--\s*AI_REVIEW_JSON\s*([\s\S]*?)-->/i);
-              if (htmlM && htmlM[1]) { try { return JSON.parse(htmlM[1]); } catch(e){ return null; } }
-              return null;
-            }
-
-            // find latest JSON with severity
-            let found = null;
-            for (const c of reversed) {
-              const parsed = extractJsonFromBody(c.body);
-              if (parsed && parsed.severity) { found = { body: c.body, json: parsed }; break; }
-            }
-
-            // fallback: marker
-            if (!found) {
-              const fallback = reversed.find(c => c.body && c.body.includes('AI_REVIEW_SEVERITY:'));
-              if (fallback) {
-                const m = fallback.body.match(/AI_REVIEW_SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
-                if (m) found = { body: fallback.body, json: { severity: m[1].toUpperCase() } };
-              }
-            }
-
-            if (!found) { core.info('No AI review severity comments found — continuing.'); return {severity: 'NONE'}; }
-
-            const level = (found.json.severity || 'NONE').toUpperCase();
-            core.info('Parsed severity from comments: ' + level);
-            if (severityRank[level] >= (severityRank[threshold] || severityRank['CRITICAL'])) {
-              core.setFailed(
-                'Defender reported severity ' + level
-                + ' which meets or exceeds block threshold ' + threshold
-                + ' — failing.'
-              );
-            }
-            return {severity: level};
+            1. Analyze the `git diff`.
+            2. Propose concrete improvements.
+            3. Output an inspiring report:
+               - ⚡ [SPEED]: Performance wins.
+               - 💡 [IDEA]: Refactoring or new feature ideas.
+            4. If code is boring but fine, reply "✨ CODE LOOKS CLEAN".
 
   summary-judge:
-    name: "Judge: Summary of Debate"
+    name: "⚖️ Judge: Final Verdict"
     runs-on: ubuntu-latest
-    needs: [env-analysis, global-analysis]
-    env:
-      GEMINI_CLI_VERSION: ${{ vars.GEMINI_CLI_VERSION }}
-      GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
-      GOOGLE_CLOUD_PROJECT: ${{ vars.GOOGLE_CLOUD_PROJECT }}
-      GOOGLE_CLOUD_LOCATION: ${{ vars.GOOGLE_CLOUD_LOCATION }}
-      SERVICE_ACCOUNT_EMAIL: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
-      GOOGLE_GENAI_USE_VERTEXAI: ${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}
-      GOOGLE_GENAI_USE_GCA: ${{ vars.GOOGLE_GENAI_USE_GCA }}
+    needs: [defender-review, innovator-review]
+    if: always()
+
     steps:
       - name: Checkout PR code
         uses: actions/checkout@v4
@@ -560,38 +109,18 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPOSITORY: ${{ github.repository }}
         with:
-          gemini_cli_version: ${{ env.GEMINI_CLI_VERSION }}
-          gcp_workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
-          gcp_project_id: ${{ env.GOOGLE_CLOUD_PROJECT }}
-          gcp_location: ${{ env.GOOGLE_CLOUD_LOCATION }}
-          gcp_service_account: ${{ env.SERVICE_ACCOUNT_EMAIL }}
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          use_vertex_ai: ${{ env.GOOGLE_GENAI_USE_VERTEXAI }}
-          use_gemini_code_assist: ${{ env.GOOGLE_GENAI_USE_GCA }}
           prompt: |
-            # CONTEXT: Predator v18.2 — cluster rules & expectations
-            CLUSTERS:
-            - macbook: dev cluster — very limited CPU/memory, single-node.
-              Prefer small resource requests, replicas=1, and avoid heavy probes and large images
-            - nvidia: gpu cluster — workloads may request GPUs, allow GPU quotas, ensure nodeSelector/tolerations for GPU nodes
-            - oracle: cloud free-tier / minimal — limited IOPS and networking, avoid large PVs, avoid bursty autoscaling
-
             ROLE: You are JUDGE agent.
+            
             INPUT:
-            - Read comments from DEFENDER and INNOVATOR in this PR.
+            - Review the code changes in this PR.
+            - Consider the roles of DEFENDER (Security) and INNOVATOR (Speed).
+
             TASK:
-            1. Make a very short summary: include which environment(s) you considered (macbook/nvidia/oracle) and why.
-               - must-fix BEFORE merge (safety)
-               - optimizations worth doing but not blocking
-            2. Form two blocks:
-               - MUST FIX BEFORE MERGE
-               - NICE TO HAVE
-            3. Post as one summarizing comment in the PR.
-            4. Append a final structured JSON object inside a fenced code block (```json ... ```). Use this schema exactly:
-               {
-                 "envs": ["macbook","nvidia","oracle"],
-                 "must_fix": [ { "title": "short", "severity": "CRITICAL|HIGH", "why": "short" } ],
-                 "nice_to_have": [ { "title": "short", "severity": "MEDIUM|LOW", "why": "short" } ],
-                 "severity": "CRITICAL|HIGH|MEDIUM|LOW"
-               }
-              The top-level severity should reflect the most severe problem found.
+            1. Synthesize a final verdict for the human reviewer.
+            2. Structure:
+               - 🛑 MANDATORY FIXES (If any security/crash risks found).
+               - ⚠️ SUGGESTED IMPROVEMENTS (Performance/Cleanliness).
+               - 🟢 READY TO MERGE (If safe).
+            3. Keep it brief and professional.
