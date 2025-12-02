@@ -95,6 +95,109 @@ redis:
         cpu: "0.25"
         memory: "128Mi"
 
+# ============ MinIO (S3 Storage) ============
+minio:
+  enabled: true
+  auth:
+    rootUser: "minio-admin"
+    rootPassword: "minio-oracle-secret"
+  persistence:
+    enabled: true
+    size: 5Gi
+  resources:
+    limits:
+      cpu: "0.5"
+      memory: "512Mi"
+  service:
+    type: ClusterIP
+    ports:
+      api: 9000
+      console: 9001
+
+# ============ OpenSearch (Lightweight) ============
+opensearch:
+  enabled: true
+  replicas: 1
+  persistence:
+    enabled: true
+    size: 2Gi
+  resources:
+    limits:
+      cpu: "0.5"
+      memory: "1Gi"
+    requests:
+      cpu: "0.25"
+      memory: "512Mi"
+  service:
+    type: ClusterIP
+    port: 9200
+
+# ============ Qdrant (Vector DB - Lightweight) ============
+qdrant:
+  enabled: true
+  replicas: 1
+  persistence:
+    enabled: true
+    size: 2Gi
+  resources:
+    limits:
+      cpu: "0.5"
+      memory: "512Mi"
+    requests:
+      cpu: "0.25"
+      memory: "256Mi"
+  service:
+    type: ClusterIP
+    port: 6333
+
+# ============ Ollama (Lightweight - CPU only) ============
+ollama:
+  enabled: true
+  image:
+    repository: ollama/ollama
+    tag: "latest"
+  resources:
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+    requests:
+      cpu: "0.5"
+      memory: "1Gi"
+  persistence:
+    enabled: true
+    size: 10Gi
+  models:
+    - "llama3.2:1b"  # Мала модель для CPU
+    - "nomic-embed-text"
+  service:
+    type: ClusterIP
+    port: 11434
+
+# ============ AI API Keys (замість локальних LLM) ============
+aiApi:
+  gemini:
+    enabled: true
+  mistral:
+    enabled: true
+  groq:
+    enabled: false
+
+# ============ Ingress (for public access) ============
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+  hosts:
+    - host: predator.oracle.local
+      paths:
+        - path: /
+          pathType: Prefix
+          service: frontend
+        - path: /api
+          pathType: Prefix
+          service: backend
+
 # ============ Node Selector ============
 nodeSelector: {}
 
