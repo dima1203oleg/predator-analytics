@@ -1,12 +1,39 @@
+{{- if .Values.backend.enabled }}
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Chart.Name }}-service
+  name: predator-backend
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: predator-backend
+    env: {{ .Values.global.env }}
 spec:
   selector:
-    app: {{ .Chart.Name }}
+    app: predator-backend
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
-  type: ClusterIP
+      port: {{ .Values.backend.service.port }}
+      targetPort: {{ .Values.backend.service.port }}
+  type: {{ .Values.backend.service.type }}
+{{- end }}
+
+{{- if .Values.frontend.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: predator-frontend
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: predator-frontend
+    env: {{ .Values.global.env }}
+spec:
+  selector:
+    app: predator-frontend
+  ports:
+    - protocol: TCP
+      port: {{ .Values.frontend.service.port }}
+      targetPort: {{ .Values.frontend.service.port }}
+  type: {{ .Values.frontend.service.type }}
+{{- end }}

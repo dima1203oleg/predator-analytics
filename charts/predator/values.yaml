@@ -1,0 +1,82 @@
+
+# Global Settings for Predator Analytics v18
+global:
+  env: production
+  domain: predator.internal
+  
+  # 🐳 CI/CD TARGET (Do not edit manually, updated by GitHub Actions)
+  image:
+    tag: "v18.4.0" # ci-release-tag
+
+  vault:
+    enabled: true
+    address: "http://vault-active.vault.svc:8200"
+    role: "predator-role"
+  
+  # 🛡️ AI SAFETY & TRUTH PROTOCOLS
+  safety:
+    anti_hallucination: true
+    strict_mode: true
+    citation_required: true
+    fallback_message: "Немає достовірних даних / Інформація відсутня у відкритих джерелах"
+
+# Service Enablement Flags
+# NOTE: Disabled services where local charts are missing in export
+gateway:
+  enabled: false
+backend:
+  enabled: false
+etl:
+  enabled: false
+vector:
+  enabled: false
+search:
+  enabled: false
+ollama:
+  enabled: false 
+agents:
+  enabled: false
+frontend:
+  enabled: false
+db:
+  enabled: false
+monitoring:
+  enabled: false
+
+# UA Sources is the only active service in this export
+ua_sources:
+  enabled: true
+
+# Shared Resource Limits - Optimized for v18 Prod
+resources:
+  default:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  heavy_compute: # For Vector/Search/ETL
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+
+# Database Connection (Injected via Secrets in Prod)
+postgres:
+  host: predator-db-rw
+  port: 5432
+  user: predator_admin
+
+redis:
+  host: predator-redis-master
+  port: 6379
+
+# External Secrets Configuration
+externalSecrets:
+  refreshInterval: 1h
+  secretStore:
+    name: vault-backend
+    kind: ClusterSecretStore

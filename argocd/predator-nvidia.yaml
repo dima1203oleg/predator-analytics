@@ -1,21 +1,33 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: predator-nvidia  # Назва Application для ArgoCD на NVIDIA
-  namespace: argocd  # ArgoCD працює в цьому namespace
+  name: predator-nvidia
+  namespace: argocd
+  labels:
+    env: lab-gpu
+    app: predator
 spec:
-  project: default  # Проект ArgoCD (default для простоти)
+  project: default
   source:
-    repoURL: https://github.com/dima1203oleg/predator-analytics  # URL GitHub-репозиторію
-    targetRevision: main  # Гілка для відстеження
-    path: environments/nvidia  # Шлях до Helm-чарту для NVIDIA
-    helm:  # Якщо це Helm-чарт
+    repoURL: https://github.com/dima1203oleg/predator-analytics
+    targetRevision: main
+    path: environments/nvidia
+    helm:
       valueFiles:
-        - values.yaml  # Файл значень для NVIDIA
+        - values.yaml
   destination:
-    server: https://kubernetes.default.svc  # Кластер NVIDIA (замінити на реальний)
-    namespace: predator-nvidia  # Namespace для деплою на NVIDIA
+    server: https://kubernetes.default.svc
+    namespace: predator-nvidia
   syncPolicy:
-    automated:  # Автоматична синхронізація
-      prune: true  # Видаляти ресурси, яких немає в Git
-      selfHeal: true  # Автоматично виправляти відхилення
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
