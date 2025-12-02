@@ -15,11 +15,21 @@
 
 ## NVIDIA (Prod) - Сервер з GPU
 
-- [ ] Підключитися до сервера
+- [ ] Підключитися до сервера (фізично або через SSH, якщо працює)
 - [ ] Клонувати репо: `git clone https://github.com/dima1203oleg/predator-analytics.git && cd predator-analytics`
 - [ ] Запустити k3s: `./scripts/bootstrap_nvidia_k3s.sh`
 - [ ] Зберегти пароль ArgoCD та kubeconfig
 - [ ] Перевірити кластер: `kubectl get nodes` та `kubectl get pods -n argocd`
+- [ ] **Налаштувати Self-Hosted Runner (для обходу проблем з SSH):**
+    - Створити PAT токен на GitHub (Settings -> Developer settings -> Personal access tokens) з правами `repo`.
+    - Запустити скрипт реєстрації:
+      ```bash
+      export GITHUB_OWNER="dima1203oleg"
+      export GITHUB_REPO="predator-analytics"
+      export GITHUB_PAT="ghp_ваш_токен"
+      ./scripts/register_selfhosted_runner.sh --non-interactive
+      ```
+    - Перевірити, що раннер з'явився в Settings -> Actions -> Runners.
 - [ ] Застосувати Application: `kubectl apply -f argocd/predator-nvidia.yaml -n argocd`
 - [ ] Додати секрети в GitHub: `ARGOCD_NVIDIA_URL` та `ARGOCD_NVIDIA_TOKEN`
 
