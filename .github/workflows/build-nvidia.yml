@@ -106,39 +106,3 @@ jobs:
             echo "git push failed (probably no write permission). Skipping push." >&2
           fi
 
-  argocd-sync:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    env:
-      ARGOCD_NVIDIA_URL: ${{ secrets.ARGOCD_NVIDIA_URL }}
-      ARGOCD_NVIDIA_TOKEN: ${{ secrets.ARGOCD_NVIDIA_TOKEN }}
-    steps:
-      - name: Sync ArgoCD
-        if: ${{ env.ARGOCD_NVIDIA_URL != '' && env.ARGOCD_NVIDIA_TOKEN != '' }}
-        run: |
-          curl -X POST "${{ env.ARGOCD_NVIDIA_URL }}/api/v1/applications/predator-nvidia/sync" \
-            -H "Authorization: Bearer ${{ env.ARGOCD_NVIDIA_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{}'
-
-      - name: Install jq
-        if: ${{ env.ARGOCD_NVIDIA_URL != '' && env.ARGOCD_NVIDIA_TOKEN != '' }}
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      - name: Wait for healthy
-        if: ${{ env.ARGOCD_NVIDIA_URL != '' && env.ARGOCD_NVIDIA_TOKEN != '' }}
-        run: |
-          for i in {1..30}; do
-            RESPONSE=$(curl -sS "${{ env.ARGOCD_NVIDIA_URL }}/api/v1/applications/predator-nvidia" \
-              -H "Authorization: Bearer ${{ env.ARGOCD_NVIDIA_TOKEN }}" || true)
-            STATUS=$(echo "$RESPONSE" | jq -r '.status.health.status' 2>/dev/null || echo "<no-json>")
-            if [ "$STATUS" = "Healthy" ]; then
-              echo "Application is healthy"
-              exit 0
-            fi
-            echo "DEBUG: ArgoCD status (raw response): $RESPONSE"
-            echo "Waiting for healthy status... ($i/30)"
-            sleep 10
-          done
-          echo "Application did not become healthy"
-          exit 1
