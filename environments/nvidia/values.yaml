@@ -24,9 +24,9 @@ backend:
       cpu: "1"
       memory: "2Gi"
   gpu:
-    enabled: true
+    enabled: false  # Backend API doesn't need GPU directly, uses Ollama via API
     resourceName: "nvidia.com/gpu"
-    count: 1
+    count: 0
   service:
     type: ClusterIP
     port: 8000
@@ -59,7 +59,7 @@ frontend:
 
 # ============ NAS / AutoML ============
 nas:
-  enabled: true
+  enabled: false  # Disabled until backend images are ready
   datasets:
     - "/data/real-sales.csv"
     - "/data/customs-ua-8y.parquet"
