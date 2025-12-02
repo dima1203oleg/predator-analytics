@@ -1,0 +1,36 @@
+name: Deploy to NVIDIA (Self-Hosted)
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+    paths:
+      - 'argocd/predator-nvidia.yaml'
+      - 'environments/nvidia/**'
+
+jobs:
+  deploy-nvidia:
+    name: Deploy to NVIDIA Cluster
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check kubectl connection
+        run: |
+          echo "Checking kubectl connection..."
+          kubectl get nodes
+          kubectl cluster-info
+
+      - name: Apply ArgoCD Application
+        run: |
+          echo "Applying ArgoCD manifest for NVIDIA environment..."
+          kubectl apply -f argocd/predator-nvidia.yaml -n argocd
+
+      - name: Force Sync (Optional)
+        if: always()
+        run: |
+          echo "Attempting to sync ArgoCD app..."
+          # Assuming argocd CLI is installed on the runner or we use kubectl to patch
+          # Using kubectl to trigger refresh is easier if CLI isn't there
+          kubectl patch application predator-nvidia -n argocd --type merge -p '{"operation": {"sync": {"prune": true}}}' || echo "Sync trigger failed, app might auto-sync later"
