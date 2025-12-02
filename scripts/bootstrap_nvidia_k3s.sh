@@ -2,7 +2,7 @@
 
 # ============================================================================
 # Bootstrap script для NVIDIA Server (lab-gpu)
-# Predator Analytics v18.x - GitOps Multi-Env Deployment
+# Predator Analytics v19.0.0 - GitOps Multi-Env Deployment
 # ============================================================================
 # Цей скрипт:
 # 1. Встановлює k3s кластер

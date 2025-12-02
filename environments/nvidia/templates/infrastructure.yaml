@@ -1,0 +1,302 @@
+{{- if .Values.minio.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: minio
+    env: {{ .Values.global.env }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+        env: {{ .Values.global.env }}
+    spec:
+      containers:
+      - name: minio
+        image: minio/minio:latest
+        args:
+          - server
+          - /data
+          - --console-address
+          - ":9001"
+        ports:
+        - containerPort: 9000
+          name: api
+        - containerPort: 9001
+          name: console
+        env:
+        - name: MINIO_ROOT_USER
+          value: {{ .Values.minio.auth.rootUser | quote }}
+        - name: MINIO_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: minio-secret
+              key: root-password
+        resources:
+          {{- toYaml .Values.minio.resources | nindent 10 }}
+        volumeMounts:
+        - name: minio-data
+          mountPath: /data
+      volumes:
+      - name: minio-data
+        {{- if .Values.minio.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: minio-pvc
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  namespace: {{ .Values.namespace }}
+spec:
+  type: {{ .Values.minio.service.type }}
+  ports:
+  - port: {{ .Values.minio.service.ports.api }}
+    targetPort: 9000
+    name: api
+  - port: {{ .Values.minio.service.ports.console }}
+    targetPort: 9001
+    name: console
+  selector:
+    app: minio
+{{- if .Values.minio.persistence.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio-pvc
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.minio.persistence.size }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.opensearch.enabled }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: opensearch
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: opensearch
+    env: {{ .Values.global.env }}
+spec:
+  serviceName: opensearch
+  replicas: {{ .Values.opensearch.replicas }}
+  selector:
+    matchLabels:
+      app: opensearch
+  template:
+    metadata:
+      labels:
+        app: opensearch
+        env: {{ .Values.global.env }}
+    spec:
+      containers:
+      - name: opensearch
+        image: opensearchproject/opensearch:2.11.0
+        ports:
+        - containerPort: 9200
+          name: http
+        - containerPort: 9300
+          name: transport
+        env:
+        - name: discovery.type
+          value: single-node
+        - name: OPENSEARCH_JAVA_OPTS
+          value: "-Xms2g -Xmx2g"
+        - name: DISABLE_SECURITY_PLUGIN
+          value: "true"
+        resources:
+          {{- toYaml .Values.opensearch.resources | nindent 10 }}
+        volumeMounts:
+        - name: opensearch-data
+          mountPath: /usr/share/opensearch/data
+  {{- if .Values.opensearch.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: opensearch-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: {{ .Values.opensearch.persistence.size }}
+  {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch
+  namespace: {{ .Values.namespace }}
+spec:
+  type: {{ .Values.opensearch.service.type }}
+  ports:
+  - port: {{ .Values.opensearch.service.port }}
+    targetPort: 9200
+    name: http
+  selector:
+    app: opensearch
+{{- end }}
+
+{{- if .Values.qdrant.enabled }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: qdrant
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: qdrant
+    env: {{ .Values.global.env }}
+spec:
+  serviceName: qdrant
+  replicas: {{ .Values.qdrant.replicas }}
+  selector:
+    matchLabels:
+      app: qdrant
+  template:
+    metadata:
+      labels:
+        app: qdrant
+        env: {{ .Values.global.env }}
+    spec:
+      containers:
+      - name: qdrant
+        image: qdrant/qdrant:latest
+        ports:
+        - containerPort: 6333
+          name: http
+        - containerPort: 6334
+          name: grpc
+        resources:
+          {{- toYaml .Values.qdrant.resources | nindent 10 }}
+        volumeMounts:
+        - name: qdrant-data
+          mountPath: /qdrant/storage
+  {{- if .Values.qdrant.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: qdrant-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: {{ .Values.qdrant.persistence.size }}
+  {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qdrant
+  namespace: {{ .Values.namespace }}
+spec:
+  type: {{ .Values.qdrant.service.type }}
+  ports:
+  - port: {{ .Values.qdrant.service.port }}
+    targetPort: 6333
+    name: http
+  - port: 6334
+    targetPort: 6334
+    name: grpc
+  selector:
+    app: qdrant
+{{- end }}
+
+{{- if .Values.ollama.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: ollama
+    env: {{ .Values.global.env }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+        env: {{ .Values.global.env }}
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: ollama
+        image: {{ .Values.ollama.image.repository }}:{{ .Values.ollama.image.tag }}
+        ports:
+        - containerPort: 11434
+          name: http
+        resources:
+          {{- toYaml .Values.ollama.resources | nindent 10 }}
+        volumeMounts:
+        - name: ollama-data
+          mountPath: /root/.ollama
+        env:
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: "all"
+        - name: OLLAMA_KEEP_ALIVE
+          value: "24h"
+      volumes:
+      - name: ollama-data
+        {{- if .Values.ollama.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: ollama-pvc
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
+{{- if .Values.ollama.persistence.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-pvc
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.ollama.persistence.size }}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+  namespace: {{ .Values.namespace }}
+spec:
+  type: {{ .Values.ollama.service.type }}
+  ports:
+  - port: {{ .Values.ollama.service.port }}
+    targetPort: 11434
+    name: http
+  selector:
+    app: ollama
+{{- end }}
