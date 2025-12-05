@@ -1,1 +1,4 @@
-Šjh®Øm¶œ_®‰¥¢«º)©¢»e¢­úè™ªiÊ+|(ø Šjh®Û¶Ø§‚Ç%jËjém
+"""Vault Service - Alias for vault_service"""
+from .vault_service import vault_service, VaultService
+
+__all__ = ["vault_service", "VaultService"]

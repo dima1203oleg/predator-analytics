@@ -1,1 +1,26 @@
-Šjh®Ùh‚§‚)©¢»a¶Úq~º&²©Z•È^›Æ³)ÜŠˆ¦¦ŠíÌ§q'¬²*'~º&²©Z•È^›(¦¦Ší±é^r×ë¢š‡^–È¦¦ŠíMé^‚¶¦‹_®‰Ç!zf¬Šjh®ÔŞ•è+jen(‘úèœ«n+^®)©¢»Z­¸­z·ë¢rŠŞÊ'~("šš+¶Ç­¶)à²Z ê–ˆ ŠxëK¢¬
+"""Telegram Bot Service"""
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class TelegramBotService:
+    """Telegram bot service"""
+    
+    def __init__(self, token: str = None):
+        self.token = token
+        self.enabled = bool(token)
+    
+    async def send_message(self, chat_id: int, text: str):
+        """Send message"""
+        if not self.enabled:
+            return None
+        # Would use python-telegram-bot
+        return True
+    
+    async def set_webhook(self, url: str):
+        """Set webhook"""
+        return True
+
+
+telegram_bot = TelegramBotService()
