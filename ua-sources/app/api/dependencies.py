@@ -1,1 +1,4 @@
-~º&·*b¦¦ŠíÌ§pg§z¶­¢·ë¢k*•©\…é²ìm«2È¨Šjh®Ğ,ÊwzË"¢wë¢f©¤
+"""API Dependencies - Alias"""
+from .deps import get_current_user, require_admin
+
+__all__ = ["get_current_user", "require_admin"]
