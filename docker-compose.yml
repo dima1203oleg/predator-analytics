@@ -1,82 +1,112 @@
-
 version: '3.8'
 
-# PREDATOR ANALYTICS v18.6 - LOCAL DEV ENVIRONMENT
 services:
-  # 1. POSTGRESQL (TimeScaleDB)
-  postgres:
-    image: timescale/timescaledb:latest-pg15
-    container_name: predator-postgres
-    environment:
-      POSTGRES_USER: ua_service
-      POSTGRES_PASSWORD: dev_password
-      POSTGRES_DB: predator_ua
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - predator-net
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ua_service"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  # 2. REDIS
-  redis:
-    image: redis:7.2-alpine
-    container_name: predator-redis
-    ports:
-      - "6379:6379"
-    networks:
-      - predator-net
-
-  # 3. BACKEND (UA-SOURCES)
-  ua-sources-api:
-    build: 
-      context: ./ua-sources
-      dockerfile: Dockerfile
-    container_name: predator-api
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-    volumes:
-      - ./ua-sources/app:/app/app
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://ua_service:dev_password@postgres:5432/predator_ua
-      - REDIS_URL=redis://redis:6379/0
-      - TRUTH_ONLY_MODE=true
-    ports:
-      - "8000:8000"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_started
-    networks:
-      - predator-net
-
-  # 4. FRONTEND (Vite Dev)
+  # Frontend - Predator Analytics UI
   frontend:
     build:
-      context: ./frontend
+      context: .
       dockerfile: Dockerfile
-    container_name: predator-frontend
     ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    command: npm run dev -- --host
-    environment:
-      - VITE_API_URL=http://ua-sources-api:8000
-    depends_on:
-      - ua-sources-api
+      - "80:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
-      - predator-net
+      - predator-network
 
-networks:
-  predator-net:
-    driver: bridge
+  # Backend - FastAPI
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://predator:predator@postgres:5432/predator_db
+      - REDIS_URL=redis://redis:6379/0
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    networks:
+      - predator-network
+
+  # UA Sources - Data Microservice
+  ua-sources:
+    build:
+      context: ./ua-sources
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://predator:predator@postgres:5432/predator_ua
+      - REDIS_URL=redis://redis:6379/1
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    networks:
+      - predator-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: predator
+      POSTGRES_PASSWORD: predator
+      POSTGRES_DB: predator_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U predator"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - predator-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - predator-network
+
+  # Qdrant Vector Database (optional)
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+    networks:
+      - predator-network
 
 volumes:
   postgres_data:
+  redis_data:
+  qdrant_data:
+
+networks:
+  predator-network:
+    driver: bridge
