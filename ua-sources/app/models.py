@@ -1,2 +1,134 @@
-~º&²©Z•È^›(¦¦Ší
-‰nš
+"""
+UA Sources - SQLAlchemy Models
+Database models for Ukrainian data storage
+"""
+from sqlalchemy import Column, Integer, String, Text, DateTime, Float, Boolean, JSON, ForeignKey
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+from datetime import datetime
+
+from .core.db import Base
+
+
+class Company(Base):
+    """Ukrainian company from EDR"""
+    __tablename__ = "companies"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    edrpou = Column(String(10), unique=True, index=True, nullable=False)
+    name = Column(String(500), nullable=False)
+    short_name = Column(String(200))
+    status = Column(String(50))  # active, closed, in_liquidation
+    
+    # Registration info
+    registration_date = Column(DateTime)
+    address = Column(Text)
+    
+    # Classification
+    kved = Column(String(10))  # Main activity code
+    kved_name = Column(String(200))
+    
+    # Ownership
+    founders = Column(JSON)  # List of founders
+    authorized_capital = Column(Float)
+    
+    # Metadata
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+    source = Column(String(50), default="edr")
+    
+    # Relationships
+    tenders = relationship("Tender", back_populates="company")
+    risk_assessments = relationship("RiskAssessment", back_populates="company")
+
+
+class Tender(Base):
+    """Prozorro tender"""
+    __tablename__ = "tenders"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    tender_id = Column(String(100), unique=True, index=True)
+    title = Column(Text)
+    description = Column(Text)
+    status = Column(String(50))
+    
+    # Value
+    amount = Column(Float)
+    currency = Column(String(3), default="UAH")
+    
+    # Dates
+    start_date = Column(DateTime)
+    end_date = Column(DateTime)
+    
+    # Procuring entity
+    procuring_entity_name = Column(String(500))
+    procuring_entity_edrpou = Column(String(10))
+    
+    # Winner
+    winner_edrpou = Column(String(10), ForeignKey("companies.edrpou"))
+    winner_name = Column(String(500))
+    
+    # Metadata
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+    raw_data = Column(JSON)
+    
+    # Relationships
+    company = relationship("Company", back_populates="tenders")
+
+
+class RiskAssessment(Base):
+    """Company risk assessment"""
+    __tablename__ = "risk_assessments"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    company_edrpou = Column(String(10), ForeignKey("companies.edrpou"))
+    
+    # Risk scores
+    overall_score = Column(Float)
+    tax_risk = Column(Float)
+    legal_risk = Column(Float)
+    financial_risk = Column(Float)
+    
+    # Flags
+    is_tax_debtor = Column(Boolean, default=False)
+    has_court_cases = Column(Boolean, default=False)
+    is_sanctioned = Column(Boolean, default=False)
+    
+    # Details
+    risk_factors = Column(JSON)
+    recommendations = Column(JSON)
+    
+    # Metadata
+    assessed_at = Column(DateTime, server_default=func.now())
+    valid_until = Column(DateTime)
+    
+    # Relationships
+    company = relationship("Company", back_populates="risk_assessments")
+
+
+class ExchangeRate(Base):
+    """NBU exchange rates"""
+    __tablename__ = "exchange_rates"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    currency_code = Column(String(3), index=True)
+    currency_name = Column(String(100))
+    rate = Column(Float)
+    rate_date = Column(DateTime, index=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+
+class IngestionLog(Base):
+    """Data ingestion audit log"""
+    __tablename__ = "ingestion_logs"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    source = Column(String(50))
+    status = Column(String(20))
+    records_total = Column(Integer)
+    records_processed = Column(Integer)
+    records_failed = Column(Integer)
+    started_at = Column(DateTime)
+    completed_at = Column(DateTime)
+    error_message = Column(Text)
