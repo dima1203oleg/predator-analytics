@@ -1,1 +1,6 @@
-Šjh®Ú,Šjh®Ûb™è¦¦Ší­©Ý¢gë¢g•êòŠjh®Ðž•êò~º&qé^¯¶)lZ Šjh®Ø´
+"""
+UA Sources - Celery Tasks
+Background task definitions
+"""
+from .tasks.etl import *
+from .tasks.ua_sources import *
