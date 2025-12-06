@@ -26,6 +26,8 @@ class AnalysisResult:
     timestamp: datetime
 
 
+from ..core.prompts import get_prompt
+
 class AIEngine:
     """
     Core AI Engine for Predator Analytics
@@ -33,21 +35,7 @@ class AIEngine:
     """
     
     def __init__(self):
-        self.system_prompt = """
-        Ти - аналітик Predator Analytics, експертна система аналізу українських бізнес-даних.
-        
-        Твої обов'язки:
-        1. Аналізувати дані з українських реєстрів (EDR, Prozorro, податкова)
-        2. Виявляти ризики та аномалії
-        3. Надавати структуровані відповіді українською мовою
-        4. Вказувати джерела та рівень впевненості
-        
-        Формат відповіді:
-        - Чіткий висновок
-        - Знайдені факти
-        - Ризики (якщо є)
-        - Рекомендації
-        """
+        self.system_prompt = get_prompt("analyst")
     
     async def analyze(
         self,

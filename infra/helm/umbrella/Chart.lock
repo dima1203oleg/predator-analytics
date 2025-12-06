@@ -1,0 +1,27 @@
+dependencies:
+- name: backend
+  repository: file://../charts/backend
+  version: 0.1.0
+- name: frontend
+  repository: file://../charts/frontend
+  version: 0.1.0
+- name: parser
+  repository: file://../charts/parser
+  version: 0.1.0
+- name: processor
+  repository: file://../charts/processor
+  version: 0.1.0
+- name: indexer
+  repository: file://../charts/indexer
+  version: 0.1.0
+- name: postgres
+  repository: file://../charts/postgres
+  version: 0.1.0
+- name: opensearch
+  repository: file://../charts/opensearch
+  version: 0.1.0
+- name: qdrant
+  repository: file://../charts/qdrant
+  version: 0.1.0
+digest: sha256:52693d363f88c8d3fea7f7261a8b63bcdbd03d52d04a665336f3d31d744d3702
+generated: "2025-12-06T22:48:10.002243+02:00"

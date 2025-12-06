@@ -1,0 +1,5 @@
+apiVersion: v2
+name: parser
+version: 0.1.0
+type: application
+description: Data Ingest Parser Agent

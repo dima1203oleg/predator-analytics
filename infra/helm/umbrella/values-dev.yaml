@@ -1,0 +1,31 @@
+global:
+  env:
+    name: dev
+
+backend:
+  replicaCount: 1
+  image:
+    tag: "dev"
+  service:
+    type: ClusterIP
+  config:
+    jwt:
+      accessTtlMinutes: 1440 # 24h for dev behavior
+
+frontend:
+  replicaCount: 1
+  image:
+    tag: "dev"
+  service:
+    type: ClusterIP
+    port: 80
+
+postgres:
+  persistence:
+    size: 2Gi # Small PV for dev
+
+opensearch:
+  persistence:
+    size: 5Gi
+  cluster:
+    singleNode: true

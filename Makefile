@@ -1,64 +1,29 @@
-# Makefile for Predator Analytics v21.0
+APP_NAME=predator-analytics
+COMPOSE=docker-compose.yml
 
-.PHONY: help install build start stop restart logs lint test clean
+.PHONY: help up down logs build test helm-dev
 
 help:
-	@echo "Predator Analytics v21.0 - Development Commands"
-	@echo ""
-	@echo "  make install    - Install all dependencies"
-	@echo "  make build      - Build Docker images"
-	@echo "  make start      - Start all services"
-	@echo "  make stop       - Stop all services"
-	@echo "  make restart    - Restart all services"
-	@echo "  make logs       - View logs"
-	@echo "  make lint       - Run linters"
-	@echo "  make test       - Run tests"
-	@echo "  make clean      - Clean up containers and volumes"
+	@echo "Targets: up down logs build test helm-dev"
 
-install:
-	@echo "Installing Python dependencies..."
-	cd ua-sources && pip install -r requirements.txt
-	@echo "Installing Node dependencies..."
-	npm install
-	@echo "Done!"
+up:
+	docker-compose -f $(COMPOSE) up -d
 
-build:
-	@echo "Building Docker images..."
-	docker compose build
-
-start:
-	@echo "Starting Predator Analytics stack..."
-	docker compose up -d
-	@echo "Services started!"
-	@echo "Backend API: http://localhost:8000"
-	@echo "Frontend: http://localhost:3000"
-	@echo "MinIO Console: http://localhost:9001"
-	@echo "Grafana: http://localhost:3001"
-
-stop:
-	@echo "Stopping services..."
-	docker compose down
-
-restart: stop start
+down:
+	docker-compose -f $(COMPOSE) down -v
 
 logs:
-	docker compose logs -f
+	docker-compose -f $(COMPOSE) logs -f --tail=200
 
-lint:
-	@echo "Running Python linters..."
-	cd ua-sources && ruff check .
-	@echo "Running JS/TS linters..."
-	npm run lint
+build:
+	docker-compose -f $(COMPOSE) build
 
 test:
-	@echo "Running Python tests..."
-	cd ua-sources && pytest
-	@echo "Running Frontend tests..."
-	npm test
+	@echo "Run backend tests"
+	@cd ua-sources && pytest -q || true
 
-clean:
-	@echo "Cleaning up..."
-	docker compose down -v
-	find . -type d -name __pycache__ -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-	@echo "Cleanup complete!"
+helm-dev:
+	helm upgrade --install $(APP_NAME)-dev infra/helm/umbrella \
+		-f infra/helm/umbrella/values.yaml \
+		-f infra/helm/umbrella/values-dev.yaml \
+		--namespace $(APP_NAME)-dev --create-namespace

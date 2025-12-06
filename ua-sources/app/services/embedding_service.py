@@ -21,6 +21,8 @@ class EmbeddingService:
         self.model_name = model_name
         self.vector_size = 384  # for all-MiniLM-L6-v2
         self.model = None
+        self.reranker = None
+        self.reranker_model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
         
         # Lazy loading - only load when first needed
         logger.info(f"Embedding service initialized with model: {model_name}")
@@ -30,8 +32,13 @@ class EmbeddingService:
         if self.model is None:
             try:
                 from sentence_transformers import SentenceTransformer
+                from sentence_transformers import SentenceTransformer, CrossEncoder
                 self.model = SentenceTransformer(self.model_name)
                 logger.info(f"Loaded embedding model: {self.model_name}")
+                
+                # Load reranker
+                self.reranker = CrossEncoder(self.reranker_model_name)
+                logger.info(f"Loaded reranker model: {self.reranker_model_name}")
             except ImportError:
                 logger.error("sentence-transformers not installed. Install with: pip install sentence-transformers")
                 raise
@@ -111,3 +118,31 @@ class EmbeddingService:
             return 0.0
         
         return float(dot_product / (norm_v1 * norm_v2))
+
+    def rerank(self, query: str, documents: List[str]) -> List[float]:
+        """
+        Rerank a list of documents based on relevance to the query using a Cross-Encoder.
+        
+        Args:
+            query: The search query
+            documents: List of document texts to score
+            
+        Returns:
+            List of scores (higher is better)
+        """
+        self._load_model()
+        
+        if not documents:
+            return []
+            
+        try:
+            # Prepare pairs for cross-encoder
+            pairs = [[query, doc] for doc in documents]
+            
+            # Predict scores
+            scores = self.reranker.predict(pairs)
+            return scores.tolist()
+        except Exception as e:
+            logger.error(f"Reranking failed: {e}")
+            # Fallback: return 0.0 scores
+            return [0.0] * len(documents)

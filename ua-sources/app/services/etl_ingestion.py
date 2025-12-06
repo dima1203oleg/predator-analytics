@@ -144,7 +144,7 @@ class ETLIngestionService:
                 """
                 
                 for record in records:
-                    values = [record[col] for col in columns_list]
+                    values = [str(record[col]) for col in columns_list]
                     await conn.execute(insert_sql, *values)
             
             return len(records)

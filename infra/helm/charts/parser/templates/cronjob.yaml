@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-parser
+spec:
+  schedule: "{{ .Values.schedule | default "*/30 * * * *" }}"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: {{ .Release.Name }}-parser
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: parser
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: POSTGRES_DB
+                  value: {{ .Values.global.postgres.db | quote }}
+                # Add other envs

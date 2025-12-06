@@ -1,0 +1,6 @@
+enabled: true
+image:
+  repository: "opensearchproject/opensearch"
+  tag: "2.11.0"
+persistence:
+  size: 20Gi

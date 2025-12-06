@@ -1,0 +1,16 @@
+enabled: true
+replicaCount: 1
+image:
+  repository: "ghcr.io/dima1203oleg/predator-backend"
+  tag: "dev"
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 8000
+resources: {}
+hpa:
+  enabled: false
+config:
+  jwt:
+    issuer: "predator-analytics"
+    accessTtlMinutes: 60
