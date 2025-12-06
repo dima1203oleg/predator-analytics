@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-umbrella.fullname" . }}-dashboards
+  labels:
+    {{- include "predator-umbrella.labels" . | nindent 4 }}
+    app.kubernetes.io/component: dashboards
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator-umbrella.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: dashboards
+  template:
+    metadata:
+      labels:
+        {{- include "predator-umbrella.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: dashboards
+    spec:
+      containers:
+        - name: dashboards
+          image: "opensearchproject/opensearch-dashboards:2.11.0"
+          ports:
+            - containerPort: 5601
+              name: http
+          env:
+            - name: 'OPENSEARCH_HOSTS'
+              value: '["http://{{ .Release.Name }}-opensearch:9200"]'
+            - name: DISABLE_SECURITY_PLUGIN
+              value: "true"
