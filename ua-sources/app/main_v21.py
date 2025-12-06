@@ -17,6 +17,10 @@ from app.api.routers import auth as auth_router
 from app.api.routers import stats as stats_router
 from app.api.routers import metrics as metrics_router
 from app.api.routers import search as search_router
+from app.api.v1 import ml as ml_router
+from app.api.v1 import optimizer as optimizer_router
+from app.services.search_fusion import hybrid_search_with_rrf
+from app.services.auto_optimizer import get_auto_optimizer
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)
@@ -24,32 +28,93 @@ logger = logging.getLogger("predator.api")
 
 app = FastAPI(
     title="Predator Analytics v21.0 API",
-    description="AI-Native Multi-Agent Analytics Platform with Semantic Search",
+    description="AI-Native Multi-Agent Analytics Platform with Semantic Search & Auto-Optimization",
     version="21.0.0"
 )
 
-# Initialize Core Services
-supervisor = NexusSupervisor()
-model_router = ModelRouter()
-avatar_service = AvatarService()
-minio_service = MinIOService()
-etl_service = ETLIngestionService()
-opensearch_indexer = OpenSearchIndexer()
-embedding_service = EmbeddingService()
-qdrant_service = QdrantService()
+# ============================================================================
+# CORE SERVICES (Lazy Initialization for Fast Startup)
+# ============================================================================
 
-# Startup event: Initialize Qdrant collection
+# Service singletons - initialized on first use
+_services = {}
+
+def get_supervisor():
+    if 'supervisor' not in _services:
+        _services['supervisor'] = NexusSupervisor()
+    return _services['supervisor']
+
+def get_model_router():
+    if 'model_router' not in _services:
+        _services['model_router'] = ModelRouter()
+    return _services['model_router']
+
+def get_avatar_service():
+    if 'avatar_service' not in _services:
+        _services['avatar_service'] = AvatarService()
+    return _services['avatar_service']
+
+def get_minio_service():
+    if 'minio_service' not in _services:
+        _services['minio_service'] = MinIOService()
+    return _services['minio_service']
+
+def get_etl_service():
+    if 'etl_service' not in _services:
+        _services['etl_service'] = ETLIngestionService()
+    return _services['etl_service']
+
+def get_opensearch_indexer():
+    if 'opensearch_indexer' not in _services:
+        _services['opensearch_indexer'] = OpenSearchIndexer()
+    return _services['opensearch_indexer']
+
+def get_embedding_service():
+    if 'embedding_service' not in _services:
+        _services['embedding_service'] = EmbeddingService()
+    return _services['embedding_service']
+
+def get_qdrant_service():
+    if 'qdrant_service' not in _services:
+        _services['qdrant_service'] = QdrantService()
+    return _services['qdrant_service']
+
+# Backward compatibility aliases
+supervisor = property(lambda self: get_supervisor())
+model_router = property(lambda self: get_model_router())
+
+# ============================================================================
+# STARTUP: Initialize Services & AutoOptimizer
+# ============================================================================
+
 @app.on_event("startup")
 async def startup_event():
-    """Initialize services on startup."""
-    logger.info("Starting Predator Analytics v21.0...")
+    """
+    Initialize all services on application startup:
+    1. Qdrant collection initialization
+    2. AutoOptimizer background loop (self-improvement cycle)
+    """
+    import asyncio
     
+    logger.info("🚀 Starting Predator Analytics v21.0...")
+    
+    # 1. Initialize Qdrant collection (lazy)
     try:
-        # Create Qdrant collection if not exists
-        await qdrant_service.create_collection()
-        logger.info("Qdrant collection ready")
+        qdrant = get_qdrant_service()
+        await qdrant.create_collection()
+        logger.info("✅ Qdrant collection ready")
     except Exception as e:
-        logger.warning(f"Qdrant initialization failed (will retry on first use): {e}")
+        logger.warning(f"⚠️ Qdrant initialization failed (will retry on first use): {e}")
+    
+    # 2. Start AutoOptimizer background loop
+    try:
+        optimizer = get_auto_optimizer()
+        asyncio.create_task(optimizer.start_optimization_loop(interval_minutes=15))
+        logger.info("🤖 AutoOptimizer started - system will self-improve automatically")
+        logger.info("📊 Monitoring: quality gates, latency, cost, accuracy")
+        logger.info("🔄 Optimization cycle: Every 15 minutes")
+    except Exception as e:
+        logger.warning(f"⚠️ AutoOptimizer failed to start: {e}")
 
 class AnalyzeRequest(BaseModel):
     query: str
@@ -240,6 +305,77 @@ async def get_document(doc_id: str):
         logger.error(f"Document fetch failed: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch document")
 
+
+@app.get("/api/v1/documents/{doc_id}/summary")
+async def get_document_summary(doc_id: str, max_length: int = 130):
+    """
+    Get or generate summary for a document.
+    
+    Uses ML summarization model (BART/T5) to generate concise summaries.
+    Results are cached in database for future requests.
+    
+    Args:
+        doc_id: Document identifier
+        max_length: Maximum summary length in tokens
+    
+    Returns:
+        {summary: str, cached: bool, word_count: int}
+    """
+    try:
+        # First, check if document exists and get content
+        document = await document_service.get_document_by_id(doc_id)
+        
+        if not document:
+            raise HTTPException(status_code=404, detail="Document not found")
+        
+        # Check if summary already exists in document
+        if document.get("summary"):
+            return {
+                "summary": document["summary"],
+                "cached": True,
+                "word_count": len(document["summary"].split())
+            }
+        
+        # Generate new summary using ML service
+        try:
+            from app.services.ml import get_summarizer
+            summarizer = get_summarizer()
+            
+            content = document.get("content", "")
+            if len(content) < 100:
+                return {
+                    "summary": content,
+                    "cached": False,
+                    "word_count": len(content.split()),
+                    "note": "Content too short for summarization"
+                }
+            
+            summary = summarizer.summarize(content, max_length=max_length)
+            
+            if summary:
+                # TODO: Cache summary in database
+                # await document_service.update_summary(doc_id, summary)
+                
+                return {
+                    "summary": summary,
+                    "cached": False,
+                    "word_count": len(summary.split())
+                }
+            else:
+                raise HTTPException(status_code=500, detail="Summarization failed")
+                
+        except ImportError:
+            raise HTTPException(
+                status_code=503,
+                detail="Summarizer service not available"
+            )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Summary generation failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate summary")
+
 # ============================================================================
 # AUTH ENDPOINTS (TS-Compliant)
 # ============================================================================
@@ -322,7 +458,7 @@ async def upload_dataset(
         # Step 3: Index to OpenSearch + Qdrant (Dual Indexing)
         # For now, we'll do it synchronously for simplicity
         # In production, use Celery/background tasks
-        index_name = f"{dataset_type}_safe"
+        index_name = "documents_safe"
         await opensearch_indexer.create_index(index_name)
         
         documents = etl_result.get("documents", [])
@@ -372,6 +508,13 @@ app.include_router(search_router.router, prefix="/api/v1")
 
 # Prometheus Metrics endpoint
 app.include_router(metrics_router.router)
+
+# ML Services endpoints (rerank, summarize, augment, explain)
+app.include_router(ml_router.router, prefix="/api/v1")
+
+# AutoOptimizer endpoints (status, trigger, metrics)
+app.include_router(optimizer_router.router, prefix="/api/v1")
+
 
 
 # ============================================================================

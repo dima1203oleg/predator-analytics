@@ -1,0 +1,171 @@
+# Values for Oracle Cloud Edge environment
+# Lightweight ARM-compatible staging environment
+
+global:
+  environment: edge
+  namespace: predator-edge
+
+backend:
+  replicaCount: 1
+  image:
+    repository: predator/ua-sources
+    tag: "latest"
+    # ARM-compatible
+    platform: linux/arm64
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "512Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+  env:
+    LOG_LEVEL: "INFO"
+    ENABLE_XAI: "true"
+    ENABLE_AUGMENTATION: "false" # Disabled for edge
+    ENABLE_MULTIMODAL: "false"
+
+frontend:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+celery:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "512Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+
+# Data stores - moderate resources for ARM
+postgresql:
+  enabled: true
+  persistence:
+    size: 20Gi
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+redis:
+  enabled: true
+  architecture: standalone
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+qdrant:
+  enabled: true
+  replicaCount: 1
+  persistence:
+    size: 10Gi
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "200m"
+    limits:
+      memory: "2Gi"
+      cpu: "1"
+
+opensearch:
+  enabled: true
+  singleNode: true
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "1"
+  javaOpts: "-Xms1g -Xmx1g"
+
+opensearch-dashboards:
+  enabled: true
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+
+# Monitoring - lightweight
+prometheus:
+  enabled: true
+  server:
+    global:
+      scrape_interval: 30s # Less frequent
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+    retention: "7d" # Shorter retention
+
+grafana:
+  enabled: true
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+
+# ML features - minimal
+mlflow:
+  enabled: true
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+
+# GPU features disabled for ARM
+h2o-llm-studio:
+  enabled: false
+
+ollama:
+  enabled: false
+
+# MinIO for object storage
+minio:
+  enabled: true
+  persistence:
+    size: 20Gi
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+
+# Ingress with Oracle Load Balancer
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Oracle-specific annotations
+    oci.oraclecloud.com/load-balancer-type: "lb"
+  hosts:
+    - host: predator.oracle.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: predator-oracle-tls
+      hosts:
+        - predator.oracle.example.com
+
+# Backups to OCI Object Storage
+backup:
+  enabled: true
+  schedule: "0 2 * * *" # Daily at 2 AM
+  destination: "oci://predator-backups"
+  retentionDays: 30

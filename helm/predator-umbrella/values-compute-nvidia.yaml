@@ -1,0 +1,213 @@
+# Values for NVIDIA Compute environment
+# Heavy compute with GPU support for ML training
+
+global:
+  environment: compute
+  namespace: predator-compute
+
+backend:
+  replicaCount: 2
+  image:
+    repository: predator/ua-sources
+    tag: "latest"
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2"
+      memory: "2Gi"
+  env:
+    LOG_LEVEL: "INFO"
+    ENABLE_XAI: "true"
+    ENABLE_AUGMENTATION: "true"
+    ENABLE_MULTIMODAL: "true"
+    ENABLE_H2O_STUDIO: "true"
+    CUDA_VISIBLE_DEVICES: "0"
+
+frontend:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+celery:
+  replicaCount: 3
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2"
+      memory: "4Gi"
+  # GPU for ML tasks
+  gpu:
+    enabled: true
+    count: 1
+
+# Data stores - production resources
+postgresql:
+  enabled: true
+  persistence:
+    size: 50Gi
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "1"
+  # Enable connection pooling
+  connectionPooling:
+    enabled: true
+    maxConnections: 100
+
+redis:
+  enabled: true
+  architecture: standalone
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+qdrant:
+  enabled: true
+  replicaCount: 1
+  persistence:
+    size: 20Gi
+  resources:
+    requests:
+      memory: "2Gi"
+      cpu: "500m"
+    limits:
+      memory: "4Gi"
+      cpu: "2"
+
+opensearch:
+  enabled: true
+  singleNode: false
+  replicas: 2
+  resources:
+    requests:
+      memory: "2Gi"
+      cpu: "500m"
+    limits:
+      memory: "4Gi"
+      cpu: "2"
+  javaOpts: "-Xms2g -Xmx2g"
+
+opensearch-dashboards:
+  enabled: true
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+
+# Monitoring - enabled
+prometheus:
+  enabled: true
+  server:
+    global:
+      scrape_interval: 15s
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "200m"
+
+grafana:
+  enabled: true
+  adminPassword: "${GRAFANA_ADMIN_PASSWORD}"
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+
+# ML features - full stack
+mlflow:
+  enabled: true
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+# H2O LLM Studio for fine-tuning
+h2o-llm-studio:
+  enabled: true
+  gpu:
+    enabled: true
+    count: 1
+  resources:
+    requests:
+      memory: "4Gi"
+      cpu: "1"
+    limits:
+      memory: "8Gi"
+      cpu: "4"
+      nvidia.com/gpu: 1
+
+# Ollama for local LLM inference
+ollama:
+  enabled: true
+  gpu:
+    enabled: true
+    count: 1
+  models:
+    - mistral:7b
+    - codellama:7b
+  resources:
+    requests:
+      memory: "4Gi"
+      cpu: "1"
+    limits:
+      memory: "8Gi"
+      cpu: "4"
+      nvidia.com/gpu: 1
+
+# MinIO for object storage
+minio:
+  enabled: true
+  persistence:
+    size: 100Gi
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+
+# Ingress with TLS
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+  hosts:
+    - host: predator.nvidia.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: predator-tls
+      hosts:
+        - predator.nvidia.local
+
+# Kubecost for cost monitoring
+kubecost:
+  enabled: true
+
+# Autoscaling
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80

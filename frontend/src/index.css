@@ -351,3 +351,294 @@ a {
         opacity: .5;
     }
 }
+
+/* ============================================================================
+   SEARCH CONSOLE - Next Generation UI Styles
+   ============================================================================ */
+
+/* Grok-inspired color scheme */
+:root {
+    --color-neon-cyan: #00f3ff;
+    --color-neon-teal: #0dd3c5;
+    --color-neon-purple: #a855f7;
+    --color-neon-pink: #ec4899;
+    --color-deep-navy: #0a0f1c;
+    --color-slate-dark: #0f172a;
+    --color-slate-mid: #1e293b;
+}
+
+/* Gradient border animation */
+@keyframes gradient-rotate {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.gradient-border-animated {
+    background: linear-gradient(90deg, var(--color-neon-cyan), var(--color-neon-teal), var(--color-neon-purple), var(--color-neon-cyan));
+    background-size: 300% 100%;
+    animation: gradient-rotate 4s ease infinite;
+}
+
+/* Glow effects */
+.glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.3), 0 0 40px rgba(0, 243, 255, 0.1);
+}
+
+.glow-purple {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3), 0 0 40px rgba(168, 85, 247, 0.1);
+}
+
+.glow-pink {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3), 0 0 40px rgba(236, 72, 153, 0.1);
+}
+
+/* Search input giant style */
+.search-input-giant {
+    font-size: 1.25rem;
+    font-weight: 300;
+    letter-spacing: 0.025em;
+    transition: all 0.3s ease;
+}
+
+.search-input-giant::placeholder {
+    color: #64748b;
+    transition: color 0.3s ease;
+}
+
+.search-input-giant:focus::placeholder {
+    color: #475569;
+}
+
+/* Result card highlight effect */
+.result-card-highlight {
+    position: relative;
+    overflow: hidden;
+}
+
+.result-card-highlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.05), transparent);
+    transition: left 0.6s ease;
+}
+
+.result-card-highlight:hover::before {
+    left: 100%;
+}
+
+/* XAI panel styles */
+.xai-panel {
+    background: linear-gradient(135deg, var(--color-slate-dark) 0%, var(--color-deep-navy) 100%);
+}
+
+/* Chip/badge styles */
+.chip-active {
+    background: linear-gradient(135deg, rgba(0, 243, 255, 0.15) 0%, rgba(13, 211, 197, 0.1) 100%);
+    border-color: rgba(0, 243, 255, 0.4);
+    color: var(--color-neon-cyan);
+}
+
+.chip-inactive {
+    background: rgba(30, 41, 59, 0.5);
+    border-color: rgba(71, 85, 105, 0.5);
+    color: #94a3b8;
+}
+
+.chip-inactive:hover {
+    border-color: rgba(100, 116, 139, 0.8);
+    color: #cbd5e1;
+}
+
+/* Glassmorphism panel */
+.glass-panel {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Score bar animation */
+@keyframes score-fill {
+    from {
+        width: 0;
+    }
+}
+
+.score-bar-animated {
+    animation: score-fill 0.8s ease-out forwards;
+}
+
+/* Floating action button */
+.fab-search {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--color-neon-cyan), var(--color-neon-teal));
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(0, 243, 255, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fab-search:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 12px 40px rgba(0, 243, 255, 0.4);
+}
+
+/* Rank badge */
+.rank-badge {
+    position: absolute;
+    left: -12px;
+    top: 16px;
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, var(--color-neon-cyan), var(--color-neon-teal));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #0a0f1c;
+    box-shadow: 0 4px 12px rgba(0, 243, 255, 0.4);
+}
+
+/* Match highlight */
+mark.match-highlight {
+    background: linear-gradient(90deg, rgba(0, 243, 255, 0.3), rgba(13, 211, 197, 0.2));
+    color: var(--color-neon-cyan);
+    padding: 0 4px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* Terminal mode / Hacker mode */
+.hacker-mode {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+}
+
+.hacker-mode * {
+    font-family: inherit !important;
+}
+
+.hacker-mode .text-cyan-400,
+.hacker-mode .text-teal-400 {
+    color: #22c55e !important;
+}
+
+.hacker-mode .from-cyan-500,
+.hacker-mode .to-teal-500 {
+    --tw-gradient-from: #22c55e !important;
+    --tw-gradient-to: #16a34a !important;
+}
+
+/* Dark mode scrollbar enhancements */
+.dark-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 3px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #1e293b, #334155);
+    border-radius: 3px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--color-neon-cyan), var(--color-neon-teal));
+}
+
+/* Premium badge pulse */
+@keyframes premium-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+.premium-badge {
+    animation: premium-pulse 2s ease-in-out infinite;
+}
+
+/* Loading shimmer */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.shimmer {
+    background: linear-gradient(90deg,
+            rgba(30, 41, 59, 0.8) 0%,
+            rgba(51, 65, 85, 0.8) 50%,
+            rgba(30, 41, 59, 0.8) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* Voice recording indicator */
+@keyframes voice-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+}
+
+.voice-recording {
+    animation: voice-pulse 1s ease-in-out infinite;
+}
+
+/* Filter sidebar transition */
+.filter-sidebar {
+    transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+/* Tooltip styles */
+.tooltip-dark {
+    background: var(--color-slate-dark);
+    border: 1px solid var(--color-slate-mid);
+    color: #e2e8f0;
+    font-size: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
