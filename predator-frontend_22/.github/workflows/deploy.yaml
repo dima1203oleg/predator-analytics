@@ -1,0 +1,99 @@
+name: Deploy Production (GitOps)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # 1. Quality Gate (Lint & Test)
+  quality-gate:
+    uses: ./.github/workflows/test-only.yml
+
+  # 2. Build & Push Container Images
+  build-push:
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Log in to Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      # Backend Build (UA Sources)
+      - name: Build & Push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ua-sources
+          file: ./ua-sources/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/ua-sources:v18.4.${{ github.run_number }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Frontend Build (React/Vite)
+      - name: Build & Push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:v18.4.${{ github.run_number }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # 3. Update GitOps Manifests (The Bridge)
+  update-manifests:
+    needs: build-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Update Helm Values
+        run: |
+          NEW_TAG="v18.4.${{ github.run_number }}"
+          echo "Updating global tag to $NEW_TAG"
+          
+          # Update the tag in charts/predator/values.yaml
+          # Using strict regex to ensure we only catch the specific line
+          sed -i "s|tag: \".*\" # ci-release-tag|tag: \"$NEW_TAG\" # ci-release-tag|g" charts/predator/values.yaml
+          
+          # Update ua-sources specific tag if needed (optional, umbrella chart usually overrides)
+          # sed -i "s|tag: \".*\"|tag: \"$NEW_TAG\"|g" charts/ua-sources/values.yaml
+          
+          echo "Verifying changes:"
+          grep "ci-release-tag" charts/predator/values.yaml
+          
+      - name: Commit & Push Config Changes
+        run: |
+          git config user.name "Predator GitOps Bot"
+          git config user.email "bot@predator.system"
+          git add charts/predator/values.yaml
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit (tag might be identical)."
+          else
+            git commit -m "chore(release): update images to v18.4.${{ github.run_number }}"
+            git push
+          fi

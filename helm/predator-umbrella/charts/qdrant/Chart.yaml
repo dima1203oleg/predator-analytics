@@ -1,0 +1,8 @@
+apiVersion: v2
+name: qdrant
+version: 1.0.0
+appVersion: "v1.7.0"
+description: A High Performance Vector Database
+type: application
+maintainers:
+  - name: Predator Platform Team

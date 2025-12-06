@@ -1,0 +1,235 @@
+# Predator Analytics v21.0 - Agent Registry
+# Complete specification with 10 specialized agents and 58 model mappings
+
+agents:
+  # ============================================
+  # SECURITY & TESTING
+  # ============================================
+  red_team:
+    name: "RedTeamAgent"
+    description: "Automated penetration testing and security validation"
+    primary: "microsoft/phi-4-reasoning"
+    fallback: "mistral-ai/codestral-2501"
+    embeddings: "cohere/embed-v3-english"
+    tools:
+      - "exploit_generator"
+      - "log_analyzer"
+      - "vulnerability_scanner"
+
+  # ============================================
+  # DATA QUALITY & VALIDATION
+  # ============================================
+  dataset_inspector:
+    name: "DatasetInspectorAgent"
+    description: "Data quality validation and profiling"
+    primary: "openai/gpt-5-mini"
+    fallback: "mistral-ai/mistral-medium-2505"
+    embeddings: "openai/text-embedding-3-large"
+    tools:
+      - "great_expectations"
+      - "pandas_profiling"
+      - "duplicate_detector"
+
+  # ============================================
+  # GRAPH & RELATIONSHIP ANALYSIS
+  # ============================================
+  lobby_map_builder:
+    name: "LobbyMapBuilder"
+    description: "Entity extraction and influence graph construction"
+    primary: "meta/llama-3.1-8b-instruct"
+    fallback: "openai/gpt-4o"
+    embeddings: "cohere/embed-v3-multilingual"
+    tools:
+      - "ner_extractor"
+      - "networkx_graph"
+      - "neo4j_connector"
+
+  # ============================================
+  # DEVOPS & SELF-HEALING
+  # ============================================
+  auto_heal:
+    name: "AutoHealAgent"
+    description: "Automated service recovery and infrastructure healing"
+    primary: "mistral-ai/codestral-2501"
+    fallback: "openai/gpt-4.1-mini"
+    classification: "microsoft/phi-3-small-8k-instruct"
+    tools:
+      - "kubectl"
+      - "argocd_cli"
+      - "prometheus_api"
+
+  # ============================================
+  # DATA GENERATION
+  # ============================================
+  synthetic_data:
+    name: "SyntheticDataAgent"
+    description: "Realistic dataset generation and anonymization"
+    primary: "meta/llama-4-maverick-17b-128e-instruct"
+    fallback: "openai/gpt-5-mini"
+    vision: "microsoft/phi-3.5-vision-instruct"
+    tools:
+      - "faker"
+      - "sdv"
+      - "template_engine"
+
+  # ============================================
+  # DECISION MAKING
+  # ============================================
+  arbiter:
+    name: "ArbiterAgent"
+    description: "Multi-model response comparison and selection"
+    primary: "microsoft/phi-4-reasoning"
+    fallback: "openai/gpt-4o"
+    local: "meta/llama-3.1-8b-instruct"
+    tools:
+      - "response_scorer"
+      - "consensus_builder"
+
+  # ============================================
+  # COMPLIANCE & ETHICS
+  # ============================================
+  human_intervention:
+    name: "HumanInterventionAgent"
+    description: "Risk detection and compliance validation"
+    primary: "meta/llama-3.1-8b-instruct"
+    fallback: "openai/gpt-5-chat"
+    summary: "cohere/command-r-plus-08-2024"
+    tools:
+      - "gdpr_checker"
+      - "pii_detector"
+      - "escalation_manager"
+
+  # ============================================
+  # SYSTEM DIAGNOSTICS
+  # ============================================
+  self_diagnosis:
+    name: "SelfDiagnosisAgent"
+    description: "Error classification and incident analysis"
+    primary: "openai/gpt-4.1-mini"
+    fallback: "mistral-ai/codestral-2501"
+    embeddings: "cohere/embed-v3-english"
+    tools:
+      - "log_parser"
+      - "stack_trace_analyzer"
+      - "incident_matcher"
+
+  # ============================================
+  # CONTINUOUS LEARNING
+  # ============================================
+  self_improvement:
+    name: "SelfImprovementAgent"
+    description: "Feedback analysis and model optimization"
+    primary: "meta/llama-3.1-8b-instruct"
+    fallback: "microsoft/phi-4-mini-reasoning"
+    reporting: "openai/gpt-5-mini"
+    tools:
+      - "drift_detector"
+      - "mlflow_api"
+      - "autotrain"
+
+  # ============================================
+  # ORCHESTRATION
+  # ============================================
+  orchestrator:
+    name: "AutoGenOrchestrator"
+    description: "Task decomposition and agent coordination"
+    primary: "deepseek/deepseek-r1-0528"
+    fallback: "microsoft/phi-3-medium-128k-instruct"
+    tools:
+      - "autogen"
+      - "langgraph"
+      - "task_planner"
+
+  # ============================================
+  # EXISTING AGENTS (from Phase 2)
+  # ============================================
+  retriever:
+    name: "RetrieverAgent"
+    description: "Data retrieval from PostgreSQL/Qdrant/OpenSearch"
+    primary: "gemini-pro"
+    fallback: "mistral-7b"
+    embeddings: "nomic-embed-text"
+
+  miner:
+    name: "MinerAgent"
+    description: "Pattern detection and anomaly analysis"
+    primary: "gpt-4o"
+    fallback: "claude-3-sonnet"
+
+  health_monitor:
+    name: "HealthMonitorAgent"
+    description: "Service health monitoring"
+    primary: "phi-3-mini"
+    fallback: "gemma-2b"
+
+  data_acquisition:
+    name: "DataAcquisitionAgent"
+    description: "Data ingestion from various sources"
+    primary: "llama-3.1-8b"
+    fallback: "mistral-7b"
+
+# ============================================
+# GLOBAL POLICIES
+# ============================================
+policies:
+  billing_enabled: true
+  pii_gate_enabled: true
+  default_timeout_sec: 60
+  max_retries: 3
+
+  # Model selection strategy
+  selection_strategy: "cost_aware" # cost_aware, latency_aware, quality_first
+
+  # Fallback chain
+  fallback_chain:
+    - "local_ollama"
+    - "groq"
+    - "gemini"
+    - "openai"
+
+  # Rate limits (per tier)
+  rate_limits:
+    free: 100 # requests/month
+    pro: 10000
+    gov: -1 # unlimited
+
+# ============================================
+# MODEL CATALOG (58 Models)
+# ============================================
+models:
+  reasoning:
+    - "microsoft/phi-4-reasoning"
+    - "microsoft/phi-4-mini-reasoning"
+    - "deepseek/deepseek-r1-0528"
+
+  code:
+    - "mistral-ai/codestral-2501"
+    - "openai/gpt-4o"
+    - "meta/llama-3.1-70b-instruct"
+
+  fast:
+    - "mistral-ai/ministral-3b"
+    - "microsoft/phi-3-mini"
+    - "ai21-labs/jamba-mini"
+    - "openai/gpt-4.1-nano"
+
+  general:
+    - "openai/gpt-5-mini"
+    - "openai/gpt-5-chat"
+    - "meta/llama-3.1-8b-instruct"
+    - "mistral-ai/mistral-medium-2505"
+    - "cohere/command-r-plus-08-2024"
+
+  embeddings:
+    - "openai/text-embedding-3-large"
+    - "cohere/embed-v3-multilingual"
+    - "cohere/embed-v3-english"
+    - "nomic-embed-text"
+
+  vision:
+    - "meta/llama-3.2-11b-vision-instruct"
+    - "microsoft/phi-3.5-vision-instruct"
+
+  creative:
+    - "meta/llama-4-maverick-17b-128e-instruct"
+    - "openai/gpt-5-chat"

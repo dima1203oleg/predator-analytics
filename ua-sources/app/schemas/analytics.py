@@ -12,10 +12,19 @@ class RiskLevel(str, Enum):
     CRITICAL = "CRITICAL"
 
 
+class LLMMode(str, Enum):
+    AUTO = "auto"          # Smart routing based on complexity
+    FAST = "fast"          # Force fast model (Groq/Mistral)
+    PRECISE = "precise"    # Force smart model (GPT-4/Claude)
+    COUNCIL = "council"    # Multi-model consensus
+
+
 class AnalyticsQuery(BaseModel):
     query: str
     sectors: List[str] = ["GOV", "BIZ"]
     depth: str = "standard"
+    llm_mode: LLMMode = LLMMode.AUTO
+    preferred_provider: Optional[str] = None
 
 
 class RiskAssessment(BaseModel):

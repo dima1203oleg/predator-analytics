@@ -4,7 +4,7 @@ Builds connection graphs between entities
 """
 from typing import Dict, Any, List, Optional, Set
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 logger = logging.getLogger(__name__)
@@ -89,7 +89,7 @@ class GraphBuilderService:
             edges=edges,
             root_entity=root_entity,
             depth=depth,
-            created_at=datetime.utcnow()
+            created_at=datetime.now(timezone.utc)
         )
     
     async def _explore_entity(

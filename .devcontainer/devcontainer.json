@@ -1,0 +1,76 @@
+{
+    "name": "Predator Analytics v21.0",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "backend",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-azuretools.vscode-docker",
+                "GitHub.copilot",
+                "GitHub.copilot-chat",
+                "esbenp.prettier-vscode",
+                "dbaeumer.vscode-eslint",
+                "ms-vscode.makefile-tools"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.linting.enabled": true,
+                "python.linting.pylintEnabled": true,
+                "python.formatting.provider": "black",
+                "editor.formatOnSave": true,
+                "files.exclude": {
+                    "**/__pycache__": true,
+                    "**/*.pyc": true,
+                    "**/.pytest_cache": true,
+                    "**/node_modules": true
+                }
+            }
+        }
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+            "version": "latest",
+            "helm": "latest"
+        },
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "18"
+        }
+    },
+    "forwardPorts": [
+        8000,
+        3000,
+        5432,
+        6379,
+        6333,
+        9200,
+        9000,
+        9001,
+        3001,
+        9090,
+        5000
+    ],
+    "portsAttributes": {
+        "8000": {
+            "label": "Backend API",
+            "onAutoForward": "notify"
+        },
+        "3000": {
+            "label": "Frontend",
+            "onAutoForward": "openBrowser"
+        },
+        "9001": {
+            "label": "MinIO Console",
+            "onAutoForward": "notify"
+        },
+        "3001": {
+            "label": "Grafana",
+            "onAutoForward": "notify"
+        }
+    },
+    "postCreateCommand": "pip install -r ua-sources/requirements.txt && npm install",
+    "remoteUser": "vscode"
+}

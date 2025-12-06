@@ -1,0 +1,40 @@
+apiVersion: v2
+name: predator-umbrella
+description: A Helm chart for Predator Analytics v21.0
+type: application
+version: 0.2.0
+appVersion: "21.0.0"
+
+dependencies:
+  - name: postgresql
+    version: 12.5.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: redis
+    version: 17.11.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
+  - name: qdrant
+    version: 0.4.0
+    repository: https://qdrant.github.io/qdrant-helm
+    condition: qdrant.enabled
+  - name: minio
+    version: 12.8.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: minio.enabled
+  - name: keycloak
+    version: 16.0.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: keycloak.enabled
+  - name: opensearch
+    version: 2.15.0
+    repository: https://opensearch-project.github.io/helm-charts
+    condition: opensearch.enabled
+  - name: prometheus
+    version: 25.0.0
+    repository: https://prometheus-community.github.io/helm-charts
+    condition: prometheus.enabled
+  - name: grafana
+    version: 7.0.0
+    repository: https://grafana.github.io/helm-charts
+    condition: grafana.enabled

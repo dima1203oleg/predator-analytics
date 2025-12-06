@@ -1,6 +1,6 @@
 """Sources Router - Data sources management"""
 from fastapi import APIRouter
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter(prefix="/sources", tags=["Sources"])
 
@@ -14,28 +14,28 @@ async def list_sources():
             "name": "Prozorro",
             "type": "API",
             "status": "ACTIVE",
-            "last_sync": datetime.utcnow().isoformat()
+            "last_sync": datetime.now(timezone.utc).isoformat()
         },
         {
             "id": "edr",
             "name": "EDR (Business Registry)",
             "type": "API",
             "status": "ACTIVE",
-            "last_sync": datetime.utcnow().isoformat()
+            "last_sync": datetime.now(timezone.utc).isoformat()
         },
         {
             "id": "nbu",
             "name": "NBU Exchange Rates",
             "type": "API",
             "status": "ACTIVE",
-            "last_sync": datetime.utcnow().isoformat()
+            "last_sync": datetime.now(timezone.utc).isoformat()
         },
         {
             "id": "tax",
             "name": "Tax Registry",
             "type": "API",
             "status": "ACTIVE",
-            "last_sync": datetime.utcnow().isoformat()
+            "last_sync": datetime.now(timezone.utc).isoformat()
         },
         {
             "id": "customs",
@@ -54,7 +54,7 @@ async def get_source(source_id: str):
         "id": source_id,
         "status": "ACTIVE",
         "records_total": 0,
-        "last_sync": datetime.utcnow().isoformat()
+        "last_sync": datetime.now(timezone.utc).isoformat()
     }
 
 
@@ -75,5 +75,6 @@ async def check_source_health(source_id: str):
         "source_id": source_id,
         "healthy": True,
         "latency_ms": 150,
-        "last_check": datetime.utcnow().isoformat()
+        "last_check": datetime.now(timezone.utc).isoformat()
     }
+

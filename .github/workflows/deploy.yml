@@ -1,54 +1,77 @@
-name: Deploy
+name: GitOps Sync & Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
+
+env:
+  DOCKER_REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
-    - name: Build and push Backend
-      uses: docker/build-push-action@v5
-      with:
-        context: ./backend
-        push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/predator-backend:latest,${{ secrets.DOCKERHUB_USERNAME }}/predator-backend:${{ github.sha }}
-        
-    - name: Build and push Frontend
-      uses: docker/build-push-action@v5
-      with:
-        context: ./frontend
-        push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/predator-frontend:latest,${{ secrets.DOCKERHUB_USERNAME }}/predator-frontend:${{ github.sha }}
+    permissions:
+      contents: read
+      packages: write
 
-  deploy-k8s:
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ua-sources
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
+
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest
+
+  deploy-to-nvidia-server:
     needs: build-and-push
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Update Kubernetes resources
-      run: |
-        # Update image tags in Helm values or Kustomize
-        sed -i "s/tag: .*/tag: ${{ github.sha }}/" environments/macbook/values-mac.yaml
-        
-    - name: Commit and push changes
-      run: |
-        git config --global user.name 'GitHub Actions'
-        git config --global user.email 'actions@github.com'
-        git add environments/macbook/values-mac.yaml
-        git commit -m "chore(deploy): update image tags to ${{ github.sha }}"
-        git push
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+
+      - name: Deploy to Kubernetes via SSH Tunnel (GitOps)
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.NVIDIA_SERVER_SSH_KEY }}
+          SSH_HOST: ${{ secrets.NVIDIA_SERVER_HOST }}
+          SSH_PORT: ${{ secrets.NVIDIA_SERVER_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          # Establish tunnel to K8s API
+          ssh -o StrictHostKeyChecking=no -f -N -L 6443:localhost:6443 -i ~/.ssh/id_ed25519 -p $SSH_PORT dima@$SSH_HOST
+
+          # Deploy using Helm
+          export KUBECONFIG=./k8s/kubeconfig_proxied
+          helm upgrade --install predator ./helm/predator-umbrella \
+            --namespace predator --create-namespace \
+            --set backend.image.repository=${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/backend \
+            --set frontend.image.repository=${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/frontend

@@ -4,7 +4,7 @@ Combines LLM with Ukrainian data sources for intelligent analysis
 """
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 from .llm import llm_service, LLMResponse
@@ -53,7 +53,9 @@ class AIEngine:
         self,
         query: str,
         sectors: List[str] = None,
-        depth: str = "standard"
+        depth: str = "standard",
+        llm_mode: str = "auto",
+        preferred_provider: Optional[str] = None
     ) -> AnalysisResult:
         """
         Perform comprehensive analysis
@@ -114,9 +116,11 @@ class AIEngine:
         Проаналізуй ці дані та надай структуровану відповідь.
         """
         
-        llm_response = await llm_service.generate(
+        llm_response = await llm_service.generate_with_routing(
             prompt=prompt,
-            system=self.system_prompt
+            system=self.system_prompt,
+            mode=llm_mode,
+            preferred_provider=preferred_provider
         )
         
         processing_time = (time.time() - start_time) * 1000
@@ -128,7 +132,7 @@ class AIEngine:
             confidence=0.85 if llm_response.success else 0.0,
             processing_time_ms=processing_time,
             model_used=llm_response.model,
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
     
     async def quick_check(self, edrpou: str) -> Dict[str, Any]:
@@ -139,7 +143,7 @@ class AIEngine:
             "edrpou": edrpou,
             "found": company is not None,
             "data": company,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
 

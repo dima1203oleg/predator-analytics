@@ -1,0 +1,175 @@
+# Predator Analytics v21.0 - Development Environment Values
+# Overrides for LOCAL development (Mac M3 / Docker Desktop)
+
+global:
+  environment: development
+  piiMasking: false # Disable in dev for debugging
+  zeroTrust: false
+
+# ============================================
+# Minimal resources for dev
+# ============================================
+
+api:
+  enabled: true
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "1024Mi"
+  autoscaling:
+    enabled: false
+
+frontend:
+  enabled: true
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "128Mi"
+
+agents:
+  enabled: true
+  replicaCount: 1
+  # Enable only essential agents in dev
+  enabledAgents:
+    - retriever
+    - miner
+    - arbiter
+
+modelRouter:
+  enabled: true
+  replicaCount: 1
+  providers:
+    ollama:
+      enabled: true
+      url: "http://host.docker.internal:11434"
+    gemini:
+      enabled: false # Disable paid APIs in dev
+    groq:
+      enabled: true # Free tier available
+
+celery:
+  enabled: true
+  replicaCount: 1
+  concurrency: 2
+
+# ============================================
+# Databases - single replica for dev
+# ============================================
+
+postgres:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: "standard"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "512Mi"
+  backup:
+    enabled: false
+
+redis:
+  enabled: true
+  persistence:
+    enabled: false
+
+qdrant:
+  enabled: true
+  replicaCount: 1
+  persistence:
+    enabled: true
+    size: 5Gi
+
+opensearch:
+  enabled: true
+  replicas:
+    master: 1
+    data: 1
+  persistence:
+    enabled: true
+    size: 10Gi
+  # Disable ILM in dev
+  ilm:
+    enabled: false
+
+minio:
+  enabled: true
+  mode: standalone
+  replicas: 1
+  persistence:
+    enabled: true
+    size: 20Gi
+
+# ============================================
+# Disable heavy components in dev
+# ============================================
+
+keycloak:
+  enabled: false # Use mock auth in dev
+
+kafka:
+  enabled: false # Use Redis for simple messaging
+
+mlflow:
+  enabled: true
+  persistence:
+    size: 10Gi
+
+neo4j:
+  enabled: false
+
+voice:
+  enabled: false # Enable when working on voice
+
+# ============================================
+# Observability - minimal
+# ============================================
+
+observability:
+  enabled: true
+  prometheus:
+    enabled: true
+    retention: 7d
+  grafana:
+    enabled: true
+  loki:
+    enabled: false # Use docker logs
+  tempo:
+    enabled: false
+  alertmanager:
+    enabled: false
+
+# ============================================
+# Ingress - dev mode
+# ============================================
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: localhost
+      paths:
+        - path: /
+          pathType: Prefix
+          service: frontend
+        - path: /api
+          pathType: Prefix
+          service: api
+  tls: [] # No TLS in dev
+
+# ============================================
+# Security - relaxed for dev
+# ============================================
+
+networkPolicies:
+  enabled: false
+
+pdb:
+  enabled: false

@@ -15,8 +15,16 @@ class TelegramBotService:
         """Send message"""
         if not self.enabled:
             return None
-        # Would use python-telegram-bot
-        return True
+        
+        try:
+            import httpx
+            url = f"https://api.telegram.org/bot{self.token}/sendMessage"
+            async with httpx.AsyncClient() as client:
+                await client.post(url, json={"chat_id": chat_id, "text": text})
+            return True
+        except Exception as e:
+            logger.error(f"Failed to send telegram message: {e}")
+            return False
     
     async def set_webhook(self, url: str):
         """Set webhook"""
