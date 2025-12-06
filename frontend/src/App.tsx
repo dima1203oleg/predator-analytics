@@ -17,17 +17,22 @@ const SecurityView = lazy(() => import('./views/SecurityView'));
 const ParsersView = lazy(() => import('./views/ParsersView'));
 const AnalyticsView = lazy(() => import('./views/AnalyticsView'));
 const SettingsView = lazy(() => import('./views/SettingsView'));
-const AdminDashboard = lazy(() => import('./views/AdminDashboard')); // Added
-// const DeploymentView = lazy(() => import('./views/DeploymentView')); // DEPRECATED: Merged into InfraView
+const AdminDashboard = lazy(() => import('./views/AdminDashboard'));
 const MonitoringView = lazy(() => import('./views/MonitoringView'));
 const LLMView = lazy(() => import('./views/LLMView'));
 const IntegrationView = lazy(() => import('./views/IntegrationView'));
 const UserView = lazy(() => import('./views/UserView'));
 const SuperIntelligenceView = lazy(() => import('./views/SuperIntelligenceView'));
-const InfraView = lazy(() => import('./views/InfraView')); // The new Engineering Hub
+const InfraView = lazy(() => import('./views/InfraView'));
 const SystemBrainView = lazy(() => import('./views/SystemBrainView'));
-const NasView = lazy(() => import('./views/NasView')); 
-const OpponentView = lazy(() => import('./views/OpponentView')); // Red Team
+const NasView = lazy(() => import('./views/NasView'));
+const OpponentView = lazy(() => import('./views/OpponentView'));
+
+// NEW: Next-Gen UI Views
+const SearchConsole = lazy(() => import('./views/SearchConsole'));
+const DatasetStudio = lazy(() => import('./views/DatasetStudio'));
+const AutoOptimizerView = lazy(() => import('./views/AutoOptimizerView'));
+
 
 const LoadingSpinner = () => (
   <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-slate-500 gap-4">
@@ -43,7 +48,7 @@ function App() {
     const isAuth = sessionStorage.getItem('predator_auth');
     return isAuth === 'true' ? 'RUNNING' : 'BOOTING';
   });
-  
+
   const [activeTab, setActiveTab] = useState<TabView>(TabView.DASHBOARD);
 
   const handleBootComplete = () => {
@@ -72,14 +77,17 @@ function App() {
   const renderContent = () => {
     switch (activeTab) {
       case TabView.DASHBOARD: return <DashboardView />;
+      case TabView.SEARCH: return <SearchConsole />;
+      case TabView.DATASET_STUDIO: return <DatasetStudio />;
+      case TabView.AUTO_OPTIMIZER: return <AutoOptimizerView />;
       case TabView.DATA: return <DatabasesView />;
       case TabView.AGENTS: return <AgentsView />;
       case TabView.SECURITY: return <SecurityView />;
       case TabView.ETL: return <ParsersView />;
       case TabView.ANALYTICS: return <AnalyticsView />;
       case TabView.SETTINGS: return <SettingsView />;
-      case TabView.ADMIN_DASHBOARD: return <AdminDashboard />; // Added
-      case TabView.DEVOPS: return <InfraView />; // Updated to use the unified Engineering Hub
+      case TabView.ADMIN_DASHBOARD: return <AdminDashboard />;
+      case TabView.DEVOPS: return <InfraView />;
       case TabView.MONITORING: return <MonitoringView />;
       case TabView.LLM: return <LLMView />;
       case TabView.INTEGRATION: return <IntegrationView />;
@@ -105,8 +113,8 @@ function App() {
       <GlobalProvider>
         <AgentProvider>
           <SuperIntelligenceProvider>
-            <Layout 
-              activeTab={activeTab} 
+            <Layout
+              activeTab={activeTab}
               onTabChange={setActiveTab}
               onLock={handleLock}
               onLogout={handleLogout}
