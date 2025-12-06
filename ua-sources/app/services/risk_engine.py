@@ -3,7 +3,7 @@ Risk Engine Service - Risk assessment and scoring
 """
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 import logging
 
@@ -97,7 +97,7 @@ class RiskEngine:
             score=score,
             factors=factors,
             mitigations=mitigations,
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
     
     def _score_to_level(self, score: float) -> RiskLevel:

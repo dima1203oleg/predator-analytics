@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:5173"]
     
     # Database
-    DATABASE_URL: str = "postgresql+asyncpg://predator:predator@localhost:5432/predator_ua"
+    DATABASE_URL: str = "sqlite+aiosqlite:///./predator.db"
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 5
     
@@ -30,6 +30,17 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
     CELERY_BROKER_URL: str = "redis://localhost:6379/1"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/1"
+    
+    # Infrastructure
+    QDRANT_URL: str = "http://localhost:6333"
+    OPENSEARCH_URL: str = "http://localhost:9200"
+    MINIO_ENDPOINT: str = "localhost:9000"
+    MINIO_ACCESS_KEY: str = "predator_admin"
+    MINIO_SECRET_KEY: str = "predator_secret_key"
+    
+    # Vault (Secrets)
+    VAULT_ADDR: str = "http://vault:8200"
+    VAULT_TOKEN: Optional[str] = None
     
     # External Ukrainian APIs
     PROZORRO_API_URL: str = "https://public.api.openprocurement.org/api/2.5"
@@ -41,7 +52,27 @@ class Settings(BaseSettings):
     # LLM Settings
     OPENAI_API_KEY: Optional[str] = None
     GEMINI_API_KEY: Optional[str] = None
-    LLM_DEFAULT_PROVIDER: str = "gemini"
+    ANTHROPIC_API_KEY: Optional[str] = None
+    GROQ_API_KEY: Optional[str] = None
+    MISTRAL_API_KEY: Optional[str] = None
+    OPENROUTER_API_KEY: Optional[str] = None
+    HUGGINGFACE_API_KEY: Optional[str] = None
+    COHERE_API_KEY: Optional[str] = None
+    TOGETHER_API_KEY: Optional[str] = None
+    
+    # LLM Base URLs (Configurable for proxies)
+    LLM_OPENAI_BASE_URL: str = "https://api.openai.com/v1"
+    LLM_GEMINI_BASE_URL: str = "https://generativelanguage.googleapis.com/v1beta"
+    LLM_ANTHROPIC_BASE_URL: str = "https://api.anthropic.com/v1"
+    LLM_GROQ_BASE_URL: str = "https://api.groq.com/openai/v1"
+    LLM_MISTRAL_BASE_URL: str = "https://api.mistral.ai/v1"
+    LLM_OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
+    LLM_OLLAMA_BASE_URL: str = "http://46.219.108.236:11434/api"
+    LLM_HUGGINGFACE_BASE_URL: str = "https://api-inference.huggingface.co/models"
+    LLM_COHERE_BASE_URL: str = "https://api.cohere.ai/v1"
+    LLM_TOGETHER_BASE_URL: str = "https://api.together.xyz/v1"
+    
+    LLM_DEFAULT_PROVIDER: str = "groq"
     
     # Security
     SECRET_KEY: str = "change-in-production"
@@ -55,6 +86,7 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = True
+        extra = "ignore"
 
 
 @lru_cache()

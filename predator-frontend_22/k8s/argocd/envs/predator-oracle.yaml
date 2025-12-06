@@ -1,0 +1,32 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-oracle
+  namespace: argocd
+  labels:
+    env: canary
+    arch: arm64
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/predator-analytics/nexus-core.git
+    path: charts/predator
+    targetRevision: main
+    helm:
+      valueFiles:
+        - values.yaml
+      parameters:
+        - name: global.env
+          value: canary
+        - name: ollama.enabled
+          value: "false" # No GPU on Free Tier
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: predator-canary
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

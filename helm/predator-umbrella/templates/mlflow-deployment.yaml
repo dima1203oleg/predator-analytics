@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-umbrella.fullname" . }}-mlflow
+  labels:
+    {{- include "predator-umbrella.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mlflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator-umbrella.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: mlflow
+  template:
+    metadata:
+      labels:
+        {{- include "predator-umbrella.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: mlflow
+    spec:
+      containers:
+        - name: mlflow
+          image: "ghcr.io/mlflow/mlflow:latest"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 5000
+              protocol: TCP
+          env:
+            - name: MLFLOW_BACKEND_STORE_URI
+              value: "postgresql://{{ .Values.postgresql.auth.username }}:{{ .Values.postgresql.auth.password }}@{{ .Release.Name }}-postgresql:5432/mlflow"
+            - name: MLFLOW_ARTIFACT_ROOT
+              value: "s3://mlflow/"
+            - name: AWS_ACCESS_KEY_ID
+              value: "{{ .Values.minio.auth.rootUser }}"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "{{ .Values.minio.auth.rootPassword }}"
+            - name: MLFLOW_S3_ENDPOINT_URL
+              value: "http://{{ .Release.Name }}-minio:9000"

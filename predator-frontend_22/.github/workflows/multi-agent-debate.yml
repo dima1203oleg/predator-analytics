@@ -1,0 +1,126 @@
+name: "🧠 Multi-Agent Debate (Defender vs Innovator)"
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  issues: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  defender-review:
+    name: "🛡️ Defender: Security & Cost"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+
+      - name: Run Gemini Defender review
+        uses: google-github-actions/run-gemini-cli@v0
+        id: gemini_defender
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: |
+            ROLE: You are DEFENDER agent for Predator Analytics v18.
+            
+            CONTEXT:
+            - This is a critical infrastructure project (K8s, ArgoCD, Python/FastAPI, React).
+            - Environments: MacBook M3 (Dev), NVIDIA GTX 1080 (Prod), Oracle Ampere (Cloud).
+            - Strict "Truth-Only" protocol. No hallucinations allowed.
+
+            Focus ONLY on:
+            - Security risks (secrets in code, unauthenticated endpoints, permissive RBAC).
+            - Stability (race conditions, lack of error handling).
+            - Cloud cost & Resource limits (prevent OOMKilled on Oracle Free Tier).
+            - Docker image size bloat.
+
+            TASK:
+            1. Analyze the `git diff` of this PR.
+            2. Identify DIRECT risks.
+            3. Output a strict report:
+               - 🔴 [BLOCKER]: Critical security/stability issues.
+               - 🟡 [WARNING]: Resource or cost concerns.
+            4. If no issues, reply "✅ DEFENDER APPROVED".
+
+  innovator-review:
+    name: "🚀 Innovator: Performance & Features"
+    runs-on: ubuntu-latest
+    needs: defender-review
+    if: always()
+
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+
+      - name: Run Gemini Innovator review
+        uses: google-github-actions/run-gemini-cli@v0
+        id: gemini_innovator
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: |
+            ROLE: You are INNOVATOR agent for Predator Analytics v18.
+
+            CONTEXT:
+            - AI-Native platform. Focus on speed, UX, and AI capabilities.
+            - Tech stack: React/Vite, Python/FastAPI, Polars, Qdrant.
+
+            Focus ONLY on:
+            - Performance optimizations (React renders, Python async, Polars usage).
+            - Developer Experience (clean code, structure).
+            - New AI capabilities (Gemini 2.5/3 integration opportunities).
+            - Auto-scaling efficiency.
+
+            TASK:
+            1. Analyze the `git diff`.
+            2. Propose concrete improvements.
+            3. Output an inspiring report:
+               - ⚡ [SPEED]: Performance wins.
+               - 💡 [IDEA]: Refactoring or new feature ideas.
+            4. If code is boring but fine, reply "✨ CODE LOOKS CLEAN".
+
+  summary-judge:
+    name: "⚖️ Judge: Final Verdict"
+    runs-on: ubuntu-latest
+    needs: [defender-review, innovator-review]
+    if: always()
+
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+
+      - name: Gemini Judge summary
+        uses: google-github-actions/run-gemini-cli@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: |
+            ROLE: You are JUDGE agent.
+            
+            INPUT:
+            - Review the code changes in this PR.
+            - Consider the roles of DEFENDER (Security) and INNOVATOR (Speed).
+
+            TASK:
+            1. Synthesize a final verdict for the human reviewer.
+            2. Structure:
+               - 🛑 MANDATORY FIXES (If any security/crash risks found).
+               - ⚠️ SUGGESTED IMPROVEMENTS (Performance/Cleanliness).
+               - 🟢 READY TO MERGE (If safe).
+            3. Keep it brief and professional.

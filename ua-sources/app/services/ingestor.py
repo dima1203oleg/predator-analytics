@@ -4,7 +4,7 @@ Handles bulk data import from various sources
 """
 from typing import Dict, Any, List, Optional, AsyncGenerator
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 import asyncio
 import logging
@@ -84,7 +84,7 @@ class IngestorService:
             return
         
         job.status = IngestionStatus.RUNNING
-        job.started_at = datetime.utcnow()
+        job.started_at = datetime.now(timezone.utc)
         
         try:
             # Simulate processing
@@ -112,7 +112,7 @@ class IngestorService:
             logger.error(f"Ingestion job {job_id} failed: {e}")
         
         finally:
-            job.completed_at = datetime.utcnow()
+            job.completed_at = datetime.now(timezone.utc)
     
     async def _process_record(self, record: Dict[str, Any]):
         """Process a single record"""

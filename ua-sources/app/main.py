@@ -8,7 +8,8 @@ from contextlib import asynccontextmanager
 import logging
 
 from .core.config import settings
-from .routers import portal, evolution, analytics, integration
+from .core.db import init_db
+from .routers import portal, evolution, analytics, integrations, system, databases, sources, security
 
 # Configure logging
 logging.basicConfig(
@@ -23,6 +24,15 @@ async def lifespan(app: FastAPI):
     """Application lifespan events"""
     logger.info(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
     logger.info(f"Environment: {settings.ENVIRONMENT}")
+    
+    # Initialize Database
+    try:
+        await init_db()
+        logger.info("Database initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize database: {e}")
+        logger.warning("Running in limited mode without database persistence")
+        
     yield
     logger.info("Shutting down...")
 
@@ -45,11 +55,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
-app.include_router(portal.router, tags=["Portal"])
-app.include_router(evolution.router, tags=["Evolution"])
-app.include_router(analytics.router, tags=["Analytics"])
-app.include_router(integration.router, tags=["Integration"])
+from fastapi import APIRouter
+
+# Create API Router
+api_router = APIRouter(prefix=settings.API_V1_PREFIX)
+
+# Include sub-routers
+api_router.include_router(portal.router)
+api_router.include_router(evolution.router)
+api_router.include_router(analytics.router)
+api_router.include_router(integrations.router)
+api_router.include_router(system.router)
+api_router.include_router(databases.router)
+api_router.include_router(sources.router)
+api_router.include_router(security.router)
+
+# Include API router in main app
+app.include_router(api_router)
 
 
 @app.get("/health")
@@ -75,7 +97,7 @@ async def root():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
-        "ua-sources.app.main:app",
+        "app.main:app",
         host="0.0.0.0",
         port=8001,
         reload=settings.DEBUG

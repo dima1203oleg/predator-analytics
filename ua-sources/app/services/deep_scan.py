@@ -1,10 +1,6 @@
-"""
-Deep Scan Service - Comprehensive data analysis
-Multi-source aggregation and risk assessment
-"""
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 import asyncio
 import logging
 
@@ -87,7 +83,7 @@ class DeepScanService:
             risk_score=risk_score,
             entities_found=total_entities,
             processing_time_ms=processing_time,
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
     
     async def _query_source(

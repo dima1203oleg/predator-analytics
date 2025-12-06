@@ -1,0 +1,33 @@
+name: AI Feedback Sender
+
+on:
+  push:
+    paths:
+      - ".ai/reports/**"
+
+jobs:
+  send-feedback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Find Report
+        id: find
+        run: |
+           FILE=$(git diff --name-only HEAD~1 HEAD | grep "^.ai/reports/" | head -n1 || true)
+           echo "file=$FILE" >> $GITHUB_OUTPUT
+           
+      - name: Send Webhook
+        if: steps.find.outputs.file != ''
+        env:
+          URL: ${{ secrets.AI_STUDIO_WEBHOOK_URL }}
+          FILE: ${{ steps.find.outputs.file }}
+        run: |
+          if [ -z "$URL" ]; then echo "No webhook URL"; exit 0; fi
+          
+          # Convert YAML to JSON
+          sudo apt-get install -y yq
+          JSON=$(yq -o=json '.' "$FILE")
+          
+          curl -X POST -H "Content-Type: application/json" -d "$JSON" "$URL"

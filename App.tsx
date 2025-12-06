@@ -4,19 +4,22 @@ import Layout from './components/Layout';
 import BootScreen from './components/BootScreen';
 import LoginScreen from './components/LoginScreen';
 import { TabView } from './types';
+import { AvatarChatWidget } from './components/avatar/AvatarChatWidget';
 import { AgentProvider } from './context/AgentContext';
 import { SuperIntelligenceProvider } from './context/SuperIntelligenceContext';
 import { ToastProvider } from './context/ToastContext';
+import { GlobalProvider } from './context/GlobalContext';
 
 // Lazy load views for better initial load performance
 const DashboardView = lazy(() => import('./views/DashboardView'));
+const AdminDashboard = lazy(() => import('./views/AdminDashboard'));
 const DatabasesView = lazy(() => import('./views/DatabasesView'));
 const AgentsView = lazy(() => import('./views/AgentsView'));
 const SecurityView = lazy(() => import('./views/SecurityView'));
 const ParsersView = lazy(() => import('./views/ParsersView'));
 const AnalyticsView = lazy(() => import('./views/AnalyticsView'));
 const SettingsView = lazy(() => import('./views/SettingsView'));
-const DeploymentView = lazy(() => import('./views/DeploymentView')); 
+const DeploymentView = lazy(() => import('./views/DeploymentView'));
 const MonitoringView = lazy(() => import('./views/MonitoringView'));
 const LLMView = lazy(() => import('./views/LLMView'));
 const IntegrationView = lazy(() => import('./views/IntegrationView'));
@@ -40,7 +43,7 @@ function App() {
     const isAuth = sessionStorage.getItem('predator_auth');
     return isAuth === 'true' ? 'RUNNING' : 'BOOTING';
   });
-  
+
   const [activeTab, setActiveTab] = useState<TabView>(TabView.DASHBOARD);
 
   const handleBootComplete = () => {
@@ -69,6 +72,7 @@ function App() {
   const renderContent = () => {
     switch (activeTab) {
       case TabView.DASHBOARD: return <DashboardView />;
+      case TabView.ADMIN: return <AdminDashboard />;
       case TabView.DATA: return <DatabasesView />;
       case TabView.AGENTS: return <AgentsView />;
       case TabView.SECURITY: return <SecurityView />;
@@ -97,21 +101,24 @@ function App() {
 
   return (
     <ToastProvider>
-      <AgentProvider>
-        <SuperIntelligenceProvider>
-          <Layout 
-            activeTab={activeTab} 
-            onTabChange={setActiveTab}
-            onLock={handleLock}
-            onLogout={handleLogout}
-            onReboot={handleReboot}
-          >
-            <Suspense fallback={<LoadingSpinner />}>
-              {renderContent()}
-            </Suspense>
-          </Layout>
-        </SuperIntelligenceProvider>
-      </AgentProvider>
+      <GlobalProvider>
+        <AgentProvider>
+          <SuperIntelligenceProvider>
+            <Layout
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              onLock={handleLock}
+              onLogout={handleLogout}
+              onReboot={handleReboot}
+            >
+              <Suspense fallback={<LoadingSpinner />}>
+                {renderContent()}
+              </Suspense>
+              <AvatarChatWidget />
+            </Layout>
+          </SuperIntelligenceProvider>
+        </AgentProvider>
+      </GlobalProvider>
     </ToastProvider>
   );
 }

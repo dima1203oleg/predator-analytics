@@ -5,7 +5,7 @@ Abstract base class for all Ukrainian data source connectors
 from abc import ABC, abstractmethod
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 import httpx
 import logging
@@ -33,7 +33,7 @@ class ConnectorResult:
     
     def __post_init__(self):
         if self.timestamp is None:
-            self.timestamp = datetime.utcnow()
+            self.timestamp = datetime.now(timezone.utc)
 
 
 class BaseConnector(ABC):
@@ -151,7 +151,7 @@ class BaseConnector(ABC):
         except Exception:
             self._status = ConnectorStatus.OFFLINE
         
-        self._last_check = datetime.utcnow()
+        self._last_check = datetime.now(timezone.utc)
         return self._status
     
     @property

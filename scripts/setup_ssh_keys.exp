@@ -1,0 +1,60 @@
+#!/usr/bin/expect -f
+
+set timeout 30
+set password "Dima@1203"
+set host "5.tcp.eu.ngrok.io"
+set port "14564"
+set user "dima"
+set pubkey "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDEetqY8TibaspCX5LtRaQRy2aasEkyp2Fhe0R7U7q6R dima@predator-analytics"
+
+puts "=== Підключення до сервера та налаштування SSH ключа ==="
+
+spawn ssh -o StrictHostKeyChecking=no -p $port $user@$host
+
+expect {
+    "password:" {
+        send "$password\r"
+        exp_continue
+    }
+    "$ " {
+        puts "\n=== Створюю директорію .ssh ==="
+        send "mkdir -p ~/.ssh && chmod 700 ~/.ssh\r"
+        expect "$ "
+        
+        puts "\n=== Додаю публічний ключ ==="
+        send "echo '$pubkey' >> ~/.ssh/authorized_keys\r"
+        expect "$ "
+        
+        send "chmod 600 ~/.ssh/authorized_keys\r"
+        expect "$ "
+        
+        puts "\n=== Перевіряю вміст authorized_keys ==="
+        send "cat ~/.ssh/authorized_keys\r"
+        expect "$ "
+        
+        puts "\n=== Виконую аналіз системи ==="
+        send "uname -a\r"
+        expect "$ "
+        
+        send "df -h\r"
+        expect "$ "
+        
+        send "free -h\r"
+        expect "$ "
+        
+        send "ps aux | head -20\r"
+        expect "$ "
+        
+        send "exit\r"
+    }
+    timeout {
+        puts "\nПомилка: час очікування вичерпано"
+        exit 1
+    }
+}
+
+puts "\n=== Підключення завершено! ==="
+puts "Тепер можна підключитися без пароля:"
+puts "ssh -i ~/.ssh/id_ed25519_ngrok $user@$host -p $port"
+
+expect eof

@@ -1,0 +1,169 @@
+{
+    "realm": "predator",
+    "enabled": true,
+    "sslRequired": "none",
+    "registrationAllowed": false,
+    "loginWithEmailAllowed": true,
+    "duplicateEmailsAllowed": false,
+    "resetPasswordAllowed": true,
+    "editUsernameAllowed": false,
+    "bruteForceProtected": true,
+    "roles": {
+        "realm": [
+            {
+                "name": "guest",
+                "description": "Free tier user - safe indices only"
+            },
+            {
+                "name": "client",
+                "description": "Basic paid tier"
+            },
+            {
+                "name": "pro",
+                "description": "Professional tier - restricted access"
+            },
+            {
+                "name": "admin",
+                "description": "System administrator"
+            },
+            {
+                "name": "pii_viewer",
+                "description": "Can view PII data"
+            },
+            {
+                "name": "analyst",
+                "description": "Data analyst role"
+            },
+            {
+                "name": "gov",
+                "description": "Government/LEA - full access"
+            }
+        ]
+    },
+    "clients": [
+        {
+            "clientId": "predator-api",
+            "enabled": true,
+            "protocol": "openid-connect",
+            "publicClient": false,
+            "bearerOnly": false,
+            "standardFlowEnabled": true,
+            "implicitFlowEnabled": false,
+            "directAccessGrantsEnabled": true,
+            "serviceAccountsEnabled": true,
+            "authorizationServicesEnabled": true,
+            "redirectUris": [
+                "http://localhost:3000/*",
+                "http://localhost:8000/*"
+            ],
+            "webOrigins": [
+                "http://localhost:3000",
+                "http://localhost:8000"
+            ],
+            "defaultClientScopes": [
+                "profile",
+                "email",
+                "roles"
+            ]
+        },
+        {
+            "clientId": "predator-frontend",
+            "enabled": true,
+            "protocol": "openid-connect",
+            "publicClient": true,
+            "standardFlowEnabled": true,
+            "implicitFlowEnabled": false,
+            "directAccessGrantsEnabled": false,
+            "redirectUris": [
+                "http://localhost:3000/*"
+            ],
+            "webOrigins": [
+                "http://localhost:3000"
+            ]
+        }
+    ],
+    "users": [
+        {
+            "username": "admin",
+            "enabled": true,
+            "email": "admin@predator.ai",
+            "emailVerified": true,
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "admin123",
+                    "temporary": false
+                }
+            ],
+            "realmRoles": [
+                "admin",
+                "pii_viewer"
+            ]
+        },
+        {
+            "username": "analyst",
+            "enabled": true,
+            "email": "analyst@predator.ai",
+            "emailVerified": true,
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "analyst123",
+                    "temporary": false
+                }
+            ],
+            "realmRoles": [
+                "pro",
+                "analyst",
+                "pii_viewer"
+            ]
+        },
+        {
+            "username": "guest",
+            "enabled": true,
+            "email": "guest@predator.ai",
+            "emailVerified": true,
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "guest123",
+                    "temporary": false
+                }
+            ],
+            "realmRoles": [
+                "guest"
+            ]
+        }
+    ],
+    "requiredActions": [
+        {
+            "alias": "UPDATE_PASSWORD",
+            "name": "Update Password",
+            "providerId": "UPDATE_PASSWORD",
+            "enabled": true,
+            "defaultAction": false
+        }
+    ],
+    "browserSecurityHeaders": {
+        "contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self'; object-src 'none';",
+        "xContentTypeOptions": "nosniff",
+        "xFrameOptions": "SAMEORIGIN",
+        "xRobotsTag": "none",
+        "xXSSProtection": "1; mode=block",
+        "strictTransportSecurity": "max-age=31536000; includeSubDomains"
+    },
+    "smtpServer": {},
+    "eventsEnabled": true,
+    "eventsListeners": [
+        "jboss-logging"
+    ],
+    "enabledEventTypes": [
+        "LOGIN",
+        "LOGIN_ERROR",
+        "LOGOUT",
+        "UPDATE_PASSWORD",
+        "UPDATE_PROFILE"
+    ],
+    "adminEventsEnabled": true,
+    "adminEventsDetailsEnabled": true
+}

@@ -1,0 +1,28 @@
+replicaCount: 1
+
+image:
+  repository: predator/backend
+  pullPolicy: IfNotPresent
+  tag: "v21.1"
+
+service:
+  type: ClusterIP
+  port: 8000
+
+env:
+  DATABASE_URL: "postgresql://predator:predator_password@predator-umbrella-postgres:5432/predator_db"
+  REDIS_URL: "redis://predator-umbrella-redis:6379/0"
+  QDRANT_URL: "http://predator-umbrella-qdrant:6333"
+  OPENSEARCH_URL: "http://predator-umbrella-opensearch:9200"
+  MINIO_ENDPOINT: "predator-umbrella-minio:9000"
+  MINIO_ACCESS_KEY: "predator_admin"
+  MINIO_SECRET_KEY: "predator_secret_key"
+  ENABLE_SEMANTIC_SEARCH: "true"
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 200m
+    memory: 512Mi

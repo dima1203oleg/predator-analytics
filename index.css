@@ -16,12 +16,12 @@
   --color-success: #22c55e;
   --color-danger: #ef4444;
   --color-warning: #eab308;
-  
+
   /* Backgrounds */
   --bg-dark: #0f172a;
   --bg-darker: #020617;
   --bg-card: rgba(15, 23, 42, 0.8);
-  
+
   /* Safe areas for mobile */
   --safe-top: env(safe-area-inset-top);
   --safe-bottom: env(safe-area-inset-bottom);
@@ -58,7 +58,7 @@ body {
 .panel-3d {
   background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
   border: 1px solid rgba(71, 85, 105, 0.3);
-  box-shadow: 
+  box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.3),
     0 2px 4px -1px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -118,15 +118,26 @@ body {
   text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
 }
 
+.text-glow-red {
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
 /* ========================================
    CYBER GRID BACKGROUND
    ======================================== */
 
 .bg-cyber-grid {
-  background-image: 
+  background-image:
     linear-gradient(rgba(6, 182, 212, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
+}
+
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(71, 85, 105, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(71, 85, 105, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* ========================================
@@ -184,8 +195,13 @@ body {
    ======================================== */
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInFromTop {
@@ -193,6 +209,7 @@ body {
     transform: translateY(-10px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -200,8 +217,15 @@ body {
 }
 
 @keyframes pulse-slow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
 }
 
 .animate-in {

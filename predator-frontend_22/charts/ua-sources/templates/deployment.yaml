@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ua-sources.fullname" . }}
+  labels:
+    {{- include "ua-sources.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "ua-sources.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "ua-sources.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "ua-sources.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          # G-01 FIX: Inherit tag from global if available, else local, else chart version
+          image: "{{ .Values.image.repository }}:{{ .Values.global.image.tag | default .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://{{ .Values.database.user }}:$(POSTGRES_PASSWORD)@{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}"
+            - name: REDIS_URL
+              value: {{ .Values.redis.url }}
+            # Inject Secrets from ExternalSecret
+            {{- if .Values.vault.enabled }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ua-sources.fullname" . }}-db-secret
+                  key: password
+                  optional: true
+            # Map all API Keys
+            - name: OPENDATABOT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ua-sources.fullname" . }}-secrets
+                  key: OPENDATABOT_API_KEY
+            - name: VIRUSTOTAL_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ua-sources.fullname" . }}-secrets
+                  key: VIRUSTOTAL_API_KEY
+            # ... (Map other secrets similarly in prod)
+            {{- end }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config/external_apis.yaml
+              subPath: external_apis.yaml
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "ua-sources.fullname" . }}-config
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

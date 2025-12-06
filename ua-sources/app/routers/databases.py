@@ -1,6 +1,6 @@
 """Databases Router - Database management endpoints"""
 from fastapi import APIRouter
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter(prefix="/databases", tags=["Databases"])
 
@@ -38,7 +38,7 @@ async def get_database_status(db_id: str):
         "status": "CONNECTED",
         "latency_ms": 2,
         "connections": 5,
-        "last_check": datetime.utcnow().isoformat()
+        "last_check": datetime.now(timezone.utc).isoformat()
     }
 
 
@@ -50,7 +50,7 @@ async def get_database_stats(db_id: str):
         "size_mb": 256,
         "tables": 12,
         "rows_total": 150000,
-        "last_backup": datetime.utcnow().isoformat()
+        "last_backup": datetime.now(timezone.utc).isoformat()
     }
 
 

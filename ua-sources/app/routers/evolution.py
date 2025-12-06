@@ -5,7 +5,7 @@ NAS (Neural Architecture Search) and Self-Evolution endpoints
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from typing import Optional, List
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 
 router = APIRouter(prefix="/evolution", tags=["Evolution"])
@@ -70,7 +70,7 @@ async def start_evolution(
         progress=5,
         active=True,
         logs=[
-            f"[{datetime.utcnow().isoformat()}] Evolution cycle initiated",
+            f"[{datetime.now(timezone.utc).isoformat()}] Evolution cycle initiated",
             "[NAS] Scanning codebase for optimization targets...",
             "[BRAIN] Initializing neural architecture search...",
         ],
@@ -91,7 +91,7 @@ async def stop_evolution():
     
     _evolution_state.active = False
     _evolution_state.phase = EvolutionPhase.IDLE
-    _evolution_state.logs.append(f"[{datetime.utcnow().isoformat()}] Evolution stopped by user")
+    _evolution_state.logs.append(f"[{datetime.now(timezone.utc).isoformat()}] Evolution stopped by user")
     
     return {"message": "Evolution stopped", "status": _evolution_state}
 

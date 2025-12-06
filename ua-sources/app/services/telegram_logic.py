@@ -3,7 +3,7 @@ Telegram Logic Service - Telegram bot business logic
 Handles message processing and response generation
 """
 from typing import Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 from .llm import llm_service
@@ -154,7 +154,7 @@ class TelegramLogic:
 ✅ База даних: Connected
 ✅ LLM: Available
 
-Час: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC
+Час: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC
         """
     
     async def _handle_query(self, text: str, user_id: int) -> str:

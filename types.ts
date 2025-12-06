@@ -2,22 +2,25 @@
 import React from 'react';
 
 export enum TabView {
-  DASHBOARD = 'dashboard',
-  USER_PORTAL = 'user_portal', // Client UI
-  INTEGRATION = 'integration', // API Keys & Sources
-  DATA = 'data',        // Storage
-  ETL = 'etl',          // Parsing
-  AGENTS = 'agents',    // MAS
-  SUPER_INTELLIGENCE = 'super_intelligence', // Evolution
-  NAS = 'nas',          // NEW: Neural Architecture Search
-  DEVOPS = 'devops',    // Deployment
-  SETTINGS = 'settings',
-  ANALYTICS = 'analytics',
-  LLM = 'llm',
-  SECURITY = 'security',
-  MONITORING = 'monitoring',
-  SYSTEM_BRAIN = 'system_brain' 
+    DASHBOARD = 'dashboard',
+    ADMIN = 'admin',
+    USER_PORTAL = 'user_portal', // Client UI
+    INTEGRATION = 'integration', // API Keys & Sources
+    DATA = 'data',        // Storage
+    ETL = 'etl',          // Parsing
+    AGENTS = 'agents',    // MAS
+    SUPER_INTELLIGENCE = 'super_intelligence', // Evolution
+    NAS = 'nas',          // NEW: Neural Architecture Search
+    DEVOPS = 'devops',    // Deployment
+    SETTINGS = 'settings',
+    ANALYTICS = 'analytics',
+    LLM = 'llm',
+    SECURITY = 'security',
+    MONITORING = 'monitoring',
+    SYSTEM_BRAIN = 'system_brain'
 }
+
+export type LLMMode = 'auto' | 'fast' | 'precise' | 'council';
 
 // --- NAS & AUTOML TYPES ---
 export type NasStrategy = 'EVOLUTIONARY' | 'REINFORCEMENT' | 'DARTS' | 'GRID_SEARCH';
@@ -165,3 +168,24 @@ export interface RAGArtifact { id: string; type: 'DOC' | 'LOG' | 'VECTOR' | 'COD
 export interface AgentGenome { agentId: string; version: string; generation: number; capabilities: string[]; evolutionStatus: 'STABLE' | 'EVOLVING' | 'PROMOTED'; }
 export type DataSector = 'GOV' | 'BIZ' | 'MED' | 'SCI' | 'OSINT' | 'GENERAL';
 export type SourceType = 'FILE' | 'WEB' | 'API' | 'REGISTRY';
+
+// --- SEMANTIC SEARCH TYPES ---
+export interface HybridSearchResult {
+    id: string;
+    title: string;
+    snippet: string;
+    score: number;
+    combinedScore?: number;
+    semanticScore?: number;
+    source: string;
+    category?: string;
+    searchType?: 'keyword' | 'semantic' | 'hybrid';
+    published_date?: string;
+    metadata?: any;
+}
+
+export interface SearchResponse {
+    results: HybridSearchResult[];
+    total: number;
+    searchType: string;
+}

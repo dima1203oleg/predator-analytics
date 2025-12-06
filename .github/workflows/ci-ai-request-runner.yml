@@ -1,0 +1,112 @@
+name: AI Request Runner (Mac M3 / dev-local)
+
+on:
+  push:
+    paths:
+      - ".ai/requests/**"
+  workflow_dispatch:
+    inputs:
+      request_file:
+        description: "Шлях до .ai/requests/*.yaml (необов'язково)"
+        required: false
+        default: ""
+
+jobs:
+  detect-request:
+    name: Detect AI request file
+    runs-on: ubuntu-latest
+    outputs:
+      request_file: ${{ steps.detect.outputs.request_file }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Detect changed file
+        id: detect
+        run: |
+          if [ -n "${{ github.event.inputs.request_file }}" ]; then
+            echo "request_file=${{ github.event.inputs.request_file }}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Шукаємо змінені файли в .ai/requests
+          git fetch --no-tags --prune --depth=2 origin +${{ github.ref }}:${{ github.ref }} || true
+          CHANGED=$(git diff --name-only HEAD~1 HEAD | grep "^.ai/requests/" | head -n1 || true)
+          
+          echo "request_file=$CHANGED" >> $GITHUB_OUTPUT
+
+  run-request-on-mac:
+    name: Run AI request on Mac M3
+    needs: detect-request
+    if: needs.detect-request.outputs.request_file != ''
+    runs-on: [self-hosted, mac-m3, pa-dev] # Змінити лейбли під ваш runner
+    env:
+      REQUEST_FILE: ${{ needs.detect-request.outputs.request_file }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          if ! command -v yq >/dev/null 2>&1; then
+             brew list yq || brew install yq
+          fi
+
+      - name: Parse & Execute
+        id: run_actions
+        run: |
+          ID=$(yq '.id' "$REQUEST_FILE")
+          ENV=$(yq '.target_env' "$REQUEST_FILE")
+          REPORT=".ai/reports/${ID}-result.yaml"
+          
+          mkdir -p .ai/reports
+          
+          echo "id: \"$ID\"" > "$REPORT"
+          echo "target_env: \"$ENV\"" >> "$REPORT"
+          echo "status: running" >> "$REPORT"
+          echo "started_at: \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"" >> "$REPORT"
+          echo "actions: []" >> "$REPORT"
+          
+          COUNT=$(yq '.actions | length' "$REQUEST_FILE")
+          STATUS="success"
+          
+          for ((i=0; i<$COUNT; i++)); do
+            CMD=$(yq ".actions[$i].run" "$REQUEST_FILE")
+            NAME=$(yq ".actions[$i].name" "$REQUEST_FILE")
+            
+            echo "Running: $NAME"
+            LOG="/tmp/action_${i}.log"
+            
+            START=$(date +%s)
+            set +e
+            eval "$CMD" > "$LOG" 2>&1
+            CODE=$?
+            set -e
+            END=$(date +%s)
+            
+            if [ $CODE -ne 0 ]; then STATUS="failed"; fi
+            
+            TAIL=$(tail -n 10 "$LOG" | sed 's/"/\\"/g')
+            
+            # Append to YAML using yq (simplified)
+            yq -i ".actions += [{
+              \"name\": \"$NAME\",
+              \"exit_code\": $CODE,
+              \"duration\": $(($END - $START)),
+              \"log_tail\": \"$TAIL\"
+            }]" "$REPORT"
+          done
+          
+          yq -i ".status = \"$STATUS\"" "$REPORT"
+          yq -i ".finished_at = \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"" "$REPORT"
+          
+          echo "report_file=$REPORT" >> $GITHUB_OUTPUT
+
+      - name: Commit Report
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "ai-runner"
+          git config user.email "bot@predator.ai"
+          git add .ai/reports/*
+          git commit -m "AI Report [skip ci]" || true
+          git push origin HEAD || true

@@ -1,6 +1,6 @@
 """Integration Service - Manages external integrations"""
 from typing import Dict, Any, List
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class IntegrationService:
@@ -14,7 +14,7 @@ class IntegrationService:
         self.integrations[name] = {
             "config": config,
             "status": "ACTIVE",
-            "registered_at": datetime.utcnow()
+            "registered_at": datetime.now(timezone.utc)
         }
     
     def get_status(self, name: str) -> Dict[str, Any]:

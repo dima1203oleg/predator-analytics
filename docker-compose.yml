@@ -1,112 +1,203 @@
-version: '3.8'
+
 
 services:
-  # Frontend - Predator Analytics UI
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    networks:
-      - predator-network
-
-  # Backend - FastAPI
+  # -------------------------------------------------------------------------
+  # BACKEND (FastAPI + MAS)
+  # -------------------------------------------------------------------------
+  # -------------------------------------------------------------------------
+  # BACKEND (FastAPI + MAS)
+  # -------------------------------------------------------------------------
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://predator:predator@postgres:5432/predator_db
-      - REDIS_URL=redis://redis:6379/0
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-    depends_on:
-      - postgres
-      - redis
-    restart: unless-stopped
-    networks:
-      - predator-network
-
-  # UA Sources - Data Microservice
-  ua-sources:
-    build:
+    build: 
       context: ./ua-sources
       dockerfile: Dockerfile
+    container_name: predator_backend
     ports:
-      - "8001:8001"
+      - "8000:8000"
+    volumes:
+      - ./ua-sources/app:/app/app
+    env_file:
+      - .env
     environment:
-      - DATABASE_URL=postgresql+asyncpg://predator:predator@postgres:5432/predator_ua
-      - REDIS_URL=redis://redis:6379/1
+      - DATABASE_URL=postgresql://predator:predator_password@postgres:5432/predator_db
+      - REDIS_URL=redis://redis:6379/0
+      - QDRANT_URL=http://qdrant:6333
+      - OPENSEARCH_URL=http://opensearch:9200
+      - MINIO_ENDPOINT=minio:9000
     depends_on:
       - postgres
       - redis
+      - qdrant
+      - opensearch
+      - minio
     restart: unless-stopped
-    networks:
-      - predator-network
 
-  # PostgreSQL Database
+  # -------------------------------------------------------------------------
+  # FRONTEND (React + Nginx)
+  # -------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: predator_frontend
+    ports:
+      - "8082:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # -------------------------------------------------------------------------
+  # DATA STORAGE LAYER
+  # -------------------------------------------------------------------------
   postgres:
     image: postgres:15-alpine
+    container_name: predator_postgres
     environment:
       POSTGRES_USER: predator
-      POSTGRES_PASSWORD: predator
+      POSTGRES_PASSWORD: predator_password
       POSTGRES_DB: predator_db
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init_v21.sql:/docker-entrypoint-initdb.d/init_v21.sql
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U predator"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - predator-network
 
-  # Redis Cache
   redis:
     image: redis:7-alpine
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
+    container_name: predator_redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - predator-network
 
-  # Qdrant Vector Database (optional)
   qdrant:
     image: qdrant/qdrant:latest
+    container_name: predator_qdrant
     ports:
       - "6333:6333"
       - "6334:6334"
     volumes:
       - qdrant_data:/qdrant/storage
     restart: unless-stopped
-    networks:
-      - predator-network
+
+  opensearch:
+    image: opensearchproject/opensearch:2.11.0
+    container_name: predator_opensearch
+    environment:
+      - cluster.name=predator-cluster
+      - node.name=predator-node1
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - DISABLE_SECURITY_PLUGIN=true 
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    restart: unless-stopped
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.11.0
+    container_name: predator_dashboards
+    ports:
+      - "5601:5601"
+    environment:
+      - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
+      - DISABLE_SECURITY_PLUGIN=true
+    depends_on:
+      - opensearch
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio
+    container_name: predator_minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: predator_admin
+      MINIO_ROOT_PASSWORD: predator_secret_key
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+
+  # -------------------------------------------------------------------------
+  # SECURITY & AUTH
+  # -------------------------------------------------------------------------
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: predator_keycloak
+    command: start-dev
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: predator
+      KC_DB_PASSWORD: predator_password
+      KC_HOSTNAME: localhost
+      KC_HTTP_ENABLED: true
+    depends_on:
+      - postgres
+    volumes:
+      - ./infra/keycloak/realm-export.json:/opt/keycloak/data/import/realm.json
+    restart: unless-stopped
+
+  # -------------------------------------------------------------------------
+  # OBSERVABILITY & ML
+  # -------------------------------------------------------------------------
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: predator_mlflow
+    ports:
+      - "5001:5000"
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=postgresql://predator:predator_password@postgres:5432/mlflow
+      - MLFLOW_ARTIFACT_ROOT=s3://mlflow/
+    depends_on:
+      - postgres
+      - minio
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: predator_grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: predator_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    restart: unless-stopped
 
 volumes:
   postgres_data:
   redis_data:
   qdrant_data:
-
-networks:
-  predator-network:
-    driver: bridge
+  opensearch_data:
+  minio_data:
+  grafana_data:
+  prometheus_data:

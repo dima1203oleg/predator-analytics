@@ -7,6 +7,8 @@ import httpx
 import os
 import logging
 
+from ..core.config import settings
+
 logger = logging.getLogger(__name__)
 
 
@@ -16,8 +18,8 @@ class VaultService:
     """
     
     def __init__(self):
-        self.vault_addr = os.getenv("VAULT_ADDR", "http://vault:8200")
-        self.vault_token = os.getenv("VAULT_TOKEN")
+        self.vault_addr = settings.VAULT_ADDR
+        self.vault_token = settings.VAULT_TOKEN
         self.enabled = bool(self.vault_token)
     
     async def get_secret(

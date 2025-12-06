@@ -1,0 +1,40 @@
+replicaCount: 1
+
+image:
+  repository: qdrant/qdrant
+  pullPolicy: IfNotPresent
+  tag: "v1.7.0"
+
+service:
+  type: ClusterIP
+  port: 6333
+  grpcPort: 6334
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+persistence:
+  enabled: false # Use PV in prod
+  size: 10Gi
+  storageClass: ""
+  accessMode: ReadWriteOnce
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 100m
+    memory: 512Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

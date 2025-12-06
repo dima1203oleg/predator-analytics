@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Синхронізація коду з Mac на сервер
+# Використання: ./scripts/sync-to-server.sh [--dry-run]
+
+SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
+SSH_HOST="5.tcp.eu.ngrok.io"
+SSH_PORT="14564"
+SSH_USER="dima"
+LOCAL_DIR="/Users/dima-mac/Documents/Predator_21/"
+REMOTE_DIR="predator-analytics"
+
+# Кольори для виводу
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+echo -e "${GREEN}📤 Синхронізація коду на сервер${NC}"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "${YELLOW}Локально:${NC} $LOCAL_DIR"
+echo -e "${YELLOW}Сервер:${NC} $SSH_USER@$SSH_HOST:~/$REMOTE_DIR"
+echo ""
+
+# Опції rsync
+RSYNC_OPTS="-avz --progress"
+
+# Виключення
+EXCLUDE_OPTS="
+  --exclude 'node_modules'
+  --exclude '.venv'
+  --exclude 'venv'
+  --exclude '.git'
+  --exclude '__pycache__'
+  --exclude '*.pyc'
+  --exclude '.DS_Store'
+  --exclude 'dist'
+  --exclude 'build'
+  --exclude '.pytest_cache'
+  --exclude '.mypy_cache'
+  --exclude 'logs'
+  --exclude '*.log'
+"
+
+# Перевірка на --dry-run
+if [ "$1" == "--dry-run" ]; then
+    echo -e "${YELLOW}⚠️  Режим симуляції (файли не будуть скопійовані)${NC}"
+    echo ""
+    RSYNC_OPTS="$RSYNC_OPTS --dry-run"
+fi
+
+# Виконання rsync
+rsync $RSYNC_OPTS $EXCLUDE_OPTS \
+  -e "ssh -i $SSH_KEY -p $SSH_PORT" \
+  "$LOCAL_DIR" \
+  "$SSH_USER@$SSH_HOST:~/$REMOTE_DIR/"
+
+# Перевірка результату
+if [ $? -eq 0 ]; then
+    echo ""
+    echo -e "${GREEN}✅ Синхронізація завершена успішно!${NC}"
+else
+    echo ""
+    echo -e "${RED}❌ Помилка синхронізації${NC}"
+    exit 1
+fi
+
+echo ""
+echo "💡 Підказка: Використовуйте --dry-run для перегляду змін без копіювання"
+echo "   Приклад: ./scripts/sync-to-server.sh --dry-run"

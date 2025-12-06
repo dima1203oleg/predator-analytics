@@ -4,7 +4,7 @@ Self-evolution and model optimization
 """
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 import logging
 
@@ -59,14 +59,14 @@ class NASEngine:
         self.state.active = True
         self.state.phase = NASPhase.DETECTION
         self.state.generation = 1
-        self.state.logs.append(f"[{datetime.utcnow()}] Evolution started")
+        self.state.logs.append(f"[{datetime.now(timezone.utc)}] Evolution started")
         return self.state
     
     async def stop_evolution(self) -> NASState:
         """Stop evolution cycle"""
         self.state.active = False
         self.state.phase = NASPhase.IDLE
-        self.state.logs.append(f"[{datetime.utcnow()}] Evolution stopped")
+        self.state.logs.append(f"[{datetime.now(timezone.utc)}] Evolution stopped")
         return self.state
     
     def get_status(self) -> Dict[str, Any]:

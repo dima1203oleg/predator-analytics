@@ -5,6 +5,7 @@ Analyzes competitors and market positioning
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 from .ai_engine import ai_engine
@@ -67,7 +68,7 @@ class OpponentEngine:
             "tender_count": len(tender_result.data) if tender_result.success else 0,
             "analysis": analysis.answer,
             "sources": analysis.sources,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
     
     async def compare_companies(

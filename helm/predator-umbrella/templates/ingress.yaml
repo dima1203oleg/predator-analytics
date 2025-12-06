@@ -1,0 +1,59 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "predator-umbrella.fullname" . }}
+  labels:
+    {{- include "predator-umbrella.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "predator-umbrella.fullname" $ }}-frontend
+                port:
+                  number: {{ $.Values.frontend.service.port }}
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "predator-umbrella.fullname" $ }}-backend
+                port:
+                  number: {{ $.Values.backend.service.port }}
+          - path: /docs
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "predator-umbrella.fullname" $ }}-backend
+                port:
+                  number: {{ $.Values.backend.service.port }}
+          - path: /redoc
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "predator-umbrella.fullname" $ }}-backend
+                port:
+                  number: {{ $.Values.backend.service.port }}
+          - path: /openapi.json
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "predator-umbrella.fullname" $ }}-backend
+                port:
+                  number: {{ $.Values.backend.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}

@@ -1,0 +1,106 @@
+# Default values for predator-umbrella.
+
+global:
+  environment: production
+
+backend:
+  replicaCount: 2
+  image:
+    repository: predator/ua-sources
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 8000
+
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+  env:
+    LOG_LEVEL: "INFO"
+    LLM_DEFAULT_PROVIDER: "openai"
+
+frontend:
+  replicaCount: 2
+  image:
+    repository: predator/frontend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 80
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: predator.analytics.io
+      paths:
+        - path: /
+          pathType: Prefix
+
+# Dependencies Configuration
+postgresql:
+  enabled: true
+  auth:
+    database: predator
+    username: predator_user
+    password: "change_me_in_prod"
+
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+
+qdrant:
+  enabled: true
+  replicaCount: 1
+  resources:
+    limits:
+      memory: "2Gi"
+    requests:
+      memory: "1Gi"
+
+minio:
+  enabled: true
+  auth:
+    rootUser: predator_admin
+    rootPassword: predator_secret_key
+
+keycloak:
+  enabled: true
+  auth:
+    adminUser: admin
+    adminPassword: admin
+  postgresql:
+    enabled: true
+    auth:
+      database: keycloak
+      username: keycloak
+      password: "keycloak_password"
+
+opensearch:
+  enabled: true
+  clusterName: "predator-cluster"
+  singleNode: true
+  config:
+    opensearch.yml:
+      plugins.security.disabled: true
+
+prometheus:
+  enabled: true
+  server:
+    global:
+      scrape_interval: 15s
+
+grafana:
+  enabled: true
+  adminPassword: "admin"

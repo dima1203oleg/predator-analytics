@@ -1,0 +1,438 @@
+# Predator Analytics v21.0 - Production Environment Values
+# Full production configuration for Oracle Cloud / GPU Server
+
+global:
+  environment: production
+  piiMasking: true
+  zeroTrust: true
+
+  features:
+    selfHealing: true
+    selfLearning: true
+    voiceInterface: true
+    3dVisualization: true
+
+# ============================================
+# High Availability Configuration
+# ============================================
+
+api:
+  enabled: true
+  replicaCount: 5
+  resources:
+    requests:
+      cpu: "1"
+      memory: "2Gi"
+    limits:
+      cpu: "4"
+      memory: "8Gi"
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 20
+    targetCPUUtilizationPercentage: 60
+  # Production optimizations
+  workers: 8
+  logLevel: warning
+
+frontend:
+  enabled: true
+  replicaCount: 3
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "512Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+
+agents:
+  enabled: true
+  replicaCount: 5
+  supervisor:
+    enabled: true
+    piiGate: true
+    billingGate: true
+  # All agents enabled in prod
+  enabledAgents:
+    - retriever
+    - miner
+    - arbiter
+    - corruption_detector
+    - lobby_map
+    - forecast
+    - lora_trainer
+    - self_improvement
+    - auto_heal
+    - red_team
+    - dataset_ingest
+    - osint
+    - graph_intelligence
+    - anomaly
+    - report_export
+    - billing_gate
+
+modelRouter:
+  enabled: true
+  replicaCount: 3
+  providers:
+    ollama:
+      enabled: true
+      url: "http://ollama-gpu:11434"
+      models:
+        - gemma:7b
+        - gemma2:9b
+        - mistral:7b
+        - llama3:70b
+        - codestral
+    gemini:
+      enabled: true
+    groq:
+      enabled: true
+    mistral:
+      enabled: true
+    anthropic:
+      enabled: true
+  policy:
+    defaultProvider: ollama
+    fallbackChain:
+      - ollama
+      - groq
+      - gemini
+      - anthropic
+    costAware: true
+    latencyAware: true
+
+celery:
+  enabled: true
+  replicaCount: 10
+  queues:
+    - default
+    - etl
+    - ml
+    - notifications
+    - osint
+    - lora
+  concurrency: 8
+  keda:
+    enabled: true
+    minReplicaCount: 5
+    maxReplicaCount: 50
+
+# ============================================
+# Production Databases
+# ============================================
+
+postgres:
+  enabled: true
+  image:
+    repository: timescale/timescaledb
+    tag: "latest-pg15"
+  persistence:
+    enabled: true
+    size: 500Gi
+    storageClass: "nvme-ssd"
+  resources:
+    requests:
+      cpu: "4"
+      memory: "16Gi"
+    limits:
+      cpu: "16"
+      memory: "64Gi"
+  backup:
+    enabled: true
+    schedule: "0 */4 * * *"
+    retention: 90
+  # HA configuration
+  replication:
+    enabled: true
+    replicas: 2
+
+redis:
+  enabled: true
+  architecture: replication
+  sentinel:
+    enabled: true
+  persistence:
+    enabled: true
+    size: 50Gi
+
+qdrant:
+  enabled: true
+  replicaCount: 5
+  persistence:
+    enabled: true
+    size: 200Gi
+  resources:
+    requests:
+      cpu: "2"
+      memory: "8Gi"
+    limits:
+      cpu: "8"
+      memory: "32Gi"
+
+opensearch:
+  enabled: true
+  replicas:
+    master: 3
+    data: 5
+    ingest: 2
+  persistence:
+    enabled: true
+    size: 1Ti
+  resources:
+    data:
+      requests:
+        cpu: "4"
+        memory: "16Gi"
+      limits:
+        cpu: "16"
+        memory: "64Gi"
+  ilm:
+    enabled: true
+    hotDays: 14
+    warmDays: 60
+    coldDays: 365
+    deleteAfterDays: 730
+  pii:
+    safeIndexSuffix: "_safe"
+    restrictedIndexSuffix: "_restricted"
+    auditEnabled: true
+
+minio:
+  enabled: true
+  mode: distributed
+  replicas: 6
+  persistence:
+    enabled: true
+    size: 2Ti
+  # Versioning for DR
+  versioning:
+    enabled: true
+  # Cross-region replication
+  replication:
+    enabled: true
+    remoteCluster: oracle-backup
+
+# ============================================
+# Security - Full Zero-Trust
+# ============================================
+
+keycloak:
+  enabled: true
+  replicaCount: 3
+  realm:
+    name: predator
+    roles:
+      - guest
+      - client
+      - pro
+      - admin
+      - pii_viewer
+      - analyst
+    mfa:
+      enabled: true
+      method: totp
+
+vault:
+  enabled: true
+  # External secrets from Vault
+  externalSecrets:
+    enabled: true
+    refreshInterval: 1h
+
+# ============================================
+# ML/AI - Full Configuration
+# ============================================
+
+mlflow:
+  enabled: true
+  tracking:
+    enabled: true
+  modelRegistry:
+    enabled: true
+  persistence:
+    enabled: true
+    size: 500Gi
+  # Canary deployments
+  canary:
+    enabled: true
+    percentage: 10
+
+# ============================================
+# Full Messaging Stack
+# ============================================
+
+kafka:
+  enabled: true
+  replicaCount: 5
+  persistence:
+    enabled: true
+    size: 500Gi
+  topics:
+    - data_changes
+    - feedback
+    - alerts
+    - agent_events
+    - cdc_postgres
+    - osint_feed
+  # Debezium CDC
+  debezium:
+    enabled: true
+
+# ============================================
+# Optional - Enable All
+# ============================================
+
+neo4j:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 200Gi
+  # Graph algorithms
+  gds:
+    enabled: true
+
+voice:
+  enabled: true
+  stt:
+    model: whisper-large-v3
+    language: uk
+  tts:
+    engine: sadtalker
+    gpu: true
+
+# ============================================
+# Full Observability
+# ============================================
+
+observability:
+  enabled: true
+  prometheus:
+    enabled: true
+    retention: 90d
+    resources:
+      requests:
+        cpu: "1"
+        memory: "4Gi"
+  grafana:
+    enabled: true
+    dashboards:
+      - api-overview
+      - agents-status
+      - ml-metrics
+      - slo-burn-rate
+      - security-audit
+      - pii-access
+      - cost-analysis
+  loki:
+    enabled: true
+    retention: 90d
+  tempo:
+    enabled: true
+    retention: 30d
+  alertmanager:
+    enabled: true
+    receivers:
+      - telegram
+      - pagerduty
+      - email
+    routes:
+      critical:
+        receiver: pagerduty
+        repeatInterval: 1m
+      warning:
+        receiver: telegram
+        repeatInterval: 10m
+      info:
+        receiver: email
+        repeatInterval: 1h
+
+# ============================================
+# Production Ingress with TLS
+# ============================================
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "1g"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: predator.ai
+      paths:
+        - path: /
+          pathType: Prefix
+          service: frontend
+        - path: /api
+          pathType: Prefix
+          service: api
+        - path: /opensearch
+          pathType: Prefix
+          service: opensearch-dashboards
+        - path: /mlflow
+          pathType: Prefix
+          service: mlflow
+  tls:
+    - secretName: predator-ai-tls
+      hosts:
+        - predator.ai
+        - "*.predator.ai"
+
+# ============================================
+# DR / Backup
+# ============================================
+
+velero:
+  enabled: true
+  schedules:
+    daily:
+      schedule: "0 2 * * *"
+      ttl: 720h
+    hourly-critical:
+      schedule: "0 * * * *"
+      ttl: 24h
+      includeNamespaces:
+        - predator
+      labelSelector:
+        matchLabels:
+          backup: critical
+
+# ============================================
+# Chaos Engineering
+# ============================================
+
+litmusChaos:
+  enabled: true
+  experiments:
+    - type: pod-delete
+      schedule: "0 4 * * 0" # Weekly Sunday 4AM
+      target: api
+    - type: node-drain
+      schedule: "0 4 * * 3" # Wednesday 4AM
+    - type: network-latency
+      schedule: "0 4 * * 5" # Friday 4AM
+
+# ============================================
+# Strict Security
+# ============================================
+
+networkPolicies:
+  enabled: true
+  defaultDeny: true
+  allowedNamespaces:
+    - istio-system
+    - monitoring
+
+pdb:
+  enabled: true
+  api:
+    minAvailable: 3
+  agents:
+    minAvailable: 3
+  opensearch:
+    minAvailable: 2
+  postgres:
+    minAvailable: 1
