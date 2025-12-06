@@ -1,0 +1,71 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "🐍 Backend: FastAPI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "app.main:app",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8000",
+                "--reload"
+            ],
+            "cwd": "${workspaceFolder}/ua-sources",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/ua-sources",
+                "ENV_FILE": "${workspaceFolder}/ua-sources/.env"
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "🐍 Backend: Celery Worker",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "celery",
+            "args": [
+                "-A",
+                "app.core.celery_app",
+                "worker",
+                "--loglevel=info",
+                "-P",
+                "solo"
+            ],
+            "cwd": "${workspaceFolder}/ua-sources",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/ua-sources",
+                "ENV_FILE": "${workspaceFolder}/ua-sources/.env"
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "🌐 Frontend: Chrome",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:8082",
+            "webRoot": "${workspaceFolder}/frontend/src",
+            "sourceMapPathOverrides": {
+                "webpack:///./src/*": "${webRoot}/*"
+            }
+        },
+        {
+            "name": "🐳 Docker: Attach to Backend",
+            "type": "docker",
+            "request": "attach",
+            "platform": "python",
+            "processName": "predator_backend"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "🚀 Full Stack (Backend + Worker)",
+            "configurations": [
+                "🐍 Backend: FastAPI",
+                "🐍 Backend: Celery Worker"
+            ]
+        }
+    ]
+}

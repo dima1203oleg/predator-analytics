@@ -1,0 +1,6 @@
+enabled: true
+image:
+  repository: "postgres"
+  tag: "15-alpine"
+persistence:
+  size: 10Gi

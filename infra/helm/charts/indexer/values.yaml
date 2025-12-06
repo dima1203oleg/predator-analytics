@@ -1,0 +1,4 @@
+enabled: true
+image:
+  repository: "ghcr.io/dima1203oleg/predator-indexer"
+  tag: "dev"

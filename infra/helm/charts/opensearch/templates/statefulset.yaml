@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-opensearch
+spec:
+  serviceName: {{ .Release.Name }}-opensearch
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-opensearch
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-opensearch
+    spec:
+      containers:
+        - name: opensearch
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+            - name: discovery.type
+              value: "single-node"
+            - name: DISABLE_SECURITY_PLUGIN
+              value: "true"
+          ports:
+            - containerPort: 9200
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/opensearch/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}

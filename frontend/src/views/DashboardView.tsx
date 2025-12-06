@@ -104,6 +104,7 @@ const DashboardView: React.FC = () => {
 
     const [overclock, setOverclock] = useState(0);
     const [chartMode, setChartMode] = useState<'TRAFFIC' | 'LATENCY' | 'ERRORS'>('TRAFFIC');
+    const [searchMode, setSearchMode] = useState<'HYBRID' | 'TEXT' | 'SEMANTIC'>('HYBRID');
     const [currentInsight, setCurrentInsight] = useState(AI_INSIGHTS[0]);
 
     const isMounted = useRef(false);
@@ -313,6 +314,12 @@ const DashboardView: React.FC = () => {
                                     </span>
                                     <span className="text-[10px] font-bold text-slate-500 uppercase">Max</span>
                                 </div>
+                            </div>
+
+                            <div className="flex gap-2 w-full">
+                                <button onClick={() => { setSearchMode('HYBRID'); play('CLICK'); }} className={`flex-1 py-1.5 rounded border text-[10px] font-bold transition-colors ${searchMode === 'HYBRID' ? 'bg-purple-900/40 border-purple-500 text-purple-300' : 'bg-slate-800 border-slate-700 text-slate-400'}`}>AI HYBRID</button>
+                                <button onClick={() => { setSearchMode('SEMANTIC'); play('CLICK'); }} className={`flex-1 py-1.5 rounded border text-[10px] font-bold transition-colors ${searchMode === 'SEMANTIC' ? 'bg-blue-900/40 border-blue-500 text-blue-300' : 'bg-slate-800 border-slate-700 text-slate-400'}`}>VECTOR</button>
+                                <button onClick={() => { setSearchMode('TEXT'); play('CLICK'); }} className={`flex-1 py-1.5 rounded border text-[10px] font-bold transition-colors ${searchMode === 'TEXT' ? 'bg-slate-700 border-slate-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-400'}`}>CLASSIC</button>
                             </div>
 
                             <div className="flex gap-2 w-full">

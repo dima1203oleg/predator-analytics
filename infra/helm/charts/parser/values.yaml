@@ -1,0 +1,5 @@
+enabled: true
+schedule: "*/30 * * * *"
+image:
+  repository: "ghcr.io/dima1203oleg/predator-parser"
+  tag: "dev"

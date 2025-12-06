@@ -1,0 +1,5 @@
+apiVersion: v2
+name: qdrant
+version: 0.1.0
+type: application
+description: Qdrant Vector DB

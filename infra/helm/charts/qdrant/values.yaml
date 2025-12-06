@@ -1,0 +1,6 @@
+enabled: true
+image:
+  repository: "qdrant/qdrant"
+  tag: "v1.7.4"
+persistence:
+  size: 10Gi

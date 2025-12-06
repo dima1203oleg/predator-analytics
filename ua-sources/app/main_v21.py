@@ -12,6 +12,11 @@ from app.services.opensearch_indexer import OpenSearchIndexer
 from app.services.auth_service import get_current_user, auth_service
 from app.services.embedding_service import EmbeddingService
 from app.services.qdrant_service import QdrantService
+from app.services.document_service import document_service
+from app.api.routers import auth as auth_router
+from app.api.routers import stats as stats_router
+from app.api.routers import metrics as metrics_router
+from app.api.routers import search as search_router
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)
@@ -184,6 +189,21 @@ async def search_documents(q: str, semantic: bool = True, category: Optional[str
         # Limit results
         results_list = results_list[:limit]
         
+        # Log search for analytics (non-blocking)
+        import asyncpg
+        import os
+        try:
+            search_type = "hybrid" if semantic else "keyword"
+            db_url = os.getenv("DATABASE_URL", "postgresql://predator:predator_password@localhost:5432/predator_db")
+            conn = await asyncpg.connect(db_url)
+            await conn.execute("""
+                INSERT INTO gold.search_logs (query, search_type, results_count, filters)
+                VALUES ($1, $2, $3, $4)
+            """, q, search_type, len(results_list), {"category": category} if category else None)
+            await conn.close()
+        except Exception as log_err:
+            logger.debug(f"Search logging failed (non-critical): {log_err}")
+        
         return {
             "results": results_list,
             "total": len(results_list),
@@ -206,23 +226,19 @@ async def get_document(doc_id: str):
         Complete document with all fields
     """
     try:
-        # Fetch from PostgreSQL gold schema
-        # For now, return mock data
-        # TODO: Implement actual database query
+        # Fetch from PostgreSQL gold schema using DocumentService
+        document = await document_service.get_document_by_id(doc_id)
         
-        return {
-            "id": doc_id,
-            "title": "Sample Document",
-            "content": "Full document content would be here...",
-            "author": "System",
-            "published_date": "2025-12-05T00:00:00Z",
-            "category": "general",
-            "source": "predator"
-        }
+        if not document:
+            raise HTTPException(status_code=404, detail="Document not found")
         
+        return document
+        
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Document fetch failed: {e}")
-        raise HTTPException(status_code=404, detail="Document not found")
+        raise HTTPException(status_code=500, detail="Failed to fetch document")
 
 # ============================================================================
 # AUTH ENDPOINTS (TS-Compliant)
@@ -341,7 +357,60 @@ async def upload_dataset(
             os_module.unlink(temp_file.name)
 
 
+# ============================================================================
+# INCLUDE TS-COMPLIANT ROUTERS
+# ============================================================================
+
+# Auth endpoints (register, login, profile)
+app.include_router(auth_router.router, prefix="/api/v1")
+
+# Stats/Analytics endpoints
+app.include_router(stats_router.router, prefix="/api/v1")
+
+# Search endpoints
+app.include_router(search_router.router, prefix="/api/v1")
+
+# Prometheus Metrics endpoint
+app.include_router(metrics_router.router)
+
+
+# ============================================================================
+# DOCUMENTS LIST ENDPOINT
+# ============================================================================
+
+@app.get("/api/v1/documents")
+async def list_documents(
+    limit: int = 20,
+    offset: int = 0,
+    category: str = None,
+    source: str = None
+):
+    """
+    List documents with pagination and filters.
+    
+    Args:
+        limit: Max number of results (default 20)
+        offset: Pagination offset
+        category: Filter by category
+        source: Filter by source
+    
+    Returns:
+        {documents: [...], total: int, limit: int, offset: int}
+    """
+    try:
+        result = await document_service.list_documents(
+            limit=limit,
+            offset=offset,
+            category=category,
+            source=source
+        )
+        return result
+    except Exception as e:
+        logger.error(f"List documents failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to list documents")
+
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
