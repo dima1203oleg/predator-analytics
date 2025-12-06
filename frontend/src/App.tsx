@@ -32,6 +32,7 @@ const OpponentView = lazy(() => import('./views/OpponentView'));
 const SearchConsole = lazy(() => import('./views/SearchConsole'));
 const DatasetStudio = lazy(() => import('./views/DatasetStudio'));
 const AutoOptimizerView = lazy(() => import('./views/AutoOptimizerView'));
+const TestingView = lazy(() => import('./views/TestingView'));
 
 
 const LoadingSpinner = () => (
@@ -96,6 +97,7 @@ function App() {
       case TabView.SYSTEM_BRAIN: return <SystemBrainView />;
       case TabView.NAS: return <NasView />;
       case TabView.OPPONENT: return <OpponentView />;
+      case TabView.TESTING: return <TestingView />;
       default: return <DashboardView />;
     }
   };
