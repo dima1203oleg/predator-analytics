@@ -17,6 +17,7 @@ import {
     Play, Pause, RotateCcw, Target, Shield, Cpu, Database,
     Brain, Sparkles, ArrowUpRight, ArrowDownRight, ChevronRight
 } from 'lucide-react';
+import { api } from '../services/api';
 
 // Types
 interface OptimizerStatus {
@@ -89,8 +90,8 @@ const MetricCard: React.FC<{
                     </div>
                 </div>
                 <div className={`p-2 rounded-lg ${status === 'good' ? 'bg-emerald-500/20 text-emerald-400' :
-                        status === 'warning' ? 'bg-amber-500/20 text-amber-400' :
-                            'bg-red-500/20 text-red-400'
+                    status === 'warning' ? 'bg-amber-500/20 text-amber-400' :
+                        'bg-red-500/20 text-red-400'
                     }`}>
                     {icon}
                 </div>
@@ -123,8 +124,8 @@ const QualityGateRow: React.FC<{ gate: QualityGate }> = ({ gate }) => {
                         initial={{ width: 0 }}
                         animate={{ width: `${percentage}%` }}
                         className={`h-full rounded-full ${gate.status === 'passing'
-                                ? 'bg-gradient-to-r from-emerald-500 to-teal-500'
-                                : 'bg-gradient-to-r from-red-500 to-rose-500'
+                            ? 'bg-gradient-to-r from-emerald-500 to-teal-500'
+                            : 'bg-gradient-to-r from-red-500 to-rose-500'
                             }`}
                     />
                 </div>
@@ -199,57 +200,19 @@ const AutoOptimizerView: React.FC = () => {
     // Fetch data
     const fetchData = useCallback(async () => {
         try {
-            // Simulated data for UI development
-            // TODO: Replace with actual API calls
-            setStatus({
-                is_running: true,
-                total_optimizations_24h: 12,
-                actions_by_type: {
-                    retrain_model: 3,
-                    scale_pods: 2,
-                    optimize_model: 4,
-                    ab_test: 3
-                },
-                quality_gates_status: 'passing',
-                next_cycle_in_minutes: 7,
-                last_action: {
-                    type: 'optimize_model',
-                    timestamp: new Date().toISOString(),
-                    reason: 'Latency optimization triggered'
-                }
-            });
+            // Real API Calls
+            const [statusRes, metricsRes, historyRes] = await Promise.all([
+                api.optimizer.getStatus(),
+                api.optimizer.getMetrics(),
+                api.optimizer.getHistory() // Needs backend endpoint
+            ]);
 
+            setStatus(statusRes);
             setMetrics({
-                ndcg_at_10: 0.86,
-                avg_latency_ms: 420,
-                error_rate: 0.003,
-                cost_per_1k_requests: 0.38,
-                user_satisfaction: 4.5,
+                ...metricsRes,
                 timestamp: new Date().toISOString()
             });
-
-            setHistory([
-                {
-                    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-                    action: { type: 'retrain_model', target: 'reranker', reason: 'NDCG drop detected: 0.72 → target 0.82' },
-                    metrics: { ndcg_at_10: 0.72 }
-                },
-                {
-                    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-                    action: { type: 'scale_pods', target: 'backend', reason: 'High latency: 650ms' },
-                    metrics: { avg_latency_ms: 650 }
-                },
-                {
-                    timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
-                    action: { type: 'ab_test', target: 'reranker_v2', reason: 'Weekly scheduled A/B test' },
-                    metrics: {}
-                },
-                {
-                    timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-                    action: { type: 'generate_dataset', reason: 'Corpus shift detected - augmenting data' },
-                    metrics: {}
-                }
-            ]);
+            setHistory(Array.isArray(historyRes) ? historyRes : []);
 
             setIsLoading(false);
         } catch (error) {
@@ -267,9 +230,12 @@ const AutoOptimizerView: React.FC = () => {
     const handleTriggerCycle = async () => {
         setIsTriggering(true);
         try {
-            // TODO: API call to trigger optimization
+            await api.optimizer.trigger();
+            // Wait for backend to process
             await new Promise(resolve => setTimeout(resolve, 2000));
             await fetchData();
+        } catch (e) {
+            console.error("Trigger failed:", e);
         } finally {
             setIsTriggering(false);
         }
@@ -309,8 +275,8 @@ const AutoOptimizerView: React.FC = () => {
                 <div className="flex items-center gap-3">
                     {/* Status indicator */}
                     <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${status?.is_running
-                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                            : 'bg-slate-800/50 border-slate-700/50 text-slate-400'
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                        : 'bg-slate-800/50 border-slate-700/50 text-slate-400'
                         }`}>
                         <div className={`w-2 h-2 rounded-full ${status?.is_running ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'
                             }`} />
@@ -398,10 +364,10 @@ const AutoOptimizerView: React.FC = () => {
                             Quality Gates
                         </h2>
                         <div className={`px-3 py-1 rounded-full text-xs font-medium ${status?.quality_gates_status === 'passing'
-                                ? 'bg-emerald-500/10 text-emerald-400'
-                                : status?.quality_gates_status === 'warning'
-                                    ? 'bg-amber-500/10 text-amber-400'
-                                    : 'bg-red-500/10 text-red-400'
+                            ? 'bg-emerald-500/10 text-emerald-400'
+                            : status?.quality_gates_status === 'warning'
+                                ? 'bg-amber-500/10 text-amber-400'
+                                : 'bg-red-500/10 text-red-400'
                             }`}>
                             {qualityGates.filter(g => g.status === 'passing').length}/{qualityGates.length} Passing
                         </div>
