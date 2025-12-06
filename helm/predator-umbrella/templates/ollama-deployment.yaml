@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-umbrella.fullname" . }}-ollama
+  labels:
+    {{- include "predator-umbrella.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ollama
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator-umbrella.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: ollama
+  template:
+    metadata:
+      labels:
+        {{- include "predator-umbrella.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: ollama
+    spec:
+      containers:
+        - name: ollama
+          image: "ollama/ollama:latest"
+          ports:
+            - containerPort: 11434
+              name: http
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+          volumeMounts:
+            - name: ollama-models
+              mountPath: /root/.ollama
+      volumes:
+        - name: ollama-models
+          persistentVolumeClaim:
+            claimName: {{ include "predator-umbrella.fullname" . }}-ollama-models
