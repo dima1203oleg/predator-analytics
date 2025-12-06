@@ -79,7 +79,7 @@ async def search(
             if source:
                 query_body["query"]["bool"]["filter"].append({"term": {"source.keyword": source}})
 
-            os_resp = await indexer.search(index_name="predator-documents", query_body=query_body)
+            os_resp = await indexer.search(index_name="documents_safe", query_body=query_body)
             text_hits = os_resp.get("hits", {}).get("hits", [])
             total = os_resp.get("hits", {}).get("total", {}).get("value", 0)
 

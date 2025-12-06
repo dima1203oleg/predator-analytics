@@ -1,0 +1,130 @@
+# Values for Mac Dev environment
+# Мінімальні ресурси для локальної розробки
+
+global:
+  environment: dev
+  namespace: predator-dev
+
+backend:
+  replicaCount: 1
+  image:
+    repository: predator/ua-sources
+    tag: "dev"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  env:
+    LOG_LEVEL: "DEBUG"
+    ENABLE_XAI: "true"
+    ENABLE_AUGMENTATION: "true"
+    ENABLE_MULTIMODAL: "false"
+
+frontend:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+celery:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+# Data stores - minimal resources
+postgresql:
+  enabled: true
+  persistence:
+    size: 5Gi
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+
+redis:
+  enabled: true
+  architecture: standalone
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+
+qdrant:
+  enabled: true
+  replicaCount: 1
+  persistence:
+    size: 2Gi
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+opensearch:
+  enabled: true
+  singleNode: true
+  config:
+    opensearch.yml:
+      plugins.security.disabled: true
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+  javaOpts: "-Xms256m -Xmx256m"
+
+opensearch-dashboards:
+  enabled: true
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+
+# Monitoring - disabled for dev
+prometheus:
+  enabled: false
+
+grafana:
+  enabled: false
+
+# ML features
+mlflow:
+  enabled: true
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+
+# Ollama for local LLM
+ollama:
+  enabled: false # Enable manually if needed
+
+# MinIO for object storage
+minio:
+  enabled: true
+  persistence:
+    size: 5Gi
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+
+# Ingress - disabled for local
+ingress:
+  enabled: false

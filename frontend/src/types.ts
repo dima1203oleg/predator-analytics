@@ -46,8 +46,8 @@ export interface SpeechRecognitionErrorEvent extends Event {
 // Extend Window interface
 declare global {
     interface Window {
-        SpeechRecognition: { new (): SpeechRecognition };
-        webkitSpeechRecognition: { new (): SpeechRecognition };
+        SpeechRecognition: { new(): SpeechRecognition };
+        webkitSpeechRecognition: { new(): SpeechRecognition };
     }
 }
 
@@ -55,12 +55,12 @@ declare global {
 export type AvatarEmotion = "idle" | "thinking" | "speaking" | "alert" | "listening";
 
 export interface AvatarShellProps {
-  emotion: AvatarEmotion;
-  currentUtterance?: string;
-  audioSource?: string | Blob;
-  onSpeechEnd?: () => void;
-  onError?: (error: Error) => void;
-  className?: string;
+    emotion: AvatarEmotion;
+    currentUtterance?: string;
+    audioSource?: string | Blob;
+    onSpeechEnd?: () => void;
+    onError?: (error: Error) => void;
+    className?: string;
 }
 
 // --- COUNCIL TYPES ---
@@ -91,23 +91,26 @@ export interface CouncilChunk {
 }
 
 export enum TabView {
-  DASHBOARD = 'dashboard',
-  USER_PORTAL = 'user_portal', // Client UI
-  INTEGRATION = 'integration', // API Keys & Sources
-  DATA = 'data',        // Storage
-  ETL = 'etl',          // Parsing
-  AGENTS = 'agents',    // MAS
-  SUPER_INTELLIGENCE = 'super_intelligence', // Evolution
-  NAS = 'nas',          // NEW: Neural Architecture Search
-  DEVOPS = 'devops',    // Deployment
-  SETTINGS = 'settings',
-  ANALYTICS = 'analytics',
-  LLM = 'llm',
-  SECURITY = 'security',
-  MONITORING = 'monitoring',
-  SYSTEM_BRAIN = 'system_brain',
-  OPPONENT = 'opponent', // NEW: Red Teaming Console
-  ADMIN_DASHBOARD = 'admin_dashboard' // NEW: Admin Dashboard for Billing/Training
+    DASHBOARD = 'dashboard',
+    USER_PORTAL = 'user_portal', // Client UI
+    SEARCH = 'search',          // NEW: Semantic Search Console
+    DATASET_STUDIO = 'dataset_studio', // NEW: Dataset Generation
+    AUTO_OPTIMIZER = 'auto_optimizer', // NEW: Self-Improvement Loop
+    INTEGRATION = 'integration', // API Keys & Sources
+    DATA = 'data',        // Storage
+    ETL = 'etl',          // Parsing
+    AGENTS = 'agents',    // MAS
+    SUPER_INTELLIGENCE = 'super_intelligence', // Evolution
+    NAS = 'nas',          // Neural Architecture Search
+    DEVOPS = 'devops',    // Deployment
+    SETTINGS = 'settings',
+    ANALYTICS = 'analytics',
+    LLM = 'llm',
+    SECURITY = 'security',
+    MONITORING = 'monitoring',
+    SYSTEM_BRAIN = 'system_brain',
+    OPPONENT = 'opponent', // Red Teaming Console
+    ADMIN_DASHBOARD = 'admin_dashboard' // Admin Dashboard for Billing/Training
 }
 
 // --- NAS & AUTOML TYPES ---

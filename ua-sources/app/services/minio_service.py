@@ -11,6 +11,8 @@ class MinIOService:
     """
     Service for interacting with MinIO object storage.
     Handles raw data uploads, model artifacts, and exports.
+    
+    Uses lazy initialization to allow app startup without MinIO.
     """
     def __init__(self):
         self.endpoint = os.getenv("MINIO_ENDPOINT", "localhost:9000")
@@ -18,26 +20,38 @@ class MinIOService:
         self.secret_key = os.getenv("MINIO_SECRET_KEY", "predator_secret_key")
         self.secure = os.getenv("MINIO_SECURE", "false").lower() == "true"
         
-        self.client = Minio(
-            self.endpoint,
-            access_key=self.access_key,
-            secret_key=self.secret_key,
-            secure=self.secure
-        )
-        
-        # Ensure buckets exist
+        self._client = None  # Lazy initialization
         self.buckets = ["raw-data", "datasets", "models", "exports"]
-        self._ensure_buckets()
-
+        self._initialized = False
+    
+    @property
+    def client(self):
+        """Lazy client initialization."""
+        if self._client is None:
+            self._client = Minio(
+                self.endpoint,
+                access_key=self.access_key,
+                secret_key=self.secret_key,
+                secure=self.secure
+            )
+        return self._client
+    
     def _ensure_buckets(self):
-        """Create buckets if they don't exist."""
+        """Create buckets if they don't exist. Called on first use."""
+        if self._initialized:
+            return
+        
         for bucket in self.buckets:
             try:
                 if not self.client.bucket_exists(bucket):
                     self.client.make_bucket(bucket)
                     logger.info(f"Created bucket: {bucket}")
             except S3Error as e:
-                logger.error(f"Failed to create bucket {bucket}: {e}")
+                logger.warning(f"MinIO bucket {bucket} not accessible: {e}")
+            except Exception as e:
+                logger.warning(f"MinIO connection failed: {e}")
+        
+        self._initialized = True
 
     async def upload_file(self, bucket: str, object_name: str, file_path: str, content_type: str = "application/octet-stream") -> str:
         """
