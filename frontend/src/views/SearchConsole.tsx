@@ -15,8 +15,9 @@ import {
     Search, Sparkles, Brain, Image, Mic, Star, Share2, Copy,
     ChevronRight, Filter, X, BookOpen, Download, Zap,
     MessageSquare, FileText, Clock, TrendingUp, Settings,
-    ChevronDown, ExternalLink, Layers, Database
+    ChevronDown, ExternalLink, Layers, Database, AlertCircle
 } from 'lucide-react';
+import { api } from '../services/api';
 
 // Types
 interface SearchResult {
@@ -288,57 +289,60 @@ const SearchConsole: React.FC = () => {
     const [searchTime, setSearchTime] = useState<number | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // Mock search function
     const handleSearch = useCallback(async () => {
         if (!query.trim()) return;
 
         setIsLoading(true);
         const startTime = Date.now();
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 800));
+        try {
+            // Real API Call
+            const apiResults = await api.search.query({ 
+                q: query,
+                filters: showFilters ? filters : undefined
+            });
 
-        // Mock results
-        const mockResults: SearchResult[] = [
-            {
-                id: '1',
-                title: 'Нейронні мережі у 2025: Повний огляд технологій',
-                snippet: 'Семантичний пошук та нейронні мережі змінюють спосіб, яким ми знаходимо інформацію. AI-powered системи забезпечують безпрецедентну точність...',
-                score: 0.94,
-                semanticScore: 0.89,
-                source: 'arXiv',
-                category: 'AI',
-                date: '12 бер 2025',
-                searchType: 'hybrid'
-            },
-            {
-                id: '2',
-                title: 'Semantic Search: Від ключових слів до розуміння контексту',
-                snippet: 'Традиційний пошук базується на точному співпаденні слів. Semantic search використовує ML для розуміння намірів користувача...',
-                score: 0.87,
-                semanticScore: 0.92,
-                source: 'Medium',
-                category: 'Tech',
-                date: '8 бер 2025',
-                searchType: 'semantic'
-            },
-            {
-                id: '3',
-                title: 'Як побудувати власну пошукову систему з Qdrant та OpenSearch',
-                snippet: 'Hybrid search поєднує найкраще з двох світів: швидкість keyword search та точність vector search. У цій статті розглянемо архітектуру...',
-                score: 0.82,
-                semanticScore: 0.78,
-                source: 'GitHub',
-                category: 'Code',
-                date: '5 бер 2025',
-                searchType: 'hybrid'
-            }
-        ];
+            // Adapt results
+            const formattedResults: SearchResult[] = Array.isArray(apiResults) ? apiResults.map((r: any) => ({
+                id: r.id || String(Math.random()),
+                title: r.title || 'Untitled Document',
+                snippet: r.snippet || r.content?.substring(0, 300) || 'No preview available',
+                score: r.score || 0,
+                semanticScore: r.semantic_score,
+                source: r.source || 'Internal',
+                category: r.category,
+                date: r.date,
+                searchType: r.search_type || 'hybrid'
+            })) : [];
 
-        setResults(mockResults);
-        setSearchTime(Date.now() - startTime);
-        setIsLoading(false);
-    }, [query]);
+            setResults(formattedResults);
+        } catch (error) {
+            console.error("Search failed:", error);
+        } finally {
+            setSearchTime(Date.now() - startTime);
+            setIsLoading(false);
+        }
+    }, [query, showFilters, filters]);
+
+    const handleExplain = async (result: SearchResult) => {
+        try {
+            // Call ML Explain API
+            const explanation = await api.ml.explain(query, result.id, result.snippet);
+            setSelectedExplanation(explanation);
+        } catch (e) {
+            console.error("Explain failed:", e);
+        }
+    };
+
+    const handleSummarize = async (result: SearchResult) => {
+        try {
+            // Call ML Summarize API (Placeholder alert for now)
+            const summary = await api.ml.summarize(result.snippet);
+            alert(`Summary: ${summary.summary}`);
+        } catch (e) {
+            console.error("Summarize failed:", e);
+        }
+    };
 
     // Keyboard shortcut
     useEffect(() => {
@@ -590,19 +594,8 @@ const SearchConsole: React.FC = () => {
                                             key={result.id}
                                             result={result}
                                             rank={i + 1}
-                                            onExplain={() => setSelectedExplanation({
-                                                method: 'token_overlap',
-                                                query_coverage: 0.85,
-                                                top_features: [
-                                                    { token: 'нейронні', importance: 0.95 },
-                                                    { token: 'мережі', importance: 0.88 },
-                                                    { token: 'AI', importance: 0.76 },
-                                                    { token: '2025', importance: 0.65 },
-                                                    { token: 'пошук', importance: 0.52 },
-                                                ],
-                                                interpretation: 'Document is highly relevant with strong keyword match'
-                                            })}
-                                            onSummarize={() => console.log('Summarize:', result.id)}
+                                            onExplain={() => handleExplain(result)}
+                                            onSummarize={() => handleSummarize(result)}
                                         />
                                     ))}
                                 </div>
