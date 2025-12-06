@@ -56,8 +56,10 @@ sentencepiece>=0.1.99      # Tokenizer for T5/BART
 
 # Integrations
 slack-sdk>=3.27.0          # Slack API client
-notion-client>=2.2.0       # Notion API
-google-api-python-client>=2.100.0  # Google Drive API
+notion-client>=2.0.0
+google-api-python-client>=2.118.0
+kubernetes>=29.0.0
+prometheus-api-client>=0.5.5
 google-auth>=2.25.0        # Google OAuth2
 google-auth-oauthlib>=1.2.0
 google-auth-httplib2>=0.2.0
