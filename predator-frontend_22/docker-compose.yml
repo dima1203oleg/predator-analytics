@@ -1,0 +1,126 @@
+version: '3.8'
+
+services:
+  # --- API GATEWAY ---
+  gateway:
+    image: nginx:alpine
+    container_name: predator-gateway
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - ua-sources-api
+      - predator-brain
+      - predator-agents
+    networks:
+      - predator-net
+
+  # --- INFRASTRUCTURE ---
+  postgres:
+    image: timescale/timescaledb:latest-pg15
+    container_name: predator-postgres
+    environment:
+      POSTGRES_USER: ua_service
+      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: predator_ua
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - predator-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ua_service"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: predator-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - predator-net
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: predator-qdrant
+    ports:
+      - "6333:6333"
+    networks:
+      - predator-net
+
+  # --- MICROSERVICES ---
+  
+  # 1. ETL & Data
+  ua-sources-api:
+    build: 
+      context: ./ua-sources
+      dockerfile: Dockerfile
+    container_name: ua-sources-api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./ua-sources/app:/app/app
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://ua_service:dev_password@postgres:5432/predator_ua
+      - REDIS_URL=redis://redis:6379/0
+      - QDRANT_URL=http://qdrant:6333
+      - TRUTH_ONLY_MODE=true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - predator-net
+
+  # 2. Neural Council
+  predator-brain:
+    build:
+      context: ./predator-brain
+      dockerfile: Dockerfile
+    container_name: predator-brain
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+    volumes:
+      - ./predator-brain/app:/app/app
+    networks:
+      - predator-net
+
+  # 3. MAS Orchestrator
+  predator-agents:
+    build:
+      context: ./predator-agents
+      dockerfile: Dockerfile
+    container_name: predator-agents
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8002 --reload
+    volumes:
+      - ./predator-agents/app:/app/app
+    networks:
+      - predator-net
+
+  # --- FRONTEND ---
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: predator-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host
+    environment:
+      # Point to Gateway
+      - VITE_API_URL=http://gateway:8080/api/v1
+    depends_on:
+      - gateway
+    networks:
+      - predator-net
+
+networks:
+  predator-net:
+    driver: bridge
+
+volumes:
+  postgres_data:

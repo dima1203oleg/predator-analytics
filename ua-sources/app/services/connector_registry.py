@@ -34,7 +34,7 @@ class ConnectorRegistry:
             try:
                 status = await connector.health_check()
                 results[name] = status.value
-            except:
+            except Exception:
                 results[name] = "ERROR"
         return results
 

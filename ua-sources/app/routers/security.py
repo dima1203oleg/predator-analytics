@@ -1,6 +1,6 @@
 """Security Router - Security and access control endpoints"""
 from fastapi import APIRouter, HTTPException, Depends
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 router = APIRouter(prefix="/security", tags=["Security"])
@@ -13,7 +13,7 @@ async def get_security_status():
         "status": "SECURE",
         "level": "HIGH",
         "threats_detected": 0,
-        "last_scan": datetime.utcnow().isoformat()
+        "last_scan": datetime.now(timezone.utc).isoformat()
     }
 
 
@@ -32,7 +32,7 @@ async def trigger_security_scan():
     return {
         "scan_id": "scan-001",
         "status": "STARTED",
-        "started_at": datetime.utcnow().isoformat()
+        "started_at": datetime.now(timezone.utc).isoformat()
     }
 
 
@@ -49,3 +49,4 @@ async def get_threats():
             "low": 0
         }
     }
+

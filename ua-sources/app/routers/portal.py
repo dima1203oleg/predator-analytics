@@ -5,7 +5,8 @@ Public-facing API endpoints for external integrations
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional, List
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, timezone
+from app.services.ai_engine import ai_engine
 
 router = APIRouter(prefix="/portal", tags=["Portal"])
 
@@ -30,22 +31,24 @@ async def get_portal_status():
         status="OPERATIONAL",
         version="19.0.0",
         uptime="99.9%",
-        last_sync=datetime.utcnow()
+        last_sync=datetime.now(timezone.utc)
     )
 
 
 @router.post("/search")
 async def public_search(query: PublicQuery):
     """Public search endpoint with rate limiting"""
+    result = await ai_engine.analyze(query=query.query, depth="standard")
     return {
         "query": query.query,
-        "results": [],
-        "total": 0,
-        "message": "Portal search endpoint ready"
+        "results": result.sources,
+        "total": len(result.sources),
+        "analysis": result.answer,
+        "message": "Results retrieved successfully"
     }
 
 
 @router.get("/health")
 async def portal_health():
     """Health check for load balancers"""
-    return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
+    return {"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}

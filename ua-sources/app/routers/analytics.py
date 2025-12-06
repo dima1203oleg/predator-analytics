@@ -5,57 +5,44 @@ Deep analytics and risk assessment endpoints
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
+from app.services.ai_engine import ai_engine
+from app.schemas.analytics import AnalyticsQuery, RiskAssessment, RiskLevel, TrendData, LLMMode
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
 
-class RiskLevel(str, Enum):
-    LOW = "LOW"
-    MEDIUM = "MEDIUM"
-    HIGH = "HIGH"
-    CRITICAL = "CRITICAL"
 
-
-class AnalyticsQuery(BaseModel):
-    query: str
-    sectors: List[str] = ["GOV", "BIZ"]
-    depth: str = "standard"  # quick, standard, deep
-
-
-class RiskAssessment(BaseModel):
-    entity: str
-    risk_level: RiskLevel
-    score: float
-    factors: List[str]
-    recommendations: List[str]
-
-
-class TrendData(BaseModel):
-    date: str
-    value: float
-    change: float
 
 
 @router.post("/deepscan")
 async def run_deep_scan(query: AnalyticsQuery):
     """Run deep scan analysis across Ukrainian data sources"""
-    return {
-        "query": query.query,
-        "sectors": query.sectors,
-        "results": {
-            "entities_found": 0,
-            "risks_identified": 0,
-            "connections_mapped": 0
-        },
-        "sources_checked": [
-            {"name": "EDR", "status": "OK", "records": 0},
-            {"name": "Prozorro", "status": "OK", "records": 0},
-            {"name": "Court Registry", "status": "OK", "records": 0},
-        ],
-        "timestamp": datetime.utcnow().isoformat()
-    }
+    try:
+        result = await ai_engine.analyze(
+            query=query.query,
+            sectors=query.sectors,
+            depth=query.depth,
+            llm_mode=query.llm_mode.value,
+            preferred_provider=query.preferred_provider
+        )
+        
+        return {
+            "query": query.query,
+            "sectors": query.sectors,
+            "mode": query.llm_mode,
+            "results": {
+                "answer": result.answer,
+                "confidence": result.confidence,
+                "model_used": result.model_used,
+                "sources_count": len(result.sources)
+            },
+            "sources": result.sources,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/risk/{edrpou}")
@@ -79,7 +66,7 @@ async def get_analytics_trends(
     days = {"1d": 1, "7d": 7, "30d": 30, "90d": 90}.get(period, 7)
     
     trends = []
-    base_date = datetime.utcnow()
+    base_date = datetime.now(timezone.utc)
     for i in range(days):
         date = base_date - timedelta(days=days - i - 1)
         trends.append(TrendData(
@@ -108,7 +95,7 @@ async def get_risk_forecast(days: int = 7):
     
     forecasts = []
     for i in range(days):
-        date = datetime.utcnow() + timedelta(days=i)
+        date = datetime.now(timezone.utc) + timedelta(days=i)
         forecasts.append({
             "date": date.strftime("%Y-%m-%d"),
             "predicted_risk": random.randint(20, 60),
@@ -129,5 +116,5 @@ async def get_sector_distribution():
             {"name": "SCI", "percentage": 10, "records": 280000},
         ],
         "total_records": 2800000,
-        "last_updated": datetime.utcnow().isoformat()
+        "last_updated": datetime.now(timezone.utc).isoformat()
     }

@@ -1,0 +1,36 @@
+# LoRA Trainer Values
+
+image:
+  repository: ghcr.io/predator-analytics/predator-brain
+  pullPolicy: IfNotPresent
+  tag: "v21.0.0" # Uses the same image as brain, but different entrypoint
+
+schedule: "0 4 * * *" # Daily at 04:00 AM
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 8Gi
+    nvidia.com/gpu: 1
+  requests:
+    cpu: 500m
+    memory: 4Gi
+    nvidia.com/gpu: 1
+
+env:
+  BASE_MODEL_NAME: "llama3-8b"
+  TRAIN_EPOCHS: "3"
+  TRAIN_BATCH_SIZE: "16"
+  TRAIN_LR: "2e-4"
+  DATASETS_DIR: "/data/datasets/brain"
+  ADAPTERS_DIR: "/data/adapters/brain"
+  TRAINING_BACKEND: "hf-peft" # or "h2o"
+
+persistence:
+  enabled: true
+  existingClaim: "predator-data-pvc" # Shared PVC with Brain/ETL
+  subPathDatasets: "datasets/brain"
+  subPathAdapters: "adapters/brain"
+
+nodeSelector: {}
+tolerations: []
