@@ -5,7 +5,7 @@ import {
   Search, User, Bell, Menu, X, ShieldCheck, Server, Activity,
   Terminal, BrainCircuit, Workflow, Clock, LogOut, Lock, ChevronDown,
   Zap, Cable, Crown, Layers, Rocket, Newspaper, Sparkles, Trophy,
-  Home, Grid, Cpu, Network, Sword, Radio, LayoutGrid
+  Home, Grid, Cpu, Network, Sword, Radio, LayoutGrid, TestTube
 } from 'lucide-react';
 import { TabView } from '../types';
 import CommandCenter from './CommandCenter';
@@ -90,6 +90,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange, onLoc
         { id: TabView.DEVOPS, label: 'Інженерний Хаб', icon: <Server size={18} /> },
         { id: TabView.SECURITY, label: 'Кіберзахист', icon: <ShieldAlert size={18} /> },
         { id: TabView.MONITORING, label: 'Спостережуваність', icon: <Activity size={18} /> },
+        { id: TabView.TESTING, label: 'Тест Лабораторія', icon: <TestTube size={18} className="text-pink-400" /> },
         { id: TabView.LLM, label: 'Майстерня Моделей', icon: <Cpu size={18} /> },
         { id: TabView.SETTINGS, label: 'Налаштування', icon: <Settings size={18} /> },
         { id: TabView.ADMIN_DASHBOARD, label: 'Адмін Панель', icon: <LayoutGrid size={18} /> },
@@ -197,8 +198,8 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange, onLoc
                         <button
                           onClick={() => handleTabClick(item.id)}
                           className={`w-full flex items-center gap-3 px-4 py-3.5 md:py-2.5 text-sm font-medium rounded-md transition-all duration-200 group relative overflow-hidden btn-3d touch-manipulation ${activeTab === item.id
-                              ? isGodMode ? 'text-white bg-purple-900/20 border border-purple-500/50 shadow-[inset_0_0_10px_rgba(168,85,247,0.2)]' : 'text-white bg-slate-800/50 border border-slate-700 shadow-[inset_0_0_10px_rgba(6,182,212,0.1)]'
-                              : 'text-slate-400 hover:bg-slate-800/30 hover:text-slate-200 border border-transparent'
+                            ? isGodMode ? 'text-white bg-purple-900/20 border border-purple-500/50 shadow-[inset_0_0_10px_rgba(168,85,247,0.2)]' : 'text-white bg-slate-800/50 border border-slate-700 shadow-[inset_0_0_10px_rgba(6,182,212,0.1)]'
+                            : 'text-slate-400 hover:bg-slate-800/30 hover:text-slate-200 border border-transparent'
                             }`}
                         >
                           {/* Active Glow Indicator */}

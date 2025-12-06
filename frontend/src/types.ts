@@ -110,7 +110,8 @@ export enum TabView {
     MONITORING = 'monitoring',
     SYSTEM_BRAIN = 'system_brain',
     OPPONENT = 'opponent', // Red Teaming Console
-    ADMIN_DASHBOARD = 'admin_dashboard' // Admin Dashboard for Billing/Training
+    ADMIN_DASHBOARD = 'admin_dashboard', // Admin Dashboard for Billing/Training
+    TESTING = 'testing'
 }
 
 // --- NAS & AUTOML TYPES ---
