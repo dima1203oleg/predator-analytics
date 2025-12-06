@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { 
-    MOCK_ENVIRONMENTS, MOCK_PIPELINES, MOCK_CONNECTORS, MOCK_FILES, 
-    MOCK_WEB_SOURCES, MOCK_API_SOURCES, MOCK_TELEGRAM_BOTS, MOCK_LLM_CONFIG, 
-    MOCK_DATABASES, MOCK_VECTORS, MOCK_SECURITY_LOGS, MOCK_WAF_LOGS, 
+import {
+    MOCK_ENVIRONMENTS, MOCK_PIPELINES, MOCK_CONNECTORS, MOCK_FILES,
+    MOCK_WEB_SOURCES, MOCK_API_SOURCES, MOCK_TELEGRAM_BOTS, MOCK_LLM_CONFIG,
+    MOCK_DATABASES, MOCK_VECTORS, MOCK_SECURITY_LOGS, MOCK_WAF_LOGS,
     MOCK_TARGETS, MOCK_ETL_JOBS, MOCK_SERVICES, MOCK_CLUSTER, MOCK_SECTOR_DATA,
     MOCK_BENCHMARKS, MOCK_AUTOML_EXPERIMENTS, MOCK_AGENT_CONFIGS, MOCK_SECRETS,
     MOCK_DATA_CATALOG, MOCK_USER_TEMPLATES, MOCK_AUTO_DATASETS
@@ -19,15 +19,15 @@ const getMetaEnv = () => {
 
 const metaEnv = getMetaEnv();
 // In dev, Vite proxy handles /api -> localhost:8080. In prod, Nginx handles it.
-const API_BASE_URL = metaEnv.VITE_API_URL || '/api/v1'; 
+const API_BASE_URL = metaEnv.VITE_API_URL || '/api/v1';
 
 const IS_TRUTH_ONLY_MODE = metaEnv.MODE === 'production' || metaEnv.VITE_TRUTH_ONLY === 'true';
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  }
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    }
 });
 
 // Helper to simulate API delay
@@ -64,7 +64,7 @@ export const api = {
         await delay(400);
         return MOCK_CONNECTORS;
     },
-    
+
     // --- INTEGRATIONS (UA-Sources) ---
     getSecrets: async () => {
         if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/sources/secrets')).data;
@@ -121,7 +121,7 @@ export const api = {
         return MOCK_AUTOML_EXPERIMENTS;
     },
     getLLMConfig: async () => {
-        if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/council/config')).data; 
+        if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/council/config')).data;
         await delay(300);
         return MOCK_LLM_CONFIG;
     },
@@ -215,6 +215,73 @@ export const api = {
                 per_model_answers: [],
                 ranking: []
             } as CouncilResult;
+        }
+    },
+
+    // --- SEMANTIC SEARCH (New v21) ---
+    search: {
+        query: async (params: { q: string, mode?: string, filters?: any }) => {
+            // Use real API if available or mandated
+            if (IS_TRUTH_ONLY_MODE) {
+                return (await apiClient.post('/search/fusion', {
+                    query: params.q,
+                    limit: 20,
+                    filters: params.filters
+                })).data;
+            }
+            // Mock handled in component or basic array here
+            await delay(600);
+            return [
+                {
+                    id: 'mock-1',
+                    title: 'System Architecture v21',
+                    snippet: 'The new architecture utilizes <b>AutoOptimizer</b> for self-healing...',
+                    score: 0.95,
+                    source: 'internal-docs',
+                    searchType: 'hybrid'
+                }
+            ];
+        }
+    },
+
+    // --- AUTO OPTIMIZER (New v21) ---
+    optimizer: {
+        getStatus: async () => {
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/optimizer/status')).data;
+            await delay(300);
+            return { is_running: true, quality_gates_status: 'passing' };
+        },
+        trigger: async () => {
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/optimizer/trigger')).data;
+            await delay(1000);
+            return { status: 'triggered' };
+        },
+        getMetrics: async () => {
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/optimizer/metrics')).data;
+            await delay(300);
+            return { ndcg_at_10: 0.85, avg_latency_ms: 320 };
+        },
+        getHistory: async () => {
+            if (IS_TRUTH_ONLY_MODE) {
+                const res = await apiClient.get('/optimizer/history');
+                return res.data?.history || [];
+            }
+            await delay(300);
+            return [];
+        }
+    },
+
+    // --- ML SERVICES (New v21) ---
+    ml: {
+        explain: async (query: string, documentId: string, content?: string) => {
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/ml/explain', { query, document_id: documentId, content })).data;
+            await delay(1500);
+            return { method: 'SHAP', query_coverage: 0.8, top_features: [], interpretation: 'Mock explanation' };
+        },
+        summarize: async (text: string) => {
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/ml/summarize', { text })).data;
+            await delay(2000);
+            return { summary: "This constitutes a simulated summary of the document content." };
         }
     }
 };
