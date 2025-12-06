@@ -1,6 +1,6 @@
 """
 UA Sources - Celery App Configuration
-Celery worker for background tasks
+Celery worker for background tasks with Beat scheduling
 """
 from celery import Celery
 from .config import settings
@@ -9,7 +9,13 @@ celery_app = Celery(
     "ua_sources",
     broker=settings.CELERY_BROKER_URL,
     backend=settings.CELERY_RESULT_BACKEND,
-    include=["app.tasks.etl", "app.tasks.ua_sources"]
+    include=[
+        "app.tasks.etl",
+        "app.tasks.ua_sources",
+        "app.tasks.etl_workers",
+        "app.tasks.maintenance",
+        "app.tasks.monitoring"
+    ]
 )
 
 # Celery configuration
@@ -23,27 +29,26 @@ celery_app.conf.update(
     task_time_limit=3600,  # 1 hour
     worker_prefetch_multiplier=1,
     worker_concurrency=4,
+    # Result expiration
+    result_expires=86400,  # 24 hours
 )
 
-# Task routes
+# Task routes - assign tasks to specific queues
 celery_app.conf.task_routes = {
+    # ETL Workers
+    "tasks.workers.*": {"queue": "etl"},
+    # Ingestion
     "app.tasks.etl.*": {"queue": "etl"},
     "app.tasks.ingestion.*": {"queue": "ingestion"},
+    # Maintenance
+    "tasks.maintenance.*": {"queue": "maintenance"},
+    # Monitoring
+    "tasks.monitoring.*": {"queue": "monitoring"},
+    # Analytics
     "app.tasks.analytics.*": {"queue": "analytics"},
 }
 
-# Beat schedule for periodic tasks
-celery_app.conf.beat_schedule = {
-    "sync-prozorro-hourly": {
-        "task": "tasks.etl.sync_prozorro",
-        "schedule": 3600.0,  # Every hour
-    },
-    "sync-nbu-rates-daily": {
-        "task": "tasks.etl.sync_nbu_rates",
-        "schedule": 86400.0,  # Every day
-    },
-    "cleanup-old-data-weekly": {
-        "task": "tasks.maintenance.cleanup",
-        "schedule": 604800.0,  # Every week
-    },
-}
+# Import and apply beat schedule
+from .beat_schedule import CELERY_BEAT_SCHEDULE
+celery_app.conf.beat_schedule = CELERY_BEAT_SCHEDULE
+

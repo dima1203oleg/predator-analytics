@@ -1,0 +1,159 @@
+openapi: 3.1.0
+info:
+  title: Predator Analytics API
+  version: 21.0.0
+  description: |
+    Unified API for Predator Analytics Platform v21.0.
+    Provides Semantic Search, Authentication, and Data Access capabilities.
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local Development
+  - url: https://api.predator.ua/api/v1
+    description: Production
+
+paths:
+  /health:
+    get:
+      summary: Health Check
+      description: Returns status of the service and critical dependencies.
+      operationId: healthCheck
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  version:
+                    type: string
+                  dependencies:
+                    type: object
+
+  /auth/login:
+    post:
+      summary: User Login
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+
+  /search:
+    get:
+      summary: Unified Search
+      description: Perform Hybrid (Text + Semantic) search across documents.
+      operationId: searchDocuments
+      parameters:
+        - name: q
+          in: query
+          description: Search query text
+          required: true
+          schema:
+            type: string
+        - name: mode
+          in: query
+          description: Search mode (hybrid, text, semantic)
+          schema:
+            type: string
+            enum: [hybrid, text, semantic]
+            default: hybrid
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: from_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResults"
+
+  /documents/{id}:
+    get:
+      summary: Get Document Details
+      operationId: getDocument
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Document details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+components:
+  schemas:
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        content:
+          type: string
+        category:
+          type: string
+        source:
+          type: string
+        published_date:
+          type: string
+          format: date-time
+        score:
+          type: number
+
+    SearchResults:
+      type: object
+      properties:
+        total:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Document"
+        mode_used:
+          type: string

@@ -1,74 +1,73 @@
--- Predator Analytics v21.0 Database Schema
--- Based on Semantic Search Platform TS
+-- Predator Analytics v21.0 Database Initialization
 
--- Enable extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS vector;  -- For pgvector if installed
-
--- ============================================================================
--- 1. STAGING SCHEMA (Raw Data)
--- ============================================================================
+-- 1. Create Schemas
 CREATE SCHEMA IF NOT EXISTS staging;
-
-CREATE TABLE IF NOT EXISTS staging.raw_data (
-    id SERIAL PRIMARY KEY,
-    source VARCHAR(255) NOT NULL,
-    raw_content JSONB,
-    fetched_at TIMESTAMP DEFAULT NOW(),
-    processed BOOLEAN DEFAULT FALSE,
-    error TEXT,
-    dataset_type VARCHAR(100) -- To distinguishing uploads
-);
-
-CREATE INDEX IF NOT EXISTS idx_raw_data_processed ON staging.raw_data(processed);
-
--- ============================================================================
--- 2. GOLD SCHEMA (Processed Documents)
--- ============================================================================
 CREATE SCHEMA IF NOT EXISTS gold;
 
-CREATE TABLE IF NOT EXISTS gold.documents (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    title TEXT,
-    content TEXT,
-    author VARCHAR(255),
-    published_date TIMESTAMP,
-    category VARCHAR(100),
-    source VARCHAR(100),
-    raw_id INT REFERENCES staging.raw_data(id),
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE INDEX IF NOT EXISTS idx_docs_title ON gold.documents USING GIN (to_tsvector('english', title));
-CREATE INDEX IF NOT EXISTS idx_docs_published ON gold.documents(published_date);
-CREATE INDEX IF NOT EXISTS idx_docs_category ON gold.documents(category);
-
--- Optional: Embeddings table (if storing in Postgres alongside Qdrant/OpenSearch)
-CREATE TABLE IF NOT EXISTS gold.embeddings (
-    doc_id UUID PRIMARY KEY REFERENCES gold.documents(id) ON DELETE CASCADE,
-    embedding vector(384), -- Requires pgvector
-    model VARCHAR(100),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-
--- ============================================================================
--- 3. USERS MANAGEMENT
--- ============================================================================
-CREATE TABLE IF NOT EXISTS gold.users (
+-- 2. Staging Layer (Raw Data)
+CREATE TABLE IF NOT EXISTS staging.raw_data (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(100) UNIQUE,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255),
-    role VARCHAR(50) DEFAULT 'user', -- admin, analyst, viewer
-    subscription_level VARCHAR(50) DEFAULT 'free',
-    can_view_pii BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT NOW(),
-    last_login TIMESTAMP
+    source_type VARCHAR(50) NOT NULL, -- 'web', 'api', 'file'
+    source_url TEXT,
+    raw_content JSONB NOT NULL,
+    fetched_at TIMESTAMPTZ DEFAULT NOW(),
+    processed BOOLEAN DEFAULT FALSE,
+    processing_error TEXT,
+    retry_count INT DEFAULT 0
 );
 
--- Initial Admin User (password: admin123)
--- Hash generated for demo purposes
-INSERT INTO gold.users (username, email, role, subscription_level, can_view_pii)
-VALUES ('admin', 'admin@predator.com', 'admin', 'pro', TRUE)
-ON CONFLICT (email) DO NOTHING;
+CREATE INDEX IF NOT EXISTS idx_staging_processed ON staging.raw_data(processed) WHERE processed = FALSE;
+CREATE INDEX IF NOT EXISTS idx_staging_source ON staging.raw_data(source_type);
+
+-- 3. Gold Layer (Cleaned Documents)
+CREATE TABLE IF NOT EXISTS gold.documents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    summary TEXT,
+    author VARCHAR(255),
+    published_date TIMESTAMPTZ,
+    source_url TEXT,
+    category VARCHAR(100),
+    language VARCHAR(10) DEFAULT 'uk',
+    
+    -- Metadata
+    raw_id INT REFERENCES staging.raw_data(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    
+    -- Indexing Status
+    indexed_os BOOLEAN DEFAULT FALSE, -- OpenSearch
+    indexed_vec BOOLEAN DEFAULT FALSE -- Qdrant
+);
+
+CREATE INDEX IF NOT EXISTS idx_gold_category ON gold.documents(category);
+CREATE INDEX IF NOT EXISTS idx_gold_pub_date ON gold.documents(published_date);
+CREATE INDEX IF NOT EXISTS idx_gold_indexing ON gold.documents(indexed_os, indexed_vec);
+
+-- 4. Users & Auth (Optional for MVP, but good to have structure)
+CREATE TABLE IF NOT EXISTS public.users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    hashed_password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100),
+    role VARCHAR(20) DEFAULT 'user', -- 'admin', 'user'
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 5. Search Logs (Analytics)
+CREATE TABLE IF NOT EXISTS gold.search_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.users(id),
+    query TEXT NOT NULL,
+    filters JSONB,
+    results_count INT,
+    search_type VARCHAR(20), -- 'text', 'semantic', 'hybrid'
+    execution_time_ms FLOAT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 6. Grant permissions (Adjust 'predator' user as needed)
+-- GRANT ALL PRIVILEGES ON SCHEMA staging TO predator;
+-- GRANT ALL PRIVILEGES ON SCHEMA gold TO predator;

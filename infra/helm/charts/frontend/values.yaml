@@ -1,0 +1,11 @@
+enabled: true
+replicaCount: 1
+image:
+  repository: "ghcr.io/dima1203oleg/predator-frontend"
+  tag: "dev"
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 80
+config:
+  apiBaseUrl: "/api/v1"

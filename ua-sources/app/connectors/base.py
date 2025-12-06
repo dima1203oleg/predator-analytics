@@ -62,14 +62,16 @@ class BaseConnector(ABC):
         self._last_check: Optional[datetime] = None
     
     async def _get_client(self) -> httpx.AsyncClient:
-        """Get or create HTTP client"""
+        """Get or create HTTP client with connection pooling"""
         if self._client is None:
             self._client = httpx.AsyncClient(
                 base_url=self.base_url,
                 timeout=self.timeout,
+                limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
                 headers={
-                    "User-Agent": "Predator-Analytics/19.0",
-                    "Accept": "application/json"
+                    "User-Agent": "Predator-Analytics/21.0",
+                    "Accept": "application/json",
+                    "Accept-Language": "uk-UA,uk;q=0.9,en;q=0.8"
                 }
             )
         return self._client

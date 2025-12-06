@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-opensearch
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Release.Name }}-opensearch
+  ports:
+    - port: 9200
+      targetPort: 9200

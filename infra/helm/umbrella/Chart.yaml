@@ -1,0 +1,32 @@
+apiVersion: v2
+name: predator-umbrella
+description: Umbrella chart for Predator Analytics v21.0
+type: application
+version: 0.1.0
+appVersion: "21.0.0"
+
+dependencies:
+  - name: backend
+    version: 0.1.0
+    repository: "file://../charts/backend"
+  - name: frontend
+    version: 0.1.0
+    repository: "file://../charts/frontend"
+  - name: parser
+    version: 0.1.0
+    repository: "file://../charts/parser"
+  - name: processor
+    version: 0.1.0
+    repository: "file://../charts/processor"
+  - name: indexer
+    version: 0.1.0
+    repository: "file://../charts/indexer"
+  - name: postgres
+    version: 0.1.0
+    repository: "file://../charts/postgres"
+  - name: opensearch
+    version: 0.1.0
+    repository: "file://../charts/opensearch"
+  - name: qdrant
+    version: 0.1.0
+    repository: "file://../charts/qdrant"

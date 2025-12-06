@@ -1,0 +1,36 @@
+global:
+  env:
+    name: prod
+
+backend:
+  replicaCount: 2
+  image:
+    tag: "latest"
+  service:
+    type: ClusterIP
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+
+frontend:
+  replicaCount: 2
+  image:
+    tag: "latest"
+
+postgres:
+  persistence:
+    size: 50Gi
+
+opensearch:
+  persistence:
+    size: 100Gi
+  cluster:
+    singleNode: false # Use cluster in prod if possible
