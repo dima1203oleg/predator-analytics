@@ -7,6 +7,11 @@ global:
     port: 5432
     db: "predator_db"
     user: "predator"
+    password: "predator_password"
+
+  redis:
+    host: "predator-redis"
+    port: 6379
 
   opensearch:
     host: "predator-opensearch"
