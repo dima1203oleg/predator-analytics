@@ -110,8 +110,9 @@ async def require_admin(user: dict = Depends(get_current_user)):
     # For now, strict: must have 'admin' role.
     # Fallback: if 'roles' is empty (mock token), allow if locally testing.
     if "admin" not in user["roles"]:
-        # TODO: removing mock bypass in prod
-        if os.getenv("ENV") != "production" and user["username"] == "admin":
+        # STRICT SECURITY: Only allow bypass if explicitly configured in non-prod
+        if os.getenv("ENV") == "development" and os.getenv("ALLOW_ADMIN_BYPASS") == "true":
+             logger.warning(f"⚠️ ADMIN ACCESS GRANTED TO {user['username']} VIA BYPASS CONFIG ⚠️")
              return user
              
         raise HTTPException(
