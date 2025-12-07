@@ -93,8 +93,7 @@ CREATE TABLE IF NOT EXISTS rate_limits (
     PRIMARY KEY(user_id, resource, window_start)
 );
 
-CREATE INDEX idx_rate_limits_window ON rate_limits(window_end) 
-WHERE window_end > NOW();
+CREATE INDEX idx_rate_limits_window ON rate_limits(window_end);
 
 COMMENT ON TABLE rate_limits IS 'Persistent rate limit counters (backup for Redis)';
 

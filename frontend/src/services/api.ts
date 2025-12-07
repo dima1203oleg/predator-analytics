@@ -220,14 +220,17 @@ export const api = {
 
     // --- SEMANTIC SEARCH (New v21) ---
     search: {
-        query: async (params: { q: string, mode?: string, filters?: any }) => {
+        query: async (params: { q: string, rerank?: boolean, mode?: string, filters?: any }) => {
             // Use real API if available or mandated
             if (IS_TRUTH_ONLY_MODE) {
-                return (await apiClient.post('/search/fusion', {
-                    query: params.q,
-                    limit: 20,
-                    filters: params.filters
-                })).data;
+                const response = await apiClient.get('/search', {
+                    params: {
+                        q: params.q,
+                        rerank: params.rerank ?? true,
+                        mode: params.mode ?? 'hybrid'
+                    }
+                });
+                return response.data.results;
             }
             // Mock handled in component or basic array here
             await delay(600);
@@ -282,6 +285,11 @@ export const api = {
             if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/ml/summarize', { text })).data;
             await delay(2000);
             return { summary: "This constitutes a simulated summary of the document content." };
+        },
+        getDocumentSummary: async (docId: string) => {
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.get(`/documents/${docId}/summary`)).data;
+            await delay(1500);
+            return { summary: "Cached summary of the document content.", cached: true, model: 'mock' };
         }
     },
 

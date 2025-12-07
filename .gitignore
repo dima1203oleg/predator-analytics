@@ -23,4 +23,46 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files
+.env
+*.env
 ua-sources/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+.venv/
+*.egg-info/
+.eggs/
+
+# Data directories
+*.csv
+*.xlsx
+data/
+uploads/
+
+# Docker volumes (local)
+postgres_data/
+redis_data/
+qdrant_data/
+opensearch_data/
+minio_data/
+grafana_data/
+prometheus_data/
+
+# Large Data
+sample_data/
+*.jsonl
+
+# Deployment Artifacts
+deploy.tar.gz
+deploy_part_*
+
+# Secrets
+*.pem
+*.key
+secrets/

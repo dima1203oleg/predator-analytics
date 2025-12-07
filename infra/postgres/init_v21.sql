@@ -1,5 +1,26 @@
 -- Predator Analytics v21.0 Database Initialization
 
+-- 0. Create additional databases for services
+-- Note: These run in the context of the default database (postgres/predator_db)
+-- We use DO block to handle "already exists" gracefully
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'mlflow') THEN
+        PERFORM dblink_exec('dbname=postgres', 'CREATE DATABASE mlflow');
+    END IF;
+EXCEPTION WHEN others THEN
+    RAISE NOTICE 'Database mlflow may already exist or dblink not available';
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'keycloak') THEN
+        PERFORM dblink_exec('dbname=postgres', 'CREATE DATABASE keycloak');
+    END IF;
+EXCEPTION WHEN others THEN
+    RAISE NOTICE 'Database keycloak may already exist or dblink not available';
+END $$;
+
 -- 1. Create Schemas
 CREATE SCHEMA IF NOT EXISTS staging;
 CREATE SCHEMA IF NOT EXISTS gold;

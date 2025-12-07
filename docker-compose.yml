@@ -20,6 +20,7 @@ services:
       - QDRANT_URL=http://qdrant:6333
       - OPENSEARCH_URL=http://opensearch:9200
       - MINIO_ENDPOINT=minio:9000
+      - PRELOAD_MODELS=false
     depends_on:
       - postgres
       - redis
@@ -193,13 +194,22 @@ services:
   # OBSERVABILITY & ML
   # -------------------------------------------------------------------------
   mlflow:
-    image: ghcr.io/mlflow/mlflow:latest
+    build:
+      context: ./infra/mlflow
+      dockerfile: Dockerfile
     container_name: predator_mlflow
+    command: >
+      mlflow server
+      --backend-store-uri postgresql://predator:predator_password@postgres:5432/mlflow
+      --default-artifact-root s3://mlflow/
+      --host 0.0.0.0
+      --port 5000
     ports:
       - "5001:5000"
     environment:
-      - MLFLOW_BACKEND_STORE_URI=postgresql://predator:predator_password@postgres:5432/mlflow
-      - MLFLOW_ARTIFACT_ROOT=s3://mlflow/
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+      - AWS_ACCESS_KEY_ID=predator_admin
+      - AWS_SECRET_ACCESS_KEY=predator_secret_key
     depends_on:
       - postgres
       - minio
@@ -210,8 +220,16 @@ services:
     container_name: predator_grafana
     ports:
       - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=predator123
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - prometheus
     restart: unless-stopped
