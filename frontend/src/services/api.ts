@@ -302,5 +302,23 @@ export const api = {
             if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/testing/status')).data;
             return { status: 'ready', available_suites: ['unit', 'integration'] };
         }
+    },
+
+    // Integrations
+    integrations: {
+        slack: {
+            getStatus: async () => {
+                if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/integrations/slack/status')).data;
+                return { configured: false };
+            },
+            getChannels: async () => {
+                if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/integrations/slack/channels')).data;
+                return [];
+            },
+            syncChannel: async (channelId: string) => {
+                if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/integrations/slack/sync', { source: 'slack', target_id: channelId })).data;
+                return { status: 'simulated', message: 'Sync started' };
+            }
+        }
     }
 };
