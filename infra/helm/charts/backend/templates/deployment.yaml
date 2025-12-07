@@ -20,6 +20,21 @@ spec:
           env:
             - name: PORT
               value: "{{ .Values.service.port }}"
-            # Add other env vars from global values here
+            - name: DATABASE_URL
+              value: "postgresql://{{ .Values.global.postgres.user }}:{{ .Values.global.postgres.password }}@{{ .Values.global.postgres.host }}:{{ .Values.global.postgres.port }}/{{ .Values.global.postgres.db }}"
+            - name: REDIS_URL
+              value: "redis://{{ .Values.global.redis.host }}:{{ .Values.global.redis.port }}/0"
+            - name: QDRANT_URL
+              value: "http://{{ .Values.global.qdrant.host }}:{{ .Values.global.qdrant.port }}"
+            - name: OPENSEARCH_URL
+              value: "http://{{ .Values.global.opensearch.host }}:{{ .Values.global.opensearch.port }}"
+            - name: ENV
+              value: "production"
+          volumeMounts:
+            - name: shadow-storage
+              mountPath: /app/data/shadow_layer
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: shadow-storage
+          emptyDir: {}
