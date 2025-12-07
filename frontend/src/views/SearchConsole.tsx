@@ -718,7 +718,7 @@ const SearchConsole: React.FC = () => {
                             </div>
                             <h3 className="text-xl font-medium text-slate-400 mb-2">Почніть пошук</h3>
                             <p className="text-sm text-slate-600 max-w-md mx-auto">
-                                Введіть запит, щоб знайти документи за допомогою семантичного пошуку з AI-поясненнями
+                                Спробуйте: "System Status", "Scan companies.csv" або просто шукайте документи.
                             </p>
                         </div>
                     )}

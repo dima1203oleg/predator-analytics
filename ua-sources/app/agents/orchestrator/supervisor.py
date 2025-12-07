@@ -4,6 +4,7 @@ from ..data.retriever_agent import RetrieverAgent
 from ..analysis.miner_agent import MinerAgent
 from ..core.arbiter_agent import ArbiterAgent
 from ...services.llm_service import get_llm_service
+from ...services.federation_service import get_federation_service
 
 logger = logging.getLogger("nexus.supervisor")
 
@@ -36,6 +37,33 @@ class NexusSupervisor:
 
         # 1.5 Chat Mode (LLM Direct)
         if mode == "chat":
+            # Federation Commands Hook
+            user_query_lower = user_query.lower()
+            
+            # Status Check
+            if "status" in user_query_lower and ("node" in user_query_lower or "system" in user_query_lower):
+                fed_service = get_federation_service()
+                nodes = fed_service.get_active_nodes()
+                if not nodes:
+                     answer = "⚠️ **System Alert**: No Edge Nodes are currently connected to the Federation."
+                else:
+                    answer = "### 🌍 Federation Status\n\n"
+                    for n in nodes:
+                        answer += f"**🖥️ {n['info']['hostname']}**\n- ID: `{n['info']['node_id']}`\n- Status: 🟢 {n['status'].upper()}\n- Load: {n.get('load',0)}%\n- Tasks Completed: {n.get('tasks_completed', 0)}\n\n"
+                return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "nexus", "action": "federation_status"}]}
+
+            # Task Dispatch (Scan CSV)
+            if ("scan" in user_query_lower or "import" in user_query_lower) and ".csv" in user_query_lower:
+                fed_service = get_federation_service()
+                path = "/Users/dima-mac/Documents/Predator_21/sample_data/companies_ukraine.csv" # Demo logic
+                try:
+                    task_id = fed_service.dispatch_task("scan_csv", {"path": path})
+                    answer = f"🚀 **Federation Protocol Initiated**\n\nI have dispatched task `{task_id}` to the Edge Cluster.\n**Target**: `{path}`\n\nThe node will begin processing immediately."
+                except Exception as e:
+                    answer = f"⚠️ **Dispatch Failed**: {str(e)}\n\nPlease ensure at least one Edge Node is online."
+                
+                return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "nexus", "action": "dispatch_task"}]}
+
             try:
                 llm = get_llm_service()
                 answer = await llm.generate(
