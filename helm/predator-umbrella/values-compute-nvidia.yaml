@@ -53,6 +53,7 @@ celery:
 postgresql:
   enabled: true
   persistence:
+    enabled: true
     size: 50Gi
   resources:
     requests:
@@ -81,6 +82,7 @@ qdrant:
   enabled: true
   replicaCount: 1
   persistence:
+    enabled: true
     size: 20Gi
   resources:
     requests:
@@ -177,6 +179,7 @@ ollama:
 minio:
   enabled: true
   persistence:
+    enabled: true
     size: 100Gi
   resources:
     requests:
