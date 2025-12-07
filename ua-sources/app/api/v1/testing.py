@@ -3,8 +3,13 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 from app.services.test_runner import get_test_runner
+from app.services.auth_service import require_admin
 
-router = APIRouter(prefix="/testing", tags=["QA Lab"])
+router = APIRouter(
+    prefix="/testing", 
+    tags=["QA Lab"],
+    dependencies=[Depends(require_admin)]
+)
 
 class TestRunRequest(BaseModel):
     suite_type: str = "unit"  # unit, integration, load, security

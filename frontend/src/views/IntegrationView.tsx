@@ -136,7 +136,11 @@ const SecretRow: React.FC<SecretRowProps> = ({ secret, onTest, onSave }) => {
                         <Key size={12} />
                     </div>
                     <h4 className="text-sm font-bold text-slate-200">{secret.name}</h4>
-                    {secret.isCritical && <ShieldAlert size={14} className="text-red-500 animate-pulse" title="Critical Infrastructure" />}
+                    {secret.isCritical && (
+                        <div title="Critical Infrastructure">
+                            <ShieldAlert size={14} className="text-red-500 animate-pulse" />
+                        </div>
+                    )}
                 </div>
                 <div className="text-[10px] text-slate-500 font-mono flex items-center gap-2">
                     <span className="text-slate-400">{secret.keyName}</span>
@@ -925,7 +929,7 @@ const IntegrationView: React.FC = () => {
                 stats={[
                     { label: 'Active Sources', value: String(files.length + webSources.length + apiSources.length), icon: <Globe size={14} />, color: 'primary' },
                     { label: 'Data Catalog', value: `${dataCatalog.length} ASSETS`, icon: <Table size={14} />, color: 'success' },
-                    { label: 'Auto Datasets', value: `${autoDatasets.length} GEN`, icon: <Bot size={14} />, color: 'purple' },
+                    { label: 'Auto Datasets', value: `${autoDatasets.length} GEN`, icon: <Bot size={14} />, color: 'primary' },
                 ]}
             />
 

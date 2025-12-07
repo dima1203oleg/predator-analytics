@@ -101,3 +101,21 @@ async def require_role(required_role: str):
         return payload
     
     return role_checker
+
+async def require_admin(user: dict = Depends(get_current_user)):
+    """
+    Dependency to enforce admin access.
+    """
+    # In development mode or if roles missing, we might be lenient or strict.
+    # For now, strict: must have 'admin' role.
+    # Fallback: if 'roles' is empty (mock token), allow if locally testing.
+    if "admin" not in user["roles"]:
+        # TODO: removing mock bypass in prod
+        if os.getenv("ENV") != "production" and user["username"] == "admin":
+             return user
+             
+        raise HTTPException(
+            status_code=403,
+            detail="Insufficient permissions. Required role: admin"
+        )
+    return user
