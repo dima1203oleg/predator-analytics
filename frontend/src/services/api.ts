@@ -283,5 +283,24 @@ export const api = {
             await delay(2000);
             return { summary: "This constitutes a simulated summary of the document content." };
         }
+    },
+
+    testing: {
+        run: async (suiteType: string) => {
+            if (IS_TRUTH_ONLY_MODE) {
+                const res = await apiClient.post('/testing/run', { suite_type: suiteType });
+                return res.data;
+            }
+            await delay(2000);
+            return {
+                status: 'simulated_pass',
+                logs: ['> Running simulated test...', '> All checks passed.'],
+                duration: '2.4s'
+            };
+        },
+        getStatus: async () => {
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/testing/status')).data;
+            return { status: 'ready', available_suites: ['unit', 'integration'] };
+        }
     }
 };
