@@ -27,12 +27,50 @@ class ETLIngestionService:
         """
         logger.info(f"Starting ETL for {file_path} [Type: {dataset_type}]")
         
-        # Step 1: Read
+        # Step 1: Read (Async/Non-blocking)
         try:
             df = await self._read_file(file_path)
         except Exception as e:
             logger.error(f"Failed to read file: {e}")
             return {"status": "failed", "error": str(e)}
+
+        if dataset_type == "customs":
+            column_map = {
+                "Дата оформлення": "date",
+                "Код товару": "hs_code",
+                "Фактурна варість, валюта контракту": "amount",
+                "Країна походження": "country",
+                "Номер митної декларації": "decl_number",
+                "ЄДРПОУ одержувача": "edrpou",
+                "Одержувач": "recipient_name",
+                "Опис товару": "description"
+            }
+            df = df.rename(columns=column_map)
+        
+        # Sanitize all column names (replace spaces, etc)
+        import re
+        new_columns = []
+        seen = set()
+        for c in df.columns:
+            # Replace non-alphanumeric with _
+            clean = re.sub(r'[^a-zA-Z0-9_]', '_', str(c)).lower().strip('_')
+            # Handle empty (was only symbols)
+            if not clean:
+                clean = "col_unknown"
+            # Handle starting with digit
+            if clean[0].isdigit():
+                clean = f"col_{clean}"
+            # Handle duplicates
+            original_clean = clean
+            counter = 1
+            while clean in seen:
+                clean = f"{original_clean}_{counter}"
+                counter += 1
+            seen.add(clean)
+            new_columns.append(clean)
+        
+        df.columns = new_columns
+        logger.info(f"Sanitized columns: {new_columns}")
 
         # Step 2: Validate
         validation_result = await self._validate_schema(df, dataset_type)
@@ -49,6 +87,7 @@ class ETLIngestionService:
             logger.info(f"Loaded {record_count} records to {table_name}")
             
             # Convert to list of dicts for return (helper for indexing)
+            # Use columns expected by indexing
             documents = df_clean.to_dict('records')
             
             # Add basic ID if missing (for indexing)
@@ -64,15 +103,20 @@ class ETLIngestionService:
             }
         except Exception as e:
             logger.error(f"Failed to load to database: {e}")
-            return {"status": "failed", "error": str(e)}
+            # Propagate the real error description
+            raise e
 
     async def _read_file(self, file_path: str) -> pd.DataFrame:
-        """Read CSV or Excel file into DataFrame."""
+        """Read CSV or Excel file into DataFrame (non-blocking)."""
+        import asyncio
+        loop = asyncio.get_running_loop()
+        
         ext = Path(file_path).suffix.lower()
         if ext == ".csv":
-            return pd.read_csv(file_path)
+            return await loop.run_in_executor(None, pd.read_csv, file_path)
         elif ext in [".xlsx", ".xls"]:
-            return pd.read_excel(file_path)
+            # Use openpyxl explicitly for xlsx
+            return await loop.run_in_executor(None, lambda: pd.read_excel(file_path, engine='openpyxl'))
         else:
             raise ValueError(f"Unsupported file format: {ext}")
 
@@ -108,6 +152,10 @@ class ETLIngestionService:
         # Fill nulls (basic strategy)
         df = df.fillna("")
         
+        # Ensure date format for customs
+        if dataset_type == "customs" and "date" in df.columns:
+            df["date"] = pd.to_datetime(df["date"], errors='coerce')
+
         # Add metadata
         df["ingested_at"] = pd.Timestamp.now()
         df["source_type"] = dataset_type
