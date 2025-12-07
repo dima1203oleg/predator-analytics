@@ -15,7 +15,7 @@ import {
     Search, Sparkles, Brain, Image, Mic, Star, Share2, Copy,
     ChevronRight, Filter, X, BookOpen, Download, Zap,
     MessageSquare, FileText, Clock, TrendingUp, Settings,
-    ChevronDown, ExternalLink, Layers, Database, AlertCircle
+    ChevronDown, ExternalLink, Layers, Database, AlertCircle, Volume2, VolumeX
 } from 'lucide-react';
 import { api } from '../services/api';
 
@@ -279,6 +279,7 @@ const SearchConsole: React.FC = () => {
     const [results, setResults] = useState<SearchResult[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isListening, setIsListening] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
     const [searchModes, setSearchModes] = useState({
         semantic: true,
         rerank: true,
@@ -321,6 +322,24 @@ const SearchConsole: React.FC = () => {
         recognition.start();
     };
 
+    const speakResponse = (text: string) => {
+        if (isMuted) return;
+
+        // Cancel previous speech
+        window.speechSynthesis.cancel();
+
+        // Create utterance
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+
+        // Try to select a good voice (optional)
+        // const voices = window.speechSynthesis.getVoices();
+        // utterance.voice = voices.find(v => v.lang.includes('uk')) || null;
+
+        window.speechSynthesis.speak(utterance);
+    };
+
     const handleSearch = useCallback(async () => {
         if (!query.trim()) return;
 
@@ -336,15 +355,21 @@ const SearchConsole: React.FC = () => {
                     id: 'nexus-reply',
                     title: 'Nexus Hivemind',
                     snippet: response.answer, // Use Markdown
-                    type: 'chat',
                     score: 1.0,
-                    semanticScore: 1.0, // Assuming a perfect semantic score for chat responses
+                    semanticScore: 1.0,
                     source: 'Nexus AI',
                     searchType: 'chat',
+                    category: 'AI',
                     metadata: { mode: response.mode, trace: response.trace }
-                } as SearchResult]); // Cast to SearchResult
+                } as any]); // Cast to any to avoid strict type checks temporarily
+
                 setIsLoading(false);
                 setSearchTime(Date.now() - startTime);
+
+                // Speak output if voice mode or chat is active
+                if (searchModes.voice || searchModes.chat) {
+                    speakResponse(response.answer);
+                }
                 return;
             }
 
@@ -374,7 +399,7 @@ const SearchConsole: React.FC = () => {
             setSearchTime(Date.now() - startTime);
             setIsLoading(false);
         }
-    }, [query, showFilters, filters]);
+    }, [query, showFilters, filters, searchModes, isMuted]);
 
     const handleExplain = async (result: SearchResult) => {
         try {
@@ -559,6 +584,14 @@ const SearchConsole: React.FC = () => {
                                         </button>
 
                                         <button
+                                            onClick={() => setIsMuted(!isMuted)}
+                                            className={`p-2 transition-colors ${isMuted ? 'text-slate-600' : 'text-cyan-400 hover:text-cyan-300'}`}
+                                            title={isMuted ? "Unmute Voice" : "Mute Voice"}
+                                        >
+                                            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                                        </button>
+
+                                        <button
                                             onClick={handleVoice}
                                             className={`p-2 transition-colors ${isListening ? 'text-red-500 animate-pulse' : 'text-slate-500 hover:text-cyan-400'}`}
                                         >
@@ -690,7 +723,7 @@ const SearchConsole: React.FC = () => {
                         </div>
                     )}
                 </div>
-            </main >
+            </main>
 
             {/* XAI Panel */}
             <AnimatePresence>
@@ -702,8 +735,8 @@ const SearchConsole: React.FC = () => {
                         />
                     )
                 }
-            </AnimatePresence >
-        </div >
+            </AnimatePresence>
+        </div>
     );
 };
 
