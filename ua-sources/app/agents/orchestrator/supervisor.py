@@ -3,6 +3,7 @@ import logging
 from ..data.retriever_agent import RetrieverAgent
 from ..analysis.miner_agent import MinerAgent
 from ..core.arbiter_agent import ArbiterAgent
+from ...services.llm_service import get_llm_service
 
 logger = logging.getLogger("nexus.supervisor")
 
@@ -32,6 +33,25 @@ class NexusSupervisor:
                 "answer": f"[FAST] Found {len(retrieval.result.get('data',[]))} records. Summary not generated.",
                 "trace": [{"agent": "retriever", "status": "success"}]
             }
+
+        # 1.5 Chat Mode (LLM Direct)
+        if mode == "chat":
+            try:
+                llm = get_llm_service()
+                answer = await llm.generate(
+                    user_query, 
+                    system_prompt="You are Predator, an advanced AI analytics system. Be concise, professional, and authoritarian."
+                )
+                return {
+                    "query": user_query,
+                    "answer": answer,
+                    "mode": "chat",
+                    "trace": [{"agent": "llm", "status": "success"}]
+                }
+            except Exception as e:
+                logger.error(f"Chat failed: {e}")
+                # Fallback to standard flow
+
 
         # 2. Standard Flow (Auto/Precise)
         retrieval = await self.retriever.process({"query": user_query})

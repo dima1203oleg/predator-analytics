@@ -334,5 +334,13 @@ export const api = {
                 return { status: 'simulated', message: 'Notion Sync started' };
             }
         }
+    },
+
+    // Nexus Hivemind
+    nexus: {
+        chat: async (query: string, mode: string = 'chat') => {
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/nexus/chat', { query, mode })).data;
+            return { answer: `[Simulated Nexus] Received: ${query}. (Enable Truth Mode for LLM)` };
+        }
     }
 };

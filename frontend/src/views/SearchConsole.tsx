@@ -29,7 +29,7 @@ interface SearchResult {
     source: string;
     category?: string;
     date?: string;
-    searchType: 'keyword' | 'semantic' | 'hybrid';
+    searchType: 'keyword' | 'semantic' | 'hybrid' | 'chat';
 }
 
 interface XAIExplanation {
@@ -95,8 +95,10 @@ const ResultCard: React.FC<{
             transition={{ delay: rank * 0.05 }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group relative p-4 rounded-xl bg-slate-900/50 border border-slate-800/50 
-                 hover:border-cyan-500/30 hover:bg-slate-900/80 transition-all duration-300"
+            className={`group relative p-4 rounded-xl border border-slate-800/50 transition-all duration-300
+                 ${result.searchType === 'chat'
+                    ? 'bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border-indigo-500/50 shadow-lg shadow-indigo-500/10'
+                    : 'bg-slate-900/50 hover:border-cyan-500/30 hover:bg-slate-900/80'}`}
         >
             {/* Rank indicator */}
             <div className="absolute -left-3 top-4 w-6 h-6 rounded-full bg-gradient-to-br from-cyan-500 to-teal-500 
@@ -132,8 +134,8 @@ const ResultCard: React.FC<{
                         </span>
                     )}
                     <span className={`px-2 py-0.5 rounded ${result.searchType === 'hybrid' ? 'bg-purple-500/10 text-purple-400' :
-                            result.searchType === 'semantic' ? 'bg-teal-500/10 text-teal-400' :
-                                'bg-slate-700 text-slate-400'
+                        result.searchType === 'semantic' ? 'bg-teal-500/10 text-teal-400' :
+                            'bg-slate-700 text-slate-400'
                         }`}>
                         {result.searchType}
                     </span>
@@ -276,12 +278,14 @@ const SearchConsole: React.FC = () => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isListening, setIsListening] = useState(false);
     const [searchModes, setSearchModes] = useState({
         semantic: true,
         rerank: true,
         explain: false,
         image: false,
-        voice: false
+        voice: false,
+        chat: false
     });
     const [showFilters, setShowFilters] = useState(true);
     const [filters, setFilters] = useState<SearchFilters>({});
@@ -289,15 +293,63 @@ const SearchConsole: React.FC = () => {
     const [searchTime, setSearchTime] = useState<number | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
+    const handleVoice = () => {
+        if (isListening) return; // Already listening handle elsewhere if needed
+        setIsListening(true);
+
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("Speech API not supported in this browser.");
+            setIsListening(false);
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'uk-UA';
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = (event: any) => {
+            const text = event.results[0][0].transcript;
+            setQuery(text);
+            setIsListening(false);
+            // Auto-trigger search/chat if confident?
+        };
+
+        recognition.onerror = () => setIsListening(false);
+        recognition.onend = () => setIsListening(false);
+
+        recognition.start();
+    };
+
     const handleSearch = useCallback(async () => {
         if (!query.trim()) return;
 
         setIsLoading(true);
+        setResults([]); // Clear previous
         const startTime = Date.now();
 
         try {
+            // Chat Mode
+            if (searchModes.chat) {
+                const response = await api.nexus.chat(query);
+                setResults([{
+                    id: 'nexus-reply',
+                    title: 'Nexus Hivemind',
+                    snippet: response.answer, // Use Markdown
+                    type: 'chat',
+                    score: 1.0,
+                    semanticScore: 1.0, // Assuming a perfect semantic score for chat responses
+                    source: 'Nexus AI',
+                    searchType: 'chat',
+                    metadata: { mode: response.mode, trace: response.trace }
+                } as SearchResult]); // Cast to SearchResult
+                setIsLoading(false);
+                setSearchTime(Date.now() - startTime);
+                return;
+            }
+
             // Real API Call
-            const apiResults = await api.search.query({ 
+            const apiResults = await api.search.query({
                 q: query,
                 filters: showFilters ? filters : undefined
             });
@@ -505,7 +557,11 @@ const SearchConsole: React.FC = () => {
                                         <button className="p-2 text-slate-500 hover:text-cyan-400 transition-colors">
                                             <Image className="w-5 h-5" />
                                         </button>
-                                        <button className="p-2 text-slate-500 hover:text-cyan-400 transition-colors">
+
+                                        <button
+                                            onClick={handleVoice}
+                                            className={`p-2 transition-colors ${isListening ? 'text-red-500 animate-pulse' : 'text-slate-500 hover:text-cyan-400'}`}
+                                        >
                                             <Mic className="w-5 h-5" />
                                         </button>
                                         <button
@@ -544,6 +600,12 @@ const SearchConsole: React.FC = () => {
                                     label="Explain"
                                     active={searchModes.explain}
                                     onClick={() => setSearchModes(s => ({ ...s, explain: !s.explain }))}
+                                />
+                                <ModeChip
+                                    icon={<MessageSquare className="w-3.5 h-3.5" />}
+                                    label="Nexus Chat"
+                                    active={searchModes.chat}
+                                    onClick={() => setSearchModes(s => ({ ...s, chat: !s.chat }))}
                                 />
                                 <ModeChip
                                     icon={<Image className="w-3.5 h-3.5" />}
@@ -628,18 +690,20 @@ const SearchConsole: React.FC = () => {
                         </div>
                     )}
                 </div>
-            </main>
+            </main >
 
             {/* XAI Panel */}
             <AnimatePresence>
-                {selectedExplanation && (
-                    <XAIPanel
-                        explanation={selectedExplanation}
-                        onClose={() => setSelectedExplanation(null)}
-                    />
-                )}
-            </AnimatePresence>
-        </div>
+                {
+                    selectedExplanation && (
+                        <XAIPanel
+                            explanation={selectedExplanation}
+                            onClose={() => setSelectedExplanation(null)}
+                        />
+                    )
+                }
+            </AnimatePresence >
+        </div >
     );
 };
 
