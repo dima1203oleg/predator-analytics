@@ -3,6 +3,7 @@ import logging
 from ..data.retriever_agent import RetrieverAgent
 from ..analysis.miner_agent import MinerAgent
 from ..core.arbiter_agent import ArbiterAgent
+from ..data.crawler_agent import CrawlerAgent
 from ...services.llm_service import get_llm_service
 from ...services.federation_service import get_federation_service
 
@@ -17,6 +18,7 @@ class NexusSupervisor:
         self.retriever = RetrieverAgent()
         self.miner = MinerAgent()
         self.arbiter = ArbiterAgent()
+        self.crawler = CrawlerAgent()
         logger.info("NexusSupervisor initialized with core agents")
 
     async def handle_request(self, user_query: str, mode: str = "auto", request_context: Dict[str, Any] = None) -> Dict[str, Any]:
@@ -63,6 +65,46 @@ class NexusSupervisor:
                     answer = f"⚠️ **Dispatch Failed**: {str(e)}\n\nPlease ensure at least one Edge Node is online."
                 
                 return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "nexus", "action": "dispatch_task"}]}
+
+            # Local Ingestion (Knowledge Base)
+            if "ingest" in user_query_lower or "learn" in user_query_lower:
+                from ...services.ingestor import ingestor_service
+                # In a real app, parse path from query. For demo, default to sample.
+                path = "/Users/dima-mac/Documents/Predator_21/sample_data/companies_ukraine.csv" 
+                try:
+                    job = await ingestor_service.ingest_csv(path)
+                    answer = f"🧠 **Knowledge Ingestion Started**\n\nJob ID: `{job.id}`\nSource: `{path}`\n\nPredator is now reading {job.records_total} records into the Qdrant Vector Database. This provides Semantic Search capabilities."
+                except Exception as e:
+                    answer = f"⚠️ **Ingestion Failed**: {str(e)}"
+                
+                return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "nexus", "action": "ingest_data"}]}
+
+            # Web Crawling
+            if "crawl" in user_query_lower or "scan http" in user_query_lower:
+                # Extract URL (naive)
+                import re
+                url_match = re.search(r'https?://[^\s]+', user_query)
+                if url_match:
+                    url = url_match.group(0)
+                    answer = f"🕷️ **Autonomous Crawler Activated**\n\nTarget: `{url}`\n\nI am deploying a scout to map this domain. Content will be extracted and indexed into the Knowledge Base."
+                    
+                    # Fire and forget (or await if fast enough)
+                    # For UX, we await but with a small limit
+                    try:
+                        result = await self.crawler.process({"url": url, "max_pages": 5})
+                        stats = result.result.get("stats", {})
+                        pages = result.result.get("pages", [])
+                        
+                        answer += f"\n\n**Mission Metadata**:\n- Pages Scanned: {stats.get('pages_crawled')}\n- Data Volume: {stats.get('total_chars')} chars\n- Knowledge Base Update: {'✅' if stats.get('stored') else '❌'}\n\n**Found Pages**:\n"
+                        for p in pages[:3]:
+                            answer += f"- [{p['title']}]({p['url']})\n"
+                            
+                    except Exception as e:
+                        answer += f"\n\n⚠️ **Mission Failed**: {str(e)}"
+                else:
+                     answer = "⚠️ Please provide a valid HTTP(S) URL to crawl."
+                
+                return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "crawler", "status": "success"}]}
 
             try:
                 llm = get_llm_service()

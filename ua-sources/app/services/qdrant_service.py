@@ -223,3 +223,9 @@ class QdrantService:
             logger.info(f"Deleted document: {doc_id}")
         except Exception as e:
             logger.error(f"Failed to delete document {doc_id}: {e}")
+
+# Singleton
+_qdrant_service = QdrantService()
+
+def get_qdrant_service() -> QdrantService:
+    return _qdrant_service
