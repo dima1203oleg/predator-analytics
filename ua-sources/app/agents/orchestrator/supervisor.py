@@ -106,6 +106,43 @@ class NexusSupervisor:
                 
                 return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "crawler", "status": "success"}]}
 
+            # Shadow Protocol (Hidden Layer)
+            if "shadow" in user_query_lower or "classified" in user_query_lower or "decrypt" in user_query_lower:
+                from ...services.shadow_service import shadow_service
+                
+                if "decrypt" in user_query_lower or "read" in user_query_lower:
+                    # Naive extraction: Get the word after 'decrypt' or 'read'
+                     # Or just try to find a known doc ID in the string
+                    docs = shadow_service.list_classified_docs()
+                    target = None
+                    for d in docs:
+                        if d in user_query_lower:
+                            target = d
+                            break
+                    
+                    if not target:
+                         # Fallback to last word
+                         target = user_query.split()[-1]
+
+                    doc = shadow_service.reveal_document(target)
+                    if doc:
+                        answer = f"🔓 **Decryption Successful**\n\n**Source ID**: `{target}`\n**Clearance**: `{doc.get('clearance')}`\n**Title**: {doc.get('title')}\n\n> {doc.get('content')}\n\n*-- End of Transmission --*"
+                    else:
+                        answer = f"🚫 **Access Denied**: Document `{target}` not found or integrity compromised."
+                    
+                    return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "nexus", "action": "shadow_decrypt"}]}
+
+                # Default: List
+                docs = shadow_service.list_classified_docs()
+                if not docs:
+                        answer = "🔒 **Shadow Layer**: No classified documents found."
+                else:
+                    answer = "🔒 **Shadow Protocol Activated**\n\n**Authentication**: `VERIFIED`\n**Clearance**: `OMEGA`\n\n**Available Intelligence**:\n"
+                    for doc in docs:
+                        answer += f"- 📁 `{doc}`\n"
+                    answer += "\nTo decrypt a file, say: `Decrypt <doc_id>`"
+                return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "nexus", "action": "shadow_access"}]}
+
             try:
                 llm = get_llm_service()
                 answer = await llm.generate(
