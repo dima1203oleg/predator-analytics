@@ -112,9 +112,9 @@ async def startup_event():
     
     # 2. Start AutoOptimizer background loop
     try:
-        optimizer = get_auto_optimizer()
-        asyncio.create_task(optimizer.start_optimization_loop(interval_minutes=15))
-        logger.info("🤖 AutoOptimizer started - system will self-improve automatically")
+        # optimizer = get_auto_optimizer()
+        # asyncio.create_task(optimizer.start_optimization_loop(interval_minutes=15))
+        # logger.info("🤖 AutoOptimizer started - system will self-improve automatically")
         logger.info("📊 Monitoring: quality gates, latency, cost, accuracy")
         logger.info("🔄 Optimization cycle: Every 15 minutes")
     except Exception as e:
@@ -147,141 +147,9 @@ async def analyze(request: AnalyzeRequest):
 # SEMANTIC SEARCH PLATFORM API (TS-Compliant)
 # ============================================================================
 
-class SearchRequest(BaseModel):
-    q: str  # Query string
-    semantic: bool = True  # Enable semantic search
-    category: Optional[str] = None
-    date_from: Optional[str] = None
-    date_to: Optional[str] = None
-
-@app.get("/api/v1/search")
-async def search_documents(q: str, semantic: bool = True, category: Optional[str] = None, limit: int = 10):
-    """
-    Hybrid search endpoint (TS-compliant).
-    Combines OpenSearch (keywords) + Qdrant (semantic similarity).
-    
-    Args:
-        q: Search query
-        semantic: Enable semantic search (default: True)
-        category: Filter by category
-        limit: Number of results (default: 10)
-    
-    Returns:
-        List of search results with scores
-    """
-    try:
-        all_results = {}  # Use dict to deduplicate by ID
-        
-        # Step 1: OpenSearch keyword search
-        logger.info(f"OpenSearch keyword search: {q}")
-        os_results = await opensearch_indexer.search("documents_safe", q, size=limit)
-        
-        for hit in os_results.get("hits", {}).get("hits", []):
-            source = hit["_source"]
-            doc_id = hit["_id"]
-            
-            # Extract highlight if available
-            highlight = hit.get("highlight", {})
-            snippet = highlight.get("content", [source.get("content", "")[:200]])[0]
-            if not snippet.endswith("..."):
-                snippet += "..."
-            
-            all_results[doc_id] = {
-                "id": doc_id,
-                "title": source.get("title", "Untitled"),
-                "snippet": snippet,
-                "score": hit["_score"],
-                "semanticScore": None,
-                "source": source.get("source", "unknown"),
-                "category": source.get("category"),
-                "searchType": "keyword"
-            }
-        
-        # Step 2: Semantic search (Qdrant)
-        if semantic:
-            logger.info(f"Qdrant semantic search: {q}")
-            try:
-                # Generate query embedding asynchronously
-                query_embedding = await embedding_service.generate_embedding_async(q)
-                
-                # Build filter conditions
-                filter_conditions = {}
-                if category:
-                    filter_conditions["category"] = category
-                
-                # Search in Qdrant
-                semantic_results = await qdrant_service.search(
-                    query_vector=query_embedding,
-                    limit=limit,
-                    filter_conditions=filter_conditions if filter_conditions else None
-                )
-                
-                # Merge semantic results
-                for result in semantic_results:
-                    doc_id = result["id"]
-                    metadata = result["metadata"]
-                    
-                    if doc_id in all_results:
-                        # Update existing result with semantic score
-                        all_results[doc_id]["semanticScore"] = result["score"]
-                        all_results[doc_id]["searchType"] = "hybrid"
-                    else:
-                        # Add new semantic result
-                        all_results[doc_id] = {
-                            "id": doc_id,
-                            "title": metadata.get("title", "Untitled"),
-                            "snippet": metadata.get("snippet", ""),
-                            "score": 0,  # No keyword score
-                            "semanticScore": result["score"],
-                            "source": metadata.get("source", "unknown"),
-                            "category": metadata.get("category"),
-                            "searchType": "semantic"
-                        }
-                
-                logger.info(f"Found {len(semantic_results)} semantic matches")
-                
-            except Exception as e:
-                logger.warning(f"Semantic search failed (continuing with keyword results): {e}")
-        
-        # Step 3: Rank and return results
-        # Combine scores: keyword_score + (semantic_score * 10) for hybrid ranking
-        results_list = list(all_results.values())
-        for result in results_list:
-            combined_score = result["score"]
-            if result["semanticScore"]:
-                combined_score += result["semanticScore"] * 10
-            result["combinedScore"] = combined_score
-        
-        # Sort by combined score
-        results_list.sort(key=lambda x: x["combinedScore"], reverse=True)
-        
-        # Limit results
-        results_list = results_list[:limit]
-        
-        # Log search for analytics (non-blocking)
-        import asyncpg
-        import os
-        try:
-            search_type = "hybrid" if semantic else "keyword"
-            db_url = os.getenv("DATABASE_URL", "postgresql://predator:predator_password@localhost:5432/predator_db")
-            conn = await asyncpg.connect(db_url)
-            await conn.execute("""
-                INSERT INTO gold.search_logs (query, search_type, results_count, filters)
-                VALUES ($1, $2, $3, $4)
-            """, q, search_type, len(results_list), {"category": category} if category else None)
-            await conn.close()
-        except Exception as log_err:
-            logger.debug(f"Search logging failed (non-critical): {log_err}")
-        
-        return {
-            "results": results_list,
-            "total": len(results_list),
-            "searchType": "hybrid" if semantic else "keyword"
-        }
-        
-    except Exception as e:
-        logger.error(f"Search failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+# Endpoint moved to app/api/routers/search.py
+# @app.get("/api/v1/search")
+# ... (removed duplicate endpoint to fix conflict with search_router)
 
 @app.get("/api/v1/documents/{doc_id}")
 async def get_document(doc_id: str):
@@ -332,12 +200,14 @@ async def get_document_summary(doc_id: str, max_length: int = 130):
         if not document:
             raise HTTPException(status_code=404, detail="Document not found")
         
-        # Check if summary already exists in document
-        if document.get("summary"):
+        # Check if summary already exists in database (cache hit)
+        cached_summary = await document_service.get_summary(doc_id)
+        if cached_summary:
             return {
-                "summary": document["summary"],
+                "summary": cached_summary["summary"],
                 "cached": True,
-                "word_count": len(document["summary"].split())
+                "word_count": cached_summary["word_count"] or len(cached_summary["summary"].split()),
+                "model": cached_summary["model_name"]
             }
         
         # Generate new summary using ML service
@@ -347,23 +217,32 @@ async def get_document_summary(doc_id: str, max_length: int = 130):
             
             content = document.get("content", "")
             if len(content) < 100:
+                short_summary = content
+                # Cache short content as summary too to avoid re-checking
+                await document_service.save_summary(
+                    doc_id, short_summary, model_name="no-op", word_count=len(short_summary.split())
+                )
                 return {
-                    "summary": content,
+                    "summary": short_summary,
                     "cached": False,
-                    "word_count": len(content.split()),
+                    "word_count": len(short_summary.split()),
                     "note": "Content too short for summarization"
                 }
             
             summary = summarizer.summarize(content, max_length=max_length)
             
             if summary:
-                # TODO: Cache summary in database
-                # await document_service.update_summary(doc_id, summary)
+                # Cache summary in database
+                word_count = len(summary.split())
+                await document_service.save_summary(
+                    doc_id, summary, model_name="bart-large-cnn", word_count=word_count
+                )
                 
                 return {
                     "summary": summary,
                     "cached": False,
-                    "word_count": len(summary.split())
+                    "word_count": word_count,
+                    "model": "bart-large-cnn"
                 }
             else:
                 raise HTTPException(status_code=500, detail="Summarization failed")
@@ -448,6 +327,13 @@ async def upload_dataset(
         content = await file.read()
         temp_file.write(content)
         temp_file.close()
+        
+        # Lazy load services
+        minio_service = get_minio_service()
+        etl_service = get_etl_service()
+        opensearch_indexer = get_opensearch_indexer()
+        embedding_service = get_embedding_service()
+        qdrant_service = get_qdrant_service()
         
         # Step 1: Upload to MinIO (raw-data bucket)
         object_name = f"{dataset_type}/{file.filename}"
