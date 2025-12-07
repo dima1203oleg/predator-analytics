@@ -48,25 +48,36 @@ class RerankerService:
         if not documents:
             return []
         
-        # Prepare query-document pairs
-        pairs = []
-        for doc in documents:
-            if score_field == "both":
-                text = f"{doc.get('title', '')} {doc.get('content', '')[:500]}"
-            else:
-                text = doc.get(score_field, "")
-            pairs.append([query, text])
-        
-        # Compute relevance scores
-        scores = self.model.predict(pairs)
-        
-        # Combine documents with scores
-        ranked = list(zip(documents, scores))
-        ranked.sort(key=lambda x: x[1], reverse=True)
-        
-        logger.info(f"Reranked {len(documents)} docs, top score: {ranked[0][1]:.3f}")
-        
-        return ranked[:top_k]
+        try:
+            # Prepare query-document pairs
+            pairs = []
+            for doc in documents:
+                if isinstance(doc, dict):
+                    if score_field == "both":
+                        text = f"{doc.get('title', '')} {doc.get('content', '')[:500]}"
+                    else:
+                        text = doc.get(score_field, "")
+                else:
+                    # Fallback if doc is just a string
+                    text = str(doc)[:500]
+                pairs.append([query, text])
+            
+            # Compute relevance scores
+            scores = self.model.predict(pairs)
+            
+            # Combine documents with scores
+            ranked = list(zip(documents, scores))
+            ranked.sort(key=lambda x: x[1], reverse=True)
+            
+            if ranked:
+                logger.info(f"Reranked {len(documents)} docs, top score: {ranked[0][1]:.3f}")
+            
+            return ranked[:top_k]
+            
+        except Exception as e:
+            logger.error(f"Reranking error: {e}")
+            # Fallback: return docs with 0 score
+            return [(d, 0.0) for d in documents][:top_k]
 
 
 # Singleton instance

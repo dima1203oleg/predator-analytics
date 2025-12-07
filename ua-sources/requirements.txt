@@ -50,7 +50,7 @@ prometheus-client>=0.19.0
 
 # ML/NLP Advanced
 spacy>=3.7.0               # NER та linguistic features
-uk-core-news-sm            # Ukrainian language model (install separately)
+https://github.com/explosion/spacy-models/releases/download/uk_core_news_sm-3.7.0/uk_core_news_sm-3.7.0-py3-none-any.whl
 nlpaug>=1.1.11             # Data augmentation
 sentencepiece>=0.1.99      # Tokenizer for T5/BART
 

@@ -29,6 +29,7 @@ async def search(
     category: Optional[str] = Query(None, description="Filter by category"),
     source: Optional[str] = Query(None, description="Filter by source"),
     mode: str = Query("hybrid", enum=["hybrid", "text", "semantic"], description="Search mode"),
+    rerank: bool = Query(True, description="Enable semantic reranking"),
     indexer: OpenSearchIndexer = Depends(get_indexer),
     qdrant: QdrantService = Depends(get_qdrant),
     embedder: EmbeddingService = Depends(get_embedding)
@@ -106,7 +107,10 @@ async def search(
                 logger.error(f"Semantic search failed: {e}")
                 if mode == "semantic": raise e
 
+                if mode == "semantic": raise e
+
         # 3. Hybrid Fusion & Reranking
+        print(f"Text hits: {len(text_hits)}, Vector hits: {len(vector_hits)}")
         final_results = []
         
         if mode == "hybrid":
@@ -116,6 +120,7 @@ async def search(
             # Normalize scores (simple max norm)
             max_text = max([h["_score"] for h in text_hits]) if text_hits else 1.0
             max_vec = max([h["score"] for h in vector_hits]) if vector_hits else 1.0
+            print(f"Scores max: text={max_text}, vec={max_vec}")
             
             # Alpha weights
             alpha_text = 0.3
@@ -141,10 +146,6 @@ async def search(
                 if did in merged:
                     merged[did]["vector_score"] = norm_score
                 else:
-                    # Need to fetch data for vector-only hits
-                    # For MVP, we might skip if not in OpenSearch, or fetch from DB
-                    # Here assuming mostly overlap or skipping data-fetch for speed in snippet
-                    # Let's try to fetch minimal info if possible or mock
                     merged[did] = {
                         "id": did,
                         "text_score": 0.0,
@@ -163,24 +164,53 @@ async def search(
             # Sort by combined score
             candidates.sort(key=lambda x: x["final_score"], reverse=True)
             top_candidates = candidates[:50] # Rerank top 50
+            print(f"Candidates for reranking: {len(top_candidates)}")
             
             # 4. Reranking (Cross-Encoder)
-            # Extract texts for reranking
-            docs_to_rank = []
-            for cand in top_candidates:
-                title = cand["data"].get("title", "")
-                content = cand["data"].get("content", "")
-                docs_to_rank.append(f"{title} {content}"[:512]) # Truncate for speed
-            
-            if docs_to_rank:
-                rerank_scores = embedder.rerank(q, docs_to_rank)
-                for i, score in enumerate(rerank_scores):
-                    top_candidates[i]["rerank_score"] = score
+            if rerank and top_candidates:
+                try:
+                    print("Importing reranker")
+                    from app.services.ml import get_reranker
+                    reranker = get_reranker()
                     
-                # Final sort by rerank score
-                top_candidates.sort(key=lambda x: x.get("rerank_score", 0.0), reverse=True)
-            
-            final_results = top_candidates[:limit]
+                    # Prepare docs for reranker (needs title + content)
+                    docs_to_rank = []
+                    for c in top_candidates:
+                        # Ensure 'data' has 'id' for tracking if needed, though we map by list/zip usually.
+                        # RerankerService uses 'documents' list.
+                        # We pass the 'data' dict which has 'title' and 'content'
+                        doc_data = c["data"]
+                        doc_data["id"] = c["id"] # Inject ID just in case
+                        docs_to_rank.append(doc_data)
+                    
+                    print(f"Calling rerank service with {len(docs_to_rank)} docs")
+                    # Rerank
+                    # returns List[Tuple[Dict, float]]
+                    ranked_results = reranker.rerank(q, docs_to_rank, top_k=limit, score_field="both")
+                    print(f"Rerank returned {len(ranked_results)} results")
+                    
+                    # Reconstruct sorted results
+                    final_results = []
+                    cand_map = {c["id"]: c for c in top_candidates}
+                    
+                    for doc_data, score in ranked_results:
+                        did = doc_data.get("id")
+                        if did and did in cand_map:
+                            cand = cand_map[did]
+                            cand["rerank_score"] = float(score)
+                            cand["combinedScore"] = float(score) # Use rerank score as final
+                            final_results.append(cand)
+                            
+                except ImportError as e:
+                    logger.warning(f"Reranking skipped (import error): {e}")
+                    final_results = top_candidates[:limit]
+                except Exception as e:
+                    logger.error(f"Reranking failed: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    final_results = top_candidates[:limit]
+            else:
+                final_results = top_candidates[:limit]
             
         elif mode == "text":
             final_results = [
@@ -214,7 +244,7 @@ async def search(
                 "source": res["data"].get("source", "unknown"),
                 "category": res["data"].get("category", "general"),
                 "searchType": mode,
-                "combinedScore": res.get("final_score")
+                "combinedScore": res.get("combinedScore", res.get("final_score", 0))
             })
 
         duration = time.time() - start_time

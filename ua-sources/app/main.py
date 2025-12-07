@@ -57,6 +57,8 @@ app.add_middleware(
 
 from fastapi import APIRouter
 
+from .api.v1 import nexus, ml, optimizer, search
+
 # Create API Router
 api_router = APIRouter(prefix=settings.API_V1_PREFIX)
 
@@ -69,6 +71,12 @@ api_router.include_router(system.router)
 api_router.include_router(databases.router)
 api_router.include_router(sources.router)
 api_router.include_router(security.router)
+
+# Include V1 Routers
+api_router.include_router(nexus.router)
+api_router.include_router(ml.router)
+api_router.include_router(optimizer.router)
+api_router.include_router(search.router)
 
 # Include API router in main app
 app.include_router(api_router)

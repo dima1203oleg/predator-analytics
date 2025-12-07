@@ -56,7 +56,7 @@ class DocumentService:
                         author,
                         published_date,
                         category,
-                        source,
+                        source_url as source,
                         raw_id,
                         created_at,
                         updated_at
@@ -116,7 +116,7 @@ class DocumentService:
                     param_idx += 1
                 
                 if source:
-                    conditions.append(f"source = ${param_idx}")
+                    conditions.append(f"source_url = ${param_idx}")
                     params.append(source)
                     param_idx += 1
                 
@@ -136,7 +136,7 @@ class DocumentService:
                         author,
                         published_date,
                         category,
-                        source,
+                        source_url as source,
                         created_at
                     FROM gold.documents
                     {where_clause}
@@ -192,7 +192,7 @@ class DocumentService:
             async with pool.acquire() as conn:
                 doc_id = await conn.fetchval("""
                     INSERT INTO gold.documents 
-                        (title, content, author, published_date, category, source, raw_id)
+                        (title, content, author, published_date, category, source_url, raw_id)
                     VALUES ($1, $2, $3, $4, $5, $6, $7)
                     RETURNING id
                 """, title, content, author, published_date, category, source, raw_id)
@@ -280,6 +280,46 @@ class DocumentService:
             logger.error(f"Failed to delete document {doc_id}: {e}")
             return False
     
+    async def get_summary(self, doc_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get cached summary for a document.
+        """
+        pool = await self._get_pool()
+        try:
+            async with pool.acquire() as conn:
+                row = await conn.fetchrow("""
+                    SELECT summary, model_name, word_count
+                    FROM document_summaries
+                    WHERE document_id = $1
+                """, doc_id)
+                if row:
+                    return dict(row)
+                return None
+        except Exception as e:
+            logger.error(f"Failed to fetch summary for {doc_id}: {e}")
+            return None
+
+    async def save_summary(self, doc_id: str, summary: str, model_name: str = "bart-large-cnn", word_count: int = 0) -> bool:
+        """
+        Save summary to database.
+        """
+        pool = await self._get_pool()
+        try:
+            async with pool.acquire() as conn:
+                await conn.execute("""
+                    INSERT INTO document_summaries (document_id, summary, model_name, word_count)
+                    VALUES ($1, $2, $3, $4)
+                    ON CONFLICT (document_id) DO UPDATE
+                    SET summary = EXCLUDED.summary,
+                        model_name = EXCLUDED.model_name,
+                        word_count = EXCLUDED.word_count,
+                        generated_at = NOW()
+                """, doc_id, summary, model_name, word_count)
+                return True
+        except Exception as e:
+            logger.error(f"Failed to save summary for {doc_id}: {e}")
+            return False
+
     async def close(self):
         """Close connection pool."""
         if self._pool:
