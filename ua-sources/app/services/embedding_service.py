@@ -146,3 +146,9 @@ class EmbeddingService:
             logger.error(f"Reranking failed: {e}")
             # Fallback: return 0.0 scores
             return [0.0] * len(documents)
+
+# Singleton
+_embedding_service = EmbeddingService()
+
+def get_embedding_service() -> EmbeddingService:
+    return _embedding_service
