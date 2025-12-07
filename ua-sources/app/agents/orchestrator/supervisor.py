@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import logging
 from ..data.retriever_agent import RetrieverAgent
 from ..analysis.miner_agent import MinerAgent
@@ -22,7 +22,7 @@ class NexusSupervisor:
     async def handle_request(self, user_query: str, mode: str = "auto", request_context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         Processes a high-level user request through the agent pipeline.
-        Supported modes: 'auto', 'fast', 'precise', 'council'
+        Supported modes: 'auto', 'fast', 'precise', 'council', 'chat'
         """
         logger.info(f"Processing request: {user_query} [Mode: {mode}]")
         
@@ -126,3 +126,12 @@ class NexusSupervisor:
                 {"agent": "miner", "status": "success"}
             ]
         }
+
+# Singleton Instance
+_supervisor_instance: Optional[NexusSupervisor] = None
+
+def get_nexus_supervisor() -> NexusSupervisor:
+    global _supervisor_instance
+    if _supervisor_instance is None:
+        _supervisor_instance = NexusSupervisor()
+    return _supervisor_instance

@@ -2,7 +2,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
-from app.agents.orchestrator.supervisor import NexusSupervisor
+from app.agents.orchestrator.supervisor import NexusSupervisor, get_nexus_supervisor
 import logging
 
 logger = logging.getLogger("api.nexus")
@@ -15,7 +15,10 @@ class ChatRequest(BaseModel):
     context: Optional[Dict[str, Any]] = None
 
 @router.post("/chat")
-async def chat_interaction(request: ChatRequest):
+async def chat_interaction(
+    request: ChatRequest,
+    supervisor: NexusSupervisor = Depends(get_nexus_supervisor)
+):
     """
     Direct interface to Nexus Supervisor (The Brain).
     Supports Voice Interaction via text-to-text.
@@ -26,8 +29,8 @@ async def chat_interaction(request: ChatRequest):
     - 'council': Multi-Agent Debate
     """
     try:
-        # Instantiate supervisor per request (stateless agents)
-        supervisor = NexusSupervisor()
+        # Use singleton supervisor
+        # supervisor = NexusSupervisor() <-- OLD
         
         logger.info(f"Nexus Chat Request: {request.query} [{request.mode}]")
         
