@@ -319,6 +319,20 @@ export const api = {
                 if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/integrations/slack/sync', { source: 'slack', target_id: channelId })).data;
                 return { status: 'simulated', message: 'Sync started' };
             }
+        },
+        notion: {
+            getStatus: async () => {
+                if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/integrations/notion/status')).data;
+                return { configured: false };
+            },
+            search: async (q: string = "") => {
+                if (IS_TRUTH_ONLY_MODE) return (await apiClient.get(`/integrations/notion/search?query=${q}`)).data;
+                return [];
+            },
+            syncPage: async (pageId: string) => {
+                if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/integrations/notion/sync', { source: 'notion', target_id: pageId })).data;
+                return { status: 'simulated', message: 'Notion Sync started' };
+            }
         }
     }
 };

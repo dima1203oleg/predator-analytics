@@ -224,7 +224,7 @@ const WizardStep = ({ num, title, active, completed }: { num: number, title: str
 
 const IntegrationView: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'SOURCES' | 'MY_DATASETS' | 'CATALOG' | 'LLM' | 'BOT' | 'API' | 'SECRETS' | 'DIAGNOSTICS'>('SOURCES');
-    const [activeSourceSubTab, setActiveSourceSubTab] = useState<'CUSTOMS' | 'TAX' | 'FILES' | 'WEB' | 'MESSENGERS'>('CUSTOMS');
+    const [activeSourceSubTab, setActiveSourceSubTab] = useState<'CUSTOMS' | 'TAX' | 'FILES' | 'WEB' | 'APPS'>('CUSTOMS');
     const [isLoading, setIsLoading] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
 
@@ -488,7 +488,7 @@ const IntegrationView: React.FC = () => {
                     { id: 'TAX', label: 'Податкові Накладні', icon: <Building2 size={14} /> },
                     { id: 'FILES', label: 'Файли (Excel/PDF)', icon: <FileText size={14} /> },
                     { id: 'WEB', label: 'Web/OSINT', icon: <Globe size={14} /> },
-                    { id: 'MESSENGERS', label: 'Slack/Telegram', icon: <MessageSquare size={14} /> },
+                    { id: 'APPS', label: 'Apps (Slack/Notion)', icon: <Layers size={14} /> },
                 ].map(tab => (
                     <button
                         key={tab.id}
@@ -579,7 +579,7 @@ const IntegrationView: React.FC = () => {
                 </div>
             )}
 
-            {activeSourceSubTab === 'MESSENGERS' && (
+            {activeSourceSubTab === 'APPS' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <TacticalCard title="Slack Integration" className="panel-3d" action={<button className="text-slate-500 hover:text-white"><Settings size={14} /></button>}>
                         <div className="space-y-4">
@@ -589,37 +589,45 @@ const IntegrationView: React.FC = () => {
                                 </div>
                                 <div className="flex-1">
                                     <h4 className="font-bold text-slate-200">Slack Workspace</h4>
-                                    <p className="text-xs text-slate-500">Sync channels and messages to Knowledge Base.</p>
+                                    <p className="text-xs text-slate-500">Sync channels and messages.</p>
                                 </div>
                                 <button
                                     onClick={async () => {
                                         const status = await api.integrations.slack.getStatus();
-                                        if (!status.configured) alert("Please configuring Slack Token in Secrets first (SLACK_BOT_TOKEN).");
-                                        else alert("Slack is configured and ready!");
+                                        if (!status.configured) alert("Add SLACK_BOT_TOKEN to Secrets.");
+                                        else alert("Slack Connected!");
                                     }}
-                                    className="px-3 py-1.5 bg-[#4A154B] text-white rounded text-xs font-bold hover:bg-[#611f69] transition-colors shadow-lg"
+                                    className="px-3 py-1.5 bg-[#4A154B] text-white rounded text-xs font-bold hover:bg-[#611f69]"
                                 >
-                                    Check Connectivity
+                                    Check
                                 </button>
                             </div>
+                        </div>
+                    </TacticalCard>
 
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Available Channels</label>
-                                <div className="bg-slate-950 rounded border border-slate-800 p-2 max-h-[150px] overflow-y-auto">
-                                    {/* Placeholder for channel list */}
-                                    <div className="flex items-center justify-between p-2 hover:bg-slate-900 rounded cursor-pointer group">
-                                        <div className="flex items-center gap-2 text-slate-300">
-                                            <span className="text-slate-500">#</span> general
-                                        </div>
-                                        <button className="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 group-hover:text-white hover:bg-primary-600 transition-colors">Sync</button>
-                                    </div>
-                                    <div className="flex items-center justify-between p-2 hover:bg-slate-900 rounded cursor-pointer group">
-                                        <div className="flex items-center gap-2 text-slate-300">
-                                            <span className="text-slate-500">#</span> alerts
-                                        </div>
-                                        <button className="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 group-hover:text-white hover:bg-primary-600 transition-colors">Sync</button>
-                                    </div>
+                    <TacticalCard title="Notion Integration" className="panel-3d" action={<button className="text-slate-500 hover:text-white"><Settings size={14} /></button>}>
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-4 p-4 bg-white/10 border border-white/20 rounded-lg">
+                                <div className="p-3 bg-white rounded text-black">
+                                    <FileText size={24} fill="currentColor" />
                                 </div>
+                                <div className="flex-1">
+                                    <h4 className="font-bold text-slate-200">Notion Workspace</h4>
+                                    <p className="text-xs text-slate-500">Index pages and databases.</p>
+                                </div>
+                                <button
+                                    onClick={async () => {
+                                        const status = await api.integrations.notion.getStatus();
+                                        if (!status.configured) alert("Add NOTION_TOKEN to Secrets.");
+                                        else alert("Notion Connected!");
+                                    }}
+                                    className="px-3 py-1.5 bg-slate-200 text-black rounded text-xs font-bold hover:bg-white"
+                                >
+                                    Check
+                                </button>
+                            </div>
+                            <div className="space-y-2">
+                                <input placeholder="Search Notion Pages..." className="w-full bg-slate-950 border border-slate-800 rounded p-2 text-xs text-slate-300" />
                             </div>
                         </div>
                     </TacticalCard>
