@@ -19,6 +19,7 @@ from app.api.routers import metrics as metrics_router
 from app.api.routers import search as search_router
 from app.api.v1 import ml as ml_router
 from app.api.v1 import optimizer as optimizer_router
+from app.api.v1 import testing as testing_router
 from app.services.search_fusion import hybrid_search_with_rrf
 from app.services.auto_optimizer import get_auto_optimizer
 
@@ -514,6 +515,9 @@ app.include_router(ml_router.router, prefix="/api/v1")
 
 # AutoOptimizer endpoints (status, trigger, metrics)
 app.include_router(optimizer_router.router, prefix="/api/v1")
+
+# QA Lab Testing endpoints
+app.include_router(testing_router.router, prefix="/api/v1")
 
 
 

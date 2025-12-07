@@ -12,6 +12,7 @@ import {
     Terminal, Activity, Server, Zap, Bug, FileText,
     RefreshCw, ShieldCheck, ChevronRight
 } from 'lucide-react';
+import { api } from '../services/api';
 
 interface TestResult {
     id: string;
@@ -41,33 +42,39 @@ const TestingView: React.FC = () => {
 
     const runTest = async (testId: string) => {
         setActiveTest(testId);
-        setConsoleOutput([`> Initializing test suite: ${testId}...`]);
+        const test = testResults.find(t => t.id === testId);
+        if (!test) return;
+
+        setConsoleOutput([`> Initializing test suite: ${test.name} (${test.type})...`]);
         setTestResults(prev => prev.map(t => t.id === testId ? { ...t, status: 'running' } : t));
 
-        // Simulation
-        const steps = [
-            "Loading environment variables...",
-            "Connecting to test database...",
-            "Running assertions...",
-            "Validating schemas...",
-            "Finalizing report..."
-        ];
+        try {
+            const startTime = Date.now();
+            // Call Backend API
+            const result = await api.testing.run(test.type);
 
-        for (const step of steps) {
-            await new Promise(r => setTimeout(r, 800));
-            setConsoleOutput(prev => [...prev, `[INFO] ${step}`]);
+            const passed = result.status === 'passed' || result.status === 'simulated_pass';
+
+            // Update UI with real logs
+            if (result.logs && Array.isArray(result.logs)) {
+                setConsoleOutput(prev => [...prev, ...result.logs]);
+            }
+
+            setTestResults(prev => prev.map(t => t.id === testId ? {
+                ...t,
+                status: passed ? 'passed' : 'failed',
+                duration: result.duration || ((Date.now() - startTime) / 1000).toFixed(1) + 's'
+            } : t));
+
+            setConsoleOutput(prev => [...prev, passed ? `> Test PASSED ✅` : `> Test FAILED ❌`]);
+
+        } catch (error) {
+            console.error("Test execution failed:", error);
+            setConsoleOutput(prev => [...prev, `[ERROR] Connection to QA Lab Backend failed.`]);
+            setTestResults(prev => prev.map(t => t.id === testId ? { ...t, status: 'failed' } : t));
+        } finally {
+            setActiveTest(null);
         }
-
-        const passed = Math.random() > 0.2;
-
-        setTestResults(prev => prev.map(t => t.id === testId ? {
-            ...t,
-            status: passed ? 'passed' : 'failed',
-            duration: (Math.random() * 10).toFixed(1) + 's'
-        } : t));
-
-        setConsoleOutput(prev => [...prev, passed ? `> Test PASSED ✅` : `> Test FAILED ❌`]);
-        setActiveTest(null);
     };
 
     return (
@@ -111,8 +118,8 @@ const TestingView: React.FC = () => {
                                 key={test.id}
                                 layout
                                 className={`p-4 rounded-xl border transition-all ${activeTest === test.id
-                                        ? 'bg-slate-800 border-cyan-500 shadow-lg shadow-cyan-500/10'
-                                        : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
+                                    ? 'bg-slate-800 border-cyan-500 shadow-lg shadow-cyan-500/10'
+                                    : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
                                     }`}
                             >
                                 <div className="flex items-center justify-between mb-2">
@@ -124,9 +131,9 @@ const TestingView: React.FC = () => {
                                         <span className="font-medium text-sm">{test.name}</span>
                                     </div>
                                     <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${test.status === 'passed' ? 'bg-emerald-500/20 text-emerald-400' :
-                                            test.status === 'failed' ? 'bg-red-500/20 text-red-400' :
-                                                test.status === 'running' ? 'bg-cyan-500/20 text-cyan-400 animate-pulse' :
-                                                    'bg-slate-700 text-slate-400'
+                                        test.status === 'failed' ? 'bg-red-500/20 text-red-400' :
+                                            test.status === 'running' ? 'bg-cyan-500/20 text-cyan-400 animate-pulse' :
+                                                'bg-slate-700 text-slate-400'
                                         }`}>
                                         {test.status}
                                     </span>
@@ -165,9 +172,9 @@ const TestingView: React.FC = () => {
                         )}
                         {consoleOutput.map((line, i) => (
                             <div key={i} className={`${line.includes('PASSED') ? 'text-emerald-400' :
-                                    line.includes('FAILED') ? 'text-red-400' :
-                                        line.includes('Initializing') ? 'text-cyan-400' :
-                                            'text-slate-300'
+                                line.includes('FAILED') ? 'text-red-400' :
+                                    line.includes('Initializing') ? 'text-cyan-400' :
+                                        'text-slate-300'
                                 }`}>
                                 {line}
                             </div>
