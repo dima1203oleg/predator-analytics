@@ -57,7 +57,7 @@ async def search(
                             {
                                 "multi_match": {
                                     "query": q,
-                                    "fields": ["title^3", "content", "company_name^2", "edrpou"],
+                                    "fields": ["title^3", "description^2", "category", "edrpou"],
                                     "type": "best_fields",
                                     "fuzziness": "AUTO"
                                 }
@@ -68,7 +68,7 @@ async def search(
                 },
                 "highlight": {
                     "fields": {
-                        "content": {"fragment_size": 150, "number_of_fragments": 1},
+                        "description": {"fragment_size": 150, "number_of_fragments": 1},
                         "title": {}
                     }
                 }
@@ -114,57 +114,34 @@ async def search(
         final_results = []
         
         if mode == "hybrid":
-            # Combine results by ID
-            merged = {}
+            # Use standard Reciprocal Rank Fusion (RRF)
+            from app.services.search_fusion import reciprocal_rank_fusion
             
-            # Normalize scores (simple max norm)
-            max_text = max([h["_score"] for h in text_hits]) if text_hits else 1.0
-            max_vec = max([h["score"] for h in vector_hits]) if vector_hits else 1.0
-            print(f"Scores max: text={max_text}, vec={max_vec}")
-            
-            # Alpha weights
-            alpha_text = 0.3
-            alpha_vec = 0.7
-            
-            # Process Text Hits
-            for h in text_hits:
-                did = h["_id"]
-                norm_score = h["_score"] / max_text
-                merged[did] = {
-                    "id": did,
-                    "text_score": norm_score,
-                    "vector_score": 0.0,
-                    "data": h["_source"],
+            # Map Elastic results to Dict format expected by RRF
+            os_input = [
+                {
+                    "id": h["_id"], 
+                    "score": h["_score"], 
+                    "data": h["_source"], 
                     "highlights": h.get("highlight", {})
                 }
-                
-            # Process Vector Hits
-            for h in vector_hits:
-                did = h["id"]
-                norm_score = h["score"] / max_vec
-                
-                if did in merged:
-                    merged[did]["vector_score"] = norm_score
-                else:
-                    merged[did] = {
-                        "id": did,
-                        "text_score": 0.0,
-                        "vector_score": norm_score,
-                        "data": h.get("metadata", {}), # Use payload
-                        "highlights": {}
-                    }
+                for h in text_hits
+            ]
             
-            # Calculate final score
-            candidates = []
-            for did, item in merged.items():
-                final_score = (item["text_score"] * alpha_text) + (item["vector_score"] * alpha_vec)
-                item["final_score"] = final_score
-                candidates.append(item)
+            # Map Qdrant results to Dict format
+            vec_input = [
+                {
+                    "id": h["id"], 
+                    "score": h["score"], 
+                    "data": h["metadata"], 
+                    "highlights": {}
+                }
+                for h in vector_hits
+            ]
             
-            # Sort by combined score
-            candidates.sort(key=lambda x: x["final_score"], reverse=True)
-            top_candidates = candidates[:50] # Rerank top 50
-            print(f"Candidates for reranking: {len(top_candidates)}")
+            # Perform Fusion
+            top_candidates = reciprocal_rank_fusion(os_input, vec_input, k=60, limit=20)
+            print(f"Candidates for reranking (after RRF): {len(top_candidates)}")
             
             # 4. Reranking (Cross-Encoder)
             if rerank and top_candidates:
