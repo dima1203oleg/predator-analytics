@@ -22,6 +22,7 @@ from app.api.v1 import optimizer as optimizer_router
 from app.api.v1 import testing as testing_router
 from app.api.v1 import integrations as integrations_router
 from app.api.v1 import nexus as nexus_router
+from app.api.v1 import federation as federation_router
 from app.services.search_fusion import hybrid_search_with_rrf
 from app.services.auto_optimizer import get_auto_optimizer
 
@@ -526,6 +527,9 @@ app.include_router(integrations_router.router, prefix="/api/v1")
 
 # Nexus Hivemind (Chat/Voice)
 app.include_router(nexus_router.router, prefix="/api/v1")
+
+# Federation Protocol (Edge Nodes)
+app.include_router(federation_router.router, prefix="/api/v1")
 
 
 
