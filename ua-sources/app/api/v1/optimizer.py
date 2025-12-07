@@ -4,7 +4,8 @@ AutoOptimizer API Endpoints
 Дозволяє моніторити та керувати автономним самовдосконаленням платформи.
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from app.services.auth_service import require_admin
 from pydantic import BaseModel
 from typing import Dict, Any, List, Optional
 from datetime import datetime
@@ -12,7 +13,11 @@ import logging
 
 logger = logging.getLogger("api.optimizer")
 
-router = APIRouter(prefix="/optimizer", tags=["Auto-Optimization"])
+router = APIRouter(
+    prefix="/optimizer", 
+    tags=["Auto-Optimization"],
+    dependencies=[Depends(require_admin)]
+)
 
 
 # ============================================================================
