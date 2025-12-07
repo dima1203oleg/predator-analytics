@@ -3,9 +3,9 @@
 ## ✅ Today (Day 1)
 
 ### 1. Review Created Files
-- [ ] Read `INTEGRATION_ROADMAP.md`
-- [ ] Read `TZ_INTEGRATION_SUMMARY.md`
-- [ ] Review new ML services code:
+- [x] Read `INTEGRATION_ROADMAP.md`
+- [x] Read `TZ_INTEGRATION_SUMMARY.md`
+- [x] Review new ML services code:
   - `ua-sources/app/services/ml/reranker_service.py`
   - `ua-sources/app/services/ml/summarizer_service.py`
 
@@ -23,6 +23,7 @@ python -m spacy download uk_core_news_sm
 ```
 
 ### 3. Run Database Migration
+- [x] Run SQL migration `005_tz_integration.sql`
 ```bash
 # Option A: If PostgreSQL running in Docker
 docker exec -i predator_postgres psql -U predator -d predator_db < \
@@ -33,6 +34,7 @@ docker exec -i predator_postgres psql -U predator -d predator_db < \
 ```
 
 ### 4. Verify ML Services Work
+- [x] Run verification script `test_ml.py`
 ```bash
 cd /Users/dima-mac/Documents/Predator_21/ua-sources
 python << 'EOF'
@@ -60,7 +62,7 @@ EOF
 ## 📅 Week 1 (Days 2-7)
 
 ### Day 2: ML Endpoint
-- [ ] Create `ua-sources/app/api/v1/ml.py`
+- [x] Create `ua-sources/app/api/v1/ml.py`
   ```python
   from fastapi import APIRouter, Depends
   from app.services.ml import get_reranker, get_summarizer
@@ -76,23 +78,24 @@ EOF
       return {"summary": summarizer.summarize(text)}
   ```
 
-- [ ] Add to `main_v21.py`:
+- [x] Add to `main_v21.py`:
   ```python
   from app.api.v1 import ml
   app.include_router(ml.router, prefix="/api/v1")
   ```
 
 ### Day 3-4: Integrate Reranker into Search
-- [ ] Modify `app/api/routers/search.py`:
+- [x] Modify `app/api/routers/search.py`:
   - Add `rerank: bool = False` parameter
   - If rerank=True, call reranker after OpenSearch+Qdrant
   - Return reranked results
 
 ### Day 5: Test End-to-End
-- [ ] Upload test document via `/api/v1/etl/upload`
-- [ ] Wait for indexing (check Celery logs)
-- [ ] Search with `/api/v1/search?q=test&rerank=true`
-- [ ] Compare results with/without reranking
+### Day 5: Test End-to-End
+- [x] Upload test document via `/api/v1/data/upload`
+- [x] Wait for indexing (verified via search)
+- [x] Search with `/api/v1/search?q=test&rerank=true`
+- [x] Compare results with/without reranking
 
 ### Day 6-7: Documentation
 - [ ] Update OpenAPI schema (`/docs`)
@@ -104,38 +107,37 @@ EOF
 ## 📅 Week 2: Summarization
 
 ### Tasks
-- [ ] Add summarizer to document endpoint
-  ```python
-  @router.get("/documents/{id}/summary")
-  async def get_summary(id: UUID, summarizer=Depends(get_summarizer)):
-      doc = await db.fetch_one("SELECT content FROM gold.documents WHERE id=$1", id)
-      summary = summarizer.summarize(doc["content"])
-      # Cache in document_summaries table
-      return {"summary": summary}
-  ```
+- [x] Add summarizer to document endpoint
+  (Already implemented in `main_v21.py`: `get_document_summary`)
 
-- [ ] Frontend: Add "View Summary" button in search results
-- [ ] Cache summaries in `document_summaries` table
+- [x] Frontend: Add "View Summary" button in search results
+- [x] Cache summaries in `document_summaries` table
+- [x] Configure HTTPS via Nginx & Certbot (config created)
+- [x] Add CI/CD GitHub Actions workflow (ready)
+- [x] Implement backup/restore scripts (completed)
+- [x] Set up monitoring script (running)
+- [x] Fix search field mapping (description field)
+- [x] Verify all services running (14 containers)
+- [x] Test search functionality (hybrid + text working)
+- [x] Create production backup (239MB)
 
 ---
 
-## 📅 Week 3: Hybrid Search Fusion
+## 📅 Week 3: Hybrid Search Fusion (RRF)
+- [x] Create `app/services/search_fusion.py` (Implemented RRF algorithm)
+- [x] Update search router to use fusion (Replaced naive weighted sum with RRF)
+- [x] Unit test: `tests/test_search_fusion.py` (Passed)
+- [x] Optimize Backend startup (Lazy Loading realized)
 
-### Tasks
-- [ ] Create `app/services/search_fusion.py`
-- [ ] Implement RRF (Reciprocal Rank Fusion)
-  ```python
-  def reciprocal_rank_fusion(results_os, results_qdrant, k=60):
-      scores = {}
-      for rank, doc in enumerate(results_os):
-          scores[doc['id']] = scores.get(doc['id'], 0) + 1/(k + rank)
-      for rank, doc in enumerate(results_qdrant):
-          scores[doc['id']] = scores.get(doc['id'], 0) + 1/(k + rank)
-      return sorted(scores.items(), key=lambda x: x[1], reverse=True)
-  ```
-
-- [ ] Update search router to use fusion
+### Remaining Tasks:
 - [ ] Benchmark: measure NDCG improvement
+
+## 🚀 Deployment Status (v21.0)
+- [x] Fix OOM Loop (Implemented Lazy Loading)
+- [x] Identify valid Server Address (2.tcp.eu.ngrok.io:19884)
+- [x] Create Robust Deployment Scripts (GitOps, Chunked, Stream)
+- [x] Commit clean code to GitHub
+- [~] Trigger Remote Deployment (In Progress / Network Dependent)
 
 ---
 
@@ -267,22 +269,30 @@ EOF
 ## ✅ Progress Tracker
 
 ```
-[█░░░░░░░░░] 10% - Dependencies installed
-[██░░░░░░░░] 20% - ML services coded
-[███░░░░░░░] 30% - Migration run
-[████░░░░░░] 40% - ML endpoints
-[█████░░░░░] 50% - Search integration
-[██████░░░░] 60% - Summarization
-[███████░░░] 70% - Slack integration
-[████████░░] 80% - Analytics
-[█████████░] 90% - Testing
-[██████████] 100% - MVP Launch!
+[████████░░] 80% - Docker Compose fully working
 ```
+
+### Completed Today (2025-12-07):
+- ✅ Docker Compose: All 14 services running
+- ✅ MLflow: Custom Dockerfile with psycopg2-binary
+- ✅ Grafana: Provisioning configured with datasources
+- ✅ Prometheus: Extended scrape targets
+- ✅ MinIO: mlflow bucket created
+- ✅ PostgreSQL: mlflow & keycloak databases created
+- ✅ Documentation: DEPLOYMENT_SUMMARY.md created
+- ✅ .dockerignore & .gitignore updated
+
+### Remaining Tasks:
+- [ ] Week 3: Hybrid Search Fusion (RRF)
+- [ ] Week 4: Slack Integration
+- [ ] Week 5: Analytics & Dashboards
+- [ ] Week 6: Testing & Security Audit
 
 ---
 
-**Current Status**: 🟢 Day 1 - Ready to Start  
-**Next Action**: Install dependencies (see checklist above)  
+**Current Status**: 🟢 Production-Ready Locally  
+**Next Action**: Deploy to NVIDIA server (when available)  
 **Target Completion**: 6 weeks (Mid-January 2026)
 
-🚀 **LET'S BUILD!**
+🚀 **DEPLOYMENT READY!**
+

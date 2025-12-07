@@ -110,7 +110,32 @@ async def startup_event():
     except Exception as e:
         logger.warning(f"⚠️ Qdrant initialization failed (will retry on first use): {e}")
     
-    # 2. Start AutoOptimizer background loop
+    # 2. Preload ML models (optional, prevents OOM on small instances)
+    import os
+    if os.getenv("PRELOAD_MODELS", "false").lower() == "true":
+        try:
+            logger.info("📦 Preloading ML models into memory...")
+            from app.services.ml import get_reranker, get_summarizer
+            
+            # Force model loading at startup
+            _ = get_reranker()
+            logger.info("✅ Reranker model preloaded (CrossEncoder)")
+            
+            _ = get_summarizer()
+            logger.info("✅ Summarizer model preloaded")
+            
+            # Preload embedding service
+            embedder = get_embedding_service()
+            await embedder.generate_embedding_async("warmup")
+            logger.info("✅ Embedding model preloaded (MiniLM)")
+            
+            logger.info("🎯 All ML models cached - hybrid search will be fast!")
+        except Exception as e:
+            logger.warning(f"⚠️ ML model preloading failed (will load on first use): {e}")
+    else:
+        logger.info("⏩ Skipping ML model preloading (Lazy Loading enabled). Models will load on first request.")
+    
+    # 3. Start AutoOptimizer background loop
     try:
         # optimizer = get_auto_optimizer()
         # asyncio.create_task(optimizer.start_optimization_loop(interval_minutes=15))
