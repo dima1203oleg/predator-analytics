@@ -186,46 +186,77 @@ class TestAuthLogin:
         assert response.status_code == 401
 
 
+
 class TestAuthProfile:
     """Tests for GET /api/v1/auth/profile"""
     
-    def test_profile_with_valid_token(self, client):
-        """Test getting profile with valid JWT"""
-        # Register and get token
-        register_response = client.post(
-            "/api/v1/auth/register",
-            json={
+    @pytest.fixture
+    def mock_auth_service(self):
+        with patch("app.services.auth_service.auth_service.verify_token") as mock_verify:
+            mock_verify.return_value = {
+                "sub": "1",
+                "preferred_username": "profiletest",
                 "email": "profiletest@test.com",
-                "password": "password123",
-                "name": "Profile User"
+                "realm_access": {"roles": ["user"]},
+                "email_verified": True
             }
-        )
-        
-        token = register_response.json()["access_token"]
-        
-        # Get profile
-        response = client.get(
-            "/api/v1/auth/profile",
-            headers={"Authorization": f"Bearer {token}"}
-        )
-        
-        assert response.status_code == 200
-        data = response.json()
-        assert data["email"] == "profiletest@test.com"
-        assert "user_id" in data
-        assert "role" in data
+            yield mock_verify
     
+    def test_profile_with_valid_token(self, client, mock_auth_service):
+        """Test getting profile with valid JWT"""
+        # Register and get token (mocked DB will simulate register, but verify_token is patched)
+        # We don't even need to register if verify_token is mocked, 
+        # but let's call the endpoint to verify structure.
+        
+        # Override the dependency explicitly in the app
+        from app.main_v21 import app
+        from app.services.auth_service import get_current_user
+        
+        async def mock_get_current_user_override():
+            return {
+                "user_id": 1,
+                "username": "profiletest",
+                "email": "profiletest@test.com",
+                "roles": ["user"],
+                "can_view_pii": False
+            }
+        
+        app.dependency_overrides[get_current_user] = mock_get_current_user_override
+        
+        try:
+            response = client.get(
+                "/api/v1/auth/profile",
+                headers={"Authorization": "Bearer mocked_token"}
+            )
+            
+            assert response.status_code == 200
+            data = response.json()
+            assert data["email"] == "profiletest@test.com"
+            assert "user_id" in data
+            assert "roles" in data
+        finally:
+            app.dependency_overrides = {}
+
     def test_profile_without_token(self, client):
         """Test profile endpoint without authorization"""
+        # Ensure no override
+        from app.main_v21 import app
+        app.dependency_overrides = {}
+        
         response = client.get("/api/v1/auth/profile")
         
-        assert response.status_code == 401
+        assert response.status_code == 401 # HTTPBearer returns 401 for missing token
     
     def test_profile_with_invalid_token(self, client):
         """Test profile with invalid JWT"""
-        response = client.get(
-            "/api/v1/auth/profile",
-            headers={"Authorization": "Bearer invalid_token_here"}
-        )
-        
-        assert response.status_code == 401
+        # Mock verify_token to raise exception
+        with patch("app.services.auth_service.auth_service.verify_token") as mock_verify:
+            from fastapi import HTTPException
+            mock_verify.side_effect = HTTPException(status_code=401, detail="Invalid token")
+            
+            response = client.get(
+                "/api/v1/auth/profile",
+                headers={"Authorization": "Bearer invalid_token_here"}
+            )
+            
+            assert response.status_code == 401

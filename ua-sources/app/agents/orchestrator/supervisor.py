@@ -4,7 +4,7 @@ from ..data.retriever_agent import RetrieverAgent
 from ..analysis.miner_agent import MinerAgent
 from ..core.arbiter_agent import ArbiterAgent
 from ..data.crawler_agent import CrawlerAgent
-from ...services.llm_service import get_llm_service
+from ...services.llm import get_llm_service
 from ...services.federation_service import get_federation_service
 
 logger = logging.getLogger("nexus.supervisor")

@@ -4,9 +4,9 @@
 # Використання: ./scripts/server-tunnel.sh [start|stop|status]
 
 SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
-SSH_HOST="5.tcp.eu.ngrok.io"
-SSH_PORT="14651"
-SSH_USER="dima"
+SSH_HOST="${SSH_HOST:-5.tcp.eu.ngrok.io}"
+SSH_PORT="${SSH_PORT:-14651}"
+SSH_USER="${SSH_USER:-dima}"
 
 # Кольори
 GREEN='\033[0;32m'

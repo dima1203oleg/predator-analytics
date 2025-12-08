@@ -66,3 +66,11 @@ deploy_part_*
 *.pem
 *.key
 secrets/
+
+# API Keys (CRITICAL - never commit)
+**/dynamic_keys.json
+dynamic_keys.json
+dynamic_keys.json
+working_api_keys.json
+test_api_keys.py
+ua-sources/.env.keys

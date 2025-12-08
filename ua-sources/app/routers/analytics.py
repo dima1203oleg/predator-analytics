@@ -48,12 +48,43 @@ async def run_deep_scan(query: AnalyticsQuery):
 @router.get("/risk/{edrpou}")
 async def get_risk_assessment(edrpou: str) -> RiskAssessment:
     """Get risk assessment for a company by EDRPOU"""
+    from app.services.risk_engine import risk_engine
+    import asyncpg
+    import os
+    
+    # Try to get company data from database
+    entity_data = {"edrpou": edrpou}
+    db_url = os.getenv("DATABASE_URL")
+    
+    if db_url:
+        try:
+            conn = await asyncpg.connect(db_url)
+            
+            # Check if company exists (table: companies per models.py)
+            company = await conn.fetchrow(
+                "SELECT * FROM companies WHERE edrpou = $1", edrpou
+            )
+            if company:
+                entity_data.update({
+                    "name": company.get("name", ""),
+                    "tax_debtor": company.get("is_tax_debtor", False),
+                    "court_cases": company.get("court_cases", 0),
+                    "sanctioned": company.get("is_sanctioned", False),
+                    "years_active": 5  # Default, can calculate from registration_date
+                })
+            await conn.close()
+        except Exception:
+            pass
+    
+    # Perform risk assessment
+    assessment = await risk_engine.assess(edrpou, entity_data)
+    
     return RiskAssessment(
         entity=edrpou,
-        risk_level=RiskLevel.LOW,
-        score=0.15,
-        factors=["No negative court cases", "Active tax status"],
-        recommendations=["Continue monitoring", "Verify beneficial owners"]
+        risk_level=RiskLevel(assessment.risk_level.value),
+        score=assessment.score,
+        factors=assessment.factors,
+        recommendations=assessment.mitigations
     )
 
 
@@ -107,14 +138,53 @@ async def get_risk_forecast(days: int = 7):
 
 @router.get("/sectors")
 async def get_sector_distribution():
-    """Get data distribution across sectors"""
+    """Get data distribution across sectors from database"""
+    import asyncpg
+    import os
+    
+    db_url = os.getenv("DATABASE_URL")
+    sectors_data = []
+    total = 0
+    
+    if db_url:
+        try:
+            conn = await asyncpg.connect(db_url)
+            
+            # Query actual record counts from tables (per models.py)
+            counts = {
+                "GOV": await conn.fetchval("SELECT COUNT(*) FROM tenders") or 0,
+                "BIZ": await conn.fetchval("SELECT COUNT(*) FROM companies") or 0,
+                "CUSTOMS": await conn.fetchval("SELECT COUNT(*) FROM ua_customs_imports") or 0,
+                "FX": await conn.fetchval("SELECT COUNT(*) FROM exchange_rates") or 0
+            }
+            await conn.close()
+            
+            total = sum(counts.values())
+            for sector, count in counts.items():
+                pct = round(count / total * 100, 1) if total > 0 else 0
+                sectors_data.append({
+                    "name": sector,
+                    "percentage": pct,
+                    "records": count
+                })
+        except Exception:
+            # Fallback to estimates if DB unavailable
+            sectors_data = [
+                {"name": "GOV", "percentage": 45, "records": 0},
+                {"name": "BIZ", "percentage": 30, "records": 0},
+                {"name": "CUSTOMS", "percentage": 15, "records": 0},
+                {"name": "FX", "percentage": 10, "records": 0}
+            ]
+    else:
+        sectors_data = [
+            {"name": "GOV", "percentage": 45, "records": 0},
+            {"name": "BIZ", "percentage": 30, "records": 0},
+            {"name": "CUSTOMS", "percentage": 15, "records": 0},
+            {"name": "FX", "percentage": 10, "records": 0}
+        ]
+    
     return {
-        "sectors": [
-            {"name": "GOV", "percentage": 45, "records": 1250000},
-            {"name": "BIZ", "percentage": 30, "records": 850000},
-            {"name": "MED", "percentage": 15, "records": 420000},
-            {"name": "SCI", "percentage": 10, "records": 280000},
-        ],
-        "total_records": 2800000,
+        "sectors": sectors_data,
+        "total_records": total,
         "last_updated": datetime.now(timezone.utc).isoformat()
     }

@@ -132,3 +132,131 @@ class IngestionLog(Base):
     started_at = Column(DateTime)
     completed_at = Column(DateTime)
     error_message = Column(Text)
+
+
+class SearchAnalytics(Base):
+    """Search query logs and performance metrics"""
+    __tablename__ = "search_analytics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String(100), index=True, nullable=True)
+    query = Column(Text, nullable=False)
+    search_mode = Column(String(20))  # text, hybrid, semantic
+    results_count = Column(Integer)
+    latency_ms = Column(Float)
+    timestamp = Column(DateTime, server_default=func.now())
+    selected_doc_id = Column(String(100), nullable=True)
+    user_agent = Column(String(200), nullable=True)
+
+
+# ============================================================================
+# v22.0 PLATFORM CORE MODELS
+# (Multi-Tenant System of Record)
+# ============================================================================
+
+from sqlalchemy.dialects.postgresql import UUID, JSONB, ARRAY
+import uuid
+
+class Document(Base):
+    """
+    Core document storage (System of Record).
+    """
+    __tablename__ = "documents"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
+    title = Column(Text)
+    content = Column(Text)
+    source_type = Column(String(30))
+    meta = Column(JSONB)
+    created_at = Column(DateTime, server_default=func.now())
+    
+    # Relationships
+    assets = relationship("MultimodalAsset", back_populates="document")
+
+
+class AugmentedDataset(Base):
+    """
+    Synthetic/Augmented data for training.
+    """
+    __tablename__ = "augmented_datasets"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
+    original_id = Column(UUID(as_uuid=True), ForeignKey("documents.id"))
+    content = Column(Text)
+    aug_type = Column(String(50))  # synonym/paraphrase/backtranslate
+    created_at = Column(DateTime, server_default=func.now())
+
+
+class MLDataset(Base):
+    """
+    Logical ML dataset definition (linked to DVC).
+    """
+    __tablename__ = "ml_datasets"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
+    name = Column(Text, nullable=False)
+    dvc_path = Column(Text, nullable=False)
+    size_rows = Column(Integer)
+    tags = Column(ARRAY(Text)) # Requires Postgres
+    created_by = Column(UUID(as_uuid=True))
+    created_at = Column(DateTime, server_default=func.now())
+    
+    # Relationships
+    jobs = relationship("MLJob", back_populates="dataset")
+
+
+class MLJob(Base):
+    """
+    Training/Fine-tuning Job Registry.
+    """
+    __tablename__ = "ml_jobs"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
+    dataset_id = Column(UUID(as_uuid=True), ForeignKey("ml_datasets.id"))
+    target = Column(String(50)) # embeddings/reranker/classifier
+    status = Column(String(30)) # queued/running/succeeded/failed
+    metrics = Column(JSONB)
+    model_ref = Column(Text)    # MLflow registry ref
+    si_cycle_id = Column(UUID(as_uuid=True)) # Link to Self-Improve cycle
+    created_at = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    dataset = relationship("MLDataset", back_populates="jobs")
+
+
+class MultimodalAsset(Base):
+    """
+    Images, Audio, PDF Previews linked to docs.
+    """
+    __tablename__ = "multimodal_assets"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
+    doc_id = Column(UUID(as_uuid=True), ForeignKey("documents.id"))
+    asset_type = Column(String(20)) # image/pdf_preview/audio
+    uri = Column(Text)
+    embedding_version = Column(Integer, default=1)
+    created_at = Column(DateTime, server_default=func.now())
+    
+    # Relationships
+    document = relationship("Document", back_populates="assets")
+
+
+class SICycle(Base):
+    """
+    Self-Improvement Loop iteration tracker.
+    """
+    __tablename__ = "si_cycles"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
+    trigger_type = Column(String(50))
+    diagnostic_ref = Column(Text)
+    dataset_ref = Column(Text)
+    mlflow_run_id = Column(Text)
+    status = Column(String(30))
+    created_at = Column(DateTime, server_default=func.now())

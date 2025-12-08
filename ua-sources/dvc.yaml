@@ -1,0 +1,25 @@
+stages:
+  augment:
+    cmd: python3 -m app.services.ml.data_augmentor
+    deps:
+      - data/raw/documents.csv
+    outs:
+      - data/processed/augmented_dataset.csv
+
+  train_reranker:
+    cmd: python3 -m H2O_LLM_Studio.train -C configs/reranker_v1.yaml
+    deps:
+      - data/processed/augmented_dataset.csv
+    outs:
+      - models/reranker_v1.onnx
+    metrics:
+      - evaluation.json:
+          cache: false
+
+  evaluate:
+    cmd: python3 scripts/evaluate_model.py --model models/reranker_v1.onnx
+    deps:
+      - models/reranker_v1.onnx
+    metrics:
+      - metrics.json:
+          cache: false
