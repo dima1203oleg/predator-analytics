@@ -24,12 +24,12 @@ python-multipart==0.0.9
 # Semantic Search (Phase 6-7)
 sentence-transformers>=3.0.0
 qdrant-client==1.7.0
-numpy==1.24.3
+numpy>=1.26.0
 Pillow>=10.0.0
 
 # ML/AI (Optional for local)
 transformers==4.37.0
-torch==2.1.2
+# torch==2.1.2  # Commented out - use CPU inference via onnx or local Ollama
 
 # Task Queue
 celery==5.3.6
@@ -83,3 +83,7 @@ lxml>=5.1.0                # Fast XML/HTML parser
 dvc[s3]>=3.40.0            # Data Version Control
 augly>=1.0.0               # Facebook AugLy (Optional)
 mlflow>=2.10.0             # Experiment Tracking
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
