@@ -2,7 +2,7 @@
 UA Sources - Configuration Module
 Environment-based settings for Ukrainian data sources
 """
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 from typing import Optional, List
 import os
@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     
     # App
     APP_NAME: str = "UA Sources Service"
-    APP_VERSION: str = "19.0.0"
+    APP_VERSION: str = "21.0.0"
     DEBUG: bool = False
     ENVIRONMENT: str = "development"
     
@@ -21,20 +21,20 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
     CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:5173"]
     
-    # Database
-    DATABASE_URL: str = "sqlite+aiosqlite:///./predator.db"
+    # Database - PostgreSQL for production, override via env
+    DATABASE_URL: str = "postgresql+asyncpg://predator:predator_password@localhost:5432/predator_db"
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 5
     
     # Redis / Celery
-    REDIS_URL: str = "redis://localhost:6379/0"
-    CELERY_BROKER_URL: str = "redis://localhost:6379/1"
-    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/1"
+    REDIS_URL: str = "redis://redis:6379/0"
+    CELERY_BROKER_URL: str = "redis://redis:6379/1"
+    CELERY_RESULT_BACKEND: str = "redis://redis:6379/1"
     
     # Infrastructure
-    QDRANT_URL: str = "http://localhost:6333"
-    OPENSEARCH_URL: str = "http://localhost:9200"
-    MINIO_ENDPOINT: str = "localhost:9000"
+    QDRANT_URL: str = "http://qdrant:6333"
+    OPENSEARCH_URL: str = "http://opensearch:9200"
+    MINIO_ENDPOINT: str = "minio:9000"
     MINIO_ACCESS_KEY: str = "predator_admin"
     MINIO_SECRET_KEY: str = "predator_secret_key"
     
@@ -59,6 +59,8 @@ class Settings(BaseSettings):
     HUGGINGFACE_API_KEY: Optional[str] = None
     COHERE_API_KEY: Optional[str] = None
     TOGETHER_API_KEY: Optional[str] = None
+    XAI_API_KEY: Optional[str] = None  # Grok
+    DEEPSEEK_API_KEY: Optional[str] = None
     
     # LLM Base URLs (Configurable for proxies)
     LLM_OPENAI_BASE_URL: str = "https://api.openai.com/v1"
@@ -71,6 +73,8 @@ class Settings(BaseSettings):
     LLM_HUGGINGFACE_BASE_URL: str = "https://api-inference.huggingface.co/models"
     LLM_COHERE_BASE_URL: str = "https://api.cohere.ai/v1"
     LLM_TOGETHER_BASE_URL: str = "https://api.together.xyz/v1"
+    LLM_XAI_BASE_URL: str = "https://api.x.ai/v1"  # Grok
+    LLM_DEEPSEEK_BASE_URL: str = "https://api.deepseek.com/v1"
     
     LLM_DEFAULT_PROVIDER: str = "groq"
     
@@ -82,11 +86,12 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     PROMETHEUS_ENABLED: bool = True
     
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = True
-        extra = "ignore"
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+        extra="ignore"
+    )
 
 
 @lru_cache()

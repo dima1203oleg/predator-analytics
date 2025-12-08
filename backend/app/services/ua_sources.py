@@ -22,6 +22,43 @@ class UkrainianSourcesService:
     
     def __init__(self):
         self.client = httpx.AsyncClient(timeout=30.0)
+        # Static stubs to avoid network dependency in demo/offline mode
+        self._stub_prozorro = [
+            {
+                "id": "UA-2025-12-01-000001",
+                "title": "Послуги з кібербезпеки для держустанов",
+                "status": "active",
+                "amount": 1200000,
+                "currency": "UAH",
+                "procuringEntity": "Мінцифри",
+                "dateModified": datetime.utcnow().isoformat(),
+                "url": "https://prozorro.gov.ua/tender/UA-2025-12-01-000001"
+            }
+        ]
+        self._stub_companies = [
+            {
+                "edrpou": "12345678",
+                "name": "ТОВ \"ПРЕДАТОР АНАЛІТИКА\"",
+                "shortName": "ПРЕДАТОР",
+                "status": "діюча",
+                "address": "м. Київ, вул. Даних, 1",
+                "director": "Іваненко Іван",
+                "kved": "62.01",
+                "registrationDate": "2021-03-15"
+            }
+        ]
+        self._stub_debtors = [
+            {
+                "name": "ТОВ \"СТАР ДЕБТ\"",
+                "edrpou": "99990000",
+                "debtAmount": 1500000,
+                "debtType": "Податковий борг",
+                "region": "м. Київ"
+            }
+        ]
+        self._stub_rates = [
+            {"currency": "USD", "name": "Долар США", "rate": 41.5, "exchangeDate": datetime.utcnow().strftime("%d.%m.%Y")}
+        ]
     
     async def close(self):
         await self.client.aclose()
@@ -34,6 +71,11 @@ class UkrainianSourcesService:
         limit: int = 20
     ) -> List[Dict[str, Any]]:
         """Search Prozorro tenders"""
+        if settings.USE_STUB_DATA:
+            normalized = query.lower() if query else ""
+            items = [i for i in self._stub_prozorro if normalized in i["title"].lower() or normalized in i["id"].lower()] if query else self._stub_prozorro
+            return items[:limit]
+
         try:
             params = {
                 "offset": "",
@@ -56,6 +98,11 @@ class UkrainianSourcesService:
                 )
                 if detail_resp.status_code == 200:
                     tender = detail_resp.json().get("data", {})
+                    # Simple client-side filter to honor query without relying on API search
+                    if query:
+                        normalized = query.lower()
+                        if normalized not in tender.get("title", "").lower() and normalized not in tender_id.lower():
+                            continue
                     tenders.append({
                         "id": tender.get("tenderID", tender_id),
                         "title": tender.get("title", ""),
@@ -65,7 +112,7 @@ class UkrainianSourcesService:
                         "procuringEntity": tender.get("procuringEntity", {}).get("name", ""),
                         "dateModified": tender.get("dateModified", ""),
                         "url": f"https://prozorro.gov.ua/tender/{tender_id}"
-                    })
+                })
             
             return tenders
         except Exception as e:
@@ -91,6 +138,11 @@ class UkrainianSourcesService:
         limit: int = 20
     ) -> List[Dict[str, Any]]:
         """Search companies in Ukrainian registry"""
+        if settings.USE_STUB_DATA:
+            normalized = query.lower() if query else ""
+            items = [i for i in self._stub_companies if normalized in i["name"].lower() or normalized in i["edrpou"].lower()] if query else self._stub_companies
+            return items[:limit]
+
         try:
             # Using data.gov.ua CKAN API
             response = await self.client.get(
@@ -130,6 +182,9 @@ class UkrainianSourcesService:
     # === NBU (National Bank of Ukraine) ===
     async def get_exchange_rates(self, date: Optional[str] = None) -> List[Dict[str, Any]]:
         """Get NBU exchange rates"""
+        if settings.USE_STUB_DATA:
+            return self._stub_rates
+
         try:
             params = {}
             if date:
@@ -171,6 +226,11 @@ class UkrainianSourcesService:
         limit: int = 20
     ) -> List[Dict[str, Any]]:
         """Search tax debtors registry"""
+        if settings.USE_STUB_DATA:
+            normalized = query.lower() if query else ""
+            items = [i for i in self._stub_debtors if normalized in i["name"].lower() or normalized in i["edrpou"].lower()] if query else self._stub_debtors
+            return items[:limit]
+
         try:
             response = await self.client.get(
                 f"{settings.EDR_API_URL}/datastore_search",

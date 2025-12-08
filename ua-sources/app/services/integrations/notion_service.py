@@ -2,7 +2,14 @@
 import os
 import logging
 from typing import Dict, List, Any, Optional
-from notion_client import AsyncClient
+
+try:
+    from notion_client import AsyncClient
+    NOTION_AVAILABLE = True
+except ImportError:
+    NOTION_AVAILABLE = False
+    class AsyncClient:
+        def __init__(self, auth=None): pass
 
 logger = logging.getLogger("service.notion")
 
@@ -14,16 +21,21 @@ class NotionService:
     
     def __init__(self):
         self.token = os.getenv("NOTION_TOKEN")
-        self.client = AsyncClient(auth=self.token) if self.token else None
+        if NOTION_AVAILABLE and self.token:
+            self.client = AsyncClient(auth=self.token)
+        else:
+            self.client = None
+            if self.token and not NOTION_AVAILABLE:
+                logger.warning("NOTION_TOKEN is set but notion_client is not installed")
 
     def is_configured(self) -> bool:
-        return self.client is not None
+        return self.client is not None and NOTION_AVAILABLE
 
     async def search(self, query: str = "") -> List[Dict[str, Any]]:
         """
         Search pages and databases in Notion.
         """
-        if not self.client:
+        if not self.client or not NOTION_AVAILABLE:
             return []
             
         try:
@@ -65,8 +77,8 @@ class NotionService:
         Ingest a Notion page into Predator's knowledge base.
         Retrieves blocks and converts to text.
         """
-        if not self.client:
-            raise Exception("Notion not configured")
+        if not self.client or not NOTION_AVAILABLE:
+            raise Exception("Notion not configured or sdk missing")
             
         try:
             # 1. Get Page Details

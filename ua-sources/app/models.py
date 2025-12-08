@@ -132,3 +132,18 @@ class IngestionLog(Base):
     started_at = Column(DateTime)
     completed_at = Column(DateTime)
     error_message = Column(Text)
+
+
+class SearchAnalytics(Base):
+    """Search query logs and performance metrics"""
+    __tablename__ = "search_analytics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String(100), index=True, nullable=True)
+    query = Column(Text, nullable=False)
+    search_mode = Column(String(20))  # text, hybrid, semantic
+    results_count = Column(Integer)
+    latency_ms = Column(Float)
+    timestamp = Column(DateTime, server_default=func.now())
+    selected_doc_id = Column(String(100), nullable=True)
+    user_agent = Column(String(200), nullable=True)

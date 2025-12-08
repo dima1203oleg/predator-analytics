@@ -210,6 +210,92 @@ class LLMRouter:
                     latency_ms=(time.time() - start) * 1000,
                     success=False, error=str(e)
                 )
+
+    async def _call_mistral(self, prompt: str, system: str = "") -> LLMResponse:
+        """Call Mistral AI API"""
+        import time
+        start = time.time()
+
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.post(
+                    f"{self.providers['mistral']['base_url']}/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {self.providers['mistral']['api_key']}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": self.providers['mistral']['model'],
+                        "messages": [
+                            {"role": "system", "content": system or "You are a helpful assistant."},
+                            {"role": "user", "content": prompt}
+                        ],
+                        "temperature": 0.7,
+                        "max_tokens": 4096
+                    },
+                    timeout=settings.LLM_TIMEOUT
+                )
+                response.raise_for_status()
+                data = response.json()
+
+                return LLMResponse(
+                    content=data["choices"][0]["message"]["content"],
+                    provider="mistral",
+                    model=self.providers['mistral']['model'],
+                    tokens_used=data.get("usage", {}).get("total_tokens", 0),
+                    latency_ms=(time.time() - start) * 1000,
+                    success=True
+                )
+            except Exception as e:
+                logger.error(f"Mistral error: {e}")
+                return LLMResponse(
+                    content="", provider="mistral", model="", tokens_used=0,
+                    latency_ms=(time.time() - start) * 1000,
+                    success=False, error=str(e)
+                )
+
+    async def _call_groq(self, prompt: str, system: str = "") -> LLMResponse:
+        """Call Groq API (OpenAI-compatible)"""
+        import time
+        start = time.time()
+
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.post(
+                    f"{self.providers['groq']['base_url']}/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {self.providers['groq']['api_key']}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": self.providers['groq']['model'],
+                        "messages": [
+                            {"role": "system", "content": system or "You are a helpful assistant."},
+                            {"role": "user", "content": prompt}
+                        ],
+                        "temperature": 0.7,
+                        "max_tokens": 4096
+                    },
+                    timeout=settings.LLM_TIMEOUT
+                )
+                response.raise_for_status()
+                data = response.json()
+
+                return LLMResponse(
+                    content=data["choices"][0]["message"]["content"],
+                    provider="groq",
+                    model=self.providers['groq']['model'],
+                    tokens_used=data.get("usage", {}).get("total_tokens", 0),
+                    latency_ms=(time.time() - start) * 1000,
+                    success=True
+                )
+            except Exception as e:
+                logger.error(f"Groq error: {e}")
+                return LLMResponse(
+                    content="", provider="groq", model="", tokens_used=0,
+                    latency_ms=(time.time() - start) * 1000,
+                    success=False, error=str(e)
+                )
     
     async def generate(
         self,
@@ -227,6 +313,13 @@ class LLMRouter:
             provider: Specific provider to use (None = use default/fallback chain)
             use_fallback: Whether to try fallback providers on failure
         """
+        if provider and provider not in self.providers:
+            return LLMResponse(
+                content="", provider=provider, model="", tokens_used=0,
+                latency_ms=0, success=False,
+                error=f"Provider '{provider}' is not configured (missing API key)"
+            )
+
         # Determine providers to try
         if provider and provider in self.providers:
             providers_to_try = [provider]
@@ -250,7 +343,18 @@ class LLMRouter:
                 response = await self._call_gemini(prompt, system)
             elif provider_name == "anthropic":
                 response = await self._call_anthropic(prompt, system)
+            elif provider_name == "mistral":
+                response = await self._call_mistral(prompt, system)
+            elif provider_name == "groq":
+                response = await self._call_groq(prompt, system)
             else:
+                logger.warning(f"LLM provider {provider_name} is configured but not implemented in router")
+                response = LLMResponse(
+                    content="", provider=provider_name, model="", tokens_used=0,
+                    latency_ms=0, success=False, error="Provider not implemented"
+                )
+                if not use_fallback:
+                    return response
                 continue
             
             if response.success:

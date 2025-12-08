@@ -442,6 +442,47 @@ app.include_router(nexus_router.router, prefix="/api/v1")
 # Federation Protocol (Edge Nodes)
 app.include_router(federation_router.router, prefix="/api/v1")
 
+# System Infrastructure & Health
+from app.routers import system as system_router
+app.include_router(system_router.router, prefix="/api/v1")
+
+# Data Sources Management
+from app.routers import sources as sources_router
+app.include_router(sources_router.router, prefix="/api/v1")
+
+# Database Management
+from app.routers import databases as databases_router
+app.include_router(databases_router.router, prefix="/api/v1")
+
+# Neural Council (AI Brain)
+from app.api.routers import council as council_router
+app.include_router(council_router.router, prefix="/api/v1")
+
+# Opponent / Red Team
+from app.api.routers import opponent as opponent_router
+app.include_router(opponent_router.router, prefix="/api/v1")
+
+# LLM Management
+from app.api.routers import llm_management as llm_mgmt_router
+app.include_router(llm_mgmt_router.router, prefix="/api/v1")
+
+# Integrations (Slack, Notion, etc.)
+from app.routers import integrations as integrations_router
+app.include_router(integrations_router.router, prefix="/api/v1")
+
+# Analytics & Stats
+from app.routers import analytics as analytics_router
+app.include_router(analytics_router.router, prefix="/api/v1")
+
+# Security Infrastructure
+from app.routers import security as security_router
+app.include_router(security_router.router, prefix="/api/v1")
+
+# Evolution System
+from app.routers import evolution as evolution_router
+app.include_router(evolution_router.router, prefix="/api/v1")
+
+
 
 
 # ============================================================================

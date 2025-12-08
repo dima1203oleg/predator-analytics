@@ -8,8 +8,11 @@ from app.api.routers.metrics import track_search_request
 import time
 import logging
 
+from pydantic import BaseModel
+
 logger = logging.getLogger("api.search")
 router = APIRouter(prefix="/search", tags=["Search"])
+
 
 # Dependencies
 def get_indexer():
@@ -366,5 +369,119 @@ async def suggest(
         return suggestions
     except Exception:
         return []
+    finally:
+        await indexer.close()
+
+
+class CustomsSearchRequest(BaseModel):
+    query: str
+    limit: int = 50
+    filters: Optional[Dict[str, Any]] = None
+
+@router.post("/customs")
+async def customs_search(
+    request: CustomsSearchRequest,
+    indexer: OpenSearchIndexer = Depends(get_indexer)
+):
+    """
+    Dedicated search for Customs Declarations (ua_customs_imports).
+    Uses 'customs' alias for zero-downtime updates.
+    Returns search results + analytics (aggregations).
+    """
+    try:
+        query = request.query
+        
+        # Construct query
+        os_query_body = {
+            "query": {
+                "bool": {
+                    "must": [
+                        {
+                            "multi_match": {
+                                "query": query,
+                                "fields": [
+                                    "опис_товару^2", 
+                                    "код_товару^3", 
+                                    "торгуюча_країна", 
+                                    "митниця_оформлення",
+                                    "номер_митної_декларації"
+                                ],
+                                "type": "best_fields",
+                                "operator": "and"
+                            }
+                        }
+                    ],
+                    "filter": []
+                }
+            },
+            "size": request.limit,
+            "highlight": {
+                "fields": {
+                    "опис_товару": {"fragment_size": 200, "number_of_fragments": 1},
+                    "код_товару": {}
+                }
+            },
+            "aggs": {
+                "top_countries": {
+                    "terms": {"field": "торгуюча_країна.keyword", "size": 10}
+                },
+                "top_codes": {
+                    "terms": {"field": "код_товару.keyword", "size": 10}
+                },
+                "top_offices": {
+                    "terms": {"field": "митниця_оформлення.keyword", "size": 10}
+                }
+            }
+        }
+        
+        # Execute search
+        response = await indexer.search(
+            index_name="customs",
+            query_body=os_query_body,
+            size=request.limit
+        )
+        
+        hits = response.get("hits", {}).get("hits", [])
+        
+        # Parse Aggregations
+        aggs = response.get("aggregations", {})
+        analytics = {
+            "top_countries": [
+                {"name": b["key"], "count": b["doc_count"]} 
+                for b in aggs.get("top_countries", {}).get("buckets", [])
+            ],
+            "top_codes": [
+                {"code": b["key"], "count": b["doc_count"]} 
+                for b in aggs.get("top_codes", {}).get("buckets", [])
+            ],
+            "top_offices": [
+                {"name": b["key"], "count": b["doc_count"]} 
+                for b in aggs.get("top_offices", {}).get("buckets", [])
+            ]
+        }
+        
+        # Map Results
+        results = []
+        for h in hits:
+            source = h.get("_source", {})
+            results.append({
+                "id": str(source.get("id") or h.get("_id")),
+                "description": source.get("опис_товару"),
+                "hs_code": source.get("код_товару"),
+                "country_trading": source.get("торгуюча_країна"),
+                "customs_office": source.get("митниця_оформлення"),
+                "decl_number": source.get("номер_митної_декларації"),
+                "score": h.get("_score")
+            })
+            
+        return {
+            "total": response.get("hits", {}).get("total", {}).get("value", 0),
+            "results": results,
+            "analytics": analytics
+        }
+
+    except Exception as e:
+        logger.error(f"Customs search failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         await indexer.close()

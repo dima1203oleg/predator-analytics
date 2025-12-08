@@ -66,3 +66,7 @@ deploy_part_*
 *.pem
 *.key
 secrets/
+
+# API Keys (CRITICAL - never commit)
+**/dynamic_keys.json
+dynamic_keys.json

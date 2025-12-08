@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     
     # App
     APP_NAME: str = "Predator Analytics"
-    APP_VERSION: str = "19.0.0"
+    APP_VERSION: str = "21.0.0"
     DEBUG: bool = False
     ENVIRONMENT: str = "development"  # development, staging, production
     
@@ -45,6 +45,10 @@ class Settings(BaseSettings):
     # Vector DB
     QDRANT_URL: str = "http://localhost:6333"
     QDRANT_API_KEY: Optional[str] = None
+    OPENSEARCH_URL: str = "http://localhost:9200"
+
+    # Offline / Demo mode
+    USE_STUB_DATA: bool = False  # If true, external UA sources return stub data
     
     # Security
     SECRET_KEY: str = "super-secret-key-change-in-production"
