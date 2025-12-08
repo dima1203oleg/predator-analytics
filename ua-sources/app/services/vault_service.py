@@ -21,6 +21,9 @@ class VaultService:
         self.vault_addr = settings.VAULT_ADDR
         self.vault_token = settings.VAULT_TOKEN
         self.enabled = bool(self.vault_token)
+        # Setup in-memory cache
+        self.cache = {}
+        self.cache_ttl = 300  # 5 minutes
     
     async def get_secret(
         self,
@@ -37,6 +40,14 @@ class VaultService:
         if not self.enabled:
             logger.warning("Vault not configured, using environment variables")
             return None
+            
+        # Check cache
+        import time
+        cache_key = f"{path}:{key if key else 'ALL'}"
+        if cache_key in self.cache:
+            entry = self.cache[cache_key]
+            if time.time() - entry['timestamp'] < self.cache_ttl:
+                return entry['data']
         
         try:
             async with httpx.AsyncClient() as client:
@@ -50,9 +61,19 @@ class VaultService:
                 
                 secret_data = data.get("data", {}).get("data", {})
                 
+                result = None
                 if key:
-                    return secret_data.get(key)
-                return secret_data
+                    result = secret_data.get(key)
+                else:
+                    result = secret_data
+                
+                # Update cache
+                self.cache[cache_key] = {
+                    'data': result,
+                    'timestamp': time.time()
+                }
+                
+                return result
                 
         except Exception as e:
             logger.error(f"Vault error: {e}")
