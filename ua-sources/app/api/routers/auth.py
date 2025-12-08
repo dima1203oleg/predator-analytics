@@ -73,7 +73,7 @@ def verify_password(password: str, stored_hash: str) -> bool:
         salt, hashed = stored_hash.split(":")
         test_hash = hashlib.sha256((salt + password).encode()).hexdigest()
         return test_hash == hashed
-    except:
+    except (ValueError, AttributeError):
         return False
 
 

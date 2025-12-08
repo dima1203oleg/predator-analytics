@@ -19,25 +19,25 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
         if: ${{ hashFiles('backend/requirements.txt') != '' }}
 
       - name: Install backend dependencies
-        if: ${{ hashFiles('backend/requirements.txt') != '' }}
+        if: ${{ hashFiles('ua-sources/requirements.txt') != '' }}
         run: |
-          cd backend
+          cd ua-sources
           pip install -r requirements.txt
 
       - name: Test backend
-        if: ${{ hashFiles('backend/requirements.txt') != '' }}
+        if: ${{ hashFiles('ua-sources/requirements.txt') != '' }}
         run: |
-          cd backend
+          cd ua-sources
           python -m pytest
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
         if: ${{ hashFiles('frontend/package.json') != '' }}
 
       - name: Install frontend dependencies
@@ -70,7 +70,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push frontend
         if: ${{ hashFiles('frontend/Dockerfile') != '' }}
@@ -79,21 +79,21 @@ jobs:
           context: ./frontend
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository }}/frontend:v18.4.${{ github.run_number }}
+          tags: ghcr.io/${{ github.repository }}/frontend:v22.0.${{ github.run_number }}
 
       - name: Build and push backend
-        if: ${{ hashFiles('backend/Dockerfile') != '' }}
+        if: ${{ hashFiles('ua-sources/Dockerfile') != '' }}
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
+          context: ./ua-sources
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository }}/backend:v18.4.${{ github.run_number }}
+          tags: ghcr.io/${{ github.repository }}/backend:v22.0.${{ github.run_number }}
 
       - name: Update Helm values for nvidia
         run: |
           if [ -f environments/nvidia/values.yaml ]; then
-            sed -i "s|tag:.*|tag: v18.4.${{ github.run_number }}|" environments/nvidia/values.yaml
+            sed -i "s|tag:.*|tag: v22.0.${{ github.run_number }}|" environments/nvidia/values.yaml
           fi
 
       - name: Commit updated values
@@ -101,8 +101,7 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add environments/nvidia/values.yaml
-          git commit -m "Update image tags to v18.4.${{ github.run_number }}" || echo "No changes"
+          git commit -m "Update image tags to v22.0.${{ github.run_number }}" || echo "No changes"
           if ! git push; then
             echo "git push failed (probably no write permission). Skipping push." >&2
           fi
-

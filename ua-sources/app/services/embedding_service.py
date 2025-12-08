@@ -147,6 +147,44 @@ class EmbeddingService:
             # Fallback: return 0.0 scores
             return [0.0] * len(documents)
 
+    # =====================
+    # MULTIMODAL (CLIP)
+    # =====================
+    
+    def _load_clip_model(self):
+        """Lazy load CLIP model."""
+        if not hasattr(self, 'clip_model') or self.clip_model is None:
+            try:
+                from sentence_transformers import SentenceTransformer
+                self.clip_model = SentenceTransformer('clip-ViT-B-32')
+                logger.info("Loaded CLIP model: clip-ViT-B-32")
+            except Exception as e:
+                logger.error(f"Failed to load CLIP model: {e}")
+                raise
+
+    def generate_clip_embedding(self, text: str = None, image_path: str = None) -> List[float]:
+        """
+        Generate multimodal embedding using CLIP.
+        Supports text OR image input.
+        """
+        self._load_clip_model()
+        
+        try:
+            if text:
+                return self.clip_model.encode(text).tolist()
+            
+            if image_path:
+                from PIL import Image
+                image = Image.open(image_path)
+                return self.clip_model.encode(image).tolist()
+                
+            return [0.0] * 512
+            
+        except Exception as e:
+            logger.error(f"CLIP embedding failed: {e}")
+            return [0.0] * 512
+
+
 # Singleton
 _embedding_service = EmbeddingService()
 

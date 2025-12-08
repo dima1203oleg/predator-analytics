@@ -1,9 +1,14 @@
-"""Simulation Router - Demo data endpoints"""
+"""
+Simulation Router - Demo/Testing data endpoints
+
+⚠️ WARNING: This router provides SIMULATED DATA for testing purposes only.
+Do NOT use in production for real analytics.
+"""
 from fastapi import APIRouter
 import random
 from datetime import datetime
 
-router = APIRouter(prefix="/simulation", tags=["Simulation"])
+router = APIRouter(prefix="/simulation", tags=["Simulation (Demo Only)"])
 
 
 @router.get("/metrics")

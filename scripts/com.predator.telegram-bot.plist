@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.predator.telegram-bot</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/dima-mac/Documents/Predator_21/scripts/telegram_bot.py</string>
+    </array>
+    
+    <key>WorkingDirectory</key>
+    <string>/Users/dima-mac/Documents/Predator_21</string>
+    
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>TELEGRAM_BOT_TOKEN</key>
+        <string>7879930188:AAGH8OYUjfun382FCEPowrC0_WKjwVRpcBQ</string>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+    
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <key>KeepAlive</key>
+    <true/>
+    
+    <key>StandardOutPath</key>
+    <string>/Users/dima-mac/Library/Logs/telegram-bot.log</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/Users/dima-mac/Library/Logs/telegram-bot-error.log</string>
+    
+    <key>ThrottleInterval</key>
+    <integer>30</integer>
+</dict>
+</plist>

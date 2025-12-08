@@ -177,6 +177,21 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
     const [manualScenarioId, setManualScenarioId] = useState<number | null>(null);
     
     const loopTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isActiveRef = useRef(false); // Keeps latest state inside async loop
+
+    const resetToIdle = () => {
+        setStage('IDLE');
+        setActiveAgents(prev => prev.map(a => ({ ...a, status: 'IDLE' })));
+        setBrainNodes(prev => prev.map(n => ({ ...n, status: 'IDLE' })));
+    };
+
+    const guardActive = () => {
+        if (!isActiveRef.current) {
+            resetToIdle();
+            return true;
+        }
+        return false;
+    };
 
     const addLog = (type: SIContextLog['type'], source: string, message: string) => {
         setLogs(prev => [...prev, {
@@ -189,7 +204,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
     };
 
     const runLoop = async () => {
-        if (!isActive) return;
+        if (!isActiveRef.current) return;
 
         // 1. SELECT SCENARIO
         const nextScenario = manualScenarioId !== null 
@@ -209,6 +224,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
         // Activate Scanner Agent
         setActiveAgents(prev => prev.map(a => a.id === nextScenario.triggerAgent ? { ...a, status: 'SCANNING' } : a));
         await new Promise(r => setTimeout(r, 2000));
+        if (guardActive()) return;
         addLog('AGENT', nextScenario.triggerAgent, nextScenario.triggerMsg);
         
         // Show RAG Evidence
@@ -219,6 +235,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
 
         setActiveAgents(prev => prev.map(a => a.id === nextScenario.triggerAgent ? { ...a, status: 'TRANSMITTING' } : a));
         await new Promise(r => setTimeout(r, 1000));
+        if (guardActive()) return;
         setActiveAgents(prev => prev.map(a => a.id === nextScenario.triggerAgent ? { ...a, status: 'IDLE' } : a));
 
         // --- STAGE 2: DEBATE ---
@@ -229,6 +246,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
             setBrainNodes(prev => prev.map(n => n.id === turn.id ? { ...n, status: 'TALKING' } : { ...n, status: 'IDLE' }));
             addLog('BRAIN', turn.id.toUpperCase(), turn.msg);
             await new Promise(r => setTimeout(r, 1500 + Math.random() * 1000));
+            if (guardActive()) return;
         }
         setBrainNodes(prev => prev.map(n => ({ ...n, status: 'IDLE' })));
 
@@ -237,6 +255,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
         setBrainNodes(prev => prev.map(n => n.id === 'arbiter' ? { ...n, status: 'TALKING' } : n));
         addLog('BRAIN', 'АРБІТР', 'Аналіз аргументів. Розрахунок матриці ризиків...');
         await new Promise(r => setTimeout(r, 2000));
+        if (guardActive()) return;
         
         // Update Transparency Matrix
         if (nextScenario.scores) {
@@ -270,8 +289,10 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
             currentDiff += line + '\n';
             setNasDiff(currentDiff);
             await new Promise(r => setTimeout(r, 500));
+            if (guardActive()) return;
         }
         await new Promise(r => setTimeout(r, 1000));
+        if (guardActive()) return;
         setActiveAgents(prev => prev.map(a => a.id === 'NAS-CODE' ? { ...a, status: 'IDLE' } : a));
 
         // --- STAGE 5: DEPLOYMENT ---
@@ -279,6 +300,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
         setActiveAgents(prev => prev.map(a => a.role === 'TESTER' || a.id === 'DEVOPS-01' ? { ...a, status: 'DEPLOYING' } : a));
         addLog('INFO', 'GITOPS', 'Запуск ArgoCD синхронізації...');
         await new Promise(r => setTimeout(r, 2000));
+        if (guardActive()) return;
         
         // Reset Agent Evolution Status
         if (nextScenario.type === 'META_IMPROVEMENT') {
@@ -299,13 +321,12 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
 
     // Effect to start/stop loop
     useEffect(() => {
+        isActiveRef.current = isActive;
         if (isActive) {
             runLoop();
         } else {
             if (loopTimeoutRef.current) clearTimeout(loopTimeoutRef.current);
-            setStage('IDLE');
-            setActiveAgents(prev => prev.map(a => ({ ...a, status: 'IDLE' })));
-            setBrainNodes(prev => prev.map(n => ({ ...n, status: 'IDLE' })));
+            resetToIdle();
         }
         return () => {
             if (loopTimeoutRef.current) clearTimeout(loopTimeoutRef.current);

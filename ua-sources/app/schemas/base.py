@@ -2,7 +2,7 @@
 UA Sources - Pydantic Schemas
 Request/Response models for API endpoints
 """
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone
 from enum import Enum
@@ -41,6 +41,8 @@ class CompanyCreate(CompanyBase):
 
 
 class CompanyResponse(CompanyBase):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     status: Optional[str] = None
     registration_date: Optional[datetime] = None
@@ -48,9 +50,6 @@ class CompanyResponse(CompanyBase):
     kved: Optional[str] = None
     kved_name: Optional[str] = None
     created_at: datetime
-    
-    class Config:
-        from_attributes = True
 
 
 # === Search Schemas ===
@@ -107,15 +106,14 @@ class TenderBase(BaseModel):
 
 
 class TenderResponse(TenderBase):
+    model_config = ConfigDict(from_attributes=True)
+    
     description: Optional[str] = None
     amount: Optional[float] = None
     currency: str = "UAH"
     procuring_entity_name: Optional[str] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
 
 
 class TenderSearchResponse(BaseModel):

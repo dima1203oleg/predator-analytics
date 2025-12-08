@@ -157,7 +157,7 @@ class AutoOptimizer:
                 # Try in-cluster config first
                 config.load_incluster_config()
                 logger.info("Loaded K8s in-cluster config")
-            except:
+            except Exception:
                 try:
                     # Fallback to kubeconfig (local dev)
                     config.load_kube_config()

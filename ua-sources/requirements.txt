@@ -25,6 +25,7 @@ python-multipart==0.0.9
 sentence-transformers>=3.0.0
 qdrant-client==1.7.0
 numpy==1.24.3
+Pillow>=10.0.0
 
 # ML/AI (Optional for local)
 transformers==4.37.0
@@ -77,3 +78,8 @@ python-docx>=1.1.0         # DOCX parsing for Drive import
 pdfplumber>=0.10.0         # PDF parsing
 beautifulsoup4>=4.12.3     # HTML parsing
 lxml>=5.1.0                # Fast XML/HTML parser
+
+# MLOps & Self-Improvement (v22.0)
+dvc[s3]>=3.40.0            # Data Version Control
+augly>=1.0.0               # Facebook AugLy (Optional)
+mlflow>=2.10.0             # Experiment Tracking

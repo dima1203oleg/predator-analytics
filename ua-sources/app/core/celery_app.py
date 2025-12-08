@@ -31,6 +31,9 @@ celery_app.conf.update(
     worker_concurrency=4,
     # Result expiration
     result_expires=86400,  # 24 hours
+    
+    # Flower Security (v22.0)
+    flower_basic_auth=f"{settings.FLOWER_USER}:{settings.FLOWER_PASSWORD}" if settings.FLOWER_USER and settings.FLOWER_PASSWORD else None,
 )
 
 # Task routes - assign tasks to specific queues

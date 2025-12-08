@@ -1,9 +1,9 @@
 
 import axios from 'axios';
-import { 
-    MOCK_ENVIRONMENTS, MOCK_PIPELINES, MOCK_CONNECTORS, MOCK_FILES, 
-    MOCK_WEB_SOURCES, MOCK_API_SOURCES, MOCK_TELEGRAM_BOTS, MOCK_LLM_CONFIG, 
-    MOCK_DATABASES, MOCK_VECTORS, MOCK_SECURITY_LOGS, MOCK_WAF_LOGS, 
+import {
+    MOCK_ENVIRONMENTS, MOCK_PIPELINES, MOCK_CONNECTORS, MOCK_FILES,
+    MOCK_WEB_SOURCES, MOCK_API_SOURCES, MOCK_TELEGRAM_BOTS, MOCK_LLM_CONFIG,
+    MOCK_DATABASES, MOCK_VECTORS, MOCK_SECURITY_LOGS, MOCK_WAF_LOGS,
     MOCK_TARGETS, MOCK_ETL_JOBS, MOCK_SERVICES, MOCK_CLUSTER, MOCK_SECTOR_DATA,
     MOCK_BENCHMARKS, MOCK_AUTOML_EXPERIMENTS, MOCK_AGENT_CONFIGS, MOCK_SECRETS,
     MOCK_DATA_CATALOG, MOCK_USER_TEMPLATES, MOCK_AUTO_DATASETS
@@ -12,38 +12,38 @@ import { RiskForecast, OpponentResponse } from '../types';
 
 // Base configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
-// TRUTH-ONLY PROTOCOL: In production, mocks are strictly disabled.
-const IS_TRUTH_ONLY_MODE = process.env.NODE_ENV === 'production'; 
+// TRUTH-ONLY PROTOCOL: Mocks are DISABLED. Real data only.
+const IS_TRUTH_ONLY_MODE = true;
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-    'X-Predator-Token': sessionStorage.getItem('predator_auth_token') || 'dev-token'
-  },
-  timeout: 60000, 
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+        'X-Predator-Token': sessionStorage.getItem('predator_auth_token') || 'dev-token'
+    },
+    timeout: 60000,
 });
 
 // --- Network Error Handler / Demo Mode Fallback ---
 apiClient.interceptors.response.use(
-  response => response,
-  error => {
-    const isNetworkError = error.message === 'Network Error' || error.code === 'ERR_NETWORK';
-    
-    // G-01 PROTOCOL VIOLATION CHECK
-    if (isNetworkError && IS_TRUTH_ONLY_MODE) {
-        console.error("🚨 TRUTH-ONLY PROTOCOL: Network connection failed. Mocks are disabled in Production.");
-        // Rejecting the promise forces the UI to show an error state instead of fake data
+    response => response,
+    error => {
+        const isNetworkError = error.message === 'Network Error' || error.code === 'ERR_NETWORK';
+
+        // G-01 PROTOCOL VIOLATION CHECK
+        if (isNetworkError && IS_TRUTH_ONLY_MODE) {
+            console.error("🚨 TRUTH-ONLY PROTOCOL: Network connection failed. Mocks are disabled in Production.");
+            // Rejecting the promise forces the UI to show an error state instead of fake data
+            return Promise.reject(error);
+        }
+
+        // ... existing demo fallback logic for dev mode ...
+        if (isNetworkError) {
+            console.warn("⚠️ Backend Unreachable. Switching to DEMO MODE (Simulation).");
+            // For axios calls, we want to reject so the specific api methods catch it and return mock data
+        }
         return Promise.reject(error);
     }
-    
-    // ... existing demo fallback logic for dev mode ...
-    if (isNetworkError) {
-        console.warn("⚠️ Backend Unreachable. Switching to DEMO MODE (Simulation).");
-        // For axios calls, we want to reject so the specific api methods catch it and return mock data
-    }
-    return Promise.reject(error);
-  }
 );
 
 // Helper to simulate risk forecast generation since it's dynamic

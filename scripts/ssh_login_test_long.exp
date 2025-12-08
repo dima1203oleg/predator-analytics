@@ -1,0 +1,32 @@
+#!/usr/bin/expect -f
+
+set host [lindex $argv 0]
+set port [lindex $argv 1]
+set user [lindex $argv 2]
+set password [lindex $argv 3]
+
+set timeout 30
+
+spawn ssh -v -o ConnectTimeout=20 -o StrictHostKeyChecking=no -p $port $user@$host "echo 'LOGIN_SUCCESS'; nvidia-smi"
+
+expect {
+    "password:" {
+        send "$password\r"
+        exp_continue
+    }
+    "LOGIN_SUCCESS" {
+        exit 0
+    }
+    "Permission denied" {
+        puts "\nError: Permission denied"
+        exit 1
+    }
+    timeout {
+        puts "\nError: Timeout"
+        exit 1
+    }
+    eof {
+        puts "\nError: EOF (Connection closed)"
+        exit 1
+    }
+}

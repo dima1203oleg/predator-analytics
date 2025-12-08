@@ -13,7 +13,8 @@ client = TestClient(app)
 def mock_embedding_service():
     service = MagicMock(spec=EmbeddingService)
     # Mock embedding vector generation (dimension 384)
-    service.encode.return_value = [0.1] * 384
+    service.generate_embedding.return_value = [0.1] * 384
+    service.generate_embedding_async = AsyncMock(return_value=[0.1] * 384)
     return service
 
 @pytest.fixture
@@ -21,8 +22,8 @@ def mock_qdrant_service():
     service = AsyncMock(spec=QdrantService)
     # Mock search results
     service.search.return_value = [
-        MagicMock(id="doc1", payload={"title": "Test Doc 1", "snippet": "Snippet 1"}, score=0.9),
-        MagicMock(id="doc2", payload={"title": "Test Doc 2", "snippet": "Snippet 2"}, score=0.8)
+        MagicMock(id="doc1", score=0.9, metadata={"title": "Test Doc 1", "snippet": "Snippet 1"}, payload={"title": "Test Doc 1"}),
+        MagicMock(id="doc2", score=0.8, metadata={"title": "Test Doc 2", "snippet": "Snippet 2"}, payload={"title": "Test Doc 2"})
     ]
     return service
 
@@ -45,7 +46,7 @@ def mock_opensearch_indexer():
 
 def test_embedding_generation(mock_embedding_service):
     """Test that embeddings are generated with correct dimension"""
-    vector = mock_embedding_service.encode("test query")
+    vector = mock_embedding_service.generate_embedding("test query")
     assert len(vector) == 384
     assert vector[0] == 0.1
 

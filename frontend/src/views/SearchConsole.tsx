@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { api } from '../services/api';
 
+const IS_TRUTH_ONLY_MODE = true;
+
 // Types
 interface SearchResult {
     id: string;
@@ -78,6 +80,36 @@ const ModeChip: React.FC<{
         )}
     </motion.button>
 );
+
+// Feedback Actions for RLHF
+const FeedbackActions: React.FC<{
+    resultId: string;
+    onFeedback: (type: 'positive' | 'negative') => void;
+}> = ({ resultId, onFeedback }) => {
+    const [status, setStatus] = useState<'none' | 'positive' | 'negative'>('none');
+
+    const handleVote = (type: 'positive' | 'negative') => {
+        setStatus(type);
+        onFeedback(type);
+    };
+
+    return (
+        <div className="flex items-center gap-1">
+            <button
+                onClick={() => handleVote('positive')}
+                className={`p-1.5 rounded hover:bg-green-500/20 transition-colors ${status === 'positive' ? 'text-green-500' : 'text-slate-600'}`}
+            >
+                <TrendingUp className={`w-3.5 h-3.5 ${status === 'positive' ? 'fill-current' : ''}`} />
+            </button>
+            <button
+                onClick={() => handleVote('negative')}
+                className={`p-1.5 rounded hover:bg-red-500/20 transition-colors ${status === 'negative' ? 'text-red-500' : 'text-slate-600'}`}
+            >
+                <TrendingUp className={`w-3.5 h-3.5 rotate-180 ${status === 'negative' ? 'fill-current' : ''}`} />
+            </button>
+        </div>
+    );
+};
 
 // Search Result Card
 const ResultCard: React.FC<{
@@ -139,6 +171,14 @@ const ResultCard: React.FC<{
                         }`}>
                         {result.searchType}
                     </span>
+
+                    {/* RLFH Feedback */}
+                    <div className="ml-auto">
+                        <FeedbackActions
+                            resultId={result.id}
+                            onFeedback={(type) => api.search.submitFeedback(result.id, type)}
+                        />
+                    </div>
                 </div>
 
                 {/* Snippet with highlight */}
@@ -323,8 +363,22 @@ const SearchConsole: React.FC = () => {
         recognition.start();
     };
 
-    const speakResponse = (text: string) => {
+    const speakResponse = async (text: string) => {
         if (isMuted) return;
+
+        try {
+            // Try backend TTS (Google Cloud)
+            const result = await api.nexus.speak(text);
+            if (result && result.audioContent) {
+                const audio = new Audio("data:audio/mp3;base64," + result.audioContent);
+                audio.play();
+                return;
+            }
+        } catch (e) {
+            console.warn("Backend TTS failed, falling back to local:", e);
+        }
+
+        // Local Fallback
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 1.0;
