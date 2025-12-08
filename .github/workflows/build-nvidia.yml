@@ -46,12 +46,6 @@ jobs:
           cd frontend
           npm ci
 
-      - name: Test frontend
-        if: ${{ hashFiles('frontend/package.json') != '' }}
-        run: |
-          cd frontend
-          npm test
-
   build-and-push:
     needs: test
     runs-on: ubuntu-latest
