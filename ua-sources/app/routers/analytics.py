@@ -150,12 +150,24 @@ async def get_sector_distribution():
         try:
             conn = await asyncpg.connect(db_url)
             
-            # Query actual record counts from tables (per models.py)
+            import asyncio
+            
+            async def get_count(table):
+                return await conn.fetchval(f"SELECT COUNT(*) FROM {table}") or 0
+
+            # Optimize: Run 4 queries in parallel
+            gov_f, biz_f, customs_f, fx_f = await asyncio.gather(
+                get_count("tenders"),
+                get_count("companies"),
+                get_count("ua_customs_imports"),
+                get_count("exchange_rates")
+            )
+            
             counts = {
-                "GOV": await conn.fetchval("SELECT COUNT(*) FROM tenders") or 0,
-                "BIZ": await conn.fetchval("SELECT COUNT(*) FROM companies") or 0,
-                "CUSTOMS": await conn.fetchval("SELECT COUNT(*) FROM ua_customs_imports") or 0,
-                "FX": await conn.fetchval("SELECT COUNT(*) FROM exchange_rates") or 0
+                "GOV": gov_f,
+                "BIZ": biz_f,
+                "CUSTOMS": customs_f,
+                "FX": fx_f
             }
             await conn.close()
             

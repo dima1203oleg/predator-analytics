@@ -30,12 +30,24 @@ class ConnectorRegistry:
     async def health_check_all(self) -> Dict[str, Any]:
         """Check health of all connectors"""
         results = {}
-        for name, connector in self.connectors.items():
-            try:
-                status = await connector.health_check()
-                results[name] = status.value
-            except Exception:
+        import asyncio
+        
+        # Optimize: Run checks in parallel
+        connector_names = list(self.connectors.keys())
+        tasks = [connector.health_check() for connector in self.connectors.values()]
+        
+        # Execute all tasks ensuring exceptions are caught
+        checks = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        for name, result in zip(connector_names, checks):
+            if isinstance(result, Exception):
                 results[name] = "ERROR"
+            else:
+                try:
+                    results[name] = result.value
+                except AttributeError:
+                    results[name] = str(result)
+        
         return results
 
 
