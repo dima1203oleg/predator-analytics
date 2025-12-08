@@ -45,12 +45,16 @@ def mock_embedder():
     service.rerank = MagicMock(return_value=[0.99]) 
     return service
 
+from app.services.auth_service import get_current_user
+
 # --- DEPENDENCY OVERRIDES ---
 @pytest.fixture(autouse=True)
 def override_deps(mock_indexer, mock_qdrant, mock_embedder):
     test_app.dependency_overrides[search.get_indexer] = lambda: mock_indexer
     test_app.dependency_overrides[search.get_qdrant] = lambda: mock_qdrant
     test_app.dependency_overrides[search.get_embedding] = lambda: mock_embedder
+    # Mock auth
+    test_app.dependency_overrides[get_current_user] = lambda: {"sub": "test_user", "tenant_id": "default"}
     yield
     test_app.dependency_overrides = {}
 
