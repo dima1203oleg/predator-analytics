@@ -4,9 +4,9 @@ Analyzes competitors and market positioning
 """
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
-from datetime import datetime
 from datetime import datetime, timezone
 import logging
+import asyncio
 
 from .ai_engine import ai_engine
 from ..connectors.prozorro import prozorro_connector
@@ -77,8 +77,11 @@ class OpponentEngine:
         company_b: str
     ) -> Dict[str, Any]:
         """Compare two companies"""
-        analysis_a = await self.analyze_opponent(company_a)
-        analysis_b = await self.analyze_opponent(company_b)
+        # Optimize: Run analyses in parallel
+        analysis_a, analysis_b = await asyncio.gather(
+            self.analyze_opponent(company_a),
+            self.analyze_opponent(company_b)
+        )
         
         return {
             "company_a": analysis_a,

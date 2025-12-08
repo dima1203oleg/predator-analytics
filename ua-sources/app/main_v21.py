@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 import logging
+from contextlib import asynccontextmanager
 
 from app.agents.orchestrator.supervisor import NexusSupervisor
 from app.services.model_router import ModelRouter
@@ -91,12 +92,14 @@ model_router = property(lambda self: get_model_router())
 # STARTUP: Initialize Services & AutoOptimizer
 # ============================================================================
 
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     """
-    Initialize all services on application startup:
+    Application lifespan manager (startup & shutdown)
+    Initialize services:
     1. Qdrant collection initialization
-    2. AutoOptimizer background loop (self-improvement cycle)
+    2. AutoOptimizer background loop
+    3. Self-Improvement Orchestrator
     """
     import asyncio
     
@@ -135,7 +138,6 @@ async def startup_event():
     else:
         logger.info("⏩ Skipping ML model preloading (Lazy Loading enabled). Models will load on first request.")
     
-    # 3. Start AutoOptimizer background loop
     # 3. Start Self-Improvement Orchestrator (v22.0)
     try:
         from app.services.si_orchestrator import get_si_orchestrator
@@ -147,6 +149,18 @@ async def startup_event():
         
     except Exception as e:
         logger.warning(f"⚠️ SI Orchestrator failed to start: {e}")
+        
+    yield
+    # Shutdown logic if any (e.g. close connections)
+    logger.info("🛑 Predator Analytics shutting down...")
+
+
+app = FastAPI(
+    title="Predator Analytics v22.0 API",
+    description="AI-Native Multi-Agent Analytics Platform with Semantic Search & Auto-Optimization",
+    version="22.0.0",
+    lifespan=lifespan
+)
 
 class AnalyzeRequest(BaseModel):
     query: str
