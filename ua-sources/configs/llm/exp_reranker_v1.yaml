@@ -1,0 +1,32 @@
+# H2O LLM Studio Configuration (v22.0)
+# Experiment: Reranker Fine-Tuning (LoRA)
+
+experiment_name: "predator-reranker-v1"
+llm_backbone: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+
+training:
+  batch_size: 32
+  epochs: 3
+  learning_rate: 2e-5
+  lora:
+    r: 8
+    alpha: 16
+    dropout: 0.05
+
+  optimizer: "AdamW"
+  scheduler: "CosineAnnealingWarmRestarts"
+
+dataset:
+  train_path: "data/processed/augmented_dataset.csv"
+  validation_path: "data/processed/val_dataset.csv"
+  text_column: "content"
+  label_column: "score"
+
+logging:
+  mlflow: true
+  neptune: false
+  project_name: "predator-analytics-v22"
+
+callbacks:
+  - type: "MLFlowLogger"
+  - type: "PostgresJobTracker" # Custom callback to update ml_jobs table

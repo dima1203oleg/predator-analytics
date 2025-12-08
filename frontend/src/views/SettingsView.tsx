@@ -1,6 +1,7 @@
 
 import React, { useMemo, useState } from "react";
 import { useToast } from "../context/ToastContext";
+import { api } from "../services/api";
 
 type EnvKey = "predator-mac" | "predator-nvidia" | "predator-oracle";
 
@@ -20,30 +21,30 @@ interface FeatureToggle {
 const FEATURE_TOGGLES: FeatureToggle[] = [
   {
     key: "metrics",
-    label: "Metrics (Prometheus / ServiceMonitor)",
+    label: "Метрики (Prometheus / ServiceMonitor)",
     description: "Увімкнути / вимкнути експорт Prometheus-метрик для сервісів.",
   },
   {
     key: "telemetry",
-    label: "Telemetry (OTEL traces)",
+    label: "Телеметрія (OTEL traces)",
     description:
       "Контроль OpenTelemetry-трейсів (OTEL_EXPORTER_OTLP_ENDPOINT, sampler тощо).",
   },
   {
     key: "rateLimit",
-    label: "Rate Limiting",
+    label: "Обмеження Швидкості (Rate Limiting)",
     description:
       "Ліміти RPS/хвилину через Redis + логічний rate limiting у сервісах.",
   },
   {
     key: "billing",
-    label: "Billing / Usage Audit",
+    label: "Білінг / Аудит Використання",
     description:
       "Збір api_usage_events в PostgreSQL для білінгу та аудиту використання.",
   },
   {
     key: "brainTrainer",
-    label: "Brain Trainer (Self-Learning CronJob)",
+    label: "Тренування Мозку (Self-Learning CronJob)",
     description:
       "CronJob, який експортує тренувальні датасети з brain_training_samples.",
   },
@@ -143,9 +144,14 @@ const SettingsView: React.FC = () => {
     toast.info("Скинуто", `Налаштування для ${selectedEnv} повернуто до початкових.`);
   };
 
-  const handleSave = () => {
-    console.log("Save env config", envConfig);
-    toast.success("Збережено", "Налаштування конфігурації оновлено успішно.");
+  const handleSave = async () => {
+    try {
+      await api.saveConfig(envConfig);
+      toast.success("Збережено", "Налаштування конфігурації оновлено успішно.");
+    } catch (e) {
+      console.error(e);
+      toast.error("Помилка", "Не вдалося зберегти налаштування.");
+    }
   };
 
   const handleGenerateYamlPreview = () => {
@@ -347,7 +353,7 @@ const SettingsView: React.FC = () => {
               На бекенді воно транслюється у Helm values та ArgoCD parameters.
             </p>
             <pre className="text-[11px] leading-relaxed bg-slate-900 border border-slate-800 rounded-md p-2 text-slate-200 overflow-auto max-h-64 custom-scrollbar">
-{JSON.stringify(currentEnv, null, 2)}
+              {JSON.stringify(currentEnv, null, 2)}
             </pre>
           </section>
         </main>
@@ -357,4 +363,3 @@ const SettingsView: React.FC = () => {
 };
 
 export default SettingsView;
-    

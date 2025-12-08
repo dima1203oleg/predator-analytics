@@ -2,8 +2,16 @@
 import os
 import logging
 from typing import Dict, List, Any, Optional
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
+
+try:
+    from slack_sdk import WebClient
+    from slack_sdk.errors import SlackApiError
+    SLACK_AVAILABLE = True
+except ImportError:
+    SLACK_AVAILABLE = False
+    class WebClient:
+        def __init__(self, token=None): pass
+    class SlackApiError(Exception): pass
 
 logger = logging.getLogger("service.slack")
 
@@ -16,14 +24,19 @@ class SlackService:
     
     def __init__(self):
         self.bot_token = os.getenv("SLACK_BOT_TOKEN")
-        self.client = WebClient(token=self.bot_token) if self.bot_token else None
+        if SLACK_AVAILABLE and self.bot_token:
+            self.client = WebClient(token=self.bot_token)
+        else:
+            self.client = None
+            if self.bot_token and not SLACK_AVAILABLE:
+                logger.warning("SLACK_BOT_TOKEN is set but slack_sdk is not installed.")
 
     def is_configured(self) -> bool:
-        return self.client is not None
+        return self.client is not None and SLACK_AVAILABLE
 
     async def list_channels(self) -> List[Dict[str, Any]]:
         """List public channels that the bot has access to."""
-        if not self.client:
+        if not self.client or not SLACK_AVAILABLE:
             return []
             
         try:
@@ -43,8 +56,8 @@ class SlackService:
 
     async def fetch_history(self, channel_id: str, limit: int = 50) -> List[Dict[str, Any]]:
         """Fetch message history from a channel."""
-        if not self.client:
-            raise Exception("Slack not configured")
+        if not self.client or not SLACK_AVAILABLE:
+            raise Exception("Slack not configured or sdk missing")
             
         try:
             response = self.client.conversations_history(channel=channel_id, limit=limit)

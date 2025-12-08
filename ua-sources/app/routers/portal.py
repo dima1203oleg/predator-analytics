@@ -29,7 +29,7 @@ async def get_portal_status():
     """Get public portal status"""
     return PortalStatus(
         status="OPERATIONAL",
-        version="19.0.0",
+        version="21.0.0",
         uptime="99.9%",
         last_sync=datetime.now(timezone.utc)
     )

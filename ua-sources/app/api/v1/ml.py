@@ -165,35 +165,35 @@ async def ml_health_check():
         from app.services.ml import get_reranker
         get_reranker()
         status["reranker"] = True
-    except:
+    except Exception:
         pass
     
     try:
         from app.services.ml import get_summarizer
         get_summarizer()
         status["summarizer"] = True
-    except:
+    except Exception:
         pass
     
     try:
         from app.services.embedding_service import EmbeddingService
         EmbeddingService()
         status["embedding"] = True
-    except:
+    except Exception:
         pass
     
     try:
         from app.services.ml import get_augmentor
         get_augmentor()
         status["augmentor"] = True
-    except:
+    except Exception:
         pass
     
     try:
         from app.services.ml import get_xai_service
         get_xai_service()
         status["xai"] = True
-    except:
+    except Exception:
         pass
     
     return {"status": "ok" if all(status.values()) else "partial", "services": status}

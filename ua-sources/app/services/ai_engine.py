@@ -93,7 +93,7 @@ class AIEngine:
             logger.error(f"Data gathering error: {e}")
         
         # 2. Generate LLM analysis
-        context = "\n\n".join(context_parts) if context_parts else "No data found in Ukrainian registries."
+        context = "\n\n".join(context_parts) if context_parts else "Дані в українських реєстрах не знайдено."
         
         prompt = f"""
         Запит користувача: {query}
@@ -101,25 +101,39 @@ class AIEngine:
         Знайдені дані:
         {context}
         
-        Проаналізуй ці дані та надай структуровану відповідь.
+        Проаналізуй ці дані та надай структуровану відповідь українською мовою.
         """
         
-        llm_response = await llm_service.generate_with_routing(
-            prompt=prompt,
-            system=self.system_prompt,
-            mode=llm_mode,
-            preferred_provider=preferred_provider
-        )
+        
+        # Use Council Debate for deep analysis
+        if depth == "deep" or llm_mode == "council":
+            llm_response = await llm_service.run_council(
+                prompt=prompt,
+                system=self.system_prompt,
+                max_tokens=2048,
+                enable_review=True
+            )
+            answer = llm_response.content if llm_response.success else "Council failed to respond"
+            model_used = llm_response.model
+        else:
+            llm_response = await llm_service.generate_with_routing(
+                prompt=prompt,
+                system=self.system_prompt,
+                mode=llm_mode,
+                preferred_provider=preferred_provider
+            )
+            answer = llm_response.content if llm_response.success else "LLM failed to respond"
+            model_used = f"{llm_response.provider}/{llm_response.model}"
         
         processing_time = (time.time() - start_time) * 1000
         
         return AnalysisResult(
             query=query,
-            answer=llm_response.content if llm_response.success else "Аналіз не вдалося виконати",
+            answer=answer,
             sources=sources,
-            confidence=0.85 if llm_response.success else 0.0,
+            confidence=0.9 if sources else 0.7,
             processing_time_ms=processing_time,
-            model_used=llm_response.model,
+            model_used=model_used,
             timestamp=datetime.now(timezone.utc)
         )
     

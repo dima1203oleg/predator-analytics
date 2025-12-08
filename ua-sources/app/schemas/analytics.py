@@ -6,6 +6,7 @@ from enum import Enum
 
 
 class RiskLevel(str, Enum):
+    MINIMAL = "MINIMAL"  # Мінімальний ризик
     LOW = "LOW"
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"

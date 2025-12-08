@@ -1,0 +1,139 @@
+# Predator Analytics - Create NVIDIA Contour Values
+# Environment: Compute (Production/GPU)
+
+global:
+  environment: "production"
+  cloudProvider: "onprem-nvidia" # or aws/gcp
+  debug: false
+
+# -----------------------------------------------------------------------------
+# 1. PostgreSQL + TimescaleDB (System of Record + Metrics)
+# -----------------------------------------------------------------------------
+postgresql:
+  enabled: true
+  image:
+    repository: timescale/timescaledb-ha
+    tag: pg15-latest
+  auth:
+    username: predator
+    database: predator_db
+    # Password should be injected via K8s Secrets
+    existingSecret: "predator-pg-creds"
+  primary:
+    resources:
+      requests:
+        cpu: 2000m
+        memory: 4Gi
+      limits:
+        cpu: 4000m
+        memory: 8Gi
+    persistence:
+      enabled: true
+      size: 50Gi
+      storageClass: "local-path" # or nfs-client depending on server setup
+  backups:
+    enabled: true
+    schedule: "0 2 * * *" # Daily at 2 AM
+
+# -----------------------------------------------------------------------------
+# 2. OpenSearch (Search Engine)
+# -----------------------------------------------------------------------------
+opensearch:
+  enabled: true
+  replicas: 1 # For single node NVIDIA server, or 3 for cluster
+  resources:
+    requests:
+      cpu: 2000m
+      memory: 4Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+  opensearchJavaOpts: "-Xmx4g -Xms4g"
+  persistence:
+    enabled: true
+    size: 100Gi
+  config:
+    opensearch.yml: |
+      plugins.security.disabled: true # For internal trusted network
+      indices.memory.index_buffer_size: 30%
+
+# -----------------------------------------------------------------------------
+# 3. Qdrant (Vector Brain)
+# -----------------------------------------------------------------------------
+qdrant:
+  enabled: true
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 2000m
+      memory: 8Gi
+    limits:
+      cpu: "8" # Use many cores for ANN search
+      memory: 16Gi
+      nvidia.com/gpu: "1" # Request 1 GPU for indexing/quantization acceleration
+  config:
+    service:
+      enable_tls: false
+    storage:
+      optimizers:
+        deleted_threshold: 0.2
+        vacuum_min_vector_number: 1000
+
+# -----------------------------------------------------------------------------
+# 4. Redis (Cache & Speed)
+# -----------------------------------------------------------------------------
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: true
+    existingSecret: "predator-redis-creds"
+  master:
+    persistence:
+      enabled: true # AOF enabled for durability
+      size: 10Gi
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+
+# -----------------------------------------------------------------------------
+# 5. MinIO (Data Lake)
+# -----------------------------------------------------------------------------
+minio:
+  enabled: true
+  mode: standalone
+  replicas: 1
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+  persistence:
+    enabled: true
+    size: 500Gi # Large storage for datasets
+  rootUser: "predator_admin"
+  # rootPassword via secret
+
+# -----------------------------------------------------------------------------
+# 6. Predator Services (Backend/ML)
+# -----------------------------------------------------------------------------
+backend:
+  image:
+    repository: ghcr.io/dima1203oleg/predator-backend
+    tag: latest
+    pullPolicy: Always
+  env:
+    VITE_TRUTH_ONLY: "true"
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi

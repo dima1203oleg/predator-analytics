@@ -79,6 +79,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Security(
         "user_id": payload.get("sub"),
         "username": payload.get("preferred_username"),
         "email": payload.get("email"),
+        "tenant_id": payload.get("tenant_id", "default"),
         "roles": auth_service.get_user_roles(payload),
         "can_view_pii": auth_service.can_access_pii(payload)
     }

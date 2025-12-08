@@ -14,7 +14,7 @@ backend:
   enabled: true
   image:
     repository: ghcr.io/dima1203oleg/predator-backend
-    tag: "v18.x"
+    tag: "v22.0.x"
     pullPolicy: Always
   replicas: 1
   resources:
@@ -25,7 +25,7 @@ backend:
       cpu: "1"
       memory: "2Gi"
   gpu:
-    enabled: false  # Backend API doesn't need GPU directly, uses Ollama via API
+    enabled: false # Backend API doesn't need GPU directly, uses Ollama via API
     resourceName: "nvidia.com/gpu"
     count: 0
   service:
@@ -44,7 +44,7 @@ frontend:
   enabled: true
   image:
     repository: ghcr.io/dima1203oleg/predator-frontend
-    tag: "v18.x"
+    tag: "v22.0.x"
     pullPolicy: Always
   replicas: 1
   resources:
@@ -60,11 +60,11 @@ frontend:
 
 # ============ NAS / AutoML ============
 nas:
-  enabled: false  # Disabled until backend images are ready
+  enabled: false # Disabled until backend images are ready
   datasets:
     - "/data/real-sales.csv"
     - "/data/customs-ua-8y.parquet"
-  automl: true  # Повний AutoML з GPU
+  automl: true # Повний AutoML з GPU
   resources:
     limits:
       cpu: "4"
@@ -140,6 +140,19 @@ opensearch:
   service:
     type: ClusterIP
     port: 9200
+
+# ============ MLOps Pipeline ============
+mlOps:
+  enabled: true
+  selfImprovement: true
+  flower:
+    enabled: true
+    user: "admin"
+    # password set via env var FLOWER_PASSWORD
+  mlflow:
+    enabled: true
+    persistence:
+      size: 5Gi
 
 # ============ Qdrant (Vector DB) ============
 qdrant:

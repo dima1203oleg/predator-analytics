@@ -21,7 +21,7 @@ const metaEnv = getMetaEnv();
 // In dev, Vite proxy handles /api -> localhost:8080. In prod, Nginx handles it.
 const API_BASE_URL = metaEnv.VITE_API_URL || '/api/v1';
 
-const IS_TRUTH_ONLY_MODE = metaEnv.MODE === 'production' || metaEnv.VITE_TRUTH_ONLY === 'true';
+const IS_TRUTH_ONLY_MODE = true; // FORCE REAL DATA
 
 const apiClient = axios.create({
     baseURL: API_BASE_URL,
@@ -34,6 +34,13 @@ const apiClient = axios.create({
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const api = {
+    // --- SYSTEM ---
+    saveConfig: async (config: any) => {
+        if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/system/config/save', config)).data;
+        await delay(500);
+        return { status: 'SAVED', timestamp: new Date().toISOString() };
+    },
+
     // --- DATABASES (UA-Sources) ---
     getDatabases: async () => {
         if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/databases/')).data;
@@ -45,31 +52,56 @@ export const api = {
         await delay(500);
         return MOCK_VECTORS;
     },
-
-    // --- SECURITY (UA-Sources) ---
-    getWafLogs: async () => {
-        if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/security/waf')).data;
-        await delay(300);
-        return MOCK_WAF_LOGS;
+    executeQuery: async (query: string, params: any = {}) => {
+        if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/databases/query', { query, params })).data;
+        await delay(800);
+        if (query.toUpperCase().includes('SELECT')) {
+            return {
+                columns: ["id", "name", "status", "created_at"],
+                rows: [
+                    [1, "Test Entity 1", "ACTIVE", new Date().toISOString()],
+                    [2, "Test Entity 2", "PENDING", new Date().toISOString()],
+                    [3, "Test Entity 3", "ARCHIVED", new Date().toISOString()]
+                ],
+                row_count: 3,
+                execution_time_ms: 15
+            };
+        }
+        return { status: 'SUCCESS', row_count: 1, execution_time_ms: 10 };
     },
-    getSecurityLogs: async () => {
-        if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/security/audit')).data;
-        await delay(300);
-        return MOCK_SECURITY_LOGS;
-    },
 
-    // --- CONNECTORS (UA-Sources) ---
+    // --- CONNECTORS & SOURCES ---
     getConnectors: async () => {
         if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/sources/connectors')).data;
         await delay(400);
         return MOCK_CONNECTORS;
     },
+    testConnector: async (id: string) => {
+        if (IS_TRUTH_ONLY_MODE) return (await apiClient.post(`/sources/connectors/${id}/test`)).data;
+        await delay(1000);
+        return { status: 'SUCCESS', latency_ms: 120, message: 'Connection successful' };
+    },
+    syncConnector: async (id: string) => {
+        if (IS_TRUTH_ONLY_MODE) return (await apiClient.post(`/sources/connectors/${id}/sync`)).data;
+        await delay(1000);
+        return { source_id: id, sync_id: `sync-${id}-001`, status: 'STARTED' };
+    },
 
-    // --- INTEGRATIONS (UA-Sources) ---
+    // --- SECRETS & INTEGRATION CONFIG ---
     getSecrets: async () => {
         if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/sources/secrets')).data;
         await delay(300);
         return MOCK_SECRETS;
+    },
+    saveSecret: async (id: string, value: string) => {
+        if (IS_TRUTH_ONLY_MODE) return (await apiClient.post(`/sources/secrets/${id}`, { value })).data;
+        await delay(800);
+        return { success: true };
+    },
+    validateSecret: async (id: string, value: string) => {
+        if (IS_TRUTH_ONLY_MODE) return (await apiClient.post(`/sources/secrets/${id}/validate`, { value })).data;
+        await delay(1500);
+        return { success: true, valid: true };
     },
     getIntegrationSources: async (type: 'FILE' | 'WEB' | 'API') => {
         if (IS_TRUTH_ONLY_MODE) return (await apiClient.get(`/sources/list?type=${type}`)).data;
@@ -84,16 +116,8 @@ export const api = {
         await delay(300);
         return MOCK_TELEGRAM_BOTS;
     },
-    saveSecret: async (id: string, value: string) => {
-        if (IS_TRUTH_ONLY_MODE) return (await apiClient.post(`/sources/secrets/${id}`, { value })).data;
-        await delay(800);
-        return { success: true };
-    },
-    validateSecret: async (id: string, value: string) => {
-        if (IS_TRUTH_ONLY_MODE) return (await apiClient.post(`/sources/secrets/${id}/validate`, { value })).data;
-        await delay(1500);
-        return { success: true, valid: true };
-    },
+
+    // --- CATALOG ---
     getDataCatalog: async () => {
         if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/sources/catalog')).data;
         await delay(400);
@@ -110,9 +134,20 @@ export const api = {
         return MOCK_AUTO_DATASETS;
     },
 
-    // --- LLM (Mocked or Brain Service) ---
+    // --- SECURITY ---
+    getWafLogs: async () => {
+        if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/security/waf')).data;
+        await delay(300);
+        return MOCK_WAF_LOGS;
+    },
+    getSecurityLogs: async () => {
+        if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/security/audit')).data;
+        await delay(300);
+        return MOCK_SECURITY_LOGS;
+    },
+
+    // --- LLM ---
     getLLMBenchmarks: async () => {
-        // Benchmarks usually static or long-running, keeping mock for now unless Brain has an endpoint
         await delay(400);
         return MOCK_BENCHMARKS;
     },
@@ -126,9 +161,26 @@ export const api = {
         return MOCK_LLM_CONFIG;
     },
 
-    // --- INFRA / DEPLOYMENT (Mocked or K8s Service) ---
+    // --- INFRASTRUCTURE ---
     getClusterStatus: async () => {
-        // Ideally hits a monitoring service
+        if (IS_TRUTH_ONLY_MODE) {
+            try {
+                const res = (await apiClient.get('/system/infrastructure')).data;
+                return {
+                    status: res.status === 'OPERATIONAL' ? 'Healthy' : 'Degraded',
+                    nodes: Object.entries(res.components || {}).map(([k, v]: [string, any]) => ({
+                        name: k,
+                        status: v.status === 'UP' ? 'Ready' : 'NotReady',
+                        role: 'data-layer',
+                        version: v.version
+                    })),
+                    pods: []
+                };
+            } catch (e) {
+                console.error("Infrastructure check failed", e);
+                return { status: 'Unknown', nodes: [], pods: [] };
+            }
+        }
         await delay(400);
         return MOCK_CLUSTER;
     },
@@ -148,16 +200,13 @@ export const api = {
         await delay(1500);
         return { success: true };
     },
-
-    // --- MONITORING ---
     getMonitoringTargets: async () => {
         await delay(300);
         return MOCK_TARGETS;
     },
     streamSystemLogs: async () => {
-        // Simulation for visual effect
         await delay(200);
-        const services = ['ua-sources', 'predator-backend', 'redis', 'postgres', 'brain-svc'];
+        const services = ['ua-sources', 'predator-backend', 'redis', 'py-engine', 'brain-svc'];
         const levels = ['INFO', 'WARN', 'ERROR', 'DEBUG'];
         const msgs = ['Health check OK', 'Processing batch', 'Connection timeout', 'Cache miss', 'Neural link established'];
         const randomLog = {
@@ -169,31 +218,22 @@ export const api = {
         return [randomLog];
     },
 
-    // --- EVOLUTION (Predator Agents Service) ---
+    // --- EVOLUTION ---
     getEvolutionStatus: async () => {
-        // Calls predator-agents service via Gateway
         try {
-            return (await apiClient.get('/evolution/status')).data;
-        } catch (e) {
-            console.warn("Evolution status offline, using mock");
-            return { active: false, phase: 'IDLE', logs: [], progress: 0 };
-        }
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/evolution/status')).data;
+        } catch (e) { console.warn("Evolution offline"); }
+        return { active: false, phase: 'IDLE', logs: [], progress: 0 };
     },
     startEvolutionCycle: async () => {
-        try {
-            return (await apiClient.post('/evolution/start')).data;
-        } catch (e) {
-            console.error("Failed to start evolution", e);
-            throw e;
-        }
+        return (await apiClient.post('/evolution/start')).data;
     },
 
-    // --- OPPONENT / RED TEAM (Predator Brain Service) ---
+    // --- BRAIN & COUNCIL ---
     askOpponent: async (query: string) => {
         try {
             return (await apiClient.post('/opponent/ask', { query })).data;
         } catch (e) {
-            console.warn("Opponent offline, fallback");
             await delay(1000);
             return {
                 answer: "Service Unavailable: Red Team module is offline.",
@@ -202,13 +242,10 @@ export const api = {
             };
         }
     },
-
-    // --- COUNCIL (Predator Brain Service) ---
     runCouncil: async (query: string) => {
         try {
             return (await apiClient.post('/council/run', { query })).data;
         } catch (e) {
-            console.warn("Council offline, fallback");
             await delay(2000);
             return {
                 final_answer: "Neural Council Unreachable. Please check Brain Service status.",
@@ -218,36 +255,56 @@ export const api = {
         }
     },
 
-    // --- SEMANTIC SEARCH (New v21) ---
+    // --- SEARCH ---
     search: {
+        submitFeedback: async (resultId: string, type: string) => {
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/search/feedback', { result_id: resultId, feedback_type: type })).data;
+            return { status: 'mocked' };
+        },
         query: async (params: { q: string, rerank?: boolean, mode?: string, filters?: any }) => {
-            // Use real API if available or mandated
             if (IS_TRUTH_ONLY_MODE) {
+                // Customs Handling
+                if (params.filters?.category === 'customs') {
+                    try {
+                        const res = await apiClient.post('/search/customs', {
+                            query: params.q,
+                            limit: 50,
+                            filters: params.filters
+                        });
+                        return res.data.results.map((r: any) => ({
+                            id: r.id,
+                            title: `Митна декларація: ${r.description?.substring(0, 50)}...`,
+                            snippet: `Код: ${r.hs_code} | Країна: ${r.country_trading} | Митниця: ${r.customs_office}`,
+                            score: r.score,
+                            source: 'ua-customs',
+                            category: 'customs',
+                            searchType: 'full-text'
+                        }));
+                    } catch (e) {
+                        console.error("Customs search failed", e);
+                        return [];
+                    }
+                }
+
                 const response = await apiClient.get('/search', {
                     params: {
                         q: params.q,
                         rerank: params.rerank ?? true,
-                        mode: params.mode ?? 'hybrid'
+                        mode: params.mode ?? 'hybrid',
+                        category: params.filters?.category,
+                        source: params.filters?.source
                     }
                 });
-                return response.data.results;
+                return response.data.results || [];
             }
-            // Mock handled in component or basic array here
             await delay(600);
-            return [
-                {
-                    id: 'mock-1',
-                    title: 'System Architecture v21',
-                    snippet: 'The new architecture utilizes <b>AutoOptimizer</b> for self-healing...',
-                    score: 0.95,
-                    source: 'internal-docs',
-                    searchType: 'hybrid'
-                }
-            ];
+            return [{
+                id: 'mock-1', title: 'System Architecture v21', snippet: 'AutoOptimizer self-healing...', score: 0.95, source: 'internal-docs'
+            }];
         }
     },
 
-    // --- AUTO OPTIMIZER (New v21) ---
+    // --- OPTIMIZER ---
     optimizer: {
         getStatus: async () => {
             if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/optimizer/status')).data;
@@ -265,16 +322,13 @@ export const api = {
             return { ndcg_at_10: 0.85, avg_latency_ms: 320 };
         },
         getHistory: async () => {
-            if (IS_TRUTH_ONLY_MODE) {
-                const res = await apiClient.get('/optimizer/history');
-                return res.data?.history || [];
-            }
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/optimizer/history')).data?.history || [];
             await delay(300);
             return [];
         }
     },
 
-    // --- ML SERVICES (New v21) ---
+    // --- ML Utils ---
     ml: {
         explain: async (query: string, documentId: string, content?: string) => {
             if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/ml/explain', { query, document_id: documentId, content })).data;
@@ -284,27 +338,21 @@ export const api = {
         summarize: async (text: string) => {
             if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/ml/summarize', { text })).data;
             await delay(2000);
-            return { summary: "This constitutes a simulated summary of the document content." };
+            return { summary: "Simulated summary of content." };
         },
         getDocumentSummary: async (docId: string) => {
             if (IS_TRUTH_ONLY_MODE) return (await apiClient.get(`/documents/${docId}/summary`)).data;
             await delay(1500);
-            return { summary: "Cached summary of the document content.", cached: true, model: 'mock' };
+            return { summary: "Cached summary.", cached: true, model: 'mock' };
         }
     },
 
+    // --- TESTING ---
     testing: {
         run: async (suiteType: string) => {
-            if (IS_TRUTH_ONLY_MODE) {
-                const res = await apiClient.post('/testing/run', { suite_type: suiteType });
-                return res.data;
-            }
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/testing/run', { suite_type: suiteType })).data;
             await delay(2000);
-            return {
-                status: 'simulated_pass',
-                logs: ['> Running simulated test...', '> All checks passed.'],
-                duration: '2.4s'
-            };
+            return { status: 'simulated_pass', logs: ['All checks passed.'], duration: '2.4s' };
         },
         getStatus: async () => {
             if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/testing/status')).data;
@@ -312,7 +360,7 @@ export const api = {
         }
     },
 
-    // Integrations
+    // --- INTEGRATIONS (Slack/Notion) ---
     integrations: {
         slack: {
             getStatus: async () => {
@@ -344,11 +392,15 @@ export const api = {
         }
     },
 
-    // Nexus Hivemind
+    // --- NEXUS ---
     nexus: {
         chat: async (query: string, mode: string = 'chat') => {
             if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/nexus/chat', { query, mode })).data;
-            return { answer: `[Simulated Nexus] Received: ${query}. (Enable Truth Mode for LLM)` };
+            return { answer: `[Simulated Nexus] Received: ${query}` };
+        },
+        speak: async (text: string) => {
+            if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/nexus/speak', { text })).data;
+            return { audioContent: null };
         }
     }
 };

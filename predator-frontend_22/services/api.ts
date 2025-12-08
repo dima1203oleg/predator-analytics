@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { 
-    MOCK_ENVIRONMENTS, MOCK_PIPELINES, MOCK_CONNECTORS, MOCK_FILES, 
-    MOCK_WEB_SOURCES, MOCK_API_SOURCES, MOCK_TELEGRAM_BOTS, MOCK_LLM_CONFIG, 
-    MOCK_DATABASES, MOCK_VECTORS, MOCK_SECURITY_LOGS, MOCK_WAF_LOGS, 
+import {
+    MOCK_ENVIRONMENTS, MOCK_PIPELINES, MOCK_CONNECTORS, MOCK_FILES,
+    MOCK_WEB_SOURCES, MOCK_API_SOURCES, MOCK_TELEGRAM_BOTS, MOCK_LLM_CONFIG,
+    MOCK_DATABASES, MOCK_VECTORS, MOCK_SECURITY_LOGS, MOCK_WAF_LOGS,
     MOCK_TARGETS, MOCK_ETL_JOBS, MOCK_SERVICES, MOCK_CLUSTER, MOCK_SECTOR_DATA,
     MOCK_BENCHMARKS, MOCK_AUTOML_EXPERIMENTS, MOCK_AGENT_CONFIGS, MOCK_SECRETS,
     MOCK_DATA_CATALOG, MOCK_USER_TEMPLATES, MOCK_AUTO_DATASETS
@@ -19,15 +19,16 @@ const getMetaEnv = () => {
 
 const metaEnv = getMetaEnv();
 // In dev, Vite proxy handles /api -> localhost:8080. In prod, Nginx handles it.
-const API_BASE_URL = metaEnv.VITE_API_URL || '/api/v1'; 
+const API_BASE_URL = metaEnv.VITE_API_URL || '/api/v1';
 
-const IS_TRUTH_ONLY_MODE = metaEnv.MODE === 'production' || metaEnv.VITE_TRUTH_ONLY === 'true';
+// TRUTH-ONLY PROTOCOL: Mocks are DISABLED. Real data only.
+const IS_TRUTH_ONLY_MODE = true;
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  }
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    }
 });
 
 // Helper to simulate API delay
@@ -64,7 +65,7 @@ export const api = {
         await delay(400);
         return MOCK_CONNECTORS;
     },
-    
+
     // --- INTEGRATIONS (UA-Sources) ---
     getSecrets: async () => {
         if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/sources/secrets')).data;
@@ -121,7 +122,7 @@ export const api = {
         return MOCK_AUTOML_EXPERIMENTS;
     },
     getLLMConfig: async () => {
-        if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/council/config')).data; 
+        if (IS_TRUTH_ONLY_MODE) return (await apiClient.get('/council/config')).data;
         await delay(300);
         return MOCK_LLM_CONFIG;
     },

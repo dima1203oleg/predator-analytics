@@ -31,9 +31,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("predator.api")
 
 app = FastAPI(
-    title="Predator Analytics v21.0 API",
+    title="Predator Analytics v22.0 API",
     description="AI-Native Multi-Agent Analytics Platform with Semantic Search & Auto-Optimization",
-    version="21.0.0"
+    version="22.0.0"
 )
 
 # ============================================================================
@@ -136,14 +136,17 @@ async def startup_event():
         logger.info("⏩ Skipping ML model preloading (Lazy Loading enabled). Models will load on first request.")
     
     # 3. Start AutoOptimizer background loop
+    # 3. Start Self-Improvement Orchestrator (v22.0)
     try:
-        # optimizer = get_auto_optimizer()
-        # asyncio.create_task(optimizer.start_optimization_loop(interval_minutes=15))
-        # logger.info("🤖 AutoOptimizer started - system will self-improve automatically")
-        logger.info("📊 Monitoring: quality gates, latency, cost, accuracy")
-        logger.info("🔄 Optimization cycle: Every 15 minutes")
+        from app.services.si_orchestrator import get_si_orchestrator
+        orchestrator = get_si_orchestrator()
+        
+        # Start in background
+        asyncio.create_task(orchestrator.start_loop())
+        logger.info("♾️ Self-Improvement Loop (v22.0) STARTED - Autonomous optimization enabled")
+        
     except Exception as e:
-        logger.warning(f"⚠️ AutoOptimizer failed to start: {e}")
+        logger.warning(f"⚠️ SI Orchestrator failed to start: {e}")
 
 class AnalyzeRequest(BaseModel):
     query: str
@@ -338,7 +341,8 @@ import os as os_module
 async def upload_dataset(
     file: UploadFile = File(...),
     dataset_type: str = "customs",
-    background_tasks: BackgroundTasks = None
+    background_tasks: BackgroundTasks = None,
+    user: dict = Depends(get_current_user)
 ):
     """
     Upload and process a dataset file.
@@ -385,7 +389,8 @@ async def upload_dataset(
                 documents=documents,
                 pii_safe=True,
                 embedding_service=embedding_service,
-                qdrant_service=qdrant_service
+                qdrant_service=qdrant_service,
+                tenant_id=user["tenant_id"]
             )
             # Remove documents from response to keep it light
             etl_result.pop("documents", None)
@@ -442,6 +447,53 @@ app.include_router(nexus_router.router, prefix="/api/v1")
 # Federation Protocol (Edge Nodes)
 app.include_router(federation_router.router, prefix="/api/v1")
 
+# System Infrastructure & Health
+from app.routers import system as system_router
+app.include_router(system_router.router, prefix="/api/v1")
+
+# Data Sources Management
+from app.routers import sources as sources_router
+app.include_router(sources_router.router, prefix="/api/v1")
+
+# Database Management
+from app.routers import databases as databases_router
+app.include_router(databases_router.router, prefix="/api/v1")
+
+# Neural Council (AI Brain)
+from app.api.routers import council as council_router
+app.include_router(council_router.router, prefix="/api/v1")
+
+# Opponent / Red Team
+from app.api.routers import opponent as opponent_router
+app.include_router(opponent_router.router, prefix="/api/v1")
+
+# LLM Management
+from app.api.routers import llm_management as llm_mgmt_router
+app.include_router(llm_mgmt_router.router, prefix="/api/v1")
+
+# Integrations (Slack, Notion, etc.)
+from app.routers import integrations as integrations_router
+app.include_router(integrations_router.router, prefix="/api/v1")
+
+# Analytics & Stats
+from app.routers import analytics as analytics_router
+app.include_router(analytics_router.router, prefix="/api/v1")
+
+# Security Infrastructure
+from app.routers import security as security_router
+app.include_router(security_router.router, prefix="/api/v1")
+
+# Evolution System
+from app.routers import evolution as evolution_router
+app.include_router(evolution_router.router, prefix="/api/v1")
+
+# V22 Self-Improvement System
+from app.api import v22_routes
+app.include_router(v22_routes.v22_router, prefix="/api")
+
+# Alertmanager Webhook Handler
+from app.api import webhook_routes
+app.include_router(webhook_routes.webhook_router, prefix="/api")
 
 
 # ============================================================================

@@ -3,6 +3,47 @@ import logging
 
 logger = logging.getLogger("predator.fusion")
 
+
+class SearchFusion:
+    """Search Fusion service for hybrid search with RRF"""
+    
+    def __init__(self, k: int = 60, default_limit: int = 20):
+        self.k = k
+        self.default_limit = default_limit
+    
+    def reciprocal_rank_fusion(
+        self,
+        results_os: List[Dict[str, Any]], 
+        results_vec: List[Dict[str, Any]], 
+        limit: int = None
+    ) -> List[Dict[str, Any]]:
+        """Applies RRF to merge OpenSearch and Qdrant results"""
+        limit = limit or self.default_limit
+        return reciprocal_rank_fusion(results_os, results_vec, self.k, limit)
+    
+    async def hybrid_search(
+        self,
+        query: str,
+        opensearch_results: List[Dict[str, Any]] = None,
+        qdrant_results: List[Dict[str, Any]] = None,
+        limit: int = 20
+    ) -> Dict[str, Any]:
+        """Performs hybrid search fusion"""
+        os_results = opensearch_results or []
+        vec_results = qdrant_results or []
+        
+        fused = self.reciprocal_rank_fusion(os_results, vec_results, limit)
+        
+        return {
+            "results": fused,
+            "total": len(fused),
+            "sources": {
+                "opensearch": len(os_results),
+                "qdrant": len(vec_results)
+            }
+        }
+
+
 def reciprocal_rank_fusion(
     results_os: List[Dict[str, Any]], 
     results_vec: List[Dict[str, Any]], 

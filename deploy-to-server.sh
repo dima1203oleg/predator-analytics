@@ -12,9 +12,10 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
-SSH_HOST="5.tcp.eu.ngrok.io"
-SSH_PORT="14651"
-SSH_USER="dima"
+# Default to what user provided, but allow override via env
+SSH_HOST="${SSH_HOST:-5.tcp.eu.ngrok.io}"
+SSH_PORT="${SSH_PORT:-14651}"
+SSH_USER="${SSH_USER:-dima}"
 REMOTE_DIR="~/predator_v21"
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
