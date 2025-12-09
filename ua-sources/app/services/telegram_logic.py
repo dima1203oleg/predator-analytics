@@ -147,13 +147,30 @@ class TelegramLogic:
     
     async def _handle_status(self, args: str, user_id: int) -> str:
         """Handle /status command"""
+        from .connector_registry import connector_registry
+        
+        # Get real health status
+        health = await connector_registry.health_check_all()
+        
+        # Format status
+        api_status = "✅ Online"
+        db_status = "✅ Connected" if health.get("full_system_check", {}).get("database") else "⚠️ Degraded"
+        
+        # Build connector status
+        connectors_text = ""
+        for name, status in health.items():
+            if name == "full_system_check": continue
+            icon = "✅" if status == "ONLINE" else ("⚠️" if status == "DEGRADED" else "❌")
+            connectors_text += f"{icon} {name.upper()}: {status}\n"
+            
         return f"""
 📊 *Статус системи*
 
-✅ API: Online
-✅ База даних: Connected
-✅ LLM: Available
+✅ API: {api_status}
+{db_status} (Database)
 
+*Інтеграції:*
+{connectors_text}
 Час: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC
         """
     

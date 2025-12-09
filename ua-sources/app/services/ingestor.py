@@ -127,7 +127,8 @@ class IngestorService:
                 
                 if len(chunk) >= self.batch_size or i == len(records) - 1:
                     try:
-                        await self._process_batch(chunk)
+                        # Optimization: Pass qdrant instance to avoid re-fetching
+                        await self._process_batch(chunk, qdrant)
                         job.records_processed += len(chunk)
                     except Exception as e:
                         job.records_failed += len(chunk)
@@ -147,10 +148,10 @@ class IngestorService:
         finally:
             job.completed_at = datetime.now(timezone.utc)
     
-    async def _process_batch(self, records: List[Dict[str, Any]]):
+    async def _process_batch(self, records: List[Dict[str, Any]], qdrant_service=None):
         """Process a batch of records: Embed -> Index"""
         embedding_service = get_embedding_service()
-        qdrant = get_qdrant_service()
+        qdrant = qdrant_service or get_qdrant_service()
         
         # 1. Prepare texts for embedding
         texts = []
