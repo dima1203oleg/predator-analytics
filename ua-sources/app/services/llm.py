@@ -367,6 +367,14 @@ class LLMService:
         Analyze prompt complexity using a fast model (Groq/Mistral).
         Returns: 'simple', 'medium', 'complex'
         """
+        # Cache check using a simplified key (first 100 chars sufficient for complexity)
+        cache_key = prompt[:100].lower()
+        if not hasattr(self, '_complexity_cache'):
+            self._complexity_cache = {}
+            
+        if cache_key in self._complexity_cache:
+            return self._complexity_cache[cache_key]
+
         # Prefer Groq for speed, fall back to Mistral or Gemini
         fast_provider = "groq" if "groq" in self.providers else "gemini"
         
@@ -385,6 +393,10 @@ class LLMService:
             )
             complexity = response.content.lower().strip()
             if complexity in ["simple", "medium", "complex"]:
+                # Limit cache size preventing OOM
+                if len(self._complexity_cache) > 1000:
+                    self._complexity_cache.clear()
+                self._complexity_cache[cache_key] = complexity
                 return complexity
             return "medium" # Default
         except Exception:
