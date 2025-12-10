@@ -1,0 +1,270 @@
+# Predator Analytics - Kubernetes Values for Production
+# Used with: helm upgrade --install predator ./helm/predator-umbrella -f k8s/values-production.yaml
+
+global:
+  environment: production
+  imageRegistry: "your-registry.io"
+  imagePullSecrets:
+    - name: regcred
+
+backend:
+  replicaCount: 3
+  image:
+    repository: predator/ua-sources
+    tag: "22.0"
+    pullPolicy: Always
+
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "2Gi"
+    limits:
+      cpu: "4000m"
+      memory: "8Gi"
+
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 15
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+
+  env:
+    LOG_LEVEL: "WARNING"
+    LLM_DEFAULT_PROVIDER: "gemini"
+    PRELOAD_MODELS: "true"
+    MAX_WORKERS: "8"
+
+  nodeSelector:
+    node-type: compute
+
+  tolerations:
+    - key: "compute"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+
+frontend:
+  replicaCount: 3
+  image:
+    repository: predator/frontend
+    tag: "22.0"
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 8
+
+celery:
+  worker:
+    replicaCount: 4
+    concurrency: 8
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "1Gi"
+      limits:
+        cpu: "2000m"
+        memory: "4Gi"
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 12
+
+  beat:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/limit-rps: "200"
+  hosts:
+    - host: predator.your-domain.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: predator-tls
+      hosts:
+        - predator.your-domain.com
+
+postgresql:
+  enabled: true
+  auth:
+    database: predator_db
+    username: predator
+    existingSecret: predator-db-credentials
+  primary:
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "1Gi"
+      limits:
+        cpu: "2000m"
+        memory: "4Gi"
+    persistence:
+      size: 50Gi
+      storageClass: "ssd"
+  backup:
+    enabled: true
+    schedule: "0 2 * * *"
+    retentionDays: 7
+
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+  master:
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "512Mi"
+      limits:
+        cpu: "1000m"
+        memory: "2Gi"
+    persistence:
+      size: 10Gi
+
+qdrant:
+  enabled: true
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "2Gi"
+      cpu: "500m"
+    limits:
+      memory: "8Gi"
+      cpu: "4000m"
+  persistence:
+    size: 30Gi
+    storageClass: "ssd"
+
+opensearch:
+  enabled: true
+  replicas: 3
+  resources:
+    requests:
+      memory: "4Gi"
+      cpu: "1000m"
+    limits:
+      memory: "8Gi"
+      cpu: "4000m"
+  persistence:
+    size: 100Gi
+    storageClass: "ssd"
+  config:
+    opensearch.yml:
+      cluster.name: predator-production
+      plugins.security.ssl.http.enabled: true
+
+minio:
+  enabled: true
+  mode: distributed
+  replicas: 4
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2000m"
+      memory: "4Gi"
+  persistence:
+    size: 200Gi
+    storageClass: "ssd"
+  auth:
+    existingSecret: predator-minio-credentials
+
+keycloak:
+  enabled: true
+  replicas: 2
+  auth:
+    existingSecret: predator-keycloak-credentials
+  postgresql:
+    enabled: false
+  externalDatabase:
+    host: postgres
+    port: 5432
+    database: keycloak
+    existingSecret: predator-db-credentials
+
+mlflow:
+  enabled: true
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2000m"
+      memory: "4Gi"
+
+ollama:
+  enabled: true
+  resources:
+    requests:
+      cpu: "2000m"
+      memory: "8Gi"
+    limits:
+      cpu: "8000m"
+      memory: "32Gi"
+      nvidia.com/gpu: "1"
+  nodeSelector:
+    gpu: "true"
+
+prometheus:
+  enabled: true
+  server:
+    retention: 30d
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "2Gi"
+    persistentVolume:
+      size: 50Gi
+
+grafana:
+  enabled: true
+  replicas: 2
+  adminPassword: "change-me-in-production"
+  persistence:
+    size: 10Gi
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: "predator"
+          orgId: 1
+          folder: "Predator Analytics"
+          type: file
+          options:
+            path: /var/lib/grafana/dashboards
+
+# Network Policies
+networkPolicies:
+  enabled: true
+
+# Pod Security Standards
+podSecurityPolicy:
+  enabled: true
+
+# Service Mesh (Istio)
+serviceMesh:
+  enabled: false
+  istio:
+    enabled: false

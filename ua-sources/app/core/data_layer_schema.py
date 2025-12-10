@@ -14,6 +14,9 @@ Based on architecture:
 SCHEMA_VERSION = "2.0.0"
 
 CREATE_SCHEMAS = """
+-- Extensions
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- Core schemas
 CREATE SCHEMA IF NOT EXISTS raw;           -- ETL staging
 CREATE SCHEMA IF NOT EXISTS gold;          -- Normalized business data

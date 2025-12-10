@@ -78,7 +78,7 @@ const LLMView: React.FC = () => {
     const toast = useToast(); // Use Toast
     const [activeTab, setActiveTab] = useState<LLMTab>('INFERENCE');
     const [activeModel, setActiveModel] = useState('llama3-70b-uk-v4');
-    
+
     // Inference State
     const [systemPrompt, setSystemPrompt] = useState('Ти — аналітичний асистент платформи Predator. Відповідай лаконічно, використовуючи технічну термінологію.');
     const [userPrompt, setUserPrompt] = useState('');
@@ -153,7 +153,7 @@ const LLMView: React.FC = () => {
 
     const handleSendMessage = () => {
         if (!userPrompt.trim()) return;
-        
+
         const newMessage: ChatMessage = { role: 'user', content: userPrompt };
         setChatHistory(prev => [...prev, newMessage]);
         setUserPrompt('');
@@ -164,7 +164,7 @@ const LLMView: React.FC = () => {
         setTimeout(() => {
             const responseMsg: ChatMessage = { role: 'assistant', content: '' };
             setChatHistory(prev => [...prev, responseMsg]);
-            
+
             let tokens = 0;
             const fullResponse = "Based on the provided parameters, the entity 'ТОВ МегаБуд' shows a 0.85 risk score for tax evasion. I have detected circular transactions with 'Offshore Ltd' in Cyprus. Recommended action: Deep Scan.";
             const words = fullResponse.split(' ');
@@ -176,13 +176,13 @@ const LLMView: React.FC = () => {
                     setIsGenerating(false);
                     return;
                 }
-                
+
                 setChatHistory(prev => {
                     const newHist = [...prev];
                     newHist[newHist.length - 1].content += (i === 0 ? '' : ' ') + words[i];
                     return newHist;
                 });
-                
+
                 tokens++;
                 setGenMetrics(prev => ({
                     tps: Math.floor(Math.random() * 20) + 40, // 40-60 TPS
@@ -228,23 +228,22 @@ const LLMView: React.FC = () => {
     const renderInference = () => (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-300">
             <div className="lg:col-span-2 flex flex-col gap-4 h-[600px]">
-                <TacticalCard title={`Chat Session: ${activeModel}`} className="flex-1 flex flex-col relative overflow-hidden panel-3d">
+                <TacticalCard title={`Чат Сесія: ${activeModel}`} className="flex-1 flex flex-col relative overflow-hidden panel-3d">
                     {/* Chat Area */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-slate-950/50">
                         {chatHistory.length === 0 && (
                             <div className="flex flex-col items-center justify-center h-full text-slate-600 gap-4">
                                 <Bot size={48} className="opacity-20 icon-3d" />
-                                <p>AI Ready. Context Window: 32k. Temperature: 0.7</p>
+                                <p>AI Готовий. Вікно контексту: 32k. Температура: 0.7</p>
                             </div>
                         )}
                         {chatHistory.map((msg, idx) => (
                             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-[80%] p-3 rounded-lg text-sm ${
-                                    msg.role === 'user' 
-                                    ? 'bg-primary-900/20 border border-primary-500/30 text-primary-100 rounded-br-none' 
-                                    : 'bg-slate-900 border border-slate-700 text-slate-300 rounded-bl-none'
-                                }`}>
-                                    {msg.role === 'assistant' && <div className="text-[10px] text-purple-400 font-bold mb-1 flex items-center gap-1"><Sparkles size={10}/> PREDATOR AI</div>}
+                                <div className={`max-w-[80%] p-3 rounded-lg text-sm ${msg.role === 'user'
+                                        ? 'bg-primary-900/20 border border-primary-500/30 text-primary-100 rounded-br-none'
+                                        : 'bg-slate-900 border border-slate-700 text-slate-300 rounded-bl-none'
+                                    }`}>
+                                    {msg.role === 'assistant' && <div className="text-[10px] text-purple-400 font-bold mb-1 flex items-center gap-1"><Sparkles size={10} /> PREDATOR AI</div>}
                                     {msg.content}
                                 </div>
                             </div>
@@ -255,7 +254,7 @@ const LLMView: React.FC = () => {
                     {/* Input Area */}
                     <div className="p-4 bg-slate-900 border-t border-slate-800">
                         <div className="flex gap-2">
-                            <input 
+                            <input
                                 value={userPrompt}
                                 onChange={(e) => setUserPrompt(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
@@ -263,18 +262,18 @@ const LLMView: React.FC = () => {
                                 className="flex-1 bg-slate-900 border border-slate-700 rounded p-2 text-sm text-slate-200 focus:border-primary-500 outline-none"
                                 disabled={isGenerating}
                             />
-                            <button 
+                            <button
                                 onClick={handleSendMessage}
                                 disabled={isGenerating || !userPrompt}
                                 className="p-2 rounded text-white disabled:opacity-50 transition-colors btn-3d btn-3d-blue"
                             >
-                                {isGenerating ? <RefreshCw className="animate-spin" size={20}/> : <Send size={20}/>}
+                                {isGenerating ? <RefreshCw className="animate-spin" size={20} /> : <Send size={20} />}
                             </button>
                         </div>
                         <div className="flex justify-between items-center mt-2 text-[10px] text-slate-500 font-mono">
-                            <span>Speed: {genMetrics.tps} tok/s</span>
-                            <span>Latency: {genMetrics.ttft} ms</span>
-                            <span>Tokens: {genMetrics.totalTokens}</span>
+                            <span>Швидкість: {genMetrics.tps} ток/с</span>
+                            <span>Затримка: {genMetrics.ttft} мс</span>
+                            <span>Токенів: {genMetrics.totalTokens}</span>
                         </div>
                     </div>
                 </TacticalCard>
@@ -285,7 +284,7 @@ const LLMView: React.FC = () => {
                     <div className="space-y-4">
                         <div>
                             <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">System Prompt</label>
-                            <textarea 
+                            <textarea
                                 value={systemPrompt}
                                 onChange={(e) => setSystemPrompt(e.target.value)}
                                 className="w-full h-24 bg-slate-950 border border-slate-700 rounded p-2 text-xs text-slate-300 resize-none focus:border-primary-500 outline-none"
@@ -302,7 +301,7 @@ const LLMView: React.FC = () => {
                             </div>
                         </div>
                         <div className="p-3 bg-slate-900 border border-slate-800 rounded flex items-center justify-between">
-                            <div className="text-xs text-slate-300">GPU VRAM Usage</div>
+                            <div className="text-xs text-slate-300">GPU VRAM Використання</div>
                             <div className="text-xs font-mono text-purple-400 font-bold">{metrics.gpu.vram.toFixed(1)}GB / 24GB</div>
                         </div>
                     </div>
@@ -316,7 +315,7 @@ const LLMView: React.FC = () => {
                                 <div className="flex justify-between items-start mb-2">
                                     <div className="flex items-center gap-2">
                                         <div className={`p-1.5 rounded ${p.type === 'FALLBACK' ? 'bg-orange-900/20 text-orange-500' : p.type === 'CLOUD' ? 'bg-blue-900/20 text-blue-500' : 'bg-purple-900/20 text-purple-500'} icon-3d`}>
-                                            {p.type === 'FALLBACK' ? <ShieldAlert size={14}/> : p.type === 'CLOUD' ? <Cloud size={14}/> : <Cpu size={14}/>}
+                                            {p.type === 'FALLBACK' ? <ShieldAlert size={14} /> : p.type === 'CLOUD' ? <Cloud size={14} /> : <Cpu size={14} />}
                                         </div>
                                         <div>
                                             <div className="text-xs font-bold text-slate-200">{p.name}</div>
@@ -324,15 +323,15 @@ const LLMView: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        {p.status === 'ACTIVE' && <div className="text-[9px] font-bold text-success-500 flex items-center gap-1 justify-end"><Wifi size={10}/> ONLINE</div>}
+                                        {p.status === 'ACTIVE' && <div className="text-[9px] font-bold text-success-500 flex items-center gap-1 justify-end"><Wifi size={10} /> ONLINE</div>}
                                         {p.status === 'STANDBY' && <div className="text-[9px] font-bold text-slate-500">STANDBY</div>}
                                     </div>
                                 </div>
-                                
+
                                 {p.accountsCount > 1 && (
                                     <div className="mt-2 pt-2 border-t border-slate-800 flex justify-between items-center text-[9px] font-mono">
                                         <div className="flex items-center gap-1 text-slate-400">
-                                            <Shuffle size={10} className="text-primary-500"/> 
+                                            <Shuffle size={10} className="text-primary-500" />
                                             Rotation: <span className="text-white font-bold">{p.rotationStrategy}</span>
                                         </div>
                                         <div className="bg-slate-900 px-1.5 py-0.5 rounded border border-slate-700 text-slate-300">
@@ -342,14 +341,14 @@ const LLMView: React.FC = () => {
                                 )}
                                 {p.type === 'FALLBACK' && (
                                     <div className="mt-2 pt-2 border-t border-slate-800 text-[9px] text-orange-400 flex items-center gap-1">
-                                        <ShieldAlert size={10}/> Emergency Fallback
+                                        <ShieldAlert size={10} /> Emergency Fallback
                                     </div>
                                 )}
                             </div>
                         ))}
                         <div className="flex justify-end pt-2">
                             <button onClick={handleSaveLLM} className="px-3 py-1.5 rounded text-xs font-bold transition-colors btn-3d btn-3d-blue flex items-center gap-2">
-                                <Settings size={14} /> Configure Router
+                                <Settings size={14} /> Налаштувати Роутер
                             </button>
                         </div>
                     </div>
@@ -367,11 +366,10 @@ const LLMView: React.FC = () => {
                             <button
                                 key={dom}
                                 onClick={() => setTrainingDomain(dom)}
-                                className={`p-3 rounded border flex flex-col items-center gap-2 transition-all btn-3d ${
-                                    trainingDomain === dom 
-                                    ? 'bg-primary-900/20 border-primary-500 text-primary-400' 
-                                    : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-600'
-                                }`}
+                                className={`p-3 rounded border flex flex-col items-center gap-2 transition-all btn-3d ${trainingDomain === dom
+                                        ? 'bg-primary-900/20 border-primary-500 text-primary-400'
+                                        : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-600'
+                                    }`}
                             >
                                 {TRAINING_CONFIGS[dom].icon}
                                 <span className="text-xs font-bold">{dom}</span>
@@ -384,7 +382,7 @@ const LLMView: React.FC = () => {
                             <h3 className="font-bold text-slate-200 text-sm">{TRAINING_CONFIGS[trainingDomain].label}</h3>
                             <span className="text-xs text-slate-500 font-mono">Dataset: {trainingDomain.toLowerCase()}_v4.jsonl</span>
                         </div>
-                        
+
                         {trainingStatus !== 'IDLE' && (
                             <div className="mb-4">
                                 <div className="flex justify-between text-xs text-slate-400 mb-1">
@@ -413,12 +411,12 @@ const LLMView: React.FC = () => {
 
                     <div className="flex justify-end gap-3">
                         <button className="px-4 py-2 rounded text-xs font-bold text-slate-300 btn-3d">Configure Hyperparams</button>
-                        <button 
+                        <button
                             onClick={handleStartTraining}
                             disabled={trainingStatus === 'TRAINING'}
                             className="px-6 py-2 rounded text-xs font-bold flex items-center gap-2 disabled:opacity-50 btn-3d btn-3d-blue"
                         >
-                            {trainingStatus === 'TRAINING' ? <RefreshCw className="animate-spin" size={14}/> : <Play size={14}/>}
+                            {trainingStatus === 'TRAINING' ? <RefreshCw className="animate-spin" size={14} /> : <Play size={14} />}
                             {trainingStatus === 'TRAINING' ? 'Training...' : 'Start Tuning'}
                         </button>
                     </div>
@@ -436,11 +434,10 @@ const LLMView: React.FC = () => {
                                 </div>
                             </div>
                             <div className="text-right">
-                                <div className={`text-[10px] font-bold px-2 py-0.5 rounded mb-1 ${
-                                    exp.status === 'COMPLETED' ? 'bg-success-900/20 text-success-500' :
-                                    exp.status === 'RUNNING' ? 'bg-blue-900/20 text-blue-500 animate-pulse' :
-                                    'bg-slate-800 text-slate-500'
-                                }`}>
+                                <div className={`text-[10px] font-bold px-2 py-0.5 rounded mb-1 ${exp.status === 'COMPLETED' ? 'bg-success-900/20 text-success-500' :
+                                        exp.status === 'RUNNING' ? 'bg-blue-900/20 text-blue-500 animate-pulse' :
+                                            'bg-slate-800 text-slate-500'
+                                    }`}>
                                     {exp.status}
                                 </div>
                                 <div className="text-[10px] text-slate-400 font-mono">{exp.score}</div>
@@ -458,11 +455,10 @@ const LLMView: React.FC = () => {
     const renderDSPy = () => (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in duration-300">
             <TacticalCard title="DSPy Prompt Optimizer (Self-Driving)" className="panel-3d" action={
-                <button 
+                <button
                     onClick={() => setDspyOptimizing(!dspyOptimizing)}
-                    className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-2 transition-all btn-3d ${
-                        dspyOptimizing ? 'btn-3d-purple' : 'bg-slate-800 text-slate-400 border border-slate-700'
-                    }`}
+                    className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-2 transition-all btn-3d ${dspyOptimizing ? 'btn-3d-purple' : 'bg-slate-800 text-slate-400 border border-slate-700'
+                        }`}
                 >
                     {dspyOptimizing ? <RefreshCw size={14} className="animate-spin" /> : <Play size={14} />}
                     {dspyOptimizing ? 'Optimizing...' : 'Start Optimizer'}
@@ -473,8 +469,8 @@ const LLMView: React.FC = () => {
                         <AreaChart data={dspyData}>
                             <defs>
                                 <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3}/>
-                                    <stop offset="95%" stopColor="#a855f7" stopOpacity={0}/>
+                                    <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
@@ -485,7 +481,7 @@ const LLMView: React.FC = () => {
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
-                
+
                 <div className="space-y-2">
                     {MOCK_DSPY_MODULES.map(mod => (
                         <div key={mod.id} className="p-3 bg-slate-900 border border-slate-800 rounded group hover:border-purple-500/30 transition-colors panel-3d">
@@ -504,7 +500,7 @@ const LLMView: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div className="mt-2 bg-black/40 p-2 rounded border border-slate-800/50">
                                 <div className="flex items-center gap-2 mb-1 text-[9px] text-slate-500 uppercase font-bold">
                                     <GitCompare size={10} /> Optimized Instruction Snippet
@@ -542,38 +538,38 @@ const LLMView: React.FC = () => {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500 pb-20 w-full max-w-[1600px] mx-auto">
-            <ViewHeader 
+            <ViewHeader
                 title="LLM & Neural Core"
-                icon={<BrainCircuit size={20} className="icon-3d-purple"/>}
+                icon={<BrainCircuit size={20} className="icon-3d-purple" />}
                 breadcrumbs={['INTELLIGENCE', 'NEURAL ENGINE']}
                 stats={[
-                    { label: 'Active Model', value: activeModel, icon: <Cpu size={14}/>, color: 'primary' },
-                    { label: 'VRAM Usage', value: `${metrics.gpu.vram.toFixed(1)} GB`, icon: <Activity size={14}/>, color: metrics.gpu.vram > 20 ? 'danger' : 'success' },
-                    { label: 'DSPy Optimizer', value: dspyOptimizing ? 'RUNNING' : 'IDLE', icon: <Sparkles size={14}/>, color: dspyOptimizing ? 'purple' : 'default', animate: dspyOptimizing },
+                    { label: 'Active Model', value: activeModel, icon: <Cpu size={14} />, color: 'primary' },
+                    { label: 'VRAM Usage', value: `${metrics.gpu.vram.toFixed(1)} GB`, icon: <Activity size={14} />, color: metrics.gpu.vram > 20 ? 'danger' : 'success' },
+                    { label: 'DSPy Optimizer', value: dspyOptimizing ? 'RUNNING' : 'IDLE', icon: <Sparkles size={14} />, color: dspyOptimizing ? 'purple' : 'default', animate: dspyOptimizing },
                 ]}
             />
 
             {/* Tabs */}
             <div className="flex border-b border-slate-800 bg-slate-950/30 rounded-t overflow-x-auto scrollbar-hide">
-                <button 
+                <button
                     onClick={() => setActiveTab('INFERENCE')}
                     className={`flex-1 min-w-[120px] py-3 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'INFERENCE' ? 'border-primary-500 text-primary-400 bg-slate-800/30' : 'border-transparent text-slate-500 hover:bg-slate-800/30'}`}
                 >
                     <MessageSquare size={16} /> Inference (Chat)
                 </button>
-                <button 
+                <button
                     onClick={() => setActiveTab('TRAINING')}
                     className={`flex-1 min-w-[120px] py-3 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'TRAINING' ? 'border-orange-500 text-orange-400 bg-slate-800/30' : 'border-transparent text-slate-500 hover:bg-slate-800/30'}`}
                 >
                     <Layers size={16} /> LoRA Training
                 </button>
-                <button 
+                <button
                     onClick={() => setActiveTab('DSPY')}
                     className={`flex-1 min-w-[120px] py-3 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'DSPY' ? 'border-purple-500 text-purple-400 bg-slate-800/30' : 'border-transparent text-slate-500 hover:bg-slate-800/30'}`}
                 >
                     <Sparkles size={16} /> DSPy Optimizer
                 </button>
-                <button 
+                <button
                     onClick={() => setActiveTab('AUTOML')}
                     className={`flex-1 min-w-[120px] py-3 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'AUTOML' ? 'border-blue-500 text-blue-400 bg-slate-800/30' : 'border-transparent text-slate-500 hover:bg-slate-800/30'}`}
                 >

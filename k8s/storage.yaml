@@ -1,0 +1,114 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: predator-fast
+  labels:
+    app.kubernetes.io/name: predator-analytics
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: predator-analytics
+    app.kubernetes.io/component: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: predator-analytics
+    app.kubernetes.io/component: cache
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qdrant-pvc
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: predator-analytics
+    app.kubernetes.io/component: vectors
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: opensearch-pvc
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: predator-analytics
+    app.kubernetes.io/component: search
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio-pvc
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: predator-analytics
+    app.kubernetes.io/component: storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-pvc
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: predator-analytics
+    app.kubernetes.io/component: monitoring
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-pvc
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: predator-analytics
+    app.kubernetes.io/component: ml
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi

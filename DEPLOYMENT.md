@@ -100,7 +100,7 @@ GEMINI_API_KEY=your-gemini-key
 OPENAI_API_KEY=your-openai-key
 
 # Database (for Docker)
-DATABASE_URL=postgresql+asyncpg://predator:predator@postgres:5432/predator_db
+    DATABASE_URL=postgresql+asyncpg://predator:predator_password@postgres:5432/predator_db
 REDIS_URL=redis://redis:6379/0
 ```
 

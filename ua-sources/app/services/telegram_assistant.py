@@ -13,6 +13,7 @@ import asyncio
 import subprocess
 from typing import Dict, Any, Optional, List, Tuple
 from datetime import datetime, timezone
+import time
 from dataclasses import dataclass
 from enum import Enum
 import logging
@@ -60,10 +61,46 @@ class TelegramAssistant:
         self.api_url = f"https://api.telegram.org/bot{token}"
         self.enabled = bool(token)
         self.last_ngrok: Optional[NgrokInfo] = None
-        self.authorized_users: List[int] = []  # Will be populated from config
+        # Authorized Telegram user IDs (comma separated in env var) — used for sensitive commands
+        auth_env = os.getenv("TELEGRAM_AUTHORIZED_USERS", "")
+        if auth_env:
+            try:
+                self.authorized_users: List[int] = [int(x.strip()) for x in auth_env.split(",") if x.strip()]
+            except Exception:
+                self.authorized_users: List[int] = []
+        else:
+            self.authorized_users: List[int] = []  # Will be populated from config
         
         # SSH config path на Mac
         self.ssh_config_path = os.path.expanduser("~/.ssh/config")
+        # AUTO_RESTART flag
+        self.auto_restart_ngrok = os.getenv("AUTO_RESTART_NGROK", "false").lower() in ("1", "true", "yes")
+        self.auto_deploy_on_up = os.getenv("AUTO_DEPLOY_ON_UP", "false").lower() in ("1", "true", "yes")
+        self.auto_rollback_on_degrade = os.getenv("AUTO_ROLLBACK_ON_DEGRADE", "false").lower() in ("1", "true", "yes")
+        # State persistence file (keep runtime toggles persistent between bot restarts)
+        self.state_file_path = os.path.expanduser(os.getenv("PREDATOR_TELEGRAM_STATE", "~/.predator_bot_state.json"))
+        # Load persisted toggles if present
+        try:
+            if os.path.exists(self.state_file_path):
+                with open(self.state_file_path, 'r') as sf:
+                    data = json.load(sf)
+                    if 'auto_restart_ngrok' in data:
+                        self.auto_restart_ngrok = bool(data['auto_restart_ngrok'])
+                    if 'auto_deploy_on_up' in data:
+                        self.auto_deploy_on_up = bool(data['auto_deploy_on_up'])
+        except Exception:
+            # Do not fail on read errors; default to env values
+            logger.debug('Failed to load bot state file or invalid JSON')
+
+        # Audit log path
+        self.audit_log_path = os.path.expanduser(os.getenv('PREDATOR_TELEGRAM_AUDIT', '~/.predator_bot_audit.log'))
+        # runtime context for requests (filled while processing an update)
+        self.requesting_user_id: Optional[int] = None
+        # optional default chat id to use for async notifications
+        try:
+            self.default_chat_id = int(os.getenv('TELEGRAM_CHAT_ID', '0')) or None
+        except Exception:
+            self.default_chat_id = None
         
         # Команди системи
         self.system_commands = {
@@ -89,6 +126,16 @@ class TelegramAssistant:
             "git": self._cmd_git_status,
             "deploy": self._cmd_deploy_status,
             "restart": self._cmd_restart_services,
+            "restart_ngrok": self._cmd_restart_ngrok,
+            "argocd": self._cmd_argocd_status,
+            "argocd_sync": self._cmd_argocd_sync,
+            "argocd_apps": self._cmd_argocd_list,
+            "argocd_probe": self._cmd_argocd_probe,
+            "k8s_dump": self._cmd_k8s_dump,
+            "auto_deploy": self._cmd_auto_deploy,
+            "argocd_sync_status": self._cmd_argocd_sync_status,
+            "auto_rollback": self._cmd_auto_rollback,
+            "argocd_rollback": self._cmd_argocd_rollback,
             
             # AI
             "search": self._cmd_ai_search,
@@ -97,6 +144,7 @@ class TelegramAssistant:
             # Setup/Configuration (NEW)
             "add_key": self._cmd_add_key,
             "set_model": self._cmd_set_model,
+            "auto_restart": self._cmd_auto_restart,
             "predator": self._cmd_predator_cli,
         }
         
@@ -112,7 +160,7 @@ class TelegramAssistant:
             "resize_keyboard": True,
             "one_time_keyboard": False
         }
-        
+
         self.inline_menu = {
             "inline_keyboard": [
                 [
@@ -129,7 +177,10 @@ class TelegramAssistant:
                 ],
                 [
                     {"text": "🔗 Ngrok Info", "callback_data": "ngrok"},
-                    {"text": "📡 SSH Config", "callback_data": "ssh"}
+                    {"text": "🚦 Auto Deploy", "callback_data": "auto_deploy"}
+                ],
+                [
+                    {"text": "↩️ Auto Rollback", "callback_data": "auto_rollback"}
                 ],
                 [
                     {"text": "📝 Logs", "callback_data": "logs"},
@@ -137,6 +188,178 @@ class TelegramAssistant:
                 ]
             ]
         }
+
+    # ==================== ARGOCD HELPERS ====================
+    def _get_argocd_credentials(self, target: str = "") -> Tuple[Optional[str], Optional[str]]:
+        """Return (server_url, token) pair for a given target (mac, nvidia, oracle) or fallback to ARGOCD_SERVER/TOKEN"""
+        if not target:
+            # fallback to generic env
+            server = os.getenv("ARGOCD_SERVER") or os.getenv("ARGOCD_URL")
+            token = os.getenv("ARGOCD_TOKEN") or os.getenv("ARGOCD_API_TOKEN")
+            return server, token
+
+        target_upper = target.upper()
+        server = os.getenv(f"ARGOCD_{target_upper}_URL") or os.getenv("ARGOCD_SERVER")
+        token = os.getenv(f"ARGOCD_{target_upper}_TOKEN") or os.getenv(f"ARGOCD_{target_upper}_PASSWORD") or os.getenv("ARGOCD_TOKEN")
+        return server, token
+
+    async def _cmd_auto_deploy(self, args: str) -> str:
+        """Toggle AUTO_DEPLOY_ON_UP. Usage: /auto_deploy on|off|status"""
+        parts = args.strip().lower().split()
+        if not parts or parts[0] == "status":
+            return f"🔁 AUTO_DEPLOY_ON_UP: {self.auto_deploy_on_up}"
+
+        # For toggle operations we require auth
+        if not self._is_requesting_user_authorized():
+            return "❌ Тільки авторизовані користувачі можуть змінювати налаштування автоматизації."
+
+        if parts[0] in ("on", "true", "1"):
+            self.auto_deploy_on_up = True
+            try:
+                with open(self.state_file_path, 'w') as sf:
+                    json.dump({'auto_deploy_on_up': True, 'auto_restart_ngrok': self.auto_restart_ngrok}, sf)
+            except Exception:
+                logger.debug('Failed to persist bot state')
+            return "✅ AUTO_DEPLOY_ON_UP встановлено у: true"
+        elif parts[0] in ("off", "false", "0"):
+            self.auto_deploy_on_up = False
+            try:
+                with open(self.state_file_path, 'w') as sf:
+                    json.dump({'auto_deploy_on_up': False, 'auto_restart_ngrok': self.auto_restart_ngrok}, sf)
+            except Exception:
+                logger.debug('Failed to persist bot state')
+            return "✅ AUTO_DEPLOY_ON_UP встановлено у: false"
+        else:
+            return "❌ Невірна команда. Використовуйте: /auto_deploy on|off|status"
+
+    async def _cmd_auto_rollback(self, args: str) -> str:
+        """Toggle AUTO_ROLLBACK_ON_DEGRADE. Usage: /auto_rollback on|off|status"""
+        if not self._is_requesting_user_authorized():
+            return "❌ Тільки авторизовані користувачі можуть змінювати налаштування автоматизації."
+
+        parts = args.strip().lower().split()
+        if not parts or parts[0] == "status":
+            return f"↩️ AUTO_ROLLBACK_ON_DEGRADE: {self.auto_rollback_on_degrade}"
+
+        if parts[0] in ("on", "true", "1"):
+            self.auto_rollback_on_degrade = True
+            try:
+                with open(self.state_file_path, 'w') as sf:
+                    json.dump({'auto_deploy_on_up': self.auto_deploy_on_up, 'auto_restart_ngrok': self.auto_restart_ngrok, 'auto_rollback_on_degrade': True}, sf)
+            except Exception:
+                logger.debug('Failed to persist bot state')
+            return "✅ AUTO_ROLLBACK_ON_DEGRADE встановлено у: true"
+        elif parts[0] in ("off", "false", "0"):
+            self.auto_rollback_on_degrade = False
+            try:
+                with open(self.state_file_path, 'w') as sf:
+                    json.dump({'auto_deploy_on_up': self.auto_deploy_on_up, 'auto_restart_ngrok': self.auto_restart_ngrok, 'auto_rollback_on_degrade': False}, sf)
+            except Exception:
+                logger.debug('Failed to persist bot state')
+            return "✅ AUTO_ROLLBACK_ON_DEGRADE встановлено у: false"
+        else:
+            return "❌ Невірна команда. Використовуйте: /auto_rollback on|off|status"
+
+    async def _call_argocd_api(self, server: str, token: str, method: str, path: str = "", json_payload: dict = None) -> Tuple[bool, Any]:
+        """Call ArgoCD REST API using httpx; returns (success, result_or_error)."""
+        if not server or not token:
+            return False, "Missing ArgoCD server or token"
+        url = server.rstrip("/") + "/api/v1" + (path if path.startswith("/") else ("/" + path if path else ""))
+        headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+        try:
+            verify = os.getenv("ARGOCD_INSECURE", "false").lower() not in ("1", "true", "yes")
+            # Retry around transient network issues
+            retries = int(os.getenv("ARGOCD_API_RETRIES", "3"))
+            backoff = float(os.getenv("ARGOCD_API_BACKOFF", "1.0"))
+            last_err = None
+            async with httpx.AsyncClient(timeout=30, verify=verify) as client:
+                for attempt in range(1, retries+1):
+                    try:
+                        if method.upper() == "GET":
+                            r = await client.get(url, headers=headers)
+                        elif method.upper() == "POST":
+                            r = await client.post(url, headers=headers, json=json_payload or {})
+                        elif method.upper() == "PUT":
+                            r = await client.put(url, headers=headers, json=json_payload or {})
+                        else:
+                            return False, f"Unsupported method: {method}"
+                        # got response, break
+                        break
+                    except Exception as e:
+                        last_err = e
+                        if attempt < retries:
+                            await asyncio.sleep(backoff * attempt)
+                            continue
+                        else:
+                            raise
+                if method.upper() == "GET":
+                    r = await client.get(url, headers=headers)
+                elif method.upper() == "POST":
+                    r = await client.post(url, headers=headers, json=json_payload or {})
+                elif method.upper() == "PUT":
+                    r = await client.put(url, headers=headers, json=json_payload or {})
+                else:
+                    return False, f"Unsupported method: {method}"
+
+            if r.status_code >= 200 and r.status_code <= 299:
+                return True, r.json() if r.content else {}
+            else:
+                return False, f"ArgoCD API error: {r.status_code} {r.text}"
+        except Exception as e:
+            logger.error(f"ArgoCD API call failed: {e}")
+            return False, str(e)
+
+    async def _send_telegram_message(self, chat_id: int, text: str) -> bool:
+        """Send a message to Telegram using the bot token asynchronously. Returns True if OK."""
+        if not chat_id:
+            return False
+        payload = {
+            'chat_id': chat_id,
+            'text': text,
+            'parse_mode': 'HTML'
+        }
+        url = f"{self.api_url}/sendMessage"
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                r = await client.post(url, json=payload)
+            return r.status_code == 200
+        except Exception as e:
+            logger.error(f"Failed to send Telegram message: {e}")
+            return False
+
+    async def _notify_argocd_sync_result(self, server: str, token: str, app: str, chat_id: Optional[int] = None, timeout: int = 600):
+        """Poll ArgoCD until sync finishes; send Telegram notice with the result to chat.
+        chat_id defaults to configured chat or the last requesting user.
+        """
+        chat = chat_id or self.default_chat_id or self.requesting_user_id
+        try:
+            ok, res = await self._call_argocd_api(server, token, "GET", f"/applications/{app}")
+            if not ok:
+                await self._send_telegram_message(chat, f"❌ ArgoCD API error while checking status for {app}: {res}")
+                return
+            status = res.get('status', {})
+            if status.get('sync', {}).get('status') == 'Synced' and status.get('health', {}).get('status') == 'Healthy':
+                await self._send_telegram_message(chat, f"✅ {app} already Synced & Healthy.")
+                return
+            start = time.time()
+            while time.time() - start < timeout:
+                ok, res = await self._call_argocd_api(server, token, "GET", f"/applications/{app}")
+                if ok:
+                    st = res.get('status', {})
+                    phase = st.get('operationState', {}).get('phase') if st.get('operationState') else None
+                    sync = st.get('sync', {}).get('status')
+                    health = st.get('health', {}).get('status')
+                    if phase in ('Succeeded',) or (sync == 'Synced' and health == 'Healthy'):
+                        await self._send_telegram_message(chat, f"🔔 ArgoCD sync for {app} completed. Sync: {sync}. Health: {health}.")
+                        return
+                await asyncio.sleep(3)
+
+            await self._send_telegram_message(chat, f"⚠️ Timeout waiting for ArgoCD sync for {app} (waited {timeout}s). Check ArgoCD UI for details.")
+        except Exception as e:
+            logger.error(f"_notify_argocd_sync_result error: {e}")
+            if chat:
+                await self._send_telegram_message(chat, f"❌ Error in ArgoCD sync monitor: {e}")
+
     
     # ==================== NGROK PARSING ====================
     
@@ -278,7 +501,7 @@ ssh dev-ngrok
         text_lower = text.lower()
         
         # Ngrok update
-        if "ngrok" in text_lower and ("ssh:" in text_lower or "http:" in text_lower):
+        if "ngrok" in text_lower and ("ssh:" in text_lower or "http:" in text_lower or "tunnel" in text_lower):
             return MessageType.NGROK_UPDATE
         
         # Command
@@ -296,11 +519,35 @@ ssh dev-ngrok
     async def _handle_ngrok_update(self, text: str, chat_id: int) -> str:
         """Обробляє оновлення ngrok"""
         ngrok_info = self.parse_ngrok_message(text)
-        
+
+        text_lower = text.lower() if text else ""
+        down_signals = ["tunnel down", "tunnel is not running", "ngrok tunnel is not running", "not running", "down", "не працює", "тунель"]
+        is_down = any(k in text_lower for k in down_signals)
+
+        # If down and auto-restart enabled, try to perform restart automatically
+        if is_down:
+            if self.auto_restart_ngrok:
+                result = await self._restart_ngrok_on_server()
+                if result.success:
+                    return f"✅ Ngrok перезапущено автоматично. Стан:\n{result.output[:1200]}"
+                else:
+                    return f"❌ Спроба автоматичного перезапуску ngrok не вдалася:\n{result.error}\n{result.output}"
+            else:
+                return "⚠️ Ngrok тунель DOWN. Увімкнено автоматичний перезапуск? (AUTO_RESTART_NGROK=false)"
+
         if ngrok_info:
             success, message = await self.update_ssh_config(ngrok_info)
+            # If configured, trigger ArgoCD sync automatically when tunnel appears
+            if success and self.auto_deploy_on_up:
+                server, token = self._get_argocd_credentials("nvidia")
+                if server and token:
+                    ok, _ = await self._call_argocd_api(server, token, "POST", f"/applications/predator-nvidia/sync", json_payload={})
+                    if ok:
+                        message = message + "\n\n🔁 Auto ArgoCD sync initiated for predator-nvidia."
+                    else:
+                        message = message + "\n\n❗ Auto ArgoCD sync attempted but failed. Check logs."
             return message
-        
+
         return "⚠️ Не вдалося розпарсити ngrok дані"
     
     async def _handle_command(self, text: str, chat_id: int, user_id: int) -> str:
@@ -344,7 +591,25 @@ ssh dev-ngrok
         # Системні команди
         handler = self.system_commands.get(cmd_name)
         if handler:
-            return await handler(args)
+            # track requesting user for authorization checks
+            self.requesting_user_id = user_id
+            result = None
+            success = False
+            try:
+                result = await handler(args)
+                success = True
+            except Exception as e:
+                result = f"❌ Помилка виконання: {e}"
+                success = False
+            finally:
+                self.requesting_user_id = None
+                # Record audit
+                try:
+                    self._log_audit(user_id, text, success, '' if success else result)
+                except Exception:
+                    logger.debug('Failed to write audit log')
+
+            return result
         
         # AI fallback
         return await self._handle_ai_query(text, chat_id)
@@ -356,7 +621,12 @@ ssh dev-ngrok
         
         handler = self.system_commands.get(data)
         if handler:
-            result = await handler("")
+            user_id = callback.get("from", {}).get("id")
+            self.requesting_user_id = user_id
+            try:
+                result = await handler("")
+            finally:
+                self.requesting_user_id = None
             # Відповідаємо на callback
             await self._answer_callback(callback["id"])
             return result
@@ -715,7 +985,7 @@ docker compose restart backend
     
     async def _cmd_help(self) -> str:
         """Допомога"""
-        return """📖 **Команди асистента**
+        return ("""📖 **Команди асистента**
 
 **🖥️ Сервер:**
 • `/status` - Загальний статус
@@ -735,16 +1005,22 @@ docker compose restart backend
 • `/ssh` - SSH конфіг
 • `/connect` - Як підключитись
 
-**📦 Deploy:**
+**📦 Deploy / ArgoCD:**
 • `/git` - Git статус
 • `/deploy` - Статус деплою
 • `/restart` - Рестарт сервісів
+• `/argocd_apps [target]` - Показати ArgoCD додатки (target: nvidia|oracle|macbook)
+• `/argocd [app|target]` - Дізнатись статус ArgoCD додатка (наприклад `/argocd predator-nvidia`)
+• `/argocd_sync confirm [app|target]` - Підтвердити синхронізацію ArgoCD (потрібна авторизація)
+• `/restart_ngrok confirm` - Перезапуск ngrok на віддаленому сервері (потрібна авторизація)
 
 **🔍 AI/Пошук:**
 • `/search [запит]` - Пошук
 • `/analyze [текст]` - Аналіз
 
 **💡 Або просто напиши запит природною мовою!**"""
+            + "\n\n**Налаштування автоматизації**\n• `AUTO_RESTART_NGROK=true` — автоматично намагатися перезапустити ngrok при падінні\n• `TELEGRAM_AUTHORIZED_USERS` — кома-розділений список телеграм user_id для виконання чутливих команд")
+        
     
     async def _cmd_server_status(self, args: str) -> str:
         """Загальний статус сервера"""
@@ -877,6 +1153,42 @@ docker compose restart backend
             return f"☸️ **Pods ({ns})**\n```\n{result.stdout[:1000]}\n```"
         except Exception as e:
             return f"❌ Помилка: {e}"
+
+    async def _cmd_k8s_dump(self, args: str) -> str:
+        """Run a cluster-info dump, compress results and return the tarball path."""
+        if not self._is_requesting_user_authorized():
+            return "❌ Ви не авторизовані для виконання цієї операції"
+
+        args_parts = args.split()
+        outdir = f"/tmp/k8s-dump-{int(time.time())}"
+        exclude_secrets = True
+        i = 0
+        while i < len(args_parts):
+            p = args_parts[i]
+            if p in ("--output-dir", "-o") and i + 1 < len(args_parts):
+                outdir = args_parts[i+1]
+                i += 1
+            elif p == "--include-secrets" or p == "--no-exclude-secrets":
+                exclude_secrets = False
+            elif p == "--exclude-secrets":
+                exclude_secrets = True
+            i += 1
+
+        cmd = ["bash", "./scripts/k8s_cluster_dump.sh", "--output-dir", outdir]
+        if exclude_secrets:
+            cmd.append("--exclude-secrets")
+        try:
+            proc = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+            if proc.returncode != 0:
+                return f"❌ Помилка виконання kubectl dump: {proc.stderr[:1000]}"
+            out_lines = proc.stdout.strip().splitlines()
+            tarball = out_lines[-1] if out_lines else ''
+            size_line = out_lines[-2] if len(out_lines) >= 2 else ''
+            msg = f"✅ Kubernetes cluster dump створено: {tarball}\n{size_line}" if tarball else "✅ Dump створено"
+            return msg
+        except Exception as e:
+            logger.error(f"Failed to run k8s dump: {e}")
+            return f"❌ Помилка: {e}"
     
     async def _cmd_services_status(self, args: str) -> str:
         """Сервіси"""
@@ -980,7 +1292,12 @@ To deploy:
 2. GitHub Actions буде triggered
 3. ArgoCD синхронізує зміни
 
-Перевірте: https://github.com/dima1203oleg/predator-analytics/actions"""
+Перевірте: https://github.com/dima1203oleg/predator-analytics/actions
+
+• `/argocd_sync confirm [app|target] [wait]` - Підтвердити синхронізацію ArgoCD (потрібна авторизація). Додайте `wait` щоб почекати завершення.
+• `/argocd_sync_status [app|target] [wait]` - Перевірити статус синхронізації (опціонально `wait`)
+• `/auto_deploy on|off|status` - Включити/вимкнути авто-синхронізацію при піднятті тунелю
+"""
     
     async def _cmd_restart_services(self, args: str) -> str:
         """Рестарт сервісів"""
@@ -998,6 +1315,286 @@ docker compose restart
 ```bash
 ssh dev-ngrok 'cd /root/predator && docker compose restart'
 ```"""
+    
+    async def _cmd_restart_ngrok(self, args: str) -> str:
+        """Перезапуск ngrok на віддаленому сервері.
+        Використання: /restart_ngrok confirm
+        """
+
+    async def _cmd_argocd_list(self, args: str) -> str:
+        """List ArgoCD applications. Usage: /argocd_apps [target]"""
+        target = args.strip().lower() if args else ""
+        server, token = self._get_argocd_credentials(target)
+        if not server or not token:
+            return "❌ ArgoCD credentials not configured. Set ARGOCD_SERVER/ARGOCD_TOKEN or ARGOCD_NVIDIA_URL/ARGOCD_NVIDIA_TOKEN."
+
+        ok, result = await self._call_argocd_api(server, token, "GET", "/applications")
+        if not ok:
+            return f"❌ ArgoCD API error: {result}"
+
+        apps = result.get("items", []) if isinstance(result, dict) else []
+        lines = [f"✅ Найдено {len(apps)} додатків:".upper()]
+        for a in apps[:50]:
+            name = a.get("metadata", {}).get("name")
+            health = a.get("status", {}).get("health", {}).get("status") if a.get("status") else "Unknown"
+            sync = a.get("status", {}).get("sync", {}).get("status") if a.get("status") else "Unknown"
+            lines.append(f"• {name} — Health: {health} — Sync: {sync}")
+
+        return "\n".join(lines)
+
+    async def _cmd_argocd_status(self, args: str) -> str:
+        """Get status for an ArgoCD application. Usage: /argocd [app] or /argocd [target]"""
+        parts = args.strip().split() if args else []
+        app = parts[0] if parts else "predator-nvidia"
+        # allow using app name or target alias (nvidia|oracle|macbook)
+        target = ""
+        if app in ("nvidia", "oracle", "mac", "macbook"):
+            target = app
+            app = f"predator-{app}"
+
+        server, token = self._get_argocd_credentials(target)
+        if not server or not token:
+            return "❌ ArgoCD credentials not configured. Set ARGOCD_SERVER/ARGOCD_TOKEN or per-target ones."
+
+        ok, result = await self._call_argocd_api(server, token, "GET", f"/applications/{app}")
+        if not ok:
+            return f"❌ ArgoCD API error: {result}"
+
+        status = result.get("status", {})
+        health = status.get("health", {}).get("status", "Unknown")
+        sync = status.get("sync", {}).get("status", "Unknown")
+        message = f"📋 ArgoCD — {app}\n• Health: {health}\n• Sync: {sync}\n"
+        # Add sync summary & conditions
+        if status.get("conditions"):
+            for cond in status["conditions"]:
+                message += f"• {cond.get('type')}: {cond.get('message', '')}\n"
+        return message
+
+    async def _cmd_argocd_sync(self, args: str) -> str:
+        """Trigger an ArgoCD sync for app. Usage: /argocd_sync [app|target] or /argocd_sync confirm [app]"""
+        if not self._is_requesting_user_authorized():
+            return "❌ Ви не авторизовані для синхронізації ArgoCD (доступ обмежено)."
+
+        parts = args.strip().split()
+        # Support: /argocd_sync confirm predator-nvidia or /argocd_sync predator-nvidia
+        confirm = False
+        app = "predator-nvidia"
+        target = ""
+        if parts and parts[0] == "confirm":
+            confirm = True
+            if len(parts) > 1:
+                app = parts[1]
+        elif parts:
+            # Could be app or target alias
+            candidate = parts[0]
+            if candidate in ("nvidia", "oracle", "mac", "macbook"):
+                target = candidate
+                app = f"predator-{candidate}"
+            else:
+                app = candidate
+
+        if not confirm:
+            return "⚠️ Для підтвердження синхронізації надішліть: `/argocd_sync confirm [app]`"
+
+        server, token = self._get_argocd_credentials(target)
+        if not server or not token:
+            return "❌ ArgoCD credentials not configured. Set ARGOCD_SERVER/ARGOCD_TOKEN or per-target ones."
+
+        ok, result = await self._call_argocd_api(server, token, "POST", f"/applications/{app}/sync", json_payload={})
+        if not ok:
+            return f"❌ ArgoCD sync failed: {result}"
+        msg = f"🔁 ArgoCD sync initiated for `{app}` — Response: {json.dumps(result) if isinstance(result, dict) else result}"
+        # If user asked to wait (e.g., '/argocd_sync confirm predator-nvidia wait'), wait for completion
+        if 'wait' in args:
+            wait_ok, wait_result = await self._wait_for_argocd_sync(server, token, app, timeout=180)
+            if wait_ok:
+                return msg + "\n\n✅ ArgoCD sync completed: " + wait_result
+            else:
+                return msg + "\n\n⚠️ ArgoCD sync did not complete in time or failed: " + wait_result
+        # notify asynchronously about sync if we can
+        try:
+            # Prefer chat from incoming request, else fallback to default chat
+            chat = None
+            if hasattr(self, 'requesting_user_id'):
+                chat = self.requesting_user_id
+            # spawn background notification task - don't await
+            asyncio.create_task(self._notify_argocd_sync_result(server, token, app, chat))
+        except Exception as e:
+            logger.debug(f"Failed to schedule ArgoCD sync notification: {e}")
+
+        return msg
+
+    async def _wait_for_argocd_sync(self, server: str, token: str, app: str, timeout: int = 120) -> Tuple[bool, str]:
+        """Poll ArgoCD app status until the current operation finishes or until timeout.
+        Returns (success, message).
+        """
+        try:
+            deadline = time.time() + timeout
+            while time.time() < deadline:
+                ok, res = await self._call_argocd_api(server, token, "GET", f"/applications/{app}")
+                if not ok:
+                    return False, f"API call failed: {res}"
+                status = res.get('status', {})
+                op_state = status.get('operationState') or {}
+                phase = op_state.get('phase')
+                sync_status = status.get('sync', {}).get('status')
+                if not op_state:
+                    # No operation - no sync in progress
+                    if sync_status == 'Synced':
+                        return True, 'Synced'
+                    else:
+                        # if no op and not synced, just return current sync state
+                        return False, f'Sync status: {sync_status or "Unknown"}'
+                if phase in ('Succeeded', 'Failed', 'Error'):
+                    if phase == 'Succeeded' and sync_status == 'Synced':
+                        return True, f"Phase: {phase}, Sync: {sync_status}"
+                    else:
+                        return False, f"Phase: {phase}, Sync: {sync_status}"
+                # else still running
+                await asyncio.sleep(3)
+            return False, f"Timeout ({timeout}s) waiting for sync"
+        except Exception as e:
+            return False, str(e)
+
+    async def _cmd_argocd_sync_status(self, args: str) -> str:
+        """Check current sync status for ArgoCD application. Usage: /argocd_sync_status [app|target] [wait]"""
+        parts = args.strip().split() if args else []
+        app = parts[0] if parts else "predator-nvidia"
+        target = ""
+        if app in ("nvidia", "oracle", "mac", "macbook"):
+            target = app
+            app = f"predator-{app}"
+
+        server, token = self._get_argocd_credentials(target)
+        if not server or not token:
+            return "❌ ArgoCD credentials not configured."
+
+        ok, res = await self._call_argocd_api(server, token, "GET", f"/applications/{app}")
+        if not ok:
+            return f"❌ ArgoCD API error: {res}"
+
+        status = res.get('status', {})
+        sync = status.get('sync', {}).get('status', 'Unknown')
+        health = status.get('health', {}).get('status', 'Unknown')
+        op_state = status.get('operationState') or {}
+        phase = op_state.get('phase', 'Idle')
+        msg = f"📋 ArgoCD — {app}\n• Sync: {sync}\n• Health: {health}\n• Operation: {phase}"
+
+        # Wait if requested
+        if len(parts) > 1 and parts[1] in ("wait", "--wait"):
+            wait_ok, wait_result = await self._wait_for_argocd_sync(server, token, app, timeout=180)
+            if wait_ok:
+                msg += "\n\n✅ Sync finished: " + wait_result
+            else:
+                msg += "\n\n⚠️ Sync did not finish: " + wait_result
+
+        return msg
+
+    async def _cmd_argocd_rollback(self, args: str) -> str:
+        """Trigger an ArgoCD rollback to previous revision for an app. Usage: /argocd_rollback confirm [app]"""
+        if not self._is_requesting_user_authorized():
+            return "❌ Ви не авторизовані для виконання rollback"
+
+        args_parts = args.strip().split()
+        confirm = False
+        app = 'predator-nvidia'
+        if args_parts and args_parts[0] == 'confirm':
+            confirm = True
+            if len(args_parts) > 1:
+                app = args_parts[1]
+        elif args_parts:
+            app = args_parts[0]
+
+        if not confirm:
+            return "⚠️ Для підтвердження виконайте: `/argocd_rollback confirm [app]`"
+
+        server, token = self._get_argocd_credentials('nvidia')
+        if not server or not token:
+            return "❌ ArgoCD credentials not configured."
+
+        ok, result = await self._call_argocd_api(server, token, 'POST', f'/applications/{app}/rollback', json_payload={'revision': 'previous'})
+        if ok:
+            # Notify and return
+            # schedule async notify
+            try:
+                chat = self.requesting_user_id or self.default_chat_id
+                if chat:
+                    await self._send_telegram_message(chat, f"🔁 Rollback requested for {app}")
+            except Exception:
+                pass
+            return f"🔁 Rollback requested for `{app}`. Response: {json.dumps(result) if isinstance(result, dict) else result}"
+        return f"❌ Rollback failed: {result}"
+
+    async def _cmd_argocd_probe(self, args: str) -> str:
+        """Probe if ArgoCD is used and reachable. Usage: /argocd_probe [target]"""
+        target = args.strip().lower() if args else ""
+        server, token = self._get_argocd_credentials(target)
+        findings = []
+        # Check repo for argocd manifests
+        repo_path = os.getcwd()
+        if os.path.isdir(os.path.join(repo_path, "argocd")):
+            findings.append("✅ `argocd/` manifests found in repository")
+        else:
+            findings.append("⚠️ `argocd/` not found in repository (may be used externally)")
+
+        if server:
+            findings.append(f"🔗 ArgoCD server configured: {server}")
+            if token:
+                ok, resp = await self._call_argocd_api(server, token, "GET", "/applications")
+                if ok:
+                    apps = resp.get("items", []) if isinstance(resp, dict) else []
+                    findings.append(f"✅ ArgoCD API reachable — {len(apps)} applications discovered.")
+                else:
+                    findings.append(f"❌ ArgoCD API test failed: {resp}")
+            else:
+                findings.append("⚠️ ArgoCD token not provided — cannot call API.")
+        else:
+            findings.append("⚠️ ArgoCD server not configured in environment (ARGOCD_*).")
+
+        return "\n".join(findings)
+        if not self._is_requesting_user_authorized():
+            return "❌ Ви не авторизовані для перезапуску ngrok."
+
+        confirm = args.strip().lower()
+        if confirm != "confirm":
+            return "⚠️ Щоб виконати перезапуск, надішліть `/restart_ngrok confirm`"
+
+        result = await self._restart_ngrok_on_server()
+        if result.success:
+            return f"✅ Ngrok перезапущено.\n{result.output[:1200]}"
+        return f"❌ Не вдалося перезапустити ngrok: {result.error}\n{result.output}"
+
+    def _is_requesting_user_authorized(self) -> bool:
+        if not self.authorized_users:
+            # No authorized users configured — deny by default
+            return False
+        return (self.requesting_user_id is not None) and (self.requesting_user_id in self.authorized_users)
+
+    def _log_audit(self, user_id: int, command: str, success: bool, message: str = '') -> None:
+        """Write an audit entry into a local log (append)."""
+        try:
+            import datetime as _dt
+            line = f"{_dt.datetime.utcnow().isoformat()}Z user={user_id} success={success} cmd={command} msg={message}\n"
+            with open(self.audit_log_path, 'a') as af:
+                af.write(line)
+        except Exception as e:
+            logger.debug(f"Failed to write audit log: {e}")
+
+    async def _restart_ngrok_on_server(self) -> ServerAction:
+        """Tries to restart ngrok on the remote host via SSH alias 'dev-ngrok'."""
+        try:
+            cmd = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=10", "dev-ngrok", "sudo", "systemctl", "restart", "ngrok-ssh.service"]
+            proc = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            if proc.returncode == 0:
+                # get status
+                status_proc = subprocess.run(["ssh", "dev-ngrok", "sudo", "systemctl", "status", "ngrok-ssh.service", "--no-pager", "-n", "20"], capture_output=True, text=True, timeout=20)
+                return ServerAction(action="restart_ngrok", success=True, output=status_proc.stdout)
+            # fallback: try to kill and restart
+            fallback_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 dev-ngrok 'pkill ngrok || true; nohup /usr/local/bin/ngrok tcp 22 --log /var/log/ngrok.log >/dev/null 2>&1 &; sleep 2; echo started'"
+            fallback_proc = subprocess.run(fallback_cmd, shell=True, capture_output=True, text=True, timeout=30)
+            return ServerAction(action="restart_ngrok", success=(fallback_proc.returncode==0), output=fallback_proc.stdout, error=fallback_proc.stderr)
+        except Exception as e:
+            return ServerAction(action="restart_ngrok", success=False, output="", error=str(e))
     
     async def _cmd_ai_search(self, args: str) -> str:
         """AI пошук"""
@@ -1070,6 +1667,33 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
             return f"✅ Модель для **{provider}** змінено на `{model}` і збережено."
         else:
             return f"❌ Не вдалося змінити. Доступні моделі для {provider}:\n" + "\n".join([f"- `{m}`" for m in models])
+
+    async def _cmd_auto_restart(self, args: str) -> str:
+        """Toggle or show AUTO_RESTART_NGROK: /auto_restart on|off|status"""
+        if not self._is_requesting_user_authorized():
+            return "❌ Ви не авторизовані для зміни налаштувань автоматичного перезапуску."
+
+        action = args.strip().lower()
+        if action in ("on", "true", "1"):
+            self.auto_restart_ngrok = True
+            try:
+                with open(self.state_file_path, 'w') as sf:
+                    json.dump({'auto_deploy_on_up': self.auto_deploy_on_up, 'auto_restart_ngrok': True}, sf)
+            except Exception:
+                logger.debug('Failed to persist bot state')
+            return "✅ Автоматичний перезапуск ngrok увімкнено"
+        elif action in ("off", "false", "0"):
+            self.auto_restart_ngrok = False
+            try:
+                with open(self.state_file_path, 'w') as sf:
+                    json.dump({'auto_deploy_on_up': self.auto_deploy_on_up, 'auto_restart_ngrok': False}, sf)
+            except Exception:
+                logger.debug('Failed to persist bot state')
+            return "✅ Автоматичний перезапуск ngrok вимкнено"
+        elif action == "status" or action == "":
+            return f"🔁 AUTO_RESTART_NGROK={'true' if self.auto_restart_ngrok else 'false'}"
+        else:
+            return "❌ Невірна опція. Використовуйте `/auto_restart on|off|status`"
 
     # ==================== PREDATOR CLI EMULATOR ====================
 

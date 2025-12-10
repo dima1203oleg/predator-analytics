@@ -1,0 +1,181 @@
+/**
+ * Cypress Configuration for Predator Analytics E2E Testing
+ * 
+ * Supports both remote server and local Mac development environments
+ */
+const { defineConfig } = require('cypress');
+const fs = require('fs');
+const path = require('path');
+
+module.exports = defineConfig({
+    e2e: {
+        baseUrl: process.env.CYPRESS_BASE_URL || 'http://localhost:8082',
+        supportFile: 'cypress/support/e2e.ts',
+        specPattern: 'cypress/integration/**/*.cy.ts',
+        fixturesFolder: 'cypress/fixtures',
+        screenshotsFolder: 'cypress/reports/screenshots',
+        videosFolder: 'cypress/reports/videos',
+
+        // Timeouts
+        defaultCommandTimeout: 30000,
+        pageLoadTimeout: 60000,
+        requestTimeout: 30000,
+        responseTimeout: 60000,
+
+        // Video/Screenshot settings
+        video: true,
+        screenshotOnRunFailure: true,
+
+        // Viewport
+        viewportWidth: 1920,
+        viewportHeight: 1080,
+
+        // Retry configuration
+        retries: {
+            runMode: 2,
+            openMode: 0
+        },
+
+        // Environment variables
+        env: {
+            // Test file path
+            TEST_XLSX_PATH: '../../../sample_data/Березень_2024.xlsx',
+
+            // Model endpoints
+            GROQ_ENABLED: true,
+            DEEPSEEK_ENABLED: true,
+            GEMINI_ENABLED: true,
+            KARPATHY_ENABLED: process.env.KARPATHY_ENABLED === 'true',
+
+            // Environment detection
+            IS_LOCAL: process.env.IS_LOCAL === 'true',
+            IS_REMOTE_SERVER: process.env.IS_REMOTE_SERVER === 'true',
+
+            // API endpoints
+            API_BASE_URL: process.env.API_BASE_URL || '/api/v1',
+
+            // OpenSearch Dashboard
+            OPENSEARCH_DASHBOARD_URL: process.env.OPENSEARCH_DASHBOARD_URL || 'http://localhost:5601'
+        },
+
+        setupNodeEvents(on, config) {
+            // Task for generating test data
+            on('task', {
+                generateTestXlsx({ rowCount, outputPath }) {
+                    const xlsx = require('xlsx');
+
+                    // Generate customs declarations data
+                    const data = generateCustomsData(rowCount);
+
+                    const wb = xlsx.utils.book_new();
+                    const ws = xlsx.utils.json_to_sheet(data);
+                    xlsx.utils.book_append_sheet(wb, ws, 'Митні декларації');
+
+                    const fullPath = path.resolve(outputPath);
+                    xlsx.writeFile(wb, fullPath);
+
+                    return { success: true, path: fullPath, rowCount: data.length };
+                },
+
+                // Task for reading report files
+                readReportFile(filePath) {
+                    try {
+                        return fs.readFileSync(filePath, 'utf-8');
+                    } catch (e) {
+                        return null;
+                    }
+                },
+
+                // Task for checking file existence
+                fileExists(filePath) {
+                    return fs.existsSync(filePath);
+                },
+
+                // Task for logging to console (for debugging)
+                log(message) {
+                    console.log(message);
+                    return null;
+                },
+
+                // Task for cleaning up test artifacts
+                cleanupTestArtifacts(dir) {
+                    const targetDir = path.resolve(dir);
+                    if (fs.existsSync(targetDir)) {
+                        fs.rmSync(targetDir, { recursive: true, force: true });
+                        fs.mkdirSync(targetDir, { recursive: true });
+                    }
+                    return { cleaned: true };
+                }
+            });
+
+            // Detect environment
+            if (process.env.CYPRESS_BASE_URL && process.env.CYPRESS_BASE_URL.includes('ngrok')) {
+                config.env.IS_REMOTE_SERVER = true;
+                config.env.IS_LOCAL = false;
+            }
+
+            return config;
+        }
+    },
+
+    component: {
+        devServer: {
+            framework: 'react',
+            bundler: 'vite'
+        }
+    }
+});
+
+/**
+ * Generate realistic customs declaration data
+ */
+function generateCustomsData(rowCount) {
+    const countries = ['CN', 'DE', 'US', 'PL', 'TR', 'IT', 'FR', 'CZ', 'IN', 'KR'];
+    const customsOffices = [
+        'Київська митниця', 'Одеська митниця', 'Львівська митниця',
+        'Харківська митниця', 'Дніпровська митниця'
+    ];
+    const hsCodes = [
+        '8471.30', '8542.31', '6110.20', '8703.23', '3004.10',
+        '8517.12', '4202.21', '9401.30', '8528.51', '2204.21'
+    ];
+    const descriptions = [
+        'Комп\'ютерне обладнання портативне',
+        'Мікросхеми інтегральні цифрові',
+        'Одяг трикотажний бавовняний',
+        'Автомобілі легкові бензинові',
+        'Лікарські засоби дозовані',
+        'Телефони мобільні смартфони',
+        'Сумки шкіряні жіночі',
+        'Меблі для сидіння офісні',
+        'Монітори LED дисплеї',
+        'Вино виноградне натуральне'
+    ];
+
+    const data = [];
+
+    for (let i = 0; i < rowCount; i++) {
+        const decDate = new Date(2024, 2, Math.floor(Math.random() * 28) + 1);
+        const country = countries[Math.floor(Math.random() * countries.length)];
+        const hsCode = hsCodes[Math.floor(Math.random() * hsCodes.length)];
+        const description = descriptions[Math.floor(Math.random() * descriptions.length)];
+        const customsOffice = customsOffices[Math.floor(Math.random() * customsOffices.length)];
+        const weight = Math.floor(Math.random() * 10000) + 100;
+        const value = Math.floor(Math.random() * 500000) + 1000;
+
+        data.push({
+            'Номер декларації': `UA${String(i + 1).padStart(6, '0')}/24`,
+            'Дата': decDate.toLocaleDateString('uk-UA'),
+            'Код товару (HS)': hsCode,
+            'Опис товару': description,
+            'Країна походження': country,
+            'Митна вартість (USD)': value,
+            'Вага (кг)': weight,
+            'Митниця оформлення': customsOffice,
+            'Отримувач (ЄДРПОУ)': String(Math.floor(Math.random() * 90000000) + 10000000),
+            'Статус': Math.random() > 0.1 ? 'Оформлено' : 'В обробці'
+        });
+    }
+
+    return data;
+}

@@ -8,6 +8,7 @@ import { AgentProvider } from './context/AgentContext';
 import { SuperIntelligenceProvider } from './context/SuperIntelligenceContext';
 import { ToastProvider } from './context/ToastContext';
 import { GlobalProvider } from './context/GlobalContext';
+import { OfflineIndicator } from './components/OfflineIndicator';
 
 // Lazy load views for better initial load performance
 const DashboardView = lazy(() => import('./views/DashboardView'));
@@ -32,6 +33,7 @@ const OpponentView = lazy(() => import('./views/OpponentView'));
 const SearchConsole = lazy(() => import('./views/SearchConsole'));
 const DatasetStudio = lazy(() => import('./views/DatasetStudio'));
 const AutoOptimizerView = lazy(() => import('./views/AutoOptimizerView'));
+const OpenSearchDashboard = lazy(() => import('./views/OpenSearchDashboard'));
 const TestingView = lazy(() => import('./views/TestingView'));
 
 
@@ -81,6 +83,7 @@ function App() {
       case TabView.SEARCH: return <SearchConsole />;
       case TabView.DATASET_STUDIO: return <DatasetStudio />;
       case TabView.AUTO_OPTIMIZER: return <AutoOptimizerView />;
+      case TabView.OPENSEARCH_DASHBOARD: return <OpenSearchDashboard />;
       case TabView.DATA: return <DatabasesView />;
       case TabView.AGENTS: return <AgentsView />;
       case TabView.SECURITY: return <SecurityView />;
@@ -129,6 +132,7 @@ function App() {
           </SuperIntelligenceProvider>
         </AgentProvider>
       </GlobalProvider>
+      <OfflineIndicator />
     </ToastProvider>
   );
 }

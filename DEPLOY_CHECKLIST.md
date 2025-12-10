@@ -7,6 +7,7 @@
 - [ ] Запустити кластер: `./scripts/bootstrap_mac_minikube.sh`
 - [ ] Зберегти пароль ArgoCD та kubeconfig
 - [ ] Перевірити кластер: `kubectl get nodes` та `kubectl get pods -n argocd`
+ - [ ] Зібрати діагностику кластера для детальної діагностики: `kubectl cluster-info dump --all-namespaces --output-directory=/tmp/k8s-dump` та стискати результат `tar -czf /tmp/k8s-dump.tar.gz -C /tmp k8s-dump` (зверніть увагу: dump може містити секрети; рекомендується використовувати `--exclude-secrets` у скрипті або очищати файл перед передачею)
 - [ ] Застосувати Application: `kubectl apply -f argocd/predator-macbook.yaml -n argocd`
 - [ ] Перевірити Application: `kubectl get applications.argoproj.io -n argocd`
 - [ ] Перевірити nginx: `kubectl get pods -n predator-dev` та `kubectl get svc -n predator-dev`
@@ -32,6 +33,11 @@
     - Перевірити, що раннер з'явився в Settings -> Actions -> Runners.
 - [ ] Застосувати Application: `kubectl apply -f argocd/predator-nvidia.yaml -n argocd`
 - [ ] Додати секрети в GitHub: `ARGOCD_NVIDIA_URL` та `ARGOCD_NVIDIA_TOKEN`
+- [ ] Додати секрети в GitHub: `ARGOCD_NVIDIA_URL` та `ARGOCD_NVIDIA_TOKEN`
+- [ ] (Опційно) Для автоматизації при піднятті тунелю встановіть: `AUTO_DEPLOY_ON_UP=true` і `AUTO_RESTART_NGROK=true` в `.env` або середовищі CI
+- [ ] Запустити `./scripts/check_argocd_usage.sh` та перевірити чи ArgoCD доступний та налаштований (опційно для автоматизації)
+ - [ ] Якщо ArgoCD має self-signed certs — налаштуйте `ARGOCD_INSECURE=true` в середовищі CI/локально (обережно!)
+ - [ ] При проблемах з ngrok тунелем: запустіть `./scripts/check_ngrok_service.sh` (за замовчуванням `dev-ngrok`) щоб перевірити присутність `ngrok-ssh.service` та логи
 
 ## Oracle (Canary) - VM у хмарі
 

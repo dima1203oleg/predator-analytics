@@ -23,6 +23,7 @@ from app.api.v1 import testing as testing_router
 from app.api.v1 import integrations as integrations_v1_router
 from app.api.v1 import nexus as nexus_router
 from app.api.v1 import federation as federation_router
+from app.api.routers import argocd_webhook as argocd_webhook_router
 from app.services.search_fusion import hybrid_search_with_rrf
 from app.services.auto_optimizer import get_auto_optimizer
 
@@ -489,6 +490,9 @@ app.include_router(v22_routes.v22_router, prefix="/api")
 # Alertmanager Webhook Handler
 from app.api import webhook_routes
 app.include_router(webhook_routes.webhook_router, prefix="/api")
+
+# ArgoCD webhook handler (receives ArgoCD webhooks and notifies / triggers rollback)
+app.include_router(argocd_webhook_router.router, prefix="/api")
 
 
 # ============================================================================

@@ -43,7 +43,7 @@ const MOCK_NODES = [
 const IntelligenceTicker = () => (
     <div className="w-full bg-slate-900/90 border-y border-slate-800 h-8 overflow-hidden flex items-center relative select-none backdrop-blur-sm mb-6 panel-3d">
         <div className="flex items-center gap-2 px-3 shrink-0 bg-slate-950 h-full border-r border-slate-800 z-20 text-red-500 font-bold text-[10px] uppercase tracking-wider shadow-xl">
-            <Radio size={12} className="animate-pulse" /> Live Intercept
+            <Radio size={12} className="animate-pulse" /> Перехоплення
         </div>
         <div className="flex items-center gap-12 animate-marquee whitespace-nowrap pl-4">
             <span className="text-slate-400 text-xs font-mono"><span className="text-blue-500">::</span> ДМСУ: Зафіксовано аномальний імпорт електроніки (Одеса)</span>
@@ -316,7 +316,7 @@ const AnalyticsView: React.FC = () => {
 
                     <div className="bg-black/80 border border-slate-800 rounded-xl p-4 font-mono text-xs text-green-400 overflow-hidden h-[300px] md:h-[400px] shadow-inner custom-scrollbar relative flex flex-col">
                         <div className="absolute top-0 left-0 right-0 p-2 bg-slate-900/90 border-b border-slate-800 flex justify-between items-center z-10">
-                            <span className="text-[10px] text-slate-500 uppercase font-bold">System Log Output</span>
+                            <span className="text-[10px] text-slate-500 uppercase font-bold">Системний Журнал</span>
                             <div className="flex gap-1">
                                 <div className="w-2 h-2 rounded-full bg-red-500"></div>
                                 <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
@@ -346,12 +346,12 @@ const AnalyticsView: React.FC = () => {
                             <div className="flex items-center justify-between">
                                 <h3 className="text-xl font-bold text-white flex items-center gap-2 font-display">
                                     <Database size={20} className="text-blue-500" />
-                                    FOUND EVIDENCE
+                                    ЗНАЙДЕНО ДОКАЗИ
                                     <span className="text-sm text-slate-500 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 ml-2">
-                                        {semanticResults.length} MATCHES
+                                        {semanticResults.length} ЗБІГІВ
                                     </span>
                                 </h3>
-                                <div className="text-xs text-slate-500">Hybrid Search (Vector + Keyword)</div>
+                                <div className="text-xs text-slate-500">Гібридний Пошук (Вектор + Ключові Слова)</div>
                             </div>
 
                             <div className="grid grid-cols-1 gap-4 max-h-[600px] overflow-y-auto custom-scrollbar p-1">
@@ -411,12 +411,12 @@ const AnalyticsView: React.FC = () => {
                                         <div className="flex justify-between items-start mb-4">
                                             <div>
                                                 <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1 flex items-center gap-2">
-                                                    <Target size={12} className="text-purple-500" /> Ціль Аналізу
+                                                    <Target size={12} className="text-purple-500" /> Ціль Розслідування
                                                 </div>
                                                 <h2 className="text-2xl font-bold text-white leading-none font-display tracking-wide">{scanResult.entity.name}</h2>
                                             </div>
                                             <div className="px-3 py-1 bg-red-900/20 border border-red-500/50 rounded text-red-500 text-xs font-bold animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.3)]">
-                                                HIGH RISK
+                                                ВИСОКИЙ РИЗИК
                                             </div>
                                         </div>
                                         <div className="space-y-2 mt-4">
@@ -491,7 +491,7 @@ const AnalyticsView: React.FC = () => {
 
                     {/* 2. MIDDLE ROW: VISUALIZATION */}
                     <TacticalCard
-                        title="Forensic Visualization"
+                        title="Форензік Візуалізація"
                         className="min-h-[500px] panel-3d p-0 overflow-hidden relative"
                         noPadding
                         action={

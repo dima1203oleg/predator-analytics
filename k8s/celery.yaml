@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-worker
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: celery-worker
+    app.kubernetes.io/component: worker
+    app.kubernetes.io/part-of: predator-analytics
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: celery-worker
+  template:
+    metadata:
+      labels:
+        app: celery-worker
+        app.kubernetes.io/name: celery-worker
+    spec:
+      containers:
+        - name: celery-worker
+          image: predator/ua-sources:latest
+          imagePullPolicy: Always
+          command:
+            - celery
+            - -A
+            - app.core.celery_app
+            - worker
+            - --loglevel=info
+            - -Q
+            - etl,ingestion,maintenance,monitoring
+            - --concurrency=4
+          envFrom:
+            - configMapRef:
+                name: predator-backend-config
+            - secretRef:
+                name: predator-db-credentials
+            - secretRef:
+                name: predator-api-keys
+          env:
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: predator-redis-credentials
+                  key: REDIS_URL
+            - name: OPENSEARCH_URL
+              value: "http://opensearch:9200"
+            - name: QDRANT_URL
+              value: "http://qdrant:6333"
+            - name: MINIO_ENDPOINT
+              value: "minio:9000"
+            - name: C_FORCE_ROOT
+              value: "true"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1500m"
+          livenessProbe:
+            exec:
+              command:
+                - celery
+                - -A
+                - app.core.celery_app
+                - inspect
+                - ping
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-beat
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: celery-beat
+    app.kubernetes.io/component: scheduler
+    app.kubernetes.io/part-of: predator-analytics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-beat
+  template:
+    metadata:
+      labels:
+        app: celery-beat
+        app.kubernetes.io/name: celery-beat
+    spec:
+      containers:
+        - name: celery-beat
+          image: predator/ua-sources:latest
+          imagePullPolicy: Always
+          command:
+            - celery
+            - -A
+            - app.core.celery_app
+            - beat
+            - --loglevel=info
+          envFrom:
+            - configMapRef:
+                name: predator-backend-config
+            - secretRef:
+                name: predator-db-credentials
+          env:
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: predator-redis-credentials
+                  key: REDIS_URL
+            - name: C_FORCE_ROOT
+              value: "true"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: celery-worker-hpa
+  namespace: predator-analytics
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: celery-worker
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 75

@@ -1,5 +1,15 @@
 {
   "recommendations": [
-    "GitHub.copilot"
-  ]
+    "ms-kubernetes-tools.vscode-kubernetes-tools",
+    "ms-azuretools.vscode-docker",
+    "redhat.vscode-yaml",
+    "tim-koehler.helm-intellisense",
+    "googlecloudtools.cloudcode",
+    "mindaro.mindaro",
+    "streetsidesoftware.code-spell-checker",
+    "eamodio.gitlens",
+    "ms-python.python",
+    "ms-python.vscode-pylance"
+  ],
+  "unwantedRecommendations": []
 }

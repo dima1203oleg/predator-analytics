@@ -1,0 +1,47 @@
+---
+# Kustomization file for Predator Analytics K8s deployment
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: predator-analytics
+
+namespace: predator-analytics
+
+resources:
+  - namespace.yaml
+  - secrets.yaml
+  - configmaps.yaml
+  - storage.yaml
+  - postgres.yaml
+  - redis.yaml
+  - opensearch.yaml
+  - qdrant.yaml
+  - minio.yaml
+  - keycloak.yaml
+  - backend.yaml
+  - celery.yaml
+  - frontend.yaml
+  - monitoring.yaml
+  - ml-services.yaml
+  - jobs.yaml
+  - ingress.yaml
+
+commonLabels:
+  app.kubernetes.io/managed-by: kustomize
+  app.kubernetes.io/part-of: predator-analytics
+
+commonAnnotations:
+  meta.helm.sh/release-name: predator
+  meta.helm.sh/release-namespace: predator-analytics
+
+# Image transformations
+images:
+  - name: predator/ua-sources
+    newName: your-registry/predator-backend
+    newTag: latest
+  - name: predator/frontend
+    newName: your-registry/predator-frontend
+    newTag: latest
+# Resource patches for different environments
+# Use with: kubectl apply -k overlays/production

@@ -7,7 +7,7 @@ import { Shield, FileText, Lock, Eye, Key, Globe, Search, AlertOctagon, Fingerpr
 import { api } from '../services/api';
 
 const LiveThreatMap = () => {
-    const [attacks, setAttacks] = useState<{id: number, x: number, y: number, type: string}[]>([]);
+    const [attacks, setAttacks] = useState<{ id: number, x: number, y: number, type: string }[]>([]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -27,21 +27,21 @@ const LiveThreatMap = () => {
             {/* Grid & Radar Effect */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(30,41,59,0.3)_0%,transparent_70%)]"></div>
             <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.05)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-            
+
             {/* Radar Scan Line */}
             <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-gradient-to-r from-transparent via-green-500/10 to-transparent -translate-x-1/2 -translate-y-1/2 animate-[spin_4s_linear_infinite] rounded-full pointer-events-none origin-center mask-image-radial"></div>
 
             {/* World Map SVG Placeholder (Abstract) */}
             <svg viewBox="0 0 1000 500" className="w-full h-full opacity-20 fill-slate-700 stroke-slate-600 pointer-events-none drop-shadow-lg">
-                 <path d="M150,150 Q250,50 350,150 T550,150 T750,150 T950,150" fill="none" strokeWidth="2" />
-                 <rect x="100" y="100" width="200" height="150" rx="10" /> {/* NA */}
-                 <rect x="400" y="80" width="200" height="200" rx="10" /> {/* EU/AF */}
-                 <rect x="700" y="100" width="250" height="200" rx="10" /> {/* ASIA */}
+                <path d="M150,150 Q250,50 350,150 T550,150 T750,150 T950,150" fill="none" strokeWidth="2" />
+                <rect x="100" y="100" width="200" height="150" rx="10" /> {/* NA */}
+                <rect x="400" y="80" width="200" height="200" rx="10" /> {/* EU/AF */}
+                <rect x="700" y="100" width="250" height="200" rx="10" /> {/* ASIA */}
             </svg>
 
             {/* Active Attacks */}
             {attacks.map(att => (
-                <div 
+                <div
                     key={att.id}
                     className="absolute flex flex-col items-center"
                     style={{ left: `${att.x}%`, top: `${att.y}%` }}
@@ -50,10 +50,10 @@ const LiveThreatMap = () => {
                     <div className={`w-2 h-2 rounded-full relative z-10 ${att.type === 'DDoS' ? 'bg-red-500' : 'bg-yellow-500'}`}></div>
                     {/* Line to Center (Kyiv) */}
                     <svg className="absolute top-1 left-1 w-[500px] h-[500px] overflow-visible pointer-events-none" style={{ transform: 'translate(-50%, -50%)' }}>
-                         <line x1="0" y1="0" x2={500 - (att.x * 10)} y2={250 - (att.y * 5)} stroke={att.type === 'DDoS' ? 'rgba(239,68,68,0.3)' : 'rgba(234,179,8,0.3)'} strokeWidth="1" />
+                        <line x1="0" y1="0" x2={500 - (att.x * 10)} y2={250 - (att.y * 5)} stroke={att.type === 'DDoS' ? 'rgba(239,68,68,0.3)' : 'rgba(234,179,8,0.3)'} strokeWidth="1" />
                     </svg>
                     <div className="mt-2 px-2 py-0.5 bg-black/80 border border-slate-700 rounded text-[8px] text-white whitespace-nowrap shadow-lg backdrop-blur-sm">
-                        {att.type} DETECTED
+                        {att.type} ВИЯВЛЕНО
                     </div>
                 </div>
             ))}
@@ -61,24 +61,24 @@ const LiveThreatMap = () => {
             {/* Center Hub (Kyiv) */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
                 <div className="w-4 h-4 bg-blue-500 rounded-full animate-pulse shadow-[0_0_20px_#3b82f6]"></div>
-                <div className="w-24 h-24 border border-blue-500/30 rounded-full absolute animate-ping" style={{animationDuration: '2s'}}></div>
+                <div className="w-24 h-24 border border-blue-500/30 rounded-full absolute animate-ping" style={{ animationDuration: '2s' }}></div>
                 <div className="mt-4 px-2 py-1 bg-blue-900/80 border border-blue-500/50 rounded text-[9px] font-bold text-blue-100 shadow-lg btn-3d">
-                    HQ: KYIV (SECURE)
+                    ЦЕНТР: КИЇВ (ЗАХИСТ)
                 </div>
             </div>
 
             {/* Legend */}
             <div className="absolute bottom-4 left-4 p-3 bg-slate-950/90 border border-slate-800 rounded-lg backdrop-blur-sm panel-3d">
-                <div className="text-[10px] font-bold text-slate-400 mb-2 uppercase">Active Threats</div>
+                <div className="text-[10px] font-bold text-slate-400 mb-2 uppercase">Активні Загрози</div>
                 <div className="space-y-1">
                     <div className="flex items-center gap-2 text-[9px] text-slate-300">
-                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div> DDoS Volumetric
+                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div> DDoS Волюметричний
                     </div>
                     <div className="flex items-center gap-2 text-[9px] text-slate-300">
-                        <div className="w-2 h-2 rounded-full bg-yellow-500"></div> Scanner Probe
+                        <div className="w-2 h-2 rounded-full bg-yellow-500"></div> Сканер-Зонд
                     </div>
                     <div className="flex items-center gap-2 text-[9px] text-slate-300">
-                        <div className="w-2 h-2 rounded-full bg-blue-500"></div> Authorized Traffic
+                        <div className="w-2 h-2 rounded-full bg-blue-500"></div> Авторизований Трафік
                     </div>
                 </div>
             </div>
@@ -113,7 +113,7 @@ const SecurityView: React.FC = () => {
             const newLog = {
                 id: Date.now(),
                 time: new Date().toLocaleTimeString(),
-                ip: `185.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.11`,
+                ip: `185.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.11`,
                 type: Math.random() > 0.5 ? 'SQL Injection' : 'Scanner Probe',
                 target: '/api/v1/auth',
                 action: 'BLOCKED'
@@ -129,14 +129,14 @@ const SecurityView: React.FC = () => {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500 pb-safe w-full max-w-[1600px] mx-auto">
-            <ViewHeader 
+            <ViewHeader
                 title="Центр Кіберзахисту (Cyber Defense)"
                 icon={<Shield size={20} className="icon-3d-green" />}
-                breadcrumbs={['SYSTEM', 'SECURITY', 'ACTIVE DEFENSE']}
+                breadcrumbs={['СИСТЕМА', 'БЕЗПЕКА', 'АКТИВНИЙ ЗАХИСТ']}
                 stats={[
-                    { label: 'Threat Level', value: 'LOW', icon: <Activity size={14} className="icon-3d-green"/>, color: 'success' },
-                    { label: 'Zero Trust', value: 'ENFORCED', icon: <ShieldAlert size={14} className="icon-3d-blue"/>, color: 'primary' },
-                    { label: 'WAF Events', value: '14/h', icon: <Ban size={14} className="icon-3d-red"/>, color: 'warning', animate: true },
+                    { label: 'Рівень Загрози', value: 'НИЗЬКИЙ', icon: <Activity size={14} className="icon-3d-green" />, color: 'success' },
+                    { label: 'Zero Trust', value: 'АКТИВНИЙ', icon: <ShieldAlert size={14} className="icon-3d-blue" />, color: 'primary' },
+                    { label: 'WAF Події', value: '14/год', icon: <Ban size={14} className="icon-3d-red" />, color: 'warning', animate: true },
                 ]}
             />
 
@@ -150,61 +150,61 @@ const SecurityView: React.FC = () => {
 
                 {/* Security Stack Status */}
                 <TacticalCard title="Статус Периметру" className="bg-gradient-to-b from-slate-900 to-slate-950 panel-3d">
-                     <div className="space-y-4">
-                         <div className="p-3 bg-slate-950 border border-slate-800 rounded flex items-center justify-between btn-3d cursor-default">
-                             <div className="flex items-center gap-3">
-                                 <div className="p-2 bg-yellow-900/20 text-yellow-500 rounded icon-3d-amber"><Key size={16}/></div>
-                                 <div>
-                                     <div className="text-xs font-bold text-slate-200">HashiCorp Vault</div>
-                                     <div className="text-[9px] text-slate-500">Secrets Management</div>
-                                 </div>
-                             </div>
-                             <div className="px-2 py-0.5 bg-success-900/20 border border-success-500/30 text-success-500 text-[9px] font-bold rounded">UNSEALED</div>
-                         </div>
+                    <div className="space-y-4">
+                        <div className="p-3 bg-slate-950 border border-slate-800 rounded flex items-center justify-between btn-3d cursor-default">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-yellow-900/20 text-yellow-500 rounded icon-3d-amber"><Key size={16} /></div>
+                                <div>
+                                    <div className="text-xs font-bold text-slate-200">HashiCorp Vault</div>
+                                    <div className="text-[9px] text-slate-500">Secrets Management</div>
+                                </div>
+                            </div>
+                            <div className="px-2 py-0.5 bg-success-900/20 border border-success-500/30 text-success-500 text-[9px] font-bold rounded">UNSEALED</div>
+                        </div>
 
-                         <div className="p-3 bg-slate-950 border border-slate-800 rounded flex items-center justify-between btn-3d cursor-default">
-                             <div className="flex items-center gap-3">
-                                 <div className="p-2 bg-purple-900/20 text-purple-500 rounded icon-3d-purple"><Globe size={16}/></div>
-                                 <div>
-                                     <div className="text-xs font-bold text-slate-200">Keycloak SSO</div>
-                                     <div className="text-[9px] text-slate-500">Identity Provider</div>
-                                 </div>
-                             </div>
-                             <div className="px-2 py-0.5 bg-success-900/20 border border-success-500/30 text-success-500 text-[9px] font-bold rounded">ONLINE</div>
-                         </div>
+                        <div className="p-3 bg-slate-950 border border-slate-800 rounded flex items-center justify-between btn-3d cursor-default">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-purple-900/20 text-purple-500 rounded icon-3d-purple"><Globe size={16} /></div>
+                                <div>
+                                    <div className="text-xs font-bold text-slate-200">Keycloak SSO</div>
+                                    <div className="text-[9px] text-slate-500">Identity Provider</div>
+                                </div>
+                            </div>
+                            <div className="px-2 py-0.5 bg-success-900/20 border border-success-500/30 text-success-500 text-[9px] font-bold rounded">ONLINE</div>
+                        </div>
 
-                         <div className="p-3 bg-slate-950 border border-slate-800 rounded flex items-center justify-between btn-3d cursor-default">
-                             <div className="flex items-center gap-3">
-                                 <div className="p-2 bg-orange-900/20 text-orange-500 rounded icon-3d-amber"><Cpu size={16}/></div>
-                                 <div>
-                                     <div className="text-xs font-bold text-slate-200">Intel SGX</div>
-                                     <div className="text-[9px] text-slate-500">Confidential Computing</div>
-                                 </div>
-                             </div>
-                             <div className="px-2 py-0.5 bg-success-900/20 border border-success-500/30 text-success-500 text-[9px] font-bold rounded">SECURED</div>
-                         </div>
+                        <div className="p-3 bg-slate-950 border border-slate-800 rounded flex items-center justify-between btn-3d cursor-default">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-orange-900/20 text-orange-500 rounded icon-3d-amber"><Cpu size={16} /></div>
+                                <div>
+                                    <div className="text-xs font-bold text-slate-200">Intel SGX</div>
+                                    <div className="text-[9px] text-slate-500">Confidential Computing</div>
+                                </div>
+                            </div>
+                            <div className="px-2 py-0.5 bg-success-900/20 border border-success-500/30 text-success-500 text-[9px] font-bold rounded">SECURED</div>
+                        </div>
 
-                         <div className="p-3 bg-slate-950 border border-slate-800 rounded flex items-center justify-between btn-3d cursor-default">
-                             <div className="flex items-center gap-3">
-                                 <div className="p-2 bg-blue-900/20 text-blue-500 rounded icon-3d-blue"><Network size={16}/></div>
-                                 <div>
-                                     <div className="text-xs font-bold text-slate-200">Cilium eBPF</div>
-                                     <div className="text-[9px] text-slate-500">Network Filtering</div>
-                                 </div>
-                             </div>
-                             <div className="px-2 py-0.5 bg-success-900/20 border border-success-500/30 text-success-500 text-[9px] font-bold rounded">ACTIVE</div>
-                         </div>
-                     </div>
-                     
-                     <div className="mt-4 pt-4 border-t border-slate-800">
-                         <div className="flex justify-between text-[10px] text-slate-500 mb-1">
-                             <span>Compliance Score</span>
-                             <span className="text-white font-bold">98/100</span>
-                         </div>
-                         <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden shadow-inner">
-                             <div className="h-full bg-success-500 w-[98%] shadow-[0_0_10px_lime]"></div>
-                         </div>
-                     </div>
+                        <div className="p-3 bg-slate-950 border border-slate-800 rounded flex items-center justify-between btn-3d cursor-default">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-blue-900/20 text-blue-500 rounded icon-3d-blue"><Network size={16} /></div>
+                                <div>
+                                    <div className="text-xs font-bold text-slate-200">Cilium eBPF</div>
+                                    <div className="text-[9px] text-slate-500">Network Filtering</div>
+                                </div>
+                            </div>
+                            <div className="px-2 py-0.5 bg-success-900/20 border border-success-500/30 text-success-500 text-[9px] font-bold rounded">ACTIVE</div>
+                        </div>
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t border-slate-800">
+                        <div className="flex justify-between text-[10px] text-slate-500 mb-1">
+                            <span>Compliance Score</span>
+                            <span className="text-white font-bold">98/100</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden shadow-inner">
+                            <div className="h-full bg-success-500 w-[98%] shadow-[0_0_10px_lime]"></div>
+                        </div>
+                    </div>
                 </TacticalCard>
             </div>
 
@@ -265,11 +265,10 @@ const SecurityView: React.FC = () => {
                                             )}
                                         </td>
                                         <td className="p-2 text-right">
-                                            <span className={`px-2 py-0.5 rounded ${
-                                                log.status === 'SUCCESS' ? 'text-success-500' :
+                                            <span className={`px-2 py-0.5 rounded ${log.status === 'SUCCESS' ? 'text-success-500' :
                                                 log.status === 'FAILURE' ? 'text-danger-500' :
-                                                'text-yellow-500'
-                                            }`}>
+                                                    'text-yellow-500'
+                                                }`}>
                                                 {log.status}
                                             </span>
                                         </td>

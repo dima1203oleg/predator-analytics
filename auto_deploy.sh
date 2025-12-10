@@ -16,11 +16,22 @@ SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
 REMOTE_USER="dima"
 REMOTE_DIR="predator_v21" # Relative to $HOME in ssh command
 LOCAL_DIR="$(pwd)"
+# ArgoCD environment variables (optional)
+ARGOCD_NVIDIA_URL=${ARGOCD_NVIDIA_URL:-}
+ARGOCD_NVIDIA_TOKEN=${ARGOCD_NVIDIA_TOKEN:-}
+ARGOCD_URL=${ARGOCD_NVIDIA_URL:-${ARGOCD_SERVER:-}}
+ARGOCD_TOKEN=${ARGOCD_NVIDIA_TOKEN:-${ARGOCD_TOKEN:-}}
+# Curl options for ArgoCD API
+if [[ "${ARGOCD_INSECURE:-false}" =~ ^(1|true|yes)$ ]]; then
+  CURL_INSECURE="-k"
+else
+  CURL_INSECURE=""
+fi
 
 # Function to check if server is reachable via SSH
 function server_up() {
   echo "Checking server connectivity ($SERVER_HOST:$SERVER_PORT)..."
-  ssh -q -i $SSH_KEY -p $SERVER_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $REMOTE_USER@$SERVER_HOST exit
+  ssh -q -i $SSH_KEY -p $SERVER_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o BatchMode=yes $REMOTE_USER@$SERVER_HOST exit
   return $?
 }
 
@@ -38,7 +49,14 @@ function sync_to_server() {
 # Function to trigger remote Docker Compose deployment
 function remote_deploy() {
   echo "Triggering remote deployment..."
-  ssh -i $SSH_KEY -p $SERVER_PORT -o StrictHostKeyChecking=no $REMOTE_USER@$SERVER_HOST "cd $REMOTE_DIR && docker-compose up -d --build"
+  # If ArgoCD config provided, call ArgoCD to sync the application instead of docker compose
+  if [[ -n "$ARGOCD_URL" && -n "$ARGOCD_TOKEN" ]]; then
+    echo "Found ArgoCD config. Triggering ArgoCD sync for predator-nvidia..."
+    curl $CURL_INSECURE -sS -X POST "$ARGOCD_URL/api/v1/applications/predator-nvidia/sync" -H "Authorization: Bearer $ARGOCD_TOKEN" -H "Content-Type: application/json" -d '{}' || true
+    return 0
+  fi
+
+  ssh -i $SSH_KEY -p $SERVER_PORT -o StrictHostKeyChecking=no -o BatchMode=yes $REMOTE_USER@$SERVER_HOST "cd $REMOTE_DIR && docker-compose up -d --build"
 }
 
 # Function to run local Docker Compose

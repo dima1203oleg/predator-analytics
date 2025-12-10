@@ -23,6 +23,7 @@ help:
 	@echo "  Database:"
 	@echo "    migrate     - Run PostgreSQL migrations"
 	@echo "    seed        - Seed sample data"
+	@echo "    schema-sql  - Print data layer schema SQL (v2) for psql apply"
 	@echo ""
 	@echo "  Testing:"
 	@echo "    test        - Run all tests"
@@ -110,6 +111,14 @@ seed:
 	@echo "Seeding sample data..."
 	docker exec -i predator_backend python -c "from app.scripts.seed_data import seed; seed()"
 
+schema-sql:
+	@echo "Generating data layer schema SQL..."
+	@cd ua-sources && python3 - <<'PYCODE'
+from app.core import data_layer_schema as d
+print(d.CREATE_SCHEMAS)
+print(d.CREATE_CORE_TABLES)
+PYCODE
+
 # ============================================================================
 # Testing
 # ============================================================================
@@ -192,4 +201,3 @@ docker-push:
 argocd-sync:
 	argocd app sync $(APP_NAME)-compute || true
 	argocd app sync $(APP_NAME)-edge || true
-

@@ -87,3 +87,4 @@ mlflow>=2.10.0             # Experiment Tracking
 # Testing
 pytest>=8.0.0
 pytest-asyncio>=0.23.0
+reportlab>=4.0.0

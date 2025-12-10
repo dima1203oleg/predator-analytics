@@ -3,7 +3,7 @@
   "version": "18.6.2",
   "private": true,
   "type": "module",
-  "scripts": {
+  "scripts": { "cypress:open": "cypress open", "cypress:run": "cypress run",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -21,7 +21,7 @@
     "three": "^0.160.0",
     "@react-three/fiber": "^8.15.12",
     "@react-three/drei": "^9.96.1",
-    "@google/genai": "^0.1.1"
+    "@google/genai": "^0.1.1", "framer-motion": "^10.16.4"
   },
   "devDependencies": {
     "@types/three": "^0.160.0",

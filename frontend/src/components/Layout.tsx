@@ -79,6 +79,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange, onLoc
     {
       title: 'ЯДРО ДАНИХ',
       items: [
+        { id: TabView.OPENSEARCH_DASHBOARD, label: 'OpenSearch', icon: <Search size={18} className="text-orange-400" /> },
         { id: TabView.INTEGRATION, label: 'Хаб Даних', icon: <Database size={18} /> },
         { id: TabView.DATA, label: 'Сховище (Grid)', icon: <HardDrive size={18} /> },
         { id: TabView.ETL, label: 'ETL Пайплайни', icon: <Workflow size={18} /> },

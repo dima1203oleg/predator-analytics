@@ -96,6 +96,7 @@ export enum TabView {
     SEARCH = 'search',          // NEW: Semantic Search Console
     DATASET_STUDIO = 'dataset_studio', // NEW: Dataset Generation
     AUTO_OPTIMIZER = 'auto_optimizer', // NEW: Self-Improvement Loop
+    OPENSEARCH_DASHBOARD = 'opensearch_dashboard', // NEW: OpenSearch Dashboard
     INTEGRATION = 'integration', // API Keys & Sources
     DATA = 'data',        // Storage
     ETL = 'etl',          // Parsing

@@ -99,7 +99,36 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./infra/postgres/init_v21.sql:/docker-entrypoint-initdb.d/init_v21.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U predator -d predator_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: unless-stopped
+
+  db-migrate:
+    image: postgres:15-alpine
+    container_name: predator_db_migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_USER: predator
+      POSTGRES_PASSWORD: predator_password
+    volumes:
+      - ./infra/postgres/migrations:/migrations:ro
+    entrypoint: >
+      sh -c "for i in $(seq 1 10); do
+                pg_isready -h postgres -U $POSTGRES_USER -d predator_db && break;
+                echo 'Waiting for Postgres...';
+                sleep 3;
+             done;
+             for f in /migrations/*.sql; do
+                echo \"Applying migration: $f\";
+                PGPASSWORD=$POSTGRES_PASSWORD psql -h postgres -U $POSTGRES_USER -d predator_db -f $f || exit 1;
+             done;
+             echo 'Migrations applied successfully.'"
+    restart: "no"
 
   redis:
     image: redis:7-alpine
@@ -234,19 +263,17 @@ services:
       - grafana_data:/var/lib/grafana
       - ./infra/grafana/provisioning:/etc/grafana/provisioning
       - ./infra/grafana/dashboards:/var/lib/grafana/dashboards
-    depends_on:
-      - prometheus
     restart: unless-stopped
 
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: predator_prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-    restart: unless-stopped
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: predator_prometheus
+  #   ports:
+  #     - "9092:9090"
+  #   volumes:
+  #     - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  #     - prometheus_data:/prometheus
+  #   restart: unless-stopped
 
 volumes:
   postgres_data:
