@@ -2,16 +2,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ViewHeader } from '../components/ViewHeader';
 import Modal from '../components/Modal';
-import { 
-  BarChart2, Search, Bell, Activity, ShieldCheck, 
-  Bot, Settings, Eye, EyeOff, Globe, ArrowUpRight, Mic, 
-  RefreshCw, Sliders, ChevronDown, Maximize2, MoreHorizontal, Newspaper,
-  Server, CheckCircle2, AlertTriangle, Clock, Calendar, Zap, Wifi,
-  Cloud, Coffee
+import {
+    BarChart2, Search, Bell, Activity, ShieldCheck,
+    Bot, Settings, Eye, EyeOff, Globe, ArrowUpRight, Mic,
+    RefreshCw, Sliders, ChevronDown, Maximize2, MoreHorizontal, Newspaper,
+    Server, CheckCircle2, AlertTriangle, Clock, Calendar, Zap, Wifi,
+    Cloud, Coffee
 } from 'lucide-react';
 import { TacticalCard } from '../components/TacticalCard';
-import { 
-  BarChart, Bar, Cell, PieChart, Pie, Tooltip, Legend, ResponsiveContainer, CartesianGrid, XAxis, YAxis, AreaChart, Area
+import {
+    BarChart, Bar, Cell, PieChart, Pie, Tooltip, Legend, ResponsiveContainer, CartesianGrid, XAxis, YAxis, AreaChart, Area
 } from 'recharts';
 
 import { UserDashboard } from '../components/user/UserDashboard';
@@ -27,15 +27,15 @@ const UserView: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'GAZETTE' | 'EXPLORER' | 'ASSISTANT' | 'SYSTEM'>('DASHBOARD');
     const [privacyMode, setPrivacyMode] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    
+
     // Data State (Truth-Only)
     const [systemLogs, setSystemLogs] = useState<any[]>([]);
     const [logHistogram, setLogHistogram] = useState<any[]>([]);
-    
+
     // Assistant State
     const [isThinking, setIsThinking] = useState(false);
     const [chatInput, setChatInput] = useState('');
-    const [chatHistory, setChatHistory] = useState<{role: 'user' | 'ai', text: string}[]>([
+    const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'ai', text: string }[]>([
         { role: 'ai', text: 'Вітаю, Дмитро! Я ваш персональний аналітик Predator. За останні 24 години я проаналізував 12 400 нових записів. Ризики стабільні. Чим можу допомогти?' }
     ]);
     const chatEndRef = useRef<HTMLDivElement>(null);
@@ -46,7 +46,7 @@ const UserView: React.FC = () => {
 
     useEffect(() => {
         isMounted.current = true;
-        
+
         const fetchData = async () => {
             if (activeTab === 'EXPLORER') {
                 try {
@@ -60,11 +60,11 @@ const UserView: React.FC = () => {
                             source: 'predator-core',
                             message: `${l.action} by ${l.user}`
                         })));
-                        
+
                         // Generate histogram from real data length (simulated distribution for viz)
                         setLogHistogram([
-                            { time: '14:00', count: logs.length * 2 }, 
-                            { time: '14:05', count: logs.length * 5 }, 
+                            { time: '14:00', count: logs.length * 2 },
+                            { time: '14:05', count: logs.length * 5 },
                             { time: '14:10', count: logs.length * 3 }
                         ]);
                     }
@@ -73,7 +73,7 @@ const UserView: React.FC = () => {
                 }
             }
         };
-        
+
         fetchData();
         return () => { isMounted.current = false; };
     }, [activeTab]);
@@ -85,13 +85,13 @@ const UserView: React.FC = () => {
     const handleSendMessage = (text?: string) => {
         const msg = text || chatInput;
         if (!msg.trim()) return;
-        
+
         if (activeTab !== 'ASSISTANT') setActiveTab('ASSISTANT');
 
         setChatHistory(prev => [...prev, { role: 'user', text: msg }]);
         setChatInput('');
         setIsThinking(true);
-        
+
         // In a real scenario, this would call api.askOpponent or similar
         setTimeout(() => {
             setIsThinking(false);
@@ -100,7 +100,7 @@ const UserView: React.FC = () => {
     };
 
     const getBgGradient = () => {
-        switch(activeTab) {
+        switch (activeTab) {
             case 'GAZETTE': return 'from-amber-900/20 via-slate-950 to-slate-950';
             case 'ASSISTANT': return 'from-purple-900/20 via-slate-950 to-slate-950';
             case 'SYSTEM': return 'from-green-900/20 via-slate-950 to-slate-950';
@@ -114,12 +114,11 @@ const UserView: React.FC = () => {
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-slate-950/30 rounded-md border border-slate-800/50 mb-4 backdrop-blur-sm">
                     {chatHistory.map((msg, i) => (
                         <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2`}>
-                            <div className={`max-w-[80%] p-4 rounded-xl text-sm leading-relaxed shadow-lg ${
-                                msg.role === 'user' 
-                                ? 'bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-br-none border border-blue-500/30' 
-                                : 'bg-slate-800 border border-slate-700 text-slate-200 rounded-bl-none'
-                            }`}>
-                                {msg.role === 'ai' && <div className="flex items-center gap-2 text-[10px] font-bold text-purple-500 mb-2 font-display tracking-wider"><Bot size={12}/> KUBERFACE</div>}
+                            <div className={`max-w-[80%] p-4 rounded-xl text-sm leading-relaxed shadow-lg ${msg.role === 'user'
+                                    ? 'bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-br-none border border-blue-500/30'
+                                    : 'bg-slate-800 border border-slate-700 text-slate-200 rounded-bl-none'
+                                }`}>
+                                {msg.role === 'ai' && <div className="flex items-center gap-2 text-[10px] font-bold text-purple-500 mb-2 font-display tracking-wider"><Bot size={12} /> KUBERFACE</div>}
                                 {msg.text}
                             </div>
                         </div>
@@ -137,12 +136,12 @@ const UserView: React.FC = () => {
                     <button className="p-3 bg-slate-900 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors btn-3d">
                         <Mic size={20} />
                     </button>
-                    <input 
-                        type="text" 
-                        value={chatInput} 
+                    <input
+                        type="text"
+                        value={chatInput}
                         onChange={(e) => setChatInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                        placeholder="Запитайте про ризики, графіки, події або контрагентів..." 
+                        placeholder="Запитайте про ризики, графіки, події або контрагентів..."
                         className="flex-1 bg-transparent border-none text-sm text-white focus:ring-0 placeholder-slate-600"
                     />
                     <button onClick={() => handleSendMessage()} disabled={!chatInput.trim()} className="p-3 rounded-lg text-white transition-all shadow-lg btn-3d btn-3d-purple disabled:opacity-50 disabled:cursor-not-allowed">
@@ -186,7 +185,7 @@ const UserView: React.FC = () => {
                                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
                                     <XAxis dataKey="time" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
                                     <YAxis stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
-                                    <Tooltip contentStyle={{ backgroundColor: '#1d2639', borderColor: '#475569', fontSize: '12px' }} itemStyle={{color: '#60a5fa'}} />
+                                    <Tooltip contentStyle={{ backgroundColor: '#1d2639', borderColor: '#475569', fontSize: '12px' }} itemStyle={{ color: '#60a5fa' }} />
                                     <Bar dataKey="count" fill="#3b82f6" radius={[2, 2, 0, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
@@ -242,7 +241,7 @@ const UserView: React.FC = () => {
                                 <tbody className="divide-y divide-slate-700">
                                     {systemLogs.map((log) => (
                                         <tr key={log.id} className="hover:bg-[#263147] transition-colors cursor-pointer">
-                                            <td className="p-2 text-center text-blue-400"><ChevronDown size={12}/></td>
+                                            <td className="p-2 text-center text-blue-400"><ChevronDown size={12} /></td>
                                             <td className="p-2 whitespace-nowrap">{log.time}</td>
                                             <td className="p-2"><span className={`px-1.5 py-0.5 rounded font-bold ${log.level === 'ERROR' ? 'bg-red-900/30 text-red-400' : 'bg-blue-900/30 text-blue-400'}`}>{log.level}</span></td>
                                             <td className="p-2 text-blue-300">{log.source}</td>
@@ -306,11 +305,11 @@ const UserView: React.FC = () => {
                 <TacticalCard title="Доступність Сервісів (SLA)" className="panel-3d">
                     <div className="h-[200px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={Array.from({length: 30}, (_, i) => ({ day: i, uptime: 99 + Math.random() }))}>
+                            <AreaChart data={Array.from({ length: 30 }, (_, i) => ({ day: i, uptime: 99 + Math.random() }))}>
                                 <defs>
                                     <linearGradient id="uptimeGrad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
@@ -336,9 +335,8 @@ const UserView: React.FC = () => {
                                 </div>
                                 <p className="text-xs text-slate-400 pl-2 leading-relaxed">{inc.desc}</p>
                                 <div className="mt-2 pl-2 flex gap-2">
-                                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded ${
-                                        inc.status === 'RESOLVED' ? 'bg-green-900/20 text-green-500 border border-green-900/50' : 'bg-yellow-900/20 text-yellow-500'
-                                    }`}>
+                                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded ${inc.status === 'RESOLVED' ? 'bg-green-900/20 text-green-500 border border-green-900/50' : 'bg-yellow-900/20 text-yellow-500'
+                                        }`}>
                                         {inc.status}
                                     </span>
                                 </div>
@@ -364,13 +362,13 @@ const UserView: React.FC = () => {
 
     return (
         <div className={`space-y-6 animate-in fade-in duration-500 pb-20 w-full max-w-[1400px] mx-auto min-h-screen bg-gradient-to-br ${getBgGradient()} transition-all duration-700`}>
-            
+
             {/* Entity Modal is shared */}
-            <Modal 
-                isOpen={!!selectedEntity} 
-                onClose={() => setSelectedEntity(null)} 
+            <Modal
+                isOpen={!!selectedEntity}
+                onClose={() => setSelectedEntity(null)}
                 title={`Аудит Контрагента: ${selectedEntity?.name}`}
-                icon={<ShieldCheck size={20} className="text-amber-500 icon-3d-amber"/>}
+                icon={<ShieldCheck size={20} className="text-amber-500 icon-3d-amber" />}
                 size="lg"
             >
                 {selectedEntity && (
@@ -409,17 +407,17 @@ const UserView: React.FC = () => {
                 </div>
             </div>
 
-            <ViewHeader 
-                title="PREDATOR PRIME | CLIENT PORTAL"
+            <ViewHeader
+                title="PREDATOR PRIME | КЛІЄНТСЬКИЙ ПОРТАЛ"
                 icon={<ShieldCheck size={24} className="text-amber-500 icon-3d-amber" />}
-                breadcrumbs={['PORTAL', 'PREMIUM DASHBOARD']}
+                breadcrumbs={['ПОРТАЛ', 'ПРЕМІУМ ПАНЕЛЬ']}
                 stats={[
-                    { label: 'System Status', value: 'OPTIMAL', icon: <Activity size={14}/>, color: 'success' },
-                    { label: 'Security Level', value: 'MAXIMUM', icon: <ShieldCheck size={14}/>, color: 'primary' },
+                    { label: 'Статус Системи', value: 'ОПТИМАЛЬНО', icon: <Activity size={14} />, color: 'success' },
+                    { label: 'Рівень Безпеки', value: 'МАКСИМУМ', icon: <ShieldCheck size={14} />, color: 'primary' },
                 ]}
                 actions={
                     <div className="flex items-center gap-3">
-                        <button 
+                        <button
                             onClick={() => setPrivacyMode(!privacyMode)}
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all btn-3d ${privacyMode ? 'bg-amber-900/20 border-amber-500 text-amber-400' : 'bg-slate-900/50 border-slate-700 text-slate-400'}`}
                         >
@@ -438,18 +436,17 @@ const UserView: React.FC = () => {
 
             <div className="flex justify-center border-b border-slate-800/50 mb-6 overflow-x-auto scrollbar-hide">
                 {[
-                    { id: 'DASHBOARD', label: 'Головна Панель', icon: <BarChart2 size={16}/> },
-                    { id: 'GAZETTE', label: 'Ранішня Газета', icon: <Newspaper size={16}/> },
-                    { id: 'EXPLORER', label: 'OpenSearch Explorer', icon: <Search size={16}/> },
-                    { id: 'ASSISTANT', label: 'KuberFace AI', icon: <Bot size={16}/> },
-                    { id: 'SYSTEM', label: 'Стан Системи', icon: <Activity size={16}/> },
+                    { id: 'DASHBOARD', label: 'Головна Панель', icon: <BarChart2 size={16} /> },
+                    { id: 'GAZETTE', label: 'Ранішня Газета', icon: <Newspaper size={16} /> },
+                    { id: 'EXPLORER', label: 'OpenSearch Explorer', icon: <Search size={16} /> },
+                    { id: 'ASSISTANT', label: 'KuberFace AI', icon: <Bot size={16} /> },
+                    { id: 'SYSTEM', label: 'Стан Системи', icon: <Activity size={16} /> },
                 ].map(tab => (
-                    <button 
+                    <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as any)}
-                        className={`flex items-center gap-2 px-6 py-3 text-sm font-bold border-b-2 transition-all hover:bg-slate-800/30 whitespace-nowrap ${
-                            activeTab === tab.id ? 'border-amber-500 text-amber-400' : 'border-transparent text-slate-500 hover:text-slate-300'
-                        }`}
+                        className={`flex items-center gap-2 px-6 py-3 text-sm font-bold border-b-2 transition-all hover:bg-slate-800/30 whitespace-nowrap ${activeTab === tab.id ? 'border-amber-500 text-amber-400' : 'border-transparent text-slate-500 hover:text-slate-300'
+                            }`}
                     >
                         {tab.icon} {tab.label}
                     </button>

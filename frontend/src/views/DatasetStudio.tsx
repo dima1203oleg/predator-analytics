@@ -14,8 +14,10 @@ import {
     Database, Sparkles, Play, Pause, RefreshCw, Download,
     ChevronRight, Filter, Settings, Zap, BarChart3,
     FileText, Layers, CheckCircle, Clock, AlertCircle,
-    Cpu, HardDrive, TrendingUp, ArrowRight
+    Cpu, HardDrive, TrendingUp, ArrowRight, Mic, Volume2
 } from 'lucide-react';
+import { useVoiceControl, InteractionStatus } from '../hooks/useVoiceControl';
+import ReactECharts from 'echarts-for-react';
 
 interface DatasetConfig {
     name: string;
@@ -169,6 +171,16 @@ const DatasetStudio: React.FC = () => {
         }
     ]);
 
+    const [voiceStatus, setVoiceStatus] = useState<InteractionStatus>('IDLE');
+    const { startListening, stopListening, speak } = useVoiceControl(voiceStatus, setVoiceStatus, (text) => {
+        setConfig(c => ({ ...c, sourceQuery: text }));
+    });
+
+    const toggleVoice = () => {
+        if (voiceStatus === 'LISTENING') stopListening();
+        else startListening();
+    };
+
     // Simulate generation
     const handleGenerate = useCallback(async () => {
         setIsGenerating(true);
@@ -181,7 +193,8 @@ const DatasetStudio: React.FC = () => {
 
         setIsGenerating(false);
         setConfig(c => ({ ...c, documentCount: 9832 }));
-    }, []);
+        speak("Dataset generation completed. 9832 documents ready for fine-tuning.");
+    }, [speak]);
 
     const handleStartTraining = useCallback(() => {
         const newJob: TrainingJob = {
@@ -274,8 +287,15 @@ const DatasetStudio: React.FC = () => {
                                 value={config.sourceQuery}
                                 onChange={(e) => setConfig(c => ({ ...c, sourceQuery: e.target.value }))}
                                 className="w-full mt-3 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl 
-                           text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50"
+                           text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 pr-12"
                             />
+                            <button
+                                onClick={toggleVoice}
+                                className={`absolute right-4 bottom-3 p-1.5 rounded-lg transition-colors ${voiceStatus === 'LISTENING' ? 'text-red-500 bg-red-500/10' : 'text-slate-400 hover:text-white'}`}
+                            >
+                                <Mic className="w-5 h-5" />
+                            </button>
+                            <div className="relative"></div>{/* Hack to keep layout valid if needed, but absolute positioning works inside relative parent? */}
                         </div>
 
                         {/* Augmentation method */}
@@ -292,8 +312,8 @@ const DatasetStudio: React.FC = () => {
                                         key={method.value}
                                         onClick={() => setConfig(c => ({ ...c, augmentationMethod: method.value as any }))}
                                         className={`p-4 rounded-xl border text-left transition-all ${config.augmentationMethod === method.value
-                                                ? 'bg-purple-500/10 border-purple-500/50 text-purple-400'
-                                                : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
+                                            ? 'bg-purple-500/10 border-purple-500/50 text-purple-400'
+                                            : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
                                             }`}
                                     >
                                         <div className="font-medium text-sm whitespace-pre-line">{method.label}</div>
@@ -365,6 +385,12 @@ const DatasetStudio: React.FC = () => {
                                             Готово до fine-tuning!
                                         </div>
                                     </div>
+                                    <button
+                                        onClick={() => speak(`Dataset generation complete. ${config.documentCount} examples added.`)}
+                                        className="p-2 text-green-400 hover:bg-green-500/20 rounded-lg transition-colors"
+                                    >
+                                        <Volume2 className="w-5 h-5" />
+                                    </button>
                                 </div>
                                 <button
                                     onClick={handleStartTraining}
@@ -378,46 +404,80 @@ const DatasetStudio: React.FC = () => {
                         )}
                     </div>
 
-                    {/* Right: Training jobs */}
-                    <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/50">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                                <BarChart3 className="w-5 h-5 text-cyan-400" />
-                                Training Jobs
+                    {/* Right: Training jobs & Analytics */}
+                    <div className="flex flex-col gap-6">
+                        {/* Dataset Quality Graph */}
+                        <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/50">
+                            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                                <TrendingUp className="w-5 h-5 text-green-400" />
+                                Якість Даних
                             </h2>
-                            <button className="text-sm text-slate-500 hover:text-white transition-colors">
-                                Показати всі
-                            </button>
+                            <ReactECharts
+                                option={{
+                                    tooltip: { trigger: 'axis' },
+                                    grid: { top: 10, bottom: 20, left: 40, right: 10 },
+                                    xAxis: { type: 'category', data: ['v1', 'v2', 'v3', 'v4', 'v5'], axisLine: { lineStyle: { color: '#475569' } } },
+                                    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#334155' } }, axisLine: { lineStyle: { color: '#475569' } } },
+                                    series: [{
+                                        data: [0.65, 0.72, 0.78, 0.85, 0.92],
+                                        type: 'line',
+                                        smooth: true,
+                                        symbolSize: 8,
+                                        lineStyle: { color: '#10b981', width: 3 },
+                                        itemStyle: { color: '#10b981' },
+                                        areaStyle: {
+                                            color: new (window as any).echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                                { offset: 0, color: 'rgba(16, 185, 129, 0.3)' },
+                                                { offset: 1, color: 'rgba(16, 185, 129, 0)' }
+                                            ])
+                                        }
+                                    }]
+                                }}
+                                style={{ height: '200px' }}
+                                theme="dark"
+                            />
                         </div>
 
-                        <div className="space-y-4">
-                            {trainingJobs.map(job => (
-                                <TrainingJobCard key={job.id} job={job} />
-                            ))}
-                        </div>
-
-                        {/* H2O Studio embed placeholder */}
-                        <div className="mt-6 p-6 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                            <div className="text-center">
-                                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-teal-500/20 
-                              flex items-center justify-center">
-                                    <Cpu className="w-8 h-8 text-cyan-400" />
-                                </div>
-                                <h3 className="text-white font-medium mb-2">H2O LLM Studio</h3>
-                                <p className="text-sm text-slate-500 mb-4">
-                                    No-code fine-tuning для embedding та reranker моделей
-                                </p>
-                                <button className="px-6 py-2 bg-cyan-500/10 text-cyan-400 rounded-lg 
-                                 hover:bg-cyan-500/20 transition-colors flex items-center gap-2 mx-auto">
-                                    Відкрити Studio
-                                    <ArrowRight className="w-4 h-4" />
+                        <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/50">
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                                    <BarChart3 className="w-5 h-5 text-cyan-400" />
+                                    Training Jobs
+                                </h2>
+                                <button className="text-sm text-slate-500 hover:text-white transition-colors">
+                                    Показати всі
                                 </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                {trainingJobs.map(job => (
+                                    <TrainingJobCard key={job.id} job={job} />
+                                ))}
+                            </div>
+
+                            {/* H2O Studio embed placeholder */}
+                            <div className="mt-6 p-6 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                                <div className="text-center">
+                                    <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-teal-500/20 
+                              flex items-center justify-center">
+                                        <Cpu className="w-8 h-8 text-cyan-400" />
+                                    </div>
+                                    <h3 className="text-white font-medium mb-2">H2O LLM Studio</h3>
+                                    <p className="text-sm text-slate-500 mb-4">
+                                        No-code fine-tuning для embedding та reranker моделей
+                                    </p>
+                                    <button className="px-6 py-2 bg-cyan-500/10 text-cyan-400 rounded-lg 
+                                 hover:bg-cyan-500/20 transition-colors flex items-center gap-2 mx-auto">
+                                        Відкрити Studio
+                                        <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

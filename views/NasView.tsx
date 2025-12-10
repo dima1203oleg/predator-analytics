@@ -2,15 +2,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TacticalCard } from '../components/TacticalCard';
 import { ViewHeader } from '../components/ViewHeader';
-import { 
-  Trophy, Activity, Zap, Server, Settings, Play, Database, 
-  GitBranch, RefreshCw, BarChart3, Box, TrendingUp, CheckCircle2,
-  AlertTriangle, DollarSign, Cloud, Cpu, Plus, X, MonitorPlay
+import {
+    Trophy, Activity, Zap, Server, Settings, Play, Database,
+    GitBranch, RefreshCw, BarChart3, Box, TrendingUp, CheckCircle2,
+    AlertTriangle, DollarSign, Cloud, Cpu, Plus, X, MonitorPlay
 } from 'lucide-react';
 import { NasTournament, ProviderQuota, ModelCandidate } from '../types';
-import { 
-  ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, 
-  Tooltip, Legend, CartesianGrid, AreaChart, Area 
+import {
+    ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis,
+    Tooltip, Legend, CartesianGrid, AreaChart, Area
 } from 'recharts';
 import Modal from '../components/Modal';
 import { useToast } from '../context/ToastContext';
@@ -27,10 +27,10 @@ const INITIAL_PROVIDERS: ProviderQuota[] = [
     { id: 'p3', name: 'OpenAI', model: 'gpt-4-turbo', tier: 'PAID', requestsUsed: 1200, requestsLimit: 5000, tokensUsed: 450000, tokensLimit: 1000000, resetDate: '01.12', status: 'OK', activeKeys: 1 },
 ];
 
-const INITIAL_MODELS: ModelCandidate[] = Array.from({length: 20}, (_, i) => ({
+const INITIAL_MODELS: ModelCandidate[] = Array.from({ length: 20 }, (_, i) => ({
     id: `m-${i}`,
     tournamentId: 't1',
-    architecture: i % 2 === 0 ? `Transformer-L${4+i}-H${128+i*16}` : `LSTM-Stacked-x${i+1}`,
+    architecture: i % 2 === 0 ? `Transformer-L${4 + i}-H${128 + i * 16}` : `LSTM-Stacked-x${i + 1}`,
     generation: Math.floor(i / 5) + 1,
     metrics: {
         accuracy: 0.7 + (Math.random() * 0.25),
@@ -48,10 +48,10 @@ const NasView: React.FC = () => {
     const [tournaments, setTournaments] = useState(INITIAL_TOURNAMENTS);
     const [providers, setProviders] = useState(INITIAL_PROVIDERS);
     const [models, setModels] = useState(INITIAL_MODELS);
-    
+
     // Live Chart Data
     const [candidatesData, setCandidatesData] = useState<any[]>([]);
-    
+
     // Create Tournament Modal
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [newTournament, setNewTournament] = useState({ name: '', dataset: '', strategy: 'EVOLUTIONARY' });
@@ -73,7 +73,7 @@ const NasView: React.FC = () => {
         // Simulation loop
         const interval = setInterval(() => {
             if (!isMounted.current) return;
-            
+
             // Simulate live training progress
             setTournaments(prev => prev.map(t => {
                 if (t.status === 'RUNNING') {
@@ -85,21 +85,21 @@ const NasView: React.FC = () => {
             // Simulate new candidate appearing on chart
             if (Math.random() > 0.7) {
                 setCandidatesData(prev => [
-                    ...prev, 
-                    { 
-                        x: 10 + Math.random() * 40, 
-                        y: 75 + Math.random() * 20, 
-                        z: 1 + Math.random() * 5, 
+                    ...prev,
+                    {
+                        x: 10 + Math.random() * 40,
+                        y: 75 + Math.random() * 20,
+                        z: 1 + Math.random() * 5,
                         name: `Auto-Gen-${Date.now()}`,
-                        generation: 5 
+                        generation: 5
                     }
                 ].slice(-50));
             }
 
         }, 2000);
 
-        return () => { 
-            isMounted.current = false; 
+        return () => {
+            isMounted.current = false;
             clearInterval(interval);
         };
     }, []);
@@ -107,7 +107,7 @@ const NasView: React.FC = () => {
     const handleCreate = () => {
         setIsCreateOpen(false);
         toast.success('Турнір Створено', `NAS запущено для "${newTournament.name}". Провайдери активовані.`);
-        
+
         const newT: NasTournament = {
             id: `t-${Date.now()}`,
             topicId: 'custom',
@@ -128,7 +128,7 @@ const NasView: React.FC = () => {
     const renderArena = () => (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-300">
             <div className="lg:col-span-2 space-y-6">
-                <TacticalCard title="Pareto Frontier (Accuracy vs Latency)" className="h-[400px] panel-3d">
+                <TacticalCard title="Парето Фронт (Точність vs Латенсі)" className="h-[400px] panel-3d">
                     <ResponsiveContainer width="100%" height="100%">
                         <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
@@ -156,25 +156,24 @@ const NasView: React.FC = () => {
                                         <div className="text-[10px] text-slate-500 font-mono">{t.strategy} • Gen {t.currentGeneration}/{t.maxGenerations}</div>
                                     </div>
                                 </div>
-                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
-                                    t.status === 'RUNNING' ? 'bg-green-900/20 text-green-500 border-green-900/50' : 
-                                    'bg-slate-800 text-slate-500 border-slate-700'
-                                }`}>
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${t.status === 'RUNNING' ? 'bg-green-900/20 text-green-500 border-green-900/50' :
+                                        'bg-slate-800 text-slate-500 border-slate-700'
+                                    }`}>
                                     {t.status}
                                 </span>
                             </div>
-                            
+
                             <div className="grid grid-cols-3 gap-2 text-center">
                                 <div className="bg-slate-950 p-2 rounded border border-slate-800">
-                                    <div className="text-[9px] text-slate-500 uppercase">Best Score</div>
+                                    <div className="text-[9px] text-slate-500 uppercase">Найкращий</div>
                                     <div className="text-sm font-bold text-purple-400">{(t.bestScore * 100).toFixed(1)}%</div>
                                 </div>
                                 <div className="bg-slate-950 p-2 rounded border border-slate-800">
-                                    <div className="text-[9px] text-slate-500 uppercase">Candidates</div>
+                                    <div className="text-[9px] text-slate-500 uppercase">Кандидати</div>
                                     <div className="text-sm font-bold text-blue-400">{t.candidatesCount}</div>
                                 </div>
                                 <div className="bg-slate-950 p-2 rounded border border-slate-800">
-                                    <div className="text-[9px] text-slate-500 uppercase">Duration</div>
+                                    <div className="text-[9px] text-slate-500 uppercase">Тривалість</div>
                                     <div className="text-sm font-bold text-slate-300">{t.duration}</div>
                                 </div>
                             </div>
@@ -184,7 +183,7 @@ const NasView: React.FC = () => {
             </div>
 
             <div className="space-y-6">
-                <TacticalCard title="Live Training Stream" className="h-[600px] flex flex-col panel-3d">
+                <TacticalCard title="Потік Тренування (Наживо)" className="h-[600px] flex flex-col panel-3d">
                     <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
                         {models.map(m => (
                             <div key={m.id} className="p-2 bg-slate-950 border border-slate-800 rounded flex items-center justify-between group hover:border-slate-600 transition-colors">
@@ -219,32 +218,30 @@ const NasView: React.FC = () => {
 
     const renderProviders = () => (
         <div className="grid grid-cols-1 gap-6 animate-in fade-in duration-300">
-            <TacticalCard title="AI Provider Router (Limits & Costs)" className="panel-3d">
+            <TacticalCard title="AI Роутер Провайдерів (Ліміти & Вартість)" className="panel-3d">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {providers.map(p => {
                         const usagePercent = (p.requestsUsed / p.requestsLimit) * 100;
                         return (
-                            <div key={p.id} className={`p-4 rounded-lg border relative overflow-hidden group hover:shadow-lg transition-all ${
-                                p.status === 'WARNING' ? 'bg-yellow-900/10 border-yellow-500/50' :
-                                p.status === 'EXHAUSTED' ? 'bg-red-900/10 border-red-500/50' :
-                                'bg-slate-900 border-slate-800'
-                            }`}>
+                            <div key={p.id} className={`p-4 rounded-lg border relative overflow-hidden group hover:shadow-lg transition-all ${p.status === 'WARNING' ? 'bg-yellow-900/10 border-yellow-500/50' :
+                                    p.status === 'EXHAUSTED' ? 'bg-red-900/10 border-red-500/50' :
+                                        'bg-slate-900 border-slate-800'
+                                }`}>
                                 <div className="flex justify-between items-start mb-4">
                                     <div className="flex items-center gap-3">
                                         <div className="p-2 bg-slate-950 rounded border border-slate-800">
-                                            {p.name.includes('Google') ? <span className="font-bold text-blue-500">G</span> : 
-                                             p.name.includes('OpenAI') ? <span className="font-bold text-green-500">O</span> : 
-                                             <span className="font-bold text-yellow-500">M</span>}
+                                            {p.name.includes('Google') ? <span className="font-bold text-blue-500">G</span> :
+                                                p.name.includes('OpenAI') ? <span className="font-bold text-green-500">O</span> :
+                                                    <span className="font-bold text-yellow-500">M</span>}
                                         </div>
                                         <div>
                                             <h4 className="font-bold text-slate-200">{p.name}</h4>
                                             <div className="text-[10px] text-slate-500 uppercase">{p.tier} Plan</div>
                                         </div>
                                     </div>
-                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
-                                        p.status === 'OK' ? 'bg-green-900/20 text-green-500 border-green-900/50' :
-                                        'bg-yellow-900/20 text-yellow-500 border-yellow-900/50'
-                                    }`}>{p.status}</span>
+                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${p.status === 'OK' ? 'bg-green-900/20 text-green-500 border-green-900/50' :
+                                            'bg-yellow-900/20 text-yellow-500 border-yellow-900/50'
+                                        }`}>{p.status}</span>
                                 </div>
 
                                 <div className="space-y-4">
@@ -254,13 +251,13 @@ const NasView: React.FC = () => {
                                             <span>{p.requestsUsed} / {p.requestsLimit}</span>
                                         </div>
                                         <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden">
-                                            <div 
-                                                className={`h-full transition-all duration-500 ${usagePercent > 80 ? 'bg-red-500' : usagePercent > 50 ? 'bg-yellow-500' : 'bg-blue-500'}`} 
+                                            <div
+                                                className={`h-full transition-all duration-500 ${usagePercent > 80 ? 'bg-red-500' : usagePercent > 50 ? 'bg-yellow-500' : 'bg-blue-500'}`}
                                                 style={{ width: `${usagePercent}%` }}
                                             ></div>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="flex justify-between items-center pt-2 border-t border-slate-800/50">
                                         <div className="text-[10px] text-slate-500">
                                             Reset: <span className="text-slate-300 font-mono">{p.resetDate}</span>
@@ -279,7 +276,7 @@ const NasView: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <TacticalCard title="AutoML Scheduler">
                     <div className="p-8 text-center text-slate-500">
-                        <MonitorPlay size={48} className="mx-auto mb-4 opacity-20"/>
+                        <MonitorPlay size={48} className="mx-auto mb-4 opacity-20" />
                         <p>AutoML Scheduler visualization placeholder.</p>
                     </div>
                 </TacticalCard>
@@ -289,29 +286,29 @@ const NasView: React.FC = () => {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500 pb-24 w-full max-w-[1600px] mx-auto">
-            
+
             <Modal
                 isOpen={isCreateOpen}
                 onClose={() => setIsCreateOpen(false)}
                 title="Новий NAS Турнір"
-                icon={<Trophy size={20} className="text-yellow-500 icon-3d-amber"/>}
+                icon={<Trophy size={20} className="text-yellow-500 icon-3d-amber" />}
             >
                 <div className="p-6 space-y-4">
                     <div>
                         <label className="text-xs font-bold text-slate-500 uppercase block mb-2">Назва Турніру</label>
-                        <input 
+                        <input
                             className="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-slate-200"
                             value={newTournament.name}
-                            onChange={(e) => setNewTournament({...newTournament, name: e.target.value})}
+                            onChange={(e) => setNewTournament({ ...newTournament, name: e.target.value })}
                             placeholder="e.g. Sales Forecast Q4"
                         />
                     </div>
                     <div>
                         <label className="text-xs font-bold text-slate-500 uppercase block mb-2">Датасет</label>
-                        <select 
+                        <select
                             className="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm text-slate-200"
                             value={newTournament.dataset}
-                            onChange={(e) => setNewTournament({...newTournament, dataset: e.target.value})}
+                            onChange={(e) => setNewTournament({ ...newTournament, dataset: e.target.value })}
                         >
                             <option value="">Оберіть датасет...</option>
                             <option value="swift_transactions">SWIFT Transactions (Clean)</option>
@@ -322,14 +319,13 @@ const NasView: React.FC = () => {
                         <label className="text-xs font-bold text-slate-500 uppercase block mb-2">Стратегія Пошуку</label>
                         <div className="grid grid-cols-2 gap-2">
                             {['EVOLUTIONARY', 'REINFORCEMENT', 'DARTS', 'GRID_SEARCH'].map(s => (
-                                <button 
+                                <button
                                     key={s}
-                                    onClick={() => setNewTournament({...newTournament, strategy: s})}
-                                    className={`p-2 rounded border text-xs font-bold transition-all ${
-                                        newTournament.strategy === s 
-                                        ? 'bg-primary-900/20 border-primary-500 text-primary-400' 
-                                        : 'bg-slate-900 border-slate-700 text-slate-500'
-                                    }`}
+                                    onClick={() => setNewTournament({ ...newTournament, strategy: s })}
+                                    className={`p-2 rounded border text-xs font-bold transition-all ${newTournament.strategy === s
+                                            ? 'bg-primary-900/20 border-primary-500 text-primary-400'
+                                            : 'bg-slate-900 border-slate-700 text-slate-500'
+                                        }`}
                                 >
                                     {s}
                                 </button>
@@ -337,7 +333,7 @@ const NasView: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex justify-end pt-4">
-                        <button 
+                        <button
                             onClick={handleCreate}
                             disabled={!newTournament.name || !newTournament.dataset}
                             className="px-6 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded font-bold shadow-lg disabled:opacity-50 btn-3d"
@@ -348,40 +344,40 @@ const NasView: React.FC = () => {
                 </div>
             </Modal>
 
-            <ViewHeader 
-                title="NAS Orchestrator & AutoML"
-                icon={<Trophy size={20} className="icon-3d-amber"/>}
-                breadcrumbs={['INTELLIGENCE', 'NAS TOURNAMENT']}
+            <ViewHeader
+                title="NAS Оркестратор & AutoML"
+                icon={<Trophy size={20} className="icon-3d-amber" />}
+                breadcrumbs={['ІНТЕЛЕКТ', 'NAS ТУРНІР']}
                 stats={[
-                    { label: 'Active Tournaments', value: String(tournaments.filter(t => t.status === 'RUNNING').length), icon: <Activity size={14}/>, color: 'success', animate: true },
-                    { label: 'GPU Hours', value: '1,420h', icon: <Zap size={14}/>, color: 'primary' },
-                    { label: 'Cost Savings', value: '$450/mo', icon: <DollarSign size={14}/>, color: 'green' },
+                    { label: 'Активні Турніри', value: String(tournaments.filter(t => t.status === 'RUNNING').length), icon: <Activity size={14} />, color: 'success', animate: true },
+                    { label: 'GPU Годин', value: '1,420г', icon: <Zap size={14} />, color: 'primary' },
+                    { label: 'Економія', value: '$450/міс', icon: <DollarSign size={14} />, color: 'green' },
                 ]}
                 actions={
-                    <button 
+                    <button
                         onClick={() => setIsCreateOpen(true)}
                         className="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded text-xs font-bold flex items-center gap-2 shadow-lg btn-3d btn-3d-amber"
                     >
-                        <Plus size={16} /> New Tournament
+                        <Plus size={16} /> Новий Турнір
                     </button>
                 }
             />
 
             {/* Tabs */}
             <div className="flex border-b border-slate-800 bg-slate-950/30 rounded-t overflow-x-auto scrollbar-hide">
-                <button 
+                <button
                     onClick={() => setActiveTab('ARENA')}
                     className={`flex-1 min-w-[120px] py-3 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'ARENA' ? 'border-primary-500 text-primary-400 bg-slate-800/30' : 'border-transparent text-slate-500 hover:bg-slate-800/30'}`}
                 >
                     <Trophy size={16} /> Active Arena
                 </button>
-                <button 
+                <button
                     onClick={() => setActiveTab('LEADERBOARD')}
                     className={`flex-1 min-w-[120px] py-3 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'LEADERBOARD' ? 'border-yellow-500 text-yellow-400 bg-slate-800/30' : 'border-transparent text-slate-500 hover:bg-slate-800/30'}`}
                 >
                     <BarChart3 size={16} /> Leaderboard
                 </button>
-                <button 
+                <button
                     onClick={() => setActiveTab('PROVIDERS')}
                     className={`flex-1 min-w-[120px] py-3 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'PROVIDERS' ? 'border-green-500 text-green-400 bg-slate-800/30' : 'border-transparent text-slate-500 hover:bg-slate-800/30'}`}
                 >
@@ -395,7 +391,7 @@ const NasView: React.FC = () => {
                 {activeTab === 'LEADERBOARD' && (
                     <TacticalCard title="Global Leaderboard (Champions)">
                         <div className="p-8 text-center text-slate-500">
-                            <Trophy size={48} className="mx-auto mb-4 opacity-20"/>
+                            <Trophy size={48} className="mx-auto mb-4 opacity-20" />
                             <p>Global leaderboard placeholder.</p>
                         </div>
                     </TacticalCard>

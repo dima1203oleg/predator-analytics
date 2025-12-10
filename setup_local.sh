@@ -31,8 +31,8 @@ fi
 echo "🐳 Starting Semantic Search Platform (v21.1)..."
 # Build backend to ensure latest Semantic Search code is used
 docker compose build backend
-# Start full stack including backend (but relying on local frontend usually)
-docker compose up -d postgres redis qdrant minio opensearch keycloak backend
+# Start infra + backend + db migration helper
+docker compose up -d postgres redis qdrant minio opensearch keycloak backend db-migrate
 
 # 4. Wait for DB
 echo "⏳ Waiting for stack initialization..."

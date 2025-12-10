@@ -392,6 +392,16 @@ export const api = {
         }
     },
 
+    // --- UPLOAD ---
+    uploadDataset: async (formData: FormData) => {
+        const response = await apiClient.post('/integrations/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    },
+
     // --- NEXUS ---
     nexus: {
         chat: async (query: string, mode: string = 'chat') => {
@@ -401,6 +411,39 @@ export const api = {
         speak: async (text: string) => {
             if (IS_TRUTH_ONLY_MODE) return (await apiClient.post('/nexus/speak', { text })).data;
             return { audioContent: null };
+        }
+    },
+
+    // --- E2E REAL BACKEND INTEGRATION ---
+    e2e: {
+        getStatus: async () => {
+            return (await apiClient.get('/e2e/status')).data;
+        },
+        getModelHealth: async (model: string) => {
+            // Use POST test for active check, or GET health if available
+            return (await apiClient.get(`/e2e/model/${model}/health`)).data;
+        },
+        testModel: async (model: string, prompt: string) => {
+            return (await apiClient.post(`/e2e/model/${model}/test`, { test_prompt: prompt })).data;
+        },
+        toggleMock: async (model: string, mode: 'mock' | 'fail' | 'rate_limit', enabled: boolean) => {
+            if (enabled) {
+                return (await apiClient.post('/e2e/mock/enable', { model, mode })).data;
+            } else {
+                return (await apiClient.post('/e2e/mock/disable', { model })).data;
+            }
+        },
+        startTestRun: async (runId: string, type: 'full' | 'models' | 'reports' = 'full') => {
+            return (await apiClient.post('/e2e/test-run', { run_id: runId, test_type: type })).data;
+        },
+        getProcessingStatus: async () => {
+            return (await apiClient.get('/e2e/processing/status')).data;
+        },
+        listReports: async (runId: string) => {
+            return (await apiClient.get(`/e2e/reports/list?run_id=${runId}`)).data;
+        },
+        generateReport: async (runId: string, format: 'pdf' | 'markdown') => {
+            return (await apiClient.post('/e2e/reports/generate', { run_id: runId, format })).data;
         }
     }
 };

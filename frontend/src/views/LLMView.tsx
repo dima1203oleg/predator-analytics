@@ -2,9 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TacticalCard } from '../components/TacticalCard';
 import { ViewHeader } from '../components/ViewHeader';
-import { BrainCircuit, Cpu, Zap, Activity, Layers, Play, Settings, Box, Terminal, Cloud, DollarSign, TrendingDown, RefreshCw, Sparkles, Server, Save, XCircle, Stethoscope, Building2, Leaf, Briefcase, Send, Eraser, MessageSquare, Gauge, Bot, TrendingUp, GitCompare, Microscope, LineChart as LineChartIcon, Shuffle, ShieldAlert, Wifi } from 'lucide-react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, Cell, AreaChart, Area, LineChart, Line } from 'recharts';
+import { BrainCircuit, Cpu, Zap, Activity, Layers, Play, Settings, Box, Terminal, Cloud, DollarSign, TrendingDown, RefreshCw, Sparkles, Server, Save, XCircle, Stethoscope, Building2, Leaf, Briefcase, Send, Eraser, MessageSquare, Gauge, Bot, TrendingUp, GitCompare, Microscope, LineChart as LineChartIcon, Shuffle, ShieldAlert, Wifi, Volume2 } from 'lucide-react';
+import ReactECharts from 'echarts-for-react';
 import { useSystemMetrics } from '../hooks/useSystemMetrics';
+import { useVoiceControl, InteractionStatus } from '../hooks/useVoiceControl';
 import { api } from '../services/api';
 import { DSPyOptimization } from '../types';
 import { useToast } from '../context/ToastContext'; // Import Toast
@@ -98,6 +99,15 @@ const LLMView: React.FC = () => {
     // DSPy State
     const [dspyOptimizing, setDspyOptimizing] = useState(false);
     const [dspyData, setDspyData] = useState(DSPY_CHART_DATA);
+
+    // Voice Control
+    const [voiceStatus, setVoiceStatus] = useState<InteractionStatus>('IDLE');
+    const { speak } = useVoiceControl(voiceStatus, setVoiceStatus, () => { });
+
+    const speakMetrics = () => {
+        const text = `System Status. Active Model: ${activeModel}. GPU V-RAM usage: ${metrics.gpu.vram.toFixed(1)} Gigabytes. DSPy Optimizer is ${dspyOptimizing ? 'Running' : 'Idle'}.`;
+        speak(text);
+    };
 
     // API Data
     const [benchmarkData, setBenchmarkData] = useState<any[]>([]);
@@ -421,22 +431,23 @@ const LLMView: React.FC = () => {
                         {/* LIVE TRAINING CHART */}
                         {trainingMetrics.length > 0 ? (
                             <div className="h-40 w-full mb-3">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={trainingMetrics}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                                        <XAxis dataKey="step" hide />
-                                        <YAxis yAxisId="loss" domain={[0, 3]} hide />
-                                        <YAxis yAxisId="acc" orientation="right" domain={[0, 1]} hide />
-                                        <Tooltip
-                                            contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', fontSize: '10px' }}
-                                            itemStyle={{ fontSize: '10px', padding: 0 }}
-                                            labelStyle={{ display: 'none' }}
-                                        />
-                                        <Legend wrapperStyle={{ fontSize: '10px' }} />
-                                        <Line yAxisId="loss" type="monotone" dataKey="loss" stroke="#ef4444" strokeWidth={2} dot={false} name="Loss" animationDuration={300} />
-                                        <Line yAxisId="acc" type="monotone" dataKey="accuracy" stroke="#22c55e" strokeWidth={2} dot={false} name="Accuracy" animationDuration={300} />
-                                    </LineChart>
-                                </ResponsiveContainer>
+                                <ReactECharts
+                                    option={{
+                                        tooltip: { trigger: 'axis' },
+                                        grid: { top: 10, bottom: 20, left: 0, right: 0, containLabel: true },
+                                        xAxis: { type: 'category', data: trainingMetrics.map(m => m.step), show: false },
+                                        yAxis: [
+                                            { type: 'value', min: 0, max: 3, show: false },
+                                            { type: 'value', min: 0, max: 1, show: false }
+                                        ],
+                                        series: [
+                                            { name: 'Loss', type: 'line', data: trainingMetrics.map(m => m.loss), showSymbol: false, lineStyle: { color: '#ef4444' } },
+                                            { name: 'Accuracy', type: 'line', yAxisIndex: 1, data: trainingMetrics.map(m => m.accuracy), showSymbol: false, lineStyle: { color: '#22c55e' } }
+                                        ]
+                                    }}
+                                    style={{ height: '100%', width: '100%' }}
+                                    theme="dark"
+                                />
                             </div>
                         ) : (
                             <div className="h-40 flex items-center justify-center bg-slate-900/50 rounded border border-dashed border-slate-800 text-xs text-slate-500 mb-3">
@@ -514,21 +525,29 @@ const LLMView: React.FC = () => {
                 </button>
             }>
                 <div className="h-[250px] w-full mb-4">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={dspyData}>
-                            <defs>
-                                <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                            <XAxis dataKey="iter" stroke="#475569" fontSize={10} tickLine={false} axisLine={false} />
-                            <YAxis domain={[60, 100]} stroke="#475569" fontSize={10} tickLine={false} axisLine={false} />
-                            <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', fontSize: '10px' }} />
-                            <Area type="monotone" dataKey="score" stroke="#a855f7" fillOpacity={1} fill="url(#colorScore)" strokeWidth={2} name="Accuracy Score" />
-                        </AreaChart>
-                    </ResponsiveContainer>
+                    <ReactECharts
+                        option={{
+                            tooltip: { trigger: 'axis' },
+                            grid: { top: 10, bottom: 20, left: 40, right: 10 },
+                            xAxis: { type: 'category', data: dspyData.map(d => d.iter), axisLine: { lineStyle: { color: '#475569' } } },
+                            yAxis: { type: 'value', min: 60, max: 100, splitLine: { lineStyle: { color: '#334155' } } },
+                            series: [{
+                                name: 'Accuracy',
+                                type: 'line',
+                                smooth: true,
+                                data: dspyData.map(d => d.score),
+                                lineStyle: { color: '#a855f7' },
+                                areaStyle: {
+                                    color: new (window as any).echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                        { offset: 0, color: 'rgba(168, 85, 247, 0.4)' },
+                                        { offset: 1, color: 'rgba(168, 85, 247, 0)' }
+                                    ])
+                                }
+                            }]
+                        }}
+                        style={{ height: '100%', width: '100%' }}
+                        theme="dark"
+                    />
                 </div>
 
                 <div className="space-y-2">
@@ -595,6 +614,16 @@ const LLMView: React.FC = () => {
                     { label: 'Активна Модель', value: activeModel, icon: <Cpu size={14} />, color: 'primary' },
                     { label: 'VRAM Пам\'ять', value: `${metrics.gpu.vram.toFixed(1)} GB`, icon: <Activity size={14} />, color: metrics.gpu.vram > 20 ? 'danger' : 'success' },
                     { label: 'DSPy Оптимізатор', value: dspyOptimizing ? 'ПРАЦЮЄ' : 'ОЧІКУВАННЯ', icon: <Sparkles size={14} />, color: dspyOptimizing ? 'primary' : 'default', animate: dspyOptimizing },
+                ]}
+                actions={[
+                    <button
+                        key="voice-metrics"
+                        onClick={speakMetrics}
+                        className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-all duration-200 hover:scale-105 active:scale-95"
+                        title="Озвучити метрики системи"
+                    >
+                        <Volume2 size={20} />
+                    </button>
                 ]}
             />
 

@@ -217,5 +217,32 @@ export const api = {
                 ranking: []
             } as CouncilResult;
         }
+    },
+
+    // --- E2E TESTING ---
+    getE2EStatus: async () => {
+        return (await apiClient.get('/e2e/status')).data;
+    },
+    getModelHealth: async (model: string) => {
+        return (await apiClient.get(`/e2e/model/${model}/health`)).data;
+    },
+    testModel: async (model: string, prompt: string) => {
+        return (await apiClient.post(`/e2e/model/${model}/test`, { test_prompt: prompt })).data;
+    },
+    toggleMock: async (model: string, mode: 'mock' | 'fail' | 'rate_limit', enabled: boolean) => {
+        if (enabled) {
+            return (await apiClient.post('/e2e/mock/enable', { model, mode })).data;
+        } else {
+            return (await apiClient.post('/e2e/mock/disable', { model })).data;
+        }
+    },
+    startTestRun: async (runId: string, type: 'full' | 'models' | 'reports' = 'full') => {
+        return (await apiClient.post('/e2e/test-run', { run_id: runId, test_type: type })).data;
+    },
+    getProcessingStatus: async () => {
+        return (await apiClient.get('/e2e/processing/status')).data;
+    },
+    listReports: async (runId: string) => {
+        return (await apiClient.get(`/e2e/reports/list?run_id=${runId}`)).data;
     }
 };
