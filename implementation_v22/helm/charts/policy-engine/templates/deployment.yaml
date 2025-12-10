@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "policy-engine.fullname" . }}
+  labels:
+    app: {{ include "policy-engine.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "policy-engine.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "policy-engine.name" . }}
+    spec:
+      nodeSelector: {{- toYaml .Values.nodeSelector | nindent 8 }}
+      tolerations: {{- toYaml .Values.tolerations | nindent 8 }}
+      affinity: {{- toYaml .Values.affinity | nindent 8 }}
+      containers:
+        - name: policy-engine
+          image: "{{ if .Values.image.digest }}{{ .Values.image.repository }}@{{ .Values.image.digest }}{{ else }}{{ .Values.image.repository }}:{{ .Values.image.tag }}{{ end }}"
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          command: ["uvicorn", "policy:app", "--host", "0.0.0.0", "--port", "8100"]

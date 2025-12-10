@@ -1,0 +1,32 @@
+global:
+  env: macdev
+  autoPromote:
+    enabled: false
+
+qdrant:
+  replicas: 1
+
+opensearch:
+  replicas: 1
+
+inference:
+  gpu:
+    enabled: false
+
+selfImproveOrchestrator:
+  enabled: false
+
+policyEngine:
+  enabled: false
+kubecost:
+  enabled: false
+keda:
+  enabled: false
+
+resources:
+  requests:
+    cpu: "250m"
+    memory: "512Mi"
+  limits:
+    cpu: "500m"
+    memory: "1Gi"

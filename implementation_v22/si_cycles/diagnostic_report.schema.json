@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "diagnostic_report",
+  "type": "object",
+  "properties": {
+    "si_cycle_id": { "type": "string", "format": "uuid" },
+    "tenant_id": { "type": "string", "format": "uuid" },
+    "trigger_type": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "logs": { "type": "array", "items": { "type": "string" } },
+    "metrics": { "type": "object" },
+    "root_cause": { "type": "array", "items": { "type": "string" } },
+    "coverage": { "type": "number" },
+    "actions": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": [
+    "si_cycle_id",
+    "tenant_id",
+    "trigger_type",
+    "timestamp",
+    "metrics"
+  ]
+}

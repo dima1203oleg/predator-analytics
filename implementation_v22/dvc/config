@@ -1,0 +1,10 @@
+[core]
+    remote = storage
+
+[remote "storage"]
+    url = s3://predator-dvc-bucket/predator-v22
+    endpointurl = http://minio:9000
+
+; NOTE: do not store credentials here; use local config or environment variables
+; dvc remote modify storage access_key_id ${MINIO_ACCESS_KEY}
+; dvc remote modify storage secret_access_key ${MINIO_SECRET_KEY}
