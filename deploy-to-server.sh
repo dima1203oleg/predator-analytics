@@ -13,10 +13,19 @@ NC='\033[0m'
 
 SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
 # Default to what user provided, but allow override via env
-SSH_HOST="${SSH_HOST:-5.tcp.eu.ngrok.io}"
-SSH_PORT="${SSH_PORT:-14651}"
+SSH_HOST="${SSH_HOST:-6.tcp.eu.ngrok.io}"
+SSH_PORT="${SSH_PORT:-18105}"
 SSH_USER="${SSH_USER:-dima}"
 REMOTE_DIR="~/predator_v21"
+ARGOCD_NVIDIA_URL=${ARGOCD_NVIDIA_URL:-}
+ARGOCD_NVIDIA_TOKEN=${ARGOCD_NVIDIA_TOKEN:-}
+ARGOCD_URL=${ARGOCD_NVIDIA_URL:-${ARGOCD_SERVER:-}}
+ARGOCD_TOKEN=${ARGOCD_NVIDIA_TOKEN:-${ARGOCD_TOKEN:-}}
+if [[ "${ARGOCD_INSECURE:-false}" =~ ^(1|true|yes)$ ]]; then
+    CURL_INSECURE="-k"
+else
+    CURL_INSECURE=""
+fi
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${GREEN}🚀 Deploying Predator v21.1 (Semantic Search Platform)${NC}"
@@ -39,9 +48,16 @@ echo -e "${YELLOW}📦 Syncing code to server...${NC}"
 rsync -avz --progress -e "ssh -i $SSH_KEY -p $SSH_PORT" \
     --exclude 'node_modules' \
     --exclude '.git' \
+    --exclude '.git/' \
     --exclude '__pycache__' \
     --exclude '*.pyc' \
     --exclude 'venv' \
+    --exclude '.venv' \
+    --exclude '.venv/' \
+    --exclude 'sample_data' \
+    --exclude '*.log' \
+    --exclude '*.xlsx' \
+    --exclude 'libtorch*' \
     ./ "$SSH_USER@$SSH_HOST:$REMOTE_DIR/"
 
 echo -e "${GREEN}✅ Code synced${NC}"
@@ -49,7 +65,14 @@ echo ""
 
 # Step 3: Deploy on server
 echo -e "${YELLOW}🐳 Building and starting services on server...${NC}"
-ssh -i "$SSH_KEY" -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" << 'ENDSSH'
+if [[ -n "${ARGOCD_URL}" && -n "${ARGOCD_TOKEN}" ]]; then
+    echo -e "${YELLOW}🔁 ArgoCD config detected. Triggering sync via ArgoCD API...${NC}"
+    curl $CURL_INSECURE -sS -X POST "${ARGOCD_URL}/api/v1/applications/predator-nvidia/sync" \
+        -H "Authorization: Bearer ${ARGOCD_TOKEN}" \
+        -H "Content-Type: application/json" -d '{}' || echo "ArgoCD sync failed or returned non-200"
+    echo "✅ ArgoCD sync requested. Please check ArgoCD UI for status."
+else
+    ssh -i "$SSH_KEY" -p "$SSH_PORT" -o BatchMode=yes "$SSH_USER@$SSH_HOST" << 'ENDSSH'
 cd ~/predator_v21
 
 # Create .env file if missing
@@ -88,6 +111,8 @@ curl -s http://localhost:8000/health || echo "Backend not yet ready"
 
 echo "✅ Deployment complete"
 ENDSSH
+
+fi
 
 echo ""
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

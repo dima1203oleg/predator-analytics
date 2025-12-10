@@ -3,6 +3,9 @@
 -- 0. Create additional databases for services
 -- Note: These run in the context of the default database (postgres/predator_db)
 -- We use DO block to handle "already exists" gracefully
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS dblink;
+
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'mlflow') THEN

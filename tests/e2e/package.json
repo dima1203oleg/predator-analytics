@@ -1,0 +1,42 @@
+{
+    "name": "predator-e2e-tests",
+    "version": "1.0.0",
+    "description": "E2E Testing Suite for Predator Analytics",
+    "scripts": {
+        "cypress:open": "cypress open --config-file cypress.config.ts",
+        "cypress:run": "cypress run --config-file cypress.config.ts",
+        "cypress:run:headed": "cypress run --config-file cypress.config.ts --headed",
+        "test:e2e": "cypress run --spec 'cypress/integration/full-cycle.cy.ts'",
+        "test:models": "cypress run --spec 'cypress/integration/models.cy.ts'",
+        "test:reports": "cypress run --spec 'cypress/integration/reports.cy.ts'",
+        "test:all": "cypress run",
+        "test:local": "CYPRESS_BASE_URL=http://localhost:8082 IS_LOCAL=true cypress run",
+        "test:remote": "CYPRESS_BASE_URL=$REMOTE_URL IS_REMOTE_SERVER=true cypress run",
+        "generate:data": "node scripts/generate-test-data.js",
+        "report:merge": "mochawesome-merge cypress/reports/*.json > cypress/reports/merged-report.json",
+        "report:generate": "marge cypress/reports/merged-report.json -f report -o cypress/reports",
+        "report:open": "open cypress/reports/report.html"
+    },
+    "dependencies": {
+        "xlsx": "^0.18.5",
+        "pdf-parse": "^1.1.1"
+    },
+    "devDependencies": {
+        "cypress": "^13.6.0",
+        "typescript": "^5.3.3",
+        "@types/node": "^20.10.0",
+        "mochawesome": "^7.1.3",
+        "mochawesome-merge": "^4.3.0",
+        "mochawesome-report-generator": "^6.2.0",
+        "cypress-file-upload": "^5.0.8",
+        "cypress-real-events": "^1.11.0"
+    },
+    "keywords": [
+        "cypress",
+        "e2e",
+        "testing",
+        "predator-analytics"
+    ],
+    "author": "Predator Analytics Team",
+    "license": "MIT"
+}

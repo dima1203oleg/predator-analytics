@@ -10,6 +10,9 @@ import {
 } from 'lucide-react';
 import { useGlobalState } from '../context/GlobalContext';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import ReactECharts from 'echarts-for-react';
+import { Volume2 } from 'lucide-react';
+import { useVoiceControl, InteractionStatus } from '../hooks/useVoiceControl';
 
 // --- FORCE GRAPH IMPORTS ---
 type SectorType = 'GOV' | 'BIZ' | 'MED' | 'SCI';
@@ -358,6 +361,16 @@ const AnalyticsView: React.FC = () => {
     const [viewMode, setViewMode] = useState<'GRAPH' | 'TIMELINE' | '3D_TIMELINE'>('GRAPH');
     const [targetLocked, setTargetLocked] = useState(false);
 
+    // Voice
+    const [voiceStatus, setVoiceStatus] = useState<InteractionStatus>('IDLE');
+    const { speak } = useVoiceControl(voiceStatus, setVoiceStatus, () => { });
+
+    const speakScanResult = () => {
+        if (!scanResult) return;
+        const text = `Investigation complete for ${scanResult.entity.name}. AI Verdict: ${scanResult.verdict}. Risk Score: ${scanResult.riskScore}. Critical flags detected: ${scanResult.flags.join(', ')}.`;
+        speak(text);
+    };
+
     // Investigation State
     const [progress, setProgress] = useState(0);
     const [activeStep, setActiveStep] = useState(0);
@@ -643,12 +656,38 @@ const AnalyticsView: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="mt-4 pt-4 border-t border-slate-800">
-                                    <div className="flex justify-between items-center">
-                                        <div className="text-[10px] text-slate-500 uppercase">Ризик Скоринг (AI)</div>
-                                        <div className="text-3xl font-bold text-red-500 font-display text-glow-red">{scanResult.riskScore}/100</div>
-                                    </div>
-                                    <div className="w-full h-2 bg-slate-800 rounded-full mt-2 overflow-hidden">
-                                        <div className="h-full bg-gradient-to-r from-green-500 via-yellow-500 to-red-500" style={{ width: `${scanResult.riskScore}%` }}></div>
+                                    <div className="h-[200px] w-full mt-2">
+                                        <ReactECharts
+                                            option={{
+                                                series: [{
+                                                    type: 'gauge',
+                                                    startAngle: 180,
+                                                    endAngle: 0,
+                                                    min: 0,
+                                                    max: 100,
+                                                    splitNumber: 10,
+                                                    itemStyle: { color: '#ef4444' }, // Red
+                                                    progress: { show: true, width: 10 },
+                                                    pointer: { show: false },
+                                                    axisLine: { lineStyle: { width: 10 } },
+                                                    axisTick: { show: false },
+                                                    splitLine: { length: 6, lineStyle: { width: 1, color: '#999' } },
+                                                    axisLabel: { distance: 15, color: '#999', fontSize: 10 },
+                                                    anchor: { show: true, showAbove: true, size: 25, itemStyle: { borderWidth: 10 } },
+                                                    title: { show: false },
+                                                    detail: {
+                                                        valueAnimation: true,
+                                                        fontSize: 24,
+                                                        color: '#fff',
+                                                        offsetCenter: [0, '20%'],
+                                                        formatter: '{value}'
+                                                    },
+                                                    data: [{ value: scanResult.riskScore, name: 'Risk' }]
+                                                }]
+                                            }}
+                                            style={{ height: '100%', width: '100%' }}
+                                            theme="dark"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -668,6 +707,9 @@ const AnalyticsView: React.FC = () => {
                                         <h3 className="text-lg font-bold text-red-400 uppercase tracking-widest font-display">Вердикт AI: {scanResult.verdict}</h3>
                                         <p className="text-[10px] text-red-300/70 font-mono">Gemini Pro • Confidence: 98.2%</p>
                                     </div>
+                                    <button onClick={speakScanResult} className="ml-auto p-2 text-red-400 hover:text-white bg-red-900/10 hover:bg-red-900/30 rounded-lg transition-colors">
+                                        <Volume2 size={24} />
+                                    </button>
                                 </div>
 
                                 <div className="bg-black/40 p-4 rounded-lg border border-red-500/20 backdrop-blur-sm mb-4">

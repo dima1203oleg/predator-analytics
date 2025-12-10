@@ -505,6 +505,15 @@ app.include_router(evolution_router.router, prefix="/api/v1")
 from app.api import v22_routes
 app.include_router(v22_routes.v22_router, prefix="/api")
 
+# ArgoCD webhook handler (receives ArgoCD webhooks and notifies / triggers rollback)
+from app.api.routers import argocd_webhook as argocd_webhook_router
+app.include_router(argocd_webhook_router.router, prefix="/api")
+
+# E2E Testing Router (Cypress automation)
+from app.api.routers import e2e as e2e_router
+app.include_router(e2e_router.router, prefix="/api/v1")
+
+
 # Alertmanager Webhook Handler
 from app.api import webhook_routes
 app.include_router(webhook_routes.webhook_router, prefix="/api")

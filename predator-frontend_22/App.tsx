@@ -26,8 +26,9 @@ const UserView = lazy(() => import('./views/UserView'));
 const SuperIntelligenceView = lazy(() => import('./views/SuperIntelligenceView'));
 const InfraView = lazy(() => import('./views/InfraView')); // The new Engineering Hub
 const SystemBrainView = lazy(() => import('./views/SystemBrainView'));
-const NasView = lazy(() => import('./views/NasView')); 
+const NasView = lazy(() => import('./views/NasView'));
 const OpponentView = lazy(() => import('./views/OpponentView')); // Red Team
+const TestingView = lazy(() => import('./views/TestingView')); // E2E Testing
 
 const LoadingSpinner = () => (
   <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-slate-500 gap-4">
@@ -43,7 +44,7 @@ function App() {
     const isAuth = sessionStorage.getItem('predator_auth');
     return isAuth === 'true' ? 'RUNNING' : 'BOOTING';
   });
-  
+
   const [activeTab, setActiveTab] = useState<TabView>(TabView.DASHBOARD);
 
   const handleBootComplete = () => {
@@ -88,6 +89,7 @@ function App() {
       case TabView.SYSTEM_BRAIN: return <SystemBrainView />;
       case TabView.NAS: return <NasView />;
       case TabView.OPPONENT: return <OpponentView />;
+      case TabView.E2E_TESTING: return <TestingView />;
       default: return <DashboardView />;
     }
   };
@@ -105,8 +107,8 @@ function App() {
       <GlobalProvider>
         <AgentProvider>
           <SuperIntelligenceProvider>
-            <Layout 
-              activeTab={activeTab} 
+            <Layout
+              activeTab={activeTab}
               onTabChange={setActiveTab}
               onLock={handleLock}
               onLogout={handleLogout}

@@ -1,0 +1,163 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: database-backup
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: database-backup
+    app.kubernetes.io/component: maintenance
+spec:
+  schedule: "0 2 * * *" # Every day at 2:00 AM
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: pg-backup
+              image: postgres:15-alpine
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+                  pg_dump -h postgres -U $POSTGRES_USER -d predator_db | gzip > /backups/predator_db_${TIMESTAMP}.sql.gz
+                  # Keep only last 7 backups
+                  ls -t /backups/*.sql.gz | tail -n +8 | xargs -r rm
+              envFrom:
+                - secretRef:
+                    name: predator-db-credentials
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: predator-db-credentials
+                      key: POSTGRES_PASSWORD
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /backups
+          restartPolicy: OnFailure
+          volumes:
+            - name: backup-storage
+              persistentVolumeClaim:
+                claimName: backup-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backup-pvc
+  namespace: predator-analytics
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: opensearch-optimize
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: opensearch-optimize
+    app.kubernetes.io/component: maintenance
+spec:
+  schedule: "0 3 * * 0" # Every Sunday at 3:00 AM
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: optimize
+              image: curlimages/curl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  # Force merge indices
+                  curl -X POST "opensearch:9200/_forcemerge?max_num_segments=1"
+                  # Clear caches
+                  curl -X POST "opensearch:9200/_cache/clear"
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cleanup-old-data
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: cleanup
+    app.kubernetes.io/component: maintenance
+spec:
+  schedule: "0 4 * * *" # Every day at 4:00 AM
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: cleanup
+              image: postgres:15-alpine
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  # Clean up old logs (older than 30 days)
+                  psql -h postgres -U $POSTGRES_USER -d predator_db -c "DELETE FROM logs WHERE created_at < NOW() - INTERVAL '30 days';"
+                  # Clean up old sessions (older than 7 days)
+                  psql -h postgres -U $POSTGRES_USER -d predator_db -c "DELETE FROM sessions WHERE last_activity < NOW() - INTERVAL '7 days';"
+              envFrom:
+                - secretRef:
+                    name: predator-db-credentials
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: predator-db-credentials
+                      key: POSTGRES_PASSWORD
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migration
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: db-migration
+    app.kubernetes.io/component: init
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.36
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done;",
+            ]
+      containers:
+        - name: migration
+          image: predator/ua-sources:latest
+          command:
+            - python
+            - -m
+            - alembic
+            - upgrade
+            - head
+          envFrom:
+            - secretRef:
+                name: predator-db-credentials
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: predator-db-credentials
+                  key: DATABASE_URL
+      restartPolicy: Never
+  backoffLimit: 3

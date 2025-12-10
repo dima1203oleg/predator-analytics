@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: predator-analytics
+  labels:
+    app.kubernetes.io/name: predator-analytics
+    app.kubernetes.io/component: platform
+    app.kubernetes.io/part-of: predator
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: predator-quota
+  namespace: predator-analytics
+spec:
+  hard:
+    requests.cpu: "20"
+    requests.memory: "40Gi"
+    limits.cpu: "40"
+    limits.memory: "80Gi"
+    persistentvolumeclaims: "20"
+    pods: "50"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: predator-limits
+  namespace: predator-analytics
+spec:
+  limits:
+    - default:
+        cpu: "500m"
+        memory: "512Mi"
+      defaultRequest:
+        cpu: "100m"
+        memory: "128Mi"
+      type: Container

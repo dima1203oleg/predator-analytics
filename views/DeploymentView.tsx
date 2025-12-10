@@ -20,7 +20,7 @@ const DeploymentView: React.FC = () => {
     const [pipelines, setPipelines] = useState<PipelineRun[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [lastUpdated, setLastUpdated] = useState<string>(new Date().toLocaleTimeString());
-    
+
     // Modals
     const [selectedPipeline, setSelectedPipeline] = useState<PipelineRun | null>(null);
     const [logModalEnv, setLogModalEnv] = useState<string | null>(null);
@@ -31,16 +31,16 @@ const DeploymentView: React.FC = () => {
     useEffect(() => {
         isMounted.current = true;
         loadData();
-        
+
         const interval = setInterval(() => {
-            if(isMounted.current) {
+            if (isMounted.current) {
                 setLastUpdated(new Date().toLocaleTimeString());
                 // In a real app, delta updates would happen here
             }
         }, 5000);
 
-        return () => { 
-            isMounted.current = false; 
+        return () => {
+            isMounted.current = false;
             clearInterval(interval);
         };
     }, []);
@@ -58,7 +58,7 @@ const DeploymentView: React.FC = () => {
             }
         } catch (e) {
             console.error(e);
-            toast.error("Помилка мережі", "Не вдалося завантажити статус деплою.");
+            toast.error("Помилка Мережі", "Не вдалося завантажити статус розгортання.");
         } finally {
             if (isMounted.current) setIsLoading(false);
         }
@@ -68,12 +68,12 @@ const DeploymentView: React.FC = () => {
         // Optimistic update
         setEnvs(prev => prev.map(e => e.id === id ? { ...e, gitStatus: 'SYNCING' } : e));
         toast.info("Синхронізація", `Запуск ArgoCD для середовища ${id}...`);
-        
+
         try {
             await api.syncEnvironment(id);
             setTimeout(() => {
                 if (isMounted.current) {
-                    setEnvs(prev => prev.map(e => e.id === id ? { ...e, gitStatus: 'SYNCED', lastSync: 'Just now' } : e));
+                    setEnvs(prev => prev.map(e => e.id === id ? { ...e, gitStatus: 'SYNCED', lastSync: 'Щойно' } : e));
                     toast.success("Успіх", `Середовище ${id} синхронізовано.`);
                 }
             }, 2000);
@@ -83,21 +83,21 @@ const DeploymentView: React.FC = () => {
     };
 
     const handleRunPipeline = async () => {
-        toast.info("Pipeline Started", "Triggering full multi-arch build pipeline...");
-        
+        toast.info("Пайплайн Запущено", "Запуск повного multi-arch пайплайну збірки...");
+
         // Optimistic: Set all envs to Syncing to show the flow
         // Specifically identify the Oracle env to show slower syncing if needed
         setEnvs(prev => prev.map(e => ({ ...e, gitStatus: 'SYNCING', progress: 10 })));
 
         await api.triggerPipeline('FULL');
-        
+
         // Refresh pipelines
         const newPipes = await api.getPipelines();
         if (isMounted.current) {
             setPipelines(newPipes);
             // Simulate progression
             setTimeout(() => {
-                 setEnvs(prev => prev.map(e => ({ ...e, gitStatus: 'SYNCED', progress: 100 })));
+                setEnvs(prev => prev.map(e => ({ ...e, gitStatus: 'SYNCED', progress: 100 })));
             }, 3000);
         }
     };
@@ -115,10 +115,10 @@ const DeploymentView: React.FC = () => {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500 pb-20 w-full max-w-[1600px] mx-auto">
-            
-            <PipelineDetailsModal 
-                run={selectedPipeline} 
-                onClose={() => setSelectedPipeline(null)} 
+
+            <PipelineDetailsModal
+                run={selectedPipeline}
+                onClose={() => setSelectedPipeline(null)}
             />
 
             <DeployLogModal
@@ -127,29 +127,29 @@ const DeploymentView: React.FC = () => {
                 onClose={() => setLogModalEnv(null)}
             />
 
-            <ViewHeader 
+            <ViewHeader
                 title="Центр Розгортання (Deployment Hub)"
-                icon={<Rocket size={20} className="icon-3d-blue"/>}
-                breadcrumbs={['SYSTEM', 'DEPLOYMENT', activeTab]}
+                icon={<Rocket size={20} className="icon-3d-blue" />}
+                breadcrumbs={['СИСТЕМА', 'РОЗГОРТАННЯ', activeTab]}
                 stats={[
-                    { label: 'Cluster Status', value: 'HYBRID', icon: <Activity size={14}/>, color: 'success', animate: true },
-                    { label: 'Release', value: 'v18.6.2', icon: <GitBranch size={14}/>, color: 'primary' },
-                    { label: 'Sync State', value: 'GITOPS', icon: <RefreshCw size={14}/>, color: 'default' },
+                    { label: 'Статус Кластера', value: 'ГІБРИД', icon: <Activity size={14} />, color: 'success', animate: true },
+                    { label: 'Реліз', value: 'v18.6.2', icon: <GitBranch size={14} />, color: 'primary' },
+                    { label: 'Стан Синхронізації', value: 'GITOPS', icon: <RefreshCw size={14} />, color: 'default' },
                 ]}
                 actions={
                     <div className="flex gap-2">
-                        <button 
+                        <button
                             onClick={handleSyncFromAI}
                             className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-bold flex items-center gap-2 transition-all border border-slate-700 btn-3d"
                             title="Run sync_from_ai_studio.sh"
                         >
-                            <CloudUpload size={14} /> Sync from AI Studio
+                            <CloudUpload size={14} /> Синхронізація з AI Studio
                         </button>
-                        <button 
+                        <button
                             onClick={handleRunPipeline}
                             className="px-4 py-2 bg-gradient-to-r from-primary-600 to-blue-600 hover:from-primary-500 hover:to-blue-500 text-white rounded text-xs font-bold flex items-center gap-2 transition-all shadow-lg btn-3d btn-3d-blue"
                         >
-                            <Play size={14} /> Trigger Pipeline (Multi-Arch)
+                            <Play size={14} /> Запустити Пайплайн (Multi-Arch)
                         </button>
                     </div>
                 }
@@ -157,19 +157,19 @@ const DeploymentView: React.FC = () => {
 
             {/* Tabs */}
             <div className="flex border-b border-slate-800 bg-slate-950/30 rounded-t overflow-x-auto scrollbar-hide">
-                <button 
+                <button
                     onClick={() => setActiveTab('OVERVIEW')}
                     className={`flex-1 min-w-[120px] py-3 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'OVERVIEW' ? 'border-primary-500 text-primary-400 bg-slate-800/30' : 'border-transparent text-slate-500 hover:bg-slate-800/30'}`}
                 >
                     <LayoutGrid size={16} /> Огляд (Overview)
                 </button>
-                <button 
+                <button
                     onClick={() => setActiveTab('LIVE')}
                     className={`flex-1 min-w-[120px] py-3 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'LIVE' ? 'border-green-500 text-green-400 bg-slate-800/30' : 'border-transparent text-slate-500 hover:bg-slate-800/30'}`}
                 >
                     <MonitorPlay size={16} /> Живий Монітор
                 </button>
-                <button 
+                <button
                     onClick={() => setActiveTab('CICD')}
                     className={`flex-1 min-w-[120px] py-3 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'CICD' ? 'border-orange-500 text-orange-400 bg-slate-800/30' : 'border-transparent text-slate-500 hover:bg-slate-800/30'}`}
                 >
@@ -188,15 +188,15 @@ const DeploymentView: React.FC = () => {
                         <div className="space-y-6 animate-in fade-in duration-300">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-h-[300px]">
                                 {envs.map(env => (
-                                    <EnvironmentCard 
-                                        key={env.id} 
-                                        env={env} 
-                                        onSync={handleSync} 
-                                        onTest={(name) => setLogModalEnv(name)} 
+                                    <EnvironmentCard
+                                        key={env.id}
+                                        env={env}
+                                        onSync={handleSync}
+                                        onTest={(name) => setLogModalEnv(name)}
                                     />
                                 ))}
                             </div>
-                            
+
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <div className="bg-slate-900 border border-slate-800 rounded-lg p-4 panel-3d">
                                     <div className="flex justify-between items-center mb-4">
@@ -237,7 +237,7 @@ const DeploymentView: React.FC = () => {
                                                     <span className={`font-bold ${e.gitStatus === 'SYNCED' ? 'text-green-500' : 'text-yellow-500 animate-pulse'}`}>{e.gitStatus}</span>
                                                 </div>
                                                 <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden mt-1">
-                                                    <div className={`h-full ${e.gitStatus === 'SYNCED' ? 'bg-green-500' : 'bg-yellow-500'}`} style={{width: `${e.gitStatus === 'SYNCED' ? 100 : 60}%`}}></div>
+                                                    <div className={`h-full ${e.gitStatus === 'SYNCED' ? 'bg-green-500' : 'bg-yellow-500'}`} style={{ width: `${e.gitStatus === 'SYNCED' ? 100 : 60}%` }}></div>
                                                 </div>
                                             </div>
                                         ))}
@@ -283,8 +283,8 @@ const DeploymentView: React.FC = () => {
                     {/* CI/CD TAB */}
                     {activeTab === 'CICD' && (
                         <div className="animate-in fade-in duration-300">
-                            <PipelineTable 
-                                pipelines={pipelines} 
+                            <PipelineTable
+                                pipelines={pipelines}
                                 onSelect={setSelectedPipeline}
                                 onRollback={handleRollback}
                             />

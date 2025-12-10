@@ -1,0 +1,157 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: opensearch
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/component: search
+    app.kubernetes.io/part-of: predator-analytics
+spec:
+  serviceName: opensearch
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opensearch
+  template:
+    metadata:
+      labels:
+        app: opensearch
+        app.kubernetes.io/name: opensearch
+    spec:
+      initContainers:
+        - name: sysctl
+          image: busybox
+          command: ["sh", "-c", "sysctl -w vm.max_map_count=262144 || true"]
+          securityContext:
+            privileged: true
+      containers:
+        - name: opensearch
+          image: opensearchproject/opensearch:2.11.0
+          ports:
+            - containerPort: 9200
+              name: http
+            - containerPort: 9300
+              name: transport
+            - containerPort: 9600
+              name: perf
+          env:
+            - name: cluster.name
+              value: "predator-cluster"
+            - name: node.name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: discovery.type
+              value: "single-node"
+            - name: bootstrap.memory_lock
+              value: "true"
+            - name: OPENSEARCH_JAVA_OPTS
+              value: "-Xms1g -Xmx1g"
+            - name: DISABLE_SECURITY_PLUGIN
+              value: "true"
+          volumeMounts:
+            - name: opensearch-storage
+              mountPath: /usr/share/opensearch/data
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1500m"
+          livenessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: 9200
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: 9200
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+  volumeClaimTemplates:
+    - metadata:
+        name: opensearch-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/component: search
+spec:
+  type: ClusterIP
+  selector:
+    app: opensearch
+  ports:
+    - port: 9200
+      targetPort: 9200
+      name: http
+    - port: 9300
+      targetPort: 9300
+      name: transport
+    - port: 9600
+      targetPort: 9600
+      name: perf
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opensearch-dashboards
+  namespace: predator-analytics
+  labels:
+    app.kubernetes.io/name: opensearch-dashboards
+    app.kubernetes.io/component: search
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opensearch-dashboards
+  template:
+    metadata:
+      labels:
+        app: opensearch-dashboards
+    spec:
+      containers:
+        - name: dashboards
+          image: opensearchproject/opensearch-dashboards:2.11.0
+          ports:
+            - containerPort: 5601
+          env:
+            - name: OPENSEARCH_HOSTS
+              value: '["http://opensearch:9200"]'
+            - name: DISABLE_SECURITY_DASHBOARDS_PLUGIN
+              value: "true"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch-dashboards
+  namespace: predator-analytics
+spec:
+  type: ClusterIP
+  selector:
+    app: opensearch-dashboards
+  ports:
+    - port: 5601
+      targetPort: 5601

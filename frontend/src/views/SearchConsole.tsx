@@ -18,6 +18,8 @@ import {
     ChevronDown, ExternalLink, Layers, Database, AlertCircle, Volume2, VolumeX
 } from 'lucide-react';
 import { api } from '../services/api';
+import ReactECharts from 'echarts-for-react';
+import { useVoiceControl, InteractionStatus } from '../hooks/useVoiceControl';
 
 const IS_TRUTH_ONLY_MODE = true;
 
@@ -117,7 +119,8 @@ const ResultCard: React.FC<{
     rank: number;
     onExplain: () => void;
     onSummarize: () => void;
-}> = ({ result, rank, onExplain, onSummarize }) => {
+    onRead: () => void;
+}> = ({ result, rank, onExplain, onSummarize, onRead }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
@@ -230,6 +233,10 @@ const ResultCard: React.FC<{
                                  rounded-lg text-xs font-medium hover:bg-slate-700 transition-colors">
                                 <Copy className="w-3.5 h-3.5" />
                             </button>
+                            <button onClick={onRead} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700/50 text-slate-400 
+                                 rounded-lg text-xs font-medium hover:bg-slate-700 transition-colors">
+                                <Volume2 className="w-3.5 h-3.5" />
+                            </button>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -278,27 +285,34 @@ const XAIPanel: React.FC<{
 
                 {/* Feature importance */}
                 <div className="mb-6">
-                    <h4 className="text-sm font-medium text-slate-400 mb-3">Token Importance</h4>
-                    <div className="space-y-2">
-                        {explanation.top_features.slice(0, 8).map((feature, i) => (
-                            <div key={i} className="flex items-center gap-3">
-                                <span className="text-xs font-mono text-slate-400 w-24 truncate">
-                                    {feature.token}
-                                </span>
-                                <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${feature.importance * 100}%` }}
-                                        transition={{ delay: i * 0.1 }}
-                                        className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
-                                    />
-                                </div>
-                                <span className="text-xs font-mono text-purple-400 w-10 text-right">
-                                    {feature.importance.toFixed(2)}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
+                    <h4 className="text-sm font-medium text-slate-400 mb-3">Token Importance (ECharts)</h4>
+                    <ReactECharts
+                        option={{
+                            tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                            grid: { top: 10, bottom: 20, left: 80, right: 20 },
+                            xAxis: { type: 'value', show: false },
+                            yAxis: {
+                                type: 'category',
+                                data: explanation.top_features.slice(0, 10).map(f => f.token),
+                                axisLabel: { color: '#94a3b8' },
+                                axisLine: { show: false },
+                                axisTick: { show: false }
+                            },
+                            series: [{
+                                data: explanation.top_features.slice(0, 10).map(f => f.importance),
+                                type: 'bar',
+                                itemStyle: {
+                                    color: new (window as any).echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                                        { offset: 0, color: '#a855f7' },
+                                        { offset: 1, color: '#ec4899' }
+                                    ]),
+                                    borderRadius: [0, 4, 4, 0]
+                                },
+                            }]
+                        }}
+                        style={{ height: '300px' }}
+                        theme="dark"
+                    />
                 </div>
 
                 {/* SHAP visualization placeholder */}
@@ -318,7 +332,7 @@ const SearchConsole: React.FC = () => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [isListening, setIsListening] = useState(false);
+
     const [isMuted, setIsMuted] = useState(false);
     const [searchModes, setSearchModes] = useState({
         semantic: true,
@@ -335,55 +349,19 @@ const SearchConsole: React.FC = () => {
     const [searchTime, setSearchTime] = useState<number | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const handleVoice = () => {
-        if (isListening) return; // Already listening handle elsewhere if needed
-        setIsListening(true);
-        // ... (voice logic unchanged)
-        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert("Speech API not supported in this browser.");
-            setIsListening(false);
-            return;
+    const [voiceStatus, setVoiceStatus] = useState<InteractionStatus>('IDLE');
+    const { startListening, stopListening, speak } = useVoiceControl(voiceStatus, setVoiceStatus, (text) => {
+        setQuery(text);
+        // Optional: Auto-search after voice input? 
+        // handleSearch(); 
+    });
+
+    const handleVoiceToggle = () => {
+        if (voiceStatus === 'LISTENING') {
+            stopListening();
+        } else {
+            startListening();
         }
-
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'uk-UA';
-        recognition.maxAlternatives = 1;
-
-        recognition.onresult = (event: any) => {
-            const text = event.results[0][0].transcript;
-            setQuery(text);
-            setIsListening(false);
-            // Auto-trigger search/chat if confident?
-        };
-
-        recognition.onerror = () => setIsListening(false);
-        recognition.onend = () => setIsListening(false);
-
-        recognition.start();
-    };
-
-    const speakResponse = async (text: string) => {
-        if (isMuted) return;
-
-        try {
-            // Try backend TTS (Google Cloud)
-            const result = await api.nexus.speak(text);
-            if (result && result.audioContent) {
-                const audio = new Audio("data:audio/mp3;base64," + result.audioContent);
-                audio.play();
-                return;
-            }
-        } catch (e) {
-            console.warn("Backend TTS failed, falling back to local:", e);
-        }
-
-        // Local Fallback
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        window.speechSynthesis.speak(utterance);
     };
 
     const handleSearch = useCallback(async () => {
@@ -413,7 +391,7 @@ const SearchConsole: React.FC = () => {
                 setSearchTime(Date.now() - startTime);
 
                 if (searchModes.voice || searchModes.chat) {
-                    speakResponse(response.answer);
+                    if (!isMuted) speak(response.answer);
                 }
                 return;
             }
@@ -642,8 +620,8 @@ const SearchConsole: React.FC = () => {
                                         </button>
 
                                         <button
-                                            onClick={handleVoice}
-                                            className={`p-2 transition-colors ${isListening ? 'text-red-500 animate-pulse' : 'text-slate-500 hover:text-cyan-400'}`}
+                                            onClick={handleVoiceToggle}
+                                            className={`p-2 transition-colors ${voiceStatus === 'LISTENING' ? 'text-red-500 animate-pulse' : 'text-slate-500 hover:text-cyan-400'}`}
                                         >
                                             <Mic className="w-5 h-5" />
                                         </button>
@@ -741,6 +719,7 @@ const SearchConsole: React.FC = () => {
                                             rank={i + 1}
                                             onExplain={() => handleExplain(result)}
                                             onSummarize={() => handleSummarize(result)}
+                                            onRead={() => speak(result.snippet)}
                                         />
                                     ))}
                                 </div>
