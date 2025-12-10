@@ -1,0 +1,19 @@
+global:
+  env: dev
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  ingressClassName: "nginx"
+
+policy-engine:
+  enabled: true
+backend:
+  enabled: true
+frontend:
+  enabled: true
+
+# Global node selector override for inference or GPU workloads
+inference:
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}

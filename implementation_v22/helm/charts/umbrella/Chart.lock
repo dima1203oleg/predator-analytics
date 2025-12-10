@@ -1,0 +1,12 @@
+dependencies:
+- name: policy-engine
+  repository: file://../policy-engine
+  version: 0.1.0
+- name: backend
+  repository: file://../backend
+  version: 0.1.0
+- name: frontend
+  repository: file://../frontend
+  version: 0.1.0
+digest: sha256:775b13f0a8ce56217b41d2291b96f43de67e66f84caf4fc628127529d8e2d4e6
+generated: "2025-12-10T13:55:45.682686676Z"

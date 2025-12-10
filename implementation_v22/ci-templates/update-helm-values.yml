@@ -1,0 +1,36 @@
+# Reusable snippet to update Helm values with an image digest and open PR (requires gh CLI token)
+
+name: Update Helm Values
+on: [workflow_call]
+
+jobs:
+  update-helm-values:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq || true
+          sudo chmod +x /usr/bin/yq || true
+
+      - name: Update umbrella values for backend
+        run: |
+          yq e '.backend.image.repository = "${{ inputs.registry }}/${{ inputs.backendImage }}"' -i helm/umbrella/values.yaml || true
+          yq e '.backend.image.digest = "${{ inputs.backendDigest }}"' -i helm/umbrella/values.yaml || true
+
+      - name: Create PR with updated values
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          git config user.name "gh-actions"
+          git config user.email "gh-actions@github.com"
+          git checkout -b update-images-${{ github.run_number }}
+          git add helm/umbrella/values.yaml
+          git commit -m "chore(images): update backend image digest to ${{ inputs.backendDigest }}" || echo "No changes"
+          if git push --set-upstream origin update-images-${{ github.run_number }}; then
+            gh pr create --title "chore(images): update backend image digest" --body "This PR updates the backend image digest to ${{ inputs.backendDigest }}" || true
+          else
+            echo "Failed to create PR; verify permissions" >&2
+          fi

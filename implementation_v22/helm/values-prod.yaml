@@ -1,0 +1,42 @@
+global:
+  env: prod
+  autoPromote:
+    enabled: true
+    policy: "full"
+
+inference:
+  gpu:
+    enabled: true
+    nodeSelector:
+      accelerator: nvidia
+
+qdrant:
+  replicas: 2
+
+opensearch:
+  replicas: 3
+
+selfImproveOrchestrator:
+  enabled: true
+policyEngine:
+  enabled: true
+kubecost:
+  enabled: true
+keda:
+  enabled: true
+
+backend:
+  nodeSelector:
+    accelerator: nvidia
+  tolerations: []
+frontend:
+  nodeSelector: {}
+  tolerations: []
+# When using GHCR in CI, set these to the pushed images and tags.
+images:
+  backend:
+    repository: ghcr.io/your-org/predator-backend
+    tag: "v22.0.*"
+  frontend:
+    repository: ghcr.io/your-org/predator-frontend
+    tag: "v22.0.*"

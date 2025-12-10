@@ -1,0 +1,23 @@
+global:
+  env: dev
+  autoPromote:
+    enabled: false
+
+qdrant:
+  replicas: 1
+
+opensearch:
+  replicas: 1
+
+selfImproveOrchestrator:
+  enabled: false
+
+inference:
+  gpu:
+    enabled: false
+policyEngine:
+  enabled: false
+kubecost:
+  enabled: false
+keda:
+  enabled: false

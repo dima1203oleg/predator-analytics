@@ -1,0 +1,15 @@
+apiVersion: v2
+name: umbrella
+description: Umbrella chart for Predator services (frontend, backend, policy-engine)
+type: application
+version: 0.1.0
+dependencies:
+  - name: policy-engine
+    version: "0.1.0"
+    repository: "file://../policy-engine"
+  - name: backend
+    version: "0.1.0"
+    repository: "file://../backend"
+  - name: frontend
+    version: "0.1.0"
+    repository: "file://../frontend"

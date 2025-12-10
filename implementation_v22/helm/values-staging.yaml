@@ -1,0 +1,26 @@
+global:
+  env: staging
+  autoPromote:
+    enabled: true
+    policy: "staging-safe"
+
+selfImproveOrchestrator:
+  enabled: true
+  signals:
+    intervalSeconds: 300
+
+qdrant:
+  replicas: 1
+
+opensearch:
+  replicas: 1
+
+inference:
+  gpu:
+    enabled: false
+policyEngine:
+  enabled: true
+kubecost:
+  enabled: true
+keda:
+  enabled: true

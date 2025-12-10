@@ -1,0 +1,19 @@
+# Reusable snippet to run Trivy on an image and fail on high+ severity
+name: Trivy Scan
+on: [workflow_call]
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Run Trivy on built image
+        run: |
+          trivy image --severity CRITICAL,HIGH ${{ inputs.image }} || true
+
+      - name: Fail if call reports high/critical vulnerabilities
+        run: |
+          trivy image --severity CRITICAL,HIGH --exit-code 1 ${{ inputs.image }} || (echo 'Trivy failed: vulnerabilities found' && exit 1)
