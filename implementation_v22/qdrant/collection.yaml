@@ -1,0 +1,19 @@
+collection: multimodal_index
+vectors:
+  text_dense:
+    size: 768
+    distance: Cosine
+  image_clip:
+    size: 512
+    distance: Cosine
+sparse_vectors:
+  text_sparse:
+    modifier: idf
+payload_schema:
+  tenant_id: keyword
+  doc_id: keyword
+  source_type: keyword
+hnsw_config:
+  m: 0
+  payload_m: 16
+on_disk: true

@@ -1,0 +1,11 @@
+{
+  "mappings": {
+    "properties": {
+      "tenant_id": { "type": "keyword" },
+      "doc_id": { "type": "keyword" },
+      "title": { "type": "text" },
+      "content": { "type": "text" },
+      "created_at": { "type": "date" }
+    }
+  }
+}

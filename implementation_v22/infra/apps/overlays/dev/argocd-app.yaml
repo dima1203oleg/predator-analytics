@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/your-org/predator-gitops"
+    path: "implementation_v22/infra/apps/overlays/dev"
+    targetRevision: HEAD
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true

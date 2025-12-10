@@ -1,0 +1,41 @@
+# Reusable snippet for build & push images to GHCR
+# Requires: REGISTRY, REPOSITORY, IMAGE_NAME, TAG, GHCR_PAT
+
+name: Build and Push Image
+
+on: [workflow_call]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Create builder cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
+          platforms: linux/amd64
+          push: true
+          tags: ${{ inputs.registry }}/${{ inputs.image }}:${{ inputs.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Get digest and output
+        run: |
+          DIGEST=$(docker buildx imagetools inspect ${{ inputs.registry }}/${{ inputs.image }}:${{ inputs.tag }} --raw | jq -r '.manifests[0].digest')
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
