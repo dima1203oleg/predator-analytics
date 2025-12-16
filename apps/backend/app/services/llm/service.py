@@ -3,12 +3,18 @@ LLM Service Facade
 Manages providers, routing, and fallbacks.
 """
 import logging
+import os
 from typing import Optional, Dict, Any, List
 from ...core.config import settings
 from ...services.llm_keys import get_key_manager
 from .providers.base import LLMResponse, BaseLLMProvider
+
+# Providers
 from .providers.groq import GroqProvider
-# Add other providers here
+from .providers.gemini import GeminiProvider
+from .providers.mistral import MistralProvider
+from .providers.openai import OpenAIProvider
+from .providers.ollama import OllamaProvider
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +31,10 @@ class LLMService:
         """
         Generate text using specified provider with fallback support
         """
+        # Resolve default provider if needed
+        if provider == "auto":
+            provider = settings.LLM_DEFAULT_PROVIDER
+
         # 1. Try primary provider
         response = await self._try_generate(provider, prompt, system, **kwargs)
         if response.success:
@@ -35,7 +45,8 @@ class LLMService:
         # 2. Try fallbacks from config
         fallbacks = settings.LLM_FALLBACK_CHAIN.split(",")
         for fb_provider in fallbacks:
-            if fb_provider == provider:
+            fb_provider = fb_provider.strip()
+            if fb_provider == provider or not fb_provider:
                 continue
 
             logger.info(f"Trying fallback: {fb_provider}")
@@ -54,29 +65,46 @@ class LLMService:
     async def _try_generate(self, provider_name: str, prompt: str, system: str, **kwargs) -> LLMResponse:
         """Helper to get key and run generation"""
         key = self.key_manager.get_key(provider_name)
+
+        # Special case for Ollama (key is base_url)
+        if provider_name == "ollama" and not key:
+             key = settings.OLLAMA_BASE_URL
+
         if not key:
             return LLMResponse(False, "", provider_name, "unknown", error="No available keys")
 
-        # Instantiate provider on the fly (or cache it)
-        # In a real app, we might cache provider instances
+        # Instantiate provider on the fly
         provider = self._get_provider_instance(provider_name, key)
         if not provider:
-             return LLMResponse(False, "", provider_name, "unknown", error="Provider implementation not found")
+             return LLMResponse(False, "", provider_name, "none", error="Provider implementation not found")
 
-        response = await provider.generate(prompt, system, **kwargs)
+        try:
+            response = await provider.generate(prompt, system, **kwargs)
 
-        if response.success:
-            self.key_manager.mark_success(provider_name, key)
-        else:
-            self.key_manager.mark_failure(provider_name, key)
+            if response.success:
+                if provider_name != "ollama":
+                    self.key_manager.mark_success(provider_name, key)
+            else:
+                if provider_name != "ollama":
+                    self.key_manager.mark_failure(provider_name, key)
 
-        return response
+            return response
+        except Exception as e:
+            return LLMResponse(False, "", provider_name, "error", error=str(e))
 
     def _get_provider_instance(self, name: str, key: str) -> Optional[BaseLLMProvider]:
         """Factory for providers"""
         if name == "groq":
-            return GroqProvider(key)
-        # Add others: gemini, mistral, etc.
+            return GroqProvider(key, model=settings.GROQ_MODEL)
+        elif name == "gemini":
+            return GeminiProvider(key, model=settings.GEMINI_MODEL)
+        elif name == "mistral":
+            return MistralProvider(key, model=settings.MISTRAL_MODEL)
+        elif name == "openai":
+            return OpenAIProvider(key, model=settings.OPENAI_MODEL if hasattr(settings, 'OPENAI_MODEL') else "gpt-4o-mini")
+        elif name == "ollama":
+            return OllamaProvider(key, model=settings.OLLAMA_MODEL)
+
         return None
 
 # Global instance
