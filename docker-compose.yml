@@ -54,8 +54,8 @@ services:
   orchestrator:
     image: predator-orchestrator:v22
     build:
-      context: ./apps
-      dockerfile: self-improve-orchestrator/Dockerfile
+      context: .
+      dockerfile: apps/self-improve-orchestrator/Dockerfile
     container_name: predator_orchestrator
     env_file:
       - .env
@@ -73,8 +73,16 @@ services:
     volumes:
       - ./apps/self-improve-orchestrator:/app/orchestrator
       - ./apps/backend/app:/app/app
+      - ./libs:/app/libs
       - orchestrator_logs:/app/logs
       - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     depends_on:
       - postgres
       - redis
@@ -99,6 +107,7 @@ services:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
     volumes:
       - ./apps/self-improve-orchestrator:/app/orchestrator
+      - ./libs:/app/libs
       - orchestrator_logs:/app/logs
     depends_on:
       - redis
