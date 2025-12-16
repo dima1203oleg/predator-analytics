@@ -9,8 +9,14 @@ def should_continue(state: AgentState) -> str:
     Decide next step based on state.
     Returns the key for the conditional edge mapping.
     """
+    step = state.get("current_step")
+
+    # 1. Success / Completion
+    if step == "COMPLETE":
+        return "approve"
+
+    # 2. Error Handling
     if state.get("error"):
-        # Simple retry logic
         retries = state["context"].get("retries", 0)
         if retries < 3:
             state["context"]["retries"] = retries + 1
@@ -18,12 +24,9 @@ def should_continue(state: AgentState) -> str:
         else:
             return "give_up"
 
-    # If no error, check if approved or needs refinement
-    last_output = state.get("last_output", {})
-    if last_output.get("quality", 0) > 0.8:
-        return "approve"
-
-    return "retry"
+    # 3. Validation / Continuation
+    # If logic reaches here, Critic implied continuation to next step
+    return "next_step"
 
 def create_agent_graph():
     """
@@ -48,9 +51,10 @@ def create_agent_graph():
         "critic",
         should_continue,
         {
-            "approve": END,
-            "give_up": END,
-            "retry": "worker"
+            "approve": END,     # Success
+            "give_up": END,     # Failure
+            "retry": "worker",  # Error recovery
+            "next_step": "worker" # Next item in plan
         }
     )
 
