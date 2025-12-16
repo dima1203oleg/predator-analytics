@@ -7,6 +7,7 @@ import os
 from typing import Optional, Dict, Any, List
 from ...core.config import settings
 from ...services.llm_keys import get_key_manager
+from ...core.resilience import get_circuit_breaker, CircuitBreakerOpenException
 from .providers.base import LLMResponse, BaseLLMProvider
 
 # Providers
@@ -79,7 +80,9 @@ class LLMService:
              return LLMResponse(False, "", provider_name, "none", error="Provider implementation not found")
 
         try:
-            response = await provider.generate(prompt, system, **kwargs)
+            # Wrap in Circuit Breaker
+            cb = get_circuit_breaker(f"llm_{provider_name}")
+            response = await cb.call(provider.generate, prompt, system, **kwargs)
 
             if response.success:
                 if provider_name != "ollama":
@@ -87,8 +90,16 @@ class LLMService:
             else:
                 if provider_name != "ollama":
                     self.key_manager.mark_failure(provider_name, key)
+                    # Note: We don't trigger CB failure here for logical errors,
+                    # only for exceptions caught by CB wrapper.
+                    # If provider.generate() returns success=False but no raise, CB thinks it's OK.
+                    # We might want to raise if we want CB to open on API errors.
+                    # For now, let's keep it simple: CB tracks Exceptions (timeouts, connection errors).
 
             return response
+        except CircuitBreakerOpenException:
+            logger.warning(f"Circuit Breaker OPEN for {provider_name}")
+            return LLMResponse(False, "", provider_name, "circuit_open", error="Circuit Breaker Open")
         except Exception as e:
             return LLMResponse(False, "", provider_name, "error", error=str(e))
 
