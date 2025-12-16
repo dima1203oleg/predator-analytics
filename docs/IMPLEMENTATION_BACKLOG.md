@@ -1,4 +1,4 @@
-# 📋 PREDATOR ANALYTICS - BACKLOG ЗАДАЧ ДЛЯ ІМПЛЕМЕНТАЦІЇ
+ # 📋 PREDATOR ANALYTICS - BACKLOG ЗАДАЧ ДЛЯ ІМПЛЕМЕНТАЦІЇ
 ## Production Readiness Checklist
 
 **Версія:** 1.0.0
@@ -10,7 +10,7 @@
 ## 🔴 P0 - КРИТИЧНІ (Блокери production)
 
 ### TASK-001: Консолідація Telegram Bot файлів
-**Статус:** 🔄 TODO
+**Статус:** ✅ DONE
 **Оцінка:** 4 години
 
 **Проблема:**
@@ -37,7 +37,7 @@ DELETE: apps/backend/app/services/telegram_advanced.py
 ---
 
 ### TASK-002: Виправити API ключі
-**Статус:** 🔄 TODO
+**Статус:** ✅ DONE
 **Оцінка:** 1 година
 
 **Проблема:**
@@ -63,7 +63,7 @@ docker compose restart orchestrator telegram_controller
 ---
 
 ### TASK-003: Виправити PostgreSQL DSN для Celery
-**Статус:** 🔄 TODO
+**Статус:** ✅ DONE
 **Оцінка:** 30 хвилин
 
 **Проблема:**
@@ -83,7 +83,7 @@ environment:
 ---
 
 ### TASK-004: Запустити Prometheus
-**Статус:** 🔄 TODO
+**Статус:** ✅ DONE
 **Оцінка:** 30 хвилин
 
 **Проблема:**
@@ -162,7 +162,7 @@ Frontend title показує `v20.0` замість `v22.0`
 ---
 
 ### TASK-008: Hardcoded Passwords → Environment Variables
-**Статус:** 🔄 TODO
+**Статус:** ✅ DONE
 **Оцінка:** 2 години
 
 **Проблема:**
@@ -240,50 +240,12 @@ name: CI Pipeline
 on: [push, pull_request]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-      - name: Install deps
-        run: pip install -r apps/backend/requirements.txt
-      - name: Test
-        run: pytest apps/backend/tests/
-
-  build:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Build Docker
-        run: docker compose build
-```
-
----
-
 ### TASK-012: Rate Limiting для API
-**Статус:** 🔄 TODO
+**Статус:** ✅ DONE
 **Оцінка:** 2 години
 
 **Імплементація:**
-```python
-# apps/backend/app/core/rate_limit.py
-from fastapi import Request, HTTPException
-import redis
-
-class RateLimiter:
-    def __init__(self, redis_url: str, limit: int = 100, window: int = 60):
-        self.redis = redis.from_url(redis_url)
-        self.limit = limit
-        self.window = window
-
-    async def check(self, request: Request):
-        key = f"rate_limit:{request.client.host}"
-        current = self.redis.incr(key)
-        if current == 1:
-            self.redis.expire(key, self.window)
-        if current > self.limit:
-            raise HTTPException(429, "Too many requests")
+Реалізовано в `apps/backend/app/middleware/rate_limit.py` та підключено в `main.py`.
 ```
 
 ---
