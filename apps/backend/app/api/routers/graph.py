@@ -45,6 +45,7 @@ async def build_graph_for_document(
             tenant_id
         )
 
+
         return {
             "status": "accepted",
             "message": "Graph extraction started",
@@ -53,4 +54,30 @@ async def build_graph_for_document(
 
     except Exception as e:
         logger.error(f"Graph trigger error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/graph/search")
+async def search_knowledge_graph(
+    q: str,
+    depth: int = 1,
+    user: dict = Depends(get_current_user)
+):
+    """
+    Search the Knowledge Graph for entities and their connections.
+    """
+    try:
+         # Get Tenant ID (mock if not in user token)
+        tenant_id = user.get("tenant_id")
+        if not tenant_id:
+            tenant_id = str(uuid.uuid4())
+
+        result = await graph_builder.search_graph(q, tenant_id, depth)
+
+        if "error" in result:
+             raise HTTPException(status_code=500, detail=result["error"])
+
+        return result
+
+    except Exception as e:
+        logger.error(f"Graph search error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
