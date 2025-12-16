@@ -3,6 +3,16 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 import logging
+import sys
+from pathlib import Path
+
+# Add project root to sys.path to ensure 'libs' is importable
+# Current: apps/backend/app/main.py -> Root is 4 levels up
+ROOT_DIR = Path(__file__).resolve().parents[3]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.append(str(ROOT_DIR))
+
+from libs.core.mq import broker
 
 from app.agents.orchestrator.supervisor import NexusSupervisor
 from app.services.model_router import ModelRouter
@@ -182,6 +192,15 @@ async def startup_event():
         logger.info("🔄 Optimization cycle: Every 15 minutes")
     except Exception as e:
         logger.warning(f"⚠️ AutoOptimizer failed to start: {e}")
+
+    # 4. Connect to Event Bus
+    await broker.connect()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup resources on shutdown"""
+    logger.info("🛑 Shutting down Predator Analytics...")
+    await broker.close()
 
 class AnalyzeRequest(BaseModel):
     query: str
@@ -522,6 +541,10 @@ app.include_router(analytics_router.router, prefix="/api/v1")
 # Security Infrastructure
 from app.routers import security as security_router
 app.include_router(security_router.router, prefix="/api/v1")
+
+# Knowledge Graph (GraphRAG)
+from app.api.routers import graph as graph_router
+app.include_router(graph_router.router, prefix="/api/v1")
 
 # Evolution System
 from app.routers import evolution as evolution_router

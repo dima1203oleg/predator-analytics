@@ -285,3 +285,48 @@ class SICycle(Base):
     mlflow_run_id = Column(Text)
     status = Column(String(30))
     created_at = Column(DateTime, server_default=func.now())
+
+
+class GraphNode(Base):
+    """
+    Knowledge Graph Node (Entity).
+    """
+    __tablename__ = "graph_nodes"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
+    name = Column(Text, nullable=False) # Name/Value of entity
+    label = Column(String(50)) # PERSON, ORG, LOC, EVENT
+    properties = Column(JSONB)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+
+    __table_args__ = (
+        Index('idx_graph_nodes_name_trgm', 'name', postgresql_using='gin', postgresql_ops={'name': 'gin_trgm_ops'}),
+        Index('idx_graph_nodes_label', 'label'),
+    )
+
+
+class GraphEdge(Base):
+    """
+    Knowledge Graph Edge (Relationship).
+    """
+    __tablename__ = "graph_edges"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    source_id = Column(UUID(as_uuid=True), ForeignKey("graph_nodes.id"), nullable=False)
+    target_id = Column(UUID(as_uuid=True), ForeignKey("graph_nodes.id"), nullable=False)
+    relation = Column(String(50)) # WORKS_AT, SIGNED, OWNED_BY
+    weight = Column(Float, default=1.0)
+
+    # Provenance - where did we find this link?
+    doc_id = Column(UUID(as_uuid=True), ForeignKey("documents.id"))
+
+    properties = Column(JSONB)
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        Index('idx_graph_edges_source', 'source_id'),
+        Index('idx_graph_edges_target', 'target_id'),
+        Index('idx_graph_edges_relation', 'relation'),
+    )
