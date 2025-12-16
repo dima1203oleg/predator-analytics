@@ -12,7 +12,8 @@ if str(ROOT_DIR) not in sys.path:
 
 from libs.core.models import (
     Company, Tender, RiskAssessment, ExchangeRate, IngestionLog, SearchAnalytics,
-    Document, AugmentedDataset, MLDataset, MLJob, MultimodalAsset, SICycle
+    Document, AugmentedDataset, MLDataset, MLJob, MultimodalAsset, SICycle,
+    GraphNode, GraphEdge
 )
 # Re-export Base for compatibility if needed (it is usually imported from db)
 from libs.core.database import Base
