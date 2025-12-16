@@ -1,21 +1,38 @@
 
+
 services:
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: predator_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: predator
+      RABBITMQ_DEFAULT_PASS: predator_secret_key
+    restart: unless-stopped
+    networks:
+      - predator-net
+
   # -------------------------------------------------------------------------
-  # BACKEND (FastAPI + Multi-Agent System + AutoOptimizer)
+  # BACKEND (FastAPI + Multi-Agent System)
   # -------------------------------------------------------------------------
   backend:
-    build: 
-      context: ./ua-sources
-      dockerfile: Dockerfile
+    image: predator-backend:v22
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
     container_name: predator_backend
     ports:
-      - "8000:8000"
+      - "8090:8000"
     volumes:
-      - ./ua-sources/app:/app/app
+      - ./apps/backend/app:/app/app
+      - ./libs:/app/libs
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql://predator:predator_password@postgres:5432/predator_db
+      - DATABASE_URL=postgresql+asyncpg://predator:predator_password@postgres:5432/predator_db
       - REDIS_URL=redis://redis:6379/0
       - QDRANT_URL=http://qdrant:6333
       - OPENSEARCH_URL=http://opensearch:9200
@@ -28,11 +45,73 @@ services:
       - opensearch
       - minio
     restart: unless-stopped
+    networks:
+      - predator-net
 
-  celery_worker:
+  # -------------------------------------------------------------------------
+  # ORCHESTRATOR v23.0 (God Mode - Self-Improvement)
+  # -------------------------------------------------------------------------
+  orchestrator:
+    image: predator-orchestrator:v22
     build:
-      context: ./ua-sources
-      dockerfile: Dockerfile
+      context: ./apps
+      dockerfile: self-improve-orchestrator/Dockerfile
+    container_name: predator_orchestrator
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://predator:predator_password@postgres:5432/predator_db
+      - REDIS_URL=redis://redis:6379/1
+      - QDRANT_URL=http://qdrant:6333
+      - OPENSEARCH_URL=http://opensearch:9200
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID:-}
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    volumes:
+      - ./apps/self-improve-orchestrator:/app/orchestrator
+      - ./apps/backend/app:/app/app
+      - orchestrator_logs:/app/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - postgres
+      - redis
+      - backend
+    restart: unless-stopped
+    networks:
+      - predator-net
+
+  # -------------------------------------------------------------------------
+  # TELEGRAM CONTROLLER
+  # -------------------------------------------------------------------------
+  telegram_controller:
+    image: predator-orchestrator:v22
+    container_name: predator_telegram_controller
+    command: python3 /app/orchestrator/agents/telegram_bot.py
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/1
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      - ./apps/self-improve-orchestrator:/app/orchestrator
+      - orchestrator_logs:/app/logs
+    depends_on:
+      - redis
+      - orchestrator
+    restart: unless-stopped
+    networks:
+      - predator-net
+
+  # -------------------------------------------------------------------------
+  # WORKERS
+  # -------------------------------------------------------------------------
+  celery_worker:
+    image: predator-backend:v22
     container_name: predator_celery_worker
     command: celery -A app.core.celery_app worker --loglevel=info -Q etl,ingestion,maintenance,monitoring
     env_file:
@@ -48,11 +127,11 @@ services:
       - redis
       - backend
     restart: unless-stopped
+    networks:
+      - predator-net
 
   celery_beat:
-    build:
-      context: ./ua-sources
-      dockerfile: Dockerfile
+    image: predator-backend:v22
     container_name: predator_celery_beat
     command: celery -A app.core.celery_app beat --loglevel=info
     env_file:
@@ -64,18 +143,19 @@ services:
       - redis
       - celery_worker
     restart: unless-stopped
-
+    networks:
+      - predator-net
 
   # -------------------------------------------------------------------------
-  # FRONTEND (React + Nginx)
+  # FRONTEND
   # -------------------------------------------------------------------------
   frontend:
     build:
-      context: ./frontend
+      context: ./apps/frontend
       dockerfile: Dockerfile
     container_name: predator_frontend
     ports:
-      - "8082:80"
+      - "8092:80"
     volumes:
       - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
     extra_hosts:
@@ -83,12 +163,14 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+    networks:
+      - predator-net
 
   # -------------------------------------------------------------------------
-  # DATA STORAGE LAYER
+  # DATA & SEARCH
   # -------------------------------------------------------------------------
   postgres:
-    image: postgres:15-alpine
+    image: timescale/timescaledb:latest-pg15
     container_name: predator_postgres
     environment:
       POSTGRES_USER: predator
@@ -98,37 +180,15 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./infra/postgres/init_v21.sql:/docker-entrypoint-initdb.d/init_v21.sql
+      # - ./infra/postgres/init_v21.sql:/docker-entrypoint-initdb.d/init_v21.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U predator -d predator_db"]
+      test: [ "CMD-SHELL", "pg_isready -U predator -d predator_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
     restart: unless-stopped
-
-  db-migrate:
-    image: postgres:15-alpine
-    container_name: predator_db_migrate
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      POSTGRES_USER: predator
-      POSTGRES_PASSWORD: predator_password
-    volumes:
-      - ./infra/postgres/migrations:/migrations:ro
-    entrypoint: >
-      sh -c "for i in $(seq 1 10); do
-                pg_isready -h postgres -U $POSTGRES_USER -d predator_db && break;
-                echo 'Waiting for Postgres...';
-                sleep 3;
-             done;
-             for f in /migrations/*.sql; do
-                echo \"Applying migration: $f\";
-                PGPASSWORD=$POSTGRES_PASSWORD psql -h postgres -U $POSTGRES_USER -d predator_db -f $f || exit 1;
-             done;
-             echo 'Migrations applied successfully.'"
-    restart: "no"
+    networks:
+      - predator-net
 
   redis:
     image: redis:7-alpine
@@ -138,6 +198,8 @@ services:
     volumes:
       - redis_data:/data
     restart: unless-stopped
+    networks:
+      - predator-net
 
   qdrant:
     image: qdrant/qdrant:latest
@@ -148,6 +210,8 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage
     restart: unless-stopped
+    networks:
+      - predator-net
 
   opensearch:
     image: opensearchproject/opensearch:2.11.0
@@ -158,7 +222,7 @@ services:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
-      - DISABLE_SECURITY_PLUGIN=true 
+      - DISABLE_SECURITY_PLUGIN=true
     ulimits:
       memlock:
         soft: -1
@@ -172,6 +236,8 @@ services:
     volumes:
       - opensearch_data:/usr/share/opensearch/data
     restart: unless-stopped
+    networks:
+      - predator-net
 
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:2.11.0
@@ -184,6 +250,8 @@ services:
     depends_on:
       - opensearch
     restart: unless-stopped
+    networks:
+      - predator-net
 
   minio:
     image: minio/minio
@@ -198,45 +266,44 @@ services:
     volumes:
       - minio_data:/data
     restart: unless-stopped
+    networks:
+      - predator-net
 
   # -------------------------------------------------------------------------
-  # SECURITY & AUTH
+  # TRAINING & MLOPS (v22.0)
   # -------------------------------------------------------------------------
-  keycloak:
-    image: quay.io/keycloak/keycloak:23.0
-    container_name: predator_keycloak
-    command: start-dev
+  h2o-llm-studio:
+    image: h2oairelease/h2oai-llmstudio-app:latest
+    container_name: h2o-llmstudio
     ports:
-      - "8080:8080"
+      - "10101:10101"
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
-      KC_DB_USERNAME: predator
-      KC_DB_PASSWORD: predator_password
-      KC_HOSTNAME: localhost
-      KC_HTTP_ENABLED: true
-    depends_on:
-      - postgres
+      - H2O_WAVE_MAX_REQUEST_SIZE=100MB
+      - H2O_WAVE_NO_LOGGING=true
     volumes:
-      - ./infra/keycloak/realm-export.json:/opt/keycloak/data/import/realm.json
+      - h2o_workspace:/workspace
+      - ./configs/h2o:/configs
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     restart: unless-stopped
+    networks:
+      - predator-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:10101"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # -------------------------------------------------------------------------
-  # OBSERVABILITY & ML
-  # -------------------------------------------------------------------------
   mlflow:
     build:
       context: ./infra/mlflow
       dockerfile: Dockerfile
     container_name: predator_mlflow
-    command: >
-      mlflow server
-      --backend-store-uri postgresql://predator:predator_password@postgres:5432/mlflow
-      --default-artifact-root s3://mlflow/
-      --host 0.0.0.0
-      --port 5000
     ports:
       - "5001:5000"
     environment:
@@ -247,7 +314,12 @@ services:
       - postgres
       - minio
     restart: unless-stopped
+    networks:
+      - predator-net
 
+  # -------------------------------------------------------------------------
+  # OBSERVABILITY
+  # -------------------------------------------------------------------------
   grafana:
     image: grafana/grafana:latest
     container_name: predator_grafana
@@ -264,16 +336,28 @@ services:
       - ./infra/grafana/provisioning:/etc/grafana/provisioning
       - ./infra/grafana/dashboards:/var/lib/grafana/dashboards
     restart: unless-stopped
+    networks:
+      - predator-net
 
-  # prometheus:
-  #   image: prom/prometheus:latest
-  #   container_name: predator_prometheus
-  #   ports:
-  #     - "9092:9090"
-  #   volumes:
-  #     - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-  #     - prometheus_data:/prometheus
-  #   restart: unless-stopped
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: predator_prometheus
+    ports:
+      - "9092:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - predator-net
 
 volumes:
   postgres_data:
@@ -283,3 +367,9 @@ volumes:
   minio_data:
   grafana_data:
   prometheus_data:
+  orchestrator_logs:
+  h2o_workspace:
+
+networks:
+  predator-net:
+    driver: bridge
