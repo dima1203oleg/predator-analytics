@@ -27,7 +27,7 @@ if [ ! -f .env ]; then
 fi
 
 # 3. Build Services
-# Note: Root context is now used, so we build all dependent services
+# Note: Root context is now used, so we build all dependent servicesе
 echo -e "${GREEN}🏗️ Building Docker images (with GPU support)...${NC}"
 docker compose build backend orchestrator telegram_controller
 
