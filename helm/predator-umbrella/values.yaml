@@ -94,6 +94,16 @@ opensearch:
   config:
     opensearch.yml:
       plugins.security.disabled: true
+    init:
+      enabled: true
+      indexName: "documents"
+    auth:
+      enabled: false
+      username: ""
+      password: ""
+      # Prefer mounting a Kubernetes secret instead of putting credentials here
+      secretName: "" # name of the secret with keys: username, password
+      secretName: ""
 
 prometheus:
   enabled: true

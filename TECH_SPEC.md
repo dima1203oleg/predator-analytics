@@ -1,662 +1,215 @@
-# 📋 PREDATOR ANALYTICS v19.0.0 — EXTENDED FINAL
+# TECH_SPEC.md: Платформа "Predator Analytics" v22.0 (Implementation-Ready)
 
-> **AI-Native · GitOps-Only · Real-Data-Only · Multi-Env (Mac ⇄ NVIDIA ⇄ Oracle) · Multi-IDE (AI Studio ⇄ VS Code)**
+## 0. Executive Summary
 
-**Версія документу:** 19.0.0  
-**Дата:** 2 грудня 2025
+Платформа забезпечує глибокий семантичний пошук, аналітику та повний ML/LLMOps цикл з **вбудованими механізмами автономного вдосконалення**:
 
----
+*   **Гібридний пошук**: OpenSearch (BM25 з OpenSearch Dashboards для моніторингу логів та query analytics) + Qdrant (dense/sparse/multimodal) з RRF fusion.
+*   **Reranking**: Cross-Encoder з інтеграцією Cohere Rerank для підвищеної точності.
+*   **XAI**: SHAP/LIME для пояснення топ-результатів, з візуалізацією в UI через ECharts.
+*   **Автогенерація датасетів**: AugLy для стратегічної аугментації, закриття coverage-дір та cold-start.
+*   **No-code / low-code fine-tuning**: H2O LLM Studio з CLI для автоматизації, підтримка DPO для стабільного навчання.
+*   **AutoML для табличних та правил**: H2O AutoML з інтеграцією в пайплайни.
+*   **Federated Learning**: Flower для enterprise сценаріїв з TLS-шифруванням.
+*   **MLOps артефакти**: DVC + MLflow для трекінгу та версіонування.
+*   **FinOps**: Kubecost + KEDA для cost-based autoscaling, з алертами та policy actions.
+*   **GitOps**: ArgoCD з App-of-Apps патерном + Helm umbrella.
+*   **Контури**: Mac (Dev) → Oracle ARM (Edge/Staging) → NVIDIA GPU (Compute).
+*   **Edge AI**: Transformers.js + RxDB для offline vector search в PWA.
+*   **Голосовий інтерфейс**: Google Cloud TTS/STT з fallback на Whisper.js/eSpeak-ng для офлайн.
+*   **Автоматизації**: Повний набір – ETL пайплайни з Celery/RabbitMQ, auto-reindex jobs, tenant-based A/B, Policy Engine для сигналів, два профілі інференсу (full_quality/cost_saver), Cypress E2E тести в CI/CD.
 
-## 0. Головна Мета Системи
+Ключова ідея v22.0: **“♾️-Self-Improvement Loop”** з чіткими межами між **observability** (включаючи OpenSearch Dashboards) → **data** → **training** → **evaluation** → **GitOps**, інтеграцією Policy Engine та tenant-based A/B.
 
-Створити єдину AI-аналітичну платформу **Predator Analytics**, яка:
+## 1. Головні цілі та вимірювані KPI/SLA
 
-1. **Працює одночасно на трьох середовищах:**
-   - **MacBook** — локальна розробка, тест ETL, UI, API
-   - **NVIDIA-сервер** — важкі GPU-задачі: NAS/AutoML, ML, LLM, LoRA
-   - **Oracle OCI** (free tier) — хмарний remote staging / demo
+### 1.1 Search Quality
+| Метрика | Ціль | Де вимірюємо | Примітка |
+| :--- | :--- | :--- | :--- |
+| precision@5 | ≥ 0.85 | offline + A/B | основний продукт-метрик |
+| recall@20 | ≥ 0.90 | offline + A/B | критично для enterprise |
+| NDCG@10 | ≥ baseline + 3% | offline + staging A/B (з OpenSearch Dashboards analytics) | гейт на промоут |
 
-2. **Повністю керується через GitOps:**
-   - Будь-яка зміна коду → GitHub → GitHub Actions CI → ArgoCD → Kubernetes (на всіх середовищах)
+### 1.2 Performance
+| Метрика | Ціль | Примітка |
+| :--- | :--- | :--- |
+| P95 latency (full pipeline) | ≤ 800 ms | default профіль |
+| P95 latency (без XAI) | ≤ 500 ms | fallback режим (cost_saver) |
+| ETL backlog | ≤ 60 s | середній лаг по черзі |
 
-3. **Має 0% симуляцій:**
-   - Усі дані — реальні Excel/CSV/PDF/Telegram/відкриті реєстри
-   - Синтетика генерується лише на основі реальних даних і тільки вручну
+### 1.3 Reliability
+| Метрика | Ціль |
+| :--- | :--- |
+| Uptime (Search API) | 99.9% |
+| Автоматичний rollback при деградації | 100% для model-promote |
 
-4. **Має повний стек AI-Native:**
-   - LLM через Ollama (локально + на NVIDIA)
-   - API-моделі через Gemini/Mistral/Groq/Fireworks
-   - NAS / AutoML / LoRA — GPU-підтримка на NVIDIA
+### 1.4 FinOps
+| Метрика | Ціль |
+| :--- | :--- |
+| cost per 1k queries | < $0.05 |
+| GPU idle | > 60 хв auto-scale/down або auto-shutdown |
+| Kubecost budget breach | алерт + policy action (через Policy Engine) |
 
-5. **Синхронізує код з:**
-   - AI Studio → GitHub
-   - VS Code → GitHub
-   - GitHub → всі 3 кластери через ArgoCD
-
----
-
-## 1. Загальна Архітектура (High Level)
-
-```
-AI Studio / VS Code
-        │
-        ▼
- GitHub Repository (predator-analytics)
-        │
-        ├── GitHub Actions (CI)
-        ▼
-   ArgoCD (3 інстанси)
-        │
-        ├── MacBook k8s кластер (dev-local)
-        ├── NVIDIA k3s кластер (GPU / ML / NAS)
-        └── Oracle k3s кластер (remote cloud)
-```
-
-### Компоненти стеку
-
-| Компонент | Технологія | Призначення |
-|-----------|------------|-------------|
-| Backend | FastAPI | REST API, ETL, LLM integration |
-| Frontend | Next.js + React + Tailwind | Веб-інтерфейс |
-| Database | PostgreSQL 16 | Основна БД |
-| Object Storage | MinIO | S3-сумісне сховище файлів |
-| Search Engine | OpenSearch 2.x | Full-text пошук |
-| Vector DB | Qdrant | Векторні embeddings |
-| LLM Runtime | Ollama | Локальні LLM моделі |
-| Cache | Redis | Кешування та черги |
-| Monitoring | Prometheus + Grafana + Loki | Метрики та логи |
-| GitOps | ArgoCD | Continuous Deployment |
-| CI/CD | GitHub Actions | Build & Test |
-
----
-
-## 2. Три Машини — їхня Роль і Навантаження
-
-### 2.1. MacBook (Dev-Local)
-
-**Призначення:**
-- Розробка UI / Backend / ETL
-- Локальний запуск повного Predatora через k8s (minikube)
-- Тестування реальних даних
-
-**Компоненти:**
-- ✅ Backend API (FastAPI)
-- ✅ Frontend (Next.js/React)
-- ✅ PostgreSQL
-- ✅ MinIO
-- ✅ OpenSearch
-- ✅ Qdrant
-- ⚡ Легкий Ollama (необов'язково)
-- ✅ Легкий ETL
-- ✅ ArgoCD (локальний)
-
-**Обмеження:**
-- ❌ Немає важкої GPU-логіки
-
-**Kubernetes:**
-```yaml
-namespace: predator-mac
-nodeSelector: {}  # Без GPU
-resources:
-  backend:
-    memory: "512Mi"
-    cpu: "500m"
-```
-
----
-
-### 2.2. NVIDIA-сервер (Lab-GPU)
-
-**Призначення:**
-- Heavy ML GPU tasks:
-  - NAS (Neural Architecture Search)
-  - AutoML
-  - LoRA retraining
-  - Embeddings generation
-  - LLM reasoning
-- Важкі ETL / Data-heavy jobs
-
-**Компоненти:**
-- ✅ k3s кластер
-- ✅ NVIDIA Toolkit + drivers
-- ✅ Ollama (full, з великими моделями)
-- ✅ FastAPI backend
-- ✅ NAS Engine
-- ⚡ MLFlow (опційно)
-- ⚡ Celery/Kafka Jobs (опційно)
-- ✅ ArgoCD
-- ✅ Monitoring stack (Prometheus + Grafana + Loki)
-
-**Характеристики:**
-```yaml
-GPU: NVIDIA GTX 1080 (8GB VRAM)
-RAM: 49GB
-CPU: 16 cores
-Storage: 177GB SSD
-OS: Ubuntu 24.04 LTS
-k3s: v1.32.5+k3s1
-```
-
-**Kubernetes:**
-```yaml
-namespace: predator-nvidia
-nodeSelector:
-  gpu: "true"
-resources:
-  backend:
-    memory: "2Gi"
-    cpu: "2000m"
-  nas-engine:
-    nvidia.com/gpu: "1"
-```
-
----
-
-### 2.3. Oracle Cloud (remote cloud)
-
-**Призначення:**
-- Remote staging/demo без GPU
-- Перевірка роботи AI API (Gemini, Mistral)
-- Мінімальний набір компонентів
-
-**Компоненти:**
-- ✅ Base FastAPI backend
-- ✅ Frontend (Next.js)
-- ✅ PostgreSQL (lightweight)
-- ✅ OpenSearch (або lightweight wrapper)
-- ✅ ArgoCD
-- ⚡ Lightweight Ollama (ARM/AMD)
-
-**Вимоги:**
-- Multi-arch Docker images (amd64 + arm64)
-- Traffic rules для експорту UI
-
----
-
-## 3. Всі Компоненти Predator Analytics
-
-### 3.1. ETL Layer (реальні дані)
-
-**Підтримувані джерела:**
-
-| Джерело | Технологія | Max Size |
-|---------|------------|----------|
-| Excel | pandas / polars | до 300MB |
-| CSV | pandas / polars | до 800MB |
-| PDF | pdfplumber | без обмежень |
-| Telegram | Telethon | real-time |
-| Websites | Playwright / Scrapy | - |
-| Реєстри | API / HTML parsing | - |
-| JSON archives | jsonlines | без обмежень |
-
-**ETL-пайплайн (обов'язковий):**
+## 2. Архітектура системи
 
 ```mermaid
-graph LR
-    A[Файл Upload] --> B[MinIO Storage]
-    B --> C[Parser]
-    C --> D[PostgreSQL]
-    C --> E[OpenSearch Index]
-    C --> F[Qdrant Embeddings]
-    D --> G[Grafana Metrics]
+graph TD
+    subgraph "External"
+        User(User Web/App)
+    end
+
+    subgraph "Frontend (PWA/React)"
+        UI[SPA: Search + XAI + Dataset Studio + Admin]
+        Offline[Offline Vector Search (Transformers.js)]
+    end
+
+    subgraph "Ingress/API"
+        Gateway[NGINX Ingress]
+        API[Backend FastAPI]
+    end
+
+    subgraph "Storage & Search"
+        Postgres[(PostgreSQL + pgvector)]
+        Redis[(Redis Cache)]
+        MinIO[(MinIO S3)]
+
+        Qdrant[(Qdrant Vector DB)]
+        OpenSearch[(OpenSearch + BM25)]
+    end
+
+    subgraph "Observability + FinOps"
+        OD[OpenSearch Dashboards]
+        Prom[Prometheus]
+        Graf[Grafana]
+        Cost[Kubecost]
+        Policy[Policy Engine]
+    end
+
+    subgraph "Training & Self-Improve"
+        Orch[Self-Improve Orchestrator]
+        Aug[Augmentor (AugLy)]
+        H2O[H2O LLM Studio]
+        MLflow[MLflow Tracking]
+        DVC[DVC Pipelines]
+    end
+
+    subgraph "Queue & Workers"
+        RMQ[RabbitMQ]
+        Celery[Celery Workers]
+    end
+
+    User --> UI
+    UI --> Gateway
+    Gateway --> API
+
+    API --> Postgres
+    API --> Redis
+    API --> Qdrant
+    API --> OpenSearch
+    API --> RMQ
+
+    RMQ --> Celery
+    Celery --> Aug
+    Celery --> Qdrant
+    Celery --> OpenSearch
+
+    Orch --> Policy
+    Orch --> H2O
+    H2O --> MLflow
+    H2O --> MinIO
+
+    Prom --> Policy
+    Cost --> Policy
+    OD --> Policy
+
+    OpenSearch --> OD
 ```
 
-1. Завантаження файлу → MinIO
-2. Парсинг → PostgreSQL
-3. Індексація → OpenSearch
-4. Embeddings → Qdrant
-5. Метрики → Grafana
+OpenSearch Dashboards інтегровано як основний інструмент для моніторингу логів, query analytics та візуалізації пошукових патернів. Він доступний через embedded iframe в Admin Console або окремий ingress, з RBAC-контролем.
 
-> ⚠️ **ЗАБОРОНА:** Ніяких симуляцій реальних даних!
+## 3. Потоки даних
 
----
+### 3.1 ETL → Augment → Train → Index
+`Raw Data` -> `RabbitMQ` -> `ETL Worker` -> `PostgreSQL (Bronze)` -> `Augmentor (Silver)` -> `H2O LLM Studio` -> `Model Artifact` -> `OpenSearch/Qdrant Indexing`
 
-### 3.2. Backend
+### 3.2 Search → Rerank → XAI
+`Request` -> `Hybrid Search (OS+Qdrant)` -> `RRF Fusion` -> `Reranker` -> `XAI Explainer` -> `Response`
 
-**Фреймворк:** FastAPI
+## 4. Каталог баз даних та їх ролі
 
-**Структура:**
-```
-backend/
-├── app/
-│   ├── main.py           # FastAPI app
-│   ├── api/
-│   │   ├── v1/
-│   │   │   ├── etl.py    # ETL endpoints
-│   │   │   ├── search.py # Search endpoints
-│   │   │   ├── llm.py    # LLM endpoints
-│   │   │   └── nas.py    # NAS/AutoML endpoints
-│   ├── core/
-│   │   ├── config.py     # Settings
-│   │   └── security.py   # Auth
-│   ├── services/
-│   │   ├── etl_service.py
-│   │   ├── llm_service.py
-│   │   ├── search_service.py
-│   │   └── nas_service.py
-│   └── models/
-│       └── schemas.py
-├── Dockerfile
-└── requirements.txt
-```
+*   **PostgreSQL**: System of record (User, Tenant, Documents, ML Jobs).
+*   **OpenSearch**: BM25 Text Search, Logs, Analytics.
+*   **OpenSearch Dashboards**: Візуалізація.
+*   **Qdrant**: Vector Search (Dense/Sparse/Multimodal).
+*   **Redis**: Caching, Rate Limiting.
+*   **MinIO**: S3-compatible object storage for artifacts, DVC.
 
-**Функції:**
-- API для UI
-- Обробка ETL
-- Виклики LLM (Ollama/Remote API)
-- Виклики NAS/AutoML
-- Робота з БД
-- S3 (MinIO) інтеграція
-- Logging → Loki/Promtail
+## 5. Безмежне самоудосконалення системи (Self-Improvement Loop ♾️)
 
----
+1.  **Policy Engine**: Окремий мікросервіс (або модуль) для обробки сигналів. Приймає `signal + context` -> `allow/deny` + план дій.
+2.  **Два профілі інференсу**: `full_quality` (rerank+XAI) та `cost_saver` (без XAI/з дешевшим reranker). Авто-перемикання при Kubecost spike.
+3.  **Авто-реіндексація**: Окремий контрольований Celery job.
+4.  **Тенантний A/B**: Ізоляція тестів по `tenant_id`.
+5.  **Автоматичний Fine-Tuning**: Orchestrator тригерить H2O LLM Studio CLI при накопиченні даних.
 
-### 3.3. Frontend (Nexus UI)
+## 10. Мінімальні робочі конфіги (Приклади)
 
-**Фреймворк:** Next.js 14 + React + Tailwind CSS
-
-**Структура:**
-```
-frontend/
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   ├── dashboard/
-│   │   ├── etl/
-│   │   ├── search/
-│   │   └── ml/
-│   ├── components/
-│   │   ├── ui/
-│   │   ├── charts/
-│   │   └── forms/
-│   └── lib/
-│       └── api.ts
-├── Dockerfile
-└── package.json
-```
-
-**Підтримує:**
-- Завантаження реальних файлів (Excel/CSV)
-- Перегляд таблиць
-- Графіки (Plotly / D3.js / Recharts)
-- Векторний пошук
-- Пошук по OpenSearch
-- UI для ML/NAS
-- Моніторинг подій (через WebSocket)
-
----
-
-### 3.4. ML / LLM Layer
-
-**Локальні моделі (Ollama):**
-
-| Модель | Розмір | Призначення | Де працює |
-|--------|--------|-------------|-----------|
-| llama3.2 | 2GB | Швидкі відповіді | Mac, NVIDIA |
-| qwen2.5 | 4.7GB | Аналіз | NVIDIA |
-| qwen3 | 5.2GB | Reasoning | NVIDIA |
-| nomic-embed-text | 300MB | Embeddings | Всі |
-| mxbai-embed-large | 500MB | Quality embeddings | NVIDIA |
-
-**Використання:**
-- Embeddings → Qdrant
-- Summaries / Insights
-- Agent system
-- NAS reasoning
-
-**Хмарні API:**
-- Gemini 2.0 Flash
-- Mistral Small
-- Groq Llama
-- Fireworks mixtral
-
----
-
-### 3.5. NAS / AutoML
-
-**Мета:**
-- Пошук найкращої моделі для задач:
-  - Виявлення аномалій
-  - Прогнозування
-  - Класифікація ризиків
-
-> ⚠️ Працює **виключно** на NVIDIA GPU
-
-**Компоненти:**
+### 10.1 Qdrant collection
 ```yaml
-nas-engine:
-  image: predator/nas-engine:latest
-  resources:
-    limits:
-      nvidia.com/gpu: "1"
-  nodeSelector:
-    gpu: "true"
+name: multimodal_search
+vectors:
+  default:
+    size: 512
+    distance: Cosine
+quantization_config:
+  scalar:
+    type: int8
 ```
 
----
-
-### 3.6. Моніторинг
-
-| Компонент | Порт | Призначення |
-|-----------|------|-------------|
-| Prometheus | 9090 | Збір метрик |
-| Grafana | 3000 | Візуалізація |
-| Loki | 3100 | Агрегація логів |
-| Tempo | 3200 | Distributed tracing |
-| Node Exporter | 9100 | Host metrics |
-
----
-
-## 4. DevOps / GitOps — Повний Цикл
-
-### 4.1. GitHub Actions (CI)
-
-**Пайплайни:**
-
-```
-.github/workflows/
-├── ci.yml                 # Lints + Tests
-├── build-backend.yml      # Build/push Docker backend
-├── build-frontend.yml     # Build/push frontend
-├── helm-lint.yml          # Helm chart validation
-├── zero-simulation.yml    # No mock data check
-└── deploy-trigger.yml     # ArgoCD webhook (optional)
-```
-
-**Приклад ci.yml:**
+### 10.2 H2O LLM Studio (docker-compose)
 ```yaml
-name: CI
-on: [push, pull_request]
-jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Lint Backend
-        run: |
-          cd backend
-          pip install ruff
-          ruff check .
-      - name: Lint Frontend
-        run: |
-          cd frontend
-          npm ci
-          npm run lint
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Test Backend
-        run: |
-          cd backend
-          pip install pytest
-          pytest
-
-  zero-simulation-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check for mock data
-        run: ./scripts/check_zero_simulation.sh
+  h2o-llm-studio:
+    image: h2oairelease/h2oai-llmstudio-app:latest
+    ports:
+      - "10101:10101"
+    volumes:
+      - ./h2o-data:/workspace
+      - ./configs/h2o:/configs
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 ```
 
----
+## 11. Project Structure (Implementation-Ready)
 
-### 4.2. ArgoCD (CD)
-
-**Структура:**
-```
-argocd/
-├── predator-macbook.yaml
-├── predator-nvidia.yaml
-└── predator-oracle.yaml
-```
-
-**Application Template:**
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: predator-{env}
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/dima1203oleg/predator-analytics.git
-    targetRevision: HEAD
-    path: environments/{env}
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: predator-{env}
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-```
-
----
-
-### 4.3. Kubernetes Environments
-
-**Структура:**
-```
-environments/
-├── macbook/
-│   ├── Chart.yaml
-│   ├── values.yaml
-│   └── templates/
-│       ├── namespace.yaml
-│       ├── backend-deployment.yaml
-│       ├── frontend-deployment.yaml
-│       ├── postgresql.yaml
-│       ├── minio.yaml
-│       ├── opensearch.yaml
-│       ├── qdrant.yaml
-│       └── services.yaml
-├── nvidia/
-│   ├── Chart.yaml
-│   ├── values.yaml
-│   └── templates/
-│       └── ... (+ nas-engine.yaml, ollama.yaml)
-└── oracle/
-    ├── Chart.yaml
-    ├── values.yaml
-    └── templates/
-```
-
-**Порівняння середовищ:**
-
-| Компонент | Mac | NVIDIA | Oracle |
-|-----------|-----|--------|--------|
-| GPU | ❌ | ✔ | ❌ |
-| NAS | легкий | повний | вимкнено |
-| Ollama | легкий | повний | легкий |
-| ML jobs | ❌ | ✔ | ❌ |
-| Resources | мінімальні | максимальні | середні |
-
----
-
-## 5. Multi-IDE Development (AI Studio + VS Code)
-
-### 5.1. AI Studio функції:
-- Редагування UI/Backend коду
-- Push у GitHub
-- Автоматичний sync скрипт: `sync_from_ai_studio.sh`
-
-### 5.2. VS Code функції:
-- Локальний/dev запуск
-- Remote SSH на NVIDIA
-- Kubernetes extension
-- ArgoCD extension
-- GitHub Copilot multi-agent
-
----
-
-## 6. Дані: 100% Real-Only Policy
-
-### Головне правило:
-
-> **Якщо дані показані у UI — це реальні дані з файлів або анонімізовані копії.**
-> **Симуляція заборонена.**
-
-### Заборонені патерни в коді:
-```python
-# ❌ ЗАБОРОНЕНО
-import random
-from faker import Faker
-mock_data = [...]
-fake_users = generate_fake()
-```
-
-### Перевіряючі механізми:
-1. CI перевіряє, що в коді немає: `random()`, `faker`, `mock data`
-2. Frontend не має JSON-файлів з демо-даними
-3. Backend тестує ETL на реальному тестовому excel
-
-### Скрипт перевірки:
-```bash
-#!/bin/bash
-# scripts/check_zero_simulation.sh
-
-FORBIDDEN_PATTERNS=(
-  "faker"
-  "mock_data"
-  "fake_users"
-  "generate_fake"
-  "random.choice.*name"
-  "synthetic_data"
-)
-
-for pattern in "${FORBIDDEN_PATTERNS[@]}"; do
-  if grep -r "$pattern" --include="*.py" --include="*.ts" --include="*.tsx" .; then
-    echo "❌ Found forbidden pattern: $pattern"
-    exit 1
-  fi
-done
-
-echo "✅ Zero simulation check passed"
-```
-
----
-
-## 7. Definition of Done (DoD)
-
-Система вважається готовою, якщо:
-
-### ✅ MacBook:
-- [ ] Завантаження Excel → MinIO → PostgreSQL → OpenSearch → Qdrant → UI
-
-### ✅ NVIDIA:
-- [ ] Все як на Mac + ML/NAS/LLM відпрацьовують GPU pipeline
-- [ ] `nvidia-smi` показує GPU в k3s pods
-
-### ✅ Oracle:
-- [ ] Remote staging працює без GPU
-- [ ] API AI працює (Mistral/Gemini)
-
-### ✅ GitOps:
-- [ ] `git push` → GitHub Actions → ArgoCD → всі 3 середовища синхронізуються
-
-### ✅ 0 Симуляцій:
-- [ ] Всі графіки / таблиці / інсайти — з реальних даних
-
----
-
-## 8. Структура Репозиторію
-
-```
+```text
 predator-analytics/
-├── .github/
-│   └── workflows/
-│       ├── ci.yml
-│       ├── build-backend.yml
-│       ├── build-frontend.yml
-│       ├── helm-lint.yml
-│       └── zero-simulation.yml
-├── argocd/
-│   ├── predator-macbook.yaml
-│   ├── predator-nvidia.yaml
-│   └── predator-oracle.yaml
-├── backend/
-│   ├── app/
-│   ├── Dockerfile
-│   └── requirements.txt
-├── frontend/
-│   ├── src/
-│   ├── Dockerfile
-│   └── package.json
-├── environments/
-│   ├── macbook/
-│   ├── nvidia/
-│   └── oracle/
-├── scripts/
-│   ├── bootstrap_mac_minikube.sh
-│   ├── bootstrap_nvidia_k3s.sh
-│   ├── bootstrap_oracle_k3s.sh
-│   ├── check_zero_simulation.sh
-│   ├── sync_from_ai_studio.sh
-│   └── push_to_ai_studio.sh
-├── docs/
-│   └── ...
-├── TECH_SPEC.md
+├── TECH_SPEC.md                  # Single Source of Truth
 ├── README.md
-└── DEPLOY_CHECKLIST.md
+├── docker-compose.yml            # Local Dev (Mac)
+├── Makefile                      # Make dev-up, etc.
+├── apps/                         # Monorepo services
+│   ├── backend/                  # FastAPI Backend
+│   ├── frontend/                 # React PWA
+│   ├── workers/                  # Celery Workers
+│   └── self-improve-orchestrator/# The Infinite Loop Coordinator
+├── infra/                        # GitOps (Helm/ArgoCD)
+│   ├── helm/
+│   └── argocd/
+├── configs/                      # Config-as-code
+│   ├── qdrant/
+│   ├── opensearch/
+│   └── h2o/
+└── scripts/                      # Utils
 ```
 
----
+## 13. Roadmap (Implementation-Focused)
 
-## 9. Secrets Management
-
-**GitHub Secrets:**
-```
-DOCKERHUB_USERNAME
-DOCKERHUB_TOKEN
-ARGOCD_TOKEN_MAC
-ARGOCD_TOKEN_NVIDIA
-ARGOCD_TOKEN_ORACLE
-GEMINI_API_KEY
-MISTRAL_API_KEY
-```
-
-**Kubernetes Secrets (per environment):**
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: predator-secrets
-  namespace: predator-{env}
-type: Opaque
-stringData:
-  POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-  MINIO_SECRET_KEY: "${MINIO_SECRET_KEY}"
-  OLLAMA_API_KEY: "${OLLAMA_API_KEY}"
-```
-
----
-
-## 10. Порти та Endpoints
-
-| Service | Port | Endpoint |
-|---------|------|----------|
-| Backend API | 8000 | /api/v1/* |
-| Frontend | 3000 | / |
-| PostgreSQL | 5432 | - |
-| MinIO | 9000 | /minio |
-| MinIO Console | 9001 | - |
-| OpenSearch | 9200 | - |
-| Qdrant | 6333 | - |
-| Ollama | 11434 | - |
-| Prometheus | 9090 | /prometheus |
-| Grafana | 3000 | /grafana |
-| ArgoCD | 8080 | /argocd |
-
----
-
-## Changelog
-
-- **v19.0.0** (2025-12-02): Initial full specification
-- **v18.x**: Legacy version (pre-GitOps)
+*   **Місяці 1–2**: Базова інфраструктура, ETL pipelines, OpenSearch Dashboards.
+*   **Місяці 3–4**: Hybrid Search, Reranker, Policy Engine.
+*   **Місяці 5–6**: H2O LLM Studio automation, AutoML rules.
+*   **Місяці 7+**: Повний Orchestrator, Flower FL, XAI.

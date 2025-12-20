@@ -1,1 +1,0 @@
-// DEPRECATED - Replaced by Brain3D.tsx

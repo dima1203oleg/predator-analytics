@@ -6,7 +6,12 @@ import sys
 from pathlib import Path
 
 # Add project root to path to find libs
-ROOT_DIR = Path(__file__).resolve().parents[3]
+current_path = Path(__file__).resolve()
+if Path("/app").exists():
+    ROOT_DIR = Path("/app")
+else:
+    ROOT_DIR = current_path.parents[3]
+
 if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
 

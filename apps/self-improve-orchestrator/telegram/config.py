@@ -28,11 +28,12 @@ MENUS = {
     ],
     "ai": [
         [{"text": "🧠 LLM Council", "callback_data": "ai_council"}, {"text": "⚡ Agents Status", "callback_data": "ai_agents"}],
-        [{"text": "🔄 Run Self-Improvement", "callback_data": "ai_improve"}, {"text": "🔙 Back", "callback_data": "menu_main"}]
+        [{"text": "🔗 Triple Chain", "callback_data": "ai_triple_chain"}, {"text": "🔄 Self-Improve", "callback_data": "ai_improve"}],
+        [{"text": "🔙 Back", "callback_data": "menu_main"}]
     ],
     "system": [
-        [{"text": "🏥 Health Check", "callback_data": "sys_health"}, {"text": "📈 Resources", "callback_data": "sys_resources"}],
-        [{"text": "🔄 Restart Services", "callback_data": "sys_restart"}, {"text": "🧹 Clear Cache", "callback_data": "sys_cache"}],
+        [{"text": "🏥 Health Check", "callback_data": "sys_health"}, {"text": "📈 Prometheus", "callback_data": "sys_prometheus"}],
+        [{"text": "📦 ArgoCD Deploy", "callback_data": "sys_deploy"}, {"text": "🧹 Clear Cache", "callback_data": "sys_cache"}],
         [{"text": "🔙 Back", "callback_data": "menu_main"}]
     ],
     "git": [
@@ -43,12 +44,12 @@ MENUS = {
 
 # Texts
 MESSAGES = {
-    "welcome": "🚀 *Predator Analytics v22.0*\n\nSystem operational.\nSelect a module to control:",
-    "access_denied": "⛔ *Access Denied*\nYou are not authorized to use this bot.",
-    "unknown_command": "❓ Unknown command.",
-    "processing": "⏳ Processing...",
-    "success": "✅ Operation successful.",
-    "error": "❌ Error occurred: {error}",
-    "chat_mode": "💬 *AI Chat Mode*\nSend me a message to start a conversation.\nType /cancel to exit.",
-    "chat_exit": "👋 Chat ended.",
+    "welcome": "🚀 *Predator Analytics v22.0 - Omniscient Center*\n\nСистема активована. Канал зв'язку захищено.\nОберіть модуль для управління або надішліть голосову команду:",
+    "access_denied": "⛔ *Доступ заборонено*\nВи не авторизовані для використання цієї системи.",
+    "unknown_command": "❓ Невідома команда або інтент.",
+    "processing": "⏳ Обробка запиту через Cortex...",
+    "success": "✅ Операцію виконано успішно.",
+    "error": "❌ Сталася помилка: {error}",
+    "chat_mode": "💬 *Режим ШІ-чату*\nНадішліть повідомлення для початку діалогу.\nВведіть /cancel для виходу.",
+    "chat_exit": "👋 Чат завершено.",
 }

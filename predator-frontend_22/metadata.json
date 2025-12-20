@@ -1,8 +1,0 @@
-{
-  "name": "Predator v20.0",
-  "description": "Predator Analytics v20.0: Singularity Edition. Next-Gen Autonomous Intelligence Platform with Quantum-Ready Architecture and Truth-Only Protocols.",
-  "requestFramePermissions": [
-    "microphone",
-    "camera"
-  ]
-}
