@@ -20,31 +20,31 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-        if: ${{ hashFiles('backend/requirements.txt') != '' }}
+        if: ${{ hashFiles('apps/backend/requirements.txt') != '' }}
 
       - name: Install backend dependencies
-        if: ${{ hashFiles('ua-sources/requirements.txt') != '' }}
+        if: ${{ hashFiles('apps/backend/requirements.txt') != '' }}
         run: |
-          cd ua-sources
+          cd apps/backend
           pip install -r requirements.txt
 
       - name: Test backend
-        if: ${{ hashFiles('ua-sources/requirements.txt') != '' }}
+        if: ${{ hashFiles('apps/backend/requirements.txt') != '' }}
         run: |
-          cd ua-sources
+          cd apps/backend
           python -m pytest
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-        if: ${{ hashFiles('frontend/package.json') != '' }}
+        if: ${{ hashFiles('apps/frontend/package.json') != '' }}
 
       - name: Install frontend dependencies
-        if: ${{ hashFiles('frontend/package.json') != '' }}
+        if: ${{ hashFiles('apps/frontend/package.json') != '' }}
         run: |
-          cd frontend
-          npm ci
+          cd apps/frontend
+          npm install
 
   build-and-push:
     needs: test
@@ -67,19 +67,19 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push frontend
-        if: ${{ hashFiles('frontend/Dockerfile') != '' }}
+        if: ${{ hashFiles('apps/frontend/Dockerfile') != '' }}
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
+          context: ./apps/frontend
           platforms: linux/amd64
           push: true
           tags: ghcr.io/${{ github.repository }}/frontend:v22.0.${{ github.run_number }}
 
       - name: Build and push backend
-        if: ${{ hashFiles('ua-sources/Dockerfile') != '' }}
+        if: ${{ hashFiles('apps/backend/Dockerfile') != '' }}
         uses: docker/build-push-action@v5
         with:
-          context: ./ua-sources
+          context: ./apps/backend
           platforms: linux/amd64
           push: true
           tags: ghcr.io/${{ github.repository }}/backend:v22.0.${{ github.run_number }}

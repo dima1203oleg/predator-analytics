@@ -1,8 +1,0 @@
-[core]
-    remote = predator-s3
-
-['remote "predator-s3"']
-    url = s3://predator-datasets/semantic-platform
-    endpointurl = http://minio:9000
-    access_key_id = predator_admin
-    secret_access_key = predator_secret_key

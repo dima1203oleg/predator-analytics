@@ -13,6 +13,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     libpq-dev \
     curl \
+    libmagic-dev \
+    libmagic1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements
@@ -24,6 +26,7 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
 
 # Copy application code
 COPY apps/backend/app ./app
+COPY apps/backend/src ./src
 
 # Copy shared libraries
 COPY libs ./libs

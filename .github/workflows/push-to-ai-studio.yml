@@ -23,15 +23,15 @@ jobs:
           CUR=${{ github.sha }}
           if [ "$PREV" = 0000000000000000000000000000000000000000 ]; then
             echo "first_commit=true" >> "$GITHUB_OUTPUT"
-            echo "paths=environments,frontend,backend" >> "$GITHUB_OUTPUT"
+            echo "paths=environments,apps/frontend,apps/backend" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           CHANGED=$(git diff --name-only $PREV $CUR || true)
           echo "$CHANGED"
           PATHS=""
           echo "$CHANGED" | grep -q '^environments/' && PATHS="environments"
-          echo "$CHANGED" | grep -q '^frontend/' && PATHS=",${PATHS}frontend"
-          echo "$CHANGED" | grep -q '^backend/' && PATHS=",${PATHS}backend"
+          echo "$CHANGED" | grep -q '^apps/frontend/' && PATHS=",${PATHS}apps/frontend"
+          echo "$CHANGED" | grep -q '^apps/backend/' && PATHS=",${PATHS}apps/backend"
           PATHS="${PATHS#,}"
           echo "paths=$PATHS" >> "$GITHUB_OUTPUT"
 

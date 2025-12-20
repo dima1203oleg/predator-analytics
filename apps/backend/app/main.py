@@ -4,15 +4,33 @@ from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 import logging
 import sys
+import os
 from pathlib import Path
 
 # Add project root to sys.path to ensure 'libs' is importable
 # Current: apps/backend/app/main.py -> Root is 4 levels up
-ROOT_DIR = Path(__file__).resolve().parents[3]
-if str(ROOT_DIR) not in sys.path:
-    sys.path.append(str(ROOT_DIR))
+# Add project root to sys.path to ensure 'libs' is importable
+try:
+    # Try finding root relative to this file
+    current_path = Path(__file__).resolve()
+    # If in Docker /app/app/main.py -> root is /app (parents[1])
+    # If local apps/backend/app/main.py -> root is project root (parents[3])
+
+    if Path("/app").exists():
+        ROOT_DIR = Path("/app")
+    else:
+        ROOT_DIR = current_path.parents[3]
+
+    if str(ROOT_DIR) not in sys.path:
+        sys.path.append(str(ROOT_DIR))
+except Exception as e:
+    logging.warning(f"Could not automatically set ROOT_DIR: {e}")
 
 from libs.core.mq import broker
+from libs.core.config import settings
+from libs.core.logger import setup_logger
+
+logger = setup_logger("predator.backend.main")
 
 from app.agents.orchestrator.supervisor import NexusSupervisor
 from app.services.model_router import ModelRouter
@@ -35,6 +53,13 @@ from app.api.v1 import integrations as integrations_v1_router
 from app.api.v1 import nexus as nexus_router
 from app.api.v1 import federation as federation_router
 from app.api.routers import argocd_webhook as argocd_webhook_router
+
+
+# Fix path for src imports
+if os.path.exists("/app/src"):
+    if "/app" not in sys.path:
+        sys.path.append("/app")
+
 from src.ingestion import router as ingestion_router
 from app.services.search_fusion import hybrid_search_with_rrf
 from app.services.auto_optimizer import get_auto_optimizer
@@ -42,6 +67,10 @@ from app.services.auto_optimizer import get_auto_optimizer
 # Logging setup
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("predator.api")
+
+# Database
+from app.database import init_db
+from app.models import Document, AugmentedDataset  # Ensure models are loaded for metadata
 
 # Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -59,16 +88,24 @@ app = FastAPI(
     version="22.0.0"
 )
 
-# Add Middleware (Order matters!)
-app.add_middleware(BaseHTTPMiddleware, dispatch=ErrorHandlerMiddleware(app).dispatch)
-app.add_middleware(BaseHTTPMiddleware, dispatch=RequestLoggingMiddleware().dispatch)
-app.add_middleware(BaseHTTPMiddleware, dispatch=MetricsMiddleware().dispatch)
-# Rate limiting could be conditional or selective, adding globally for now
-app.add_middleware(BaseHTTPMiddleware, dispatch=RateLimitMiddleware().dispatch)
+# Add Middleware (Order matters - last added is first run)
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.add_middleware(RateLimitMiddleware, requests_per_minute=100)
+app.add_middleware(MetricsMiddleware)
+app.add_middleware(RequestLoggingMiddleware)
+app.add_middleware(ErrorHandlerMiddleware)
 
 # Mount Static Files (Web Interface)
 try:
-    import os
     if not os.path.exists("app/static"):
         os.makedirs("app/static")
     app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -150,6 +187,13 @@ async def startup_event():
 
     logger.info("🚀 Starting Predator Analytics v21.0...")
 
+    # 0. Initialize Database (Disabled for stable startup, use manual init if needed)
+    # try:
+    #     await init_db()
+    #     logger.info("✅ Database initialized")
+    # except Exception as e:
+    #     logger.error(f"❌ Database initialization failed: {e}")
+
     # 1. Initialize Qdrant collection (lazy)
     try:
         qdrant = get_qdrant_service()
@@ -159,7 +203,6 @@ async def startup_event():
         logger.warning(f"⚠️ Qdrant initialization failed (will retry on first use): {e}")
 
     # 2. Preload ML models (optional, prevents OOM on small instances)
-    import os
     if os.getenv("PRELOAD_MODELS", "false").lower() == "true":
         try:
             logger.info("📦 Preloading ML models into memory...")
@@ -344,19 +387,7 @@ async def get_document_summary(doc_id: str, max_length: int = 130):
 
 from fastapi import Depends
 
-@app.get("/api/v1/auth/profile")
-async def get_profile(user: dict = Depends(get_current_user)):
-    """
-    Get current user profile.
-    Requires authentication (JWT token).
-    """
-    return {
-        "user_id": user["user_id"],
-        "username": user["username"],
-        "email": user["email"],
-        "roles": user["roles"],
-        "subscription": "pro" if user["can_view_pii"] else "free"
-    }
+# Duplicate profile route removed in favor of auth_router
 
 @app.post("/api/v1/llm/chat")
 async def chat_llm(model: str, messages: List[Dict[str, str]]):
@@ -441,6 +472,46 @@ async def upload_dataset(
                 embedding_service=embedding_service,
                 qdrant_service=qdrant_service
             )
+
+            # Step 4: Populate Gold Layer (PostgreSQL documents table)
+            # This allows other services to use this data as the system of record
+            import uuid
+            import json
+            import pandas as pd
+            from datetime import datetime
+            from app.models import Document
+            from app.core.db import async_session_maker
+
+            def _serialize_meta(obj):
+                if isinstance(obj, (pd.Timestamp, datetime)):
+                    return obj.isoformat()
+                if isinstance(obj, uuid.UUID):
+                    return str(obj)
+                return str(obj)
+
+            async with async_session_maker() as session:
+                for doc_data in documents:
+                    # Clean the doc_data for JSON serialization
+                    clean_meta = {}
+                    for k, v in doc_data.items():
+                        if isinstance(v, (pd.Timestamp, datetime, uuid.UUID)):
+                            clean_meta[k] = str(v)
+                        else:
+                            clean_meta[k] = v
+
+                    # Create document record
+                    doc = Document(
+                        id=uuid.uuid4(),
+                        tenant_id=uuid.UUID("00000000-0000-0000-0000-000000000000"), # Default tenant
+                        title=f"{dataset_type.capitalize()} Entry: {doc_data.get('decl_number', 'Unknown')}",
+                        content=doc_data.get('description', str(doc_data)),
+                        source_type=dataset_type,
+                        meta=clean_meta
+                    )
+                    session.add(doc)
+                await session.commit()
+                logger.info(f"✅ Promoted {len(documents)} docs to Gold Layer (PostgreSQL)")
+
             # Remove documents from response to keep it light
             etl_result.pop("documents", None)
 
@@ -529,6 +600,10 @@ app.include_router(opponent_router.router, prefix="/api/v1")
 # LLM Management
 from app.api.routers import llm_management as llm_mgmt_router
 app.include_router(llm_mgmt_router.router, prefix="/api/v1")
+
+# Triple Agent (Trinity Core v22)
+from app.api.v1 import trinity as trinity_router
+app.include_router(trinity_router.router, prefix="/api/v1/trinity", tags=["Trinity"])
 
 # Integrations (Slack, Notion, etc.)
 from app.routers import integrations as integrations_router

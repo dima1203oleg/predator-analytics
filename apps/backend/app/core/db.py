@@ -1,12 +1,15 @@
 """
-Shim for Core Database
-Redirects to libs.core.database
+WinSURF Bridge: Core DB Alias
+Maps app.core.db to app.database (which maps to libs.core.database)
+Ensures boot-safety across legacy ingestion modules.
 """
-import sys
-from pathlib import Path
+from app.database import (
+    engine,
+    async_session_maker,
+    get_db,
+    Base,
+    init_db,
+    close_db
+)
 
-ROOT_DIR = Path(__file__).resolve().parents[4]
-if str(ROOT_DIR) not in sys.path:
-    sys.path.append(str(ROOT_DIR))
-
-from libs.core.database import engine, async_session_maker, Base, get_db, init_db, close_db
+__all__ = ["engine", "async_session_maker", "get_db", "Base", "init_db", "close_db"]

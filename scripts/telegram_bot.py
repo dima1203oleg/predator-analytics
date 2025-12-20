@@ -33,7 +33,9 @@ logger = logging.getLogger(__name__)
 # CONFIGURATION
 # ============================================================
 
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "7879930188:AAGH8OYUjfun382FCEPowrC0_WKjwVRpcBQ")
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+if not BOT_TOKEN:
+    raise ValueError("TELEGRAM_BOT_TOKEN must be set in .env")
 API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 SSH_CONFIG_PATH = os.path.expanduser("~/.ssh/config")
 PROJECT_DIR = "/Users/dima-mac/Documents/Predator_21"
@@ -67,10 +69,10 @@ def parse_ngrok_message(text: str) -> Optional[NgrokInfo]:
     """Parse ngrok URLs from message"""
     ssh_pattern = r'SSH:\s*tcp://([^:]+):(\d+)'
     http_pattern = r'HTTP:\s*(https?://[^\s]+)'
-    
+
     ssh_match = re.search(ssh_pattern, text)
     http_match = re.search(http_pattern, text)
-    
+
     if ssh_match:
         return NgrokInfo(
             ssh_host=ssh_match.group(1),
@@ -85,18 +87,18 @@ def parse_ngrok_message(text: str) -> Optional[NgrokInfo]:
 def update_ssh_config(ngrok_info: NgrokInfo) -> Tuple[bool, str]:
     """Update SSH config with new ngrok data"""
     global last_ngrok
-    
+
     try:
         if not os.path.exists(SSH_CONFIG_PATH):
             return False, f"❌ SSH config не знайдено: {SSH_CONFIG_PATH}"
-        
+
         with open(SSH_CONFIG_PATH, 'r') as f:
             content = f.read()
-        
+
         # Find dev-ngrok block
         pattern = r'(Host\s+dev-ngrok\s*\n(?:[^\n]*\n)*?)(?=Host\s|\Z)'
         match = re.search(pattern, content, re.IGNORECASE)
-        
+
         if match:
             old_block = match.group(1)
             new_block = re.sub(r'HostName\s+\S+', f'HostName {ngrok_info.ssh_host}', old_block)
@@ -114,12 +116,12 @@ Host dev-ngrok
     UserKnownHostsFile /dev/null
 """
             content += new_block
-        
+
         with open(SSH_CONFIG_PATH, 'w') as f:
             f.write(content)
-        
+
         last_ngrok = ngrok_info
-        
+
         return True, f"""✅ *SSH Config оновлено!*
 
 🔗 *Нові ngrok дані:*
@@ -131,7 +133,7 @@ Host dev-ngrok
 ```bash
 ssh dev-ngrok
 ```"""
-        
+
     except Exception as e:
         logger.error(f"Failed to update SSH config: {e}")
         return False, f"❌ Помилка: {str(e)}"
@@ -140,6 +142,19 @@ ssh dev-ngrok
 # ============================================================
 # COMMAND HANDLERS
 # ============================================================
+
+COMMANDS = {}
+EMOJI_MAP = {
+    "статус": "status",
+    "status": "status",
+    "disk": "disk",
+    "memory": "memory",
+    "cpu": "cpu",
+    "docker": "docker",
+    "k8s": "k8s_cluster",
+    "ngrok": "ngrok",
+    "help": "help"
+}
 
 async def cmd_start(args: str) -> str:
     return """🚀 *Predator Analytics Assistant*
@@ -188,7 +203,7 @@ async def cmd_help(args: str) -> str:
 async def cmd_status(args: str) -> str:
     global last_ngrok
     ngrok_status = f"✅ Активний ({last_ngrok.ssh_host}:{last_ngrok.ssh_port})" if last_ngrok else "⚠️ Очікую дані"
-    
+
     return f"""📊 *Статус системи*
 
 🖥️ Local Mac: Online
@@ -287,10 +302,10 @@ async def cmd_ssh(args: str) -> str:
     try:
         with open(SSH_CONFIG_PATH, 'r') as f:
             content = f.read()
-        
+
         pattern = r'(Host\s+dev-ngrok\s*\n(?:[^\n]*\n)*?)(?=Host\s|\Z)'
         match = re.search(pattern, content, re.IGNORECASE)
-        
+
         if match:
             return f"📡 *SSH Config (dev-ngrok)*\n```\n{match.group(1)}\n```"
         return "⚠️ Блок dev-ngrok не знайдено"
@@ -364,29 +379,72 @@ async def cmd_opensearch(args: str) -> str:
         async with httpx.AsyncClient(timeout=5) as client:
             health = await client.get(f"{opensearch_url}/_cluster/health")
             health_data = health.json()
-            
+
             indices = await client.get(f"{opensearch_url}/_cat/indices?format=json")
             indices_data = indices.json()
-            
+
             total_docs = sum(int(idx.get("docs.count", 0) or 0) for idx in indices_data)
-            
+
             result = f"""🔸 *OpenSearch Status*
 
 Cluster: {health_data.get('cluster_name', 'N/A')}
-Status: {health_data.get('status', 'unknown')} 
+Status: {health_data.get('status', 'unknown')}
 Indices: {health_data.get('number_of_indices', 0)}
 Docs: {total_docs:,}
 Active Shards: {health_data.get('active_shards', 0)}
 
 Top Indices:"""
-            
+
             for idx in indices_data[:5]:
                 result += f"\n  • {idx['index']}: {idx.get('docs.count', 0)} docs"
-            
+
             return result
     except Exception as e:
         return f"❌ OpenSearch offline: {str(e)}"
 
+
+# Register commands
+COMMANDS = {
+    "start": cmd_start,
+    "help": cmd_help,
+    "status": cmd_status,
+    "disk": cmd_disk,
+    "memory": cmd_memory,
+    "cpu": cmd_cpu,
+    "uptime": cmd_uptime,
+    "docker": cmd_docker,
+    "pods": cmd_pods,
+    "logs": cmd_logs,
+    "ngrok": cmd_ngrok,
+    "ssh": cmd_ssh,
+    "connect": cmd_connect,
+    "git": cmd_git,
+    "deploy": cmd_deploy,
+    "opensearch": cmd_opensearch,
+    "qdrant": cmd_qdrant,
+    "celery": cmd_celery_status,
+    "etl": cmd_etl_jobs,
+    "cluster": cmd_k8s_cluster,
+    "predator": cmd_full_status,
+    "parsing": cmd_parsing_status,
+    "indexing": cmd_indexing_status,
+    "code": cmd_code,
+    "bash": cmd_bash,
+    "test": cmd_test,
+    "create": cmd_create_file,
+    "llm_providers": cmd_llm_providers,
+    "llm_add": cmd_llm_add
+}
+
+async def cmd_help_updated(args: str) -> str:
+    return """📖 *Predator Helper*
+
+**🖥️ Сервер:**
+• /status - Загальний статус
+• /disk - Диск
+• /memory - RAM
+• /cpu - CPU
+    """
 
 async def cmd_qdrant(args: str) -> str:
     """Qdrant статус"""
@@ -395,18 +453,18 @@ async def cmd_qdrant(args: str) -> str:
         async with httpx.AsyncClient(timeout=5) as client:
             collections = await client.get(f"{qdrant_url}/collections")
             coll_data = collections.json()
-            
+
             result = "🔹 *Qdrant Vector DB*\n\n"
-            
+
             for coll in coll_data.get("result", {}).get("collections", []):
                 coll_name = coll.get("name")
                 info = await client.get(f"{qdrant_url}/collections/{coll_name}")
                 info_data = info.json().get("result", {})
-                
+
                 result += f"📦 {coll_name}\n"
                 result += f"  Vectors: {info_data.get('points_count', 0):,}\n"
                 result += f"  Status: {info_data.get('status', 'unknown')}\n\n"
-            
+
             return result or "⚠️ No collections"
     except Exception as e:
         return f"❌ Qdrant offline: {str(e)}"
@@ -420,7 +478,7 @@ async def cmd_celery_status(args: str) -> str:
             capture_output=True, text=True, timeout=10,
             cwd=f"{PROJECT_DIR}/ua-sources"
         )
-        
+
         if result.returncode == 0:
             return f"🔸 *Celery Workers*\n```\n{result.stdout[:800]}\n```"
         return "⚠️ Celery offline"
@@ -435,14 +493,14 @@ async def cmd_etl_jobs(args: str) -> str:
         async with httpx.AsyncClient(timeout=5) as client:
             response = await client.get(f"{backend_url}/api/etl/jobs")
             data = response.json()
-            
+
             result = f"""🔹 *ETL Pipeline*
 
 Total Jobs: {data.get('total', 0)}"""
-            
+
             for job in data.get('jobs', [])[:5]:
                 result += f"\n  • {job.get('id', 'N/A')}: {job.get('status', 'unknown')}"
-            
+
             return result
     except Exception as e:
         return f"❌ ETL service offline: {str(e)}"
@@ -456,9 +514,9 @@ async def cmd_k8s_cluster(args: str) -> str:
             ["kubectl", "get", "nodes", "-o", "json"],
             capture_output=True, text=True, timeout=10
         )
-        
+
         result = "☸️ *Kubernetes Cluster*\n\n"
-        
+
         if nodes_result.returncode == 0:
             nodes_json = json.loads(nodes_result.stdout)
             result += f"**Nodes:** {len(nodes_json.get('items', []))}\n"
@@ -466,19 +524,19 @@ async def cmd_k8s_cluster(args: str) -> str:
                 name = node['metadata']['name']
                 ready = node['status']['conditions'][-1]['status'] == "True"
                 result += f"  • {name}: {'✅' if ready else '❌'}\n"
-        
+
         # Pods summary
         pods_result = subprocess.run(
             ["kubectl", "get", "pods", "--all-namespaces", "-o", "json"],
             capture_output=True, text=True, timeout=10
         )
-        
+
         if pods_result.returncode == 0:
             pods_json = json.loads(pods_result.stdout)
             running = sum(1 for p in pods_json.get('items', []) if p['status'].get('phase') == 'Running')
             total = len(pods_json.get('items', []))
             result += f"\n**Pods:** {running}/{total} Running\n"
-        
+
         return result
     except Exception as e:
         return f"❌ K8s error: {str(e)}"
@@ -498,9 +556,9 @@ async def cmd_full_status(args: str) -> str:
             cmd_celery_status(""),
             cmd_k8s_cluster("")
         ]
-        
+
         results = await asyncio.gather(*tasks, return_exceptions=True)
-        
+
         return "\n\n".join(str(r) for r in results if r)
 
 
@@ -512,14 +570,14 @@ async def cmd_parsing_status(args: str) -> str:
             # ETL jobs
             etl_response = await client.get(f"{backend_url}/api/etl/jobs")
             etl_data = etl_response.json()
-            
+
             result = f"""📥 *Парсинг / ETL*
 
 Active Jobs: {etl_data.get('total', 0)}
 
 Використай /opensearch для індексів
 Використай /etl для деталей"""
-            
+
             return result
     except Exception as e:
         return f"⚠️ Backend offline\n\n💡 Запусти: `docker compose up -d backend`"
@@ -528,39 +586,39 @@ Active Jobs: {etl_data.get('total', 0)}
 async def cmd_indexing_status(args: str) -> str:
     """Статус індексації"""
     result = "📊 *Індексація*\n\n"
-    
+
     try:
         opensearch_url = os.getenv("OPENSEARCH_URL", "http://localhost:9200")
         async with httpx.AsyncClient(timeout=5) as client:
             indices = await client.get(f"{opensearch_url}/_cat/indices?format=json")
             indices_data = indices.json()
-            
+
             total_docs = sum(int(idx.get("docs.count", 0) or 0) for idx in indices_data)
-            
+
             result += f"**OpenSearch:**\n"
             result += f"  Indices: {len(indices_data)}\n"
             result += f"  Documents: {total_docs:,}\n\n"
     except:
         result += "  ❌ OpenSearch offline\n\n"
-    
+
     try:
         qdrant_url = os.getenv("QDRANT_URL", "http://localhost:6333")
         async with httpx.AsyncClient(timeout=5) as client:
             collections = await client.get(f"{qdrant_url}/collections")
             coll_data = collections.json()
-            
+
             total_vectors = 0
             for coll in coll_data.get("result", {}).get("collections", []):
                 coll_name = coll.get("name")
                 info = await client.get(f"{qdrant_url}/collections/{coll_name}")
                 total_vectors += info.json().get("result", {}).get("points_count", 0)
-            
+
             result += f"**Qdrant:**\n"
             result += f"  Collections: {len(coll_data.get('result', {}).get('collections', []))}\n"
             result += f"  Vectors: {total_vectors:,}\n"
     except:
         result += "  ❌ Qdrant offline\n"
-    
+
     return result
 
 
@@ -586,25 +644,25 @@ print(os.getcwd())
 ```
 
 ⚠️ Безпечно виконується в контексті проекту"""
-    
+
     try:
         # Create temp file
         temp_file = f"/tmp/tg_code_{datetime.now().timestamp()}.py"
         with open(temp_file, 'w') as f:
             f.write(args)
-        
+
         # Execute
         result = subprocess.run(
             ["python3", temp_file],
             capture_output=True, text=True, timeout=30,
             cwd=PROJECT_DIR
         )
-        
+
         os.remove(temp_file)
-        
+
         output = result.stdout or result.stderr
         status = "✅" if result.returncode == 0 else "❌"
-        
+
         return f"""{status} *Code Execution*
 
 ```python
@@ -630,17 +688,17 @@ async def cmd_bash(args: str) -> str:
 ```
 
 ⚠️ Працює в контексті проекту"""
-    
+
     try:
         result = subprocess.run(
             args, shell=True,
             capture_output=True, text=True, timeout=30,
             cwd=PROJECT_DIR
         )
-        
+
         output = result.stdout or result.stderr
         status = "✅" if result.returncode == 0 else "❌"
-        
+
         return f"""{status} *Bash*
 
 ```bash
@@ -661,16 +719,16 @@ async def cmd_test(args: str) -> str:
         cmd = ["pytest", "-v"]
         if args:
             cmd.append(args)
-        
+
         result = subprocess.run(
             cmd,
             capture_output=True, text=True, timeout=60,
             cwd=f"{PROJECT_DIR}/ua-sources"
         )
-        
+
         output = result.stdout or result.stderr
         status = "✅ PASSED" if result.returncode == 0 else "❌ FAILED"
-        
+
         return f"""🧪 *Tests {status}*
 
 ```
@@ -691,18 +749,18 @@ async def cmd_create_file(args: str) -> str:
 def hello():
     print("Hello")
 ```"""
-    
+
     parts = args.split("\n", 1)
     path = parts[0].strip()
     content = parts[1] if len(parts) > 1 else ""
-    
+
     try:
         full_path = os.path.join(PROJECT_DIR, path)
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
-        
+
         with open(full_path, 'w') as f:
             f.write(content)
-        
+
         return f"""✅ *File Created*
 
 Path: `{path}`
@@ -721,12 +779,12 @@ async def cmd_llm_providers(args: str) -> str:
         async with httpx.AsyncClient(timeout=5) as client:
             response = await client.get(f"{os.getenv('BACKEND_URL', 'http://localhost:8000')}/api/llm/providers")
             providers = response.json()
-        
+
         result = "🧠 **LLM Провайдери**\n\n"
-        
+
         active = [p for p in providers if p['api_keys']]
         inactive = [p for p in providers if not p['api_keys']]
-        
+
         if active:
             result += "**✅ Активні:**\n"
             for p in active:
@@ -736,17 +794,17 @@ async def cmd_llm_providers(args: str) -> str:
                 result += f"{emoji} {p['name']} {status} {free_tag}\n"
                 result += f"  🔑 {len(p['api_keys'])} ключів\n"
                 result += f"  📦 {p['model']}\n\n"
-        
+
         if inactive[:5]:  # Show only first 5
             result += "**➕ Доступні для додавання:**\n"
             for p in inactive[:5]:
                 emoji = get_provider_emoji_local(p['id'])
                 free_tag = "🆓" if p['free'] else "💰"
                 result += f"{emoji} {p['name']} {free_tag}\n"
-        
+
         result += f"\nВсього: {len(active)} активних / {len(providers)} провайдерів"
         return result
-        
+
     except Exception as e:
         return f"❌ Error: {str(e)}"
 
@@ -770,16 +828,16 @@ async def cmd_llm_add(args: str) -> str:
 Або природно:
 "Додай ключ Groq: gsk_xxx"
 """
-    
+
     parts = args.strip().split(maxsplit=1)
     if len(parts) != 2:
         return "❌ Формат: `/llm_add <provider> <key>`"
-    
+
     provider_id, api_key = parts
-    
+
     try:
         logger.info(f"Adding LLM key for {provider_id}...")
-        
+
         async with httpx.AsyncClient(timeout=30) as client:
             response = await client.post(
                 f"{os.getenv('BACKEND_URL', 'http://localhost:8000')}/api/llm/providers/{provider_id}/keys",
@@ -790,7 +848,7 @@ async def cmd_llm_add(args: str) -> str:
                 }
             )
             data = response.json()
-        
+
         emoji = get_provider_emoji_local(provider_id)
         return f"""✅ **Ключ додано!**
 
@@ -798,7 +856,7 @@ async def cmd_llm_add(args: str) -> str:
 🔑 Всього ключів: {data.get('total_keys', 1)}
 
 {data.get('message', 'Success')}"""
-        
+
     except httpx.HTTPStatusError as e:
         if e.response.status_code == 400:
             return f"❌ **Тест ключа провалився**\n\n{e.response.json().get('detail', 'Invalid key')}"
@@ -816,13 +874,13 @@ async def cmd_llm_test(args: str) -> str:
 ```
 /llm_test groq gsk_xxxxx
 ```"""
-    
+
     parts = args.strip().split(maxsplit=1)
     if len(parts) != 2:
         return "❌ Формат: `/llm_test <provider> <key>`"
-    
+
     provider_id, api_key = parts
-    
+
     try:
         async with httpx.AsyncClient(timeout=30) as client:
             response = await client.post(
@@ -833,7 +891,7 @@ async def cmd_llm_test(args: str) -> str:
                 }
             )
             result = response.json()
-        
+
         if result['success']:
             return f"""✅ **Ключ валідний!**
 
@@ -842,7 +900,7 @@ async def cmd_llm_test(args: str) -> str:
 💬 {result.get('message', 'Test passed')}"""
         else:
             return f"❌ **Ключ невалідний**\n\n{result.get('error', 'Unknown error')}"
-            
+
     except Exception as e:
         return f"❌ Error: {str(e)}"
 
@@ -853,7 +911,7 @@ async def cmd_llm_stats(args: str) -> str:
         async with httpx.AsyncClient(timeout=5) as client:
             response = await client.get(f"{os.getenv('BACKEND_URL', 'http://localhost:8000')}/api/llm/stats")
             stats = response.json()
-        
+
         return f"""📊 **LLM Statistics**
 
 🔢 Всього провайдерів: {stats['total_providers']}
@@ -861,7 +919,7 @@ async def cmd_llm_stats(args: str) -> str:
 🔑 Всього ключів: {stats['total_keys']}
 
 Використай /llm_providers для деталей"""
-        
+
     except Exception as e:
         return f"❌ Error: {str(e)}"
 
@@ -892,29 +950,29 @@ COMMANDS = {
     "start": cmd_start,
     "help": cmd_help,
     "menu": cmd_start,
-    
+
     # Server
     "status": cmd_status,
     "disk": cmd_disk,
     "memory": cmd_memory,
     "cpu": cmd_cpu,
     "uptime": cmd_uptime,
-    
+
     # Docker/K8s
     "docker": cmd_docker,
     "pods": cmd_pods,
     "logs": cmd_logs,
     "cluster": cmd_k8s_cluster,
-    
+
     # Network
     "ngrok": cmd_ngrok,
     "ssh": cmd_ssh,
     "connect": cmd_connect,
-    
+
     # Deploy
     "git": cmd_git,
     "deploy": cmd_deploy,
-    
+
     # Predator Analytics
     "opensearch": cmd_opensearch,
     "qdrant": cmd_qdrant,
@@ -924,13 +982,13 @@ COMMANDS = {
     "indexing": cmd_indexing_status,
     "fullstatus": cmd_full_status,
     "predator": cmd_full_status,
-    
+
     # AI Programming
     "code": cmd_code,
     "bash": cmd_bash,
     "test": cmd_test,
     "create": cmd_create_file,
-    
+
     # LLM Management
     "llm_providers": cmd_llm_providers,
     "llm_add": cmd_llm_add,
@@ -943,18 +1001,18 @@ EMOJI_MAP = {
     # Basic
     "📊": "status", "статус": "status",
     "🖥️": "status", "сервер": "status",
-    
+
     # Docker/K8s
     "🐳": "docker", "docker": "docker",
     "☸️": "cluster", "k8s": "cluster", "кластер": "cluster",
-    
+
     # Network
     "🔗": "ngrok", "ngrok": "ngrok",
     "📡": "ssh", "ssh": "ssh", "ssh config": "ssh",
-    
+
     # Deploy
     "📦": "deploy", "deploy": "deploy", "деплой": "deploy",
-    
+
    # Predator Analytics
     "🗄️": "opensearch", "opensearch": "opensearch",
     "🧠": "qdrant", "qdrant": "qdrant",
@@ -962,13 +1020,13 @@ EMOJI_MAP = {
     "📥": "parsing", "парсинг": "parsing",
     "📊": "indexing", "індексація": "indexing",
     "🎯": "predator", "предатор": "predator",
-    
+
     # Programming
     "💻": "code", "код": "code",
     "🔨": "bash",
     "🧪": "test", "тести": "test",
-    
-    # Help  
+
+    # Help
     "❓": "help", "допомога": "help",
 }
 
@@ -1048,7 +1106,7 @@ COMMANDS["help"] = cmd_help_updated
 async def understand_intent(text: str) -> Dict[str, Any]:
     """Розуміє намір користувача через AI"""
     text_lower = text.lower()
-    
+
     # Ключові слова для різних категорій
     intents = {
         "system_status": ["статус", "стан", "як", "працює", "система", "все", "працюють", "сервіси"],
@@ -1063,46 +1121,46 @@ async def understand_intent(text: str) -> Dict[str, Any]:
         "help": ["допомога", "команд", "що вміє", "можеш"],
         "greeting": ["привіт", "вітаю", "здоров", "добри"],
     }
-    
+
     # Знаходимо найкращий збіг
     best_match = None
     best_score = 0
-    
+
     for intent_name, keywords in intents.items():
         score = sum(1 for kw in keywords if kw in text_lower)
         if score > best_score:
             best_score = score
             best_match = intent_name
-    
+
     if best_match and best_score > 0:
         return {"intent": best_match, "confidence": best_score, "text": text}
-    
+
     # Якщо не знайшли - загальний запит
     return {"intent": "general", "confidence": 0, "text": text}
 
 
 async def process_natural_language(text: str, chat_id: int) -> str:
     """Обробляє природну мову через AI"""
-    
+
     text_lower = text.lower()
-    
+
     # Special: LLM key adding - природна мова
     if "додай ключ" in text_lower or "add key" in text_lower:
         # Parse: "Додай ключ Groq: gsk_xxx" or "Додай ключ groq gsk_xxx"
         import re
-        
+
         # Try format: "додай ключ <provider>: <key>"
         match = re.search(r'додай ключ\s+(\w+)[:\s]+([a-zA-Z0-9_\-]+)', text_lower)
         if not match:
             # Try English
             match = re.search(r'add key\s+(\w+)[:\s]+([a-zA-Z0-9_\-]+)', text_lower)
-        
+
         if match:
             provider = match.group(1).lower()
             # Get actuall key from original text (preserve case)
             key_start = text.find(match.group(2))
             key = text[key_start:key_start+100].split()[0]  # Get first token
-            
+
             return await cmd_llm_add(f"{provider} {key}")
         else:
             return """🔑 Додати ключ
@@ -1113,11 +1171,11 @@ async def process_natural_language(text: str, chat_id: int) -> str:
 "Додай ключ gemini AIzaxxxxx"
 
 Провайдери: groq, gemini, xai, deepseek, mistral, cohere"""
-    
+
     # Розуміємо намір
     intent_data = await understand_intent(text)
     intent = intent_data["intent"]
-    
+
     # Обробляємо згідно наміру
     if intent == "greeting":
         return """👋 Привіт! Я Predator Analytics Bot.
@@ -1129,31 +1187,31 @@ async def process_natural_language(text: str, chat_id: int) -> str:
 • SSH/ngrok налаштуваннями
 
 Питай що завгодно або /help для команд!"""
-    
+
     elif intent == "system_status":
         return await cmd_full_status("")
-    
+
     elif intent == "opensearch":
         return await cmd_opensearch("")
-    
+
     elif intent == "qdrant":
         return await cmd_qdrant("")
-    
+
     elif intent == "parsing":
         return await cmd_parsing_status("")
-    
+
     elif intent == "celery":
         return await cmd_celery_status("")
-    
+
     elif intent == "k8s":
         return await cmd_k8s_cluster("")
-    
+
     elif intent == "docker":
         return await cmd_docker("")
-    
+
     elif intent == "ngrok":
         return await cmd_ngrok("")
-    
+
     elif intent == "programming":
         return """💻 **AI Code Agent**
 
@@ -1168,32 +1226,32 @@ async def process_natural_language(text: str, chat_id: int) -> str:
 ```
 
 Що хочеш виконати?"""
-    
+
     elif intent == "help":
         return await cmd_help_updated("")
-    
+
     # Загальний AI відповідь
     else:
         # Спочатку пробуємо з нашою knowledge base (работає без API!)
         knowledge_response = get_knowledge_based_response(text)
         if knowledge_response:
             return knowledge_response
-        
+
         # Потім пробуємо LLM якщо доступний
         try:
             # Визначаємо складність запиту для вибору між council та звичайним LLM
             from app.services.llm import llm_service
-            
+
             # Ключові слова що вказують на складне питання
             complex_indicators = [
                 "порівняй", "проаналізуй", "поясни детально", "розкажи про",
                 "як працює", "архітектура", "система", "plan", "strategy",
                 "порада", "рекомендація", "що краще", "опиши", "розкажи"
             ]
-            
+
             is_complex = any(indicator in text.lower() for indicator in complex_indicators)
             is_complex = is_complex or len(text.split()) > 15  # Довге питання = складне
-            
+
             system_prompt = """Ти - AI асистент Predator Analytics Bot.
 Допомагай користувачу з питаннями про:
 - Моніторинг системи (OpenSearch, Qdrant, Celery, K8s)
@@ -1204,18 +1262,18 @@ async def process_natural_language(text: str, chat_id: int) -> str:
 
 Відповідай коротко та по суті українською мовою.
 Якщо потрібна команда - вкажи яку."""
-            
+
             if is_complex:
                 # Використовуємо LLM Council для глибокого аналізу
                 logger.info(f"Using LLM Council for complex query: {text[:50]}...")
-                
+
                 response = await llm_service.generate_with_routing(
                     prompt=text,
                     system=system_prompt,
                     mode="council",  # 🔥 Council mode!
                     max_tokens=1500
                 )
-                
+
                 if response.success:
                     # Додаємо мітку що це council відповідь
                     prefix = "🧠 **Council AI** (5 моделей)\n\n"
@@ -1227,13 +1285,13 @@ async def process_natural_language(text: str, chat_id: int) -> str:
                     system=system_prompt,
                     mode="fast"
                 )
-                
+
                 if response.success:
                     return f"🤖 {response.content[:1000]}"
-            
+
         except Exception as e:
             logger.error(f"AI processing error: {e}")
-        
+
         # Final fallback - показуємо допомогу
         return """💡 Можу допомогти!
 
@@ -1255,7 +1313,7 @@ def get_knowledge_based_response(text: str) -> Optional[str]:
     Працює БЕЗ LLM API!
     """
     text_lower = text.lower()
-    
+
     # Питання про веб інтерфейс / frontend
     if any(kw in text_lower for kw in ["веб", "інтерфейс", "frontend", "фронтенд", "ui", "дизайн"]):
         return """🎨 **Веб інтерфейс Predator Analytics**
@@ -1286,7 +1344,7 @@ def get_knowledge_based_response(text: str) -> Optional[str]:
   - index.css - стилі
 
 Потрібно більше деталей? Питай про конкретний компонент!"""
-    
+
     # Архітектура системи
     if any(kw in text_lower for kw in ["архітектур", "компонент", "структур", "система"]):
         return """🏗️ **Архітектура Predator Analytics**
@@ -1326,7 +1384,7 @@ def get_knowledge_based_response(text: str) -> Optional[str]:
    - Grafana (monitoring)
 
 Детально: `/predator` або питай про конкретний шар!"""
-    
+
     # Backend
     if any(kw in text_lower for kw in ["backend", "api", "fastapi", "бекенд"]):
         return """⚙️ **Backend API**
@@ -1352,7 +1410,7 @@ def get_knowledge_based_response(text: str) -> Optional[str]:
 **Файли:** `/ua-sources/app/`
 
 Що саме цікавить?"""
-    
+
     # Databases
     if any(kw in text_lower for kw in ["база", "database", "opensearch", "qdrant", "postgres"]):
         return """🗄️ **Databases**
@@ -1380,7 +1438,7 @@ def get_knowledge_based_response(text: str) -> Optional[str]:
 Команди:
 • `/opensearch` - статус індексів
 • `/qdrant` - vector колекції"""
-    
+
     # ETL / Parsing
     if any(kw in text_lower for kw in ["etl", "парсинг", "crawler", "збір даних"]):
         return """📥 **ETL Pipeline**
@@ -1407,7 +1465,7 @@ def get_knowledge_based_response(text: str) -> Optional[str]:
 `/ua-sources/app/tasks/etl_workers.py`
 
 Статус: `/parsing` або `/etl`"""
-    
+
     # AI/ML
     if any(kw in text_lower for kw in ["ai", "ml", "llm", "council", "модел"]):
         return """🧠 **AI/ML System**
@@ -1434,7 +1492,7 @@ def get_knowledge_based_response(text: str) -> Optional[str]:
 • Council (5 моделей, ~10s)
 
 Автоматично обирається по складності питання!"""
-    
+
     # Infrastructure
     if any(kw in text_lower for kw in ["deploy", "k8s", "kubernetes", "docker", "інфра"]):
         return """🚀 **Infrastructure**
@@ -1466,7 +1524,7 @@ def get_knowledge_based_response(text: str) -> Optional[str]:
 Команди:
 • `/cluster` - K8s статус
 • `/docker` - контейнери"""
-    
+
     # Telegram bot
     if any(kw in text_lower for kw in ["бот", "telegram", "телеграм"]):
         return """🤖 **Telegram Bot**
@@ -1492,7 +1550,7 @@ def get_knowledge_based_response(text: str) -> Optional[str]:
 `/scripts/telegram_bot.py`
 
 Я і є цей бот! 😊"""
-    
+
     # Проекти / загальне
     if any(kw in text_lower for kw in ["predator", "проект", "що це", "опис"]):
         return """🎯 **Predator Analytics**
@@ -1520,7 +1578,7 @@ def get_knowledge_based_response(text: str) -> Optional[str]:
 github.com/dima1203oleg/predator-analytics
 
 Детально: `/predator` або питай конкретно!"""
-    
+
     return None  # Якщо не знайдено в knowledge base
 
 
@@ -1531,7 +1589,7 @@ github.com/dima1203oleg/predator-analytics
 async def process_message(text: str, chat_id: int, user_id: int) -> str:
     """Process incoming message"""
     text_lower = text.lower().strip()
-    
+
     # Check for ngrok update
     if "ngrok" in text_lower and ("ssh:" in text_lower or "http:" in text_lower):
         ngrok_info = parse_ngrok_message(text)
@@ -1539,25 +1597,25 @@ async def process_message(text: str, chat_id: int, user_id: int) -> str:
             success, message = update_ssh_config(ngrok_info)
             return message
         return "⚠️ Не вдалося розпарсити ngrok дані"
-    
+
     # Check for commands
     if text.startswith("/"):
         parts = text[1:].split(maxsplit=1)
         cmd = parts[0].lower()
         args = parts[1] if len(parts) > 1 else ""
-        
+
         handler = COMMANDS.get(cmd)
         if handler:
             return await handler(args)
         return "❌ Невідома команда. /help"
-    
+
     # Check for emoji/text commands
     for key, cmd in EMOJI_MAP.items():
         if text_lower.startswith(key) or key in text_lower:
             handler = COMMANDS.get(cmd)
             if handler:
                 return await handler("")
-    
+
     # 🆕 ПРИРОДНА МОВА - AI обробка
     return await process_natural_language(text, chat_id)
 
@@ -1577,7 +1635,7 @@ async def send_message(chat_id: int, text: str, reply_markup: Optional[Dict] = N
             }
             if reply_markup:
                 data["reply_markup"] = json.dumps(reply_markup)
-            
+
             response = await client.post(f"{API_URL}/sendMessage", json=data)
             return response.status_code == 200
     except Exception as e:
@@ -1628,39 +1686,39 @@ async def run_bot():
 ║  ✅ Docker/K8s управління                                    ║
 ╚══════════════════════════════════════════════════════════════╝
     """)
-    
+
     logger.info(f"🚀 Starting bot with token: {BOT_TOKEN[:15]}...")
-    
+
     # Delete existing webhook
     await delete_webhook()
     logger.info("✅ Webhook deleted, starting polling...")
-    
+
     offset = 0
-    
+
     while True:
         try:
             updates = await get_updates(offset=offset, timeout=30)
-            
+
             for update in updates:
                 offset = update["update_id"] + 1
-                
+
                 if "message" not in update:
                     continue
-                
+
                 message = update["message"]
                 chat_id = message["chat"]["id"]
                 user_id = message["from"]["id"]
                 text = message.get("text", "")
-                
+
                 if not text:
                     continue
-                
+
                 username = message["from"].get("username", "Unknown")
                 logger.info(f"📩 [{username}] {text[:50]}...")
-                
+
                 # Process message
                 response = await process_message(text, chat_id, user_id)
-                
+
                 # Send reply with menu for /start
                 show_menu = text.lower() in ["/start", "/menu"]
                 await send_message(
@@ -1669,7 +1727,7 @@ async def run_bot():
                     reply_markup=MAIN_MENU if show_menu else None
                 )
                 logger.info(f"✅ Replied to {username}")
-                
+
         except asyncio.CancelledError:
             logger.info("🛑 Bot stopped")
             break

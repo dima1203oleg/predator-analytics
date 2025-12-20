@@ -3,7 +3,7 @@ name: Create PR for fixes + Auto-approve & Auto-merge
 on:
   push:
     branches:
-      - 'fix/**'
+      - "fix/**"
 
 permissions:
   contents: write
@@ -24,11 +24,11 @@ jobs:
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies (ua-sources)
         run: |
-          cd ua-sources
+          cd apps/backend
           python -m pip install --upgrade pip
           pip install -r requirements.txt || true
           pip install pytest pytest-asyncio httpx || true
@@ -37,13 +37,13 @@ jobs:
         id: run_tests
         run: |
           set -eux
-          cd ua-sources
+          cd apps/backend
           python -m pytest tests/ -q
 
       - name: Finalize results
         id: set_output
         run: |
-          echo "tests=$([[ -f ua-sources/.pytest_cache ]] && echo passed || echo failed)" >> "$GITHUB_OUTPUT"
+          echo "tests=$([[ -d apps/backend/.pytest_cache ]] && echo passed || echo failed)" >> "$GITHUB_OUTPUT"
 
   create-or-update-pr:
     name: Create or Update Pull Request
