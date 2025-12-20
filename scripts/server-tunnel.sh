@@ -3,9 +3,10 @@
 # SSH Port Forwarding для доступу до веб-інтерфейсів Predator Analytics
 # Використання: ./scripts/server-tunnel.sh [start|stop|status]
 
-SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
-SSH_HOST="${SSH_HOST:-6.tcp.eu.ngrok.io}"
-SSH_PORT="${SSH_PORT:-18105}"
+SSH_KEY="$HOME/.ssh/id_ed25519_dev"
+SSH_HOST="${SSH_HOST:-predator-server}" # Використовуємо аліас з ~/.ssh/config
+# SSH_PORT is irrelevant if using alias, but if explicit:
+SSH_PORT="${SSH_PORT:-6666}"
 SSH_USER="${SSH_USER:-dima}"
 
 # Кольори
@@ -54,7 +55,7 @@ start_tunnel() {
 
     # Запуск SSH-тунелю
     ssh -i "$SSH_KEY" -p "$SSH_PORT" $SSH_OPTS "$SSH_USER@$SSH_HOST"
-    
+
     # Зберегти PID
     SSH_PID=$(pgrep -f "ssh.*$SSH_HOST.*-L")
     if [ -n "$SSH_PID" ]; then
@@ -72,7 +73,7 @@ start_tunnel() {
 
 stop_tunnel() {
     echo -e "${YELLOW}🛑 Зупинка SSH-тунелю...${NC}"
-    
+
     if [ -f "$PID_FILE" ]; then
         PID=$(cat "$PID_FILE")
         if kill -0 "$PID" 2>/dev/null; then
@@ -100,7 +101,7 @@ show_status() {
     echo -e "${GREEN}📊 Статус SSH-тунелю${NC}"
     echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
-    
+
     if [ -f "$PID_FILE" ] && kill -0 $(cat "$PID_FILE") 2>/dev/null; then
         echo -e "${GREEN}✅ SSH-тунель активний (PID: $(cat "$PID_FILE"))${NC}"
         echo ""
@@ -113,7 +114,7 @@ show_status() {
         echo ""
         echo -e "${YELLOW}💡 Запустити тунель:${NC} ./scripts/server-tunnel.sh start"
     fi
-    
+
     echo ""
     echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 }

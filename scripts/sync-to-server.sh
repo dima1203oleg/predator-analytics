@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Синхронізація коду з Mac на сервер
+# Синхронізація коду з Mac на сервер (Static IP)
 # Використання: ./scripts/sync-to-server.sh [--dry-run]
 
-SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
-SSH_HOST="5.tcp.eu.ngrok.io"
-SSH_PORT="14564"
+SSH_KEY="$HOME/.ssh/id_ed25519_ngrok" # Key for server access
+SSH_HOST="194.177.1.240"
+SSH_PORT="6666"
 SSH_USER="dima"
 LOCAL_DIR="/Users/dima-mac/Documents/Predator_21/"
 REMOTE_DIR="predator-analytics"
@@ -23,23 +23,23 @@ echo -e "${YELLOW}Сервер:${NC} $SSH_USER@$SSH_HOST:~/$REMOTE_DIR"
 echo ""
 
 # Опції rsync
-RSYNC_OPTS="-avz --progress"
+RSYNC_OPTS="-avz --progress --exclude .venv* --exclude venv* --exclude node_modules --exclude .git --exclude __pycache__ --exclude *.pyc --exclude .DS_Store --exclude dist --exclude build --exclude *.log"
 
 # Виключення
 EXCLUDE_OPTS="
-  --exclude 'node_modules'
-  --exclude '.venv'
-  --exclude 'venv'
-  --exclude '.git'
-  --exclude '__pycache__'
-  --exclude '*.pyc'
-  --exclude '.DS_Store'
-  --exclude 'dist'
-  --exclude 'build'
-  --exclude '.pytest_cache'
-  --exclude '.mypy_cache'
-  --exclude 'logs'
-  --exclude '*.log'
+  --exclude node_modules
+  --exclude .venv
+  --exclude venv
+  --exclude .git
+  --exclude __pycache__
+  --exclude *.pyc
+  --exclude .DS_Store
+  --exclude dist
+  --exclude build
+  --exclude .pytest_cache
+  --exclude .mypy_cache
+  --exclude logs
+  --exclude *.log
 "
 
 # Перевірка на --dry-run
@@ -51,7 +51,7 @@ fi
 
 # Виконання rsync
 rsync $RSYNC_OPTS $EXCLUDE_OPTS \
-  -e "ssh -i $SSH_KEY -p $SSH_PORT" \
+  -e "ssh -i $SSH_KEY -p $SSH_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
   "$LOCAL_DIR" \
   "$SSH_USER@$SSH_HOST:~/$REMOTE_DIR/"
 

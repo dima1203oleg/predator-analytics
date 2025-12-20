@@ -1,9 +1,8 @@
-
 name: Quality Gate (Test Only)
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_call:
 
 jobs:
@@ -14,10 +13,10 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
       - name: Install dependencies
         run: |
-          if [ -f ua-sources/requirements.txt ]; then pip install -r ua-sources/requirements.txt; fi
+          if [ -f apps/backend/requirements.txt ]; then pip install -r apps/backend/requirements.txt; fi
       - name: Lint (Flake8)
         run: |
           pip install flake8
@@ -27,16 +26,16 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./frontend
+        working-directory: ./apps/frontend
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: apps/frontend/package.json
       - name: Install
-        run: npm ci
+        run: npm install
       - name: Lint
         run: npm run lint

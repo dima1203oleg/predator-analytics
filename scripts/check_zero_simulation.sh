@@ -1,7 +1,7 @@
 #!/bin/bash
 # =============================================================================
 # Zero Simulation Data Checker
-# Predator Analytics v19.0.0
+# Predator Analytics v22.0.0
 # 
 # Перевіряє відсутність mock/fake/simulated даних у коді
 # =============================================================================
@@ -13,7 +13,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo "🔍 Zero Simulation Check - Predator Analytics v19.0.0"
+echo "🔍 Zero Simulation Check - Predator Analytics v22.0.0"
 echo "======================================================"
 
 # Заборонені патерни

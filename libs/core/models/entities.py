@@ -12,6 +12,24 @@ import uuid
 # Import Base from shared database module
 from ..database import Base
 
+class User(Base):
+    """
+    Unified User model.
+    Synced with gold.users in PostgreSQL.
+    """
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    tenant_id = Column(UUID(as_uuid=True), index=True, default=uuid.uuid4)
+    username = Column(String(100), unique=True)
+    email = Column(String(255), unique=True, nullable=False)
+    password_hash = Column(String(255))
+    role = Column(String(50), default="user")
+    subscription_level = Column(String(50), default="free")
+    can_view_pii = Column(Boolean, default=False)
+    created_at = Column(DateTime, server_default=func.now())
+    last_login = Column(DateTime)
+
 class Company(Base):
     """Ukrainian company from EDR"""
     __tablename__ = "companies"
@@ -178,6 +196,11 @@ class Document(Base):
     Core document storage (System of Record).
     """
     __tablename__ = "documents"
+    __table_args__ = (
+        Index('idx_documents_created_at', 'created_at'),
+        Index('idx_documents_source_type', 'source_type'),
+        Index('idx_documents_tenant_id', 'tenant_id'),
+    )
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
@@ -190,10 +213,6 @@ class Document(Base):
     # Relationships
     assets = relationship("MultimodalAsset", back_populates="document")
 
-    __table_args__ = (
-        Index('idx_documents_created_at', 'created_at'),
-        Index('idx_documents_source_type', 'source_type'),
-    )
 
 
 class AugmentedDataset(Base):
@@ -330,3 +349,52 @@ class GraphEdge(Base):
         Index('idx_graph_edges_target', 'target_id'),
         Index('idx_graph_edges_relation', 'relation'),
     )
+
+class TrinityAuditLog(Base):
+    """
+    Audit log for Triple Agent (Trinity) operations.
+    Keeps track of Gemini's plan, Mistral's output, and Copilot's audit.
+    """
+    __tablename__ = "trinity_audit_logs"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    request_text = Column(Text, nullable=False)
+    user_id = Column(String(100), index=True)
+
+    # Reasoning Chain
+    intent = Column(String(50))
+    gemini_plan = Column(JSONB)
+    mistral_output = Column(Text)
+    copilot_audit = Column(JSONB)
+
+    # Final Outcome
+    status = Column(String(20)) # verified, fixed, error
+    final_output = Column(Text)
+    risk_level = Column(String(20))
+
+    # Metadata
+    execution_time_ms = Column(Integer)
+    created_at = Column(DateTime, server_default=func.now())
+
+class FileRegistry(Base):
+    """
+    Registry for uploaded files.
+    Used by the ingestion pipeline.
+    """
+    __tablename__ = "file_registry"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    filename = Column(String(255), nullable=False)
+    file_size_bytes = Column(Integer, nullable=False)
+    content_hash = Column(String(64), index=True, nullable=False) # For idempotency
+    storage_path = Column(Text, nullable=False)
+    mime_type = Column(String(100))
+    tenant_id = Column(UUID(as_uuid=True), index=True, nullable=False)
+
+    status = Column(String(20), default="PENDING") # PENDING, PROCESSING, COMPLETED, FAILED
+    error_message = Column(Text, nullable=True)
+
+    metadata_json = Column(JSONB, default={})
+
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

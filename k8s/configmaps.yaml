@@ -27,7 +27,7 @@ metadata:
     app.kubernetes.io/name: predator-analytics
     app.kubernetes.io/component: frontend
 data:
-  VITE_API_URL: "/api"
+  VITE_API_URL: "/api/v1"
   VITE_KEYCLOAK_URL: "http://keycloak:8080"
   VITE_KEYCLOAK_REALM: "predator"
   VITE_KEYCLOAK_CLIENT_ID: "predator-frontend"

@@ -4,7 +4,8 @@ Shared settings for all Predator services.
 """
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
-from typing import Optional, List
+from typing import Optional, List, Union, Any, Dict
+import json
 import os
 
 
@@ -24,8 +25,7 @@ class Settings(BaseSettings):
         os.getenv("FRONTEND_DEV_URL", "http://localhost:5173")
     ]
 
-    # Database - PostgreSQL for production, override via env
-    # Defaulting to async driver for modern stack
+    # Database
     DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://predator:predator_password@localhost:5432/predator_db")
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 5
@@ -35,12 +35,15 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str = "redis://redis:6379/1"
     CELERY_RESULT_BACKEND: str = "redis://redis:6379/1"
 
+    # Message Queue (Event Bus)
+    RABBITMQ_URL: str = os.getenv("RABBITMQ_URL", "amqp://predator:predator_secret_key@rabbitmq:5672/")
+
     # Infrastructure
     QDRANT_URL: str = "http://qdrant:6333"
     OPENSEARCH_URL: str = "http://opensearch:9200"
     MINIO_ENDPOINT: str = "minio:9000"
-    MINIO_ACCESS_KEY: str = "predator_admin"
-    MINIO_SECRET_KEY: str = "predator_secret_key"
+    MINIO_ACCESS_KEY: str = os.getenv("MINIO_ROOT_USER", "predator_admin")
+    MINIO_SECRET_KEY: str = os.getenv("MINIO_ROOT_PASSWORD", "predator_secret_key")
 
     # Vault (Secrets)
     VAULT_ADDR: str = "http://vault:8200"
@@ -56,6 +59,7 @@ class Settings(BaseSettings):
     # LLM Settings
     OPENAI_API_KEY: Optional[str] = None
     GEMINI_API_KEY: Optional[str] = None
+    # GEMINI_API_KEYS removed from Settings class to bypass Pydantic parsing issues
     ANTHROPIC_API_KEY: Optional[str] = None
     GROQ_API_KEY: Optional[str] = None
     MISTRAL_API_KEY: Optional[str] = None
@@ -63,22 +67,16 @@ class Settings(BaseSettings):
     HUGGINGFACE_API_KEY: Optional[str] = None
     COHERE_API_KEY: Optional[str] = None
     TOGETHER_API_KEY: Optional[str] = None
-    XAI_API_KEY: Optional[str] = None  # Grok
+    XAI_API_KEY: Optional[str] = None
     DEEPSEEK_API_KEY: Optional[str] = None
 
-    # LLM Base URLs (Configurable for proxies)
+    # LLM Base URLs
     LLM_OPENAI_BASE_URL: str = "https://api.openai.com/v1"
     LLM_GEMINI_BASE_URL: str = "https://generativelanguage.googleapis.com/v1beta"
-    LLM_ANTHROPIC_BASE_URL: str = "https://api.anthropic.com/v1"
     LLM_GROQ_BASE_URL: str = "https://api.groq.com/openai/v1"
     LLM_MISTRAL_BASE_URL: str = "https://api.mistral.ai/v1"
     LLM_OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     LLM_OLLAMA_BASE_URL: str = "http://46.219.108.236:11434/api"
-    LLM_HUGGINGFACE_BASE_URL: str = "https://api-inference.huggingface.co/models"
-    LLM_COHERE_BASE_URL: str = "https://api.cohere.ai/v1"
-    LLM_TOGETHER_BASE_URL: str = "https://api.together.xyz/v1"
-    LLM_XAI_BASE_URL: str = "https://api.x.ai/v1"  # Grok
-    LLM_DEEPSEEK_BASE_URL: str = "https://api.deepseek.com/v1"
 
     LLM_DEFAULT_PROVIDER: str = "gemini"
     LLM_FALLBACK_CHAIN: str = "gemini,groq,mistral,openai"
@@ -114,7 +112,6 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
-    """Cached settings instance"""
     return Settings()
 
 settings = get_settings()

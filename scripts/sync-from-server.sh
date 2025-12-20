@@ -3,10 +3,11 @@
 # Синхронізація коду з сервера на Mac (резервне копіювання)
 # Використання: ./scripts/sync-from-server.sh [--dry-run]
 
-SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
-SSH_HOST="5.tcp.eu.ngrok.io"
-SSH_PORT="14564"
+# === КОНФІГУРАЦІЯ ===
+SSH_HOST="194.177.1.240"
+SSH_PORT="6666"
 SSH_USER="dima"
+SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
 LOCAL_BACKUP_DIR="/Users/dima-mac/Documents/Predator_21/server-backup"
 REMOTE_DIR="predator-analytics"
 
@@ -42,7 +43,14 @@ EXCLUDE_OPTS="
   --exclude '.mypy_cache'
   --exclude 'logs'
   --exclude '*.log'
+  --exclude '.git'
 "
+
+# SSH опції
+SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+if [ -f "$SSH_KEY" ]; then
+    SSH_OPTS="-i $SSH_KEY $SSH_OPTS"
+fi
 
 # Перевірка на --dry-run
 if [ "$1" == "--dry-run" ]; then
@@ -53,7 +61,7 @@ fi
 
 # Виконання rsync
 rsync $RSYNC_OPTS $EXCLUDE_OPTS \
-  -e "ssh -i $SSH_KEY -p $SSH_PORT" \
+  -e "ssh -p $SSH_PORT $SSH_OPTS" \
   "$SSH_USER@$SSH_HOST:~/$REMOTE_DIR/" \
   "$LOCAL_BACKUP_DIR/"
 

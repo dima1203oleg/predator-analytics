@@ -42,6 +42,9 @@ COPY apps/self-improve-orchestrator ./orchestrator
 COPY apps/backend/app ./app
 # Shared Core Libraries
 COPY libs ./libs
+# CLI scripts for agents
+COPY scripts ./scripts
+RUN chmod +x ./scripts/*.py
 
 # Create logs directory
 RUN mkdir -p /app/logs

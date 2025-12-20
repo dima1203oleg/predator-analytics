@@ -38,3 +38,14 @@ resources:
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
+# Init hooks configuration
+init:
+  enabled: true
+  collectionName: "multimodal_index"
+auth:
+  enabled: false
+  apiKey: ""
+  secretName: "" # secret name with key apiKey
+  secretName: ""
+

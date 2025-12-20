@@ -3,9 +3,9 @@
 # Запуск веб-інтерфейсів Predator Analytics на сервері
 # Використання: ./scripts/server-start-web.sh
 
-SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
-SSH_HOST="5.tcp.eu.ngrok.io"
-SSH_PORT="14651"
+# === КОНФІГУРАЦІЯ ===
+SSH_HOST="194.177.1.240"
+SSH_PORT="6666"
 SSH_USER="dima"
 
 # Кольори
@@ -18,11 +18,15 @@ NC='\033[0m'
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${GREEN}🚀 Запуск веб-інтерфейсів на сервері${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "📍 Сервер: ${YELLOW}$SSH_HOST:$SSH_PORT${NC}"
 echo ""
+
+# SSH опції
+SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10"
 
 # Функція для виконання команд на сервері
 run_remote() {
-    ssh -i "$SSH_KEY" -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "$1"
+    ssh $SSH_OPTS -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "$1"
 }
 
 # Перевірка підключення
@@ -35,42 +39,21 @@ echo -e "${GREEN}✅ Підключення встановлено${NC}"
 echo ""
 
 # Перевірка статусу контейнерів
-echo -e "${YELLOW}🐳 Перевірка Docker контейнерів...${NC}"
-CONTAINERS=$(run_remote "docker ps -a --format '{{.Names}}\t{{.Status}}' | grep -E '(frontend|grafana|backend)'")
-echo "$CONTAINERS"
+echo -e "${YELLOW}🐳 Статус Docker сервісів...${NC}"
+run_remote "cd ~/predator-analytics && docker compose ps" 2>/dev/null
 echo ""
 
-# Запуск контейнерів
-echo -e "${YELLOW}🔄 Запуск контейнерів...${NC}"
-
-# Frontend
-echo -e "${BLUE}📱 Запуск Frontend...${NC}"
-run_remote "docker start predator10-frontend 2>&1" > /dev/null
-if [ $? -eq 0 ]; then
-    echo -e "${GREEN}   ✅ Frontend запущено${NC}"
-else
-    echo -e "${RED}   ⚠️  Помилка запуску Frontend${NC}"
-fi
-
-# Grafana
-echo -e "${BLUE}📊 Запуск Grafana...${NC}"
-run_remote "docker start predator-grafana 2>&1" > /dev/null
-if [ $? -eq 0 ]; then
-    echo -e "${GREEN}   ✅ Grafana запущено${NC}"
-else
-    echo -e "${RED}   ⚠️  Помилка запуску Grafana${NC}"
-fi
-
+# Запуск контейнерів якщо потрібно
+echo -e "${YELLOW}🔄 Перевірка та запуск сервісів...${NC}"
+run_remote "cd ~/predator-analytics && docker compose up -d" 2>/dev/null
 echo ""
 
 # Перевірка портів
 echo -e "${YELLOW}🔍 Перевірка доступності портів...${NC}"
-PORTS=$(run_remote "ss -tulpn 2>/dev/null | grep LISTEN | grep -E ':(8082|3001|8000)'")
+PORTS=$(run_remote "ss -tulpn 2>/dev/null | grep LISTEN | grep -E ':(3000|8000|5432|6379)' | head -10")
 if [ -n "$PORTS" ]; then
     echo -e "${GREEN}✅ Порти відкриті:${NC}"
-    echo "$PORTS" | while read line; do
-        echo "   $line"
-    done
+    echo "$PORTS"
 else
     echo -e "${YELLOW}⚠️  Порти ще не відкриті (зачекайте кілька секунд)${NC}"
 fi
@@ -80,32 +63,9 @@ echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━�
 echo -e "${GREEN}✅ Веб-інтерфейси запущено!${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-
-# Перевірка SSH-тунелю
-echo -e "${YELLOW}🚇 Перевірка SSH-тунелю...${NC}"
-if lsof -i:9082 > /dev/null 2>&1; then
-    echo -e "${GREEN}✅ SSH-тунель активний${NC}"
-    echo ""
-    echo -e "${GREEN}🌐 Доступні посилання:${NC}"
-    echo -e "   ${BLUE}Frontend:${NC} http://localhost:9082"
-    echo -e "   ${BLUE}Grafana:${NC}  http://localhost:9001"
-    echo ""
-    echo -e "${YELLOW}💡 Відкрити у браузері:${NC}"
-    echo -e "   web-frontend  # або: open http://localhost:9082"
-    echo -e "   web-grafana   # або: open http://localhost:9001"
-    echo -e "   web-all       # Відкрити все"
-else
-    echo -e "${YELLOW}⚠️  SSH-тунель не активний${NC}"
-    echo ""
-    echo -e "${YELLOW}💡 Запустіть тунель:${NC}"
-    echo -e "   ./scripts/server-tunnel.sh start"
-    echo ""
-    echo -e "${YELLOW}Або запустити зараз? (y/n):${NC}"
-    read -r response
-    if [[ "$response" =~ ^[Yy]$ ]]; then
-        ./scripts/server-tunnel.sh start
-    fi
-fi
-
+echo -e "${GREEN}🌐 Доступні посилання:${NC}"
+echo -e "   ${BLUE}Frontend:${NC}  http://$SSH_HOST:3000"
+echo -e "   ${BLUE}Backend:${NC}   http://$SSH_HOST:8000"
+echo -e "   ${BLUE}API Docs:${NC}  http://$SSH_HOST:8000/docs"
 echo ""
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

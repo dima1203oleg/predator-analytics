@@ -1,28 +1,80 @@
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
+  external_labels:
+    cluster: "predator-local"
+    environment: "dev"
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+          # - 'alertmanager:9093'  # Uncomment when Alertmanager is deployed
+
+# Load rules once and periodically evaluate them
+rule_files:
+  # - "alerts/*.yml"
 
 scrape_configs:
+  # Prometheus self-monitoring
   - job_name: "prometheus"
     static_configs:
       - targets: ["localhost:9090"]
 
+  # Backend API (FastAPI)
   - job_name: "backend"
     metrics_path: "/metrics"
     static_configs:
       - targets: ["backend:8000"]
     scrape_interval: 10s
+    metric_relabel_configs:
+      # Keep only relevant metrics
+      - source_labels: [__name__]
+        regex: "(http_.*|llm_council_.*|search_.*|model_.*)"
+        action: keep
 
+  # MLflow Tracking Server
+  - job_name: "mlflow"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["mlflow:5000"]
+    scrape_interval: 30s
+
+  # Grafana
+  - job_name: "grafana"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["grafana:3000"]
+    scrape_interval: 30s
+
+  # Redis
   - job_name: "redis"
     static_configs:
       - targets: ["redis:6379"]
+    scrape_interval: 15s
 
+  # OpenSearch
   - job_name: "opensearch"
     metrics_path: "/_prometheus/metrics"
     static_configs:
       - targets: ["opensearch:9200"]
+    scrape_interval: 20s
 
+  # Qdrant Vector DB
   - job_name: "qdrant"
     metrics_path: "/metrics"
     static_configs:
       - targets: ["qdrant:6333"]
+    scrape_interval: 15s
+
+  # PostgreSQL (via postgres_exporter if deployed)
+  # - job_name: "postgres"
+  #   static_configs:
+  #     - targets: ["postgres_exporter:9187"]
+
+  # MinIO (if metrics exposed)
+  # - job_name: "minio"
+  #   metrics_path: "/minio/v2/metrics/cluster"
+  #   static_configs:
+  #     - targets: ["minio:9000"]

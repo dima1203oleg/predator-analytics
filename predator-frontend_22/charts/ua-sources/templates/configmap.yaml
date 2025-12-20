@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "ua-sources.fullname" . }}-config
-  labels:
-    {{- include "ua-sources.labels" . | nindent 4 }}
-data:
-  external_apis.yaml: |
-{{ .Values.externalApisConfig | indent 4 }}

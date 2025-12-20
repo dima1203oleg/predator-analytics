@@ -6,9 +6,18 @@ import sys
 from pathlib import Path
 
 # Add project root to path
-ROOT_DIR = Path(__file__).resolve().parents[3]
-if str(ROOT_DIR) not in sys.path:
-    sys.path.append(str(ROOT_DIR))
+# Add project root to path
+try:
+    if Path("/app").exists():
+        ROOT_DIR = Path("/app")
+    else:
+        # Local dev environment
+        ROOT_DIR = Path(__file__).resolve().parents[3]
+
+    if str(ROOT_DIR) not in sys.path:
+        sys.path.append(str(ROOT_DIR))
+except Exception:
+    pass
 
 from libs.core.models import (
     Company, Tender, RiskAssessment, ExchangeRate, IngestionLog, SearchAnalytics,

@@ -2,6 +2,18 @@
 
 Цей документ описує, як працювати з віддаленим сервером та переключатися між Mac і сервером.
 
+## 📍 Параметри підключення
+
+| Параметр | Значення |
+|----------|----------|
+| **IP** | 194.177.1.240 |
+| **Port** | 6666 |
+| **User** | dima |
+| **Password** | Dima@1203 |
+| **Директорія** | ~/predator-analytics |
+
+---
+
 ## 📋 Зміст
 
 1. [Швидкий старт](#швидкий-старт)
@@ -21,7 +33,7 @@
 ./scripts/server-connect.sh
 
 # Або вручну
-ssh -i ~/.ssh/id_ed25519_ngrok dima@5.tcp.eu.ngrok.io -p 14564
+ssh -p 6666 dima@194.177.1.240
 ```
 
 ### Перевірка статусу сервера
@@ -56,19 +68,18 @@ ssh -i ~/.ssh/id_ed25519_ngrok dima@5.tcp.eu.ngrok.io -p 14564
 # Виконати команду на сервері
 ./scripts/server-connect.sh "ls -la"
 ./scripts/server-connect.sh "docker ps"
-./scripts/server-connect.sh "cd predator-analytics && git status"
+./scripts/server-connect.sh "docker compose logs predator_backend"
 ```
 
 ### 2. `server-status.sh` - Перевірка статусу
 
 **Показує:**
 - ✅ Стан підключення
+- 🎮 GPU інформацію (nvidia-smi)
 - 💻 Системну інформацію
 - 💾 Використання диска
 - 🧠 Використання пам'яті
 - 🐳 Docker контейнери
-- 🐍 Python процеси
-- 📦 Node.js процеси
 - 🔌 Відкриті порти
 
 **Використання:**
@@ -124,24 +135,24 @@ ssh -i ~/.ssh/id_ed25519_ngrok dima@5.tcp.eu.ngrok.io -p 14564
 
 # На сервері
 cd ~/predator-analytics
-source .venv/bin/activate
 git pull origin main
+docker compose restart
 ```
 
 #### 2️⃣ **Робота на сервері**
 
 ```bash
-# Запустити backend
-cd ~/predator-analytics/backend
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+# Перевірити сервіси
+docker compose ps
 
-# Запустити frontend (у новому терміналі)
-cd ~/predator-analytics
-npm run dev
+# Переглянути логи backend
+docker compose logs -f predator_backend
 
-# Запустити Celery (у новому терміналі)
-cd ~/predator-analytics/backend
-celery -A app.core.celery_app worker -l info
+# Переглянути логи orchestrator
+docker compose logs -f predator_orchestrator
+
+# Моніторинг GPU
+watch -n 1 nvidia-smi
 ```
 
 #### 3️⃣ **Якщо пропало світло - переключення на Mac**
@@ -151,13 +162,8 @@ celery -A app.core.celery_app worker -l info
 ./scripts/sync-from-server.sh
 
 # 2. Продовжити роботу локально на Mac
-cd /Users/dima-mac/Documents/Predator_21/ua-sources
-source .venv/bin/activate
-uvicorn app.main:app --reload
-
-# 3. У новому терміналі - frontend
 cd /Users/dima-mac/Documents/Predator_21
-npm run dev
+./start_local.sh  # або docker compose up -d
 ```
 
 #### 4️⃣ **Світло з'явилося - повернення на сервер**
@@ -171,9 +177,8 @@ npm run dev
 
 # 3. Перезапустити сервіси на сервері
 cd ~/predator-analytics
-git add .
-git commit -m "Синхронізація з Mac"
-docker-compose restart
+git add . && git commit -m "sync" && git push
+docker compose restart
 ```
 
 ---
@@ -209,13 +214,13 @@ tar -czf "backup-$(date +%Y%m%d-%H%M%S).tar.gz" server-backup/
 
 ```bash
 # Перевірити підключення
-ping 5.tcp.eu.ngrok.io
+ping 194.177.1.240
 
 # Перевірити порт
-nc -zv 5.tcp.eu.ngrok.io 14564
+nc -zv 194.177.1.240 6666
 
 # Спробувати підключитися з verbose
-ssh -vvv -i ~/.ssh/id_ed25519_ngrok dima@5.tcp.eu.ngrok.io -p 14564
+ssh -vvv -p 6666 dima@194.177.1.240
 ```
 
 ### Проблема: Синхронізація не працює
@@ -257,13 +262,13 @@ find . -type f -name "*.pyc" -delete
 
 ```bash
 # Перевірити логи
-./scripts/server-connect.sh "docker logs <container_id>"
+./scripts/server-connect.sh "docker logs predator_backend --tail 100"
 
 # Перевірити Docker Compose
-./scripts/server-connect.sh "cd predator-analytics && docker-compose ps"
+./scripts/server-connect.sh "cd ~/predator-analytics && docker compose ps"
 
 # Перезапустити контейнери
-./scripts/server-connect.sh "cd predator-analytics && docker-compose restart"
+./scripts/server-connect.sh "cd ~/predator-analytics && docker compose restart"
 ```
 
 ---
@@ -287,14 +292,15 @@ find . -type f -name "*.pyc" -delete
 
 ```bash
 # Перевірити всі сервіси
-systemctl status predator-*
+docker compose ps
 
-# Перевірити логи
-journalctl -u predator-backend -f
+# Переглянути логи
+docker compose logs -f
 
 # Моніторинг ресурсів
 htop
 docker stats
+nvidia-smi -l 1
 ```
 
 ---
@@ -332,17 +338,5 @@ docker stats
 
 ---
 
-## 📞 Підтримка
-
-Якщо виникають проблеми:
-
-1. ✅ Перевірте статус: `./scripts/server-status.sh`
-2. ✅ Перегляньте логи на сервері
-3. ✅ Перевірте підключення до інтернету
-4. ✅ Перезавантажте контейнери
-5. ✅ У критичній ситуації - переключіться на Mac
-
----
-
-**Останнє оновлення:** 2025-12-05  
-**Версія:** 1.0
+**Останнє оновлення:** 2025-12-14
+**Версія:** 2.0 (Static IP)

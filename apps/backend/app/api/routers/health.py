@@ -19,7 +19,7 @@ async def check_postgres() -> Dict[str, Any]:
     """Check PostgreSQL connection"""
     try:
         from sqlalchemy import text
-        from app.core.db import engine
+        from app.database import engine
 
         start = time.time()
         async with engine.connect() as conn:
@@ -58,7 +58,7 @@ async def check_redis() -> Dict[str, Any]:
 
 
 async def check_qdrant() -> Dict[str, Any]:
-    """Check Qdrant vector database"""
+    """Check Qdrant vector database and get point counts"""
     try:
         from qdrant_client import QdrantClient
 
@@ -66,13 +66,19 @@ async def check_qdrant() -> Dict[str, Any]:
         start = time.time()
 
         client = QdrantClient(url=qdrant_url, timeout=5)
-        collections = client.get_collections()
+        collections = client.get_collections().collections
+
+        total_points = 0
+        for col in collections:
+            stats = client.get_collection(col.name)
+            total_points += stats.points_count
 
         latency = (time.time() - start) * 1000
         return {
             "status": "healthy",
             "latency_ms": round(latency, 2),
-            "collections": len(collections.collections)
+            "collections": len(collections),
+            "vectors_count": total_points
         }
     except Exception as e:
         logger.error(f"Qdrant check failed: {e}")
@@ -80,7 +86,7 @@ async def check_qdrant() -> Dict[str, Any]:
 
 
 async def check_opensearch() -> Dict[str, Any]:
-    """Check OpenSearch connection"""
+    """Check OpenSearch connection and get document counts"""
     try:
         from opensearchpy import AsyncOpenSearch
 
@@ -94,13 +100,19 @@ async def check_opensearch() -> Dict[str, Any]:
             timeout=5
         )
         info = await client.info()
+
+        # Get total docs count
+        stats = await client.indices.stats()
+        total_docs = stats.get("_all", {}).get("primaries", {}).get("docs", {}).get("count", 0)
+
         await client.close()
 
         latency = (time.time() - start) * 1000
         return {
             "status": "healthy",
             "latency_ms": round(latency, 2),
-            "version": info.get("version", {}).get("number", "unknown")
+            "version": info.get("version", {}).get("number", "unknown"),
+            "docs_count": total_docs
         }
     except Exception as e:
         logger.error(f"OpenSearch check failed: {e}")

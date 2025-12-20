@@ -1,6 +1,0 @@
-apiVersion: v2
-name: ua-sources
-description: Predator Analytics v18.1 UA Sources Microservice (ETL & Connectors)
-type: application
-version: 18.1.0
-appVersion: "18.1.0"
