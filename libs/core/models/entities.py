@@ -5,7 +5,6 @@ Shared SQLAlchemy entities for Predator Analytics
 from sqlalchemy import Column, Integer, String, Text, DateTime, Float, Boolean, JSON, ForeignKey, Index
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from datetime import datetime
 from sqlalchemy.dialects.postgresql import UUID, JSONB, ARRAY
 import uuid
 
@@ -18,6 +17,7 @@ class User(Base):
     Synced with gold.users in PostgreSQL.
     """
     __tablename__ = "users"
+    __table_args__ = {"schema": "gold"}
 
     id = Column(Integer, primary_key=True)
     tenant_id = Column(UUID(as_uuid=True), index=True, default=uuid.uuid4)
@@ -65,6 +65,7 @@ class Company(Base):
     __table_args__ = (
         Index('idx_companies_kved', 'kved'),
         Index('idx_companies_status', 'status'),
+        {"schema": "gold"}
     )
 
 
@@ -91,7 +92,7 @@ class Tender(Base):
     procuring_entity_edrpou = Column(String(10))
 
     # Winner
-    winner_edrpou = Column(String(10), ForeignKey("companies.edrpou"))
+    winner_edrpou = Column(String(10), ForeignKey("gold.companies.edrpou"))
     winner_name = Column(String(500))
 
     # Metadata
@@ -107,15 +108,17 @@ class Tender(Base):
         Index('idx_tenders_amount', 'amount'),
         Index('idx_tenders_procuring_entity', 'procuring_entity_edrpou'),
         Index('idx_tenders_dates', 'start_date', 'end_date'),
+        {"schema": "gold"}
     )
 
 
 class RiskAssessment(Base):
     """Company risk assessment"""
     __tablename__ = "risk_assessments"
+    __table_args__ = {"schema": "gold"}
 
     id = Column(Integer, primary_key=True, index=True)
-    company_edrpou = Column(String(10), ForeignKey("companies.edrpou"))
+    company_edrpou = Column(String(10), ForeignKey("gold.companies.edrpou"))
 
     # Risk scores
     overall_score = Column(Float)
@@ -143,6 +146,7 @@ class RiskAssessment(Base):
 class ExchangeRate(Base):
     """NBU exchange rates"""
     __tablename__ = "exchange_rates"
+    __table_args__ = {"schema": "gold"}
 
     id = Column(Integer, primary_key=True, index=True)
     currency_code = Column(String(3), index=True)
@@ -155,6 +159,7 @@ class ExchangeRate(Base):
 class IngestionLog(Base):
     """Data ingestion audit log"""
     __tablename__ = "ingestion_logs"
+    __table_args__ = {"schema": "gold"}
 
     id = Column(Integer, primary_key=True, index=True)
     source = Column(String(50))
@@ -183,11 +188,12 @@ class SearchAnalytics(Base):
 
     __table_args__ = (
         Index('idx_search_analytics_timestamp', 'timestamp'),
+        {"schema": "gold"}
     )
 
 
 # ============================================================================
-# v22.0 PLATFORM CORE MODELS
+# v25.0 PLATFORM CORE MODELS
 # (Multi-Tenant System of Record)
 # ============================================================================
 
@@ -200,6 +206,7 @@ class Document(Base):
         Index('idx_documents_created_at', 'created_at'),
         Index('idx_documents_source_type', 'source_type'),
         Index('idx_documents_tenant_id', 'tenant_id'),
+        {"schema": "gold"}
     )
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -220,10 +227,11 @@ class AugmentedDataset(Base):
     Synthetic/Augmented data for training.
     """
     __tablename__ = "augmented_datasets"
+    __table_args__ = {"schema": "gold"}
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
-    original_id = Column(UUID(as_uuid=True), ForeignKey("documents.id"))
+    original_id = Column(UUID(as_uuid=True), ForeignKey("gold.documents.id"))
     content = Column(Text)
     aug_type = Column(String(50))  # synonym/paraphrase/backtranslate
     created_at = Column(DateTime, server_default=func.now())
@@ -234,6 +242,7 @@ class MLDataset(Base):
     Logical ML dataset definition (linked to DVC).
     """
     __tablename__ = "ml_datasets"
+    __table_args__ = {"schema": "gold"}
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
@@ -256,7 +265,7 @@ class MLJob(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
-    dataset_id = Column(UUID(as_uuid=True), ForeignKey("ml_datasets.id"))
+    dataset_id = Column(UUID(as_uuid=True), ForeignKey("gold.ml_datasets.id")) # Fixed schema ref
     target = Column(String(50)) # embeddings/reranker/classifier
     status = Column(String(30)) # queued/running/succeeded/failed
     metrics = Column(JSONB)
@@ -269,6 +278,7 @@ class MLJob(Base):
 
     __table_args__ = (
         Index('idx_ml_jobs_status', 'status'),
+        {"schema": "gold"}
     )
 
 
@@ -277,10 +287,11 @@ class MultimodalAsset(Base):
     Images, Audio, PDF Previews linked to docs.
     """
     __tablename__ = "multimodal_assets"
+    __table_args__ = {"schema": "gold"}
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
-    doc_id = Column(UUID(as_uuid=True), ForeignKey("documents.id"))
+    doc_id = Column(UUID(as_uuid=True), ForeignKey("gold.documents.id"))
     asset_type = Column(String(20)) # image/pdf_preview/audio
     uri = Column(Text)
     embedding_version = Column(Integer, default=1)
@@ -295,6 +306,7 @@ class SICycle(Base):
     Self-Improvement Loop iteration tracker.
     """
     __tablename__ = "si_cycles"
+    __table_args__ = {"schema": "gold"}
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     tenant_id = Column(UUID(as_uuid=True), nullable=False, index=True)
@@ -323,6 +335,7 @@ class GraphNode(Base):
     __table_args__ = (
         Index('idx_graph_nodes_name_trgm', 'name', postgresql_using='gin', postgresql_ops={'name': 'gin_trgm_ops'}),
         Index('idx_graph_nodes_label', 'label'),
+        {"schema": "gold"}
     )
 
 
@@ -333,13 +346,13 @@ class GraphEdge(Base):
     __tablename__ = "graph_edges"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    source_id = Column(UUID(as_uuid=True), ForeignKey("graph_nodes.id"), nullable=False)
-    target_id = Column(UUID(as_uuid=True), ForeignKey("graph_nodes.id"), nullable=False)
+    source_id = Column(UUID(as_uuid=True), ForeignKey("gold.graph_nodes.id"), nullable=False)
+    target_id = Column(UUID(as_uuid=True), ForeignKey("gold.graph_nodes.id"), nullable=False)
     relation = Column(String(50)) # WORKS_AT, SIGNED, OWNED_BY
     weight = Column(Float, default=1.0)
 
     # Provenance - where did we find this link?
-    doc_id = Column(UUID(as_uuid=True), ForeignKey("documents.id"))
+    doc_id = Column(UUID(as_uuid=True), ForeignKey("gold.documents.id"))
 
     properties = Column(JSONB)
     created_at = Column(DateTime, server_default=func.now())
@@ -348,6 +361,7 @@ class GraphEdge(Base):
         Index('idx_graph_edges_source', 'source_id'),
         Index('idx_graph_edges_target', 'target_id'),
         Index('idx_graph_edges_relation', 'relation'),
+        {"schema": "gold"}
     )
 
 class TrinityAuditLog(Base):
@@ -356,6 +370,7 @@ class TrinityAuditLog(Base):
     Keeps track of Gemini's plan, Mistral's output, and Copilot's audit.
     """
     __tablename__ = "trinity_audit_logs"
+    __table_args__ = {"schema": "gold"}
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     request_text = Column(Text, nullable=False)
@@ -366,6 +381,8 @@ class TrinityAuditLog(Base):
     gemini_plan = Column(JSONB)
     mistral_output = Column(Text)
     copilot_audit = Column(JSONB)
+    thinking_process = Column(Text) # V25: Inner monologue
+    meta = Column(JSONB, default={}) # Technical payload
 
     # Final Outcome
     status = Column(String(20)) # verified, fixed, error
@@ -382,6 +399,7 @@ class FileRegistry(Base):
     Used by the ingestion pipeline.
     """
     __tablename__ = "file_registry"
+    __table_args__ = {"schema": "gold", "extend_existing": True}
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     filename = Column(String(255), nullable=False)
@@ -395,6 +413,139 @@ class FileRegistry(Base):
     error_message = Column(Text, nullable=True)
 
     metadata_json = Column(JSONB, default={})
+
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+class RawData(Base):
+    """
+    Raw data in staging schema.
+    Used by the ingestion pipeline.
+    """
+    __tablename__ = "raw_data"
+    __table_args__ = {"schema": "staging"}
+
+    id = Column(Integer, primary_key=True)
+    source = Column(String(50), nullable=False)
+    raw_content = Column(JSONB, nullable=False)
+    dataset_type = Column(String(50))
+    processed = Column(Boolean, default=False)
+    fetched_at = Column(DateTime, server_default=func.now())
+    processed_at = Column(DateTime)
+
+class DataSource(Base):
+    """
+    Core data source registry.
+    """
+    __tablename__ = "data_sources"
+    __table_args__ = {"schema": "gold"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String(255), nullable=False)
+    source_type = Column(String(50), nullable=False) # file, api, telegram, registry
+    connector = Column(String(50), nullable=False)   # upload, api, bot, scraper
+    status = Column(String(50), default="draft")     # draft, uploaded, parsing, indexed, error
+    tenant_id = Column(UUID(as_uuid=True), index=True, nullable=False)
+
+    # Metadata and configuration
+    config = Column(JSONB, default={})
+    sector = Column(String(50)) # GOV, MED, BIZ, SCI, etc.
+    schedule = Column(JSONB)    # cron, manual, stream info
+
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+class NasTournament(Base):
+    """
+    AutoML/NAS Tournament Registry (Evolutionary Optimization).
+    """
+    __tablename__ = "nas_tournaments"
+    __table_args__ = {"schema": "gold"}
+
+    id = Column(String(50), primary_key=True)  # Using String ID for easier frontend ref 't-123'
+    topic_id = Column(String(50), nullable=False)
+    name = Column(String(200), nullable=False)
+    dataset_id = Column(String(50))
+    strategy = Column(String(50)) # EVOLUTIONARY, DARTS, etc.
+    status = Column(String(20)) # RUNNING, COMPLETED, FAILED
+
+    current_generation = Column(Integer, default=0)
+    max_generations = Column(Integer, default=10)
+    best_score = Column(Float, default=0.0)
+
+    start_time = Column(DateTime, server_default=func.now())
+    end_time = Column(DateTime)
+
+    configuration = Column(JSONB) # Hyperparameters search space
+
+    # Relationships
+    candidates = relationship("NasCandidate", back_populates="tournament")
+
+
+class NasCandidate(Base):
+    """
+    Single Model Architecture Candidate in a Tournament.
+    """
+    __tablename__ = "nas_candidates"
+    __table_args__ = {"schema": "gold"}
+
+    id = Column(String(50), primary_key=True)
+    tournament_id = Column(String(50), ForeignKey("gold.nas_tournaments.id"))
+
+    architecture = Column(String(100)) # e.g. "Transformer-L12-H768"
+    generation = Column(Integer)
+
+    metrics = Column(JSONB) # {accuracy, latency, f1, params}
+    status = Column(String(20)) # TRAINING, COMPLETED, FAILED
+
+    provider = Column(String(50)) # mistral, gemini, etc.
+    weights_path = Column(Text) # Path to saved weights if any
+
+    created_at = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    tournament = relationship("NasTournament", back_populates="candidates")
+
+
+class CouncilSession(Base):
+    """
+    LLM Council Deliberation History.
+    """
+    __tablename__ = "council_sessions"
+    __table_args__ = {"schema": "gold"}
+
+    id = Column(String(50), primary_key=True) # Request ID
+    query = Column(Text, nullable=False)
+    context = Column(Text)
+
+    final_answer = Column(Text)
+    confidence = Column(Float)
+
+    participants = Column(JSONB) # List of model IDs
+    dissenting_opinions = Column(JSONB)
+    peer_reviews = Column(JSONB)
+
+    meta_info = Column(JSONB)
+
+    created_at = Column(DateTime, server_default=func.now())
+class Case(Base):
+    """
+    PREDATOR Case - The primary unit of value.
+    Situation + Analysis + Conclusion.
+    """
+    __tablename__ = "cases"
+    __table_args__ = {"schema": "gold"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    title = Column(String(500), nullable=False)
+    situation = Column(Text, nullable=False)
+    conclusion = Column(Text)
+    status = Column(String(50), default="УВАГА") # КРИТИЧНО, УВАГА, БЕЗПЕЧНО, АРХІВ
+    risk_score = Column(Integer, default=50)
+    sector = Column(String(50), default="BIZ") # GOV, BIZ, MED, SCI
+    entity_id = Column(String(100)) # Link to Company EDRPOU or other entity
+    ai_insight = Column(Text)
+    evidence = Column(JSONB, default=[])
 
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

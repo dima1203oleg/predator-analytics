@@ -1,10 +1,8 @@
 import json
 import logging
-import inspect
 from ..state import AgentState
 from ..tools.registry import registry
 # Import tools to ensure registration
-from ..tools import filesystem
 
 logger = logging.getLogger("agent.worker")
 
@@ -54,7 +52,7 @@ Format 2 (Completion):
         # 1. Think & Choose Tool
         response = await llm_service.generate(
             prompt=prompt,
-            provider="gemini",
+            provider="groq", # Coder Phase - Fast & Accurate
             temperature=0.0
         )
 
@@ -92,6 +90,7 @@ Format 2 (Completion):
                 result_str = result_str[:2000] + "...[truncated]"
 
             return {
+                "thinking": action.get("thought", f"Executing tool: {tool_name}"),
                 "last_output": {
                     "tool": tool_name,
                     "tool_output": result_str,
@@ -102,6 +101,7 @@ Format 2 (Completion):
 
         elif "final_answer" in action:
             return {
+                "thinking": action.get("thought", "Synthesizing final strategic result."),
                 "last_output": {
                     "result": action["final_answer"],
                     "thought": action.get("thought"),
@@ -111,6 +111,6 @@ Format 2 (Completion):
 
     except Exception as e:
         logger.error(f"Worker Exception: {e}")
-        return {"error": str(e)}
+        return {"error": str(e), "thinking": f"Worker encountered critical error: {e}"}
 
-    return {"error": "No action taken"}
+    return {"error": "No action taken", "thinking": "Worker stalled: no valid action derived."}
