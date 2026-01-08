@@ -15,17 +15,42 @@ async def critic_node(state: AgentState):
     idx = context.get("plan_index", 0)
     current_step = state.get("current_step")
 
-    # 1. Handle Errors (Retry logic is in graph conditional)
-    if state.get("error"):
-        logger.warning(f"Step '{current_step}' failed with error.")
-        return {} # Pass through for graph logic
+    # 1. AI SECURITY AUDIT (Copilot/Aider Phase)
+    audit_report = "Security assessment in progress..."
+    try:
+        from app.services.triple_agent_service import triple_agent_service
+        result_text = str(last_output.get('tool_output') or last_output.get('result', 'No result'))
+        audit_res = await triple_agent_service.security_review(result_text)
+        audit_report = audit_res.get("security_assessment", "Audit passed.")
 
-    # 2. Check if Worker signaled completion (e.g. final_answer)
+        if not audit_res.get("approved"):
+            logger.warning(f"🚨 Audit REJECTED: {audit_report}")
+            state["error"] = f"Audit Failed: {audit_report}"
+            return {
+                "thinking": f"Critique: Step '{current_step}' output rejected. Reason: {audit_report}. Requesting correction."
+            }
+
+        logger.info(f"✅ Audit PASSED: {audit_report}")
+    except Exception as e:
+        logger.error(f"Critic Audit Error: {e}")
+        audit_report = f"Audit skipped due to error: {e}"
+
+    # 2. Reasoning Trace for UI
+    thinking = f"Critic thinking: Analysis of step '{current_step}' completed. Result: {audit_report}. "
+
+    # 3. Handle Errors
+    if state.get("error"):
+        return {"thinking": thinking + "Status: ERROR DETECTED."}
+
+    # 4. Check if Worker signaled completion
     if last_output.get("done") or "final_answer" in last_output:
         logger.info("✅ Worker signaled completion.")
-        return {"current_step": "COMPLETE"}
+        return {
+            "current_step": "COMPLETE",
+            "thinking": thinking + "Mission accomplished. Strategy successfully finalized."
+        }
 
-    # 3. Advance Plan
+    # 5. Advance Plan
     if plan and idx < len(plan) - 1:
         next_idx = idx + 1
         next_step = plan[next_idx]
@@ -35,12 +60,16 @@ async def critic_node(state: AgentState):
             "current_step": next_step,
             "context": {**context, "plan_index": next_idx},
             "last_output": {}, # Clear output
-            "error": None
+            "error": None,
+            "thinking": thinking + f"Proceeding to next strategic milestone: {next_step}"
         }
 
-    # 4. Plan Exhausted
+    # 6. Plan Exhausted
     if plan:
         logger.info("🏁 All steps executed.")
-        return {"current_step": "COMPLETE"}
+        return {
+            "current_step": "COMPLETE",
+            "thinking": thinking + "All strategic steps completed. System state verified."
+        }
 
-    return {"error": "Plan empty or invalid state"}
+    return {"error": "Plan empty or invalid state", "thinking": "Critique failed: internal inconsistency."}

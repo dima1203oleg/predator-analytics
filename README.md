@@ -1,8 +1,81 @@
-# 🦅 Predator Analytics v22.0
+# 🦅 Predator Analytics v25.0
 
 **AI-Native Semantic Search & Analytics Platform**
 
 > Self-Improving • GitOps-Native • Enterprise-Ready
+
+---
+
+## 🏛️ Архітектура Платформи
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        FRONTEND (React 18 SPA)                          │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────────────┐│
+│  │  Data Hub   │ │ Search UI   │ │ Admin/Obs   │ │OpenSearch Dashboards││
+│  │  (Sources)  │ │ (Hybrid)    │ │ (Metrics)   │ │   (Embedded)        ││
+│  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────────────┘│
+├─────────────────────────────────────────────────────────────────────────┤
+│                        BACKEND (FastAPI + Celery)                       │
+│  ┌────────────┬────────────┬────────────┬────────────┬─────────────────┐│
+│  │ API        │ Job        │ Auth/RBAC  │ Webhook    │ LLM Router      ││
+│  │ Ingestion  │ Scheduler  │ Service    │ Agents     │ (Groq→Gemini)   ││
+│  └────────────┴────────────┴────────────┴────────────┴─────────────────┘│
+├─────────────────────────────────────────────────────────────────────────┤
+│                          DATA LAYER                                      │
+│  ┌────────────┬────────────┬────────────┬────────────┬─────────────────┐│
+│  │PostgreSQL  │ MinIO      │ Redis      │ OpenSearch │ Qdrant          ││
+│  │(System of  │ (Object    │ (Cache)    │ (BM25)     │ (Vector)        ││
+│  │ Record)    │  Storage)  │            │            │                 ││
+│  └────────────┴────────────┴────────────┴────────────┴─────────────────┘│
+├─────────────────────────────────────────────────────────────────────────┤
+│                         ML/AI LAYER                                      │
+│  ┌────────────┬────────────┬────────────┬────────────┬─────────────────┐│
+│  │ H2O/AutoML │ MLflow     │ Synthetic  │ Self-      │ Triple Agent    ││
+│  │            │ (Tracking) │ Data Gen   │ Improve    │ (Strategist/    ││
+│  │            │            │            │ Loop       │  Coder/Auditor) ││
+│  └────────────┴────────────┴────────────┴────────────┴─────────────────┘│
+├─────────────────────────────────────────────────────────────────────────┤
+│                       MESSAGING/STREAMING                                │
+│  ┌─────────────────────────┬────────────────────────────────────────────┐│
+│  │ RabbitMQ (ETL, Ingestion, Maintenance, Monitoring queues)            ││
+│  └─────────────────────────┴────────────────────────────────────────────┘│
+├─────────────────────────────────────────────────────────────────────────┤
+│                       CONTROL PLANE                                      │
+│  ┌────────────┬────────────┬────────────────────────────────────────────┐│
+│  │ Telegram   │ CLI        │ Observability (Prometheus + Grafana)       ││
+│  │ Bot        │ (predator) │                                            ││
+│  └────────────┴────────────┴────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📊 Канонічні Сутності
+
+| Сутність | Опис | Таблиця/Сховище |
+|----------|------|-----------------|
+| **Source** | Джерело даних (файл, API, Telegram) | `gold.data_sources` |
+| **Dataset** | Набір даних після парсингу | `gold.ml_datasets` |
+| **Job** | Фонове завдання (ETL, ML) | `gold.ml_jobs`, `gold.ingestion_logs` |
+| **Index** | Індекс пошуку | OpenSearch/Qdrant |
+| **Artifact** | Модель, лог, результат | MinIO + MLflow |
+
+---
+
+## 🦾 Autonomous Core (v25 Premium)
+
+Predator v25 — це жива екосистема, яка здатна до самовідновлення та самовдосконалення:
+
+1.  **🛡️ Self-Healing Guardian**: Автоматично діагностує стан бази даних та інфраструктури. Виправляє схеми, додає відсутні індекси та відновлює з'єднання без участі людини.
+2.  **🧠 Neuro-Optimizer (PAO)**: Постійно моніторить "Data Drift". Як тільки в систему надходять нові дані, ШІ-ядро автоматично ініціює цикли донавчання моделей.
+3.  **👁️ Neural Trace Visualization**: Повна прозорість прийняття рішень. Кожна команда проходить через Trinity (Strategist -> Coder -> Auditor), а користувач бачить повний логічний ланцюжок (Reasoning Trace) у реальному часі.
+4.  **🔒 WinSURF Governance**: Найвищий рівень безпеки. Кожна дія перевіряється на відповідність оперативним політикам перед виконанням.
+5.  **🔐 Identity & Secret Manager**: Централізоване керування ключами та секретами з підтримкою прозорого шифрування.
+6.  **🎭 Digital Twin Simulation**: Можливість запускати стрес-тести та сценарії "What-If" для перевірки стійкості системи під екстремальним навантаженням.
+7.  **📶 Omniscience Real-time Stream**: Єдиний WebSocket-потік, що транслює стан системи, хід тренувань, системні пульсації та Trinitarian Reasoning у реальному часі.
+8.  **📈 Health Score Aggregator**: Розумна агрегація метрик інфраструктури та сервісів у єдиний "Health Score" (0-100) з автоматичною генерацією алерів.
+
 
 ---
 
@@ -11,7 +84,7 @@
 ### Local Development (Docker Compose)
 ```bash
 # Start all services
-docker compose up -d
+docker compose --profile local up -d
 
 # Check status
 docker compose ps
@@ -20,36 +93,109 @@ docker compose ps
 docker compose logs -f backend
 ```
 
+### CLI (Predator CLI)
+```bash
+# Install CLI
+pip install -e ./libs/cli
+
+# Ingest data
+predator ingest --file data.csv --type customs
+
+# Search
+predator search --query "митні декларації" --mode hybrid
+
+# Check status
+predator status
+```
+
 ### NVIDIA Server
 ```bash
 # Connect to server
 ./scripts/server-connect.sh
 
-# Check status
-./scripts/server-status.sh
-
-# Sync code
-./scripts/sync-to-server.sh
+# Deploy
+docker compose --profile server up -d
 ```
 
 ---
 
-## 📦 Architecture
+## 📦 Services
 
+| Service | Port | Description |
+|---------|------|-------------|
+| Backend | 8090 | FastAPI REST API |
+| Frontend | 80 | React SPA (Nginx) |
+| PostgreSQL | 5432 | Primary database (TimescaleDB) |
+| Redis | 6379 | Cache & Celery broker |
+| OpenSearch | 9200 | Full-text search (BM25) |
+| Qdrant | 6333 | Vector database |
+| OpenSearch Dashboards | 5601 | Analytics UI |
+| Grafana | 3001 | Monitoring dashboards |
+| Prometheus | 9092 | Metrics collection |
+| RabbitMQ | 15672 | Message broker UI |
+| MinIO | 9001 | Object storage UI |
+| MLflow | 5001 | ML experiment tracking |
+
+---
+
+## 🔍 Пошук та Аналітика
+
+### Hybrid Search
+- **BM25** (OpenSearch) - Повнотекстовий пошук
+- **Semantic** (Qdrant) - Векторний пошук
+- **Hybrid** - Комбінований (55% BM25 + 45% Vector)
+
+### Reranking
+- Cross-encoder ML модель для переранжування топ-результатів
+
+### XAI (Explainable AI)
+- Token importance analysis
+- SHAP/LIME explanations
+- Highlights релевантних термінів
+
+### Summarizer
+- LLM-based document summarization
+- Contextual result summaries
+
+---
+
+## 🤖 LLM Router
+
+Automatic fallback chain:
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Frontend (React 18)                  │
-├─────────────────────────────────────────────────────────┤
-│                    Backend (FastAPI)                    │
-├──────────────┬──────────────┬──────────────┬───────────┤
-│  OpenSearch  │    Qdrant    │  PostgreSQL  │   Redis   │
-│    (BM25)    │   (Vector)   │   (Gold DB)  │  (Cache)  │
-├──────────────┴──────────────┴──────────────┴───────────┤
-│              ML Services (Reranker, XAI)               │
-├─────────────────────────────────────────────────────────┤
-│           Orchestrator (Self-Improvement Loop)          │
-└─────────────────────────────────────────────────────────┘
+Groq (Primary) → Gemini → Mistral → OpenRouter → Together → Ollama (Offline)
 ```
+
+### Підтримувані моделі:
+- **Groq**: llama-3.3-70b-versatile
+- **Gemini**: gemini-2.0-flash-exp
+- **Mistral**: mistral-large-latest
+- **Ollama**: qwen2.5-coder:7b (local)
+
+---
+
+## 📱 Telegram Bot
+
+Commands:
+- `/status [job_id]` - Статус завдання
+- `/datasets` - Список наборів даних
+- `/search [query]` - Виконати пошук
+- `/ingest [source_id]` - Запустити ingestion
+- `/metrics` - Метрики системи
+- `/help` - Список команд
+
+---
+
+## 🔧 ETL Pipelines
+
+| Pipeline | Тригер | Вхід | Вихід |
+|----------|--------|------|-------|
+| Data Ingestion | File upload | Raw file | Dataset |
+| ETL Processing | Post-ingestion | Raw dataset | Clean dataset |
+| Indexing | Dataset ready | Dataset | OS/Qdrant index |
+| ML Training | Manual/Auto | Dataset | Model artifact |
+| Synthetic Data | Manual/Loop | Dataset | Synthetic dataset |
+| Self-Improvement | Periodic/KPI | Logs | New jobs |
 
 ---
 
@@ -57,81 +203,41 @@ docker compose logs -f backend
 
 ```
 predator-analytics/
-├── backend/           # FastAPI backend + ML services
-│   ├── app/           # Main application
-│   ├── orchestrator/  # Self-improvement system
-│   └── Dockerfile
-├── frontend/          # React 18 + TypeScript
-│   ├── src/           # Source code
-│   └── Dockerfile
-├── scripts/           # Deployment & utility scripts
-├── infra/             # Infrastructure configs
-│   ├── postgres/      # Database migrations
-│   ├── grafana/       # Dashboards
-│   └── prometheus/    # Monitoring
-├── helm/              # Kubernetes charts
-├── docs/              # Documentation
-├── docker-compose.yml # Local development
-└── TECH_SPEC.md       # Technical specification v22.0
+├── apps/
+│   ├── backend/           # FastAPI backend
+│   │   ├── app/
+│   │   │   ├── api/       # API routes
+│   │   │   ├── services/  # Business logic
+│   │   │   ├── tasks/     # Celery workers
+│   │   │   └── core/      # Configuration
+│   ├── frontend/          # React SPA
+│   │   └── src/
+│   │       ├── views/     # Page components
+│   │       ├── components/ # UI components
+│   │       └── services/  # API client
+│   ├── telegram-bot/      # Telegram integration
+│   └── trinity_bot/       # Advanced agent bot
+├── libs/
+│   ├── core/              # Shared code
+│   │   ├── models/        # SQLAlchemy models
+│   │   └── database.py    # DB connection
+│   └── cli/               # Predator CLI
+├── infra/
+│   ├── prometheus/        # Metrics config
+│   ├── grafana/           # Dashboard configs
+│   └── mlflow/            # ML tracking
+├── docker-compose.yml     # Services orchestration
+└── .env.example           # Environment template
 ```
-
----
-
-## 🔧 Configuration
-
-### Environment Variables
-```bash
-cp .env.example .env
-# Edit .env with your API keys
-```
-
-### Key Services (docker-compose.yml)
-| Service | Port | Description |
-|---------|------|-------------|
-| Backend | 8000 | FastAPI REST API |
-| Frontend | 3000 | React SPA |
-| PostgreSQL | 5432 | Primary database |
-| Redis | 6379 | Cache & queues |
-| OpenSearch | 9200 | Full-text search |
-| Qdrant | 6333 | Vector database |
-| Grafana | 3001 | Monitoring dashboards |
-
----
-
-## 🎯 Key Features
-
-### ✅ Implemented
-- **Hybrid Search**: OpenSearch (BM25) + Qdrant (Vector)
-- **Cross-Encoder Reranking**: Semantic result ranking
-- **XAI**: SHAP/LIME explanations for search results
-- **LLM Council**: Multi-model AI decision making
-- **Data Augmentation**: NLPAug + AugLy
-- **Telegram Bot**: Full control panel
-- **Monitoring**: Prometheus + Grafana
-
-### 🔄 In Progress
-- MLflow integration
-- DVC data versioning
-- H2O AutoML
-
----
-
-## 📍 Server Connection
-
-| Parameter | Value |
-|-----------|-------|
-| **IP** | 194.177.1.240 |
-| **Port** | 6666 |
-| **User** | dima |
-| **Directory** | ~/predator-analytics |
 
 ---
 
 ## 📚 Documentation
 
-- [TECH_SPEC.md](TECH_SPEC.md) — Full technical specification v22.0
-- [QUICK_START.md](QUICK_START.md) — Getting started guide
-- [docs/](docs/) — Additional documentation
+- [ARCHITECTURE_COMPLIANCE_REPORT.md](ARCHITECTURE_COMPLIANCE_REPORT.md) — Звіт відповідності архітектурі
+- [TECH_SPEC.md](TECH_SPEC.md) — Технічна специфікація v25.0
+- [libs/cli/README.md](libs/cli/README.md) — CLI документація
+- [docs/](docs/) — Додаткова документація
 
 ---
 
@@ -139,15 +245,18 @@ cp .env.example .env
 
 ```bash
 # Backend health check
-curl http://localhost:8000/health
+curl http://localhost:8090/api/health
 
 # Search API
-curl "http://localhost:8000/api/v1/search?q=example"
+curl "http://localhost:8090/api/v1/search?q=example&mode=hybrid"
 
-# Server status
-./scripts/server-status.sh
+# System status
+curl http://localhost:8090/api/v25/status
 
-# Deploy via Git
+# CLI status
+predator status
+
+# Server deploy
 ./scripts/git_deploy.sh
 ```
 
@@ -159,4 +268,4 @@ Proprietary — All rights reserved.
 
 ---
 
-*Predator Analytics v22.0 — Self-Improving AI Platform*
+*Predator Analytics v25.0 — Self-Improving AI Platform*

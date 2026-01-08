@@ -1,5 +1,4 @@
-from typing import TypedDict, Annotated, List, Union, Dict, Any, Optional
-import operator
+from typing import TypedDict, List, Dict, Any, Optional
 
 class AgentMessage(TypedDict):
     role: str # user, assistant, system, tool
@@ -25,3 +24,6 @@ class AgentState(TypedDict):
 
     # Errors if any
     error: Optional[str]
+
+    # V25 Inner Monologue / Thinking Process
+    thinking: Optional[str]

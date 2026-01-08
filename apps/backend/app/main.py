@@ -38,15 +38,13 @@ from app.services.avatar_service import AvatarService
 from app.services.minio_service import MinIOService
 from app.services.etl_ingestion import ETLIngestionService
 from app.services.opensearch_indexer import OpenSearchIndexer
-from app.services.auth_service import get_current_user, auth_service
 from app.services.embedding_service import EmbeddingService
 from app.services.qdrant_service import QdrantService
 from app.services.document_service import document_service
-from app.api.routers import auth as auth_router
-from app.api.routers import stats as stats_router
 from app.api.routers import metrics as metrics_router
-from app.api.routers import search as search_router
+from app.api.routers import search as search_router, auth as auth_router, stats as stats_router
 from app.api.v1 import ml as ml_router
+from app.routers import sources as sources_router
 from app.api.v1 import optimizer as optimizer_router
 from app.api.v1 import testing as testing_router
 from app.api.v1 import integrations as integrations_v1_router
@@ -61,8 +59,6 @@ if os.path.exists("/app/src"):
         sys.path.append("/app")
 
 from src.ingestion import router as ingestion_router
-from app.services.search_fusion import hybrid_search_with_rrf
-from app.services.auto_optimizer import get_auto_optimizer
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)
@@ -70,10 +66,8 @@ logger = logging.getLogger("predator.api")
 
 # Database
 from app.database import init_db
-from app.models import Document, AugmentedDataset  # Ensure models are loaded for metadata
 
 # Middleware
-from starlette.middleware.base import BaseHTTPMiddleware
 from app.middleware import (
     RateLimitMiddleware,
     MetricsMiddleware,
@@ -83,7 +77,7 @@ from app.middleware import (
 from app.api.routers import health as health_router
 
 app = FastAPI(
-    title="Predator Analytics v22.0 API",
+    title="Predator Analytics v25.0 API",
     description="AI-Native Multi-Agent Analytics Platform with Semantic Search & Auto-Optimization",
     version="22.0.0"
 )
@@ -185,14 +179,21 @@ async def startup_event():
     """
     import asyncio
 
-    logger.info("🚀 Starting Predator Analytics v21.0...")
+    logger.info("🚀 Starting Predator Analytics v25.0...")
 
-    # 0. Initialize Database (Disabled for stable startup, use manual init if needed)
-    # try:
-    #     await init_db()
-    #     logger.info("✅ Database initialized")
-    # except Exception as e:
-    #     logger.error(f"❌ Database initialization failed: {e}")
+    # 0. Initialize Database & Guardian (Non-fatal)
+    try:
+        await asyncio.wait_for(init_db(), timeout=5.0)
+        from libs.core.guardian import guardian
+        # Initial fix
+        recovery = await guardian.run_auto_recovery()
+        logger.info(f"✅ Database initialized. Guardian Fixes: {recovery.get('fixed_issues', [])}")
+
+        # Start background loop
+        asyncio.create_task(guardian.start())
+        logger.info("🛡️ Guardian Self-Healing loop ACTIVATED in background.")
+    except Exception as e:
+        logger.warning(f"⚠️ Database/Guardian initialization failed: {e}. Backend will continue.")
 
     # 1. Initialize Qdrant collection (lazy)
     try:
@@ -228,16 +229,19 @@ async def startup_event():
 
     # 3. Start AutoOptimizer background loop
     try:
-        # optimizer = get_auto_optimizer()
-        # asyncio.create_task(optimizer.start_optimization_loop(interval_minutes=15))
-        # logger.info("🤖 AutoOptimizer started - system will self-improve automatically")
+        from app.services.autonomous_optimizer import autonomous_optimizer
+        await autonomous_optimizer.start()
+        logger.info("🧠 Autonomous Optimizer STARTED - detecting data drift every 10 mins")
         logger.info("📊 Monitoring: quality gates, latency, cost, accuracy")
         logger.info("🔄 Optimization cycle: Every 15 minutes")
     except Exception as e:
         logger.warning(f"⚠️ AutoOptimizer failed to start: {e}")
 
-    # 4. Connect to Event Bus
-    await broker.connect()
+    # 4. Connect to Event Bus (Non-fatal)
+    try:
+        await asyncio.wait_for(broker.connect(), timeout=5.0)
+    except Exception as e:
+        logger.warning(f"⚠️ Event Bus connection failed: {e}. Backend will continue without MQ.")
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -298,6 +302,27 @@ async def get_document(doc_id: str):
     except Exception as e:
         logger.error(f"Document fetch failed: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch document")
+
+
+@app.delete("/api/v1/documents/{doc_id}")
+async def delete_document(doc_id: str):
+    """Delete document by ID."""
+    try:
+        existing = await document_service.get_document_by_id(doc_id)
+        if not existing:
+            raise HTTPException(status_code=404, detail="Document not found")
+
+        ok = await document_service.delete_document(doc_id)
+        if not ok:
+            raise HTTPException(status_code=500, detail="Failed to delete document")
+
+        return {"success": True, "id": doc_id}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Document delete failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete document")
 
 
 @app.get("/api/v1/documents/{doc_id}/summary")
@@ -385,7 +410,6 @@ async def get_document_summary(doc_id: str, max_length: int = 130):
 # AUTH ENDPOINTS (TS-Compliant)
 # ============================================================================
 
-from fastapi import Depends
 
 # Duplicate profile route removed in favor of auth_router
 
@@ -476,7 +500,6 @@ async def upload_dataset(
             # Step 4: Populate Gold Layer (PostgreSQL documents table)
             # This allows other services to use this data as the system of record
             import uuid
-            import json
             import pandas as pd
             from datetime import datetime
             from app.models import Document
@@ -578,8 +601,11 @@ app.include_router(diagnostics_api.router, prefix="/api/v1")
 # Full System Health Router
 app.include_router(health_router.router)
 
+# v25 Premium Features (Consolidated in app/api/v25_routes.py)
+# from app.routers import v25 as v25_router
+# app.include_router(v25_router.router, prefix="/api/v25")
+
 # Data Sources Management
-from app.routers import sources as sources_router
 app.include_router(sources_router.router, prefix="/api/v1")
 
 # Ingestion System (New)
@@ -601,7 +627,7 @@ app.include_router(opponent_router.router, prefix="/api/v1")
 from app.api.routers import llm_management as llm_mgmt_router
 app.include_router(llm_mgmt_router.router, prefix="/api/v1")
 
-# Triple Agent (Trinity Core v22)
+# Triple Agent (Trinity Core v25)
 from app.api.v1 import trinity as trinity_router
 app.include_router(trinity_router.router, prefix="/api/v1/trinity", tags=["Trinity"])
 
@@ -621,16 +647,20 @@ app.include_router(security_router.router, prefix="/api/v1")
 from app.api.routers import graph as graph_router
 app.include_router(graph_router.router, prefix="/api/v1")
 
+# Cases Management (Центральна цінність PREDATOR)
+from app.api.routers import cases as cases_router
+app.include_router(cases_router.router, prefix="/api/v1")
+
 # Evolution System
 from app.routers import evolution as evolution_router
 app.include_router(evolution_router.router, prefix="/api/v1")
 
-# V22 Self-Improvement System
-from app.api import v22_routes
-app.include_router(v22_routes.v22_router, prefix="/api")
+# V25 Premium System (System Monitoring, ML Jobs, Arbitration, Trinity)
+from app.api import v25_routes
+app.include_router(v25_routes.v25_router, prefix="/api")
 
 
-# V22 Copilot (Gemini Agent)
+# V25 Copilot (Gemini Agent)
 from app.api.routers import copilot as copilot_router
 app.include_router(copilot_router.router, prefix="/api/v1/copilot", tags=["Copilot"])
 
@@ -670,7 +700,7 @@ async def list_documents(
             limit=limit,
             offset=offset,
             category=category,
-            source=source
+            source_type=source
         )
         return result
     except Exception as e:
