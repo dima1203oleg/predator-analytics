@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 from ..state import AgentState
 from ..tools.registry import registry
 # Import tools to ensure registration
@@ -70,7 +71,10 @@ Format 2 (Completion):
             action = json.loads(content)
         except json.JSONDecodeError:
             # Fallback: treat whole content as answer if possible
-            return {"last_output": {"result": content, "thought": "Failed to parse JSON, returning raw"}}
+            return {
+                "thinking": ["Failed to parse JSON, returning raw content"],
+                "final_response": content
+            }
 
         # 3. Execute
         if "tool" in action:
@@ -90,27 +94,23 @@ Format 2 (Completion):
                 result_str = result_str[:2000] + "...[truncated]"
 
             return {
-                "thinking": action.get("thought", f"Executing tool: {tool_name}"),
-                "last_output": {
-                    "tool": tool_name,
-                    "tool_output": result_str,
-                    "thought": action.get("thought"),
-                    "quality": 1.0 # Optimistic
-                }
+                "thinking": [action.get("thought", f"Executing tool: {tool_name}")],
+                "tool_outputs": [{
+                    "tool_name": tool_name,
+                    "tool_input": json.dumps(args),
+                    "output": result_str,
+                    "timestamp": time.time()
+                }]
             }
 
         elif "final_answer" in action:
             return {
-                "thinking": action.get("thought", "Synthesizing final strategic result."),
-                "last_output": {
-                    "result": action["final_answer"],
-                    "thought": action.get("thought"),
-                    "quality": 1.0
-                }
+                "thinking": [action.get("thought", "Synthesizing final strategic result.")],
+                "final_response": action["final_answer"]
             }
 
     except Exception as e:
         logger.error(f"Worker Exception: {e}")
-        return {"error": str(e), "thinking": f"Worker encountered critical error: {e}"}
+        return {"error": str(e), "thinking": [f"Worker encountered critical error: {e}"]}
 
-    return {"error": "No action taken", "thinking": "Worker stalled: no valid action derived."}
+    return {"error": "No action taken", "thinking": ["Worker stalled: no valid action derived."]}
