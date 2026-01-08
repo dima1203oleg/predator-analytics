@@ -9,23 +9,30 @@ def should_continue(state: AgentState) -> str:
     Decide next step based on state.
     Returns the key for the conditional edge mapping.
     """
-    step = state.get("current_step")
-
     # 1. Success / Completion
-    if step == "COMPLETE":
+    if state.get("final_response"):
         return "approve"
 
     # 2. Error Handling
     if state.get("error"):
         retries = state["context"].get("retries", 0)
         if retries < 3:
-            state["context"]["retries"] = retries + 1
+            # We modify context in place, which is fine in LangGraph for dicts
+            # but ideally we should return a state update.
+            # For conditional edges, we just inspect.
+            # The 'worker' node should handle retry logic or we add a 'recovery' node.
+            # Here we just decide where to go.
             return "retry"
         else:
             return "give_up"
 
     # 3. Validation / Continuation
-    # If logic reaches here, Critic implied continuation to next step
+    # If we have a plan but no final response, continue working
+    if state.get("plan"):
+        # Check if all steps are done (logic to be implemented in planner/critic)
+        # For now, just continue execution
+        return "next_step"
+
     return "next_step"
 
 def create_agent_graph():
