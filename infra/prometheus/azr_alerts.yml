@@ -1,0 +1,258 @@
+# ═══════════════════════════════════════════════════════════════
+# AZR System Prometheus Alerting Rules
+# Predator Analytics v26
+# ═══════════════════════════════════════════════════════════════
+#
+# CONSTITUTIONAL ENFORCEMENT:
+# These alerts implement monitoring for constitutional compliance
+# Critical violations trigger immediate emergency protocols
+#
+# NO-AI-OVERRIDE CLAUSE ACTIVE
+# ═══════════════════════════════════════════════════════════════
+
+groups:
+  - name: azr_constitutional_alerts
+    interval: 15s
+    rules:
+      # ═══════════════════════════════════════════════════════════
+      # CRITICAL ALERTS - Immediate action required
+      # ═══════════════════════════════════════════════════════════
+
+      - alert: AZRConstitutionalViolation
+        expr: sum(predator_azr_constitutional_violations_total) > 0
+        for: 0m
+        labels:
+          severity: critical
+          component: azr
+          category: constitutional
+        annotations:
+          summary: "🚨 CONSTITUTIONAL VIOLATION DETECTED"
+          description: |
+            A constitutional axiom has been violated.
+            Total violations: {{ $value }}
+            Immediate action required per emergency protocol.
+
+            Actions:
+            1. Freeze all amendment processing
+            2. Isolate affected components
+            3. Initiate forensic analysis
+            4. Notify security council
+          runbook_url: "https://docs.predator.io/azr/runbooks/constitutional-violation"
+
+      - alert: AZRDecisionChainBroken
+        expr: predator_azr_hash_chain_integrity < 1
+        for: 0m
+        labels:
+          severity: critical
+          component: azr
+          category: integrity
+        annotations:
+          summary: "🔗 HASH CHAIN INTEGRITY COMPROMISED"
+          description: |
+            Decision chain integrity check failed.
+            Chain integrity score: {{ $value }}
+            Possible tampering or system corruption detected.
+
+            Actions:
+            1. Activate emergency ledger
+            2. Cryptographic quarantine
+            3. Forensic investigation
+          runbook_url: "https://docs.predator.io/azr/runbooks/chain-integrity"
+
+      - alert: AZRImmutableCoreModificationAttempt
+        expr: sum(predator_azr_immutable_core_access_attempts_total) > 0
+        for: 0m
+        labels:
+          severity: critical
+          component: azr
+          category: security
+        annotations:
+          summary: "🛡️ IMMUTABLE CORE MODIFICATION ATTEMPT"
+          description: |
+            Attempt to modify immutable core component detected.
+            Axiom 10 (Core Inviolability) triggered.
+            Access attempts: {{ $value }}
+          runbook_url: "https://docs.predator.io/azr/runbooks/core-protection"
+
+      # ═══════════════════════════════════════════════════════════
+      # HIGH SEVERITY ALERTS
+      # ═══════════════════════════════════════════════════════════
+
+      - alert: AZRRiskExposureHigh
+        expr: predator_azr_system_risk_exposure > 0.7
+        for: 5m
+        labels:
+          severity: warning
+          component: azr
+          category: risk
+        annotations:
+          summary: "⚠️ High AZR System Risk Exposure"
+          description: |
+            Current risk exposure: {{ $value }}
+            Threshold: 0.7
+            Multiple high-risk amendments may be active.
+          runbook_url: "https://docs.predator.io/azr/runbooks/high-risk"
+
+      - alert: AZRRollbackRateIncreased
+        expr: |
+          rate(predator_azr_rollbacks_total[1h]) >
+          rate(predator_azr_rollbacks_total[24h]) * 1.5
+        for: 30m
+        labels:
+          severity: warning
+          component: azr
+          category: stability
+        annotations:
+          summary: "📉 Increased AZR Rollback Rate"
+          description: |
+            Rollback rate has increased significantly.
+            1h rate vs 24h average shows 50%+ increase.
+            Investigate recent amendments.
+          runbook_url: "https://docs.predator.io/azr/runbooks/rollback-analysis"
+
+      - alert: AZRApprovalDeadlock
+        expr: predator_azr_pending_approvals > 0 and predator_azr_approval_wait_time_hours > 72
+        for: 1h
+        labels:
+          severity: warning
+          component: azr
+          category: governance
+        annotations:
+          summary: "⏳ AZR Approval Deadlock Detected"
+          description: |
+            Amendment stuck in approval process.
+            Pending approvals: {{ $value }}
+            Wait time exceeded 72 hours.
+          runbook_url: "https://docs.predator.io/azr/runbooks/approval-deadlock"
+
+      - alert: AZRSimulationAccuracyDegraded
+        expr: predator_azr_simulation_accuracy < 0.99
+        for: 1h
+        labels:
+          severity: warning
+          component: azr
+          category: quality
+        annotations:
+          summary: "📊 AZR Simulation Accuracy Degraded"
+          description: |
+            Digital twin simulation accuracy: {{ $value }}
+            Target: >= 99.7%
+            Threshold: 99%
+            Recalibration may be required.
+          runbook_url: "https://docs.predator.io/azr/runbooks/simulation-calibration"
+
+      # ═══════════════════════════════════════════════════════════
+      # MEDIUM SEVERITY ALERTS
+      # ═══════════════════════════════════════════════════════════
+
+      - alert: AZRAmendmentDurationExceeded
+        expr: |
+          histogram_quantile(0.95, rate(predator_azr_amendment_duration_seconds_bucket[1h])) > 7200
+        for: 30m
+        labels:
+          severity: info
+          component: azr
+          category: performance
+        annotations:
+          summary: "⏰ AZR Amendment Duration Exceeded"
+          description: |
+            95th percentile amendment duration exceeds 2 hours.
+            Current p95: {{ $value }} seconds
+          runbook_url: "https://docs.predator.io/azr/runbooks/duration-optimization"
+
+      - alert: AZRMissingCommitment
+        expr: predator_azr_proposals_without_commitment > 0
+        for: 1h
+        labels:
+          severity: info
+          component: azr
+          category: compliance
+        annotations:
+          summary: "📝 AZR Proposals Missing Commitment"
+          description: |
+            Proposals in validation without cryptographic commitment.
+            Count: {{ $value }}
+            Axiom 11 compliance required.
+          runbook_url: "https://docs.predator.io/azr/runbooks/commitment-required"
+
+      - alert: AZRChaosTestingPending
+        expr: predator_azr_high_risk_amendments_without_chaos_test > 0
+        for: 2h
+        labels:
+          severity: info
+          component: azr
+          category: testing
+        annotations:
+          summary: "🔥 AZR High-Risk Amendments Need Chaos Testing"
+          description: |
+            High-risk amendments pending chaos testing.
+            Count: {{ $value }}
+            Axiom 9 requires chaos testing for high-risk changes.
+          runbook_url: "https://docs.predator.io/azr/runbooks/chaos-testing"
+
+  - name: azr_health
+    interval: 30s
+    rules:
+      - alert: AZRServiceDown
+        expr: up{job="predator-azr"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: azr
+        annotations:
+          summary: "🔴 AZR Service Down"
+          description: "AZR service is not responding"
+
+      - alert: AZRConstitutionNotEnforced
+        expr: predator_azr_constitution_enforcement_active != 1
+        for: 0m
+        labels:
+          severity: critical
+          component: azr
+          category: constitutional
+        annotations:
+          summary: "🚨 AZR CONSTITUTION NOT ENFORCED"
+          description: |
+            Constitutional enforcement is not active!
+            This is a CRITICAL security incident.
+            All operations must be halted.
+          runbook_url: "https://docs.predator.io/azr/runbooks/constitution-offline"
+
+      - alert: AZROPADisconnected
+        expr: predator_azr_opa_connected != 1
+        for: 5m
+        labels:
+          severity: warning
+          component: azr
+        annotations:
+          summary: "⚠️ AZR OPA Policy Agent Disconnected"
+          description: "Cannot enforce OPA policies for constitutional compliance"
+
+      - alert: AZRTruthLedgerUnavailable
+        expr: predator_azr_truth_ledger_available != 1
+        for: 5m
+        labels:
+          severity: warning
+          component: azr
+        annotations:
+          summary: "⚠️ AZR Truth Ledger Unavailable"
+          description: "Cannot access Truth Ledger for amendment records"
+
+  - name: azr_metrics_recording
+    interval: 30s
+    rules:
+      # Recording rules for efficiency
+      - record: azr:amendments:total
+        expr: sum(predator_azr_amendments_total) by (category, risk_level, state)
+
+      - record: azr:violations:total
+        expr: sum(predator_azr_constitutional_violations_total) by (axiom)
+
+      - record: azr:rollback:rate_1h
+        expr: rate(predator_azr_rollbacks_total[1h])
+
+      - record: azr:risk:exposure
+        expr: |
+          sum(predator_azr_amendments_total{state="active",risk_level="HIGH"} * 0.7 +
+              predator_azr_amendments_total{state="active",risk_level="EXTREME"} * 1.0) /
+          (sum(predator_azr_amendments_total{state="active"}) + 1)
