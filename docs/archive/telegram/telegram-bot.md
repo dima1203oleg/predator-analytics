@@ -1,0 +1,174 @@
+# 🤖 Predator Analytics Telegram Bot
+
+Інтелектуальний AI-помічник для управління сервером через Telegram.
+
+## 🚀 Швидкий старт
+
+### Запуск вручну
+```bash
+cd /Users/dima-mac/Documents/Predator_21/scripts
+python3 telegram_bot.py
+```
+
+### Запуск як сервіс (автозапуск)
+```bash
+cd /Users/dima-mac/Documents/Predator_21/scripts
+./install_telegram_bot.sh
+# Вибери опцію 2
+```
+
+## ✨ Функціонал
+
+### 🔗 Автоматичне оновлення ngrok/SSH
+
+Коли сервер перезавантажується і надсилає повідомлення типу:
+```
+🔗 Ngrok URLs
+SSH: tcp://7.tcp.eu.ngrok.io:15102
+HTTP: https://example.ngrok-free.dev
+```
+
+Бот **автоматично**:
+1. Парсить нові ngrok дані
+2. Оновлює `~/.ssh/config`
+3. Повідомляє про успішне оновлення
+
+Тепер можна підключатись просто:
+```bash
+ssh dev-ngrok
+```
+
+### 📊 Моніторинг сервера
+
+| Команда | Опис |
+|---------|------|
+| `/status` | Загальний статус |
+| `/disk` | Використання диску |
+| `/memory` | RAM статистика |
+| `/cpu` | CPU завантаження |
+| `/uptime` | Аптайм системи |
+
+### 🐳 Docker/Kubernetes
+
+| Команда | Опис |
+|---------|------|
+| `/docker` | Список контейнерів |
+| `/pods` | K8s поди |
+| `/logs [сервіс]` | Логи сервісу |
+
+### 🔗 Мережа
+
+| Команда | Опис |
+|---------|------|
+| `/ngrok` | Поточні ngrok дані |
+| `/ssh` | SSH конфігурація |
+| `/connect` | Інструкції підключення |
+
+### 📦 Deploy
+
+| Команда | Опис |
+|---------|------|
+| `/git` | Git статус |
+| `/deploy` | Deploy інформація |
+| `/argocd_apps [target]` | Показати ArgoCD додатки (target: nvidia|oracle|macbook) |
+| `/argocd [app|target]` | Дізнатись статус ArgoCD додатка |
+| `/argocd_sync confirm [app|target]` | Підтвердити синхронізацію ArgoCD (потрібна авторизація) |
+| `/argocd_sync_status [app|target] [wait]` | Перевірити статус синхронізації (параметр `wait` очікує завершення) |
+| `/auto_deploy on|off|status` | Включити/вимкнути автоматичний виклик ArgoCD при піднятті тунелю |
+
+## 📱 Меню
+
+Після `/start` з'явиться зручне меню з кнопками:
+- 📊 Статус
+- 🖥️ Сервер  
+- 🐳 Docker
+- ☸️ K8s
+- 🔗 Ngrok
+- 📡 SSH Config
+- 📦 Deploy
+- ❓ Допомога
+
+## 💬 Природня мова
+
+Бот розуміє запити українською:
+- "покажи статус сервера"
+- "скільки пам'яті"
+- "як підключитись"
+- "покажи логи"
+
+## 🔧 Конфігурація
+
+Токен бота зберігається в:
+- Змінній `TELEGRAM_BOT_TOKEN`
+- Або напряму в `telegram_bot.py`
+
+SSH конфіг оновлюється в:
+- `~/.ssh/config` (блок `Host dev-ngrok`)
+
+ Автоматизація & ArgoCD:
+ - `AUTO_DEPLOY_ON_UP` — якщо `true`, `ngrok_monitor.sh` автоматично запускає ArgoCD sync, коли сервіс повертається в UP після падіння. 
+ - `ARGOCD_INSECURE` — якщо `true`, бот дозволить небезпечні SSL сертифікати (self-signed) при виклику ArgoCD API (use cautiously)
+ - `ARGOCD_API_RETRIES`, `ARGOCD_API_BACKOFF` — налаштування: кількість повторів та затримка при виклику ArgoCD API
+ - `PREDATOR_TELEGRAM_STATE` — шлях до JSON-файла, в якому бот зберігає персистентні налаштування (default: `~/.predator_bot_state.json`)
+- `AUTO_ROLLBACK_ON_DEGRADE` — якщо `true`, бот автоматично спробує виконати rollback коли ArgoCD відправить хвилю (Degraded/Progressing -> Degraded)
+- `ARGOCD_NVIDIA_URL` / `ARGOCD_NVIDIA_TOKEN` — якщо встановлені, скрипти та бот будуть ініціювати синхронізацію ArgoCD для `predator-nvidia` замість прямого `docker-compose` на сервері.
+- `AUTO_RESTART_NGROK` — якщо `true`, бот спробує автоматично перезапустити ngrok при падінні тунелю.
+- `AUTO_DEPLOY_ON_UP` — якщо `true`, `ngrok_monitor.sh` автоматично запускає ArgoCD sync, коли сервіс повертається в UP після падіння. 
+- `ARGOCD_INSECURE` — якщо `true`, бот дозволить небезпечні SSL сертифікати (self-signed) при виклику ArgoCD API (use cautiously)
+- `ARGOCD_API_RETRIES`, `ARGOCD_API_BACKOFF` — налаштування: кількість повторів та затримка при виклику ArgoCD API
+
+## 📝 Логи
+
+```bash
+# Foreground
+# Виводяться в консоль
+
+# Background (launchd)
+tail -f ~/Library/Logs/telegram-bot.log
+```
+
+## 🛑 Зупинка
+
+### Foreground
+`Ctrl+C`
+
+### Background
+```bash
+launchctl unload ~/Library/LaunchAgents/com.predator.telegram-bot.plist
+```
+
+Або через інсталятор:
+```bash
+./install_telegram_bot.sh
+# Вибери опцію 3
+```
+
+## 🔐 Безпека
+
+- Токен бота **НЕ** пушиться в git (додано в `.gitignore`)
+- Для продакшену використовуй змінні оточення
+- Можна обмежити доступ через `AUTHORIZED_USERS`
+
+## 🏗 Архітектура
+
+```
+scripts/
+├── telegram_bot.py              # Головний standalone бот
+├── install_telegram_bot.sh      # Інсталятор
+└── com.predator.telegram-bot.plist  # LaunchAgent
+
+ua-sources/
+├── app/services/
+│   ├── telegram_assistant.py    # Повний асистент (з AI)
+│   └── telegram_bot.py          # Базовий сервіс
+├── app/api/routers/
+│   └── telegram.py              # API роутер (webhook)
+└── run_telegram_bot.py          # Запуск з FastAPI
+```
+
+## 🎯 TODO
+
+- [ ] Інтеграція з AI Engine для пошуку
+- [ ] Віддалене виконання команд на сервері
+- [ ] Сповіщення про помилки
+- [ ] Метрики та графіки

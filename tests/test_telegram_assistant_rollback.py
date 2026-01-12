@@ -1,5 +1,4 @@
 import pytest
-import os
 from app.services.telegram_assistant import TelegramAssistant
 
 

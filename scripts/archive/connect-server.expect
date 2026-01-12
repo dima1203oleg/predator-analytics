@@ -1,0 +1,44 @@
+#!/usr/bin/expect -f
+# Автоматичне підключення до сервера з паролем
+# Використання: expect scripts/connect-server.expect
+
+set timeout 30
+set server "194.177.1.240"
+set port "6666"
+set user "dima"
+set password "Dima@1203"
+
+spawn ssh -p $port -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $user@$server
+
+expect {
+    "password:" {
+        send "$password\r"
+        exp_continue
+    }
+    "Password:" {
+        send "$password\r"
+        exp_continue
+    }
+    "*$*" {
+        send "echo '✅ Підключено успішно!'\r"
+        send "hostname\r"
+        send "uptime\r"
+        send "cd ~/predator-analytics && pwd\r"
+        interact
+    }
+    "*#*" {
+        send "echo '✅ Підключено успішно!'\r"
+        send "hostname\r"
+        send "uptime\r"
+        send "cd ~/predator-analytics && pwd\r"
+        interact
+    }
+    timeout {
+        puts "❌ Timeout - не вдалося підключитися"
+        exit 1
+    }
+    eof {
+        puts "❌ З'єднання обірвалося"
+        exit 1
+    }
+}

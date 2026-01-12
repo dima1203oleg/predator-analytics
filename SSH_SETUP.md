@@ -158,7 +158,7 @@ sudo fail2ban-client status sshd
 1. Встановіть розширення: `Remote - SSH`
 2. `Cmd+Shift+P` → `Remote-SSH: Connect to Host...`
 3. Виберіть `predator-dev` або введіть `ssh predator-dev`
-4. Відкрийте папку: `/home/dima/predator_v22`
+4. Відкрийте папку: `/home/dima/predator_v25`
 
 ### Проброс портів у VS Code:
 - Remote Explorer → Forward a Port
@@ -169,7 +169,7 @@ sudo fail2ban-client status sshd
 ## ✅ Чеклист перевірки
 
 - [ ] Клієнт підключається: `ssh predator-dev` без пароля
-- [ ] Робоча директорія доступна: `ls /home/dima/predator_v22`
+- [ ] Робоча директорія доступна: `ls /home/dima/predator_v25`
 - [ ] sshd конфіг застосовано: `PasswordAuthentication no`
 - [ ] Firewall дозволяє SSH порт
 - [ ] VS Code підключається через Remote-SSH

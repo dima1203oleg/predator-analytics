@@ -1,0 +1,1122 @@
+openapi: 3.0.3
+info:
+  title: Predator Analytics API
+  description: |
+    # 🛡️ Predator Analytics v25.0 API
+
+    Self-healing analytics platform with multi-agent AI orchestration.
+
+    ## Основні можливості
+
+    - **Cases Management** — Управління справами для аналізу
+    - **Data Hub** — Завантаження та обробка даних
+    - **AI Agents** — Мультиагентна система аналітики
+    - **Real-time Analytics** — Аналітика в реальному часі
+
+    ## Автентифікація
+
+    API використовує JWT Bearer tokens. Отримайте токен через `/auth/login`.
+
+  version: "25.0.0"
+  contact:
+    name: Predator Team
+    email: support@predator.ai
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8090
+    description: Local Development
+  - url: https://api.predator.ai
+    description: Production
+
+tags:
+  - name: Health
+    description: System health checks
+  - name: Auth
+    description: Authentication endpoints
+  - name: Cases
+    description: Case management
+  - name: Data
+    description: Data ingestion and ETL
+  - name: Agents
+    description: AI Agent interactions
+  - name: Optimizer
+    description: System optimization
+  - name: Analytics
+    description: Analytics and reporting
+
+paths:
+  # ============================================
+  # HEALTH
+  # ============================================
+  /health:
+    get:
+      tags: [Health]
+      summary: Full system health check
+      description: Returns comprehensive health status of all system components
+      operationId: getHealth
+      responses:
+        "200":
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              example:
+                status: healthy
+                version: "25.0.0"
+                uptime: 86400
+                components:
+                  database: healthy
+                  redis: healthy
+                  qdrant: healthy
+                  opensearch: healthy
+
+  /health/live:
+    get:
+      tags: [Health]
+      summary: Liveness probe
+      description: Simple liveness check for Kubernetes
+      operationId: getLive
+      responses:
+        "200":
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /health/ready:
+    get:
+      tags: [Health]
+      summary: Readiness probe
+      description: Checks if service is ready to handle requests
+      operationId: getReady
+      responses:
+        "200":
+          description: Service is ready
+        "503":
+          description: Service is not ready
+
+  # ============================================
+  # AUTHENTICATION
+  # ============================================
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: User login
+      description: Authenticate user and receive JWT token
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh token
+      description: Refresh JWT token
+      operationId: refreshToken
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+
+  # ============================================
+  # CASES
+  # ============================================
+  /api/v25/cases:
+    get:
+      tags: [Cases]
+      summary: List all cases
+      description: Retrieve paginated list of analysis cases
+      operationId: listCases
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, in_progress, completed, failed]
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum: [created_at, updated_at, risk_score]
+            default: created_at
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        "200":
+          description: List of cases
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseListResponse"
+
+    post:
+      tags: [Cases]
+      summary: Create new case
+      description: Create a new analysis case
+      operationId: createCase
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CaseCreate"
+      responses:
+        "201":
+          description: Case created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+
+  /api/v25/cases/{caseId}:
+    get:
+      tags: [Cases]
+      summary: Get case by ID
+      operationId: getCase
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Case details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+        "404":
+          description: Case not found
+
+    put:
+      tags: [Cases]
+      summary: Update case
+      operationId: updateCase
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CaseUpdate"
+      responses:
+        "200":
+          description: Case updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+
+    delete:
+      tags: [Cases]
+      summary: Delete case
+      operationId: deleteCase
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Case deleted
+
+  /api/v25/cases/{caseId}/analyze:
+    post:
+      tags: [Cases]
+      summary: Analyze case with AI
+      description: Trigger AI-powered analysis of the case
+      operationId: analyzeCase
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeRequest"
+      responses:
+        "202":
+          description: Analysis started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+
+  # ============================================
+  # DATA
+  # ============================================
+  /api/v25/data/sources:
+    get:
+      tags: [Data]
+      summary: List data sources
+      description: Get available data sources and their status
+      operationId: listDataSources
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of data sources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DataSource"
+
+  /api/v25/data/upload:
+    post:
+      tags: [Data]
+      summary: Upload data file
+      description: Upload a file for processing (CSV, Excel, JSON)
+      operationId: uploadData
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: File to upload
+                source_name:
+                  type: string
+                  description: Name for the data source
+                auto_process:
+                  type: boolean
+                  default: true
+                  description: Automatically start ETL processing
+      responses:
+        "202":
+          description: Upload accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResponse"
+
+  /api/v25/data/etl/status:
+    get:
+      tags: [Data]
+      summary: Get ETL status
+      description: Get status of all ETL jobs
+      operationId: getETLStatus
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, running, completed, failed]
+      responses:
+        "200":
+          description: ETL jobs status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ETLJob"
+
+  /api/v25/data/etl/{jobId}:
+    get:
+      tags: [Data]
+      summary: Get specific ETL job
+      operationId: getETLJob
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: ETL job details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ETLJob"
+
+  # ============================================
+  # AGENTS
+  # ============================================
+  /api/v25/agents/chat:
+    post:
+      tags: [Agents]
+      summary: Chat with AI agent
+      description: Send a message to the AI agent and receive a response
+      operationId: agentChat
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatRequest"
+      responses:
+        "200":
+          description: Agent response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+            text/event-stream:
+              schema:
+                type: string
+                description: Server-Sent Events stream
+
+  /api/v25/agents/analyze:
+    post:
+      tags: [Agents]
+      summary: Run AI analysis
+      description: Request comprehensive AI analysis on provided data
+      operationId: agentAnalyze
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalysisRequest"
+      responses:
+        "202":
+          description: Analysis started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+
+  /api/v25/agents/status:
+    get:
+      tags: [Agents]
+      summary: Get agents status
+      description: Get status of all AI agents
+      operationId: getAgentsStatus
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Agents status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentsStatus"
+
+  # ============================================
+  # OPTIMIZER
+  # ============================================
+  /api/v25/optimizer/status:
+    get:
+      tags: [Optimizer]
+      summary: Get optimizer status
+      description: Get current status of the autonomous optimizer
+      operationId: getOptimizerStatus
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Optimizer status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OptimizerStatus"
+
+  /api/v25/optimizer/metrics:
+    get:
+      tags: [Optimizer]
+      summary: Get optimization metrics
+      description: Get historical optimization metrics
+      operationId: getOptimizerMetrics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [1h, 24h, 7d, 30d]
+            default: 24h
+      responses:
+        "200":
+          description: Optimization metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OptimizerMetrics"
+
+  /api/v25/optimizer/force-check:
+    post:
+      tags: [Optimizer]
+      summary: Force optimization check
+      description: Trigger immediate optimization check
+      operationId: forceOptimizerCheck
+      security:
+        - bearerAuth: []
+      responses:
+        "202":
+          description: Check triggered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+
+  # ============================================
+  # ANALYTICS
+  # ============================================
+  /api/v25/analytics/dashboard:
+    get:
+      tags: [Analytics]
+      summary: Get dashboard data
+      description: Get aggregated data for the main dashboard
+      operationId: getDashboardData
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardData"
+
+  /api/v25/analytics/reports:
+    get:
+      tags: [Analytics]
+      summary: List reports
+      operationId: listReports
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of reports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Report"
+
+    post:
+      tags: [Analytics]
+      summary: Generate report
+      operationId: generateReport
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportRequest"
+      responses:
+        "202":
+          description: Report generation started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+
+  /api/v25/analytics/search:
+    post:
+      tags: [Analytics]
+      summary: Hybrid search
+      description: Search across all data using hybrid (semantic + keyword) search
+      operationId: hybridSearch
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SearchRequest"
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # ============================================
+    # HEALTH
+    # ============================================
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        version:
+          type: string
+        uptime:
+          type: integer
+          description: Uptime in seconds
+        components:
+          type: object
+          additionalProperties:
+            type: string
+
+    # ============================================
+    # AUTH
+    # ============================================
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+          default: bearer
+        expires_in:
+          type: integer
+          description: Token lifetime in seconds
+
+    # ============================================
+    # CASES
+    # ============================================
+    Case:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [pending, in_progress, completed, failed]
+        risk_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+        assigned_to:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CaseCreate:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+          default: medium
+        tags:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+
+    CaseUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [pending, in_progress, completed, failed]
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+        tags:
+          type: array
+          items:
+            type: string
+
+    CaseListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Case"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        pages:
+          type: integer
+
+    AnalyzeRequest:
+      type: object
+      properties:
+        analysis_type:
+          type: string
+          enum: [quick, standard, deep]
+          default: standard
+        include_recommendations:
+          type: boolean
+          default: true
+
+    # ============================================
+    # DATA
+    # ============================================
+    DataSource:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+          enum: [file, database, api, stream]
+        status:
+          type: string
+          enum: [active, inactive, error]
+        records_count:
+          type: integer
+        last_updated:
+          type: string
+          format: date-time
+
+    UploadResponse:
+      type: object
+      properties:
+        file_id:
+          type: string
+          format: uuid
+        filename:
+          type: string
+        size_bytes:
+          type: integer
+        status:
+          type: string
+        etl_job_id:
+          type: string
+          format: uuid
+
+    ETLJob:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        source_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, running, completed, failed]
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        records_processed:
+          type: integer
+        errors_count:
+          type: integer
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+        error_message:
+          type: string
+
+    # ============================================
+    # AGENTS
+    # ============================================
+    ChatRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          maxLength: 10000
+        conversation_id:
+          type: string
+          format: uuid
+        stream:
+          type: boolean
+          default: false
+        context:
+          type: object
+          description: Additional context for the agent
+
+    ChatResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        message:
+          type: string
+        role:
+          type: string
+          enum: [assistant, user]
+        conversation_id:
+          type: string
+          format: uuid
+        agent_name:
+          type: string
+        thinking:
+          type: string
+          description: Agent's reasoning process
+        tools_used:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+
+    AnalysisRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+        data_sources:
+          type: array
+          items:
+            type: string
+            format: uuid
+        analysis_depth:
+          type: string
+          enum: [quick, standard, deep]
+          default: standard
+
+    AgentsStatus:
+      type: object
+      properties:
+        total_agents:
+          type: integer
+        active_agents:
+          type: integer
+        agents:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              status:
+                type: string
+                enum: [idle, busy, error]
+              current_task:
+                type: string
+              tasks_completed:
+                type: integer
+
+    # ============================================
+    # OPTIMIZER
+    # ============================================
+    OptimizerStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [active, paused, disabled]
+        last_check:
+          type: string
+          format: date-time
+        next_check:
+          type: string
+          format: date-time
+        current_level:
+          type: string
+          enum: [low, medium, high, aggressive]
+        issues_detected:
+          type: integer
+        auto_fixes_applied:
+          type: integer
+
+    OptimizerMetrics:
+      type: object
+      properties:
+        period:
+          type: string
+        checks_performed:
+          type: integer
+        issues_found:
+          type: integer
+        auto_fixes:
+          type: integer
+        avg_response_time:
+          type: number
+        uptime_percentage:
+          type: number
+        history:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                format: date-time
+              metric:
+                type: string
+              value:
+                type: number
+
+    # ============================================
+    # ANALYTICS
+    # ============================================
+    DashboardData:
+      type: object
+      properties:
+        cases_summary:
+          type: object
+          properties:
+            total:
+              type: integer
+            pending:
+              type: integer
+            in_progress:
+              type: integer
+            completed:
+              type: integer
+        risk_distribution:
+          type: object
+          additionalProperties:
+            type: integer
+        recent_activity:
+          type: array
+          items:
+            type: object
+        system_health:
+          type: object
+
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+          enum: [pending, generating, ready, failed]
+        download_url:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    ReportRequest:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [summary, detailed, executive, custom]
+        date_range:
+          type: object
+          properties:
+            start:
+              type: string
+              format: date
+            end:
+              type: string
+              format: date
+        filters:
+          type: object
+        format:
+          type: string
+          enum: [pdf, xlsx, csv, json]
+          default: pdf
+
+    SearchRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+        limit:
+          type: integer
+          default: 20
+          maximum: 100
+        filters:
+          type: object
+        search_type:
+          type: string
+          enum: [hybrid, semantic, keyword]
+          default: hybrid
+
+    SearchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              title:
+                type: string
+              snippet:
+                type: string
+              score:
+                type: number
+              source:
+                type: string
+              metadata:
+                type: object
+        total:
+          type: integer
+        query_time_ms:
+          type: integer
+
+    # ============================================
+    # COMMON
+    # ============================================
+    TaskResponse:
+      type: object
+      properties:
+        task_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [queued, running, completed, failed]
+        message:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object

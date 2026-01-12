@@ -1,0 +1,22 @@
+apiVersion: v2
+name: predator-analytics
+description: AI-Native Multi-Agent Analytics Platform
+type: application
+version: 25.0.0
+appVersion: "25.0.0"
+maintainers:
+  - name: Antigravity
+    email: ai@predator.io
+dependencies:
+  - name: postgresql
+    version: 12.5.6
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: redis
+    version: 17.11.3
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
+  - name: qdrant
+    version: 0.7.0
+    repository: https://qdrant.github.io/qdrant-helm
+    condition: qdrant.enabled

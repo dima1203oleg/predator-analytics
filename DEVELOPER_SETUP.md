@@ -1,6 +1,6 @@
-# Налаштування середовища розробки (Predator Analytics v22.0)
+# Налаштування середовища розробки (Predator Analytics v25.0)
 
-Цей документ пояснює, як підготувати локальне середовище та DevContainer для роботи з `predator_v22`.
+Цей документ пояснює, як підготувати локальне середовище та DevContainer для роботи з `predator_v25`.
 
 ## Передумови
 
@@ -12,7 +12,7 @@
 
 ## Швидкий старт у DevContainer
 
-1. Відкрийте `predator_v22` у VS Code.
+1. Відкрийте `predator_v25` у VS Code.
 2. Виберіть Command Palette → Dev Containers: Reopen in Container.
 3. Після створення контейнеру виконайте:
 
@@ -25,15 +25,15 @@ pnpm install --workspace-root
 ## Запуск сервісів (локально, Docker Compose)
 
 ```bash
-cd predator_v22
+cd predator_v25
 # Запускається мінімальний набір сервісів (backend, minio, redis, qdrant, opensearch, postgres)
-docker-compose -f predator_v21/docker-compose.yml up --build
+docker-compose -f predator_v25/docker-compose.yml up --build
 ```
 
 ## Запуск backend локально (в контейнері або локальному віртуальному середовищі)
 
 ```bash
-cd predator_v21/ua-sources
+cd predator_v25/ua-sources
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -46,7 +46,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 ```bash
 # From project root
-cd implementation_v22
+cd implementation_v25
 ./scripts/run-tox-docker.sh py311 ua-sources
 ```
 
@@ -55,7 +55,7 @@ cd implementation_v22
 ## Запуск frontend (Vite)
 
 ```bash
-cd predator_v21/frontend
+cd predator_v25/frontend
 pnpm install
 pnpm run dev
 ```
@@ -69,7 +69,7 @@ pnpm run dev
 
 ## Corollary: Рекомендовані VS Code Extensions
 
-(див. `.vscode/extensions.json` в `predator_v22`)
+(див. `.vscode/extensions.json` в `predator_v25`)
 
 - ms-python.python
 - ms-python.vscode-pylance
@@ -115,11 +115,11 @@ docker buildx imagetools inspect ghcr.io/<org>/predator-backend:local-test --raw
 ```yaml
 backend:
 	repository: ghcr.io/org/predator-backend
-	tag: "v22.0.1"
+	tag: "v25.0.1"
 	digest: "sha256:abcd1234..."
 frontend:
 	repository: ghcr.io/org/predator-frontend
-	tag: "v22.0.1"
+	tag: "v25.0.1"
 	digest: "sha256:efgh5678..."
 ```
 

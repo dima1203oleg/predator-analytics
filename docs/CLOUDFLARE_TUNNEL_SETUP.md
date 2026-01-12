@@ -145,7 +145,7 @@ Host predator-cf
 
 1. `Cmd+Shift+P` → `Remote-SSH: Connect to Host...`
 2. Виберіть `predator-cf`
-3. Відкрийте `/home/dima/predator_v22`
+3. Відкрийте `/home/dima/predator_v25`
 
 ---
 

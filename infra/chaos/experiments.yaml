@@ -1,0 +1,59 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: api-pod-failure
+  namespace: chaos-testing
+spec:
+  action: pod-failure
+  mode: one
+  duration: "30s"
+  selector:
+    namespaces:
+      - default
+    labelSelectors:
+      "app": "predator-api"
+  scheduler:
+    cron: "@every 10m"
+
+---
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: db-network-latency
+  namespace: chaos-testing
+spec:
+  action: delay
+  mode: all
+  selector:
+    namespaces:
+      - default
+    labelSelectors:
+      "app": "postgres"
+  delay:
+    latency: "100ms"
+    correlation: "100"
+    jitter: "0ms"
+  duration: "60s"
+  scheduler:
+    cron: "@every 15m"
+
+---
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: worker-cpu-stress
+  namespace: chaos-testing
+spec:
+  mode: one
+  selector:
+    namespaces:
+      - default
+    labelSelectors:
+      "app": "predator-worker"
+  stressors:
+    cpu:
+      workers: 1
+      load: 100
+  duration: "60s"
+  scheduler:
+    cron: "@every 20m"

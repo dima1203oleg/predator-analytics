@@ -2,7 +2,7 @@
     "annotations": {
         "list": []
     },
-    "description": "Predator Analytics v21.0 - ETL & Search Monitoring",
+    "description": "Predator Analytics v25.0 - ETL & Search Monitoring",
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
@@ -430,8 +430,8 @@
     },
     "timepicker": {},
     "timezone": "browser",
-    "title": "Predator Analytics v21.0",
-    "uid": "predator-v21-main",
+    "title": "Predator Analytics v25.0",
+    "uid": "predator-v25-main",
     "version": 1,
     "weekStart": ""
 }

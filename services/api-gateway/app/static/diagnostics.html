@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predator System Diagnostics</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff;
+            --success-color: #2ea043;
+            --error-color: #f85149;
+            --warning-color: #d29922;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+        h1 {
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        .btn {
+            background-color: var(--success-color);
+            color: white;
+            border: 1px solid rgba(27,31,35,0.15);
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .btn:disabled {
+            background-color: var(--border-color);
+            cursor: not-allowed;
+        }
+        .log-window {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 15px;
+            border-radius: 6px;
+            height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-ok { background-color: rgba(46, 160, 67, 0.2); color: var(--success-color); border: 1px solid var(--success-color); }
+        .status-error { background-color: rgba(248, 81, 73, 0.2); color: var(--error-color); border: 1px solid var(--error-color); }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .metric-card {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        .markdown-report {
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏥 Predator System Diagnostics</h1>
+
+    <div class="card">
+        <button id="runBtn" class="btn" onclick="runDiagnostics()">▶️ Run Full System Diagnostic</button>
+    </div>
+
+    <div id="resultsPanel" class="card" style="display: none;">
+        <div class="section-header">
+            <h3>Infrastructure Status</h3>
+            <span id="infraStatusBadge"></span>
+        </div>
+        <div class="grid">
+            <div class="metric-card">
+                <div>CPU Usage</div>
+                <div id="cpuVal" class="metric-value">--</div>
+            </div>
+            <div class="metric-card">
+                <div>RAM Usage</div>
+                <div id="ramVal" class="metric-value">--</div>
+            </div>
+            <div class="metric-card">
+                <div>Redis</div>
+                <div id="redisVal" class="metric-value">--</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="aiPanel" class="card" style="display: none;">
+         <div class="section-header">
+            <h3>AI Brain Status</h3>
+            <span id="aiStatusBadge"></span>
+        </div>
+        <div id="aiModelsGrid" class="grid">
+            <!-- Populated via JS -->
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📜 Diagnostic Log / Report</h3>
+        <div id="logWindow" class="log-window">System ready. Click 'Run' to start diagnostics...</div>
+    </div>
+</div>
+
+<script>
+    async function runDiagnostics() {
+        const btn = document.getElementById('runBtn');
+        const log = document.getElementById('logWindow');
+        const resultsPanel = document.getElementById('resultsPanel');
+        const aiPanel = document.getElementById('aiPanel');
+
+        btn.disabled = true;
+        btn.innerText = "⏳ Running Diagnostics...";
+        log.innerText = "🚀 Initializing diagnostics sequence...\n";
+
+        try {
+            log.innerText += "📡 Contacting Backend API (POST /api/v1/system/diagnostics/run)...\n";
+
+            const response = await fetch('/api/v1/system/diagnostics/run', {
+                method: 'POST'
+            });
+
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const results = data.results;
+
+            // Infrastructure Update
+            log.innerText += "✅ Infrastructure data received.\n";
+            document.getElementById('cpuVal').innerText = results.infrastructure.cpu?.usage || "ERR";
+            document.getElementById('ramVal').innerText = results.infrastructure.ram?.usage || "ERR";
+
+            const redisStat = results.infrastructure.redis;
+            const redisEl = document.getElementById('redisVal');
+            redisEl.innerText = redisStat.status;
+            redisEl.className = `metric-value ${redisStat.status === 'OK' ? '' : 'error-text'}`; // add css class if needed
+
+            resultsPanel.style.display = 'block';
+
+            // AI Update
+            log.innerText += "✅ AI Brain data received.\n";
+            const aiGrid = document.getElementById('aiModelsGrid');
+            aiGrid.innerHTML = '';
+
+            for (const [model, info] of Object.entries(results.ai_brain)) {
+                const div = document.createElement('div');
+                div.className = 'metric-card';
+                const statusIcon = info.status === 'OK' ? '✅' : '❌';
+                div.innerHTML = `
+                    <div style="font-weight:bold; margin-bottom:5px;">${model.toUpperCase()}</div>
+                    <div style="font-size:14px;">${statusIcon} ${info.status}</div>
+                    <div style="font-size:12px; color: #888;">Latency: ${info.latency_ms || 'N/A'}ms</div>
+                `;
+                aiGrid.appendChild(div);
+            }
+            aiPanel.style.display = 'block';
+
+            // Full Report
+            log.innerText += "\n--- GENERATED REPORT ---\n";
+            log.innerText += data.report_markdown;
+
+        } catch (error) {
+            log.innerText += `\n❌ CRITICAL FAILURE: ${error.message}`;
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "▶️ Run Full System Diagnostic";
+        }
+    }
+</script>
+
+</body>
+</html>

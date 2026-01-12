@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-mlflow
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mlflow
+spec:
+  type: {{ .Values.mlflow.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.mlflow.service.port }}
+      targetPort: http
+      protocol: TCP
+  selector:
+    {{- include "predator-analytics.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: mlflow

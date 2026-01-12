@@ -1,0 +1,16 @@
+collection: multimodal_index
+vectors:
+  text_dense:
+    size: 768
+    distance: Cosine
+  image_clip:
+    size: 512
+    distance: Cosine
+sparse_vectors:
+  text_sparse:
+    modifier: idf
+payload_schema:
+  tenant_id: keyword
+  doc_id: keyword
+  source_type: keyword
+# HNSW and other params are expected to be configured programmatically or via integration scripts

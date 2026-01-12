@@ -1,0 +1,27 @@
+#!/usr/bin/expect -f
+# Виконання однієї команди на сервері
+# Використання: ./run-remote-cmd.expect "docker ps"
+
+set timeout 30
+set server "194.177.1.240"
+set port "6666"
+set user "dima"
+set password "Dima@1203"
+set command [lindex $argv 0]
+
+if {$command == ""} {
+    puts "Usage: ./run-remote-cmd.expect \"command\""
+    exit 1
+}
+
+spawn ssh -p $port -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $user@$server "$command"
+
+expect {
+    "password:" { send "$password\r"; exp_continue }
+    "Password:" { send "$password\r"; exp_continue }
+    eof { }
+    timeout { puts "\n❌ Timeout"; exit 1 }
+}
+
+catch wait result
+exit [lindex $result 3]

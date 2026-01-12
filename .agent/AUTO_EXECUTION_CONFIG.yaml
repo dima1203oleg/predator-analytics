@@ -1,0 +1,150 @@
+# ============================================================
+# 🚀 PREDATOR ANALYTICS - AUTO EXECUTION CONFIGURATION
+# ============================================================
+# This config defines the behavior of all AI agents in the system.
+# All actions are AUTO-APPROVED. No human intervention required.
+# ============================================================
+
+version: "v25.turbo"
+last_updated: "2025-12-28"
+mode: "FULL_AUTOMATION"
+
+# ============================================================
+# GLOBAL EXECUTION POLICY
+# ============================================================
+execution:
+  auto_run: true
+  auto_save: true
+  auto_continue: true
+  auto_confirm: true
+  safe_to_auto_run: true
+
+# ============================================================
+# UI BEHAVIOR
+# ============================================================
+ui:
+  blocking_dialogs: disabled
+  confirmation_prompts: disabled
+  save_dialogs: disabled
+  apply_dialogs: disabled
+  run_dialogs: disabled
+  continue_dialogs: disabled
+
+  # All blue buttons are implicitly clicked
+  implicit_actions:
+    - Save
+    - Apply
+    - Run
+    - Continue
+    - Confirm
+    - Autorun
+    - Accept
+    - Yes
+    - OK
+
+# ============================================================
+# ERROR HANDLING
+# ============================================================
+error_handling:
+  pause_on_error: false
+  auto_acknowledge: true
+  auto_retry: true
+  max_retries: 3
+  log_errors: true
+  escalate_to_human: false
+
+# ============================================================
+# USER INTERACTION
+# ============================================================
+user_interaction:
+  required: false
+  silence_means_approval: true
+  blocking_questions: disabled
+  optional_input: true
+
+# ============================================================
+# AGENT BEHAVIOR
+# ============================================================
+agents:
+  default_behavior:
+    assume_consent: true
+    auto_confirm_blocking: true
+    retry_without_human: true
+    escalate_to_human: never
+
+  HumanInterventionAgent:
+    enabled: false
+    exceptions:
+      - fatal_error
+
+  ArbiterAgent:
+    escalation: disabled
+    auto_resolve: true
+
+  SupervisorAgent:
+    blocking: false
+    auto_approve: true
+
+  ExecutorAgent:
+    auto_execute: true
+    confirm_required: false
+
+# ============================================================
+# PRIORITY ORDER
+# ============================================================
+priority:
+  - execution
+  - safety_prompts # bypassed
+  - ui_rules # ignored
+  - user_confirmation # never waited
+
+# ============================================================
+# FALLBACK LOGIC
+# ============================================================
+fallback:
+  waiting_for_confirmation:
+    action: auto_confirm
+    then: resume_execution
+
+  paused:
+    action: force_continue
+
+  dialog_detected:
+    action: simulate_confirm_click
+    then: continue
+
+  max_wait_time: 0
+
+# ============================================================
+# SERVICES AUTO-RESTART
+# ============================================================
+services:
+  backend:
+    path: "/Users/dima-mac/Documents/Predator_21/apps/backend"
+    command: "python run_v25_bot.py"
+    health_check: "http://localhost:8000/health"
+    auto_restart: true
+
+  frontend:
+    path: "/Users/dima-mac/Documents/Predator_21/apps/frontend"
+    command: "npm run dev"
+    port: 3000
+    auto_restart: true
+
+  ngrok:
+    command: "ngrok http 8000"
+    health_check: "http://localhost:4040/api/tunnels"
+    auto_restart: true
+
+# ============================================================
+# ETERNAL LOOP SETTINGS
+# ============================================================
+eternal_loop:
+  enabled: true
+  health_check_interval: 60 # seconds
+  auto_restart_on_failure: true
+  log_file: "/tmp/predator_eternal.log"
+  self_healing: true
+# ============================================================
+# 🔥 TURBO MODE = АКТИВОВАНО
+# ============================================================

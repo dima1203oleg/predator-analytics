@@ -1,25 +1,53 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: Predator Analytics API
-  version: 21.0.0
+  version: 25.0.0
   description: |
-    Unified API for Predator Analytics Platform v21.0.
-    Provides Semantic Search, Authentication, and Data Access capabilities.
+    # 🛡️ PREDATOR ANALYTICS v25.0 API
+
+    Незламна система аналітики з автоматичним самовідновленням.
+
+    ## Автентифікація
+    Використовуйте Bearer токен в заголовку `Authorization`.
+
+    ## Rate Limiting
+    - Explorer: 100 запитів/хвилина
+    - Operator: 500 запитів/хвилина
+    - Commander: без обмежень
+
+  contact:
+    name: Predator Support
+    email: support@predator.ua
+  license:
+    name: Proprietary
+
 servers:
-  - url: http://localhost:8000/api/v1
+  - url: http://194.177.1.240/api
+    description: Production Server
+  - url: http://localhost:8090/api
     description: Local Development
-  - url: https://api.predator.ua/api/v1
-    description: Production
+
+tags:
+  - name: Health
+    description: Перевірка здоров'я системи
+  - name: Analysis
+    description: AI-powered аналіз даних
+  - name: Data Hub
+    description: Управління джерелами та датасетами
+  - name: Cases
+    description: Управління кейсами
+  - name: Council
+    description: Multi-LLM Council (дебати)
 
 paths:
-  /health:
+  /v25/health:
     get:
-      summary: Health Check
-      description: Returns status of the service and critical dependencies.
-      operationId: healthCheck
+      tags: [Health]
+      summary: Перевірка здоров'я системи
+      operationId: getHealth
       responses:
         "200":
-          description: Service is healthy
+          description: Система працює
           content:
             application/json:
               schema:
@@ -27,133 +55,60 @@ paths:
                 properties:
                   status:
                     type: string
-                    example: ok
+                    enum: [healthy, degraded, critical]
                   version:
                     type: string
-                  dependencies:
-                    type: object
+                  uptime_seconds:
+                    type: integer
 
-  /auth/login:
+  /v25/analyze:
     post:
-      summary: User Login
-      operationId: login
+      tags: [Analysis]
+      summary: E2E AI аналіз даних
+      operationId: analyze
       requestBody:
         required: true
         content:
-          application/x-www-form-urlencoded:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                context:
+                  type: string
+                create_case:
+                  type: boolean
+      responses:
+        "200":
+          description: Результат аналізу
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                  confidence:
+                    type: number
+
+  /v1/data-hub/upload:
+    post:
+      tags: [Data Hub]
+      summary: Завантажити файл
+      operationId: uploadDataset
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
             schema:
               type: object
               properties:
-                username:
+                file:
                   type: string
-                password:
-                  type: string
+                  format: binary
       responses:
         "200":
-          description: Successful login
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Token"
-
-  /search:
-    get:
-      summary: Unified Search
-      description: Perform Hybrid (Text + Semantic) search across documents.
-      operationId: searchDocuments
-      parameters:
-        - name: q
-          in: query
-          description: Search query text
-          required: true
-          schema:
-            type: string
-        - name: mode
-          in: query
-          description: Search mode (hybrid, text, semantic)
-          schema:
-            type: string
-            enum: [hybrid, text, semantic]
-            default: hybrid
-        - name: category
-          in: query
-          schema:
-            type: string
-        - name: from_date
-          in: query
-          schema:
-            type: string
-            format: date
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            default: 10
-      responses:
-        "200":
-          description: Search results
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SearchResults"
-
-  /documents/{id}:
-    get:
-      summary: Get Document Details
-      operationId: getDocument
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "200":
-          description: Document details
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Document"
-
-components:
-  schemas:
-    Token:
-      type: object
-      properties:
-        access_token:
-          type: string
-        token_type:
-          type: string
-
-    Document:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        title:
-          type: string
-        content:
-          type: string
-        category:
-          type: string
-        source:
-          type: string
-        published_date:
-          type: string
-          format: date-time
-        score:
-          type: number
-
-    SearchResults:
-      type: object
-      properties:
-        total:
-          type: integer
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/Document"
-        mode_used:
-          type: string
+          description: Файл завантажено

@@ -1,0 +1,32 @@
+#!/usr/bin/expect -f
+
+set host "194.177.1.240"
+set port 6666
+set user "dima"
+set password "Dima@1203"
+set key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDEetqY8TibaspCX5LtRaQRy2aasEkyp2Fhe0R7U7q6R dima@predator-analytics"
+set timeout 30
+
+puts "🔐 Adding SSH key to $user@$host:$port..."
+
+spawn ssh -o StrictHostKeyChecking=no -p $port $user@$host "mkdir -p ~/.ssh && echo '$key' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && echo 'KEY_ADDED_SUCCESSFULLY'"
+
+expect {
+    "password:" {
+        send "$password\r"
+        exp_continue
+    }
+    "Connection refused" {
+        puts "\n❌ Connection refused."
+        exit 1
+    }
+    "KEY_ADDED_SUCCESSFULLY" {
+        puts "\n✅ SSH Key added successfully!"
+        exit 0
+    }
+    timeout {
+        puts "\n❌ Timeout."
+        exit 1
+    }
+    eof
+}

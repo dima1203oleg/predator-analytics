@@ -3,10 +3,7 @@
 # Синхронізація коду з Mac на сервер (Static IP)
 # Використання: ./scripts/sync-to-server.sh [--dry-run]
 
-SSH_KEY="$HOME/.ssh/id_ed25519_ngrok" # Key for server access
-SSH_HOST="194.177.1.240"
-SSH_PORT="6666"
-SSH_USER="dima"
+SSH_HOST="predator-server"
 LOCAL_DIR="/Users/dima-mac/Documents/Predator_21/"
 REMOTE_DIR="predator-analytics"
 
@@ -40,6 +37,12 @@ EXCLUDE_OPTS="
   --exclude .mypy_cache
   --exclude logs
   --exclude *.log
+  --exclude '*.xlsx'
+  --exclude '*.csv'
+  --exclude '*.zip'
+  --exclude '*.gz'
+  --exclude 'Березень_2024.csv'
+  --exclude 'custom_declarations_registry.xlsx'
 "
 
 # Перевірка на --dry-run
@@ -51,9 +54,9 @@ fi
 
 # Виконання rsync
 rsync $RSYNC_OPTS $EXCLUDE_OPTS \
-  -e "ssh -i $SSH_KEY -p $SSH_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
+  -e "ssh" \
   "$LOCAL_DIR" \
-  "$SSH_USER@$SSH_HOST:~/$REMOTE_DIR/"
+  "$SSH_HOST:~/$REMOTE_DIR/"
 
 # Перевірка результату
 if [ $? -eq 0 ]; then

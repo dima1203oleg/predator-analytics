@@ -1,0 +1,69 @@
+# Predator Analytics v22.0 - Production Backend Dockerfile
+# MANDATORY: Static IP / Domain deployment - NO localhost for external access
+
+# Build stage
+FROM python:3.12-slim AS builder
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY apps/backend/requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Production stage
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy installed packages from builder
+COPY --from=builder /root/.local /root/.local
+
+# Copy application code from project root
+COPY libs ./libs
+# Workaround for src copy issue: Copy full directory and mv
+COPY apps/backend ./_backend_full
+RUN cp -r ./_backend_full/app ./app && \
+    cp -r ./_backend_full/src ./src && \
+    cp -r ./_backend_full/config ./config && \
+    cp -r ./_backend_full/configs ./configs && \
+    rm -rf ./_backend_full
+
+# Create non-root user
+RUN useradd --create-home --shell /bin/bash predator && \
+    chown -R predator:predator /app
+USER predator
+
+# Make Python modules accessible
+ENV PATH=/root/.local/bin:$PATH
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+# Environment variables (MANDATORY: 0.0.0.0 binding)
+ENV HOST=0.0.0.0
+ENV PORT=8000
+ENV ENVIRONMENT=production
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://0.0.0.0:8000/health || exit 1
+
+# Start application
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,0 +1,59 @@
+version: "3"
+
+tasks:
+  default:
+    cmds:
+      - task: help
+
+  help:
+    desc: Show available commands
+    cmds:
+      - echo "🤖 Predator Analytics Task Manager"
+      - task --list
+
+  sync:
+    desc: Sync code to Production Server
+    cmds:
+      - ./scripts/sync-to-server.sh
+
+  deploy:
+    desc: Deploy stack via Docker Compose on Server
+    cmds:
+      - task: sync
+      - ssh -p 6666 dima@194.177.1.240 "cd ~/predator-analytics && docker compose up -d"
+
+  restart:
+    desc: Restart specific services (e.g., task restart s=backend)
+    cmds:
+      - task: sync
+      - ssh -p 6666 dima@194.177.1.240 "cd ~/predator-analytics && docker compose restart {{.s}}"
+    vars:
+      s: backend telegram-bot
+
+  doctor:
+    desc: Run Full System Diagnostics on Server
+    cmds:
+      - task: sync
+      - ssh -p 6666 dima@194.177.1.240 "cd ~/predator-analytics && ./scripts/system_doctor.sh"
+
+  logs:
+    desc: View logs from all services
+    cmds:
+      - ssh -p 6666 dima@194.177.1.240 "cd ~/predator-analytics && docker compose logs -f --tail 50"
+
+  autonomy-check:
+    desc: Run Self-Check on Server
+    cmds:
+      - task: sync
+      - ssh -p 6666 dima@194.177.1.240 "cd ~/predator-analytics && ./scripts/test_autonomy.sh"
+
+  test:
+    desc: Run core unit tests on Server
+    cmds:
+      - task: sync
+      - ssh -p 6666 dima@194.177.1.240 "cd ~/predator-analytics && docker exec predator_telegram_bot python3 libs/core/tests/test_governance.py"
+
+  lint:
+    desc: Run Ruff Linter locally
+    cmds:
+      - ruff check apps/ libs/

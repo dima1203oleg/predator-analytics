@@ -1,0 +1,21 @@
+server.name: opensearch-dashboards
+server.host: "0.0.0.0"
+server.basePath: "/opensearch-dashboards"
+server.rewriteBasePath: true
+opensearch.hosts: ["http://opensearch:9200"]
+opensearch.ssl.verificationMode: none
+
+# Security disabled for easy embedding (dev/internal mode)
+opensearch_security.enabled: false
+opensearch_security.multitenancy.enabled: false
+
+# Allow Embedding / Iframe
+# CRITICAL: This allows the dashboard to be displayed inside the Predator UI
+csp.strict: false
+csp.warnLegacyBrowsers: false
+
+# Cookie settings for iframe contexts
+opensearch_security.cookie.secure: false
+opensearch_security.cookie.sameSite: "None"
+
+i18n.locale: "uk" # Let's set it to Ukrainian if supported/fallback to En

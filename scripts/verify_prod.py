@@ -1,5 +1,4 @@
 import requests
-import json
 import time
 
 BASE_URL = "http://localhost:8000/api/v1"
@@ -7,7 +6,7 @@ BASE_URL = "http://localhost:8000/api/v1"
 def test_health():
     print("🔹 Testing Health Endpoint...")
     try:
-        resp = requests.get(f"http://localhost:8000/health")
+        resp = requests.get("http://localhost:8000/health")
         resp.raise_for_status()
         print(f"✅ Health OK: {resp.json()}")
     except Exception as e:

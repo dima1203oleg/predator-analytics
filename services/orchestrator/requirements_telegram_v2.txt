@@ -1,0 +1,33 @@
+# Telegram Bot V2.0 Requirements
+# Core Telegram
+aiogram==3.3.0
+aiohttp>=3.9.0
+
+# Redis для Queue та Power Monitor
+redis[asyncio]>=5.0.0
+
+# Візуалізація (графіки)
+matplotlib>=3.8.0
+numpy>=1.24.0
+
+# System monitoring
+psutil>=5.9.0
+
+# Docker control
+docker>=7.0.0
+
+# Google Cloud Voice (опціонально)
+google-cloud-speech>=2.21.0
+google-cloud-texttospeech>=2.14.0
+
+# Fallback TTS/STT (якщо немає Google Cloud)
+SpeechRecognition>=3.10.0
+gTTS>=2.4.0
+pydub>=0.25.1
+
+# Database
+sqlalchemy[asyncio]>=2.0.0
+asyncpg>=0.29.0
+
+# JSON та утиліти
+python-dotenv>=1.0.0

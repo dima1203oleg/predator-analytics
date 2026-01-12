@@ -1,0 +1,8 @@
+#!/usr/bin/expect -f
+set timeout 30
+spawn ssh-copy-id -p 6666 -i /Users/dima-mac/.ssh/id_predator_v4 -o StrictHostKeyChecking=no dima@194.177.1.240
+expect {
+    "yes/no" { send "yes\r"; exp_continue }
+    -re "(?i)password:" { send "Dima@1203\r" }
+    eof
+}

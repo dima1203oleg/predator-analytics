@@ -1,0 +1,35 @@
+# =============================================================================
+# PREDATOR ANALYTICS - PRODUCTION STATIC SERVER
+# =============================================================================
+# Primary Connection (Static IP)
+Host predator-server
+    HostName 194.177.1.240
+    Port 6666
+    User dima
+    IdentityFile ~/.ssh/id_ed25519_dev
+    # Security & Stability
+    IdentitiesOnly yes
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    # Connection Persistance (Anti-Timeout)
+    ServerAliveInterval 60
+    ServerAliveCountMax 10
+    TCPKeepAlive yes
+    # Performance
+    Compression yes
+    # Multiplexing (Faster repeated connections)
+    ControlMaster auto
+    ControlPath ~/.ssh/control-%C
+    ControlPersist 10m
+
+# Alias for backward compatibility
+Host nvidia-server
+    HostName 194.177.1.240
+    Port 6666
+    User dima
+    IdentityFile ~/.ssh/id_ed25519_dev
+    IdentitiesOnly yes
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ServerAliveInterval 60
+    ServerAliveCountMax 10

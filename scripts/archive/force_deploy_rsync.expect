@@ -1,0 +1,24 @@
+#!/usr/bin/expect -f
+set timeout -1
+set server "194.177.1.240"
+set port "6666"
+set user "dima"
+set password "Dima@1203"
+set local_root "/Users/dima-mac/Documents/Predator_21"
+set remote_root "~/predator-analytics"
+
+# Sync apps directory
+spawn rsync -avhzc --delete -e "ssh -p 6666" /Users/dima-mac/Documents/Predator_21/apps /Users/dima-mac/Documents/Predator_21/libs /Users/dima-mac/Documents/Predator_21/scripts /Users/dima-mac/Documents/Predator_21/docker-compose.yml /Users/dima-mac/Documents/Predator_21/docker-compose.prod.yml dima@194.177.1.240:~/predator-analytics/
+expect {
+    "password:" { send "$password\r"; exp_continue }
+    "Password:" { send "$password\r"; exp_continue }
+    eof
+}
+
+# Run install/start script
+spawn ssh -p $port $user@$server "cd $remote_root && ./scripts/remote_start.sh"
+expect {
+    "password:" { send "$password\r"; exp_continue }
+    "Password:" { send "$password\r"; exp_continue }
+    eof
+}

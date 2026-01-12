@@ -1,0 +1,42 @@
+# H2O LLM Studio Configuration
+# Predator Analytics v25.0 Default Fine-Tuning Config
+
+experiment_name: "predator-v25-checkpoints"
+problem_type: "text_causal_language_modeling"
+
+dataset:
+  train_dataframe: "/workspace/data/current_batch_train.csv"
+  validation_strategy: "automatic_holdout"
+  validation_size: 0.1
+  data_sample: 1.0
+  system_column: "system_prompt"
+  prompt_column: "instruction"
+  answer_column: "output"
+  text_prompt_start: "<|prompt|>"
+  text_answer_separator: "<|answer|>"
+  add_eos_token_to_answer: true
+
+tokenizer:
+  max_length: 2048
+  padding_quantile: 0.0
+
+architecture:
+  backbone_dtype: "bfloat16"
+  gradient_checkpointing: true
+  intermediate_dropout: 0.0
+
+training:
+  loss_function: "CrossEntropy"
+  optimizer: "AdamW"
+  learning_rate: 0.0002
+  batch_size: 4
+  epochs: 3
+  lora:
+    r: 64
+    alpha: 16
+    dropout: 0.05
+    target_modules: ["q_proj", "v_proj", "k_proj", "o_proj"]
+
+environment:
+  mixed_precision: true
+  use_fsdp: false

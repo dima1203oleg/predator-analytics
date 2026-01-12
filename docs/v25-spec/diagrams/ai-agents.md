@@ -1,0 +1,108 @@
+# 🤖 AI Агентна Система — Predator Analytics v25.0
+
+## Мультиагентна Екосистема
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    SUPERINTELLIGENCE CORE                        │
+│                                                                  │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │                    ORCHESTRATOR                             │ │
+│  │          (Task Planning, Resource Allocation)               │ │
+│  └───────────────────────────┬────────────────────────────────┘ │
+│                              │                                   │
+│  ┌───────┬───────┬───────┬───┴───┬───────┬───────┬───────┐     │
+│  │       │       │       │       │       │       │       │     │
+│  ▼       ▼       ▼       ▼       ▼       ▼       ▼       ▼     │
+│┌─────┐┌─────┐┌─────┐┌─────┐┌─────┐┌─────┐┌─────┐┌─────┐       │
+││SIGINT│HUMINT│TECHINT│CYBINT│OSINT││ LLM ││CRITIC││EXEC ││       │
+││Agent││Agent││Agent ││Agent││Agent││Agent││Agent││Agent│       │
+│└─────┘└─────┘└─────┘└─────┘└─────┘└─────┘└─────┘└─────┘       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Self-Improvement Loop
+
+```
+    ┌─────────────┐
+    │   DIAGNOSE  │◄──────────────────────────┐
+    │  Analyze    │                           │
+    │ Performance │                           │
+    └──────┬──────┘                           │
+           │                                  │
+           ▼                                  │
+    ┌─────────────┐                           │
+    │   AUGMENT   │    Self-Improvement       │
+    │  Generate   │        Loop               │
+    │  Synthetic  │                           │
+    │    Data     │                           │
+    └──────┬──────┘                           │
+           │                                  │
+           ▼                                  │
+    ┌─────────────┐                           │
+    │    TRAIN    │                           │
+    │  Fine-tune  │                           │
+    │   Models    │                           │
+    └──────┬──────┘                           │
+           │                                  │
+           ▼                                  │
+    ┌─────────────┐                           │
+    │  EVALUATE   │                           │
+    │   A/B Test  │                           │
+    │   Results   │                           │
+    └──────┬──────┘                           │
+           │                                  │
+           ▼                                  │
+    ┌─────────────┐                           │
+    │   PROMOTE   │───────────────────────────┘
+    │   Deploy    │
+    │  if better  │
+    └─────────────┘
+```
+
+## LLM Router (Fallback Chain)
+
+```
+    Request
+       │
+       ▼
+┌──────────────┐
+│   LiteLLM    │
+│    Router    │
+└──────┬───────┘
+       │
+       ├─────────────────────────┐
+       │                         │
+       ▼                         ▼
+┌──────────────┐          ┌──────────────┐
+│   Claude 3   │──fail──▶│   GPT-4o     │
+│  (Primary)   │          │  (Fallback)  │
+└──────────────┘          └──────┬───────┘
+                                 │
+                                 ▼ fail
+                          ┌──────────────┐
+                          │   Groq       │
+                          │ (Fast Local) │
+                          └──────┬───────┘
+                                 │
+                                 ▼ fail
+                          ┌──────────────┐
+                          │   Ollama     │
+                          │  (Offline)   │
+                          └──────────────┘
+```
+
+## Agent Types
+
+| Agent | Role | Capabilities |
+|-------|------|--------------|
+| **SIGINT** | Signals Intelligence | Network traffic analysis |
+| **HUMINT** | Human Intelligence | Social engineering detection |
+| **TECHINT** | Technical Intelligence | Vulnerability scanning |
+| **CYBINT** | Cyber Intelligence | Threat hunting |
+| **OSINT** | Open Source | Dark web monitoring |
+| **LLM** | Reasoning | XAI explanations |
+| **CRITIC** | Validation | Quality check |
+| **EXEC** | Execution | Tool invocation |
+
+*© 2026 Predator Analytics*

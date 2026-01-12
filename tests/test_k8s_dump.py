@@ -1,4 +1,3 @@
-import os
 import pytest
 import subprocess
 from app.services.telegram_assistant import TelegramAssistant

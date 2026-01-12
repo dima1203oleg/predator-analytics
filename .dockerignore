@@ -22,6 +22,10 @@ docker-compose.yml
 # Ignore logs and temporary files
 *.log
 *.tmp
+*.csv
+*.xlsx
+data/workers/
+services/api-gateway/data/
 
 # Ignore node modules (if any)
 node_modules/

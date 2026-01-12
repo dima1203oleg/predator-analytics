@@ -5,9 +5,8 @@ Safe SQLAlchemy connection management (Async/Sync support)
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
-from typing import AsyncGenerator, Generator, Union
+from typing import AsyncGenerator, Generator
 import logging
-import asyncio
 
 from .config import settings
 
@@ -71,7 +70,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         finally:
             await session.close()
 
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, contextmanager
 
 @asynccontextmanager
 async def get_db_ctx() -> AsyncGenerator[AsyncSession, None]:
@@ -86,8 +85,9 @@ async def get_db_ctx() -> AsyncGenerator[AsyncSession, None]:
         finally:
             await session.close()
 
+@contextmanager
 def get_db_sync() -> Generator[Session, None, None]:
-    """Dependency for getting sync database session"""
+    """Context manager for using sync DB session in tasks/scripts"""
     with sync_session_maker() as session:
         try:
             yield session
@@ -104,10 +104,14 @@ async def init_db() -> None:
     if is_async:
         async with engine.begin() as conn:
             await conn.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
+            await conn.execute(text("CREATE SCHEMA IF NOT EXISTS gold"))
+            await conn.execute(text("CREATE SCHEMA IF NOT EXISTS staging"))
+            await conn.execute(text("CREATE SCHEMA IF NOT EXISTS raw"))
             await conn.run_sync(Base.metadata.create_all)
     else:
         with engine.begin() as conn:
             conn.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
+            conn.execute(text("CREATE SCHEMA IF NOT EXISTS raw"))
             Base.metadata.create_all(engine)
     logger.info("Database tables and extensions initialized")
 

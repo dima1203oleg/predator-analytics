@@ -417,6 +417,28 @@ class FileRegistry(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
+class ETLJob(Base):
+    """
+    ETL Job - Formal State Machine Tracking.
+    """
+    __tablename__ = "etl_jobs"
+    __table_args__ = {"schema": "raw"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    source_file = Column(String(255), nullable=False)
+    state = Column(String(50), nullable=False) # ENUM
+
+    progress = Column(JSONB, default={"percent": 0, "records_total": 0, "records_processed": 0, "records_indexed": 0})
+    timestamps = Column(JSONB, default={})
+    errors = Column(JSONB, default=[])
+
+    tenant_id = Column(UUID(as_uuid=True))
+    dataset_type = Column(String(50))
+
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
 class RawData(Base):
     """
     Raw data in staging schema.

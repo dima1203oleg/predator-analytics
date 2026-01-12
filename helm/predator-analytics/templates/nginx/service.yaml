@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-nginx
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: nginx
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+spec:
+  type: {{ .Values.nginx.service.type }}
+  loadBalancerIP: "194.177.1.240"
+  ports:
+    - name: http
+      port: {{ .Values.nginx.service.ports.http }}
+      targetPort: http
+      protocol: TCP
+    - name: https
+      port: {{ .Values.nginx.service.ports.https }}
+      targetPort: https
+      protocol: TCP
+  selector:
+    {{- include "predator-analytics.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: nginx

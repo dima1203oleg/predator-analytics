@@ -1,0 +1,66 @@
+# Default values for predator-analytics.
+
+global:
+  environment: production
+  domain: internal.predator.io
+
+# API Gateway Configuration
+api:
+  replicaCount: 3
+  image:
+    repository: predator/api-gateway
+    pullPolicy: IfNotPresent
+    tag: "25.0.0"
+  service:
+    type: ClusterIP
+    port: 8090
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 20
+    targetCPUUtilizationPercentage: 75
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2G
+    requests:
+      cpu: 500m
+      memory: 1G
+  env:
+    LOG_LEVEL: INFO
+    CACHE_ENABLED: "true"
+
+# Worker Configuration
+worker:
+  replicaCount: 2
+  image:
+    repository: predator/worker
+    tag: "25.0.0"
+  autoscaling:
+    keda:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 15
+      queueLength: 10
+
+# External Services (Dependencies)
+postgresql:
+  enabled: true
+  auth:
+    database: predator_db
+    username: predator
+  primary:
+    persistence:
+      size: 50Gi
+
+redis:
+  enabled: true
+  architecture: standalone
+
+qdrant:
+  enabled: true
+  replicaCount: 3
+
+opensearch:
+  enabled: true
+  replicas: 3

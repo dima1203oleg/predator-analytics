@@ -22,24 +22,28 @@ services:
     profiles: ["local", "server"]
 
   backend:
-    image: predator-backend:v22
+    image: predator-backend:v25
     build:
       context: .
-      dockerfile: apps/backend/Dockerfile
+      dockerfile: services/api-gateway/Dockerfile
     container_name: predator_backend
     ports:
       - "8090:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
-      - ./apps/backend/app:/app/app
+      - ./services/api-gateway/app:/app/app
+      - ./services/api-gateway/src:/app/src
       - ./libs:/app/libs
     env_file:
       - .env
     environment:
-      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://predator:predator_password@postgres:5432/predator_db}
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://admin:666666@postgres:5432/predator_db}
       - REDIS_URL=redis://redis:6379/0
       - QDRANT_URL=http://qdrant:6333
       - OPENSEARCH_URL=http://opensearch:9200
       - MINIO_ENDPOINT=minio:9000
+      - RABBITMQ_URL=amqp://predator:predator_secret_key@rabbitmq:5672/
       - PRELOAD_MODELS=false
     depends_on:
       postgres:
@@ -52,22 +56,23 @@ services:
     profiles: ["local", "server"]
 
   orchestrator:
-    image: predator-orchestrator:v22
+    image: predator-orchestrator:v25
     build:
       context: .
-      dockerfile: apps/self-improve-orchestrator/Dockerfile
+      dockerfile: services/orchestrator/Dockerfile
     container_name: predator_orchestrator
+    network_mode: host
     env_file:
       - .env
     environment:
-      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://predator:predator_password@postgres:5432/predator_db}
-      - REDIS_URL=redis://redis:6379/1
-      - QDRANT_URL=http://qdrant:6333
-      - OPENSEARCH_URL=http://opensearch:9200
-      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://predator:predator_password@127.0.0.1:5432/predator_db}
+      - REDIS_URL=redis://127.0.0.1:6379/1
+      - QDRANT_URL=http://127.0.0.1:6333
+      - OPENSEARCH_URL=http://127.0.0.1:9200
+      - OLLAMA_BASE_URL=http://127.0.0.1:11434
     volumes:
-      - ./apps/self-improve-orchestrator:/app/orchestrator
-      - ./apps/backend/app:/app/app
+      - ./services/orchestrator:/app/orchestrator
+      - ./services/api-gateway/app:/app/app
       - ./libs:/app/libs
       - orchestrator_logs:/app/logs
       - /var/run/docker.sock:/var/run/docker.sock
@@ -75,11 +80,11 @@ services:
       resources:
         limits:
           memory: 4G
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+        # reservations:
+        #   devices:
+        #     - driver: nvidia
+        #       count: 1
+        #       capabilities: [gpu]
     depends_on:
       postgres:
         condition: service_healthy
@@ -88,25 +93,25 @@ services:
       backend:
         condition: service_started
     restart: unless-stopped
-    networks:
-      - predator-net
     profiles: ["server"]
 
   celery_worker:
-    image: predator-backend:v22
+    image: predator-backend:v25
     container_name: predator_celery_worker
-    command: celery -A app.core.celery_app worker --loglevel=info -Q etl,ingestion,maintenance,monitoring --prefetch-multiplier=1 --concurrency=4
+    command: celery -A app.core.celery_app worker --loglevel=info -Q etl,ingestion,maintenance,monitoring,analytics --prefetch-multiplier=1 --concurrency=4
     volumes:
-      - ./apps/backend/app:/app/app
+      - ./services/api-gateway/app:/app/app
+      - ./services/api-gateway/src:/app/src
       - ./libs:/app/libs
     env_file:
       - .env
     environment:
-      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://predator:predator_password@postgres:5432/predator_db}
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://admin:666666@postgres:5432/predator_db}
       - REDIS_URL=redis://redis:6379/0
       - QDRANT_URL=http://qdrant:6333
       - OPENSEARCH_URL=http://opensearch:9200
       - MINIO_ENDPOINT=minio:9000
+      - RABBITMQ_URL=amqp://predator:predator_secret_key@rabbitmq:5672/
     depends_on:
       postgres:
         condition: service_healthy
@@ -116,13 +121,18 @@ services:
     networks:
       - predator-net
     profiles: ["local", "server"]
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A app.core.celery_app inspect ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   celery_beat:
-    image: predator-backend:v22
+    image: predator-backend:v25
     container_name: predator_celery_beat
     command: celery -A app.core.celery_app beat --loglevel=info
     volumes:
-      - ./apps/backend/app:/app/app
+      - ./services/api-gateway/app:/app/app
       - ./libs:/app/libs
     env_file:
       - .env
@@ -136,14 +146,19 @@ services:
     networks:
       - predator-net
     profiles: ["local", "server"]
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A app.core.celery_app inspect ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   frontend:
     build:
-      context: ./apps/frontend
+      context: ./apps/predator-analytics-ui
       dockerfile: Dockerfile
     container_name: predator_frontend
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
@@ -158,15 +173,15 @@ services:
     image: timescale/timescaledb:latest-pg15
     container_name: predator_postgres
     environment:
-      POSTGRES_USER: predator
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-predator_password}
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-666666}
       POSTGRES_DB: predator_db
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U predator -d predator_db" ]
+      test: [ "CMD-SHELL", "pg_isready -U admin -d predator_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -212,7 +227,7 @@ services:
       - cluster.name=predator-cluster
       - node.name=predator-node1
       - discovery.type=single-node
-      - bootstrap.memory_lock=true
+      - bootstrap.memory_lock=false
       - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
       - DISABLE_SECURITY_PLUGIN=true
     ulimits:
@@ -240,6 +255,8 @@ services:
     environment:
       - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
       - "DISABLE_SECURITY_PLUGIN=true"
+      - "SERVER_BASEPATH=/opensearch-dashboards"
+      - "SERVER_REWRITEBASEPATH=true"
     volumes:
       - ./opensearch_dashboards_no_auth.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml:ro
     depends_on:
@@ -260,14 +277,40 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-predator_admin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-predator_secret_key}
+      MINIO_BROWSER_REDIRECT_URL: "https://commendatory-loriann-unappealingly.ngrok-free.dev/minio"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 10s
       retries: 3
-    volumes:
-      - minio_data:/data
-    restart: unless-stopped
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: predator_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: predator_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - predator-net
     profiles: ["local", "server"]
@@ -280,16 +323,17 @@ services:
     environment:
       - H2O_WAVE_MAX_REQUEST_SIZE=100MB
       - H2O_WAVE_NO_LOGGING=true
+      - H2O_WAVE_BASE_URL=/llm-studio
     volumes:
       - h2o_workspace:/workspace
       - ./configs/h2o:/configs
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
     restart: unless-stopped
     networks:
       - predator-net
@@ -321,7 +365,7 @@ services:
       - "3001:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-predator123}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-666666}
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_AUTH_ANONYMOUS_ENABLED=true
     volumes:
@@ -352,10 +396,25 @@ services:
       - predator-net
     profiles: ["server"]
 
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: predator_alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./infra/prometheus/alertmanager.yml:/etc/alertmanager/config.yml
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    restart: unless-stopped
+    networks:
+      - predator-net
+    profiles: ["server"]
+
   telegram-bot:
     build:
-      context: ./apps/telegram-bot
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/telegram-bot/Dockerfile
     container_name: predator_telegram_bot
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}

@@ -1,0 +1,460 @@
+# Predator Analytics v25.0 - Production Values
+# MANDATORY: Static IP / Domain deployment - NO localhost for external access
+
+# Global configuration
+global:
+  # Static IP or Domain (PRODUCTION SERVER)
+  staticIP: "194.177.1.240"
+  domain: "predator.analytics.local"
+  
+  # Image registry
+  imageRegistry: "ghcr.io/dima1203oleg"
+  imageTag: "latest"
+  
+  # Environment
+  environment: "production"
+  
+  # Storage class
+  storageClass: "fast-ssd"
+
+# Replica counts
+replicaCount:
+  frontend: 3
+  backend: 5
+  nginx: 2
+  celeryWorker: 3
+  celeryBeat: 1
+
+# Image pull secrets (for private GHCR packages)
+imagePullSecrets:
+  - name: ghcr-secret
+
+# cert-manager / Let's Encrypt
+certManager:
+  enabled: true
+  email: "admin@predator.analytics.local"
+  ingressClass: "nginx"
+
+# Frontend configuration
+frontend:
+  image:
+    repository: "predator-ui"
+    tag: "latest"
+    pullPolicy: "IfNotPresent"
+  
+  service:
+    type: ClusterIP
+    port: 3000
+    
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/rate-limit: "100"
+      nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    host: "predator.analytics.local"
+    tls:
+      enabled: true
+      secretName: "predator-frontend-tls"
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  
+  env:
+    - name: NODE_ENV
+      value: "production"
+    - name: REACT_APP_API_BASE
+      value: "https://predator.analytics.local/api/v1"
+    - name: VITE_API_URL
+      value: "https://predator.analytics.local/api/v1"
+    - name: VITE_BACKEND_PROXY_TARGET
+      value: "http://backend:8000"
+
+# Backend configuration
+backend:
+  image:
+    repository: "predator-api"
+    tag: "latest"
+    pullPolicy: "IfNotPresent"
+  
+  service:
+    type: ClusterIP
+    port: 8000
+    
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      nginx.ingress.kubernetes.io/rate-limit: "200"
+      nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+      nginx.ingress.kubernetes.io/rate-limit-burst: "50"
+    host: "api.predator.analytics.local"
+    tls:
+      enabled: true
+      secretName: "predator-backend-tls"
+  
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+  
+  env:
+    - name: ENVIRONMENT
+      value: "production"
+    - name: HOST
+      value: "0.0.0.0"
+    - name: PORT
+      value: "8000"
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: predator-secrets
+          key: database-url
+    - name: REDIS_URL
+      value: "redis://redis:6379/0"
+    - name: OPENSEARCH_URL
+      value: "http://opensearch:9200"
+    - name: QDRANT_URL
+      value: "http://qdrant:6333"
+    - name: MLFLOW_URL
+      value: "http://mlflow:5000"
+    - name: FRONTEND_URL
+      value: "https://predator.analytics.local"
+    - name: CORS_ORIGINS
+      value: "https://predator.analytics.local"
+    - name: JWT_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: predator-secrets
+          key: jwt-secret
+
+# JWT (used by templates/secrets.yaml)
+jwt:
+  secretKey: "secure_prod_jwt_secret_2024"
+
+# Nginx reverse proxy
+nginx:
+  image:
+    repository: "nginx"
+    tag: "1.25-alpine"
+    pullPolicy: "IfNotPresent"
+  
+  service:
+    type: LoadBalancer
+    loadBalancerIP: "194.177.1.240"
+    ports:
+      http: 80
+      https: 443
+    
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 256Mi
+  
+  config:
+    # SSL certificates (mount from secret)
+    sslSecret: "predator-ssl-certs"
+    
+    # Rate limiting
+    rateLimiting:
+      enabled: true
+      apiLimit: "200r/m"
+      loginLimit: "10r/m"
+
+# PostgreSQL database
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "secure_prod_postgres_password_2024"
+    database: "predator_db"
+  primary:
+    persistence:
+      enabled: true
+      storageClass: "fast-ssd"
+      size: 500Gi
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 4Gi
+      requests:
+        cpu: 1000m
+        memory: 2Gi
+
+# Redis cache
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      storageClass: "fast-ssd"
+      size: 50Gi
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+
+# OpenSearch
+opensearch:
+  enabled: true
+  clusterName: "predator-opensearch"
+  nodeGroup: "master"
+  replicas: 1
+  
+  # Production settings
+  opensearchJavaOpts: "-Xms4g -Xmx4g"
+  resources:
+    requests:
+      cpu: 2000m
+      memory: 6Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+  
+  persistence:
+    enabled: true
+    storageClass: "fast-ssd"
+    size: 1Ti
+  
+  # Security
+  security:
+    tls:
+      restEncryption: false
+      transportEncryption: false
+    auth:
+      adminPassword: "secure_prod_opensearch_password_2024"
+
+# Qdrant vector database
+qdrant:
+  enabled: true
+  replicaCount: 1
+  
+  image:
+    repository: "qdrant/qdrant"
+    tag: "v1.7.4"
+  
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+  
+  persistence:
+    enabled: true
+    storageClass: "fast-ssd"
+    size: 500Gi
+  
+  config:
+    # Production settings
+    logLevel: "INFO"
+    service:
+      http_port: 6333
+      grpc_port: 6334
+
+# Celery workers
+celeryWorker:
+  image:
+    repository: "predator-worker"
+    tag: "latest"
+    pullPolicy: "IfNotPresent"
+  
+  replicaCount: 3
+  
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+  
+  env:
+    - name: ENVIRONMENT
+      value: "production"
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: predator-secrets
+          key: database-url
+    - name: REDIS_URL
+      value: "redis://redis:6379/0"
+    - name: OPENSEARCH_URL
+      value: "http://opensearch:9200"
+    - name: QDRANT_URL
+      value: "http://qdrant:6333"
+
+# Celery beat scheduler
+celeryBeat:
+  image:
+    repository: "predator-worker"
+    tag: "latest"
+    pullPolicy: "IfNotPresent"
+  
+  replicaCount: 1
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  
+  env:
+    - name: ENVIRONMENT
+      value: "production"
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: predator-secrets
+          key: database-url
+    - name: REDIS_URL
+      value: "redis://redis:6379/0"
+
+# MLflow
+mlflow:
+  image:
+    repository: "python"
+    tag: "3.11-slim"
+    pullPolicy: "IfNotPresent"
+  
+  service:
+    type: ClusterIP
+    port: 5000
+  
+  ingress:
+    enabled: true
+    className: "nginx"
+    host: "mlflow.predator.analytics.local"
+    tls:
+      enabled: true
+      secretName: "predator-mlflow-tls"
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  
+  env:
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: predator-secrets
+          key: database-url
+  
+  persistence:
+    enabled: true
+    storageClass: "fast-ssd"
+    size: 200Gi
+
+# Monitoring
+monitoring:
+  enabled: true
+  
+  # Prometheus
+  prometheus:
+    enabled: true
+    service:
+      type: ClusterIP
+      port: 9090
+    persistence:
+      enabled: true
+      storageClass: "fast-ssd"
+      size: 200Gi
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 4Gi
+      requests:
+        cpu: 1000m
+        memory: 2Gi
+  
+  # Grafana
+  grafana:
+    enabled: true
+    service:
+      type: ClusterIP
+      port: 3000
+    persistence:
+      enabled: true
+      storageClass: "fast-ssd"
+      size: 50Gi
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    adminPassword: "secure_prod_grafana_password_2024"
+    ingress:
+      enabled: true
+      className: "nginx"
+      host: "grafana.predator.analytics.local"
+      tls:
+        enabled: true
+        secretName: "predator-grafana-tls"
+
+# Autoscaling
+autoscaling:
+  enabled: true
+  frontend:
+    minReplicas: 3
+    maxReplicas: 20
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  backend:
+    minReplicas: 5
+    maxReplicas: 30
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+
+# External API keys (base64 encoded in secrets)
+externalAPIs:
+  openai: "your-openai-api-key-base64-encoded"
+  anthropic: "your-anthropic-api-key-base64-encoded"
+  gemini: "your-gemini-api-key-base64-encoded"
+  groq: "your-groq-api-key-base64-encoded"
+
+# SSL certificates (base64 encoded in secrets)
+nginxSSL:
+  cert: "your-ssl-certificate-base64-encoded"
+  key: "your-ssl-private-key-base64-encoded"
+
+# Pod security
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+  runAsGroup: 1000
+
+# Security context
+securityContext:
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
