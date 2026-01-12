@@ -26,3 +26,7 @@ export { SuperIntelligenceDashboard } from './ai/SuperIntelligenceDashboard';
 export { SelfHealingStatus } from './ai/SelfHealingStatus';
 export { AIActivityLogs } from './ai/AIActivityLogs';
 export { WorkflowControlPanel } from './ai/WorkflowControlPanel';
+
+// v26.0 AZR Constitutional Framework
+export { AZRConstitutionalDashboard } from './AZRConstitutionalDashboard';
+export { ETLTruthDashboard } from './ETLTruthDashboard';
