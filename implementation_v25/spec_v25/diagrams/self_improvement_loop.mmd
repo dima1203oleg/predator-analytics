@@ -1,0 +1,12 @@
+```mermaid
+flowchart LR
+  A[Monitor Signals] --> B[Auto Diagnosis]
+  B --> C[Data Augmentation]
+  C --> D[Train / Fine-tune]
+  D --> E[Offline Eval]
+  E --> F[Staging A/B]
+  F --> G[GitOps Promote]
+  G --> H[Post-Deploy Monitor]
+  H -->|Degrade| R[Auto Rollback]
+  H -->|OK| A
+```

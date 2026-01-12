@@ -1,0 +1,310 @@
+# Predator Analytics v25.0 - Production Docker Compose
+# MANDATORY: Static IP / Domain deployment - NO localhost for external access
+# All services bind to 0.0.0.0 with proper reverse proxy routing
+
+version: "3.8"
+
+networks:
+  predator-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+services:
+  # Reverse Proxy - Entry point for all external traffic
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: predator-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/ssl:/etc/nginx/ssl:ro
+      - ./apps/frontend/dist:/usr/share/nginx/html:ro
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.2
+    depends_on:
+      - backend
+      - frontend
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend - React SPA
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile.prod
+    container_name: predator-frontend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_API_BASE=${API_BASE_URL:-https://predator.analytics.local/api/v1}
+      - VITE_API_URL=${API_BASE_URL:-https://predator.analytics.local/api/v1}
+      - VITE_BACKEND_PROXY_TARGET=${BACKEND_URL:-http://172.20.0.4:8000}
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.3
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Backend API - FastAPI
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile.prod
+    container_name: predator-backend
+    restart: unless-stopped
+    environment:
+      - ENVIRONMENT=production
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DATABASE_URL=${DATABASE_URL:-postgresql://predator:${POSTGRES_PASSWORD}@postgres:5432/predator_db}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - OPENSEARCH_URL=${OPENSEARCH_URL:-http://opensearch:9200}
+      - QDRANT_URL=${QDRANT_URL:-http://qdrant:6333}
+      - MLFLOW_URL=${MLFLOW_URL:-http://mlflow:5000}
+      - FRONTEND_URL=${FRONTEND_URL:-https://predator.analytics.local}
+      - CORS_ORIGINS=${CORS_ORIGINS:-https://predator.analytics.local}
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.4
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      opensearch:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Database - PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: predator-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=predator_db
+      - POSTGRES_USER=predator
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.5
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U predator -d predator_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Cache & Message Broker - Redis
+  redis:
+    image: redis:7-alpine
+    container_name: predator-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --bind 0.0.0.0
+    volumes:
+      - redis_data:/data
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.6
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Search Engine - OpenSearch
+  opensearch:
+    image: opensearchproject/opensearch:2.12.0
+    container_name: predator-opensearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms2g -Xmx2g"
+      - network.host=0.0.0.0
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+      - ./docker/opensearch/opensearch.yml:/usr/share/opensearch/config/opensearch.yml:ro
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.7
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -f http://0.0.0.0:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Vector Database - Qdrant
+  qdrant:
+    image: qdrant/qdrant:v1.7.4
+    container_name: predator-qdrant
+    restart: unless-stopped
+    command: ./qdrant --bind-to 0.0.0.0 --grpc-port 6334 --http-port 6333
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.8
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MLOps - MLflow
+  mlflow:
+    image: python:3.11-slim
+    container_name: predator-mlflow
+    restart: unless-stopped
+    command: >
+      bash -c "
+      pip install mlflow psycopg2-binary &&
+      mlflow server
+        --host 0.0.0.0
+        --port 5000
+        --backend-store-uri postgresql://predator:${POSTGRES_PASSWORD}@postgres:5432/predator_db
+        --default-artifact-root /mlflow/artifacts
+      "
+    environment:
+      - DATABASE_URL=postgresql://predator:${POSTGRES_PASSWORD}@postgres:5432/predator_db
+    volumes:
+      - mlflow_data:/mlflow
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.9
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Task Queue - Celery Worker
+  celery-worker:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.prod
+    container_name: predator-celery-worker
+    restart: unless-stopped
+    command: celery -A app.core.celery_app worker --loglevel=info --concurrency=4
+    environment:
+      - ENVIRONMENT=production
+      - DATABASE_URL=${DATABASE_URL:-postgresql://predator:${POSTGRES_PASSWORD}@postgres:5432/predator_db}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - OPENSEARCH_URL=${OPENSEARCH_URL:-http://opensearch:9200}
+      - QDRANT_URL=${QDRANT_URL:-http://qdrant:6333}
+      - MLFLOW_URL=${MLFLOW_URL:-http://mlflow:5000}
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.10
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      opensearch:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+
+  # Task Scheduler - Celery Beat
+  celery-beat:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.prod
+    container_name: predator-celery-beat
+    restart: unless-stopped
+    command: celery -A app.core.celery_app beat --loglevel=info
+    environment:
+      - ENVIRONMENT=production
+      - DATABASE_URL=${DATABASE_URL:-postgresql://predator:${POSTGRES_PASSWORD}@postgres:5432/predator_db}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.11
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Monitoring - Prometheus
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: predator-prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--storage.tsdb.retention.time=200h"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.12
+
+  # Monitoring - Grafana
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: predator-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_SERVER_DOMAIN=${GRAFANA_DOMAIN:-predator.analytics.local}
+      - GF_SERVER_ROOT_URL=https://${GRAFANA_DOMAIN:-predator.analytics.local}/grafana/
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./docker/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.13
+    depends_on:
+      - prometheus
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  opensearch_data:
+    driver: local
+  qdrant_data:
+    driver: local
+  mlflow_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local

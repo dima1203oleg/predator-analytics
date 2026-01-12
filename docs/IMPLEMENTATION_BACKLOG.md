@@ -110,7 +110,7 @@ curl http://localhost:9092/targets
 **Оцінка:** 30 хвилин
 
 **Проблема:**
-Frontend title показує `v20.0` замість `v22.0`
+Frontend title показує `v25.0` замість `v25.0`
 
 **Рішення:**
 ```typescript
@@ -118,7 +118,7 @@ Frontend title показує `v20.0` замість `v22.0`
 // Знайти і замінити версію
 
 // apps/frontend/index.html
-<title>Predator Analytics v22.0</title>
+<title>Predator Analytics v25.0</title>
 
 // apps/frontend/package.json
 "version": "22.0.0"

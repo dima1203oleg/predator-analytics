@@ -1,0 +1,26 @@
+[tool.ruff]
+# WinSURF Code Quality Policy
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "B"]
+ignore = [
+    "E501", # Line too long (handled by formatter mostly)
+    "B008", # Do not perform function calls in argument defaults (fastapi depends on it)
+]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+# WinSURF Type Safety Policy
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.bandit]
+# WinSURF Security Policy
+exclude_dirs = ["tests", "migrations"]
+skips = ["B101"] # Assert usage is okay in internal logic typically

@@ -68,7 +68,7 @@ def main():
         print("❌ No SSH config found in logs")
         sys.exit(1)
         
-    print(f"🔍 Found SSH Config:")
+    print("🔍 Found SSH Config:")
     print(f"   Host: {config['host']}")
     print(f"   Port: {config['port']}")
     print(f"   User: {config['user']}")

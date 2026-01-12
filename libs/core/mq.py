@@ -1,7 +1,6 @@
 import aio_pika
 import json
 import logging
-import asyncio
 from typing import Optional, Callable, Awaitable, List
 from .config import settings
 

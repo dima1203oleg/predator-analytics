@@ -1,0 +1,71 @@
+{{- if .Values.frontend.ingress.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-frontend-tls
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: frontend
+spec:
+  secretName: {{ .Values.frontend.ingress.tls.secretName }}
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - {{ .Values.frontend.ingress.host }}
+{{- end }}
+
+{{- if .Values.backend.ingress.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-backend-tls
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backend
+spec:
+  secretName: {{ .Values.backend.ingress.tls.secretName }}
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - {{ .Values.backend.ingress.host }}
+{{- end }}
+
+{{- if .Values.monitoring.grafana.ingress.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-grafana-tls
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: grafana
+spec:
+  secretName: {{ .Values.monitoring.grafana.ingress.tls.secretName }}
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - {{ .Values.monitoring.grafana.ingress.host }}
+{{- end }}
+
+{{- if .Values.mlflow.ingress.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-mlflow-tls
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mlflow
+spec:
+  secretName: {{ .Values.mlflow.ingress.tls.secretName }}
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - {{ .Values.mlflow.ingress.host }}
+{{- end }}

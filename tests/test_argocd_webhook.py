@@ -1,7 +1,3 @@
-import os
-import pytest
-from fastapi.testclient import TestClient
-from app.main import app as fastapi_app
 
 from app.services.telegram_assistant import get_assistant, init_assistant
 from app.api.routers.argocd_webhook import process_argocd_event

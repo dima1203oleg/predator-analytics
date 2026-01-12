@@ -1,0 +1,114 @@
+#!/usr/bin/expect -f
+
+set timeout 60
+set host "194.177.1.240"
+set port "6666"
+set user "dima"
+set pass "Dima@1203"
+set remote_base "/home/dima/Predator_21"
+set remote_orch "$remote_base/backend/orchestrator"
+
+puts "\n🚀 Starting deployment to $host:$port..."
+
+# 0. Ensure directory exists
+puts "\n📁 Creating directories..."
+spawn ssh -p $port -o StrictHostKeyChecking=no $user@$host "mkdir -p $remote_orch/agents"
+expect {
+    "password:" { send "$pass\r" }
+    timeout { puts "Connection timeout"; exit 1 }
+}
+expect eof
+
+# 1. Upload .env
+puts "\n📤 Uploading .env file..."
+spawn scp -P $port -o StrictHostKeyChecking=no .env $user@$host:$remote_orch/.env
+expect {
+    "password:" { send "$pass\r" }
+}
+expect eof
+
+# 2. Upload bot script
+puts "\n📤 Uploading bot script..."
+spawn scp -P $port -o StrictHostKeyChecking=no backend/orchestrator/agents/telegram_bot_v4_advanced.py $user@$host:$remote_orch/agents/telegram_bot_v4_advanced.py
+expect {
+    "password:" { send "$pass\r" }
+}
+expect eof
+
+# 3. Restart bot
+puts "\n🔄 Restarting bot..."
+spawn ssh -p $port -o StrictHostKeyChecking=no $user@$host
+expect {
+    "password:" { send "$pass\r" }
+}
+
+expect {
+    "$ " { }
+    "# " { }
+    "dima@" { }
+}
+
+send "cd $remote_orch\r"
+expect {
+    "$ " { }
+    "dima@" { }
+}
+
+# Check if venv exists, if not create it (safety check)
+send "if [ ! -d \"venv\" ]; then python3 -m venv venv; fi\r"
+expect {
+    "$ " { }
+    "dima@" { }
+}
+
+send "source venv/bin/activate\r"
+expect {
+    "$ " { }
+    "dima@" { }
+}
+
+# Install python-dotenv if missing
+send "pip install python-dotenv\r"
+expect {
+    "$ " { }
+    "dima@" { }
+}
+
+send "pkill -f telegram_bot_v4_advanced.py\r"
+expect {
+    "$ " { }
+    "dima@" { }
+}
+send "sleep 2\r"
+expect {
+    "$ " { }
+    "dima@" { }
+}
+
+send "nohup python agents/telegram_bot_v4_advanced.py > telegram_bot_v4.log 2>&1 &\r"
+expect {
+    "$ " { }
+    "dima@" { }
+}
+
+send "echo '✅ Bot started, checking logs...'\r"
+expect {
+    "$ " { }
+    "dima@" { }
+}
+send "sleep 3\r"
+expect {
+    "$ " { }
+    "dima@" { }
+}
+
+send "tail -n 20 telegram_bot_v4.log\r"
+expect {
+    "$ " { }
+    "dima@" { }
+}
+
+send "exit\r"
+expect eof
+
+puts "\n✨ Deployment complete!"

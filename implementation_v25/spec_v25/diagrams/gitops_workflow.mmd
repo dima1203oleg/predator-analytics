@@ -1,0 +1,10 @@
+```mermaid
+flowchart LR
+  DEV[Dev commit] --> CI[Build/Test]
+  CI --> REG[Push to Registry]
+  CI --> MAN[Update Helm values/manifests]
+  MAN --> ARGO[ArgoCD Sync]
+  ARGO --> K3S[Deploy to Cluster]
+  K3S --> SMOKE[Smoke Tests]
+  SMOKE -->|Fail| ROLLBACK[Auto-Rollback]
+```

@@ -3,7 +3,7 @@
 # SSH Port Forwarding для доступу до веб-інтерфейсів Predator Analytics
 # Використання: ./scripts/server-tunnel.sh [start|stop|status]
 
-SSH_KEY="$HOME/.ssh/id_ed25519_dev"
+SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
 SSH_HOST="${SSH_HOST:-predator-server}" # Використовуємо аліас з ~/.ssh/config
 # SSH_PORT is irrelevant if using alias, but if explicit:
 SSH_PORT="${SSH_PORT:-6666}"
@@ -19,8 +19,8 @@ NC='\033[0m'
 # Порти для перенаправлення (Локальний:Віддалений:Опис)
 PORTS=(
     "9001:3001:Grafana"
-    "9082:8082:Frontend"
-    "9000:8000:Backend API"
+    "9080:80:Frontend"
+    "9090:8090:Backend API"
     "9432:5432:PostgreSQL"
     "9379:6379:Redis"
 )
@@ -46,7 +46,7 @@ start_tunnel() {
     SSH_OPTS="-N -f"
     for port_map in "${PORTS[@]}"; do
         IFS=':' read -r local_port remote_port desc <<< "$port_map"
-        SSH_OPTS="$SSH_OPTS -L $local_port:localhost:$remote_port"
+        SSH_OPTS="$SSH_OPTS -L $local_port:[::1]:$remote_port"
         echo -e "${YELLOW}📡 Перенаправлення:${NC} localhost:$local_port → сервер:$remote_port ($desc)"
     done
 
@@ -57,7 +57,7 @@ start_tunnel() {
     ssh -i "$SSH_KEY" -p "$SSH_PORT" $SSH_OPTS "$SSH_USER@$SSH_HOST"
 
     # Зберегти PID
-    SSH_PID=$(pgrep -f "ssh.*$SSH_HOST.*-L")
+    SSH_PID=$(pgrep -f "ssh.*-L.*$SSH_HOST")
     if [ -n "$SSH_PID" ]; then
         echo "$SSH_PID" > "$PID_FILE"
         echo ""
@@ -86,7 +86,7 @@ stop_tunnel() {
         fi
     else
         # Спробувати знайти процес
-        SSH_PID=$(pgrep -f "ssh.*$SSH_HOST.*-L")
+        SSH_PID=$(pgrep -f "ssh.*-L.*$SSH_HOST")
         if [ -n "$SSH_PID" ]; then
             kill "$SSH_PID"
             echo -e "${GREEN}✅ SSH-тунель зупинено (PID: $SSH_PID)${NC}"
@@ -128,12 +128,12 @@ show_links() {
     echo -e "   ${BLUE}http://localhost:9001${NC}"
     echo ""
     echo -e "${GREEN}🎨 Frontend (Веб-додаток):${NC}"
-    echo -e "   ${BLUE}http://localhost:9082${NC}"
+    echo -e "   ${BLUE}http://localhost:9080${NC}"
     echo ""
     echo -e "${GREEN}🔧 Backend API (FastAPI):${NC}"
-    echo -e "   ${BLUE}http://localhost:9000${NC}"
-    echo -e "   ${BLUE}http://localhost:9000/docs${NC} (Swagger)"
-    echo -e "   ${BLUE}http://localhost:9000/redoc${NC} (ReDoc)"
+    echo -e "   ${BLUE}http://localhost:9090${NC}"
+    echo -e "   ${BLUE}http://localhost:9090/docs${NC} (Swagger)"
+    echo -e "   ${BLUE}http://localhost:9090/redoc${NC} (ReDoc)"
     echo ""
     echo -e "${GREEN}🗄️  PostgreSQL:${NC}"
     echo -e "   ${BLUE}localhost:9432${NC}"

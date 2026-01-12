@@ -548,7 +548,7 @@ async def cmd_full_status(args: str) -> str:
         # Import advanced monitoring
         from app.services.telegram_advanced import get_full_system_status
         return await get_full_system_status()
-    except Exception as e:
+    except Exception:
         # Fallback to basic status
         tasks = [
             cmd_opensearch(""),
@@ -579,8 +579,8 @@ Active Jobs: {etl_data.get('total', 0)}
 Використай /etl для деталей"""
 
             return result
-    except Exception as e:
-        return f"⚠️ Backend offline\n\n💡 Запусти: `docker compose up -d backend`"
+    except Exception:
+        return "⚠️ Backend offline\n\n💡 Запусти: `docker compose up -d backend`"
 
 
 async def cmd_indexing_status(args: str) -> str:
@@ -595,7 +595,7 @@ async def cmd_indexing_status(args: str) -> str:
 
             total_docs = sum(int(idx.get("docs.count", 0) or 0) for idx in indices_data)
 
-            result += f"**OpenSearch:**\n"
+            result += "**OpenSearch:**\n"
             result += f"  Indices: {len(indices_data)}\n"
             result += f"  Documents: {total_docs:,}\n\n"
     except:
@@ -613,7 +613,7 @@ async def cmd_indexing_status(args: str) -> str:
                 info = await client.get(f"{qdrant_url}/collections/{coll_name}")
                 total_vectors += info.json().get("result", {}).get("points_count", 0)
 
-            result += f"**Qdrant:**\n"
+            result += "**Qdrant:**\n"
             result += f"  Collections: {len(coll_data.get('result', {}).get('collections', []))}\n"
             result += f"  Vectors: {total_vectors:,}\n"
     except:

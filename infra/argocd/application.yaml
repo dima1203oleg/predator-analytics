@@ -28,7 +28,7 @@ spec:
 
       parameters:
         - name: global.imageTag
-          value: "v22.0.0"
+          value: "v25.0.0"
         - name: backend.replicas
           value: "2"
         - name: frontend.replicas

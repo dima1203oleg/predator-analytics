@@ -23,7 +23,7 @@ def read_file(path: str) -> str:
 
         # Safety: Limit size to 500KB
         if target.stat().st_size > 500_000:
-            return f"Error: File too large (>500KB). Cannot read entirely."
+            return "Error: File too large (>500KB). Cannot read entirely."
 
         return target.read_text(encoding="utf-8")
     except Exception as e:

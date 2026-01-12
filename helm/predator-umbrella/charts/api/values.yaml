@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: predator/backend
   pullPolicy: IfNotPresent
-  tag: "v21.1"
+  tag: "v25.1"
 
 service:
   type: ClusterIP

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predator-bot
+  namespace: predator-nvidia
+  labels:
+    app: predator-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: predator-bot
+  template:
+    metadata:
+      labels:
+        app: predator-bot
+    spec:
+      containers:
+        - name: bot
+          image: predator-analytics/bot:v25.0
+          imagePullPolicy: IfNotPresent
+          command: ["python3", "apps/trinity_bot/bot/main.py"]
+          envFrom:
+            - secretRef:
+                name: bot-env-vars
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: tmp-voice
+              mountPath: "/tmp"
+      # Sidecar for local Whisper if needed (optional)
+      # - name: whisper-sidecar
+      #   image: onerahmet/openai-whisper-asr-webservice:latest
+      volumes:
+        - name: tmp-voice
+          emptyDir: {}

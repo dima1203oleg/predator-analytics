@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "predator-trinity-bot"
+version = "22.0.0"
+description = "Predator Analytics v22.0: Trinity Core - Telegram Terminal"
+authors = ["Predator Team"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+aiogram = "^3.12"
+google-cloud-aiplatform = "^1.60"
+mistralai = "^1.5"
+# github-copilot-sdk = "^0.4" # Commented out as likely proprietary/mock, will mock in code if needed
+opentelemetry-api = "^1.29"
+kubernetes = "^31.0"
+qdrant-client = "^1.11"
+asyncpg = "^0.29"
+SpeechRecognition = "^3.10"
+aiohttp = "^3.9"
+pydub = "^0.25.1" # For audio conversion helper often needed with OGG
+google-generativeai = "^0.8.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

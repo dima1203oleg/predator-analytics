@@ -1,6 +1,3 @@
-import tempfile
-import os
-import asyncio
 import pytest
 
 from app.services.telegram_assistant import TelegramAssistant, NgrokInfo

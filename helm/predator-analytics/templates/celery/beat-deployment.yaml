@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-celery-beat
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app.kubernetes.io/component: celery-beat
+spec:
+  replicas: {{ .Values.celeryBeat.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "predator-analytics.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: celery-beat
+  template:
+    metadata:
+      labels:
+        {{- include "predator-analytics.labels" . | nindent 8 }}
+        app.kubernetes.io/component: celery-beat
+    spec:
+      {{- with .Values.celeryBeat.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: celery-beat
+          securityContext:
+            {{- toYaml .Values.celeryBeat.securityContext | nindent 12 }}
+          image: {{ include "predator-analytics.image" .Values.celeryBeat.image }}
+          imagePullPolicy: {{ .Values.celeryBeat.image.pullPolicy }}
+          command: ["celery", "-A", "app.tasks.celery_app", "beat", "--loglevel=info"]
+          resources:
+            {{- toYaml .Values.celeryBeat.resources | nindent 12 }}
+          env:
+            {{- toYaml .Values.celeryBeat.env | nindent 12 }}
+      {{- with .Values.celeryBeat.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.celeryBeat.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.celeryBeat.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

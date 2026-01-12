@@ -1,0 +1,53 @@
+#!/usr/bin/expect -f
+set timeout -1
+set server "194.177.1.240"
+set port "6666"
+set user "dima"
+set password "Dima@1203"
+
+spawn ssh -p $port $user@$server
+expect {
+    "password:" { send "$password\r"; exp_continue }
+    "Password:" { send "$password\r"; exp_continue }
+    "*$*" { }
+    "*#*" { }
+}
+
+# Setup permissions
+send "chmod +x ~/predator-analytics/scripts/*.sh\r"
+expect "*$*"
+send "cd ~/predator-analytics\r"
+expect "*$*"
+
+# Execute the repair script
+send "./scripts/remote_start.sh\r"
+
+expect {
+    -re "\[sudo\] password for" {
+        send "$password\r"
+        exp_continue
+    }
+    "Password:" {
+        send "$password\r"
+        exp_continue
+    }
+    "Do you want to continue? \[Y/n\]" {
+        send "y\r"
+        exp_continue
+    }
+    " SUCCESS!" {
+        puts "\n--- ✅ REPAIR SUCCESSFUL: GPU DETECTED IN DOCKER ---\n"
+        send "exit\r"
+    }
+    " FAILURE!" {
+        puts "\n--- ❌ REPAIR FAILED: GPU NOT DETECTED ---\n"
+        send "exit\r"
+    }
+    # Fallback to shell prompt if script finishes without matching above
+    "*$*" {
+        send "exit\r"
+    }
+    eof {
+        puts "\n--- Connection Closed ---\n"
+    }
+}

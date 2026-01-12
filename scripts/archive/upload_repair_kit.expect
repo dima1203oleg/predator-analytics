@@ -1,0 +1,25 @@
+#!/usr/bin/expect -f
+set timeout 60
+set server "194.177.1.240"
+set port "6666"
+set user "dima"
+set password "Dima@1203"
+set local_path "scripts"
+set remote_path "~/predator-analytics/scripts/"
+
+# Create remote directory just in case
+spawn ssh -p $port $user@$server "mkdir -p $remote_path"
+expect {
+    "password:" { send "$password\r"; exp_continue }
+    "Password:" { send "$password\r"; exp_continue }
+    "*(yes/no)*" { send "yes\r"; exp_continue }
+    eof
+}
+
+# Upload files
+spawn scp -P $port $local_path/deploy_server.sh $local_path/force_nvidia_fix.sh $local_path/reinstall_toolkit.sh $local_path/install_only.sh $local_path/quick_fix_link.sh $local_path/force_cdi.sh $local_path/disable_gpu.sh $local_path/remote_start.sh $user@$server:$remote_path
+expect {
+    "password:" { send "$password\r"; exp_continue }
+    "Password:" { send "$password\r"; exp_continue }
+    eof
+}

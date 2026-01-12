@@ -1,0 +1,78 @@
+{{- if .Values.opensearch.init.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "predator-umbrella.fullname" . }}-opensearch-init
+  labels:
+    app.kubernetes.io/name: {{ include "predator-umbrella.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: opensearch-init
+          image: curlimages/curl:8.2.1
+          command: ["sh", "-c"]
+          env:
+{{- if and .Values.opensearch.auth.enabled (ne .Values.opensearch.secretName "") }}
+            - name: OPENSEARCH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opensearch.secretName }}
+                  key: username
+            - name: OPENSEARCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opensearch.secretName }}
+                  key: password
+{{- else }}
+            - name: OPENSEARCH_USERNAME
+              value: "{{ default "" .Values.opensearch.auth.username }}"
+            - name: OPENSEARCH_PASSWORD
+              value: "{{ default "" .Values.opensearch.auth.password }}"
+{{- end }}
+          args:
+            - |
+              set -e
+              # Wait for opensearch service to become available
+              OPENSEARCH_HOST="{{ .Release.Name }}-opensearch"
+              OPENSEARCH_URL="http://${OPENSEARCH_HOST}:9200"
+{{- if and .Values.opensearch.auth.enabled (ne .Values.opensearch.secretName "") }}
+              # Use env secrets OPENSEARCH_USERNAME/OPENSEARCH_PASSWORD when provided via secretName
+              CURL_AUTH="-u ${OPENSEARCH_USERNAME}:${OPENSEARCH_PASSWORD}"
+{{- else if .Values.opensearch.auth.enabled }}
+              # Use plain username/password from values (not recommended for prod)
+              CURL_AUTH="-u {{ .Values.opensearch.auth.username }}:{{ .Values.opensearch.auth.password }}"
+{{- else }}
+              CURL_AUTH=""
+{{- end }}
+              i=0
+              until curl -sS "$OPENSEARCH_URL" >/dev/null 2>&1 || [ $i -gt 30 ]; do
+                echo "Waiting for OpenSearch ($OPENSEARCH_URL)..."
+                i=$((i+1)); sleep 5
+              done
+              if [ $i -gt 30 ]; then
+                echo "OpenSearch did not become available in time"
+                exit 1
+              fi
+              # Write mapping file to disk
+              cat > /tmp/mapping.json <<'MAPPING'
+{{ .Files.Get "files/documents_mapping.json" | indent 14 }}
+MAPPING
+              INDEX="{{ default "documents" .Values.opensearch.init.indexName }}"
+              # Check if index exists and apply mapping conditionally
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" $CURL_AUTH "$OPENSEARCH_URL/$INDEX" ) || STATUS=000
+              if [ "$STATUS" = "200" ]; then
+                echo "Index $INDEX exists; updating mapping"
+                curl -sS $CURL_AUTH -X PUT "$OPENSEARCH_URL/$INDEX/_mapping" -H 'Content-Type: application/json' --data-binary @/tmp/mapping.json || echo "WARNING: failed to update mapping via _mapping"
+              else
+                echo "Index $INDEX does not exist; creating index"
+                curl -sS $CURL_AUTH -X PUT "$OPENSEARCH_URL/$INDEX" -H 'Content-Type: application/json' --data-binary @/tmp/mapping.json
+              fi
+      terminationGracePeriodSeconds: 30
+{{- end }}

@@ -2,7 +2,6 @@ import requests
 import time
 import os
 import sys
-import json
 
 BASE_URL = "http://localhost:8000/api/v1"
 FILE_PATH = "sample_data/companies_ukraine.csv"
@@ -11,7 +10,7 @@ def wait_for_api():
     print("⏳ Waiting for API to be ready...")
     for _ in range(30):
         try:
-            resp = requests.get(f"http://localhost:8000/health")
+            resp = requests.get("http://localhost:8000/health")
             if resp.status_code == 200:
                 print("✅ API is UP!")
                 return True
@@ -49,7 +48,7 @@ def verify_search():
     
     try:
         resp = requests.get(f"{BASE_URL}/search/search/?q={query}&mode=hybrid") # Note: Router prefix might be /search so path is /search/search? verify main.py logic
-        # Checking main_v21.py... usually prefix="/api/v1" + router prefix="/search" -> /api/v1/search/
+        # Checking main_v25.py... usually prefix="/api/v1" + router prefix="/search" -> /api/v1/search/
         # Let's try /api/v1/search/ first (trailing slash if root is empty) or just /api/v1/search
     except:
         print("❌ Search request failed connection.")
@@ -65,7 +64,7 @@ def verify_search():
         total = data.get("total", 0)
         stype = data.get("searchType")
         
-        print(f"✅ Search Status: 200 OK")
+        print("✅ Search Status: 200 OK")
         print(f"   Mode: {stype}")
         print(f"   Total Hits: {total}")
         print(f"   Returned: {len(results)}")

@@ -21,7 +21,7 @@ async def main():
         print(f"\n2. Decrypting '{target}'...")
         doc = shadow_service.reveal_document(target)
         if doc:
-            print(f"   ✅ Decryption Success!")
+            print("   ✅ Decryption Success!")
             print(f"   Title: {doc.get('title')}")
             print(f"   Content: {doc.get('content')[:50]}...")
         else:

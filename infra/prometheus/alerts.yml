@@ -1,0 +1,260 @@
+# ═══════════════════════════════════════════════════════════════
+# Prometheus Alert Rules для Predator Analytics v25
+# ═══════════════════════════════════════════════════════════════
+
+groups:
+  # ═══════════════════════════════════════════════════════════════
+  # КРИТИЧНІ АЛЕРТИ - СИСТЕМА
+  # ═══════════════════════════════════════════════════════════════
+  - name: predator_critical
+    interval: 30s
+    rules:
+      - alert: APILatencyHigh
+        expr: histogram_quantile(0.99, http_request_duration_seconds_bucket) > 1
+        for: 5m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "API латенсія перевищує 1s (P99)"
+          description: "99-й перцентиль латенсі API {{ $value | humanizeDuration }} на інстансі {{ $labels.instance }}"
+
+      - alert: APIErrorRateHigh
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "Висока частота помилок API (>5%)"
+          description: "{{ $value | humanizePercentage }} запитів завершуються з 5xx помилками"
+
+      - alert: PostgreSQLDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "PostgreSQL недоступний"
+          description: "Основна база даних не відповідає"
+
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: cache
+        annotations:
+          summary: "Redis недоступний"
+          description: "Кеш та черга Celery не працюють"
+
+      - alert: QdrantDown
+        expr: up{job="qdrant"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: vectordb
+        annotations:
+          summary: "Qdrant недоступний"
+          description: "Векторна база даних не відповідає - семантичний пошук не працює"
+
+      - alert: DiskSpaceCritical
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Критично мало дискового простору (<10%)"
+          description: "Залишилось {{ $value | humanize }}% на {{ $labels.mountpoint }}"
+
+      - alert: MemoryUsageHigh
+        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Критично мало пам'яті (<10%)"
+          description: "Доступно лише {{ $value | humanize }}% RAM"
+
+  # ═══════════════════════════════════════════════════════════════
+  # ML/AI АЛЕРТИ
+  # ═══════════════════════════════════════════════════════════════
+  - name: predator_ml
+    interval: 1m
+    rules:
+      - alert: MLJobFailed
+        expr: increase(ml_job_failures_total[1h]) > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: ml
+        annotations:
+          summary: "Багато провалених ML задач (>5 за годину)"
+          description: "{{ $value }} ML jobs завершились з помилкою"
+
+      - alert: MLTrainingStuck
+        expr: ml_training_duration_seconds > 3600
+        for: 10m
+        labels:
+          severity: warning
+          component: ml
+        annotations:
+          summary: "ML тренування зависло (>1 година)"
+          description: "Job {{ $labels.job_id }} виконується дуже довго"
+
+      - alert: ModelAccuracyDrop
+        expr: abs(ml_model_accuracy - ml_model_accuracy offset 1h) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: ml
+        annotations:
+          summary: "Точність моделі впала на >10%"
+          description: "Модель {{ $labels.model_name }}: точність {{ $value | humanizePercentage }}"
+
+      - alert: InferenceLatencyHigh
+        expr: histogram_quantile(0.95, ml_inference_duration_seconds_bucket) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: ml
+        annotations:
+          summary: "ML inference дуже повільний (P95 >2s)"
+          description: "Модель {{ $labels.model_name }} відповідає {{ $value | humanizeDuration }}"
+
+  # ═══════════════════════════════════════════════════════════════
+  # CELERY WORKERS
+  # ═══════════════════════════════════════════════════════════════
+  - name: predator_celery
+    interval: 1m
+    rules:
+      - alert: CeleryQueueBacklog
+        expr: celery_queue_length > 100
+        for: 10m
+        labels:
+          severity: warning
+          component: celery
+        annotations:
+          summary: "Велика черга Celery (>100 задач)"
+          description: "Черга {{ $labels.queue }}: {{ $value }} задач очікують"
+
+      - alert: CeleryWorkerDown
+        expr: celery_workers_count == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: celery
+        annotations:
+          summary: "Немає активних Celery workers"
+          description: "Всі worker'и вимкнені - завдання не обробляються"
+
+      - alert: CeleryTaskFailureRate
+        expr: rate(celery_task_failed_total[10m]) / rate(celery_task_total[10m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: celery
+        annotations:
+          summary: "Багато провалених Celery задач (>10%)"
+          description: "{{ $value | humanizePercentage }} задач завершуються з помилкою"
+
+  # ═══════════════════════════════════════════════════════════════
+  # ПОШУК ТА ІНДЕКСАЦІЯ
+  # ═══════════════════════════════════════════════════════════════
+  - name: predator_search
+    interval: 1m
+    rules:
+      - alert: SearchLatencyHigh
+        expr: histogram_quantile(0.95, search_request_duration_seconds_bucket) > 3
+        for: 5m
+        labels:
+          severity: warning
+          component: search
+        annotations:
+          summary: "Пошук дуже повільний (P95 >3s)"
+          description: "Середня латенсія пошуку: {{ $value | humanizeDuration }}"
+
+      - alert: IndexingFailed
+        expr: increase(indexing_failures_total[1h]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: search
+        annotations:
+          summary: "Багато помилок індексації (>10 за годину)"
+          description: "{{ $value }} документів не вдалось проіндексувати"
+
+      - alert: OpenSearchHeapHigh
+        expr: opensearch_jvm_mem_heap_used_percent > 90
+        for: 5m
+        labels:
+          severity: warning
+          component: opensearch
+        annotations:
+          summary: "OpenSearch heap memory >90%"
+          description: "Використано {{ $value }}% heap пам'яті"
+
+  # ═══════════════════════════════════════════════════════════════
+  # INFRASTRUCTURE
+  # ═══════════════════════════════════════════════════════════════
+  - name: predator_infrastructure
+    interval: 1m
+    rules:
+      - alert: CPUUsageHigh
+        expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 10m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Високе завантаження CPU (>80%)"
+          description: "CPU usage {{ $value | humanize }}% на {{ $labels.instance }}"
+
+      - alert: DiskIOHigh
+        expr: rate(node_disk_io_time_seconds_total[5m]) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Високе навантаження на диск"
+          description: "Disk I/O util {{ $value | humanizePercentage }} на {{ $labels.device }}"
+
+      - alert: NetworkErrorsHigh
+        expr: rate(node_network_receive_errs_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Багато мережевих помилок"
+          description: "{{ $value }} помилок/сек на {{ $labels.device }}"
+
+  # ═══════════════════════════════════════════════════════════════
+  # AGENTS ТА ORCHESTRATOR
+  # ═══════════════════════════════════════════════════════════════
+  - name: predator_agents
+    interval: 1m
+    rules:
+      - alert: AgentUnresponsive
+        expr: agent_last_heartbeat_seconds > 300
+        for: 2m
+        labels:
+          severity: warning
+          component: agents
+        annotations:
+          summary: "AI агент не відповідає >5 хвилин"
+          description: "Агент {{ $labels.agent_name }} останній heartbeat {{ $value | humanizeDuration }} тому"
+
+      - alert: MissionFailureRate
+        expr: rate(mission_failed_total[30m]) / rate(mission_total[30m]) > 0.2
+        for: 10m
+        labels:
+          severity: warning
+          component: agents
+        annotations:
+          summary: "Багато провалених місій (>20%)"
+          description: "{{ $value | humanizePercentage }} місій завершуються з помилкою"

@@ -1,0 +1,38 @@
+apiVersion: v2
+name: predator-analytics
+description: Predator Analytics v25.0 - Production-First Deployment
+type: application
+version: 22.0.0
+appVersion: "22.0.0"
+keywords:
+  - analytics
+  - etl
+  - search
+  - ml
+  - monitoring
+home: https://github.com/predator-analytics/predator
+sources:
+  - https://github.com/predator-analytics/predator
+maintainers:
+  - name: Predator Analytics Team
+    email: team@predator.analytics
+annotations:
+  category: Analytics
+  licenses: MIT
+dependencies:
+  - name: postgresql
+    version: "12.x.x"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: postgresql.enabled
+  - name: redis
+    version: "17.x.x"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled
+  - name: opensearch
+    version: "2.x.x"
+    repository: "https://opensearch-project.github.io/helm-charts"
+    condition: opensearch.enabled
+  - name: qdrant
+    version: "0.x.x"
+    repository: "https://qdrant.github.io/qdrant-helm"
+    condition: qdrant.enabled

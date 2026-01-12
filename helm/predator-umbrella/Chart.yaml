@@ -1,6 +1,6 @@
 apiVersion: v2
 name: predator-umbrella
-description: A Helm chart for Predator Analytics v21.0
+description: A Helm chart for Predator Analytics v25.0
 type: application
 version: 0.2.0
 appVersion: "21.0.0"

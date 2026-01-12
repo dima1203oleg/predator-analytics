@@ -1,0 +1,200 @@
+# ═══════════════════════════════════════════════════════════════
+# Alertmanager Configuration для Predator Analytics v25
+# ═══════════════════════════════════════════════════════════════
+
+global:
+  # Тривалість між re-notification для одного алерту
+  resolve_timeout: 5m
+
+  # Інтеграція з Telegram
+  telegram_api_url: "https://api.telegram.org"
+
+# Шаблони для повідомлень
+templates:
+  - "/etc/alertmanager/templates/*.tmpl"
+
+# Конфігурація маршрутизації алертів
+route:
+  # Групування алертів
+  group_by: ["alertname", "cluster", "service"]
+
+  # Час очікування перед відправкою першого сповіщення
+  group_wait: 10s
+
+  # Час очікування перед відправкою повідомлення про нові алерти в групі
+  group_interval: 10s
+
+  # Інтервал між повторними сповіщеннями
+  repeat_interval: 12h
+
+  # Receiver за замовчуванням
+  receiver: "telegram-critical"
+
+  # Маршрути для різних типів алертів
+  routes:
+    # CRITICAL алерти - негайне сповіщення
+    - match:
+        severity: critical
+      receiver: "telegram-critical"
+      group_wait: 10s
+      repeat_interval: 5m
+      continue: true # Продовжити обробку іншими роутами
+
+    # WARNING алерти - стандартне сповіщення
+    - match:
+        severity: warning
+      receiver: "telegram-warning"
+      group_wait: 30s
+      repeat_interval: 2h
+
+    # INFO алерти - групове сповіщення
+    - match:
+        severity: info
+      receiver: "telegram-info"
+      group_wait: 5m
+      repeat_interval: 24h
+
+    # ML/AI специфічні алерти
+    - match:
+        component: ml
+      receiver: "telegram-ml"
+      group_by: ["model_name", "job_id"]
+      repeat_interval: 1h
+
+    # Celery workers
+    - match:
+        component: celery
+      receiver: "telegram-workers"
+      group_by: ["queue", "worker"]
+      repeat_interval: 30m
+
+    # Database алерти
+    - match:
+        component: database
+      receiver: "telegram-db"
+      group_by: ["instance"]
+      repeat_interval: 15m
+
+# Receivers - destinations для алертів
+receivers:
+  # ═══════════════════════════════════════════════════════════════
+  # TELEGRAM RECEIVERS
+  # ═══════════════════════════════════════════════════════════════
+
+  - name: "telegram-critical"
+    telegram_configs:
+      - api_url: "https://api.telegram.org"
+        bot_token: "${TELEGRAM_BOT_TOKEN}"
+        chat_id: ${TELEGRAM_ADMIN_IDS}
+        parse_mode: "HTML"
+        message: |
+          🚨 <b>CRITICAL ALERT</b> 🚨
+
+          <b>Alert:</b> {{ .GroupLabels.alertname }}
+          <b>Severity:</b> {{ .CommonLabels.severity }}
+          <b>Service:</b> {{ .CommonLabels.service | default "unknown" }}
+          <b>Instance:</b> {{ .CommonLabels.instance | default "N/A" }}
+
+          <b>Description:</b>
+          {{ range .Alerts }}
+          • {{ .Annotations.description }}
+          {{ end }}
+
+          <b>Started:</b> {{ .StartsAt }}
+
+          🔗 <a href="http://194.177.1.240:9090/alerts">Prometheus Alerts</a>
+
+  - name: "telegram-warning"
+    telegram_configs:
+      - api_url: "https://api.telegram.org"
+        bot_token: "${TELEGRAM_BOT_TOKEN}"
+        chat_id: ${TELEGRAM_ADMIN_IDS}
+        parse_mode: "HTML"
+        message: |
+          ⚠️ <b>WARNING</b>
+
+          <b>Alert:</b> {{ .GroupLabels.alertname }}
+          <b>Service:</b> {{ .CommonLabels.service | default "unknown" }}
+
+          {{ range .Alerts }}
+          {{ .Annotations.description }}
+          {{ end }}
+
+          <i>Started: {{ .StartsAt | humanizeTimestamp }}</i>
+
+  - name: "telegram-info"
+    telegram_configs:
+      - api_url: "https://api.telegram.org"
+        bot_token: "${TELEGRAM_BOT_TOKEN}"
+        chat_id: ${TELEGRAM_ADMIN_IDS}
+        parse_mode: "HTML"
+        send_resolved: true
+        message: |
+          ℹ️ <b>INFO</b>
+
+          {{ range .Alerts }}
+          • {{ .Annotations.description }}
+          {{ end }}
+
+  - name: "telegram-ml"
+    telegram_configs:
+      - api_url: "https://api.telegram.org"
+        bot_token: "${TELEGRAM_BOT_TOKEN}"
+        chat_id: ${TELEGRAM_ADMIN_IDS}
+        parse_mode: "HTML"
+        message: |
+          🤖 <b>ML/AI Alert</b>
+
+          <b>Model:</b> {{ .CommonLabels.model_name | default "unknown" }}
+          <b>Job:</b> {{ .CommonLabels.job_id | default "N/A" }}
+
+          {{ range .Alerts }}
+          {{ .Annotations.description }}
+          {{ end }}
+
+  - name: "telegram-workers"
+    telegram_configs:
+      - api_url: "https://api.telegram.org"
+        bot_token: "${TELEGRAM_BOT_TOKEN}"
+        chat_id: ${TELEGRAM_ADMIN_IDS}
+        parse_mode: "HTML"
+        message: |
+          👷 <b>Celery Worker Alert</b>
+
+          <b>Queue:</b> {{ .CommonLabels.queue }}
+          <b>Worker:</b> {{ .CommonLabels.worker | default "all" }}
+
+          {{ range .Alerts }}
+          {{ .Annotations.description }}
+          {{ end }}
+
+  - name: "telegram-db"
+    telegram_configs:
+      - api_url: "https://api.telegram.org"
+        bot_token: "${TELEGRAM_BOT_TOKEN}"
+        chat_id: ${TELEGRAM_ADMIN_IDS}
+        parse_mode: "HTML"
+        message: |
+          💾 <b>Database Alert</b>
+
+          <b>Instance:</b> {{ .CommonLabels.instance }}
+
+          {{ range .Alerts }}
+          {{ .Annotations.description }}
+          {{ end }}
+
+# Інгібітори - правила для пригнічення алертів
+inhibit_rules:
+  # Якщо є CRITICAL, не показувати WARNING для того ж сервісу
+  - source_match:
+      severity: "critical"
+    target_match:
+      severity: "warning"
+    equal: ["alertname", "service", "instance"]
+
+  # Якщо сервіс недоступний, не показувати інші алерти для нього
+  - source_match:
+      alertname: "ServiceDown"
+    target_match_re:
+      alertname: ".*"
+    equal: ["service", "instance"]

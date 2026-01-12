@@ -1,0 +1,49 @@
+graph TD
+    subgraph Client Layer
+        Web[Web Interface]
+        CLI[AI CLI Agents]
+    end
+
+    subgraph "Kubernetes / Docker Compose Cluster"
+        Ingress[NGINX Ingress]
+
+        subgraph "Application Services"
+            API[API Gateway (FastAPI)]
+            Orch[Orchestrator (AI Agent)]
+            ETL[ETL Service]
+            ML[ML Models Services]
+        end
+
+        subgraph "Data Persistence"
+            PG[(PostgreSQL)]
+            Redis[(Redis Cache)]
+            Qdrant[(Qdrant Vector DB)]
+            OpenSearch[(OpenSearch)]
+            MinIO[(MinIO Object Storage)]
+        end
+
+        subgraph "DevOps & Monitoring"
+            Argo[ArgoCD]
+            Prom[Prometheus]
+            Graf[Grafana]
+            Guardian[Guardian Agent]
+        end
+    end
+
+    Web --> Ingress
+    CLI --> Ingress
+    Ingress --> API
+    API --> Orch
+    API --> ETL
+    API --> ML
+
+    ETL --> PG
+    ETL --> MinIO
+    ETL --> OpenSearch
+
+    Orch --> Qdrant
+    Orch --> Py
+
+    Guardian -.-> API
+    Guardian -.-> ETL
+    Guardian -.-> PG
