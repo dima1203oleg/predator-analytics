@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lock, RefreshCw, Shield, Terminal, Zap, Eye, Database, Activity, Server, Brain } from 'lucide-react';
-import { TacticalCard } from '../../../components';
-import { RealTimeSystemMetrics, JobQueueMonitor, LLMHealthMonitor, StorageAnalytics } from '../../../components'; // As per imports in original dashboard
+import { Lock, RefreshCw, Shield, Terminal, Zap, Eye, Database, Activity, Server, Brain, Fingerprint } from 'lucide-react';
+import {
+  TacticalCard,
+  TruthLedgerSection,
+  RealTimeSystemMetrics,
+  JobQueueMonitor,
+  LLMHealthMonitor,
+  StorageAnalytics
+} from '../../../components';
 import { PermissionLayer } from '../'; // from dimensional index
 import { SystemMetrics } from '../../../types/metrics';
 
@@ -12,7 +18,7 @@ interface CommanderShellProps {
 }
 
 export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onAction }) => {
-  const [activeMonitorTab, setActiveMonitorTab] = useState<'metrics' | 'jobs' | 'llm' | 'storage'>('metrics');
+  const [activeMonitorTab, setActiveMonitorTab] = useState<'metrics' | 'jobs' | 'llm' | 'storage' | 'ledger'>('metrics');
 
   return (
     <div className="space-y-6">
@@ -85,7 +91,8 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
             { id: 'metrics', label: 'Телеметрія', icon: <Activity size={14}/> },
             { id: 'jobs', label: 'Черги Завдань', icon: <Server size={14}/>  },
             { id: 'llm', label: 'Стан LLM', icon: <Brain size={14}/>  },
-            { id: 'storage', label: 'Сховища', icon: <Database size={14}/>  }
+            { id: 'storage', label: 'Сховища', icon: <Database size={14}/>  },
+            { id: 'ledger', label: 'Truth Ledger', icon: <Fingerprint size={14}/> }
           ].map(tab => (
             <button
               key={tab.id}
@@ -104,7 +111,8 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
           {activeMonitorTab === 'metrics' && <RealTimeSystemMetrics />}
           {activeMonitorTab === 'jobs' && <JobQueueMonitor />}
           {activeMonitorTab === 'llm' && <LLMHealthMonitor />}
-          {activeMonitorTab === 'storage' && <StorageAnalytics />}
+          { activeMonitorTab === 'storage' && <StorageAnalytics /> }
+          { activeMonitorTab === 'ledger' && <TruthLedgerSection /> }
         </div>
       </div>
 

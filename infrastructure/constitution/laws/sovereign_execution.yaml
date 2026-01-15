@@ -1,0 +1,15 @@
+id: "axiom_sovereign_execution"
+name: "Sovereign Execution Law"
+version: "27.0"
+description: |
+  The Orchestrator cannot execute any task without explicit Arbiter authorization.
+  This prevents the "God Mode" AI from modifying the system outside of constitutional bounds.
+
+constraints:
+  - id: "mandatory_arbitration"
+    description: "Arbiter signature required for all orchestration tasks."
+
+monitoring:
+  metric: "predator_unauthorized_executions_total"
+  threshhold: 0
+  alert_severity: "critical"

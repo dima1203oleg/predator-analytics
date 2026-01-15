@@ -4,7 +4,9 @@ from typing import Dict, Any, List
 from opensearchpy import AsyncOpenSearch, helpers
 from datetime import datetime
 
-logger = logging.getLogger("service.opensearch_indexer")
+from libs.core.structured_logger import get_logger, log_performance
+
+logger = get_logger("service.opensearch_indexer")
 
 class OpenSearchIndexer:
     """
@@ -28,7 +30,7 @@ class OpenSearchIndexer:
     async def create_index(self, index_name: str, mappings: Dict[str, Any] = None):
         """Create an index with Ukrainian analyzer and tenant isolation."""
         if await self.client.indices.exists(index=index_name):
-            logger.info(f"Index {index_name} already exists")
+            logger.info("opensearch_index_exists", index_name=index_name)
             await self._ensure_mapping(index_name)
             return
 
@@ -67,7 +69,7 @@ class OpenSearchIndexer:
             body["mappings"]["properties"].update(mappings.get("properties", {}))
 
         await self.client.indices.create(index=index_name, body=body)
-        logger.info(f"Created index: {index_name} with Ukrainian analyzer")
+        logger.info("opensearch_index_created", index_name=index_name, analyzer="ukrainian")
 
     async def _ensure_mapping(self, index_name: str):
         """Ensure tenant_id mapping exists on existing index."""
@@ -81,7 +83,7 @@ class OpenSearchIndexer:
                 }
             )
         except Exception as e:
-            logger.warning(f"Failed to update mapping for {index_name}: {e}")
+            logger.warning("opensearch_mapping_update_failed", index_name=index_name, error=str(e))
 
     async def index_document(
         self,
@@ -110,9 +112,10 @@ class OpenSearchIndexer:
                 body=doc_data,
                 refresh=True
             )
-            logger.info(f"Indexed document {doc_id} to {index_name}")
+
+            logger.info("opensearch_document_indexed", doc_id=doc_id, index_name=index_name)
         except Exception as e:
-            logger.error(f"Failed to index document {doc_id}: {e}")
+            logger.error("opensearch_indexing_failed", doc_id=doc_id, index_name=index_name, error=str(e))
             raise e
 
     async def index_documents(
@@ -135,7 +138,12 @@ class OpenSearchIndexer:
             qdrant_service: Service to store vectors (optional)
             tenant_id: Tenant context for isolation
         """
-        logger.info(f"Indexing {len(documents)} documents to {index_name} [Tenant: {tenant_id}]")
+        logger.info(
+            "opensearch_bulk_indexing_started",
+            count=len(documents),
+            index_name=index_name,
+            tenant_id=tenant_id
+        )
 
         # 1. Apply PII masking and Inject Tenant ID
         processed_docs = []
@@ -200,10 +208,10 @@ class OpenSearchIndexer:
                 if qdrant_docs:
                     await qdrant_service.index_batch(qdrant_docs, tenant_id=tenant_id)
                     qdrant_count = len(qdrant_docs)
-                    logger.info(f"Successfully indexed {qdrant_count} vectors to Qdrant")
+                    logger.info("qdrant_vectors_indexed", count=qdrant_count, tenant_id=tenant_id)
 
             except Exception as e:
-                logger.error(f"Qdrant indexing failed: {e}")
+                logger.error("qdrant_indexing_failed", error=str(e))
 
         return {
             "indexed_opensearch": success,
@@ -279,7 +287,7 @@ class OpenSearchIndexer:
                             "filter": [{"term": {"tenant_id": tenant_id}}]
                         }
                     }
-                logger.info(f"Injected tenant filter for {tenant_id} into query_body")
+                logger.info("opensearch_search_tenant_filter_applied", tenant_id=tenant_id)
 
         elif query:
             # Simple text search across all fields WITH tenant filter
@@ -327,10 +335,11 @@ class OpenSearchIndexer:
                 body = {"query": {"match_all": {}}, "size": size}
 
         try:
-            response = await self.client.search(index=index_name, body=body)
+            with log_performance(logger, "opensearch_search_latency", index_name=index_name):
+                response = await self.client.search(index=index_name, body=body)
             return response
         except Exception as e:
-            logger.error(f"Search failed: {e}")
+            logger.error("opensearch_search_failed", error=str(e), index_name=index_name)
             return {"hits": {"hits": [], "total": {"value": 0}}}
 
     async def close(self):

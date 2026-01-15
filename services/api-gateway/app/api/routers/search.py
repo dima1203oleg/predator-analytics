@@ -26,7 +26,7 @@ except ImportError:
     import logging
     logger = logging.getLogger("api.search")
     CACHING_ENABLED = False
-    logger.warning("Redis caching not available - running without cache")
+    logger.warning("redis_cache_unavailable", status="running_without_cache")
 
 router = APIRouter(prefix="/search", tags=["Search"])
 
@@ -134,7 +134,7 @@ async def search(
                 if mode == "semantic":
                     total = len(vector_hits) # Qdrant total is approximate or just list len
             except Exception as e:
-                logger.error(f"Semantic search failed: {e}")
+                logger.error("semantic_search_failed", error=str(e), tenant_id=tenant_id)
                 if mode == "semantic": raise e
 
                 if mode == "semantic": raise e
@@ -209,10 +209,10 @@ async def search(
                             final_results.append(cand)
 
                 except ImportError as e:
-                    logger.warning(f"Reranking skipped (import error): {e}")
+                    logger.warning("reranking_skipped", reason="import_error", error=str(e))
                     final_results = top_candidates[:limit]
                 except Exception as e:
-                    logger.error(f"Reranking failed: {e}")
+                    logger.error("reranking_failed", error=str(e))
                     # import traceback
                     # traceback.print_exc()
                     final_results = top_candidates[:limit]
@@ -264,7 +264,7 @@ async def search(
         }
 
     except Exception as e:
-        logger.error(f"Search failed: {e}")
+        logger.error("search_request_failed", error=str(e), query=q, mode=mode)
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         await indexer.close()
@@ -287,13 +287,19 @@ async def submit_feedback(
     try:
         tenant_id = user.get("tenant_id", "default")
         # Log to tracking service (Mock for now, would be PostgreSQL/ClickHouse)
-        logger.info(f"RLHF Feedback: User={user.get('sub')} Result={feedback.result_id} Type={feedback.feedback_type} Tenant={tenant_id}")
+        logger.info(
+            "rlhf_feedback_received",
+            user_id=user.get('sub'),
+            result_id=feedback.result_id,
+            feedback_type=feedback.feedback_type,
+            tenant_id=tenant_id
+        )
 
         # In a real impl, this would update a 'user_feedback' table
         # which the Self-Improvement Loop uses to fine-tune rerankers.
         return {"status": "accepted", "message": "Feedback recorded"}
     except Exception as e:
-        logger.error(f"Feedback submission failed: {e}")
+        logger.error("feedback_submission_failed", error=str(e))
         raise HTTPException(status_code=500, detail="Failed to record feedback")
 
 
@@ -346,7 +352,7 @@ async def search_companies(
             "total": response.get("hits", {}).get("total", {}).get("value", 0)
         }
     except Exception as e:
-        logger.error(f"Company search failed: {e}")
+        logger.error("company_search_failed", error=str(e), query=q)
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         await indexer.close()
@@ -401,7 +407,7 @@ async def search_tenders(
             "total": response.get("hits", {}).get("total", {}).get("value", 0)
         }
     except Exception as e:
-        logger.error(f"Tender search failed: {e}")
+        logger.error("tender_search_failed", error=str(e), query=q)
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         await indexer.close()
@@ -559,7 +565,7 @@ async def customs_search(
         }
 
     except Exception as e:
-        logger.error(f"Customs search failed: {e}")
+        logger.error("customs_search_failed", error=str(e), query=request.query)
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         await indexer.close()
@@ -597,5 +603,5 @@ async def multimodal_search(
 
         return {"hits": hits}
     except Exception as e:
-        logger.error(f"Multimodal search failed: {e}")
+        logger.error("multimodal_search_failed", error=str(e), query=request.query)
         raise HTTPException(status_code=500, detail=str(e))

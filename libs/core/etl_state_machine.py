@@ -7,24 +7,30 @@ from datetime import datetime
 from typing import Dict, Any, List
 
 class ETLState(str, Enum):
+    # Lifecycle
     CREATED = "CREATED"
     UPLOADING = "UPLOADING"
     UPLOAD_FAILED = "UPLOAD_FAILED"
     UPLOADED = "UPLOADED"
 
+    # Processing
     PROCESSING = "PROCESSING"
     PROCESSING_FAILED = "PROCESSING_FAILED"
     PROCESSED = "PROCESSED"
 
+    # Indexing
     INDEXING = "INDEXING"
     INDEXING_FAILED = "INDEXING_FAILED"
     INDEXED = "INDEXED"
 
+    # Final
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
     CANCELLED = "CANCELLED"
 
 class ETLStateMachine:
+    VERSION = "1.0"
+
     TRANSITIONS = {
         ETLState.CREATED: [ETLState.UPLOADING],
         ETLState.UPLOADING: [ETLState.UPLOADED, ETLState.UPLOAD_FAILED, ETLState.CANCELLED],
@@ -34,6 +40,7 @@ class ETLStateMachine:
         ETLState.INDEXING: [ETLState.INDEXED, ETLState.INDEXING_FAILED, ETLState.CANCELLED],
         ETLState.INDEXED: [ETLState.COMPLETED],
 
+        # Terminal logic
         ETLState.UPLOAD_FAILED: [ETLState.FAILED],
         ETLState.PROCESSING_FAILED: [ETLState.FAILED],
         ETLState.INDEXING_FAILED: [ETLState.FAILED]
@@ -41,43 +48,60 @@ class ETLStateMachine:
 
     TERMINAL_STATES = {ETLState.COMPLETED, ETLState.FAILED, ETLState.CANCELLED}
 
-    @staticmethod
-    def can_transition(current: ETLState, next_state: ETLState) -> bool:
-        if current in ETLStateMachine.TERMINAL_STATES:
+    @classmethod
+    def can_transition(cls, current_state: ETLState, next_state: ETLState) -> bool:
+        """Check if a transition is allowed by the formal state machine."""
+        if current_state == next_state:
+            return True
+        return next_state.value in cls.TRANSITIONS.get(current_state.value, [])
+
+    @classmethod
+    def is_valid_transition(cls, current_state_val: str, next_state_val: str) -> bool:
+        """String-based helper for Arbiter validation."""
+        try:
+            curr = ETLState(current_state_val)
+            nxt = ETLState(next_state_val)
+            return cls.can_transition(curr, nxt)
+        except ValueError:
             return False
-        allowed = ETLStateMachine.TRANSITIONS.get(current, [])
-        return next_state in allowed
 
-    @staticmethod
-    def get_progress(state: ETLState, context: Dict[str, Any]) -> int:
-        """Calculate deterministic progress percentage based on state."""
+    @classmethod
+    def get_progress(cls, state: ETLState, context: dict) -> int:
+        """
+        Calculates REAL progress based on v26 Formal Requirements.
+        No optimistic jumps. No faking.
+        """
         if state == ETLState.CREATED: return 0
-        if state == ETLState.UPLOADING: return 10
-        if state == ETLState.UPLOADED: return 20
-        # PROCESSING: 20-60%
+        if state == ETLState.UPLOADING:
+             # UPLOADING: bytes_transferred / bytes_total
+             transferred = context.get("bytes_transferred", 0)
+             total = context.get("bytes_total", 1) or 1
+             return min(int((transferred / total) * 10), 9)
+
+        if state == ETLState.UPLOADED: return 10
+
         if state == ETLState.PROCESSING:
-            processed = context.get("records_processed", 0)
-            total = context.get("records_total", 1) or 1
-            ratio = min(processed / total, 1.0)
-            return 20 + int(ratio * 40)
+             # PROCESSING: records_processed / records_total
+             processed = context.get("records_processed", 0)
+             total = context.get("records_total", 1) or 1
+             ratio = processed / total
+             return 10 + int(ratio * 40) # 10% -> 50%
 
-        if state == ETLState.PROCESSED: return 60
+        if state == ETLState.PROCESSED: return 50
 
-        # INDEXING: 60-95%
         if state == ETLState.INDEXING:
-            indexed = context.get("records_indexed", 0)
-            total = context.get("records_total", 1) or 1
-            ratio = min(indexed / total, 1.0)
-            return 60 + int(ratio * 35)
+             # INDEXING: documents_indexed / documents_total
+             indexed = context.get("records_indexed", 0)
+             total = context.get("records_total", 1) or 1
+             ratio = indexed / total
+             return 50 + int(ratio * 45) # 50% -> 95%
 
-        if state == ETLState.INDEXED: return 95
+        if state == ETLState.INDEXED: return 99 # 100 only after final audit
+
         if state == ETLState.COMPLETED: return 100
 
-        # Failures freeze at current or default to range start
-        if state == ETLState.UPLOAD_FAILED: return 10
-        if state == ETLState.PROCESSING_FAILED: return context.get("percent", 20)
-        if state == ETLState.INDEXING_FAILED: return context.get("percent", 60)
-        if state == ETLState.FAILED: return context.get("percent", 0)
-        if state == ETLState.CANCELLED: return context.get("percent", 0)
+        # Terminals (FAILED/CANCELLED) stay at their last known percent
+        if state in cls.TERMINAL_STATES:
+             return context.get("percent", 0)
 
-        return 0
+        return context.get("percent", 0)

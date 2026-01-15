@@ -1,0 +1,286 @@
+# ═══════════════════════════════════════════════════════════════
+# AXIOM 8: ЗАКОН АНТИКРИХКОСТІ
+# Predator Analytics v28-S Constitutional Framework
+# ═══════════════════════════════════════════════════════════════
+
+id: "axiom_8"
+name: "Закон Антикрихкості"
+name_en: "Law of Anti-Fragility"
+version: "28.0"
+level: "ABSOLUTE"
+status: "ENFORCED"
+created_at: "2026-01-12T22:55:00Z"
+hash_algorithm: "SHA3-512"
+
+formal_logic: |
+  # Система повинна покращуватися від стресорів
+  ∀ failure ∈ System.Failures:
+    failure.occurred ⇒
+      (∃ lesson ∈ Lessons ∧ lesson.derived_from = failure.id)
+      ∧ (∃ improvement ∈ Improvements ∧ improvement.addresses = failure.type)
+      ∧ (system.resilience[failure.type] > previous_resilience[failure.type])
+
+  # Контрольована деградація
+  ∀ component ∈ System.Components:
+    component.failed ⇒
+      (∃ fallback ∈ Fallbacks ∧ fallback.covers = component.id)
+      ∧ (system.core_functions.available = true)
+
+  # Автоматичне відновлення
+  ∀ failure ∈ System.Failures:
+    failure.recoverable ⇒
+      (∃ recovery_action ∧ recovery_action.trigger_time < failure.time + RECOVERY_SLA)
+
+explanation: |
+  Закон Антикрихкості визначає здатність системи ставати сильнішою від стресу:
+
+  1. НАВЧАННЯ ВІД ПОМИЛОК: Кожен збій аналізується та
+     генерує уроки для покращення системи.
+
+  2. КОНТРОЛЬОВАНА ДЕГРАДАЦІЯ: При відмові компонента система
+     продовжує працювати з обмеженою функціональністю.
+
+  3. АВТОМАТИЧНЕ ВІДНОВЛЕННЯ: Система самостійно відновлюється
+     від recoverable помилок в межах SLA.
+
+  4. РЕЗЕРВУВАННЯ: Критичні компоненти мають fallback механізми.
+
+  5. CHAOS ENGINEERING: Система регулярно тестується
+     контрольованими збоями для виявлення слабких місць.
+
+immutability: "ABSOLUTE"
+
+degradation_modes:
+  FULL:
+    description: "Повна функціональність"
+    availability: ">= 99.9%"
+    all_features: true
+
+  DEGRADED_LEVEL_1:
+    description: "Незначна деградація"
+    availability: ">= 99.0%"
+    disabled_features:
+      - "Non-critical analytics"
+      - "Batch processing"
+      - "Report generation"
+    preserved_features:
+      - "Core API"
+      - "Real-time processing"
+      - "Constitutional checks"
+      - "Human interface"
+
+  DEGRADED_LEVEL_2:
+    description: "Суттєва деградація"
+    availability: ">= 95.0%"
+    disabled_features:
+      - "All non-essential features"
+      - "Agent autonomous actions"
+      - "LLM inference"
+    preserved_features:
+      - "Core API (read-only)"
+      - "Constitutional checks"
+      - "Human interface"
+      - "Emergency protocols"
+
+  EMERGENCY:
+    description: "Аварійний режим"
+    availability: ">= 90.0%"
+    disabled_features:
+      - "All automation"
+      - "All agents"
+      - "All non-critical systems"
+    preserved_features:
+      - "Human interface"
+      - "Emergency protocols"
+      - "Audit logging"
+      - "Data preservation"
+
+recovery_protocols:
+  auto_recovery:
+    enabled: true
+    max_attempts: 3
+    backoff_strategy: "exponential"
+    initial_delay_ms: 1000
+    max_delay_ms: 60000
+
+    recoverable_failures:
+      - type: "connection_error"
+        action: "retry_with_backoff"
+        sla_seconds: 30
+
+      - type: "timeout"
+        action: "increase_timeout_retry"
+        sla_seconds: 60
+
+      - type: "memory_pressure"
+        action: "clear_caches_retry"
+        sla_seconds: 120
+
+      - type: "temporary_unavailability"
+        action: "wait_and_retry"
+        sla_seconds: 300
+
+    non_recoverable_failures:
+      - type: "data_corruption"
+        action: "halt_and_alert"
+
+      - type: "constitutional_violation"
+        action: "halt_and_escalate"
+
+      - type: "security_breach"
+        action: "isolate_and_alert"
+
+  circuit_breaker:
+    enabled: true
+    failure_threshold: 5
+    success_threshold: 3
+    timeout_seconds: 60
+    half_open_max_requests: 3
+
+failure_learning:
+  post_mortem_requirements:
+    - field: "failure_id"
+      description: "Унікальний ідентифікатор збою"
+
+    - field: "root_cause"
+      description: "Коренева причина збою"
+
+    - field: "timeline"
+      description: "Хронологія подій"
+
+    - field: "impact"
+      description: "Вплив на систему та користувачів"
+
+    - field: "detection_time"
+      description: "Час виявлення"
+
+    - field: "recovery_time"
+      description: "Час відновлення"
+
+    - field: "lessons_learned"
+      description: "Уроки та висновки"
+
+    - field: "improvement_actions"
+      description: "Заплановані покращення"
+
+  improvement_tracking:
+    - "Кожен урок генерує improvement ticket"
+    - "Improvements відстежуються до завершення"
+    - "Ефективність покращень вимірюється"
+    - "Рецидиви тих самих збоїв блокуються"
+
+chaos_engineering:
+  enabled: true
+  frequency: "weekly"
+  scope: "non-production first, then canary"
+
+  experiments:
+    - name: "service_failure"
+      description: "Симуляція відмови сервісу"
+      safe_targets: ["non-critical services"]
+
+    - name: "network_partition"
+      description: "Симуляція розриву мережі"
+      safe_targets: ["isolated components"]
+
+    - name: "resource_exhaustion"
+      description: "Симуляція вичерпання ресурсів"
+      safe_targets: ["controlled environments"]
+
+    - name: "latency_injection"
+      description: "Введення затримок"
+      safe_targets: ["all services"]
+
+  safety_guards:
+    - "Автоматична зупинка при перевищенні error rate 10%"
+    - "Обов'язкове людське схвалення для production"
+    - "Rollback при виявленні неочікуваних наслідків"
+
+fallback_mechanisms:
+  database:
+    primary: "PostgreSQL"
+    fallback: "SQLite read-only cache"
+    trigger: "connection_failures > 3"
+
+  cache:
+    primary: "Redis"
+    fallback: "In-memory LRU cache"
+    trigger: "redis_unavailable"
+
+  llm:
+    primary: "Ollama LLaMA 3.1"
+    fallback: "Rule-based responses"
+    trigger: "llm_unavailable or timeout > 30s"
+
+  messaging:
+    primary: "RabbitMQ"
+    fallback: "Synchronous processing"
+    trigger: "rabbitmq_unavailable"
+
+enforcement:
+  primary:
+    - method: "Health Check System"
+      description: "Постійний моніторинг здоров'я компонентів"
+      automated: true
+
+    - method: "Auto-Recovery Engine"
+      description: "Автоматичне відновлення від збоїв"
+      automated: true
+
+    - method: "Circuit Breaker"
+      description: "Захист від каскадних відмов"
+      automated: true
+
+  secondary:
+    - method: "Chaos Testing"
+      description: "Регулярне тестування стійкості"
+      automated: true
+      schedule: "Weekly"
+
+    - method: "Post-Mortem Review"
+      description: "Аналіз збоїв та генерація уроків"
+      automated: false
+      schedule: "After each significant failure"
+
+constraints:
+  - id: "failure_must_generate_lesson"
+    description: "Кожен збій повинен генерувати урок"
+    check_expression: "failure.post_mortem is not null"
+    violation_severity: "MEDIUM"
+    violation_action: "CREATE_POST_MORTEM_TICKET"
+
+  - id: "fallback_must_exist"
+    description: "Критичні компоненти повинні мати fallback"
+    check_expression: "critical_component.fallback is not null"
+    violation_severity: "HIGH"
+    violation_action: "ALERT_ARCHITECTURE_REVIEW"
+
+  - id: "recovery_within_sla"
+    description: "Відновлення в межах SLA"
+    check_expression: "recovery_time < failure.type.sla"
+    violation_severity: "HIGH"
+    violation_action: "ESCALATE_TO_ONCALL"
+
+monitoring:
+  metrics:
+    - "failures_by_type_total"
+    - "recovery_time_seconds"
+    - "recovery_success_rate"
+    - "circuit_breaker_state"
+    - "degradation_mode_current"
+    - "fallback_activations_total"
+    - "lessons_generated_total"
+    - "improvements_implemented_total"
+
+  alerts:
+    - condition: "recovery_time > sla"
+      severity: "HIGH"
+      action: "ESCALATE_IMMEDIATELY"
+
+    - condition: "degradation_mode = EMERGENCY"
+      severity: "CRITICAL"
+      action: "ALL_HANDS_ALERT"
+
+    - condition: "recurring_failure_detected"
+      severity: "HIGH"
+      action: "INVESTIGATE_ROOT_CAUSE"

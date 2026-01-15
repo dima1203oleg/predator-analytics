@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from typing import AsyncGenerator, Generator
+from contextlib import contextmanager
 import logging
 
 from .config import settings
@@ -32,6 +33,22 @@ if is_async:
         autocommit=False,
         autoflush=False
     )
+
+    # Also create sync engine for scripts/predatorctl
+    sync_url = settings.DATABASE_URL.replace("+asyncpg", "")
+    sync_engine = create_engine(
+        sync_url,
+        pool_size=settings.DB_POOL_SIZE,
+        max_overflow=settings.DB_MAX_OVERFLOW,
+        echo=settings.DEBUG
+    )
+    sync_session_maker = sessionmaker(
+        sync_engine,
+        class_=Session,
+        expire_on_commit=False,
+        autocommit=False,
+        autoflush=False
+    )
 else:
     # Create sync engine for Celery/Scripts
     engine = create_engine(
@@ -40,6 +57,7 @@ else:
         max_overflow=settings.DB_MAX_OVERFLOW,
         echo=settings.DEBUG
     )
+    sync_engine = engine
     # Sync Session factory
     sync_session_maker = sessionmaker(
         engine,

@@ -1,0 +1,12 @@
+id: "axiom_irreversibility"
+name: "Закон необоротності (Axiom Irreversibility)"
+version: "27.0"
+status: "ENFORCED"
+description: |
+  Необоротні дії (насильство, знищення, обмеження свободи) вимагають не просто високої ймовірності,
+  а повної відсутності розумних альтернативних пояснень та контрфактуальних сценаріїв.
+  Якщо існує хоча б одне правдоподібне альтернативне пояснення, необоротна дія ЗАБОРОНЕНА.
+
+constraints:
+  - id: "supermajority_confidence_required"
+  - id: "zero_alternative_explanations"

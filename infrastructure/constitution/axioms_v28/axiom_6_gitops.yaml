@@ -1,0 +1,23 @@
+id: "axiom_6"
+name: "GitOps Mandate"
+level: "operational"
+description: "Requires that the Git repository remains the single source of truth for the system state."
+
+provisions:
+  declarative_config:
+    required: true
+    description: "All infrastructure and application configuration must be declarative and stored in Git."
+
+  no_manual_changes:
+    required: true
+    description: "Direct modification of live production environment (SSH tampering) is forbidden for permanent changes."
+    exception: "Emergency stabilization (must be back-ported to Git immediately)."
+
+  audit_trail:
+    required: true
+    description: "Every change to the system state is a commit."
+
+violations:
+  config_drift:
+    severity: "HIGH"
+    response: "Automated alert by SOM. Force synchronization with Git state."

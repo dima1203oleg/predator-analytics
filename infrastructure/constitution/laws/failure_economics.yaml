@@ -1,0 +1,9 @@
+id: "axiom_failure_economics"
+name: "Failure Economics and Penalty System"
+version: "27.0"
+description: "Ensures that system failures have explicit costs and consequences."
+
+constraints:
+  - id: "system_freeze_on_critical"
+  - id: "mandatory_postmortem"
+  - id: "azr_downgrade"

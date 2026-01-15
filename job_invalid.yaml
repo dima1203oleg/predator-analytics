@@ -1,0 +1,5 @@
+id: job-prod-002
+type: schedule_job
+context:
+  compute_intensity: high
+  target_node_type: cpu

@@ -656,6 +656,30 @@ export const api = {
         },
         getCaseDetail: async (caseId: string) => {
             return (await v25Client.get(`/cases/${caseId}`)).data;
+        },
+        // --- AZR ENGINE (Autonomous Evolution) ---
+        azr: {
+             getStatus: async () => {
+                 return (await v25Client.get('/azr/status')).data;
+             },
+             getAudit: async (limit: number = 50) => {
+                 return (await v25Client.get(`/azr/audit?limit=${limit}`)).data;
+             },
+             freeze: async () => {
+                 return (await v25Client.post('/azr/freeze')).data;
+             },
+             unfreeze: async () => {
+                 return (await v25Client.post('/azr/unfreeze')).data;
+             },
+             // Governance (DAO)
+             governance: {
+                 propose: async (title: string, description: string, category: string = "TWEAK") => {
+                     return (await v25Client.post('/azr/governance/propose', { title, description, category })).data;
+                 },
+                 getConstitution: async () => {
+                     return (await v25Client.get('/azr/constitution')).data;
+                 }
+             }
         }
     },
 

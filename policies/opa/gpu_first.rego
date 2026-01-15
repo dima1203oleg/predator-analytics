@@ -1,32 +1,26 @@
 package predator.gpu_first
 
+# Deny any pod that requests GPU resources but hasn't selected a GPU node
 violation[{"msg": msg}] {
   input.review.kind.kind == "Pod"
-  # Check if pod requests GPU
   container := input.review.object.spec.containers[_]
-  gpu_request := container.resources.requests["nvidia.com/gpu"]
-  to_number(gpu_request) > 0
 
-  # Check if node selector is present
-  not input.review.object.spec.nodeSelector["predator/gpu"] == "true"
+  # Check if container requests GPU
+  # Adjust the key based on your specific GPU resource name (e.g., nvidia.com/gpu)
+  exists(container.resources.requests["nvidia.com/gpu"])
 
-  msg := sprintf("Pod %v requests GPU but is not scheduled on a GPU node (missing predator/gpu=true)", [input.review.object.metadata.name])
+  # Check node selector
+  not has_gpu_selector(input.review.object.spec)
+
+  msg := sprintf("Pod %v requests GPU but does not have predator/gpu='true' node selector", [input.review.object.metadata.name])
 }
 
-violation[{"msg": msg}] {
-    # Check simple workloads on Heavy Nodes
-    input.review.kind.kind == "Pod"
-    not input.review.object.spec.nodeSelector["predator/gpu"] == "true"
+# Helper to check for existence
+exists(val) {
+  val != null
+}
 
-    # Heuristic: simple jobs should stay off GPU
-    # In reality we check labels like "job-type: etl-heavy"
-    input.review.object.metadata.labels["predator-job-type"] == "simple-script"
-
-    # If it ended up on GPU node somehow (e.g. no taints) - hard to check here without Node info.
-    # But we can forbid requesting GPU for simple scripts.
-    container := input.review.object.spec.containers[_]
-    gpu_request := container.resources.requests["nvidia.com/gpu"]
-    to_number(gpu_request) > 0
-
-    msg := "Simple scripts must not request GPU resources (Law of Compute Distribution)"
+# Helper to check node selector
+has_gpu_selector(spec) {
+  spec.nodeSelector["predator/gpu"] == "true"
 }

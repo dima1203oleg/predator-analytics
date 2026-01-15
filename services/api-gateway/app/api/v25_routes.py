@@ -24,12 +24,20 @@ from app.services.health_aggregator import health_aggregator
 from app.services.ops_service import ops_service
 from app.services.training_status_service import training_status_service
 from libs.core.database import get_db_ctx
-from libs.core.models import MLJob, TrinityAuditLog, Document, AugmentedDataset, CouncilSession, SICycle, IngestionLog
+from libs.core.models import MLJob, TrinityAuditLog, Document, AugmentedDataset, CouncilSession, SICycle, IngestionLog, ETLJob
+from libs.core.etl_state_machine import ETLState
 from sqlalchemy import select, func, desc, text
 
-logger = logging.getLogger("v25_routes")
+from libs.core.structured_logger import get_logger
+logger = get_logger("v25_routes")
 
 v25_router = APIRouter(prefix="/v25", tags=["v25-self-improvement"])
+
+from app.api.routers import etl as etl_router
+v25_router.include_router(etl_router.router)
+
+# AZR Endpoints moved to app/routers/azr.py
+
 
 
 # === Pydantic Models ===
@@ -280,6 +288,31 @@ async def get_v25_system_status():
         training = await training_status_service.get_latest_status()
         is_training = training.get("status") in ["running", "training"]
 
+        # Get real ETL jobs status
+        async with get_db_ctx() as db:
+            active_res = await db.execute(
+                select(ETLJob).where(ETLJob.state.notin_([
+                    ETLState.COMPLETED.value,
+                    ETLState.FAILED.value,
+                    ETLState.CANCELLED.value
+                ]))
+            )
+            active_jobs = active_res.scalars().all()
+
+            etl_running = len(active_jobs) > 0
+            if etl_running:
+                # v26 Requirement: Global progress = Average of real progresses
+                total_percent = sum([j.progress.get("percent", 0) for j in active_jobs])
+                global_progress = int(total_percent / len(active_jobs))
+                # Safety: never 100 if active
+                global_progress = min(global_progress, 99)
+            else:
+                global_progress = 100
+
+            # Count total synced records
+            synced_res = await db.execute(select(func.sum(IngestionLog.records_processed)))
+            records_synced = synced_res.scalar() or 0
+
         return {
             "metrics": metrics,
             "automl": {
@@ -296,9 +329,10 @@ async def get_v25_system_status():
                 "last_round_time": datetime.utcnow().isoformat()
             },
             "data_pipeline": {
-                "etl_running": True,
+                "etl_running": etl_running,
+                "global_progress": global_progress,
                 "last_sync_time": datetime.utcnow().isoformat(),
-                "records_synced": 15420,
+                "records_synced": int(records_synced),
                 "pending_queue": status_data.get("active_queues", 0)
             },
             "opensearch": {
@@ -579,6 +613,39 @@ async def trigger_autonomous_training():
 async def get_training_status():
     """Get current autonomous training status"""
     return await training_status_service.get_latest_status()
+
+class AgentCycleRequest(BaseModel):
+    task: str
+
+@v25_router.post("/agents/run-cycle")
+async def run_sovereign_agent_cycle(request: AgentCycleRequest):
+    """
+    Запуск Суверенного Циклу автовдосконалення (7 CLI Агентів):
+    Gemini, Vibe, Mistral, Aider/Copilot, Claude, DeepSeek, CodeLlama
+    """
+    try:
+        from orchestrator.agents.v25_sovereign_registry import sovereign_orchestrator
+        result = await sovereign_orchestrator.execute_comprehensive_cycle(request.task)
+        return result
+    except Exception as e:
+        logger.error(f"Sovereign Cycle Failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@v25_router.get("/agents/status")
+async def get_sovereign_agents_status():
+    """
+    Статус всіх 7 суверенних CLI агентів (UA)
+    """
+    try:
+        from orchestrator.agents.v25_sovereign_registry import sovereign_orchestrator
+        return sovereign_orchestrator.get_agent_status()
+    except Exception as e:
+        logger.error(f"Agent Status Failed: {e}")
+        return {
+            "agents": {},
+            "cycle_count": 0,
+            "error": str(e)
+        }
 
 @v25_router.post("/system/restart")
 async def run_system_restart():
@@ -1030,108 +1097,101 @@ async def get_monitoring_health():
 
 @v25_router.get("/monitoring/sagas")
 async def get_real_sagas():
-    """Returns real distributed transaction status (Sagas) from Ingestion logs with full 4-step details"""
+    """
+    Returns REAL ETL Job status (v26 State Machine).
+    MAPPED to UI 4-step visualization.
+    """
+    from libs.core.models.entities import ETLJob
+    from libs.core.etl_state_machine import ETLState
+
     try:
         async with get_db_ctx() as db:
-            # 1. Fetch recent ingestion logs
+            # 1. Fetch recent ETL jobs
             result = await db.execute(
-                select(IngestionLog).order_by(desc(IngestionLog.started_at)).limit(5)
+                select(ETLJob).order_by(desc(ETLJob.created_at)).limit(5)
             )
-            logs = result.scalars().all()
-
-            # 2. Fetch latest ML Job to link status (simplified linkage)
-            ml_job_res = await db.execute(
-                select(MLJob).order_by(desc(MLJob.created_at)).limit(1)
-            )
-            latest_ml_job = ml_job_res.scalars().first()
-            ml_status = "idle"
-            ml_progress = 0
-            if latest_ml_job:
-                if latest_ml_job.status == "succeeded":
-                    ml_status = "completed"
-                    ml_progress = 100
-                elif latest_ml_job.status == "running":
-                    ml_status = "running"
-                    ml_progress = 45 # Approximate
-                elif latest_ml_job.status == "queued":
-                    ml_status = "pending"
-                    ml_progress = 0
-                elif latest_ml_job.status == "failed":
-                    ml_status = "failed"
+            jobs = result.scalars().all()
 
             sagas = []
-            for log in logs:
-                is_completed = log.status == "success"
-                is_running = log.status == "running"
-                is_failed = log.status == "failed"
+            for job in jobs:
+                st = job.state
 
-                # Determine total progress
-                total_progress = 0
-                if is_completed:
-                    total_progress = 100
-                elif is_running:
-                     # Calculate based on records
-                    if log.records_total > 0:
-                        total_progress = int((log.records_processed / log.records_total) * 75)
-                    else:
-                        total_progress = 10
+                # Mapping ETLState to UI "Step status"
+                # Steps: ingestion, processing, indexing, ml
 
-                # Determine ML status for this specific pipeline (temporal correlation)
-                # If this log is recent and completed, and ML job exists, use it.
-                # Otherwise, if log is old, ML is likely completed or not relevant.
-                step_ml_status = "idle"
-                if is_completed:
-                     step_ml_status = ml_status
+                # 1. Ingestion
+                ingestion_st = "pending"
+                if st == ETLState.UPLOADING.value: ingestion_st = "running"
+                elif st == ETLState.UPLOAD_FAILED.value: ingestion_st = "failed"
+                elif st == ETLState.CANCELLED.value: ingestion_st = "idle"
+                elif st not in [ETLState.CREATED.value]: ingestion_st = "completed"
 
-                # Build steps with REAL data
+                # 2. Processing
+                proc_st = "pending"
+                if st == ETLState.PROCESSING.value: proc_st = "running"
+                elif st == ETLState.PROCESSING_FAILED.value: proc_st = "failed"
+                elif st == ETLState.CANCELLED.value: proc_st = "idle"
+                elif st in [ETLState.PROCESSED.value, ETLState.INDEXING.value, ETLState.INDEXING_FAILED.value, ETLState.INDEXED.value, ETLState.COMPLETED.value]:
+                     proc_st = "completed"
+
+                # 3. Indexing
+                idx_st = "pending"
+                if st == ETLState.INDEXING.value: idx_st = "running"
+                elif st == ETLState.INDEXING_FAILED.value: idx_st = "failed"
+                elif st == ETLState.CANCELLED.value: idx_st = "idle"
+                elif st in [ETLState.INDEXED.value, ETLState.COMPLETED.value]:
+                     idx_st = "completed"
+
+                # 4. ML
+                ml_st = "idle"
+                if st == ETLState.COMPLETED.value: ml_st = "pending"
+
+                progress_val = job.progress.get("percent", 0) if job.progress else 0
+
                 steps = [
                     {
                         "id": "ingestion",
                         "name": "Завантаження",
-                        "status": "completed", # Log existence implies upload done
-                        "progress": 100,
-                        "records": log.records_total or 0,
-                        "duration": 5
+                        "status": ingestion_st,
+                        "progress": 100 if ingestion_st == "completed" else progress_val if ingestion_st == "running" else 0,
+                        "records": job.progress.get("records_total", 0) if job.progress else 0
                     },
                     {
                         "id": "processing",
                         "name": "Обробка",
-                        "status": "completed" if is_completed else ("failed" if is_failed else "running"),
-                        "progress": 100 if is_completed else (int(log.records_processed/log.records_total*100) if log.records_total else 0),
-                        "records": log.records_processed or 0,
-                        "duration": 15
+                        "status": proc_st,
+                        "progress": 100 if proc_st == "completed" else progress_val if proc_st == "running" else 0,
+                        "records": job.progress.get("records_processed", 0) if job.progress else 0
                     },
                     {
                         "id": "indexing",
                         "name": "Індексація",
-                        "status": "completed" if is_completed else "pending",
-                        "progress": 100 if is_completed else 0,
-                        "records": log.records_processed if is_completed else 0, # Indexed count matches processed
-                        "duration": 10
+                        "status": idx_st,
+                        "progress": 100 if idx_st == "completed" else progress_val if idx_st == "running" else 0,
+                        "records": job.progress.get("records_indexed", 0) if job.progress else 0
                     },
                     {
                         "id": "ml",
                         "name": "ML Аналіз",
-                        "status": step_ml_status,
-                        "progress": ml_progress if step_ml_status != "idle" else 0,
-                        "duration": 120 if step_ml_status == "completed" else 0
+                        "status": ml_st,
+                        "progress": 0
                     }
                 ]
 
                 sagas.append({
-                    "id": f"SAGA-{log.id}",
-                    "traceId": f"trc-{str(log.id)[:8]}",
-                    "name": f"Імпорт: {log.source}",
-                    "source": log.source,
-                    "status": "COMPLETED" if is_completed else "FAILED" if is_failed else "RUNNING",
-                    "totalProgress": total_progress,
-                    "startedAt": log.started_at.isoformat() if log.started_at else datetime.utcnow().isoformat(),
+                    "id": str(job.id),
+                    "name": f"Імпорт: {job.source_file}",
+                    "source": job.source_file,
+                    "status": "completed" if st == ETLState.COMPLETED.value else "failed" if st in [ETLState.FAILED.value, ETLState.CANCELLED.value] else "running",
+                    "totalProgress": progress_val,
+                    "startedAt": job.created_at.isoformat(),
                     "steps": steps
                 })
 
-            if not sagas:
-                 return []
             return sagas
+    except Exception as e:
+        logger.error(f"Sagas fetch failed: {e}")
+        return []
     except Exception as e:
         logger.error(f"Sagas fetch failed: {e}")
         return []
@@ -1888,4 +1948,279 @@ async def get_workflow_status(workflow_id: str):
             "workflow_id": workflow_id,
             "status": "unknown",
             "error": str(e)
+        }
+
+
+# === Autonomous Intelligence v2.0 Endpoints ===
+
+@v25_router.get("/autonomous/status")
+async def get_autonomous_intelligence_status():
+    """
+    🧠 Get Autonomous Intelligence v2.0 Status
+
+    Returns comprehensive status including:
+    - Predictive analyzer metrics
+    - Learning engine statistics
+    - Recent autonomous decisions
+    - Resource allocation status
+    """
+    try:
+        from app.services.autonomous_intelligence_v2 import autonomous_intelligence_v2
+        return autonomous_intelligence_v2.get_status()
+    except Exception as e:
+        logger.error(f"Autonomous Intelligence status failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@v25_router.get("/autonomous/predictions")
+async def get_current_predictions():
+    """
+    🔮 Get Current System Predictions
+
+    Returns predicted issues before they occur:
+    - CPU overload predictions
+    - Memory leak detection
+    - Error spike forecasts
+    - Performance degradation warnings
+    """
+    try:
+        from app.services.autonomous_intelligence_v2 import autonomous_intelligence_v2
+        predictions = autonomous_intelligence_v2.predictive_analyzer.predict_issues()
+
+        return {
+            "predictions": predictions,
+            "count": len(predictions),
+            "timestamp": datetime.utcnow().isoformat(),
+            "metrics_collected": len(autonomous_intelligence_v2.predictive_analyzer.metrics_history)
+        }
+    except Exception as e:
+        logger.error(f"Predictions fetch failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@v25_router.get("/autonomous/decisions")
+async def get_autonomous_decisions():
+    """
+    🤖 Get Recent Autonomous Decisions
+
+    Returns history of decisions made by the system without human intervention
+    """
+    try:
+        from app.services.autonomous_intelligence_v2 import autonomous_intelligence_v2
+        decisions = autonomous_intelligence_v2.decision_maker.decision_history
+
+        return {
+            "decisions": [
+                {
+                    "id": d.decision_id,
+                    "type": d.decision_type,
+                    "confidence": d.confidence,
+                    "reasoning": d.reasoning,
+                    "actions": d.actions,
+                    "expected_impact": d.expected_impact,
+                    "executed": d.executed,
+                    "success": d.success,
+                    "timestamp": d.timestamp.isoformat()
+                }
+                for d in decisions[-20:]  # Last 20 decisions
+            ],
+            "total_decisions": len(decisions),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Decisions fetch failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@v25_router.get("/autonomous/learning-stats")
+async def get_learning_statistics():
+    """
+    🎓 Get Self-Learning Statistics
+
+    Returns statistics about the system's learning progress:
+    - Total learning records
+    - Strategy confidence scores
+    - Average accuracy
+    - Best performing strategies
+    """
+    try:
+        from app.services.autonomous_intelligence_v2 import autonomous_intelligence_v2
+        stats = autonomous_intelligence_v2.learning_engine.get_learning_stats()
+
+        # Add detailed strategy scores
+        strategy_details = {}
+        for strategy, scores in autonomous_intelligence_v2.learning_engine.strategy_scores.items():
+            strategy_details[strategy] = {
+                "confidence": autonomous_intelligence_v2.learning_engine.get_strategy_confidence(strategy),
+                "total_uses": len(scores),
+                "recent_accuracy": scores[-10:] if len(scores) >= 10 else scores,
+                "average_accuracy": sum(scores) / len(scores) if scores else 0.0
+            }
+
+        return {
+            **stats,
+            "strategy_details": strategy_details,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Learning stats fetch failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@v25_router.get("/autonomous/resources")
+async def get_resource_allocation():
+    """
+    📊 Get Dynamic Resource Allocation Status
+
+    Returns current resource allocation and utilization
+    """
+    try:
+        from app.services.autonomous_intelligence_v2 import autonomous_intelligence_v2
+        return autonomous_intelligence_v2.resource_allocator.get_allocation_status()
+    except Exception as e:
+        logger.error(f"Resource allocation fetch failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@v25_router.post("/autonomous/start")
+async def start_autonomous_intelligence():
+    """
+    🚀 Start Autonomous Intelligence v2.0
+
+    Starts the autonomous intelligence system with:
+    - Predictive analytics
+    - Self-learning
+    - Autonomous decision making
+    - Dynamic resource allocation
+    """
+    try:
+        from app.services.autonomous_intelligence_v2 import autonomous_intelligence_v2
+        await autonomous_intelligence_v2.start()
+
+        return {
+            "status": "started",
+            "message": "Autonomous Intelligence v2.0 is now running",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Failed to start Autonomous Intelligence: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@v25_router.post("/autonomous/stop")
+async def stop_autonomous_intelligence():
+    """
+    🛑 Stop Autonomous Intelligence v2.0
+    """
+    try:
+        from app.services.autonomous_intelligence_v2 import autonomous_intelligence_v2
+        await autonomous_intelligence_v2.stop()
+
+        return {
+            "status": "stopped",
+            "message": "Autonomous Intelligence v2.0 has been stopped",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Failed to stop Autonomous Intelligence: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class AutonomyConfigUpdate(BaseModel):
+    check_interval: Optional[int] = None
+    min_confidence: Optional[float] = None
+    anomaly_threshold: Optional[float] = None
+
+
+@v25_router.post("/autonomous/config")
+async def update_autonomy_config(config: AutonomyConfigUpdate):
+    """
+    ⚙️ Update Autonomous Intelligence Configuration
+
+    Allows runtime configuration of:
+    - Check interval (seconds)
+    - Minimum confidence for autonomous execution
+    - Anomaly detection threshold
+    """
+    try:
+        from app.services.autonomous_intelligence_v2 import autonomous_intelligence_v2
+
+        if config.check_interval is not None:
+            autonomous_intelligence_v2._check_interval = config.check_interval
+
+        if config.min_confidence is not None:
+            autonomous_intelligence_v2.decision_maker.min_confidence = config.min_confidence
+
+        if config.anomaly_threshold is not None:
+            autonomous_intelligence_v2.predictive_analyzer.anomaly_threshold = config.anomaly_threshold
+
+        return {
+            "status": "updated",
+            "current_config": {
+                "check_interval": autonomous_intelligence_v2._check_interval,
+                "min_confidence": autonomous_intelligence_v2.decision_maker.min_confidence,
+                "anomaly_threshold": autonomous_intelligence_v2.predictive_analyzer.anomaly_threshold
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Config update failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@v25_router.get("/autonomous/health")
+async def get_autonomous_health():
+    """
+    💚 Get Autonomous Intelligence Health Check
+
+    Returns health status of all autonomous subsystems
+    """
+    try:
+        from app.services.autonomous_intelligence_v2 import autonomous_intelligence_v2
+
+        status = autonomous_intelligence_v2.get_status()
+
+        # Determine health based on various factors
+        is_running = status.get("is_running", False)
+        learning_stats = status.get("learning_engine", {})
+        decisions = status.get("decision_maker", {}).get("recent_decisions", [])
+
+        # Calculate health score
+        health_score = 100
+
+        if not is_running:
+            health_score -= 50
+
+        # Check if learning is progressing
+        if learning_stats.get("total_records", 0) == 0:
+            health_score -= 20
+
+        # Check recent decision success rate
+        recent_successes = sum(1 for d in decisions if d.get("success"))
+        if decisions:
+            success_rate = recent_successes / len(decisions)
+            if success_rate < 0.5:
+                health_score -= 20
+
+        health_status = "healthy" if health_score >= 80 else "degraded" if health_score >= 50 else "critical"
+
+        return {
+            "status": health_status,
+            "health_score": health_score,
+            "is_running": is_running,
+            "subsystems": {
+                "predictive_analyzer": "healthy" if status.get("predictive_analyzer", {}).get("metrics_collected", 0) > 0 else "initializing",
+                "learning_engine": "healthy" if learning_stats.get("total_records", 0) > 0 else "initializing",
+                "decision_maker": "healthy" if len(decisions) > 0 else "initializing",
+                "resource_allocator": "healthy"
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        return {
+            "status": "critical",
+            "health_score": 0,
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
         }

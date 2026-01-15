@@ -1,0 +1,16 @@
+id: "axiom_crc"
+name: "Axiom CRC: Contextual Reality Coherence"
+version: "27.0"
+level: "ABSOLUTE"
+status: "ENFORCED"
+description: >
+  Fact without context is noise. Action without context is violence.
+  Decisions must be temporally, spatially, and socially coherent.
+  Alternative (counterfactual) explanations must be analyzed and proven less plausible.
+
+constraints:
+  - id: "temporal_coherence"
+    description: "Temporal coherence required"
+  - id: "spatial_coherence"
+  - id: "social_coherence"
+  - id: "counterfactual_analysis"

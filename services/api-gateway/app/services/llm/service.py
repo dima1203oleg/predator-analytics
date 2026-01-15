@@ -9,9 +9,9 @@ import httpx
 import os
 import random
 from ...core.config import settings
-from libs.core.logger import setup_logger
+from libs.core.structured_logger import get_logger, RequestLogger
 
-logger = setup_logger("predator.backend.llm")
+logger = get_logger("predator.backend.llm")
 
 
 class LLMProvider(Enum):
@@ -149,7 +149,7 @@ class LLMService:
         self.providers["ollama"] = {
             "base_url": settings.LLM_OLLAMA_BASE_URL,
             "model": settings.OLLAMA_MODEL,
-            "models_available": ["qwen2.5-coder:7b", "mistral", "llama3"],
+            "models_available": ["llama3.1:8b-instruct", "qwen2.5-coder:7b", "mistral", "llama3"],
             "api_key": None
         }
 
@@ -274,7 +274,7 @@ class LLMService:
                 continue
 
             try:
-                logger.debug(f"LLM_ROUTER: Attempting {provider_name}...")
+                logger.debug("llm_routing_attempt", provider=provider_name)
                 response = await self.generate(
                     prompt=prompt,
                     system=system,
@@ -283,16 +283,16 @@ class LLMService:
                     temperature=temperature
                 )
                 if response.success:
-                    logger.info(f"LLM_ROUTER: Success with {provider_name} [Model: {response.model}]")
+                    logger.info("llm_routing_success", provider=provider_name, model=response.model)
                     return response
 
-                logger.warning(f"LLM_ROUTER: {provider_name} returned error: {response.error}")
+                logger.warning("llm_routing_error", provider=provider_name, error=response.error)
                 last_error = response.error
             except Exception as e:
-                logger.error(f"LLM_ROUTER: Provider {provider_name} critical failure: {e}")
+                logger.error("llm_routing_failure_critical", provider=provider_name, error=str(e))
                 last_error = str(e)
 
-        logger.error(f"LLM_ROUTER: All providers in chain failed. Last error: {last_error}")
+        logger.error("llm_routing_exhausted", last_error=last_error)
         return await self.generate(prompt, system, max_tokens=max_tokens, temperature=temperature)
 
     async def generate(
@@ -326,21 +326,22 @@ class LLMService:
         config = self.providers[selected_provider]
 
         try:
-            if selected_provider == "gemini":
-                response = await self._call_gemini(prompt, system, config, max_tokens, temperature, format)
-            elif selected_provider in ["groq", "mistral", "openrouter", "deepseek", "together", "grok"]:
-                response = await self._call_openai_compatible(prompt, system, config, max_tokens, temperature, selected_provider, format)
-            elif selected_provider == "cohere":
-                response = await self._call_cohere(prompt, system, config, max_tokens, temperature)
-            elif selected_provider == "huggingface":
-                response = await self._call_huggingface(prompt, system, config, max_tokens, temperature)
-            else:
-                response = await self._call_ollama(prompt, system, config, max_tokens, temperature)
+            with RequestLogger(logger, "llm_generation", provider=selected_provider, model=config["model"]) as req_logger:
+                if selected_provider == "gemini":
+                    response = await self._call_gemini(prompt, system, config, max_tokens, temperature, format)
+                elif selected_provider in ["groq", "mistral", "openrouter", "deepseek", "together", "grok"]:
+                    response = await self._call_openai_compatible(prompt, system, config, max_tokens, temperature, selected_provider, format)
+                elif selected_provider == "cohere":
+                    response = await self._call_cohere(prompt, system, config, max_tokens, temperature)
+                elif selected_provider == "huggingface":
+                    response = await self._call_huggingface(prompt, system, config, max_tokens, temperature)
+                else:
+                    response = await self._call_ollama(prompt, system, config, max_tokens, temperature)
 
-            response.latency_ms = (time.time() - start_time) * 1000
-            return response
+                response.latency_ms = (time.time() - start_time) * 1000
+                return response
         except Exception as e:
-            logger.error(f"LLM error with {selected_provider}: {e}")
+            logger.error("llm_critical_error", provider=selected_provider, error=str(e))
             return LLMResponse(False, "", selected_provider, config["model"], error=str(e))
 
     async def _call_cohere(self, prompt, system, config, max_tokens, temperature):
@@ -441,7 +442,13 @@ class LLMService:
             response = await client.post(f"{config['base_url']}/generate", json={
                 "model": config["model"], "prompt": full_prompt, "stream": False
             }, timeout=120.0)
+
             data = response.json()
+            if response.status_code != 200:
+                error_msg = data.get("error", "Unknown Ollama Error")
+                logger.error(f"Ollama error: {error_msg}")
+                return LLMResponse(False, "", "ollama", config["model"], error=error_msg)
+
             return LLMResponse(True, data.get("response", ""), "ollama", config["model"])
 
 # Singleton instance

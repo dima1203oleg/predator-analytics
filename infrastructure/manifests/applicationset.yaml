@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: predator-applications
+spec:
+  generators:
+    # Git generator for services and apps
+    - git:
+        repoURL: https://github.com/org/predator-infrastructure.git
+        revision: main
+        directories:
+          - path: services/*
+          - path: applications/*
+
+    # Cluster generator for environments
+    - clusters:
+        selector:
+          matchLabels:
+            predator-environment: development
+
+  template:
+    metadata:
+      name: "{{path.basename}}"
+      annotations:
+        constitution-version: "v26"
+        managed-by: "argocd"
+
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/org/predator-infrastructure.git
+        targetRevision: main
+        path: "{{path}}"
+
+        plugin:
+          name: kustomize
+          env:
+            - name: KUSTOMIZE_ENVIRONMENT
+              value: "{{name}}"
+
+      destination:
+        server: "{{server}}"
+        namespace: predator-system
+
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+
+        syncOptions:
+          - Validate=true
+          - CreateNamespace=true
+          - PruneLast=true
+
+        retry:
+          limit: 3
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m

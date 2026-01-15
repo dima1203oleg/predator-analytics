@@ -23,7 +23,7 @@ python-multipart==0.0.9
 
 # Semantic Search (Phase 6-7)
 sentence-transformers==3.0.0
-qdrant-client==1.13.2
+qdrant-client>=1.16.0
 numpy>=1.26.0
 Pillow>=10.0.0
 
@@ -78,6 +78,11 @@ jaeger-client>=4.8.0       # Distributed tracing (optional)
 opentelemetry-api==1.30.0
 opentelemetry-sdk==1.30.0
 opentelemetry-proto==1.30.0
+opentelemetry-instrumentation-fastapi==0.51b0
+opentelemetry-instrumentation-sqlalchemy==0.51b0
+opentelemetry-instrumentation-httpx==0.51b0
+opentelemetry-exporter-otlp==1.30.0
+opentelemetry-exporter-otlp-proto-grpc==1.30.0
 protobuf==5.29.3
 importlib-metadata==7.2.1  # Fixed for Aider
 
@@ -121,3 +126,8 @@ SpeechRecognition==3.10.1
 duckdb>=0.9.0
 pyarrow>=14.0.0
 great_expectations>=0.18.0
+
+# ════ CLI Agents v25.0 (Multi-Agent Self-Improvement) ════
+aider-chat>=0.70.0
+gitpython>=3.1.40
+PyYAML>=6.0.2

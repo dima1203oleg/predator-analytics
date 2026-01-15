@@ -1,0 +1,12 @@
+id: "axiom_llm_truth_boundary"
+name: "LLM Truth Boundary and Verification"
+version: "27.0"
+description: "Prevents LLM hallucinations from impacting system state."
+
+constraints:
+  - id: "TB-001"
+    description: "LLM outputs are proposals, never facts."
+  - id: "TB-002"
+    description: "LLM outputs cannot directly modify system state without Arbiter validation."
+  - id: "TB-003"
+    description: "All LLM-generated content must be tagged as 'speculative' until verified."

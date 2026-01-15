@@ -6,17 +6,18 @@ Middleware for Predator Analytics
 - Error Handling
 """
 import time
-import logging
+import os
+import uuid
 from typing import Callable, Optional
 from fastapi import Request, Response, HTTPException
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 import redis.asyncio as aioredis
-import os
 from prometheus_client import Counter, Histogram, Gauge, REGISTRY
 from datetime import datetime
+from libs.core.structured_logger import get_logger, RequestLogger
 
-logger = logging.getLogger(__name__)
+logger = get_logger("predator.middleware")
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PROMETHEUS METRICS
@@ -187,52 +188,31 @@ class MetricsMiddleware(BaseHTTPMiddleware):
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
-        # Generate Correlation ID
-        correlation_id = request.headers.get("X-Correlation-ID") or str(uuid.uuid4())
-        request.state.correlation_id = correlation_id
+        # Get path for context
+        path = request.url.path
+        method = request.method
 
-        start_time = time.time()
+        # Use RequestLogger for structured timing and logging
+        with RequestLogger(logger, "http_request", path=path, method=method) as req_logger:
+            try:
+                response = await call_next(request)
 
-        # Process request
-        try:
-            response = await call_next(request)
+                # Add Correlation ID to response headers if available
+                if hasattr(request.state, "correlation_id"):
+                    response.headers["X-Correlation-ID"] = request.state.correlation_id
 
-            # Add Correlation ID to response headers
-            response.headers["X-Correlation-ID"] = correlation_id
+                # Update context for the completion log
+                req_logger.bind(status_code=response.status_code)
 
-            # Log specific events if needed (e.g. 500s or slow requests)
-            duration = time.time() - start_time
-            if duration > 1.0 or response.status_code >= 500:
-                logger.info(
-                    f"Request {request.method} {request.url.path} finished",
-                    extra={
-                        "correlation_id": correlation_id,
-                        "status": response.status_code,
-                        "duration": duration,
-                        "method": request.method,
-                        "path": request.url.path
-                    }
-                )
-
-            return response
-
-        except Exception as e:
-            duration = time.time() - start_time
-            logger.error(
-                f"Request failed: {e}",
-                extra={
-                    "correlation_id": correlation_id,
-                    "duration": duration,
-                    "error": str(e)
-                }
-            )
-            # Re-raise to let ErrorHandlerMiddleware handle response
-            raise e
+                return response
+            except Exception as e:
+                # Exception is handled by RequestLogger.__exit__
+                raise e
 
 class ErrorHandlerMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         try:
             return await call_next(request)
         except Exception as e:
-            logger.error(f"ERROR: {e}", exc_info=True)
-            return JSONResponse(status_code=500, content={"error": str(e)})
+            logger.exception("unhandled_exception", path=request.url.path, method=request.method)
+            return JSONResponse(status_code=500, content={"error": "Internal Server Error", "detail": str(e)})

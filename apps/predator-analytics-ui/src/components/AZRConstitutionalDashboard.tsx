@@ -12,6 +12,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { TruthLedgerSection } from './TruthLedgerSection';
 import {
   Shield,
   Scale,
@@ -261,9 +262,9 @@ export const AZRConstitutionalDashboard: React.FC = () => {
   const fetchData = useCallback(async () => {
     try {
       const [constitutionRes, proposalsRes, metricsRes] = await Promise.all([
-        fetch('/api/azr/constitution/verify'),
-        fetch('/api/azr/proposals?limit=10'),
-        fetch('/api/azr/metrics')
+        fetch('/api/v25/azr/constitution/verify'),
+        fetch('/api/v25/azr/proposals?limit=10'),
+        fetch('/api/v25/azr/metrics')
       ]);
 
       if (constitutionRes.ok) {
@@ -437,6 +438,9 @@ export const AZRConstitutionalDashboard: React.FC = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* TRUTH LEDGER AUDIT */}
+      <TruthLedgerSection />
 
       {/* Аксіоми */}
       <div>

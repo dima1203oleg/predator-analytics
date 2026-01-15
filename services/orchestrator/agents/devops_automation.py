@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.12
 """
 PREDATOR v25 - DevOps Automation Agent
 Handles CI/CD pipelines, deployments, and infrastructure automation.
@@ -13,7 +13,9 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 
-logger = logging.getLogger("agents.devops_automation")
+from libs.core.structured_logger import get_logger, log_business_event, RequestLogger
+
+logger = get_logger("agents.devops_automation")
 
 
 class DeploymentTarget(Enum):
@@ -31,9 +33,9 @@ class DeploymentConfig:
     environment: str
     services: List[str] = field(default_factory=list)
     ssh_host: Optional[str] = None
-    ssh_port: int = 22
+    ssh_port: int = 6666 # За замовчуванням використовуємо порт 6666 (NVIDIA Server)
     ssh_user: str = "dima"
-    ssh_key: Optional[str] = None
+    ssh_key: Optional[str] = os.path.expanduser("~/.ssh/id_ed25519_ngrok")
     compose_file: str = "docker-compose.yml"
     helm_chart: Optional[str] = None
     helm_values: Optional[str] = None
@@ -55,7 +57,7 @@ class DevOpsAutomationAgent:
         default_ssh_key: Optional[str] = None
     ):
         self.project_root = project_root
-        self.default_ssh_key = default_ssh_key or os.path.expanduser("~/.ssh/id_ed25519_dev")
+        self.default_ssh_key = default_ssh_key or os.path.expanduser("~/.ssh/id_ed25519_ngrok")
         self.deployment_history: List[Dict] = []
 
     async def _run_command(
@@ -134,7 +136,8 @@ class DevOpsAutomationAgent:
         force_recreate: bool = False
     ) -> Dict[str, Any]:
         """Deploy services using Docker Compose."""
-        logger.info(f"🚀 Deploying via Docker Compose to {config.environment}")
+        with RequestLogger(logger, "docker_deploy", environment=config.environment, target=config.target.value) as req_logger:
+            req_logger.info(f"deploy_started", build=build)
 
         if config.target == DeploymentTarget.REMOTE_SSH:
             # Remote deployment
@@ -230,7 +233,8 @@ class DevOpsAutomationAgent:
         timeout: str = "10m"
     ) -> Dict[str, Any]:
         """Deploy or upgrade a Helm release."""
-        logger.info(f"🚀 Deploying Helm release: {release_name}")
+        with RequestLogger(logger, "helm_deploy", release=release_name, namespace=namespace) as req_logger:
+            req_logger.info("helm_deploy_started", chart=chart_path)
 
         cmd = [
             "helm",
@@ -308,7 +312,10 @@ class DevOpsAutomationAgent:
         service_name: str,
         config: DeploymentConfig
     ) -> Dict[str, Any]:
-        """Restart a specific service."""
+        """Restart a specific service (with anti-lockup for self-restart)."""
+        with RequestLogger(logger, "service_restart", service=service_name, target=config.target.value):
+            logger.info(f"restart_requested", service=service_name)
+
         if config.target == DeploymentTarget.REMOTE_SSH:
             result = await self._run_ssh_command(
                 host=config.ssh_host,
@@ -318,7 +325,15 @@ class DevOpsAutomationAgent:
                 key=config.ssh_key
             )
         else:
-            result = await self._run_command(["docker", "restart", service_name])
+            # Local Restart
+            # If we are in docker and trying to restart ourselves, we must be careful
+            # We use a detached process to avoid waiting for our own death
+            try:
+                cmd = ["docker", "restart", service_name]
+                subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                return {"success": True, "message": "Restart command sent (detached)"}
+            except Exception as e:
+                return {"success": False, "error": str(e)}
 
         if result["success"]:
             logger.info(f"✅ Restarted service: {service_name}")
@@ -442,7 +457,7 @@ def create_nvidia_config() -> DeploymentConfig:
         ssh_host="194.177.1.240",
         ssh_port=6666,
         ssh_user="dima",
-        ssh_key=os.path.expanduser("~/.ssh/id_ed25519_dev"),
+        ssh_key=os.path.expanduser("~/.ssh/id_ed25519_ngrok"),
         compose_file="docker-compose.yml",
         services=[]
     )

@@ -1,0 +1,12 @@
+id: "axiom_model_governance"
+name: "Model Governance and Lifecycle Control"
+version: "27.0"
+description: "Strict control over AI model lineage and production readiness."
+
+constraints:
+  - id: "MG-001"
+    description: "Models without confirmed lineage cannot run in production."
+  - id: "MG-002"
+    description: "Model changes are treated as architectural changes."
+  - id: "MG-003"
+    description: "Model outputs must be traceable and auditable in the Truth Ledger."

@@ -26,7 +26,8 @@
     "workbox-window": "^7.0.0",
     "three": "^0.160.0",
     "@react-three/fiber": "^8.15.12",
-    "@react-three/drei": "^9.96.1"
+    "@react-three/drei": "^9.96.1",
+    "@tanstack/react-query": "^5.17.0"
   },
   "devDependencies": {
     "@types/three": "^0.160.0",

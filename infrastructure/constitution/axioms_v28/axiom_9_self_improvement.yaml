@@ -1,0 +1,32 @@
+id: "axiom_9"
+name: "Bounded Self-Improvement Law"
+level: "fundamental"
+description: "Governs the capabilities of the system to modify its own code or architecture."
+
+provisions:
+  verifiability:
+    required: true
+    description: "All self-improvement actions must produce verifiable artifacts (diffs, test results)."
+    mechanism: "VPC Verifier check"
+
+  reversibility:
+    required: true
+    description: "Every self-improvement action must have an automated rollback plan."
+    max_rollback_time_ms: 300000 # 5 minutes
+
+  human_gate:
+    required_for: ["architecture", "constitution", "security_protocols"]
+    description: "Critical changes require explicit digital signature from a Human Sovereign."
+
+  rate_limit:
+    max_improvements_per_day: 10
+    cooldown_period_s: 3600
+
+violations:
+  unverified_change:
+    severity: "CRITICAL"
+    response: "Immediate rollback and isolation of the modifying agent."
+
+  recursion_loop:
+    severity: "CRITICAL"
+    response: "Force restart of the agent container. Reset to last stable state."

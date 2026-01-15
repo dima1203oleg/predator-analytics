@@ -1,0 +1,12 @@
+id: "axiom_ignorance"
+name: "Право не знати (Axiom Ignorance)"
+version: "27.0"
+status: "ENFORCED"
+description: |
+  Якщо система формально декларує "невідоме невідоме" (ignorance), вона зобов'язана
+  віддати перевагу бездіяльності перед припущеннями. Спекуляція на основі неповної
+  реальності не може бути підставою для дії.
+
+constraints:
+  - id: "prefer_inaction_on_ignorance"
+  - id: "speculation_forbidden"

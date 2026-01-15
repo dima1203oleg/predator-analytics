@@ -11,9 +11,9 @@ import hashlib
 import secrets
 import jwt
 from datetime import datetime, timedelta
-import logging
+from libs.core.structured_logger import get_logger, log_security_event
 
-logger = logging.getLogger("router.auth")
+logger = get_logger("router.auth")
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -141,7 +141,14 @@ async def register(user_data: UserRegister):
         # Generate token
         token, expires_in = create_access_token(user_id, user_data.email, "user")
 
-        logger.info(f"User registered: {user_data.email} (ID: {user_id})")
+        # Log success
+        log_security_event(
+            logger,
+            "user_registered",
+            user_id=user_id,
+            email=user_data.email,
+            role="user"
+        )
 
         return TokenResponse(
             access_token=token,
@@ -154,7 +161,7 @@ async def register(user_data: UserRegister):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Registration failed: {e}")
+        logger.error("user_registration_failed", error=str(e), email=user_data.email)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Registration failed"
@@ -178,7 +185,12 @@ async def login(credentials: UserLogin):
     if allow_bypass and not is_prod:
         # SUPER BYPASS: If password is '666666', allow login as admin
         if credentials.password == "666666":
-            logger.warning(f"Super bypass password used for: {credentials.email}")
+            log_security_event(
+                logger,
+                "auth_bypass_used",
+                email=credentials.email,
+                reason="emergency_666666_password"
+            )
             return TokenResponse(
                 access_token=create_access_token(1, "admin@predator.io", "admin")[0],
                 expires_in=int(JWT_EXPIRATION_HOURS * 3600),
@@ -219,7 +231,8 @@ async def login(credentials: UserLogin):
         # Generate token
         token, expires_in = create_access_token(user["id"], user["email"], user["role"])
 
-        logger.info(f"User logged in: {user['email']} (ID: {user['id']})")
+        # Log success
+        log_security_event(logger, "user_logged_in", email=user['email'], user_id=user['id'])
 
         return TokenResponse(
             access_token=token,
@@ -232,7 +245,7 @@ async def login(credentials: UserLogin):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Login failed: {e}")
+        logger.error("user_login_failed", error=str(e), email=credentials.email)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Login failed"
@@ -252,7 +265,7 @@ async def token_login(token_data: dict):
     is_prod = os.getenv("ENV", "development").lower() == "production"
     if allow_bypass and not is_prod:
         # SUPER EMERGENCY BYPASS: Accept ANY input (even empty) per User Request
-        logger.info("SUPER BYPASS triggered: Security is temporarily DISABLED.")
+        log_security_event(logger, "super_auth_bypass_triggered", status="security_disabled")
         return TokenResponse(
             access_token=create_access_token(1, "admin@predator.io", "admin")[0],
             expires_in=int(JWT_EXPIRATION_HOURS * 3600),
@@ -312,7 +325,7 @@ async def token_login(token_data: dict):
             detail="Invalid token"
         )
     except Exception as e:
-        logger.error(f"Token login failed: {e}")
+        logger.error("token_login_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Authentication failed"

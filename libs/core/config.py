@@ -39,6 +39,10 @@ class Settings(BaseSettings):
 
     # API
     API_V1_PREFIX: str = "/api/v1"
+
+    # --- CONSTITUTIONAL CORE (v26.2) ---
+    CONSTITUTION_HASH: str = "3f05c27896098e41471c246fb39e6a0dd43f7b11ff7c46db8f0195d3d3cae3cd"
+    CONSTITUTION_PATH: str = "/app/docs/v26_CONSTITUTION.md"
     CORS_ORIGINS: List[str] = [
         "*", # Allow all in development/standalone modes for easier access
         os.getenv("FRONTEND_URL", "http://localhost:3000"),
@@ -49,30 +53,28 @@ class Settings(BaseSettings):
     ]
 
     # Database
-    POSTGRES_USER: str = os.getenv("POSTGRES_USER", "admin")
-    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "666666")
-    POSTGRES_HOST: str = os.getenv("POSTGRES_HOST", "localhost")
-    POSTGRES_PORT: str = os.getenv("POSTGRES_PORT", "5432")
-    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "predator_db")
-
-    @property
-    def DATABASE_URL(self) -> str:
-        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+    POSTGRES_USER: str = "admin"
+    POSTGRES_PASSWORD: str = "666666"
+    POSTGRES_HOST: str = "postgres"
+    POSTGRES_PORT: str = "5432"
+    POSTGRES_DB: str = "predator_db"
+    DATABASE_URL: str = "postgresql+asyncpg://admin:666666@postgres:5432/predator_db"
 
     @property
     def SYNC_DATABASE_URL(self) -> str:
-        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        return self.DATABASE_URL.replace("+asyncpg", "")
 
     @property
     def CLEAN_DATABASE_URL(self) -> str:
         """Returns DSN without driver suffix, safe for asyncpg.connect()"""
-        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        import re
+        return re.sub(r'postgresql\+[^:]+:', 'postgresql:', self.DATABASE_URL)
 
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 5
 
     # Redis / Celery
-    REDIS_HOST: str = os.getenv("REDIS_HOST", "redis")
+    REDIS_HOST: str = "redis"
     REDIS_PORT: int = 6379
 
     @property
@@ -88,20 +90,20 @@ class Settings(BaseSettings):
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/1"
 
     # Message Queue (Event Bus)
-    RABBITMQ_USER: str = os.getenv("RABBITMQ_USER", "predator")
-    RABBITMQ_PASSWORD: str = os.getenv("RABBITMQ_PASSWORD", "predator_secret_key")
-    RABBITMQ_HOST: str = os.getenv("RABBITMQ_HOST", "rabbitmq")
+    RABBITMQ_USER: str = "predator"
+    RABBITMQ_PASSWORD: str = "predator_secret_key"
+    RABBITMQ_HOST: str = "rabbitmq"
 
     @property
     def RABBITMQ_URL(self) -> str:
         return f"amqp://{self.RABBITMQ_USER}:{self.RABBITMQ_PASSWORD}@{self.RABBITMQ_HOST}:5672/"
 
     # Infrastructure
-    QDRANT_URL: str = os.getenv("QDRANT_URL", "http://qdrant:6333")
-    OPENSEARCH_URL: str = os.getenv("OPENSEARCH_URL", "http://opensearch:9200")
-    MINIO_ENDPOINT: str = os.getenv("MINIO_ENDPOINT", "minio:9000")
-    MINIO_ACCESS_KEY: str = os.getenv("MINIO_ROOT_USER", "predator_admin")
-    MINIO_SECRET_KEY: str = os.getenv("MINIO_ROOT_PASSWORD", "predator_secret_key")
+    QDRANT_URL: str = "http://qdrant:6333"
+    OPENSEARCH_URL: str = "http://opensearch:9200"
+    MINIO_ENDPOINT: str = "minio:9000"
+    MINIO_ACCESS_KEY: str = "predator_admin"
+    MINIO_SECRET_KEY: str = "predator_secret_key"
 
     # Vault (Secrets)
     VAULT_ADDR: str = "http://vault:8200"
@@ -144,7 +146,7 @@ class Settings(BaseSettings):
     GEMINI_MODEL: str = "gemini-1.5-flash"
     MISTRAL_MODEL: str = "mistral-large-latest"
     OPENAI_MODEL: str = "gpt-4o-mini"
-    OLLAMA_MODEL: str = "qwen2.5:latest"
+    OLLAMA_MODEL: str = "llama3.1:8b-instruct"
     OPENROUTER_MODEL: str = "google/gemini-2.0-flash-exp:free"
 
     # TTS/STT
@@ -156,10 +158,19 @@ class Settings(BaseSettings):
     # Monitoring
     LOG_LEVEL: str = "INFO"
     PROMETHEUS_ENABLED: bool = True
+    OTLP_ENDPOINT: str = os.getenv("OTLP_ENDPOINT", "http://otel-collector:4317")
 
     # Flower Security
     FLOWER_USER: Optional[str] = os.getenv("FLOWER_USER", "admin")
     FLOWER_PASSWORD: Optional[str] = os.getenv("FLOWER_PASSWORD", "admin")
+
+    @field_validator("SECRET_KEY", mode="after")
+    @classmethod
+    def validate_secret_key(cls, v):
+        if v == "change-in-production":
+            import logging
+            logging.warning("⚠️  SECURITY RISKS: Default SECRET_KEY detected! Use a strong key in production.")
+        return v
 
     model_config = SettingsConfigDict(
         env_file=".env",

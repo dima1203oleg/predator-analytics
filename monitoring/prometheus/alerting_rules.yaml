@@ -1,0 +1,66 @@
+groups:
+  - name: constitution-violations
+    rules:
+      - alert: ConstitutionAxiomViolation
+        expr: predator_constitution_violations_total > 0
+        for: 1m
+        labels:
+          severity: critical
+          component: constitution
+        annotations:
+          summary: "Constitution Axiom Violated"
+          description: "Axiom {{ $labels.axiom }} has been violated. Details: {{ $labels.violation }}"
+
+      - alert: GPUFirstPolicyViolation
+        expr: predator_gpu_jobs_on_cpu_total > 0
+        for: 5m
+        labels:
+          severity: warning
+          component: gpu-first
+        annotations:
+          summary: "GPU-First Policy Violation"
+          description: "{{ $value }} jobs are running on CPU instead of GPU"
+
+  - name: system-health
+    rules:
+      - alert: GPUOverutilization
+        expr: predator_gpu_utilization_percent > 90
+        for: 10m
+        labels:
+          severity: warning
+          component: gpu
+        annotations:
+          summary: "GPU Overutilization"
+          description: "GPU utilization is at {{ $value }}% for over 10 minutes"
+
+      - alert: ArbiterHighLatency
+        expr: histogram_quantile(0.95, rate(predator_arbiter_decision_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          component: arbiter
+        annotations:
+          summary: "High Arbiter Latency"
+          description: "95th percentile latency is {{ $value }}s"
+
+      - alert: LedgerHashChainBroken
+        expr: predator_ledger_hash_chain_breaks_total > 0
+        for: 0m
+        labels:
+          severity: critical
+          component: ledger
+        annotations:
+          summary: "Ledger Hash Chain Broken"
+          description: "Cryptographic integrity failure detected: {{ $value }} breaks"
+
+  - name: business-metrics
+    rules:
+      - alert: ETLTruthViolation
+        expr: predator_etl_truth_violations_total > 0
+        for: 0m
+        labels:
+          severity: critical
+          component: etl
+        annotations:
+          summary: "ETL Truth Violation"
+          description: "ETL state changed without verification. Value: {{ $value }}"

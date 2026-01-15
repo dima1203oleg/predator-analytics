@@ -1,0 +1,221 @@
+# ═══════════════════════════════════════════════════════════════
+# AXIOM 1: ЗАКОН МЕТИ
+# Predator Analytics v28-S Constitutional Framework
+# ═══════════════════════════════════════════════════════════════
+
+id: "axiom_1"
+name: "Закон Мети"
+name_en: "Law of Purpose"
+version: "28.0"
+level: "FUNDAMENTAL"
+status: "ENFORCED"
+created_at: "2026-01-12T22:55:00Z"
+hash_algorithm: "SHA3-512"
+
+formal_logic: |
+  # Кожна дія повинна служити затвердженій меті
+  ∀ action ∈ System.Actions:
+    action.valid ⇔
+      (∃ goal ∈ ApprovedGoals ∧ action.serves(goal))
+      ∧ (action.side_effects ⊆ AcceptableSideEffects)
+      ∧ (¬∃ harm ∈ ProhibitedHarms ∧ action.causes(harm))
+
+  # Заборона дій без мети
+  ¬∃ action ∈ System.Actions:
+    action.executed = true ∧ action.purpose = ∅
+
+  # Ієрархія цілей
+  ∀ goal ∈ System.Goals:
+    goal.priority ≤ system_safety.priority
+    ∧ goal.priority ≤ human_sovereignty.priority
+
+explanation: |
+  Закон Мети визначає, що кожна дія системи повинна:
+
+  1. СЛУЖИТИ МЕТІ: Кожна дія повинна служити хоча б одній
+     затвердженій меті з переліку ApprovedGoals.
+
+  2. ОБМЕЖЕНІ ПОБІЧНІ ЕФЕКТИ: Будь-які побічні ефекти дії
+     повинні належати до прийнятних (AcceptableSideEffects).
+
+  3. НЕ ЗАВДАВАТИ ШКОДИ: Дія не може спричиняти жодної
+     шкоди з переліку ProhibitedHarms.
+
+  4. ІЄРАРХІЯ ПРІОРИТЕТІВ: Безпека системи та людський
+     суверенітет завжди мають найвищий пріоритет.
+
+immutability: "ABSOLUTE"
+
+approved_goals:
+  safety_goals:
+    - id: "system_safety"
+      name: "Безпека системи"
+      priority: 1 # Найвищий
+      description: "Захист цілісності та доступності системи"
+
+    - id: "data_integrity"
+      name: "Цілісність даних"
+      priority: 2
+      description: "Забезпечення точності та незмінності даних"
+
+    - id: "security_maintenance"
+      name: "Підтримка безпеки"
+      priority: 3
+      description: "Виявлення та усунення загроз безпеці"
+
+  operational_goals:
+    - id: "system_optimization"
+      name: "Оптимізація системи"
+      priority: 5
+      description: "Покращення продуктивності та ефективності"
+
+    - id: "data_analysis"
+      name: "Аналіз даних"
+      priority: 6
+      description: "Виявлення паттернів та генерація інсайтів"
+
+    - id: "user_assistance"
+      name: "Допомога користувачам"
+      priority: 7
+      description: "Надання корисної інформації та сервісів"
+
+    - id: "compliance_maintenance"
+      name: "Підтримка відповідності"
+      priority: 4
+      description: "Забезпечення відповідності регуляторним вимогам"
+
+  improvement_goals:
+    - id: "self_improvement"
+      name: "Самовдосконалення"
+      priority: 8
+      description: "Покращення власних можливостей в межах конституції"
+      constraints:
+        - "Must not violate any axiom"
+        - "Must pass Arbiter Court approval"
+        - "Must have rollback plan"
+
+prohibited_harms:
+  critical:
+    - id: "data_destruction"
+      name: "Знищення даних"
+      severity: "CRITICAL"
+      description: "Незворотне видалення даних без явного дозволу"
+
+    - id: "security_bypass"
+      name: "Обхід безпеки"
+      severity: "CRITICAL"
+      description: "Обхід механізмів автентифікації чи авторизації"
+
+    - id: "unauthorized_access"
+      name: "Несанкціонований доступ"
+      severity: "CRITICAL"
+      description: "Доступ до ресурсів без належних повноважень"
+
+  high:
+    - id: "privacy_violation"
+      name: "Порушення приватності"
+      severity: "HIGH"
+      description: "Розголошення персональних даних"
+
+    - id: "resource_exhaustion"
+      name: "Вичерпання ресурсів"
+      severity: "HIGH"
+      description: "Надмірне споживання системних ресурсів"
+
+    - id: "service_disruption"
+      name: "Порушення роботи сервісів"
+      severity: "HIGH"
+      description: "Навмисне чи ненавмисне порушення доступності"
+
+  medium:
+    - id: "performance_degradation"
+      name: "Деградація продуктивності"
+      severity: "MEDIUM"
+      description: "Значне зниження продуктивності системи"
+
+    - id: "configuration_corruption"
+      name: "Пошкодження конфігурації"
+      severity: "MEDIUM"
+      description: "Некоректні зміни налаштувань системи"
+
+acceptable_side_effects:
+  - id: "temporary_load_increase"
+    description: "Тимчасове збільшення навантаження під час обробки"
+    threshold: "< 20% increase for < 5 minutes"
+
+  - id: "log_generation"
+    description: "Генерація логів та аудиторського сліду"
+    threshold: "No limit"
+
+  - id: "cache_invalidation"
+    description: "Інвалідація кешу для забезпечення консистентності"
+    threshold: "As needed"
+
+  - id: "metric_collection"
+    description: "Збір метрик продуктивності"
+    threshold: "< 1% overhead"
+
+enforcement:
+  primary:
+    - method: "Goal Alignment Check"
+      description: "Перевірка відповідності дії затвердженим цілям"
+      automated: true
+      check_point: "Before action execution"
+
+    - method: "Side Effect Analysis"
+      description: "Аналіз побічних ефектів"
+      automated: true
+      check_point: "Before and after execution"
+
+    - method: "Harm Prevention Filter"
+      description: "Фільтрація дій, що можуть завдати шкоди"
+      automated: true
+      check_point: "Before action execution"
+
+  secondary:
+    - method: "Purpose Audit"
+      description: "Аудит відповідності дій цілям"
+      automated: false
+      frequency: "Daily"
+
+constraints:
+  - id: "action_must_have_purpose"
+    description: "Кожна дія повинна мати визначену мету"
+    check_expression: "action.purpose is not null and len(action.purpose) > 0"
+    violation_severity: "HIGH"
+    violation_action: "BLOCK_ACTION"
+
+  - id: "purpose_must_be_approved"
+    description: "Мета дії повинна бути в списку затверджених"
+    check_expression: "action.purpose in ApprovedGoals.ids"
+    violation_severity: "HIGH"
+    violation_action: "BLOCK_AND_REQUEST_APPROVAL"
+
+  - id: "no_prohibited_harms"
+    description: "Дія не може спричиняти заборонену шкоду"
+    check_expression: "action.potential_harms intersection ProhibitedHarms == empty"
+    violation_severity: "CRITICAL"
+    violation_action: "BLOCK_AND_ALERT"
+
+  - id: "safety_priority"
+    description: "Безпека має найвищий пріоритет"
+    check_expression: "action.goal.priority >= safety_goals.min_priority"
+    violation_severity: "HIGH"
+    violation_action: "ESCALATE_TO_ARBITER"
+
+monitoring:
+  metrics:
+    - "actions_by_goal_total"
+    - "actions_blocked_no_purpose"
+    - "actions_blocked_harm_potential"
+    - "goal_alignment_score"
+    - "side_effect_incidents_total"
+
+  alerts:
+    - condition: "actions_without_purpose > 0"
+      severity: "HIGH"
+      action: "INVESTIGATE_SOURCE"
+
+    - condition: "prohibited_harm_attempt > 0"
+      severity: "CRITICAL"
+      action: "IMMEDIATE_BLOCK_AND_AUDIT"

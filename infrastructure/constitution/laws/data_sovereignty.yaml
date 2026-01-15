@@ -1,0 +1,18 @@
+id: "axiom_data_sovereignty"
+name: "Data Sovereignty and Lineage Constitution"
+version: "27.0"
+description: >
+  Ensure every data object is rooted in physical reality through confirmed lineage and ownership.
+  Metadata requirements include: source_system, ingestion_timestamp, transformation_chain_hash, owner, consent_policy.
+
+constraints:
+  - id: "DS-001"
+    description: "Every data object must have a confirmed lineage."
+  - id: "DS-002"
+    description: "Every data object must have a defined owner (sovereign)."
+  - id: "DS-003"
+    description: "Indexing without confirmed lineage is prohibited."
+  - id: "DS-004"
+    description: "LLM inference on data without metadata-backed lineage is prohibited."
+  - id: "DS-005"
+    description: "AZR optimization on unidentified/unverified data is prohibited."

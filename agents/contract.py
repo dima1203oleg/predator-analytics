@@ -15,6 +15,7 @@ class AgentContext:
     execution_id: str
     token: str
     cli_path: str = "./predatorctl"
+    workspace_root: str = "."
 
 class BaseAgent(Protocol):
     """

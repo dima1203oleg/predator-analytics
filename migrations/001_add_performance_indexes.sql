@@ -1,181 +1,95 @@
--- ═══════════════════════════════════════════════════════════════════════════
--- Predator Analytics v25 - Performance Indexes Migration
--- Створено: 2026-01-11
--- Мета: Оптимізація найчастіших SQL queries
--- ═══════════════════════════════════════════════════════════════════════════
+-- PREDATOR ANALYTICS v30.2 - Robust Hardened Performance Indexes
+-- Created by Antigravity (Pair Programming with Dima)
+-- Date: 2026-01-15 (Improved Stability)
 
--- Перед виконанням: Backup database
--- pg_dump -U predator predator_db > backup_$(date +%Y%m%d).sql
+-- Ensure essential extensions and schemas exist
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE SCHEMA IF NOT EXISTS azr;
+CREATE SCHEMA IF NOT EXISTS truth;
+CREATE SCHEMA IF NOT EXISTS gold;
+CREATE SCHEMA IF NOT EXISTS staging;
+CREATE SCHEMA IF NOT EXISTS raw;
 
-BEGIN;
+-- Use a DO block to safely apply indexes only where tables exist
+DO $$
+BEGIN
+    -- 1. Core Platform Indexes (Gold Schema)
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'gold' AND tablename = 'documents') THEN
+        CREATE INDEX IF NOT EXISTS idx_gold_docs_source_ts ON gold.documents (source_type, created_at DESC);
+    END IF;
 
--- ═══════════════════════════════════════════════════════════════════════════
--- DOCUMENTS TABLE - Основна таблиця документів
--- ═══════════════════════════════════════════════════════════════════════════
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'gold' AND tablename = 'cases') THEN
+        CREATE INDEX IF NOT EXISTS idx_gold_cases_status_risk ON gold.cases (status, risk_score DESC);
+    END IF;
 
--- Index для сортування по даті створення (ORDER BY created_at DESC)
--- Impact: Прискорення /api/v1/documents endpoint на 10-20x
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_documents_created_at
-ON documents(created_at DESC);
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'gold' AND tablename = 'trinity_audit_logs') THEN
+        CREATE INDEX IF NOT EXISTS idx_gold_trinity_audit_ts_desc ON gold.trinity_audit_logs (created_at DESC);
+    END IF;
 
--- Index для фільтрації по типу джерела
--- Impact: WHERE source_type = 'customs' стає instant
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_documents_source_type
-ON documents(source_type);
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'gold' AND tablename = 'ml_jobs') THEN
+        CREATE INDEX IF NOT EXISTS idx_gold_ml_jobs_metrics ON gold.ml_jobs (status, created_at DESC);
+    END IF;
 
--- Index для фільтрації по tenant (multi-tenancy)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_documents_tenant_id
-ON documents(tenant_id);
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'gold' AND tablename = 'file_registry') THEN
+        CREATE INDEX IF NOT EXISTS idx_gold_files_idempotency ON gold.file_registry (content_hash, status);
+    END IF;
 
--- Composite index для комбінованих запитів
--- Impact: WHERE tenant_id = X AND source_type = Y ORDER BY created_at
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_documents_tenant_source_date
-ON documents(tenant_id, source_type, created_at DESC);
+    -- 2. Business Entity Indexes (Gold Schema)
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'gold' AND tablename = 'companies') THEN
+        CREATE INDEX IF NOT EXISTS idx_gold_companies_name_trgm ON gold.companies USING gin (name gin_trgm_ops);
+    END IF;
 
--- Full-text search index для title
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_documents_title_gin
-ON documents USING gin(to_tsvector('ukrainian', title));
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'gold' AND tablename = 'tenders') THEN
+        CREATE INDEX IF NOT EXISTS idx_gold_tenders_winner_lookup ON gold.tenders (winner_edrpou, amount DESC);
+    END IF;
 
--- Full-text search index для content
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_documents_content_gin
-ON documents USING gin(to_tsvector('ukrainian', content));
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'gold' AND tablename = 'risk_assessments') THEN
+        CREATE INDEX IF NOT EXISTS idx_gold_risk_latest ON gold.risk_assessments (company_edrpou, assessed_at DESC);
+    END IF;
 
--- ═══════════════════════════════════════════════════════════════════════════
--- ML_JOBS TABLE - ML training jobs
--- ═══════════════════════════════════════════════════════════════════════════
+    -- 3. Ingestion & ETL Pipeline (Staging/Raw Schemas)
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'staging' AND tablename = 'raw_data') THEN
+        CREATE INDEX IF NOT EXISTS idx_staging_raw_processing ON staging.raw_data (source, processed, fetched_at);
+    END IF;
 
--- Index для фільтрації по статусу
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_ml_jobs_status
-ON ml_jobs(status);
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'raw' AND tablename = 'etl_jobs') THEN
+        CREATE INDEX IF NOT EXISTS idx_raw_etl_job_tracking ON raw.etl_jobs (state, updated_at DESC);
+    END IF;
 
--- Index для сортування по даті
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_ml_jobs_created_at
-ON ml_jobs(created_at DESC);
+    -- 4. Constitutional Truth Ledger (Public Schema - Service specific)
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'truth_ledger') THEN
+        CREATE INDEX IF NOT EXISTS idx_pub_ledger_ts_desc ON public.truth_ledger (created_at DESC);
+        CREATE INDEX IF NOT EXISTS idx_pub_ledger_action_entity ON public.truth_ledger (action, entity_type);
+    END IF;
 
--- Composite для активних jobs
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_ml_jobs_status_created
-ON ml_jobs(status, created_at DESC)
-WHERE status IN ('pending', 'running');
+    -- 5. Forensic Truth Ledger (Truth Schema - ETL specific)
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'truth' AND tablename = 'etl_state_decisions') THEN
+        CREATE INDEX IF NOT EXISTS idx_truth_etl_dec_chain ON truth.etl_state_decisions (job_id, derived_at DESC);
+        CREATE INDEX IF NOT EXISTS idx_truth_etl_dec_hash ON truth.etl_state_decisions (decision_hash);
+    END IF;
 
--- ═══════════════════════════════════════════════════════════════════════════
--- DATA_SOURCES TABLE
--- ═══════════════════════════════════════════════════════════════════════════
+    -- 6. AZR Sovereign Ledger (AZR Schema)
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'azr' AND tablename = 'amendments') THEN
+        CREATE INDEX IF NOT EXISTS idx_azr_amendments_chain ON azr.amendments (current_state, created_at DESC);
+    END IF;
 
--- Index для active sources
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_data_sources_active
-ON data_sources(is_active)
-WHERE is_active = true;
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'azr' AND tablename = 'constitutional_violations') THEN
+        CREATE INDEX IF NOT EXISTS idx_azr_violations_axiom ON azr.constitutional_violations (axiom_violated, detected_at DESC);
+    END IF;
 
--- Index для sync status
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_data_sources_sync_status
-ON data_sources(last_sync_status);
+    -- 7. Knowledge Graph (Gold Schema)
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'gold' AND tablename = 'graph_edges') THEN
+        CREATE INDEX IF NOT EXISTS idx_gold_graph_edges_doc ON gold.graph_edges (doc_id);
+    END IF;
 
--- ═══════════════════════════════════════════════════════════════════════════
--- CASES TABLE - Центральна цінність Predator
--- ═══════════════════════════════════════════════════════════════════════════
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'gold' AND tablename = 'graph_nodes') THEN
+        CREATE INDEX IF NOT EXISTS idx_gold_graph_nodes_type_name ON gold.graph_nodes (label, name);
+    END IF;
 
--- Index для priority + status
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_cases_priority_status
-ON cases(priority DESC, status);
+    -- 8. Audit Chain (Public Schema)
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'audit_chain') THEN
+        CREATE INDEX IF NOT EXISTS idx_pub_audit_chain_verified ON public.audit_chain (verified_at DESC);
+        CREATE INDEX IF NOT EXISTS idx_pub_audit_chain_auditor ON public.audit_chain (auditor_id);
+    END IF;
 
--- Index для assigned user
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_cases_assigned_to
-ON cases(assigned_to)
-WHERE assigned_to IS NOT NULL;
-
--- Index для due date
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_cases_due_date
-ON cases(due_date)
-WHERE due_date IS NOT NULL;
-
--- ═══════════════════════════════════════════════════════════════════════════
--- AUDIT LOGS - Trinity Agent трейси
--- ═══════════════════════════════════════════════════════════════════════════
-
--- Index для timestamp (recent logs)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_trinity_audit_created_at
-ON trinity_audit_log(created_at DESC);
-
--- Index для status filtering
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_trinity_audit_status
-ON trinity_audit_log(status);
-
--- ═══════════════════════════════════════════════════════════════════════════
--- SYSTEM_METRICS - Моніторинг метрик
--- ═══════════════════════════════════════════════════════════════════════════
-
--- Hypertable optimization (TimescaleDB)
--- Index для time-series queries
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_system_metrics_timestamp
-ON system_metrics(timestamp DESC);
-
--- Index для metric name filtering
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_system_metrics_name
-ON system_metrics(metric_name);
-
--- Composite для metric queries
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_system_metrics_name_timestamp
-ON system_metrics(metric_name, timestamp DESC);
-
--- ═══════════════════════════════════════════════════════════════════════════
--- FOREIGN KEY INDEXES - Прискорення JOINs
--- ═══════════════════════════════════════════════════════════════════════════
-
--- Document metadata FK
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_document_metadata_doc_id
-ON document_metadata(document_id);
-
--- Document summaries FK
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_document_summaries_doc_id
-ON document_summaries(document_id);
-
--- ML Jobs dataset FK
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_ml_jobs_dataset_id
-ON ml_jobs(dataset_id);
-
--- ═══════════════════════════════════════════════════════════════════════════
--- VACUUM AND ANALYZE - Оновлення статистики
--- ═══════════════════════════════════════════════════════════════════════════
-
-VACUUM ANALYZE documents;
-VACUUM ANALYZE ml_jobs;
-VACUUM ANALYZE data_sources;
-VACUUM ANALYZE cases;
-VACUUM ANALYZE trinity_audit_log;
-VACUUM ANALYZE system_metrics;
-
-COMMIT;
-
--- ═══════════════════════════════════════════════════════════════════════════
--- VERIFICATION QUERIES
--- ═══════════════════════════════════════════════════════════════════════════
-
--- Перевірити створені indexes
-SELECT
-    schemaname,
-    tablename,
-    indexname,
-    indexdef
-FROM pg_indexes
-WHERE schemaname = 'public'
-AND indexname LIKE 'idx_%'
-ORDER BY tablename, indexname;
-
--- Перевірити розмір indexes
-SELECT
-    schemaname || '.' || tablename AS table_name,
-    indexname,
-    pg_size_pretty(pg_relation_size(indexrelid)) AS index_size
-FROM pg_stat_user_indexes
-WHERE schemaname = 'public'
-ORDER BY pg_relation_size(indexrelid) DESC;
-
--- Test query performance improvement
-EXPLAIN ANALYZE
-SELECT * FROM documents
-WHERE source_type = 'customs'
-ORDER BY created_at DESC
-LIMIT 100;
-
--- Expected: Index Scan using idx_documents_created_at (cost ~10ms)
--- Before: Seq Scan on documents (cost ~500ms)
+END $$;

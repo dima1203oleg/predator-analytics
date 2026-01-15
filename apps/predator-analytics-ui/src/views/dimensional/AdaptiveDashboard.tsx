@@ -10,6 +10,7 @@ import { api } from '../../services/api';
 import { useToast } from '../../context/ToastContext';
 import { useDimensionalContext } from '../../hooks/useDimensionalContext';
 import { ViewHeader } from '../../components';
+import AzrHyperWidget from '../../components/AzrHyperWidget';
 
 // Import newly separated shells
 import { ExplorerShell, OperatorShell, CommanderShell } from '../../components/dimensional';
@@ -152,6 +153,9 @@ const AdaptiveDashboard: React.FC<AdaptiveDashboardProps> = ({ onNavigate }) => 
         breadcrumbs={getDimensionBreadcrumbs(dimension)}
         stats={getDimensionStats(dimension, metrics)}
       />
+
+      {/* AZR SOVEREIGN CORE WIDGET */}
+      <AzrHyperWidget />
 
       <AnimatePresence mode="wait">
         <motion.div

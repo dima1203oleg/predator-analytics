@@ -1,0 +1,142 @@
+{
+  "timestamp": "2026-01-14T00:55:23Z",
+  "violations": [
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/libs/core/cache.py",
+      "issue": "FUNC_LIMIT_EXCEEDED",
+      "value": 28,
+      "limit": 25
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/scripts/telegram_bot.py",
+      "issue": "LOC_LIMIT_EXCEEDED",
+      "value": 1743,
+      "limit": 800
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/scripts/telegram_bot.py",
+      "issue": "FUNC_LIMIT_EXCEEDED",
+      "value": 45,
+      "limit": 25
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/scripts/predatorctl.py",
+      "issue": "LOC_LIMIT_EXCEEDED",
+      "value": 1082,
+      "limit": 800
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/scripts/predatorctl.py",
+      "issue": "FUNC_LIMIT_EXCEEDED",
+      "value": 48,
+      "limit": 25
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui/src/views/MonitoringView.tsx",
+      "issue": "LOC_LIMIT_EXCEEDED",
+      "value": 1109,
+      "limit": 800
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui/src/views/OmniscienceView.tsx",
+      "issue": "LOC_LIMIT_EXCEEDED",
+      "value": 1019,
+      "limit": 800
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/main.py",
+      "issue": "LOC_LIMIT_EXCEEDED",
+      "value": 967,
+      "limit": 800
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/agents/orchestrator/superintelligence.py",
+      "issue": "LOC_LIMIT_EXCEEDED",
+      "value": 1134,
+      "limit": 800
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/agents/orchestrator/superintelligence.py",
+      "issue": "FUNC_LIMIT_EXCEEDED",
+      "value": 54,
+      "limit": 25
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/api/v25_routes.py",
+      "issue": "LOC_LIMIT_EXCEEDED",
+      "value": 1917,
+      "limit": 800
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/api/v25_routes.py",
+      "issue": "FUNC_LIMIT_EXCEEDED",
+      "value": 64,
+      "limit": 25
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/api/routers/e2e.py",
+      "issue": "FUNC_LIMIT_EXCEEDED",
+      "value": 26,
+      "limit": 25
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/services/pipeline_service.py",
+      "issue": "FUNC_LIMIT_EXCEEDED",
+      "value": 37,
+      "limit": 25
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/services/telegram_menu.py",
+      "issue": "FUNC_LIMIT_EXCEEDED",
+      "value": 26,
+      "limit": 25
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/services/telegram_executor.py",
+      "issue": "LOC_LIMIT_EXCEEDED",
+      "value": 1071,
+      "limit": 800
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/services/telegram_assistant.py",
+      "issue": "LOC_LIMIT_EXCEEDED",
+      "value": 2448,
+      "limit": 800
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/services/telegram_assistant.py",
+      "issue": "FUNC_LIMIT_EXCEEDED",
+      "value": 69,
+      "limit": 25
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/som/app/main.py",
+      "issue": "FUNC_LIMIT_EXCEEDED",
+      "value": 39,
+      "limit": 25
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/vpc-verifier/app/main.py",
+      "issue": "FUNC_LIMIT_EXCEEDED",
+      "value": 29,
+      "limit": 25
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/orchestrator/main.py",
+      "issue": "LOC_LIMIT_EXCEEDED",
+      "value": 845,
+      "limit": 800
+    },
+    {
+      "file": "/Users/dima-mac/Documents/Predator_21/services/orchestrator/memory/manager.py",
+      "issue": "FUNC_LIMIT_EXCEEDED",
+      "value": 31,
+      "limit": 25
+    }
+  ],
+  "stats": {
+    "total_files": 667,
+    "total_loc": 111038,
+    "complexity_score": 127583
+  }
+}

@@ -1,0 +1,22 @@
+id: "axiom_5"
+name: "Command Line Primacy Law"
+level: "operational"
+description: "Mandates that all system capabilities must be accessible via Command Line Interface or API before GUI implementation."
+
+provisions:
+  api_coverage:
+    required: true
+    description: "100% of capabilities must be exposed via REST/gRPC API."
+
+  cli_autonomy:
+    required: true
+    description: "The system must remain fully operational and recoverable using only SSH and CLI tools."
+
+  headless_operation:
+    required: true
+    description: "GUI is an optional visualization layer; the core logic must not depend on it."
+
+violations:
+  gui_dependency:
+    severity: "MEDIUM"
+    response: "Reject PR. Require API implementation."

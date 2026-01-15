@@ -6,14 +6,14 @@
 """
 
 import asyncio
-import logging
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 from enum import Enum
 from dataclasses import dataclass, field
 from pydantic import BaseModel
+from libs.core.structured_logger import get_logger, log_business_event, RequestLogger
 
-logger = logging.getLogger(__name__)
+logger = get_logger("services.orchestrator.mission_planner")
 
 
 class MissionPriority(str, Enum):
@@ -89,6 +89,7 @@ class Mission:
     tasks: List[MissionTask] = field(default_factory=list)
     assigned_agents: List[AgentType] = field(default_factory=list)
     context: Dict[str, Any] = field(default_factory=dict)
+    ooda_metrics: Dict[str, float] = field(default_factory=dict)  # {observe_ms: 0, orient_ms: 0, decide_ms: 0, act_ms: 0}
     created_at: datetime = field(default_factory=datetime.now)
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
@@ -190,7 +191,7 @@ class MissionPlanner:
             max_concurrent_tasks=5
         )
 
-        logger.info(f"✅ Зареєстровано {len(self.agent_registry)} агентів")
+        logger.info("agents_registered", count=len(self.agent_registry))
 
     async def create_mission(
         self,
@@ -211,7 +212,15 @@ class MissionPlanner:
         )
 
         self.active_missions[mission_id] = mission
-        logger.info(f"🎯 Створено місію: {mission.title} (ID: {mission_id})")
+        logger.info("mission_created", title=mission.title, mission_id=mission_id)
+
+        log_business_event(
+            logger,
+            "mission_lifecycle_created",
+            mission_id=mission_id,
+            priority=priority.value,
+            title=title
+        )
 
         return mission
 
@@ -224,33 +233,46 @@ class MissionPlanner:
         3. DECIDE - Розбиття на задачі та призначення агентів
         4. ACT - Початок виконання
         """
-        mission.status = MissionStatus.PLANNING
+        async with RequestLogger(logger, "mission_planning", mission_id=mission.mission_id):
+            mission.status = MissionStatus.PLANNING
+            start_planning = datetime.now()
 
-        logger.info(f"📋 Планування місії: {mission.title}")
+            # 1. OBSERVE - Збір контексту
+            obs_start = datetime.now()
+            async with RequestLogger(logger, "ooda_observe", mission_id=mission.mission_id):
+                context = await self._observe_context(mission)
+            mission.ooda_metrics["observe_ms"] = (datetime.now() - obs_start).total_seconds() * 1000
 
-        # 1. OBSERVE - Збір контексту
-        context = await self._observe_context(mission)
+            # 2. ORIENT - Аналіз ресурсів
+            ori_start = datetime.now()
+            async with RequestLogger(logger, "ooda_orient", mission_id=mission.mission_id):
+                available_agents = await self._orient_resources(mission)
+            mission.ooda_metrics["orient_ms"] = (datetime.now() - ori_start).total_seconds() * 1000
 
-        # 2. ORIENT - Аналіз ресурсів
-        available_agents = await self._orient_resources(mission)
+            # 3. DECIDE - Створення плану
+            dec_start = datetime.now()
+            async with RequestLogger(logger, "ooda_decide", mission_id=mission.mission_id):
+                tasks = await self._decide_strategy(mission, context, available_agents)
+                mission.tasks = tasks
+            mission.ooda_metrics["decide_ms"] = (datetime.now() - dec_start).total_seconds() * 1000
 
-        # 3. DECIDE - Створення плану
-        tasks = await self._decide_strategy(mission, context, available_agents)
-        mission.tasks = tasks
+            # 4. Призначення агентів
+            for task in tasks:
+                agent = await self._assign_best_agent(task, available_agents)
+                if agent:
+                    task.assigned_agent = agent
+                    mission.assigned_agents.append(agent)
 
-        # 4. Призначення агентів
-        for task in tasks:
-            agent = await self._assign_best_agent(task, available_agents)
-            if agent:
-                task.assigned_agent = agent
-                mission.assigned_agents.append(agent)
+            log_business_event(
+                logger,
+                "mission_plan_ready",
+                mission_id=mission.mission_id,
+                tasks_count=len(tasks),
+                agents_count=len(set(mission.assigned_agents)),
+                ooda_metrics=mission.ooda_metrics
+            )
 
-        logger.info(
-            f"✅ План готовий: {len(tasks)} задач, "
-            f"{len(set(mission.assigned_agents))} агентів"
-        )
-
-        return mission
+            return mission
 
     async def _observe_context(self, mission: Mission) -> Dict[str, Any]:
         """OBSERVE: Збір та аналіз контексту"""
@@ -262,7 +284,11 @@ class MissionPlanner:
             "resources": mission.context.get("resources", {})
         }
 
-        logger.debug(f"📊 Контекст: {context['mission_type']}, складність: {context['complexity']}")
+        logger.debug(
+            "observe_context",
+            mission_type=context['mission_type'],
+            complexity=context['complexity']
+        )
         return context
 
     async def _orient_resources(self, mission: Mission) -> List[AgentType]:
@@ -439,48 +465,54 @@ class MissionPlanner:
         mission.status = MissionStatus.IN_PROGRESS
         mission.started_at = datetime.now()
 
-        logger.info(f"🚀 Виконання місії: {mission.title}")
+        async with RequestLogger(logger, "mission_execution", mission_id=mission.mission_id):
+            act_start = datetime.now()
+            try:
+                # Виконуємо задачі паралельно або послідовно залежно від залежностей
+                results = await asyncio.gather(
+                    *[self._execute_task(task) for task in mission.tasks],
+                    return_exceptions=True
+                )
+                mission.ooda_metrics["act_ms"] = (datetime.now() - act_start).total_seconds() * 1000
 
-        try:
-            # Виконуємо задачі паралельно або послідовно залежно від залежностей
-            results = await asyncio.gather(
-                *[self._execute_task(task) for task in mission.tasks],
-                return_exceptions=True
-            )
+                # Перевірка результатів
+                failed_tasks = [
+                    task for task in mission.tasks
+                    if task.status == "failed"
+                ]
 
-            # Перевірка результатів
-            failed_tasks = [
-                task for task in mission.tasks
-                if task.status == "failed"
-            ]
+                if failed_tasks:
+                    mission.status = MissionStatus.FAILED
+                    mission.result = {
+                        "success": False,
+                        "failed_tasks": len(failed_tasks),
+                        "errors": [task.error for task in failed_tasks]
+                    }
+                else:
+                    mission.status = MissionStatus.COMPLETED
+                    mission.result = {
+                        "success": True,
+                        "completed_tasks": len(mission.tasks),
+                        "results": [task.result for task in mission.tasks]
+                    }
 
-            if failed_tasks:
+                mission.completed_at = datetime.now()
+                duration = (mission.completed_at - mission.started_at).total_seconds()
+
+                log_business_event(
+                    logger,
+                    "mission_lifecycle_completed",
+                    mission_id=mission.mission_id,
+                    status=mission.status.value,
+                    duration_s=duration,
+                    tasks_total=len(mission.tasks),
+                    tasks_failed=len(failed_tasks) if 'failed_tasks' in locals() else 0
+                )
+
+            except Exception as e:
                 mission.status = MissionStatus.FAILED
-                mission.result = {
-                    "success": False,
-                    "failed_tasks": len(failed_tasks),
-                    "errors": [task.error for task in failed_tasks]
-                }
-            else:
-                mission.status = MissionStatus.COMPLETED
-                mission.result = {
-                    "success": True,
-                    "completed_tasks": len(mission.tasks),
-                    "results": [task.result for task in mission.tasks]
-                }
-
-            mission.completed_at = datetime.now()
-            duration = (mission.completed_at - mission.started_at).total_seconds()
-
-            logger.info(
-                f"✅ Місія завершена: {mission.title} "
-                f"({duration:.2f}s, статус: {mission.status})"
-            )
-
-        except Exception as e:
-            mission.status = MissionStatus.FAILED
-            mission.result = {"success": False, "error": str(e)}
-            logger.error(f"❌ Помилка виконання місії: {e}")
+                mission.result = {"success": False, "error": str(e)}
+                logger.exception("mission_execution_failed", error=str(e), mission_id=mission.mission_id)
 
         # Переміщуємо в завершені
         if mission.mission_id in self.active_missions:
@@ -509,7 +541,12 @@ class MissionPlanner:
         except Exception as e:
             task.status = "failed"
             task.error = str(e)
-            logger.error(f"❌ Задача провалена: {task.description} - {e}")
+            logger.error(
+                "task_failed",
+                task_id=task.task_id,
+                error=str(e),
+                description=task.description
+            )
 
         finally:
             task.completed_at = datetime.now()
@@ -595,6 +632,7 @@ class MissionPlanner:
             "created_at": mission.created_at.isoformat(),
             "started_at": mission.started_at.isoformat() if mission.started_at else None,
             "completed_at": mission.completed_at.isoformat() if mission.completed_at else None,
+            "ooda_metrics": mission.ooda_metrics
         }
 
     def _calculate_progress(self, mission: Mission) -> float:

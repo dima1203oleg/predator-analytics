@@ -1,0 +1,23 @@
+id: "axiom_etl_truth"
+axiom_id: "axiom_6"
+description: |
+  No ETL state transition can occur without cryptographic verification and Arbiter approval.
+  The Truth Ledger must be updated atomically with the state change.
+
+constraints:
+  - id: "arbiter_approval"
+    target: "Job"
+    type: "etl"
+    condition: "annotations['predator.io/arbiter-approved'] == 'true'"
+    enforcement: "hard"
+
+  - id: "ledger_immutable"
+    target: "Database"
+    table: "truth_ledger"
+    condition: "update_operation == DENY"
+    enforcement: "db_trigger"
+
+monitoring:
+  metric: "predator_etl_truth_violations_total"
+  threshhold: 0
+  alert_severity: "critical"

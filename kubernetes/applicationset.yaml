@@ -1,0 +1,35 @@
+# kubernetes/applicationset.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: predator-v26- Nezlamnist
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/dima1203oleg/predator-analytics.git
+        revision: main
+        directories:
+          - path: services/*
+          - path: applications/*
+  template:
+    metadata:
+      name: "{{path.basename}}"
+      labels:
+        managed-by: argocd
+        predator-v26: "true"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/dima1203oleg/predator-analytics.git
+        targetRevision: main
+        path: "{{path}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: predator-system
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - Validate=true

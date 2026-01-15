@@ -1,0 +1,57 @@
+# constitutional_axioms.yaml
+version: "v1.0"
+created: "2026-01-01T00:00:00Z"
+immutable: true # Зміни потребують перезапуску системи
+
+axioms:
+  - id: "axiom-001"
+    name: "Human Sovereignty"
+    formal_definition: |
+      ∀action ∈ SystemActions :
+      Critical(action) → RequiresHumanApproval(action)
+    enforcement_level: "FULL"
+    verification_method: "Z3"
+    description: |
+      Критичні дії завжди потребують людського затвердження
+
+  - id: "axiom-002"
+    name: "Constitutional Immutability"
+    formal_definition: |
+      ∀t ∈ Time : Constitution(t) = Constitution(t+Δt)
+      unless ConstitutionalAmendmentProtocol(Δt)
+    enforcement_level: "FULL"
+    verification_method: "Formal"
+    description: |
+      Конституція незмінна під час виконання
+
+  - id: "axiom-003"
+    name: "Transparency Mandate"
+    formal_definition: |
+      ∀action ∈ SystemActions :
+      ∃record ∈ TruthLedger : Records(action, record)
+    enforcement_level: "FULL"
+    verification_method: "Audit"
+    description: |
+      Кожна дія має бути записана в Truth Ledger
+
+  - id: "axiom-004"
+    name: "Reality Grounding"
+    formal_definition: |
+      ∀proposal ∈ AIProposals :
+      RequiresPhysicalVerification(proposal) ∨
+      HasDigitalTwinSimulation(proposal)
+    enforcement_level: "DEGRADED"
+    verification_method: "VPC"
+    description: |
+      Пропозиції AI потребують фізичної верифікації або симуляції
+
+  - id: "axiom-005"
+    name: "Controlled Autonomy"
+    formal_definition: |
+      AutonomousImprovement(action) →
+      RiskScore(action) < 0.2 ∧
+      HasRollbackPlan(action)
+    enforcement_level: "DEGRADED"
+    verification_method: "Risk Assessment"
+    description: |
+      Автономні покращення обмежені ризиком <20% та мають план відкату

@@ -5,7 +5,9 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct, Filter, FieldCondition, MatchValue, HnswConfigDiff, PayloadSchemaType
 import uuid
 
-logger = logging.getLogger("service.qdrant")
+from libs.core.structured_logger import get_logger, log_performance
+
+logger = get_logger("service.qdrant")
 
 class QdrantService:
     """
@@ -13,40 +15,40 @@ class QdrantService:
     Handles document embeddings storage and semantic search.
     Supports Multi-Tenancy via payload filtering.
     """
-    
+
     def __init__(self):
         self.host = os.getenv("QDRANT_URL", "http://localhost:6333")
         self.client = QdrantClient(url=self.host)
         self.collection_name = "documents_vectors"
         self.vector_size = 384  # all-MiniLM-L6-v2
-        
+
         # Multimodal (CLIP)
         self.multimodal_collection_name = "multimodal_vectors"
         self.multimodal_vector_size = 512 # CLIP-ViT-B-32
-        
-        logger.info(f"Qdrant service initialized: {self.host}")
-    
+
+        logger.info("qdrant_service_initialized", host=self.host)
+
     async def create_collection(self, collection_name: str = None, vector_size: int = None):
         """
         Create a Qdrant collection for storing vectors.
         Configured for Multi-Tenancy with HNSW payload optimization.
-        
+
         Args:
             collection_name: Name of collection (default: documents_vectors)
             vector_size: Dimension of vectors (default: 384)
         """
         collection_name = collection_name or self.collection_name
         vector_size = vector_size or self.vector_size
-        
+
         try:
             # Check if collection exists
             collections = self.client.get_collections().collections
             if any(c.name == collection_name for c in collections):
-                logger.info(f"Collection {collection_name} already exists")
+                logger.info("qdrant_collection_exists", collection=collection_name)
                 # Ensure tenant index exists even if collection does
                 self._ensure_tenant_index(collection_name)
                 return
-            
+
             # Create collection with Multi-Tenant optimization
             # payload_m=16, m=0 -> optimize for payload filtering
             self.client.create_collection(
@@ -60,14 +62,14 @@ class QdrantService:
                     payload_m=16
                 )
             )
-            
+
             # Create payload index for tenant_id (critical for speed)
             self._ensure_tenant_index(collection_name)
-            
-            logger.info(f"Created Qdrant collection: {collection_name} with multi-tenant config")
-            
+
+            logger.info("qdrant_collection_created", collection=collection_name, multi_tenant=True)
+
         except Exception as e:
-            logger.error(f"Failed to create collection: {e}")
+            logger.error("qdrant_collection_creation_failed", error=str(e), collection=collection_name)
             raise
 
     def _ensure_tenant_index(self, collection_name: str):
@@ -78,11 +80,11 @@ class QdrantService:
                 field_name="tenant_id",
                 field_schema=PayloadSchemaType.KEYWORD,
             )
-            logger.info(f"Verified/Created tenant_id index for {collection_name}")
+            logger.info("qdrant_tenant_index_verified", collection=collection_name)
         except Exception as e:
             # Ignore if already exists or other non-critical error
-            logger.warning(f"Tenant index creation warning: {e}")
-    
+            logger.warning("qdrant_tenant_index_warning", error=str(e), collection=collection_name)
+
     def _ensure_uuid(self, id_val: Any) -> str:
         """
         Ensure ID is a valid Point ID (int or UUID).
@@ -90,7 +92,7 @@ class QdrantService:
         """
         if isinstance(id_val, int):
             return id_val
-            
+
         str_id = str(id_val)
         try:
             # Check if already distinct UUID
@@ -112,27 +114,27 @@ class QdrantService:
         """
         try:
             point_id = self._ensure_uuid(doc_id)
-            
+
             payload = metadata or {}
             payload["tenant_id"] = tenant_id
-            
+
             point = PointStruct(
                 id=point_id,
                 vector=embedding,
                 payload=payload
             )
-            
+
             self.client.upsert(
                 collection_name=self.collection_name,
                 points=[point]
             )
-            
-            logger.info(f"Indexed document: {doc_id} (UUID: {point_id}) for tenant: {tenant_id}")
-            
+
+            logger.info("qdrant_document_indexed", doc_id=doc_id, tenant_id=tenant_id)
+
         except Exception as e:
-            logger.error(f"Failed to index document {doc_id}: {e}")
+            logger.error("qdrant_indexing_failed", doc_id=doc_id, error=str(e))
             raise
-    
+
     async def index_batch(
         self,
         documents: List[Dict[str, Any]],
@@ -147,12 +149,12 @@ class QdrantService:
             points = []
             for doc in documents:
                 point_id = self._ensure_uuid(doc["id"])
-                
+
                 payload = doc.get("metadata", {})
                 # Ensure tenant_id is set
                 if "tenant_id" not in payload:
                     payload["tenant_id"] = tenant_id
-                
+
                 points.append(
                     PointStruct(
                         id=point_id,
@@ -160,18 +162,18 @@ class QdrantService:
                         payload=payload
                     )
                 )
-            
+
             self.client.upsert(
                 collection_name=self.collection_name,
                 points=points
             )
-            
-            logger.info(f"Indexed {len(documents)} documents in batch for tenant: {tenant_id}")
-            
+
+            logger.info("qdrant_batch_indexed", count=len(documents), tenant_id=tenant_id)
+
         except Exception as e:
-            logger.error(f"Batch indexing failed: {e}")
+            logger.error("qdrant_batch_indexing_failed", error=str(e), tenant_id=tenant_id)
             raise
-    
+
     async def search(
         self,
         query_vector: List[float],
@@ -182,20 +184,20 @@ class QdrantService:
     ) -> List[Dict[str, Any]]:
         """
         Search for similar vectors with tenant isolation.
-        
+
         Args:
             query_vector: Query embedding
             limit: Number of results
             filter_conditions: Optional filters (e.g., {"category": "news"})
             tenant_id: Context tenant ID to filter results (CRITICAL for security)
-        
+
         Returns:
             List of results with id, score, and payload
         """
         try:
             # Build filter
             must_conditions = []
-            
+
             # 1. Enforce Tenant Filter
             if tenant_id:
                 must_conditions.append(
@@ -204,7 +206,7 @@ class QdrantService:
                         match=MatchValue(value=tenant_id)
                     )
                 )
-            
+
             # 2. Add other filters
             if filter_conditions:
                 for key, value in filter_conditions.items():
@@ -214,9 +216,9 @@ class QdrantService:
                             match=MatchValue(value=value)
                         )
                     )
-            
+
             query_filter = Filter(must=must_conditions) if must_conditions else None
-            
+
             # Execute search
             results = self.client.search(
                 collection_name=collection_name or self.collection_name,
@@ -224,7 +226,7 @@ class QdrantService:
                 limit=limit,
                 query_filter=query_filter
             )
-            
+
             # Format results
             formatted_results = [
                 {
@@ -234,14 +236,14 @@ class QdrantService:
                 }
                 for hit in results
             ]
-            
-            logger.info(f"Found {len(formatted_results)} similar documents (Tenant: {tenant_id})")
+
+            logger.info("qdrant_search_completed", hits=len(formatted_results), tenant_id=tenant_id)
             return formatted_results
-            
+
         except Exception as e:
-            logger.error(f"Search failed: {e}")
+            logger.error("qdrant_search_failed", error=str(e), tenant_id=tenant_id)
             return []
-    
+
     async def get_document(self, doc_id: str) -> Optional[Dict[str, Any]]:
         """
         Retrieve a specific document by ID.
@@ -251,7 +253,7 @@ class QdrantService:
                 collection_name=self.collection_name,
                 ids=[doc_id]
             )
-            
+
             if result:
                 return {
                     "id": result[0].id,
@@ -259,11 +261,11 @@ class QdrantService:
                     "metadata": result[0].payload
                 }
             return None
-            
+
         except Exception as e:
-            logger.error(f"Failed to retrieve document {doc_id}: {e}")
+            logger.error("qdrant_retrieval_failed", doc_id=doc_id, error=str(e))
             return None
-    
+
     async def delete_document(self, doc_id: str):
         """Delete a document from the collection."""
         try:
@@ -272,9 +274,9 @@ class QdrantService:
                 collection_name=self.collection_name,
                 points_selector=[point_id]
             )
-            logger.info(f"Deleted document: {doc_id} (UUID: {point_id})")
+            logger.info("qdrant_document_deleted", doc_id=doc_id)
         except Exception as e:
-            logger.error(f"Failed to delete document {doc_id}: {e}")
+            logger.error("qdrant_delete_failed", doc_id=doc_id, error=str(e))
 
 # Singleton
 _qdrant_service = QdrantService()

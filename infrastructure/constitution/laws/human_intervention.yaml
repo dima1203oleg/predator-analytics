@@ -1,0 +1,12 @@
+id: "axiom_human_intervention"
+name: "Human Intervention and Review Constitution"
+version: "27.0"
+description: "Establishes mandatory human checkpoints for high-risk system changes."
+
+constraints:
+  - id: "HI-001"
+    description: "risk_score > 0.20 requires Human Review"
+  - id: "HI-005"
+    description: "Manual direct modification of Truth Ledger is strictly forbidden."
+  - id: "HI-006"
+    description: "Overriding ETL state manually is forbidden."

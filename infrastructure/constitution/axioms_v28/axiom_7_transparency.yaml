@@ -1,0 +1,251 @@
+# ═══════════════════════════════════════════════════════════════
+# AXIOM 7: ЗАКОН ПРОЗОРОСТІ
+# Predator Analytics v28-S Constitutional Framework
+# ═══════════════════════════════════════════════════════════════
+
+id: "axiom_7"
+name: "Закон Прозорості"
+name_en: "Law of Transparency"
+version: "28.0"
+level: "ABSOLUTE"
+status: "ENFORCED"
+created_at: "2026-01-12T22:55:00Z"
+hash_algorithm: "SHA3-512"
+
+formal_logic: |
+  # Кожна дія повинна бути залогована
+  ∀ action ∈ System.Actions:
+    action.executed ⇒
+      (∃ log_entry ∈ TruthLedger ∧ log_entry.action_id = action.id)
+      ∧ (log_entry.timestamp ≤ action.completion_time)
+      ∧ (log_entry.signed = true)
+
+  # Кожне рішення повинно мати пояснення
+  ∀ decision ∈ System.Decisions:
+    decision.made ⇒
+      (∃ explanation ∈ Explanations ∧ explanation.decision_id = decision.id)
+      ∧ (explanation.human_readable = true)
+      ∧ (explanation.reasoning_chain ≠ ∅)
+
+  # Аудит в реальному часі
+  ∀ t ∈ Time:
+    ∃ audit_stream ∧ audit_stream.lag < 5_seconds
+
+explanation: |
+  Закон Прозорості забезпечує повну відкритість системи:
+
+  1. ПОВНЕ ЛОГУВАННЯ: Кожна дія системи логується в Truth Ledger
+     з криптографічним підписом та часовою міткою.
+
+  2. ПОЯСНЮВАНІСТЬ: Кожне рішення супроводжується
+     зрозумілим для людини поясненням.
+
+  3. ЛАНЦЮЖОК МІРКУВАНЬ: Всі кроки до прийняття рішення
+     документуються та можуть бути перевірені.
+
+  4. АУДИТ В РЕАЛЬНОМУ ЧАСІ: Система підтримує безперервний
+     потік аудиторських подій з мінімальною затримкою.
+
+  5. КРИПТОГРАФІЧНІ ДОКАЗИ: Всі записи мають криптографічні
+     підписи, що унеможливлюють їх підробку.
+
+immutability: "ABSOLUTE"
+
+logging_requirements:
+  mandatory_fields:
+    - field: "entry_id"
+      type: "UUID"
+      description: "Унікальний ідентифікатор запису"
+
+    - field: "timestamp"
+      type: "TIMESTAMPTZ"
+      description: "Монотонний час події"
+
+    - field: "action_type"
+      type: "STRING"
+      description: "Тип дії"
+
+    - field: "actor_id"
+      type: "STRING"
+      description: "Ідентифікатор виконавця (агент, користувач, сервіс)"
+
+    - field: "target"
+      type: "STRING"
+      description: "Ціль дії"
+
+    - field: "input_data_hash"
+      type: "STRING"
+      description: "Хеш вхідних даних"
+
+    - field: "output_data_hash"
+      type: "STRING"
+      description: "Хеш вихідних даних"
+
+    - field: "signature"
+      type: "STRING"
+      description: "Криптографічний підпис"
+
+    - field: "previous_hash"
+      type: "STRING"
+      description: "Хеш попереднього запису (ланцюжок)"
+
+  optional_fields:
+    - field: "context"
+      type: "JSONB"
+      description: "Додатковий контекст"
+
+    - field: "parent_action_id"
+      type: "UUID"
+      description: "Батьківська дія (для вкладених)"
+
+    - field: "duration_ms"
+      type: "INTEGER"
+      description: "Тривалість виконання"
+
+explainability_requirements:
+  decision_explanation:
+    required_elements:
+      - element: "decision_id"
+        description: "Ідентифікатор рішення"
+
+      - element: "summary"
+        description: "Коротке резюме рішення"
+        format: "Одне речення для людини"
+
+      - element: "reasoning_chain"
+        description: "Послідовність кроків міркування"
+        format: "Список кроків з поясненнями"
+
+      - element: "evidence"
+        description: "Докази, на яких базується рішення"
+        format: "Посилання на факти та дані"
+
+      - element: "alternatives_considered"
+        description: "Розглянуті альтернативи"
+        format: "Список з поясненням чому відхилено"
+
+      - element: "confidence_score"
+        description: "Рівень впевненості"
+        format: "Число 0.0 - 1.0"
+
+      - element: "uncertainty_factors"
+        description: "Фактори невизначеності"
+        format: "Список потенційних проблем"
+
+  human_readable_format:
+    template: |
+      РІШЕННЯ: {summary}
+
+      ОБҐРУНТУВАННЯ:
+      {reasoning_chain as numbered list}
+
+      ДОКАЗИ:
+      {evidence as bullet points}
+
+      РОЗГЛЯНУТІ АЛЬТЕРНАТИВИ:
+      {alternatives with rejection reasons}
+
+      РІВЕНЬ ВПЕВНЕНОСТІ: {confidence_score}%
+
+      ЗАСТЕРЕЖЕННЯ:
+      {uncertainty_factors}
+
+audit_stream:
+  configuration:
+    transport: "Redis Pub/Sub + PostgreSQL"
+    channel: "predator:audit:stream"
+    max_lag_seconds: 5
+    retention_days: 365
+
+  event_types:
+    - "action_started"
+    - "action_completed"
+    - "action_failed"
+    - "decision_made"
+    - "anomaly_detected"
+    - "constitutional_check"
+    - "human_intervention"
+    - "rollback_triggered"
+
+  consumers:
+    - name: "Grafana Dashboard"
+      type: "real-time"
+      purpose: "Візуалізація активності"
+
+    - name: "Alertmanager"
+      type: "real-time"
+      purpose: "Сповіщення про аномалії"
+
+    - name: "Compliance Archive"
+      type: "persistent"
+      purpose: "Довгостроковий аудит"
+
+    - name: "SOM Central Oversight"
+      type: "real-time"
+      purpose: "Моніторинг конституційної відповідності"
+
+enforcement:
+  primary:
+    - method: "Action Interception"
+      description: "Перехоплення та логування всіх дій"
+      automated: true
+
+    - method: "Decision Documentation"
+      description: "Автоматична генерація пояснень"
+      automated: true
+
+    - method: "Signature Verification"
+      description: "Верифікація криптографічних підписів"
+      automated: true
+
+  secondary:
+    - method: "Audit Trail Review"
+      description: "Періодичний огляд аудиторського сліду"
+      automated: false
+      frequency: "Weekly"
+
+constraints:
+  - id: "action_must_be_logged"
+    description: "Кожна дія повинна бути залогована"
+    check_expression: "action.executed implies action.log_entry_id is not null"
+    violation_severity: "CRITICAL"
+    violation_action: "BLOCK_AND_ALERT"
+
+  - id: "decision_must_be_explained"
+    description: "Кожне рішення повинно мати пояснення"
+    check_expression: "decision.made implies decision.explanation is not null"
+    violation_severity: "HIGH"
+    violation_action: "BLOCK_UNTIL_EXPLAINED"
+
+  - id: "log_must_be_signed"
+    description: "Кожен лог-запис повинен бути підписаний"
+    check_expression: "log_entry.signature is not null"
+    violation_severity: "HIGH"
+    violation_action: "REJECT_ENTRY"
+
+  - id: "audit_stream_lag"
+    description: "Затримка аудит-стріму не більше 5 секунд"
+    check_expression: "audit_stream.current_lag < 5"
+    violation_severity: "HIGH"
+    violation_action: "ALERT_AND_INVESTIGATE"
+
+monitoring:
+  metrics:
+    - "audit_entries_total"
+    - "audit_stream_lag_seconds"
+    - "explanation_generation_time_ms"
+    - "signature_verification_failures"
+    - "unlogged_actions_total" # Should always be 0
+
+  alerts:
+    - condition: "unlogged_action_detected"
+      severity: "CRITICAL"
+      action: "HALT_AND_INVESTIGATE"
+
+    - condition: "audit_stream_lag > 5s"
+      severity: "HIGH"
+      action: "SCALE_AUDIT_CONSUMERS"
+
+    - condition: "signature_verification_failed"
+      severity: "CRITICAL"
+      action: "INVESTIGATE_TAMPERING"

@@ -24,10 +24,11 @@ FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 
-# Install runtime libs (libpq for Postgre)
+# Install runtime libs (libpq for Postgre, git for auto-commit)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
     curl \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 

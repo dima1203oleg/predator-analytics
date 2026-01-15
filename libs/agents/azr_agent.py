@@ -1,8 +1,9 @@
-
 import asyncio
 import logging
 import json
 import subprocess
+import os
+import tempfile
 from datetime import datetime
 from typing import Dict, Any, List
 from agents.contract import AZRAgentContract, AgentContext
@@ -23,7 +24,7 @@ class PredatorAZRAgent(AZRAgentContract):
         self.health_score = 100.0
 
     async def run(self, context: AgentContext) -> Dict[str, Any]:
-        """Main Agent Loop."""
+        """Main Agent Loop: OODA (Observe, Orient, Decide, Act)."""
         self.running = True
         logger.info(f"🤖 AZR Agent {self.name} started with execution ID {context.execution_id}")
 
@@ -31,24 +32,46 @@ class PredatorAZRAgent(AZRAgentContract):
         amendments = []
 
         try:
-            while self.running and cycles < 10: # Safety cap for now
+            while self.running and cycles < 5:
                 cycles += 1
+                logger.info(f"🔄 AZR Cycle {cycles} starting...")
 
-                # 1. PERCEIVE: Get System Status via CLI
+                # 1. OBSERVE: Get Comprehensive Verification
+                verification = self._cli_command(context, ["verify", "--output", "json"])
+
+                # 2. ORIENT: Deep Analysis of Constitutional Integrity
+                issues = []
+                const_status = verification.get("constitution", {}).get("status")
+
+                if const_status == "VIOLATED":
+                    issues.append("Axiom Integrity Violation detected in core document")
+                elif const_status == "MISSING":
+                    issues.append("Constitution file is MISSING")
+
+                # 3. DECIDE: Integrated Analysis with System Status
                 status = self._cli_command(context, ["system", "status", "--output", "json"])
-
-                # 2. ANALYZE: Check logic
                 if status.get("overall") != "HEALTHY":
-                    logger.warning("Unhealthy system detected! Preparing amendment...")
-                    # Simulating analysis...
-                    proposal = self._generate_fix_proposal(status)
+                    issues.append(f"System status is {status.get('overall')}")
 
-                    # 3. ACT: Propose Amendment
+                # 4. ACT: If issues found, propose amendments
+                if issues:
+                    logger.warning(f"⚠️ Issues detected: {issues}")
+                    # In a real system, we'd have a catalog of fix scripts/templates
+                    proposal = f"""
+                    title: Automatic Constitutional Recovery
+                    scope: security
+                    actions:
+                      - type: GITOPS_SYNC
+                        target: docs/v26_CONSTITUTION.md
+                        reason: {issues[0]}
+                    """
                     res = await self.propose_amendment(context, proposal)
                     amendments.append(res)
+                else:
+                    logger.info("✅ System state verified as CONSTITUTIONAL.")
 
-                # Heartbeat
-                await asyncio.sleep(10) # Fast loop for demo
+                # Sleep before next cycle
+                await asyncio.sleep(15)
 
         except Exception as e:
             logger.error(f"AZR Crash: {e}")
@@ -60,23 +83,71 @@ class PredatorAZRAgent(AZRAgentContract):
         return True
 
     async def propose_amendment(self, context: AgentContext, proposal_yaml: str) -> str:
-        """Submit proposal via predatorctl azr propose"""
-        # In a real scenario, we'd write to a tmp file
-        logger.info(f"📝 Proposing Amendment: {proposal_yaml[:50]}...")
-        # Mocking CLI call for proposal
-        return "azr_proposal_123"
+        """Submit proposal via predatorctl azr propose."""
+        import tempfile
+        import os
+
+        # Write proposal to a temp file for CLI consumption
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+            f.write(proposal_yaml)
+            tmp_path = f.name
+
+        try:
+            logger.info("📝 Submitting amendment proposal...")
+            # Command: predatorctl azr propose <path>
+            res = self._cli_command(context, ["azr", "propose", "amendment", tmp_path])
+            proposal_id = res.get("proposal_id", "unknown_id")
+            logger.info(f"✅ Amendment proposed successfully: {proposal_id}")
+            return proposal_id
+        finally:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
 
     def _cli_command(self, context: AgentContext, args: List[str]) -> Dict:
-        """Execute CLI command safely."""
+        """Execute CLI command safely and return JSON."""
         cmd = [context.cli_path] + args
-        # In production this would run subprocess. Here we mock for the loop logic test
-        # to avoid recursive CLI calls blocking.
-        return {"overall": "HEALTHY", "components": {"db": "UP"}}
+        try:
+            env = os.environ.copy()
+            # Ensure PYTHONPATH is set so libs are found
+            if context.workspace_root not in env.get("PYTHONPATH", ""):
+                env["PYTHONPATH"] = f"{context.workspace_root}:{env.get('PYTHONPATH', '')}"
 
-    def _generate_fix_proposal(self, status: Dict) -> str:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                env=env,
+                cwd=context.workspace_root
+            )
+
+            if result.returncode != 0:
+                logger.error(f"CLI Error: {result.stderr}")
+                return {"status": "ERROR", "error": result.stderr}
+
+            # Try to parse as JSON if output is intended for it
+            if "--output" in args and "json" in args:
+                try:
+                    return json.loads(result.stdout)
+                except json.JSONDecodeError:
+                    return {"status": "RAW", "output": result.stdout}
+
+            return {"status": "OK", "output": result.stdout}
+        except Exception as e:
+            logger.exception(f"Failed to execute CLI command {cmd}")
+            return {"status": "EXCEPTION", "error": str(e)}
+
+    def _generate_fix_proposal(self, analysis: Dict) -> str:
+        """Generate a machine-readable fix proposal."""
         return f"""
-        type: SELF_HEALING
-        target: system
-        reason: Detected status {status.get('overall')}
-        action: restart_services
-        """
+# PREDATOR V26 AMENDMENT PROPOSAL
+type: AUTO_RECOVERY
+timestamp: {datetime.now().isoformat()}
+agent: {self.name}
+issues:
+{json.dumps(analysis.get('issues', []), indent=2)}
+proposed_actions:
+  - action: verify_all_nodes
+  - action: re_sync_ledger_from_consensus
+  - action: restart_orphaned_etls
+safety_valve: READY
+"""
