@@ -23,12 +23,29 @@ from datetime import datetime
 from typing import Dict, List, Any, Optional
 from pathlib import Path
 
+from libs.core.structured_logger import get_logger, log_business_event, RequestLogger
+logger = get_logger("predator.sovereign")
+
 # Імпортуємо існуючі агенти
 from .aider_agent import AiderAgent, AiderOrchestration
-from app.agents.copilot import CopilotAgent
-from libs.core.structured_logger import get_logger, log_business_event, RequestLogger
+# Спроба імпорту CopilotAgent з динамічним пошуком шляху
+try:
+    from app.agents.copilot import CopilotAgent
+except ImportError:
+    import sys
+    # Додаємо шлях до api-gateway, якщо ми в іншому контексті
+    for p in [Path(__file__).resolve().parents[3] / "services/api-gateway",
+              Path("/app/services/api-gateway")]:
+        if p.exists() and str(p) not in sys.path:
+            sys.path.append(str(p))
+    try:
+        from app.agents.copilot import CopilotAgent
+    except ImportError:
+        logger.warning("⚠️ CopilotAgent не знайдено через стандартний імпорт. Використовуємо заглушку.")
+        class CopilotAgent:
+            def __init__(self, *args, **kwargs): pass
+            async def chat(self, *args, **kwargs): return "CopilotAgent stub"
 
-logger = get_logger("predator.sovereign")
 
 class SovereignAgentOrchestrator:
     """
@@ -50,8 +67,16 @@ class SovereignAgentOrchestrator:
         "local": ["ollama/llama3.1:8b", "ollama/mistral:7b", "ollama/deepseek-coder:6.7b"]
     }
 
-    def __init__(self, workspace_root: str = "/app"):
+    def __init__(self, workspace_root: str = None):
+        if workspace_root is None:
+            # Динамічне визначення кореневої директорії
+            if Path("/app").exists() and os.access("/app", os.W_OK):
+                workspace_root = "/app"
+            else:
+                workspace_root = str(Path(__file__).resolve().parents[3])
+
         self.workspace_root = Path(workspace_root)
+
         self.aider_orchestrator = AiderOrchestration(project_root=str(workspace_root))
         self.cycle_count = 0
 

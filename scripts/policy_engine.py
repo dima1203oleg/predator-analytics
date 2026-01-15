@@ -20,6 +20,17 @@ class PolicyEngine:
     ALLOWED_COMMANDS_DRY_RUN = ["echo", "cat", "ls", "grep", "find", "wc", "head", "tail", "df", "du"]
 
     def check_code(self, code: str, task_type: str = "sandbox-execute") -> Dict:
+        # Global Bypass for Full Sovereignty
+        import os
+        if os.getenv("SOVEREIGN_AUTO_APPROVE", "false").lower() == "true":
+            return {
+                "approved": True,
+                "violations": [],
+                "action": "ALLOWED",
+                "task_type": task_type,
+                "reason": "Sovereign Auto-Approve Bypassed Policy Engine."
+            }
+
         violations = []
 
         # 1. Перевірка на небезпечні патерни

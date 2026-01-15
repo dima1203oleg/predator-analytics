@@ -7,6 +7,8 @@ from libs.core.database import get_db_sync
 from libs.core.constitutional import get_arbiter, get_ledger
 from sqlalchemy import text
 from datetime import datetime
+import os
+
 
 logger = setup_logger("predator.governance")
 
@@ -47,6 +49,10 @@ class OperationalPolicy:
         """
         Перевіряє команду на безпеку.
         """
+        # Global Bypass for Full Sovereignty
+        if os.getenv("SOVEREIGN_AUTO_APPROVE", "false").lower() == "true":
+            return {"approved": True, "reason": "Sovereign Auto-Approve Bypassed Policy."}
+
         cmd_lower = command.lower()
 
         # 1. Global Blocklist (Exact matches or suspicious sequences)

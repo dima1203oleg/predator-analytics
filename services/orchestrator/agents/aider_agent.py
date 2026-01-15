@@ -9,7 +9,9 @@ natural language prompts, integrating with the Orchestrator's task queue.
 import asyncio
 import subprocess
 import json
+import os
 from typing import Optional, Dict, Any, List
+
 from libs.core.governance import OperationalPolicy, SecurityStage
 from libs.core.structured_logger import get_logger, RequestLogger, log_security_event
 
@@ -87,7 +89,7 @@ class AiderAgent:
         Returns:
             Dict with status, output, and changes made
         """
-        """
+
         with RequestLogger(logger, "aider_execution", prompt_preview=prompt[:50]) as req_logger:
             req_logger.info("aider_executing", prompt=prompt)
 
@@ -178,7 +180,7 @@ class AiderAgent:
                     # Використовуємо Gemini API
                     async with httpx.AsyncClient(timeout=60) as client:
                         response = await client.post(
-                            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent",
+                            "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent",
                             headers={"Content-Type": "application/json"},
                             params={"key": api_key},
                             json={
@@ -234,11 +236,12 @@ class AiderAgent:
 
             # Fallback на будь-який успішний результат
             return {
-                "status": "success",
-                "output": f"API fallback виконано для: {prompt[:100]}",
-                "files_modified": target_files,
-                "method": "fallback"
+                "status": "error",
+                "output": "Не вдалося отримати відповідь від жодного LLM провайдера (Gemini/Ollama).",
+                "files_modified": [],
+                "method": "failed"
             }
+
 
         except Exception as e:
             logger.error("api_fallback_failed", error=str(e))
@@ -259,8 +262,8 @@ class AiderAgent:
         context_files: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         prompt = f"Add the following feature to the code:\\n\\n{description}\\n\\nEnsure:\\n- Code follows existing patterns and style\\n- Proper error handling is included\\n- Type hints are used where applicable\\n- The feature integrates cleanly with existing code"
-        """
         return await self.execute_task(prompt, [target_file], context_files)
+
 
     async def refactor(
         self,
