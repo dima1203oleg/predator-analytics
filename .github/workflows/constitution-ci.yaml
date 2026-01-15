@@ -1,0 +1,63 @@
+name: Constitution CI/CD
+
+on:
+  push:
+    branches: [main, release/*]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PREDATOR_VERSION: v26
+
+jobs:
+  constitution-check:
+    name: Конституційна перевірка
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Predator CLI
+        run: |
+          pip install ./predatorctl
+
+      - name: Validate Axioms
+        run: |
+          predatorctl system audit --type constitution --since 24h
+
+      - name: OPA Policy Check
+        uses: open-policy-agent/conftest-action@v0.2.0
+        with:
+          policy: policies/opa/
+          input: '**/*.yaml'
+
+  security-scan:
+    name: Сканування безпеки
+    runs-on: ubuntu-latest
+    needs: constitution-check
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+
+      - name: Checkov Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: infrastructure/
+          framework: terraform

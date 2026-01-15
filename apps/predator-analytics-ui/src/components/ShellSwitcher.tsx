@@ -2,12 +2,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useShell, UIShell } from '../context/ShellContext';
-import { useUser, UserRole } from '../context/UserContext';
+import { useUser } from '../context/UserContext';
+import { UserRole } from '../config/roles';
 import { Layout, Eye, Shield, Crown } from 'lucide-react';
 
 export const ShellSwitcher: React.FC = () => {
   const { currentShell, setShell } = useShell();
-  const { user, isCommander, isOperator } = useUser();
+  const { user, isAdmin } = useUser();
   const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
@@ -17,18 +18,18 @@ export const ShellSwitcher: React.FC = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  if (!user || (!isCommander && !isOperator)) return null;
+  if (!user) return null;
 
   const shells = [
-    { id: UIShell.EXPLORER, label: 'Explorer', icon: <Eye size={14} />, role: UserRole.EXPLORER },
-    { id: UIShell.OPERATOR, label: 'Operator', icon: <Shield size={14} />, role: UserRole.OPERATOR },
-    { id: UIShell.COMMANDER, label: 'Commander', icon: <Crown size={14} />, role: UserRole.COMMANDER },
+    { id: UIShell.EXPLORER, label: 'Explorer', icon: <Eye size={14} />, role: UserRole.CLIENT_BASIC },
+    { id: UIShell.OPERATOR, label: 'Operator', icon: <Shield size={14} />, role: UserRole.CLIENT_PREMIUM },
+    { id: UIShell.COMMANDER, label: 'Commander', icon: <Crown size={14} />, role: UserRole.ADMIN },
   ];
 
   const roleHierarchy = {
-    [UserRole.EXPLORER]: 1,
-    [UserRole.OPERATOR]: 2,
-    [UserRole.COMMANDER]: 3,
+    [UserRole.CLIENT_BASIC]: 1,
+    [UserRole.CLIENT_PREMIUM]: 2,
+    [UserRole.ADMIN]: 3,
   };
 
   return (
@@ -37,7 +38,7 @@ export const ShellSwitcher: React.FC = () => {
         const hasAccess = roleHierarchy[user.role] >= roleHierarchy[shell.role];
 
         // Mobile Restriction: Commander is not supported on mobile
-        if (isMobile && shell.role === UserRole.COMMANDER) return null;
+        if (isMobile && shell.role === UserRole.ADMIN) return null;
 
         if (!hasAccess) return null;
 
@@ -54,7 +55,7 @@ export const ShellSwitcher: React.FC = () => {
                 : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
               }
             `}
-            title={shell.role === UserRole.COMMANDER && isMobile ? 'Commander mode not available on mobile' : `Switch to ${shell.label} Mode`}
+            title={shell.role === UserRole.ADMIN && isMobile ? 'Commander mode not available on mobile' : `Switch to ${shell.label} Mode`}
           >
             {shell.icon}
             <span className={isActive ? 'block' : 'hidden'}>{shell.label}</span>

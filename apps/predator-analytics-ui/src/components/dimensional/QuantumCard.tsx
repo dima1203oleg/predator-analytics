@@ -17,7 +17,7 @@
 import React, { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { useDimensionalContext, Dimension } from '../../hooks/useDimensionalContext';
-import { UserRole } from '../../context/UserContext';
+import { UserRole } from '../../config/roles';
 
 interface QuantumCardProps {
   children: ReactNode;
@@ -196,9 +196,9 @@ export const InformationTier: React.FC<{
   const { role } = useDimensionalContext();
 
   const roleToTier: Record<UserRole, number> = {
-    [UserRole.EXPLORER]: 1,
-    [UserRole.OPERATOR]: 2,
-    [UserRole.COMMANDER]: 3,
+    [UserRole.CLIENT_BASIC]: 1,
+    [UserRole.CLIENT_PREMIUM]: 2,
+    [UserRole.ADMIN]: 3,
   };
 
   const currentTier = roleToTier[role];

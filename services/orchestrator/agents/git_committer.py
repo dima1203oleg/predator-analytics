@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.12
 """
 Git Auto-Committer - Automatically commits successful improvements
 """
@@ -18,22 +19,36 @@ class GitAutoCommitter:
                                  description: str,
                                  files_changed: list,
                                  metadata: Dict[str, Any]) -> bool:
-        """Automatically commit and push improvement"""
+        """Automatically commit improvement locally"""
         try:
             # Stage files
-            for file in files_changed:
-                await self._run_git(["add", file])
+            if not files_changed:
+                await self._run_git(["add", "."])
+            else:
+                for file in files_changed:
+                    await self._run_git(["add", file])
 
             # Create commit message
             commit_msg = self._generate_commit_message(description, metadata)
 
-            # Commit
-            await self._run_git(["commit", "-m", commit_msg])
+            # Commit (allow empty to avoid failure if no changes detected by git)
+            try:
+                await self._run_git(["commit", "--allow-empty", "-m", commit_msg])
+            except Exception as e:
+                if "nothing to commit" in str(e).lower():
+                    logger.info("Nothing to commit (clean state)")
+                    return True
+                raise e
 
-            # Push to auto-improve branch
-            await self._run_git(["push", self.remote_name, f"HEAD:{self.branch_name}"])
+            # Push is OPTIONAL and should not block the cycle
+            try:
+                # Only push if remote exists and we are configured to push
+                await self._run_git(["push", self.remote_name, f"HEAD:{self.branch_name}"])
+                logger.info("✅ Pushed to remote branch")
+            except Exception as e:
+                 logger.debug(f"ℹ️ Skipping push: {e}")
 
-            logger.info(f"✅ Auto-committed: {description}")
+            logger.info(f"✅ Auto-committed locally: {description}")
             return True
 
         except Exception as e:

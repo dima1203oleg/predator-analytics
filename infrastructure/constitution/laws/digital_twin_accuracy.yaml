@@ -1,0 +1,9 @@
+id: "axiom_digital_twin_accuracy"
+name: "Digital Twin Accuracy and Reality Gap Law"
+version: "27.0"
+description: "Maintains high fidelity between digital simulation and physical reality."
+
+constraints:
+  - id: "divergence_threshold"
+    description: "Max divergence 0.3%"
+  - id: "block_on_divergence"

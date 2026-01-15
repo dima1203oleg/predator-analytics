@@ -14,7 +14,7 @@
 - IDE autocomplete
 """
 
-from pydantic import BaseModel, Field, validator, root_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import Optional, Dict, Any, List
 from datetime import datetime
 from enum import Enum
@@ -83,15 +83,16 @@ class ETLTaskPayload(BaseModel):
     priority: TaskPriority = Field(default=TaskPriority.NORMAL)
     callback_url: Optional[str] = Field(None, description="Webhook after completion")
 
-    @validator('file_path')
+    @field_validator('file_path')
+    @classmethod
     def validate_file_path(cls, v):
         """Перевірка що file_path не порожній"""
         if not v or not v.strip():
             raise ValueError("file_path cannot be empty")
         return v.strip()
 
-    class Config:
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "source_id": "src_march_2024",
                 "file_path": "raw-data/customs/Березень_2024.xlsx",
@@ -105,6 +106,7 @@ class ETLTaskPayload(BaseModel):
                 "callback_url": "https://api.example.com/webhook"
             }
         }
+    }
 
 
 class MLTrainingPayload(BaseModel):
@@ -135,7 +137,8 @@ class MLTrainingPayload(BaseModel):
         description="Min accuracy for auto-deploy"
     )
 
-    @validator('dataset_id')
+    @field_validator('dataset_id')
+    @classmethod
     def validate_dataset_id(cls, v):
         """Validate UUID format"""
         try:
@@ -144,8 +147,8 @@ class MLTrainingPayload(BaseModel):
             raise ValueError("dataset_id must be valid UUID")
         return v
 
-    class Config:
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "dataset_id": "550e8400-e29b-41d4-a716-446655440000",
                 "model_type": "automl",
@@ -161,6 +164,7 @@ class MLTrainingPayload(BaseModel):
                 "accuracy_threshold": 0.90
             }
         }
+    }
 
 
 class IndexingTaskPayload(BaseModel):
@@ -170,8 +174,8 @@ class IndexingTaskPayload(BaseModel):
     Queue: indexing_queue
     Task: tasks.indexing.index_documents_task
     """
-    documents: List[Dict[str, Any]] = Field(..., min_items=1, max_items=10000)
-    index_name: str = Field(..., regex="^[a-z][a-z0-9_-]*$")
+    documents: List[Dict[str, Any]] = Field(..., min_length=1, max_length=10000)
+    index_name: str = Field(..., pattern="^[a-z][a-z0-9_-]*$")
     collection_name: str = Field(..., description="Qdrant collection name")
     batch_size: int = Field(default=100, ge=1, le=1000)
     generate_embeddings: bool = Field(
@@ -183,7 +187,8 @@ class IndexingTaskPayload(BaseModel):
         description="Remove PII before indexing"
     )
 
-    @validator('documents')
+    @field_validator('documents')
+    @classmethod
     def validate_documents(cls, v):
         """Validate each document has required fields"""
         required_fields = ['content']
@@ -192,8 +197,8 @@ class IndexingTaskPayload(BaseModel):
                 raise ValueError("Each document must have 'content' field")
         return v
 
-    class Config:
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "documents": [
                     {
@@ -209,6 +214,7 @@ class IndexingTaskPayload(BaseModel):
                 "pii_safe": True
             }
         }
+    }
 
 
 class MaintenanceTaskPayload(BaseModel):
@@ -218,13 +224,13 @@ class MaintenanceTaskPayload(BaseModel):
     Queue: maintenance_queue
     Task: tasks.maintenance.run_maintenance_task
     """
-    operation: str = Field(..., regex="^(vacuum_db|reclaim_vectors|optimize_indexes|cleanup_old_data)$")
+    operation: str = Field(..., pattern="^(vacuum_db|reclaim_vectors|optimize_indexes|cleanup_old_data)$")
     target: Optional[str] = Field(None, description="Specific target (table name, collection, etc)")
     dry_run: bool = Field(default=False, description="Simulate without applying changes")
     schedule_time: Optional[datetime] = Field(None, description="Run at specific time")
 
-    class Config:
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "operation": "vacuum_db",
                 "target": "documents",
@@ -232,6 +238,7 @@ class MaintenanceTaskPayload(BaseModel):
                 "schedule_time": None
             }
         }
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -263,8 +270,8 @@ class RedisEvent(BaseModel):
     correlation_id: Optional[str] = Field(None, description="For distributed tracing")
     source_service: str = Field(..., description="Service that emitted event")
 
-    class Config:
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "event_id": "evt_123",
                 "event_type": "job.completed",
@@ -278,20 +285,21 @@ class RedisEvent(BaseModel):
                 "source_service": "celery_worker"
             }
         }
+    }
 
 
 class JobProgressEvent(RedisEvent):
     """Специфічний event для progress updates"""
     event_type: EventType = EventType.JOB_PROGRESS
 
-    @root_validator
-    def validate_progress_payload(cls, values):
+    @model_validator(mode='after')
+    def validate_progress_payload(self) -> 'JobProgressEvent':
         """Validate progress payload has required fields"""
-        payload = values.get('payload', {})
+        payload = self.payload or {}
         required = ['job_id', 'progress_percent', 'current_step']
         if not all(key in payload for key in required):
             raise ValueError(f"Progress event must have fields: {required}")
-        return values
+        return self
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -301,13 +309,13 @@ class JobProgressEvent(RedisEvent):
 class SearchRequest(BaseModel):
     """Contract для search API"""
     query: str = Field(..., min_length=1, max_length=500)
-    mode: str = Field(default="hybrid", regex="^(semantic|keyword|hybrid)$")
+    mode: str = Field(default="hybrid", pattern="^(semantic|keyword|hybrid)$")
     limit: int = Field(default=20, ge=1, le=100)
     offset: int = Field(default=0, ge=0)
     filters: Optional[Dict[str, Any]] = None
 
-    class Config:
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "query": "митні декларації з Китаю",
                 "mode": "hybrid",
@@ -319,6 +327,7 @@ class SearchRequest(BaseModel):
                 }
             }
         }
+    }
 
 
 class SearchResponse(BaseModel):
@@ -329,8 +338,8 @@ class SearchResponse(BaseModel):
     took_ms: int
     mode: str
 
-    class Config:
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "success": True,
                 "results": [
@@ -345,17 +354,18 @@ class SearchResponse(BaseModel):
                 "mode": "hybrid"
             }
         }
+    }
 
 
 class CreateMissionRequest(BaseModel):
     """Contract для Mission Planner API"""
     title: str = Field(..., min_length=5, max_length=200)
     description: str = Field(..., min_length=10, max_length=2000)
-    priority: str = Field(default="medium", regex="^(low|medium|high|critical)$")
+    priority: str = Field(default="medium", pattern="^(low|medium|high|critical)$")
     context: Dict[str, Any] = Field(default_factory=dict)
 
-    class Config:
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "title": "Аналіз кіберзагрози APT-2024-001",
                 "description": "Виявлено підозрілу активність. Необхідний аналіз через SIGINT та CYBINT.",
@@ -366,6 +376,7 @@ class CreateMissionRequest(BaseModel):
                 }
             }
         }
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════════════

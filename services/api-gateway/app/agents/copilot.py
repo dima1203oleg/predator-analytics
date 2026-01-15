@@ -6,6 +6,11 @@ except ModuleNotFoundError:
     genai = None
 from pydantic import BaseModel
 import asyncio
+from libs.core.governance import OperationalPolicy, SecurityStage
+import os
+import logging
+
+logger = logging.getLogger("agents.copilot")
 
 class ToolResult(BaseModel):
     tool_name: str
@@ -114,10 +119,13 @@ class CopilotAgent:
         SECURITY WARNING: This is a critical capability.
         In production, strict allowlisting of commands is required.
         """
-        # Minimum safety check
-        forbidden = ["rm -rf /", ":(){ :|:& };:", "wget", "curl"]
-        if any(f in command for f in forbidden):
-             return ToolResult(tool_name="run_shell", output="Command blocked by safety policy", is_error=True)
+        # Enhanced security via OperationalPolicy (v26.2)
+        stage = SecurityStage.PRODUCTION if os.getenv("ENVIRONMENT") == "production" else SecurityStage.RND
+        validation = OperationalPolicy.validate_command(command, stage=stage)
+
+        if not validation["approved"]:
+             logger.error(f"🛑 Security Block (Copilot): {validation['reason']}")
+             return ToolResult(tool_name="run_shell", output=f"Security Violation: {validation['reason']}", is_error=True)
 
         try:
             proc = await asyncio.create_subprocess_shell(

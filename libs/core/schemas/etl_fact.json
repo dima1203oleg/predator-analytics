@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://predator/constitution/v26/etl-fact-schema.json",
+  "title": "ETL Fact Schema",
+  "description": "Канонічна схема фактів ETL. ЕTL не публікує стани, лише ці факти.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["job_id", "fact_id", "fact_type", "timestamp", "source"],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Унікальний ідентифікатор ETL-завдання"
+    },
+    "fact_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Унікальний ідентифікатор факту (для дедуплікації)"
+    },
+    "fact_type": {
+      "type": "string",
+      "enum": [
+        "file_upload_started",
+        "file_upload_progress",
+        "file_upload_completed",
+        "file_validation_started",
+        "file_validation_completed",
+        "file_validation_failed",
+        "row_parsed",
+        "row_validated",
+        "row_transformed",
+        "batch_indexed",
+        "heartbeat",
+        "error_occurred",
+        "processing_completed",
+        "indexing_completed"
+      ],
+      "description": "Тип факту. Визначає семантику."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Мітки часу у форматі ISO 8601"
+    },
+    "source": {
+      "type": "string",
+      "enum": ["etl_engine", "storage_layer", "indexing_service"],
+      "description": "Компонент, що згенерував факт"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Змістовне навантаження факту",
+      "oneOf": [
+        {
+          "properties": {
+            "bytes_processed": { "type": "integer", "minimum": 0 },
+            "total_bytes": { "type": "integer", "minimum": 0 }
+          },
+          "required": ["bytes_processed", "total_bytes"]
+        },
+        {
+          "properties": {
+            "rows_processed": { "type": "integer", "minimum": 0 },
+            "total_rows": { "type": "integer", "minimum": 0 }
+          },
+          "required": ["rows_processed", "total_rows"]
+        },
+        {
+          "properties": {
+            "error_code": { "type": "string" },
+            "error_message": { "type": "string" },
+            "error_context": { "type": "object" }
+          },
+          "required": ["error_code", "error_message"]
+        }
+      ]
+    }
+  }
+}

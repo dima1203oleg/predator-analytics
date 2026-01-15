@@ -3,6 +3,9 @@ from fastapi import APIRouter
 from datetime import datetime, timezone
 import asyncpg
 import os
+from libs.core.structured_logger import get_logger, log_security_event
+
+logger = get_logger("predator.api.security")
 
 router = APIRouter(prefix="/security", tags=["Security"])
 
@@ -30,8 +33,8 @@ async def get_security_status():
                 AND timestamp > NOW() - INTERVAL '24 hours'
             """)
             threats_count = result or 0
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error("security_status_check_failed", error=str(e))
         finally:
             await conn.close()
 
@@ -72,8 +75,8 @@ async def get_audit_log(limit: int = 50):
                 })
 
             total = await conn.fetchval("SELECT COUNT(*) FROM audit_pii_access")
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error("audit_log_fetch_failed", error=str(e))
             # Return empty list if table missing (graceful degradation)
         finally:
             await conn.close()
@@ -113,8 +116,8 @@ async def get_waf_logs(limit: int = 20):
                     "action": "BLOCK",
                     "timestamp": row["timestamp"].isoformat() if row["timestamp"] else None
                 })
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error("waf_log_fetch_failed", error=str(e))
         finally:
             await conn.close()
 
@@ -144,8 +147,11 @@ async def trigger_security_scan():
                 VALUES ($1, $2, $3, $4, $5)
             """, "security_scan", "low", "Manual security scan triggered",
                 {"scan_id": scan_id}, datetime.now(timezone.utc))
-        except Exception:
-            pass
+            # Log to structured logger as well
+            log_security_event(logger, "manual_scan_triggered", "low", scan_id=scan_id, source="api")
+            logger.info("security_scan_started", scan_id=scan_id)
+        except Exception as e:
+            logger.error("security_scan_log_failed", error=str(e))
         finally:
             await conn.close()
 
@@ -185,8 +191,8 @@ async def get_threats():
                 if row["severity"] in breakdown:
                     breakdown[row["severity"]] += 1
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error("threats_fetch_failed", error=str(e))
         finally:
             await conn.close()
 

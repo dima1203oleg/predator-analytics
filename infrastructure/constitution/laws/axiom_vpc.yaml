@@ -1,0 +1,14 @@
+id: "axiom_vpc"
+name: "Axiom VPC: Verifiable Physical Consequences"
+version: "27.0"
+level: "ABSOLUTE"
+status: "ENFORCED"
+description: >
+  No action is considered completed without independent witness verification.
+  Actuators cannot verify their own results.
+  Consensus among independent sensors is mandatory for physical truth.
+
+constraints:
+  - id: "independent_witness_verification"
+  - id: "cross_channel_consensus"
+  - id: "actuator_observation_separation"

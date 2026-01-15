@@ -11,7 +11,9 @@ from typing import Dict, List, Any, Optional, Callable
 from collections import defaultdict
 import logging
 
-logger = logging.getLogger("agents.self_healing")
+from libs.core.structured_logger import get_logger, log_business_event, RequestLogger
+
+logger = get_logger("agents.self_healing")
 
 
 @dataclass
@@ -149,64 +151,78 @@ class SelfHealingSystem:
         """
         pattern = self.error_tracker.record_error(error, context)
 
-        logger.warning(f"🔧 Self-Healing: Detected {pattern.error_type} (count: {pattern.count})")
+        with RequestLogger(logger, "self_healing_attempt", error_type=pattern.error_type, count=pattern.count) as req_logger:
 
-        # Check circuit breaker
-        if self._is_circuit_open(pattern.error_type):
-            logger.warning(f"⚡ Circuit breaker OPEN for {pattern.error_type}")
-            return None
+            logger.warning("healing_detected_error",
+                error_type=pattern.error_type,
+                count=pattern.count,
+                message=str(error)[:200]
+            )
 
-        # Increment circuit breaker counter
-        self.circuit_breaker_errors[pattern.error_type] += 1
+            # Check circuit breaker
+            if self._is_circuit_open(pattern.error_type):
+                logger.warning("healing_circuit_open", error_type=pattern.error_type)
+                return None
 
-        # Get healing strategy
-        strategy = self.healing_strategies.get(
-            pattern.error_type,
-            self._heal_generic
-        )
+            # Increment circuit breaker counter
+            self.circuit_breaker_errors[pattern.error_type] += 1
 
-        # Attempt healing
-        action = await strategy(pattern, context or {})
+            # Get healing strategy
+            strategy = self.healing_strategies.get(
+                pattern.error_type,
+                self._heal_generic
+            )
 
-        if action:
-            self.healing_history.append(action)
-            pattern.resolution_attempts += 1
+            # Attempt healing
+            action = await strategy(pattern, context or {})
 
-            if action.success:
-                pattern.resolved = True
-                self.circuit_breaker_errors[pattern.error_type] = 0
-                logger.info(f"✅ Self-Healing SUCCESS: {action.description}")
-            else:
-                logger.warning(f"⚠️ Self-Healing FAILED: {action.description}")
+            if action:
+                self.healing_history.append(action)
+                pattern.resolution_attempts += 1
 
-                # Open circuit breaker if too many failures
-                if self.circuit_breaker_errors[pattern.error_type] >= self.escalation_threshold:
-                    self._open_circuit(pattern.error_type)
+                if action.success:
+                    pattern.resolved = True
+                    self.circuit_breaker_errors[pattern.error_type] = 0
+                    req_logger.info(
+                        "healing_action_success",
+                        action_type=action.action_type,
+                        description=action.description
+                    )
+                else:
+                    req_logger.warning(
+                        "healing_action_failed",
+                        action_type=action.action_type,
+                        description=action.description
+                    )
 
-        # Check for escalation
-        if pattern.count >= self.escalation_threshold and not pattern.resolved:
-            await self._escalate(pattern)
+                    # Open circuit breaker if too many failures
+                    if self.circuit_breaker_errors[pattern.error_type] >= self.escalation_threshold:
+                        self._open_circuit(pattern.error_type)
 
-        # Store in memory for learning
-        if self.memory:
-            try:
-                from orchestrator.memory.manager import MemoryEvent
-                event = MemoryEvent(
-                    id=f"error_{int(datetime.now().timestamp())}",
-                    type="error",
-                    content=f"Error: {pattern.error_type} - {pattern.message[:100]}",
-                    metadata={
-                        "error_type": pattern.error_type,
-                        "healed": action.success if action else False,
-                        "context": context
-                    },
-                    importance=0.8
-                )
-                await self.memory.remember(event)
-            except Exception as e:
-                logger.debug(f"Memory store failed: {e}")
+            # Check for escalation
+            if pattern.count >= self.escalation_threshold and not pattern.resolved:
+                await self._escalate(pattern)
 
-        return action
+            # Store in memory for learning
+            if self.memory:
+                try:
+                    from orchestrator.memory.manager import MemoryEvent
+                    event = MemoryEvent(
+                        id=f"error_{int(datetime.now().timestamp())}",
+                        type="error",
+                        content=f"Error: {pattern.error_type} - {pattern.message[:100]}",
+                        metadata={
+                            "error_type": pattern.error_type,
+                            "healed": action.success if action else False,
+                            "context": context
+                        },
+                        importance=0.8
+                    )
+                    await self.memory.remember(event)
+                except Exception as e:
+                    logger.debug("memory_store_failed", error=str(e))
+
+            return action
 
     async def _heal_connection(self, pattern: ErrorPattern, context: Dict) -> HealingAction:
         """Heal connection errors with retry and reconnect"""
@@ -346,7 +362,12 @@ class SelfHealingSystem:
 
     async def _escalate(self, pattern: ErrorPattern):
         """Escalate critical issues"""
-        logger.error(f"🚨 ESCALATION: {pattern.error_type} occurred {pattern.count} times")
+        logger.error(
+            "healing_escalation",
+            error_type=pattern.error_type,
+            count=pattern.count,
+            severity="critical"
+        )
 
         # Store escalation in Redis for notification
         if self.redis:

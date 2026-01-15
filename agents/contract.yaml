@@ -1,0 +1,43 @@
+# agents/contract.yaml
+agent_framework:
+  contract_version: "1.0"
+  system_codename: "Nezlamnist"
+  governance: "CLI-First"
+
+  agent_types:
+    azr_agent:
+      purpose: "Самовдосконалення системи (Autonomous Zone Recovery)"
+      permissions: ["read_metrics", "propose_amendments", "run_chaos_tests"]
+      execution_model: "observe → analyze → propose → validate"
+      tools: ["predatorctl verify", "predatorctl azr propose"]
+
+    health_agent:
+      purpose: "Моніторинг здоров'я системи"
+      permissions: ["read_all_metrics", "read_logs", "trigger_alerts"]
+      execution_model: "continuous_monitoring → anomaly_detection → alerting"
+      tools: ["predatorctl system health", "predatorctl metrics query"]
+
+    gitops_agent:
+      purpose: "Автоматизація GitOps потоків"
+      permissions: ["read_git", "create_prs", "sync_applications"]
+      execution_model: "detect_drift → plan_sync → execute_sync → verify"
+      tools: ["predatorctl gitops diff", "predatorctl gitops sync"]
+
+    security_agent:
+      purpose: "Безперервна безпекова перевірка"
+      permissions:
+        ["scan_vulnerabilities", "check_compliance", "enforce_policies"]
+      execution_model: "scan → assess → report → remediate"
+      tools: ["predatorctl system audit", "trivy", "checkov"]
+
+  communication_protocol:
+    primary: "predatorctl CLI"
+    secondary: "REST API (Read-Only State Projection)"
+    authentication: "JWT tokens with OAuth2"
+    audit_trail: "Mandatory JSON audit log for every CLI command"
+
+  constraints:
+    - "Agents CANNOT modify constitutional axioms."
+    - "Agents CANNOT bypass the Arbiter (Mandatory for ETL)."
+    - "Agents MUST operate via a machine-verified audit trail."
+    - "Heavy compute (ML/ETL) MUST be offloaded to GPU nodes via predatorctl submit."

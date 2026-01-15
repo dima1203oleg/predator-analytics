@@ -1,10 +1,9 @@
 import aio_pika
 import json
-import logging
 from typing import Optional, Callable, Awaitable, List
-from .config import settings
-
-logger = logging.getLogger("predator.mq")
+from libs.core.config import settings
+from libs.core.structured_logger import get_logger
+logger = get_logger("predator.mq")
 
 class MessageBroker:
     """

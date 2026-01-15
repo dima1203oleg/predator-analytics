@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Shield, Radio, Lock, Activity, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next'; // Assuming i18n is setup, otherwise direct strings
-import HoloContainer from './HoloContainer';
+
+import { HoloContainer } from './HoloContainer';
 
 // --- TYPES ---
 

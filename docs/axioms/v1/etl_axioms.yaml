@@ -1,0 +1,49 @@
+# etl_axioms.yaml
+version: "v1.0"
+applies_to: "ETL Pipeline"
+
+axioms:
+  - id: "ETL-AXIOM-001"
+    name: "Real Data Only"
+    formal_definition: |
+      ∀job ∈ ETLJobs : SourceData(job) ∈ RealWorldData
+      ∧ ¬∃simulation ∈ Simulations : UsedIn(job, simulation)
+    enforcement: "FULL"
+    description: |
+      ETL обробляє виключно реальні дані, симуляції заборонені
+
+  - id: "ETL-AXIOM-002"
+    name: "State Truth Invariant"
+    formal_definition: |
+      ∀job ∈ ETLJobs : DisplayedState(job) = ActualState(job)
+      ∧ ∀transition ∈ Transitions : RecordedInTruthLedger(transition)
+    enforcement: "FULL"
+    description: |
+      Відображений стан ETL має точно відповідати реальному
+
+  - id: "ETL-AXIOM-003"
+    name: "Progress Monotonicity"
+    formal_definition: |
+      ∀job ∈ ETLJobs : Progress(job, t) ≤ Progress(job, t+Δt)
+      ∧ (Progress(job) = 100%) → State(job) ∈ {COMPLETED, FAILED}
+    enforcement: "FULL"
+    description: |
+      Прогрес монотонний і 100% тільки при завершенні
+
+  - id: "ETL-AXIOM-004"
+    name: "Indexing Result Truth"
+    formal_definition: |
+      ∀job ∈ ETLJobs : (State(job) = INDEXED) →
+      (IndexedRecords(job) > 0 ∨ DocumentedEmptyInput(job))
+    enforcement: "STRICT"
+    description: |
+      Індексація з нульовим результатом має бути документована
+
+  - id: "ETL-AXIOM-005"
+    name: "No Silent Failure"
+    formal_definition: |
+      ∀job ∈ ETLJobs : (State(job) = FAILED) →
+      ∃error ∈ Errors : AssociatedWith(job, error)
+    enforcement: "STRICT"
+    description: |
+      Кожна помилка має бути явно зафіксована

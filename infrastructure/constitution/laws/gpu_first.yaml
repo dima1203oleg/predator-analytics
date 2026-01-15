@@ -1,0 +1,15 @@
+id: "axiom_gpu_first"
+name: "GPU-First Processing Law"
+version: "27.0"
+description: |
+  All computationally intensive tasks must be scheduled on GPU nodes.
+  CPU fallback is allowed only after a configured timeout and must be logged as a warning.
+
+constraints:
+  - id: "gpu_mandatory"
+  - id: "cpu_fallback_denial"
+
+monitoring:
+  metric: "predator_gpu_jobs_on_cpu_total"
+  threshhold: 0
+  alert_severity: "warning"

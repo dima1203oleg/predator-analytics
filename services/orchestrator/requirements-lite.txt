@@ -93,4 +93,7 @@ pytest-asyncio>=0.23.0
 
 # Docker client for container orchestration
 docker
+# AI Agents & CLI tools
+aider-chat>=0.70.0
+gitpython>=3.1.40
 playwright==1.41.2

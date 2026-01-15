@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useUser, UserRole } from './UserContext';
+import { useUser } from './UserContext';
+import { UserRole } from '../config/roles';
 
 export enum UIShell {
   EXPLORER = 'explorer',   // Nebula Hub
@@ -24,9 +25,9 @@ export const ShellProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // Auto-set shell based on role when user changes
   useEffect(() => {
     if (user) {
-      if (user.role === UserRole.COMMANDER) {
+      if (user.role === UserRole.ADMIN) {
         setCurrentShell(UIShell.COMMANDER);
-      } else if (user.role === UserRole.OPERATOR) {
+      } else if (user.role === UserRole.CLIENT_PREMIUM) {
         setCurrentShell(UIShell.OPERATOR);
       } else {
         setCurrentShell(UIShell.EXPLORER);
@@ -39,19 +40,24 @@ export const ShellProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     // Only allow setting a shell if user has sufficient role
     if (!user) return;
 
-    const roleHierarchy = {
-      [UserRole.EXPLORER]: 1,
-      [UserRole.OPERATOR]: 2,
-      [UserRole.COMMANDER]: 3,
+    // Hierarchy: ADMIN(3) > PREMIUM(2) > BASIC(1)
+    const roleLevel = {
+      [UserRole.CLIENT_BASIC]: 1,
+      [UserRole.CLIENT_PREMIUM]: 2,
+      [UserRole.ADMIN]: 3,
     };
 
-    const shellRequirements = {
-      [UIShell.EXPLORER]: UserRole.EXPLORER,
-      [UIShell.OPERATOR]: UserRole.OPERATOR,
-      [UIShell.COMMANDER]: UserRole.COMMANDER,
+    // Shell Requirements
+    const shellLevel = {
+       [UIShell.EXPLORER]: 1,
+       [UIShell.OPERATOR]: 2,
+       [UIShell.COMMANDER]: 3,
     };
 
-    if (roleHierarchy[user.role] >= roleHierarchy[shellRequirements[shell]]) {
+    const currentLevel = roleLevel[user.role] || 1;
+    const requiredLevel = shellLevel[shell] || 1;
+
+    if (currentLevel >= requiredLevel) {
       setCurrentShell(shell);
     }
   };

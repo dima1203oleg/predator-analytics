@@ -7,7 +7,9 @@ from sqlalchemy import delete, func, text
 from app.database import async_session_maker
 from app.models import Document
 
-logger = logging.getLogger("service.document")
+from libs.core.structured_logger import get_logger, log_performance
+
+logger = get_logger("service.document")
 
 class DocumentService:
     """
@@ -41,38 +43,14 @@ class DocumentService:
                 # doc_id might be string, convert to UUID
                 uid = uuid.UUID(doc_id) if isinstance(doc_id, str) else doc_id
                 result = await session.execute(select(Document).where(Document.id == uid))
-                doc = result.scalars().first()
+                if not doc:
+                    return None
 
-                if doc:
-                    category = None
-                    try:
-                        if isinstance(doc.meta, dict):
-                            category = doc.meta.get("category")
-                    except Exception:
-                        category = None
-
-                    doc_dict = {
-                        "id": str(doc.id),
-                        "tenant_id": str(doc.tenant_id),
-                        "title": doc.title,
-                        "content": doc.content,
-                        "source_type": doc.source_type,
-                        "source": doc.source_type,
-                        "category": category,
-                        "meta": doc.meta,
-                        "created_at": doc.created_at.isoformat() if doc.created_at else None
-                    }
-
-                    # Cache result
-                    try:
-                        await cache.set(f"doc:{doc_id}", doc_dict, ttl=300) # 5 min cache
-                    except Exception:
-                        pass
-
-                    return doc_dict
-                return None
+                doc_dict = self._serialize_document(doc)
+                await self._cache_document(doc_id, doc_dict)
+                return doc_dict
             except Exception as e:
-                logger.error(f"Failed to fetch document {doc_id}: {e}")
+                logger.error("document_fetch_failed", doc_id=doc_id, error=str(e))
                 return None
 
     async def list_documents(
@@ -129,8 +107,22 @@ class DocumentService:
                     "limit": limit,
                     "offset": offset
                 }
+                logger.info(
+                    "documents_listed",
+                    count=len(documents),
+                    total=total,
+                    source_type=source_type,
+                    tenant_id=tenant_id
+                )
+
+                return {
+                    "documents": documents,
+                    "total": total or 0,
+                    "limit": limit,
+                    "offset": offset
+                }
             except Exception as e:
-                logger.error(f"Failed to list documents: {e}")
+                logger.error("document_list_failed", error=str(e), tenant_id=tenant_id)
                 return {"documents": [], "total": 0, "limit": limit, "offset": offset}
 
     async def create_document(
@@ -159,7 +151,7 @@ class DocumentService:
                 await session.commit()
                 return doc
             except Exception as e:
-                logger.error(f"Failed to create document: {e}")
+                logger.error("document_create_failed", error=str(e), title=title, tenant_id=tenant_id)
                 raise e
 
     async def _do_create_document(
@@ -195,8 +187,38 @@ class DocumentService:
         await session.flush()
         await session.refresh(doc)
 
-        logger.info(f"Buffered document {doc.id} for tenant {tenant_id}")
+        logger.info("document_created_buffered", doc_id=str(doc.id), tenant_id=tenant_id)
         return doc
+
+    def _serialize_document(self, doc) -> Dict[str, Any]:
+        """Helper to serialize document to dict."""
+        category = None
+        try:
+            if isinstance(doc.meta, dict):
+                category = doc.meta.get("category")
+        except Exception:
+            pass
+
+        return {
+            "id": str(doc.id),
+            "tenant_id": str(doc.tenant_id),
+            "title": doc.title,
+            "content": doc.content,
+            "source_type": doc.source_type,
+            "source": doc.source_type,
+            "category": category,
+            "meta": doc.meta,
+            "created_at": doc.created_at.isoformat() if doc.created_at else None
+        }
+
+    async def _cache_document(self, doc_id: str, doc_dict: Dict[str, Any]):
+        """Helper to cache document safely."""
+        try:
+            from libs.core.cache import get_cache
+            cache = get_cache()
+            await cache.set(f"doc:{doc_id}", doc_dict, ttl=300)
+        except Exception:
+            pass
 
     async def delete_document(self, doc_id: str) -> bool:
         """Delete document."""

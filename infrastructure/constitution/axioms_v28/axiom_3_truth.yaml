@@ -1,0 +1,218 @@
+# ═══════════════════════════════════════════════════════════════
+# AXIOM 3: ЗАКОН ІСТИНИ
+# Predator Analytics v28-S Constitutional Framework
+# ═══════════════════════════════════════════════════════════════
+
+id: "axiom_3"
+name: "Закон Істини"
+name_en: "Law of Truth"
+version: "28.0"
+level: "FUNDAMENTAL"
+status: "ENFORCED"
+created_at: "2026-01-12T22:30:00Z"
+hash_algorithm: "SHA3-512"
+
+formal_logic: |
+  # Класифікація тверджень
+  ∀ statement ∈ System.Statements:
+    statement.type ∈ {PROPOSAL, VERIFIED_FACT, AXIOM, INFERENCE}
+
+  # Вимоги до валідності
+  ∀ statement ∈ System.Statements:
+    statement.valid ⇔
+      (statement.type = PROPOSAL ∨ statement.verified = true)
+      ∧ (statement.source ∈ TrustedSources)
+      ∧ (statement.logged_in_ledger = true)
+      ∧ (statement.timestamp ∈ MonotonicTimeline)
+
+  # LLM Truth Boundary
+  ∀ llm_output ∈ LLM.Outputs:
+    llm_output.type = PROPOSAL
+    ∧ llm_output.requires_verification = true
+    ∧ ¬llm_output.is_fact
+
+explanation: |
+  Закон Істини встановлює чіткі правила розрізнення фактів та пропозицій:
+
+  1. КЛАСИФІКАЦІЯ: Кожне твердження в системі повинно бути класифіковане:
+     - PROPOSAL: Пропозиція - не є фактом, потребує верифікації
+     - VERIFIED_FACT: Верифікований факт - підтверджено через VPC
+     - AXIOM: Аксіома - фундаментальна істина, не потребує доказу
+     - INFERENCE: Висновок - логічно виведено з фактів
+
+  2. LLM BOUNDARY: Жоден вихід LLM не є фактом за замовчуванням.
+     Всі LLM виходи класифікуються як PROPOSAL.
+
+  3. TRUTH LEDGER: Всі твердження записуються в іммутабельний
+     Truth Ledger з криптографічним підписом.
+
+  4. ВЕРИФІКАЦІЯ: Факти верифікуються через VPC (Verifiable Physical
+     Consequences) з консенсусом незалежних свідків.
+
+immutability: "ABSOLUTE"
+
+statement_types:
+  PROPOSAL:
+    description: "Пропозиція - не є фактом, потребує верифікації"
+    requires_verification: true
+    can_be_executed: false
+    trust_level: 0.0
+    sources: ["llm", "agent", "external_system", "inference_engine"]
+
+  VERIFIED_FACT:
+    description: "Верифікований факт - підтверджено через VPC"
+    requires_verification: false
+    can_be_executed: true
+    trust_level: 1.0
+    sources: ["vpc_verifier", "human_confirmation", "sensor_consensus"]
+
+  AXIOM:
+    description: "Аксіома - фундаментальна істина"
+    requires_verification: false
+    can_be_executed: true
+    trust_level: 1.0
+    sources: ["constitution"]
+
+  INFERENCE:
+    description: "Висновок - логічно виведено з фактів"
+    requires_verification: true
+    can_be_executed: false
+    trust_level: 0.8
+    sources: ["formal_verifier", "logic_engine"]
+    requires: ["base_facts must be VERIFIED_FACT or AXIOM"]
+
+llm_truth_boundary:
+  principle: |
+    LLM (Large Language Model) є потужним інструментом для генерації пропозицій,
+    але не є джерелом істини. Всі виходи LLM класифікуються як PROPOSAL
+    і потребують верифікації перед використанням як фактів.
+
+  rules:
+    - "LLM output is ALWAYS type=PROPOSAL"
+    - "LLM cannot verify its own outputs"
+    - "LLM must declare uncertainty explicitly"
+    - "LLM cannot claim to know physical facts without sensor data"
+
+  verification_requirements:
+    low_risk_proposal:
+      verification_method: "logic_check"
+      minimum_confidence: 0.8
+
+    medium_risk_proposal:
+      verification_method: "vpc_verification"
+      minimum_witnesses: 2
+
+    high_risk_proposal:
+      verification_method: "human_review + vpc_verification"
+      minimum_witnesses: 3
+      human_approval: true
+
+truth_ledger_integration:
+  storage_backend: "PostgreSQL + Merkle Tree"
+
+  entry_structure:
+    - field: "entry_id"
+      type: "UUID"
+      description: "Унікальний ідентифікатор запису"
+
+    - field: "statement_type"
+      type: "ENUM"
+      values: ["PROPOSAL", "VERIFIED_FACT", "AXIOM", "INFERENCE"]
+
+    - field: "content"
+      type: "JSONB"
+      description: "Зміст твердження"
+
+    - field: "source"
+      type: "TEXT"
+      description: "Джерело твердження"
+
+    - field: "verification_status"
+      type: "ENUM"
+      values: ["PENDING", "VERIFIED", "REJECTED", "EXPIRED"]
+
+    - field: "data_hash"
+      type: "TEXT"
+      description: "SHA3-512 хеш контенту"
+
+    - field: "previous_hash"
+      type: "TEXT"
+      description: "Хеш попереднього запису (ланцюжок)"
+
+    - field: "merkle_proof"
+      type: "TEXT[]"
+      description: "Merkle proof для верифікації"
+
+    - field: "timestamp"
+      type: "TIMESTAMPTZ"
+      description: "Монотонний час створення"
+
+    - field: "arbiter_signature"
+      type: "TEXT"
+      description: "Криптографічний підпис арбітра"
+
+  immutability_guarantees:
+    - "Записи не можуть бути змінені після створення"
+    - "Хеш-ланцюжок забезпечує виявлення будь-яких змін"
+    - "Merkle tree дозволяє ефективну верифікацію"
+    - "Монотонний час запобігає антидатуванню"
+
+enforcement:
+  primary:
+    - method: "Statement Classification"
+      description: "Автоматична класифікація всіх тверджень"
+      automated: true
+
+    - method: "Source Verification"
+      description: "Перевірка джерела твердження"
+      automated: true
+
+    - method: "Truth Ledger Recording"
+      description: "Запис у Truth Ledger"
+      automated: true
+
+    - method: "LLM Output Tagging"
+      description: "Автоматичне маркування LLM виходів як PROPOSAL"
+      automated: true
+
+constraints:
+  - id: "statement_must_be_classified"
+    description: "Кожне твердження повинно мати тип"
+    check_expression: "statement.type is not null"
+    violation_severity: "HIGH"
+    violation_action: "REJECT_STATEMENT"
+
+  - id: "llm_output_is_proposal"
+    description: "LLM вихід завжди є пропозицією"
+    check_expression: "llm_output.type == 'PROPOSAL'"
+    violation_severity: "CRITICAL"
+    violation_action: "FORCE_RECLASSIFICATION"
+
+  - id: "fact_requires_verification"
+    description: "Факт потребує верифікації VPC"
+    check_expression: "statement.type == 'VERIFIED_FACT' implies statement.vpc_verified == true"
+    violation_severity: "CRITICAL"
+    violation_action: "DOWNGRADE_TO_PROPOSAL"
+
+  - id: "ledger_entry_required"
+    description: "Твердження повинно бути записане в Ledger"
+    check_expression: "statement.ledger_entry_id is not null"
+    violation_severity: "HIGH"
+    violation_action: "BLOCK_UNTIL_RECORDED"
+
+monitoring:
+  metrics:
+    - "statements_by_type_total"
+    - "verification_success_rate"
+    - "llm_proposals_verified_rate"
+    - "truth_ledger_entries_total"
+    - "merkle_tree_verification_latency"
+
+  alerts:
+    - condition: "llm_output_classified_as_fact"
+      severity: "CRITICAL"
+      action: "IMMEDIATE_RECLASSIFICATION"
+
+    - condition: "truth_ledger_integrity_violation"
+      severity: "CRITICAL"
+      action: "SYSTEM_HALT_AND_INVESTIGATION"

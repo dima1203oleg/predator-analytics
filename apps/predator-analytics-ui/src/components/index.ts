@@ -30,3 +30,4 @@ export { WorkflowControlPanel } from './ai/WorkflowControlPanel';
 // v26.0 AZR Constitutional Framework
 export { AZRConstitutionalDashboard } from './AZRConstitutionalDashboard';
 export { ETLTruthDashboard } from './ETLTruthDashboard';
+export { TruthLedgerSection } from './TruthLedgerSection';

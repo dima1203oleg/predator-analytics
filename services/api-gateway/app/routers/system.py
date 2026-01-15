@@ -1,11 +1,12 @@
-"""System Router - System status and health endpoints"""
 from fastapi import APIRouter, Body
+from fastapi.responses import HTMLResponse
 from datetime import datetime, timezone
 from typing import Dict, Any
 import os
 import asyncio
 import json
 import psutil
+import subprocess
 from app.api.routers import health
 
 router = APIRouter(prefix="/system", tags=["System"])
@@ -126,3 +127,35 @@ async def save_config_real(config: Dict[str, Any] = Body(...)):
 async def save_config(config: Dict[str, Any] = Body(...)):
     """Save system configuration (Alias)"""
     return await save_config_real(config)
+
+@router.get("/complexity", response_class=HTMLResponse)
+async def get_complexity_report():
+    """
+    Returns the System Complexity Report (Autonomy Guard).
+    Generates it on the fly if needed.
+    """
+    report_path = "complexity_report.html"
+    script_path = "scripts/enforce_complexity.py"
+
+    # 1. Try to run the script to get fresh data
+    if os.path.exists(script_path):
+        try:
+            subprocess.run(["python3", script_path], check=False, timeout=30)
+        except Exception as e:
+            print(f"Error running complexity script: {e}")
+
+    # 2. Return HTML if exists
+    if os.path.exists(report_path):
+        with open(report_path, "r", encoding="utf-8") as f:
+            return f.read()
+
+    return """
+    <html>
+        <head><title>Complexity Report Not Found</title></head>
+        <body style="background:#1a1a1a;color:#fff;font-family:sans-serif;text-align:center;padding:50px;">
+            <h1>⚠️ Report Not Available</h1>
+            <p>Could not generate complexity report.</p>
+            <p>Ensure <code>scripts/enforce_complexity.py</code> exists and is executable.</p>
+        </body>
+    </html>
+    """

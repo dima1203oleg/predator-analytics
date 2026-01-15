@@ -1,0 +1,64 @@
+chaos_experiments:
+  - name: "gpu-node-failure"
+    description: "Simulation of a GPU node failure"
+    hypothesis: "System automatically redistributes jobs to other GPU nodes"
+
+    steps:
+      - action: "drain-node"
+        target: "random-gpu-node"
+
+      - action: "monitor-redistribution"
+        metrics:
+          - "predator_gpu_jobs_redistributed_total"
+          - "predator_etl_jobs_failed_total"
+
+      - action: "verify-constitution"
+        checks:
+          - "no-gpu-jobs-on-cpu"
+          - "etl-truth-maintained"
+
+    rollback: "uncordon-node"
+
+    acceptance_criteria:
+      - "Less than 1% jobs lost"
+      - "Zero jobs scheduled on CPU"
+      - "Arbiter remains available"
+
+  - name: "network-partition-arbiter"
+    description: "Isolate Arbiter from the rest of the system"
+    hypothesis: "System enters safe mode, queues jobs"
+
+    steps:
+      - action: "block-network"
+        source: "arbiter-pod"
+        destination: "all-pods"
+
+      - action: "monitor-fallback"
+        duration: "5m"
+
+      - action: "restore-network"
+
+      - action: "verify-recovery"
+
+    acceptance_criteria:
+      - "No new ETL jobs started"
+      - "Existing jobs continue execution"
+      - "Arbiter processes queue after recovery"
+
+  - name: "ledger-corruption"
+    description: "Simulate corruption of a ledger entry"
+    hypothesis: "System detects corruption and initiates recovery"
+
+    steps:
+      - action: "corrupt-random-ledger-entry"
+
+      - action: "trigger-integrity-check"
+
+      - action: "monitor-recovery"
+
+    rollback: "restore-from-backup"
+
+    acceptance_criteria:
+      - "Corruption detected in < 60s"
+      - "Auto-recovery initiated"
+      - "Ledger consistency restored"

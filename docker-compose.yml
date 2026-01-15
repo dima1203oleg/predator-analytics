@@ -1,4 +1,4 @@
-version: '3.8'
+# Predator Analytics v25 - Docker Compose Configuration
 
 services:
 
@@ -21,6 +21,40 @@ services:
       - predator-net
     profiles: ["local", "server"]
 
+  arbiter:
+    build:
+      context: ./services/arbiter
+      dockerfile: Dockerfile
+    container_name: predator_arbiter
+    ports:
+      - "8091:8000"
+    volumes:
+      - ./services/arbiter:/app
+      - ./infrastructure/constitution:/app/infrastructure/constitution
+    environment:
+      - CONSTITUTION_PATH=/app/infrastructure/constitution
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+
+  truth-ledger:
+    build:
+      context: ./services/truth-ledger
+      dockerfile: Dockerfile
+    container_name: predator_ledger
+    ports:
+      - "8092:8000"
+    volumes:
+      - ./services/truth-ledger:/app
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://admin:666666@postgres:5432/predator_db}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+
   backend:
     image: predator-backend:v25
     build:
@@ -35,6 +69,11 @@ services:
       - ./services/api-gateway/app:/app/app
       - ./services/api-gateway/src:/app/src
       - ./libs:/app/libs
+      - ./predatorctl/predatorctl:/app/predatorctl
+      - ./services/orchestrator:/app/orchestrator
+      - ./services:/app/services
+      - ./docs:/app/docs
+      - ./scripts:/app/scripts
     env_file:
       - .env
     environment:
@@ -72,6 +111,8 @@ services:
       - OLLAMA_BASE_URL=http://127.0.0.1:11434
     volumes:
       - ./services/orchestrator:/app/orchestrator
+      - ./docs:/app/docs
+      - ./scripts:/app/scripts
       - ./services/api-gateway/app:/app/app
       - ./libs:/app/libs
       - orchestrator_logs:/app/logs
@@ -103,6 +144,11 @@ services:
       - ./services/api-gateway/app:/app/app
       - ./services/api-gateway/src:/app/src
       - ./libs:/app/libs
+      - ./predatorctl/predatorctl:/app/predatorctl
+      - ./services/orchestrator:/app/orchestrator
+      - ./services:/app/services
+      - ./docs:/app/docs
+      - ./scripts:/app/scripts
     env_file:
       - .env
     environment:
@@ -134,6 +180,11 @@ services:
     volumes:
       - ./services/api-gateway/app:/app/app
       - ./libs:/app/libs
+      - ./predatorctl/predatorctl:/app/predatorctl
+      - ./services/orchestrator:/app/orchestrator
+      - ./services:/app/services
+      - ./docs:/app/docs
+      - ./scripts:/app/scripts
     env_file:
       - .env
     environment:
@@ -324,9 +375,11 @@ services:
       - H2O_WAVE_MAX_REQUEST_SIZE=100MB
       - H2O_WAVE_NO_LOGGING=true
       - H2O_WAVE_BASE_URL=/llm-studio
+      - CUDA_VISIBLE_DEVICES=  # Empty = CPU mode (no GPU crashes)
     volumes:
       - h2o_workspace:/workspace
       - ./configs/h2o:/configs
+    # GPU mode - uncomment when NVIDIA Container Toolkit is properly configured
     # deploy:
     #   resources:
     #     reservations:
@@ -334,10 +387,33 @@ services:
     #         - driver: nvidia
     #           count: 1
     #           capabilities: [gpu]
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:10101/ || exit 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    restart: "no"  # Disabled to prevent crash loop - enable after GPU setup
     networks:
       - predator-net
     profiles: ["server"]
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: predator_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    networks:
+      - predator-net
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles: ["local", "server"]
 
   mlflow:
     build:
@@ -435,6 +511,100 @@ services:
       - predator-net
     profiles: ["local", "server"]
 
+  # ═══════════════════════════════════════════════════════════════
+  # v28-S Constitutional Framework Services
+  # ═══════════════════════════════════════════════════════════════
+
+  som:
+    build:
+      context: ./services/som
+      dockerfile: Dockerfile
+    container_name: predator_som
+    ports:
+      - "8095:8095"
+    volumes:
+      - ./services/som:/app
+      - ./infrastructure/constitution:/app/infrastructure/constitution
+      - ./libs:/app/libs
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://admin:666666@postgres:5432/predator_db}
+      - REDIS_URL=redis://redis:6379/0
+      - ARBITER_URL=http://arbiter:8000
+      - LEDGER_URL=http://truth-ledger:8000
+      - RCE_URL=http://rce:8093
+      - VPC_URL=http://vpc-verifier:8094
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      arbiter:
+        condition: service_started
+      truth-ledger:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8095/api/v1/som/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  rce:
+    build:
+      context: ./services/rce
+      dockerfile: Dockerfile
+    container_name: predator_rce
+    ports:
+      - "8093:8093"
+    volumes:
+      - ./services/rce:/app
+      - ./libs:/app/libs
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8093/api/v1/rce/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  vpc-verifier:
+    build:
+      context: ./services/vpc-verifier
+      dockerfile: Dockerfile
+    container_name: predator_vpc
+    ports:
+      - "8094:8094"
+    volumes:
+      - ./services/vpc-verifier:/app
+      - ./libs:/app/libs
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://admin:666666@postgres:5432/predator_db}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8094/api/v1/vpc/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 volumes:
   postgres_data:
   redis_data:
@@ -445,6 +615,7 @@ volumes:
   prometheus_data:
   orchestrator_logs:
   h2o_workspace:
+  ollama_data:
 
 networks:
   predator-net:

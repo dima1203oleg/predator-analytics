@@ -50,6 +50,21 @@ def add_correlation_id(logger, method_name, event_dict):
     return event_dict
 
 
+def add_otel_trace_ids(logger, method_name, event_dict):
+    """Add OpenTelemetry trace and span IDs if available"""
+    try:
+        from opentelemetry import trace
+        span = trace.get_current_span()
+        if span.is_recording():
+            ctx = span.get_span_context()
+            if ctx.is_valid:
+                event_dict["trace_id"] = format(ctx.trace_id, "032x")
+                event_dict["span_id"] = format(ctx.span_id, "016x")
+    except ImportError:
+        pass
+    return event_dict
+
+
 def add_timestamp(logger, method_name, event_dict):
     """Add ISO8601 timestamp"""
     event_dict["timestamp"] = datetime.utcnow().isoformat() + "Z"
@@ -93,6 +108,7 @@ def setup_structured_logging(
         structlog.stdlib.add_log_level,
         add_service_context,
         add_correlation_id,
+        add_otel_trace_ids,
         add_timestamp,
         structlog.stdlib.PositionalArgumentsFormatter(),
         structlog.processors.StackInfoRenderer(),
@@ -121,6 +137,7 @@ def setup_structured_logging(
         format="%(message)s",
         stream=sys.stdout,
         level=getattr(logging, log_level.upper()),
+        force=True,
     )
 
     return structlog.get_logger()
@@ -187,6 +204,14 @@ class RequestLogger:
                 duration_ms=duration_ms,
                 **self.context
             )
+
+    async def __aenter__(self):
+        """Async context manager entry"""
+        return self.__enter__()
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Async context manager exit"""
+        return self.__exit__(exc_type, exc_val, exc_tb)
 
 
 def log_performance(

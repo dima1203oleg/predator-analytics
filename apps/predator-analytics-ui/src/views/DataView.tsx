@@ -7,7 +7,7 @@ import {
   FileSearch, Check, Trash2
 } from 'lucide-react';
 import { api } from '../services/api';
-import { ETLPipelineVisualizer } from '../components';
+import { ETLTruthDashboard, AZRConstitutionalDashboard } from '../components';
 import { useGlobalState } from '../context/GlobalContext';
 
 // ============================================================================
@@ -529,8 +529,12 @@ const DataView: React.FC = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
+            className="space-y-6"
           >
-            <ETLPipelineVisualizer />
+             <ETLTruthDashboard />
+             <div className="pt-8 border-t border-white/5">
+                 <AZRConstitutionalDashboard />
+             </div>
           </motion.div>
         )}
       </AnimatePresence>

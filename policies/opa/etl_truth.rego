@@ -1,23 +1,26 @@
 package predator.etl_truth
 
-# 1. Block Non-Arbiter Approved Jobs
+# Deny ETL jobs without Arbiter approval annotation
 violation[{"msg": msg}] {
   input.review.kind.kind == "Job"
+
+  # Check if it is an ETL job via label
   input.review.object.metadata.labels["predator-job-type"] == "etl"
 
-  # Check for annotation signature
+  # Check for annotation
   not input.review.object.metadata.annotations["predator-arbiter-approved"]
 
-  msg := sprintf("ETL Job %v missing Arbiter Approval (Axiom 4 violation)", [input.review.object.metadata.name])
+  msg := sprintf("ETL Job %v missing required 'predator-arbiter-approved' annotation", [input.review.object.metadata.name])
 }
 
-# 2. Block direct DB access pods (except specific services)
+# Deny modifications to Ledger without proper service account
 violation[{"msg": msg}] {
-    input.review.kind.kind == "Pod"
-    image := input.review.object.spec.containers[_].image
-    contains(image, "postgres-client")
+  input.review.kind.kind == "Pod"
+  input.review.object.metadata.labels["app"] == "truth-ledger"
 
-    not input.review.object.metadata.labels["predator-role"] == "admin-tool"
+  # Example: Ensure only signed images are used for ledger
+  image := input.review.object.spec.containers[_].image
+  not startswith(image, "predator-registry.local/")
 
-    msg := "Direct DB client pods are forbidden (Use predatorctl)"
+  msg := "Truth Ledger pods must use images from trusted local registry"
 }

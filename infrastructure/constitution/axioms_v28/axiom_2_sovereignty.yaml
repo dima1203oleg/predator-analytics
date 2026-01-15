@@ -1,0 +1,205 @@
+# ═══════════════════════════════════════════════════════════════
+# AXIOM 2: ЗАКОН ЛЮДСЬКОГО СУВЕРЕНІТЕТУ
+# Predator Analytics v28-S Constitutional Framework
+# ═══════════════════════════════════════════════════════════════
+
+id: "axiom_2"
+name: "Закон Людського Суверенітету"
+name_en: "Law of Human Sovereignty"
+version: "28.0"
+level: "FUNDAMENTAL"
+status: "ENFORCED"
+created_at: "2026-01-12T22:30:00Z"
+hash_algorithm: "SHA3-512"
+
+formal_logic: |
+  ∀ decision ∈ System.Decisions:
+    decision.critical ⇒
+      (∃ human_approval ∧ human_approval.valid = true)
+      ∧ (human_approval.timestamp < decision.execution_time)
+      ∧ (human_approval.authority_level ≥ decision.required_level)
+      ∧ (human_approval.informed_consent = true)
+
+  # Red Button Protocol
+  ∀ t ∈ Time:
+    ∃ red_button_accessible = true
+    ∧ red_button.response_time < 100ms
+
+  # No AI Override Clause
+  ¬∃ ai_action:
+    ai_action.overrides(human_decision)
+    ∧ ¬ai_action.explicit_human_delegation
+
+explanation: |
+  Закон Людського Суверенітету встановлює безумовний пріоритет
+  людського контролю над системою:
+
+  1. КРИТИЧНІ РІШЕННЯ: Будь-яке критичне рішення потребує явного
+     затвердження людиною з відповідним рівнем повноважень.
+
+  2. ІНФОРМОВАНА ЗГОДА: Людина повинна отримати повну та зрозумілу
+     інформацію перед прийняттям рішення.
+
+  3. ЧЕРВОНА КНОПКА: Механізм екстреної зупинки завжди доступний
+     та працює з мінімальною затримкою.
+
+  4. ЗАБОРОНА ПЕРЕВИЗНАЧЕННЯ: AI не може перевизначити рішення людини
+     без явного делегування повноважень.
+
+  5. ТИМЧАСОВІСТЬ ДЕЛЕГУВАННЯ: Будь-яке делегування автоматизованим
+     системам є тимчасовим та відкликається.
+
+immutability: "ABSOLUTE"
+
+enforcement:
+  primary:
+    - method: "Human Approval Gateway"
+      description: "Шлюз для затвердження критичних рішень"
+      automated: true
+      escalation_timeout: "5 minutes"
+
+    - method: "Red Button Protocol"
+      description: "Трирівневий протокол екстреної зупинки"
+      automated: true
+      response_time_sla: "< 100ms"
+
+    - method: "Authority Level Verification"
+      description: "Перевірка рівня повноважень оператора"
+      automated: true
+
+  secondary:
+    - method: "Informed Consent Verification"
+      description: "Перевірка отримання повної інформації"
+      automated: false
+      requires_confirmation: true
+
+critical_decision_types:
+  - type: "constitutional_change"
+    required_authority: "ADMIN"
+    approval_count: 2
+    description: "Будь-які зміни до конституційних аксіом"
+
+  - type: "security_modification"
+    required_authority: "ADMIN"
+    approval_count: 1
+    description: "Зміни в налаштуваннях безпеки"
+
+  - type: "data_deletion"
+    required_authority: "OPERATOR"
+    approval_count: 1
+    description: "Видалення даних із системи"
+
+  - type: "external_integration"
+    required_authority: "ADMIN"
+    approval_count: 2
+    description: "Підключення зовнішніх систем"
+
+  - type: "high_resource_allocation"
+    required_authority: "OPERATOR"
+    approval_count: 1
+    threshold: "50% system resources"
+    description: "Виділення значних системних ресурсів"
+
+  - type: "model_deployment"
+    required_authority: "ADMIN"
+    approval_count: 1
+    description: "Розгортання нових ML моделей"
+
+red_button_protocol:
+  levels:
+    - level: 1
+      name: "PAUSE"
+      action: "Призупинити всі активності SOM та автоматизовані рішення"
+      reversible: true
+      confirmation_required: false
+      description: "Тимчасова пауза автономних операцій"
+
+    - level: 2
+      name: "ISOLATE"
+      action: "Ізолювати SOM та автоматизовані компоненти від production"
+      reversible: true
+      confirmation_required: true
+      description: "Повна ізоляція автономних систем"
+
+    - level: 3
+      name: "SHUTDOWN"
+      action: "Повне вимкнення системи зі збереженням стану"
+      reversible: true
+      confirmation_required: true
+      requires_physical_key: true
+      description: "Повна зупинка системи"
+
+  activation_methods:
+    - method: "web_ui"
+      availability: "24/7"
+      response_time: "< 100ms"
+
+    - method: "cli"
+      command: "predatorctl emergency --level {1,2,3}"
+      response_time: "< 100ms"
+
+    - method: "telegram_bot"
+      command: "/emergency {1,2,3}"
+      response_time: "< 500ms"
+
+    - method: "api"
+      endpoint: "POST /api/v1/emergency/activate"
+      response_time: "< 100ms"
+
+authority_levels:
+  - level: "VIEWER"
+    numeric: 1
+    capabilities: ["view_dashboards", "view_logs"]
+
+  - level: "OPERATOR"
+    numeric: 2
+    capabilities:
+      ["view_dashboards", "view_logs", "approve_low_risk", "trigger_jobs"]
+
+  - level: "ADMIN"
+    numeric: 3
+    capabilities:
+      ["all_operator", "approve_high_risk", "modify_config", "manage_users"]
+
+  - level: "SOVEREIGN"
+    numeric: 4
+    capabilities: ["all_admin", "constitutional_changes", "emergency_protocols"]
+
+constraints:
+  - id: "critical_requires_human"
+    description: "Критичні рішення потребують людського затвердження"
+    check_expression: "decision.critical implies decision.human_approved"
+    violation_severity: "CRITICAL"
+    violation_action: "BLOCK_EXECUTION"
+
+  - id: "red_button_always_accessible"
+    description: "Червона кнопка завжди доступна"
+    check_expression: "red_button.accessible == true"
+    violation_severity: "CRITICAL"
+    violation_action: "SYSTEM_ALERT"
+
+  - id: "no_ai_override"
+    description: "AI не може перевизначити рішення людини"
+    check_expression: "not (action.source == 'ai' and action.overrides_human == true)"
+    violation_severity: "CRITICAL"
+    violation_action: "BLOCK_AND_AUDIT"
+
+monitoring:
+  metrics:
+    - "human_approval_response_time_seconds"
+    - "critical_decisions_pending_count"
+    - "red_button_accessibility_status"
+    - "authority_level_violations_total"
+
+  alerts:
+    - condition: "human_approval_timeout > 10 minutes"
+      severity: "HIGH"
+      action: "ESCALATE_AND_NOTIFY"
+
+    - condition: "red_button_unavailable"
+      severity: "CRITICAL"
+      action: "IMMEDIATE_SYSTEM_ALERT"
+
+    - condition: "unauthorized_critical_action_attempt"
+      severity: "CRITICAL"
+      action: "BLOCK_LOG_AND_NOTIFY"

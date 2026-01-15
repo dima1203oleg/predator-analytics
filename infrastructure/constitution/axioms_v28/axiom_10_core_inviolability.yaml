@@ -1,0 +1,20 @@
+id: "axiom_10"
+name: "Core Inviolability Law"
+level: "fundamental"
+description: "Protects the constitutional axioms from unauthorized modification by the system itself."
+
+provisions:
+  immutability:
+    required: true
+    description: "Constitutional files and their memory representations are read-only for all AI agents."
+    enforcement: "OS-level permissions + Cryptographic hash verification"
+
+  transcendent_change:
+    allowed: true
+    mechanism: "Only via external deployment pipeline initiated by Human Sovereign."
+    verification: "Must match Git commit signature."
+
+violations:
+  integrity_breach:
+    severity: "FATAL"
+    response: "Total system shutdown. Emergency purge of RAM. Alert Human Sovereign."

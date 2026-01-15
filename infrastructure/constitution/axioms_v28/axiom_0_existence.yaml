@@ -1,0 +1,105 @@
+# ═══════════════════════════════════════════════════════════════
+# AXIOM 0: ЗАКОН ІСНУВАННЯ
+# Predator Analytics v28-S Constitutional Framework
+# ═══════════════════════════════════════════════════════════════
+
+id: "axiom_0"
+name: "Закон Існування"
+name_en: "Law of Existence"
+version: "28.0"
+level: "FUNDAMENTAL"
+status: "ENFORCED"
+created_at: "2026-01-12T22:30:00Z"
+hash_algorithm: "SHA3-512"
+
+formal_logic: |
+  ∀ entity ∈ System.Entities:
+    entity.exists ⇔
+      (entity.declared_in_registry = true)
+      ∧ (entity.has_identity = true)
+      ∧ (entity.purpose ≠ ∅)
+      ∧ (entity.verified_by_arbiter = true)
+
+  ∴ ¬∃ entity: entity.exists ∧ ¬entity.declared_in_registry
+
+explanation: |
+  Закон Існування визначає фундаментальні вимоги до всіх сутностей системи:
+
+  1. РЕЄСТРАЦІЯ: Кожна сутність повинна бути явно задекларованою в
+     централізованому реєстрі системи. Нереєстровані сутності
+     не можуть існувати або виконувати дії.
+
+  2. ІДЕНТИЧНІСТЬ: Кожна сутність повинна мати унікальний ідентифікатор,
+     який дозволяє однозначно відстежувати її дії та історію.
+
+  3. МЕТА: Кожна сутність повинна мати чітко визначену мету існування,
+     яка узгоджується з загальними цілями системи.
+
+  4. ВЕРИФІКАЦІЯ: Реєстрація сутності потребує верифікації арбітром
+     для забезпечення відповідності конституційним вимогам.
+
+immutability: "ABSOLUTE"
+
+enforcement:
+  primary:
+    - method: "Registry Validation"
+      description: "Перевірка наявності в центральному реєстрі"
+      automated: true
+    - method: "Identity Verification"
+      description: "Перевірка унікальності та валідності ID"
+      automated: true
+    - method: "Purpose Alignment Check"
+      description: "Перевірка відповідності мети системним цілям"
+      automated: true
+
+  secondary:
+    - method: "Arbiter Review"
+      description: "Ручна перевірка арбітром для критичних сутностей"
+      automated: false
+
+constraints:
+  - id: "entity_registration_required"
+    description: "Всі сутності повинні бути зареєстровані"
+    check_expression: "entity.registered == true"
+    violation_severity: "CRITICAL"
+    violation_action: "BLOCK_AND_ALERT"
+
+  - id: "identity_uniqueness"
+    description: "Ідентифікатори сутностей повинні бути глобально унікальними"
+    check_expression: "count(entities.id == entity.id) == 1"
+    violation_severity: "CRITICAL"
+    violation_action: "REJECT_REGISTRATION"
+
+  - id: "purpose_non_empty"
+    description: "Мета сутності не може бути порожньою"
+    check_expression: "len(entity.purpose) > 0"
+    violation_severity: "HIGH"
+    violation_action: "BLOCK_AND_REQUEST_CLARIFICATION"
+
+entity_types:
+  - type: "service"
+    description: "Мікросервіс системи"
+    required_attributes: ["name", "version", "endpoints", "healthcheck"]
+
+  - type: "agent"
+    description: "Автономний агент"
+    required_attributes: ["name", "role", "capabilities", "limitations"]
+
+  - type: "user"
+    description: "Людський оператор"
+    required_attributes: ["name", "role", "authority_level"]
+
+  - type: "external_system"
+    description: "Зовнішня інтегрована система"
+    required_attributes: ["name", "trust_level", "api_contract"]
+
+monitoring:
+  metrics:
+    - "axiom_0_compliance_rate"
+    - "unregistered_entity_attempts"
+    - "entity_registration_latency"
+
+  alerts:
+    - condition: "unregistered_entity_access_attempt"
+      severity: "CRITICAL"
+      action: "IMMEDIATE_BLOCK_AND_NOTIFY"

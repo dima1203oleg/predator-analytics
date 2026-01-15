@@ -1,0 +1,38 @@
+# recovery/recovery_constraints.yaml
+recovery_constraints:
+  version: "1.0"
+  principle: "Automated recovery must be transparent and auditable"
+
+  hard_constraints:
+    absolutely_forbidden:
+      - "auto_commit_to_main_branch"
+      - "auto_rerun_without_arbiter_approval"
+      - "data_modification_without_backup"
+      - "bypass_gitops_workflow"
+      - "silent_recovery_without_audit"
+
+    transparency_requirements:
+      - "all_recovery_actions_must_be_logged"
+      - "recovery_plan_must_be_versioned"
+      - "evidence_must_be_preserved"
+      - "human_review_required_for_production"
+
+  approval_workflow:
+    steps:
+      - "Detection (by Arbiter)"
+      - "Analysis (RecoveryAgent CLI analysis)"
+      - "Plan Generation (with rollback plan)"
+      - "PR Creation (to fix branch)"
+      - "Arbiter Review (court tier required)"
+      - "Human Approval (for production)"
+      - "Execution (via GitOps)"
+
+    required_approvals:
+      - arbiter_approval: true
+        tier: "court"
+      - human_approval: true
+        role: "engineering_lead"
+
+  rate_limiting:
+    recovery_attempts_per_job: 3
+    cooldown_period: "24h"

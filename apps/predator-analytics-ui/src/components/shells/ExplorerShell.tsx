@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Bell, User, Menu, X, Home, FileText,
-  Activity, Zap, Compass, ShieldCheck, Sparkles
+  Activity, Zap, Compass, ShieldCheck, Sparkles, Scale
 } from 'lucide-react';
 import { TabView } from '../../types';
 import { useUser } from '../../context/UserContext';
@@ -20,6 +20,10 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Основне меню - розділене на логічні групи
+  const navItemsConstitutional = [
+    { id: TabView.SOM, label: 'SOM (Конституція)', icon: <Scale size={20} />, group: 'constitutional' },
+  ];
+
   const navItemsMain = [
     { id: TabView.OVERVIEW, label: 'Огляд', icon: <Home size={20} />, group: 'main' },
     { id: TabView.CASES, label: 'Кейси', icon: <FileText size={20} />, group: 'main' },
@@ -36,7 +40,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
   ];
 
   // Об'єднуємо для зворотної сумісності
-  const navItems = [...navItemsMain, ...navItemsData, ...navItemsAI];
+  const navItems = [...navItemsConstitutional, ...navItemsMain, ...navItemsData, ...navItemsAI];
 
   return (
     <div className="flex h-screen bg-[#020617] text-slate-200 font-sans">
@@ -60,6 +64,25 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
           </div>
 
           <nav className="space-y-1">
+            {/* Група: Конституція */}
+            {navItemsConstitutional.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => onTabChange(item.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all mb-2 ${
+                  activeTab === item.id
+                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-lg shadow-amber-500/5'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                {item.icon}
+                <span className="font-semibold text-sm">{item.label}</span>
+                {activeTab === item.id && (
+                  <motion.div layoutId="active-pill" className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
+                )}
+              </button>
+            ))}
+
             {/* Група: Головне */}
             {navItemsMain.map((item) => (
               <button

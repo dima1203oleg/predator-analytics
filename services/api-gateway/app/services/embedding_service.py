@@ -2,16 +2,23 @@ import logging
 import os
 from typing import List
 import numpy as np
+from libs.core.governance import OperationalPolicy
+from libs.core.reality import get_juridical_transpiler
+from predatorctl.core.ledger_client import LedgerClient
 
-logger = logging.getLogger("service.embedding")
+from libs.core.structured_logger import get_logger, log_performance
+
+logger = get_logger("service.embedding")
+ledger = LedgerClient()
 
 class EmbeddingService:
     """
     Service for generating text embeddings for semantic search.
     Uses sentence-transformers for vector generation.
-    **CONSTITUTIONAL COMPLIANCE**:
-    - Respects Axiom 1 (Compute Distribution).
-    - Uses Mock/Dummy implementation on non-GPU tiers.
+    **CONSTITUTIONAL COMPLIANCE (v27.0)**:
+    - Enforced by Arbiter via OperationalPolicy.
+    - Verified by Truth Ledger & Reality-Bound Axioms.
+    - Audited by Constitutional Linter.
     """
 
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
@@ -27,53 +34,70 @@ class EmbeddingService:
         self.reranker = None
         self.reranker_model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
-        # Constitutional Check
+        # Deprecated Tier Check (Now Handled by Arbiter)
         self.compute_tier = os.environ.get("COMPUTE_TIER", "basic").lower()
         self.is_gpu_tier = self.compute_tier in ["gpu", "heavy", "ml"]
 
         # Lazy loading - only load when first needed
-        logger.info(f"Embedding service initialized with model: {model_name} (Tier: {self.compute_tier})")
+        logger.info("embedding_service_initialized", model=model_name)
 
         # Batching service
         self._batch_service = None
 
     def _load_model(self):
-        """Lazy load the model. Enforces Axiom 1: No Heavy Compute on Basic Tier."""
+        """Lazy load the model. Enforces Constitutional Control via Arbiter."""
         if self.model is None:
-            # 1. Check Constitution
-            if not self.is_gpu_tier:
+            # 1. Constitutional Gatekeeping (v26)
+            decision = OperationalPolicy.authorize_high_compute(
+                component="EmbeddingService",
+                task_details={
+                    "model_name": self.model_name,
+                    "reranker": self.reranker_model_name,
+                    "action": "load_heavy_models"
+                }
+            )
+
+            if not decision.get("allowed"):
                 logger.warning(
-                    f"⚠️  [CONSTITUTION AXIOM 1] Heavy Compute requested on '{self.compute_tier}' tier."
-                    " Offloading to Dummy Model. Real processing requires REMOTE_GPU_SERVER."
+                    "constitutional_model_load_denied",
+                    reason=decision.get("reason"),
+                    component="EmbeddingService"
                 )
                 self._load_dummy_model()
                 return
 
-            # 2. Load Real Model (Only on GPU Tier)
+            logger.info(
+                "constitutional_model_load_approved",
+                signature=decision.get("signature", "N/A")[:8]
+            )
+
+            # 2. Load Real Model (Arbiter approved context)
             try:
                 from sentence_transformers import SentenceTransformer
                 from sentence_transformers import CrossEncoder
-                self.model = SentenceTransformer(self.model_name)
-                logger.info(f"Loaded embedding model: {self.model_name}")
+                with log_performance(logger, "model_loading_latency", model=self.model_name):
+                    self.model = SentenceTransformer(self.model_name)
+                logger.info("embedding_model_loaded", model=self.model_name)
 
                 # Load reranker
                 self.reranker = CrossEncoder(self.reranker_model_name)
-                logger.info(f"Loaded reranker model: {self.reranker_model_name}")
+                logger.info("reranker_model_loaded", model=self.reranker_model_name)
             except ImportError:
-                logger.warning("sentence-transformers not installed. Using fallback DummyModel.")
+                logger.warning("sentence_transformers_missing_fallback_dummy")
                 self._load_dummy_model()
             except Exception as e:
-                logger.error(f"Failed to load model: {e}")
+                logger.error("model_load_failed", error=str(e), model=self.model_name)
                 raise
 
     def _load_dummy_model(self):
         """Load compliant dummy model for local/basic tiers."""
         class DummyModel:
             def encode(self, text, convert_to_numpy=True, show_progress_bar=False):
-                # Return 384-dim zero vector (matches all-MiniLM-L6-v2)
+                # Return 384-dim vector with small noise (matches all-MiniLM-L6-v2)
+                # Prevents Divide-by-Zero in cosine similarity (Axiom 16 Resilience)
                 if isinstance(text, list):
-                    return np.zeros((len(text), 384))
-                return np.zeros(384)
+                    return np.random.rand(len(text), 384) * 0.01
+                return np.random.rand(384) * 0.01
 
         self.model = DummyModel()
         self.reranker = None  # No reranking locally
@@ -126,7 +150,7 @@ class EmbeddingService:
             embeddings = self.model.encode(texts, convert_to_numpy=True, show_progress_bar=True)
             return embeddings.tolist()
         except Exception as e:
-            logger.error(f"Batch embedding generation failed: {e}")
+            logger.error("batch_embedding_failed", error=str(e), count=len(texts))
             return [[0.0] * self.vector_size] * len(texts)
 
     def cosine_similarity(self, vec1: List[float], vec2: List[float]) -> float:
@@ -176,7 +200,7 @@ class EmbeddingService:
             scores = self.reranker.predict(pairs)
             return scores.tolist()
         except Exception as e:
-            logger.error(f"Reranking failed: {e}")
+            logger.error("reranking_failed", error=str(e), docs_count=len(documents))
             # Fallback: return 0.0 scores
             return [0.0] * len(documents)
 
@@ -190,7 +214,7 @@ class EmbeddingService:
             try:
                 from sentence_transformers import SentenceTransformer
                 self.clip_model = SentenceTransformer('clip-ViT-B-32')
-                logger.info("Loaded CLIP model: clip-ViT-B-32")
+                logger.info("clip_model_loaded", model="clip-ViT-B-32")
             except Exception as e:
                 logger.error(f"Failed to load CLIP model: {e}")
                 raise

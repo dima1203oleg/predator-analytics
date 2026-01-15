@@ -1,83 +1,155 @@
-# PREDATOR ANALYTICS v26: "THE UNBREAKABLE" SPECIFICATION
+# PREDATOR ANALYTICS v26: THE CLI-FIRST SOVEREIGN SYSTEM (NEZLAMNIST)
 
-**Version:** 26.2 (Ratified)
+**Version:** 26.2 (Formal Specification)
 **Codename:** "Nezlamnist" (The Unbreakable)
-**Status:** IMPLEMENTED
+**Status:** IMPLEMENTED / RATIFIED
 **Governance:** CLI-Governed (via `predatorctl`)
 
-## 1. Abstract
-Predator Analytics v26 represents a paradigm shift from a UI-centric application to a **CLI-First Sovereign System**. It is built upon a rigid Constitutional framework (`docs/v26_CONSTITUTION.md`) that enforces truthfulness, compute distribution, and autonomous self-healing. The system guarantee is provided not by code functioning, but by **mathematical proof of state** via the Truth Ledger and **active enforcement** by the Arbiter.
-
-## 2. Core Philosophy
-The system operates under the "Law of CLI-First Sovereignty" (Axiom 5). The User Interface is demoted to a passive, read-only projection of the system's state, while all mutations, control, and verification happen exclusively through the `predatorctl` control plane.
-
-### 2.1 Key Components Implemented
-1.  **Predator CLI (`predatorctl`)**: The single source of command for the system.
-2.  **ETL Arbiter & Truth Ledger**: A python service enforcing invariants and recording cryptographic proof of every state transition.
-3.  **Agent Zero Trust**: An autonomous agent framework using ephemeral tokens for self-healing (AZR).
-4.  **Chaos Engineering**: Integrated toolkit for continuous resilience verification (`predatorctl chaos`).
-
 ---
 
-## 3. DevOps & CI/CD (The "Unbreakable" Pipeline)
+## 🔍 1. ВСТУП ТА ФІЛОСОФІЯ СИСТЕМИ
 
-### 3.1 Continuous Verification Loop (CVL)
-Instead of simple unit tests, v26 employs a "Continuous Verification Loop" triggered by `predatorctl verify`. This validates:
-*   **Constitutional Integrity:** MD5/SHA256 checks of the Constitution itself.
-*   **Ledger Integrity:** Cryptographic chain validation of the `truth.truth_ledger` table.
-*   **Operational Health:** Real-time checks of all microservices via `system check`.
+### 1.1 Мета та Область Застосування
+Predator Analytics v26 — це формально-верифікована система обробки даних, де **CLI-first архітектура** є основним конституційним принципом. Система забезпечує автоматичне виконання важких обчислень на GPU серверах, гарантує правдивість станів ETL через арбітерну систему та підтримує розробку в офлайн-режимі.
 
-### 3.2 GitOps with ArgoCD
-*   **Sync:** ArgoCD automatically syncs `k8s/` manifests from the repo to the cluster.
-*   **Drift Detection:** Any manual changes are overwritten by the Git state.
-*   **Rollbacks:** Automatic rollback if a new deployment fails health checks.
+**Ключові принципи:**
+*   **CLI** — єдиний джерельний інтерфейс управління.
+*   **UI** — лише вільна від часу візуалізація стану (віртуальне дзеркало).
+*   **Агенти** взаємодіють виключно через CLI.
+*   **Всі операції** мають machine-readable вихід (JSON/YAML).
 
----
+### 1.2 Конституційні Аксіоми (v26.2)
 
-## 4. Local Development Environment
+```yaml
+constitutional_axioms:
+  axiom_5:
+    name: "Закон CLI-First суверенітету"
+    formal_logic: |
+      ∀ operation ∈ System.Operations:
+        (∃ cli_interface ∧ cli_interface.primary = true)
+        ∧ (operation.scriptable = true)
+        ∧ (operation.api_optional = true)
+        ∧ (operation.machine_output ⊆ {json, yaml})
+    explanation: |
+      CLI — єдиний джерельний інтерфейс управління.
+      Всі агенти, CI/CD та люди взаємодіють через CLI.
+      UI є лише вільним від часу відображенням стану, керованим через CLI.
+    immutability: "ABSOLUTE"
 
-### 4.1 Prerequisites
-*   Docker & Docker Compose
-*   Python 3.12+ (for `predatorctl`)
-
-### 4.2 Quick Start (CLI-First)
-```bash
-# Initialize control plane
-pip install typer rich shellingham
-chmod +x scripts/predatorctl.py
-
-# Check status
-./predatorctl.py system status
-
-# Verify Integrity
-./predatorctl.py verify --scope full
-
-# Run Chaos Tests
-./predatorctl.py chaos run smoke
+  axiom_6:
+    name: "Закон повної верифікації GitOps"
+    formal_logic: |
+      ∀ change ∈ System.Changes:
+        change.valid ⇔
+          (change.declared_in_git = true)
+          ∧ (change.reviewed_via_pr = true)
+          ∧ (change.applied_by_controller = true)
+          ∧ (change.audit_trail ⊆ git_history)
+    explanation: |
+      Жодна зміна в системі не може бути застосована без її оголошення в Git.
+      Git історія є єдиним джерелом істини для конфігурації.
+    immutability: "ABSOLUTE"
 ```
 
 ---
 
-## 5. Constitutional Components
+## 🏗️ 2. АРХІТЕКТУРНІ КОМПОНЕНТИ
 
-### 5.1 Truth Ledger
-A dedicated PostgreSQL schema (`truth`) that records every critical state transition.
-*   **Immutability:** Uses SHA-256 hash chaining (blockchain-like structure).
-*   **Verification:** `predatorctl ledger verify` re-calculates all hashes to detect tampering.
+### 2.1 CLI Control Plane (predatorctl)
 
-### 5.2 Agent AZR (Autonomous Zone Recovery)
-An autonomous agent (`libs/agents/azr_agent.py`) that:
-1.  Observes system state via `predatorctl`.
-2.  Detects anomalies.
-3.  Proposes amendments (fixes).
-4.  Operates with ephemeral tokens (Zero Trust).
+#### 2.1.1 Специфікація CLI
+*   **Version:** 1.0.0
+*   **Language:** Python (Typer + Click)
+*   **Output Formats:** `text`, `json`, `yaml`
+*   **Exit Codes:**
+    *   0: Success
+    *   5: Constitution Violation (Critical)
+
+#### 2.1.2 Основні команди
+*   `system status|health|audit` — Моніторинг та аудит конституції.
+*   `etl submit|status|list` — Керування обробкою даних.
+*   `arbiter decide|explain` — Пряма взаємодія з Арбітром.
+*   `ledger verify|audit` — Криптографічна перевірка Truth Ledger.
+*   `chaos run` — Запуск стрес-тестів.
+*   `azr propose|status` — Самовдосконалення системи.
+*   `gitops sync|diff` — Синхронізація з Git-джерелом.
+
+### 2.2 Архітектура Агентів (Agent Contract)
+
+Система v26 впроваджує **Agent Zero Trust Strategy**. Агенти не мають прямого доступу до БД, лише через `predatorctl`.
+
+**Типи агентів:**
+1.  **AZR Agent:** Самовдосконалення та самовідновлення.
+2.  **Health Agent:** Continuous Monitoring.
+3.  **GitOps Agent:** Автоматизація деплою.
+4.  **Security Agent:** Безперервний аудит безпеки.
 
 ---
 
-## 6. License & Components
+## 🏗️ 3. GITOPS КОНСТИТУЦІЙНИЙ КАРКАС
 
-All components are Open Source (Apache 2.0 / MIT).
-*   **DB:** PostgreSQL, Qdrant
-*   **Search:** OpenSearch
-*   **Control Plane:** Typer (Python)
-*   **Monitoring:** Prometheus, Grafana
+### 3.1 Структура Репозиторію
+```text
+predator-infrastructure/
+├── constitution/       # Аксіоми (axioms.yaml)
+├── services/           # Arbiter, Ledger, API
+├── applications/       # ETL Jobs, ML Models
+├── policies/           # OPA Rego policies
+└── environments/       # Dev, Staging, Prod overlays
+```
+
+### 3.2 Автоматизація (Argo CD)
+Вся інфраструктура розгортається через Argo CD ApplicationSets з увімкненим `selfHeal: true`. Будь-яке "дрифтування" конфігурації автоматично виправляється.
+
+---
+
+## 🛡️ 4. СТЕК ПОЛІТИК ТА БЕЗПЕКИ
+
+### 4.1 Багаторівнева валідація
+1.  **Pre-commit:** Trivy, Checkov, OPA (local).
+2.  **CI/CD (GitHub Actions):** Повна конституційна перевірка (`predatorctl verify`).
+3.  **Admission Control:** OPA Gatekeeper у кластері Kubernetes для блокування нелегітимних запусків (наприклад, ETL без підпису Арбітра).
+4.  **Post-deployment:** Постійний аудит стану через `predatorctl system audit`.
+
+---
+
+## 🔧 5. ІНФРАСТРУКТУРА ТА ДЕПЛОЙМЕНТ
+
+### 5.1 GPU Інфраструктура
+Система вимагає нод з міткою `predator/gpu: "true"`.
+*   **Compute Tier Heavy:** NVIDIA A100 для ML-тренувань.
+*   **Compute Tier Medium:** NVIDIA T4/V100 для індексації та ETL.
+
+### 5.2 Infrastructure as Code (Terraform)
+Вся хмарна інфраструктура (AWS EKS, VPC, IAM) описана як Terraform модулі з OIDC авторизацією для GitHub Actions.
+
+---
+
+## 📊 6. МОНІТОРИНГ ТА СПОСТЕРЕЖЕННЯ (CVL)
+
+**Continuous Verification Loop** забезпечується через:
+*   **Metrics:** Prometheus (GPU utilization, ETL truth violations).
+*   **Alerting:** Сповіщення при порушенні хеш-ланцюга ліджера (Critical).
+*   **Dashboards:** Візуалізація "Здоров'я Конституції".
+
+---
+
+## 🧪 7. ТЕСТУВАННЯ ТА CHAOS ENGINEERING
+
+Система v26.2 вважається стабільною лише після проходження **Chaos Suite**:
+*   `gpu-node-failure`: Перевірка редистрибуції навантаження.
+*   `ledger-corruption`: Перевірка детекції підробки даних.
+*   `network-partition`: Перевірка роботи Арбітра в ізоляції.
+
+---
+
+## 📈 8. ПЛАН ВПРОВАДЖЕННЯ
+
+1.  **Фаза 1 (Фундамент):** Налаштування GPU кластера та GitOps.
+2.  **Фаза 2 (Ядро):** Впровадження `predatorctl` та Truth Ledger.
+3.  **Фаза 3 (Автономія):** Запуск агентів AZR для самовідновлення.
+4.  **Фаза 4 (Продукція):** Повний rollout з 99.95% SLA.
+
+---
+**Ратифіковано Радою Коду Predator Analytics.**
+**Слава Хешу.**

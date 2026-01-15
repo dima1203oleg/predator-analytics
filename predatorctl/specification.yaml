@@ -1,0 +1,43 @@
+# predatorctl/specification.yaml
+cli_spec:
+  version: "1.0.0"
+  codename: "Nezlamnist"
+  language: "English/Ukrainian"
+  framework: "Python Typer + Click"
+
+  output_formats:
+    default: "human_readable"
+    machine: ["json", "yaml", "csv"]
+
+  error_handling:
+    exit_codes:
+      0: "Success"
+      1: "General error"
+      2: "CLI usage error"
+      3: "Network error"
+      4: "Authentication error"
+      5: "Constitution violation (CRITICAL)"
+
+  logging:
+    levels: ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    structured: true
+    destination: "stderr + file"
+    file_path: "/var/log/predator/predatorctl.log"
+
+  commands:
+    system:
+      status: "Get overall system status"
+      health: "Check health of services"
+      audit: "Audit compliance with constitution"
+    etl:
+      submit: "Submit an ETL job payload"
+      status: "Check status of a job"
+      list: "List all jobs"
+    ledger:
+      verify: "Verify cryptographic integrity of truth ledger"
+    chaos:
+      run: "Execute a chaos engineering scenario"
+    azr:
+      propose: "Propose a system amendment (AZR Agent)"
+    gitops:
+      sync: "Synchronize local state with GitOps source"

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.12
 # policy_engine.py
 # Автор: Головний DevOps Predator Analytics v25.0
 # Призначення: Перевірка безпеки згенерованого AI коду

@@ -15,7 +15,7 @@ class SecretManager:
     def __init__(self):
         # In a real v25 system, this would connect to Vault or AWS Secrets Manager
         # Here we use a Master Encryption Key from env if available, or a default for R&D
-        self.master_key = os.getenv("PREDATOR_MASTER_KEY", base64.urlsafe_b64encode(b"predator-v25-unbreakable-default-key"))
+        self.master_key = os.getenv("PREDATOR_MASTER_KEY", base64.urlsafe_b64encode(b"predator_v25_master_secret_key_!"))
         try:
             self.fernet = Fernet(self.master_key)
         except Exception as e:

@@ -1,0 +1,28 @@
+constitutional_axioms:
+  axiom_5:
+    name: "Закон CLI-First суверенітету"
+    formal_logic: |
+      ∀ operation ∈ System.Operations:
+        (∃ cli_interface ∧ cli_interface.primary = true)
+        ∧ (operation.scriptable = true)
+        ∧ (operation.api_optional = true)
+        ∧ (operation.machine_output ⊆ {json, yaml})
+    explanation: |
+      CLI — єдиний джерельний інтерфейс управління.
+      Всі агенти, CI/CD та люди взаємодіють через CLI.
+      UI є лише вільним від часу відображенням стану, керованим через CLI.
+    immutability: "ABSOLUTE"
+
+  axiom_6:
+    name: "Закон повної верифікації GitOps"
+    formal_logic: |
+      ∀ change ∈ System.Changes:
+        change.valid ⇔
+          (change.declared_in_git = true)
+          ∧ (change.reviewed_via_pr = true)
+          ∧ (change.applied_by_controller = true)
+          ∧ (change.audit_trail ⊆ git_history)
+    explanation: |
+      Жодна зміна в системі не може бути застосована без її оголошення в Git.
+      Git історія є єдиним джерелом істини для конфігурації.
+    immutability: "ABSOLUTE"

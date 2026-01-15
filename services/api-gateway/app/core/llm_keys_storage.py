@@ -7,7 +7,8 @@ import logging
 from typing import List, Dict, Optional
 from dataclasses import dataclass
 
-logger = logging.getLogger(__name__)
+from libs.core.structured_logger import get_logger
+logger = get_logger("core.llm_keys")
 
 @dataclass
 class LLMProvider:
