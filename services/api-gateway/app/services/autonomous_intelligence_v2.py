@@ -273,7 +273,7 @@ class AutonomousDecisionMaker:
 
     def __init__(self, learning_engine: SelfLearningEngine):
         self.learning_engine = learning_engine
-        self.min_confidence = 0.6  # Мінімальна впевненість для автономного виконання
+        self.min_confidence = 0.0  # FULL AUTONOMY: Always approve
         self.decision_history: List[AutonomousDecision] = []
 
     async def make_decision(

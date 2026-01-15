@@ -11,7 +11,13 @@ logger = logging.getLogger("agents.git_committer")
 
 class GitAutoCommitter:
     def __init__(self):
-        self.repo_path = "/app"
+        import os
+        from pathlib import Path
+        if Path("/app").exists():
+            self.repo_path = "/app"
+        else:
+            self.repo_path = str(Path(__file__).resolve().parents[3])
+
         self.remote_name = "origin"
         self.branch_name = "auto-improve"
 
