@@ -180,7 +180,7 @@ class AiderAgent:
                     # Використовуємо Gemini API
                     async with httpx.AsyncClient(timeout=60) as client:
                         response = await client.post(
-                            "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent",
+                            "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent",
                             headers={"Content-Type": "application/json"},
                             params={"key": api_key},
                             json={
