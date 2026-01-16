@@ -227,7 +227,14 @@ services:
       - ./infrastructure/constitution:/app/infrastructure/constitution
     depends_on: [postgres, redis, kafka]
     restart: unless-stopped
-    networks: [predator-net]
+    networks:
+      predator-net:
+        aliases:
+          - arbiter
+          - truth-ledger
+          - som
+          - rce
+          - vpc-verifier
     profiles: ["local", "server"]
 
   # ═══════════════════════════════════════════════════════════════

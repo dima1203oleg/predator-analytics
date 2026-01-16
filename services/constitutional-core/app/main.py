@@ -2,7 +2,9 @@
 🏛️ CONSTITUTIONAL CORE (Unified Monolith)
 =========================================
 Реальне об'єднання логіки 5 сервісів.
-Використовує FastAPI Sub-Applications (Mounting) для ізоляції модулів.
+Використовує Hybrid Mounting Strategy:
+1. Include Router - для модулів, що вже мають /api/v1/... префікси (SOM, RCE, VPC)
+2. Mount App - для модулів без префіксів (Arbiter, Ledger)
 """
 
 from fastapi import FastAPI
@@ -13,19 +15,15 @@ import logging
 
 # --- IMPORT MODULES ---
 try:
-    from app.modules.arbiter.app.main import app as arbiter_app
-    from app.modules.ledger.app.main import app as ledger_app
-    from app.modules.som.app.main import app as som_app
-    from app.modules.rce.app.main import app as rce_app
-    from app.modules.vpc.app.main import app as vpc_app
+    from .modules.arbiter.app.main import app as arbiter_app
+    from .modules.ledger.app.main import app as ledger_app
+    from .modules.som.app.main import app as som_app
+    from .modules.rce.app.main import app as rce_app
+    from .modules.vpc.app.main import app as vpc_app
 except ImportError as e:
     logging.error(f"❌ Failed to import modules: {e}")
-    # Fallback для розробки, якщо модулі ще не адаптовані ідеально
-    arbiter_app = FastAPI()
-    ledger_app = FastAPI()
-    som_app = FastAPI()
-    rce_app = FastAPI()
-    vpc_app = FastAPI()
+    # Fallback placeholders
+    arbiter_app = ledger_app = som_app = rce_app = vpc_app = FastAPI()
 
 app = FastAPI(
     title="Predator Constitutional Core",
@@ -41,23 +39,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- MOUNTING REAL APPLICATIONS ---
-# Це підключає повний функціонал старих мікросервісів
+# --- HYBRID MOUNTING STRATEGY ---
 
-# 1. Arbiter (Rules) -> /api/v1/arbiter
+# 1. ARBITER (No prefix in module -> Mount at /api/v1/arbiter)
+# Original URL: /decide -> New URL: /api/v1/arbiter/decide
 app.mount("/api/v1/arbiter", arbiter_app)
 
-# 2. Ledger (Audit) -> /api/v1/ledger
+# 2. LEDGER (No prefix in module -> Mount at /api/v1/ledger)
+# Original URL: /entry -> New URL: /api/v1/ledger/entry
 app.mount("/api/v1/ledger", ledger_app)
 
-# 3. SOM (Observer) -> /api/v1/som
-app.mount("/api/v1/som", som_app)
+# 3. SOM (Has /api/v1/som prefix -> Include Router)
+# Original URL: /api/v1/som/health -> New URL: /api/v1/som/health (Preserved)
+app.include_router(som_app.router)
 
-# 4. RCE (Execution) -> /api/v1/rce
-app.mount("/api/v1/rce", rce_app)
+# 4. RCE (Has /api/v1/rce prefix -> Include Router)
+# Original URL: /api/v1/rce/analyze -> New URL: /api/v1/rce/analyze (Preserved)
+app.include_router(rce_app.router)
 
-# 5. VPC (Verificator) -> /api/v1/vpc
-app.mount("/api/v1/vpc", vpc_app)
+# 5. VPC (Has /api/v1/vpc prefix -> Include Router)
+# Original URL: /api/v1/vpc/verify -> New URL: /api/v1/vpc/verify (Preserved)
+app.include_router(vpc_app.router)
 
 
 @app.get("/health")
@@ -65,10 +67,13 @@ async def core_health():
     return {
         "status": "operational",
         "mode": "unified_monolith",
-        "mounted_modules": [
-            "arbiter", "ledger", "som", "rce", "vpc"
-        ],
-        "system_rules": "active"
+        "strategies": {
+            "arbiter": "mounted_subapp",
+            "ledger": "mounted_subapp",
+            "som": "included_router",
+            "rce": "included_router",
+            "vpc": "included_router"
+        }
     }
 
 if __name__ == "__main__":
