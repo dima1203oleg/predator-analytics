@@ -55,7 +55,7 @@ async def get_job(job_id: str):
     async with get_db_ctx() as sess:
         job = await sess.get(ETLJob, uuid.UUID(job_id))
         if not job:
-            raise HTTPException(status_code=404, detail="Завдання не знайдено")
+            raise HTTPException(status_code=404, detail="Job not found")
 
         # Build timestamps object
         timestamps = {

@@ -13,30 +13,13 @@ from .config import settings
 
 logger = logging.getLogger(__name__)
 
-import socket
-from urllib.parse import urlparse, urlunparse
-
-# Helper to fix hostname for local execution
-def fix_db_url(url: str) -> str:
-    try:
-        parsed = urlparse(url)
-        # Try to resolve hostname
-        socket.gethostbyname(parsed.hostname)
-        return url
-    except (socket.gaierror, TypeError):
-        # Fallback to localhost if hostname resolution fails (e.g. running script outside docker)
-        if parsed.hostname == 'postgres':
-             return url.replace('@postgres', '@localhost')
-        return url
-
 # Determine if the URL is async
 is_async = "asyncpg" in settings.DATABASE_URL
-fixed_db_url = fix_db_url(settings.DATABASE_URL)
 
 if is_async:
     # Create async engine
     engine = create_async_engine(
-        fixed_db_url,
+        settings.DATABASE_URL,
         pool_size=settings.DB_POOL_SIZE,
         max_overflow=settings.DB_MAX_OVERFLOW,
         echo=settings.DEBUG,

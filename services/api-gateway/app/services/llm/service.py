@@ -9,9 +9,9 @@ import httpx
 import os
 import random
 from ...core.config import settings
-from libs.core.structured_logger import get_logger, RequestLogger
+from libs.core.logger import setup_logger
 
-logger = get_logger("predator.backend.llm")
+logger = setup_logger("predator.backend.llm")
 
 
 class LLMProvider(Enum):
@@ -274,7 +274,7 @@ class LLMService:
                 continue
 
             try:
-                logger.debug("llm_routing_attempt", provider=provider_name)
+                logger.debug(f"LLM_ROUTER: Attempting {provider_name}...")
                 response = await self.generate(
                     prompt=prompt,
                     system=system,
@@ -283,16 +283,16 @@ class LLMService:
                     temperature=temperature
                 )
                 if response.success:
-                    logger.info("llm_routing_success", provider=provider_name, model=response.model)
+                    logger.info(f"LLM_ROUTER: Success with {provider_name} [Model: {response.model}]")
                     return response
 
-                logger.warning("llm_routing_error", provider=provider_name, error=response.error)
+                logger.warning(f"LLM_ROUTER: {provider_name} returned error: {response.error}")
                 last_error = response.error
             except Exception as e:
-                logger.error("llm_routing_failure_critical", provider=provider_name, error=str(e))
+                logger.error(f"LLM_ROUTER: Provider {provider_name} critical failure: {e}")
                 last_error = str(e)
 
-        logger.error("llm_routing_exhausted", last_error=last_error)
+        logger.error(f"LLM_ROUTER: All providers in chain failed. Last error: {last_error}")
         return await self.generate(prompt, system, max_tokens=max_tokens, temperature=temperature)
 
     async def generate(
@@ -326,22 +326,21 @@ class LLMService:
         config = self.providers[selected_provider]
 
         try:
-            with RequestLogger(logger, "llm_generation", provider=selected_provider, model=config["model"]) as req_logger:
-                if selected_provider == "gemini":
-                    response = await self._call_gemini(prompt, system, config, max_tokens, temperature, format)
-                elif selected_provider in ["groq", "mistral", "openrouter", "deepseek", "together", "grok"]:
-                    response = await self._call_openai_compatible(prompt, system, config, max_tokens, temperature, selected_provider, format)
-                elif selected_provider == "cohere":
-                    response = await self._call_cohere(prompt, system, config, max_tokens, temperature)
-                elif selected_provider == "huggingface":
-                    response = await self._call_huggingface(prompt, system, config, max_tokens, temperature)
-                else:
-                    response = await self._call_ollama(prompt, system, config, max_tokens, temperature)
+            if selected_provider == "gemini":
+                response = await self._call_gemini(prompt, system, config, max_tokens, temperature, format)
+            elif selected_provider in ["groq", "mistral", "openrouter", "deepseek", "together", "grok"]:
+                response = await self._call_openai_compatible(prompt, system, config, max_tokens, temperature, selected_provider, format)
+            elif selected_provider == "cohere":
+                response = await self._call_cohere(prompt, system, config, max_tokens, temperature)
+            elif selected_provider == "huggingface":
+                response = await self._call_huggingface(prompt, system, config, max_tokens, temperature)
+            else:
+                response = await self._call_ollama(prompt, system, config, max_tokens, temperature)
 
-                response.latency_ms = (time.time() - start_time) * 1000
-                return response
+            response.latency_ms = (time.time() - start_time) * 1000
+            return response
         except Exception as e:
-            logger.error("llm_critical_error", provider=selected_provider, error=str(e))
+            logger.error(f"LLM error with {selected_provider}: {e}")
             return LLMResponse(False, "", selected_provider, config["model"], error=str(e))
 
     async def _call_cohere(self, prompt, system, config, max_tokens, temperature):

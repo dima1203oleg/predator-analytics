@@ -87,11 +87,11 @@ SECURE_HEADERS = {
 
 from src.ingestion import router as ingestion_router
 
-# Additional imports
-from libs.core.structured_logger import log_business_event
+# Logging setup
+from libs.core.structured_logger import get_logger, log_business_event
 from libs.core.cache import get_cache
 
-# NOTE: logger already initialized on line 44 as "predator.backend.main"
+logger = get_logger("predator.api.main")
 
 # Database
 from app.database import init_db
@@ -101,27 +101,19 @@ from app.middleware import (
     RateLimitMiddleware,
     MetricsMiddleware,
     RequestLoggingMiddleware,
-    ErrorHandlerMiddleware,
-    CircuitBreakerMiddleware
+    ErrorHandlerMiddleware
 )
 from app.api.routers import health as health_router
 
 app = FastAPI(
     title="Predator Analytics v26.2 API",
-    description="Незламна система: Мультиагентна аналітична платформа на базі ШІ (Повний суверенітет)",
+    description="The Unbreakable System: AI-Native Multi-Agent Analytics Platform (CLI-First Sovereignty)",
     version="26.2.0"
 )
 
 # Initialize OpenTelemetry BEFORE adding middlewares or handlers
 setup_otel(app, "predator_backend")
 logger.info("otel_initialized", service="predator_backend")
-
-# Активація Middleware (Order matters!)
-app.add_middleware(ErrorHandlerMiddleware)
-app.add_middleware(CircuitBreakerMiddleware) # Захист від збоїв
-app.add_middleware(RequestLoggingMiddleware)
-app.add_middleware(MetricsMiddleware)
-app.add_middleware(RateLimitMiddleware)
 
 # --- SYSTEM VERIFICATION ENDPOINT (The "Truth" for UI) ---
 @app.get("/api/system/verification")
@@ -150,8 +142,8 @@ async def get_system_verification():
     else:
         # Re-calculate
         const_path = settings.CONSTITUTION_PATH
-        const_hash = "ГЕНЕЗИС_НЕ_ЗНАЙДЕНО"
-        const_status = "НЕВІДОМО"
+        const_hash = "GENESIS_NOT_FOUND"
+        const_status = "UNKNOWN"
 
         if os.path.exists(const_path):
             try:
@@ -170,11 +162,11 @@ async def get_system_verification():
                 # but for now we trust the calculated hash represents the file's identity.
                 # In strict mode, settings.CONSTITUTION_HASH should be updated to SHA3.
                 if settings.CONSTITUTION_HASH.startswith(full_hash[:16]):
-                     const_status = "ВАЛІДНО"
+                    const_status = "VALID"
                 elif settings.CONSTITUTION_HASH == full_hash:
-                     const_status = "ВАЛІДНО"
+                     const_status = "VALID"
                 else:
-                    const_status = "ПОРУШЕНО"
+                    const_status = "VIOLATED"
             except Exception as e:
                 const_status = f"ERROR: {str(e)}"
 
@@ -223,7 +215,7 @@ async def get_guardian_health():
             "enabled": True,
             "agent": "AZR-v1",
             "last_action": datetime.now().isoformat(),
-            "status": "ОЧІКУВАННЯ"
+            "status": "IDLE"
         },
         "last_check": {
             "timestamp": datetime.now().isoformat(),
@@ -233,11 +225,8 @@ async def get_guardian_health():
         }
     }
 
-# ============================================================================
-# MIDDLEWARE SETUP (v26 Security) - Order matters: last added is first run
-# ============================================================================
-
-# NOTE: CORSMiddleware already imported on line 76
+# Add Middleware (Order matters - last added is first run)
+from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
@@ -256,11 +245,6 @@ app.add_middleware(ErrorHandlerMiddleware)
 from app.core.middleware.autonomy_guard import AutonomyGuardMiddleware
 app.add_middleware(AutonomyGuardMiddleware)
 
-app.add_middleware(
-    TrustedHostMiddleware,
-    allowed_hosts=["*"]
-)
-
 # Mount Static Files (Web Interface)
 try:
     if not os.path.exists("app/static"):
@@ -268,6 +252,24 @@ try:
     app.mount("/static", StaticFiles(directory="app/static"), name="static")
 except Exception as e:
     logger.warning(f"Could not mount static files: {e}")
+
+
+# ============================================================================
+# MIDDLEWARE SETUP (v26 Security)
+# ============================================================================
+
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=["*"]
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.middleware("http")
 async def add_security_headers(request, call_next):
@@ -456,14 +458,6 @@ async def startup_event():
     except Exception as e:
         logger.error("azr_engine_failed", error=str(e))
 
-    # 3.8.5 Start System Monitor Service (v27.0)
-    try:
-        from app.services.monitoring.system_monitor import system_monitor
-        await system_monitor.start_monitoring()
-        logger.info("📡 System Monitor Service STARTED (v27.0)")
-    except Exception as e:
-        logger.error("system_monitor_start_failed", error=str(e))
-
     # 3.9 Start Endless Self-Improvement Service
     try:
         from app.services.training_service import self_improvement_service
@@ -480,7 +474,14 @@ async def startup_event():
     except Exception as e:
         logger.warning(f"⚠️ Event Bus connection failed: {e}")
 
-    # 5. Register Guardian reference (already started on line 355)\n    try:\n        from libs.core.guardian import guardian\n        # NOTE: guardian.start() already called on line 355, just register state\n        app.state.guardian = guardian\n        logger.info(\"🛡️ Guardian System registered (v26.0)\")\n    except Exception as e:\n        logger.error(f\"❌ Guardian registration failed: {e}\")
+    # 5. Start Global Guardian (v26 Self-Healing)
+    try:
+        from libs.core.guardian import guardian
+        asyncio.create_task(guardian.start())  # Run in background
+        app.state.guardian = guardian
+        logger.info("🛡️ Guardian System initialized (v26.0)")
+    except Exception as e:
+        logger.error(f"❌ Guardian init failed: {e}")
 
 @app.get("/system/health/v26")
 async def system_health_v26():
@@ -1010,12 +1011,12 @@ app.include_router(health_router.router, prefix="/api/v1")
 # Data Sources Management
 app.include_router(sources_router.router, prefix="/api/v1")
 
-# AZR Constitution (v27 Hyper-Powered) handled above via azr_router (lines 972, 976)
+# AZR Constitution (v27 Hyper-Powered) handled above via azr_router
 
 # Google Ecosystem Integration
 from app.routers import google_integrations
 app.include_router(google_integrations.router, prefix="/api/v1")
-# NOTE: azr_router already included on lines 972 (/api/v1) and 976 (/api/v25)
+app.include_router(azr_router.router, prefix="/api/v1")
 
 # Data Hub (v25 - Canonical Entities)
 from app.api.v1 import data_hub as data_hub_router
@@ -1068,11 +1069,13 @@ app.include_router(cases_router.router, prefix="/api/v1")
 from app.api.routers import missions as missions_router
 app.include_router(missions_router.router)
 
-# NOTE: Evolution System already included on lines 973 (/api/v1) and 977 (/api/v25)
-# Do not re-include evolution_router here to avoid duplicate routes
+# Evolution System
+from app.routers import evolution as evolution_router
+app.include_router(evolution_router.router, prefix="/api/v1")
 
-# NOTE: V25 Premium System already included on line 980
-# Do not re-include v25_router here to avoid duplicate routes
+# V25 Premium System (System Monitoring, ML Jobs, Arbitration, Trinity)
+from app.api import v25_routes
+app.include_router(v25_routes.v25_router, prefix="/api")
 
 
 # V25 Copilot (Gemini Agent)
@@ -1123,8 +1126,17 @@ async def list_documents(
         raise HTTPException(status_code=500, detail="Failed to list documents")
 
 
-# NOTE: Removed duplicate startup_event() - all initialization is in the main
-# startup_event defined on line 344. The self_improvement_service is started on line 466.
+@app.on_event("startup")
+async def startup_event():
+    """Initialize background services on startup."""
+    logger.info("system_startup_initiated")
+    # Start the endless self-improvement loop (Auto-Training)
+    try:
+        from app.services.training_service import self_improvement_service
+        await self_improvement_service.start_endless_loop()
+        logger.info("self_improvement_service_started")
+    except Exception as e:
+        logger.error(f"failed_to_start_self_improvement: {e}")
 
 if __name__ == "__main__":
     import uvicorn

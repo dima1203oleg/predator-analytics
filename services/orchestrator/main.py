@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PREDATOR ANALYTICS v29.0 - AUTONOMOUS ORCHESTRATOR
+PREDATOR ANALYTICS v23.0 - AUTONOMOUS ORCHESTRATOR
 God Mode: Infinite Self-Improvement Loop
 
 This is the BRAIN of the system. It runs on the server 24/7.
@@ -27,16 +27,14 @@ from orchestrator.tasks.data_sentinel import DataSentinel
 # TelegramCommandCenter removed (Decoupled Architecture)
 from orchestrator.agents.git_committer import GitAutoCommitter
 from orchestrator.agents.change_observer import ChangeObserver, ProposalArbitrator
-from orchestrator.memory.manager import AdvancedMemoryManager, get_memory_manager
+from orchestrator.memory.manager import AdvancedMemoryManager
 from orchestrator.agents.reflexion_agent import ReflexionAgent, TreeOfThoughtsPlanner
 from orchestrator.agents.debate_protocol import create_council_debate
 from orchestrator.agents.self_healing import SelfHealingSystem
 from orchestrator.agents.performance_predictor import PerformancePredictor, AutoScaler
 from orchestrator.knowledge.graph import get_knowledge_graph
 from orchestrator.agents.training_manager import TrainingManager
-from orchestrator.agents.shadow_mode import ShadowModeService
 from libs.core.constitutional import ArbiterClient, LedgerClient
-from libs.core.swarm_client import SwarmClient
 
 # --- LOGGING SETUP (MUST BE BEFORE TRY/EXCEPT THAT USE LOGGER) ---
 # Create a robust logger that writes to both stdout and a file
@@ -99,7 +97,7 @@ class AutonomousOrchestrator:
         # Advanced AI Components
         self.memory = None  # Initialized after Redis
         self.reflexion = None  # Initialized after memory
-        self.planner = TreeOfThoughtsPlanner() # Placeholder init
+        self.planner = TreeOfThoughtsPlanner()
         self.debate = None  # Initialized after LLM fallback
         self.self_healing = None  # Initialized after memory
         self.performance = None  # Initialized after Redis
@@ -110,8 +108,6 @@ class AutonomousOrchestrator:
         self.power_monitor = None  # Initialized after Telegram
         self.voice_handler = None  # Initialized separately
         self.training_manager = None
-        self.shadow_mode = None
-        self.swarm = None # gRPC Swarm Client
 
         self.iteration = 0
         self.deployment_failures = 0
@@ -153,31 +149,19 @@ class AutonomousOrchestrator:
         self.change_observer = ChangeObserver(redis_client=self.redis)
         logger.info("✅ Change Observer initialized")
 
-        # Swarm Client (gRPC Protocol)
-        self.swarm = SwarmClient(host="127.0.0.1", port=50051)
-        logger.info("✅ Swarm gRPC Client initialized")
-
         # Advanced Memory System
-        self.memory = get_memory_manager(
+        self.memory = AdvancedMemoryManager(
             redis_client=self.redis,
             db_session=self.db_session
         )
         logger.info("✅ Memory Manager initialized")
 
-        # Reflexion Agent (uses memory for past experiences AND Swarm)
+        # Reflexion Agent (uses memory for past experiences)
         self.reflexion = ReflexionAgent(
             llm_fallback=self.code_improver.fallback,
-            memory_manager=self.memory,
-            swarm_client=self.swarm
+            memory_manager=self.memory
         )
-        logger.info("✅ Reflexion Agent initialized (with Swarm)")
-
-        # Re-initialize Planner with Swarm Client
-        self.planner = TreeOfThoughtsPlanner(
-            llm_fallback=None,
-            swarm_client=self.swarm
-        )
-        logger.info("✅ TreeOfThoughts Planner initialized (with Swarm)")
+        logger.info("✅ Reflexion Agent initialized")
 
         # Multi-Agent Debate for complex decisions
         self.debate = create_council_debate(llm_fallback=self.code_improver.fallback)
@@ -197,10 +181,6 @@ class AutonomousOrchestrator:
         )
         self.auto_scaler = AutoScaler(self.performance)
         logger.info("✅ Performance Predictor initialized")
-
-        # Shadow Mode (A/B testing)
-        self.shadow_mode = ShadowModeService(redis_client=self.redis)
-        logger.info("✅ Shadow Mode Service initialized (with Redis)")
 
         # Power Monitor (if available)
         if POWER_MONITOR_AVAILABLE:
@@ -239,7 +219,7 @@ class AutonomousOrchestrator:
         self.ledger = LedgerClient(base_url=os.environ.get("LEDGER_URL", "http://127.0.0.1:8092"))
         logger.info("✅ Truth Ledger Client (Host Mode) initialized")
 
-        logger.info("🚀 Orchestrator initialized with FULL AI STACK v29.0 (Swarm Enabled)")
+        logger.info("🚀 Orchestrator initialized with FULL AI STACK v2.0")
 
     async def set_activity(self, activity: str):
         """Update current activity status in Redis and Log"""
@@ -272,11 +252,6 @@ class AutonomousOrchestrator:
 
                 # Also logging
                 logger.info(f"📡 BROADCAST [{stage}]: {message}")
-
-            # Broadcast to Swarm (Optional, for memory)
-            if self.swarm:
-                await self.swarm.broadcast_event("orchestrator", f"broadcast_{stage}", event)
-
         except Exception as e:
             logger.error(f"Broadcast error: {e}")
 
@@ -333,12 +308,7 @@ class AutonomousOrchestrator:
                 # 2. ANALYST REVIEW
                 await self.set_activity("🧠 Analyzing System...")
                 await self.broadcast("analyst", "Аналіз стану системи...", "processing")
-
-                # Use Shadow Mode if available to compare models
-                if self.shadow_mode:
-                    analysis = await self.shadow_mode.execute_dual_analysis(metrics, self.analyst)
-                else:
-                    analysis = await self.analyst.analyze(metrics)
+                analysis = await self.analyst.analyze(metrics)
 
                 # 3. IDENTIFY TASK
                 await self.set_activity("🔍 Seeking Tasks...")
@@ -573,10 +543,10 @@ class AutonomousOrchestrator:
         return improvement_tasks[task_index]
 
     async def council_vote(self, task: dict, proposal: dict, metrics: dict) -> dict:
-        """Get council consensus on proposal via gRPC Swarm Protocol"""
+        """Get council consensus on proposal"""
         proposals = []
 
-        # 1. Critic review
+        # Critic review
         if proposal.get('code'):
             critic_review = await self.critic.review(proposal['code'], task['description'])
             proposals.append({
@@ -585,7 +555,7 @@ class AutonomousOrchestrator:
                 **critic_review
             })
 
-        # 2. Analyst input
+        # Analyst input
         analyst_input = await self.analyst.analyze(metrics)
         proposals.append({
             "role": "analyst",
@@ -593,37 +563,6 @@ class AutonomousOrchestrator:
             **analyst_input
         })
 
-        # --- NEW: gRPC SWARM CONSENSUS (v29.2) ---
-        await self.broadcast("swarm", "🚀 Initiating Swarm Consensus (gRPC)...", "processing")
-
-        swarm_proposal = {
-            "task": task['description'],
-            "code_hash": str(hash(proposal.get('code', ''))),
-            "predicted_impact": metrics.get('prediction', 'neutral')
-        }
-
-        swarm_response = await self.swarm.propose_action(
-            agent_id="orchestrator_prime",
-            description=f"Task: {task['description']}",
-            changes=swarm_proposal
-        )
-
-        if swarm_response and swarm_response.approved:
-            await self.broadcast("swarm", f"✅ Swarm Approved: {swarm_response.votes_for} FOR, {swarm_response.votes_against} AGAINST", "success")
-
-            # Chairman final decision (incorporating Swarm vote)
-            chairman_decision = await self.chairman.decide(
-                task['description'],
-                proposals,
-                {"metrics": metrics, "swarm_approved": True, "swarm_rationale": swarm_response.decision_rationale}
-            )
-            return {
-                "consensus": "approve",
-                "reason": swarm_response.decision_rationale,
-                "confidence": 0.95
-            }
-
-        # Fallback to internal consensus if swarm fails or rejects
         # Chairman final decision
         chairman_decision = await self.chairman.decide(task['description'], proposals, {"metrics": metrics})
         proposals.append({
@@ -639,57 +578,25 @@ class AutonomousOrchestrator:
         """Execute approved task"""
         logger.info(f"⚙️ Executing: {task['description']}")
 
-        # --- CONSTITUTIONAL CHECK (Swarm gRPC) ---
+        # --- CONSTITUTIONAL CHECK ---
         # Before executing ANY high-impact task, we must consult the Arbiter.
         # This enforces sovereignty even if the code was generated by the AI itself.
+        decision = self.arbiter.decide(
+            type="execute_task",
+            context={
+                "task_type": task.get("type"),
+                "description": task.get("description"),
+                "proposal_summary": proposal.get("description", "Code Execution")
+            }
+        )
 
-        allowed = False
-        signature = "mock_sig_fallback"
-        reason = "Check Failed"
-
-        if self.swarm:
-            decision = self.swarm.check_authorization(
-                agent_id="orchestrator",
-                action_type="execute_task",
-                context={
-                    "task_type": task.get("type"),
-                    "description": task.get("description"),
-                    "proposal_summary": proposal.get("description", "Code Execution")
-                }
-            )
-
-            if decision and decision.allowed:
-                allowed = True
-                signature = decision.signature
-                logger.info(f"✅ Arbiter Authorized Execution (gRPC): {signature[:8]}")
-            elif decision:
-                reason = getattr(decision, "reason", "Denied")
-                logger.warning(f"⛔ EXECUTION BLOCKED BY ARBITER (gRPC): {reason}")
-            else:
-                logger.warning("⚠️ Swarm check failed, falling back to REST Arbiter")
-                # Fallback to REST if gRPC fails
-                rest_decision = self.arbiter.decide(
-                     type="execute_task",
-                     context={"task_type": task.get("type")}
-                )
-                allowed = rest_decision['allowed']
-                reason = rest_decision.get('reason', 'RPC Fail')
-        else:
-            # Fallback for no Swarm Client
-            decision = self.arbiter.decide(
-                type="execute_task",
-                context={
-                    "task_type": task.get("type"),
-                    "description": task.get("description"),
-                    "proposal_summary": proposal.get("description", "Code Execution")
-                }
-            )
-            allowed = decision['allowed']
-            reason = decision.get('reason', 'REST Denied')
-
-        if not allowed:
+        if not decision['allowed']:
+            reason = decision['reason']
+            logger.warning(f"⛔ EXECUTION BLOCKED BY ARBITER: {reason}")
             await self.broadcast("system", f"⛔ БЛОКУВАННЯ АРБІТРОМ: {reason}", "error")
             return False
+
+        logger.info(f"✅ Arbiter Authorized Execution: {decision.get('signature', 'mock_sig')[:8]}...")
 
         # --- LEDGER COMMIT ---
         # Record the sanctioned execution in the Truth Ledger
@@ -701,7 +608,7 @@ class AutonomousOrchestrator:
                 "task_description": task.get("description"),
                 "proposal_summary": proposal.get("description")
             },
-            signature=signature
+            signature=decision.get("signature")
         )
         # ---------------------
 
@@ -824,7 +731,7 @@ class AutonomousOrchestrator:
             try:
                 stop_signal = await self.redis.get(UI_STOP_SIGNAL_KEY)
                 ui_stop = stop_signal == "1" if stop_signal else False
-            except Exception as e:
+            except Exception:
                 pass
 
         if not ui_stop:

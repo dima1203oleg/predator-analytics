@@ -12,7 +12,6 @@ import os
 
 class Settings(BaseSettings):
     """Application settings with environment variable support"""
-    ENVIRONMENT: str = "development"
 
     @field_validator('CORS_ORIGINS', mode='before')
     @classmethod
@@ -32,18 +31,18 @@ class Settings(BaseSettings):
             return [x.strip() for x in v.split(',') if x.strip()]
         return ["*"]
 
-    # --- RESILIENCE & SURVIVAL (v27.0) ---
-    RESILIENCE_MODE: bool = True  # Режим незламності увімкнено за замовчуванням
-    CIRCUIT_BREAKER_THRESHOLD: int = 5 # Кількість помилок до блокування
-    FALLBACK_TO_LOCAL_AI: bool = True # Використовувати Ollama як фолбек
-    EMERGENCY_RESTART_ENABLED: bool = True # Дозволити самостійний перезапуск
+    # App
+    APP_NAME: str = "Predator Analytics Core"
+    APP_VERSION: str = "22.0.0"
+    DEBUG: bool = False
+    ENVIRONMENT: str = "development"
+
+    # API
+    API_V1_PREFIX: str = "/api/v1"
 
     # --- CONSTITUTIONAL CORE (v26.2) ---
     CONSTITUTION_HASH: str = "3f05c27896098e41471c246fb39e6a0dd43f7b11ff7c46db8f0195d3d3cae3cd"
-    @property
-    def CONSTITUTION_PATH(self) -> str:
-        base = "/app" if os.path.exists("/app") else os.getcwd()
-        return os.path.join(base, "docs/v26_CONSTITUTION.md")
+    CONSTITUTION_PATH: str = "/app/docs/v26_CONSTITUTION.md"
     CORS_ORIGINS: List[str] = [
         "*", # Allow all in development/standalone modes for easier access
         os.getenv("FRONTEND_URL", "http://localhost:3000"),
@@ -157,7 +156,6 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
 
     # Monitoring
-    DEBUG: bool = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
     LOG_LEVEL: str = "INFO"
     PROMETHEUS_ENABLED: bool = True
     OTLP_ENDPOINT: str = os.getenv("OTLP_ENDPOINT", "http://otel-collector:4317")

@@ -137,7 +137,6 @@ def setup_structured_logging(
         format="%(message)s",
         stream=sys.stdout,
         level=getattr(logging, log_level.upper()),
-        force=True,
     )
 
     return structlog.get_logger()
@@ -205,14 +204,6 @@ class RequestLogger:
                 **self.context
             )
 
-    async def __aenter__(self):
-        """Async context manager entry"""
-        return self.__enter__()
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        """Async context manager exit"""
-        return self.__exit__(exc_type, exc_val, exc_tb)
-
 
 def log_performance(
     logger: structlog.BoundLogger,
@@ -263,34 +254,6 @@ def log_business_event(
         event_category="business",
         **attributes
     )
-
-    # Якщо це успішна операція ШІ, зберігаємо її в пам'ять еволюції
-    if event_name.startswith("ai_") and attributes.get("status") == "success":
-        log_evolution_experience(event_name, attributes)
-
-def log_evolution_experience(event_name: str, attributes: Dict[str, Any]):
-    """Збереження успішного досвіду ШІ для майбутнього навчання"""
-    try:
-        from pathlib import Path
-        import json
-        from datetime import datetime
-
-        # CURRENT: /Users/dima-mac/Documents/Predator_21/libs/core/structured_logger.py
-        # Project Root should be 3 levels up
-        exp_file = Path(__file__).resolve().parents[2] / "data/evolution/experience_ledger.jsonl"
-        exp_file.parent.mkdir(parents=True, exist_ok=True)
-
-        experience = {
-            "timestamp": datetime.now().isoformat(),
-            "event": event_name,
-            "data": attributes,
-            "version": "27.0-Evolution"
-        }
-
-        with open(exp_file, "a", encoding="utf-8") as f:
-            f.write(json.dumps(experience, ensure_ascii=False) + "\n")
-    except:
-        pass
 
 
 def log_security_event(
@@ -344,22 +307,22 @@ def example_usage():
     # Log with request context manager
     with RequestLogger(logger, "search_documents", query="test") as req_logger:
         req_logger.info(
-            "пошуковий_запит",
+            "processing_search",
             mode="hybrid",
             limit=20
         )
-        # Симуляція роботи
+        # Simulate work
         import time
         time.sleep(0.1)
         req_logger.info(
-            "результати_пошуку",
+            "search_results",
             results_count=15
         )
 
     # Performance logging
     log_performance(
         logger,
-        "запит_до_бд",
+        "database_query",
         duration_ms=234,
         query_type="select",
         table="documents"
@@ -368,7 +331,7 @@ def example_usage():
     # Business event
     log_business_event(
         logger,
-        "початок_навчання_шф",
+        "ml_training_started",
         dataset_id="dataset_march_2024",
         model_type="automl",
         priority="high"
@@ -377,7 +340,7 @@ def example_usage():
     # Security event
     log_security_event(
         logger,
-        "відмова_у_доступі",
+        "permission_denied",
         severity="medium",
         user_id="user_456",
         required_role="admin",
@@ -389,7 +352,7 @@ def example_usage():
         1 / 0
     except Exception as e:
         logger.exception(
-            "помилка_обчислення",
+            "calculation_error",
             operation="divide",
             numerator=1,
             denominator=0

@@ -45,14 +45,14 @@ def _get_or_create_metric(cls, name, *args, **kwargs):
 SEARCH_REQUESTS_TOTAL = _get_or_create_metric(
     Counter,
     'search_requests_total',
-    'Загальна кількість запитів на пошук',
+    'Total search requests',
     ['search_type', 'status']
 )
 
 SEARCH_LATENCY_SECONDS = _get_or_create_metric(
     Histogram,
     'search_latency_seconds',
-    'Затримка пошукового запиту в секундах',
+    'Search request latency in seconds',
     ['search_type'],
     buckets=[0.05, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0]
 )
@@ -60,7 +60,7 @@ SEARCH_LATENCY_SECONDS = _get_or_create_metric(
 SEARCH_RESULTS_COUNT = _get_or_create_metric(
     Histogram,
     'search_results_count',
-    'Кількість повернутих результатів пошуку',
+    'Number of search results returned',
     ['search_type'],
     buckets=[0, 1, 5, 10, 20, 50, 100]
 )
@@ -72,14 +72,14 @@ SEARCH_RESULTS_COUNT = _get_or_create_metric(
 LLM_COUNCIL_REQUESTS_TOTAL = _get_or_create_metric(
     Counter,
     'llm_council_requests_total',
-    'Загальна кількість запитів до Нейронної Ради',
+    'Total LLM Council queries',
     ['peer_review_enabled']
 )
 
 LLM_COUNCIL_LATENCY_SECONDS = _get_or_create_metric(
     Histogram,
     'llm_council_latency_seconds',
-    'Затримка обговорення в Нейронній Раді',
+    'LLM Council deliberation latency',
     ['num_models'],
     buckets=[1, 5, 10, 15, 20, 30, 60]
 )
@@ -87,21 +87,21 @@ LLM_COUNCIL_LATENCY_SECONDS = _get_or_create_metric(
 LLM_COUNCIL_CONFIDENCE_SCORE = _get_or_create_metric(
     Histogram,
     'llm_council_confidence_score',
-    'Оцінка впевненості рішень Ради',
+    'Confidence score of council decisions',
     buckets=[0.0, 0.3, 0.5, 0.7, 0.8, 0.9, 1.0]
 )
 
 LLM_COUNCIL_PEER_REVIEWS = _get_or_create_metric(
     Histogram,
     'llm_council_peer_reviews',
-    'Кількість проведених рецензувань',
+    'Number of peer reviews conducted',
     buckets=[0, 2, 4, 6, 8, 12, 20]
 )
 
 LLM_COUNCIL_COST_USD = _get_or_create_metric(
     Counter,
     'llm_council_cost_usd',
-    'Орієнтовна вартість у USD',
+    'Estimated cost in USD',
     ['model_provider']
 )
 
@@ -112,14 +112,14 @@ LLM_COUNCIL_COST_USD = _get_or_create_metric(
 MODEL_INFERENCE_TOTAL = _get_or_create_metric(
     Counter,
     'model_inference_total',
-    'Загальна кількість запитів на вивід моделі',
+    'Total model inference requests',
     ['model_name', 'status']
 )
 
 MODEL_INFERENCE_LATENCY = _get_or_create_metric(
     Histogram,
     'model_inference_latency_seconds',
-    'Затримка виводу моделі',
+    'Model inference latency',
     ['model_name'],
     buckets=[0.1, 0.5, 1.0, 2.0, 5.0]
 )
@@ -127,7 +127,7 @@ MODEL_INFERENCE_LATENCY = _get_or_create_metric(
 MODEL_TOKENS_USED = _get_or_create_metric(
     Counter,
     'model_tokens_used_total',
-    'Загальна кількість використаних токенів',
+    'Total tokens used',
     ['model_name', 'type']  # type: prompt, completion
 )
 
@@ -138,14 +138,14 @@ MODEL_TOKENS_USED = _get_or_create_metric(
 ETL_TASKS_TOTAL = _get_or_create_metric(
     Counter,
     'etl_tasks_total',
-    'Загальна кількість виконаних завдань ETL',
+    'Total ETL tasks executed',
     ['task_type', 'status']
 )
 
 ETL_TASK_DURATION_SECONDS = _get_or_create_metric(
     Histogram,
     'etl_task_duration_seconds',
-    'Тривалість завдання ETL',
+    'ETL task duration',
     ['task_type'],
     buckets=[1.0, 5.0, 10.0, 30.0, 60.0, 120.0, 300.0]
 )
@@ -153,14 +153,14 @@ ETL_TASK_DURATION_SECONDS = _get_or_create_metric(
 ETL_DOCUMENTS_PROCESSED = _get_or_create_metric(
     Counter,
     'etl_documents_processed_total',
-    'Загальна кількість оброблених документів',
+    'Total documents processed',
     ['source_type', 'status']
 )
 
 ETL_RECORDS_PROCESSED = _get_or_create_metric(
     Counter,
     'etl_records_processed_total',
-    'Загальна кількість записів, оброблених ETL',
+    'Total records processed by ETL',
     ['stage']
 )
 
@@ -171,7 +171,7 @@ ETL_RECORDS_PROCESSED = _get_or_create_metric(
 DB_QUERY_DURATION_SECONDS = _get_or_create_metric(
     Histogram,
     'db_query_duration_seconds',
-    'Тривалість запиту до бази даних',
+    'Database query duration',
     ['query_type'],
     buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0]
 )
@@ -179,20 +179,20 @@ DB_QUERY_DURATION_SECONDS = _get_or_create_metric(
 DB_CONNECTIONS_ACTIVE = _get_or_create_metric(
     Gauge,
     'db_connections_active',
-    'Активні з’єднання з базою даних'
+    'Active database connections'
 )
 
 CACHE_HITS_TOTAL = _get_or_create_metric(
     Counter,
     'cache_hits_total',
-    'Потрапляння в кеш',
+    'Cache hits',
     ['cache_type']
 )
 
 CACHE_MISSES_TOTAL = _get_or_create_metric(
     Counter,
     'cache_misses_total',
-    'Пропуски в кеші',
+    'Cache misses',
     ['cache_type']
 )
 
@@ -203,26 +203,26 @@ CACHE_MISSES_TOTAL = _get_or_create_metric(
 OPENSEARCH_DOCS_TOTAL = _get_or_create_metric(
     Gauge,
     'opensearch_docs_total',
-    'Загальна кількість документів в OpenSearch'
+    'Total documents in OpenSearch'
 )
 
 QDRANT_VECTORS_TOTAL = _get_or_create_metric(
     Gauge,
     'qdrant_vectors_total',
-    'Загальна кількість векторів у Qdrant'
+    'Total vectors in Qdrant'
 )
 
 DOCUMENTS_TOTAL = _get_or_create_metric(
     Gauge,
     'documents_total',
-    'Загальна кількість документів у золотій схемі',
+    'Total documents in gold schema',
     ['category']
 )
 
 STAGING_RECORDS_UNPROCESSED = _get_or_create_metric(
     Gauge,
     'staging_records_unprocessed',
-    'Необроблені записи в staging'
+    'Unprocessed records in staging'
 )
 
 # ============================================================================

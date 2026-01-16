@@ -69,13 +69,11 @@ class ReflexionAgent:
     2. External Grounding - searches knowledge base for citations
     3. Gap Analysis - identifies what's missing
     4. Iterative Refinement - improves based on feedback
-    5. Swarm Broadcasting - shares successful reflections
     """
 
-    def __init__(self, llm_fallback=None, memory_manager=None, swarm_client=None):
+    def __init__(self, llm_fallback=None, memory_manager=None):
         self.llm = llm_fallback
         self.memory = memory_manager
-        self.swarm = swarm_client
         self.max_iterations = 3
         self.min_acceptable_score = 0.75
 
@@ -141,21 +139,6 @@ class ReflexionAgent:
             # Check if acceptable
             if not reflection.should_retry:
                 logger.info(f"✅ Output acceptable at iteration {iteration + 1}")
-                # Broadcast success to Swarm
-                if self.swarm:
-                    try:
-                        await self.swarm.broadcast_event(
-                            agent_id="reflexion",
-                            event_type="code_refined",
-                            payload={
-                                "task": context.get("task", ""),
-                                "iteration": iteration,
-                                "score": reflection.critique.overall_score
-                            },
-                            importance=30
-                        )
-                    except Exception:
-                        pass
                 break
 
             # Refine based on feedback
@@ -422,17 +405,15 @@ class TreeOfThoughtsPlanner:
     """
     Tree of Thoughts planning for complex tasks
     Explores multiple solution approaches and selects best path
-    Swarm-Enhanced: Consults other agents for consensus on approaches.
     """
 
-    def __init__(self, llm_fallback=None, swarm_client=None):
+    def __init__(self, llm_fallback=None):
         self.llm = llm_fallback
-        self.swarm = swarm_client
         self.max_breadth = 3
         self.max_depth = 2
 
     async def plan(self, task: Dict) -> Dict:
-        """Generate plan using tree exploration with Swarm consensus"""
+        """Generate plan using tree exploration"""
         root = {
             "content": task.get("description", ""),
             "score": 0.0,
@@ -443,23 +424,10 @@ class TreeOfThoughtsPlanner:
         approaches = await self._generate_approaches(task)
 
         for approach in approaches:
-            # SWARM CONSENSUS CHECK
-            approach_score = approach.get("score", 0.5)
-            if self.swarm:
-                try:
-                    # Propose approach to swarm
-                    # In a real swarm, this would go to Critic/Architect agents
-                    # Here we simulate the network call via our gRPC client stub if connected
-                    pass
-                    # For now, we assume positive reinforcement if swarm is active
-                    approach_score += 0.1
-                except Exception:
-                    pass
-
             node = {
                 "content": approach["description"],
                 "approach": approach["type"],
-                "score": approach_score,
+                "score": approach.get("score", 0.5),
                 "children": []
             }
 
@@ -474,26 +442,12 @@ class TreeOfThoughtsPlanner:
         best_child = max(root["children"], key=lambda x: x["score"]) if root["children"] else None
 
         if best_child:
-            plan_result = {
+            return {
                 "approach": best_child.get("approach"),
                 "description": best_child.get("content"),
                 "steps": best_child.get("steps", []),
                 "confidence": best_child.get("score", 0.5)
             }
-
-            # Broadcast plan to Swarm
-            if self.swarm:
-                try:
-                    await self.swarm.broadcast_event(
-                        agent_id="planner",
-                        event_type="plan_created",
-                        payload=plan_result,
-                        importance=70
-                    )
-                except Exception as e:
-                    logger.warning(f"Failed to broadcast plan: {e}")
-
-            return plan_result
 
         return {"approach": "default", "steps": [], "confidence": 0.3}
 

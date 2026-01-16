@@ -26,23 +26,19 @@ router = APIRouter(prefix="/council", tags=["LLM Council"])
 # Request/Response Models
 class CouncilQueryRequest(BaseModel):
     """Request for council deliberation"""
-    query: str = Field(..., description="Питання або завдання для Ради")
-    context: Optional[str] = Field(None, description="Додаткова фонова інформація")
+    query: str = Field(..., description="Question or task for the council")
+    context: Optional[str] = Field(None, description="Background information")
     models: Optional[List[str]] = Field(
         default=['gemini', 'groq'],
-        description="Моделі, які слід включити до складу Ради (за замовчуванням: безкоштовний рівень)"
+        description="Models to include in council (defaults to free tier)"
     )
     enable_peer_review: bool = Field(
         default=True,
-        description="Увімкнути фазу рецензування (повільніше, але вища якість)"
+        description="Enable peer review phase (slower but higher quality)"
     )
     chairman_model: Optional[str] = Field(
         None,
-        description="Модель, що виконує роль Голови (за замовчуванням: gpt4)"
-    )
-    use_free_models_only: bool = Field(
-        default=True,
-        description="Використовувати тільки безкоштовні API (Gemini Flash, Groq)"
+        description="Model to use as chairman (default: gpt4)"
     )
 
 
@@ -83,7 +79,7 @@ def get_council() -> LLMCouncilOrchestrator:
             logger.error(f"Failed to initialize council: {e}")
             raise HTTPException(
                 status_code=503,
-                detail=f"Нейронна Рада недоступна: {str(e)}"
+                detail=f"LLM Council unavailable: {str(e)}"
             )
 
     return _council_instance
@@ -109,12 +105,8 @@ async def query_council(
         import time
         start_time = time.time()
 
-        if request.use_free_models_only:
-            # FORCE FREE MODELS
-            free_models = ["gemini/gemini-1.5-flash", "groq/llama-3.1-70b", "groq/mixtral-8x7b"]
-            council = create_default_council(include_models=free_models)
-            logger.info("🛡️ Використовується режим безкоштовних ШІ (Free Tier Mode)")
-        elif request.models:
+        # If specific models requested, create a dynamic council, else use global
+        if request.models:
             council = create_default_council(include_models=request.models)
         else:
             council = get_council()
@@ -179,7 +171,7 @@ async def query_council(
         logger.error(f"Council query failed: {e}")
         raise HTTPException(
             status_code=500,
-            detail=f"Помилка обговорення в Раді: {str(e)}"
+            detail=f"Council deliberation failed: {str(e)}"
         )
 
 
@@ -285,7 +277,7 @@ async def get_council_stats():
     except Exception as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Не вдалося отримати статистику: {str(e)}"
+            detail=f"Failed to get stats: {str(e)}"
         )
 
 
@@ -299,7 +291,7 @@ async def reset_council():
     global _council_instance
     _council_instance = None
 
-    return {"status": "Раду успішно скинуто"}
+    return {"status": "Council reset successfully"}
 
 
 @router.get("/health")
@@ -432,7 +424,7 @@ async def get_example_usage():
     """
 
     return {
-        "description": "API Нейронної Ради LLM - система консенсусу між кількома моделями",
+        "description": "LLM Council API - Multi-model consensus system",
         "example_request": {
             "url": "/api/council/query",
             "method": "POST",
@@ -444,15 +436,15 @@ async def get_example_usage():
             }
         },
         "workflow": [
-            "1. Незалежна генерація: Кожна модель відповідає самостійно",
-            "2. Рецензування: Моделі критикують відповіді одна одної",
-            "3. Консенсус: Голова синтезує найкращу відповідь",
-            "4. Результат: Високоякісний консенсус з оцінкою впевненості"
+            "1. Independent Generation: Each model answers independently",
+            "2. Peer Review: Models critique each other's responses",
+            "3. Consensus: Chairman synthesizes best answer",
+            "4. Return: High-quality consensus with confidence score"
         ],
         "benefits": [
-            "Вища точність, ніж у однієї моделі",
-            "Зменшення галюцинацій завдяки взаємній перевірці",
-            "Різноманітність поглядів",
-            "Оцінка впевненості на основі згоди"
+            "Higher accuracy than single model",
+            "Reduced hallucinations through peer review",
+            "Diversity of perspectives",
+            "Confidence scoring based on agreement"
         ]
     }

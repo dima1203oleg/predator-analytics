@@ -135,21 +135,17 @@ async def summarize_text(request: SummarizeRequest):
             word_count=word_count
         )
 
+    except ImportError as e:
+        logger.error(f"Summarizer not available: {e}")
+        raise HTTPException(
+            status_code=503,
+            detail="Summarizer service not available. Install transformers."
+        )
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.warning(f"Локальна саммаризація недоступна: {e}. Використовуємо Gemini...")
-        try:
-            from services.orchestrator.agents.v25_sovereign_registry import sovereign_orchestrator
-            prompt = f"Зроби стислий підсумок (summary) наступного тексту українською мовою:\n{request.text[:4000]}"
-            summary = await sovereign_orchestrator.gemini_agent.chat(prompt)
-
-            return SummarizeResponse(
-                summary=summary,
-                model="gemini-1.5-flash-free",
-                word_count=len(summary.split())
-            )
-        except Exception as ai_e:
-            logger.error(f"ШІ-саммаризація також провалилася: {ai_e}")
-            raise HTTPException(status_code=500, detail="Служба саммаризації недоступна")
+        logger.error(f"Summarization failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/health")
@@ -390,27 +386,11 @@ async def explain_result(request: ExplainRequest):
             "explanation": explanation
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.warning(f"Локальний XAI недоступний: {e}. Використовуємо Gemini...")
-        try:
-            from services.orchestrator.agents.v25_sovereign_registry import sovereign_orchestrator
-            from app.services.document_service import document_service
-
-            document = await document_service.get_document_by_id(request.document_id)
-            content = document.get("content", "") if document else ""
-
-            prompt = f"Поясни релевантність документа до запиту '{request.query}'.\nТекст документа: {content[:2000]}\nПояснення повинно бути коротким, українською мовою."
-            explanation = await sovereign_orchestrator.gemini_agent.chat(prompt)
-
-            return {
-                "document_id": request.document_id,
-                "query": request.query,
-                "explanation": explanation,
-                "model": "gemini-1.5-flash-free"
-            }
-        except Exception as ai_e:
-            logger.error(f"ШІ-пояснення провалилося: {ai_e}")
-            raise HTTPException(status_code=500, detail="Служба пояснень недоступна")
+        logger.error(f"Explanation failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/explain/{document_id}")

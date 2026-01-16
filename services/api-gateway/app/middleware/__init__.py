@@ -6,25 +6,18 @@ Middleware for Predator Analytics
 - Error Handling
 """
 import time
-import os
-import uuid
+import logging
 from typing import Callable, Optional
 from fastapi import Request, Response, HTTPException
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 import redis.asyncio as aioredis
-import psutil
+import os
 from prometheus_client import Counter, Histogram, Gauge, REGISTRY
 from datetime import datetime
-from libs.core.structured_logger import get_logger, RequestLogger
+import uuid
 
-logger = get_logger("predator.middleware")
-
-# Стан Circuit Breaker (глобальний для інстансу)
-CIRCUIT_STATE = {
-    "open_circuits": {}, # {service_name: timestamp_of_failure}
-    "failure_counters": {} # {service_name: count}
-}
+logger = logging.getLogger(__name__)
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PROMETHEUS METRICS
@@ -164,17 +157,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         client_ip = request.client.host if request.client else "unknown"
 
-        # Dynamic Rate Limiting based on system load (v26.3)
-        cpu_usage = psutil.cpu_percent()
-        effective_limit = self.limiter.requests_per_minute
-
-        if cpu_usage > 85:
-            # Critical load: reduce limits by 80%
-            effective_limit = max(5, int(self.limiter.requests_per_minute * 0.2))
-            logger.warning("system_overload_detected", cpu_usage=cpu_usage, throttling=True)
-        elif cpu_usage > 60:
-            # Medium load: reduce limits by 50%
-            effective_limit = int(self.limiter.requests_per_minute * 0.5)
+        # Whitelist internal networks (Docker, Localhost)
+        is_internal = client_ip.startswith(("127.", "172.", "10.", "192.168."))
 
         if is_internal or request.url.path in ["/metrics", "/health", "/api/v1/health"]:
              return await call_next(request)
@@ -202,97 +186,54 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         ACTIVE_CONNECTIONS.dec()
         return response
 
-        return response
-
-class CircuitBreakerMiddleware(BaseHTTPMiddleware):
-    """
-    Middleware для запобігання каскадним збоям (Circuit Breaker).
-    Якщо сервіс (напр. /search) видає багато помилок, він 'замикається' на 60 сек.
-    """
+class RequestLoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
-        from libs.core.config import settings
+        # Generate Correlation ID
+        correlation_id = request.headers.get("X-Correlation-ID") or str(uuid.uuid4())
+        request.state.correlation_id = correlation_id
 
-        path = request.url.path
-        service_id = path.split('/')[2] if len(path.split('/')) > 2 else "root"
+        start_time = time.time()
 
-        now = time.time()
-
-        # Перевірка чи ланцюг розімкнутий
-        if service_id in CIRCUIT_STATE["open_circuits"]:
-            if now - CIRCUIT_STATE["open_circuits"][service_id] < 60:
-                logger.warning(f"🔌 CIRCUIT OPEN for {service_id}. Returning survival response.")
-                return JSONResponse(
-                    status_code=503,
-                    content={
-                        "error": "Service in Survival Mode",
-                        "status": "DEGRADED",
-                        "context": "Система захищає ядро. Будь ласка, спробуйте через хвилину."
-                    }
-                )
-            else:
-                # Час вийшов, пробуємо знову (half-open)
-                del CIRCUIT_STATE["open_circuits"][service_id]
-                CIRCUIT_STATE["failure_counters"][service_id] = 0
-
+        # Process request
         try:
             response = await call_next(request)
 
-            if response.status_code >= 500:
-                self._record_failure(service_id, settings.CIRCUIT_BREAKER_THRESHOLD)
+            # Add Correlation ID to response headers
+            response.headers["X-Correlation-ID"] = correlation_id
+
+            # Log specific events if needed (e.g. 500s or slow requests)
+            duration = time.time() - start_time
+            if duration > 1.0 or response.status_code >= 500:
+                logger.info(
+                    f"Request {request.method} {request.url.path} finished",
+                    extra={
+                        "correlation_id": correlation_id,
+                        "status": response.status_code,
+                        "duration": duration,
+                        "method": request.method,
+                        "path": request.url.path
+                    }
+                )
 
             return response
+
         except Exception as e:
-            self._record_failure(service_id, settings.CIRCUIT_BREAKER_THRESHOLD)
+            duration = time.time() - start_time
+            logger.error(
+                f"Request failed: {e}",
+                extra={
+                    "correlation_id": correlation_id,
+                    "duration": duration,
+                    "error": str(e)
+                }
+            )
+            # Re-raise to let ErrorHandlerMiddleware handle response
             raise e
-
-    def _record_failure(self, service_id: str, threshold: int):
-        count = CIRCUIT_STATE["failure_counters"].get(service_id, 0) + 1
-        CIRCUIT_STATE["failure_counters"][service_id] = count
-
-        if count >= threshold:
-            CIRCUIT_STATE["open_circuits"][service_id] = time.time()
-            logger.error(f"💥 CIRCUIT BLOWN for {service_id}! Transitioning to SURVIVAL MODE.")
-
-class RequestLoggingMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
-        # Get path for context
-        path = request.url.path
-        method = request.method
-
-        # Use RequestLogger for structured timing and logging
-        with RequestLogger(logger, "http_request", path=path, method=method) as req_logger:
-            try:
-                response = await call_next(request)
-
-                # Add Correlation ID to response headers if available
-                if hasattr(request.state, "correlation_id"):
-                    response.headers["X-Correlation-ID"] = request.state.correlation_id
-
-                # Update context for the completion log
-                req_logger.bind(status_code=response.status_code)
-
-                return response
-            except Exception as e:
-                # Exception is handled by RequestLogger.__exit__
-                raise e
 
 class ErrorHandlerMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         try:
             return await call_next(request)
         except Exception as e:
-            # Використовуємо ШІ-аналіз помилок (UA/Free API)
-            try:
-                from libs.core.structured_logger import log_error_with_analysis
-                log_error_with_analysis(logger, e, {"path": request.url.path, "method": request.method})
-            except:
-                logger.exception("exception_analysis_failed")
-
-            return JSONResponse(
-                status_code=500,
-                content={
-                    "error": "Внутрішня помилка сервера",
-                    "detail": str(e),
-                    "context": "ШІ-аналіз помилки додано до логів"
-                }
-            )
+            logger.error(f"ERROR: {e}", exc_info=True)
+            return JSONResponse(status_code=500, content={"error": str(e)})
