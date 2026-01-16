@@ -23,7 +23,7 @@ const apiClient = axios.create({
 });
 
 // V25 Canonical Client (Internal)
-const v25Client = axios.create({
+export const v25Client = axios.create({
     baseURL: '/api/v25',
     headers: {
         'Content-Type': 'application/json',

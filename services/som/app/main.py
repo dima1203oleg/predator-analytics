@@ -129,6 +129,7 @@ class SOMState:
         self.analysis_count = 0
         self.last_analysis: Optional[datetime] = None
         self.startup_time = datetime.utcnow()
+        self.chaos_mode = False # Режим хаос-тестування
 
     def is_operational(self) -> bool:
         return self.active and self.emergency_level is None
@@ -147,7 +148,20 @@ class SOMState:
 som_state = SOMState()
 
 # ═══════════════════════════════════════════════════════════════
-# CORE SERVICES
+# CHAOS ENDPOINTS (Antifragility)
+# ═══════════════════════════════════════════════════════════════
+
+@app.post("/api/v1/som/chaos/spike")
+async def trigger_cpu_spike(duration: int = 10, background_tasks: BackgroundTasks = None):
+    """Спровокувати сплеск навантаження для перевірки адаптивної middleware"""
+    from libs.core.chaos_tester import chaos_tester
+    if background_tasks:
+        background_tasks.add_task(chaos_tester.simulate_cpu_spike, duration)
+    return {"status": "chaos_initiated", "target": "cpu", "duration": duration}
+
+@app.get("/api/v1/som/chaos/status")
+async def get_chaos_status():
+    return {"chaos_mode": som_state.chaos_mode, "active_tests": []}
 # ═══════════════════════════════════════════════════════════════
 
 class CentralOversightCore:

@@ -10,6 +10,8 @@ import asyncio
 import os
 import re
 import sys
+import json
+import httpx
 from pathlib import Path
 
 # Add project root to sys.path
@@ -24,6 +26,31 @@ logger = get_logger("predator.autonomous_processor")
 
 TODO_FILE = PROJECT_ROOT / "EXECUTION_TODO.md"
 STRATEGIC_OPTIMIZER = PROJECT_ROOT / "scripts/strategic_optimizer.py"
+MISSION_DISCOVERER = PROJECT_ROOT / "scripts/mission_discoverer.py"
+
+async def run_mission_discovery():
+    """Пошук нових стратегічних цілей"""
+    logger.info("🔭 Запуск пошуку нових місій...")
+    try:
+        process = await asyncio.create_subprocess_exec(
+            sys.executable, str(MISSION_DISCOVERER),
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        await process.communicate()
+        logger.info("🧠 Нові місії додано до горизонту планування.")
+    except Exception as e:
+        logger.error(f"❌ Помилка пошуку місій: {e}")
+
+async def run_chaos_sprint():
+    """Запуск короткого стрес-тесту для перевірки незламності"""
+    logger.info("🔥 Ініціалізація Еволюційного Стресу (Chaos Sprint)...")
+    try:
+        async with httpx.AsyncClient() as client:
+            await client.post("http://localhost:8095/api/v1/som/chaos/spike", params={"duration": 15})
+        logger.info("✅ Стрес-тест запущено. Моніторинг адаптивності...")
+    except:
+        pass
 
 async def run_strategic_optimization():
     """Запуск стратегічного планування перед виконанням завдань"""
@@ -43,8 +70,16 @@ async def run_strategic_optimization():
         logger.error(f"❌ Не вдалося запустити оптимізатор: {e}")
 
 async def process_todos():
-    # Крок 0: Стратегічне планування
+    # Крок 0: Пошук нових можливостей
+    await run_mission_discovery()
+
+    # Крок 0.1: Стратегічне планування
     await run_strategic_optimization()
+
+    # Крок 0.2: Шанс на Chaos Sprint (10% імовірність для антикрихкості)
+    import random
+    if random.random() < 0.10:
+        await run_chaos_sprint()
 
     if not TODO_FILE.exists():
         logger.error(f"Файл TODO не знайдено за шляхом: {TODO_FILE}")
