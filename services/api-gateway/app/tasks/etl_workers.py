@@ -17,10 +17,7 @@ from libs.core.structured_logger import get_logger, RequestLogger
 logger = get_logger("predator.workers.etl")
 
 # Data Contracts
-from libs.core.contracts.payloads import IndexingTaskPayload, ETLTaskPayload, validate_payload, DatasetType
-
-# Service Imports
-from app.services.etl_ingestion import ETLIngestionService
+from libs.core.contracts.payloads import IndexingTaskPayload
 
 
 # ============================================================================
@@ -125,171 +122,110 @@ def parse_external_source(source_type: str, config: dict = None):
         return asyncio.run(run_parser())
 
 
-@shared_task(name="tasks.workers.process_file_task", queue="etl")
-def process_file_task(**kwargs):
-    """
-    ETL File Processor: Processes uploaded files (Excel/CSV) into database
-    Uses ETLTaskPayload for strict contract validation.
-    """
-    # Validate payload
-    payload = validate_payload(ETLTaskPayload, kwargs)
-
-    with RequestLogger(
-        logger,
-        "etl_file_processing",
-        source_id=payload.source_id,
-        filename=os.path.basename(payload.file_path)
-    ) as req_logger:
-
-        req_logger.info(
-            "etl_task_started",
-            dataset_type=payload.dataset_type.value,
-            options=payload.options
-        )
-
-        async def run_file_processor():
-            service = ETLIngestionService()
-            try:
-                # Delegate to actual service
-                result = await service.process_file(
-                    file_path=payload.file_path,
-                    dataset_type=payload.dataset_type.value
-                )
-
-                req_logger.info(
-                    "etl_task_completed",
-                    records_processed=result.get("records_processed", 0),
-                    status=result.get("status")
-                )
-                return result
-
-            except Exception as e:
-                req_logger.exception("etl_task_failed", error=str(e))
-                raise
-
-        return asyncio.run(run_file_processor())
-
-
 # ============================================================================
 # 2. DATA PROCESSOR - Transforms staging to gold
 # ============================================================================
 
-@shared_task(name="tasks.workers.process_staging_data", queue="etl")
-def process_staging_data(staging_ids: list):
+@shared_task(name="tasks.workers.process_staging_records", queue="etl")
+def process_staging_records(staging_ids: list):
     """
-    Processor Agent: Transform raw data from staging and move to gold schema.
-    Includes Semantic Deduplication via UnifiedMemoryManager.
+    Processor Agent: Transform raw data from staging to gold.documents
+
+    Args:
+        staging_ids: List of staging.raw_data IDs to process
+
+    Returns:
+        {status, processed_count, gold_ids}
     """
-    with RequestLogger(logger, "staging_processing", records_count=len(staging_ids)) as req_logger:
-        async def run_processor():
-            # Lazy import to avoid circular dependencies
-            from libs.core.memory.unified_memory import memory_manager
+    logger.info("staging_processing_started", records_count=len(staging_ids))
 
-            db_url = settings.CLEAN_DATABASE_URL
-            conn = await asyncpg.connect(db_url)
+    async def run_processor():
+        db_url = settings.CLEAN_DATABASE_URL
+        conn = await asyncpg.connect(db_url)
 
-            try:
-                processed_count = 0
-                skipped_count = 0
-                gold_ids = []
+        try:
+            processed_count = 0
+            gold_ids = []
 
-                for staging_id in staging_ids:
-                    # Fetch raw record
-                    row = await conn.fetchrow("""
-                        SELECT id, source, raw_content, dataset_type
-                        FROM staging.raw_data
-                        WHERE id = $1 AND processed = FALSE
-                    """, staging_id)
+            for staging_id in staging_ids:
+                # Fetch raw record
+                row = await conn.fetchrow("""
+                    SELECT id, source, raw_content, dataset_type
+                    FROM staging.raw_data
+                    WHERE id = $1 AND processed = FALSE
+                """, staging_id)
 
-                    if not row:
-                        continue
+                if not row:
+                    continue
 
-                    raw_content = row["raw_content"]
-                    dataset_type = row["dataset_type"]
+                raw_content = row["raw_content"]
+                dataset_type = row["dataset_type"]
 
-                    # Transform based on dataset type
-                    if dataset_type == "tenders":
-                        title = raw_content.get("title", "Untitled Tender")
-                        content = raw_content.get("description", "")
-                        author = raw_content.get("procuring_entity", {}).get("name", "Unknown")
-                        published_date = raw_content.get("date", None)
-                        category = "tenders"
+                # Transform based on dataset type
+                if dataset_type == "tenders":
+                    title = raw_content.get("title", "Untitled Tender")
+                    content = raw_content.get("description", "")
+                    author = raw_content.get("procuring_entity", {}).get("name", "Unknown")
+                    published_date = raw_content.get("date", None)
+                    category = "tenders"
 
-                    elif dataset_type == "exchange_rates":
-                        title = f"NBU Rate: {raw_content.get('cc', 'Unknown')}"
-                        content = f"Rate: {raw_content.get('rate', 0)} as of {raw_content.get('exchangedate', '')}"
-                        author = "NBU"
-                        published_date = None
-                        category = "finance"
+                elif dataset_type == "exchange_rates":
+                    title = f"NBU Rate: {raw_content.get('cc', 'Unknown')}"
+                    content = f"Rate: {raw_content.get('rate', 0)} as of {raw_content.get('exchangedate', '')}"
+                    author = "NBU"
+                    published_date = None
+                    category = "finance"
 
-                    elif dataset_type == "customs":
-                        title = raw_content.get("title", f"Customs Record {staging_id}")
-                        content = raw_content.get("content", json.dumps(raw_content))
-                        author = raw_content.get("declarant", "Unknown")
-                        published_date = raw_content.get("date")
-                        category = "customs"
+                elif dataset_type == "customs":
+                    title = raw_content.get("title", f"Customs Record {staging_id}")
+                    content = raw_content.get("content", json.dumps(raw_content))
+                    author = raw_content.get("declarant", "Unknown")
+                    published_date = raw_content.get("date")
+                    category = "customs"
 
-                    else:
-                        # Generic document
-                        title = raw_content.get("title", f"Document {staging_id}")
-                        content = raw_content.get("content", json.dumps(raw_content))
-                        author = raw_content.get("author")
-                        published_date = raw_content.get("date")
-                        category = raw_content.get("category", "general")
+                else:
+                    # Generic document
+                    title = raw_content.get("title", f"Document {staging_id}")
+                    content = raw_content.get("content", json.dumps(raw_content))
+                    author = raw_content.get("author")
+                    published_date = raw_content.get("date")
+                    category = raw_content.get("category", "general")
 
-                    # SEMANTIC DEDUPLICATION (Smart ETL)
-                    # Check if similar content exists in memory
-                    is_duplicate = False
-                    try:
-                        similar_docs = await memory_manager.recall(content, limit=1)
-                        if similar_docs and similar_docs[0]['score'] > 0.95:
-                            logger.info(f"♻️ Deduplication: Found similar doc with score {similar_docs[0]['score']}")
-                            is_duplicate = True
-                    except Exception as e:
-                        logger.warning(f"Deduplication check failed: {e}")
+                # Insert into gold.documents
+                gold_id = await conn.fetchval("""
+                    INSERT INTO gold.documents
+                        (title, content, author, published_date, category, source, raw_id)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7)
+                    RETURNING id
+                """, title, content, author, published_date, category, row["source"], staging_id)
 
-                    if is_duplicate:
-                        # Mark as processed but don't insert to gold
-                        await conn.execute("UPDATE staging.raw_data SET processed = TRUE WHERE id = $1", staging_id)
-                        skipped_count += 1
-                        continue
+                # Mark staging record as processed
+                await conn.execute("""
+                    UPDATE staging.raw_data SET processed = TRUE WHERE id = $1
+                """, staging_id)
 
-                    # Insert into gold.documents
-                    gold_id = await conn.fetchval("""
-                        INSERT INTO gold.documents
-                            (title, content, author, published_date, category, source, raw_id)
-                        VALUES ($1, $2, $3, $4, $5, $6, $7)
-                        RETURNING id
-                    """, title, content, author, published_date, category, row["source"], staging_id)
+                gold_ids.append(str(gold_id))
+                processed_count += 1
 
-                    # Mark staging record as processed
-                    await conn.execute("""
-                        UPDATE staging.raw_data SET processed = TRUE WHERE id = $1
-                    """, staging_id)
+            logger.info("staging_processing_completed", processed_count=processed_count)
 
-                    gold_ids.append(str(gold_id))
-                    processed_count += 1
+            # Trigger indexer for new gold records
+            if gold_ids:
+                index_gold_documents.delay(gold_ids)
 
-                req_logger.info("staging_processing_completed", processed=processed_count, skipped=skipped_count)
+            return {
+                "status": "success",
+                "processed_count": processed_count,
+                "gold_ids": gold_ids
+            }
 
-                # Trigger indexer for new gold records
-                if gold_ids:
-                    index_gold_documents.delay(gold_ids)
+        except Exception as e:
+            logger.error("staging_processing_failed", error=str(e))
+            return {"status": "failed", "error": str(e)}
+        finally:
+            await conn.close()
 
-                return {
-                    "status": "success",
-                    "processed_count": processed_count,
-                    "skipped_duplicates": skipped_count,
-                    "gold_ids": gold_ids
-                }
-
-            except Exception as e:
-                req_logger.error("staging_processing_failed", error=str(e))
-                return {"status": "failed", "error": str(e)}
-            finally:
-                await conn.close()
-
-        return asyncio.run(run_processor())
+    return asyncio.run(run_processor())
 
 
 # ============================================================================
@@ -299,69 +235,92 @@ def process_staging_data(staging_ids: list):
 @shared_task(name="tasks.workers.index_gold_documents", queue="etl")
 def index_gold_documents(gold_ids: list):
     """
-    Indexer Agent: Index gold.documents to Unified Memory Layers.
-    Replaces legacy OpenSearch/Qdrant separate services.
+    Indexer Agent: Index gold.documents to OpenSearch and Qdrant
+
+    Args:
+        gold_ids: List of gold.documents IDs to index
+
+    Returns:
+        {status, indexed_opensearch, indexed_qdrant}
     """
-    with RequestLogger(logger, "gold_indexing", records_count=len(gold_ids)) as req_logger:
-        async def run_indexer():
-            from libs.core.memory.unified_memory import memory_manager
+    logger.info("gold_indexing_started", records_count=len(gold_ids))
 
-            conn = None
-            try:
-                db_url = settings.CLEAN_DATABASE_URL
-                conn = await asyncpg.connect(db_url)
+    async def run_indexer():
+        from app.services.opensearch_indexer import OpenSearchIndexer
+        from app.services.embedding_service import get_embedding_service
+        from app.services.qdrant_service import QdrantService
 
-                indexed_count = 0
+        db_url = settings.CLEAN_DATABASE_URL
+        conn = await asyncpg.connect(db_url)
 
-                for gold_id in gold_ids:
-                    # Fetch gold record
-                    row = await conn.fetchrow("""
-                        SELECT id, title, content, category, source, published_date
-                        FROM gold.documents
-                        WHERE id = $1
-                    """, gold_id)
+        opensearch = OpenSearchIndexer()
+        embedding_service = get_embedding_service()
+        qdrant = QdrantService()
 
-                    if not row:
-                        continue
+        try:
+            # Ensure indices/collections exist
+            await qdrant.create_collection()
+            await opensearch.create_index("documents_safe")
 
-                    # Prepare content for memory
-                    # Combining title and content for rich context
-                    memory_content = f"Title: {row['title']}\nContent: {row['content']}"
+            # Fetch all documents in this batch
+            documents = []
 
-                    # Tags for filtering
-                    tags = [
-                        f"source:{row['source'] or 'unknown'}",
-                        f"category:{row['category'] or 'general'}",
-                        f"doc_id:{row['id']}"
-                    ]
-                    if row['published_date']:
-                        tags.append(f"year:{row['published_date'].year}")
+            # Use ANY($1) for efficient batch select
+            q = "SELECT id, title, content, author, published_date, category, source FROM gold.documents WHERE id = ANY($1::uuid[])"
+            # Need to cast string IDs to UUIDs if valid, or handle string IDs.
+            # Assuming 'id' in gold.documents is UUID (based on typical schema).
+            # If ids are strings but column is UUID, need casting.
+            # The gold_ids passed here are likely strings from previous tasks.
+            # Let's verify data types. In 'etl_ingestion', id is returned.
 
-                    # Store in Unified Memory (handles Redis, Qdrant, OpenSearch automagically)
-                    memory_id = await memory_manager.store(
-                        content=memory_content,
-                        role="document",
-                        tags=tags
-                    )
+            rows = await conn.fetch(q, gold_ids)
 
-                    if memory_id:
-                        indexed_count += 1
-
-                req_logger.info("gold_indexing_completed", indexed_count=indexed_count)
-
-                return {
-                    "status": "success",
-                    "indexed_count": indexed_count
+            for row in rows:
+                doc = {
+                    "id": str(row["id"]),
+                    "title": row["title"],
+                    "content": row["content"],
+                    "author": row["author"],
+                    "published_date": row["published_date"].isoformat() if row["published_date"] else None,
+                    "category": row["category"],
+                    "source": row["source"]
                 }
+                documents.append(doc)
 
-            except Exception as e:
-                req_logger.error("gold_indexing_failed", error=str(e))
-                return {"status": "failed", "error": str(e)}
-            finally:
-                if conn:
-                    await conn.close()
+            if not documents:
+                logger.warning("gold_indexing_skipped", reason="no_docs_found", ids=gold_ids)
+                return {"status": "skipped", "reason": "no_docs_found"}
 
-        return asyncio.run(run_indexer())
+            # Unified Batch Indexing (OpenSearch + Qdrant)
+            # Passes services to enable dual indexing logic in opensearch_indexer.py
+            result = await opensearch.index_documents(
+                index_name="documents_safe", # Should match search router index
+                documents=documents,
+                pii_safe=True,
+                embedding_service=embedding_service,
+                qdrant_service=qdrant
+            )
+
+            logger.info("gold_indexing_batch_completed",
+                indexed_opensearch=result.get("indexed_opensearch"),
+                indexed_qdrant=result.get("indexed_qdrant")
+            )
+
+            return {
+                "status": "success",
+                "indexed_opensearch": result.get("indexed_opensearch", 0),
+                "indexed_qdrant": result.get("indexed_qdrant", 0),
+                "failed": result.get("failed", 0)
+            }
+
+        except Exception as e:
+            logger.error("gold_indexing_failed", error=str(e))
+            return {"status": "failed", "error": str(e)}
+        finally:
+            await conn.close()
+            await opensearch.close()
+
+    return asyncio.run(run_indexer())
 
 
 # ============================================================================

@@ -23,29 +23,11 @@ from datetime import datetime
 from typing import Dict, List, Any, Optional
 from pathlib import Path
 
-from libs.core.structured_logger import get_logger, log_business_event, RequestLogger
-logger = get_logger("predator.sovereign")
-
 # Імпортуємо існуючі агенти
 from .aider_agent import AiderAgent, AiderOrchestration
-# Спроба імпорту CopilotAgent з динамічним пошуком шляху
-try:
-    from app.agents.copilot import CopilotAgent
-except ImportError:
-    import sys
-    # Додаємо шлях до api-gateway, якщо ми в іншому контексті
-    for p in [Path(__file__).resolve().parents[3] / "services/api-gateway",
-              Path("/app/services/api-gateway")]:
-        if p.exists() and str(p) not in sys.path:
-            sys.path.append(str(p))
-    try:
-        from app.agents.copilot import CopilotAgent
-    except ImportError:
-        logger.warning("⚠️ CopilotAgent не знайдено через стандартний імпорт. Використовуємо заглушку.")
-        class CopilotAgent:
-            def __init__(self, *args, **kwargs): pass
-            async def chat(self, *args, **kwargs): return "CopilotAgent stub"
+from app.agents.copilot import CopilotAgent
 
+logger = logging.getLogger("predator.sovereign")
 
 class SovereignAgentOrchestrator:
     """
@@ -59,27 +41,16 @@ class SovereignAgentOrchestrator:
     # Доступні моделі (GTX 1080 Optimized - LOCAL FIRST)
     # Llama 3.1 8B & Mistral 7B -> Пріоритет #1 для швидкості та приватності
     AVAILABLE_MODELS = {
-        "analysis": ["mistral/mistral-small-latest", "ollama/llama3.1:8b", "gemini/gemini-2.0-flash"],
-
-        "coding": ["mistral/mistral-small-latest", "ollama/deepseek-coder:6.7b", "gemini/gemini-2.0-flash"],
-        "refactoring": ["mistral/mistral-small-latest", "ollama/mistral:7b", "deepseek/deepseek-chat"],
-        "review": ["mistral/mistral-small-latest", "ollama/llama3.1:8b", "gemini/gemini-2.0-flash"],
-
+        "analysis": ["ollama/llama3.1:8b", "gemini/gemini-2.0-flash-exp", "mistral/mistral-small-latest"],
+        "coding": ["ollama/deepseek-coder:6.7b", "ollama/codellama:7b", "gemini/gemini-2.0-flash-exp"],
+        "refactoring": ["ollama/mistral:7b", "deepseek/deepseek-chat"],
+        "review": ["ollama/llama3.1:8b", "gemini/gemini-2.0-flash-exp"],
         "domain_knowledge": ["ollama/llama3.1:8b"],
         "local": ["ollama/llama3.1:8b", "ollama/mistral:7b", "ollama/deepseek-coder:6.7b"]
     }
 
-
-    def __init__(self, workspace_root: str = None):
-        if workspace_root is None:
-            # Динамічне визначення кореневої директорії
-            if Path("/app").exists() and os.access("/app", os.W_OK):
-                workspace_root = "/app"
-            else:
-                workspace_root = str(Path(__file__).resolve().parents[3])
-
+    def __init__(self, workspace_root: str = "/app"):
         self.workspace_root = Path(workspace_root)
-
         self.aider_orchestrator = AiderOrchestration(project_root=str(workspace_root))
         self.cycle_count = 0
 
@@ -114,67 +85,47 @@ class SovereignAgentOrchestrator:
         """
         self.cycle_count += 1
         cycle_id = f"cycle_{self.cycle_count}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        logger.info(f"🚀 Запуск комплексного циклу #{self.cycle_count}: {task_description}")
 
-        with RequestLogger(logger, "comprehensive_cycle", cycle_id=cycle_id, task_preview=task_description[:50]) as req_logger:
-            req_logger.info("cycle_started", task=task_description)
+        files_modified = []
 
-            files_modified = []
+        # 1. АНАЛІЗ (Gemini CLI або Claude як фолбек)
+        analysis = await self._run_analysis(task_description)
 
-            try:
-                # 1. АНАЛІЗ (Gemini CLI або Claude як фолбек)
-                async with RequestLogger(logger, "cycle_phase_analysis", cycle_id=cycle_id):
-                    analysis = await self._run_analysis(task_description)
+        # 2. ВАЙБ-КОДИНГ (Vibe CLI - швидкий прототип)
+        if analysis.get("requires_coding"):
+            vibe_result = await self._run_vibe_iteration(analysis)
+            files_modified.extend(vibe_result.get("files_modified", []))
 
-                # 2. ВАЙБ-КОДИНГ (Vibe CLI - швидкий прототип)
-                if analysis.get("requires_coding"):
-                    async with RequestLogger(logger, "cycle_phase_coding", cycle_id=cycle_id):
-                        vibe_result = await self._run_vibe_iteration(analysis)
-                    files_modified.extend(vibe_result.get("files_modified", []))
+            # 3. ГЛИБОКЕ ВИПРАВЛЕННЯ (GitHub Copilot / Aider / Claude)
+            aider_result = await self._run_aider_reconciliation(vibe_result, analysis)
+            files_modified.extend(aider_result.get("files_modified", []))
 
-                    # 3. ГЛИБОКЕ ВИПРАВЛЕННЯ (GitHub Copilot / Aider / Claude)
-                    async with RequestLogger(logger, "cycle_phase_reconciliation", cycle_id=cycle_id):
-                        aider_result = await self._run_aider_reconciliation(vibe_result, analysis)
-                    files_modified.extend(aider_result.get("files_modified", []))
+            # 4. РЕФАКТОРИНГ (Mistral CLI або DeepSeek)
+            final_refactor = await self._run_mistral_refactor(aider_result)
+            files_modified.extend(final_refactor.get("files_modified", []))
 
-                    # 4. РЕФАКТОРИНГ (Mistral CLI або DeepSeek)
-                    async with RequestLogger(logger, "cycle_phase_refactoring", cycle_id=cycle_id):
-                        final_refactor = await self._run_mistral_refactor(aider_result)
-                    files_modified.extend(final_refactor.get("files_modified", []))
+            # 5. CODE REVIEW (Claude - безпека)
+            if self.agent_status["claude"]:
+                await self._run_claude_review(final_refactor)
 
-                    # 5. CODE REVIEW (Claude - безпека)
-                    if self.agent_status["claude"]:
-                        async with RequestLogger(logger, "cycle_phase_review", cycle_id=cycle_id):
-                            await self._run_claude_review(final_refactor)
+            # 6. АВТО-РОЗГОРТАННЯ (Self-Deployment)
+            if final_refactor.get("status") == "success":
+                await self._run_self_deployment(final_refactor)
 
-                    # 6. АВТО-РОЗГОРТАННЯ (Self-Deployment)
-                    if final_refactor.get("status") == "success":
-                         async with RequestLogger(logger, "cycle_phase_deploy", cycle_id=cycle_id):
-                            await self._run_self_deployment(final_refactor)
+            # 7. GIT AUTO-COMMIT
+            await self._run_git_autocommit(task_description, files_modified, cycle_id)
 
-                    # 7. GIT AUTO-COMMIT
-                    await self._run_git_autocommit(task_description, files_modified, cycle_id)
+            # 8. АВТОНАВЧАННЯ (Llama 3.1 8b)
+            await self._update_local_knowledge(task_description, final_refactor)
 
-                    # 8. АВТОНАВЧАННЯ (Llama 3.1 8b)
-                    await self._update_local_knowledge(task_description, final_refactor)
-
-                log_business_event(
-                    logger,
-                    "sovereign_cycle_completed",
-                    cycle_id=cycle_id,
-                    files_count=len(set(files_modified)),
-                    duration_s=0 # calculated by RequestLogger
-                )
-
-                return {
-                    "status": "success",
-                    "message": "Цикл автовдосконалення завершено успішно (UA-v25)",
-                    "cycle_id": cycle_id,
-                    "files_modified": list(set(files_modified)),
-                    "agents_used": [k for k, v in self.agent_status.items() if v]
-                }
-            except Exception as e:
-                req_logger.exception("cycle_failed", error=str(e))
-                raise e
+        return {
+            "status": "success",
+            "message": "Цикл автовдосконалення завершено успішно (UA-v25)",
+            "cycle_id": cycle_id,
+            "files_modified": list(set(files_modified)),
+            "agents_used": [k for k, v in self.agent_status.items() if v]
+        }
 
     async def _run_claude_review(self, previous_result: Dict):
         """Code Review через Claude для безпеки коду"""
@@ -248,10 +199,10 @@ class SovereignAgentOrchestrator:
             # Адаптивний вибір середовища
             if os.getenv("PREDATOR_ENV") == "production-nvidia":
                  config = create_nvidia_config()
-                 logger.info("Використання конфігурації сервера NVIDIA")
+                 logger.info("Using NVIDIA Server Config")
             else:
                  config = create_local_config()
-                 logger.info("Використання конфігурації Local Docker")
+                 logger.info("Using Local Docker Config")
 
             logger.info("🔄 Перезапуск сервісів для застосування змін...")
             await devops.restart_service("predator_backend", config)
@@ -260,34 +211,42 @@ class SovereignAgentOrchestrator:
             logger.error(f"❌ Помилка авторозгортання: {e}")
 
     async def _run_analysis(self, prompt: str) -> Dict:
-        """Аналіз задачі за допомогою Arbitration Engine (Gemini/Mistral/Ollama)."""
-        from ..arbitration.engine import arbitration_engine
+        """Аналіз задачі (Local First)."""
+        models = self.AVAILABLE_MODELS["analysis"]
 
-        try:
-            # Використовуємо новий Arbitration Engine для консенсусу
-            result = await arbitration_engine.execute(prompt, task_type="analysis")
+        for model_name in models:
+            logger.info(f"🧠 Аналіз задачі через {model_name}...")
+            try:
+                response = ""
+                # Обробка залежно від типу агента
+                if "gemini" in model_name and self.gemini_agent:
+                    ua_prompt = f"Проаналізуй задачу: {prompt}. JSON Output keys: requires_coding, files_to_touch, suggestion."
+                    response = await self.gemini_agent.chat(ua_prompt)
+                elif "ollama" in model_name or "mistral" in model_name:
+                    # Generic Aider/Ollama Agent
+                    agent = AiderAgent(model=model_name, project_root=str(self.workspace_root))
+                    # Для аналізу краще простий промпт
+                    res = await agent.execute_task(f"ANALYSIS: {prompt}. Return ONLY JSON with keys: requires_coding (bool), files_to_touch (list), suggestion (string).", [])
+                    response = res.get("output", "")
 
-            # Парсинг відповіді (очікуємо JSON)
-            import re
-            json_match = re.search(r'\{.*\}', result.content, re.DOTALL)
+                # Parse JSON
+                import re
+                json_match = re.search(r'\{.*\}', response, re.DOTALL)
+                if json_match:
+                    try:
+                        return json.loads(json_match.group())
+                    except:
+                        pass
 
-            if json_match:
-                try:
-                    res = json.loads(json_match.group())
-                    res["requires_coding"] = True
-                    return res
-                except:
-                    pass
+                # Якщо JSON не парситься, але відповідь є - повертаємо як suggestion
+                if response and len(response) > 10:
+                     return {"requires_coding": True, "files_to_touch": [], "suggestion": response}
 
-            if result.content:
-                return {"requires_coding": True, "files_to_touch": [], "suggestion": result.content}
+            except Exception as e:
+                logger.warning(f"⚠️ Модель {model_name} провалилась: {e}")
+                continue
 
-        except Exception as e:
-            logger.error(f"❌ Arbitration Analysis failed: {e}")
-
-        # Fallback (якщо арбітраж впав)
-        return {"requires_coding": True, "files_to_touch": [], "suggestion": "Автоматичний аналіз недоступний (Fallback)"}
-
+        return {"requires_coding": True, "files_to_touch": [], "suggestion": "Автоматичний аналіз недоступний"}
 
     async def _run_vibe_iteration(self, analysis: Dict) -> Dict:
         """Імітація Vibe CLI для швидкої ітерації"""
@@ -311,7 +270,7 @@ class SovereignAgentOrchestrator:
         elif self.agent_status["claude"]:
             model = "anthropic/claude-3-5-sonnet-20241022"
         else:
-            model = "mistral/mistral-small-latest"
+            model = "gemini/gemini-2.0-flash-exp"
 
         prompt = f"""
         Перевір та виправ будь-які помилки у попередніх змінах.
@@ -356,7 +315,7 @@ class SovereignAgentOrchestrator:
         elif self.agent_status["deepseek"]:
             model = "deepseek/deepseek-chat"
         else:
-            model = "mistral/mistral-small-latest"
+            model = "gemini/gemini-2.0-flash-exp"
 
         agent = AiderAgent(model=model, project_root=str(self.workspace_root))
         prompt = "Зроби фінальний рефакторинг коду для забезпечення максимальної чистоти та відповідності стандартам Predator v25."

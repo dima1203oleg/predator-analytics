@@ -26,11 +26,11 @@ async def get_db_connection():
 
 @router.get("/ingestion")
 async def get_ingestion_stats(
-    days: int = Query(7, ge=1, le=365, description="Кількість днів для аналізу")
+    days: int = Query(7, ge=1, le=365, description="Number of days to look back")
 ):
     """
     Get data ingestion statistics.
-
+    
     Returns:
         - Total documents in staging vs gold
         - Documents added in last N days
@@ -38,10 +38,10 @@ async def get_ingestion_stats(
         - Ingestion success rate
     """
     conn = await get_db_connection()
-
+    
     try:
         cutoff_date = datetime.now() - timedelta(days=days)
-
+        
         # Staging stats
         staging_total = await conn.fetchval("SELECT COUNT(*) FROM staging.raw_data")
         staging_unprocessed = await conn.fetchval(
@@ -51,19 +51,19 @@ async def get_ingestion_stats(
             "SELECT COUNT(*) FROM staging.raw_data WHERE fetched_at > $1",
             cutoff_date
         )
-
+        
         # Gold stats
         gold_total = await conn.fetchval("SELECT COUNT(*) FROM gold.documents")
         gold_recent = await conn.fetchval(
             "SELECT COUNT(*) FROM gold.documents WHERE created_at > $1",
             cutoff_date
         )
-
+        
         # Last ingestion time
         last_ingestion = await conn.fetchval(
             "SELECT MAX(fetched_at) FROM staging.raw_data"
         )
-
+        
         # Ingestion by source
         source_stats = await conn.fetch("""
             SELECT source, COUNT(*) as count, MAX(fetched_at) as last_fetch
@@ -71,11 +71,11 @@ async def get_ingestion_stats(
             GROUP BY source
             ORDER BY count DESC
         """)
-
+        
         # Calculate success rate
         total_processed = staging_total - staging_unprocessed
         success_rate = (total_processed / staging_total * 100) if staging_total > 0 else 0
-
+        
         return {
             "staging": {
                 "total": staging_total or 0,
@@ -98,7 +98,7 @@ async def get_ingestion_stats(
             ],
             "period_days": days
         }
-
+        
     finally:
         await conn.close()
 
@@ -110,24 +110,24 @@ async def get_ingestion_timeline(
 ):
     """
     Get ingestion timeline for charting.
-
+    
     Returns documents ingested per time period.
     """
     conn = await get_db_connection()
-
+    
     try:
         cutoff_date = datetime.now() - timedelta(days=days)
-
+        
         if granularity == "hour":
             trunc = "hour"
         elif granularity == "week":
             trunc = "week"
         else:
             trunc = "day"
-
+        
         # Staging timeline
         staging_timeline = await conn.fetch(f"""
-            SELECT
+            SELECT 
                 date_trunc('{trunc}', fetched_at) as period,
                 COUNT(*) as count
             FROM staging.raw_data
@@ -135,10 +135,10 @@ async def get_ingestion_timeline(
             GROUP BY period
             ORDER BY period
         """, cutoff_date)
-
+        
         # Gold timeline
         gold_timeline = await conn.fetch(f"""
-            SELECT
+            SELECT 
                 date_trunc('{trunc}', created_at) as period,
                 COUNT(*) as count
             FROM gold.documents
@@ -146,7 +146,7 @@ async def get_ingestion_timeline(
             GROUP BY period
             ORDER BY period
         """, cutoff_date)
-
+        
         return {
             "granularity": granularity,
             "period_days": days,
@@ -159,7 +159,7 @@ async def get_ingestion_timeline(
                 for row in gold_timeline
             ]
         }
-
+        
     finally:
         await conn.close()
 
@@ -174,7 +174,7 @@ async def get_search_stats(
 ):
     """
     Get search statistics.
-
+    
     Returns:
         - Total searches (if search_logs table exists)
         - Average response time
@@ -183,22 +183,22 @@ async def get_search_stats(
     """
     # Note: This requires a search_logs table to be created
     # For now, return placeholder data
-
+    
     conn = await get_db_connection()
-
+    
     try:
         # Check if search_logs table exists
         table_exists = await conn.fetchval("""
             SELECT EXISTS (
-                SELECT FROM information_schema.tables
+                SELECT FROM information_schema.tables 
                 WHERE table_schema = 'gold' AND table_name = 'search_logs'
             )
         """)
-
+        
         if not table_exists:
             return {
-                "message": "Логування пошуку не активовано",
-                "hint": "Створіть таблицю gold.search_logs для активації статистики пошуку",
+                "message": "Search logging not enabled",
+                "hint": "Create gold.search_logs table to enable search statistics",
                 "sample_schema": {
                     "id": "SERIAL PRIMARY KEY",
                     "query": "TEXT",
@@ -209,20 +209,20 @@ async def get_search_stats(
                     "created_at": "TIMESTAMP DEFAULT NOW()"
                 }
             }
-
+        
         cutoff_date = datetime.now() - timedelta(days=days)
-
+        
         # Get stats from search_logs
         total_searches = await conn.fetchval(
             "SELECT COUNT(*) FROM gold.search_logs WHERE created_at > $1",
             cutoff_date
         )
-
+        
         avg_response_time = await conn.fetchval(
             "SELECT AVG(response_time_ms) FROM gold.search_logs WHERE created_at > $1",
             cutoff_date
         )
-
+        
         popular_queries = await conn.fetch("""
             SELECT query, COUNT(*) as count
             FROM gold.search_logs
@@ -231,14 +231,14 @@ async def get_search_stats(
             ORDER BY count DESC
             LIMIT 10
         """, cutoff_date)
-
+        
         by_type = await conn.fetch("""
             SELECT search_type, COUNT(*) as count
             FROM gold.search_logs
             WHERE created_at > $1
             GROUP BY search_type
         """, cutoff_date)
-
+        
         return {
             "total_searches": total_searches or 0,
             "avg_response_time_ms": round(avg_response_time or 0, 2),
@@ -249,7 +249,7 @@ async def get_search_stats(
             "by_type": {row["search_type"]: row["count"] for row in by_type},
             "period_days": days
         }
-
+        
     finally:
         await conn.close()
 
@@ -262,18 +262,18 @@ async def get_search_stats(
 async def get_system_stats():
     """
     Get overall system statistics.
-
+    
     Returns:
         - Database sizes
         - Table counts
         - Index health
     """
     conn = await get_db_connection()
-
+    
     try:
         # Get table sizes
         table_sizes = await conn.fetch("""
-            SELECT
+            SELECT 
                 schemaname || '.' || relname as table_name,
                 pg_size_pretty(pg_total_relation_size(relid)) as total_size,
                 n_live_tup as row_count
@@ -281,15 +281,15 @@ async def get_system_stats():
             WHERE schemaname IN ('staging', 'gold')
             ORDER BY pg_total_relation_size(relid) DESC
         """)
-
+        
         # Get database size
         db_size = await conn.fetchval("""
             SELECT pg_size_pretty(pg_database_size(current_database()))
         """)
-
+        
         # Get index stats
         index_stats = await conn.fetch("""
-            SELECT
+            SELECT 
                 schemaname || '.' || indexrelname as index_name,
                 idx_scan as scans,
                 idx_tup_read as tuples_read,
@@ -299,10 +299,10 @@ async def get_system_stats():
             ORDER BY idx_scan DESC
             LIMIT 10
         """)
-
+        
         # Users count
         user_count = await conn.fetchval("SELECT COUNT(*) FROM gold.users")
-
+        
         return {
             "database": {
                 "size": db_size,
@@ -327,7 +327,7 @@ async def get_system_stats():
                 "total": user_count or 0
             }
         }
-
+        
     finally:
         await conn.close()
 
@@ -338,10 +338,10 @@ async def get_category_stats():
     Get document distribution by category.
     """
     conn = await get_db_connection()
-
+    
     try:
         categories = await conn.fetch("""
-            SELECT
+            SELECT 
                 COALESCE(category, 'uncategorized') as category,
                 COUNT(*) as count,
                 MAX(created_at) as last_updated
@@ -349,7 +349,7 @@ async def get_category_stats():
             GROUP BY category
             ORDER BY count DESC
         """)
-
+        
         return {
             "categories": [
                 {
@@ -361,6 +361,6 @@ async def get_category_stats():
             ],
             "total_categories": len(categories)
         }
-
+        
     finally:
         await conn.close()

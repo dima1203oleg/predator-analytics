@@ -13,9 +13,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 
-from libs.core.structured_logger import get_logger, log_business_event, RequestLogger
-
-logger = get_logger("agents.devops_automation")
+logger = logging.getLogger("agents.devops_automation")
 
 
 class DeploymentTarget(Enum):
@@ -136,8 +134,7 @@ class DevOpsAutomationAgent:
         force_recreate: bool = False
     ) -> Dict[str, Any]:
         """Deploy services using Docker Compose."""
-        with RequestLogger(logger, "docker_deploy", environment=config.environment, target=config.target.value) as req_logger:
-            req_logger.info(f"deploy_started", build=build)
+        logger.info(f"🚀 Deploying via Docker Compose to {config.environment}")
 
         if config.target == DeploymentTarget.REMOTE_SSH:
             # Remote deployment
@@ -233,8 +230,7 @@ class DevOpsAutomationAgent:
         timeout: str = "10m"
     ) -> Dict[str, Any]:
         """Deploy or upgrade a Helm release."""
-        with RequestLogger(logger, "helm_deploy", release=release_name, namespace=namespace) as req_logger:
-            req_logger.info("helm_deploy_started", chart=chart_path)
+        logger.info(f"🚀 Deploying Helm release: {release_name}")
 
         cmd = [
             "helm",
@@ -313,8 +309,7 @@ class DevOpsAutomationAgent:
         config: DeploymentConfig
     ) -> Dict[str, Any]:
         """Restart a specific service (with anti-lockup for self-restart)."""
-        with RequestLogger(logger, "service_restart", service=service_name, target=config.target.value):
-            logger.info(f"restart_requested", service=service_name)
+        logger.info(f"🔄 Requesting restart for {service_name}...")
 
         if config.target == DeploymentTarget.REMOTE_SSH:
             result = await self._run_ssh_command(

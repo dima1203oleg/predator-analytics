@@ -1,24 +1,15 @@
-import structlog
+"""
+Ollama Local LLM Provider
+"""
 import time
 import httpx
-from app.core.config import settings
 from .base import BaseLLMProvider, LLMResponse
 
-logger = structlog.get_logger(__name__)
-
 class OllamaProvider(BaseLLMProvider):
-    def __init__(self, base_url: str = None, model: str = None):
-        # Fallback to absolute system settings if not provided
-        self.base_url = (base_url or settings.LLM_OLLAMA_BASE_URL).rstrip("/")
-        self.model = model or settings.OLLAMA_MODEL
-
-        super().__init__("", self.model)
-
-        # Ensure we point to /chat endpoint for chat-based interactions
-        if not self.base_url.endswith("/chat"):
-             self.chat_url = f"{self.base_url}/chat"
-        else:
-             self.chat_url = self.base_url
+    def __init__(self, base_url: str, model: str = "llama3.1:8b-instruct"):
+        # api_key is not used usually, passing base_url as key hack or config
+        super().__init__(base_url, model)
+        self.base_url = f"{base_url}/api/chat"
 
     @property
     def provider_name(self) -> str:
@@ -43,38 +34,26 @@ class OllamaProvider(BaseLLMProvider):
         }
 
         try:
-            logger.debug("ollama_request", model=self.model, url=self.chat_url)
-
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    self.chat_url,
+                    self.base_url,
                     json=payload,
-                    timeout=kwargs.get("timeout", 120.0) # Local models need more time
+                    timeout=60.0 # Local inference can be slow
                 )
 
                 if response.status_code != 200:
-                    logger.error("ollama_api_error", status=response.status_code, error=response.text)
                     return LLMResponse(
                         success=False,
                         content="",
                         provider=self.provider_name,
                         model=self.model,
-                        error=f"Ollama API Error {response.status_code}: {response.text}"
+                        error=f"API Error {response.status_code}: {response.text}"
                     )
 
                 data = response.json()
-                # Extraction for /api/chat endpoint
-                if "message" in data:
-                    content = data["message"]["content"]
-                elif "response" in data:
-                    content = data["response"]
-                else:
-                    content = str(data)
-
-                # Ollama token stats
+                content = data["message"]["content"]
+                # Ollama returns token stats
                 tokens = data.get("eval_count", 0) + data.get("prompt_eval_count", 0)
-
-                logger.info("ollama_success", model=self.model, tokens=tokens)
 
                 return LLMResponse(
                     success=True,
@@ -86,7 +65,6 @@ class OllamaProvider(BaseLLMProvider):
                 )
 
         except Exception as e:
-            logger.exception("ollama_critical_failure", error=str(e))
             return LLMResponse(
                 success=False,
                 content="",

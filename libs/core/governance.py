@@ -7,8 +7,6 @@ from libs.core.database import get_db_sync
 from libs.core.constitutional import get_arbiter, get_ledger
 from sqlalchemy import text
 from datetime import datetime
-import os
-
 
 logger = setup_logger("predator.governance")
 
@@ -30,13 +28,7 @@ class OperationalPolicy:
 
     FORBIDDEN_COMMANDS = [
         "rm -rf /", "mkfs", "dd if=", ":(){ :|:& };:", # Fork bomb
-        "chmod 777 -R /", "shutdown", "reboot",
-        "> /dev/sda", "mv /* /dev/null", "rm -rf .git"
-    ]
-
-    FORBIDDEN_PATTERNS = [
-        ";", "&&", "||", "|", "`", "$( ", ">", "<", # Shell injection characters
-        "../", "..\\" # Path traversal
+        "chmod 777 -R /", "shutdown", "reboot"
     ]
 
     FORBIDDEN_TECH = [
@@ -49,52 +41,30 @@ class OperationalPolicy:
         """
         Перевіряє команду на безпеку.
         """
-        # Global Bypass for Full Sovereignty
-        if os.getenv("SOVEREIGN_AUTO_APPROVE", "false").lower() == "true":
-            return {"approved": True, "reason": "Суверенне автосхвалення активовано. Політику обійдено."}
-
         cmd_lower = command.lower()
 
-        # 1. Global Blocklist (Exact matches or suspicious sequences)
+        # 1. Global Blocklist
         for bad_cmd in OperationalPolicy.FORBIDDEN_COMMANDS:
             if bad_cmd.lower() in cmd_lower:
                 return {
                     "approved": False,
-                    "reason": f"Критичне порушення безпеки: Заборонена послідовність команд '{bad_cmd}'."
+                    "reason": f"Critical Security Violation: Forbidden command sequence '{bad_cmd}'."
                 }
 
-        # 2. Production Constraints & Pattern Check
+        # 2. Production Constraints
         if stage == SecurityStage.PRODUCTION:
-            # Тільки дозволені команди в проді
-            allowed_prefixes = ["uvicorn", "python", "celery", "aider", "git", "ls", "grep"]
-            is_allowed = any(cmd_lower.startswith(pref) for pref in allowed_prefixes)
-
-            if not is_allowed:
-                return {
-                    "approved": False,
-                    "reason": f"Операційне порушення: Команда '{command.split()[0]}' не дозволена для PRODUCTION."
-                }
-
-            # Перевірка на небезпечні символи (Shell Injection)
-            for pattern in OperationalPolicy.FORBIDDEN_PATTERNS:
-                if pattern in command:
-                     return {
-                        "approved": False,
-                        "reason": f"Порушення безпеки: Виявлено заборонений символ/паттерн '{pattern}' у PRODUCTION."
-                    }
-
             if "kubectl apply" in cmd_lower or "kubectl delete" in cmd_lower:
                  return {
                     "approved": False,
-                    "reason": "Пряма модифікація через kubectl заборонена в PRODUCTION. Використовуйте GitOps (ArgoCD)."
+                    "reason": "Direct kubectl modification prohibited in PRODUCTION. Use GitOps (ArgoCD)."
                 }
             if "pip install" in cmd_lower:
                  return {
                     "approved": False,
-                    "reason": "Встановлення пакетів під час виконання заборонено в PRODUCTION."
+                    "reason": "Runtime package installation prohibited in PRODUCTION."
                 }
 
-        return {"approved": True, "reason": "Команда безпечна згідно з поточною політикою."}
+        return {"approved": True, "reason": "Command is safe within current policy."}
 
     @staticmethod
     def check_technology(tech_stack: List[str]) -> Dict[str, Any]:
@@ -105,9 +75,9 @@ class OperationalPolicy:
             if tech.lower() in OperationalPolicy.FORBIDDEN_TECH:
                 return {
                     "approved": False,
-                    "reason": f"Технологія '{tech}' заборонена політикою раціоналізації. Використовуйте затверджений стек."
+                    "reason": f"Technology '{tech}' is banned by Rationalization Policy. Use approved stack."
                 }
-        return {"approved": True, "reason": "Технологічний стек відповідає стандартам WinSURF."}
+        return {"approved": True, "reason": "Tech stack aligned with WinSURF."}
 
     @staticmethod
     def verify_truth_ledger() -> Dict[str, Any]:

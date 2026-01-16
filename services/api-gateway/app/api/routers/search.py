@@ -43,13 +43,13 @@ def get_embedding():
 
 @router.get("/")
 async def search(
-    q: str = Query(..., min_length=1, description="Пошуковий запит"),
-    limit: int = Query(20, le=100, description="Максимальна кількість результатів"),
-    offset: int = Query(0, ge=0, description="Зміщення пагінації"),
-    category: Optional[str] = Query(None, description="Фільтр за категорією"),
-    source: Optional[str] = Query(None, description="Фільтр за джерелом"),
-    mode: str = Query("hybrid", enum=["hybrid", "text", "semantic"], description="Режим пошуку"),
-    rerank: bool = Query(True, description="Увімкнути семантичне переранжування"),
+    q: str = Query(..., min_length=1, description="Search query"),
+    limit: int = Query(20, le=100, description="Max results"),
+    offset: int = Query(0, ge=0, description="Pagination offset"),
+    category: Optional[str] = Query(None, description="Filter by category"),
+    source: Optional[str] = Query(None, description="Filter by source"),
+    mode: str = Query("hybrid", enum=["hybrid", "text", "semantic"], description="Search mode"),
+    rerank: bool = Query(True, description="Enable semantic reranking"),
     indexer: OpenSearchIndexer = Depends(get_indexer),
     qdrant: QdrantService = Depends(get_qdrant),
     embedder: EmbeddingService = Depends(get_embedding),
@@ -300,7 +300,7 @@ async def submit_feedback(
         return {"status": "accepted", "message": "Feedback recorded"}
     except Exception as e:
         logger.error("feedback_submission_failed", error=str(e))
-        raise HTTPException(status_code=500, detail="Не вдалося зафіксувати відгук")
+        raise HTTPException(status_code=500, detail="Failed to record feedback")
 
 
 @router.get("/companies")

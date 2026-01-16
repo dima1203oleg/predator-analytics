@@ -8,8 +8,7 @@ import asyncpg
 from libs.core.config import settings
 from libs.core.database import get_db_ctx
 from libs.core.models.entities import MLJob, MLDataset
-from libs.core.structured_logger import get_logger, log_business_event, RequestLogger
-from libs.core.contracts.payloads import MLTrainingPayload, validate_payload, MLModelType
+from libs.core.structured_logger import get_logger, log_business_event
 
 logger = get_logger("tasks.ml_workers")
 
@@ -17,9 +16,14 @@ logger = get_logger("tasks.ml_workers")
 def process_ml_job(job_id: str):
     """
     Process a queued MLJob.
+    1. Fetch Job & Dataset info
+    2. Load Data from Staging
+    3. Run AI Model (Embedding/Analysis)
+    4. Update Job Status & Metrics
     """
-    with RequestLogger(logger, "ml_job_processing", job_id=job_id) as req_logger:
-        async def run_job():
+    logger.info("ml_job_started", job_id=job_id)
+
+    async def run_job():
         try:
             async with get_db_ctx() as sess:
                 # 1. Fetch Job
@@ -142,12 +146,10 @@ def process_ml_job(job_id: str):
                     "os_status": os_results
                 }
                 await sess.commit()
-
-                req_logger.info("ml_job_completed", job_id=job_id, processed_rows=len(docs_to_index))
                 return {"status": "success", "processed": len(docs_to_index)}
 
         except Exception as e:
-            req_logger.error("ml_job_failed", error=str(e), job_id=job_id)
+            logger.error("ml_job_execution_failed", error=str(e), job_id=job_id)
             # Try to save failure status
             try:
                 # New session to ensure we can write error even if main transaction failed
@@ -163,70 +165,21 @@ def process_ml_job(job_id: str):
 
     return asyncio.run(run_job())
 
-
-@shared_task(name="tasks.ml.train_model_task", queue="ml_queue")
-def train_model_task(**kwargs):
-    """
-    ML Training Task: Handles model training jobs.
-    Uses MLTrainingPayload for contract validation.
-    """
-    # 1. Validate Payload
-    payload = validate_payload(MLTrainingPayload, kwargs)
-
-    with RequestLogger(
-        logger,
-        "ml_training_task",
-        dataset_id=payload.dataset_id,
-        model_type=payload.model_type.value
-    ) as req_logger:
-
-        req_logger.info(
-            "training_started",
-            hyperparameters=payload.hyperparameters,
-            config=payload.training_config
-        )
-
-        async def run_training():
-            # TODO: Integrate with actual AutoML Service or H2O LLM Studio
-            # For now, we simulate the training process compliant with the contract
-
-            # Simulate processing
-            import asyncio
-            await asyncio.sleep(2)
-
-            # Result
-            accuracy = 0.88 # Mock result
-
-            req_logger.info(
-                "training_completed",
-                accuracy=accuracy,
-                deployed=payload.auto_deploy and accuracy > payload.accuracy_threshold
-            )
-
-            return {
-                "status": "success",
-                "accuracy": accuracy,
-                "dataset_id": payload.dataset_id
-            }
-
-        return asyncio.run(run_training())
-
 @shared_task(name="tasks.ml.self_improvement_cycle", queue="analytics")
 def self_improvement_task():
     """
     Managed Celery task for the Endless Self-Improvement cycle.
+    Reschedules itself after execution.
     """
     from app.services.training_service import self_improvement_service
 
     async def run():
-        with RequestLogger(logger, "self_improvement_cycle") as req_logger:
-            try:
-                await self_improvement_service.run_single_cycle()
-
-                req_logger.info("self_improvement_cycle_completed", cycle=self_improvement_service.cycle_count)
-                return {"status": "success", "cycle": self_improvement_service.cycle_count}
-            except Exception as e:
-                req_logger.error("self_improvement_cycle_failed", error=str(e))
-                return {"status": "error", "error": str(e)}
+        try:
+            await self_improvement_service.run_single_cycle()
+            # Optional: Automatic rescheduling logic if not using celery-beat
+            # self_improvement_task.apply_async(countdown=300)
+            return {"status": "success", "cycle": self_improvement_service.cycle_count}
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
 
     return asyncio.run(run())
