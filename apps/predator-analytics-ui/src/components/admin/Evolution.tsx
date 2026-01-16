@@ -5,5 +5,5 @@ import React from 'react';
 import { EvolutionDashboard } from '../super/EvolutionDashboard';
 
 export const EvolutionAdmin: React.FC = () => {
-  return \u003cEvolutionDashboard /\u003e;
+  return <EvolutionDashboard />;
 };
