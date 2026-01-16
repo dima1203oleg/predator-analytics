@@ -1,132 +1,148 @@
-# Execution TODO — Predator Analytics Stabilization
+# План виконання (TODO) — Стабілізація Predator Analytics
 
-This checklist is written to be executed by an AI agent implementing the audit outcomes.
+Цей список призначений для виконання AI-агентом, що реалізує результати аудиту.
 
-## P0 — Stop‑the‑line (Critical)
+## P0 — Критичні зупинки (Critical)
 
-### 1) Secrets removal and path to secret manager
+### 1) Видалення секретів та шлях до менеджера секретів [ВИКОНАНО]
 
-- Targets:
+- **Цілі:**
   - `helm/predator-analytics/values.yaml`
   - `helm/predator-analytics/values-production.yaml`
-  - any `*.json` containing tokens/keys (e.g. `services/api-gateway/dynamic_keys.json` if present)
+  - будь-які `*.json`, що містять токени/ключі (наприклад, `services/api-gateway/dynamic_keys.json`, якщо є)
 
-- Required:
-  - remove plaintext secrets from repo
-  - load secrets via environment / secret provider
-  - document the migration path (ExternalSecrets/Vault)
+- **Вимоги:**
+  - видалити відкриті секрети з репозиторію
+  - завантажувати секрети через оточення / провайдер секретів
+  - задокументувати шлях міграції (ExternalSecrets/Vault)
 
-**Acceptance:** repository contains no plaintext secrets; `git grep -i` checks are clean.
+**Прийняття:** репозиторій не містить відкритих секретів; перевірки `git grep -i` успішні.
 
-### 2) Backend boot‑safety (import graph)
+### 2) Безпека завантаження бекенду (граф імпортів) [ВИКОНАНО]
 
-- Targets:
+- **Цілі:**
   - `services/api-gateway/app/main.py`
-  - `services/api-gateway/app/api/routers/etl.py` (and its imports)
+  - `services/api-gateway/app/api/routers/etl.py` (та його імпорти)
 
-- Required:
-  - remove references to missing modules (e.g. `app.core.db`)
-  - ensure backend starts in Docker/Helm/local
+- **Вимоги:**
+  - видалити посилання на відсутні модулі (наприклад, `app.core.db`)
+  - забезпечити запуск бекенду в Docker/Helm/локально
 
-**Acceptance:** backend starts without ImportError; health endpoint responds.
+**Прийняття:** бекенд запускається без ImportError; ендпоінт health відповідає.
 
-### 3) Tenant leakage prevention (OpenSearch)
+### 3) Запобігання витоку даних між тенентами (OpenSearch) [ВИКОНАНО]
 
-- Targets:
+- **Цілі:**
   - `services/api-gateway/app/services/opensearch_indexer.py`
   - `services/api-gateway/app/api/routers/search.py`
 
-- Required:
-  - enforce tenant filter even when `query_body` is provided
-  - forbid search without tenant context
+- **Вимоги:**
+  - примусово застосовувати фільтр тенента, навіть якщо надано `query_body`
+  - заборонити пошук без контексту тенента
 
-**Acceptance:** cross‑tenant access is impossible through search; missing tenant context is rejected.
+**Прийняття:** крос-тенентний доступ через пошук неможливий; запити без контексту тенента відхиляються.
 
-### 4) Auth canon decision and enforcement
+### 4) Канонічне рішення щодо авторизації та впровадження [ВИКОНАНО]
 
-- Targets:
+- **Цілі:**
   - `services/api-gateway/app/api/deps.py`
   - `services/api-gateway/app/services/auth_service.py`
   - `services/api-gateway/app/api/routers/auth.py`
   - `services/api-gateway/app/main.py`
 
-- Required:
-  - choose Keycloak‑first or JWT‑first
-  - single `get_current_user`
-  - remove duplicate `/api/v1/auth/profile`
-  - standardize `tenant_id` claim
+- **Вимоги:**
+  - обрати пріоритет: Keycloak або JWT
+  - єдиний метод `get_current_user`
+  - видалити дублікат `/api/v1/auth/profile`
+  - стандартизувати claim `tenant_id`
 
-**Acceptance:** one auth flow works end‑to‑end; all routers use canonical auth.
+**Прийняття:** один потік авторизації працює наскрізно; всі роутери використовують канонічну авторизацію.
 
-## P1 — Contract Unification
+## P1 — Уніфікація контрактів
 
-### 5) Documents canonical store
+### 5) Канонічне сховище документів [ВИКОНАНО]
 
-- Targets:
+- **Цілі:**
   - `services/api-gateway/app/services/document_service.py`
   - `services/api-gateway/app/core/data_layer_schema.py`
   - `libs/core/models/entities.py`
 
-- Required:
-  - pick canonical table/schema
-  - align reads/writes/indexing to the same canonical store
-  - add migration‑safe fixes
+- **Вимоги:**
+  - обрати канонічну таблицю/схему
+  - узгодити читання/запис/індексування з канонічним сховищем
+  - додати виправлення, безпечні для міграції
 
-**Acceptance:** no split‑brain reads/writes; schema matches runtime behavior.
+**Прийняття:** відсутність роздвоєння даних при читанні/записі; схема відповідає поведінці в рантаймі.
 
-### 6) Ingestion canonical pipeline
+### 6) Канонічний конвеєр імпорту (Ingestion) [ВИКОНАНО]
 
-- Targets:
-  - upload routers (`/api/v1/...`)
+- **Цілі:**
+  - роутери завантаження (`/api/v1/...`)
   - `services/api-gateway/app/tasks/etl_workers.py`
   - `services/api-gateway/app/services/etl_ingestion.py`
-  - `libs/core/mq.py` and Celery config
+  - `libs/core/mq.py` та конфіг Celery
 
-- Required:
-  - implement and document pipeline: API→job registry→queue→workers→DB→index
-  - mark alternative paths deprecated/experimental
+- **Вимоги:**
+  - впровадити та задокументувати конвеєр: API → реєстр завдань → черга → воркери → БД → індекс
+  - позначити альтернативні шляхи як застарілі/експериментальні
 
-**Acceptance:** one recommended pipeline exists and is observable.
+**Прийняття:** існує один рекомендований конвеєр, який піддається моніторингу.
 
-### 7) Deployment consistency (Helm/Compose)
+### 7) Узгодженість розгортання (Helm/Compose) [ВИКОНАНО]
 
-- Targets:
-  - `helm/...` celery worker templates
+- **Цілі:**
+  - шаблони воркерів Celery в `helm/...`
   - `services/api-gateway/app/core/celery_app.py`
   - `docker-compose.prod.yml`
 
-- Required:
-  - fix Celery `-A` to correct module
-  - ensure compose mount paths exist or remove mounts
+- **Вимоги:**
+  - виправити аргумент `-A` для Celery на правильний модуль
+  - переконатися, що шляхи монтування в compose існують, або видалити їх
 
-**Acceptance:** worker starts; compose does not reference missing files.
+**Прийняття:** воркер запускається; compose не містить посилань на відсутні файли.
 
-## P2 — Observability + UI
+## P2 — Спостережуваність (Observability) + UI
 
-### 8) One metrics endpoint
+### 8) Єдиний ендпоінт метрик [ВИКОНАНО]
 
-- Targets:
+- **Цілі:**
   - `services/api-gateway/app/api/routers/metrics.py`
   - `services/api-gateway/app/api/routers/prometheus_metrics.py`
-  - metrics middleware
+  - middleware метрик
 
-- Required:
-  - choose one canonical `/metrics`
-  - ensure one registry and no duplicated series
+- **Вимоги:**
+  - обрати один канонічний `/metrics`
+  - забезпечити один реєстр без дублювання часових рядів
 
-**Acceptance:** Prometheus scrapes one endpoint; no duplicate time series.
+**Прийняття:** Prometheus збирає дані з одного ендпоінта; відсутні дублікати метрик.
 
-### 9) Frontend UX and API consistency
+### 9) Узгодженість Frontend UX та API [ВИКОНАНО]
 
-- Targets:
+- **Цілі:**
   - `apps/predator-analytics-ui/src/services/api.ts`
-  - search/login/documents components
+  - компоненти пошуку/логіну/документів
 
-- Required:
-  - unify API base path (no v1/v25 mix)
-  - ensure Authorization + tenant context on requests
-  - add explicit UI states (loading/empty/error)
-  - implement minimal sections: Dashboard/Documents/Ingestion/Search/System
-  - performance: dedupe fetch, caching, clear state model
+- **Вимоги:**
+  - уніфікувати базовий шлях API (без змішування v1/v25)
+  - забезпечити передачу Authorization + контексту тенента в запитах
+  - додати чіткі стани UI (завантаження/порожньо/помилка)
+  - впровадити мінімальні розділи: Dashboard/Documents/Ingestion/Search/System
+  - продуктивність: дедуплікація запитів, кешування, чітка модель стану
 
-**Acceptance:** UI predictable, tenant‑safe, reduced network churn, clear errors.
+**Прийняття:** UI передбачуваний, безпечний щодо тенентів, зменшено мережеве навантаження, чіткі помилки.
+
+## P3 — Повна локалізація та Python 3.12 (Нове)
+
+### 10) Перевірка сумісності з Python 3.12 [ВИКОНАНО]
+
+- **Вимоги:**
+  - Перевірити всі сервіси (`api-gateway`, `orchestrator`, `etl-workers`) на запуск під Python 3.12.
+  - Оновити Dockerfiles для використання базових образів Python 3.12.
+
+### 11) Повна українізація інтерфейсу та коду [ВИКОНАНО]
+
+- **Вимоги:**
+  - Перекласти всі статичні тексти у фронтенді (`uk-UA.json`, `dimensional.uk.ts`). [ВИКОНАНО]
+  - Оновити повідомлення про помилки на бекенді для підтримки UA. [ВИКОНАНО: routers: main, search, etl, auth, stats, telegram, council, metrics, missions, cases]
+  - Забезпечити україномовне логування в критичних сервісах. [ВИКОНАНО: autonomous_processor.py, structured_logger.py, governance.py, etl_state_machine_v28s.py]
+  - Оновити системні промпти ШІ-агентів. [ВИКОНАНО: v25_sovereign_registry.py]

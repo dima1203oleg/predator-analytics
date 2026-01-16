@@ -94,18 +94,18 @@ class ETLStateMachineV28S:
 
         # AXIOM-001: No simulation data
         if context.get("is_simulation"):
-            violations.append("ETL-AXIOM-001: Simulation data detected in production pipeline")
+            violations.append("ETL-АКСІОМА-001: Виявлено симуляційні дані в продуктовому конвеєрі")
 
         # AXIOM-003: Progress <= 100
         progress = cls.get_progress(state, context)
         if progress > 100:
-            violations.append("ETL-AXIOM-003: Progress overflow detected")
+            violations.append("ETL-АКСІОМА-003: Виявлено переповнення прогресу (>100%)")
 
         # AXIOM-004: No zero indexing with data
         if state == ETLState.INDEXED:
             records_total = context.get("records_total", 0)
             records_indexed = context.get("records_indexed", 0)
             if records_total > 0 and records_indexed == 0 and not context.get("allow_empty"):
-                violations.append("ETL-AXIOM-004: Zero indexing result for non-empty input")
+                violations.append("ETL-АКСІОМА-004: Нульовий результат індексування для непорожнього вводу")
 
         return violations

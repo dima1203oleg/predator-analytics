@@ -51,7 +51,7 @@ class OperationalPolicy:
         """
         # Global Bypass for Full Sovereignty
         if os.getenv("SOVEREIGN_AUTO_APPROVE", "false").lower() == "true":
-            return {"approved": True, "reason": "Sovereign Auto-Approve Bypassed Policy."}
+            return {"approved": True, "reason": "Суверенне автосхвалення активовано. Політику обійдено."}
 
         cmd_lower = command.lower()
 
@@ -60,7 +60,7 @@ class OperationalPolicy:
             if bad_cmd.lower() in cmd_lower:
                 return {
                     "approved": False,
-                    "reason": f"Critical Security Violation: Forbidden command sequence '{bad_cmd}'."
+                    "reason": f"Критичне порушення безпеки: Заборонена послідовність команд '{bad_cmd}'."
                 }
 
         # 2. Production Constraints & Pattern Check
@@ -72,7 +72,7 @@ class OperationalPolicy:
             if not is_allowed:
                 return {
                     "approved": False,
-                    "reason": f"Operational Violation: Command '{command.split()[0]}' is not authorized for PRODUCTION."
+                    "reason": f"Операційне порушення: Команда '{command.split()[0]}' не дозволена для PRODUCTION."
                 }
 
             # Перевірка на небезпечні символи (Shell Injection)
@@ -80,21 +80,21 @@ class OperationalPolicy:
                 if pattern in command:
                      return {
                         "approved": False,
-                        "reason": f"Security Violation: Forbidden character/pattern '{pattern}' detected in PRODUCTION."
+                        "reason": f"Порушення безпеки: Виявлено заборонений символ/паттерн '{pattern}' у PRODUCTION."
                     }
 
             if "kubectl apply" in cmd_lower or "kubectl delete" in cmd_lower:
                  return {
                     "approved": False,
-                    "reason": "Direct kubectl modification prohibited in PRODUCTION. Use GitOps (ArgoCD)."
+                    "reason": "Пряма модифікація через kubectl заборонена в PRODUCTION. Використовуйте GitOps (ArgoCD)."
                 }
             if "pip install" in cmd_lower:
                  return {
                     "approved": False,
-                    "reason": "Runtime package installation prohibited in PRODUCTION."
+                    "reason": "Встановлення пакетів під час виконання заборонено в PRODUCTION."
                 }
 
-        return {"approved": True, "reason": "Command is safe within current policy."}
+        return {"approved": True, "reason": "Команда безпечна згідно з поточною політикою."}
 
     @staticmethod
     def check_technology(tech_stack: List[str]) -> Dict[str, Any]:
@@ -105,9 +105,9 @@ class OperationalPolicy:
             if tech.lower() in OperationalPolicy.FORBIDDEN_TECH:
                 return {
                     "approved": False,
-                    "reason": f"Technology '{tech}' is banned by Rationalization Policy. Use approved stack."
+                    "reason": f"Технологія '{tech}' заборонена політикою раціоналізації. Використовуйте затверджений стек."
                 }
-        return {"approved": True, "reason": "Tech stack aligned with WinSURF."}
+        return {"approved": True, "reason": "Технологічний стек відповідає стандартам WinSURF."}
 
     @staticmethod
     def verify_truth_ledger() -> Dict[str, Any]:

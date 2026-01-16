@@ -107,7 +107,7 @@ from app.api.routers import health as health_router
 
 app = FastAPI(
     title="Predator Analytics v26.2 API",
-    description="The Unbreakable System: AI-Native Multi-Agent Analytics Platform (CLI-First Sovereignty)",
+    description="Незламна система: Мультиагентна аналітична платформа на базі ШІ (Повний суверенітет)",
     version="26.2.0"
 )
 
@@ -142,8 +142,8 @@ async def get_system_verification():
     else:
         # Re-calculate
         const_path = settings.CONSTITUTION_PATH
-        const_hash = "GENESIS_NOT_FOUND"
-        const_status = "UNKNOWN"
+        const_hash = "ГЕНЕЗИС_НЕ_ЗНАЙДЕНО"
+        const_status = "НЕВІДОМО"
 
         if os.path.exists(const_path):
             try:
@@ -162,11 +162,11 @@ async def get_system_verification():
                 # but for now we trust the calculated hash represents the file's identity.
                 # In strict mode, settings.CONSTITUTION_HASH should be updated to SHA3.
                 if settings.CONSTITUTION_HASH.startswith(full_hash[:16]):
-                    const_status = "VALID"
+                     const_status = "ВАЛІДНО"
                 elif settings.CONSTITUTION_HASH == full_hash:
-                     const_status = "VALID"
+                     const_status = "ВАЛІДНО"
                 else:
-                    const_status = "VIOLATED"
+                    const_status = "ПОРУШЕНО"
             except Exception as e:
                 const_status = f"ERROR: {str(e)}"
 
@@ -215,7 +215,7 @@ async def get_guardian_health():
             "enabled": True,
             "agent": "AZR-v1",
             "last_action": datetime.now().isoformat(),
-            "status": "IDLE"
+            "status": "ОЧІКУВАННЯ"
         },
         "last_check": {
             "timestamp": datetime.now().isoformat(),

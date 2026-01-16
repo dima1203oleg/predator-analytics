@@ -42,19 +42,19 @@ async def telegram_webhook(request: Request, background_tasks: BackgroundTasks):
     try:
         data = await request.json()
         logger.info(f"Received webhook: {data}")
-        
+
         bot = get_assistant()
         if not bot:
             logger.error("Bot not initialized")
             return {"ok": False, "error": "Bot not initialized"}
-        
+
         # Отримуємо chat_id
         chat_id = None
         if "message" in data:
             chat_id = data["message"]["chat"]["id"]
         elif "callback_query" in data:
             chat_id = data["callback_query"]["message"]["chat"]["id"]
-        
+
         # Обробляємо в background
         async def process_and_reply():
             try:
@@ -66,7 +66,7 @@ async def telegram_webhook(request: Request, background_tasks: BackgroundTasks):
                         text = data["message"].get("text", "").lower()
                         if text in ["/start", "/menu"]:
                             show_menu = True
-                    
+
                     await bot.send_message(
                         chat_id=chat_id,
                         text=response,
@@ -76,10 +76,10 @@ async def telegram_webhook(request: Request, background_tasks: BackgroundTasks):
                 logger.error(f"Error in background task: {e}")
                 if chat_id:
                     await bot.send_message(chat_id, f"❌ Помилка: {str(e)}")
-        
+
         background_tasks.add_task(process_and_reply)
         return {"ok": True}
-        
+
     except Exception as e:
         logger.error(f"Webhook error: {e}")
         return {"ok": False, "error": str(e)}
@@ -105,8 +105,8 @@ async def setup_webhook(setup: WebhookSetup):
     """Setup Telegram webhook"""
     bot = get_assistant()
     if not bot:
-        raise HTTPException(status_code=500, detail="Bot not initialized")
-    
+        raise HTTPException(status_code=500, detail="Бот не ініціалізований")
+
     success = await bot.set_webhook(setup.url)
     return {"ok": success, "webhook_url": setup.url}
 
@@ -116,8 +116,8 @@ async def delete_webhook():
     """Delete webhook (for polling mode)"""
     bot = get_assistant()
     if not bot:
-        raise HTTPException(status_code=500, detail="Bot not initialized")
-    
+        raise HTTPException(status_code=500, detail="Бот не ініціалізований")
+
     success = await bot.delete_webhook()
     return {"ok": success}
 
@@ -128,7 +128,7 @@ async def send_message(msg: MessageRequest):
     bot = get_assistant()
     if not bot:
         raise HTTPException(status_code=500, detail="Bot not initialized")
-    
+
     success = await bot.send_message(
         chat_id=msg.chat_id,
         text=msg.text,
@@ -143,7 +143,7 @@ async def get_ngrok_info():
     bot = get_assistant()
     if not bot or not bot.last_ngrok:
         return {"ngrok": None}
-    
+
     return {
         "ngrok": {
             "ssh_host": bot.last_ngrok.ssh_host,
@@ -160,7 +160,7 @@ async def get_menu():
     bot = get_assistant()
     if not bot:
         return {"menu": None}
-    
+
     return {
         "main_menu": bot.main_menu_keyboard,
         "inline_menu": bot.inline_menu,
