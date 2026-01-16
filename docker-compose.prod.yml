@@ -135,7 +135,7 @@ services:
 
   # Database
   postgres:
-    image: postgres:15-alpine
+    image: timescale/timescaledb:latest-pg15
     container_name: predator-postgres
     restart: unless-stopped
     environment:
@@ -151,7 +151,7 @@ services:
 
   # Redis Cache
   redis:
-    image: redis:7.2-alpine
+    image: redis:7-alpine
     container_name: predator-redis
     restart: unless-stopped
     ports:
