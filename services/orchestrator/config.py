@@ -27,6 +27,8 @@ DEEPSEEK_MODEL = "deepseek-chat"
 OLLAMA_BASE_URL = settings.LLM_OLLAMA_BASE_URL
 OLLAMA_MODEL = settings.OLLAMA_MODEL
 MISTRAL_API_KEY = settings.MISTRAL_API_KEY
+MISTRAL_MODEL = settings.MISTRAL_MODEL
+DEEPSEEK_API_KEY = settings.DEEPSEEK_API_KEY
 
 # ============================================================================
 # TELEGRAM BOT CONTROL PLANE

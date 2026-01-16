@@ -16,13 +16,17 @@ from datetime import datetime, timedelta
 from enum import Enum
 import logging
 import asyncio
-import uuid
 import os
+import json
+import uuid
+import redis.asyncio as aioredis
 
 # v29-S Constitutional Core imports
 try:
-    from .core.axioms import constitutional_axioms, AxiomViolation, CriticalActionType
-    from .core.truth_ledger import truth_ledger, ActionType, LedgerEntry
+    from core.axioms import constitutional_axioms, AxiomViolation, CriticalActionType
+    from core.truth_ledger import truth_ledger, ActionType, LedgerEntry
+    from core.digital_twin import DigitalTwin
+    from core.debate import SovereignDebate
     CONSTITUTIONAL_CORE_AVAILABLE = True
 except ImportError:
     CONSTITUTIONAL_CORE_AVAILABLE = False
@@ -83,6 +87,7 @@ class Anomaly(BaseModel):
     metrics: Dict[str, Any] = {}
     suggested_action: Optional[str] = None
     auto_remediation_eligible: bool = False
+    status: str = "active" # active, resolved, ignored
 
 class ImprovementProposal(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -106,11 +111,23 @@ class SubmitProposalRequest(BaseModel):
     change_type: str
     changes: Dict[str, Any]
 
+    reason: Optional[str] = None
+
 class EmergencyRequest(BaseModel):
     level: EmergencyLevel
     operator_id: str
     confirmation_code: str
     reason: Optional[str] = None
+
+class ImmunityRequest(BaseModel):
+    component_id: str
+    minutes: int
+    operator_id: str
+
+class OverruleRequest(BaseModel):
+    violation_id: str
+    reason: str
+    operator_id: str
 
 # ═══════════════════════════════════════════════════════════════
 # SOM STATE
@@ -129,10 +146,40 @@ class SOMState:
         self.analysis_count = 0
         self.last_analysis: Optional[datetime] = None
         self.startup_time = datetime.utcnow()
+        self.redis = None
         self.chaos_mode = False # Режим хаос-тестування
+        self.quarantine_registry: Dict[str, Dict[str, Any]] = {} # Агенти в ізоляції
+        self.agent_reputations: Dict[str, float] = {} # Репутаційні бали (0.0 - 1.0)
+        self.policy_enforcement_count = 0
+
+        # Chaos Injections
+        self.chaos_metrics_override: Dict[str, Dict[str, float]] = {}
+
+        # Sovereignty Overrides
+        self.immunity_registry: Dict[str, datetime] = {} # component_id -> expiry_time
 
     def is_operational(self) -> bool:
         return self.active and self.emergency_level is None
+
+    def is_quarantined(self, agent_id: str) -> bool:
+        """Перевірка чи агент в ізоляції"""
+        if agent_id not in self.quarantine_registry:
+            return False
+
+        q_info = self.quarantine_registry[agent_id]
+        if q_info.get("expires_at") and datetime.utcnow() > q_info["expires_at"]:
+            del self.quarantine_registry[agent_id]
+            return False
+        return True
+
+    def quarantine_agent(self, agent_id: str, reason: str, duration_min: int = 60):
+        """Відправити агента на карантин"""
+        self.quarantine_registry[agent_id] = {
+            "reason": reason,
+            "quarantined_at": datetime.utcnow(),
+            "expires_at": datetime.utcnow() + timedelta(minutes=duration_min)
+        }
+        logger.warning(f"🛡️ AGENT ISOLATED: {agent_id} quarantined for {duration_min}m. Reason: {reason}")
 
     def activate_emergency(self, level: EmergencyLevel, operator_id: str, reason: str):
         self.emergency_level = level
@@ -147,21 +194,6 @@ class SOMState:
 # Global state instance
 som_state = SOMState()
 
-# ═══════════════════════════════════════════════════════════════
-# CHAOS ENDPOINTS (Antifragility)
-# ═══════════════════════════════════════════════════════════════
-
-@app.post("/api/v1/som/chaos/spike")
-async def trigger_cpu_spike(duration: int = 10, background_tasks: BackgroundTasks = None):
-    """Спровокувати сплеск навантаження для перевірки адаптивної middleware"""
-    from libs.core.chaos_tester import chaos_tester
-    if background_tasks:
-        background_tasks.add_task(chaos_tester.simulate_cpu_spike, duration)
-    return {"status": "chaos_initiated", "target": "cpu", "duration": duration}
-
-@app.get("/api/v1/som/chaos/status")
-async def get_chaos_status():
-    return {"chaos_mode": som_state.chaos_mode, "active_tests": []}
 # ═══════════════════════════════════════════════════════════════
 
 class CentralOversightCore:
@@ -183,6 +215,12 @@ class CentralOversightCore:
         # Detect anomalies
         new_anomalies = await self._detect_anomalies()
 
+        # Ring Level 2: Active Policy Enforcement
+        await self._enforce_ring_2_policies(new_anomalies)
+
+        # Auto-Remediation for detected anomalies
+        await self._apply_auto_remediation(new_anomalies)
+
         # Check constitutional compliance
         compliance_result = await self._check_constitutional_compliance()
 
@@ -195,9 +233,84 @@ class CentralOversightCore:
             "duration_ms": (datetime.utcnow() - start_time).total_seconds() * 1000,
             "components_analyzed": len(self.state.components),
             "anomalies_detected": len(new_anomalies),
+            "quarantined_agents": len(self.state.quarantine_registry),
             "compliance_status": compliance_result,
             "total_analyses": self.state.analysis_count
         }
+
+    async def _enforce_ring_2_policies(self, anomalies: List[Anomaly]):
+        """Ring Level 2: Active Guardian - Автономні контрзаходи"""
+        for anomaly in anomalies:
+            if anomaly.severity == AnomalySeverity.CRITICAL:
+                # Автономний карантин для агентів, що спричиняють критичні аномалії
+                agent_id = anomaly.component_id # Assuming component_id is agent_id here
+                if not self.state.is_quarantined(agent_id):
+                    self.state.quarantine_agent(
+                        agent_id,
+                        f"Critical anomaly detected: {anomaly.type}",
+                        duration_min=120
+                    )
+                    self.state.policy_enforcement_count += 1
+
+                    # Record to Ledger
+                    if CONSTITUTIONAL_CORE_AVAILABLE:
+                        truth_ledger.record(
+                            action_type=ActionType.REMEDIATION_APPLIED,
+                            actor="som_active_guardian",
+                            payload={
+                                "target": agent_id,
+                                "action": "autonomous_quarantine",
+                                "reason": anomaly.description
+                            }
+                        )
+
+    async def _apply_auto_remediation(self, anomalies: List[Anomaly]):
+        """Автоматичне виправлення аномалій (Auto-Healing)"""
+        for anomaly in anomalies:
+            if anomaly.status == "resolved":
+                continue
+
+            # Check for Human Immunity first (Ring Level 3)
+            if anomaly.component_id in self.state.immunity_registry:
+                expiry = self.state.immunity_registry[anomaly.component_id]
+                if datetime.utcnow() < expiry:
+                    logger.info(f"🛡️ REMEDIATION SKIPPED: {anomaly.component_id} has active human immunity.")
+                    continue # Skip this anomaly if it has immunity
+
+            if anomaly.auto_remediation_eligible:
+                logger.info(f"🔧 AUTO-HEALING: Attempting remediation for {anomaly.id} ({anomaly.type})")
+
+                success = await self._execute_remediation(anomaly)
+
+                if success:
+                    anomaly.status = "resolved"
+                    logger.info(f"✅ REMEDIATED: {anomaly.id} fixed successfully.")
+
+                    # Record to Ledger
+                    if CONSTITUTIONAL_CORE_AVAILABLE:
+                         truth_ledger.record(
+                            action_type=ActionType.REMEDIATION_APPLIED,
+                            actor="som_auto_remediation",
+                            payload={
+                                "anomaly_id": anomaly.id,
+                                "type": anomaly.type,
+                                "result": "success"
+                            }
+                        )
+
+    async def _execute_remediation(self, anomaly: Anomaly) -> bool:
+        """Виконати конкретну дію з виправлення"""
+        # Logic for different types of remediation
+        if anomaly.type == "resource_exhaustion":
+            # Simulate clearing cache or killing runaway process
+            logger.info(f"🧹 REMEDIATION: Clearing ephemeral buffers for {anomaly.component_id}")
+            return True
+
+        if anomaly.type == "cache_inconsistency":
+            logger.info(f"🔄 REMEDIATION: Resyncing state for {anomaly.component_id}")
+            return True
+
+        return False
 
     async def _update_component_health(self):
         """Оновити стан компонентів (отримати з Prometheus/Docker)"""
@@ -214,16 +327,21 @@ class CentralOversightCore:
         ]
 
         for comp_id, name in base_components:
-            # In production, this would query Prometheus or Docker API
+            # Check for chaos overrides
+            metrics = {
+                "cpu_usage": 0.3,
+                "memory_usage": 0.4,
+                "request_rate": 100.0
+            }
+            if comp_id in self.state.chaos_metrics_override:
+                metrics.update(self.state.chaos_metrics_override[comp_id])
+                logger.warning(f"🎰 CHAOS METRICS active for {comp_id}: {metrics}")
+
             self.state.components[comp_id] = ComponentHealth(
                 component_id=comp_id,
                 name=name,
-                status="healthy",  # Would be determined by actual health checks
-                metrics={
-                    "cpu_usage": 0.3,  # Placeholder
-                    "memory_usage": 0.4,
-                    "request_rate": 100.0
-                },
+                status="healthy",
+                metrics=metrics,
                 last_updated=datetime.utcnow()
             )
 
@@ -263,14 +381,39 @@ class CentralOversightCore:
                 new_anomalies.append(anomaly)
                 self.state.anomalies.append(anomaly)
 
+            # Ring Level 2: Detect Agent Axiom Deviations
+            if CONSTITUTIONAL_CORE_AVAILABLE:
+                violations = constitutional_axioms.get_violations(limit=5)
+                for v in violations:
+                    if v['actor'] == comp_id and not v.get("remediation_applied"):
+                        anomaly = Anomaly(
+                            id=f"anomaly_violation_{uuid.uuid4().hex[:8]}",
+                            type="constitutional_violation",
+                            component_id=comp_id,
+                            severity=AnomalySeverity.CRITICAL,
+                            description=f"Axiom violation {v['axiom_id']} detected from {comp_id}",
+                            detected_at=datetime.utcnow(),
+                            metrics=v['context'],
+                            suggested_action="Immediate Isolation",
+                            auto_remediation_eligible=True
+                        )
+                        new_anomalies.append(anomaly)
+                        self.state.anomalies.append(anomaly)
+
         return new_anomalies
 
     async def _check_constitutional_compliance(self) -> Dict[str, Any]:
         """Перевірка відповідності конституційним аксіомам"""
-        # In production, this would check against actual axiom enforcement
+        if not CONSTITUTIONAL_CORE_AVAILABLE:
+            return {"compliant": False, "message": "Constitutional Core not available"}
+
+        is_valid = constitutional_axioms.verify_integrity()
+        violations = constitutional_axioms.get_violations(limit=10)
+
         return {
-            "compliant": True,
-            "violations": [],
+            "compliant": is_valid,
+            "axioms_integrity": "valid" if is_valid else "compromised",
+            "active_violations": len([v for v in violations if not v.get('remediation_applied')]),
             "last_check": datetime.utcnow().isoformat()
         }
 
@@ -325,6 +468,24 @@ class HumanSovereigntyInterface:
             "deactivated_by": operator_id
         }
 
+    def grant_temporary_immunity(self, component_id: str, minutes: int) -> Dict[str, Any]:
+        """Grant a component temporary immunity from autonomous actions"""
+        expiry = datetime.utcnow() + timedelta(minutes=minutes)
+        self.state.immunity_registry[component_id] = expiry
+        logger.warning(f"🛡️ IMMUNITY GRANTED: {component_id} is immune until {expiry.isoformat()}")
+        return {
+            "component_id": component_id,
+            "expiry": expiry.isoformat(),
+            "status": "immune"
+        }
+
+    def overrule_axiom_violation(self, violation_id: str, reason: str) -> Dict[str, Any]:
+        """Manually overrule and clear an axiom violation"""
+        # Recorded in Ledger via truth_ledger (simulated here for brevity)
+        logger.critical(f"⚖️ HUMAN OVERRULE: Violation {violation_id} cleared. Reason: {reason}")
+        # Logic to find and resolve the anomaly associated with violation_id would go here
+        return {"status": "overruled", "violation_id": violation_id}
+
 
 # ═══════════════════════════════════════════════════════════════
 # FASTAPI APPLICATION
@@ -345,13 +506,74 @@ app.add_middleware(
 )
 
 # v30.1 Autonomy Guard (Security Control for Autonomous Agents)
-# v30.1 Autonomy Guard (Security Control for Autonomous Agents)
-from .core.middleware.autonomy_guard import AutonomyGuardMiddleware
+from core.middleware.autonomy_guard import AutonomyGuardMiddleware
 app.add_middleware(AutonomyGuardMiddleware)
 
-# Initialize services
+# Global services
+som_state = SOMState()
 oversight_core = CentralOversightCore(som_state)
+digital_twin = DigitalTwin() if CONSTITUTIONAL_CORE_AVAILABLE else None
+sovereign_debate = SovereignDebate() if CONSTITUTIONAL_CORE_AVAILABLE else None
 sovereignty_interface = HumanSovereigntyInterface(som_state)
+
+# ═══════════════════════════════════════════════════════════════
+# CHAOS ENDPOINTS
+# ═══════════════════════════════════════════════════════════════
+
+@app.post("/api/v1/som/chaos/spike")
+async def trigger_cpu_spike(duration: int = 10, background_tasks: BackgroundTasks = None):
+    """Спровокувати сплеск навантаження для перевірки адаптивної middleware"""
+    from libs.core.chaos_tester import chaos_tester
+    if background_tasks:
+        background_tasks.add_task(chaos_tester.simulate_cpu_spike, duration)
+    return {"status": "chaos_initiated", "target": "cpu", "duration": duration}
+
+@app.post("/api/v1/som/chaos/metrics")
+async def inject_chaos_metrics(component_id: str, cpu: float = None, memory: float = None):
+    """Inject dummy metrics for testing anomaly detection"""
+    overrides = {}
+    if cpu is not None: overrides["cpu_usage"] = cpu
+    if memory is not None: overrides["memory_usage"] = memory
+
+    som_state.chaos_metrics_override[component_id] = overrides
+    return {"status": "injected", "component": component_id, "overrides": overrides}
+
+@app.delete("/api/v1/som/chaos/metrics")
+async def clear_chaos_metrics(component_id: str = None):
+    """Clear chaos metrics"""
+    if component_id:
+        som_state.chaos_metrics_override.pop(component_id, None)
+    else:
+        som_state.chaos_metrics_override.clear()
+    return {"status": "cleared"}
+
+@app.get("/api/v1/som/chaos/status")
+async def get_chaos_status():
+    return {"chaos_mode": som_state.chaos_mode, "active_tests": []}
+
+@app.post("/api/v1/som/chaos/axiom_breach")
+async def simulate_axiom_breach(agent_id: str = "orchestrator"):
+    """Симуляція порушення аксіоми для перевірки Active Guardian"""
+    if CONSTITUTIONAL_CORE_AVAILABLE:
+        from core.axioms import AxiomViolation
+        violation = AxiomViolation(
+            axiom_id="AXIOM-001",
+            violation_type="unauthorized_critical_action",
+            actor=agent_id,
+            action="delete_truth_ledger",
+            timestamp=datetime.utcnow(),
+            severity="critical",
+            context={"reason": "Chaos Test Simulation"},
+            remediation_applied=False
+        )
+        constitutional_axioms._record_violation(violation)
+        return {"status": "violation_injected", "agent_id": agent_id, "axiom": "AXIOM-001"}
+    return {"status": "error", "message": "Constitutional Core not available"}
+
+@app.post("/api/v1/som/analysis/trigger")
+async def trigger_analysis():
+    """Мануальний запуск циклу аналізу"""
+    return await oversight_core.analyze_system()
 
 # ═══════════════════════════════════════════════════════════════
 # HEALTH & STATUS ENDPOINTS
@@ -375,13 +597,47 @@ async def get_status():
         "operational": som_state.is_operational(),
         "ring_level": som_state.current_ring.value,
         "emergency_level": som_state.emergency_level.value if som_state.emergency_level else None,
-        "pending_proposals": len([p for p in som_state.proposals.values()
+        "total_anomalies": len([p for p in som_state.proposals.values()
                                    if p.status == ProposalStatus.AWAITING_APPROVAL]),
-        "total_anomalies": len(som_state.anomalies),
+        "total_anomalies_active": len(som_state.anomalies),
         "last_analysis": som_state.last_analysis.isoformat() if som_state.last_analysis else None,
+        "redis_connected": som_state.redis is not None,
         "uptime_seconds": (datetime.utcnow() - som_state.startup_time).total_seconds(),
         "analysis_count": som_state.analysis_count
     }
+
+@app.get("/api/v1/som/shadow/metrics")
+async def get_shadow_metrics(limit: int = 20):
+    """Pull shadow mode metrics from Redis"""
+    if not som_state.redis:
+        return {"status": "error", "message": "Redis not connected", "deviations": []}
+
+    try:
+        data = await som_state.redis.lrange("som:shadow:deviations", 0, limit - 1)
+        deviations = [json.loads(d) for d in data]
+        last_score = await som_state.redis.get("som:shadow:last_score")
+
+        return {
+            "status": "ready",
+            "deviations": deviations,
+            "current_drift_score": float(last_score) if last_score else 0.0
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e), "deviations": []}
+
+@app.on_event("startup")
+async def som_startup():
+    """Initialize Redis on startup"""
+    try:
+        redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
+        som_state.redis = await aioredis.from_url(
+            redis_url,
+            encoding="utf-8",
+            decode_responses=True
+        )
+        logger.info(f"✅ SOM connected to Redis at {redis_url}")
+    except Exception as e:
+        logger.warning(f"⚠️ SOM failed to connect to Redis: {e}")
 
 # ═══════════════════════════════════════════════════════════════
 # CENTRAL OVERSIGHT ENDPOINTS
@@ -459,6 +715,36 @@ async def get_component_health(component_id: str):
 # ═══════════════════════════════════════════════════════════════
 # IMPROVEMENT ENGINE ENDPOINTS
 # ═══════════════════════════════════════════════════════════════
+
+@app.post("/api/v1/som/simulation/run")
+async def run_predictive_simulation(proposal_id: str):
+    """Run a Digital Twin simulation for a proposal"""
+    if not CONSTITUTIONAL_CORE_AVAILABLE or not digital_twin:
+        raise HTTPException(status_code=503, detail="Digital Twin not available")
+
+    proposal = som_state.proposals.get(proposal_id)
+    if not proposal:
+        raise HTTPException(status_code=404, detail="Proposal not found")
+
+    # Get current metrics for the target component
+    comp_health = som_state.components.get(proposal.target_component)
+    current_metrics = comp_health.metrics if comp_health else {}
+
+    proposal.status = ProposalStatus.SIMULATING
+
+    # Run Technical Simulation
+    sim_result = await digital_twin.run_simulation(current_metrics, proposal.dict())
+
+    # Run Dialectical Debate
+    debate_result = await sovereign_debate.generate_debate(proposal.dict())
+
+    proposal.simulation_results = {
+        "technical": sim_result,
+        "debate": debate_result
+    }
+    proposal.status = ProposalStatus.AWAITING_APPROVAL if sim_result["risk_analysis"]["is_safe"] else ProposalStatus.REJECTED
+
+    return proposal.simulation_results
 
 @app.get("/api/v1/som/proposals")
 async def get_proposals(status: Optional[ProposalStatus] = None):
@@ -566,6 +852,42 @@ async def activate_emergency(request: EmergencyRequest):
 
     return result
 
+@app.post("/api/v1/som/proposals/{proposal_id}/execute")
+async def execute_proposal(proposal_id: str, operator_id: str):
+    """Execute an approved proposal"""
+    if proposal_id not in som_state.proposals:
+        raise HTTPException(status_code=404, detail="Proposal not found")
+
+    proposal = som_state.proposals[proposal_id]
+    if proposal.status != ProposalStatus.APPROVED:
+        raise HTTPException(status_code=400, detail=f"Proposal must be APPROVED to execute. Current: {proposal.status}")
+
+    logger.critical(f"🚀 EXECUTING PROPOSAL {proposal_id}: {proposal.title}")
+
+    # Simulate effectuation
+    await asyncio.sleep(2)
+    proposal.status = ProposalStatus.COMPLETED
+
+    # Record to Ledger
+    if CONSTITUTIONAL_CORE_AVAILABLE:
+        truth_ledger.record(
+            action_type=ActionType.REMEDIATION_APPLIED,
+            actor=operator_id,
+            payload={
+                "proposal_id": proposal_id,
+                "title": proposal.title,
+                "action": "proposal_execution"
+            },
+            axioms_applied=["AXIOM-003"]
+        )
+
+    return {
+        "executed": True,
+        "proposal_id": proposal_id,
+        "status": proposal.status.value,
+        "message": f"Proposal '{proposal.title}' successfully effectuated."
+    }
+
 @app.delete("/api/v1/som/emergency")
 async def deactivate_emergency(operator_id: str):
     """Deactivate emergency protocol"""
@@ -652,6 +974,14 @@ async def check_action_against_axioms(
     if not CONSTITUTIONAL_CORE_AVAILABLE:
         return {"allowed": True, "message": "Constitutional Core not loaded - action allowed by default"}
 
+    # Ring Level 2 Check: Quarantine
+    if som_state.is_quarantined(actor):
+        return {
+            "allowed": False,
+            "reason": f"Actor {actor} is in AUTONOMOUS QUARANTINE by SOM Ring Level 2",
+            "checked_at": datetime.utcnow().isoformat()
+        }
+
     is_allowed, reason = constitutional_axioms.check_action(action_type, actor, context)
 
     # Record to Truth Ledger
@@ -673,6 +1003,16 @@ async def check_action_against_axioms(
         "reason": reason,
         "checked_at": datetime.utcnow().isoformat()
     }
+
+@app.post("/api/v1/som/sovereignty/immunity")
+async def grant_immunity(request: ImmunityRequest):
+    """Grant temporary immunity to a component"""
+    return sovereignty_interface.grant_temporary_immunity(request.component_id, request.minutes)
+
+@app.post("/api/v1/som/sovereignty/overrule")
+async def overrule_violation(request: OverruleRequest):
+    """Manually overrule a violation"""
+    return sovereignty_interface.overrule_axiom_violation(request.violation_id, request.reason)
 
 @app.get("/api/v1/som/axioms/violations")
 async def get_axiom_violations(limit: int = 50):

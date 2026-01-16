@@ -9,6 +9,8 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+import asyncio
 import uvicorn
 import os
 import logging
@@ -20,15 +22,33 @@ try:
     from .modules.som.app.main import app as som_app
     from .modules.rce.app.main import app as rce_app
     from .modules.vpc.app.main import app as vpc_app
+    # gRPC Server
+    from app.grpc_server import serve as start_grpc_server
 except ImportError as e:
     logging.error(f"❌ Failed to import modules: {e}")
     # Fallback placeholders
     arbiter_app = ledger_app = som_app = rce_app = vpc_app = FastAPI()
+    async def start_grpc_server(port): pass
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    logging.info("🚀 Starting Constitutional Core gRPC Server...")
+    grpc_task = asyncio.create_task(start_grpc_server(port=50051))
+    yield
+    # Shutdown
+    logging.info("🛑 Stopping gRPC Server...")
+    grpc_task.cancel()
+    try:
+        await grpc_task
+    except asyncio.CancelledError:
+        pass
 
 app = FastAPI(
     title="Predator Constitutional Core",
     description="Unified Governance & Security Service",
-    version="28.6.0"
+    version="28.6.0",
+    lifespan=lifespan
 )
 
 app.add_middleware(

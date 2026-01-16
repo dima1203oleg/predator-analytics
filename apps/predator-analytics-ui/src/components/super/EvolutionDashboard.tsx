@@ -16,6 +16,7 @@ import {
     Database,
     Cpu
 } from 'lucide-react';
+import { AutonomousLearningStack } from './AutonomousLearningStack';
 
 const EvolutionDashboard: React.FC = () => {
     const [stats, setStats] = useState<any>(null);
@@ -134,10 +135,10 @@ const EvolutionDashboard: React.FC = () => {
                 </TacticalCard>
             </div>
 
-            {/* Real-Time Evolution Logs */}
-            <div className="col-span-12 md:col-span-8 flex flex-col">
+            {/* Deep Experience Ledger */}
+            <div className="col-span-12 md:col-span-4 flex flex-col">
                 <TacticalCard title="Deep Experience Ledger" icon={<Activity className="w-4 h-4 text-blue-400" />}>
-                    <div className="h-[380px] overflow-y-auto pr-2 space-y-2 font-mono scrollbar-hide">
+                    <div className="h-[450px] overflow-y-auto pr-2 space-y-2 font-mono scrollbar-hide">
                         <AnimatePresence mode="popLayout">
                             {recentExperience.map((exp: any, i: number) => (
                                 <motion.div
@@ -157,10 +158,6 @@ const EvolutionDashboard: React.FC = () => {
                                         <p className="text-xs text-white/80 leading-relaxed uppercase">
                                             {exp.data?.message || exp.data?.description || JSON.stringify(exp.data)}
                                         </p>
-                                        <div className="mt-2 flex gap-2">
-                                            <span className="text-[8px] px-1.5 py-0.5 bg-green-500/20 text-green-400 rounded">EXPERIENCE GAINED</span>
-                                            <span className="text-[8px] px-1.5 py-0.5 bg-white/10 text-white/40 rounded italic">v{exp.version}</span>
-                                        </div>
                                     </div>
                                 </motion.div>
                             ))}
@@ -168,11 +165,16 @@ const EvolutionDashboard: React.FC = () => {
                         {recentExperience.length === 0 && (
                             <div className="flex flex-col items-center justify-center h-full text-white/20 uppercase tracking-widest text-xs">
                                 <Activity className="w-12 h-12 mb-4 animate-pulse" />
-                                Waiting for Evolution Experience...
+                                No experience recorded...
                             </div>
                         )}
                     </div>
                 </TacticalCard>
+            </div>
+
+            {/* Autonomous Learning Stack */}
+            <div className="col-span-12 md:col-span-4">
+                <AutonomousLearningStack />
             </div>
         </div>
     );

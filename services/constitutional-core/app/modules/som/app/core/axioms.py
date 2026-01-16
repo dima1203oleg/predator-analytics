@@ -11,6 +11,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 import hashlib
 import logging
+import uuid
 
 logger = logging.getLogger("som.axioms")
 
@@ -59,11 +60,17 @@ class AxiomViolation:
     action: str
     timestamp: datetime
     severity: str  # critical, high, medium, low
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
     context: Dict[str, Any] = field(default_factory=dict)
     remediation_applied: bool = False
+    resolved: bool = False
+    resolved_at: Optional[datetime] = None
+    resolved_by: Optional[str] = None
+    resolution_reason: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
+            "id": self.id,
             "axiom_id": self.axiom_id,
             "violation_type": self.violation_type,
             "actor": self.actor,
@@ -71,7 +78,11 @@ class AxiomViolation:
             "timestamp": self.timestamp.isoformat(),
             "severity": self.severity,
             "context": self.context,
-            "remediation_applied": self.remediation_applied
+            "remediation_applied": self.remediation_applied,
+            "resolved": self.resolved,
+            "resolved_at": self.resolved_at.isoformat() if self.resolved_at else None,
+            "resolved_by": self.resolved_by,
+            "resolution_reason": self.resolution_reason
         }
 
 
@@ -272,6 +283,18 @@ class ConstitutionalAxioms:
     def get_violations(self, limit: int = 100) -> List[Dict[str, Any]]:
         """Отримання останніх порушень"""
         return [v.to_dict() for v in self._violations[-limit:]]
+
+    def resolve_violation(self, violation_id: str, actor: str, reason: str) -> bool:
+        """Ручне вирішення (Overrule) порушення аксіоми"""
+        for v in self._violations:
+            if v.id == violation_id:
+                v.resolved = True
+                v.resolved_at = datetime.utcnow()
+                v.resolved_by = actor
+                v.resolution_reason = reason
+                logger.warning(f"⚖️ Axiom violation {violation_id} RESOLVED by {actor}: {reason}")
+                return True
+        return False
 
     @property
     def genesis_hash(self) -> str:

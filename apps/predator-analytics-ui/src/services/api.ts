@@ -517,6 +517,58 @@ export const api = {
             return (await apiClient.post('/e2e/reports/generate', { run_id: runId, format })).data;
         }
     },
+    // --- SOM (Sovereign Observer Module) v29-S ---
+    som: {
+        getStatus: async () => {
+            return (await apiClient.get('/som/status')).data;
+        },
+        getAnomalies: async (limit: number = 50) => {
+            return (await apiClient.get('/som/anomalies', { params: { limit } })).data;
+        },
+        getProposals: async (status?: string) => {
+            return (await apiClient.get('/som/proposals', { params: { status } })).data;
+        },
+        getProposalDetail: async (id: string) => {
+            return (await apiClient.get(`/som/proposals/${id}`)).data;
+        },
+        approveProposal: async (id: string, operatorId: string) => {
+            return (await apiClient.post(`/som/proposals/${id}/approve`, null, { params: { approver_id: operatorId } })).data;
+        },
+        executeProposal: async (id: string, operatorId: string) => {
+            return (await apiClient.post(`/som/proposals/${id}/execute`, null, { params: { operator_id: operatorId } })).data;
+        },
+        getShadowMetrics: async () => {
+            return (await apiClient.get('/som/shadow/metrics')).data;
+        },
+        activateEmergency: async (level: number, operatorId: string, code: string, reason?: string) => {
+            return (await apiClient.post('/som/emergency', {
+                level,
+                operator_id: operatorId,
+                confirmation_code: code,
+                reason
+            })).data;
+        },
+        deactivateEmergency: async (operatorId: string) => {
+            return (await apiClient.delete('/som/emergency', { params: { operator_id: operatorId } })).data;
+        },
+        grantImmunity: async (componentId: string, minutes: number, operatorId: string) => {
+            return (await apiClient.post('/som/sovereignty/immunity', {
+                component_id: componentId,
+                minutes,
+                operator_id: operatorId
+            })).data;
+        },
+        getAxiomViolations: async (limit: number = 50) => {
+            return (await apiClient.get('/som/axioms/violations', { params: { limit } })).data;
+        },
+        overruleAxiom: async (violationId: string, reason: string, operatorId: string) => {
+            return (await apiClient.post('/som/sovereignty/overrule', {
+                violation_id: violationId,
+                reason,
+                operator_id: operatorId
+            })).data;
+        }
+    },
     v25: {
         getLiveQueues: async () => {
             return (await v25Client.get('/monitoring/queues')).data;
@@ -680,7 +732,7 @@ export const api = {
                      return (await v25Client.get('/azr/constitution')).data;
                  }
              }
-        }
+        },
     },
 
     // --- DOCUMENTS (Gold Layer Registry) ---

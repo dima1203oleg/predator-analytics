@@ -177,15 +177,20 @@ def process_file_task(**kwargs):
 @shared_task(name="tasks.workers.process_staging_data", queue="etl")
 def process_staging_data(staging_ids: list):
     """
-    Processor Agent: Transform raw data from staging and move to gold schema
+    Processor Agent: Transform raw data from staging and move to gold schema.
+    Includes Semantic Deduplication via UnifiedMemoryManager.
     """
     with RequestLogger(logger, "staging_processing", records_count=len(staging_ids)) as req_logger:
         async def run_processor():
+            # Lazy import to avoid circular dependencies
+            from libs.core.memory.unified_memory import memory_manager
+
             db_url = settings.CLEAN_DATABASE_URL
             conn = await asyncpg.connect(db_url)
 
             try:
                 processed_count = 0
+                skipped_count = 0
                 gold_ids = []
 
                 for staging_id in staging_ids:
@@ -232,6 +237,23 @@ def process_staging_data(staging_ids: list):
                         published_date = raw_content.get("date")
                         category = raw_content.get("category", "general")
 
+                    # SEMANTIC DEDUPLICATION (Smart ETL)
+                    # Check if similar content exists in memory
+                    is_duplicate = False
+                    try:
+                        similar_docs = await memory_manager.recall(content, limit=1)
+                        if similar_docs and similar_docs[0]['score'] > 0.95:
+                            logger.info(f"♻️ Deduplication: Found similar doc with score {similar_docs[0]['score']}")
+                            is_duplicate = True
+                    except Exception as e:
+                        logger.warning(f"Deduplication check failed: {e}")
+
+                    if is_duplicate:
+                        # Mark as processed but don't insert to gold
+                        await conn.execute("UPDATE staging.raw_data SET processed = TRUE WHERE id = $1", staging_id)
+                        skipped_count += 1
+                        continue
+
                     # Insert into gold.documents
                     gold_id = await conn.fetchval("""
                         INSERT INTO gold.documents
@@ -248,7 +270,7 @@ def process_staging_data(staging_ids: list):
                     gold_ids.append(str(gold_id))
                     processed_count += 1
 
-                req_logger.info("staging_processing_completed", processed_count=processed_count)
+                req_logger.info("staging_processing_completed", processed=processed_count, skipped=skipped_count)
 
                 # Trigger indexer for new gold records
                 if gold_ids:
@@ -257,6 +279,7 @@ def process_staging_data(staging_ids: list):
                 return {
                     "status": "success",
                     "processed_count": processed_count,
+                    "skipped_duplicates": skipped_count,
                     "gold_ids": gold_ids
                 }
 
@@ -276,26 +299,19 @@ def process_staging_data(staging_ids: list):
 @shared_task(name="tasks.workers.index_gold_documents", queue="etl")
 def index_gold_documents(gold_ids: list):
     """
-    Indexer Agent: Index gold.documents to OpenSearch and Qdrant
+    Indexer Agent: Index gold.documents to Unified Memory Layers.
+    Replaces legacy OpenSearch/Qdrant separate services.
     """
     with RequestLogger(logger, "gold_indexing", records_count=len(gold_ids)) as req_logger:
         async def run_indexer():
-            from app.services.opensearch_indexer import OpenSearchIndexer
-            from app.services.embedding_service import get_embedding_service
-            from app.services.qdrant_service import QdrantService
+            from libs.core.memory.unified_memory import memory_manager
 
-            os_indexer = None
             conn = None
             try:
-                os_indexer = OpenSearchIndexer()
-                embedder = get_embedding_service()
-                qdrant = QdrantService()
-
                 db_url = settings.CLEAN_DATABASE_URL
                 conn = await asyncpg.connect(db_url)
 
-                indexed_os = 0
-                indexed_qd = 0
+                indexed_count = 0
 
                 for gold_id in gold_ids:
                     # Fetch gold record
@@ -308,55 +324,34 @@ def index_gold_documents(gold_ids: list):
                     if not row:
                         continue
 
-                    # Prepare doc for indexing
-                    doc = {
-                        "id": str(row["id"]),
-                        "title": row["title"],
-                        "content": row["content"],
-                        "category": row["category"],
-                        "source": row["source"],
-                        "date": row["published_date"].isoformat() if row["published_date"] else None
-                    }
+                    # Prepare content for memory
+                    # Combining title and content for rich context
+                    memory_content = f"Title: {row['title']}\nContent: {row['content']}"
 
-                    # Validating doc against contract (Optional but recommended for consistency)
-                    # We wrap it in a list because IndexingTaskPayload expects 'documents' list
-                    # strict_doc = IndexingTaskPayload(
-                    #     documents=[doc],
-                    #     index_name="temp",
-                    #     collection_name="temp"
-                    # ).documents[0]
-                    # Note: We skip strict validation here to avoid overhead for every doc,
-                    # but the structure is aligned with the contract.
+                    # Tags for filtering
+                    tags = [
+                        f"source:{row['source'] or 'unknown'}",
+                        f"category:{row['category'] or 'general'}",
+                        f"doc_id:{row['id']}"
+                    ]
+                    if row['published_date']:
+                        tags.append(f"year:{row['published_date'].year}")
 
-                    # Index to OpenSearch
-                    os_success = await os_indexer.index_document(doc)
-                    if os_success:
-                        indexed_os += 1
-
-                    # Index to Qdrant (Vector DB)
-                    # 1. Generate embedding
-                    vector = await embedder.get_embedding(f"{doc['title']} {doc['content']}")
-
-                    # 2. Upsert to Qdrant
-                    qd_success = await qdrant.upsert_document(
-                        collection_name=f"predator_{doc['category']}",
-                        doc_id=doc['id'],
-                        vector=vector,
-                        payload=doc
+                    # Store in Unified Memory (handles Redis, Qdrant, OpenSearch automagically)
+                    memory_id = await memory_manager.store(
+                        content=memory_content,
+                        role="document",
+                        tags=tags
                     )
-                    if qd_success:
-                        indexed_qd += 1
 
-                req_logger.info(
-                    "gold_indexing_completed",
-                    opensearch_count=indexed_os,
-                    qdrant_count=indexed_qd
-                )
+                    if memory_id:
+                        indexed_count += 1
+
+                req_logger.info("gold_indexing_completed", indexed_count=indexed_count)
 
                 return {
                     "status": "success",
-                    "indexed_opensearch": indexed_os,
-                    "indexed_qdrant": indexed_qd
+                    "indexed_count": indexed_count
                 }
 
             except Exception as e:
@@ -365,8 +360,6 @@ def index_gold_documents(gold_ids: list):
             finally:
                 if conn:
                     await conn.close()
-                if os_indexer:
-                    await os_indexer.close()
 
         return asyncio.run(run_indexer())
 
