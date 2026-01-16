@@ -1,7 +1,7 @@
-fastapi==0.115.0
-uvicorn==0.30.6
-pydantic==2.10.6
-pydantic-settings==2.7.1
+fastapi>=0.110.0
+uvicorn>=0.30.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
 aiohttp>=3.10.0
 pyyaml==6.0.2
 requests==2.32.3
@@ -75,14 +75,14 @@ cryptography>=41.0.0       # Token encryption
 structlog>=24.0.0          # WinSURF: Structured Logging
 python-json-logger>=2.0.7  # WinSURF: JSON Logs
 jaeger-client>=4.8.0       # Distributed tracing (optional)
-opentelemetry-api==1.30.0
-opentelemetry-sdk==1.30.0
-opentelemetry-proto==1.30.0
-opentelemetry-instrumentation-fastapi==0.51b0
-opentelemetry-instrumentation-sqlalchemy==0.51b0
-opentelemetry-instrumentation-httpx==0.51b0
-opentelemetry-exporter-otlp==1.30.0
-opentelemetry-exporter-otlp-proto-grpc==1.30.0
+opentelemetry-api>=1.20.0
+opentelemetry-sdk>=1.20.0
+opentelemetry-proto>=1.20.0
+opentelemetry-instrumentation-fastapi>=0.40b0
+opentelemetry-instrumentation-sqlalchemy>=0.40b0
+opentelemetry-instrumentation-httpx>=0.40b0
+opentelemetry-exporter-otlp>=1.20.0
+opentelemetry-exporter-otlp-proto-grpc>=1.20.0
 protobuf==5.29.3
 importlib-metadata==7.2.1  # Fixed for Aider
 
@@ -128,6 +128,6 @@ pyarrow>=14.0.0
 great_expectations>=0.18.0
 
 # ════ CLI Agents v25.0 (Multi-Agent Self-Improvement) ════
-aider-chat>=0.60.0
+aider-chat
 gitpython>=3.1.40
 PyYAML>=6.0.2
