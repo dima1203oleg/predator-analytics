@@ -331,8 +331,12 @@ app.add_middleware(
 )
 
 # v30.1 Autonomy Guard (Security Control for Autonomous Agents)
-from app.core.middleware.autonomy_guard import AutonomyGuardMiddleware
-app.add_middleware(AutonomyGuardMiddleware)
+try:
+    from app.core.middleware.autonomy_guard import AutonomyGuardMiddleware
+    app.add_middleware(AutonomyGuardMiddleware)
+except ImportError:
+    logger.warning("⚠️ AutonomyGuardMiddleware not available - skipping")
+
 
 # Initialize services
 oversight_core = CentralOversightCore(som_state)
