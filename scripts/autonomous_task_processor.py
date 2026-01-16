@@ -69,7 +69,16 @@ async def process_todos():
 
     logger.info(f"🏁 Autonomous processing finished. Tasks handled: {tasks_processed}")
 
+def load_env():
+    env_file = PROJECT_ROOT / ".env"
+    if env_file.exists():
+        for line in env_file.read_text().splitlines():
+            if line and not line.startswith("#") and "=" in line:
+                key, value = line.split("=", 1)
+                os.environ[key.strip()] = value.strip()
+
 if __name__ == "__main__":
+    load_env()
     # Ensure SOVEREIGN_AUTO_APPROVE is set for this process
     os.environ["SOVEREIGN_AUTO_APPROVE"] = "true"
     asyncio.run(process_todos())
