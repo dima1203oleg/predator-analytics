@@ -135,17 +135,21 @@ async def summarize_text(request: SummarizeRequest):
             word_count=word_count
         )
 
-    except ImportError as e:
-        logger.error(f"Summarizer not available: {e}")
-        raise HTTPException(
-            status_code=503,
-            detail="Summarizer service not available. Install transformers."
-        )
-    except HTTPException:
-        raise
     except Exception as e:
-        logger.error(f"Summarization failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.warning(f"Локальна саммаризація недоступна: {e}. Використовуємо Gemini...")
+        try:
+            from services.orchestrator.agents.v25_sovereign_registry import sovereign_orchestrator
+            prompt = f"Зроби стислий підсумок (summary) наступного тексту українською мовою:\n{request.text[:4000]}"
+            summary = await sovereign_orchestrator.gemini_agent.chat(prompt)
+
+            return SummarizeResponse(
+                summary=summary,
+                model="gemini-1.5-flash-free",
+                word_count=len(summary.split())
+            )
+        except Exception as ai_e:
+            logger.error(f"ШІ-саммаризація також провалилася: {ai_e}")
+            raise HTTPException(status_code=500, detail="Служба саммаризації недоступна")
 
 
 @router.get("/health")
