@@ -1,0 +1,22 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: predator-chaos-engine
+  namespace: predator-analytics
+spec:
+  appinfo:
+    appns: "predator-analytics"
+    applabel: "app=backend"
+    appkind: "deployment"
+  chaosServiceAccount: predator-chaos-sa
+  experiments:
+    - name: pod-delete
+      spec:
+        components:
+          env:
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
+            - name: CHAOS_INTERVAL
+              value: "10"
+            - name: FORCE
+              value: "true"

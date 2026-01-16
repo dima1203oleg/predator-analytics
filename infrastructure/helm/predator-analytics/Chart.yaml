@@ -1,0 +1,15 @@
+apiVersion: v2
+name: predator-analytics
+description: Helm чарт для розгортання Predator Analytics v28.5 (Українська Версія)
+type: application
+version: 28.5.0
+appVersion: "28.5.0"
+dependencies:
+  - name: postgresql
+    version: 12.5.6
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: redis
+    version: 17.11.3
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
