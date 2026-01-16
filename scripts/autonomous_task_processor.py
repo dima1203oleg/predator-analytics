@@ -23,10 +23,31 @@ from libs.core.structured_logger import get_logger
 logger = get_logger("predator.autonomous_processor")
 
 TODO_FILE = PROJECT_ROOT / "EXECUTION_TODO.md"
+STRATEGIC_OPTIMIZER = PROJECT_ROOT / "scripts/strategic_optimizer.py"
+
+async def run_strategic_optimization():
+    """Запуск стратегічного планування перед виконанням завдань"""
+    logger.info("📡 Запуск стратегічного планувальника...")
+    try:
+        process = await asyncio.create_subprocess_exec(
+            sys.executable, str(STRATEGIC_OPTIMIZER),
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        stdout, stderr = await process.communicate()
+        if process.returncode == 0:
+            logger.info("🧠 Стратегічне планування завершено.")
+        else:
+            logger.warning(f"⚠️ Оптимізатор завершився з кодом {process.returncode}: {stderr.decode()}")
+    except Exception as e:
+        logger.error(f"❌ Не вдалося запустити оптимізатор: {e}")
 
 async def process_todos():
+    # Крок 0: Стратегічне планування
+    await run_strategic_optimization()
+
     if not TODO_FILE.exists():
-        logger.error(f"TODO file not found at {TODO_FILE}")
+        logger.error(f"Файл TODO не знайдено за шляхом: {TODO_FILE}")
         return
 
     content = TODO_FILE.read_text(encoding="utf-8")
@@ -48,26 +69,25 @@ async def process_todos():
 
         full_task_desc = f"TASK {task_num}: {task_title}\nDETAILS:\n{task_details}"
 
-        logger.info(f"🚀 Processing Task {task_num}: {task_title}")
+        logger.info(f"🚀 Обробка завдання {task_num}: {task_title}")
 
         try:
-            # Execute via Sovereign Orchestrator
+            # Виконання через Sovereign Orchestrator
             result = await sovereign_orchestrator.execute_comprehensive_cycle(full_task_desc)
 
             if result.get("status") == "success":
-                logger.info(f"✅ Task {task_num} completed successfully!")
+                logger.info(f"✅ Завдання {task_num} завершено успішно!")
                 tasks_processed += 1
-                # Mark as completed in the file (optional, but good for tracking)
-                # For now, we trust the agent's internal state and git commits.
+                # Позначення як виконане (опціонально)
             else:
-                logger.warning(f"⚠️ Task {task_num} failed: {result.get('message')}")
+                logger.warning(f"⚠️ Завдання {task_num} провалено: {result.get('message')}")
 
         except Exception as e:
-            logger.error(f"❌ Error processing task {task_num}: {e}")
-            # Continue to next task in God Mode
+            logger.error(f"❌ Помилка під час обробки завдання {task_num}: {e}")
+            # Продовжуємо наступне завдання у режимі God Mode
             continue
 
-    logger.info(f"🏁 Autonomous processing finished. Tasks handled: {tasks_processed}")
+    logger.info(f"🏁 Автономна обробка завершена. Оброблено завдань: {tasks_processed}")
 
 def load_env():
     env_file = PROJECT_ROOT / ".env"

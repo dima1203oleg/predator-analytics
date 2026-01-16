@@ -42,7 +42,10 @@ class Settings(BaseSettings):
 
     # --- CONSTITUTIONAL CORE (v26.2) ---
     CONSTITUTION_HASH: str = "3f05c27896098e41471c246fb39e6a0dd43f7b11ff7c46db8f0195d3d3cae3cd"
-    CONSTITUTION_PATH: str = "/app/docs/v26_CONSTITUTION.md"
+    @property
+    def CONSTITUTION_PATH(self) -> str:
+        base = "/app" if os.path.exists("/app") else os.getcwd()
+        return os.path.join(base, "docs/v26_CONSTITUTION.md")
     CORS_ORIGINS: List[str] = [
         "*", # Allow all in development/standalone modes for easier access
         os.getenv("FRONTEND_URL", "http://localhost:3000"),

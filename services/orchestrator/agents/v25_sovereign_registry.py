@@ -248,10 +248,10 @@ class SovereignAgentOrchestrator:
             # Адаптивний вибір середовища
             if os.getenv("PREDATOR_ENV") == "production-nvidia":
                  config = create_nvidia_config()
-                 logger.info("Using NVIDIA Server Config")
+                 logger.info("Використання конфігурації сервера NVIDIA")
             else:
                  config = create_local_config()
-                 logger.info("Using Local Docker Config")
+                 logger.info("Використання конфігурації Local Docker")
 
             logger.info("🔄 Перезапуск сервісів для застосування змін...")
             await devops.restart_service("predator_backend", config)
@@ -279,7 +279,7 @@ class SovereignAgentOrchestrator:
                     response = await self.gemini_agent.chat(ua_prompt)
                 elif "ollama" in model_name:
                     agent = AiderAgent(model=model_name, project_root=str(self.workspace_root))
-                    res = await agent.execute_task(f"ANALYSIS: {prompt}. Return ONLY JSON with keys: requires_coding (bool), files_to_touch (list), suggestion (string).", [])
+                    res = await agent.execute_task(f"АНАЛІЗ: {prompt}. Поверни ТІЛЬКИ JSON з ключами: requires_coding (bool), files_to_touch (list), suggestion (string).", [])
                     response = res.get("output", "")
                 elif "mistral" in model_name:
                     # Direct API call for Mistral as fallback
@@ -292,7 +292,7 @@ class SovereignAgentOrchestrator:
                                 headers={"Authorization": f"Bearer {api_key}"},
                                 json={
                                     "model": "mistral-small-latest",
-                                    "messages": [{"role": "user", "content": f"Return ONLY JSON for this task analysis: {prompt}. Keys: requires_coding, files_to_touch, suggestion."}]
+                                    "messages": [{"role": "user", "content": f"Поверни ТІЛЬКИ JSON для аналізу цієї задачі: {prompt}. Ключі: requires_coding, files_to_touch, suggestion."}]
                                 }
                             )
                             if resp.status_code == 200:

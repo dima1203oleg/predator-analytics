@@ -125,7 +125,7 @@ async def register(user_data: UserRegister):
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email already registered"
+                detail="Електронна пошта вже зареєстрована"
             )
 
         # Hash password
@@ -164,7 +164,7 @@ async def register(user_data: UserRegister):
         logger.error("user_registration_failed", error=str(e), email=user_data.email)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Registration failed"
+            detail="Помилка реєстрації"
         )
     finally:
         await conn.close()
@@ -212,14 +212,14 @@ async def login(credentials: UserLogin):
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid email or password"
+                detail="Невірна пошта або пароль"
             )
 
         # Verify password
         if not verify_password(credentials.password, user["password_hash"]):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid email or password"
+                detail="Невірна пошта або пароль"
             )
 
         # Update last_login
@@ -248,7 +248,7 @@ async def login(credentials: UserLogin):
         logger.error("user_login_failed", error=str(e), email=credentials.email)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Login failed"
+            detail="Помилка входу"
         )
     finally:
         await conn.close()
@@ -277,7 +277,7 @@ async def token_login(token_data: dict):
     if not raw_token:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Token required"
+            detail="Необхідний токен"
         )
 
     try:
@@ -299,7 +299,7 @@ async def token_login(token_data: dict):
             if not user:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid token"
+                    detail="Невалідний токен"
                 )
 
             # Return token response (token is still valid)
@@ -317,18 +317,18 @@ async def token_login(token_data: dict):
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token expired"
+            detail="Термін дії токена закінчився"
         )
     except jwt.InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token"
+            detail="Невалідний токен"
         )
     except Exception as e:
         logger.error("token_login_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Authentication failed"
+            detail="Помилка автентифікації"
         )
 
 
@@ -342,7 +342,7 @@ async def get_profile(authorization: str = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing or invalid authorization header"
+            detail="Відсутній або невірний заголовок авторизації"
         )
 
     token = authorization.replace("Bearer ", "")
@@ -355,12 +355,12 @@ async def get_profile(authorization: str = Header(None)):
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token expired"
+            detail="Термін дії токена закінчився"
         )
     except jwt.InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token"
+            detail="Невалідний токен"
         )
 
     conn = await get_db_connection()
@@ -375,7 +375,7 @@ async def get_profile(authorization: str = Header(None)):
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
+                detail="Користувача не знайдено"
             )
 
         return UserProfile(
@@ -400,4 +400,4 @@ async def logout():
     For JWT-based auth, logout is typically handled client-side
     by removing the token. This endpoint is provided for completeness.
     """
-    return {"message": "Logged out successfully", "action": "remove_token_client_side"}
+    return {"message": "Успішний вихід із системи", "action": "remove_token_client_side"}

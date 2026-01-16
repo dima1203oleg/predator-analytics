@@ -101,7 +101,7 @@ class PredictiveAnalyzer:
         # CPU trend
         cpu_values = [m.cpu_usage for m in recent]
         cpu_trend = self._calculate_trend(cpu_values)
-        if cpu_trend > 0.5 and cpu_values[-1] > 70:
+        if cpu_trend > 0.1 and cpu_values[-1] > 70:  # Lowered trend threshold for better sensitivity
             predictions.append({
                 "type": "cpu_overload",
                 "severity": "high",
@@ -114,7 +114,7 @@ class PredictiveAnalyzer:
         # Memory trend
         mem_values = [m.memory_usage for m in recent]
         mem_trend = self._calculate_trend(mem_values)
-        if mem_trend > 0.3 and mem_values[-1] > 75:
+        if mem_trend > 0.1 and mem_values[-1] > 75:  # Lowered trend threshold
             predictions.append({
                 "type": "memory_leak",
                 "severity": "critical",
@@ -216,8 +216,13 @@ class SelfLearningEngine:
         if record.action_taken not in self.strategy_scores:
             self.strategy_scores[record.action_taken] = []
 
-        # Оцінка: наскільки близько до очікуваного результату
-        accuracy = 1.0 - abs(record.expected_outcome - record.actual_outcome)
+        # Оцінка: наскільки близько до очікуваного результату (відносна точність)
+        if abs(record.expected_outcome) > 0.001:
+            diff_ratio = abs(record.expected_outcome - record.actual_outcome) / abs(record.expected_outcome)
+            accuracy = max(0.0, 1.0 - diff_ratio)
+        else:
+            accuracy = 1.0 if abs(record.actual_outcome) < 0.001 else 0.0
+
         self.strategy_scores[record.action_taken].append(accuracy)
 
         # Зберігати останні 100 записів для кожної стратегії

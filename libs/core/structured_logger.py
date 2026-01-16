@@ -316,22 +316,22 @@ def example_usage():
     # Log with request context manager
     with RequestLogger(logger, "search_documents", query="test") as req_logger:
         req_logger.info(
-            "processing_search",
+            "пошуковий_запит",
             mode="hybrid",
             limit=20
         )
-        # Simulate work
+        # Симуляція роботи
         import time
         time.sleep(0.1)
         req_logger.info(
-            "search_results",
+            "результати_пошуку",
             results_count=15
         )
 
     # Performance logging
     log_performance(
         logger,
-        "database_query",
+        "запит_до_бд",
         duration_ms=234,
         query_type="select",
         table="documents"
@@ -340,7 +340,7 @@ def example_usage():
     # Business event
     log_business_event(
         logger,
-        "ml_training_started",
+        "початок_навчання_шф",
         dataset_id="dataset_march_2024",
         model_type="automl",
         priority="high"
@@ -349,7 +349,7 @@ def example_usage():
     # Security event
     log_security_event(
         logger,
-        "permission_denied",
+        "відмова_у_доступі",
         severity="medium",
         user_id="user_456",
         required_role="admin",
@@ -361,7 +361,7 @@ def example_usage():
         1 / 0
     except Exception as e:
         logger.exception(
-            "calculation_error",
+            "помилка_обчислення",
             operation="divide",
             numerator=1,
             denominator=0

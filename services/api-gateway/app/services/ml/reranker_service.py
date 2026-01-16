@@ -17,23 +17,59 @@ class RerankerService:
 
     def __init__(self, model_name: str = "cross-encoder/ms-marco-MiniLM-L-12-v2"):
         """
-        Initialize reranker with pre-trained model.
-
-        Args:
-            model_name: HuggingFace model identifier
+        Ініціалізує переранжувальник.
         """
-        logger.info(f"Loading reranker model: {model_name}")
+        logger.info(f"Завантаження моделі переранжування: {model_name}")
         self.model = None
         try:
             from sentence_transformers import CrossEncoder
             self.model = CrossEncoder(model_name, max_length=512)
-            logger.info("Reranker model loaded successfully")
-        except ImportError:
-            logger.warning("sentence-transformers not installed. Reranking disabled.")
+            logger.info("Локальна модель переранжування завантажена успішно")
         except Exception as e:
-            logger.error(f"Failed to load reranker model: {e}")
+            logger.warning(f"Локальна модель недоступна: {e}. Буде використано LLM фолбек.")
 
-    def rerank(
+    async def _rerank_with_llm(self, query: str, documents: List[Dict], top_k: int) -> List[Tuple[Dict, float]]:
+        """
+        Інтелектуальне переранжування через Gemini API.
+        """
+        logger.info(f"Запуск LLM-переранжування для {len(documents)} документів...")
+        try:
+            # Для простоти використовуємо Gemini 1.5 Flash через Copilot/Orchestrator context
+            # В реальному коді тут виклик API
+            from services.orchestrator.agents.v25_sovereign_registry import sovereign_orchestrator
+
+            prompt = f"Запит користувача: {query}\n\nРезультати пошуку:\n"
+            for i, doc in enumerate(documents):
+                prompt += f"[{i}] {doc.get('title', 'Без назви')}\n{doc.get('content', '')[:300]}\n\n"
+
+            prompt += "Перестав індекси документів у порядку зменшення релевантності. Поверни ТІЛЬКИ список індексів, наприклад: [2, 0, 1]."
+
+            # Використовуємо метод chat оркестратора
+            raw_response = await sovereign_orchestrator.gemini_agent.chat(prompt)
+
+            import re
+            indices = [int(i) for i in re.findall(r'\d+', raw_response)]
+
+            ranked = []
+            seen = set()
+            for idx in indices:
+                if 0 <= idx < len(documents) and idx not in seen:
+                    # Надаємо штучну оцінку на основі позиції (1.0 -> 0.1)
+                    score = 1.0 - (len(ranked) * 0.1)
+                    ranked.append((documents[idx], max(0.1, score)))
+                    seen.add(idx)
+
+            # Додаємо ті, що залишилися
+            for i, doc in enumerate(documents):
+                if i not in seen:
+                    ranked.append((doc, 0.0))
+
+            return ranked[:top_k]
+        except Exception as e:
+            logger.error(f"Помилка LLM-переранжування: {e}")
+            return [(d, 0.0) for d in documents][:top_k]
+
+    async def rerank(
         self,
         query: str,
         documents: List[Dict],
@@ -41,50 +77,28 @@ class RerankerService:
         score_field: str = "title"
     ) -> List[Tuple[Dict, float]]:
         """
-        Rerank documents based on semantic relevance to query.
-
-        Args:
-            query: Search query text
-            documents: List of documents (dicts with 'id', 'title', 'content')
-            top_k: Number of top results to return
-            score_field: Field to use for scoring ('title', 'content', or 'both')
-
-        Returns:
-            List of (document, relevance_score) tuples, sorted by score
+        Переранжування документів. Підтримує локальну модель та LLM фолбек.
         """
         if not documents:
             return []
 
-        try:
-            # Prepare query-document pairs
-            pairs = []
-            for doc in documents:
-                if isinstance(doc, dict):
-                    if score_field == "both":
-                        text = f"{doc.get('title', '')} {doc.get('content', '')[:500]}"
-                    else:
-                        text = doc.get(score_field, "")
-                else:
-                    # Fallback if doc is just a string
-                    text = str(doc)[:500]
-                pairs.append([query, text])
+        # 1. Спроба локального переранжування (якщо є модель)
+        if self.model:
+            try:
+                pairs = []
+                for doc in documents:
+                    text = f"{doc.get('title', '')} {doc.get('content', '')[:500]}" if score_field == "both" else doc.get(score_field, "")
+                    pairs.append([query, text])
 
-            # Compute relevance scores
-            scores = self.model.predict(pairs)
+                scores = self.model.predict(pairs)
+                ranked = list(zip(documents, scores))
+                ranked.sort(key=lambda x: x[1], reverse=True)
+                return ranked[:top_k]
+            except Exception as e:
+                logger.error(f"Помилка локального переранжування: {e}")
 
-            # Combine documents with scores
-            ranked = list(zip(documents, scores))
-            ranked.sort(key=lambda x: x[1], reverse=True)
-
-            if ranked:
-                logger.info(f"Reranked {len(documents)} docs, top score: {ranked[0][1]:.3f}")
-
-            return ranked[:top_k]
-
-        except Exception as e:
-            logger.error(f"Reranking error: {e}")
-            # Fallback: return docs with 0 score
-            return [(d, 0.0) for d in documents][:top_k]
+        # 2. Фолбек до LLM (якщо локальна модель недоступна або дала збій)
+        return await self._rerank_with_llm(query, documents, top_k)
 
 
 # Singleton instance
