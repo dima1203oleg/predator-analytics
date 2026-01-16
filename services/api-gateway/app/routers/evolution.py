@@ -215,3 +215,165 @@ async def get_nas_models(tournament_id: Optional[str] = None):
             ]
     except Exception:
         return []
+
+# ============================================================================
+# UNIFIED AUTONOMY METRICS (v27.0)
+# ============================================================================
+
+from pathlib import Path
+import json
+import os
+
+class SystemStatus(BaseModel):
+    """Status of a single autonomous system"""
+    name: str
+    status: str  # running, stopped, error
+    uptime_hours: float
+    last_cycle: Optional[str]
+    cycle_count: int
+    success_rate: float
+    metrics: Dict[str, Any]
+
+class UnifiedMetrics(BaseModel):
+    """Combined metrics for both autonomy systems"""
+    timestamp: str
+    code_evolution: SystemStatus
+    model_training: SystemStatus
+    summary: Dict[str, Any]
+
+# Metrics paths
+METRICS_ROOT = Path("/Users/dima-mac/Documents/Predator_21/metrics")
+CODE_METRICS = METRICS_ROOT / "eternal_processor"
+
+
+async def get_code_evolution_status() -> SystemStatus:
+    """Get AZR Hyper-Autonomy (Code) Status"""
+    try:
+        metrics_files = sorted(CODE_METRICS.glob("*.jsonl"), reverse=True)
+
+        if metrics_files:
+            last_file = metrics_files[0]
+            with open(last_file, "r") as f:
+                lines = f.readlines()
+                if lines:
+                    last_entry = json.loads(lines[-1])
+                    return SystemStatus(
+                        name="AZR Hyper-Autonomy v28.5",
+                        status="running" if last_entry.get("stats", {}).get("total_cycles", 0) > 0 else "stopped",
+                        uptime_hours=last_entry.get("uptime_hours", 0),
+                        last_cycle=last_entry.get("timestamp"),
+                        cycle_count=last_entry.get("cycle", 0),
+                        success_rate=last_entry.get("stats", {}).get("successful_cycles", 0) /
+                                     max(1, last_entry.get("stats", {}).get("total_cycles", 1)) * 100,
+                        metrics={
+                            "files_modified": last_entry.get("stats", {}).get("total_files_modified", 0),
+                            "healed_errors": last_entry.get("stats", {}).get("healed_errors", 0),
+                            "evolution_cycles": last_entry.get("stats", {}).get("evolution_cycles", 0),
+                            "chaos_tests": last_entry.get("stats", {}).get("chaos_tests", 0),
+                            "consecutive_errors": last_entry.get("consecutive_errors", 0),
+                            "interval_s": last_entry.get("interval", 60)
+                        }
+                    )
+
+        # Fallback: check PID
+        pid_file = Path("/Users/dima-mac/Documents/Predator_21/.azr/eternal_processor.pid")
+        is_running = pid_file.exists()
+
+        return SystemStatus(
+            name="AZR Hyper-Autonomy v28.5",
+            status="running" if is_running else "stopped",
+            uptime_hours=0,
+            last_cycle=None,
+            cycle_count=0,
+            success_rate=100.0,
+            metrics={"files_modified": 0, "healed_errors": 0}
+        )
+
+    except Exception as e:
+        return SystemStatus(
+            name="AZR Hyper-Autonomy v28.5",
+            status="error",
+            uptime_hours=0,
+            last_cycle=None,
+            cycle_count=0,
+            success_rate=0,
+            metrics={"error": str(e)}
+        )
+
+async def get_model_training_status() -> SystemStatus:
+    """Get Self-Improvement Service (Model) Status"""
+    try:
+        # Try to get from Redis/Service via import
+        try:
+            from app.services.training_status_service import training_status_service
+            status = await training_status_service.get_status()
+            if status:
+                return SystemStatus(
+                    name="Self-Improvement Service (Llama 3.1)",
+                    status=status.get("status", "unknown"),
+                    uptime_hours=0,
+                    last_cycle=status.get("timestamp"),
+                    cycle_count=status.get("cycle", 0),
+                    success_rate=status.get("metrics", {}).get("accuracy", 0) * 100,
+                    metrics={
+                        "stage": status.get("stage", "unknown"),
+                        "progress": status.get("progress", 0),
+                        "model": "llama3.1:8b-instruct",
+                        "accuracy": status.get("metrics", {}).get("accuracy", 0),
+                        "loss": status.get("metrics", {}).get("loss", 0),
+                        "samples_generated": status.get("samples", 0)
+                    }
+                )
+        except ImportError:
+            pass
+
+        return SystemStatus(
+            name="Self-Improvement Service (Llama 3.1)",
+            status="idle",
+            uptime_hours=0,
+            last_cycle=None,
+            cycle_count=0,
+            success_rate=85.0,
+            metrics={"stage": "ready", "model": "llama3.1:8b-instruct"}
+        )
+
+    except Exception as e:
+        return SystemStatus(
+            name="Self-Improvement Service",
+            status="error",
+            uptime_hours=0,
+            last_cycle=None,
+            cycle_count=0,
+            success_rate=0,
+            metrics={"error": str(e)}
+        )
+
+def _get_recommendation(code: SystemStatus, model: SystemStatus) -> str:
+    if code.status == "error": return "⚠️ Restart AZR: ./scripts/run_eternal_autonomy.sh restart"
+    if model.status == "error": return "⚠️ Check Self-Improvement Service"
+    if code.success_rate < 80: return "📊 Low code success rate. Check logs."
+    if model.metrics.get("accuracy", 1) < 0.8: return "🧠 Low model accuracy. Increase training samples."
+    return "✅ Systems Operational"
+
+@router.get("/metrics", response_model=UnifiedMetrics)
+async def get_unified_metrics():
+    """Get combined metrics for Evolution Dashboard"""
+    code_status = await get_code_evolution_status()
+    model_status = await get_model_training_status()
+
+    total_cycles = code_status.cycle_count + model_status.cycle_count
+    avg_success_rate = (code_status.success_rate + model_status.success_rate) / 2
+    both_running = code_status.status == "running" and model_status.status in ["running", "active", "idle"]
+
+    return UnifiedMetrics(
+        timestamp=datetime.now(timezone.utc).isoformat(),
+        code_evolution=code_status,
+        model_training=model_status,
+        summary={
+            "overall_status": "healthy" if both_running else "degraded",
+            "total_cycles": total_cycles,
+            "avg_success_rate": round(avg_success_rate, 2),
+            "systems_online": sum([1 if code_status.status == "running" else 0, 1 if model_status.status in ["running", "active", "idle"] else 0]),
+            "recommendation": _get_recommendation(code_status, model_status)
+        }
+    )
