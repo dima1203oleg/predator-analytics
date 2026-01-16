@@ -7,7 +7,7 @@ pyyaml==6.0.2
 requests==2.32.3
 python-multipart==0.0.9
 email-validator==2.1.0
-jinja2==3.1.5
+jinja2==3.1.4
 
 # Data Pipeline (Phase 3)
 minio==7.2.3
