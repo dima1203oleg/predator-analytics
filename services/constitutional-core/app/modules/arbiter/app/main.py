@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Body
 from pydantic import BaseModel
 from typing import Dict, Any, Optional
-from app.engine import ConstitutionEngine
+from .engine import ConstitutionEngine
 import logging
 
 # Configure Logging

@@ -5,8 +5,8 @@ from pydantic import BaseModel
 from typing import Dict, Any, Optional
 import os
 
-from app.models import Base, LedgerEntry
-from app.core import LedgerManager
+from .models import Base, LedgerEntry
+from .core import LedgerManager
 
 # Database Setup
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./ledger.db")
