@@ -138,6 +138,14 @@ export const NAVIGATION_ZONES: NavZone[] = [
         icon: <Bot size={18} />,
         description: 'Рій AI-агентів',
       },
+      {
+        id: TabView.EVOLUTION,
+        label: 'Еволюція',
+        icon: <Sparkles size={18} />,
+        description: 'Прогрес автонавчання',
+        isNew: true,
+        isLive: true,
+      },
     ],
   },
 
