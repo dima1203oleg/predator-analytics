@@ -264,6 +264,34 @@ def log_business_event(
         **attributes
     )
 
+    # Якщо це успішна операція ШІ, зберігаємо її в пам'ять еволюції
+    if event_name.startswith("ai_") and attributes.get("status") == "success":
+        log_evolution_experience(event_name, attributes)
+
+def log_evolution_experience(event_name: str, attributes: Dict[str, Any]):
+    """Збереження успішного досвіду ШІ для майбутнього навчання"""
+    try:
+        from pathlib import Path
+        import json
+        from datetime import datetime
+
+        # CURRENT: /Users/dima-mac/Documents/Predator_21/libs/core/structured_logger.py
+        # Project Root should be 3 levels up
+        exp_file = Path(__file__).resolve().parents[2] / "data/evolution/experience_ledger.jsonl"
+        exp_file.parent.mkdir(parents=True, exist_ok=True)
+
+        experience = {
+            "timestamp": datetime.now().isoformat(),
+            "event": event_name,
+            "data": attributes,
+            "version": "27.0-Evolution"
+        }
+
+        with open(exp_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(experience, ensure_ascii=False) + "\n")
+    except:
+        pass
+
 
 def log_security_event(
     logger: structlog.BoundLogger,
