@@ -51,9 +51,9 @@ prometheus-client
 # ═══════════════════════════════════════════════════════════════
 
 # ML/NLP Advanced
-spacy               # NER та linguistic features
-https://github.com/explosion/spacy-models/releases/download/uk_core_news_sm-3.7.0/uk_core_news_sm-3.7.0-py3-none-any.whl
-nlpaug             # Data augmentation
+# spacy==3.7.0               # NER та linguistic features
+# https://github.com/explosion/spacy-models/releases/download/uk_core_news_sm-3.7.0/uk_core_news_sm-3.7.0-py3-none-any.whl
+# nlpaug             # Data augmentation (Temporarily disabled)
 nltk                # NLTK for nlpaug
 sentencepiece      # Tokenizer for T5/BART
 
