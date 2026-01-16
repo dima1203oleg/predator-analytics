@@ -169,7 +169,7 @@ services:
 
   # MinIO Object Storage
   minio:
-    image: minio/minio:RELEASE.2024-01-13T07-53-03Z
+    image: minio/minio:latest
     container_name: predator-minio
     restart: unless-stopped
     ports:
