@@ -49,7 +49,7 @@ async def test_excel_etl():
     try:
         import asyncpg
         conn = await asyncpg.connect(
-            "postgresql://predator:666666@localhost:5432/predator_db"
+            "postgresql://predator:predator_password@localhost:5432/predator_db"
         )
         await conn.close()
         print("   ✅ PostgreSQL: Доступний")
