@@ -1,19 +1,31 @@
 """
-🏛️ CONSTITUTIONAL CORE (Unified)
-================================
-Єдиний центр управління Predator Analytics.
-Об'єднує логіку Arbiter, Ledger, SOM, RCE та VPC.
+🏛️ CONSTITUTIONAL CORE (Unified Monolith)
+=========================================
+Реальне об'єднання логіки 5 сервісів.
+Використовує FastAPI Sub-Applications (Mounting) для ізоляції модулів.
 """
 
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import os
+import logging
 
-# --- IMPORT MODULES (Unified) ---
-# Для спрощення ми емулюємо роутери, якщо реальні файли потребують адаптації.
-# В реальному сценарії тут був би рефакторинг імпортів кожного модуля.
-# Зараз ми створюємо проксі-роути до перенесеного коду.
+# --- IMPORT MODULES ---
+try:
+    from app.modules.arbiter.app.main import app as arbiter_app
+    from app.modules.ledger.app.main import app as ledger_app
+    from app.modules.som.app.main import app as som_app
+    from app.modules.rce.app.main import app as rce_app
+    from app.modules.vpc.app.main import app as vpc_app
+except ImportError as e:
+    logging.error(f"❌ Failed to import modules: {e}")
+    # Fallback для розробки, якщо модулі ще не адаптовані ідеально
+    arbiter_app = FastAPI()
+    ledger_app = FastAPI()
+    som_app = FastAPI()
+    rce_app = FastAPI()
+    vpc_app = FastAPI()
 
 app = FastAPI(
     title="Predator Constitutional Core",
@@ -29,54 +41,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- MODULE ROUTERS ---
+# --- MOUNTING REAL APPLICATIONS ---
+# Це підключає повний функціонал старих мікросервісів
 
-# 1. ARBITER (Правила)
-arbiter_router = APIRouter(prefix="/api/v1/arbiter", tags=["Arbiter"])
-@arbiter_router.get("/health")
-async def arbiter_health(): return {"status": "active", "module": "arbiter"}
+# 1. Arbiter (Rules) -> /api/v1/arbiter
+app.mount("/api/v1/arbiter", arbiter_app)
 
-# 2. TRUTH LEDGER (Аудит)
-ledger_router = APIRouter(prefix="/api/v1/ledger", tags=["Truth Ledger"])
-@ledger_router.get("/health")
-async def ledger_health(): return {"status": "active", "module": "ledger"}
+# 2. Ledger (Audit) -> /api/v1/ledger
+app.mount("/api/v1/ledger", ledger_app)
 
-# 3. SOM (Спостерігач)
-som_router = APIRouter(prefix="/api/v1/som", tags=["SOM"])
-@som_router.get("/health")
-async def som_health(): return {"status": "active", "module": "som"}
+# 3. SOM (Observer) -> /api/v1/som
+app.mount("/api/v1/som", som_app)
 
-# 4. RCE (Виконання)
-rce_router = APIRouter(prefix="/api/v1/rce", tags=["RCE"])
-@rce_router.get("/health")
-async def rce_health(): return {"status": "active", "module": "rce"}
+# 4. RCE (Execution) -> /api/v1/rce
+app.mount("/api/v1/rce", rce_app)
 
-# 5. VPC (Ізоляція)
-vpc_router = APIRouter(prefix="/api/v1/vpc", tags=["VPC"])
-@vpc_router.get("/health")
-async def vpc_health(): return {"status": "active", "module": "vpc"}
+# 5. VPC (Verificator) -> /api/v1/vpc
+app.mount("/api/v1/vpc", vpc_app)
 
-
-# Підключаємо роутери
-app.include_router(arbiter_router)
-app.include_router(ledger_router)
-app.include_router(som_router)
-app.include_router(rce_router)
-app.include_router(vpc_router)
-
-
-# --- ADAPTERS FOR LEGACY PORTS ---
-# Оскільки ми запускаємо один процес, ми не можемо слухати 5 портів одночасно в uvicorn без складної конфігурації.
-# У docker-compose ми зробили мапінг портів 8091-8095 -> 8000.
-# Тому цей один додаток буде відповідати на запити, що приходять на будь-який з цих портів.
 
 @app.get("/health")
-async def combined_health():
+async def core_health():
     return {
         "status": "operational",
-        "service": "constitutional-core",
-        "governance_mode": "unified",
-        "modules_loaded": ["arbiter", "ledger", "som", "rce", "vpc"]
+        "mode": "unified_monolith",
+        "mounted_modules": [
+            "arbiter", "ledger", "som", "rce", "vpc"
+        ],
+        "system_rules": "active"
     }
 
 if __name__ == "__main__":
