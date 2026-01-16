@@ -230,7 +230,7 @@ services:
        - OLLAMA_BASE_URL=http://ollama:11434
     networks:
       predator-network:
-        ipv4_address: 172.20.0.10
+        ipv4_address: 172.20.0.12
     depends_on:
       - backend
       - redis
