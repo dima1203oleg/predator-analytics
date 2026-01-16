@@ -48,8 +48,8 @@ services:
   # Backend API
   backend:
     build:
-      context: ./services/api-gateway
-      dockerfile: Dockerfile.prod
+      context: .
+      dockerfile: services/api-gateway/Dockerfile.prod
     container_name: predator-backend
     restart: unless-stopped
     env_file: .env
@@ -181,8 +181,8 @@ services:
   # Celery Worker
   celery-worker:
     build:
-      context: ./services/api-gateway
-      dockerfile: Dockerfile.prod
+      context: .
+      dockerfile: services/api-gateway/Dockerfile.prod
     container_name: predator-celery-worker
     command: celery -A app.core.celery_app worker --loglevel=info
     env_file: .env
@@ -200,8 +200,8 @@ services:
   # Celery Beat
   celery-beat:
     build:
-      context: ./services/api-gateway
-      dockerfile: Dockerfile.prod
+      context: .
+      dockerfile: services/api-gateway/Dockerfile.prod
     container_name: predator-celery-beat
     command: celery -A app.core.celery_app beat --loglevel=info
     env_file: .env
