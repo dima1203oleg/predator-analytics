@@ -19,9 +19,35 @@ class TrainingStatusService:
         self._redis = None
 
     async def _get_redis(self):
-        if self._redis is None:
-            self._redis = aioredis.from_url(self.redis_url, decode_responses=True)
-        return self._redis
+        if self._redis:
+            return self._redis
+
+        try:
+            # Attempt to connect to verify configuration
+            client = aioredis.from_url(self.redis_url, decode_responses=True, socket_connect_timeout=1)
+            await client.ping()
+            self._redis = client
+            return self._redis
+        except Exception as e:
+            logger.warning(f"Redis unavailable ({e}), using In-Memory Mock.")
+
+            # Simple InMemory Mock class
+            class InMemoryRedis:
+                def __init__(self):
+                    self.data = {}
+                    self.lists = {}
+                async def get(self, key): return self.data.get(key)
+                async def set(self, key, value, ex=None): self.data[key] = value
+                async def lrange(self, key, start, end): return self.lists.get(key, [])[start:end+1 if end != -1 else None]
+                async def lpush(self, key, value):
+                    if key not in self.lists: self.lists[key] = []
+                    self.lists[key].insert(0, value)
+                async def ltrim(self, key, start, end):
+                    if key in self.lists: self.lists[key] = self.lists[key][start:end+1]
+                async def close(self): pass
+
+            self._redis = InMemoryRedis()
+            return self._redis
 
     async def get_latest_status(self) -> Dict[str, Any]:
         """Fetch the latest training status from Redis"""
