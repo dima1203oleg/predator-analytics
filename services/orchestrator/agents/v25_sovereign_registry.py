@@ -258,8 +258,13 @@ class SovereignAgentOrchestrator:
             logger.error(f"❌ Помилка авторозгортання: {e}")
 
     async def _run_analysis(self, prompt: str) -> Dict:
-        """Аналіз задачі (Local First)."""
+        """Аналіз задачі (Multi-Model Support)."""
         models = self.AVAILABLE_MODELS["analysis"]
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {os.getenv('MISTRAL_API_KEY')}"
+        }
 
         for model_name in models:
             logger.info(f"🧠 Аналіз задачі через {model_name}...")
@@ -267,14 +272,29 @@ class SovereignAgentOrchestrator:
                 response = ""
                 # Обробка залежно від типу агента
                 if "gemini" in model_name and self.gemini_agent:
+                    # РЕАЛЬНИЙ виклик через CopilotAgent ( Gemimi 1.5 Pro)
                     ua_prompt = f"Проаналізуй задачу: {prompt}. JSON Output keys: requires_coding, files_to_touch, suggestion."
                     response = await self.gemini_agent.chat(ua_prompt)
-                elif "ollama" in model_name or "mistral" in model_name:
-                    # Generic Aider/Ollama Agent
+                elif "ollama" in model_name:
                     agent = AiderAgent(model=model_name, project_root=str(self.workspace_root))
-                    # Для аналізу краще простий промпт
                     res = await agent.execute_task(f"ANALYSIS: {prompt}. Return ONLY JSON with keys: requires_coding (bool), files_to_touch (list), suggestion (string).", [])
                     response = res.get("output", "")
+                elif "mistral" in model_name:
+                    # Direct API call for Mistral as fallback
+                    import httpx
+                    async with httpx.AsyncClient(timeout=30) as client:
+                        api_key = os.getenv("MISTRAL_API_KEY") or os.getenv("CODESTRAL_API_KEY")
+                        if api_key:
+                            resp = await client.post(
+                                "https://api.mistral.ai/v1/chat/completions",
+                                headers={"Authorization": f"Bearer {api_key}"},
+                                json={
+                                    "model": "mistral-small-latest",
+                                    "messages": [{"role": "user", "content": f"Return ONLY JSON for this task analysis: {prompt}. Keys: requires_coding, files_to_touch, suggestion."}]
+                                }
+                            )
+                            if resp.status_code == 200:
+                                response = resp.json()['choices'][0]['message']['content']
 
                 # Parse JSON
                 import re
@@ -285,15 +305,17 @@ class SovereignAgentOrchestrator:
                     except:
                         pass
 
-                # Якщо JSON не парситься, але відповідь є - повертаємо як suggestion
                 if response and len(response) > 10:
                      return {"requires_coding": True, "files_to_touch": [], "suggestion": response}
 
             except Exception as e:
                 logger.warning(f"⚠️ Модель {model_name} провалилась: {e}")
+                # Wait before next model to avoid rate limits
+                await asyncio.sleep(2)
                 continue
 
         return {"requires_coding": True, "files_to_touch": [], "suggestion": "Автоматичний аналіз недоступний"}
+
 
     async def _run_vibe_iteration(self, analysis: Dict) -> Dict:
         """Імітація Vibe CLI для швидкої ітерації"""
