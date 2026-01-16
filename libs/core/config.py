@@ -12,6 +12,7 @@ import os
 
 class Settings(BaseSettings):
     """Application settings with environment variable support"""
+    ENVIRONMENT: str = "development"
 
     @field_validator('CORS_ORIGINS', mode='before')
     @classmethod
