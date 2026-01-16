@@ -59,10 +59,12 @@ class SovereignAgentOrchestrator:
     # Доступні моделі (GTX 1080 Optimized - LOCAL FIRST)
     # Llama 3.1 8B & Mistral 7B -> Пріоритет #1 для швидкості та приватності
     AVAILABLE_MODELS = {
-        "analysis": ["ollama/llama3.1:8b", "gemini/gemini-2.0-flash", "mistral/mistral-small-latest"],
-        "coding": ["ollama/deepseek-coder:6.7b", "ollama/codellama:7b", "gemini/gemini-2.0-flash"],
-        "refactoring": ["ollama/mistral:7b", "deepseek/deepseek-chat"],
-        "review": ["ollama/llama3.1:8b", "gemini/gemini-2.0-flash"],
+        "analysis": ["mistral/mistral-small-latest", "ollama/llama3.1:8b", "gemini/gemini-2.0-flash"],
+
+        "coding": ["mistral/mistral-small-latest", "ollama/deepseek-coder:6.7b", "gemini/gemini-2.0-flash"],
+        "refactoring": ["mistral/mistral-small-latest", "ollama/mistral:7b", "deepseek/deepseek-chat"],
+        "review": ["mistral/mistral-small-latest", "ollama/llama3.1:8b", "gemini/gemini-2.0-flash"],
+
         "domain_knowledge": ["ollama/llama3.1:8b"],
         "local": ["ollama/llama3.1:8b", "ollama/mistral:7b", "ollama/deepseek-coder:6.7b"]
     }

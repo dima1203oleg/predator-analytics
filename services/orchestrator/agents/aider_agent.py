@@ -206,7 +206,29 @@ class AiderAgent:
                                 break
 
 
+            elif self.model.startswith("mistral") or self.model.startswith("codestral"):
+                 api_key = os.getenv("MISTRAL_API_KEY") or os.getenv("CODESTRAL_API_KEY")
+                 if api_key:
+                     async with httpx.AsyncClient(timeout=120) as client:
+                         response = await client.post(
+                             "https://api.mistral.ai/v1/chat/completions",
+                             headers={"Authorization": f"Bearer {api_key}"},
+                             json={
+                                 "model": "mistral-small-latest",
+                                 "messages": [{"role": "user", "content": prompt}]
+                             }
+                         )
+                         if response.status_code == 200:
+                             result = response.json()
+                             return {
+                                 "status": "success",
+                                 "output": result['choices'][0]['message']['content'],
+                                 "files_modified": target_files,
+                                 "method": "mistral_api"
+                             }
+
             elif self.model.startswith("ollama"):
+
                 # Використовуємо локальний Ollama з пошуком хоста
                 hosts = ["http://ollama:11434", "http://host.docker.internal:11434", "http://localhost:11434"]
                 base_url = None
