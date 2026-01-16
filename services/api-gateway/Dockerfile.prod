@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements
-COPY apps/backend/requirements.txt .
+COPY services/api-gateway/requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --user -r requirements.txt
@@ -36,11 +36,8 @@ COPY --from=builder /root/.local /root/.local
 # Copy application code from project root
 COPY libs ./libs
 # Workaround for src copy issue: Copy full directory and mv
-COPY apps/backend ./_backend_full
+COPY services/api-gateway ./_backend_full
 RUN cp -r ./_backend_full/app ./app && \
-    cp -r ./_backend_full/src ./src && \
-    cp -r ./_backend_full/config ./config && \
-    cp -r ./_backend_full/configs ./configs && \
     rm -rf ./_backend_full
 
 # Create non-root user
