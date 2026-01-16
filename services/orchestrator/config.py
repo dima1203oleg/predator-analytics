@@ -12,6 +12,7 @@ from libs.core.config import settings
 
 # Chairman (Decision Maker)
 GEMINI_API_KEY = settings.GEMINI_API_KEY
+GEMINI_API_KEYS = settings.GEMINI_API_KEYS
 GEMINI_MODEL = settings.GEMINI_MODEL
 
 # Critic/Coder

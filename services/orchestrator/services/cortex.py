@@ -12,7 +12,7 @@ from datetime import datetime
 
 import google.generativeai as genai
 from .infrastructure import InfrastructureHandler
-from ..config import GEMINI_API_KEY, GEMINI_MODEL
+from ..config import GEMINI_API_KEY, GEMINI_API_KEYS, GEMINI_MODEL
 
 logger = logging.getLogger("cortex")
 
@@ -22,8 +22,11 @@ class CortexOrchestrator:
         self.tasks: Dict[str, Any] = {} # In-memory state (use Redis in production)
         self.approvals: Dict[str, Any] = {}
 
-        # Configure Gemini
-        genai.configure(api_key=GEMINI_API_KEY)
+        # Configure Gemini with Key Rotation
+        self.gemini_keys = GEMINI_API_KEYS if GEMINI_API_KEYS else [GEMINI_API_KEY]
+        self.current_key_index = 0
+        self._rotate_key() # Initialize with first key
+
         self.gemini = genai.GenerativeModel(GEMINI_MODEL)
 
         # Groq Client (Simulated or via HTTP for now to avoid extra dependencies)
@@ -88,8 +91,21 @@ class CortexOrchestrator:
             task["status"] = "failed"
             task["error"] = str(e)
 
+    def _rotate_key(self):
+        """Rotates to the next available API Key"""
+        if not self.gemini_keys:
+            logger.warning("No Gemini API keys available!")
+            return
+
+        key = self.gemini_keys[self.current_key_index]
+        genai.configure(api_key=key)
+        masked_key = key[:5] + "..." + key[-5:]
+        logger.info(f"🔄 Switched Gemini API Key to index {self.current_key_index} ({masked_key})")
+
+        self.current_key_index = (self.current_key_index + 1) % len(self.gemini_keys)
+
     async def _gemini_plan(self, command: str) -> Dict[str, Any]:
-        """Real Semantic Router using Gemini Flash"""
+        """Real Semantic Router using Gemini Flash with Key Rotation for 429s"""
         prompt = f"""
         Analyze the following user command for Predator Analytics v23.0.
         System Context: K8s, Prometheus, Qdrant, Postgres, ArgoCD.
@@ -105,20 +121,33 @@ class CortexOrchestrator:
         - voice_hint: short Ukrainian summary of what you are doing (max 10 words)
         """
 
-        try:
-            response = self.gemini.generate_content(prompt)
-            # Simple JSON extraction
-            text = response.text.strip().replace("```json", "").replace("```", "")
-            return json.loads(text)
-        except Exception as e:
-            logger.warning(f"Gemini routing failed: {e}")
-            return {
-                "intent": "general",
-                "requires_action": False,
-                "response": "Вибачте, сталася помилка при аналізі запиту.",
-                "risk_level": "low",
-                "voice_hint": "Помилка аналізу."
-            }
+        max_retries = len(self.gemini_keys) * 2  # Try each key twice if needed
+
+        for attempt in range(max_retries):
+            try:
+                response = self.gemini.generate_content(prompt)
+                # Simple JSON extraction
+                text = response.text.strip().replace("```json", "").replace("```", "")
+                return json.loads(text)
+
+            except Exception as e:
+                error_str = str(e)
+                if "429" in error_str or "Quota exceeded" in error_str or "Too Many Requests" in error_str:
+                    logger.warning(f"⚠️ Gemini Rate Limit (429) on attempt {attempt+1}. Rotating key...")
+                    self._rotate_key()
+                    await asyncio.sleep(1) # Brief pause before retry
+                else:
+                    logger.error(f"Gemini routing failed: {e}")
+                    break
+
+        # Fallback if all retries fail
+        return {
+            "intent": "general",
+            "requires_action": False,
+            "response": "Вибачте, всі API ключі вичерпали ліміти. Спробуйте пізніше.",
+            "risk_level": "low",
+            "voice_hint": "Ліміти вичерпано."
+        }
 
     async def _generate_solution(self, goal: str, intent: str) -> str:
         """Generate code or config using Groq/Coder"""
