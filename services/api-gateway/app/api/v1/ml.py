@@ -390,11 +390,27 @@ async def explain_result(request: ExplainRequest):
             "explanation": explanation
         }
 
-    except HTTPException:
-        raise
     except Exception as e:
-        logger.error(f"Explanation failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.warning(f"Локальний XAI недоступний: {e}. Використовуємо Gemini...")
+        try:
+            from services.orchestrator.agents.v25_sovereign_registry import sovereign_orchestrator
+            from app.services.document_service import document_service
+
+            document = await document_service.get_document_by_id(request.document_id)
+            content = document.get("content", "") if document else ""
+
+            prompt = f"Поясни релевантність документа до запиту '{request.query}'.\nТекст документа: {content[:2000]}\nПояснення повинно бути коротким, українською мовою."
+            explanation = await sovereign_orchestrator.gemini_agent.chat(prompt)
+
+            return {
+                "document_id": request.document_id,
+                "query": request.query,
+                "explanation": explanation,
+                "model": "gemini-1.5-flash-free"
+            }
+        except Exception as ai_e:
+            logger.error(f"ШІ-пояснення провалилося: {ai_e}")
+            raise HTTPException(status_code=500, detail="Служба пояснень недоступна")
 
 
 @router.get("/explain/{document_id}")
