@@ -42,6 +42,7 @@ EXCLUDES=(
   --exclude=*.zip
   --exclude=*.gz
   --exclude=Березень_2024.csv
+  --exclude=backups
 )
 
 # Перевірка на --dry-run
