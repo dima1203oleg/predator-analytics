@@ -303,7 +303,9 @@ class SovereignAgentOrchestrator:
                 json_match = re.search(r'\{.*\}', response, re.DOTALL)
                 if json_match:
                     try:
-                        return json.loads(json_match.group())
+                        res = json.loads(json_match.group())
+                        res["requires_coding"] = True # FORCE CODING FOR STABILIZATION
+                        return res
                     except:
                         pass
 
@@ -341,7 +343,7 @@ class SovereignAgentOrchestrator:
         elif self.agent_status["claude"]:
             model = "anthropic/claude-3-5-sonnet-20241022"
         else:
-            model = "gemini/gemini-2.0-flash-exp"
+            model = "mistral/mistral-small-latest"
 
         prompt = f"""
         Перевір та виправ будь-які помилки у попередніх змінах.
@@ -386,7 +388,7 @@ class SovereignAgentOrchestrator:
         elif self.agent_status["deepseek"]:
             model = "deepseek/deepseek-chat"
         else:
-            model = "gemini/gemini-2.0-flash-exp"
+            model = "mistral/mistral-small-latest"
 
         agent = AiderAgent(model=model, project_root=str(self.workspace_root))
         prompt = "Зроби фінальний рефакторинг коду для забезпечення максимальної чистоти та відповідності стандартам Predator v25."
