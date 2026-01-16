@@ -33,6 +33,7 @@ const Jurisdictions = React.lazy(() => import('./components/admin/Jurisdictions'
 const SOM = React.lazy(() => import('./components/admin/SOM').then(module => ({ default: module.SOMAdmin })));
 const AuditLogs = React.lazy(() => import('./components/admin/AuditLogs').then(module => ({ default: module.AuditLogs })));
 const E3Dashboard = React.lazy(() => import('./components/admin/EternalEvolutionDashboard').then(module => ({ default: module.EternalEvolutionDashboard })));
+const Evolution = React.lazy(() => import('./components/admin/Evolution').then(module => ({ default: module.EvolutionAdmin })));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-[50vh]">
@@ -70,6 +71,7 @@ export const AppRoutes: React.FC = () => {
 
           {/* ADMIN ROUTES */}
           <Route path="/admin/e3" element={<AdminGuard><E3Dashboard /></AdminGuard>} />
+          <Route path="/admin/evolution" element={<AdminGuard><Evolution /></AdminGuard>} />
           <Route path="/admin/som" element={<AdminGuard><SOM /></AdminGuard>} />
           <Route path="/admin/status" element={<AdminGuard><SystemStatus /></AdminGuard>} />
           <Route path="/admin/infra" element={<AdminGuard><Infrastructure /></AdminGuard>} />

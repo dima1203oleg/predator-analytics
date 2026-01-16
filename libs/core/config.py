@@ -156,6 +156,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
 
     # Monitoring
+    DEBUG: bool = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
     LOG_LEVEL: str = "INFO"
     PROMETHEUS_ENABLED: bool = True
     OTLP_ENDPOINT: str = os.getenv("OTLP_ENDPOINT", "http://otel-collector:4317")
