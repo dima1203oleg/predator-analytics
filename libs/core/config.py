@@ -31,6 +31,15 @@ class Settings(BaseSettings):
             return [x.strip() for x in v.split(',') if x.strip()]
         return ["*"]
 
+    @field_validator('GEMINI_API_KEYS', mode='before')
+    @classmethod
+    def parse_gemini_keys(cls, v):
+        if isinstance(v, list):
+            return v
+        if isinstance(v, str):
+            return [x.strip() for x in v.split(',') if x.strip()]
+        return []
+
     # App
     APP_NAME: str = "Predator Analytics Core"
     APP_VERSION: str = "22.0.0"
@@ -119,7 +128,7 @@ class Settings(BaseSettings):
     # LLM Settings
     OPENAI_API_KEY: Optional[str] = None
     GEMINI_API_KEY: Optional[str] = None
-    # GEMINI_API_KEYS removed from Settings class to bypass Pydantic parsing issues
+    GEMINI_API_KEYS: List[str] = []
     ANTHROPIC_API_KEY: Optional[str] = None
     GROQ_API_KEY: Optional[str] = None
     MISTRAL_API_KEY: Optional[str] = None
