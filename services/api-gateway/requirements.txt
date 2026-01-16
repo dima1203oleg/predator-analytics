@@ -128,6 +128,6 @@ pyarrow
 great_expectations
 
 # ════ CLI Agents v25.0 (Multi-Agent Self-Improvement) ════
-aider-chat
+aider-chat==0.65.0
 gitpython
 PyYAML
