@@ -1,83 +1,52 @@
-# 🚀 PREDATOR v28.6 - Стратегічний План Еволюції
-**Дата оновлення:** 2026-01-16
-**Статус:** ✅ 100% COMPONENT READINESS
-**Попередня фаза:** v27.0 Stabilization ✅ COMPLETED
+# 🦅 Predator Analytics: Strategic Evolution Plan (v29-S)
+
+## Current Objective: Phase 4 - Sovereign Intelligence & Autonomous Evolution
+
+### 1. Sovereign Observer Module (SOM) - [ACTIVE]
+
+*   **Central Oversight**: Unified governance dashboard for all AI agents. [DONE]
+*   **Shadow Mode Integration**: Real-time A/B testing of AI decisions. [DONE]
+*   **Human Sovereignty**: Operators can overrule any axiom violation. [DONE]
+*   **Emergency Protocol**: Instant system-wide lockdown (Level 5). [DONE]
+
+### 2. Semantic Memory 2.0 - [COMPLETED]
+
+*   **High-Speed Vector Layer**: Qdrant-based retrieval (Short/Medium term). [DONE]
+*   **Historical Archival**: OpenSearch-based long-term persistence. [DONE]
+*   **Automatic Archiving**: Move old memories from Qdrant to OpenSearch (30d threshold). [DONE]
+*   **Knowledge Graph (v25)**: Relationship mapping between entities and actions. [DONE]
+
+### 3. Autonomous Learning Stack (v29.1) - [DONE]
+
+*   **Hyper-Complex Scenario Seeds**: 105+ tactical fraud schemes defined. [DONE]
+*   **Synthetic Data Agent**: LLM-driven generation of realistic training sets. [DONE]
+*   **Quality Scorer**: Automated validation of synthetic data diversity. [DONE]
+*   **Fine-Tuning Orchestrator**: Automated Llama-3 training on GPU server. [DONE]
+*   **Sovereign UI Integration**: Real-time monitoring and manual triggers. [DONE]
+*   **Autonomous Learning Dashboard**: Візуалізація циклів навчання та просування моделей в UI. [DONE]
+
+## Roadmap: v29.x & v30.0
+
+### Phase 29.2: Multi-Agent Swarm (Full Protocol) — [IN PROGRESS]
+
+*   **gRPC Consensus**: Sub-millisecond voting between 7+ agents. [DONE]
+*   **Truth Ledger v2**: Immutable audit trail for all swarm interactions.
+*   **Dynamic Role Allocation**: Swarm determines best agent for specific tasks.
+
+### Phase 30.0: Singular Point
+
+*   **Zero-Shot Adaptation**: System adapts to new laws/policies in real-time.
+*   **Global Predator Mesh**: Inter-server collaboration & distributed intelligence.
+*   **Neural Governance**: Decision-making based on collective AI experience.
+
+## Success Metrics (KPIs)
+
+*   **Detection Accuracy**: >98.5% F1 score on complex fraud schemes.
+*   **Sovereign Uptime**: 99.999% (Self-healing system).
+*   **Knowledge Growth**: 10k+ new relationships/edges in Graph per 24h.
+*   **Evolution Velocity**: 1 major model update per 48h (Fully autonomous).
 
 ---
 
-## 📊 Поточний Стан Системи (v28.6)
-
-### ✅ Технологічні Досягнення
-1.  **Unified Governance Core:** Консолідація 5 мікросервісів (`arbiter`, `ledger`, `som`, `rce`, `vpc`) в єдиний моноліт `constitutional-core`. Економія 500MB RAM.
-2.  **Infrastructure:** Повна міграція на `Docker Compose V2` + `Helm Charts` (UA) + `Istio` (Permissive).
-3.  **Python 3.12:** Всі сервіси переведені на найновіший стек з використанням `uv` для надшвидких білдів.
-4.  **Resilience:**
-    *   `Safe Boot Protocol` (Disaster Recovery).
-    *   `Kill Switch` (.safety_lock).
-    *   `Kafka Persistence` для Truth Ledger.
-
-### 🔧 Активні Компоненти (126/126)
-- **Agents:** `PlannerAgent` (Architect), `ReputationAgent`, `AuditorAgent`, `NightlyScheduler` (Real impl).
-- **Core:** `Constitutional Core` (Real Mounted Apps).
-- **UI:** `Unified Autonomy Dashboard`, `Evolution Dashboard`.
-
----
-
-## 🎯 Фаза v29.0: "Hyper-Optimization & Intelligence"
-
-### Пріоритет P0 — Інтелектуальне Покращення
-#### 1) 🧠 Semantic Memory 2.0
-**Мета:** Об'єднати Qdrant та OpenSearch в єдиний шар знань.
-- [ ] Єдиний інтерфейс пам'яті (`MemoryInterface`).
-- [ ] Автоматичне архівування старих спогадів.
-
-#### 2) 🌐 Multi-Agent Swarm (Swarm Intelligence)
-**Мета:** Агенти спілкуються напряму через gRPC, а не REST.
-- [ ] Прототип gRPC комунікації між `Orchestrator` та `Constitutional Core`.
-
----
-
-## 📅 Roadmap (Next Steps)
-
-### Тиждень 1 (16-22 січня) - ✅ DONE
-- [x] 100% Component Verification.
-- [x] DevOps Stack (Helm, K6, Litmus).
-- [x] Architecture Optimization (Consolidated Governance).
-- [x] Codebase Cleanup (No Stubs).
-
-### Тиждень 2 (23-29 січня) - 🚀 EXECUTION
-- [ ] **Release v29.0:**
-    - Deployment to NVIDIA Production Server.
-    - Full E2E Testing with K6.
-    - SOM "Ring Level 2" Activation (Semi-Autonomous).
-
----
-
-## 🎖️ Критерії Успіху v28.6
-1.  **Start Time:** Cold boot < 10 секунд (завдяки `uv` та консолідації).
-2.  **Resource Usage:** < 4GB RAM на Idle (разом з LLM).
-3.  **Stability:** Проходження `safe_boot.sh` без помилок.
-
----
-
-## 🚀 Інструкції запуску
-
-**Normal Start:**
-```bash
-./scripts/start.sh
-```
-
-**Safe Mode (Disaster Recovery):**
-```bash
-./scripts/safe_boot.sh
-```
-
-**DevOps Deploy:**
-```bash
-helm install predator ./infrastructure/helm/predator-analytics
-```
-
----
-
-**Статус:** 🟢 STABLE
-**Версія:** 28.6-RELEASE
+**Статус:** 🟢 HYPER-STABLE (Learning Enabled)
+**Версія:** 29.1-S (Sovereign Upgrade)

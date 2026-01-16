@@ -18,3 +18,8 @@ requests==2.31.0
 python-multipart==0.0.9
 greenlet==3.0.3
 aiohttp==3.9.3
+qdrant-client==1.7.3
+opensearch-py==2.4.2
+sentence-transformers==2.5.1
+grpcio==1.62.0
+grpcio-tools==1.62.0

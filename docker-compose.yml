@@ -171,6 +171,7 @@ services:
     volumes:
       - ./services/orchestrator:/app/orchestrator
       - ./libs:/app/libs
+      - ./data:/app/data
     depends_on: [postgres, redis, backend]
     restart: unless-stopped
     profiles: ["server"]
@@ -208,8 +209,8 @@ services:
 
   constitutional-core:
     build:
-      context: ./services/constitutional-core
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/constitutional-core/Dockerfile
     container_name: predator_governance
     ports:
       - "8091:8000" # Main Governance
@@ -217,6 +218,7 @@ services:
       - "8093:8000" # RCE
       - "8094:8000" # VPC
       - "8095:8000" # SOM
+      - "50051:50051" # gRPC Swarm
     environment:
       - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://admin:666666@postgres:5432/predator_db}
       - REDIS_URL=redis://redis:6379/0
@@ -225,6 +227,7 @@ services:
     volumes:
       - ./services/constitutional-core/app:/app/app
       - ./infrastructure/constitution:/app/infrastructure/constitution
+      - ./libs:/app/libs
     depends_on: [postgres, redis, kafka]
     restart: unless-stopped
     networks:
@@ -235,6 +238,7 @@ services:
           - som
           - rce
           - vpc-verifier
+          - predator_governance
     profiles: ["local", "server"]
 
   # ═══════════════════════════════════════════════════════════════
@@ -246,7 +250,9 @@ services:
     ports: ["10101:10101"]
     environment:
       - CUDA_VISIBLE_DEVICES= # CPU mode by default
-    volumes: [h2o_workspace:/workspace]
+    volumes:
+      - h2o_workspace:/workspace
+      - ./data:/app/data
     networks: [predator-net]
     profiles: ["server"]
 

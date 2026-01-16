@@ -4,10 +4,11 @@ import { motion } from 'framer-motion';
 import {
   Home, Search, Database, Bot, Shield, Settings, Activity,
   BrainCircuit, Eye, Rocket, BarChart3, Zap, FileText, Sparkles,
-  Lock, ChevronRight, Crown, Layers
+  Lock, ChevronRight, Crown, Layers, ShieldAlert, Scale
 } from 'lucide-react';
 import { TabView } from '../../types';
-import { useUser, UserRole } from '../../context/UserContext';
+import { useUser } from '../../context/UserContext';
+import { UserRole } from '../../config/roles';
 import { useShell, UIShell } from '../../context/ShellContext';
 
 // ============================================================================
@@ -146,6 +147,14 @@ export const NAVIGATION_ZONES: NavZone[] = [
         isNew: true,
         isLive: true,
       },
+      {
+        id: TabView.SOM,
+        label: 'Управління',
+        icon: <Scale size={18} />,
+        description: 'Конституційний нагляд',
+        isNew: true,
+        isLive: true,
+      },
     ],
   },
 
@@ -234,8 +243,15 @@ export const OrbitMenu: React.FC<OrbitMenuProps> = ({
   isCollapsed,
   onToggleCollapse,
 }) => {
-  const { canAccess, user } = useUser();
+  const { user } = useUser();
   const { currentShell } = useShell();
+
+  const isAdmin = user?.role === UserRole.ADMIN;
+  const canAccess = (role: UserRole) => {
+    if (isAdmin) return true;
+    if (user?.role === role) return true;
+    return false;
+  };
 
   // Define which zones are visible for each Shell
   const shellVisibility: Record<UIShell, string[]> = {
