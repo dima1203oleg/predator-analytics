@@ -13,6 +13,7 @@ from fastapi import Request, Response, HTTPException
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 import redis.asyncio as aioredis
+import psutil
 from prometheus_client import Counter, Histogram, Gauge, REGISTRY
 from datetime import datetime
 from libs.core.structured_logger import get_logger, RequestLogger
@@ -157,8 +158,17 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         client_ip = request.client.host if request.client else "unknown"
 
-        # Whitelist internal networks (Docker, Localhost)
-        is_internal = client_ip.startswith(("127.", "172.", "10.", "192.168."))
+        # Dynamic Rate Limiting based on system load (v26.3)
+        cpu_usage = psutil.cpu_percent()
+        effective_limit = self.limiter.requests_per_minute
+
+        if cpu_usage > 85:
+            # Critical load: reduce limits by 80%
+            effective_limit = max(5, int(self.limiter.requests_per_minute * 0.2))
+            logger.warning("system_overload_detected", cpu_usage=cpu_usage, throttling=True)
+        elif cpu_usage > 60:
+            # Medium load: reduce limits by 50%
+            effective_limit = int(self.limiter.requests_per_minute * 0.5)
 
         if is_internal or request.url.path in ["/metrics", "/health", "/api/v1/health"]:
              return await call_next(request)
@@ -214,5 +224,18 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
         try:
             return await call_next(request)
         except Exception as e:
-            logger.exception("unhandled_exception", path=request.url.path, method=request.method)
-            return JSONResponse(status_code=500, content={"error": "Internal Server Error", "detail": str(e)})
+            # Використовуємо ШІ-аналіз помилок (UA/Free API)
+            try:
+                from libs.core.structured_logger import log_error_with_analysis
+                log_error_with_analysis(logger, e, {"path": request.url.path, "method": request.method})
+            except:
+                logger.exception("exception_analysis_failed")
+
+            return JSONResponse(
+                status_code=500,
+                content={
+                    "error": "Внутрішня помилка сервера",
+                    "detail": str(e),
+                    "context": "ШІ-аналіз помилки додано до логів"
+                }
+            )
