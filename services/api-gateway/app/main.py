@@ -101,7 +101,8 @@ from app.middleware import (
     RateLimitMiddleware,
     MetricsMiddleware,
     RequestLoggingMiddleware,
-    ErrorHandlerMiddleware
+    ErrorHandlerMiddleware,
+    CircuitBreakerMiddleware
 )
 from app.api.routers import health as health_router
 
@@ -114,6 +115,13 @@ app = FastAPI(
 # Initialize OpenTelemetry BEFORE adding middlewares or handlers
 setup_otel(app, "predator_backend")
 logger.info("otel_initialized", service="predator_backend")
+
+# Активація Middleware (Order matters!)
+app.add_middleware(ErrorHandlerMiddleware)
+app.add_middleware(CircuitBreakerMiddleware) # Захист від збоїв
+app.add_middleware(RequestLoggingMiddleware)
+app.add_middleware(MetricsMiddleware)
+app.add_middleware(RateLimitMiddleware)
 
 # --- SYSTEM VERIFICATION ENDPOINT (The "Truth" for UI) ---
 @app.get("/api/system/verification")
