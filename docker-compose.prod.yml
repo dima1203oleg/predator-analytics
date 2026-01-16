@@ -81,7 +81,7 @@ services:
   governance:
     build:
       context: .
-      dockerfile: services/constitutional-core/Dockerfile
+      dockerfile: services/som/Dockerfile
     container_name: predator-governance
     restart: unless-stopped
     env_file: .env
