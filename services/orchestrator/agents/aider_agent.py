@@ -178,25 +178,33 @@ class AiderAgent:
                 api_key = os.getenv("GEMINI_API_KEY")
                 if api_key:
                     # Використовуємо Gemini API
-                    async with httpx.AsyncClient(timeout=60) as client:
-                        response = await client.post(
-                            "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent",
-                            headers={"Content-Type": "application/json"},
-                            params={"key": api_key},
-                            json={
-                                "contents": [{"parts": [{"text": f"Ти AI-асистент для програмування. {prompt}"}]}],
-                                "generationConfig": {"temperature": 0.7, "maxOutputTokens": 2000}
-                            }
-                        )
-                        if response.status_code == 200:
-                            result = response.json()
-                            output = result.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
-                            return {
-                                "status": "success",
-                                "output": output,
-                                "files_modified": target_files,
-                                "method": "gemini_api"
-                            }
+                    for attempt in range(3):
+                        async with httpx.AsyncClient(timeout=60) as client:
+                            response = await client.post(
+                                "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent",
+                                headers={"Content-Type": "application/json"},
+                                params={"key": api_key},
+                                json={
+                                    "contents": [{"parts": [{"text": f"Ти AI-асистент для програмування. {prompt}"}]}],
+                                    "generationConfig": {"temperature": 0.7, "maxOutputTokens": 2000}
+                                }
+                            )
+                            if response.status_code == 200:
+                                result = response.json()
+                                output = result.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                                return {
+                                    "status": "success",
+                                    "output": output,
+                                    "files_modified": target_files,
+                                    "method": "gemini_api"
+                                }
+                            elif response.status_code == 429:
+                                logger.warning(f"⚠️ Gemini 429 on attempt {attempt+1}. Sleeping 5s...")
+                                await asyncio.sleep(5)
+                                continue
+                            else:
+                                break
+
 
             elif self.model.startswith("ollama"):
                 # Використовуємо локальний Ollama з пошуком хоста
