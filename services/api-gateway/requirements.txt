@@ -41,7 +41,7 @@ sqlalchemy[asyncio]
 alembic
 psutil
 psycopg2-binary
-httpx
+
 
 # Monitoring
 prometheus-client
@@ -74,7 +74,7 @@ cryptography       # Token encryption
 # Observability
 structlog          # WinSURF: Structured Logging
 python-json-logger  # WinSURF: JSON Logs
-jaeger-client       # Distributed tracing (optional)
+
 opentelemetry-api
 opentelemetry-sdk
 opentelemetry-proto
