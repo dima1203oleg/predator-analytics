@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: predator-analytics
+spec:
+  mtls:
+    mode: PERMISSIVE # Змінено зі STRICT на PERMISSIVE для спрощення розробки
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-all-dev
+  namespace: predator-analytics
+spec:
+  action: ALLOW # Дозволяємо все на етапі розробки
+  rules:
+    - {}

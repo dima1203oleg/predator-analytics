@@ -1,0 +1,46 @@
+# Глобальні налаштування Predator Analytics
+global:
+  environment: production
+  language: uk_UA
+  pythonVersion: "3.12"
+  timezone: "Europe/Kiev"
+
+# Налаштування Backend
+backend:
+  replicaCount: 2
+  image:
+    repository: predator/backend
+    tag: v28.5
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  env:
+    AZR_AUTONOMY_LEVEL: "full"
+    SOVEREIGN_AUTO_APPROVE: "true"
+
+# Налаштування Frontend
+frontend:
+  replicaCount: 1
+  image:
+    repository: predator/frontend
+    tag: v28.5
+  service:
+    type: ClusterIP
+    port: 80
+
+# Бази Даних (якщо використовуються вбудовані)
+postgresql:
+  enabled: true
+  auth:
+    username: predator_admin
+    database: predator_db
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
