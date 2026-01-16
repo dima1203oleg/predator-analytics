@@ -14,6 +14,19 @@ sys.path.append(os.path.join(os.getcwd(), "services/api-gateway"))
 # Configure logging to verify structured logger integration
 from libs.core.structured_logger import get_logger, log_business_event
 
+from pathlib import Path
+
+# Load environment
+def load_env():
+    env_file = Path(os.getcwd()) / ".env"
+    if env_file.exists():
+        for line in env_file.read_text().splitlines():
+            if line and not line.startswith("#") and "=" in line:
+                key, value = line.split("=", 1)
+                os.environ.setdefault(key.strip(), value.strip())
+
+load_env()
+
 logger = get_logger("verify_azr")
 
 async def verify_azr():
