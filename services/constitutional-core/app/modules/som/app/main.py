@@ -1025,6 +1025,34 @@ async def get_axiom_violations(limit: int = 50):
         "total": len(constitutional_axioms.get_violations(limit))
     }
 
+
+class AnomalyBatchRequest(BaseModel):
+    anomalies: List[Dict[str, Any]]
+
+@app.post("/api/v1/som/anomalies/batch")
+async def report_anomalies_batch(request: AnomalyBatchRequest):
+    """Receive batch of anomalies from Anomaly Detection Service"""
+    report_id = str(uuid.uuid4())
+    logger.info(f"🚨 Received {len(request.anomalies)} anomalies. Batch ID: {report_id}")
+
+    # Analyze critical anomalies
+    critical_count = 0
+    for anomaly in request.anomalies:
+        if anomaly.get("severity") in ["critical", "high"]:
+            critical_count += 1
+            if CONSTITUTIONAL_CORE_AVAILABLE:
+                truth_ledger.record(
+                    action_type=ActionType.ANOMALY_DETECTED,
+                    actor="anomaly_detector",
+                    payload=anomaly,
+                    axioms_applied=[]
+                )
+
+    if critical_count > 0:
+        logger.warning(f"⚠️ Processed {critical_count} CRITICAL anomalies in batch {report_id}")
+
+    return {"status": "received", "report_id": report_id, "processed": len(request.anomalies)}
+
 # ═══════════════════════════════════════════════════════════════
 # v29-S TRUTH LEDGER ENDPOINTS
 # ═══════════════════════════════════════════════════════════════

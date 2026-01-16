@@ -456,6 +456,14 @@ async def startup_event():
     except Exception as e:
         logger.error("azr_engine_failed", error=str(e))
 
+    # 3.8.5 Start System Monitor Service (v27.0)
+    try:
+        from app.services.monitoring.system_monitor import system_monitor
+        await system_monitor.start_monitoring()
+        logger.info("📡 System Monitor Service STARTED (v27.0)")
+    except Exception as e:
+        logger.error("system_monitor_start_failed", error=str(e))
+
     # 3.9 Start Endless Self-Improvement Service
     try:
         from app.services.training_service import self_improvement_service
