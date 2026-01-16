@@ -31,14 +31,11 @@ class Settings(BaseSettings):
             return [x.strip() for x in v.split(',') if x.strip()]
         return ["*"]
 
-    # App
-    APP_NAME: str = "Predator Analytics Core"
-    APP_VERSION: str = "22.0.0"
-    DEBUG: bool = False
-    ENVIRONMENT: str = "development"
-
-    # API
-    API_V1_PREFIX: str = "/api/v1"
+    # --- RESILIENCE & SURVIVAL (v27.0) ---
+    RESILIENCE_MODE: bool = True  # Режим незламності увімкнено за замовчуванням
+    CIRCUIT_BREAKER_THRESHOLD: int = 5 # Кількість помилок до блокування
+    FALLBACK_TO_LOCAL_AI: bool = True # Використовувати Ollama як фолбек
+    EMERGENCY_RESTART_ENABLED: bool = True # Дозволити самостійний перезапуск
 
     # --- CONSTITUTIONAL CORE (v26.2) ---
     CONSTITUTION_HASH: str = "3f05c27896098e41471c246fb39e6a0dd43f7b11ff7c46db8f0195d3d3cae3cd"
