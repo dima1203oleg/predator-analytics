@@ -20,6 +20,12 @@ from libs.core.structured_logger import get_logger, RequestLogger
 
 logger = get_logger("predator.middleware")
 
+# Стан Circuit Breaker (глобальний для інстансу)
+CIRCUIT_STATE = {
+    "open_circuits": {}, # {service_name: timestamp_of_failure}
+    "failure_counters": {} # {service_name: count}
+}
+
 # ═══════════════════════════════════════════════════════════════════════════
 # PROMETHEUS METRICS
 # ═══════════════════════════════════════════════════════════════════════════
@@ -195,6 +201,57 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         HTTP_REQUEST_DURATION.labels(method=request.method, endpoint=request.url.path).observe(latency)
         ACTIVE_CONNECTIONS.dec()
         return response
+
+        return response
+
+class CircuitBreakerMiddleware(BaseHTTPMiddleware):
+    """
+    Middleware для запобігання каскадним збоям (Circuit Breaker).
+    Якщо сервіс (напр. /search) видає багато помилок, він 'замикається' на 60 сек.
+    """
+    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+        from libs.core.config import settings
+
+        path = request.url.path
+        service_id = path.split('/')[2] if len(path.split('/')) > 2 else "root"
+
+        now = time.time()
+
+        # Перевірка чи ланцюг розімкнутий
+        if service_id in CIRCUIT_STATE["open_circuits"]:
+            if now - CIRCUIT_STATE["open_circuits"][service_id] < 60:
+                logger.warning(f"🔌 CIRCUIT OPEN for {service_id}. Returning survival response.")
+                return JSONResponse(
+                    status_code=503,
+                    content={
+                        "error": "Service in Survival Mode",
+                        "status": "DEGRADED",
+                        "context": "Система захищає ядро. Будь ласка, спробуйте через хвилину."
+                    }
+                )
+            else:
+                # Час вийшов, пробуємо знову (half-open)
+                del CIRCUIT_STATE["open_circuits"][service_id]
+                CIRCUIT_STATE["failure_counters"][service_id] = 0
+
+        try:
+            response = await call_next(request)
+
+            if response.status_code >= 500:
+                self._record_failure(service_id, settings.CIRCUIT_BREAKER_THRESHOLD)
+
+            return response
+        except Exception as e:
+            self._record_failure(service_id, settings.CIRCUIT_BREAKER_THRESHOLD)
+            raise e
+
+    def _record_failure(self, service_id: str, threshold: int):
+        count = CIRCUIT_STATE["failure_counters"].get(service_id, 0) + 1
+        CIRCUIT_STATE["failure_counters"][service_id] = count
+
+        if count >= threshold:
+            CIRCUIT_STATE["open_circuits"][service_id] = time.time()
+            logger.error(f"💥 CIRCUIT BLOWN for {service_id}! Transitioning to SURVIVAL MODE.")
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
