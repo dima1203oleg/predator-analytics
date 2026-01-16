@@ -345,7 +345,8 @@ app.add_middleware(
 )
 
 # v30.1 Autonomy Guard (Security Control for Autonomous Agents)
-from app.core.middleware.autonomy_guard import AutonomyGuardMiddleware
+# v30.1 Autonomy Guard (Security Control for Autonomous Agents)
+from .core.middleware.autonomy_guard import AutonomyGuardMiddleware
 app.add_middleware(AutonomyGuardMiddleware)
 
 # Initialize services
