@@ -22,28 +22,27 @@ echo ""
 # Опції rsync
 RSYNC_OPTS="-avz --progress --exclude .venv* --exclude venv* --exclude node_modules --exclude .git --exclude __pycache__ --exclude *.pyc --exclude .DS_Store --exclude dist --exclude build --exclude *.log"
 
-# Виключення
-EXCLUDE_OPTS="
-  --exclude node_modules
-  --exclude .venv
-  --exclude venv
-  --exclude .git
-  --exclude __pycache__
-  --exclude *.pyc
-  --exclude .DS_Store
-  --exclude dist
-  --exclude build
-  --exclude .pytest_cache
-  --exclude .mypy_cache
-  --exclude logs
-  --exclude *.log
-  --exclude '*.xlsx'
-  --exclude '*.csv'
-  --exclude '*.zip'
-  --exclude '*.gz'
-  --exclude 'Березень_2024.csv'
-  --exclude 'custom_declarations_registry.xlsx'
-"
+# Виключення (Bash Array)
+EXCLUDES=(
+  --exclude=node_modules
+  --exclude=.venv
+  --exclude=venv
+  --exclude=.git
+  --exclude=__pycache__
+  --exclude=*.pyc
+  --exclude=.DS_Store
+  --exclude=dist
+  --exclude=build
+  --exclude=.pytest_cache
+  --exclude=.mypy_cache
+  --exclude=logs
+  --exclude=*.log
+  --exclude=*.xlsx
+  --exclude=*.csv
+  --exclude=*.zip
+  --exclude=*.gz
+  --exclude=Березень_2024.csv
+)
 
 # Перевірка на --dry-run
 if [ "$1" == "--dry-run" ]; then
@@ -53,7 +52,7 @@ if [ "$1" == "--dry-run" ]; then
 fi
 
 # Виконання rsync
-rsync $RSYNC_OPTS $EXCLUDE_OPTS \
+rsync $RSYNC_OPTS "${EXCLUDES[@]}" \
   -e "ssh" \
   "$LOCAL_DIR" \
   "$SSH_HOST:~/$REMOTE_DIR/"
