@@ -93,7 +93,7 @@ beautifulsoup4     # HTML parsing
 lxml                # Fast XML/HTML parser
 
 # MLOps & Self-Improvement (v25.0)
-dvc[s3]            # Data Version Control
+# dvc[s3]>=3.40.0            # Temporarily disabled to fix build loop
 # augly               # Facebook AugLy (Optional)
 mlflow             # Experiment Tracking
 
