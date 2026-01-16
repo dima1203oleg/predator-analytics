@@ -41,7 +41,7 @@ class DataHubService:
                 description=source_data.description,
                 source_type=source_data.source_type.value,
                 config=source_data.config,
-                metadata=source_data.metadata
+                meta=source_data.meta
             )
             session.add(source)
             await session.commit()
