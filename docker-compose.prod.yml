@@ -120,6 +120,7 @@ services:
     image: ollama/ollama:latest
     container_name: predator-ollama
     restart: unless-stopped
+    runtime: nvidia
     deploy:
       resources:
         reservations:
