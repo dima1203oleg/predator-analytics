@@ -5,7 +5,7 @@ Shared settings for all Predator services.
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import field_validator
 from functools import lru_cache
-from typing import Optional, List
+from typing import Optional, List, Any
 import json
 import os
 
@@ -128,7 +128,7 @@ class Settings(BaseSettings):
     # LLM Settings
     OPENAI_API_KEY: Optional[str] = None
     GEMINI_API_KEY: Optional[str] = None
-    GEMINI_API_KEYS: List[str] = []
+    GEMINI_API_KEYS: Any = []
     ANTHROPIC_API_KEY: Optional[str] = None
     GROQ_API_KEY: Optional[str] = None
     MISTRAL_API_KEY: Optional[str] = None
