@@ -25,28 +25,33 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Install runtime dependencies
+# Create non-root user
+RUN useradd --create-home --shell /bin/bash predator
+
+# Copy installed packages from builder
+COPY --from=builder /root/.local /home/predator/.local
+
+# Install runtime dependencies
 RUN apt-get update && apt-get install -y \
     curl \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy installed packages from builder
-COPY --from=builder /root/.local /root/.local
+# Fix permissions
+RUN chown -R predator:predator /home/predator
 
 # Copy application code from project root
 COPY libs ./libs
 # Workaround for src copy issue: Copy full directory and mv
 COPY services/api-gateway ./_backend_full
 RUN cp -r ./_backend_full/app ./app && \
-    rm -rf ./_backend_full
-
-# Create non-root user
-RUN useradd --create-home --shell /bin/bash predator && \
+    rm -rf ./_backend_full && \
     chown -R predator:predator /app
+
 USER predator
 
 # Make Python modules accessible
-ENV PATH=/root/.local/bin:$PATH
+ENV PATH=/home/predator/.local/bin:$PATH
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
