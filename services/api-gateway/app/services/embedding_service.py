@@ -54,54 +54,49 @@ class EmbeddingService:
 
     async def generate_embedding_async(self, text: str) -> List[float]:
         """
-        Generate embedding vector asynchronously with dynamic batching.
+        Generate embedding vector asynchronously via Ollama.
         """
-        if self._batch_service is None:
-            from app.services.batch_embedder import BatchEmbeddingService
-            self._batch_service = BatchEmbeddingService(self)
-            self._batch_service.start()
-
-        return await self._batch_service.embed_async(text)
+        import httpx
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    self.ollama_url,
+                    json={"model": self.model_name, "prompt": text},
+                    timeout=30.0
+                )
+                response.raise_for_status()
+                data = response.json()
+                return data.get("embedding", [0.0] * self.vector_size)
+        except Exception as e:
+            logger.error("ollama_embedding_async_failed", error=str(e))
+            return [0.0] * self.vector_size
 
     def generate_embedding(self, text: str) -> List[float]:
         """
-        Generate embedding vector for text.
-        Blocking call - verify safe usage or use generate_embedding_async.
-
-        Args:
-            text: Input text
-
-        Returns:
-            List of floats (vector representation)
+        Generate embedding vector via Ollama (Blocking).
         """
-        self._load_model()
-
+        import requests
         try:
-            embedding = self.model.encode(text, convert_to_numpy=True)
-            return embedding.tolist()
+            response = requests.post(
+                self.ollama_url,
+                json={"model": self.model_name, "prompt": text},
+                timeout=30.0
+            )
+            response.raise_for_status()
+            data = response.json()
+            return data.get("embedding", [0.0] * self.vector_size)
         except Exception as e:
-            logger.error(f"Embedding generation failed: {e}")
-            # Return zero vector as fallback
+            logger.error("ollama_embedding_failed", error=str(e))
             return [0.0] * self.vector_size
 
     def generate_batch_embeddings(self, texts: List[str]) -> List[List[float]]:
         """
-        Generate embeddings for multiple texts (batch processing).
-
-        Args:
-            texts: List of input texts
-
-        Returns:
-            List of embedding vectors
+        Generate embeddings for multiple texts via Ollama.
         """
-        self._load_model()
-
-        try:
-            embeddings = self.model.encode(texts, convert_to_numpy=True, show_progress_bar=True)
-            return embeddings.tolist()
-        except Exception as e:
-            logger.error("batch_embedding_failed", error=str(e), count=len(texts))
-            return [[0.0] * self.vector_size] * len(texts)
+        results = []
+        for text in texts:
+            results.append(self.generate_embedding(text))
+        return results
 
     def cosine_similarity(self, vec1: List[float], vec2: List[float]) -> float:
         """
