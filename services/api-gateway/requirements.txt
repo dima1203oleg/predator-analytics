@@ -8,6 +8,7 @@ requests
 python-multipart
 email-validator
 jinja2
+aio-pika
 
 # Data Pipeline (Phase 3)
 minio
