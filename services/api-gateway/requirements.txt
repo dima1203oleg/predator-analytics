@@ -3,6 +3,7 @@ uvicorn
 pydantic
 pydantic-settings
 aiohttp
+httpx
 pyyaml
 requests
 python-multipart
@@ -10,27 +11,20 @@ email-validator
 jinja2
 aio-pika
 
-# Data Pipeline (Phase 3)
+# Data Pipeline
 minio
 pandas
 openpyxl
 asyncpg
 opensearch-py
 
-# Security & Auth (Phase 5)
+# Security & Auth
 PyJWT[crypto]
 python-jose[cryptography]
-python-multipart
 
-# Semantic Search (Phase 6-7)
-sentence-transformers
+# Vector DB & Math
 qdrant-client
 numpy
-Pillow
-
-# ML/AI (Optional for local)
-# transformers (Temporarily removed)
-# torch>=2.2.0 (Temporarily removed)
 
 # Task Queue
 celery
@@ -43,14 +37,8 @@ alembic
 psutil
 psycopg2-binary
 
-
-# Monitoring
+# Monitoring & Observability
 prometheus-client
-
-# ═══════════════════════════════════════════════════════════════
-# НОВI ЗАЛЕЖНОСТI ДЛЯ ТЗ ІНТЕГРАЦІЇ (2025-12-06)
-
-# Core Observability
 structlog
 python-json-logger
 opentelemetry-api

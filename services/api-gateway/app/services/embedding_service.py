@@ -21,73 +21,23 @@ class EmbeddingService:
     - Audited by Constitutional Linter.
     """
 
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
+    def __init__(self, model_name: str = "nomic-embed-text"):
         """
         Initialize embedding service.
 
         Args:
-            model_name: HuggingFace model name (default: all-MiniLM-L6-v2, 384 dimensions)
+            model_name: Ollama model name (default: nomic-embed-text)
         """
-        self.model_name = model_name
-        self.vector_size = 384  # for all-MiniLM-L6-v2
-        self.model = None
-        self.reranker = None
-        self.reranker_model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+        from libs.core.config import settings
+        self.model_name = os.environ.get("EMBEDDING_MODEL", model_name)
+        self.ollama_url = f"{settings.OLLAMA_BASE_URL}/api/embeddings"
+        self.vector_size = 768  # default for nomic-embed-text
 
-        # Deprecated Tier Check (Now Handled by Arbiter)
-        self.compute_tier = os.environ.get("COMPUTE_TIER", "basic").lower()
-        self.is_gpu_tier = self.compute_tier in ["gpu", "heavy", "ml"]
-
-        # Lazy loading - only load when first needed
-        logger.info("embedding_service_initialized", model=model_name)
-
-        # Batching service
-        self._batch_service = None
+        logger.info("embedding_service_initialized", model=self.model_name, url=self.ollama_url)
 
     def _load_model(self):
-        """Lazy load the model. Enforces Constitutional Control via Arbiter."""
-        if self.model is None:
-            # 1. Constitutional Gatekeeping (v26)
-            decision = OperationalPolicy.authorize_high_compute(
-                component="EmbeddingService",
-                task_details={
-                    "model_name": self.model_name,
-                    "reranker": self.reranker_model_name,
-                    "action": "load_heavy_models"
-                }
-            )
-
-            if not decision.get("allowed"):
-                logger.warning(
-                    "constitutional_model_load_denied",
-                    reason=decision.get("reason"),
-                    component="EmbeddingService"
-                )
-                self._load_dummy_model()
-                return
-
-            logger.info(
-                "constitutional_model_load_approved",
-                signature=decision.get("signature", "N/A")[:8]
-            )
-
-            # 2. Load Real Model (Arbiter approved context)
-            try:
-                from sentence_transformers import SentenceTransformer
-                from sentence_transformers import CrossEncoder
-                with log_performance(logger, "model_loading_latency", model=self.model_name):
-                    self.model = SentenceTransformer(self.model_name)
-                logger.info("embedding_model_loaded", model=self.model_name)
-
-                # Load reranker
-                self.reranker = CrossEncoder(self.reranker_model_name)
-                logger.info("reranker_model_loaded", model=self.reranker_model_name)
-            except ImportError:
-                logger.warning("sentence_transformers_missing_fallback_dummy")
-                self._load_dummy_model()
-            except Exception as e:
-                logger.error("model_load_failed", error=str(e), model=self.model_name)
-                raise
+        """No-op for API-based embedding."""
+        pass
 
     def _load_dummy_model(self):
         """Load compliant dummy model for local/basic tiers."""
