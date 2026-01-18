@@ -2,14 +2,10 @@ import logging
 import os
 from typing import List
 import numpy as np
-from libs.core.governance import OperationalPolicy
-from libs.core.reality import get_juridical_transpiler
-from predatorctl.core.ledger_client import LedgerClient
 
-from libs.core.structured_logger import get_logger, log_performance
+from libs.core.structured_logger import get_logger
 
 logger = get_logger("service.embedding")
-ledger = LedgerClient()
 
 class EmbeddingService:
     """
