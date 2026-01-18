@@ -63,7 +63,6 @@ services:
           memory: 2G
     environment:
       - UVICORN_TIMEOUT_KEEP_ALIVE=300
-      - UVICORN_LIMIT_MAX_REQUESTS=0
       - DATABASE_URL=postgresql+asyncpg://predator:${POSTGRES_PASSWORD}@postgres:5432/predator_db
       - REDIS_URL=redis://redis:6379/0
       - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/
