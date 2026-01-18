@@ -55,6 +55,10 @@ USER predator
 ENV PATH=/home/predator/.local/bin:$PATH
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
+ENV NLTK_DATA=/home/predator/nltk_data
+
+# Pre-download NLTK data for nlpaug
+RUN python -c "import nltk; nltk.download('wordnet', download_dir='/home/predator/nltk_data'); nltk.download('omw-1.4', download_dir='/home/predator/nltk_data')"
 
 # Environment variables (MANDATORY: 0.0.0.0 binding)
 ENV HOST=0.0.0.0
