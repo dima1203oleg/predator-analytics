@@ -45,8 +45,9 @@ COPY libs ./libs
 # Workaround for src copy issue: Copy full directory and mv
 COPY services/api-gateway ./_backend_full
 RUN cp -r ./_backend_full/app ./app && \
+    if [ -d "./_backend_full/src" ]; then cp -r ./_backend_full/src ./src; fi && \
     rm -rf ./_backend_full && \
-    chown -R predator:predator /app
+    chown -R predator:predator /app /app/src 2>/dev/null || true
 
 USER predator
 
