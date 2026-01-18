@@ -61,6 +61,8 @@ services:
           memory: 8G
         reservations:
           memory: 2G
+    volumes:
+      - ./March_2024_Registry.xlsx:/app/March_2024_Registry.xlsx
     environment:
       - UVICORN_TIMEOUT_KEEP_ALIVE=300
       - DATABASE_URL=postgresql+asyncpg://predator:${POSTGRES_PASSWORD}@postgres:5432/predator_db
