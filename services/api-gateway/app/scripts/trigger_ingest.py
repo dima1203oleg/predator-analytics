@@ -15,7 +15,7 @@ async def main():
         from app.services.etl_ingestion import ETLIngestionService
         service = ETLIngestionService()
 
-        file_path = "/app/March_2024_Registry.xlsx"
+        file_path = "/app/uploads/Березень_2024.xlsx"
         if not os.path.exists(file_path):
             print(f"Error: File {file_path} not found.")
             return
