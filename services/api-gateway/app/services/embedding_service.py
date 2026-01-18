@@ -26,7 +26,7 @@ class EmbeddingService:
         """
         from libs.core.config import settings
         self.model_name = os.environ.get("EMBEDDING_MODEL", model_name)
-        self.ollama_url = f"{settings.OLLAMA_BASE_URL}/api/embeddings"
+        self.ollama_url = f"{settings.LLM_OLLAMA_BASE_URL}/embeddings"
         self.vector_size = 768  # default for nomic-embed-text
 
         logger.info("embedding_service_initialized", model=self.model_name, url=self.ollama_url)
