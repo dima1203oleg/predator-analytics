@@ -671,6 +671,10 @@ app.include_router(webhook_routes.webhook_router, prefix="/api")
 # ArgoCD webhook handler (receives ArgoCD webhooks and notifies / triggers rollback)
 app.include_router(argocd_webhook_router.router, prefix="/api")
 
+# WebSocket endpoints for real-time updates
+from app.api import websocket as websocket_router
+app.include_router(websocket_router.router)
+
 
 # ============================================================================
 # DOCUMENTS LIST ENDPOINT
