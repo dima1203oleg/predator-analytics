@@ -189,7 +189,7 @@ minio:
 ## 🟡 P2 - СЕРЕДНІЙ ПРІОРИТЕТ
 
 ### TASK-009: Видалити застарілі файли в корені
-**Статус:** 🔄 TODO
+**Статус:** ✅ DONE (Verified - directories already removed or migrated to apps/)
 **Оцінка:** 1 година
 
 **Проблема:**
@@ -206,10 +206,12 @@ rm -rf backend/
 rm -rf frontend/
 ```
 
+**Результат:** Директорії вже були видалені або перенесені в `apps/`. Перевірено 2026-01-31.
+
 ---
 
 ### TASK-010: Повна документація workflows
-**Статус:** 🔄 TODO
+**Статус:** ✅ DONE
 **Оцінка:** 4 години
 
 **Поточні workflows:**
@@ -219,27 +221,31 @@ rm -rf frontend/
 - `.agent/workflows/system_status.md`
 - `.agent/workflows/verify_e2e_ui.md`
 
-**Потрібно додати:**
-- `deploy_production.md`
-- `rollback_changes.md`
-- `scale_services.md`
-- `backup_restore.md`
-- `security_audit.md`
+**Додано (2026-01-31):**
+- ✅ `docs/WORKFLOWS.md` - Comprehensive documentation for all 27 GitHub Actions workflows
+- ✅ `docs/DEPLOY_PRODUCTION.md` - Production deployment procedures and checklists
+- ✅ `docs/ROLLBACK.md` - Rollback procedures and disaster recovery
+- ✅ `docs/SCALING.md` - Service scaling strategies and procedures
+- ✅ `docs/BACKUP_RESTORE.md` - Backup and restore procedures
+- ✅ `docs/SECURITY_AUDIT.md` - Security audit and compliance procedures
 
 ---
 
 ### TASK-011: CI/CD через GitHub Actions
-**Статус:** 🔄 TODO
+**Статус:** ✅ DONE (Already implemented)
 **Оцінка:** 4 години
 
-**Створити:**
-```yaml
-# .github/workflows/ci.yml
-name: CI Pipeline
+**Результат:** 
+Вже існує 27 comprehensive GitHub Actions workflows:
+- `ci.yml` - Main CI pipeline
+- `ci-cd-pipeline.yml` - Full CI/CD with deployment
+- `deploy-*.yml` - Multiple deployment workflows
+- `build-nvidia.yml` - NVIDIA-specific builds
+- Security workflows (secrets-checker, chart-protection)
+- AI-powered workflows (ai-autofix-loop, multi-agent-debate)
+- Maintenance workflows (nightly-rerun, rollback)
+- Detailed documentation in `docs/WORKFLOWS.md`
 
-on: [push, pull_request]
-
-jobs:
 ### TASK-012: Rate Limiting для API
 **Статус:** ✅ DONE
 **Оцінка:** 2 години
@@ -251,23 +257,34 @@ jobs:
 ---
 
 ### TASK-013: WebSocket для Real-time Updates
-**Статус:** 🔄 TODO
+**Статус:** ✅ DONE
 **Оцінка:** 4 години
 
 **Імплементація:**
-```python
-# apps/backend/app/api/websocket.py
-from fastapi import WebSocket
+Реалізовано в `apps/backend/app/api/websocket.py` з наступними features:
+- ✅ ConnectionManager для управління з'єднаннями
+- ✅ Channel-based subscriptions (system, jobs, training, diagnostics, trinity)
+- ✅ `/ws/events` endpoint для загальних подій
+- ✅ `/ws/omniscience` endpoint для v25 features (real-time system state)
+- ✅ Helper functions для broadcasting:
+  - `broadcast_system_event()`
+  - `broadcast_job_update()`
+  - `broadcast_training_update()`
+  - `broadcast_diagnostic_alert()`
+  - `broadcast_trinity_reasoning()`
+- ✅ Інтегровано в `main.py`
 
-@app.websocket("/ws/events")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    pubsub = redis.pubsub()
-    await pubsub.subscribe("predator:events")
-
-    async for message in pubsub.listen():
-        if message["type"] == "message":
-            await websocket.send_json(message["data"])
+**Використання:**
+```javascript
+// Frontend example
+const ws = new WebSocket('ws://api.predator.example.com/ws/events');
+ws.onopen = () => {
+  ws.send(JSON.stringify({action: 'subscribe', channel: 'system'}));
+};
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  console.log('Event received:', data);
+};
 ```
 
 ---
@@ -355,13 +372,19 @@ k8s/
 
 ## 📊 SUMMARY
 
-| Пріоритет | Кількість задач | Орієнтовний час |
-|-----------|-----------------|-----------------|
-| P0 (Critical) | 4 | ~6 годин |
-| P1 (High) | 4 | ~7.5 годин |
-| P2 (Medium) | 5 | ~15 годин |
-| P3 (Low) | 7 | ~68 годин |
-| **TOTAL** | **20** | **~96.5 годин** |
+| Пріоритет | Кількість задач | Виконано | Залишилось | Орієнтовний час (залишок) |
+|-----------|-----------------|----------|------------|---------------------------|
+| P0 (Critical) | 4 | 4 | 0 | 0 годин ✅ |
+| P1 (High) | 4 | 1 | 3 | ~5.5 годин |
+| P2 (Medium) | 5 | 5 | 0 | 0 годин ✅ |
+| P3 (Low) | 7 | 0 | 7 | ~68 годин |
+| **TOTAL** | **20** | **10** | **10** | **~73.5 годин** |
+
+**Недавно виконано (2026-01-31)**:
+- ✅ TASK-009: Видалити застарілі файли (verified already done)
+- ✅ TASK-010: Повна документація workflows (6 comprehensive docs created)
+- ✅ TASK-011: CI/CD через GitHub Actions (27 workflows already exist)
+- ✅ TASK-013: WebSocket для Real-time Updates (complete implementation)
 
 ---
 
@@ -379,4 +402,6 @@ k8s/
 
 ---
 
-**Останнє оновлення:** 2025-12-16T18:15:00+02:00
+**Останнє оновлення:** 2026-01-31T04:25:00+00:00  
+**Оновив:** GitHub Copilot Agent  
+**Прогрес:** 10/20 задач виконано (50%) 🎯
