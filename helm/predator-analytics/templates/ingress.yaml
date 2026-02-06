@@ -11,18 +11,30 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    # Rewrite /api/v1/x -> /v1/x on backend
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
     - host: {{ .Values.global.domain }}
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          # API Routing: /api/v1/... -> Backend /v1/...
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: {{ include "predator-analytics.fullname" . }}-api
                 port:
                   number: 8000
+          # UI Routing: / -> UI Service
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "predator-analytics.fullname" . }}-ui
+                port:
+                  number: 80
     - host: mlflow.{{ .Values.global.domain }}
       http:
         paths:
