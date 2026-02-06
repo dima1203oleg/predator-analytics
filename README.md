@@ -4,7 +4,7 @@
 ## Overview
 
 Autonomous AI-driven analytical platform.
-Built on **Python 3.12**, **Kubernetes**, and **ArgoCD**.
+Built on **Python 3.12**, **Kubernetes**, **React**, and **ArgoCD**.
 Strict adherence to **GitOps** principles.
 
 ## Architecture
@@ -34,15 +34,17 @@ kubectl create namespace predator-analytics
 helm install predator ./helm/predator-analytics -n predator-analytics
 ```
 
-### 4. Observe
+### 4. Access
 
+* **UI:** `http://predator.analytics.local` (Add to /etc/hosts)
+* **API:** `http://predator.analytics.local/api`
 * **ArgoCD:** `kubectl port-forward svc/argocd-server -n argocd 8080:443`
-* **MCP Router:** Port 8080
-* **RTB Engine:** Port 8081
+* **MLflow:** `http://mlflow.predator.analytics.local`
 
 ## Directory Structure
 
-* `services/`: Source code for all agents/controllers
+* `apps/predator-analytics-ui`: React/Vite Frontend
+* `services/`: Source code for Backend (API, AI, Autonomy)
 * `helm/`: Kubernetes manifests
 * `schemas/`: JSON Event Schemas
 * `docs/`: Architecture documentation
