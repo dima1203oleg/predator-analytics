@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-analytics-v25
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/dima1203oleg/predator-analytics.git"
+    targetRevision: HEAD
+    path: helm/predator-analytics
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: predator-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
