@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rtb-engine-sa
+  namespace: predator-prod
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: rtb-executor-role
+  namespace: predator-prod
+spec:
+  rules:
+    - apiGroups: ["batch", "apps"]
+      resources: ["jobs", "deployments"]
+      verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rtb-engine-binding
+  namespace: predator-prod
+subjects:
+  - kind: ServiceAccount
+    name: rtb-engine-sa
+roleRef:
+  kind: Role
+  name: rtb-executor-role
+  apiGroup: rbac.authorization.k8s.io
