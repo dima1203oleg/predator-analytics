@@ -37,11 +37,11 @@ class AuditStore:
         try:
             async with self.pool.acquire() as conn:
                 await conn.execute(
-                    \"\"\"
+                    """
                     INSERT INTO audit_ledger (
                         audit_id, actor_id, action_type, resource_id, payload, trace_id, integrity_hash
                     ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-                    \"\"\",
+                    """,
                     artifact.decision_id,
                     "rtb-engine",
                     artifact.action_type,

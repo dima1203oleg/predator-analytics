@@ -53,10 +53,10 @@ class AuditWorker:
 
             async with self.db_pool.acquire() as conn:
                 await conn.execute(
-                    \"\"\"
+                    """
                     INSERT INTO audit_ledger (audit_id, actor_id, action_type, resource_id, payload, trace_id, integrity_hash)
                     VALUES ($1, $2, $3, $4, $5, $6, $7)
-                    \"\"\",
+                    """,
                     audit_id, evt.source, evt.event_type, str(evt.event_id), 
                     json.dumps(payload), uuid.UUID(evt.trace_id) if evt.trace_id else None,
                     integrity_hash

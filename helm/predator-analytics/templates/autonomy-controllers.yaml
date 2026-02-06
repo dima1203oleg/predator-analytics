@@ -1,0 +1,31 @@
+
+# predator-analytics v25.1 - Component Registry Update
+# Adding SIO and AutoML Controller
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-sio-controller
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: sio-controller
+          image: ghcr.io/predator-analytics/sio-controller:latest
+          env:
+            - name: RTB_ENGINE_URL
+              value: "http://{{ include "predator-analytics.fullname" . }}-rtb-engine:8081/events"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-automl-controller
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: automl-controller
+          image: ghcr.io/predator-analytics/automl-controller:latest
