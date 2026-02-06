@@ -111,6 +111,8 @@ services:
     env_file: .env
     volumes:
       - ./data:/app/data
+      - ./docs:/app/docs
+      - ./.git:/app/.git
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
@@ -218,6 +220,41 @@ services:
       timeout: 20s
       retries: 3
 
+  # Automated Backups
+  backup:
+    build:
+      context: ./docker/backup
+      dockerfile: Dockerfile
+    container_name: predator-backup
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - CRON_SCHEDULE=0 3 * * * # Daily at 3 AM
+    volumes:
+      - ./backups:/backups
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.18
+    depends_on:
+      - postgres
+      - qdrant
+
+  # OpenTelemetry Collector
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: predator-otel-collector
+    restart: unless-stopped
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./docker/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.17
+
   # Qdrant
   qdrant:
     image: qdrant/qdrant:v1.7.4
@@ -264,6 +301,8 @@ services:
        - REDIS_URL=redis://redis:6379/0
        - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/
        - OLLAMA_BASE_URL=http://ollama:11434
+    healthcheck:
+      test: ["NONE"]
     networks:
       predator-network:
         ipv4_address: 172.20.0.12
@@ -284,6 +323,8 @@ services:
        - DATABASE_URL=postgresql+asyncpg://predator:${POSTGRES_PASSWORD}@postgres:5432/predator_db
        - REDIS_URL=redis://redis:6379/0
        - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/
+    healthcheck:
+      test: ["NONE"]
     networks:
       predator-network:
         ipv4_address: 172.20.0.11

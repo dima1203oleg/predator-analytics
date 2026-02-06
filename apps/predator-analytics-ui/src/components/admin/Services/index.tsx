@@ -3,27 +3,27 @@ import { Box, Play, Square, RotateCcw } from 'lucide-react';
 
 export const Services: React.FC = () => {
   const services = [
-    { name: 'som-hypervisor', port: 8095, version: 'v29.0.0', status: 'running' },
-    { name: 'truth-ledger', port: 8092, version: 'v29.0.0', status: 'running' },
-    { name: 'arbiter-core', port: 8091, version: 'v29.0.0', status: 'running' },
-    { name: 'rce-executor', port: 8093, version: 'v29.0.0', status: 'running' },
-    { name: 'vpc-verifier', port: 8094, version: 'v29.0.0', status: 'running' },
-    { name: 'predator-api', port: 8000, version: 'v29.0.0', status: 'running' },
-    { name: 'predator-nlp', port: 8002, version: 'v29.0.0', status: 'running' },
+    { name: 'som-hypervisor', port: 8095, version: 'v30.0.0', status: 'running' },
+    { name: 'truth-ledger', port: 8092, version: 'v30.0.0', status: 'running' },
+    { name: 'arbiter-core', port: 8091, version: 'v30.0.0', status: 'running' },
+    { name: 'rce-executor', port: 8093, version: 'v30.0.0', status: 'running' },
+    { name: 'vpc-verifier', port: 8094, version: 'v30.0.0', status: 'running' },
+    { name: 'predator-api', port: 8000, version: 'v30.0.0', status: 'running' },
+    { name: 'predator-nlp', port: 8002, version: 'v30.0.0', status: 'running' },
   ];
 
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-white mb-6">Мікросервіси</h1>
 
-      <div className="bg-slate-900 border border-slate-700 rounded-xl overflow-hidden">
+      <div className="bg-slate-900 border border-slate-700 rounded-xl ">
         <table className="w-full text-left">
            <thead className="bg-slate-950 text-slate-500 text-xs uppercase font-bold">
               <tr>
                  <th className="p-4">Service Name</th>
                  <th className="p-4">Port</th>
                  <th className="p-4">Version</th>
-                 <th className="p-4">Status</th>
+                 <th className="p-4">Статус</th>
                  <th className="p-4 text-right">Actions</th>
               </tr>
            </thead>

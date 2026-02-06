@@ -1,0 +1,112 @@
+# Default values for predator-frontend
+# This is a YAML-formatted file.
+
+global:
+  environment: production
+  domain: predator-analytics.com
+
+replicaCount: 2
+
+image:
+  repository: ghcr.io/predator-analytics/frontend
+  pullPolicy: IfNotPresent
+  tag: "30.1.0"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: "predator-frontend"
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: app.predator-analytics.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: predator-frontend-tls
+      hosts:
+        - app.predator-analytics.com
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 10
+  periodSeconds: 5
+
+# Environment variables
+env:
+  - name: NODE_ENV
+    value: "production"
+  - name: NEXT_PUBLIC_API_URL
+    value: "https://api.predator-analytics.com"
+  - name: NEXT_TELEMETRY_DISABLED
+    value: "1"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - predator-frontend
+          topologyKey: kubernetes.io/hostname

@@ -1,17 +1,16 @@
+from __future__ import annotations
+
 #!/usr/bin/env python3
+import json
 import os
 import sys
-import json
 import time
+
 
 # PREDATOR V30.1 - COMPLEXITY ENFORCER (UA)
 # Запобігає "вибуху складності" шляхом моніторингу метрик коду.
 # Вимагає Python 3.12+
 
-if sys.version_info < (3, 12):
-    print("❌ ПОМИЛКА: Необхідний Python 3.12 або новіший.")
-    print(f"   Поточна версія: {sys.version.split()[0]}")
-    sys.exit(1)
 
 MAX_LINES_PER_FILE = 800
 MAX_FUNCTIONS_PER_FILE = 25
@@ -20,22 +19,21 @@ VIDEO_EXT = {".py", ".ts", ".tsx", ".js"}
 
 def count_metrics(filepath):
     try:
-        with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+        with open(filepath, encoding='utf-8', errors='ignore') as f:
             lines = f.readlines()
             loc = len(lines)
             functions = 0
             for line in lines:
                 stripped = line.strip()
                 if filepath.endswith('.py'):
-                    if stripped.startswith('def ') or stripped.startswith('async def '):
+                    if stripped.startswith(('def ', 'async def ')):
                         functions += 1
-                else:
-                    if stripped.startswith('function ') or '=>' in stripped or ') {' in stripped:
-                        # Дуже примітивна евристика для JS/TS, але працює для грубої оцінки
-                        if 'function' in stripped or ('const' in stripped and '=>' in stripped):
-                            functions += 1
+                elif stripped.startswith('function ') or '=>' in stripped or ') {' in stripped:
+                    # Дуже примітивна евристика для JS/TS, але працює для грубої оцінки
+                    if 'function' in stripped or ('const' in stripped and '=>' in stripped):
+                        functions += 1
             return loc, functions
-    except Exception as e:
+    except Exception:
         # print(f"Warning: Could not read {filepath}: {e}")
         return 0, 0
 
@@ -190,9 +188,8 @@ def flatten_report(report):
             json.dump(report, f, indent=2, ensure_ascii=False)
         print("\nПовний звіт збережено у 'complexity_report.json'")
         return False # Fail
-    else:
-        print("\n✅ Система в межах бюджету складності.")
-        return True # Pass
+    print("\n✅ Система в межах бюджету складності.")
+    return True # Pass
 
 if __name__ == "__main__":
     current_dir = os.getcwd()

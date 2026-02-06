@@ -1,5 +1,8 @@
-import typer
+from __future__ import annotations
+
 from rich.console import Console
+import typer
+
 
 app = typer.Typer(help="Analyze system metrics and logs")
 console = Console()
@@ -42,9 +45,7 @@ def report_insights(
 def constitution(
     logs: str = typer.Option("services/arbiter/logs/access.log", "--logs", help="Path to Arbiter logs")
 ):
-    """
-    Analyze constitutional adherence and density of denials.
-    """
+    """Analyze constitutional adherence and density of denials."""
     console.print(f"Scanning {logs} for Constitutional friction...")
     # Mock analysis logic for v26 demonstration
     console.print("\n[yellow]Constitutional Friction Summary:[/yellow]")
@@ -59,9 +60,7 @@ def suggest(
     target: str = typer.Option("argo-workflows", "--target", help="Target component"),
     metrics: bool = typer.Option(True, "--metrics", help="Use live metrics for suggestion")
 ):
-    """
-    Suggest optimizations for a target component.
-    """
+    """Suggest optimizations for a target component."""
     console.print(f"Analyzing {target} behavior...")
     console.print("[green]Recommendation:[/green] Reduce replicas for stability. Save: 12% GPU.")
 
@@ -70,8 +69,6 @@ def simulate(
     scenario: str = typer.Option("load-test", "--scenario", help="Scenario type"),
     duration: str = typer.Option("10m", "--duration")
 ):
-    """
-    Run a simulation scenario.
-    """
+    """Run a simulation scenario."""
     console.print(f"Running {scenario} simulation for {duration}...")
     console.print("[green]Result: 0 Constitutional Violations Detected.[/green]")

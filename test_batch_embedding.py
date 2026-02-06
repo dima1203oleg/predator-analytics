@@ -1,13 +1,17 @@
+from __future__ import annotations
+
 import asyncio
 import logging
-import sys
 import os
+import sys
 import time
+
 
 # Add path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'services/api-gateway'))
 
 from app.services.embedding_service import get_embedding_service
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("test.batch")
@@ -46,4 +50,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(test_batching())
     except Exception as e:
-        logger.error(f"Test failed: {e}")
+        logger.exception(f"Test failed: {e}")

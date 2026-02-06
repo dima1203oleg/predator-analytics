@@ -1,4 +1,4 @@
-from typing import List
+from __future__ import annotations
 
 from pydantic import Field
 from pydantic_settings import BaseSettings  # Updated for pydantic v2
@@ -25,7 +25,7 @@ class Settings(BaseSettings):
         case_sensitive = True
 
     @property
-    def admin_ids(self) -> List[int]:
+    def admin_ids(self) -> list[int]:
         if not self.TELEGRAM_ADMIN_IDS.strip():
             return []
         try:

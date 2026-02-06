@@ -1,7 +1,11 @@
-import typer
+from __future__ import annotations
+
 import time
+
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
+import typer
+
 
 app = typer.Typer(help="Manage proposal lifecycle")
 console = Console()
@@ -11,9 +15,7 @@ def start(
     type: str = typer.Option("optimization", "--type"),
     area: str = typer.Option("database", "--area")
 ):
-    """
-    Start a full proposal lifecycle (Generate -> Validate -> Simulate -> Risk -> Court -> Deploy).
-    """
+    """Start a full proposal lifecycle (Generate -> Validate -> Simulate -> Risk -> Court -> Deploy)."""
     console.print(f"[bold blue]Starting Lifecycle for {type} in {area}...[/bold blue]")
 
     with Progress(

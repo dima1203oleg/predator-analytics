@@ -58,6 +58,14 @@ fi
 
 echo ""
 
+
+# ==================== КРОК 1.5: ЗАПУСК VOICE GUARDIAN ==================== 
+
+log_info "Крок 1.5/7: Запуск Voice Guardian (Watchdog)..." 
+./scripts/voice_watchdog.sh > /dev/null 2>&1 & 
+log_success "Voice Guardian активовано (PID: $!)" 
+echo "" 
+
 # ==================== КРОК 2: ЗАПУСК DOCKER ====================
 
 log_info "Крок 2/7: Запуск Docker containers..."

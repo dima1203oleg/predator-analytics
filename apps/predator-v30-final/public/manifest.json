@@ -1,0 +1,96 @@
+{
+  "name": "Predator Analytics Platform",
+  "short_name": "Predator",
+  "description": "Advanced Semantic Search & Analytics Platform. Платформа розвідки та аналітики нового покоління.",
+  "lang": "uk",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#020617",
+  "background_color": "#020617",
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "label": "Головна панель"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Пошук",
+      "short_name": "Пошук",
+      "description": "Семантичний пошук",
+      "url": "/search",
+      "icons": [{ "src": "/icons/search.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Моніторинг",
+      "short_name": "Моніторинг",
+      "description": "Системний моніторинг",
+      "url": "/monitoring",
+      "icons": [{ "src": "/icons/monitoring.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Агенти",
+      "short_name": "Агенти",
+      "description": "AI Агенти",
+      "url": "/agents",
+      "icons": [{ "src": "/icons/agents.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

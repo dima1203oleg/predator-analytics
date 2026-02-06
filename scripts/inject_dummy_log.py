@@ -1,13 +1,17 @@
+from __future__ import annotations
+
 import asyncio
-import uuid
 from datetime import datetime
 import sys
+import uuid
+
 
 # Set up PYTHONPATH for libs
 sys.path.append("/app")
 
 from libs.core.database import async_session_maker
 from libs.core.models import TrinityAuditLog
+
 
 async def create_dummy_log():
     async with async_session_maker() as session:

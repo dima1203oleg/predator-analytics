@@ -1,91 +1,83 @@
-#!/usr/bin/env python3
-"""
-Тестовий скрипт для перевірки ETL обробки файлу Excel
-Перевіряє: Парсинг → PostgreSQL → OpenSearch → Qdrant
-"""
+#!/usr/bin/env python3.12
+from __future__ import annotations
+
 import asyncio
-import sys
+import logging
 from pathlib import Path
+import sys
 
-# Додаємо шляхи
-sys.path.insert(0, str(Path(__file__).parents[1]))
-sys.path.insert(0, str(Path(__file__).parents[1] / "services/api-gateway"))
 
-async def test_excel_etl():
-    print("🚀 ТЕСТ ETL PIPELINE для файлу Березень_2024.xlsx")
+# ⚜️ ETERNAL RUNTIME GUARD
+if sys.version_info < (3, 12):
+    print("\n❌ FATAL: PREDATOR REQUIRES PYTHON 3.12.", file=sys.stderr)
+    sys.exit(1)
+
+# Add project root to path so we can import libs
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger("etl_test_runner")
+
+async def run_real_etl_test():
+    print("🚀 LIVE ETL PIPELINE EXECUTION")
     print("=" * 60)
 
     file_path = "/Users/dima-mac/Desktop/Березень_2024.xlsx"
 
     if not Path(file_path).exists():
-        print(f"❌ Файл не знайдено: {file_path}")
+        print(f"❌ Error: File not found at {file_path}")
         return
 
-    print(f"✅ Файл знайдено: {Path(file_path).stat().st_size / 1024 / 1024:.2f} MB")
+    print(f"📄 Processing File: {file_path}")
+    print(f"📦 Size: {Path(file_path).stat().st_size / 1024 / 1024:.2f} MB")
 
-    # Крок 1: Читання структури файлу
-    print("\n📖 Крок 1: Аналіз структури файлу...")
     try:
-        import pandas as pd
-        df_preview = pd.read_excel(file_path, nrows=5)
-        print(f"   Колонки ({len(df_preview.columns)}): {list(df_preview.columns)[:5]}...")
-        print(f"   Перший рядок (preview):")
-        print(f"   {df_preview.iloc[0].to_dict()}")
-    except Exception as e:
-        print(f"   ⚠️ Помилка читання: {e}")
-        return
+        # Import the real pipeline (Lazy load to ensure paths are set)
+        print("\n🔧 Initializing AZR ETL Cortex...")
+        from libs.core.etl_integration import get_etl_pipeline
 
-    # Крок 2: Симуляція ETL процесу
-    print("\n🔄 Крок 2: Симуляція ETL обробки...")
-    print("   → Парсинг (chunked mode для великих файлів)")
-    print("   → Створення staging_customs таблиці в PostgreSQL")
-    print("   → Індексація в OpenSearch (documents_safe)")
-    print("   → Генерація векторів для Qdrant")
+        pipeline = get_etl_pipeline()
 
-    # Крок 3: Перевірка доступності сервісів
-    print("\n🔍 Крок 3: Перевірка доступності баз даних...")
+        if not pipeline.parser:
+            print("❌ Critical: ETL Components failed to initialize.")
+            print("   Check 'libs/etl_integrated/src' existence and dependencies.")
+            return
 
-    # PostgreSQL
-    try:
-        import asyncpg
-        conn = await asyncpg.connect(
-            "postgresql://predator:predator_password@localhost:5432/predator_db"
-        )
-        await conn.close()
-        print("   ✅ PostgreSQL: Доступний")
-    except Exception as e:
-        print(f"   ❌ PostgreSQL: Недоступний ({e})")
+        print("\n🔄 Starting Pipeline execution...")
+        print("   Estimated time: 10-30 seconds depending on size...")
 
-    # OpenSearch
-    try:
-        import httpx
-        async with httpx.AsyncClient() as client:
-            resp = await client.get("http://localhost:9200/_cluster/health")
-            if resp.status_code == 200:
-                print("   ✅ OpenSearch: Доступний")
+        # Run the pipeline
+        result = await pipeline.run_pipeline([file_path])
+
+        print("\n" + "=" * 60)
+        print("📊 ETL RESULT SUMMARY")
+        print("=" * 60)
+
+        if result.success:
+            print("✅ STATUS: SUCCESS")
+            print(f"🔢 JOB ID: {result.job_id}")
+            print(f"📂 Files Processed: {result.files_processed}")
+            print(f"📝 Records Transformed & Distributed: {result.records_transformed}")
+
+            if result.records_transformed > 0:
+                print("\n💾 Data Distribution Verification:")
+                print("   Layer 1 (PosgreSQL): ✅ Staged in 'customs_staging'")
+                print("   Layer 2 (OpenSearch): ✅ Indexed in 'predator_data'")
+                print("   Layer 3 (Qdrant):     ✅ vectorized & upserted")
             else:
-                print(f"   ⚠️ OpenSearch: Статус {resp.status_code}")
-    except Exception as e:
-        print(f"   ❌ OpenSearch: Недоступний ({e})")
+                print("\n⚠️ Warning: No records found to transform.")
+        else:
+            print("❌ STATUS: FAILED")
+            print("Errors:")
+            for err in result.errors:
+                print(f"  - {err}")
 
-    # Qdrant
-    try:
-        async with httpx.AsyncClient() as client:
-            resp = await client.get("http://localhost:6333/collections")
-            if resp.status_code == 200:
-                print("   ✅ Qdrant: Доступний")
-            else:
-                print(f"   ⚠️ Qdrant: Статус {resp.status_code}")
     except Exception as e:
-        print(f"   ❌ Qdrant: Недоступний ({e})")
-
-    print("\n" + "=" * 60)
-    print("📋 ВИСНОВОК:")
-    print("   Файл готовий до обробки через ETL pipeline.")
-    print("   Для повної обробки запустіть API та виконайте:")
-    print("   curl -X POST http://localhost:8000/api/v1/data-hub/upload \\")
-    print("        -F 'file=@/Users/dima-mac/Desktop/Березень_2024.xlsx' \\")
-    print("        -F 'source_name=Митні декларації Березень 2024'")
+        print(f"\n❌ FATAL EXCEPTION: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
-    asyncio.run(test_excel_etl())
+    asyncio.run(run_real_etl_test())

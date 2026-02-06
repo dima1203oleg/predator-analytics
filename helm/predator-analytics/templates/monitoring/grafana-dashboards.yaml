@@ -21,7 +21,7 @@ data:
             "targets": [
               {
                 "expr": "sum(rate(http_requests_total[5m])) by (service)",
-                "legendFormat": "{{service}}"
+                "legendFormat": "{{ "{{" }}service}}"
               }
             ],
             "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
@@ -33,7 +33,7 @@ data:
             "targets": [
               {
                 "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service))",
-                "legendFormat": "95th percentile - {{service}}"
+                "legendFormat": "95th percentile - {{ "{{" }}service}}"
               }
             ],
             "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
@@ -45,7 +45,7 @@ data:
             "targets": [
               {
                 "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m])) by (service) / sum(rate(http_requests_total[5m])) by (service)",
-                "legendFormat": "Error Rate - {{service}}"
+                "legendFormat": "Error Rate - {{ "{{" }}service}}"
               }
             ],
             "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
@@ -57,7 +57,7 @@ data:
             "targets": [
               {
                 "expr": "sum(rate(container_cpu_usage_seconds_total[5m])) by (pod)",
-                "legendFormat": "{{pod}}"
+                "legendFormat": "{{ "{{" }}pod}}"
               }
             ],
             "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
@@ -69,7 +69,7 @@ data:
             "targets": [
               {
                 "expr": "sum(container_memory_working_set_bytes) by (pod) / 1024 / 1024",
-                "legendFormat": "{{pod}}"
+                "legendFormat": "{{ "{{" }}pod}}"
               }
             ],
             "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
@@ -106,7 +106,7 @@ data:
             "targets": [
               {
                 "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
-                "legendFormat": "{{instance}}"
+                "legendFormat": "{{ "{{" }}instance}}"
               }
             ],
             "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
@@ -118,7 +118,7 @@ data:
             "targets": [
               {
                 "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
-                "legendFormat": "{{instance}}"
+                "legendFormat": "{{ "{{" }}instance}}"
               }
             ],
             "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
@@ -130,7 +130,7 @@ data:
             "targets": [
               {
                 "expr": "(1 - (node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"})) * 100",
-                "legendFormat": "{{instance}}"
+                "legendFormat": "{{ "{{" }}instance}}"
               }
             ],
             "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
@@ -142,11 +142,11 @@ data:
             "targets": [
               {
                 "expr": "rate(node_network_receive_bytes_total[5m]) * 8",
-                "legendFormat": "RX - {{instance}}"
+                "legendFormat": "RX - {{ "{{" }}instance}}"
               },
               {
                 "expr": "rate(node_network_transmit_bytes_total[5m]) * 8",
-                "legendFormat": "TX - {{instance}}"
+                "legendFormat": "TX - {{ "{{" }}instance}}"
               }
             ],
             "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
@@ -171,7 +171,7 @@ data:
             "targets": [
               {
                 "expr": "sum(rate(http_requests_total[5m])) by (method, path)",
-                "legendFormat": "{{method}} {{path}}"
+                "legendFormat": "{{ "{{" }}method}} {{ "{{" }}path}}"
               }
             ],
             "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0}
@@ -183,7 +183,7 @@ data:
             "targets": [
               {
                 "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, method, path))",
-                "legendFormat": "95th - {{method}} {{path}}"
+                "legendFormat": "95th - {{ "{{" }}method}} {{ "{{" }}path}}"
               }
             ],
             "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8}
@@ -195,7 +195,7 @@ data:
             "targets": [
               {
                 "expr": "sum(rate(celery_tasks_total[5m])) by (name)",
-                "legendFormat": "{{name}}"
+                "legendFormat": "{{ "{{" }}name}}"
               }
             ],
             "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
@@ -207,7 +207,7 @@ data:
             "targets": [
               {
                 "expr": "histogram_quantile(0.95, sum(rate(celery_task_duration_seconds_bucket[5m])) by (le, name))",
-                "legendFormat": "95th - {{name}}"
+                "legendFormat": "95th - {{ "{{" }}name}}"
               }
             ],
             "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}

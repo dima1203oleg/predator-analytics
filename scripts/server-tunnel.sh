@@ -3,11 +3,7 @@
 # SSH Port Forwarding для доступу до веб-інтерфейсів Predator Analytics
 # Використання: ./scripts/server-tunnel.sh [start|stop|status]
 
-SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
 SSH_HOST="${SSH_HOST:-predator-server}" # Використовуємо аліас з ~/.ssh/config
-# SSH_PORT is irrelevant if using alias, but if explicit:
-SSH_PORT="${SSH_PORT:-6666}"
-SSH_USER="${SSH_USER:-dima}"
 
 # Кольори
 GREEN='\033[0;32m'
@@ -23,6 +19,7 @@ PORTS=(
     "9090:8090:Backend API"
     "9432:5432:PostgreSQL"
     "9379:6379:Redis"
+    "5601:5601:OpenSearch Dashboards"
 )
 
 # PID файл
@@ -51,10 +48,9 @@ start_tunnel() {
     done
 
     echo ""
-    echo -e "${YELLOW}🔐 Підключення до $SSH_HOST:$SSH_PORT...${NC}"
-
     # Запуск SSH-тунелю
-    ssh -i "$SSH_KEY" -p "$SSH_PORT" $SSH_OPTS "$SSH_USER@$SSH_HOST"
+    echo -e "${YELLOW}🔐 Підключення до $SSH_HOST...${NC}"
+    ssh $SSH_OPTS "$SSH_HOST"
 
     # Зберегти PID
     SSH_PID=$(pgrep -f "ssh.*-L.*$SSH_HOST")

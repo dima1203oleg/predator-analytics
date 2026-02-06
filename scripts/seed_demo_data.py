@@ -1,13 +1,18 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""Seed demo data for PREDATOR v25"""
-import requests
-import random
+"""Seed demo data for PREDATOR v25."""
 from datetime import datetime, timedelta
+import random
+
+import requests
+
 
 BASE_URL = "http://localhost:8090/api"
 
 def seed_cases():
-    """Create demo cases via API"""
+    """Create demo cases via API."""
     sectors = ["GOV", "BIZ", "MED", "SCI"]
     statuses = ["NEW", "IN_PROGRESS", "RESOLVED"]
 

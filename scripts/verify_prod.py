@@ -1,5 +1,10 @@
-import requests
+from __future__ import annotations
+
+import sys
 import time
+
+import requests
+
 
 BASE_URL = "http://localhost:8000/api/v1"
 
@@ -11,14 +16,14 @@ def test_health():
         print(f"✅ Health OK: {resp.json()}")
     except Exception as e:
         print(f"❌ Health FAILED: {e}")
-        exit(1)
+        sys.exit(1)
 
 def test_hybrid_search():
     print("\n🔹 Testing Hybrid Search (RRF)...")
     query = "test document"
     try:
         # First ensure we have some data (optional, skipping ingestion for speed, relying on existing)
-        
+
         # Perform Search
         params = {
             "q": query,
@@ -28,14 +33,14 @@ def test_hybrid_search():
         resp = requests.get(f"{BASE_URL}/search", params=params)
         resp.raise_for_status()
         data = resp.json()
-        
+
         results = data.get("results", [])
         print(f"ℹ️ Found {len(results)} results")
-        
+
         if results:
             first = results[0]
             print(f"   Top result: {first.get('title')} (Score: {first.get('score')})")
-            
+
             # Check structure
             if "combinedScore" in first:
                 print("✅ RRF Fusion fields present")
@@ -43,11 +48,11 @@ def test_hybrid_search():
                 print("⚠️ Warning: combinedScore missing in result")
         else:
             print("⚠️ No results found (might be empty DB). Skipping structure check.")
-            
+
     except Exception as e:
         print(f"❌ Search FAILED: {e}")
         # Don't exit, maybe DB is just empty
-        
+
 def main():
     print("🚀 Starting Production Verification...")
     time.sleep(2) # Wait for service warmup

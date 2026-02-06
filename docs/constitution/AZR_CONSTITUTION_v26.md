@@ -154,6 +154,40 @@ axiom_14:
   enforcement: "Monotonic Clock + Hash Chain"
 ```
 
+### Axiom 15: Закон лінгвістичного та технічного суверенітету
+
+```yaml
+axiom_15:
+  name: "Law of Linguistic and Technical Sovereignty"
+  formal_logic: |
+    ∀ artifact ∈ System.Artifacts:
+      (artifact.type = UI_TEXT ∨ artifact.type = COMMENT ∨ artifact.type = DOC) ⇒ artifact.language = UKRAINIAN
+      ∧ (artifact.type = PYTHON_RUNTIME) ⇒ artifact.version = 3.12
+  explanation: |
+    Вся комунікація, інтерфейс та документація мають бути ВИКЛЮЧНО українською мовою.
+    Єдина допустима версія Python — 3.12. Будь-які відхилення блокуються AZR.
+  immutability: "ABSOLUTE"
+  enforcement: "Linter + AZR Guard + Pre-commit"
+```
+
+### Axiom 16: Закон автономної еволюції (Self-Learning)
+
+```yaml
+axiom_16:
+  name: "Law of Autonomous Evolution"
+  formal_logic: |
+    ∀ cycle ∈ AZR.Cycles:
+      cycle.learning_enabled = true
+      ∧ cycle.improvement_metrics.verified = true
+      ∧ cycle.impact < 0.05 (System_Stability_Delta)
+  explanation: |
+    Система зобов'язана постійно вдосконалювати свій код, інтерфейс та алгоритми.
+    Будь-яке покращення повинно проходити через Digital Twin симуляцію.
+    Автонавчання (NAS, fine-tuning) інтегровано в ядро AZR як обов'язковий процес.
+  immutability: "ABSOLUTE"
+  enforcement: "Evolution Dash + SI Loops + Arbiter"
+```
+
 ---
 
 ## II. AMENDMENT LEVELS

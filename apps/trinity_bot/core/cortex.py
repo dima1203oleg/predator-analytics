@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 # Add project root to sys.path to access scripts and libs
 _current_dir = os.path.dirname(os.path.abspath(__file__))
 _project_root = os.path.abspath(os.path.join(_current_dir, "../../.."))
@@ -9,10 +12,10 @@ if _scripts_dir not in sys.path:
     sys.path.insert(0, _scripts_dir)
 
 try:
-    from scripts.triple_cli import MixedCLIStack, AgentRole
+    from scripts.triple_cli import AgentRole, MixedCLIStack
 except ImportError:
     try:
-        from triple_cli import MixedCLIStack, AgentRole
+        from triple_cli import AgentRole, MixedCLIStack
     except ImportError:
         MixedCLIStack = None
 
@@ -33,9 +36,11 @@ class CopilotAgent:
             return AuditResult(False, ["Security Risk: Direct system calls detected."])
         return AuditResult(True, [])
 
-from core.tools import InfraTools
-import json
 import asyncio
+import json
+
+from core.tools import InfraTools
+
 
 logger = logging.getLogger("trinity.cortex")
 
@@ -58,7 +63,7 @@ class TrinityOrchestrator:
                     self.gemini = genai.GenerativeModel("gemini-1.5-pro")
                     logger.info("Gemini Pro (Fallback SDK) initialized.")
             except Exception as e:
-                logger.error(f"Gemini Init failed: {e}")
+                logger.exception(f"Gemini Init failed: {e}")
 
             # Mistral Fallback
             try:
@@ -68,7 +73,7 @@ class TrinityOrchestrator:
                     self.mistral = Mistral(api_key=api_key)
                     logger.info("Mistral (Fallback SDK) initialized.")
             except Exception as e:
-                logger.error(f"Mistral Init failed: {e}")
+                logger.exception(f"Mistral Init failed: {e}")
 
         # Copilot/Aider Audit
         self.copilot = CopilotAgent(version="v2-audit")
@@ -90,7 +95,7 @@ class TrinityOrchestrator:
                 # But here we just call it
                 plan = self.cli_stack.planner_agent(user_query)
             except Exception as e:
-                logger.error(f"CLI Planner failed: {e}")
+                logger.exception(f"CLI Planner failed: {e}")
 
         if not plan:
             if not self.gemini:
@@ -102,7 +107,7 @@ class TrinityOrchestrator:
                 text_resp = strategy_resp.text.replace("```json", "").replace("```", "")
                 plan = json.loads(text_resp)
             except Exception as e:
-                logger.error(f"Fallback Strategy failed: {e}")
+                logger.exception(f"Fallback Strategy failed: {e}")
                 return {"status": "error", "message": "Failed to generate strategy."}
 
         if plan.get('risk_level') == 'high' and user_role != 'admin':
@@ -120,7 +125,7 @@ class TrinityOrchestrator:
                 try:
                     draft_code = self.cli_stack.codegen_agent(plan)
                 except Exception as e:
-                    logger.error(f"CLI Codegen failed: {e}")
+                    logger.exception(f"CLI Codegen failed: {e}")
 
             if not draft_code:
                 if not self.mistral:
@@ -145,7 +150,7 @@ class TrinityOrchestrator:
                     else:
                         audit_data = {"passed": False, "errors": ["Aider CLI failed"], "method": "Aider CLI"}
                 except Exception as e:
-                    logger.error(f"Aider CLI Audit failed: {e}")
+                    logger.exception(f"Aider CLI Audit failed: {e}")
 
             if audit_data["passed"]:
                 execution_result = {"type": "code", "content": draft_code, "summary": "✅ Code generated and verified via Trinity Stack."}
@@ -194,6 +199,6 @@ class TrinityOrchestrator:
                 await session.commit()
                 logger.info(f"Trinity audit log saved. ID: {log.id}")
         except Exception as e:
-             logger.error(f"Failed to save Trinity audit log: {e}")
+             logger.exception(f"Failed to save Trinity audit log: {e}")
 
         return execution_result

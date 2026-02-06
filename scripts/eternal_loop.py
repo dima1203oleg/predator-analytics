@@ -1,19 +1,22 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-♾️ ETERNAL EXECUTION LOOP — NEVER STOPS
+"""♾️ ETERNAL EXECUTION LOOP — NEVER STOPS
 ═══════════════════════════════════════════════════════════════
 System runs FOREVER. Auto-recovers from ANY failure.
 NO HUMAN INTERVENTION REQUIRED.
-═══════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════.
 """
 
-import time
+from datetime import datetime
+import json
+import logging
+from pathlib import Path
 import signal
 import subprocess
-import logging
-from datetime import datetime
-from pathlib import Path
-import json
+import time
+
 
 # ════════════════════════════════════════════════════════════════
 # CONFIGURATION
@@ -50,14 +53,14 @@ logger = logging.getLogger("eternal_loop")
 # ════════════════════════════════════════════════════════════════
 
 class StateManager:
-    """Persist and recover execution state"""
+    """Persist and recover execution state."""
 
     def __init__(self, state_file: Path = STATE_FILE):
         self.state_file = state_file
         self.state = self._load_state()
 
     def _load_state(self) -> dict:
-        """Load state from file or return default"""
+        """Load state from file or return default."""
         if self.state_file.exists():
             try:
                 return json.loads(self.state_file.read_text())
@@ -71,18 +74,18 @@ class StateManager:
         }
 
     def save(self) -> None:
-        """Save current state"""
+        """Save current state."""
         self.state["last_check"] = datetime.utcnow().isoformat()
         self.state_file.write_text(json.dumps(self.state, indent=2))
 
     def record_restart(self, service: str) -> None:
-        """Record a service restart"""
+        """Record a service restart."""
         self.state["restart_count"] += 1
         self.save()
         logger.info(f"♾️ Restart #{self.state['restart_count']}: {service}")
 
     def record_error(self, error: str) -> None:
-        """Record an error (keep last 100)"""
+        """Record an error (keep last 100)."""
         self.state["errors"].append({
             "time": datetime.utcnow().isoformat(),
             "error": error,
@@ -96,7 +99,7 @@ class StateManager:
 # ════════════════════════════════════════════════════════════════
 
 def check_backend_health() -> bool:
-    """Check if backend is healthy"""
+    """Check if backend is healthy."""
     try:
         import requests
         response = requests.get("http://localhost:8000/health", timeout=5)
@@ -106,11 +109,11 @@ def check_backend_health() -> bool:
 
 
 def check_frontend_health() -> bool:
-    """Check if frontend is running on port 3000"""
+    """Check if frontend is running on port 3000."""
     try:
         result = subprocess.run(
             ["lsof", "-i", ":3000"],
-            capture_output=True,
+            check=False, capture_output=True,
             timeout=5,
         )
         return result.returncode == 0
@@ -119,7 +122,7 @@ def check_frontend_health() -> bool:
 
 
 def check_ngrok_health() -> bool:
-    """Check if ngrok tunnel is active"""
+    """Check if ngrok tunnel is active."""
     try:
         import requests
         response = requests.get("http://localhost:4040/api/tunnels", timeout=5)
@@ -130,11 +133,11 @@ def check_ngrok_health() -> bool:
 
 
 def check_docker_health() -> dict:
-    """Check Docker container status"""
+    """Check Docker container status."""
     try:
         result = subprocess.run(
             ["docker", "ps", "--format", "{{.Names}}:{{.Status}}"],
-            capture_output=True,
+            check=False, capture_output=True,
             text=True,
             timeout=10,
         )
@@ -156,11 +159,11 @@ def check_docker_health() -> dict:
 # ════════════════════════════════════════════════════════════════
 
 def restart_backend() -> bool:
-    """Restart the backend service"""
+    """Restart the backend service."""
     logger.info("🔄 Restarting backend...")
     try:
         # Kill existing
-        subprocess.run(["pkill", "-f", "run_v25_bot.py"], capture_output=True)
+        subprocess.run(["pkill", "-f", "run_v25_bot.py"], check=False, capture_output=True)
         time.sleep(2)
 
         # Start new
@@ -175,16 +178,16 @@ def restart_backend() -> bool:
         time.sleep(RESTART_DELAY)
         return check_backend_health()
     except Exception as e:
-        logger.error(f"Backend restart failed: {e}")
+        logger.exception(f"Backend restart failed: {e}")
         return False
 
 
 def restart_frontend() -> bool:
-    """Restart the frontend service"""
+    """Restart the frontend service."""
     logger.info("🔄 Restarting frontend...")
     try:
         # Kill existing
-        subprocess.run(["pkill", "-f", "vite"], capture_output=True)
+        subprocess.run(["pkill", "-f", "vite"], check=False, capture_output=True)
         time.sleep(2)
 
         # Start new
@@ -199,16 +202,16 @@ def restart_frontend() -> bool:
         time.sleep(RESTART_DELAY)
         return check_frontend_health()
     except Exception as e:
-        logger.error(f"Frontend restart failed: {e}")
+        logger.exception(f"Frontend restart failed: {e}")
         return False
 
 
 def restart_ngrok() -> bool:
-    """Restart ngrok tunnel"""
+    """Restart ngrok tunnel."""
     logger.info("🔄 Restarting ngrok...")
     try:
         # Kill existing
-        subprocess.run(["pkill", "-f", "ngrok"], capture_output=True)
+        subprocess.run(["pkill", "-f", "ngrok"], check=False, capture_output=True)
         time.sleep(2)
 
         # Start new
@@ -222,20 +225,20 @@ def restart_ngrok() -> bool:
         time.sleep(RESTART_DELAY)
         return check_ngrok_health()
     except Exception as e:
-        logger.error(f"Ngrok restart failed: {e}")
+        logger.exception(f"Ngrok restart failed: {e}")
         return False
 
 
 def restart_docker_container(name: str) -> bool:
-    """Restart a Docker container"""
+    """Restart a Docker container."""
     logger.info(f"🔄 Restarting Docker container: {name}")
     try:
-        subprocess.run(["docker", "restart", name], capture_output=True, timeout=30)
+        subprocess.run(["docker", "restart", name], check=False, capture_output=True, timeout=30)
         time.sleep(5)
         containers = check_docker_health()
         return containers.get(name, False)
     except Exception as e:
-        logger.error(f"Docker restart failed for {name}: {e}")
+        logger.exception(f"Docker restart failed for {name}: {e}")
         return False
 
 
@@ -244,7 +247,7 @@ def restart_docker_container(name: str) -> bool:
 # ════════════════════════════════════════════════════════════════
 
 def rotate_logs() -> None:
-    """Rotate logs if they get too large"""
+    """Rotate logs if they get too large."""
     for log_file in [LOG_FILE, Path("/tmp/backend.log"), Path("/tmp/frontend.log")]:
         if log_file.exists() and log_file.stat().st_size > MAX_LOG_SIZE:
             try:
@@ -261,8 +264,7 @@ def rotate_logs() -> None:
 # ════════════════════════════════════════════════════════════════
 
 def eternal_loop():
-    """
-    ♾️ THE ETERNAL LOOP — NEVER STOPS
+    """♾️ THE ETERNAL LOOP — NEVER STOPS.
 
     Runs FOREVER, checking health and restarting services.
     Auto-recovers from ANY failure.
@@ -334,7 +336,7 @@ def eternal_loop():
 
         except Exception as e:
             # NEVER STOP — just log and continue
-            logger.error(f"♾️ Error in iteration #{iteration}: {e}")
+            logger.exception(f"♾️ Error in iteration #{iteration}: {e}")
             state.record_error(str(e))
             logger.info("♾️ Auto-recovering... continuing loop")
 
@@ -347,7 +349,7 @@ def eternal_loop():
 # ════════════════════════════════════════════════════════════════
 
 def signal_handler(signum, frame):
-    """Trap signals but keep running"""
+    """Trap signals but keep running."""
     logger.warning(f"♾️ Received signal {signum} — IGNORING (GODMODE)")
     logger.info("♾️ Loop continues...")
 

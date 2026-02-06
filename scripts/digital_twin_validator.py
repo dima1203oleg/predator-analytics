@@ -1,6 +1,9 @@
+from __future__ import annotations
+
+import random
 import sys
 import time
-import random
+
 
 def run_twin_test(action_type, meta):
     print(f"🚀 Digital Twin: Starting validation for {action_type}...")

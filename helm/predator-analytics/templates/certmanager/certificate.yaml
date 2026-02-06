@@ -1,3 +1,4 @@
+{{- if .Values.certManager.enabled }}
 {{- if .Values.frontend.ingress.enabled }}
 ---
 apiVersion: cert-manager.io/v1
@@ -68,4 +69,5 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - {{ .Values.mlflow.ingress.host }}
+{{- end }}
 {{- end }}

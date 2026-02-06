@@ -1,0 +1,76 @@
+
+# ════════════════════════════════════════════════════════════════════════
+# TRAINING CONTROLLER DEPLOYMENT
+# ════════════════════════════════════════════════════════════════════════
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-training-controller
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: training-controller
+    component: autonomy-core
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator-analytics.selectorLabels" . | nindent 6 }}
+      app: training-controller
+  template:
+    metadata:
+      labels:
+        {{- include "predator-analytics.selectorLabels" . | nindent 8 }}
+        app: training-controller
+        component: autonomy-core
+    spec:
+      serviceAccountName: sa-training-controller
+      priorityClassName: predator-medium
+      containers:
+        - name: training-controller
+          image: "ghcr.io/predator-analytics/training-controller:latest"
+          command: ["uvicorn", "services.training-controller.controller:app", "--host", "0.0.0.0", "--port", "8083"]
+          ports:
+            - containerPort: 8083
+              name: http
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sa-training-controller
+  namespace: predator-analytics
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: training-controller-role
+  namespace: predator-analytics
+rules:
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "get", "list", "watch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: training-controller-binding
+  namespace: predator-analytics
+subjects:
+  - kind: ServiceAccount
+    name: sa-training-controller
+    namespace: predator-analytics
+roleRef:
+  kind: Role
+  name: training-controller-role
+  apiGroup: rbac.authorization.k8s.io

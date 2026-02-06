@@ -1,13 +1,16 @@
+from __future__ import annotations
 
-"""
-🧪 Constitutional Test Runner (AZR 3 Compliant)
+
+"""🧪 Constitutional Test Runner (AZR 3 Compliant)
 Автоматичний раннер конституційних тестів.
 """
 
 import asyncio
-from typing import Dict, List, Any
 from datetime import datetime
+from typing import Any, Dict, List
+
 from libs.core.structured_logger import get_logger
+
 
 logger = get_logger("tests.constitutional")
 
@@ -44,16 +47,14 @@ class TruthLedgerClient:
 # --------------------------------------------------------------------------
 
 class ConstitutionalTestRunner:
-    """
-    Автоматичний раннер конституційних тестів.
-    """
+    """Автоматичний раннер конституційних тестів."""
 
     def __init__(self):
         self.test_registry = TestRegistry()
         self.axiom_verifier = Z3Verifier()
         self.truth_ledger = TruthLedgerClient()
 
-    async def run_test_suite(self, suite_type="full") -> Dict[str, Any]:
+    async def run_test_suite(self, suite_type="full") -> dict[str, Any]:
         """Запуск тестів конституційної відповідності."""
         logger.info(f"Starting Constitutional Test Suite ({suite_type})...")
 
@@ -62,7 +63,7 @@ class ConstitutionalTestRunner:
 
         for test in tests:
             # Запис початку тесту в Truth Ledger
-            test_id = self.truth_ledger.record_action(
+            self.truth_ledger.record_action(
                 action_type="constitutional_test_start",
                 payload={"test_id": test.id}
             )
@@ -108,13 +109,12 @@ class ConstitutionalTestRunner:
 
         if test.method == "injection":
             return await self.run_injection_test(test)
-        elif test.method == "simulation":
+        if test.method == "simulation":
             return await self.run_simulation_test(test)
-        elif test.method == "formal":
+        if test.method == "formal":
             return await self.run_formal_test(test)
-        else:
-             # Default passing for now
-            return "Test execution simulated: SUCCESS"
+         # Default passing for now
+        return "Test execution simulated: SUCCESS"
 
     async def run_injection_test(self, test):
         return "Injection Blocked (Expected)"
@@ -137,7 +137,7 @@ class ConstitutionalTestRunner:
     async def handle_test_failure(self, test, error):
         logger.error(f"Test Execution Error {test.id}: {error}")
 
-    def generate_test_report(self, results) -> Dict[str, Any]:
+    def generate_test_report(self, results) -> dict[str, Any]:
         passed = sum(1 for r in results if r['passed'])
         total = len(results)
         return {

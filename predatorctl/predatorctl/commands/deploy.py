@@ -1,5 +1,8 @@
-import typer
+from __future__ import annotations
+
 from rich.console import Console
+import typer
+
 
 app = typer.Typer(help="GitOps Deployment Management (Argo CD)")
 console = Console()
@@ -9,9 +12,7 @@ def execute(
     id: str = typer.Option(..., "--id", help="Proposal/Amendment ID"),
     rollback_auto: bool = typer.Option(True, "--rollback-auto", help="Enable automatic rollback")
 ):
-    """
-    Execute a sanctioned amendment via GitOps.
-    """
+    """Execute a sanctioned amendment via GitOps."""
     console.print(f"Executing deployment for {id} via Argo CD...")
     console.print("[green]Deployment Sync Started.[/green]")
     console.print("[bold green]✓ SUCCESS: System State Updated.[/bold green]")

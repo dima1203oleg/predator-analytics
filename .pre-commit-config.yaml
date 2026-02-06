@@ -1,17 +1,139 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🦁 PREDATOR ANALYTICS - PRE-COMMIT HOOKS v2.0
+# Ultra-Fast Linting & Formatting Pipeline
+# ═══════════════════════════════════════════════════════════════════════════════
+
 repos:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # BASIC CHECKS
+  # ─────────────────────────────────────────────────────────────────────────────
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+        exclude: '\.md$' # Preserve trailing whitespace in markdown
       - id: end-of-file-fixer
+        exclude: '\.(svg|lock)$'
       - id: check-yaml
+        args: ["--unsafe"] # Allow custom tags
       - id: check-toml
+      - id: check-json
+        exclude: 'tsconfig.*\.json$' # Skip tsconfig with comments
       - id: check-added-large-files
+        args: ["--maxkb=1000"]
       - id: detect-private-key
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-symlinks
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
 
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PYTHON - RUFF (Linting & Formatting)
+  # ─────────────────────────────────────────────────────────────────────────────
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.0
+    rev: v0.9.2
     hooks:
       - id: ruff
-        args: [--fix]
+        name: ruff-lint
+        args: ["--fix", "--config", "ruff.toml"]
+        types_or: [python, pyi]
+        exclude: '^(migrations|alembic)/.*\.py$'
       - id: ruff-format
+        name: ruff-format
+        args: ["--config", "ruff.toml"]
+        types_or: [python, pyi]
+        exclude: '^(migrations|alembic)/.*\.py$'
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JAVASCRIPT/TYPESCRIPT - OXLINT
+  # ─────────────────────────────────────────────────────────────────────────────
+  - repo: local
+    hooks:
+      - id: oxlint
+        name: oxlint
+        entry: npx oxlint --config oxlint.json --fix
+        language: system
+        types_or: [javascript, jsx, ts, tsx]
+        files: '\.(js|jsx|ts|tsx)$'
+        exclude: "^(node_modules|dist|build)/"
+        pass_filenames: true
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # SECRETS DETECTION
+  # ─────────────────────────────────────────────────────────────────────────────
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        name: detect-secrets
+        args: ["--baseline", ".secrets.baseline"]
+        exclude: 'package-lock\.json|pnpm-lock\.yaml'
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # DOCKERFILE LINTING
+  # ─────────────────────────────────────────────────────────────────────────────
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.13.1-beta
+    hooks:
+      - id: hadolint-docker
+        name: hadolint
+        args: ["--ignore", "DL3008", "--ignore", "DL3013", "--ignore", "DL3018"]
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # YAML LINTING
+  # ─────────────────────────────────────────────────────────────────────────────
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        name: yamllint
+        args:
+          [
+            "-d",
+            "{extends: relaxed, rules: {line-length: {max: 200}, truthy: disable}}",
+          ]
+        exclude: "^(helm|charts|k8s|argocd)/"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # SHELL SCRIPT LINTING
+  # ─────────────────────────────────────────────────────────────────────────────
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        name: shellcheck
+        args: ["--severity=warning"]
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # MARKDOWN LINTING
+  # ─────────────────────────────────────────────────────────────────────────────
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.43.0
+    hooks:
+      - id: markdownlint
+        name: markdownlint
+        args: ["--fix", "--disable", "MD013", "MD033", "MD041", "--"]
+        exclude: 'CHANGELOG\.md|node_modules'
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # COMMIT MESSAGE LINTING
+  # ─────────────────────────────────────────────────────────────────────────────
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.1.0
+    hooks:
+      - id: commitizen
+        name: commitizen
+        stages: [commit-msg]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CI CONFIGURATION
+# ─────────────────────────────────────────────────────────────────────────────
+ci:
+  autofix_commit_msg: "🤖 [pre-commit.ci] auto fixes from hooks"
+  autofix_prs: true
+  autoupdate_branch: "main"
+  autoupdate_commit_msg: "⬆️ [pre-commit.ci] pre-commit autoupdate"
+  autoupdate_schedule: weekly
+  skip: [oxlint] # Skip in CI, run locally
+  submodules: false

@@ -1,14 +1,16 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-Тест Telegram Bot - перевірка з'єднання
-"""
+"""Тест Telegram Bot - перевірка з'єднання."""
+import asyncio
 import os
 import sys
-import asyncio
+
 
 async def test_bot():
     print("🔍 Тестування Telegram Bot...")
-    print("")
+    print()
 
     # Перевірка токена
     token = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -21,7 +23,7 @@ async def test_bot():
 
     print(f"✅ Token: {token[:10]}...")
     print(f"✅ Admin ID: {admin_id or 'НЕ ВСТАНОВЛЕНО'}")
-    print("")
+    print()
 
     # Перевірка aiogram
     try:
@@ -33,7 +35,7 @@ async def test_bot():
         return False
 
     # Тест з'єднання
-    print("")
+    print()
     print("🌐 Тестую з'єднання з Telegram API...")
 
     try:
@@ -45,14 +47,14 @@ async def test_bot():
         print(f"   Bot: @{me.username}")
         print(f"   Name: {me.first_name}")
         print(f"   ID: {me.id}")
-        print("")
+        print()
 
         # Перевірка команд
         commands = await bot.get_my_commands()
         print(f"📋 Встановлено команд: {len(commands)}")
         for cmd in commands:
             print(f"   /{cmd.command} - {cmd.description}")
-        print("")
+        print()
 
         # Якщо є admin_id - спробуємо надіслати тестове повідомлення
         if admin_id and admin_id != "0":
@@ -66,19 +68,19 @@ async def test_bot():
                 print("   Перевір що ADMIN_ID правильний")
 
         await bot.session.close()
-        print("")
+        print()
         print("✅ ВСЕ ПРАЦЮЄ!")
-        print("")
+        print()
         print("Тепер запусти бота:")
         print("  python3 backend/orchestrator/agents/telegram_bot_v2.py")
-        print("")
+        print()
         print("І напиши йому в Telegram: /start")
 
         return True
 
     except Exception as e:
         print(f"❌ Помилка: {e}")
-        print("")
+        print()
         print("Можливі причини:")
         print("1. Неправильний токен - перевір у @BotFather")
         print("2. Немає інтернету")

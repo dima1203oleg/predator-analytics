@@ -1,16 +1,20 @@
+from __future__ import annotations
 
-import unittest
-from unittest.mock import MagicMock, AsyncMock, patch
 import asyncio
 from datetime import datetime
+import os
 
 # Adjust path
 import sys
-import os
+import unittest
+from unittest.mock import AsyncMock, MagicMock, patch
+
+
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(), "services/api-gateway"))
 
 from libs.core.guardian import GuardianService
+
 
 class TestGuardianService(unittest.IsolatedAsyncioTestCase):
 
@@ -33,9 +37,9 @@ class TestGuardianService(unittest.IsolatedAsyncioTestCase):
         with patch("socket.create_connection", side_effect=OSError):
             results = await self.guardian.check_infrastructure()
 
-        self.assertEqual(results["redis"], "UP")
-        self.assertEqual(results["rabbitmq"], "DOWN")
-        self.assertEqual(results["qdrant"], "DOWN")
+        assert results["redis"] == "UP"
+        assert results["rabbitmq"] == "DOWN"
+        assert results["qdrant"] == "DOWN"
 
     @patch("libs.core.guardian.get_db_ctx")
     async def test_schema_integrity_mocked(self, mock_get_db):
@@ -50,8 +54,8 @@ class TestGuardianService(unittest.IsolatedAsyncioTestCase):
         mock_db.execute.return_value = mock_result
 
         issues = await self.guardian.verify_schema_integrity()
-        self.assertTrue(len(issues) > 0)
-        self.assertIn("MISSING_TABLE: gold.data_sources", issues)
+        assert len(issues) > 0
+        assert "MISSING_TABLE: gold.data_sources" in issues
 
     async def test_auto_recovery_triggers(self):
         """Test that auto-recovery is called when critical failure detected."""

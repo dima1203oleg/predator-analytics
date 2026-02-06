@@ -1,18 +1,21 @@
-from typing import Dict, Any, Optional
-import requests
+from __future__ import annotations
+
 import json
 import logging
+from typing import Any, Dict, Optional
+
+import requests
+
 
 class LedgerClient:
-    """
-    Client for interacting with the Truth Ledger Service.
+    """Client for interacting with the Truth Ledger Service.
     Used by predatorctl and other agents.
     """
     def __init__(self, base_url: str = "http://localhost:8092"):
         self.base_url = base_url
         self.logger = logging.getLogger("ledger-client")
 
-    def append_entry(self, entity_type: str, entity_id: str, action: str, payload: Dict[str, Any], signature: str = None) -> Dict:
+    def append_entry(self, entity_type: str, entity_id: str, action: str, payload: dict[str, Any], signature: str | None = None) -> dict:
         try:
             resp = requests.post(f"{self.base_url}/entry", json={
                 "entity_type": entity_type,
@@ -24,10 +27,10 @@ class LedgerClient:
             resp.raise_for_status()
             return resp.json()
         except Exception as e:
-            self.logger.error(f"Failed to append to ledger: {e}")
+            self.logger.exception(f"Failed to append to ledger: {e}")
             return None
 
-    def verify_entry(self, entry_id: int) -> Dict:
+    def verify_entry(self, entry_id: int) -> dict:
         try:
             resp = requests.get(f"{self.base_url}/verify/{entry_id}")
             if resp.status_code == 404:

@@ -1,20 +1,24 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-🚀 Predator Eternal Self-Improver CLI
+"""🚀 Predator Eternal Self-Improver CLI
 Runs as a background service to continuously optimize the Predator Analytics system.
 """
 import asyncio
-import os
-import sys
-import shutil
 from datetime import datetime
+import os
 from pathlib import Path
+import shutil
+import sys
+
 
 # Fix paths for imports
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "services" / "api-gateway"))
 
 from app.services.autonomous_intelligence_v2 import autonomous_intelligence_v2
+
 
 class EternalSelfImprover:
     def __init__(self, project_path: str):
@@ -24,14 +28,14 @@ class EternalSelfImprover:
         self._is_active = True
 
     async def run(self):
-        print(f"🚀 ETERNAL SELF-IMPROVER ACTIVE")
-        print(f"🌓 Phase: NIGHT CLUSTER (Continuous Refinement)")
+        print("🚀 ETERNAL SELF-IMPROVER ACTIVE")
+        print("🌓 Phase: NIGHT CLUSTER (Continuous Refinement)")
 
         while self._is_active:
             try:
                 # 1. Analyze system state using AI v2.0
                 status = autonomous_intelligence_v2.get_status()
-                predictive = status.get('predictive_analyzer', {})
+                status.get('predictive_analyzer', {})
 
                 # 2. Perform UI Refinements
                 await self._optimize_ui()
@@ -50,16 +54,14 @@ class EternalSelfImprover:
                 await asyncio.sleep(60)
 
     async def _optimize_ui(self):
-        """Perform autonomous UI improvements"""
+        """Perform autonomous UI improvements."""
         # Logic to scan for tech jargon and replace it
         # Logic to optimize React components (e.g., adding memo where needed)
-        pass
 
     async def _optimize_backend(self):
-        """Perform autonomous Backend improvements"""
+        """Perform autonomous Backend improvements."""
         # Logic to optimize SQL queries
         # Logic to refine AI prompt templates
-        pass
 
 if __name__ == "__main__":
     improver = EternalSelfImprover(str(project_root))

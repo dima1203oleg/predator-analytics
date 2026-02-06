@@ -1,12 +1,36 @@
-import typer
-from typing import Optional
-from rich.console import Console
-from rich.logging import RichHandler
+from __future__ import annotations
+
 import logging
 import sys
+from typing import Optional
+
+from rich.console import Console
+from rich.logging import RichHandler
+import typer
 
 # Commands
-from predatorctl.commands import system, etl, ledger, chaos, azr, gitops, arbiter, policy, auth, secrets, metrics, logs, trace, deploy
+from predatorctl.commands import (
+    agent,
+    arbiter,
+    auth,
+    azr,
+    chaos,
+    deploy,
+    etl,
+    gitops,
+    ledger,
+    logs,
+    mcp,
+    metrics,
+    mistral,
+    policy,
+    secrets,
+    system,
+    trace,
+    ui_sentinel,
+    vibe,
+)
+
 
 app = typer.Typer(
     name="predatorctl",
@@ -32,8 +56,7 @@ def main(
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable verbose output"),
     output: str = typer.Option("human", "--output", "-o", help="Output format (human, json, yaml)")
 ):
-    """
-    Predator Analytics v26 CLI Control Plane.
+    """Predator Analytics v26 CLI Control Plane.
 
     Implements the [bold]CLI-First[/bold] constitutional principle.
     """
@@ -44,6 +67,7 @@ def main(
     # ctx.obj = {"output": output}
 
 # Register Subcommands
+app.add_typer(agent.app, name="agent")
 app.add_typer(system.app, name="system")
 app.add_typer(etl.app, name="etl")
 app.add_typer(ledger.app, name="ledger")
@@ -59,6 +83,11 @@ app.add_typer(metrics.app, name="metrics")
 app.add_typer(logs.app, name="logs")
 app.add_typer(trace.app, name="trace")
 app.add_typer(deploy.app, name="deploy")
+app.add_typer(mistral.app, name="mistral")
+app.add_typer(mistral.app, name="ai")
+app.add_typer(vibe.app, name="vibe")
+app.add_typer(mcp.app, name="mcp")
+app.add_typer(ui_sentinel.app, name="sentinel")
 
 if __name__ == "__main__":
     app()

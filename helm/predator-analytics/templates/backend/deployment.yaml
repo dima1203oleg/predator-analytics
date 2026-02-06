@@ -29,7 +29,7 @@ spec:
         - name: backend
           securityContext:
             {{- toYaml .Values.backend.securityContext | nindent 12 }}
-          image: {{ include "predator-analytics.image" .Values.backend.image }}
+          image: {{ include "predator-analytics.image" (dict "root" . "image" .Values.backend.image) }}
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           ports:
             - name: http

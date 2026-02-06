@@ -1,131 +1,29 @@
-{{- if .Values.frontend.ingress.enabled -}}
+
+# ════════════════════════════════════════════════════════════════════════
+# INGRESS (Public Access)
+# ════════════════════════════════════════════════════════════════════════
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "predator-analytics.fullname" . }}-frontend
+  name: {{ include "predator-analytics.fullname" . }}-ingress
   labels:
     {{- include "predator-analytics.labels" . | nindent 4 }}
-    app.kubernetes.io/component: frontend
   annotations:
-    {{- with .Values.frontend.ingress.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
 spec:
-  ingressClassName: {{ .Values.frontend.ingress.className }}
-  tls:
-    - hosts:
-        - {{ .Values.frontend.ingress.host }}
-      secretName: {{ .Values.frontend.ingress.tls.secretName }}
   rules:
-    - host: {{ .Values.frontend.ingress.host }}
+    - host: {{ .Values.global.domain }}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ include "predator-analytics.fullname" . }}-frontend
+                name: {{ include "predator-analytics.fullname" . }}-api
                 port:
-                  name: http
-{{- end }}
-
-{{- if .Values.backend.ingress.enabled -}}
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: {{ include "predator-analytics.fullname" . }}-backend
-  labels:
-    {{- include "predator-analytics.labels" . | nindent 4 }}
-    app.kubernetes.io/component: backend
-  annotations:
-    {{- with .Values.backend.ingress.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-spec:
-  ingressClassName: {{ .Values.backend.ingress.className }}
-  tls:
-    - hosts:
-        - {{ .Values.backend.ingress.host }}
-      secretName: {{ .Values.backend.ingress.tls.secretName }}
-  rules:
-    - host: {{ .Values.backend.ingress.host }}
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ include "predator-analytics.fullname" . }}-backend
-                port:
-                  name: http
-{{- end }}
-
-{{- if .Values.monitoring.grafana.ingress.enabled -}}
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: {{ include "predator-analytics.fullname" . }}-grafana
-  labels:
-    {{- include "predator-analytics.labels" . | nindent 4 }}
-    app.kubernetes.io/component: grafana
-  annotations:
-    {{- with .Values.monitoring.grafana.ingress.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-spec:
-  ingressClassName: {{ .Values.monitoring.grafana.ingress.className }}
-  tls:
-    - hosts:
-        - {{ .Values.monitoring.grafana.ingress.host }}
-      secretName: {{ .Values.monitoring.grafana.ingress.tls.secretName }}
-  rules:
-    - host: {{ .Values.monitoring.grafana.ingress.host }}
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ include "predator-analytics.fullname" . }}-grafana
-                port:
-                  name: http
-{{- end }}
-
-{{- if .Values.mlflow.ingress.enabled -}}
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: {{ include "predator-analytics.fullname" . }}-mlflow
-  labels:
-    {{- include "predator-analytics.labels" . | nindent 4 }}
-    app.kubernetes.io/component: mlflow
-  annotations:
-    {{- with .Values.mlflow.ingress.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-spec:
-  ingressClassName: {{ .Values.mlflow.ingress.className }}
-  tls:
-    - hosts:
-        - {{ .Values.mlflow.ingress.host }}
-      secretName: {{ .Values.mlflow.ingress.tls.secretName }}
-  rules:
-    - host: {{ .Values.mlflow.ingress.host }}
+                  number: 8000
+    - host: mlflow.{{ .Values.global.domain }}
       http:
         paths:
           - path: /
@@ -134,5 +32,4 @@ spec:
               service:
                 name: {{ include "predator-analytics.fullname" . }}-mlflow
                 port:
-                  name: http
-{{- end }}
+                  number: 5000

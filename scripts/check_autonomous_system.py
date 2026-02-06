@@ -1,12 +1,15 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-Швидка перевірка Autonomous Intelligence v2.0
-Запускає систему та показує статус
+"""Швидка перевірка Autonomous Intelligence v2.0
+Запускає систему та показує статус.
 """
 import asyncio
-import sys
-from pathlib import Path
 import json
+from pathlib import Path
+import sys
+
 
 # Додати шлях до проекту
 project_root = Path(__file__).parent.parent
@@ -16,7 +19,7 @@ from app.services.autonomous_intelligence_v2 import autonomous_intelligence_v2
 
 
 async def check_system():
-    """Перевірка системи"""
+    """Перевірка системи."""
     print("="*60)
     print("🧠 AUTONOMOUS INTELLIGENCE V2.0 - SYSTEM CHECK")
     print("="*60)
@@ -30,13 +33,13 @@ async def check_system():
 
     # 2. Predictive Analyzer
     pred_stats = status['predictive_analyzer']
-    print(f"\n🔮 Predictive Analyzer:")
+    print("\n🔮 Predictive Analyzer:")
     print(f"  Зібрано метрик: {pred_stats['metrics_collected']}")
     print(f"  Поріг аномалій: {pred_stats['anomaly_threshold']}σ")
 
     # 3. Learning Engine
     learn_stats = status['learning_engine']
-    print(f"\n🎓 Learning Engine:")
+    print("\n🎓 Learning Engine:")
     print(f"  Всього записів: {learn_stats['total_records']}")
     print(f"  Вивчено стратегій: {learn_stats['strategies_learned']}")
     if learn_stats.get('best_strategy'):
@@ -44,32 +47,32 @@ async def check_system():
 
     # 4. Decision Maker
     decision_stats = status['decision_maker']
-    print(f"\n🤖 Decision Maker:")
+    print("\n🤖 Decision Maker:")
     print(f"  Всього рішень: {decision_stats['total_decisions']}")
     print(f"  Мін. впевненість: {decision_stats['min_confidence']:.0%}")
 
     if decision_stats['recent_decisions']:
-        print(f"\n  📋 Останні рішення:")
+        print("\n  📋 Останні рішення:")
         for dec in decision_stats['recent_decisions'][-3:]:
             status_icon = "✅" if dec.get('success') else "⏳" if dec.get('executed') else "❌"
             print(f"    {status_icon} {dec['type']} (confidence: {dec['confidence']:.0%})")
 
     # 5. Resource Allocator
     resource_stats = status['resource_allocator']
-    print(f"\n📊 Resource Allocator:")
+    print("\n📊 Resource Allocator:")
     current = resource_stats['current']
     print(f"  Workers: {current['workers']}")
     print(f"  Memory: {current['memory_mb']} MB")
     print(f"  CPU Cores: {current['cpu_cores']}")
 
     utilization = resource_stats['utilization']
-    print(f"\n  Використання:")
+    print("\n  Використання:")
     print(f"    Workers: {utilization['workers']:.1%}")
     print(f"    Memory: {utilization['memory']:.1%}")
     print(f"    CPU: {utilization['cpu']:.1%}")
 
     # 6. Рекомендації
-    print(f"\n💡 Рекомендації:")
+    print("\n💡 Рекомендації:")
 
     if not status['is_running']:
         print("  ⚠️  Система не запущена. Запустіть через:")
@@ -95,13 +98,14 @@ async def check_system():
 
 
 async def test_prediction():
-    """Тест передбачення"""
+    """Тест передбачення."""
     print("\n" + "="*60)
     print("🔮 ТЕСТ: Predictive Analytics")
     print("="*60)
 
-    from app.services.autonomous_intelligence_v2 import PredictiveMetrics
     from datetime import datetime
+
+    from app.services.autonomous_intelligence_v2 import PredictiveMetrics
 
     analyzer = autonomous_intelligence_v2.predictive_analyzer
 
@@ -118,7 +122,7 @@ async def test_prediction():
         )
         analyzer.add_metrics(metrics)
 
-    print(f"✅ Додано 20 метрик")
+    print("✅ Додано 20 метрик")
 
     # Перевіряємо передбачення
     predictions = analyzer.predict_issues()
@@ -138,7 +142,7 @@ async def test_prediction():
 
 
 async def test_decision():
-    """Тест прийняття рішення"""
+    """Тест прийняття рішення."""
     print("\n" + "="*60)
     print("🤖 ТЕСТ: Autonomous Decision Making")
     print("="*60)
@@ -165,7 +169,7 @@ async def test_decision():
     decision = await decision_maker.make_decision([test_prediction], current_state)
 
     if decision:
-        print(f"\n✅ Рішення прийнято:")
+        print("\n✅ Рішення прийнято:")
         print(f"   ID: {decision.decision_id}")
         print(f"   Тип: {decision.decision_type}")
         print(f"   Впевненість: {decision.confidence:.2%}")
@@ -174,10 +178,10 @@ async def test_decision():
         if not decision.executed:
             print(f"   ℹ️  Рішення не виконано (впевненість < {decision_maker.min_confidence:.0%})")
 
-        print(f"\n   💭 Пояснення:")
+        print("\n   💭 Пояснення:")
         print(f"      {decision.reasoning}")
 
-        print(f"\n   🎯 Дії:")
+        print("\n   🎯 Дії:")
         for i, action in enumerate(decision.actions, 1):
             print(f"      {i}. {action['type']}: {action['params']}")
     else:
@@ -187,7 +191,7 @@ async def test_decision():
 
 
 async def main():
-    """Головна функція"""
+    """Головна функція."""
     print("\n🚀 Запуск перевірки Autonomous Intelligence v2.0...\n")
 
     try:
@@ -198,7 +202,7 @@ async def main():
         predictions = await test_prediction()
 
         # 3. Тест прийняття рішення
-        decision = await test_decision()
+        await test_decision()
 
         # 4. Фінальний звіт
         print("\n" + "="*60)

@@ -6,14 +6,14 @@ global:
   # Static IP or Domain (PRODUCTION SERVER)
   staticIP: "194.177.1.240"
   domain: "predator.analytics.local"
-  
+
   # Image registry
   imageRegistry: "ghcr.io/dima1203oleg"
   imageTag: "latest"
-  
+
   # Environment
   environment: "production"
-  
+
   # Storage class
   storageClass: "fast-ssd"
 
@@ -31,9 +31,13 @@ imagePullSecrets:
 
 # cert-manager / Let's Encrypt
 certManager:
-  enabled: true
+  enabled: false
   email: "admin@predator.analytics.local"
   ingressClass: "nginx"
+
+# JWT (used by templates/secrets.yaml)
+jwt:
+  secretKey: "secure_prod_jwt_secret_2024"
 
 # Frontend configuration
 frontend:
@@ -41,11 +45,11 @@ frontend:
     repository: "predator-ui"
     tag: "latest"
     pullPolicy: "IfNotPresent"
-  
+
   service:
     type: ClusterIP
     port: 3000
-    
+
   ingress:
     enabled: true
     className: "nginx"
@@ -58,7 +62,7 @@ frontend:
     tls:
       enabled: true
       secretName: "predator-frontend-tls"
-  
+
   resources:
     limits:
       cpu: 1000m
@@ -66,7 +70,7 @@ frontend:
     requests:
       cpu: 500m
       memory: 512Mi
-  
+
   env:
     - name: NODE_ENV
       value: "production"
@@ -83,11 +87,11 @@ backend:
     repository: "predator-api"
     tag: "latest"
     pullPolicy: "IfNotPresent"
-  
+
   service:
     type: ClusterIP
     port: 8000
-    
+
   ingress:
     enabled: true
     className: "nginx"
@@ -100,7 +104,7 @@ backend:
     tls:
       enabled: true
       secretName: "predator-backend-tls"
-  
+
   resources:
     limits:
       cpu: 2000m
@@ -108,7 +112,7 @@ backend:
     requests:
       cpu: 1000m
       memory: 2Gi
-  
+
   env:
     - name: ENVIRONMENT
       value: "production"
@@ -123,6 +127,10 @@ backend:
           key: database-url
     - name: REDIS_URL
       value: "redis://redis:6379/0"
+    - name: RABBITMQ_URL
+      value: "amqp://predator:predator_secret_key@rabbitmq:5672/"
+    - name: MINIO_ENDPOINT
+      value: "minio:9000"
     - name: OPENSEARCH_URL
       value: "http://opensearch:9200"
     - name: QDRANT_URL
@@ -138,10 +146,37 @@ backend:
         secretKeyRef:
           name: predator-secrets
           key: jwt-secret
+    - name: MINIO_ACCESS_KEY
+      value: "predator_admin"
+    - name: MINIO_SECRET_KEY
+      value: "predator_secret_key"
 
-# JWT (used by templates/secrets.yaml)
-jwt:
-  secretKey: "secure_prod_jwt_secret_2024"
+# RabbitMQ
+rabbitmq:
+  enabled: true
+  auth:
+    username: "predator"
+    password: "predator_secret_key"
+  persistence:
+    enabled: true
+    storageClass: "fast-ssd"
+    size: 50Gi
+
+# MinIO
+minio:
+  enabled: true
+  auth:
+    rootUser: "predator_admin"
+    rootPassword: "predator_secret_key"
+  persistence:
+    enabled: true
+    storageClass: "fast-ssd"
+    size: 500Gi
+  resources:
+    requests:
+      memory: 1Gi
+    limits:
+      memory: 2Gi
 
 # Nginx reverse proxy
 nginx:
@@ -149,14 +184,14 @@ nginx:
     repository: "nginx"
     tag: "1.25-alpine"
     pullPolicy: "IfNotPresent"
-  
+
   service:
     type: LoadBalancer
     loadBalancerIP: "194.177.1.240"
     ports:
       http: 80
       https: 443
-    
+
   resources:
     limits:
       cpu: 1000m
@@ -164,11 +199,11 @@ nginx:
     requests:
       cpu: 500m
       memory: 256Mi
-  
+
   config:
     # SSL certificates (mount from secret)
     sslSecret: "predator-ssl-certs"
-    
+
     # Rate limiting
     rateLimiting:
       enabled: true
@@ -218,7 +253,7 @@ opensearch:
   clusterName: "predator-opensearch"
   nodeGroup: "master"
   replicas: 1
-  
+
   # Production settings
   opensearchJavaOpts: "-Xms4g -Xmx4g"
   resources:
@@ -228,12 +263,12 @@ opensearch:
     limits:
       cpu: 4000m
       memory: 8Gi
-  
+
   persistence:
     enabled: true
     storageClass: "fast-ssd"
     size: 1Ti
-  
+
   # Security
   security:
     tls:
@@ -246,11 +281,11 @@ opensearch:
 qdrant:
   enabled: true
   replicaCount: 1
-  
+
   image:
     repository: "qdrant/qdrant"
     tag: "v1.7.4"
-  
+
   resources:
     requests:
       cpu: 1000m
@@ -258,12 +293,12 @@ qdrant:
     limits:
       cpu: 2000m
       memory: 4Gi
-  
+
   persistence:
     enabled: true
     storageClass: "fast-ssd"
     size: 500Gi
-  
+
   config:
     # Production settings
     logLevel: "INFO"
@@ -277,9 +312,9 @@ celeryWorker:
     repository: "predator-worker"
     tag: "latest"
     pullPolicy: "IfNotPresent"
-  
+
   replicaCount: 3
-  
+
   resources:
     limits:
       cpu: 2000m
@@ -287,7 +322,7 @@ celeryWorker:
     requests:
       cpu: 1000m
       memory: 2Gi
-  
+
   env:
     - name: ENVIRONMENT
       value: "production"
@@ -298,10 +333,18 @@ celeryWorker:
           key: database-url
     - name: REDIS_URL
       value: "redis://redis:6379/0"
+    - name: RABBITMQ_URL
+      value: "amqp://predator:predator_secret_key@rabbitmq:5672/"
+    - name: MINIO_ENDPOINT
+      value: "minio:9000"
     - name: OPENSEARCH_URL
       value: "http://opensearch:9200"
     - name: QDRANT_URL
       value: "http://qdrant:6333"
+    - name: MINIO_ACCESS_KEY
+      value: "predator_admin"
+    - name: MINIO_SECRET_KEY
+      value: "predator_secret_key"
 
 # Celery beat scheduler
 celeryBeat:
@@ -309,9 +352,9 @@ celeryBeat:
     repository: "predator-worker"
     tag: "latest"
     pullPolicy: "IfNotPresent"
-  
+
   replicaCount: 1
-  
+
   resources:
     limits:
       cpu: 500m
@@ -319,7 +362,7 @@ celeryBeat:
     requests:
       cpu: 250m
       memory: 512Mi
-  
+
   env:
     - name: ENVIRONMENT
       value: "production"
@@ -335,13 +378,13 @@ celeryBeat:
 mlflow:
   image:
     repository: "python"
-    tag: "3.11-slim"
+    tag: "3.12-slim"
     pullPolicy: "IfNotPresent"
-  
+
   service:
     type: ClusterIP
     port: 5000
-  
+
   ingress:
     enabled: true
     className: "nginx"
@@ -349,7 +392,7 @@ mlflow:
     tls:
       enabled: true
       secretName: "predator-mlflow-tls"
-  
+
   resources:
     limits:
       cpu: 1000m
@@ -357,14 +400,14 @@ mlflow:
     requests:
       cpu: 500m
       memory: 1Gi
-  
+
   env:
     - name: DATABASE_URL
       valueFrom:
         secretKeyRef:
           name: predator-secrets
           key: database-url
-  
+
   persistence:
     enabled: true
     storageClass: "fast-ssd"
@@ -373,7 +416,7 @@ mlflow:
 # Monitoring
 monitoring:
   enabled: true
-  
+
   # Prometheus
   prometheus:
     enabled: true
@@ -391,7 +434,7 @@ monitoring:
       requests:
         cpu: 1000m
         memory: 2Gi
-  
+
   # Grafana
   grafana:
     enabled: true
@@ -458,3 +501,5 @@ securityContext:
   capabilities:
     drop:
       - ALL
+
+# AUTO-DEPLOYMENT: v27 ULTRA UPGRADE applied at 2026-01-31T07:42:18.874929

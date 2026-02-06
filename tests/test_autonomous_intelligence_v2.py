@@ -1,33 +1,37 @@
+from __future__ import annotations
+
+
+"""Тести для Autonomous Intelligence v2.0
+Перевіряє всі 4 підсистеми.
 """
-Тести для Autonomous Intelligence v2.0
-Перевіряє всі 4 підсистеми
-"""
-import pytest
 import asyncio
 from datetime import datetime
-import sys
 from pathlib import Path
+import sys
+
+import pytest
+
 
 # Додати шлях до проекту
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "services" / "api-gateway"))
 
 from app.services.autonomous_intelligence_v2 import (
-    autonomous_intelligence_v2,
-    PredictiveMetrics,
-    PredictiveAnalyzer,
-    SelfLearningEngine,
     AutonomousDecisionMaker,
     DynamicResourceAllocator,
-    LearningRecord
+    LearningRecord,
+    PredictiveAnalyzer,
+    PredictiveMetrics,
+    SelfLearningEngine,
+    autonomous_intelligence_v2,
 )
 
 
 class TestPredictiveAnalyzer:
-    """Тести для Predictive Analyzer"""
+    """Тести для Predictive Analyzer."""
 
     def test_add_metrics(self):
-        """Тест додавання метрик"""
+        """Тест додавання метрик."""
         analyzer = PredictiveAnalyzer()
 
         metrics = PredictiveMetrics(
@@ -43,7 +47,7 @@ class TestPredictiveAnalyzer:
         assert len(analyzer.metrics_history) == 1
 
     def test_predict_cpu_overload(self):
-        """Тест передбачення перевантаження CPU"""
+        """Тест передбачення перевантаження CPU."""
         analyzer = PredictiveAnalyzer()
 
         # Симулюємо зростаючий CPU
@@ -66,7 +70,7 @@ class TestPredictiveAnalyzer:
         assert cpu_predictions[0]['severity'] in ['high', 'critical']
 
     def test_predict_memory_leak(self):
-        """Тест виявлення витоку пам'яті"""
+        """Тест виявлення витоку пам'яті."""
         analyzer = PredictiveAnalyzer()
 
         # Симулюємо витік пам'яті
@@ -89,10 +93,10 @@ class TestPredictiveAnalyzer:
 
 
 class TestSelfLearningEngine:
-    """Тести для Self-Learning Engine"""
+    """Тести для Self-Learning Engine."""
 
     def test_record_outcome(self):
-        """Тест запису результату"""
+        """Тест запису результату."""
         engine = SelfLearningEngine()
 
         record = LearningRecord(
@@ -110,7 +114,7 @@ class TestSelfLearningEngine:
         assert "scale_up" in engine.strategy_scores
 
     def test_strategy_confidence(self):
-        """Тест розрахунку впевненості стратегії"""
+        """Тест розрахунку впевненості стратегії."""
         engine = SelfLearningEngine()
 
         # Додаємо кілька успішних результатів
@@ -131,7 +135,7 @@ class TestSelfLearningEngine:
         assert confidence > 0.8
 
     def test_recommend_strategy(self):
-        """Тест рекомендації стратегії"""
+        """Тест рекомендації стратегії."""
         engine = SelfLearningEngine()
 
         # Додаємо результати для різних стратегій
@@ -161,11 +165,11 @@ class TestSelfLearningEngine:
 
 
 class TestAutonomousDecisionMaker:
-    """Тести для Autonomous Decision Maker"""
+    """Тести для Autonomous Decision Maker."""
 
     @pytest.mark.asyncio
     async def test_make_decision_high_confidence(self):
-        """Тест прийняття рішення з високою впевненістю"""
+        """Тест прийняття рішення з високою впевненістю."""
         learning_engine = SelfLearningEngine()
         decision_maker = AutonomousDecisionMaker(learning_engine)
 
@@ -203,7 +207,7 @@ class TestAutonomousDecisionMaker:
 
     @pytest.mark.asyncio
     async def test_decision_not_executed_low_confidence(self):
-        """Тест що рішення не виконується при низькій впевненості"""
+        """Тест що рішення не виконується при низькій впевненості."""
         learning_engine = SelfLearningEngine()
         decision_maker = AutonomousDecisionMaker(learning_engine)
         decision_maker.min_confidence = 0.9  # Дуже висока вимога
@@ -219,15 +223,15 @@ class TestAutonomousDecisionMaker:
 
         # Рішення створене, але не виконане через низьку впевненість
         if decision:
-            assert decision.executed == False or decision.confidence < 0.9
+            assert not decision.executed or decision.confidence < 0.9
 
 
 class TestDynamicResourceAllocator:
-    """Тести для Dynamic Resource Allocator"""
+    """Тести для Dynamic Resource Allocator."""
 
     @pytest.mark.asyncio
     async def test_scale_up_on_high_cpu(self):
-        """Тест збільшення ресурсів при високому CPU"""
+        """Тест збільшення ресурсів при високому CPU."""
         allocator = DynamicResourceAllocator()
 
         initial_cores = allocator.current_allocation["cpu_cores"]
@@ -250,7 +254,7 @@ class TestDynamicResourceAllocator:
 
     @pytest.mark.asyncio
     async def test_scale_up_on_high_memory(self):
-        """Тест збільшення пам'яті при високому використанні"""
+        """Тест збільшення пам'яті при високому використанні."""
         allocator = DynamicResourceAllocator()
 
         initial_memory = allocator.current_allocation["memory_mb"]
@@ -273,7 +277,7 @@ class TestDynamicResourceAllocator:
 
     @pytest.mark.asyncio
     async def test_respect_max_limits(self):
-        """Тест дотримання максимальних лімітів"""
+        """Тест дотримання максимальних лімітів."""
         allocator = DynamicResourceAllocator()
 
         # Встановлюємо поточні ресурси на максимум
@@ -288,7 +292,7 @@ class TestDynamicResourceAllocator:
             throughput=200.0
         )
 
-        changes = await allocator.adjust_resources(metrics)
+        await allocator.adjust_resources(metrics)
 
         # Не повинно перевищувати максимум
         assert allocator.current_allocation["workers"] <= allocator.max_allocation["workers"]
@@ -297,11 +301,11 @@ class TestDynamicResourceAllocator:
 
 
 class TestAutonomousIntelligenceIntegration:
-    """Інтеграційні тести для повної системи"""
+    """Інтеграційні тести для повної системи."""
 
     @pytest.mark.asyncio
     async def test_full_system_startup(self):
-        """Тест запуску повної системи"""
+        """Тест запуску повної системи."""
         # Створюємо нову інстанцію для тесту
         from app.services.autonomous_intelligence_v2 import AutonomousIntelligenceV2
 
@@ -310,16 +314,16 @@ class TestAutonomousIntelligenceIntegration:
         # Запускаємо
         await ai.start()
 
-        assert ai._is_running == True
+        assert ai._is_running
 
         # Зупиняємо
         await ai.stop()
 
-        assert ai._is_running == False
+        assert not ai._is_running
 
     @pytest.mark.asyncio
     async def test_get_status(self):
-        """Тест отримання статусу"""
+        """Тест отримання статусу."""
         status = autonomous_intelligence_v2.get_status()
 
         assert "is_running" in status
@@ -331,7 +335,7 @@ class TestAutonomousIntelligenceIntegration:
 
     @pytest.mark.asyncio
     async def test_end_to_end_cycle(self):
-        """Тест повного циклу: метрики -> передбачення -> рішення -> навчання"""
+        """Тест повного циклу: метрики -> передбачення -> рішення -> навчання."""
         from app.services.autonomous_intelligence_v2 import AutonomousIntelligenceV2
 
         ai = AutonomousIntelligenceV2()

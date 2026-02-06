@@ -1,8 +1,12 @@
-import pandas as pd
-import numpy as np
-from sqlalchemy import create_engine
+from __future__ import annotations
+
 import logging
 import os
+
+import numpy as np
+import pandas as pd
+from sqlalchemy import create_engine
+
 
 # Setup
 logging.basicConfig(level=logging.INFO)
@@ -56,7 +60,7 @@ def train_anomaly_model():
         logger.info(f"Learned patterns for {len(stats)} HS codes.")
 
     except Exception as e:
-        logger.error(f"Training failed: {e}")
+        logger.exception(f"Training failed: {e}")
 
 if __name__ == "__main__":
     train_anomaly_model()

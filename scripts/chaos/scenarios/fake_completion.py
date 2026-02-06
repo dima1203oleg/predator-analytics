@@ -1,19 +1,22 @@
+from __future__ import annotations
+
 # scripts/chaos/scenarios/fake_completion.py
 import asyncio
-import uuid
 import json
-import subprocess
 import logging
+import subprocess
+import uuid
+
 from libs.core.database import get_db_ctx
-from libs.core.models.entities import ETLJob
 from libs.core.etl_state_machine import ETLState
+from libs.core.models.entities import ETLJob
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ChaosFakeCompletion")
 
 async def run_scenario():
-    """
-    Scenario: Fake Completion
+    """Scenario: Fake Completion
     A job is manually set to COMPLETED/INDEXED but has ZERO indexed records in its facts.
     The Arbiter should detect this and force-fail the job.
     """
@@ -46,7 +49,7 @@ async def run_scenario():
     # For CI/CD we would use a timeout.
 
     logger.info(f"🔍 To verify, run: predatorctl etl audit {job_id}")
-    logger.info(f"⚖️ Arbiter should detect INV-004 and force-fail.")
+    logger.info("⚖️ Arbiter should detect INV-004 and force-fail.")
 
 if __name__ == "__main__":
     asyncio.run(run_scenario())

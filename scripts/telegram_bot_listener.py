@@ -1,12 +1,19 @@
+from __future__ import annotations
+
 # telegram_bot_listener.py
 # Побудовано за архітектурою Головного DevOps-інженера Predator Analytics v25.0
-
-import os
 import logging
-import time
-from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+import os
 from pathlib import Path
+import time
+from typing import TYPE_CHECKING
+
+from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
+
+
+if TYPE_CHECKING:
+    from telegram import Update
+
 
 # Конфігурація
 logging.basicConfig(
@@ -47,11 +54,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown"
         )
     except Exception as e:
-        logger.error(f"Помилка створення завдання: {e}")
+        logger.exception(f"Помилка створення завдання: {e}")
         await update.message.reply_text(f"❌ Помилка сервісу: {e}")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    help_text = """
+    help_text = f"""
 🤖 *Predator Analytics AI-ланцюжок v25.0*
 Я — автономна система самовідновлення.
 
@@ -60,8 +67,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 • *Виправ помилку в Docker-контейнері*
 • *Оптимізуй SQL запит для PostgreSQL*
 
-Ваш ID: `{user_id}`
-    """.format(user_id=update.effective_user.id)
+Ваш ID: `{update.effective_user.id}`
+    """
     await update.message.reply_text(help_text, parse_mode="Markdown")
 
 def main():

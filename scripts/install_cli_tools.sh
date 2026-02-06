@@ -18,24 +18,28 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Додаємо шлях до бінарників Python (особливо для macOS)
-export PATH="$PATH:$HOME/Library/Python/3.9/bin:$HOME/.local/bin"
+# Додаємо шлях до бінарників Python 3.12 (Axiom 15 Compliance)
+export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}🚀 Встановлення CLI-інструментів для v25.0${NC}"
+echo -e "${BLUE}🚀 Встановлення CLI-інструментів для v25.0 (Python 3.12 ONLY)${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-# Перевірка Python і pip
-echo -e "\n${YELLOW}[1/5] Перевірка залежностей...${NC}"
-if ! command -v python3 &> /dev/null; then
-    echo -e "${RED}❌ Python3 не знайдено. Встановіть Python 3.8+${NC}"
+# Перевірка Python 3.12
+echo -e "\n${YELLOW}[1/5] Перевірка Python 3.12...${NC}"
+if ! python3.12 --version &> /dev/null; then
+    echo -e "${RED}❌ FATAL: Python 3.12 НЕ ЗНАЙДЕНО.${NC}"
+    echo -e "${YELLOW}💡 Встановіть Python 3.12 та спробуйте знову.${NC}"
     exit 1
 fi
 if ! command -v pip3 &> /dev/null; then
-    echo -e "${RED}❌ pip3 не знайдено. Встановіть pip${NC}"
+    echo -e "${RED}❌ pip3 не знайдено.${NC}"
     exit 1
 fi
-echo -e "${GREEN}✅ Python $(python3 --version) та pip знайдено${NC}"
+echo -e "${GREEN}✅ Python $(python3.12 --version) знайдено${NC}"
+
+# Replace all subsequent python3 calls with python3.12
+alias python3='python3.12'
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # 1. Gemini CLI (планування/аналіз)

@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-backend.fullname" . }}-api-gateway
+  labels:
+    {{- include "predator-backend.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api-gateway
+spec:
+  {{- if not .Values.apiGateway.autoscaling.enabled }}
+  replicas: {{ .Values.apiGateway.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "predator-backend.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: api-gateway
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "predator-backend.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: api-gateway
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "predator-backend.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: api-gateway
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["uvicorn"]
+        args:
+          - "app.main:app"
+          - "--host"
+          - "0.0.0.0"
+          - "--port"
+          - "{{ .Values.apiGateway.targetPort }}"
+          - "--workers"
+          - "4"
+          - "--loop"
+          - "uvloop"
+        ports:
+        - name: http
+          containerPort: {{ .Values.apiGateway.targetPort }}
+          protocol: TCP
+        - name: metrics
+          containerPort: 9090
+          protocol: TCP
+        livenessProbe:
+          {{- toYaml .Values.apiGateway.livenessProbe | nindent 12 }}
+        readinessProbe:
+          {{- toYaml .Values.apiGateway.readinessProbe | nindent 12 }}
+        resources:
+          {{- toYaml .Values.apiGateway.resources | nindent 12 }}
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "predator-backend.fullname" . }}-secrets
+                key: database-url
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "predator-backend.fullname" . }}-secrets
+                key: redis-url
+          - name: JWT_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "predator-backend.fullname" . }}-secrets
+                key: jwt-secret-key
+          - name: OPENSEARCH_HOSTS
+            value: {{ include "predator-backend.opensearchHosts" . | quote }}
+          - name: OPENSEARCH_USER
+            value: {{ .Values.externalServices.opensearch.username | quote }}
+          - name: OPENSEARCH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "predator-backend.fullname" . }}-secrets
+                key: opensearch-password
+          - name: QDRANT_HOST
+            value: {{ .Values.externalServices.qdrant.host | quote }}
+          - name: QDRANT_PORT
+            value: {{ .Values.externalServices.qdrant.port | quote }}
+          - name: OLLAMA_BASE_URL
+            value: {{ .Values.externalServices.ollama.baseUrl | quote }}
+          - name: DEFAULT_LLM_MODEL
+            value: {{ .Values.externalServices.ollama.defaultModel | quote }}
+          - name: EMBEDDING_MODEL
+            value: {{ .Values.externalServices.ollama.embeddingModel | quote }}
+          {{- range .Values.env }}
+          - name: {{ .name }}
+            value: {{ .value | quote }}
+          {{- end }}
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: cache
+          mountPath: /app/.cache
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: cache
+        emptyDir: {}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

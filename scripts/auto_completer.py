@@ -1,6 +1,8 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-Predator Analytics - Self-Improvement & Auto-Completion Agent
+"""Predator Analytics - Self-Improvement & Auto-Completion Agent
 Implementation of 'Self-Improvement Loop' from TECH_SPEC.md Section 9.
 
 This script acts as a local agent that:
@@ -10,10 +12,11 @@ This script acts as a local agent that:
 4. Attempts to auto-fix or deploy missing parts.
 """
 
+import logging
 import os
 import subprocess
 import time
-import logging
+
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - [AUTO-AGENT] - %(message)s')
@@ -25,13 +28,13 @@ REMOTE_HOST = "predator-server"
 def run_cmd(cmd, cwd=PROJECT_ROOT):
     logger.info(f"Running: {' '.join(cmd)}")
     try:
-        result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
+        result = subprocess.run(cmd, check=False, cwd=cwd, capture_output=True, text=True)
         if result.returncode != 0:
             logger.error(f"Command failed: {result.stderr}")
             return False, result.stderr
         return True, result.stdout
     except Exception as e:
-        logger.error(f"Execution error: {e}")
+        logger.exception(f"Execution error: {e}")
         return False, str(e)
 
 def check_remote_health():
@@ -87,7 +90,7 @@ def auto_fix(issue):
         success, out = run_cmd(["bash", "deploy-to-server.sh"])
         if success:
              logger.info("✅ Deployment Script Finished. Verifying...")
-             ok, msg = check_remote_health()
+             ok, _msg = check_remote_health()
              if ok:
                  logger.info("✅ Fix Successful: Remote is up.")
                  return True
@@ -122,7 +125,7 @@ def main():
             logger.info("📋 Validation Checks Passed.")
 
         except Exception as e:
-            logger.error(f"Cycle Error: {e}")
+            logger.exception(f"Cycle Error: {e}")
 
         logger.info("💤 Sleeping for 60s...")
         time.sleep(60)

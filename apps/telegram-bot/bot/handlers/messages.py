@@ -1,9 +1,14 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 from aiogram import F, Router, types
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from bot.services.orchestrator import AgentOrchestrator
+if TYPE_CHECKING:
+    from bot.services.orchestrator import AgentOrchestrator
+
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -22,10 +27,8 @@ async def cmd_start(message: types.Message):
     )
 
 @router.message(F.text)
-async def handle_natural_language(message: types.Message, orchestrator: AgentOrchestrator):
-    """
-    Advanced NLP Handler: Analysis -> Intent -> Action -> Result
-    """
+async def handle_natural_language(message: types.Message, orchestrator: "AgentOrchestrator"):
+    """Advanced NLP Handler: Analysis -> Intent -> Action -> Result."""
     user_query = message.text
     user_id = message.from_user.id
 
@@ -74,8 +77,8 @@ async def handle_natural_language(message: types.Message, orchestrator: AgentOrc
         await display_result(status_msg, result)
 
     except Exception as e:
-        logger.error(f"Critical error in TG Handler: {e}")
-        await status_msg.edit_text(f"❌ <b>Критична помилка:</b>\n<code>{str(e)}</code>", parse_mode="HTML")
+        logger.exception(f"Critical error in TG Handler: {e}")
+        await status_msg.edit_text(f"❌ <b>Критична помилка:</b>\n<code>{e!s}</code>", parse_mode="HTML")
 
 async def display_result(status_msg: types.Message, result: dict):
     """Helper to format and display result."""
@@ -95,7 +98,7 @@ async def display_result(status_msg: types.Message, result: dict):
     await status_msg.edit_text(response_text, parse_mode="HTML")
 
 @router.callback_query(F.data.startswith("confirm_"))
-async def handle_confirmation(callback: types.CallbackQuery, orchestrator: AgentOrchestrator):
+async def handle_confirmation(callback: types.CallbackQuery, orchestrator: "AgentOrchestrator"):
     user_id = callback.from_user.id
     intent_data = orchestrator.pending_actions.get(user_id)
 
@@ -118,7 +121,7 @@ async def handle_confirmation(callback: types.CallbackQuery, orchestrator: Agent
         await callback.message.edit_text(f"❌ <b>Помилка виконання:</b>\n<code>{e}</code>", parse_mode="HTML")
 
 @router.callback_query(F.data == "cancel_action")
-async def handle_cancel(callback: types.CallbackQuery, orchestrator: AgentOrchestrator):
+async def handle_cancel(callback: types.CallbackQuery, orchestrator: "AgentOrchestrator"):
     user_id = callback.from_user.id
     if user_id in orchestrator.pending_actions:
         del orchestrator.pending_actions[user_id]
@@ -127,10 +130,8 @@ async def handle_cancel(callback: types.CallbackQuery, orchestrator: AgentOrches
     await callback.answer()
 
 @router.message(F.voice)
-async def handle_voice_command(message: types.Message, orchestrator: AgentOrchestrator):
-    """
-    Voice to Action: Gemini native audio processing.
-    """
+async def handle_voice_command(message: types.Message, orchestrator: "AgentOrchestrator"):
+    """Voice to Action: Gemini native audio processing."""
     status_msg = await message.answer("🎤 <b>Сприймаю голос...</b>", parse_mode="HTML")
 
     try:
@@ -138,8 +139,8 @@ async def handle_voice_command(message: types.Message, orchestrator: AgentOrches
         file_id = message.voice.file_id
         file = await message.bot.get_file(file_id)
 
-        import tempfile
         import os
+        import tempfile
         with tempfile.NamedTemporaryFile(delete=False, suffix=".ogg") as tmp:
             await message.bot.download_file(file.file_path, tmp.name)
             tmp_path = tmp.name
@@ -173,5 +174,5 @@ async def handle_voice_command(message: types.Message, orchestrator: AgentOrches
         await display_result(status_msg, result)
 
     except Exception as e:
-        logger.error(f"Voice processing failed: {e}")
-        await status_msg.edit_text(f"❌ <b>Помилка голосового вводу:</b>\n<code>{str(e)}</code>", parse_mode="HTML")
+        logger.exception(f"Voice processing failed: {e}")
+        await status_msg.edit_text(f"❌ <b>Помилка голосового вводу:</b>\n<code>{e!s}</code>", parse_mode="HTML")

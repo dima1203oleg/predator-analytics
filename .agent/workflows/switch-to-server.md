@@ -29,6 +29,13 @@ description: Підключення та робота на NVIDIA сервері
 ./scripts/server-connect.sh
 ```
 
+### 2.1. Налаштування доступу до Kubernetes
+Щоб бачити кластер в IDE (Mac), потрібно завантажити конфіг:
+```bash
+./scripts/fetch-kubeconfig.sh
+```
+*Примітка: `server-connect.sh` вже налаштований на проброс порту 6443.*
+
 ### 3. Перевірка Docker сервісів (на сервері)
 ```bash
 cd ~/predator-analytics && docker compose ps

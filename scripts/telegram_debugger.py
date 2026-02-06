@@ -1,12 +1,16 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
+"""🔍 PREDATOR TELEGRAM DEBUGGER
+Діагностика та виправлення проблем з ботом.
 """
-🔍 PREDATOR TELEGRAM DEBUGGER
-Діагностика та виправлення проблем з ботом
-"""
-import os
 import asyncio
 import logging
+import os
+
 from aiogram import Bot
+
 
 # Кольори
 class Colors:
@@ -41,7 +45,7 @@ def update_env_file(key: str, value: str):
     # Read existing
     lines = []
     if os.path.exists(env_path):
-        with open(env_path, "r") as f:
+        with open(env_path) as f:
             lines = f.readlines()
 
     # Update or Add
@@ -73,7 +77,7 @@ async def main():
     print("Current Config:")
     print(f"  TOKEN:    {token[:5] + '...' if token else 'NOT SET'}")
     print(f"  ADMIN_ID: {admin_id or 'NOT SET'}")
-    print("")
+    print()
 
     # 2. Verify Token
     valid = False
@@ -87,7 +91,7 @@ async def main():
         new_token = input(f"{Colors.BOLD}Enter new Bot Token (from @BotFather):{Colors.ENDC} ").strip()
 
         if new_token:
-            valid, username = await check_token(new_token)
+            valid, _username = await check_token(new_token)
             if valid:
                 update_env_file("TELEGRAM_BOT_TOKEN", new_token)
                 token = new_token
@@ -125,10 +129,10 @@ async def main():
 
     print("\n====================================")
     print(f"{Colors.BOLD}🎉 DIAGNOSTIC COMPLETE!{Colors.ENDC}")
-    print("")
+    print()
     print("To start the bot now, run:")
     print(f"{Colors.GREEN}python3 backend/orchestrator/agents/telegram_bot_v2.py{Colors.ENDC}")
-    print("")
+    print()
 
 if __name__ == "__main__":
     try:

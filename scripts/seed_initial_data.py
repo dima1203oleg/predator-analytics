@@ -1,7 +1,11 @@
+from __future__ import annotations
+
 import asyncio
-import asyncpg
-import uuid
 from datetime import datetime
+import uuid
+
+import asyncpg
+
 
 DATABASE_URL = "postgresql://predator:predator_password@localhost:5432/predator_db"
 

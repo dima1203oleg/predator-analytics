@@ -107,7 +107,7 @@ export const SystemStatus: React.FC = () => {
 
       {/* Services Table */}
       <h3 className="text-lg font-bold text-white mt-8 mb-4">Core Services Status</h3>
-      <div className="bg-slate-900/50 border border-slate-700/50 rounded-xl overflow-hidden min-h-[200px]">
+      <div className="bg-slate-900/50 border border-slate-700/50 rounded-xl  min-h-[200px]">
          {services.length === 0 ? (
              <div className="p-8 text-center text-slate-500">Завантаження статусу сервісів...</div>
          ) : (
@@ -115,7 +115,7 @@ export const SystemStatus: React.FC = () => {
                 <thead className="bg-slate-950/50 text-slate-500 text-xs uppercase tracking-wider font-bold">
                    <tr>
                       <th className="p-4">Service</th>
-                      <th className="p-4">Status</th>
+                      <th className="p-4">Статус</th>
                       <th className="p-4">Uptime</th>
                       <th className="p-4">Latency</th>
                    </tr>

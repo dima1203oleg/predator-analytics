@@ -1,7 +1,10 @@
-import re
+from __future__ import annotations
+
 import os
+import re
 import subprocess
 import sys
+
 
 LOG_FILE = "telegram_bot.log"
 ADD_SCRIPT = "./scripts/add-nvidia-cluster.sh"
@@ -20,42 +23,38 @@ def get_last_ssh_config(log_file):
 
     # Look for SSH Config pattern from bottom up
     # Pattern: HostName <host> ... Port <port> ... User <user>
-    config = {}
-    
+
     # Reverse iterate to find the latest
-    capture = False
-    ssh_block = []
-    
+
     for line in reversed(lines):
         if "SSH Config" in line:
-            capture = True
             # We found the header, now process the block we collected (which is in reverse order)
             # But the block is actually *after* this line in the log.
             # So simpler approach: Join all lines, find last occurrence
             break
-            
+
     # Regex approach on full text is safer
     full_text = "\n".join(lines)
-    
+
     # Find last occurrence of HostName ...
     # This regex is a bit loose to catch variations
     matches = list(re.finditer(r"HostName\s+([a-zA-Z0-9.-]+)", full_text))
     if not matches:
         return None
-        
+
     last_hostname = matches[-1].group(1)
-    
+
     # Find Port near this HostName
     # We search in the text AFTER the last HostName match index - 50 chars (to be safe)
     start_idx = matches[-1].start()
     snippet = full_text[start_idx:]
-    
+
     port_match = re.search(r"Port\s+(\d+)", snippet)
     user_match = re.search(r"User\s+(\w+)", snippet)
-    
+
     port = port_match.group(1) if port_match else "22"
     user = user_match.group(1) if user_match else "root"
-    
+
     return {
         "host": last_hostname,
         "port": port,
@@ -67,16 +66,16 @@ def main():
     if not config:
         print("❌ No SSH config found in logs")
         sys.exit(1)
-        
+
     print("🔍 Found SSH Config:")
     print(f"   Host: {config['host']}")
     print(f"   Port: {config['port']}")
     print(f"   User: {config['user']}")
-    
+
     # Run the add script
     cmd = [ADD_SCRIPT, config['port'], config['host'], config['user']]
     print(f"🚀 Running: {' '.join(cmd)}")
-    
+
     try:
         subprocess.check_call(cmd)
     except subprocess.CalledProcessError as e:

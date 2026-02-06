@@ -1,50 +1,24 @@
 ---
-description: Повна перевірка статусу системи
+description: Повна перевірка статусу системи PREDATOR (Уніфікована)
 ---
-// turbo-all
+# 🛰️ /system_status: Unified AZR Control
 
-# System Status Check
+Це глобальний статус-дашборд, що об'єднує контроль за версіями, мовою та інфраструктурою.
 
-Перевірка статусу всіх компонентів Predator Analytics.
-
-## 1. Перевірка SSH підключення
-
+// turbo
+## 🛠️ Запуск повного аудиту системи
 ```bash
-ssh -p 6666 dima@194.177.1.240 "echo 'SSH OK: $(hostname)'"
+python3 scripts/azr_system_status.py
 ```
 
-## 2. Перевірка Docker сервісів
-
+## 📜 Вторинні перевірки (Remote)
+Якщо основний дашборд показує помилки, перевірте віддалений сервер:
 ```bash
 ssh -p 6666 dima@194.177.1.240 "cd ~/predator-analytics && docker compose ps"
 ```
 
-## 3. Перевірка Orchestrator
-
+## 🛡️ Контроль за правилами (Axiom 15)
+Перевірити дотримання Python 3.12 та Української мови:
 ```bash
-ssh -p 6666 dima@194.177.1.240 "docker logs predator_orchestrator --tail 50"
-```
-
-## 4. Перевірка Telegram Bot
-
-```bash
-ssh -p 6666 dima@194.177.1.240 "docker logs predator_orchestrator 2>&1 | grep -i telegram | tail -20"
-```
-
-## 5. Перевірка Backend API
-
-```bash
-ssh -p 6666 dima@194.177.1.240 "curl -s http://localhost:8000/health | head -n 5"
-```
-
-## 6. Перевірка GPU
-
-```bash
-ssh -p 6666 dima@194.177.1.240 "nvidia-smi --query-gpu=name,memory.used,memory.total,utilization.gpu --format=csv"
-```
-
-## 7. Перевірка диску та памʼяті
-
-```bash
-ssh -p 6666 dima@194.177.1.240 "echo '=== DISK ===' && df -h / && echo '=== MEMORY ===' && free -h"
+python3 scripts/azr_constitutional_guard.py
 ```

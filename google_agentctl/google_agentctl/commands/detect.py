@@ -1,7 +1,11 @@
-import typer
+from __future__ import annotations
+
 from rich.console import Console
-from predatorctl.core.ledger_client import LedgerClient
+import typer
+
 from libs.core.reality import get_juridical_transpiler
+from predatorctl.core.ledger_client import LedgerClient
+
 
 app = typer.Typer(help="Detect system anomalies")
 console = Console()

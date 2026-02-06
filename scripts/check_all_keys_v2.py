@@ -1,8 +1,11 @@
+from __future__ import annotations
 
 import asyncio
-import aiohttp
-import logging
 import json
+import logging
+
+import aiohttp
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(message)s')

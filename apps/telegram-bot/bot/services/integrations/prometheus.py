@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import logging
-from typing import Any, Dict
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -8,10 +10,8 @@ class PrometheusClient:
         self.url = url
         # В реальності тут буде aiohttp session
 
-    async def get_relevant_metrics(self, params: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Отримує метрики, релевантні до контексту запиту.
-        """
+    async def get_relevant_metrics(self, params: dict[str, Any]) -> dict[str, Any]:
+        """Отримує метрики, релевантні до контексту запиту."""
         issue_type = params.get("issue_type", "general")
 
         # MOCK DATA поки що, оскільки ми не налаштували реальний доступ до прометея звідси
@@ -35,9 +35,9 @@ class PrometheusClient:
         # В реальності: query_prometheus(self.url, query)
         return metrics
 
-    async def query_metrics(self, params: Dict) -> Dict:
+    async def query_metrics(self, params: dict) -> dict:
         return await self.get_relevant_metrics(params)
 
-    async def generate_graph(self, metric_name: str, labels: Dict, duration: str) -> str:
+    async def generate_graph(self, metric_name: str, labels: dict, duration: str) -> str:
         # Повертає URL на рендер графіку
         return f"https://grafana.predator.internal/d/xyz?var-metric={metric_name}"

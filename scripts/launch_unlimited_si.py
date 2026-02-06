@@ -1,6 +1,8 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3.12
-"""
-🛡️ PREDATOR v25 - Тригер необмеженого автовдосконалення (Launch SI Loop)
+"""🛡️ PREDATOR v25 - Тригер необмеженого автовдосконалення (Launch SI Loop).
 ----------------------------------------------------------------------
 Цей скрипт запускає нескінченний цикл покращення системи через 4 CLI агенти.
 Використовує Python 3.12 та повну українізацію.
@@ -8,8 +10,9 @@
 
 import asyncio
 import logging
-import sys
 import os
+import sys
+
 
 # Додаємо кореневу директорію до шляху
 sys.path.append(os.getcwd())
@@ -38,9 +41,9 @@ async def main():
             await asyncio.sleep(3600)
 
     except ImportError as e:
-        logger.error(f"❌ Помилка імпорту: {e}. Переконайтеся, що ви в корені проекту.")
+        logger.exception(f"❌ Помилка імпорту: {e}. Переконайтеся, що ви в корені проекту.")
     except Exception as e:
-        logger.error(f"❌ Фатальна помилка: {e}")
+        logger.exception(f"❌ Фатальна помилка: {e}")
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--force":

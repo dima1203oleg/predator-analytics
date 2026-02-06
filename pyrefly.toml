@@ -1,0 +1,49 @@
+# Lion Predator Analytics - Pyrefly Configuration
+# Ultra-Fast Python Type Checker
+
+[project]
+name = "predator-analytics"
+python_version = "3.12"
+
+[source]
+includes = [
+    "services/api-gateway/app",
+    "libs",
+    "agents",
+    "predatorctl",
+]
+excludes = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "node_modules",
+    "dist",
+    "build",
+    "migrations",
+    "alembic",
+]
+
+[type_checking]
+strictness = "standard"
+infer_types = true
+check_missing_return_type = true
+check_missing_parameter_type = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[errors]
+missing-import = "ignore"
+untyped-import = "ignore"
+
+[[overrides]]
+path = "tests/**"
+strictness = "basic"
+
+[performance]
+incremental = true
+cache_dir = ".pyrefly_cache"
+
+[output]
+format = "text"
+show_error_codes = true
+color = true

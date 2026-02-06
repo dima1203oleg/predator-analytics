@@ -1,21 +1,25 @@
+from __future__ import annotations
 
-import pytest
-from unittest.mock import MagicMock, patch
 import hashlib
-import numpy as np
 import os
 import sys
+from unittest.mock import MagicMock, patch
+
+import numpy as np
+import pytest
+
 
 # Add specific service path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../services/api-gateway')))
 
+from app.routers.azr import AzrStatus, get_azr_status
+from app.routers.google_integrations import SuggestionPushRequest, get_suggestions, push_suggestion
 from app.services.embedding_service import EmbeddingService
-from app.routers.azr import get_azr_status, AzrStatus
-from app.routers.google_integrations import push_suggestion, get_suggestions, SuggestionPushRequest
+
 
 # --- 1. AXIOM 17: QUANTUM SECURITY ---
 def test_axiom_17_crypto():
-    """ Verify SHA3-512 is preferred if available. """
+    """Verify SHA3-512 is preferred if available."""
     msg = b"Axiom 17 Verification"
 
     if hasattr(hashlib, 'sha3_512'):
@@ -31,7 +35,7 @@ def test_axiom_17_crypto():
 
 # --- 2. VECTOR MATH RESILIENCE ---
 def test_dummy_embedding_no_zero_division():
-    """ Verify DummyModel returns noise, not pure zeros, preventing division by zero. """
+    """Verify DummyModel returns noise, not pure zeros, preventing division by zero."""
     service = EmbeddingService()
     # Force loading dummy model
     with patch.object(service, 'is_gpu_tier', False):
@@ -49,7 +53,7 @@ def test_dummy_embedding_no_zero_division():
 # --- 3. GOOGLE INTEGRATION STORE ---
 @pytest.mark.asyncio
 async def test_google_suggestion_store():
-    """ Verify in-memory store for Google Suggestions. """
+    """Verify in-memory store for Google Suggestions."""
     # Imported at top level
 
     # Push
@@ -69,7 +73,7 @@ async def test_google_suggestion_store():
 # --- 4. AZR STATUS HYPER-MODE ---
 @pytest.mark.asyncio
 async def test_azr_hyper_mode():
-    """ Verify AZR status reports Hyper-Scale Mode appropriately. """
+    """Verify AZR status reports Hyper-Scale Mode appropriately."""
     with patch('app.routers.azr.settings') as mock_settings:
         mock_settings.CONSTITUTION_PATH = "/tmp/fake_constitution"
 

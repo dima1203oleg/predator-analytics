@@ -1,0 +1,36 @@
+
+# ════════════════════════════════════════════════════════════════════════
+# PRIORITY CLASSES (Quality of Service)
+# ════════════════════════════════════════════════════════════════════════
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: predator-critical
+value: 1000
+preemptionPolicy: Never
+description: "API, RTB Engine, KServe — never preempt"
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: predator-high
+value: 500
+preemptionPolicy: PreemptLowerPriority
+description: "MCP Router, PostgreSQL, Redis, Kafka, Ollama"
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: predator-medium
+value: 300
+preemptionPolicy: PreemptLowerPriority
+globalDefault: true
+description: "MLflow, Chroma, Monitoring, Temporal, Feast"
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: predator-low
+value: 100
+preemptionPolicy: PreemptLowerPriority
+description: "Training Jobs, AutoML, AES, SIO — can be preempted"

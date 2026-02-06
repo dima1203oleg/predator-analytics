@@ -1,43 +1,47 @@
-# ===========================================
-# Predator Analytics v19.0 - Production Docker
-# Multi-stage build for minimal image size
-# ===========================================
+# Використовуємо офіційний легкий образ Python 3.12
+FROM python:3.12-slim
 
-# Stage 1: Build frontend
-FROM node:20-alpine AS frontend-builder
-WORKDIR /app
+# Встановлення змінних середовища
+# PYTHONDONTWRITEBYTECODE: Запобігає запису .pyc файлів
+# PYTHONUNBUFFERED: Гарантує, що вивід консолі буде видимим одразу
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    APP_HOME=/app \
+    PORT=8080
 
-# Copy package files
-COPY package*.json ./
+# Встановлення робочої директорії
+WORKDIR $APP_HOME
 
-# Install dependencies
-RUN npm ci
+# Встановлення системних залежностей, необхідних для компіляції та gettext
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gettext \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy source
+# Копіювання файлу залежностей
+COPY requirements.txt .
+
+# Встановлення залежностей Python
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Копіювання коду застосунку
 COPY . .
 
-# Build production
-RUN npm run build
+# Компіляція файлів перекладу (якщо вони існують)
+RUN if [ -d "locales" ]; then \
+    msgfmt locales/uk/LC_MESSAGES/messages.po -o locales/uk/LC_MESSAGES/messages.mo; \
+    fi
 
-# Stage 2: Production server
-FROM nginx:alpine AS production
+# Створення непривілейованого користувача для безпеки
+RUN adduser --disabled-password --gecos "" predator_user && \
+    chown -R predator_user:predator_user $APP_HOME
 
-# Copy nginx config
-COPY docker/nginx.conf /etc/nginx/nginx.conf
+USER predator_user
 
-# Copy built assets
-COPY --from=frontend-builder /app/dist /usr/share/nginx/html
+# Відкриття порту
+EXPOSE $PORT
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:80/health || exit 1
-
-# Expose port
-EXPOSE 80
-
-# Labels
-LABEL maintainer="Predator Analytics Team"
-LABEL version="19.0.0"
-LABEL description="Predator Analytics Frontend"
-
-CMD ["nginx", "-g", "daemon off;"]
+# Команда запуску
+CMD ["python", "main.py"]

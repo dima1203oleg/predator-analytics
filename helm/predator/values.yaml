@@ -1,0 +1,100 @@
+global:
+  domain: predator.live
+  environment: production
+  storageClass: "local-path"
+  mqPassword: "change-me-in-secrets"
+  dbPassword: "change-me-in-secrets"
+
+vault:
+  enabled: false
+
+api:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: predator-api
+    tag: v30.0.0
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+
+pipelines:
+  worker:
+    replicaCount: 4
+    image:
+      repository: predator-worker
+      tag: v30.0.0
+  kafka:
+    enabled: true
+    persistence:
+      size: 50Gi
+
+ingestion:
+  enabled: true
+  replicaCount: 3
+  image:
+    repository: predator-ingestion
+    tag: v30.0.0
+
+datasets:
+  enabled: true
+  image:
+    repository: predator-datasets
+    tag: v30.0.0
+
+ai:
+  ollama:
+    enabled: true
+    gpuEnabled: true
+    models: ["llama3", "mistral"]
+
+ui:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: predator-ui
+    tag: v30.0.0
+
+auth:
+  keycloak:
+    enabled: true
+    realm: predator
+    client: sovereign-ui
+
+# Infrastructure Components (Root Level for Standard Charts)
+postgresql:
+  enabled: true
+  auth:
+    username: predator_admin
+    database: predator_gold
+  persistence:
+    size: 100Gi
+
+qdrant:
+  enabled: true
+  persistence:
+    size: 50Gi
+
+opensearch:
+  enabled: true
+  persistence:
+    size: 100Gi
+
+redis:
+  enabled: true
+  architecture: standalone
+
+minio:
+  enabled: true
+  persistence:
+    size: 500Gi
+
+observability:
+  prometheus: { enabled: true }
+  grafana: { enabled: true }
+  loki: { enabled: true }
+  tempo: { enabled: true }
+  argusdb:
+    enabled: true
+    persistence: { size: 200Gi }

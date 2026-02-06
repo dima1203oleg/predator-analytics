@@ -1,0 +1,20 @@
+[Unit]
+Description=Predator AZR Sovereign Autonomy Engine
+After=docker.service network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+# Чекаємо поки контейнер повністю підніметься
+ExecStartPre=/bin/sleep 30
+# Запускаємо автономію всередині контейнера
+ExecStart=/usr/bin/docker exec predator_backend python3 -u /app/scripts/start_azr_autonomy.py
+# Перезапускати, якщо впаде
+Restart=always
+RestartSec=60
+# Логування в системний журнал
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

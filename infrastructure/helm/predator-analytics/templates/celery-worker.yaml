@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-celery-worker
+  labels:
+    app: celery-worker
+spec:
+  replicas: {{ .Values.celery_worker.replicas }}
+  selector:
+    matchLabels:
+      app: celery-worker
+  template:
+    metadata:
+      labels:
+        app: celery-worker
+    spec:
+      containers:
+        - name: celery-worker
+          image: "{{ .Values.celery_worker.image.repository }}:{{ .Values.celery_worker.image.tag }}"
+          command: ["celery", "-A", "app.core.celery_app", "worker", "-Q", "etl,ingestion,maintenance", "--concurrency=4"]
+          env:
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://{{ .Values.postgresql.auth.username }}:{{ .Values.postgresql.auth.password }}@{{ .Release.Name }}-postgresql:5432/{{ .Values.postgresql.auth.database }}"
+            - name: REDIS_URL
+              value: "redis://:{{ .Values.redis.auth.password }}@{{ .Release.Name }}-redis-master:6379/0"

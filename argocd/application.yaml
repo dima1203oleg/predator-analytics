@@ -3,25 +3,12 @@ kind: Application
 metadata:
   name: predator-analytics
   namespace: argocd
-  labels:
-    app: predator-analytics
-    environment: production
 spec:
   project: default
   source:
+    path: helm/predator-analytics
     repoURL: https://github.com/predator-analytics/predator
     targetRevision: main
-    path: helm/predator-analytics
-    helm:
-      valueFiles:
-        - values-production.yaml
-      parameters:
-        - name: global.staticIP
-          value: "194.177.1.240"
-        - name: global.domain
-          value: "predator.analytics.local"
-        - name: global.environment
-          value: "production"
   destination:
     server: https://kubernetes.default.svc
     namespace: predator-analytics
@@ -29,15 +16,3 @@ spec:
     automated:
       prune: true
       selfHeal: true
-      allowEmpty: false
-    syncOptions:
-      - CreateNamespace=true
-      - PrunePropagationPolicy=foreground
-      - PruneLast=true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m
-  revisionHistoryLimit: 3

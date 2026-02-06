@@ -1,0 +1,96 @@
+
+# ════════════════════════════════════════════════════════════════════════
+# POSTGRESQL STATEFULSET (Primary Database)
+# ════════════════════════════════════════════════════════════════════════
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-postgresql
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: postgresql
+    component: data-layer
+spec:
+  serviceName: {{ include "predator-analytics.fullname" . }}-postgresql
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator-analytics.selectorLabels" . | nindent 6 }}
+      app: postgresql
+  template:
+    metadata:
+      labels:
+        {{- include "predator-analytics.selectorLabels" . | nindent 8 }}
+        app: postgresql
+        component: data-layer
+    spec:
+      priorityClassName: predator-high
+      containers:
+        - name: postgresql
+          image: "postgres:{{ .Values.postgresql.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+              name: postgresql
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: predator-db-secrets
+                  key: postgres-password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1"
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: {{ include "predator-analytics.fullname" . }}-pg-init
+  volumeClaimTemplates:
+    - metadata:
+      name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.postgresql.persistence.size }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-postgresql
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: postgresql
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+      name: postgresql
+  selector:
+    {{- include "predator-analytics.selectorLabels" . | nindent 4 }}
+    app: postgresql

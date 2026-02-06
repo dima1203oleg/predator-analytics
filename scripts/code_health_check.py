@@ -1,11 +1,14 @@
-import os
+from __future__ import annotations
+
 import ast
 import hashlib
+import os
 import sys
+
 
 def check_syntax(file_path):
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             source = f.read()
         ast.parse(source)
         return True, None

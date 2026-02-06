@@ -1,12 +1,16 @@
+from __future__ import annotations
+
 import asyncio
 import logging
-import sys
 from pathlib import Path
+import sys
+
 
 # Add project root to sys.path
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from libs.agents.graph import create_agent_graph
+
 
 # Setup basic logging
 logging.basicConfig(level=logging.INFO)

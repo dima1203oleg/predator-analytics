@@ -1,6 +1,8 @@
+from __future__ import annotations
 
 import os
 import sys
+
 
 # Add scripts to path
 project_root = "/Users/dima-mac/Documents/Predator_21"

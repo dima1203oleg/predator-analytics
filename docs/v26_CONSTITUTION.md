@@ -239,6 +239,20 @@ axiom_17:
   immutability: "ABSOLUTE"
 ```
 
+### Axiom 18: Law of Pythonic Purity
+```yaml
+axiom_18:
+  name: "Закон чистоти Python"
+  formal_logic: |
+    ∀ env ∈ System.Environments:
+      python.version(env) = 3.12.x
+      ∧ (python.version(env) < 3.12 ⇒ status = VIOLATION)
+  explanation: |
+    Єдина допустима версія Python у всій системі (локально, в контейнерах, на серверах) — 3.12.
+    Будь-яка інша версія є критичним порушенням.
+  immutability: "ABSOLUTE"
+```
+
 ### Law of Monotonic Facts (Subsidiary to Axiom 8)
 ```yaml
 axiom_9:

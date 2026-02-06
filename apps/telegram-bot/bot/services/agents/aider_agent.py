@@ -1,13 +1,14 @@
+from __future__ import annotations
+
 import asyncio
 import logging
 import os
-from typing import Any, Dict
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class AiderAgent:
-    """
-    Aider CLI Agent for Code Review and Fixing.
+    """Aider CLI Agent for Code Review and Fixing.
     Aligns with Level 3 of Mixed Top CLI Stack.
     """
     def __init__(self):
@@ -16,10 +17,8 @@ class AiderAgent:
         if not os.path.exists(self.aider_path):
             self.aider_path = "aider" # Fallback to PATH
 
-    async def review_and_fix(self, file_path: str, context: str) -> Dict[str, Any]:
-        """
-        Runs Aider to review and automatically fix code based on context.
-        """
+    async def review_and_fix(self, file_path: str, context: str) -> dict[str, Any]:
+        """Runs Aider to review and automatically fix code based on context."""
         logger.info(f"🛡️ Aider Review started for {file_path}...")
 
         if not os.path.exists(file_path):
@@ -52,26 +51,24 @@ class AiderAgent:
                     "output": stdout.decode(),
                     "approved": True
                 }
-            else:
-                logger.warning(f"⚠️ Aider finished with return code {process.returncode}")
-                return {
-                    "status": "warning",
-                    "output": stdout.decode(),
-                    "error": stderr.decode(),
-                    "approved": False
-                }
+            logger.warning(f"⚠️ Aider finished with return code {process.returncode}")
+            return {
+                "status": "warning",
+                "output": stdout.decode(),
+                "error": stderr.decode(),
+                "approved": False
+            }
 
         except Exception as e:
-            logger.error(f"❌ Aider execution failed: {e}")
+            logger.exception(f"❌ Aider execution failed: {e}")
             return {
                 "status": "error",
                 "message": str(e),
                 "approved": False
             }
 
-    async def security_review(self, context_prompt: str) -> Dict[str, Any]:
-        """
-        Legacy compatibility: performs a quick security check.
+    async def security_review(self, context_prompt: str) -> dict[str, Any]:
+        """Legacy compatibility: performs a quick security check.
         Can be upgraded to use Aider's analysis capabilities.
         """
         risk_level = "low"

@@ -1,1 +1,0 @@
-"""VPC - Verifiable Physical Consequences"""

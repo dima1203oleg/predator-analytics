@@ -1,10 +1,14 @@
-import typer
-from rich.console import Console
-from rich.logging import RichHandler
+from __future__ import annotations
+
 import logging
 
+from rich.console import Console
+from rich.logging import RichHandler
+import typer
+
 # Commands
-from google_agentctl.commands import generate, analyze, submit, lifecycle, test, detect, report
+from google_agentctl.commands import analyze, detect, generate, lifecycle, report, submit, test
+
 
 app = typer.Typer(
     name="google-agentctl",

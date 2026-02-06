@@ -29,7 +29,7 @@ spec:
         - name: mlflow
           securityContext:
             {{- toYaml .Values.mlflow.securityContext | nindent 12 }}
-          image: {{ include "predator-analytics.image" .Values.mlflow.image }}
+          image: {{ include "predator-analytics.image" (dict "root" . "image" .Values.mlflow.image) }}
           imagePullPolicy: {{ .Values.mlflow.image.pullPolicy }}
           command: ["bash", "-c", "pip install mlflow psycopg2-binary && mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri postgresql://predator:{{ .Values.postgresql.auth.postgresPassword }}@{{ .Release.Name }}-postgresql:5432/predator_db --default-artifact-root /mlflow/artifacts"]
           ports:

@@ -1,11 +1,14 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-🎯 DEMO: Triple CLI Chain для швидкого тестування
-Простий приклад використання Gemini → Mistral → Aider
+"""🎯 DEMO: Triple CLI Chain для швидкого тестування
+Простий приклад використання Gemini → Mistral → Aider.
 """
 
-import sys
 from pathlib import Path
+import sys
+
 
 # Додаємо scripts до path
 sys.path.insert(0, str(Path(__file__).parent))

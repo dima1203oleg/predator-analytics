@@ -1,20 +1,21 @@
-from typing import Dict, Any, Optional
-import requests
+from __future__ import annotations
+
 import logging
+from typing import Any, Dict, Optional
+
+import requests
+
 
 class ArbiterClient:
-    """
-    Client for interacting with the Arbiter Service.
+    """Client for interacting with the Arbiter Service.
     Enforces the 'Constitution as Code'.
     """
     def __init__(self, base_url: str = "http://localhost:8091"):
         self.base_url = base_url
         self.logger = logging.getLogger("arbiter-client")
 
-    def decide(self, type: str, context: Dict[str, Any], sender: str = "predatorctl") -> Dict:
-        """
-        Request a constitutional decision.
-        """
+    def decide(self, type: str, context: dict[str, Any], sender: str = "predatorctl") -> dict:
+        """Request a constitutional decision."""
         try:
             payload = {
                 "request_id": f"req-{type}-{context.get('id', 'adhoc')}",
@@ -27,7 +28,7 @@ class ArbiterClient:
             return resp.json()
         except requests.exceptions.RequestException as e:
             # If Arbiter is down, System defaults to "FAIL CLOSED" (Deny)
-            self.logger.error(f"Arbiter Unreachable: {e}")
+            self.logger.exception(f"Arbiter Unreachable: {e}")
             return {
                 "allowed": False,
                 "reason": "Arbiter Service Unreachable (Fail Closed)",

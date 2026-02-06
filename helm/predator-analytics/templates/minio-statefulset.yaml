@@ -1,0 +1,91 @@
+
+# ════════════════════════════════════════════════════════════════════════
+# MINIO STATEFULSET (Artifact Storage)
+# ════════════════════════════════════════════════════════════════════════
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-minio
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: minio
+    component: data-layer
+spec:
+  serviceName: {{ include "predator-analytics.fullname" . }}-minio
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator-analytics.selectorLabels" . | nindent 6 }}
+      app: minio
+  template:
+    metadata:
+      labels:
+        {{- include "predator-analytics.selectorLabels" . | nindent 8 }}
+        app: minio
+        component: data-layer
+    spec:
+      priorityClassName: predator-medium
+      containers:
+        - name: minio
+          image: "minio/minio:latest"
+          args: ["server", "/data", "--console-address", ":9001"]
+          env:
+            - name: MINIO_ROOT_USER
+              value: "minioadmin"
+            - name: MINIO_ROOT_PASSWORD
+              value: "minioadmin"
+          ports:
+            - containerPort: 9000
+              name: api
+            - containerPort: 9001
+              name: console
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: api
+            initialDelaySeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: api
+            initialDelaySeconds: 10
+  volumeClaimTemplates:
+    - metadata:
+      name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-minio
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: minio
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9000
+      targetPort: 9000
+      protocol: TCP
+      name: api
+    - port: 9001
+      targetPort: 9001
+      protocol: TCP
+      name: console
+  selector:
+    {{- include "predator-analytics.selectorLabels" . | nindent 4 }}
+    app: minio

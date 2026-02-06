@@ -1,6 +1,8 @@
+from __future__ import annotations
 
 import os
 import re
+
 
 def analyze_codebase(root_dir):
     report = []
@@ -16,11 +18,11 @@ def analyze_codebase(root_dir):
 
     # --- Backend Analysis ---
     report.append("## Backend (Python) Analysis\n")
-    for root, dirs, files in os.walk(backend_dir):
+    for root, _dirs, files in os.walk(backend_dir):
         for file in files:
             if file.endswith(".py"):
                 path = os.path.join(root, file)
-                with open(path, 'r') as f:
+                with open(path) as f:
                     content = f.read()
 
                     # Check for generic exceptions
@@ -37,11 +39,11 @@ def analyze_codebase(root_dir):
 
     # --- Frontend Analysis ---
     report.append("\n## Frontend (TypeScript/React) Analysis\n")
-    for root, dirs, files in os.walk(frontend_dir):
+    for root, _dirs, files in os.walk(frontend_dir):
         for file in files:
             if file.endswith((".ts", ".tsx")):
                 path = os.path.join(root, file)
-                with open(path, 'r') as f:
+                with open(path) as f:
                     content = f.read()
 
                     # Check for 'any' types
