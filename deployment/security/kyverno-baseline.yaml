@@ -1,0 +1,47 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: predator-security-baseline
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: check-non-root
+      match:
+        any:
+          - resources:
+              kinds:
+                - Deployment
+                - Job
+              namespaces:
+                - predator-prod
+      validate:
+        message: "Containers must not run as root."
+        pattern:
+          spec:
+            template:
+              spec:
+                securityContext:
+                  runAsNonRoot: true
+    - name: check-resource-limits
+      match:
+        any:
+          - resources:
+              kinds:
+                - Deployment
+              namespaces:
+                - predator-prod
+      validate:
+        message: "Resources limits and requests are required."
+        pattern:
+          spec:
+            template:
+              spec:
+                containers:
+                  - resources:
+                      limits:
+                        cpu: "?*"
+                        memory: "?*"
+                      requests:
+                        cpu: "?*"
+                        memory: "?*"
