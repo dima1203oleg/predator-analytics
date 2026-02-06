@@ -1,0 +1,38 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: predator-alerts
+  namespace: predator-analytics
+  labels:
+    app: predator-analytics
+    role: alert-rules
+spec:
+  groups:
+    - name: predator-critical
+      rules:
+        - alert: HighErrorRate
+          expr: rate(http_requests_total{status=~"5.."}[5m]) > 1
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "High API Error Rate Detected"
+            description: "API is returning 5xx errors at > 1 req/sec."
+
+        - alert: RTBDecisionFailure
+          expr: rate(predator_decisions_total{status="failed"}[5m]) > 0
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "RTB Decision Engine Failure"
+            description: "Decisions are failing to execute."
+
+        - alert: LLMLatencyHigh
+          expr: histogram_quantile(0.95, rate(llm_request_duration_seconds_bucket[5m])) > 5.0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "LLM Response Time Degradation"
+            description: "95th percentile LLM latency is > 5 seconds."
