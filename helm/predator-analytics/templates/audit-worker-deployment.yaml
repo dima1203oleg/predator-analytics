@@ -1,0 +1,48 @@
+
+# ════════════════════════════════════════════════════════════════════════
+# AUDIT WORKER DEPLOYMENT
+# ════════════════════════════════════════════════════════════════════════
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-audit-worker
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: audit-worker
+    component: security-layer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator-analytics.selectorLabels" . | nindent 6 }}
+      app: audit-worker
+  template:
+    metadata:
+      labels:
+        {{- include "predator-analytics.selectorLabels" . | nindent 8 }}
+        app: audit-worker
+        component: security-layer
+    spec:
+      priorityClassName: predator-high
+      containers:
+        - name: audit-worker
+          image: "ghcr.io/predator-analytics/audit-worker:latest"
+          command: ["python", "services/audit-worker/worker.py"]
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://predator_app:$(DB_PASSWORD)@{{ include "predator-analytics.fullname" . }}-postgresql:5432/predator_audit"
+            - name: REDIS_URL
+              value: "redis://{{ include "predator-analytics.fullname" . }}-redis:6379"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sa-audit-worker
+  namespace: predator-analytics
