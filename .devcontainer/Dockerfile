@@ -1,36 +1,34 @@
-FROM ubuntu:22.04
 
-# Avoid prompts from apt
-ENV DEBIAN_FRONTEND=noninteractive
+FROM python:3.12-slim-bookworm
 
-# Install common tools and Python
+# Install basic dev tools
 RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    python3-venv \
     git \
     curl \
     wget \
+    zsh \
+    vim \
     build-essential \
-    libpq-dev \
-    postgresql-client \
-    htop \
-    ncdu \
-    tmux \
-    unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Set python3 as default python
-RUN ln -s /usr/bin/python3 /usr/bin/python
+# Install Kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    chmod +x kubectl && \
+    mv kubectl /usr/local/bin/
 
-# Install Python tools
-RUN pip3 install --no-cache-dir \
-    black \
-    pylint \
-    pytest \
-    ipython \
-    rich \
-    httpx
+# Install Helm
+RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-# Set working directory
-WORKDIR /workspace
+# Create user
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME -s /bin/zsh \
+    && apt-get update \
+    && apt-get install -y sudo \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+
+USER $USERNAME
