@@ -1,0 +1,41 @@
+
+# ════════════════════════════════════════════════════════════════════════
+# AES CRONJOB (Autonomous Engineering)
+# ════════════════════════════════════════════════════════════════════════
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-aes-nightly
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: aes
+    component: engineering-plane
+  annotations:
+    description: "Nightly scan for security and quality improvements"
+spec:
+  schedule: "0 3 * * *" # 03:00 UTC
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: aes-scanner
+            image: "ghcr.io/predator-analytics/aes:latest"
+            command: ["python", "-m", "services.aes.scanner"]
+            env:
+              - name: MCP_ROUTER_URL
+                value: "http://{{ include "predator-analytics.fullname" . }}-mcp-router:8080"
+              - name: GITHUB_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: predator-git-secrets
+                    key: token
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "250m"
+              limits:
+                memory: "1Gi"
+                cpu: "1"
+          priorityClassName: predator-low
+          restartPolicy: OnFailure

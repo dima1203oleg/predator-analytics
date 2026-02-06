@@ -1,0 +1,23 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-pg-init
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+data:
+  01-init-dbs.sh: |
+    #!/bin/bash
+    set -e
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+        CREATE DATABASE predator;
+        CREATE DATABASE mlflow;
+        CREATE DATABASE optuna;
+        CREATE DATABASE audit;
+        
+        -- Create readonly user for MCP
+        CREATE USER mcp_readonly WITH PASSWORD 'readonly_secure_password';
+        GRANT CONNECT ON DATABASE predator TO mcp_readonly;
+        \c predator
+        ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO mcp_readonly;
+    EOSQL

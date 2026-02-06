@@ -1,22 +1,27 @@
-import typer
-import yaml
+from __future__ import annotations
+
 import os
 import random
+
 from rich.console import Console
-from predatorctl.core.arbiter_client import ArbiterClient
-from predatorctl.core.ledger_client import LedgerClient
+import typer
+import yaml
+
 from libs.core.azr import get_azr_engine
 from libs.core.reality import (
-    get_reality_engine,
-    get_vpc_verifier,
-    get_cincinnatus_timer,
-    get_juridical_transpiler,
-    get_z3_verifier,
-    get_semantic_gate,
     ActionCategory,
     EventPhase,
-    Observation
+    Observation,
+    get_cincinnatus_timer,
+    get_juridical_transpiler,
+    get_reality_engine,
+    get_semantic_gate,
+    get_vpc_verifier,
+    get_z3_verifier,
 )
+from predatorctl.core.arbiter_client import ArbiterClient
+from predatorctl.core.ledger_client import LedgerClient
+
 
 app = typer.Typer(help="AZR (Autonomous Zero-Risk Runtime) Agent")
 proposal_app = typer.Typer(help="Manage AZR proposals")
@@ -275,7 +280,7 @@ def cincinnatus_status():
     """Check emergency mode status and timer."""
     rem = timer.get_remaining_time()
     if rem > 0:
-        console.print(f"Emergency Mode: [bold red]ACTIVE[/bold red]")
+        console.print("Emergency Mode: [bold red]ACTIVE[/bold red]")
         console.print(f"Time Remaining: [yellow]{rem}s[/yellow]")
     else:
         console.print("Emergency Mode: [green]INACTIVE[/green]")

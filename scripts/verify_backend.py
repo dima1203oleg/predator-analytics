@@ -1,7 +1,9 @@
+from __future__ import annotations
 
-import sys
 import asyncio
+import sys
 from unittest.mock import MagicMock
+
 
 # Define paths
 sys.path.append('/home/dima/Predator_21/backend/orchestrator/agents')
@@ -27,12 +29,11 @@ sys.modules['aiogram.fsm.storage.redis'] = MagicMock()
 # So global scope is safe!
 
 try:
-    from telegram_bot_v4_advanced import SystemController, DockerController, GitController, AgentController
+    from telegram_bot_v4_advanced import AgentController, DockerController, GitController, SystemController
     print("✅ Module imported successfully.")
 except ImportError as e:
     print(f"❌ Import failed: {e}")
     # If import fails, we might need to set env vars
-    pass
 
 async def test_functions():
     print("\n--- Testing SystemController ---")

@@ -1,6 +1,9 @@
+from __future__ import annotations
+
+import time
 
 import psutil
-import time
+
 
 print("--- Testing System Stats (GLOBAL) ---")
 # cpu_percent with interval IS blocking and usually accurate

@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import asyncio  # FIX: Import at module level to avoid NameError
 import json
 import os
 import warnings
-from typing import Any, Dict, Optional
+from typing import Any
 
 import google.generativeai as genai
 import httpx  # For Groq fallback API calls
@@ -36,17 +38,16 @@ class GeminiAgent:
         self.model = genai.GenerativeModel(self.model_name)
 
     def _rotate_key(self):
-        """Змінити поточний API ключ"""
+        """Змінити поточний API ключ."""
         import random
         new_key = random.choice(self.api_keys)
         genai.configure(api_key=new_key)
         self.model = genai.GenerativeModel(self.model_name)
         logger.info("Rotated to a new Gemini API key")
 
-    async def _call_groq(self, prompt: str, api_key: str) -> Optional[str]:
-        """
-        Call Groq API as fallback - FREE with HIGH limits!
-        Groq offers 14,400 tokens/min vs Gemini's 20 req/day free tier
+    async def _call_groq(self, prompt: str, api_key: str) -> str | None:
+        """Call Groq API as fallback - FREE with HIGH limits!
+        Groq offers 14,400 tokens/min vs Gemini's 20 req/day free tier.
         """
         url = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -68,13 +69,10 @@ class GeminiAgent:
             if response.status_code == 200:
                 data = response.json()
                 return data["choices"][0]["message"]["content"]
-            else:
-                raise Exception(f"Groq API error: {response.status_code}")
+            raise Exception(f"Groq API error: {response.status_code}")
 
     async def analyze_with_context(self, prompt: str) -> str:
-        """
-        Виконує глибокий аналіз запиту з урахуванням контексту.
-        """
+        """Виконує глибокий аналіз запиту з урахуванням контексту."""
         try:
             # System prompt для задання ролі
             system_instruction = """
@@ -124,12 +122,11 @@ class GeminiAgent:
                 except Exception:
                     return "❌ Усі LLM провайдери перевантажені. Спробуйте через хвилину."
 
-            logger.error(f"Gemini analysis failed: {e}")
-            return f"❌ Помилка аналізу: {str(e)}"
+            logger.exception(f"Gemini analysis failed: {e}")
+            return f"❌ Помилка аналізу: {e!s}"
 
-    async def classify_intent(self, text: str) -> Dict[str, Any]:
-        """
-        Advanced intent classification using Gemini.
+    async def classify_intent(self, text: str) -> dict[str, Any]:
+        """Advanced intent classification using Gemini.
         Returns JSON with intent and parameters.
         """
         try:
@@ -165,17 +162,16 @@ class GeminiAgent:
 
             return json.loads(content)
         except Exception as e:
-            logger.error(f"Intent classification failed: {e}")
+            logger.exception(f"Intent classification failed: {e}")
             return {"intent": "chat", "params": {}, "confidence": 0.5}
 
     async def classify_intent_fallback(self, text: str) -> str:
-        """Збережено для сумісності"""
+        """Збережено для сумісності."""
         res = await self.classify_intent(text)
         return res.get("intent", "chat")
 
-    async def process_audio(self, audio_path: str, prompt: str) -> Dict[str, Any]:
-        """
-        Multimodal Audio Processing (v25 Neural Core).
+    async def process_audio(self, audio_path: str, prompt: str) -> dict[str, Any]:
+        """Multimodal Audio Processing (v25 Neural Core).
         Uploads audio to Gemini and processes with prompt.
         """
         try:
@@ -206,6 +202,6 @@ class GeminiAgent:
             return json.loads(content)
 
         except Exception as e:
-            logger.error(f"Audio processing failed: {e}")
+            logger.exception(f"Audio processing failed: {e}")
             # Fallback text-only if possible or re-raise
             return {"text": "Помилка обробки аудіо", "intent": "chat", "error": str(e)}

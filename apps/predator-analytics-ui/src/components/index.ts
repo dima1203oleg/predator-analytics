@@ -12,7 +12,7 @@ export { RealTimeSystemMetrics } from './RealTimeSystemMetrics';
 export { JobQueueMonitor } from './JobQueueMonitor';
 export { LLMHealthMonitor } from './LLMHealthMonitor';
 export { StorageAnalytics } from './StorageAnalytics';
-export { OpenSearchDashboardsEmbed } from './OpenSearchDashboardsEmbed';
+export { AnalyticsDashboard } from './AnalyticsDashboard';
 export { ETLPipelineVisualizer } from './ETLPipelineVisualizer';
 
 // v25.0 Enhanced Components
@@ -31,3 +31,7 @@ export { WorkflowControlPanel } from './ai/WorkflowControlPanel';
 export { AZRConstitutionalDashboard } from './AZRConstitutionalDashboard';
 export { ETLTruthDashboard } from './ETLTruthDashboard';
 export { TruthLedgerSection } from './TruthLedgerSection';
+
+// v30.0 Pipeline Monitoring
+export { PipelineMonitor } from './pipeline/PipelineMonitor';
+export { ActiveJobsPanel } from './pipeline/ActiveJobsPanel';

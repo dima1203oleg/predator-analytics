@@ -5,42 +5,108 @@ global:
   pythonVersion: "3.12"
   timezone: "Europe/Kiev"
 
-# Налаштування Backend
+# ════ CORE SERVICES (Custom) ════
+
 backend:
-  replicaCount: 2
+  enabled: true
+  replicaCount: 1
   image:
     repository: predator/backend
-    tag: v28.5
+    tag: v28.6
     pullPolicy: IfNotPresent
-  resources:
-    limits:
-      cpu: 2000m
-      memory: 4Gi
-    requests:
-      cpu: 500m
-      memory: 1Gi
+  service:
+    port: 8000
   env:
     AZR_AUTONOMY_LEVEL: "full"
     SOVEREIGN_AUTO_APPROVE: "true"
 
-# Налаштування Frontend
 frontend:
+  enabled: true
   replicaCount: 1
   image:
     repository: predator/frontend
-    tag: v28.5
+    tag: v28.6
   service:
-    type: ClusterIP
     port: 80
 
-# Бази Даних (якщо використовуються вбудовані)
+orchestrator:
+  enabled: true
+  image:
+    repository: predator/orchestrator
+    tag: v28.6
+
+constitutional_core:
+  enabled: true
+  image:
+    repository: predator/governance
+    tag: v28.6
+  service:
+    ports: [8091, 8092, 8093, 8094, 8095, 50051]
+
+celery_worker:
+  enabled: true
+  image:
+    repository: predator/backend # Uses backend image
+    tag: v28.6
+  replicas: 1
+
+h2o:
+  enabled: true
+  automl_image: h2oai/h2o-open-source-k8s:latest
+  studio_image: h2oairelease/h2oai-llmstudio-app:latest
+
+ollama:
+  enabled: true
+  image: ollama/ollama:latest
+  cpu_only: true
+
+# ════ DEPENDENCIES (Bitnami & Others) ════
+
 postgresql:
   enabled: true
   auth:
     username: predator_admin
     database: predator_db
+    password: predator_password
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
 
 redis:
   enabled: true
   auth:
     enabled: true
+    password: predator_secret_key
+  architecture: standalone
+
+rabbitmq:
+  enabled: true
+  auth:
+    username: predator
+    password: predator_secret_key
+
+kafka:
+  enabled: true
+  zookeeper:
+    enabled: true
+
+minio:
+  enabled: true
+  auth:
+    rootUser: predator_admin
+    rootPassword: predator_secret_key
+  persistence:
+    size: 20Gi
+
+qdrant:
+  enabled: true
+  replicaCount: 1
+
+opensearch:
+  enabled: true
+  replicas: 1
+  opensearchJavaOpts: "-Xms512m -Xmx512m"
+
+monitoring:
+  enabled: true # Prometheus + Grafana

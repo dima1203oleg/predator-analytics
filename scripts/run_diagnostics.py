@@ -1,7 +1,9 @@
+from __future__ import annotations
 
 import asyncio
-import sys
 import os
+import sys
+
 
 # Ensure backend modules can be imported
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'backend'))
@@ -19,7 +21,7 @@ async def main():
     service = DiagnosticsService()
 
     print("2️⃣  Running Full Suite (Infra -> AI Brain)...")
-    results = await service.run_full_diagnostics()
+    await service.run_full_diagnostics()
 
     print("3️⃣  Generating Report...")
     report = service.generate_report()

@@ -1,9 +1,13 @@
+from __future__ import annotations
 
 import asyncio
-import uuid
 from datetime import datetime
+import uuid
+
 from sqlalchemy import text
+
 from libs.core.database import get_db_ctx
+
 
 async def seed_cases():
     cases = [

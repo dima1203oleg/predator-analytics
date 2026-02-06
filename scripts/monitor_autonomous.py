@@ -1,14 +1,18 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
+"""Real-time Monitoring Dashboard для Autonomous Intelligence v2.0
+Показує статус системи в реальному часі.
 """
-Real-time Monitoring Dashboard для Autonomous Intelligence v2.0
-Показує статус системи в реальному часі
-"""
-import requests
-import time
+from datetime import datetime
 import os
 import sys
-from datetime import datetime
-from typing import Dict, Any
+import time
+from typing import Any, Dict
+
+import requests
+
 
 # ANSI кольори
 class Colors:
@@ -24,12 +28,12 @@ class Colors:
 
 
 def clear_screen():
-    """Очистити екран"""
+    """Очистити екран."""
     os.system('clear' if os.name == 'posix' else 'cls')
 
 
 def print_header():
-    """Вивести заголовок"""
+    """Вивести заголовок."""
     print(f"{Colors.BOLD}{Colors.CYAN}")
     print("╔════════════════════════════════════════════════════════════════════╗")
     print("║     AUTONOMOUS INTELLIGENCE v2.0 - REAL-TIME DASHBOARD            ║")
@@ -39,30 +43,28 @@ def print_header():
 
 
 def get_status_color(status: str) -> str:
-    """Отримати колір для статусу"""
+    """Отримати колір для статусу."""
     status_lower = status.lower()
     if status_lower in ['healthy', 'running', 'active']:
         return Colors.GREEN
-    elif status_lower in ['degraded', 'partial', 'warning']:
+    if status_lower in ['degraded', 'partial', 'warning']:
         return Colors.YELLOW
-    elif status_lower in ['error', 'failed', 'stopped']:
+    if status_lower in ['error', 'failed', 'stopped']:
         return Colors.RED
-    else:
-        return Colors.BLUE
+    return Colors.BLUE
 
 
 def format_percentage(value: float) -> str:
-    """Форматувати відсоток з кольором"""
+    """Форматувати відсоток з кольором."""
     if value >= 80:
         return f"{Colors.GREEN}{value:.1f}%{Colors.ENDC}"
-    elif value >= 60:
+    if value >= 60:
         return f"{Colors.YELLOW}{value:.1f}%{Colors.ENDC}"
-    else:
-        return f"{Colors.RED}{value:.1f}%{Colors.ENDC}"
+    return f"{Colors.RED}{value:.1f}%{Colors.ENDC}"
 
 
-def print_system_overview(data: Dict[str, Any]):
-    """Вивести загальний огляд системи"""
+def print_system_overview(data: dict[str, Any]):
+    """Вивести загальний огляд системи."""
     print(f"\n{Colors.BOLD}📊 SYSTEM OVERVIEW{Colors.ENDC}")
     print("─" * 70)
 
@@ -79,8 +81,8 @@ def print_system_overview(data: Dict[str, Any]):
     print(f"  Automation:       {format_percentage(automation)}")
 
 
-def print_subsystems(systems: Dict[str, Any]):
-    """Вивести статус підсистем"""
+def print_subsystems(systems: dict[str, Any]):
+    """Вивести статус підсистем."""
     print(f"\n{Colors.BOLD}🧠 SUBSYSTEMS STATUS{Colors.ENDC}")
     print("─" * 70)
 
@@ -136,7 +138,7 @@ def print_subsystems(systems: Dict[str, Any]):
 
 
 def print_predictions(api_url: str):
-    """Вивести поточні передбачення"""
+    """Вивести поточні передбачення."""
     try:
         response = requests.get(f"{api_url}/api/v1/v25/autonomous/predictions", timeout=2)
         if response.status_code == 200:
@@ -169,7 +171,7 @@ def print_predictions(api_url: str):
 
 
 def print_recent_decisions(api_url: str):
-    """Вивести останні рішення"""
+    """Вивести останні рішення."""
     try:
         response = requests.get(f"{api_url}/api/v1/v25/autonomous/decisions", timeout=2)
         if response.status_code == 200:
@@ -200,18 +202,18 @@ def print_recent_decisions(api_url: str):
 
 
 def print_footer():
-    """Вивести футер"""
+    """Вивести футер."""
     print(f"\n{Colors.CYAN}{'─' * 70}{Colors.ENDC}")
     print(f"{Colors.BOLD}Press Ctrl+C to exit | Refreshing every 5 seconds{Colors.ENDC}")
 
 
 def main():
-    """Головна функція"""
+    """Головна функція."""
     api_url = os.getenv('API_URL', 'http://localhost:8000')
 
     print(f"{Colors.GREEN}Starting Autonomous Intelligence v2.0 Dashboard...{Colors.ENDC}")
     print(f"API URL: {api_url}")
-    print(f"Press Ctrl+C to exit\n")
+    print("Press Ctrl+C to exit\n")
     time.sleep(2)
 
     try:
@@ -246,8 +248,8 @@ def main():
             except requests.exceptions.ConnectionError:
                 print(f"\n{Colors.RED}❌ Cannot connect to API at {api_url}{Colors.ENDC}")
                 print(f"\n{Colors.YELLOW}Make sure the backend is running:{Colors.ENDC}")
-                print(f"  cd services/api-gateway")
-                print(f"  python -m uvicorn app.main:app --reload")
+                print("  cd services/api-gateway")
+                print("  python -m uvicorn app.main:app --reload")
 
             except Exception as e:
                 print(f"\n{Colors.RED}❌ Error: {e}{Colors.ENDC}")

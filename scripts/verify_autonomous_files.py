@@ -1,23 +1,25 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-Швидка перевірка файлів Autonomous Intelligence v2.0
-Перевіряє наявність всіх створених файлів
+"""Швидка перевірка файлів Autonomous Intelligence v2.0
+Перевіряє наявність всіх створених файлів.
 """
 import os
 from pathlib import Path
 
+
 def check_file(path, description):
-    """Перевірити наявність файлу"""
+    """Перевірити наявність файлу."""
     if os.path.exists(path):
         size = os.path.getsize(path)
         print(f"✅ {description}")
         print(f"   📄 {path}")
         print(f"   📊 Розмір: {size:,} bytes")
         return True
-    else:
-        print(f"❌ {description}")
-        print(f"   📄 {path}")
-        return False
+    print(f"❌ {description}")
+    print(f"   📄 {path}")
+    return False
 
 def main():
     print("="*70)

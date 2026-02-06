@@ -1,7 +1,10 @@
+from __future__ import annotations
 
 import asyncio
-import aiohttp
 import logging
+
+import aiohttp
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -17,8 +20,7 @@ async def check_gemini(key):
             async with session.post(f"{url}?key={key}", json=payload) as response:
                 if response.status == 200:
                     return True, "OK"
-                else:
-                    return False, f"Status {response.status}"
+                return False, f"Status {response.status}"
     except Exception as e:
         return False, str(e)
 
@@ -37,8 +39,7 @@ async def check_groq(key):
             async with session.post(url, headers=headers, json=payload) as response:
                 if response.status == 200:
                     return True, "OK"
-                else:
-                    return False, f"Status {response.status}"
+                return False, f"Status {response.status}"
     except Exception as e:
         return False, str(e)
 

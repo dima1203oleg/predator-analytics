@@ -3,7 +3,8 @@ version: 1.0
 description: "Автоматизовані сценарії тестування стійкості (Chaos Engineering) для Predator v29"
 
 scenarios:
-  - name: "database_latency"
+  - id: "database_latency"
+    name: "database_latency"
     type: "network"
     target: "postgres"
     duration: "30s"
@@ -13,7 +14,8 @@ scenarios:
     expected_outcome: "recovered"
     description: "Симуляція високої затримки бази даних"
 
-  - name: "redis_unavailability"
+  - id: "redis_unavailability"
+    name: "redis_unavailability"
     type: "infrastructure"
     target: "redis"
     duration: "10s"
@@ -22,7 +24,8 @@ scenarios:
     expected_outcome: "degraded_performance"
     description: "Імітація недоступності Redis кешу"
 
-  - name: "high_cpu_load"
+  - id: "high_cpu_load"
+    name: "high_cpu_load"
     type: "resource"
     target: "api-gateway"
     duration: "45s"
@@ -31,7 +34,8 @@ scenarios:
     expected_outcome: "autoscaling_trigger"
     description: "Стрес-тест CPU для API Gateway"
 
-  - name: "qdrant_timeout"
+  - id: "qdrant_timeout"
+    name: "qdrant_timeout"
     type: "network"
     target: "qdrant"
     duration: "20s"
@@ -40,7 +44,8 @@ scenarios:
     expected_outcome: "fallback_to_keyword_search"
     description: "Імітація проблем мережі до Vector DB"
 
-  - name: "som_axiom_violation"
+  - id: "som_axiom_violation"
+    name: "som_axiom_violation"
     type: "application"
     target: "orchestrator"
     duration: "5s"

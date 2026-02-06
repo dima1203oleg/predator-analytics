@@ -1,10 +1,14 @@
-import typer
-import yaml
+from __future__ import annotations
+
 import json
 import os
 import sys
+
 from rich.console import Console
 from rich.panel import Panel
+import typer
+import yaml
+
 
 # Try to import from services by adding project root to path
 # Assuming we are running from project root or installed in project
@@ -25,18 +29,13 @@ def decide(
     file: str = typer.Option(..., "--file", "-f", help="Request context file (YAML/JSON)"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Show detailed evaluation")
 ):
-    """
-    Submit a request for Arbiter decision.
-    """
+    """Submit a request for Arbiter decision."""
     if not os.path.exists(file):
         console.print(f"[red]Error:[/red] File {file} not found.")
         raise typer.Exit(code=1)
 
-    with open(file, 'r') as f:
-        if file.endswith('.json'):
-            context = json.load(f)
-        else:
-            context = yaml.safe_load(f)
+    with open(file) as f:
+        context = json.load(f) if file.endswith('.json') else yaml.safe_load(f)
 
     req_type = context.get("type", "unknown")
     req_context = context.get("context", {})
@@ -65,9 +64,7 @@ def explain(
     decision_id: str = typer.Argument(..., help="Decision ID"),
     verbose: bool = typer.Option(False, "--verbose", help="Show full trace")
 ):
-    """
-    Explain the reasoning behind a decision.
-    """
+    """Explain the reasoning behind a decision."""
     console.print(f"Retrieving reasoning for {decision_id}...")
     console.print("Reasoning trace: [Axiom 5] OK -> [Axiom 6] OK -> [Human Intervention] SKIP")
     console.print("[green]Outcome: APPROVED[/green]")

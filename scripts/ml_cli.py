@@ -1,13 +1,15 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🤖 CLI для Навчання Моделей та Агентів через Triple CLI Chain
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Використовує Gemini→Mistral→Aider для автоматизації:
 1. Генерації навчальних пайплайнів (H2O AutoML, PyTorch, Kubeflow)
 2. Створення агентів (LangGraph, LangChain)
 3. Аугментації тренувальних даних
-4. Налаштування MLOps інфраструктури
+4. Налаштування MLOps інфраструктури.
 
 Приклади:
     # Навчання моделі класифікації
@@ -21,10 +23,11 @@
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
 
-import sys
 import argparse
 from pathlib import Path
+import sys
 from typing import List, Optional
+
 
 # Імпортуємо Triple CLI Chain
 sys.path.insert(0, str(Path(__file__).parent))
@@ -32,10 +35,10 @@ from triple_cli import TripleCLIChain
 
 
 class MLCLIOrchestrator:
-    """Оркестратор для ML завдань через CLI"""
+    """Оркестратор для ML завдань через CLI."""
 
     def __init__(self):
-        """Ініціалізація з Triple CLI Chain"""
+        """Ініціалізація з Triple CLI Chain."""
         self.cli_chain = TripleCLIChain()
         self.output_dir = Path("./generated_ml_scripts")
         self.output_dir.mkdir(exist_ok=True)
@@ -45,8 +48,7 @@ class MLCLIOrchestrator:
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
     def generate_training_pipeline(self, task: str, framework: str = "h2o") -> str:
-        """
-        Генерація навчального пайплайну
+        """Генерація навчального пайплайну.
 
         Args:
             task: Опис ML задачі (класифікація, регресія, NER, etc)
@@ -116,9 +118,8 @@ class MLCLIOrchestrator:
     # 2. Створення Агентів
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-    def generate_agent(self, agent_type: str, tools: Optional[List[str]] = None) -> str:
-        """
-        Генерація AI агента
+    def generate_agent(self, agent_type: str, tools: list[str] | None = None) -> str:
+        """Генерація AI агента.
 
         Args:
             agent_type: Тип агента (код-ревьювер, дослідник, оптимізатор)
@@ -169,8 +170,7 @@ class MLCLIOrchestrator:
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
     def generate_augmentation_pipeline(self, data_type: str, count: int = 1000) -> str:
-        """
-        Генерація пайплайну аугментації даних
+        """Генерація пайплайну аугментації даних.
 
         Args:
             data_type: Тип даних (text, image, tabular)
@@ -241,8 +241,7 @@ class MLCLIOrchestrator:
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
     def generate_mlops_script(self, script_type: str) -> str:
-        """
-        Генерація MLOps скриптів
+        """Генерація MLOps скриптів.
 
         Args:
             script_type: Тип скрипту (monitoring, deployment, rollback, testing)
@@ -314,7 +313,7 @@ class MLCLIOrchestrator:
 
 
 def main():
-    """CLI інтерфейс для ML завдань"""
+    """CLI інтерфейс для ML завдань."""
     parser = argparse.ArgumentParser(
         description="ML CLI - автоматизація ML/AI розробки через Triple CLI Chain",
         formatter_class=argparse.RawDescriptionHelpFormatter,

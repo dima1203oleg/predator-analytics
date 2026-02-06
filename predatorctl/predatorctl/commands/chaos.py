@@ -1,9 +1,14 @@
-import typer
+from __future__ import annotations
+
 import time
+
 from rich.console import Console
 from rich.table import Table
+import typer
+
 from predatorctl.core.arbiter_client import ArbiterClient
 from predatorctl.core.ledger_client import LedgerClient
+
 
 app = typer.Typer(help="Chaos Engineering (LitmusChaos Integration)")
 console = Console()

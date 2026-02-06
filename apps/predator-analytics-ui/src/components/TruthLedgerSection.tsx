@@ -70,7 +70,7 @@ export const TruthLedgerSection: React.FC = () => {
         <span className="text-[10px] text-slate-500 font-mono">Blockchain-Stabilized</span>
       </div>
 
-      <div className="bg-slate-900/50 rounded-2xl border border-white/5 overflow-hidden">
+      <div className="bg-slate-900/50 rounded-2xl border border-white/5 ">
         <table className="w-full text-left text-[11px]">
           <thead>
             <tr className="bg-white/5 text-slate-400 font-mono">
@@ -131,7 +131,7 @@ export const TruthLedgerSection: React.FC = () => {
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           >
-            <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl">
+            <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-2xl  shadow-2xl">
               <div className="p-6 border-b border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400">
@@ -163,7 +163,7 @@ export const TruthLedgerSection: React.FC = () => {
                         <span className="text-sm font-bold text-white">{report.timestamp}</span>
                       </div>
                       <div className="p-4 rounded-xl bg-slate-800/50 border border-white/5">
-                        <span className="text-[10px] text-slate-500 uppercase block mb-1">Status</span>
+                        <span className="text-[10px] text-slate-500 uppercase block mb-1">Статус</span>
                         <span className="text-sm font-bold text-emerald-400">REALITY-LOCKED</span>
                       </div>
                     </div>

@@ -1,0 +1,26 @@
+# predator-analytics RTB Engine Rules v2.0
+version: "2.0"
+rules:
+  - id: R001
+    name: model_performance_degraded
+    trigger: ModelPerformanceDegraded
+    condition: "context.get('drop', 0) > 0.05"
+    action: start_improvement_cycle
+    autonomy_level: L1
+    description: "Trigger improvement cycle if accuracy drops > 5%"
+
+  - id: R005
+    name: security_vulnerability
+    trigger: SecurityVulnerabilityDetected
+    condition: "context.get('severity') in ['CRITICAL', 'HIGH']"
+    action: block_deploy_and_alert
+    autonomy_level: L0
+    description: "Alert on critical security issues"
+
+  - id: R006
+    name: cost_budget_exceeded
+    trigger: CostBudgetAlert
+    condition: "context.get('monthly_spend', 0) > context.get('budget', 100) * 0.80"
+    action: scale_down_non_critical
+    autonomy_level: L1
+    description: "Scale down non-critical services when budget > 80%"

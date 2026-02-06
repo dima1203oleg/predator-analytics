@@ -1,9 +1,11 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🔗 Mixed Top CLI Stack (Canonical Implementation)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Відповідає специфікації: CLI_STACK_MIXED_TOP_TECH_SPEC.md
+Відповідає специфікації: CLI_STACK_MIXED_TOP_TECH_SPEC.md.
 
 Ролі:
 1. Gemini CLI - Планування та аналіз (free tier)
@@ -25,15 +27,16 @@
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
 
-import os
-import sys
-import json
 import argparse
-import subprocess
-import logging
-from pathlib import Path
-from typing import Dict
 from enum import Enum
+import json
+import logging
+import os
+from pathlib import Path
+import subprocess
+import sys
+from typing import Dict
+
 
 # Налаштування логування
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -51,9 +54,7 @@ class AgentRole(Enum):
     FALLBACK = "fallback"
 
 class MixedCLIStack:
-    """
-    Імплементація Змішаного ТОП CLI-стеку для Predator Analytics.
-    """
+    """Імплементація Змішаного ТОП CLI-стеку для Predator Analytics."""
 
     def __init__(self, gemini_key=None, mistral_key=None, groq_key=None):
         self.env = self._detect_environment()
@@ -69,19 +70,19 @@ class MixedCLIStack:
             os.environ["PATH"] = f"{python_bin}:{os.environ['PATH']}"
 
     def self_doctor(self) -> str:
-        """Запуск системної діагностики Predator"""
+        """Запуск системної діагностики Predator."""
         print("\n" + "━" * 60)
         print("🏥 Рівень 0: System Doctor (Diagnostics)")
         print("━" * 60)
         try:
             script_path = os.path.join(self.root_dir, "scripts/system_doctor.sh")
-            result = subprocess.run(['bash', script_path], capture_output=True, text=True, timeout=30)
+            result = subprocess.run(['bash', script_path], check=False, capture_output=True, text=True, timeout=30)
             return result.stdout
         except Exception as e:
             return f"❌ Diagnostics failed: {e}"
 
     def _detect_environment(self) -> Environment:
-        """Визначає середовище виконання"""
+        """Визначає середовище виконання."""
         # Проста евристика: на сервері зазвичай є специфічні змінні або hostname
         # Тут використовуємо змінну EXECUTION_ENV або дефолт
         env_var = os.environ.get("EXECUTION_ENV", "local").lower()
@@ -90,13 +91,13 @@ class MixedCLIStack:
         return Environment.LOCAL
 
     def _setup_api_keys(self):
-        """Завантажує API ключі з оточення"""
+        """Завантажує API ключі з оточення."""
         self.gemini_key = os.environ.get("GEMINI_API_KEY")
         self.mistral_key = os.environ.get("MISTRAL_API_KEY")
         self.groq_key = os.environ.get("GROQ_API_KEY")
 
     def _init_clients(self):
-        """Ініціалізація клієнтів з fallback логікою"""
+        """Ініціалізація клієнтів з fallback логікою."""
         # 1. Gemini (Planner)
         self.gemini_client = None
         if self.gemini_key:
@@ -128,8 +129,7 @@ class MixedCLIStack:
         # 3. Aider (Review) - перевіряється в runtime
 
     def _run_fallback(self, task: str, role: AgentRole, context: str = "") -> str:
-        """
-        Єдиний механізм Fallback (Ollama).
+        """Єдиний механізм Fallback (Ollama).
         Викликається, коли основний інструмент недоступний.
         """
         print(f"\n⚠️  FALLBACK MODE: {role.value.upper()} → OLLAMA")
@@ -152,7 +152,7 @@ class MixedCLIStack:
         try:
             result = subprocess.run(
                 ['ollama', 'run', model, full_prompt],
-                capture_output=True,
+                check=False, capture_output=True,
                 text=True,
                 timeout=120
             )
@@ -166,7 +166,7 @@ class MixedCLIStack:
             return f"❌ CRITICAL: Fallback failed: {e}"
 
     # 🧠 Рівень 1: Планування (Gemini)
-    def planner_agent(self, task: str) -> Dict:
+    def planner_agent(self, task: str) -> dict:
         print("\n" + "━" * 60)
         print("🧠 Рівень 1: Gemini CLI (Planner)")
         print("━" * 60)
@@ -219,7 +219,7 @@ class MixedCLIStack:
                 return {"description": task, "task_type": "script", "steps": []}
 
     # ✋ Рівень 2: Генерація (Mistral Vibe)
-    def codegen_agent(self, plan: Dict) -> str:
+    def codegen_agent(self, plan: dict) -> str:
         print("\n" + "━" * 60)
         print("✋ Рівень 2: Mistral Vibe CLI (Codegen)")
         print("━" * 60)
@@ -307,13 +307,13 @@ class MixedCLIStack:
         try:
             if not aider_bin:
                 raise FileNotFoundError
-            check = subprocess.run([aider_bin, '--version'], capture_output=True, timeout=5)
+            check = subprocess.run([aider_bin, '--version'], check=False, capture_output=True, timeout=5)
             if check.returncode != 0:
                 raise FileNotFoundError
         except (FileNotFoundError, subprocess.TimeoutExpired):
             print("⚠️  Aider не знайдено.")
             print(self._run_fallback(f"Review code in {file_path}", AgentRole.REVIEW, context))
-            return
+            return None
 
         print(f"🛡️ Запуск Aider для перевірки: {file_path}")
 
@@ -329,14 +329,14 @@ class MixedCLIStack:
         try:
             subprocess.run(cmd, check=True, capture_output=True)
             print("✅ Aider завершив рев'ю.")
-            with open(file_path, 'r') as f:
+            with open(file_path) as f:
                 return f.read()
         except subprocess.CalledProcessError as e:
             print(f"⚠️ Aider завершився з помилкою: {e}")
             return None
 
     # Orchestrator Logic
-    def run_pipeline(self, task: str, output_file: str = None):
+    def run_pipeline(self, task: str, output_file: str | None = None):
         print(f"🚀 ЗАПУСК MIXED CLI PIPELINE [{self.env.value.upper()}]")
 
         # 1. Plan

@@ -1,15 +1,19 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-Тестування Telegram Bot V4.0
-"""
+"""Тестування Telegram Bot V4.0."""
 
 import asyncio
 import os
-from unittest.mock import AsyncMock
-import pytest
 
 # Імпорт компонентів бота (якщо запускається окремо)
 import sys
+from unittest.mock import AsyncMock
+
+import pytest
+
+
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 # ==================== TEST DATA ====================
@@ -21,10 +25,10 @@ TEST_MESSAGE = "Тестове повідомлення"
 # ==================== UNIT TESTS ====================
 
 class TestMenuSystem:
-    """Тести системи меню"""
+    """Тести системи меню."""
 
     def test_main_menu_structure(self):
-        """Перевірка структури головного меню"""
+        """Перевірка структури головного меню."""
         # Імпорт тут щоб уникнути помилок якщо модуль не доступний
         try:
             from backend.orchestrator.agents.telegram_bot_v4_advanced import MenuSystem
@@ -37,7 +41,7 @@ class TestMenuSystem:
             print("⚠️  Skipping menu test - module not available")
 
     def test_all_menus_have_back_button(self):
-        """Перевірка що всі меню мають кнопку повернення"""
+        """Перевірка що всі меню мають кнопку повернення."""
         try:
             from backend.orchestrator.agents.telegram_bot_v4_advanced import MenuSystem
 
@@ -68,11 +72,11 @@ class TestMenuSystem:
             print("⚠️  Skipping menu back button test - module not available")
 
 class TestSystemController:
-    """Тести системного контролера"""
+    """Тести системного контролера."""
 
     @pytest.mark.asyncio
     async def test_get_system_status(self):
-        """Тест отримання статусу системи"""
+        """Тест отримання статусу системи."""
         try:
             from backend.orchestrator.agents.telegram_bot_v4_advanced import SystemController
 
@@ -87,7 +91,7 @@ class TestSystemController:
 
     @pytest.mark.asyncio
     async def test_get_processes(self):
-        """Тест отримання списку процесів"""
+        """Тест отримання списку процесів."""
         try:
             from backend.orchestrator.agents.telegram_bot_v4_advanced import SystemController
 
@@ -99,11 +103,11 @@ class TestSystemController:
             print("⚠️  Skipping processes test - module not available")
 
 class TestAIController:
-    """Тести AI контролера"""
+    """Тести AI контролера."""
 
     @pytest.mark.asyncio
     async def test_ai_controller_initialization(self):
-        """Тест ініціалізації AI контролера"""
+        """Тест ініціалізації AI контролера."""
         try:
             from backend.orchestrator.agents.telegram_bot_v4_advanced import AIController
 
@@ -116,7 +120,7 @@ class TestAIController:
 
     @pytest.mark.asyncio
     async def test_ai_chat_without_keys(self):
-        """Тест чату без API ключів"""
+        """Тест чату без API ключів."""
         try:
             from backend.orchestrator.agents.telegram_bot_v4_advanced import AIController
 
@@ -132,11 +136,11 @@ class TestAIController:
             print("⚠️  Skipping AI chat test - module not available")
 
 class TestContextManager:
-    """Тести менеджера контексту"""
+    """Тести менеджера контексту."""
 
     @pytest.mark.asyncio
     async def test_context_creation(self):
-        """Тест створення контексту"""
+        """Тест створення контексту."""
         try:
             from backend.orchestrator.agents.telegram_bot_v4_advanced import ContextManager, UserContext
 
@@ -157,7 +161,7 @@ class TestContextManager:
 
     @pytest.mark.asyncio
     async def test_add_message_to_context(self):
-        """Тест додавання повідомлення в контекст"""
+        """Тест додавання повідомлення в контекст."""
         try:
             from backend.orchestrator.agents.telegram_bot_v4_advanced import ContextManager
 
@@ -179,11 +183,11 @@ class TestContextManager:
 # ==================== INTEGRATION TESTS ====================
 
 class TestBotIntegration:
-    """Інтеграційні тести бота"""
+    """Інтеграційні тести бота."""
 
     @pytest.mark.asyncio
     async def test_bot_initialization(self):
-        """Тест ініціалізації бота"""
+        """Тест ініціалізації бота."""
         # Встановлюємо тестові змінні середовища
         os.environ["TELEGRAM_BOT_TOKEN"] = "test_token"
         os.environ["TELEGRAM_ADMIN_ID"] = str(TEST_ADMIN_ID)
@@ -202,7 +206,7 @@ class TestBotIntegration:
 # ==================== MANUAL TESTS ====================
 
 async def manual_test_system_status():
-    """Ручний тест статусу системи"""
+    """Ручний тест статусу системи."""
     print("\n" + "="*50)
     print("MANUAL TEST: System Status")
     print("="*50)
@@ -217,7 +221,7 @@ async def manual_test_system_status():
         print(f"❌ Error: {e}")
 
 async def manual_test_processes():
-    """Ручний тест процесів"""
+    """Ручний тест процесів."""
     print("\n" + "="*50)
     print("MANUAL TEST: Processes")
     print("="*50)
@@ -232,7 +236,7 @@ async def manual_test_processes():
         print(f"❌ Error: {e}")
 
 async def manual_test_docker():
-    """Ручний тест Docker"""
+    """Ручний тест Docker."""
     print("\n" + "="*50)
     print("MANUAL TEST: Docker")
     print("="*50)
@@ -247,7 +251,7 @@ async def manual_test_docker():
         print(f"❌ Error: {e}")
 
 async def manual_test_git():
-    """Ручний тест Git"""
+    """Ручний тест Git."""
     print("\n" + "="*50)
     print("MANUAL TEST: Git")
     print("="*50)
@@ -267,7 +271,7 @@ async def manual_test_git():
 # ==================== MAIN ====================
 
 async def run_all_manual_tests():
-    """Запустити всі ручні тести"""
+    """Запустити всі ручні тести."""
     print("\n🧪 Running Manual Tests...")
 
     await manual_test_system_status()
@@ -280,7 +284,7 @@ async def run_all_manual_tests():
     print("="*50)
 
 def run_unit_tests():
-    """Запустити юніт тести"""
+    """Запустити юніт тести."""
     print("\n🧪 Running Unit Tests...")
 
     # Menu tests

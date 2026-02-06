@@ -1,5 +1,9 @@
-import pytest
+from __future__ import annotations
+
 import subprocess
+
+import pytest
+
 from app.services.telegram_assistant import TelegramAssistant
 
 

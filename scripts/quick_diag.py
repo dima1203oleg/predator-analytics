@@ -1,8 +1,12 @@
+from __future__ import annotations
 
 import asyncio
-import aiohttp
-import sys
+import contextlib
 from datetime import datetime
+import sys
+
+import aiohttp
+
 
 async def check_service(name, url, expected_status=200):
     try:
@@ -14,11 +18,10 @@ async def check_service(name, url, expected_status=200):
                 if status == expected_status:
                     print(f"✅ {name:<20} OK ({duration:.2f}s)")
                     return True
-                else:
-                    print(f"❌ {name:<20} FAIL (Status: {status})")
-                    return False
+                print(f"❌ {name:<20} FAIL (Status: {status})")
+                return False
     except Exception as e:
-        print(f"❌ {name:<20} DOWN ({str(e)})")
+        print(f"❌ {name:<20} DOWN ({e!s})")
         return False
 
 async def main():
@@ -45,7 +48,5 @@ async def main():
         sys.exit(1)
 
 if __name__ == "__main__":
-    try:
+    with contextlib.suppress(KeyboardInterrupt):
         asyncio.run(main())
-    except KeyboardInterrupt:
-        pass

@@ -1,19 +1,23 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-Standalone Telegram Bot - Повністю автономний бот
-Працює без FastAPI, тільки polling
+"""Standalone Telegram Bot - Повністю автономний бот
+Працює без FastAPI, тільки polling.
 """
 import asyncio
+from dataclasses import dataclass
+from datetime import UTC, datetime, timezone
+import json
 import logging
 import os
-import sys
 import re
 import subprocess
-import json
-from datetime import datetime, timezone
-from typing import Dict, Any, List, Optional, Tuple
-from dataclasses import dataclass
+import sys
+from typing import Any, Dict, List, Optional, Tuple
+
 import httpx
+
 
 # Add project to path
 sys.path.insert(0, "/Users/dima-mac/Documents/Predator_21/ua-sources")
@@ -41,7 +45,7 @@ SSH_CONFIG_PATH = os.path.expanduser("~/.ssh/config")
 PROJECT_DIR = "/Users/dima-mac/Documents/Predator_21"
 
 # Authorized users (your Telegram user IDs)
-AUTHORIZED_USERS: List[int] = []  # Empty = all users allowed
+AUTHORIZED_USERS: list[int] = []  # Empty = all users allowed
 
 
 # ============================================================
@@ -58,15 +62,15 @@ class NgrokInfo:
 
 
 # Global state
-last_ngrok: Optional[NgrokInfo] = None
+last_ngrok: NgrokInfo | None = None
 
 
 # ============================================================
 # NGROK PARSING
 # ============================================================
 
-def parse_ngrok_message(text: str) -> Optional[NgrokInfo]:
-    """Parse ngrok URLs from message"""
+def parse_ngrok_message(text: str) -> NgrokInfo | None:
+    """Parse ngrok URLs from message."""
     ssh_pattern = r'SSH:\s*tcp://([^:]+):(\d+)'
     http_pattern = r'HTTP:\s*(https?://[^\s]+)'
 
@@ -79,20 +83,20 @@ def parse_ngrok_message(text: str) -> Optional[NgrokInfo]:
             ssh_port=int(ssh_match.group(2)),
             http_url=http_match.group(1) if http_match else "",
             raw_message=text,
-            parsed_at=datetime.now(timezone.utc)
+            parsed_at=datetime.now(UTC)
         )
     return None
 
 
-def update_ssh_config(ngrok_info: NgrokInfo) -> Tuple[bool, str]:
-    """Update SSH config with new ngrok data"""
+def update_ssh_config(ngrok_info: NgrokInfo) -> tuple[bool, str]:
+    """Update SSH config with new ngrok data."""
     global last_ngrok
 
     try:
         if not os.path.exists(SSH_CONFIG_PATH):
             return False, f"❌ SSH config не знайдено: {SSH_CONFIG_PATH}"
 
-        with open(SSH_CONFIG_PATH, 'r') as f:
+        with open(SSH_CONFIG_PATH) as f:
             content = f.read()
 
         # Find dev-ngrok block
@@ -135,8 +139,8 @@ ssh dev-ngrok
 ```"""
 
     except Exception as e:
-        logger.error(f"Failed to update SSH config: {e}")
-        return False, f"❌ Помилка: {str(e)}"
+        logger.exception(f"Failed to update SSH config: {e}")
+        return False, f"❌ Помилка: {e!s}"
 
 
 # ============================================================
@@ -214,7 +218,7 @@ async def cmd_status(args: str) -> str:
 
 async def cmd_disk(args: str) -> str:
     try:
-        result = subprocess.run(["df", "-h", "/"], capture_output=True, text=True, timeout=5)
+        result = subprocess.run(["df", "-h", "/"], check=False, capture_output=True, text=True, timeout=5)
         return f"💾 *Disk Usage*\n```\n{result.stdout}\n```"
     except Exception as e:
         return f"❌ Помилка: {e}"
@@ -222,7 +226,7 @@ async def cmd_disk(args: str) -> str:
 
 async def cmd_memory(args: str) -> str:
     try:
-        result = subprocess.run(["vm_stat"], capture_output=True, text=True, timeout=5)
+        result = subprocess.run(["vm_stat"], check=False, capture_output=True, text=True, timeout=5)
         lines = result.stdout.split('\n')[:10]
         return f"🧠 *Memory Stats*\n```\n{''.join(lines)}\n```"
     except Exception as e:
@@ -231,7 +235,7 @@ async def cmd_memory(args: str) -> str:
 
 async def cmd_cpu(args: str) -> str:
     try:
-        result = subprocess.run(["top", "-l", "1", "-n", "0"], capture_output=True, text=True, timeout=10)
+        result = subprocess.run(["top", "-l", "1", "-n", "0"], check=False, capture_output=True, text=True, timeout=10)
         for line in result.stdout.split('\n'):
             if 'CPU usage' in line:
                 return f"⚡ *CPU*\n{line}"
@@ -242,7 +246,7 @@ async def cmd_cpu(args: str) -> str:
 
 async def cmd_uptime(args: str) -> str:
     try:
-        result = subprocess.run(["uptime"], capture_output=True, text=True, timeout=5)
+        result = subprocess.run(["uptime"], check=False, capture_output=True, text=True, timeout=5)
         return f"⏰ *Uptime*\n{result.stdout}"
     except Exception as e:
         return f"❌ Помилка: {e}"
@@ -252,7 +256,7 @@ async def cmd_docker(args: str) -> str:
     try:
         result = subprocess.run(
             ["docker", "ps", "--format", "table {{.Names}}\t{{.Status}}"],
-            capture_output=True, text=True, timeout=10
+            check=False, capture_output=True, text=True, timeout=10
         )
         if result.returncode == 0:
             return f"🐳 *Docker Containers*\n```\n{result.stdout[:1000]}\n```"
@@ -266,7 +270,7 @@ async def cmd_pods(args: str) -> str:
         ns = args.strip() if args else "default"
         result = subprocess.run(
             ["kubectl", "get", "pods", "-n", ns],
-            capture_output=True, text=True, timeout=10
+            check=False, capture_output=True, text=True, timeout=10
         )
         return f"☸️ *Pods ({ns})*\n```\n{result.stdout[:1000]}\n```"
     except Exception as e:
@@ -278,7 +282,7 @@ async def cmd_logs(args: str) -> str:
     try:
         result = subprocess.run(
             ["docker", "logs", "--tail", "15", service],
-            capture_output=True, text=True, timeout=10
+            check=False, capture_output=True, text=True, timeout=10
         )
         output = result.stdout or result.stderr
         return f"📝 *Logs ({service})*\n```\n{output[:1200]}\n```"
@@ -300,7 +304,7 @@ async def cmd_ngrok(args: str) -> str:
 
 async def cmd_ssh(args: str) -> str:
     try:
-        with open(SSH_CONFIG_PATH, 'r') as f:
+        with open(SSH_CONFIG_PATH) as f:
             content = f.read()
 
         pattern = r'(Host\s+dev-ngrok\s*\n(?:[^\n]*\n)*?)(?=Host\s|\Z)'
@@ -336,12 +340,12 @@ async def cmd_git(args: str) -> str:
     try:
         result = subprocess.run(
             ["git", "log", "-1", "--oneline"],
-            capture_output=True, text=True, timeout=10,
+            check=False, capture_output=True, text=True, timeout=10,
             cwd=PROJECT_DIR
         )
         result2 = subprocess.run(
             ["git", "status", "-s"],
-            capture_output=True, text=True, timeout=10,
+            check=False, capture_output=True, text=True, timeout=10,
             cwd=PROJECT_DIR
         )
         changes = result2.stdout[:300] if result2.stdout else "Clean ✅"
@@ -373,7 +377,7 @@ GitHub: github.com/dima1203oleg/predator-analytics"""
 # ============================================================
 
 async def cmd_opensearch(args: str) -> str:
-    """OpenSearch статус"""
+    """OpenSearch статус."""
     try:
         opensearch_url = os.getenv("OPENSEARCH_URL", "http://localhost:9200")
         async with httpx.AsyncClient(timeout=5) as client:
@@ -400,7 +404,7 @@ Top Indices:"""
 
             return result
     except Exception as e:
-        return f"❌ OpenSearch offline: {str(e)}"
+        return f"❌ OpenSearch offline: {e!s}"
 
 
 # Register commands
@@ -447,7 +451,7 @@ async def cmd_help_updated(args: str) -> str:
     """
 
 async def cmd_qdrant(args: str) -> str:
-    """Qdrant статус"""
+    """Qdrant статус."""
     try:
         qdrant_url = os.getenv("QDRANT_URL", "http://localhost:6333")
         async with httpx.AsyncClient(timeout=5) as client:
@@ -467,15 +471,15 @@ async def cmd_qdrant(args: str) -> str:
 
             return result or "⚠️ No collections"
     except Exception as e:
-        return f"❌ Qdrant offline: {str(e)}"
+        return f"❌ Qdrant offline: {e!s}"
 
 
 async def cmd_celery_status(args: str) -> str:
-    """Celery workers статус"""
+    """Celery workers статус."""
     try:
         result = subprocess.run(
             ["celery", "-A", "app.core.celery_app", "inspect", "active"],
-            capture_output=True, text=True, timeout=10,
+            check=False, capture_output=True, text=True, timeout=10,
             cwd=f"{PROJECT_DIR}/ua-sources"
         )
 
@@ -483,11 +487,11 @@ async def cmd_celery_status(args: str) -> str:
             return f"🔸 *Celery Workers*\n```\n{result.stdout[:800]}\n```"
         return "⚠️ Celery offline"
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 async def cmd_etl_jobs(args: str) -> str:
-    """ETL jobs статус"""
+    """ETL jobs статус."""
     try:
         backend_url = os.getenv("BACKEND_URL", "http://localhost:8000")
         async with httpx.AsyncClient(timeout=5) as client:
@@ -503,16 +507,16 @@ Total Jobs: {data.get('total', 0)}"""
 
             return result
     except Exception as e:
-        return f"❌ ETL service offline: {str(e)}"
+        return f"❌ ETL service offline: {e!s}"
 
 
 async def cmd_k8s_cluster(args: str) -> str:
-    """Детальний статус K8s"""
+    """Детальний статус K8s."""
     try:
         # Nodes
         nodes_result = subprocess.run(
             ["kubectl", "get", "nodes", "-o", "json"],
-            capture_output=True, text=True, timeout=10
+            check=False, capture_output=True, text=True, timeout=10
         )
 
         result = "☸️ *Kubernetes Cluster*\n\n"
@@ -528,7 +532,7 @@ async def cmd_k8s_cluster(args: str) -> str:
         # Pods summary
         pods_result = subprocess.run(
             ["kubectl", "get", "pods", "--all-namespaces", "-o", "json"],
-            capture_output=True, text=True, timeout=10
+            check=False, capture_output=True, text=True, timeout=10
         )
 
         if pods_result.returncode == 0:
@@ -539,11 +543,11 @@ async def cmd_k8s_cluster(args: str) -> str:
 
         return result
     except Exception as e:
-        return f"❌ K8s error: {str(e)}"
+        return f"❌ K8s error: {e!s}"
 
 
 async def cmd_full_status(args: str) -> str:
-    """Повний статус Predator Analytics"""
+    """Повний статус Predator Analytics."""
     try:
         # Import advanced monitoring
         from app.services.telegram_advanced import get_full_system_status
@@ -563,7 +567,7 @@ async def cmd_full_status(args: str) -> str:
 
 
 async def cmd_parsing_status(args: str) -> str:
-    """Статус парсингу"""
+    """Статус парсингу."""
     try:
         backend_url = os.getenv("BACKEND_URL", "http://localhost:8000")
         async with httpx.AsyncClient(timeout=5) as client:
@@ -571,20 +575,19 @@ async def cmd_parsing_status(args: str) -> str:
             etl_response = await client.get(f"{backend_url}/api/etl/jobs")
             etl_data = etl_response.json()
 
-            result = f"""📥 *Парсинг / ETL*
+            return f"""📥 *Парсинг / ETL*
 
 Active Jobs: {etl_data.get('total', 0)}
 
 Використай /opensearch для індексів
 Використай /etl для деталей"""
 
-            return result
     except Exception:
         return "⚠️ Backend offline\n\n💡 Запусти: `docker compose up -d backend`"
 
 
 async def cmd_indexing_status(args: str) -> str:
-    """Статус індексації"""
+    """Статус індексації."""
     result = "📊 *Індексація*\n\n"
 
     try:
@@ -627,7 +630,7 @@ async def cmd_indexing_status(args: str) -> str:
 # ============================================================
 
 async def cmd_code(args: str) -> str:
-    """Виконати Python код"""
+    """Виконати Python код."""
     if not args:
         return """💻 *AI Code Agent*
 
@@ -654,7 +657,7 @@ print(os.getcwd())
         # Execute
         result = subprocess.run(
             ["python3", temp_file],
-            capture_output=True, text=True, timeout=30,
+            check=False, capture_output=True, text=True, timeout=30,
             cwd=PROJECT_DIR
         )
 
@@ -674,11 +677,11 @@ print(os.getcwd())
 {output[:1000]}
 ```"""
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 async def cmd_bash(args: str) -> str:
-    """Виконати bash команду"""
+    """Виконати bash команду."""
     if not args:
         return """💻 *Bash Executor*
 
@@ -691,7 +694,7 @@ async def cmd_bash(args: str) -> str:
 
     try:
         result = subprocess.run(
-            args, shell=True,
+            args, check=False, shell=True,
             capture_output=True, text=True, timeout=30,
             cwd=PROJECT_DIR
         )
@@ -710,11 +713,11 @@ async def cmd_bash(args: str) -> str:
 {output[:1200]}
 ```"""
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 async def cmd_test(args: str) -> str:
-    """Запустити тести"""
+    """Запустити тести."""
     try:
         cmd = ["pytest", "-v"]
         if args:
@@ -722,7 +725,7 @@ async def cmd_test(args: str) -> str:
 
         result = subprocess.run(
             cmd,
-            capture_output=True, text=True, timeout=60,
+            check=False, capture_output=True, text=True, timeout=60,
             cwd=f"{PROJECT_DIR}/ua-sources"
         )
 
@@ -735,11 +738,11 @@ async def cmd_test(args: str) -> str:
 {output[-1200:]}
 ```"""
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 async def cmd_create_file(args: str) -> str:
-    """Створити файл через бот"""
+    """Створити файл через бот."""
     if not args or "\n" not in args:
         return """📝 *Create File*
 
@@ -766,7 +769,7 @@ def hello():
 Path: `{path}`
 Size: {len(content)} bytes"""
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 # ============================================================
@@ -774,7 +777,7 @@ Size: {len(content)} bytes"""
 # ============================================================
 
 async def cmd_llm_providers(args: str) -> str:
-    """Список LLM провайдерів"""
+    """Список LLM провайдерів."""
     try:
         async with httpx.AsyncClient(timeout=5) as client:
             response = await client.get(f"{os.getenv('BACKEND_URL', 'http://localhost:8000')}/api/llm/providers")
@@ -806,11 +809,11 @@ async def cmd_llm_providers(args: str) -> str:
         return result
 
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 async def cmd_llm_add(args: str) -> str:
-    """Додати API ключ"""
+    """Додати API ключ."""
     if not args or ' ' not in args:
         return """🔑 **Додати API ключ**
 
@@ -862,11 +865,11 @@ async def cmd_llm_add(args: str) -> str:
             return f"❌ **Тест ключа провалився**\n\n{e.response.json().get('detail', 'Invalid key')}"
         return f"❌ Error: {e.response.json().get('detail', str(e))}"
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 async def cmd_llm_test(args: str) -> str:
-    """Тестувати API ключ"""
+    """Тестувати API ключ."""
     if not args or ' ' not in args:
         return """🧪 **Тестувати ключ**
 
@@ -898,15 +901,14 @@ async def cmd_llm_test(args: str) -> str:
 ⏱️ Latency: {result.get('latency_ms', 0):.0f}ms
 📦 Model: {result.get('model', 'N/A')}
 💬 {result.get('message', 'Test passed')}"""
-        else:
-            return f"❌ **Ключ невалідний**\n\n{result.get('error', 'Unknown error')}"
+        return f"❌ **Ключ невалідний**\n\n{result.get('error', 'Unknown error')}"
 
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 async def cmd_llm_stats(args: str) -> str:
-    """Статистика LLM"""
+    """Статистика LLM."""
     try:
         async with httpx.AsyncClient(timeout=5) as client:
             response = await client.get(f"{os.getenv('BACKEND_URL', 'http://localhost:8000')}/api/llm/stats")
@@ -921,11 +923,11 @@ async def cmd_llm_stats(args: str) -> str:
 Використай /llm_providers для деталей"""
 
     except Exception as e:
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 def get_provider_emoji_local(provider_id: str) -> str:
-    """Emoji для провайдера"""
+    """Emoji для провайдера."""
     emojis = {
         "groq": "⚡",
         "gemini": "🧠",
@@ -1103,8 +1105,8 @@ COMMANDS["help"] = cmd_help_updated
 # AI NATURAL LANGUAGE PROCESSING
 # ============================================================
 
-async def understand_intent(text: str) -> Dict[str, Any]:
-    """Розуміє намір користувача через AI"""
+async def understand_intent(text: str) -> dict[str, Any]:
+    """Розуміє намір користувача через AI."""
     text_lower = text.lower()
 
     # Ключові слова для різних категорій
@@ -1140,8 +1142,7 @@ async def understand_intent(text: str) -> Dict[str, Any]:
 
 
 async def process_natural_language(text: str, chat_id: int) -> str:
-    """Обробляє природну мову через AI"""
-
+    """Обробляє природну мову через AI."""
     text_lower = text.lower()
 
     # Special: LLM key adding - природна мова
@@ -1159,11 +1160,10 @@ async def process_natural_language(text: str, chat_id: int) -> str:
             provider = match.group(1).lower()
             # Get actuall key from original text (preserve case)
             key_start = text.find(match.group(2))
-            key = text[key_start:key_start+100].split()[0]  # Get first token
+            key = text[key_start:key_start+100].split(maxsplit=1)[0]  # Get first token
 
             return await cmd_llm_add(f"{provider} {key}")
-        else:
-            return """🔑 Додати ключ
+        return """🔑 Додати ключ
 
 Формат:
 "Додай ключ groq: gsk_xxxxx"
@@ -1188,31 +1188,31 @@ async def process_natural_language(text: str, chat_id: int) -> str:
 
 Питай що завгодно або /help для команд!"""
 
-    elif intent == "system_status":
+    if intent == "system_status":
         return await cmd_full_status("")
 
-    elif intent == "opensearch":
+    if intent == "opensearch":
         return await cmd_opensearch("")
 
-    elif intent == "qdrant":
+    if intent == "qdrant":
         return await cmd_qdrant("")
 
-    elif intent == "parsing":
+    if intent == "parsing":
         return await cmd_parsing_status("")
 
-    elif intent == "celery":
+    if intent == "celery":
         return await cmd_celery_status("")
 
-    elif intent == "k8s":
+    if intent == "k8s":
         return await cmd_k8s_cluster("")
 
-    elif intent == "docker":
+    if intent == "docker":
         return await cmd_docker("")
 
-    elif intent == "ngrok":
+    if intent == "ngrok":
         return await cmd_ngrok("")
 
-    elif intent == "programming":
+    if intent == "programming":
         return """💻 **AI Code Agent**
 
 Я можу:
@@ -1227,32 +1227,31 @@ async def process_natural_language(text: str, chat_id: int) -> str:
 
 Що хочеш виконати?"""
 
-    elif intent == "help":
+    if intent == "help":
         return await cmd_help_updated("")
 
     # Загальний AI відповідь
-    else:
-        # Спочатку пробуємо з нашою knowledge base (работає без API!)
-        knowledge_response = get_knowledge_based_response(text)
-        if knowledge_response:
-            return knowledge_response
+    # Спочатку пробуємо з нашою knowledge base (работає без API!)
+    knowledge_response = get_knowledge_based_response(text)
+    if knowledge_response:
+        return knowledge_response
 
-        # Потім пробуємо LLM якщо доступний
-        try:
-            # Визначаємо складність запиту для вибору між council та звичайним LLM
-            from app.services.llm import llm_service
+    # Потім пробуємо LLM якщо доступний
+    try:
+        # Визначаємо складність запиту для вибору між council та звичайним LLM
+        from app.services.llm import llm_service
 
-            # Ключові слова що вказують на складне питання
-            complex_indicators = [
-                "порівняй", "проаналізуй", "поясни детально", "розкажи про",
-                "як працює", "архітектура", "система", "plan", "strategy",
-                "порада", "рекомендація", "що краще", "опиши", "розкажи"
-            ]
+        # Ключові слова що вказують на складне питання
+        complex_indicators = [
+            "порівняй", "проаналізуй", "поясни детально", "розкажи про",
+            "як працює", "архітектура", "система", "plan", "strategy",
+            "порада", "рекомендація", "що краще", "опиши", "розкажи"
+        ]
 
-            is_complex = any(indicator in text.lower() for indicator in complex_indicators)
-            is_complex = is_complex or len(text.split()) > 15  # Довге питання = складне
+        is_complex = any(indicator in text.lower() for indicator in complex_indicators)
+        is_complex = is_complex or len(text.split()) > 15  # Довге питання = складне
 
-            system_prompt = """Ти - AI асистент Predator Analytics Bot.
+        system_prompt = """Ти - AI асистент Predator Analytics Bot.
 Допомагай користувачу з питаннями про:
 - Моніторинг системи (OpenSearch, Qdrant, Celery, K8s)
 - Програмування через Telegram
@@ -1263,37 +1262,37 @@ async def process_natural_language(text: str, chat_id: int) -> str:
 Відповідай коротко та по суті українською мовою.
 Якщо потрібна команда - вкажи яку."""
 
-            if is_complex:
-                # Використовуємо LLM Council для глибокого аналізу
-                logger.info(f"Using LLM Council for complex query: {text[:50]}...")
+        if is_complex:
+            # Використовуємо LLM Council для глибокого аналізу
+            logger.info(f"Using LLM Council for complex query: {text[:50]}...")
 
-                response = await llm_service.generate_with_routing(
-                    prompt=text,
-                    system=system_prompt,
-                    mode="council",  # 🔥 Council mode!
-                    max_tokens=1500
-                )
+            response = await llm_service.generate_with_routing(
+                prompt=text,
+                system=system_prompt,
+                mode="council",  # 🔥 Council mode!
+                max_tokens=1500
+            )
 
-                if response.success:
-                    # Додаємо мітку що це council відповідь
-                    prefix = "🧠 **Council AI** (5 моделей)\n\n"
-                    return f"{prefix}{response.content[:1500]}\n\n_⏱️ {response.latency_ms:.0f}ms | {response.model}_"
-            else:
-                # Звичайний fast режим для простих питань
-                response = await llm_service.generate_with_routing(
-                    prompt=text,
-                    system=system_prompt,
-                    mode="fast"
-                )
+            if response.success:
+                # Додаємо мітку що це council відповідь
+                prefix = "🧠 **Council AI** (5 моделей)\n\n"
+                return f"{prefix}{response.content[:1500]}\n\n_⏱️ {response.latency_ms:.0f}ms | {response.model}_"
+        else:
+            # Звичайний fast режим для простих питань
+            response = await llm_service.generate_with_routing(
+                prompt=text,
+                system=system_prompt,
+                mode="fast"
+            )
 
-                if response.success:
-                    return f"🤖 {response.content[:1000]}"
+            if response.success:
+                return f"🤖 {response.content[:1000]}"
 
-        except Exception as e:
-            logger.error(f"AI processing error: {e}")
+    except Exception as e:
+        logger.exception(f"AI processing error: {e}")
 
-        # Final fallback - показуємо допомогу
-        return """💡 Можу допомогти!
+    # Final fallback - показуємо допомогу
+    return """💡 Можу допомогти!
 
 Для кращих відповідей налаштуй LLM API ключі.
 
@@ -1307,9 +1306,8 @@ async def process_natural_language(text: str, chat_id: int) -> str:
 Або уточни: "статус системи", "покажи компоненти" тощо."""
 
 
-def get_knowledge_based_response(text: str) -> Optional[str]:
-    """
-    Knowledge base - вбудовані знання про систему
+def get_knowledge_based_response(text: str) -> str | None:
+    """Knowledge base - вбудовані знання про систему
     Працює БЕЗ LLM API!
     """
     text_lower = text.lower()
@@ -1587,14 +1585,14 @@ github.com/dima1203oleg/predator-analytics
 # ============================================================
 
 async def process_message(text: str, chat_id: int, user_id: int) -> str:
-    """Process incoming message"""
+    """Process incoming message."""
     text_lower = text.lower().strip()
 
     # Check for ngrok update
     if "ngrok" in text_lower and ("ssh:" in text_lower or "http:" in text_lower):
         ngrok_info = parse_ngrok_message(text)
         if ngrok_info:
-            success, message = update_ssh_config(ngrok_info)
+            _success, message = update_ssh_config(ngrok_info)
             return message
         return "⚠️ Не вдалося розпарсити ngrok дані"
 
@@ -1624,8 +1622,8 @@ async def process_message(text: str, chat_id: int, user_id: int) -> str:
 # TELEGRAM API
 # ============================================================
 
-async def send_message(chat_id: int, text: str, reply_markup: Optional[Dict] = None) -> bool:
-    """Send message to chat"""
+async def send_message(chat_id: int, text: str, reply_markup: dict | None = None) -> bool:
+    """Send message to chat."""
     try:
         async with httpx.AsyncClient() as client:
             data = {
@@ -1639,23 +1637,23 @@ async def send_message(chat_id: int, text: str, reply_markup: Optional[Dict] = N
             response = await client.post(f"{API_URL}/sendMessage", json=data)
             return response.status_code == 200
     except Exception as e:
-        logger.error(f"Failed to send message: {e}")
+        logger.exception(f"Failed to send message: {e}")
         return False
 
 
 async def delete_webhook() -> bool:
-    """Delete webhook for polling mode"""
+    """Delete webhook for polling mode."""
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(f"{API_URL}/deleteWebhook")
             return response.json().get("ok", False)
     except Exception as e:
-        logger.error(f"Failed to delete webhook: {e}")
+        logger.exception(f"Failed to delete webhook: {e}")
         return False
 
 
-async def get_updates(offset: int = 0, timeout: int = 30) -> List[Dict]:
-    """Get updates from Telegram"""
+async def get_updates(offset: int = 0, timeout: int = 30) -> list[dict]:
+    """Get updates from Telegram."""
     try:
         async with httpx.AsyncClient(timeout=timeout + 10) as client:
             response = await client.get(
@@ -1665,7 +1663,7 @@ async def get_updates(offset: int = 0, timeout: int = 30) -> List[Dict]:
             result = response.json()
             return result.get("result", [])
     except Exception as e:
-        logger.error(f"Failed to get updates: {e}")
+        logger.exception(f"Failed to get updates: {e}")
         return []
 
 
@@ -1675,7 +1673,7 @@ async def get_updates(offset: int = 0, timeout: int = 30) -> List[Dict]:
 # ============================================================
 
 async def run_bot():
-    """Main bot loop"""
+    """Main bot loop."""
     print("""
 ╔══════════════════════════════════════════════════════════════╗
 ║        🤖 Predator Analytics Telegram Bot                    ║
@@ -1732,7 +1730,7 @@ async def run_bot():
             logger.info("🛑 Bot stopped")
             break
         except Exception as e:
-            logger.error(f"❌ Error: {e}")
+            logger.exception(f"❌ Error: {e}")
             await asyncio.sleep(5)
 
 

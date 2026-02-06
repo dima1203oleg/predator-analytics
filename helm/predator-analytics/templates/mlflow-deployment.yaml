@@ -1,0 +1,85 @@
+
+# ════════════════════════════════════════════════════════════════════════
+# MLFLOW DEPLOYMENT (Experiment Tracking)
+# ════════════════════════════════════════════════════════════════════════
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-mlflow
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: mlflow
+    component: ml-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator-analytics.selectorLabels" . | nindent 6 }}
+      app: mlflow
+  template:
+    metadata:
+      labels:
+        {{- include "predator-analytics.selectorLabels" . | nindent 8 }}
+        app: mlflow
+        component: ml-platform
+    spec:
+      priorityClassName: predator-medium
+      containers:
+        - name: mlflow
+          image: "ghcr.io/mlflow/mlflow:latest"
+          command:
+            - mlflow
+            - server
+            - --host
+            - 0.0.0.0
+            - --port
+            - "5000"
+            - --backend-store-uri
+            - postgresql://postgres:$(DB_PASSWORD)@{{ include "predator-analytics.fullname" . }}-postgresql:5432/mlflow
+            - --default-artifact-root
+            - s3://mlflow-artifacts/
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: predator-db-secrets
+                  key: postgres-password
+            - name: MLFLOW_S3_ENDPOINT_URL
+              value: http://{{ include "predator-analytics.fullname" . }}-minio:9000
+            - name: AWS_ACCESS_KEY_ID
+              value: minioadmin
+            - name: AWS_SECRET_ACCESS_KEY
+              value: minioadmin
+          ports:
+            - containerPort: 5000
+              name: http
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-mlflow
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: mlflow
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5000
+      targetPort: 5000
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "predator-analytics.selectorLabels" . | nindent 4 }}
+    app: mlflow

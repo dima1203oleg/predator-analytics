@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import asyncio
-import sys
-import uuid
 from pathlib import Path
+import sys
 from unittest.mock import AsyncMock, MagicMock
+import uuid
+
 
 # Add core paths
 ROOT_DIR = Path("/Users/dima-mac/Documents/Predator_21")
@@ -14,8 +17,9 @@ async def run_augmentation_diagnostic():
     print("----------------------------------------------------------")
 
     try:
-        from src.mlops.augmentor import AugmentorManager
         from libs.core.models import Document
+
+        from src.mlops.augmentor import AugmentorManager
     except ImportError as e:
         print(f"❌ Dependency Error: {e}")
         return

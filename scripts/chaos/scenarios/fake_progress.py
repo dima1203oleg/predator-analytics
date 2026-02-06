@@ -1,24 +1,28 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-Chaos Scenario: Fake Progress Injection (INV-002 Violation)
+"""Chaos Scenario: Fake Progress Injection (INV-002 Violation)
 Injects a "COMPLETED" state transition with zero indexed records,
 verifying that the Arbiter detects the lie, blocks the transition,
 and raises an invariant violation.
 """
 import asyncio
+from datetime import datetime
 import json
 import os
 import sys
-from datetime import datetime
 from uuid import uuid4
+
 
 # Ensure project root is in path
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(), "services/api-gateway"))
 
+from app.services.state_derivation import StateDerivationEngine
 from libs.core.database import get_db_ctx
 from libs.core.etl_state_machine import ETLState
-from app.services.state_derivation import StateDerivationEngine
+
 
 async def run_scenario():
     print("🧪 [CHAOS] Starting Scenario: Fake Progress Injection (INV-002/INV-001)...")
@@ -30,11 +34,6 @@ async def run_scenario():
 
     # Virtual initial state
     current_state = ETLState.PROCESSING
-    current_metrics = {
-        "records_total": 1000,
-        "records_processed": 500,
-        "records_indexed": 0 # Not done!
-    }
 
     # 2. Action: Inject a fake COMPLETED fact/transition report
     # The "Attacker" (buggy code) tries to claim it finished.

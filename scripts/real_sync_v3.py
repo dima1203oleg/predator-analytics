@@ -1,10 +1,14 @@
-import pandas as pd
-from sqlalchemy import create_engine, text
-import os
+from __future__ import annotations
+
 import json
-import uuid
+import os
 import sys
 import traceback
+import uuid
+
+import pandas as pd
+from sqlalchemy import create_engine, text
+
 
 def run():
     print("🚀 Predator Sync V3.4: Engineering Pipeline")

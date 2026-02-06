@@ -1,6 +1,6 @@
+import { AnimatePresence, HTMLMotionProps, motion } from 'framer-motion';
+import { AlertCircle, ArrowDown, ArrowUp, CheckCircle, ChevronDown, Info, Minus } from 'lucide-react';
 import React, { useState } from 'react';
-import { motion, HTMLMotionProps, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, AlertCircle, CheckCircle, Info, Activity, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 
 export interface CardMetric {
   label: string;
@@ -108,21 +108,42 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
         ${getGlowClass()}
         ${getVariantClass()}
         ${className}
-        relative overflow-hidden
+        relative
       `}
       {...rest}
     >
       {/* Decorative Elements */}
       {(variant === 'cyber' || variant === 'holographic') && (
         <>
-          <div className="absolute top-0 left-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <div className="absolute top-0 left-0 w-2 h-[1px] bg-cyan-500"></div>
-            <div className="absolute top-0 left-0 w-[1px] h-2 bg-cyan-500"></div>
+          {/* Corner Brackets */}
+          <div className="absolute top-0 left-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
+            <div className="absolute top-0 left-0 w-3 h-[1.5px] bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
+            <div className="absolute top-0 left-0 w-[1.5px] h-3 bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
           </div>
-          <div className="absolute bottom-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-             <div className="absolute bottom-0 right-0 w-2 h-[1px] bg-cyan-500"></div>
-             <div className="absolute bottom-0 right-0 w-[1px] h-2 bg-cyan-500"></div>
+          <div className="absolute top-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
+            <div className="absolute top-0 right-0 w-3 h-[1.5px] bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
+            <div className="absolute top-0 right-0 w-[1.5px] h-3 bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
           </div>
+          <div className="absolute bottom-0 left-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
+            <div className="absolute bottom-0 left-0 w-3 h-[1.5px] bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
+            <div className="absolute bottom-0 left-0 w-[1.5px] h-3 bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
+          </div>
+          <div className="absolute bottom-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
+             <div className="absolute bottom-0 right-0 w-3 h-[1.5px] bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
+             <div className="absolute bottom-0 right-0 w-[1.5px] h-3 bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
+          </div>
+
+          {/* Sweeping Reflective Stripe */}
+          <motion.div
+            initial={{ left: '-100%' }}
+            whileHover={{ left: '200%' }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            className="absolute top-0 bottom-0 w-1/4 bg-white/5 skew-x-[35deg] pointer-events-none z-10 blur-xl"
+          />
+
+          {/* Micro-Noise Texture */}
+          <div className="absolute inset-0 bg-cyber-noise opacity-[0.05] pointer-events-none z-0 rounded-[inherit]"></div>
+
           {variant === 'cyber' && <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none z-0"></div>}
           {variant === 'holographic' && (
              <div className="absolute -top-[100%] left-0 right-0 h-1/2 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent animate-scanline-fast opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity"></div>
@@ -186,7 +207,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden relative z-10"
+            className=" relative z-10"
           >
              <div className={`${noPadding ? '' : 'p-5'} flex flex-col gap-4`}>
                 {children}
@@ -207,7 +228,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
                                      {metric.trend === 'up' ? <ArrowUp size={10} /> :
                                       metric.trend === 'down' ? <ArrowDown size={10} /> :
                                       <Minus size={10} />}
-                                     {metric.trendValue && <span className="ml-1">{metric.trendValue}</span>}
+                                     {metric.trendValue && <span className="ml-1">{(metric.trendValue as any)}</span>}
                                   </div>
                                )}
                             </div>

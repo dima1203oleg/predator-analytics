@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import os
 
@@ -18,14 +20,12 @@ class MistralAgent:
             else:
                  self.client = Mistral(api_key=api_key)
         except ImportError as e:
-            logger.error(f"Failed to import mistralai: {e}. MistralAgent disabled.")
+            logger.exception(f"Failed to import mistralai: {e}. MistralAgent disabled.")
         except Exception as e:
-            logger.error(f"MistralAgent init error: {e}")
+            logger.exception(f"MistralAgent init error: {e}")
 
     async def generate_code(self, prompt: str) -> str:
-        """
-        Генерує код на основі промта.
-        """
+        """Генерує код на основі промта."""
         if not self.client:
             return self._mock_generation(prompt)
 
@@ -44,11 +44,11 @@ class MistralAgent:
 
             return response.choices[0].message.content
         except Exception as e:
-            logger.error(f"Mistral generation failed: {e}")
-            return f"# Error generating code: {str(e)}"
+            logger.exception(f"Mistral generation failed: {e}")
+            return f"# Error generating code: {e!s}"
 
     def _mock_generation(self, prompt: str) -> str:
-        """Заглушка для тестів без API ключа"""
+        """Заглушка для тестів без API ключа."""
         return f"""
 # MOCK CODE GENERATION (Mistral Key missing)
 # Request: {prompt}

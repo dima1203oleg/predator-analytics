@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import pytest
 
-from app.services.telegram_assistant import TelegramAssistant, NgrokInfo
+from app.services.telegram_assistant import NgrokInfo, TelegramAssistant
 
 
 @pytest.mark.asyncio
@@ -31,7 +33,7 @@ async def test_update_ssh_config(tmp_path):
     tmpfile.write_text(content)
     ta.ssh_config_path = str(tmpfile)
     ngrok_info = NgrokInfo(ssh_host="7.tcp.eu.ngrok.io", ssh_port=15102, http_url="https://x", raw_message="x", parsed_at=None)
-    ok, message = await ta.update_ssh_config(ngrok_info)
+    ok, _message = await ta.update_ssh_config(ngrok_info)
     assert ok
     new_content = tmpfile.read_text()
     assert "HostName 7.tcp.eu.ngrok.io" in new_content
@@ -42,7 +44,6 @@ async def test_update_ssh_config(tmp_path):
 async def test_auto_deploy_toggle():
     ta = TelegramAssistant(token="fake")
     # ensure default matches env
-    orig = ta.auto_deploy_on_up
     # Set requesting user as unauthorized - should fail
     ta.requesting_user_id = 1234
     ta.authorized_users = []

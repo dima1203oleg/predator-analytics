@@ -1,8 +1,13 @@
-import pytest
+from __future__ import annotations
+
 import json
 import logging
 import sys
-from libs.core.structured_logger import setup_structured_logging, RequestLogger, get_logger
+
+import pytest
+
+from libs.core.structured_logger import RequestLogger, get_logger, setup_structured_logging
+
 
 # Ensure logging is configured for JSON before tests
 @pytest.fixture(scope="module", autouse=True)
@@ -12,7 +17,7 @@ def configure_logging():
     libs.core.structured_logger._global_logger = setup_structured_logging(log_level="INFO", use_json=True)
 
 def test_structured_log_format(caplog):
-    """Verify logs are valid JSON when configured"""
+    """Verify logs are valid JSON when configured."""
     # Clear previous logs
     caplog.clear()
 
@@ -37,7 +42,7 @@ def test_structured_log_format(caplog):
     assert "service" in data
 
 def test_request_logger_context(caplog):
-    """Verify RequestLogger adds context and duration"""
+    """Verify RequestLogger adds context and duration."""
     caplog.clear()
     print("DEBUG: Starting test_request_logger_context")
 

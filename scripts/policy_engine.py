@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 #!/usr/bin/env python3.12
 # policy_engine.py
 # Автор: Головний DevOps Predator Analytics v25.0
 # Призначення: Перевірка безпеки згенерованого AI коду
-
 import re
 from typing import Dict
+
 
 class PolicyEngine:
     FORBIDDEN_PATTERNS = [
@@ -19,7 +21,7 @@ class PolicyEngine:
 
     ALLOWED_COMMANDS_DRY_RUN = ["echo", "cat", "ls", "grep", "find", "wc", "head", "tail", "df", "du"]
 
-    def check_code(self, code: str, task_type: str = "sandbox-execute") -> Dict:
+    def check_code(self, code: str, task_type: str = "sandbox-execute") -> dict:
         violations = []
 
         # 1. Перевірка на небезпечні патерни

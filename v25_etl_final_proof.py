@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import asyncio
 import os
-import sys
 from pathlib import Path
+import sys
 from unittest.mock import AsyncMock
+
 
 # Add core paths
 ROOT_DIR = Path("/Users/dima-mac/Documents/Predator_21")

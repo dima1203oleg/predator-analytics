@@ -1,0 +1,318 @@
+# Predator Analytics v28.6 - Optimized Docker Compose
+# 🚀 Features: Unified Governance, Kafka Persistence, UV Speed
+
+services:
+  # ═══════════════════════════════════════════════════════════════
+  # 1. CORE INFRASTRUCTURE (Messaging & DBs)
+  # ═══════════════════════════════════════════════════════════════
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: predator_rabbitmq
+    ports: ["5672:5672", "15672:15672"]
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-predator}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-predator_secret_key}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: predator_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: predator_kafka
+    depends_on: [zookeeper]
+    ports: ["9092:9092"]
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  postgres:
+    image: timescale/timescaledb:latest-pg15
+    container_name: predator_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-666666}
+      POSTGRES_DB: predator_db
+    ports: ["5432:5432"]
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d predator_db"]
+      interval: 10s
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  redis:
+    image: redis:7-alpine
+    container_name: predator_redis
+    ports: ["6379:6379"]
+    volumes: [redis_data:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  minio:
+    image: minio/minio
+    container_name: predator_minio
+    command: server /data --console-address ":9001"
+    ports: ["9000:9000", "9001:9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-predator_admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-predator_secret_key}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  # ═══════════════════════════════════════════════════════════════
+  # 2. SEARCH & VECTORS
+  # ═══════════════════════════════════════════════════════════════
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: predator_qdrant
+    ports: ["6333:6333", "6334:6334"]
+    volumes: [qdrant_data:/qdrant/storage]
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  opensearch:
+    image: opensearchproject/opensearch:2.17.1
+    container_name: predator_opensearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=false
+      - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
+      - DISABLE_SECURITY_PLUGIN=true
+    ulimits:
+      memlock: { soft: -1, hard: -1 }
+    ports: ["9200:9200", "9600:9600"]
+    volumes: [opensearch_data:/usr/share/opensearch/data]
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.17.1
+    container_name: predator_dashboards
+    ports: ["5601:5601"]
+    environment:
+      - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
+      - "DISABLE_SECURITY_PLUGIN=true"
+    depends_on: [opensearch]
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  # ═══════════════════════════════════════════════════════════════
+  # 3. APPLICATION LAYER (Aggregated)
+  # ═══════════════════════════════════════════════════════════════
+
+  backend:
+    image: predator-backend:v28.6
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    container_name: predator_backend
+    entrypoint: []
+    command:
+      [
+        "uvicorn",
+        "app.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--workers",
+        "1",
+      ]
+    ports: ["8090:8000"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    volumes:
+      - ./services/api-gateway/app:/app/app
+      - ./services/api-gateway/src:/app/src
+      - ./libs:/app/libs
+      - ./services/orchestrator:/app/orchestrator
+      - ./scripts:/app/scripts
+    # env_file: [.env] # Disabled due to sandbox permissions
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://admin:666666@postgres:5432/predator_db}
+      - REDIS_URL=redis://redis:6379/0
+      - QDRANT_URL=http://qdrant:6333
+      - OPENSEARCH_URL=http://opensearch:9200
+      - MINIO_ENDPOINT=minio:9000
+      - RABBITMQ_URL=amqp://predator:predator_secret_key@rabbitmq:5672/
+    depends_on: [postgres, redis]
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  orchestrator:
+    image: predator-orchestrator:v28.6
+    build:
+      context: .
+      dockerfile: services/orchestrator/Dockerfile
+    container_name: predator_orchestrator
+    network_mode: host
+    # env_file: [.env]
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://predator:predator_password@127.0.0.1:5432/predator_db}
+    volumes:
+      - ./services/orchestrator:/app/orchestrator
+      - ./libs:/app/libs
+      - ./data:/app/data
+    depends_on: [postgres, redis, backend]
+    restart: unless-stopped
+    profiles: ["server"]
+
+  celery_worker:
+    image: predator-backend:v28.6
+    container_name: predator_celery_worker
+    command: celery -A app.core.celery_app worker -Q etl,ingestion,maintenance --concurrency=4
+    volumes:
+      - ./services/api-gateway/app:/app/app
+      - ./libs:/app/libs
+    # env_file: [.env]
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://admin:666666@postgres:5432/predator_db}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on: [postgres, redis]
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  frontend:
+    build:
+      context: ./apps/predator-analytics-ui
+      dockerfile: Dockerfile
+    container_name: predator_frontend
+    ports: ["80:80"]
+    depends_on: [backend]
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  # ═══════════════════════════════════════════════════════════════
+  # 4. UNIFIED GOVERNANCE (Replaces 5 Microservices)
+  # ═══════════════════════════════════════════════════════════════
+
+  constitutional-core:
+    build:
+      context: .
+      dockerfile: services/constitutional-core/Dockerfile
+    container_name: predator_governance
+    ports:
+      - "8091:8000" # Main Governance
+      - "8092:8000" # Ledger
+      - "8093:8000" # RCE
+      - "8094:8000" # VPC
+      - "8095:8000" # SOM
+      - "50051:50051" # gRPC Swarm
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://admin:666666@postgres:5432/predator_db}
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - CONSTITUTION_PATH=/app/infrastructure/constitution
+    volumes:
+      - ./services/constitutional-core/app:/app/app
+      - ./infrastructure/constitution:/app/infrastructure/constitution
+      - ./libs:/app/libs
+    depends_on: [postgres, redis, kafka]
+    restart: unless-stopped
+    networks:
+      predator-network:
+        aliases:
+          - arbiter
+          - truth-ledger
+          - som
+          - rce
+          - vpc-verifier
+          - predator_governance
+    profiles: ["local", "server"]
+
+  # ═══════════════════════════════════════════════════════════════
+  # 5. AI & OBSERVABILITY
+  # ═══════════════════════════════════════════════════════════════
+
+  h2o-llm-studio:
+    image: h2oairelease/h2oai-llmstudio-app:latest
+    ports: ["10101:10101"]
+    environment:
+      - CUDA_VISIBLE_DEVICES= # CPU mode by default
+    volumes:
+      - h2o_workspace:/workspace
+      - ./data:/app/data
+    networks: [predator-network]
+    profiles: ["server"]
+
+  h2o-automl:
+    image: h2oai/h2o-open-source-k8s:latest
+    container_name: predator_h2o_automl
+    ports: ["54321:54321"]
+    environment:
+      - H2O_WAVE_NO_LOG=1
+    volumes:
+      - ./data:/app/data
+    networks: [predator-network]
+    profiles: ["server"]
+
+  ollama:
+    image: ollama/ollama:latest
+    ports: ["11434:11434"]
+    volumes: [ollama_data:/root/.ollama]
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  grafana:
+    image: grafana/grafana:latest
+    ports: ["3001:3000"]
+    networks: [predator-network]
+    profiles: ["server"]
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports: ["9090:9090"]
+    networks: [predator-network]
+    profiles: ["server"]
+
+volumes:
+  postgres_data:
+  redis_data:
+  qdrant_data:
+  opensearch_data:
+  minio_data:
+  grafana_data:
+  prometheus_data:
+  orchestrator_logs:
+  h2o_workspace:
+  ollama_data:
+
+networks:
+  predator-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

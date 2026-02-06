@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-h2o
+  labels:
+    app: h2o
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: h2o
+  template:
+    metadata:
+      labels:
+        app: h2o
+    spec:
+      containers:
+        - name: automl
+          image: "{{ .Values.h2o.automl_image }}"
+          ports:
+            - containerPort: 54321
+          # Persistent storage for models
+          volumeMounts:
+            - name: h2o-data
+              mountPath: /data
+        - name: studio
+          image: "{{ .Values.h2o.studio_image }}"
+          ports:
+            - containerPort: 10101
+          env:
+            - name: H2O_WAVE_NO_LOG
+              value: "1"
+      volumes:
+        - name: h2o-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-h2o
+spec:
+  type: ClusterIP
+  ports:
+    - name: automl
+      port: 54321
+    - name: studio
+      port: 10101
+  selector:
+    app: h2o

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import logging
-from typing import Any, Dict
+from typing import Any
 
 from libs.agents.core import TrinityCore
 
@@ -35,10 +37,8 @@ class AgentOrchestrator(TrinityCore):
         self.prometheus = PrometheusClient()
         self.pending_actions = {} # user_id -> intent_data
 
-    async def execute_chain(self, intent_data: Dict[str, Any], user_id: int) -> Dict:
-        """
-        Processes an intent and parameters through the TrinityCore or directly via Ops.
-        """
+    async def execute_chain(self, intent_data: dict[str, Any], user_id: int) -> dict:
+        """Processes an intent and parameters through the TrinityCore or directly via Ops."""
         intent = intent_data.get("intent", "chat")
         params = intent_data.get("params", {})
         query = params.get("query") or intent # Fallback

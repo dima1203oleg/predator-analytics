@@ -1,0 +1,267 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - button [ref=e8] [cursor=pointer]:
+      - img [ref=e10]
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - generic [ref=e23]: P
+        - generic [ref=e26]:
+          - generic [ref=e27]: PREDATOR ANALYTICS
+          - generic [ref=e28]:
+            - generic [ref=e29]: v30.0-STABLE
+            - generic [ref=e32]: ONLINE
+      - generic [ref=e33]:
+        - button "Знайти... ⌘K" [ref=e34] [cursor=pointer]:
+          - img [ref=e35]
+          - generic [ref=e38]: Знайти...
+          - generic [ref=e39]: ⌘K
+        - generic [ref=e41]:
+          - generic [ref=e42]: 03:24:29
+          - generic [ref=e43]: 03 лют. 2026 р.
+        - generic [ref=e45]:
+          - button "CMD" [ref=e47] [cursor=pointer]:
+            - img [ref=e49]
+            - generic [ref=e51]: CMD
+          - button "TAB" [ref=e53] [cursor=pointer]:
+            - img [ref=e55]
+            - generic [ref=e57]: TAB
+          - button "GSM" [ref=e58] [cursor=pointer]:
+            - img [ref=e60]
+            - generic [ref=e62]: GSM
+        - generic [ref=e64]:
+          - button "TITAN" [ref=e65] [cursor=pointer]:
+            - generic [ref=e66]: TITAN
+          - button "INQUISITOR" [ref=e68] [cursor=pointer]:
+            - generic [ref=e69]: INQUISITOR
+          - button "SOVEREIGN" [ref=e71] [cursor=pointer]:
+            - generic [ref=e72]: SOVEREIGN
+        - generic [ref=e75]:
+          - button "client" [ref=e76] [cursor=pointer]
+          - button "premium" [ref=e77] [cursor=pointer]: premium
+          - button "admin" [ref=e78] [cursor=pointer]
+        - generic [ref=e79] [cursor=pointer]:
+          - generic [ref=e80]:
+            - generic [ref=e81]: Authenticated Operator
+            - generic [ref=e82]: Predator_User_01
+          - generic [ref=e83]:
+            - img [ref=e85]
+            - img [ref=e89]
+          - generic [ref=e92]:
+            - generic [ref=e93]:
+              - img [ref=e94]
+              - generic [ref=e97]: Sovereign_Elite
+            - generic [ref=e98]:
+              - img [ref=e99]
+              - generic [ref=e108]: "AUTH_TOKEN: PX-992-SI"
+    - complementary [ref=e109]:
+      - generic [ref=e111]:
+        - img [ref=e113]
+        - generic [ref=e115]:
+          - heading "PREDATOR" [level=1] [ref=e116]
+          - text: Analytics v30
+      - generic [ref=e118]:
+        - generic [ref=e119]:
+          - heading "ОГЛЯД" [level=3] [ref=e120]
+          - generic [ref=e121]:
+            - link "Головна" [ref=e122] [cursor=pointer]:
+              - /url: /overview
+              - img [ref=e124]
+              - generic [ref=e129]: Головна
+            - link "Паноптикон Pro" [ref=e130] [cursor=pointer]:
+              - /url: /
+              - img [ref=e132]
+              - generic [ref=e135]: Паноптикон
+              - generic [ref=e136]:
+                - img [ref=e137]
+                - generic [ref=e139]: Pro
+            - link "Стрічка Подій" [ref=e140] [cursor=pointer]:
+              - /url: /news
+              - img [ref=e142]
+              - generic [ref=e148]: Стрічка Подій
+        - generic [ref=e149]:
+          - heading "РОЗВІДКА" [level=3] [ref=e150]
+          - generic [ref=e151]:
+            - link "Пошук v30" [ref=e152] [cursor=pointer]:
+              - /url: /search-v2
+              - img [ref=e154]
+              - generic [ref=e159]: Пошук v30
+            - link "Радар Зв'язків" [ref=e160] [cursor=pointer]:
+              - /url: /analytics
+              - img [ref=e162]
+              - generic [ref=e167]: Радар Зв'язків
+            - link "Топологія" [ref=e168] [cursor=pointer]:
+              - /url: /graph
+              - img [ref=e170]
+              - generic [ref=e175]: Топологія
+            - link "Архів Знань" [ref=e176] [cursor=pointer]:
+              - /url: /documents
+              - img [ref=e178]
+              - generic [ref=e181]: Архів Знань
+            - link "Розслідування" [ref=e182] [cursor=pointer]:
+              - /url: /cases
+              - img [ref=e184]
+              - generic [ref=e186]: Розслідування
+        - generic [ref=e187]:
+          - heading "ДАНІ" [level=3] [ref=e188]
+          - generic [ref=e189]:
+            - link "Сховища" [ref=e190] [cursor=pointer]:
+              - /url: /databases
+              - img [ref=e192]
+              - generic [ref=e196]: Сховища
+            - link "Джерела" [ref=e197] [cursor=pointer]:
+              - /url: /parsers
+              - img [ref=e199]
+              - generic [ref=e203]: Джерела
+            - link "Dataset Studio" [ref=e204] [cursor=pointer]:
+              - /url: /datasets
+              - img [ref=e206]
+              - generic [ref=e216]: Dataset Studio
+            - link "Customs Intel Pro" [ref=e217] [cursor=pointer]:
+              - /url: /customs-intel
+              - img [ref=e219]
+              - generic [ref=e223]: Customs Intel
+              - generic [ref=e224]:
+                - img [ref=e225]
+                - generic [ref=e227]: Pro
+        - generic [ref=e228]:
+          - heading "ОПЕРАЦІЇ" [level=3] [ref=e229]
+          - generic [ref=e230]:
+            - link "ШІ Агенти" [ref=e231] [cursor=pointer]:
+              - /url: /agents
+              - img [ref=e233]
+              - generic [ref=e236]: ШІ Агенти
+            - link "NAS Оркестратор" [ref=e237] [cursor=pointer]:
+              - /url: /llm/nas
+              - img [ref=e239]
+              - generic [ref=e245]: NAS Оркестратор
+        - generic [ref=e246]:
+          - heading "СИСТЕМА" [level=3] [ref=e247]
+          - generic [ref=e248]:
+            - link "Комплаєнс" [ref=e249] [cursor=pointer]:
+              - /url: /compliance
+              - img [ref=e251]
+              - generic [ref=e255]: Комплаєнс
+            - link "Налаштування" [ref=e256] [cursor=pointer]:
+              - /url: /settings
+              - img [ref=e258]
+              - generic [ref=e261]: Налаштування
+        - generic [ref=e262]:
+          - heading "PREMIUM" [level=3] [ref=e263]
+          - generic [ref=e264]:
+            - link "Intelligence Hub Pro" [ref=e265] [cursor=pointer]:
+              - /url: /premium
+              - img [ref=e267]
+              - generic [ref=e273]: Intelligence Hub
+              - generic [ref=e274]:
+                - img [ref=e275]
+                - generic [ref=e277]: Pro
+            - link "Конструктор Pro" [ref=e278] [cursor=pointer]:
+              - /url: /builder
+              - img [ref=e280]
+              - generic [ref=e284]: Конструктор
+              - generic [ref=e285]:
+                - img [ref=e286]
+                - generic [ref=e288]: Pro
+            - link "Конкуренти Pro" [ref=e289] [cursor=pointer]:
+              - /url: /competitor-intel
+              - img [ref=e291]
+              - generic [ref=e296]: Конкуренти
+              - generic [ref=e297]:
+                - img [ref=e298]
+                - generic [ref=e300]: Pro
+            - link "Entity Graph Pro" [ref=e301] [cursor=pointer]:
+              - /url: /entity-graph
+              - img [ref=e303]
+              - generic [ref=e306]: Entity Graph
+              - generic [ref=e307]:
+                - img [ref=e308]
+                - generic [ref=e310]: Pro
+        - generic [ref=e311]:
+          - heading "АВТОНОМНІСТЬ" [level=3] [ref=e312]
+          - generic [ref=e313]:
+            - link "Еволюція Pro" [ref=e314] [cursor=pointer]:
+              - /url: /autonomy
+              - img [ref=e316]
+              - generic [ref=e324]: Еволюція
+              - generic [ref=e325]:
+                - img [ref=e326]
+                - generic [ref=e328]: Pro
+            - link "Компоненти Pro" [ref=e329] [cursor=pointer]:
+              - /url: /components
+              - img [ref=e331]
+              - generic [ref=e341]: Компоненти
+              - generic [ref=e342]:
+                - img [ref=e343]
+                - generic [ref=e345]: Pro
+            - link "Knowledge Pro" [ref=e346] [cursor=pointer]:
+              - /url: /knowledge
+              - img [ref=e348]
+              - generic [ref=e350]: Knowledge
+              - generic [ref=e351]:
+                - img [ref=e352]
+                - generic [ref=e354]: Pro
+      - generic [ref=e355]:
+        - generic [ref=e356]:
+          - generic [ref=e361]:
+            - generic [ref=e362]: СИСТЕМА ОНЛАЙН
+            - generic [ref=e363]: v30.0.0-стабільна
+          - img [ref=e364]
+        - generic [ref=e367]:
+          - generic [ref=e369]: License Owner
+          - generic [ref=e370]: Кізима Дмитро Миколайович
+          - generic [ref=e371]: b. 12.03.1985 • © 2026
+    - main [ref=e372]:
+      - generic [ref=e385]:
+        - generic [ref=e386]: QUANTUM LINK ESTABLISHED
+        - generic [ref=e387]:
+          - generic [ref=e388]: P
+          - generic [ref=e389]: R
+          - generic [ref=e390]: E
+          - generic [ref=e391]: D
+          - generic [ref=e392]: A
+          - generic [ref=e393]: T
+          - generic [ref=e394]: O
+          - generic [ref=e395]: R
+  - button "Швидкі дії ⌘K" [ref=e396] [cursor=pointer]:
+    - img [ref=e397]
+    - generic [ref=e399]: Швидкі дії
+    - generic [ref=e400]: ⌘K
+  - button "Відкрити швидкі дії" [ref=e402] [cursor=pointer]:
+    - img [ref=e404]
+  - generic [ref=e407]:
+    - generic [ref=e410]:
+      - generic [ref=e411]:
+        - img [ref=e412]
+        - generic [ref=e414]: Крок 1 з 6
+      - button "Закрити" [ref=e415] [cursor=pointer]:
+        - img [ref=e416]
+    - generic [ref=e419]:
+      - img [ref=e421]
+      - heading "Ласкаво просимо до PREDATOR v30" [level=2] [ref=e426]
+      - paragraph [ref=e427]: Ваша ультимативна платформа для аналітики, розслідувань та стратегічного планування тепер ще потужніша.
+    - generic [ref=e428]:
+      - button "Назад" [disabled] [ref=e429]
+      - button "Далі" [ref=e437] [cursor=pointer]:
+        - text: Далі
+        - img [ref=e438]
+  - generic [ref=e440]:
+    - generic [ref=e441]:
+      - generic [ref=e442]:
+        - img [ref=e444]
+        - generic [ref=e451]: Автономний Режим
+      - generic [ref=e452]:
+        - button "−" [ref=e453] [cursor=pointer]
+        - button "Приховати на цю сесію" [ref=e454] [cursor=pointer]:
+          - img [ref=e455]
+    - generic [ref=e458]:
+      - paragraph [ref=e459]: Бекенд недоступний. UI працює з локальними даними.
+      - button "Спробувати знову" [ref=e460] [cursor=pointer]:
+        - img [ref=e461]
+        - text: Спробувати знову
+  - button "2" [ref=e466] [cursor=pointer]:
+    - img [ref=e467]
+    - generic [ref=e471]: "2"
+```

@@ -4,10 +4,8 @@
 # Використання: ./scripts/server-status.sh
 
 # === КОНФІГУРАЦІЯ ===
-SSH_HOST="194.177.1.240"
-SSH_PORT="6666"
-SSH_USER="dima"
-SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
+SSH_ALIAS="predator-server"
+# Примітка: Host/Port/User/Key беруться з ~/.ssh/config
 
 # Кольори
 GREEN='\033[0;32m'
@@ -19,19 +17,13 @@ NC='\033[0m'
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${GREEN}📊 Статус сервера Predator Analytics${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "📍 Сервер: ${YELLOW}$SSH_HOST:$SSH_PORT${NC}"
+echo -e "📍 Сервер: ${YELLOW}$SSH_ALIAS${NC}"
 echo -e "🌐 Веб-інтерфейс: ${GREEN}https://2e41c24fa38f0d.lhr.life/${NC}"
 echo ""
 
-# SSH опції
-SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10"
-if [ -f "$SSH_KEY" ]; then
-    SSH_OPTS="-i $SSH_KEY $SSH_OPTS"
-fi
-
 # Функція для виконання команд на сервері
 run_remote() {
-    ssh $SSH_OPTS -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "$1" 2>/dev/null
+    ssh "$SSH_ALIAS" "$1" 2>/dev/null
 }
 
 # Перевірка підключення
@@ -40,7 +32,7 @@ if run_remote "echo 'OK'" > /dev/null 2>&1; then
     echo -e "${GREEN}   ✅ Сервер доступний${NC}"
 else
     echo -e "${RED}   ❌ Сервер недоступний${NC}"
-    echo -e "${YELLOW}   💡 Підказка: перевірте ssh -p $SSH_PORT $SSH_USER@$SSH_HOST${NC}"
+    echo -e "${YELLOW}   💡 Підказка: спробуйте 'ssh predator-server' в терміналі${NC}"
     exit 1
 fi
 echo ""

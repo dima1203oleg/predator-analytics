@@ -1,15 +1,20 @@
-import typer
+from __future__ import annotations
+
+from datetime import datetime
 import json
-import yaml
-import requests
 import os
+from typing import Optional
+
+import requests
 from rich.console import Console
 from rich.table import Table
-from typing import Optional
-from datetime import datetime
-from predatorctl.core.ledger_client import LedgerClient
-from predatorctl.core.arbiter_client import ArbiterClient
+import typer
+import yaml
+
 from libs.core.linter import get_linter
+from predatorctl.core.arbiter_client import ArbiterClient
+from predatorctl.core.ledger_client import LedgerClient
+
 
 app = typer.Typer(help="System management and status")
 console = Console()
@@ -23,8 +28,7 @@ linter = get_linter(LAWS_DIR)
 def status(
     output: str = typer.Option("human", "--output", "-o", help="Output format (human, json, yaml)")
 ):
-    """
-    Get overall system status and component health.
+    """Get overall system status and component health.
     Queries live constitutional services.
     """
     # Check Constitutional Services
@@ -90,18 +94,14 @@ def status(
 def health(
     detailed: bool = typer.Option(False, "--detailed", help="Show detailed health metrics")
 ):
-    """
-    Check health of system services.
-    """
+    """Check health of system services."""
     console.print("[green]✓[/green] All systems operational")
     if detailed:
         console.print("Detailed health check not implemented in mock.")
 
 @app.command()
 def lint():
-    """
-    Lint constitutional axioms for logic conflicts and syntax errors.
-    """
+    """Lint constitutional axioms for logic conflicts and syntax errors."""
     console.print(f"Linting axioms in {LAWS_DIR}...")
     results = linter.lint_all()
 
@@ -130,9 +130,7 @@ def audit(
     since: str = typer.Option("24h", "--since", help="Lookback period"),
     type: str = typer.Option("compliance", "--type", help="Type of audit")
 ):
-    """
-    Audit compliance with constitution using the Truth Ledger.
-    """
+    """Audit compliance with constitution using the Truth Ledger."""
     console.print(f"Running {type} audit for last {since}...")
 
     # Check Ledger Integrity
@@ -189,8 +187,7 @@ def audit(
 def bom(
     kernel_only: bool = typer.Option(False, "--kernel", help="Show only Tier-0 Kernel components")
 ):
-    """
-    Show v27.0 System Bill of Materials (BOM) Revision.
+    """Show v27.0 System Bill of Materials (BOM) Revision.
     Maps digital components to the physical reality stack.
     """
     table = Table(title="Predator v27.0 System BOM (Revision)")
@@ -224,9 +221,7 @@ def bom(
 def version(
     check_update: bool = typer.Option(False, "--check-update", help="Check for updates")
 ):
-    """
-    Show system version.
-    """
+    """Show system version."""
     console.print("Predator Analytics v27.0.0 (The Reality-Bound Edition)")
     if check_update:
         console.print("Checking for updates... System is up to date.")

@@ -1,14 +1,18 @@
+from __future__ import annotations
+
 import asyncio
-import asyncpg
 import hashlib
-import secrets
 import os
+import secrets
+
+import asyncpg
+
 
 # Configuration from .env or defaults
 DB_URL = os.getenv("DATABASE_URL", "postgresql://predator:predator_password@localhost:5432/predator_db").replace("postgresql+asyncpg://", "postgresql://")
 
 def hash_password(password: str) -> str:
-    """Hash password with salt using SHA256"""
+    """Hash password with salt using SHA256."""
     salt = secrets.token_hex(16)
     hashed = hashlib.sha256((salt + password).encode()).hexdigest()
     return f"{salt}:{hashed}"

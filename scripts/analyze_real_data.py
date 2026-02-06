@@ -1,12 +1,16 @@
+from __future__ import annotations
+
+import os
+import sys
 
 import pandas as pd
-import os
+
 
 FILE_PATH = "/Users/dima-mac/Desktop/Березень_2024.xlsx"
 
 if not os.path.exists(FILE_PATH):
     print(f"❌ File not found: {FILE_PATH}")
-    exit(1)
+    sys.exit(1)
 
 print(f"📂 Loading: {FILE_PATH} ...")
 try:

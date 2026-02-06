@@ -1,0 +1,5 @@
+# Antigravity Rules
+
+1. **Language**: Always answer in Ukrainian.
+2. **Context**: Deployment target is NVIDIA server (k3s), Local environment is Mac (Development).
+3. **Tools**: Use k9s for cluster management.

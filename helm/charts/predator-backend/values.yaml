@@ -1,0 +1,315 @@
+# Default values for predator-backend
+# This is a YAML-formatted file.
+
+global:
+  environment: production
+  domain: predator-analytics.com
+  tlsEnabled: true
+
+# Replication and scaling
+replicaCount: 3
+
+image:
+  repository: ghcr.io/predator-analytics/backend
+  pullPolicy: IfNotPresent
+  tag: "30.1.0"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: "predator-backend"
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "9090"
+  prometheus.io/path: "/metrics"
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+
+# API Gateway Service
+apiGateway:
+  enabled: true
+  port: 9080
+  targetPort: 9080
+  replicas: 3
+
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 9080
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: 9080
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 2
+
+# Ingestion Worker
+ingestionWorker:
+  enabled: true
+  replicas: 2
+
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+
+  # Circuit breaker configuration
+  circuitBreaker:
+    maxCpuMinutes: 10
+    maxMemoryGb: 4
+    maxChunks: 1000000
+    maxProcessingTimeMinutes: 30
+
+# AI/RAG Services
+aiServices:
+  enabled: true
+  replicas: 2
+
+  resources:
+    limits:
+      cpu: 3000m
+      memory: 6Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+
+  # RAG configuration
+  rag:
+    retrieverTopK: 20
+    rerankerTopK: 5
+    maxContextTokens: 4096
+    confidenceThreshold: 0.7
+
+# Background Workers (Celery)
+workers:
+  enabled: true
+  replicas: 2
+
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+  concurrency: 4
+  queues:
+    - default
+    - ingestion
+    - indexing
+    - ai
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 9080
+  annotations: {}
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+  hosts:
+    - host: api.predator-analytics.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: predator-api-tls
+      hosts:
+        - api.predator-analytics.com
+
+# Database configuration
+postgresql:
+  enabled: true
+  auth:
+    username: predator
+    password: "" # Set via secret
+    database: predator_db
+  primary:
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 4Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    persistence:
+      enabled: true
+      size: 100Gi
+      storageClass: "longhorn"
+
+# Redis configuration
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: "" # Set via secret
+  master:
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+    persistence:
+      enabled: true
+      size: 20Gi
+
+# External services configuration
+externalServices:
+  # OpenSearch
+  opensearch:
+    enabled: true
+    hosts:
+      - "opensearch-cluster-master:9200"
+    username: admin
+    password: "" # Set via secret
+
+  # Qdrant
+  qdrant:
+    enabled: true
+    host: "qdrant-service"
+    port: 6333
+    apiKey: "" # Set via secret
+
+  # Kafka
+  kafka:
+    enabled: true
+    bootstrapServers:
+      - "kafka-broker-0.kafka:9092"
+      - "kafka-broker-1.kafka:9092"
+      - "kafka-broker-2.kafka:9092"
+
+  # MinIO
+  minio:
+    enabled: true
+    endpoint: "minio-service:9000"
+    bucket: "predator-data"
+    accessKey: "" # Set via secret
+    secretKey: "" # Set via secret
+
+  # Ollama (LLM)
+  ollama:
+    enabled: true
+    baseUrl: "http://ollama-service:11434"
+    defaultModel: "mistral:7b"
+    embeddingModel: "nomic-embed-text"
+
+# Environment variables
+env:
+  - name: APP_NAME
+    value: "Predator Analytics"
+  - name: APP_VERSION
+    value: "30.1"
+  - name: ENVIRONMENT
+    value: "production"
+  - name: LOG_LEVEL
+    value: "INFO"
+  - name: PYTHONUNBUFFERED
+    value: "1"
+
+# Secrets (should be overridden with actual secrets)
+secrets:
+  jwtSecretKey: "" # Required
+  databaseUrl: "" # Required
+  redisUrl: "" # Required
+
+# Observability
+monitoring:
+  enabled: true
+  prometheus:
+    enabled: true
+    port: 9090
+  loki:
+    enabled: true
+  tempo:
+    enabled: true
+
+# Security
+security:
+  networkPolicy:
+    enabled: true
+    policyTypes:
+      - Ingress
+      - Egress
+
+  podSecurityPolicy:
+    enabled: true
+
+  vault:
+    enabled: true
+    address: "http://vault:8200"
+    role: "predator-backend"
+
+# Resource quotas
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - predator-backend
+          topologyKey: kubernetes.io/hostname

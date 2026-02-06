@@ -1,16 +1,22 @@
-import os
+from __future__ import annotations
+
 import asyncio
 import logging
-from aiogram import Bot, Dispatcher, F, types
-from aiogram.types import FSInputFile
-from aiogram.fsm.storage.memory import MemoryStorage
+import os
 
 # Add common libs path if needed or rely on package install
 import sys
+
+from aiogram import Bot, Dispatcher, F, types
+from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.types import FSInputFile
+
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from core.cortex import TrinityOrchestrator
 from utils.voice import VoiceEngine
+
 
 # Logging
 logging.basicConfig(level=logging.INFO)

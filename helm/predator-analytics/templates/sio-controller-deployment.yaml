@@ -1,0 +1,63 @@
+
+# ════════════════════════════════════════════════════════════════════════
+# SIO CONTROLLER DEPLOYMENT (Self-Improvement Orchestrator)
+# ════════════════════════════════════════════════════════════════════════
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-sio-controller
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: sio-controller
+    component: autonomy-core
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator-analytics.selectorLabels" . | nindent 6 }}
+      app: sio-controller
+  template:
+    metadata:
+      labels:
+        {{- include "predator-analytics.selectorLabels" . | nindent 8 }}
+        app: sio-controller
+        component: autonomy-core
+    spec:
+      priorityClassName: predator-medium
+      containers:
+        - name: sio-controller
+          image: "ghcr.io/predator-analytics/sio-controller:latest"
+          command: ["uvicorn", "services.sio-controller.controller:app", "--host", "0.0.0.0", "--port", "8082"]
+          ports:
+            - containerPort: 8082
+              name: http
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-sio-trigger
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+spec:
+  schedule: "0 */6 * * *" # Every 6 hours
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: trigger
+            image: curlimages/curl:latest
+            command: ["curl", "-X", "POST", "http://{{ include "predator-analytics.fullname" . }}-sio-controller:8082/run-cycle"]
+          restartPolicy: OnFailure

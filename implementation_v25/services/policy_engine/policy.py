@@ -1,8 +1,12 @@
+from __future__ import annotations
+
+from enum import Enum
+from typing import Any, Dict
+import uuid
+
 from fastapi import FastAPI
 from pydantic import BaseModel
-from enum import Enum
-import uuid
-from typing import Any, Dict
+
 
 app = FastAPI(title="Predator Policy Engine (stub)", version="0.1")
 
@@ -14,12 +18,12 @@ class Decision(str, Enum):
 class Signal(BaseModel):
     name: str
     value: Any
-    metadata: Dict[str, Any] = {}
+    metadata: dict[str, Any] = {}
 
 class Context(BaseModel):
     tenant_id: str
     resource: str
-    extra: Dict[str, Any] = {}
+    extra: dict[str, Any] = {}
 
 class PolicyRequest(BaseModel):
     signal: Signal
@@ -28,14 +32,13 @@ class PolicyRequest(BaseModel):
 class PolicyResponse(BaseModel):
     id: str
     decision: Decision
-    plan: Dict[str, Any]
+    plan: dict[str, Any]
 
 @app.post("/decide", response_model=PolicyResponse)
 async def decide(req: PolicyRequest):
     # very simple policy stub for demo
     signal = req.signal.name.lower()
     val = req.signal.value
-    tenant = req.context.tenant_id
 
     if signal == "kubecost_spike" and val.get("percentage", 0) > 80:
         return PolicyResponse(id=str(uuid.uuid4()), decision=Decision.REVIEW, plan={"action": "scale_down", "reason": "cost spike"})

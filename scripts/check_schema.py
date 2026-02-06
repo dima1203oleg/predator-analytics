@@ -1,4 +1,8 @@
+from __future__ import annotations
+
 from sqlalchemy import create_engine, text
+
+
 try:
     engine = create_engine("postgresql://admin:666666@localhost:5432/predator_db")
     with engine.connect() as conn:

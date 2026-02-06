@@ -1,0 +1,20 @@
+apiVersion: v2
+name: predator-frontend
+description: PREDATOR Analytics Frontend - Next.js UI
+type: application
+version: 30.1.0
+appVersion: "30.1"
+
+maintainers:
+  - name: PREDATOR Team
+    email: dev@predator-analytics.com
+
+keywords:
+  - analytics
+  - frontend
+  - nextjs
+  - ui
+
+annotations:
+  category: Analytics
+  licenses: Proprietary

@@ -1,8 +1,12 @@
-import kubernetes.client
-import kubernetes.config
-import aiohttp
+from __future__ import annotations
+
 import logging
 import os
+
+import aiohttp
+import kubernetes.client
+import kubernetes.config
+
 
 logger = logging.getLogger("trinity.tools")
 
@@ -37,7 +41,7 @@ class InfraTools:
         return {"status": "executed", "results": results}
 
     async def scale_deployment(self, namespace, deployment, replicas):
-        """Scale workers (FinOps)"""
+        """Scale workers (FinOps)."""
         logger.info(f"Scaling {deployment} in {namespace} to {replicas}")
 
         # FinOps Check Policy
@@ -57,7 +61,7 @@ class InfraTools:
             return f"Failed to scale {deployment}: {e}"
 
     async def get_rabbitmq_backlog(self):
-        """Monitor queues"""
+        """Monitor queues."""
         rabbitmq_host = os.getenv("RABBITMQ_HOST", "rabbitmq")
         user = os.getenv("RABBITMQ_USER", "predator")
         password = os.getenv("RABBITMQ_PASS", "predator_secret_key")
@@ -71,11 +75,11 @@ class InfraTools:
                         return {q['name']: q.get('messages', 0) for q in data}
                     return {"error": f"RabbitMQ API returned {resp.status}"}
         except Exception as e:
-            logger.error(f"RabbitMQ check failed: {e}")
+            logger.exception(f"RabbitMQ check failed: {e}")
             return {"error": str(e)}
 
     async def trigger_argocd_sync(self, app_name):
-        """GitOps Trigger"""
+        """GitOps Trigger."""
         # Call ArgoCD API to force sync
         argocd_server = os.getenv("ARGOCD_SERVER", "argocd-server")
         token = os.getenv("ARGOCD_TOKEN", "")

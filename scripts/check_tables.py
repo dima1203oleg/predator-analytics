@@ -1,13 +1,17 @@
+from __future__ import annotations
 
 import asyncio
-import sys
 import os
+import sys
+
 
 # Add project root to pythonpath
 sys.path.append(os.getcwd())
 
 from sqlalchemy import text
+
 from libs.core.database import engine
+
 
 async def check_tables():
     try:

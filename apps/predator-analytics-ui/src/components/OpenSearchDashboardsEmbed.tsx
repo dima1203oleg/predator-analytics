@@ -26,14 +26,35 @@ interface OpenSearchDashboardsEmbedProps {
   showHeader?: boolean;
 }
 
-const DASHBOARDS_BASE_URL = '/opensearch-dashboards';
+// Dynamic base URL handling for remote access
+const getDashboardsUrl = () => {
+  if (typeof window !== 'undefined') {
+    // If running on ngrok/remote, assume dashboards are proxied or on same host port 5601
+    // For V30 production, we use a relative path if proxied, or fallback to absolute
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
 
-// Predefined dashboard IDs
+    // If local dev
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return 'http://localhost:5601';
+    }
+
+    // If remote/ngrok, we might need a proxy path like /opensearch-dashboards
+    // Or we assume port 5601 is also exposed/tunneled.
+    // Best practice: Use relative path via Nginx proxy
+    return '/opensearch-dashboards';
+  }
+  return 'http://localhost:5601';
+};
+
+const DASHBOARDS_BASE_URL = getDashboardsUrl();
+
+// Predefined dashboard IDs (To be filled with real UUIDs from the server)
 const DASHBOARDS = {
-  SEARCH_ANALYTICS: 'search-analytics',
-  SYSTEM_METRICS: 'system-metrics',
-  ERROR_LOGS: 'error-logs',
-  LATENCY_OVERVIEW: 'latency-overview',
+  SEARCH_ANALYTICS: '',
+  SYSTEM_METRICS: '',
+  ERROR_LOGS: '',
+  LATENCY_OVERVIEW: '',
   CUSTOM: 'custom'
 };
 
@@ -48,28 +69,17 @@ export const OpenSearchDashboardsEmbed: React.FC<OpenSearchDashboardsEmbedProps>
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState(new Date());
 
-  const dashboardUrl = `${DASHBOARDS_BASE_URL}/app/dashboards#/view/${dashboardId}?embed=true&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-24h,to:now))`;
+  // Use a simpler base URL if we don't have a specific dashboard ID
+  const dashboardUrl = dashboardId && dashboardId !== 'custom'
+    ? `${DASHBOARDS_BASE_URL}/app/dashboards#/view/${dashboardId}?embed=true&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-24h,to:now))`
+    : `${DASHBOARDS_BASE_URL}/app/dashboards?embed=true`;
 
   useEffect(() => {
-    // Check if OpenSearch Dashboards is accessible
-    const checkDashboards = async () => {
-      try {
-        const response = await fetch(`${DASHBOARDS_BASE_URL}/api/status`, {
-          method: 'GET',
-          credentials: 'include'
-        });
-        if (!response.ok) {
-          throw new Error('OpenSearch Dashboards недоступний');
-        }
-        setError(null);
-      } catch (err) {
-        setError('OpenSearch Dashboards недоступний. Перевірте підключення.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkDashboards();
+    // We'll trust the iframe to show its own errors to avoid CORS issues with fetch
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleRefresh = () => {
@@ -97,7 +107,7 @@ export const OpenSearchDashboardsEmbed: React.FC<OpenSearchDashboardsEmbedProps>
 
   return (
     <motion.div
-      className={`${containerClass} rounded-xl overflow-hidden border border-[var(--border-primary)]`}
+      className={`${containerClass} rounded-xl  border border-[var(--border-primary)]`}
       layout
       transition={{ duration: 0.3 }}
     >
@@ -120,9 +130,16 @@ export const OpenSearchDashboardsEmbed: React.FC<OpenSearchDashboardsEmbedProps>
           <div className="flex items-center gap-2">
             {/* Dashboard Selector */}
             <select
+              aria-label="Виберіть дашборд"
               className="px-3 py-1.5 rounded-lg bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-sm border border-[var(--border-secondary)]"
-              defaultValue={dashboardId}
+              value={dashboardId}
+              onChange={(e) => {
+                // Here we would normally change the dashboardId,
+                // but since prop is controlled, we'll just log or handle locally if needed
+                console.log('Selected:', e.target.value);
+              }}
             >
+              <option value="">🏠 Список дашбордів</option>
               <option value={DASHBOARDS.SEARCH_ANALYTICS}>📊 Аналітика Пошуку</option>
               <option value={DASHBOARDS.SYSTEM_METRICS}>📈 Метрики Системи</option>
               <option value={DASHBOARDS.ERROR_LOGS}>⚠️ Журнал Помилок</option>
@@ -164,7 +181,10 @@ export const OpenSearchDashboardsEmbed: React.FC<OpenSearchDashboardsEmbedProps>
       )}
 
       {/* Content */}
-      <div style={{ height: isFullscreen ? 'calc(100vh - 60px)' : height }} className="relative">
+      <motion.div
+        animate={{ height: isFullscreen ? 'calc(100vh - 60px)' : height }}
+        className="relative"
+      >
         <AnimatePresence mode="wait">
           {error ? (
             <motion.div
@@ -215,7 +235,7 @@ export const OpenSearchDashboardsEmbed: React.FC<OpenSearchDashboardsEmbedProps>
             />
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
 
       {/* Quick Stats Footer */}
       <div className="flex items-center justify-between px-4 py-2 bg-[var(--bg-secondary)] border-t border-[var(--border-primary)]">

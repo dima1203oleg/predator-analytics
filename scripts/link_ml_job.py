@@ -1,7 +1,11 @@
-from sqlalchemy import create_engine, text
-import time
+from __future__ import annotations
+
 import os
+import time
 import uuid
+
+from sqlalchemy import create_engine, text
+
 
 # Config
 DEFAULT_DB_URL = "postgresql://admin:666666@localhost:5432/predator_db"
@@ -53,7 +57,7 @@ def link_job():
                 print("❌ Datasource not found. Is Ingestion done?")
                 return
 
-            ds_id = res[0]
+            res[0]
 
             # 2. Create MLDataset entry
             check = conn.execute(text("SELECT id FROM gold.ml_datasets WHERE name='customs_march_2024'")).fetchone()

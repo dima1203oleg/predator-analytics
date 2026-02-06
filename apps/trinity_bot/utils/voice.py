@@ -1,8 +1,12 @@
-import os
-import logging
-import speech_recognition as sr
-from pydub import AudioSegment
+from __future__ import annotations
+
 import asyncio
+import logging
+import os
+
+from pydub import AudioSegment
+import speech_recognition as sr
+
 
 # Check for whisper availability
 try:
@@ -69,4 +73,4 @@ class VoiceEngine:
         """Mock Text-to-Speech synthesis."""
         # return path to audio file
         # In a real app we'd use gTTS or ElevenLabs
-        return None
+        return

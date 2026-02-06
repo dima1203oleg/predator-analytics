@@ -195,7 +195,7 @@ export const AIActivityLogs: React.FC<AIActivityLogsProps> = ({
   };
 
   return (
-    <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden h-full flex flex-col">
+    <div className="bg-slate-800/50 rounded-xl border border-slate-700  h-full flex flex-col">
       {/* Header */}
       <div className="p-4 border-b border-slate-700 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -227,9 +227,9 @@ export const AIActivityLogs: React.FC<AIActivityLogsProps> = ({
           >
             <option value="all">Всі</option>
             <option value="info">Info</option>
-            <option value="success">Success</option>
+            <option value="success">Успіх</option>
             <option value="warning">Warning</option>
-            <option value="error">Error</option>
+            <option value="error">Помилка</option>
             <option value="debug">Debug</option>
           </select>
 

@@ -13,7 +13,7 @@ Agents MUST read this file first before asking the user for any connection detai
 | **SSH Port** | `6666` |
 | **User** | `dima` |
 | **Password** | `Dima@1203` |
-| **Web UI** | [https://commendatory-loriann-unappealingly.ngrok-free.dev](https://commendatory-loriann-unappealingly.ngrok-free.dev) |
+| **Web UI** | [https://jolyn-bifid-eligibly.ngrok-free.dev/admin](https://jolyn-bifid-eligibly.ngrok-free.dev/admin) |
 
 ## 🛠️ Auto-Connect Command Template
 ```bash

@@ -1,0 +1,50 @@
+name: "Predator v30: Production Readiness"
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install ruff pytest
+      - name: Lint with Ruff
+        run: ruff check .
+
+  helm-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+      - name: Helm Lint
+        run: |
+          helm lint helm/predator
+      - name: Helm Template Validation
+        run: |
+          helm template predator-test helm/predator > manifest.yaml
+          # Basic manifest sanity check
+          grep "kind: Deployment" manifest.yaml
+
+  build-and-push:
+    needs: [lint, helm-validation]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build API
+        run: |
+          docker build -t predator-api:latest -f Dockerfile .
+      # In production, this would push to ECR/GHCR

@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 import asyncio
-import aiohttp
 import json
+
+import aiohttp
+
 
 KEYS = {
     "groq": [
@@ -90,26 +94,24 @@ async def check_key(session, provider, key):
             if resp.status == 200:
                 print(f"✅ {provider}: {key[:6]}... VALID")
                 return key
-            else:
-                text = await resp.text()
-                print(f"❌ {provider}: {key[:6]}... INVALID ({resp.status}) - {text[:50]}")
-                return None
+            text = await resp.text()
+            print(f"❌ {provider}: {key[:6]}... INVALID ({resp.status}) - {text[:50]}")
+            return None
     except Exception as e:
-        print(f"⚠️ {provider}: {key[:6]}... ERROR ({str(e)})")
+        print(f"⚠️ {provider}: {key[:6]}... ERROR ({e!s})")
         return None
 
 async def main():
-    valid_keys = {}
     async with aiohttp.ClientSession() as session:
         tasks = []
         for provider, keys in KEYS.items():
             for key in keys:
                 tasks.append(check_key(session, provider, key))
 
-        results = await asyncio.gather(*tasks)
+        await asyncio.gather(*tasks)
 
         # Organize results
-        for i, (provider, keys) in enumerate(KEYS.items()):
+        for _i, (provider, keys) in enumerate(KEYS.items()):
             # This mapping is tricky with flat list of tasks, better to re-map.
             # Simplified:
             pass

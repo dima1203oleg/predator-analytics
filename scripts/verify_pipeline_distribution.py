@@ -1,7 +1,9 @@
+from __future__ import annotations
 
 import asyncio
-import os
 import logging
+import os
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(name)s - %(message)s')
@@ -27,7 +29,7 @@ async def verify_distribution():
         logger.info(f"VERIFY [PostgreSQL]: Found {row['count']} documents in gold.documents (source='customs'). Last ingest: {row['last_ingest']}")
         await conn.close()
     except Exception as e:
-        logger.error(f"VERIFY [PostgreSQL]: Failed to check. Error: {e}")
+        logger.exception(f"VERIFY [PostgreSQL]: Failed to check. Error: {e}")
 
     # 2. Check OpenSearch (Text Index)
     try:
@@ -51,7 +53,7 @@ async def verify_distribution():
 
             logger.info(f"VERIFY [OpenSearch]: Index 'documents_safe' exists with {doc_count} docs. Hits for '330610': {hits}")
     except Exception as e:
-         logger.error(f"VERIFY [OpenSearch]: Failed to check. Error: {e}")
+         logger.exception(f"VERIFY [OpenSearch]: Failed to check. Error: {e}")
 
     # 3. Check Qdrant (Vector Index)
     try:
@@ -67,7 +69,7 @@ async def verify_distribution():
             else:
                 logger.warning(f"VERIFY [Qdrant]: Collection 'documents_safe' not found (Status {resp.status_code})")
     except Exception as e:
-        logger.error(f"VERIFY [Qdrant]: Failed to check. Error: {e}")
+        logger.exception(f"VERIFY [Qdrant]: Failed to check. Error: {e}")
 
 if __name__ == "__main__":
     asyncio.run(verify_distribution())

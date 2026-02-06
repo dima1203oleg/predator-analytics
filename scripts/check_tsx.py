@@ -1,8 +1,10 @@
+from __future__ import annotations
 
 import re
 
+
 def check_structure(file_path):
-    with open(file_path, 'r') as f:
+    with open(file_path) as f:
         content = f.read()
 
     tags = []

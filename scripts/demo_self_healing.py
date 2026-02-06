@@ -1,10 +1,12 @@
+from __future__ import annotations
 
-"""
-WinSURF Demo: Self-Healing Code Workflow
+
+"""WinSURF Demo: Self-Healing Code Workflow
 Scenario: Agent receives bad code, runs Ruff, fixes it automatically.
 """
-import subprocess
 import os
+import subprocess
+
 
 # 1. Create a "bad" python file
 bad_code = """
@@ -36,7 +38,7 @@ subprocess.run(["ruff", "format", filename], check=False)
 
 # 5. Show Result
 print("\n✅ Final Code:")
-with open(filename, "r") as f:
+with open(filename) as f:
     print(f.read())
 
 # Cleanup

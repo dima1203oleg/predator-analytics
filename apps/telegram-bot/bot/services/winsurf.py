@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import json
 import logging
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Dict
 
 logger = logging.getLogger(__name__)
 
@@ -31,8 +32,7 @@ class ArchitecturalDecisionRecord:
         return self.__dict__
 
 class WinSURFArchitect:
-    """
-    Автоматизована реалізація WinSURF Framework (v2).
+    """Автоматизована реалізація WinSURF Framework (v2).
     Generates ADRs and enforces Stability/Complexity matrices.
     """
 
@@ -43,10 +43,8 @@ class WinSURFArchitect:
         self.forbidden_tech = ["pulsar", "cassandra", "jenkins", "terraform", "ansible"]
         self.approved_tech = ["rabbitmq", "postgresql", "argocd", "kubernetes", "helm", "docker", "crossplane"]
 
-    async def evaluate_proposal(self, action: str, technology: str, description: str) -> Dict:
-        """
-        AI-driven evaluation of a proposal.
-        """
+    async def evaluate_proposal(self, action: str, technology: str, description: str) -> dict:
+        """AI-driven evaluation of a proposal."""
         # 1. Rationalization Check
         if technology and technology.lower() in self.forbidden_tech:
             return self._create_verdict(
@@ -80,10 +78,8 @@ class WinSURFArchitect:
             "impact": impact
         }
 
-    async def _analyze_impact_with_ai(self, action: str, tech: str, desc: str) -> Dict:
-        """
-        Uses AI (or heuristic fallback) to score Stability vs Complexity.
-        """
+    async def _analyze_impact_with_ai(self, action: str, tech: str, desc: str) -> dict:
+        """Uses AI (or heuristic fallback) to score Stability vs Complexity."""
         # TODO: Implement actual LLM call here.
         # For now, using deterministic heuristics for speed/stability in this demo.
 
@@ -107,7 +103,7 @@ class WinSURFArchitect:
             "security_risk": security_risk
         }
 
-    def _apply_matrix(self, impact: Dict) -> Dict:
+    def _apply_matrix(self, impact: dict) -> dict:
         # Rule 1: Complexity must be justified by Autonomy
         if impact["complexity"] > 6 and impact["autonomy"] < 4:
             return {
@@ -127,7 +123,7 @@ class WinSURFArchitect:
             "reason": "Схвалено. Відповідає метрикам WinSURF."
         }
 
-    def _create_verdict(self, decision: WinSURFDecision, reason: str, context: str) -> Dict:
+    def _create_verdict(self, decision: WinSURFDecision, reason: str, context: str) -> dict:
          return {
             "decision": decision,
             "reason": reason,
@@ -136,7 +132,7 @@ class WinSURFArchitect:
         }
 
     def validate_code_action(self, code: str) -> bool:
-        """Fast static analysis check"""
+        """Fast static analysis check."""
         if self.stage == SecurityStage.PRODUCTION:
             # Block hardcoded secrets
             if "API_KEY=" in code or "PASSWORD=" in code:

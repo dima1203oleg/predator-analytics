@@ -1,10 +1,14 @@
-import pandas as pd
-from sqlalchemy import create_engine, text
-import os
+from __future__ import annotations
+
 import datetime
 import json
-import uuid
+import os
 import sys
+import uuid
+
+import pandas as pd
+from sqlalchemy import create_engine, text
+
 
 # Config
 DEFAULT_DB_URL = "postgresql://admin:666666@localhost:5432/predator_db"
@@ -18,7 +22,7 @@ FILE_PATH = "customs.xlsx"
 
 def ingest():
     global FILE_PATH
-    print(f"🚀 Starting Real Data Ingestion")
+    print("🚀 Starting Real Data Ingestion")
 
     if not os.path.exists(FILE_PATH):
         if os.path.exists("/Users/dima-mac/Desktop/Березень_2024.xlsx"):
@@ -54,7 +58,7 @@ def ingest():
         'Фактурна варість, валюта контракту': 'invoice_value'
     }
 
-    valid_cols = [c for c in column_map.keys() if c in df.columns]
+    valid_cols = [c for c in column_map if c in df.columns]
     df_clean = df[valid_cols].copy()
     df_clean.rename(columns=column_map, inplace=True)
     df_clean['ingested_at'] = datetime.datetime.now()
@@ -88,7 +92,7 @@ def ingest():
             """))
             conn.commit()
 
-        print(f"⏳ Writing records to 'gold.customs_declarations'...")
+        print("⏳ Writing records to 'gold.customs_declarations'...")
         df_clean.to_sql(
             'customs_declarations',
             engine,

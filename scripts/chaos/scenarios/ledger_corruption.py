@@ -1,10 +1,14 @@
+from __future__ import annotations
 
 import asyncio
-import sys
 import os
-from sqlalchemy import select, update, text
+import sys
+
+from sqlalchemy import select, text, update
+
 from libs.core.database import get_db_ctx
 from libs.core.models.truth_ledger import TruthLedger
+
 
 async def corrupt_last_entry():
     print("🔥 [CHAOS] Attempting Ledger Corruption...")

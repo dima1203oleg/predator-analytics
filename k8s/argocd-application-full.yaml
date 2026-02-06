@@ -1,0 +1,572 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-analytics
+  namespace: argocd
+  labels:
+    app: predator-analytics
+    environment: production
+    version: "v25.0"
+    managed-by: argocd
+    team: predator-core
+  annotations:
+    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: predator-deploys
+    notifications.argoproj.io/subscribe.on-sync-failed.slack: predator-alerts-critical
+    notifications.argoproj.io/subscribe.on-health-degraded.slack: predator-alerts-critical
+    notifications.argoproj.io/subscribe.on-sync-status-unknown.slack: predator-alerts
+    predator.analytics/description: "Predator Analytics Platform — full autonomous stack"
+    predator.analytics/owner: "platform-team"
+    predator.analytics/python-version: "3.12"
+    predator.analytics/llm-budget: "$0"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/predator-analytics/predator
+    targetRevision: main
+    path: helm/predator-analytics
+    helm:
+      valueFiles:
+        - values.yaml
+        - values-production.yaml
+      parameters:
+        - name: global.staticIP
+          value: "194.177.1.240"
+        - name: global.domain
+          value: "predator.analytics.local"
+        - name: global.environment
+          value: "production"
+        - name: global.pythonVersion
+          value: "3.12"
+        - name: global.imageRegistry
+          value: "ghcr.io/predator-analytics"
+        - name: global.imagePullPolicy
+          value: "IfNotPresent"
+        - name: global.logLevel
+          value: "INFO"
+        - name: global.logFormat
+          value: "json"
+        - name: mcpRouter.enabled
+          value: "true"
+        - name: mcpRouter.replicas
+          value: "2"
+        - name: mcpRouter.image.repository
+          value: "ghcr.io/predator-analytics/mcp-router"
+        - name: mcpRouter.image.tag
+          value: "latest"
+        - name: mcpRouter.service.port
+          value: "8080"
+        - name: mcpRouter.resources.requests.memory
+          value: "256Mi"
+        - name: mcpRouter.resources.requests.cpu
+          value: "100m"
+        - name: mcpRouter.resources.limits.memory
+          value: "512Mi"
+        - name: mcpRouter.resources.limits.cpu
+          value: "500m"
+        - name: mcpRouter.providers.ollama.enabled
+          value: "true"
+        - name: mcpRouter.providers.ollama.url
+          value: "http://ollama-service:11434"
+        - name: mcpRouter.providers.ollama.model
+          value: "llama3.1:8b"
+        - name: mcpRouter.providers.ollama.priority
+          value: "1"
+        - name: mcpRouter.providers.ollama.timeout
+          value: "60"
+        - name: mcpRouter.providers.groq.enabled
+          value: "true"
+        - name: mcpRouter.providers.groq.model
+          value: "llama-3.1-70b-versatile"
+        - name: mcpRouter.providers.groq.priority
+          value: "2"
+        - name: mcpRouter.providers.groq.dailyLimit
+          value: "14400"
+        - name: mcpRouter.providers.groq.timeout
+          value: "15"
+        - name: mcpRouter.providers.gemini.enabled
+          value: "true"
+        - name: mcpRouter.providers.gemini.model
+          value: "gemini-1.5-flash"
+        - name: mcpRouter.providers.gemini.priority
+          value: "3"
+        - name: mcpRouter.providers.gemini.dailyLimit
+          value: "1500"
+        - name: mcpRouter.providers.gemini.timeout
+          value: "30"
+        - name: mcpRouter.providers.openai.enabled
+          value: "false"
+        - name: mcpRouter.providers.anthropic.enabled
+          value: "false"
+        - name: mcpRouter.providers.cohere.enabled
+          value: "false"
+        - name: mcpRouter.providers.azureOpenai.enabled
+          value: "false"
+        - name: mcpRouter.providers.awsBedrock.enabled
+          value: "false"
+        - name: mcpRouter.mcpServers.postgres.enabled
+          value: "true"
+        - name: mcpRouter.mcpServers.postgres.mode
+          value: "readonly"
+        - name: mcpRouter.mcpServers.filesystem.enabled
+          value: "true"
+        - name: mcpRouter.mcpServers.filesystem.rootPath
+          value: "/predator/codebase"
+        - name: mcpRouter.mcpServers.git.enabled
+          value: "true"
+        - name: mcpRouter.mcpServers.git.allowPush
+          value: "false"
+        - name: mcpRouter.mcpServers.braveSearch.enabled
+          value: "true"
+        - name: rtbEngine.enabled
+          value: "true"
+        - name: rtbEngine.replicas
+          value: "2"
+        - name: rtbEngine.image.repository
+          value: "ghcr.io/predator-analytics/rtb-engine"
+        - name: rtbEngine.image.tag
+          value: "latest"
+        - name: rtbEngine.service.port
+          value: "8081"
+        - name: rtbEngine.resources.requests.memory
+          value: "256Mi"
+        - name: rtbEngine.resources.requests.cpu
+          value: "100m"
+        - name: rtbEngine.resources.limits.memory
+          value: "512Mi"
+        - name: rtbEngine.resources.limits.cpu
+          value: "500m"
+        - name: rtbEngine.policies.modelPromote.autoApprove
+          value: "false"
+        - name: rtbEngine.policies.modelPromote.requiresLlmAnalysis
+          value: "true"
+        - name: rtbEngine.policies.modelPromote.accuracyThreshold
+          value: "0.95"
+        - name: rtbEngine.policies.modelPromote.minEvalSamples
+          value: "1000"
+        - name: rtbEngine.policies.scaleUp.autoApprove
+          value: "true"
+        - name: rtbEngine.policies.scaleUp.cpuThreshold
+          value: "80"
+        - name: rtbEngine.policies.scaleUp.maxReplicas
+          value: "10"
+        - name: rtbEngine.policies.scaleDown.autoApprove
+          value: "true"
+        - name: rtbEngine.policies.scaleDown.cpuThreshold
+          value: "20"
+        - name: rtbEngine.policies.scaleDown.minReplicas
+          value: "2"
+        - name: rtbEngine.policies.rollback.autoApprove
+          value: "true"
+        - name: rtbEngine.policies.rollback.errorRateThreshold
+          value: "5"
+        - name: rtbEngine.policies.rollback.durationSeconds
+          value: "60"
+        - name: rtbEngine.audit.enabled
+          value: "true"
+        - name: rtbEngine.audit.storage
+          value: "postgresql"
+        - name: rtbEngine.audit.retentionDays
+          value: "365"
+        - name: sioController.enabled
+          value: "true"
+        - name: sioController.replicas
+          value: "1"
+        - name: sioController.image.repository
+          value: "ghcr.io/predator-analytics/sio-controller"
+        - name: sioController.image.tag
+          value: "latest"
+        - name: sioController.service.port
+          value: "8082"
+        - name: sioController.resources.requests.memory
+          value: "512Mi"
+        - name: sioController.resources.requests.cpu
+          value: "250m"
+        - name: sioController.resources.limits.memory
+          value: "1Gi"
+        - name: sioController.resources.limits.cpu
+          value: "500m"
+        - name: sioController.cycle.intervalHours
+          value: "24"
+        - name: sioController.cycle.driftThreshold
+          value: "0.05"
+        - name: sioController.cycle.maxConcurrentJobs
+          value: "2"
+        - name: sioController.cycle.trainingTimeout
+          value: "3600"
+        - name: sioController.cycle.autoPromote
+          value: "false"
+        - name: aes.enabled
+          value: "true"
+        - name: aes.replicas
+          value: "1"
+        - name: aes.image.repository
+          value: "ghcr.io/predator-analytics/aes"
+        - name: aes.image.tag
+          value: "latest"
+        - name: aes.resources.requests.memory
+          value: "512Mi"
+        - name: aes.resources.requests.cpu
+          value: "250m"
+        - name: aes.resources.limits.memory
+          value: "1Gi"
+        - name: aes.resources.limits.cpu
+          value: "500m"
+        - name: aes.autonomy.coreLogic
+          value: "L0"
+        - name: aes.autonomy.tests
+          value: "L1"
+        - name: aes.autonomy.docs
+          value: "L1"
+        - name: aes.autonomy.lintFixes
+          value: "L1"
+        - name: aes.autonomy.formatting
+          value: "L2"
+        - name: aes.autonomy.dbMigrations
+          value: "L3"
+        - name: aes.autonomy.secrets
+          value: "L3"
+        - name: aes.autonomy.productionConfig
+          value: "L3"
+        - name: aes.scanning.security
+          value: "true"
+        - name: aes.scanning.testCoverage
+          value: "true"
+        - name: aes.scanning.documentation
+          value: "true"
+        - name: aes.scanning.codeSmells
+          value: "true"
+        - name: aes.scanning.intervalHours
+          value: "24"
+        - name: aes.scanning.maxTasksPerCycle
+          value: "5"
+        - name: ollama.enabled
+          value: "true"
+        - name: ollama.replicas
+          value: "1"
+        - name: ollama.image.repository
+          value: "ollama/ollama"
+        - name: ollama.image.tag
+          value: "latest"
+        - name: ollama.service.port
+          value: "11434"
+        - name: ollama.resources.requests.memory
+          value: "8Gi"
+        - name: ollama.resources.requests.cpu
+          value: "2"
+        - name: ollama.resources.limits.memory
+          value: "16Gi"
+        - name: ollama.resources.limits.cpu
+          value: "4"
+        - name: ollama.persistence.size
+          value: "50Gi"
+        - name: ollama.persistence.storageClass
+          value: "standard"
+        - name: ollama.models[0]
+          value: "llama3.1:8b"
+        - name: ollama.models[1]
+          value: "codellama:7b"
+        - name: ollama.models[2]
+          value: "deepseek-coder:6.7b"
+        - name: mlflow.enabled
+          value: "true"
+        - name: mlflow.replicas
+          value: "1"
+        - name: mlflow.image.repository
+          value: "ghcr.io/mlflow/mlflow"
+        - name: mlflow.image.tag
+          value: "latest"
+        - name: mlflow.service.port
+          value: "5000"
+        - name: mlflow.resources.requests.memory
+          value: "512Mi"
+        - name: mlflow.resources.requests.cpu
+          value: "250m"
+        - name: mlflow.resources.limits.memory
+          value: "1Gi"
+        - name: mlflow.resources.limits.cpu
+          value: "500m"
+        - name: mlflow.backendStore.type
+          value: "postgresql"
+        - name: mlflow.backendStore.database
+          value: "mlflow"
+        - name: mlflow.artifactStore.type
+          value: "minio"
+        - name: mlflow.artifactStore.bucket
+          value: "mlflow-artifacts"
+        - name: mlflow.artifactStore.endpoint
+          value: "http://minio:9000"
+        - name: chromaDb.enabled
+          value: "true"
+        - name: chromaDb.replicas
+          value: "1"
+        - name: chromaDb.image.repository
+          value: "chromadb/chroma"
+        - name: chromaDb.image.tag
+          value: "latest"
+        - name: chromaDb.service.port
+          value: "8000"
+        - name: chromaDb.resources.requests.memory
+          value: "1Gi"
+        - name: chromaDb.resources.requests.cpu
+          value: "500m"
+        - name: chromaDb.resources.limits.memory
+          value: "2Gi"
+        - name: chromaDb.resources.limits.cpu
+          value: "1"
+        - name: chromaDb.persistence.size
+          value: "20Gi"
+        - name: chromaDb.collections.codeContext.enabled
+          value: "true"
+        - name: chromaDb.collections.documentation.enabled
+          value: "true"
+        - name: chromaDb.collections.incidents.enabled
+          value: "true"
+        - name: phoenix.enabled
+          value: "true"
+        - name: phoenix.replicas
+          value: "1"
+        - name: phoenix.image.repository
+          value: "arizephoenix/phoenix"
+        - name: phoenix.image.tag
+          value: "latest"
+        - name: phoenix.service.port
+          value: "6006"
+        - name: phoenix.resources.requests.memory
+          value: "512Mi"
+        - name: phoenix.resources.requests.cpu
+          value: "250m"
+        - name: phoenix.resources.limits.memory
+          value: "1Gi"
+        - name: phoenix.resources.limits.cpu
+          value: "500m"
+        - name: phoenix.persistence.size
+          value: "10Gi"
+        - name: postgresql.enabled
+          value: "true"
+        - name: postgresql.image.tag
+          value: "15"
+        - name: postgresql.auth.database
+          value: "predator"
+        - name: postgresql.primary.resources.requests.memory
+          value: "512Mi"
+        - name: postgresql.primary.resources.requests.cpu
+          value: "250m"
+        - name: postgresql.primary.resources.limits.memory
+          value: "2Gi"
+        - name: postgresql.primary.resources.limits.cpu
+          value: "1"
+        - name: postgresql.primary.persistence.size
+          value: "50Gi"
+        - name: postgresql.readOnlyUser.enabled
+          value: "true"
+        - name: postgresql.readOnlyUser.name
+          value: "mcp_readonly"
+        - name: redis.enabled
+          value: "true"
+        - name: redis.image.tag
+          value: "7"
+        - name: redis.architecture
+          value: "standalone"
+        - name: redis.master.resources.requests.memory
+          value: "256Mi"
+        - name: redis.master.resources.limits.memory
+          value: "512Mi"
+        - name: redis.master.persistence.size
+          value: "5Gi"
+        - name: minio.enabled
+          value: "true"
+        - name: minio.replicas
+          value: "1"
+        - name: minio.resources.requests.memory
+          value: "512Mi"
+        - name: minio.resources.limits.memory
+          value: "1Gi"
+        - name: minio.persistence.size
+          value: "100Gi"
+        - name: minio.buckets[0].name
+          value: "mlflow-artifacts"
+        - name: minio.buckets[1].name
+          value: "model-registry"
+        - name: minio.buckets[2].name
+          value: "data-pipeline"
+        - name: kyverno.enabled
+          value: "true"
+        - name: kyverno.policies.restrictRootContainers
+          value: "true"
+        - name: kyverno.policies.requireResourceLimits
+          value: "true"
+        - name: kyverno.policies.restrictLoadBalancer
+          value: "true"
+        - name: kyverno.policies.maxMemoryPerPod
+          value: "16Gi"
+        - name: kyverno.policies.maxCpuPerPod
+          value: "4"
+        - name: kyverno.policies.requireLabels
+          value: "true"
+        - name: kyverno.policies.requiredLabels[0]
+          value: "app"
+        - name: kyverno.policies.requiredLabels[1]
+          value: "component"
+        - name: kyverno.policies.disallowLatestTag
+          value: "false"
+        - name: monitoring.enabled
+          value: "true"
+        - name: monitoring.prometheus.enabled
+          value: "true"
+        - name: monitoring.prometheus.retention
+          value: "30d"
+        - name: monitoring.prometheus.resources.requests.memory
+          value: "512Mi"
+        - name: monitoring.prometheus.resources.limits.memory
+          value: "2Gi"
+        - name: monitoring.prometheus.persistence.size
+          value: "50Gi"
+        - name: monitoring.grafana.enabled
+          value: "true"
+        - name: monitoring.grafana.resources.requests.memory
+          value: "256Mi"
+        - name: monitoring.grafana.resources.limits.memory
+          value: "512Mi"
+        - name: monitoring.grafana.dashboards.predator
+          value: "true"
+        - name: monitoring.grafana.dashboards.llmMetrics
+          value: "true"
+        - name: monitoring.grafana.dashboards.mlflow
+          value: "true"
+        - name: monitoring.grafana.dashboards.rtbAudit
+          value: "true"
+        - name: monitoring.alertmanager.enabled
+          value: "true"
+        - name: monitoring.alertmanager.slack.enabled
+          value: "true"
+        - name: monitoring.alertmanager.slack.channel
+          value: "predator-alerts"
+        - name: kubecost.enabled
+          value: "true"
+        - name: kubecost.monthlyBudget
+          value: "100"
+        - name: kubecost.alertThresholdPercent
+          value: "80"
+        - name: kubecost.autoScaleDown
+          value: "true"
+        - name: atlas.enabled
+          value: "true"
+        - name: atlas.migrationDir
+          value: "file://migrations"
+        - name: atlas.lintPolicy
+          value: "strict"
+        - name: atlas.blockDestructive
+          value: "true"
+        - name: api.enabled
+          value: "true"
+        - name: api.replicas
+          value: "3"
+        - name: api.image.repository
+          value: "ghcr.io/predator-analytics/api"
+        - name: api.image.tag
+          value: "latest"
+        - name: api.service.port
+          value: "8000"
+        - name: api.service.type
+          value: "ClusterIP"
+        - name: api.resources.requests.memory
+          value: "512Mi"
+        - name: api.resources.requests.cpu
+          value: "250m"
+        - name: api.resources.limits.memory
+          value: "1Gi"
+        - name: api.resources.limits.cpu
+          value: "1"
+        - name: api.autoscaling.enabled
+          value: "true"
+        - name: api.autoscaling.minReplicas
+          value: "3"
+        - name: api.autoscaling.maxReplicas
+          value: "10"
+        - name: api.autoscaling.targetCPU
+          value: "70"
+        - name: api.autoscaling.targetMemory
+          value: "80"
+        - name: ingress.enabled
+          value: "true"
+        - name: ingress.className
+          value: "nginx"
+        - name: ingress.hosts[0].host
+          value: "predator.analytics.local"
+        - name: ingress.hosts[0].paths[0].path
+          value: "/"
+        - name: ingress.hosts[0].paths[0].pathType
+          value: "Prefix"
+        - name: ingress.hosts[0].paths[0].backend
+          value: "api"
+        - name: ingress.hosts[1].host
+          value: "mlflow.predator.analytics.local"
+        - name: ingress.hosts[1].paths[0].path
+          value: "/"
+        - name: ingress.hosts[1].paths[0].backend
+          value: "mlflow"
+        - name: ingress.hosts[2].host
+          value: "grafana.predator.analytics.local"
+        - name: ingress.hosts[2].paths[0].path
+          value: "/"
+        - name: ingress.hosts[2].paths[0].backend
+          value: "grafana"
+        - name: ingress.hosts[3].host
+          value: "phoenix.predator.analytics.local"
+        - name: ingress.hosts[3].paths[0].path
+          value: "/"
+        - name: ingress.hosts[3].paths[0].backend
+          value: "phoenix"
+        - name: security.networkPolicies.enabled
+          value: "true"
+        - name: security.networkPolicies.denyAllByDefault
+          value: "true"
+        - name: security.podSecurityStandards.enforce
+          value: "restricted"
+        - name: security.serviceAccounts.automountToken
+          value: "false"
+        - name: security.secrets.provider
+          value: "kubernetes"
+        - name: security.secrets.rotation.enabled
+          value: "true"
+        - name: security.secrets.rotation.intervalDays
+          value: "90"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: predator-analytics
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+    managedNamespaceMetadata:
+      labels:
+        app.kubernetes.io/managed-by: argocd
+        predator.analytics/environment: production
+  revisionHistoryLimit: 5
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas
+    - group: ""
+      kind: Pod
+      jsonPointers:
+        - /metadata/annotations
+    - group: monitoring.coreos.com
+      kind: ServiceMonitor
+      jsonPointers:
+        - /metadata/labels

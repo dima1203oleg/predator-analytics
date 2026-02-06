@@ -1,0 +1,379 @@
+# PREDATOR Analytics - Business Rules Configuration
+# Version: 31.0.0
+# Категорії: fraud, customs, sanctions, business, data_quality
+
+rules:
+  # ═══════════════════════════════════════════════════════════════════════════
+  # FRAUD DETECTION RULES
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: fraud_round_numbers
+    name: "Підозрілі круглі суми"
+    description: "Сума декларації кратна 1000 з нулями в кінці"
+    version: "1.0.0"
+    enabled: true
+    category: fraud
+    priority: 80
+    conditions:
+      - field: total_value
+        operator: regex
+        value: "^\\d+000\\.?0*$"
+      - field: total_value
+        operator: gt
+        value: 100000
+    actions:
+      - type: flag
+        flag: suspicious_round_amount
+      - type: score
+        points: 15
+    metadata:
+      explanation: "Занадто круглі суми можуть свідчити про маніпуляцію"
+
+  - id: fraud_price_deviation
+    name: "Відхилення від ринкової ціни"
+    description: "Ціна товару відхиляється від медіани по HS-коду > 50%"
+    version: "1.0.0"
+    enabled: true
+    category: fraud
+    priority: 90
+    conditions:
+      - field: price_deviation_percent
+        operator: gt
+        value: 50
+    actions:
+      - type: flag
+        flag: price_anomaly
+      - type: score
+        points: 25
+      - type: alert
+        channel: fraud_team
+        severity: high
+
+  - id: fraud_split_shipments
+    name: "Дроблення партій"
+    description: "Множинні декларації від одного експортера за короткий період"
+    version: "1.0.0"
+    enabled: true
+    category: fraud
+    priority: 85
+    conditions:
+      - field: same_exporter_declarations_24h
+        operator: gt
+        value: 3
+      - field: individual_value
+        operator: lt
+        value: 150000  # Рівно під порогом
+    actions:
+      - type: flag
+        flag: potential_split_shipment
+      - type: score
+        points: 30
+
+  - id: fraud_new_exporter
+    name: "Новий експортер з великими сумами"
+    description: "Раніше невідомий експортер з декларацією > $500k"
+    version: "1.0.0"
+    enabled: true
+    category: fraud
+    priority: 75
+    conditions:
+      - field: exporter.first_seen_days
+        operator: lt
+        value: 30
+      - field: total_value
+        operator: gt
+        value: 500000
+    actions:
+      - type: flag
+        flag: new_high_value_exporter
+      - type: score
+        points: 20
+      - type: review
+        task_type: entity_review
+        priority: high
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # CUSTOMS RULES
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: customs_hs_mismatch
+    name: "Невідповідність HS-коду опису"
+    description: "HS-код не відповідає опису товару"
+    version: "1.0.0"
+    enabled: true
+    category: customs
+    priority: 70
+    conditions:
+      - field: hs_description_match_score
+        operator: lt
+        value: 0.6
+    actions:
+      - type: flag
+        flag: hs_mismatch
+      - type: score
+        points: 20
+
+  - id: customs_country_origin_mismatch
+    name: "Невідповідність країни походження"
+    description: "Країна відправлення не збігається з країною виробництва"
+    version: "1.0.0"
+    enabled: true
+    category: customs
+    priority: 65
+    conditions:
+      - field: country_of_origin
+        operator: ne
+        value: "$entity.country_of_shipment"
+      - field: product_category
+        operator: in
+        value: ["electronics", "machinery", "chemicals"]
+    actions:
+      - type: flag
+        flag: origin_mismatch
+      - type: score
+        points: 15
+
+  - id: customs_transit_through_risk_zone
+    name: "Транзит через ризикову зону"
+    description: "Товар проходив через країну з високим ризиком"
+    version: "1.0.0"
+    enabled: true
+    category: customs
+    priority: 80
+    conditions:
+      - field: transit_countries
+        operator: contains
+        value: ["BY", "RU", "CN", "AE"]
+    actions:
+      - type: flag
+        flag: risk_transit
+      - type: score
+        points: 25
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # SANCTIONS RULES
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: sanctions_country_embargo
+    name: "Країна під санкціями"
+    description: "Імпорт/експорт з країни під торговим ембарго"
+    version: "1.0.0"
+    enabled: true
+    category: sanctions
+    priority: 100
+    conditions:
+      - field: country_of_origin
+        operator: in
+        value: ["RU", "BY", "KP", "IR", "SY"]
+    actions:
+      - type: flag
+        flag: sanctions_violation
+      - type: score
+        points: 100
+      - type: alert
+        channel: compliance
+        severity: critical
+      - type: block
+        reason: "Санкційна країна"
+
+  - id: sanctions_entity_match
+    name: "SDN List Match"
+    description: "Компанія/особа у санкційних списках"
+    version: "1.0.0"
+    enabled: true
+    category: sanctions
+    priority: 100
+    conditions:
+      - field: sdn_match_score
+        operator: gt
+        value: 0.9
+    actions:
+      - type: flag
+        flag: sdn_match
+      - type: score
+        points: 100
+      - type: alert
+        channel: compliance
+        severity: critical
+      - type: review
+        task_type: sanctions_review
+        priority: critical
+
+  - id: sanctions_dual_use
+    name: "Товари подвійного призначення"
+    description: "HS-код відноситься до товарів подвійного призначення"
+    version: "1.0.0"
+    enabled: true
+    category: sanctions
+    priority: 95
+    conditions:
+      - field: hs_code
+        operator: in
+        value: ["8471", "8542", "8543", "9014", "9015"]  # Electronics, chips
+    actions:
+      - type: flag
+        flag: dual_use
+      - type: score
+        points: 40
+      - type: review
+        task_type: export_control_review
+        priority: high
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # DATA QUALITY RULES
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: dq_missing_exporter
+    name: "Відсутній експортер"
+    description: "Декларація без інформації про експортера"
+    version: "1.0.0"
+    enabled: true
+    category: data_quality
+    priority: 50
+    conditions:
+      - field: exporter.name
+        operator: eq
+        value: null
+    actions:
+      - type: flag
+        flag: incomplete_data
+      - type: score
+        points: 5
+
+  - id: dq_invalid_hs_code
+    name: "Невалідний HS-код"
+    description: "HS-код не відповідає стандартному формату"
+    version: "1.0.0"
+    enabled: true
+    category: data_quality
+    priority: 60
+    conditions:
+      - field: hs_code
+        operator: regex
+        value: "^(?![0-9]{6,10}$).*"
+    actions:
+      - type: flag
+        flag: invalid_hs_code
+      - type: score
+        points: 10
+
+  - id: dq_sum_mismatch
+    name: "Невідповідність суми"
+    description: "Сума товарів не дорівнює загальній сумі декларації"
+    version: "1.0.0"
+    enabled: true
+    category: data_quality
+    priority: 70
+    conditions:
+      - field: calculated_total
+        operator: ne
+        value: "$entity.declared_total"
+      - field: difference_percent
+        operator: gt
+        value: 1
+    actions:
+      - type: flag
+        flag: sum_mismatch
+      - type: score
+        points: 20
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # BUSINESS INTELLIGENCE RULES
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: bi_market_share_change
+    name: "Різка зміна частки ринку"
+    description: "Частка компанії на ринку змінилась > 20% за місяць"
+    version: "1.0.0"
+    enabled: true
+    category: business
+    priority: 40
+    conditions:
+      - field: market_share_change_percent
+        operator: gt
+        value: 20
+    actions:
+      - type: flag
+        flag: market_shift
+      - type: alert
+        channel: analytics
+        severity: info
+
+  - id: bi_new_trade_route
+    name: "Новий торговий маршрут"
+    description: "Перший імпорт компанії з нової країни"
+    version: "1.0.0"
+    enabled: true
+    category: business
+    priority: 30
+    conditions:
+      - field: is_new_country_pair
+        operator: eq
+        value: true
+    actions:
+      - type: flag
+        flag: new_trade_route
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RULE SETS (Grouped rules for specific scenarios)
+# ═══════════════════════════════════════════════════════════════════════════
+
+rule_sets:
+  - id: basic_screening
+    name: "Базовий скринінг"
+    description: "Мінімальний набір перевірок для всіх декларацій"
+    rules:
+      - sanctions_country_embargo
+      - sanctions_entity_match
+      - dq_missing_exporter
+      - dq_invalid_hs_code
+
+  - id: high_value_screening
+    name: "Скринінг великих сум"
+    description: "Додаткові перевірки для декларацій > $100k"
+    threshold:
+      field: total_value
+      operator: gt
+      value: 100000
+    rules:
+      - fraud_round_numbers
+      - fraud_price_deviation
+      - fraud_new_exporter
+      - customs_country_origin_mismatch
+      - customs_transit_through_risk_zone
+      - sanctions_dual_use
+
+  - id: full_compliance
+    name: "Повна compliance перевірка"
+    description: "Всі правила для максимальної перевірки"
+    rules: ["*"]  # All rules
+
+# ═══════════════════════════════════════════════════════════════════════════
+# THRESHOLDS & CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+thresholds:
+  risk_score:
+    low: 20
+    medium: 50
+    high: 80
+    critical: 100
+
+  auto_block_score: 150
+  require_review_score: 80
+
+alerts:
+  channels:
+    fraud_team:
+      type: telegram
+      bot_id: predator_alerts
+      chat_id: -1001234567890
+
+    compliance:
+      type: email
+      recipients:
+        - compliance@company.com
+
+    analytics:
+      type: webhook
+      url: http://internal-api/alerts

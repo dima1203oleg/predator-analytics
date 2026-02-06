@@ -1,15 +1,20 @@
-import typer
+from __future__ import annotations
+
 import json
-import yaml
 import os
+from typing import Optional
+import uuid
+
 import redis
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
-from typing import Optional
+from rich.table import Table
+import typer
+import yaml
+
 from predatorctl.core.arbiter_client import ArbiterClient
 from predatorctl.core.ledger_client import LedgerClient
-import uuid
+
 
 app = typer.Typer(help="ETL job management")
 console = Console()
@@ -24,18 +29,17 @@ def submit(
     job_file: str = typer.Argument(..., help="Path to job definition file"),
     dry_run: bool = typer.Option(False, "--dry-run", help="Validate without submitting")
 ):
-    """
-    Submit an ETL job payload.
+    """Submit an ETL job payload.
     Process:
     1. Arbiter Check (Constitution)
     2. Ledger Record (Immutability)
-    3. Push to Redis Queue (Execution)
+    3. Push to Redis Queue (Execution).
     """
     if not os.path.exists(job_file):
         console.print(f"[red]Error:[/red] File {job_file} not found.")
         raise typer.Exit(code=1)
 
-    with open(job_file, 'r') as f:
+    with open(job_file) as f:
         job_def = yaml.safe_load(f)
 
     job_id = job_def.get("id", f"etl-{str(uuid.uuid4())[:8]}")
@@ -98,9 +102,7 @@ def status(
     job_id: str = typer.Argument(..., help="Job ID"),
     watch: bool = typer.Option(False, "--watch", "-w", help="Watch status changes")
 ):
-    """
-    Check status of a job.
-    """
+    """Check status of a job."""
     console.print(f"Status for job [cyan]{job_id}[/cyan]: [green]RUNNING[/green]")
     console.print("Progress: [=================>        ] 65%")
 
@@ -109,9 +111,7 @@ def logs(
     job_id: str = typer.Argument(..., help="Job ID"),
     tail: int = typer.Option(100, "--tail", help="Number of lines to show")
 ):
-    """
-    View job logs.
-    """
+    """View job logs."""
     console.print(f"Showing last {tail} lines for {job_id}...")
     console.print("[INFO] Processing batch 45/100")
     console.print("[INFO] GPU Batch normalization complete")
@@ -121,19 +121,15 @@ def cancel(
     job_id: str = typer.Argument(..., help="Job ID"),
     reason: str = typer.Option(..., "--reason", "-r", help="Reason for cancellation")
 ):
-    """
-    Cancel a running job.
-    """
+    """Cancel a running job."""
     console.print(f"Cancelling job {job_id}. Reason: {reason}")
     console.print("[yellow]Cancelled[/yellow]")
 
 @app.command()
 def list(
-    state: Optional[str] = typer.Option(None, "--state", help="Filter by state")
+    state: str | None = typer.Option(None, "--state", help="Filter by state")
 ):
-    """
-    List all jobs.
-    """
+    """List all jobs."""
     table = Table(title="ETL Jobs")
     table.add_column("ID", style="cyan")
     table.add_column("Type")

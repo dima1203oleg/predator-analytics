@@ -1,20 +1,19 @@
+from __future__ import annotations
+
 import logging
-from typing import Any, Dict
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class CopilotAgent:
-    """
-    Security & Code Review Agent.
+    """Security & Code Review Agent.
     Виконує роль "System 2" перевірки.
     """
     def __init__(self):
         pass
 
-    async def security_review(self, context_prompt: str) -> Dict[str, Any]:
-        """
-        Проводить аудит безпеки запропонованих дій.
-        """
+    async def security_review(self, context_prompt: str) -> dict[str, Any]:
+        """Проводить аудит безпеки запропонованих дій."""
         logger.info("Copilot Security Review started...")
 
         # 1. Евристичний аналіз (швидкий)
@@ -43,8 +42,6 @@ class CopilotAgent:
         }
 
     async def create_pr(self, title: str, description: str, code: str) -> str:
-        """
-        Створює Pull Request (Mock).
-        """
+        """Створює Pull Request (Mock)."""
         logger.info(f"Creating PR: {title}")
         return "https://github.com/predator-analytics/repo/pull/123"

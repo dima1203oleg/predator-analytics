@@ -1,8 +1,10 @@
+from __future__ import annotations
 
-from typing import Protocol, List, Dict, Any, Optional
 from abc import abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Protocol
+
 
 class AgentPermission(Protocol):
     """Permissions granted to an agent."""
@@ -18,18 +20,17 @@ class AgentContext:
     workspace_root: str = "."
 
 class BaseAgent(Protocol):
-    """
-    Contract for all Predator v26 Agents.
+    """Contract for all Predator v26 Agents.
     Agents MUST use the CLI for mutations.
     Agents MUST output machine-readable logs.
     """
 
     name: str
     version: str
-    required_permissions: List[str]
+    required_permissions: list[str]
 
     @abstractmethod
-    async def run(self, context: AgentContext) -> Dict[str, Any]:
+    async def run(self, context: AgentContext) -> dict[str, Any]:
         """Execute the agent loop or task."""
         ...
 
@@ -43,5 +44,5 @@ class AZRAgentContract(BaseAgent):
 
     @abstractmethod
     async def propose_amendment(self, proposal_yaml: str) -> str:
-        """Wraps `predatorctl azr propose`"""
+        """Wraps `predatorctl azr propose`."""
         ...

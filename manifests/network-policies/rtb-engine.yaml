@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: rtb-engine-network-policy
+  namespace: predator-analytics
+spec:
+  podSelector:
+    matchLabels:
+      app: rtb-engine
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: api
+        - podSelector:
+            matchLabels:
+              component: sio-controller
+      ports:
+        - port: 8081
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: mcp-router
+      ports:
+        - port: 8080
+    - to:
+        - podSelector:
+            matchLabels:
+              app: postgresql
+      ports:
+        - port: 5432
+    - to:
+        - podSelector:
+            matchLabels:
+              app: redis
+      ports:
+        - port: 6379

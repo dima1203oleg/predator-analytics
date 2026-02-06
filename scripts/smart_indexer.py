@@ -1,9 +1,13 @@
+from __future__ import annotations
+
 import asyncio
+import logging
 import os
 import sys
-import logging
-from opensearchpy import AsyncOpenSearch, helpers
+
 import asyncpg
+from opensearchpy import AsyncOpenSearch, helpers
+
 
 # Logging setup
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -110,7 +114,7 @@ async def main():
                 await asyncio.sleep(DELAY_BETWEEN_BATCHES)
 
             except Exception as e:
-                logger.error(f"\n❌ Batch failed at offset {processed}: {e}")
+                logger.exception(f"\n❌ Batch failed at offset {processed}: {e}")
                 failed_batches += 1
                 await asyncio.sleep(5) # Cooldown
                 if failed_batches > 10:

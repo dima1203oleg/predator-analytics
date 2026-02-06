@@ -6,10 +6,22 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
+    "lint:ox": "oxlint --config oxlint.json apps/predator-analytics-ui/src/",
+    "lint:ox:fix": "oxlint --config oxlint.json --fix apps/predator-analytics-ui/src/",
+    "lint:knip": "knip",
+    "lint:knip:fix": "knip --fix",
+    "lint:all": "pnpm lint:ox && pnpm lint:knip",
     "test": "turbo test",
-    "clean": "turbo clean"
+    "clean": "turbo clean",
+    "py:lint": "ruff check --config ruff.toml .",
+    "py:lint:fix": "ruff check --config ruff.toml --fix .",
+    "py:format": "ruff format --config ruff.toml .",
+    "py:type": "pyrefly check",
+    "py:all": "pnpm py:lint:fix && pnpm py:format && pnpm py:type"
   },
   "devDependencies": {
+    "knip": "^5.82.1",
+    "oxlint": "^0.15.15",
     "turbo": "latest"
   }
 }

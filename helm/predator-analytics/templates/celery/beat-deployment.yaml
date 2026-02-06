@@ -29,7 +29,7 @@ spec:
         - name: celery-beat
           securityContext:
             {{- toYaml .Values.celeryBeat.securityContext | nindent 12 }}
-          image: {{ include "predator-analytics.image" .Values.celeryBeat.image }}
+          image: {{ include "predator-analytics.image" (dict "root" . "image" .Values.celeryBeat.image) }}
           imagePullPolicy: {{ .Values.celeryBeat.image.pullPolicy }}
           command: ["celery", "-A", "app.tasks.celery_app", "beat", "--loglevel=info"]
           resources:

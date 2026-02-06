@@ -1,12 +1,15 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-Простий тестовий Telegram Bot
-Використовуй для перевірки що токен працює
+"""Простий тестовий Telegram Bot
+Використовуй для перевірки що токен працює.
 """
 import asyncio
 import logging
 import os
 import sys
+
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 logger = logging.getLogger("test_bot")
@@ -25,12 +28,12 @@ async def main():
     logger.info(f"✅ Admin ID: {ADMIN_ID or 'не встановлено'}")
 
     try:
-        from aiogram import Bot, Dispatcher, types, F
+        from aiogram import Bot, Dispatcher, F, types
         from aiogram.filters import Command
         from aiogram.fsm.storage.memory import MemoryStorage
     except ImportError:
-        logger.error("❌ aiogram не встановлено!")
-        logger.error("pip3 install aiogram")
+        logger.exception("❌ aiogram не встановлено!")
+        logger.exception("pip3 install aiogram")
         return
 
     # Створюємо бота
@@ -42,8 +45,8 @@ async def main():
         me = await bot.get_me()
         logger.info(f"✅ Бот запущений: @{me.username} ({me.first_name})")
     except Exception as e:
-        logger.error(f"❌ Помилка з'єднання: {e}")
-        logger.error("Перевір токен у @BotFather")
+        logger.exception(f"❌ Помилка з'єднання: {e}")
+        logger.exception("Перевір токен у @BotFather")
         return
 
     # Простий handler

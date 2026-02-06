@@ -1,0 +1,80 @@
+
+# ════════════════════════════════════════════════════════════════════════
+# PREDATOR API DEPLOYMENT
+# ════════════════════════════════════════════════════════════════════════
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-api
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: api
+    component: application-layer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      {{- include "predator-analytics.selectorLabels" . | nindent 6 }}
+      app: api
+  template:
+    metadata:
+      labels:
+        {{- include "predator-analytics.selectorLabels" . | nindent 8 }}
+        app: api
+        component: application-layer
+    spec:
+      serviceAccountName: sa-predator-api
+      priorityClassName: predator-critical
+      containers:
+        - name: api
+          image: "ghcr.io/predator-analytics/api:latest"
+          command: ["uvicorn", "services.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+          ports:
+            - containerPort: 8000
+              name: http
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://predator_app:$(DB_PASSWORD)@{{ include "predator-analytics.fullname" . }}-postgresql:5432/predator"
+            - name: MCP_ROUTER_URL
+              value: "http://{{ include "predator-analytics.fullname" . }}-mcp-router:8080"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-api
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: api
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "predator-analytics.selectorLabels" . | nindent 4 }}
+    app: api
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sa-predator-api
+  namespace: predator-analytics

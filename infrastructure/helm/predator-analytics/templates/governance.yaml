@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-governance
+  labels:
+    app: governance
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: governance
+  template:
+    metadata:
+      labels:
+        app: governance
+    spec:
+      containers:
+        - name: governance
+          image: "{{ .Values.constitutional_core.image.repository }}:{{ .Values.constitutional_core.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8091
+            - containerPort: 8092
+            - containerPort: 8093
+            - containerPort: 8094
+            - containerPort: 8095
+          env:
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://{{ .Values.postgresql.auth.username }}:{{ .Values.postgresql.auth.password }}@{{ .Release.Name }}-postgresql:5432/{{ .Values.postgresql.auth.database }}"
+            - name: REDIS_URL
+              value: "redis://:{{ .Values.redis.auth.password }}@{{ .Release.Name }}-redis-master:6379/0"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "{{ .Release.Name }}-kafka:9092"
+          volumeMounts:
+            - name: code-volume
+              mountPath: /app
+      volumes:
+        - name: code-volume
+          hostPath:
+            path: /home/ubuntu/predator-analytics
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-governance
+spec:
+  type: ClusterIP
+  ports:
+    - name: main
+      port: 8091
+    - name: ledger
+      port: 8092
+    - name: som
+      port: 8095
+  selector:
+    app: governance

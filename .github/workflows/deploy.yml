@@ -1,77 +1,35 @@
-name: GitOps Sync & Deploy
+name: Production Deploy
 
 on:
   push:
-    branches: [main]
+    branches: ["main"]
   workflow_dispatch:
 
-env:
-  DOCKER_REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Backend image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./apps/backend
-          push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
-
-      - name: Build and push Frontend image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./apps/frontend
-          push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest
-
-  deploy-to-nvidia-server:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-
+  deploy:
+    runs-on: self-hosted # Assuming runner is on the NVIDIA server or similar
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      - name: Install Helm
-        uses: azure/setup-helm@v3
+      - name: Login to Docker Hub
+        # If using registry, otherwise skip. Assuming local build for now.
+        run: echo "Skipping login (local build strategy)"
 
-      - name: Deploy to Kubernetes via SSH Tunnel (GitOps)
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.NVIDIA_SERVER_SSH_KEY }}
-          SSH_HOST: ${{ secrets.NVIDIA_SERVER_HOST }}
-          SSH_PORT: ${{ secrets.NVIDIA_SERVER_PORT }}
+      - name: Create .env file
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.PROD_ENV_FILE }}" > .env
 
-          # Establish tunnel to K8s API
-          ssh -o StrictHostKeyChecking=no -f -N -L 6443:localhost:6443 -i ~/.ssh/id_ed25519 -p $SSH_PORT dima@$SSH_HOST
+      - name: Deploy with Docker Compose
+        run: |
+          docker compose -f docker-compose.prod.yml down
+          docker compose -f docker-compose.prod.yml build
+          docker compose -f docker-compose.prod.yml up -d
 
-          # Deploy using Helm
-          export KUBECONFIG=./k8s/kubeconfig_proxied
-          helm upgrade --install predator ./helm/predator-umbrella \
-            --namespace predator --create-namespace \
-            --set backend.image.repository=${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/backend \
-            --set frontend.image.repository=${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}/frontend
+      - name: Verify Health
+        run: |
+          sleep 30
+          curl -f http://localhost/health || exit 1

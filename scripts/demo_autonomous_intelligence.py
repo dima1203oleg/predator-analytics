@@ -1,13 +1,16 @@
+from __future__ import annotations
+
+
 #!/usr/bin/env python3
-"""
-Демонстрація Autonomous Intelligence v2.0
-Показує роботу всіх підсистем
+"""Демонстрація Autonomous Intelligence v2.0
+Показує роботу всіх підсистем.
 """
 import asyncio
-import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 import random
+import sys
+
 
 # Додати шлях до проекту
 project_root = Path(__file__).parent.parent
@@ -16,11 +19,7 @@ sys.path.insert(0, str(project_root / "services" / "api-gateway"))
 
 # Імпорт модулів
 try:
-    from app.services.autonomous_intelligence_v2 import (
-        autonomous_intelligence_v2,
-        PredictiveMetrics,
-        LearningRecord
-    )
+    from app.services.autonomous_intelligence_v2 import LearningRecord, PredictiveMetrics, autonomous_intelligence_v2
 except ImportError as e:
     print(f"❌ Помилка імпорту: {e}")
     print(f"Шлях: {sys.path}")
@@ -28,7 +27,7 @@ except ImportError as e:
 
 
 async def demo_predictive_analyzer():
-    """Демонстрація передбачення проблем"""
+    """Демонстрація передбачення проблем."""
     print("\n" + "="*60)
     print("🔮 ДЕМОНСТРАЦІЯ: Predictive Analyzer")
     print("="*60)
@@ -69,7 +68,7 @@ async def demo_predictive_analyzer():
 
 
 async def demo_decision_maker():
-    """Демонстрація прийняття автономних рішень"""
+    """Демонстрація прийняття автономних рішень."""
     print("\n" + "="*60)
     print("🤖 ДЕМОНСТРАЦІЯ: Autonomous Decision Maker")
     print("="*60)
@@ -106,23 +105,23 @@ async def demo_decision_maker():
     decision = await decision_maker.make_decision([test_prediction], current_state)
 
     if decision:
-        print(f"\n✅ Рішення прийнято:")
+        print("\n✅ Рішення прийнято:")
         print(f"  ID: {decision.decision_id}")
         print(f"  Тип: {decision.decision_type}")
         print(f"  Впевненість: {decision.confidence:.2%}")
         print(f"  Виконано: {'✅ Так' if decision.executed else '❌ Ні (низька впевненість)'}")
-        print(f"\n  💭 Пояснення:")
+        print("\n  💭 Пояснення:")
         print(f"     {decision.reasoning}")
-        print(f"\n  🎯 Дії:")
+        print("\n  🎯 Дії:")
         for i, action in enumerate(decision.actions, 1):
             print(f"     {i}. {action['type']}: {action['params']}")
-        print(f"\n  📊 Очікуваний вплив:")
+        print("\n  📊 Очікуваний вплив:")
         for key, value in decision.expected_impact.items():
             print(f"     {key}: {value}")
 
 
 async def demo_learning_engine():
-    """Демонстрація самонавчання"""
+    """Демонстрація самонавчання."""
     print("\n" + "="*60)
     print("🎓 ДЕМОНСТРАЦІЯ: Self-Learning Engine")
     print("="*60)
@@ -163,13 +162,13 @@ async def demo_learning_engine():
     # Показати статистику
     stats = learning_engine.get_learning_stats()
 
-    print(f"\n📊 Статистика навчання:")
+    print("\n📊 Статистика навчання:")
     print(f"  Всього записів: {stats['total_records']}")
     print(f"  Вивчено стратегій: {stats['strategies_learned']}")
     print(f"  Середня точність: {stats['average_accuracy']:.2%}")
     print(f"  Найкраща стратегія: {stats['best_strategy']}")
 
-    print(f"\n🎯 Впевненість у стратегіях:")
+    print("\n🎯 Впевненість у стратегіях:")
     for strategy in strategies:
         confidence = learning_engine.get_strategy_confidence(strategy)
         print(f"  {strategy}: {confidence:.2%}")
@@ -180,7 +179,7 @@ async def demo_learning_engine():
 
 
 async def demo_resource_allocator():
-    """Демонстрація динамічного масштабування"""
+    """Демонстрація динамічного масштабування."""
     print("\n" + "="*60)
     print("📊 ДЕМОНСТРАЦІЯ: Dynamic Resource Allocator")
     print("="*60)
@@ -207,7 +206,7 @@ async def demo_resource_allocator():
     changes = await allocator.adjust_resources(high_load_metrics)
 
     if changes:
-        print(f"\n✅ Ресурси автоматично збільшено:")
+        print("\n✅ Ресурси автоматично збільшено:")
         for key, value in changes.items():
             print(f"  {key}: {value}")
     else:
@@ -220,14 +219,14 @@ async def demo_resource_allocator():
     print(f"  Memory: {status['current']['memory_mb']} MB")
     print(f"  CPU Cores: {status['current']['cpu_cores']}")
 
-    print(f"\n📊 Використання:")
+    print("\n📊 Використання:")
     print(f"  Workers: {status['utilization']['workers']:.1%}")
     print(f"  Memory: {status['utilization']['memory']:.1%}")
     print(f"  CPU: {status['utilization']['cpu']:.1%}")
 
 
 async def demo_full_cycle():
-    """Демонстрація повного циклу роботи"""
+    """Демонстрація повного циклу роботи."""
     print("\n" + "="*60)
     print("🔄 ДЕМОНСТРАЦІЯ: Повний Цикл Автономної Роботи")
     print("="*60)
@@ -251,24 +250,24 @@ async def demo_full_cycle():
     print(f"  Інтервал перевірки: {status['check_interval_seconds']}с")
 
     pred_stats = status['predictive_analyzer']
-    print(f"\n  🔮 Predictive Analyzer:")
+    print("\n  🔮 Predictive Analyzer:")
     print(f"     Зібрано метрик: {pred_stats['metrics_collected']}")
     print(f"     Поріг аномалій: {pred_stats['anomaly_threshold']}σ")
 
     learn_stats = status['learning_engine']
-    print(f"\n  🎓 Learning Engine:")
+    print("\n  🎓 Learning Engine:")
     print(f"     Всього записів: {learn_stats['total_records']}")
     print(f"     Вивчено стратегій: {learn_stats['strategies_learned']}")
     if learn_stats['best_strategy']:
         print(f"     Найкраща стратегія: {learn_stats['best_strategy']}")
 
     decision_stats = status['decision_maker']
-    print(f"\n  🤖 Decision Maker:")
+    print("\n  🤖 Decision Maker:")
     print(f"     Всього рішень: {decision_stats['total_decisions']}")
     print(f"     Мін. впевненість: {decision_stats['min_confidence']:.0%}")
 
     if decision_stats['recent_decisions']:
-        print(f"\n  📋 Останні рішення:")
+        print("\n  📋 Останні рішення:")
         for dec in decision_stats['recent_decisions'][-3:]:
             status_icon = "✅" if dec['success'] else "⏳" if dec['executed'] else "❌"
             print(f"     {status_icon} {dec['type']} (confidence: {dec['confidence']:.0%})")
@@ -279,7 +278,7 @@ async def demo_full_cycle():
 
 
 async def main():
-    """Головна функція"""
+    """Головна функція."""
     print("\n" + "="*60)
     print("🧠 AUTONOMOUS INTELLIGENCE v2.0 - ДЕМОНСТРАЦІЯ")
     print("="*60)

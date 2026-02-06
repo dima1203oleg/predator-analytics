@@ -1,0 +1,46 @@
+
+# ════════════════════════════════════════════════════════════════════════
+# UNIVERSAL PREDATOR DOCKERFILE
+# Multi-stage build for Python 3.12 services
+# ════════════════════════════════════════════════════════════════════════
+
+FROM python:3.12-slim-bookworm AS builder
+
+# 1. System Deps (Minimal build tools)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# 2. Python Dependencies
+# We install ALL requirements in the builder stage to cache them layer-wise
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# ════════════════════════════════════════════════════════════════════════
+
+FROM python:3.12-slim-bookworm AS runtime
+
+# 1. Security: Create non-root user
+RUN useradd --create-home --shell /bin/bash appuser
+WORKDIR /app
+
+# 2. Copy installed libs from builder
+COPY --from=builder /install /usr/local
+
+# 3. Copy Application Code
+# Note: In a real monorepo build, we might selective copy, 
+# but for simplicity we copy individual service logic in specific build steps.
+# This file is meant to be used as a template where context is the root or service dir.
+COPY services/ /app/services/
+
+# 4. Environment
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+# 5. Security: Drop to non-root
+USER appuser
+
+# 6. Default command (overridden by K8s)
+CMD ["python", "-c", "print('Predator Service Ready')"]

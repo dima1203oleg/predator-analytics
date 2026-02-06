@@ -1,0 +1,6 @@
+apiVersion: v2
+name: predator-voice
+description: Helm chart для розгортання голосового сервісу Predator
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
