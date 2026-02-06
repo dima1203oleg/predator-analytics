@@ -1,5 +1,8 @@
-# predator-analytics RTB Engine Rules v2.0
-version: "2.0"
+# predator-analytics v25.1
+# RTB Engine Rules: Core Policy
+# Section 3.2.2 of Specification.
+
+version: "25.1"
 rules:
   - id: R001
     name: model_performance_degraded
@@ -7,7 +10,31 @@ rules:
     condition: "context.get('drop', 0) > 0.05"
     action: start_improvement_cycle
     autonomy_level: L1
-    description: "Trigger improvement cycle if accuracy drops > 5%"
+    description: "If accuracy drops > 5%, trigger retraining."
+
+  - id: R002
+    name: model_validation_passed
+    trigger: ModelValidationCompleted
+    condition: "context.get('new_accuracy', 0) > context.get('baseline', 0) and context.get('critical_errors', 1) == 0"
+    action: promote_model
+    autonomy_level: L3
+    description: "If new model is better and safe, promote it (L3 = manual)."
+
+  - id: R003
+    name: scale_up
+    trigger: ResourcePressureDetected
+    condition: "context.get('cpu_avg_5m', 0) > 0.80"
+    action: approve_scale_up
+    autonomy_level: L1
+    description: "Auto-scale up if CPU > 80%."
+
+  - id: R004
+    name: scale_down
+    trigger: ResourceUnderutilized
+    condition: "context.get('cpu_avg_30m', 1) < 0.20"
+    action: approve_scale_down
+    autonomy_level: L1
+    description: "Auto-scale down if CPU < 20%."
 
   - id: R005
     name: security_vulnerability
@@ -15,12 +42,44 @@ rules:
     condition: "context.get('severity') in ['CRITICAL', 'HIGH']"
     action: block_deploy_and_alert
     autonomy_level: L0
-    description: "Alert on critical security issues"
+    description: "Block deployment on high vulnerability."
 
   - id: R006
     name: cost_budget_exceeded
     trigger: CostBudgetAlert
-    condition: "context.get('monthly_spend', 0) > context.get('budget', 100) * 0.80"
+    condition: "context.get('monthly_spend', 0) > context.get('budget', 0) * 0.80"
     action: scale_down_non_critical
     autonomy_level: L1
-    description: "Scale down non-critical services when budget > 80%"
+    description: "Reduce resources if budget > 80%."
+
+  - id: R007
+    name: data_drift_detected
+    trigger: DataDriftDetected
+    condition: "context.get('drift_score', 0) > context.get('threshold', 1.0)"
+    action: trigger_investigation
+    autonomy_level: L1
+    description: "Start investigation on data drift."
+
+  - id: R008
+    name: all_llm_providers_down
+    trigger: AllLLMProvidersFailed
+    condition: "True"
+    action: switch_to_cached_and_alert
+    autonomy_level: L0
+    description: "Alert on system-wide LLM failure."
+
+  - id: R009
+    name: automl_experiment_completed
+    trigger: AutoMLExperimentCompleted
+    condition: "context.get('best_score', 0) > context.get('current_production_score', 0)"
+    action: propose_model_swap
+    autonomy_level: L3
+    description: "Propose AutoML model if it beats production."
+
+  - id: R010
+    name: canary_rollback
+    trigger: CanaryHealthCheckFailed
+    condition: "context.get('error_rate', 0) > 0.05 or context.get('latency_p99', 0) > context.get('baseline_p99', 0) * 2"
+    action: immediate_rollback
+    autonomy_level: L1
+    description: "Auto-rollback canary on health failure."
