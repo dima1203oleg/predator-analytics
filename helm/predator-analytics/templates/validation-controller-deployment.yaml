@@ -1,0 +1,66 @@
+
+# ════════════════════════════════════════════════════════════════════════
+# VALIDATION CONTROLLER DEPLOYMENT
+# ════════════════════════════════════════════════════════════════════════
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-validation-controller
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: validation-controller
+    component: autonomy-core
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator-analytics.selectorLabels" . | nindent 6 }}
+      app: validation-controller
+  template:
+    metadata:
+      labels:
+        {{- include "predator-analytics.selectorLabels" . | nindent 8 }}
+        app: validation-controller
+        component: autonomy-core
+    spec:
+      priorityClassName: predator-medium
+      containers:
+        - name: validation-controller
+          image: "ghcr.io/predator-analytics/validation-controller:latest"
+          command: ["uvicorn", "services.validation-controller.controller:app", "--host", "0.0.0.0", "--port", "8084"]
+          ports:
+            - containerPort: 8084
+              name: http
+          env:
+            - name: MLFLOW_TRACKING_URI
+              value: "http://{{ include "predator-analytics.fullname" . }}-mlflow:5000"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator-analytics.fullname" . }}-validation-controller
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: validation-controller
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8084
+      targetPort: 8084
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "predator-analytics.selectorLabels" . | nindent 4 }}
+    app: validation-controller
