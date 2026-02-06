@@ -16,9 +16,7 @@ python-multipart==0.0.9
 numpy==1.26.4
 pandas==2.2.1
 scikit-learn==1.4.1.post1
-# Chroma DB client (NOT server)
 chromadb==0.4.24
-# OpenAI SDK (used for compatible APIs like Ollama/Groq)
 openai==1.14.0
 tenacity==8.2.3
 
@@ -38,3 +36,8 @@ uuid6==2024.1.12
 
 # MLOps Client
 mlflow-skinny==2.11.1
+
+# DEV / TEST DEPENDENCIES
+pytest==8.0.2
+pytest-asyncio==0.23.5
+bandit==1.7.7
