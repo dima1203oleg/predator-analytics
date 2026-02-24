@@ -1,0 +1,43 @@
+{
+    "name": "Predator v54 Dev Environment",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": "."
+    },
+    "remoteUser": "devuser",
+    "containerUser": "devuser",
+    "mounts": [
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
+        "source=${env:HOME}/.kube/config,target=/home/devuser/.kube/config,type=bind",
+        "source=/opt/dev,target=/workspaces,type=bind"
+    ],
+    "runArgs": [
+        "--gpus",
+        "all",
+        "--network",
+        "host"
+    ],
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/bin/python3.12"
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-azuretools.vscode-docker",
+                "ms-kubernetes-tools.vscode-kubernetes-tools"
+            ]
+        }
+    },
+    "postCreateCommand": "python3.12 -m pip install black pylint mypy pytest",
+    "forwardPorts": [
+        8000,
+        3000,
+        5432,
+        9200,
+        8080,
+        9090,
+        16686
+    ],
+    "workspaceFolder": "/workspaces"
+}

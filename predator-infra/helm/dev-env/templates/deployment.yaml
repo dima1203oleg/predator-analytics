@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.username }}-dev
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: dev
+    user: {{ .Values.username }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dev
+      user: {{ .Values.username }}
+  template:
+    metadata:
+      labels:
+        app: dev
+        user: {{ .Values.username }}
+      annotations:
+        devcontainer.metadata: '{"configFilePath": "/workspaces/infra/devcontainer/.devcontainer/devcontainer.json"}'
+    spec:
+      serviceAccountName: {{ .Values.username }}-sa
+      containers:
+        - name: dev
+          image: "{{ .Values.image }}:{{ .Values.tag }}"
+          command: ["tail", "-f", "/dev/null"]
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+              memory: {{ .Values.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+              memory: {{ .Values.resources.limits.memory | quote }}
+              nvidia.com/gpu: {{ index .Values.resources.limits "nvidia.com/gpu" | quote }}
+          volumeMounts:
+            - name: home
+              mountPath: /home/devuser
+            - name: docker-sock
+              mountPath: /var/run/docker.sock
+            - name: workspace
+              mountPath: /workspaces
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      volumes:
+        - name: home
+          persistentVolumeClaim:
+            claimName: {{ .Values.username }}-pvc
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+        - name: workspace
+          hostPath:
+            path: /opt/dev
+            type: Directory

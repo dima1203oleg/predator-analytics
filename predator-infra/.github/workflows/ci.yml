@@ -1,0 +1,20 @@
+name: CI/CD Headless
+
+on:
+    push:
+        branches:
+            - ci-minio-e2e
+
+jobs:
+    build-and-push:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            # Since the registry is internal (localhost:5000 on the server),
+            # the GitHub Action would normally need a tunnel or a public registry.
+            # For this setup, we assume building is done on the server via Remote SSH
+            # or triggered via an SSH command.
+
+            - name: Build Dummy (Actual build happens on Server)
+              run: echo "Code pushed. ArgoCD will sync changed manifests."

@@ -1,0 +1,12 @@
+username: ""
+image: localhost:5000/dev-image
+tag: 0f4444b0
+storage: 50Gi
+resources:
+  requests:
+    cpu: "4"
+    memory: "8Gi"
+  limits:
+    cpu: "8"
+    memory: "16Gi"
+    nvidia.com/gpu: "1"

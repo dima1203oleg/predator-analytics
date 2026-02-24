@@ -1,0 +1,40 @@
+# Backups and temporary files
+*.bak
+*.tmp
+*.swp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+/tmp/docker-build*.log
+
+# Dev Container local state
+.devcontainer/local-state/
+
+# Terraform local state
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# SSH keys (safety measure)
+*.pem
+*.key
+id_rsa
+id_ed25519*
+
+# Sensitive data
+.env
+.env.*
+! .env.example
+
+# Kubernetes local configs
+kubeconfig
+.kube/

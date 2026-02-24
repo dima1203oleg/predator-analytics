@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dev-USERNAME
+  namespace: argocd
+spec:
+  project: dev-users
+  source:
+    repoURL: https://github.com/dima1203oleg/predator-analytics.git
+    targetRevision: ci-minio-e2e
+    path: helm/dev-env
+    helm:
+      values: |
+        username: USERNAME
+        tag: latest
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev-USERNAME
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: dev-users
+  namespace: argocd
+spec:
+  description: Project for developer environments
+  sourceRepos:
+    - "https://github.com/dima1203oleg/predator-analytics.git"
+  destinations:
+    - namespace: dev-*
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
