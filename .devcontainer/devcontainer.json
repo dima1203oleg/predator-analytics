@@ -2,8 +2,9 @@
     "name": "Predator Analytics Server",
     "build": {
         "dockerfile": "Dockerfile",
-        "context": "."
+        "context": ".."
     },
+    "workspaceFolder": "/workspace",
     "customizations": {
         "vscode": {
             "extensions": [
@@ -15,15 +16,14 @@
                 "usernamehw.errorlens",
                 "github.copilot",
                 "ms-kubernetes-tools.vscode-kubernetes-tools",
-                "donjayamanne.githistory"
+                "donjayamanne.githistory",
+                "iosonofabio.better-toml"
             ]
         }
     },
-    "remoteUser": "root",
-    "mounts": [
-        "source=/opt/predator/data,target=/data,type=bind",
-        "source=/opt/predator/cache,target=/cache,type=bind",
-        "source=/opt/predator/models,target=/models,type=bind"
-    ],
-    "postCreateCommand": "pip install -r requirements.txt && pip install -r requirements_v4.txt"
+    "remoteUser": "vscode",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    },
+    "postCreateCommand": "echo 'Ready for K8s development'"
 }
