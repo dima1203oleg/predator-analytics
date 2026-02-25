@@ -15,7 +15,7 @@ backend:
   image:
     repository: ghcr.io/dima1203oleg/predator-backend
     tag: "latest"
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   replicas: 1
   resources:
     limits:
