@@ -6,10 +6,10 @@ import logging
 import asyncio
 from typing import Dict, List, Any
 import socket
-from .database import get_db_ctx, init_db
-from .config import settings
-from .redis import redis_client
-from .mq import broker
+from libs.core.database import get_db_ctx, init_db
+from libs.core.config import settings
+from libs.core.redis import redis_client
+from libs.core.mq import broker
 
 logger = logging.getLogger("predator.guardian")
 
@@ -77,7 +77,7 @@ class GuardianService:
                 status["checks"]["schema_gold"] = "OK" if res.fetchone() else "MISSING"
 
         except Exception as e:
-            logger.error(f"Guardian DB Check Failed: {e}")
+            logger.error(f"Помилка перевірки БД Guardian: {e}")
             status["status"] = "unhealthy"
             status["error"] = str(e)
 
@@ -96,13 +96,17 @@ class GuardianService:
                     if not res.fetchone():
                         issues.append(f"MISSING_TABLE: gold.{table}")
 
-                # Check for unique constraints
-                res = await db.execute(text("SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'data_sources_name_unique'"))
+                # Check for unique constraints in gold schema
+                res = await db.execute(text("""
+                    SELECT 1 FROM information_schema.table_constraints 
+                    WHERE constraint_name = 'data_sources_name_unique' 
+                    AND table_schema = 'gold'
+                """))
                 if not res.fetchone():
                     issues.append("MISSING_CONSTRAINT: gold.data_sources.name_unique")
 
         except Exception as e:
-            logger.error(f"Guardian Schema Verification Error: {e}")
+            logger.error(f"Помилка верифікації схеми Guardian: {e}")
             issues.append(f"VERIFICATION_ERROR: {str(e)}")
 
         return issues
@@ -122,23 +126,27 @@ class GuardianService:
         # 2. Fix specific known issues
         try:
             async with get_db_ctx() as db:
-                # Fix data_sources unique constraint
+                # Fix data_sources unique constraint in gold schema
                 await db.execute(text("""
                     DO $$
                     BEGIN
-                        IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'data_sources_name_unique') THEN
-                            ALTER TABLE gold.data_sources ADD CONSTRAINT data_sources_name_unique UNIQUE (name);
+                        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'gold' AND table_name = 'data_sources') THEN
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'data_sources_name_unique' AND table_schema = 'gold') THEN
+                                ALTER TABLE gold.data_sources ADD CONSTRAINT data_sources_name_unique UNIQUE (name);
+                            END IF;
                         END IF;
                     END $$;
                 """))
                 results["fixed_issues"].append("DATA_SOURCES_UNIQUE_CONSTRAINT_FIX")
 
-                # Fix ml_datasets unique constraint
+                # Fix ml_datasets unique constraint in gold schema
                 await db.execute(text("""
                     DO $$
                     BEGIN
-                        IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'ml_datasets_name_unique') THEN
-                            ALTER TABLE gold.ml_datasets ADD CONSTRAINT ml_datasets_name_unique UNIQUE (name);
+                        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'gold' AND table_name = 'ml_datasets') THEN
+                            IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'ml_datasets_name_unique' AND table_schema = 'gold') THEN
+                                ALTER TABLE gold.ml_datasets ADD CONSTRAINT ml_datasets_name_unique UNIQUE (name);
+                            END IF;
                         END IF;
                     END $$;
                 """))
@@ -146,7 +154,7 @@ class GuardianService:
 
                 await db.commit()
         except Exception as e:
-            logger.error(f"Guardian Auto-Recovery Error: {e}")
+            logger.error(f"Помилка авто-відновлення Guardian: {e}")
             results["error"] = str(e)
 
         results["status"] = "completed"
@@ -154,7 +162,7 @@ class GuardianService:
 
     async def start(self):
         """Start the background Guardian reconciliation loop."""
-        logger.info("🛡️ Guardian Reconciliation Loop STARTED.")
+        logger.info("🛡️ Цикл моніторингу Guardian ЗАПУЩЕНО.")
         while True:
             try:
                 # 1. Run diagnostics
@@ -163,14 +171,14 @@ class GuardianService:
 
                 # 2. Trigger auto-recovery if critical issues found
                 if any(v == "DOWN" for v in infra.values()) or schema_issues:
-                    logger.warning(f"⚠️ Guardian detected system degradation. Triggering Auto-Recovery...")
+                    logger.warning(f"⚠️ Guardian виявив деградацію системи. Запуск автоматичного відновлення...")
                     await self.run_auto_recovery()
 
                 # 3. Heartbeat log
-                logger.debug("Guardian: System check completed. Status: HEALTHY")
+                logger.debug("Guardian: Перевірка системи завершена. Стан: ЗДОРОВИЙ")
 
             except Exception as e:
-                logger.error(f"Guardian Loop Error: {e}")
+                logger.error(f"Помилка циклу Guardian: {e}")
 
             await asyncio.sleep(300) # Reconcile every 5 minutes
 

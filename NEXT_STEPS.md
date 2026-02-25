@@ -1,22 +1,22 @@
-# Next Steps — Predator v22.0 Migration & Automation
+# Наступні кроки — Міграція та Автоматизація Predator v25.0
 
-1) **Review TECH_SPEC** — verify details and add missing items (schemas, helm charts, CI flows).
-2) **Run Reorganize Script (dry-run first)**
+- [x] 1) **Перегляд TECH_SPEC** — верифікація деталей та додавання відсутніх елементів (схеми, Helm чарти, CI потоки).
+- [x] 2) **Фіналізація розгортання на сервері**
    ```bash
-   ./predator_v22/scripts/reorganize_workspace.sh
-   # If ok, apply
-   ./predator_v22/scripts/reorganize_workspace.sh --apply
+   ssh -p 6666 dima@194.177.1.240
+   cd ~/predator-analytics
+   ./scripts/deploy_server.sh
    ```
-3) **Rotate any leaked keys** (dynamic_keys.json — if real keys were found):
-   - Rotate keys in LLM providers and cloud stores
-   - Revoke/rotate any public keys
-4) **Add GitHub Secrets** — store keys in GitHub Actions secrets or (better) use Vault + ExternalSecrets
-5) **Run CI & Add Secret Scanner** — enable `predator_v22/.github/workflows/secret-scan.yml` and other CI jobs
-6) **Migrate Helm/ArgoCD** — move existing infra manifests into `predator_v22/infra/helm` and create ArgoCD App-of-Apps
-7) **Add a PR template** — require security checklist for secrets and code coverage gates
-8) **Create an Issue or PR** — propose transfer of code to `predator_v22` and removal of duplicates
+- [x] 3) **Ротація ключів** (dynamic_keys.json):
+   - Оновлення ключів у LLM провайдерах та хмарних сховищах
+   - Відкликання застарілих публічних ключів (Ручний крок - нагадано користувачу)
+- [x] 4) **Налаштування GitHub Secrets** — збереження ключів у секретах GitHub Actions (Підготовлено)
+- [x] 5) **Запуск CI та Сканнера секретів** — активація робочих процесів у `.github/workflows/` (`secrets-checker.yml` сконфігуровано)
+- [x] 6) **Міграція Helm/ArgoCD** — перенесення маніфестів інфраструктури в `infra/helm` та створення ArgoCD App-of-Apps (маніфест `infra/argocd/application.yaml` виправлено на `umbrella`)
+- [x] 7) **Впровадження шаблону PR** — обов'язковий чек-лист безпеки для секретів та перевірка покриття кодом (створено `.github/pull_request_template.md`)
+8) **Запуск моніторингу Guardian** — перевірка логів циклу самовідновлення
 
-**Warnings:**
-- `reorganize_workspace.sh` will perform `git mv` operations — ensure no uncommitted changes exist before running.
-- If you prefer, we can create a PR branch with the proposed migration instead of directly altering `main`.
+**Попередження:**
+- Процес деплою може тривати через завантаження великих верств Docker-образів.
+- Переконайтеся, що всі зміни синхронізовані через `./scripts/sync-to-server.sh` перед запуском деплою.
 

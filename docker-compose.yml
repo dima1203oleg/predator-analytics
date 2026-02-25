@@ -22,7 +22,7 @@ services:
     profiles: ["local", "server"]
 
   backend:
-    image: predator-backend:v22
+    image: predator-backend:v25
     build:
       context: .
       dockerfile: apps/backend/Dockerfile
@@ -52,7 +52,7 @@ services:
     profiles: ["local", "server"]
 
   orchestrator:
-    image: predator-orchestrator:v22
+    image: predator-orchestrator:v25
     build:
       context: .
       dockerfile: apps/self-improve-orchestrator/Dockerfile
@@ -93,7 +93,7 @@ services:
     profiles: ["server"]
 
   celery_worker:
-    image: predator-backend:v22
+    image: predator-backend:v25
     container_name: predator_celery_worker
     command: celery -A app.core.celery_app worker --loglevel=info -Q etl,ingestion,maintenance,monitoring --prefetch-multiplier=1 --concurrency=4
     volumes:
@@ -118,7 +118,7 @@ services:
     profiles: ["local", "server"]
 
   celery_beat:
-    image: predator-backend:v22
+    image: predator-backend:v25
     container_name: predator_celery_beat
     command: celery -A app.core.celery_app beat --loglevel=info
     volumes:
@@ -139,8 +139,8 @@ services:
 
   frontend:
     build:
-      context: ./apps/frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/frontend/Dockerfile
     container_name: predator_frontend
     ports:
       - "80:80"
@@ -354,9 +354,10 @@ services:
 
   telegram-bot:
     build:
-      context: ./apps/telegram-bot
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/self-improve-orchestrator/Dockerfile
     container_name: predator_telegram_bot
+    command: python3 -m orchestrator.telegram.bot
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - TELEGRAM_ADMIN_IDS=${TELEGRAM_ADMIN_IDS}
@@ -370,7 +371,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./apps/telegram-bot:/app
+      - ./apps/self-improve-orchestrator:/app/orchestrator
       - ./libs:/app/libs
     networks:
       - predator-net

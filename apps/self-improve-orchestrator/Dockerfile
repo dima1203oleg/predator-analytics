@@ -1,39 +1,23 @@
-FROM python:3.12-slim
+FROM python:3.12-bookworm
 
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     python3-dev \
     libpq-dev \
     curl \
     git \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Playwright dependencies (full set for Chromium)
-RUN apt-get update && apt-get install -y \
-    libnss3 \
-    libatk-bridge2.0-0 \
-    libdrm2 \
-    libxkbcommon0 \
-    libgbm1 \
-    libasound2 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxrandr2 \
-    libcups2 \
-    libpango-1.0-0 \
-    libcairo2 \
-    libatspi2.0-0 \
+    libmagic-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy and install Python requirements
 COPY apps/self-improve-orchestrator/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright browsers
+# Install Playwright browsers and their system dependencies
+RUN playwright install-deps chromium
 RUN playwright install chromium
 
 # Copy orchestrator code

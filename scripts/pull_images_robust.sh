@@ -14,6 +14,9 @@ IMAGES=(
     "ghcr.io/mlflow/mlflow:latest"
     "grafana/grafana:latest"
     "prom/prometheus:latest"
+    "predator-backend:v25"
+    "predator-orchestrator:v25"
+    "predator-frontend:v25"
 )
 
 echo "Starting sequential pull of ${#IMAGES[@]} images..."

@@ -101,12 +101,19 @@ def get_db_sync() -> Generator[Session, None, None]:
 
 async def init_db() -> None:
     """Initialize database tables and extensions"""
+    # Import all models to ensure they are registered in Base.metadata
+    import libs.core.models.entities # noqa
+    schemas = ["gold", "silver", "bronze", "staging"]
     if is_async:
         async with engine.begin() as conn:
+            for schema in schemas:
+                await conn.execute(text(f"CREATE SCHEMA IF NOT EXISTS {schema}"))
             await conn.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
             await conn.run_sync(Base.metadata.create_all)
     else:
         with engine.begin() as conn:
+            for schema in schemas:
+                conn.execute(text(f"CREATE SCHEMA IF NOT EXISTS {schema}"))
             conn.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
             Base.metadata.create_all(engine)
     logger.info("Database tables and extensions initialized")

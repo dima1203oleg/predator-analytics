@@ -1,55 +1,61 @@
 #!/bin/bash
 set -e
 
-# Colors
+# Кольори для виводу
 GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
 RED='\033[0;31m'
-NC='\033[0m' # No Color
+BLUE='\033[0;34m'
+NC='\033[0m' # Без кольору
 
-echo -e "${GREEN}🚀 Starting Predator Deployment on NVIDIA Server...${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}🚀 Запуск розгортання Predator v25.0 на NVIDIA сервері...${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-# 0. Ensure we are in project root (assuming script is in scripts/)
+# 0. Перехід в корінь проекту
 cd "$(dirname "$0")/.."
 
-# 1. Update Code
-echo -e "${GREEN}📥 Pulling latest code...${NC}"
-git config pull.rebase false
-git stash
-git pull origin main
-git stash pop || true
+# 1. Оновлення коду (відключено, використовується rsync)
+echo -e "${YELLOW}📥 Оновлення коду (код вже синхронізовано через rsync)...${NC}"
+# git config pull.rebase false
+# git stash
+# git pull origin main
+# git stash pop || true
 
-# 2. Check Config
+# 2. Перевірка конфігурації
 if [ ! -f .env ]; then
-    echo -e "${RED}⚠️ .env file missing! Creating from example...${NC}"
+    echo -e "${RED}⚠️ Файл .env відсутній! Створення з прикладу...${NC}"
     cp .env.example .env
-    echo "Please edit .env and run this script again."
+    echo "Будь ласка, відредагуйте .env та запустіть скрипт знову."
     exit 1
 fi
 
-# 3. Build Services
-# Note: Root context is now used, so we build all dependent servicesе
-echo -e "${GREEN}🏗️ Building Docker images (with GPU support)...${NC}"
-docker compose build backend orchestrator telegram_controller
+# 3. Збірка сервісів
+echo -e "${YELLOW}🏗️ Збірка Docker образів (з підтримкою GPU)...${NC}"
+docker compose --profile server build backend orchestrator frontend
 
-# 4. Restart Services
-echo -e "${GREEN}🔄 Restarting services...${NC}"
-docker compose up -d --remove-orphans
+# 4. Перезапуск сервісів
+echo -e "${YELLOW}🔄 Перезапуск контейнерів...${NC}"
+docker compose --profile server up -d --remove-orphans
 
-# 5. Verify Health
-echo -e "${GREEN}🏥 Checking health (waiting 15s)...${NC}"
+# 5. Перевірка стану (Health Check)
+echo -e "${YELLOW}🏥 Перевірка працездатності (очікування 15с)...${NC}"
 sleep 15
 if curl -s -f http://localhost:8090/health > /dev/null; then
-    echo -e "${GREEN}✅ Backend API is Healthy!${NC}"
+    echo -e "${GREEN}✅ Backend API працює стабільно!${NC}"
 else
-    echo -e "${RED}❌ Backend Health check failed.${NC}"
-    echo "Last 20 lines of backend logs:"
+    echo -e "${RED}❌ Помилка перевірки стану бекенду.${NC}"
+    echo "Останні 20 рядків логів бекенду:"
     docker compose logs --tail=20 backend
 fi
 
-# 6. Check GPU Access (Optional)
+# 6. Статус GPU
 if command -v nvidia-smi &> /dev/null; then
-    echo -e "${GREEN}GPU Status:${NC}"
+    echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${GREEN}🎮 Статус NVIDIA GPU:${NC}"
     nvidia-smi --query-gpu=name,utilization.gpu,memory.used --format=csv,noheader
 fi
 
-echo -e "${GREEN}✅ Deployment Complete!${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}✅ Розгортання завершено успішно!${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

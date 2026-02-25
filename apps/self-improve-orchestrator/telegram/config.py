@@ -21,30 +21,30 @@ class BotStates(Enum):
 # Keyboard Layouts
 MENUS = {
     "main": [
-        [{"text": "🤖 AI Control", "callback_data": "menu_ai"}, {"text": "📊 Analytics", "callback_data": "menu_analytics"}],
-        [{"text": "🛠 System", "callback_data": "menu_system"}, {"text": "🐙 Git Ops", "callback_data": "menu_git"}],
-        [{"text": "🔍 Search", "callback_data": "menu_search"}, {"text": "📂 Knowledge", "callback_data": "menu_knowledge"}],
-        [{"text": "💬 Chat with Copilot", "callback_data": "start_chat"}]
+        [{"text": "🤖 Управління ШІ", "callback_data": "menu_ai"}, {"text": "📊 Аналітика", "callback_data": "menu_analytics"}],
+        [{"text": "🛠 Система", "callback_data": "menu_system"}, {"text": "🐙 Git Ops", "callback_data": "menu_git"}],
+        [{"text": "🔍 Пошук", "callback_data": "menu_search"}, {"text": "📂 База знань", "callback_data": "menu_knowledge"}],
+        [{"text": "💬 Чат з Копілотом", "callback_data": "start_chat"}]
     ],
     "ai": [
-        [{"text": "🧠 LLM Council", "callback_data": "ai_council"}, {"text": "⚡ Agents Status", "callback_data": "ai_agents"}],
-        [{"text": "🔗 Triple Chain", "callback_data": "ai_triple_chain"}, {"text": "🔄 Self-Improve", "callback_data": "ai_improve"}],
-        [{"text": "🔙 Back", "callback_data": "menu_main"}]
+        [{"text": "🧠 Рада LLM", "callback_data": "ai_council"}, {"text": "⚡ Статус агентів", "callback_data": "ai_agents"}],
+        [{"text": "🔗 Потрійний ланцюг", "callback_data": "ai_triple_chain"}, {"text": "🔄 Самовдосконалення", "callback_data": "ai_improve"}],
+        [{"text": "🔙 Назад", "callback_data": "menu_main"}]
     ],
     "system": [
-        [{"text": "🏥 Health Check", "callback_data": "sys_health"}, {"text": "📈 Prometheus", "callback_data": "sys_prometheus"}],
-        [{"text": "📦 ArgoCD Deploy", "callback_data": "sys_deploy"}, {"text": "🧹 Clear Cache", "callback_data": "sys_cache"}],
-        [{"text": "🔙 Back", "callback_data": "menu_main"}]
+        [{"text": "🏥 Перевірка стану", "callback_data": "sys_health"}, {"text": "📈 Prometheus", "callback_data": "sys_prometheus"}],
+        [{"text": "📦 Деплой ArgoCD", "callback_data": "sys_deploy"}, {"text": "🧹 Очистити кеш", "callback_data": "sys_cache"}],
+        [{"text": "🔙 Назад", "callback_data": "menu_main"}]
     ],
     "git": [
-        [{"text": "📥 Pull Updates", "callback_data": "git_pull"}, {"text": "📜 Status", "callback_data": "git_status"}],
-        [{"text": "📝 Log", "callback_data": "git_log"}, {"text": "🔙 Back", "callback_data": "menu_main"}]
+        [{"text": "📥 Оновити код", "callback_data": "git_pull"}, {"text": "📜 Статус", "callback_data": "git_status"}],
+        [{"text": "📝 Логи", "callback_data": "git_log"}, {"text": "🔙 Назад", "callback_data": "menu_main"}]
     ]
 }
 
 # Texts
 MESSAGES = {
-    "welcome": "🚀 *Predator Analytics v22.0 - Omniscient Center*\n\nСистема активована. Канал зв'язку захищено.\nОберіть модуль для управління або надішліть голосову команду:",
+    "welcome": "🚀 *Predator Analytics v25.0 - Omniscient Center*\n\nСистема активована. Канал зв'язку захищено.\nОберіть модуль для управління або надішліть голосову команду:",
     "access_denied": "⛔ *Доступ заборонено*\nВи не авторизовані для використання цієї системи.",
     "unknown_command": "❓ Невідома команда або інтент.",
     "processing": "⏳ Обробка запиту через Cortex...",

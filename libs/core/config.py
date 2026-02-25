@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     # App
     APP_NAME: str = "Predator Analytics Core"
-    APP_VERSION: str = "22.0.0"
+    APP_VERSION: str = "25.0.0"
     DEBUG: bool = False
     ENVIRONMENT: str = "development"
 
@@ -88,9 +88,26 @@ class Settings(BaseSettings):
     OPENAI_MODEL: str = "gpt-4o-mini"
     OLLAMA_MODEL: str = "qwen2.5-coder:7b"
     OPENROUTER_MODEL: str = "google/gemini-2.0-flash-exp:free"
+    DEEPSEEK_MODEL: str = "deepseek-chat"
+
+    # Orchestrator & Self-Improvement
+    LOOP_INTERVAL_SECONDS: int = 60
+    MAX_ITERATIONS_PER_DAY: int = 288
+    STOP_SIGNAL_KEY: str = "orchestrator:stop_signal"
+    UI_STOP_SIGNAL_KEY: str = "orchestrator:ui_stop"
+    MIN_TEST_COVERAGE: float = 0.70
+    MIN_LIGHTHOUSE_SCORE: float = 0.85
+    MAX_DEPLOYMENT_FAILURES: int = 3
+    AUTO_APPROVAL_ENABLED: bool = True
 
     # TTS/STT
     GOOGLE_TTS_API_KEY: Optional[str] = None
+    TELEGRAM_BOT_TOKEN: Optional[str] = os.getenv("TELEGRAM_BOT_TOKEN")
+    TELEGRAM_ADMIN_ID: Optional[str] = os.getenv("TELEGRAM_ADMIN_ID")
+
+    # Path Management
+    PROJECT_ROOT: str = os.getenv("PROJECT_ROOT", "/app")
+    CODEBASE_PATH: str = os.getenv("CODEBASE_PATH", "/app/app")
     # Security
     SECRET_KEY: str = "change-in-production"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440

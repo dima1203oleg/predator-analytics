@@ -195,60 +195,60 @@ const MonitoringView: React.FC = () => {
                     : clusterResponse as any as MonClusterStatus;
 
                 if (isMounted.current && cluster.nodes && cluster.nodes.length > 0) {
-                     const nodes: GraphDataNode[] = [];
-                     const links: GraphDataLink[] = [];
+                    const nodes: GraphDataNode[] = [];
+                    const links: GraphDataLink[] = [];
 
-                     // Add Nodes
-                     cluster.nodes.forEach((node: MonClusterNode) => {
-                         nodes.push({
-                             name: node.name,
-                             category: 0, // NODE
-                             symbolSize: 40,
-                             itemStyle: { color: '#3b82f6', shadowBlur: 15, shadowColor: '#3b82f666' },
-                             data: { category: 'ВУЗОЛ', status: node.status, cpu: node.cpuUsage?.toString() }
-                         });
+                    // Add Nodes
+                    cluster.nodes.forEach((node: MonClusterNode) => {
+                        nodes.push({
+                            name: node.name,
+                            category: 0, // NODE
+                            symbolSize: 40,
+                            itemStyle: { color: '#3b82f6', shadowBlur: 15, shadowColor: '#3b82f666' },
+                            data: { category: 'ВУЗОЛ', status: node.status, cpu: node.cpuUsage?.toString() }
+                        });
 
-                         // Add Pods for this node (if available in cluster data, otherwise mock based on targets)
-                         if (node.pods) {
-                             node.pods.forEach((pod: MonClusterPod) => {
-                                 nodes.push({
-                                     name: pod.name,
-                                     category: 1, // POD
-                                     symbolSize: 20,
-                                     itemStyle: { color: '#10b981' },
-                                     data: { category: 'ПОД', status: pod.status, cpu: pod.cpu?.toString() }
-                                 });
-                                 links.push({ source: node.name, target: pod.name });
-                             });
-                         }
-                     });
+                        // Add Pods for this node (if available in cluster data, otherwise mock based on targets)
+                        if (node.pods) {
+                            node.pods.forEach((pod: MonClusterPod) => {
+                                nodes.push({
+                                    name: pod.name,
+                                    category: 1, // POD
+                                    symbolSize: 20,
+                                    itemStyle: { color: '#10b981' },
+                                    data: { category: 'ПОД', status: pod.status, cpu: pod.cpu?.toString() }
+                                });
+                                links.push({ source: node.name, target: pod.name });
+                            });
+                        }
+                    });
 
-                     // If no pods found in cluster data (mock mode might not have them nested), use targets/services
-                     if (nodes.length < 5) {
-                         // Add mocked services/targets as nodes if cluster data is sparse
+                    // If no pods found in cluster data (mock mode might not have them nested), use targets/services
+                    if (nodes.length < 5) {
+                        // Add mocked services/targets as nodes if cluster data is sparse
                         const data = await api.getMonitoringTargets();
                         if (isMounted.current) setTargets(data);
 
                         data.forEach((t: MonTarget) => {
-                              nodes.push({
-                                  name: t.name,
-                                  category: 2, // SERVICE
-                                  symbolSize: 30,
-                                  itemStyle: { color: '#a855f7' },
-                                  data: { category: 'СЕРВІС', status: t.status, latency: t.latency }
-                              });
-                              // Link to first node as parent (mock)
-                              if (nodes[0]) links.push({ source: nodes[0].name, target: t.name });
-                         });
-                      }
+                            nodes.push({
+                                name: t.name,
+                                category: 2, // SERVICE
+                                symbolSize: 30,
+                                itemStyle: { color: '#a855f7' },
+                                data: { category: 'СЕРВІС', status: t.status, latency: t.latency }
+                            });
+                            // Link to first node as parent (mock)
+                            if (nodes[0]) links.push({ source: nodes[0].name, target: t.name });
+                        });
+                    }
 
-                     setGraphData({ nodes, links });
+                    setGraphData({ nodes, links });
                 } else {
-                     // Fallback if cluster status fails or is empty - construct from targets
-                     const data = await api.getMonitoringTargets();
-                     if (isMounted.current) {
+                    // Fallback if cluster status fails or is empty - construct from targets
+                    const data = await api.getMonitoringTargets();
+                    if (isMounted.current) {
                         setTargets(data);
-                          const nodes: GraphDataNode[] = [
+                        const nodes: GraphDataNode[] = [
                             { name: 'Шлюз Кластера', category: 0, symbolSize: 50, itemStyle: { color: '#0ea5e9' }, data: { category: 'ШЛЮЗ', status: 'Онлайн' } }
                         ];
                         const links: GraphDataLink[] = [];
@@ -263,7 +263,7 @@ const MonitoringView: React.FC = () => {
                             links.push({ source: 'Шлюз Кластера', target: t.name });
                         });
                         setGraphData({ nodes, links });
-                     }
+                    }
                 }
 
                 // Fetch real V25 data
@@ -282,7 +282,7 @@ const MonitoringView: React.FC = () => {
             } catch (e) {
                 console.error(e);
             } finally {
-                 if (isMounted.current) setLoading(false);
+                if (isMounted.current) setLoading(false);
             }
         };
         fetchTargets();
@@ -352,7 +352,7 @@ const MonitoringView: React.FC = () => {
                                 <p className="text-[10px] text-slate-400 line-clamp-1 italic mb-3">"{log.request_text}"</p>
                                 <div className="flex justify-between text-[8px] font-mono text-slate-500">
                                     <span>{new Date(log.created_at).toLocaleTimeString()}</span>
-                                    <span>RISK: {log.risk_level}</span>
+                                    <span>РИЗИК: <span className={log.risk_level === 'high' ? 'text-rose-400' : 'text-emerald-400'}>{log.risk_level === 'high' ? 'ВИСОКИЙ' : 'НИЗЬКИЙ'}</span></span>
                                 </div>
                             </motion.div>
                         ))}
@@ -360,10 +360,10 @@ const MonitoringView: React.FC = () => {
                 </TacticalCard>
             </div>
             <div className="lg:col-span-2">
-                <TacticalCard variant="holographic" title="NEURAL REASONING TRACE" className="min-h-[600px] border-white/5 bg-slate-950/40 flex flex-col">
+                <TacticalCard variant="holographic" title="НЕЙРОННИЙ СЛІД ПРИЙНЯТТЯ РІШЕНЬ" className="min-h-[600px] border-white/5 bg-slate-950/40 flex flex-col">
                     {selectedAudit ? (
                         <div className="p-8 space-y-10">
-                             <div className="flex items-center gap-6 p-6 bg-purple-600/5 rounded-3xl border border-purple-500/20">
+                            <div className="flex items-center gap-6 p-6 bg-purple-600/5 rounded-3xl border border-purple-500/20">
                                 <div className="p-4 bg-purple-600/20 rounded-2xl text-purple-400">
                                     <Brain size={32} />
                                 </div>
@@ -371,78 +371,78 @@ const MonitoringView: React.FC = () => {
                                     <h3 className="text-xl font-black text-white uppercase">{selectedAudit.intent}</h3>
                                     <p className="text-sm text-slate-400 font-mono mt-1">{selectedAudit.id}</p>
                                 </div>
-                             </div>
+                            </div>
 
-                             <div className="relative pl-12">
+                            <div className="relative pl-12">
                                 <div className="absolute left-4 top-0 bottom-0 w-px bg-gradient-to-b from-purple-500 to-transparent" />
                                 <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-slate-950 border-2 border-purple-500 flex items-center justify-center text-purple-400 z-10">
                                     <Target size={14} />
                                 </div>
                                 <div className="space-y-4">
-                                    <h4 className="text-xs font-black text-purple-400 uppercase tracking-[0.2em]">Strategist Plan (Gemini)</h4>
+                                    <h4 className="text-xs font-black text-purple-400 uppercase tracking-[0.2em]">План Стратега (Gemini)</h4>
                                     <div className="p-6 bg-white/5 rounded-2xl border border-white/5 text-sm text-slate-200 font-mono whitespace-pre-wrap leading-relaxed shadow-lg">
                                         {Array.isArray(selectedAudit.gemini_plan?.steps)
-                                            ? selectedAudit.gemini_plan.steps.map((s: string, i: number) => <div key={i} className="mb-1">[{i+1}] {s}</div>)
-                                            : (selectedAudit.gemini_plan || "No plan details available.")}
+                                            ? selectedAudit.gemini_plan.steps.map((s: string, i: number) => <div key={i} className="mb-1">[{i + 1}] {s}</div>)
+                                            : (selectedAudit.gemini_plan || "Деталі плану недоступні.")}
                                     </div>
                                 </div>
-                             </div>
+                            </div>
 
-                             {selectedAudit.thinking_process && (
+                            {selectedAudit.thinking_process && (
                                 <div className="relative pl-12 mt-12">
                                     <div className="absolute left-4 top-0 bottom-0 w-px bg-gradient-to-b from-amber-500 to-transparent" />
                                     <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-slate-950 border-2 border-amber-500 flex items-center justify-center text-amber-400 z-10">
                                         <Zap size={14} />
                                     </div>
                                     <div className="space-y-4">
-                                        <h4 className="text-xs font-black text-amber-400 uppercase tracking-[0.2em]">Inner Monologue (v25 Neuron)</h4>
+                                        <h4 className="text-xs font-black text-amber-400 uppercase tracking-[0.2em]">Внутрішній Монолог (Нейрон v25)</h4>
                                         <div className="p-6 bg-amber-500/5 rounded-2xl border border-amber-500/10 text-xs text-amber-100/80 font-mono leading-relaxed italic">
                                             {selectedAudit.thinking_process}
                                         </div>
                                     </div>
                                 </div>
-                             )}
+                            )}
 
-                             {selectedAudit.mistral_output && (
+                            {selectedAudit.mistral_output && (
                                 <div className="relative pl-12 mt-12">
                                     <div className="absolute left-4 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500 to-transparent" />
                                     <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-slate-950 border-2 border-blue-500 flex items-center justify-center text-blue-400 z-10">
                                         <Code size={14} />
                                     </div>
                                     <div className="space-y-4">
-                                        <h4 className="text-xs font-black text-blue-400 uppercase tracking-[0.2em]">Coder Output (Mistral/Groq)</h4>
+                                        <h4 className="text-xs font-black text-blue-400 uppercase tracking-[0.2em]">Вихід Коду (Mistral/Groq)</h4>
                                         <div className="p-6 bg-blue-500/5 rounded-2xl border border-blue-500/10 text-[11px] text-blue-100/90 font-mono whitespace-pre-wrap overflow-x-auto">
                                             {selectedAudit.mistral_output}
                                         </div>
                                     </div>
                                 </div>
-                             )}
+                            )}
 
-                             <div className="relative pl-12 mt-12">
+                            <div className="relative pl-12 mt-12">
                                 <div className="absolute left-4 top-0 bottom-0 w-px bg-gradient-to-b from-emerald-500 to-transparent" />
                                 <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-slate-950 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 z-10">
                                     <CheckCircle2 size={14} />
                                 </div>
                                 <div className="space-y-4">
-                                    <h4 className="text-xs font-black text-emerald-400 uppercase tracking-[0.2em]">Security Audit (Aider/Copilot)</h4>
+                                    <h4 className="text-xs font-black text-emerald-400 uppercase tracking-[0.2em]">Аудит Безпеки (Aider/Copilot)</h4>
                                     <div className="p-6 bg-emerald-500/5 rounded-2xl border border-emerald-500/10 text-sm text-emerald-100/80 font-mono italic leading-relaxed shadow-inner">
-                                        {typeof selectedAudit.copilot_audit === 'object' ? JSON.stringify(selectedAudit.copilot_audit, null, 2) : (selectedAudit.copilot_audit || "Audit summary not recorded.")}
+                                        {typeof selectedAudit.copilot_audit === 'object' ? JSON.stringify(selectedAudit.copilot_audit, null, 2) : (selectedAudit.copilot_audit || "Підсумок аудиту не записано.")}
                                     </div>
                                     <div className="flex gap-4">
                                         <div className="px-4 py-2 bg-slate-950 rounded-xl border border-white/5 text-[9px] font-mono text-slate-400 uppercase">
-                                            Execution: <span className="text-emerald-400">{selectedAudit.execution_time_ms}ms</span>
+                                            Виконання: <span className="text-emerald-400">{selectedAudit.execution_time_ms}мс</span>
                                         </div>
                                         <div className="px-4 py-2 bg-slate-950 rounded-xl border border-white/5 text-[9px] font-mono text-slate-400 uppercase">
-                                            Risk Score: <span className={selectedAudit.risk_level === 'high' ? 'text-rose-400' : 'text-emerald-400'}>{selectedAudit.risk_level.toUpperCase()}</span>
+                                            Рівень Ризику: <span className={selectedAudit.risk_level === 'high' ? 'text-rose-400' : 'text-emerald-400'}>{selectedAudit.risk_level === 'high' ? 'ВИСОКИЙ' : 'НИЗЬКИЙ'}</span>
                                         </div>
                                     </div>
                                 </div>
-                             </div>
+                            </div>
                         </div>
                     ) : (
                         <div className="h-full flex flex-col items-center justify-center opacity-20 py-40">
                             <Brain size={100} />
-                            <p className="mt-8 text-xs font-black uppercase tracking-widest">Select Trace to visualize reasoning</p>
+                            <p className="mt-8 text-xs font-black uppercase tracking-widest">Оберіть Слід для візуалізації міркувань</p>
                         </div>
                     )}
                 </TacticalCard>
@@ -479,8 +479,8 @@ const MonitoringView: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex justify-between items-center text-[9px] font-mono border-t border-white/5 pt-3">
-                                    <div className="text-slate-500">INIT: <span className="text-slate-300">{saga.startTime}</span></div>
-                                    <div className="text-slate-500 tracking-tighter">TRACE_ID: {saga.traceId.substring(0, 8)}...</div>
+                                    <div className="text-slate-500">ПОЧАТОК: <span className="text-slate-300">{saga.startTime}</span></div>
+                                    <div className="text-slate-500 tracking-tighter">ID ТРЕЙСУ: {saga.traceId.substring(0, 8)}...</div>
                                 </div>
                                 {selectedSaga?.id === saga.id && (
                                     <motion.div layoutId="sagaActive" className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 shadow-[0_0_15px_#3b82f6]" />
@@ -520,12 +520,12 @@ const MonitoringView: React.FC = () => {
 
                             <div className="relative pl-16 space-y-10 flex-1">
                                 <div className="absolute left-7 top-4 bottom-4 w-[2px] bg-slate-800/50 rounded-full overflow-hidden">
-                                     <motion.div
+                                    <motion.div
                                         initial={{ height: 0 }}
                                         animate={{ height: '100%' }}
                                         transition={{ duration: 1.5, ease: "easeInOut" }}
                                         className="w-full bg-gradient-to-b from-blue-500 via-indigo-500 to-purple-500 shadow-[0_0_15px_#3b82f6]"
-                                     />
+                                    />
                                 </div>
 
                                 {selectedSaga.steps.map((step, idx) => (
@@ -536,23 +536,21 @@ const MonitoringView: React.FC = () => {
                                         key={step.id}
                                         className="relative flex items-center gap-8 group"
                                     >
-                                        <div className={`w-14 h-14 rounded-full border-2 flex items-center justify-center bg-slate-950 z-10 transition-all duration-500 shadow-2xl ${
-                                            step.status === 'COMPLETED' ? 'border-emerald-500 text-emerald-400 shadow-emerald-500/20' :
+                                        <div className={`w-14 h-14 rounded-full border-2 flex items-center justify-center bg-slate-950 z-10 transition-all duration-500 shadow-2xl ${step.status === 'COMPLETED' ? 'border-emerald-500 text-emerald-400 shadow-emerald-500/20' :
                                             step.status === 'FAILED' ? 'border-rose-500 text-rose-400 shadow-rose-500/20' :
-                                            step.status === 'COMPENSATED' ? 'border-amber-500 text-amber-400 shadow-amber-500/20' :
-                                            'border-slate-800 text-slate-600'
-                                        } group-hover:scale-110`}>
+                                                step.status === 'COMPENSATED' ? 'border-amber-500 text-amber-400 shadow-amber-500/20' :
+                                                    'border-slate-800 text-slate-600'
+                                            } group-hover:scale-110`}>
                                             {step.status === 'COMPLETED' && <CheckCircle2 size={24} />}
                                             {step.status === 'FAILED' && <XCircle size={24} />}
                                             {step.status === 'COMPENSATED' && <RotateCcw size={24} />}
                                             {!['COMPLETED', 'FAILED', 'COMPENSATED'].includes(step.status) && <Clock size={24} />}
                                         </div>
 
-                                        <div className={`flex-1 p-6 rounded-[32px] border backdrop-blur-md transition-all duration-500 group-hover:border-white/20 group-hover:bg-white/5 ${
-                                            step.status === 'FAILED' ? 'bg-rose-500/5 border-rose-500/20' :
+                                        <div className={`flex-1 p-6 rounded-[32px] border backdrop-blur-md transition-all duration-500 group-hover:border-white/20 group-hover:bg-white/5 ${step.status === 'FAILED' ? 'bg-rose-500/5 border-rose-500/20' :
                                             step.status === 'COMPENSATED' ? 'bg-amber-500/5 border-amber-500/20' :
-                                            'bg-slate-900/40 border-white/5 shadow-xl'
-                                        }`}>
+                                                'bg-slate-900/40 border-white/5 shadow-xl'
+                                            }`}>
                                             <div className="flex justify-between items-center mb-4">
                                                 <div className="flex items-center gap-4">
                                                     <div className="p-2.5 bg-slate-950/80 rounded-xl border border-white/10 text-blue-400">
@@ -577,7 +575,7 @@ const MonitoringView: React.FC = () => {
                                                         <RotateCcw size={14} />
                                                     </div>
                                                     <div className="text-[10px] text-amber-400 font-black uppercase tracking-widest">
-                                                       Компенсуюча Дія: {step.compensatingAction}
+                                                        Компенсуюча Дія: {step.compensatingAction}
                                                     </div>
                                                 </motion.div>
                                             )}
@@ -632,12 +630,12 @@ const MonitoringView: React.FC = () => {
                             onClick={() => setActiveTab(tab)}
                             className={`flex-1 py-3 px-6 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 flex items-center justify-center gap-3 relative overflow-hidden whitespace-nowrap ${activeTab === tab ? (
                                 tab === 'METRICS' ? `${isCommanderShell ? 'bg-amber-600' : isOperatorShell ? 'bg-emerald-600' : 'bg-blue-600'} text-white shadow-lg border border-white/20` :
-                                tab === 'LOGS' ? 'bg-amber-600 text-white shadow-lg border border-white/20' :
-                                tab === 'JOBS' ? 'bg-cyan-600 text-white shadow-lg border border-white/20' :
-                                tab === 'LLM' ? 'bg-purple-600 text-white shadow-lg border border-white/20' :
-                                tab === 'STORAGE' ? 'bg-indigo-600 text-white shadow-lg border border-white/20' :
-                                tab === 'ANALYTICS' ? 'bg-orange-600 text-white shadow-lg border border-white/20' :
-                                'bg-purple-600 text-white shadow-lg border border-white/20'
+                                    tab === 'LOGS' ? 'bg-amber-600 text-white shadow-lg border border-white/20' :
+                                        tab === 'JOBS' ? 'bg-cyan-600 text-white shadow-lg border border-white/20' :
+                                            tab === 'LLM' ? 'bg-purple-600 text-white shadow-lg border border-white/20' :
+                                                tab === 'STORAGE' ? 'bg-indigo-600 text-white shadow-lg border border-white/20' :
+                                                    tab === 'ANALYTICS' ? 'bg-orange-600 text-white shadow-lg border border-white/20' :
+                                                        'bg-purple-600 text-white shadow-lg border border-white/20'
                             ) : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}
                         >
                             {tab === 'METRICS' && <BarChart3 size={16} />}
@@ -650,12 +648,12 @@ const MonitoringView: React.FC = () => {
                             {tab === 'NEURAL' && <Brain size={16} className="text-purple-400" />}
 
                             {tab === 'METRICS' ? 'Метрики' :
-                             tab === 'LOGS' ? 'Логи' :
-                             tab === 'JOBS' ? 'Задачі' :
-                             tab === 'LLM' ? 'AI_Core' :
-                             tab === 'STORAGE' ? 'Сховище' :
-                             tab === 'ANALYTICS' ? 'Dashboards' :
-                             tab === 'NEURAL' ? 'Neural Trace' : 'Saga'}
+                                tab === 'LOGS' ? 'Логи' :
+                                    tab === 'JOBS' ? 'Задачі' :
+                                        tab === 'LLM' ? 'Ядро ШІ' :
+                                            tab === 'STORAGE' ? 'Сховище' :
+                                                tab === 'ANALYTICS' ? 'Дашборди' :
+                                                    tab === 'NEURAL' ? 'Нейро-Слід' : 'Saga'}
 
                             {activeTab === tab && <motion.div layoutId="tabGlow" className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />}
                         </button>
@@ -704,7 +702,7 @@ const MonitoringView: React.FC = () => {
                                 {wsData?.pulse && (
                                     <TacticalCard
                                         variant="holographic"
-                                        title="SYSTEM PULSE AGGREGATOR"
+                                        title="АГРЕГАТОР СИСТЕМНОГО ПУЛЬСУ"
                                         className="panel-3d glass-ultra rounded-[32px] border-white/5 overflow-hidden shadow-2xl relative"
                                     >
                                         <div className="absolute top-2 right-4 text-[10px] font-black text-slate-500 uppercase">v25_CORE</div>
@@ -737,9 +735,9 @@ const MonitoringView: React.FC = () => {
                                     </TacticalCard>
                                 )}
 
-                                 <TacticalCard
+                                <TacticalCard
                                     variant="holographic"
-                                    title={isCommanderShell ? 'NEURAL_TOPOLOGY' : 'МАТРИЦЯ СЕРВІСІВ'}
+                                    title={isCommanderShell ? 'НЕЙРОННА_ТОПОЛОГІЯ' : 'МАТРИЦЯ СЕРВІСІВ'}
                                     className={`panel-3d glass-ultra rounded-[32px] border-white/5 overflow-hidden shadow-2xl ${isCommanderShell ? 'border-amber-500/20' : isOperatorShell ? 'border-emerald-500/20' : ''}`}
                                 >
                                     <div className="h-[350px] w-full relative group">
@@ -792,9 +790,9 @@ const MonitoringView: React.FC = () => {
                                     </div>
                                 </TacticalCard>
 
-                                 <TacticalCard
+                                <TacticalCard
                                     variant="holographic"
-                                    title={isCommanderShell ? 'AI_ANOMALY_VECTOR' : 'Аналіз Коефіцієнта Загрози'}
+                                    title={isCommanderShell ? 'ВЕКТОР_ШІ_АНОМАЛІЙ' : 'Аналіз Коефіцієнта Загрози'}
                                     className={`panel-3d overflow-hidden glass-ultra rounded-[32px] shadow-2xl ${isCommanderShell ? 'border-amber-500/20' : ''}`}
                                 >
                                     <div className="relative h-44 flex flex-col items-center justify-center">
@@ -808,12 +806,12 @@ const MonitoringView: React.FC = () => {
                                     </div>
                                     <div className="mt-4 space-y-2 px-4 pb-4">
                                         <div className="h-1.5 bg-slate-900 rounded-full overflow-hidden border border-white/5">
-                                             <motion.div
+                                            <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${anomalyScore * 100}%` }}
                                                 transition={{ duration: 1.5, ease: "circOut" }}
                                                 className={`h-full ${anomalyScore > 0.6 ? 'bg-rose-500 shadow-[0_0_15px_#f43f5e]' : isCommanderShell ? 'bg-amber-500 shadow-[0_0_15px_#f59e0b]' : 'bg-blue-500 shadow-[0_0_15px_#3b82f6]'}`}
-                                             />
+                                            />
                                         </div>
                                     </div>
                                 </TacticalCard>
@@ -821,7 +819,7 @@ const MonitoringView: React.FC = () => {
                                 <TacticalCard variant="holographic" title="Черги Повідомлень (Bus)" className="panel-3d glass-ultra rounded-[32px] shadow-2xl">
                                     <div className="space-y-4">
                                         {loading && queues.length === 0 ? (
-                                            Array.from({length: 4}).map((_, i) => (
+                                            Array.from({ length: 4 }).map((_, i) => (
                                                 <div key={i} className="flex justify-between items-center p-3 bg-black/40 rounded-xl border border-white/5">
                                                     <Skeleton width={120} height={20} />
                                                     <Skeleton width={80} height={20} />
@@ -837,8 +835,8 @@ const MonitoringView: React.FC = () => {
                                                         showPulse={q.messages > 100}
                                                     />
                                                     <div className="flex flex-col">
-                                                      <span className="text-[11px] font-black text-white uppercase tracking-wider">{q.name}</span>
-                                                      <span className="text-[8px] text-slate-500 font-mono">CHANNEL_V1.2</span>
+                                                        <span className="text-[11px] font-black text-white uppercase tracking-wider">{q.name}</span>
+                                                        <span className="text-[8px] text-slate-500 font-mono">CHANNEL_V1.2</span>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
@@ -1013,21 +1011,21 @@ const MonitoringView: React.FC = () => {
 
                     {activeTab === 'JOBS' && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                             {/* Job Queue Monitor */}
-                             <div className="lg:col-span-1">
-                                 <JobQueueMonitor />
-                             </div>
+                            {/* Job Queue Monitor */}
+                            <div className="lg:col-span-1">
+                                <JobQueueMonitor />
+                            </div>
 
-                             {/* ETL Pipeline Viz */}
-                             <div className="glass-ultra p-1 rounded-[32px] border border-white/5 shadow-2xl">
-                                  <div className="p-6">
-                                     <h3 className="text-xl font-black text-white uppercase tracking-wider mb-6 flex items-center gap-3">
-                                         <Layers className="text-blue-400" />
-                                         Активні ETL Пайплайни
-                                     </h3>
-                                     <ETLPipelineVisualizer />
-                                 </div>
-                             </div>
+                            {/* ETL Pipeline Viz */}
+                            <div className="glass-ultra p-1 rounded-[32px] border border-white/5 shadow-2xl">
+                                <div className="p-6">
+                                    <h3 className="text-xl font-black text-white uppercase tracking-wider mb-6 flex items-center gap-3">
+                                        <Layers className="text-blue-400" />
+                                        Активні ETL Пайплайни
+                                    </h3>
+                                    <ETLPipelineVisualizer />
+                                </div>
+                            </div>
                         </div>
                     )}
 
@@ -1038,15 +1036,15 @@ const MonitoringView: React.FC = () => {
                     )}
 
                     {activeTab === 'STORAGE' && (
-                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <StorageAnalytics />
                         </div>
                     )}
 
                     {activeTab === 'NEURAL' && renderNeuralTrace()}
-            {activeTab === 'ANALYTICS' && (
+                    {activeTab === 'ANALYTICS' && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                            <TacticalCard variant="holographic" title="OPENSEARCH DASHBOARDS ANALYTICS" className="panel-3d glass-ultra rounded-[32px] shadow-2xl">
+                            <TacticalCard variant="holographic" title="АНАЛІТИКА OPENSEARCH" className="panel-3d glass-ultra rounded-[32px] shadow-2xl">
                                 <div className="p-4">
                                     <OpenSearchDashboardsEmbed
                                         dashboardId="search-analytics"

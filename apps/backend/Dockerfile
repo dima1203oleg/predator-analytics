@@ -1,5 +1,5 @@
 # ============================================================
-# Predator Analytics v22.0 - Backend Dockerfile
+# Predator Analytics v25.0 - Backend Dockerfile
 # FastAPI + ML Services + Multi-Agent System
 # ============================================================
 
@@ -44,7 +44,7 @@ EXPOSE 8000
 
 # Labels
 LABEL maintainer="Predator Analytics Team"
-LABEL version="22.0.0"
+LABEL version="25.0.0"
 LABEL description="Predator Analytics Backend - Semantic Search Platform"
 
 # Run the application
