@@ -1,7 +1,7 @@
 # Predator Analytics - Infrastructure Management
 # Based on FINAL_INFRA_FIXATION.md
 
-.PHONY: dev server stop status clean help
+.PHONY: dev server stop status clean rebuild help
 
 help:
 	@echo "🔍 Predator Commands:"
@@ -9,6 +9,7 @@ help:
 	@echo "  make server - Start FULL server environment (Linux/GPU)"
 	@echo "  make stop   - Stop all services"
 	@echo "  make clean  - Full cleanup (volumes + orphans)"
+	@echo "  make rebuild-dev - Rebuild the Dev Container"
 
 dev:
 	@./scripts/infra_guard.sh local
@@ -41,3 +42,7 @@ cli-setup:
 cli-test:
 	@echo "🧪 Testing CLI tools integration..."
 	@bash scripts/test_cli_tools.sh
+
+rebuild-dev:
+	@echo "🔄 Rebuilding Dev Container..."
+	@./scripts/rebuild_devcontainer.sh
