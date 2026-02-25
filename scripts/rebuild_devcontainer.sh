@@ -23,6 +23,15 @@ else
     exit 1
 fi
 
-# Note: This build command prepares the image. 
-# Re-running the container with "up" or similar might be needed depending on usage.
-echo "🚀 Environment is ready for rebuild/reopen."
+# Re-open (ensure container is up and running)
+echo "🚀 Starting/Refreshing Dev Container (Reopen)..."
+npx -y @devcontainers/cli up --workspace-folder "$REPO_ROOT"
+
+if [ $? -eq 0 ]; then
+    echo "✅ Dev Container is UP and ready for attachment."
+else
+    echo "❌ Failed to start Dev Container."
+    exit 1
+fi
+
+echo "✨ Environment is fully prepared."
