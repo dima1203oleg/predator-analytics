@@ -46,6 +46,25 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+
+  ingestion-api:
+    build:
+      context: .
+      dockerfile: apps/ingestion-api/Dockerfile
+    container_name: predator_ingestion_api
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./apps/ingestion-api/app:/app/app
+      - ./libs:/app/libs
+    env_file:
+      - .env
+    depends_on:
+      redpanda:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - predator-net

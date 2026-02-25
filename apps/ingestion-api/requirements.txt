@@ -1,0 +1,8 @@
+# apps/ingestion-api/requirements.txt
+fastapi>=0.104.1
+uvicorn>=0.23.2
+pydantic>=2.4.2
+confluent-kafka>=2.3.0
+tuspy>=1.0.0
+python-multipart>=0.0.6
+redis>=5.0.1
