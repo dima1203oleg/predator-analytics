@@ -11,6 +11,7 @@ ENV PYTHONUNBUFFERED=1
 # (Since 22.04 default is Python 3.10)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     software-properties-common \
+    gnupg \
     curl \
     git \
     wget \
