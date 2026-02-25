@@ -1,41 +1,57 @@
-FROM mcr.microsoft.com/vscode/devcontainers/python:3.12-bullseye
+# Predator Remote LTS Dev Environment
+# OS: Ubuntu 22.04 LTS (Jammy)
+FROM ubuntu:22.04
 
-# ── System Dependencies ────────────────────────────────────────────────────
-RUN apt-get update && apt-get install -y \
+# Prevent interactive prompts during apt installations
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# Install baseline dependencies and Python 3.12
+# Setting up software-properties-common to get the deadsnakes PPA for Python 3.12 
+# (Since 22.04 default is Python 3.10)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    software-properties-common \
     curl \
-    wget \
     git \
-    jq \
-    make \
+    wget \
     build-essential \
-    libpq-dev \
-    redis-tools \
-    postgresql-client \
-    iputils-ping \
-    netcat-openbsd \
-    htop \
+    zsh \
+    sudo \
+    jq \
+    && add-apt-repository ppa:deadsnakes/ppa -y \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+    python3.12 \
+    python3.12-dev \
+    python3.12-venv \
+    python3-pip \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# ── Node.js 20 ────────────────────────────────────────────────────────────
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g pnpm typescript tsx
+# Set Python 3.12 as the default python3
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1 \
+    && update-alternatives --install /usr/bin/python python /usr/bin/python3.12 1
 
-# ── kubectl + Helm ────────────────────────────────────────────────────────
-RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
-    && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl \
-    && curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+# Ensure pip is up to date
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12
 
-# ── Python base tools ─────────────────────────────────────────────────────
-RUN pip install --upgrade pip \
-    && pip install \
-    black \
-    isort \
-    pylint \
-    mypy \
-    pytest \
-    httpie \
-    ipython
+# Create a non-root 'dev' user
+ARG USERNAME=dev
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
 
-# ── Working directory ─────────────────────────────────────────────────────
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m -s /bin/zsh $USERNAME \
+    # Add sudo support for the non-root user
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+
+# Install Oh My Zsh for the dev user (Optional but highly recommended for DX)
+USER $USERNAME
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \
+    && sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/g' ~/.zshrc
+
 WORKDIR /workspace
+
+# Start shell
+CMD ["/bin/zsh"]
