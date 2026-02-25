@@ -1,4 +1,4 @@
-# TECH_SPEC.md: Платформа "Predator Analytics" v22.0 (Implementation-Ready)
+# TECH_SPEC.md: Платформа "Predator Analytics" v25.0 (Implementation-Ready)
 
 ## 0. Executive Summary
 
@@ -19,7 +19,7 @@
 *   **Голосовий інтерфейс**: Google Cloud TTS/STT з fallback на Whisper.js/eSpeak-ng для офлайн.
 *   **Автоматизації**: Повний набір – ETL пайплайни з Celery/RabbitMQ, auto-reindex jobs, tenant-based A/B, Policy Engine для сигналів, два профілі інференсу (full_quality/cost_saver), Cypress E2E тести в CI/CD.
 
-Ключова ідея v22.0: **“♾️-Self-Improvement Loop”** з чіткими межами між **observability** (включаючи OpenSearch Dashboards) → **data** → **training** → **evaluation** → **GitOps**, інтеграцією Policy Engine та tenant-based A/B.
+Ключова ідея v25.0: **“♾️-Self-Improvement Loop”** з чіткими межами між **observability** (включаючи OpenSearch Dashboards) → **data** → **training** → **evaluation** → **GitOps**, інтеграцією Policy Engine та tenant-based A/B.
 
 ## 1. Головні цілі та вимірювані KPI/SLA
 

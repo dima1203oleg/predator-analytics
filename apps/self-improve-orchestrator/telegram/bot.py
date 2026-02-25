@@ -1,5 +1,5 @@
 """
-Predator C2 (Neural Interface) v23.0
+Predator C2 (Neural Interface) v25.0
 The state-of-the-art control panel for Predator Analytics.
 Features: Semantic Routing, Cortex Stateful Orchestration, HITL.
 """
@@ -54,7 +54,7 @@ def get_approval_keyboard(task_id: str) -> InlineKeyboardMarkup:
 async def cmd_start(message: types.Message):
     if message.from_user.id != ADMIN_ID: return
     await message.answer(MESSAGES["welcome"], parse_mode=ParseMode.MARKDOWN)
-    await send_voice_report(message.chat.id, "Система Предатор Аналітікс v23.0 в режимі очікування покупець.")
+    await send_voice_report(message.chat.id, "Система Предатор Аналітікс v25.0 в режимі очікування, оператор.")
 
 @router.message(F.voice)
 async def handle_voice(message: types.Message):

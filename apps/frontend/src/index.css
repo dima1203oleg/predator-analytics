@@ -57,7 +57,7 @@ body {
 
 /* Base Loader Styles */
 #root:empty::before {
-    content: "INITIALIZING PREDATOR KERNEL v20.0...";
+    content: "ІНІЦІАЛІЗАЦІЯ ЯДРА PREDATOR v25.0...";
     display: flex;
     justify-content: center;
     align-items: center;
@@ -885,9 +885,17 @@ mark.match-highlight {
 }
 
 @keyframes progress-linear {
-    0% { transform: translateX(-100%); }
-    50% { transform: translateX(0%); }
-    100% { transform: translateX(100%); }
+    0% {
+        transform: translateX(-100%);
+    }
+
+    50% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
 }
 
 .animate-progress {
@@ -925,7 +933,7 @@ mark.match-highlight {
 }
 
 /* ============================================================================
-   PREDATOR ANALYTICS v22 - PREMIUM UI ENHANCEMENTS
+   PREDATOR ANALYTICS v25.0 - PREMIUM UI ENHANCEMENTS
    ============================================================================ */
 
 /* Holographic scanline animation */
@@ -933,6 +941,7 @@ mark.match-highlight {
     0% {
         top: -100%;
     }
+
     100% {
         top: 100%;
     }
@@ -944,13 +953,16 @@ mark.match-highlight {
 
 /* Aurora glow effect for premium cards */
 @keyframes aurora-glow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 30px rgba(6, 182, 212, 0.15),
-                    0 0 60px rgba(6, 182, 212, 0.05);
+            0 0 60px rgba(6, 182, 212, 0.05);
     }
+
     50% {
         box-shadow: 0 0 40px rgba(168, 85, 247, 0.15),
-                    0 0 80px rgba(168, 85, 247, 0.08);
+            0 0 80px rgba(168, 85, 247, 0.08);
     }
 }
 
@@ -974,22 +986,29 @@ mark.match-highlight {
 }
 
 @keyframes blink-cursor {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
 }
 
 /* Neon border effect */
 .neon-border-cyan {
     box-shadow: 0 0 5px #00f3ff,
-                0 0 10px #00f3ff,
-                inset 0 0 5px rgba(0, 243, 255, 0.1);
+        0 0 10px #00f3ff,
+        inset 0 0 5px rgba(0, 243, 255, 0.1);
     border-color: rgba(0, 243, 255, 0.5);
 }
 
 .neon-border-purple {
     box-shadow: 0 0 5px #a855f7,
-                0 0 10px #a855f7,
-                inset 0 0 5px rgba(168, 85, 247, 0.1);
+        0 0 10px #a855f7,
+        inset 0 0 5px rgba(168, 85, 247, 0.1);
     border-color: rgba(168, 85, 247, 0.5);
 }
 
@@ -1006,6 +1025,7 @@ mark.match-highlight {
     0% {
         stroke-dashoffset: 100;
     }
+
     100% {
         stroke-dashoffset: 0;
     }
@@ -1018,22 +1038,29 @@ mark.match-highlight {
 
 /* Glitch effect for critical alerts */
 @keyframes glitch {
-    0%, 90%, 100% {
+
+    0%,
+    90%,
+    100% {
         transform: translate(0);
         opacity: 1;
     }
+
     92% {
         transform: translate(-2px, 1px);
         opacity: 0.8;
     }
+
     94% {
         transform: translate(2px, -1px);
         opacity: 0.9;
     }
+
     96% {
         transform: translate(-1px, 2px);
         opacity: 0.85;
     }
+
     98% {
         transform: translate(1px, -2px);
         opacity: 0.9;
@@ -1046,10 +1073,13 @@ mark.match-highlight {
 
 /* Breathing glow for status indicators */
 @keyframes breathing-glow {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 0.4;
         transform: scale(1);
     }
+
     50% {
         opacity: 1;
         transform: scale(1.1);
@@ -1065,6 +1095,7 @@ mark.match-highlight {
     0% {
         transform: rotate(0deg) translateX(30px) rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg) translateX(30px) rotate(-360deg);
     }
@@ -1080,6 +1111,7 @@ mark.match-highlight {
         transform: translateY(-100%);
         opacity: 1;
     }
+
     100% {
         transform: translateY(100%);
         opacity: 0;
@@ -1093,13 +1125,13 @@ mark.match-highlight {
 /* Premium card hover lift */
 .card-lift {
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.3s ease;
+        box-shadow 0.3s ease;
 }
 
 .card-lift:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5),
-                0 0 20px rgba(6, 182, 212, 0.1);
+        0 0 20px rgba(6, 182, 212, 0.1);
 }
 
 /* Focus ring for accessibility */
@@ -1125,9 +1157,11 @@ mark.match-highlight {
     0% {
         background-position: 0% 50%;
     }
+
     50% {
         background-position: 100% 50%;
     }
+
     100% {
         background-position: 0% 50%;
     }
@@ -1135,9 +1169,9 @@ mark.match-highlight {
 
 .ai-thinking-bg {
     background: linear-gradient(90deg,
-        rgba(168, 85, 247, 0.1) 0%,
-        rgba(6, 182, 212, 0.2) 50%,
-        rgba(168, 85, 247, 0.1) 100%);
+            rgba(168, 85, 247, 0.1) 0%,
+            rgba(6, 182, 212, 0.2) 50%,
+            rgba(168, 85, 247, 0.1) 100%);
     background-size: 200% 100%;
     animation: ai-thinking 2s ease infinite;
 }

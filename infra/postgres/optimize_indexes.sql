@@ -1,4 +1,4 @@
--- Optimization Indexes for Predator Analytics v22.0
+-- Оптимізація індексів для Predator Analytics v25.0
 -- Applied to improve query performance on search and filtering
 
 -- 1. Companies Indexes

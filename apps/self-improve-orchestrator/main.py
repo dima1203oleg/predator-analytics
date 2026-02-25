@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PREDATOR ANALYTICS v23.0 - AUTONOMOUS ORCHESTRATOR
+PREDATOR ANALYTICS v25.0 - AUTONOMOUS ORCHESTRATOR
 God Mode: Infinite Self-Improvement Loop
 
 This is the BRAIN of the system. It runs on the server 24/7.
@@ -16,63 +16,34 @@ import redis.asyncio as aioredis
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
+import logging
+import json
+from typing import Optional, Dict, List, Any
+
+from libs.core.config import settings
+from libs.core.logger import setup_logger
+from libs.core.database import async_session_maker, engine
+from libs.core.llm import llm_service
+
 # Setup paths
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+# root is already added by Docker/K8s or manual sys.path in docker-compose
 
-from orchestrator.config import *
-from orchestrator.council import Chairman, Critic, Analyst, reach_consensus
-from orchestrator.tasks.code_improver import CodeImprover
-from orchestrator.tasks.ui_guardian import UIGuardian
-from orchestrator.tasks.data_sentinel import DataSentinel
-# TelegramCommandCenter removed (Decoupled Architecture)
-from orchestrator.agents.git_committer import GitAutoCommitter
-from orchestrator.agents.change_observer import ChangeObserver, ProposalArbitrator
-from orchestrator.memory.manager import AdvancedMemoryManager, MemoryEvent
-from orchestrator.agents.reflexion_agent import ReflexionAgent, TreeOfThoughtsPlanner
-from orchestrator.agents.debate_protocol import MultiAgentDebate, create_council_debate
-from orchestrator.agents.self_healing import SelfHealingSystem
-from orchestrator.agents.performance_predictor import PerformancePredictor, AutoScaler
-from orchestrator.knowledge.graph import KnowledgeGraph, get_knowledge_graph
-from orchestrator.agents.training_manager import TrainingManager
+from .support import (
+    Chairman, Critic, Analyst, reach_consensus,
+    CodeImprover, UIGuardian, DataSentinel,
+    GitAutoCommitter, ChangeObserver, ProposalArbitrator,
+    AdvancedMemoryManager, ReflexionAgent, TreeOfThoughtsPlanner,
+    SelfHealingSystem, PerformancePredictor, AutoScaler,
+    get_knowledge_graph, TrainingManager, PowerMonitor, VoiceHandler,
+    create_council_debate
+)
 
-# --- LOGGING SETUP (MUST BE BEFORE TRY/EXCEPT THAT USE LOGGER) ---
-# Create a robust logger that writes to both stdout and a file
-logger = logging.getLogger("orchestrator")
-logger.setLevel(logging.INFO)
-
-# Console Handler
-c_handler = logging.StreamHandler()
-c_handler.setLevel(logging.INFO)
-c_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-c_handler.setFormatter(c_format)
-
-# File Handler (Shared Volume)
-# Ensure logs dir exists
-os.makedirs('logs', exist_ok=True)
-
-f_handler = logging.FileHandler('logs/system.log')
-f_handler.setLevel(logging.INFO)
-f_format = logging.Formatter('%(asctime)s - %(message)s')
-f_handler.setFormatter(f_format)
-
-if not logger.handlers:
-    logger.addHandler(c_handler)
-    logger.addHandler(f_handler)
+# --- LOGGING SETUP ---
+logger = setup_logger("predator.orchestrator", log_file='logs/system.log')
 
 # --- OPTIONAL COMPONENTS (may fail gracefully) ---
-try:
-    from orchestrator.agents.power_monitor import PowerMonitor
-    POWER_MONITOR_AVAILABLE = True
-except ImportError:
-    POWER_MONITOR_AVAILABLE = False
-    logger.warning("⚠️ Power Monitor not available")
-
-try:
-    from orchestrator.agents.voice_handler import VoiceHandler
-    VOICE_HANDLER_AVAILABLE = True
-except ImportError:
-    VOICE_HANDLER_AVAILABLE = False
-    logger.warning("⚠️ Voice Handler not available")
+POWER_MONITOR_AVAILABLE = False
+VOICE_HANDLER_AVAILABLE = False
 
 class AutonomousOrchestrator:
     def __init__(self):
@@ -81,12 +52,12 @@ class AutonomousOrchestrator:
         self.telegram = None
 
         # Council Members
-        self.chairman = Chairman(GEMINI_API_KEY, GEMINI_MODEL)
-        self.critic = Critic(GROQ_API_KEY, GROQ_MODEL)
-        self.analyst = Analyst(DEEPSEEK_API_KEY if DEEPSEEK_API_KEY else None, OLLAMA_BASE_URL)
+        self.chairman = Chairman(settings.GEMINI_API_KEY, settings.GEMINI_MODEL)
+        self.critic = Critic(settings.GROQ_API_KEY, settings.GROQ_MODEL)
+        self.analyst = Analyst(settings.DEEPSEEK_API_KEY if settings.DEEPSEEK_API_KEY else None, settings.LLM_OLLAMA_BASE_URL)
 
         # Task Agents
-        self.code_improver = CodeImprover(GROQ_API_KEY, GROQ_MODEL)
+        self.code_improver = CodeImprover(settings.GROQ_API_KEY, settings.GROQ_MODEL)
         self.ui_guardian = UIGuardian()
         self.data_sentinel = DataSentinel()
         self.git_committer = GitAutoCommitter()
@@ -110,88 +81,113 @@ class AutonomousOrchestrator:
 
         self.iteration = 0
         self.deployment_failures = 0
+        self.current_activity = "idle"
+        self.ui_stop = False # Initialize to avoid lint error
 
     async def initialize(self):
         """Initialize connections"""
         try:
             self.redis = await aioredis.from_url(
-                REDIS_URL,
+                settings.REDIS_URL,
                 encoding="utf-8",
                 decode_responses=True,
                 socket_timeout=5,
                 socket_connect_timeout=5
             )
             # Test connection
-            await self.redis.ping()
-            logger.info("✅ Redis connected")
+            if self.redis:
+                await self.redis.ping()
+            logger.info("✅ Redis підключено")
         except Exception as e:
-            logger.warning(f"⚠️ Redis unavailable: {e}. Using in-memory fallback.")
+            logger.warning(f"⚠️ Redis недоступний: {e}. Використовую резервний варіант в пам'яті.")
             self.redis = None
 
         # DB
         try:
-            engine = create_async_engine(POSTGRES_URL.replace("postgresql://", "postgresql+asyncpg://"))
-            async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-            self.db_session = async_session
-            logger.info("✅ Database connected")
+            self.db_session = async_session_maker
+            logger.info("✅ Фабрика БД ініціалізована з core libs")
         except Exception as e:
-            logger.warning(f"⚠️ Database unavailable: {e}")
+            logger.warning(f"⚠️ База даних недоступна: {e}")
             self.db_session = None
+
+        # Start Self-Healing Guardian from Core
+        try:
+            from libs.core.guardian import guardian
+            self.self_healing = guardian
+            asyncio.create_task(self.self_healing.start())
+            logger.info("✅ Цикл узгодження Guardian запущено")
+        except Exception as e:
+            logger.warning(f"⚠️ Помилка запуску Guardian: {e}")
 
         # Telegram
         # Telegram (Decoupled)
         # We now communicate via Redis pub/sub to the standalone Bot V4
         self.telegram = None
-        logger.info("✅ Telegram decoupled mode (sending events to Redis)")
+        logger.info("✅ Режим деривації Telegram (надсилання подій у Redis)")
 
         # Change Observer (needs Redis)
-        self.change_observer = ChangeObserver(redis_client=self.redis)
-        logger.info("✅ Change Observer initialized")
+        if self.redis:
+            self.change_observer = ChangeObserver(redis_client=self.redis)
+            logger.info("✅ Change Observer ініціалізовано")
+        else:
+            logger.warning("⚠️ Change Observer не ініціалізовано: Redis недоступний.")
 
         # Advanced Memory System
-        self.memory = AdvancedMemoryManager(
-            redis_client=self.redis,
-            db_session=self.db_session
-        )
-        logger.info("✅ Memory Manager initialized")
+        if self.redis and self.db_session:
+            self.memory = AdvancedMemoryManager(
+                redis_client=self.redis,
+                db_session=self.db_session
+            )
+            logger.info("✅ Менеджер пам'яті ініціалізовано")
+        else:
+            logger.warning("⚠️ Менеджер пам'яті не ініціалізований повністю: Redis або БД недоступні.")
 
         # Reflexion Agent (uses memory for past experiences)
-        self.reflexion = ReflexionAgent(
-            llm_fallback=self.code_improver.fallback,
-            memory_manager=self.memory
-        )
-        logger.info("✅ Reflexion Agent initialized")
+        if self.memory:
+            self.reflexion = ReflexionAgent(
+                llm_fallback=self.code_improver.model,
+                memory_manager=self.memory
+            )
+            logger.info("✅ Reflexion Agent ініціалізовано")
+        else:
+            logger.warning("⚠️ Reflexion Agent не ініціалізовано: Менеджер пам'яті недоступний.")
 
         # Multi-Agent Debate for complex decisions
-        self.debate = create_council_debate(llm_fallback=self.code_improver.fallback)
-        logger.info("✅ Debate Protocol initialized")
+        self.debate = create_council_debate(chairman=self.chairman, critic=self.critic, analyst=self.analyst, topic="System Initialization")
+        logger.info("✅ Протокол дебатів ініціалізовано")
 
         # Self-Healing System
-        self.self_healing = SelfHealingSystem(
-            redis_client=self.redis,
-            memory_manager=self.memory
-        )
-        logger.info("✅ Self-Healing System initialized")
+        if self.redis and self.memory:
+            self.self_healing = SelfHealingSystem(
+                redis_client=self.redis,
+                memory_manager=self.memory
+            )
+            logger.info("✅ Система самовідновлення ініціалізована")
+        else:
+            logger.warning("⚠️ Система самовідновлення не ініціалізована повністю: Redis або пам'ять недоступні.")
 
         # Performance Predictor
-        self.performance = PerformancePredictor(
-            redis_client=self.redis,
-            llm_client=self.code_improver.fallback
-        )
-        self.auto_scaler = AutoScaler(self.performance)
-        logger.info("✅ Performance Predictor initialized")
+        if self.redis and self.code_improver.model:
+            self.performance = PerformancePredictor(
+                redis_client=self.redis,
+                llm_client=self.code_improver.fallback
+            )
+            self.auto_scaler = AutoScaler(self.performance)
+            logger.info("✅ Performance Predictor ініціалізовано")
+        else:
+            logger.warning("⚠️ Performance Predictor не ініціалізований повністю: Redis або LLM недоступні.")
 
         # Power Monitor (if available)
         if POWER_MONITOR_AVAILABLE:
             try:
                 self.power_monitor = PowerMonitor(
-                    redis_url=REDIS_URL,
+                    redis_url=settings.REDIS_URL,
                     telegram_bot=None # Decoupled
                 )
                 await self.power_monitor.initialize()
-                logger.info("✅ Power Monitor initialized")
+                logger.info("✅ Power Monitor ініціалізовано")
             except Exception as e:
-                logger.warning(f"⚠️ Power Monitor init failed: {e}")
+                logger.warning(f"⚠️ Помилка ініціалізації Power Monitor: {e}")
 
         # Voice Handler (if available)
         if VOICE_HANDLER_AVAILABLE:
@@ -199,27 +195,34 @@ class AutonomousOrchestrator:
                 self.voice_handler = VoiceHandler()
                 voice_ok = await self.voice_handler.initialize()
                 if voice_ok:
-                    logger.info("✅ Voice Handler initialized")
+                    logger.info("✅ Голосовий обробник ініціалізовано")
                 else:
-                    logger.warning("⚠️ Voice Handler: Google Cloud credentials not configured")
+                    logger.warning("⚠️ Голосовий обробник: облікові дані Google Cloud не налаштовані")
             except Exception as e:
-                logger.warning(f"⚠️ Voice Handler init failed: {e}")
+                logger.warning(f"⚠️ Помилка ініціалізації голосового обробника: {e}")
 
         # Build Knowledge Graph from codebase
         try:
             self.knowledge_graph.from_codebase("/app/app")
-            logger.info(f"✅ Knowledge Graph: {len(self.knowledge_graph.nodes)} nodes")
+            logger.info(f"✅ Граф знань: {len(self.knowledge_graph.nodes)} вузлів")
         except Exception as e:
-            logger.warning(f"⚠️ Knowledge Graph build failed: {e}")
+            logger.warning(f"⚠️ Помилка побудови графа знань: {e}")
 
-        logger.info("🚀 Orchestrator initialized with FULL AI STACK v2.0")
+        logger.info("🚀 Оркестратор ініціалізовано з ПОВНИМ AI СТЕКОМ v25.0")
 
     async def set_activity(self, activity: str):
         """Update current activity status in Redis and Log"""
         self.current_activity = activity
-        logger.info(f"📢 ACTIVITY: {activity}")
         if self.redis:
-            await self.redis.set("system:current_activity", activity, ex=3600)
+            try:
+                await self.redis.set(
+                    f"orchestrator:activity:{settings.APP_NAME}",
+                    activity,
+                    ex=3600
+                )
+            except Exception:
+                pass
+        logger.info(f"📍 Активність: {activity}")
 
     async def broadcast(self, stage: str, message: str, status: str = "processing", details: str = None):
         """
@@ -227,31 +230,32 @@ class AutonomousOrchestrator:
         Stages: 'analyst', 'critic', 'architect', 'execution'
         """
         try:
-            event = {
-                "id": str(uuid.uuid4()),
-                "timestamp": datetime.now().isoformat(),
-                "stage": stage,
-                "message": message,
-                "status": status,
-                "details": details
-            }
-            if self.redis:
-                # Publish to a channel that the bot listens to
-                await self.redis.publish("predator:events", json.dumps(event))
+            # Always log
+            logger.info(f"📡 ТРАНСЛЯЦІЯ [{stage}]: {message}")
 
-                # Also logging
-                logger.info(f"📡 BROADCAST [{stage}]: {message}")
+            if self.redis:
+                try:
+                    payload = json.dumps({
+                        "stage": stage,
+                        "message": message,
+                        "status": status,
+                        "details": details,
+                        "timestamp": datetime.now().isoformat()
+                    })
+                    await self.redis.publish("orchestrator:updates", payload)
+                except Exception as e:
+                    logger.error(f"Помилка трансляції Redis: {e}")
         except Exception as e:
-            logger.error(f"Broadcast error: {e}")
+            logger.error(f"Помилка трансляції: {e}")
 
     async def infinite_loop(self):
-        logger.info("🚀 Starting Infinite Loop...")
+        logger.info("🚀 Запуск нескінченного циклу...")
         # await self.telegram.start() # Removed: running standalone now
 
         # Start Power Monitor heartbeat in background
         if self.power_monitor:
             asyncio.create_task(self.power_monitor.start_monitoring())
-            logger.info("⚡ Power Monitor heartbeat started")
+            logger.info("⚡ Запущено моніторинг живлення (heartbeat)")
 
         while True:
             try:
@@ -291,7 +295,7 @@ class AutonomousOrchestrator:
                     metrics = await self.performance.predict_impact(proposal.get('code', ''))
 
                     if proposal.get("error") or not proposal.get("code"):
-                        logger.warning(f"⚠️ Code generation failed: {proposal.get('error', 'No code returned')}")
+                        logger.warning(f"⚠️ Помилка генерації коду: {proposal.get('error', 'код не повернуто')}")
                         await self.broadcast("architect", "Помилка генерації коду", "error", details=proposal.get('error'))
                         continue
 
@@ -306,7 +310,7 @@ class AutonomousOrchestrator:
 
                     # --- AUTO APPROVAL BLOCK (USER DIRECTIVE: "PLUS NA BUD-SHO") ---
                     # We bypass human approval for total autonomy
-                    logger.info("🛡️ AUTO-APPROVAL ENABLED: Bypassing human verification.")
+                    logger.info("🛡️ АВТО-СХВАЛЕННЯ УВІМКНЕНО: Обхід підтвердження людиною.")
                     await self.broadcast("approval", "✅ АВТО-СХВАЛЕННЯ (Глобальна політика)", "success")
                     approved_by_user = True
                     # --- AUTO APPROVAL BLOCK END ---
@@ -361,7 +365,7 @@ class AutonomousOrchestrator:
                 async with self.db_session() as session:
                     result = await session.execute(text("SELECT count(*) FROM augmented_datasets"))
                     metrics["dataset_size"] = result.scalar() or 0
-                    logger.info(f"📊 Real dataset size: {metrics['dataset_size']}")
+                    logger.info(f"📊 Реальний розмір датасету: {metrics['dataset_size']}")
             except Exception as e:
                 logger.warning(f"Failed to get DB metrics: {e}")
 
@@ -377,7 +381,7 @@ class AutonomousOrchestrator:
                 task_json = await self.redis.rpop("tasks:queue") # FIFO
                 if task_json:
                     task = json.loads(task_json)
-                    logger.info(f"📨 Task received from Queue: {task['description']}")
+                    logger.info(f"📨 Отримано завдання з черги: {task['description']}")
                     await self.notify(f"📥 Прийнято в роботу: {task['description']}")
 
                     # Ensure format
@@ -517,7 +521,7 @@ class AutonomousOrchestrator:
 
     async def execute_task(self, task: dict, proposal: dict) -> bool:
         """Execute approved task"""
-        logger.info(f"⚙️ Executing: {task['description']}")
+        logger.info(f"⚙️ Виконання: {task['description']}")
 
         # --- DATA AUGMENTATION TASK ---
         if task.get("type") == "data_augmentation":
@@ -530,7 +534,7 @@ class AutonomousOrchestrator:
                     ids = [str(r[0]) for r in result.fetchall()]
 
                 if not ids:
-                    logger.warning("No documents found for augmentation")
+                    logger.warning("Для розширення даних документів не знайдено.")
                     return False
 
                 # Call internal API
@@ -546,7 +550,7 @@ class AutonomousOrchestrator:
                     )
 
                 if resp.status_code == 200:
-                    logger.info(f"✅ Data augmentation triggered: {resp.json()}")
+                    logger.info(f"✅ Запущено розширення даних: {resp.json()}")
                     return True
                 else:
                     logger.error(f"❌ Augmentation API failed: {resp.text}")
@@ -563,7 +567,7 @@ class AutonomousOrchestrator:
             logger.warning("Proposed execution missing file_path or code")
             return False
 
-        full_path = os.path.join(PROJECT_ROOT, file_path)
+        full_path = os.path.join(settings.PROJECT_ROOT, file_path)
 
         try:
             # 1. Write Code
@@ -573,7 +577,7 @@ class AutonomousOrchestrator:
             with open(full_path, "w") as f:
                 f.write(code_content)
 
-            logger.info(f"💾 Wrote code to {full_path}")
+            logger.info(f"💾 Код записано в {full_path}")
 
             # 2. Commit and Push
             files_changed = [file_path]
@@ -604,7 +608,7 @@ class AutonomousOrchestrator:
         ui_stop = False
         if self.redis:
             try:
-                stop_signal = await self.redis.get(UI_STOP_SIGNAL_KEY)
+                stop_signal = await self.redis.get(settings.UI_STOP_SIGNAL_KEY)
                 ui_stop = stop_signal == "1" if stop_signal else False
             except Exception:
                 pass
@@ -641,13 +645,13 @@ class AutonomousOrchestrator:
             for metric_name in metrics.keys():
                 is_anomaly, score = await self.performance.detect_anomaly(metric_name)
                 if is_anomaly:
-                    logger.warning(f"🔴 Anomaly: {metric_name} (score: {score:.2f})")
+                    logger.warning(f"🔴 Аномалія: {metric_name} (оцінка: {score:.2f})")
 
             # Get scaling recommendations
             if self.auto_scaler:
                 scaling = await self.auto_scaler.get_scaling_recommendation()
                 if scaling.get("action") not in ["none", "scale_down_candidate"]:
-                    logger.info(f"📈 Scaling recommendation: {scaling}")
+                    logger.info(f"📈 Рекомендація щодо масштабування: {scaling}")
 
         except Exception as e:
             logger.error(f"Performance monitoring error: {e}")
@@ -657,7 +661,7 @@ class AutonomousOrchestrator:
         try:
             result = await self.change_observer.observe()
             if result.get("proposals_generated", 0) > 0:
-                logger.info(f"👁️ Change Observer: {result['proposals_generated']} proposals generated")
+                logger.info(f"👁️ Спостерігач змін: згенеровано {result['proposals_generated']} пропозицій")
 
                 # Process pending proposals through arbitration
                 await self._process_pending_proposals()
@@ -681,9 +685,9 @@ class AutonomousOrchestrator:
                 decision = await self.arbitrator.arbitrate(proposal)
                 if decision.get("status") == "approved":
                     approved_count += 1
-                    logger.info(f"✅ Proposal approved: {proposal.get('title', 'Unknown')}")
+                    logger.info(f"✅ Пропозицію схвалено: {proposal.get('title', 'Unknown')}")
                 else:
-                    logger.info(f"❌ Proposal rejected: {proposal.get('title', 'Unknown')}")
+                    logger.info(f"❌ Пропозицію відхилено: {proposal.get('title', 'Unknown')}")
 
             # Clear processed proposals
             if len(proposals) <= 3:
@@ -701,7 +705,7 @@ class AutonomousOrchestrator:
                 await self.telegram.notify_decision(task, decision, votes, reason)
             except Exception as e:
                 logger.error(f"Failed to notify decision: {e}")
-        logger.info(f"⚖️ Council decision: {decision} - {task[:50]}")
+        logger.info(f"⚖️ Рішення ради: {decision} - {task[:50]}")
 
     async def notify(self, message: str):
         """Send notification via Telegram"""

@@ -1,29 +1,115 @@
 {
-    "name": "Predator Analytics Server",
+    "name": "Predator Analytics v25.0 — Server Dev",
     "build": {
         "dockerfile": "Dockerfile",
         "context": ".."
     },
     "workspaceFolder": "/workspace",
+    // ─── Env Variables ────────────────────────────────────────────────────
+    "remoteEnv": {
+        "PYTHONPATH": "/workspace",
+        "DOCKER_BUILDKIT": "1"
+    },
+    // ─── Port Forwarding (server → local Mac) ─────────────────────────────
+    "forwardPorts": [
+        8090,
+        8092,
+        6379,
+        5672,
+        15672,
+        9090,
+        3000,
+        5601
+    ],
+    "portsAttributes": {
+        "8090": {
+            "label": "Backend API",
+            "onAutoForward": "notify"
+        },
+        "8092": {
+            "label": "Frontend UI",
+            "onAutoForward": "openBrowser"
+        },
+        "6379": {
+            "label": "Redis",
+            "onAutoForward": "silent"
+        },
+        "5672": {
+            "label": "RabbitMQ",
+            "onAutoForward": "silent"
+        },
+        "15672": {
+            "label": "RabbitMQ UI",
+            "onAutoForward": "notify"
+        },
+        "9090": {
+            "label": "Prometheus",
+            "onAutoForward": "silent"
+        },
+        "3000": {
+            "label": "Grafana",
+            "onAutoForward": "notify"
+        },
+        "5601": {
+            "label": "OpenSearch Dashboards",
+            "onAutoForward": "notify"
+        }
+    },
+    // ─── VS Code Extensions ────────────────────────────────────────────────
     "customizations": {
         "vscode": {
             "extensions": [
                 "ms-python.python",
                 "ms-python.vscode-pylance",
+                "ms-python.debugpy",
                 "ms-azuretools.vscode-docker",
                 "redhat.vscode-yaml",
                 "esbenp.prettier-vscode",
                 "usernamehw.errorlens",
                 "github.copilot",
+                "github.copilot-chat",
                 "ms-kubernetes-tools.vscode-kubernetes-tools",
                 "donjayamanne.githistory",
-                "iosonofabio.better-toml"
-            ]
+                "eamodio.gitlens",
+                "ms-vscode.makefile-tools",
+                "bradlc.vscode-tailwindcss",
+                "Orta.vscode-jest",
+                "ms-vscode.live-server",
+                "yoavbls.pretty-ts-errors",
+                "formulahendry.terminal"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "editor.formatOnSave": true,
+                "editor.defaultFormatter": "esbenp.prettier-vscode",
+                "[python]": {
+                    "editor.defaultFormatter": "ms-python.python"
+                },
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "files.exclude": {
+                    "**/__pycache__": true,
+                    "**/*.pyc": true,
+                    "**/.DS_Store": true
+                }
+            }
         }
     },
-    "remoteUser": "vscode",
+    // ─── Docker outside of Docker (для docker compose команд ────────────────
     "features": {
-        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+            "moby": false,
+            "dockerDashComposeVersion": "v2"
+        },
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "20"
+        }
     },
-    "postCreateCommand": "echo 'Ready for K8s development'"
+    // ─── Після створення DevContainer ─────────────────────────────────────
+    "postCreateCommand": "pip install -r apps/backend/requirements.txt && pip install -r apps/self-improve-orchestrator/requirements.txt && echo '✅ Predator Analytics v25.0 DevContainer готовий!'",
+    // ─── Mounts: shared docker socket для docker compose ──────────────────
+    "mounts": [
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    ],
+    "remoteUser": "vscode",
+    "shutdownAction": "stopContainer"
 }
