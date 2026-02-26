@@ -8,7 +8,7 @@ SSH_HOST="194.177.1.240"
 SSH_PORT="6666"
 SSH_USER="dima"
 SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
-LOCAL_BACKUP_DIR="/Users/dima-mac/Documents/Predator_21/server-backup"
+LOCAL_BACKUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/server-backup"
 REMOTE_DIR="predator-analytics"
 
 # Кольори для виводу

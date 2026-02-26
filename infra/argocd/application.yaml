@@ -1,13 +1,13 @@
-# ArgoCD Application for Predator Analytics
-# GitOps deployment configuration
+# ArgoCD Application for Predator Analytics v25.0
+# GitOps deployment configuration (App-of-Apps pattern or single Umbrella)
 
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: predator-analytics
+  name: predator-umbrella
   namespace: argocd
   labels:
-    app.kubernetes.io/name: predator-analytics
+    app.kubernetes.io/name: predator-umbrella
     app.kubernetes.io/part-of: predator-system
   annotations:
     argocd.argoproj.io/sync-wave: "0"
@@ -19,12 +19,12 @@ spec:
   source:
     repoURL: https://github.com/dima1203oleg/predator-analytics.git
     targetRevision: main
-    path: infra/helm/predator-analytics
+    path: infra/helm/umbrella
 
     helm:
       valueFiles:
         - values.yaml
-        - values-production.yaml
+        - values-prod.yaml
 
       parameters:
         - name: global.imageTag
@@ -33,12 +33,10 @@ spec:
           value: "2"
         - name: frontend.replicas
           value: "2"
-        - name: orchestrator.enabled
-          value: "true"
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: predator
+    namespace: predator-nvidia
 
   syncPolicy:
     automated:
@@ -49,7 +47,6 @@ spec:
       - CreateNamespace=true
       - PruneLast=true
       - ApplyOutOfSyncOnly=true
-      - Validate=true
     retry:
       limit: 5
       backoff:
@@ -68,63 +65,3 @@ spec:
       kind: Secret
       jsonPointers:
         - /data
-
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: predator-databases
-  namespace: argocd
-  labels:
-    app.kubernetes.io/name: predator-databases
-    app.kubernetes.io/part-of: predator-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
-spec:
-  project: default
-
-  source:
-    repoURL: https://github.com/dima1203oleg/predator-analytics.git
-    targetRevision: main
-    path: infra/helm/databases
-
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: predator
-
-  syncPolicy:
-    automated:
-      prune: false # Don't auto-delete databases!
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: predator-monitoring
-  namespace: argocd
-  labels:
-    app.kubernetes.io/name: predator-monitoring
-    app.kubernetes.io/part-of: predator-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
-spec:
-  project: default
-
-  source:
-    repoURL: https://github.com/dima1203oleg/predator-analytics.git
-    targetRevision: main
-    path: infra/helm/monitoring
-
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: monitoring
-
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true

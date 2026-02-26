@@ -14,8 +14,8 @@ backend:
   enabled: true
   image:
     repository: ghcr.io/dima1203oleg/predator-backend
-    tag: "v25.0.40"
-    pullPolicy: Always
+    tag: "latest"
+    pullPolicy: IfNotPresent
   replicas: 1
   resources:
     limits:
@@ -44,7 +44,7 @@ frontend:
   enabled: true
   image:
     repository: ghcr.io/dima1203oleg/predator-frontend
-    tag: "v25.0.40"
+    tag: "latest"
     pullPolicy: Always
   replicas: 1
   resources:

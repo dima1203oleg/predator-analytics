@@ -19,7 +19,8 @@ PORTS=(
     "9090:8090:Backend API"
     "9432:5432:PostgreSQL"
     "9379:6379:Redis"
-    "5601:5601:OpenSearch Dashboards"
+    # Kubernetes API (додається при бажанні)
+    # "6443:6443:K8s API"
 )
 
 # PID файл
@@ -46,6 +47,12 @@ start_tunnel() {
         SSH_OPTS="$SSH_OPTS -L $local_port:[::1]:$remote_port"
         echo -e "${YELLOW}📡 Перенаправлення:${NC} localhost:$local_port → сервер:$remote_port ($desc)"
     done
+
+    # Якщо хочемо також пробросити Kubernetes API, додаємо вручну
+    if [[ "$EXTRA" == "k8s" || "$1" == "k8s" ]]; then
+        SSH_OPTS="$SSH_OPTS -L 6443:localhost:6443"
+        echo -e "${YELLOW}📡 Перенаправлення:${NC} localhost:6443 → сервер:6443 (Kubernetes API)"
+    fi
 
     echo ""
     # Запуск SSH-тунелю
@@ -137,13 +144,16 @@ show_links() {
     echo -e "${GREEN}💾 Redis:${NC}"
     echo -e "   ${BLUE}localhost:9379${NC}"
     echo ""
+    echo -e "${GREEN}🔑 Kubernetes API:${NC}"
+    echo -e "   ${BLUE}https://localhost:6443${NC}"
+    echo ""
     echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 }
 
 # Головне меню
 case "${1:-start}" in
     start)
-        start_tunnel
+        start_tunnel "$2"
         ;;
     stop)
         stop_tunnel
@@ -164,6 +174,34 @@ case "${1:-start}" in
             echo -e "${YELLOW}💡 Спочатку запустіть:${NC} ./scripts/server-tunnel.sh start"
         fi
         ;;
+    deploy)
+        # simple helper: встановлює kubeconfig, запускає helm
+        if [ -z "$KUBECONFIG" ]; then
+            echo "🔧 Створюю тимчасовий kubeconfig у k8s/kubeconfig_proxied"
+            mkdir -p k8s
+            cat <<'EOF' > k8s/kubeconfig_proxied
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://localhost:6443
+    insecure-skip-tls-verify: true
+  name: remote
+contexts:
+- context:
+    cluster: remote
+    user: remote
+  name: remote
+current-context: remote
+users:
+- name: remote
+  user:
+    token: $ARGOCD_TOKEN
+EOF
+            export KUBECONFIG=$PWD/k8s/kubeconfig_proxied
+        fi
+        echo "🚀 Виконуємо helm upgrade/ install"
+        helm upgrade --install predator ./helm/predator-umbrella --namespace predator --create-namespace "$@"
+        ;;
     *)
         echo "Використання: $0 {start|stop|restart|status|links}"
         echo ""
@@ -173,6 +211,7 @@ case "${1:-start}" in
         echo "  restart - Перезапустити SSH-тунель"
         echo "  status  - Показати статус"
         echo "  links   - Показати посилання на веб-інтерфейси"
+        echo "  deploy  - Запустити helm upgrade у кластері через тунель"
         exit 1
         ;;
 esac

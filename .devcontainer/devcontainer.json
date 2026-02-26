@@ -1,27 +1,40 @@
 {
-	"name": "Predator Analytics Dev",
-	"build": {
-		"dockerfile": "Dockerfile",
-		"context": ".."
-	},
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"ms-python.python",
-				"ms-azuretools.vscode-docker",
-				"ms-kubernetes-tools.vscode-kubernetes-tools",
-				"hashicorp.terraform",
-				"redhat.vscode-yaml",
-				"tamasfe.even-better-toml"
-			],
-			"settings": {
-				"python.defaultInterpreterPath": "/usr/local/bin/python"
-			}
-		}
-	},
-	"remoteUser": "vscode",
-	"mounts": [
-		"source=${localEnv:HOME}/.kube,target=/home/vscode/.kube,type=bind,consistency=cached"
-	],
-	"postCreateCommand": "pip install -r requirements.txt && echo 'Predator Dev Environment Ready!'"
+    "name": "predator-lts-dev",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "remoteUser": "dev",
+    "workspaceFolder": "/workspace",
+    // We explicitly tell VS Code to mount the repo into /workspace
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "features": {
+        // Optional feature: allow using the host's Docker socket without installing Docker in the container
+        // This relies on the host (server) dockerd. Mac Docker Desktop will NOT be used if doing this via Remote-SSH.
+        // "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+        //    "version": "latest",
+        //    "enableNonRootDocker": "true",
+        //    "moby": "true"
+        // }
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "zsh",
+                "python.defaultInterpreterPath": "/usr/bin/python3.12"
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.debugpy",
+                "esbenp.prettier-vscode",
+                "dbaeumer.vscode-eslint"
+            ]
+        }
+    },
+    "forwardPorts": [
+        8000,
+        5173
+    ],
+    "postCreateCommand": "python3.12 -m venv /workspace/.venv && /workspace/.venv/bin/pip install --upgrade pip"
 }

@@ -1,15 +1,30 @@
-# Stage 1: Build
-FROM node:20-alpine as build
+# PREDATOR ANALYTICS v25.0 - Frontend Docker
+FROM node:20-alpine AS builder
+
 WORKDIR /app
-COPY package.json ./
+
+# Copy package config
+COPY apps/frontend/package.json apps/frontend/package-lock.json* ./
+
+# Install dependencies 
+# Using --legacy-peer-deps because Predator v25 has some complex dependencies
 RUN npm install --legacy-peer-deps
-COPY . .
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+# Copy source code
+COPY apps/frontend/ .
+
+# Build production assets
 RUN npm run build
 
-# Stage 2: Serve
+# Stage 2: Serve with Nginx
 FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy custom nginx config
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+
+# Copy build assets from builder
+COPY --from=builder /app/dist /usr/share/nginx/html
+
 EXPOSE 80
+
 CMD ["nginx", "-g", "daemon off;"]

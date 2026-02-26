@@ -1,27 +1,28 @@
-# Рекомендовані помічники / агенти для Predator v25.0
+# Рекомендовані помічники та агенти (Predator v25.0)
 
-Це набір agent/assistant рекомендацій, які допомагають автоматизувати рутинні задачі та підвищити швидкість розробки.
+Цей документ описує екосистему ШІ-агентів, які автоматизують життєвий цикл Predator Analytics.
 
-## 1) Dev Assist (GitHub Copilot + Copilot Chat)
-- Використання Copilot + Copilot Chat у VS Code для надання контекстних підказок та автогенерації тестів.
-- Налаштування: `GitHub.copilot`, `GitHub.copilot-chat` у `.vscode/extensions.json`.
+## 1) Dev Assist (GitHub Copilot / Cursor)
+- Використання Copilot + Copilot Chat або Cursor для контекстної генерації коду та рефакторингу.
+- **Роль**: Прискорення розробки нових функцій та виправлення багів.
 
-## 2) Repo Maintenance Agent (GH Actions + Dependabot)
-- Dependabot для автопоновлення залежностей.
-- CI агенти у GitHub Actions для лінтінгу, тестування та сканування вразливостей (Trivy/TruffleHog).
+## 2) Repo Maintenance Agent (GitHub Actions)
+- **Dependabot**: Автоматичне оновлення залежностей.
+- **CI/CD Pipeline**: Автоматичне тестування, лінтінг та сканування вразливостей (Trivy).
 
-## 3) Secret Prevention/Scan Agent
-- TruffleHog + detect-secrets у CI.
-- Pre-commit hook з detect-secrets для локального сканування.
+## 3) Security Guardian (Gitleaks + TruffleHog)
+- Сканування коду на наявність витоків секретів у реальному часі.
+- **Pre-commit hooks**: Локальне блокування коммітів з чутливими даними.
 
-## 4) Infra & Cost Agent
-- Kubecost (policy/alerts) → автоматичні дії (scale-down) по порогу бюджету.
-- Observability agent (Prometheus exporter) для моделей.
+## 4) Self-Improve Orchestrator (SIO v25)
+- Автономний агент, що керує циклами самовдосконалення: **Діагностика → Генерація патчів → Тестування → Деплой**.
+- Використовує **Cortex** для прийняття стратегічних рішень.
 
-## 5) Self-Improve Orchestrator (SIO)
-- Агент контролює цикли self-improvement: Auto-diagnose → Augment → Train → Evaluate → Promote
-- Policy engine для контролю Auto-Promote (requires manual approval triggers for production)
+## 5) System Guardian Service
+- Фоновий сервіс, що моніторить здоров'я інфраструктури (Redis, DB, MQ).
+- **Роль**: Автоматичне відновлення (Self-Healing) при деградації сервісів.
 
-## 6) Test Automation Agent
-- Cypress Runner + scheduling job (nightly) to run E2E and backup regression tests.
+## 6) Observability & Cost Agent (Prometheus + Grafana)
+- Моніторинг метрик продуктивності та вартості використання LLM.
+- **AlertManager**: Сповіщення про аномалії або перевищення бюджету.
 

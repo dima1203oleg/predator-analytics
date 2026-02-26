@@ -1,10 +1,14 @@
 .PHONY: package deploy clean release-v27 verify-v27 lint-axioms
 
-package:
-	tar -czf predator_v27_release.tar.gz predatorctl google_agentctl services/arbiter services/truth-ledger services/api-gateway infrastructure/constitution policies agents libs README_V27.md docker-compose.yml docs scripts
+.PHONY: dev server stop status clean rebuild help
 
-release-v27: package
-	scp -P 6666 predator_v27_release.tar.gz dima@194.177.1.240:~/predator-analytics/
+help:
+	@echo "🔍 Predator Commands:"
+	@echo "  make dev    - Start LOCAL dev environment (Mac safe)"
+	@echo "  make server - Start FULL server environment (Linux/GPU)"
+	@echo "  make stop   - Stop all services"
+	@echo "  make clean  - Full cleanup (volumes + orphans)"
+	@echo "  make rebuild-dev - Rebuild the Dev Container"
 
 lint-axioms:
 	PYTHONPATH=./predatorctl:./google_agentctl:. predatorctl system lint
@@ -24,5 +28,14 @@ install-local:
 audit:
 	predatorctl system audit --type constitution
 
-test-arbiter:
-	python3 test_arbiter_flow.py
+cli-setup:
+	@echo "🛠️ Setting up Mixed TOP CLI Stack..."
+	@bash scripts/install_cli_tools.sh
+
+cli-test:
+	@echo "🧪 Testing CLI tools integration..."
+	@bash scripts/test_cli_tools.sh
+
+rebuild-dev:
+	@echo "🔄 Rebuilding Dev Container..."
+	@./scripts/rebuild_devcontainer.sh
