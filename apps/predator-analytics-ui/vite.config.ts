@@ -7,7 +7,7 @@ export default defineConfig({
     host: '0.0.0.0',
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://194.177.1.240:30080',
         changeOrigin: true,
         secure: false,
       },
@@ -18,11 +18,11 @@ export default defineConfig({
       }
     },
     fs: {
-        allow: ['..', '../..', '/'],
-        strict: false
+      allow: ['..', '../..', '/'],
+      strict: false
     },
     watch: {
-        ignored: ['**/node_modules/**']
+      ignored: ['**/node_modules/**']
     }
   },
   optimizeDeps: {

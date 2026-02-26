@@ -1,22 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 :root {
     --sat: env(safe-area-inset-top);
     --sar: env(safe-area-inset-right);
     --sab: env(safe-area-inset-bottom);
     --sal: env(safe-area-inset-left);
-
-    /* Dynamic units for better mobile layout */
     --vh: 11vh;
 
     /* Role Specific Palettes */
-    --color-explorer: #3b82f6;      /* Trustworthy Blue */
-    --color-operator: #10b981;      /* Tactical Green */
-    --color-commander: #f59e0b;     /* Command Amber/Gold */
-    --color-forbidden: #ef4444;     /* Danger Red */
+    --color-explorer: #3b82f6;
+    --color-operator: #10b981;
+    --color-commander: #f59e0b;
+    --color-forbidden: #ef4444;
 
     /* Role Specific Glows */
     --glow-explorer: rgba(59, 130, 246, 0.4);
@@ -27,6 +27,8 @@
     --glow-blue: rgba(6, 182, 212, 0.4);
     --glow-purple: rgba(168, 85, 247, 0.4);
     --glow-indigo: rgba(99, 102, 241, 0.4);
+    --glow-orange: rgba(249, 115, 22, 0.4);
+    --glow-amber: rgba(245, 158, 11, 0.35);
 }
 
 .pt-safe {
@@ -120,14 +122,12 @@ body {
 
 /* Iridescent Text Effect */
 .text-iridescent {
-    background: linear-gradient(
-        45deg,
-        #60a5fa 0%,
-        #a855f7 25%,
-        #ec4899 50%,
-        #a855f7 75%,
-        #60a5fa 100%
-    );
+    background: linear-gradient(45deg,
+            #60a5fa 0%,
+            #a855f7 25%,
+            #ec4899 50%,
+            #a855f7 75%,
+            #60a5fa 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -136,7 +136,9 @@ body {
 }
 
 @keyframes shine {
-    to { background-position: 200% center; }
+    to {
+        background-position: 200% center;
+    }
 }
 
 /* Chromatic Aberration Simulation */
@@ -158,8 +160,17 @@ body {
 
 /* Neural pulse effect */
 @keyframes neural-pulse {
-    0%, 100% { filter: drop-shadow(0 0 5px var(--glow-color)); opacity: 0.8; }
-    50% { filter: drop-shadow(0 0 20px var(--glow-color)); opacity: 1; }
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 5px var(--glow-color));
+        opacity: 0.8;
+    }
+
+    50% {
+        filter: drop-shadow(0 0 20px var(--glow-color));
+        opacity: 1;
+    }
 }
 
 .neural-breathing {
@@ -179,16 +190,15 @@ body {
 }
 
 .forbidden-ghost {
-    background: repeating-linear-gradient(
-        45deg,
-        rgba(239, 68, 68, 0.05),
-        rgba(239, 68, 68, 0.05) 10px,
-        rgba(239, 68, 68, 0.1) 10px,
-        rgba(239, 68, 68, 0.1) 20px
-    );
+    background: repeating-linear-gradient(45deg,
+            rgba(239, 68, 68, 0.05),
+            rgba(239, 68, 68, 0.05) 10px,
+            rgba(239, 68, 68, 0.1) 10px,
+            rgba(239, 68, 68, 0.1) 20px);
     border: 1px dashed var(--color-forbidden);
     opacity: 0.6;
 }
+
 /* Base Loader Styles */
 #root:empty::before {
     content: "ІНІЦІАЛІЗАЦІЯ ЯДРА PREDATOR v30.0...";
@@ -257,8 +267,13 @@ body {
 }
 
 @keyframes scanline-move {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(100%); }
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(100%);
+    }
 }
 
 .animate-scanline-fast {
@@ -309,8 +324,13 @@ body {
 }
 
 @keyframes holographic-sweep {
-    0% { transform: translate(-30%, -30%) rotate(0deg); }
-    100% { transform: translate(30%, 30%) rotate(360deg); }
+    0% {
+        transform: translate(-30%, -30%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(30%, 30%) rotate(360deg);
+    }
 }
 
 .glow-pulse {
@@ -318,8 +338,17 @@ body {
 }
 
 @keyframes glow-pulse {
-    0%, 100% { filter: drop-shadow(0 0 2px var(--glow-color, #3b82f6)); opacity: 0.8; }
-    50% { filter: drop-shadow(0 0 8px var(--glow-color, #3b82f6)); opacity: 1; }
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 2px var(--glow-color, #3b82f6));
+        opacity: 0.8;
+    }
+
+    50% {
+        filter: drop-shadow(0 0 8px var(--glow-color, #3b82f6));
+        opacity: 1;
+    }
 }
 
 .holographic-scanline {
@@ -336,10 +365,23 @@ body {
 }
 
 @keyframes scanline {
-    0% { top: 0; opacity: 0; }
-    5% { opacity: 1; }
-    95% { opacity: 1; }
-    100% { top: 100%; opacity: 0; }
+    0% {
+        top: 0;
+        opacity: 0;
+    }
+
+    5% {
+        opacity: 1;
+    }
+
+    95% {
+        opacity: 1;
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+    }
 }
 
 .neural-scanline {
@@ -363,4 +405,154 @@ body {
 
 .tilt-glare-layer {
     background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), var(--gc, #fff), transparent 80%);
+}
+
+/* ============================================================================
+   FACTORY / ЗАВОД — Premium Visual Enhancements
+   ============================================================================ */
+
+/* Factory orange glow pulse */
+@keyframes factory-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(249, 115, 22, 0.2), 0 0 60px rgba(249, 115, 22, 0.1);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(249, 115, 22, 0.4), 0 0 80px rgba(249, 115, 22, 0.15);
+    }
+}
+
+.factory-pulse {
+    animation: factory-glow 3s ease-in-out infinite;
+}
+
+/* OODA pipeline connector pulse */
+@keyframes pipeline-flow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.pipeline-flow {
+    background: linear-gradient(90deg, #f97316, #f59e0b, #06b6d4, #f97316);
+    background-size: 300% 300%;
+    animation: pipeline-flow 3s ease infinite;
+}
+
+/* Enhanced sidebar item hover */
+.sidebar-item-glow:hover {
+    box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.05);
+}
+
+/* Neon border for active states */
+.neon-border-orange {
+    border-color: rgba(249, 115, 22, 0.6);
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.2), inset 0 0 15px rgba(249, 115, 22, 0.05);
+}
+
+.neon-border-cyan {
+    border-color: rgba(6, 182, 212, 0.6);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.2), inset 0 0 15px rgba(6, 182, 212, 0.05);
+}
+
+.neon-border-violet {
+    border-color: rgba(139, 92, 246, 0.6);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.2), inset 0 0 15px rgba(139, 92, 246, 0.05);
+}
+
+/* Better typography */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.font-mono,
+code,
+pre,
+kbd {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+/* Premium card glow on hover */
+.premium-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-card:hover {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+}
+
+/* Sidebar active item enhanced glow */
+.sidebar-active {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(6, 182, 212, 0.08) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Improved global scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.2) transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.25);
+    border-radius: 99px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.45);
+}
+
+/* AZR status badge pulse */
+@keyframes azr-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 4px rgba(249, 115, 22, 0.6));
+    }
+
+    50% {
+        opacity: 0.7;
+        filter: drop-shadow(0 0 12px rgba(249, 115, 22, 0.9));
+    }
+}
+
+.azr-active {
+    animation: azr-pulse 2s ease-in-out infinite;
+}
+
+/* Gradient headings */
+.h-gradient-orange {
+    background: linear-gradient(135deg, #ffffff 0%, #fed7aa 50%, #fb923c 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.h-gradient-cyan {
+    background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 50%, #06b6d4 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
