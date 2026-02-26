@@ -435,6 +435,50 @@ app.get('/api/v1/pipeline/events/:jobId', (req, res) => {
 // 🔍 SEARCH — ШУКАЄ ПО РЕАЛЬНИХ ДАНИХ
 // =============================================
 
+// SSE Endpoint for real-time updates
+app.get(['/api/v1/ingestion/stream/:jobId', '/api/v1/data-hub/stream/:jobId'], (req, res) => {
+  const { jobId } = req.params;
+  const job = etlJobs.find(j => j.job_id === jobId);
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
+
+  const emitJob = (j) => {
+    const sseData = {
+      ...j,
+      status: j.state === 'READY' ? 'ready' : j.state === 'FAILED' ? 'failed' : 'processing',
+      stage: j.progress?.stage || 'INIT',
+      sub_phase: j.progress?.details,
+      percent: j.progress?.percent || 0,
+      message: j.progress?.details,
+      total: j.progress?.records_total || 0,
+      current: j.progress?.records_processed || 0
+    };
+    res.write(`data: ${JSON.stringify(sseData)}\n\n`);
+  }
+
+  // Initial state emission
+  if (job) {
+    emitJob(job);
+  }
+
+  // Subscribe to global pipeline events for this jobId
+  const interval = setInterval(() => {
+    const latestJob = etlJobs.find(j => j.job_id === jobId);
+    if (latestJob) {
+      emitJob(latestJob);
+      if (latestJob.state === 'READY' || latestJob.state === 'FAILED') {
+        clearInterval(interval);
+        res.end();
+      }
+    }
+  }, 1000);
+
+  req.on('close', () => clearInterval(interval));
+});
+
 app.get('/api/v1/search', (req, res) => {
   const q = (req.query.q || '').toLowerCase();
   if (!q || DB_SEARCH_INDEX.length === 0) {

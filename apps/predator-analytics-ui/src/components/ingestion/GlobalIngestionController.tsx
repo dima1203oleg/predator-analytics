@@ -9,11 +9,11 @@ import {
     Loader2,
     X
 } from "lucide-react"
-import { useEffect, useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import { IngestionJob, useIngestionStore } from "../../store/useIngestionStore"
 import { cn } from "../../utils/cn"
 import { Button } from "../ui/button"
-import { PipelineMonitor } from '../pipeline/PipelineMonitor'
+import { PipelineMonitor } from '../pipeline'
 
 export function GlobalIngestionController() {
     const { activeJobs, updateJob, removeJob, isHubOpen, setHubOpen } = useIngestionStore()
@@ -129,13 +129,19 @@ export function GlobalIngestionController() {
                                 <div className="space-y-6">
                                     {jobIds.map(id => (
                                         <div key={id} className="relative group">
-                                            <PipelineMonitor
-                                                jobId={id}
-                                                pipelineType={activeJobs[id].type}
-                                                externalStatus={activeJobs[id]}
-                                                onComplete={() => { }}
-                                                onError={() => { }}
-                                            />
+                                            {typeof PipelineMonitor !== 'undefined' ? (
+                                                <PipelineMonitor
+                                                    jobId={id}
+                                                    pipelineType={activeJobs[id].type}
+                                                    externalStatus={activeJobs[id]}
+                                                    onComplete={() => { }}
+                                                    onError={() => { }}
+                                                />
+                                            ) : (
+                                                <div className="p-4 text-rose-500 font-mono text-xs border border-rose-500/20 rounded-xl bg-rose-500/5">
+                                                    [ERROR: PipelineMonitor not loaded]
+                                                </div>
+                                            )}
                                             {(activeJobs[id].status === 'ready' || activeJobs[id].status === 'failed') && (
                                                 <button
                                                     onClick={() => removeJob(id)}
