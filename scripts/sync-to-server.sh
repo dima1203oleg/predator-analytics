@@ -3,8 +3,11 @@
 # Синхронізація коду з Mac на сервер (Static IP)
 # Використання: ./scripts/sync-to-server.sh [--dry-run]
 
-SSH_HOST="predator-server"
-LOCAL_DIR="/Users/dima-mac/Documents/Predator_21/"
+SSH_KEY="$HOME/.ssh/id_ed25519_ngrok" # Key for server access
+SSH_HOST="194.177.1.240"
+SSH_PORT="6666"
+SSH_USER="dima"
+LOCAL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/"
 REMOTE_DIR="predator-analytics"
 
 # Кольори для виводу

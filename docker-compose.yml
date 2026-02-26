@@ -21,28 +21,213 @@ services:
     networks: [predator-network]
     profiles: ["local", "server"]
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: predator_zookeeper
+  backend:
+    image: predator-backend:v25
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    container_name: predator_backend
+    ports:
+      - "8090:8000"
+    volumes:
+      - ./apps/backend/app:/app/app
+      - ./libs:/app/libs
+    env_file:
+      - .env
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    networks: [predator-network]
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://predator:predator_password@postgres:5432/predator_db}
+      - REDIS_URL=redis://redis:6379/0
+      - QDRANT_URL=http://qdrant:6333
+      - OPENSEARCH_URL=http://opensearch:9200
+      - MINIO_ENDPOINT=minio:9000
+      - PRELOAD_MODELS=false
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - predator-net
     profiles: ["local", "server"]
 
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    container_name: predator_kafka
-    depends_on: [zookeeper]
-    ports: ["9092:9092"]
+  ingestion-api:
+    build:
+      context: .
+      dockerfile: apps/ingestion-api/Dockerfile
+    container_name: predator_ingestion_api
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./apps/ingestion-api/app:/app/app
+      - ./libs:/app/libs
+    env_file:
+      - .env
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+
+  orchestrator:
+    image: predator-orchestrator:v25
+    build:
+      context: .
+      dockerfile: apps/self-improve-orchestrator/Dockerfile
+    container_name: predator_orchestrator
+    env_file:
+      - .env
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks: [predator-network]
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://predator:predator_password@postgres:5432/predator_db}
+      - REDIS_URL=redis://redis:6379/1
+      - QDRANT_URL=http://qdrant:6333
+      - OPENSEARCH_URL=http://opensearch:9200
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    volumes:
+      - ./apps/self-improve-orchestrator:/app/orchestrator
+      - ./apps/backend/app:/app/app
+      - ./libs:/app/libs
+      - orchestrator_logs:/app/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - predator-net
+    profiles: ["server"]
+
+  celery_worker:
+    image: predator-backend:v25
+    container_name: predator_celery_worker
+    command: celery -A app.core.celery_app worker --loglevel=info -Q etl,ingestion,maintenance,monitoring --prefetch-multiplier=1 --concurrency=4
+    volumes:
+      - ./apps/backend/app:/app/app
+      - ./libs:/app/libs
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://predator:predator_password@postgres:5432/predator_db}
+      - REDIS_URL=redis://redis:6379/0
+      - QDRANT_URL=http://qdrant:6333
+      - OPENSEARCH_URL=http://opensearch:9200
+      - MINIO_ENDPOINT=minio:9000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+
+  celery_beat:
+    image: predator-backend:v25
+    container_name: predator_celery_beat
+    command: celery -A app.core.celery_app beat --loglevel=info
+    volumes:
+      - ./apps/backend/app:/app/app
+      - ./libs:/app/libs
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://predator:predator_password@postgres:5432/predator_db}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    container_name: predator_frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      backend:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+
+  neo4j:
+    image: neo4j:5.12.0
+    container_name: predator_neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD:-predator_neo4j_password}
+      # Enable APOC plugin for advanced graph algorithms used by Influence Engine
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_import_file_use__neo4j__config=true
+      - NEO4J_PLUGINS=["apoc"]
+    ports:
+      - "7474:7474" # HTTP
+      - "7687:7687" # Bolt
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - neo4j_import:/var/lib/neo4j/import
+      - neo4j_plugins:/plugins
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider localhost:7474 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+
+  redpanda:
+    image: docker.redpanda.com/vectorized/redpanda:v23.2.19
+    container_name: predator_redpanda
+    command:
+      - redpanda
+      - start
+      - --smp 1
+      - --overprovisioned
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      # Advertise external IP as localhost for local dev
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
+      - --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:18082
+    ports:
+      - "19092:19092"
+      - "18082:18082"
+      - "9644:9644" # Admin API
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f localhost:9644/v1/status/ready || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - predator-net
     profiles: ["local", "server"]
 
   postgres:
@@ -302,7 +487,37 @@ services:
     networks: [predator-network]
     profiles: ["server"]
 
+  telegram-bot:
+    build:
+      context: .
+      dockerfile: apps/self-improve-orchestrator/Dockerfile
+    container_name: predator_telegram_bot
+    command: python3 -m orchestrator.telegram.bot
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_ADMIN_IDS=${TELEGRAM_ADMIN_IDS}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - REDIS_URL=redis://redis:6379/1
+      - POSTGRES_DSN=${DATABASE_URL:-postgresql+asyncpg://predator:predator_password@postgres:5432/predator_db}
+      - ENVIRONMENT=rnd
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./apps/self-improve-orchestrator:/app/orchestrator
+      - ./libs:/app/libs
+    networks:
+      - predator-net
+    profiles: ["local", "server"]
+
 volumes:
+  neo4j_data:
+  neo4j_logs:
+  neo4j_import:
+  neo4j_plugins:
+  redpanda_data:
   postgres_data:
   redis_data:
   neo4j_data:

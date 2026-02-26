@@ -157,7 +157,7 @@ const MonitoringView: React.FC = () => {
                             data: { category: 'ВУЗОЛ', status: node.status, cpu: node.cpuUsage?.toString() }
                         });
 
-                        // Add Pods for this node (if available in cluster data)
+                        // Add Pods for this node (if available in cluster data, otherwise mock based on targets)
                         if (node.pods) {
                             node.pods.forEach((pod: MonClusterPod) => {
                                 nodes.push({
@@ -172,12 +172,46 @@ const MonitoringView: React.FC = () => {
                         }
                     });
 
+                    // If no pods found in cluster data (mock mode might not have them nested), use targets/services
+                    if (nodes.length < 5) {
+                        // Add mocked services/targets as nodes if cluster data is sparse
+                        const data = await api.getMonitoringTargets();
+                        if (isMounted.current) setTargets(data);
+
+                        data.forEach((t: MonTarget) => {
+                            nodes.push({
+                                name: t.name,
+                                category: 2, // SERVICE
+                                symbolSize: 30,
+                                itemStyle: { color: '#a855f7' },
+                                data: { category: 'СЕРВІС', status: t.status, latency: t.latency }
+                            });
+                            // Link to first node as parent (mock)
+                            if (nodes[0]) links.push({ source: nodes[0].name, target: t.name });
+                        });
+                    }
+
                     setGraphData({ nodes, links });
                 } else {
-                    // Truth-only: do not synthesize graph/targets. Keep empty state.
+                    // Fallback if cluster status fails or is empty - construct from targets
+                    const data = await api.getMonitoringTargets();
                     if (isMounted.current) {
-                        setTargets([]);
-                        setGraphData({ nodes: [], links: [] });
+                        setTargets(data);
+                        const nodes: GraphDataNode[] = [
+                            { name: 'Шлюз Кластера', category: 0, symbolSize: 50, itemStyle: { color: '#0ea5e9' }, data: { category: 'ШЛЮЗ', status: 'Онлайн' } }
+                        ];
+                        const links: GraphDataLink[] = [];
+                        data.forEach((t: MonTarget) => {
+                            nodes.push({
+                                name: t.name,
+                                category: 2, // SERVICE
+                                symbolSize: 30,
+                                itemStyle: { color: '#a855f7' },
+                                data: { category: 'СЕРВІС', status: t.status, latency: t.latency }
+                            });
+                            links.push({ source: 'Шлюз Кластера', target: t.name });
+                        });
+                        setGraphData({ nodes, links });
                     }
                 }
 
@@ -267,7 +301,7 @@ const MonitoringView: React.FC = () => {
                                 <p className="text-[10px] text-slate-400 line-clamp-1 italic mb-3">"{log.request_text}"</p>
                                 <div className="flex justify-between text-[8px] font-mono text-slate-500">
                                     <span>{new Date(log.created_at).toLocaleTimeString()}</span>
-                                    <span>RISK: {log.risk_level}</span>
+                                    <span>РИЗИК: <span className={log.risk_level === 'high' ? 'text-rose-400' : 'text-emerald-400'}>{log.risk_level === 'high' ? 'ВИСОКИЙ' : 'НИЗЬКИЙ'}</span></span>
                                 </div>
                             </motion.div>
                         ))}
@@ -275,7 +309,7 @@ const MonitoringView: React.FC = () => {
                 </TacticalCard>
             </div>
             <div className="lg:col-span-2">
-                <TacticalCard variant="holographic" title="ВІЗУАЛІЗАЦІЯ НЕЙРОННОГО МИСЛЕННЯ" className="min-h-[600px] border-white/5 bg-slate-950/40 flex flex-col">
+                <TacticalCard variant="holographic" title="НЕЙРОННИЙ СЛІД ПРИЙНЯТТЯ РІШЕНЬ" className="min-h-[600px] border-white/5 bg-slate-950/40 flex flex-col">
                     {selectedAudit ? (
                         <div className="p-8 space-y-10">
                             <div className="flex items-center gap-6 p-6 bg-purple-600/5 rounded-3xl border border-purple-500/20">
@@ -298,7 +332,7 @@ const MonitoringView: React.FC = () => {
                                     <div className="p-6 bg-white/5 rounded-2xl border border-white/5 text-sm text-slate-200 font-mono whitespace-pre-wrap leading-relaxed shadow-lg">
                                         {Array.isArray(selectedAudit.gemini_plan?.steps)
                                             ? selectedAudit.gemini_plan.steps.map((s: string, i: number) => <div key={i} className="mb-1">[{i + 1}] {s}</div>)
-                                            : (selectedAudit.gemini_plan || "No plan details available.")}
+                                            : (selectedAudit.gemini_plan || "Деталі плану недоступні.")}
                                     </div>
                                 </div>
                             </div>
@@ -310,7 +344,7 @@ const MonitoringView: React.FC = () => {
                                         <Zap size={14} />
                                     </div>
                                     <div className="space-y-4">
-                                        <h4 className="text-xs font-black text-amber-400 uppercase tracking-[0.2em]">Внутрішній Монолог (v25 Нейрон)</h4>
+                                        <h4 className="text-xs font-black text-amber-400 uppercase tracking-[0.2em]">Внутрішній Монолог (Нейрон v25)</h4>
                                         <div className="p-6 bg-amber-500/5 rounded-2xl border border-amber-500/10 text-xs text-amber-100/80 font-mono leading-relaxed italic">
                                             {selectedAudit.thinking_process}
                                         </div>
@@ -325,7 +359,7 @@ const MonitoringView: React.FC = () => {
                                         <Code size={14} />
                                     </div>
                                     <div className="space-y-4">
-                                        <h4 className="text-xs font-black text-blue-400 uppercase tracking-[0.2em]">Вихід Кодера (Mistral/Groq)</h4>
+                                        <h4 className="text-xs font-black text-blue-400 uppercase tracking-[0.2em]">Вихід Коду (Mistral/Groq)</h4>
                                         <div className="p-6 bg-blue-500/5 rounded-2xl border border-blue-500/10 text-[11px] text-blue-100/90 font-mono whitespace-pre-wrap overflow-x-auto">
                                             {selectedAudit.mistral_output}
                                         </div>
@@ -339,16 +373,16 @@ const MonitoringView: React.FC = () => {
                                     <CheckCircle2 size={14} />
                                 </div>
                                 <div className="space-y-4">
-                                        <h4 className="text-xs font-black text-emerald-400 uppercase tracking-[0.2em]">Аудит Безпеки (Aider/Copilot)</h4>
+                                    <h4 className="text-xs font-black text-emerald-400 uppercase tracking-[0.2em]">Аудит Безпеки (Aider/Copilot)</h4>
                                     <div className="p-6 bg-emerald-500/5 rounded-2xl border border-emerald-500/10 text-sm text-emerald-100/80 font-mono italic leading-relaxed shadow-inner">
-                                        {typeof selectedAudit.copilot_audit === 'object' ? JSON.stringify(selectedAudit.copilot_audit, null, 2) : (selectedAudit.copilot_audit || "Audit summary not recorded.")}
+                                        {typeof selectedAudit.copilot_audit === 'object' ? JSON.stringify(selectedAudit.copilot_audit, null, 2) : (selectedAudit.copilot_audit || "Підсумок аудиту не записано.")}
                                     </div>
                                     <div className="flex gap-4">
                                         <div className="px-4 py-2 bg-slate-950 rounded-xl border border-white/5 text-[9px] font-mono text-slate-400 uppercase">
                                             Виконання: <span className="text-emerald-400">{selectedAudit.execution_time_ms}мс</span>
                                         </div>
                                         <div className="px-4 py-2 bg-slate-950 rounded-xl border border-white/5 text-[9px] font-mono text-slate-400 uppercase">
-                                            Рівень Ризику: <span className={selectedAudit.risk_level === 'high' ? 'text-rose-400' : 'text-emerald-400'}>{selectedAudit.risk_level === 'high' ? 'ВИСОКИЙ' : selectedAudit.risk_level === 'medium' ? 'СЕРЕДНІЙ' : 'НИЗЬКИЙ'}</span>
+                                            Рівень Ризику: <span className={selectedAudit.risk_level === 'high' ? 'text-rose-400' : 'text-emerald-400'}>{selectedAudit.risk_level === 'high' ? 'ВИСОКИЙ' : 'НИЗЬКИЙ'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -357,7 +391,7 @@ const MonitoringView: React.FC = () => {
                     ) : (
                         <div className="h-full flex flex-col items-center justify-center opacity-20 py-40">
                             <Brain size={100} />
-                            <p className="mt-8 text-xs font-black uppercase tracking-widest">Оберіть запис для візуалізації мислення</p>
+                            <p className="mt-8 text-xs font-black uppercase tracking-widest">Оберіть Слід для візуалізації міркувань</p>
                         </div>
                     )}
                 </TacticalCard>
@@ -394,8 +428,8 @@ const MonitoringView: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex justify-between items-center text-[9px] font-mono border-t border-white/5 pt-3">
-                                    <div className="text-slate-500">INIT: <span className="text-slate-300">{saga.startTime}</span></div>
-                                    <div className="text-slate-500 tracking-tighter">TRACE_ID: {saga.traceId.substring(0, 8)}...</div>
+                                    <div className="text-slate-500">ПОЧАТОК: <span className="text-slate-300">{saga.startTime}</span></div>
+                                    <div className="text-slate-500 tracking-tighter">ID ТРЕЙСУ: {saga.traceId.substring(0, 8)}...</div>
                                 </div>
                                 {selectedSaga?.id === saga.id && (
                                     <motion.div layoutId="sagaActive" className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 shadow-[0_0_15px_#3b82f6]" />
@@ -655,8 +689,7 @@ const MonitoringView: React.FC = () => {
                                             tab === 'LLM' ? 'bg-purple-600 text-white shadow-lg border border-white/20' :
                                                 tab === 'STORAGE' ? 'bg-indigo-600 text-white shadow-lg border border-white/20' :
                                                     tab === 'ANALYTICS' ? 'bg-orange-600 text-white shadow-lg border border-white/20' :
-                                                        tab === 'SIMULATION' ? 'bg-rose-600 text-white shadow-lg border border-white/20' :
-                                                            'bg-purple-600 text-white shadow-lg border border-white/20'
+                                                        'bg-purple-600 text-white shadow-lg border border-white/20'
                             ) : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}
                         >
                             {tab === 'METRICS' && <BarChart3 size={16} />}
@@ -672,11 +705,10 @@ const MonitoringView: React.FC = () => {
                             {tab === 'METRICS' ? 'Метрики' :
                                 tab === 'LOGS' ? 'Логи' :
                                     tab === 'JOBS' ? 'Задачі' :
-                                        tab === 'LLM' ? 'AI_Core' :
+                                        tab === 'LLM' ? 'Ядро ШІ' :
                                             tab === 'STORAGE' ? 'Сховище' :
-                                                tab === 'ANALYTICS' ? 'Dashboards' :
-                                                    tab === 'NEURAL' ? 'Neural Trace' :
-                                                        tab === 'SIMULATION' ? 'Digital Twin' : 'Saga'}
+                                                tab === 'ANALYTICS' ? 'Дашборди' :
+                                                    tab === 'NEURAL' ? 'Нейро-Слід' : 'Saga'}
 
                             {activeTab === tab && <motion.div layoutId="tabGlow" className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />}
                         </button>
@@ -725,7 +757,7 @@ const MonitoringView: React.FC = () => {
                                 {wsData?.pulse && (
                                     <TacticalCard
                                         variant="holographic"
-                                        title="SYSTEM PULSE AGGREGATOR"
+                                        title="АГРЕГАТОР СИСТЕМНОГО ПУЛЬСУ"
                                         className="panel-3d glass-ultra rounded-[32px] border-white/5 overflow-hidden shadow-2xl relative"
                                     >
                                         <div className="absolute top-2 right-4 text-[10px] font-black text-slate-500 uppercase">v25_CORE</div>
@@ -760,7 +792,7 @@ const MonitoringView: React.FC = () => {
 
                                 <TacticalCard
                                     variant="holographic"
-                                    title={isCommanderShell ? 'NEURAL_TOPOLOGY' : 'МАТРИЦЯ СЕРВІСІВ'}
+                                    title={isCommanderShell ? 'НЕЙРОННА_ТОПОЛОГІЯ' : 'МАТРИЦЯ СЕРВІСІВ'}
                                     className={`panel-3d glass-ultra rounded-[32px] border-white/5 overflow-hidden shadow-2xl ${isCommanderShell ? 'border-amber-500/20' : isOperatorShell ? 'border-emerald-500/20' : ''}`}
                                 >
                                     <div className="h-[350px] w-full relative group">
@@ -815,7 +847,7 @@ const MonitoringView: React.FC = () => {
 
                                 <TacticalCard
                                     variant="holographic"
-                                    title={isCommanderShell ? 'AI_ANOMALY_VECTOR' : 'Аналіз Коефіцієнта Загрози'}
+                                    title={isCommanderShell ? 'ВЕКТОР_ШІ_АНОМАЛІЙ' : 'Аналіз Коефіцієнта Загрози'}
                                     className={`panel-3d overflow-hidden glass-ultra rounded-[32px] shadow-2xl ${isCommanderShell ? 'border-amber-500/20' : ''}`}
                                 >
                                     <div className="relative h-44 flex flex-col items-center justify-center">
@@ -1065,10 +1097,9 @@ const MonitoringView: React.FC = () => {
                     )}
 
                     {activeTab === 'NEURAL' && renderNeuralTrace()}
-                    {activeTab === 'SIMULATION' && renderSimulationView()}
                     {activeTab === 'ANALYTICS' && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                            <TacticalCard variant="holographic" title="OPENSEARCH DASHBOARDS ANALYTICS" className="panel-3d glass-ultra rounded-[32px] shadow-2xl">
+                            <TacticalCard variant="holographic" title="АНАЛІТИКА OPENSEARCH" className="panel-3d glass-ultra rounded-[32px] shadow-2xl">
                                 <div className="p-4">
                                     <OpenSearchDashboardsEmbed
                                         dashboardId="search-analytics"

@@ -5,6 +5,7 @@ __pycache__/
 
 # Ignore virtual environments
 venv/
+.venv/
 .env
 
 # Ignore git files
@@ -29,3 +30,28 @@ services/api-gateway/data/
 
 # Ignore node modules (if any)
 node_modules/
+dist/
+build/
+*.tar.gz
+*.zip
+*.mp3
+*.ogg
+*.xlsx
+*.csv
+.DS_Store
+.agent/
+.agents/
+.next/
+.cache/
+server-backup/
+Predator_50/
+data/
+app/
+services/
+api-gateway/
+uploads/
+data_staging/
+build_v45/
+*.csv
+*.xlsx
+*.tar.gz
