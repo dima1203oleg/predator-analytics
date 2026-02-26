@@ -106,7 +106,7 @@ export const QuickActionsBar: React.FC = () => {
     <motion.div
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed bottom-40 right-6 z-[55]"
+      className="fixed bottom-[20rem] right-6 z-[55]"
     >
       <AnimatePresence>
         {expanded && (
@@ -155,8 +155,9 @@ export const QuickActionsBar: React.FC = () => {
         title={expanded ? locales.quickActions.collapse : locales.quickActions.expand}
         className={cn(
           'w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl transition-all',
-          'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500',
-          'border border-white/20 hover:border-white/30'
+          'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500',
+          'border border-white/20 hover:border-white/30',
+          'shadow-[0_0_20px_rgba(251,191,36,0.2)] hover:shadow-[0_0_30px_rgba(251,191,36,0.3)]'
         )}
       >
         <motion.div

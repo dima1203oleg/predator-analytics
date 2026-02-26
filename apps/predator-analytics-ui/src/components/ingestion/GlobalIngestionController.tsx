@@ -13,158 +13,159 @@ import { useEffect, useRef } from "react"
 import { IngestionJob, useIngestionStore } from "../../store/useIngestionStore"
 import { cn } from "../../utils/cn"
 import { Button } from "../ui/button"
+import { PipelineMonitor } from '../pipeline/PipelineMonitor'
 
 export function GlobalIngestionController() {
-  const { activeJobs, updateJob, removeJob, isHubOpen, setHubOpen } = useIngestionStore()
-  const jobIds = Object.keys(activeJobs)
+    const { activeJobs, updateJob, removeJob, isHubOpen, setHubOpen } = useIngestionStore()
+    const jobIds = Object.keys(activeJobs)
 
-  // SSE Listener Manager remains same...
-  const listenersRef = useRef<Record<string, EventSource>>({})
+    // SSE Listener Manager remains same...
+    const listenersRef = useRef<Record<string, EventSource>>({})
 
-  // ... (effects logic is same)
-  useEffect(() => {
-    jobIds.forEach(id => {
-      const job = activeJobs[id]
-      if (['ready', 'failed'].includes(job.status)) return
-      if (listenersRef.current[id]) return
+    // ... (effects logic is same)
+    useEffect(() => {
+        jobIds.forEach(id => {
+            const job = activeJobs[id]
+            if (['ready', 'failed'].includes(job.status)) return
+            if (listenersRef.current[id]) return
 
-      const es = new EventSource(`/api/v1/ingestion/stream/${id}`)
-      listenersRef.current[id] = es
+            const es = new EventSource(`/api/v1/ingestion/stream/${id}`)
+            listenersRef.current[id] = es
 
-      es.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data)
-          updateJob(id, {
-            status: data.status,
-            stage: data.stage,
-            subPhase: data.sub_phase || data.message, // New Granular Field
-            percent: data.percent,
-            message: data.message,
-            totalItems: data.total,
-            currentItem: data.current,
-            error: data.error
-          })
+            es.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data)
+                    updateJob(id, {
+                        status: data.status,
+                        stage: data.stage,
+                        subPhase: data.sub_phase || data.message, // New Granular Field
+                        percent: data.percent,
+                        message: data.message,
+                        totalItems: data.total,
+                        currentItem: data.current,
+                        error: data.error
+                    })
 
-          if (data.status === 'ready' || data.status === 'failed') {
-            es.close()
-            delete listenersRef.current[id]
-          }
-        } catch (e) {
-            console.error("SSE Parse Error", e)
-        }
-      }
+                    if (data.status === 'ready' || data.status === 'failed') {
+                        es.close()
+                        delete listenersRef.current[id]
+                    }
+                } catch (e) {
+                    console.error("SSE Parse Error", e)
+                }
+            }
 
-      es.onerror = () => {
-          es.close()
-          delete listenersRef.current[id]
-      }
-    })
+            es.onerror = () => {
+                es.close()
+                delete listenersRef.current[id]
+            }
+        })
 
-    Object.keys(listenersRef.current).forEach(id => {
-        if (!activeJobs[id]) {
-            listenersRef.current[id].close()
-            delete listenersRef.current[id]
-        }
-    })
-  }, [jobIds, activeJobs, updateJob])
+        Object.keys(listenersRef.current).forEach(id => {
+            if (!activeJobs[id]) {
+                listenersRef.current[id].close()
+                delete listenersRef.current[id]
+            }
+        })
+    }, [jobIds, activeJobs, updateJob])
 
-  return (
-    <AnimatePresence>
-      {isHubOpen && (
-        <div className="fixed inset-0 z-[300] flex justify-end">
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setHubOpen(false)}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-          />
+    return (
+        <AnimatePresence>
+            {isHubOpen && (
+                <div className="fixed inset-0 z-[300] flex justify-end">
+                    {/* Backdrop */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setHubOpen(false)}
+                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                    />
 
-          {/* Drawer */}
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="relative w-full max-w-2xl bg-slate-950/90 backdrop-blur-3xl border-l border-white/5 shadow-2xl flex flex-col overflow-hidden"
-          >
-            {/* Hub Header */}
-            <div className="p-8 border-b border-white/5 flex items-center justify-between relative overflow-hidden">
-                {/* Background Glow */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full -mr-32 -mt-32" />
+                    {/* Drawer */}
+                    <motion.div
+                        initial={{ x: '100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '100%' }}
+                        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                        className="relative w-full max-w-2xl bg-slate-950/90 backdrop-blur-3xl border-l border-white/5 shadow-2xl flex flex-col overflow-hidden"
+                    >
+                        {/* Hub Header */}
+                        <div className="p-8 border-b border-white/5 flex items-center justify-between relative overflow-hidden">
+                            {/* Background Glow */}
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full -mr-32 -mt-32" />
 
-                <div className="relative z-10">
-                    <div className="flex items-center gap-3 mb-1">
-                        <div className="p-2 bg-emerald-500/20 rounded-lg text-emerald-400">
-                            <Activity size={20} className="animate-pulse" />
-                        </div>
-                        <h2 className="text-2xl font-black text-white tracking-tighter uppercase italic">Центр Процесів</h2>
-                    </div>
-                    <p className="text-xs font-black text-slate-500 uppercase tracking-widest pl-11">
-                        Моніторинг та Контроль Нейронних Процесів
-                    </p>
-                </div>
-
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setHubOpen(false)}
-                    className="relative z-10 w-12 h-12 rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/10"
-                >
-                    <X size={20} className="text-slate-400" />
-                </Button>
-            </div>
-
-            {/* Hub Content */}
-            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-8">
-                {jobIds.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
-                        <Loader2 size={48} className="text-slate-800 mb-4 animate-spin" />
-                        <h3 className="text-lg font-black text-slate-500 uppercase">Активні процеси відсутні</h3>
-                        <p className="text-sm text-slate-600 mt-2">Запустіть імпорт даних, щоб побачити телеметрію в реальному часі.</p>
-                    </div>
-                ) : (
-                    <div className="space-y-6">
-                        {jobIds.map(id => (
-                            <div key={id} className="relative group">
-                                <PipelineMonitor
-                                    jobId={id}
-                                    pipelineType={activeJobs[id].type}
-                                    externalStatus={activeJobs[id]}
-                                    onComplete={() => {}}
-                                    onError={() => {}}
-                                />
-                                {(activeJobs[id].status === 'ready' || activeJobs[id].status === 'failed') && (
-                                    <button
-                                        onClick={() => removeJob(id)}
-                                        className="absolute top-4 right-4 p-2 bg-slate-900/80 rounded-lg text-slate-400 hover:text-white hover:bg-rose-500/20 transition-all z-20"
-                                    >
-                                        <X size={16} />
-                                    </button>
-                                )}
+                            <div className="relative z-10">
+                                <div className="flex items-center gap-3 mb-1">
+                                    <div className="p-2 bg-emerald-500/20 rounded-lg text-emerald-400">
+                                        <Activity size={20} className="animate-pulse" />
+                                    </div>
+                                    <h2 className="text-2xl font-black text-white tracking-tighter uppercase italic">Центр Процесів</h2>
+                                </div>
+                                <p className="text-xs font-black text-slate-500 uppercase tracking-widest pl-11">
+                                    Моніторинг та Контроль Нейронних Процесів
+                                </p>
                             </div>
-                        ))}
-                    </div>
-                )}
-            </div>
 
-            {/* Hub Footer */}
-            <div className="p-6 border-t border-white/5 bg-black/40 flex items-center justify-between text-[10px] uppercase font-black tracking-widest text-slate-600">
-                <div className="flex items-center gap-4">
-                    <span>OODA_ID: PRD-HUB-832</span>
-                    <span className="text-emerald-500/50">TRUST_COEFFICIENT: 0.9994</span>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setHubOpen(false)}
+                                className="relative z-10 w-12 h-12 rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/10"
+                            >
+                                <X size={20} className="text-slate-400" />
+                            </Button>
+                        </div>
+
+                        {/* Hub Content */}
+                        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-8">
+                            {jobIds.length === 0 ? (
+                                <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
+                                    <Loader2 size={48} className="text-slate-800 mb-4 animate-spin" />
+                                    <h3 className="text-lg font-black text-slate-500 uppercase">Активні процеси відсутні</h3>
+                                    <p className="text-sm text-slate-600 mt-2">Запустіть імпорт даних, щоб побачити телеметрію в реальному часі.</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-6">
+                                    {jobIds.map(id => (
+                                        <div key={id} className="relative group">
+                                            <PipelineMonitor
+                                                jobId={id}
+                                                pipelineType={activeJobs[id].type}
+                                                externalStatus={activeJobs[id]}
+                                                onComplete={() => { }}
+                                                onError={() => { }}
+                                            />
+                                            {(activeJobs[id].status === 'ready' || activeJobs[id].status === 'failed') && (
+                                                <button
+                                                    onClick={() => removeJob(id)}
+                                                    className="absolute top-4 right-4 p-2 bg-slate-900/80 rounded-lg text-slate-400 hover:text-white hover:bg-rose-500/20 transition-all z-20"
+                                                >
+                                                    <X size={16} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Hub Footer */}
+                        <div className="p-6 border-t border-white/5 bg-black/40 flex items-center justify-between text-[10px] uppercase font-black tracking-widest text-slate-600">
+                            <div className="flex items-center gap-4">
+                                <span>OODA_ID: PRD-HUB-832</span>
+                                <span className="text-emerald-500/50">TRUST_COEFFICIENT: 0.9994</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                                SYSTEM_SYNC_ACTIVE
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                    SYSTEM_SYNC_ACTIVE
-                </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
-  )
+            )}
+        </AnimatePresence>
+    )
 }
 
 function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void }) {
@@ -184,8 +185,8 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
             <div className={cn(
                 "bg-slate-900/60 backdrop-blur-xl border-2 rounded-[32px] overflow-hidden transition-all duration-500",
                 isDone ? "border-emerald-500/20 shadow-emerald-500/5" :
-                isFailed ? "border-rose-500/20 shadow-rose-500/5" :
-                "border-white/5 hover:border-indigo-500/20 shadow-indigo-500/5"
+                    isFailed ? "border-rose-500/20 shadow-rose-500/5" :
+                        "border-white/5 hover:border-indigo-500/20 shadow-indigo-500/5"
             )}>
                 {/* Visual Status Bar (Top) */}
                 <div className="h-1.5 w-full bg-slate-800/50">
@@ -193,8 +194,8 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                         className={cn(
                             "h-full rounded-r-full",
                             isDone ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" :
-                            isFailed ? "bg-rose-500 shadow-[0_0_10px_#f43f5e]" :
-                            "bg-indigo-500 shadow-[0_0_10px_#6366f1]"
+                                isFailed ? "bg-rose-500 shadow-[0_0_10px_#f43f5e]" :
+                                    "bg-indigo-500 shadow-[0_0_10px_#6366f1]"
                         )}
                         initial={{ width: 0 }}
                         animate={{ width: `${job.percent}%` }}
@@ -208,12 +209,12 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                             <div className={cn(
                                 "w-14 h-14 rounded-2xl flex items-center justify-center border relative overflow-hidden",
                                 isDone ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" :
-                                isFailed ? "bg-rose-500/10 border-rose-500/20 text-rose-400" :
-                                "bg-indigo-500/10 border-indigo-500/20 text-indigo-400"
+                                    isFailed ? "bg-rose-500/10 border-rose-500/20 text-rose-400" :
+                                        "bg-indigo-500/10 border-indigo-500/20 text-indigo-400"
                             )}>
                                 {isDone ? <CheckCircle2 size={24} /> :
-                                 isFailed ? <AlertCircle size={24} /> :
-                                 <LoaderPlaceholderIcon className="animate-spin" />}
+                                    isFailed ? <AlertCircle size={24} /> :
+                                        <LoaderPlaceholderIcon className="animate-spin" />}
 
                                 {/* Background Pulse for active items */}
                                 {!isDone && !isFailed && (
@@ -237,7 +238,7 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                         </div>
 
                         <div className="flex gap-2">
-                             {(isDone || isFailed) && (
+                            {(isDone || isFailed) && (
                                 <Button
                                     variant="ghost"
                                     size="icon"
@@ -246,7 +247,7 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                                 >
                                     <X size={16} />
                                 </Button>
-                             )}
+                            )}
                         </div>
                     </div>
 
@@ -279,25 +280,25 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
 
                     {/* Miniature Terminal Log */}
                     <div className="bg-black/40 rounded-2xl p-4 border border-white/5 font-mono text-[10px] space-y-1.5 min-h-[80px] overflow-hidden relative">
-                         <div className="absolute top-2 right-4 flex gap-1">
+                        <div className="absolute top-2 right-4 flex gap-1">
                             <div className="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]" />
                             <div className="w-1 h-1 rounded-full bg-slate-800" />
                             <div className="w-1 h-1 rounded-full bg-slate-800" />
-                         </div>
-                         <div className="text-slate-500">[{new Date(job.startedAt).toLocaleTimeString()}] PREDATOR_AUTH: SUCCESS</div>
-                         <div className="flex gap-2 text-indigo-400/80">
+                        </div>
+                        <div className="text-slate-500">[{new Date(job.startedAt).toLocaleTimeString()}] PREDATOR_AUTH: SUCCESS</div>
+                        <div className="flex gap-2 text-indigo-400/80">
                             <ChevronRight size={10} className="mt-0.5" />
                             <span>NODE_RESOLVE: {job.stage}</span>
-                         </div>
-                         <div className="flex gap-2 text-slate-400">
+                        </div>
+                        <div className="flex gap-2 text-slate-400">
                             <ChevronRight size={10} className="mt-0.5" />
                             <span className="truncate">{job.message}</span>
-                         </div>
-                         {!isDone && !isFailed && (
-                             <div className="text-emerald-500/60 animate-pulse overflow-hidden whitespace-nowrap">
+                        </div>
+                        {!isDone && !isFailed && (
+                            <div className="text-emerald-500/60 animate-pulse overflow-hidden whitespace-nowrap">
                                 {`>> SYSTEM_TRACE: ${Math.random().toString(16).substring(2, 12).toUpperCase()} >> DATAPACK_OK`}
-                             </div>
-                         )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

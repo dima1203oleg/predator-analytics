@@ -22,6 +22,7 @@ import {
   Maximize2,
   Minimize2
 } from 'lucide-react';
+import { api } from '../../services/api';
 
 interface Suggestion {
   id: string;
@@ -104,16 +105,25 @@ export const AICopilot: React.FC = () => {
     }
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim()) return;
 
-    // Simulate AI response
-    setAiResponse('Аналізую ваш запит...');
-    setTimeout(() => {
-      setAiResponse(`✨ Я проаналізував ваш запит "${message}". Ось що я знайшов:\n\n• Знайдено 15 релевантних декларацій\n• Виявлено 3 потенційні ризики\n• Рекомендую перевірити компанію "ТОВ Альфа"\n\nБажаєте детальніший звіт?`);
-    }, 1500);
-
+    const query = message;
     setMessage('');
+    setAiResponse('Аналізую ваш запит...');
+
+    try {
+      // Підключення до реального AI бекенду через Predator v25 API
+      const res = await api.ai.query(query);
+      if (res && (res.answer || res.response || res.result)) {
+        setAiResponse(res.answer || res.response || res.result);
+      } else {
+        setAiResponse(`✨ Запит оброблено, але AI не повернув текстової відповіді. Відповідь: ${JSON.stringify(res)}`);
+      }
+    } catch (e: any) {
+      console.error("AI Copilot Error:", e);
+      setAiResponse(`Помилка зв'язку з Ядром AI: ${e?.message || 'Невідома помилка'}. Можливо, сервер офлайн.`);
+    }
   };
 
   const getSuggestionIcon = (type: string) => {
@@ -147,7 +157,7 @@ export const AICopilot: React.FC = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-[60] w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-600 shadow-2xl flex items-center justify-center group"
+            className="fixed bottom-10 right-6 z-[60] w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-600 shadow-[0_0_30px_rgba(147,51,234,0.3)] flex items-center justify-center group"
           >
             <Brain className="w-8 h-8 text-white group-hover:scale-110 transition-transform" />
             <motion.div
@@ -182,11 +192,10 @@ export const AICopilot: React.FC = () => {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className={`fixed z-50 bg-gradient-to-br from-slate-900/95 via-purple-900/95 to-slate-900/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl shadow-2xl ${
-              isExpanded
-                ? 'inset-4'
-                : 'bottom-6 right-6 w-[450px] h-[600px]'
-            }`}
+            className={`fixed z-[150] bg-gradient-to-br from-slate-900/95 via-purple-900/95 to-slate-900/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl shadow-2xl ${isExpanded
+              ? 'inset-4'
+              : 'bottom-6 right-6 w-[450px] h-[600px]'
+              }`}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-purple-500/30">
@@ -301,11 +310,10 @@ export const AICopilot: React.FC = () => {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleVoiceToggle}
-                    className={`p-3 rounded-xl transition-all ${
-                      isListening
-                        ? 'bg-red-500 text-white'
-                        : 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30'
-                    }`}
+                    className={`p-3 rounded-xl transition-all ${isListening
+                      ? 'bg-red-500 text-white'
+                      : 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30'
+                      }`}
                   >
                     {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
                   </motion.button>

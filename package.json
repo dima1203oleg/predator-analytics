@@ -23,5 +23,10 @@
     "knip": "^5.82.1",
     "oxlint": "^0.15.15",
     "turbo": "latest"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "ws": "^8.19.0"
   }
 }

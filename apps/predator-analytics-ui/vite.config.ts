@@ -1,18 +1,21 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
+// Proxy target: local mock API by default, remote server if VITE_BACKEND_PROXY_TARGET is set
+const BACKEND = process.env.VITE_BACKEND_PROXY_TARGET || 'http://localhost:9080';
+
 export default defineConfig({
   server: {
     port: 3045,
     host: '0.0.0.0',
     proxy: {
       '/api': {
-        target: 'http://194.177.1.240:30080',
+        target: BACKEND,
         changeOrigin: true,
         secure: false,
       },
       '/voice': {
-        target: 'http://194.177.1.240:30080',
+        target: BACKEND,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/voice/, ''),
       }

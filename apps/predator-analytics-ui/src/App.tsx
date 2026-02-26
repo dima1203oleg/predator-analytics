@@ -25,7 +25,7 @@ import OnboardingWizard from './components/premium/OnboardingWizard';
 import QuickActionsBar from './components/premium/QuickActionsBar';
 import { ToasterProvider } from './components/premium/ToasterProvider';
 import { OfflineBanner } from './components/shared/OfflineBanner';
-import { GlobalAZRStatus } from './components/super/GlobalAZRStatus';
+import { CyberTerminal } from './components/ui/CyberTerminal';
 
 // Setup Query Client with optimized settings
 const queryClient = new QueryClient({
@@ -61,12 +61,12 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <AppProvider>
-          <UserProvider>
-            <RoleProvider>
-              <ShellProvider>
-                <AgentProvider>
-                  <DisplayModeProvider>
-                    <SensitiveDataProvider>
+            <UserProvider>
+              <RoleProvider>
+                <ShellProvider>
+                  <AgentProvider>
+                    <DisplayModeProvider>
+                      <SensitiveDataProvider>
                         <ToastProvider>
                           <GlobalProvider>
                             <SuperIntelligenceProvider>
@@ -82,24 +82,23 @@ function App() {
                                 <>
                                   <AppRoutes />
                                   {/* Global UI Components */}
-                                  <CommandPalette />
                                   <QuickActionsBar />
                                   <ToasterProvider />
                                   <OnboardingWizard />
                                   <OfflineBanner />
                                   <AICopilot />
-                                  <GlobalAZRStatus />
+                                  <CyberTerminal />
                                 </>
                               )}
                             </SuperIntelligenceProvider>
                           </GlobalProvider>
                         </ToastProvider>
-                    </SensitiveDataProvider>
-                  </DisplayModeProvider>
-                </AgentProvider>
-              </ShellProvider>
-            </RoleProvider>
-          </UserProvider>
+                      </SensitiveDataProvider>
+                    </DisplayModeProvider>
+                  </AgentProvider>
+                </ShellProvider>
+              </RoleProvider>
+            </UserProvider>
           </AppProvider>
         </BrowserRouter>
       </QueryClientProvider>
