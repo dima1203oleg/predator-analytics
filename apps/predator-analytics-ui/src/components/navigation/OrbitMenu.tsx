@@ -22,7 +22,7 @@ const OrbitMenu: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-32 z-[100]">
+    <div className="fixed bottom-12 right-32 z-[100]">
       <motion.button
         onMouseEnter={() => setIsOpen(true)}
         whileHover={{ scale: 1.1 }}
@@ -44,9 +44,9 @@ const OrbitMenu: React.FC = () => {
           >
             {/* Ambient Pulse */}
             <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.1 }}
-                className="absolute inset-0 bg-blue-500 rounded-full blur-[100px]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.1 }}
+              className="absolute inset-0 bg-blue-500 rounded-full blur-[100px]"
             />
 
             {/* Spinning Ring */}
@@ -76,22 +76,21 @@ const OrbitMenu: React.FC = () => {
                     onClick={() => handleNavigate(item.path)}
                     className="flex flex-col items-center group"
                   >
-                    <div className={`p-4 bg-slate-950 border transition-all duration-300 rounded-3xl ${
-                        isActive
+                    <div className={`p-4 bg-slate-950 border transition-all duration-300 rounded-3xl ${isActive
                         ? 'border-blue-500/60 shadow-[0_0_30px_rgba(37,99,235,0.4)]'
                         : 'border-white/10 group-hover:border-blue-500/50 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)]'
-                    } ${item.color}`}>
+                      } ${item.color}`}>
                       {item.icon}
                     </div>
                     <motion.div
-                        initial={{ opacity: 0, y: 5 }}
-                        whileHover={{ opacity: 1, y: 0 }}
-                        className="absolute -bottom-6 flex flex-col items-center"
+                      initial={{ opacity: 0, y: 5 }}
+                      whileHover={{ opacity: 1, y: 0 }}
+                      className="absolute -bottom-6 flex flex-col items-center"
                     >
-                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 whitespace-nowrap bg-black/80 px-2 py-1 rounded backdrop-blur-md border border-white/5 shadow-2xl">
-                          {item.label}
-                        </span>
-                        <div className="w-1 h-1 bg-blue-500 rounded-full mt-1" />
+                      <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 whitespace-nowrap bg-black/80 px-2 py-1 rounded backdrop-blur-md border border-white/5 shadow-2xl">
+                        {item.label}
+                      </span>
+                      <div className="w-1 h-1 bg-blue-500 rounded-full mt-1" />
                     </motion.div>
                   </button>
                 </motion.div>

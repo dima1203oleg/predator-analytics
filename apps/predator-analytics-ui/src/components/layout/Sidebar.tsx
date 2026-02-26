@@ -5,6 +5,7 @@ import {
   Bot,
   Boxes,
   BrainCircuit,
+  Command,
   Database,
   Factory,
   FileCheck,
@@ -267,7 +268,37 @@ export const Sidebar = () => {
 
         {isSidebarOpen && (
           <div className="pb-4 px-4 text-center">
-            <div className="h-px w-full bg-white/5 mb-3" />
+            <div className="h-px w-full bg-white/5 mb-4" />
+
+            {/* Quick Actions (Moved from floating fixed position for better aesthetics) */}
+            <button
+              onClick={() => {
+                window.dispatchEvent(new KeyboardEvent('keydown', {
+                  key: 'k',
+                  ctrlKey: true,
+                  bubbles: true
+                }));
+              }}
+              className={cn(
+                "w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group mb-4",
+                "bg-gradient-to-r from-indigo-600/20 via-violet-600/20 to-indigo-600/20",
+                "hover:from-indigo-600/30 hover:via-violet-600/30 hover:to-indigo-600/30",
+                "border border-indigo-500/30 hover:border-indigo-400/50",
+                "shadow-[0_0_20px_rgba(79,70,229,0.1)] hover:shadow-[0_0_30px_rgba(79,70,229,0.2)]",
+                "backdrop-blur-md"
+              )}
+            >
+              <div className="p-1.5 bg-indigo-500/20 rounded-lg group-hover:scale-110 transition-transform duration-300">
+                <Command size={14} className="text-indigo-400 group-hover:text-white" />
+              </div>
+              <span className="text-[10px] font-black text-indigo-300 group-hover:text-white uppercase tracking-widest leading-none transition-colors">
+                Швидкі дії
+              </span>
+              <kbd className="hidden lg:inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-black/40 rounded text-[8px] font-mono text-indigo-400 border border-white/5">
+                ⌘K
+              </kbd>
+            </button>
+
             <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-1">
               Власник Ліцензії
             </div>

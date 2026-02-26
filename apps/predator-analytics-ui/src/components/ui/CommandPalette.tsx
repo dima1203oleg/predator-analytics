@@ -1,16 +1,16 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-    ArrowRight,
-    BarChart2,
-    BrainCircuit,
-    Command,
-    FileText,
-    Home, Radio,
-    Search,
-    Shield,
-    Ship,
-    TrendingUp,
-    X
+  ArrowRight,
+  BarChart2,
+  BrainCircuit,
+  Command,
+  FileText,
+  Home, Radio,
+  Search,
+  Shield,
+  Ship,
+  TrendingUp,
+  X
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -165,8 +165,8 @@ export const CommandPalette = () => {
                   >
                     <div className="flex items-center gap-4 relative z-10">
                       <div className={cn(
-                          "p-2 rounded-lg transition-colors duration-300",
-                          index === selectedIndex ? "bg-emerald-500/20 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)]" : "bg-slate-800 text-slate-500 group-hover/item:bg-slate-700"
+                        "p-2 rounded-lg transition-colors duration-300",
+                        index === selectedIndex ? "bg-emerald-500/20 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)]" : "bg-slate-800 text-slate-500 group-hover/item:bg-slate-700"
                       )}>
                         <action.icon className="w-5 h-5" />
                       </div>
@@ -176,10 +176,10 @@ export const CommandPalette = () => {
                       </div>
                     </div>
                     {index === selectedIndex && (
-                        <motion.div layoutId="palette-active-glow" className="flex items-center gap-2 text-emerald-400 relative z-10">
-                           <span className="text-[9px] font-mono font-black animate-pulse uppercase">Execute</span>
-                           <ArrowRight className="w-4 h-4" />
-                        </motion.div>
+                      <motion.div layoutId="palette-active-glow" className="flex items-center gap-2 text-emerald-400 relative z-10">
+                        <span className="text-[9px] font-mono font-black animate-pulse uppercase">Execute</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </motion.div>
                     )}
                   </button>
                 ))
@@ -193,8 +193,8 @@ export const CommandPalette = () => {
             {/* Footer */}
             <div className="bg-slate-950 px-4 py-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
               <div className="flex gap-4">
-                 <span className="flex items-center gap-1"><kbd className="bg-slate-800 px-1 rounded border border-slate-700">↑↓</kbd> Навігація</span>
-                 <span className="flex items-center gap-1"><kbd className="bg-slate-800 px-1 rounded border border-slate-700">↵</kbd> Вибрати</span>
+                <span className="flex items-center gap-1"><kbd className="bg-slate-800 px-1 rounded border border-slate-700">↑↓</kbd> Навігація</span>
+                <span className="flex items-center gap-1"><kbd className="bg-slate-800 px-1 rounded border border-slate-700">↵</kbd> Вибрати</span>
               </div>
               <span className="tracking-wider opacity-50">PREDATOR AI</span>
             </div>
