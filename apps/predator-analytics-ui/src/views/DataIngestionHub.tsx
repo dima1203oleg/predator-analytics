@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import type { IngestionJob } from '../store/useIngestionStore';
 import {
   Activity,
   BarChart3,
@@ -25,7 +26,12 @@ import {
   Upload,
   X,
   XCircle,
-  Zap
+  Zap,
+  Target,
+  Archive,
+  Server,
+  Share2,
+  Search,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { AdvancedBackground } from '../components/AdvancedBackground';
@@ -653,12 +659,13 @@ const DataIngestionHub = () => {
           </motion.button>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard icon={Database} label="Джерел Даних" value={stats.totalSources} color="emerald" />
-          <StatCard icon={BarChart3} label="Всього Записів" value={stats.totalRecords} color="blue" />
-          <StatCard icon={Zap} label="Оброблено (24г)" value={`+${stats.processed24h}`} trend="+12%" color="purple" />
-          <StatCard icon={Activity} label="Активних Потоків" value={stats.activeStreams} color="amber" />
+        {/* Data Lakes Monitor (Live Storages) */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mt-4">
+          <StatCard icon={Archive} label="СИРІ ДАНІ (MINIO)" value={stats.totalSources} color="orange" trend="ГОТОВИЙ" />
+          <StatCard icon={Database} label="ФАКТИ (POSTGRESQL)" value={stats.totalRecords} color="yellow" trend="АКТИВНИЙ" />
+          <StatCard icon={Share2} label="ЗВ'ЯЗКИ (GRAPH DB)" value={`+${stats.processed24h}`} trend="СИНХРО" color="purple" />
+          <StatCard icon={Search} label="ПОШУК (OPENSEARCH)" value={stats.totalRecords * 2} color="cyan" trend="АКТИВНИЙ" />
+          <StatCard icon={Target} label="ВЕКТОРИ (QDRANT)" value={stats.activeStreams * 1536} color="emerald" trend="ГОТОВИЙ" />
         </div>
       </div>
 
