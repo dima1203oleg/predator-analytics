@@ -2,6 +2,10 @@ export enum UserRole {
   CLIENT_BASIC = 'client_basic',
   CLIENT_PREMIUM = 'client_premium',
   ADMIN = 'admin',
+  // Backward-compatible aliases (legacy component support)
+  OPERATOR = 'client_premium',
+  COMMANDER = 'admin',
+  EXPLORER = 'client_basic',
 }
 
 // Цивільні назви для UI (ніяких технічних термінів!)

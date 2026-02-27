@@ -3,6 +3,21 @@ import { UserRole } from '../config/roles';
 export { UserRole };
 
 // ============================================================================
+// ROLE HIERARCHY (backward-compatible aliases)
+// ============================================================================
+// Legacy aliases used by older components
+export const ROLE_HIERARCHY: Record<string, number> = {
+  [UserRole.CLIENT_BASIC]: 1,
+  [UserRole.CLIENT_PREMIUM]: 2,
+  [UserRole.ADMIN]: 3,
+  // Backward-compatible aliases
+  'OPERATOR': 2,
+  'COMMANDER': 3,
+  'EXPLORER': 1,
+};
+
+
+// ============================================================================
 // NEW USER CONTEXT (Optimized for v2.0)
 // ============================================================================
 
@@ -32,6 +47,9 @@ interface UserContextType {
   // Helpers
   isAdmin: boolean;
   isClient: boolean;
+
+  // RBAC - checks if current user has at least the required role level
+  canAccess: (requiredRole: UserRole | string) => boolean;
 
   // Actions
   setUser: (user: UserProfile) => void;
@@ -77,12 +95,19 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Logic: if upgrading to PRO, change role to PREMIUM
       let newRole = user.role;
       if (tier === SubscriptionTier.PRO || tier === SubscriptionTier.ENTERPRISE) {
-         if (user.role === UserRole.CLIENT_BASIC) {
-            newRole = UserRole.CLIENT_PREMIUM;
-         }
+        if (user.role === UserRole.CLIENT_BASIC) {
+          newRole = UserRole.CLIENT_PREMIUM;
+        }
       }
       setUserState({ ...user, tier, role: newRole });
     }
+  };
+
+  const canAccess = (requiredRole: UserRole | string): boolean => {
+    if (!user) return false;
+    const currentLevel = ROLE_HIERARCHY[user.role] ?? 1;
+    const requiredLevel = ROLE_HIERARCHY[requiredRole] ?? 1;
+    return currentLevel >= requiredLevel;
   };
 
   return (
@@ -93,6 +118,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isAuthenticated: !!user,
         isAdmin: user?.role === UserRole.ADMIN,
         isClient: user?.role === UserRole.CLIENT_BASIC || user?.role === UserRole.CLIENT_PREMIUM,
+        canAccess,
         setUser,
         logout,
         updateTier,
@@ -114,10 +140,12 @@ export const useUser = (): UserContextType => {
       isAuthenticated: false,
       isAdmin: false,
       isClient: false,
-      setUser: () => {},
-      logout: () => {},
-      updateTier: () => {},
+      canAccess: () => true, // safe default: allow all when outside provider
+      setUser: () => { },
+      logout: () => { },
+      updateTier: () => { },
     };
+
   }
   return context;
 };

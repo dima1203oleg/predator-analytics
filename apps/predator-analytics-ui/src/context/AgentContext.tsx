@@ -35,6 +35,15 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 } else if (response && response.agents) {
                     realAgents = response.agents;
                 }
+                // Normalize status field: 'active' → 'WORKING', 'idle' → 'IDLE', anything else → 'IDLE'
+                realAgents = realAgents.map((a: any) => ({
+                    ...a,
+                    status: (a.status === 'active' || a.status === 'WORKING') ? 'WORKING'
+                        : (a.status === 'error' || a.status === 'FAILED') ? 'ERROR'
+                            : 'IDLE',
+                    efficiency: a.accuracy ? Math.round(a.accuracy * 100) : (a.efficiency ?? 85),
+                    lastAction: a.lastAction || `Оброблено ${a.tasksCompleted ?? 0} завдань`,
+                }));
             } catch (e) {
                 // Check if system health endpoint has agent info
                 const health = await api.ai.getHealth();
@@ -101,9 +110,9 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
     }, [addLog]);
 
-    const advanceCycle = useCallback(() => {}, []); // Controlled by backend status now
-    const approvePR = useCallback(() => {}, []);
-    const rejectPR = useCallback(() => {}, []);
+    const advanceCycle = useCallback(() => { }, []); // Controlled by backend status now
+    const approvePR = useCallback(() => { }, []);
+    const rejectPR = useCallback(() => { }, []);
 
     return (
         <AgentContext.Provider value={{
@@ -132,11 +141,11 @@ export const useAgents = () => {
             cyclePhase: 'IDLE' as CyclePhase,
             logs: [],
             activePR: null,
-            startCycle: () => {},
-            advanceCycle: () => {},
-            approvePR: () => {},
-            rejectPR: () => {},
-            addLog: () => {}
+            startCycle: () => { },
+            advanceCycle: () => { },
+            approvePR: () => { },
+            rejectPR: () => { },
+            addLog: () => { }
         };
     }
     return context;

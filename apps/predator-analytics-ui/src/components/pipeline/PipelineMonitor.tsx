@@ -380,7 +380,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                     {/* DB Node Anchors */}
                     <div className="absolute inset-0 pointer-events-none">
                         {activeDbNodes.map(node => {
-                            const isActive = status?.state.includes(node.id.toUpperCase()) || (status?.state === 'READY');
+                            const isActive = (status?.state ?? '').includes(node.id.toUpperCase()) || (status?.state === 'READY');
                             const isVisibleInMode = pipelineConfig.visualMode === 'REACTOR';
 
                             if (!isVisibleInMode) return null;
@@ -544,7 +544,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                         <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-2">
                             {[1, 2, 3].map(i => (
                                 <div key={i} className="text-[9px] font-mono p-2 rounded bg-black/40 border-l-2 border-emerald-500 text-emerald-400/80 leading-relaxed">
-                                    [SYS_EVENT] {status?.progress?.details?.slice(0, 30)}...
+                                    [SYS_EVENT] {(status?.progress?.details ?? 'Initializing...').slice(0, 30)}...
                                 </div>
                             ))}
                         </div>
