@@ -64,17 +64,19 @@ const resilienceInterceptor = (error: any) => {
 
         // Analytics Fallbacks
         if (url.includes('/analytics/') || url.includes('/stats')) {
-             return Promise.resolve({ data: {
-                 documents_total: 0,
-                 total_documents: 0,
-                 synthetic_examples: 0,
-                 total_cases: 0,
-                 trained_models: 0,
-                 storage_gb: 0,
-                 forecast: [],
-                 market_structure: [],
-                 regional_activity: []
-             }});
+            return Promise.resolve({
+                data: {
+                    documents_total: 0,
+                    total_documents: 0,
+                    synthetic_examples: 0,
+                    total_cases: 0,
+                    trained_models: 0,
+                    storage_gb: 0,
+                    forecast: [],
+                    market_structure: [],
+                    regional_activity: []
+                }
+            });
         }
 
         // Graph/Structure Fallbacks
@@ -109,8 +111,8 @@ const resilienceInterceptor = (error: any) => {
 
         // Generic Fallback heuristic
         if (error.config?.method === 'get') {
-             // If we suspect it needs an array, give an empty object which is safer than crash
-             return Promise.resolve({ data: {} });
+            // If we suspect it needs an array, give an empty object which is safer than crash
+            return Promise.resolve({ data: {} });
         }
     }
     return Promise.reject(error);
@@ -250,17 +252,17 @@ export const api = {
     // --- INGESTION PIPELINE (v45) ---
     ingestion: {
         uploadFile: async (file: File) => {
-             const formData = new FormData();
-             formData.append('file', file);
-             // Backend Router: /api/v1/ingest/upload
-             const res = await apiClient.post('/ingest/upload', formData, {
-                 headers: { 'Content-Type': 'multipart/form-data' }
-             });
-             return {
-                 ...res.data,
-                 file_id: res.data.source_id || res.data.id, // Map source_id/id to file_id for frontend compat
-                 job_id: res.data.source_id || res.data.id   // Map for job tracking
-             };
+            const formData = new FormData();
+            formData.append('file', file);
+            // Backend Router: /api/v1/ingest/upload
+            const res = await apiClient.post('/ingest/upload', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            return {
+                ...res.data,
+                file_id: res.data.source_id || res.data.id, // Map source_id/id to file_id for frontend compat
+                job_id: res.data.source_id || res.data.id   // Map for job tracking
+            };
         },
         uploadFileChunked: async (file: File, onProgress?: (p: number) => void) => {
             const CHUNK_SIZE = 1024 * 1024 * 5; // 5MB chunks
@@ -301,54 +303,54 @@ export const api = {
             };
         },
         startJob: async (data: { source_type: string, file_id?: string, url?: string, config?: any }) => {
-             // If file_id is present, the pipeline is already started by upload!
-             if (data.file_id) {
-                 return { job_id: data.file_id };
-             }
+            // If file_id is present, the pipeline is already started by upload!
+            if (data.file_id) {
+                return { job_id: data.file_id };
+            }
 
-             // For Telegram channels
-             if (data.source_type === 'telegram' && data.url) {
-                 const res = await apiClient.post('/ingest/telegram', {
-                     url: data.url,
-                     name: data.config?.name,
-                     sector: data.config?.sector
-                 });
-                 return { job_id: res.data.source_id };
-             }
+            // For Telegram channels
+            if (data.source_type === 'telegram' && data.url) {
+                const res = await apiClient.post('/ingest/telegram', {
+                    url: data.url,
+                    name: data.config?.name,
+                    sector: data.config?.sector
+                });
+                return { job_id: res.data.source_id };
+            }
 
-             // For URLs, we might need a separate endpoint e.g. /sources/create or /ingest/url
-             // Currently backend /ingest/upload is for files.
-             // We'll fallback to /sources/create logic or implement /ingest/url later.
-             return { job_id: "mock-url-job" };
+            // For URLs, we might need a separate endpoint e.g. /sources/create or /ingest/url
+            // Currently backend /ingest/upload is for files.
+            // We'll fallback to /sources/create logic or implement /ingest/url later.
+            return { job_id: "mock-url-job" };
         },
         getJobStatus: async (jobId: string) => {
-             // Backend Router: /api/v1/ingest/status/{source_id}
-             return (await apiClient.get(`/ingest/status/${jobId}`)).data;
+            // Backend Router: /api/v1/ingest/status/{source_id}
+            return (await apiClient.get(`/ingest/status/${jobId}`)).data;
         },
         getJobGraph: async (jobId: string) => {
-             // Placeholder for graph data if backend doesn't support it yet
-             try {
+            // Placeholder for graph data if backend doesn't support it yet
+            try {
                 return (await apiClient.get(`/ingest/graph/${jobId}`)).data;
-             } catch (e) {
+            } catch (e) {
                 return { nodes: [], edges: [] };
-             }
+            }
         },
         // Poll job status with callback
         pollJobStatus: (jobId: string, onUpdate: (status: any) => void, intervalMs: number = 2000) => {
-             const poll = async () => {
-                 try {
-                     const status = await apiClient.get(`/ingestion/jobs/${jobId}`);
-                     onUpdate(status.data);
-                     if (status.data.state === 'READY' || status.data.state === 'FAILED') {
-                         return; // Stop polling
-                     }
-                     setTimeout(poll, intervalMs);
-                 } catch (e) {
-                     console.error('Poll error:', e);
-                     setTimeout(poll, intervalMs * 2); // Backoff on error
-                 }
-             };
-             poll();
+            const poll = async () => {
+                try {
+                    const status = await apiClient.get(`/ingestion/jobs/${jobId}`);
+                    onUpdate(status.data);
+                    if (status.data.state === 'READY' || status.data.state === 'FAILED') {
+                        return; // Stop polling
+                    }
+                    setTimeout(poll, intervalMs);
+                } catch (e) {
+                    console.error('Poll error:', e);
+                    setTimeout(poll, intervalMs * 2); // Backoff on error
+                }
+            };
+            poll();
         },
         // v31 Knowledge Engineering APIs
         getQualityReport: async (jobId: string) => {
@@ -491,6 +493,23 @@ export const api = {
     },
 
     // --- V45 PREMIUM FEATURES ---
+    premium: {
+        getCommodityForecast: async () => {
+            return (await v45Client.get('/premium/commodity-forecast')).data;
+        },
+        getIntelligenceAlerts: async () => {
+            return (await v45Client.get('/premium/intelligence-alerts')).data;
+        },
+        getCompetitors: async () => {
+            return (await v45Client.get('/premium/competitors')).data;
+        },
+        getSuppliers: async () => {
+            return (await v45Client.get('/premium/suppliers')).data;
+        },
+        getPriceComparison: async () => {
+            return (await v45Client.get('/premium/price-comparison')).data;
+        }
+    },
     getMorningNewspaper: async () => {
         return (await v45Client.get('/newspaper')).data;
     },
@@ -898,49 +917,49 @@ export const api = {
     // --- AZR (Autonomous Zero-manual-intervention Response) ---
     azr: {
         getStatus: async () => {
-             return (await apiClient.get('/azr/status')).data;
+            return (await apiClient.get('/azr/status')).data;
         },
         getDecisions: async (limit: number = 20) => {
-             return (await apiClient.get('/azr/decisions', { params: { limit } })).data;
+            return (await apiClient.get('/azr/decisions', { params: { limit } })).data;
         },
         getAudit: async (limit: number = 50) => {
-             return (await apiClient.get('/azr/audit', { params: { limit } })).data;
+            return (await apiClient.get('/azr/audit', { params: { limit } })).data;
         },
         getExperience: async () => {
-             return (await apiClient.get('/azr/experience')).data;
+            return (await apiClient.get('/azr/experience')).data;
         },
         start: async (hours: number = 24) => {
-             return (await apiClient.post('/azr/start', null, { params: { duration_hours: hours } })).data;
+            return (await apiClient.post('/azr/start', null, { params: { duration_hours: hours } })).data;
         },
         stop: async () => {
-             return (await apiClient.post('/azr/stop')).data;
+            return (await apiClient.post('/azr/stop')).data;
         },
         verifyDecision: async (decisionId: string) => {
-             return (await apiClient.post(`/azr/decisions/${decisionId}/verify`)).data;
+            return (await apiClient.post(`/azr/decisions/${decisionId}/verify`)).data;
         }
     },
 
     // --- EVOLUTION & NAS ---
     evolution: {
         getStatus: async () => {
-             return (await apiClient.get('/evolution/status')).data;
+            return (await apiClient.get('/evolution/status')).data;
         },
         getTournaments: async () => {
-             return (await apiClient.get('/evolution/tournaments')).data;
+            return (await apiClient.get('/evolution/tournaments')).data;
         },
         getModels: async (tournamentId?: string) => {
-             return (await apiClient.get('/evolution/models', { params: { tournament_id: tournamentId } })).data;
+            return (await apiClient.get('/evolution/models', { params: { tournament_id: tournamentId } })).data;
         },
         getCortexMap: async () => {
-             return (await apiClient.get('/evolution/cortex-map')).data;
+            return (await apiClient.get('/evolution/cortex-map')).data;
         },
         getHistory: async (period: string = '24h') => {
-             return (await apiClient.get('/evolution/metrics/history', { params: { period } })).data;
+            return (await apiClient.get('/evolution/metrics/history', { params: { period } })).data;
         }
     },
     v45: {
         getEtlStatus: async () => {
-             return (await v45Client.get('/etl/status')).data;
+            return (await v45Client.get('/etl/status')).data;
         },
         getLiveQueues: async () => {
             return (await v45Client.get('/monitoring/queues')).data;
@@ -1173,33 +1192,33 @@ export const api = {
         },
         // --- AZR ENGINE (Autonomous Evolution) ---
         azr: {
-             getStatus: async () => {
-                 return (await v45Client.get('/azr/status')).data;
-             },
-             getAudit: async (limit: number = 50) => {
-                 return (await v45Client.get(`/azr/audit?limit=${limit}`)).data;
-             },
-             getCortexMap: async () => {
-                 return (await v45Client.get('/som/cortex-map')).data;
-             },
-             freeze: async () => {
-                 return (await v45Client.post('/azr/freeze')).data;
-             },
-             unfreeze: async () => {
-                 return (await v45Client.post('/azr/unfreeze')).data;
-             },
-             getDecisions: async (limit: number = 20) => {
-                 return (await v45Client.get(`/azr/decisions?limit=${limit}`)).data;
-             },
-             // Governance (DAO)
-             governance: {
-                 propose: async (title: string, description: string, category: string = "TWEAK") => {
-                     return (await v45Client.post('/azr/governance/propose', { title, description, category })).data;
-                 },
-                 getConstitution: async () => {
-                     return (await v45Client.get('/azr/constitution')).data;
-                 }
-             }
+            getStatus: async () => {
+                return (await v45Client.get('/azr/status')).data;
+            },
+            getAudit: async (limit: number = 50) => {
+                return (await v45Client.get(`/azr/audit?limit=${limit}`)).data;
+            },
+            getCortexMap: async () => {
+                return (await v45Client.get('/som/cortex-map')).data;
+            },
+            freeze: async () => {
+                return (await v45Client.post('/azr/freeze')).data;
+            },
+            unfreeze: async () => {
+                return (await v45Client.post('/azr/unfreeze')).data;
+            },
+            getDecisions: async (limit: number = 20) => {
+                return (await v45Client.get(`/azr/decisions?limit=${limit}`)).data;
+            },
+            // Governance (DAO)
+            governance: {
+                propose: async (title: string, description: string, category: string = "TWEAK") => {
+                    return (await v45Client.post('/azr/governance/propose', { title, description, category })).data;
+                },
+                getConstitution: async () => {
+                    return (await v45Client.get('/azr/constitution')).data;
+                }
+            }
         },
     },
 
