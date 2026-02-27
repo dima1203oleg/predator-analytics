@@ -5,7 +5,8 @@
  * Для бізнесу та контролюючих органів
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { api } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   TrendingUp,
@@ -116,24 +117,7 @@ const userRoles: UserRole[] = [
 ];
 
 // ========================
-// Mock Data
-// ========================
-
-const mockTopImporters: CompetitorData[] = [
-  { name: 'ТОВ "Укрторг"', imports: 15420000, exports: 2100000, topProducts: ['Електроніка', 'Комплектуючі'], countries: ['Китай', 'В\'єтнам'], trend: 'up', marketShare: 12.5 },
-  { name: 'ТОВ "ГлобалТрейд"', imports: 12800000, exports: 8900000, topProducts: ['Хімія', 'Пластик'], countries: ['Німеччина', 'Польща'], trend: 'up', marketShare: 10.2 },
-  { name: 'ТОВ "АгроІмпорт"', imports: 9500000, exports: 1200000, topProducts: ['Добрива', 'Техніка'], countries: ['Білорусь', 'Росія'], trend: 'down', marketShare: 7.8 },
-  { name: 'ПрАТ "МеталТорг"', imports: 8200000, exports: 5600000, topProducts: ['Метал', 'Сплави'], countries: ['Туреччина', 'Індія'], trend: 'stable', marketShare: 6.5 },
-  { name: 'ТОВ "ТехноІмпорт"', imports: 7100000, exports: 900000, topProducts: ['Обладнання', 'Запчастини'], countries: ['Китай', 'Тайвань'], trend: 'up', marketShare: 5.8 },
-];
-
-const mockRiskAlerts = [
-  { id: 1, company: 'ТОВ "Схема"', risk: 'high', reason: 'Заниження митної вартості на 340%', amount: 2400000 },
-  { id: 2, company: 'ФОП Петренко', risk: 'high', reason: 'Підозріла зміна кодів УКТЗЕД', amount: 890000 },
-  { id: 3, company: 'ТОВ "Транзит"', risk: 'medium', reason: 'Нетипові обсяги для галузі', amount: 1200000 },
-  { id: 4, company: 'ТОВ "Оптима"', risk: 'medium', reason: 'Пов\'язані структури в офшорах', amount: 5600000 },
-];
-
+// Mock data removed in favor of real API
 // ========================
 // Premium KPI Cards
 // ========================
@@ -200,8 +184,8 @@ const CompetitorCard: React.FC<{ data: CompetitorData; rank: number }> = ({ data
           w-10 h-10 rounded-full flex items-center justify-center font-black text-lg
           ${rank === 0 ? 'bg-amber-500/20 text-amber-400' :
             rank === 1 ? 'bg-slate-400/20 text-slate-300' :
-            rank === 2 ? 'bg-orange-600/20 text-orange-400' :
-            'bg-slate-800 text-slate-500'}
+              rank === 2 ? 'bg-orange-600/20 text-orange-400' :
+                'bg-slate-800 text-slate-500'}
         `}>
           {rank + 1}
         </div>
@@ -220,12 +204,11 @@ const CompetitorCard: React.FC<{ data: CompetitorData; rank: number }> = ({ data
         <p className="text-lg font-black text-white">
           ${(data.imports / 1000000).toFixed(1)}M
         </p>
-        <div className={`flex items-center justify-end gap-1 text-xs ${
-          data.trend === 'up' ? 'text-emerald-400' :
+        <div className={`flex items-center justify-end gap-1 text-xs ${data.trend === 'up' ? 'text-emerald-400' :
           data.trend === 'down' ? 'text-rose-400' : 'text-slate-400'
-        }`}>
+          }`}>
           {data.trend === 'up' ? <TrendingUp size={12} /> :
-           data.trend === 'down' ? <TrendingDown size={12} /> : null}
+            data.trend === 'down' ? <TrendingDown size={12} /> : null}
           <span>{data.marketShare}% ринку</span>
         </div>
       </div>
@@ -253,7 +236,7 @@ const CompetitorCard: React.FC<{ data: CompetitorData; rank: number }> = ({ data
 // Risk Alert Card
 // ========================
 
-const RiskAlertCard: React.FC<{ alert: typeof mockRiskAlerts[0] }> = ({ alert }) => (
+const RiskAlertCard: React.FC<{ alert: any }> = ({ alert }) => (
   <motion.div
     whileHover={{ x: 4 }}
     className={`
@@ -274,7 +257,7 @@ const RiskAlertCard: React.FC<{ alert: typeof mockRiskAlerts[0] }> = ({ alert })
       </div>
       <div className="text-right">
         <p className="text-lg font-black text-white">
-          ₴{(alert.amount / 1000).toFixed(0)}K
+          {alert.amount ? `₴${(alert.amount / 1000).toFixed(0)}K` : 'Різке збільшення імпорту'}
         </p>
         <button className="mt-2 text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
           Розслідувати <ChevronRight size={12} />
@@ -320,6 +303,33 @@ const CustomsIntelligencePremium: React.FC = () => {
   const [activeRole, setActiveRole] = useState<'business' | 'government' | 'premium'>('business');
   const [searchQuery, setSearchQuery] = useState('');
   const [isPremium] = useState(true); // Toggle for premium access
+  const [topImporters, setTopImporters] = useState<CompetitorData[]>([]);
+  const [riskAlerts, setRiskAlerts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [competitors, alerts] = await Promise.all([
+          api.premium.getCompetitors(),
+          api.premium.getIntelligenceAlerts()
+        ]);
+        setTopImporters(competitors);
+        setRiskAlerts(alerts.map((a: any) => ({
+          id: a.id,
+          company: a.title.replace('Ризикова декларація: ', ''),
+          risk: a.severity === 'high' ? 'high' : 'medium',
+          reason: a.description,
+          amount: 0 // Mock value as API returns severity and desc
+        })));
+      } catch (err) {
+        console.error('Failed to fetch customs data', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -459,9 +469,15 @@ const CustomsIntelligencePremium: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                {mockTopImporters.map((company, index) => (
-                  <CompetitorCard key={company.name} data={company} rank={index} />
-                ))}
+                {loading ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin w-6 h-6 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto" />
+                  </div>
+                ) : (
+                  topImporters.map((company, index) => (
+                    <CompetitorCard key={company.name} data={company} rank={index} />
+                  ))
+                )}
               </div>
             </div>
 
@@ -511,15 +527,21 @@ const CustomsIntelligencePremium: React.FC = () => {
                     <p className="text-sm text-slate-500">Підозрілі операції</p>
                   </div>
                   <span className="px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-bold rounded-full">
-                    {mockRiskAlerts.length} нових
+                    {riskAlerts.length} нових
                   </span>
                 </div>
 
-                <div className="space-y-3">
-                  {mockRiskAlerts.map((alert) => (
+                {loading ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin w-6 h-6 border-4 border-rose-500 border-t-transparent rounded-full mx-auto" />
+                  </div>
+                ) : riskAlerts.length > 0 ? (
+                  riskAlerts.map((alert) => (
                     <RiskAlertCard key={alert.id} alert={alert} />
-                  ))}
-                </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-slate-500 text-center py-4">Немає нових алертів</p>
+                )}
               </div>
             ) : (
               <PremiumLock
