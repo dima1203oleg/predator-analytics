@@ -33,37 +33,75 @@ const ModelTrainingView: React.FC = () => {
     const [trainingStatus, setTrainingStatus] = useState<'IDLE' | 'TRAINING' | 'COMPLETED'>('IDLE');
     const [progress, setProgress] = useState(0);
     const [logs, setLogs] = useState<string[]>([]);
-    const [activeModel, setActiveModel] = useState('Predator-v45-Large');
+    const [activeModel, setActiveModel] = useState('Predator-v45-X-Core');
+    const [stats, setStats] = useState(MOCK_TRAINING_STATS);
     const logsEndRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        if (trainingStatus === 'TRAINING') {
-            const interval = setInterval(() => {
-                setProgress(prev => {
-                    if (prev >= 100) {
-                        setTrainingStatus('COMPLETED');
-                        return 100;
-                    }
-                    return prev + 0.5;
-                });
+    const API_BASE = 'http://localhost:9080/api/v1';
 
-                if (Math.random() > 0.7) {
-                    const newLog = `[${new Date().toLocaleTimeString()}] Epoch ${Math.floor(progress / 3.3)}: Loss=${(0.5 * (1 - progress / 100)).toFixed(4)} Acc=${(70 + (progress / 100) * 29).toFixed(2)}%`;
-                    setLogs(prev => [...prev.slice(-50), newLog]);
+    // Fetch status and logs
+    useEffect(() => {
+        const fetchStatus = async () => {
+            try {
+                const res = await fetch(`${API_BASE}/neural/training/status`);
+                const data = await res.json();
+                setTrainingStatus(data.status);
+                setProgress(data.progress);
+                setLogs(data.logs || []);
+                setActiveModel(data.activeModel);
+            } catch (err) {
+                console.error('Failed to fetch training status:', err);
+            }
+        };
+
+        const fetchStats = async () => {
+            try {
+                const res = await fetch(`${API_BASE}/neural/training/stats`);
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    setStats(data);
                 }
-            }, 200);
-            return () => clearInterval(interval);
-        }
-    }, [trainingStatus, progress]);
+            } catch (err) {
+                console.error('Failed to fetch training stats:', err);
+            }
+        };
+
+        fetchStatus();
+        fetchStats();
+
+        const interval = setInterval(() => {
+            fetchStatus();
+            if (trainingStatus === 'TRAINING') fetchStats();
+        }, 2000);
+
+        return () => clearInterval(interval);
+    }, [trainingStatus]);
 
     useEffect(() => {
         logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [logs]);
 
-    const handleStartTraining = () => {
-        setTrainingStatus('TRAINING');
-        setProgress(0);
-        setLogs(['[SYSTEM] Ініціалізація вагів моделі...', '[SYSTEM] Завантаження датасету "Customs-Elite-v4"...']);
+    const handleStartTraining = async () => {
+        try {
+            await fetch(`${API_BASE}/neural/training/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: activeModel })
+            });
+            setTrainingStatus('TRAINING');
+            setProgress(0);
+        } catch (err) {
+            console.error('Failed to start training:', err);
+        }
+    };
+
+    const handleStopTraining = async () => {
+        try {
+            await fetch(`${API_BASE}/neural/training/stop`, { method: 'POST' });
+            setTrainingStatus('IDLE');
+        } catch (err) {
+            console.error('Failed to stop training:', err);
+        }
     };
 
     return (
@@ -160,7 +198,7 @@ const ModelTrainingView: React.FC = () => {
                             <div className="p-6">
                                 <div className="h-[350px] w-full">
                                     <ResponsiveContainer width="100%" height="100%">
-                                        <AreaChart data={MOCK_TRAINING_STATS}>
+                                        <AreaChart data={stats}>
                                             <defs>
                                                 <linearGradient id="colorAcc" x1="0" y1="0" x2="0" y2="1">
                                                     <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
@@ -203,7 +241,7 @@ const ModelTrainingView: React.FC = () => {
                                             <motion.button
                                                 whileHover={{ scale: 1.05 }}
                                                 whileTap={{ scale: 0.95 }}
-                                                onClick={() => setTrainingStatus('IDLE')}
+                                                onClick={handleStopTraining}
                                                 className="px-8 py-4 bg-rose-600/10 border border-rose-500/30 text-rose-400 rounded-2xl font-black uppercase tracking-widest hover:bg-rose-600/20 transition-all flex items-center gap-3 shadow-[0_0_20px_rgba(244,63,94,0.2)]"
                                             >
                                                 <Square size={18} /> ЗУПИНИТИ

@@ -71,7 +71,8 @@ interface UploadedFile {
 
 // === SOURCE TYPE CONFIG ===
 const SOURCE_TYPES = [
-  { id: 'excel', label: 'Excel / CSV', icon: FileSpreadsheet, color: 'emerald', desc: 'Реєстри, декларації, таблиці', accept: '.xlsx,.xls,.csv' },
+  { id: 'customs', label: 'Митні Декларації', icon: FileSpreadsheet, color: 'emerald', desc: 'Завантаження реєстрів МД (.csv, .xlsx)', accept: '.xlsx,.xls,.csv' },
+  { id: 'excel', label: 'Таблиці / CSV', icon: FileSpreadsheet, color: 'cyan', desc: 'Звичайні табличні дані', accept: '.xlsx,.xls,.csv' },
   { id: 'telegram', label: 'Telegram', icon: MessageSquare, color: 'blue', desc: 'Канали та групи для моніторингу' },
   { id: 'website', label: 'Веб-сайт', icon: Globe, color: 'purple', desc: 'URL для парсингу та скрейпінгу' },
   { id: 'pdf', label: 'PDF', icon: FileText, color: 'rose', desc: 'PDF документи з текстом', accept: '.pdf' },
@@ -158,52 +159,67 @@ const FileDropZone = ({ onDrop, accept, files, onRemove }: {
 
   return (
     <div className="space-y-4">
-      <div
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
         className={cn(
-          "relative border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer",
+          "relative border-2 border-dashed rounded-[32px] p-12 text-center transition-all duration-300 cursor-pointer overflow-hidden shadow-2xl group",
           isDragging
-            ? "border-emerald-500 bg-emerald-500/10"
-            : "border-slate-700/50 hover:border-slate-600 hover:bg-slate-800/30"
+            ? "border-emerald-500 bg-emerald-500/20 shadow-[0_0_50px_rgba(16,185,129,0.3)]"
+            : "border-emerald-500/20 hover:border-emerald-500/50 hover:bg-emerald-500/5 bg-slate-900/60 backdrop-blur-xl"
         )}
       >
+        {/* Glow behind the box */}
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
         <input
           type="file"
           multiple
           accept={accept}
           onChange={(e) => onDrop(Array.from(e.target.files || []))}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
           title="Виберіть файли для завантаження"
           aria-label="Виберіть файли для завантаження"
         />
 
-        <div className="flex flex-col items-center gap-4">
+        <div className="relative z-10 flex flex-col items-center gap-6">
           <div className={cn(
-            "w-16 h-16 rounded-2xl flex items-center justify-center transition-all",
-            isDragging ? "bg-emerald-500/20 text-emerald-400" : "bg-slate-800 text-slate-500"
+            "w-24 h-24 rounded-[32px] flex items-center justify-center transition-all duration-500 ease-out transform group-hover:-translate-y-2 group-hover:shadow-[0_20px_40px_-10px_rgba(16,185,129,0.5)]",
+            isDragging
+              ? "bg-gradient-to-tr from-emerald-500 to-cyan-400 text-white scale-110"
+              : "bg-slate-800/80 border border-white/10 text-emerald-400"
           )}>
-            <Upload className="w-8 h-8" />
+            <Upload className={cn("w-10 h-10 transition-transform duration-500", isDragging ? "animate-bounce" : "group-hover:scale-110")} />
           </div>
           <div>
-            <p className="text-white font-bold mb-1">
-              {isDragging ? 'Відпустіть файли тут' : 'Перетягніть файли сюди'}
-            </p>
-            <p className="text-sm text-slate-400 mt-2">
-              Максимальний розмір файлу: <span className="text-emerald-400 font-bold">1 ГБ (Багатопотокове завантаження)</span>
+            <h3 className="text-2xl font-black text-white mb-2 tracking-tight">
+              {isDragging ? 'ЗАВАНТАЖЕННЯ ДАНИХ...' : 'ПЕРЕТЯГНІТЬ ФАЙЛИ СЮДИ'}
+            </h3>
+            <p className="text-slate-400 text-sm max-w-sm mx-auto leading-relaxed">
+              Або натисніть для вибору файлів. Максимальний розмір:
+              <span className="text-emerald-400 font-bold ml-1 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">1 ГБ</span>
             </p>
           </div>
         </div>
 
-        {/* Animated border on drag */}
-        {isDragging && (
-          <div className="absolute inset-0 rounded-2xl pointer-events-none">
-            <div className="absolute inset-0 rounded-2xl border-2 border-emerald-500 animate-pulse" />
-          </div>
-        )}
-      </div>
+        {/* Animated border pulse on drag */}
+        <AnimatePresence>
+          {isDragging && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 rounded-[32px] pointer-events-none z-0"
+            >
+              <div className="absolute inset-0 rounded-[32px] border-2 border-emerald-500 opacity-50 blur-md animate-pulse" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
       {/* File List */}
       {files.length > 0 && (
@@ -443,7 +459,7 @@ const DataIngestionHub = () => {
   const [sources, setSources] = useState<DataSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState('excel');
+  const [selectedType, setSelectedType] = useState('customs');
   const [uploadFiles, setUploadFiles] = useState<UploadedFile[]>([]);
   const [urlInput, setUrlInput] = useState('');
   const [apiKeyInput, setApiKeyInput] = useState('');
@@ -568,13 +584,14 @@ const DataIngestionHub = () => {
           });
           // File-based sources
           let fileType = selectedType as IngestionJob['type'];
-          if (fileType === 'excel' && !uf.file.name.endsWith('.xlsx') && !uf.file.name.endsWith('.xls')) {
+          if ((fileType as any) === 'customs' || fileType === 'excel') {
             if (uf.file.name.endsWith('.csv')) fileType = 'csv';
             if (uf.file.name.endsWith('.pdf')) fileType = 'pdf';
+            // Otherwise it stays 'excel' or 'customs', but we map 'customs' to 'csv' usually if not handled.
           }
 
           addJob(jobRes.job_id, uf.file.name, uf.file.size, fileType);
-          updateJob(jobRes.job_id, { status: 'parsing', stage: 'init', message: 'Запуск пайплайну...' });
+          updateJob(jobRes.job_id, { status: 'parsing', stage: 'init', message: 'Аналіз митних декларацій...' });
 
           setUploadFiles(prev => prev.map((f, idx) =>
             idx === i ? { ...f, status: 'done' as const, progress: 100, result: jobRes } : f
@@ -610,7 +627,7 @@ const DataIngestionHub = () => {
   };
 
   const currentTypeConfig = SOURCE_TYPES.find(t => t.id === selectedType) || SOURCE_TYPES[0];
-  const isFileType = ['excel', 'csv', 'pdf', 'image', 'word'].includes(selectedType);
+  const isFileType = ['customs', 'excel', 'csv', 'pdf', 'image', 'word'].includes(selectedType);
 
   return (
     <div className="flex flex-col space-y-8 pb-20 relative min-h-screen">
@@ -618,8 +635,8 @@ const DataIngestionHub = () => {
 
       {/* Pipeline Monitor Overlay */}
       {activeJobId && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="max-w-2xl w-full">
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="max-w-4xl w-full max-h-[95vh] overflow-y-auto custom-scrollbar p-4">
             <PipelineMonitor
               jobId={activeJobId}
               pipelineType={activeJobs[activeJobId]?.type}
