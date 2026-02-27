@@ -6,7 +6,7 @@ const BACKEND = process.env.VITE_BACKEND_PROXY_TARGET || 'http://localhost:9080'
 
 export default defineConfig({
   server: {
-    port: 3045,
+    port: 3030,
     host: '0.0.0.0',
     proxy: {
       '/api': {

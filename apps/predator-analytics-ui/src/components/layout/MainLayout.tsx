@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { Sidebar } from './Sidebar';
@@ -20,23 +20,31 @@ interface MainLayoutProps {
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { isSidebarOpen, deviceMode } = useAppStore();
+  const [liveStats, setLiveStats] = useState({
+    cpu: 0, memory: 0, records: 0, stage: 'SOVEREIGN', ooda: 1042
+  });
 
-
-  // Scroll Diagnostics
-  React.useEffect(() => {
-    const checkScroll = () => {
-      console.log('--- SCROLL DIAGNOSTICS ---');
-      console.log('Window Height:', window.innerHeight);
-      console.log('Body Scroll Height:', document.body.scrollHeight);
-      console.log('Root Client Height:', document.getElementById('root')?.clientHeight);
-      console.log('Overflow status Body:', window.getComputedStyle(document.body).overflowY);
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [metrics, dbStats] = await Promise.allSettled([
+          fetch('/api/v1/system/metrics').then(r => r.json()),
+          fetch('/api/v1/database/stats').then(r => r.json()),
+        ]);
+        setLiveStats(prev => ({
+          cpu: metrics.status === 'fulfilled' ? Math.round(metrics.value.cpu ?? prev.cpu) : prev.cpu,
+          memory: metrics.status === 'fulfilled' ? Math.round(metrics.value.memory ?? prev.memory) : prev.memory,
+          records: dbStats.status === 'fulfilled' ? (dbStats.value.postgresql?.records ?? prev.records) : prev.records,
+          stage: 'SOVEREIGN',
+          ooda: prev.ooda + 1,
+        }));
+      } catch { }
     };
-    checkScroll();
-    window.addEventListener('resize', checkScroll);
-    return () => window.removeEventListener('resize', checkScroll);
+    fetchStats();
+    const iv = setInterval(fetchStats, 8000);
+    return () => clearInterval(iv);
   }, []);
 
-  // --- PREMIUM DEVICE SIMULATOR FRAMES ---
   // --- PREMIUM DEVICE SIMULATOR FRAMES ---
   const renderContent = () => {
     if (deviceMode === 'desktop') {
@@ -89,16 +97,16 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
           {/* Content Wrapper */}
           <div className="h-full w-full overflow-y-auto bg-[#020617] relative custom-scrollbar">
-             {/* Digital Scanline Effect */}
-             <motion.div
-               animate={{ top: ['-10%', '110%'] }}
-               transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-               className="absolute left-0 right-0 h-px bg-emerald-500/20 shadow-[0_0_10px_#10b981] z-[55] pointer-events-none"
-             />
+            {/* Digital Scanline Effect */}
+            <motion.div
+              animate={{ top: ['-10%', '110%'] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              className="absolute left-0 right-0 h-px bg-emerald-500/20 shadow-[0_0_10px_#10b981] z-[55] pointer-events-none"
+            />
 
-             <div className="p-4 relative z-10">
-                {children}
-             </div>
+            <div className="p-4 relative z-10">
+              {children}
+            </div>
           </div>
         </motion.div>
       </div>
@@ -133,20 +141,20 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </AnimatePresence>
 
         <div className="flex-1 p-4 md:p-6 lg:p-8 relative">
-           {/* Background Grid Pattern */}
-           <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-dot-grid" />
+          {/* Background Grid Pattern */}
+          <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-dot-grid" />
 
-           <AnimatePresence mode="wait">
-             <motion.div
-               key={deviceMode}
-               initial={{ opacity: 0, x: 20 }}
-               animate={{ opacity: 1, x: 0 }}
-               exit={{ opacity: 0, x: -20 }}
-               className="relative z-10 w-full"
-             >
-                {renderContent()}
-             </motion.div>
-           </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={deviceMode}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="relative z-10 w-full"
+            >
+              {renderContent()}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
 
@@ -154,27 +162,33 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <ProcessRadar />
       <CyberTerminal />
 
-      {/* CyberDeck Footer */}
-      <div className="fixed bottom-0 left-0 right-0 h-6 bg-black/80 backdrop-blur-md border-t border-indigo-500/30 z-[100] flex items-center px-4 gap-6 overflow-hidden">
-          <div className="flex items-center gap-2 shrink-0">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Core_Live</span>
-          </div>
+      {/* CyberDeck Status Footer — LIVE DATA */}
+      <div className="fixed bottom-0 left-0 right-0 h-6 bg-black/85 backdrop-blur-md border-t border-indigo-500/20 z-[100] flex items-center px-4 gap-6 overflow-hidden">
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Core_Live</span>
+        </div>
 
-          <div className="flex-1 overflow-hidden pointer-events-none">
-              <motion.div
-                animate={{ x: [0, -1000] }}
-                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                className="whitespace-nowrap text-[9px] font-mono text-slate-500 tracking-tight"
-              >
-                  {` >> SYSTEM_V40.1_SOVEREIGN >> OODA_CYCLE: 1042 >> TRUST_COEFFICIENT: 0.9982 >> NEURAL_LOAD: 64% >> IDENTITY_RESOLVED: 12.4M >> ANOMALY_INDEX: 0.002 >> ENFORCEMENT_READY >> SYSTEM_V40.1_SOVEREIGN >> OODA_CYCLE: 1042 >> TRUST_COEFFICIENT: 0.9982 >> NEURAL_LOAD: 64% >> IDENTITY_RESOLVED: 12.4M >> ANOMALY_INDEX: 0.002 >> ENFORCEMENT_READY`}
-              </motion.div>
-          </div>
+        <div className="flex items-center gap-4 shrink-0 text-[9px] font-mono">
+          <span className="text-cyan-500">CPU: <span className="text-cyan-300">{liveStats.cpu}%</span></span>
+          <span className="text-purple-500">RAM: <span className="text-purple-300">{liveStats.memory}%</span></span>
+          <span className="text-blue-500">БД: <span className="text-blue-300">{liveStats.records.toLocaleString()} rec</span></span>
+        </div>
 
-          <div className="flex items-center gap-4 shrink-0 border-l border-white/10 pl-4 h-full">
-              <span className="text-[9px] font-mono text-indigo-400">LATENCY: 12ms</span>
-              <span className="text-[9px] font-mono text-slate-500">{new Date().toLocaleTimeString()}</span>
-          </div>
+        <div className="flex-1 overflow-hidden pointer-events-none">
+          <motion.div
+            animate={{ x: [0, -1200] }}
+            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+            className="whitespace-nowrap text-[9px] font-mono text-slate-600 tracking-tight"
+          >
+            {` >> SYSTEM_V45_SOVEREIGN >> OODA_CYCLE: ${liveStats.ooda} >> STAGE: ${liveStats.stage} >> CPU: ${liveStats.cpu}% >> MEM: ${liveStats.memory}% >> DB_RECORDS: ${liveStats.records.toLocaleString()} >> TRUST_COEFFICIENT: 0.9982 >> ANOMALY_INDEX: 0.002 >> ENFORCEMENT_READY >> SYSTEM_V45_SOVEREIGN >> OODA_CYCLE: ${liveStats.ooda} >> STAGE: ${liveStats.stage} `}
+          </motion.div>
+        </div>
+
+        <div className="flex items-center gap-4 shrink-0 border-l border-white/10 pl-4 h-full">
+          <span className="text-[9px] font-mono text-indigo-400">LATENCY: 12ms</span>
+          <span className="text-[9px] font-mono text-slate-500">{new Date().toLocaleTimeString()}</span>
+        </div>
       </div>
     </div>
   );

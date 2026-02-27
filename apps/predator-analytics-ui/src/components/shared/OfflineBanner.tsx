@@ -51,7 +51,7 @@ export const OfflineBanner = () => {
     const handleRetry = async () => {
         setRetrying(true);
         try {
-            const response = await fetch('/api/health', { method: 'GET' });
+            const response = await fetch('/api/v1/health', { method: 'GET' });
             if (response.ok) {
                 window.dispatchEvent(new CustomEvent('predator-backend-online'));
                 setVisible(false);
