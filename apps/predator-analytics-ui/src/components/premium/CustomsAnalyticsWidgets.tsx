@@ -38,24 +38,18 @@ export const TopImportersWidget: React.FC<{
   const [sortBy, setSortBy] = useState<'volume' | 'value' | 'growth'>('volume');
 
   useEffect(() => {
-    // Mock data - replace with real API
-    const mockData = [
-      { name: 'АльфаТрейд ТОВ', volume: 12450000, value: 89000000, growth: 34.2, risk: 12 },
-      { name: 'ГлобалІмпорт', volume: 9800000, value: 67000000, growth: 18.5, risk: 8 },
-      { name: 'ТехноСистемс', volume: 7600000, value: 54000000, growth: -5.2, risk: 45 },
-      { name: 'МегаПостачальник', volume: 6900000, value: 48000000, growth: 22.1, risk: 15 },
-      { name: 'Інтер-Трейд', volume: 5400000, value: 38000000, growth: 8.7, risk: 22 },
-      { name: 'Укрімпорт ЛТД', volume: 4800000, value: 35000000, growth: -12.3, risk: 67 },
-      { name: 'БізнесПартнер', volume: 4200000, value: 29000000, growth: 45.8, risk: 5 },
-      { name: 'ЄвроЛогістика', volume: 3900000, value: 27000000, growth: 3.2, risk: 18 },
-      { name: 'АзіяТранс', volume: 3500000, value: 24000000, growth: 67.4, risk: 38 },
-      { name: 'НоваЕра ТОВ', volume: 3100000, value: 21000000, growth: -8.9, risk: 42 },
-    ].slice(0, limit);
-
-    setTimeout(() => {
-      setData(mockData);
-      setLoading(false);
-    }, 500);
+    const fetchImporters = async () => {
+      setLoading(true);
+      try {
+        const result = await api.premium.getTopImporters();
+        setData(result);
+      } catch (err) {
+        console.error("Failed to fetch top importers", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchImporters();
   }, [limit]);
 
   const sortedData = useMemo(() => {
@@ -129,8 +123,8 @@ export const TopImportersWidget: React.FC<{
                 <div className={cn(
                   "px-2 py-1 rounded text-[8px] font-bold",
                   item.risk > 50 ? "bg-rose-500/20 text-rose-400" :
-                  item.risk > 25 ? "bg-amber-500/20 text-amber-400" :
-                  "bg-emerald-500/20 text-emerald-400"
+                    item.risk > 25 ? "bg-amber-500/20 text-amber-400" :
+                      "bg-emerald-500/20 text-emerald-400"
                 )}>
                   {item.risk}% {premiumLocales.customsAnalytics.topImporters.riskLabel}
                 </div>
@@ -157,16 +151,23 @@ export const TopImportersWidget: React.FC<{
 export const HSCodeAnalyticsWidget: React.FC<{
   persona: string;
 }> = ({ persona }) => {
-  const [selectedCode, setSelectedCode] = useState<string | null>(null);
+  const [hsData, setHsData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const hsData = [
-    { code: '8471', name: 'Комп\'ютери', volume: 45000000, anomalyScore: 78 },
-    { code: '8517', name: 'Телефони', volume: 38000000, anomalyScore: 23 },
-    { code: '7208', name: 'Сталевий прокат', volume: 32000000, anomalyScore: 45 },
-    { code: '8703', name: 'Автомобілі', volume: 28000000, anomalyScore: 12 },
-    { code: '3004', name: 'Ліки', volume: 24000000, anomalyScore: 56 },
-    { code: '2710', name: 'Нафтопродукти', volume: 21000000, anomalyScore: 34 },
-  ];
+  useEffect(() => {
+    const fetchHSData = async () => {
+      setLoading(true);
+      try {
+        const result = await api.premium.getHSAnalytics();
+        setHsData(result);
+      } catch (err) {
+        console.error("Failed to fetch HS analytics", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHSData();
+  }, []);
 
   const personaColor = persona === 'TITAN' ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
 
@@ -230,7 +231,13 @@ export const HSCodeAnalyticsWidget: React.FC<{
       <div className="p-4 grid grid-cols-2 gap-4">
         {/* Chart */}
         <div className="h-[200px]">
-          <ReactECharts option={chartOption} className="w-full h-full" theme="dark" />
+          {loading ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <RefreshCw className={`text-${personaColor}-400 animate-spin`} size={24} />
+            </div>
+          ) : (
+            <ReactECharts option={chartOption} className="w-full h-full" theme="dark" />
+          )}
         </div>
 
         {/* Legend */}
@@ -241,10 +248,8 @@ export const HSCodeAnalyticsWidget: React.FC<{
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: i * 0.1 }}
-              onClick={() => setSelectedCode(item.code)}
               className={cn(
-                "flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all",
-                selectedCode === item.code ? "bg-white/10" : "hover:bg-white/5"
+                "flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all hover:bg-white/5"
               )}
             >
               <div className="flex items-center gap-2">
@@ -252,8 +257,8 @@ export const HSCodeAnalyticsWidget: React.FC<{
                   className={cn(
                     "w-2 h-2 rounded-full",
                     i % 4 === 0 ? "bg-amber-500" :
-                    i % 4 === 1 ? "bg-rose-500" :
-                    i % 4 === 2 ? "bg-indigo-500" : "bg-emerald-500"
+                      i % 4 === 1 ? "bg-rose-500" :
+                        i % 4 === 2 ? "bg-indigo-500" : "bg-emerald-500"
                   )}
                 />
                 <span className="text-[10px] font-bold text-white">{item.code}</span>
@@ -264,8 +269,8 @@ export const HSCodeAnalyticsWidget: React.FC<{
                 <span className={cn(
                   "text-[8px] font-bold px-1.5 py-0.5 rounded",
                   item.anomalyScore > 60 ? "bg-rose-500/20 text-rose-400" :
-                  item.anomalyScore > 30 ? "bg-amber-500/20 text-amber-400" :
-                  "bg-emerald-500/20 text-emerald-400"
+                    item.anomalyScore > 30 ? "bg-amber-500/20 text-amber-400" :
+                      "bg-emerald-500/20 text-emerald-400"
                 )}>
                   {item.anomalyScore}%
                 </span>
@@ -284,12 +289,23 @@ export const HSCodeAnalyticsWidget: React.FC<{
 export const PriceAnomalyWidget: React.FC<{
   persona: string;
 }> = ({ persona }) => {
-  const anomalies = [
-    { id: 1, hsCode: '8471.30', description: 'Ноутбуки', declared: 150, market: 450, deviation: -66.7, companies: 12 },
-    { id: 2, hsCode: '8517.12', description: 'Смартфони', declared: 80, market: 180, deviation: -55.6, companies: 8 },
-    { id: 3, hsCode: '7208.51', description: 'Сталевий лист', declared: 320, market: 480, deviation: -33.3, companies: 5 },
-    { id: 4, hsCode: '3004.90', description: 'Ліки', declared: 1200, market: 800, deviation: 50.0, companies: 3 },
-  ];
+  const [anomalies, setAnomalies] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnomalies = async () => {
+      setLoading(true);
+      try {
+        const result = await api.premium.getPriceAnomalies();
+        setAnomalies(result);
+      } catch (err) {
+        console.error("Failed to fetch price anomalies", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnomalies();
+  }, []);
 
   const personaColor = persona === 'INQUISITOR' ? 'rose' : 'amber';
 
@@ -312,7 +328,11 @@ export const PriceAnomalyWidget: React.FC<{
       </div>
 
       <div className="p-4 space-y-3">
-        {anomalies.map((item, i) => (
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <RefreshCw className="text-rose-400 animate-spin" size={24} />
+          </div>
+        ) : anomalies.map((item, i) => (
           <motion.div
             key={item.id}
             initial={{ opacity: 0, y: 10 }}
@@ -447,11 +467,23 @@ const getCountryFlag = (code: string): string => {
 export const CompetitorRadarWidget: React.FC<{
   persona: string;
 }> = ({ persona }) => {
-  const competitors = [
-    { name: 'АльфаТрейд', metrics: { volume: 85, growth: 70, risk: 20, diversity: 60, speed: 75 } },
-    { name: 'ГлобалІмпорт', metrics: { volume: 72, growth: 55, risk: 35, diversity: 80, speed: 65 } },
-    { name: 'ТехноСистемс', metrics: { volume: 68, growth: 40, risk: 60, diversity: 45, speed: 55 } },
-  ];
+  const [competitors, setCompetitors] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCompetitors = async () => {
+      setLoading(true);
+      try {
+        const result = await api.premium.getCompetitorRadar();
+        setCompetitors(result);
+      } catch (err) {
+        console.error("Failed to fetch competitor radar", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCompetitors();
+  }, []);
 
   const chartOption = {
     backgroundColor: 'transparent',
@@ -504,7 +536,13 @@ export const CompetitorRadarWidget: React.FC<{
       </div>
 
       <div className="h-[300px] p-4">
-        <ReactECharts option={chartOption} className="w-full h-full" theme="dark" />
+        {loading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <RefreshCw className="text-amber-400 animate-spin" size={24} />
+          </div>
+        ) : (
+          <ReactECharts option={chartOption} className="w-full h-full" theme="dark" />
+        )}
       </div>
     </div>
   );
@@ -621,8 +659,8 @@ export const RiskScoreWidget: React.FC<{
                   className={cn(
                     "h-full rounded-full",
                     factor.score >= 75 ? "bg-rose-500" :
-                    factor.score >= 50 ? "bg-amber-500" :
-                    "bg-emerald-500"
+                      factor.score >= 50 ? "bg-amber-500" :
+                        "bg-emerald-500"
                   )}
                 />
               </div>

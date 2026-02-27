@@ -546,6 +546,21 @@ export const api = {
         },
         getCosts: async () => {
             return (await v45Client.get('/premium/costs')).data;
+        },
+        getTopImporters: async () => {
+            return (await v45Client.get('/premium/top-importers')).data;
+        },
+        getHSAnalytics: async () => {
+            return (await v45Client.get('/premium/hs-analytics')).data;
+        },
+        getPriceAnomalies: async () => {
+            return (await v45Client.get('/premium/price-anomalies')).data;
+        },
+        getCompetitorRadar: async () => {
+            return (await apiClient.get('/premium/competitor-radar')).data;
+        },
+        getMarketTrends: async () => {
+            return (await apiClient.get('/premium/market-trends')).data;
         }
     },
     getMorningNewspaper: async () => {
