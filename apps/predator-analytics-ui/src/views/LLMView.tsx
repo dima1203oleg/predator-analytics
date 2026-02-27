@@ -143,12 +143,18 @@ const LLMView: React.FC = () => {
             <div className="flex p-1 bg-black/40 backdrop-blur-3xl border border-white/5 rounded-[24px] overflow-x-auto scrollbar-hide shadow-2xl">
                 {[
                     { id: 'INFERENCE', label: premiumLocales.llm.tabs.inference, icon: MessageSquare, color: 'text-blue-400' },
-                    { id: 'TRAINING', label: premiumLocales.llm.tabs.training, icon: Layers, color: 'text-purple-400' },
                     { id: 'DSPY', label: premiumLocales.llm.tabs.dspy, icon: Sparkles, color: 'text-emerald-400' },
-                    { id: 'AUTOML', label: premiumLocales.llm.tabs.automl, icon: Settings, color: 'text-amber-400' },
+                    { id: 'TRAINING_LINK', label: 'Лабораторія Навчання', icon: Layers, color: 'text-purple-400', isLink: true },
                 ].map(tab => (
                     <button
-                        key={tab.id} onClick={() => setActiveTab(tab.id as LLMTab)}
+                        key={tab.id}
+                        onClick={() => {
+                            if ((tab as any).isLink) {
+                                window.location.href = '/training';
+                            } else {
+                                setActiveTab(tab.id as LLMTab);
+                            }
+                        }}
                         className={`
                             flex-1 min-w-[200px] py-4 rounded-[20px] text-[10px] font-black transition-all flex items-center justify-center gap-4 relative overflow-hidden group uppercase tracking-[0.2em]
                             ${activeTab === tab.id ? 'bg-white/5 text-white shadow-2xl' : 'text-slate-500 hover:text-slate-300'}
@@ -180,17 +186,6 @@ const LLMView: React.FC = () => {
                         systemPrompt={systemPrompt}
                         onSystemPromptChange={setSystemPrompt}
                         chatEndRef={chatEndRef}
-                    />
-                )}
-                {(activeTab === 'TRAINING' || activeTab === 'AUTOML') && (
-                    <LLMTrainingView
-                        trainingDomain={trainingDomain}
-                        onTrainingDomainChange={setTrainingDomain}
-                        trainingStatus={trainingStatus}
-                        progress={progress}
-                        trainingLogs={trainingLogs}
-                        onStartTraining={handleStartTraining}
-                        logsEndRef={logsEndRef}
                     />
                 )}
                 {activeTab === 'DSPY' && (

@@ -30,8 +30,10 @@ import {
   EyeOff,
   ZoomIn,
   ZoomOut,
-  Move
+  Move,
+  RefreshCw
 } from 'lucide-react';
+import { api } from '../services/api';
 
 // ========================
 // Types
@@ -61,34 +63,9 @@ interface FlowAnimation {
   progress: number;
 }
 
-// ========================
-// Mock Data
-// ========================
-
-const countries: Country[] = [
-  { id: 'ua', name: 'Україна', code: 'UA', x: 55, y: 35, imports: 0, exports: 0 },
-  { id: 'cn', name: 'Китай', code: 'CN', x: 78, y: 42, imports: 245000000, exports: 12000000 },
-  { id: 'de', name: 'Німеччина', code: 'DE', x: 48, y: 32, imports: 89000000, exports: 45000000 },
-  { id: 'pl', name: 'Польща', code: 'PL', x: 51, y: 33, imports: 78000000, exports: 56000000 },
-  { id: 'tr', name: 'Туреччина', code: 'TR', x: 58, y: 45, imports: 67000000, exports: 23000000 },
-  { id: 'vn', name: "В'єтнам", code: 'VN', x: 82, y: 52, imports: 56000000, exports: 5000000 },
-  { id: 'by', name: 'Білорусь', code: 'BY', x: 54, y: 30, imports: 45000000, exports: 18000000 },
-  { id: 'it', name: 'Італія', code: 'IT', x: 47, y: 40, imports: 34000000, exports: 28000000 },
-  { id: 'us', name: 'США', code: 'US', x: 20, y: 38, imports: 28000000, exports: 15000000 },
-  { id: 'in', name: 'Індія', code: 'IN', x: 72, y: 50, imports: 23000000, exports: 8000000 },
-];
-
-const tradeFlows: TradeFlow[] = [
-  { id: '1', from: 'cn', to: 'ua', value: 245000000, product: 'Електроніка', color: '#22d3ee' },
-  { id: '2', from: 'de', to: 'ua', value: 89000000, product: 'Хімія', color: '#a855f7' },
-  { id: '3', from: 'pl', to: 'ua', value: 78000000, product: 'Добрива', color: '#22c55e' },
-  { id: '4', from: 'tr', to: 'ua', value: 67000000, product: 'Метал', color: '#f59e0b' },
-  { id: '5', from: 'vn', to: 'ua', value: 56000000, product: 'Текстиль', color: '#ec4899' },
-  { id: '6', from: 'by', to: 'ua', value: 45000000, product: 'Сільгосп', color: '#10b981' },
-  { id: '7', from: 'ua', to: 'de', value: 45000000, product: 'Зерно', color: '#fbbf24' },
-  { id: '8', from: 'ua', to: 'pl', value: 56000000, product: 'Метал', color: '#6366f1' },
-  { id: '9', from: 'it', to: 'ua', value: 34000000, product: 'Техніка', color: '#f43f5e' },
-  { id: '10', from: 'us', to: 'ua', value: 28000000, product: 'Обладнання', color: '#3b82f6' },
+// Mock data removed in favor of API
+const defaultCountries: Country[] = [
+  { id: 'ua', name: 'Україна', code: 'UA', x: 55, y: 35, imports: 0, exports: 0 }
 ];
 
 // ========================
@@ -210,7 +187,8 @@ const FlowLine: React.FC<FlowLineProps> = ({ flow, countries, isActive, animatio
 // Legend Component
 // ========================
 
-const MapLegend: React.FC<{ flows: TradeFlow[]; onFlowSelect: (id: string | null) => void; selectedFlow: string | null }> = ({
+const MapLegend: React.FC<{ countries: Country[]; flows: TradeFlow[]; onFlowSelect: (id: string | null) => void; selectedFlow: string | null }> = ({
+  countries,
   flows,
   onFlowSelect,
   selectedFlow
@@ -225,9 +203,8 @@ const MapLegend: React.FC<{ flows: TradeFlow[]; onFlowSelect: (id: string | null
         <button
           key={flow.id}
           onClick={() => onFlowSelect(selectedFlow === flow.id ? null : flow.id)}
-          className={`w-full flex items-center gap-3 p-2 rounded-lg transition-all text-left ${
-            selectedFlow === flow.id ? 'bg-white/10' : 'hover:bg-white/5'
-          }`}
+          className={`w-full flex items-center gap-3 p-2 rounded-lg transition-all text-left ${selectedFlow === flow.id ? 'bg-white/10' : 'hover:bg-white/5'
+            }`}
         >
           <div
             className="w-3 h-3 rounded-full flex-shrink-0"
@@ -248,12 +225,9 @@ const MapLegend: React.FC<{ flows: TradeFlow[]; onFlowSelect: (id: string | null
   </div>
 );
 
-// ========================
-// Stats Panel
-// ========================
-
-const StatsPanel: React.FC<{ selectedCountry: Country | null }> = ({ selectedCountry }) => (
-  <div className="absolute top-4 right-4 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-xl p-4 w-64">
+// Stats Panel Refactored to receive summary
+const StatsPanel: React.FC<{ selectedCountry: Country | null, summary: any }> = ({ selectedCountry, summary }) => (
+  <div className="absolute top-4 right-4 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-xl p-4 w-64 shadow-2xl">
     <h4 className="text-sm font-bold text-white mb-3">
       {selectedCountry ? selectedCountry.name : 'Загальна статистика'}
     </h4>
@@ -272,29 +246,20 @@ const StatsPanel: React.FC<{ selectedCountry: Country | null }> = ({ selectedCou
             {formatValue(selectedCountry.exports)}
           </span>
         </div>
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-slate-500">Баланс</span>
-          <span className={`text-sm font-bold ${
-            selectedCountry.imports > selectedCountry.exports ? 'text-rose-400' : 'text-emerald-400'
-          }`}>
-            {selectedCountry.imports > selectedCountry.exports ? '-' : '+'}
-            {formatValue(Math.abs(selectedCountry.imports - selectedCountry.exports))}
-          </span>
-        </div>
       </div>
     ) : (
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <span className="text-xs text-slate-500">Загальний імпорт</span>
-          <span className="text-sm font-bold text-cyan-400">$847M</span>
+          <span className="text-sm font-bold text-cyan-400">{summary.totalImport}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-xs text-slate-500">Загальний експорт</span>
-          <span className="text-sm font-bold text-emerald-400">$210M</span>
+          <span className="text-sm font-bold text-emerald-400">{summary.totalExport}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-xs text-slate-500">Країн-партнерів</span>
-          <span className="text-sm font-bold text-white">{countries.length - 1}</span>
+          <span className="text-sm font-bold text-white">{summary.partnerCount}</span>
         </div>
       </div>
     )}
@@ -306,12 +271,37 @@ const StatsPanel: React.FC<{ selectedCountry: Country | null }> = ({ selectedCou
 // ========================
 
 const TradeFlowMapPremium: React.FC = () => {
+  const [countries, setCountries] = useState<Country[]>(defaultCountries);
+  const [tradeFlows, setTradeFlows] = useState<TradeFlow[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [animationProgress, setAnimationProgress] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [zoom, setZoom] = useState(1);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await api.premium.getTradeFlows();
+        setCountries(data.countries || defaultCountries);
+        setTradeFlows(data.flows || []);
+      } catch (err) {
+        console.error("Failed to fetch trade flows", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const summary = useMemo(() => {
+    const partnerCount = Math.max(0, countries.length - 1);
+    const totalImport = formatValue(tradeFlows.filter(f => f.to === 'ua').reduce((a, b) => a + b.value, 0));
+    const totalExport = formatValue(tradeFlows.filter(f => f.from === 'ua').reduce((a, b) => a + b.value, 0));
+    return { partnerCount, totalImport, totalExport };
+  }, [countries, tradeFlows]);
 
   // Animation loop
   useEffect(() => {
@@ -352,9 +342,8 @@ const TradeFlowMapPremium: React.FC = () => {
             {/* Playback controls */}
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className={`p-2 rounded-lg transition-colors ${
-                isPlaying ? 'bg-cyan-500/20 text-cyan-400' : 'bg-slate-800 text-slate-400'
-              }`}
+              className={`p-2 rounded-lg transition-colors ${isPlaying ? 'bg-cyan-500/20 text-cyan-400' : 'bg-slate-800 text-slate-400'
+                }`}
               title={isPlaying ? 'Пауза' : 'Відтворити'}
             >
               {isPlaying ? <Pause size={18} /> : <Play size={18} />}
@@ -443,13 +432,14 @@ const TradeFlowMapPremium: React.FC = () => {
 
           {/* Legend */}
           <MapLegend
+            countries={countries}
             flows={tradeFlows}
             onFlowSelect={setSelectedFlow}
             selectedFlow={selectedFlow}
           />
 
           {/* Stats Panel */}
-          <StatsPanel selectedCountry={selectedCountry} />
+          <StatsPanel selectedCountry={selectedCountry} summary={summary} />
 
           {/* Info tooltip */}
           <div className="absolute bottom-4 right-4 p-3 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-xl">
@@ -463,17 +453,23 @@ const TradeFlowMapPremium: React.FC = () => {
         {/* Bottom Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
           {[
-            { label: 'Загальний імпорт', value: '$847M', icon: TrendingDown, color: 'cyan' },
-            { label: 'Загальний експорт', value: '$210M', icon: TrendingUp, color: 'emerald' },
+            { label: 'Загальний імпорт', value: summary.totalImport, icon: TrendingDown, color: 'cyan' },
+            { label: 'Загальний експорт', value: summary.totalExport, icon: TrendingUp, color: 'emerald' },
             { label: 'Торгових потоків', value: tradeFlows.length.toString(), icon: ArrowRight, color: 'purple' },
-            { label: 'Країн-партнерів', value: (countries.length - 1).toString(), icon: Globe, color: 'amber' },
+            { label: 'Країн-партнерів', value: summary.partnerCount.toString(), icon: Globe, color: 'amber' },
           ].map((stat, i) => (
             <div key={i} className="bg-slate-900/60 border border-white/5 rounded-xl p-4">
-              <div className="flex items-center justify-between mb-2">
-                <stat.icon className={`text-${stat.color}-400`} size={18} />
-                <span className="text-2xl font-black text-white">{stat.value}</span>
-              </div>
-              <p className="text-xs text-slate-500">{stat.label}</p>
+              {loading ? (
+                <div className="h-10 w-full animate-pulse bg-slate-800 rounded mb-2" />
+              ) : (
+                <>
+                  <div className="flex items-center justify-between mb-2">
+                    <stat.icon className={`text-${stat.color}-400`} size={18} />
+                    <span className="text-2xl font-black text-white">{stat.value}</span>
+                  </div>
+                  <p className="text-xs text-slate-500">{stat.label}</p>
+                </>
+              )}
             </div>
           ))}
         </div>

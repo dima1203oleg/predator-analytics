@@ -13,7 +13,7 @@ import {
     FileText, Layers, CheckCircle, Clock, AlertCircle,
     Cpu, HardDrive, TrendingUp, ArrowRight, Mic, Volume2, Box,
     Activity, Shield, Terminal, FastForward, Target, Binary, Microscope,
-    Plus, Search, ToggleRight
+    Plus, Search, ToggleRight, Hammer as HammerIcon
 } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { api } from '../services/api';
@@ -63,26 +63,44 @@ const DatasetStudio: React.FC = () => {
                 {/* Header Section */}
                 <div className="flex items-center justify-between relative z-10">
                     <div className="flex items-center gap-6">
-                        <div className="p-5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[32px] shadow-2xl shadow-indigo-500/20">
-                            <Binary size={32} className="text-white" />
+                        <div className="relative group">
+                            <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                                className="absolute -inset-4 bg-gradient-to-r from-indigo-500/20 to-purple-600/20 rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition-opacity"
+                            />
+                            <div className="relative p-6 bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-700 rounded-[32px] shadow-2xl shadow-indigo-500/30 border border-white/20">
+                                <HammerIcon size={32} className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
+                            </div>
                         </div>
                         <div>
+                            <div className="flex items-center gap-2 mb-1">
+                                <Sparkles size={14} className="text-amber-400" />
+                                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em]">Advanced Data Synthesis</span>
+                            </div>
                             <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">
-                                {premiumLocales.datasetStudio.title.split(' ')[0]}_<span className="text-indigo-400">{premiumLocales.datasetStudio.title.split(' ')[1]}</span>
+                                НЕЙРОННА_<span className="text-indigo-400">КУЗНЯ</span>
                             </h1>
-                            <p className="text-slate-500 text-xs font-bold uppercase tracking-[0.5em] mt-1">{premiumLocales.datasetStudio.subtitle}</p>
+                            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] mt-1">Dataset Engineering & Latent Space Augmentation</p>
                         </div>
                     </div>
 
                     <div className="flex gap-4">
-                         <div className="px-6 py-3 bg-slate-900/60 border border-white/5 rounded-2xl flex items-center gap-4">
-                             <div className="text-right">
-                                 <p className="text-[10px] text-slate-500 font-bold uppercase">{premiumLocales.datasetStudio.header.gpuLoad}</p>
-                                 <p className="text-lg font-mono font-black text-emerald-400">{stats.gpu_load}%</p>
-                             </div>
-                             <div className="h-8 w-[2px] bg-white/5" />
-                             <Cpu className="text-indigo-400" size={20} />
-                         </div>
+                        <div className="px-6 py-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-3xl flex items-center gap-6 shadow-2xl">
+                            <div className="flex flex-col">
+                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Forge Hub</span>
+                                <span className="text-xl font-mono font-black text-white">1.2M <span className="text-indigo-500 text-xs">rows</span></span>
+                            </div>
+                            <div className="h-10 w-[1px] bg-white/5" />
+                            <div className="flex flex-col">
+                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Sync Latency</span>
+                                <span className="text-xl font-mono font-black text-emerald-400">1.2ms</span>
+                            </div>
+                            <div className="h-10 w-[1px] bg-white/5" />
+                            <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-400">
+                                <Activity size={20} className="animate-pulse" />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -94,15 +112,15 @@ const DatasetStudio: React.FC = () => {
 
                         {/* 📚 New Section: Interactive User Datasets */}
                         <UserDatasetsPanel
-                             className="shadow-2xl shadow-black/40"
-                             onDatasetSelect={(ds) => setActivePrototypeId(ds.id)}
+                            className="shadow-2xl shadow-black/40"
+                            onDatasetSelect={(ds) => setActivePrototypeId(ds.id)}
                         />
 
                         {/* 🔄 Pipeline Monitor per DB */}
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                   <Activity size={16} className="text-indigo-400" /> {premiumLocales.datasetStudio.panels.pipeline.title}
+                                    <Activity size={16} className="text-indigo-400" /> {premiumLocales.datasetStudio.panels.pipeline.title}
                                 </h3>
                                 <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-black rounded uppercase underline cursor-help">{premiumLocales.datasetStudio.panels.pipeline.realtimeSync}</span>
                             </div>
@@ -170,7 +188,7 @@ const DatasetStudio: React.FC = () => {
                                                         : "bg-slate-900 border-white/5 text-slate-500 hover:border-white/20"
                                                 )}
                                             >
-                                                {val >= 1000 ? `${val/1000}k` : val}
+                                                {val >= 1000 ? `${val / 1000}k` : val}
                                             </button>
                                         ))}
                                     </div>
@@ -212,7 +230,7 @@ const DatasetStudio: React.FC = () => {
                                 <Clock size={14} className="text-slate-500" /> {premiumLocales.datasetStudio.panels.generation.recentEvents}
                             </h3>
                             <div className="space-y-3">
-                                {[1,2,3].map(i => (
+                                {[1, 2, 3].map(i => (
                                     <div key={i} className="flex gap-3 text-[10px] border-l border-white/5 pl-3">
                                         <span className="text-slate-600 font-mono">19:40</span>
                                         <span className="text-slate-400">{premiumLocales.datasetStudio.panels.generation.eventSynthesized.replace('{id}', '0' + i)}</span>

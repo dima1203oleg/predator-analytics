@@ -5,7 +5,7 @@
  * Тренди, прогнози, можливості
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   TrendingUp,
@@ -34,8 +34,10 @@ import {
   Zap,
   AlertTriangle,
   CheckCircle,
-  Activity
+  Activity,
+  RefreshCw
 } from 'lucide-react';
+import { api } from '../services/api';
 
 // ========================
 // Types
@@ -68,101 +70,9 @@ interface Opportunity {
   urgency: 'high' | 'medium' | 'low';
 }
 
-// ========================
-// Mock Data
-// ========================
-
-const marketSegments: MarketSegment[] = [
-  {
-    id: '1',
-    name: 'Електроніка та компоненти',
-    volume: 245000000,
-    change: 18.5,
-    trend: 'up',
-    topPlayers: ['ТОВ "ТехноІмпорт"', 'ПрАТ "ЕлектроСвіт"', 'ТОВ "DigiParts"'],
-    avgPrice: 125,
-    priceChange: -5.2
-  },
-  {
-    id: '2',
-    name: 'Хімічна продукція',
-    volume: 189000000,
-    change: 7.2,
-    trend: 'up',
-    topPlayers: ['ТОВ "ХімТрейд"', 'ПрАТ "АгроХім"', 'ТОВ "Полімер+"'],
-    avgPrice: 2.45,
-    priceChange: 12.3
-  },
-  {
-    id: '3',
-    name: 'Сільгосптехніка',
-    volume: 156000000,
-    change: -8.3,
-    trend: 'down',
-    topPlayers: ['ТОВ "АгроМаш"', 'ПрАТ "ФермТех"', 'ТОВ "Урожай"'],
-    avgPrice: 45000,
-    priceChange: 3.1
-  },
-  {
-    id: '4',
-    name: 'Будівельні матеріали',
-    volume: 134000000,
-    change: 22.1,
-    trend: 'up',
-    topPlayers: ['ТОВ "БудМат"', 'ПрАТ "СтройІмпорт"', 'ТОВ "Європлитка"'],
-    avgPrice: 18.5,
-    priceChange: -2.8
-  },
-  {
-    id: '5',
-    name: 'Текстиль та одяг',
-    volume: 98000000,
-    change: -3.5,
-    trend: 'down',
-    topPlayers: ['ТОВ "ФешнІмпорт"', 'ПрАТ "ТекстильПлюс"', 'ТОВ "Стиль"'],
-    avgPrice: 8.9,
-    priceChange: -8.7
-  },
-];
-
-const opportunities: Opportunity[] = [
-  {
-    id: '1',
-    type: 'price_drop',
-    title: 'Падіння цін на LED панелі',
-    description: 'Ціни з В\'єтнаму впали на 23% за останній тиждень. Оптимальний час для закупівлі.',
-    potentialSaving: 125000,
-    confidence: 92,
-    urgency: 'high'
-  },
-  {
-    id: '2',
-    type: 'new_supplier',
-    title: 'Новий постачальник добрив з Польщі',
-    description: 'Grupa Azoty запустила нову лінію. Ціни на 15% нижче ринку.',
-    potentialSaving: 89000,
-    confidence: 87,
-    urgency: 'medium'
-  },
-  {
-    id: '3',
-    type: 'trend',
-    title: 'Зростання попиту на сонячні панелі',
-    description: 'Прогнозується зростання імпорту на 45% до кінця кварталу.',
-    potentialSaving: 0,
-    confidence: 78,
-    urgency: 'medium'
-  },
-  {
-    id: '4',
-    type: 'gap',
-    title: 'Ніша: комплектуючі для дронів',
-    description: 'Низька конкуренція, високий попит. Всього 3 імпортери в сегменті.',
-    potentialSaving: 0,
-    confidence: 85,
-    urgency: 'low'
-  },
-];
+// Mock data removed in favor of API
+const defaultSegments: MarketSegment[] = [];
+const defaultOpportunities: Opportunity[] = [];
 
 // ========================
 // Components
@@ -222,9 +132,8 @@ const SegmentCard: React.FC<SegmentCardProps> = ({ segment, isExpanded, onToggle
             <p className="text-2xl font-black text-white">
               {formatCurrency(segment.volume)}
             </p>
-            <div className={`flex items-center justify-end gap-1 text-sm ${
-              segment.change >= 0 ? 'text-emerald-400' : 'text-rose-400'
-            }`}>
+            <div className={`flex items-center justify-end gap-1 text-sm ${segment.change >= 0 ? 'text-emerald-400' : 'text-rose-400'
+              }`}>
               {segment.change >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
               <span>{segment.change > 0 ? '+' : ''}{segment.change}%</span>
             </div>
@@ -235,9 +144,8 @@ const SegmentCard: React.FC<SegmentCardProps> = ({ segment, isExpanded, onToggle
             <p className="text-lg font-bold text-slate-300">
               ${segment.avgPrice}
             </p>
-            <div className={`flex items-center justify-end gap-1 text-xs ${
-              segment.priceChange < 0 ? 'text-emerald-400' : 'text-rose-400'
-            }`}>
+            <div className={`flex items-center justify-end gap-1 text-xs ${segment.priceChange < 0 ? 'text-emerald-400' : 'text-rose-400'
+              }`}>
               <span>Ціна {segment.priceChange < 0 ? '' : '+'}{segment.priceChange}%</span>
             </div>
           </div>
@@ -277,11 +185,10 @@ const SegmentCard: React.FC<SegmentCardProps> = ({ segment, isExpanded, onToggle
                 <div className="space-y-2">
                   {segment.topPlayers.map((player, index) => (
                     <div key={player} className="flex items-center gap-3 p-2 bg-slate-800/50 rounded-lg">
-                      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                        index === 0 ? 'bg-amber-500/20 text-amber-400' :
+                      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${index === 0 ? 'bg-amber-500/20 text-amber-400' :
                         index === 1 ? 'bg-slate-600/50 text-slate-300' :
-                        'bg-orange-500/20 text-orange-400'
-                      }`}>
+                          'bg-orange-500/20 text-orange-400'
+                        }`}>
                         {index + 1}
                       </span>
                       <span className="text-sm text-slate-300">{player}</span>
@@ -368,18 +275,40 @@ const OpportunityCard: React.FC<{ opportunity: Opportunity }> = ({ opportunity }
 // ========================
 
 const MarketAnalyticsPremium: React.FC = () => {
+  const [marketSegments, setMarketSegments] = useState<MarketSegment[]>([]);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [loading, setLoading] = useState(true);
   const [expandedSegment, setExpandedSegment] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'quarter' | 'year'>('month');
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [segments, opps] = await Promise.all([
+          api.premium.getMarketSegments(),
+          api.premium.getOpportunities()
+        ]);
+        setMarketSegments(segments);
+        setOpportunities(opps);
+      } catch (err) {
+        console.error("Failed to fetch market data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   const totalVolume = useMemo(() =>
     marketSegments.reduce((acc, s) => acc + s.volume, 0),
-    []
+    [marketSegments]
   );
 
   const avgGrowth = useMemo(() => {
+    if (marketSegments.length === 0) return 0;
     const sum = marketSegments.reduce((acc, s) => acc + s.change, 0);
     return sum / marketSegments.length;
-  }, []);
+  }, [marketSegments]);
 
   return (
     <div className="min-h-screen bg-slate-950 p-6">
@@ -413,15 +342,14 @@ const MarketAnalyticsPremium: React.FC = () => {
                 <button
                   key={range}
                   onClick={() => setTimeRange(range)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    timeRange === range
-                      ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'text-slate-500 hover:text-slate-300'
-                  }`}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${timeRange === range
+                    ? 'bg-emerald-500/20 text-emerald-400'
+                    : 'text-slate-500 hover:text-slate-300'
+                    }`}
                 >
                   {range === 'week' ? 'Тиждень' :
-                   range === 'month' ? 'Місяць' :
-                   range === 'quarter' ? 'Квартал' : 'Рік'}
+                    range === 'month' ? 'Місяць' :
+                      range === 'quarter' ? 'Квартал' : 'Рік'}
                 </button>
               ))}
             </div>
@@ -440,7 +368,7 @@ const MarketAnalyticsPremium: React.FC = () => {
               <span className="text-slate-500 text-sm">Загальний обсяг</span>
               <Package className="text-cyan-400" size={20} />
             </div>
-            <p className="text-3xl font-black text-white">{formatCurrency(totalVolume)}</p>
+            {loading ? <div className="h-8 w-24 bg-slate-800 animate-pulse rounded" /> : <p className="text-3xl font-black text-white">{formatCurrency(totalVolume)}</p>}
           </div>
 
           <div className="bg-slate-900/60 border border-white/5 rounded-2xl p-5">
@@ -448,7 +376,7 @@ const MarketAnalyticsPremium: React.FC = () => {
               <span className="text-slate-500 text-sm">Середнє зростання</span>
               <TrendingUp className="text-emerald-400" size={20} />
             </div>
-            <p className="text-3xl font-black text-white">+{avgGrowth.toFixed(1)}%</p>
+            {loading ? <div className="h-8 w-24 bg-slate-800 animate-pulse rounded" /> : <p className="text-3xl font-black text-white">+{avgGrowth.toFixed(1)}%</p>}
           </div>
 
           <div className="bg-slate-900/60 border border-white/5 rounded-2xl p-5">
@@ -456,7 +384,7 @@ const MarketAnalyticsPremium: React.FC = () => {
               <span className="text-slate-500 text-sm">Активних сегментів</span>
               <Layers className="text-purple-400" size={20} />
             </div>
-            <p className="text-3xl font-black text-white">{marketSegments.length}</p>
+            {loading ? <div className="h-8 w-24 bg-slate-800 animate-pulse rounded" /> : <p className="text-3xl font-black text-white">{marketSegments.length}</p>}
           </div>
 
           <div className="bg-slate-900/60 border border-white/5 rounded-2xl p-5">
@@ -464,7 +392,7 @@ const MarketAnalyticsPremium: React.FC = () => {
               <span className="text-slate-500 text-sm">Можливостей</span>
               <Sparkles className="text-amber-400" size={20} />
             </div>
-            <p className="text-3xl font-black text-white">{opportunities.length}</p>
+            {loading ? <div className="h-8 w-24 bg-slate-800 animate-pulse rounded" /> : <p className="text-3xl font-black text-white">{opportunities.length}</p>}
           </div>
         </div>
 

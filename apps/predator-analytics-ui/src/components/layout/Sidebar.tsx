@@ -70,8 +70,8 @@ export const Sidebar = () => {
         items: [
           { name: premiumLocales.sidebar.items.agents, path: '/agents', icon: Bot },
           { name: premiumLocales.sidebar.items.orchestrator, path: '/llm/nas', icon: Trophy },
+          { name: 'Навчання Моделі', path: '/training', icon: BrainCircuit, premium: true },
           { name: premiumLocales.sidebar.items.aiCore, path: '/intelligence', icon: Zap, role: 'admin' },
-          { name: premiumLocales.sidebar.items.aiLab, path: '/llm', icon: BrainCircuit, role: 'admin' },
         ]
       },
       {

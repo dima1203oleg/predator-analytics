@@ -41,6 +41,9 @@ import { DatabasePipelineMonitor } from '../components/pipeline/DatabasePipeline
 import { PipelineMonitor } from '../components/pipeline/PipelineMonitor';
 import { api } from '../services/api';
 import { useIngestionStore } from '../store/useIngestionStore';
+import { HoloContainer } from '../components/HoloContainer';
+import { TacticalCard } from '../components/TacticalCard';
+import { CyberOrb } from '../components/CyberOrb';
 import { cn } from '../utils/cn';
 
 // === TYPES ===
@@ -79,46 +82,16 @@ const SOURCE_TYPES = [
   { id: 'rss', label: 'RSS/Atom', icon: Rss, color: 'lime', desc: 'Новинні стрічки та фіди' },
 ];
 
-// === COMPONENTS ===
+const DATA_LAKES_REGISTRY = [
+  { id: 'minio', name: 'MinIO', version: 'RELEASE.2024-01', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Object Storage (Сирі дані)', icon: Archive, color: 'orange', glow: 'yellow' },
+  { id: 'postgres', name: 'PostgreSQL', version: '16.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Primary Relational DB (Факти)', icon: Database, color: 'blue', glow: 'blue' },
+  { id: 'qdrant', name: 'Qdrant', version: '1.7.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Vector Database (Семантика)', icon: Target, color: 'emerald', glow: 'green' },
+  { id: 'opensearch', name: 'OpenSearch', version: '2.11.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Search Engine (Пошук)', icon: Search, color: 'cyan', glow: 'blue' },
+  { id: 'graphdb', name: 'Neo4j', version: '5.16.0', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Graph Database (Зв\'язки)', icon: Share2, color: 'purple', glow: 'purple' },
+  { id: 'redis', name: 'Redis', version: '7.2.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'In-Memory Cache (Кеш)', icon: Zap, color: 'red', glow: 'red' },
+];
 
-const GlowingCard = ({ children, className, glowColor = 'emerald' }: { children: React.ReactNode; className?: string; glowColor?: string }) => (
-  <div className={cn(
-    "relative bg-slate-900/80 backdrop-blur-xl border border-slate-800/50 rounded-2xl overflow-hidden",
-    "before:absolute before:inset-0 before:bg-gradient-to-br before:from-transparent before:via-transparent before:to-slate-800/20",
-    className
-  )}>
-    <div className={cn(
-      "absolute -inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-      `bg-gradient-to-r from-${glowColor}-500/20 via-transparent to-${glowColor}-500/20`
-    )} />
-    {children}
-  </div>
-);
-
-const StatCard = ({ icon: Icon, label, value, trend, color = 'slate' }: {
-  icon: any; label: string; value: string | number; trend?: string; color?: string
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="bg-slate-900/60 backdrop-blur-xl border border-slate-800/50 rounded-2xl p-5 group hover:border-slate-700/50 transition-all"
-  >
-    <div className="flex items-start justify-between mb-3">
-      <div className={cn("p-2.5 rounded-xl", `bg-${color}-500/10 text-${color}-400`)}>
-        <Icon className="w-5 h-5" />
-      </div>
-      {trend && (
-        <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full">
-          {trend}
-        </span>
-      )}
-    </div>
-    <div className="text-2xl font-black text-white mb-1 font-mono tracking-tight">
-      {typeof value === 'number' ? value.toLocaleString('uk-UA') : value}
-    </div>
-    <div className="text-xs font-medium text-slate-500 uppercase tracking-wider">{label}</div>
-  </motion.div>
-);
+// Stat cards were replaced by TacticalCard grid below. Empty component list to keep file clean.
 
 const SourceTypeButton = ({ source, isSelected, onClick }: {
   source: typeof SOURCE_TYPES[0]; isSelected: boolean; onClick: () => void
@@ -628,44 +601,128 @@ const DataIngestionHub = () => {
       )}
 
       {/* Header */}
-      <div className="relative z-10">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-xl">
-                <Database className="w-6 h-6 text-white" />
+      <div className="relative z-20 mb-12">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+          <div className="flex items-center gap-10">
+            {/* The Reactor Visual */}
+            <div className="relative w-32 h-32 flex-shrink-0">
+              <motion.div
+                animate={{ rotate: 360, scale: [1, 1.05, 1] }}
+                transition={{ rotate: { duration: 20, repeat: Infinity, ease: "linear" }, scale: { duration: 4, repeat: Infinity } }}
+                className="absolute inset-0 border-2 border-dashed border-emerald-500/30 rounded-full"
+              />
+              <motion.div
+                animate={{ rotate: -360, scale: [1, 1.1, 1] }}
+                transition={{ rotate: { duration: 15, repeat: Infinity, ease: "linear" }, scale: { duration: 3, repeat: Infinity } }}
+                className="absolute inset-4 border-2 border-emerald-500/20 rounded-full"
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(16,185,129,0.5)] z-10 border border-white/20">
+                  <Database size={32} className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                </div>
               </div>
-              <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">
-                МУЛЬТИДЖЕРЕЛЬНИЙ ІНТЕЛЕКТ
-              </span>
+              {/* Orbits */}
+              {[0, 120, 240].map((angle, i) => (
+                <motion.div
+                  key={i}
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 3 + i, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0 pointer-events-none"
+                  style={{ rotate: angle }}
+                >
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-cyan-400 rounded-full shadow-[0_0_15px_#22d3ee]" />
+                </motion.div>
+              ))}
             </div>
-            <h1 className="text-4xl font-black text-white mb-2 tracking-tight">
-              ЦЕНТР ДАНИХ
-            </h1>
-            <p className="text-lg text-slate-400 max-w-xl">
-              Єдиний хаб для завантаження, парсингу та індексації всіх типів даних.
-              Excel, PDF, аудіо, відео, Telegram, API та веб-сайти — все в одному місці.
-            </p>
+
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-[0.4em] rounded-full">
+                  Central Data Nexus v45
+                </span>
+                <span className="px-3 py-1 bg-white/5 border border-white/10 text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] rounded-full">
+                  Status: Sovereign
+                </span>
+              </div>
+              <h1 className="text-5xl font-black text-white mb-2 tracking-tighter uppercase italic leading-none">
+                ЦЕНТР_<span className="text-emerald-500">ДАНИХ</span>
+              </h1>
+              <p className="text-slate-400 text-sm max-w-xl font-medium leading-relaxed">
+                Глобальне нейронне ядро для управління потоками інформації. <br />
+                <span className="text-emerald-500/60 text-[10px] font-black uppercase tracking-[0.2em]">Sovereign Intelligence Data Fabric Active</span>
+              </p>
+            </div>
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white rounded-xl transition-all shadow-xl shadow-emerald-900/30 font-black tracking-wide"
-          >
-            <Plus className="w-5 h-5" />
-            ДОДАТИ ДЖЕРЕЛО
-          </motion.button>
+          <div className="flex flex-col gap-4">
+            <motion.button
+              whileHover={{ scale: 1.05, filter: 'brightness(1.1)' }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-4 px-10 py-5 bg-gradient-to-r from-emerald-600 via-emerald-500 to-cyan-600 text-white rounded-[24px] transition-all shadow-2xl shadow-emerald-900/40 font-black tracking-widest text-sm border border-emerald-400/30"
+            >
+              <Plus className="w-6 h-6" />
+              ІНТЕГРУВАТИ НОВЕ ДЖЕРЕЛО
+            </motion.button>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 bg-white/5 rounded-2xl border border-white/5 flex flex-col group hover:border-emerald-500/30 transition-all">
+                <span className="text-[8px] font-black text-slate-500 uppercase group-hover:text-emerald-400">Час Роботи</span>
+                <span className="text-xs font-mono text-emerald-400">99.9%</span>
+              </div>
+              <div className="p-3 bg-white/5 rounded-2xl border border-white/5 flex flex-col group hover:border-amber-500/30 transition-all">
+                <span className="text-[8px] font-black text-slate-500 uppercase group-hover:text-amber-400">MinIO Storage</span>
+                <span className="text-xs font-mono text-amber-500 uppercase tracking-tighter">Verified</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Knowledge Storages (Data Lakes) Section */}
+      <div className="mb-0">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Server className="w-5 h-5 text-cyan-400" />
+            <h2 className="text-xl font-black text-white tracking-tight uppercase">Сховища Знань / Data Lakes</h2>
+          </div>
+          <div className="flex items-center gap-4 text-[10px] uppercase tracking-widest font-bold text-slate-500">
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> Системно Активні</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-slate-700"></span> Очікування</span>
+          </div>
         </div>
 
-        {/* Data Lakes Monitor (Live Storages) */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mt-4">
-          <StatCard icon={Archive} label="СИРІ ДАНІ (MINIO)" value={stats.totalSources} color="orange" trend="ГОТОВИЙ" />
-          <StatCard icon={Database} label="ФАКТИ (POSTGRESQL)" value={stats.totalRecords} color="yellow" trend="АКТИВНИЙ" />
-          <StatCard icon={Share2} label="ЗВ'ЯЗКИ (GRAPH DB)" value={`+${stats.processed24h}`} trend="СИНХРО" color="purple" />
-          <StatCard icon={Search} label="ПОШУК (OPENSEARCH)" value={stats.totalRecords * 2} color="cyan" trend="АКТИВНИЙ" />
-          <StatCard icon={Target} label="ВЕКТОРИ (QDRANT)" value={stats.activeStreams * 1536} color="emerald" trend="ГОТОВИЙ" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+          {DATA_LAKES_REGISTRY.map((lake) => (
+            <TacticalCard
+              key={lake.id}
+              title={lake.name}
+              subtitle={`${lake.version}`}
+              icon={<lake.icon size={18} />}
+              variant="holographic"
+              glow={lake.id === 'minio' ? 'yellow' : lake.glow as any}
+              status="success"
+              noPadding
+              className={cn(
+                "min-h-[120px] transition-all duration-500",
+                lake.id === 'minio' ? "border-amber-500/30 bg-amber-500/5" : ""
+              )}
+            >
+              <div className="px-3 pb-3">
+                <div className="flex items-center gap-1.5 mb-2">
+                  {lake.id === 'minio' && <Archive size={10} className="text-amber-400" />}
+                  <div className="text-[10px] text-slate-400 line-clamp-1">{lake.desc}</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className={cn(
+                    "text-[8px] font-black px-1.5 py-0.5 rounded border uppercase tracking-tighter",
+                    lake.id === 'minio' ? "bg-amber-500/20 text-amber-400 border-amber-500/30" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                  )}>
+                    {lake.status}
+                  </span>
+                </div>
+              </div>
+            </TacticalCard>
+          ))}
         </div>
       </div>
 
@@ -734,23 +791,25 @@ const DataIngestionHub = () => {
       </div>
 
       {/* Empty State */}
-      {!loading && sources.length === 0 && (
-        <div className="text-center py-20">
-          <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-slate-900/50 border border-slate-800 flex items-center justify-center">
-            <Database className="w-12 h-12 text-slate-700" />
+      {
+        !loading && sources.length === 0 && (
+          <div className="text-center py-20">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-slate-900/50 border border-slate-800 flex items-center justify-center">
+              <Database className="w-12 h-12 text-slate-700" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-400 mb-2">Джерела даних відсутні</h3>
+            <p className="text-slate-500 mb-6">
+              Додайте перше джерело для початку збору та аналізу даних
+            </p>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold"
+            >
+              Додати перше джерело
+            </button>
           </div>
-          <h3 className="text-xl font-bold text-slate-400 mb-2">Джерела даних відсутні</h3>
-          <p className="text-slate-500 mb-6">
-            Додайте перше джерело для початку збору та аналізу даних
-          </p>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold"
-          >
-            Додати перше джерело
-          </button>
-        </div>
-      )}
+        )
+      }
 
       {/* Add Source Modal */}
       <AnimatePresence>
@@ -901,7 +960,7 @@ const DataIngestionHub = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </div >
   );
 };
 

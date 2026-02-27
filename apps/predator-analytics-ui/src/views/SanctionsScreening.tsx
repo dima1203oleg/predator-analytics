@@ -5,8 +5,9 @@
  * OFAC, EU, UN, UK lists integration
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { api } from '../services/api';
 import {
   Shield,
   Search,
@@ -58,44 +59,8 @@ interface ScreeningResult {
   searchId: string;
 }
 
-// ========================
-// Mock Data
-// ========================
-
-const recentScreenings: ScreeningResult[] = [
-  {
-    id: '1',
-    entityName: 'TransGlobal Logistics Ltd',
-    entityType: 'company',
-    status: 'clean',
-    timestamp: '2026-02-03T04:30:00',
-    matches: [],
-    searchId: 'SCR-2026-001'
-  },
-  {
-    id: '2',
-    entityName: 'Nord Stream Enterprizes',
-    entityType: 'company',
-    status: 'blocked',
-    timestamp: '2026-02-03T03:15:00',
-    matches: [
-      { id: 'm1', list: 'OFAC', program: 'SDN', target: 'Nord Stream Enterprizes', details: 'Blocked Entity', severity: 'high', dateMismatch: false, score: 100 },
-      { id: 'm2', list: 'EU', program: 'Reg. 833/2014', target: 'Nord Stream', details: 'Asset Freeze', severity: 'high', dateMismatch: false, score: 95 }
-    ],
-    searchId: 'SCR-2026-002'
-  },
-  {
-    id: '3',
-    entityName: 'Ivan Petrov',
-    entityType: 'person',
-    status: 'warning',
-    timestamp: '2026-02-02T18:00:00',
-    matches: [
-      { id: 'm3', list: 'PEP', program: 'Domestic', target: 'Ivan Petrovich Petrov', details: 'Potential Match', severity: 'medium', dateMismatch: true, score: 75 }
-    ],
-    searchId: 'SCR-2026-003'
-  }
-];
+// Mock data removed in favor of API
+const defaultRecentScreenings: ScreeningResult[] = [];
 
 // ========================
 // Components
@@ -203,9 +168,25 @@ const StatsCard: React.FC<{ label: string; value: string; color: string; icon: a
 // ========================
 
 const SanctionsScreening: React.FC = () => {
+  const [recentScreenings, setRecentScreenings] = useState<ScreeningResult[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [selectedResult, setSelectedResult] = useState<ScreeningResult | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await api.premium.getSanctionsResults();
+        setRecentScreenings(data);
+      } catch (err) {
+        console.error("Failed to fetch sanctions results", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleSearch = () => {
     if (!searchQuery) return;
@@ -289,10 +270,10 @@ const SanctionsScreening: React.FC = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <StatsCard label="Перевірок сьогодні" value="128" color="cyan" icon={Search} />
-          <StatsCard label="Співпадінь" value="3" color="rose" icon={AlertTriangle} />
-          <StatsCard label="PEP знайдено" value="12" color="amber" icon={User} />
-          <StatsCard label="Чистих" value="113" color="emerald" icon={CheckCircle} />
+          <StatsCard label="Перевірок сьогодні" value={recentScreenings.length.toString()} color="cyan" icon={Search} />
+          <StatsCard label="Співпадінь" value={recentScreenings.filter(r => r.status === 'blocked').length.toString()} color="rose" icon={AlertTriangle} />
+          <StatsCard label="PEP знайдено" value={recentScreenings.filter(r => r.matches.some(m => m.list === 'PEP')).length.toString()} color="amber" icon={User} />
+          <StatsCard label="Чистих" value={recentScreenings.filter(r => r.status === 'clean').length.toString()} color="emerald" icon={CheckCircle} />
         </div>
 
         {/* Results Area */}
@@ -305,11 +286,17 @@ const SanctionsScreening: React.FC = () => {
                 Останні перевірки
               </h3>
             </div>
-            {recentScreenings.map((result) => (
-              <div key={result.id} onClick={() => setSelectedResult(result)}>
-                <ScreeningRow result={result} />
-              </div>
-            ))}
+            {loading ? (
+              Array(3).fill(0).map((_, i) => (
+                <div key={i} className="h-20 bg-slate-900/60 rounded-xl animate-pulse" />
+              ))
+            ) : (
+              recentScreenings.map((result) => (
+                <div key={result.id} onClick={() => setSelectedResult(result)}>
+                  <ScreeningRow result={result} />
+                </div>
+              ))
+            )}
           </div>
 
           {/* Details Panel */}

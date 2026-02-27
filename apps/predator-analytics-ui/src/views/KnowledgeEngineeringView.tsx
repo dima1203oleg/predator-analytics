@@ -13,8 +13,9 @@
  * 9. Cost Governor
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { api } from '../services/api';
 import {
   Workflow, Shield, Users, GitBranch, Activity,
   Scale, FileText, UserCheck, DollarSign,
@@ -41,6 +42,31 @@ const KNOWLEDGE_TABS = [
 
 export const KnowledgeEngineeringView: React.FC = () => {
   const [activeTab, setActiveTab] = useState('quality');
+  const [rules, setRules] = useState<any[]>([]);
+  const [costs, setCosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [rulesData, costsData] = await Promise.all([
+          api.premium.getRules(),
+          api.premium.getCosts()
+        ]);
+        setRules(rulesData);
+        setCosts(costsData);
+      } catch (err) {
+        console.error("Failed to fetch knowledge engineering data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const toggleRule = (id: string) => {
+    setRules(prev => prev.map(r => r.id === id ? { ...r, enabled: !r.enabled } : r));
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -68,20 +94,19 @@ export const KnowledgeEngineeringView: React.FC = () => {
               {['CREATED', 'SOURCE_CHECKED', 'INGESTED', 'PARSED', 'VALIDATED',
                 'TRANSFORMED', 'ENTITIES_RESOLVED', 'LOADED', 'GRAPH_BUILT',
                 'INDEXED', 'VECTORIZED', 'READY'].map((state, i) => (
-                <motion.div
-                  key={state}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  className={`p-3 rounded-lg text-center text-xs font-bold uppercase ${
-                    state === 'READY' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' :
-                    state === 'VALIDATED' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' :
-                    'bg-slate-800 text-slate-400 border border-slate-700'
-                  }`}
-                >
-                  {state.replace('_', ' ')}
-                </motion.div>
-              ))}
+                  <motion.div
+                    key={state}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className={`p-3 rounded-lg text-center text-xs font-bold uppercase ${state === 'READY' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' :
+                        state === 'VALIDATED' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' :
+                          'bg-slate-800 text-slate-400 border border-slate-700'
+                      }`}
+                  >
+                    {state.replace('_', ' ')}
+                  </motion.div>
+                ))}
             </div>
             <div className="mt-6 p-4 bg-slate-800/50 rounded-xl">
               <p className="text-slate-400 text-sm">
@@ -127,37 +152,35 @@ export const KnowledgeEngineeringView: React.FC = () => {
           <div className="bg-slate-900/90 border border-slate-700/50 rounded-2xl p-6">
             <h3 className="text-xl font-bold text-white mb-4">Rules Engine</h3>
             <div className="space-y-3">
-              {[
-                { id: 'fraud_round', name: 'Suspicious round amounts', category: 'fraud', enabled: true },
-                { id: 'sanctions_country', name: 'Sanctioned country', category: 'sanctions', enabled: true },
-                { id: 'duplicate_decl', name: 'Duplicate declaration', category: 'quality', enabled: true },
-                { id: 'hs_mismatch', name: 'Invalid HS code', category: 'customs', enabled: false },
-              ].map(rule => (
-                <div key={rule.id} className="flex items-center justify-between p-4 bg-slate-800/50 rounded-xl">
-                  <div>
-                    <h4 className="text-white font-medium">{rule.name}</h4>
-                    <span className={`text-xs px-2 py-0.5 rounded ${
-                      rule.category === 'fraud' ? 'bg-rose-500/20 text-rose-400' :
-                      rule.category === 'sanctions' ? 'bg-amber-500/20 text-amber-400' :
-                      rule.category === 'customs' ? 'bg-blue-500/20 text-blue-400' :
-                      'bg-slate-700 text-slate-400'
-                    }`}>
-                      {rule.category}
-                    </span>
+              {loading ? (
+                Array(4).fill(0).map((_, i) => <div key={i} className="h-16 bg-slate-800 animate-pulse rounded-xl" />)
+              ) : (
+                rules.map(rule => (
+                  <div key={rule.id} className="flex items-center justify-between p-4 bg-slate-800/50 rounded-xl">
+                    <div>
+                      <h4 className="text-white font-medium">{rule.name}</h4>
+                      <span className={`text-xs px-2 py-0.5 rounded ${rule.category === 'fraud' ? 'bg-rose-500/20 text-rose-400' :
+                          rule.category === 'sanctions' ? 'bg-amber-500/20 text-amber-400' :
+                            rule.category === 'customs' ? 'bg-blue-500/20 text-blue-400' :
+                              'bg-slate-700 text-slate-400'
+                        }`}>
+                        {rule.category}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => toggleRule(rule.id)}
+                      className={`relative w-12 h-6 rounded-full transition-colors ${rule.enabled ? 'bg-emerald-500' : 'bg-slate-600'
+                        }`}
+                      aria-label={`Toggle ${rule.name}`}
+                    >
+                      <motion.div
+                        animate={{ x: rule.enabled ? 24 : 0 }}
+                        className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"
+                      />
+                    </button>
                   </div>
-                  <button
-                    className={`relative w-12 h-6 rounded-full transition-colors ${
-                      rule.enabled ? 'bg-emerald-500' : 'bg-slate-600'
-                    }`}
-                    aria-label={`Toggle ${rule.name}`}
-                  >
-                    <motion.div
-                      animate={{ x: rule.enabled ? 24 : 0 }}
-                      className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"
-                    />
-                  </button>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         );
@@ -167,29 +190,28 @@ export const KnowledgeEngineeringView: React.FC = () => {
           <div className="bg-slate-900/90 border border-slate-700/50 rounded-2xl p-6">
             <h3 className="text-xl font-bold text-white mb-4">Cost & Load Governor</h3>
             <div className="grid grid-cols-2 gap-4">
-              {[
-                { resource: 'LLM API', used: 12.45, limit: 50, color: 'emerald' },
-                { resource: 'Embeddings', used: 3.20, limit: 20, color: 'blue' },
-                { resource: 'Scraping', used: 1.80, limit: 10, color: 'amber' },
-                { resource: 'Telegram', used: 0, limit: 5, color: 'cyan' },
-              ].map(item => (
-                <div key={item.resource} className="bg-slate-800/50 rounded-xl p-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-slate-400">{item.resource}</span>
-                    <span className="text-white font-bold">${item.used.toFixed(2)}</span>
+              {loading ? (
+                Array(4).fill(0).map((_, i) => <div key={i} className="h-24 bg-slate-800 animate-pulse rounded-xl" />)
+              ) : (
+                costs.map(item => (
+                  <div key={item.resource} className="bg-slate-800/50 rounded-xl p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-slate-400">{item.resource}</span>
+                      <span className="text-white font-bold">${item.used.toFixed(2)}</span>
+                    </div>
+                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(item.used / item.limit) * 100}%` }}
+                        className={`h-full bg-${item.color}-500`}
+                      />
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Limit: ${item.limit}/day
+                    </p>
                   </div>
-                  <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(item.used / item.limit) * 100}%` }}
-                      className={`h-full bg-${item.color}-500`}
-                    />
-                  </div>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Limit: ${item.limit}/day
-                  </p>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         );
@@ -231,11 +253,10 @@ export const KnowledgeEngineeringView: React.FC = () => {
               onClick={() => setActiveTab(tab.id)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`p-3 rounded-xl flex flex-col items-center gap-2 transition-all ${
-                isActive
+              className={`p-3 rounded-xl flex flex-col items-center gap-2 transition-all ${isActive
                   ? 'bg-gradient-to-br from-cyan-500/30 to-blue-500/30 border-2 border-cyan-500/50 text-white'
                   : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:border-slate-600'
-              }`}
+                }`}
             >
               <Icon size={20} />
               <span className="text-[10px] font-bold uppercase tracking-tight text-center leading-tight">

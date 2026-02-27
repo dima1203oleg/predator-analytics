@@ -6,8 +6,11 @@
  * Змінює контекст залежно від обраної стратегії: "EARN" (Бізнес) або "CONTROL" (Влада).
  */
 
+import React, { useState, useEffect } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { motion } from 'framer-motion';
+import { PageTransition } from '../components/layout/PageTransition';
+import { AdvancedBackground } from '../components/AdvancedBackground';
 import {
     Activity,
     AlertTriangle,
@@ -23,21 +26,33 @@ import {
     Users,
     Zap
 } from 'lucide-react';
-import React, { useState } from 'react';
-import { AdvancedBackground } from '../components/AdvancedBackground';
-import { PageTransition } from '../components/layout/PageTransition';
 import { TacticalCard } from '../components/TacticalCard';
 import { NeuralPulse } from '../components/ui/NeuralPulse';
+import { api } from '../services/api';
 
 import { useAppStore } from '../store/useAppStore';
 
 type DashboardMode = 'PROFIT' | 'CONTROL';
 
 const SmartDashboard: React.FC = () => {
-    const { persona, userRole } = useAppStore();
+    const { persona } = useAppStore();
     const [mode, setMode] = useState<DashboardMode>(persona === 'TITAN' ? 'PROFIT' : 'CONTROL');
+    const [stats, setStats] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
 
-    // MOCK DATA GENERATORS (Simulation of Real-time Intelligence)
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const data = await api.premium.getDashboardStats();
+                setStats(data);
+            } catch (err) {
+                console.error("Failed to fetch dashboard stats", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchStats();
+    }, []);
     const getChartOption = (mode: DashboardMode) => {
         const color = mode === 'PROFIT' ? '#10b981' : '#f43f5e';
         return {
@@ -88,110 +103,115 @@ const SmartDashboard: React.FC = () => {
 
                 <div className="max-w-7xl mx-auto px-6 pt-10 relative z-10">
 
-                {/* 🎛️ STRATEGY SWITCHER */}
-                <div className="flex justify-between items-end mb-12">
-                    <div>
-                        <h1 className="text-4xl font-black text-white tracking-tighter uppercase mb-2">
-                            Global_<span className={mode === 'PROFIT' ? "text-emerald-400" : "text-rose-500"}>Situation</span>
-                        </h1>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.4em]">
-                            System Mode: {mode === 'PROFIT' ? "Commercial Intelligence" : "Enforcement & Control"}
-                        </p>
+                    {/* 🎛️ STRATEGY SWITCHER */}
+                    <div className="flex justify-between items-end mb-12">
+                        <div>
+                            <h1 className="text-4xl font-black text-white tracking-tighter uppercase mb-2">
+                                Global_<span className={mode === 'PROFIT' ? "text-emerald-400" : "text-rose-500"}>Situation</span>
+                            </h1>
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.4em]">
+                                System Mode: {mode === 'PROFIT' ? "Commercial Intelligence" : "Enforcement & Control"}
+                            </p>
+                        </div>
+
+                        <div className="bg-slate-900/50 p-1 rounded-xl border border-white/10 flex gap-1 backdrop-blur-md">
+                            <button
+                                onClick={() => setMode('PROFIT')}
+                                className={`px-6 py-3 rounded-lg text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${mode === 'PROFIT'
+                                    ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20'
+                                    : 'text-slate-500 hover:text-emerald-400 hover:bg-white/5'
+                                    }`}
+                            >
+                                <TrendingUp size={16} /> Business
+                            </button>
+                            <button
+                                onClick={() => setMode('CONTROL')}
+                                className={`px-6 py-3 rounded-lg text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${mode === 'CONTROL'
+                                    ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20'
+                                    : 'text-slate-500 hover:text-rose-400 hover:bg-white/5'
+                                    }`}
+                            >
+                                <Shield size={16} /> Control
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="bg-slate-900/50 p-1 rounded-xl border border-white/10 flex gap-1 backdrop-blur-md">
-                        <button
-                            onClick={() => setMode('PROFIT')}
-                            className={`px-6 py-3 rounded-lg text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
-                                mode === 'PROFIT'
-                                ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20'
-                                : 'text-slate-500 hover:text-emerald-400 hover:bg-white/5'
-                            }`}
-                        >
-                            <TrendingUp size={16} /> Business
-                        </button>
-                        <button
-                            onClick={() => setMode('CONTROL')}
-                            className={`px-6 py-3 rounded-lg text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
-                                mode === 'CONTROL'
-                                ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20'
-                                : 'text-slate-500 hover:text-rose-400 hover:bg-white/5'
-                            }`}
-                        >
-                            <Shield size={16} /> Control
-                        </button>
-                    </div>
-                </div>
-
-                {/* 📊 DYNAMIC METRICS GRID */}
-                <div className="grid grid-cols-4 gap-6 mb-8">
-                    {mode === 'PROFIT' ? (
-                        <>
-                            <MetricCard icon={<DollarSign />} label="Potential Revenue" value="$4.2M" trend="+12%" color="emerald" />
-                            <MetricCard icon={<Globe />} label="Market Share" value="18.5%" trend="+2.1%" color="cyan" />
-                            <MetricCard icon={<Briefcase />} label="Active Competitors" value="142" trend="-5" color="purple" />
-                            <MetricCard icon={<Zap />} label="Hot Opportunities" value="8" trend="NEW" color="amber" />
-                        </>
-                    ) : (
-                        <>
-                            <MetricCard icon={<AlertTriangle />} label="Critical Risks" value="3" trend="+1" color="rose" />
-                            <MetricCard icon={<Search />} label="Under Investigation" value="12" trend="+4" color="orange" />
-                            <MetricCard icon={<Users />} label="Linked Entities" value="1,204" trend="+56" color="indigo" />
-                            <MetricCard icon={<FileText />} label="Evidence Collected" value="4.5GB" trend="+200MB" color="blue" />
-                        </>
-                    )}
-                </div>
-
-                {/* 🧠 MAIN ANALYTICAL VIEW */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                    {/* Main Chart */}
-                    <div className="lg:col-span-2">
-                        <TacticalCard
-                            title={mode === 'PROFIT' ? "Market Dynamics" : "Anomaly Detection Timeline"}
-                            subtitle={mode === 'PROFIT' ? "Real-time revenue projection vs Competitors" : "Frequency of suspicious transactions"}
-                            variant="glass"
-                        >
-                            <div className="p-6 h-[400px]">
-                                <ReactECharts option={getChartOption(mode)} style={{ height: '100%', width: '100%' }} />
-                            </div>
-                        </TacticalCard>
+                    {/* 📊 DYNAMIC METRICS GRID */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        {loading ? (
+                            Array(4).fill(0).map((_, i) => (
+                                <div key={i} className="h-32 bg-slate-900/40 rounded-2xl animate-pulse border border-white/5" />
+                            ))
+                        ) : (
+                            (mode === 'PROFIT' ? stats?.profit : stats?.control)?.map((s: any) => (
+                                <MetricCard
+                                    key={s.id}
+                                    icon={s.label.includes('Revenue') ? <DollarSign /> : s.label.includes('Market') ? <Globe /> : s.label.includes('Competitors') ? <Briefcase /> : s.label.includes('Opportunities') ? <Zap /> : s.label.includes('Risks') ? <AlertTriangle /> : s.label.includes('Investigation') ? <Search /> : s.label.includes('Entities') ? <Users /> : <FileText />}
+                                    label={s.label}
+                                    value={s.value}
+                                    trend={s.trend}
+                                    color={s.color}
+                                />
+                            ))
+                        )}
                     </div>
 
-                    {/* Side Intelligence Feed */}
-                    <div className="space-y-6">
-                        <TacticalCard
-                            title={mode === 'PROFIT' ? "Competitor Moves" : "Red Flags Detected"}
-                            className="h-full"
-                        >
-                            <div className="p-6 space-y-4">
-                                {(mode === 'PROFIT' ? PROFIT_FEED : CONTROL_FEED).map((item, i) => (
-                                    <motion.div
-                                        key={i}
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: i * 0.1 }}
-                                        className={`p-4 rounded-xl border-l-4 ${mode === 'PROFIT' ? 'border-emerald-500 bg-emerald-500/5' : 'border-rose-500 bg-rose-500/5'} border-t border-r border-b border-white/5`}
-                                    >
-                                        <div className="flex justify-between items-start mb-1">
-                                            <span className="text-[10px] font-black uppercase text-slate-500">{item.time}</span>
-                                            <span className={`text-[9px] font-bold px-2 py-0.5 rounded text-white ${mode === 'PROFIT' ? 'bg-emerald-500' : 'bg-rose-500'}`}>{item.tag}</span>
+                    {/* 🧠 MAIN ANALYTICAL VIEW */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                        {/* Main Chart */}
+                        <div className="lg:col-span-2">
+                            <TacticalCard
+                                title={mode === 'PROFIT' ? "Market Dynamics" : "Anomaly Detection Timeline"}
+                                subtitle={mode === 'PROFIT' ? "Real-time revenue projection vs Competitors" : "Frequency of suspicious transactions"}
+                                variant="glass"
+                            >
+                                <div className="p-6 h-[400px]">
+                                    <ReactECharts option={getChartOption(mode)} style={{ height: '100%', width: '100%' }} />
+                                </div>
+                            </TacticalCard>
+                        </div>
+
+                        {/* Side Intelligence Feed */}
+                        <div className="space-y-6">
+                            <TacticalCard
+                                title={mode === 'PROFIT' ? "Competitor Moves" : "Red Flags Detected"}
+                                className="h-full"
+                            >
+                                <div className="p-6 space-y-4">
+                                    {loading ? (
+                                        <div className="text-center py-10">
+                                            <div className="animate-spin w-6 h-6 border-2 border-slate-500 border-t-transparent rounded-full mx-auto" />
                                         </div>
-                                        <p className="text-sm font-bold text-white mb-1">{item.title}</p>
-                                        <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </TacticalCard>
+                                    ) : (
+                                        (mode === 'PROFIT' ? stats?.feeds?.profit : stats?.feeds?.control)?.map((item: any, i: number) => (
+                                            <motion.div
+                                                key={i}
+                                                initial={{ opacity: 0, x: 20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: i * 0.1 }}
+                                                className={`p-4 rounded-xl border-l-4 ${mode === 'PROFIT' ? 'border-emerald-500 bg-emerald-500/5' : 'border-rose-500 bg-rose-500/5'} border-t border-r border-b border-white/5`}
+                                            >
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <span className="text-[10px] font-black uppercase text-slate-500">{item.time}</span>
+                                                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded text-white ${mode === 'PROFIT' ? 'bg-emerald-500' : 'bg-rose-500'}`}>{item.tag}</span>
+                                                </div>
+                                                <p className="text-sm font-bold text-white mb-1">{item.title}</p>
+                                                <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+                                            </motion.div>
+                                        ))
+                                    )}
+                                </div>
+                            </TacticalCard>
+                        </div>
                     </div>
-                </div>
 
-                {/* 📂 QUICK ACCESS (Common for both) */}
-                <div className="mt-8 grid grid-cols-3 gap-6">
-                    <ActionButton icon={<Target />} label={mode === 'PROFIT' ? "Find New Clients" : "Start Inspection"} color={mode === 'PROFIT' ? 'emerald' : 'rose'} />
-                    <ActionButton icon={<FileText />} label="Generate Report" color="slate" />
-                    <ActionButton icon={<Activity />} label="View Live Pipelines" color="indigo" onClick={() => window.location.href = '/ingest'} />
-                </div>
+                    {/* 📂 QUICK ACCESS (Common for both) */}
+                    <div className="mt-8 grid grid-cols-3 gap-6">
+                        <ActionButton icon={<Target />} label={mode === 'PROFIT' ? "Find New Clients" : "Start Inspection"} color={mode === 'PROFIT' ? 'emerald' : 'rose'} />
+                        <ActionButton icon={<FileText />} label="Generate Report" color="slate" />
+                        <ActionButton icon={<Activity />} label="View Live Pipelines" color="indigo" onClick={() => window.location.href = '/ingest'} />
+                    </div>
 
                 </div>
             </div>
@@ -229,16 +249,5 @@ const ActionButton: React.FC<{ icon: any, label: string, color: string, onClick?
     </button>
 );
 
-const PROFIT_FEED = [
-    { time: '14:30', tag: 'OPPORTUNITY', title: 'High Demand: Electronics', desc: 'Competitor A ran out of stock. Estimated gap: $200k.' },
-    { time: '12:15', tag: 'PRICE ALERT', title: 'Steel Prices Drop', desc: 'Global index down 4%. Good time to procure raw materials.' },
-    { time: '09:45', tag: 'COMPETITOR', title: 'New Import Record', desc: 'Company X imported 50t of generic goods from China.' }
-];
-
-const CONTROL_FEED = [
-    { time: '14:32', tag: 'CRITICAL', title: 'Under-invoicing Detected', desc: 'Container #8922 declared value is 40% below market average.' },
-    { time: '12:20', tag: 'RELATION', title: 'Hidden Beneficiary', desc: 'Company Y connected to sanctioned entity via 2 intermediaries.' },
-    { time: '10:05', tag: 'PATTERN', title: 'Circular Transaction', desc: 'Funds moving in rapid cycle between 3 related firms.' }
-];
-
+// Feeds moved to API
 export default SmartDashboard;
