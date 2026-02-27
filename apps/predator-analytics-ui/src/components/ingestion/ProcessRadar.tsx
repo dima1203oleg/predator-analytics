@@ -1,11 +1,35 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Activity, Bell, Layers, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useIngestionStore } from '../../store/useIngestionStore';
+import { api } from '../../services/api';
 import { cn } from '../../utils/cn';
 
 export const ProcessRadar = () => {
     const { activeJobs, minimized, setMinimized, isHubOpen, setHubOpen } = useIngestionStore();
-    const activeCount = Object.values(activeJobs).filter(j => j.status !== 'ready' && j.status !== 'failed').length;
+    const [realJobs, setRealJobs] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchJobs = async () => {
+            try {
+                const data = await api.getETLJobs(10);
+                if (data && Array.isArray(data)) {
+                    setRealJobs(data.filter((j: any) => j.status !== 'READY' && j.status !== 'FAILED' && j.status !== 'completed' && j.status !== 'failed' && j.state !== 'READY' && j.state !== 'FAILED'));
+                }
+            } catch (e) {
+                // Ignore error, keep previous state
+            }
+        };
+
+        fetchJobs();
+        const interval = setInterval(fetchJobs, 3000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const localActiveJobs = Object.values(activeJobs).filter(j => j.status !== 'ready' && j.status !== 'failed');
+
+    // Merge local jobs with real backend jobs, prioritizing unique tasks
+    const activeCount = localActiveJobs.length + realJobs.length;
 
     if (activeCount === 0) return null;
 
@@ -69,7 +93,8 @@ export const ProcessRadar = () => {
                             </div>
 
                             <div className="space-y-4">
-                                {Object.values(activeJobs).filter(j => j.status !== 'ready' && j.status !== 'failed').slice(0, 3).map(job => (
+                                {/* Local Upload Jobs */}
+                                {localActiveJobs.slice(0, 2).map(job => (
                                     <div key={job.id} className="space-y-1.5">
                                         <div className="flex justify-between items-center text-[10px]">
                                             <div className="flex items-center gap-2 max-w-[180px]">
@@ -91,6 +116,36 @@ export const ProcessRadar = () => {
                                         </div>
                                     </div>
                                 ))}
+
+                                {/* Real Backend Jobs */}
+                                {realJobs.slice(0, Math.max(0, 3 - localActiveJobs.length)).map(job => {
+                                    const percent = job.progress?.percent || 0;
+                                    const stage = job.progress?.stage || job.status || job.state || 'Обробка';
+                                    const name = job.name || job.source_name || `Завдання ${job.id?.substring(0, 8)}`;
+
+                                    return (
+                                        <div key={job.id || job.job_id} className="space-y-1.5 opacity-90">
+                                            <div className="flex justify-between items-center text-[10px]">
+                                                <div className="flex items-center gap-2 max-w-[180px]">
+                                                    <Activity size={10} className="text-blue-500" />
+                                                    <span className="text-white font-black truncate uppercase">{name}</span>
+                                                </div>
+                                                <span className="text-blue-400 font-mono font-bold">{percent}%</span>
+                                            </div>
+                                            <div className="h-1 bg-slate-800/50 rounded-full overflow-hidden border border-white/5">
+                                                <motion.div
+                                                    className="h-full bg-gradient-to-r from-blue-600 to-cyan-400 shadow-[0_0_8px_#3b82f6]"
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${percent}%` }}
+                                                />
+                                            </div>
+                                            <div className="flex justify-between text-[8px] uppercase tracking-tighter text-slate-500 font-bold italic">
+                                                <span>{stage}</span>
+                                                <span className="animate-pulse text-cyan-500/50">ETL Ядро</span>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
 
                             {activeCount > 3 && (
