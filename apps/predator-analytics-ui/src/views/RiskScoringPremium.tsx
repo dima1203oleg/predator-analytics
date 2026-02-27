@@ -5,8 +5,9 @@
  * Виявлення схем, ризиків, порушень
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { api } from '../services/api';
 import {
   ShieldAlert,
   AlertTriangle,
@@ -78,110 +79,9 @@ interface Investigation {
   potentialRecovery: number;
 }
 
-// ========================
-// Mock Data
-// ========================
-
-const riskEntities: RiskEntity[] = [
-  {
-    id: '1',
-    name: 'ТОВ "ТрансСхема"',
-    edrpou: '87654321',
-    riskScore: 94,
-    riskLevel: 'critical',
-    flags: ['Заниження вартості', 'Офшорні зв\'язки', 'Карусельна схема'],
-    lastActivity: '2026-01-31',
-    totalOperations: 156,
-    suspiciousAmount: 8900000,
-    linkedEntities: 12,
-    investigations: 2
-  },
-  {
-    id: '2',
-    name: 'ПрАТ "ІмпортОптима"',
-    edrpou: '76543210',
-    riskScore: 87,
-    riskLevel: 'high',
-    flags: ['Зміна кодів УКТЗЕД', 'Нетипові обсяги'],
-    lastActivity: '2026-01-30',
-    totalOperations: 89,
-    suspiciousAmount: 4500000,
-    linkedEntities: 5,
-    investigations: 1
-  },
-  {
-    id: '3',
-    name: 'ТОВ "ФасадКомпані"',
-    edrpou: '65432109',
-    riskScore: 78,
-    riskLevel: 'high',
-    flags: ['Shell company', 'Пов\'язані особи'],
-    lastActivity: '2026-01-28',
-    totalOperations: 34,
-    suspiciousAmount: 2100000,
-    linkedEntities: 8,
-    investigations: 0
-  },
-  {
-    id: '4',
-    name: 'ФОП Петренко В.М.',
-    edrpou: '3456789012',
-    riskScore: 65,
-    riskLevel: 'medium',
-    flags: ['Розбиття партій', 'Часті зміни постачальників'],
-    lastActivity: '2026-01-31',
-    totalOperations: 245,
-    suspiciousAmount: 890000,
-    linkedEntities: 3,
-    investigations: 0
-  },
-  {
-    id: '5',
-    name: 'ТОВ "АгроТрейдПлюс"',
-    edrpou: '54321098',
-    riskScore: 45,
-    riskLevel: 'low',
-    flags: ['Незначні розходження'],
-    lastActivity: '2026-01-29',
-    totalOperations: 78,
-    suspiciousAmount: 120000,
-    linkedEntities: 1,
-    investigations: 0
-  }
-];
-
-const investigations: Investigation[] = [
-  {
-    id: '1',
-    entityName: 'ТОВ "ТрансСхема"',
-    status: 'in_progress',
-    priority: 'critical',
-    assignedTo: 'Слідчий Коваленко О.І.',
-    createdAt: '2026-01-15',
-    findings: 8,
-    potentialRecovery: 4500000
-  },
-  {
-    id: '2',
-    entityName: 'Група компаній "Імпорт-Експорт"',
-    status: 'open',
-    priority: 'high',
-    assignedTo: 'Аналітик Шевченко М.П.',
-    createdAt: '2026-01-28',
-    findings: 3,
-    potentialRecovery: 2100000
-  },
-  {
-    id: '3',
-    entityName: 'ПрАТ "ІмпортОптима"',
-    status: 'escalated',
-    priority: 'high',
-    assignedTo: 'Прокурор Бондаренко Г.В.',
-    createdAt: '2026-01-10',
-    findings: 12,
-    potentialRecovery: 7800000
-  }
-];
+// Mock data removed in favor of API
+const defaultRiskEntities: RiskEntity[] = [];
+const defaultInvestigations: Investigation[] = [];
 
 // ========================
 // Components
@@ -250,7 +150,7 @@ const EntityCard: React.FC<{ entity: RiskEntity; onSelect: () => void }> = ({ en
         p-5 rounded-2xl bg-slate-900/60 border cursor-pointer transition-all
         ${entity.riskLevel === 'critical' ? 'border-rose-500/30 hover:border-rose-500/50' :
           entity.riskLevel === 'high' ? 'border-amber-500/30 hover:border-amber-500/50' :
-          'border-white/5 hover:border-white/10'}
+            'border-white/5 hover:border-white/10'}
       `}
     >
       <div className="flex items-start gap-4">
@@ -331,11 +231,10 @@ const InvestigationCard: React.FC<{ investigation: Investigation }> = ({ investi
             <Icon size={12} />
             {config.label}
           </span>
-          <span className={`px-2 py-1 text-xs font-bold rounded-lg ${
-            investigation.priority === 'critical' ? 'bg-rose-500/20 text-rose-400' :
-            investigation.priority === 'high' ? 'bg-amber-500/20 text-amber-400' :
-            'bg-slate-700 text-slate-400'
-          }`}>
+          <span className={`px-2 py-1 text-xs font-bold rounded-lg ${investigation.priority === 'critical' ? 'bg-rose-500/20 text-rose-400' :
+              investigation.priority === 'high' ? 'bg-amber-500/20 text-amber-400' :
+                'bg-slate-700 text-slate-400'
+            }`}>
             {investigation.priority.toUpperCase()}
           </span>
         </div>
@@ -362,9 +261,30 @@ const InvestigationCard: React.FC<{ investigation: Investigation }> = ({ investi
 // ========================
 
 const RiskScoringPremium: React.FC = () => {
+  const [riskEntities, setRiskEntities] = useState<RiskEntity[]>([]);
+  const [investigations, setInvestigations] = useState<Investigation[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
   const [selectedEntity, setSelectedEntity] = useState<RiskEntity | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [entities, invs] = await Promise.all([
+          api.premium.getRiskEntities(),
+          api.premium.getInvestigations()
+        ]);
+        setRiskEntities(entities);
+        setInvestigations(invs);
+      } catch (err) {
+        console.error("Failed to fetch risk data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const filteredEntities = useMemo(() => {
     let result = [...riskEntities];
@@ -381,7 +301,7 @@ const RiskScoringPremium: React.FC = () => {
     }
 
     return result.sort((a, b) => b.riskScore - a.riskScore);
-  }, [searchQuery, selectedLevel]);
+  }, [riskEntities, searchQuery, selectedLevel]);
 
   const stats = useMemo(() => ({
     critical: riskEntities.filter(e => e.riskLevel === 'critical').length,
@@ -389,7 +309,7 @@ const RiskScoringPremium: React.FC = () => {
     medium: riskEntities.filter(e => e.riskLevel === 'medium').length,
     low: riskEntities.filter(e => e.riskLevel === 'low').length,
     totalSuspicious: riskEntities.reduce((acc, e) => acc + e.suspiciousAmount, 0)
-  }), []);
+  }), [riskEntities]);
 
   return (
     <div className="min-h-screen bg-slate-950 p-6">
@@ -432,9 +352,8 @@ const RiskScoringPremium: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <div
             onClick={() => setSelectedLevel('critical')}
-            className={`p-4 rounded-xl bg-slate-900/60 border cursor-pointer transition-all ${
-              selectedLevel === 'critical' ? 'border-rose-500' : 'border-rose-500/20 hover:border-rose-500/40'
-            }`}
+            className={`p-4 rounded-xl bg-slate-900/60 border cursor-pointer transition-all ${selectedLevel === 'critical' ? 'border-rose-500' : 'border-rose-500/20 hover:border-rose-500/40'
+              }`}
           >
             <div className="flex items-center justify-between mb-2">
               <XCircle className="text-rose-500" size={20} />
@@ -445,9 +364,8 @@ const RiskScoringPremium: React.FC = () => {
 
           <div
             onClick={() => setSelectedLevel('high')}
-            className={`p-4 rounded-xl bg-slate-900/60 border cursor-pointer transition-all ${
-              selectedLevel === 'high' ? 'border-amber-500' : 'border-amber-500/20 hover:border-amber-500/40'
-            }`}
+            className={`p-4 rounded-xl bg-slate-900/60 border cursor-pointer transition-all ${selectedLevel === 'high' ? 'border-amber-500' : 'border-amber-500/20 hover:border-amber-500/40'
+              }`}
           >
             <div className="flex items-center justify-between mb-2">
               <AlertTriangle className="text-amber-500" size={20} />
@@ -458,9 +376,8 @@ const RiskScoringPremium: React.FC = () => {
 
           <div
             onClick={() => setSelectedLevel('medium')}
-            className={`p-4 rounded-xl bg-slate-900/60 border cursor-pointer transition-all ${
-              selectedLevel === 'medium' ? 'border-yellow-500' : 'border-yellow-500/20 hover:border-yellow-500/40'
-            }`}
+            className={`p-4 rounded-xl bg-slate-900/60 border cursor-pointer transition-all ${selectedLevel === 'medium' ? 'border-yellow-500' : 'border-yellow-500/20 hover:border-yellow-500/40'
+              }`}
           >
             <div className="flex items-center justify-between mb-2">
               <AlertCircle className="text-yellow-500" size={20} />
@@ -471,9 +388,8 @@ const RiskScoringPremium: React.FC = () => {
 
           <div
             onClick={() => setSelectedLevel('low')}
-            className={`p-4 rounded-xl bg-slate-900/60 border cursor-pointer transition-all ${
-              selectedLevel === 'low' ? 'border-emerald-500' : 'border-emerald-500/20 hover:border-emerald-500/40'
-            }`}
+            className={`p-4 rounded-xl bg-slate-900/60 border cursor-pointer transition-all ${selectedLevel === 'low' ? 'border-emerald-500' : 'border-emerald-500/20 hover:border-emerald-500/40'
+              }`}
           >
             <div className="flex items-center justify-between mb-2">
               <CheckCircle className="text-emerald-500" size={20} />
@@ -484,9 +400,8 @@ const RiskScoringPremium: React.FC = () => {
 
           <div
             onClick={() => setSelectedLevel('all')}
-            className={`p-4 rounded-xl bg-gradient-to-r from-rose-500/10 to-amber-500/10 border cursor-pointer ${
-              selectedLevel === 'all' ? 'border-white/30' : 'border-white/10'
-            }`}
+            className={`p-4 rounded-xl bg-gradient-to-r from-rose-500/10 to-amber-500/10 border cursor-pointer ${selectedLevel === 'all' ? 'border-white/30' : 'border-white/10'
+              }`}
           >
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="text-white" size={20} />
@@ -524,13 +439,19 @@ const RiskScoringPremium: React.FC = () => {
               </span>
             </div>
 
-            {filteredEntities.map((entity) => (
-              <EntityCard
-                key={entity.id}
-                entity={entity}
-                onSelect={() => setSelectedEntity(entity)}
-              />
-            ))}
+            {loading ? (
+              Array(3).fill(0).map((_, i) => (
+                <div key={i} className="h-32 bg-slate-900/60 rounded-2xl animate-pulse border border-white/5" />
+              ))
+            ) : (
+              filteredEntities.map((entity) => (
+                <EntityCard
+                  key={entity.id}
+                  entity={entity}
+                  onSelect={() => setSelectedEntity(entity)}
+                />
+              ))
+            )}
           </div>
 
           {/* Active Investigations */}
@@ -541,9 +462,15 @@ const RiskScoringPremium: React.FC = () => {
             </h2>
 
             <div className="space-y-3">
-              {investigations.map((inv) => (
-                <InvestigationCard key={inv.id} investigation={inv} />
-              ))}
+              {loading ? (
+                Array(2).fill(0).map((_, i) => (
+                  <div key={i} className="h-24 bg-slate-800/50 rounded-xl animate-pulse" />
+                ))
+              ) : (
+                investigations.map((inv) => (
+                  <InvestigationCard key={inv.id} investigation={inv} />
+                ))
+              )}
             </div>
 
             <button className="w-full mt-4 py-3 border border-white/10 rounded-xl text-slate-400 hover:text-white transition-colors text-sm">

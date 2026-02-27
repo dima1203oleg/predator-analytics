@@ -612,17 +612,284 @@ app.get('/api/v1/system/infrastructure', (req, res) => {
 
 // Premium
 app.get('/api/v1/premium/intelligence-alerts', (req, res) => {
-  const highRisk = DB_FACTS.filter(d => d.risk_score > 80).slice(0, 3);
+  const highRisk = DB_FACTS.filter(d => d.risk_score > 75).slice(0, 10);
   const alerts = highRisk.map((d, i) => ({
-    id: `alert-${i}`, severity: 'high',
-    title: `Ризикова декларація: ${d.company_name}`,
-    description: `${d.goods_description} з ${d.country_origin} — ризик ${d.risk_score}%`,
-    timestamp: d.ingested_at
+    id: `alert-${d.id}-${i}`,
+    severity: d.risk_score > 90 ? 'critical' : d.risk_score > 80 ? 'high' : 'medium',
+    title: d.risk_score > 90 ? `КРИТИЧНИЙ РИЗИК: ${d.company_name}` : `Ризикова декларація: ${d.company_name}`,
+    description: `${d.goods_description} з ${d.country_origin} — зафіксовано аномальний ризик ${d.risk_score}% (код: ${d.hs_code})`,
+    timestamp: d.ingested_at,
+    category: d.risk_score > 90 ? 'risk' : 'competitor',
+    status: 'active',
+    source: 'Neural Risk Scanner v45',
+    data: { company: d.company_name, score: d.risk_score, value: d.customs_value_usd }
   }));
+
   if (alerts.length === 0) {
-    alerts.push({ id: 'alert-0', severity: 'info', title: 'Немає ризикових декларацій', description: 'Завантажте дані через Центр Даних', timestamp: new Date().toISOString() });
+    alerts.push({
+      id: 'alert-initial-0',
+      severity: 'critical',
+      title: 'Система готова до аналізу',
+      description: 'Чекаємо на перші дані для запуску нейронного сканера.',
+      timestamp: new Date().toISOString(),
+      category: 'system',
+      status: 'active',
+      source: 'System Runtime'
+    });
   }
   res.json(alerts);
+});
+
+app.get('/api/v1/premium/alert-rules', (req, res) => {
+  res.json([
+    {
+      id: '1',
+      name: 'Падіння цін більше 15%',
+      category: 'price',
+      condition: 'price_change < -15%',
+      threshold: -15,
+      isEnabled: true,
+      notifications: { email: true, push: true, sms: true },
+      triggeredCount: 12
+    },
+    {
+      id: '2',
+      name: 'Новий конкурент в сегменті',
+      category: 'competitor',
+      condition: 'new_competitor_detected',
+      threshold: 0,
+      isEnabled: true,
+      notifications: { email: true, push: true, sms: false },
+      triggeredCount: 5
+    },
+    {
+      id: '3',
+      name: 'Ризик-скор вище 80',
+      category: 'risk',
+      condition: 'risk_score > 80',
+      threshold: 80,
+      isEnabled: true,
+      notifications: { email: true, push: true, sms: true },
+      triggeredCount: 3
+    },
+    {
+      id: '4',
+      name: 'Аномальна вартість (Outlier)',
+      category: 'risk',
+      condition: 'z-score > 3.0',
+      threshold: 3,
+      isEnabled: true,
+      notifications: { email: false, push: true, sms: false },
+      triggeredCount: 1
+    }
+  ]);
+});
+
+app.get('/api/v1/premium/trade-flows', (req, res) => {
+  const countries = [
+    { id: 'ua', name: 'Україна', code: 'UA', x: 55, y: 35, imports: 0, exports: 0 },
+    { id: 'cn', name: 'Китай', code: 'CN', x: 78, y: 42, imports: 245000000, exports: 12000000 },
+    { id: 'de', name: 'Німеччина', code: 'DE', x: 48, y: 32, imports: 89000000, exports: 45000000 },
+    { id: 'pl', name: 'Польща', code: 'PL', x: 51, y: 33, imports: 78000000, exports: 56000000 },
+    { id: 'tr', name: 'Туреччина', code: 'TR', x: 58, y: 45, imports: 67000000, exports: 23000000 },
+    { id: 'vn', name: "В'єтнам", code: 'VN', x: 82, y: 52, imports: 56000000, exports: 5000000 },
+    { id: 'us', name: 'США', code: 'US', x: 20, y: 38, imports: 28000000, exports: 15000000 }
+  ];
+
+  const flows = countries.filter(c => c.id !== 'ua').map((c, i) => ({
+    id: `flow-${i}`,
+    from: c.id,
+    to: 'ua',
+    value: c.imports,
+    product: ['Електроніка', 'Хімія', 'Добрива', 'Метал', 'Текстиль', 'Обладнання'][i % 6],
+    color: ['#22d3ee', '#a855f7', '#22c55e', '#f59e0b', '#ec4899', '#3b82f6'][i % 6]
+  }));
+
+  res.json({ countries, flows });
+});
+
+app.get('/api/v1/premium/market-segments', (req, res) => {
+  res.json([
+    { id: '1', name: 'Електроніка та компоненти', volume: 245000000, change: 18.5, trend: 'up', topPlayers: ['ТОВ "ТехноІмпорт"', 'ПрАТ "ЕлектроСвіт"'], avgPrice: 125, priceChange: -5.2 },
+    { id: '2', name: 'Хімічна продукція', volume: 189000000, change: 7.2, trend: 'up', topPlayers: ['ТОВ "ХімТрейд"', 'ПрАТ "АгроХім"'], avgPrice: 2.45, priceChange: 12.3 },
+    { id: '3', name: 'Будівельні матеріали', volume: 134000000, change: 22.1, trend: 'up', topPlayers: ['ТОВ "БудМат"', 'ПрАТ "СтройІмпорт"'], avgPrice: 18.5, priceChange: -2.8 }
+  ]);
+});
+
+app.get('/api/v1/premium/opportunities', (req, res) => {
+  res.json([
+    { id: '1', type: 'price_drop', title: 'Падіння цін на LED панелі', description: 'Ціни з В\'єтнаму впали на 23%. Оптимальний час для закупівлі.', potentialSaving: 125000, confidence: 92, urgency: 'high' },
+    { id: '2', type: 'new_supplier', title: 'Новий постачальник добрив з Польщі', description: 'Grupa Azoty запустила нову лінію. Ціни на 15% нижче ринку.', potentialSaving: 89000, confidence: 87, urgency: 'medium' }
+  ]);
+});
+
+app.get('/api/v1/premium/dashboard-stats', (req, res) => {
+  const totalValue = DB_FACTS.reduce((sum, d) => sum + (d.customs_value_usd || 0), 0);
+  const riskCount = DB_FACTS.filter(d => d.risk_score > 80).length;
+
+  res.json({
+    profit: [
+      { id: '1', label: 'Potential Revenue', value: `$${(totalValue / 1000000).toFixed(1)}M`, trend: '+12%', color: 'emerald' },
+      { id: '2', label: 'Market Share', value: '18.5%', trend: '+2.1%', color: 'cyan' },
+      { id: '3', label: 'Active Competitors', value: '142', trend: '-5', color: 'purple' },
+      { id: '4', label: 'Hot Opportunities', value: '8', trend: 'NEW', color: 'amber' }
+    ],
+    control: [
+      { id: '1', label: 'Critical Risks', value: riskCount.toString(), trend: '+1', color: 'rose' },
+      { id: '2', label: 'Under Investigation', value: '12', trend: '+4', color: 'orange' },
+      { id: '3', label: 'Linked Entities', value: (DB_FACTS.length * 5).toString(), trend: '+56', color: 'indigo' },
+      { id: '4', label: 'Evidence Collected', value: '4.5GB', trend: '+200MB', color: 'blue' }
+    ],
+    feeds: {
+      profit: [
+        { time: '14:30', tag: 'OPPORTUNITY', title: 'High Demand: Electronics', desc: 'Competitor A ran out of stock. Estimated gap: $200k.' },
+        { time: '12:15', tag: 'PRICE ALERT', title: 'Steel Prices Drop', desc: 'Global index down 4%. Good time to procure raw materials.' }
+      ],
+      control: [
+        { time: '14:32', tag: 'CRITICAL', title: 'Under-invoicing Detected', desc: 'Container #8922 declared value is 40% below market average.' },
+        { time: '12:20', tag: 'RELATION', title: 'Hidden Beneficiary', desc: 'Company Y connected to sanctioned entity via 2 intermediaries.' }
+      ]
+    }
+  });
+});
+
+app.get('/api/v1/premium/ai-insights', (req, res) => {
+  res.json([
+    {
+      id: '1',
+      type: 'opportunity',
+      priority: 'critical',
+      title: 'Оптимальний час для закупівлі LED панелей',
+      description: 'На основі аналізу декларацій, ціни на LED панелі досягли мінімуму. Прогнозується зростання на 18%.',
+      confidence: 94,
+      impact: 'Економія до $45,000',
+      category: 'Закупівлі',
+      createdAt: new Date().toISOString(),
+      actionable: true,
+      actions: [{ label: 'Знайти постачальників', type: 'primary' }],
+      saved: false
+    },
+    {
+      id: '2',
+      type: 'anomaly',
+      priority: 'high',
+      title: 'Незвична активність компанії "ТрансСхема"',
+      description: 'Виявлено 340% зростання імпорту за останній тиждень.',
+      confidence: 87,
+      impact: 'Ризик: $120,000',
+      category: 'Ризики',
+      createdAt: new Date().toISOString(),
+      actionable: true,
+      actions: [{ label: 'Розпочати розслідування', type: 'primary' }],
+      saved: true
+    }
+  ]);
+});
+
+app.get('/api/v1/premium/predictions', (req, res) => {
+  res.json([
+    { id: '1', title: 'Імпорт електроніки', currentValue: 245, predictedValue: 289, timeframe: '30 днів', confidence: 87, trend: 'up' },
+    { id: '2', title: 'Ціни на добрива', currentValue: 420, predictedValue: 385, timeframe: '14 днів', confidence: 82, trend: 'down' }
+  ]);
+});
+
+app.get('/api/v1/premium/risk-entities', (req, res) => {
+  res.json([
+    {
+      id: '1',
+      name: 'ТОВ "ТрансСхема"',
+      edrpou: '12345678',
+      riskScore: 94,
+      riskLevel: 'critical',
+      flags: ['Заниження вартості', 'Офшорні зв\'язки', 'Карусельна схема'],
+      lastActivity: '2026-02-01',
+      totalOperations: 156,
+      suspiciousAmount: 8900000,
+      linkedEntities: 12,
+      investigations: 2
+    },
+    {
+      id: '2',
+      name: 'ПрАТ "ІмпортОптима"',
+      edrpou: '23456789',
+      riskScore: 87,
+      riskLevel: 'high',
+      flags: ['Зміна кодів УКТЗЕД', 'Нетипові обсяги'],
+      lastActivity: '2026-01-30',
+      totalOperations: 89,
+      suspiciousAmount: 4500000,
+      linkedEntities: 5,
+      investigations: 1
+    }
+  ]);
+});
+
+app.get('/api/v1/premium/investigations', (req, res) => {
+  res.json([
+    {
+      id: '1',
+      entityName: 'ТОВ "ТрансСхема"',
+      status: 'in_progress',
+      priority: 'critical',
+      assignedTo: 'Слідчий Коваленко О.І.',
+      createdAt: '2026-01-15',
+      findings: 8,
+      potentialRecovery: 4500000
+    },
+    {
+      id: '2',
+      entityName: 'ПрАТ "ІмпортОптима"',
+      status: 'escalated',
+      priority: 'high',
+      assignedTo: 'Прокурор Бондаренко Г.В.',
+      createdAt: '2026-01-10',
+      findings: 12,
+      potentialRecovery: 7800000
+    }
+  ]);
+});
+
+app.get('/api/v1/premium/sanctions-results', (req, res) => {
+  res.json([
+    {
+      id: '1',
+      entityName: 'TransGlobal Logistics Ltd',
+      entityType: 'company',
+      status: 'clean',
+      timestamp: new Date().toISOString(),
+      matches: [],
+      searchId: 'SCR-2026-001'
+    },
+    {
+      id: '2',
+      entityName: 'Nord Stream Enterprizes',
+      entityType: 'company',
+      status: 'blocked',
+      timestamp: new Date().toISOString(),
+      matches: [
+        { id: 'm1', list: 'OFAC', program: 'SDN', target: 'Nord Stream Enterprizes', details: 'Blocked Entity', severity: 'high', dateMismatch: false, score: 100 }
+      ],
+      searchId: 'SCR-2026-002'
+    }
+  ]);
+});
+
+app.get('/api/v1/premium/rules', (req, res) => {
+  res.json([
+    { id: 'fraud_round', name: 'Suspicious round amounts', category: 'fraud', enabled: true },
+    { id: 'sanctions_country', name: 'Sanctioned country', category: 'sanctions', enabled: true },
+    { id: 'duplicate_decl', name: 'Duplicate declaration', category: 'quality', enabled: true },
+    { id: 'hs_mismatch', name: 'Invalid HS code', category: 'customs', enabled: false }
+  ]);
+});
+
+app.get('/api/v1/premium/costs', (req, res) => {
+  res.json([
+    { resource: 'LLM API', used: 12.45, limit: 50, color: 'emerald' },
+    { resource: 'Embeddings', used: 3.20, limit: 20, color: 'blue' },
+    { resource: 'Scraping', used: 1.80, limit: 10, color: 'amber' },
+    { resource: 'Telegram', used: 0, limit: 5, color: 'cyan' }
+  ]);
 });
 
 app.get('/api/v1/premium/commodity-forecast', (req, res) => {
@@ -812,8 +1079,17 @@ app.use('/api', (req, res) => {
 // 🌐 SERVER START
 // =============================================
 
+// Seed initial data
+console.log('🌱 Seeding initial database facts...');
+const initialData = generateDeclarations(100, 'initial_seed.xlsx');
+DB_FACTS.push(...initialData);
+initialData.forEach(d => {
+  DB_SEARCH_INDEX.push({ ...d, _id: d.id });
+});
+
 const server = app.listen(PORT, () => {
-  console.log(`\n🚀 PREDATOR Mock API v2 running on http://localhost:${PORT}`);
+  console.log(`🚀 PREDATOR Mock API Server running on port ${PORT}`);
+  console.log(`🔗 http://localhost:${PORT}/api/v1/...`);
   console.log(`📊 Health: http://localhost:${PORT}/api/v1/health`);
   console.log(`🗂  DB Stats: http://localhost:${PORT}/api/v1/database/stats`);
   console.log(`\n📌 Дані з'являться після завантаження файлу через UI або POST /api/v1/ingest/upload\n`);

@@ -508,6 +508,42 @@ export const api = {
         },
         getPriceComparison: async () => {
             return (await v45Client.get('/premium/price-comparison')).data;
+        },
+        getAlertRules: async () => {
+            return (await v45Client.get('/premium/alert-rules')).data;
+        },
+        getTradeFlows: async () => {
+            return (await v45Client.get('/premium/trade-flows')).data;
+        },
+        getMarketSegments: async () => {
+            return (await v45Client.get('/premium/market-segments')).data;
+        },
+        getOpportunities: async () => {
+            return (await v45Client.get('/premium/opportunities')).data;
+        },
+        getDashboardStats: async () => {
+            return (await v45Client.get('/premium/dashboard-stats')).data;
+        },
+        getAiInsights: async () => {
+            return (await v45Client.get('/premium/ai-insights')).data;
+        },
+        getPredictions: async () => {
+            return (await v45Client.get('/premium/predictions')).data;
+        },
+        getRiskEntities: async () => {
+            return (await v45Client.get('/premium/risk-entities')).data;
+        },
+        getInvestigations: async () => {
+            return (await v45Client.get('/premium/investigations')).data;
+        },
+        getSanctionsResults: async () => {
+            return (await v45Client.get('/premium/sanctions-results')).data;
+        },
+        getRules: async () => {
+            return (await v45Client.get('/premium/rules')).data;
+        },
+        getCosts: async () => {
+            return (await v45Client.get('/premium/costs')).data;
         }
     },
     getMorningNewspaper: async () => {

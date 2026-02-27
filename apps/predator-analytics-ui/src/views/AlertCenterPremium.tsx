@@ -5,7 +5,8 @@
  * Налаштування та моніторинг подій
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { api } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bell,
@@ -77,106 +78,8 @@ interface AlertRule {
 }
 
 // ========================
-// Mock Data
+// Mock data removed in favor of real API
 // ========================
-
-const mockAlerts: Alert[] = [
-  {
-    id: '1',
-    title: 'Критичне падіння цін на LED панелі',
-    description: 'Ціни впали на 23% за останні 24 години. Рекомендуємо оперативне рішення.',
-    priority: 'critical',
-    status: 'active',
-    category: 'price',
-    createdAt: '2026-02-03T03:45:00',
-    source: 'Price Monitor',
-    data: { change: -23, current: 12.5, previous: 16.2 }
-  },
-  {
-    id: '2',
-    title: 'Новий конкурент у сегменті електроніки',
-    description: 'Компанія "ТехноМакс" почала активний імпорт з Китаю.',
-    priority: 'high',
-    status: 'active',
-    category: 'competitor',
-    createdAt: '2026-02-03T02:30:00',
-    source: 'Competitor Watch',
-    data: { company: 'ТехноМакс', volume: 450000 }
-  },
-  {
-    id: '3',
-    title: 'Підозріла активність: ТОВ "ТрансСхема"',
-    description: 'Виявлено 5 декларацій з ознаками заниження вартості.',
-    priority: 'high',
-    status: 'acknowledged',
-    category: 'risk',
-    createdAt: '2026-02-02T18:15:00',
-    source: 'Risk Scanner'
-  },
-  {
-    id: '4',
-    title: 'Зростання попиту на сонячні панелі',
-    description: 'Ринковий тренд: імпорт збільшився на 45% за місяць.',
-    priority: 'medium',
-    status: 'active',
-    category: 'market',
-    createdAt: '2026-02-02T14:00:00',
-    source: 'Market Analyzer'
-  },
-  {
-    id: '5',
-    title: 'Новий постачальник з Польщі верифікований',
-    description: 'Grupa Azoty пройшла верифікацію. Рейтинг надійності: 97%',
-    priority: 'low',
-    status: 'resolved',
-    category: 'market',
-    createdAt: '2026-02-02T10:00:00',
-    source: 'Supplier Discovery'
-  },
-];
-
-const mockRules: AlertRule[] = [
-  {
-    id: '1',
-    name: 'Падіння цін більше 15%',
-    category: 'price',
-    condition: 'price_change < -15%',
-    threshold: -15,
-    isEnabled: true,
-    notifications: { email: true, push: true, sms: true },
-    triggeredCount: 12
-  },
-  {
-    id: '2',
-    name: 'Новий конкурент в сегменті',
-    category: 'competitor',
-    condition: 'new_competitor_detected',
-    threshold: 0,
-    isEnabled: true,
-    notifications: { email: true, push: true, sms: false },
-    triggeredCount: 5
-  },
-  {
-    id: '3',
-    name: 'Ризик-скор вище 80',
-    category: 'risk',
-    condition: 'risk_score > 80',
-    threshold: 80,
-    isEnabled: true,
-    notifications: { email: true, push: true, sms: true },
-    triggeredCount: 3
-  },
-  {
-    id: '4',
-    name: 'Зростання ринку більше 20%',
-    category: 'market',
-    condition: 'market_growth > 20%',
-    threshold: 20,
-    isEnabled: false,
-    notifications: { email: true, push: false, sms: false },
-    triggeredCount: 8
-  },
-];
 
 // ========================
 // Components
@@ -343,11 +246,43 @@ const RuleCard: React.FC<{ rule: AlertRule; onToggle: () => void }> = ({ rule, o
 // ========================
 
 const AlertCenterPremium: React.FC = () => {
-  const [alerts, setAlerts] = useState(mockAlerts);
-  const [rules, setRules] = useState(mockRules);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [rules, setRules] = useState<AlertRule[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<AlertPriority | 'all'>('all');
   const [tab, setTab] = useState<'alerts' | 'rules'>('alerts');
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [alertsData, rulesData] = await Promise.all([
+          api.premium.getIntelligenceAlerts(),
+          api.premium.getAlertRules()
+        ]);
+
+        // Map API alerts to local Alert type
+        const mappedAlerts: Alert[] = alertsData.map((a: any) => ({
+          id: a.id,
+          title: a.title,
+          description: a.description,
+          priority: (a.severity === 'critical' || a.severity === 'high' || a.severity === 'medium' || a.severity === 'low') ? a.severity : 'medium',
+          status: a.status || 'active',
+          category: a.category || 'risk',
+          createdAt: a.timestamp || new Date().toISOString(),
+          source: a.source || 'Neural Scanner'
+        }));
+
+        setAlerts(mappedAlerts);
+        setRules(rulesData);
+      } catch (err) {
+        console.error('Failed to fetch alerts/rules', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const filteredAlerts = useMemo(() => {
     let result = [...alerts];
@@ -463,9 +398,8 @@ const AlertCenterPremium: React.FC = () => {
         <div className="flex items-center gap-4 mb-6">
           <button
             onClick={() => setTab('alerts')}
-            className={`px-4 py-2 rounded-xl font-bold text-sm transition-colors ${
-              tab === 'alerts' ? 'bg-amber-500/20 text-amber-400' : 'text-slate-500 hover:text-white'
-            }`}
+            className={`px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === 'alerts' ? 'bg-amber-500/20 text-amber-400' : 'text-slate-500 hover:text-white'
+              }`}
           >
             <span className="flex items-center gap-2">
               <Bell size={16} />
@@ -474,9 +408,8 @@ const AlertCenterPremium: React.FC = () => {
           </button>
           <button
             onClick={() => setTab('rules')}
-            className={`px-4 py-2 rounded-xl font-bold text-sm transition-colors ${
-              tab === 'rules' ? 'bg-purple-500/20 text-purple-400' : 'text-slate-500 hover:text-white'
-            }`}
+            className={`px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === 'rules' ? 'bg-purple-500/20 text-purple-400' : 'text-slate-500 hover:text-white'
+              }`}
           >
             <span className="flex items-center gap-2">
               <Settings size={16} />
@@ -506,15 +439,14 @@ const AlertCenterPremium: React.FC = () => {
                   <button
                     key={f}
                     onClick={() => setFilter(f)}
-                    className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-                      filter === f
+                    className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${filter === f
                         ? f === 'all' ? 'bg-white/10 text-white' :
                           f === 'critical' ? 'bg-rose-500/20 text-rose-400' :
-                          f === 'high' ? 'bg-amber-500/20 text-amber-400' :
-                          f === 'medium' ? 'bg-cyan-500/20 text-cyan-400' :
-                          'bg-slate-700 text-slate-300'
+                            f === 'high' ? 'bg-amber-500/20 text-amber-400' :
+                              f === 'medium' ? 'bg-cyan-500/20 text-cyan-400' :
+                                'bg-slate-700 text-slate-300'
                         : 'text-slate-500 hover:text-white'
-                    }`}
+                      }`}
                   >
                     {f === 'all' ? 'Всі' : priorityConfig[f].label}
                   </button>
@@ -524,20 +456,29 @@ const AlertCenterPremium: React.FC = () => {
 
             {/* Alerts List */}
             <div className="space-y-3">
-              {filteredAlerts.map((alert) => (
-                <AlertCard
-                  key={alert.id}
-                  alert={alert}
-                  onAcknowledge={() => acknowledgeAlert(alert.id)}
-                  onResolve={() => resolveAlert(alert.id)}
-                />
-              ))}
-
-              {filteredAlerts.length === 0 && (
+              {loading ? (
                 <div className="text-center py-12">
-                  <Bell className="text-slate-600 mx-auto mb-4" size={48} />
-                  <p className="text-slate-500">Немає алертів</p>
+                  <div className="animate-spin w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full mx-auto mb-4" />
+                  <p className="text-slate-500 font-mono text-sm tracking-widest uppercase">Аналіз подій...</p>
                 </div>
+              ) : (
+                <>
+                  {filteredAlerts.map((alert) => (
+                    <AlertCard
+                      key={alert.id}
+                      alert={alert}
+                      onAcknowledge={() => acknowledgeAlert(alert.id)}
+                      onResolve={() => resolveAlert(alert.id)}
+                    />
+                  ))}
+
+                  {filteredAlerts.length === 0 && (
+                    <div className="text-center py-12">
+                      <Bell className="text-slate-600 mx-auto mb-4" size={48} />
+                      <p className="text-slate-500">Немає алертів</p>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </>
@@ -546,13 +487,19 @@ const AlertCenterPremium: React.FC = () => {
         {/* Rules Tab */}
         {tab === 'rules' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {rules.map((rule) => (
-              <RuleCard
-                key={rule.id}
-                rule={rule}
-                onToggle={() => toggleRule(rule.id)}
-              />
-            ))}
+            {loading ? (
+              <div className="col-span-full text-center py-12">
+                <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full mx-auto" />
+              </div>
+            ) : (
+              rules.map((rule) => (
+                <RuleCard
+                  key={rule.id}
+                  rule={rule}
+                  onToggle={() => toggleRule(rule.id)}
+                />
+              ))
+            )}
           </div>
         )}
       </div>

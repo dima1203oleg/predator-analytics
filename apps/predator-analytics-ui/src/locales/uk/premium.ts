@@ -43,13 +43,13 @@ export const premiumLocales = {
     expand: 'Відкрити швидкі дії',
     collapse: 'Сховати дії',
     toasts: {
-       analyzeInit: 'Запуск аналізу...',
-       analyzePrep: 'Підготовка аналітичного модуля',
-       analyzeSuccess: 'Аналіз завершено!',
-       analyzeError: 'Помилка аналізу',
-       optimizeInit: 'Запуск оптимізації...',
-       optimizeSuccess: 'Оптимізацію запущено!',
-       optimizeError: 'Не вдалося запустити оптимізацію',
+      analyzeInit: 'Запуск аналізу...',
+      analyzePrep: 'Підготовка аналітичного модуля',
+      analyzeSuccess: 'Аналіз завершено!',
+      analyzeError: 'Помилка аналізу',
+      optimizeInit: 'Запуск оптимізації...',
+      optimizeSuccess: 'Оптимізацію запущено!',
+      optimizeError: 'Не вдалося запустити оптимізацію',
     }
   },
 
@@ -845,9 +845,9 @@ export const premiumLocales = {
     },
   },
   errors: {
-      redTeamOffline: 'Сервіс недоступний: Red Team модуль офлайн.',
-      systemOffline: 'Система офлайн',
-      backendOffline: 'Бекенд недоступний',
+    redTeamOffline: 'Сервіс недоступний: Red Team модуль офлайн.',
+    systemOffline: 'Система офлайн',
+    backendOffline: 'Бекенд недоступний',
   },
 
   // ============================================
@@ -872,17 +872,18 @@ export const premiumLocales = {
       cases: 'Справи',
       storage: 'Сховища',
       sources: 'Джерела',
-      datasetStudio: 'Dataset Studio',
+      datasetStudio: 'Датасет Студіо',
       customsIntel: 'Митна Розвідка',
       agents: 'Агенти ШІ',
       orchestrator: 'Оркестратор',
       aiCore: 'Ядро ШІ',
       aiLab: 'Лабораторія ШІ',
+      modelTraining: 'Навчання Моделі',
+      modeling: 'Моделювання',
       monitoring: 'Моніторинг',
       compliance: 'Комплаєнс',
       security: 'Безпека',
       settings: 'Налаштування',
-      modeling: 'Моделювання',
     },
     status: {
       online: 'СИСТЕМА ОНЛАЙН',
@@ -1342,10 +1343,10 @@ export const premiumLocales = {
       cognitiveResource: 'Когнітивний Ресурс',
     },
     telemetry: {
-       title: 'ЖИВА ТЕЛЕМЕТРІЯ V45',
-       secureChannel: 'ЗАХИЩЕНИЙ КАНАЛ // PREDATOR-SIGMA-V45',
-       statusVerified: 'СТАТУС: ВЕРИФІКОВАНО',
-       hash: 'ХЕШ',
+      title: 'ЖИВА ТЕЛЕМЕТРІЯ V45',
+      secureChannel: 'ЗАХИЩЕНИЙ КАНАЛ // PREDATOR-SIGMA-V45',
+      statusVerified: 'СТАТУС: ВЕРИФІКОВАНО',
+      hash: 'ХЕШ',
     }
   },
 
@@ -1468,68 +1469,68 @@ export const premiumLocales = {
     title: 'ДВИГУН ЕВОЛЮЦІЇ',
     subtitle: 'Цикл Автономного Самовдосконалення v45_Активний',
     stats: {
-        azrCycles: 'AZR_CYCLES',
-        ledgerEntries: 'LEDGER_ENTRIES',
-        healthScore: 'HEALTH_SCORE',
+      azrCycles: 'AZR_CYCLES',
+      ledgerEntries: 'LEDGER_ENTRIES',
+      healthScore: 'HEALTH_SCORE',
     },
     tabs: {
-        overview: 'Огляд Еволюції',
-        trace: 'Слід Міркувань',
-        deployment: 'Пульс Розгортання',
-        ledger: 'Truth Ledger',
-        forge: 'Кузня Еволюції',
+      overview: 'Огляд Еволюції',
+      trace: 'Слід Міркувань',
+      deployment: 'Пульс Розгортання',
+      ledger: 'Truth Ledger',
+      forge: 'Кузня Еволюції',
     },
     ui: {
-        versions: 'UI Версії',
-        history: 'Історія автономних покращень',
-        changes: 'змін',
-        status: 'AZR_STATUS',
-        runtime: 'ЧАС РОБОТИ',
-        nextCycle: 'НАСТУПНИЙ ЦИКЛ',
-        engaged: 'АВТОНОМНА ЕВОЛЮЦІЯ ЗАДІЯНА',
-        sovereignCore: 'СУВЕРЕННЕ ЯДРО',
+      versions: 'UI Версії',
+      history: 'Історія автономних покращень',
+      changes: 'змін',
+      status: 'AZR_STATUS',
+      runtime: 'ЧАС РОБОТИ',
+      nextCycle: 'НАСТУПНИЙ ЦИКЛ',
+      engaged: 'АВТОНОМНА ЕВОЛЮЦІЯ ЗАДІЯНА',
+      sovereignCore: 'СУВЕРЕННЕ ЯДРО',
     },
     trace: {
-        logStream: 'ПОТІК ЛОГІВ',
-        scanning: 'Сканування Кортексу...',
-        noSignals: 'Сигналів не виявлено',
-        cognitiveMonologue: 'Когнітивний Монолог',
-        potentialResponse: 'Потенційний Результат',
-        optimal: 'ОПТИМАЛЬНО',
-        impact: 'Вплив',
-        confidenceScore: 'Рівень Впевненості',
-        safeExecution: 'Безпечне Виконання: Підтверджено',
-        policyAlignment: 'Відповідність Політиці: 100%',
-        verifyDecision: 'Верифікувати Рішення',
-        decisionApproved: 'Рішення Погоджено',
+      logStream: 'ПОТІК ЛОГІВ',
+      scanning: 'Сканування Кортексу...',
+      noSignals: 'Сигналів не виявлено',
+      cognitiveMonologue: 'Когнітивний Монолог',
+      potentialResponse: 'Потенційний Результат',
+      optimal: 'ОПТИМАЛЬНО',
+      impact: 'Вплив',
+      confidenceScore: 'Рівень Впевненості',
+      safeExecution: 'Безпечне Виконання: Підтверджено',
+      policyAlignment: 'Відповідність Політиці: 100%',
+      verifyDecision: 'Верифікувати Рішення',
+      decisionApproved: 'Рішення Погоджено',
 
-        verificationError: 'Помилка верифікації рішення.',
+      verificationError: 'Помилка верифікації рішення.',
     },
     ledgerView: {
-        title: 'ЖУРНАЛ_НЕЗМІННОЇ_ІСТИНИ_V48.LOG',
-        sync: 'СИНХРОНІЗАЦІЯ_V45',
-        liveStream: 'ЖИВИЙ_ПОТІК',
-        status: 'Статус: Суверенний',
-        uptime: 'Час роботи',
-        connection: 'З\'єднання: Захищене',
-        networkActive: 'AZR_МЕРЕЖА_АКТИВНА',
+      title: 'ЖУРНАЛ_НЕЗМІННОЇ_ІСТИНИ_V48.LOG',
+      sync: 'СИНХРОНІЗАЦІЯ_V45',
+      liveStream: 'ЖИВИЙ_ПОТІК',
+      status: 'Статус: Суверенний',
+      uptime: 'Час роботи',
+      connection: 'З\'єднання: Захищене',
+      networkActive: 'AZR_МЕРЕЖА_АКТИВНА',
     },
     forgeView: {
-        title: 'ЦЕХ ВЕБ-ЕВОЛЮЦІЇ',
-        subtitle: 'Автономний UX/UI Архітектор v2.0',
-        liveActive: 'Живе покращення активне',
-        enhancement: 'ПОКРАЩЕННЯ',
-        viewAllHistory: 'Переглянути Всю Історію Еволюції',
+      title: 'ЦЕХ ВЕБ-ЕВОЛЮЦІЇ',
+      subtitle: 'Автономний UX/UI Архітектор v2.0',
+      liveActive: 'Живе покращення активне',
+      enhancement: 'ПОКРАЩЕННЯ',
+      viewAllHistory: 'Переглянути Всю Історію Еволюції',
     },
     learningStack: {
-        title: 'СУВЕРЕННИЙ СТЕК НАВЧАННЯ',
-        engineStatus: 'Статус Двигуна Навчання',
-        idle: 'ОЧІКУВАННЯ',
-        startTraining: 'Запустити Навчання',
-        tuneHyper: 'Налаштувати Гіперпараметри',
-        accuracyDelta: 'Дельта Точності Моделі',
-        noBenchmarks: 'Бенчмарки ще не записані.',
-        waitingPatterns: 'Очікування нових патернів...',
+      title: 'СУВЕРЕННИЙ СТЕК НАВЧАННЯ',
+      engineStatus: 'Статус Двигуна Навчання',
+      idle: 'ОЧІКУВАННЯ',
+      startTraining: 'Запустити Навчання',
+      tuneHyper: 'Налаштувати Гіперпараметри',
+      accuracyDelta: 'Дельта Точності Моделі',
+      noBenchmarks: 'Бенчмарки ще не записані.',
+      waitingPatterns: 'Очікування нових патернів...',
     }
   },
 
@@ -1753,11 +1754,11 @@ export const premiumLocales = {
   intelligenceTicker: {
     live: 'СТРІЧКА LIVE',
     labels: {
-        sanctions: 'САНКЦІЇ',
-        insight: 'ІНСАЙТ',
-        customs: 'МИТНИЦЯ',
-        risk: 'РИЗИК',
-        market: 'РИНОК'
+      sanctions: 'САНКЦІЇ',
+      insight: 'ІНСАЙТ',
+      customs: 'МИТНИЦЯ',
+      risk: 'РИЗИК',
+      market: 'РИНОК'
     },
     items: [
       { label: 'САНКЦІЇ', text: 'ЄС готує 15-й пакет обмежень на експорт електроніки' },
@@ -1822,9 +1823,9 @@ export const premiumLocales = {
       risk: 'Ризик-фактор',
     },
     metrics: {
-        nodes: 'ВУЗЛИ',
-        links: "ЗВ'ЯЗКИ",
-        depth: 'ГЛИБИНА'
+      nodes: 'ВУЗЛИ',
+      links: "ЗВ'ЯЗКИ",
+      depth: 'ГЛИБИНА'
     }
   },
 
@@ -1856,70 +1857,70 @@ export const premiumLocales = {
     all: 'Усі',
     noAlerts: 'Нових сповіщень не виявлено',
     severity: {
-        critical: 'КРИТИЧНО',
-        high: 'ВИСОКИЙ',
-        medium: 'СЕРЕДНІЙ',
-        low: 'НИЗЬКИЙ',
-        info: 'ІНФО',
+      critical: 'КРИТИЧНО',
+      high: 'ВИСОКИЙ',
+      medium: 'СЕРЕДНІЙ',
+      low: 'НИЗЬКИЙ',
+      info: 'ІНФО',
     },
     categories: {
-        competitor: 'Конкурент',
-        price: 'Ціна',
-        anomaly: 'Аномалія',
-        scheme: 'Схема',
-        trend: 'Тренд',
-        risk: 'Ризик',
-        opportunity: 'Можливість',
+      competitor: 'Конкурент',
+      price: 'Ціна',
+      anomaly: 'Аномалія',
+      scheme: 'Схема',
+      trend: 'Тренд',
+      risk: 'Ризик',
+      opportunity: 'Можливість',
     },
     time: {
-        justNow: 'щойно',
-        minutesAgo: 'хв тому',
-        hoursAgo: 'год тому',
-        daysAgo: 'дн тому',
+      justNow: 'щойно',
+      minutesAgo: 'хв тому',
+      hoursAgo: 'год тому',
+      daysAgo: 'дн тому',
     },
     mockData: {
-        titan: {
-            alphaTrade: {
-                title: 'Конкурент "АльфаТрейд" збільшив імпорт на 340%',
-                desc: 'Виявлено різке зростання обсягів імпорту електроніки з Китаю. Можлива підготовка до масштабної кампанії.',
-            },
-            turkeySupplier: {
-                title: 'Новий постачальник з Туреччини: ціна -23%',
-                desc: 'Виявлено нового постачальника сталевих виробів з ціною значно нижче ринкової.',
-            },
-            steelForecast: {
-                title: 'Прогноз: ціни на сталь +15% до березня',
-                desc: 'На основі аналізу 50,000+ декларацій прогнозується зростання цін на сталеву продукцію.',
-            }
+      titan: {
+        alphaTrade: {
+          title: 'Конкурент "АльфаТрейд" збільшив імпорт на 340%',
+          desc: 'Виявлено різке зростання обсягів імпорту електроніки з Китаю. Можлива підготовка до масштабної кампанії.',
         },
-        inquisitor: {
-            scheme17: {
-                title: 'СХЕМА: 17 пов\'язаних компаній занижують вартість',
-                desc: 'Виявлено мережу компаній з однаковими бенефіціарами, що систематично декларують занижену митну вартість.',
-            },
-            hs8471Anomaly: {
-                title: 'Аномалія: HS код 8471 занижено на $2.4M',
-                desc: 'Митна вартість комп\'ютерного обладнання на 67% нижче ринкової за останній тиждень.',
-            },
-            tovAlphaRisk: {
-                title: 'ТОВ "Альфа" — 89% ймовірність порушення',
-                desc: 'Високий ризик-скор на основі історії декларацій, віку компанії та зв\'язків.',
-            }
+        turkeySupplier: {
+          title: 'Новий постачальник з Туреччини: ціна -23%',
+          desc: 'Виявлено нового постачальника сталевих виробів з ціною значно нижче ринкової.',
         },
-        sovereign: {
-            chipRisk: {
-                title: 'Системний ризик: залежність від 3 постачальників чіпів',
-                desc: '78% імпорту мікрочіпів надходить від 3 компаній. Критична вразливість ланцюга поставок.',
-            },
-            euTradeForecast: {
-                title: 'Прогноз: торгівля з ЄС +12% у Q2 2026',
-                desc: 'Макроекономічний аналіз вказує на зростання обсягів торгівлі з Європейським Союзом.',
-            },
-            steelCorrelation: {
-                title: 'Кореляція 0.87: сталь ↔ будівництво',
-                desc: 'Виявлено сильну кореляцію між імпортом сталі та будівельною активністю.',
-            }
+        steelForecast: {
+          title: 'Прогноз: ціни на сталь +15% до березня',
+          desc: 'На основі аналізу 50,000+ декларацій прогнозується зростання цін на сталеву продукцію.',
         }
+      },
+      inquisitor: {
+        scheme17: {
+          title: 'СХЕМА: 17 пов\'язаних компаній занижують вартість',
+          desc: 'Виявлено мережу компаній з однаковими бенефіціарами, що систематично декларують занижену митну вартість.',
+        },
+        hs8471Anomaly: {
+          title: 'Аномалія: HS код 8471 занижено на $2.4M',
+          desc: 'Митна вартість комп\'ютерного обладнання на 67% нижче ринкової за останній тиждень.',
+        },
+        tovAlphaRisk: {
+          title: 'ТОВ "Альфа" — 89% ймовірність порушення',
+          desc: 'Високий ризик-скор на основі історії декларацій, віку компанії та зв\'язків.',
+        }
+      },
+      sovereign: {
+        chipRisk: {
+          title: 'Системний ризик: залежність від 3 постачальників чіпів',
+          desc: '78% імпорту мікрочіпів надходить від 3 компаній. Критична вразливість ланцюга поставок.',
+        },
+        euTradeForecast: {
+          title: 'Прогноз: торгівля з ЄС +12% у Q2 2026',
+          desc: 'Макроекономічний аналіз вказує на зростання обсягів торгівлі з Європейським Союзом.',
+        },
+        steelCorrelation: {
+          title: 'Кореляція 0.87: сталь ↔ будівництво',
+          desc: 'Виявлено сильну кореляцію між імпортом сталі та будівельною активністю.',
+        }
+      }
     }
   },
 
@@ -2000,18 +2001,18 @@ export const premiumLocales = {
     updatedLive: 'Оновлено: LIVE',
     globalNetwork: 'Глобальна Торгова Мережа',
     nodes: {
-        china: 'Китай',
-        germany: 'Німеччина',
-        poland: 'Польща',
-        usa: 'США',
-        turkey: 'Туреччина',
-        ukraine: 'Україна',
+      china: 'Китай',
+      germany: 'Німеччина',
+      poland: 'Польща',
+      usa: 'США',
+      turkey: 'Туреччина',
+      ukraine: 'Україна',
     },
     categories: {
-        electronics: 'Електроніка',
-        cars: 'Автомобілі',
-        textile: 'Текстиль',
-        energy: 'Енергетика',
+      electronics: 'Електроніка',
+      cars: 'Автомобілі',
+      textile: 'Текстиль',
+      energy: 'Енергетика',
     }
   },
 
@@ -2087,10 +2088,10 @@ export const premiumLocales = {
     total: 'Разом',
     hsCode: 'Код УКТ ЗЕД',
     countries: {
-        china: 'Китай',
-        usa: 'США',
-        eu: 'ЄС',
-        turkey: 'Туреччина',
+      china: 'Китай',
+      usa: 'США',
+      eu: 'ЄС',
+      turkey: 'Туреччина',
     },
     riskIndicator: 'Індикатор Ризику',
     riskWarning: 'Можливе коригування митної вартості. Рекомендовано підготувати експортну декларацію.',
@@ -2108,20 +2109,20 @@ export const premiumLocales = {
     integrateDesc: 'Інтегруйте системи',
     interfaceOnline: 'Нейронний Інтерфейс v45 Онлайн',
     sagas: {
-        riskCrawler: 'Ризик-Краулер (Регіон: EU)',
-        sourcingSignals: 'Сигнали Сорсингу (Електроніка)',
-        sanctionsDetector: 'Детектор Санкцій (PEP)',
-        actions: {
-            rotterdam: 'Аналіз порту Роттердам',
-            hsCheck: 'Перевірка HS 8541',
-            dbUpdate: 'Оновлено базу 2026',
-        }
+      riskCrawler: 'Ризик-Краулер (Регіон: EU)',
+      sourcingSignals: 'Сигнали Сорсингу (Електроніка)',
+      sanctionsDetector: 'Детектор Санкцій (PEP)',
+      actions: {
+        rotterdam: 'Аналіз порту Роттердам',
+        hsCheck: 'Перевірка HS 8541',
+        dbUpdate: 'Оновлено базу 2026',
+      }
     },
     logs: {
-        init: '[SYSTEM] Ініціалізація нейронного ядра...',
-        scanStart: '[SAGA-1] Початок сканування митних декларацій...',
-        anomalyFound: '[SAGA-1] Виявлено відхилення в ціні на 15% вище медіани.',
-        monitoringActive: '[SAGA-2] Моніторинг ланцюгів постачання активний.',
+      init: '[SYSTEM] Ініціалізація нейронного ядра...',
+      scanStart: '[SAGA-1] Початок сканування митних декларацій...',
+      anomalyFound: '[SAGA-1] Виявлено відхилення в ціні на 15% вище медіани.',
+      monitoringActive: '[SAGA-2] Моніторинг ланцюгів постачання активний.',
     }
   },
 
@@ -2286,9 +2287,9 @@ export const premiumLocales = {
       euDirect: 'ЄС - Прямі Автоперевезення',
     },
     time: {
-        days: 'днів',
-        day: 'день',
-        ofDays: 'дні',
+      days: 'днів',
+      day: 'день',
+      ofDays: 'дні',
     }
   },
 
@@ -2522,105 +2523,105 @@ export const premiumLocales = {
     title: 'Оберіть Ваш План',
     description: 'Отримайте доступ до найпотужнішої аналітичної платформи для митних даних. Починайте безкоштовно та масштабуйтесь за потреби.',
     billing: {
-        monthly: 'Щомісячно',
-        annual: 'Річно',
-        save: 'Економія {amount}/рік',
+      monthly: 'Щомісячно',
+      annual: 'Річно',
+      save: 'Економія {amount}/рік',
     },
     popular: 'Найпопулярніший',
     cta: {
-        starter: 'Почати Безкоштовно',
-        professional: 'Активувати Professional',
-        enterprise: 'Зв\'язатися з нами',
+      starter: 'Почати Безкоштовно',
+      professional: 'Активувати Professional',
+      enterprise: 'Зв\'язатися з нами',
     },
     plans: {
-        starter: {
-            name: 'STARTER',
-            subtitle: 'Для початку роботи',
-            features: [
-                'Базовий пошук декларацій',
-                '1,000 запитів/день',
-                'Експорт до 100 записів',
-                'Email сповіщення',
-                'Базові звіти',
-                'AI Інсайти',
-                'Конкурентний аналіз',
-                'API доступ',
-                'Пріоритетна підтримка',
-            ]
-        },
-        professional: {
-            name: 'PROFESSIONAL',
-            subtitle: 'Для серйозного бізнесу',
-            features: [
-                'Необмежений пошук декларацій',
-                'Необмежені запити',
-                'Безлімітний експорт',
-                'Real-time сповіщення',
-                'Розширені звіти',
-                'AI Інсайти (TITAN/INQUISITOR/SOVEREIGN)',
-                'Конкурентний аналіз',
-                'API доступ (10K запитів/день)',
-                'Стандартна підтримка',
-            ]
-        },
-        enterprise: {
-            name: 'ENTERPRISE',
-            subtitle: 'Для великих організацій',
-            priceLabel: 'Індивідуально',
-            features: [
-                'Все з Professional +',
-                'Виділений сервер',
-                'Безлімітні API запити',
-                'Кастомні дашборди',
-                'Інтеграція з вашими системами',
-                'On-premise розгортання',
-                'SLA 99.9% uptime',
-                'Виділений менеджер',
-                '24/7 пріоритетна підтримка',
-            ]
-        }
+      starter: {
+        name: 'STARTER',
+        subtitle: 'Для початку роботи',
+        features: [
+          'Базовий пошук декларацій',
+          '1,000 запитів/день',
+          'Експорт до 100 записів',
+          'Email сповіщення',
+          'Базові звіти',
+          'AI Інсайти',
+          'Конкурентний аналіз',
+          'API доступ',
+          'Пріоритетна підтримка',
+        ]
+      },
+      professional: {
+        name: 'PROFESSIONAL',
+        subtitle: 'Для серйозного бізнесу',
+        features: [
+          'Необмежений пошук декларацій',
+          'Необмежені запити',
+          'Безлімітний експорт',
+          'Real-time сповіщення',
+          'Розширені звіти',
+          'AI Інсайти (TITAN/INQUISITOR/SOVEREIGN)',
+          'Конкурентний аналіз',
+          'API доступ (10K запитів/день)',
+          'Стандартна підтримка',
+        ]
+      },
+      enterprise: {
+        name: 'ENTERPRISE',
+        subtitle: 'Для великих організацій',
+        priceLabel: 'Індивідуально',
+        features: [
+          'Все з Professional +',
+          'Виділений сервер',
+          'Безлімітні API запити',
+          'Кастомні дашборди',
+          'Інтеграція з вашими системами',
+          'On-premise розгортання',
+          'SLA 99.9% uptime',
+          'Виділений менеджер',
+          '24/7 пріоритетна підтримка',
+        ]
+      }
     },
     comparison: {
-        trigger: 'Порівняти всі функції',
-        header: 'Функція',
-        categories: {
-            search: 'Пошук та Дані',
-            analytics: 'Аналітика',
-            support: 'Підтримка',
-        },
-        features: {
-            searchScope: 'Пошук декларацій',
-            dailyQueries: 'Запити на день',
-            exportLimit: 'Експорт даних',
-            dataHistory: 'Історія даних',
-            aiInsights: 'AI Інсайти',
-            compAnalysis: 'Конкурентний аналіз',
-            riskScoring: 'Ризик-скоринг',
-            forecasting: 'Прогнозування',
-            supportChannel: 'Канал підтримки',
-            responseTime: 'Час відповіді',
-            onboarding: 'Онбординг',
-            sla: 'SLA',
-        },
-        values: {
-            basic: 'Базовий',
-            advanced: 'Розширений',
-            full: 'Повний + Custom',
-            unlimited: 'Необмежено',
-            limit100: '100 записів',
-            unlimitedApi: 'Безліміт + API',
-            year1: '1 рік',
-            years5: '5 років',
-            fullHistory: 'Повна історія',
-            customModels: '✅ + Custom Models',
-            customRules: '✅ + Custom Rules',
-            email: 'Email',
-            emailChat: 'Email + Chat',
-            phoneDedicated: 'Phone + Dedicated',
-            h48: '48 год',
-            h4: '4 год',
-            h1: '< 1 год',
-        }
+      trigger: 'Порівняти всі функції',
+      header: 'Функція',
+      categories: {
+        search: 'Пошук та Дані',
+        analytics: 'Аналітика',
+        support: 'Підтримка',
+      },
+      features: {
+        searchScope: 'Пошук декларацій',
+        dailyQueries: 'Запити на день',
+        exportLimit: 'Експорт даних',
+        dataHistory: 'Історія даних',
+        aiInsights: 'AI Інсайти',
+        compAnalysis: 'Конкурентний аналіз',
+        riskScoring: 'Ризик-скоринг',
+        forecasting: 'Прогнозування',
+        supportChannel: 'Канал підтримки',
+        responseTime: 'Час відповіді',
+        onboarding: 'Онбординг',
+        sla: 'SLA',
+      },
+      values: {
+        basic: 'Базовий',
+        advanced: 'Розширений',
+        full: 'Повний + Custom',
+        unlimited: 'Необмежено',
+        limit100: '100 записів',
+        unlimitedApi: 'Безліміт + API',
+        year1: '1 рік',
+        years5: '5 років',
+        fullHistory: 'Повна історія',
+        customModels: '✅ + Custom Models',
+        customRules: '✅ + Custom Rules',
+        email: 'Email',
+        emailChat: 'Email + Chat',
+        phoneDedicated: 'Phone + Dedicated',
+        h48: '48 год',
+        h4: '4 год',
+        h1: '< 1 год',
+      }
     }
   },
 
@@ -2628,72 +2629,78 @@ export const premiumLocales = {
   // Dataset Studio
   // ============================================
   datasetStudio: {
-    title: 'Dataset Studio',
-    subtitle: 'Neural Data Foundry v45',
+    title: 'ДАТАСЕТ СТУДІО',
+    subtitle: 'Лабораторія синтезу та обробки знань',
     description: 'Тепер з підтримкою власних датасетів як прикладів для генерації.',
+    forge: {
+      title: 'НЕЙРОННА КУЗНЯ',
+      subtitle: 'Dataset Engineering & Latent Space Augmentation',
+      totalRows: 'Загальна Кузня Знань',
+      syncLatency: 'Затримка Синхронізації',
+    },
     header: {
-        gpuLoad: 'NVIDIA L40S Load',
+      gpuLoad: 'GPU LOAD',
     },
     panels: {
-        userDatasets: {
-            title: 'Мої Датасети',
-            upload: 'Завантажити',
-            stats: '{count} завантажено • {active} активних як приклад',
-            empty: {
-                title: 'Немає завантажених датасетів',
-                subtitle: 'Завантажте Excel, CSV або JSON файл'
-            },
-            info: {
-                title: 'Приклади для генерації:',
-                desc: 'Увімкніть перемикач 🔘 біля датасету, щоб він став основою для створення нових синтетичних даних.'
-            },
-            dataset: {
-                rows: 'рядків',
-                cols: 'колонок',
-                example: 'Приклад',
-                enable: 'Увімкнути',
-                disable: 'Вимкнути',
-                activeDesc: 'Цей датасет буде використано як основу для генерації нових синтетичних даних',
-                deleteConfirm: 'Видалити цей датасет?',
-                turnOff: 'Вимкнути як приклад',
-                turnOn: 'Увімкнути як приклад'
-            },
-            uploadModal: {
-                title: 'Завантажити Датасет',
-                dragDrop: 'Перетягніть файл сюди або натисніть для вибору',
-                supported: 'Підтримуються: Excel, CSV, JSON, Parquet',
-                uploading: 'Завантаження...',
-                action: 'Завантажити'
-            }
+      userDatasets: {
+        title: 'Мої Датасети',
+        upload: 'Завантажити',
+        stats: '{count} завантажено • {active} активних як приклад',
+        empty: {
+          title: 'Немає завантажених датасетів',
+          subtitle: 'Завантажте Excel, CSV або JSON файл'
         },
-        pipeline: {
-            title: 'Живі Пайплайни Обробки',
-            realtimeSync: 'Real-time Sync',
-            monitorTitle: 'Data Pipeline Monitor',
-            monitorSubtitle: 'REAL-TIME PROCESSING STATUS',
-            itemsProcessed: 'Items Processed',
-            live: 'Live'
+        info: {
+          title: 'Приклади для генерації:',
+          desc: 'Увімкніть перемикач 🔘 біля датасету, щоб він став основою для створення нових синтетичних даних.'
         },
-        generation: {
-            title: 'Синтетична Кузня',
-            subtitle: 'Генерація нових даних',
-            prototype: {
-                label: 'Прототип для навчання',
-                selected: 'Вибрано Прототип',
-                notSelected: 'Прототип не вибрано',
-                placeholder: 'Оберіть в лівій панелі'
-            },
-            augmentation: {
-                label: 'Глибина Аугментації',
-                fast: 'FAST',
-                deep: 'DEEP NEURAL'
-            },
-            action: 'Запустити Генерацію',
-            activeModels: 'Активні Моделі',
-            ready: 'Ready',
-            recentEvents: 'Останні Події',
-            eventSynthesized: 'Датасет #{id} успішно синтезовано'
+        dataset: {
+          rows: 'рядків',
+          cols: 'колонок',
+          example: 'Приклад',
+          enable: 'Увімкнути',
+          disable: 'Вимкнути',
+          activeDesc: 'Цей датасет буде використано як основу для генерації нових синтетичних даних',
+          deleteConfirm: 'Видалити цей датасет?',
+          turnOff: 'Вимкнути як приклад',
+          turnOn: 'Увімкнути як приклад'
+        },
+        uploadModal: {
+          title: 'Завантажити Датасет',
+          dragDrop: 'Перетягніть файл сюди або натисніть для вибору',
+          supported: 'Підтримуються: Excel, CSV, JSON, Parquet',
+          uploading: 'Завантаження...',
+          action: 'Завантажити'
         }
+      },
+      pipeline: {
+        title: 'Живі Пайплайни Обробки',
+        realtimeSync: 'Real-time Sync',
+        monitorTitle: 'Data Pipeline Monitor',
+        monitorSubtitle: 'REAL-TIME PROCESSING STATUS',
+        itemsProcessed: 'Items Processed',
+        live: 'Live'
+      },
+      generation: {
+        title: 'Синтетична Кузня',
+        subtitle: 'Генерація нових даних',
+        prototype: {
+          label: 'Прототип для навчання',
+          selected: 'Вибрано Прототип',
+          notSelected: 'Прототип не вибрано',
+          placeholder: 'Оберіть в лівій панелі'
+        },
+        augmentation: {
+          label: 'Глибина Аугментації',
+          fast: 'FAST',
+          deep: 'DEEP NEURAL'
+        },
+        action: 'Запустити Генерацію',
+        activeModels: 'Активні Моделі',
+        ready: 'Ready',
+        recentEvents: 'Останні Події',
+        eventSynthesized: 'Датасет #{id} успішно синтезовано'
+      }
     }
   },
 };

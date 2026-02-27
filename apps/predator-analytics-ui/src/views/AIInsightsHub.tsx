@@ -2,7 +2,7 @@
  * 🧠 AI Insights Hub
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../utils/cn';
 import {
@@ -33,6 +33,7 @@ import {
   XCircle,
   Eye
 } from 'lucide-react';
+import { api } from '../services/api';
 
 // ========================
 // Types
@@ -67,101 +68,9 @@ interface PredictionCard {
   trend: 'up' | 'down' | 'stable';
 }
 
-// ========================
-// Mock Data
-// ========================
-
-const insights: AIInsight[] = [
-  {
-    id: '1',
-    type: 'opportunity',
-    priority: 'critical',
-    title: 'Оптимальний час для закупівлі LED панелей',
-    description: 'На основі аналізу 15,000 декларацій, ціни на LED панелі досягли мінімуму за 6 місяців. Прогнозується зростання на 18% протягом наступних 2 тижнів.',
-    confidence: 94,
-    impact: 'Економія до $45,000',
-    category: 'Закупівлі',
-    createdAt: '2026-02-03T04:30:00',
-    actionable: true,
-    actions: [
-      { label: 'Знайти постачальників', type: 'primary' },
-      { label: 'Порівняти ціни', type: 'secondary' }
-    ],
-    saved: false
-  },
-  {
-    id: '2',
-    type: 'anomaly',
-    priority: 'high',
-    title: 'Незвична активність компанії "ТрансСхема"',
-    description: 'Виявлено 340% зростання імпорту за останній тиждень. Патерн співпадає з відомими схемами заниження митної вартості.',
-    confidence: 87,
-    impact: 'Ризик: $120,000',
-    category: 'Ризики',
-    createdAt: '2026-02-03T03:15:00',
-    actionable: true,
-    actions: [
-      { label: 'Розпочати розслідування', type: 'primary' },
-      { label: 'Переглянути декларації', type: 'secondary' }
-    ],
-    saved: true
-  },
-  {
-    id: '3',
-    type: 'prediction',
-    priority: 'medium',
-    title: 'Прогноз: Зростання імпорту сонячних панелей',
-    description: 'ML-модель прогнозує 45% зростання попиту на сонячні панелі у Q2 2026 на основі державних програм та цінових трендів.',
-    confidence: 82,
-    impact: 'Ринок: +$12M',
-    category: 'Тренди',
-    createdAt: '2026-02-03T02:00:00',
-    actionable: true,
-    actions: [
-      { label: 'Аналіз ринку', type: 'primary' }
-    ],
-    saved: false
-  },
-  {
-    id: '4',
-    type: 'recommendation',
-    priority: 'medium',
-    title: 'Рекомендація: Диверсифікація постачальників',
-    description: 'Ваша залежність від китайських постачальників становить 78%. Рекомендуємо розглянути альтернативи з В\'єтнаму та Польщі.',
-    confidence: 91,
-    impact: 'Зниження ризику',
-    category: 'Стратегія',
-    createdAt: '2026-02-02T18:00:00',
-    actionable: true,
-    actions: [
-      { label: 'Знайти альтернативи', type: 'primary' }
-    ],
-    saved: false
-  },
-  {
-    id: '5',
-    type: 'risk',
-    priority: 'high',
-    title: 'Ризик: Затримки на митниці "Рава-Руська"',
-    description: 'AI виявив патерн затримок на 3-5 днів для вантажів через цей пункт. Рекомендуємо альтернативні маршрути.',
-    confidence: 89,
-    impact: 'Затримки: 3-5 днів',
-    category: 'Логістика',
-    createdAt: '2026-02-02T14:30:00',
-    actionable: true,
-    actions: [
-      { label: 'Переглянути маршрути', type: 'primary' }
-    ],
-    saved: true
-  },
-];
-
-const predictions: PredictionCard[] = [
-  { id: '1', title: 'Імпорт електроніки', currentValue: 245, predictedValue: 289, timeframe: '30 днів', confidence: 87, trend: 'up' },
-  { id: '2', title: 'Ціни на добрива', currentValue: 420, predictedValue: 385, timeframe: '14 днів', confidence: 82, trend: 'down' },
-  { id: '3', title: 'Обсяг з Китаю', currentValue: 1.2, predictedValue: 1.45, timeframe: '7 днів', confidence: 91, trend: 'up' },
-  { id: '4', title: 'Ризик-скор ринку', currentValue: 45, predictedValue: 52, timeframe: '30 днів', confidence: 78, trend: 'up' },
-];
+// Mock data removed in favor of API
+const defaultInsights: AIInsight[] = [];
+const defaultPredictions: PredictionCard[] = [];
 
 // ========================
 // Components
@@ -200,7 +109,7 @@ const InsightCard: React.FC<{
         p-5 rounded-2xl border-l-4 transition-all
         ${insight.priority === 'critical' ? 'border-l-rose-500 bg-rose-500/5' :
           insight.priority === 'high' ? 'border-l-amber-500 bg-amber-500/5' :
-          'border-l-white/10 bg-slate-900/60'}
+            'border-l-white/10 bg-slate-900/60'}
         border border-white/5
       `}
     >
@@ -245,11 +154,10 @@ const InsightCard: React.FC<{
               {insight.actions.map((action, i) => (
                 <button
                   key={i}
-                  className={`px-4 py-2 rounded-lg font-bold text-sm transition-colors ${
-                    action.type === 'primary'
+                  className={`px-4 py-2 rounded-lg font-bold text-sm transition-colors ${action.type === 'primary'
                       ? `bg-${type.color}-500/20 text-${type.color}-400 hover:bg-${type.color}-500/30`
                       : 'bg-slate-800 text-slate-400 hover:text-white'
-                  }`}
+                    }`}
                 >
                   {action.label}
                 </button>
@@ -262,27 +170,24 @@ const InsightCard: React.FC<{
         <div className="flex flex-col gap-2">
           <button
             onClick={onSave}
-            className={`p-2 rounded-lg transition-colors ${
-              insight.saved ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-500 hover:text-white'
-            }`}
+            className={`p-2 rounded-lg transition-colors ${insight.saved ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-500 hover:text-white'
+              }`}
             title="Зберегти"
           >
             <Bookmark size={16} fill={insight.saved ? 'currentColor' : 'none'} />
           </button>
           <button
             onClick={() => onFeedback('positive')}
-            className={`p-2 rounded-lg transition-colors ${
-              insight.feedback === 'positive' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-500 hover:text-emerald-400'
-            }`}
+            className={`p-2 rounded-lg transition-colors ${insight.feedback === 'positive' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-500 hover:text-emerald-400'
+              }`}
             title="Корисно"
           >
             <ThumbsUp size={16} />
           </button>
           <button
             onClick={() => onFeedback('negative')}
-            className={`p-2 rounded-lg transition-colors ${
-              insight.feedback === 'negative' ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-800 text-slate-500 hover:text-rose-400'
-            }`}
+            className={`p-2 rounded-lg transition-colors ${insight.feedback === 'negative' ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-800 text-slate-500 hover:text-rose-400'
+              }`}
             title="Не корисно"
           >
             <ThumbsDown size={16} />
@@ -318,9 +223,8 @@ const PredictionWidget: React.FC<{ prediction: PredictionCard }> = ({ prediction
       </div>
 
       <div className="flex items-center justify-between">
-        <div className={`flex items-center gap-1 text-xs ${
-          prediction.trend === 'up' ? 'text-emerald-400' : 'text-rose-400'
-        }`}>
+        <div className={`flex items-center gap-1 text-xs ${prediction.trend === 'up' ? 'text-emerald-400' : 'text-rose-400'
+          }`}>
           {prediction.trend === 'up' ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
           {change > 0 ? '+' : ''}{change.toFixed(1)}%
         </div>
@@ -338,21 +242,46 @@ const PredictionWidget: React.FC<{ prediction: PredictionCard }> = ({ prediction
 // ========================
 
 const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode }) => {
-  const [insightList, setInsightList] = useState(insights);
+  const [insightList, setInsightList] = useState<AIInsight[]>([]);
+  const [predictionsList, setPredictionsList] = useState<PredictionCard[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<InsightType | 'all'>('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [insightsData, predictionsData] = await Promise.all([
+        api.premium.getAiInsights(),
+        api.premium.getPredictions()
+      ]);
+      setInsightList(insightsData);
+      setPredictionsList(predictionsData);
+    } catch (err) {
+      console.error("Failed to fetch AI insights", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const filteredInsights = useMemo(() => {
     if (filter === 'all') return insightList;
     return insightList.filter(i => i.type === filter);
   }, [insightList, filter]);
 
-  const stats = useMemo(() => ({
-    total: insightList.length,
-    critical: insightList.filter(i => i.priority === 'critical').length,
-    opportunities: insightList.filter(i => i.type === 'opportunity').length,
-    avgConfidence: Math.round(insightList.reduce((acc, i) => acc + i.confidence, 0) / insightList.length)
-  }), [insightList]);
+  const stats = useMemo(() => {
+    if (insightList.length === 0) return { total: 0, critical: 0, opportunities: 0, avgConfidence: 0 };
+    return {
+      total: insightList.length,
+      critical: insightList.filter(i => i.priority === 'critical').length,
+      opportunities: insightList.filter(i => i.type === 'opportunity').length,
+      avgConfidence: Math.round(insightList.reduce((acc, i) => acc + i.confidence, 0) / insightList.length)
+    };
+  }, [insightList]);
 
   const toggleSave = (id: string) => {
     setInsightList(prev => prev.map(i =>
@@ -366,9 +295,10 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode }) =
     ));
   };
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 2000);
+    await fetchData();
+    setIsRefreshing(false);
   };
 
   return (
@@ -402,9 +332,8 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode }) =
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className={`flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 rounded-xl transition-colors ${
-                isRefreshing ? 'opacity-50' : 'hover:bg-slate-700'
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 rounded-xl transition-colors ${isRefreshing ? 'opacity-50' : 'hover:bg-slate-700'
+                }`}
             >
               <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
               Оновити
@@ -459,9 +388,8 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode }) =
             <div className="flex gap-2 flex-wrap mb-4">
               <button
                 onClick={() => setFilter('all')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                  filter === 'all' ? 'bg-purple-500/20 text-purple-400' : 'text-slate-500 hover:text-white'
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${filter === 'all' ? 'bg-purple-500/20 text-purple-400' : 'text-slate-500 hover:text-white'
+                  }`}
               >
                 Всі
               </button>
@@ -469,9 +397,8 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode }) =
                 <button
                   key={key}
                   onClick={() => setFilter(key as InsightType)}
-                  className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    filter === key ? `bg-${config.color}-500/20 text-${config.color}-400` : 'text-slate-500 hover:text-white'
-                  }`}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${filter === key ? `bg-${config.color}-500/20 text-${config.color}-400` : 'text-slate-500 hover:text-white'
+                    }`}
                 >
                   <config.icon size={14} />
                   {config.label}
@@ -480,14 +407,28 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode }) =
             </div>
 
             {/* Insights List */}
-            {filteredInsights.map((insight) => (
-              <InsightCard
-                key={insight.id}
-                insight={insight}
-                onSave={() => toggleSave(insight.id)}
-                onFeedback={(type) => setFeedback(insight.id, type)}
-              />
-            ))}
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4" />
+                <p className="text-slate-500 font-mono text-sm tracking-widest uppercase italic">Генерація аналітичного ядра...</p>
+              </div>
+            ) : (
+              filteredInsights.map((insight) => (
+                <InsightCard
+                  key={insight.id}
+                  insight={insight}
+                  onSave={() => toggleSave(insight.id)}
+                  onFeedback={(type) => setFeedback(insight.id, type)}
+                />
+              ))
+            )}
+
+            {!loading && filteredInsights.length === 0 && (
+              <div className="text-center py-20 bg-slate-900/40 rounded-3xl border border-white/5">
+                <Brain className="w-12 h-12 text-slate-700 mx-auto mb-4" />
+                <p className="text-slate-500">Інсайти відсутні для вибраного фільтра</p>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -514,9 +455,13 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode }) =
                 ML Прогнози
               </h3>
               <div className="space-y-3">
-                {predictions.map((pred) => (
-                  <PredictionWidget key={pred.id} prediction={pred} />
-                ))}
+                {loading ? (
+                  Array(3).fill(0).map((_, i) => <div key={i} className="h-24 bg-slate-900/60 rounded-xl animate-pulse" />)
+                ) : (
+                  predictionsList.map((pred) => (
+                    <PredictionWidget key={pred.id} prediction={pred} />
+                  ))
+                )}
               </div>
             </div>
           </div>

@@ -71,6 +71,7 @@ const ScenarioModeling = lazy(() => import('./views/ScenarioModeling'));
 
 const DatasetsPage = lazy(() => import('./views/datasets/DatasetsPage'));
 const AutoFactoryView = lazy(() => import('./views/AutoFactoryView'));
+const ModelTrainingView = lazy(() => import('./views/ModelTrainingView'));
 
 
 
@@ -147,6 +148,7 @@ export const AppRoutesNew = () => {
             <Route path="/llm" element={<LLMView />} />
             <Route path="/llm/nas" element={<NasView />} />
             <Route path="/agents" element={<AgentsView />} />
+            <Route path="/training" element={<ModelTrainingView />} />
             <Route path="/super" element={<SuperIntelligenceView />} />
             <Route path="/evolution" element={<EvolutionView />} />
 
