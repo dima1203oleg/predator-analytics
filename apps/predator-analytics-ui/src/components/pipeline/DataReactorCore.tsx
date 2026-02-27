@@ -10,12 +10,20 @@ import {
     Activity,
     AlertTriangle,
     Radio, // For vectors
-    Box
+    Box,
+    Glasses,
+    TerminalSquare,
+    Network,
+    Archive
 } from 'lucide-react';
 
 interface ComponentStatus {
     state: 'idle' | 'active' | 'error';
     count: number;
+    details?: {
+        throughput: string;
+        latency: string;
+    };
 }
 
 interface ReactorProps {
@@ -34,239 +42,289 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
     isActive,
     hasError = false,
     stats = {
-        postgres: { state: 'idle', count: 0 },
-        graph: { state: 'idle', count: 0 },
-        opensearch: { state: 'idle', count: 0 },
-        qdrant: { state: 'idle', count: 0 },
+        postgres: { state: 'idle', count: 0, details: { throughput: '0.0 MB/s', latency: '0ms' } },
+        graph: { state: 'idle', count: 0, details: { throughput: '0 ed/s', latency: '0ms' } },
+        opensearch: { state: 'idle', count: 0, details: { throughput: '0 docs/s', latency: '0ms' } },
+        qdrant: { state: 'idle', count: 0, details: { throughput: '0 vec/s', latency: '0ms' } },
         redis: { state: 'idle', count: 0 }
     }
 }) => {
-    // Particles for animation
-    const [particles, setParticles] = useState<{ id: number; target: string }[]>([]);
+    // State for X-Ray Mode
+    const [xrayMode, setXrayMode] = useState(false);
+    const [particles, setParticles] = useState<{ id: number; target: string; type: string }[]>([]);
 
     useEffect(() => {
         if (!isActive || hasError) return;
 
-        // Target DBs to shoot particles towards
         const targets = ['postgres', 'graph', 'opensearch', 'qdrant'];
+        const types = ['fact', 'edge', 'text', 'vector'];
 
-        // Spawn particles when active
         const interval = setInterval(() => {
-            const target = targets[Math.floor(Math.random() * targets.length)];
+            const rIndex = Math.floor(Math.random() * targets.length);
             setParticles(prev => [
-                ...prev.slice(-30), // keep max 30 particles
-                { id: Date.now() + Math.random(), target }
+                ...prev.slice(-40), // More particles!
+                { id: Date.now() + Math.random(), target: targets[rIndex], type: types[rIndex] }
             ]);
-        }, 150); // fast fire rate
+        }, 100);
 
         return () => clearInterval(interval);
     }, [isActive, hasError]);
 
-    // Database Nodes Mapping
+    // DB Nodes Config
     const nodes = [
-        { id: 'postgres', title: 'PostgreSQL', subtitle: 'Facts', icon: Database, color: 'text-yellow-400', glow: 'shadow-yellow-500/50', border: 'border-yellow-500/30', bg: 'bg-yellow-900/20', position: 'top-0 right-0 translate-x-[120%] -translate-y-[40%]', stat: stats.postgres },
-        { id: 'graph', title: 'Graph DB', subtitle: 'Relations', icon: Share2, color: 'text-purple-400', glow: 'shadow-purple-500/50', border: 'border-purple-500/30', bg: 'bg-purple-900/20', position: 'bottom-0 right-0 translate-x-[120%] translate-y-[40%]', stat: stats.graph },
-        { id: 'opensearch', title: 'OpenSearch', subtitle: 'Search Index', icon: Search, color: 'text-cyan-400', glow: 'shadow-cyan-500/50', border: 'border-cyan-500/30', bg: 'bg-cyan-900/20', position: 'top-0 left-0 -translate-x-[120%] -translate-y-[40%]', stat: stats.opensearch },
-        { id: 'qdrant', title: 'Qdrant', subtitle: 'Vector Space', icon: Radio, color: 'text-emerald-400', glow: 'shadow-emerald-500/50', border: 'border-emerald-500/30', bg: 'bg-emerald-900/20', position: 'bottom-0 left-0 -translate-x-[120%] translate-y-[40%]', stat: stats.qdrant },
+        {
+            id: 'postgres', title: 'PostgreSQL', subtitle: 'Transact Facts', icon: Database,
+            color: 'text-yellow-400', glow: 'shadow-yellow-500/50', border: 'border-yellow-500/30', bg: 'bg-yellow-900/20',
+            position: 'top-0 right-0 translate-x-[110%] -translate-y-[50%]', stat: stats.postgres
+        },
+        {
+            id: 'graph', title: 'Graph DB', subtitle: 'Neural Edges', icon: Share2,
+            color: 'text-purple-400', glow: 'shadow-purple-500/50', border: 'border-purple-500/30', bg: 'bg-purple-900/20',
+            position: 'bottom-0 right-0 translate-x-[110%] translate-y-[50%]', stat: stats.graph
+        },
+        {
+            id: 'opensearch', title: 'OpenSearch', subtitle: 'Full-Text Index', icon: Search,
+            color: 'text-cyan-400', glow: 'shadow-cyan-500/50', border: 'border-cyan-500/30', bg: 'bg-cyan-900/20',
+            position: 'top-0 left-0 -translate-x-[110%] -translate-y-[50%]', stat: stats.opensearch
+        },
+        {
+            id: 'qdrant', title: 'Qdrant', subtitle: 'Vector Space', icon: Target,
+            color: 'text-emerald-400', glow: 'shadow-emerald-500/50', border: 'border-emerald-500/30', bg: 'bg-emerald-900/20',
+            position: 'bottom-0 left-0 -translate-x-[110%] translate-y-[50%]', stat: stats.qdrant
+        },
     ];
 
     const reactorColor = hasError ? 'text-red-500' : isActive ? 'text-blue-500' : 'text-slate-500';
-    const reactorGlow = hasError ? 'shadow-[0_0_50px_rgba(239,68,68,0.5)]' : isActive ? 'shadow-[0_0_50px_rgba(59,130,246,0.6)]' : 'shadow-none';
 
     return (
-        <div className="relative w-full py-20 flex justify-center items-center overflow-hidden bg-[#0A0E17] rounded-xl border border-white/5">
+        <div className={`relative w-full h-[600px] flex justify-center items-center overflow-hidden rounded-[32px] border border-white/5 transition-all duration-1000 ${xrayMode ? 'bg-[#050B14]' : 'bg-[#0A0E17]'}`}>
 
-            {/* Background Pulse indicating activity */}
-            {isActive && !hasError && (
-                <motion.div
-                    animate={{ opacity: [0.1, 0.3, 0.1], scale: [1, 1.05, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0%,transparent_70%)] pointer-events-none"
-                />
-            )}
+            {/* Header / Mode Toggle */}
+            <div className="absolute top-6 right-6 z-50 flex gap-4">
+                <button
+                    onClick={() => setXrayMode(!xrayMode)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg border backdrop-blur-md transition-all ${xrayMode
+                        ? 'bg-blue-500/20 border-blue-500/50 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
+                        : 'bg-slate-900/80 border-slate-700 text-slate-400 hover:text-white'
+                        }`}
+                >
+                    <Glasses size={16} />
+                    <span className="text-xs font-bold uppercase tracking-wider">X-Ray Mode</span>
+                </button>
+            </div>
 
-            {/* Grid Pattern */}
-            <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
+            {/* X-Ray specific grid backgrounds */}
+            <AnimatePresence>
+                {xrayMode && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.15 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-[url('/hex-grid.svg')] bg-center bg-repeat pointer-events-none"
+                    />
+                )}
+            </AnimatePresence>
+
+            <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10 pointer-events-none" />
 
             {/* Main Assembly */}
-            <div className="relative z-10">
-
-                {/* Connection Lines (SVGs behind) */}
+            <div className="relative z-10 scale-[0.85] sm:scale-100">
+                {/* Visual DB Connections */}
                 <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-0" style={{ transform: 'scale(1.5)' }}>
-                    <defs>
-                        <linearGradient id="grad-active" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.8" />
-                            <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-                        </linearGradient>
-                        {/* Simple styling for SVG lines can be done by mapping through paths */}
-                    </defs>
-
                     {nodes.map(node => {
-                        // Very simplified static path logic for visual connections
                         const isLeft = node.position.includes('left-0');
                         const isTop = node.position.includes('top-0');
-
-                        // X and Y coords radiating from center (50%, 50%)
-                        const x2 = isLeft ? -100 : 200;
-                        const y2 = isTop ? -50 : 150;
-
+                        const x2 = isLeft ? -120 : 220;
+                        const y2 = isTop ? -80 : 180;
                         const isAnimating = isActive && !hasError;
+                        const strokeColor = xrayMode ? node.color.replace('text-', '').replace('-400', '') : "#3b82f6";
 
                         return (
-                            <g key={`line - to - ${node.id} `}>
+                            <g key={`connection-${node.id}`}>
                                 <motion.path
-                                    d={`M 50 50 C ${isLeft ? 0 : 100} 50, ${x2} ${y2}, ${x2} ${y2} `}
+                                    d={`M 50 50 C ${isLeft ? 0 : 100} 50, ${x2} ${y2}, ${x2} ${y2}`}
                                     fill="none"
-                                    stroke={isAnimating ? "#3b82f6" : "#334155"}
-                                    strokeWidth="2"
-                                    strokeDasharray={isAnimating ? "6 6" : "none"}
-                                    animate={isAnimating ? { strokeDashoffset: [24, 0] } : {}}
+                                    stroke={isAnimating ? strokeColor : "#334155"}
+                                    strokeWidth={xrayMode ? "3" : "2"}
+                                    strokeDasharray={isAnimating ? "8 8" : "none"}
+                                    animate={isAnimating ? { strokeDashoffset: [32, 0] } : {}}
                                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                    strokeOpacity={isAnimating ? 0.4 : 0.2}
+                                    strokeOpacity={isAnimating ? (xrayMode ? 0.6 : 0.4) : 0.2}
                                 />
+                                {xrayMode && isAnimating && (
+                                    <motion.circle r="2" fill={strokeColor}
+                                        animate={{ offsetDistance: ["0%", "100%"] }}
+                                    />
+                                )}
                             </g>
                         );
                     })}
                 </svg>
 
-                {/* Central Router Engine */}
+                {/* Engine Core */}
                 <div className="relative z-20 mx-auto">
                     <motion.div
-                        className={`w - 32 h - 32 rounded - full border - 2 bg - [#0F172A] flex items - center justify - center relative ${hasError ? 'border-red-500' : isActive ? 'border-blue-500' : 'border-slate-600'
-                            } `}
+                        className={`w-36 h-36 rounded-full border-4 bg-[#0F172A] flex items-center justify-center relative ${hasError ? 'border-red-500' : isActive ? 'border-blue-500' : 'border-slate-600'
+                            }`}
                         animate={{
-                            boxShadow: hasError
-                                ? ['0 0 20px rgba(239,68,68,0.2)', '0 0 40px rgba(239,68,68,0.4)', '0 0 20px rgba(239,68,68,0.2)']
-                                : isActive
-                                    ? ['0 0 20px rgba(59,130,246,0.3)', '0 0 50px rgba(59,130,246,0.6)', '0 0 20px rgba(59,130,246,0.3)']
-                                    : '0 0 0px rgba(0,0,0,0)'
+                            boxShadow: hasError ? ['0 0 20px rgba(239,68,68,0.2)', '0 0 50px rgba(239,68,68,0.5)', '0 0 20px rgba(239,68,68,0.2)']
+                                : isActive ? [`0 0 30px rgba(59,130,246,0.3)`, `0 0 80px rgba(59,130,246,0.${xrayMode ? '8' : '5'})`]
+                                    : '0 0 0px rgba(0,0,0,0)',
+                            scale: isActive && xrayMode ? [1, 1.05, 1] : 1
                         }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
+                        transition={{ duration: 2, repeat: Infinity }}
                     >
-                        {/* Inner Ring */}
-                        <motion.div
-                            animate={isActive ? { rotate: 360 } : { rotate: 0 }}
-                            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                            className={`absolute inset - 2 rounded - full border border - dashed opacity - 50 ${hasError ? 'border-red-400' : isActive ? 'border-blue-400' : 'border-slate-500'} `}
-                        />
+                        {/* Inner Rotating Rings */}
+                        <motion.div animate={isActive ? { rotate: 360 } : { rotate: 0 }} transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                            className={`absolute inset-2 rounded-full border-2 border-dashed opacity-50 ${hasError ? 'border-red-400' : isActive ? 'border-blue-400' : 'border-slate-500'}`} />
+                        {xrayMode && (
+                            <motion.div animate={isActive ? { rotate: -360 } : { rotate: 0 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                                className={`absolute -inset-4 rounded-full border border-dotted opacity-30 border-blue-300`} />
+                        )}
 
-                        {/* Core Icon */}
-                        <div className={`relative z - 10 ${reactorColor} `}>
-                            {hasError ? <AlertTriangle size={48} /> : isActive ? <Activity size={48} /> : <Cpu size={48} />}
+                        <div className={`relative z-10 ${reactorColor}`}>
+                            {hasError ? <AlertTriangle size={56} /> : xrayMode ? <Network size={56} /> : <Cpu size={56} />}
                         </div>
 
-                        {/* Title */}
-                        <div className="absolute -bottom-8 whitespace-nowrap text-center left-1/2 -translate-x-1/2">
-                            <span className={`text - sm font - bold tracking - widest ${hasError ? 'text-red-400' : isActive ? 'text-blue-400' : 'text-slate-400'} `}>
+                        {/* Title Label */}
+                        <div className="absolute -bottom-10 whitespace-nowrap text-center left-1/2 -translate-x-1/2">
+                            <span className={`text-sm font-black tracking-[0.2em] ${hasError ? 'text-red-400' : isActive ? 'text-blue-400' : 'text-slate-400'}`}>
                                 ROUTER ENGINE
                             </span>
-                            <div className="text-[10px] text-slate-500 uppercase tracking-wider">Canonical Event Splitter</div>
+                            <div className="text-[9px] text-slate-500 uppercase tracking-widest mt-1">Multi-Dimensional Splitter</div>
                         </div>
                     </motion.div>
 
-                    {/* Incoming Data Stream */}
+                    {/* Incoming Main Payload Stream (From MinIO) */}
                     {isActive && (
-                        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-1 h-24 overflow-hidden mt-6">
-                            <motion.div
-                                className="w-full h-full bg-gradient-to-b from-transparent via-blue-400 to-blue-500"
-                                animate={{ y: ['-100%', '100%'] }}
-                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            />
+                        <div className="absolute -top-[140px] left-1/2 -translate-x-1/2 w-4 h-36 overflow-hidden mt-6 bg-[#0A0E17]/80 backdrop-blur-md rounded-full border-x border-[#0A0E17] z-0">
+                            <motion.div className="w-full h-full bg-gradient-to-b from-transparent via-blue-500/80 to-blue-600 shadow-[0_0_20px_#3b82f6]"
+                                animate={{ y: ['-100%', '100%'] }} transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }} />
                         </div>
                     )}
 
-                    <div className="absolute -top-36 left-1/2 -translate-x-1/2 text-center">
-                        {isActive && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="text-xs font-mono text-slate-300 bg-slate-800/80 px-2 py-1 flex items-center gap-2 rounded border border-slate-700 backdrop-blur-sm"
-                            >
-                                <Box size={12} className="text-blue-400" /> RAW_PAYLOAD
-                            </motion.div>
-                        )}
-                    </div>
+                    {/* MinIO Raw Data Source Node */}
+                    <div className="absolute -top-[160px] left-1/2 -translate-x-1/2 z-30">
+                        <motion.div
+                            className={`flex flex-col items-center justify-center p-3 rounded-xl border backdrop-blur-xl transition-all w-48 ${xrayMode ? 'bg-[#0A0E17]/90 hover:bg-[#0F172A]' : 'bg-slate-900/60'
+                                } ${isActive ? 'border-orange-500/50 shadow-[0_0_30px_rgba(249,115,22,0.3)]' : 'border-slate-800'}`}
+                        >
+                            <div className="flex items-center gap-2 mb-1 w-full justify-center">
+                                <Archive size={16} className={isActive ? 'text-orange-400' : 'text-slate-500'} />
+                                <span className="text-xs font-black uppercase tracking-wider text-orange-400">MinIO (S3 Core)</span>
+                            </div>
+                            <div className="text-[9px] text-slate-400 uppercase tracking-widest text-center w-full border-t border-white/5 pt-1 mt-1">
+                                {isActive ? 'RAW FILE SECURED' : 'DATA LAKE / DROPZONE'}
+                            </div>
 
+                            {/* File progress indicator in X-Ray mode */}
+                            <AnimatePresence>
+                                {xrayMode && isActive && (
+                                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="w-full">
+                                        <div className="w-full bg-slate-900 rounded-full h-1 mt-2 border border-white/10 overflow-hidden">
+                                            <motion.div className="h-full bg-orange-500" animate={{ width: ['0%', '100%'] }} transition={{ duration: 2, ease: "linear" }} />
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+                    </div>
                 </div>
 
-                {/* Database Nodes */}
+                {/* Databases Display */}
                 {nodes.map((node) => {
                     const isNodeActive = isActive && node.stat.state === 'active';
 
                     return (
-                        <div key={node.id} className={`absolute w - 44 ${node.position} z - 10 transition - all duration - 300`}>
+                        <div key={node.id} className={`absolute w-56 ${node.position} z-10 transition-all duration-500`}>
                             <motion.div
-                                className={`flex items - start gap - 4 p - 3 rounded - lg border backdrop - blur - xl ${node.bg} ${node.border} ${isNodeActive ? `shadow-[0_0_20px_var(--glow)]` : ''} `}
+                                className={`flex flex-col p-4 rounded-xl border backdrop-blur-xl transition-all ${xrayMode ? 'bg-[#0A0E17]/90 hover:bg-[#0F172A]' : node.bg
+                                    } ${node.border} ${isNodeActive ? `shadow-[0_0_30px_var(--glow)]` : ''}`}
                                 style={{ '--glow': node.color.replace('text-', '').replace('-400', '') } as any}
-                                whileHover={{ scale: 1.05 }}
+                                whileHover={{ scale: 1.05, zIndex: 50 }}
                             >
-                                <div className={`p - 2 rounded - full bg - [#0A0E17] border ${node.border} ${node.color} relative`}>
-                                    <node.icon size={20} />
-                                    {isNodeActive && (
-                                        <motion.div
-                                            className="absolute inset-0 rounded-full bg-current opacity-20"
-                                            animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-                                            transition={{ duration: 1, repeat: Infinity }}
-                                        />
-                                    )}
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className={`p-2.5 rounded-xl bg-[#0A0E17] border ${node.border} ${node.color} relative`}>
+                                        <node.icon size={20} />
+                                        {isNodeActive && (
+                                            <motion.div className="absolute inset-0 rounded-xl bg-current opacity-20"
+                                                animate={{ scale: [1, 1.3, 1], opacity: [0.6, 0, 0.6] }} transition={{ duration: 1.5, repeat: Infinity }} />
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className={`text-md font-black truncate uppercase tracking-wider ${node.color}`}>{node.title}</h4>
+                                        <p className="text-[10px] text-slate-400 uppercase tracking-widest">{node.subtitle}</p>
+                                    </div>
                                 </div>
 
-                                <div className="flex-1 min-w-0">
-                                    <h4 className={`text - sm font - bold truncate ${node.color} `}>{node.title}</h4>
-                                    <p className="text-[10px] text-slate-400 uppercase tracking-wider">{node.subtitle}</p>
-
-                                    {/* Metric Counter */}
-                                    <div className="mt-1 flex items-center justify-between border-t border-white/5 pt-1">
-                                        <span className="text-[10px] text-slate-500">Events</span>
-                                        <span className="text-xs font-mono font-bold text-white">
+                                {/* Metrics Section */}
+                                <div className="bg-black/30 rounded-lg p-2 border border-white/5">
+                                    <div className="flex items-center justify-between mb-1">
+                                        <span className="text-[9px] text-slate-500 font-bold uppercase">Total Entities</span>
+                                        <span className={`text-sm font-mono font-black ${isNodeActive ? 'text-white' : 'text-slate-500'}`}>
                                             {node.stat.count.toLocaleString()}
                                         </span>
                                     </div>
+
+                                    {/* X-Ray deep metrics */}
+                                    <AnimatePresence>
+                                        {xrayMode && (
+                                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                                                <div className="flex justify-between items-center mt-2 pt-2 border-t border-white/5">
+                                                    <span className="text-[8px] text-slate-600 uppercase flex items-center gap-1"><TerminalSquare size={8} /> Throughput</span>
+                                                    <span className={`text-[9px] font-mono ${node.color}`}>{isNodeActive ? node.stat.details?.throughput || '1.1k/s' : '0.0/s'}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center mt-1">
+                                                    <span className="text-[8px] text-slate-600 uppercase flex items-center gap-1"><Activity size={8} /> Latency</span>
+                                                    <span className="text-[9px] font-mono text-emerald-400">{isNodeActive ? node.stat.details?.latency || '12ms' : '-'}</span>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
                             </motion.div>
                         </div>
                     );
                 })}
 
-                {/* Floating Particles mimicking payload split */}
+                {/* Particle Emitters */}
                 <AnimatePresence>
                     {particles.map(p => {
-                        // Simple mapping to target nodes for particle end positions
                         const targetNode = nodes.find(n => n.id === p.target);
                         if (!targetNode) return null;
 
                         const isLeft = targetNode.position.includes('left-0');
                         const isTop = targetNode.position.includes('top-0');
 
-                        const x = isLeft ? -180 : 180;
-                        const y = isTop ? -80 : 80;
-
-                        // Color logic
+                        // Particle trajectory
+                        const x = isLeft ? -200 : 200;
+                        const y = isTop ? -100 : 100;
                         const colorClass = targetNode.color.replace('text-', 'bg-');
 
                         return (
-                            <motion.div
-                                key={p.id}
+                            <motion.div key={p.id}
                                 initial={{ x: 0, y: 0, scale: 0, opacity: 1 }}
-                                animate={{ x, y, scale: 1, opacity: 0 }}
+                                animate={{ x, y, scale: xrayMode ? 1.5 : 1, opacity: 0 }}
                                 exit={{ opacity: 0 }}
-                                transition={{ duration: 0.8, ease: "easeOut" }}
-                                className={`absolute left - 1 / 2 top - 1 / 2 w - 2 h - 2 rounded - full - ml - 1 - mt - 1 ${colorClass} shadow - [0_0_10px_currentColor] z - 30 pointer - events - none`}
-                            />
+                                transition={{ duration: xrayMode ? 0.6 : 1, ease: "circIn" }}
+                                className={`absolute left-1/2 top-1/2 w-2 h-2 rounded-full -ml-1 -mt-1 ${colorClass} shadow-[0_0_15px_currentColor] z-30 pointer-events-none`}
+                            >
+                                {xrayMode && (
+                                    <span className="absolute -top-3 -left-4 text-[6px] font-mono text-white/50">{p.type}</span>
+                                )}
+                            </motion.div>
                         );
                     })}
                 </AnimatePresence>
-
             </div>
 
-            {/* Footer Info / Redis State */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-4">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-[#0A0E17]/80 border border-green-500/20 text-green-400 backdrop-blur-md">
-                    <Server size={14} />
-                    <span className="text-xs font-mono">Redis System State:
-                        <span className="ml-2 font-bold text-white">
-                            {isActive ? 'SYNCHRONIZING' : 'IDLE'}
-                        </span>
+            {/* Bottom State Footer */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4">
+                <div className={`flex items-center gap-2 px-6 py-2 rounded-full border backdrop-blur-md transition-colors ${isActive ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-slate-900/80 border-slate-800 text-slate-600'
+                    }`}>
+                    <Server size={14} className={isActive ? 'animate-pulse' : ''} />
+                    <span className="text-[10px] uppercase font-black tracking-widest">
+                        System State: {isActive ? 'SYNCING MANIFEST' : 'IDLE / AWAITING CARGO'}
                     </span>
                 </div>
             </div>
