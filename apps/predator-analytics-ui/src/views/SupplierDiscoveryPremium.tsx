@@ -5,7 +5,8 @@
  * на основі аналізу митних даних
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { api } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -69,101 +70,8 @@ interface SupplierMatch {
 }
 
 // ========================
-// Mock Data
+// Mock data removed in favor of real API
 // ========================
-
-const mockSuppliers: Supplier[] = [
-  {
-    id: '1',
-    name: 'Shenzhen Technology Co., Ltd',
-    country: 'Китай',
-    countryCode: 'CN',
-    city: 'Shenzhen',
-    products: ['LED панелі', 'Електроніка', 'Компоненти'],
-    totalExportVolume: 45000000,
-    avgPrice: 12.5,
-    priceCompetitiveness: 92,
-    ukraineClients: 28,
-    reliability: 94,
-    leadTime: 14,
-    lastShipment: '2026-01-28',
-    certifications: ['ISO 9001', 'CE', 'RoHS'],
-    verified: true,
-    isFavorite: false
-  },
-  {
-    id: '2',
-    name: 'Vietnam Electronics Manufacturing',
-    country: 'В\'єтнам',
-    countryCode: 'VN',
-    city: 'Ho Chi Minh City',
-    products: ['Дисплеї', 'Акумулятори', 'Зарядні пристрої'],
-    totalExportVolume: 28000000,
-    avgPrice: 11.8,
-    priceCompetitiveness: 95,
-    ukraineClients: 12,
-    reliability: 88,
-    leadTime: 18,
-    lastShipment: '2026-01-30',
-    certifications: ['ISO 9001', 'UL'],
-    verified: true,
-    isFavorite: true
-  },
-  {
-    id: '3',
-    name: 'Grupa Azoty S.A.',
-    country: 'Польща',
-    countryCode: 'PL',
-    city: 'Tarnów',
-    products: ['Добрива', 'Хімікати', 'Пластик'],
-    totalExportVolume: 89000000,
-    avgPrice: 0.85,
-    priceCompetitiveness: 78,
-    ukraineClients: 45,
-    reliability: 97,
-    leadTime: 5,
-    lastShipment: '2026-01-31',
-    certifications: ['ISO 9001', 'ISO 14001', 'REACH'],
-    verified: true,
-    isFavorite: false
-  },
-  {
-    id: '4',
-    name: 'Turkish Steel Industries',
-    country: 'Туреччина',
-    countryCode: 'TR',
-    city: 'Istanbul',
-    products: ['Сталь', 'Метал', 'Арматура'],
-    totalExportVolume: 156000000,
-    avgPrice: 850,
-    priceCompetitiveness: 85,
-    ukraineClients: 67,
-    reliability: 91,
-    leadTime: 7,
-    lastShipment: '2026-01-31',
-    certifications: ['ISO 9001', 'CE'],
-    verified: true,
-    isFavorite: false
-  },
-  {
-    id: '5',
-    name: 'Taiwan Semiconductor Parts',
-    country: 'Тайвань',
-    countryCode: 'TW',
-    city: 'Taipei',
-    products: ['Мікросхеми', 'Напівпровідники', 'IC'],
-    totalExportVolume: 34000000,
-    avgPrice: 2.45,
-    priceCompetitiveness: 72,
-    ukraineClients: 8,
-    reliability: 96,
-    leadTime: 21,
-    lastShipment: '2026-01-25',
-    certifications: ['ISO 9001', 'IATF 16949', 'RoHS'],
-    verified: true,
-    isFavorite: false
-  }
-];
 
 // ========================
 // Components
@@ -221,7 +129,9 @@ const SupplierCard: React.FC<{
             <div className="flex items-center gap-2 mb-1">
               <h3 className="text-lg font-bold text-white">{supplier.name}</h3>
               {supplier.verified && (
-                <Shield className="text-cyan-400" size={16} title="Верифікований" />
+                <div title="Верифікований">
+                  <Shield className="text-cyan-400" size={16} />
+                </div>
               )}
             </div>
 
@@ -243,10 +153,9 @@ const SupplierCard: React.FC<{
         <div className="flex items-center gap-6">
           {/* Price Competitiveness */}
           <div className="text-center">
-            <div className={`text-2xl font-black ${
-              supplier.priceCompetitiveness >= 90 ? 'text-emerald-400' :
-              supplier.priceCompetitiveness >= 70 ? 'text-amber-400' : 'text-rose-400'
-            }`}>
+            <div className={`text-2xl font-black ${supplier.priceCompetitiveness >= 90 ? 'text-emerald-400' :
+                supplier.priceCompetitiveness >= 70 ? 'text-amber-400' : 'text-rose-400'
+              }`}>
               {supplier.priceCompetitiveness}%
             </div>
             <p className="text-xs text-slate-500">Ціна</p>
@@ -272,11 +181,10 @@ const SupplierCard: React.FC<{
                 e.stopPropagation();
                 onFavorite();
               }}
-              className={`p-2 rounded-lg transition-colors ${
-                supplier.isFavorite
+              className={`p-2 rounded-lg transition-colors ${supplier.isFavorite
                   ? 'bg-amber-500/20 text-amber-400'
                   : 'bg-slate-800 text-slate-500 hover:text-amber-400'
-              }`}
+                }`}
             >
               {supplier.isFavorite ? <Star size={18} /> : <StarOff size={18} />}
             </motion.button>
@@ -410,7 +318,22 @@ const SupplierDiscoveryPremium: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [suppliers, setSuppliers] = useState(mockSuppliers);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const data = await api.premium.getSuppliers();
+        setSuppliers(data);
+      } catch (err) {
+        console.error('Failed to fetch suppliers', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSuppliers();
+  }, []);
 
   const countries = useMemo(() =>
     [...new Set(suppliers.map(s => s.country))],
@@ -503,21 +426,30 @@ const SupplierDiscoveryPremium: React.FC = () => {
 
         {/* Suppliers List */}
         <div className="space-y-4">
-          {filteredSuppliers.map((supplier) => (
-            <SupplierCard
-              key={supplier.id}
-              supplier={supplier}
-              isExpanded={expandedId === supplier.id}
-              onToggle={() => setExpandedId(expandedId === supplier.id ? null : supplier.id)}
-              onFavorite={() => toggleFavorite(supplier.id)}
-            />
-          ))}
-
-          {filteredSuppliers.length === 0 && (
+          {loading ? (
             <div className="text-center py-12">
-              <Search className="text-slate-600 mx-auto mb-4" size={48} />
-              <p className="text-slate-500">Постачальників не знайдено</p>
+              <div className="animate-spin w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto mb-4" />
+              <p className="text-slate-500 font-mono text-sm tracking-widest uppercase">Завантаження даних...</p>
             </div>
+          ) : (
+            <>
+              {filteredSuppliers.map((supplier) => (
+                <SupplierCard
+                  key={supplier.id}
+                  supplier={supplier}
+                  isExpanded={expandedId === supplier.id}
+                  onToggle={() => setExpandedId(expandedId === supplier.id ? null : supplier.id)}
+                  onFavorite={() => toggleFavorite(supplier.id)}
+                />
+              ))}
+
+              {filteredSuppliers.length === 0 && (
+                <div className="text-center py-12">
+                  <Search className="text-slate-600 mx-auto mb-4" size={48} />
+                  <p className="text-slate-500">Постачальників не знайдено</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

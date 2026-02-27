@@ -5,7 +5,8 @@
  * Знаходження найкращих пропозицій
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { api } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -61,52 +62,7 @@ interface Product {
 }
 
 // ========================
-// Mock Data
-// ========================
-
-const mockProducts: Product[] = [
-  {
-    id: '1',
-    name: 'LED панелі 55" (4K, IPS)',
-    category: 'Електроніка',
-    hsCode: '8528.72',
-    unit: 'шт',
-    avgPrice: 145,
-    offers: [
-      { id: '1a', supplierName: 'Shenzhen Display Co.', country: 'Китай', countryCode: 'CN', price: 125, currency: 'USD', minQuantity: 100, leadTime: 14, reliability: 94, lastUpdated: '2026-02-03', priceHistory: [], isVerified: true, isBestPrice: true },
-      { id: '1b', supplierName: 'Vietnam Panels Ltd', country: "В'єтнам", countryCode: 'VN', price: 132, currency: 'USD', minQuantity: 50, leadTime: 18, reliability: 88, lastUpdated: '2026-02-02', priceHistory: [], isVerified: true, isBestPrice: false },
-      { id: '1c', supplierName: 'Taiwan Tech Inc', country: 'Тайвань', countryCode: 'TW', price: 148, currency: 'USD', minQuantity: 25, leadTime: 21, reliability: 96, lastUpdated: '2026-02-01', priceHistory: [], isVerified: true, isBestPrice: false },
-      { id: '1d', supplierName: 'Korean Electronics', country: 'Корея', countryCode: 'KR', price: 165, currency: 'USD', minQuantity: 20, leadTime: 12, reliability: 98, lastUpdated: '2026-02-03', priceHistory: [], isVerified: true, isBestPrice: false },
-    ]
-  },
-  {
-    id: '2',
-    name: 'Литій-іонні акумулятори (18650, 3000mAh)',
-    category: 'Електроніка',
-    hsCode: '8507.60',
-    unit: 'шт',
-    avgPrice: 2.85,
-    offers: [
-      { id: '2a', supplierName: 'Battery World Shenzhen', country: 'Китай', countryCode: 'CN', price: 2.45, currency: 'USD', minQuantity: 1000, leadTime: 14, reliability: 92, lastUpdated: '2026-02-03', priceHistory: [], isVerified: true, isBestPrice: true },
-      { id: '2b', supplierName: 'Samsung SDI', country: 'Корея', countryCode: 'KR', price: 3.20, currency: 'USD', minQuantity: 500, leadTime: 10, reliability: 99, lastUpdated: '2026-02-02', priceHistory: [], isVerified: true, isBestPrice: false },
-      { id: '2c', supplierName: 'Panasonic Japan', country: 'Японія', countryCode: 'JP', price: 3.45, currency: 'USD', minQuantity: 200, leadTime: 12, reliability: 99, lastUpdated: '2026-02-01', priceHistory: [], isVerified: true, isBestPrice: false },
-    ]
-  },
-  {
-    id: '3',
-    name: 'NPK Добрива (15-15-15)',
-    category: 'Хімія',
-    hsCode: '3105.20',
-    unit: 'тонна',
-    avgPrice: 420,
-    offers: [
-      { id: '3a', supplierName: 'Grupa Azoty', country: 'Польща', countryCode: 'PL', price: 385, currency: 'USD', minQuantity: 20, leadTime: 5, reliability: 97, lastUpdated: '2026-02-03', priceHistory: [], isVerified: true, isBestPrice: true },
-      { id: '3b', supplierName: 'Belaruskali', country: 'Білорусь', countryCode: 'BY', price: 395, currency: 'USD', minQuantity: 50, leadTime: 7, reliability: 85, lastUpdated: '2026-02-02', priceHistory: [], isVerified: false, isBestPrice: false },
-      { id: '3c', supplierName: 'Yara International', country: 'Норвегія', countryCode: 'NO', price: 450, currency: 'USD', minQuantity: 10, leadTime: 10, reliability: 99, lastUpdated: '2026-02-01', priceHistory: [], isVerified: true, isBestPrice: false },
-    ]
-  },
-];
-
+// Mock data removed in favor of real API
 // ========================
 // Components
 // ========================
@@ -142,8 +98,8 @@ const PriceComparisonRow: React.FC<PriceComparisonRowProps> = ({ offer, avgPrice
           w-8 h-8 rounded-full flex items-center justify-center font-black text-sm
           ${rank === 0 ? 'bg-amber-500/20 text-amber-400' :
             rank === 1 ? 'bg-slate-500/20 text-slate-400' :
-            rank === 2 ? 'bg-orange-500/20 text-orange-400' :
-            'bg-slate-800 text-slate-500'}
+              rank === 2 ? 'bg-orange-500/20 text-orange-400' :
+                'bg-slate-800 text-slate-500'}
         `}>
           {rank + 1}
         </div>
@@ -153,7 +109,9 @@ const PriceComparisonRow: React.FC<PriceComparisonRowProps> = ({ offer, avgPrice
           <div className="flex items-center gap-2 mb-1">
             <span className="font-bold text-white">{offer.supplierName}</span>
             {offer.isVerified && (
-              <Shield className="text-cyan-400" size={14} title="Верифікований" />
+              <div title="Верифікований">
+                <Shield className="text-cyan-400" size={14} />
+              </div>
             )}
             {offer.isBestPrice && (
               <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full">
@@ -179,10 +137,9 @@ const PriceComparisonRow: React.FC<PriceComparisonRowProps> = ({ offer, avgPrice
 
         {/* Reliability */}
         <div className="text-center">
-          <div className={`text-lg font-bold ${
-            offer.reliability >= 95 ? 'text-emerald-400' :
-            offer.reliability >= 85 ? 'text-amber-400' : 'text-rose-400'
-          }`}>
+          <div className={`text-lg font-bold ${offer.reliability >= 95 ? 'text-emerald-400' :
+              offer.reliability >= 85 ? 'text-amber-400' : 'text-rose-400'
+            }`}>
             {offer.reliability}%
           </div>
           <p className="text-[10px] text-slate-500">Надійність</p>
@@ -193,9 +150,8 @@ const PriceComparisonRow: React.FC<PriceComparisonRowProps> = ({ offer, avgPrice
           <div className="text-xl font-black text-white">
             {formatPrice(offer.price)}
           </div>
-          <div className={`flex items-center justify-end gap-1 text-xs ${
-            isCheaper ? 'text-emerald-400' : 'text-rose-400'
-          }`}>
+          <div className={`flex items-center justify-end gap-1 text-xs ${isCheaper ? 'text-emerald-400' : 'text-rose-400'
+            }`}>
             {isCheaper ? <TrendingDown size={12} /> : <TrendingUp size={12} />}
             <span>{priceDiff.toFixed(1)}% від середньої</span>
           </div>
@@ -310,11 +266,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, isExpanded, onToggle
 
 const PriceComparisonPremium: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [expandedProduct, setExpandedProduct] = useState<string | null>(mockProducts[0].id);
+  const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'savings' | 'offers' | 'name'>('savings');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await api.premium.getPriceComparison();
+        setProducts(data);
+        if (data.length > 0) {
+          setExpandedProduct(data[0].id);
+        }
+      } catch (err) {
+        console.error('Failed to fetch products', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   const filteredProducts = useMemo(() => {
-    let result = [...mockProducts];
+    let result = [...products];
 
     if (searchQuery) {
       result = result.filter(p =>
@@ -324,15 +299,17 @@ const PriceComparisonPremium: React.FC = () => {
     }
 
     return result;
-  }, [searchQuery]);
+  }, [searchQuery, products]);
 
   const totalSavings = useMemo(() => {
-    return mockProducts.reduce((acc, p) => {
+    if (products.length === 0) return 0;
+    return products.reduce((acc, p) => {
+      if (p.offers.length === 0) return acc;
       const best = Math.min(...p.offers.map(o => o.price));
       const worst = Math.max(...p.offers.map(o => o.price));
       return acc + ((worst - best) / worst) * 100;
-    }, 0) / mockProducts.length;
-  }, []);
+    }, 0) / products.length;
+  }, [products]);
 
   return (
     <div className="min-h-screen bg-slate-950 p-6">
@@ -376,7 +353,7 @@ const PriceComparisonPremium: React.FC = () => {
           <div className="bg-slate-900/60 border border-white/5 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
               <Package className="text-cyan-400" size={18} />
-              <span className="text-2xl font-black text-white">{mockProducts.length}</span>
+              <span className="text-2xl font-black text-white">{products.length}</span>
             </div>
             <p className="text-xs text-slate-500">Товарів</p>
           </div>
@@ -385,7 +362,7 @@ const PriceComparisonPremium: React.FC = () => {
             <div className="flex items-center justify-between mb-2">
               <Globe className="text-purple-400" size={18} />
               <span className="text-2xl font-black text-white">
-                {new Set(mockProducts.flatMap(p => p.offers.map(o => o.country))).size}
+                {new Set(products.flatMap(p => p.offers.map(o => o.country))).size}
               </span>
             </div>
             <p className="text-xs text-slate-500">Країн</p>
@@ -395,7 +372,7 @@ const PriceComparisonPremium: React.FC = () => {
             <div className="flex items-center justify-between mb-2">
               <BarChart3 className="text-amber-400" size={18} />
               <span className="text-2xl font-black text-white">
-                {mockProducts.reduce((acc, p) => acc + p.offers.length, 0)}
+                {products.reduce((acc, p) => acc + p.offers.length, 0)}
               </span>
             </div>
             <p className="text-xs text-slate-500">Пропозицій</p>
@@ -426,22 +403,31 @@ const PriceComparisonPremium: React.FC = () => {
 
         {/* Products List */}
         <div className="space-y-4">
-          {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              isExpanded={expandedProduct === product.id}
-              onToggle={() => setExpandedProduct(
-                expandedProduct === product.id ? null : product.id
-              )}
-            />
-          ))}
-
-          {filteredProducts.length === 0 && (
+          {loading ? (
             <div className="text-center py-12">
-              <Search className="text-slate-600 mx-auto mb-4" size={48} />
-              <p className="text-slate-500">Товарів не знайдено</p>
+              <div className="animate-spin w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full mx-auto mb-4" />
+              <p className="text-slate-500 font-mono text-sm tracking-widest uppercase">Завантаження даних...</p>
             </div>
+          ) : (
+            <>
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  isExpanded={expandedProduct === product.id}
+                  onToggle={() => setExpandedProduct(
+                    expandedProduct === product.id ? null : product.id
+                  )}
+                />
+              ))}
+
+              {filteredProducts.length === 0 && (
+                <div className="text-center py-12">
+                  <Search className="text-slate-600 mx-auto mb-4" size={48} />
+                  <p className="text-slate-500">Товарів не знайдено</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
