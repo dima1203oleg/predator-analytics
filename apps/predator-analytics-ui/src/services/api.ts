@@ -157,7 +157,9 @@ export const api = {
         return (await v45Client.post('/etl/sync')).data;
     },
     getETLJobs: async (limit: number = 20) => {
-        return (await v45Client.get(`/etl/jobs?limit=${limit}`)).data;
+        const data = (await v45Client.get(`/etl/jobs?limit=${limit}`)).data;
+        // API may return { jobs: [...] } or directly an array
+        return Array.isArray(data) ? data : (data?.jobs ?? data?.items ?? []);
     },
     getETLJob: async (id: string) => {
         return (await v45Client.get(`/etl/jobs/${id}`)).data;

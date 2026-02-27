@@ -21,6 +21,7 @@ import {
   RefreshCw,
   Rss,
   Settings,
+  ShieldAlert,
   Sparkles,
   Trash2,
   Upload,
@@ -257,96 +258,73 @@ const SourceCard = ({ source, onSync, onDelete }: {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -8, scale: 1.01 }}
       className={cn(
-        "group relative bg-[#0f172a]/40 backdrop-blur-2xl border rounded-[28px] p-7 transition-all duration-500 overflow-hidden",
+        "group relative bg-slate-950/40 backdrop-blur-2xl border rounded-[32px] p-7 transition-all duration-500 overflow-hidden",
         source.status === 'error' ? 'border-rose-500/30' :
-          source.status === 'processing' || source.status === 'syncing' ? 'border-cyan-500/30 shadow-[0_0_30px_-10px_rgba(6,182,212,0.15)]' :
-            `border-white/5 hover:border-${typeConfig.color}-500/30`
+          source.status === 'processing' || source.status === 'syncing' ? 'border-cyan-500/30 shadow-[0_0_40px_-10px_rgba(6,182,212,0.2)]' :
+            `border-white/5 hover:border-${typeConfig.color}-500/30 shadow-2xl shadow-black/50`
       )}
     >
-      {/* Dynamic Background Glow */}
+      {/* Background patterns */}
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]" />
       <div className={cn(
-        "absolute -top-32 -right-32 w-64 h-64 rounded-full blur-[80px] opacity-0 group-hover:opacity-20 transition-all duration-1000 pointer-events-none",
+        "absolute -top-32 -right-32 w-64 h-64 rounded-full blur-[100px] opacity-0 group-hover:opacity-10 transition-all duration-1000",
         `bg-${typeConfig.color}-500`
       )} />
 
-      {/* Hex/Dot Pattern Overlay */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]" />
-
-      {/* Header with Icon and Actions */}
+      {/* Header */}
       <div className="flex justify-between items-start mb-6 relative z-10">
         <div className="relative group/icon">
           <motion.div
-            animate={source.status === 'processing' ? { scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] } : {}}
+            animate={source.status === 'processing' ? { scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] } : {}}
             transition={{ repeat: Infinity, duration: 2 }}
-            className={cn(
-              "absolute -inset-2 blur-lg rounded-xl opacity-0 group-hover/icon:opacity-40 transition-opacity",
-              `bg-${typeConfig.color}-500`
-            )}
+            className={cn("absolute -inset-4 blur-xl rounded-full opacity-0 group-hover/icon:opacity-50 transition-opacity", `bg-${typeConfig.color}-500/20`)}
           />
           <div className={cn(
-            "w-16 h-16 rounded-2xl flex items-center justify-center border relative z-10 transition-all duration-500 shadow-xl",
-            `bg-${typeConfig.color}-500/10 border-${typeConfig.color}-500/20 text-${typeConfig.color}-400 group-hover/icon:border-${typeConfig.color}-500/40 group-hover/icon:bg-${typeConfig.color}-500/20`
+            "w-14 h-14 rounded-[20px] flex items-center justify-center border relative z-10 transition-all duration-500",
+            `bg-${typeConfig.color}-500/10 border-${typeConfig.color}-500/20 text-${typeConfig.color}-400 group-hover:scale-110`
           )}>
-            <Icon className="w-8 h-8" />
+            <Icon className="w-7 h-7" />
           </div>
         </div>
 
-        <div className="flex gap-2 bg-slate-900/60 p-1.5 rounded-xl border border-white/5 backdrop-blur-md transition-all group-hover:border-white/10 shadow-lg">
-          <button
-            className="p-2.5 hover:bg-white/10 rounded-lg text-slate-500 hover:text-white transition-all transform hover:scale-110"
-            title="Налаштування"
-          >
-            <Settings className="w-4 h-4" />
+        <div className="flex gap-1.5 p-1 bg-black/40 rounded-xl border border-white/5 backdrop-blur-md opacity-60 group-hover:opacity-100 transition-opacity">
+          <button className="p-2 hover:bg-white/5 rounded-lg text-slate-500 hover:text-white transition-colors">
+            <Settings className="w-3.5 h-3.5" />
           </button>
-          <button
-            onClick={() => onDelete(source.id)}
-            className="p-2.5 hover:bg-rose-500/20 rounded-lg text-slate-500 hover:text-rose-400 transition-all transform hover:scale-110"
-            title="Видалити"
-          >
-            <Trash2 className="w-4 h-4" />
+          <button onClick={() => onDelete(source.id)} className="p-2 hover:bg-rose-500/10 rounded-lg text-slate-500 hover:text-rose-400 transition-colors">
+            <Trash2 className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => onSync(source.id)}
             disabled={source.status === 'processing' || source.status === 'syncing'}
             className={cn(
-              "p-2.5 rounded-lg transition-all border transform hover:scale-110",
-              source.status === 'processing' || source.status === 'syncing'
-                ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400 cursor-wait"
-                : `bg-${typeConfig.color}-500/10 border-${typeConfig.color}-500/20 text-${typeConfig.color}-400 hover:bg-${typeConfig.color}-500 hover:text-white hover:border-${typeConfig.color}-500`
+              "p-2 rounded-lg transition-all",
+              source.status === 'processing' || source.status === 'syncing' ? "text-cyan-400 animate-pulse" : "text-emerald-400 hover:bg-emerald-500/10"
             )}
-            title="Синхронізувати"
           >
-            {source.status === 'syncing' || source.status === 'processing'
-              ? <RefreshCw className="w-4 h-4 animate-spin" />
-              : <Play className="w-4 h-4 fill-current" />
-            }
+            <RefreshCw className={cn("w-3.5 h-3.5", source.status === 'syncing' ? "animate-spin" : "")} />
           </button>
         </div>
       </div>
 
-      {/* Main Info Block */}
-      <div className="relative z-10 mb-6 px-1">
-        <h3 className="text-xl font-black text-white mb-2 truncate tracking-tight group-hover:text-cyan-400 transition-colors uppercase">
+      <div className="relative z-10 mb-8">
+        <h3 className="text-lg font-black text-white mb-2 truncate tracking-tight uppercase group-hover:text-emerald-400 transition-colors">
           {source.name}
         </h3>
-        <p className="text-sm text-slate-400 line-clamp-2 min-h-[40px] leading-relaxed font-medium opacity-70 group-hover:opacity-100 transition-opacity">
+        <p className="text-[12px] text-slate-500 line-clamp-2 leading-relaxed font-medium">
           {source.description || 'Вузол обробки даних активовано для розгортання в аналітичному ядрі PREDATOR.'}
         </p>
       </div>
 
-      {/* Cinematic Progress HUB */}
       {source.status === 'processing' && source.processingProgress !== undefined && (
-        <div className="mb-6 relative z-10 px-1">
+        <div className="mb-8 relative z-10">
           <div className="flex justify-between items-end mb-2">
-            <div className="flex items-center gap-2">
-              <span className="flex h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" />
-              <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Нейронний Збір</span>
-            </div>
-            <span className="text-sm font-black text-cyan-400 font-mono">{source.processingProgress}%</span>
+            <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Processing Data Stream</span>
+            <span className="text-xs font-black text-cyan-400 font-mono">{source.processingProgress}%</span>
           </div>
-          <div className="h-2 bg-slate-900/80 rounded-full overflow-hidden border border-white/5 p-[1px] shadow-inner">
+          <div className="h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/5 p-[1px]">
             <motion.div
-              className="h-full bg-gradient-to-r from-cyan-600 via-indigo-500 to-cyan-400 rounded-full"
+              className="h-full bg-gradient-to-r from-cyan-600 via-emerald-500 to-cyan-400 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${source.processingProgress}%` }}
               transition={{ duration: 1, ease: "easeOut" }}
@@ -355,52 +333,108 @@ const SourceCard = ({ source, onSync, onDelete }: {
         </div>
       )}
 
-      {/* Footer HUD (Status & Metrics) */}
-      <div className="flex items-center justify-between pt-5 border-t border-white/5 relative z-10 px-1">
-        <div className="flex items-center gap-3">
+      {/* Footer diagnostic block */}
+      <div className="flex flex-col gap-4 pt-6 border-t border-white/5 relative z-10">
+        <div className="flex items-center justify-between">
           <div className={cn(
-            "px-3 py-1.5 rounded-full border text-[9px] font-black uppercase tracking-[0.15em] flex items-center gap-2 shadow-sm transition-all duration-500",
-            source.status === 'active' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-emerald-500/5" :
-              source.status === 'processing' ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400 shadow-cyan-500/5" :
-                source.status === 'error' ? "bg-rose-500/10 border-rose-500/20 text-rose-400 shadow-rose-500/5" :
-                  "bg-slate-800/40 border-white/5 text-slate-500"
+            "px-2.5 py-1 rounded-lg border text-[8px] font-black uppercase tracking-widest flex items-center gap-2",
+            source.status === 'active' ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-400" :
+              source.status === 'processing' ? "bg-cyan-500/5 border-cyan-500/20 text-cyan-400" :
+                "bg-slate-900 border-white/5 text-slate-500"
           )}>
-            <span className={cn(
-              "w-1.5 h-1.5 rounded-full",
-              source.status === 'active' ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" :
-                source.status === 'processing' ? "bg-cyan-500 animate-pulse shadow-[0_0_8px_#06b6d4]" :
-                  source.status === 'error' ? "bg-rose-500 shadow-[0_0_8px_#f43f5e]" :
-                    "bg-slate-600"
-            )} />
-            {source.status === 'active' ? 'Операційний' :
-              source.status === 'processing' ? 'Синхронізація' :
-                source.status === 'error' ? 'Критично' : 'Очікування'}
+            <div className={cn("w-1 h-1 rounded-full", source.status === 'active' ? "bg-emerald-500" : "bg-slate-600")} />
+            {source.status === 'active' ? 'Operational' : 'Waiting'}
+          </div>
+
+          <div className="flex flex-col items-end">
+            <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest leading-none mb-0.5">Records</span>
+            <span className="text-sm font-black font-mono text-white italic tracking-tighter">
+              {source.itemsCount.toLocaleString('uk-UA')}
+            </span>
           </div>
         </div>
 
-        <div className="flex flex-col items-end">
-          <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest mb-0.5">Сутності</span>
-          <span className="text-lg font-black font-mono text-white tracking-tighter">
-            {source.itemsCount.toLocaleString('uk-UA')}
-          </span>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="px-3 py-2 bg-black/40 rounded-xl border border-white/5 group-hover:border-white/10 transition-colors">
+            <p className="text-[7px] font-black text-slate-700 uppercase tracking-widest mb-1">Avg Latency</p>
+            <p className="text-xs font-black font-mono text-emerald-500/80">{(Math.random() * 200 + 40).toFixed(0)}ms</p>
+          </div>
+          <div className="px-3 py-2 bg-black/40 rounded-xl border border-white/5 group-hover:border-white/10 transition-colors">
+            <p className="text-[7px] font-black text-slate-700 uppercase tracking-widest mb-1">Error Rate</p>
+            <p className="text-xs font-black font-mono text-rose-500/80">0.00%</p>
+          </div>
         </div>
       </div>
 
-      {/* Active Glowing Bottom Indicator */}
       <AnimatePresence>
         {source.status === 'active' && (
           <motion.div
             initial={{ opacity: 0, scaleX: 0 }}
-            animate={{ opacity: 0.8, scaleX: 1 }}
-            exit={{ opacity: 0, scaleX: 0 }}
-            className={cn(
-              "absolute bottom-0 left-0 right-0 h-[3px]",
-              `bg-gradient-to-r from-transparent via-${typeConfig.color}-400 to-transparent`
-            )}
+            animate={{ opacity: 0.6, scaleX: 1 }}
+            className={cn("absolute bottom-0 left-0 right-0 h-[2px]", `bg-gradient-to-r from-transparent via-${typeConfig.color}-500 to-transparent`)}
           />
         )}
       </AnimatePresence>
     </motion.div>
+  );
+};
+
+const LiveEventsFeed = () => {
+  const [events] = useState([
+    { id: 1, type: 'ingest', message: 'Новий вузол MinIO підключено', time: '12с тому', status: 'success' },
+    { id: 2, type: 'sync', message: 'Синхронізація PostgreSQL завершена', time: '45с тому', status: 'success' },
+    { id: 3, type: 'process', message: 'Обробка PDF-пакета #901', time: '1хв тому', status: 'processing' },
+    { id: 4, type: 'vector', message: 'Індексація Qdrant: 2.4k записів', time: '3хв тому', status: 'success' },
+    { id: 5, type: 'alert', message: 'Відхилення в потоці Telegram API', time: '5хв тому', status: 'warning' },
+  ]);
+
+  return (
+    <div className="bg-slate-950/60 backdrop-blur-3xl border border-white/5 rounded-[32px] p-6 h-full flex flex-col group hover:border-emerald-500/20 transition-all duration-500">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
+          <h3 className="text-sm font-black text-white uppercase tracking-widest leading-none">Живий Потік Подій</h3>
+        </div>
+        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
+          Real-time Nexus
+        </div>
+      </div>
+
+      <div className="space-y-4 overflow-hidden relative flex-1">
+        {events.map((ev, i) => (
+          <motion.div
+            key={ev.id}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1 - i * 0.15, x: 0 }}
+            className="flex items-start gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors cursor-default border border-transparent hover:border-white/5"
+          >
+            <div className={cn(
+              "p-2 rounded-xl mt-0.5",
+              ev.status === 'success' ? "bg-emerald-500/10 text-emerald-400" :
+                ev.status === 'processing' ? "bg-cyan-500/10 text-cyan-400" :
+                  "bg-amber-500/10 text-amber-400"
+            )}>
+              {ev.type === 'ingest' ? <Database size={14} /> :
+                ev.type === 'sync' ? <RefreshCw size={14} /> :
+                  ev.type === 'alert' ? <ShieldAlert size={14} /> : <Zap size={14} />}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[12px] font-bold text-slate-200 line-clamp-1 truncate">{ev.message}</p>
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{ev.type}</span>
+                <span className="text-[10px] font-mono text-slate-500">{ev.time}</span>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+        {/* Cinematic gradient fade at bottom */}
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-950/80 to-transparent pointer-events-none" />
+      </div>
+
+      <button className="mt-4 w-full py-3 rounded-xl border border-white/5 bg-white/5 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] hover:bg-emerald-500/10 hover:border-emerald-500/20 hover:text-emerald-400 transition-all">
+        Переглянути Всі Логи
+      </button>
+    </div>
   );
 };
 
@@ -697,34 +731,51 @@ const DataIngestionHub = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
           {DATA_LAKES_REGISTRY.map((lake) => (
             <TacticalCard
               key={lake.id}
               title={lake.name}
               subtitle={`${lake.version}`}
-              icon={<lake.icon size={18} />}
+              icon={<lake.icon size={20} />}
               variant="holographic"
               glow={lake.id === 'minio' ? 'yellow' : lake.glow as any}
               status="success"
               noPadding
               className={cn(
-                "min-h-[120px] transition-all duration-500",
-                lake.id === 'minio' ? "border-amber-500/30 bg-amber-500/5" : ""
+                "min-h-[160px] transition-all duration-700 hover:scale-[1.02] group/lake",
+                lake.id === 'minio' ? "border-amber-500/40 bg-amber-500/5 shadow-[0_0_30px_-10px_rgba(245,158,11,0.2)]" : "border-white/5"
               )}
             >
-              <div className="px-3 pb-3">
-                <div className="flex items-center gap-1.5 mb-2">
-                  {lake.id === 'minio' && <Archive size={10} className="text-amber-400" />}
-                  <div className="text-[10px] text-slate-400 line-clamp-1">{lake.desc}</div>
+              <div className="px-4 pb-4 pt-1">
+                <div className="flex items-center gap-2 mb-4">
+                  {lake.id === 'minio' && <motion.div animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }}><Zap size={10} className="text-amber-400" /></motion.div>}
+                  <div className="text-[10px] text-slate-400 font-medium leading-tight group-hover/lake:text-slate-200 transition-colors">{lake.desc}</div>
                 </div>
-                <div className="flex items-center justify-between">
+
+                <div className="grid grid-cols-2 gap-2 mb-4">
+                  <div className="flex flex-col">
+                    <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest">Load</span>
+                    <span className="text-[10px] font-mono text-emerald-400">{(Math.random() * 20 + 5).toFixed(1)}%</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest">Nodes</span>
+                    <span className="text-[10px] font-mono text-cyan-400">3/3</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between mt-auto">
                   <span className={cn(
-                    "text-[8px] font-black px-1.5 py-0.5 rounded border uppercase tracking-tighter",
-                    lake.id === 'minio' ? "bg-amber-500/20 text-amber-400 border-amber-500/30" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                    "text-[8px] font-black px-2 py-0.5 rounded-md border uppercase tracking-wider",
+                    lake.id === 'minio' ? "bg-amber-500/10 text-amber-400 border-amber-500/20" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                   )}>
-                    {lake.status}
+                    {lake.status === 'АКТИВНИЙ В ПАЙПЛАЙНІ' ? 'Active' : lake.status}
                   </span>
+                  <div className="flex -space-x-1">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="w-1.5 h-1.5 rounded-full bg-emerald-500/40 border border-emerald-500/20 shadow-[0_0_5px_rgba(16,185,129,0.3)]" />
+                    ))}
+                  </div>
                 </div>
               </div>
             </TacticalCard>
