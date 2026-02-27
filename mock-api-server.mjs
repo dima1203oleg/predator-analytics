@@ -427,7 +427,7 @@ app.post(['/api/v1/data-hub/upload', '/api/v1/ingest/upload'], (req, res) => {
 });
 
 // ETL Jobs listing
-app.get('/api/v25/etl/jobs', (req, res) => { res.json({ jobs: etlJobs }); });
+app.get('/api/v45/etl/jobs', (req, res) => { res.json({ jobs: etlJobs }); });
 app.get('/api/v1/etl/jobs', (req, res) => { res.json({ jobs: etlJobs }); });
 app.get('/api/v1/etl/status', (req, res) => {
   res.json({ status: 'READY', active_jobs: etlJobs.filter(j => j.state !== 'READY' && j.state !== 'COMPLETED').length, total_records: DB_FACTS.length });
