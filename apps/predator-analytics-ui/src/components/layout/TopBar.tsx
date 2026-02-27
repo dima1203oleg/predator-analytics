@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { Cpu, Menu, Monitor, Search, Shield, ShieldAlert, Smartphone, Tablet } from 'lucide-react';
-import { useState } from 'react';
+import { Cpu, Database, Menu, Monitor, Search, Shield, ShieldAlert, Smartphone, Tablet } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { VoiceAssistant } from '../shared/VoiceAssistant';
@@ -12,12 +12,32 @@ import OperatorIdentity from './OperatorIdentity';
 
 export const TopBar = () => {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [liveMetrics, setLiveMetrics] = useState<{ cpu: number; records: number; status: string } | null>(null);
   const {
     userRole, setRole,
     persona, setPersona,
     deviceMode, setDeviceMode,
     toggleSidebar
   } = useAppStore();
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const [sysMetrics, dbStats] = await Promise.allSettled([
+          fetch('/api/v1/system/metrics').then(r => r.json()),
+          fetch('/api/v1/database/stats').then(r => r.json()),
+        ]);
+        setLiveMetrics({
+          cpu: sysMetrics.status === 'fulfilled' ? Math.round(sysMetrics.value.cpu ?? 0) : 0,
+          records: dbStats.status === 'fulfilled' ? (dbStats.value.postgresql?.records ?? 0) : 0,
+          status: 'OPERATIONAL',
+        });
+      } catch { }
+    };
+    fetchMetrics();
+    const iv = setInterval(fetchMetrics, 10000);
+    return () => clearInterval(iv);
+  }, []);
 
   return (
     <div className="h-16 border-b border-white/5 bg-slate-950/80 backdrop-blur-xl flex items-center justify-between px-6 fixed top-0 left-0 right-0 z-50 shadow-2xl shadow-black/50 overflow-hidden">
@@ -62,28 +82,41 @@ export const TopBar = () => {
       </div>
 
       {/* Center: Live Command Center HUD */}
-      <div className="hidden 2xl:flex items-center gap-8 bg-black/20 border border-white/5 px-6 py-2 rounded-2xl backdrop-blur-sm">
+      <div className="hidden 2xl:flex items-center gap-6 bg-black/20 border border-white/5 px-5 py-2 rounded-2xl backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <div className="p-1.5 bg-red-500/10 rounded-lg animate-pulse">
-            <ShieldAlert size={16} className="text-red-500" />
+            <ShieldAlert size={15} className="text-red-500" />
           </div>
           <div>
-            <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest">РІВЕНЬ ЗАГРОЗИ</div>
-            <div className="text-xs font-mono font-bold text-red-400">DEFCON 4 (ПОМІРНИЙ)</div>
+            <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest">ЗАГРОЗА</div>
+            <div className="text-xs font-mono font-bold text-red-400">DEFCON 4</div>
           </div>
         </div>
-        <div className="w-px h-6 bg-white/10" />
+        <div className="w-px h-5 bg-white/10" />
         <div className="flex items-center gap-3">
-          <div className="p-1.5 bg-blue-500/10 rounded-lg">
-            <Cpu size={16} className="text-blue-500" />
+          <div className="p-1.5 bg-cyan-500/10 rounded-lg">
+            <Cpu size={15} className="text-cyan-400" />
           </div>
           <div>
-            <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest">ЦІЛІСНІСТЬ СИСТЕМИ</div>
-            <div className="text-xs font-mono font-bold text-blue-400">
-              <NumberTicker value={100} />% ОПТИМАЛЬНО
+            <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest">CPU</div>
+            <div className="text-xs font-mono font-bold text-cyan-400">
+              {liveMetrics ? `${liveMetrics.cpu}%` : '...'}
             </div>
           </div>
         </div>
+        <div className="w-px h-5 bg-white/10" />
+        <div className="flex items-center gap-3">
+          <div className="p-1.5 bg-blue-500/10 rounded-lg">
+            <Database size={15} className="text-blue-400" />
+          </div>
+          <div>
+            <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Записів БД</div>
+            <div className="text-xs font-mono font-bold text-blue-400">
+              {liveMetrics ? liveMetrics.records.toLocaleString() : '...'}
+            </div>
+          </div>
+        </div>
+        <div className="w-px h-5 bg-white/10" />
         <AZRStatusHUD />
       </div>
 

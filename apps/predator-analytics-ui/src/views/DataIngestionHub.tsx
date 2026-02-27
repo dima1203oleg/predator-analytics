@@ -636,7 +636,7 @@ const DataIngestionHub = () => {
       {/* Pipeline Monitor Overlay */}
       {activeJobId && (
         <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="max-w-4xl w-full max-h-[95vh] overflow-y-auto custom-scrollbar p-4">
+          <div className="max-w-7xl w-full max-h-[95vh] overflow-y-auto custom-scrollbar p-4">
             <PipelineMonitor
               jobId={activeJobId}
               pipelineType={activeJobs[activeJobId]?.type}

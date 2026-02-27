@@ -159,8 +159,8 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
 
             {/* 💠 CENTRAL VISUALIZER: Dynamic Mode Engine */}
             <div className="mb-12 relative">
-                <div className="h-[400px] bg-slate-900/40 rounded-[32px] border border-white/5 relative overflow-hidden ring-1 ring-white/5">
-                    <NeuralPulse color={pipelineConfig.accentColor + '20'} size={600} />
+                <div className="h-[650px] bg-slate-900/40 rounded-[32px] border border-white/5 relative overflow-hidden ring-1 ring-white/5">
+                    <NeuralPulse color={pipelineConfig.accentColor + '20'} size={1000} />
 
                     {/* MODE 1: ⚛️ DATA REACTOR (Structured) */}
                     {pipelineConfig.visualMode === 'REACTOR' && (
