@@ -221,7 +221,7 @@ const DatabasesView: React.FC = () => {
                 ]}
             />
 
-            <div className="flex p-1.5 bg-slate-950/50 backdrop-blur-3xl border border-white/5 rounded-2xl mb-8 sticky top-20 z-40 overflow-x-auto scrollbar-hide shadow-2xl">
+            <div className="flex p-2 bg-slate-950/80 backdrop-blur-3xl border border-white/10 rounded-[24px] mb-8 sticky top-20 z-40 overflow-x-auto custom-scrollbar shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]">
                 {[
                     { id: 'ETL', label: 'ETL PIPELINE', icon: <Activity size={18} />, color: 'amber' },
                     { id: 'RELATIONAL', label: 'Реляційні', icon: <DatabaseIcon size={18} />, color: 'blue' },
@@ -229,21 +229,41 @@ const DatabasesView: React.FC = () => {
                     { id: 'VECTOR', label: 'Векторні', icon: <Layers size={18} />, color: 'emerald' },
                     { id: 'GRAPH', label: 'Графові', icon: <Share2 size={18} />, color: 'purple' },
                     { id: 'CALIBRATION', label: 'Калібрування AI', icon: <Binary size={18} />, color: 'primary' }
-                ].map(tab => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id as any)}
-                        className={`flex-1 min-w-[160px] py-4 px-4 rounded-xl text-[10px] sm:text-xs font-black transition-all duration-300 flex items-center justify-center gap-3 relative group ${activeTab === tab.id ? 'bg-slate-800 text-white shadow-2xl' : 'text-slate-500 hover:text-slate-300'}`}
-                    >
-                        <span className={activeTab === tab.id ? (tab.color === 'blue' ? 'text-blue-400' : tab.color === 'amber' ? 'text-amber-400' : tab.color === 'emerald' ? 'text-emerald-400' : tab.color === 'purple' ? 'text-purple-400' : 'text-primary-400') : 'text-slate-600'}>
-                            {tab.icon}
-                        </span>
-                        <span className="uppercase tracking-[0.2em] whitespace-nowrap">{tab.label}</span>
-                        {activeTab === tab.id && (
-                            <motion.div layoutId="tabLine" className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 shadow-[0_0_15px_#3b82f6]" />
-                        )}
-                    </button>
-                ))}
+                ].map(tab => {
+                    const isActive = activeTab === tab.id;
+                    return (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id as any)}
+                            className={`flex-1 min-w-[170px] py-4 px-5 rounded-2xl text-[10px] sm:text-xs font-black transition-all duration-500 flex items-center justify-center gap-3 relative group overflow-hidden ${
+                                isActive ? 'bg-white/10 text-white shadow-xl' : 'text-slate-500 hover:text-white hover:bg-white/5'
+                            }`}
+                        >
+                            {/* Inner glow effect for active tab */}
+                            {isActive && (
+                                <div className={`absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none`} />
+                            )}
+                            
+                            <span className={isActive ? (tab.color === 'blue' ? 'text-blue-400' : tab.color === 'amber' ? 'text-amber-400' : tab.color === 'emerald' ? 'text-emerald-400' : tab.color === 'purple' ? 'text-purple-400' : 'text-primary-400') : 'text-slate-600 group-hover:scale-110 transition-transform'}>
+                                {tab.icon}
+                            </span>
+                            <span className="uppercase tracking-[0.2em] whitespace-nowrap z-10">{tab.label}</span>
+                            
+                            {isActive && (
+                                <motion.div 
+                                    layoutId="tabLine" 
+                                    className={`absolute bottom-0 left-4 right-4 h-1 rounded-t-full shadow-[0_0_20px_rgba(255,255,255,0.5)] ${
+                                        tab.color === 'blue' ? 'bg-blue-500 shadow-blue-500/50' : 
+                                        tab.color === 'amber' ? 'bg-amber-500 shadow-amber-500/50' : 
+                                        tab.color === 'emerald' ? 'bg-emerald-500 shadow-emerald-500/50' : 
+                                        tab.color === 'purple' ? 'bg-purple-500 shadow-purple-500/50' : 
+                                        'bg-primary-500 shadow-primary-500/50'
+                                    }`} 
+                                />
+                            )}
+                        </button>
+                    );
+                })}
             </div>
 
             <div className="min-h-[500px] relative">
@@ -254,7 +274,7 @@ const DatabasesView: React.FC = () => {
                         </motion.div>
                     )}
                     {activeTab === 'RELATIONAL' && <RelationalView tables={tables} onOpenQuery={handleOpenQuery} />}
-                    {activeTab === 'OBJECT' && <ObjectStorageView buckets={mockMinioBuckets} />}
+                    {activeTab === 'OBJECT' && <ObjectStorageView buckets={buckets.length > 0 ? buckets : mockMinioBuckets} />}
                     {activeTab === 'VECTOR' && <VectorDBView vectorData={vectorData} selectedVector={selectedVector} onSelectVector={setSelectedVector} />}
                     {activeTab === 'GRAPH' && <GraphDBView cypherQuery={cypherQuery} onCypherQueryChange={setCypherQuery} onExecuteCypher={handleExecuteCypher} />}
                     {activeTab === 'CALIBRATION' && <CalibrationView trainingPairs={trainingPairs} onVerifySql={handleVerifySql} />}
