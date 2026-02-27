@@ -433,6 +433,82 @@ app.get('/api/v1/etl/status', (req, res) => {
   res.json({ status: 'READY', active_jobs: etlJobs.filter(j => j.state !== 'READY' && j.state !== 'COMPLETED').length, total_records: DB_FACTS.length });
 });
 
+// =============================================
+// 🧠 NEURAL TRAINING ENGINE
+// =============================================
+
+let neuralTrainingState = {
+  status: 'IDLE',
+  progress: 0,
+  activeModel: 'Predator-v45-X-Core',
+  startTime: null,
+  logs: []
+};
+
+app.get('/api/v1/neural/training/status', (req, res) => {
+  if (neuralTrainingState.status === 'TRAINING') {
+    const elapsed = (Date.now() - neuralTrainingState.startTime) / 1000;
+    neuralTrainingState.progress = Math.min(100, elapsed * 2); // 1% every 0.5s
+
+    if (neuralTrainingState.progress >= 100) {
+      neuralTrainingState.status = 'COMPLETED';
+    } else if (Math.random() > 0.7) {
+      const epoch = Math.floor(neuralTrainingState.progress / 3.3);
+      const loss = (0.5 * (1 - neuralTrainingState.progress / 100)).toFixed(4);
+      const acc = (85 + (neuralTrainingState.progress / 100) * 14.5).toFixed(2);
+      neuralTrainingState.logs.push(`[${new Date().toLocaleTimeString()}] Epoch ${epoch}: Loss=${loss} Acc=${acc}%`);
+      if (neuralTrainingState.logs.length > 50) neuralTrainingState.logs.shift();
+    }
+  }
+  res.json(neuralTrainingState);
+});
+
+app.post('/api/v1/neural/training/start', (req, res) => {
+  neuralTrainingState = {
+    status: 'TRAINING',
+    progress: 0,
+    activeModel: req.body.model || 'Predator-v45-X-Core',
+    startTime: Date.now(),
+    logs: [
+      `[${new Date().toLocaleTimeString()}] Initializing Weights...`,
+      `[${new Date().toLocaleTimeString()}] Optimizing for V45 Analytics Kernel...`,
+      `[${new Date().toLocaleTimeString()}] Loading training dataset: Customs-Elite-v4...`
+    ]
+  };
+  res.json({ success: true });
+});
+
+app.post('/api/v1/neural/training/stop', (req, res) => {
+  neuralTrainingState.status = 'IDLE';
+  res.json({ success: true });
+});
+
+app.get('/api/v1/neural/training/stats', (req, res) => {
+  const stats = [
+    { epoch: 1, loss: 2.5, accuracy: 30, val_loss: 2.8 },
+    { epoch: 5, loss: 1.8, accuracy: 55, val_loss: 2.1 },
+    { epoch: 10, loss: 1.2, accuracy: 72, val_loss: 1.5 },
+    { epoch: 15, loss: 0.8, accuracy: 84, val_loss: 1.1 },
+    { epoch: 20, loss: 0.5, accuracy: 91, val_loss: 0.8 },
+    { epoch: 25, loss: 0.3, accuracy: 96, val_loss: 0.5 },
+    { epoch: 30, loss: 0.15, accuracy: 98.5, val_loss: 0.35 },
+  ];
+  if (neuralTrainingState.status === 'TRAINING' || neuralTrainingState.status === 'COMPLETED') {
+    const currentEpoch = Math.floor(neuralTrainingState.progress / 3.3);
+    for (let i = 1; i <= currentEpoch; i++) {
+      if (!stats.find(s => s.epoch === i * 3)) {
+        stats.push({
+          epoch: i * 3,
+          loss: (2.5 * Math.pow(0.9, i)).toFixed(4),
+          accuracy: (30 + i * 2).toFixed(2),
+          val_loss: (2.8 * Math.pow(0.92, i)).toFixed(4)
+        });
+      }
+    }
+  }
+  res.json(stats.sort((a, b) => a.epoch - b.epoch));
+});
+
 // Ingestion status
 app.get(['/api/v1/ingest/status/:jobId', '/api/v1/ingestion/status/:jobId', '/api/v1/ingestion/jobs/:jobId'], (req, res) => {
   const job = etlJobs.find(j => j.job_id === req.params.jobId);
@@ -1101,7 +1177,23 @@ wss.on('connection', (ws) => {
   const interval = setInterval(() => {
     ws.send(JSON.stringify({
       type: 'metrics',
-      data: { cpu: 24 + Math.random() * 15, memory: 45 + Math.random() * 20, timestamp: new Date().toISOString(), db_records: DB_FACTS.length }
+      data: { cpu: 24 + Math.random() * 15, memory: 45 + Math.random() * 20, timestamp: new Date().toISOString(), db_records: DB_FACTS.length },
+      // Omniscience compatibility
+      pulse: {
+        score: 98,
+        status: 'HEALTHY',
+        reasons: ['Neural Core Operational'],
+        alerts: []
+      },
+      system: {
+        cpu_percent: 24 + Math.random() * 15,
+        memory_percent: 45 + Math.random() * 20,
+        timestamp: new Date().toISOString(),
+        active_containers: 12,
+        container_raw: "v45-ready"
+      },
+      sagas: [],
+      audit_logs: []
     }));
   }, 2000);
   ws.on('close', () => clearInterval(interval));

@@ -31,10 +31,9 @@ export const ProcessRadar = () => {
     // Merge local jobs with real backend jobs, prioritizing unique tasks
     const activeCount = localActiveJobs.length + realJobs.length;
 
-    if (activeCount === 0) return null;
 
     return (
-        <div className="fixed bottom-12 right-56 z-[200]">
+        <div className="fixed bottom-12 left-80 z-[200]">
             <motion.div
                 initial={{ scale: 0, rotate: -45 }}
                 animate={{ scale: 1, rotate: 0 }}

@@ -1,7 +1,6 @@
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { ToastMessage, ToastType } from '../types';
-import { ToastContainer } from '../components/Toast';
+import { ToastMessage, ToastType, ToastContainer } from '../components/Toast';
 
 interface ToastContextType {
     addToast: (type: ToastType, title: string, message: string, duration?: number) => void;
@@ -43,11 +42,11 @@ export const useToast = () => {
     if (!context) {
         console.warn('useToast used outside of ToastProvider - returning no-ops');
         return {
-            addToast: () => {},
-            success: () => {},
-            error: () => {},
-            warning: () => {},
-            info: () => {},
+            addToast: () => { },
+            success: () => { },
+            error: () => { },
+            warning: () => { },
+            info: () => { },
         };
     }
     return context;

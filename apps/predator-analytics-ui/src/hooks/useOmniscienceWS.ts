@@ -31,7 +31,7 @@ export const useOmniscienceWS = () => {
     const connect = () => {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         // Use the same host as the API, handled by nginx if in production
-        const host = window.location.hostname === 'localhost' ? 'localhost:8090' : window.location.host;
+        const host = window.location.hostname === 'localhost' ? 'localhost:9080' : window.location.host;
         const url = `${protocol}//${host}/api/v45/ws/omniscience`;
 
         console.log(`📡 Connecting to Omniscience WS: ${url}`);

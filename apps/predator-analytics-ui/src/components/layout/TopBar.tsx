@@ -50,7 +50,7 @@ export const TopBar = () => {
             </span>
             <div className="flex items-center gap-2 mt-1">
               <div className="px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded text-[9px] font-black tracking-widest text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                v45.0-STABLE
+                v45.0-STABLE [AI-VERIFIED]
               </div>
               <div className="flex items-center gap-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
