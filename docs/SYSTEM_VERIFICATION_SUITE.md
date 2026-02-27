@@ -1,4 +1,4 @@
-# 🧪 SYSTEM VERIFICATION SUITE (Mixed CLI Stack v25.0)
+# 🧪 SYSTEM VERIFICATION SUITE (Mixed CLI Stack v45.0)
 
 Цей протокол призначений для перевірки працездатності канонічного CLI-стеку після розгортання.
 

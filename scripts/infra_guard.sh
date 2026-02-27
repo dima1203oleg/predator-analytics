@@ -21,7 +21,7 @@ if [[ "$1" == "local" ]]; then
     echo "✅ Starting in Safe Local mode."
 fi
 
-# 🐍 PYTHON ETERNITY CHECK (v25.0 Policy)
+# 🐍 PYTHON ETERNITY CHECK (v45.0 Policy)
 PYTHON_VER=$(python3 --version 2>&1 | awk '{print $2}')
 if [[ ! $PYTHON_VER =~ ^3\.12 ]]; then
     echo "❌ ETERNAL DIRECTIVE VIOLATION: Python version is $PYTHON_VER."

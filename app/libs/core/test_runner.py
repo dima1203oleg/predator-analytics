@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Constitutional Test Runner - AZR Engine v28-S."""
+"""Constitutional Test Runner - AZR Engine v45-S."""
 import asyncio
 from datetime import datetime
 import logging

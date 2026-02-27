@@ -47,7 +47,7 @@ def constitution(
 ):
     """Analyze constitutional adherence and density of denials."""
     console.print(f"Scanning {logs} for Constitutional friction...")
-    # Mock analysis logic for v26 demonstration
+    # Mock analysis logic for v45 demonstration
     console.print("\n[yellow]Constitutional Friction Summary:[/yellow]")
     console.print("  • [bold red]DENIED[/bold red]: 12 requests (GPU Resource Pre-emption)")
     console.print("  • [bold green]APPROVED[/bold green]: 450 requests (Standard ETL Flow)")

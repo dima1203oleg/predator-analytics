@@ -1,4 +1,4 @@
-# Predator Analytics v26 User Guide
+# Predator Analytics v45 User Guide
 
 Welcome to the Predator Analytics Control Plane.
 

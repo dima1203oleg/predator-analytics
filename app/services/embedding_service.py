@@ -14,7 +14,7 @@ logger = get_logger("service.embedding")
 class EmbeddingService:
     """Service for generating text embeddings for semantic search.
     Uses sentence-transformers for vector generation.
-    **CONSTITUTIONAL COMPLIANCE (v27.0)**:
+    **CONSTITUTIONAL COMPLIANCE (v45.0)**:
     - Enforced by Arbiter via OperationalPolicy.
     - Verified by Truth Ledger & Reality-Bound Axioms.
     - Audited by Constitutional Linter.

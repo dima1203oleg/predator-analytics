@@ -1,8 +1,8 @@
 #!/bin/bash
-# 🦁 PREDATOR v30: FULL PRODUCTION LAUNCH
+# 🦁 Predator v45 | Neural Analytics: FULL PRODUCTION LAUNCH
 # Цей скрипт запускає систему у режимі повної бойової готовності.
 
-echo "🦁 PREDATOR v30: INITIATING PRODUCTION SEQUENCE..."
+echo "🦁 Predator v45 | Neural Analytics: INITIATING PRODUCTION SEQUENCE..."
 echo "==================================================="
 
 PROJECT_ROOT=$(pwd)
@@ -62,7 +62,7 @@ else
 fi
 
 echo ""
-echo "🚀 PREDATOR V30 IS READY."
+echo "🚀 PREDATOR V45 IS READY."
 echo "👉 Interface: http://localhost:3000"
 echo "👉 API Docs:  http://localhost:8000/docs"
 echo "==================================================="

@@ -16,8 +16,8 @@ interface DeploymentStep {
 }
 
 export const AZRDeploymentCenter: React.FC = () => {
-    const [currentVersion, setCurrentVersion] = useState('v30.0.0');
-    const [targetVersion, setTargetVersion] = useState('v30.1.0-ALPHA-1');
+    const [currentVersion, setCurrentVersion] = useState('v45.0.0');
+    const [targetVersion, setTargetVersion] = useState('v45.1.0-ALPHA-1');
     const [isDeploying, setIsDeploying] = useState(false);
     const [progress, setProgress] = useState(0);
     const [activeStep, setActiveStep] = useState(0);
@@ -184,7 +184,7 @@ export const AZRDeploymentCenter: React.FC = () => {
                         className="mt-10 p-6 bg-black rounded-3xl border border-blue-500/30 font-mono text-[10px] text-blue-400/80 space-y-1"
                     >
                         <div>[SYSTEM] ІНІЦІАЛІЗАЦІЯ GITOPS РУКОСТИСКАННЯ...</div>
-                        <div>[K8S] РЕЗЕРВУВАННЯ CANARY ПРОСТОРУ ІМЕН: predator-canary-v30...</div>
+                        <div>[K8S] РЕЗЕРВУВАННЯ CANARY ПРОСТОРУ ІМЕН: predator-canary-v45...</div>
                         <div>[SCAN] ПЕРЕВІРКА ПОЛІТИКИ БЕЗПЕКИ: ПРОЙДЕНО (VULN: 0)</div>
                         {progress > 40 && <div>[NEURAL] СИНХРОНІЗАЦІЯ ЕМБЕДИНГІВ (1024-D) З QDRANT...</div>}
                         {progress > 70 && <div>[DEPLOY] ПОЧАТО ROLL-OUT: 1 З 12 ПОДІВ ЗАПУЩЕНО...</div>}

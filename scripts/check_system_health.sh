@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🦅 PREDATOR ANALYTICS v25 - SYSTEM HEALTH CHECK"
+echo "🦅 PREDATOR ANALYTICS v45 - SYSTEM HEALTH CHECK"
 echo "==============================================="
 
 # Check Docker Containers
@@ -9,7 +9,7 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep predator
 
 # check backend
 echo -e "\n🐍 Checking Backend API:"
-curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/v25/system/status || echo "Backend unreachable"
+curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/v45/system/status || echo "Backend unreachable"
 if [ $? -eq 0 ]; then echo " OK"; else echo " FAIL"; fi
 
 # check frontend

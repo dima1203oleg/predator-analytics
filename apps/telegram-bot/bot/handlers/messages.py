@@ -16,7 +16,7 @@ router = Router()
 @router.message(F.text == "/start")
 async def cmd_start(message: types.Message):
     await message.answer(
-        "👋 <b>Вітаю в Predator Analytics v25.1!</b>\n\n"
+        "👋 <b>Вітаю в Predator Analytics v45.1!</b>\n\n"
         "Я автономний агент з архітектурним наглядом WinSURF.\n"
         "Ви можете писати мені запити природною мовою, наприклад:\n"
         "• <i>'Проведи діагностику системи'</i>\n"
@@ -151,7 +151,7 @@ async def handle_voice_command(message: types.Message, orchestrator: "AgentOrche
         # We'll use the orchestrator's Gemini agent to transcribe and analyze
         # Assuming gemini_agent.py has a process_audio method or we can just send the text
         # For now, let's just transcribe
-        prompt = "Ти — ядро Predator v25. Це голосове повідомлення від командира. Переклади його в текст (українською) та визнач намір (intent). Поверни JSON: {text: string, intent: string, reasoning: string}"
+        prompt = "Ти — ядро Predator v45 | Neural Analytics. Це голосове повідомлення від командира. Переклади його в текст (українською) та визнач намір (intent). Поверни JSON: {text: string, intent: string, reasoning: string}"
 
         # Use simple transcription fallback if native audio not yet in Agent
         # But actually let's assume orchestrator.gemini can handle file paths

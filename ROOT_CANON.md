@@ -12,7 +12,7 @@
 
 ## 🏗️ Архітектурні Догми (Architectural Dogmas)
 1. **Real Data First (Truth-Only Mode):** Система повинна віддавати лише справжні дані з БД або живих джерел. Симуляції заборонені.
-2. **Unified V25 API:** Усі нові функції повинні проходити через `/api/v25` з повною типізацією.
+2. **Unified V45 API:** Усі нові функції повинні проходити через `/api/v45` з повною типізацією.
 3. **Agentic Autonomy:** Усі дії в системі фіксуються Trinity Audit Log для подальшого аналізу.
 
 ---
@@ -30,4 +30,4 @@
 4.  **PRIMARY WEB INTERFACE**:
     *   **URL**: `https://jolyn-bifid-eligibly.ngrok-free.dev/admin`
     *   **Status**: ACTIVE & CANONICAL
-    *   **Version**: v26.0 (Unified Admin UI)
+    *   **Version**: v45.0 (Unified Admin UI)

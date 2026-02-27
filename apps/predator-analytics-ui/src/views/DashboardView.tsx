@@ -1,6 +1,6 @@
 
 /**
- * 🦁 PREDATOR v30: SMART DASHBOARD
+ * 🦁 Predator v45 | Neural Analytics: SMART DASHBOARD
  *
  * Адаптивний командний центр платформи.
  * Змінює контекст залежно від обраної стратегії: "EARN" (Бізнес) або "CONTROL" (Влада).

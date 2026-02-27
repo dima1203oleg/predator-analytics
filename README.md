@@ -1,7 +1,5 @@
 
-# Predator Analytics v25.1
-
-## Overview
+# Predator v45 | Neural Analytics## Overview
 
 Autonomous AI-driven analytical platform.
 Built on **Python 3.12**, **Kubernetes**, **React**, and **ArgoCD**.
@@ -23,15 +21,15 @@ See `docs/TECHNICAL_SPECIFICATION_FINAL.md` for the single source of truth.
 ### 2. Build Images
 
 ```bash
-chmod +x start_predator.sh
-./start_predator.sh
+chmod +x START_PREDATOR_V45.sh
+./START_PREDATOR_V45.sh
 ```
 
 ### 3. Deploy
 
 ```bash
 kubectl create namespace predator-analytics
-helm install predator ./helm/predator-analytics -n predator-analytics
+helm install predator ./helm/predator-v45 -n predator-analytics
 ```
 
 ### 4. Access

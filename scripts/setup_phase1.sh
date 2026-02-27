@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-# PREDATOR ANALYTICS v25.1 - PHASE 1 SETUP
+# PREDATOR ANALYTICS v45.1 - PHASE 1 SETUP
 # Creates the directory structure as defined in TECHNICAL_SPECIFICATION_FINAL.md
 
-echo "🚀 Initializing Predator Analytics v25.1 - Phase 1: Foundation..."
+echo "🚀 Initializing Predator Analytics v45.1 - Phase 1: Foundation..."
 
 # 1. Create Directories (Part 5: File Structure)
 DIRS=(
@@ -53,7 +53,7 @@ touch .github/CODEOWNERS
 cat > helm/predator-analytics/Chart.yaml <<EOF
 apiVersion: v2
 name: predator-analytics
-description: "Predator Analytics Platform v25.1 (Phase 1)"
+description: "Predator Analytics Platform v45.1 (Phase 1)"
 type: application
 version: 0.1.0
 appVersion: "25.1"

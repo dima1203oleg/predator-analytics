@@ -18,7 +18,7 @@ from app.libs.core.models.truth_ledger import TruthLedger
 logger = logging.getLogger("service.etl_arbiter")
 
 class ETLArbiter:
-    """ARBITER SYSTEM for Predator Analytics v26.
+    """ARBITER SYSTEM for Predator Analytics v45.
     Ensures Truth, Invariants, and Progress correctness.
     Records all decisions to the Constitutional Truth Ledger.
     """
@@ -137,7 +137,7 @@ class ETLArbiter:
     async def _record_verdict(self, sess, job: ETLJob, decision: str, prev_state: str, reason: str | None = None):
         """Record a decision into the Truth Ledger with cryptographic chaining."""
         # 1. Get previous hash (Simple implementation: last hash for this job, or global genesis)
-        # For simplicity in v26.0 locally, let's chain per job.
+        # For simplicity in v45.0 locally, let's chain per job.
         # Ideally: Global Merkle Tree.
         stmt = select(TruthLedger).where(TruthLedger.job_id == str(job.id)).order_by(desc(TruthLedger.created_at)).limit(1)
         res = await sess.execute(stmt)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3.12
-"""🛡️ PREDATOR COMPREHENSIVE VERIFICATION SUITE v25.0
+"""🛡️ PREDATOR COMPREHENSIVE VERIFICATION SUITE v45.0
 ==================================================
 Автоматична перевірка цілісності даних, сервісів та ШІ.
 """
@@ -86,7 +86,7 @@ async def check_agents():
 
 async def main():
     print("="*60)
-    print("⚜️  PREDATOR v25.0 SYSTEM VERIFICATION")
+    print("⚜️  Predator v45 | Neural Analytics.0 SYSTEM VERIFICATION")
     print("   Timestamp:", datetime.now().isoformat())
     print("="*60)
 

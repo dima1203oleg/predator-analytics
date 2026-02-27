@@ -21,7 +21,7 @@ async def seed():
         INSERT INTO public.documents (id, tenant_id, title, content, source_type, created_at)
         VALUES ($1, $2, $3, $4, $5, $6)
         ON CONFLICT DO NOTHING
-    """, doc_id, tenant_id, "Predator Analytics v25.0 Deployment Info",
+    """, doc_id, tenant_id, "Predator Analytics v45.0 Deployment Info",
     "System successfully deployed on NVIDIA Server. Core components: OpenSearch, Qdrant, PostgreSQL, Celery, H2O LLM Studio.",
     "system", datetime.now())
 
@@ -30,7 +30,7 @@ async def seed():
         INSERT INTO public.augmented_datasets (id, tenant_id, original_id, content, aug_type)
         VALUES ($1, $2, $3, $4, $5)
         ON CONFLICT DO NOTHING
-    """, uuid.uuid4(), tenant_id, doc_id, "Система Predator v25.0 успішно розгорнута на сервері NVIDIA.", "paraphrase")
+    """, uuid.uuid4(), tenant_id, doc_id, "Система Predator v45 | Neural Analytics.0 успішно розгорнута на сервері NVIDIA.", "paraphrase")
 
     print("✅ Seed complete.")
     await conn.close()

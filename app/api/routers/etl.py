@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 
-"""ETL Router - Predator Analytics v28-S."""
+"""ETL Router - Predator Analytics v45-S."""
 import logging
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from app.libs.core.etl_arbiter import ETLSovereignArbiter
-from app.libs.core.etl_state_machine_v28s import ETLState, ETLStateMachineV28S
+from app.libs.core.etl_state_machine_v45s import ETLState, ETLStateMachineV45S
 from app.libs.core.structured_logger import get_logger
 from app.services.etl_ingestion import ETLIngestionService
 
@@ -126,7 +126,7 @@ async def get_global_status():
 @router.post("/process-local")
 async def process_local_file(file_path: str, dataset_type: str = "customs"):
     """Trigger ETL for a file already present on the server.
-    Required for Predator Analytics v25.0 E2E testing.
+    Required for Predator Analytics v45.0 E2E testing.
     """
     try:
         result = await etl_service.process_file(file_path, dataset_type)
@@ -140,7 +140,7 @@ async def process_local_file(file_path: str, dataset_type: str = "customs"):
 @router.post("/upload")
 async def upload_and_process(file: UploadFile = File(...), dataset_type: str = "customs"):
     """Handle direct file upload and ETL trigger."""
-    # This logic is also in main.py, but for v25.0 we consolidate it here
+    # This logic is also in main.py, but for v45.0 we consolidate it here
     import os
     import tempfile
 

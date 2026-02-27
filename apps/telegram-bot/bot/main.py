@@ -46,7 +46,7 @@ async def main():
     # Передача оркестратора в хендлери через workflow_data
     dp["orchestrator"] = orchestrator
 
-    logger.info("🤖 Predator Analytics Telegram Bot v25.1 STARTED")
+    logger.info("🤖 Predator Analytics Telegram Bot v45.1 STARTED")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":

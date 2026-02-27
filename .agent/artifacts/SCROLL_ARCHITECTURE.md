@@ -1,4 +1,4 @@
-# Архітектура Scroll - Predator v25 Web Interface
+# Архітектура Scroll - Predator v45 | Neural Analytics Web Interface
 
 ## Проблема (ДО виправлення)
 

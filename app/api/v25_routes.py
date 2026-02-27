@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Predator Analytics v25.0 - Self-Improving System Routes
+"""Predator Analytics v45.0 - Self-Improving System Routes
 Endpoints for system monitoring, optimizer control, and auto-improvement.
 """
 
@@ -46,16 +46,16 @@ from app.services.training_status_service import training_status_service
 from app.services.triple_agent_service import triple_agent_service
 
 
-logger = get_logger("v25_routes")
+logger = get_logger("v45_routes")
 
-v25_router = APIRouter(prefix="/v25", tags=["v25-self-improvement"])
+v45_router = APIRouter(prefix="/v45", tags=["v45-self-improvement"])
 
 from app.api.routers import etl as etl_router
 from app.api.routers import graph as graph_router
 
 
-v25_router.include_router(etl_router.router)
-v25_router.include_router(graph_router.router)
+v45_router.include_router(etl_router.router)
+v45_router.include_router(graph_router.router)
 
 # AZR Endpoints moved to app/routers/azr.py
 
@@ -92,7 +92,7 @@ class StorageStatus(BaseModel):
     qdrant_vectors: int
 
 
-class V25SystemStatus(BaseModel):
+class V45SystemStatus(BaseModel):
     automl: AutoMLStatus
     flower: FlowerStatus
     data_pipeline: DataPipelineStatus
@@ -128,7 +128,7 @@ class TriggerResponse(BaseModel):
 from app.services.system_status_service import system_status_service
 
 
-@v25_router.get("/pulse")
+@v45_router.get("/pulse")
 async def get_system_pulse():
     """🛡️ ВСЕЗНАЮЧЕ ОКО - Real-time System Health Pulse.
 
@@ -253,7 +253,7 @@ async def get_system_pulse():
         }
 
 
-@v25_router.get("/newspaper")
+@v45_router.get("/newspaper")
 async def get_morning_newspaper():
     """🛡️ РАНКОВА ГАЗЕТА - Personalized Daily Briefing.
     Returns news, stats, and AI recommendations for the user.
@@ -265,7 +265,7 @@ async def get_morning_newspaper():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@v25_router.get("/system/stage")
+@v45_router.get("/system/stage")
 async def get_system_stage():
     """Returns current stage of the Super Intelligence Evolution Loop."""
     # In a real environment, we would look at the latest SI Cycle stage
@@ -292,13 +292,13 @@ async def get_system_stage():
     except Exception:
         return "IDLE"
 
-@v25_router.get("/system/status")
-async def get_v25_system_status():
-    """Get comprehensive v25 system status with real data metrics and Intelligent Advisor notes."""
+@v45_router.get("/system/status")
+async def get_v45_system_status():
+    """Get comprehensive v45 system status with real data metrics and Intelligent Advisor notes."""
     try:
         status_data = await system_status_service.get_comprehensive_status()
 
-        # Mapping to V25SystemStatus structure for frontend compatibility
+        # Mapping to V45SystemStatus structure for frontend compatibility
         os_data = status_data.get("data_pipeline", {}).get("opensearch", {})
         qd_data = status_data.get("data_pipeline", {}).get("qdrant", {})
 
@@ -330,7 +330,7 @@ async def get_v25_system_status():
 
             etl_running = len(active_jobs) > 0
             if etl_running:
-                # v26 Requirement: Global progress = Average of real progresses
+                # v45 Requirement: Global progress = Average of real progresses
                 total_percent = sum([j.progress.get("percent", 0) for j in active_jobs])
                 global_progress = int(total_percent / len(active_jobs))
                 # Safety: never 100 if active
@@ -346,7 +346,7 @@ async def get_v25_system_status():
             "metrics": metrics,
             "automl": {
                 "is_running": is_training,
-                "model_version": "v25.1.0",
+                "model_version": "v45.1.0",
                 "last_training_time": datetime.now(UTC).isoformat(),
                 "accuracy": 0.92,
                 "training_progress": training.get("progress", 0)
@@ -386,7 +386,7 @@ async def get_v25_system_status():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@v25_router.get("/optimizer/status")
+@v45_router.get("/optimizer/status")
 async def get_optimizer_status():
     """Get AutoOptimizer operational status."""
     return {
@@ -403,7 +403,7 @@ async def get_optimizer_status():
     }
 
 
-@v25_router.get("/stats")
+@v45_router.get("/stats")
 async def get_system_stats():
     """Returns REAL system stats from PostgreSQL (System of Record)."""
     try:
@@ -439,7 +439,7 @@ async def get_system_stats():
         }
 
 
-@v25_router.get("/optimizer/metrics")
+@v45_router.get("/optimizer/metrics")
 async def get_optimizer_metrics():
     """Get current optimization metrics snapshot - now with real data."""
     try:
@@ -476,7 +476,7 @@ async def get_optimizer_metrics():
         )
 
 
-@v25_router.post("/optimizer/force-check")
+@v45_router.post("/optimizer/force-check")
 async def force_optimizer_check():
     """Force an immediate optimization check."""
     try:
@@ -487,7 +487,7 @@ async def force_optimizer_check():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@v25_router.get("/optimizer/status")
+@v45_router.get("/optimizer/status")
 async def get_optimizer_status():
     """Get detailed optimizer status."""
     try:
@@ -498,7 +498,7 @@ async def get_optimizer_status():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@v25_router.get("/ml/jobs")
+@v45_router.get("/ml/jobs")
 async def get_ml_jobs():
     """List recent fine-tuning jobs from the database."""
     try:
@@ -537,7 +537,7 @@ async def get_ml_jobs():
         return []
 
 
-@v25_router.get("/optimizer/history")
+@v45_router.get("/optimizer/history")
 async def get_optimizer_history():
     """Get REAL optimization action history from service."""
     try:
@@ -567,7 +567,7 @@ async def get_optimizer_history():
         return {"history": [], "total_actions": 0, "success_rate": 0}
 
 
-@v25_router.post("/optimizer/trigger")
+@v45_router.post("/optimizer/trigger")
 async def trigger_optimizer(request: TriggerRequest):
     """Manually trigger an optimization cycle.
 
@@ -591,7 +591,7 @@ async def trigger_optimizer(request: TriggerRequest):
 class TripleAgentRequest(BaseModel):
     command: str
 
-@v25_router.post("/trinity/process")
+@v45_router.post("/trinity/process")
 async def process_triple_agent(request: TripleAgentRequest):
     """Execute Triple Agent Chain (Strategist -> Coder -> Auditor)."""
     try:
@@ -600,7 +600,7 @@ async def process_triple_agent(request: TripleAgentRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@v25_router.post("/system/doctor")
+@v45_router.post("/system/doctor")
 async def run_system_doctor():
     """Run Predator System Doctor (Full Infrastructure Diagnostics)."""
     try:
@@ -610,7 +610,7 @@ async def run_system_doctor():
         logger.exception(f"System doctor failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@v25_router.post("/system/doctor/fix")
+@v45_router.post("/system/doctor/fix")
 async def apply_doctor_fixes(fixes: list[str]):
     """Apply specific fixes identified by the doctor."""
     try:
@@ -619,7 +619,7 @@ async def apply_doctor_fixes(fixes: list[str]):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@v25_router.post("/training/trigger")
+@v45_router.post("/training/trigger")
 async def trigger_autonomous_training():
     """Manually trigger autonomous training via Orchestrator."""
     success = await training_status_service.trigger_manual_training()
@@ -627,7 +627,7 @@ async def trigger_autonomous_training():
         return {"status": "triggered", "message": "Manual training trigger sent to Orchestrator"}
     raise HTTPException(status_code=500, detail="Failed to send training trigger")
 
-@v25_router.get("/training/status")
+@v45_router.get("/training/status")
 async def get_training_status():
     """Get current autonomous training status."""
     return await training_status_service.get_latest_status()
@@ -635,7 +635,7 @@ async def get_training_status():
 class PredictRequest(BaseModel):
     data: list[dict[str, Any]]
 
-@v25_router.post("/training/predict")
+@v45_router.post("/training/predict")
 async def predict_anomaly(request: PredictRequest):
     """Predict anomalies using the latest H2O model."""
     from app.services.h2o_manager import h2o_manager
@@ -644,23 +644,23 @@ async def predict_anomaly(request: PredictRequest):
 class AgentCycleRequest(BaseModel):
     task: str
 
-@v25_router.post("/agents/run-cycle")
+@v45_router.post("/agents/run-cycle")
 async def run_sovereign_agent_cycle(request: AgentCycleRequest):
     """Запуск Суверенного Циклу автовдосконалення (7 CLI Агентів):
     Gemini, Vibe, Mistral, Aider/Copilot, Claude, DeepSeek, CodeLlama.
     """
     try:
-        from orchestrator.agents.v25_sovereign_registry import sovereign_orchestrator
+        from orchestrator.agents.v45_sovereign_registry import sovereign_orchestrator
         return await sovereign_orchestrator.execute_comprehensive_cycle(request.task)
     except Exception as e:
         logger.exception(f"Sovereign Cycle Failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@v25_router.get("/agents/status")
+@v45_router.get("/agents/status")
 async def get_sovereign_agents_status():
     """Статус всіх 7 суверенних CLI агентів (UA)."""
     try:
-        from orchestrator.agents.v25_sovereign_registry import sovereign_orchestrator
+        from orchestrator.agents.v45_sovereign_registry import sovereign_orchestrator
         return sovereign_orchestrator.get_agent_status()
     except Exception as e:
         logger.exception(f"Agent Status Failed: {e}")
@@ -670,7 +670,7 @@ async def get_sovereign_agents_status():
             "error": str(e)
         }
 
-@v25_router.post("/system/restart")
+@v45_router.post("/system/restart")
 async def run_system_restart():
     """Emergency Restart of services."""
     try:
@@ -679,7 +679,7 @@ async def run_system_restart():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@v25_router.post("/system/rollback")
+@v45_router.post("/system/rollback")
 async def run_system_rollback():
     """Rollback codebase."""
     try:
@@ -690,12 +690,12 @@ async def run_system_rollback():
 
 # === Monitoring Endpoints ===
 
-@v25_router.get("/monitoring/health")
+@v45_router.get("/monitoring/health")
 async def get_monitoring_health():
     """Get real infrastructure metrics from Prometheus."""
     return await monitoring_service.get_system_metrics()
 
-@v25_router.get("/monitoring/queues")
+@v45_router.get("/monitoring/queues")
 async def get_monitoring_queues():
     """Get real-time RabbitMQ queue status."""
     return await monitoring_service.get_queue_status()
@@ -708,7 +708,7 @@ import contextlib
 from app.services.system_control_service import system_control_service
 
 
-@v25_router.post("/system/lockdown")
+@v45_router.post("/system/lockdown")
 async def run_system_lockdown():
     """Toggle System Lockdown."""
     try:
@@ -718,13 +718,13 @@ async def run_system_lockdown():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@v25_router.get("/system/lockdown")
+@v45_router.get("/system/lockdown")
 async def get_system_lockdown():
     """Get Lockdown Status."""
     is_active = await system_control_service.is_lockdown()
     return {"is_active": is_active}
 
-@v25_router.get("/system/doctor")
+@v45_router.get("/system/doctor")
 async def get_guardian_status():
     """Returns real-time diagnostics from the Self-Healing Guardian."""
     from app.libs.core.guardian import guardian
@@ -738,9 +738,9 @@ async def get_guardian_status():
         "last_recovery": guardian.last_fix_timestamp
     }
 
-@v25_router.get("/healthcheck/v25")
-async def v25_healthcheck():
-    """Comprehensive v25 system health check using real dependency checks."""
+@v45_router.get("/healthcheck/v45")
+async def v45_healthcheck():
+    """Comprehensive v45 system health check using real dependency checks."""
     from app.api.routers import health
 
     # Run all critical checks
@@ -755,7 +755,7 @@ async def v25_healthcheck():
 
     return {
         "status": "healthy" if is_healthy else "degraded",
-        "version": "v25.1.0",
+        "version": "v45.1.0",
         "services": {
             "postgres": pg["status"],
             "redis": rd["status"],
@@ -774,8 +774,8 @@ async def v25_healthcheck():
     }
 
 
-@v25_router.get("/healthcheck/v25/premium")
-async def get_v25_premium_health():
+@v45_router.get("/healthcheck/v45/premium")
+async def get_v45_premium_health():
     """Detailed health of premium components."""
     return {
         "cyber_core": "STABLE",
@@ -785,7 +785,7 @@ async def get_v25_premium_health():
         "last_calibration": datetime.now(UTC).isoformat()
     }
 
-@v25_router.get("/arbitration/scores")
+@v45_router.get("/arbitration/scores")
 async def get_arbitration_scores():
     """Fetch latest arbitration scores from the AI Council sessions."""
     try:
@@ -820,17 +820,17 @@ async def get_arbitration_scores():
     except Exception:
         return []
 
-@v25_router.get("/evolution/stats")
+@v45_router.get("/evolution/stats")
 async def get_evolution_stats():
     """Get latest system evolution stats."""
     return await evolution_service.get_latest_stats()
 
-@v25_router.get("/evolution/experience")
+@v45_router.get("/evolution/experience")
 async def get_evolution_experience(limit: int = 10):
     """Get recent evolution experience/events."""
     return await evolution_service.get_recent_experience(limit=limit)
 
-@v25_router.websocket("/evolution/stream")
+@v45_router.websocket("/evolution/stream")
 async def websocket_evolution_stream(websocket: WebSocket):
     """Real-time Evolution Metrics WebSocket."""
     await websocket.accept()
@@ -848,7 +848,7 @@ async def websocket_evolution_stream(websocket: WebSocket):
         await websocket.close()
 
 
-@v25_router.get("/trinity/audit-logs")
+@v45_router.get("/trinity/audit-logs")
 async def get_trinity_audit_logs():
     """Returns recent Trinity audit logs."""
     try:
@@ -878,7 +878,7 @@ async def get_trinity_audit_logs():
 class TrinityCommand(BaseModel):
     command: str
 
-@v25_router.post("/trinity/process")
+@v45_router.post("/trinity/process")
 async def run_trinity_process(payload: TrinityCommand):
     """Executes a command through the Triple Agent system (Nebula -> Cortex -> Nexus chain)."""
     try:
@@ -887,7 +887,7 @@ async def run_trinity_process(payload: TrinityCommand):
         logger.exception(f"Trinity Process Failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@v25_router.get("/monitoring/logs")
+@v45_router.get("/monitoring/logs")
 async def get_monitoring_logs(limit: int = 10):
     """Fetch real application logs for the dashboard."""
     # This would ideally interface with Loki/Promtail or query SysLog table
@@ -909,26 +909,26 @@ async def get_monitoring_logs(limit: int = 10):
     except Exception:
         return []
 
-@v25_router.get("/metrics/realtime")
+@v45_router.get("/metrics/realtime")
 async def get_realtime_metrics():
     """Get system-wide real-time metrics."""
     return await monitoring_service.get_system_metrics()
 
 
-@v25_router.get("/recommendations")
+@v45_router.get("/recommendations")
 async def get_system_recommendations():
     """Get proactive AI recommendations based on system state."""
     from app.services.recommendation_service import recommendation_service
     return await recommendation_service.get_smart_recommendations()
 
-@v25_router.post("/simulation/stress-test")
+@v45_router.post("/simulation/stress-test")
 async def trigger_simulation(target: str = "data_pipeline", intensity: float = 0.5):
     """Trigger a Digital Twin stress test simulation."""
     from app.services.simulation_service import simulation_service
     return await simulation_service.run_stress_test(target, intensity)
 
 
-@v25_router.post("/maintenance/run")
+@v45_router.post("/maintenance/run")
 async def run_maintenance(request: MaintenanceRequest):
     """Run an operational maintenance action (truth-only)."""
     try:
@@ -947,14 +947,14 @@ async def run_maintenance(request: MaintenanceRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@v25_router.get("/simulation/status/{sim_id}")
+@v45_router.get("/simulation/status/{sim_id}")
 async def get_sim_status(sim_id: str):
     """Get status of a specific simulation."""
     from app.services.simulation_service import simulation_service
     return await simulation_service.get_simulation_status(sim_id)
 
 
-@v25_router.websocket("/ws/omniscience")
+@v45_router.websocket("/ws/omniscience")
 async def omniscience_ws(websocket: WebSocket):
     await websocket.accept()
     try:
@@ -1003,11 +1003,11 @@ async def omniscience_ws(websocket: WebSocket):
                 "training": training,
                 "audit_logs": audit_logs,
                 "sagas": sagas,
-                "v25Realtime": pulse.get("metrics", {}) # Compatibility
+                "v45Realtime": pulse.get("metrics", {}) # Compatibility
             }
 
             await websocket.send_json(payload)
-            await asyncio.sleep(2) # Faster update for V25
+            await asyncio.sleep(2) # Faster update for V45
     except WebSocketDisconnect:
         return
     except Exception as e:
@@ -1015,14 +1015,14 @@ async def omniscience_ws(websocket: WebSocket):
         with contextlib.suppress(builtins.BaseException):
             await websocket.close()
 
-@v25_router.post("/system/lockdown")
+@v45_router.post("/system/lockdown")
 async def toggle_system_lockdown():
     """Toggle Global System Lockdown State."""
     from app.services.system_control_service import system_control_service
     new_state = await system_control_service.toggle_lockdown()
     return {"status": "success", "lockdown_active": new_state}
 
-@v25_router.post("/etl/sync")
+@v45_router.post("/etl/sync")
 async def trigger_etl_sync():
     """Trigger Global ETL Synchronization."""
     try:
@@ -1058,13 +1058,13 @@ async def trigger_etl_sync():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@v25_router.post("/optimizer/run")
+@v45_router.post("/optimizer/run")
 async def trigger_optimizer_run():
     """Manual trigger for AI Self-Optimization."""
     await training_status_service.trigger_manual_training()
     return {"status": "success", "message": "Цикл ШІ-оптимізації активовано"}
 
-@v25_router.post("/system/restart")
+@v45_router.post("/system/restart")
 async def restart_services():
     """Simulates service restart or triggers safe reload."""
     from app.services.kafka_service import kafka_service
@@ -1076,7 +1076,7 @@ async def restart_services():
     # This would normally talk to Docker socket or systemd
     return {"status": "success", "message": "Процес перезапуску підсистем активовано"}
 
-@v25_router.post("/dataset/generate")
+@v45_router.post("/dataset/generate")
 async def generate_synthetic_dataset(config: dict[str, Any]):
     """Trigger synthetic data generation for training."""
     import os
@@ -1117,17 +1117,17 @@ async def generate_synthetic_dataset(config: dict[str, Any]):
 
     return result
 
-@v25_router.get("/ml/training/history")
+@v45_router.get("/ml/training/history")
 async def get_training_history():
     """Fetch time-series training metrics for UI graphs."""
     from app.services.training_status_service import training_status_service
     return await training_status_service.get_metrics_history()
 
-@v25_router.get("/v25/monitoring/metrics") # Legacy compatibility for some UI components
-async def get_realtime_metrics_v25():
+@v45_router.get("/v45/monitoring/metrics") # Legacy compatibility for some UI components
+async def get_realtime_metrics_v45():
     return await get_realtime_metrics()
 
-@v25_router.get("/monitoring/health")
+@v45_router.get("/monitoring/health")
 async def get_monitoring_health():
     """Detailed System Health (AdaptiveDashboard Source)."""
     cpu = 0
@@ -1149,9 +1149,9 @@ async def get_monitoring_health():
         "services": health.get("services", {})
     }
 
-@v25_router.get("/monitoring/sagas")
+@v45_router.get("/monitoring/sagas")
 async def get_real_sagas():
-    """Returns REAL ETL Job status (v26 State Machine).
+    """Returns REAL ETL Job status (v45 State Machine).
     MAPPED to UI 4-step visualization.
     """
     from app.libs.core.etl_state_machine import ETLState
@@ -1249,7 +1249,7 @@ async def get_real_sagas():
         logger.exception(f"Sagas fetch failed: {e}")
         return []
 
-@v25_router.get("/monitoring/alerts")
+@v45_router.get("/monitoring/alerts")
 async def get_real_alerts():
     """Fetch active alerts from the system."""
     # In a real environment, this would query Prometheus / Alertmanager
@@ -1279,19 +1279,19 @@ async def get_real_alerts():
     except Exception:
         return []
 
-@v25_router.get("/monitoring/queues/{name}/purge")
+@v45_router.get("/monitoring/queues/{name}/purge")
 async def purge_queue(name: str):
     """Purge all messages from a specific queue."""
     logger.info(f"Purging queue: {name}")
     return {"status": "purged", "queue": name, "count": 0}
 
-@v25_router.post("/ml/jobs/{id}/retry")
+@v45_router.post("/ml/jobs/{id}/retry")
 async def retry_job(id: str):
     """Retry a failed job."""
     logger.info(f"Retrying job: {id}")
     return {"status": "queued", "id": id, "action": "retry"}
 
-@v25_router.delete("/ml/jobs/{id}")
+@v45_router.delete("/ml/jobs/{id}")
 async def cancel_job(id: str):
     """Cancel a running job or delete a failed one."""
     logger.info(f"Cancelling job: {id}")
@@ -1303,7 +1303,7 @@ class AnalysisRequest(BaseModel):
     query: str
     tenant_id: str = "default"
 
-@v25_router.post("/analyze")
+@v45_router.post("/analyze")
 async def run_e2e_analysis(payload: AnalysisRequest):
     """Наскрізний аналіз: Пошук по всіх базах + AI висновок + Автоматичне створення кейсу."""
     from app.services.ai_engine import ai_engine
@@ -1316,7 +1316,7 @@ async def run_e2e_analysis(payload: AnalysisRequest):
         logger.exception(f"Analysis failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@v25_router.get("/cases")
+@v45_router.get("/cases")
 async def get_analytical_cases(limit: int = 20):
     """Повертає список створених аналітичних кейсів."""
     from app.libs.core.models.entities import Case
@@ -1341,7 +1341,7 @@ async def get_analytical_cases(limit: int = 20):
         logger.exception(f"Fetch cases failed: {e}")
         return []
 
-@v25_router.get("/cases/{case_id}")
+@v45_router.get("/cases/{case_id}")
 async def get_case_details(case_id: str):
     """Детальна інформація про кейс."""
     import uuid
@@ -1370,7 +1370,7 @@ async def get_case_details(case_id: str):
 
 
 # ============================================
-# E2E ANALYSIS API (v25.1)
+# E2E ANALYSIS API (v45.1)
 # ============================================
 
 class AnalysisRequest(BaseModel):
@@ -1397,7 +1397,7 @@ class AnalysisResponse(BaseModel):
     error: str | None = None
 
 
-@v25_router.post("/analyze/e2e", response_model=AnalysisResponse)
+@v45_router.post("/analyze/e2e", response_model=AnalysisResponse)
 async def e2e_analysis(request: AnalysisRequest):
     """🔍 E2E Multi-Database Analysis.
 
@@ -1539,7 +1539,7 @@ async def e2e_analysis(request: AnalysisRequest):
 
 
 # =============================================================================
-# SUPERINTELLIGENCE ORCHESTRATOR v25.0 ENDPOINTS
+# SUPERINTELLIGENCE ORCHESTRATOR v45.0 ENDPOINTS
 # =============================================================================
 
 class AIQueryRequest(BaseModel):
@@ -1560,7 +1560,7 @@ class AIQueryResponse(BaseModel):
     error: str | None = None
 
 
-@v25_router.post("/ai/query", response_model=AIQueryResponse)
+@v45_router.post("/ai/query", response_model=AIQueryResponse)
 async def process_ai_query(request: AIQueryRequest):
     """🧠 SuperIntelligence Orchestrator - Process AI Query.
 
@@ -1612,7 +1612,7 @@ async def process_ai_query(request: AIQueryRequest):
         )
 
 
-@v25_router.get("/ai/health")
+@v45_router.get("/ai/health")
 async def get_ai_health():
     """🏥 Get SuperIntelligence Orchestrator Health Status.
 
@@ -1646,7 +1646,7 @@ async def get_ai_health():
         }
 
 
-@v25_router.post("/ai/self-improve")
+@v45_router.post("/ai/self-improve")
 async def trigger_self_improvement():
     """🔄 Trigger Self-Improvement Cycle.
 
@@ -1680,7 +1680,7 @@ async def trigger_self_improvement():
         }
 
 
-@v25_router.get("/ai/agents")
+@v45_router.get("/ai/agents")
 async def get_ai_agents():
     """🤖 Get Intelligence Agent Status.
 
@@ -1723,7 +1723,7 @@ async def get_ai_agents():
         }
 
 
-@v25_router.post("/ai/healing/trigger")
+@v45_router.post("/ai/healing/trigger")
 async def trigger_self_healing(component: str = "all"):
     """🏥 Trigger Self-Healing Recovery.
 
@@ -1750,7 +1750,7 @@ async def trigger_self_healing(component: str = "all"):
         }
 
 
-@v25_router.get("/ai/healing/history")
+@v45_router.get("/ai/healing/history")
 async def get_healing_history():
     """📋 Get Self-Healing Recovery History."""
     try:
@@ -1773,7 +1773,7 @@ async def get_healing_history():
         }
 
 
-@v25_router.get("/ai/metrics")
+@v45_router.get("/ai/metrics")
 async def get_ai_metrics():
     """📊 Get AI Orchestrator Performance Metrics."""
     try:
@@ -1801,7 +1801,7 @@ async def get_ai_metrics():
 
 
 # WebSocket for Real-time AI Stream
-@v25_router.websocket("/ws/ai/stream")
+@v45_router.websocket("/ws/ai/stream")
 async def ai_stream_ws(websocket: WebSocket):
     """🔴 Real-time AI Stream WebSocket.
 
@@ -1844,7 +1844,7 @@ async def ai_stream_ws(websocket: WebSocket):
 # PROMETHEUS METRICS ENDPOINT
 # =============================================================================
 
-@v25_router.get("/metrics")
+@v45_router.get("/metrics")
 async def get_prometheus_metrics():
     """📊 Prometheus Metrics Endpoint.
 
@@ -1878,7 +1878,7 @@ async def get_prometheus_metrics():
 # TEMPORAL WORKFLOW ENDPOINTS
 # =============================================================================
 
-@v25_router.post("/workflow/self-improvement")
+@v45_router.post("/workflow/self-improvement")
 async def start_self_improvement_workflow(reason: str = "manual"):
     """🔄 Start Self-Improvement Workflow via Temporal.
 
@@ -1914,7 +1914,7 @@ async def start_self_improvement_workflow(reason: str = "manual"):
         }
 
 
-@v25_router.post("/workflow/self-healing")
+@v45_router.post("/workflow/self-healing")
 async def start_self_healing_workflow(
     component: str = "all",
     failure_type: str = "unknown",
@@ -1955,7 +1955,7 @@ async def start_self_healing_workflow(
         }
 
 
-@v25_router.get("/workflow/status/{workflow_id}")
+@v45_router.get("/workflow/status/{workflow_id}")
 async def get_workflow_status(workflow_id: str):
     """📋 Get Workflow Status.
 
@@ -1980,7 +1980,7 @@ async def get_workflow_status(workflow_id: str):
 
 # === Autonomous Intelligence v2.0 Endpoints ===
 
-@v25_router.get("/autonomous/status")
+@v45_router.get("/autonomous/status")
 async def get_autonomous_intelligence_status():
     """🧠 Get Autonomous Intelligence v2.0 Status.
 
@@ -1998,7 +1998,7 @@ async def get_autonomous_intelligence_status():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@v25_router.get("/autonomous/predictions")
+@v45_router.get("/autonomous/predictions")
 async def get_current_predictions():
     """🔮 Get Current System Predictions.
 
@@ -2023,7 +2023,7 @@ async def get_current_predictions():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@v25_router.get("/autonomous/decisions")
+@v45_router.get("/autonomous/decisions")
 async def get_autonomous_decisions():
     """🤖 Get Recent Autonomous Decisions.
 
@@ -2056,7 +2056,7 @@ async def get_autonomous_decisions():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@v25_router.get("/autonomous/learning-stats")
+@v45_router.get("/autonomous/learning-stats")
 async def get_learning_statistics():
     """🎓 Get Self-Learning Statistics.
 
@@ -2090,7 +2090,7 @@ async def get_learning_statistics():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@v25_router.get("/autonomous/resources")
+@v45_router.get("/autonomous/resources")
 async def get_resource_allocation():
     """📊 Get Dynamic Resource Allocation Status.
 
@@ -2104,7 +2104,7 @@ async def get_resource_allocation():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@v25_router.post("/autonomous/start")
+@v45_router.post("/autonomous/start")
 async def start_autonomous_intelligence():
     """🚀 Start Autonomous Intelligence v2.0.
 
@@ -2128,7 +2128,7 @@ async def start_autonomous_intelligence():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@v25_router.post("/autonomous/stop")
+@v45_router.post("/autonomous/stop")
 async def stop_autonomous_intelligence():
     """🛑 Stop Autonomous Intelligence v2.0."""
     try:
@@ -2151,7 +2151,7 @@ class AutonomyConfigUpdate(BaseModel):
     anomaly_threshold: float | None = None
 
 
-@v25_router.post("/autonomous/config")
+@v45_router.post("/autonomous/config")
 async def update_autonomy_config(config: AutonomyConfigUpdate):
     """⚙️ Update Autonomous Intelligence Configuration.
 
@@ -2186,7 +2186,7 @@ async def update_autonomy_config(config: AutonomyConfigUpdate):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@v25_router.get("/autonomous/health")
+@v45_router.get("/autonomous/health")
 async def get_autonomous_health():
     """💚 Get Autonomous Intelligence Health Check.
 

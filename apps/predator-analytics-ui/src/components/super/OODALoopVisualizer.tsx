@@ -75,7 +75,7 @@ export const OODALoopVisualizer: React.FC<{ activeStep?: string }> = ({ activeSt
                         <Activity className="text-blue-400 animate-pulse" size={24} />
                     </div>
                     <div>
-                        <h3 className="text-xl font-black text-white uppercase tracking-widest">OODA LOOP v25</h3>
+                        <h3 className="text-xl font-black text-white uppercase tracking-widest">OODA LOOP v45</h3>
                         <p className="text-[10px] text-slate-500 font-mono uppercase tracking-[0.2em]">Цикл Когнітивного Домінування</p>
                     </div>
                 </div>

@@ -1,11 +1,11 @@
-# Predator Analytics v25.0 — Implementation-ready
+# Predator Analytics v45.0 — Implementation-ready
 
-This folder contains the initial, implementation-ready artifacts for v25.0 of the Predator Analytics platform.
+This folder contains the initial, implementation-ready artifacts for v45.0 of the Predator Analytics platform.
 
 Contents:
 
-- `TECH_SPEC.md` — Implementation-Ready Technical Specification (v25.0) (the full document)
-- `spec_v25/` — Canonical v25.0 Technical Specification package (master spec + diagrams)
+- `TECH_SPEC.md` — Implementation-Ready Technical Specification (v45.0) (the full document)
+- `spec_v45/` — Canonical v45.0 Technical Specification package (master spec + diagrams)
 - `helm/` — sample Helm values for dev/staging/prod
 - `qdrant/collection.yaml` — sample Qdrant collection config
 - `opensearch/mapping.json` — example OpenSearch index mapping
@@ -47,14 +47,14 @@ Development tips:
 - Start the local policy engine (development):
 
 ```bash
-cd implementation_v25/services/policy_engine
+cd implementation_v45/services/policy_engine
 uvicorn policy:app --reload --port 8100
 ```
 
 - Run training & indexing examples via Makefile:
 
 ```bash
-cd implementation_v25
+cd implementation_v45
 make train CONFIG=configs/llm/exp_reranker_lora.py
 make index DATASET=sample
 ```
@@ -83,7 +83,7 @@ Deployment script example (local):
 
 ```bash
 # deploy to nvidia cluster (requires argocd login)
-cd implementation_v25
+cd implementation_v45
 ./scripts/deploy-to-nvidia.sh nvidia predator-prod
 ```
 
@@ -129,12 +129,12 @@ argocd app get predator-prod
 4. Alternatively use the local helper script (ensure you have `argocd` and kubeconfig):
 
 ```bash
-cd implementation_v25
+cd implementation_v45
 chmod +x ./scripts/deploy-to-nvidia.sh
 ./scripts/deploy-to-nvidia.sh nvidia predator-prod
 ```
 
-How to fallback to Mac quickly: - `cd implementation_v25 && docker-compose -f docker-compose.dev.yaml up -d` - Or deploy via Helm using the Mac values file:
+How to fallback to Mac quickly: - `cd implementation_v45 && docker-compose -f docker-compose.dev.yaml up -d` - Or deploy via Helm using the Mac values file:
 
 ```bash
 helm upgrade --install predator ./helm --values ./helm/values-mac.yaml --namespace dev --create-namespace
@@ -157,10 +157,10 @@ GHCR CI Push guidance:
 To enable publishing images from CI, add `GHCR_PAT` secret with a Personal Access Token (packages: write
 scope) to your GitHub repo settings. The CI will log in and push images only if that secret is present.
 
-CI Build & Release (v25 automation):
+CI Build & Release (v45 automation):
 
 - New workflow: `.github/workflows/build-and-release.yml` — builds backend & frontend images, pushes to GHCR, extracts image digest, runs Trivy scans, executes e2e smoke tests via `docker-compose`, and opens a PR to update the Helm umbrella `values.yaml` with the digest.
-- Helper scripts: `implementation_v25/scripts/commit-helm-values-pr.sh` and `implementation_v25/scripts/generate-dockerfile-from-template.sh`.
+- Helper scripts: `implementation_v45/scripts/commit-helm-values-pr.sh` and `implementation_v45/scripts/generate-dockerfile-from-template.sh`.
 - Run a manual release locally: push a tag `vX.Y.Z` or trigger the workflow from the GitHub UI.
 
 Local test runner helper:
@@ -168,7 +168,7 @@ Local test runner helper:
 If you do not have `tox` or `python3.12` locally, run the helper script which uses Docker to run tox in a `python:3.12-slim` container:
 
 ```bash
-cd implementation_v25
+cd implementation_v45
 ./scripts/run-tox-docker.sh py311 ua-sources
 ```
 

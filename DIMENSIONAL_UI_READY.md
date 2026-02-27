@@ -201,7 +201,7 @@ const MOCK_COMMANDER: UserProfile = {
 1. **Реальні дані з backend**
    ```typescript
    // AdaptiveDashboard.tsx вже підключено:
-   const status = await api.v25.getSystemStatus();
+   const status = await api.v45.getSystemStatus();
    ```
 
 2. **Більше views з QuantumCard**
@@ -267,7 +267,7 @@ npm run dev
 
 ---
 
-**Створено з ❤️ для Predator Analytics v25**
+**Створено з ❤️ для Predator Analytics v45**
 **Google AI Antigravity**
 **2026-01-06**
 

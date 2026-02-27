@@ -93,7 +93,7 @@ export const PredatorChatWidget: React.FC = () => {
                 <div>
                   <h3 className="text-sm font-black text-white tracking-wide">PREDATOR AI</h3>
                   <p className="text-[10px] text-emerald-400/80 font-mono flex items-center gap-1">
-                    <span className="w-1 h-1 bg-emerald-400 rounded-full" /> ONLINE • V30.0 BETA
+                    <span className="w-1 h-1 bg-emerald-400 rounded-full" /> ONLINE • V45.0 BETA
                   </p>
                 </div>
               </div>

@@ -97,7 +97,7 @@ const DeploymentView: React.FC = () => {
                 breadcrumbs={['СИСТЕМА', 'ДЕПЛОЙ', 'КОНТРОЛЬ']}
                 stats={[
                     { label: 'Стан Флоту', value: 'ОПТИМАЛЬНО', icon: <ShieldCheck size={14}/>, color: 'success' },
-                    { label: 'Версія', value: 'v30.0.0', icon: <GitBranch size={14}/>, color: 'primary' },
+                    { label: 'Версія', value: 'v45.0.0', icon: <GitBranch size={14}/>, color: 'primary' },
                     { label: 'Стратегія', value: 'GITOPS', icon: <Zap size={14}/>, color: 'success' },
                 ]}
                 actions={
@@ -157,10 +157,10 @@ const DeploymentView: React.FC = () => {
                                             <GitBranch size={48} />
                                         </motion.div>
                                         <div className="flex-1">
-                                            <div className="text-4xl font-display font-bold text-white tracking-widest mb-1">v30.0.0</div>
+                                            <div className="text-4xl font-display font-bold text-white tracking-widest mb-1">v45.0.0</div>
                                             <div className="text-[10px] text-slate-500 font-mono flex items-center gap-3 uppercase tracking-widest">
                                                 <span className="text-emerald-500 font-bold">Стабільно</span>
-                                                <ChevronRight size={10}/> Оптимізовано для ARM64-V30
+                                                <ChevronRight size={10}/> Оптимізовано для ARM64-V45
                                             </div>
                                         </div>
                                     </div>

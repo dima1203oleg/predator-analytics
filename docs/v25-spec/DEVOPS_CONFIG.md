@@ -1,4 +1,4 @@
-# ⚙️ DevOps Конфігурації — Predator Analytics v25.0
+# ⚙️ DevOps Конфігурації — Predator Analytics v45.0
 
 > GitOps, ArgoCD, GitHub Actions та Kubernetes конфігурації
 

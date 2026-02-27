@@ -1,5 +1,5 @@
 #!/bin/bash
-# PREDATOR v30 — ULTIMATE PRODUCTION DEPLOYER
+# Predator v45 | Neural Analytics— ULTIMATE PRODUCTION DEPLOYER
 # Мова: Українська | Runtime: Python 3.12 | Mode: AUTO-SUCCESS
 
 # Stop on error, but allow custom error handling
@@ -31,7 +31,7 @@ print_banner() {
     echo "█▀█ █▀█ █▀▀ █▀▄ ▄▀█ ▀█▀ █▀█ █▀█"
     echo "█▀▀ █▀▄ ██▄ █▄▀ █▀█ ░█░ █▄█ █▀▄"
     echo -e "${NC}"
-    echo -e "${BLUE}  >>> ULTIMATE DEPLOYER v30.1 <<<  ${NC}"
+    echo -e "${BLUE}  >>> ULTIMATE DEPLOYER v45.1 <<<  ${NC}"
     echo "======================================"
 }
 
@@ -114,7 +114,7 @@ main() {
     set -e
 
     if [ $STATUS -eq 0 ]; then
-        log "${GREEN}✅ SUCCESS: PREDATOR v30 успішно розгорнуто!${NC}"
+        log "${GREEN}✅ SUCCESS: Predator v45 | Neural Analyticsуспішно розгорнуто!${NC}"
     else
         log "${RED}❌ FAILURE: Помилка деплою. Відкат виконано автоматично (atomic).${NC}"
         # Показати логи останнього failed поду

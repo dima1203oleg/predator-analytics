@@ -23,7 +23,7 @@ class ActionCategory(str, Enum):
     CONTAINMENT = "containment"
     ISOLATION = "isolation"
     SHUTDOWN = "shutdown"
-    PREEMPTIVE_LETHAL = "preemptive_lethal" # Forbidden in emergency by v27.0 feedback
+    PREEMPTIVE_LETHAL = "preemptive_lethal" # Forbidden in emergency by v45.0 feedback
     MASS_SUSPENSION = "mass_rights_suspension"
 
 class Observation(BaseModel):
@@ -69,7 +69,7 @@ class RealityContextEngine:
                 details={"anomaly": "Reality Divergence: Forced contextual friction detected."}
             )
 
-        # Mock analysis logic based on v27.0 principles
+        # Mock analysis logic based on v45.0 principles
         temporal_coherent = random.choice([True, True, True, False]) # High probability of coherence
 
         # Axiom IGNORANCE: If ignorance is declared, prefer inaction
@@ -119,7 +119,7 @@ class RealityContextEngine:
             executable=True,
             confidence=round(confidence, 3),
             context_hash=f"ctx_{random.getrandbits(64):x}",
-            proof="Z3_FORMAL_PROOF_GENERATED_V27_RT"
+            proof="Z3_FORMAL_PROOF_GENERATED_V45_RT"
         )
 
 class SemanticGate:
@@ -233,7 +233,7 @@ def get_vpc_verifier() -> VPCVerifier:
 def get_cincinnatus_timer() -> CincinnatusTimer:
     return CincinnatusTimer()
 
-# --- JURIDICAL TRANSPILLER v27.0 ---
+# --- JURIDICAL TRANSPILLER v45.0 ---
 class LegalDocument(BaseModel):
     title: str
     format: str = "PDF/A-3"
@@ -263,7 +263,7 @@ class JuridicalTranspiler:
             basis = ["Criminal Code UA Art 361", "Cybersecurity Law of Ukraine", "Predator Constitutional Axiom CRC"]
         else:
             evidence = f"Observed physical change verified by {data.get('witness_count', 0)} independent witnesses."
-            basis = ["GDPR Art 25", "ISO 27001:2022", "Predator Constitution v27.0"]
+            basis = ["GDPR Art 25", "ISO 27001:2022", "Predator Constitution v45.0"]
 
         legal_content = {
             "header": "PREDATOR SOVEREIGN JURISDICTION",
@@ -287,7 +287,7 @@ class ConstitutionalAxiomsZ3:
     def verify_decision(self, action: str, context: dict[str, Any]) -> bool:
         # Simulate Z3 solving process
         logger.info(f"Z3 Solver: Verifying action '{action}' against Axiom VPC and CRC...")
-        # In v27.0, we simulate the sat/unsat check
+        # In v45.0, we simulate the sat/unsat check
         return True # Logic proves consistent
 
 def get_juridical_transpiler() -> JuridicalTranspiler:

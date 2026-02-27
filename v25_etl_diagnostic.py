@@ -12,7 +12,7 @@ sys.path.append(str(ROOT_DIR))
 sys.path.append(str(ROOT_DIR / "apps" / "backend"))
 
 async def run_diagnostic():
-    print("🧠 Predator Analytics v25.0 Diagnostic - ETL Layer")
+    print("🧠 Predator Analytics v45.0 Diagnostic - ETL Layer")
     print("---------------------------------------------------")
 
     from app.services.etl_ingestion import ETLIngestionService

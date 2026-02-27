@@ -134,7 +134,7 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                             records_fetched += 1
 
                 elif source_type == "telegram":
-                    # Telegram Channel Parsing (v25.1)
+                    # Telegram Channel Parsing (v45.1)
                     try:
                         from app.connectors.telegram_channel import telegram_channel_connector
                         channel_username = config.get("channelUsername") if config else None
@@ -161,7 +161,7 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                         req_logger.exception("telegram_connector_not_available")
 
                 elif source_type == "web":
-                    # Web Scraping (v25.1)
+                    # Web Scraping (v45.1)
                     try:
                         from app.connectors.web_scraper import web_scraper_connector
                         url = config.get("url") if config else None
@@ -190,7 +190,7 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                         req_logger.exception("web_scraper_connector_not_available")
 
                 elif source_type == "rss":
-                    # RSS/Atom Feed Parsing (v25.1)
+                    # RSS/Atom Feed Parsing (v45.1)
                     try:
                         from app.connectors.web_scraper import web_scraper_connector
                         feed_url = config.get("url") if config else None
@@ -259,7 +259,7 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
 def process_staging_records(self, staging_ids: list):
     """Processor Agent: Transform raw data from staging to gold.documents.
 
-    COMPLEX OPTIMIZATION (v25.1):
+    COMPLEX OPTIMIZATION (v45.1):
     - Unified Meta Handling: author, published_date, category -> meta JSONB
     - Schema Compliance: tenant_id, source_type
     - New Data Types: telegram_messages, web_pages, rss_items
@@ -480,7 +480,7 @@ def process_staging_records(self, staging_ids: list):
 def index_gold_documents(self, gold_ids: list):
     """Indexer Agent: Index gold.documents to OpenSearch and Qdrant.
 
-    COMPLEX OPTIMIZATION (v25.1):
+    COMPLEX OPTIMIZATION (v45.1):
     - Reads 'meta' JSONB for extended attributes
     - Handles unified document schema
     - Improved error handling and batch processing

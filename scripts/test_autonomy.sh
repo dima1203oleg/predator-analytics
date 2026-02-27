@@ -36,4 +36,4 @@ python3 scripts/triple_cli.py --agent planner "Self-test" > /dev/null && echo "�
 docker exec predator_orchestrator python3 -c "import mistralai; print('✅ Level 2 (Mistral): READY')" || echo "⚠️ Level 2 (Mistral) missing in orchestrator"
 docker exec predator_orchestrator which aider > /dev/null && echo "✅ Level 3 (Aider): READY" || echo "⚠️ Level 3 (Aider) missing in orchestrator"
 
-echo "🎉 Autonomy Self-Check COMPLETED. System is ready for autonomous operations (Mixed CLI Stack v25.0 active)."
+echo "🎉 Autonomy Self-Check COMPLETED. System is ready for autonomous operations (Mixed CLI Stack v45.0 active)."

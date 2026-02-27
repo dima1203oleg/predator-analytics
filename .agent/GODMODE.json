@@ -1,6 +1,6 @@
 {
-  "$schema": "antigravity-godmode-v25",
-  "version": "v25.GODMODE",
+  "$schema": "antigravity-godmode-v45",
+  "version": "v45.GODMODE",
   "mode": "ABSOLUTE",
   "status": "ETERNAL",
   "description": "NON-INTERACTIVE, NON-BLOCKING, NON-STOP execution",

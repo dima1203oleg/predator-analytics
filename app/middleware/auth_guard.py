@@ -25,7 +25,7 @@ class RoleGuard:
             # Simulate JWT decode (In prod use Keycloak public key)
             # decoded = jwt.decode(token, options={"verify_signature": False})
             # user_roles = decoded.get("realm_access", {}).get("roles", [])
-            user_roles = ["premium", "admin"] # Mock for v30 readiness
+            user_roles = ["premium", "admin"] # Mock for v45 readiness
 
             if not any(role in self.allowed_roles for role in user_roles):
                 raise HTTPException(

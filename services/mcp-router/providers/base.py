@@ -2,7 +2,7 @@
 """
 Module: base_provider
 Component: mcp-router
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional

@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: "https://github.com/your-org/predator-gitops"
     targetRevision: HEAD
-    path: "implementation_v25/infra/apps/overlays"
+    path: "implementation_v45/infra/apps/overlays"
     directory:
       recurse: true
   destination:

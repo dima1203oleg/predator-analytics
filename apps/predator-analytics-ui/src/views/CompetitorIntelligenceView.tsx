@@ -1,6 +1,6 @@
 
 /**
- * 🎯 Competitor Intelligence View v30
+ * 🎯 Competitor Intelligence View v45
  *
  * Стратегічний аналіз конкурентів на основі митних даних та OSINT.
  */

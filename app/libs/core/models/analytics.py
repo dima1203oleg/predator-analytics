@@ -1,5 +1,5 @@
 """
-Predator Analytics v25 - Analytical Layer Models
+Predator Analytics v45 - Analytical Layer Models
 Models for Behavioral, Institutional, and Influence layers.
 """
 import uuid

@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "🦁 STARTING PREDATOR V30 FIX (FINAL FIX)..."
+echo "🦁 STARTING PREDATOR V45 FIX (FINAL FIX)..."
 
 # 1. Kill old processes to clean up noise
 pkill -f "vite"

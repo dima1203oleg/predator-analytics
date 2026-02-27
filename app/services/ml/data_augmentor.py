@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Data Augmentor Service (v25.0)
+"""Data Augmentor Service (v45.0)
 Generates synthetic data for expanding training datasets using NLPAug and AugLy.
 """
 import logging

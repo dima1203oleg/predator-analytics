@@ -13,7 +13,7 @@ sys.path.append(str(ROOT_DIR))
 sys.path.append(str(ROOT_DIR / "apps" / "backend"))
 
 async def run_augmentation_diagnostic():
-    print("🧠 Predator Analytics v25.0 Diagnostic - Augmentation Layer")
+    print("🧠 Predator Analytics v45.0 Diagnostic - Augmentation Layer")
     print("----------------------------------------------------------")
 
     try:
@@ -56,7 +56,7 @@ async def run_augmentation_diagnostic():
             print(f"📝 Variant {i+1} Content: '{item.content[:100]}...'")
             print(f"✨ Type: {item.aug_type}")
 
-        print("🚀 SUCCESS: Augmentation Pipeline validated for v25.0 logic.")
+        print("🚀 SUCCESS: Augmentation Pipeline validated for v45.0 logic.")
 
     except Exception as e:
         print(f"❌ Augmentation logic failed: {e}")

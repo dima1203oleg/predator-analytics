@@ -13,7 +13,7 @@ api:
   replicaCount: 2
   image:
     repository: predator-api
-    tag: v30.0.0
+    tag: v45.0.0
   resources:
     limits:
       cpu: 2000m
@@ -24,7 +24,7 @@ pipelines:
     replicaCount: 4
     image:
       repository: predator-worker
-      tag: v30.0.0
+      tag: v45.0.0
   kafka:
     enabled: true
     persistence:
@@ -35,13 +35,13 @@ ingestion:
   replicaCount: 3
   image:
     repository: predator-ingestion
-    tag: v30.0.0
+    tag: v45.0.0
 
 datasets:
   enabled: true
   image:
     repository: predator-datasets
-    tag: v30.0.0
+    tag: v45.0.0
 
 ai:
   ollama:
@@ -54,7 +54,7 @@ ui:
   replicaCount: 2
   image:
     repository: predator-ui
-    tag: v30.0.0
+    tag: v45.0.0
 
 auth:
   keycloak:

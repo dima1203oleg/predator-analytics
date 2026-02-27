@@ -127,7 +127,7 @@ export const PremiumHero: React.FC = () => {
           >
             <Sparkles className="w-4 h-4 text-purple-400" />
             <span className="text-sm font-medium text-purple-300">
-              Нова версія V30 вже доступна!
+              Нова версія V45 вже доступна!
             </span>
           </motion.div>
 

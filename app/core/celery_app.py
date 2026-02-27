@@ -41,7 +41,7 @@ celery_app.conf.update(
     # Result expiration
     result_expires=86400,  # 24 hours
 
-    # Monitoring Events (Critical for v25 JobQueueMonitor)
+    # Monitoring Events (Critical for v45 JobQueueMonitor)
     worker_send_task_events=True,
     task_send_sent_event=True,
 
@@ -50,7 +50,7 @@ celery_app.conf.update(
     worker_cancel_long_running_tasks_on_connection_loss=True,
     task_reject_on_worker_lost=True,
 
-    # Flower Security (v25.0)
+    # Flower Security (v45.0)
     flower_basic_auth=f"{settings.FLOWER_USER}:{settings.FLOWER_PASSWORD}" if settings.FLOWER_USER and settings.FLOWER_PASSWORD else None,
 )
 

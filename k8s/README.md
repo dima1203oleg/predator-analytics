@@ -1,4 +1,4 @@
-# Kubernetes Deployment - Predator Analytics v25.0
+# Kubernetes Deployment - Predator Analytics v45.0
 
 ## 📋 Огляд
 
@@ -135,7 +135,7 @@ kubectl get hpa -n predator-analytics
 
 ```bash
 # Rolling update
-kubectl set image deployment/backend backend=predator/ua-sources:v25.1 -n predator-analytics
+kubectl set image deployment/backend backend=predator/ua-sources:v45.1 -n predator-analytics
 
 # Check rollout status
 kubectl rollout status deployment/backend -n predator-analytics

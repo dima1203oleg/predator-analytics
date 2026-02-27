@@ -5,16 +5,16 @@ set -e
 SERVER="dima@194.177.1.240"
 PORT="6666"
 REMOTE_DIR="~/predator-analytics"
-TAR_FILE="predator_v26_release.tar.gz"
+TAR_FILE="predator_v45_release.tar.gz"
 
-echo "🦅 Deploying Predator v26 to $SERVER..."
+echo "🦅 Deploying Predator v45 | Neural Analyticsto $SERVER..."
 
 # Note: This script assumes you have SSH access configured.
 # If automatic upload fails, you can run these commands manually.
 
 # 1. Repackage with new Docker configurations
 echo "📦 Packaging release payload..."
-tar -czf $TAR_FILE predatorctl google_agentctl services/arbiter services/truth-ledger infrastructure/constitution policies agents README_V26.md docker-compose.yml
+tar -czf $TAR_FILE predatorctl google_agentctl services/arbiter services/truth-ledger infrastructure/constitution policies agents README_V45.md docker-compose.yml
 
 # 2. Transfer Payload
 echo "📦 Uploading release payload..."
@@ -47,5 +47,5 @@ ssh -p $PORT $SERVER << EOF
     echo "Running Constitutional Audit..."
     predatorctl system audit --type constitution
 
-    echo "✅ v26 Deployment Complete!"
+    echo "✅ v45 Deployment Complete!"
 EOF

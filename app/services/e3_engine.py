@@ -121,7 +121,7 @@ class EternalEvolutionEngine:
             "status": "evolving" if self._is_running else "suspended",
             "cycles": self._evolution_cycles,
             "last_evolution": self._last_evolution,
-            "intelligence_level": "v26.0-Evolved",
+            "intelligence_level": "v45.0-Evolved",
             "metrics": {
                 "terminology_fixes": self._evolution_cycles * 2,
                 "performance_tweaks": self._evolution_cycles + 5,

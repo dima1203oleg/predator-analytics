@@ -2,7 +2,7 @@
 """
 Module: model_registry
 Component: training-controller
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 import logging
 from typing import Dict, Optional, List

@@ -18,7 +18,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 try:
     with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        print(f"Serving UI v30 at http://localhost:{PORT}")
+        print(f"Serving UI v45 at http://localhost:{PORT}")
         httpd.serve_forever()
 except Exception as e:
     print(f"Error: {e}")

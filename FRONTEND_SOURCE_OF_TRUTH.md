@@ -9,9 +9,9 @@
 ```
 
 **ВСІ ІНШІ ПАПКИ - ЗАСТАРІЛІ КОПІЇ. НЕ РЕДАГУВАТИ:**
-- ❌ `v30_ui/` - стара копія
-- ❌ `apps/predator-v30-temp/` - тимчасова копія
-- ❌ `apps/v30_bypass_extracted/` - архівна копія
+- ❌ `v45_ui/` - стара копія
+- ❌ `apps/predator-v45-temp/` - тимчасова копія
+- ❌ `apps/v45_bypass_extracted/` - архівна копія
 - ❌ Будь-які `.tar.gz` файли - архіви
 
 ---
@@ -27,7 +27,7 @@ cd /Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui
 ### Крок 2: Деплой на сервер (БЕЗ КЕШУ)
 ```bash
 cd /Users/dima-mac/Documents/Predator_21
-./scripts/deploy-v30-clean.sh
+./scripts/deploy-v45-clean.sh
 ```
 
 Цей скрипт:
@@ -56,13 +56,13 @@ ssh predator-server
 docker exec predator_frontend cat /usr/share/nginx/html/index.html | grep -i title
 ```
 
-Має показати: `PREDATOR v30`
+Має показати: `Predator v45 | Neural Analytics`
 
 ---
 
 ## 🚫 ЩО **НЕ** РОБИТИ
 
-1. ❌ **НЕ редагувати** файли в інших папках (`v30_ui`, `predator-v30-temp`)
+1. ❌ **НЕ редагувати** файли в інших папках (`v45_ui`, `predator-v45-temp`)
 2. ❌ **НЕ використовувати** `docker compose build` без `--no-cache`
 3. ❌ **НЕ створювати** нові копії проекту
 4. ❌ **НЕ копіювати** код між папками вручну
@@ -86,9 +86,9 @@ docker compose up -d frontend
 
 ## 📊 ВЕРСІЇ
 
-- **v25** - Застаріла (не використовувати)
-- **v26** - Застаріла (не використовувати)
-- **v30** - ПОТОЧНА ОФІЦІЙНА ВЕРСІЯ ✅
+- **v45** - Застаріла (не використовувати)
+- **v45** - Застаріла (не використовувати)
+- **v45** - ПОТОЧНА ОФІЦІЙНА ВЕРСІЯ ✅
 
 **Остання синхронізація:** 2026-02-02 02:06
 

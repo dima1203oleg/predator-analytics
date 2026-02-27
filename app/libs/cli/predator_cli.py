@@ -168,7 +168,7 @@ def train(dataset_id: str, target: str, config: str | None, async_mode: bool):
                     "target": target,
                     "config": config_data
                 }
-                response = client.post("/v25/training/start", json=payload)
+                response = client.post("/v45/training/start", json=payload)
 
                 if response.status_code != 200:
                     console.print(f"[red]❌ Training failed: {response.text}[/red]")
@@ -292,7 +292,7 @@ def status(job_id: str | None, show_all: bool, job_type: str | None):
 
             else:
                 # System status or all jobs
-                response = client.get("/v25/status")
+                response = client.get("/v45/status")
 
                 if response.status_code != 200:
                     console.print("[red]❌ Could not fetch system status[/red]")
@@ -301,7 +301,7 @@ def status(job_id: str | None, show_all: bool, job_type: str | None):
                 system = response.json()
 
                 console.print(Panel(f"""
-[bold cyan]🦅 PREDATOR ANALYTICS v25.0[/bold cyan]
+[bold cyan]🦅 PREDATOR ANALYTICS v45.0[/bold cyan]
 
 [bold]System Stage:[/bold] {system.get('stage', 'N/A')}
 

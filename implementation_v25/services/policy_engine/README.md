@@ -1,4 +1,4 @@
-# Policy Engine — Predator Analytics (v25)
+# Policy Engine — Predator Analytics (v45)
 
 This is a minimal stub for the Policy Engine — a small service that takes `signal + context` and returns `allow/deny + plan` decisions.
 

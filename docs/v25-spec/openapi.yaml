@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Predator Analytics API
   description: |
-    # 🛡️ Predator Analytics v25.0 API
+    # 🛡️ Predator Analytics v45.0 API
 
     Self-healing analytics platform with multi-agent AI orchestration.
 
@@ -147,7 +147,7 @@ paths:
   # ============================================
   # CASES
   # ============================================
-  /api/v25/cases:
+  /api/v45/cases:
     get:
       tags: [Cases]
       summary: List all cases
@@ -213,7 +213,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Case"
 
-  /api/v25/cases/{caseId}:
+  /api/v45/cases/{caseId}:
     get:
       tags: [Cases]
       summary: Get case by ID
@@ -281,7 +281,7 @@ paths:
         "204":
           description: Case deleted
 
-  /api/v25/cases/{caseId}/analyze:
+  /api/v45/cases/{caseId}/analyze:
     post:
       tags: [Cases]
       summary: Analyze case with AI
@@ -312,7 +312,7 @@ paths:
   # ============================================
   # DATA
   # ============================================
-  /api/v25/data/sources:
+  /api/v45/data/sources:
     get:
       tags: [Data]
       summary: List data sources
@@ -330,7 +330,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/DataSource"
 
-  /api/v25/data/upload:
+  /api/v45/data/upload:
     post:
       tags: [Data]
       summary: Upload data file
@@ -366,7 +366,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/UploadResponse"
 
-  /api/v25/data/etl/status:
+  /api/v45/data/etl/status:
     get:
       tags: [Data]
       summary: Get ETL status
@@ -390,7 +390,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/ETLJob"
 
-  /api/v25/data/etl/{jobId}:
+  /api/v45/data/etl/{jobId}:
     get:
       tags: [Data]
       summary: Get specific ETL job
@@ -415,7 +415,7 @@ paths:
   # ============================================
   # AGENTS
   # ============================================
-  /api/v25/agents/chat:
+  /api/v45/agents/chat:
     post:
       tags: [Agents]
       summary: Chat with AI agent
@@ -441,7 +441,7 @@ paths:
                 type: string
                 description: Server-Sent Events stream
 
-  /api/v25/agents/analyze:
+  /api/v45/agents/analyze:
     post:
       tags: [Agents]
       summary: Run AI analysis
@@ -463,7 +463,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/TaskResponse"
 
-  /api/v25/agents/status:
+  /api/v45/agents/status:
     get:
       tags: [Agents]
       summary: Get agents status
@@ -482,7 +482,7 @@ paths:
   # ============================================
   # OPTIMIZER
   # ============================================
-  /api/v25/optimizer/status:
+  /api/v45/optimizer/status:
     get:
       tags: [Optimizer]
       summary: Get optimizer status
@@ -498,7 +498,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/OptimizerStatus"
 
-  /api/v25/optimizer/metrics:
+  /api/v45/optimizer/metrics:
     get:
       tags: [Optimizer]
       summary: Get optimization metrics
@@ -521,7 +521,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/OptimizerMetrics"
 
-  /api/v25/optimizer/force-check:
+  /api/v45/optimizer/force-check:
     post:
       tags: [Optimizer]
       summary: Force optimization check
@@ -540,7 +540,7 @@ paths:
   # ============================================
   # ANALYTICS
   # ============================================
-  /api/v25/analytics/dashboard:
+  /api/v45/analytics/dashboard:
     get:
       tags: [Analytics]
       summary: Get dashboard data
@@ -556,7 +556,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/DashboardData"
 
-  /api/v25/analytics/reports:
+  /api/v45/analytics/reports:
     get:
       tags: [Analytics]
       summary: List reports
@@ -593,7 +593,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/TaskResponse"
 
-  /api/v25/analytics/search:
+  /api/v45/analytics/search:
     post:
       tags: [Analytics]
       summary: Hybrid search

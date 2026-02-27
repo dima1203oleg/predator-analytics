@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Prometheus Metrics Exporter for SuperIntelligence Orchestrator v25.0.
+"""Prometheus Metrics Exporter for SuperIntelligence Orchestrator v45.0.
 
 Exposes key AI metrics for monitoring:
 - Request counts and latencies
@@ -273,7 +273,7 @@ class AIMetricsCollector:
             # Set orchestrator info
             agents = [agent.value for agent in orchestrator.agents] if hasattr(orchestrator, 'agents') else []
             llm_providers = ['groq', 'gemini', 'ollama']
-            init_orchestrator_info('v25.0', agents, llm_providers)
+            init_orchestrator_info('v45.0', agents, llm_providers)
 
             # Set initial agent statuses
             if hasattr(orchestrator, 'agents'):

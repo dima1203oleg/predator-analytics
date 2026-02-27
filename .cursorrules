@@ -1,5 +1,25 @@
-# Antigravity Rules
+# Antigravity Rules — PREDATOR Analytics
 
-1. **Language**: Always answer in Ukrainian.
-2. **Context**: Deployment target is NVIDIA server (k3s), Local environment is Mac (Development).
-3. **Tools**: Use k9s for cluster management.
+1. **Language**: Завжди відповідати українською.
+2. **Context**: Deployment target — NVIDIA server (k3s). Local environment — Mac (Development).
+3. **Tools**: Використовувати k9s для управління кластером.
+4. **Context7**: Завжди використовувати Context7 MCP для генерації коду, документації та API.
+5. **Git**: Після кожного успішного фіксу або фази — пропонувати git commit з описом.
+
+## ⚡ WEB INTERFACE — КАНОНІЧНІ ПРАВИЛА (НЕЗМІННІ)
+
+6. **ЄДИНИЙ ПОРТ**: Веб-інтерфейс PREDATOR Analytics завжди запускається на порту **3030**.
+   - URL: http://localhost:3030
+   - Ніколи не використовувати інший порт для основного UI.
+
+7. **ЄДИНА ДИРЕКТОРІЯ UI**: Єдина правильна версія веб-інтерфейсу:
+   - **Директорія**: `/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui`
+   - Це PREDATOR Analytics v45+ (повна версія з усіма компонентами).
+   - Ніякі інші директорії (public_ui, v30_ui_new, v30_ui, v30_final_3034) НЕ є робочою версією UI.
+
+8. **ЗАПУСК UI**: Завжди запускати з директорії `/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui`:
+   ```bash
+   cd /Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui && npx vite --port 3030 --host
+   ```
+
+9. **MOCK API**: Якщо backend недоступний — запускати `/Users/dima-mac/Documents/Predator_21/mock-api-server.mjs` на порту **9080**.

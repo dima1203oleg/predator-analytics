@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Predator Analytics v25 - Data Hub Service
+"""Predator Analytics v45 - Data Hub Service
 Manages Sources, Datasets, and Jobs lifecycle.
 """
 from datetime import datetime

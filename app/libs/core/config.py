@@ -11,7 +11,7 @@ import sys
 if sys.version_info < (3, 12):
     print("\n" + "!"*80, file=sys.stderr)
     print("❌ FATAL: RUNTIME VERSION MISMATCH", file=sys.stderr)
-    print("   PREDATOR ANALYTICS v25+ STRICTLY REQUIRES PYTHON 3.12.", file=sys.stderr)
+    print("   PREDATOR ANALYTICS v45+ STRICTLY REQUIRES PYTHON 3.12.", file=sys.stderr)
     print(f"   DETECTED: {sys.version}", file=sys.stderr)
     print("   ACTION: Upgrade to 3.12.x and recreate virtual environments.", file=sys.stderr)
     print("!"*80 + "\n", file=sys.stderr)
@@ -95,9 +95,9 @@ class Settings(BaseSettings):
     # API
     API_V1_PREFIX: str = "/api/v1"
 
-    # --- CONSTITUTIONAL CORE (v26.2) ---
+    # --- CONSTITUTIONAL CORE (v45.2) ---
     CONSTITUTION_HASH: str = "3f05c27896098e41471c246fb39e6a0dd43f7b11ff7c46db8f0195d3d3cae3cd"
-    CONSTITUTION_PATH: str = os.path.join(PROJECT_ROOT, "docs/v26_CONSTITUTION.md")
+    CONSTITUTION_PATH: str = os.path.join(PROJECT_ROOT, "docs/v45_CONSTITUTION.md")
     CORS_ORIGINS: list[str] = [
         "*", # Allow all in development/standalone modes for easier access
         os.getenv("FRONTEND_URL", "http://localhost:3000"),

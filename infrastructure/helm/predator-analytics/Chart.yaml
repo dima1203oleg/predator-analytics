@@ -1,6 +1,6 @@
 apiVersion: v2
 name: predator-analytics
-description: Helm чарт для розгортання Predator Analytics v28.5 (Українська Версія)
+description: Helm чарт для розгортання Predator Analytics v45.5 (Українська Версія)
 type: application
 version: 28.5.0
 appVersion: "28.5.0"

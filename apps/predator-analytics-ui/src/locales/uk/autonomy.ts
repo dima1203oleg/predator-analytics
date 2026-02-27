@@ -1,5 +1,5 @@
 /**
- * PREDATOR v30 - Autonomy Locales (Ukrainian)
+ * Predator v45 | Neural Analytics - Autonomy Locales (Ukrainian)
  *
  * Українська локалізація для модуля автономної еволюції
  */
@@ -166,7 +166,7 @@ export const componentsLocales = {
   // Header
   header: {
     title: 'Реєстр Компонентів',
-    subtitle: '190+ open-source компонентів, що формують Predator v30',
+    subtitle: '190+ open-source компонентів, що формують Predator v45 | Neural Analytics',
   },
 
   // Stats

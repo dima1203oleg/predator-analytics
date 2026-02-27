@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 #!/usr/bin/env python3
-"""Predator Analytics CLI (predatorctl) v26
+"""Predator Analytics CLI (predatorctl) v45
 Implementation of the CLI-First Sovereignty Axiom.
 """
 
@@ -44,7 +44,7 @@ except ImportError as e:
 # Setup App
 app = typer.Typer(
     name="predatorctl",
-    help="Predator Analytics v26 Control Plane",
+    help="Predator Analytics v45 Control Plane",
     add_completion=False,
 )
 
@@ -120,7 +120,7 @@ def system_status(
                 "arbiter": "UNKNOWN",
             },
             "overall": "UNKNOWN",
-            "version": "v26.2.0-Offline",
+            "version": "v45.2.0-Offline",
             "note": "Could not connect to API Gateway on localhost:8000"
         }
 
@@ -442,7 +442,7 @@ def ledger_verify(job_id: str | None = None, output: OutputFormat = OutputFormat
             }
 
             # Simple global verify loop (assuming linear or per-job linear)
-            # For v26 prototype, we check per-entry hash validity first
+            # For v45 prototype, we check per-entry hash validity first
             for entry in entries:
                 # Reconstruct payload
                 # job_id + prev + new + metrics + prev_hash + tier

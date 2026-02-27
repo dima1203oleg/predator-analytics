@@ -182,7 +182,7 @@ export const ETLPipelineVisualizer: React.FC = () => {
 
   const fetchPipelines = useCallback(async () => {
     try {
-      const response = await fetch('/api/v25/monitoring/sagas'); // Corrected path
+      const response = await fetch('/api/v45/monitoring/sagas'); // Corrected path
       if (response.ok) {
         const sagas = await response.json();
         // Transform sagas to pipelines using REAL data from backend

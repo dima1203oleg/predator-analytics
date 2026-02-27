@@ -27,7 +27,7 @@ const BootScreen: React.FC<BootScreenProps> = ({ onComplete }) => {
     { msg: "MEM: 128GB ECC ALLOCATED AT 0x00000000 - 0xFFFFFFFF ... OK", delay: 300 },
     { msg: "DEVICES: NVMe RAID0 DETECTED (/dev/nvme0n1, /dev/nvme0n2)", delay: 450 },
     { msg: "GPU: DETECTING CUDA CORES [NVIDIA H100] ... 14592 CORES ACTIVE", delay: 600 },
-    { msg: "KERNEL: LOADING PREDATOR KERNEL v30.0.0-PREEMPT_RT ...", delay: 900 },
+    { msg: "KERNEL: LOADING PREDATOR KERNEL v45.0.0-PREEMPT_RT ...", delay: 900 },
     { msg: "SECURITY: INITIALIZING ZERO-TRUST ENCLAVE (SGX MODE) ... DONE", delay: 1200 },
     { msg: "NET: ESTABLISHING MESH UPLINK (WIREGUARD) ... 10.0.0.5 ASSIGNED", delay: 1400 },
     { msg: "CONTAINER: K3S CLUSTER INITIALIZATION ...", delay: 1600 },
@@ -95,7 +95,7 @@ const BootScreen: React.FC<BootScreenProps> = ({ onComplete }) => {
                 <Globe className="text-cyan-400 w-10 h-10 animate-spin-slow" />
               </div>
               <div className="absolute -bottom-3 -right-3 bg-slate-900 border border-cyan-500/50 text-cyan-400 text-[10px] px-2 py-0.5 font-black tracking-widest rounded-lg">
-                  v30.0
+                  v45.0
               </div>
           </div>
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Sources Management API - Predator Analytics v25
+"""Sources Management API - Predator Analytics v45
 API для управління джерелами даних (Telegram, Web, RSS, API).
 """
 from datetime import datetime

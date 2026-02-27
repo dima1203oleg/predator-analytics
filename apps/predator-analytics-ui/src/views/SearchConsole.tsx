@@ -492,7 +492,7 @@ const SearchConsole: React.FC = () => {
     return (
         <div className="min-h-screen bg-transparent animate-in fade-in duration-700 pb-24">
             <ViewHeader
-                title="СЕМАНТИЧНИЙ ПОШУК (SYNAPSE V25)"
+                title="СЕМАНТИЧНИЙ ПОШУК (SYNAPSE V45)"
                 icon={<Search size={20} className="icon-3d-blue" />}
                 breadcrumbs={['СИНАПСИС', 'ДОСЛІДЖЕННЯ', 'СЕМАНТИЧНИЙ ДВИГУН']}
                 stats={[
@@ -631,7 +631,7 @@ const SearchConsole: React.FC = () => {
                                 ))}
                             </div>
 
-                            {/* Pagination v25 */}
+                            {/* Pagination v45 */}
                             <div className="flex justify-center items-center gap-6 mt-16 pb-20">
                                 <button className="px-6 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white hover:border-slate-600 transition-all">Назад</button>
                                 <div className="flex gap-2">

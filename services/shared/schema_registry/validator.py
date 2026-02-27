@@ -2,7 +2,7 @@
 """
 Module: validator
 Component: shared.schema_registry
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 import json
 import os

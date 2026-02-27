@@ -25,7 +25,7 @@ try:
     chain = TripleCLIChain()
 
     # Простий приклад: генерація Hello World скрипту
-    task = "Створи простий Python скрипт що виводить 'Hello from Predator Analytics v25.0!'"
+    task = "Створи простий Python скрипт що виводить 'Hello from Predator Analytics v45.0!'"
 
     print(f"📝 Завдання: {task}")
     print()

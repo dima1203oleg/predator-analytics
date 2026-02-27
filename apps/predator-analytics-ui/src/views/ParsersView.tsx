@@ -248,7 +248,7 @@ const ParsersView = () => {
         try {
             const [conRes, etlRes] = await Promise.allSettled([
                 api.getConnectors(),
-                (api as any).v25.getEtlStatus()
+                (api as any).v45.getEtlStatus()
             ]);
 
             if (conRes.status === 'fulfilled' && Array.isArray(conRes.value)) {

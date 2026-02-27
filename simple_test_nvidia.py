@@ -67,7 +67,7 @@ class SimpleNvidiaTester:
 
         endpoints = [
             ("/api/v1/system/metrics", "Системні метрики"),
-            ("/api/v25/metrics/realtime", "V25 реалтайм метрики"),
+            ("/api/v45/metrics/realtime", "V45 реалтайм метрики"),
             ("/api/v1/agents", "Агенти"),
             ("/docs", "API Documentation"),
         ]
@@ -119,7 +119,7 @@ class SimpleNvidiaTester:
         # Проста перевірка WebSocket через HTTP (не ідеально, але краще ніж нічого)
         try:
             # Спроба HTTP запиту до WebSocket ендпоінту (має повернути помилку 400/426)
-            status, _content = self.check_url(f"ws://{self.nvidia_ip}:8090/api/v25/ws/omniscience")
+            status, _content = self.check_url(f"ws://{self.nvidia_ip}:8090/api/v45/ws/omniscience")
             # WebSocket не доступний через HTTP, але це означає, що порт відкритий
             if status in [0, 400, 426]:  # 0 = connection refused (можливо, WebSocket), 400/426 = WebSocket через HTTP
                 self.log_test("WebSocket порт", True, "Порт відкритий для WebSocket")

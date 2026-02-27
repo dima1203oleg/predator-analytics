@@ -2,7 +2,7 @@
 # Version: 30.1
 # Status: PRODUCTION READY
 
-This document defines the Standard Operating Procedures (SOPs) for maintaining and operating the Predator Analytics v30.1+ system.
+This document defines the Standard Operating Procedures (SOPs) for maintaining and operating the Predator Analytics v45.1+ system.
 
 ---
 

@@ -42,8 +42,8 @@ export const OpenSearchLiveWidget: React.FC<{
   const fetchData = useCallback(async () => {
     try {
       const [stats, health] = await Promise.allSettled([
-        api.v25.getStats(),
-        api.v25.getLiveHealth()
+        api.v45.getStats(),
+        api.v45.getLiveHealth()
       ]);
 
       const now = new Date();
@@ -160,7 +160,7 @@ export const OpenSearchLiveWidget: React.FC<{
             <h4 className="text-sm font-black text-white uppercase tracking-wider">OpenSearch Analytics</h4>
             <div className="flex items-center gap-2 mt-1">
               <div className={`w-1.5 h-1.5 rounded-full ${getHealthColor(data?.clusterHealth || 'green')} animate-pulse`} />
-              <span className="text-[9px] text-slate-500 font-mono uppercase">PREDATOR_CLUSTER_V25</span>
+              <span className="text-[9px] text-slate-500 font-mono uppercase">PREDATOR_CLUSTER_V45</span>
             </div>
           </div>
         </div>

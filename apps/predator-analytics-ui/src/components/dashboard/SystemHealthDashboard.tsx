@@ -8,7 +8,7 @@ import {
 import AZRDashboard from '../azr/AZRDashboard';
 
 // ============================================================================
-// SYSTEM HEALTH DASHBOARD - PREDATOR v25.0
+// SYSTEM HEALTH DASHBOARD - Predator v45 | Neural Analytics.0
 // Real-time system monitoring with intuitive visualizations
 // ============================================================================
 
@@ -258,7 +258,7 @@ const GuardianStatus = ({ mode, healing_history }: { mode: string, healing_histo
                 <div className="p-2 rounded-lg bg-emerald-500/20">
                     <Shield size={20} className="text-emerald-400" />
                 </div>
-                <h3 className="text-lg font-bold text-white">Статус Guardian (v26.2)</h3>
+                <h3 className="text-lg font-bold text-white">Статус Guardian (v45.2)</h3>
             </div>
             <div className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-mono border border-emerald-500/30">
                 РЕЖИМ: {mode || 'AUTO'}
@@ -288,7 +288,7 @@ const GuardianStatus = ({ mode, healing_history }: { mode: string, healing_histo
     </motion.div>
 );
 
-// --- TRUTH VERIFICATION PANEL (v26.2) ---
+// --- TRUTH VERIFICATION PANEL (v45.2) ---
 const TruthVerification = ({ data, onVerify }: { data: any, onVerify: () => void }) => {
   if (!data) return (
       <div className="col-span-1 md:col-span-3 p-8 rounded-2xl bg-white/5 border border-white/10 animate-pulse flex items-center justify-center">
@@ -313,7 +313,7 @@ const TruthVerification = ({ data, onVerify }: { data: any, onVerify: () => void
           </div>
           <div>
             <h3 className="text-xl font-bold text-white flex items-center gap-2">
-              Конституційна Верифікація <span className="text-indigo-400 text-xs font-normal border border-indigo-500/30 px-2 py-0.5 rounded-full">v26.2</span>
+              Конституційна Верифікація <span className="text-indigo-400 text-xs font-normal border border-indigo-500/30 px-2 py-0.5 rounded-full">v45.2</span>
             </h3>
             <p className="text-slate-400 text-sm mt-1">Перевірка цілісності аксіом та ланцюга істини Ledger</p>
           </div>
@@ -401,7 +401,7 @@ export const SystemHealthDashboard: React.FC = () => {
 
   const fetchHealth = async () => {
     try {
-      // 1. Fetch Constitutional Verification (v26.2)
+      // 1. Fetch Constitutional Verification (v45.2)
       try {
           const vRes = await fetch('/api/system/verification');
           if (vRes.ok) {
@@ -410,9 +410,9 @@ export const SystemHealthDashboard: React.FC = () => {
           }
       } catch (e) { console.warn("Verification fetch error", e); }
 
-      // 2. Fetch Guardian Status (v26.2)
+      // 2. Fetch Guardian Status (v45.2)
       try {
-          const gRes = await fetch('/api/v1/system/health/v26');
+          const gRes = await fetch('/api/v1/system/health/v45');
           if (gRes.ok) {
               const gData = await gRes.json();
               setGuardianData(gData);
@@ -420,7 +420,7 @@ export const SystemHealthDashboard: React.FC = () => {
       } catch (e) { console.warn("Guardian fetch error", e); }
 
       // 3. Main System Pulse
-      const res = await fetch('/api/v25/pulse');
+      const res = await fetch('/api/v45/pulse');
       const data = res.ok ? await res.json() : {};
 
       setHealth({
@@ -487,7 +487,7 @@ export const SystemHealthDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* --- TRUTH VERIFICATION PANEL (v26.2) --- */}
+      {/* --- TRUTH VERIFICATION PANEL (v45.2) --- */}
       <TruthVerification data={verificationData} onVerify={reVerify} />
 
       {/* Main Grid */}

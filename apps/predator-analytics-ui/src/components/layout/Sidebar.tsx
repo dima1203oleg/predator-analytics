@@ -34,7 +34,7 @@ export const Sidebar = () => {
   const { isSidebarOpen, userRole, deviceMode } = useAppStore();
   const metrics = useSystemMetrics();
 
-  // --- OPTIMIZED NAVIGATION STRUCTURE (v27) ---
+  // --- OPTIMIZED NAVIGATION STRUCTURE (v45) ---
   const navGroups: {
     title: string;
     items: { name: string; path: string; icon: any; premium?: boolean; role?: string }[];
@@ -134,12 +134,8 @@ export const Sidebar = () => {
           </div>
 
           <div className={cn("transition-opacity duration-300", isSidebarOpen ? "opacity-100" : "opacity-0 hidden")}>
-            <span className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 tracking-tighter">
-              PREDATOR
-              <span className="ml-1.5 text-[10px] bg-cyan-500/10 text-cyan-400 px-1.5 py-0.5 rounded border border-cyan-500/20 align-top">
-                v45.0
-              </span>
-            </span>
+            <span className="text-[14px] font-black bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 tracking-tighter">
+              Predator v45 | Neural Analytics</span>
           </div>
         </div>
 

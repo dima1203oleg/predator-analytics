@@ -1,6 +1,6 @@
 #!/bin/bash
 # ===========================================
-# 🎯 PREDATOR Analytics v30 - Quick Start
+# 🎯 PREDATOR Analytics v45 - Quick Start
 # ===========================================
 
 echo "🚀 Запуск PREDATOR Analytics UI..."

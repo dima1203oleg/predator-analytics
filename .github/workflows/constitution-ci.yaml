@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 env:
-  PREDATOR_VERSION: v26
+  PREDATOR_VERSION: v45
 
 jobs:
   constitution-check:

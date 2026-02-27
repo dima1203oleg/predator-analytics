@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "This script lists candidate files to remove from the main workspace if you accept consolidation to implementation_v25/"
+echo "This script lists candidate files to remove from the main workspace if you accept consolidation to implementation_v45/"
 echo "*** THIS IS A PROPOSAL: script only prints files. Delete only after review and approval. ***"
 
 repo_root="$(cd "$(dirname "$0")/.." && pwd)"
@@ -14,13 +14,13 @@ declare -a candidates=(
   "qdrant/" # existing qdrant config sets
   "opensearch/" # root opensearch configs
   "dvc/" # root dvc config folder
-  "scripts/" # old top-level scripts (migrate to implementation_v25/scripts)
-  "TECH_SPEC.md" # will be replaced with new implementation_v25/TECH_SPEC
+  "scripts/" # old top-level scripts (migrate to implementation_v45/scripts)
+  "TECH_SPEC.md" # will be replaced with new implementation_v45/TECH_SPEC
   "TECH_SPEC.old.md" # backup of old spec
   "README.md" # root README
 )
 
-echo "Candidate files/folders in repo root to be reviewed and possibly removed/moved to implementation_v25/:
+echo "Candidate files/folders in repo root to be reviewed and possibly removed/moved to implementation_v45/:
 "
 
 for c in "${candidates[@]}"; do

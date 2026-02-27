@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Axiom Registry and Verification - AZR Engine v28-S."""
+"""Axiom Registry and Verification - AZR Engine v45-S."""
 from datetime import datetime
 import logging
 from pathlib import Path

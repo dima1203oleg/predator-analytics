@@ -1,5 +1,5 @@
 /**
- * UNIFIED DATA SERVICE - V25 Truth Protocol
+ * UNIFIED DATA SERVICE - V45 Truth Protocol
  *
  * Замінює всі MOCK дані реальними API викликами.
  * Централізує всю логіку отримання даних з backend.
@@ -50,7 +50,7 @@ export interface ServiceStatus {
 class InfrastructureService {
   async getEnvironments(): Promise<DeploymentEnvironment[]> {
     try {
-      const response = await api.v25.getInfrastructure();
+      const response = await api.v45.getInfrastructure();
       return response.environments || [];
     } catch (error) {
       console.error('[InfraService] Failed to fetch environments:', error);
@@ -60,7 +60,7 @@ class InfrastructureService {
 
   async getSystemMetrics(): Promise<SystemMetrics | null> {
     try {
-      return await api.v25.getLiveHealth();
+      return await api.v45.getLiveHealth();
     } catch (error) {
       console.error('[InfraService] Failed to fetch system metrics:', error);
       return null;
@@ -69,7 +69,7 @@ class InfrastructureService {
 
   async getServices(): Promise<ServiceStatus[]> {
     try {
-      const response = await api.v25.getServicesStatus();
+      const response = await api.v45.getServicesStatus();
       return response.services || [];
     } catch (error) {
       console.error('[InfraService] Failed to fetch services:', error);
@@ -170,8 +170,8 @@ class SecurityService {
   async getAuditLogs(limit = 100) {
     try {
       // Use Trinity audit logs if available
-      if ((api as any).v25?.trinity?.getAuditLogs) {
-        return await (api as any).v25.trinity.getAuditLogs(limit);
+      if ((api as any).v45?.trinity?.getAuditLogs) {
+        return await (api as any).v45.trinity.getAuditLogs(limit);
       }
       // Fallback to system logs
       return await api.streamSystemLogs();
@@ -192,7 +192,7 @@ class SecurityService {
 
   async getLiveAlerts() {
     try {
-      return await api.v25.getLiveAlerts();
+      return await api.v45.getLiveAlerts();
     } catch (error) {
       console.error('[SecurityService] Failed to fetch alerts:', error);
       return [];
@@ -207,7 +207,7 @@ class SecurityService {
 class AgentsService {
   async getAgents() {
     try {
-      const response = await api.v25.getAgents();
+      const response = await api.v45.getAgents();
       return response.agents || [];
     } catch (error) {
       console.error('[AgentsService] Failed to fetch agents:', error);
@@ -241,7 +241,7 @@ class AgentsService {
 class AnalyticsService {
   async getForecast() {
     try {
-      const response = await api.v25.analytics.getForecast();
+      const response = await api.v45.analytics.getForecast();
       return response.data || [];
     } catch (error) {
       console.error('[AnalyticsService] Failed to fetch forecast:', error);
@@ -251,7 +251,7 @@ class AnalyticsService {
 
   async getMarketStructure() {
     try {
-      const response = await api.v25.analytics.getMarketStructure();
+      const response = await api.v45.analytics.getMarketStructure();
       return response.data || [];
     } catch (error) {
       console.error('[AnalyticsService] Failed to fetch market structure:', error);
@@ -261,7 +261,7 @@ class AnalyticsService {
 
   async getRegionalActivity() {
     try {
-      const response = await api.v25.analytics.getRegionalActivity();
+      const response = await api.v45.analytics.getRegionalActivity();
       return response.data || [];
     } catch (error) {
       console.error('[AnalyticsService] Failed to fetch regional activity:', error);
@@ -271,7 +271,7 @@ class AnalyticsService {
 
   async getStats() {
     try {
-      return await api.v25.getStats();
+      return await api.v45.getStats();
     } catch (error) {
       console.error('[AnalyticsService] Failed to fetch stats:', error);
       return {

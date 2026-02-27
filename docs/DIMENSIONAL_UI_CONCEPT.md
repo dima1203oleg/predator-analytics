@@ -1,4 +1,4 @@
-# 🌌 DIMENSIONAL INTELLIGENCE UI (DI-UI) — КОНЦЕПЦІЯ PREDATOR v25
+# 🌌 DIMENSIONAL INTELLIGENCE UI (DI-UI) — КОНЦЕПЦІЯ Predator v45 | Neural Analytics
 
 > **"Інтерфейс як багатовимірний простір свідомості"**
 
@@ -619,7 +619,7 @@ function getVisualizationMode(role: UserRole, sensitivity: DataSensitivity) {
 
 ---
 
-**Підготовлено для**: Predator Analytics v25 Platform
+**Підготовлено для**: Predator Analytics v45 Platform
 **Автор**: Google AI Antigravity Agent
 **Дата**: 2026-01-06
 **Версія**: 1.0 (Initial Concept)

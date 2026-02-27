@@ -1,9 +1,9 @@
 #!/bin/bash
 # ════════════════════════════════════════════════════════════════════════════
-# PREDATOR v30 - Bootstrap Autonomous Evolution
+# Predator v45 | Neural Analytics- Bootstrap Autonomous Evolution
 # ════════════════════════════════════════════════════════════════════════════
 #
-# This script initializes the autonomous evolution capabilities of Predator v30.
+# This script initializes the autonomous evolution capabilities of Predator v45 | Neural Analytics.
 #
 # Features:
 # - Constitutional rules loading
@@ -66,7 +66,7 @@ print_banner() {
     echo "║   ██║     ██║  ██║███████╗██████╔╝██║  ██║   ██║   ╚██████╔╝██║  ██║ ║"
     echo "║   ╚═╝     ╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝ ║"
     echo "║                                                                  ║"
-    echo "║              AUTONOMOUS EVOLUTION BOOTSTRAP v30                  ║"
+    echo "║              AUTONOMOUS EVOLUTION BOOTSTRAP v45                  ║"
     echo "║                                                                  ║"
     echo "╚══════════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
@@ -162,7 +162,7 @@ load_constitution() {
 
     if [ -f "$CONSTITUTION_PATH" ]; then
         # Parse and display key rules
-        echo -e "  ${CYAN}Constitution v30.0${NC}"
+        echo -e "  ${CYAN}Constitution v45.0${NC}"
         echo -e "  Immutable principles loaded"
         echo -e "  Autonomy boundaries configured"
         echo -e "  Safety Council agents: 5"
@@ -296,7 +296,7 @@ print_summary() {
 main() {
     print_banner
 
-    log_info "Starting bootstrap for Predator v30 Autonomous Evolution"
+    log_info "Starting bootstrap for Predator v45 | Neural AnalyticsAutonomous Evolution"
     log_info "Target phase: Phase $AUTONOMY_PHASE ($(get_phase_name $AUTONOMY_PHASE))"
 
     if [ "$DRY_RUN" = true ]; then

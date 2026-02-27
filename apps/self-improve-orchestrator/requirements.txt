@@ -1,4 +1,4 @@
-# PREDATOR ANALYTICS v25.0 - Orchestrator & C2 Bot Requirements
+# PREDATOR ANALYTICS v45.0 - Orchestrator & C2 Bot Requirements
 # Core
 pydantic==2.10.6
 pydantic-settings==2.7.1

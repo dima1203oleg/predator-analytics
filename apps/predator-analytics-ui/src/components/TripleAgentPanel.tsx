@@ -33,7 +33,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
 
     const fetchHistory = async () => {
         try {
-            const logs = await api.v25.trinity.getLogs(10);
+            const logs = await api.v45.trinity.getLogs(10);
             setHistory(logs);
         } catch (e) {
             console.error("Failed to fetch Trinity logs", e);
@@ -70,7 +70,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
             });
 
             // Call Backend
-            const res = await api.v25.trinity.process(command);
+            const res = await api.v45.trinity.process(command);
 
             // Step 1: Gemini
             setSteps(prev => {

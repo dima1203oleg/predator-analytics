@@ -1,5 +1,5 @@
 #!/bin/bash
-# PREDATOR v30 - AUTONOMOUS EVOLUTION PROTOCOL (NIGHT SHIFT)
+# Predator v45 | Neural Analytics- AUTONOMOUS EVOLUTION PROTOCOL (NIGHT SHIFT)
 # Activated by: System Architect
 # Purpose: Continuous system improvement, integrity verification, and simulation of cognitive agents.
 
@@ -8,7 +8,7 @@ mkdir -p $LOG_DIR
 SESSION_ID=$(date +%Y%m%d_%H%M%S)
 
 echo "╔════════════════════════════════════════════════════╗"
-echo "║     PREDATOR v30 AUTONOMOUS PROTOCOL ACTIVATED     ║"
+echo "║     Predator v45 | Neural AnalyticsAUTONOMOUS PROTOCOL ACTIVATED     ║"
 echo "║     Mode: NIGHT_SHIFT_EVOLUTION                    ║"
 echo "║     Session: $SESSION_ID                           ║"
 echo "╚════════════════════════════════════════════════════╝" | tee -a $LOG_DIR/master.log

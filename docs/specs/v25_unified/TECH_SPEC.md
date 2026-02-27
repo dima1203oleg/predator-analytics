@@ -1,6 +1,6 @@
 # Технічне Завдання
 **Семантична Пошукова Платформа та Аналітика Даних**
-**Implementation-Ready v25.0** — Dev/Arch Standard + Automation-First
+**Implementation-Ready v45.0** — Dev/Arch Standard + Automation-First
 
 > Документ призначений для:
 > **(1)** команди розробників як implementation plan,
@@ -25,7 +25,7 @@
 - **GitOps**: ArgoCD + Helm umbrella
 - **Контури**: Mac (Dev) → Oracle (Edge/Staging) → NVIDIA (Compute)
 
-Ключова ідея v25.0:
+Ключова ідея v45.0:
 **“♾️-Self-Improvement Loop”** з чіткими межами між **observability → data → training → evaluation → GitOps**.
 
 ---

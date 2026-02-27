@@ -204,7 +204,7 @@ class NexusTelegramBot(TelegramAssistant):
                 response = await client.get(f"{self.nexus_api_url}/api/v1/health")
                 health = response.json()
 
-                result = "🏥 **Стан системи Predator Analytics v25.0**\n\n"
+                result = "🏥 **Стан системи Predator Analytics v45.0**\n\n"
 
                 components = health.get("components", {})
                 for name, status in components.items():

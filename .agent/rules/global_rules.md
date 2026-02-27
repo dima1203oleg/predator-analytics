@@ -1,4 +1,4 @@
-# Predator Analytics v25 Global Rules
+# Predator Analytics v45 Global Rules
 
 ## 1. Мовна Політика
 

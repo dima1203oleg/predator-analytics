@@ -143,7 +143,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
 
   const fetchMetrics = useCallback(async () => {
     try {
-      const response = await fetch('/api/v25/monitoring/health');
+      const response = await fetch('/api/v45/monitoring/health');
       if (response.ok) {
         const data = await response.json();
         setMetrics({
@@ -182,7 +182,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
     const connectWebSocket = () => {
       try {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        ws = new WebSocket(`${protocol}//${window.location.host}/api/v25/ws/omniscience`);
+        ws = new WebSocket(`${protocol}//${window.location.host}/api/v45/ws/omniscience`);
 
         ws.onopen = () => setIsConnected(true);
         ws.onclose = () => setIsConnected(false);

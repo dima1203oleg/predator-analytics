@@ -12,7 +12,7 @@ backend:
   replicaCount: 1
   image:
     repository: predator/backend
-    tag: v28.6
+    tag: v45.6
     pullPolicy: IfNotPresent
   service:
     port: 8000
@@ -25,7 +25,7 @@ frontend:
   replicaCount: 1
   image:
     repository: predator/frontend
-    tag: v28.6
+    tag: v45.6
   service:
     port: 80
 
@@ -33,13 +33,13 @@ orchestrator:
   enabled: true
   image:
     repository: predator/orchestrator
-    tag: v28.6
+    tag: v45.6
 
 constitutional_core:
   enabled: true
   image:
     repository: predator/governance
-    tag: v28.6
+    tag: v45.6
   service:
     ports: [8091, 8092, 8093, 8094, 8095, 50051]
 
@@ -47,7 +47,7 @@ celery_worker:
   enabled: true
   image:
     repository: predator/backend # Uses backend image
-    tag: v28.6
+    tag: v45.6
   replicas: 1
 
 h2o:

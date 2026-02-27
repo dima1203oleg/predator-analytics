@@ -34,7 +34,7 @@ from predatorctl.commands import (
 
 app = typer.Typer(
     name="predatorctl",
-    help="Predator Analytics v26 CLI Control Plane",
+    help="Predator Analytics v45 CLI Control Plane",
     add_completion=True,
     rich_markup_mode="rich"
 )
@@ -56,7 +56,7 @@ def main(
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable verbose output"),
     output: str = typer.Option("human", "--output", "-o", help="Output format (human, json, yaml)")
 ):
-    """Predator Analytics v26 CLI Control Plane.
+    """Predator Analytics v45 CLI Control Plane.
 
     Implements the [bold]CLI-First[/bold] constitutional principle.
     """

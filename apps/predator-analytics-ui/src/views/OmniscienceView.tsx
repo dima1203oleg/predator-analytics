@@ -59,7 +59,7 @@ interface SystemMetrics {
   networkActivity: number;
 }
 
-interface V25Status {
+interface V45Status {
   automl?: {
     is_running: boolean;
     model_version: string;
@@ -212,7 +212,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ icon: Icon, label, value, unit,
             {/* Corner Accent */}
             <div className={cn("absolute top-0 right-0 p-4 opacity-20", styles.text)}>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M0 0H20V20" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M0 0H20V45" stroke="currentColor" strokeWidth="2"/>
                 </svg>
             </div>
         </div>
@@ -556,7 +556,7 @@ const OmniscienceView: React.FC = () => {
   const [connectionMode, setConnectionMode] = useState<OmniscienceConnectionMode>('offline');
   const [realtimeThoughts, setRealtimeThoughts] = useState<string[]>([]);
   const [selectedView, setSelectedView] = useState<'overview' | 'agents' | 'council' | 'knowledge' | 'control' | 'triple' | 'cortex' | 'sovereign' | 'evolution_dash' | 'telegram'>('overview');
-  const [v25Status, setV25Status] = useState<V25Status | null>(null);
+  const [v45Status, setV45Status] = useState<V45Status | null>(null);
   const [isLockdown, setIsLockdown] = useState(false);
   const [activeDiagnostic, setActiveDiagnostic] = useState(false);
   const [diagnosticReport, setDiagnosticReport] = useState<string | null>(null);
@@ -590,13 +590,13 @@ const OmniscienceView: React.FC = () => {
     const fetchInitialStatus = async () => {
       try {
         const [status, lockdown, health] = await Promise.all([
-            api.v25.getSystemStatus(),
-            api.v25.getLockdownStatus(),
-            api.v25.getLiveHealth()
+            api.v45.getSystemStatus(),
+            api.v45.getLockdownStatus(),
+            api.v45.getLiveHealth()
         ]);
 
         if (status) {
-          setV25Status(status);
+          setV45Status(status);
           setMetrics((prev) => ({
             ...prev,
             health: status.health_score ?? prev.health,
@@ -608,7 +608,7 @@ const OmniscienceView: React.FC = () => {
         }
         console.log("Initial Health Check:", health);
       } catch (e) {
-        console.warn("Failed to fetch initial v25 statuses", e);
+        console.warn("Failed to fetch initial v45 statuses", e);
       }
     };
 
@@ -652,9 +652,9 @@ const OmniscienceView: React.FC = () => {
     const unsubscribeSnapshot = client.subscribe((snapshot) => {
       const cpu = snapshot.system?.cpu_percent;
       const memory = snapshot.system?.memory_percent;
-      const throughput = snapshot.v25Realtime?.throughput?.value;
-      const errorRate = snapshot.v25Realtime?.error_rate?.value;
-      const latency = snapshot.v25Realtime?.latency?.value;
+      const throughput = snapshot.v45Realtime?.throughput?.value;
+      const errorRate = snapshot.v45Realtime?.error_rate?.value;
+      const latency = snapshot.v45Realtime?.latency?.value;
 
       if (snapshot.training) {
         setTrainingStatus(snapshot.training);
@@ -729,7 +729,7 @@ const OmniscienceView: React.FC = () => {
       case 'restart':
         setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.restartInit, ...prev]);
         try {
-          const res = await api.v25.runSystemRestart();
+          const res = await api.v45.runSystemRestart();
           setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.restartStatus.replace('{report}', (res.report?.slice(0, 50) || '') + '...'), ...prev]);
         } catch (e) {
           setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.restartError, ...prev]);
@@ -737,7 +737,7 @@ const OmniscienceView: React.FC = () => {
         break;
       case 'lockdown':
         try {
-          const res = await api.v25.toggleLockdown();
+          const res = await api.v45.toggleLockdown();
           setIsLockdown(res.is_active);
           setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.lockdownToggle.replace('{status}', res.status), ...prev]);
         } catch (e) {
@@ -747,7 +747,7 @@ const OmniscienceView: React.FC = () => {
       case 'rollback':
         setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.rollbackInit, ...prev]);
         try {
-          const res = await api.v25.runSystemRollback();
+          const res = await api.v45.runSystemRollback();
           setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.rollbackStatus.replace('{report}', (res.report?.slice(0, 50) || '') + '...'), ...prev]);
         } catch (e) {
              setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.rollbackError, ...prev]);
@@ -763,7 +763,7 @@ const OmniscienceView: React.FC = () => {
         setDiagnosticReport(null);
         setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.diagInit, ...prev]);
         try {
-          const res = await api.v25.runSystemDoctor();
+          const res = await api.v45.runSystemDoctor();
           setDiagnosticReport(res.report);
           setRealtimeThoughts((prev) => [
             premiumLocales.omniscience.shadowControl.logs.diagStatus.replace('{status}', res.status.toUpperCase()),
@@ -783,7 +783,7 @@ const OmniscienceView: React.FC = () => {
           const issues = [];
           if (diagnosticReport?.includes('CRITICAL')) issues.push('RESTART_REDIS'); // Example logic
 
-          const res = await api.v25.applyDoctorFixes(issues.length > 0 ? issues : ['PURGE_CACHE']);
+          const res = await api.v45.applyDoctorFixes(issues.length > 0 ? issues : ['PURGE_CACHE']);
           setRealtimeThoughts((prev) => [
             premiumLocales.omniscience.shadowControl.logs.fixStatus.replace('{status}', res.status.toUpperCase()),
             ...res.results.map((r: string) => `[FIX] ${r}`),
@@ -796,7 +796,7 @@ const OmniscienceView: React.FC = () => {
         break;
       case 'autonomy':
         setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.autonomyInit, ...prev]);
-        await api.v25.optimizer.trigger('Manual override via Omniscience');
+        await api.v45.optimizer.trigger('Manual override via Omniscience');
         setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.autonomySuccess, ...prev]);
         break;
     }
@@ -853,7 +853,7 @@ const OmniscienceView: React.FC = () => {
             ]}
         />
 
-        {v25Status?.advisor_note && (
+        {v45Status?.advisor_note && (
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -864,9 +864,9 @@ const OmniscienceView: React.FC = () => {
             </div>
             <div className="flex-1">
               <div className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-1">{premiumLocales.omniscience.insight.title}</div>
-              <div className="text-lg text-slate-200 font-display font-medium italic tracking-tight">"{v25Status.advisor_note}"</div>
+              <div className="text-lg text-slate-200 font-display font-medium italic tracking-tight">"{v45Status.advisor_note}"</div>
             </div>
-            {(v25Status.health_score ?? 100) < 85 && (
+            {(v45Status.health_score ?? 100) < 85 && (
               <button
                 onClick={() => handleControlAction('diagnostics')}
                 className="flex items-center gap-3 px-8 py-4 bg-rose-600 hover:bg-rose-500 text-white rounded-2xl transition-all font-black text-xs uppercase tracking-widest shadow-lg shadow-rose-900/20"
@@ -877,7 +877,7 @@ const OmniscienceView: React.FC = () => {
           </motion.div>
         )}
 
-        {/* Navigation Tabs v25 - Shadow Collective Aesthetic */}
+        {/* Navigation Tabs v45 - Shadow Collective Aesthetic */}
         <div className="flex flex-wrap gap-4 bg-black/60 p-2.5 rounded-[32px] border border-white/5 backdrop-blur-3xl w-fit mx-auto shadow-2xl relative z-20">
           {[
             { id: 'overview', label: premiumLocales.omniscience.tabs.overview, icon: Gauge },
@@ -1070,7 +1070,7 @@ const OmniscienceView: React.FC = () => {
                 exit={{ opacity: 0, scale: 0.95 }}
                 className="col-span-12 h-full overflow-y-auto"
               >
-                <SovereignAZRBrain status={v25Status} />
+                <SovereignAZRBrain status={v45Status} />
               </motion.div>
             )}
 
@@ -1083,10 +1083,10 @@ const OmniscienceView: React.FC = () => {
                 className="col-span-12 h-full grid grid-cols-12 gap-8"
               >
                 <div className="col-span-5 h-full">
-                  <SovereignETLMonitor status={v25Status} />
+                  <SovereignETLMonitor status={v45Status} />
                 </div>
                 <div className="col-span-7 h-full">
-                  <AZREvolutionTimeline status={v25Status} />
+                  <AZREvolutionTimeline status={v45Status} />
                 </div>
               </motion.div>
             )}
@@ -1120,7 +1120,7 @@ const OmniscienceView: React.FC = () => {
                     <Activity className="text-purple-400" size={18} />
                   </div>
                   <div>
-                    <div className="text-purple-400 font-bold text-sm tracking-wider uppercase">{premiumLocales.common.info} SYSTEM DOCTOR V25</div>
+                    <div className="text-purple-400 font-bold text-sm tracking-wider uppercase">{premiumLocales.common.info} SYSTEM DOCTOR V45</div>
                     <div className="text-[10px] font-mono text-slate-500 uppercase">{premiumLocales.omniscience.shadowControl.actions.diagnostics}</div>
                   </div>
                 </div>
@@ -1174,7 +1174,7 @@ const OmniscienceView: React.FC = () => {
                 </button>
               </div>
               <div className="flex-1 p-4 overflow-y-auto font-mono text-[10px] text-cyan-300 scrollbar-hide">
-                <pre>{JSON.stringify(v25Status, null, 2)}</pre>
+                <pre>{JSON.stringify(v45Status, null, 2)}</pre>
               </div>
               <div className="p-2 bg-black border-t border-cyan-500/30 text-[8px] text-center text-slate-500 font-mono">
                 {premiumLocales.omniscience.telemetry.secureChannel}

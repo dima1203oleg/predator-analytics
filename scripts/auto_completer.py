@@ -47,7 +47,7 @@ def check_remote_health():
 
     # 2. Check Remote Docker
     # We must run inside the project directory
-    success, output = run_cmd(["ssh", REMOTE_HOST, "cd ~/predator_v25 && docker compose ps --format json"], cwd=None)
+    success, output = run_cmd(["ssh", REMOTE_HOST, "cd ~/predator_v45 && docker compose ps --format json"], cwd=None)
     if not success:
         return False, f"Remote Docker Unreachable: {output}"
 
@@ -69,13 +69,13 @@ def check_remote_health():
 
 def read_spec_goals():
     logger.info("📖 Reading Tech Spec Goals...")
-    spec_path = os.path.join(PROJECT_ROOT, "docs/specs/v25_unified/TECH_SPEC.md")
+    spec_path = os.path.join(PROJECT_ROOT, "docs/specs/v45_unified/TECH_SPEC.md")
     if not os.path.exists(spec_path):
         return False, "Spec file missing"
 
     # In a real agent, we would parse this semantically.
     # Here we simulate extracting the 'Definition of Done' or active tasks.
-    return True, "Loaded v25.0 Goals: Search Quality, Performance, Reliability"
+    return True, "Loaded v45.0 Goals: Search Quality, Performance, Reliability"
 
 def auto_fix(issue):
     logger.info(f"🛠️ Attempting to fix: {issue}")

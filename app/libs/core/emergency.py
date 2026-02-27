@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Red Button Emergency Protocol - SOM v29."""
+"""Red Button Emergency Protocol - SOM v45."""
 import asyncio
 from datetime import datetime
 from enum import Enum

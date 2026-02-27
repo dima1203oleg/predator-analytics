@@ -28,7 +28,7 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const data = await api.v25.getRealtimeMetrics();
+        const data = await api.v45.getRealtimeMetrics();
         if (data) {
           setMetrics({
             cpu: data.cpu_usage || 0,

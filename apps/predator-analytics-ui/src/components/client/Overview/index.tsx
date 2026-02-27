@@ -36,7 +36,7 @@ export const Overview: React.FC = () => {
             Вітаємо, {user?.name?.split(' ')[0]}!
           </h1>
           <p className="text-blue-200/80 text-lg max-w-2xl">
-            Система Predator Analytics готова до роботи.
+            Система Predator v45 | Neural Analyticsготова до роботи.
             {isPremium
               ? ' Всі аналітичні модулі активні.'
               : ' Ознайомтесь з останніми новинами та трендами.'}

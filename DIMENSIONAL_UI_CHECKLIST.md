@@ -215,7 +215,7 @@ default: return <AdaptiveDashboard />;
 - [x] Permission checking
 
 ### API Integration
-- [x] Connects to `api.v25.getSystemStatus()`
+- [x] Connects to `api.v45.getSystemStatus()`
 - [x] Real-time metrics fetching
 - [x] 30-second refresh interval
 

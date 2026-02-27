@@ -2,7 +2,7 @@
 
 **Статус:** ПРИЙНЯТО
 **Дата:** 2026-02-04
-**Контекст:** Predator v30 Constitutional Compliance
+**Контекст:** Predator v45 | Neural Analytics Constitutional Compliance
 
 ## Рішення
 

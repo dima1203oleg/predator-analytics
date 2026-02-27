@@ -19,7 +19,7 @@ from .training_status_service import training_status_service
 logger = setup_logger("predator.backend.health_aggregator")
 
 class HealthAggregatorService:
-    """V25 Canonical Health Aggregator.
+    """V45 Canonical Health Aggregator.
     Collects data from all system components to produce a unified Health Score.
     """
 
@@ -87,7 +87,7 @@ class HealthAggregatorService:
             # We only keep active alerts
             self._generate_auto_alerts(reasons)
 
-            # 5. Autonomous Arbitration (v25 Premium)
+            # 5. Autonomous Arbitration (v45 Premium)
             if score < 40 and now - getattr(self, 'last_intervention', 0) > 300:
                 self.last_intervention = now
                 asyncio.create_task(self._trigger_autonomous_fix(reasons))

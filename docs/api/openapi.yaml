@@ -3,7 +3,7 @@ info:
   title: Predator Analytics API
   version: 25.0.0
   description: |
-    # 🛡️ PREDATOR ANALYTICS v25.0 API
+    # 🛡️ PREDATOR ANALYTICS v45.0 API
 
     Незламна система аналітики з автоматичним самовідновленням.
 
@@ -40,7 +40,7 @@ tags:
     description: Multi-LLM Council (дебати)
 
 paths:
-  /v25/health:
+  /v45/health:
     get:
       tags: [Health]
       summary: Перевірка здоров'я системи
@@ -61,7 +61,7 @@ paths:
                   uptime_seconds:
                     type: integer
 
-  /v25/analyze:
+  /v45/analyze:
     post:
       tags: [Analysis]
       summary: E2E AI аналіз даних

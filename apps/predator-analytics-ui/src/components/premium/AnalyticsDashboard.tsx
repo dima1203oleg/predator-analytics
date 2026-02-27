@@ -1,5 +1,5 @@
 /**
- * Аналітичний Дашборд PREDATOR v25
+ * Аналітичний Дашборд Predator v45 | Neural Analytics
  *
  * Інтегровані графіки з реальними даними OpenSearch/Prometheus/Qdrant
  * Запит реальних даних без симуляцій
@@ -264,9 +264,9 @@ export const AnalyticsDashboard: React.FC = () => {
     try {
       // Паралельні запити до бекенду
       const [health, stats, status] = await Promise.allSettled([
-        api.v25.getLiveHealth(),
-        api.v25.getStats(),
-        api.v25.getSystemStatus()
+        api.v45.getLiveHealth(),
+        api.v45.getStats(),
+        api.v45.getSystemStatus()
       ]);
 
       const now = new Date();
@@ -496,7 +496,7 @@ export const AnalyticsDashboard: React.FC = () => {
         <div className="flex items-center gap-6 text-[10px] text-slate-500 font-mono uppercase tracking-wider">
           <span className="flex items-center gap-2">
             <Shield size={12} className="text-emerald-400" />
-            API v25.4.0
+            API v45.4.0
           </span>
           <span className="flex items-center gap-2">
             <Activity size={12} className="text-blue-400" />

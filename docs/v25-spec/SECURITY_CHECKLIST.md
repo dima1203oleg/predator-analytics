@@ -1,4 +1,4 @@
-# 🔐 Security Hardening Checklist — Predator v25.0
+# 🔐 Security Hardening Checklist — Predator v45 | Neural Analytics.0
 
 > **Версія:** 25.0
 > **Оновлено:** 10.01.2026

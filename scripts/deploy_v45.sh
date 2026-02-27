@@ -1,77 +1,122 @@
 #!/bin/bash
-# PREDATOR V45 - FORCE DEPLOY SCRIPT (CLEAN SLATE)
-# This script completely resets the frontend environment and deploys version 45.
+# ============================================
+# Predator v45 | Neural Analytics- Ultra Sync & Deploy Script
+# ============================================
+# Цей скрипт синхронізує фронтенд між локальною машиною та сервером.
+# Запуск: ./scripts/deploy_v45.sh
+# ============================================
 
+set -e
+
+# Кольори
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+# Конфігурація
 SERVER="predator-server"
+SERVER_IP="194.177.1.240"
+SERVER_PORT="6666"
+SERVER_USER="dima"
 REMOTE_BASE="/home/dima/predator-analytics"
 REMOTE_DIST="$REMOTE_BASE/apps/predator-analytics-ui/dist"
 LOCAL_DIST="/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui/dist"
 LOCAL_PROJECT="/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui"
-# Using a fixed temporary dir to avoid permission issues with node_modules
-TEMP_BUILD_DIR="$HOME/predator-build-temp"
 
-echo "🌌 INITIATING PREDATOR V45 PROTOCOL..."
+echo -e "${CYAN}"
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║       Predator v45 | Neural Analytics- SYNC & DEPLOY                           ║"
+echo "║       Синхронізація локальних змін на сервер                 ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo -e "${NC}"
 
-# 1. Clean Build Environment
-echo "🧹 Preparing build environment..."
-rm -rf "$TEMP_BUILD_DIR"
-mkdir -p "$TEMP_BUILD_DIR"
+# 1. Перевірка доступності сервера
+echo -e "${YELLOW}[1/5] Перевірка доступності сервера...${NC}"
+if ssh -q -o ConnectTimeout=5 "$SERVER" exit 2>/dev/null; then
+    echo -e "${GREEN}✓ Сервер онлайн${NC}"
+    SERVER_ONLINE=true
+else
+    echo -e "${RED}✗ Сервер недоступний через SSH alias${NC}"
+    echo -e "${YELLOW}   Спроба прямого підключення...${NC}"
 
-# 2. Copy Source Code (Excluding node_modules)
-echo "📋 Cloning source for clean build..."
-rsync -av --exclude 'node_modules' --exclude 'dist' "$LOCAL_PROJECT/" "$TEMP_BUILD_DIR/"
-
-# 3. Build in Clean Env
-# Note: We assume node_modules might be corrupted in original dir, but we try to use the ones from project if possible
-# OR we rely on a clean npm install. Since npm install takes time, we will try to reuse node_modules primarily.
-# BUT the user has EPERM issues.
-# STRATEGY: We will try to run build in the original dir first, identifying that EPERM on 'lstat' is often a Vite/Rollup cache issue.
-echo "🔨 Building V45..."
-cd "$LOCAL_PROJECT"
-# Try to clean Vite cache
-rm -rf node_modules/.vite
-npm run build
-
-if [ $? -ne 0 ]; then
-    echo "❌ Build failed in original directory. Attempting fallback..."
-    # If standard build fails, we upload source and let server handle it?
-    # No, server env is unknown.
-    # Let's try to ignore the specific stats error by bypassing? No.
-    # We will try to execute the upload anyway, assuming maybe 'dist' was created despite errors?
-    if [ ! -d "dist" ]; then
-        echo "⛔ Critical Error: 'dist' folder not found. Deployment aborted."
-        exit 1
+    if ssh -q -o ConnectTimeout=5 -p $SERVER_PORT $SERVER_USER@$SERVER_IP exit 2>/dev/null; then
+        echo -e "${GREEN}✓ Пряме підключення успішне${NC}"
+        SERVER="$SERVER_USER@$SERVER_IP -p $SERVER_PORT"
+        SERVER_ONLINE=true
+    else
+        echo -e "${RED}✗ Сервер повністю недоступний${NC}"
+        echo ""
+        echo -e "${YELLOW}Можливі причини:${NC}"
+        echo "  1. macOS блокує SSH (запустіть FIX_MACOS_PERMISSIONS.sh)"
+        echo "  2. VPN не підключений"
+        echo "  3. Сервер офлайн"
+        echo ""
+        echo -e "${CYAN}Запуск локального сервера розробки...${NC}"
+        cd "$LOCAL_PROJECT" && npm run dev
+        exit 0
     fi
 fi
 
-# 4. Upload
-echo "🚀 Uploading V45 Essence..."
-ssh "$SERVER" "mkdir -p $REMOTE_DIST"
-rsync -avz --delete "$LOCAL_DIST/" "$SERVER:$REMOTE_DIST/"
+# 2. Збірка проекту локально
+echo ""
+echo -e "${YELLOW}[2/5] Збірка проекту...${NC}"
+cd "$LOCAL_PROJECT"
 
-# 5. Nginx Config
-echo "⚙️ Configuring Neural Interfaces (Nginx)..."
-scp "/Users/dima-mac/Documents/Predator_21/nginx.simple.conf" "$SERVER:$REMOTE_BASE/docker/nginx.simple.conf"
+# Видаляємо попередню збірку
+rm -rf dist 2>/dev/null || true
 
-# 6. KILL EVERYTHING AND START V45
-echo "💀 PURGING OLD SYSTEMS..."
-ssh "$SERVER" << 'EOF'
-    # Kill all known variants
-    docker rm -f predator-analytics-frontend 2>/dev/null || true
-    docker rm -f predator-fixed-frontend 2>/dev/null || true
-    docker rm -f predator_frontend 2>/dev/null || true
+# Збірка
+npm run build
 
-    # Prune conflicting networks if any
-    # docker network prune -f
+if [ ! -d "dist" ]; then
+    echo -e "${RED}✗ Помилка збірки: dist не створено${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓ Збірка завершена${NC}"
 
-    echo "🌟 IGNITING PREDATOR V45 CORE..."
-    docker run -d --name predator-v45-core \
-        --restart unless-stopped \
-        -p 80:80 \
-        -v /home/dima/predator-analytics/apps/predator-analytics-ui/dist:/usr/share/nginx/html:ro \
-        -v /home/dima/predator-analytics/docker/nginx.simple.conf:/etc/nginx/nginx.conf:ro \
-        nginx:alpine
-EOF
+# 3. Підрахунок змін
+echo ""
+echo -e "${YELLOW}[3/5] Аналіз файлів для синхронізації...${NC}"
+FILE_COUNT=$(find dist -type f | wc -l | tr -d ' ')
+TOTAL_SIZE=$(du -sh dist | cut -f1)
+echo -e "   📁 Файлів: ${CYAN}$FILE_COUNT${NC}"
+echo -e "   📦 Розмір: ${CYAN}$TOTAL_SIZE${NC}"
 
-echo "✅ PREDATOR V45 IS LIVE."
-echo "🔗 Access Neural Link: https://jolyn-bifid-eligibly.ngrok-free.dev/"
+# 4. Синхронізація на сервер
+echo ""
+echo -e "${YELLOW}[4/5] Передача файлів на сервер...${NC}"
+
+# Створюємо директорію на сервері
+ssh $SERVER "mkdir -p $REMOTE_DIST" 2>/dev/null
+
+# rsync з прогресом
+rsync -avz --delete --progress "$LOCAL_DIST/" "$SERVER:$REMOTE_DIST/"
+
+echo -e "${GREEN}✓ Файли синхронізовано${NC}"
+
+# 5. Перезапуск контейнера
+echo ""
+echo -e "${YELLOW}[5/5] Перезапуск веб-сервера...${NC}"
+
+ssh $SERVER "docker restart predator-fixed-frontend 2>/dev/null || docker restart predator_frontend 2>/dev/null" || {
+    echo -e "${YELLOW}   Контейнер не знайдено, запускаємо новий...${NC}"
+    ssh $SERVER "docker run -d --name predator-fixed-frontend \
+        -p 8080:80 \
+        -v $REMOTE_DIST:/usr/share/nginx/html:ro \
+        nginx:alpine" 2>/dev/null
+}
+
+echo -e "${GREEN}✓ Веб-сервер перезапущено${NC}"
+
+# Підсумок
+echo ""
+echo -e "${CYAN}════════════════════════════════════════════════════════════════${NC}"
+echo -e "${GREEN}🎉 ГОТОВО! V45 успішно розгорнуто на сервері.${NC}"
+echo -e "${CYAN}════════════════════════════════════════════════════════════════${NC}"
+echo ""
+echo -e "🔗 ${YELLOW}Локальний UI:${NC}  http://localhost:3030"
+echo -e "🔗 ${YELLOW}Сервер UI:${NC}     http://$SERVER_IP:8080"
+echo -e "🔗 ${YELLOW}Публічний:${NC}     https://jolyn-bifid-eligibly.ngrok-free.dev"
+echo ""

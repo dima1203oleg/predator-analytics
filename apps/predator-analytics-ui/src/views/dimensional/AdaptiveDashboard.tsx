@@ -1,5 +1,5 @@
 /**
- * AdaptiveDashboard - Dimensional Intelligence Dashboard (v25 Revised)
+ * AdaptiveDashboard - Dimensional Intelligence Dashboard (v45 Revised)
  */
 
 import React, { useState, useEffect } from 'react';
@@ -94,9 +94,9 @@ const AdaptiveDashboard: React.FC<AdaptiveDashboardProps> = ({ onNavigate }) => 
       try {
         if (isCommander || isOperator) {
            // Reuse existing data fetching logic...
-           const status = await api.v25.getSystemStatus().catch(() => ({}));
-           const alerts = await api.v25.getNotifications().catch(() => []);
-           const health = await api.v25.getLiveHealth().catch(() => ({}));
+           const status = await api.v45.getSystemStatus().catch(() => ({}));
+           const alerts = await api.v45.getNotifications().catch(() => []);
+           const health = await api.v45.getLiveHealth().catch(() => ({}));
 
            setMetrics(prev => ({
             ...prev,
@@ -120,7 +120,7 @@ const AdaptiveDashboard: React.FC<AdaptiveDashboardProps> = ({ onNavigate }) => 
         }
 
         if (isExplorer) {
-          const logs = await api.v25.trinity.getAuditLogs().catch(() => []);
+          const logs = await api.v45.trinity.getAuditLogs().catch(() => []);
           // Reuse search logs logic...
            if (logs && logs.length > 0) {
             setRecentSearches(logs.slice(0, 3).map((log: any) => ({
@@ -198,10 +198,10 @@ const AdaptiveDashboard: React.FC<AdaptiveDashboardProps> = ({ onNavigate }) => 
 // Helper functions (kept local or could be moved to utils)
 function getDimensionTitle(dimension: string): string {
   switch (dimension) {
-    case 'NEBULA': return 'ПРОСТІР NEBULA v30';
-    case 'CORTEX': return 'МЕРЕЖА CORTEX v30';
-    case 'NEXUS': return 'КОМАНДНИЙ NEXUS v30';
-    default: return 'ПРИЛАДНА ПАНЕЛЬ v30';
+    case 'NEBULA': return 'ПРОСТІР NEBULA v45';
+    case 'CORTEX': return 'МЕРЕЖА CORTEX v45';
+    case 'NEXUS': return 'КОМАНДНИЙ NEXUS v45';
+    default: return 'ПРИЛАДНА ПАНЕЛЬ v45';
   }
 }
 

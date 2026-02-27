@@ -30,7 +30,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
     const availableModels = [
         { id: 'gemini', name: 'GEMINI_2.0_ULTRA', icon: <Sparkles size={14} />, gradient: 'from-blue-500 to-indigo-600' },
         { id: 'groq', name: 'LLAMA_3_70B_GROQ', icon: <Zap size={14} />, gradient: 'from-orange-500 to-red-600' },
-        { id: 'ops-sentinel-v25', name: 'OPS_SENTINEL_V25', icon: <Shield size={14} />, gradient: 'from-emerald-500 to-teal-600' },
+        { id: 'ops-sentinel-v45', name: 'OPS_SENTINEL_V45', icon: <Shield size={14} />, gradient: 'from-emerald-500 to-teal-600' },
         { id: 'gpt4', name: 'GPT_4O_PREMIUM', icon: <Brain size={14} />, gradient: 'from-purple-500 to-pink-600' },
         { id: 'claude', name: 'CLAUDE_3.5_SONNET', icon: <Target size={14} />, gradient: 'from-rose-500 to-orange-600' },
     ];
@@ -74,7 +74,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
         setIsDeliberating(true);
         setError(null);
         setResult(null);
-        setQuery("Strategic Autonomous Analysis_v25.8_Initiated...");
+        setQuery("Strategic Autonomous Analysis_v45.8_Initiated...");
 
         try {
             setPhase('GENERATING');
@@ -93,7 +93,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
 
     return (
         <div className="h-full flex flex-col gap-10">
-            {/* Header Section v25 */}
+            {/* Header Section v45 */}
             <div className="flex items-center justify-between p-10 bg-black/40 backdrop-blur-3xl border border-white/5 rounded-[40px] shadow-2xl panel-3d">
                 <div className="flex items-center gap-8">
                     <div className="relative group">
@@ -109,7 +109,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                         <div className="flex items-center gap-4">
                             <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.4em] flex items-center gap-3">
                                 <span className="w-2 h-2 rounded-full bg-cyan-500 dynamic-color-pulse" />
-                                Multi-Model Arbitration_v25_Active
+                                Multi-Model Arbitration_v45_Active
                             </p>
                             {result && (
                                 <div className="flex items-center gap-6 pl-6 border-l border-white/10">

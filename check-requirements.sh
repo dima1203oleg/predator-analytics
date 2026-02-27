@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🔍 [CHECK] Verifying Predator v29-S Software Requirements..."
+echo "🔍 [CHECK] Verifying Predator v45 | Neural Analytics-S Software Requirements..."
 
 # Helper function to check command
 check_version() {
@@ -35,9 +35,9 @@ fi
 if [ -n "$PYTHON_CMD" ]; then
     echo "✅ Python found: $($PYTHON_CMD --version 2>&1)"
 
-    # Check critical Python libs for v29-S Constitutional Core
+    # Check critical Python libs for v45-S Constitutional Core
     echo ""
-    echo "--- Python Libraries (v29-S Core) ---"
+    echo "--- Python Libraries (v45-S Core) ---"
     $PYTHON_CMD -c "import z3; print('✅ Z3 (Constitutional Formal Verifier) found')" 2>/dev/null || echo "⚠️ Z3 not found (Required for Constitutional Core - install with: pip install z3-solver)"
     $PYTHON_CMD -c "import pydantic; print('✅ Pydantic found:', pydantic.__version__)" 2>/dev/null || echo "⚠️ Pydantic NOT FOUND"
     $PYTHON_CMD -c "import sqlalchemy; print('✅ SQLAlchemy found:', sqlalchemy.__version__)" 2>/dev/null || echo "⚠️ SQLAlchemy NOT FOUND"
@@ -94,9 +94,9 @@ else
     echo "⚠️ Frontend package.json not found"
 fi
 
-# v29-S Specific Checks
+# v45-S Specific Checks
 echo ""
-echo "--- v29-S Constitutional Files ---"
+echo "--- v45-S Constitutional Files ---"
 if [ -f "services/som/app/axioms.py" ]; then
     echo "✅ Constitutional Axioms file found"
 else

@@ -139,7 +139,7 @@ const CustomsIntelligenceView = () => {
             </AnimatePresence>
 
             <ViewHeader
-                title="TELEGRAM РОЗВІДКА (PREDATOR v45)"
+                title="TELEGRAM РОЗВІДКА (Predator v45 | Neural Analytics)"
                 icon={<Shield size={20} className="icon-3d-green" />}
                 breadcrumbs={['РОЗВІДКА', 'ДЖЕРЕЛА', 'TELEGRAM']}
                 stats={[

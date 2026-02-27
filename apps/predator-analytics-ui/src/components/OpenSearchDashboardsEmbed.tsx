@@ -30,7 +30,7 @@ interface OpenSearchDashboardsEmbedProps {
 const getDashboardsUrl = () => {
   if (typeof window !== 'undefined') {
     // If running on ngrok/remote, assume dashboards are proxied or on same host port 5601
-    // For V30 production, we use a relative path if proxied, or fallback to absolute
+    // For V45 production, we use a relative path if proxied, or fallback to absolute
     const protocol = window.location.protocol;
     const hostname = window.location.hostname;
 

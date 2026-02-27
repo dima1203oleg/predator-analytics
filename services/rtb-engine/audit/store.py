@@ -2,7 +2,7 @@
 """
 Module: store
 Component: rtb-engine
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 import asyncpg
 import logging

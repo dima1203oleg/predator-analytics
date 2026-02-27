@@ -1,5 +1,5 @@
 /**
- * Workflow Control Panel v25.0
+ * Workflow Control Panel v45.0
  *
  * UI for managing Temporal workflows.
  * Features:

@@ -85,7 +85,7 @@ class SignalCollector:
         return signals
 
 class SIOrchestrator:
-    """♾️ Self-Improvement Orchestrator (v25.0).
+    """♾️ Self-Improvement Orchestrator (v45.0).
     Manages the autonomous lifecycle: Monitor -> Diagnose -> Train -> Deploy.
     """
 

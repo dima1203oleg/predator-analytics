@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PREDATOR v30 - predatorctl CLI
+Predator v45 | Neural Analytics - predatorctl CLI
 ==============================
 
 Command-line interface for managing the Predator autonomous system.
@@ -57,10 +57,10 @@ def print_info(message: str):
 
 def cmd_status(args):
     """Get overall system status."""
-    print_header("PREDATOR v30 System Status")
+    print_header("Predator v45 | Neural Analytics System Status")
 
     status = {
-        "version": "30.0",
+        "version": "45.0",
         "status": "healthy",
         "uptime": "12d 4h 32m",
         "generation": 42,
@@ -181,7 +181,7 @@ def cmd_autonomy_trigger(args):
 
 def cmd_components_list(args):
     """List all components."""
-    print_header("PREDATOR v30 Components Registry")
+    print_header("Predator v45 | Neural Analytics Components Registry")
 
     categories = [
         ("Orchestration & Infrastructure", 15, "healthy"),
@@ -212,9 +212,9 @@ def cmd_components_list(args):
 
 def cmd_constitution_show(args):
     """Show constitutional rules."""
-    print_header("PREDATOR v30 Constitution")
+    print_header("Predator v45 | Neural Analytics Constitution")
 
-    print(f"  {Colors.BOLD}Version:{Colors.ENDC} 30.0")
+    print(f"  {Colors.BOLD}Version:{Colors.ENDC} 45.0")
     print(f"  {Colors.BOLD}Status:{Colors.ENDC} {Colors.GREEN}Active{Colors.ENDC}")
     print()
 
@@ -274,10 +274,10 @@ def cmd_evolution_history(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="PREDATOR v30 Control CLI",
+        description="Predator v45 | Neural Analytics Control CLI",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--version', action='version', version='predatorctl v30.0')
+    parser.add_argument('--version', action='version', version='predatorctl v45.0')
 
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
 

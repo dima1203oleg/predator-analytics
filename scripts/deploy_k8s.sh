@@ -2,10 +2,10 @@
 #!/bin/bash
 set -e
 
-# PREDATOR V25.1 - K8S DEPLOYMENT SCRIPT
+# PREDATOR V45.1 - K8S DEPLOYMENT SCRIPT
 # Assumes kubectl context is set correctly.
 
-echo "🚢 Deploying Predator Analytics v25.1 to Kubernetes..."
+echo "🚢 Deploying Predator Analytics v45.1 to Kubernetes..."
 
 NAMESPACE="predator-analytics"
 

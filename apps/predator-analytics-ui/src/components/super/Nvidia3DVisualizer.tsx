@@ -106,6 +106,6 @@ const Nvidia3DVisualizer: React.FC<{ load?: number }> = ({ load = 45 }) => {
 };
 
 // Required for threejs in React
-// 3D Engine Visualization v25.0.0
+// 3D Engine Visualization v45.0.0
 
 export default Nvidia3DVisualizer;

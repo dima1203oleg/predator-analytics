@@ -18,7 +18,7 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
     {
       id: 'init',
       command: 'system info',
-      output: <span className="text-slate-400">Predator Analytics v18.6 [Truth-Only Edition]<br/>Kernel: Linux 5.15.0-generic (x86_64)<br/>Node: k3s-master-01 [ONLINE]<br/>Локаль: uk_UA.UTF-8<br/>Використовуйте 'go [view]' для навігації.</span>,
+      output: <span className="text-slate-400">Predator v45 | Neural Analytics<br />Kernel: Linux 5.15.0-generic (x86_64)<br />Node: k3s-master-01 [ONLINE]<br />Локаль: uk_UA.UTF-8<br />Використовуйте 'go [view]' для навігації.</span>,
       timestamp: new Date().toLocaleTimeString()
     }
   ]);
@@ -46,60 +46,60 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
 
   // --- MATRIX RAIN EFFECT ---
   useEffect(() => {
-      if (!matrixMode || !isOpen) return;
+    if (!matrixMode || !isOpen) return;
 
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-      let animationId: number;
+    let animationId: number;
 
-      const resize = () => {
-          const parent = canvas.parentElement;
-          if (parent) {
-              canvas.width = parent.clientWidth;
-              canvas.height = parent.clientHeight;
-          }
-      };
+    const resize = () => {
+      const parent = canvas.parentElement;
+      if (parent) {
+        canvas.width = parent.clientWidth;
+        canvas.height = parent.clientHeight;
+      }
+    };
 
-      window.addEventListener('resize', resize);
-      resize(); // Initial sizing
+    window.addEventListener('resize', resize);
+    resize(); // Initial sizing
 
-      const fontSize = 14;
-      // Recalculate columns based on width
-      const columns = Math.floor(canvas.width / fontSize);
-      const drops: number[] = Array(columns).fill(1);
-      const chars = "0123456789ABCDEFｦｱｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ";
+    const fontSize = 14;
+    // Recalculate columns based on width
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops: number[] = Array(columns).fill(1);
+    const chars = "0123456789ABCDEFｦｱｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ";
 
-      const draw = () => {
-          // Translucent black background for trail effect
-          ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const draw = () => {
+      // Translucent black background for trail effect
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-          ctx.fillStyle = '#0f0'; // Matrix Green
-          ctx.font = `${fontSize}px monospace`;
+      ctx.fillStyle = '#0f0'; // Matrix Green
+      ctx.font = `${fontSize}px monospace`;
 
-          for (let i = 0; i < drops.length; i++) {
-              const text = chars[Math.floor(Math.random() * chars.length)];
-              ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-              if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                  drops[i] = 0;
-              }
-              drops[i]++;
-          }
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
 
-          animationId = requestAnimationFrame(draw);
-      };
+      animationId = requestAnimationFrame(draw);
+    };
 
-      // Start animation loop
-      draw();
+    // Start animation loop
+    draw();
 
-      return () => {
-          cancelAnimationFrame(animationId);
-          window.removeEventListener('resize', resize);
-      };
+    return () => {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener('resize', resize);
+    };
   }, [matrixMode, isOpen]);
 
   const handleCommand = (e: React.FormEvent | React.MouseEvent, overrideCmd?: string) => {
@@ -112,24 +112,24 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
     const cmdLower = cmd.toLowerCase();
 
     setHistory(prev => {
-        const last = prev[prev.length - 1];
-        if (last !== cmd) return [...prev, cmd];
-        return prev;
+      const last = prev[prev.length - 1];
+      if (last !== cmd) return [...prev, cmd];
+      return prev;
     });
     setHistoryIndex(-1);
 
     // Special Matrix Toggle
     if (cmdLower === 'matrix') {
-        setMatrixMode(!matrixMode);
-        const newLog: CommandLog = {
-            id: Date.now().toString(),
-            command: cmd,
-            output: <span className="text-green-500 font-bold">The Matrix has you... [Матриця за тобою стежить]</span>,
-            timestamp: new Date().toLocaleTimeString()
-        };
-        setLogs(prev => [...prev, newLog]);
-        setInput('');
-        return;
+      setMatrixMode(!matrixMode);
+      const newLog: CommandLog = {
+        id: Date.now().toString(),
+        command: cmd,
+        output: <span className="text-green-500 font-bold">The Matrix has you... [Матриця за тобою стежить]</span>,
+        timestamp: new Date().toLocaleTimeString()
+      };
+      setLogs(prev => [...prev, newLog]);
+      setInput('');
+      return;
     }
 
     const newLog: CommandLog = {
@@ -144,60 +144,60 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          if (history.length > 0) {
-              const newIndex = historyIndex === -1 ? history.length - 1 : Math.max(0, historyIndex - 1);
-              setHistoryIndex(newIndex);
-              setInput(history[newIndex]);
-          }
-      } else if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          if (historyIndex !== -1) {
-              const newIndex = historyIndex + 1;
-              if (newIndex >= history.length) {
-                  setHistoryIndex(-1);
-                  setInput('');
-              } else {
-                  setHistoryIndex(newIndex);
-                  setInput(history[newIndex]);
-              }
-          }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (history.length > 0) {
+        const newIndex = historyIndex === -1 ? history.length - 1 : Math.max(0, historyIndex - 1);
+        setHistoryIndex(newIndex);
+        setInput(history[newIndex]);
       }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex !== -1) {
+        const newIndex = historyIndex + 1;
+        if (newIndex >= history.length) {
+          setHistoryIndex(-1);
+          setInput('');
+        } else {
+          setHistoryIndex(newIndex);
+          setInput(history[newIndex]);
+        }
+      }
+    }
   };
 
   const processCommand = (cmd: string): React.ReactNode => {
     // Navigation Commands
     if (cmd.startsWith('go ') || cmd.startsWith('open ')) {
-        const target = cmd.split(' ')[1];
-        if (onNavigate) {
-            switch (target) {
-                case 'dashboard': onNavigate(TabView.DASHBOARD); return 'Перенаправлення на Панель...';
-                case 'god': case 'super': onNavigate(TabView.SUPER_INTELLIGENCE); return 'Вхід у Режим Бога...';
-                case 'analytics': case 'scan': onNavigate(TabView.ANALYTICS); return 'Відкриття Глибинного Сканування...';
-                case 'devops': case 'infra': onNavigate(TabView.DEVOPS); return 'Відкриття Інженерного Хабу...';
-                case 'brain': case 'council': onNavigate(TabView.SYSTEM_BRAIN); return 'Виклик Ради...';
-                case 'nas': onNavigate(TabView.NAS); return 'Відкриття NAS Арени...';
-                case 'security': case 'defcon': onNavigate(TabView.SECURITY); return 'Відкриття Центру Безпеки...';
-                case 'chat': case 'user': onNavigate(TabView.USER_PORTAL); return 'Перемикання на Виконавчий Режим...';
-                default: return <span className="text-yellow-500">Невідомий розділ. Спробуйте: dashboard, god, analytics, devops, brain</span>;
-            }
+      const target = cmd.split(' ')[1];
+      if (onNavigate) {
+        switch (target) {
+          case 'dashboard': onNavigate(TabView.DASHBOARD); return 'Перенаправлення на Панель...';
+          case 'god': case 'super': onNavigate(TabView.SUPER_INTELLIGENCE); return 'Вхід у Режим Бога...';
+          case 'analytics': case 'scan': onNavigate(TabView.ANALYTICS); return 'Відкриття Глибинного Сканування...';
+          case 'devops': case 'infra': onNavigate(TabView.DEVOPS); return 'Відкриття Інженерного Хабу...';
+          case 'brain': case 'council': onNavigate(TabView.SYSTEM_BRAIN); return 'Виклик Ради...';
+          case 'nas': onNavigate(TabView.NAS); return 'Відкриття NAS Арени...';
+          case 'security': case 'defcon': onNavigate(TabView.SECURITY); return 'Відкриття Центру Безпеки...';
+          case 'chat': case 'user': onNavigate(TabView.USER_PORTAL); return 'Перемикання на Виконавчий Режим...';
+          default: return <span className="text-yellow-500">Невідомий розділ. Спробуйте: dashboard, god, analytics, devops, brain</span>;
         }
+      }
     }
 
     if (cmd.startsWith('scan')) {
-        return <div className="text-blue-400">Ініціалізація Глибинного Сканування... [====================] 100%<br/>Критичних загроз не виявлено.</div>;
+      return <div className="text-blue-400">Ініціалізація Глибинного Сканування... [====================] 100%<br />Критичних загроз не виявлено.</div>;
     }
 
     switch (cmd) {
       case 'help': return <span className="text-primary-400">
-          Доступні Команди:<br/>
-          - go [view]: Навігація (напр., 'go god', 'go brain')<br/>
-          - status: Перевірка здоров'я системи<br/>
-          - scan: Швидке сканування загроз<br/>
-          - lock: Блокування сесії<br/>
-          - matrix: Перемикання візуального ефекту<br/>
-          - clear: Очищення терміналу
+        Доступні Команди:<br />
+        - go [view]: Навігація (напр., 'go god', 'go brain')<br />
+        - status: Перевірка здоров'я системи<br />
+        - scan: Швидке сканування загроз<br />
+        - lock: Блокування сесії<br />
+        - matrix: Перемикання візуального ефекту<br />
+        - clear: Очищення терміналу
       </span>;
       case 'clear': setLogs([]); return null;
       case 'status': return <span className="text-success-500">ВСІ СИСТЕМИ ПРАЦЮЮТЬ. G-01 ПРОТОКОЛ АКТИВНИЙ.</span>;
@@ -211,42 +211,42 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
 
   return (
     <div
-        className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-safe pb-safe"
-        onClick={onClose}
+      className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-safe pb-safe"
+      onClick={onClose}
     >
       <div
-          className={`w-full h-[100dvh] md:h-auto md:max-w-4xl border rounded-xl shadow-2xl  flex flex-col md:max-h-[700px] mt-0 md:mt-16 transition-all duration-300 panel-3d ${matrixMode ? 'bg-black border-green-500/50 shadow-[0_0_50px_rgba(0,255,0,0.2)]' : 'bg-slate-900 border-slate-700'}`}
-          onClick={e => e.stopPropagation()}
+        className={`w-full h-[100dvh] md:h-auto md:max-w-4xl border rounded-xl shadow-2xl  flex flex-col md:max-h-[700px] mt-0 md:mt-16 transition-all duration-300 panel-3d ${matrixMode ? 'bg-black border-green-500/50 shadow-[0_0_50px_rgba(0,255,0,0.2)]' : 'bg-slate-900 border-slate-700'}`}
+        onClick={e => e.stopPropagation()}
       >
         {/* Matrix Canvas Background */}
         <div className="absolute inset-0 pointer-events-none z-0">
-             {matrixMode && <canvas ref={canvasRef} className="w-full h-full opacity-30" />}
+          {matrixMode && <canvas ref={canvasRef} className="w-full h-full opacity-30" />}
         </div>
 
         {/* Header */}
         <div className={`p-3 flex items-center justify-between border-b shrink-0 select-none relative z-10 ${matrixMode ? 'bg-black border-green-900 text-green-500' : 'bg-slate-900 border-slate-800'}`}>
           <div className="flex items-center gap-3 px-2">
             <div className={`p-1.5 rounded ${matrixMode ? 'bg-green-900/20 text-green-500' : 'bg-slate-800 text-slate-400 icon-3d'}`}>
-                <Terminal size={16} />
+              <Terminal size={16} />
             </div>
             <span className={`text-xs font-mono font-bold ${matrixMode ? 'text-green-500' : 'text-slate-200'}`}>
-                root@predator-core:~ {matrixMode ? '[MATRIX_MODE]' : ''}
+              root@predator-core:~ {matrixMode ? '[MATRIX_MODE]' : ''}
             </span>
           </div>
           <div className="flex gap-2">
-              <button onClick={() => setMatrixMode(!matrixMode)} className={`p-1.5 rounded hover:bg-white/10 transition-colors btn-3d ${matrixMode ? 'text-green-500' : 'text-slate-400'}`} title="Переключити Матрицю">
-                  <Code size={16} />
-              </button>
-              <button onClick={onClose} className={`p-1.5 rounded hover:bg-red-500/20 hover:text-red-400 transition-colors btn-3d ${matrixMode ? 'text-green-500' : 'text-slate-400'}`}>
-                  <X size={16} />
-              </button>
+            <button onClick={() => setMatrixMode(!matrixMode)} className={`p-1.5 rounded hover:bg-white/10 transition-colors btn-3d ${matrixMode ? 'text-green-500' : 'text-slate-400'}`} title="Переключити Матрицю">
+              <Code size={16} />
+            </button>
+            <button onClick={onClose} className={`p-1.5 rounded hover:bg-red-500/20 hover:text-red-400 transition-colors btn-3d ${matrixMode ? 'text-green-500' : 'text-slate-400'}`}>
+              <X size={16} />
+            </button>
           </div>
         </div>
 
         {/* Terminal Body */}
         <div
-            className="flex-1 p-4 overflow-y-auto font-mono text-sm relative z-10"
-            onClick={() => inputRef.current?.focus()}
+          className="flex-1 p-4 overflow-y-auto font-mono text-sm relative z-10"
+          onClick={() => inputRef.current?.focus()}
         >
           {logs.map((log) => (
             <div key={log.id} className="mb-2 break-words">
@@ -259,9 +259,9 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
                 <span className={matrixMode ? 'text-green-400' : 'text-slate-200'}>{log.command}</span>
               </div>
               {log.output && (
-                  <div className={`mt-1 pl-5 border-l-2 ${matrixMode ? 'text-green-300 border-green-900' : 'text-slate-300 border-slate-700'}`}>
-                      {log.output}
-                  </div>
+                <div className={`mt-1 pl-5 border-l-2 ${matrixMode ? 'text-green-300 border-green-900' : 'text-slate-300 border-slate-700'}`}>
+                  {log.output}
+                </div>
               )}
             </div>
           ))}
@@ -270,13 +270,13 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
 
         {/* Navigation Hints */}
         <div className={`p-2 border-t ${matrixMode ? 'border-green-900 bg-black' : 'border-slate-800 bg-slate-900'} relative z-10 overflow-x-auto`}>
-            <div className="flex gap-2 text-[10px] font-mono">
-                <span className="text-slate-500 px-2">Швидка Навігація:</span>
-                <button onClick={(e) => handleCommand(e, 'go god')} className="text-purple-400 hover:text-purple-300">go god</button>
-                <button onClick={(e) => handleCommand(e, 'go brain')} className="text-blue-400 hover:text-blue-300">go brain</button>
-                <button onClick={(e) => handleCommand(e, 'go nas')} className="text-yellow-400 hover:text-yellow-300">go nas</button>
-                <button onClick={(e) => handleCommand(e, 'go devops')} className="text-orange-400 hover:text-orange-300">go devops</button>
-            </div>
+          <div className="flex gap-2 text-[10px] font-mono">
+            <span className="text-slate-500 px-2">Швидка Навігація:</span>
+            <button onClick={(e) => handleCommand(e, 'go god')} className="text-purple-400 hover:text-purple-300">go god</button>
+            <button onClick={(e) => handleCommand(e, 'go brain')} className="text-blue-400 hover:text-blue-300">go brain</button>
+            <button onClick={(e) => handleCommand(e, 'go nas')} className="text-yellow-400 hover:text-yellow-300">go nas</button>
+            <button onClick={(e) => handleCommand(e, 'go devops')} className="text-orange-400 hover:text-orange-300">go devops</button>
+          </div>
         </div>
 
         {/* Input */}

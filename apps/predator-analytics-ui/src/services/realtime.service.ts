@@ -1,5 +1,5 @@
 /**
- * PREDATOR V30 - Real-Time Data Service
+ * PREDATOR V45 - Real-Time Data Service
  * Централізований сервіс для отримання реальних даних з бекенду
  * Замінює всі mock/симуляції на справжні API виклики
  */
@@ -162,7 +162,7 @@ class RealTimeDataService {
             latency: info.latency
           })),
           uptime: data.uptime || 'N/A',
-          version: data.version || 'v30.0'
+          version: data.version || 'v45.0'
         };
 
         this.setCache(cacheKey, status);

@@ -2,7 +2,7 @@
 """
 Module: controller
 Component: sio-controller
-Predator Analytics v25.1
+Predator Analytics v45.1
 Section 3.7.3 of Spec.
 """
 import asyncio

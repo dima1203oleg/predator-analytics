@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../orchestrato
 from council.mission_planner import MissionPriority, MissionStatus, get_mission_planner
 
 
-router = APIRouter(prefix="/api/v25/missions", tags=["missions"])
+router = APIRouter(prefix="/api/v45/missions", tags=["missions"])
 
 
 class CreateMissionRequest(BaseModel):

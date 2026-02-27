@@ -113,7 +113,7 @@ export const AICopilot: React.FC = () => {
     setAiResponse('Аналізую ваш запит...');
 
     try {
-      // Підключення до реального AI бекенду через Predator v25 API
+      // Підключення до реального AI бекенду через Predator v45 | Neural AnalyticsAPI
       const res = await api.ai.query(query);
       if (res && (res.answer || res.response || res.result)) {
         setAiResponse(res.answer || res.response || res.result);

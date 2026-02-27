@@ -167,6 +167,6 @@ It must **NEVER**:
 
 ---
 
-**VERSION:** v25.GODMODE
+**VERSION:** v45.GODMODE
 **MODE:** ABSOLUTE
 **STATUS:** ♾️ ETERNAL

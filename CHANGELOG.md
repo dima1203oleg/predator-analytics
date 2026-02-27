@@ -1,4 +1,23 @@
-# 🚀 CHANGELOG v25.1.0 - Predator Analytics
+# 🚀 CHANGELOG v45.0.0 - Predator v45 | Neural Analytics> **Дата випуску:** 27.02.2026
+> **Build:** Canonical Authority Release
+> **Status:** ACTIVE & AUTHORITATIVE
+
+---
+
+## 🏛️ GLOBAL VERSION AUTHORITY DIRECTIVE (v45)
+
+**Predator v45 | Neural Analytics** is now the single canonical version of the platform.
+
+### Key Changes:
+- **Canonical UI Title:** Locked to "Predator v45 | Neural Analytics".
+- **Legacy Invalidation:** All v1.x - v45.x versions are deprecated.
+- **Port Authority:** Web UI strictly on port **3030**.
+- **Infra Synchronization:** Deployment configs, Kubernetes manifests, and Helm charts updated to v45 baseline.
+- **Title Lock:** Browser title, application header, and system identifiers synchronized.
+
+---
+
+# 🚀 CHANGELOG v45.1.0 - Predator Analytics (Legacy)
 
 > **Дата випуску:** 09.01.2026
 > **Build:** Session improvements
@@ -95,12 +114,12 @@ Drag-and-drop завантаження файлів:
 
 ## 🔧 API Improvements
 
-### `/api/v25/pulse` Endpoint
+### `/api/v45/pulse` Endpoint
 
 Новий endpoint для System Health Dashboard:
 
 ```bash
-curl http://localhost:8090/api/v25/pulse
+curl http://localhost:8090/api/v45/pulse
 ```
 
 **Response:**

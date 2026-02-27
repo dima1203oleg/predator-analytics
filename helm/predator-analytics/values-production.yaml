@@ -1,4 +1,4 @@
-# Predator Analytics v25.0 - Production Values
+# Predator Analytics v45.0 - Production Values
 # MANDATORY: Static IP / Domain deployment - NO localhost for external access
 
 # Global configuration
@@ -502,4 +502,4 @@ securityContext:
     drop:
       - ALL
 
-# AUTO-DEPLOYMENT: v27 ULTRA UPGRADE applied at 2026-01-31T07:42:18.874929
+# AUTO-DEPLOYMENT: v45 ULTRA UPGRADE applied at 2026-01-31T07:42:18.874929

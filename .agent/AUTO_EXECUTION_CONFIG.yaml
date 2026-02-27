@@ -5,7 +5,7 @@
 # All actions are AUTO-APPROVED. No human intervention required.
 # ============================================================
 
-version: "v25.turbo"
+version: "v45.turbo"
 last_updated: "2025-12-28"
 mode: "FULL_AUTOMATION"
 
@@ -121,7 +121,7 @@ fallback:
 services:
   backend:
     path: "/Users/dima-mac/Documents/Predator_21/apps/backend"
-    command: "python run_v25_bot.py"
+    command: "python run_v45_bot.py"
     health_check: "http://localhost:8000/health"
     auto_restart: true
 

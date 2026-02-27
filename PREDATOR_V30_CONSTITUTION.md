@@ -1,13 +1,11 @@
-# 🧠 PREDATOR v30
-
-## ФІНАЛЬНА АРХІТЕКТУРНА КОНСТИТУЦІЯ
+# 🧠 Predator v45 | Neural Analytics## ФІНАЛЬНА АРХІТЕКТУРНА КОНСТИТУЦІЯ
 **Sovereign Autonomous Intelligence Platform**
 
 ---
 
 **Статус:** FINAL
 **Дата фіксації:** 2026-02-04
-**Версія конституції:** v30.0
+**Версія конституції:** v45.0
 **Призначення:** Єдиний канонічний документ, обов'язковий для всієї екосистеми Predator
 
 ---
@@ -16,8 +14,7 @@
 
 Цей документ:
 
-- **є єдиним джерелом істини** щодо архітектури Predator v30
-- **має вищу силу**, ніж будь-які README, ADR, Helm values або pipeline configs
+- **є єдиним джерелом істини** щодо архітектури Predator v45 | Neural Analytics- **має вищу силу**, ніж будь-які README, ADR, Helm values або pipeline configs
 - **визначає межі автономії**, правила еволюції та незмінні канони
 - **застосовується** до коду, інфраструктури, моделей, даних і процесів
 
@@ -30,7 +27,7 @@
 ### 1.1 CI/CD — АРХІТЕКТУРНО ЗАКРИТЕ ПИТАННЯ
 
 ```yaml
-cicd_constitution_v30:
+cicd_constitution_v45:
   source_of_truth: GitLab CE
   gitops_engine: ArgoCD
   pipeline_runtime: Tekton
@@ -55,7 +52,7 @@ cicd_constitution_v30:
 ### 1.2 СПОСТЕРЕЖУВАНІСТЬ — МАТРИЦЯ ВІДПОВІДАЛЬНОСТІ (КАНОН)
 
 ```yaml
-observability_v30:
+observability_v45:
   metrics:
     primary: Prometheus
     long_term: Thanos + MinIO
@@ -93,7 +90,7 @@ observability_v30:
 ### 1.3 БЕЗПЕКА — ЗАКРИТТЯ SUPPLY-CHAIN РИЗИКІВ
 
 ```yaml
-security_constitution_v30:
+security_constitution_v45:
   sbom:
     mandatory: true
     tools: [CycloneDX, Syft, Trivy]
@@ -119,7 +116,7 @@ security_constitution_v30:
 ### 2.1 MODEL REGISTRY & POLICY ENGINE
 
 ```yaml
-model_governance_v30:
+model_governance_v45:
   registry: MLflow Model Registry
   policy_engine: OPA
 
@@ -152,7 +149,7 @@ model_governance_v30:
 ## 3. DISASTER RECOVERY ЯК ПЕРШОКЛАСНИЙ МОДУЛЬ
 
 ```yaml
-dr_constitution_v30:
+dr_constitution_v45:
   rto_rpo:
     postgres:
       rto: 15m
@@ -181,7 +178,7 @@ dr_constitution_v30:
 ## 4. СУВЕРЕННІСТЬ ТА ЮРИДИЧНА КОРЕКТНІСТЬ
 
 ```yaml
-sovereignty_v30:
+sovereignty_v45:
   data:
     residency: enforced
     cross_border: denied_by_default
@@ -200,7 +197,7 @@ sovereignty_v30:
 ## 5. АРХІТЕКТУРНІ КАНОНИ (НЕЗМІННІ)
 
 ```yaml
-technical_canons_v30:
+technical_canons_v45:
   kubernetes: K3s
   service_mesh: Istio
   relational_db: PostgreSQL
@@ -218,7 +215,7 @@ technical_canons_v30:
 ## 6. МЕЖІ АВТОНОМІЇ
 
 ```yaml
-autonomy_boundaries_v30:
+autonomy_boundaries_v45:
   allowed:
     - hyperparameters
     - data_pipelines
@@ -241,7 +238,7 @@ autonomy_boundaries_v30:
 ## 7. ФАЗИ РОЗГОРТАННЯ (КАНОНІЧНІ)
 
 ```yaml
-deployment_phases_v30:
+deployment_phases_v45:
   phase_0: [K3s, Longhorn, PostgreSQL, MinIO]
   phase_1: [Istio, Prometheus, Grafana, Keycloak]
   phase_2: [Neo4j, Qdrant, Redis, Airflow]
@@ -254,7 +251,7 @@ deployment_phases_v30:
 ## 8. ФІНАЛЬНА КОНСТИТУЦІЯ (ЗАКРИТА)
 
 ```yaml
-predator_v30_constitution:
+predator_v45_constitution:
   purpose: "Sovereign autonomous intelligence system"
 
   immutable_principles:
@@ -278,7 +275,7 @@ predator_v30_constitution:
 
 ## 🎯 ФІНАЛЬНИЙ СТАТУС
 
-**Predator v30 — ЗАКРИТИЙ ЯК КОНСТИТУЦІЯ**
+**Predator v45 | Neural Analytics— ЗАКРИТИЙ ЯК КОНСТИТУЦІЯ**
 
 ❌ не PoC
 ❌ не "архітектурна ідея"
@@ -295,7 +292,7 @@ predator_v30_constitution:
 
 ## ОСТАННЄ РЕЧЕННЯ — КЛЮЧОВЕ
 
-> **Predator v30 — це не стек.**
+> **Predator v45 | Neural Analytics— це не стек.**
 > **Це система з пам'яттю, відповідальністю і межами.**
 
 ---
@@ -303,4 +300,4 @@ predator_v30_constitution:
 **Підписано:**
 🦁 PREDATOR Constitutional Council
 **Дата:** 2026-02-04
-**Версія:** v30.0 FINAL
+**Версія:** v45.0 FINAL

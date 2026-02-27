@@ -14,7 +14,7 @@ SERVER_HOST="2.tcp.eu.ngrok.io"
 SERVER_PORT=19884
 SSH_KEY="$HOME/.ssh/id_ed25519_ngrok"
 REMOTE_USER="dima"
-REMOTE_DIR="predator_v25" # Relative to $HOME in ssh command
+REMOTE_DIR="predator_v45" # Relative to $HOME in ssh command
 LOCAL_DIR="$(pwd)"
 # ArgoCD environment variables (optional)
 ARGOCD_NVIDIA_URL=${ARGOCD_NVIDIA_URL:-}

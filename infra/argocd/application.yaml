@@ -1,4 +1,4 @@
-# ArgoCD Application for Predator Analytics v25.0
+# ArgoCD Application for Predator Analytics v45.0
 # GitOps deployment configuration (App-of-Apps pattern or single Umbrella)
 
 apiVersion: argoproj.io/v1alpha1
@@ -28,7 +28,7 @@ spec:
 
       parameters:
         - name: global.imageTag
-          value: "v25.0.0"
+          value: "v45.0.0"
         - name: backend.replicas
           value: "2"
         - name: frontend.replicas

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     api,
-    v25Client
+    v45Client
 } from '../../services/api';
 import { TacticalCard } from '../TacticalCard';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,9 +30,9 @@ const EvolutionDashboard: React.FC = () => {
     const fetchData = async () => {
         try {
             const [statsRes, experienceRes, chaosRes, anomaliesRes] = await Promise.allSettled([
-                v25Client.get('/evolution/metrics/current'),
-                v25Client.get('/evolution/experience'),
-                v25Client.get('/azr/status'),
+                v45Client.get('/evolution/metrics/current'),
+                v45Client.get('/evolution/experience'),
+                v45Client.get('/azr/status'),
                 api.som.getAnomalies()
             ]);
 

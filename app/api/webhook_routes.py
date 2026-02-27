@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Webhook endpoint for Alertmanager integration with v25 auto-trigger system.
+"""Webhook endpoint for Alertmanager integration with v45 auto-trigger system.
 Receives alert firing events and automatically triggers optimization cycles.
 """
 
@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 
 logger = logging.getLogger(__name__)
-webhook_router = APIRouter(prefix="/v25", tags=["webhooks"])
+webhook_router = APIRouter(prefix="/v45", tags=["webhooks"])
 
 
 class AlertmanagerWebhookPayload:
@@ -24,14 +24,14 @@ class AlertmanagerWebhookPayload:
         self.alerts = payload.get("alerts", [])
 
     def get_trigger_actions(self) -> list[dict[str, str]]:
-        """Extract v25_action labels from alerts."""
+        """Extract v45_action labels from alerts."""
         actions = []
         for alert in self.alerts:
             labels = alert.get("labels", {})
-            v25_action = labels.get("v25_action")
-            if v25_action:
+            v45_action = labels.get("v45_action")
+            if v45_action:
                 actions.append({
-                    "action": v25_action,
+                    "action": v45_action,
                     "severity": labels.get("severity", "info"),
                     "component": labels.get("component", "unknown"),
                     "summary": alert.get("annotations", {}).get("summary"),
@@ -50,7 +50,7 @@ async def handle_alert_webhook(request: Request):
       "alerts": [{
         "labels": {
           "alertname": "LowSemanticSearchQuality",
-          "v25_action": "trigger_automl_retrain"
+          "v45_action": "trigger_automl_retrain"
         }
       }]
     }
@@ -63,13 +63,13 @@ async def handle_alert_webhook(request: Request):
 
         actions = webhook.get_trigger_actions()
         if not actions:
-            logger.warning("No v25_action labels found in alerts")
+            logger.warning("No v45_action labels found in alerts")
             return {"status": "no_actions", "alert_count": len(webhook.alerts)}
 
         triggered_cycles = []
 
         for action in actions:
-            logger.info(f"Processing v25 action: {action['action']}")
+            logger.info(f"Processing v45 action: {action['action']}")
             cycle_id = f"{action['action']}_{datetime.utcnow().timestamp()}"
             triggered_cycles.append(cycle_id)
 

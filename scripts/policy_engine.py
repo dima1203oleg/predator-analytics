@@ -2,7 +2,7 @@ from __future__ import annotations
 
 #!/usr/bin/env python3.12
 # policy_engine.py
-# Автор: Головний DevOps Predator Analytics v25.0
+# Автор: Головний DevOps Predator Analytics v45.0
 # Призначення: Перевірка безпеки згенерованого AI коду
 import re
 from typing import Dict

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Predator Analytics v25 - Canonical Entities
+"""Predator Analytics v45 - Canonical Entities
 Source, Dataset, Job, Index, Artifact definitions.
 """
 from datetime import datetime

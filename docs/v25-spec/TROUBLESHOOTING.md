@@ -1,4 +1,4 @@
-# 🔧 Troubleshooting Guide — Predator v25.0
+# 🔧 Troubleshooting Guide — Predator v45 | Neural Analytics.0
 
 > **Версія:** 25.0
 > **Оновлено:** 10.01.2026

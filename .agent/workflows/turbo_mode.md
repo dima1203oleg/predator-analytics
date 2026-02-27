@@ -90,7 +90,7 @@ lsof -i :3000 2>/dev/null | head -3 || echo "Frontend not running"
 ## 4. Auto-Restart Services
 
 ```bash
-cd /Users/dima-mac/Documents/Predator_21/apps/backend && python run_v25_bot.py &
+cd /Users/dima-mac/Documents/Predator_21/apps/backend && python run_v45_bot.py &
 ```
 
 ## 5. Ngrok Tunnel Check

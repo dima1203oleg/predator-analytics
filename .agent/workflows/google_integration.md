@@ -8,7 +8,7 @@ This workflow describes how to manually transfer a suggestion from Google AI Stu
 
 ## Prerequisite
 - You have an "Advisory" output from Google AI Studio (code snippet, architecture idea).
-- You have `predatorctl` v26 installed.
+- You have `predatorctl` v45 installed.
 
 ## 1. Create a Proposal File
 Save the Google output into a YAML file, e.g., `google_optimization.yaml`.

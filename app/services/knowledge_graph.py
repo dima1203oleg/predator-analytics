@@ -7,7 +7,7 @@ import uuid
 
 
 class KnowledgeGraphService:
-    """Service for managing entities and their relationships (v30)."""
+    """Service for managing entities and their relationships (v45)."""
 
     def __init__(self):
         self.logger = logging.getLogger("service.knowledge_graph")

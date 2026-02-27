@@ -196,7 +196,7 @@ class SearchAnalytics(Base):
 
 
 # ============================================================================
-# v25.0 PLATFORM CORE MODELS
+# v45.0 PLATFORM CORE MODELS
 # (Multi-Tenant System of Record)
 # ============================================================================
 
@@ -386,7 +386,7 @@ class TrinityAuditLog(Base):
     gemini_plan = Column(JSONB)
     mistral_output = Column(Text)
     copilot_audit = Column(JSONB)
-    thinking_process = Column(Text) # V25: Inner monologue
+    thinking_process = Column(Text) # V45: Inner monologue
     meta = Column(JSONB, default={}) # Technical payload
 
     # Final Outcome

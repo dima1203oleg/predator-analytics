@@ -1,4 +1,4 @@
-# 🤖 Predator Analytics v23.0 - Autonomous Orchestrator (GOD MODE)
+# 🤖 Predator Analytics v45.0 - Autonomous Orchestrator (GOD MODE)
 
 ## 🎯 Що це?
 
@@ -34,7 +34,7 @@ https://console.groq.com/keys
 
 ```bash
 ssh predator-server
-cd ~/predator_v25
+cd ~/predator_v45
 nano .env
 ```
 

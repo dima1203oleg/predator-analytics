@@ -20,7 +20,7 @@ from libs.core.structured_logger import get_logger
 logger = get_logger("scripts.start_azr_autonomy")
 
 async def main():
-    print("🚀 ІНІЦІАЛІЗАЦІЯ СУВЕРЕННОЇ АВТОНОМІЇ AZR V28...")
+    print("🚀 ІНІЦІАЛІЗАЦІЯ СУВЕРЕННОЇ АВТОНОМІЇ AZR V45...")
 
     try:
         from app.services.azr_engine import azr_engine

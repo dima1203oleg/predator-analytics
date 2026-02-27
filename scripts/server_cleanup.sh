@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to remove old Predator artifacts from server
-# WARNING: This will delete old versions (v21, v22, etc.)
+# WARNING: This will delete old versions (v45, v45, etc.)
 
 echo "🧹 Починаємо глибоку очистку сервера від старих версій..."
 
@@ -10,8 +10,8 @@ docker rm -f predator_frontend predator-nginx predator-frontend-old 2>/dev/null
 
 # 2. Видалення старих директорій dist
 echo "🗑️ Видалення застарілих папок dist..."
-sudo rm -rf /home/dima/predator_v21
-sudo rm -rf /home/dima/predator_v22
+sudo rm -rf /home/dima/predator_v45
+sudo rm -rf /home/dima/predator_v45
 sudo rm -rf /home/dima/Predator_21 # Видаляємо дублікат з великої літери, якщо він не основний
 sudo rm -rf /home/dima/predator-analytics/apps/frontend/dist
 

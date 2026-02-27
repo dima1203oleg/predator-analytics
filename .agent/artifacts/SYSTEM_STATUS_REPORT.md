@@ -1,4 +1,4 @@
-# Звіт про Стан Системи - Predator v25
+# Звіт про Стан Системи - Predator v45 | Neural Analytics
 ## Перевірка Локальних Компонентів
 
 **Дата**: 2026-01-09 03:56
@@ -156,7 +156,7 @@ curl -I http://localhost
 
 ### 4. Перевірка Backend API
 ```bash
-curl http://localhost:8000/api/v25/health
+curl http://localhost:8000/api/v45/health
 ```
 
 ### 5. Перевірка Frontend

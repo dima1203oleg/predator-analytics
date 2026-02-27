@@ -1,6 +1,6 @@
 title: Predator Chaos Scenarios
 version: 1.0
-description: "Автоматизовані сценарії тестування стійкості (Chaos Engineering) для Predator v29"
+description: "Автоматизовані сценарії тестування стійкості (Chaos Engineering) для Predator v45 | Neural Analytics"
 
 scenarios:
   - id: "database_latency"

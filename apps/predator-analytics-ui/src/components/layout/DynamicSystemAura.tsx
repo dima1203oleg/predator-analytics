@@ -12,7 +12,7 @@ const DynamicSystemAura: React.FC = () => {
   useEffect(() => {
     const fetchState = async () => {
       try {
-        const metrics = await api.v25.getRealtimeMetrics();
+        const metrics = await api.v45.getRealtimeMetrics();
         if (metrics) {
             if (metrics.cpu_usage > 70) setSystemState('alert');
             else if (metrics.requests_per_second > 20) setSystemState('learning');

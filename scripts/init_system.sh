@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# Predator Analytics v25.0 - System Hardening & Initializer
+# Predator Analytics v45.0 - System Hardening & Initializer
 # Focus: Database, Storage, Extensions, Context
 # ============================================================
 

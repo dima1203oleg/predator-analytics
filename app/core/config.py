@@ -31,7 +31,7 @@ except ImportError as e:
     # Minimal mock to avoid immediate crash during import scanning, but app will fail later
     class MockSettings:
         PROJECT_NAME = "Predator"
-        VERSION = "v25"
+        VERSION = "v45"
         API_V1_STR = "/api/v1"
         SECRET_KEY = "mock"
     settings = MockSettings()

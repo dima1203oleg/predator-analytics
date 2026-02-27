@@ -1,7 +1,7 @@
 """🔍 SEARCH ENGINE (OpenSearch Integration)
 ==========================================
 Core component for full-text and faceted search.
-Part of PREDATOR V30 Organism Architecture.
+Part of PREDATOR V45 Organism Architecture.
 """
 
 import logging

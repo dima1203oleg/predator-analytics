@@ -89,8 +89,8 @@ export const LLMDspyView: React.FC<LLMDspyViewProps> = ({
                     {dspyOptimizing && (
                         <div className="space-y-3">
                             <div className="text-purple-400 font-bold uppercase tracking-widest">&gt;&gt; {premiumLocales.llm.dspy.logs.bootstrapInit}</div>
-                            <div className="text-slate-600">[v25.Compiler] {premiumLocales.llm.dspy.logs.compilerGen}</div>
-                            <div className="text-slate-600">[v25.Evaluator] {premiumLocales.llm.dspy.logs.evaluatorTest}</div>
+                            <div className="text-slate-600">[v45.Compiler] {premiumLocales.llm.dspy.logs.compilerGen}</div>
+                            <div className="text-slate-600">[v45.Evaluator] {premiumLocales.llm.dspy.logs.evaluatorTest}</div>
                             <motion.div animate={{ x: [0, 4, 0] }} transition={{ repeat: Infinity }} className="text-emerald-500/80 font-bold">&gt;&gt; {premiumLocales.llm.dspy.logs.candidateAccepted.replace('{delta}', '+4.2%')}</motion.div>
                             <div className="text-slate-700 italic border-l border-white/10 pl-4 py-2 opacity-60">"{premiumLocales.llm.dspy.logs.disambiguation}"</div>
                         </div>

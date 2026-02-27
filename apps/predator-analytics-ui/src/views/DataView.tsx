@@ -166,7 +166,7 @@ const DataView: React.FC = () => {
   const handleAnalyze = async (source: Source) => {
     setAnalyzingSourceId(source.id);
     try {
-        const res = await (api as any).v25.analyze(source.name);
+        const res = await (api as any).v45.analyze(source.name);
         alert(`✅ АНАЛІЗ ЗАВЕРШЕНО: ${res.answer.substring(0, 100)}... Кейс створено автоматично.`);
     } catch (e) {
         console.error(e);

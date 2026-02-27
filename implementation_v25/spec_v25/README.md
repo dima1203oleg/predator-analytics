@@ -1,6 +1,6 @@
-# Predator Analytics v25.0 — Technical Specification (Canonical)
+# Predator Analytics v45.0 — Technical Specification (Canonical)
 
-Це канонічний пакет ТЗ для **Predator Analytics v25.0** у форматі Markdown.
+Це канонічний пакет ТЗ для **Predator Analytics v45.0** у форматі Markdown.
 
 ## Навігація
 
@@ -17,8 +17,8 @@
 
 ## Джерела, з яких зібрано канонічну версію
 
-- `implementation_v25/TECH_SPEC.md`
-- `docs/specs/v25_unified/*`
+- `implementation_v45/TECH_SPEC.md`
+- `docs/specs/v45_unified/*`
 - `docs/api/openapi.yaml`
 - `docs/diagrams/ARCHITECTURE_DIAGRAMS.md`
 

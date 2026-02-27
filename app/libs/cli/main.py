@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 #!/usr/bin/env python3.12
-"""🛡️ Predator Analytics v25.0 CLI - УКРАЇНСЬКА ВЕРСІЯ.
+"""🛡️ Predator Analytics v45.0 CLI - УКРАЇНСЬКА ВЕРСІЯ.
 -------------------------------------------------
 Уніфікований інтерфейс командного рядка для управління системою.
 Підтримує 4 Суверенних CLI Агенти (Gemini, Vibe, Mistral, Aider).
@@ -54,7 +54,7 @@ class PredatorClient:
 @click.option('--api-url', default='http://localhost:8090', help='URL до Predator API')
 @click.pass_context
 def cli(ctx, api_url):
-    """🛡️ Predator Analytics CLI v25.0 - Командний центр (UA)."""
+    """🛡️ Predator Analytics CLI v45.0 - Командний центр (UA)."""
     ctx.ensure_object(dict)
     ctx.obj['API_URL'] = api_url
     ctx.obj['client'] = PredatorClient(api_url)
@@ -68,7 +68,7 @@ def status(ctx):
 
     async def run():
         console.print(Panel(
-            "[bold cyan]Predator Analytics v25.0[/bold cyan]\n"
+            "[bold cyan]Predator Analytics v45.0[/bold cyan]\n"
             "[dim]Повний системний огляд (NVIDIA Server Integrated)[/dim]",
             title="📊 Статус Системи"
         ))
@@ -97,7 +97,7 @@ def status(ctx):
         # Автономність та Агенти
         agents = autonomy.get('systems', {})
         if agents:
-            console.print("\n[bold]🤖 Суверенні AI-Агенти (v25):[/bold]")
+            console.print("\n[bold]🤖 Суверенні AI-Агенти (v45):[/bold]")
             agents_table = Table()
             agents_table.add_column("Агент", style="magenta")
             agents_table.add_column("Режим", style="white")
@@ -127,7 +127,7 @@ def sovereign_cycle(ctx, task):
         console.print(Panel(
             f"[bold yellow]Задача:[/bold yellow] {task}\n"
             f"[dim]Агенти: Gemini, Vibe, Mistral, Aider/Copilot, Claude, DeepSeek, CodeLlama[/dim]",
-            title="🚀 Sovereign Self-Improvement Cycle (v25)"
+            title="🚀 Sovereign Self-Improvement Cycle (v45)"
         ))
 
         with Progress(
@@ -138,7 +138,7 @@ def sovereign_cycle(ctx, task):
             progress.add_task("🤖 Запуск агентів...", total=None)
 
             try:
-                result = await client.post('/api/v25/agents/run-cycle', {"task": task})
+                result = await client.post('/api/v45/agents/run-cycle', {"task": task})
                 console.print(f"\n[bold green]✅ Результат:[/bold green] {result.get('message', 'Успішно')}")
             except Exception as e:
                 console.print(f"\n[red]❌ Помилка циклу: {e}[/red]")
@@ -155,11 +155,11 @@ def doctor(ctx):
     client = ctx.obj['client']
 
     async def run():
-        console.print("[bold cyan]🩺 Запуск Системного Лікаря Predator v25...[/bold cyan]")
+        console.print("[bold cyan]🩺 Запуск Системного Лікаря Predator v45 | Neural Analytics...[/bold cyan]")
 
         with console.status("[bold green]Сканування вразливостей та помилок..."):
             try:
-                await client.post('/api/v25/system/doctor', {})
+                await client.post('/api/v45/system/doctor', {})
 
                 table = Table(title="Діагностичний Звіт")
                 table.add_column("Компонент", style="cyan")
@@ -187,10 +187,10 @@ def knowledge(ctx):
     client = ctx.obj['client']
 
     async def run():
-        console.print(Panel("[bold]📚 Журнал досвіду моделі Llama 3.1 8b[/bold]", subtitle="Auto-Learning v25"))
+        console.print(Panel("[bold]📚 Журнал досвіду моделі Llama 3.1 8b[/bold]", subtitle="Auto-Learning v45"))
 
         try:
-            stats = await client.get('/api/v25/stats')
+            stats = await client.get('/api/v45/stats')
             console.print(f"🔹 Всього синтетичних кейсів: [bold cyan]{stats.get('synthetic_examples', 0)}[/bold cyan]")
 
             table = Table()
@@ -220,7 +220,7 @@ def llama_train(ctx, model):
 
         with console.status("[bold green]Оптимізація ваг (K M Quantization)..."):
             try:
-                result = await client.post('/api/v25/ml-training/start', {
+                result = await client.post('/api/v45/ml-training/start', {
                     "model": model,
                     "provider": "ollama"
                 })
@@ -243,7 +243,7 @@ def logs(ctx, job_id):
     async def run():
         console.print(f"📋 [bold]Логи для задачі {job_id}:[/bold]")
         try:
-            logs_data = await client.get(f'/api/v25/jobs/{job_id}/logs')
+            logs_data = await client.get(f'/api/v45/jobs/{job_id}/logs')
             for entry in logs_data.get('logs', []):
                 time = entry.get('timestamp', '')[11:19]
                 level = entry.get('level', 'INFO')

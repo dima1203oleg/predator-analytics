@@ -1,6 +1,4 @@
-CI Template Snippets for Predator v25
-
-This folder contains reusable GitHub Actions snippets to implement the improved CI flow for images and releases.
+CI Template Snippets for Predator v45 | Neural AnalyticsThis folder contains reusable GitHub Actions snippets to implement the improved CI flow for images and releases.
 
 Files:
 

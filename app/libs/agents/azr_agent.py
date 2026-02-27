@@ -65,7 +65,7 @@ class PredatorAZRAgent(AZRAgentContract):
                     scope: security
                     actions:
                       - type: GITOPS_SYNC
-                        target: docs/v26_CONSTITUTION.md
+                        target: docs/v45_CONSTITUTION.md
                         reason: {issues[0]}
                     """
                     res = await self.propose_amendment(context, proposal)
@@ -141,7 +141,7 @@ class PredatorAZRAgent(AZRAgentContract):
     def _generate_fix_proposal(self, analysis: dict) -> str:
         """Generate a machine-readable fix proposal."""
         return f"""
-# PREDATOR V26 AMENDMENT PROPOSAL
+# PREDATOR V45 AMENDMENT PROPOSAL
 type: AUTO_RECOVERY
 timestamp: {datetime.now().isoformat()}
 agent: {self.name}

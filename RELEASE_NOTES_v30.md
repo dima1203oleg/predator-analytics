@@ -1,8 +1,8 @@
-# Predator Analytics v30.0.0 - Sovereign Release Notes
+# Predator Analytics v45.0.0 - Sovereign Release Notes
 
 ## 🚀 Commercial Launch Status: READY
 
-**Build ID:** `predator-v30.0.0-sovereign`
+**Build ID:** `predator-v45.0.0-sovereign`
 **Date:** 2026-02-04
 **Deployment:** Helm 3 / ArgoCD / K3s
 
@@ -36,7 +36,7 @@
 
 ## 🔍 Observability & Reliability
 - **Full Stack Monitoring**: Prometheus, Grafana, Loki, Tempo templates included.
-- **Health Probes**: Dedicated `/health/v30` endpoint for deep system verification.
+- **Health Probes**: Dedicated `/health/v45` endpoint for deep system verification.
 - **Resilience**: `ingestion_service.py` implements robust error handling and Redis-backed state persistence.
 
 ---
@@ -45,7 +45,7 @@
 
 **Local Verification:**
 ```bash
-./DEPLOY_PROD_V30.sh
+./DEPLOY_PROD_V45.sh
 ```
 
 **Production Launch (Server):**

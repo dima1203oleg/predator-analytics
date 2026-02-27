@@ -1,6 +1,6 @@
-# Predator v25 Automation Plan
+# Predator v45 | Neural AnalyticsAutomation Plan
 
-Це детальний план автоматизації CI/CD, Dockerfile конверсій, та загальної релізної стратегії для `v25.0`. Плани та кроки виконані з урахуванням поточних артефактів у `implementation_v25` та репозиторію.
+Це детальний план автоматизації CI/CD, Dockerfile конверсій, та загальної релізної стратегії для `v45.0`. Плани та кроки виконані з урахуванням поточних артефактів у `implementation_v45` та репозиторію.
 
 ## Цілі ✅
 
@@ -129,9 +129,9 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ## Migration tasks & dev experience 🧭
 
-- Create `implementation_v25/scripts/dockerfile-template.sh` to generate standardized Dockerfile.
-- Add `implementation_v25/scripts/run-lint-and-tests.sh` to run local tests and `tox` via Docker fallback.
-- Document the process in `implementation_v25/README.md` and `DEVELOPER_SETUP.md`.
+- Create `implementation_v45/scripts/dockerfile-template.sh` to generate standardized Dockerfile.
+- Add `implementation_v45/scripts/run-lint-and-tests.sh` to run local tests and `tox` via Docker fallback.
+- Document the process in `implementation_v45/README.md` and `DEVELOPER_SETUP.md`.
 
 ---
 
@@ -161,4 +161,4 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 If ви затверджуєте цей план — я починаю з інвентаризації Dockerfiles та CI workflows, потім виконаю тестову конверсію `ua-sources/Dockerfile` та додам відповідний CI job (будування, сканування, опціонально пуш).
 
-Файл створено: `implementation_v25/automation-plan.md`.
+Файл створено: `implementation_v45/automation-plan.md`.

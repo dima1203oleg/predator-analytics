@@ -34,7 +34,7 @@ const CasesView: React.FC = () => {
     setLoading(true);
     try {
       // Fallback to empty array if API fails or returns null
-      const data = await (api as any).v25.getCases() || [];
+      const data = await (api as any).v45.getCases() || [];
       setCases(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error('Помилка завантаження кейсів:', e);

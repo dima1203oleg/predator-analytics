@@ -1,5 +1,5 @@
 #!/bin/bash
-# PREDATOR V30 - Sync & Deploy Tool
+# PREDATOR V45 - Sync & Deploy Tool
 # Usage: ./sync_predator.sh [frontend|backend|all]
 
 SERVER_HOST="194.177.1.240"
@@ -9,7 +9,7 @@ REMOTE_PATH="~/predator-analytics"
 
 TARGET=${1:-all}
 
-echo "🦅 PREDATOR V30 SYNC SYSTEM"
+echo "🦅 PREDATOR V45 SYNC SYSTEM"
 echo "Target: $TARGET"
 echo "Server: $SERVER_HOST"
 

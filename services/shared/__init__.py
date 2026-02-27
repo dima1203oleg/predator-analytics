@@ -1,6 +1,6 @@
 
 """
-Predator Analytics v25.1
+Predator Analytics v45.1
 Shared Library
 """
 from .events import PredatorEvent

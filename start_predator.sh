@@ -2,10 +2,10 @@
 #!/bin/bash
 set -e
 
-# PREDATOR ANALYTICS v25.1 - AUTO START
+# PREDATOR ANALYTICS v45.1 - AUTO START
 # Builds base image and helps deploy locally (simulation)
 
-echo "🚀 Starting Predator Analytics v25.1 Deployment Sequence"
+echo "🚀 Starting Predator Analytics v45.1 Deployment Sequence"
 
 # 1. Build Base Image (Backend)
 echo "📦 Building Base Backend Image..."

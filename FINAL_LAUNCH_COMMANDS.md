@@ -1,4 +1,4 @@
-# 🚀 ЗАПУСК PREDATOR v28-S НА СЕРВЕРІ
+# 🚀 ЗАПУСК Predator v45 | Neural Analytics-S НА СЕРВЕРІ
 
 Я підготував повний пакет розгортання (`predator_deploy_kit.tar.gz`), який містить усі необхідні скрипти та конфігурації (Helm, RabbitMQ, MinIO).
 
@@ -12,7 +12,7 @@ scp -P 6666 predator_deploy_kit.tar.gz dima@194.177.1.240:~/
 
 ### 2. Запуск розгортання
 ```bash
-ssh -p 6666 dima@194.177.1.240 "tar -xzf predator_deploy_kit.tar.gz && chmod +x deploy_v28s_server.sh && ./deploy_v28s_server.sh production"
+ssh -p 6666 dima@194.177.1.240 "tar -xzf predator_deploy_kit.tar.gz && chmod +x deploy_v45s_server.sh && ./deploy_v45s_server.sh production"
 ```
 *(Пароль: `Dima@1203`)*
 

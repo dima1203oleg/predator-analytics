@@ -71,7 +71,7 @@ const DiagnosticsPage: React.FC = () => {
              <span className="text-iridescent">ДІАГНОСТИКА СИСТЕМИ</span>
            </motion.h1>
            <div className="flex items-center gap-6 mt-6 ml-2">
-             <p className="text-slate-500 uppercase tracking-[0.4em] font-black text-[10px]">Predator Neural Core v30.0 // Системний Потік</p>
+             <p className="text-slate-500 uppercase tracking-[0.4em] font-black text-[10px]">Predator Neural Core v45.0 // Системний Потік</p>
              <div className="h-4 w-[1px] bg-slate-800" />
              <div className="flex items-center gap-2">
                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />

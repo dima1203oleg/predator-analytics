@@ -248,9 +248,9 @@ async def liveness_probe():
     """
     return {"status": "alive"}
 
-@router.get("/health/v30")
-async def v30_production_check():
-    """v30 Sovereign Production Health Check."""
+@router.get("/health/v45")
+async def v45_production_check():
+    """v45 Sovereign Production Health Check."""
     return {
         "status": "OPERATIONAL",
         "system": "PREDATOR",

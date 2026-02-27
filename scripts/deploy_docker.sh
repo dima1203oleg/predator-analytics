@@ -1,5 +1,5 @@
 #!/bin/bash
-# Predator V25 - Dockerized Build & Deploy
+# Predator v45 | Neural Analytics- Dockerized Build & Deploy
 # Цей скрипт використовує Docker для збірки, щоб уникнути залежності від локального npm.
 
 SERVER="predator-server"
@@ -11,7 +11,7 @@ LOCAL_PROJECT="/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui"
 # Перехід в директорію проекту
 cd "$LOCAL_PROJECT"
 
-echo "🛠️ ПІДГОТОВКА ДО РОЗГОРТАННЯ V25 (DOCKER MODE)..."
+echo "🛠️ ПІДГОТОВКА ДО РОЗГОРТАННЯ V45 (DOCKER MODE)..."
 
 # 1. Перевірка доступності сервера
 if ! ssh -q -o ConnectTimeout=5 "$SERVER" exit; then

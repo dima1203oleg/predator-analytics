@@ -210,7 +210,7 @@ const DatabasesView: React.FC = () => {
             </Modal>
 
             <ViewHeader
-                title="НЕЙРОННА СІТКА СХОВИЩ (STORAGE V25)"
+                title="НЕЙРОННА СІТКА СХОВИЩ (STORAGE V45)"
                 icon={<DatabaseIcon size={20} className="icon-3d-blue" />}
                 breadcrumbs={['СИНАПСИС', 'ДАНІ', 'СХОВИЩА']}
                 className="mb-8"

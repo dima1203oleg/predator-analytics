@@ -2,7 +2,7 @@
 """
 Module: controller
 Component: automl-controller
-Predator Analytics v25.1
+Predator Analytics v45.1
 Section 3.4.3 of Spec.
 """
 import asyncio

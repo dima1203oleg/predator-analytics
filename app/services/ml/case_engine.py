@@ -78,7 +78,7 @@ class CaseEngineService:
                     status=status,
                     risk_score=risk_score,
                     entity_id=entity_id,
-                    ai_insight="Виявлено автоматичними алгоритмами Predator v25",
+                    ai_insight="Виявлено автоматичними алгоритмами Predator v45 | Neural Analytics",
                     evidence=sources # Зберігаємо джерела як докази
                 )
                 sess.add(new_case)

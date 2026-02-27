@@ -526,7 +526,7 @@ docker compose up -d --build
 
 - **Main Spec:** `docs/TECHNICAL_SPECIFICATION_COMPLETE.md`
 - **System Audit:** `docs/SYSTEM_AUDIT_REPORT.md`
-- **Orchestrator Docs:** `docs/ORCHESTRATOR_v23.md`
+- **Orchestrator Docs:** `docs/ORCHESTRATOR_v45.md`
 - **Quick Start:** `docs/QUICK_START.md`
 
 ---

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Predator V25 - Remote Build & Deploy (FULL STACK)
+# Predator v45 | Neural Analytics- Remote Build & Deploy (FULL STACK)
 # Цей скрипт оновлює Frontend (UI) та Backend (API Gateway)
 
 SERVER="predator-server"
@@ -14,7 +14,7 @@ REMOTE_API="$REMOTE_BASE/services/api-gateway"
 
 DOCKER_COMPOSE="/Users/dima-mac/Documents/Predator_21/docker-compose.prod.yml"
 
-echo "🚀 ЗАПУСК ПОВНОГО ДЕПЛОЮ (V27)..."
+echo "🚀 ЗАПУСК ПОВНОГО ДЕПЛОЮ (V45)..."
 
 # 1. Connectivity Check
 if ! ssh -q -o ConnectTimeout=5 "$SERVER" exit; then

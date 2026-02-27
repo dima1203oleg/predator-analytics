@@ -22,9 +22,9 @@ const apiClient = axios.create({
     }
 });
 
-// V25 Canonical Client (Internal)
-// V25 Canonical Client (Internal) - REPOINTED TO V1 for Backward Compatibility
-export const v25Client = axios.create({
+// V45 Canonical Client (Internal)
+// V45 Canonical Client (Internal) - REPOINTED TO V1 for Backward Compatibility
+export const v45Client = axios.create({
     baseURL: '/api/v1',
     headers: {
         'Content-Type': 'application/json',
@@ -120,23 +120,23 @@ const resilienceInterceptor = (error: any) => {
 apiClient.interceptors.request.use(authInterceptor as any);
 apiClient.interceptors.response.use((r) => r, resilienceInterceptor);
 
-v25Client.interceptors.request.use(authInterceptor as any);
-v25Client.interceptors.response.use((r) => r, resilienceInterceptor);
+v45Client.interceptors.request.use(authInterceptor as any);
+v45Client.interceptors.response.use((r) => r, resilienceInterceptor);
 
 // Truth-only mode: no simulated delays, no mock fallbacks.
 
 const optimizerApi = {
     getStatus: async () => {
-        return (await v25Client.get('/optimizer/status')).data;
+        return (await v45Client.get('/optimizer/status')).data;
     },
     trigger: async (reason: string = 'manual') => {
-        return (await v25Client.post('/optimizer/trigger', { reason })).data;
+        return (await v45Client.post('/optimizer/trigger', { reason })).data;
     },
     getMetrics: async () => {
-        return (await v25Client.get('/optimizer/metrics')).data;
+        return (await v45Client.get('/optimizer/metrics')).data;
     },
     getHistory: async () => {
-        return (await v25Client.get('/optimizer/history')).data?.history || [];
+        return (await v45Client.get('/optimizer/history')).data?.history || [];
     }
 };
 
@@ -146,46 +146,46 @@ export const api = {
         return (await apiClient.post('/system/config/save', config)).data;
     },
     getLiveAlerts: async () => {
-        return (await v25Client.get('/monitoring/alerts')).data;
+        return (await v45Client.get('/monitoring/alerts')).data;
     },
     lockdown: async () => {
-        return (await v25Client.post('/system/lockdown')).data;
+        return (await v45Client.post('/system/lockdown')).data;
     },
     syncETL: async () => {
-        return (await v25Client.post('/etl/sync')).data;
+        return (await v45Client.post('/etl/sync')).data;
     },
     getETLJobs: async (limit: number = 20) => {
-        return (await v25Client.get(`/etl/jobs?limit=${limit}`)).data;
+        return (await v45Client.get(`/etl/jobs?limit=${limit}`)).data;
     },
     getETLJob: async (id: string) => {
-        return (await v25Client.get(`/etl/jobs/${id}`)).data;
+        return (await v45Client.get(`/etl/jobs/${id}`)).data;
     },
     getETLStatus: async () => {
-        return (await v25Client.get('/etl/status')).data;
+        return (await v45Client.get('/etl/status')).data;
     },
     runOptimizer: async () => {
-        return (await v25Client.post('/optimizer/run')).data;
+        return (await v45Client.post('/optimizer/run')).data;
     },
     restartServices: async () => {
-        return (await v25Client.post('/system/restart')).data;
+        return (await v45Client.post('/system/restart')).data;
     },
     generateDataset: async (config: any) => {
-        return (await v25Client.post('/dataset/generate', config)).data;
+        return (await v45Client.post('/dataset/generate', config)).data;
     },
     getTrainingHistory: async () => {
-        return (await v25Client.get('/ml/training/history')).data;
+        return (await v45Client.get('/ml/training/history')).data;
     },
     getMLJobs: async () => {
-        return (await v25Client.get('/ml/jobs')).data;
+        return (await v45Client.get('/ml/jobs')).data;
     },
     getLogs: async () => {
-        return (await v25Client.get('/system/status')).data;
+        return (await v45Client.get('/system/status')).data;
     },
     getConfig: async () => {
         return (await apiClient.get('/system/config')).data;
     },
     getStatus: async () => {
-        return (await v25Client.get('/system/status')).data;
+        return (await v45Client.get('/system/status')).data;
     },
 
     // --- DATABASES (UA-Sources) ---
@@ -247,7 +247,7 @@ export const api = {
         return (await apiClient.get(`/sources/${id}/logs`)).data;
     },
 
-    // --- INGESTION PIPELINE (v30) ---
+    // --- INGESTION PIPELINE (v45) ---
     ingestion: {
         uploadFile: async (file: File) => {
              const formData = new FormData();
@@ -404,7 +404,7 @@ export const api = {
         },
     },
 
-    // --- v30 NEW SERVICES ---
+    // --- v45 NEW SERVICES ---
     datasets: {
         list: async () => {
             return (await apiClient.get('/datasets/')).data;
@@ -468,7 +468,7 @@ export const api = {
         return (await apiClient.get('/sources/datasets/auto')).data;
     },
 
-    // --- LLM MANAGEMENT (v25 High Performance) ---
+    // --- LLM MANAGEMENT (v45 High Performance) ---
     llm: {
         getProviders: async () => {
             return (await apiClient.get('/llm/providers')).data;
@@ -490,12 +490,12 @@ export const api = {
         }
     },
 
-    // --- V25 PREMIUM FEATURES ---
+    // --- V45 PREMIUM FEATURES ---
     getMorningNewspaper: async () => {
-        return (await v25Client.get('/newspaper')).data;
+        return (await v45Client.get('/newspaper')).data;
     },
     getSystemStage: async () => {
-        return (await v25Client.get('/system/stage')).data;
+        return (await v45Client.get('/system/stage')).data;
     },
 
     // --- SECURITY ---
@@ -570,7 +570,7 @@ export const api = {
     },
     getMonitoringTargets: async () => {
         try {
-            return (await v25Client.get('/monitoring/targets')).data;
+            return (await v45Client.get('/monitoring/targets')).data;
         } catch (e) {
             try {
                 const infra = (await apiClient.get('/system/infrastructure')).data;
@@ -587,7 +587,7 @@ export const api = {
     },
     streamSystemLogs: async () => {
         try {
-            const logs = (await v25Client.get('/monitoring/logs?limit=5')).data;
+            const logs = (await v45Client.get('/monitoring/logs?limit=5')).data;
             return logs.map((log: any) => ({
                 ts: log.timestamp || new Date().toLocaleTimeString(),
                 service: log.service || 'system',
@@ -696,7 +696,7 @@ export const api = {
         }
     },
 
-    // --- KNOWLEDGE GRAPH API - See v25.graph for canonical implementation ---
+    // --- KNOWLEDGE GRAPH API - See v45.graph for canonical implementation ---
 
 
     // --- OPTIMIZER ---
@@ -765,46 +765,46 @@ export const api = {
         }
     },
 
-    // --- SUPERINTELLIGENCE v25.0 ---
+    // --- SUPERINTELLIGENCE v45.0 ---
     ai: {
         query: async (query: string, mode: string = 'auto', context?: Record<string, any>) => {
-            return (await v25Client.post('/ai/query', { query, mode, context })).data;
+            return (await v45Client.post('/ai/query', { query, mode, context })).data;
         },
         getHealth: async () => {
-            return (await v25Client.get('/ai/health')).data;
+            return (await v45Client.get('/ai/health')).data;
         },
         getAgents: async () => {
-            return (await v25Client.get('/ai/agents')).data;
+            return (await v45Client.get('/ai/agents')).data;
         },
         getMetrics: async () => {
-            return (await v25Client.get('/ai/metrics')).data;
+            return (await v45Client.get('/ai/metrics')).data;
         },
         triggerSelfImprovement: async () => {
-            return (await v25Client.post('/ai/self-improve')).data;
+            return (await v45Client.post('/ai/self-improve')).data;
         },
         healing: {
             trigger: async (component: string = 'all') => {
-                return (await v25Client.post(`/ai/healing/trigger?component=${component}`)).data;
+                return (await v45Client.post(`/ai/healing/trigger?component=${component}`)).data;
             },
             getHistory: async () => {
-                return (await v25Client.get('/ai/healing/history')).data;
+                return (await v45Client.get('/ai/healing/history')).data;
             }
         },
         // Temporal Workflow Integration
         workflow: {
             startSelfImprovement: async (reason: string = 'manual') => {
-                return (await v25Client.post(`/workflow/self-improvement?reason=${reason}`)).data;
+                return (await v45Client.post(`/workflow/self-improvement?reason=${reason}`)).data;
             },
             startSelfHealing: async (component: string = 'all', failureType: string = 'unknown', severity: string = 'medium') => {
-                return (await v25Client.post(`/workflow/self-healing?component=${component}&failure_type=${failureType}&severity=${severity}`)).data;
+                return (await v45Client.post(`/workflow/self-healing?component=${component}&failure_type=${failureType}&severity=${severity}`)).data;
             },
             getStatus: async (workflowId: string) => {
-                return (await v25Client.get(`/workflow/status/${workflowId}`)).data;
+                return (await v45Client.get(`/workflow/status/${workflowId}`)).data;
             }
         },
         // Prometheus Metrics
         getPrometheusMetrics: async () => {
-            return (await v25Client.get('/metrics')).data;
+            return (await v45Client.get('/metrics')).data;
         }
     },
 
@@ -839,7 +839,7 @@ export const api = {
             return (await apiClient.post('/e2e/reports/generate', { run_id: runId, format })).data;
         }
     },
-    // --- SOM (Sovereign Observer Module) v29-S ---
+    // --- SOM (Sovereign Observer Module) v45-S ---
     som: {
         getStatus: async () => {
             return (await apiClient.get('/som/status')).data;
@@ -938,104 +938,104 @@ export const api = {
              return (await apiClient.get('/evolution/metrics/history', { params: { period } })).data;
         }
     },
-    v25: {
+    v45: {
         getEtlStatus: async () => {
-             return (await v25Client.get('/etl/status')).data;
+             return (await v45Client.get('/etl/status')).data;
         },
         getLiveQueues: async () => {
-            return (await v25Client.get('/monitoring/queues')).data;
+            return (await v45Client.get('/monitoring/queues')).data;
         },
         getLiveHealth: async () => {
-            return (await v25Client.get('/monitoring/health')).data;
+            return (await v45Client.get('/monitoring/health')).data;
         },
         getLiveSagas: async () => {
-            return (await v25Client.get('/monitoring/sagas')).data;
+            return (await v45Client.get('/monitoring/sagas')).data;
         },
         getLiveAlerts: async () => {
-            return (await v25Client.get('/monitoring/alerts')).data;
+            return (await v45Client.get('/monitoring/alerts')).data;
         },
         getSystemStatus: async () => {
-            return (await v25Client.get('/system/status')).data;
+            return (await v45Client.get('/system/status')).data;
         },
         getSystemStage: async () => {
-            return (await v25Client.get('/system/stage')).data;
+            return (await v45Client.get('/system/stage')).data;
         },
         getStats: async () => {
-            return (await v25Client.get('/stats')).data;
+            return (await v45Client.get('/stats')).data;
         },
         runSystemDoctor: async () => {
-            return (await v25Client.get('/system/doctor')).data;
+            return (await v45Client.get('/system/doctor')).data;
         },
         applyDoctorFixes: async (fixes: string[]) => {
-            return (await v25Client.post('/system/doctor/fix', fixes)).data;
+            return (await v45Client.post('/system/doctor/fix', fixes)).data;
         },
         runSystemRestart: async () => {
-            return (await v25Client.post('/system/restart')).data;
+            return (await v45Client.post('/system/restart')).data;
         },
         runSystemRollback: async () => {
-            return (await v25Client.post('/system/rollback')).data;
+            return (await v45Client.post('/system/rollback')).data;
         },
         toggleLockdown: async () => {
-            return (await v25Client.post('/system/lockdown')).data;
+            return (await v45Client.post('/system/lockdown')).data;
         },
         getLockdownStatus: async () => {
-            return (await v25Client.get('/system/lockdown')).data;
+            return (await v45Client.get('/system/lockdown')).data;
         },
         trinity: {
             process: async (command: string) => {
-                return (await v25Client.post('/trinity/process', { command })).data;
+                return (await v45Client.post('/trinity/process', { command })).data;
             },
             getAuditLogs: async (limit: number = 20) => {
-                return (await v25Client.get(`/trinity/audit-logs?limit=${limit}`)).data;
+                return (await v45Client.get(`/trinity/audit-logs?limit=${limit}`)).data;
             },
             getLogs: async (limit: number = 20) => {
-                return (await v25Client.get(`/trinity/audit-logs?limit=${limit}`)).data;
+                return (await v45Client.get(`/trinity/audit-logs?limit=${limit}`)).data;
             },
             getLogDetail: async (id: string) => {
-                return (await v25Client.get(`/trinity/logs/${id}`)).data;
+                return (await v45Client.get(`/trinity/logs/${id}`)).data;
             }
         },
         optimizer: optimizerApi,
         ml: {
             fineTune: async (dataset: string) => {
-                return (await v25Client.post('/ml/fine-tune', { dataset })).data;
+                return (await v45Client.post('/ml/fine-tune', { dataset })).data;
             },
             getJobs: async () => {
-                return (await v25Client.get('/ml/jobs')).data;
+                return (await v45Client.get('/ml/jobs')).data;
             },
             getArbitrationScores: async () => {
-                return (await v25Client.get('/arbitration/scores')).data;
+                return (await v45Client.get('/arbitration/scores')).data;
             }
         },
         getRecommendations: async () => {
-            return (await v25Client.get('/recommendations')).data;
+            return (await v45Client.get('/recommendations')).data;
         },
         triggerSimulation: async (target: string, intensity: number = 0.5) => {
-            return (await v25Client.post('/simulation/stress-test', null, { params: { target, intensity } })).data;
+            return (await v45Client.post('/simulation/stress-test', null, { params: { target, intensity } })).data;
         },
         getSimulationStatus: async (simId: string) => {
-            return (await v25Client.get(`/simulation/status/${simId}`)).data;
+            return (await v45Client.get(`/simulation/status/${simId}`)).data;
         },
         triggerMaintenance: async (action: string) => {
-            return (await v25Client.post('/maintenance/run', { action })).data;
+            return (await v45Client.post('/maintenance/run', { action })).data;
         },
         training: {
             trigger: async () => {
-                return (await v25Client.post('/training/trigger')).data;
+                return (await v45Client.post('/training/trigger')).data;
             },
             status: async () => {
-                return (await v25Client.get('/training/status')).data;
+                return (await v45Client.get('/training/status')).data;
             }
         },
         getNotifications: async () => {
             try {
-                const notifications = (await v25Client.get('/user/notifications')).data;
+                const notifications = (await v45Client.get('/user/notifications')).data;
                 return notifications;
             } catch (e) {
                 try {
                     const [health, queues] = await Promise.all([
-                        v25Client.get('/monitoring/health').catch(() => ({ data: null })),
-                        v25Client.get('/monitoring/queues').catch(() => ({ data: null }))
+                        v45Client.get('/monitoring/health').catch(() => ({ data: null })),
+                        v45Client.get('/monitoring/queues').catch(() => ({ data: null }))
                     ]);
 
                     const notifications: any[] = [];
@@ -1069,17 +1069,17 @@ export const api = {
             }
         },
         getRealtimeMetrics: async () => {
-            return (await v25Client.get('/metrics/realtime')).data;
+            return (await v45Client.get('/metrics/realtime')).data;
         },
-        // --- Аналітичні операції PREDATOR v25 ---
+        // --- Аналітичні операції Predator v45 | Neural Analytics ---
         analyze: async (query: string, tenantId: string = 'default') => {
-            return (await v25Client.post('/analyze', { query, tenant_id: tenantId })).data;
+            return (await v45Client.post('/analyze', { query, tenant_id: tenantId })).data;
         },
         // --- ANALYTICS API ---
         analytics: {
             getForecast: async () => {
                 try {
-                    return (await v25Client.get('/analytics/forecast')).data;
+                    return (await v45Client.get('/analytics/forecast')).data;
                 } catch (e) {
                     console.warn('[Analytics] Forecast endpoint not available');
                     return { data: [] };
@@ -1087,7 +1087,7 @@ export const api = {
             },
             getMarketStructure: async () => {
                 try {
-                    return (await v25Client.get('/analytics/market-structure')).data;
+                    return (await v45Client.get('/analytics/market-structure')).data;
                 } catch (e) {
                     console.warn('[Analytics] Market structure endpoint not available');
                     return { data: [] };
@@ -1095,7 +1095,7 @@ export const api = {
             },
             getRegionalActivity: async () => {
                 try {
-                    return (await v25Client.get('/analytics/regional-activity')).data;
+                    return (await v45Client.get('/analytics/regional-activity')).data;
                 } catch (e) {
                     console.warn('[Analytics] Regional activity endpoint not available');
                     return { data: [] };
@@ -1105,7 +1105,7 @@ export const api = {
         // --- INFRASTRUCTURE API ---
         getInfrastructure: async () => {
             try {
-                return (await v25Client.get('/infrastructure')).data;
+                return (await v45Client.get('/infrastructure')).data;
             } catch (e) {
                 console.warn('[Infra] Infrastructure endpoint not available');
                 return { environments: [] };
@@ -1113,7 +1113,7 @@ export const api = {
         },
         getServicesStatus: async () => {
             try {
-                return (await v25Client.get('/infrastructure/services')).data;
+                return (await v45Client.get('/infrastructure/services')).data;
             } catch (e) {
                 console.warn('[Infra] Services status endpoint not available');
                 return { services: [] };
@@ -1121,7 +1121,7 @@ export const api = {
         },
         getAgents: async () => {
             try {
-                return (await v25Client.get('/agents')).data;
+                return (await v45Client.get('/agents')).data;
             } catch (e) {
                 console.warn('[Agents] Agents endpoint not available');
                 return { agents: [] };
@@ -1129,7 +1129,7 @@ export const api = {
         },
         getArbitrationResults: async () => {
             try {
-                return (await v25Client.get('/arbitration/results')).data;
+                return (await v45Client.get('/arbitration/results')).data;
             } catch (e) {
                 console.warn('[Arbitration] Results endpoint not available');
                 return { results: [] };
@@ -1137,22 +1137,22 @@ export const api = {
         },
         getResilienceMetrics: async () => {
             try {
-                return (await v25Client.get('/resilience/metrics')).data;
+                return (await v45Client.get('/resilience/metrics')).data;
             } catch (e) {
                 console.warn('[Resilience] Metrics endpoint not available');
                 return { resilience_index: 0.95, recovery_time_ms: 1200 };
             }
         },
         getCases: async (limit: number = 20) => {
-            return (await v25Client.get('/cases', { params: { limit } })).data;
+            return (await v45Client.get('/cases', { params: { limit } })).data;
         },
         getCaseDetail: async (caseId: string) => {
-            return (await v25Client.get(`/cases/${caseId}`)).data;
+            return (await v45Client.get(`/cases/${caseId}`)).data;
         },
         // --- DASHBOARDS ---
         saveDashboard: async (dashboard: any) => {
             try {
-                return (await v25Client.post('/dashboards', dashboard)).data;
+                return (await v45Client.post('/dashboards', dashboard)).data;
             } catch (e) {
                 console.warn('[API] Dashboard save endpoint not available, using local storage fallback');
                 // Fallback to localStorage when backend not available
@@ -1165,7 +1165,7 @@ export const api = {
         },
         getDashboards: async () => {
             try {
-                return (await v25Client.get('/dashboards')).data;
+                return (await v45Client.get('/dashboards')).data;
             } catch (e) {
                 console.warn('[API] Dashboards list endpoint not available, using local storage fallback');
                 return JSON.parse(localStorage.getItem('predator_dashboards') || '[]');
@@ -1174,36 +1174,36 @@ export const api = {
         // --- AZR ENGINE (Autonomous Evolution) ---
         azr: {
              getStatus: async () => {
-                 return (await v25Client.get('/azr/status')).data;
+                 return (await v45Client.get('/azr/status')).data;
              },
              getAudit: async (limit: number = 50) => {
-                 return (await v25Client.get(`/azr/audit?limit=${limit}`)).data;
+                 return (await v45Client.get(`/azr/audit?limit=${limit}`)).data;
              },
              getCortexMap: async () => {
-                 return (await v25Client.get('/som/cortex-map')).data;
+                 return (await v45Client.get('/som/cortex-map')).data;
              },
              freeze: async () => {
-                 return (await v25Client.post('/azr/freeze')).data;
+                 return (await v45Client.post('/azr/freeze')).data;
              },
              unfreeze: async () => {
-                 return (await v25Client.post('/azr/unfreeze')).data;
+                 return (await v45Client.post('/azr/unfreeze')).data;
              },
              getDecisions: async (limit: number = 20) => {
-                 return (await v25Client.get(`/azr/decisions?limit=${limit}`)).data;
+                 return (await v45Client.get(`/azr/decisions?limit=${limit}`)).data;
              },
              // Governance (DAO)
              governance: {
                  propose: async (title: string, description: string, category: string = "TWEAK") => {
-                     return (await v25Client.post('/azr/governance/propose', { title, description, category })).data;
+                     return (await v45Client.post('/azr/governance/propose', { title, description, category })).data;
                  },
                  getConstitution: async () => {
-                     return (await v25Client.get('/azr/constitution')).data;
+                     return (await v45Client.get('/azr/constitution')).data;
                  }
              }
         },
     },
 
-    // --- CUSTOMS INTELLIGENCE (v27) ---
+    // --- CUSTOMS INTELLIGENCE (v45) ---
     customs: {
         getRegistry: async (query: string = "", limit: number = 50) => {
             return (await apiClient.get('/customs/registry', { params: { query, limit } })).data;
@@ -1235,7 +1235,7 @@ export const api = {
         }
     },
 
-    // --- KNOWLEDGE GRAPH (v25 Canonical) ---
+    // --- KNOWLEDGE GRAPH (v45 Canonical) ---
     graph: {
         summary: async () => {
             return (await apiClient.get('/graph/summary')).data;
@@ -1247,10 +1247,10 @@ export const api = {
             return (await apiClient.post('/graph/extract', null, { params: { text } })).data;
         },
         build: async (docId: string) => {
-            return (await v25Client.post(`/graph/build/${docId}`)).data;
+            return (await v45Client.post(`/graph/build/${docId}`)).data;
         },
         execute: async (query: string) => {
-            return (await v25Client.post('/graph/query', { query })).data;
+            return (await v45Client.post('/graph/query', { query })).data;
         }
     },
 
@@ -1287,7 +1287,7 @@ export const api = {
         // Evolution Status
         getStatus: async () => {
             try {
-                return (await v25Client.get('/autonomy/status')).data;
+                return (await v45Client.get('/autonomy/status')).data;
             } catch (e) {
                 return {
                     phase: 'phase_2_recommendations',
@@ -1306,7 +1306,7 @@ export const api = {
         // System Metrics
         getMetrics: async () => {
             try {
-                return (await v25Client.get('/autonomy/metrics')).data;
+                return (await v45Client.get('/autonomy/metrics')).data;
             } catch (e) {
                 return {
                     latency_p99_ms: 285,
@@ -1322,7 +1322,7 @@ export const api = {
         // Performance Gaps
         getGaps: async () => {
             try {
-                return (await v25Client.get('/autonomy/gaps')).data;
+                return (await v45Client.get('/autonomy/gaps')).data;
             } catch (e) {
                 return [];
             }
@@ -1331,7 +1331,7 @@ export const api = {
         // Hypotheses
         getHypotheses: async (status?: string, type?: string) => {
             try {
-                return (await v25Client.get('/autonomy/hypotheses', {
+                return (await v45Client.get('/autonomy/hypotheses', {
                     params: { status, type }
                 })).data;
             } catch (e) {
@@ -1340,22 +1340,22 @@ export const api = {
         },
         getHypothesis: async (id: string) => {
             try {
-                return (await v25Client.get(`/autonomy/hypotheses/${id}`)).data;
+                return (await v45Client.get(`/autonomy/hypotheses/${id}`)).data;
             } catch (e) {
                 return null;
             }
         },
         approveHypothesis: async (id: string) => {
-            return (await v25Client.post(`/autonomy/hypotheses/${id}/approve`)).data;
+            return (await v45Client.post(`/autonomy/hypotheses/${id}/approve`)).data;
         },
         rejectHypothesis: async (id: string, reason: string) => {
-            return (await v25Client.post(`/autonomy/hypotheses/${id}/reject`, { reason })).data;
+            return (await v45Client.post(`/autonomy/hypotheses/${id}/reject`, { reason })).data;
         },
 
         // Safety Council
         getSafetyReview: async (hypothesisId: string) => {
             try {
-                return (await v25Client.get(`/autonomy/safety-council/${hypothesisId}`)).data;
+                return (await v45Client.get(`/autonomy/safety-council/${hypothesisId}`)).data;
             } catch (e) {
                 return null;
             }
@@ -1364,7 +1364,7 @@ export const api = {
         // Constitution
         getConstitution: async () => {
             try {
-                return (await v25Client.get('/autonomy/constitution')).data;
+                return (await v45Client.get('/autonomy/constitution')).data;
             } catch (e) {
                 return {
                     version: '30.0',
@@ -1377,7 +1377,7 @@ export const api = {
         // Evolution History
         getHistory: async (generation?: number, limit: number = 20) => {
             try {
-                return (await v25Client.get('/autonomy/history', {
+                return (await v45Client.get('/autonomy/history', {
                     params: { generation, limit }
                 })).data;
             } catch (e) {
@@ -1388,7 +1388,7 @@ export const api = {
         // Progress
         getProgress: async () => {
             try {
-                return (await v25Client.get('/autonomy/progress')).data;
+                return (await v45Client.get('/autonomy/progress')).data;
             } catch (e) {
                 return {
                     total_generations: 42,
@@ -1400,7 +1400,7 @@ export const api = {
 
         // Trigger Evaluation
         triggerEvaluation: async (force: boolean = false, focusAreas?: string[]) => {
-            return (await v25Client.post('/autonomy/trigger-evaluation', {
+            return (await v45Client.post('/autonomy/trigger-evaluation', {
                 force,
                 focus_areas: focusAreas
             })).data;
@@ -1408,19 +1408,19 @@ export const api = {
 
         // Set Phase
         setPhase: async (phase: string) => {
-            return (await v25Client.post('/autonomy/phase', { phase })).data;
+            return (await v45Client.post('/autonomy/phase', { phase })).data;
         },
 
         // Retraining
         getRetrainingStatus: async () => {
             try {
-                return (await v25Client.get('/autonomy/retraining/status')).data;
+                return (await v45Client.get('/autonomy/retraining/status')).data;
             } catch (e) {
                 return { drift_score: 0.12, retraining_needed: false };
             }
         },
         triggerRetraining: async (modelId?: string) => {
-            return (await v25Client.post('/autonomy/retraining/trigger', { model_id: modelId })).data;
+            return (await v45Client.post('/autonomy/retraining/trigger', { model_id: modelId })).data;
         }
     },
     pipelines: {

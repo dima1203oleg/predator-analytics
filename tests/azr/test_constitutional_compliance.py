@@ -3,7 +3,7 @@ from __future__ import annotations
 
 """═══════════════════════════════════════════════════════════════
 AZR Constitutional Test Suite (AZR-CTS)
-Predator Analytics v26
+Predator Analytics v45
 ═══════════════════════════════════════════════════════════════.
 
 MANDATORY EXECUTION POINTS:
@@ -508,8 +508,8 @@ class TestConstitutionIntegrity:
     """Tests for constitution integrity and enforcement."""
 
     def test_constitution_version(self):
-        """Constitution version must be v26."""
-        assert CONSTITUTION_VERSION == "v26"
+        """Constitution version must be v45."""
+        assert CONSTITUTION_VERSION == "v45"
 
     def test_constitution_active(self):
         """Constitution must be active."""

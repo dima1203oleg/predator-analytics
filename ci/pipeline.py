@@ -1,6 +1,6 @@
 
 """
-Portable CI Pipeline — Predator Analytics v25.1
+Portable CI Pipeline — Predator Analytics v45.1
 Identity: Dagger Pipeline
 """
 import sys

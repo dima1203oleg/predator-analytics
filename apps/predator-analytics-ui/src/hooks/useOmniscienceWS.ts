@@ -19,7 +19,7 @@ export interface OmniscienceData {
     training: any;
     audit_logs: any[];
     sagas: SagaTransaction[];
-    v25Realtime?: any;
+    v45Realtime?: any;
 }
 
 export const useOmniscienceWS = () => {
@@ -32,7 +32,7 @@ export const useOmniscienceWS = () => {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         // Use the same host as the API, handled by nginx if in production
         const host = window.location.hostname === 'localhost' ? 'localhost:8090' : window.location.host;
-        const url = `${protocol}//${host}/api/v25/ws/omniscience`;
+        const url = `${protocol}//${host}/api/v45/ws/omniscience`;
 
         console.log(`📡 Connecting to Omniscience WS: ${url}`);
         ws.current = new WebSocket(url);

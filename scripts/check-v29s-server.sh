@@ -1,12 +1,12 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════════════
-# PREDATOR ANALYTICS v29-S - Перевірка вимог на NVIDIA сервері
+# PREDATOR ANALYTICS v45-S - Перевірка вимог на NVIDIA сервері
 # Виконувати на сервері через SSH
 # ═══════════════════════════════════════════════════════════════
 
 set -e
 
-echo "🔍 [v29-S] Перевірка вимог на NVIDIA сервері..."
+echo "🔍 [v45-S] Перевірка вимог на NVIDIA сервері..."
 echo "═══════════════════════════════════════════════════════════════"
 
 # Кольори
@@ -43,7 +43,7 @@ echo -e "\n${BLUE}--- Docker сервіси ---${NC}"
 docker --version
 docker compose version
 
-echo -e "\n${BLUE}--- v29-S Контейнери ---${NC}"
+echo -e "\n${BLUE}--- v45-S Контейнери ---${NC}"
 REQUIRED_CONTAINERS=("predator_postgres" "predator_redis" "predator_backend" "predator_frontend" "predator_som")
 for container in "${REQUIRED_CONTAINERS[@]}"; do
     if docker ps --format '{{.Names}}' | grep -q "$container"; then
@@ -54,7 +54,7 @@ for container in "${REQUIRED_CONTAINERS[@]}"; do
     fi
 done
 
-echo -e "\n${BLUE}--- v29-S API Перевірка ---${NC}"
+echo -e "\n${BLUE}--- v45-S API Перевірка ---${NC}"
 # SOM API
 if curl -s http://localhost:8095/api/v1/som/health | grep -q "healthy"; then
     echo -e "${GREEN}✅ SOM API: здоровий${NC}"
@@ -69,7 +69,7 @@ else
     echo -e "${YELLOW}⚠️ Backend API: перевірте статус${NC}"
 fi
 
-echo -e "\n${BLUE}--- Конституційне Ядро v29-S ---${NC}"
+echo -e "\n${BLUE}--- Конституційне Ядро v45-S ---${NC}"
 AXIOMS_RESPONSE=$(curl -s http://localhost:8095/api/v1/som/axioms 2>/dev/null)
 if echo "$AXIOMS_RESPONSE" | grep -q '"is_valid": true'; then
     AXIOM_COUNT=$(echo "$AXIOMS_RESPONSE" | grep -o '"total": [0-9]*' | grep -o '[0-9]*')
@@ -102,5 +102,5 @@ df -h / | tail -1
 
 echo ""
 echo "═══════════════════════════════════════════════════════════════"
-echo -e "${GREEN}✅ Перевірка v29-S завершена${NC}"
+echo -e "${GREEN}✅ Перевірка v45-S завершена${NC}"
 echo "═══════════════════════════════════════════════════════════════"

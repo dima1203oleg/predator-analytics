@@ -1,6 +1,6 @@
 #!/bin/bash
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 🚀 CLI Tools Installation Script for Predator Analytics v25.0
+# 🚀 CLI Tools Installation Script for Predator Analytics v45.0
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Встановлює та налаштовує:
 # 1. Gemini CLI (планування/стратегія)
@@ -22,7 +22,7 @@ NC='\033[0m' # No Color
 export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}🚀 Встановлення CLI-інструментів для v25.0 (Python 3.12 ONLY)${NC}"
+echo -e "${BLUE}🚀 Встановлення CLI-інструментів для v45.0 (Python 3.12 ONLY)${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 # Перевірка Python 3.12

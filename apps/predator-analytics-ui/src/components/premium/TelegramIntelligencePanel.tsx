@@ -33,7 +33,7 @@ export const TelegramIntelligencePanel: React.FC = () => {
 
   const loadChannels = async () => {
     try {
-      // In v30, we use the ingestion connectors API
+      // In v45, we use the ingestion connectors API
       const data = await api.getConnectors();
       if (Array.isArray(data)) {
         const tgChannels = data
@@ -110,7 +110,7 @@ export const TelegramIntelligencePanel: React.FC = () => {
           <div>
             <h3 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-2">
               Telegram Parsing Intelligence
-              <span className="px-2 py-0.5 rounded-md bg-blue-500/20 text-[8px] text-blue-400 font-bold border border-blue-500/20 animate-pulse">V30_PRO</span>
+              <span className="px-2 py-0.5 rounded-md bg-blue-500/20 text-[8px] text-blue-400 font-bold border border-blue-500/20 animate-pulse">V45_PRO</span>
             </h3>
             <p className="text-[10px] text-slate-500 font-mono uppercase tracking-[0.3em]">Neural Channel Ingestion & Signal Extraction</p>
           </div>

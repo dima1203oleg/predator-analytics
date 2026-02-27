@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://predator/constitution/v26/etl-fact-schema.json",
+  "$id": "https://predator/constitution/v45/etl-fact-schema.json",
   "title": "ETL Fact Schema",
   "description": "Канонічна схема фактів ETL. ЕTL не публікує стани, лише ці факти.",
   "type": "object",

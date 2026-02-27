@@ -38,7 +38,7 @@ class ETLArbiterAgent:
 
     async def run(self):
         """Main loop of the arbiter agent."""
-        self.logger.info("⚖️ ETL Arbiter Agent (v26.2) Started.")
+        self.logger.info("⚖️ ETL Arbiter Agent (v45.2) Started.")
         while True:
             try:
                 # 1. Collect facts
@@ -54,7 +54,7 @@ class ETLArbiterAgent:
                     active_jobs = result.scalars().all()
 
                     for job in active_jobs:
-                        # 0. Stall Detection (v26 Requirement)
+                        # 0. Stall Detection (v45 Requirement)
                         last_fact = job.progress.get("last_fact_at")
                         if last_fact:
                             last_dt = datetime.fromisoformat(last_fact)
@@ -66,7 +66,7 @@ class ETLArbiterAgent:
                         # 1. Derive state from facts using the Sovereign Engine
                         # We simulate passing facts as a list (in real world we'd query fact table)
                         # For now, we use the Job's progress as the mock of latest facts summary
-                        # In a full v26 world, we would pass the actual fact list.
+                        # In a full v45 world, we would pass the actual fact list.
                         # Since derivation engine expects facts, we'll wrap progress into a summary fact
                         facts_mock = [{"fact_type": "heartbeat", "timestamp": last_fact or datetime.utcnow().isoformat(), "payload": job.progress}]
                         derivation = self.engine.derive_state(facts_mock, ETLState(job.state))
@@ -81,7 +81,7 @@ class ETLArbiterAgent:
                         violations = self.check_invariants(job, derived_state)
 
                         if violations:
-                            # 5. Enforce with Specific Actions (v26 Requirement)
+                            # 5. Enforce with Specific Actions (v45 Requirement)
                             # Action: revert_to_INDEXING for INV-001 (fake completion)
                             if any("INV-001" in v for v in violations):
                                 self.logger.info(f"⚖️ Fake Completion detected for {job.id}. Reverting to INDEXING.")
@@ -180,7 +180,7 @@ class ETLArbiterAgent:
                     ) VALUES (
                         :jid, :p_state, :d_state,
                         :ev_hash, :ev_sum, :conf,
-                        'v26.2', 'StateDerivationEngine', :vios,
+                        'v45.2', 'StateDerivationEngine', :vios,
                         :prev_hash, :dec_hash, 'ETLArbiterAgent'
                     )
                 """),

@@ -37,7 +37,7 @@ def print_header():
     print(f"{Colors.BOLD}{Colors.CYAN}")
     print("╔════════════════════════════════════════════════════════════════════╗")
     print("║     AUTONOMOUS INTELLIGENCE v2.0 - REAL-TIME DASHBOARD            ║")
-    print("║     Predator Analytics v26                                         ║")
+    print("║     Predator Analytics v45                                         ║")
     print("╚════════════════════════════════════════════════════════════════════╝")
     print(f"{Colors.ENDC}")
 
@@ -140,7 +140,7 @@ def print_subsystems(systems: dict[str, Any]):
 def print_predictions(api_url: str):
     """Вивести поточні передбачення."""
     try:
-        response = requests.get(f"{api_url}/api/v1/v25/autonomous/predictions", timeout=2)
+        response = requests.get(f"{api_url}/api/v1/v45/autonomous/predictions", timeout=2)
         if response.status_code == 200:
             data = response.json()
             predictions = data.get('predictions', [])
@@ -173,7 +173,7 @@ def print_predictions(api_url: str):
 def print_recent_decisions(api_url: str):
     """Вивести останні рішення."""
     try:
-        response = requests.get(f"{api_url}/api/v1/v25/autonomous/decisions", timeout=2)
+        response = requests.get(f"{api_url}/api/v1/v45/autonomous/decisions", timeout=2)
         if response.status_code == 200:
             data = response.json()
             decisions = data.get('decisions', [])

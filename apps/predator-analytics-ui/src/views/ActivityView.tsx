@@ -233,8 +233,8 @@ const ActivityView: React.FC = () => {
       setLoading(true);
       try {
         const [notifications, audit] = await Promise.all([
-          api.v25.getNotifications(),
-          api.v25.azr.getAudit(20)
+          api.v45.getNotifications(),
+          api.v45.azr.getAudit(20)
         ]);
 
         const realEvents: ActivityEvent[] = [];

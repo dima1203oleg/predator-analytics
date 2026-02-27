@@ -3,7 +3,7 @@ from __future__ import annotations
 
 """═══════════════════════════════════════════════════════════════
 AZR Risk Assessment Service
-Predator Analytics v26
+Predator Analytics v45
 ═══════════════════════════════════════════════════════════════.
 
 Implements formal risk assessment model from Constitution.

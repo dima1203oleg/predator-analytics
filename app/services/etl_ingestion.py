@@ -59,7 +59,7 @@ class ETLIngestionService:
                 job.progress = updated_progress
                 job.progress["percent"] = ETLStateMachine.get_progress(state, job.progress)
 
-                # Emit facts via Message Broker (v30.2 optimization)
+                # Emit facts via Message Broker (v45.2 optimization)
                 for k, v in new_progress.items():
                     await broker.publish(
                         f"etl.fact.{k}",
@@ -121,7 +121,7 @@ class ETLIngestionService:
 
             indexer_config = {
                 "postgresql_enabled": True,
-                "postgresql_table": f"staging_{dataset_type}_v27",
+                "postgresql_table": f"staging_{dataset_type}_v45",
                 "minio_enabled": False,
                 "quadrant_enabled": True,
                 "opensearch_enabled": True
@@ -307,7 +307,7 @@ class ETLIngestionService:
         wb.close()
 
     async def verify_indexing_complete(self, job_id: uuid.UUID, expected_count: int) -> bool:
-        """Real verification that data is indexed (v26 Requirement)."""
+        """Real verification that data is indexed (v45 Requirement)."""
         # In this implementation, we check the progress reported by our internal indexer
         # or query OpenSearch directly if we had the client here.
         # Since this is a service, let's assume we use the indexer service.
@@ -316,6 +316,6 @@ class ETLIngestionService:
 
         # Real logic: counts documents with this job_id in OS
         # For this turn, we'll return True if expected > 0 (mocking the OS call)
-        # But in a real v26 world, this MUST be a network call to OS.
+        # But in a real v45 world, this MUST be a network call to OS.
         logger.info("etl_indexing_verification", job_id=str(job_id), expected=expected_count)
         return expected_count > 0

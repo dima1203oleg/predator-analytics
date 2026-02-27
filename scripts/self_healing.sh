@@ -81,10 +81,10 @@ check_docker() {
 
 restart_backend() {
     log_info "Restarting backend..."
-    pkill -f "run_v25_bot.py" 2>/dev/null || true
+    pkill -f "run_v45_bot.py" 2>/dev/null || true
     sleep 2
     cd "$BACKEND_DIR"
-    nohup python run_v25_bot.py > /tmp/backend.log 2>&1 &
+    nohup python run_v45_bot.py > /tmp/backend.log 2>&1 &
     sleep 5
     if check_backend; then
         log_ok "Backend restarted successfully"

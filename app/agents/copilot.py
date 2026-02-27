@@ -19,7 +19,7 @@ class ToolResult(BaseModel):
     is_error: bool = False
 
 class CopilotAgent:
-    """Predator V25 Copilot Agent (Gemini-powered).
+    """Predator v45 | Neural AnalyticsCopilot Agent (Gemini-powered).
 
     Capabilities:
     1. Read/Write files (within scoped workspace).
@@ -35,7 +35,7 @@ class CopilotAgent:
         self.model = genai.GenerativeModel('gemini-1.5-pro') # Using latest capable model
 
         self.system_prompt = f"""
-        You are the Predator V25 System Copilot.
+        You are the Predator v45 | Neural AnalyticsSystem Copilot.
         Your role is to assist in maintaining, debugging, and improving the codebase.
         You have access to the file system at {self.workspace_root}.
 
@@ -51,7 +51,7 @@ class CopilotAgent:
 
         prompt = f"{self.system_prompt}\n\nUser: {user_message}"
 
-        # NOTE: This is a simplified generation. In v25 full spec,
+        # NOTE: This is a simplified generation. In v45 full spec,
         # this would involve function calling definitions for tools.
         response = await self.model.generate_content_async(prompt)
         return response.text

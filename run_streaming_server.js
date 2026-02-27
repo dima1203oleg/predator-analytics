@@ -141,7 +141,7 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    if (req.url.includes('api/v25/etl/process-local') || req.url.includes('trigger')) {
+    if (req.url.includes('api/v45/etl/process-local') || req.url.includes('trigger')) {
         if (!state.etl_running) {
             startSimulation();
             res.writeHead(200, { 'Content-Type': 'application/json' });

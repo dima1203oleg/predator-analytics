@@ -449,7 +449,7 @@ npm run dev
 ---
 
 **Створено з ❤️ by Google AI Antigravity**
-**Для Predator Analytics v25**
+**Для Predator Analytics v45**
 **2026-01-06 15:40**
 
 ---

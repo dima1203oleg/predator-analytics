@@ -2,7 +2,7 @@
 """
 Module: cache
 Component: mcp-router
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 import json
 import hashlib

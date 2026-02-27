@@ -104,7 +104,7 @@ class CustomsService:
             "processing_time": "0.8s",
             "models_used": [
                 {"name": "Graph_Nexus_v2", "calls": 1, "avg_latency": "240ms"},
-                {"name": "Predator_LLM_v28", "calls": 2, "avg_latency": "1.2s"}
+                {"name": "Predator_LLM_v45", "calls": 2, "avg_latency": "1.2s"}
             ],
             "recommendations": [
                 f"Verify {telegram_mentions} social intelligence signals found in Customs_of_Ukraine.",

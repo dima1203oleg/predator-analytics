@@ -1,4 +1,4 @@
-# 🔍 Звіт про Стан Сервера Predator v25
+# 🔍 Звіт про Стан Сервера Predator v45 | Neural Analytics
 ## Перевірка Інфраструктури - 2026-01-09 05:29
 
 **Сервер**: 194.177.1.240:6666
@@ -49,7 +49,7 @@
 - **Viewport**: Налаштовано для mobile
 
 ### Backend API
-- **URL**: http://localhost:8090/api/v25/health
+- **URL**: http://localhost:8090/api/v45/health
 - **Статус**: ⚠️ Endpoint не знайдено
 - **Відповідь**: `{"detail":"Not Found"}`
 - **Примітка**: Backend працює, але health endpoint може бути на іншому шляху

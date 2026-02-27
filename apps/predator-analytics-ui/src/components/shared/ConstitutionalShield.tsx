@@ -9,7 +9,7 @@ export const ConstitutionalShield: React.FC = () => {
     useEffect(() => {
         const fetchStatus = async () => {
             try {
-                const response = await fetch('/api/v25/azr/status');
+                const response = await fetch('/api/v45/azr/status');
                 const data = await response.json();
                 setStatus(data);
             } catch (error) {
@@ -67,7 +67,7 @@ export const ConstitutionalShield: React.FC = () => {
                             </div>
 
                             <p className="text-slate-400 mb-3 leading-relaxed">
-                                Система під захистом конституційних аксіом v28-A. Автономність: <span className="text-blue-400 font-bold">{status.rights_level}</span>
+                                Система під захистом конституційних аксіом v45-A. Автономність: <span className="text-blue-400 font-bold">{status.rights_level}</span>
                             </p>
 
                             <div className="space-y-1.5 border-t border-white/5 pt-2">

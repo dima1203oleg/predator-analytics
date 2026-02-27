@@ -325,7 +325,7 @@ const SystemVerificationSuite: React.FC = () => {
             </div>
             <div>
               <h1 className="text-3xl font-black text-white tracking-tight">System Verification Suite</h1>
-              <p className="text-rose-400 font-mono text-sm">PREDATOR ANALYTICS V30 // CONTROL CASE // MARCH DATA</p>
+              <p className="text-rose-400 font-mono text-sm">PREDATOR ANALYTICS V45 // CONTROL CASE // MARCH DATA</p>
             </div>
           </div>
           <div className="flex gap-8 text-sm text-slate-500 font-mono mt-4">

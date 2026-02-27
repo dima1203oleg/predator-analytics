@@ -3,13 +3,13 @@ import { Box, Play, Square, RotateCcw } from 'lucide-react';
 
 export const Services: React.FC = () => {
   const services = [
-    { name: 'som-hypervisor', port: 8095, version: 'v30.0.0', status: 'running' },
-    { name: 'truth-ledger', port: 8092, version: 'v30.0.0', status: 'running' },
-    { name: 'arbiter-core', port: 8091, version: 'v30.0.0', status: 'running' },
-    { name: 'rce-executor', port: 8093, version: 'v30.0.0', status: 'running' },
-    { name: 'vpc-verifier', port: 8094, version: 'v30.0.0', status: 'running' },
-    { name: 'predator-api', port: 8000, version: 'v30.0.0', status: 'running' },
-    { name: 'predator-nlp', port: 8002, version: 'v30.0.0', status: 'running' },
+    { name: 'som-hypervisor', port: 8095, version: 'v45.0.0', status: 'running' },
+    { name: 'truth-ledger', port: 8092, version: 'v45.0.0', status: 'running' },
+    { name: 'arbiter-core', port: 8091, version: 'v45.0.0', status: 'running' },
+    { name: 'rce-executor', port: 8093, version: 'v45.0.0', status: 'running' },
+    { name: 'vpc-verifier', port: 8094, version: 'v45.0.0', status: 'running' },
+    { name: 'predator-api', port: 8000, version: 'v45.0.0', status: 'running' },
+    { name: 'predator-nlp', port: 8002, version: 'v45.0.0', status: 'running' },
   ];
 
   return (

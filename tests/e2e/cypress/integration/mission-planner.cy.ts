@@ -16,7 +16,7 @@ describe('Mission Planner End-to-End', () => {
 
   before(() => {
     // Verify Mission Planner API is available
-    cy.request(`${API_URL}/api/v25/missions/agents/stats`).then((response) => {
+    cy.request(`${API_URL}/api/v45/missions/agents/stats`).then((response) => {
       expect(response.status).to.eq(200)
       expect(response.body).to.have.property('total_agents')
       expect(response.body.total_agents).to.be.greaterThan(0)
@@ -30,7 +30,7 @@ describe('Mission Planner End-to-End', () => {
 
     cy.request({
       method: 'POST',
-      url: `${API_URL}/api/v25/missions/test/threat-analysis`,
+      url: `${API_URL}/api/v45/missions/test/threat-analysis`,
       timeout: 30000
     }).then((response) => {
       expect(response.status).to.eq(200)
@@ -48,7 +48,7 @@ describe('Mission Planner End-to-End', () => {
   it('Test 2: Verify mission details', () => {
     cy.log('📊 Fetching mission details...')
 
-    cy.request(`${API_URL}/api/v25/missions/${missionId}`).then((response) => {
+    cy.request(`${API_URL}/api/v45/missions/${missionId}`).then((response) => {
       expect(response.status).to.eq(200)
 
       const mission = response.body
@@ -77,7 +77,7 @@ describe('Mission Planner End-to-End', () => {
     let lastProgress = 0
 
     cy.waitUntil(() =>
-      cy.request(`${API_URL}/api/v25/missions/${missionId}`)
+      cy.request(`${API_URL}/api/v45/missions/${missionId}`)
         .then((response) => {
           const mission = response.body
           const progress = mission.progress || 0
@@ -103,7 +103,7 @@ describe('Mission Planner End-to-End', () => {
   it('Test 4: Verify successful completion', () => {
     cy.log('✅ Verifying mission results...')
 
-    cy.request(`${API_URL}/api/v25/missions/${missionId}`).then((response) => {
+    cy.request(`${API_URL}/api/v45/missions/${missionId}`).then((response) => {
       const mission = response.body
 
       // Verify mission completed successfully
@@ -127,7 +127,7 @@ describe('Mission Planner End-to-End', () => {
   it('Test 5: Check agent statistics', () => {
     cy.log('📊 Checking agent stats after mission...')
 
-    cy.request(`${API_URL}/api/v25/missions/agents/stats`).then((response) => {
+    cy.request(`${API_URL}/api/v45/missions/agents/stats`).then((response) => {
       expect(response.status).to.eq(200)
 
       const stats = response.body
@@ -172,7 +172,7 @@ describe('Mission Planner - Different Mission Types', () => {
 
       cy.request({
         method: 'POST',
-        url: `${API_URL}/api/v25/missions${missionType.endpoint}`,
+        url: `${API_URL}/api/v45/missions${missionType.endpoint}`,
         timeout: 30000
       }).then((response) => {
         expect(response.status).to.eq(200)
@@ -205,7 +205,7 @@ describe('Mission Planner - Custom Missions', () => {
 
     cy.request({
       method: 'POST',
-      url: `${API_URL}/api/v25/missions/create`,
+      url: `${API_URL}/api/v45/missions/create`,
       body: {
         title: 'Cypress E2E Test Mission',
         description: 'Automated test mission for validating multi-agent coordination',
@@ -243,13 +243,13 @@ describe('Mission Planner - Performance', () => {
 
     cy.request({
       method: 'POST',
-      url: `${API_URL}/api/v25/missions/test/system-health`,
+      url: `${API_URL}/api/v45/missions/test/system-health`,
     }).then((response) => {
       const missionId = response.body.mission_id
 
       // Wait for completion
       cy.waitUntil(() =>
-        cy.request(`${API_URL}/api/v25/missions/${missionId}`)
+        cy.request(`${API_URL}/api/v45/missions/${missionId}`)
           .then((res) => res.body.status === 'completed'),
         { timeout: SLA_THRESHOLD_MS, interval: 1000 }
       ).then(() => {

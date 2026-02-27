@@ -1,4 +1,4 @@
-# 🛠️ Локальна Розробка — Predator Analytics v25.0
+# 🛠️ Локальна Розробка — Predator Analytics v45.0
 
 > Повний посібник з налаштування локального середовища розробки
 
@@ -169,7 +169,7 @@ volumes:
 
 ```json
 {
-  "name": "Predator Analytics v25 Dev",
+  "name": "Predator Analytics v45 Dev",
   "features": {
     "node": "20",
     "docker-outside-of-docker": {},
@@ -524,7 +524,7 @@ alias dclean='docker system prune -af && docker volume prune -f'
 1. **Запустити систему:** `make up`
 2. **Відкрити UI:** http://localhost
 3. **Перевірити API:** http://localhost:8090/docs
-4. **Прочитати документацію:** [SPEC_v25.md](./SPEC_v25.md)
+4. **Прочитати документацію:** [SPEC_v45.md](./SPEC_v45.md)
 5. **Запустити хаос-тести:** `make chaos`
 
 ---

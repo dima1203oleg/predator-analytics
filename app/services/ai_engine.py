@@ -81,7 +81,7 @@ class AIEngine:
         except Exception as e:
             logger.exception(f"Помилка зовнішнього пошуку: {e}")
 
-        # 2. Гібридний пошук по внутрішніх даних (V25 Triple-DB)
+        # 2. Гібридний пошук по внутрішніх даних (V45 Triple-DB)
         try:
             internal_data = await hybrid_search_with_rrf(query, tenant_id=tenant_id)
             if internal_data["results"]:

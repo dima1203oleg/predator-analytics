@@ -248,7 +248,7 @@ const SuperIntelligenceView: React.FC = () => {
                                     { s: 'Швидкість', A: arbitrationScores[0]?.criteria.performance * 100 || 0, B: arbitrationScores[1]?.criteria.performance * 100 || 0 },
                                 ]}>
                                     <PolarGrid stroke="#ffffff05" /><PolarAngleAxis dataKey="s" tick={{ fill: '#64748b', fontSize: 9, fontWeight: 'bold' }} />
-                                    <Radar name="Арбітр v25" dataKey="A" stroke="#6366f1" fill="#6366f1" fillOpacity={0.2} />
+                                    <Radar name="Арбітр v45" dataKey="A" stroke="#6366f1" fill="#6366f1" fillOpacity={0.2} />
                                     <Radar name="Ядро Системи" dataKey="B" stroke="#a855f7" fill="#a855f7" fillOpacity={0.2} />
                                     <Tooltip contentStyle={{ backgroundColor: '#020617', border: '1px solid #ffffff10', borderRadius: '12px', fontSize: '9px' }} />
                                 </RadarChart>

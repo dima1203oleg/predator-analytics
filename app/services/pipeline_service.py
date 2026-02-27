@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Predator Analytics v25 - Pipeline Service
+"""Predator Analytics v45 - Pipeline Service
 Orchestrates ETL, Indexing, ML Training, and Synthetic Data pipelines.
 """
 import asyncio

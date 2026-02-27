@@ -10,7 +10,7 @@ from typing import Any, Dict, List
 logger = logging.getLogger("predator.simulation")
 
 class SimulationService:
-    """Predator v25 Digital Twin & Simulation Engine.
+    """Predator v45 | Neural AnalyticsDigital Twin & Simulation Engine.
     Allows running 'What-If' scenarios on ML models and data pipelines.
     """
     def __init__(self):

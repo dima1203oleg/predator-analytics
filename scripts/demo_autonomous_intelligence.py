@@ -301,9 +301,9 @@ async def main():
         print("✅ ДЕМОНСТРАЦІЯ ЗАВЕРШЕНА УСПІШНО!")
         print("="*60)
         print("\n🎉 Autonomous Intelligence v2.0 готова до роботи!")
-        print("\n📚 Детальна документація: AUTONOMY_ANALYSIS_v26.md")
+        print("\n📚 Детальна документація: AUTONOMY_ANALYSIS_v45.md")
         print("🔧 Workflow: /ultra_autonomous")
-        print("🌐 API: /api/v1/v25/autonomous/*")
+        print("🌐 API: /api/v1/v45/autonomous/*")
 
     except Exception as e:
         print(f"\n❌ Помилка: {e}")

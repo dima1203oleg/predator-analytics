@@ -1,6 +1,6 @@
-# Manual Deployment Guide for Predator v26 (Nezlamnist)
+# Manual Deployment Guide for Predator v45 | Neural Analytics(Nezlamnist)
 
-This guide provides step-by-step instructions to deploy the Constitutionally-Bound Predator Analytics v26 system.
+This guide provides step-by-step instructions to deploy the Constitutionally-Bound Predator Analytics v45 system.
 
 ## 📦 Components Included
 - **predatorctl**: Command-line control plane with real-time Dashboard & Chaos engine.
@@ -14,7 +14,7 @@ This guide provides step-by-step instructions to deploy the Constitutionally-Bou
 ### 1. Upload Payload
 Transfer the deployment package to your server:
 ```bash
-scp -P 6666 predator_v26_release.tar.gz dima@194.177.1.240:~/predator-analytics/
+scp -P 6666 predator_v45_release.tar.gz dima@194.177.1.240:~/predator-analytics/
 ```
 
 ### 2. Connect to Server
@@ -26,7 +26,7 @@ ssh -p 6666 dima@194.177.1.240
 Inside the server:
 ```bash
 cd ~/predator-analytics
-tar -xzf predator_v26_release.tar.gz
+tar -xzf predator_v45_release.tar.gz
 
 # 1. Update Python Tools
 source .venv/bin/activate

@@ -2,7 +2,7 @@
 """
 Module: truth_ledger
 Component: shared
-Predator Analytics v25.1
+Predator Analytics v45.1
 Section 3.1.2 of Spec.
 """
 import clickhouse_connect

@@ -20,7 +20,7 @@ export const TruthLedgerTerminal: React.FC = () => {
   const fetchRealAudit = async () => {
     setIsSyncing(true);
     try {
-      const audit = await api.v25.azr.getAudit(40);
+      const audit = await api.v45.azr.getAudit(40);
       if (audit && Array.isArray(audit)) {
         const mapped: LedgerEntry[] = audit.map((a: any, idx: number) => ({
           sequence: a.sequence || (1000 + idx),

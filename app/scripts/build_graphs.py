@@ -13,7 +13,7 @@ from app.services.graph_service import graph_builder
 
 
 async def build_all_graphs():
-    print("🕸️ Starting Bulk Graph Extraction (v25)...")
+    print("🕸️ Starting Bulk Graph Extraction (v45)...")
     tenant_id = "00000000-0000-0000-0000-000000000000"
 
     async with get_db_ctx() as db:

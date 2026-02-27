@@ -16,7 +16,7 @@ from app.services.truth_ledger import truth_ledger
 logger = get_logger("service.chaos")
 
 class ChaosTester:
-    """Sovereign Observer Module - Chaos Engineering Executor (v27.0).
+    """Sovereign Observer Module - Chaos Engineering Executor (v45.0).
     Orchestrates stress tests based on scenarios.
     """
     def __init__(self, config_path: str = "/app/configs/chaos_scenarios.yaml"):

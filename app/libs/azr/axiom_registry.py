@@ -3,7 +3,7 @@ from __future__ import annotations
 
 """═══════════════════════════════════════════════════════════════
 AXIOM REGISTRY - Constitutional Axiom Management
-Predator Analytics v28-S.
+Predator Analytics v45-S.
 
 Immutable registry of constitutional axioms.
 Loaded from YAML files on system startup.
@@ -105,7 +105,7 @@ class AxiomRegistry:
     - Provide axiom information for auditing
     """
 
-    def __init__(self, axioms_path: str = "/app/infrastructure/constitution/axioms_v28"):
+    def __init__(self, axioms_path: str = "/app/infrastructure/constitution/axioms_v45"):
         self._axioms: dict[str, Axiom] = {}
         self._registry_hash: str = ""
         self._loaded = False
@@ -123,7 +123,7 @@ class AxiomRegistry:
         if not self.axioms_path.exists():
             logger.warning(f"Axioms path {self.axioms_path} not found")
             # Try alternative path
-            alt_path = Path("infrastructure/constitution/axioms_v28")
+            alt_path = Path("infrastructure/constitution/axioms_v45")
             if alt_path.exists():
                 self.axioms_path = alt_path
             else:

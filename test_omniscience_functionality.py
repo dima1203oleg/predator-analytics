@@ -66,17 +66,17 @@ class OmniscienceTester:
         except Exception as e:
             self.log_test("Backend Health", False, str(e))
 
-        # V25 реалтайм метрики
+        # V45 реалтайм метрики
         try:
-            response = requests.get(f"{self.api_url}/api/v25/metrics/realtime", timeout=5)
+            response = requests.get(f"{self.api_url}/api/v45/metrics/realtime", timeout=5)
             if response.status_code == 200:
                 data = response.json()
                 has_required_fields = all(key in data for key in ['ndcg', 'latency', 'throughput', 'error_rate'])
-                self.log_test("V25 Metrics", has_required_fields, "Немає всіх полів")
+                self.log_test("V45 Metrics", has_required_fields, "Немає всіх полів")
             else:
-                self.log_test("V25 Metrics", False, f"HTTP {response.status_code}")
+                self.log_test("V45 Metrics", False, f"HTTP {response.status_code}")
         except Exception as e:
-            self.log_test("V25 Metrics", False, str(e))
+            self.log_test("V45 Metrics", False, str(e))
 
         # Системні метрики
         try:
@@ -177,7 +177,7 @@ class OmniscienceTester:
             ws_test_script = f"""
             return new Promise((resolve) => {{
                 try {{
-                    const ws = new WebSocket('ws://{self.nvidia_ip}:8090/api/v25/ws/omniscience');
+                    const ws = new WebSocket('ws://{self.nvidia_ip}:8090/api/v45/ws/omniscience');
                     ws.onopen = () => resolve({{status: 'connected', error: null}});
                     ws.onerror = (e) => resolve({{status: 'error', error: e.toString()}});
                     ws.onmessage = (e) => resolve({{status: 'message_received', data: e.data}});

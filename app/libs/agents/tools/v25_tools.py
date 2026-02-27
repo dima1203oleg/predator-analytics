@@ -8,10 +8,10 @@ from typing import Any, Dict, List, Optional
 from .registry import registry
 
 
-logger = logging.getLogger("tools.v25")
+logger = logging.getLogger("tools.v45")
 
-@registry.register(name="get_v25_pulse", description="Get real-time system pulse score and health status from v25 Aggregator")
-async def get_v25_pulse() -> str:
+@registry.register(name="get_v45_pulse", description="Get real-time system pulse score and health status from v45 Aggregator")
+async def get_v45_pulse() -> str:
     """Retrieve current health score, active alerts, and degradation reasons."""
     try:
         # Dynamic import to avoid circular dependency
@@ -75,7 +75,7 @@ async def system_maintenance(task: str) -> str:
         return f"Maintenance failed: {e}"
 
 
-# ===== NEW V25.1 TOOLS =====
+# ===== NEW V45.1 TOOLS =====
 
 @registry.register(
     name="e2e_analyze",
@@ -101,7 +101,7 @@ async def e2e_analyze(query: str, databases: list[str] | None = None, limit: int
 
         async with httpx.AsyncClient(timeout=60.0) as client:
             response = await client.post(
-                "http://localhost:8000/api/v25/analyze/e2e",
+                "http://localhost:8000/api/v45/analyze/e2e",
                 json=payload
             )
             return response.text
@@ -271,7 +271,7 @@ async def get_system_stats() -> str:
         import httpx
 
         async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get("http://localhost:8000/api/v25/stats")
+            response = await client.get("http://localhost:8000/api/v45/stats")
             return response.text
 
     except Exception as e:

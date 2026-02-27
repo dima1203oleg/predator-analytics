@@ -26,7 +26,7 @@ class WinSURFDecision(str, Enum):
     NEEDS_REVIEW = "needs_review"
 
 class OperationalPolicy:
-    """Centralized Governance Policy for Predator Analytics v26.
+    """Centralized Governance Policy for Predator Analytics v45.
     Integrates with Arbiter and Truth Ledger.
     """
 
@@ -81,7 +81,7 @@ class OperationalPolicy:
 
     @staticmethod
     def verify_truth_ledger() -> dict[str, Any]:
-        """Верифікує цілісність ланцюга Truth Ledger (v26 Remote Service)."""
+        """Верифікує цілісність ланцюга Truth Ledger (v45 Remote Service)."""
         client = get_ledger()
         healthy = client.verify_integrity()
 

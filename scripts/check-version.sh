@@ -31,7 +31,7 @@ if [ -n "$SERVER_VERSION" ]; then
         echo "   ✅ Співпадає з локальною версією"
     else
         echo "   ⚠️  НЕ співпадає! Локально: $LOCAL_VERSION"
-        echo "   💡 Запустіть: ./scripts/deploy-v30-clean.sh"
+        echo "   💡 Запустіть: ./scripts/deploy-v45-clean.sh"
     fi
 else
     echo "   ❌ Не вдалося отримати версію з сервера"

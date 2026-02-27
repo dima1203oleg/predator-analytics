@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Enhanced ETL State Machine v28-S - AZR Engine
+"""Enhanced ETL State Machine v45-S - AZR Engine
 Core business logic for ETL transitions and constitutional invariants.
 """
 from datetime import datetime
@@ -33,8 +33,8 @@ class ETLState(str, Enum):
     FAILED = "FAILED"
     CANCELLED = "CANCELLED"
 
-class ETLStateMachineV28S:
-    VERSION = "v28-S"
+class ETLStateMachineV45S:
+    VERSION = "v45-S"
     INTEGRATION = "Sovereign Observer Module"
 
     TRANSITIONS = {
@@ -61,7 +61,7 @@ class ETLStateMachineV28S:
 
     @classmethod
     def get_progress(cls, state: ETLState, context: dict[str, Any]) -> int:
-        """Calculates REAL progress based on v28-S Formal Requirements."""
+        """Calculates REAL progress based on v45-S Formal Requirements."""
         if state == ETLState.CREATED: return 0
 
         if state == ETLState.UPLOADING:

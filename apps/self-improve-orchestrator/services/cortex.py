@@ -33,7 +33,7 @@ class CortexOrchestrator:
         await asyncio.sleep(2)
         task["status"] = "auditing"
         task["audit"] = "Security scan complete. No critical vulnerabilities found."
-        task["artifact"] = "print('Hello from Predator v25.0')"
+        task["artifact"] = "print('Hello from Predator v45 | Neural Analytics.0')"
         await asyncio.sleep(2)
         task["status"] = "awaiting_approval"
         task["strategy"]["voice_hint"] = "Завдання підготовлено. Очікую вашого підтвердження."

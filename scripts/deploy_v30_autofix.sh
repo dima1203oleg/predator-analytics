@@ -11,7 +11,7 @@ LOCAL_DIST="/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui/dis
 LOCAL_PROJECT="/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui"
 FIX_SCRIPT="/Users/dima-mac/Documents/Predator_21/scripts/FIX_ALL_PERMISSIONS.sh"
 
-echo "🔧 AUTO-FIX & DEPLOY: Predator V30.0.0"
+echo "🔧 AUTO-FIX & DEPLOY: Predator v45 | Neural Analytics.0.0"
 echo "========================================"
 
 # 1. Запуск фіксу прав (якщо файл існує)
@@ -25,7 +25,7 @@ else
 fi
 
 # 2. Build
-echo "🏗️  Building Frontend (V30)..."
+echo "🏗️  Building Frontend (V45)..."
 cd "$LOCAL_PROJECT"
 npm run build
 
@@ -39,6 +39,6 @@ rsync -avz -e "ssh -p $SSH_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFil
 echo "🔄 Restarting Remote Server..."
 ssh -p $SSH_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$SSH_USER@$SERVER_IP" "docker restart predator-fixed-frontend || docker run -d --name predator-fixed-frontend -p 8080:80 -v $REMOTE_DIST:/usr/share/nginx/html:ro nginx:alpine"
 
-echo "✅ DONE! V30 Deployment Complete."
+echo "✅ DONE! V45 Deployment Complete."
 echo "👉 Local: http://localhost:3030"
 echo "👉 Server: http://$SERVER_IP:8080"

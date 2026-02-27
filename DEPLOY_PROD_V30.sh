@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🚀 PREDATOR V30 - PRODUCTION ENFORCEMENT"
+echo "🚀 PREDATOR V45 - PRODUCTION ENFORCEMENT"
 echo "----------------------------------------"
 
 # 1. Validate Helm Charts
@@ -28,7 +28,7 @@ fi
 
 # 4. Final Sanity Check
 echo "🔍 Running System Health Verification..."
-# curl -s http://localhost/api/v1/health/v30 || echo "⚠️ API not reachable (Expected if cluster is down)"
+# curl -s http://localhost/api/v1/health/v45 || echo "⚠️ API not reachable (Expected if cluster is down)"
 
 echo "----------------------------------------"
-echo "🌟 PREDATOR V30 IS LIVE AND SOVEREIGN."
+echo "🌟 PREDATOR V45 IS LIVE AND SOVEREIGN."

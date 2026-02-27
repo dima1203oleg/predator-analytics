@@ -215,7 +215,7 @@ export const JobQueueMonitor: React.FC = () => {
   const fetchData = useCallback(async () => {
     try {
       // Fetch queues
-      const queuesRes = await fetch('/api/v25/monitoring/queues');
+      const queuesRes = await fetch('/api/v45/monitoring/queues');
       if (queuesRes.ok) {
         const qData = await queuesRes.json();
         setQueues(qData.map((q: any) => ({
@@ -228,7 +228,7 @@ export const JobQueueMonitor: React.FC = () => {
       }
 
       // Fetch jobs
-      const jobsRes = await fetch('/api/v25/ml/jobs');
+      const jobsRes = await fetch('/api/v45/ml/jobs');
       if (jobsRes.ok) {
         const jData = await jobsRes.json();
         setJobs(jData.map((j: any) => ({
@@ -272,7 +272,7 @@ export const JobQueueMonitor: React.FC = () => {
   const handlePurge = async (queueName: string) => {
     if (!window.confirm(`Ви впевнені що хочете очистити чергу ${queueName}? Всі повідомлення будуть втрачені.`)) return;
     try {
-        await fetch(`/api/v25/monitoring/queues/${queueName}/purge`, { method: 'POST' });
+        await fetch(`/api/v45/monitoring/queues/${queueName}/purge`, { method: 'POST' });
         fetchData(); // immediate refresh
     } catch (e) {
         console.error("Failed to purge queue", e);
@@ -281,7 +281,7 @@ export const JobQueueMonitor: React.FC = () => {
 
   const handleRetry = async (jobId: string) => {
       try {
-          await fetch(`/api/v25/ml/jobs/${jobId}/retry`, { method: 'POST' });
+          await fetch(`/api/v45/ml/jobs/${jobId}/retry`, { method: 'POST' });
           fetchData();
           setSelectedJob(null);
       } catch (e) {
@@ -292,7 +292,7 @@ export const JobQueueMonitor: React.FC = () => {
   const handleCancel = async (jobId: string) => {
       if (!window.confirm(`Зупинити виконання завдання ${jobId}?`)) return;
       try {
-          await fetch(`/api/v25/ml/jobs/${jobId}`, { method: 'DELETE' });
+          await fetch(`/api/v45/ml/jobs/${jobId}`, { method: 'DELETE' });
           fetchData();
           setSelectedJob(null);
       } catch (e) {
