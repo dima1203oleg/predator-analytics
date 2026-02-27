@@ -3,7 +3,7 @@ from __future__ import annotations
 
 """═══════════════════════════════════════════════════════════════
 AZR Library - Autonomous Zero-Risk Amendment Runtime
-Predator Analytics v26
+Predator Analytics v45
 ═══════════════════════════════════════════════════════════════.
 
 This library implements the constitutional framework for
@@ -83,7 +83,7 @@ __all__ = [
 # Constitutional Version Check
 def verify_constitution_active() -> bool:
     """Verify constitutional framework is active and enforced."""
-    return CONSTITUTION_VERSION == "v26"
+    return CONSTITUTION_VERSION == "v45"
 
 def get_constitution_summary() -> dict:
     """Get summary of active constitution."""

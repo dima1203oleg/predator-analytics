@@ -123,7 +123,7 @@ def check_sync_and_duplicates():
 
 def run_guard():
     print("\n" + "="*50)
-    print("🛡️  AZR CONSTITUTIONAL GUARD - v25.0")
+    print("🛡️  AZR CONSTITUTIONAL GUARD - v45.0")
     print("="*50 + "\n")
 
     runtime_ok = check_runtime_version()

@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: "https://github.com/your-org/predator-gitops"
-    path: "implementation_v25/infra/apps/overlays/dev"
+    path: "implementation_v45/infra/apps/overlays/dev"
     targetRevision: HEAD
   destination:
     server: "https://kubernetes.default.svc"

@@ -176,7 +176,7 @@ azr_rollbacks                # Кількість відкатів
 |--------|------|-------|
 | v32.0.0 | 2026-01-23 | OODA Loop, Experience Memory, Anomaly Detection, Chaos Engine |
 | v31.0.0 | 2026-01-18 | ZAR Unified, MCP Integration |
-| v28.0.0 | 2026-01-15 | Constitutional Guard, Canary Deployment |
+| v45.0.0 | 2026-01-15 | Constitutional Guard, Canary Deployment |
 
 ---
 

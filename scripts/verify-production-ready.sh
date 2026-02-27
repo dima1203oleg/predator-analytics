@@ -1,5 +1,5 @@
 #!/bin/bash
-# 🦅 PREDATOR v30.1 Production Readiness Verification
+# 🦅 Predator v45 | Neural Analytics.1 Production Readiness Verification
 # Перевіряє всі критерії готовності до production
 
 set -e
@@ -7,7 +7,7 @@ set -e
 PROJECT_ROOT="/Users/dima-mac/Documents/Predator_21"
 cd "$PROJECT_ROOT"
 
-echo "🔍 PREDATOR v30.1 PRODUCTION READINESS CHECK"
+echo "🔍 Predator v45 | Neural Analytics.1 PRODUCTION READINESS CHECK"
 echo "============================================"
 echo ""
 
@@ -91,10 +91,10 @@ echo ""
 echo "📚 PHASE 4: DOCUMENTATION"
 echo "----------------------------"
 
-[[ -f "docs/PREDATOR_MASTER_SPEC_v30.1.md" ]] && check_pass "Master Spec v30.1" || check_fail "Master Spec missing"
+[[ -f "docs/PREDATOR_MASTER_SPEC_v45.1.md" ]] && check_pass "Master Spec v45.1" || check_fail "Master Spec missing"
 [[ -f "docs/SUPERVISOR_PROMPT.md" ]] && check_pass "Supervisor Prompt" || check_fail "Supervisor Prompt missing"
 [[ -f "docs/EXECUTION_RUNBOOKS.md" ]] && check_pass "Execution Runbooks" || check_fail "Execution Runbooks missing"
-[[ -f "docs/INTEGRATION_PLAN_v30.1_PRODUCTION.md" ]] && check_pass "Integration Plan" || check_fail "Integration Plan missing"
+[[ -f "docs/INTEGRATION_PLAN_v45.1_PRODUCTION.md" ]] && check_pass "Integration Plan" || check_fail "Integration Plan missing"
 
 echo ""
 echo "🚀 PHASE 5: DEPLOYMENT READINESS"
@@ -117,7 +117,7 @@ echo -e "${RED}FAILED:${NC} $FAIL"
 echo ""
 
 if [[ $FAIL -eq 0 ]]; then
-    echo -e "${GREEN}✅ PREDATOR v30.1 PRODUCTION READY${NC}"
+    echo -e "${GREEN}✅ Predator v45 | Neural Analytics.1 PRODUCTION READY${NC}"
     echo ""
     echo "Next steps:"
     echo "1. Deploy backend: helm install predator-backend ./helm/charts/predator-backend"

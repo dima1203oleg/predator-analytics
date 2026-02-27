@@ -11,7 +11,7 @@
         - generic [ref=e27]:
           - generic [ref=e28]: PREDATOR ANALYTICS
           - generic [ref=e29]:
-            - generic [ref=e30]: v30.0-STABLE
+            - generic [ref=e30]: v45.0-STABLE
             - generic [ref=e33]: ONLINE
       - generic [ref=e34]:
         - generic [ref=e35]:
@@ -72,7 +72,7 @@
         - img [ref=e146]
         - generic [ref=e148]:
           - heading "PREDATOR" [level=1] [ref=e149]
-          - text: Analytics v30
+          - text: Analytics v45
       - generic [ref=e151]:
         - generic [ref=e152]:
           - heading "ОГЛЯД" [level=3] [ref=e153]
@@ -95,10 +95,10 @@
         - generic [ref=e184]:
           - heading "РОЗВІДКА" [level=3] [ref=e185]
           - generic [ref=e186]:
-            - link "Пошук v30" [ref=e187] [cursor=pointer]:
+            - link "Пошук v45" [ref=e187] [cursor=pointer]:
               - /url: /search-v2
               - img [ref=e189]
-              - generic [ref=e194]: Пошук v30
+              - generic [ref=e194]: Пошук v45
             - link "Радар Зв'язків" [ref=e195] [cursor=pointer]:
               - /url: /analytics
               - img [ref=e197]
@@ -218,7 +218,7 @@
         - generic [ref=e417]:
           - generic [ref=e422]:
             - generic [ref=e423]: СИСТЕМА ОНЛАЙН
-            - generic [ref=e424]: v30.0.0-стабільна
+            - generic [ref=e424]: v45.0.0-стабільна
           - img [ref=e425]
         - generic [ref=e430]:
           - generic [ref=e432]: License Owner

@@ -111,7 +111,7 @@ def create_chart(category, component_path):
         "image": {
             "repository": f"predator/{category}-{flattened_name}",
             "pullPolicy": "IfNotPresent",
-            "tag": "v30.0.0"
+            "tag": "v45.0.0"
         },
         "service": {
             "type": "ClusterIP",

@@ -58,7 +58,7 @@ const INITIAL_SCORES: ArbitrationScore[] = [
 
 // Seed Logs so the Stream isn't empty - MASSIVELY EXPANDED FOR VISUAL FILL
 const INITIAL_LOGS: SIContextLog[] = [
-    { id: 'init-0', timestamp: '09:59:55', type: 'INFO', source: 'KERNEL', message: 'Booting Singularity Core v30.0...' },
+    { id: 'init-0', timestamp: '09:59:55', type: 'INFO', source: 'KERNEL', message: 'Booting Singularity Core v45.0...' },
     { id: 'init-1', timestamp: '10:00:01', type: 'INFO', source: 'SYSTEM', message: 'Neural Core Initialized. Quantum Links Established.' },
     { id: 'init-2', timestamp: '10:00:02', type: 'INFO', source: 'RAG', message: 'Vector Database Connected (Shard 0-5). Indexing 14.2M vectors.' },
     { id: 'init-3', timestamp: '10:00:05', type: 'DEBATE', source: 'GEMINI', message: 'Архітектура системи стабільна. Очікую нових векторів загроз для аналізу.' },
@@ -77,7 +77,7 @@ const INITIAL_ARTIFACTS: RAGArtifact[] = [
 
 // Rich Boot Code for the Typewriter Effect
 const INITIAL_NAS_BOOT_CODE = `
-// KERNEL: SINGULARITY v25.0.1
+// KERNEL: SINGULARITY v45.0.1
 // TARGET: OPTIMIZATION_MATRIX
 // -----------------------------------
 import torch
@@ -211,7 +211,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
     const [isActive, setIsActive] = useState(false);
     const [stage, setStage] = useState<SuperLoopStage>('IDLE');
     const [logs, setLogs] = useState<SIContextLog[]>([
-        { id: 'boot', timestamp: new Date().toLocaleTimeString(), type: 'INFO', source: 'KERNEL', message: 'Connected to Predator v30 Core. Waiting for stream...' }
+        { id: 'boot', timestamp: new Date().toLocaleTimeString(), type: 'INFO', source: 'KERNEL', message: 'Connected to Predator v45 | Neural Analytics. Waiting for stream...' }
     ]);
     const [brainNodes, setBrainNodes] = useState<BrainNodeState[]>(INITIAL_BRAIN_NODES);
     const [activeAgents, setActiveAgents] = useState<UnifiedAgentState[]>(INITIAL_AGENTS);
@@ -226,14 +226,14 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
     // Manual Trigger: In real mode, this might trigger a backend job
     const injectScenario = async (id: number) => {
         // In real mode, we might want to trigger a specific test or analysis
-        api.v25.trinity.process("Run manual analysis scenario " + id);
+        api.v45.trinity.process("Run manual analysis scenario " + id);
         setIsActive(true);
     };
 
     const toggleLoop = () => setIsActive(!isActive);
     const vetoCycle = () => {
-         setIsActive(false);
-         api.v25.runSystemRollback(); // Real veto
+        setIsActive(false);
+        api.v45.runSystemRollback(); // Real veto
     };
 
     // Real Data Polling
@@ -244,14 +244,14 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
             try {
                 // 0. Fetch Real Stage
                 try {
-                   const realStage = await api.v25.getSystemStage();
-                   setStage(realStage);
-                } catch(e) {}
+                    const realStage = await api.v45.getSystemStage();
+                    setStage(realStage);
+                } catch (e) { }
 
                 // 1. Fetch Real Logs (Trinity)
-                const realLogs = await api.v25.trinity.getLogs(20);
+                const realLogs = await api.v45.trinity.getLogs(20);
                 if (realLogs && realLogs.length > 0) {
-                     const mappedLogs = realLogs.map((l: any) => ({
+                    const mappedLogs = realLogs.map((l: any) => ({
                         id: l.id,
                         timestamp: new Date(l.created_at).toLocaleTimeString(),
                         type: (l.status === 'verified' ? 'SUCCESS' : l.status === 'error' ? 'ERROR' : 'INFO') as any,
@@ -278,41 +278,41 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
                     const latestSession = history[0];
                     // Map session to "Scenario" visualization
                     if (latestSession.id !== currentScenario?.id) {
-                         setCurrentScenario({
-                             id: latestSession.id,
-                             name: "Strategic Analysis (Real)",
-                             type: 'STRATEGY',
-                             triggerAgent: 'COUNCIL',
-                             triggerMsg: latestSession.query,
-                             verdict: latestSession.final_answer,
-                             debate: [], // Could parse from peer_reviews
-                             scores: [] // Could parse from participants
-                         });
+                        setCurrentScenario({
+                            id: latestSession.id,
+                            name: "Strategic Analysis (Real)",
+                            type: 'STRATEGY',
+                            triggerAgent: 'COUNCIL',
+                            triggerMsg: latestSession.query,
+                            verdict: latestSession.final_answer,
+                            debate: [], // Could parse from peer_reviews
+                            scores: [] // Could parse from participants
+                        });
 
-                         // Update Arbitration Scores from real data if possible
-                         // (Mapping logic simplified here)
+                        // Update Arbitration Scores from real data if possible
+                        // (Mapping logic simplified here)
                     }
                 }
 
                 // 3. Map Real LLM Providers to Brain Nodes
                 const providers = await api.getNasProviders();
-                const sysMetrics = await api.v25.getRealtimeMetrics().catch(() => null);
+                const sysMetrics = await api.v45.getRealtimeMetrics().catch(() => null);
 
                 if (providers && providers.length > 0) {
-                     const realBrainNodes: BrainNodeState[] = providers.map((p: any, idx: number) => ({
-                         id: p.id,
-                         name: p.name,
-                         role: idx === 0 ? 'АРБІТР' : 'ЕКСПЕРТ',
-                         avatar: p.name[0],
-                         color: p.id === 'google' ? '#3b82f6' : p.id === 'openai' ? '#10b981' : '#a855f7',
-                         status: 'IDLE',
-                         load: sysMetrics ? (idx === 0 ? sysMetrics.cpu_usage : Math.max(10, sysMetrics.cpu_usage - 15)) : 0
-                     }));
-                     // Ensure we have at least one Arbiter
-                     if (!realBrainNodes.find(n => n.role === 'АРБІТР')) {
-                         if (realBrainNodes.length > 0) realBrainNodes[0].role = 'АРБІТР';
-                     }
-                     setBrainNodes(realBrainNodes);
+                    const realBrainNodes: BrainNodeState[] = providers.map((p: any, idx: number) => ({
+                        id: p.id,
+                        name: p.name,
+                        role: idx === 0 ? 'АРБІТР' : 'ЕКСПЕРТ',
+                        avatar: p.name[0],
+                        color: p.id === 'google' ? '#3b82f6' : p.id === 'openai' ? '#10b981' : '#a855f7',
+                        status: 'IDLE',
+                        load: sysMetrics ? (idx === 0 ? sysMetrics.cpu_usage : Math.max(10, sysMetrics.cpu_usage - 15)) : 0
+                    }));
+                    // Ensure we have at least one Arbiter
+                    if (!realBrainNodes.find(n => n.role === 'АРБІТР')) {
+                        if (realBrainNodes.length > 0) realBrainNodes[0].role = 'АРБІТР';
+                    }
+                    setBrainNodes(realBrainNodes);
                 }
 
                 // 4. Map Real Infra to Agents
@@ -322,30 +322,30 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
 
                     infra.nodes.forEach((node: any) => {
                         // 1. Try to map Pods (Kubernetes mode)
-                         if (node.pods && node.pods.length > 0) {
-                             node.pods.forEach((pod: any) => {
-                                 let role: UnifiedAgentState['role'] = 'EXECUTOR';
-                                 if (pod.type === 'db') role = 'MONITOR';
-                                 if (pod.type === 'search') role = 'SCANNER';
+                        if (node.pods && node.pods.length > 0) {
+                            node.pods.forEach((pod: any) => {
+                                let role: UnifiedAgentState['role'] = 'EXECUTOR';
+                                if (pod.type === 'db') role = 'MONITOR';
+                                if (pod.type === 'search') role = 'SCANNER';
 
-                                 realAgents.push({
-                                     id: pod.name.toUpperCase(),
-                                     name: `${pod.name} svc`,
-                                     role: role,
-                                     status: pod.status === 'Running' ? 'IDLE' : 'IDLE'
-                                 });
-                             });
-                         }
-                         // 2. Fallback: Map the Node itself (Monolith/Docker Compose mode)
-                         else {
-                             // api.ts returns "nodes" as components in Truth Mode
-                             realAgents.push({
-                                 id: node.name.toUpperCase(),
-                                 name: node.name,
-                                 role: 'MONITOR',
-                                 status: node.status === 'Ready' ? 'IDLE' : 'IDLE'
-                             });
-                         }
+                                realAgents.push({
+                                    id: pod.name.toUpperCase(),
+                                    name: `${pod.name} svc`,
+                                    role: role,
+                                    status: pod.status === 'Running' ? 'IDLE' : 'IDLE'
+                                });
+                            });
+                        }
+                        // 2. Fallback: Map the Node itself (Monolith/Docker Compose mode)
+                        else {
+                            // api.ts returns "nodes" as components in Truth Mode
+                            realAgents.push({
+                                id: node.name.toUpperCase(),
+                                name: node.name,
+                                role: 'MONITOR',
+                                status: node.status === 'Ready' ? 'IDLE' : 'IDLE'
+                            });
+                        }
                     });
 
                     if (realAgents.length > 0) setActiveAgents(realAgents);
@@ -353,7 +353,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
 
                 // 5. Fetch Real Arbitration Scores
                 try {
-                    const scores = await api.v25.ml.getArbitrationScores();
+                    const scores = await api.v45.ml.getArbitrationScores();
                     if (scores && scores.length > 0) {
                         setArbitrationScores(scores);
                     }
@@ -380,7 +380,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
             toggleLoop,
             vetoCycle,
             injectScenario,
-            stage, // Real stage mapping implemented via api.v25.getSystemStage()
+            stage, // Real stage mapping implemented via api.v45.getSystemStage()
             logs,
             brainNodes,
             activeAgents,
@@ -403,9 +403,9 @@ export const useSuperIntelligence = () => {
         console.warn('useSuperIntelligence used outside of SuperIntelligenceProvider - returning defaults');
         return {
             isActive: false,
-            toggleLoop: () => {},
-            vetoCycle: () => {},
-            injectScenario: () => {},
+            toggleLoop: () => { },
+            vetoCycle: () => { },
+            injectScenario: () => { },
             stage: 'IDLE' as SuperLoopStage,
             logs: [],
             brainNodes: INITIAL_BRAIN_NODES,

@@ -1,4 +1,4 @@
-# 🚀 Predator v25 — SSH DevContainer Development Guide
+# 🚀 Predator v45 | Neural Analytics — SSH DevContainer Development Guide
 
 > **Server-First Development**: Mac для редагування, Server для обчислень
 

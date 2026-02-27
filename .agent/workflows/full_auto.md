@@ -80,7 +80,7 @@ If any service is down, run these:
 
 ### Restart Backend
 ```bash
-cd /Users/dima-mac/Documents/Predator_21/apps/backend && nohup python run_v25_bot.py > /tmp/backend.log 2>&1 &
+cd /Users/dima-mac/Documents/Predator_21/apps/backend && nohup python run_v45_bot.py > /tmp/backend.log 2>&1 &
 ```
 
 ### Restart Frontend

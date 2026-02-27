@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: predator-v26- Nezlamnist
+  name: predator-v45- Nezlamnist
 spec:
   generators:
     - git:
@@ -16,7 +16,7 @@ spec:
       name: "{{path.basename}}"
       labels:
         managed-by: argocd
-        predator-v26: "true"
+        predator-v45: "true"
     spec:
       project: default
       source:

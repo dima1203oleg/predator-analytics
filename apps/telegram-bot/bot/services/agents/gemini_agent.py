@@ -171,7 +171,7 @@ class GeminiAgent:
         return res.get("intent", "chat")
 
     async def process_audio(self, audio_path: str, prompt: str) -> dict[str, Any]:
-        """Multimodal Audio Processing (v25 Neural Core).
+        """Multimodal Audio Processing (v45 Neural Core).
         Uploads audio to Gemini and processes with prompt.
         """
         try:

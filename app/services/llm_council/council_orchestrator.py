@@ -408,7 +408,7 @@ def create_default_council(
         except:
             logger.warning("Groq not available")
 
-    # Always add Ops Sentinel for V25.0 system awareness
+    # Always add Ops Sentinel for V45.0 system awareness
     try:
         from .models.ops_member import OpsCouncilMember
         members.append(OpsCouncilMember())

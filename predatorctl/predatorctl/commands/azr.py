@@ -60,7 +60,7 @@ def proposal_submit(
         console.print(f"[red]Error:[/red] File {file} not found.")
         raise typer.Exit(code=1)
     console.print(f"Submitting proposal from {source} ({file})...")
-    console.print("[green]Proposal Submitted. ID: prop-v26-tail[/green]")
+    console.print("[green]Proposal Submitted. ID: prop-v45-tail[/green]")
 
 @proposal_app.command("list")
 def proposal_list(
@@ -68,14 +68,14 @@ def proposal_list(
 ):
     """List proposals by status."""
     console.print(f"Showing {status} proposals:")
-    console.print("- prop-v26-tail (PENDING)")
+    console.print("- prop-v45-tail (PENDING)")
 
 @proposal_app.command("validate")
 def proposal_validate(
     id: str = typer.Argument(..., help="Proposal ID")
 ):
     """Validate a proposal for constitutional compliance with Z3 formal proof."""
-    console.print(f"Validating {id} against Constitution v27.0...")
+    console.print(f"Validating {id} against Constitution v45.0...")
     if z3.verify_decision(id, {"type": "proposal_validation"}):
         console.print("[green]✓ Z3 FORMAL PROOF GENERATED: SAT[/green]")
         console.print("[green]✓ Validation Passed.[/green]")
@@ -173,7 +173,7 @@ def azr_execute(
     force_incoherent: bool = typer.Option(False, "--force-incoherent", hidden=True),
     rollback_on_failure: bool = typer.Option(True, "--rollback-on-failure")
 ):
-    """Execute a sanctioned proposal with Reality-Bound verification (v27.0 Red-Team Ready)."""
+    """Execute a sanctioned proposal with Reality-Bound verification (v45.0 Red-Team Ready)."""
     # Semantic Normalization
     normalized_id = semantic_gate.normalize(id)
     console.print(f"Executing sanctioned proposal {normalized_id}...")
@@ -216,7 +216,7 @@ def azr_execute(
 
     console.print(f"[green]✓ VPC PASS:[/green] Observed by {vpc_res.witness_count} witnesses. Consensus: {vpc_res.consensus_score*100:.1f}%")
 
-    # 4. Final Arbiter Sanction (v27.0)
+    # 4. Final Arbiter Sanction (v45.0)
     console.print("Requesting final Arbiter Sanction with Reality Proof...")
     decision = arbiter.decide(
         type="execute_proposal",
@@ -248,7 +248,7 @@ def azr_execute(
     console.print(f"[cyan]Legally Legible Document Generated:[/cyan] {doc.title}")
     console.print(f"Format: {doc.format} | Ledger Hash: {doc.ledger_hash}")
 
-    # 6. Truth Ledger Record (v27.0 Reality Anchor)
+    # 6. Truth Ledger Record (v45.0 Reality Anchor)
     ledger_res = ledger.append_entry(
         entity_type="proposal",
         entity_id=id,
@@ -273,7 +273,7 @@ def cincinnatus_activate():
     res = timer.activate()
     console.print(f"[bold red]SECURITY ALERT:[/bold red] {res}")
     console.print("Emergency powers granted for 3600s. All AZR constraints temporarily relaxed.")
-    console.print("[yellow]NOTE: Preemptive Lethal and Mass Rights Suspension remain FORBIDDEN (v27.0 RT Filter).[/yellow]")
+    console.print("[yellow]NOTE: Preemptive Lethal and Mass Rights Suspension remain FORBIDDEN (v45.0 RT Filter).[/yellow]")
 
 @cincinnatus_app.command("status")
 def cincinnatus_status():

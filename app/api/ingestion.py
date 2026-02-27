@@ -27,7 +27,7 @@ async def upload_dataset(
     background_tasks: BackgroundTasks = None
 ):
     """
-    V25 Canonical Ingestion Engine.
+    V45 Canonical Ingestion Engine.
     Handles high-speed upload, MinIO archiving, Kafka event signaling,
     ETL processing, and Vector Indexing in one atomic-like flow.
     """

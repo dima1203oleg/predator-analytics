@@ -2,7 +2,7 @@
 """
 Module: scanner
 Component: aes
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 import logging
 import asyncio

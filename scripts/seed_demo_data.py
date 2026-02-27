@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 #!/usr/bin/env python3
-"""Seed demo data for PREDATOR v25."""
+"""Seed demo data for Predator v45 | Neural Analytics."""
 from datetime import datetime, timedelta
 import random
 
@@ -27,7 +27,7 @@ def seed_cases():
         }
 
         try:
-            resp = requests.post(f"{BASE_URL}/v25/cases", json=case_data, timeout=5)
+            resp = requests.post(f"{BASE_URL}/v45/cases", json=case_data, timeout=5)
             if resp.status_code in [200, 201]:
                 print(f"✅ Created case #{i+1}")
             else:

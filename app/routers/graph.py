@@ -17,7 +17,7 @@ async def get_graph_summary():
 @router.get("/search")
 async def search_graph(query: str, depth: int = 2):
     """Search for entities and their surrounding relationship network."""
-    # Simulation for UI v30 Semantic Radar
+    # Simulation for UI v45 Semantic Radar
     return {
         "nodes": [
             {"id": "node-1", "name": query, "label": "ORGANIZATION", "properties": {"revenue": "1.2M"}},

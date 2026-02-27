@@ -35,7 +35,7 @@ def main():
             "Autonomous Intelligence v2.0 - Основний код"
         ),
         (
-            project_root / "services/api-gateway/app/api/v25_routes.py",
+            project_root / "services/api-gateway/app/api/v45_routes.py",
             "API Routes - Endpoints для AI v2.0"
         ),
         (
@@ -51,7 +51,7 @@ def main():
 
         # Документація
         (
-            project_root / "AUTONOMY_ANALYSIS_v26.md",
+            project_root / "AUTONOMY_ANALYSIS_v45.md",
             "Детальний аналіз автономії"
         ),
         (
@@ -108,7 +108,7 @@ def main():
         print("\n📚 Документація:")
         print("   - Швидкий старт: AUTONOMOUS_INTELLIGENCE_README.md")
         print("   - Інструкції: AUTONOMY_COMPLETE.md")
-        print("   - Детальний аналіз: AUTONOMY_ANALYSIS_v26.md")
+        print("   - Детальний аналіз: AUTONOMY_ANALYSIS_v45.md")
         print("\n🚀 Наступні кроки:")
         print("   1. Запустити backend: cd services/api-gateway && python -m uvicorn app.main:app --reload")
         print("   2. Перевірити статус: curl http://localhost:8000/system/autonomy/status")

@@ -1,6 +1,6 @@
-# 🏛️ PREDATOR ANALYTICS v26 — УНІФІКОВАНЕ ТЕХНІЧНЕ ЗАВДАННЯ
+# 🏛️ PREDATOR ANALYTICS v45 — УНІФІКОВАНЕ ТЕХНІЧНЕ ЗАВДАННЯ
 
-**Версія:** v26.0
+**Версія:** v45.0
 **Дата:** 2026-01-12
 **Python:** 3.12 (ОБОВ'ЯЗКОВО)
 **Мова:** Українська (повна локалізація)
@@ -58,7 +58,7 @@ axiom_5:
 ```
 
 ### Аксіоми 9-14: AZR Constitutional Framework
-Детально описані в `/docs/constitution/AZR_CONSTITUTION_v26.md`
+Детально описані в `/docs/constitution/AZR_CONSTITUTION_v45.md`
 
 ---
 
@@ -297,7 +297,7 @@ warning:
 
 - [ ] ETL показує реальні стани
 - [ ] AZR enforcement активний
-- [ ] Конституція v26 ратифікована
+- [ ] Конституція v45 ратифікована
 - [ ] CLI predatorctl працює
 
 ### 9.2 Performance
@@ -324,7 +324,7 @@ warning:
 ## X. ФІНАЛЬНА ФОРМУЛА
 
 ```
-Predator Analytics v26 =
+Predator Analytics v45 =
   Constitution (Axioms 1-14)
   × AZR (Zero-Risk Amendments)
   × ETL (Truth Only)
@@ -339,4 +339,4 @@ Predator Analytics v26 =
 
 **СТАТУС:** RATIFIED
 **IMMUTABILITY:** ABSOLUTE
-**VERSION:** v26.0
+**VERSION:** v45.0

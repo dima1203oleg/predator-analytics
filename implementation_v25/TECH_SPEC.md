@@ -1,10 +1,10 @@
-<!-- TECH_SPEC v25.0 Implementation-Ready -->
+<!-- TECH_SPEC v45.0 Implementation-Ready -->
 <!-- Inserted using assistant; verify for your formatting/requirements -->
 
 # Технічне Завдання
 
 **Семантична Пошукова Платформа та Аналітика Даних**  
-**Implementation-Ready v25.0** — Dev/Arch Standard + Automation-First
+**Implementation-Ready v45.0** — Dev/Arch Standard + Automation-First
 
 > Документ призначений для:  
 > **(1)** команди розробників як implementation plan,  
@@ -29,7 +29,7 @@
 - **GitOps**: ArgoCD + Helm umbrella
 - **Контури**: Mac (Dev) → Oracle (Edge/Staging) → NVIDIA (Compute)
 
-Ключова ідея v25.0:  
+Ключова ідея v45.0:  
 **“♾️-Self-Improvement Loop”** з чіткими межами між **observability → data → training → evaluation → GitOps**.
 
 ---
@@ -319,7 +319,7 @@ participant X as XAI
 
 ### 3.6 Edge-first: PWA, Offline Vector Search & Privacy
 
-v25.0 implements offline-first behaviour with a PWA client, local quantized embedding models, and background-sync strategies:
+v45.0 implements offline-first behaviour with a PWA client, local quantized embedding models, and background-sync strategies:
 
 - Use Workbox service worker to manage caching strategies and background sync.
 - Bundle quantized transformer models (`q8` / `q4`) via `transformers.js` or `onnxruntime-web` and store in the client cache.
@@ -375,7 +375,7 @@ Promote: A/B ≥7 days + NDCG@10 ↑ ≥3% + latency increase ≤15%
 
 Monitor → Diagnose → Augment → Train → Evaluate → A/B → GitOps Promote → Post-Monitor → Repeat
 
-See `self-improve` orchestration code in `implementation_v25/scripts` for example job templates.
+See `self-improve` orchestration code in `implementation_v45/scripts` for example job templates.
 
 ---
 
@@ -412,7 +412,7 @@ Outlined in `TECH_SPEC.md` in root and this file's `Roadmap` section.
 
 ## 14. References & Next Steps
 
-1. I created a consolidated folder with minimal configs and scripts to bootstrap v25.0 deployment.
+1. I created a consolidated folder with minimal configs and scripts to bootstrap v45.0 deployment.
 2. Next steps:
 
 - Review `TECH_SPEC.md` and the created configs.

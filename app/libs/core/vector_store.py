@@ -1,7 +1,7 @@
 """🧠 VECTOR STORE (Qdrant Integration)
 =====================================
 Core component for semantic search and memory retrieval.
-Part of PREDATOR V30 Organism Architecture.
+Part of PREDATOR V45 Organism Architecture.
 """
 
 import asyncio

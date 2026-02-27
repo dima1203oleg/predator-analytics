@@ -369,7 +369,7 @@ export const SearchView = () => {
             // Parallel execution of search and AI analysis
             const [searchRes, aiRes] = await Promise.allSettled([
                 api.search.query({ q: query, mode: 'hybrid' }),
-                api.v25.analyze(query).catch(() => null)
+                api.v45.analyze(query).catch(() => null)
             ]);
 
             // Process Search Results

@@ -47,7 +47,7 @@ class InsightsEngine:
         # In a real system, this would query a dedicated 'insights' table
         # populated by background ML workers.
 
-        # Simulate realistic v30 data
+        # Simulate realistic v45 data
         return [
             AIInsight(
                 id=str(uuid.uuid4())[:8],

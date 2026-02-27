@@ -116,7 +116,7 @@ You must:
 
 ### 6.2 UI ↔ API Consistency
 You must:
-- Forbid mixing of `/api/v1/*` and `/api/v25/*`.
+- Forbid mixing of `/api/v1/*` and `/api/v45/*`.
 - Choose one canonical API base and update UI accordingly.
 - Ensure all requests include tenant context.
 

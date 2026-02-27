@@ -35,7 +35,7 @@ def update_values():
         return False
 
     timestamp = datetime.datetime.now().isoformat()
-    note = f"# AUTO-DEPLOYMENT: v27 ULTRA UPGRADE applied at {timestamp}\n"
+    note = f"# AUTO-DEPLOYMENT: v45 ULTRA UPGRADE applied at {timestamp}\n"
 
     with open(VALUES_PATH) as f:
         content = f.read()

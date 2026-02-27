@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""🚀 Redis Caching Service для Predator Analytics v25.
+"""🚀 Redis Caching Service для Predator Analytics v45.
 
 Production-ready caching layer для оптимізації performance:
 - Search results caching

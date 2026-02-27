@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 # telegram_bot_listener.py
-# Побудовано за архітектурою Головного DevOps-інженера Predator Analytics v25.0
+# Побудовано за архітектурою Головного DevOps-інженера Predator Analytics v45.0
 import logging
 import os
 from pathlib import Path
@@ -59,7 +59,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = f"""
-🤖 *Predator Analytics AI-ланцюжок v25.0*
+🤖 *Predator Analytics AI-ланцюжок v45.0*
 Я — автономна система самовідновлення.
 
 Надішліть мені завдання українською:

@@ -50,7 +50,7 @@ def verify_search():
 
     try:
         resp = requests.get(f"{BASE_URL}/search/search/?q={query}&mode=hybrid") # Note: Router prefix might be /search so path is /search/search? verify main.py logic
-        # Checking main_v25.py... usually prefix="/api/v1" + router prefix="/search" -> /api/v1/search/
+        # Checking main_v45.py... usually prefix="/api/v1" + router prefix="/search" -> /api/v1/search/
         # Let's try /api/v1/search/ first (trailing slash if root is empty) or just /api/v1/search
     except:
         print("❌ Search request failed connection.")

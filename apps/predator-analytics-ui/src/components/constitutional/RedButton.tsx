@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 /**
  * ═══════════════════════════════════════════════════════════════
  * RED BUTTON COMPONENT - Emergency Protocol UI
- * Predator Analytics v28-S
- *
+ * Predator v45 | Neural Analytics*
  * Три рівні екстреної зупинки:
  * Level 1: PAUSE - Призупинити SOM
  * Level 2: ISOLATE - Ізолювати від production

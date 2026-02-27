@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# Predator v25 Server Bootstrap Script
+# Predator v45 | Neural AnalyticsServer Bootstrap Script
 # ============================================================
 # Creates the standard directory structure on the server
 # Run this ONCE after first SSH connection to setup the server
@@ -10,7 +10,7 @@
 
 set -e
 
-echo "🚀 Predator v25 Server Bootstrap"
+echo "🚀 Predator v45 | Neural AnalyticsServer Bootstrap"
 echo "=================================="
 
 # Base directory
@@ -36,7 +36,7 @@ chmod -R 755 "${PREDATOR_BASE}"
 if [ ! -f "${PREDATOR_BASE}/.env" ]; then
     echo "📝 Creating .env template..."
     cat > "${PREDATOR_BASE}/.env.example" << 'EOF'
-# Predator v25 Environment Variables
+# Predator v45 | Neural AnalyticsEnvironment Variables
 # Copy to .env and fill in values
 
 # Database

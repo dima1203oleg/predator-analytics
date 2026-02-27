@@ -37,7 +37,7 @@ const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const toast = useToast();
     const [state, setState] = useState<GlobalState>({
-        systemVersion: 'v30.0.0', // SOVEREIGN EDITION
+        systemVersion: 'v45.0.0', // SOVEREIGN EDITION
         defconLevel: 3,
         cpuLoad: 15,
         networkTraffic: 24, // MB/s
@@ -137,7 +137,7 @@ export const useGlobalState = () => {
         console.warn('useGlobalState used outside of GlobalProvider - returning defaults');
         return {
             state: {
-                systemVersion: 'v30.0.0',
+                systemVersion: 'v45.0.0',
                 defconLevel: 3 as const,
                 cpuLoad: 0,
                 networkTraffic: 0,

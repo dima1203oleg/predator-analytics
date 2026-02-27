@@ -10,18 +10,18 @@ export interface OmniscienceV1SystemMetrics {
     container_raw?: string;
 }
 
-export interface OmniscienceV25RealtimeMetric {
+export interface OmniscienceV45RealtimeMetric {
     value: number;
     threshold?: number;
     status?: string;
     unit?: string;
 }
 
-export interface OmniscienceV25RealtimeMetrics {
-    ndcg: OmniscienceV25RealtimeMetric;
-    latency: OmniscienceV25RealtimeMetric;
-    throughput: OmniscienceV25RealtimeMetric;
-    error_rate: OmniscienceV25RealtimeMetric;
+export interface OmniscienceV45RealtimeMetrics {
+    ndcg: OmniscienceV45RealtimeMetric;
+    latency: OmniscienceV45RealtimeMetric;
+    throughput: OmniscienceV45RealtimeMetric;
+    error_rate: OmniscienceV45RealtimeMetric;
     timestamp: string;
 }
 
@@ -38,7 +38,7 @@ export interface OmniscienceRealtimeSnapshot {
     isLive: boolean;
     receivedAt: string;
     system?: OmniscienceV1SystemMetrics;
-    v25Realtime?: OmniscienceV25RealtimeMetrics;
+    v45Realtime?: OmniscienceV45RealtimeMetrics;
     training?: OmniscienceTrainingStatus;
     error?: string;
 }
@@ -82,7 +82,7 @@ export class OmniscienceRealtimeClient {
         if (options.wsUrl) {
             this.wsUrl = options.wsUrl;
         } else {
-            const wsPath = options.wsPath ?? '/api/v25/ws/omniscience';
+            const wsPath = options.wsPath ?? '/api/v45/ws/omniscience';
             this.wsUrl = deriveWsUrl(wsPath);
         }
     }
@@ -188,7 +188,7 @@ export class OmniscienceRealtimeClient {
                         isLive: true,
                         receivedAt: new Date().toISOString(),
                         system: parsed.system,
-                        v25Realtime: parsed.v25Realtime,
+                        v45Realtime: parsed.v45Realtime,
                         training: parsed.training,
                     };
                     this.emit(snapshot);
@@ -237,10 +237,10 @@ export class OmniscienceRealtimeClient {
         const receivedAt = new Date().toISOString();
 
         try {
-            const [systemRes, v25Res, trainingRes] = await Promise.all([
+            const [systemRes, v45Res, trainingRes] = await Promise.all([
                 axios.get<OmniscienceV1SystemMetrics>('/api/v1/system/metrics', { timeout: this.requestTimeoutMs }),
-                axios.get<OmniscienceV25RealtimeMetrics>('/api/v25/metrics/realtime', { timeout: this.requestTimeoutMs }),
-                axios.get<OmniscienceTrainingStatus>('/api/v25/training/status', { timeout: this.requestTimeoutMs }),
+                axios.get<OmniscienceV45RealtimeMetrics>('/api/v45/metrics/realtime', { timeout: this.requestTimeoutMs }),
+                axios.get<OmniscienceTrainingStatus>('/api/v45/training/status', { timeout: this.requestTimeoutMs }),
             ]);
 
             const snapshot: OmniscienceRealtimeSnapshot = {
@@ -248,7 +248,7 @@ export class OmniscienceRealtimeClient {
                 isLive: true,
                 receivedAt,
                 system: systemRes.data,
-                v25Realtime: v25Res.data,
+                v45Realtime: v45Res.data,
                 training: trainingRes.data,
             };
 
@@ -273,10 +273,10 @@ export class OmniscienceRealtimeClient {
         return 'Unknown error';
     }
 
-    private generateFallbackSnapshot(prev?: OmniscienceRealtimeSnapshot): Pick<OmniscienceRealtimeSnapshot, 'system' | 'v25Realtime'> {
+    private generateFallbackSnapshot(prev?: OmniscienceRealtimeSnapshot): Pick<OmniscienceRealtimeSnapshot, 'system' | 'v45Realtime'> {
         return {
             system: undefined,
-            v25Realtime: undefined,
+            v45Realtime: undefined,
         };
     }
 }

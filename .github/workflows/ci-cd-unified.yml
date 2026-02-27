@@ -1,4 +1,4 @@
-name: Predator v25.0 - Unified CI/CD Pipeline
+name: Predator v45 | Neural Analytics - Unified CI/CD Pipeline
 
 on:
   push:
@@ -297,7 +297,7 @@ jobs:
       - name: Check API Health
         run: |
           sleep 30
-          curl -sf http://localhost:8090/api/v25/system/status || echo "API health check failed"
+          curl -sf http://localhost:8090/api/v45/system/status || echo "API health check failed"
 
       - name: Check Frontend
         run: |

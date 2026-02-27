@@ -1,4 +1,4 @@
-# 🔐 Environment Variables Reference — Predator v25.0
+# 🔐 Environment Variables Reference — Predator v45 | Neural Analytics.0
 
 > **Версія:** 25.0
 > **Оновлено:** 10.01.2026

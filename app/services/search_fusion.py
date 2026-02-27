@@ -112,7 +112,7 @@ def reciprocal_rank_fusion(
         doc["score"] = score
         doc["fusion_debug"]["final_score"] = score
 
-        # --- V25 XAI Layer: Explainable AI Highlights ---
+        # --- V45 XAI Layer: Explainable AI Highlights ---
         # In a production system, this could be a call to LLMService
         # Here we add automated reason highlights based on rank/source
         if "highlight" not in doc:

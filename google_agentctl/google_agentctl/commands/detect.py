@@ -17,7 +17,7 @@ def anomalies(
     algorithm: str = typer.Option("isolation-forest", "--algorithm"),
     generate_report: bool = typer.Option(False, "--report", help="Generate juridical report if anomalies found")
 ):
-    """Detect anomalies in system behavior (v27.0)."""
+    """Detect anomalies in system behavior (v45.0)."""
     console.print(f"Running anomaly detection using {algorithm}...")
 
     # Logic simulation (Always 1 anomaly for demo if report is requested)

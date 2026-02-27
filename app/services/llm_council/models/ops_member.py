@@ -19,7 +19,7 @@ class OpsCouncilMember(CouncilMember):
     It uses specialized CLI tools to gather evidence before answering.
     """
 
-    def __init__(self, model_id: str = "ops-sentinel-v25", provider: str = "predator-ops"):
+    def __init__(self, model_id: str = "ops-sentinel-v45", provider: str = "predator-ops"):
         super().__init__(model_id=model_id, provider=provider)
         self.diagnostics_report = ""
 

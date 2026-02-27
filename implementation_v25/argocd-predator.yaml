@@ -1,10 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: predator-analytics-v25
+  name: predator-analytics-v45
   namespace: argocd
   labels:
-    version: v25.0.0
+    version: v45.0.0
     stack: predator
 spec:
   project: default
@@ -14,7 +14,7 @@ spec:
     path: k8s/overlays/prod
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: predator-v25
+    namespace: predator-v45
   syncPolicy:
     automated:
       prune: true

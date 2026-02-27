@@ -169,5 +169,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-    console.log(`🚀 v30 Lite Gateway running on http://${HOST}:${PORT}`);
+    console.log(`🚀 v45 Lite Gateway running on http://${HOST}:${PORT}`);
 });

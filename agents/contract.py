@@ -20,7 +20,7 @@ class AgentContext:
     workspace_root: str = "."
 
 class BaseAgent(Protocol):
-    """Contract for all Predator v26 Agents.
+    """Contract for all Predator v45 | Neural Analytics Agents.
     Agents MUST use the CLI for mutations.
     Agents MUST output machine-readable logs.
     """

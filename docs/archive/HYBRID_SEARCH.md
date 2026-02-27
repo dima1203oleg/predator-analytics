@@ -1,6 +1,6 @@
 # 🔍 Hybrid Search with RRF (Reciprocal Rank Fusion)
 
-Implementation details for Predator Analytics v25.0.
+Implementation details for Predator Analytics v45.0.
 
 ## Overview
 

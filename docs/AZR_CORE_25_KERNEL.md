@@ -1,5 +1,5 @@
 # Predator AZR-CORE-25
-## The Minimal Sovereign Execution Kernel (v27.0)
+## The Minimal Sovereign Execution Kernel (v45.0)
 
 This is the strictly necessary subset of components required to maintain "Reality-Bound Digital Sovereignty".
 

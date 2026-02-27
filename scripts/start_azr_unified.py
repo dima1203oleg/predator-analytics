@@ -28,7 +28,7 @@ import sys
 if sys.version_info < (3, 12):
     print("\n" + "!"*80, file=sys.stderr)
     print("❌ FATAL: RUNTIME VERSION MISMATCH", file=sys.stderr)
-    print("   PREDATOR ANALYTICS v25+ STRICTLY REQUIRES PYTHON 3.12.", file=sys.stderr)
+    print("   PREDATOR ANALYTICS v45+ STRICTLY REQUIRES PYTHON 3.12.", file=sys.stderr)
     print(f"   DETECTED: {sys.version}", file=sys.stderr)
     print("!"*80 + "\n", file=sys.stderr)
     sys.exit(1)

@@ -11,7 +11,7 @@ from ..connectors.registry import registry_connector
 from ..connectors.tax import tax_connector
 
 
-# Нові connectors (v25.1)
+# Нові connectors (v45.1)
 try:
     from ..connectors.telegram_channel import telegram_channel_connector
 except ImportError:

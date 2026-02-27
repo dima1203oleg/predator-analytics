@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🚀 [AUDIT] Starting Predator v29-S Server Audit..."
+echo "🚀 [AUDIT] Starting Predator v45 | Neural Analytics-S Server Audit..."
 
 # Detect OS
 OS_TYPE=$(uname -s)
@@ -75,7 +75,7 @@ else
     echo "Unknown OS"
 fi
 
-# 6. Docker Audit (v29-S specific)
+# 6. Docker Audit (v45-S specific)
 echo "--- Docker ---"
 if command -v docker &> /dev/null; then
     docker --version
@@ -83,11 +83,11 @@ if command -v docker &> /dev/null; then
     echo "Running containers: $RUNNING_CONTAINERS"
     echo "✅ Docker available"
 else
-    echo "❌ Docker NOT FOUND (Required for v29-S)"
+    echo "❌ Docker NOT FOUND (Required for v45-S)"
 fi
 
-# 7. v29-S Services Check
-echo "--- v29-S Critical Services ---"
+# 7. v45-S Services Check
+echo "--- v45-S Critical Services ---"
 REQUIRED_SERVICES=("postgres" "redis" "backend" "frontend" "som" "vpc")
 if command -v docker &> /dev/null; then
     for svc in "${REQUIRED_SERVICES[@]}"; do

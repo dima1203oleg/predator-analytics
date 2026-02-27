@@ -13,7 +13,7 @@ sys.path.append(str(ROOT_DIR))
 sys.path.append(str(ROOT_DIR / "apps" / "backend"))
 
 async def run_diagnostic():
-    print("🧠 Predator Analytics v25.0 Final E2E Logic Proof")
+    print("🧠 Predator Analytics v45.0 Final E2E Logic Proof")
     print("---------------------------------------------------")
 
     from app.services.etl_ingestion import ETLIngestionService
@@ -35,7 +35,7 @@ async def run_diagnostic():
         result = await etl.process_file(file_path, "customs")
 
         if result["status"] == "success":
-            print("🚀 SUCCESS: ETL Pipeline validated for v25.0 test data.")
+            print("🚀 SUCCESS: ETL Pipeline validated for v45.0 test data.")
             print(f"📊 Records processed: {result['record_count']}")
             print(f"📝 Table name: {result['table_name']}")
             print(f"🔍 Sample clean record: {result['documents'][0] if result['documents'] else 'None'}")

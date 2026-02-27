@@ -25,7 +25,7 @@ class ETLState(str, Enum):
     INDEXING_FAILED = "INDEXING_FAILED"
 
 class StateDerivationEngine:
-    """Sovereign State Derivation Engine (Law of Derived ETL State v26).
+    """Sovereign State Derivation Engine (Law of Derived ETL State v45).
     The sole authority for calculating ETL job states based on emitted facts.
     """
 

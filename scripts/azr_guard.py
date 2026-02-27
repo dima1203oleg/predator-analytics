@@ -3,7 +3,7 @@ from __future__ import annotations
 
 #!/usr/bin/env python3
 """
-🛡️ AZR CONSTITUTIONAL GUARD - v25.0
+🛡️ AZR CONSTITUTIONAL GUARD - v45.0
 Enforcing Project Sovereignty (Axioms 1-16)
 """
 import logging

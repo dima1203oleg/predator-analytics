@@ -25,7 +25,7 @@ export const Models: React.FC = () => {
 
          <div className="bg-slate-900/50 border border-blue-500/20 rounded-xl p-6 relative  bg-gradient-to-br from-blue-900/10 to-transparent">
             <div className="absolute top-0 right-0 p-4 opacity-20 text-blue-500"><Brain size={64} /></div>
-            <h3 className="text-lg font-bold text-blue-400 mb-2">SOM Hypervisor v29</h3>
+            <h3 className="text-lg font-bold text-blue-400 mb-2">SOM Hypervisor v45</h3>
             <p className="text-slate-400 text-sm mb-4">Автономний агент контролю цілісності та безпеки.</p>
             <div className="flex items-center gap-2 text-blue-500 text-xs font-bold uppercase font-mono">
                <CheckCircle size={14} />Активно</div>

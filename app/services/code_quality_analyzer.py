@@ -11,7 +11,7 @@ from app.libs.core.structured_logger import get_logger
 logger = get_logger("service.code_quality")
 
 class CodeQualityAnalyzer:
-    """Autonomous Code Quality Analyzer (v27.0).
+    """Autonomous Code Quality Analyzer (v45.0).
     Scans the codebase for complexity, functions size, and potential issues using AST.
     """
 

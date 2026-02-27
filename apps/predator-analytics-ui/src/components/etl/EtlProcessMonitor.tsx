@@ -81,7 +81,7 @@ export const EtlProcessMonitor: React.FC = () => {
                             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                             <span>System Active</span>
                             <span>•</span>
-                            <span>v28-S Core</span>
+                            <span>v45-S Core</span>
                         </div>
                     </div>
                 </div>

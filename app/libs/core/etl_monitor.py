@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""ETL Constitutional Monitor - AZR Engine v28-S
+"""ETL Constitutional Monitor - AZR Engine v45-S
 Real-time monitoring and validation of the ETL Pipeline.
 """
 import asyncio
@@ -10,7 +10,7 @@ import logging
 from typing import Any, Dict, List, Optional
 
 from app.libs.core.etl_arbiter import ETLSovereignArbiter
-from app.libs.core.etl_state_machine_v28s import ETLState, ETLStateMachineV28S
+from app.libs.core.etl_state_machine_v45s import ETLState, ETLStateMachineV45S
 
 
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ class ETLConstitutionalMonitor:
     def __init__(self):
         # self.open_telemetry = OpenTelemetryClient() # Integrated via otel.py
         self.arbiter = ETLSovereignArbiter()
-        self.state_machine = ETLStateMachineV28S()
+        self.state_machine = ETLStateMachineV45S()
 
     async def monitor_job(self, job_id: str, job_data: dict[str, Any]):
         """Validate a single ETL job's compliance in real-time."""

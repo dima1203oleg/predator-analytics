@@ -1,5 +1,5 @@
 #!/bin/bash
-# 🐵 Chaos Monkey for Predator Analytics v26
+# 🐵 Chaos Monkey for Predator Analytics v45
 # Скрипт для ін'єкції збоїв у локальне середовище Docker Compose
 
 # Кольори

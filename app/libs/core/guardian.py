@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Predator Analytics v25 - Self-Healing Guardian
+"""Predator Analytics v45 - Self-Healing Guardian
 Core module for system diagnostics, auto-recovery and schema integrity.
 """
 import asyncio
@@ -181,7 +181,7 @@ class GuardianService:
         return results
 
     async def vacuum_analytical_storage(self) -> dict[str, Any]:
-        """Performs V25 DB Optimization (VACUUM ANALYZE)."""
+        """Performs V45 DB Optimization (VACUUM ANALYZE)."""
         logger.info("🛠️ Guardian: Starting Vacuum Analytical Storage...")
         from sqlalchemy import text
         try:
@@ -259,6 +259,6 @@ class GuardianService:
             except Exception as e:
                 logger.exception(f"Guardian Loop Error: {e}")
 
-            await asyncio.sleep(60) # Reconcile every 1 minute now (Aggressive v26 Standard)
+            await asyncio.sleep(60) # Reconcile every 1 minute now (Aggressive v45 Standard)
 
 guardian = GuardianService()

@@ -113,7 +113,7 @@ export const NAVIGATION_CONFIG: Record<string, NavItem[]> = {
     },
     {
       id: 'evolution',
-      label: 'AI Evolution (v30)',
+      label: 'AI Evolution (v45)',
       icon: 'Sparkles',
       path: '/admin/evolution',
       roles: [UserRole.ADMIN],

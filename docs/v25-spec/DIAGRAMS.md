@@ -1,4 +1,4 @@
-# 📊 System Diagrams (Mermaid) — Predator v25.0
+# 📊 System Diagrams (Mermaid) — Predator v45 | Neural Analytics.0
 
 > **Версія:** 25.0
 > **Оновлено:** 10.01.2026

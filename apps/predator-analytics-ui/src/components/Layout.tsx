@@ -65,7 +65,7 @@ const Layout: React.FC<LayoutProps> = ({
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const data = await api.v25.getRealtimeMetrics();
+        const data = await api.v45.getRealtimeMetrics();
         if (data) {
           setMetrics({
             cpu: data.cpu_usage || 0,
@@ -206,7 +206,7 @@ const Layout: React.FC<LayoutProps> = ({
                       PREDATOR
                     </h1>
                     <p className="text-[9px] text-slate-500 font-black tracking-[0.2em] uppercase">
-                      V25 · КОМАНДНИЙ ЦЕНТР
+                      V45 · КОМАНДНИЙ ЦЕНТР
                     </p>
                   </div>
                 </div>

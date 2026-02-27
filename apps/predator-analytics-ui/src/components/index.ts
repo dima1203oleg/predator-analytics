@@ -15,23 +15,23 @@ export { StorageAnalytics } from './StorageAnalytics';
 export { AnalyticsDashboard } from './AnalyticsDashboard';
 export { ETLPipelineVisualizer } from './ETLPipelineVisualizer';
 
-// v25.0 Enhanced Components
+// v45.0 Enhanced Components
 export { SystemHealthDashboard } from './dashboard/SystemHealthDashboard';
 export { AIAnalystPanel } from './ai/AIAnalystPanel';
 export { EnhancedDataUpload } from './upload/EnhancedDataUpload';
 export { SmartCaseBrowser } from './cases/SmartCaseBrowser';
 
-// v25.0 SuperIntelligence Components
+// v45.0 SuperIntelligence Components
 export { SuperIntelligenceDashboard } from './ai/SuperIntelligenceDashboard';
 export { SelfHealingStatus } from './ai/SelfHealingStatus';
 export { AIActivityLogs } from './ai/AIActivityLogs';
 export { WorkflowControlPanel } from './ai/WorkflowControlPanel';
 
-// v26.0 AZR Constitutional Framework
+// v45.0 AZR Constitutional Framework
 export { AZRConstitutionalDashboard } from './AZRConstitutionalDashboard';
 export { ETLTruthDashboard } from './ETLTruthDashboard';
 export { TruthLedgerSection } from './TruthLedgerSection';
 
-// v30.0 Pipeline Monitoring
+// v45.0 Pipeline Monitoring
 export { PipelineMonitor } from './pipeline/PipelineMonitor';
 export { ActiveJobsPanel } from './pipeline/ActiveJobsPanel';

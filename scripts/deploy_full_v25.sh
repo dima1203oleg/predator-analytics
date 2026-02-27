@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Predator Analytics v25.0 - FULL Autonomous System Deployment
+# Predator Analytics v45.0 - FULL Autonomous System Deployment
 # Deploys Orchestrator, H2O LLM Studio, Backend, and Frontend.
 
 SSH_HOST="predator-server"
@@ -10,7 +10,7 @@ REMOTE_DIR="predator-analytics"
 GREEN='\033[0;32m'
 NC='\033[0m'
 
-echo -e "${GREEN}🚀 Starting FULL v25.0 Deployment to NVIDIA Server...${NC}"
+echo -e "${GREEN}🚀 Starting FULL v45.0 Deployment to NVIDIA Server...${NC}"
 
 # 1. Sync Code
 ./scripts/sync-to-server.sh
@@ -30,6 +30,6 @@ ssh "$SSH_HOST" "
     # Build and Start FULL Stack using the 'server' profile
     docker compose --profile server up -d --build && \
 
-    echo -e "${GREEN}✅ All v25.0 Services Deployed!${NC}" && \
+    echo -e "${GREEN}✅ All v45.0 Services Deployed!${NC}" && \
     docker compose ps
 "

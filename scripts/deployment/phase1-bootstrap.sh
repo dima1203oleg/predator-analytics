@@ -1,10 +1,10 @@
 #!/bin/bash
 # phase1-bootstrap.sh
-# PHASE 1: Bootstrap Predator Analytics v28-S
+# PHASE 1: Bootstrap Predator Analytics v45-S
 
 set -e  # Завершення при помилці
 
-echo "🚀 Phase 1: Bootstrap Predator Analytics v28-S"
+echo "🚀 Phase 1: Bootstrap Predator Analytics v45-S"
 
 # 1. Перевірка системних вимог
 echo "🔍 Перевірка системних вимог..."

@@ -37,7 +37,7 @@ async def monitor():
     client = None
     if API_ID and API_HASH:
         try:
-            client = TelegramClient('predator_v30_session', int(API_ID), API_HASH)
+            client = TelegramClient('predator_v45_session', int(API_ID), API_HASH)
             await client.start()
             print("✅ Connected to Telegram Network")
         except Exception as e:

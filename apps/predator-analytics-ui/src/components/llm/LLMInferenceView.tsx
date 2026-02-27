@@ -162,7 +162,7 @@ export const LLMInferenceView: React.FC<LLMInferenceViewProps> = ({
                 <TacticalCard variant="holographic" title={premiumLocales.llm.inference.router.title} className="glass-morphism panel-3d">
                     <div className="space-y-4">
                         {[
-                            { name: `${premiumLocales.common.local} Llama-3`, status: premiumLocales.llm.inference.router.active, type: 'CORE', model: 'v25.0 Meta' },
+                            { name: `${premiumLocales.common.local} Llama-3`, status: premiumLocales.llm.inference.router.active, type: 'CORE', model: 'v45.0 Meta' },
                             { name: 'Gemini 3 Ultra', status: premiumLocales.llm.inference.router.standby, type: 'CLOUD', model: 'DeepMind API' },
                         ].map((p, i) => (
                             <motion.div whileHover={{ x: 4 }} key={i} className="p-4 bg-slate-950/80 border border-white/5 rounded-2xl flex justify-between items-center group">

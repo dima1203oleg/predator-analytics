@@ -23,7 +23,7 @@ MANDATORY OUTCOMES (Definition of Done)
 - Documents: single canonical store used for read/write/index source. No cross-table read/write split.
 - Ingestion: canonical pipeline API→job registry→queue→workers→DB→index; others labeled deprecated/experimental.
 - Observability: exactly one /metrics + one Prometheus registry; no duplicate series.
-- UI: one canonical API base (no /api/v1 vs /api/v25 mix), tenant context included, explicit loading/empty/error states,
+- UI: one canonical API base (no /api/v1 vs /api/v45 mix), tenant context included, explicit loading/empty/error states,
   sections Dashboard/Documents/Ingestion/Search/System (health+version+env), and performance improvements (dedupe fetch, caching).
 
 REQUIRED DELIVERABLES

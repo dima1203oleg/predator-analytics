@@ -241,7 +241,7 @@ async def metrics():
 
 @router.get("/metrics/summary")
 async def metrics_summary():
-    """Human-readable metrics summary (v25 compliant)."""
+    """Human-readable metrics summary (v45 compliant)."""
     return {
         "status": "active",
         "registry": "default",

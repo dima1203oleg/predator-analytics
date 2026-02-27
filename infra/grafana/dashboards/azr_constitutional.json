@@ -2,7 +2,7 @@
   "annotations": {
     "list": []
   },
-  "description": "AZR (Autonomous Zero-Risk Amendment Runtime) System Overview - Predator Analytics v26",
+  "description": "AZR (Autonomous Zero-Risk Amendment Runtime) System Overview - Predator Analytics v45",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -92,7 +92,7 @@
           "refId": "A"
         }
       ],
-      "title": "Constitution v26",
+      "title": "Constitution v45",
       "type": "stat"
     },
     {
@@ -993,7 +993,7 @@
   "refresh": "30s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["predator", "azr", "constitutional", "v26"],
+  "tags": ["predator", "azr", "constitutional", "v45"],
   "templating": {
     "list": []
   },

@@ -26,7 +26,7 @@ const LLMView: React.FC = () => {
     const metrics = useSystemMetrics();
     const toast = useToast();
     const [activeTab, setActiveTab] = useState<LLMTab>('INFERENCE');
-    const [activeModel, setActiveModel] = useState('llama3-70b-v25');
+    const [activeModel, setActiveModel] = useState('llama3-70b-v45');
 
     const [systemPrompt, setSystemPrompt] = useState(premiumLocales.llm.systemPrompt);
     const [userPrompt, setUserPrompt] = useState('');
@@ -56,8 +56,8 @@ const LLMView: React.FC = () => {
                     api.getLLMBenchmarks(),
                     api.getAutoMLExperiments(),
                     api.getLLMConfig(),
-                    api.v25.optimizer.getHistory(),
-                    api.v25.optimizer.getStatus()
+                    api.v45.optimizer.getHistory(),
+                    api.v45.optimizer.getStatus()
                 ]);
 
                 if (statusRes && statusRes.modules) {
@@ -111,7 +111,7 @@ const LLMView: React.FC = () => {
 
         (async () => {
             try {
-                await api.v25.training.trigger();
+                await api.v45.training.trigger();
                 toast.success(premiumLocales.llm.toasts.trainingStarted, premiumLocales.llm.toasts.trainingStartedDesc);
             } catch (e) {
                 toast.error(premiumLocales.llm.toasts.trainingEndpointError, premiumLocales.llm.toasts.trainingEndpointErrorDesc);

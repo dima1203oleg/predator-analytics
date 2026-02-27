@@ -4,7 +4,7 @@
 SERVER="predator-server"
 # Credentials and port are handled by ~/.ssh/config
 
-echo "🚀 Синхронізація файлів фронтенду v30 (без node_modules)..."
+echo "🚀 Синхронізація файлів фронтенду v45 (без node_modules)..."
 rsync -avz --exclude 'node_modules' --exclude 'dist' apps/predator-analytics-ui/ $SERVER:~/predator-analytics/apps/frontend/
 
 echo "🏗️ Перезбірка фронтенду на сервері..."

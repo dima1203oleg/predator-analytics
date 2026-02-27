@@ -8,7 +8,7 @@ metadata:
 data:
   predator-overview.json: |
     {
-      "title": "Predator v25.1 Overview",
+      "title": "Predator v45 | Neural Analytics.1 Overview",
       "panels": [
         {
           "title": "Total Decisions",

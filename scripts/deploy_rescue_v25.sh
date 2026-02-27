@@ -1,6 +1,6 @@
 #!/bin/bash
 # ------------------------------------------------------------------
-# PREDATOR ANALYTICS v25 - RESCUE DEPLOYMENT SCRIPT (UKRAINIAN)
+# PREDATOR ANALYTICS v45 - RESCUE DEPLOYMENT SCRIPT (UKRAINIAN)
 # ------------------------------------------------------------------
 # Цей скрипт призначений для примусового розгортання оновлень на сервері,
 # коли стандартні методи (rsync/alias) не працюють.
@@ -19,7 +19,7 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-echo -e "${YELLOW}🚀 ПОЧАТОК АВАРІЙНОГО РОЗГОРТАННЯ V25 (OMNISCIENCE UI)${NC}"
+echo -e "${YELLOW}🚀 ПОЧАТОК АВАРІЙНОГО РОЗГОРТАННЯ V45 (OMNISCIENCE UI)${NC}"
 
 # 1. Перевірка наявності ключа
 if [ ! -f "$SSH_KEY" ]; then
@@ -40,7 +40,7 @@ fi
 
 # 3. Підготовка архіву (швидше ніж передача тисяч дрібних файлів)
 echo -e "${YELLOW}📦 Архівація фронтенду...${NC}"
-TAR_NAME="frontend_v25_deploy.tar.gz"
+TAR_NAME="frontend_v45_deploy.tar.gz"
 # Виключаємо node_modules, dist та інші непотрібні файли
 tar -czf "$TAR_NAME" -C apps/frontend . --exclude=node_modules --exclude=dist --exclude=.git
 

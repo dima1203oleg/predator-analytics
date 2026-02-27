@@ -55,7 +55,7 @@ export const VoiceAssistant: React.FC = () => {
     // 2. Complex Queries (Trinity AI Backend)
     setIsAiThinking(true);
     try {
-      const response = await axios.post('/api/v25/trinity/process', {
+      const response = await axios.post('/api/v45/trinity/process', {
         command: text
       });
 

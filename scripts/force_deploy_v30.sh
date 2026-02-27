@@ -1,6 +1,6 @@
 #!/bin/bash
-# PREDATOR V30 - FORCE UPDATE SCRIPT
-# Цей скрипт ПРИМУСОВО оновлює головний контейнер фронтенду на сервері до версії v30.
+# PREDATOR V45 - FORCE UPDATE SCRIPT
+# Цей скрипт ПРИМУСОВО оновлює головний контейнер фронтенду на сервері до версії v45.
 
 SERVER="predator-server"
 REMOTE_BASE="/home/dima/predator-analytics"
@@ -8,10 +8,10 @@ REMOTE_DIST="$REMOTE_BASE/apps/predator-analytics-ui/dist"
 LOCAL_DIST="/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui/dist"
 LOCAL_PROJECT="/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui"
 
-echo "🚀 ПОЧАТОК РОЗГОРТАННЯ PREDATOR V30 (CU-PIE EDITION)..."
+echo "🚀 ПОЧАТОК РОЗГОРТАННЯ PREDATOR V45 (CU-PIE EDITION)..."
 
 # 1. Build Local
-echo "📦 Збірка v30 локально..."
+echo "📦 Збірка v45 локально..."
 cd "$LOCAL_PROJECT" && npm run build
 
 # 2. Upload
@@ -24,11 +24,11 @@ echo "⚙️ Оновлення конфігурації Nginx..."
 scp "/Users/dima-mac/Documents/Predator_21/nginx.simple.conf" "$SERVER:$REMOTE_BASE/docker/nginx.simple.conf"
 
 # 4. SWAP CONTAINERS
-echo "🔄 ЗАМІНА КОНТЕЙНЕРІВ (V28 -> V30)..."
+echo "🔄 ЗАМІНА КОНТЕЙНЕРІВ (V45 -> V45)..."
 ssh "$SERVER" << 'EOF'
     # Stop old main frontend
     if docker ps | grep -q predator_frontend; then
-        echo "🛑 Зупинка старого контейнера v28 (predator_frontend)..."
+        echo "🛑 Зупинка старого контейнера v45 (predator_frontend)..."
         docker stop predator_frontend
         docker rm predator_frontend
     fi
@@ -46,7 +46,7 @@ ssh "$SERVER" << 'EOF'
         docker rm -f predator-fixed-frontend
     fi
 
-    echo "▶️ Запуск PREDATOR V30..."
+    echo "▶️ Запуск PREDATOR V45..."
     docker run -d --name predator-analytics-frontend \
         --restart unless-stopped \
         -p 80:80 \
@@ -55,5 +55,5 @@ ssh "$SERVER" << 'EOF'
         nginx:alpine
 EOF
 
-echo "✅ УСПІШНО! PREDATOR V30 розгорнуто на головному порті (80)."
+echo "✅ УСПІШНО! PREDATOR V45 розгорнуто на головному порті (80)."
 echo "🌐 Перевірте: https://jolyn-bifid-eligibly.ngrok-free.dev/"

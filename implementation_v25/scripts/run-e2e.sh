@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Predator v25 Local E2E Smoke Test
+# Predator v45 | Neural AnalyticsLocal E2E Smoke Test
 # Usage: ./run-e2e.sh
 
 # Colors
@@ -42,14 +42,14 @@ if [ "$READY" = false ]; then
 fi
 
 # Validate specific endpoints
-echo "🧪 Testing Monitoring Endpoint (v25)..."
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/v25/monitoring/queues)
+echo "🧪 Testing Monitoring Endpoint (v45)..."
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/v45/monitoring/queues)
 
 # We accept 200 (OK) or 401/403 (Auth required) as proof of life
 if [[ "$HTTP_CODE" =~ ^(200|401|403)$ ]]; then
-    echo -e "${GREEN}✅ /api/v25/monitoring/queues responded with $HTTP_CODE${NC}"
+    echo -e "${GREEN}✅ /api/v45/monitoring/queues responded with $HTTP_CODE${NC}"
 else
-    echo -e "${RED}❌ /api/v25/monitoring/queues failed with $HTTP_CODE${NC}"
+    echo -e "${RED}❌ /api/v45/monitoring/queues failed with $HTTP_CODE${NC}"
     docker-compose logs backend --tail=50
     exit 1
 fi

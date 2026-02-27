@@ -76,7 +76,7 @@ const DocumentsView: React.FC = () => {
                     <h3 className="text-xl font-display font-black text-slate-200 group-hover:text-blue-400 transition-colors tracking-tight">Додати нові матеріали до аналізу</h3>
                     <p className="text-sm text-slate-500 mt-3 max-w-lg leading-relaxed">
                         Підтримуються PDF звіти, реєстри CSV/JSON та текстові документи. <br/>
-                        <span className="text-xs text-slate-600 font-mono mt-2 block uppercase tracking-widest">Автоматична семантична індексація V25</span>
+                        <span className="text-xs text-slate-600 font-mono mt-2 block uppercase tracking-widest">Автоматична семантична індексація V45</span>
                     </p>
                 </div>
             </div>

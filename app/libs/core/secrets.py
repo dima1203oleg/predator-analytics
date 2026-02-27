@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Predator Analytics v25 - Centralized Identity & Secret Manager
+"""Predator Analytics v45 - Centralized Identity & Secret Manager
 Enforces secure handling of API keys and credentials.
 """
 import base64
@@ -18,9 +18,9 @@ logger = logging.getLogger("predator.secrets")
 
 class SecretManager:
     def __init__(self):
-        # In a real v25 system, this would connect to Vault or AWS Secrets Manager
+        # In a real v45 system, this would connect to Vault or AWS Secrets Manager
         # Here we use a Master Encryption Key from env if available, or a default for R&D
-        self.master_key = os.getenv("PREDATOR_MASTER_KEY", base64.urlsafe_b64encode(b"predator_v25_master_secret_key_!"))
+        self.master_key = os.getenv("PREDATOR_MASTER_KEY", base64.urlsafe_b64encode(b"predator_v45_master_secret_key_!"))
         try:
             self.fernet = Fernet(self.master_key)
         except Exception as e:

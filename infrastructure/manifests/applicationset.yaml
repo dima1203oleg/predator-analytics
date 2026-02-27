@@ -22,7 +22,7 @@ spec:
     metadata:
       name: "{{path.basename}}"
       annotations:
-        constitution-version: "v26"
+        constitution-version: "v45"
         managed-by: "argocd"
 
     spec:

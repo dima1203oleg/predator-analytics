@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: "https://github.com/predator-analytics/predator-v30" # Placeholder
+    repoURL: "https://github.com/predator-analytics/predator-v45" # Placeholder
     targetRevision: HEAD
     path: helm/predator
     helm:

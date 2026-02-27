@@ -1,6 +1,6 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════════════
-# 🩹 PREDATOR V30 - HOTFIX DEPLOYMENT
+# 🩹 PREDATOR V45 - HOTFIX DEPLOYMENT
 # Fixes Context API crashes and ensures stability
 # ═══════════════════════════════════════════════════════════════
 
@@ -9,7 +9,7 @@ SOURCE_DIR="apps/predator-analytics-ui/src"
 REMOTE_DIR="~/predator-analytics/apps/predator-analytics-ui/src"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🩹 DEPLOYING V30 HOTFIXES (FULL SOURCE)"
+echo "🩹 DEPLOYING V45 HOTFIXES (FULL SOURCE)"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 

@@ -33,8 +33,8 @@ def history(
 ):
     """Show deployment history."""
     console.print("Showing recent deployments...")
-    console.print("- v26.0.1 (Current)")
-    console.print("- v26.0.0")
+    console.print("- v45.0.1 (Current)")
+    console.print("- v45.0.0")
 
 @app.command()
 def rollback(

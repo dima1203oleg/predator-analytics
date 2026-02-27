@@ -156,7 +156,7 @@ export const GlobalSearchOverlay: React.FC<{ isOpen: boolean; onClose: () => voi
         </div>
 
         <div className="px-4 py-2 bg-slate-950/50 border-t border-white/5 flex justify-between items-center text-[10px] text-slate-600 font-mono">
-           <span>PREDATOR V30 SEARCH INDEX</span>
+           <span>PREDATOR V45 SEARCH INDEX</span>
            <span>CMD + K TO OPEN</span>
         </div>
       </motion.div>

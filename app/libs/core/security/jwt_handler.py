@@ -13,7 +13,7 @@ from typing import Any, Dict, Optional
 
 
 # Secret key should be in environment in production
-SECRET_KEY = "PREDATOR_SOVEREIGN_MASTER_KEY_v27"
+SECRET_KEY = "PREDATOR_SOVEREIGN_MASTER_KEY_v45"
 ALGORITHM = "HS256"
 
 def _base64_url_encode(data: bytes) -> str:

@@ -1,5 +1,5 @@
 
-# predator-analytics v25.1 - Component Registry Update
+# predator-analytics v45.1 - Component Registry Update
 # Adding SIO and AutoML Controller
 
 apiVersion: apps/v1

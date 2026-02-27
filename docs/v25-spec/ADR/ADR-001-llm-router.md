@@ -110,4 +110,4 @@ router_settings:
 ## Зв'язки
 
 - [ADR-002: Hybrid Search Architecture](./ADR-002-hybrid-search.md)
-- [MASTER_SPEC_v25.md](../MASTER_SPEC_v25.md)
+- [MASTER_SPEC_v45.md](../MASTER_SPEC_v45.md)

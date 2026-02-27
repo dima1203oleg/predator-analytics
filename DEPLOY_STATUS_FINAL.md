@@ -1,7 +1,7 @@
 # Deployment Status Report (2025-12-14)
 
 ## ✅ Completed actions
-- Fixed `NameError` in `backend/app/main_v25.py`.
+- Fixed `NameError` in `backend/app/main_v45.py`.
 - Fixed `db-migrate` entrypoint in `docker-compose.yml`.
 - Added `DiagnosticsService` module (`backend/app/services/diagnostics_service.py`).
 - Added API endpoint `/api/v1/system/diagnostics/run`.

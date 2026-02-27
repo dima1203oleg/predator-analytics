@@ -3,7 +3,7 @@ SERVER="predator-server"
 SSH_OPTS="-o ControlPath=none"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🧹 DEEP CLEAN & DEPLOY V30"
+echo "🧹 DEEP CLEAN & DEPLOY V45"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Sync latest source code first
@@ -26,12 +26,12 @@ docker ps -a | grep frontend | awk '{print $1}' | xargs -r docker rm -f
 echo "🧹 Pruning conflicting networks/volumes..."
 docker network prune -f
 
-echo "🔄 Rebuilding V30 Frontend (NO CACHE)..."
+echo "🔄 Rebuilding V45 Frontend (NO CACHE)..."
 # Ensure we map 80:80 explicitly in case compose override exists
 export COMPOSER_IGNORE_PLATFORM_REQ=1
 docker compose build --no-cache frontend
 
-echo "🚀 Starting V30 Frontend on Port 80..."
+echo "🚀 Starting V45 Frontend on Port 80..."
 docker compose up -d --force-recreate frontend
 
 echo "⏳ Waiting for init..."

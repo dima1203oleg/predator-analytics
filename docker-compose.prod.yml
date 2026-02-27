@@ -1,4 +1,4 @@
-# Predator Analytics v27.0 - Production Docker Compose (Updated)
+# Predator Analytics v45.0 - Production Docker Compose (Updated)
 # Infrastructure + Governance + AI Orchestration
 # Optimized for NVIDIA Server Deployment
 
@@ -54,7 +54,7 @@ services:
     restart: unless-stopped
     shm_size: '2gb'
     env_file: .env
-    # === LARGE FILE SUPPORT (v27.0) ===
+    # === LARGE FILE SUPPORT (v45.0) ===
     deploy:
       resources:
         limits:
@@ -81,7 +81,7 @@ services:
       - governance
       - ollama
 
-  # Governance (SOM) - NEW v27
+  # Governance (SOM) - NEW v45
   governance:
     build:
       context: .
@@ -101,7 +101,7 @@ services:
       - redis
       - rabbitmq
 
-  # Orchestrator (AZR) - NEW v27
+  # Orchestrator (AZR) - NEW v45
   orchestrator:
     build:
       context: .
@@ -125,7 +125,7 @@ services:
       - ollama
       - redis
 
-  # RabbitMQ (Event Bus) - NEW v27
+  # RabbitMQ (Event Bus) - NEW v45
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: predator-rabbitmq

@@ -2,7 +2,7 @@
 
 **Статус:** ПРИЙНЯТО
 **Дата:** 2026-02-04
-**Контекст:** Predator v30 Constitutional Compliance
+**Контекст:** Predator v45 | Neural Analytics Constitutional Compliance
 
 ## Рішення
 
@@ -28,7 +28,7 @@ security_pipeline:
 
 ## Обґрунтування
 
-Для системи класу Predator v30:
+Для системи класу Predator v45 | Neural Analytics:
 - SBOM — це не nice-to-have, а must-have
 - Supply-chain атаки — реальна загроза
 - Sovereign-grade вимагає повної прозорості залежностей

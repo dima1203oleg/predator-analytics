@@ -88,7 +88,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             </button>
                         </div>
                         <h1 className="text-4xl font-black tracking-[0.2em] text-white/80 mb-2">PREDATOR</h1>
-                        <p className="text-slate-500 text-xs tracking-[0.3em] uppercase">Secure Access Terminal v30.1</p>
+                        <p className="text-slate-500 text-xs tracking-[0.3em] uppercase">Secure Access Terminal v45.1</p>
                     </motion.div>
                 )}
 

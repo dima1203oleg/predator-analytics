@@ -1,7 +1,7 @@
 #!/bin/bash
 cd /Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui
 
-echo "🏗️ Building Local UI Preview (v27)..."
+echo "🏗️ Building Local UI Preview (v45)..."
 # Build locally
 docker build -t predator-local-ui -f Dockerfile.local .
 

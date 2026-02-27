@@ -1,5 +1,5 @@
 /**
- * OpenSearch Інтеграційний Компонент PREDATOR v25
+ * OpenSearch Інтеграційний Компонент Predator v45 | Neural Analytics
  *
  * Вбудовування OpenSearch Dashboards з живими графіками
  * Резервний режим з локальними графіками ECharts
@@ -48,8 +48,8 @@ export const OpenSearch: React.FC = () => {
   const fetchData = useCallback(async () => {
     try {
       const [searchStats, systemStats] = await Promise.allSettled([
-        api.v25.getStats(),
-        api.v25.getLiveHealth()
+        api.v45.getStats(),
+        api.v45.getLiveHealth()
       ]);
 
       const now = new Date();
@@ -181,7 +181,7 @@ export const OpenSearch: React.FC = () => {
           <div>
             <h3 className="text-sm font-black text-white uppercase tracking-wider">OpenSearch Dashboards</h3>
             <div className="flex items-center gap-3 mt-1">
-              <span className="text-[9px] text-slate-500 font-mono uppercase">PREDATOR_CLUSTER_V25</span>
+              <span className="text-[9px] text-slate-500 font-mono uppercase">PREDATOR_CLUSTER_V45</span>
               {stats && (
                 <span className={`text-[9px] font-black uppercase flex items-center gap-1 ${getHealthColor(stats.cluster_health)}`}>
                   <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${stats.cluster_health === 'green' ? 'bg-emerald-400' : stats.cluster_health === 'yellow' ? 'bg-amber-400' : 'bg-rose-400'}`} />

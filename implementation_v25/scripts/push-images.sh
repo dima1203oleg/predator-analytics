@@ -3,10 +3,10 @@ set -euo pipefail
 
 # Build and push frontend/backend images to GHCR if GHCR_PAT is present.
 GHCR=${GHCR:-ghcr.io}
-REPO=${REPO:-${GITHUB_REPOSITORY:-your-org/predator_v25}}
+REPO=${REPO:-${GITHUB_REPOSITORY:-your-org/predator_v45}}
 RUN_NUM=${RUN_NUM:-local}
-BACKEND_TAG=${1:-v25.0.${RUN_NUM}}
-FRONTEND_TAG=${2:-v25.0.${RUN_NUM}}
+BACKEND_TAG=${1:-v45.0.${RUN_NUM}}
+FRONTEND_TAG=${2:-v45.0.${RUN_NUM}}
 
 if [ -z "${GHCR_PAT:-}" ]; then
   echo "GHCR_PAT not set. Aborting push. To push, export GHCR_PAT or set it in env." >&2

@@ -2,7 +2,7 @@
 """
 Module: analytics
 Component: api
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 from fastapi import APIRouter, HTTPException, Depends
 from typing import Dict, List, Optional

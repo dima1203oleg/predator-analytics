@@ -1,5 +1,5 @@
 #!/bin/bash
-# PREDATOR V30 - Secure UI Viewer
+# PREDATOR V45 - Secure UI Viewer
 # Bypasses server firewall using direct container tunnel
 
 SERVER="dima@194.177.1.240"

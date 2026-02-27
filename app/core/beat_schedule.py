@@ -68,7 +68,7 @@ CELERY_BEAT_SCHEDULE = {
     },
 
     # ============================================================================
-    # AUTONOMOUS INTELLIGENCE (Predator Core v25)
+    # AUTONOMOUS INTELLIGENCE (Predator Core v45)
     # ============================================================================
 
     "autonomous-detection-every-2-min": {

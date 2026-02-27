@@ -2,7 +2,7 @@
 """
 Module: decision
 Component: shared
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 from dataclasses import dataclass, field
 from datetime import datetime

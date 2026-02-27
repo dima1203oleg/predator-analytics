@@ -1,9 +1,9 @@
-# 🚀 Predator Analytics v25 - Roadmap Вдосконалення
+# 🚀 Predator Analytics v45 - Roadmap Вдосконалення
 
 ## 📊 Поточний Стан: 90% Готовності
 
 **Дата створення:** 2026-01-11
-**Версія:** v25.0
+**Версія:** v45.0
 **Мета:** Досягти 100% готовності та production excellence
 
 ---
@@ -66,7 +66,7 @@ describe('ML Training End-to-End', () => {
       .should('contain', 'COMPLETED')
 
     // 5. Verify model artifacts
-    cy.request('/api/v25/ml-jobs')
+    cy.request('/api/v45/ml-jobs')
       .its('body.jobs[0].status')
       .should('eq', 'succeeded')
   })
@@ -79,18 +79,18 @@ describe('ML Training End-to-End', () => {
 describe('Mission Planner', () => {
   it('Should execute threat analysis mission', () => {
     // Create mission via API
-    cy.request('POST', '/api/v25/missions/test/threat-analysis')
+    cy.request('POST', '/api/v45/missions/test/threat-analysis')
       .then((response) => {
         const missionId = response.body.mission_id
 
         // Poll for completion
         cy.waitUntil(() =>
-          cy.request(`/api/v25/missions/${missionId}`)
+          cy.request(`/api/v45/missions/${missionId}`)
             .then(r => r.body.status === 'completed')
         , { timeout: 30000, interval: 2000 })
 
         // Verify all tasks completed
-        cy.request(`/api/v25/missions/${missionId}`)
+        cy.request(`/api/v45/missions/${missionId}`)
           .its('body.tasks')
           .should('have.length.greaterThan', 0)
       })

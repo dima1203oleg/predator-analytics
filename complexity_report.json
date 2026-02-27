@@ -62,13 +62,13 @@
       "limit": 25
     },
     {
-      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/api/v25_routes.py",
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/api/v45_routes.py",
       "issue": "LOC_LIMIT_EXCEEDED",
       "value": 1917,
       "limit": 800
     },
     {
-      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/api/v25_routes.py",
+      "file": "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app/api/v45_routes.py",
       "issue": "FUNC_LIMIT_EXCEEDED",
       "value": 64,
       "limit": 25

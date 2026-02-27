@@ -1,4 +1,4 @@
-# 🏛️ PREDATOR ANALYTICS v28-S: ПІДСУМОК АНАЛІЗУ ТА ПЛАНУ ВПРОВАДЖЕННЯ
+# 🏛️ PREDATOR ANALYTICS v45-S: ПІДСУМОК АНАЛІЗУ ТА ПЛАНУ ВПРОВАДЖЕННЯ
 
 ## Дата аналізу: 2026-01-12
 ## Статус: ПЛАН ЗАТВЕРДЖЕНО ДО ВИКОНАННЯ
@@ -44,7 +44,7 @@
 
 ---
 
-## 2. GAP Analysis: Існуюче vs v28-S
+## 2. GAP Analysis: Існуюче vs v45-S
 
 ### Конституційний шар
 | Компонент | Існує | Потрібно | Gap |
@@ -87,16 +87,16 @@
 ### 📋 Планування
 | Файл | Опис |
 |------|------|
-| `docs/IMPLEMENTATION_PLAN_V28_S.md` | Головний план впровадження |
+| `docs/IMPLEMENTATION_PLAN_V45_S.md` | Головний план впровадження |
 | `docs/PHASE1_TECHNICAL_SPEC.md` | Детальна специфікація Фази 1 |
 | `docs/specs/SOM_SPECIFICATION.md` | Специфікація SOM модуля |
 
 ### 📜 Конституційні аксіоми
 | Файл | Аксіома |
 |------|---------|
-| `infrastructure/constitution/axioms_v28/axiom_0_existence.yaml` | Закон Існування |
-| `infrastructure/constitution/axioms_v28/axiom_2_sovereignty.yaml` | Закон Людського Суверенітету |
-| `infrastructure/constitution/axioms_v28/axiom_3_truth.yaml` | Закон Істини |
+| `infrastructure/constitution/axioms_v45/axiom_0_existence.yaml` | Закон Існування |
+| `infrastructure/constitution/axioms_v45/axiom_2_sovereignty.yaml` | Закон Людського Суверенітету |
+| `infrastructure/constitution/axioms_v45/axiom_3_truth.yaml` | Закон Істини |
 
 ### 📂 Створена структура директорій
 ```

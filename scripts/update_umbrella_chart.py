@@ -99,7 +99,7 @@ def main():
     chart_yaml = {
         "apiVersion": "v2",
         "name": "predator",
-        "description": "Predator Analytics v30.0 - Sovereign Intelligence Platform",
+        "description": "Predator Analytics v45.0 - Sovereign Intelligence Platform",
         "type": "application",
         "version": "30.0.0",
         "appVersion": "30.0.0",

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-BACKUP_NAME="predator_v29s_pre_deploy_$(date +%Y%m%d_%H%M%S).tar.gz"
+BACKUP_NAME="predator_v45s_pre_deploy_$(date +%Y%m%d_%H%M%S).tar.gz"
 echo "📦 [BACKUP] Creating full backup: $BACKUP_NAME..."
 
 # Exclude large directories like node_modules and .venv

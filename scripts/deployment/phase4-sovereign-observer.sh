@@ -31,5 +31,5 @@ echo "✅ [3/4] AZR Engine: Running (Assumed)"
 # Truth Ledger (Mock/Real)
 echo "✅ [4/4] Truth Ledger: Initialized"
 
-echo "🎉 Predator Analytics v28-S (AZR 3) УСПІШНО РОЗГОРНУТО!"
+echo "🎉 Predator Analytics v45-S (AZR 3) УСПІШНО РОЗГОРНУТО!"
 echo "📊 СИСТЕМА ПРАЦЮЄ В РЕЖИМІ REAL MODE."

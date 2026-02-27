@@ -31,7 +31,7 @@ const AgentsView: React.FC = () => {
     useEffect(() => {
         const fetchAlerts = async () => {
             try {
-                const alerts = await api.v25.getLiveAlerts();
+                const alerts = await api.v45.getLiveAlerts();
                 setRealAlerts(alerts || []);
             } catch (e) {
                 console.warn("Failed to fetch fleet alerts");

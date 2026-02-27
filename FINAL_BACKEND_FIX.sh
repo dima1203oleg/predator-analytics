@@ -2,7 +2,7 @@
 # 🦁 PREDATOR BACKEND FINAL FIX & LAUNCH
 # Цей скрипт призначений для "жвавого" старту бекенду, щоб розблокувати UI
 
-echo "🦁 PREDATOR V30: FINAL BACKEND LAUNCH SEQUENCE"
+echo "🦁 PREDATOR V45: FINAL BACKEND LAUNCH SEQUENCE"
 echo "==============================================="
 
 # 1. Kill old processes

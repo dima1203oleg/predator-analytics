@@ -52,7 +52,7 @@ def status(
         ledger_health = "[red]unreachable[/red]"
 
     status_data = {
-        "system": "Predator Analytics v27.0",
+        "system": "Predator Analytics v45.0",
         "status": "OPERATIONAL" if "unreachable" not in (arbiter_health, ledger_health) else "DEGRADED",
         "timestamp": datetime.utcnow().isoformat(),
         "components": {
@@ -138,8 +138,8 @@ def audit(
     if not healthy:
         console.print("[bold red]CRITICAL: Truth Ledger Integrity Compromised![/bold red]")
 
-    # Constitutional Scan (New for v26)
-    v27_axioms = {
+    # Constitutional Scan (New for v45)
+    v45_axioms = {
         "VPC: Physical": "ENFORCED",
         "CRC: Contextual": "ENFORCED",
         "Irreversibility": "ENFORCED",
@@ -151,7 +151,7 @@ def audit(
         "Model Governance": "ACTIVE",
         "Failure Economics": "ENFORCED"
     }
-    for axiom, state in v27_axioms.items():
+    for axiom, state in v45_axioms.items():
         state_style = "green" if state in ["ACTIVE", "ENFORCED"] else "yellow"
         console.print(f"  • {axiom:20} : [{state_style}]{state}[/{state_style}]")
 
@@ -179,7 +179,7 @@ def audit(
         console.print("\n[yellow]Audit Log is empty (Ledger offline or no entries).[/yellow]")
 
     if healthy:
-        console.print("\n[bold green]✓ AUDIT PASS[/bold green]: Chain integrity and v27.0 Reality-Bound axioms verified.")
+        console.print("\n[bold green]✓ AUDIT PASS[/bold green]: Chain integrity and v45.0 Reality-Bound axioms verified.")
     else:
         console.print("\n[bold red]✕ AUDIT FAIL[/bold red]: Chain corruption detected.")
 
@@ -187,10 +187,10 @@ def audit(
 def bom(
     kernel_only: bool = typer.Option(False, "--kernel", help="Show only Tier-0 Kernel components")
 ):
-    """Show v27.0 System Bill of Materials (BOM) Revision.
+    """Show v45.0 System Bill of Materials (BOM) Revision.
     Maps digital components to the physical reality stack.
     """
-    table = Table(title="Predator v27.0 System BOM (Revision)")
+    table = Table(title="Predator v45 | Neural Analytics.0 System BOM (Revision)")
     table.add_column("Category", style="cyan")
     table.add_column("Component", style="magenta")
     table.add_column("Status", style="green")
@@ -222,6 +222,6 @@ def version(
     check_update: bool = typer.Option(False, "--check-update", help="Check for updates")
 ):
     """Show system version."""
-    console.print("Predator Analytics v27.0.0 (The Reality-Bound Edition)")
+    console.print("Predator Analytics v45.0.0 (The Reality-Bound Edition)")
     if check_update:
         console.print("Checking for updates... System is up to date.")

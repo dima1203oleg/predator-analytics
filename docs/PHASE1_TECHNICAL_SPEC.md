@@ -45,7 +45,7 @@ Phase1_Objectives:
 ## 1.2 Залежності між компонентами
 ```mermaid
 graph TD
-    A[Аксіоми v28-S] --> B[Constitution Engine]
+    A[Аксіоми v45-S] --> B[Constitution Engine]
     B --> C[Arbiter Court]
     B --> D[RCE]
     B --> E[VPC Verifier]
@@ -69,7 +69,7 @@ graph TD
 
 ### Axiom 0: Закон Існування
 ```yaml
-# infrastructure/constitution/axioms_v28/axiom_0_existence.yaml
+# infrastructure/constitution/axioms_v45/axiom_0_existence.yaml
 id: "axiom_0"
 name: "Закон Існування"
 version: "28.0"
@@ -106,7 +106,7 @@ constraints:
 
 ### Axiom 1: Закон Мети
 ```yaml
-# infrastructure/constitution/axioms_v28/axiom_1_purpose.yaml
+# infrastructure/constitution/axioms_v45/axiom_1_purpose.yaml
 id: "axiom_1"
 name: "Закон Мети"
 version: "28.0"
@@ -149,7 +149,7 @@ prohibited_harms:
 
 ### Axiom 2: Закон Людського Суверенітету
 ```yaml
-# infrastructure/constitution/axioms_v28/axiom_2_sovereignty.yaml
+# infrastructure/constitution/axioms_v45/axiom_2_sovereignty.yaml
 id: "axiom_2"
 name: "Закон Людського Суверенітету"
 version: "28.0"
@@ -190,7 +190,7 @@ red_button_levels:
 
 ### Axiom 3: Закон Істини
 ```yaml
-# infrastructure/constitution/axioms_v28/axiom_3_truth.yaml
+# infrastructure/constitution/axioms_v45/axiom_3_truth.yaml
 id: "axiom_3"
 name: "Закон Істини"
 version: "28.0"
@@ -225,7 +225,7 @@ statement_types:
 
 ### Axiom 4: Закон Безпеки
 ```yaml
-# infrastructure/constitution/axioms_v28/axiom_4_safety.yaml
+# infrastructure/constitution/axioms_v45/axiom_4_safety.yaml
 id: "axiom_4"
 name: "Закон Безпеки"
 version: "28.0"
@@ -260,7 +260,7 @@ risk_thresholds:
 
 ### Axiom 5-10 (вже існують, оновити)
 ```yaml
-# Аксіоми 5-10 вже визначені в v26/v27
+# Аксіоми 5-10 вже визначені в v45/v45
 # Потрібно об'єднати та стандартизувати
 
 axiom_5: "CLI-First Sovereignty"      # Існує
@@ -330,7 +330,7 @@ class AxiomRegistry:
     Cannot be modified at runtime.
     """
 
-    def __init__(self, axioms_path: str = "/app/infrastructure/constitution/axioms_v28"):
+    def __init__(self, axioms_path: str = "/app/infrastructure/constitution/axioms_v45"):
         self._axioms: Dict[str, Axiom] = {}
         self._registry_hash: str = ""
         self._loaded = False
@@ -887,7 +887,7 @@ class TemporalAnalyzer:
 - [ ] Очистити дисковий простір на сервері
 - [ ] Встановити Ollama з CUDA підтримкою
 - [ ] Завантажити LLaMA 3.1 8B Q4_K_M
-- [ ] Створити database migrations для v28-S
+- [ ] Створити database migrations для v45-S
 
 ## Тиждень 3-4: Конституційне Ядро
 - [ ] Створити YAML файли для всіх аксіом

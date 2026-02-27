@@ -2,7 +2,7 @@
 """
 Module: metrics
 Component: shared
-Predator Analytics v25.1
+Predator Analytics v45.1
 Section 3.5 of Spec.
 """
 from prometheus_client import Counter, Histogram, Gauge

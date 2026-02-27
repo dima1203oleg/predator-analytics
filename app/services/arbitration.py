@@ -23,7 +23,7 @@ class ArbitrationResult(BaseModel):
     timestamp: str
 
 class ArbitrationEngine:
-    """Multi-Model Arbitration Engine (v27.0).
+    """Multi-Model Arbitration Engine (v45.0).
     Executes parallel inference across multiple AI providers and selects the optimal consensus using semantic similarity.
     """
     def __init__(self, model_router: ModelRouter):

@@ -6,7 +6,7 @@ metadata:
   labels:
     app: predator-analytics
     environment: production
-    version: "v25.0"
+    version: "v45.0"
     managed-by: argocd
     team: predator-core
   annotations:

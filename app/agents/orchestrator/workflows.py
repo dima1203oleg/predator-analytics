@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Temporal Workflows for SuperIntelligence Self-Improvement v25.0.
+"""Temporal Workflows for SuperIntelligence Self-Improvement v45.0.
 
 Implements durable, fault-tolerant workflows for:
 - Self-Improvement Cycle

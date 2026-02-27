@@ -18,7 +18,7 @@ alias server="ssh predator-server"
 alias logs="ssh predator-server 'docker logs -f predator_orchestrator'"
 alias status="ssh predator-server 'docker ps'"
 alias deploy="cd ~/Documents/Predator_21 && ./scripts/deploy_orchestrator.sh"
-alias start_orch="ssh predator-server 'cd ~/predator_v25 && docker compose up -d orchestrator'"
+alias start_orch="ssh predator-server 'cd ~/predator_v45 && docker compose up -d orchestrator'"
 alias stop_orch="ssh predator-server 'docker stop predator_orchestrator'"
 EOF
 )

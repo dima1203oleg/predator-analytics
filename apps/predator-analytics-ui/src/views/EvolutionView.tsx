@@ -70,7 +70,7 @@ const EvolutionView: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Quick Stats v25 */}
+                        {/* Quick Stats v45 */}
                         <div className="flex gap-4">
                             <div className="px-8 py-4 bg-black/40 backdrop-blur-2xl border border-white/5 rounded-[24px] shadow-xl panel-3d">
                                 <div className="text-[9px] text-slate-500 uppercase tracking-[0.3em] font-black mb-1">{premiumLocales.evolution.stats.azrCycles}</div>
@@ -88,7 +88,7 @@ const EvolutionView: React.FC = () => {
                     </div>
                 </motion.div>
 
-                {/* Tab Navigation v25 */}
+                {/* Tab Navigation v45 */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -227,7 +227,7 @@ const EvolutionView: React.FC = () => {
                     )}
                 </AnimatePresence>
 
-                {/* Footer Status Bar v25 */}
+                {/* Footer Status Bar v45 */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}

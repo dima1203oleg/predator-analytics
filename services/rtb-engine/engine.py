@@ -2,7 +2,7 @@
 """
 Module: engine
 Component: rtb-engine
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 import logging
 import json

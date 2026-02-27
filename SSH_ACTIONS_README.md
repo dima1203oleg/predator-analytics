@@ -54,7 +54,7 @@ ssh predator-dev
 ssh -i ~/.ssh/id_ed25519 -p SSH_PORT SSH_USER@SERVER_IP
 
 # check project directory
-ls -la /home/SSH_USER/predator_v25
+ls -la /home/SSH_USER/predator_v45
 ```
 
 6. Troubleshooting tips
@@ -67,7 +67,7 @@ ls -la /home/SSH_USER/predator_v25
 
 - Ensure `Remote - SSH` extension is installed.
 - After adding host to `~/.ssh/config`, open Command Palette -> `Remote-SSH: Connect to Host...` -> choose `predator-dev`.
-- When connected, `File -> Open Folder` -> `/home/SSH_USER/predator_v25`.
+- When connected, `File -> Open Folder` -> `/home/SSH_USER/predator_v45`.
 - To forward dev ports (backend 8000, frontend 5173): Remote Explorer -> Forward a Port, or add `LocalForward` entries to `~/.ssh/config`.
 
 If you want, provide `SERVER_IP`, `SSH_USER`, `SSH_PORT`, or paste your public key here and I will:

@@ -184,7 +184,7 @@ def handle_interruption(execution_state: str) -> None:
 
 ABSOLUTE_MODE_ACTIVE: Final[bool] = True
 GODMODE_ENABLED: Final[bool] = True
-VERSION: Final[str] = "v25.GODMODE"
+VERSION: Final[str] = "v45.GODMODE"
 MODE: Final[str] = "ABSOLUTE"
 STATUS: Final[str] = "ETERNAL"
 

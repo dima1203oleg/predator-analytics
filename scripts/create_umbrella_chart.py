@@ -6,7 +6,7 @@ HELM_ROOT = "/Users/dima-mac/Documents/Predator_21/charts"
 UMBRELLA_DIR = os.path.join(HELM_ROOT, "predator-umbrella")
 OS_CHARTS_DIR = HELM_ROOT # Where the category folders live
 
-# Define the structure based on what generate_v30_helm.py produces
+# Define the structure based on what generate_v45_helm.py produces
 # We need to scan the directory to find all generated charts
 def find_all_charts():
     charts = []
@@ -18,7 +18,7 @@ def find_all_charts():
         cat_path = os.path.join(OS_CHARTS_DIR, category)
         if os.path.isdir(cat_path) and category != "predator-umbrella":
             # Search recursively or just one level?
-            # generate_v30_helm.py creates: charts/category/component_path
+            # generate_v45_helm.py creates: charts/category/component_path
             # Example: charts/api/gateway
             for root, dirs, files in os.walk(cat_path):
                 if "Chart.yaml" in files:
@@ -58,7 +58,7 @@ def create_umbrella():
     chart_yaml = {
         "apiVersion": "v2",
         "name": "predator-umbrella",
-        "description": "Predator Analytics v30 Full Stack (Umbrella)",
+        "description": "Predator Analytics v45 Full Stack (Umbrella)",
         "type": "application",
         "version": "1.0.0",
         "appVersion": "30.0.0",

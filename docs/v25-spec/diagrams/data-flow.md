@@ -1,4 +1,4 @@
-# 🔄 Потоки Даних — Predator Analytics v25.0
+# 🔄 Потоки Даних — Predator Analytics v45.0
 
 ## Основний ETL Pipeline
 

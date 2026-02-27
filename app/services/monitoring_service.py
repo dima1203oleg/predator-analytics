@@ -133,7 +133,7 @@ class MonitoringService:
         }
 
     async def get_realtime_metrics(self) -> dict[str, Any]:
-        """Alias for get_detailed_health for v25 compatibility."""
+        """Alias for get_detailed_health for v45 compatibility."""
         return await self.get_detailed_health()
 
 monitoring_service = MonitoringService()

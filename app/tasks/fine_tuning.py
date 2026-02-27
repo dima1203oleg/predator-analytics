@@ -48,4 +48,4 @@ async def start_h2o_finetuning(dataset_id: str, job_id: str, model_name: str = "
         await conn.close()
 
 if __name__ == "__main__":
-    asyncio.run(start_h2o_finetuning("synthetic_customs_2024", "predator-v25-base"))
+    asyncio.run(start_h2o_finetuning("synthetic_customs_2024", "predator-v45-base"))

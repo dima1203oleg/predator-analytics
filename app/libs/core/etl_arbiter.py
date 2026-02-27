@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Arbiter for Constitutional Control of ETL Pipeline - AZR Engine v28-S."""
+"""Arbiter for Constitutional Control of ETL Pipeline - AZR Engine v45-S."""
 import asyncio
 from datetime import datetime
 import logging

@@ -1,4 +1,4 @@
-# 🚀 Predator Analytics v25 — Деплой на NVIDIA Server
+# 🚀 Predator Analytics v45 — Деплой на NVIDIA Server
 
 **Мета:** Запустити весь стек (frontend/backend/infra) на NVIDIA сервері, щоб зберегти ресурси Mac. Mac використовується тільки для доступу через браузер/SSH.
 
@@ -99,7 +99,7 @@ http://194.177.1.240:8092
 curl http://194.177.1.240:8090/health
 # Очікується: {"status":"healthy"}
 
-curl http://194.177.1.240:8090/api/v25/metrics/realtime
+curl http://194.177.1.240:8090/api/v45/metrics/realtime
 # Очікується: JSON з метриками (ndcg, latency, throughput, error_rate)
 ```
 

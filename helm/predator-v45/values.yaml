@@ -1,0 +1,70 @@
+# Predator v45 | Neural AnalyticsHelm Configuration
+
+global:
+  environment: production
+  domain: predator.internal
+
+backend:
+  replicaCount: 3
+  image:
+    repository: predator/backend
+    pullPolicy: IfNotPresent
+    tag: "v45.0.0"
+
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 75
+
+  env:
+    MAX_UPLOAD_SIZE: "1073741824" # 1GB
+    LOG_LEVEL: "INFO"
+    PROMETHEUS_ENABLED: "true"
+
+frontend:
+  replicaCount: 2
+  image:
+    repository: predator/ui
+    tag: "v45.0.0"
+  service:
+    type: LoadBalancer
+    port: 80
+
+# 📦 Dependencies Configuration (Embedded)
+postgresql:
+  enabled: true
+  auth:
+    username: predator_admin
+    database: predator_db
+  primary:
+    persistence:
+      size: 50Gi
+
+redis:
+  enabled: true
+  architecture: replication
+  auth:
+    enabled: false
+
+qdrant:
+  enabled: true
+  replicaCount: 3
+  resources:
+    limits:
+      memory: 8Gi
+
+minio:
+  enabled: true
+  mode: distributed
+  replicas: 4
+  persistence:
+    size: 100Gi

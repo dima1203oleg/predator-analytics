@@ -24,13 +24,13 @@ python main.py --api-url http://194.177.1.240:8090 search -q "тест"
 
 ```bash
 # Створити тестову місію threat analysis
-curl -X POST http://194.177.1.240:8090/api/v25/missions/test/threat-analysis
+curl -X POST http://194.177.1.240:8090/api/v45/missions/test/threat-analysis
 
 # Отримати статус
-curl http://194.177.1.240:8090/api/v25/missions/agents/stats
+curl http://194.177.1.240:8090/api/v45/missions/agents/stats
 
 # Перевірити всі активні місії
-curl http://194.177.1.240:8090/api/v25/missions/
+curl http://194.177.1.240:8090/api/v45/missions/
 ```
 
 ### 3. Активувати Alertmanager (10 хвилин)
@@ -94,7 +94,7 @@ npm install
 cat > cypress/integration/quick-ml-test.cy.ts << 'EOF'
 describe('Quick ML Test', () => {
   it('Should trigger ML job', () => {
-    cy.request('POST', 'http://localhost:8090/api/v25/ml-training/start', {
+    cy.request('POST', 'http://localhost:8090/api/v45/ml-training/start', {
       dataset_id: 'test_dataset',
       model_type: 'automl'
     }).then((response) => {
@@ -173,7 +173,7 @@ curl -s http://localhost:9090/api/v1/query?query=rate\(ml_job_completed_total\[1
 
 # Mission Completion
 echo "Active Missions:"
-curl -s http://localhost:8090/api/v25/missions/ | jq '.total'
+curl -s http://localhost:8090/api/v45/missions/ | jq '.total'
 
 EOF
 

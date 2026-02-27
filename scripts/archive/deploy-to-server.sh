@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Predator Analytics v25.1 - Server Deployment Script
+# Predator Analytics v45.1 - Server Deployment Script
 # This script deploys the Semantic Search Platform to the remote server
 
 set -e
@@ -16,7 +16,7 @@ SSH_KEY="$HOME/.ssh/id_ed25519_dev"
 SSH_HOST="${SSH_HOST:-194.177.1.240}"
 SSH_PORT="${SSH_PORT:-6666}"
 SSH_USER="${SSH_USER:-dima}"
-REMOTE_DIR="~/predator_v25"
+REMOTE_DIR="~/predator_v45"
 ARGOCD_NVIDIA_URL=${ARGOCD_NVIDIA_URL:-}
 ARGOCD_NVIDIA_TOKEN=${ARGOCD_NVIDIA_TOKEN:-}
 ARGOCD_URL=${ARGOCD_NVIDIA_URL:-${ARGOCD_SERVER:-}}
@@ -28,7 +28,7 @@ else
 fi
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}🚀 Deploying Predator v25.1 (Semantic Search Platform)${NC}"
+echo -e "${GREEN}🚀 Deploying Predator v45 | Neural Analytics.1 (Semantic Search Platform)${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
@@ -73,7 +73,7 @@ if [[ -n "${ARGOCD_URL}" && -n "${ARGOCD_TOKEN}" ]]; then
     echo "✅ ArgoCD sync requested. Please check ArgoCD UI for status."
 else
     ssh -i "$SSH_KEY" -p "$SSH_PORT" -o BatchMode=yes "$SSH_USER@$SSH_HOST" << 'ENDSSH'
-cd ~/predator_v25
+cd ~/predator_v45
 
 # Create .env file if missing
 if [ ! -f .env ]; then

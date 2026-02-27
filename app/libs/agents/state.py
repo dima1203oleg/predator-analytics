@@ -80,7 +80,7 @@ class AgentState(TypedDict):
     # Generated artifacts (files, reports, etc.)
     artifacts: dict[str, Any]
 
-    # V25 Inner Monologue / Thinking Process
+    # V45 Inner Monologue / Thinking Process
     thinking: list[str] # Stream of thoughts
 
     # Errors if any
@@ -89,7 +89,7 @@ class AgentState(TypedDict):
     # Final answer/result
     final_response: str | None
 
-    # ===== E2E ANALYTICS EXTENSIONS (v25.1) =====
+    # ===== E2E ANALYTICS EXTENSIONS (v45.1) =====
 
     # Active data sources being analyzed
     data_sources: list[DataSourceInfo]

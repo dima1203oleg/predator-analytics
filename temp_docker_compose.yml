@@ -1,4 +1,4 @@
-# Predator Analytics v28.6 - Optimized Docker Compose
+# Predator Analytics v45.6 - Optimized Docker Compose
 # 🚀 Features: Unified Governance, Kafka Persistence, UV Speed
 
 services:
@@ -132,7 +132,7 @@ services:
   # ═══════════════════════════════════════════════════════════════
 
   backend:
-    image: predator-backend:v28.6
+    image: predator-backend:v45.6
     build:
       context: .
       dockerfile: services/api-gateway/Dockerfile
@@ -171,7 +171,7 @@ services:
     profiles: ["local", "server"]
 
   orchestrator:
-    image: predator-orchestrator:v28.6
+    image: predator-orchestrator:v45.6
     build:
       context: .
       dockerfile: services/orchestrator/Dockerfile
@@ -189,7 +189,7 @@ services:
     profiles: ["server"]
 
   celery_worker:
-    image: predator-backend:v28.6
+    image: predator-backend:v45.6
     container_name: predator_celery_worker
     command: celery -A app.core.celery_app worker -Q etl,ingestion,maintenance --concurrency=4
     volumes:

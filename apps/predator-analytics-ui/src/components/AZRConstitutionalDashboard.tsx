@@ -1,7 +1,6 @@
 /**
  * 🏛️ AZR Constitutional Dashboard
- * Predator Analytics v26
- *
+ * Predator v45 | Neural Analytics*
  * Візуалізація системи AZR (Autonomous Zero-Risk Amendment Runtime):
  * - Статус Конституції
  * - Активні та запропоновані поправки
@@ -262,9 +261,9 @@ export const AZRConstitutionalDashboard: React.FC = () => {
   const fetchData = useCallback(async () => {
     try {
       const [constitutionRes, proposalsRes, metricsRes] = await Promise.all([
-        fetch('/api/v25/azr/constitution/verify'),
-        fetch('/api/v25/azr/proposals?limit=10'),
-        fetch('/api/v25/azr/metrics')
+        fetch('/api/v45/azr/constitution/verify'),
+        fetch('/api/v45/azr/proposals?limit=10'),
+        fetch('/api/v45/azr/metrics')
       ]);
 
       if (constitutionRes.ok) {
@@ -539,7 +538,7 @@ export const AZRConstitutionalDashboard: React.FC = () => {
         </p>
         <div className="flex items-center justify-center gap-2 mt-4 text-[10px] text-slate-600 font-mono uppercase">
           <Lock size={12} />
-          Конституція v26 • AZR Runtime
+          Конституція v45 • AZR Runtime
         </div>
       </motion.div>
     </div>

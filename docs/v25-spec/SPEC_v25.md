@@ -1,4 +1,4 @@
-# 🛡️ PREDATOR ANALYTICS v25.0 — ПОВНА ТЕХНІЧНА СПЕЦИФІКАЦІЯ
+# 🛡️ PREDATOR ANALYTICS v45.0 — ПОВНА ТЕХНІЧНА СПЕЦИФІКАЦІЯ
 
 > **Версія документа:** 1.0
 > **Дата створення:** 10.01.2026
@@ -32,7 +32,7 @@
 
 ### 1.1. Місія
 
-**Predator v25.0** — це еволюційна версія **автономної системи кібербезпеки**, що інтегрує:
+**Predator v45 | Neural Analytics.0** — це еволюційна версія **автономної системи кібербезпеки**, що інтегрує:
 
 - **Мультиагентну архітектуру** з AI-оркестрацією (SIGINT, HUMINT, TECHINT, CYBINT)
 - **Суперінтелектуальне ядро** для динамічного прийняття рішень
@@ -44,7 +44,7 @@
 
 ### 1.2. Ключові Можливості
 
-| Категорія | Можливість | Опис | Вдосконалення у v25.0 |
+| Категорія | Можливість | Опис | Вдосконалення у v45.0 |
 |-----------|------------|------|-----------------------|
 | **Розвідка** | OSINT & Multi-INT | Збір з відкритих/закритих джерел | Qdrant семантичний пошук, XAI-пояснення |
 | **Аналіз** | Threat Intelligence | Реальний час з ML-моделями (H2O) | Гібридний rerank + LLM-резюмування |
@@ -94,7 +94,7 @@
 ### 1.6. Формат Системи
 
 - **Обсяг:** Повноцінна end-to-end система кібербезпеки
-- **Тип:** Production v25.0 — максимально відмовостійка система
+- **Тип:** Production v45.0 — максимально відмовостійка система
 - **Парадигма:** Мікросервісна архітектура + Kubernetes + GitOps
 - **Ліцензії:** Виключно безкоштовний open-source стек
 
@@ -386,9 +386,9 @@ app.add_middleware(
 
 # Routes
 app.include_router(health_router, prefix="/health")
-app.include_router(v25_router, prefix="/api/v25")
-app.include_router(agents_router, prefix="/api/v25/agents")
-app.include_router(data_router, prefix="/api/v25/data")
+app.include_router(v45_router, prefix="/api/v45")
+app.include_router(agents_router, prefix="/api/v45/agents")
+app.include_router(data_router, prefix="/api/v45/data")
 ```
 
 ### 5.2. Структура Backend
@@ -1074,7 +1074,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: predator-backend:v25
+          image: predator-backend:v45
 
           # Liveness Probe - перезапуск при зависанні
           livenessProbe:
@@ -1288,7 +1288,7 @@ class HybridCrypto:
         # Комбінований ключ через HKDF
         combined = HKDF(
             classical_secret + pqc_secret,
-            salt=b"predator-hybrid-v25"
+            salt=b"predator-hybrid-v45"
         )
 
         return combined, pqc_ciphertext
@@ -1301,7 +1301,7 @@ class HybridCrypto:
 ### 11.1. REST API Endpoints
 
 ```yaml
-# Основні ендпоінти API v25
+# Основні ендпоінти API v45
 endpoints:
   # Health
   - path: /health
@@ -1317,46 +1317,46 @@ endpoints:
     description: Readiness probe
 
   # Cases (Справи)
-  - path: /api/v25/cases
+  - path: /api/v45/cases
     methods: [GET, POST]
     description: Список та створення справ
 
-  - path: /api/v25/cases/{id}
+  - path: /api/v45/cases/{id}
     methods: [GET, PUT, DELETE]
     description: Операції з окремою справою
 
-  - path: /api/v25/cases/{id}/analyze
+  - path: /api/v45/cases/{id}/analyze
     method: POST
     description: Запуск AI аналізу справи
 
   # Data (Дані)
-  - path: /api/v25/data/sources
+  - path: /api/v45/data/sources
     method: GET
     description: Список джерел даних
 
-  - path: /api/v25/data/upload
+  - path: /api/v45/data/upload
     method: POST
     description: Завантаження файлу
 
-  - path: /api/v25/data/etl/status
+  - path: /api/v45/data/etl/status
     method: GET
     description: Статус ETL процесів
 
   # Agents (Агенти)
-  - path: /api/v25/agents/chat
+  - path: /api/v45/agents/chat
     method: POST
     description: Чат з AI агентом
 
-  - path: /api/v25/agents/analyze
+  - path: /api/v45/agents/analyze
     method: POST
     description: Аналіз даних агентом
 
   # Optimizer
-  - path: /api/v25/optimizer/status
+  - path: /api/v45/optimizer/status
     method: GET
     description: Статус автооптимізатора
 
-  - path: /api/v25/optimizer/metrics
+  - path: /api/v45/optimizer/metrics
     method: GET
     description: Метрики оптимізації
 ```
@@ -1523,7 +1523,7 @@ make down    # Зупинка
 ```json
 // .devcontainer/devcontainer.json
 {
-  "name": "Predator Analytics v25 Dev",
+  "name": "Predator Analytics v45 Dev",
   "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bullseye",
   "features": {
     "node": { "version": "20" },
@@ -1627,7 +1627,7 @@ kubectl delete pod $RANDOM_POD -n predator
 sleep 30
 
 # 3. Check health
-HEALTH=$(curl -s http://localhost/api/v25/health | jq -r '.status')
+HEALTH=$(curl -s http://localhost/api/v45/health | jq -r '.status')
 if [ "$HEALTH" == "healthy" ]; then
     echo "✅ System recovered successfully"
 else
@@ -1733,7 +1733,7 @@ tools:
 
 ### 16.2. Гарантія Безкоштовності
 
-Усі компоненти системи Predator Analytics v25.0 використовують **виключно безкоштовні та відкриті** технології. Жодних ліцензійних платежів не потрібно.
+Усі компоненти системи Predator Analytics v45.0 використовують **виключно безкоштовні та відкриті** технології. Жодних ліцензійних платежів не потрібно.
 
 ---
 

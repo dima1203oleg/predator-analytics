@@ -16,7 +16,7 @@ const DashboardBuilderView: React.FC = () => {
       console.log('[DashboardBuilder] Saving dashboard:', dashboard);
 
       // Save dashboard configuration to backend
-      // Using Mock for V30 demonstration
+      // Using Mock for V45 demonstration
       await new Promise(resolve => setTimeout(resolve, 1000));
       const response = { status: 'success', id: 'dash_' + Date.now() };
 

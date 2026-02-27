@@ -1,5 +1,5 @@
 #!/bin/bash
-# PREDATOR V25 - Voice Service Watchdog & Guardian
+# PREDATOR V45 - Voice Service Watchdog & Guardian
 # Цей скрипт запускає озвучку в захищеному REST режимі та автоматично перезапускає її при збоях.
 # ВИКОРИСТОВУЄТЬСЯ: apps/predator-analytics-ui/src/hooks/useVoiceAssistant.ts (через speak_buffer.txt)
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 #!/usr/bin/env python3
 """AZR Constitutional Test Suite (AZR-CTS)
-Reference Implementation for v27 Constitution (Hyper-Powered).
+Reference Implementation for v45 Constitution (Hyper-Powered).
 """
 from datetime import datetime, timedelta
 import os

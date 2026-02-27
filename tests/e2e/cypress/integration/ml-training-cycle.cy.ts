@@ -56,7 +56,7 @@ describe('ML Training End-to-End Cycle', () => {
 
     // Poll for datasets
     cy.waitUntil(() =>
-      cy.request(`${API_URL}/api/v25/data-hub/datasets`)
+      cy.request(`${API_URL}/api/v45/data-hub/datasets`)
         .then((response) => {
           const datasets = response.body.datasets || []
           const latestDataset = datasets[0]
@@ -82,7 +82,7 @@ describe('ML Training End-to-End Cycle', () => {
 
     cy.request({
       method: 'POST',
-      url: `${API_URL}/api/v25/ml-training/start`,
+      url: `${API_URL}/api/v45/ml-training/start`,
       body: {
         dataset_id: datasetId,
         model_type: 'automl',
@@ -108,7 +108,7 @@ describe('ML Training End-to-End Cycle', () => {
     let lastProgress = 0
 
     cy.waitUntil(() =>
-      cy.request(`${API_URL}/api/v25/ml-jobs/${jobId}`)
+      cy.request(`${API_URL}/api/v45/ml-jobs/${jobId}`)
         .then((response) => {
           expect(response.status).to.eq(200)
 
@@ -133,7 +133,7 @@ describe('ML Training End-to-End Cycle', () => {
   it('Step 5: Verify training completion', () => {
     cy.log('✅ Verifying training results...')
 
-    cy.request(`${API_URL}/api/v25/ml-jobs/${jobId}`).then((response) => {
+    cy.request(`${API_URL}/api/v45/ml-jobs/${jobId}`).then((response) => {
       const job = response.body
 
       // Assert successful completion
@@ -152,7 +152,7 @@ describe('ML Training End-to-End Cycle', () => {
   it('Step 6: Check model artifacts', () => {
     cy.log('📦 Checking model artifacts...')
 
-    cy.request(`${API_URL}/api/v25/ml-jobs/${jobId}/artifacts`).then((response) => {
+    cy.request(`${API_URL}/api/v45/ml-jobs/${jobId}/artifacts`).then((response) => {
       expect(response.status).to.eq(200)
 
       const artifacts = response.body.artifacts || []
@@ -176,7 +176,7 @@ describe('ML Training End-to-End Cycle', () => {
     // Delete test job (optional)
     cy.request({
       method: 'DELETE',
-      url: `${API_URL}/api/v25/ml-jobs/${jobId}`,
+      url: `${API_URL}/api/v45/ml-jobs/${jobId}`,
       failOnStatusCode: false
     }).then((response) => {
       cy.log('✅ Cleanup completed')
@@ -194,7 +194,7 @@ describe('ML Training Performance Benchmark', () => {
     const startTime = Date.now()
     const SLA_THRESHOLD_MS = 300000 // 5 minutes
 
-    cy.request(`${API_URL}/api/v25/ml-jobs`)
+    cy.request(`${API_URL}/api/v45/ml-jobs`)
       .then((response) => {
         const recentJobs = response.body.jobs || []
         const completedJobs = recentJobs.filter((j: any) => j.status === 'succeeded')

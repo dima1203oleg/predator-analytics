@@ -141,7 +141,7 @@ class SelfImprovementService:
                     })
 
             # 7. Автовдосконалення коду (Sovereign Optimizations)
-            from orchestrator.agents.v25_sovereign_registry import sovereign_orchestrator
+            from orchestrator.agents.v45_sovereign_registry import sovereign_orchestrator
 
             await training_status_service.update_status({
                 "stage": "optimizing_code",

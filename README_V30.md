@@ -1,17 +1,17 @@
-# 🦁 PREDATOR Analytics V30 - Quick Start
+# 🦁 PREDATOR Analytics V45 - Quick Start
 
 ## 🚀 Швидкий Запуск (1 команда!)
 
 ```bash
 cd /Users/dima-mac/Documents/Predator_21
-./START_PREDATOR_V30.sh
+./START_PREDATOR_V45.sh
 ```
 
 Потім відкрийте в браузері: **http://localhost:3030**
 
 ---
 
-## ✨ Що Нового у V30?
+## ✨ Що Нового у V45?
 
 ### 🤖 AI Copilot
 Ваш особистий інтелектуальний помічник:
@@ -57,7 +57,7 @@ node mock-api-server.mjs
 ### 2. Запуск UI (в іншому терміналі)
 ```bash
 cd /Users/dima-mac/Documents/Predator_21
-./V30_GOLDEN_START.sh
+./V45_GOLDEN_START.sh
 ```
 
 ---
@@ -72,7 +72,7 @@ cd /Users/dima-mac/Documents/Predator_21
 
 ## 📚 Документація
 
-Детальна документація: `/Users/dima-mac/Desktop/PREDATOR_V30_IMPROVEMENTS.md`
+Детальна документація: `/Users/dima-mac/Desktop/PREDATOR_V45_IMPROVEMENTS.md`
 
 ---
 
@@ -114,7 +114,7 @@ lsof -i :9080
 tail -f /tmp/predator-mock-api.log
 
 # Повна очистка
-./START_PREDATOR_V30.sh
+./START_PREDATOR_V45.sh
 ```
 
 ---

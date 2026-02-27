@@ -1,5 +1,5 @@
 """
-Analytical Service for Backend API — V25.
+Analytical Service for Backend API — V45.
 Connects the UI to the Market Nervous System (AnalyticalEngine).
 Implements: Market Pulse, Entity Profile (CERS), CERS Explanation.
 """
@@ -39,7 +39,7 @@ class AnalyticalService:
 
     async def get_entity_profile(self, entity_id: UUID) -> Dict[str, Any]:
         """
-        Full V25 Company Profile — the 'Credit X-Ray' and 'Scheme Detector' product.
+        Full V45 Company Profile — the 'Credit X-Ray' and 'Scheme Detector' product.
         Returns CERS score, all 5 layer signals, confidence level.
         """
         logger.info(f"🔬 Building full CERS entity profile for {entity_id}")

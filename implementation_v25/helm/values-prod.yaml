@@ -36,7 +36,7 @@ frontend:
 images:
   backend:
     repository: ghcr.io/your-org/predator-backend
-    tag: "v25.0.*"
+    tag: "v45.0.*"
   frontend:
     repository: ghcr.io/your-org/predator-frontend
-    tag: "v25.0.*"
+    tag: "v45.0.*"

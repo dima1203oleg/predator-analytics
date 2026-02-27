@@ -36,7 +36,7 @@ export const SystemStatus: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-slate-900 border border-slate-700/50 p-6 rounded-2xl">
          <div>
-            <h1 className="text-2xl font-bold text-white mb-2">Стан Системи <span className="text-blue-500">v29</span></h1>
+            <h1 className="text-2xl font-bold text-white mb-2">Стан Системи <span className="text-blue-500">v45</span></h1>
             <div className="flex items-center gap-4 text-slate-400 text-sm">
                <span className="flex items-center gap-2">
                  Оновлено: {lastUpdated.toLocaleTimeString()}

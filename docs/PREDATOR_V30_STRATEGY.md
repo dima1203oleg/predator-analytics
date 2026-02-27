@@ -1,8 +1,8 @@
-# 🦁 PREDATOR PLATFORM V30: GLOBAL STRATEGY & PREMIUM EVOLUTION
+# 🦁 PREDATOR PLATFORM V45: GLOBAL STRATEGY & PREMIUM EVOLUTION
 *Confidential Technical & Business Specification*
 
 ## 1. ФІЛОСОФІЯ СИСТЕМИ: "TOTAL INTELLIGENCE"
-Система PREDATOR v30 перетворюється з інструменту "аналітики даних" на платформу **"інформаційної переваги"**. Вона не просто обробляє дані, вона дає владу.
+Система Predator v45 | Neural Analytics перетворюється з інструменту "аналітики даних" на платформу **"інформаційної переваги"**. Вона не просто обробляє дані, вона дає владу.
 
 ### 🧠 ДВА ВЕКТОРИ ЦІННОСТІ (DUAL-PURPOSE CORE)
 Система працює на єдиній базі даних, але має два абсолютно різних інтерфейси (або режими відображення) залежно від ролі клієнта.
@@ -50,7 +50,7 @@
 *   ✅ **API**: Prozorro, E-Data, OpenSanctions.
 *   ✅ **Web Scraping**: Новини, сайти конкурентів.
 
-### 3.2 Advanced Ingestion (Нове в v30)
+### 3.2 Advanced Ingestion (Нове в v45)
 *   🎥 **Video/Audio Intelligence**:
     *   Моніторинг YouTube/TikTok/Telegram каналів.
     *   **Whisper AI Parsing**: Транскрибація голосу в текст.
@@ -90,4 +90,4 @@
 
 ---
 
-**Висновок**: PREDATOR v30 — це екосистема, де дані перетворюються на гроші або владу.
+**Висновок**: Predator v45 | Neural Analytics — це екосистема, де дані перетворюються на гроші або владу.

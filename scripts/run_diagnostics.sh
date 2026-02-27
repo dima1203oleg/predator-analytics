@@ -1,6 +1,6 @@
 
 #!/bin/bash
-# PREDATOR V25.1 - SYSTEM DIAGNOSTICS (Self-Healing v4 - Bootstrap)
+# PREDATOR V45.1 - SYSTEM DIAGNOSTICS (Self-Healing v4 - Bootstrap)
 
 echo "🩺 Initiating System Diagnostics..."
 

@@ -9,7 +9,7 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}Starting Predator Analytics v25.0...${NC}"
+echo -e "${GREEN}Starting Predator Analytics v45.0...${NC}"
 
 # Check for Docker
 if ! command -v docker >/dev/null 2>&1; then

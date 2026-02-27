@@ -1,4 +1,4 @@
-# 🧊 PREDATOR MONOLITH STABILITY MANIFEST (v25.0)
+# 🧊 PREDATOR MONOLITH STABILITY MANIFEST (v45.0)
 # Ці модулі вважаються СТАБІЛЬНИМИ та МОНОЛІТНИМИ.
 # AI-агентам ЗАБОРОНЕНО вносити в них правки без критичної потреби.
 

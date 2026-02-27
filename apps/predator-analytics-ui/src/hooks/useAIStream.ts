@@ -1,5 +1,5 @@
 /**
- * useAIStream Hook v25.0
+ * useAIStream Hook v45.0
  *
  * WebSocket hook for real-time AI stream data.
  * Provides:
@@ -52,7 +52,7 @@ export function useAIStream(options: UseAIStreamOptions = {}): UseAIStreamReturn
 
   const getWsUrl = useCallback(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    return `${protocol}//${window.location.host}/api/v25/ws/ai/stream`;
+    return `${protocol}//${window.location.host}/api/v45/ws/ai/stream`;
   }, []);
 
   const connect = useCallback(() => {

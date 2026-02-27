@@ -1,5 +1,5 @@
 """
-Predator Analytics v25.0 — Market Nervous System Routes
+Predator Analytics v45.0 — Market Nervous System Routes
 Covers all 5 analytical layers (101-200) + CERS API.
 
 Endpoints:
@@ -33,7 +33,7 @@ async def get_market_pulse():
 @nerve_router.get("/profile/{entity_id}", summary="Full CERS Entity Profile")
 async def get_entity_profile(entity_id: UUID):
     """
-    🔬 Повний V25 профіль компанії — 'Кредитний рентген'.
+    🔬 Повний V45 профіль компанії — 'Кредитний рентген'.
     Повертає CERS + сигнали усіх 5 аналітичних шарів.
     
     Використовується:
@@ -139,7 +139,7 @@ async def get_layers_status():
     """
     from datetime import datetime
     return {
-        "nerve_system_version": "v25.0",
+        "nerve_system_version": "v45.0",
         "layers": {
             "behavioral": {
                 "datasets": "101-120",

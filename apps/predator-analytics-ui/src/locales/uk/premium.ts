@@ -360,7 +360,7 @@ export const premiumLocales = {
       expandAnalytics: 'Відкрити Прогнози',
       collapseAnalytics: 'Згорнути Аналітику',
       liveData: 'ЖИВІ ДАНІ',
-      footer: 'PREDATOR ANALYTICS v30 • РАНІШНЯ ГАЗЕТА',
+      footer: 'PREDATOR ANALYTICS v45 • РАНІШНЯ ГАЗЕТА',
       confidence: 'Впевненість',
       growth: 'Зростання',
       decline: 'Спад',
@@ -841,7 +841,7 @@ export const premiumLocales = {
     offlineBanner: {
       title: 'СИСТЕМА ОФЛАЙН',
       mode: 'РЕЖИМ АВТОНОМНОЇ СТІЙКОСТІ',
-      desc: 'З\'єднання з PREDATOR Core v30 втрачено. Інтерфейс працює в автономному режимі. Дані можуть бути неактуальні.',
+      desc: 'З\'єднання з PREDATOR Core v45 втрачено. Інтерфейс працює в автономному режимі. Дані можуть бути неактуальні.',
     },
   },
   errors: {
@@ -865,7 +865,7 @@ export const premiumLocales = {
       home: 'Головна',
       panopticon: 'Паноптикон',
       feed: 'Стрічка Подій',
-      search: 'Пошук v30',
+      search: 'Пошук v45',
       radar: 'Радар Зв\'язків',
       topology: 'Топологія',
       archive: 'Архів документів',
@@ -995,7 +995,7 @@ export const premiumLocales = {
   // ============================================
   semanticRadar: {
     title: "СЕМАНТИЧНИЙ РАДАР ЗВ'ЯЗКІВ",
-    breadcrumbs: ['PREDATOR', 'АНАЛІТИКА', 'GRAFT DATA v25'],
+    breadcrumbs: ['PREDATOR', 'АНАЛІТИКА', 'GRAFT DATA v45'],
     stats: {
       nodes: 'Вузли',
       edges: 'Зв\'язки',
@@ -1017,7 +1017,7 @@ export const premiumLocales = {
     },
     entityHud: {
       params: 'ПАРАМЕТРИ ОБ\'ЄКТА',
-      aiInsight: 'AI ІНСАЙТ v25',
+      aiInsight: 'AI ІНСАЙТ v45',
       safe: 'БЕЗПЕЧНО',
       risk: 'РИЗИК',
       selectNode: 'Виберіть вузол для аналізу',
@@ -1094,7 +1094,7 @@ export const premiumLocales = {
       visualizeTitle: 'ВІЗУАЛІЗАЦІЯ НЕЙРОННОГО МИСЛЕННЯ',
       intent: 'ДИНАМІЧНИЙ НАМІР',
       planTitle: 'План Стратега (Gemini)',
-      innerMonologue: 'Внутрішній Монолог (v25 Нейрон)',
+      innerMonologue: 'Внутрішній Монолог (v45 Нейрон)',
       coderOutput: 'Вихід Кодера (Mistral/Groq)',
       securityAudit: 'Аудит Безпеки (Aider/Copilot)',
       executionTime: 'Виконання',
@@ -1362,7 +1362,7 @@ export const premiumLocales = {
       trainingStarted: 'Тренування запущено',
       trainingStartedDesc: 'Очікуй оновлення статусу',
       trainingEndpointError: 'Training endpoint недоступний',
-      trainingEndpointErrorDesc: 'Перевір /api/v25/training/trigger',
+      trainingEndpointErrorDesc: 'Перевір /api/v45/training/trigger',
     },
     tabs: {
       inference: 'Синаптичний Діалог',
@@ -1507,7 +1507,7 @@ export const premiumLocales = {
     },
     ledgerView: {
         title: 'ЖУРНАЛ_НЕЗМІННОЇ_ІСТИНИ_V48.LOG',
-        sync: 'СИНХРОНІЗАЦІЯ_V25',
+        sync: 'СИНХРОНІЗАЦІЯ_V45',
         liveStream: 'ЖИВИЙ_ПОТІК',
         status: 'Статус: Суверенний',
         uptime: 'Час роботи',
@@ -1539,7 +1539,7 @@ export const premiumLocales = {
   onboarding: {
     steps: {
       welcome: {
-        title: 'Ласкаво просимо до PREDATOR v30',
+        title: 'Ласкаво просимо до Predator v45 | Neural Analytics',
         description: 'Ваша ультимативна платформа для аналітики, розслідувань та стратегічного планування тепер ще потужніша.',
       },
       documents: {
@@ -2106,7 +2106,7 @@ export const premiumLocales = {
     notificationsDesc: 'Отримуйте сповіщення',
     apiDocs: 'API Документація',
     integrateDesc: 'Інтегруйте системи',
-    interfaceOnline: 'Нейронний Інтерфейс v30 Онлайн',
+    interfaceOnline: 'Нейронний Інтерфейс v45 Онлайн',
     sagas: {
         riskCrawler: 'Ризик-Краулер (Регіон: EU)',
         sourcingSignals: 'Сигнали Сорсингу (Електроніка)',
@@ -2198,7 +2198,7 @@ export const premiumLocales = {
   },
 
   predatorChat: {
-    welcomeMessage: 'Вітаю, Операторе. Системи PREDATOR V30 активні. Чим можу допомогти?',
+    welcomeMessage: 'Вітаю, Операторе. Системи PREDATOR V45 активні. Чим можу допомогти?',
     processingMessage: 'Я обробляю ваш запит...',
     reportResponse: 'Генерую аналітичний звіт за останні 24 години. Виявлено 3 критичні аномалії.',
     riskResponse: "Сканую поточні операції... Ризик по компанії 'ТОВ Вектор' підвищено до 89%.",
@@ -2254,7 +2254,7 @@ export const premiumLocales = {
     liveIntelFeed: 'Стрічка LIVE Intel',
     criticalRisk: 'Критичний Ризик',
     alphaOpportunity: 'Альфа Можливість',
-    aiAccuracyVersion: 'ШІ Точність v30',
+    aiAccuracyVersion: 'ШІ Точність v45',
   },
 
   tenderIntelligence: {
@@ -2298,7 +2298,7 @@ export const premiumLocales = {
     incomingStream: 'Вхідний потік',
     encryptedLinkActive: "Шифрований зв'язок активний",
     decryptedTranscription: 'Дешифрована Транскрипція:',
-    neuralLinkActive: 'V30-Neural-Link-АКТИВНИЙ',
+    neuralLinkActive: 'V45-Neural-Link-АКТИВНИЙ',
     messages: {
       shipMovement: 'PREDATOR AI: Виявлено нетиповий рух судна в Північному морі.',
       sagaCheck: 'SAGA-101: Перехресна перевірка 2,402 нових декларацій для HS 8507.',
@@ -2362,7 +2362,7 @@ export const premiumLocales = {
   },
 
   apiKeys: {
-    title: 'API КЛЮЧІ ТА ПРОВАЙДЕРИ ШІ (V25)',
+    title: 'API КЛЮЧІ ТА ПРОВАЙДЕРИ ШІ (V45)',
     vault: {
       title: 'Сховище Секретів (Active)',
       description: 'Всі ключі шифруються за допомогою AES-256 та зберігаються у захищеному сховищі Predator. Вони ніколи не передаються на фронтенд у відкритому вигляді.',
@@ -2400,8 +2400,8 @@ export const premiumLocales = {
   // Customs Intelligence
   // ============================================
   customsIntelligence: {
-    title: 'МИТНА РОЗВІДКА v28',
-    breadcrumbs: ['PREDATOR', 'ПРЕМІУМ', 'CUSTOMS v28'],
+    title: 'МИТНА РОЗВІДКА v45',
+    breadcrumbs: ['PREDATOR', 'ПРЕМІУМ', 'CUSTOMS v45'],
     stats: {
       declarations: 'Декларацій',
       anomalies: 'Аномалій',
@@ -2629,7 +2629,7 @@ export const premiumLocales = {
   // ============================================
   datasetStudio: {
     title: 'Dataset Studio',
-    subtitle: 'Neural Data Foundry v30',
+    subtitle: 'Neural Data Foundry v45',
     description: 'Тепер з підтримкою власних датасетів як прикладів для генерації.',
     header: {
         gpuLoad: 'NVIDIA L40S Load',

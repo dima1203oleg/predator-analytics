@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const port = 3030;
-const baseDir = '/Users/dima-mac/Documents/Predator_21/apps/v30_active/dist';
+const baseDir = '/Users/dima-mac/Documents/Predator_21/apps/v45_active/dist';
 
 http.createServer((req, res) => {
     let url = req.url.split('?')[0];

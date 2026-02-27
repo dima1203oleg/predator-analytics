@@ -1,5 +1,5 @@
 #!/bin/bash
-# Deploy Orchestrator v23.0 to NVIDIA Server with auto-approval mode
+# Deploy Orchestrator v45.0 to NVIDIA Server with auto-approval mode
 
 set -e
 
@@ -11,10 +11,10 @@ NC='\033[0m'
 SSH_KEY="$HOME/.ssh/id_ed25519_dev"
 SSH_HOST="${SSH_HOST:-predator-server}"
 SSH_USER="${SSH_USER:-dima}"
-REMOTE_DIR="~/predator_v25"
+REMOTE_DIR="~/predator_v45"
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}🚀 Deploying Orchestrator v23.0 (GOD MODE)${NC}"
+echo -e "${GREEN}🚀 Deploying Orchestrator v45.0 (GOD MODE)${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 # 1. Sync code
@@ -36,7 +36,7 @@ echo -e "${GREEN}✅ Code synced${NC}"
 # 2. Deploy
 echo -e "${YELLOW}🐳 Building and starting Orchestrator on server...${NC}"
 ssh "$SSH_HOST" << 'ENDSSH'
-cd ~/predator_v25
+cd ~/predator_v45
 
 # Build orchestrator image
 docker compose build orchestrator

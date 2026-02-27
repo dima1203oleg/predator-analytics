@@ -2,7 +2,7 @@
 """
 Module: telemetry
 Component: shared
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 import os
 from opentelemetry import trace

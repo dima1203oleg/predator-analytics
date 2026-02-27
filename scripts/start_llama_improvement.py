@@ -32,7 +32,7 @@ from libs.core.config import settings
 
 def print_header():
     print("\033[1;35m" + "="*60 + "\033[0m")
-    print("\033[1;36m" + "   PREDATOR: ENDLESS SELF-IMPROVEMENT LOOP v25.0" + "\033[0m")
+    print("\033[1;36m" + "   PREDATOR: ENDLESS SELF-IMPROVEMENT LOOP v45.0" + "\033[0m")
     print("\033[1;35m" + "="*60 + "\033[0m")
     print(f"\033[1;37m   CORE ENGINE: \033[1;32m{settings.OLLAMA_MODEL}\033[0m")
     print("\033[1;37m   PROVIDER:    \033[1;32mOLLAMA (Local Edge Cluster)\033[0m")
@@ -71,7 +71,7 @@ async def main():
     success = await run_first_cycle()
     if success:
         await start_background_loop()
-        print("\n\033[1;97mСистема Predator v25 тепер знаходиться в режимі автономного самонавчання.\033[0m")
+        print("\n\033[1;97mСистема Predator v45 | Neural Analyticsтепер знаходиться в режимі автономного самонавчання.\033[0m")
         print("\033[1;90mЛоги доступні через: tail -f services/api-gateway/app.log (structured JSON)\033[0m\n")
 
 if __name__ == "__main__":

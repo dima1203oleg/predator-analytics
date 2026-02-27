@@ -35,10 +35,10 @@ stringData:
 EOF"
 
 echo "🏗️ Збірка Docker образу на сервері (Build from Root)..."
-ssh -p $PORT $SERVER "cd $REMOTE_ROOT && docker build -f apps/trinity_bot/Dockerfile -t predator-analytics/bot:v25.0 ."
+ssh -p $PORT $SERVER "cd $REMOTE_ROOT && docker build -f apps/trinity_bot/Dockerfile -t predator-analytics/bot:v45.0 ."
 
 echo "📦 Імпорт образу в K3s..."
-ssh -p $PORT $SERVER "docker save predator-analytics/bot:v25.0 | sudo k3s ctr images import -"
+ssh -p $PORT $SERVER "docker save predator-analytics/bot:v45.0 | sudo k3s ctr images import -"
 
 echo "📦 Застосування маніфестів Kubernetes..."
 ssh -p $PORT $SERVER "cd $REMOTE_ROOT && sudo k3s kubectl apply -f k8s/bot/ && \

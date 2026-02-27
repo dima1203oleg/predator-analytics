@@ -1,4 +1,4 @@
-# 🔥 Хаос-Інженіринг — Predator Analytics v25.0
+# 🔥 Хаос-Інженіринг — Predator Analytics v45.0
 
 > Плани тестування стійкості системи через контрольоване введення збоїв
 
@@ -23,7 +23,7 @@
 
 **Хаос-інженіринг** — це дисципліна експериментування на розподілених системах з метою побудови впевненості в здатності системи витримувати турбулентні умови в production середовищі.
 
-### Чому це важливо для Predator v25.0?
+### Чому це важливо для Predator v45 | Neural Analytics.0?
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -75,7 +75,7 @@ steady_state:
   health_checks:
     - endpoint: /health
       expected_status: 200
-    - endpoint: /api/v25/health
+    - endpoint: /api/v45/health
       expected_status: 200
 ```
 
@@ -615,7 +615,7 @@ spec:
       app: predator-backend
   target: Response
   port: 8000
-  path: /api/v25/*
+  path: /api/v45/*
   method: GET
   abort: true  # Розрив з'єднання
   # Або inject помилки:

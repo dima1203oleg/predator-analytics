@@ -1,0 +1,22 @@
+apiVersion: v2
+name: predator-v45
+description: A Helm chart for Predator Analytics v45 Sovereign Platform
+type: application
+version: 45.0.0
+appVersion: "45.0.0"
+maintainers:
+  - name: Gravity Control
+    email: admin@predator.ai
+dependencies:
+  - name: postgresql
+    version: 12.5.2
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: redis
+    version: 17.11.3
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
+  - name: qdrant
+    version: 0.4.5
+    repository: https://qdrant.github.io/qdrant-helm
+    condition: qdrant.enabled

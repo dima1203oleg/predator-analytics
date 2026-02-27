@@ -1,6 +1,6 @@
 apiVersion: v2
 name: predator-analytics
-description: "Predator Analytics Platform v25.1 (Phase 1)"
+description: "Predator Analytics Platform v45.1 (Phase 1)"
 type: application
 version: 0.1.0
 appVersion: "25.1"

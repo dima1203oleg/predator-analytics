@@ -40,7 +40,7 @@ print(f"Confidence: {result.confidence}")
 
 ```bash
 # Start server
-uvicorn app.main_v25:app --reload
+uvicorn app.main_v45:app --reload
 
 # Query council
 curl -X POST http://localhost:8000/api/council/query \

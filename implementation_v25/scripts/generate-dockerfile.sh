@@ -1,5 +1,5 @@
 #!/bin/bash
-# Predator v25 Dockerfile Generator
+# Predator v45 | Neural AnalyticsDockerfile Generator
 # Generates a standard, policy-compliant Dockerfile for Python services.
 
 SERVICE_NAME=$1
@@ -21,7 +21,7 @@ fi
 echo "Generating $TARGET_FILE..."
 
 cat > "$TARGET_FILE" <<EOF
-# Predator Analytics v25 - $SERVICE_NAME Service
+# Predator Analytics v45 - $SERVICE_NAME Service
 # Context: Root of the repository
 
 # === Builder Stage ===

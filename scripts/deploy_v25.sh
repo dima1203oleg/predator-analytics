@@ -1,5 +1,5 @@
 #!/bin/bash
-# Predator V25 - Ultra Sync & Deploy Script
+# Predator v45 | Neural Analytics- Ultra Sync & Deploy Script
 # Цей скрипт забезпечує автоматичну синхронізацію фронтенду між локальною машиною та сервером.
 
 SERVER="predator-server"
@@ -8,7 +8,7 @@ REMOTE_DIST="$REMOTE_BASE/apps/predator-analytics-ui/dist"
 LOCAL_DIST="/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui/dist"
 LOCAL_PROJECT="/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui"
 
-echo "🛠️ ПІДГОТОВКА ДО РОЗГОРТАННЯ V25..."
+echo "🛠️ ПІДГОТОВКА ДО РОЗГОРТАННЯ V45..."
 
 # 1. Перевірка доступності сервера
 if ! ssh -q "$SERVER" exit; then
@@ -45,5 +45,5 @@ ssh "$SERVER" "docker run -d --name predator-fixed-frontend \
     -v $REMOTE_BASE/docker/nginx.simple.conf:/etc/nginx/nginx.conf:ro \
     nginx:alpine"
 
-echo "🎉 ГОТОВО! V25 розгорнуто на сервері."
+echo "🎉 ГОТОВО! V45 розгорнуто на сервері."
 echo "🔗 Перевірте: https://jolyn-bifid-eligibly.ngrok-free.dev/admin"

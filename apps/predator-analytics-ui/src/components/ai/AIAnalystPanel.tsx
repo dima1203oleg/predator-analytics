@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 // ============================================================================
-// AI ANALYST PANEL - PREDATOR v25.0
+// AI ANALYST PANEL - Predator v45 | Neural Analytics.0
 // Interactive AI-powered analysis with beautiful UX
 // ============================================================================
 
@@ -218,7 +218,7 @@ export const AIAnalystPanel: React.FC = () => {
 
     try {
       const startTime = Date.now();
-      const res = await fetch('/api/v25/analyze', {
+      const res = await fetch('/api/v45/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, context: 'general' }),
@@ -274,7 +274,7 @@ export const AIAnalystPanel: React.FC = () => {
                 PREDATOR AI
                 <Sparkles size={14} className="text-amber-400" />
               </h2>
-              <p className="text-xs text-slate-400">Інтелектуальний аналітик v25.0</p>
+              <p className="text-xs text-slate-400">Інтелектуальний аналітик v45.0</p>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs text-emerald-400">

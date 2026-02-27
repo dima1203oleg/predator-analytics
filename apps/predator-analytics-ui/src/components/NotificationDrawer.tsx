@@ -28,7 +28,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ isOpen, 
     React.useEffect(() => {
         if (isOpen) {
             import('../services/api').then(({ api }) => {
-                api.v25.getNotifications().then(data => setNotifications(data as Notification[]));
+                api.v45.getNotifications().then(data => setNotifications(data as Notification[]));
             });
         }
     }, [isOpen]);

@@ -11,7 +11,7 @@
         - generic [ref=e26]:
           - generic [ref=e27]: PREDATOR ANALYTICS
           - generic [ref=e28]:
-            - generic [ref=e29]: v30.0-STABLE
+            - generic [ref=e29]: v45.0-STABLE
             - generic [ref=e32]: ONLINE
       - generic [ref=e33]:
         - button "Знайти... ⌘K" [ref=e34] [cursor=pointer]:
@@ -61,7 +61,7 @@
         - img [ref=e113]
         - generic [ref=e115]:
           - heading "PREDATOR" [level=1] [ref=e116]
-          - text: Analytics v30
+          - text: Analytics v45
       - generic [ref=e118]:
         - generic [ref=e119]:
           - heading "ОГЛЯД" [level=3] [ref=e120]
@@ -84,10 +84,10 @@
         - generic [ref=e149]:
           - heading "РОЗВІДКА" [level=3] [ref=e150]
           - generic [ref=e151]:
-            - link "Пошук v30" [ref=e152] [cursor=pointer]:
+            - link "Пошук v45" [ref=e152] [cursor=pointer]:
               - /url: /search-v2
               - img [ref=e154]
-              - generic [ref=e159]: Пошук v30
+              - generic [ref=e159]: Пошук v45
             - link "Радар Зв'язків" [ref=e160] [cursor=pointer]:
               - /url: /analytics
               - img [ref=e162]
@@ -207,7 +207,7 @@
         - generic [ref=e356]:
           - generic [ref=e361]:
             - generic [ref=e362]: СИСТЕМА ОНЛАЙН
-            - generic [ref=e363]: v30.0.0-стабільна
+            - generic [ref=e363]: v45.0.0-стабільна
           - img [ref=e364]
         - generic [ref=e367]:
           - generic [ref=e369]: License Owner
@@ -338,7 +338,7 @@
         - img [ref=e614]
     - generic [ref=e617]:
       - img [ref=e619]
-      - heading "Ласкаво просимо до PREDATOR v30" [level=2] [ref=e624]
+      - heading "Ласкаво просимо до Predator v45 | Neural Analytics" [level=2] [ref=e624]
       - paragraph [ref=e625]: Ваша ультимативна платформа для аналітики, розслідувань та стратегічного планування тепер ще потужніша.
     - generic [ref=e626]:
       - button "Назад" [disabled] [ref=e627]

@@ -1,5 +1,5 @@
 #!/bin/bash
-# PREDATOR v45 - BACKEND HOTFIX (H2O JSON PARSER)
+# Predator v45 | Neural Analytics- BACKEND HOTFIX (H2O JSON PARSER)
 # Applies a robust JSON parser to the running backend container to fix pipeline crashes.
 
 SERVER="predator-server"

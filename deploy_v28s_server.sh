@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-# PREDATOR ANALYTICS v28-S Deployment Script (Server Edition)
-# Usage: ./deploy_v28s_server.sh [ENVIRONMENT]
-# Example: ./deploy_v28s_server.sh production
+# PREDATOR ANALYTICS v45-S Deployment Script (Server Edition)
+# Usage: ./deploy_v45s_server.sh [ENVIRONMENT]
+# Example: ./deploy_v45s_server.sh production
 
 ENV=${1:-production}
 VALUES_FILE="values-${ENV}.yaml"
 
-echo "🦅 PREDATOR ANALYTICS v28-S DEPLOYMENT SEQUENCE STARTED"
+echo "🦅 PREDATOR ANALYTICS v45-S DEPLOYMENT SEQUENCE STARTED"
 echo "------------------------------------------------------"
 echo "Target Environment: $ENV"
 echo "Using Values File: helm/predator-analytics/$VALUES_FILE"
@@ -49,7 +49,7 @@ else
 fi
 
 # 5. Deploy / Upgrade via Helm
-echo "🚀 Deploying via Helm (v28-S)..."
+echo "🚀 Deploying via Helm (v45-S)..."
 # Use environment-specific values after base values
 set +e # Temporarily allow failure for retry logic
 helm upgrade --install predator-analytics ./helm/predator-analytics \

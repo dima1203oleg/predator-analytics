@@ -208,7 +208,7 @@ export const AnimatedStatusBar: React.FC<AnimatedStatusBarProps> = ({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-xs text-slate-500">API Version</span>
-                <span className="text-xs font-mono text-purple-400">v30.0.0</span>
+                <span className="text-xs font-mono text-purple-400">v45.0.0</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-xs text-slate-500">{premiumLocales.statusBar.region}</span>

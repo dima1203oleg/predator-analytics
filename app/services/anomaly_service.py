@@ -13,7 +13,7 @@ from app.services.evolution_service import evolution_service
 logger = get_logger("service.anomaly")
 
 class AnomalyService:
-    """Advanced Anomaly Detection Service (v27.0).
+    """Advanced Anomaly Detection Service (v45.0).
     Uses Statistical Methods (Z-Score) and Forecasting (Linear Regression/Exp Smoothing)
     to detect system irregularities.
     """

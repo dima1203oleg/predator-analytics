@@ -18,7 +18,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const data = await api.v25.azr.getStatus();
+        const data = await api.v45.azr.getStatus();
 
         setStatus({
           overall_status: data.is_running ? 'evolving' : 'suspended',
@@ -47,7 +47,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const data = await api.v25.azr.getAudit();
+        const data = await api.v45.azr.getAudit();
 
         const mappedLogs: EvolutionLog[] = data.map((log: any) => ({
           id: log.sovereign_id,
@@ -76,7 +76,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
           </div>
           <div>
             <h1 className="text-3xl font-black text-white tracking-tight">ETERNAL EVOLUTION ENGINE</h1>
-            <p className="text-blue-400 font-bold tracking-widest text-xs uppercase">Система Самовдосконалення v26.0</p>
+            <p className="text-blue-400 font-bold tracking-widest text-xs uppercase">Система Самовдосконалення v45.0</p>
           </div>
         </div>
       </header>
@@ -181,7 +181,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
                         if (!desc) return;
 
                         try {
-                            const res = await api.v25.azr.governance.propose(title, desc);
+                            const res = await api.v45.azr.governance.propose(title, desc);
                             alert(`Proposal Status: ${res.status}\nVotes For: ${res.votes_for}\nVotes Against: ${res.votes_against}`);
                         } catch (e) {
                             alert("Failed to submit proposal: " + e);
@@ -209,7 +209,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
           <button
              onClick={async () => {
                 if (window.confirm("ВИ ВПЕВНЕНІ? Це зупинить всі автономні процеси AZR!")) {
-                   await fetch('/api/v25/azr/freeze', { method: 'POST' });
+                   await fetch('/api/v45/azr/freeze', { method: 'POST' });
                    window.location.reload();
                 }
              }}

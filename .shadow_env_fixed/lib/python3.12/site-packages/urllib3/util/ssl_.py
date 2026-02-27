@@ -108,7 +108,7 @@ try:  # Do we have ssl at all?
         TLSVersion,
     )
 
-    PROTOCOL_SSLv23 = PROTOCOL_TLS
+    PROTOCOL_SSLv45 = PROTOCOL_TLS
 
     # Needed for Python 3.9 which does not define this
     VERIFY_X509_PARTIAL_CHAIN = getattr(ssl, "VERIFY_X509_PARTIAL_CHAIN", 0x80000)
@@ -140,7 +140,7 @@ except ImportError:
     OP_NO_TICKET = 0x4000  # type: ignore[assignment, misc]
     OP_NO_SSLv2 = 0x1000000  # type: ignore[assignment, misc]
     OP_NO_SSLv3 = 0x2000000  # type: ignore[assignment, misc]
-    PROTOCOL_SSLv23 = PROTOCOL_TLS = 2  # type: ignore[assignment, misc]
+    PROTOCOL_SSLv45 = PROTOCOL_TLS = 2  # type: ignore[assignment, misc]
     PROTOCOL_TLS_CLIENT = 16  # type: ignore[assignment, misc]
     VERIFY_X509_PARTIAL_CHAIN = 0x80000
     VERIFY_X509_STRICT = 0x20  # type: ignore[assignment, misc]
@@ -235,7 +235,7 @@ def create_urllib3_context(
 
     :param ssl_version:
         The desired protocol version to use. This will default to
-        PROTOCOL_SSLv23 which will negotiate the highest protocol that both
+        PROTOCOL_SSLv45 which will negotiate the highest protocol that both
         the server and your installation of OpenSSL support.
 
         This parameter is deprecated instead use 'ssl_minimum_version'.

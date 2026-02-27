@@ -34,7 +34,7 @@ asyncio.run(main())
 
 ### 3. Перевірка статусу
 ```bash
-curl http://localhost:8000/api/v1/v25/autonomous/status | jq
+curl http://localhost:8000/api/v1/v45/autonomous/status | jq
 ```
 
 ## 📊 Основні Метрики
@@ -47,7 +47,7 @@ curl http://localhost:8000/api/v1/v25/autonomous/status | jq
 
 ## 📚 Документація
 
-- **Детальний аналіз:** [AUTONOMY_ANALYSIS_v26.md](./AUTONOMY_ANALYSIS_v26.md)
+- **Детальний аналіз:** [AUTONOMY_ANALYSIS_v45.md](./AUTONOMY_ANALYSIS_v45.md)
 - **Короткий summary:** [AUTONOMY_UPGRADE_SUMMARY.md](./AUTONOMY_UPGRADE_SUMMARY.md)
 - **Фінальний звіт:** [AUTONOMY_FINAL_REPORT.md](./AUTONOMY_FINAL_REPORT.md)
 - **Workflow:** [.agent/workflows/ultra_autonomous.md](./.agent/workflows/ultra_autonomous.md)
@@ -56,24 +56,24 @@ curl http://localhost:8000/api/v1/v25/autonomous/status | jq
 
 ```bash
 # Статус
-GET /api/v1/v25/autonomous/status
+GET /api/v1/v45/autonomous/status
 
 # Передбачення
-GET /api/v1/v25/autonomous/predictions
+GET /api/v1/v45/autonomous/predictions
 
 # Рішення
-GET /api/v1/v25/autonomous/decisions
+GET /api/v1/v45/autonomous/decisions
 
 # Навчання
-GET /api/v1/v25/autonomous/learning-stats
+GET /api/v1/v45/autonomous/learning-stats
 
 # Ресурси
-GET /api/v1/v25/autonomous/resources
+GET /api/v1/v45/autonomous/resources
 
 # Управління
-POST /api/v1/v25/autonomous/start
-POST /api/v1/v25/autonomous/stop
-POST /api/v1/v25/autonomous/config
+POST /api/v1/v45/autonomous/start
+POST /api/v1/v45/autonomous/stop
+POST /api/v1/v45/autonomous/config
 ```
 
 ## 🎓 Демо
@@ -104,4 +104,4 @@ python3 scripts/demo_autonomous_intelligence.py
 
 ## 🎉 Готово!
 
-**Predator Analytics v26 - The Future is Autonomous** 🚀🧠
+**Predator Analytics v45 - The Future is Autonomous** 🚀🧠

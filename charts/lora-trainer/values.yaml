@@ -3,7 +3,7 @@
 image:
   repository: ghcr.io/predator-analytics/predator-brain
   pullPolicy: IfNotPresent
-  tag: "v25.0.0" # Uses the same image as brain, but different entrypoint
+  tag: "v45.0.0" # Uses the same image as brain, but different entrypoint
 
 schedule: "0 4 * * *" # Daily at 04:00 AM
 

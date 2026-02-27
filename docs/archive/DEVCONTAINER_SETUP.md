@@ -140,7 +140,7 @@ OPENAI_API_KEY=
 
 ## Next Steps
 
-1. Start backend: `python3 ua-sources/app/main_v25.py`
+1. Start backend: `python3 ua-sources/app/main_v45.py`
 2. Start frontend: `npm run dev`
 3. Access API docs: http://localhost:8000/docs
 4. Test upload: `curl -X POST http://localhost:8000/api/v1/data/upload -F "file=@test.csv"`

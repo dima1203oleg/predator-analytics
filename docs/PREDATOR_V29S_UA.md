@@ -1,4 +1,4 @@
-# 🏛️ PREDATOR ANALYTICS v29-S
+# 🏛️ PREDATOR ANALYTICS v45-S
 
 ## Sovereign Observer Module - Конституційна Система
 
@@ -20,7 +20,7 @@
 
 ## 🎯 Огляд системи
 
-Predator Analytics v29-S представляє революційний підхід до створення автономних AI-систем:
+Predator Analytics v45-S представляє революційний підхід до створення автономних AI-систем:
 
 - **🤖 AI генерує пропозиції** покращень на основі аналізу системи
 - **🧪 Digital Twin тестує** зміни в повністю ізольованому середовищі
@@ -142,7 +142,7 @@ DELETE /api/v1/som/emergency  # Деактивувати
 
 ```bash
 # На NVIDIA сервері
-./scripts/check-v29s-server.sh
+./scripts/check-v45s-server.sh
 
 # Локально
 ./check-requirements.sh
@@ -196,4 +196,4 @@ curl -X POST http://localhost:8095/api/v1/som/analyze | jq
 
 ---
 
-**Predator Analytics v29-S** - де технології служать людині, а не навпаки.
+**Predator Analytics v45-S** - де технології служать людині, а не навпаки.

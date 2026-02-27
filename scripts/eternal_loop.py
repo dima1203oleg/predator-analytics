@@ -163,12 +163,12 @@ def restart_backend() -> bool:
     logger.info("🔄 Restarting backend...")
     try:
         # Kill existing
-        subprocess.run(["pkill", "-f", "run_v25_bot.py"], check=False, capture_output=True)
+        subprocess.run(["pkill", "-f", "run_v45_bot.py"], check=False, capture_output=True)
         time.sleep(2)
 
         # Start new
         subprocess.Popen(
-            ["python", "run_v25_bot.py"],
+            ["python", "run_v45_bot.py"],
             cwd=BACKEND_DIR,
             stdout=open("/tmp/backend.log", "a"),
             stderr=subprocess.STDOUT,

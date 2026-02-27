@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Predator Analytics v25 - Pipeline API Endpoints
+"""Predator Analytics v45 - Pipeline API Endpoints
 Orchestrates ETL, Indexing, ML Training, and Optimization pipelines.
 """
 from typing import TYPE_CHECKING, Any, Dict, List, Optional

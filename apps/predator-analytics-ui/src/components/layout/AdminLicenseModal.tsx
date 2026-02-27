@@ -23,7 +23,7 @@ export const AdminLicenseModal: React.FC<AdminLicenseModalProps> = ({ isOpen, on
     setLoading(true);
     // Simulate API call for license generation
     setTimeout(() => {
-        const key = `PREDATOR-V30-${role.toUpperCase()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+        const key = `PREDATOR-V45-${role.toUpperCase()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
         setGeneratedKey(key);
         setLoading(false);
         // Here we would actually call api.admin.generateLicense({ email, role })

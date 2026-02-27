@@ -33,8 +33,8 @@ done &
 
 ```bash
 cd /Users/dima-mac/Documents/Predator_21/apps/backend
-if ! pgrep -f "run_v25_bot.py" > /dev/null; then
-  nohup python run_v25_bot.py > /tmp/backend.log 2>&1 &
+if ! pgrep -f "run_v45_bot.py" > /dev/null; then
+  nohup python run_v45_bot.py > /tmp/backend.log 2>&1 &
   echo "Backend restarted at $(date)"
 fi
 ```
@@ -84,7 +84,7 @@ find /tmp -name "predator_*.log" -size +10M -exec truncate -s 0 {} \; 2>/dev/nul
 while true; do
   # Health check
   curl -s http://localhost:8000/health > /dev/null || \
-    (cd /Users/dima-mac/Documents/Predator_21/apps/backend && python run_v25_bot.py &)
+    (cd /Users/dima-mac/Documents/Predator_21/apps/backend && python run_v45_bot.py &)
 
   # Ngrok check
   curl -s http://localhost:4040/api/tunnels > /dev/null || \

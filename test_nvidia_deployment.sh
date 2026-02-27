@@ -78,7 +78,7 @@ check_websocket() {
     
     if command -v websocat >/dev/null 2>&1; then
         # Перевіряємо WebSocket з'єднання
-        if echo '{"test": "ping"}' | websocat --timeout 5 "ws://$NVIDIA_IP:8090/api/v25/ws/omniscience" >/dev/null 2>&1; then
+        if echo '{"test": "ping"}' | websocat --timeout 5 "ws://$NVIDIA_IP:8090/api/v45/ws/omniscience" >/dev/null 2>&1; then
             echo "✅ OK (WebSocket працює)"
             return 0
         else
@@ -87,7 +87,7 @@ check_websocket() {
         fi
     else
         # Альтернативна перевірка через curl (менш надійна)
-        if curl -s -H "Upgrade: websocket" -H "Connection: Upgrade" "ws://$NVIDIA_IP:8090/api/v25/ws/omniscience" >/dev/null 2>&1; then
+        if curl -s -H "Upgrade: websocket" -H "Connection: Upgrade" "ws://$NVIDIA_IP:8090/api/v45/ws/omniscience" >/dev/null 2>&1; then
             echo "⚠️  Можливо працює (потрібен websocat для точної перевірки)"
             return 0
         else
@@ -133,9 +133,9 @@ if ! check_json_response "$API_URL/api/v1/system/metrics" "Системні ме
     errors=$((errors + 1))
 fi
 
-# 5. Перевірка V25 реалтайм метрик
+# 5. Перевірка V45 реалтайм метрик
 total=$((total + 1))
-if ! check_json_response "$API_URL/api/v25/metrics/realtime" "V25 реалтайм метрики"; then
+if ! check_json_response "$API_URL/api/v45/metrics/realtime" "V45 реалтайм метрики"; then
     errors=$((errors + 1))
 fi
 

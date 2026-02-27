@@ -2,7 +2,7 @@
 """
 Module: loader
 Component: rtb-engine
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 import yaml
 import logging

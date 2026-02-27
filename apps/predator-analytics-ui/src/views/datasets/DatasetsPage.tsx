@@ -114,7 +114,7 @@ export default function DatasetsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-center gap-2"
             >
-                <Badge variant="outline" className="border-blue-500/30 text-blue-400">DATA LAB v30.1</Badge>
+                <Badge variant="outline" className="border-blue-500/30 text-blue-400">DATA LAB v45.1</Badge>
                 <Badge variant="outline" className="border-emerald-500/30 text-emerald-400">AI READY</Badge>
             </motion.div>
           <h1 className="text-4xl font-black tracking-tight text-white uppercase">

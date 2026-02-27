@@ -1,31 +1,31 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-    Activity,
-    BarChart3,
-    Brain,
-    Camera,
-    CheckCircle,
-    Database,
-    File,
-    FileImage,
-    FileSpreadsheet,
-    FileText,
-    Globe,
-    Key,
-    Link,
-    MessageSquare,
-    Play,
-    Plus,
-    Radio,
-    RefreshCw,
-    Rss,
-    Settings,
-    Sparkles,
-    Trash2,
-    Upload,
-    X,
-    XCircle,
-    Zap
+  Activity,
+  BarChart3,
+  Brain,
+  Camera,
+  CheckCircle,
+  Database,
+  File,
+  FileImage,
+  FileSpreadsheet,
+  FileText,
+  Globe,
+  Key,
+  Link,
+  MessageSquare,
+  Play,
+  Plus,
+  Radio,
+  RefreshCw,
+  Rss,
+  Settings,
+  Sparkles,
+  Trash2,
+  Upload,
+  X,
+  XCircle,
+  Zap
 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { AdvancedBackground } from '../components/AdvancedBackground';
@@ -274,8 +274,8 @@ const SourceCard = ({ source, onSync, onDelete }: {
       className={cn(
         "group relative bg-[#0f172a]/40 backdrop-blur-2xl border rounded-[28px] p-7 transition-all duration-500 overflow-hidden",
         source.status === 'error' ? 'border-rose-500/30' :
-        source.status === 'processing' || source.status === 'syncing' ? 'border-cyan-500/30 shadow-[0_0_30px_-10px_rgba(6,182,212,0.15)]' :
-        `border-white/5 hover:border-${typeConfig.color}-500/30`
+          source.status === 'processing' || source.status === 'syncing' ? 'border-cyan-500/30 shadow-[0_0_30px_-10px_rgba(6,182,212,0.15)]' :
+            `border-white/5 hover:border-${typeConfig.color}-500/30`
       )}
     >
       {/* Dynamic Background Glow */}
@@ -290,20 +290,20 @@ const SourceCard = ({ source, onSync, onDelete }: {
       {/* Header with Icon and Actions */}
       <div className="flex justify-between items-start mb-6 relative z-10">
         <div className="relative group/icon">
-            <motion.div
-               animate={source.status === 'processing' ? { scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] } : {}}
-               transition={{ repeat: Infinity, duration: 2 }}
-               className={cn(
-                "absolute -inset-2 blur-lg rounded-xl opacity-0 group-hover/icon:opacity-40 transition-opacity",
-                `bg-${typeConfig.color}-500`
-               )}
-            />
-            <div className={cn(
+          <motion.div
+            animate={source.status === 'processing' ? { scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] } : {}}
+            transition={{ repeat: Infinity, duration: 2 }}
+            className={cn(
+              "absolute -inset-2 blur-lg rounded-xl opacity-0 group-hover/icon:opacity-40 transition-opacity",
+              `bg-${typeConfig.color}-500`
+            )}
+          />
+          <div className={cn(
             "w-16 h-16 rounded-2xl flex items-center justify-center border relative z-10 transition-all duration-500 shadow-xl",
             `bg-${typeConfig.color}-500/10 border-${typeConfig.color}-500/20 text-${typeConfig.color}-400 group-hover/icon:border-${typeConfig.color}-500/40 group-hover/icon:bg-${typeConfig.color}-500/20`
-            )}>
-                <Icon className="w-8 h-8" />
-            </div>
+          )}>
+            <Icon className="w-8 h-8" />
+          </div>
         </div>
 
         <div className="flex gap-2 bg-slate-900/60 p-1.5 rounded-xl border border-white/5 backdrop-blur-md transition-all group-hover:border-white/10 shadow-lg">
@@ -354,8 +354,8 @@ const SourceCard = ({ source, onSync, onDelete }: {
         <div className="mb-6 relative z-10 px-1">
           <div className="flex justify-between items-end mb-2">
             <div className="flex items-center gap-2">
-                <span className="flex h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" />
-                <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Нейронний Збір</span>
+              <span className="flex h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse" />
+              <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Нейронний Збір</span>
             </div>
             <span className="text-sm font-black text-cyan-400 font-mono">{source.processingProgress}%</span>
           </div>
@@ -374,22 +374,22 @@ const SourceCard = ({ source, onSync, onDelete }: {
       <div className="flex items-center justify-between pt-5 border-t border-white/5 relative z-10 px-1">
         <div className="flex items-center gap-3">
           <div className={cn(
-              "px-3 py-1.5 rounded-full border text-[9px] font-black uppercase tracking-[0.15em] flex items-center gap-2 shadow-sm transition-all duration-500",
-              source.status === 'active' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-emerald-500/5" :
+            "px-3 py-1.5 rounded-full border text-[9px] font-black uppercase tracking-[0.15em] flex items-center gap-2 shadow-sm transition-all duration-500",
+            source.status === 'active' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-emerald-500/5" :
               source.status === 'processing' ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400 shadow-cyan-500/5" :
-              source.status === 'error' ? "bg-rose-500/10 border-rose-500/20 text-rose-400 shadow-rose-500/5" :
-              "bg-slate-800/40 border-white/5 text-slate-500"
+                source.status === 'error' ? "bg-rose-500/10 border-rose-500/20 text-rose-400 shadow-rose-500/5" :
+                  "bg-slate-800/40 border-white/5 text-slate-500"
           )}>
             <span className={cn(
-                "w-1.5 h-1.5 rounded-full",
-                source.status === 'active' ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" :
+              "w-1.5 h-1.5 rounded-full",
+              source.status === 'active' ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" :
                 source.status === 'processing' ? "bg-cyan-500 animate-pulse shadow-[0_0_8px_#06b6d4]" :
-                source.status === 'error' ? "bg-rose-500 shadow-[0_0_8px_#f43f5e]" :
-                "bg-slate-600"
+                  source.status === 'error' ? "bg-rose-500 shadow-[0_0_8px_#f43f5e]" :
+                    "bg-slate-600"
             )} />
             {source.status === 'active' ? 'Операційний' :
-             source.status === 'processing' ? 'Синхронізація' :
-             source.status === 'error' ? 'Критично' : 'Очікування'}
+              source.status === 'processing' ? 'Синхронізація' :
+                source.status === 'error' ? 'Критично' : 'Очікування'}
           </div>
         </div>
 
@@ -403,17 +403,17 @@ const SourceCard = ({ source, onSync, onDelete }: {
 
       {/* Active Glowing Bottom Indicator */}
       <AnimatePresence>
-          {source.status === 'active' && (
-            <motion.div
-               initial={{ opacity: 0, scaleX: 0 }}
-               animate={{ opacity: 0.8, scaleX: 1 }}
-               exit={{ opacity: 0, scaleX: 0 }}
-               className={cn(
-                "absolute bottom-0 left-0 right-0 h-[3px]",
-                `bg-gradient-to-r from-transparent via-${typeConfig.color}-400 to-transparent`
-               )}
-            />
-          )}
+        {source.status === 'active' && (
+          <motion.div
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 0.8, scaleX: 1 }}
+            exit={{ opacity: 0, scaleX: 0 }}
+            className={cn(
+              "absolute bottom-0 left-0 right-0 h-[3px]",
+              `bg-gradient-to-r from-transparent via-${typeConfig.color}-400 to-transparent`
+            )}
+          />
+        )}
       </AnimatePresence>
     </motion.div>
   );
@@ -444,7 +444,7 @@ const DataIngestionHub = () => {
     try {
       const [conRes, etlRes] = await Promise.allSettled([
         api.getConnectors(),
-        (api as any).v25?.getEtlStatus?.()
+        (api as any).v45?.getEtlStatus?.()
       ]);
 
       if (conRes.status === 'fulfilled' && Array.isArray(conRes.value)) {
@@ -530,13 +530,13 @@ const DataIngestionHub = () => {
 
           let uploadRes;
           if (uf.file.size > 10 * 1024 * 1024) { // > 10MB use chunked
-              uploadRes = await api.ingestion.uploadFileChunked(uf.file, (p) => {
-                  setUploadFiles(prev => prev.map((f, idx) =>
-                    idx === i ? { ...f, progress: p } : f
-                  ));
-              });
+            uploadRes = await api.ingestion.uploadFileChunked(uf.file, (p) => {
+              setUploadFiles(prev => prev.map((f, idx) =>
+                idx === i ? { ...f, progress: p } : f
+              ));
+            });
           } else {
-              uploadRes = await api.ingestion.uploadFile(uf.file);
+            uploadRes = await api.ingestion.uploadFile(uf.file);
           }
 
           setUploadFiles(prev => prev.map((f, idx) =>
@@ -547,8 +547,14 @@ const DataIngestionHub = () => {
             source_type: selectedType,
             file_id: uploadRes.file_id,
           });
+          // File-based sources
+          let fileType = selectedType as IngestionJob['type'];
+          if (fileType === 'excel' && !uf.file.name.endsWith('.xlsx') && !uf.file.name.endsWith('.xls')) {
+            if (uf.file.name.endsWith('.csv')) fileType = 'csv';
+            if (uf.file.name.endsWith('.pdf')) fileType = 'pdf';
+          }
 
-          addJob(jobRes.job_id, uf.file.name, uf.file.size);
+          addJob(jobRes.job_id, uf.file.name, uf.file.size, fileType);
           updateJob(jobRes.job_id, { status: 'parsing', stage: 'init', message: 'Запуск пайплайну...' });
 
           setUploadFiles(prev => prev.map((f, idx) =>
@@ -566,7 +572,7 @@ const DataIngestionHub = () => {
         });
 
         const jobName = selectedType === 'telegram' ? (urlInput.split('/').pop() || 'Telegram') : urlInput;
-        addJob(jobRes.job_id, jobName, 0);
+        addJob(jobRes.job_id, jobName, 0, selectedType as any);
         updateJob(jobRes.job_id, { status: 'parsing', stage: 'init', message: 'Ініціалізація конектора...' });
 
         setActiveJobId(jobRes.job_id);
@@ -824,9 +830,9 @@ const DataIngestionHub = () => {
                         onChange={(e) => setUrlInput(e.target.value)}
                         placeholder={
                           selectedType === 'telegram' ? 'https://t.me/channel_name або @username' :
-                          selectedType === 'api' ? 'https://api.example.com/v1/data' :
-                          selectedType === 'rss' ? 'https://example.com/feed.xml' :
-                          'https://example.com/page'
+                            selectedType === 'api' ? 'https://api.example.com/v1/data' :
+                              selectedType === 'rss' ? 'https://example.com/feed.xml' :
+                                'https://example.com/page'
                         }
                         className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl py-4 pl-12 pr-4 text-white placeholder:text-slate-600 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 outline-none font-mono"
                       />

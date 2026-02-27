@@ -26,7 +26,7 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const data = await api.v25.getRealtimeMetrics();
+        const data = await api.v45.getRealtimeMetrics();
         if (data) {
           setMetrics({
             cpu: data.cpu_usage || 0,
@@ -74,7 +74,7 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
               </div>
               <div className="truncate">
                 <div className="text-xs font-black tracking-tighter">PREDATOR_CMD</div>
-                <div className="text-[10px] opacity-50 uppercase">v25.operator_shell</div>
+                <div className="text-[10px] opacity-50 uppercase">v45.operator_shell</div>
               </div>
             </div>
           )}

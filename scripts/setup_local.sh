@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Setting up Predator Analytics v25.0 (Local Dev Mode)"
+echo "🚀 Setting up Predator Analytics v45.0 (Local Dev Mode)"
 
 # 1. Create .env if missing
 if [ ! -f .env ]; then
@@ -28,7 +28,7 @@ if ! command -v docker &> /dev/null; then
 fi
 
 # 3. Start Infrastructure
-echo "🐳 Starting Semantic Search Platform (v25.1)..."
+echo "🐳 Starting Semantic Search Platform (v45.1)..."
 # Build backend to ensure latest Semantic Search code is used
 docker compose build backend
 # Start infra + backend + db migration helper

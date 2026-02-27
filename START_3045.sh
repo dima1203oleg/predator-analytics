@@ -1,5 +1,5 @@
 #!/bin/bash
-# 🦁 PREDATOR V30 - 3045 LAUNCHER
+# 🦁 PREDATOR V45 - 3045 LAUNCHER
 # Bypasses local locks by running from /tmp
 
 PROJECT_ROOT="/Users/dima-mac/Documents/Predator_21"
@@ -8,7 +8,7 @@ TMP_RUN="/tmp/predator_3045_launch"
 BACKEND_PORT=3040
 FRONTEND_PORT=3045
 
-echo "🚀 Starting PREDATOR V30 on Port 3045 (Clean Mode)..."
+echo "🚀 Starting PREDATOR V45 on Port 3045 (Clean Mode)..."
 
 # Prepare clean workspace
 rm -rf "$TMP_RUN" && mkdir -p "$TMP_RUN"
@@ -32,5 +32,5 @@ fi
 export VITE_BACKEND_PROXY_TARGET="http://localhost:$BACKEND_PORT"
 export VITE_API_URL="/api/v1"
 
-echo "🎯 LAUNCHING v30 on http://localhost:$FRONTEND_PORT..."
+echo "🎯 LAUNCHING v45 on http://localhost:$FRONTEND_PORT..."
 npx vite --port $FRONTEND_PORT --host --clearScreen false

@@ -1,4 +1,4 @@
-# 🛡️ Predator Analytics v25.0 — Технічне Завдання
+# 🛡️ Predator Analytics v45.0 — Технічне Завдання
 
 > **Версія:** 25.0 (Unbreakable)
 > **Дата:** 10.01.2026
@@ -6,7 +6,7 @@
 
 ---
 
-## 📋 Predator Analytics v25.0 — Технічна Документація
+## 📋 Predator Analytics v45.0 — Технічна Документація
 
 > **Версія:** 2.0 (Детальна Специфікація)
 > **Статус:** Затверджено Головним Архітектором
@@ -18,10 +18,10 @@
 
 | Документ | Опис |
 |----------|------|
-| [**MASTER_SPEC_v25.md**](./MASTER_SPEC_v25.md) | 🔥 **ГОЛОВНИЙ ДОКУМЕНТ** — Повна специфікація системи |
+| [**MASTER_SPEC_v45.md**](./MASTER_SPEC_v45.md) | 🔥 **ГОЛОВНИЙ ДОКУМЕНТ** — Повна специфікація системи |
 | [UI_UX_SPEC.md](./UI_UX_SPEC.md) | 🎨 UI/UX Специфікація — Dimensional UI, Data Visibility |
-| [SPEC_v25_DETAILED.md](./SPEC_v25_DETAILED.md) | 🏗️ Архітектура — City of Systems, PQC, Temporal |
-| [SPEC_v25.md](./SPEC_v25.md) | 📋 Базова технічна специфікація |
+| [SPEC_v45_DETAILED.md](./SPEC_v45_DETAILED.md) | 🏗️ Архітектура — City of Systems, PQC, Temporal |
+| [SPEC_v45.md](./SPEC_v45.md) | 📋 Базова технічна специфікація |
 
 ### 🛠️ Операційна Документація
 
@@ -62,11 +62,11 @@
 ## 📁 Структура Документації
 
 ```
-docs/v25-spec/
-├── 📄 MASTER_SPEC_v25.md        # Головний документ
+docs/v45-spec/
+├── 📄 MASTER_SPEC_v45.md        # Головний документ
 ├── 📄 UI_UX_SPEC.md             # UI/UX специфікація
-├── 📄 SPEC_v25_DETAILED.md      # Детальна архітектура
-├── 📄 SPEC_v25.md               # Базова специфікація
+├── 📄 SPEC_v45_DETAILED.md      # Детальна архітектура
+├── 📄 SPEC_v45.md               # Базова специфікація
 │
 ├── 🔧 TROUBLESHOOTING.md        # Troubleshooting guide
 ├── 📘 RUNBOOKS.md               # Operations runbooks
@@ -121,7 +121,7 @@ kubectl apply -f argocd/application.yaml
 
 ---
 
-## ✅ Що входить у ТЗ v25.0
+## ✅ Що входить у ТЗ v45.0
 
 - [x] **Повна архітектурна специфікація** — мікросервіси, бази даних, черги
 - [x] **Схеми компонентів та потоків даних** — Mermaid діаграми

@@ -1,4 +1,4 @@
-# Predator Analytics v28.6 - Optimized Docker Compose
+# Predator Analytics v45.6 - Optimized Docker Compose
 # 🚀 Features: Unified Governance, Kafka Persistence, UV Speed
 
 services:
@@ -22,7 +22,7 @@ services:
     profiles: ["local", "server"]
 
   backend:
-    image: predator-backend:v25
+    image: predator-backend:v45
     build:
       context: .
       dockerfile: apps/backend/Dockerfile
@@ -71,7 +71,7 @@ services:
     profiles: ["local", "server"]
 
   orchestrator:
-    image: predator-orchestrator:v25
+    image: predator-orchestrator:v45
     build:
       context: .
       dockerfile: apps/self-improve-orchestrator/Dockerfile
@@ -112,7 +112,7 @@ services:
     profiles: ["server"]
 
   celery_worker:
-    image: predator-backend:v25
+    image: predator-backend:v45
     container_name: predator_celery_worker
     command: celery -A app.core.celery_app worker --loglevel=info -Q etl,ingestion,maintenance,monitoring --prefetch-multiplier=1 --concurrency=4
     volumes:
@@ -137,7 +137,7 @@ services:
     profiles: ["local", "server"]
 
   celery_beat:
-    image: predator-backend:v25
+    image: predator-backend:v45
     container_name: predator_celery_beat
     command: celery -A app.core.celery_app beat --loglevel=info
     volumes:
@@ -202,7 +202,7 @@ services:
     profiles: ["local", "server"]
 
   redpanda:
-    image: docker.redpanda.com/vectorized/redpanda:v23.2.19
+    image: docker.redpanda.com/vectorized/redpanda:v45.2.19
     container_name: predator_redpanda
     command:
       - redpanda
@@ -333,7 +333,7 @@ services:
   # ═══════════════════════════════════════════════════════════════
 
   backend:
-    image: predator-backend:v28.6
+    image: predator-backend:v45.6
     build:
       context: .
       dockerfile: services/api-gateway/Dockerfile
@@ -360,7 +360,7 @@ services:
     profiles: ["local", "server"]
 
   orchestrator:
-    image: predator-orchestrator:v28.6
+    image: predator-orchestrator:v45.6
     build:
       context: .
       dockerfile: services/orchestrator/Dockerfile
@@ -378,7 +378,7 @@ services:
     profiles: ["server"]
 
   celery_worker:
-    image: predator-backend:v28.6
+    image: predator-backend:v45.6
     container_name: predator_celery_worker
     command: celery -A app.core.celery_app worker -Q etl,ingestion,maintenance --concurrency=4
     volumes:

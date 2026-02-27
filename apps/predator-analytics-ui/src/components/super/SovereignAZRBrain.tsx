@@ -33,8 +33,8 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
   const fetchRealOODA = async () => {
     try {
         const [audit, sys] = await Promise.all([
-            api.v25.azr.getAudit(20),
-            api.v25.getRealtimeMetrics()
+            api.v45.azr.getAudit(20),
+            api.v45.getRealtimeMetrics()
         ]);
 
         if (audit && Array.isArray(audit)) {
@@ -46,7 +46,7 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
             setMetrics({ load: sys.cpu_load || sys.cpu_percent || 0 });
         }
 
-        const decisionsData = await api.v25.azr.getDecisions(10);
+        const decisionsData = await api.v45.azr.getDecisions(10);
         if (decisionsData && Array.isArray(decisionsData)) {
             setDecisions(decisionsData);
         }

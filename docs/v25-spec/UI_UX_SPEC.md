@@ -1,4 +1,4 @@
-# 🎨 UI/UX Специфікація: Predator Analytics v25.0
+# 🎨 UI/UX Специфікація: Predator Analytics v45.0
 
 > **Повна Специфікація UI/UX з Інтеграцією Self-Healing та AI-Оркестрації**
 
@@ -1133,8 +1133,8 @@ const useAnnounce = () => {
 
 | Документ | Зв'язок |
 |----------|---------|
-| [SPEC_v25_DETAILED.md](./SPEC_v25_DETAILED.md) | Архітектура бекенду, Temporal, Kafka |
-| [SPEC_v25.md](./SPEC_v25.md) | AI агенти, гібридний пошук |
+| [SPEC_v45_DETAILED.md](./SPEC_v45_DETAILED.md) | Архітектура бекенду, Temporal, Kafka |
+| [SPEC_v45.md](./SPEC_v45.md) | AI агенти, гібридний пошук |
 | [openapi.yaml](./openapi.yaml) | REST API ендпоінти |
 | [diagrams/](./diagrams/) | Архітектурні діаграми |
 

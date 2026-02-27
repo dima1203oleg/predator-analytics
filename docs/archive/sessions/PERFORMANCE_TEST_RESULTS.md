@@ -155,7 +155,7 @@
 ### Implement These First:
 
 ```python
-# 1. Model caching (add to main_v25.py)
+# 1. Model caching (add to main_v45.py)
 @app.on_event("startup")
 async def preload_models():
     logger.info("Preloading ML models...")

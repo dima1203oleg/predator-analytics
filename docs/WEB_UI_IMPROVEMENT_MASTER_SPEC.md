@@ -23,4 +23,4 @@ Refine the Predator Analytics web interface to be intuitive, visible, and perfor
 ## 5. Definition of Done
 - Intuitive interface that requires no manual.
 - Real-time system state (no fake data).
-- Backward compatibility with v25 API.
+- Backward compatibility with v45 API.

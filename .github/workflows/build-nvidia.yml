@@ -73,7 +73,7 @@ jobs:
           context: ./apps/frontend
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository }}/frontend:v25.0.${{ github.run_number }}
+          tags: ghcr.io/${{ github.repository }}/frontend:v45.0.${{ github.run_number }}
 
       - name: Build and push backend
         if: ${{ hashFiles('apps/backend/Dockerfile') != '' }}
@@ -82,12 +82,12 @@ jobs:
           context: ./apps/backend
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository }}/backend:v25.0.${{ github.run_number }}
+          tags: ghcr.io/${{ github.repository }}/backend:v45.0.${{ github.run_number }}
 
       - name: Update Helm values for nvidia
         run: |
           if [ -f environments/nvidia/values.yaml ]; then
-            sed -i "s|tag:.*|tag: v25.0.${{ github.run_number }}|" environments/nvidia/values.yaml
+            sed -i "s|tag:.*|tag: v45.0.${{ github.run_number }}|" environments/nvidia/values.yaml
           fi
 
       - name: Commit updated values
@@ -95,7 +95,7 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add environments/nvidia/values.yaml
-          git commit -m "Update image tags to v25.0.${{ github.run_number }}" || echo "No changes"
+          git commit -m "Update image tags to v45.0.${{ github.run_number }}" || echo "No changes"
           if ! git push; then
             echo "git push failed (probably no write permission). Skipping push." >&2
           fi

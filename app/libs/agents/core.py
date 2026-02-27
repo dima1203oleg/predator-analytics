@@ -9,7 +9,7 @@ from app.libs.core.logger import setup_logger
 logger = setup_logger("predator.trinity")
 
 class TrinityCore:
-    """The heart of Predator Analytics v25+.
+    """The heart of Predator Analytics v45+.
     Unifies WinSURF Governance, Strategic Planning, and Secure Execution.
     """
     def __init__(self, strategist, coder, auditor, ops=None):

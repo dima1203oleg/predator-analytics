@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "🦁 SAFETY MODE START V30 @ 3045..."
+echo "🦁 SAFETY MODE START V45 @ 3045..."
 
 # 1. Cleaning cleanup
 pkill -f "vite"

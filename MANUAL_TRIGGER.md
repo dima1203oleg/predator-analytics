@@ -15,7 +15,7 @@
 
 **Команда:**
 ```bash
-curl -X POST "http://localhost:8090/v25/etl/process-local?file_path=/app/scripts/customs.xlsx&dataset_type=customs_march_2024"
+curl -X POST "http://localhost:8090/v45/etl/process-local?file_path=/app/scripts/customs.xlsx&dataset_type=customs_march_2024"
 ```
 *(Замініть `/app/scripts/customs.xlsx` на реальний шлях до файлу всередині Docker контейнера або локальної папки)*.
 

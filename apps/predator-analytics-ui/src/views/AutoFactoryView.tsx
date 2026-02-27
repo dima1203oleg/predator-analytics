@@ -1,5 +1,5 @@
 /**
- * PREDATOR v45 — ЗАВОД: Система Автоматичного Доопрацювання Програми
+ * Predator v45 | Neural Analytics — ЗАВОД: Система Автоматичного Доопрацювання Програми
  * Auto-Fix Factory · AZR Unified Brain · Self-Improvement Engine
  */
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""🔒 Data Contracts для Predator Analytics v25.
+"""🔒 Data Contracts для Predator Analytics v45.
 
 Формалізація всіх payload structures з Pydantic для:
 - Celery tasks

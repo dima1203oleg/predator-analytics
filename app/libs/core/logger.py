@@ -9,7 +9,7 @@ from typing import Optional
 
 
 class WinSURFFormatter(logging.Formatter):
-    """Structured JSON Formatter for Predator Analytics v25+.
+    """Structured JSON Formatter for Predator Analytics v45+.
     Enables better log analysis for AI Agents and Observability tools.
     """
     def format(self, record):

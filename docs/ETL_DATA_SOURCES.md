@@ -1,4 +1,4 @@
-# 📡 ETL Data Sources Integration (v25.1)
+# 📡 ETL Data Sources Integration (v45.1)
 
 ## Огляд
 
@@ -20,7 +20,7 @@
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                   API Gateway (FastAPI)                          │
-│         /api/v25/sources → sources_management.py                 │
+│         /api/v45/sources → sources_management.py                 │
 │         - POST /sources (create)                                 │
 │         - POST /sources/test (test connection)                   │
 │         - POST /sources/{id}/sync (trigger sync)                 │
@@ -73,7 +73,7 @@ TELEGRAM_PHONE=+380XXXXXXXXX  # Ваш номер телефону
 
 ```bash
 # Тестування підключення
-curl -X POST http://localhost:8000/api/v25/sources/test \
+curl -X POST http://localhost:8000/api/v45/sources/test \
   -H "Content-Type: application/json" \
   -d '{
     "type": "telegram",
@@ -82,7 +82,7 @@ curl -X POST http://localhost:8000/api/v25/sources/test \
   }'
 
 # Створення джерела
-curl -X POST http://localhost:8000/api/v25/sources \
+curl -X POST http://localhost:8000/api/v45/sources \
   -H "Content-Type: application/json" \
   -d '{
     "type": "telegram",
@@ -93,7 +93,7 @@ curl -X POST http://localhost:8000/api/v25/sources \
   }'
 
 # Запуск синхронізації
-curl -X POST http://localhost:8000/api/v25/sources/{source_id}/sync
+curl -X POST http://localhost:8000/api/v45/sources/{source_id}/sync
 ```
 
 ### Методи Connector
@@ -128,7 +128,7 @@ subscription = await telegram_channel_connector.subscribe_to_channel("channel_na
 
 ```bash
 # Скрапінг веб-сторінки
-curl -X POST http://localhost:8000/api/v25/sources/test \
+curl -X POST http://localhost:8000/api/v45/sources/test \
   -H "Content-Type: application/json" \
   -d '{
     "type": "web",
@@ -140,7 +140,7 @@ curl -X POST http://localhost:8000/api/v25/sources/test \
   }'
 
 # RSS фід
-curl -X POST http://localhost:8000/api/v25/sources/test \
+curl -X POST http://localhost:8000/api/v45/sources/test \
   -H "Content-Type: application/json" \
   -d '{
     "type": "rss",

@@ -2,7 +2,7 @@
 """
 Module: logging_config
 Component: shared
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 import logging
 import json

@@ -28,7 +28,7 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ trainingPairs,
                             />
                             <div className="relative z-10">
                                 <div className="text-[10px] text-blue-400 font-black uppercase tracking-[0.2em] mb-1">Активна Нейронна Модель</div>
-                                <div className="text-xl font-black text-white uppercase tracking-tighter">CodeLlama-34b-v25-Instruct</div>
+                                <div className="text-xl font-black text-white uppercase tracking-tighter">CodeLlama-34b-v45-Instruct</div>
                                 <div className="flex items-center gap-4 mt-3">
                                     <div className="flex items-center gap-1.5 grayscale opacity-60">
                                         <div className="w-2 h-2 rounded-full bg-emerald-500"></div>

@@ -5,8 +5,7 @@ import { RedButton } from './RedButton';
 /**
  * ═══════════════════════════════════════════════════════════════
  * SOM DASHBOARD - Sovereign Observer Module Monitor
- * Predator Analytics v29-S
- *
+ * Predator v45 | Neural Analytics*
  * Центральна панель моніторингу конституційного гіпервізора
  * з підтримкою Constitutional Core та Truth Ledger
  * ═══════════════════════════════════════════════════════════════
@@ -478,7 +477,7 @@ export const SOMDashboard: React.FC = () => {
           <span style={{ fontSize: 36 }}>🏛️</span>
           <div>
             <h1>Sovereign Observer Module</h1>
-            <span className="version">v29.0-SOM</span>
+            <span className="version">v45.0-SOM</span>
           </div>
         </div>
 

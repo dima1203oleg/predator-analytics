@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: bot
-          image: predator-analytics/bot:v25.0
+          image: predator-analytics/bot:v45.0
           imagePullPolicy: IfNotPresent
           command: ["python3", "apps/trinity_bot/bot/main.py"]
           envFrom:

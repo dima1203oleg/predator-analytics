@@ -2,7 +2,7 @@
 # Predator Analytics System Doctor
 # WinSURF-style self-diagnostics
 
-echo "🏥 Predator System Doctor is analyzing the health of Predator Analytics v25.1..."
+echo "🏥 Predator System Doctor is analyzing the health of Predator Analytics v45.1..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # 1. Container Health

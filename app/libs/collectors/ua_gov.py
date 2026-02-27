@@ -9,7 +9,7 @@ import requests
 logger = logging.getLogger("collectors.ua_gov")
 
 class UAGovCollector:
-    """Уніфікований колектор для державних даних України (v27.0).
+    """Уніфікований колектор для державних даних України (v45.0).
     Інтеграція з ProZorro, OpenDataBot (mock), та Державним реєстром.
     """
     def __init__(self, api_key: str | None = None):
@@ -20,7 +20,7 @@ class UAGovCollector:
         """Запит до ProZorro API."""
         logger.info(f"Запит тендерів ProZorro: {query}")
         try:
-            # Спрощений запит (v27.0 mock для демонстрації архітектури)
+            # Спрощений запит (v45.0 mock для демонстрації архітектури)
             params = {"descending": 1, "limit": 10}
             if query:
                 params["opt_fields"] = "description,title"

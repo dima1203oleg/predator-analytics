@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { api, v25Client } from '../../services/api';
+import { api, v45Client } from '../../services/api';
 import { TacticalCard } from '../TacticalCard';
 import { motion } from 'framer-motion';
 import {
@@ -21,8 +21,8 @@ export const AutonomousLearningStack: React.FC = () => {
     const fetchTrainingData = async () => {
         try {
             const [status, hist] = await Promise.all([
-                v25Client.get('/training/status'),
-                v25Client.get('/ml/jobs')
+                v45Client.get('/training/status'),
+                v45Client.get('/ml/jobs')
             ]);
             setTrainingStatus(status.data);
             setHistory(hist.data || []);
@@ -40,7 +40,7 @@ export const AutonomousLearningStack: React.FC = () => {
     const triggerManualTraining = async () => {
         setIsThinking(true);
         try {
-            await v25Client.post('/training/trigger');
+            await v45Client.post('/training/trigger');
         } finally {
             setTimeout(() => setIsThinking(false), 2000);
         }

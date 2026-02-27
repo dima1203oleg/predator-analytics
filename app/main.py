@@ -25,7 +25,7 @@ from app.libs.core.structured_logger import get_logger, log_business_event, setu
 logger = get_logger("predator.api.main")
 
 app = FastAPI(
-    title="Predator Analytics v30.0 API",
+    title="Predator Analytics v45.0 API",
     description="Незламна Система: AI-Native Мультиагентна Аналітична Платформа",
     version="30.0.0"
 )
@@ -42,7 +42,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 🆕 Import v30 Routers
+# 🆕 Import v45 Routers
 from app.api.routers import auth as auth_router
 from app.api.routers import council as council_router
 from app.api.routers import customs as customs_router
@@ -64,7 +64,7 @@ from app.routers.pipelines import router as pipelines_router
 # API ROUTER INCLUSION
 # ============================================================================
 
-# v30 Feature Set
+# v45 Feature Set
 app.include_router(ingestion_router, prefix="/api/v1")
 app.include_router(datasets_router, prefix="/api/v1")
 app.include_router(pipelines_router, prefix="/api/v1")
@@ -96,7 +96,7 @@ except ImportError:
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info("PREDATOR_V30_BOOT_START", mode="SOVEREIGN")
+    logger.info("PREDATOR_V45_BOOT_START", mode="SOVEREIGN")
 
     # Connect to Message Broker
     try:

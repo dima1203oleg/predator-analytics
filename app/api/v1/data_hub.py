@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Predator Analytics v25 - Data Hub API Endpoints
+"""Predator Analytics v45 - Data Hub API Endpoints
 RESTful API for Sources, Datasets, and Jobs management.
 """
 from typing import TYPE_CHECKING, Any, List, Optional

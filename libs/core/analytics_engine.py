@@ -1,5 +1,5 @@
 """
-Predator Analytics v25 - Core Analytical Engine
+Predator Analytics v45 - Core Analytical Engine
 The "Brain" that processes behavioral, institutional, and influence layers.
 """
 import logging
@@ -323,13 +323,13 @@ class AnalyticalEngine:
         from libs.core.ledger_service import LedgerService
         from libs.core.models.analytics import DecisionArtifact
         
-        input_ctx = {"entity_id": entity_id, "weights": "v25_standard"}
+        input_ctx = {"entity_id": entity_id, "weights": "v45_standard"}
         artifact_dict = LedgerService.create_artifact(
             decision_type="ENTITY_PROFILE_GENERATION",
             input_context=input_ctx,
             output_payload=output_payload,
             confidence_score=output_payload["confidence"],
-            model_version_hash="v25", # Placeholder
+            model_version_hash="v45", # Placeholder
             tenant_id="SYSTEM"
         )
         
@@ -387,7 +387,7 @@ class AnalyticalEngine:
 
             return {
                 # Legacy fields (API compatibility)
-                "index_name": "Economic Climate Meter (V25)",
+                "index_name": "Economic Climate Meter (V45)",
                 "score": turbulence,
                 "trend": "stable" if turbulence < 0.5 else "elevated",
                 "anomalies_detected": pulse_record.active_anomalies,
@@ -396,7 +396,7 @@ class AnalyticalEngine:
                     "magnitude": 5_000_000
                 },
                 "timestamp": pulse_record.timestamp.isoformat(),
-                # V25 CERS enriched fields
+                # V45 CERS enriched fields
                 "turbulence_index": pulse_record.turbulence_index,
                 "system_health": pulse_record.system_health,
                 "cers": cers,

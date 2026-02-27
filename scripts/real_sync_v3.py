@@ -117,7 +117,7 @@ def run():
         conf_dict = {
             "last_count": len(df),
             "table_name": "gold.customs_declarations",
-            "import_method": "direct_sync_v25"
+            "import_method": "direct_sync_v45"
         }
         conf_json = json.dumps(conf_dict)
 

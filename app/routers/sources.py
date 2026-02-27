@@ -47,7 +47,7 @@ class Connector(BaseModel):
 @router.get("/", response_model=list[DataSource])
 async def get_data_sources():
     """Get all available data sources (PostgreSQL tables).
-    Combines legacy staging_ tables with v25 gold.data_sources registry.
+    Combines legacy staging_ tables with v45 gold.data_sources registry.
     """
     db_url = os.getenv("DATABASE_URL", "postgresql://admin:predator_password@postgres:5432/predator_db")
     # Clean scheme for asyncpg
@@ -62,7 +62,7 @@ async def get_data_sources():
     try:
         conn = await asyncpg.connect(db_url)
 
-        # 1. Query v25 Registry (Gold Layer)
+        # 1. Query v45 Registry (Gold Layer)
         gold_query = """
             SELECT
                 ds.id,

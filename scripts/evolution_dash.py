@@ -6,8 +6,7 @@ import os
 import time
 
 
-# Hack style Evolution Dashboard for Predator v25
-AUDIT_LOG = "/tmp/azr_logs/azr_audit_log.jsonl"
+# Hack style Evolution Dashboard for Predator v45 | Neural AnalyticsAUDIT_LOG = "/tmp/azr_logs/azr_audit_log.jsonl"
 ENGINE_LOG = "/tmp/azr_logs/azr_engine.log"
 
 def clear(): os.system('clear' if os.name == 'posix' else 'cls')
@@ -39,7 +38,7 @@ def main():
         clear()
         total, last, mem_count = get_stats()
 
-        print("\033[1;36m" + "═══ PREDATOR v25: AZR EVOLUTION STATUS ══════════════════════════════════" + "\033[0m")
+        print("\033[1;36m" + "═══ Predator v45 | Neural Analytics: AZR EVOLUTION STATUS ══════════════════════════════════" + "\033[0m")
         print(f"📡 UPTIME: {datetime.now().strftime('%H:%M:%S')} | 🧬 CYCLES: {total} | ⚖️ COMPLIANCE: 100%")
         print(f"🐍 RUNTIME: Python {py_ver} | 🏛️  MEMORY: {mem_count} cases")
         print("──────────────────────────────────────────────────────────────────────────")

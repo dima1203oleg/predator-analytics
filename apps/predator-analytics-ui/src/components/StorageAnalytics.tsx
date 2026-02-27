@@ -184,9 +184,9 @@ export const StorageAnalytics: React.FC = () => {
     try {
       // Try to fetch from backend
       const [bucketsRes, dbRes, indicesRes] = await Promise.all([
-        fetch('/api/v25/storage/buckets').catch(() => null),
-        fetch('/api/v25/storage/databases').catch(() => null),
-        fetch('/api/v25/storage/indices').catch(() => null)
+        fetch('/api/v45/storage/buckets').catch(() => null),
+        fetch('/api/v45/storage/databases').catch(() => null),
+        fetch('/api/v45/storage/indices').catch(() => null)
       ]);
 
       // Process responses or use mock data

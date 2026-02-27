@@ -16,7 +16,7 @@ from app.libs.core.models import *  # Import all models to register them
 
 
 async def migrate():
-    print("Starting Predator v25 Gold Migration...")
+    print("Starting Predator v45 | Neural AnalyticsGold Migration...")
     async with engine.begin() as conn:
         # Create schema gold if not exists
         await conn.execute(text("CREATE SCHEMA IF NOT EXISTS gold"))

@@ -254,7 +254,7 @@ class AZREngine:
         asyncio.create_task(self.telegram.report_cycle_async(entry['sovereign_id'], metrics, actions))
 
     async def run(self):
-        logger.info("🔥 AGGRESSIVE EVOLUTION ACTIVATED. PREDATOR v25 IS MUTATING...")
+        logger.info("🔥 AGGRESSIVE EVOLUTION ACTIVATED. Predator v45 | Neural Analytics IS MUTATING...")
         while True:
             try:
                 metrics = await self.observe()

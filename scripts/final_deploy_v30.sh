@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# PREDATOR V30 FINAL DEPLOYMENT SCRIPT
+# PREDATOR V45 FINAL DEPLOYMENT SCRIPT
 # This script locks in the configuration and deploys the fully audited system.
 
-echo "🦁 PREDATOR V30 FINAL DEPLOYMENT SEQUENCE INITIATED..."
+echo "🦁 PREDATOR V45 FINAL DEPLOYMENT SEQUENCE INITIATED..."
 
 # 1. Environment Check
 if [ ! -f .env.production ]; then
@@ -12,7 +12,7 @@ if [ ! -f .env.production ]; then
 fi
 
 # 2. Frontend Build
-echo "🏗️  Building PREDATOR UI (V30)..."
+echo "🏗️  Building PREDATOR UI (V45)..."
 cd apps/predator-analytics-ui
 npm install && npm run build
 if [ $? -ne 0 ]; then
@@ -62,9 +62,9 @@ EOF
 
 # 4. Deploy to Container
 echo "🚀 Deploying to static container..."
-docker rm -f predator-v30-frontend 2>/dev/null
+docker rm -f predator-v45-frontend 2>/dev/null
 docker run -d \
-  --name predator-v30-frontend \
+  --name predator-v45-frontend \
   -p 3045:80 \
   -v $(pwd)/apps/predator-analytics-ui/dist:/usr/share/nginx/html \
   -v $(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf \

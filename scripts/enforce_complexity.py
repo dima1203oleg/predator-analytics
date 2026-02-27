@@ -7,7 +7,7 @@ import sys
 import time
 
 
-# PREDATOR V30.1 - COMPLEXITY ENFORCER (UA)
+# PREDATOR V45.1 - COMPLEXITY ENFORCER (UA)
 # Запобігає "вибуху складності" шляхом моніторингу метрик коду.
 # Вимагає Python 3.12+
 
@@ -92,7 +92,7 @@ def generate_html_report(report):
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Звіт Складності Predator v30.1</title>
+    <title>Звіт Складності Predator v45 | Neural Analytics.1</title>
     <style>
         body {{ font-family: -apple-system, system-ui, sans-serif; background: #1a1a1a; color: #e0e0e0; padding: 20px; }}
         .container {{ max-width: 900px; margin: 0 auto; }}
@@ -109,7 +109,7 @@ def generate_html_report(report):
 </head>
 <body>
     <div class="container">
-        <h1>🛡️ Predator v30.1 Complexity Report</h1>
+        <h1>🛡️ Predator v45 | Neural Analytics.1 Complexity Report</h1>
         <div class="stats">
             <div class="card">
                 <h2>{total_files}</h2>

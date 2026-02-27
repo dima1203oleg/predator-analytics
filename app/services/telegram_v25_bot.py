@@ -17,14 +17,14 @@ from .triple_agent_service import triple_agent_service
 
 logger = logging.getLogger(__name__)
 
-class PredatorBotV25:
-    """[DEPRECATED] Predator Analytics v25.0 - Unified AI Control Panel
+class PredatorBotV45:
+    """[DEPRECATED] Predator Analytics v45.0 - Unified AI Control Panel
     This service is legacy and replaced by the autonomous 'apps/telegram-bot' microservice.
     Do not use for new implementations.
     """
 
     def __init__(self, token: str):
-        logger.warning("⚠️ DEPRECATED: PredatorBotV25 is initialized but should be replaced by WinSURF Bot.")
+        logger.warning("⚠️ DEPRECATED: PredatorBotV45 is initialized but should be replaced by WinSURF Bot.")
         self.bot = Bot(token=token)
         self.dp = Dispatcher()
         self.temp_results = {} # Store results for callbacks
@@ -49,7 +49,7 @@ class PredatorBotV25:
 
     async def cmd_start(self, message: Message):
         welcome_text = (
-            "🤖 **Рredator Analytics v25.0 Online**\n\n"
+            "🤖 **Рredator Analytics v45.0 Online**\n\n"
             "Вітаю, Операторе. Я — ваш автономний пульт керування.\n"
             "Я використовую трійку AI-агентів (Gemini, Mistral, Aider) для виконання ваших команд.\n\n"
             "Доступні команди:\n"
@@ -70,7 +70,7 @@ class PredatorBotV25:
         lockdown = "🚨 АКТИВНО (LOCKDOWN)" if await system_control_service.is_lockdown() else "✅ Вимкнено"
 
         status = (
-            "🏥 **Статус Predator v25.0**\n\n"
+            "🏥 **Статус Predator v45 | Neural Analytics.0**\n\n"
             f"🛡 Блокування: {lockdown}\n"
             f"📊 CPU Load: {metrics['cpu_load']}%\n"
             f"💾 RAM Usage: {metrics['memory_usage']}%\n"
@@ -237,12 +237,12 @@ class PredatorBotV25:
         await callback.answer()
 
     async def run(self):
-        logger.info("🚀 Predator Bot v25.0 (aiogram) starting...")
+        logger.info("🚀 Predator Bot v45.0 (aiogram) starting...")
         await self.dp.start_polling(self.bot)
 
-v25_bot: PredatorBotV25 | None = None
+v45_bot: PredatorBotV45 | None = None
 
-def init_v25_bot(token: str) -> PredatorBotV25:
-    global v25_bot
-    v25_bot = PredatorBotV25(token)
-    return v25_bot
+def init_v45_bot(token: str) -> PredatorBotV45:
+    global v45_bot
+    v45_bot = PredatorBotV45(token)
+    return v45_bot

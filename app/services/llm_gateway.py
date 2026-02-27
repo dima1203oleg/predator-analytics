@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-"""Predator Analytics v25.0 - LiteLLM Gateway Service
+"""Predator Analytics v45.0 - LiteLLM Gateway Service
 Unified interface for multi-LLM routing with automatic failover.
 """
 import asyncio

@@ -134,74 +134,75 @@ function runPipeline(jobId, sourceFile) {
   const job = etlJobs.find(j => j.job_id === jobId);
   if (!job) return;
 
-  // ========= PHASE 1: UPLOAD → MinIO =========
-  emitEvent(jobId, 'UPLOAD_STARTED', `Завантаження ${sourceFile} в MinIO...`);
+  // ========= PHASE 1: UPLOAD → MinIO (The Core Bucket) =========
+  emitEvent(jobId, 'UPLOAD_STARTED', `Завантаження ${sourceFile} в MinIO (raw-buffer)...`);
   job.state = 'UPLOAD';
-  job.progress = { ...job.progress, stage: 'UPLOAD', details: 'Збереження оригіналу в MinIO...', percent: 5 };
+  job.progress = { ...job.progress, stage: 'UPLOAD', details: 'Збереження оригіналу в MinIO [Object Storage]', percent: 5 };
 
   setTimeout(() => {
     DB_FILES.push({ id: jobId, filename: sourceFile, size_bytes: 2457600, uploaded_at: new Date().toISOString() });
     emitEvent(jobId, 'FILE_STORED_MINIO', `Файл збережено у MinIO: bucket=customs-raw`);
-    job.progress = { ...job.progress, percent: 12, details: 'Оригінал збережено. Запуск парсера...' };
+    job.progress = { ...job.progress, stage: 'PARSE', percent: 15, details: 'Оригінал зафіксовано. Активація роутера...' };
 
-    // ========= PHASE 2: PARSE =========
-    emitEvent(jobId, 'PARSING_STARTED', `Парсинг Excel: аналіз структури...`);
+    // ========= PHASE 2: PARSE (Structure Extraction) =========
+    emitEvent(jobId, 'PARSING_STARTED', `Розщеплення структури Excel: виявлення колонок...`);
     job.state = 'PARSE';
-    job.progress = { ...job.progress, stage: 'PARSE', percent: 20, details: 'Парсинг рядків Excel...' };
+    job.progress = { ...job.progress, stage: 'PARSE', percent: 25, details: 'Вилучення метаданих та рядків...' };
 
     setTimeout(() => {
       const declarations = generateDeclarations(TOTAL_RECORDS, sourceFile);
-      job.progress = { ...job.progress, percent: 30, records_total: TOTAL_RECORDS, details: `Розпарсено ${TOTAL_RECORDS} рядків. Валідація...` };
-      emitEvent(jobId, 'PARSING_COMPLETE', `Розпарсено ${TOTAL_RECORDS} записів`);
+      job.progress = { ...job.progress, percent: 35, records_total: TOTAL_RECORDS, details: `Розпарсено ${TOTAL_RECORDS} рядків. Перехід до валідації...` };
+      emitEvent(jobId, 'PARSING_COMPLETE', `Структуру розщеплено: ${TOTAL_RECORDS} записів знайдено`);
 
-      // ========= PHASE 3: VALIDATION =========
-      emitEvent(jobId, 'VALIDATION_STARTED', 'Перевірка якості даних (DQ Check)...');
+      // ========= PHASE 3: VALIDATION (DQ Core) =========
+      emitEvent(jobId, 'VALIDATION_STARTED', 'Запуск DQ Core: перевірка цілісності даних...');
       job.state = 'VALIDATE';
-      job.progress = { ...job.progress, stage: 'VALIDATE', percent: 38, details: 'DQ Check: перевірка HS кодів, ЄДРПОУ...' };
+      job.progress = { ...job.progress, stage: 'VALIDATE', percent: 45, details: 'DQ Check: валідація HS-кодів та ЄДРПОУ...' };
 
       setTimeout(() => {
-        const rejected = 3;
+        const rejected = 4;
         const valid = declarations.filter((_, i) => i >= rejected);
-        emitEvent(jobId, 'VALIDATION_COMPLETE', `Пройшло: ${valid.length}, Відхилено: ${rejected}, Дублікатів: 0`);
-        job.progress = { ...job.progress, percent: 45, details: `Валідація завершена. ${rejected} записів відхилено.` };
+        emitEvent(jobId, 'VALIDATION_COMPLETE', `Валідація ОК: ${valid.length} пройшло, ${rejected} відхилено`);
+        job.progress = { ...job.progress, percent: 52, details: `Дані очищено. Початок маршрутизації...` };
 
-        // ========= PHASE 4: NORMALIZE =========
-        emitEvent(jobId, 'NORMALIZE_STARTED', 'Нормалізація даних...');
+        // ========= PHASE 4: NORMALIZE (Canonical Model) =========
+        emitEvent(jobId, 'NORMALIZE_STARTED', 'Нормалізація до Канонічної Моделі...');
         job.state = 'NORMALIZE';
-        job.progress = { ...job.progress, stage: 'NORMALIZE', percent: 50, details: 'Нормалізація схеми...' };
+        job.progress = { ...job.progress, stage: 'NORMALIZE', percent: 60, details: 'Мапування на схему Predator Core...' };
 
         setTimeout(() => {
-          emitEvent(jobId, 'NORMALIZE_COMPLETE', 'Дані нормалізовано');
+          emitEvent(jobId, 'NORMALIZE_COMPLETE', 'Дані нормалізовано до єдиного стандарту');
 
-          // ========= PHASE 5: LOAD_SQL → PostgreSQL (Факти) =========
-          emitEvent(jobId, 'STORE_POSTGRES_STARTED', 'Збереження фактів у PostgreSQL...');
+          // ========= PHASE 5: MULTI-DB ROUTING: POSTGRES (Facts) =========
+          emitEvent(jobId, 'STORE_POSTGRES_STARTED', 'Маршрутизація фактів у PostgreSQL [Relational]...');
           job.state = 'LOAD_SQL';
-          job.progress = { ...job.progress, stage: 'LOAD_SQL', percent: 55, details: 'Запис у PostgreSQL (facts)...' };
+          job.progress = { ...job.progress, stage: 'LOAD_SQL', percent: 68, details: 'Запис транзакційних фактів у PostgreSQL...' };
 
           setTimeout(() => {
             DB_FACTS.push(...valid);
-            emitEvent(jobId, 'DECLARATION_STORED_POSTGRES', `${valid.length} записів збережено в PostgreSQL`);
-            job.progress = { ...job.progress, percent: 60, records_processed: valid.length, details: 'PostgreSQL ✓. Побудова графу...' };
+            emitEvent(jobId, 'DECLARATION_STORED_POSTGRES', `${valid.length} фактів зафіксовано в SQL`);
+            job.progress = { ...job.progress, percent: 75, records_processed: valid.length, details: 'SQL заповнено ✓. Побудова зв\'язків у GraphDB...' };
 
-            // ========= PHASE 5: GRAPH → Graph DB (Зв'язки) =========
-            emitEvent(jobId, 'GRAPH_LINKING_STARTED', 'Побудова зв\'язків company↔declaration...');
+            // ========= PHASE 6: GRAPH (Relations) =========
+            emitEvent(jobId, 'GRAPH_LINKING_STARTED', 'Побудова реляційного графу: Company ↔ Declaration...');
             job.state = 'BUILD_GRAPH';
-            job.progress = { ...job.progress, stage: 'BUILD_GRAPH', percent: 68, details: 'Побудова графу зв\'язків...' };
+            job.progress = { ...job.progress, stage: 'BUILD_GRAPH', percent: 82, details: 'Neural Graph: створення вузлів та ребер...' };
 
             setTimeout(() => {
+              // (Graph build logic remains identical but events are aligned)
               const uniqueCompanies = [...new Set(valid.map(d => d.company_name))];
-              uniqueCompanies.forEach((companyName, idx) => {
-                const existing = DB_GRAPH.nodes.find(n => n.label === companyName);
+              uniqueCompanies.forEach((cn, i) => {
+                const existing = DB_GRAPH.nodes.find(n => n.label === cn);
                 if (!existing) {
-                  const comp = COMPANIES.find(c => c.name === companyName) || {};
-                  DB_GRAPH.nodes.push({ id: `comp-${idx}`, label: companyName, type: 'Company', edrpou: comp.edrpou, risk: comp.risk });
+                  const comp = COMPANIES.find(c => c.name === cn) || {};
+                  DB_GRAPH.nodes.push({ id: `comp-${DB_GRAPH.nodes.length}`, label: cn, type: 'Company', edrpou: comp.edrpou, risk: comp.risk });
                 }
               });
               const uniqueCountries = [...new Set(valid.map(d => d.country_origin))];
               uniqueCountries.forEach((country, idx) => {
                 const existing = DB_GRAPH.nodes.find(n => n.label === country && n.type === 'Country');
                 if (!existing) {
-                  DB_GRAPH.nodes.push({ id: `country-${idx}`, label: country, type: 'Country' });
+                  DB_GRAPH.nodes.push({ id: `country-${DB_GRAPH.nodes.length}`, label: country, type: 'Country' });
                 }
               });
               // Зв'язки
@@ -212,14 +213,13 @@ function runPipeline(jobId, sourceFile) {
                   DB_GRAPH.edges.push({ from: compNode.id, to: countryNode.id, label: 'Торгує з', declaration: d.declaration_number });
                 }
               });
+              emitEvent(jobId, 'DECLARATION_GRAPH_LINKED', `Граф оновлено: +${uniqueCompanies.length} вузлів зв\'язків`);
+              job.progress = { ...job.progress, percent: 88, details: 'Граф ✓. Індексація в OpenSearch...' };
 
-              emitEvent(jobId, 'DECLARATION_GRAPH_LINKED', `${DB_GRAPH.nodes.length} вузлів, ${DB_GRAPH.edges.length} зв\'язків`);
-              job.progress = { ...job.progress, percent: 75, details: 'Граф ✓. Індексація для пошуку...' };
-
-              // ========= PHASE 6: INDEX → OpenSearch (Пошук) =========
-              emitEvent(jobId, 'INDEXING_STARTED', 'Індексація в OpenSearch...');
+              // ========= PHASE 7: SEARCH (Context) =========
+              emitEvent(jobId, 'INDEXING_STARTED', 'Індексація повнотекстового пошуку [OpenSearch]...');
               job.state = 'INDEX_SEARCH';
-              job.progress = { ...job.progress, stage: 'INDEX_SEARCH', percent: 80, details: 'Індексація в OpenSearch...' };
+              job.progress = { ...job.progress, stage: 'INDEX_SEARCH', percent: 92, details: 'Створення інвертованих індексів...' };
 
               setTimeout(() => {
                 valid.forEach(d => {
@@ -229,21 +229,19 @@ function runPipeline(jobId, sourceFile) {
                     declaration: d,
                   });
                 });
-                emitEvent(jobId, 'DECLARATION_INDEXED', `${valid.length} документів проіндексовано в OpenSearch`);
-                job.progress = { ...job.progress, percent: 90, records_indexed: valid.length, details: 'OpenSearch ✓. Векторизація...' };
+                emitEvent(jobId, 'DECLARATION_INDEXED', `${valid.length} записів додано в пошуковий індекс`);
+                job.progress = { ...job.progress, percent: 96, details: 'OpenSearch ✓. Генерація векторів Qdrant...' };
 
-                // ========= PHASE 7: VECTORIZE → Qdrant (Семантика) =========
-                emitEvent(jobId, 'VECTORIZATION_STARTED', 'Генерація ембедингів для Qdrant...');
+                // ========= PHASE 8: VECTORIZE (Semantic) =========
+                emitEvent(jobId, 'VECTORIZATION_STARTED', 'Генерація ембедингів: перетворення в Llama-3-Vector...');
                 job.state = 'VECTORIZE';
-                job.progress = { ...job.progress, stage: 'VECTORIZE', percent: 92, details: 'Генерація семантичних векторів...' };
+                job.progress = { ...job.progress, stage: 'VECTORIZE', percent: 98, details: 'Запис у Qdrant [Vector Space]...' };
 
                 setTimeout(() => {
-                  valid.forEach(d => {
-                    DB_VECTORS.push({ id: d.id, text: `${d.goods_description} від ${d.company_name} з ${d.country_origin}`, vector: Array(384).fill(0).map(() => Math.random()) });
-                  });
-                  emitEvent(jobId, 'DECLARATION_VECTORIZED', `${valid.length} ембедингів збережено в Qdrant`);
+                  valid.forEach(d => DB_VECTORS.push({ id: d.id, text: `${d.goods_description} від ${d.company_name} з ${d.country_origin}`, vector: Array(384).fill(0).map(() => Math.random()) }));
+                  emitEvent(jobId, 'DECLARATION_VECTORIZED', `Векторизація завершена: ${valid.length} ембедингів`);
 
-                  // ========= COMPLETE =========
+                  // ========= READY =========
                   job.state = 'READY';
                   job.progress = {
                     ...job.progress,
@@ -252,18 +250,17 @@ function runPipeline(jobId, sourceFile) {
                     records_total: TOTAL_RECORDS,
                     records_processed: valid.length,
                     records_indexed: valid.length,
-                    details: `✅ Пайплайн завершено! ${valid.length} записів розподілено по 6 базах.`
+                    details: `✅ АЛХІМІЯ ДАНІВ ЗАВЕРШЕНА. ${valid.length} декларацій розщеплено по 6 базах.`
                   };
-
                   DB_PIPELINE_STATE[jobId] = 'COMPLETED';
-                  emitEvent(jobId, 'PIPELINE_COMPLETED', `Повний цикл: MinIO→PostgreSQL→GraphDB→OpenSearch→Qdrant→Redis. ${valid.length} записів.`);
+                  emitEvent(jobId, 'PIPELINE_COMPLETED', `Повний 4D-розподіл завершено: [Facts, Relations, Search, Vectors]`);
 
                   console.log(`\n✅ PIPELINE DONE: ${valid.length} records distributed across 6 databases`);
                   console.log(`   📦 MinIO: 1 file | 🐘 PostgreSQL: ${DB_FACTS.length} facts | 🕸 Graph: ${DB_GRAPH.nodes.length} nodes | 🔍 OpenSearch: ${DB_SEARCH_INDEX.length} docs | 🧠 Qdrant: ${DB_VECTORS.length} vectors\n`);
                 }, 1500);
-              }, 2000);
-            }, 1500);
-          }, 1500);
+              }, 1200);
+            }, 1200);
+          }, 1200);
         }, 1200);
       }, 2000);
     }, 1500);
@@ -271,11 +268,11 @@ function runPipeline(jobId, sourceFile) {
 }
 
 // =============================================
-// 🔌 API ENDPOINTS
+// 📊 MONITORING & SYSTEM
 // =============================================
 
-// Health check
-app.get('/api/v1/health', (req, res) => {
+// Universal Health
+app.get(['/api/v1/health', '/api/v1/monitoring/health', '/v1/monitoring/health'], (req, res) => {
   res.json({
     status: 'healthy', timestamp: new Date().toISOString(), databases: {
       postgresql: DB_FACTS.length,
@@ -285,6 +282,27 @@ app.get('/api/v1/health', (req, res) => {
       files: DB_FILES.length
     }
   });
+});
+
+// Autonomy
+app.get(['/api/v1/autonomy/status', '/v1/autonomy/status'], (req, res) => {
+  res.json({ state: 'SOVEREIGN', active_strategies: 4, neural_load: 12 + Math.random() * 5, uptime: '7d 14h' });
+});
+
+app.get(['/api/v1/autonomy/metrics', '/v1/autonomy/metrics'], (req, res) => {
+  res.json({ efficiency: 94.2, anomaly_detection_rate: 98.7, vector_search_precision: 0.96, timestamp: new Date().toISOString() });
+});
+
+app.get(['/api/v1/autonomy/hypotheses', '/v1/autonomy/hypotheses'], (req, res) => {
+  res.json([
+    { id: 'hyp-1', title: 'Маршрутна аномалія', probability: 0.84, status: 'VERIFYING' },
+    { id: 'hyp-2', title: 'Кластеризація ризику ЄДРПОУ', probability: 0.76, status: 'STABLE' }
+  ]);
+});
+
+// System Lockdown
+app.get(['/api/v1/system/lockdown', '/v1/system/lockdown'], (req, res) => {
+  res.json({ active: false, level: 0, reason: null });
 });
 
 // System metrics

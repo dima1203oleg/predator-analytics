@@ -78,7 +78,7 @@ class DetectionService:
 
                             ai_insight = f"【PLANNED ANALYSIS】: {result.get('plan', '')}\n\n"
                             ai_insight += f"【AI CONCLUSION】: {result.get('code', 'Аналіз завершено без додаткових висновків.')}\n\n"
-                            ai_insight += f"【SECURITY AUDIT】: {result.get('audit_report', 'Перевірено протоколом v25.')}"
+                            ai_insight += f"【SECURITY AUDIT】: {result.get('audit_report', 'Перевірено протоколом v45.')}"
                         except Exception as ai_e:
                             logger.exception(f"AI Insight failed for document {doc.id}: {ai_e}")
                             ai_insight = "AI аналіз тимчасово недоступний через обмеження API."

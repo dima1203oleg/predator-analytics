@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 // ============================================================================
-// SMART CASE BROWSER - PREDATOR v25.0
+// SMART CASE BROWSER - Predator v45 | Neural Analytics.0
 // Intuitive case management with advanced filtering
 // ============================================================================
 
@@ -192,7 +192,7 @@ export const SmartCaseBrowser: React.FC<{ onCaseSelect?: (caseItem: Case) => voi
   React.useEffect(() => {
     const fetchCases = async () => {
       try {
-        const res = await fetch('/api/v25/cases');
+        const res = await fetch('/api/v45/cases');
         const data = await res.json();
         setCases(data.length > 0 ? data : generateMockCases());
       } catch {

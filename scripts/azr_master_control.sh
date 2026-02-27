@@ -1,7 +1,7 @@
 #!/bin/bash
 # scripts/azr_master_control.sh
 # ═══════════════════════════════════════════════════════════════════════════════
-# 🏛️ AZR MASTER CONTROL & KERNEL - PREDATOR v25.0
+# 🏛️ AZR MASTER CONTROL & KERNEL - Predator v45 | Neural Analytics.0
 # UNBREAKABLE INFINITE SELF-IMPROVEMENT ORCHESTRATOR
 # CORE PILLARS: Rules, Code, UI, Learning, Infra.
 # ═══════════════════════════════════════════════════════════════════════════════

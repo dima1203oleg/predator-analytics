@@ -2,7 +2,7 @@
 """
 Module: router
 Component: mcp-router
-Predator Analytics v25.1
+Predator Analytics v45.1
 """
 from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel

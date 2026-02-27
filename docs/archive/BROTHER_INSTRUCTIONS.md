@@ -54,7 +54,7 @@ stop_orch
 start_orch
 
 # Перезапустити
-ssh predator-server 'cd ~/predator_v25 && docker compose restart orchestrator'
+ssh predator-server 'cd ~/predator_v45 && docker compose restart orchestrator'
 ```
 
 ---

@@ -136,7 +136,7 @@ const MonitoringView: React.FC = () => {
 
                 // Fetch real alerts
                 try {
-                    const alerts = await api.v25.getLiveAlerts();
+                    const alerts = await api.v45.getLiveAlerts();
                     if (isMounted.current) setRealAlerts(alerts);
                 } catch (e) {
                     console.warn("Failed to fetch alerts", e);
@@ -184,11 +184,11 @@ const MonitoringView: React.FC = () => {
                     }
                 }
 
-                // Fetch real V25 data
-                const qData = await api.v25.getLiveQueues();
+                // Fetch real V45 data
+                const qData = await api.v45.getLiveQueues();
                 if (isMounted.current) setQueues(qData);
 
-                const hData = await api.v25.getLiveHealth();
+                const hData = await api.v45.getLiveHealth();
                 if (isMounted.current) {
                     setRealMetrics(hData);
                     // Use backend anomaly score if available, else derive
@@ -426,7 +426,7 @@ const MonitoringView: React.FC = () => {
                                 <div>
                                     <div className="flex items-center gap-4">
                                         <h3 className="text-2xl font-black text-white uppercase tracking-tighter">{selectedSaga.name}</h3>
-                                        <span className="text-[10px] font-black text-blue-500 bg-blue-500/10 px-3 py-1 rounded-full uppercase tracking-[0.2em] border border-blue-500/20">v25_CORE</span>
+                                        <span className="text-[10px] font-black text-blue-500 bg-blue-500/10 px-3 py-1 rounded-full uppercase tracking-[0.2em] border border-blue-500/20">v45_CORE</span>
                                     </div>
                                     <div className="mt-3 text-[10px] text-slate-500 font-mono flex items-center gap-6 uppercase tracking-widest">
                                         <span>TRACE: <span className="text-blue-400 font-bold">{selectedSaga.traceId}</span></span>
@@ -520,7 +520,7 @@ const MonitoringView: React.FC = () => {
                 <div className="p-8 space-y-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <button
-                            onClick={() => api.v25.triggerSimulation('backend', 0.8)}
+                            onClick={() => api.v45.triggerSimulation('backend', 0.8)}
                             className="group p-8 bg-black/40 border border-white/5 rounded-[32px] hover:border-blue-500/30 transition-all text-left relative overflow-hidden"
                         >
                             <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -538,7 +538,7 @@ const MonitoringView: React.FC = () => {
                         </button>
 
                         <button
-                            onClick={() => api.v25.triggerSimulation('customs_dataset', 0.5)}
+                            onClick={() => api.v45.triggerSimulation('customs_dataset', 0.5)}
                             className="group p-8 bg-black/40 border border-white/5 rounded-[32px] hover:border-rose-500/30 transition-all text-left relative overflow-hidden"
                         >
                             <div className="absolute inset-0 bg-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -593,7 +593,7 @@ const MonitoringView: React.FC = () => {
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => api.v25.triggerMaintenance(m.action)}
+                                    onClick={() => api.v45.triggerMaintenance(m.action)}
                                     className="px-5 py-2.5 bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-[0_0_15px_rgba(16,185,129,0.1)] active:scale-95"
                                 >
                                     {premiumLocales.monitoring.maintenance.run}
@@ -774,7 +774,7 @@ const MonitoringView: React.FC = () => {
                                         title={premiumLocales.monitoring.pulse.title}
                                         className="panel-3d glass-ultra rounded-[32px] border-white/5 overflow-hidden shadow-2xl relative"
                                     >
-                                        <div className="absolute top-2 right-4 text-[10px] font-black text-slate-500 uppercase">v25_CORE</div>
+                                        <div className="absolute top-2 right-4 text-[10px] font-black text-slate-500 uppercase">v45_CORE</div>
                                         <div className="p-6 flex flex-col items-center">
                                             <div className="relative mb-8">
                                                 <CyberOrb size={160} color={wsData.pulse.score < 40 ? "#ef4444" : wsData.pulse.score < 80 ? "#f59e0b" : "#3b82f6"} className="opacity-80" />

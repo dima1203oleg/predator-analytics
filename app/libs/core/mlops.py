@@ -102,7 +102,7 @@ class FineTuningOrchestrator:
     def trigger_training(self, dataset_path: str, version: str):
         """Simulate a trigger to the training service."""
         logger.info(f"🔥 Triggering autonomous fine-tuning for v{version} using {dataset_path}")
-        # In v29-C this would call a Webhook or push to a Redis queue
+        # In v45-C this would call a Webhook or push to a Redis queue
         with get_db_sync() as session:
             session.execute(
                 text("UPDATE ml_ops.dataset_versions SET metadata = jsonb_set(metadata, '{status}', '\"training_in_progress\"') WHERE version = :v"),
@@ -175,7 +175,7 @@ class ShadowEvaluator:
             # Simple equality check for now, can be LLM-as-a-judge later
             if champion_output != shadow_output:
                 logger.warning("📉 Shadow Model Divergence detected!")
-                # In v29-S we would log this to a 'divergence_ledger' table
+                # In v45-S we would log this to a 'divergence_ledger' table
                 with get_db_sync() as session:
                     session.execute(
                         text("INSERT INTO ml_ops.model_evaluations (metric_name, value, metadata) VALUES (:m, :v, :meta)"),

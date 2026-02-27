@@ -17,7 +17,7 @@ http://localhost:9082
 **Технологія:** React + Vite  
 **Порт на сервері:** 8082  
 
-### 🔎 **Semantic Search Interface (New v25.1)**
+### 🔎 **Semantic Search Interface (New v45.1)**
 **Розташування:** Analytics View -> Top Search Bar  
 **Функції:**  
 - **Semantic Toggle:** Перемикання між Deep Scan (Agents) та Hybrid Search (Qdrant).

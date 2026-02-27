@@ -1,11 +1,11 @@
 ---
-description: AZR Engine v28-S: Autonomous Observation & Evolution Loop
+description: AZR Engine v45-S: Autonomous Observation & Evolution Loop
 ---
 // turbo-all
 
-# AZR v28-S Evolution Workflow
+# AZR v45-S Evolution Workflow
 
-Цей воркфлоу реалізує цикл "Спостереження-Деплой" згідно з ТЗ AZR Engine v28-S.
+Цей воркфлоу реалізує цикл "Спостереження-Деплой" згідно з ТЗ AZR Engine v45-S.
 
 ## 1. Observation (Спостереження)
 Збір метрик через OpenTelemetry та аналіз логів Grafana Loki.

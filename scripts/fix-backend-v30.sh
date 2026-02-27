@@ -1,6 +1,6 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════════════
-# 🛠 PREDATOR V30 - BACKEND FIX (CRONITER & REBUILD)
+# 🛠 PREDATOR V45 - BACKEND FIX (CRONITER & REBUILD)
 # ═══════════════════════════════════════════════════════════════
 
 set -e

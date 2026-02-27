@@ -1,6 +1,6 @@
-# 🚀 Predator Analytics v25 - Quick Start Guide
+# 🚀 Predator Analytics v45 - Quick Start Guide
 
-Welcome to **Predator Analytics v25** — the most advanced Ukrainian data intelligence platform with AI-powered analysis and semantic search.
+Welcome to **Predator Analytics v45** — the most advanced Ukrainian data intelligence platform with AI-powered analysis and semantic search.
 
 ---
 
@@ -235,7 +235,7 @@ LOG_LEVEL=DEBUG
 
 - **Full Documentation:** `docs/`
 - **API Reference:** `http://localhost:8000/docs` (when backend running)
-- **Architecture:** `docs/v25_integration_summary.md`
+- **Architecture:** `docs/v45_integration_summary.md`
 - **Changelog:** `CHANGELOG.md`
 
 ---

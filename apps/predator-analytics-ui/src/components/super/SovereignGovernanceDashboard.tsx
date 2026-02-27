@@ -211,7 +211,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-3xl font-black text-white tracking-tight uppercase">Sovereign Governance</h1>
-                            <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-[10px] font-black rounded-md border border-indigo-500/30 tracking-tighter">v29.1-S</span>
+                            <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-[10px] font-black rounded-md border border-indigo-500/30 tracking-tighter">v45.1-S</span>
                         </div>
                         <p className="text-slate-500 text-sm font-medium mt-1">Constitutional Oversight & Human Sovereignty Interface</p>
                     </div>

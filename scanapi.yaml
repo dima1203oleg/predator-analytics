@@ -4,7 +4,7 @@ project:
 
 endpoints:
   - name: Evolution Status
-    path: "/api/v25/evolution/status"
+    path: "/api/v45/evolution/status"
     requests:
       - name: Get Current Metrics
         method: GET
@@ -15,7 +15,7 @@ endpoints:
             assertion: "{{'intelligence_gain' in response.json()}}"
 
   - name: System Health
-    path: "/api/v25/system/status"
+    path: "/api/v45/system/status"
     requests:
       - name: Heartbeat Check
         method: GET

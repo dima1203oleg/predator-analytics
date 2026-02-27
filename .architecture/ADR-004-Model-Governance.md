@@ -2,14 +2,14 @@
 
 **Статус:** ПРИЙНЯТО
 **Дата:** 2026-02-04
-**Контекст:** Predator v30 Constitutional Compliance
+**Контекст:** Predator v45 | Neural Analytics Constitutional Compliance
 
 ## Рішення
 
 **Обов'язкова система управління життєвим циклом AI моделей:**
 
 ```yaml
-model_governance_v30:
+model_governance_v45:
   registry: MLflow Model Registry
   policy_engine: OPA (Open Policy Agent)
 
@@ -36,7 +36,7 @@ model_governance_v30:
 
 ## Обґрунтування
 
-Для системи класу Predator v30:
+Для системи класу Predator v45 | Neural Analytics:
 - **Модель — це актив**, а не просто код
 - Автономна система може деградувати без контролю
 - Sovereign-grade вимагає повної прозорості рішень AI

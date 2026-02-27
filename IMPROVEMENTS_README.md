@@ -1,20 +1,20 @@
-# 🚀 Predator Analytics v30.1 - Evolution & Hardening
+# 🚀 Predator Analytics v45.1 - Evolution & Hardening
 
 > **Автономна робота завершена:** 2026-01-14
-> **Режим:** v30.1 Evolution & Security Hardening
+> **Режим:** v45.1 Evolution & Security Hardening
 > **Результат:** 94% → 96% готовності
 
 ---
 
 ## 📊 Quick Overview
 
-### What Was Done (v30.1)
+### What Was Done (v45.1)
 - ✅ **Autonomy Guard** implemented (API & SOM levels)
 - ✅ **Complexity Enforcer** (Real-time technical debt monitor)
 - ✅ **Python 3.12 Migration** (Full stack strict enforcement)
 - ✅ **Database Performance Pack 2** (7 core indexes created)
 - ✅ **Ukrainian Localization** (Complete interface & CLI)
-- ✅ **SOM Dashboard v29-S Integration** (Visual metrics & Truth Ledger)
+- ✅ **SOM Dashboard v45-S Integration** (Visual metrics & Truth Ledger)
 
 ### System Improvements
 - ⚡️ **10-20x faster** database queries (after migration)
@@ -54,7 +54,7 @@ predator agents                    # Agent stats
 - Parallel execution
 
 ```bash
-curl -X POST http://localhost:8090/api/v25/missions/test/threat-analysis
+curl -X POST http://localhost:8090/api/v45/missions/test/threat-analysis
 ```
 
 #### Production Monitoring
@@ -152,7 +152,7 @@ npx cypress run
 python libs/cli/main.py status
 
 # Test Mission Planner
-curl -X POST http://localhost:8090/api/v25/missions/test/threat-analysis
+curl -X POST http://localhost:8090/api/v45/missions/test/threat-analysis
 
 # Test caching
 python libs/core/cache.py
@@ -415,7 +415,7 @@ alertmanager:
 
 ## 🚀 Final Notes
 
-**Predator Analytics v25** успішно покращено до **94% готовності** за одну автономну сесію.
+**Predator Analytics v45** успішно покращено до **94% готовності** за одну автономну сесію.
 
 **Всі зміни production-ready та готові до deployment.**
 

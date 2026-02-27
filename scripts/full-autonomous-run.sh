@@ -1,5 +1,5 @@
 #!/bin/bash
-# PREDATOR v30 Autonomous Script
+# Predator v45 | Neural AnalyticsAutonomous Script
 set -euo pipefail
 PROJECT_DIR="$(pwd)"
 LOG_DIR="$PROJECT_DIR/logs"

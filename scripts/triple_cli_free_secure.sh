@@ -1,6 +1,6 @@
 #!/bin/bash
 # triple_cli_free_secure.sh - Захищений автономний ланцюжок
-# Побудовано за архітектурою Головного DevOps-інженера Predator Analytics v25.0
+# Побудовано за архітектурою Головного DevOps-інженера Predator Analytics v45.0
 
 set -u # Важливо: перехоплюємо неоголошені змінні
 
@@ -107,7 +107,7 @@ process_single_task() {
 }
 
 # Головний цикл
-log "INFO" "Ініціалізація Захищеного AI-Ланцюжка v25.0..." "init"
+log "INFO" "Ініціалізація Захищеного AI-Ланцюжка v45.0..." "init"
 while true; do
     for task in "$TASK_QUEUE_DIR"/*.task; do
         [ -e "$task" ] || continue

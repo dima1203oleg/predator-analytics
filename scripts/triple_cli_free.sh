@@ -1,6 +1,6 @@
 #!/bin/bash
 # triple_cli_free.sh - Автономний ланцюжок Ollama (Plan) -> CodeLlama (Code) -> Aider (Verify)
-# Побудовано за архітектурою Головного DevOps-інженера Predator Analytics v25.0
+# Побудовано за архітектурою Головного DevOps-інженера Predator Analytics v45.0
 
 set -euo pipefail
 shopt -s lastpipe
@@ -130,7 +130,7 @@ process_task_queue() {
 if [[ "${1:-}" == "--oneshot" ]]; then
     process_task_queue
 else
-    log "INFO" "Запуск автономного CLI-ланцюжка Predator v25.0" "init"
+    log "INFO" "Запуск автономного CLI-ланцюжка Predator v45 | Neural Analytics.0" "init"
     while true; do
         process_task_queue
         sleep 10

@@ -1,4 +1,4 @@
-# 🚀 CLI Tools Quick Start - Predator Analytics v25.0
+# 🚀 CLI Tools Quick Start - Predator Analytics v45.0
 
 ## ✅ Встановлено та Працює
 
@@ -55,7 +55,7 @@ python3 scripts/demo _triple_cli.py
 🚀 Запустіть: python3 demo_hello.py
 
 # Вивід:
-Hello from Predator Analytics v25.0!
+Hello from Predator Analytics v45.0!
 ```
 
 ---
@@ -240,5 +240,5 @@ export MISTRAL_API_KEY="wAp8islIU7ZK24G7cRDrfttvYBIfMKKc"
 ---
 
 **Дата:** 2025-12-20
-**Версія:** v25.0
+**Версія:** v45.0
 **Статус:** 🟢 Operational

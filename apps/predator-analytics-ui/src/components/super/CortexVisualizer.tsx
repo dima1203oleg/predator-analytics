@@ -55,7 +55,7 @@ export const CortexVisualizer: React.FC = () => {
                        { id: "1", name: "API Gateway", type: "service", compliant: true, version: "3.12", notes: [], dependencies: ["PostgreSQL", "Redis"] },
                        { id: "2", name: "Constitutional Guard", type: "service", compliant: true, version: "3.12", notes: [], dependencies: ["Truth Ledger"] },
                         { id: "3", name: "SOM (Sovereign Observer)", type: "service", compliant: false, version: "unknown", notes: ["No runtime definition found"], dependencies: ["API Gateway"] },
-                        { id: "4", name: "Predator Analytics UI", type: "frontend", compliant: true, version: "Vite/React", notes: [], dependencies: ["API Gateway"] },
+                        { id: "4", name: "Predator v45 | Neural AnalyticsUI", type: "frontend", compliant: true, version: "Vite/React", notes: [], dependencies: ["API Gateway"] },
                         { id: "5", name: "AZR Agent", type: "agent", compliant: false, version: "unknown", notes: ["No runtime definition found"], dependencies: ["predatorctl"] },
                          { id: "6", name: "PostgreSQL", type: "database", compliant: true, version: "15", notes: [], dependencies: [] },
                     ]

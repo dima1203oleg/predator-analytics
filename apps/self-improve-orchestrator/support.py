@@ -70,7 +70,7 @@ class UIGuardian:
 
 class DataSentinel:
     """
-    V25 Data Sentinel: Responsible for economic data integrity 
+    V45 Data Sentinel: Responsible for economic data integrity 
     using the Market Nervous System.
     """
     async def check_data(self):

@@ -161,7 +161,7 @@ class TelegramAssistant:
             "auto_restart": self._cmd_auto_restart,
             "predator": self._cmd_predator_cli,
 
-            # Queues (V25)
+            # Queues (V45)
             "queues": self._cmd_queue_status,
             "purge": self._cmd_purge_queue,
         }
@@ -637,7 +637,7 @@ ssh dev-ngrok
     async def _cmd_queue_status(self, args: str) -> tuple[str, dict | None]:
         """Show RabbitMQ Queues Status."""
         # In a real scenario, fetch from RabbitMQ API or internal service
-        # Mocking for v25 demo consistency
+        # Mocking for v45 demo consistency
         queues = [
             {"name": "etl_queue", "messages": 12, "consumers": 4, "status": "active", "rate": 25},
             {"name": "ml_training", "messages": 3, "consumers": 2, "status": "active", "rate": 5},

@@ -55,7 +55,7 @@ const FEATURE_TOGGLES: FeatureToggle[] = [
   },
   {
     key: "quantumAudit",
-    label: "Квантовий Аудит (V25 Active)",
+    label: "Квантовий Аудит (V45 Active)",
     description: "Безперервний контроль цілісності та безпеки золотого шару.",
   },
   {
@@ -242,12 +242,12 @@ const SettingsView: React.FC = () => {
     >
       <CyberGrid />
       <ViewHeader
-          title="КОНФІГУРАЦІЯ КЛАСТЕРА (V30.0)"
+          title="КОНФІГУРАЦІЯ КЛАСТЕРА (V45.0)"
           icon={<SettingsIcon size={20} className="icon-3d-blue" />}
           breadcrumbs={['СИНАПСИС', 'СИСТЕМА', 'КОНФІГУРАЦІЯ']}
           stats={[
               { label: 'Середовище', value: currentEnv.name.toUpperCase(), icon: <Server size={14} className="icon-3d-blue"/>, color: 'primary' },
-              { label: 'Стандарт', value: 'V30 GOLD', icon: <Database size={14} className="icon-3d-amber"/>, color: 'success' },
+              { label: 'Стандарт', value: 'V45 GOLD', icon: <Database size={14} className="icon-3d-amber"/>, color: 'success' },
               { label: 'Статус', value: 'СИНХРОННО', icon: <Globe size={14} className="icon-3d-green"/>, color: 'success' },
           ]}
       />
