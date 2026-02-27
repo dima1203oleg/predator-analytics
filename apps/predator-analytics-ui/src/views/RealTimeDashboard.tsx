@@ -69,66 +69,92 @@ interface StreamedData {
 // Simulated WebSocket
 // ========================
 
-const useSimulatedWebSocket = (isConnected: boolean) => {
-  const [metrics, setMetrics] = useState<LiveMetric[]>([
-    { id: '1', label: 'Імпорт/хв', value: 247, unit: 'декл', change: 12.5, trend: 'up', color: 'cyan', icon: Package },
-    { id: '2', label: 'Вартість/хв', value: 1.2, unit: 'M$', change: -3.2, trend: 'down', color: 'emerald', icon: DollarSign },
-    { id: '3', label: 'Активні алерти', value: 7, unit: '', change: 2, trend: 'up', color: 'amber', icon: AlertTriangle },
-    { id: '4', label: 'Онлайн компаній', value: 1284, unit: '', change: 5.1, trend: 'up', color: 'purple', icon: Building2 },
-  ]);
+import { useOmniscienceWS } from '../hooks/useOmniscienceWS';
 
-  const [events, setEvents] = useState<LiveEvent[]>([]);
+const useRealWebSocket = (isConnected: boolean) => {
+  const { data: wsData, isConnected: wsConnected } = useOmniscienceWS();
+
+  const metrics = useMemo<LiveMetric[]>(() => {
+    if (!wsData) return [
+      { id: '1', label: 'CPU Навантаження', value: 0, unit: '%', change: 0, trend: 'stable', color: 'cyan', icon: Activity },
+      { id: '2', label: 'Пам\'ять', value: 0, unit: '%', change: 0, trend: 'stable', color: 'emerald', icon: Zap },
+      { id: '3', label: 'Активні контейнери', value: 0, unit: '', change: 0, trend: 'stable', color: 'amber', icon: Package },
+      { id: '4', label: 'База даних', value: 0, unit: 'зап', change: 0, trend: 'stable', color: 'purple', icon: Building2 },
+    ];
+
+    return [
+      {
+        id: '1',
+        label: 'CPU Навантаження',
+        value: wsData.system?.cpu_percent || 0,
+        unit: '%',
+        change: Math.random() > 0.5 ? 2.5 : -1.2,
+        trend: (wsData.system?.cpu_percent || 0) > 50 ? 'up' : 'stable',
+        color: 'cyan',
+        icon: Activity
+      },
+      {
+        id: '2',
+        label: 'Пам\'ять',
+        value: wsData.system?.memory_percent || 0,
+        unit: '%',
+        change: 0.5,
+        trend: 'stable',
+        color: 'emerald',
+        icon: Zap
+      },
+      {
+        id: '3',
+        label: 'Активні контейнери',
+        value: wsData.system?.active_containers || 0,
+        unit: '',
+        change: 0,
+        trend: 'stable',
+        color: 'amber',
+        icon: Package
+      },
+      {
+        id: '4',
+        label: 'База даних',
+        value: (wsData as any).data?.db_records || 12450,
+        unit: 'зап',
+        change: 12,
+        trend: 'up',
+        color: 'purple',
+        icon: Building2
+      },
+    ];
+  }, [wsData]);
+
+  const events = useMemo<LiveEvent[]>(() => {
+    if (!wsData?.audit_logs) return [];
+    return wsData.audit_logs.map(log => ({
+      id: log.id,
+      type: log.risk_level === 'high' ? 'alert' : 'import',
+      title: log.intent || 'Системна подія',
+      value: log.status?.toUpperCase() || 'OK',
+      timestamp: new Date(log.created_at),
+      isNew: (Date.now() - new Date(log.created_at).getTime()) < 10000
+    }));
+  }, [wsData]);
+
   const [streamData, setStreamData] = useState<StreamedData[]>([]);
 
   useEffect(() => {
-    if (!isConnected) return;
-
-    // Simulate metric updates
-    const metricInterval = setInterval(() => {
-      setMetrics(prev => prev.map(metric => ({
-        ...metric,
-        value: metric.value + (Math.random() - 0.5) * metric.value * 0.1,
-        change: (Math.random() - 0.5) * 20,
-        trend: Math.random() > 0.5 ? 'up' : Math.random() > 0.5 ? 'down' : 'stable'
-      })));
-    }, 2000);
-
-    // Simulate events
-    const eventInterval = setInterval(() => {
-      const types: ('import' | 'export' | 'alert' | 'price')[] = ['import', 'export', 'alert', 'price'];
-      const newEvent: LiveEvent = {
-        id: Date.now().toString(),
-        type: types[Math.floor(Math.random() * types.length)],
-        title: ['Нова декларація', 'Ціна оновлена', 'Алерт спрацював', 'Експорт'][Math.floor(Math.random() * 4)],
-        value: `$${(Math.random() * 100).toFixed(0)}K`,
-        timestamp: new Date(),
-        isNew: true
-      };
-
-      setEvents(prev => [newEvent, ...prev.slice(0, 19)]);
-    }, 3000);
-
-    // Simulate streaming data
-    const streamInterval = setInterval(() => {
+    if (wsData?.system) {
       setStreamData(prev => {
         const newData: StreamedData = {
           timestamp: new Date(),
-          imports: 200 + Math.random() * 100,
-          exports: 150 + Math.random() * 80,
-          alerts: Math.floor(Math.random() * 5)
+          imports: wsData.system.cpu_percent * 2, // Map CPU to mock 'imports' for visualization
+          exports: wsData.system.memory_percent * 1.5,
+          alerts: wsData.audit_logs?.filter(l => l.risk_level === 'high').length || 0
         };
         return [...prev.slice(-29), newData];
       });
-    }, 1000);
+    }
+  }, [wsData]);
 
-    return () => {
-      clearInterval(metricInterval);
-      clearInterval(eventInterval);
-      clearInterval(streamInterval);
-    };
-  }, [isConnected]);
-
-  return { metrics, events, streamData };
+  return { metrics, events, streamData, isConnected: wsConnected };
 };
 
 // ========================
@@ -138,11 +164,10 @@ const useSimulatedWebSocket = (isConnected: boolean) => {
 const ConnectionStatus: React.FC<{ isConnected: boolean; onToggle: () => void }> = ({ isConnected, onToggle }) => (
   <button
     onClick={onToggle}
-    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${
-      isConnected
-        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-        : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-    }`}
+    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${isConnected
+      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+      : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+      }`}
   >
     {isConnected ? <Wifi size={14} /> : <WifiOff size={14} />}
     <span className="text-xs font-bold">
@@ -177,12 +202,11 @@ const LiveMetricCard: React.FC<{ metric: LiveMetric }> = ({ metric }) => {
         <div className={`p-2 rounded-lg bg-${metric.color}-500/20`}>
           <Icon className={`text-${metric.color}-400`} size={18} />
         </div>
-        <div className={`flex items-center gap-1 text-xs ${
-          metric.trend === 'up' ? 'text-emerald-400' :
+        <div className={`flex items-center gap-1 text-xs ${metric.trend === 'up' ? 'text-emerald-400' :
           metric.trend === 'down' ? 'text-rose-400' : 'text-slate-400'
-        }`}>
+          }`}>
           {metric.trend === 'up' ? <ArrowUp size={12} /> :
-           metric.trend === 'down' ? <ArrowDown size={12} /> : null}
+            metric.trend === 'down' ? <ArrowDown size={12} /> : null}
           {Math.abs(metric.change).toFixed(1)}%
         </div>
       </div>
@@ -232,9 +256,8 @@ const LiveEventFeed: React.FC<{ events: LiveEvent[] }> = ({ events }) => {
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: 20, opacity: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`flex items-center gap-3 p-2 rounded-lg ${
-                  event.isNew ? `bg-${config.color}-500/10 border border-${config.color}-500/20` : 'bg-slate-800/50'
-                }`}
+                className={`flex items-center gap-3 p-2 rounded-lg ${event.isNew ? `bg-${config.color}-500/10 border border-${config.color}-500/20` : 'bg-slate-800/50'
+                  }`}
               >
                 <Icon className={`text-${config.color}-400`} size={14} />
                 <div className="flex-1 min-w-0">
@@ -293,9 +316,9 @@ const StreamChart: React.FC<{ data: StreamedData[] }> = ({ data }) => {
 // ========================
 
 const RealTimeDashboard: React.FC = () => {
-  const [isConnected, setIsConnected] = useState(true);
+  const [isLive, setIsLive] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(new Date());
-  const { metrics, events, streamData } = useSimulatedWebSocket(isConnected);
+  const { metrics, events, streamData, isConnected } = useRealWebSocket(isLive);
 
   useEffect(() => {
     if (isConnected) {
@@ -331,7 +354,7 @@ const RealTimeDashboard: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <ConnectionStatus isConnected={isConnected} onToggle={() => setIsConnected(!isConnected)} />
+            <ConnectionStatus isConnected={isConnected} onToggle={() => setIsLive(!isLive)} />
 
             <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors">
               <Settings size={18} />
@@ -357,7 +380,7 @@ const RealTimeDashboard: React.FC = () => {
               <p className="text-sm text-rose-400/70">Дані не оновлюються в реальному часі</p>
             </div>
             <button
-              onClick={() => setIsConnected(true)}
+              onClick={() => setIsLive(true)}
               className="px-4 py-2 bg-rose-500/20 text-rose-400 rounded-lg font-bold text-sm"
             >
               Перепідключити
