@@ -28,8 +28,8 @@ export const TopBar = () => {
         <button
           onClick={toggleSidebar}
           className="p-2 hover:bg-slate-800 rounded-lg lg:hidden"
-          title="Toggle Sidebar"
-          aria-label="Toggle Sidebar"
+          title="Згорнути/Розгорнути Бічну Панель"
+          aria-label="Перемикач Бічної Панелі"
         >
           <Menu className="w-6 h-6 text-slate-400" />
         </button>
@@ -46,16 +46,16 @@ export const TopBar = () => {
 
           <div className="hidden sm:block">
             <span className="font-black text-xl text-white block leading-none tracking-tight">
-              PREDATOR <span className="text-emerald-400">ANALYTICS</span>
+              PREDATOR <span className="text-emerald-400">АНАЛІТИКА</span>
             </span>
             <div className="flex items-center gap-2 mt-1">
-               <div className="px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded text-[9px] font-black tracking-widest text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                   v45.0-STABLE
-               </div>
-               <div className="flex items-center gap-1">
-                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                 <span className="text-[9px] text-emerald-500/80 font-mono">В МЕРЕЖІ</span>
-               </div>
+              <div className="px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded text-[9px] font-black tracking-widest text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                v45.0-STABLE
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[9px] text-emerald-500/80 font-mono">В МЕРЕЖІ</span>
+              </div>
             </div>
           </div>
         </div>
@@ -63,28 +63,28 @@ export const TopBar = () => {
 
       {/* Center: Live Command Center HUD */}
       <div className="hidden 2xl:flex items-center gap-8 bg-black/20 border border-white/5 px-6 py-2 rounded-2xl backdrop-blur-sm">
-         <div className="flex items-center gap-3">
-            <div className="p-1.5 bg-red-500/10 rounded-lg animate-pulse">
-                <ShieldAlert size={16} className="text-red-500" />
+        <div className="flex items-center gap-3">
+          <div className="p-1.5 bg-red-500/10 rounded-lg animate-pulse">
+            <ShieldAlert size={16} className="text-red-500" />
+          </div>
+          <div>
+            <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest">РІВЕНЬ ЗАГРОЗИ</div>
+            <div className="text-xs font-mono font-bold text-red-400">DEFCON 4 (ПОМІРНИЙ)</div>
+          </div>
+        </div>
+        <div className="w-px h-6 bg-white/10" />
+        <div className="flex items-center gap-3">
+          <div className="p-1.5 bg-blue-500/10 rounded-lg">
+            <Cpu size={16} className="text-blue-500" />
+          </div>
+          <div>
+            <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest">ЦІЛІСНІСТЬ СИСТЕМИ</div>
+            <div className="text-xs font-mono font-bold text-blue-400">
+              <NumberTicker value={100} />% ОПТИМАЛЬНО
             </div>
-            <div>
-                <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest">РІВЕНЬ ЗАГРОЗИ</div>
-                <div className="text-xs font-mono font-bold text-red-400">DEFCON 4</div>
-            </div>
-         </div>
-         <div className="w-px h-6 bg-white/10" />
-         <div className="flex items-center gap-3">
-             <div className="p-1.5 bg-blue-500/10 rounded-lg">
-                 <Cpu size={16} className="text-blue-500" />
-             </div>
-             <div>
-                 <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest">ЦІЛІСНІСТЬ СИСТЕМИ</div>
-                 <div className="text-xs font-mono font-bold text-blue-400">
-                    <NumberTicker value={100} />% ОПТИМАЛЬНО
-                 </div>
-             </div>
-         </div>
-         <AZRStatusHUD />
+          </div>
+        </div>
+        <AZRStatusHUD />
       </div>
 
       {/* Right: Actions & Profile */}
@@ -92,15 +92,15 @@ export const TopBar = () => {
 
         {/* Global Search Trigger */}
         <button
-            onClick={() => {
-                const event = new KeyboardEvent('keydown', { key: 'k', metaKey: true });
-                window.dispatchEvent(event);
-            }}
-            className="hidden lg:flex items-center gap-3 bg-slate-900/40 hover:bg-slate-800 border border-white/5 hover:border-emerald-500/30 text-slate-400 px-4 py-2 rounded-xl transition-all group"
+          onClick={() => {
+            const event = new KeyboardEvent('keydown', { key: 'k', metaKey: true });
+            window.dispatchEvent(event);
+          }}
+          className="hidden lg:flex items-center gap-3 bg-slate-900/40 hover:bg-slate-800 border border-white/5 hover:border-emerald-500/30 text-slate-400 px-4 py-2 rounded-xl transition-all group"
         >
-            <Search className="w-4 h-4 group-hover:text-emerald-400 transition-colors" />
-            <span className="text-xs font-bold uppercase tracking-wider">Знайти...</span>
-            <kbd className="hidden xl:inline-block bg-slate-950 rounded px-1.5 py-0.5 text-[9px] text-slate-500 border border-slate-800 font-mono">⌘K</kbd>
+          <Search className="w-4 h-4 group-hover:text-emerald-400 transition-colors" />
+          <span className="text-xs font-bold uppercase tracking-wider">Знайти...</span>
+          <kbd className="hidden xl:inline-block bg-slate-950 rounded px-1.5 py-0.5 text-[9px] text-slate-500 border border-slate-800 font-mono">⌘K</kbd>
         </button>
 
         <div className="h-8 w-[1px] bg-white/5 hidden md:block" />
@@ -115,9 +115,9 @@ export const TopBar = () => {
           <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
           {[
-            { mode: 'desktop', icon: Monitor, label: 'CMD' },
-            { mode: 'tablet', icon: Tablet, label: 'TAB' },
-            { mode: 'mobile', icon: Smartphone, label: 'GSM' }
+            { mode: 'desktop', icon: Monitor, label: 'ПК' },
+            { mode: 'tablet', icon: Tablet, label: 'ПЛ' },
+            { mode: 'mobile', icon: Smartphone, label: 'МОБ' }
           ].map(({ mode, icon: Icon, label }) => (
             <button
               key={mode}
@@ -156,32 +156,36 @@ export const TopBar = () => {
 
         {/* Intelligence Perspective Switcher - VECTOR HUD */}
         <div className="hidden xl:flex items-center gap-2 bg-black/40 p-1.5 rounded-2xl border border-white/10 backdrop-blur-2xl shadow-2xl">
-          {(['TITAN', 'INQUISITOR', 'SOVEREIGN'] as const).map((p) => (
-             <button
-                key={p}
-                onClick={() => setPersona(p)}
-                className={cn(
-                    "px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] rounded-xl transition-all relative overflow-hidden group/persona",
-                    persona === p
-                        ? p === 'TITAN' ? "text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 shadow-[0_0_20px_rgba(6,182,212,0.2)]" :
-                          p === 'INQUISITOR' ? "text-rose-400 bg-rose-500/10 border border-rose-500/20 shadow-[0_0_20px_rgba(244,63,94,0.2)]" :
-                          "text-amber-400 bg-amber-500/10 border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.2)]"
-                        : "text-slate-600 hover:text-slate-300"
-                )}
-             >
-                <div className="flex items-center gap-2 relative z-10 font-black">
-                   <div className={cn("w-1 h-1 rounded-full",
-                     persona === p ? "bg-current animate-pulse" : "bg-slate-800"
-                   )} />
-                   {p}
-                </div>
-                {persona === p && (
-                    <motion.div
-                        layoutId="personaGlow"
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none"
-                    />
-                )}
-             </button>
+          {[
+            { key: 'TITAN', label: 'ТИТАН' },
+            { key: 'INQUISITOR', label: 'ІНКВІЗИТОР' },
+            { key: 'SOVEREIGN', label: 'СУВЕРЕН' }
+          ].map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setPersona(key as any)}
+              className={cn(
+                "px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] rounded-xl transition-all relative overflow-hidden group/persona",
+                persona === key
+                  ? key === 'TITAN' ? "text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 shadow-[0_0_20px_rgba(6,182,212,0.2)]" :
+                    key === 'INQUISITOR' ? "text-rose-400 bg-rose-500/10 border border-rose-500/20 shadow-[0_0_20px_rgba(244,63,94,0.2)]" :
+                      "text-amber-400 bg-amber-500/10 border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+                  : "text-slate-600 hover:text-slate-300"
+              )}
+            >
+              <div className="flex items-center gap-2 relative z-10 font-black">
+                <div className={cn("w-1 h-1 rounded-full",
+                  persona === key ? "bg-current animate-pulse" : "bg-slate-800"
+                )} />
+                {label}
+              </div>
+              {persona === key && (
+                <motion.div
+                  layoutId="personaGlow"
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none"
+                />
+              )}
+            </button>
           ))}
         </div>
 
@@ -190,19 +194,19 @@ export const TopBar = () => {
 
         {/* Admin Access Panel */}
         <div className="hidden md:flex items-center gap-2">
-             <VoiceAssistant />
-             <button
-                onClick={() => setIsAdminOpen(true)}
-                className="group flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 hover:border-red-500/40"
-             >
-                <div className="p-1 rounded bg-red-500/10 group-hover:bg-red-500/20 text-red-500 transition-colors">
-                    <Shield size={14} />
-                </div>
-                <div className="flex flex-col items-start leading-none gap-1">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-red-400 group-hover:text-red-300">Ядро Адміна</span>
-                    <span className="text-[9px] text-slate-500 font-mono group-hover:text-slate-400">РІВЕНЬ_ДОСТУПУ_5</span>
-                </div>
-             </button>
+          <VoiceAssistant />
+          <button
+            onClick={() => setIsAdminOpen(true)}
+            className="group flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 hover:border-red-500/40"
+          >
+            <div className="p-1 rounded bg-red-500/10 group-hover:bg-red-500/20 text-red-500 transition-colors">
+              <Shield size={14} />
+            </div>
+            <div className="flex flex-col items-start leading-none gap-1">
+              <span className="text-[9px] font-black uppercase tracking-widest text-red-400 group-hover:text-red-300">Ядро Адміна</span>
+              <span className="text-[9px] text-slate-500 font-mono group-hover:text-slate-400">РІВЕНЬ_ДОСТУПУ_5</span>
+            </div>
+          </button>
         </div>
 
         <OperatorIdentity />

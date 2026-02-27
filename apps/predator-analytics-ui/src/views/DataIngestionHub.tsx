@@ -100,22 +100,28 @@ const SourceTypeButton = ({ source, isSelected, onClick }: {
   return (
     <motion.button
       type="button"
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.05, y: -2 }}
+      whileTap={{ scale: 0.95 }}
       onClick={onClick}
       className={cn(
-        "relative p-4 rounded-xl border flex flex-col items-center gap-2 transition-all overflow-hidden group",
+        "relative p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all overflow-hidden group h-24 justify-center text-center",
         isSelected
-          ? `bg-${source.color}-500/10 border-${source.color}-500 text-${source.color}-400 shadow-lg shadow-${source.color}-500/10`
-          : "bg-slate-800/30 border-slate-700/50 text-slate-400 hover:bg-slate-800/50 hover:border-slate-600"
+          ? `bg-${source.color}-500/10 border-${source.color}-500/50 text-${source.color}-400 shadow-lg shadow-${source.color}-500/10`
+          : "bg-slate-900/40 border-white/5 text-slate-500 hover:bg-slate-800/80 hover:border-white/10"
       )}
     >
       {/* Glow effect */}
       {isSelected && (
         <div className={`absolute inset-0 bg-${source.color}-500/5 blur-xl`} />
       )}
-      <Icon className="w-6 h-6 relative z-10" />
-      <span className="font-bold text-[10px] uppercase tracking-wider relative z-10">{source.label}</span>
+      <Icon className={cn("w-7 h-7 relative z-10 transition-transform group-hover:scale-110", isSelected ? "animate-pulse" : "")} />
+      <span className="font-black text-[9px] uppercase tracking-[0.2em] relative z-10 leading-none">{source.label}</span>
+      {isSelected && (
+        <motion.div
+          layoutId="activeSourceGlow"
+          className={cn("absolute bottom-0 left-0 right-0 h-0.5", `bg-${source.color}-500`)}
+        />
+      )}
     </motion.button>
   );
 };

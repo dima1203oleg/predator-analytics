@@ -135,7 +135,7 @@ export const Sidebar = () => {
 
           <div className={cn("transition-opacity duration-300", isSidebarOpen ? "opacity-100" : "opacity-0 hidden")}>
             <span className="text-[14px] font-black bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 tracking-tighter">
-              Predator v45 | Neural Analytics</span>
+              Predator v45 | Нейронна Аналітика</span>
           </div>
         </div>
 
