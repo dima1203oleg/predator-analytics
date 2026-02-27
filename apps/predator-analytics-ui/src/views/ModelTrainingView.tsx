@@ -141,11 +141,11 @@ const ModelTrainingView: React.FC = () => {
                                     { label: 'Batch Size', val: '64', icon: <Layers size={12} /> },
                                     { label: 'Context Win', val: '32k', icon: <Microscope size={12} /> },
                                     { label: 'DPO Beta', val: '0.1', icon: <Target size={12} /> },
-                                ].map(p => (
-                                    <div key={p.label} className="flex justify-between items-center p-3 bg-white/5 rounded-xl group hover:bg-white/10 transition-all">
+                                ].map((p, idx) => (
+                                    <div key={p.label} className="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5 group hover:border-purple-500/30 hover:bg-purple-500/10 transition-all duration-300">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-purple-400">{p.icon}</span>
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase">{p.label}</span>
+                                            <span className="text-purple-400 group-hover:scale-110 transition-transform">{p.icon}</span>
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase group-hover:text-purple-300">{p.label}</span>
                                         </div>
                                         <span className="text-xs font-mono text-white">{p.val}</span>
                                     </div>
@@ -172,14 +172,14 @@ const ModelTrainingView: React.FC = () => {
                                                 </linearGradient>
                                             </defs>
                                             <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                                            <XAxis dataKey="epoch" stroke="#475569" fontSize={10} axisLine={false} tickLine={false} />
-                                            <YAxis stroke="#475569" fontSize={10} axisLine={false} tickLine={false} />
+                                            <XAxis dataKey="epoch" stroke="#64748b" fontSize={10} axisLine={false} tickLine={false} />
+                                            <YAxis stroke="#64748b" fontSize={10} axisLine={false} tickLine={false} />
                                             <Tooltip
-                                                contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px' }}
-                                                itemStyle={{ fontSize: '12px' }}
+                                                contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', backdropFilter: 'blur(10px)', border: '1px solid rgba(139, 92, 246, 0.3)', borderRadius: '16px', boxShadow: '0 10px 30px -10px rgba(139, 92, 246, 0.3)' }}
+                                                itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
                                             />
-                                            <Area type="monotone" dataKey="accuracy" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorAcc)" name="Точність" />
-                                            <Area type="monotone" dataKey="loss" stroke="#f43f5e" strokeWidth={2} strokeDasharray="5 5" fillOpacity={1} fill="url(#colorLoss)" name="Втрати" />
+                                            <Area type="monotone" dataKey="accuracy" stroke="#8b5cf6" strokeWidth={4} fillOpacity={1} fill="url(#colorAcc)" name="Точність" />
+                                            <Area type="monotone" dataKey="loss" stroke="#f43f5e" strokeWidth={3} strokeDasharray="5 5" fillOpacity={1} fill="url(#colorLoss)" name="Втрати" />
                                         </AreaChart>
                                     </ResponsiveContainer>
                                 </div>
@@ -200,19 +200,23 @@ const ModelTrainingView: React.FC = () => {
 
                                     <div className="flex gap-4 ml-8">
                                         {trainingStatus === 'TRAINING' ? (
-                                            <button
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
                                                 onClick={() => setTrainingStatus('IDLE')}
-                                                className="px-8 py-3 bg-rose-600/10 border border-rose-500/30 text-rose-400 rounded-2xl font-black uppercase tracking-widest hover:bg-rose-600/20 transition-all flex items-center gap-2"
+                                                className="px-8 py-4 bg-rose-600/10 border border-rose-500/30 text-rose-400 rounded-2xl font-black uppercase tracking-widest hover:bg-rose-600/20 transition-all flex items-center gap-3 shadow-[0_0_20px_rgba(244,63,94,0.2)]"
                                             >
-                                                <Square size={16} /> Зупинити
-                                            </button>
+                                                <Square size={18} /> ЗУПИНИТИ
+                                            </motion.button>
                                         ) : (
-                                            <button
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
                                                 onClick={handleStartTraining}
-                                                className="px-10 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-purple-900/40 transition-all flex items-center gap-2"
+                                                className="px-10 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest shadow-[0_10px_40px_-10px_rgba(139,92,246,0.8)] border border-purple-400/30 transition-all flex items-center gap-3"
                                             >
-                                                <Play size={16} /> Навчати
-                                            </button>
+                                                <Play size={18} /> ПОЧАТИ НАВЧАННЯ
+                                            </motion.button>
                                         )}
                                     </div>
                                 </div>
@@ -283,9 +287,13 @@ const ModelTrainingView: React.FC = () => {
                                         Модель показує високу стабільність на <span className="text-emerald-400 font-bold">валідаційній вибірці</span>. Ризик оверфіттингу низький.
                                     </p>
                                 </div>
-                                <button className="w-full py-3 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 text-xs font-bold rounded-xl transition-all">
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="w-full py-4 bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/40 text-purple-300 hover:text-white text-[12px] uppercase font-black tracking-widest rounded-xl transition-all shadow-[0_0_20px_rgba(139,92,246,0.15)] hover:shadow-[0_0_30px_rgba(139,92,246,0.3)]"
+                                >
                                     Публікувати Ваги v45.2
-                                </button>
+                                </motion.button>
                             </div>
                         </div>
                     </div>
