@@ -28,6 +28,7 @@ import { api } from '../../services/api';
 import { IngestionJob } from '../../store/useIngestionStore';
 import { cn } from '../../utils/cn';
 import { NeuralPulse } from '../ui/NeuralPulse';
+import { DataReactorCore } from './DataReactorCore';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // DATA REACTOR CORE - CANONICAL PREDATOR v35
@@ -163,21 +164,19 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
 
                     {/* MODE 1: ⚛️ DATA REACTOR (Structured) */}
                     {pipelineConfig.visualMode === 'REACTOR' && (
-                        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
-                            {activeDbNodes.map(node => {
-                                const isActive = status?.state.includes(node.id.toUpperCase()) || (status?.state === 'READY');
-                                return (
-                                    <g key={node.id}>
-                                        <path d={`M ${CORE_X} ${CORE_Y} L ${node.x} ${node.y}`} stroke={isActive ? node.color : 'rgba(255,255,255,0.05)'} strokeWidth="0.5" strokeDasharray="1,2" fill="none" />
-                                        {isActive && status?.state !== 'READY' && [0, 1, 2].map(i => (
-                                            <motion.circle key={i} r="0.8" fill={node.color} animate={{ cx: [CORE_X, node.x], cy: [CORE_Y, node.y], opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.6 }} />
-                                        ))}
-                                    </g>
-                                );
-                            })}
-                            <motion.circle cx={CORE_X} cy={CORE_Y} r="8" fill="#020617" stroke={pipelineConfig.accentColor} strokeWidth="1" animate={{ r: [8, 10, 8] }} transition={{ duration: 2, repeat: Infinity }} />
-                            <circle cx={CORE_X} cy={CORE_Y} r="4" fill={pipelineConfig.accentColor} className="animate-pulse" />
-                        </svg>
+                        <div className="absolute inset-0">
+                            <DataReactorCore
+                                isActive={status?.state !== 'READY' && status?.state !== 'FAILED'}
+                                hasError={status?.state === 'FAILED' || status?.status === 'failed'}
+                                stats={{
+                                    postgres: { state: percent > 10 ? 'active' : 'idle', count: status?.progress?.records_processed || Math.floor(percent * 15) },
+                                    graph: { state: percent > 30 ? 'active' : 'idle', count: Math.floor((status?.progress?.records_processed || Math.floor(percent * 15)) * 1.5) },
+                                    opensearch: { state: percent > 50 ? 'active' : 'idle', count: status?.progress?.records_processed || Math.floor(percent * 15) },
+                                    qdrant: { state: percent > 70 ? 'active' : 'idle', count: status?.progress?.records_processed || Math.floor(percent * 15) },
+                                    redis: { state: status?.state !== 'READY' ? 'active' : 'idle', count: 1 }
+                                }}
+                            />
+                        </div>
                     )}
 
                     {/* MODE 2: 🕸 NEURAL INTELLIGENCE WEB (Social/Entities) */}
