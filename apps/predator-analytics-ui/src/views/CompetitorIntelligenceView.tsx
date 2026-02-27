@@ -111,27 +111,27 @@ const CompetitorCard: React.FC<{
                   </span>
                 )}
                 {competitor.riskScore > 50 && (
-                   <span className="px-2 py-0.5 bg-rose-500/20 text-rose-400 text-[10px] uppercase font-black tracking-wider rounded-lg border border-rose-500/30 flex items-center gap-1">
-                     high risk {competitor.riskScore}%
-                   </span>
+                  <span className="px-2 py-0.5 bg-rose-500/20 text-rose-400 text-[10px] uppercase font-black tracking-wider rounded-lg border border-rose-500/30 flex items-center gap-1">
+                    high risk {competitor.riskScore}%
+                  </span>
                 )}
               </div>
 
               <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
                 <span className="font-mono bg-white/5 px-2 py-0.5 rounded text-slate-300">{competitor.edrpou}</span>
-                <span className="flex items-center gap-1"><Globe size={12} /> {competitor.countries.slice(0,3).join(', ')}</span>
-                <span className="flex items-center gap-1"><Package size={12} /> {competitor.products.slice(0,2).join(', ')}</span>
+                <span className="flex items-center gap-1"><Globe size={12} /> {(competitor.countries || []).slice(0, 3).join(', ')}</span>
+                <span className="flex items-center gap-1"><Package size={12} /> {(competitor.products || []).slice(0, 2).join(', ')}</span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-8">
+              <div className="flex items-center gap-8">
             <div className="text-right">
               <p className="text-2xl font-black text-white tracking-tight">
-                ${(competitor.totalImport / 1000000).toFixed(1)}M
+                ${(((competitor as any).totalImport || (competitor as any).imports || 0) / 1000000).toFixed(1)}M
               </p>
               <div className={cn("flex items-center justify-end gap-1 text-xs font-bold",
-                  competitor.trend === 'up' ? "text-emerald-400" : competitor.trend === 'down' ? "text-rose-400" : "text-slate-400"
+                competitor.trend === 'up' ? "text-emerald-400" : competitor.trend === 'down' ? "text-rose-400" : "text-slate-400"
               )}>
                 {competitor.trend === 'up' ? <ArrowUpRight size={12} /> : competitor.trend === 'down' ? <ArrowDownRight size={12} /> : <div className="w-3 h-0.5 bg-slate-400" />}
                 <span>{competitor.trend !== 'stable' && (competitor.trendPercent > 0 ? '+' : '')}{competitor.trendPercent}%</span>
@@ -139,18 +139,18 @@ const CompetitorCard: React.FC<{
             </div>
 
             <div className="flex items-center gap-2">
-               <button
-                 onClick={(e) => { e.stopPropagation(); onTrack(); }}
-                 className={cn(
-                   "p-2.5 rounded-xl transition-all border border-transparent",
-                   competitor.isTracked ? "bg-amber-500/20 text-amber-400 border-amber-500/30" : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"
-                 )}
-               >
-                 {competitor.isTracked ? <Star size={18} fill="currentColor" /> : <Star size={18} />}
-               </button>
-               <div className={cn("transition-transform duration-300 text-slate-500", isExpanded && "rotate-180")}>
-                 <ChevronDown size={20} />
-               </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); onTrack(); }}
+                className={cn(
+                  "p-2.5 rounded-xl transition-all border border-transparent",
+                  competitor.isTracked ? "bg-amber-500/20 text-amber-400 border-amber-500/30" : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"
+                )}
+              >
+                {competitor.isTracked ? <Star size={18} fill="currentColor" /> : <Star size={18} />}
+              </button>
+              <div className={cn("transition-transform duration-300 text-slate-500", isExpanded && "rotate-180")}>
+                <ChevronDown size={20} />
+              </div>
             </div>
           </div>
         </div>
@@ -168,47 +168,47 @@ const CompetitorCard: React.FC<{
             className="border-t border-white/5 bg-black/20"
           >
             <div className="p-6 grid grid-cols-3 gap-8">
-               <div className="space-y-4">
-                  <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                      <Globe size={14} className="text-blue-400" /> Географія Імпорту
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                      {competitor.countries.map(c => (
-                          <span key={c} className="px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs font-medium text-slate-300">{c}</span>
-                      ))}
-                  </div>
-               </div>
+              <div className="space-y-4">
+                <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                  <Globe size={14} className="text-blue-400" /> Географія Імпорту
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {(competitor.countries || []).map(c => (
+                    <span key={c} className="px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs font-medium text-slate-300">{c}</span>
+                  ))}
+                </div>
+              </div>
 
-               <div className="space-y-4">
-                  <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                      <Target size={14} className="text-emerald-400" /> Топ Постачальники
-                  </h4>
-                  <ul className="space-y-2">
-                      {competitor.topSuppliers.map(s => (
-                          <li key={s} className="flex items-center justify-between text-sm text-slate-300 border-b border-white/5 pb-1 last:border-0">
-                              <span>{s}</span>
-                              <ExternalLinkButton />
-                          </li>
-                      ))}
-                  </ul>
-               </div>
+              <div className="space-y-4">
+                <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                  <Target size={14} className="text-emerald-400" /> Топ Постачальники
+                </h4>
+                <ul className="space-y-2">
+                  {(competitor.topSuppliers || []).map(s => (
+                    <li key={s} className="flex items-center justify-between text-sm text-slate-300 border-b border-white/5 pb-1 last:border-0">
+                      <span>{s}</span>
+                      <ExternalLinkButton />
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-               <div className="space-y-4">
-                  <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                      <Zap size={14} className="text-amber-400" /> Швидкі Дії
-                  </h4>
-                  <div className="flex flex-col gap-2">
-                      <button className="flex items-center gap-3 px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-lg text-xs font-bold transition-colors">
-                          <BarChart3 size={14} /> Детальна Аналітика
-                      </button>
-                      <button className="flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 rounded-lg text-xs font-bold transition-colors">
-                          <FileText size={14} /> Експорт Звіту (PDF)
-                      </button>
-                      <button className="flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 rounded-lg text-xs font-bold transition-colors">
-                          <Share2 size={14} /> Поділитися
-                      </button>
-                  </div>
-               </div>
+              <div className="space-y-4">
+                <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                  <Zap size={14} className="text-amber-400" /> Швидкі Дії
+                </h4>
+                <div className="flex flex-col gap-2">
+                  <button className="flex items-center gap-3 px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-lg text-xs font-bold transition-colors">
+                    <BarChart3 size={14} /> Детальна Аналітика
+                  </button>
+                  <button className="flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 rounded-lg text-xs font-bold transition-colors">
+                    <FileText size={14} /> Експорт Звіту (PDF)
+                  </button>
+                  <button className="flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 rounded-lg text-xs font-bold transition-colors">
+                    <Share2 size={14} /> Поділитися
+                  </button>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}
@@ -218,7 +218,7 @@ const CompetitorCard: React.FC<{
 }
 
 const ExternalLinkButton = () => (
-    <button className="text-slate-600 hover:text-white transition-colors"><ArrowUpRight size={12} /></button>
+  <button className="text-slate-600 hover:text-white transition-colors"><ArrowUpRight size={12} /></button>
 );
 
 // --- MAIN VIEW ---
@@ -232,23 +232,24 @@ const CompetitorIntelligenceView: React.FC = () => {
 
   // Load Real Data
   useEffect(() => {
-      const fetchData = async () => {
-          setLoading(true);
-          try {
-              // Try to fetch from real API
-              // const data = await api.competitors.list();
-              // For now, simulate loading and use mock if API fails/is empty
-              setTimeout(() => {
-                  setCompetitors(MOCK_COMPETITORS);
-                  setLoading(false);
-              }, 800);
-          } catch (e) {
-              console.error("Competitor load error", e);
-              setCompetitors(MOCK_COMPETITORS);
-              setLoading(false);
-          }
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Fetch from real API mock server DB facts
+        const data = await api.premium.getCompetitors ? await api.premium.getCompetitors() : (await api.get('/premium/competitors')).data;
+        if (data && data.length > 0) {
+          setCompetitors(data);
+        } else {
+          setCompetitors(MOCK_COMPETITORS);
+        }
+      } catch (e) {
+        console.error("Competitor load error", e);
+        setCompetitors(MOCK_COMPETITORS);
+      } finally {
+        setLoading(false);
       }
-      fetchData();
+    }
+    fetchData();
   }, []);
 
   const filteredCompetitors = useMemo(() => {
@@ -281,8 +282,8 @@ const CompetitorIntelligenceView: React.FC = () => {
         icon={<Target size={20} className="icon-3d-indigo" />}
         breadcrumbs={['РОЗВІДКА', 'РИНОК', 'КОНКУРЕНТИ']}
         stats={[
-            { label: 'База', value: competitors.length, icon: <Layers size={12} />, color: 'primary' },
-            { label: 'Моніторинг', value: competitors.filter(c => c.isTracked).length, icon: <Eye size={12} />, color: 'amber' },
+          { label: 'База', value: competitors.length, icon: <Layers size={12} />, color: 'primary' },
+          { label: 'Моніторинг', value: competitors.filter(c => c.isTracked).length, icon: <Eye size={12} />, color: 'amber' },
         ]}
       />
 
@@ -290,67 +291,67 @@ const CompetitorIntelligenceView: React.FC = () => {
 
         {/* Controls */}
         <div className="flex flex-col md:flex-row gap-4 p-1">
-            <div className="flex-1 relative group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" size={20} />
-                <input
-                    type="text"
-                    placeholder="Пошук компанії за назвою або ЄДРПОУ..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 bg-slate-900/60 border border-white/10 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium"
-                />
+          <div className="flex-1 relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" size={20} />
+            <input
+              type="text"
+              placeholder="Пошук компанії за назвою або ЄДРПОУ..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 bg-slate-900/60 border border-white/10 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium"
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <div className="relative group">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="appearance-none pl-4 pr-10 py-4 bg-slate-900/60 border border-white/10 rounded-2xl text-slate-300 focus:outline-none focus:border-white/20 font-bold cursor-pointer hover:bg-slate-800/60 transition-colors"
+              >
+                <option value="import">За обсягом</option>
+                <option value="share">За часткою</option>
+                <option value="trend">За трендом</option>
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={16} />
             </div>
 
-            <div className="flex gap-2">
-                <div className="relative group">
-                    <select
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value as any)}
-                        className="appearance-none pl-4 pr-10 py-4 bg-slate-900/60 border border-white/10 rounded-2xl text-slate-300 focus:outline-none focus:border-white/20 font-bold cursor-pointer hover:bg-slate-800/60 transition-colors"
-                    >
-                        <option value="import">За обсягом</option>
-                        <option value="share">За часткою</option>
-                        <option value="trend">За трендом</option>
-                    </select>
-                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={16} />
-                </div>
-
-                <button className="px-6 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2 active:scale-95">
-                    <Filter size={18} />
-                    <span className="hidden sm:inline">Фільтри</span>
-                </button>
-            </div>
+            <button className="px-6 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2 active:scale-95">
+              <Filter size={18} />
+              <span className="hidden sm:inline">Фільтри</span>
+            </button>
+          </div>
         </div>
 
         {/* List */}
         <div className="space-y-4">
-            {loading ? (
-                Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="p-6 bg-slate-900/40 border border-white/5 rounded-2xl">
-                        <DataSkeleton className="mb-4" width="40%" height={24} />
-                        <div className="flex gap-4">
-                            <DataSkeleton width="20%" height={16} />
-                            <DataSkeleton width="20%" height={16} />
-                        </div>
-                    </div>
-                ))
-            ) : filteredCompetitors.length > 0 ? (
-                filteredCompetitors.map(competitor => (
-                    <CompetitorCard
-                        key={competitor.id}
-                        competitor={competitor}
-                        isExpanded={expandedId === competitor.id}
-                        onToggle={() => setExpandedId(expandedId === competitor.id ? null : competitor.id)}
-                        onTrack={() => toggleTrack(competitor.id)}
-                    />
-                ))
-            ) : (
-                <div className="text-center py-20 bg-slate-900/20 border border-dashed border-slate-800 rounded-3xl">
-                    <Search className="mx-auto h-12 w-12 text-slate-700 mb-4" />
-                    <h3 className="text-slate-400 font-bold">Нічого не знайдено</h3>
-                    <p className="text-slate-600 text-sm mt-1">Спробуйте змінити параметри пошуку</p>
+          {loading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="p-6 bg-slate-900/40 border border-white/5 rounded-2xl">
+                <DataSkeleton className="mb-4" width="40%" height={24} />
+                <div className="flex gap-4">
+                  <DataSkeleton width="20%" height={16} />
+                  <DataSkeleton width="20%" height={16} />
                 </div>
-            )}
+              </div>
+            ))
+          ) : filteredCompetitors.length > 0 ? (
+            filteredCompetitors.map(competitor => (
+              <CompetitorCard
+                key={competitor.id}
+                competitor={competitor}
+                isExpanded={expandedId === competitor.id}
+                onToggle={() => setExpandedId(expandedId === competitor.id ? null : competitor.id)}
+                onTrack={() => toggleTrack(competitor.id)}
+              />
+            ))
+          ) : (
+            <div className="text-center py-20 bg-slate-900/20 border border-dashed border-slate-800 rounded-3xl">
+              <Search className="mx-auto h-12 w-12 text-slate-700 mb-4" />
+              <h3 className="text-slate-400 font-bold">Нічого не знайдено</h3>
+              <p className="text-slate-600 text-sm mt-1">Спробуйте змінити параметри пошуку</p>
+            </div>
+          )}
         </div>
 
       </div>
