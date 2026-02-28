@@ -58,9 +58,9 @@ export const Sidebar = () => {
         ]
       },
       {
-        title: 'ДАТА-ХАБ',
+        title: premiumLocales.sidebar.groups.data || 'ДАНІ',
         items: [
-          { name: 'Центр Даних', path: '/data-hub', icon: Database },
+          { name: premiumLocales.sidebar.items.dataCenter || 'Центр Даних', path: '/data-hub', icon: Database },
           { name: premiumLocales.sidebar.items.datasetStudio, path: '/datasets', icon: Boxes },
           { name: premiumLocales.sidebar.items.customsIntel, path: '/customs-intel', icon: Ship, premium: true },
         ]
@@ -70,7 +70,7 @@ export const Sidebar = () => {
         items: [
           { name: premiumLocales.sidebar.items.agents, path: '/agents', icon: Bot },
           { name: premiumLocales.sidebar.items.orchestrator, path: '/llm/nas', icon: Trophy },
-          { name: 'Навчання Моделі', path: '/training', icon: BrainCircuit, premium: true },
+          { name: premiumLocales.sidebar.items.modelTraining || 'Навчання Моделі', path: '/training', icon: BrainCircuit, premium: true },
           { name: premiumLocales.sidebar.items.aiCore, path: '/intelligence', icon: Zap, role: 'admin' },
         ]
       },
@@ -84,24 +84,15 @@ export const Sidebar = () => {
         ]
       },
       {
-        title: 'ПРЕМІУМ',
+        title: premiumLocales.sidebar.groups.premium || 'ПРЕМІУМ',
         items: [
-          { name: 'Хаб Розвідки', path: '/premium', icon: Trophy, premium: true },
-          { name: 'Конструктор', path: '/builder', icon: Layers, premium: true },
-          { name: 'Моделювання', path: '/modeling', icon: TrendingUp, premium: true },
-          { name: 'Конкуренти', path: '/competitor-intel', icon: Network, premium: true },
-          { name: 'Граф Сутностей', path: '/entity-graph', icon: Globe, premium: true },
+          { name: premiumLocales.sidebar.items.premiumHub || 'Хаб Розвідки', path: '/premium', icon: Trophy, premium: true },
+          { name: premiumLocales.sidebar.items.builder || 'Конструктор', path: '/builder', icon: Layers, premium: true },
+          { name: premiumLocales.sidebar.items.modeling, path: '/modeling', icon: TrendingUp, premium: true },
+          { name: premiumLocales.sidebar.items.competitors || 'Конкуренти', path: '/competitor-intel', icon: Network, premium: true },
+          { name: premiumLocales.sidebar.items.entityGraph || 'Граф Сутностей', path: '/entity-graph', icon: Globe, premium: true },
         ]
       },
-      {
-        title: 'АВТОНОМНІСТЬ',
-        items: [
-          { name: 'ЗАВОД', path: '/factory', icon: Factory, premium: true },
-          { name: 'Еволюція', path: '/autonomy', icon: BrainCircuit, premium: true },
-          { name: 'Компоненти', path: '/components', icon: Boxes, premium: true },
-          { name: 'Знання', path: '/knowledge', icon: Library, premium: true },
-        ]
-      }
     ];
 
 
