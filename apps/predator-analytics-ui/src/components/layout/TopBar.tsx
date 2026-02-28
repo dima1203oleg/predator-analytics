@@ -70,7 +70,7 @@ export const TopBar = () => {
             </span>
             <div className="flex items-center gap-2 mt-1">
               <div className="px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded text-[9px] font-black tracking-widest text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                v45.0-STABLE [AI-VERIFIED]
+                v45.0-STABLE [ПІДТВЕРДЖЕНО-ШІ]
               </div>
               <div className="flex items-center gap-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -89,7 +89,7 @@ export const TopBar = () => {
           </div>
           <div>
             <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest">ЗАГРОЗА</div>
-            <div className="text-xs font-mono font-bold text-red-400">DEFCON 4</div>
+            <div className="text-xs font-mono font-bold text-red-400">DEFCON 4 (НИЗЬКА)</div>
           </div>
         </div>
         <div className="w-px h-5 bg-white/10" />
