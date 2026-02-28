@@ -1,3 +1,13 @@
 2026-02-28 22:02:45,130 | INFO | 🛰️ PREDATOR Autopush Daemon (Polling Mode) STARTED
 2026-02-28 22:02:45,130 | INFO | Watching: /Users/dima-mac/Documents/Predator_21 every 30s
 2026-02-28 22:02:45,248 | INFO | 🚀 Changes detected. Initiating Autocommit & Autopush...
+hint: The '.git/hooks/pre-commit' hook was ignored because it's not set as executable.
+hint: You can disable this warning with `git config set advice.ignoredHook false`.
+[main 292301b8] 🔄 Autocommit: Changes detected at 2026-02-28 22:02:45
+ 5 files changed, 179 insertions(+), 7 deletions(-)
+ create mode 100644 scripts/autopush.out
+ create mode 100644 scripts/autopush_daemon.py
+To https://github.com/dima1203oleg/predator-analytics.git
+   4f2d83a0..292301b8  main -> main
+2026-02-28 22:02:46,461 | INFO | ✅ Successfully pushed to GitHub.
+2026-02-28 22:02:46,585 | INFO | 🚀 Changes detected. Initiating Autocommit & Autopush...
