@@ -102,8 +102,8 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
             setRetryCount(prev => {
                 const newCount = prev + 1;
                 if (newCount >= MAX_RETRIES) {
-                    setStatus(s => s ? { ...s, state: 'FAILED', error: 'Не вдалося підключитись до сервера' } : s);
-                    onError?.('Connection timeout');
+                    setStatus(s => s ? { ...s, state: 'FAILED', error: 'Не вдалося підключитись до ядра PREDATOR' } : s);
+                    onError?.('Помилка з\'єднання');
                     return newCount;
                 }
                 setTimeout(pollStatus, 3000); // Backoff on error
@@ -158,8 +158,8 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                             )}
                         </h2>
                         <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-2 text-[11px] md:text-xs font-mono text-emerald-500/80 uppercase tracking-[0.2em] md:tracking-[0.3em]">
-                            <span className="flex items-center gap-1.5"><Activity size={14} className="text-emerald-400" /> Швидкість: 1.2GB/s</span>
-                            <span className="flex items-center gap-1.5"><Shield size={14} className="text-emerald-400" /> Довіра: 99.8%</span>
+                            <span className="flex items-center gap-1.5"><Activity size={14} className="text-emerald-400" /> Швидкість: 1.2 ГБ/с</span>
+                            <span className="flex items-center gap-1.5"><Shield size={14} className="text-emerald-400" /> Точність: 99.8%</span>
                         </div>
                     </div>
                 </div>
@@ -394,13 +394,13 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
 
                     <div className="absolute top-6 left-6 p-4 bg-black/60 backdrop-blur-md rounded-2xl border border-white/10 font-mono text-[9px] text-emerald-500/80 pointer-events-none">
                         <div className="flex items-center gap-2 mb-2 border-b border-emerald-500/20 pb-1">
-                            <Zap size={10} /> {pipelineConfig.visualMode}_ENGINE
+                            <Zap size={10} /> {pipelineConfig.visualMode}_ДВИГУН
                         </div>
                         <div className="space-y-1">
-                            <p>ENGINE: {pipelineConfig.visualMode}</p>
-                            <p>LOAD_SYNC: PARALLEL</p>
-                            <p>V3.5_CORE_ACTIVE: TRUE</p>
-                            <p>BUFFER: OODA_PRIMARY</p>
+                            <p>ЯДРО: {pipelineConfig.visualMode}</p>
+                            <p>СИНХРОНІЗАЦІЯ: ПАРАЛЕЛЬНА</p>
+                            <p>СТАТУС_V3.5: АКТИВНО</p>
+                            <p>БУФЕР: OODA_PRIMARY</p>
                         </div>
                     </div>
                 </div>
