@@ -157,15 +157,15 @@ export const api = {
         return (await v45Client.post('/etl/sync')).data;
     },
     getETLJobs: async (limit: number = 20) => {
-        const data = (await v45Client.get(`/etl/jobs?limit=${limit}`)).data;
-        // API may return { jobs: [...] } or directly an array
+        const data = (await apiClient.get(`/ingest/jobs`)).data;
+        // API returns { jobs: [...] } 
         return Array.isArray(data) ? data : (data?.jobs ?? data?.items ?? []);
     },
     getETLJob: async (id: string) => {
-        return (await v45Client.get(`/etl/jobs/${id}`)).data;
+        return (await apiClient.get(`/ingest/status/${id}`)).data;
     },
     getETLStatus: async () => {
-        return (await v45Client.get('/etl/status')).data;
+        return (await apiClient.get('/ingest/jobs')).data;
     },
     runOptimizer: async () => {
         return (await v45Client.post('/optimizer/run')).data;
@@ -262,8 +262,8 @@ export const api = {
             });
             return {
                 ...res.data,
-                file_id: res.data.source_id || res.data.id, // Map source_id/id to file_id for frontend compat
-                job_id: res.data.source_id || res.data.id   // Map for job tracking
+                file_id: res.data.job_id || res.data.source_id || res.data.id,
+                job_id: res.data.job_id || res.data.source_id || res.data.id
             };
         },
         uploadFileChunked: async (file: File, onProgress?: (p: number) => void) => {
@@ -300,8 +300,8 @@ export const api = {
             const res = await apiClient.post('/ingest/upload/complete', finalizeData);
             return {
                 ...res.data,
-                file_id: res.data.id,
-                job_id: res.data.id
+                file_id: res.data.job_id || res.data.id,
+                job_id: res.data.job_id || res.data.id
             };
         },
         startJob: async (data: { source_type: string, file_id?: string, url?: string, config?: any }) => {

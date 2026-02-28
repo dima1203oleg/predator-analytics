@@ -1,5 +1,6 @@
 import logging
 from typing import Dict, Any
+from datetime import datetime, UTC
 
 logger = logging.getLogger("app.services.training_status_service")
 
@@ -12,7 +13,12 @@ class TrainingStatusService:
         return {
             "status": "idle",
             "last_training": None,
-            "progress": 0
+            "progress": 0,
+            "timestamp": datetime.now(UTC).isoformat()
         }
+
+    async def get_latest_status(self) -> Dict[str, Any]:
+        """Alias for get_current_status used by v25 routes."""
+        return await self.get_current_status()
 
 training_status_service = TrainingStatusService()

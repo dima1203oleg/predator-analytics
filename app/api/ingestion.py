@@ -18,54 +18,67 @@ from libs.core.logger import setup_logger
 
 logger = setup_logger("predator.api.ingestion")
 
-router = APIRouter(prefix="/ingestion", tags=["ingestion"])
+router = APIRouter(prefix="/ingest", tags=["ingestion"])
 
-@router.post("/upload")
-async def upload_dataset(
-    file: UploadFile = File(...),
-    dataset_type: str = "custom",
-    background_tasks: BackgroundTasks = None
-):
+# In-memory job state (In production, this should be in Redis/PostgreSQL)
+GLOBAL_JOBS: Dict[str, Dict[str, Any]] = {}
+
+async def process_dataset_task(job_id: str, file_path: str, filename: str, dataset_type: str):
     """
-    V45 Canonical Ingestion Engine.
-    Handles high-speed upload, MinIO archiving, Kafka event signaling,
-    ETL processing, and Vector Indexing in one atomic-like flow.
+    Background task to process dataset with status updates.
     """
-    logger.info(f"🚀 Starting ingestion for file: {file.filename} (Type: {dataset_type})")
-    
-    # 1. Save to temp file
-    suffix = os.path.splitext(file.filename)[1]
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
-        content = await file.read()
-        temp_file.write(content)
-        temp_path = temp_file.name
+    job = GLOBAL_JOBS.get(job_id)
+    if not job:
+        return
 
     try:
-        # 2. Archive to MinIO (Bronze Layer)
-        object_name = f"{dataset_type}/{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}"
-        await minio_service.upload_file("raw-data", object_name, temp_path)
+        # Phase 1: Archive to MinIO (Bronze Layer)
+        job["state"] = "ARCHIVING"
+        job["progress"]["stage"] = "archiving"
+        job["progress"]["percent"] = 10
+        
+        object_name = f"{dataset_type}/{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
+        await minio_service.upload_file("raw-data", object_name, file_path)
+        job["minio_path"] = f"raw-data/{object_name}"
         logger.info(f"📦 Archived to MinIO: raw-data/{object_name}")
 
-        # 3. Signal Kafka (Eventual Consistency Flow)
+        # Phase 2: Signal Kafka (Eventual Consistency Flow) - PRE-ETL
+        job["state"] = "STAGING"
+        job["progress"]["stage"] = "kafka_signal"
+        job["progress"]["percent"] = 20
         await kafka_service.send_message("ingestion_events", {
             "action": "file_uploaded",
-            "filename": file.filename,
-            "minio_path": f"raw-data/{object_name}",
+            "job_id": job_id,
+            "filename": filename,
+            "minio_path": job["minio_path"],
             "dataset_type": dataset_type,
             "timestamp": datetime.utcnow().isoformat()
         })
 
-        # 4. ETL Processing (Silver Layer)
-        etl_result = await etl_service.process_file(temp_path, dataset_type)
+        # Phase 3: ETL Processing (Silver Layer)
+        job["state"] = "PROCESSING"
+        job["progress"]["stage"] = "etl"
+        job["progress"]["percent"] = 30
+        
+        etl_result = await etl_service.process_file(file_path, dataset_type)
         if not etl_result.get("success"):
-            raise HTTPException(status_code=400, detail=f"ETL failed: {etl_result.get('error')}")
+            raise Exception(f"ETL failed: {etl_result.get('error')}")
 
         documents = etl_result.get("documents", [])
-        
-        # 5. Vector Indexing (Semantic Layer)
-        indexing_result = await indexing_service.index_documents(documents, dataset_type)
+        job["progress"]["records_total"] = len(documents)
+        job["progress"]["records_processed"] = len(documents)
+        job["progress"]["percent"] = 60
 
-        # 6. Populate Gold Layer (PostgreSQL)
+        # Phase 4: Vector Indexing (Semantic Layer)
+        job["state"] = "INDEXING"
+        job["progress"]["stage"] = "indexing"
+        indexing_result = await indexing_service.index_documents(documents, dataset_type)
+        job["progress"]["records_indexed"] = indexing_result.get("indexed", 0)
+        job["progress"]["percent"] = 80
+
+        # Phase 5: Populate Gold Layer (PostgreSQL)
+        job["state"] = "PROMOTING"
+        job["progress"]["stage"] = "promotion"
         async with async_session_maker() as session:
             for doc_data in documents:
                 # Clean meta
@@ -84,18 +97,142 @@ async def upload_dataset(
             await session.commit()
             logger.info(f"✅ Promoted {len(documents)} docs to Gold Layer (PostgreSQL)")
 
-        return {
-            "status": "success",
-            "file": file.filename,
-            "minio_path": f"raw-data/{object_name}",
-            "etl": {k: v for k, v in etl_result.items() if k != "documents"},
-            "indexing": indexing_result,
-            "message": "File processed successfully"
-        }
-
+        job["state"] = "COMPLETED"
+        job["progress"]["percent"] = 100
+        job["progress"]["stage"] = "finished"
+        job["updated_at"] = datetime.utcnow().isoformat()
+        
     except Exception as e:
-        logger.error(f"Upload failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Job {job_id} failed: {e}")
+        job["state"] = "FAILED"
+        job["error"] = str(e)
+        job["progress"]["stage"] = "error"
+        job["updated_at"] = datetime.utcnow().isoformat()
     finally:
-        if os.path.exists(temp_path):
-            os.unlink(temp_path)
+        if os.path.exists(file_path):
+             try:
+                 os.unlink(file_path)
+             except:
+                 pass
+
+@router.post("/upload")
+async def upload_dataset(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    dataset_type: str = "custom"
+):
+    """
+    V45 Improved Ingestion Engine.
+    Initiates asynchronous processing and returns a Job ID immediately.
+    """
+    job_id = str(uuid.uuid4())
+    logger.info(f"🚀 Received upload: {file.filename} -> Job {job_id}")
+    
+    # Save to temp file
+    suffix = os.path.splitext(file.filename)[1]
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+        content = await file.read()
+        temp_file.write(content)
+        temp_path = temp_file.name
+
+    # Initialize job tracking
+    GLOBAL_JOBS[job_id] = {
+        "job_id": job_id,
+        "source_file": file.filename,
+        "state": "CREATED",
+        "progress": {
+            "percent": 0,
+            "stage": "queued",
+            "records_processed": 0,
+            "records_total": 0,
+            "records_indexed": 0
+        },
+        "timestamps": {
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat()
+        },
+        "errors": []
+    }
+
+    # Start background process
+    background_tasks.add_task(
+        process_dataset_task, 
+        job_id=job_id, 
+        file_path=temp_path, 
+        filename=file.filename, 
+        dataset_type=dataset_type
+    )
+
+    return {
+        "status": "success",
+        "job_id": job_id,
+        "message": "Ingestion initiated successfully"
+    }
+
+@router.get("/jobs")
+async def list_jobs(limit: int = 20):
+    """
+    List active and recent ingestion jobs.
+    """
+    jobs_list = sorted(
+        GLOBAL_JOBS.values(), 
+        key=lambda x: x["timestamps"]["created_at"], 
+        reverse=True
+    )
+    return {"jobs": jobs_list[:limit]}
+
+@router.get("/status/{job_id}")
+async def get_job_status(job_id: str):
+    """
+    Get detailed status for a specific job.
+    """
+    job = GLOBAL_JOBS.get(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return job
+
+@router.post("/telegram")
+async def ingest_telegram(
+    background_tasks: BackgroundTasks,
+    request: Dict[str, Any]
+):
+    """
+    Trigger Telegram ingestion (Mock for now).
+    """
+    job_id = str(uuid.uuid4())
+    url = request.get("url")
+    name = request.get("name", url.split('/')[-1] if url else "Unknown Telegram")
+    
+    GLOBAL_JOBS[job_id] = {
+        "job_id": job_id,
+        "source_file": f"telegram://{name}",
+        "state": "CREATED",
+        "progress": {
+            "percent": 0,
+            "stage": "queued",
+            "records_processed": 0,
+            "records_total": 0
+        },
+        "timestamps": {
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat()
+        }
+    }
+    
+    # Mock some progress in a task
+    async def mock_tg_task(jid):
+        try:
+            GLOBAL_JOBS[jid]["state"] = "PROCESSING"
+            for i in range(1, 11):
+                await asyncio.sleep(1)
+                GLOBAL_JOBS[jid]["progress"]["percent"] = i * 10
+                GLOBAL_JOBS[jid]["progress"]["records_processed"] = i * 5
+                GLOBAL_JOBS[jid]["progress"]["records_total"] = 50
+            GLOBAL_JOBS[jid]["state"] = "COMPLETED"
+        except:
+            GLOBAL_JOBS[jid]["state"] = "FAILED"
+            
+    import asyncio
+    background_tasks.add_task(mock_tg_task, job_id)
+    
+    return {"status": "success", "job_id": job_id}
