@@ -88,10 +88,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
           {/* Simulator Info Header */}
           <div className="absolute top-2 left-0 right-0 px-8 flex justify-between items-center text-[10px] font-mono text-slate-500 z-50 pointer-events-none">
-            <span>PREDATOR_MOBILE_LINK</span>
+            <span>ПРЕДАТОР_МОБІЛЬНИЙ_ЗВ_ЯЗОК</span>
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>SECURE_FEED</span>
+              <span>ЗАХИЩЕНИЙ_КАНАЛ</span>
             </div>
           </div>
 
@@ -166,7 +166,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <div className="fixed bottom-0 left-0 right-0 h-6 bg-black/85 backdrop-blur-md border-t border-indigo-500/20 z-[100] flex items-center px-4 gap-6 overflow-hidden">
         <div className="flex items-center gap-2 shrink-0">
           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Core_Live</span>
+          <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Ядро_Активне</span>
         </div>
 
         <div className="flex items-center gap-4 shrink-0 text-[9px] font-mono">
