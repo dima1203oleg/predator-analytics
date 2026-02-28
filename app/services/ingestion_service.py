@@ -5,6 +5,9 @@ from typing import List, Dict, Any, Optional, BinaryIO
 from datetime import datetime
 
 from app.models.ingestion import IngestionJob, IngestionStatus, IngestionProgress
+from app.services.indexing_service import indexing_service
+from app.services.embedding_service import get_embedding_service
+from app.services.document_processor import DocumentProcessor
 
 logger = logging.getLogger(__name__)
 
@@ -97,23 +100,19 @@ class IngestionService:
 
     async def create_embedding(self, chunk: List[Dict[str, Any]]):
         """
-        Generate embeddings for a chunk (Mock).
-        In integration: Call EmbeddingService / OpenAI / Ollama.
+        Generate embeddings for a chunk via real EmbeddingService.
         """
-        # Simulation of latency
-        import asyncio
-        await asyncio.sleep(0.1)
-        pass
+        service = get_embedding_service()
+        for doc in chunk:
+            text = f"{doc.get('title', '')} {doc.get('content', '')}".strip()
+            if text:
+                doc['embedding'] = await service.generate_embedding_async(text)
 
     async def index_chunk(self, chunk: List[Dict[str, Any]]):
         """
-        Index chunk into Vector DB / Search Engine (Mock).
-        In integration: Call OpenSearch / Qdrant service.
+        Index chunk into Vector DB / Search Engine using real IndexingService.
         """
-        # Simulation of latency
-        import asyncio
-        await asyncio.sleep(0.1)
-        pass
+        await indexing_service.index_documents(chunk)
 
     async def save_dataset_metadata(
         self,
