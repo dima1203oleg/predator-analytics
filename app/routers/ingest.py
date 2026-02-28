@@ -339,6 +339,33 @@ async def ingest_telegram(
         "message": "Парсинг розпочато"
     }
 
+@router.get("/jobs")
+async def list_jobs():
+    """
+    List all active and recent ingestion jobs.
+    """
+    jobs_list = []
+    for job_id, job in ingestion_jobs.items():
+        jobs_list.append({
+            "job_id": job_id,
+            "source_file": job.filename,
+            "state": job.status.value,
+            "display_name": getattr(job, "display_name", job.filename),
+            "progress": {
+                "percent": job.progress.percent,
+                "records_processed": job.progress.current_item,
+                "records_total": job.progress.total_items
+            },
+            "timestamps": {
+                "created_at": job.created_at.isoformat() if job.created_at else datetime.utcnow().isoformat(),
+                "updated_at": job.updated_at.isoformat() if hasattr(job, "updated_at") and job.updated_at else datetime.utcnow().isoformat()
+            }
+        })
+    
+    # Sort by created_at descending
+    jobs_list.sort(key=lambda x: x["timestamps"]["created_at"], reverse=True)
+    return {"jobs": jobs_list}
+
 @router.get("/status/{job_id}")
 async def get_status(job_id: str):
     """
