@@ -73,22 +73,22 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
     // DB Nodes Config
     const nodes = [
         {
-            id: 'postgres', title: 'PostgreSQL', subtitle: 'Transact Facts', icon: Database,
+            id: 'postgres', title: 'PostgreSQL', subtitle: 'Факти (Транзакції)', icon: Database,
             color: 'text-yellow-400', glow: 'shadow-yellow-500/50', border: 'border-yellow-500/30', bg: 'bg-yellow-900/20',
             position: 'top-0 right-0 translate-x-[110%] -translate-y-[50%]', stat: stats.postgres
         },
         {
-            id: 'graph', title: 'Graph DB', subtitle: 'Neural Edges', icon: Share2,
+            id: 'graph', title: 'Графова БД', subtitle: 'Нейронні Зв\'язки', icon: Share2,
             color: 'text-purple-400', glow: 'shadow-purple-500/50', border: 'border-purple-500/30', bg: 'bg-purple-900/20',
             position: 'bottom-0 right-0 translate-x-[110%] translate-y-[50%]', stat: stats.graph
         },
         {
-            id: 'opensearch', title: 'OpenSearch', subtitle: 'Full-Text Index', icon: Search,
+            id: 'opensearch', title: 'OpenSearch', subtitle: 'Повнотекстовий Індекс', icon: Search,
             color: 'text-cyan-400', glow: 'shadow-cyan-500/50', border: 'border-cyan-500/30', bg: 'bg-cyan-900/20',
             position: 'top-0 left-0 -translate-x-[110%] -translate-y-[50%]', stat: stats.opensearch
         },
         {
-            id: 'qdrant', title: 'Qdrant', subtitle: 'Vector Space', icon: Target,
+            id: 'qdrant', title: 'Qdrant', subtitle: 'Векторний Простір', icon: Target,
             color: 'text-emerald-400', glow: 'shadow-emerald-500/50', border: 'border-emerald-500/30', bg: 'bg-emerald-900/20',
             position: 'bottom-0 left-0 -translate-x-[110%] translate-y-[50%]', stat: stats.qdrant
         },
@@ -211,10 +211,10 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                         >
                             <div className="flex items-center gap-2 mb-1 w-full justify-center">
                                 <Archive size={16} className={isActive ? 'text-orange-400' : 'text-slate-500'} />
-                                <span className="text-xs font-black uppercase tracking-wider text-orange-400">MinIO (S3 Core)</span>
+                                <span className="text-xs font-black uppercase tracking-wider text-orange-400">MinIO (Об'єктне Сховище)</span>
                             </div>
                             <div className="text-[9px] text-slate-400 uppercase tracking-widest text-center w-full border-t border-white/5 pt-1 mt-1">
-                                {isActive ? 'RAW FILE SECURED' : 'DATA LAKE / DROPZONE'}
+                                {isActive ? 'СИРІ ДАНІ ЗАХИЩЕНО' : 'DZ / ХОЛОДНЕ СХОВИЩЕ'}
                             </div>
 
                             {/* File progress indicator in X-Ray mode */}
@@ -271,11 +271,11 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                                         {xrayMode && (
                                             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                                                 <div className="flex justify-between items-center mt-2 pt-2 border-t border-white/5">
-                                                    <span className="text-[8px] text-slate-600 uppercase flex items-center gap-1"><TerminalSquare size={8} /> Throughput</span>
+                                                    <span className="text-[8px] text-slate-600 uppercase flex items-center gap-1"><TerminalSquare size={8} /> Пропускна здатність</span>
                                                     <span className={`text-[9px] font-mono ${node.color}`}>{isNodeActive ? node.stat.details?.throughput || '1.1k/s' : '0.0/s'}</span>
                                                 </div>
                                                 <div className="flex justify-between items-center mt-1">
-                                                    <span className="text-[8px] text-slate-600 uppercase flex items-center gap-1"><Activity size={8} /> Latency</span>
+                                                    <span className="text-[8px] text-slate-600 uppercase flex items-center gap-1"><Activity size={8} /> Затримка</span>
                                                     <span className="text-[9px] font-mono text-emerald-400">{isNodeActive ? node.stat.details?.latency || '12ms' : '-'}</span>
                                                 </div>
                                             </motion.div>
