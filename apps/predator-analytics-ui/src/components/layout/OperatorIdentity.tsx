@@ -9,7 +9,7 @@ export const OperatorIdentity: React.FC = () => {
   return (
     <div className="flex items-center gap-4 px-4 py-2 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl group hover:border-blue-500/30 transition-all cursor-pointer">
       <div className="text-right hidden sm:block">
-        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Authenticated Operator</div>
+        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Авторизований Оператор</div>
         <div className="text-sm font-black text-white tracking-widest uppercase italic">Predator_User_01</div>
       </div>
 
@@ -27,7 +27,7 @@ export const OperatorIdentity: React.FC = () => {
 
         {/* Role Badge */}
         <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-slate-950 flex items-center justify-center">
-            <Shield className="text-white" size={8} />
+          <Shield className="text-white" size={8} />
         </div>
       </div>
 
@@ -35,14 +35,14 @@ export const OperatorIdentity: React.FC = () => {
 
       <div className="hidden lg:flex flex-col items-start">
         <div className="flex items-center gap-1.5 px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-md">
-            <Award className="text-amber-500" size={10} />
-            <span className="text-[8px] font-black text-amber-500 uppercase tracking-widest">
-                {userRole === 'premium' ? 'Sovereign_Elite' : 'Autonomous_Observer'}
-            </span>
+          <Award className="text-amber-500" size={10} />
+          <span className="text-[8px] font-black text-amber-500 uppercase tracking-widest">
+            {userRole === 'premium' ? 'СУВЕРЕН_ЕЛІТ' : 'АВТОНОМНИЙ_СПОСТЕРІГАЧ'}
+          </span>
         </div>
         <div className="text-[8px] text-slate-500 mt-1 flex items-center gap-1">
-            <Fingerprint size={8} />
-            <span>AUTH_TOKEN: PX-992-SI</span>
+          <Fingerprint size={8} />
+          <span>ТОКЕН_АВТ: PX-992-SI</span>
         </div>
       </div>
     </div>
