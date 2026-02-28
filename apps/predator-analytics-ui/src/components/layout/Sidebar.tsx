@@ -90,205 +90,219 @@ export const Sidebar = () => {
           { name: premiumLocales.sidebar.items.builder || 'Конструктор', path: '/builder', icon: Layers, premium: true },
           { name: premiumLocales.sidebar.items.modeling, path: '/modeling', icon: TrendingUp, premium: true },
           { name: premiumLocales.sidebar.items.competitors || 'Конкуренти', path: '/competitor-intel', icon: Network, premium: true },
+          { name: (premiumLocales as any).sidebar?.items?.entityGraph || 'Граф Сутностей', path: '/entity-graph', icon: Globe, premium: true },
+        ]
+      },
+      {
+        title: (premiumLocales as any).sidebar?.groups?.autonomy || 'АВТОНОМНІСТЬ',
+        items: [
+          { name: (premiumLocales as any).sidebar?.items?.factory || 'ЗАВОД', path: '/factory', icon: Factory, premium: true },
+          { name: (premiumLocales as any).sidebar?.items?.evolution || 'Еволюція', path: '/autonomy', icon: BrainCircuit, premium: true },
+          { name: (premiumLocales as any).sidebar?.items?.components || 'Компоненти', path: '/components', icon: Boxes, premium: true },
+          { name: (premiumLocales as any).sidebar?.items?.knowledge || 'Знання', path: '/knowledge', icon: Library, premium: true },
+        ]
+      }
+    ];
 
-        return(
+  const hasAccess = (item: any) => {
+    if (item.role === 'admin' && userRole !== 'admin') return false;
+    if (item.premium && userRole === 'client') return false;
+    return true;
+  };
+
+  return (
     <motion.aside
-      initial={ false}
+      initial={false}
       animate={{
         width: isSidebarOpen ? 240 : 80,
         transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] }
       }}
-className = {
-  cn(
+      className={cn(
         "fixed left-0 top-0 h-screen z-40 flex flex-col border-r border-white/10 bg-[#020617]/80 backdrop-blur-2xl",
         "shadow-[10px_0_40px_-15px_rgba(0,0,0,0.8)]"
-  )
-}
-  >
-  {/* --- LOGO SECTION --- */ }
-  < div className = "h-20 flex items-center px-6 relative overflow-hidden group" >
-    <div className="relative z-10 flex items-center gap-3">
-      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
-        <Zap className="text-white w-6 h-6 fill-white/20" />
-      </div>
+      )}
+    >
+      {/* --- LOGO SECTION --- */}
+      <div className="h-20 flex items-center px-6 relative overflow-hidden group">
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
+            <Zap className="text-white w-6 h-6 fill-white/20" />
+          </div>
 
-      <div className={cn("transition-opacity duration-300", isSidebarOpen ? "opacity-100" : "opacity-0 hidden")}>
-        <span className="text-[14px] font-black bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 tracking-tighter">
-          Predator v45 | Нейронна Аналітика</span>
-      </div>
-    </div>
-
-{/* Ambient Glow */ }
-<div className="absolute top-0 left-0 w-full h-full bg-indigo-500/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      </div >
-
-  {/* --- NAVIGATION --- */ }
-  < div className = "flex-1 overflow-y-auto py-6 px-3 space-y-5 scrollbar-hide" >
-  {
-    navGroups.map((group, idx) => (
-      <div key={idx} className="space-y-2">
-        {isSidebarOpen && (
-          <motion.h3
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 * idx }}
-            className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-3 mb-2"
-          >
-            {group.title}
-          </motion.h3>
-        )}
-
-        <div className="space-y-1">
-          {group.items.filter(hasAccess).map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              title={!isSidebarOpen ? item.name : undefined}
-              className={({ isActive }) => cn(
-                "relative flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group overflow-hidden",
-                isActive
-                  ? "bg-gradient-to-r from-indigo-500/10 to-blue-500/10 text-white shadow-lg shadow-indigo-500/10 border border-indigo-500/20"
-                  : "text-slate-400 hover:text-slate-100 hover:bg-white/5 border border-transparent"
-              )}
-            >
-              {({ isActive }) => (
-                <>
-                  <div className={cn(
-                    "relative z-10 transition-all duration-300 group-hover:scale-110 shrink-0 flex items-center justify-center",
-                    isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.4)]" : "text-slate-500 group-hover:text-slate-200"
-                  )}>
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeGlow"
-                        className="absolute inset-0 bg-blue-500/10 border-l-2 border-l-blue-500 z-0"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.2 }}
-                      />
-                    )}
-                    <item.icon className={cn("w-5 h-5 relative z-10 transition-all", isActive ? "icon-3d-blue" : "")} strokeWidth={isActive ? 2.5 : 2} />
-                  </div>
-
-                  <span className={cn(
-                    "whitespace-nowrap font-medium text-sm transition-all duration-300 origin-left relative z-10",
-                    isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 w-0 overflow-hidden"
-                  )}>
-                    {item.name}
-                  </span>
-
-                  {/* Active Indicator & Hover Glow */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeNavGlow"
-                      className="absolute inset-0 bg-indigo-500/5 rounded-xl z-0"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    />
-                  )}
-                  {/* Premium Badge - Always Visible */}
-                  {item.premium && isSidebarOpen && (
-                    <div className="ml-auto flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-400/40 rounded-full shrink-0">
-                      <SparklesIcon className="w-3 h-3 text-amber-400" />
-                      <span className="text-[9px] font-black text-amber-300 uppercase tracking-wider">Про</span>
-                    </div>
-                  )}
-
-                  {/* Admin Badge - Always Visible */}
-                  {item.role === 'admin' && isSidebarOpen && (
-                    <div className="ml-auto flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-rose-500/20 to-red-500/20 border border-rose-400/40 rounded-full shrink-0">
-                      <ShieldCheck className="w-3 h-3 text-rose-400" />
-                      <span className="text-[9px] font-black text-rose-300 uppercase tracking-wider">Адмін</span>
-                    </div>
-                  )}
-                </>
-              )}
-            </NavLink>
-          ))}
+          <div className={cn("transition-opacity duration-300", isSidebarOpen ? "opacity-100" : "opacity-0 hidden")}>
+            <span className="text-[14px] font-black bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 tracking-tighter">
+              Predator v45 | Нейронна Аналітика</span>
+          </div>
         </div>
+
+        {/* Ambient Glow */}
+        <div className="absolute top-0 left-0 w-full h-full bg-indigo-500/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </div>
-    ))
-  }
-      </div >
 
-  {/* --- FOOTER STATUS --- */ }
+      {/* --- NAVIGATION --- */}
+      <div className="flex-1 overflow-y-auto py-6 px-3 space-y-5 scrollbar-hide">
+        {navGroups.map((group, idx) => (
+          <div key={idx} className="space-y-2">
+            {isSidebarOpen && (
+              <motion.h3
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 * idx }}
+                className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-3 mb-2"
+              >
+                {group.title}
+              </motion.h3>
+            )}
 
+            <div className="space-y-1">
+              {group.items.filter(hasAccess).map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  title={!isSidebarOpen ? item.name : undefined}
+                  className={({ isActive }) => cn(
+                    "relative flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group overflow-hidden",
+                    isActive
+                      ? "bg-gradient-to-r from-indigo-500/10 to-blue-500/10 text-white shadow-lg shadow-indigo-500/10 border border-indigo-500/20"
+                      : "text-slate-400 hover:text-slate-100 hover:bg-white/5 border border-transparent"
+                  )}
+                >
+                  {({ isActive }) => (
+                    <>
+                      <div className={cn(
+                        "relative z-10 transition-all duration-300 group-hover:scale-110 shrink-0 flex items-center justify-center",
+                        isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.4)]" : "text-slate-500 group-hover:text-slate-200"
+                      )}>
+                        {isActive && (
+                          <motion.div
+                            layoutId="activeGlow"
+                            className="absolute inset-0 bg-blue-500/10 border-l-2 border-l-blue-500 z-0"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.2 }}
+                          />
+                        )}
+                        <item.icon className={cn("w-5 h-5 relative z-10 transition-all", isActive ? "icon-3d-blue" : "")} strokeWidth={isActive ? 2.5 : 2} />
+                      </div>
 
-{/* --- COPYRIGHT & STATUS --- */ }
-<div className="flex flex-col border-t border-white/5 bg-black/20">
-  <div className={cn("p-4 flex items-center gap-3 transition-all", isSidebarOpen ? "justify-between" : "justify-center")}>
-    <div className="flex items-center gap-3">
-      <div className="relative">
-        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-        <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-emerald-500 blur-md animate-pulse" />
-      </div>
-      {isSidebarOpen && (
-        <div className="flex flex-col gap-0.5">
-          <span className="text-[10px] font-black text-white uppercase tracking-widest">{premiumLocales.sidebar.status.online}</span>
-          <div className="flex items-center gap-2">
-            <span className="text-emerald-500/70 font-mono text-[9px]">v45.0.1-СУВЕРЕН</span>
-            <div className="flex gap-0.5">
-              {[...Array(3)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ height: [2, 6, 2] }}
-                  transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
-                  className="w-0.5 bg-emerald-500/40 rounded-full"
-                />
+                      <span className={cn(
+                        "whitespace-nowrap font-medium text-sm transition-all duration-300 origin-left relative z-10",
+                        isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 w-0 overflow-hidden"
+                      )}>
+                        {item.name}
+                      </span>
+
+                      {/* Active Indicator & Hover Glow */}
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeNavGlow"
+                          className="absolute inset-0 bg-indigo-500/5 rounded-xl z-0"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        />
+                      )}
+                      {/* Premium Badge - Always Visible */}
+                      {item.premium && isSidebarOpen && (
+                        <div className="ml-auto flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-400/40 rounded-full shrink-0">
+                          <SparklesIcon className="w-3 h-3 text-amber-400" />
+                          <span className="text-[9px] font-black text-amber-300 uppercase tracking-wider">Про</span>
+                        </div>
+                      )}
+
+                      {/* Admin Badge - Always Visible */}
+                      {item.role === 'admin' && isSidebarOpen && (
+                        <div className="ml-auto flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-rose-500/20 to-red-500/20 border border-rose-400/40 rounded-full shrink-0">
+                          <ShieldCheck className="w-3 h-3 text-rose-400" />
+                          <span className="text-[9px] font-black text-rose-300 uppercase tracking-wider">Адмін</span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </NavLink>
               ))}
             </div>
           </div>
+        ))}
+      </div>
+
+      {/* --- FOOTER STATUS --- */}
+
+      {/* --- COPYRIGHT & STATUS --- */}
+      <div className="flex flex-col border-t border-white/5 bg-black/20">
+        <div className={cn("p-4 flex items-center gap-3 transition-all", isSidebarOpen ? "justify-between" : "justify-center")}>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-emerald-500 blur-md animate-pulse" />
+            </div>
+            {isSidebarOpen && (
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[10px] font-black text-white uppercase tracking-widest">{premiumLocales.sidebar.status.online}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-500/70 font-mono text-[9px]">v45.0.1-СУВЕРЕН</span>
+                  <div className="flex gap-0.5">
+                    {[...Array(3)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        animate={{ height: [2, 6, 2] }}
+                        transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                        className="w-0.5 bg-emerald-500/40 rounded-full"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      )}
-    </div>
-  </div>
 
-  {isSidebarOpen && (
-    <div className="pb-4 px-4 text-center">
-      <div className="h-px w-full bg-white/5 mb-4" />
+        {isSidebarOpen && (
+          <div className="pb-4 px-4 text-center">
+            <div className="h-px w-full bg-white/5 mb-4" />
 
-      {/* Quick Actions (Moved from floating fixed position for better aesthetics) */}
-      <button
-        onClick={() => {
-          window.dispatchEvent(new KeyboardEvent('keydown', {
-            key: 'k',
-            ctrlKey: true,
-            bubbles: true
-          }));
-        }}
-        className={cn(
-          "w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group mb-4",
-          "bg-gradient-to-r from-indigo-600/20 via-violet-600/20 to-indigo-600/20",
-          "hover:from-indigo-600/30 hover:via-violet-600/30 hover:to-indigo-600/30",
-          "border border-indigo-500/30 hover:border-indigo-400/50",
-          "shadow-[0_0_20px_rgba(79,70,229,0.1)] hover:shadow-[0_0_30px_rgba(79,70,229,0.2)]",
-          "backdrop-blur-md"
+            {/* Quick Actions (Moved from floating fixed position for better aesthetics) */}
+            <button
+              onClick={() => {
+                window.dispatchEvent(new KeyboardEvent('keydown', {
+                  key: 'k',
+                  ctrlKey: true,
+                  bubbles: true
+                }));
+              }}
+              className={cn(
+                "w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group mb-4",
+                "bg-gradient-to-r from-indigo-600/20 via-violet-600/20 to-indigo-600/20",
+                "hover:from-indigo-600/30 hover:via-violet-600/30 hover:to-indigo-600/30",
+                "border border-indigo-500/30 hover:border-indigo-400/50",
+                "shadow-[0_0_20px_rgba(79,70,229,0.1)] hover:shadow-[0_0_30px_rgba(79,70,229,0.2)]",
+                "backdrop-blur-md"
+              )}
+            >
+              <div className="p-1.5 bg-indigo-500/20 rounded-lg group-hover:scale-110 transition-transform duration-300">
+                <Command size={14} className="text-indigo-400 group-hover:text-white" />
+              </div>
+              <span className="text-[10px] font-black text-indigo-300 group-hover:text-white uppercase tracking-widest leading-none transition-colors">
+                Швидкі дії
+              </span>
+              <kbd className="hidden lg:inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-black/40 rounded text-[8px] font-mono text-indigo-400 border border-white/5">
+                ⌘K
+              </kbd>
+            </button>
+
+            <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-1">
+              Власник Ліцензії
+            </div>
+            <div className="text-[10px] text-slate-300 font-medium">
+              Кізима Дмитро Миколайович
+            </div>
+            <div className="text-[9px] text-slate-600 font-mono mt-0.5">
+              b. 12.03.1985 • © 2026
+            </div>
+          </div>
         )}
-      >
-        <div className="p-1.5 bg-indigo-500/20 rounded-lg group-hover:scale-110 transition-transform duration-300">
-          <Command size={14} className="text-indigo-400 group-hover:text-white" />
-        </div>
-        <span className="text-[10px] font-black text-indigo-300 group-hover:text-white uppercase tracking-widest leading-none transition-colors">
-          Швидкі дії
-        </span>
-        <kbd className="hidden lg:inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-black/40 rounded text-[8px] font-mono text-indigo-400 border border-white/5">
-          ⌘K
-        </kbd>
-      </button>
-
-      <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-1">
-        Власник Ліцензії
       </div>
-      <div className="text-[10px] text-slate-300 font-medium">
-        Кізима Дмитро Миколайович
-      </div>
-      <div className="text-[9px] text-slate-600 font-mono mt-0.5">
-        b. 12.03.1985 • © 2026
-      </div>
-    </div>
-  )}
-</div>
-    </motion.aside >
+    </motion.aside>
   );
 };
 
