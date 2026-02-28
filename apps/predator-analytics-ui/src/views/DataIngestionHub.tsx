@@ -34,7 +34,7 @@ import {
   Share2,
   Search,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AdvancedBackground } from '../components/AdvancedBackground';
 import { MediaIntelligencePanel } from '../components/intel/MediaIntelligencePanel';
 import { ActiveJobsPanel } from '../components/pipeline/ActiveJobsPanel';
@@ -80,17 +80,17 @@ const SOURCE_TYPES = [
   { id: 'word', label: 'Word', icon: File, color: 'sky', desc: 'Документи .docx/.doc', accept: '.docx,.doc' },
   { id: 'audio', label: 'Аудіо', icon: Radio, color: 'pink', desc: 'Транскрибування аудіо (MP3, WAV, M4A)', accept: '.mp3,.wav,.m4a,.ogg,.flac' },
   { id: 'video', label: 'Відео', icon: Camera, color: 'red', desc: 'Транскрибування та аналіз відео', accept: '.mp4,.mov,.avi,.webm,.mkv' },
-  { id: 'api', label: 'API / Зовнішні', icon: Zap, color: 'orange', desc: 'Публічні/приватні API джерела' },
-  { id: 'rss', label: 'RSS / Новини', icon: Rss, color: 'lime', desc: 'Новинні стрічки та фіди' },
+  { id: 'api', label: 'API', icon: Zap, color: 'orange', desc: 'Публічні/приватні API джерела' },
+  { id: 'rss', label: 'RSS/Atom', icon: Rss, color: 'lime', desc: 'Новинні стрічки та фіди' },
 ];
 
 const DATA_LAKES_REGISTRY = [
-  { id: 'minio', name: 'MinIO', version: 'RELEASE.2024-01', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Об\'єктне Сховище (Сирі дані)', icon: Archive, color: 'orange', glow: 'yellow' },
-  { id: 'postgres', name: 'PostgreSQL', version: '16.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Реляційна БД (SQL)', icon: Database, color: 'blue', glow: 'blue' },
-  { id: 'qdrant', name: 'Qdrant', version: '1.7.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Векторна БД (Семантика)', icon: Target, color: 'emerald', glow: 'green' },
-  { id: 'opensearch', name: 'OpenSearch', version: '2.11.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Пошуковий Індекс (Повнотекстовий)', icon: Search, color: 'cyan', glow: 'blue' },
-  { id: 'graphdb', name: 'Neo4j', version: '5.16.0', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Графова БД (Зв\'язки)', icon: Share2, color: 'purple', glow: 'purple' },
-  { id: 'redis', name: 'Redis', version: '7.2.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Кеш у пам\'яті (Кеш)', icon: Zap, color: 'red', glow: 'red' },
+  { id: 'minio', name: 'MinIO', version: 'RELEASE.2024-01', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Object Storage (Сирі дані)', icon: Archive, color: 'orange', glow: 'yellow' },
+  { id: 'postgres', name: 'PostgreSQL', version: '16.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Primary Relational DB (Факти)', icon: Database, color: 'blue', glow: 'blue' },
+  { id: 'qdrant', name: 'Qdrant', version: '1.7.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Vector Database (Семантика)', icon: Target, color: 'emerald', glow: 'green' },
+  { id: 'opensearch', name: 'OpenSearch', version: '2.11.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Search Engine (Пошук)', icon: Search, color: 'cyan', glow: 'blue' },
+  { id: 'graphdb', name: 'Neo4j', version: '5.16.0', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Graph Database (Зв\'язки)', icon: Share2, color: 'purple', glow: 'purple' },
+  { id: 'redis', name: 'Redis', version: '7.2.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'In-Memory Cache (Кеш)', icon: Zap, color: 'red', glow: 'red' },
 ];
 
 // Stat cards were replaced by TacticalCard grid below. Empty component list to keep file clean.
@@ -264,15 +264,6 @@ const SourceCard = ({ source, onSync, onDelete }: {
   onSync: (id: string) => void;
   onDelete: (id: string) => void;
 }) => {
-  // Stable latency derived from source.id hash to prevent flickering
-  const stableLatency = useMemo(() => {
-    let hash = 0;
-    for (let i = 0; i < source.id.length; i++) {
-      hash = ((hash << 5) - hash) + source.id.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash % 200) + 40;
-  }, [source.id]);
   const typeConfig = SOURCE_TYPES.find(t => t.id === source.type) || SOURCE_TYPES[0];
   const Icon = typeConfig.icon;
 
@@ -344,7 +335,7 @@ const SourceCard = ({ source, onSync, onDelete }: {
       {source.status === 'processing' && source.processingProgress !== undefined && (
         <div className="mb-8 relative z-10">
           <div className="flex justify-between items-end mb-2">
-            <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Обробка Потоку Даних</span>
+            <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Processing Data Stream</span>
             <span className="text-xs font-black text-cyan-400 font-mono">{source.processingProgress}%</span>
           </div>
           <div className="h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/5 p-[1px]">
@@ -368,11 +359,11 @@ const SourceCard = ({ source, onSync, onDelete }: {
                 "bg-slate-900 border-white/5 text-slate-500"
           )}>
             <div className={cn("w-1 h-1 rounded-full", source.status === 'active' ? "bg-emerald-500" : "bg-slate-600")} />
-            {source.status === 'active' ? 'Активно' : 'Очікування'}
+            {source.status === 'active' ? 'Operational' : 'Waiting'}
           </div>
 
           <div className="flex flex-col items-end">
-            <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest leading-none mb-0.5">Записів</span>
+            <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest leading-none mb-0.5">Records</span>
             <span className="text-sm font-black font-mono text-white italic tracking-tighter">
               {source.itemsCount.toLocaleString('uk-UA')}
             </span>
@@ -381,11 +372,11 @@ const SourceCard = ({ source, onSync, onDelete }: {
 
         <div className="grid grid-cols-2 gap-2">
           <div className="px-3 py-2 bg-black/40 rounded-xl border border-white/5 group-hover:border-white/10 transition-colors">
-            <p className="text-[7px] font-black text-slate-700 uppercase tracking-widest mb-1">Сер. Затримка</p>
-            <p className="text-xs font-black font-mono text-emerald-500/80">{stableLatency}ms</p>
+            <p className="text-[7px] font-black text-slate-700 uppercase tracking-widest mb-1">Avg Latency</p>
+            <p className="text-xs font-black font-mono text-emerald-500/80">{(Math.random() * 200 + 40).toFixed(0)}ms</p>
           </div>
           <div className="px-3 py-2 bg-black/40 rounded-xl border border-white/5 group-hover:border-white/10 transition-colors">
-            <p className="text-[7px] font-black text-slate-700 uppercase tracking-widest mb-1">Відсоток Помилок</p>
+            <p className="text-[7px] font-black text-slate-700 uppercase tracking-widest mb-1">Error Rate</p>
             <p className="text-xs font-black font-mono text-rose-500/80">0.00%</p>
           </div>
         </div>
@@ -439,7 +430,7 @@ const LiveEventsFeed = () => {
           <h3 className="text-sm font-black text-white uppercase tracking-widest leading-none">Живий Потік Подій</h3>
         </div>
         <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
-          Пряма Трансляція
+          Real-time Nexus
         </div>
       </div>
 
@@ -478,7 +469,7 @@ const LiveEventsFeed = () => {
       </div>
 
       <button className="mt-4 w-full py-3 rounded-xl border border-white/5 bg-white/5 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] hover:bg-emerald-500/10 hover:border-emerald-500/20 hover:text-emerald-400 transition-all">
-        ПЕРЕГЛЯНУТИ ВСІ ПОДІЇ
+        Переглянути Всі Логи
       </button>
     </div>
   );
@@ -542,25 +533,23 @@ const DataIngestionHub = () => {
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadData, 8000);
+    const interval = setInterval(loadData, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  // Clean up stale persisted jobs on mount (jobs older than 30 min that are still processing)
+  // Auto-select latest active job if none selected
   useEffect(() => {
-    const now = Date.now();
-    const staleThreshold = 30 * 60 * 1000; // 30 minutes
-    const allJobs = Object.values(activeJobs);
-    allJobs.forEach(job => {
-      if (now - job.startedAt > staleThreshold && !['ready', 'failed'].includes(job.status)) {
-        updateJob(job.id, { status: 'failed', message: 'Пайплайн завершено по таймауту' });
-      }
-    });
-  }, []); // Run only on mount
+    if (!activeJobId) {
+      const jobs = Object.values(activeJobs);
+      const latest = jobs
+        .filter(j => ['uploading', 'validating', 'parsing', 'chunking', 'embedding', 'indexing'].includes(j.status))
+        .sort((a, b) => b.startedAt - a.startedAt)[0];
 
-  // NOTE: We intentionally do NOT auto-select active jobs on mount.
-  // The overlay blocks the entire page. It only appears when the user
-  // explicitly submits a new data source via the modal.
+      if (latest) {
+        setActiveJobId(latest.id);
+      }
+    }
+  }, [activeJobId, activeJobs]);
 
   const handleSync = async (id: string) => {
     setSources(prev => prev.map(s => s.id === id ? { ...s, status: 'syncing' as const } : s));
@@ -687,46 +676,39 @@ const DataIngestionHub = () => {
   const isFileType = ['customs', 'excel', 'csv', 'pdf', 'image', 'word', 'audio', 'video'].includes(selectedType);
 
   return (
-    <div className="flex flex-col space-y-8 pb-20 relative min-h-screen px-4 md:px-8 lg:px-12 max-w-[1600px] mx-auto">
+    <div className="flex flex-col space-y-8 pb-20 relative min-h-screen">
       <AdvancedBackground />
 
-      {/* Pipeline Monitor Overlay — only shown after explicit ingestion trigger */}
-      <AnimatePresence>
-        {activeJobId && activeJobs[activeJobId] && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl overflow-y-auto px-4 py-20 custom-scrollbar"
-          >
-            <div className="max-w-6xl mx-auto w-full flex flex-col items-center">
-              <PipelineMonitor
-                jobId={activeJobId}
-                pipelineType={activeJobs[activeJobId]?.type}
-                externalStatus={activeJobs[activeJobId]}
-                onComplete={() => {
-                  setActiveJobId(null);
-                  loadData();
-                }}
-                onError={(error) => console.error('Pipeline error:', error)}
-              />
-              <button
-                onClick={() => setActiveJobId(null)}
-                className="mt-6 max-w-sm w-full py-4 bg-slate-800 hover:bg-slate-700 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] border border-slate-700 hover:border-slate-500 text-slate-300 rounded-2xl transition-all text-sm font-bold tracking-widest uppercase"
-              >
-                Сховати панель
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Pipeline Monitor Overlay */}
+      {activeJobId && (
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="max-w-7xl w-full max-h-[95vh] overflow-y-auto custom-scrollbar p-4">
+            <PipelineMonitor
+              jobId={activeJobId}
+              pipelineType={activeJobs[activeJobId]?.type}
+              externalStatus={activeJobs[activeJobId]}
+              onComplete={() => {
+                setActiveJobId(null);
+                loadData();
+              }}
+              onError={(error) => console.error('Pipeline error:', error)}
+            />
+            <button
+              onClick={() => setActiveJobId(null)}
+              className="mt-4 w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-colors"
+            >
+              Сховати (pipeline продовжує працювати)
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
-      <div className="relative z-20 mb-12 flex flex-col items-center text-center">
-        <div className="flex flex-col items-center gap-10">
-          <div className="flex flex-col items-center">
+      <div className="relative z-20 mb-12">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+          <div className="flex items-center gap-10">
             {/* The Reactor Visual */}
-            <div className="relative w-32 h-32 mb-8">
+            <div className="relative w-32 h-32 flex-shrink-0">
               <motion.div
                 animate={{ rotate: 360, scale: [1, 1.05, 1] }}
                 transition={{ rotate: { duration: 20, repeat: Infinity, ease: "linear" }, scale: { duration: 4, repeat: Infinity } }}
@@ -756,53 +738,53 @@ const DataIngestionHub = () => {
               ))}
             </div>
 
-            <div className="flex flex-col items-center">
-              <div className="flex items-center gap-3 mb-6 justify-center">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
                 <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-[0.4em] rounded-full">
-                  Процесор Даних v45
+                  Central Data Nexus v45
                 </span>
                 <span className="px-3 py-1 bg-white/5 border border-white/10 text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] rounded-full">
-                  Статус: Активно
+                  Status: Sovereign
                 </span>
               </div>
-              <h1 className="text-4xl md:text-7xl font-black text-white mb-6 tracking-tighter uppercase italic leading-none">
-                ЦЕНТР_<span className="text-emerald-400 drop-shadow-[0_0_20px_rgba(52,211,153,0.4)]">ДАНИХ</span>
+              <h1 className="text-6xl md:text-7xl font-black text-white mb-4 tracking-tighter uppercase italic leading-none flex items-center gap-4">
+                ЦЕНТР_<span className="text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.5)]">ДАНИХ</span>
               </h1>
-              <p className="text-slate-400 text-lg max-w-3xl font-medium leading-relaxed bg-slate-950/40 p-6 rounded-[32px] border border-white/5 backdrop-blur-xl shadow-2xl mx-auto">
-                Глобальне ядро управління потоками інформації. <br />
-                <span className="text-emerald-500/80 text-[10px] font-black uppercase tracking-[0.4em] mt-4 block flex items-center justify-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></span>
-                  ІНТЕЛЕКТУАЛЬНА МАТРИЦЯ АКТИВОВАНА
+              <p className="text-slate-300 text-lg max-w-2xl font-medium leading-relaxed bg-slate-900/40 p-4 rounded-2xl border border-white/5 backdrop-blur-sm">
+                Глобальне нейронне ядро для управління потоками інформації. <br />
+                <span className="text-emerald-400 text-[11px] font-black uppercase tracking-[0.3em] mt-2 block flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></span>
+                  Sovereign Intelligence Data Fabric Active
                 </span>
               </p>
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-6 mt-4 w-full max-w-xl mx-auto">
+          <div className="flex flex-col gap-4">
             <motion.button
               whileHover={{ scale: 1.03, filter: 'brightness(1.1)' }}
               whileTap={{ scale: 0.97 }}
               onClick={() => setIsModalOpen(true)}
-              className="group relative flex items-center justify-center gap-4 w-full px-12 py-6 bg-gradient-to-r from-emerald-600 via-emerald-500 to-cyan-600 text-white rounded-[28px] transition-all shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] font-black tracking-[0.2em] text-sm overflow-hidden border border-emerald-400/50"
+              className="group relative flex items-center gap-4 px-12 py-6 bg-gradient-to-r from-emerald-600 via-emerald-500 to-cyan-600 text-white rounded-[28px] transition-all shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] font-black tracking-[0.2em] text-sm overflow-hidden border border-emerald-400/50"
             >
               <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-[length:250%_250%,100%_100%] animate-[shimmer_3s_infinite] opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
               <Plus className="w-7 h-7 relative z-10" />
               <span className="relative z-10 drop-shadow-md">ІНТЕГРУВАТИ НОВЕ ДЖЕРЕЛО</span>
             </motion.button>
-
-            <div className="grid grid-cols-2 gap-4 w-full">
-              <div className="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col items-center group hover:border-emerald-500/30 transition-all">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-emerald-400 mb-1">Загалом Записів</span>
-                <span className="text-lg font-mono text-emerald-400">{stats.totalRecords.toLocaleString('uk-UA')}</span>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 bg-white/5 rounded-2xl border border-white/5 flex flex-col group hover:border-emerald-500/30 transition-all">
+                <span className="text-[8px] font-black text-slate-500 uppercase group-hover:text-emerald-400">Загалом Записів</span>
+                <span className="text-xs font-mono text-emerald-400">{stats.totalRecords.toLocaleString('uk-UA')}</span>
               </div>
-              <div className="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col items-center group hover:border-amber-500/30 transition-all">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-amber-400 mb-1">Оброблено (24г)</span>
-                <span className="text-lg font-mono text-amber-500 uppercase tracking-tighter">{stats.processed24h.toLocaleString('uk-UA')}</span>
+              <div className="p-3 bg-white/5 rounded-2xl border border-white/5 flex flex-col group hover:border-amber-500/30 transition-all">
+                <span className="text-[8px] font-black text-slate-500 uppercase group-hover:text-amber-400">Оброблено (24г)</span>
+                <span className="text-xs font-mono text-amber-500 uppercase tracking-tighter">{stats.processed24h.toLocaleString('uk-UA')}</span>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
       {/* Knowledge Storages (Data Lakes) Section */}
       <div className="mb-0">
@@ -841,18 +823,16 @@ const DataIngestionHub = () => {
 
                 <div className="grid grid-cols-2 gap-2 mb-4">
                   <div className="flex flex-col">
-                    <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest">Навантаження</span>
+                    <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest">Load</span>
                     <span className="text-[10px] font-mono text-emerald-400">
                       {lake.id === 'postgres' ? (Math.min(95, stats.totalRecords / 1000)).toFixed(1) :
                         lake.id === 'minio' ? (Math.min(98, stats.totalRecords / 2000)).toFixed(1) :
                           lake.id === 'qdrant' ? (Math.min(90, stats.totalRecords / 1500)).toFixed(1) :
-                            lake.id === 'opensearch' ? (Math.min(88, stats.totalRecords / 1200)).toFixed(1) :
-                              lake.id === 'graphdb' ? (Math.min(72, stats.totalRecords / 2500)).toFixed(1) :
-                                '4.2'}%
+                            (Math.random() * 10 + 2).toFixed(1)}%
                     </span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest">Вузли</span>
+                    <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest">Nodes</span>
                     <span className="text-[10px] font-mono text-cyan-400">3/3</span>
                   </div>
                 </div>
@@ -862,7 +842,7 @@ const DataIngestionHub = () => {
                     "text-[8px] font-black px-2 py-0.5 rounded-md border uppercase tracking-wider",
                     lake.id === 'minio' ? "bg-amber-500/10 text-amber-400 border-amber-500/20" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                   )}>
-                    {lake.status === 'АКТИВНИЙ В ПАЙПЛАЙНІ' ? 'Активно' : lake.status}
+                    {lake.status === 'АКТИВНИЙ В ПАЙПЛАЙНІ' ? 'Active' : lake.status}
                   </span>
                   <div className="flex -space-x-1">
                     {[1, 2, 3].map(i => (
@@ -874,10 +854,10 @@ const DataIngestionHub = () => {
             </TacticalCard>
           ))}
         </div>
-      </div >
+      </div>
 
       {/* Active Jobs Monitor - показує всі процеси в реальному часі */}
-      < div className="relative z-10" >
+      <div className="relative z-10">
         <ActiveJobsPanel
           maxJobs={8}
           className="mb-8"
@@ -887,14 +867,12 @@ const DataIngestionHub = () => {
             }
           }}
         />
-      </div >
+      </div>
 
+      {/* Database Pipeline Monitor - Індивідуальні пайплайни по базах даних */}
       <div className="relative z-10 mb-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
         <DatabasePipelineMonitor />
-        <div className="space-y-8">
-          <MediaIntelligencePanel />
-          <LiveEventsFeed />
-        </div>
+        <MediaIntelligencePanel />
       </div>
 
       {/* Source Type Quick Filters */}
