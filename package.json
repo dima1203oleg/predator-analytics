@@ -25,8 +25,12 @@
     "turbo": "latest"
   },
   "dependencies": {
+    "@google-cloud/speech": "^7.2.1",
+    "@google-cloud/text-to-speech": "^6.4.0",
     "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "multer": "^2.0.2",
     "ws": "^8.19.0"
   }
 }

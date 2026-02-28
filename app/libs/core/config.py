@@ -88,7 +88,7 @@ class Settings(BaseSettings):
 
     # App
     APP_NAME: str = "Predator Analytics Core"
-    APP_VERSION: str = "26.2.0"
+    APP_VERSION: str = "55.0.0"
     DEBUG: bool = False
     ENVIRONMENT: str = "development"
 
@@ -109,11 +109,11 @@ class Settings(BaseSettings):
 
     # Database
     POSTGRES_USER: str = "admin"
-    POSTGRES_PASSWORD: str = "666666"
+    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "")
     POSTGRES_HOST: str = "postgres"
     POSTGRES_PORT: str = "5432"
     POSTGRES_DB: str = "predator_db"
-    DATABASE_URL: str = "postgresql+asyncpg://admin:666666@postgres:5432/predator_db"
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://admin:@postgres:5432/predator_db")
 
     @property
     def SYNC_DATABASE_URL(self) -> str:
@@ -146,7 +146,7 @@ class Settings(BaseSettings):
 
     # Message Queue (Event Bus)
     RABBITMQ_USER: str = "predator"
-    RABBITMQ_PASSWORD: str = "predator_secret_key"
+    RABBITMQ_PASSWORD: str = os.getenv("RABBITMQ_PASSWORD", "")
     RABBITMQ_HOST: str = "rabbitmq"
 
     @property
@@ -157,10 +157,10 @@ class Settings(BaseSettings):
     QDRANT_URL: str = "http://qdrant:6333"
     OPENSEARCH_URL: str = "http://opensearch:9200"
     NEO4J_URL: str = "bolt://neo4j:7687"
-    NEO4J_AUTH: str = "neo4j/predator_secret_key"
+    NEO4J_AUTH: str = os.getenv("NEO4J_AUTH", "neo4j/")
     MINIO_ENDPOINT: str = "minio:9000"
-    MINIO_ACCESS_KEY: str = "predator_admin"
-    MINIO_SECRET_KEY: str = "predator_secret_key"
+    MINIO_ACCESS_KEY: str = os.getenv("MINIO_ROOT_USER", "")
+    MINIO_SECRET_KEY: str = os.getenv("MINIO_ROOT_PASSWORD", "")
 
     # Vault (Secrets)
     VAULT_ADDR: str = "http://vault:8200"

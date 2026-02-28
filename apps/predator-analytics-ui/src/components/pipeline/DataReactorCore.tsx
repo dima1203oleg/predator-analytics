@@ -97,7 +97,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
     const reactorColor = hasError ? 'text-red-500' : isActive ? 'text-blue-500' : 'text-slate-500';
 
     return (
-        <div className={`relative w-full h-[600px] flex justify-center items-center overflow-hidden rounded-[32px] border border-white/5 transition-all duration-1000 ${xrayMode ? 'bg-[#050B14]' : 'bg-[#0A0E17]'}`}>
+        <div className={`relative w-full h-[650px] flex justify-center items-center overflow-visible rounded-[32px] border border-white/5 transition-all duration-1000 ${xrayMode ? 'bg-[#050B14]' : 'bg-[#0A0E17]'}`}>
 
             {/* Header / Mode Toggle */}
             <div className="absolute top-6 right-6 z-50 flex gap-4">
@@ -109,7 +109,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                         }`}
                 >
                     <Glasses size={16} />
-                    <span className="text-xs font-bold uppercase tracking-wider">X-Ray Mode</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">Режим X-Ray</span>
                 </button>
             </div>
 
@@ -128,14 +128,14 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
             <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10 pointer-events-none" />
 
             {/* Main Assembly */}
-            <div className="relative z-10 scale-[0.85] sm:scale-100">
+            <div className="relative z-10 scale-[0.6] sm:scale-[0.7] md:scale-90 lg:scale-[0.8] xl:scale-90 2xl:scale-100">
                 {/* Visual DB Connections */}
                 <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-0" style={{ transform: 'scale(1.5)' }}>
                     {nodes.map(node => {
                         const isLeft = node.position.includes('left-0');
                         const isTop = node.position.includes('top-0');
-                        const x2 = isLeft ? -120 : 220;
-                        const y2 = isTop ? -80 : 180;
+                        const x2 = isLeft ? -100 : 200;
+                        const y2 = isTop ? -70 : 170;
                         const isAnimating = isActive && !hasError;
                         const strokeColor = xrayMode ? node.color.replace('text-', '').replace('-400', '') : "#3b82f6";
 
@@ -189,9 +189,9 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                         {/* Title Label */}
                         <div className="absolute -bottom-10 whitespace-nowrap text-center left-1/2 -translate-x-1/2">
                             <span className={`text-sm font-black tracking-[0.2em] ${hasError ? 'text-red-400' : isActive ? 'text-blue-400' : 'text-slate-400'}`}>
-                                ROUTER ENGINE
+                                ЯДРО МАРШРУТИЗАЦІЇ
                             </span>
-                            <div className="text-[9px] text-slate-500 uppercase tracking-widest mt-1">Multi-Dimensional Splitter</div>
+                            <div className="text-[9px] text-slate-500 uppercase tracking-widest mt-1">Багатовимірний Розподілювач</div>
                         </div>
                     </motion.div>
 
@@ -260,7 +260,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                                 {/* Metrics Section */}
                                 <div className="bg-black/30 rounded-lg p-2 border border-white/5">
                                     <div className="flex items-center justify-between mb-1">
-                                        <span className="text-[9px] text-slate-500 font-bold uppercase">Total Entities</span>
+                                        <span className="text-[9px] text-slate-500 font-bold uppercase">Всього Сутностей</span>
                                         <span className={`text-sm font-mono font-black ${isNodeActive ? 'text-white' : 'text-slate-500'}`}>
                                             {node.stat.count.toLocaleString()}
                                         </span>
@@ -324,7 +324,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                     }`}>
                     <Server size={14} className={isActive ? 'animate-pulse' : ''} />
                     <span className="text-[10px] uppercase font-black tracking-widest">
-                        System State: {isActive ? 'SYNCING MANIFEST' : 'IDLE / AWAITING CARGO'}
+                        Стан Системи: {isActive ? 'СИНХРОНІЗАЦІЯ МАНІФЕСТУ' : 'ОЧІКУВАННЯ ДАНИХ'}
                     </span>
                 </div>
             </div>

@@ -127,7 +127,7 @@ const useRealWebSocket = (isConnected: boolean) => {
   }, [wsData]);
 
   const events = useMemo<LiveEvent[]>(() => {
-    if (!wsData?.audit_logs) return [];
+    if (!Array.isArray(wsData?.audit_logs)) return [];
     return wsData.audit_logs.map(log => ({
       id: log.id,
       type: log.risk_level === 'high' ? 'alert' : 'import',

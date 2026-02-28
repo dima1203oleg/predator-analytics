@@ -73,7 +73,7 @@ const DatabasesView: React.FC = () => {
             setLoading(true);
             try {
                 const data = await api.getDatabases();
-                if (isMounted.current) setTables(data);
+                if (isMounted.current) setTables(Array.isArray(data) ? data : []);
             } catch (e) {
                 console.error("Failed to fetch tables", e);
             } finally {
@@ -85,7 +85,7 @@ const DatabasesView: React.FC = () => {
             setLoading(true);
             try {
                 const data = await api.getVectors();
-                if (isMounted.current) setVectorData(data);
+                if (isMounted.current) setVectorData(Array.isArray(data) ? data : []);
             } catch (e) {
                 console.error("Failed to fetch vectors", e);
             } finally {
@@ -97,7 +97,7 @@ const DatabasesView: React.FC = () => {
             setLoading(true);
             try {
                 const data = await api.getBuckets();
-                if (isMounted.current) setBuckets(data);
+                if (isMounted.current) setBuckets(Array.isArray(data) ? data : []);
             } catch (e) {
                 console.error("Failed to fetch buckets", e);
             } finally {
@@ -109,7 +109,7 @@ const DatabasesView: React.FC = () => {
             setLoading(true);
             try {
                 const data = await api.getTrainingPairs();
-                if (isMounted.current) setTrainingPairs(data);
+                if (isMounted.current) setTrainingPairs(Array.isArray(data) ? data : []);
             } catch (e) {
                 console.error("Failed to fetch training pairs", e);
             } finally {
@@ -235,30 +235,28 @@ const DatabasesView: React.FC = () => {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className={`flex-1 min-w-[170px] py-4 px-5 rounded-2xl text-[10px] sm:text-xs font-black transition-all duration-500 flex items-center justify-center gap-3 relative group overflow-hidden ${
-                                isActive ? 'bg-white/10 text-white shadow-xl' : 'text-slate-500 hover:text-white hover:bg-white/5'
-                            }`}
+                            className={`flex-1 min-w-[170px] py-4 px-5 rounded-2xl text-[10px] sm:text-xs font-black transition-all duration-500 flex items-center justify-center gap-3 relative group overflow-hidden ${isActive ? 'bg-white/10 text-white shadow-xl' : 'text-slate-500 hover:text-white hover:bg-white/5'
+                                }`}
                         >
                             {/* Inner glow effect for active tab */}
                             {isActive && (
                                 <div className={`absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none`} />
                             )}
-                            
+
                             <span className={isActive ? (tab.color === 'blue' ? 'text-blue-400' : tab.color === 'amber' ? 'text-amber-400' : tab.color === 'emerald' ? 'text-emerald-400' : tab.color === 'purple' ? 'text-purple-400' : 'text-primary-400') : 'text-slate-600 group-hover:scale-110 transition-transform'}>
                                 {tab.icon}
                             </span>
                             <span className="uppercase tracking-[0.2em] whitespace-nowrap z-10">{tab.label}</span>
-                            
+
                             {isActive && (
-                                <motion.div 
-                                    layoutId="tabLine" 
-                                    className={`absolute bottom-0 left-4 right-4 h-1 rounded-t-full shadow-[0_0_20px_rgba(255,255,255,0.5)] ${
-                                        tab.color === 'blue' ? 'bg-blue-500 shadow-blue-500/50' : 
-                                        tab.color === 'amber' ? 'bg-amber-500 shadow-amber-500/50' : 
-                                        tab.color === 'emerald' ? 'bg-emerald-500 shadow-emerald-500/50' : 
-                                        tab.color === 'purple' ? 'bg-purple-500 shadow-purple-500/50' : 
-                                        'bg-primary-500 shadow-primary-500/50'
-                                    }`} 
+                                <motion.div
+                                    layoutId="tabLine"
+                                    className={`absolute bottom-0 left-4 right-4 h-1 rounded-t-full shadow-[0_0_20px_rgba(255,255,255,0.5)] ${tab.color === 'blue' ? 'bg-blue-500 shadow-blue-500/50' :
+                                            tab.color === 'amber' ? 'bg-amber-500 shadow-amber-500/50' :
+                                                tab.color === 'emerald' ? 'bg-emerald-500 shadow-emerald-500/50' :
+                                                    tab.color === 'purple' ? 'bg-purple-500 shadow-purple-500/50' :
+                                                        'bg-primary-500 shadow-primary-500/50'
+                                        }`}
                                 />
                             )}
                         </button>

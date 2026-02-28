@@ -18,7 +18,7 @@ export const DatabasePipelineMonitor: React.FC<DatabasePipelineMonitorProps> = (
     const jobIds = Object.keys(activeJobs);
     // Sort logic to find most relevant job (e.g., newest starting one)
     const activeJob = jobIds.length > 0
-        ? Object.values(activeJobs).sort((a,b) => b.startedAt - a.startedAt)[0]
+        ? Object.values(activeJobs).sort((a, b) => b.startedAt - a.startedAt)[0]
         : null;
 
     if (!activeJob) {
@@ -27,11 +27,11 @@ export const DatabasePipelineMonitor: React.FC<DatabasePipelineMonitorProps> = (
 
     return (
         <div className={cn("rounded-2xl overflow-hidden border border-white/5 shadow-2xl", className)}>
-             <PipelineMonitor
+            <PipelineMonitor
                 jobId={activeJob.id}
                 pipelineType={activeJob.type}
                 externalStatus={activeJob}
-             />
+            />
         </div>
     );
 };
@@ -43,8 +43,8 @@ const IdleState = ({ compact, className }: { compact: boolean, className?: strin
                 <Server size={24} className="text-slate-500" />
             </div>
             <div>
-                 <h4 className="text-sm font-bold text-slate-400 uppercase">System Idle</h4>
-                 <p className="text-xs text-slate-600 mt-1">No active ingestion pipelines. Ready for data.</p>
+                <h4 className="text-sm font-bold text-slate-400 uppercase">Система в Очікуванні</h4>
+                <p className="text-xs text-slate-600 mt-1">Немає активних пайплайнів. Готовність до прийому даних.</p>
             </div>
         </CardContent>
     </Card>

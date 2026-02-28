@@ -55,8 +55,8 @@ const CATEGORY_MAP: Record<string, { color: string; icon: any; label: string }> 
 const RadarOverlay: React.FC = () => {
     return (
         <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[40px]">
-             {/* Dynamic Scanline */}
-             <div className="scanline opacity-20" />
+            {/* Dynamic Scanline */}
+            <div className="scanline opacity-20" />
 
             {/* Spinning Beam */}
             <motion.div
@@ -143,6 +143,8 @@ const AnalysisGraph: React.FC<{
         window.addEventListener('resize', handleResize);
         handleResize();
 
+        const dist = (a: any, b: any) => Math.hypot(a.x - b.x, a.y - b.y);
+
         const draw = () => {
             if (!active) return;
             const width = container.clientWidth;
@@ -226,7 +228,7 @@ const AnalysisGraph: React.FC<{
                         ctx.font = '8px monospace';
                         ctx.fillStyle = 'rgba(255,255,255,0.3)';
                         ctx.textAlign = 'center';
-                        ctx.fillText(link.relation, (s.x! + t.x!)/2, (s.y! + t.y!)/2);
+                        ctx.fillText(link.relation, (s.x! + t.x!) / 2, (s.y! + t.y!) / 2);
                     }
                 }
             });
@@ -267,8 +269,6 @@ const AnalysisGraph: React.FC<{
             requestRef.current = requestAnimationFrame(draw);
         };
 
-        const dist = (a: any, b: any) => Math.hypot(a.x - b.x, a.y - b.y);
-
         requestRef.current = requestAnimationFrame(draw);
         return () => {
             if (requestRef.current) cancelAnimationFrame(requestRef.current);
@@ -280,8 +280,8 @@ const AnalysisGraph: React.FC<{
         const rc = canvasRef.current!.getBoundingClientRect();
         const width = rc.width;
         const height = rc.height;
-        const mx = (e.clientX || e.touches?.[0].clientX) - rc.left - width/2;
-        const my = (e.clientY || e.touches?.[0].clientY) - rc.top - height/2;
+        const mx = (e.clientX || e.touches?.[0].clientX) - rc.left - width / 2;
+        const my = (e.clientY || e.touches?.[0].clientY) - rc.top - height / 2;
 
         const hit = nodesRef.current.find(n => Math.hypot(n.x! - mx, n.y! - my) < n.radius! + 10);
         if (hit) {
@@ -295,8 +295,8 @@ const AnalysisGraph: React.FC<{
         const rc = canvasRef.current!.getBoundingClientRect();
         const width = rc.width;
         const height = rc.height;
-        draggingNode.current.x = (e.clientX || e.touches?.[0].clientX) - rc.left - width/2;
-        draggingNode.current.y = (e.clientY || e.touches?.[0].clientY) - rc.top - height/2;
+        draggingNode.current.x = (e.clientX || e.touches?.[0].clientX) - rc.left - width / 2;
+        draggingNode.current.y = (e.clientY || e.touches?.[0].clientY) - rc.top - height / 2;
     };
 
     return (
@@ -347,10 +347,12 @@ const AnalyticsView: React.FC = () => {
         setIsScanning(true);
         try {
             const result = await api.graph.search(query, 2);
-            setNodes(result.nodes || []);
-            setLinks(result.edges || []);
-            if (result.nodes?.length > 0) {
-                setSelectedEntity(result.nodes[0]);
+            const nodes = Array.isArray(result?.nodes) ? result.nodes : [];
+            const edges = Array.isArray(result?.edges) ? result.edges : [];
+            setNodes(nodes);
+            setLinks(edges);
+            if (nodes.length > 0) {
+                setSelectedEntity(nodes[0]);
             }
         } catch (e) {
             console.error("Search failed", e);

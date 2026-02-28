@@ -63,23 +63,23 @@ export const MediaIntelligencePanel: React.FC = () => {
                         <Mic className="w-6 h-6 text-rose-400" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-white uppercase tracking-widest">Media Intelligence</h3>
-                        <p className="text-[10px] text-slate-500 font-mono">Real-time Voice & Video Processing</p>
+                        <h3 className="text-sm font-black text-white uppercase tracking-widest">Медіа-Розвідка</h3>
+                        <p className="text-[10px] text-slate-500 font-mono">Обробка Голосу та Відео в Режимі Реального Часу</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="relative flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
                     </span>
-                    <span className="text-[10px] font-bold text-rose-400 uppercase">Listening</span>
+                    <span className="text-[10px] font-bold text-rose-400 uppercase">Прослуховування</span>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Media Queue */}
                 <div className="space-y-3">
-                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Ingestion Queue</h4>
+                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Черга Надходження</h4>
                     {mediaQueue.map(item => (
                         <motion.div
                             key={item.id}
@@ -105,16 +105,16 @@ export const MediaIntelligencePanel: React.FC = () => {
                                         <div className="text-[10px] text-slate-500 font-mono">{item.source} • {item.duration}</div>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <span className={cn(
-                                        "px-2 py-1 text-[9px] font-black uppercase rounded",
-                                        item.status === 'analyzed' ? "bg-emerald-500/10 text-emerald-400" :
+                                <span className={cn(
+                                    "px-2 py-1 text-[9px] font-black uppercase rounded",
+                                    item.status === 'analyzed' ? "bg-emerald-500/10 text-emerald-400" :
                                         item.status === 'processing' ? "bg-indigo-500/10 text-indigo-400 animate-pulse" :
-                                        "bg-slate-700 text-slate-400"
-                                    )}>
-                                        {item.status}
-                                    </span>
-                                </div>
+                                            "bg-slate-700 text-slate-400"
+                                )}>
+                                    {item.status === 'analyzed' ? 'Проаналізовано' :
+                                        item.status === 'processing' ? 'Обробка' :
+                                            item.status === 'pending' ? 'Очікування' : 'Виявлено'}
+                                </span>
                             </div>
 
                             {/* Waveform Animation for Processing */}
@@ -147,11 +147,11 @@ export const MediaIntelligencePanel: React.FC = () => {
                                 <div className="flex items-center justify-between pb-4 border-b border-white/5">
                                     <div className="flex items-center gap-2">
                                         <Activity size={16} className="text-rose-400" />
-                                        <span className="text-xs font-bold text-white">AI Analysis Results</span>
+                                        <span className="text-xs font-bold text-white">Результати ШІ-Аналізу</span>
                                     </div>
                                     {activeItem.sentiment === 'danger' && (
                                         <span className="flex items-center gap-1 text-xs font-black text-rose-500 blink">
-                                            <AlertTriangle size={14} /> RED FLAG DETECTED
+                                            <AlertTriangle size={14} /> ВИЯВЛЕНО ПІДОЗРІЛУ АКТИВНІСТЬ
                                         </span>
                                     )}
                                 </div>
@@ -159,10 +159,10 @@ export const MediaIntelligencePanel: React.FC = () => {
                                 {/* Transcription */}
                                 <div className="space-y-2">
                                     <h5 className="text-[10px] font-black text-slate-500 uppercase flex items-center gap-2">
-                                        <Type size={12} /> Transcription
+                                        <Type size={12} /> Транскрипція
                                     </h5>
                                     <div className="p-3 bg-slate-800/50 rounded-lg text-sm text-slate-300 italic leading-relaxed border-l-2 border-rose-500">
-                                        "{activeItem.transcription || "Processing audio stream..."}"
+                                        "{activeItem.transcription || "Обробка аудіопотоку..."}"
                                     </div>
                                 </div>
 
@@ -170,7 +170,7 @@ export const MediaIntelligencePanel: React.FC = () => {
                                 {activeItem.entities && (
                                     <div className="space-y-2">
                                         <h5 className="text-[10px] font-black text-slate-500 uppercase flex items-center gap-2">
-                                            <Fingerprint size={12} /> Detected Entities
+                                            <Fingerprint size={12} /> Виявлені Об'єкти
                                         </h5>
                                         <div className="flex flex-wrap gap-2">
                                             {activeItem.entities.map(ent => (
@@ -185,10 +185,10 @@ export const MediaIntelligencePanel: React.FC = () => {
                                 {/* Actions */}
                                 <div className="pt-4 flex gap-2">
                                     <button className="flex-1 py-2 bg-indigo-600/20 text-indigo-400 border border-indigo-600/30 rounded-lg text-xs font-bold uppercase hover:bg-indigo-600/30 transition-all flex items-center justify-center gap-2">
-                                        <Search size={14} /> Search Graph
+                                        <Search size={14} /> Пошук в Графі
                                     </button>
                                     <button className="flex-1 py-2 bg-rose-600/20 text-rose-400 border border-rose-600/30 rounded-lg text-xs font-bold uppercase hover:bg-rose-600/30 transition-all flex items-center justify-center gap-2">
-                                        <AlertTriangle size={14} /> Report
+                                        <AlertTriangle size={14} /> Звіт
                                     </button>
                                 </div>
                             </motion.div>
@@ -196,11 +196,11 @@ export const MediaIntelligencePanel: React.FC = () => {
                     ) : (
                         <div className="h-full flex flex-col items-center justify-center text-slate-600">
                             <Brain size={32} className="mb-2 opacity-20" />
-                            <p className="text-xs uppercase font-bold text-center">Select media<br/>to view analysis</p>
+                            <p className="text-xs uppercase font-bold text-center">Виберіть медіа<br />для перегляду аналізу</p>
                         </div>
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 };

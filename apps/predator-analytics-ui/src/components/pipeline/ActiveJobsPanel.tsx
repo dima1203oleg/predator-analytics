@@ -27,6 +27,7 @@ interface ActiveJob {
 }
 
 const TYPE_ICONS: Record<string, any> = {
+  customs: FileSpreadsheet,
   excel: FileSpreadsheet,
   csv: FileSpreadsheet,
   pdf: FileText,
@@ -40,6 +41,7 @@ const TYPE_ICONS: Record<string, any> = {
 };
 
 const TYPE_COLORS: Record<string, string> = {
+  customs: 'emerald',
   excel: 'emerald',
   csv: 'emerald',
   pdf: 'rose',
@@ -78,22 +80,61 @@ export const ActiveJobsPanel: React.FC<ActiveJobsPanelProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const buildDisplayName = (job: any): string => {
+    const pipelineType = job?.pipeline_type || job?.source_type || '';
+    const rawFile = job?.source_file || job?.name || '';
+
+    // Telegram: extract @username
+    if (pipelineType === 'telegram' || rawFile.startsWith('telegram_')) {
+      const channelName = rawFile.replace(/^telegram_/, '');
+      return `Telegram: @${channelName}`;
+    }
+    // Website
+    if (pipelineType === 'website') {
+      return `🌐 Веб-сайт: ${rawFile}`;
+    }
+    // RSS
+    if (pipelineType === 'rss') {
+      return `📡 RSS: ${rawFile}`;
+    }
+    // API
+    if (pipelineType === 'api') {
+      return `🔌 API: ${rawFile}`;
+    }
+    // Audio/Video/Image
+    if (pipelineType === 'audio') return `🎙️ Аудіо: ${rawFile}`;
+    if (pipelineType === 'video') return `🎥 Відео: ${rawFile}`;
+    if (pipelineType === 'image') return `🖼️ Зображення: ${rawFile}`;
+    if (pipelineType === 'pdf') return `📄 PDF: ${rawFile}`;
+    if (pipelineType === 'word') return `📝 Документ: ${rawFile}`;
+    // Excel/CSV/Customs — just show filename
+    if (rawFile) return rawFile;
+    // Fallback: never show raw ID
+    const jobIdRaw = job?.id || job?.job_id || '';
+    if (jobIdRaw.startsWith('tg-')) return `Telegram-канал`;
+    if (jobIdRaw.startsWith('web-')) return `Веб-джерело`;
+    if (jobIdRaw.startsWith('rss-')) return `RSS-стрічка`;
+    if (jobIdRaw.startsWith('api-')) return `API-інтеграція`;
+    if (jobIdRaw.startsWith('file-') || jobIdRaw.startsWith('etl-')) return `Файл — обробка`;
+    return `Завдання — обробка`;
+  };
+
   const fetchJobs = useCallback(async () => {
     try {
       const data = await api.getETLJobs(maxJobs);
       // Transform API response to ActiveJob format
-      const transformedJobs: ActiveJob[] = (data || []).map((job: any) => ({
-        id: job.id || job.job_id,
-        name: job.name || job.source_name || `Завдання ${job.id?.substring(0, 8)}`,
-        type: job.source_type || 'excel',
-        status: mapStatus(job.status || job.state),
-        progress: job.progress?.percent || 0,
-        stage: job.progress?.stage || job.status || 'Ініціалізація',
-        startedAt: job.created_at || job.started_at || new Date().toISOString(),
-        eta: job.progress?.eta,
-        itemsProcessed: job.progress?.items_processed || job.metadata?.parser_stats?.success,
-        itemsTotal: job.progress?.items_total || job.metadata?.parser_stats?.total_rows,
-        error: job.error,
+      const transformedJobs: ActiveJob[] = (data || []).filter(Boolean).map((job: any) => ({
+        id: job?.id || job?.job_id || Math.random().toString(),
+        name: buildDisplayName(job),
+        type: job?.pipeline_type || job?.source_type || 'excel',
+        status: mapStatus(job?.status || job?.state),
+        progress: job?.progress?.percent || 0,
+        stage: job?.progress?.stage || job?.status || 'Ініціалізація',
+        startedAt: job?.created_at || job?.started_at || job?.timestamps?.created_at || new Date().toISOString(),
+        eta: job?.progress?.eta,
+        itemsProcessed: job?.progress?.records_processed || job?.progress?.items_processed || job?.metadata?.parser_stats?.success,
+        itemsTotal: job?.progress?.records_total || job?.progress?.items_total || job?.metadata?.parser_stats?.total_rows,
+        error: job?.error,
       }));
       setJobs(transformedJobs);
       setError(null);
@@ -115,19 +156,41 @@ export const ActiveJobsPanel: React.FC<ActiveJobsPanelProps> = ({
   const mapStatus = (status: string): ActiveJob['status'] => {
     const statusMap: Record<string, ActiveJob['status']> = {
       'CREATED': 'pending',
+      'UPLOAD': 'pending',
       'SOURCE_CHECKED': 'processing',
       'INGESTED': 'processing',
+      'INGEST_MINIO': 'processing',
+      'DECODE': 'processing',
+      'PARSE': 'processing',
       'PARSED': 'processing',
+      'VALIDATE': 'processing',
       'VALIDATED': 'processing',
+      'NORMALIZE': 'processing',
+      'NORMALIZED': 'processing',
+      'TRANSFORM': 'processing',
       'TRANSFORMED': 'processing',
+      'EXTRACT_CONTENT': 'processing',
+      'EXTRACTING': 'processing',
+      'CHUNK': 'processing',
+      'CHUNKED': 'processing',
+      'RESOLVE_ENTITIES': 'processing',
       'ENTITIES_RESOLVED': 'processing',
-      'LOADED': 'indexing',
+      'NLP_EXTRACTION': 'processing',
+      'LOAD_SQL': 'indexing',
+      'ROUTING_SQL': 'indexing',
+      'ROUTING_GRAPH': 'indexing',
+      'ROUTING_SEARCH': 'indexing',
+      'ROUTING_VECTOR': 'indexing',
+      'BUILD_GRAPH': 'indexing',
       'GRAPH_BUILT': 'indexing',
+      'INDEX_SEARCH': 'indexing',
       'INDEXED': 'indexing',
+      'VECTORIZE': 'vectorizing',
       'VECTORIZED': 'vectorizing',
       'READY': 'completed',
-      'FAILED': 'failed',
+      'COMPLETED': 'completed',
       'SUCCESS': 'completed',
+      'FAILED': 'failed',
       'ERROR': 'failed',
       'RUNNING': 'processing',
       'QUEUED': 'pending',
@@ -279,11 +342,10 @@ export const ActiveJobsPanel: React.FC<ActiveJobsPanelProps> = ({
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${job.progress}%` }}
-                          className={`h-full rounded-full ${
-                            job.status === 'failed' ? 'bg-rose-500' :
+                          className={`h-full rounded-full ${job.status === 'failed' ? 'bg-rose-500' :
                             job.status === 'completed' ? 'bg-emerald-500' :
-                            `bg-${typeColor}-500`
-                          }`}
+                              `bg-${typeColor}-500`
+                            }`}
                         />
                       </div>
 

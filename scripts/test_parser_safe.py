@@ -2,6 +2,9 @@
 import asyncio
 import getpass
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from telethon import TelegramClient
 

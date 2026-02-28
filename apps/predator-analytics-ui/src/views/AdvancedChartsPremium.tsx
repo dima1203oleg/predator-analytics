@@ -350,6 +350,33 @@ const ChartCard: React.FC<ChartCardProps> = ({ title, type, children, gridSpan =
 const AdvancedChartsPremium: React.FC = () => {
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'quarter' | 'year'>('year');
   const [expandedChart, setExpandedChart] = useState<string | null>(null);
+  const [marketTrends, setMarketTrends] = useState<ChartData[]>([]);
+  const [categories, setCategories] = useState<ChartData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [trends, hsAnalytics] = await Promise.all([
+          api.premium.getMarketTrends(),
+          api.premium.getHSAnalytics()
+        ]);
+
+        setMarketTrends(Array.isArray(trends) ? trends : []);
+        setCategories((Array.isArray(hsAnalytics) ? hsAnalytics : []).map((item: any) => ({
+          label: item.name || item.code,
+          value: Math.round(item.volume / 1000000),
+          color: ['#22d3ee', '#a855f7', '#22c55e', '#f59e0b', '#ec4899', '#6366f1'][Math.floor(Math.random() * 6)]
+        })));
+      } catch (err) {
+        console.error("Failed to fetch chart data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-950 p-6">
@@ -383,15 +410,14 @@ const AdvancedChartsPremium: React.FC = () => {
                 <button
                   key={range}
                   onClick={() => setTimeRange(range)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    timeRange === range
-                      ? 'bg-purple-500/20 text-purple-400'
-                      : 'text-slate-500 hover:text-slate-300'
-                  }`}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${timeRange === range
+                    ? 'bg-purple-500/20 text-purple-400'
+                    : 'text-slate-500 hover:text-slate-300'
+                    }`}
                 >
                   {range === 'week' ? 'Тиждень' :
-                   range === 'month' ? 'Місяць' :
-                   range === 'quarter' ? 'Квартал' : 'Рік'}
+                    range === 'month' ? 'Місяць' :
+                      range === 'quarter' ? 'Квартал' : 'Рік'}
                 </button>
               ))}
             </div>
@@ -409,60 +435,68 @@ const AdvancedChartsPremium: React.FC = () => {
 
         {/* Charts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Monthly Import Trend */}
-          <ChartCard title="Динаміка імпорту" type="bar" gridSpan={2}>
-            <AnimatedBarChart data={monthlyImportData} height={200} />
-          </ChartCard>
+          {loading ? (
+            Array(6).fill(0).map((_, i) => (
+              <div key={i} className="h-64 bg-slate-900/60 rounded-2xl animate-pulse border border-white/5" />
+            ))
+          ) : (
+            <>
+              {/* Monthly Import Trend */}
+              <ChartCard title="Динаміка імпорту" type="bar" gridSpan={2}>
+                <AnimatedBarChart data={marketTrends} height={200} />
+              </ChartCard>
 
-          {/* Category Distribution */}
-          <ChartCard title="Розподіл по категоріях" type="pie">
-            <div className="flex items-center justify-center py-4">
-              <AnimatedDonutChart data={categoryData} size={180} />
-            </div>
-          </ChartCard>
+              {/* Category Distribution */}
+              <ChartCard title="Розподіл по категоріях" type="pie">
+                <div className="flex items-center justify-center py-4">
+                  <AnimatedDonutChart data={categories} size={180} />
+                </div>
+              </ChartCard>
 
-          {/* Line Chart */}
-          <ChartCard title="Тренд імпорту" type="line">
-            <AnimatedLineChart data={monthlyImportData} height={150} filled color="#a855f7" />
-          </ChartCard>
+              {/* Line Chart */}
+              <ChartCard title="Тренд імпорту" type="line">
+                <AnimatedLineChart data={marketTrends} height={150} filled color="#a855f7" />
+              </ChartCard>
 
-          {/* Country Distribution */}
-          <ChartCard title="Країни-імпортери" type="pie">
-            <div className="flex items-center justify-center py-4">
-              <AnimatedDonutChart data={countryData} size={180} />
-            </div>
-          </ChartCard>
+              {/* Country Distribution */}
+              <ChartCard title="Країни-імпортери" type="pie">
+                <div className="flex items-center justify-center py-4">
+                  <AnimatedDonutChart data={categories.slice(0, 3)} size={180} />
+                </div>
+              </ChartCard>
 
-          {/* Growth Chart */}
-          <ChartCard title="Зростання по місяцях" type="area">
-            <AnimatedLineChart data={monthlyImportData} height={150} filled color="#22c55e" />
-          </ChartCard>
+              {/* Growth Chart */}
+              <ChartCard title="Зростання по місяцях" type="area">
+                <AnimatedLineChart data={marketTrends} height={150} filled color="#22c55e" />
+              </ChartCard>
 
-          {/* Category Bar Chart */}
-          <ChartCard title="ТОП Категорії" type="bar" gridSpan={3}>
-            <div className="flex items-end gap-4 h-48">
-              {categoryData.map((item, index) => {
-                const maxVal = Math.max(...categoryData.map(d => d.value));
-                const height = (item.value / maxVal) * 100;
+              {/* Category Bar Chart */}
+              <ChartCard title="ТОП Категорії" type="bar" gridSpan={3}>
+                <div className="flex items-end gap-4 h-48">
+                  {categories.map((item, index) => {
+                    const maxVal = Math.max(...categories.map(d => d.value), 1);
+                    const height = (item.value / maxVal) * 100;
 
-                return (
-                  <div key={index} className="flex-1 flex flex-col items-center">
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: `${height}%` }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                      className="w-full rounded-t-xl"
-                      style={{ backgroundColor: item.color }}
-                    />
-                    <div className="mt-3 text-center">
-                      <p className="text-white font-bold">${item.value}M</p>
-                      <p className="text-xs text-slate-500 mt-1">{item.label}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </ChartCard>
+                    return (
+                      <div key={index} className="flex-1 flex flex-col items-center">
+                        <motion.div
+                          initial={{ height: 0 }}
+                          animate={{ height: `${height}%` }}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                          className="w-full rounded-t-xl"
+                          style={{ backgroundColor: item.color }}
+                        />
+                        <div className="mt-3 text-center">
+                          <p className="text-white font-bold">${item.value}M</p>
+                          <p className="text-xs text-slate-500 mt-1">{item.label}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ChartCard>
+            </>
+          )}
         </div>
 
         {/* AI Insights */}

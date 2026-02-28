@@ -20,7 +20,13 @@ import {
   Brain,
   X,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Volume2,
+  Ear,
+  Eye,
+  Activity,
+  Cpu,
+  ShieldAlert
 } from 'lucide-react';
 import { api } from '../../services/api';
 
@@ -33,14 +39,20 @@ interface Suggestion {
   impact: 'high' | 'medium' | 'low';
 }
 
-export const AICopilot: React.FC = () => {
+export const Predator: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [message, setMessage] = useState('');
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [aiResponse, setAiResponse] = useState('');
+  const [activeAgent, setActiveAgent] = useState<string>('');
+  const [isPulseActive, setIsPulseActive] = useState(false);
+  const [isInteractiveMode, setIsInteractiveMode] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const recognitionRef = useRef<any>(null);
+  const speakIdRef = useRef<number>(0);
 
   useEffect(() => {
     // Simulate AI generating suggestions
@@ -65,65 +77,116 @@ export const AICopilot: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleVoiceToggle = () => {
-    if (!isListening) {
-      // Start listening
-      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-        const recognition = new SpeechRecognition();
+  const speak = async (text: string) => {
+    try {
+      console.log("🔊 Predator attempting to speak:", text.substring(0, 50) + "...");
 
-        recognition.lang = 'uk-UA'; // Ukrainian
-        recognition.continuous = false;
-        recognition.interimResults = false;
-
-        recognition.onstart = () => {
-          setIsListening(true);
-        };
-
-        recognition.onresult = (event: any) => {
-          const transcript = event.results[0][0].transcript;
-          setMessage(transcript);
-          setIsListening(false);
-        };
-
-        recognition.onerror = (event: any) => {
-          console.error('Speech recognition error:', event.error);
-          setIsListening(false);
-        };
-
-        recognition.onend = () => {
-          setIsListening(false);
-        };
-
-        recognition.start();
-      } else {
-        alert('Ваш браузер не підтримує розпізнавання мови. Спробуйте Chrome або Edge.');
+      // Stop and clear previous audio to prevent overlapping
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
       }
-    } else {
-      // Stop listening
-      setIsListening(false);
+
+      const currentSpeakId = ++speakIdRef.current;
+
+      const response = await fetch('/api/v1/ai/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      if (!response.ok) throw new Error('TTS Failed');
+
+      // If a new speak call was made while we were fetching this one, abort playback
+      if (speakIdRef.current !== currentSpeakId) {
+        console.log("⏭️ Skipping outdated audio playback");
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      if (!audioRef.current) {
+        audioRef.current = new Audio();
+      }
+
+      audioRef.current.src = url;
+      audioRef.current.play().catch(e => {
+        console.warn("Autoplay prevented, retrying with new Audio:", e);
+        audioRef.current = new Audio(url);
+        audioRef.current.play().catch(err => console.error("Playback failed completely:", err));
+      });
+    } catch (e) {
+      console.error("TTS Error:", e);
     }
   };
 
-  const handleSend = async () => {
-    if (!message.trim()) return;
+  const handleSend = async (forcedQuery?: string) => {
+    const query = forcedQuery || message;
+    if (!query.trim()) return;
 
-    const query = message;
-    setMessage('');
-    setAiResponse('Аналізую ваш запит...');
+    if (!forcedQuery) setMessage('');
+    setAiResponse('Аналізую ваші дані через Neural Core...');
+    setActiveAgent('Активація каскаду агентів...');
 
     try {
-      // Підключення до реального AI бекенду через Predator v45 | Neural AnalyticsAPI
       const res = await api.ai.query(query);
-      if (res && (res.answer || res.response || res.result)) {
-        setAiResponse(res.answer || res.response || res.result);
+      const answer = res.answer || res.response || res.result;
+
+      if (answer) {
+        setAiResponse(answer);
+        setActiveAgent(res.agent || 'Neural Alpha');
+        // Автоматично озвучуємо відповідь для інтерактивності
+        speak(answer);
       } else {
-        setAiResponse(`✨ Запит оброблено, але AI не повернув текстової відповіді. Відповідь: ${JSON.stringify(res)}`);
+        setAiResponse(`✨ Запит оброблено. Результат зафіксовано в системі.`);
       }
     } catch (e: any) {
       console.error("AI Copilot Error:", e);
-      setAiResponse(`Помилка зв'язку з Ядром AI: ${e?.message || 'Невідома помилка'}. Можливо, сервер офлайн.`);
+      setAiResponse(`Помилка: ${e?.message}. Можливо, сервер Ollama або API недоступні.`);
     }
+  };
+
+  const handleVoiceToggle = () => {
+    if (!isListening) {
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognitionRef.current = recognition;
+
+        recognition.lang = 'uk-UA';
+        recognition.continuous = isInteractiveMode; // Use continuous if in interactive mode
+        recognition.interimResults = false;
+
+        recognition.onstart = () => setIsListening(true);
+        recognition.onresult = (event: any) => {
+          const transcript = event.results[event.results.length - 1][0].transcript;
+          setMessage(transcript);
+          handleSend(transcript);
+        };
+        recognition.onerror = () => setIsListening(false);
+        recognition.onend = () => {
+          if (isInteractiveMode && isListening) {
+            recognition.start(); // Restart if in interactive mode
+          } else {
+            setIsListening(false);
+          }
+        };
+        recognition.start();
+      } else {
+        alert('Browser speech recognition not supported.');
+      }
+    } else {
+      setIsListening(false);
+      if (recognitionRef.current) recognitionRef.current.stop();
+    }
+  };
+
+  const handlePulseRead = () => {
+    setIsPulseActive(true);
+    const summary = suggestions.map(s => `${s.title}. ${s.description}`).join('... ');
+    const fullText = `Звіт Predator. ${summary}. Чекаю на ваші вказівки.`;
+    speak(fullText);
+    setTimeout(() => setIsPulseActive(false), 5000);
   };
 
   const getSuggestionIcon = (type: string) => {
@@ -198,34 +261,60 @@ export const AICopilot: React.FC = () => {
               }`}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-purple-500/30">
+            <div className="flex items-center justify-between p-4 border-b border-cyan-500/30 bg-black/40">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <Brain className="w-8 h-8 text-purple-400" />
+                  <Activity className="w-8 h-8 text-cyan-400" />
                   <motion.div
                     className="absolute inset-0"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    animate={{ rotate: 360, scale: [1, 1.2, 1] }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
                   >
-                    <Sparkles className="w-4 h-4 text-cyan-400 absolute -top-1 -right-1" />
+                    <div className="w-full h-full border border-cyan-500/30 border-dashed rounded-full" />
                   </motion.div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">AI Copilot</h3>
-                  <p className="text-xs text-purple-300">Ваш інтелектуальний помічник</p>
+                  <h3 className="text-xl font-black tracking-tighter text-white uppercase italic">PREDATOR</h3>
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <p className="text-[10px] text-cyan-300 font-bold uppercase tracking-widest">Neural Core v45.0</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handlePulseRead}
+                  className={`p-2 rounded-lg transition-all ${isPulseActive ? 'bg-cyan-500/30 text-cyan-400' : 'hover:bg-cyan-500/10 text-cyan-300'}`}
+                  title="Прочитати звіт"
+                >
+                  <Volume2 className={`w-5 h-5 ${isPulseActive ? 'animate-bounce' : ''}`} />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setIsInteractiveMode(!isInteractiveMode);
+                    if (!isInteractiveMode && !isListening) {
+                      setTimeout(handleVoiceToggle, 100); // Auto-start listening when enabling
+                    }
+                  }}
+                  className={`p-2 rounded-lg transition-all ${isInteractiveMode ? 'bg-cyan-500/30 text-cyan-400 border border-cyan-500/50' : 'hover:bg-cyan-500/10 text-cyan-300'}`}
+                  title="Інтерактивний режим (Predator Ear)"
+                >
+                  <Ear className={`w-5 h-5 ${isInteractiveMode ? 'animate-pulse text-cyan-400' : ''}`} />
+                </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setIsExpanded(!isExpanded)}
-                  className="p-2 hover:bg-purple-500/20 rounded-lg transition-colors"
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                 >
                   {isExpanded ? (
-                    <Minimize2 className="w-5 h-5 text-purple-300" />
+                    <Minimize2 className="w-5 h-5 text-gray-300" />
                   ) : (
-                    <Maximize2 className="w-5 h-5 text-purple-300" />
+                    <Maximize2 className="w-5 h-5 text-gray-300" />
                   )}
                 </motion.button>
                 <motion.button
@@ -296,7 +385,13 @@ export const AICopilot: React.FC = () => {
                     <div className="flex items-start gap-3">
                       <Brain className="w-6 h-6 text-purple-400 mt-1" />
                       <div className="flex-1">
-                        <p className="text-sm text-white whitespace-pre-line">{aiResponse}</p>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[10px] uppercase tracking-wider text-cyan-400 font-bold">
+                            {activeAgent || 'Neural Core'}
+                          </span>
+                          <span className="flex h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                        </div>
+                        <p className="text-sm text-white whitespace-pre-line leading-relaxed">{aiResponse}</p>
                       </div>
                     </div>
                   </motion.div>
@@ -304,18 +399,18 @@ export const AICopilot: React.FC = () => {
               </div>
 
               {/* Input Area */}
-              <div className="p-4 border-t border-purple-500/30">
+              <div className="p-4 border-t border-cyan-500/30 bg-black/40">
                 <div className="flex items-center gap-2">
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleVoiceToggle}
-                    className={`p-3 rounded-xl transition-all ${isListening
-                      ? 'bg-red-500 text-white'
-                      : 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30'
+                    className={`p-3 rounded-xl transition-all shadow-[0_0_15px_rgba(6,182,212,0.2)] ${isListening
+                      ? 'bg-red-600 text-white animate-pulse'
+                      : 'bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30'
                       }`}
                   >
-                    {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                    {isListening ? <Activity className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
                   </motion.button>
 
                   <input
@@ -324,21 +419,22 @@ export const AICopilot: React.FC = () => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                    placeholder="Запитайте AI про що завгодно..."
-                    className="flex-1 bg-slate-800/50 border border-purple-500/30 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/60 transition-colors"
+                    placeholder={isInteractiveMode ? "Predator слухає активне середовище..." : "Введіть команду для Predator..."}
+                    className="flex-1 bg-black/60 border border-cyan-500/30 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500/60 transition-all font-mono text-sm"
                   />
 
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={handleSend}
-                    className="p-3 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-xl text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+                    onClick={() => handleSend()}
+                    className="p-3 bg-gradient-to-r from-cyan-600 to-blue-700 rounded-xl text-white shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all"
                   >
-                    <Send className="w-5 h-5" />
+                    <Zap className="w-5 h-5" />
                   </motion.button>
                 </div>
               </div>
             </div>
+            <audio ref={audioRef} style={{ display: 'none' }} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -346,4 +442,4 @@ export const AICopilot: React.FC = () => {
   );
 };
 
-export default AICopilot;
+export default Predator;

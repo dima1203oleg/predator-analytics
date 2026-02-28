@@ -407,11 +407,22 @@ if TEMPORAL_AVAILABLE:
 
                 # Stage 5: PROMOTE
                 if evaluation.get('should_promote', False):
-                    promoted = await workflow.execute_activity(
-                        promote_improvements,
+                    approved = await workflow.execute_activity(
+                        manual_approval_check,
                         args=[evaluation],
                         start_to_close_timeout=timedelta(minutes=5)
                     )
+                    if approved:
+                        promoted = await workflow.execute_activity(
+                            promote_improvements,
+                            args=[evaluation],
+                            start_to_close_timeout=timedelta(minutes=5)
+                        )
+                    else:
+                        promoted = False
+                        logger.info('Manual approval not granted, skipping promotion.')
+                else:
+                    promoted = False
                 stages_completed['promote'] = True
 
             except Exception as e:
@@ -552,3 +563,13 @@ def get_workflow_starter() -> WorkflowStarter:
     if workflow_starter is None:
         workflow_starter = WorkflowStarter()
     return workflow_starter
+
+
+# Add new activity for manual approval check
+@activity.defn
+async def manual_approval_check(evaluation: dict[str, Any]) -> bool:
+    # Placeholder: Check for human approval, e.g., via Redis flag or API call.
+    # In a real system, this could query a database or external service for approval status.
+    # For now, return False by default or check a config flag.
+    from libs.core.config import settings
+    return getattr(settings, 'MANUAL_GATE_APPROVED', False)

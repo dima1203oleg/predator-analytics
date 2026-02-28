@@ -40,7 +40,9 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
         try {
             const data = await api.graph.search(query);
             // Transform data for SVG positions (simulated force-layout)
-            const transformedNodes = data.nodes.map((n: any, i: number) => ({
+            const safeNodes = data?.nodes || [];
+            const safeEdges = data?.edges || [];
+            const transformedNodes = safeNodes.map((n: any, i: number) => ({
                 ...n,
                 x: 200 + Math.cos(i * 1.5) * 150,
                 y: 200 + Math.sin(i * 1.5) * 150,
@@ -48,7 +50,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                 color: n.label === 'ORGANIZATION' ? '#8b5cf6' : n.label === 'PERSON' ? '#ec4899' : '#0ea5e9'
             }));
             setNodes(transformedNodes);
-            setEdges(data.edges);
+            setEdges(safeEdges);
         } catch (e) {
             console.error("Failed to fetch graph", e);
         } finally {
@@ -154,11 +156,11 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                             whileHover={{ scale: 1.2, cursor: 'pointer' }}
                         >
                             {/* Outer Glow */}
-                            <circle cx={node.x} cy={node.y} r={node.size/2 + 5} fill={node.color} fillOpacity="0.05" />
+                            <circle cx={node.x} cy={node.y} r={node.size / 2 + 5} fill={node.color} fillOpacity="0.05" />
                             {/* Main Circle */}
                             <circle
                                 cx={node.x} cy={node.y}
-                                r={node.size/2}
+                                r={node.size / 2}
                                 fill={node.color}
                                 fillOpacity="0.15"
                                 stroke={node.color}
@@ -169,7 +171,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
 
                             {/* Label */}
                             <text
-                                x={node.x} y={node.y + node.size/2 + 15}
+                                x={node.x} y={node.y + node.size / 2 + 15}
                                 textAnchor="middle"
                                 className="text-[8px] fill-slate-400 font-bold uppercase tracking-tighter"
                             >
@@ -192,9 +194,9 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                 </div>
 
                 <div className="flex gap-2">
-                   <button className="px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-2">
-                       <Zap size={14} /> EXTRACT
-                   </button>
+                    <button className="px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-2">
+                        <Zap size={14} /> EXTRACT
+                    </button>
                 </div>
             </div>
 

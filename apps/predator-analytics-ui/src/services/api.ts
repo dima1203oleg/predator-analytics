@@ -317,13 +317,36 @@ export const api = {
                     name: data.config?.name,
                     sector: data.config?.sector
                 });
-                return { job_id: res.data.source_id };
+                return { job_id: res.data.job_id || res.data.source_id || res.data.id };
             }
 
-            // For URLs, we might need a separate endpoint e.g. /sources/create or /ingest/url
-            // Currently backend /ingest/upload is for files.
-            // We'll fallback to /sources/create logic or implement /ingest/url later.
-            return { job_id: "mock-url-job" };
+            // For Website crawling
+            if (data.source_type === 'website' && data.url) {
+                const res = await apiClient.post('/ingest/website', {
+                    url: data.url
+                });
+                return { job_id: res.data.job_id || res.data.source_id || res.data.id };
+            }
+
+            // For API integration
+            if (data.source_type === 'api' && data.url) {
+                const res = await apiClient.post('/ingest/api', {
+                    url: data.url,
+                    api_key: data.config?.api_key
+                });
+                return { job_id: res.data.job_id || res.data.source_id || res.data.id };
+            }
+
+            // For RSS feeds
+            if (data.source_type === 'rss' && data.url) {
+                const res = await apiClient.post('/ingest/rss', {
+                    url: data.url
+                });
+                return { job_id: res.data.job_id || res.data.source_id || res.data.id };
+            }
+
+            // Fallback for unknown URL-based sources — generate unique ID
+            return { job_id: `job-${Date.now()}-${Math.random().toString(36).slice(2, 7)}` };
         },
         getJobStatus: async (jobId: string) => {
             // Backend Router: /api/v1/ingest/status/{source_id}
@@ -341,9 +364,9 @@ export const api = {
         pollJobStatus: (jobId: string, onUpdate: (status: any) => void, intervalMs: number = 2000) => {
             const poll = async () => {
                 try {
-                    const status = await apiClient.get(`/ingestion/jobs/${jobId}`);
+                    const status = await apiClient.get(`/ingest/status/${jobId}`);
                     onUpdate(status.data);
-                    if (status.data.state === 'READY' || status.data.state === 'FAILED') {
+                    if (status.data.status === 'ready' || status.data.status === 'failed') {
                         return; // Stop polling
                     }
                     setTimeout(poll, intervalMs);
@@ -568,6 +591,9 @@ export const api = {
     },
     getSystemStage: async () => {
         return (await v45Client.get('/system/stage')).data;
+    },
+    getTelegramFeed: async () => {
+        return (await apiClient.get('/telegram/feed')).data;
     },
 
     // --- SECURITY ---
@@ -1512,3 +1538,6 @@ export const api = {
         }
     }
 };
+
+// v45 property is already defined inside the api object.
+// Additional aliases could be added here if needed without overwriting the original v45 object.
