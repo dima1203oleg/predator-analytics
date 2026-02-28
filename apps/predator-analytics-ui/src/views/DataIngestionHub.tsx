@@ -803,7 +803,6 @@ const DataIngestionHub = () => {
             </div>
           </div>
         </div>
-      </div>
 
       {/* Knowledge Storages (Data Lakes) Section */}
       <div className="mb-0">
