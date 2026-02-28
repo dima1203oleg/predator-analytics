@@ -14,7 +14,7 @@ export const ProcessRadar = () => {
             try {
                 const data = await api.getETLJobs(10);
                 if (data && Array.isArray(data)) {
-                    setRealJobs(data.filter((j: any) => j.status !== 'READY' && j.status !== 'FAILED' && j.status !== 'completed' && j.status !== 'failed' && j.state !== 'READY' && j.state !== 'FAILED'));
+                    setRealJobs(data.filter((j: any) => j && j.status !== 'READY' && j.status !== 'FAILED' && j.status !== 'completed' && j.status !== 'failed' && j.state !== 'READY' && j.state !== 'FAILED'));
                 }
             } catch (e) {
                 // Ignore error, keep previous state
@@ -33,7 +33,7 @@ export const ProcessRadar = () => {
 
 
     return (
-        <div className="fixed bottom-12 left-80 z-[200]">
+        <div className="fixed bottom-12 right-12 z-[200]">
             <motion.div
                 initial={{ scale: 0, rotate: -45 }}
                 animate={{ scale: 1, rotate: 0 }}
@@ -118,9 +118,28 @@ export const ProcessRadar = () => {
 
                                 {/* Real Backend Jobs */}
                                 {realJobs.slice(0, Math.max(0, 3 - localActiveJobs.length)).map(job => {
+                                    if (!job) return null;
                                     const percent = job.progress?.percent || 0;
                                     const stage = job.progress?.stage || job.status || job.state || 'Обробка';
-                                    const name = job.name || job.source_name || `Завдання ${job.id?.substring(0, 8)}`;
+
+                                    // Build human-readable name (mirrors ActiveJobsPanel logic)
+                                    const buildName = (j: any): string => {
+                                        const pType = j?.pipeline_type || j?.source_type || '';
+                                        const raw = j?.source_file || j?.name || '';
+                                        if (pType === 'telegram' || raw.startsWith('telegram_')) return `Telegram: @${raw.replace(/^telegram_/, '')}`;
+                                        if (pType === 'website') return `🌐 ${raw}`;
+                                        if (pType === 'rss') return `📡 RSS: ${raw}`;
+                                        if (pType === 'audio') return `🎙️ ${raw}`;
+                                        if (pType === 'video') return `🎥 ${raw}`;
+                                        if (pType === 'image') return `🖼️ ${raw}`;
+                                        if (pType === 'pdf') return `📄 ${raw}`;
+                                        if (raw) return raw;
+                                        const id = j?.job_id || '';
+                                        if (id.startsWith('tg-')) return 'Telegram-канал';
+                                        if (id.startsWith('web-')) return 'Веб-джерело';
+                                        return 'Файл — обробка';
+                                    };
+                                    const name = buildName(job);
 
                                     return (
                                         <div key={job.id || job.job_id} className="space-y-1.5 opacity-90">

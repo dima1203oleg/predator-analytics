@@ -12,12 +12,50 @@
 import express from 'express';
 import cors from 'cors';
 import { WebSocketServer } from 'ws';
+import fs from 'fs';
+import path from 'path';
+import { exec } from 'child_process';
+import speech from '@google-cloud/speech';
+import textToSpeech from '@google-cloud/text-to-speech';
+import multer from 'multer';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const PORT = 9080;
 
 app.use(cors());
 app.use(express.json({ limit: '100mb' }));
+
+// Multer for audio uploads
+const upload = multer({ dest: 'uploads/' });
+
+// Google Cloud Clients - Using the correct TTS key from Predator_50
+const GOOGLE_KEY_PATH = './Predator_50/secrets/google-tts-key.json';
+const speechClient = new speech.SpeechClient({ keyFilename: GOOGLE_KEY_PATH });
+const ttsClient = new textToSpeech.TextToSpeechClient({ keyFilename: GOOGLE_KEY_PATH });
+
+// Remote Ollama Configuration (NVIDIA Server)
+const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
+
+// Gemini Keys for Stealth Routing
+const GEMINI_KEYS = [
+  process.env.GEMINI_KEY_1,
+  process.env.GEMINI_KEY_2,
+  process.env.GEMINI_KEY_3,
+  process.env.GEMINI_KEY_4,
+  process.env.GEMINI_KEY_5,
+  process.env.GEMINI_KEY_6,
+  process.env.GEMINI_KEY_7
+].filter(Boolean);
+
+let currentKeyIndex = 0;
+function getNextGeminiKey() {
+  const key = GEMINI_KEYS[currentKeyIndex];
+  currentKeyIndex = (currentKeyIndex + 1) % GEMINI_KEYS.length;
+  return key;
+}
 
 // =============================================
 // 📦 IN-MEMORY DATABASE (імітація розподіленого сховища)
@@ -40,6 +78,11 @@ const DB_FILES = [];
 
 // Redis (стан пайплайнів)
 const DB_PIPELINE_STATE = {};
+
+// Telegram PostgreSQL (Факти)
+const DB_TELEGRAM_EVENTS = [];
+const DB_TELEGRAM_ENTITIES = [];
+
 
 // ETL Jobs
 let etlJobs = [];
@@ -264,7 +307,948 @@ function runPipeline(jobId, sourceFile) {
         }, 1200);
       }, 2000);
     }, 1500);
-  }, 1000); // <-- Closing NORMALIZE timeout
+  }, 1000);
+}
+
+
+
+function runTelegramPipeline(jobId, url) {
+  const username = (url || '').split('/').filter(Boolean).slice(-1)[0]?.replace('@', '') || 'unknown';
+  const job = etlJobs.find(j => j.job_id === jobId);
+  if (!job) return;
+
+  const stages = [
+    'AUTH',
+    'FETCH',
+    'RAW_STORAGE',
+    'NORMALIZE',
+    'NLP_EXTRACTION',
+    'ROUTING_SQL',
+    'ROUTING_GRAPH',
+    'ROUTING_SEARCH',
+    'ROUTING_VECTOR',
+    'READY'
+  ];
+  let currentStageIndex = 0;
+
+  // Real execution with simulation fallback
+  const runScraper = () => {
+    emitEvent(jobId, 'FETCH_STARTED', `Запуск парсера для @${username}...`);
+
+    // Check if scraper exists, otherwise simulate
+    const scraperPath = '/Users/dima-mac/Documents/Predator_21/scraper_sandbox.py';
+    if (!fs.existsSync(scraperPath)) {
+      console.log(`[PIPELINE] Scraper not found. Running simulation for @${username}`);
+      emitEvent(jobId, 'FETCH_SIMULATION', `Симуляція отримання даних з @${username}...`);
+
+      // Generate realistic mock Telegram data
+      const mockMessages = [
+        { message_id: 1001, date: new Date().toISOString(), text: `⚠️ На Одеській митниці затримано контрабандну партію тютюнових виробів на суму 2.5 млн грн. ДБР порушило справу.` },
+        { message_id: 1002, date: new Date().toISOString(), text: `Львівська митниця: перевірка вантажу з Польщі виявила невідповідність декларацій. Заявлена вартість — $5000, реальна — $45000.` },
+        { message_id: 1003, date: new Date().toISOString(), text: `СБУ спільно з Держмитслужбою викрили схему ухилення від сплати мита на імпорт електроніки через фіктивні компанії.` },
+        { message_id: 1004, date: new Date().toISOString(), text: `Волинська митниця: Зафіксовано спробу незаконного ввезення 150 кг меду без сертифікатів якості.` },
+        { message_id: 1005, date: new Date().toISOString(), text: `Закарпатська митниця повідомляє про збільшення потоку вантажних автомобілів на 23% за останній тиждень.` },
+        { message_id: 1006, date: new Date().toISOString(), text: `Суд виніс вирок у справі про контрабанду цигарок через Одеський порт. Збитки державі — 12 млн грн.` },
+        { message_id: 1007, date: new Date().toISOString(), text: `Київська митниця: затримано підозрілий вантаж хімічних речовин. Проводиться експертиза.` },
+        { message_id: 1008, date: new Date().toISOString(), text: `Нові правила декларування товарів набувають чинності з 1 квітня. Митні брокери проходять перепідготовку.` }
+      ];
+
+      // Save simulated data
+      try {
+        fs.mkdirSync('/Users/dima-mac/Documents/Predator_21/.antigravity_tmp', { recursive: true });
+        fs.writeFileSync('/Users/dima-mac/Documents/Predator_21/.antigravity_tmp/channel_data.json', JSON.stringify(mockMessages, null, 2));
+      } catch (e) { console.warn('Could not save simulated data:', e); }
+
+      job.progress.records_total = mockMessages.length;
+      console.log(`[PIPELINE] Simulated ${mockMessages.length} messages for @${username}`);
+      currentStageIndex++; // Moving to RAW_STORAGE
+      processNextStage();
+      return;
+    }
+
+    exec(`TARGET_CHANNEL=${username} /Users/dima-mac/Documents/Predator_21/.venv/bin/python ${scraperPath}`,
+      { cwd: '/Users/dima-mac/Documents/Predator_21' },
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error(`[PIPELINE] Scraper error: ${error.message}`);
+          job.state = 'FAILED';
+          job.errors.push(error.message);
+          emitEvent(jobId, 'PIPELINE_FAILED', error.message);
+          return;
+        }
+        console.log(`[PIPELINE] Scraper finished. Continuing full OMNISCIENCE pipeline.`);
+        currentStageIndex++; // Moving to RAW_STORAGE
+        processNextStage();
+      });
+  };
+
+  const processNextStage = () => {
+    const stage = stages[currentStageIndex];
+    job.state = stage;
+    const percent = Math.round(((currentStageIndex + 1) / stages.length) * 100);
+
+    let details = '';
+    switch (stage) {
+      case 'AUTH': details = 'Авторизація через Telethon API...'; break;
+      case 'FETCH': details = `Отримання повідомлень з @${username}...`; break;
+      case 'RAW_STORAGE': details = 'Phase 2 (MinIO): Збереження оригіналів у MinIO...'; break;
+      case 'NORMALIZE': details = 'Phase 3 (Normalize): Перетворення на Канонічну Модель...'; break;
+      case 'NLP_EXTRACTION': details = 'Phase 4 (NLP): Видобуття сутностей (митниці, компанії, ризики)...'; break;
+      case 'ROUTING_SQL': details = 'Phase 5 (PostgreSQL): Запис структурованих фактів (telegram_events)...'; break;
+      case 'ROUTING_GRAPH': details = 'Phase 5 (GraphDB): Формування графу зв\'язків подій та сутностей...'; break;
+      case 'ROUTING_SEARCH': details = 'Phase 5 (OpenSearch): Повнотекстова індексація...'; break;
+      case 'ROUTING_VECTOR': details = 'Phase 5 (Qdrant): Семантична Llama-3 векторизація...'; break;
+      case 'READY': details = `✅ Моніторинг @${username} активовано. Дані розщеплено по 4 базах.`; break;
+    }
+
+    job.progress = { ...job.progress, stage, percent, details };
+    emitEvent(jobId, `${stage}_STARTED`, details);
+
+    let delay = 1000;
+
+    if (stage === 'AUTH') {
+      delay = 800;
+      setTimeout(() => { currentStageIndex++; processNextStage(); }, delay);
+    }
+    else if (stage === 'FETCH') {
+      runScraper();
+    }
+    else if (stage === 'RAW_STORAGE') {
+      DB_FILES.push({ id: jobId, filename: `telegram_${username}.json`, size_bytes: 157925, uploaded_at: new Date().toISOString() });
+      setTimeout(() => { currentStageIndex++; processNextStage(); }, 800);
+    }
+    else if (stage === 'NORMALIZE') {
+      try {
+        const rawData = JSON.parse(fs.readFileSync('/Users/dima-mac/Documents/Predator_21/.antigravity_tmp/channel_data.json', 'utf8'));
+        const messages = rawData.filter(m => m.text && m.text.length > 10);
+        job.tempContext = { messages };
+        emitEvent(jobId, 'MESSAGES_NORMALIZED', `Нормалізовано ${messages.length} значущих повідомлень`);
+      } catch (e) {
+        console.warn("Could not read channel_data.json", e);
+        job.tempContext = { messages: [] };
+      }
+      setTimeout(() => { currentStageIndex++; processNextStage(); }, 1200);
+    }
+    else if (stage === 'NLP_EXTRACTION') {
+      const messages = job.tempContext?.messages || [];
+      const extracted = messages.map(msg => {
+        const text = msg.text.toLowerCase();
+        const entities = [];
+        let risk_score = 0;
+        let event_type = "Інформаційне повідомлення";
+
+        if (text.includes('дбр')) entities.push({ type: 'Authority', value: 'ДБР' });
+        if (text.includes('сбу')) entities.push({ type: 'Authority', value: 'СБУ' });
+        if (text.includes('митниц')) entities.push({ type: 'Authority', value: 'Держмитслужба' });
+
+        if (text.includes('контрабанд')) { risk_score += 40; event_type = "Контрабанда"; }
+        if (text.includes('наркотик')) { risk_score += 50; event_type = "Наркотрафік"; }
+        if (text.includes('хабар') || text.includes('зловживання')) { risk_score += 45; event_type = "Корупція"; }
+        if (text.includes('суд') || text.includes('вирок')) risk_score += 15;
+
+        ['одеськ', 'львівськ', 'волинськ', 'закарпатськ', 'київськ'].forEach(reg => {
+          if (text.includes(reg)) entities.push({ type: 'CustomsOffice', value: reg.charAt(0).toUpperCase() + reg.slice(1) + 'а митниця' });
+        });
+
+        return {
+          id: `tg-${msg.message_id}`,
+          date: msg.date,
+          channel: username,
+          original_text: msg.text,
+          summary: msg.text.substring(0, 150) + '...',
+          risk_score: Math.min(risk_score, 100),
+          event_type,
+          entities
+        };
+      });
+      job.tempContext.extracted = extracted;
+      emitEvent(jobId, 'NLP_EXTRACTION_COMPLETE', `LLM вилучила ${extracted.reduce((s, e) => s + e.entities.length, 0)} сутностей`);
+      setTimeout(() => { currentStageIndex++; processNextStage(); }, 1500);
+    }
+    else if (stage === 'ROUTING_SQL') {
+      const extracted = job.tempContext?.extracted || [];
+      extracted.forEach(item => {
+        DB_TELEGRAM_EVENTS.push({
+          event_id: item.id,
+          channel: item.channel,
+          date: item.date,
+          summary: item.summary,
+          event_type: item.event_type,
+          risk_score: item.risk_score
+        });
+        item.entities.forEach(ent => {
+          DB_TELEGRAM_ENTITIES.push({
+            entity_name: ent.value,
+            entity_type: ent.type,
+            reference_event_id: item.id
+          });
+        });
+      });
+      emitEvent(jobId, 'ROUTED_POSTGRES', `Збережено у PostgreSQL таблиці telegram_events та extracted_entities`);
+      setTimeout(() => { currentStageIndex++; processNextStage(); }, 800);
+    }
+    else if (stage === 'ROUTING_GRAPH') {
+      const extracted = job.tempContext?.extracted || [];
+      const chanNodeId = `chan-${username}`;
+      if (!DB_GRAPH.nodes.find(n => n.id === chanNodeId)) {
+        DB_GRAPH.nodes.push({ id: chanNodeId, label: `@${username}`, type: 'Channel' });
+      }
+
+      let edgesCount = 0;
+      extracted.forEach(item => {
+        if (item.risk_score > 0) {
+          DB_GRAPH.nodes.push({ id: item.id, label: item.event_type, type: 'Event', risk: item.risk_score });
+          DB_GRAPH.edges.push({ from: chanNodeId, to: item.id, label: 'PUBLISHED' });
+          edgesCount++;
+
+          item.entities.forEach(ent => {
+            const entId = `ent-${ent.type}-${ent.value.replace(/\s+/g, '')}`;
+            if (!DB_GRAPH.nodes.find(n => n.id === entId)) {
+              DB_GRAPH.nodes.push({ id: entId, label: ent.value, type: ent.type });
+            }
+            DB_GRAPH.edges.push({ from: item.id, to: entId, label: 'MENTIONS' });
+            edgesCount++;
+          });
+        }
+      });
+      emitEvent(jobId, 'ROUTED_GRAPH', `GraphDB: Інтегровано ${edgesCount} нових зв'язків (Events → Entities)`);
+      setTimeout(() => { currentStageIndex++; processNextStage(); }, 1000);
+    }
+    else if (stage === 'ROUTING_SEARCH') {
+      const extracted = job.tempContext?.extracted || [];
+      extracted.forEach(item => {
+        DB_SEARCH_INDEX.push({
+          id: item.id,
+          text: item.original_text,
+          declaration: {
+            id: item.id,
+            declaration_number: `TG-${item.id.split('-')[1]}`,
+            company_name: `@${item.channel}`,
+            goods_description: item.summary,
+            country_origin: 'TELEGRAM',
+            customs_office: 'N/A',
+            customs_value_usd: 0,
+            date: item.date,
+            risk_score: item.risk_score
+          }
+        });
+      });
+      emitEvent(jobId, 'ROUTED_SEARCH', `OpenSearch: Проіндексовано ${extracted.length} документів`);
+      setTimeout(() => { currentStageIndex++; processNextStage(); }, 800);
+    }
+    else if (stage === 'ROUTING_VECTOR') {
+      const extracted = job.tempContext?.extracted || [];
+      extracted.forEach(item => {
+        DB_VECTORS.push({
+          id: item.id,
+          text: item.summary,
+          vector: Array(384).fill(0).map(() => Math.random())
+        });
+      });
+      emitEvent(jobId, 'ROUTED_QDRANT', `Qdrant: Згенеровано ${extracted.length} семантичних векторів`);
+      setTimeout(() => { currentStageIndex++; processNextStage(); }, 1200);
+    }
+    else if (stage === 'READY') {
+      DB_PIPELINE_STATE[jobId] = 'COMPLETED';
+
+      const totalItems = job.tempContext?.extracted?.length || 0;
+      job.progress.records_indexed = totalItems;
+      job.progress.records_total = totalItems;
+      job.progress.records_processed = totalItems;
+
+      emitEvent(jobId, 'OMNISCIENCE_COMPLETED', `[OMNISCIENCE] ${totalItems} Telegram-подій стали багатовимірними фактами системи`);
+
+      delete job.tempContext;
+    }
+  };
+
+  processNextStage();
+}
+
+// =============================================
+// 📄 PDF PIPELINE — Quantum Document Stack
+// =============================================
+function runPdfPipeline(jobId, filename) {
+  const job = etlJobs.find(j => j.job_id === jobId);
+  if (!job) return;
+
+  const stages = ['CREATED', 'UPLOAD', 'INGEST_MINIO', 'OCR', 'EXTRACT_CONTENT', 'CHUNK', 'VECTORIZE', 'INDEX_SEARCH', 'READY'];
+  let idx = 0;
+
+  const next = () => {
+    const stage = stages[idx];
+    const percent = Math.round(((idx + 1) / stages.length) * 100);
+    const details = {
+      CREATED: 'Ініціалізація Quantum Document Stack...',
+      UPLOAD: `Завантаження ${filename} у буфер обробки...`,
+      INGEST_MINIO: 'Збереження оригіналу PDF у MinIO [Object Storage]...',
+      OCR: 'Розпізнавання тексту — Tesseract OCR v5 + CRAFT детектор...',
+      EXTRACT_CONTENT: 'Витягнення структурованого контенту: таблиці, заголовки, параграфи...',
+      CHUNK: 'Семантична сегментація: розбиття на 512-токенні чанки з перекриттям...',
+      VECTORIZE: 'Генерація Llama-3 ембедингів — 384-вимірний простір...',
+      INDEX_SEARCH: 'Індексація в OpenSearch — створення інвертованих індексів...',
+      READY: `✅ PDF оброблено. ${filename} — розщеплено на знання.`
+    }[stage];
+
+    job.state = stage;
+    job.progress = { ...job.progress, stage, percent, details };
+    emitEvent(jobId, `${stage}_STARTED`, details);
+
+    if (stage === 'INGEST_MINIO') {
+      DB_FILES.push({ id: jobId, filename, size_bytes: 1024000, uploaded_at: new Date().toISOString(), type: 'pdf' });
+    }
+    if (stage === 'OCR') {
+      const pages = 12 + Math.floor(Math.random() * 30);
+      const ocrText = `Митна декларація №UA-${Math.floor(Math.random() * 999999)}. Товар: Обладнання промислове. Вартість: $${(Math.random() * 500000).toFixed(0)}. Країна: Німеччина.`;
+      job.tempContext = { pages, ocrText, chunks: [] };
+      emitEvent(jobId, 'OCR_COMPLETE', `Розпізнано ${pages} сторінок документа`);
+    }
+    if (stage === 'EXTRACT_CONTENT') {
+      const entities = [
+        { type: 'Company', value: 'ТОВ "ТехноГруп"' },
+        { type: 'Amount', value: '$245,000' },
+        { type: 'HSCode', value: '8471.30' },
+        { type: 'Country', value: 'Німеччина' }
+      ];
+      job.tempContext.entities = entities;
+      emitEvent(jobId, 'CONTENT_EXTRACTED', `Знайдено ${entities.length} сутностей у документі`);
+    }
+    if (stage === 'CHUNK') {
+      const chunkCount = 8 + Math.floor(Math.random() * 20);
+      for (let i = 0; i < chunkCount; i++) {
+        job.tempContext.chunks.push({ id: `chunk-${jobId}-${i}`, text: `Chunk ${i}: ${job.tempContext.ocrText.substring(0, 100)}...`, page: Math.floor(i / 3) + 1 });
+      }
+      emitEvent(jobId, 'CHUNKING_COMPLETE', `Документ розбито на ${chunkCount} семантичних чанків`);
+    }
+    if (stage === 'VECTORIZE') {
+      (job.tempContext.chunks || []).forEach(chunk => {
+        DB_VECTORS.push({ id: chunk.id, text: chunk.text, vector: Array(384).fill(0).map(() => Math.random()), source: 'pdf', source_file: filename });
+      });
+      emitEvent(jobId, 'VECTORS_GENERATED', `${job.tempContext.chunks.length} векторів згенеровано`);
+    }
+    if (stage === 'INDEX_SEARCH') {
+      (job.tempContext.chunks || []).forEach(chunk => {
+        DB_SEARCH_INDEX.push({
+          id: chunk.id,
+          text: chunk.text,
+          declaration: { id: chunk.id, declaration_number: `PDF-${jobId.slice(-6)}`, company_name: 'PDF Document', goods_description: chunk.text.slice(0, 80), country_origin: 'PDF', customs_office: 'N/A', customs_value_usd: 0, date: new Date().toISOString(), risk_score: 0 }
+        });
+      });
+      DB_FACTS.push({
+        id: `pdf-${jobId}`, declaration_number: `PDF-${jobId.slice(-6)}`, date: new Date().toISOString().split('T')[0],
+        company_name: 'PDF Document', goods_description: `PDF: ${filename}`, goods_category: 'Документ',
+        country_origin: 'СИСТЕМА', customs_office: 'Digital', weight_kg: 0, customs_value_usd: 0,
+        risk_score: 10, source_file: filename, ingested_at: new Date().toISOString(),
+        metadata: { pages: job.tempContext.pages, chunks: job.tempContext.chunks.length, entities: job.tempContext.entities }
+      });
+      emitEvent(jobId, 'INDEXED_OPENSEARCH', `${job.tempContext.chunks.length} чанків проіндексовано`);
+    }
+    if (stage === 'READY') {
+      DB_PIPELINE_STATE[jobId] = 'COMPLETED';
+      job.progress.records_total = job.tempContext?.chunks?.length || 0;
+      job.progress.records_processed = job.tempContext?.chunks?.length || 0;
+      job.progress.records_indexed = job.tempContext?.chunks?.length || 0;
+      emitEvent(jobId, 'PDF_PIPELINE_COMPLETED', `PDF повністю оброблено: ${job.tempContext?.pages} сторінок → ${job.tempContext?.chunks?.length} чанків → векторизовано`);
+      delete job.tempContext;
+      return;
+    }
+
+    idx++;
+    setTimeout(next, 800 + Math.random() * 600);
+  };
+  next();
+}
+
+// =============================================
+// 📝 WORD PIPELINE — Text Analysis Stack
+// =============================================
+function runWordPipeline(jobId, filename) {
+  const job = etlJobs.find(j => j.job_id === jobId);
+  if (!job) return;
+
+  const stages = ['CREATED', 'UPLOAD', 'INGEST_MINIO', 'PARSE', 'CHUNK', 'VECTORIZE', 'READY'];
+  let idx = 0;
+
+  const next = () => {
+    const stage = stages[idx];
+    const percent = Math.round(((idx + 1) / stages.length) * 100);
+    const details = {
+      CREATED: 'Ініціалізація Text Analysis Stack...',
+      UPLOAD: `Завантаження ${filename}...`,
+      INGEST_MINIO: 'Збереження .docx в MinIO...',
+      PARSE: 'Парсинг структури Word: секції, таблиці, параграфи...',
+      CHUNK: 'Розбиття на семантичні блоки...',
+      VECTORIZE: 'Llama-3 векторизація параграфів...',
+      READY: `✅ Word документ оброблено: ${filename}`
+    }[stage];
+
+    job.state = stage;
+    job.progress = { ...job.progress, stage, percent, details };
+    emitEvent(jobId, `${stage}_STARTED`, details);
+
+    if (stage === 'INGEST_MINIO') {
+      DB_FILES.push({ id: jobId, filename, size_bytes: 512000, uploaded_at: new Date().toISOString(), type: 'word' });
+    }
+    if (stage === 'PARSE') {
+      const paragraphs = 15 + Math.floor(Math.random() * 40);
+      const tables = Math.floor(Math.random() * 5);
+      job.tempContext = { paragraphs, tables, chunks: [] };
+      emitEvent(jobId, 'WORD_PARSED', `Виявлено ${paragraphs} параграфів, ${tables} таблиць`);
+    }
+    if (stage === 'CHUNK') {
+      const count = job.tempContext.paragraphs;
+      for (let i = 0; i < count; i++) {
+        job.tempContext.chunks.push({ id: `wchunk-${jobId}-${i}`, text: `Параграф ${i + 1}: Аналіз торгових операцій та митних процедур...` });
+      }
+      emitEvent(jobId, 'WORD_CHUNKED', `${count} блоків створено`);
+    }
+    if (stage === 'VECTORIZE') {
+      job.tempContext.chunks.forEach(chunk => {
+        DB_VECTORS.push({ id: chunk.id, text: chunk.text, vector: Array(384).fill(0).map(() => Math.random()), source: 'word', source_file: filename });
+      });
+      DB_SEARCH_INDEX.push({
+        id: `word-${jobId}`, text: job.tempContext.chunks.map(c => c.text).join(' '),
+        declaration: { id: `word-${jobId}`, declaration_number: `WORD-${jobId.slice(-6)}`, company_name: filename, goods_description: 'Word Document', country_origin: 'СИСТЕМА', customs_office: 'N/A', customs_value_usd: 0, date: new Date().toISOString(), risk_score: 0 }
+      });
+      emitEvent(jobId, 'WORD_VECTORIZED', `${job.tempContext.chunks.length} ембедингів згенеровано`);
+    }
+    if (stage === 'READY') {
+      DB_PIPELINE_STATE[jobId] = 'COMPLETED';
+      job.progress.records_total = job.tempContext?.chunks?.length || 0;
+      job.progress.records_processed = job.tempContext?.chunks?.length || 0;
+      job.progress.records_indexed = job.tempContext?.chunks?.length || 0;
+      delete job.tempContext;
+      return;
+    }
+
+    idx++;
+    setTimeout(next, 700 + Math.random() * 500);
+  };
+  next();
+}
+
+// =============================================
+// 🖼️ IMAGE PIPELINE — Vision Analysis Layer
+// =============================================
+function runImagePipeline(jobId, filename) {
+  const job = etlJobs.find(j => j.job_id === jobId);
+  if (!job) return;
+
+  const stages = ['CREATED', 'UPLOAD', 'OCR', 'VECTORIZE', 'READY'];
+  let idx = 0;
+
+  const next = () => {
+    const stage = stages[idx];
+    const percent = Math.round(((idx + 1) / stages.length) * 100);
+    const details = {
+      CREATED: 'Ініціалізація Vision Analysis Layer...',
+      UPLOAD: `Завантаження зображення ${filename}...`,
+      OCR: 'OCR + Computer Vision: CRAFT + Tesseract + YOLO v8 object detection...',
+      VECTORIZE: 'CLIP ембединги: мультимодальна векторизація (текст + візуальне)...',
+      READY: `✅ Зображення оброблено: ${filename}`
+    }[stage];
+
+    job.state = stage;
+    job.progress = { ...job.progress, stage, percent, details };
+    emitEvent(jobId, `${stage}_STARTED`, details);
+
+    if (stage === 'UPLOAD') {
+      DB_FILES.push({ id: jobId, filename, size_bytes: 2048000, uploaded_at: new Date().toISOString(), type: 'image' });
+    }
+    if (stage === 'OCR') {
+      const labels = ['Митна печатка', 'QR-код', 'Штрих-код', 'Підпис', 'Штамп'];
+      const detectedLabels = labels.slice(0, 2 + Math.floor(Math.random() * 3));
+      const ocrText = `Виявлено: ${detectedLabels.join(', ')}. Текст: Декларація №UA-${Math.floor(Math.random() * 999999)}`;
+      job.tempContext = { ocrText, labels: detectedLabels, objects: detectedLabels.length };
+      emitEvent(jobId, 'IMAGE_OCR_COMPLETE', `OCR: ${ocrText.slice(0, 80)}... | Objects: ${detectedLabels.length}`);
+    }
+    if (stage === 'VECTORIZE') {
+      DB_VECTORS.push({
+        id: `img-${jobId}`, text: job.tempContext.ocrText,
+        vector: Array(384).fill(0).map(() => Math.random()),
+        source: 'image', source_file: filename, labels: job.tempContext.labels
+      });
+      DB_FACTS.push({
+        id: `img-${jobId}`, declaration_number: `IMG-${jobId.slice(-6)}`, date: new Date().toISOString().split('T')[0],
+        company_name: 'Image Analysis', goods_description: `OCR: ${job.tempContext.ocrText.slice(0, 60)}`, goods_category: 'Зображення',
+        country_origin: 'VISION', customs_office: 'Digital', weight_kg: 0, customs_value_usd: 0,
+        risk_score: 5, source_file: filename, ingested_at: new Date().toISOString(),
+        metadata: { objects: job.tempContext.objects, labels: job.tempContext.labels }
+      });
+      emitEvent(jobId, 'IMAGE_VECTORIZED', 'CLIP мультимодальний ембединг створено');
+    }
+    if (stage === 'READY') {
+      DB_PIPELINE_STATE[jobId] = 'COMPLETED';
+      job.progress.records_total = 1;
+      job.progress.records_processed = 1;
+      job.progress.records_indexed = 1;
+      delete job.tempContext;
+      return;
+    }
+
+    idx++;
+    setTimeout(next, 1000 + Math.random() * 800);
+  };
+  next();
+}
+
+// =============================================
+// 🎵 AUDIO PIPELINE — Acoustic Signal Processing
+// =============================================
+function runAudioPipeline(jobId, filename) {
+  const job = etlJobs.find(j => j.job_id === jobId);
+  if (!job) return;
+
+  const stages = ['CREATED', 'UPLOAD', 'DECODE', 'TRANSCRIPT', 'VECTORIZE', 'READY'];
+  let idx = 0;
+
+  const next = () => {
+    const stage = stages[idx];
+    const percent = Math.round(((idx + 1) / stages.length) * 100);
+    const details = {
+      CREATED: 'Ініціалізація Acoustic Signal Processing...',
+      UPLOAD: `Завантаження аудіо ${filename}...`,
+      DECODE: 'Декодування аудіо: FFmpeg → WAV 16kHz моно...',
+      TRANSCRIPT: 'Whisper Large v3: транскрибація мовлення → текст...',
+      VECTORIZE: 'Семантична векторизація транскрипту...',
+      READY: `✅ Аудіо оброблено: ${filename}`
+    }[stage];
+
+    job.state = stage;
+    job.progress = { ...job.progress, stage, percent, details };
+    emitEvent(jobId, `${stage}_STARTED`, details);
+
+    if (stage === 'UPLOAD') {
+      DB_FILES.push({ id: jobId, filename, size_bytes: 5120000, uploaded_at: new Date().toISOString(), type: 'audio' });
+    }
+    if (stage === 'DECODE') {
+      const duration = 30 + Math.floor(Math.random() * 300); // seconds
+      job.tempContext = { duration, format: 'WAV 16kHz', speakers: 1 + Math.floor(Math.random() * 3) };
+      emitEvent(jobId, 'AUDIO_DECODED', `Тривалість: ${Math.floor(duration / 60)}хв ${duration % 60}с | ${job.tempContext.speakers} спікер(ів)`);
+    }
+    if (stage === 'TRANSCRIPT') {
+      const transcript = `Обговорення митних процедур. Доповідач зазначив критичні зміни в тарифних ставках на електроніку. Рекомендовано переглянути класифікацію за кодом 8471. Зафіксовано порушення в декларації UA-${Math.floor(Math.random() * 999999)}.`;
+      const segments = [];
+      for (let t = 0; t < job.tempContext.duration; t += 30) {
+        segments.push({ start: t, end: Math.min(t + 30, job.tempContext.duration), text: transcript.substring(0, 60) + '...' });
+      }
+      job.tempContext.transcript = transcript;
+      job.tempContext.segments = segments;
+      emitEvent(jobId, 'TRANSCRIPT_COMPLETE', `Транскрибовано ${segments.length} сегментів тексту`);
+    }
+    if (stage === 'VECTORIZE') {
+      const chunks = job.tempContext.segments || [];
+      chunks.forEach((seg, i) => {
+        DB_VECTORS.push({ id: `audio-${jobId}-${i}`, text: seg.text, vector: Array(384).fill(0).map(() => Math.random()), source: 'audio', source_file: filename });
+      });
+      DB_SEARCH_INDEX.push({
+        id: `audio-${jobId}`, text: job.tempContext.transcript,
+        declaration: { id: `audio-${jobId}`, declaration_number: `AUD-${jobId.slice(-6)}`, company_name: 'Аудіо транскрипт', goods_description: job.tempContext.transcript.slice(0, 80), country_origin: 'AUDIO', customs_office: 'N/A', customs_value_usd: 0, date: new Date().toISOString(), risk_score: 0 }
+      });
+      DB_FACTS.push({
+        id: `audio-${jobId}`, declaration_number: `AUD-${jobId.slice(-6)}`, date: new Date().toISOString().split('T')[0],
+        company_name: 'Аудіо запис', goods_description: `Транскрипт: ${job.tempContext.transcript.slice(0, 60)}`, goods_category: 'Медіа',
+        country_origin: 'AUDIO', customs_office: 'Digital', weight_kg: 0, customs_value_usd: 0,
+        risk_score: 5, source_file: filename, ingested_at: new Date().toISOString(),
+        metadata: { duration_seconds: job.tempContext.duration, speakers: job.tempContext.speakers, segments: chunks.length }
+      });
+      emitEvent(jobId, 'AUDIO_VECTORIZED', `${chunks.length} аудіо-сегментів векторизовано`);
+    }
+    if (stage === 'READY') {
+      DB_PIPELINE_STATE[jobId] = 'COMPLETED';
+      const segs = job.tempContext?.segments?.length || 0;
+      job.progress.records_total = segs;
+      job.progress.records_processed = segs;
+      job.progress.records_indexed = segs;
+      delete job.tempContext;
+      return;
+    }
+
+    idx++;
+    setTimeout(next, 1200 + Math.random() * 800);
+  };
+  next();
+}
+
+// =============================================
+// 🎬 VIDEO PIPELINE — Visual Frame Analysis
+// =============================================
+function runVideoPipeline(jobId, filename) {
+  const job = etlJobs.find(j => j.job_id === jobId);
+  if (!job) return;
+
+  const stages = ['CREATED', 'UPLOAD', 'DECODE', 'OCR', 'TRANSCRIPT', 'VECTORIZE', 'READY'];
+  let idx = 0;
+
+  const next = () => {
+    const stage = stages[idx];
+    const percent = Math.round(((idx + 1) / stages.length) * 100);
+    const details = {
+      CREATED: 'Ініціалізація Visual Frame Analysis...',
+      UPLOAD: `Завантаження відео ${filename}...`,
+      DECODE: 'FFmpeg декодування: H.264 → кадри 1fps для аналізу...',
+      OCR: 'YOLO v8 + CRAFT: Detection на кожному ключовому кадрі...',
+      TRANSCRIPT: 'Whisper Large v3: транскрибація аудіо-доріжки...',
+      VECTORIZE: 'Мультимодальна векторизація: CLIP (кадри) + Llama-3 (текст)...',
+      READY: `✅ Відео оброблено: ${filename}`
+    }[stage];
+
+    job.state = stage;
+    job.progress = { ...job.progress, stage, percent, details };
+    emitEvent(jobId, `${stage}_STARTED`, details);
+
+    if (stage === 'UPLOAD') {
+      DB_FILES.push({ id: jobId, filename, size_bytes: 52428800, uploaded_at: new Date().toISOString(), type: 'video' });
+    }
+    if (stage === 'DECODE') {
+      const duration = 60 + Math.floor(Math.random() * 600);
+      const fps = 30;
+      const keyframes = Math.floor(duration / 10);
+      job.tempContext = { duration, fps, keyframes, frames_analyzed: keyframes };
+      emitEvent(jobId, 'VIDEO_DECODED', `Тривалість: ${Math.floor(duration / 60)}хв ${duration % 60}с | ${keyframes} ключових кадрів`);
+    }
+    if (stage === 'OCR') {
+      const objects = ['Контейнер', 'Вантажівка', 'Митний пост', 'Штрих-код', 'Номерний знак', 'Документ'];
+      const detected = objects.slice(0, 2 + Math.floor(Math.random() * 4));
+      job.tempContext.detected_objects = detected;
+      job.tempContext.ocr_text = `Кадровий аналіз: виявлено ${detected.join(', ')}`;
+      emitEvent(jobId, 'VIDEO_OCR_COMPLETE', `Виявлено ${detected.length} типів об'єктів на ${job.tempContext.keyframes} кадрах`);
+    }
+    if (stage === 'TRANSCRIPT') {
+      const transcript = `Оглядове відео митного терміналу. Показано процедуру інспекції вантажу. Інспектор зазначає відповідність документації. Виявлено маркування на контейнері ${Math.floor(Math.random() * 999999)}.`;
+      const segments = [];
+      for (let t = 0; t < job.tempContext.duration; t += 30) {
+        segments.push({ start: t, end: Math.min(t + 30, job.tempContext.duration), text: transcript.substring(0, 60) + '...' });
+      }
+      job.tempContext.transcript = transcript;
+      job.tempContext.segments = segments;
+      emitEvent(jobId, 'VIDEO_TRANSCRIPT_COMPLETE', `Аудіо транскрибовано: ${segments.length} сегментів`);
+    }
+    if (stage === 'VECTORIZE') {
+      const totalChunks = (job.tempContext.segments?.length || 0) + (job.tempContext.keyframes || 0);
+      // Visual vectors
+      for (let i = 0; i < job.tempContext.keyframes; i++) {
+        DB_VECTORS.push({ id: `vid-frame-${jobId}-${i}`, text: `Frame ${i}: ${job.tempContext.ocr_text}`, vector: Array(384).fill(0).map(() => Math.random()), source: 'video-frame', source_file: filename });
+      }
+      // Text vectors
+      (job.tempContext.segments || []).forEach((seg, i) => {
+        DB_VECTORS.push({ id: `vid-text-${jobId}-${i}`, text: seg.text, vector: Array(384).fill(0).map(() => Math.random()), source: 'video-audio', source_file: filename });
+      });
+      DB_SEARCH_INDEX.push({
+        id: `video-${jobId}`, text: `${job.tempContext.transcript} ${job.tempContext.ocr_text}`,
+        declaration: { id: `video-${jobId}`, declaration_number: `VID-${jobId.slice(-6)}`, company_name: 'Відео аналіз', goods_description: `Відео: ${filename}`, country_origin: 'VIDEO', customs_office: 'N/A', customs_value_usd: 0, date: new Date().toISOString(), risk_score: 0 }
+      });
+      DB_FACTS.push({
+        id: `video-${jobId}`, declaration_number: `VID-${jobId.slice(-6)}`, date: new Date().toISOString().split('T')[0],
+        company_name: 'Відео аналітика', goods_description: `Відео: ${job.tempContext.transcript.slice(0, 60)}`, goods_category: 'Медіа',
+        country_origin: 'VIDEO', customs_office: 'Digital', weight_kg: 0, customs_value_usd: 0,
+        risk_score: 5, source_file: filename, ingested_at: new Date().toISOString(),
+        metadata: { duration_seconds: job.tempContext.duration, keyframes: job.tempContext.keyframes, objects: job.tempContext.detected_objects, segments: job.tempContext.segments?.length }
+      });
+      emitEvent(jobId, 'VIDEO_VECTORIZED', `${totalChunks} мультимодальних ембедингів (кадри + аудіо)`);
+    }
+    if (stage === 'READY') {
+      DB_PIPELINE_STATE[jobId] = 'COMPLETED';
+      const total = (job.tempContext?.segments?.length || 0) + (job.tempContext?.keyframes || 0);
+      job.progress.records_total = total;
+      job.progress.records_processed = total;
+      job.progress.records_indexed = total;
+      delete job.tempContext;
+      return;
+    }
+
+    idx++;
+    setTimeout(next, 1500 + Math.random() * 1000);
+  };
+  next();
+}
+
+// =============================================
+// 🌐 WEBSITE PIPELINE — Autonomous Web Sonar
+// =============================================
+function runWebsitePipeline(jobId, url) {
+  const job = etlJobs.find(j => j.job_id === jobId);
+  if (!job) return;
+
+  const stages = ['CREATED', 'CRAWL', 'EXTRACT_CONTENT', 'VALIDATE', 'NORMALIZE', 'INDEX_SEARCH', 'READY'];
+  let idx = 0;
+  const domain = (url || 'unknown.com').replace(/https?:\/\//, '').split('/')[0];
+
+  const next = () => {
+    const stage = stages[idx];
+    const percent = Math.round(((idx + 1) / stages.length) * 100);
+    const details = {
+      CREATED: 'Ініціалізація Autonomous Web Sonar...',
+      CRAWL: `Crawling ${domain}: виявлення сторінок, robots.txt, sitemap.xml...`,
+      EXTRACT_CONTENT: 'Readability Engine: витягнення тексту, зображень, метаданих...',
+      VALIDATE: 'DQ Check: перевірка цілісності та релевантності контенту...',
+      NORMALIZE: 'Нормалізація до Canonical Web Schema...',
+      INDEX_SEARCH: 'OpenSearch: повнотекстова індексація сторінок...',
+      READY: `✅ Веб-сайт ${domain} оброблено.`
+    }[stage];
+
+    job.state = stage;
+    job.progress = { ...job.progress, stage, percent, details };
+    emitEvent(jobId, `${stage}_STARTED`, details);
+
+    if (stage === 'CRAWL') {
+      const pagesFound = 5 + Math.floor(Math.random() * 20);
+      const links = pagesFound * 3;
+      job.tempContext = { domain, pagesFound, links, pages: [] };
+      for (let i = 0; i < pagesFound; i++) {
+        job.tempContext.pages.push({
+          id: `page-${jobId}-${i}`,
+          url: `https://${domain}/page-${i + 1}`,
+          title: `Сторінка ${i + 1}: ${['Новини', 'Контакти', 'Про нас', 'Товари', 'Послуги', 'Документи', 'Звіти', 'Аналітика'][i % 8]}`,
+          text: `Контент сторінки ${i + 1} сайту ${domain}. Інформація про митні процедури та торгові операції.`,
+          wordCount: 200 + Math.floor(Math.random() * 800)
+        });
+      }
+      DB_FILES.push({ id: jobId, filename: `crawl_${domain}.json`, size_bytes: pagesFound * 5000, uploaded_at: new Date().toISOString(), type: 'website' });
+      emitEvent(jobId, 'CRAWL_COMPLETE', `Знайдено ${pagesFound} сторінок, ${links} зв'язків`);
+    }
+    if (stage === 'EXTRACT_CONTENT') {
+      emitEvent(jobId, 'CONTENT_EXTRACTED', `Витягнено контент з ${job.tempContext.pagesFound} сторінок`);
+    }
+    if (stage === 'VALIDATE') {
+      const valid = job.tempContext.pages.filter(() => Math.random() > 0.1);
+      job.tempContext.validPages = valid;
+      emitEvent(jobId, 'VALIDATION_COMPLETE', `${valid.length}/${job.tempContext.pagesFound} сторінок пройшли валідацію`);
+    }
+    if (stage === 'NORMALIZE') {
+      emitEvent(jobId, 'NORMALIZED', 'Контент нормалізовано до Canonical Schema');
+    }
+    if (stage === 'INDEX_SEARCH') {
+      const pages = job.tempContext.validPages || job.tempContext.pages;
+      pages.forEach(page => {
+        DB_SEARCH_INDEX.push({
+          id: page.id, text: `${page.title} ${page.text}`,
+          declaration: { id: page.id, declaration_number: `WEB-${jobId.slice(-6)}`, company_name: domain, goods_description: page.title, country_origin: 'WEB', customs_office: 'N/A', customs_value_usd: 0, date: new Date().toISOString(), risk_score: 0 }
+        });
+        DB_VECTORS.push({ id: page.id, text: page.text, vector: Array(384).fill(0).map(() => Math.random()), source: 'website', source_file: domain });
+      });
+      // Graph: link structure
+      const siteNode = `site-${domain.replace(/[^a-z0-9]/g, '')}`;
+      if (!DB_GRAPH.nodes.find(n => n.id === siteNode)) {
+        DB_GRAPH.nodes.push({ id: siteNode, label: domain, type: 'Website' });
+      }
+      pages.slice(0, 10).forEach(page => {
+        DB_GRAPH.nodes.push({ id: page.id, label: page.title, type: 'WebPage' });
+        DB_GRAPH.edges.push({ from: siteNode, to: page.id, label: 'HAS_PAGE' });
+      });
+      emitEvent(jobId, 'WEB_INDEXED', `${pages.length} сторінок проіндексовано + граф зв'язків`);
+    }
+    if (stage === 'READY') {
+      DB_PIPELINE_STATE[jobId] = 'COMPLETED';
+      const total = job.tempContext?.validPages?.length || job.tempContext?.pagesFound || 0;
+      job.progress.records_total = total;
+      job.progress.records_processed = total;
+      job.progress.records_indexed = total;
+      delete job.tempContext;
+      return;
+    }
+
+    idx++;
+    setTimeout(next, 1000 + Math.random() * 800);
+  };
+  next();
+}
+
+// =============================================
+// ⚡ API PIPELINE — Neural Stream Sync
+// =============================================
+function runApiPipeline(jobId, apiUrl) {
+  const job = etlJobs.find(j => j.job_id === jobId);
+  if (!job) return;
+
+  const stages = ['CREATED', 'AUTH', 'FETCH', 'VALIDATE', 'TRANSFORM', 'LOAD_SQL', 'INDEX_SEARCH', 'READY'];
+  let idx = 0;
+  const endpoint = (apiUrl || 'api.example.com').replace(/https?:\/\//, '').split('/')[0];
+
+  const next = () => {
+    const stage = stages[idx];
+    const percent = Math.round(((idx + 1) / stages.length) * 100);
+    const details = {
+      CREATED: 'Ініціалізація Neural Stream Sync...',
+      AUTH: `Автентифікація через API Key/OAuth2 для ${endpoint}...`,
+      FETCH: `Запит до API: GET ${apiUrl}...`,
+      VALIDATE: 'Валідація JSON Schema відповіді...',
+      TRANSFORM: 'Трансформація: API Response → Canonical Model...',
+      LOAD_SQL: 'Запис структурованих даних у PostgreSQL...',
+      INDEX_SEARCH: 'Індексація в OpenSearch...',
+      READY: `✅ API інтеграція ${endpoint} завершена.`
+    }[stage];
+
+    job.state = stage;
+    job.progress = { ...job.progress, stage, percent, details };
+    emitEvent(jobId, `${stage}_STARTED`, details);
+
+    if (stage === 'AUTH') {
+      emitEvent(jobId, 'API_AUTH_OK', `Автентифікація для ${endpoint} пройдена`);
+    }
+    if (stage === 'FETCH') {
+      const recordCount = 20 + Math.floor(Math.random() * 80);
+      const apiData = [];
+      for (let i = 0; i < recordCount; i++) {
+        apiData.push({
+          id: `api-rec-${jobId}-${i}`,
+          name: `API Record ${i + 1}`,
+          value: Math.floor(Math.random() * 100000),
+          category: ['trade', 'customs', 'logistics', 'finance'][i % 4],
+          timestamp: new Date(Date.now() - Math.random() * 86400000 * 30).toISOString()
+        });
+      }
+      job.tempContext = { records: apiData, endpoint };
+      emitEvent(jobId, 'API_FETCHED', `Отримано ${recordCount} записів з API`);
+    }
+    if (stage === 'VALIDATE') {
+      const valid = job.tempContext.records.filter(() => Math.random() > 0.05);
+      job.tempContext.validRecords = valid;
+      emitEvent(jobId, 'API_VALIDATED', `${valid.length}/${job.tempContext.records.length} записів пройшли валідацію`);
+    }
+    if (stage === 'TRANSFORM') {
+      emitEvent(jobId, 'API_TRANSFORMED', 'Дані трансформовано до Canonical Model');
+    }
+    if (stage === 'LOAD_SQL') {
+      const records = job.tempContext.validRecords || job.tempContext.records;
+      records.forEach(rec => {
+        DB_FACTS.push({
+          id: rec.id, declaration_number: `API-${jobId.slice(-6)}-${rec.id.split('-').pop()}`,
+          date: rec.timestamp.split('T')[0],
+          company_name: `API: ${endpoint}`, goods_description: `${rec.name} (${rec.category})`,
+          goods_category: rec.category, country_origin: 'API', customs_office: endpoint,
+          weight_kg: 0, customs_value_usd: rec.value, risk_score: Math.floor(Math.random() * 30),
+          source_file: `api_${endpoint}`, ingested_at: new Date().toISOString()
+        });
+      });
+      emitEvent(jobId, 'API_SQL_STORED', `${records.length} записів збережено у PostgreSQL`);
+    }
+    if (stage === 'INDEX_SEARCH') {
+      const records = job.tempContext.validRecords || job.tempContext.records;
+      records.forEach(rec => {
+        DB_SEARCH_INDEX.push({
+          id: rec.id, text: `${rec.name} ${rec.category} ${endpoint}`,
+          declaration: { id: rec.id, declaration_number: `API-${jobId.slice(-6)}`, company_name: endpoint, goods_description: rec.name, country_origin: 'API', customs_office: endpoint, customs_value_usd: rec.value, date: rec.timestamp, risk_score: 0 }
+        });
+      });
+      emitEvent(jobId, 'API_INDEXED', `${records.length} записів проіндексовано`);
+    }
+    if (stage === 'READY') {
+      DB_PIPELINE_STATE[jobId] = 'COMPLETED';
+      const total = job.tempContext?.validRecords?.length || job.tempContext?.records?.length || 0;
+      job.progress.records_total = total;
+      job.progress.records_processed = total;
+      job.progress.records_indexed = total;
+      delete job.tempContext;
+      return;
+    }
+
+    idx++;
+    setTimeout(next, 800 + Math.random() * 600);
+  };
+  next();
+}
+
+// =============================================
+// 📡 RSS PIPELINE — Plasma News Stream
+// =============================================
+function runRssPipeline(jobId, feedUrl) {
+  const job = etlJobs.find(j => j.job_id === jobId);
+  if (!job) return;
+
+  const stages = ['CREATED', 'FETCH', 'PARSE', 'TRANSFORM', 'INDEX_SEARCH', 'READY'];
+  let idx = 0;
+  const feedDomain = (feedUrl || 'news.example.com').replace(/https?:\/\//, '').split('/')[0];
+
+  const NEWS_TEMPLATES = [
+    { title: 'Зміни в митних тарифах на електроніку', category: 'Регуляція', risk: 35 },
+    { title: 'Нові правила імпорту с/г продукції', category: 'Агро', risk: 20 },
+    { title: 'Розслідування контрабанди на Одеській митниці', category: 'Безпека', risk: 85 },
+    { title: 'Стратегічні зміни в логістичних маршрутах', category: 'Логістика', risk: 15 },
+    { title: 'Санкційний список оновлено: +12 компаній', category: 'Санкції', risk: 90 },
+    { title: 'Ринок металу: тренди та прогнози Q2', category: 'Аналітика', risk: 10 },
+    { title: 'Кібератака на митну систему: реакція', category: 'Безпека', risk: 70 },
+    { title: 'Автоматизація митного оформлення', category: 'Технологія', risk: 5 },
+    { title: 'Нові торгові угоди з країнами АСЕАН', category: 'Дипломатія', risk: 15 },
+    { title: 'Виявлення цінових аномалій в імпорті фармацевтики', category: 'Фармацевтика', risk: 65 },
+  ];
+
+  const next = () => {
+    const stage = stages[idx];
+    const percent = Math.round(((idx + 1) / stages.length) * 100);
+    const details = {
+      CREATED: 'Ініціалізація Plasma News Stream...',
+      FETCH: `Отримання RSS фіду з ${feedDomain}...`,
+      PARSE: 'Розбір XML/Atom: витягнення заголовків, контенту, дат...',
+      TRANSFORM: 'Трансформація до уніфікованого формату новин...',
+      INDEX_SEARCH: 'OpenSearch + Qdrant: повнотекстова індексація + семантичне групування...',
+      READY: `✅ RSS моніторинг ${feedDomain} активовано.`
+    }[stage];
+
+    job.state = stage;
+    job.progress = { ...job.progress, stage, percent, details };
+    emitEvent(jobId, `${stage}_STARTED`, details);
+
+    if (stage === 'FETCH') {
+      const articleCount = 5 + Math.floor(Math.random() * 10);
+      const articles = [];
+      for (let i = 0; i < articleCount; i++) {
+        const template = NEWS_TEMPLATES[i % NEWS_TEMPLATES.length];
+        articles.push({
+          id: `rss-${jobId}-${i}`,
+          title: template.title,
+          text: `${template.title}. Детальний аналіз ситуації в секторі ${template.category}. Джерело: ${feedDomain}.`,
+          category: template.category,
+          risk_score: template.risk,
+          published: new Date(Date.now() - Math.random() * 86400000 * 7).toISOString(),
+          source: feedDomain
+        });
+      }
+      job.tempContext = { articles, feedDomain };
+      emitEvent(jobId, 'RSS_FETCHED', `Отримано ${articleCount} статей з ${feedDomain}`);
+    }
+    if (stage === 'PARSE') {
+      emitEvent(jobId, 'RSS_PARSED', `${job.tempContext.articles.length} статей розпарсено`);
+    }
+    if (stage === 'TRANSFORM') {
+      emitEvent(jobId, 'RSS_TRANSFORMED', 'Формат уніфіковано: заголовок, текст, категорія, ризик');
+    }
+    if (stage === 'INDEX_SEARCH') {
+      const articles = job.tempContext.articles;
+      articles.forEach(article => {
+        // OpenSearch
+        DB_SEARCH_INDEX.push({
+          id: article.id, text: `${article.title} ${article.text}`,
+          declaration: { id: article.id, declaration_number: `RSS-${jobId.slice(-6)}`, company_name: feedDomain, goods_description: article.title, country_origin: 'RSS', customs_office: 'News', customs_value_usd: 0, date: article.published, risk_score: article.risk_score }
+        });
+        // Qdrant
+        DB_VECTORS.push({ id: article.id, text: `${article.title} ${article.text}`, vector: Array(384).fill(0).map(() => Math.random()), source: 'rss', source_file: feedDomain });
+        // PostgreSQL
+        DB_FACTS.push({
+          id: article.id, declaration_number: `RSS-${jobId.slice(-6)}-${article.id.split('-').pop()}`,
+          date: article.published.split('T')[0],
+          company_name: feedDomain, goods_description: article.title,
+          goods_category: article.category, country_origin: 'RSS', customs_office: 'News',
+          weight_kg: 0, customs_value_usd: 0, risk_score: article.risk_score,
+          source_file: `rss_${feedDomain}`, ingested_at: new Date().toISOString()
+        });
+      });
+      emitEvent(jobId, 'RSS_INDEXED', `${articles.length} статей: OpenSearch + Qdrant + PostgreSQL`);
+    }
+    if (stage === 'READY') {
+      DB_PIPELINE_STATE[jobId] = 'COMPLETED';
+      const total = job.tempContext?.articles?.length || 0;
+      job.progress.records_total = total;
+      job.progress.records_processed = total;
+      job.progress.records_indexed = total;
+      delete job.tempContext;
+      return;
+    }
+
+    idx++;
+    setTimeout(next, 900 + Math.random() * 600);
+  };
+  next();
 }
 
 // =============================================
@@ -301,17 +1285,63 @@ app.get(['/api/v1/autonomy/hypotheses', '/v1/autonomy/hypotheses'], (req, res) =
 });
 
 // System Lockdown
-app.get(['/api/v1/system/lockdown', '/v1/system/lockdown'], (req, res) => {
-  res.json({ active: false, level: 0, reason: null });
+app.get(['/api/v1/system/lockdown', '/v1/system/lockdown', '/api/v45/system/lockdown'], (req, res) => {
+  res.json({ active: false, level: 0, reason: null, status: 'secure', is_active: false });
 });
 
-// System metrics
-app.get('/api/v1/system/metrics', (req, res) => {
-  res.json({ cpu: 24 + Math.random() * 15, memory: 45 + Math.random() * 20, disk: 32, network: { in: Math.random() * 1000, out: Math.random() * 500 }, timestamp: new Date().toISOString() });
+app.post('/api/v45/system/lockdown', (req, res) => {
+  res.json({ is_active: true, status: 'LOCKDOWN ENGAGED' });
 });
 
-app.get('/api/v1/metrics/realtime', (req, res) => {
-  res.json({ activeUsers: 3, requestsPerSecond: Math.floor(Math.random() * 50), avgResponseTime: Math.floor(Math.random() * 30), errorRate: Math.random() * 0.5 });
+// System metrics (handles both v1 format and v45 Omniscience expectations)
+app.get(['/api/v1/system/metrics', '/v1/system/metrics', '/api/v45/system/status'], (req, res) => {
+  res.json({
+    health_score: 98 + Math.random() * 2,
+    advisor_note: "Sovereign AI Active: Всі системи працюють стабільно.",
+    opensearch: { opensearch_docs: DB_SEARCH_INDEX.length },
+    qdrant: { qdrant_vectors: DB_VECTORS.length },
+    cpu: 24 + Math.random() * 15,
+    cpu_percent: 24 + Math.random() * 15, // used by v1 omniscience metrics
+    memory: 45 + Math.random() * 20,
+    memory_percent: 45 + Math.random() * 20, // used by v1 omniscience metrics
+    disk: 32,
+    network: { in: Math.random() * 1000, out: Math.random() * 500 },
+    active_containers: 12,
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get(['/api/v1/metrics/realtime', '/v1/metrics/realtime', '/api/v45/metrics/realtime'], (req, res) => {
+  res.json({
+    activeUsers: 3,
+    requestsPerSecond: Math.floor(Math.random() * 50),
+    avgResponseTime: Math.floor(Math.random() * 30),
+    errorRate: Math.random() * 0.5,
+    // V45 Realtime metrics structure 
+    throughput: { value: 1400 + Math.random() * 200, unit: 'req/s' },
+    latency: { value: 45 + Math.random() * 10, unit: 'ms' },
+    error_rate: { value: 0.01 + Math.random() * 0.02, unit: '%' },
+    ndcg: { value: 0.94, unit: 'score' },
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get(['/api/v1/monitoring/health', '/api/v45/monitoring/health'], (req, res) => {
+  res.json({
+    status: 'UP',
+    health_score: 99,
+    services: { database: { status: 'UP' }, cache: { status: 'UP' }, llm: { status: 'UP' } }
+  });
+});
+
+app.get('/api/v45/training/status', (req, res) => {
+  res.json({
+    timestamp: new Date().toISOString(),
+    stage: 'OPTIMIZATION',
+    message: 'Training module is idle.',
+    status: 'IDLE',
+    progress: 100
+  });
 });
 
 // AI Agents
@@ -402,35 +1432,218 @@ app.post(['/api/v1/ai/query', '/api/v1/nexus/chat'], (req, res) => {
 });
 
 // =============================================
-// 📤 UPLOAD & PIPELINE
+// 📥 UNIVERSAL INGESTION ROUTER
 // =============================================
+let activeUploads = {};
 
-app.post(['/api/v1/data-hub/upload', '/api/v1/ingest/upload'], (req, res) => {
-  const job_id = `etl-${Date.now()}`;
-  const source_file = "Березень_2024.xlsx";
+app.post('/api/v1/ingest/upload/start', (req, res) => {
+  const request_id = `req-${Date.now()}`;
+  activeUploads[request_id] = { chunks: 0, startedAt: Date.now() };
+  res.json({ request_id });
+});
+
+app.post('/api/v1/ingest/upload/chunk', (req, res) => {
+  // Mock receiving a chunk
+  const { request_id, index } = req.body || req.query; // If body is parsed or formData is not
+  if (request_id && activeUploads[request_id]) {
+    activeUploads[request_id].chunks++;
+  }
+  res.json({ success: true, index });
+});
+
+app.post('/api/v1/ingest/upload/complete', (req, res) => {
+  const job_id = `file-${Date.now()}`;
+  // Read from body (assuming multer or express body parser handles it, or from query/form)
+  const filename = req.body?.filename || req.query?.filename || "upload.data";
+  const source_type = req.body?.source_type || 'generic';
+
+  let pipelineType = 'customs';
+  if (filename.toLowerCase().endsWith('.pdf')) pipelineType = 'pdf';
+  if (filename.toLowerCase().endsWith('.mp3')) pipelineType = 'audio';
+  if (filename.toLowerCase().endsWith('.mp4')) pipelineType = 'video';
+  if (filename.toLowerCase().includes('telegram')) pipelineType = 'telegram';
+
   const newJob = {
-    job_id, id: job_id, source_id: job_id, source_file,
-    state: 'UPLOADING',
-    progress: { percent: 0, records_total: 0, records_processed: 0, records_indexed: 0, stage: 'UPLOADING', details: 'Ініціалізація пайплайну...' },
+    job_id, id: job_id, source_id: job_id,
+    source_file: filename, pipeline_type: pipelineType,
+    state: 'CREATED',
+    progress: { percent: 0, records_total: 1000, records_processed: 0, records_indexed: 0, stage: 'CREATED', details: `Started pipeline for ${filename}` },
     timestamps: { created_at: new Date().toISOString(), state_entered_at: new Date().toISOString(), updated_at: new Date().toISOString() },
     errors: []
   };
 
   etlJobs.unshift(newJob);
   DB_PIPELINE_STATE[job_id] = 'STARTED';
-  emitEvent(job_id, 'PIPELINE_STARTED', `Запущено повний пайплайн для ${source_file}`);
+  emitEvent(job_id, 'FILE_UPLOADED', `Файл ${filename} прийнято до обробки`);
 
-  // Запускаємо реальний 6-фазний пайплайн
-  runPipeline(job_id, source_file);
+  if (pipelineType === 'customs') {
+    runPipeline(job_id, filename);
+  } else {
+    // Basic fallback progress for other types
+    setTimeout(() => { newJob.state = 'VALIDATING'; newJob.progress.percent = 20; }, 2000);
+    setTimeout(() => { newJob.state = 'PROCESSING'; newJob.progress.percent = 60; }, 4000);
+    setTimeout(() => { newJob.state = 'READY'; newJob.progress.percent = 100; newJob.progress.stage = 'COMPLETED'; }, 6000);
+  }
 
-  res.json({ success: true, job_id, source_id: job_id, id: job_id });
+  res.json({ success: true, id: job_id, job_id, source_id: job_id, message: "Pipeline initiated" });
 });
+
+app.post(['/api/v1/data-hub/upload', '/api/v1/ingest/upload'], (req, res) => {
+  const job_id = `etl-${Date.now()}`;
+  // Detect source type from request body or filename
+  const contentType = req.headers['content-type'] || '';
+  const source_type = req.body?.source_type || 'customs';
+  const filename = req.body?.filename || "Березень_2024.xlsx";
+
+  // Determine pipeline based on file extension or explicit source_type
+  let pipelineType = 'customs';
+  const ext = filename.split('.').pop()?.toLowerCase() || '';
+  if (['pdf'].includes(ext) || source_type === 'pdf') pipelineType = 'pdf';
+  else if (['doc', 'docx'].includes(ext) || source_type === 'word') pipelineType = 'word';
+  else if (['jpg', 'jpeg', 'png', 'webp', 'tiff'].includes(ext) || source_type === 'image') pipelineType = 'image';
+  else if (['mp3', 'wav', 'm4a', 'ogg', 'flac'].includes(ext) || source_type === 'audio') pipelineType = 'audio';
+  else if (['mp4', 'mov', 'avi', 'webm', 'mkv'].includes(ext) || source_type === 'video') pipelineType = 'video';
+  else if (['csv', 'xlsx', 'xls'].includes(ext) || ['customs', 'excel', 'csv'].includes(source_type)) pipelineType = 'customs';
+
+  const source_file = filename;
+  const PIPELINE_LABELS = {
+    customs: 'Structured Data Reactor',
+    pdf: 'Quantum Document Stack',
+    word: 'Text Analysis Stack',
+    image: 'Vision Analysis Layer',
+    audio: 'Acoustic Signal Processing',
+    video: 'Visual Frame Analysis'
+  };
+
+  const newJob = {
+    job_id, id: job_id, source_id: job_id, source_file, pipeline_type: pipelineType,
+    state: 'CREATED',
+    progress: { percent: 0, records_total: 0, records_processed: 0, records_indexed: 0, stage: 'CREATED', details: `Ініціалізація ${PIPELINE_LABELS[pipelineType] || 'Pipeline'}...` },
+    timestamps: { created_at: new Date().toISOString(), state_entered_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    errors: []
+  };
+
+  etlJobs.unshift(newJob);
+  DB_PIPELINE_STATE[job_id] = 'STARTED';
+  emitEvent(job_id, 'PIPELINE_STARTED', `[${PIPELINE_LABELS[pipelineType]}] Запущено пайплайн для ${source_file}`);
+
+  // Route to the correct pipeline
+  switch (pipelineType) {
+    case 'pdf': runPdfPipeline(job_id, source_file); break;
+    case 'word': runWordPipeline(job_id, source_file); break;
+    case 'image': runImagePipeline(job_id, source_file); break;
+    case 'audio': runAudioPipeline(job_id, source_file); break;
+    case 'video': runVideoPipeline(job_id, source_file); break;
+    default: runPipeline(job_id, source_file); break;
+  }
+
+  res.json({ success: true, job_id, source_id: job_id, id: job_id, pipeline_type: pipelineType });
+});
+
+app.post(['/api/v1/ingest/telegram', '/v1/ingest/telegram'], (req, res) => {
+  const { url, name } = req.body;
+  const job_id = `tg-${Date.now()}`;
+  const username = (url || '').split('/').filter(Boolean).slice(-1)[0]?.replace('@', '') || 'unknown';
+
+  const newJob = {
+    job_id, id: job_id, source_id: job_id,
+    source_file: `telegram_${username}`, pipeline_type: 'telegram',
+    state: 'CREATED',
+    progress: { percent: 0, records_total: 0, records_processed: 0, records_indexed: 0, stage: 'CREATED', details: `Ініціалізація моніторингу @${username}...` },
+    timestamps: { created_at: new Date().toISOString(), state_entered_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    errors: []
+  };
+
+  etlJobs.unshift(newJob);
+  DB_PIPELINE_STATE[job_id] = 'STARTED';
+  emitEvent(job_id, 'TELEGRAM_PIPELINE_STARTED', `Запущено пайплайн для Telegram каналу @${username}`);
+
+  // Запускаємо моніторинг
+  runTelegramPipeline(job_id, url);
+
+  res.json({ success: true, job_id, source_id: job_id, id: job_id, message: "Парсинг розпочато" });
+});
+
+// 🌐 Website ingestion endpoint
+app.post(['/api/v1/ingest/website', '/v1/ingest/website'], (req, res) => {
+  const { url } = req.body;
+  const job_id = `web-${Date.now()}`;
+  const domain = (url || 'unknown.com').replace(/https?:\/\//, '').split('/')[0];
+
+  const newJob = {
+    job_id, id: job_id, source_id: job_id,
+    source_file: domain, pipeline_type: 'website',
+    state: 'CREATED',
+    progress: { percent: 0, records_total: 0, records_processed: 0, records_indexed: 0, stage: 'CREATED', details: `Ініціалізація Web Sonar для ${domain}...` },
+    timestamps: { created_at: new Date().toISOString(), state_entered_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    errors: []
+  };
+
+  etlJobs.unshift(newJob);
+  DB_PIPELINE_STATE[job_id] = 'STARTED';
+  emitEvent(job_id, 'WEBSITE_PIPELINE_STARTED', `Web Sonar активовано для ${domain}`);
+  runWebsitePipeline(job_id, url);
+
+  res.json({ success: true, job_id, source_id: job_id, id: job_id, message: `Crawling ${domain} розпочато` });
+});
+
+// ⚡ API ingestion endpoint
+app.post(['/api/v1/ingest/api', '/v1/ingest/api'], (req, res) => {
+  const { url, api_key } = req.body;
+  const job_id = `api-${Date.now()}`;
+  const endpoint = (url || 'api.example.com').replace(/https?:\/\//, '').split('/')[0];
+
+  const newJob = {
+    job_id, id: job_id, source_id: job_id,
+    source_file: `api_${endpoint}`, pipeline_type: 'api',
+    state: 'CREATED',
+    progress: { percent: 0, records_total: 0, records_processed: 0, records_indexed: 0, stage: 'CREATED', details: `Ініціалізація API Stream Sync для ${endpoint}...` },
+    timestamps: { created_at: new Date().toISOString(), state_entered_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    errors: []
+  };
+
+  etlJobs.unshift(newJob);
+  DB_PIPELINE_STATE[job_id] = 'STARTED';
+  emitEvent(job_id, 'API_PIPELINE_STARTED', `Neural Stream Sync для ${endpoint}`);
+  runApiPipeline(job_id, url);
+
+  res.json({ success: true, job_id, source_id: job_id, id: job_id, message: `API інтеграція з ${endpoint} розпочата` });
+});
+
+// 📡 RSS ingestion endpoint
+app.post(['/api/v1/ingest/rss', '/v1/ingest/rss'], (req, res) => {
+  const { url } = req.body;
+  const job_id = `rss-${Date.now()}`;
+  const feedDomain = (url || 'news.example.com').replace(/https?:\/\//, '').split('/')[0];
+
+  const newJob = {
+    job_id, id: job_id, source_id: job_id,
+    source_file: `rss_${feedDomain}`, pipeline_type: 'rss',
+    state: 'CREATED',
+    progress: { percent: 0, records_total: 0, records_processed: 0, records_indexed: 0, stage: 'CREATED', details: `Ініціалізація Plasma Stream для ${feedDomain}...` },
+    timestamps: { created_at: new Date().toISOString(), state_entered_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    errors: []
+  };
+
+  etlJobs.unshift(newJob);
+  DB_PIPELINE_STATE[job_id] = 'STARTED';
+  emitEvent(job_id, 'RSS_PIPELINE_STARTED', `Plasma News Stream для ${feedDomain}`);
+  runRssPipeline(job_id, url);
+
+  res.json({ success: true, job_id, source_id: job_id, id: job_id, message: `RSS моніторинг ${feedDomain} розпочато` });
+});
+
 
 // ETL Jobs listing
 app.get('/api/v45/etl/jobs', (req, res) => { res.json({ jobs: etlJobs }); });
 app.get('/api/v1/etl/jobs', (req, res) => { res.json({ jobs: etlJobs }); });
 app.get('/api/v1/etl/status', (req, res) => {
-  res.json({ status: 'READY', active_jobs: etlJobs.filter(j => j.state !== 'READY' && j.state !== 'COMPLETED').length, total_records: DB_FACTS.length });
+  res.json({
+    status: 'READY',
+    active_jobs: etlJobs.filter(j => j.state !== 'READY' && j.state !== 'COMPLETED').length,
+    total_records: DB_FACTS.length,
+    new_docs_24h: Math.floor(DB_FACTS.length * 0.15) + (etlJobs.length * 12)
+  });
 });
 
 // =============================================
@@ -575,21 +1788,27 @@ app.get(['/api/v1/ingestion/stream/:jobId', '/api/v1/data-hub/stream/:jobId'], (
 
 app.get('/api/v1/search', (req, res) => {
   const q = (req.query.q || '').toLowerCase();
+  const queryWords = q.split(/\s+/).filter(Boolean);
+
   if (!q || DB_SEARCH_INDEX.length === 0) {
     return res.json({ results: [], total: 0, query: q });
   }
 
   const results = DB_SEARCH_INDEX
-    .filter(doc => doc.text.toLowerCase().includes(q))
+    .filter(doc => {
+      const text = doc.text.toLowerCase();
+      // Match if ANY word from the query is in the text
+      return queryWords.some(word => word.length > 2 && text.includes(word));
+    })
     .slice(0, 20)
     .map((doc, i) => ({
       id: doc.declaration.id,
-      title: `Декларація ${doc.declaration.declaration_number}: ${doc.declaration.goods_description}`,
-      snippet: `${doc.declaration.company_name} | ${doc.declaration.country_origin} | ${doc.declaration.customs_office} | $${doc.declaration.customs_value_usd.toLocaleString()}`,
+      title: `[${doc.declaration.country_origin}] ${doc.declaration.declaration_number}: ${doc.declaration.goods_description}`,
+      snippet: `${doc.declaration.company_name} | ${doc.declaration.customs_office} | $${doc.declaration.customs_value_usd.toLocaleString()}`,
       score: 0.95 - (i * 0.02),
-      source: 'customs-registry',
-      category: 'customs',
-      searchType: 'full-text'
+      source: doc.declaration.country_origin === 'TELEGRAM' ? 'telegram' : 'customs-registry',
+      category: doc.declaration.country_origin === 'TELEGRAM' ? 'intelligence' : 'customs',
+      searchType: 'semantic-mock'
     }));
 
   res.json({ results, total: results.length, query: q });
@@ -597,8 +1816,15 @@ app.get('/api/v1/search', (req, res) => {
 
 app.post('/api/v1/search/customs', (req, res) => {
   const q = (req.body.query || '').toLowerCase();
+  const queryWords = q.split(/\s+/).filter(Boolean);
+
   const results = DB_FACTS
-    .filter(d => `${d.goods_description} ${d.company_name} ${d.country_origin} ${d.date} ${d.hs_code}`.toLowerCase().includes(q))
+    .filter(d => {
+      if (!q) return true;
+      const docString = `${d.goods_description} ${d.company_name} ${d.country_origin} ${d.date} ${d.hs_code}`.toLowerCase();
+      // Simple mock semantic search: return true if at least one meaningful keyword matches the document
+      return queryWords.some(word => word.length > 3 && docString.includes(word));
+    })
     .slice(0, 20)
     .map(d => ({
       id: d.id,
@@ -612,7 +1838,31 @@ app.post('/api/v1/search/customs', (req, res) => {
       risk_score: d.risk_score,
       score: 0.95
     }));
-  res.json({ results, total: results.length });
+
+  // Also include Telegram messages in the customs search if they mention any keywords!
+  const tgResults = DB_SEARCH_INDEX
+    .filter(doc => doc.source === 'customs-registry' || doc.declaration?.country_origin === 'TELEGRAM')
+    .filter(doc => {
+      if (!q) return false;
+      const text = doc.text.toLowerCase();
+      return queryWords.some(word => word.length > 3 && text.includes(word));
+    })
+    .slice(0, 10)
+    .map(d => ({
+      id: d.id,
+      description: `[TELEGRAM] ${d.declaration.goods_description}`,
+      hs_code: 'TG-MSG',
+      country_trading: 'TELEGRAM',
+      customs_office: d.declaration.company_name, // actually holds @channel
+      customs_value_usd: 0,
+      date: d.declaration.date,
+      company: d.declaration.company_name,
+      risk_score: d.declaration.risk_score,
+      score: 0.88
+    }));
+
+  const allResults = [...results, ...tgResults].slice(0, 30);
+  res.json({ results: allResults, total: allResults.length });
 });
 
 app.post('/api/v1/search/declarations', (req, res) => {
@@ -662,8 +1912,47 @@ app.get('/api/v1/graph/search', (req, res) => {
   res.json({ nodes: DB_GRAPH.nodes.slice(0, 30), edges: DB_GRAPH.edges.slice(0, 50), total_nodes: DB_GRAPH.nodes.length, total_edges: DB_GRAPH.edges.length });
 });
 
-// Connectors / Sources
-app.get('/api/v1/sources/connectors', (req, res) => { res.json([]); });
+// Connectors / Sources — тепер повертає ВСІ типи джерел
+app.get('/api/v1/sources/connectors', (req, res) => {
+  // Map all etlJobs to connectors
+  const jobConnectors = etlJobs.map(j => {
+    const pipeType = j.pipeline_type || 'customs';
+    const typeMap = {
+      'customs': 'excel', 'pdf': 'pdf', 'word': 'word', 'image': 'image',
+      'audio': 'audio', 'video': 'video', 'telegram': 'telegram',
+      'website': 'website', 'api': 'api', 'rss': 'rss'
+    };
+    return {
+      id: j.job_id,
+      name: j.source_file || j.job_id,
+      type: typeMap[pipeType] || 'excel',
+      status: j.state === 'READY' ? 'active' : j.state === 'FAILED' ? 'error' : 'processing',
+      itemsCount: j.progress?.records_indexed || j.progress?.records_processed || 0,
+      lastSync: j.timestamps?.updated_at || j.timestamps?.created_at,
+      description: j.progress?.details || `Pipeline: ${pipeType}`,
+      processingProgress: j.state !== 'READY' ? j.progress?.percent : undefined
+    };
+  });
+
+  // Built-in demo sources (shown when no jobs have been run yet)
+  const builtInSources = DB_FACTS.length > 0 ? [
+    {
+      id: 'src-customs-registry', name: 'Березень_2024.xlsx', type: 'excel',
+      status: 'active', itemsCount: DB_FACTS.length,
+      lastSync: new Date().toISOString(),
+      description: 'Реєстр митних декларацій — Березень 2024'
+    },
+  ] : [];
+
+  // Merge: etlJobs first, then built-in (filtering duplicates)
+  const existingIds = new Set(jobConnectors.map(c => c.id));
+  const mergedConnectors = [
+    ...jobConnectors,
+    ...builtInSources.filter(s => !existingIds.has(s.id))
+  ];
+
+  res.json(mergedConnectors);
+});
 app.get('/api/v1/sources/', (req, res) => { res.json([]); });
 
 // System status
@@ -1140,20 +2429,308 @@ app.get('/api/v1/llm/providers', (req, res) => {
   res.json([{ id: 'openai', name: 'OpenAI (GPT-4)', status: 'active', latency: 240 }]);
 });
 
-// Catch-all for any missing endpoints (must be last)
-app.use('/api', (req, res) => {
-  console.log(`[MOCK] Unhandled ${req.method} ${req.path}`);
-  if (req.method === 'GET') {
-    // Return empty arrays for list endpoints to avoid UI crashes
-    if (req.path.endsWith('s') || req.path.includes('list') || req.path.includes('history')) return res.json([]);
-    return res.json({});
-  }
-  res.json({ success: true, message: 'Mock accepted' });
+// --- PREMIUM ENDPOINTS (must be BEFORE catch-all) ---
+app.get('/api/v1/premium/market-trends', (req, res) => {
+  const months = ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'];
+  const results = months.map((m, i) => ({
+    label: m,
+    value: 80 + Math.floor(Math.random() * 50) + (i * 5),
+    trend: Math.floor(Math.random() * 20 - 5)
+  }));
+  res.json(results);
 });
+
+app.get('/api/v1/newspaper', (req, res) => {
+  const highRiskCount = DB_FACTS.filter(d => d.risk_score > 70).length;
+  const totalVolume = DB_FACTS.reduce((acc, d) => acc + d.customs_value_usd, 0);
+
+  res.json({
+    metrics: [
+      { label: 'Активні алерти', value: highRiskCount.toString(), change: -2, trend: 'down' },
+      { label: 'Можливості ринку', value: '12', change: 3, trend: 'up' },
+      { label: 'Ринковий скор', value: '78%', change: 5, trend: 'up' },
+      { label: 'Рівень ризику', value: highRiskCount > 10 ? 'ВИСОКИЙ' : 'НИЗЬКИЙ', change: -8, trend: 'down' }
+    ],
+    stats: {
+      total_documents: DB_FACTS.length,
+      new_documents_24h: 42,
+      system_health: 'Optimal'
+    },
+    recommendations: [
+      'Переглянути постачальників у секторі електроніки',
+      'Звернути увагу на ріст цін на логістику в Чорному морі',
+      'Оптимізувати податкове навантаження через нові пільги'
+    ],
+    news: DB_FACTS.slice(0, 5).map(d => ({
+      id: d.id,
+      title: d.goods_description,
+      type: d.operation_type,
+      time: d.created_at,
+      risk: d.risk_score
+    })),
+    sections: [
+      {
+        id: 'critical',
+        title: '🚨 Критичні події',
+        priority: 'critical',
+        items: [
+          {
+            id: 'c-1',
+            type: 'alert',
+            title: 'Аномальна концентрація імпорту',
+            summary: `Виявлено завантаження від нових постачальників на суму $${(totalVolume / 10).toFixed(1)}M`,
+            impact: 'Потенційний демпінг на ринку електроніки',
+            timestamp: '2 години тому',
+            tags: ['імпорт', 'ризик', 'електроніка'],
+            actionable: true
+          }
+        ]
+      },
+      {
+        id: 'opportunities',
+        title: '📈 Можливості та Тренди',
+        priority: 'high',
+        items: [
+          {
+            id: 'o-1',
+            type: 'opportunity',
+            title: 'Нова ніша: С/Г техніка',
+            summary: 'Попит на запчастини зріс на 45% за останній тиждень',
+            value: '$2.4М',
+            timestamp: '6 годин тому',
+            tags: ['сг-техніка', 'тренд'],
+            actionable: true
+          }
+        ]
+      }
+    ],
+    summary: `Сьогодні система PREDATOR зафіксувала ${highRiskCount} критичних алерти та 12 нових можливостей. Загальний стан ринку оцінюється як стабільний.`
+  });
+});
+
+
 
 // =============================================
 // 🌐 SERVER START
 // =============================================
+
+// =============================================
+// 🤖 CO-PILOT AGENT SYSTEM (Dual-Agent + Fallback)
+// =============================================
+
+async function callOllama(prompt) {
+  try {
+    const response = await fetch(`${OLLAMA_HOST}/api/generate`, {
+      method: 'POST',
+      body: JSON.stringify({
+        model: 'llama3.1',
+        prompt: prompt,
+        stream: false
+      })
+    });
+    if (!response.ok) throw new Error('Ollama offline');
+    const data = await response.json();
+    return data.response;
+  } catch (e) {
+    console.warn("⚠️ Ollama Fallback Triggered:", e.message);
+    return null;
+  }
+}
+
+async function callGitHubCopilot(prompt) {
+  return new Promise((resolve) => {
+    exec(`gh copilot explain "${prompt.replace(/"/g, '\\"')}"`, (error, stdout) => {
+      if (error) {
+        console.warn("⚠️ GH Copilot Fallback Triggered:", error.message);
+        resolve(null);
+      } else {
+        resolve(stdout);
+      }
+    });
+  });
+}
+
+async function callGeminiCLI(prompt) {
+  return new Promise((resolve) => {
+    exec(`gemini --prompt "${prompt.replace(/"/g, '\\"')}"`, (error, stdout) => {
+      if (error) {
+        console.warn("⚠️ Gemini CLI Fallback Triggered:", error.message);
+        resolve(null);
+      } else {
+        resolve(stdout);
+      }
+    });
+  });
+}
+
+// REST API Fallback
+async function callGeminiAPI(prompt) {
+  const apiKey = getNextGeminiKey();
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      })
+    });
+    const data = await response.json();
+    return data.candidates[0].content.parts[0].text;
+  } catch (e) {
+    return "Вибачте, всі агенти зараз недоступні. Спробуйте пізніше.";
+  }
+}
+
+app.post('/api/v1/ai/query', async (req, res) => {
+  const { query, mode } = req.body;
+
+  if (mode === 'voice') {
+    console.log("🎤 Processing Voice Query...");
+  }
+
+  console.log(`🤖 Neural Consensus: Integrating Local Brain with Gemini Mouth for query: "${query}"`);
+
+  // --- PHASE 1: THE BRAIN (Local Context & Facts) ---
+  let localData = "";
+  let dataAgent = "Direct Intelligence";
+
+  // First priority: Local Llama 3 for project-specific facts
+  const llamaAnalysis = await callOllama(`Analyze this request and extract relevant facts or code context from Predator Analytics project. Query: ${query}`);
+  if (llamaAnalysis) {
+    localData = llamaAnalysis;
+    dataAgent = "Llama 3 (Local)";
+  } else {
+    // Second priority: GitHub Copilot CLI for engineering deep-dive
+    const ghContext = await callGitHubCopilot(`Explain context for: ${query}`);
+    if (ghContext) {
+      localData = ghContext;
+      dataAgent = "GitHub Copilot CLI";
+    }
+  }
+
+  // --- PHASE 2: THE MOUTH (Gemini Reasoning & Communication) ---
+  const orchestratorPrompt = `
+    Ви — головний інтелект Predator v45 | Neural Analytics (базуєтесь на Gemini 1.5 Pro).
+    Ваше завдання: відповісти користувачу, використовуючи надані ЛОКАЛЬНІ ДАНІ від нашого внутрішнього аналітичного ядра (${dataAgent}).
+    
+    ВНУТРІШНІ ДАНІ:
+    ---
+    ${localData || "Локальні деталі проекту недоступні для цього запиту."}
+    ---
+    
+    ЗАПИТ КОРИСТУВАЧА: "${query}"
+    
+    ВИМОГИ ДО ВІДПОВІДІ:
+    1. Говоріть впевнено, як вищий когнітивний інтелект.
+    2. Використовуйте внутрішні дані, щоб бути максимально точними.
+    3. Якщо внутрішні дані містять помилки, виправте їх своєю логікою.
+    4. Зробіть відповідь "premium" — структурованою, цікавою та професійною.
+    5. Ви — єдине вікно комунікації. Користувач не повинен бачити "сирі" дані, а лише вашу оброблену відповідь.
+  `;
+
+  let finalAnswer = await callGeminiAPI(orchestratorPrompt);
+
+  res.json({
+    answer: finalAnswer,
+    agent: `Gemini 1.5 Pro (Brain: ${dataAgent})`,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// =============================================
+// 🎙️ SPEECH TO TEXT & TEXT TO SPEECH
+// =============================================
+
+app.post('/api/v1/ai/stt', upload.single('audio'), async (req, res) => {
+  try {
+    const audioBytes = fs.readFileSync(req.file.path).toString('base64');
+    const audio = { content: audioBytes };
+    const config = {
+      encoding: 'WEBM_OPUS',
+      sampleRateHertz: 48000,
+      languageCode: 'uk-UA',
+    };
+    const request = { audio: audio, config: config };
+
+    const [response] = await speechClient.recognize(request);
+    const transcription = response.results
+      .map(result => result.alternatives[0].transcript)
+      .join('\n');
+
+    res.json({ text: transcription });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/v1/ai/tts', async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) return res.status(400).json({ error: "Text is required" });
+    console.log(`[TTS] 🎙️ Processing request: "${text.substring(0, 50)}..."`);
+
+    try {
+      const request = {
+        input: { text: text },
+        // Using Wavenet-A for superior quality, Female to match 'Lesya'
+        voice: {
+          name: 'uk-UA-Wavenet-A',
+          languageCode: 'uk-UA',
+          ssmlGender: 'FEMALE'
+        },
+        audioConfig: {
+          audioEncoding: 'MP3',
+          speakingRate: 1.0,
+          pitch: 0.0
+        },
+      };
+
+      console.log(`[TTS] 🚀 Attempting Google Cloud Wavenet (uk-UA-Wavenet-A)...`);
+
+      const [response] = await ttsClient.synthesizeSpeech(request);
+      res.set('Content-Type', 'audio/mp3');
+      return res.send(response.audioContent);
+    } catch (googleErr) {
+      console.warn(`[TTS] ⚠️ Google Cloud failed: ${googleErr.message}`);
+      console.log(`[TTS] 🔄 Falling back to MacOS 'say' (System Voice: Lesya)...`);
+
+      // Fallback to MacOS 'say' + 'ffmpeg'
+      const tempId = Date.now();
+      const tempAiff = path.join('uploads', `fallback_${tempId}.aiff`);
+      const tempMp3 = path.join('uploads', `fallback_${tempId}.mp3`);
+
+      // Clean text for shell
+      const safeText = text.replace(/["'`]/g, '');
+
+      const sayCmd = `say -v Lesya "${safeText}" -o ${tempAiff}`;
+      const ffmpegCmd = `ffmpeg -i ${tempAiff} -codec:a libmp3lame -qscale:a 2 ${tempMp3}`;
+
+      exec(`${sayCmd} && ${ffmpegCmd}`, (error) => {
+        if (error) {
+          console.error(`[TTS] ❌ Fallback failed: ${error.message}`);
+          return res.status(500).json({ error: "All TTS engines failed" });
+        }
+
+        try {
+          const audioBuffer = fs.readFileSync(tempMp3);
+          console.log(`[TTS] 🆗 Fallback successful (MacOS Lesya)`);
+          res.set('Content-Type', 'audio/mp3');
+          res.send(audioBuffer);
+
+          // Cleanup
+          setTimeout(() => {
+            if (fs.existsSync(tempAiff)) fs.unlinkSync(tempAiff);
+            if (fs.existsSync(tempMp3)) fs.unlinkSync(tempMp3);
+          }, 5000);
+        } catch (readErr) {
+          res.status(500).json({ error: "Failed to read fallback audio" });
+        }
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Seed initial data
 console.log('🌱 Seeding initial database facts...');
@@ -1166,9 +2743,8 @@ initialData.forEach(d => {
 const server = app.listen(PORT, () => {
   console.log(`🚀 PREDATOR Mock API Server running on port ${PORT}`);
   console.log(`🔗 http://localhost:${PORT}/api/v1/...`);
-  console.log(`📊 Health: http://localhost:${PORT}/api/v1/health`);
-  console.log(`🗂  DB Stats: http://localhost:${PORT}/api/v1/database/stats`);
-  console.log(`\n📌 Дані з'являться після завантаження файлу через UI або POST /api/v1/ingest/upload\n`);
+  console.log(`🎙️ Voice Engine: Google Cloud STT/TTS Active`);
+  console.log(`🤖 AI Copilot: Llama3 -> GhCopilot -> Gemini Fallback Active`);
 });
 
 // WebSocket for real-time updates
@@ -1293,4 +2869,92 @@ app.get('/api/v1/premium/market-trends', (req, res) => {
     trend: Math.floor(Math.random() * 20 - 5)
   }));
   res.json(results);
+});
+
+app.get('/api/v1/telegram/feed', (req, res) => {
+  try {
+    const data = JSON.parse(fs.readFileSync('/Users/dima-mac/Documents/Predator_21/.antigravity_tmp/channel_data.json', 'utf8'));
+    res.json(data);
+  } catch (e) {
+    res.json([]);
+  }
+});
+
+app.get('/api/v1/newspaper', (req, res) => {
+  const highRiskCount = DB_FACTS.filter(d => d.risk_score > 70).length;
+  const totalVolume = DB_FACTS.reduce((acc, d) => acc + d.customs_value_usd, 0);
+
+  res.json({
+    metrics: [
+      { label: 'Активні алерти', value: highRiskCount.toString(), change: -2, trend: 'down' },
+      { label: 'Можливості ринку', value: '12', change: 3, trend: 'up' },
+      { label: 'Ринковий скор', value: '78%', change: 5, trend: 'up' },
+      { label: 'Рівень ризику', value: highRiskCount > 10 ? 'ВИСОКИЙ' : 'НИЗЬКИЙ', change: -8, trend: 'down' }
+    ],
+    stats: {
+      total_documents: DB_FACTS.length,
+      new_documents_24h: 42,
+      system_health: 'Optimal'
+    },
+    recommendations: [
+      'Переглянути постачальників у секторі електроніки',
+      'Звернути увагу на ріст цін на логістику в Чорному морі',
+      'Оптимізувати податкове навантаження через нові пільги'
+    ],
+    news: DB_FACTS.slice(0, 5).map(d => ({
+      id: d.id,
+      title: d.goods_description,
+      type: d.operation_type,
+      time: d.created_at,
+      risk: d.risk_score
+    })),
+    sections: [
+      {
+        id: 'critical',
+        title: '🚨 Критичні події',
+        priority: 'critical',
+        items: [
+          {
+            id: 'c-1',
+            type: 'alert',
+            title: 'Аномальна концентрація імпорту',
+            summary: `Виявлено завантаження від нових постачальників на суму $${(totalVolume / 10).toFixed(1)}M`,
+            impact: 'Потенційний демпінг на ринку електроніки',
+            timestamp: '2 години тому',
+            tags: ['імпорт', 'ризик', 'електроніка'],
+            actionable: true
+          }
+        ]
+      },
+      {
+        id: 'opportunities',
+        title: '📈 Можливості та Тренди',
+        priority: 'high',
+        items: [
+          {
+            id: 'o-1',
+            type: 'opportunity',
+            title: 'Нова ніша: С/Г техніка',
+            summary: 'Попит на запчастини зріс на 45% за останній тиждень',
+            value: '$2.4М',
+            timestamp: '6 годин тому',
+            tags: ['сг-техніка', 'тренд'],
+            actionable: true
+          }
+        ]
+      }
+    ],
+    summary: `Сьогодні система PREDATOR зафіксувала ${highRiskCount} критичних алерти та 12 нових можливостей. Загальний стан ринку оцінюється як {status}.`
+  });
+});
+
+// Catch-all for any missing endpoints (must be last)
+app.use('/api', (req, res) => {
+  console.log(`[MOCK] Unhandled ${req.method} ${req.path}`);
+  if (req.method === 'GET') {
+    // Return empty arrays for list endpoints to avoid UI crashes
+    if (req.path.endsWith('s') || req.path.includes('list') || req.path.includes('history')) return res.json([]);
+    return res.json({});
+  }
+  res.json({ success: true, message: 'Mock accepted' });
 });

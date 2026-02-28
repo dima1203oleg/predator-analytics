@@ -42,7 +42,7 @@ export const TopImportersWidget: React.FC<{
       setLoading(true);
       try {
         const result = await api.premium.getTopImporters();
-        setData(result);
+        setData(Array.isArray(result) ? result : []);
       } catch (err) {
         console.error("Failed to fetch top importers", err);
       } finally {
@@ -159,7 +159,7 @@ export const HSCodeAnalyticsWidget: React.FC<{
       setLoading(true);
       try {
         const result = await api.premium.getHSAnalytics();
-        setHsData(result);
+        setHsData(Array.isArray(result) ? result : []);
       } catch (err) {
         console.error("Failed to fetch HS analytics", err);
       } finally {
@@ -297,7 +297,7 @@ export const PriceAnomalyWidget: React.FC<{
       setLoading(true);
       try {
         const result = await api.premium.getPriceAnomalies();
-        setAnomalies(result);
+        setAnomalies(Array.isArray(result) ? result : []);
       } catch (err) {
         console.error("Failed to fetch price anomalies", err);
       } finally {
@@ -475,7 +475,7 @@ export const CompetitorRadarWidget: React.FC<{
       setLoading(true);
       try {
         const result = await api.premium.getCompetitorRadar();
-        setCompetitors(result);
+        setCompetitors(Array.isArray(result) ? result : []);
       } catch (err) {
         console.error("Failed to fetch competitor radar", err);
       } finally {

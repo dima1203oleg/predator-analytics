@@ -7,4 +7,8 @@ class KafkaService:
         logger.info(f"Published event to {topic}: {data} (Mock)")
         return True
 
+    async def send_message(self, topic: str, data: dict):
+        """Alias for publish_event to support v45+ naming conventions."""
+        return await self.publish_event(topic, data)
+
 kafka_service = KafkaService()

@@ -19,7 +19,7 @@ import { AppRoutesNew as AppRoutes } from './AppRoutesNew';
 import BootScreen from './components/BootScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import LoginScreen from './components/LoginScreen';
-import { AICopilot } from './components/premium/AICopilot';
+import { Predator } from './components/premium/AICopilot';
 import CommandPalette from './components/premium/CommandPalette';
 import OnboardingWizard from './components/premium/OnboardingWizard';
 import QuickActionsBar from './components/premium/QuickActionsBar';
@@ -86,7 +86,7 @@ function App() {
                                   <ToasterProvider />
                                   <OnboardingWizard />
                                   <OfflineBanner />
-                                  <AICopilot />
+                                  <Predator />
                                   <CyberTerminal />
                                 </>
                               )}

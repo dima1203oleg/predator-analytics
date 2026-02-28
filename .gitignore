@@ -1,5 +1,5 @@
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,16 +7,17 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Node
+node_modules/
+dist/
+dist-ssr/
 *.local
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 !.vscode/launch.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
@@ -24,9 +25,11 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment files
+# Environment files (NEVER commit real .env)
 .env
-*.env
+.env.local
+.env.production
+.env.nvidia
 ua-sources/.env
 
 # Python
@@ -36,14 +39,43 @@ __pycache__/
 .Python
 venv/
 .venv/
+.backend_venv/
+.predator_venv/
+.predator_312_stack/
+.predator_autonomous_venv/
+.predator_dev/
+.predator_tools_venv/
+.venv_ag/
+.venv_ag2/
+.venv_audio/
+.venv_voice/
+.god_mode_env/
+.shadow_env/
+.shadow_env_fixed/
+.shadow_env_v2/
+.shadow_venv/
+predator_env/
+venv_fix/
 *.egg-info/
 .eggs/
+.ruff_cache/
+.pytest_cache/
+.aider.tags.cache.v4/
 
-# Data directories
+# Data files
 *.csv
 *.xlsx
 data/
 uploads/
+data_staging/
+
+# Media / test artifacts
+*.mp3
+*.aiff
+*.wav
+*.tar.gz
+*.pid
+*.session
 
 # Docker volumes (local)
 postgres_data/
@@ -53,24 +85,37 @@ opensearch_data/
 minio_data/
 grafana_data/
 prometheus_data/
+neo4j_data/
+mlflow_data/
+redpanda_data/
 
 # Large Data
 sample_data/
 *.jsonl
+*.jar
 
 # Deployment Artifacts
-deploy.tar.gz
-deploy_part_*
+deploy_*.tar.gz
+*.tar.gz
 
-# Secrets
+# Secrets (CRITICAL - never commit)
 *.pem
 *.key
 secrets/
-
-# API Keys (CRITICAL - never commit)
+keys/
 **/dynamic_keys.json
-dynamic_keys.json
 dynamic_keys.json
 working_api_keys.json
 test_api_keys.py
 ua-sources/.env.keys
+
+# Local lib copies (not for git)
+shadow_libs/
+libs_local/
+libs_local_v2/
+
+# Temp files
+nohup.out
+*.pid
+temp_*
+mock-api.log

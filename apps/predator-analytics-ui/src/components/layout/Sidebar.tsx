@@ -118,7 +118,7 @@ export const Sidebar = () => {
     <motion.aside
       initial={false}
       animate={{
-        width: isSidebarOpen ? 280 : 80,
+        width: isSidebarOpen ? 240 : 80,
         transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] }
       }}
       className={cn(
@@ -144,7 +144,7 @@ export const Sidebar = () => {
       </div>
 
       {/* --- NAVIGATION --- */}
-      <div className="flex-1 overflow-y-auto py-6 px-4 space-y-8 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto py-6 px-3 space-y-5 scrollbar-hide">
         {navGroups.map((group, idx) => (
           <div key={idx} className="space-y-2">
             {isSidebarOpen && (
@@ -152,7 +152,7 @@ export const Sidebar = () => {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 * idx }}
-                className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-4 mb-3"
+                className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-3 mb-2"
               >
                 {group.title}
               </motion.h3>
@@ -175,7 +175,7 @@ export const Sidebar = () => {
                     <>
                       <div className={cn(
                         "relative z-10 transition-all duration-300 group-hover:scale-110 shrink-0 flex items-center justify-center",
-                        isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]" : "text-slate-500 group-hover:text-slate-300"
+                        isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.4)]" : "text-slate-500 group-hover:text-slate-200"
                       )}>
                         {isActive && (
                           <motion.div

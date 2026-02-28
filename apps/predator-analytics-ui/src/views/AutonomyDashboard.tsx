@@ -7,29 +7,29 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-    Activity,
-    AlertTriangle,
-    Award,
-    Brain,
-    CheckCircle,
-    ChevronRight,
-    Clock,
-    Cpu,
-    Eye,
-    Gauge,
-    GitBranch,
-    HardDrive,
-    Lock,
-    Play,
-    RefreshCw,
-    Scale,
-    Shield,
-    Sparkles,
-    Target,
-    TrendingUp,
-    Users,
-    XCircle,
-    Zap
+  Activity,
+  AlertTriangle,
+  Award,
+  Brain,
+  CheckCircle,
+  ChevronRight,
+  Clock,
+  Cpu,
+  Eye,
+  Gauge,
+  GitBranch,
+  HardDrive,
+  Lock,
+  Play,
+  RefreshCw,
+  Scale,
+  Shield,
+  Sparkles,
+  Target,
+  TrendingUp,
+  Users,
+  XCircle,
+  Zap
 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -249,7 +249,7 @@ export const AutonomyDashboard: React.FC = () => {
       }
 
       // Обробка гіпотез
-      if (hypothesesRes.status === 'fulfilled' && hypothesesRes.value) {
+      if (hypothesesRes.status === 'fulfilled' && Array.isArray(hypothesesRes.value)) {
         setHypotheses(hypothesesRes.value);
       } else {
         setHypotheses([
@@ -437,11 +437,10 @@ export const AutonomyDashboard: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className={`relative flex items-center gap-2.5 px-5 py-3 rounded-2xl transition-all duration-300 ${
-                isActive
+              className={`relative flex items-center gap-2.5 px-5 py-3 rounded-2xl transition-all duration-300 ${isActive
                   ? 'bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 border-2 border-cyan-500/50 text-white shadow-lg shadow-cyan-500/20'
                   : 'bg-slate-800/40 border border-slate-700/50 text-slate-400 hover:border-slate-600 hover:text-slate-200'
-              }`}
+                }`}
             >
               <Icon size={18} className={isActive ? 'text-cyan-400' : ''} />
               <span className="font-medium whitespace-nowrap">{tab.label}</span>
@@ -567,13 +566,12 @@ export const AutonomyDashboard: React.FC = () => {
                   return (
                     <React.Fragment key={phase.id}>
                       <motion.div
-                        className={`flex flex-col items-center gap-3 p-5 rounded-2xl transition-all ${
-                          isActive
+                        className={`flex flex-col items-center gap-3 p-5 rounded-2xl transition-all ${isActive
                             ? 'bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-2 border-cyan-500/50 shadow-lg shadow-cyan-500/20'
                             : isPast
                               ? 'bg-slate-800/50 border border-emerald-500/30'
                               : 'bg-slate-800/30 border border-slate-700/50 opacity-50'
-                        }`}
+                          }`}
                         animate={isActive ? { scale: [1, 1.03, 1] } : {}}
                         transition={{ duration: 2, repeat: Infinity }}
                       >
@@ -847,13 +845,12 @@ export const AutonomyDashboard: React.FC = () => {
                     className="flex items-center justify-between p-4 bg-slate-800/40 rounded-xl border border-slate-700/30 hover:border-slate-600/50 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <div className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                        id.startsWith('SEC') ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
-                        id.startsWith('PRV') ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
-                        id.startsWith('TRN') ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' :
-                        id.startsWith('STB') ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
-                        'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                      }`}>
+                      <div className={`px-3 py-1.5 rounded-lg text-xs font-bold ${id.startsWith('SEC') ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
+                          id.startsWith('PRV') ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
+                            id.startsWith('TRN') ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' :
+                              id.startsWith('STB') ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
+                                'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                        }`}>
                         {id}
                       </div>
                       <span className="text-white">{text}</span>

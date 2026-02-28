@@ -25,7 +25,10 @@ export const TelegramIntelligencePanel: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [newUrl, setNewUrl] = useState('');
   const [isAdding, setIsAdding] = useState(false);
-  const [logs, setLogs] = useState<{ts: string, msg: string, type: 'info' | 'success' | 'warn'}[]>([]);
+  const [logs, setLogs] = useState<{ ts: string, msg: string, type: 'info' | 'success' | 'warn' }[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [showFeed, setShowFeed] = useState(false);
+  const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
 
   const addLog = (msg: string, type: 'info' | 'success' | 'warn' = 'info') => {
     setLogs(prev => [{ ts: new Date().toLocaleTimeString(), msg, type }, ...prev].slice(0, 50));
@@ -57,9 +60,24 @@ export const TelegramIntelligencePanel: React.FC = () => {
     }
   };
 
+  const loadFeed = async () => {
+    try {
+      const data = await (api as any).getTelegramFeed();
+      if (Array.isArray(data)) {
+        setMessages(data);
+      }
+    } catch (e) {
+      console.error("Failed to load feed", e);
+    }
+  };
+
   useEffect(() => {
     loadChannels();
-    const interval = setInterval(loadChannels, 5000);
+    loadFeed();
+    const interval = setInterval(() => {
+      loadChannels();
+      loadFeed();
+    }, 5000);
 
     // Initial logs
     addLog("Predator Telegram Ingestion Kernel v4.2 initialized", 'info');
@@ -117,8 +135,8 @@ export const TelegramIntelligencePanel: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-4">
-           {loading ? <RefreshCw className="animate-spin text-slate-500 w-4 h-4" /> : <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />}
-           <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{channels.length} ACTIVE_CHANNELS</div>
+          {loading ? <RefreshCw className="animate-spin text-slate-500 w-4 h-4" /> : <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />}
+          <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{channels.length} ACTIVE_CHANNELS</div>
         </div>
       </div>
 
@@ -158,58 +176,58 @@ export const TelegramIntelligencePanel: React.FC = () => {
           {/* Quick Stats */}
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-               <div className="text-[8px] text-slate-500 font-black uppercase mb-1">Total Signals</div>
-               <div className="text-lg font-black text-white">{channels.reduce((acc, c) => acc + c.itemsCount, 0).toLocaleString()}</div>
+              <div className="text-[8px] text-slate-500 font-black uppercase mb-1">Total Signals</div>
+              <div className="text-lg font-black text-white">{channels.reduce((acc, c) => acc + c.itemsCount, 0).toLocaleString()}</div>
             </div>
             <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-               <div className="text-[8px] text-slate-500 font-black uppercase mb-1">Queue Size</div>
-               <div className="text-lg font-black text-blue-400">0</div>
+              <div className="text-[8px] text-slate-500 font-black uppercase mb-1">Queue Size</div>
+              <div className="text-lg font-black text-blue-400">0</div>
             </div>
           </div>
 
           {/* Miniature Log Viewer */}
           <div className="rounded-2xl bg-black/60 border border-white/5 p-6 font-mono text-[9px] flex-1 overflow-hidden min-h-[200px] flex flex-col">
-             <div className="flex items-center gap-2 mb-4 text-slate-500 border-b border-white/5 pb-2">
-                <Terminal size={12} />
-                <span className="font-black uppercase tracking-widest">INGESTION_LOGS</span>
-             </div>
-             <div className="space-y-2 overflow-y-auto scrollbar-hide flex-1">
-                {logs.map((log, i) => (
-                  <div key={i} className={cn(
-                    "leading-relaxed transition-opacity",
-                    i > 5 ? "opacity-40" : "opacity-100",
-                    log.type === 'success' ? "text-emerald-400" : log.type === 'warn' ? "text-rose-400" : "text-slate-400"
-                  )}>
-                    <span className="opacity-30 mr-2">[{log.ts}]</span>
-                    {log.msg}
-                  </div>
-                ))}
-                <div className="flex items-center gap-2 text-blue-400 animate-pulse">
-                   <span className="opacity-30 mr-2">{'>'}</span> Listening for neural activity...
+            <div className="flex items-center gap-2 mb-4 text-slate-500 border-b border-white/5 pb-2">
+              <Terminal size={12} />
+              <span className="font-black uppercase tracking-widest">INGESTION_LOGS</span>
+            </div>
+            <div className="space-y-2 overflow-y-auto scrollbar-hide flex-1">
+              {logs.map((log, i) => (
+                <div key={i} className={cn(
+                  "leading-relaxed transition-opacity",
+                  i > 5 ? "opacity-40" : "opacity-100",
+                  log.type === 'success' ? "text-emerald-400" : log.type === 'warn' ? "text-rose-400" : "text-slate-400"
+                )}>
+                  <span className="opacity-30 mr-2">[{log.ts}]</span>
+                  {log.msg}
                 </div>
-             </div>
+              ))}
+              <div className="flex items-center gap-2 text-blue-400 animate-pulse">
+                <span className="opacity-30 mr-2">{'>'}</span> Listening for neural activity...
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Right: Targets List */}
         <div className="flex-1 p-8 overflow-y-auto scrollbar-hide">
           <div className="flex justify-between items-center mb-6">
-             <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                <MessageSquare size={12} className="text-blue-400" />
-                Active Monitoring Targets
-             </h4>
-             <div className="flex gap-2">
-                <span className="px-2 py-1 rounded bg-white/5 text-[8px] text-slate-500 border border-white/5 uppercase">Global Registry</span>
-             </div>
+            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+              <MessageSquare size={12} className="text-blue-400" />
+              Active Monitoring Targets
+            </h4>
+            <div className="flex gap-2">
+              <span className="px-2 py-1 rounded bg-white/5 text-[8px] text-slate-500 border border-white/5 uppercase">Global Registry</span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <AnimatePresence>
               {channels.length === 0 ? (
                 <div className="col-span-full h-64 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[32px] text-slate-600">
-                    <Activity size={48} className="opacity-20 mb-4" />
-                    <p className="text-xs font-mono uppercase tracking-widest">No active parsing targets</p>
-                    <p className="text-[10px] opacity-50 mt-2">Use the side panel to add a Telegram source</p>
+                  <Activity size={48} className="opacity-20 mb-4" />
+                  <p className="text-xs font-mono uppercase tracking-widest">No active parsing targets</p>
+                  <p className="text-[10px] opacity-50 mt-2">Use the side panel to add a Telegram source</p>
                 </div>
               ) : (
                 channels.map((channel, i) => (
@@ -221,65 +239,107 @@ export const TelegramIntelligencePanel: React.FC = () => {
                     className="p-6 rounded-[32px] bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all group/card relative overflow-hidden"
                   >
                     <div className="absolute top-0 right-0 p-4 opacity-0 group-hover/card:opacity-100 transition-opacity">
-                       <button
+                      <button
                         onClick={() => handleDelete(channel.id)}
                         className="p-2 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 rounded-xl transition-all"
-                       >
-                          <Trash2 size={16} />
-                       </button>
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
 
                     <div className="flex items-start gap-4 mb-6">
-                       <div className={cn(
-                         "w-12 h-12 rounded-2xl flex items-center justify-center border transition-all duration-500",
-                         channel.status === 'active' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]" : "bg-slate-800 border-slate-700 text-slate-500"
-                       )}>
-                          <Globe size={20} className={cn(channel.status === 'active' && "animate-pulse")} />
-                       </div>
-                       <div className="flex-1 min-w-0">
-                          <h5 className="text-white font-black text-sm truncate uppercase tracking-tight">{channel.name || channel.url.split('/').pop()}</h5>
-                          <p className="text-[10px] text-slate-500 font-mono truncate">{channel.url}</p>
-                       </div>
+                      <div className={cn(
+                        "w-12 h-12 rounded-2xl flex items-center justify-center border transition-all duration-500",
+                        channel.status === 'active' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]" : "bg-slate-800 border-slate-700 text-slate-500"
+                      )}>
+                        <Globe size={20} className={cn(channel.status === 'active' && "animate-pulse")} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h5 className="text-white font-black text-sm truncate uppercase tracking-tight">{channel.name || channel.url.split('/').pop()}</h5>
+                        <p className="text-[10px] text-slate-500 font-mono truncate">{channel.url}</p>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between pt-6 border-t border-white/5">
-                        <div className="flex flex-col">
-                           <span className="text-[8px] text-slate-600 font-black uppercase mb-1 tracking-widest">Статус</span>
-                           <div className="flex items-center gap-1.5">
-                              <div className={cn("w-1.5 h-1.5 rounded-full", channel.status === 'active' ? "bg-emerald-500 animate-pulse" : "bg-slate-500")} />
-                              <span className={cn("text-[9px] font-black uppercase", channel.status === 'active' ? "text-emerald-400" : "text-slate-500")}>
-                                 {channel.status}
-                              </span>
-                           </div>
+                      <div className="flex flex-col">
+                        <span className="text-[8px] text-slate-600 font-black uppercase mb-1 tracking-widest">Статус</span>
+                        <div className="flex items-center gap-1.5">
+                          <div className={cn("w-1.5 h-1.5 rounded-full", channel.status === 'active' ? "bg-emerald-500 animate-pulse" : "bg-slate-500")} />
+                          <span className={cn("text-[9px] font-black uppercase", channel.status === 'active' ? "text-emerald-400" : "text-slate-500")}>
+                            {channel.status}
+                          </span>
                         </div>
+                      </div>
 
-                        <div className="text-right">
-                           <span className="text-[8px] text-slate-600 font-black uppercase mb-1 tracking-widest">Injected Objects</span>
-                           <div className="text-xs font-mono text-white font-bold">{channel.itemsCount.toLocaleString()}</div>
-                        </div>
+                      <div className="text-right">
+                        <span className="text-[8px] text-slate-600 font-black uppercase mb-1 tracking-widest">Injected Objects</span>
+                        <div className="text-xs font-mono text-white font-bold">{channel.itemsCount.toLocaleString()}</div>
+                      </div>
 
-                        <div className="text-right">
-                           <span className="text-[8px] text-slate-600 font-black uppercase mb-1 tracking-widest">Last Activity</span>
-                           <div className="text-xs font-mono text-blue-400 uppercase tracking-tighter">
-                              {new Date(channel.lastSync).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                           </div>
+                      <div className="text-right">
+                        <span className="text-[8px] text-slate-600 font-black uppercase mb-1 tracking-widest">Last Activity</span>
+                        <div className="text-xs font-mono text-blue-400 uppercase tracking-tighter">
+                          {new Date(channel.lastSync).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </div>
+                      </div>
                     </div>
                   </motion.div>
                 ))
               )}
             </AnimatePresence>
           </div>
+
+          {/* Real-time Message Feed */}
+          <div className="mt-12 space-y-6">
+            <div className="flex justify-between items-center">
+              <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                <Zap size={12} className="text-amber-400" />
+                Neural Signal Feed
+              </h4>
+              <span className="text-[8px] font-mono text-slate-600 uppercase">Live_Stream_Active</span>
+            </div>
+
+            <div className="space-y-4">
+              {messages.length === 0 ? (
+                <div className="p-12 text-center border border-white/5 rounded-[32px] bg-black/20 text-slate-700 font-mono text-[10px] uppercase tracking-widest">
+                  Waiting for incoming signals...
+                </div>
+              ) : (
+                messages.slice(0, 5).map((msg, i) => (
+                  <motion.div
+                    key={msg.message_id || i}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    className="p-6 rounded-[24px] bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all group/msg relative"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-[10px] font-black text-blue-400 uppercase tracking-tighter">
+                        Signal #{msg.message_id}
+                      </span>
+                      <span className="text-[9px] font-mono text-slate-600">
+                        {new Date(msg.date).toLocaleTimeString()}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed font-medium line-clamp-3">
+                      {msg.text || "[Media/System Message]"}
+                    </p>
+                    <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-0.5 h-8 bg-blue-500 rounded-full opacity-0 group-hover/msg:opacity-100 transition-opacity" />
+                  </motion.div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="p-4 bg-blue-500/5 text-center border-t border-blue-500/10 flex items-center justify-center gap-4">
-         <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.3em]">Temporal-Backbone Sync: Active</span>
-         <div className="flex gap-1">
-            {[1,2,3,4,5].map(i => (
-              <div key={i} className="w-1 h-1 rounded-full bg-blue-400/30 animate-pulse" style={{ animationDelay: `${i * 200}ms` }} />
-            ))}
-         </div>
+        <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.3em]">Temporal-Backbone Sync: Active</span>
+        <div className="flex gap-1">
+          {[1, 2, 3, 4, 5].map(i => (
+            <div key={i} className="w-1 h-1 rounded-full bg-blue-400/30 animate-pulse" style={{ animationDelay: `${i * 200}ms` }} />
+          ))}
+        </div>
       </div>
     </div>
   );

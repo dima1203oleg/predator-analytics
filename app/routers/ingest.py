@@ -3,7 +3,8 @@ import uuid
 import json
 import asyncio
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, Dict, Any
+from pydantic import BaseModel
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks, Depends
 from fastapi.responses import StreamingResponse
@@ -16,17 +17,26 @@ from app.models.ingestion import (
     IngestionResponse
 )
 from app.services.ingestion_service import IngestionService
+from app.connectors.telegram_channel import telegram_channel_connector
+from app.services.telegram_pipeline import get_telegram_pipeline
+
 # In a real app, use a real auth dependency. Mocking for now if file doesn't exist
 try:
     from app.core.security import get_current_user
 except ImportError:
     async def get_current_user(): return type('User', (), {'id': 'mock-user-id'})
 
-router = APIRouter(prefix="/v1/ingestion", tags=["ingestion"])
+router = APIRouter(prefix="/ingest", tags=["ingestion"])
 logger = logging.getLogger(__name__)
 
 # In-memory storage for jobs (Use Redis in production)
 ingestion_jobs: dict = {}
+
+class TelegramIngestRequest(BaseModel):
+    url: str
+    name: Optional[str] = None
+    sector: Optional[str] = None
+    limit: int = 100
 
 async def process_file_async(
     job_id: str,
@@ -134,6 +144,86 @@ async def process_file_async(
         job.progress.message = f"Помилка: {str(e)}"
         job.updated_at = datetime.utcnow()
 
+async def process_telegram_async(
+    job_id: str,
+    url: str,
+    limit: int,
+    user_id: str,
+    config: dict
+):
+    """
+    Background task to process Telegram channel with Telethon.
+    """
+    job = ingestion_jobs.get(job_id)
+    if not job:
+        return
+
+    pipeline = get_telegram_pipeline()
+
+    try:
+        # Phase 1: Authentication & Connection
+        job.status = IngestionStatus.VALIDATING
+        job.progress.stage = "AUTH"
+        job.progress.message = "Підключення до Telegram API..."
+        job.updated_at = datetime.utcnow()
+        
+        # Extract username from URL
+        username = url.split('/')[-1].replace('@', '')
+        
+        # Phase 2: Fetching
+        job.status = IngestionStatus.PARSING
+        job.progress.stage = "FETCH"
+        job.progress.message = f"Отримання історії каналу @{username}..."
+        job.updated_at = datetime.utcnow()
+        await asyncio.sleep(0.5)
+
+        # Get history via Telethon connector
+        # Note: In a real app, we'd ensure the connector is initialized with valid session
+        result = await telegram_channel_connector.fetch_channel_history(username, limit=limit)
+        
+        if not result.success:
+            raise ValueError(f"Telethon error: {result.error}")
+
+        messages = result.data
+        job.progress.total_items = len(messages)
+        job.progress.percent = 30
+        job.progress.message = f"Знайдено {len(messages)} повідомлень"
+
+        # Phase 3: Processing & Enrichment
+        job.status = IngestionStatus.EMBEDDING
+        job.progress.stage = "PARSE"
+        job.updated_at = datetime.utcnow()
+
+        processed_count = 0
+        for i, msg in enumerate(messages):
+            job.progress.current_item = i + 1
+            job.progress.percent = 30 + ((i + 1) / len(messages)) * 60
+            job.progress.message = f"Обробка повідомлень: {i+1}/{len(messages)}"
+
+            # Process via Intelligence Pipeline
+            # We pass a simplified message dict or the raw one if compat
+            await pipeline.process_message(msg, {"name": username})
+            
+            # Simulated indexing for now as in process_file_async
+            processed_count += 1
+            if i % 10 == 0:
+                 await asyncio.sleep(0.1) # Yield to event loop
+
+        # Phase 4: Finalizing
+        job.status = IngestionStatus.READY
+        job.progress.stage = "READY"
+        job.progress.percent = 100
+        job.progress.message = f"Успішно оброблено {processed_count} повідомлень з @{username}"
+        job.updated_at = datetime.utcnow()
+
+    except Exception as e:
+        logger.exception(f"Telegram ingestion failed for job {job_id}")
+        job.status = IngestionStatus.FAILED
+        job.progress.stage = "failed"
+        job.error = str(e)
+        job.progress.message = f"Помилка: {str(e)}"
+        job.updated_at = datetime.utcnow()
+
 
 @router.get("/health")
 async def health():
@@ -201,9 +291,53 @@ async def upload_file(
         job_id=job_id,
         status=IngestionStatus.UPLOADING,
         message="Файл прийнято до обробки",
-        status_url=f"/api/v1/ingestion/status/{job_id}",
-        stream_url=f"/api/v1/ingestion/stream/{job_id}"
+        status_url=f"/api/v1/ingest/status/{job_id}",
+        stream_url=f"/api/v1/ingest/stream/{job_id}"
     )
+
+@router.post("/telegram", response_model=dict)
+async def ingest_telegram(
+    request: TelegramIngestRequest,
+    background_tasks: BackgroundTasks,
+    current_user = Depends(get_current_user)
+):
+    """
+    Initiate Telegram channel parsing.
+    """
+    job_id = str(uuid.uuid4())
+    job = IngestionJob(
+        id=job_id,
+        filename=f"telegram_{request.url.split('/')[-1]}",
+        file_size=0,
+        file_type="telegram",
+        status=IngestionStatus.UPLOADING,
+        user_id=getattr(current_user, 'id', 'anonymous'),
+        created_at=datetime.utcnow(),
+        progress=IngestionProgress(
+            stage="CREATED",
+            percent=0,
+            message="Запит на парсинг Telegram прийнято"
+        )
+    )
+
+    ingestion_jobs[job_id] = job
+
+    # Start background task
+    background_tasks.add_task(
+        process_telegram_async,
+        job_id=job_id,
+        url=request.url,
+        limit=request.limit,
+        user_id=getattr(current_user, 'id', 'anonymous'),
+        config={"name": request.name, "sector": request.sector}
+    )
+
+    return {
+        "status": "success",
+        "job_id": job_id,
+        "source_id": job_id, # Frontend compat
+        "message": "Парсинг розпочато"
+    }
 
 @router.get("/status/{job_id}")
 async def get_status(job_id: str):

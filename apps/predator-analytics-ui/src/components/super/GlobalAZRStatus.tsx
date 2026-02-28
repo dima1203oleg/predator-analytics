@@ -57,16 +57,16 @@ export const GlobalAZRStatus: React.FC = () => {
       >
         <div className="flex flex-col items-end">
           <span className="text-[10px] font-black text-cyan-400 uppercase tracking-wider flex items-center gap-1">
-             AZR SYSTEM <Zap size={10} className="fill-cyan-400" />
+            АЗР СИСТЕМА <Zap size={10} className="fill-cyan-400" />
           </span>
           <span className="text-xs font-bold text-white flex items-center gap-1">
-             GEN {status?.generation || '0'}
-             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            ГЕН {status?.generation || '0'}
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           </span>
         </div>
 
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-600 to-blue-600 flex items-center justify-center group-hover:rotate-90 transition-transform duration-500">
-           <Activity size={14} className="text-white" />
+          <Activity size={14} className="text-white" />
         </div>
       </motion.button>
     </motion.div>

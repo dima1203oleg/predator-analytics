@@ -25,9 +25,9 @@ from app.libs.core.structured_logger import get_logger, log_business_event, setu
 logger = get_logger("predator.api.main")
 
 app = FastAPI(
-    title="Predator Analytics v45.0 API",
-    description="Незламна Система: AI-Native Мультиагентна Аналітична Платформа",
-    version="30.0.0"
+    title="Predator Analytics v55.0 API",
+    description="Економічний радар: система раннього попередження, аналізу ризиків та інформаційної переваги",
+    version="55.0.0"
 )
 
 # Initialize OpenTelemetry
@@ -91,12 +91,22 @@ except ImportError:
     logger.warning("AZR Router not found")
 
 # ============================================================================
+# v55 API v2 (Strangler Fig: parallel to v1)
+# ============================================================================
+try:
+    from app.api.v2.router import v2_router
+    app.include_router(v2_router)
+    logger.info("v2 API routers mounted at /api/v2")
+except ImportError as e:
+    logger.warning("v2 routers not available: %s", e)
+
+# ============================================================================
 # STARTUP & UTILS
 # ============================================================================
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info("PREDATOR_V45_BOOT_START", mode="SOVEREIGN")
+    logger.info("PREDATOR_V55_BOOT_START", mode="SOVEREIGN")
 
     # Connect to Message Broker
     try:
@@ -123,7 +133,7 @@ async def shutdown_event():
 async def root():
     return {
         "system": "PREDATOR",
-        "version": "30.0.0",
+        "version": "55.0.0",
         "status": "OPERATIONAL",
         "autonomy_level": "SOVEREIGN",
         "timestamp": datetime.now(UTC).isoformat()

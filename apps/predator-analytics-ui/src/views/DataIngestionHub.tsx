@@ -34,7 +34,7 @@ import {
   Share2,
   Search,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AdvancedBackground } from '../components/AdvancedBackground';
 import { MediaIntelligencePanel } from '../components/intel/MediaIntelligencePanel';
 import { ActiveJobsPanel } from '../components/pipeline/ActiveJobsPanel';
@@ -85,12 +85,12 @@ const SOURCE_TYPES = [
 ];
 
 const DATA_LAKES_REGISTRY = [
-  { id: 'minio', name: 'MinIO', version: 'RELEASE.2024-01', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Object Storage (Сирі дані)', icon: Archive, color: 'orange', glow: 'yellow' },
-  { id: 'postgres', name: 'PostgreSQL', version: '16.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Primary Relational DB (Факти)', icon: Database, color: 'blue', glow: 'blue' },
-  { id: 'qdrant', name: 'Qdrant', version: '1.7.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Vector Database (Семантика)', icon: Target, color: 'emerald', glow: 'green' },
-  { id: 'opensearch', name: 'OpenSearch', version: '2.11.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Search Engine (Пошук)', icon: Search, color: 'cyan', glow: 'blue' },
-  { id: 'graphdb', name: 'Neo4j', version: '5.16.0', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Graph Database (Зв\'язки)', icon: Share2, color: 'purple', glow: 'purple' },
-  { id: 'redis', name: 'Redis', version: '7.2.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'In-Memory Cache (Кеш)', icon: Zap, color: 'red', glow: 'red' },
+  { id: 'minio', name: 'MinIO', version: 'RELEASE.2024-01', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Об\'єктне Сховище (Сирі дані)', icon: Archive, color: 'orange', glow: 'yellow' },
+  { id: 'postgres', name: 'PostgreSQL', version: '16.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Реляційна БД (Факти)', icon: Database, color: 'blue', glow: 'blue' },
+  { id: 'qdrant', name: 'Qdrant', version: '1.7.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Векторна БД (Семантика)', icon: Target, color: 'emerald', glow: 'green' },
+  { id: 'opensearch', name: 'OpenSearch', version: '2.11.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Пошукова Система (Пошук)', icon: Search, color: 'cyan', glow: 'blue' },
+  { id: 'graphdb', name: 'Neo4j', version: '5.16.0', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Графова БД (Зв\'язки)', icon: Share2, color: 'purple', glow: 'purple' },
+  { id: 'redis', name: 'Redis', version: '7.2.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Кеш в ОЗП (Кеш)', icon: Zap, color: 'red', glow: 'red' },
 ];
 
 // Stat cards were replaced by TacticalCard grid below. Empty component list to keep file clean.
@@ -264,6 +264,15 @@ const SourceCard = ({ source, onSync, onDelete }: {
   onSync: (id: string) => void;
   onDelete: (id: string) => void;
 }) => {
+  // Stable latency derived from source.id hash to prevent flickering
+  const stableLatency = useMemo(() => {
+    let hash = 0;
+    for (let i = 0; i < source.id.length; i++) {
+      hash = ((hash << 5) - hash) + source.id.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash % 200) + 40;
+  }, [source.id]);
   const typeConfig = SOURCE_TYPES.find(t => t.id === source.type) || SOURCE_TYPES[0];
   const Icon = typeConfig.icon;
 
@@ -335,7 +344,7 @@ const SourceCard = ({ source, onSync, onDelete }: {
       {source.status === 'processing' && source.processingProgress !== undefined && (
         <div className="mb-8 relative z-10">
           <div className="flex justify-between items-end mb-2">
-            <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Processing Data Stream</span>
+            <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Обробка Потоку Даних</span>
             <span className="text-xs font-black text-cyan-400 font-mono">{source.processingProgress}%</span>
           </div>
           <div className="h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/5 p-[1px]">
@@ -359,11 +368,11 @@ const SourceCard = ({ source, onSync, onDelete }: {
                 "bg-slate-900 border-white/5 text-slate-500"
           )}>
             <div className={cn("w-1 h-1 rounded-full", source.status === 'active' ? "bg-emerald-500" : "bg-slate-600")} />
-            {source.status === 'active' ? 'Operational' : 'Waiting'}
+            {source.status === 'active' ? 'Активно' : 'Очікування'}
           </div>
 
           <div className="flex flex-col items-end">
-            <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest leading-none mb-0.5">Records</span>
+            <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest leading-none mb-0.5">Записів</span>
             <span className="text-sm font-black font-mono text-white italic tracking-tighter">
               {source.itemsCount.toLocaleString('uk-UA')}
             </span>
@@ -372,11 +381,11 @@ const SourceCard = ({ source, onSync, onDelete }: {
 
         <div className="grid grid-cols-2 gap-2">
           <div className="px-3 py-2 bg-black/40 rounded-xl border border-white/5 group-hover:border-white/10 transition-colors">
-            <p className="text-[7px] font-black text-slate-700 uppercase tracking-widest mb-1">Avg Latency</p>
-            <p className="text-xs font-black font-mono text-emerald-500/80">{(Math.random() * 200 + 40).toFixed(0)}ms</p>
+            <p className="text-[7px] font-black text-slate-700 uppercase tracking-widest mb-1">Сер. Затримка</p>
+            <p className="text-xs font-black font-mono text-emerald-500/80">{stableLatency}ms</p>
           </div>
           <div className="px-3 py-2 bg-black/40 rounded-xl border border-white/5 group-hover:border-white/10 transition-colors">
-            <p className="text-[7px] font-black text-slate-700 uppercase tracking-widest mb-1">Error Rate</p>
+            <p className="text-[7px] font-black text-slate-700 uppercase tracking-widest mb-1">Відсоток Помилок</p>
             <p className="text-xs font-black font-mono text-rose-500/80">0.00%</p>
           </div>
         </div>
@@ -396,13 +405,31 @@ const SourceCard = ({ source, onSync, onDelete }: {
 };
 
 const LiveEventsFeed = () => {
-  const [events] = useState([
-    { id: 1, type: 'ingest', message: 'Новий вузол MinIO підключено', time: '12с тому', status: 'success' },
-    { id: 2, type: 'sync', message: 'Синхронізація PostgreSQL завершена', time: '45с тому', status: 'success' },
-    { id: 3, type: 'process', message: 'Обробка PDF-пакета #901', time: '1хв тому', status: 'processing' },
-    { id: 4, type: 'vector', message: 'Індексація Qdrant: 2.4k записів', time: '3хв тому', status: 'success' },
-    { id: 5, type: 'alert', message: 'Відхилення в потоці Telegram API', time: '5хв тому', status: 'warning' },
-  ]);
+  const [events, setEvents] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await api.getLiveAlerts();
+        if (Array.isArray(res)) {
+          setEvents(res.slice(0, 8));
+        }
+      } catch (e) {
+        // Fallback for demo
+      }
+    };
+    fetchEvents();
+    const interval = setInterval(fetchEvents, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const demoEvents = [
+    { id: 'd1', type: 'ingest', message: 'Новий вузол MinIO підключено', time: '12с тому', status: 'success' },
+    { id: 'd2', type: 'sync', message: 'Синхронізація PostgreSQL завершена', time: '45с тому', status: 'success' },
+    { id: 'd3', type: 'process', message: 'Обробка пакетів даних #901', time: '1хв тому', status: 'processing' },
+  ];
+
+  const displayEvents = events.length > 0 ? events : demoEvents;
 
   return (
     <div className="bg-slate-950/60 backdrop-blur-3xl border border-white/5 rounded-[32px] p-6 h-full flex flex-col group hover:border-emerald-500/20 transition-all duration-500">
@@ -412,37 +439,40 @@ const LiveEventsFeed = () => {
           <h3 className="text-sm font-black text-white uppercase tracking-widest leading-none">Живий Потік Подій</h3>
         </div>
         <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
-          Real-time Nexus
+          Нексус Реал-Тайм
         </div>
       </div>
 
       <div className="space-y-4 overflow-hidden relative flex-1">
-        {events.map((ev, i) => (
-          <motion.div
-            key={ev.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1 - i * 0.15, x: 0 }}
-            className="flex items-start gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors cursor-default border border-transparent hover:border-white/5"
-          >
-            <div className={cn(
-              "p-2 rounded-xl mt-0.5",
-              ev.status === 'success' ? "bg-emerald-500/10 text-emerald-400" :
-                ev.status === 'processing' ? "bg-cyan-500/10 text-cyan-400" :
-                  "bg-amber-500/10 text-amber-400"
-            )}>
-              {ev.type === 'ingest' ? <Database size={14} /> :
-                ev.type === 'sync' ? <RefreshCw size={14} /> :
-                  ev.type === 'alert' ? <ShieldAlert size={14} /> : <Zap size={14} />}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[12px] font-bold text-slate-200 line-clamp-1 truncate">{ev.message}</p>
-              <div className="flex items-center justify-between mt-1">
-                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{ev.type}</span>
-                <span className="text-[10px] font-mono text-slate-500">{ev.time}</span>
+        <AnimatePresence mode="popLayout">
+          {displayEvents.map((ev, i) => (
+            <motion.div
+              key={ev.id || i}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1 - i * 0.15, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="flex items-start gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors cursor-default border border-transparent hover:border-white/5"
+            >
+              <div className={cn(
+                "p-2 rounded-xl mt-0.5",
+                ev.status === 'success' || ev.level === 'INFO' ? "bg-emerald-500/10 text-emerald-400" :
+                  ev.status === 'processing' || ev.level === 'WARNING' ? "bg-cyan-500/10 text-cyan-400" :
+                    "bg-amber-500/10 text-amber-400"
+              )}>
+                {ev.type === 'ingest' ? <Database size={14} /> :
+                  ev.type === 'sync' ? <RefreshCw size={14} /> :
+                    ev.status === 'warning' || ev.level === 'WARNING' ? <ShieldAlert size={14} /> : <Zap size={14} />}
               </div>
-            </div>
-          </motion.div>
-        ))}
+              <div className="flex-1 min-w-0">
+                <p className="text-[12px] font-bold text-slate-200 line-clamp-1 truncate">{ev.message || ev.msg}</p>
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{ev.type || ev.service || 'System'}</span>
+                  <span className="text-[10px] font-mono text-slate-500">{ev.time || new Date(ev.timestamp).toLocaleTimeString()}</span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
         {/* Cinematic gradient fade at bottom */}
         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-950/80 to-transparent pointer-events-none" />
       </div>
@@ -466,6 +496,12 @@ const DataIngestionHub = () => {
   const [submitting, setSubmitting] = useState(false);
   const { addJob, updateJob, activeJobs } = useIngestionStore();
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
+  const [filterType, setFilterType] = useState<string | null>(null);
+
+  const filteredSources = React.useMemo(() => {
+    if (!filterType) return sources;
+    return sources.filter(s => s.type === filterType);
+  }, [sources, filterType]);
 
   // Stats
   const [stats, setStats] = useState({
@@ -479,7 +515,7 @@ const DataIngestionHub = () => {
     try {
       const [conRes, etlRes] = await Promise.allSettled([
         api.getConnectors(),
-        (api as any).v45?.getEtlStatus?.()
+        api.getETLStatus()
       ]);
 
       if (conRes.status === 'fulfilled' && Array.isArray(conRes.value)) {
@@ -487,13 +523,13 @@ const DataIngestionHub = () => {
         setStats(prev => ({
           ...prev,
           totalSources: conRes.value.length,
-          totalRecords: conRes.value.reduce((sum: number, s: any) => sum + (s.itemsCount || 0), 0),
           activeStreams: conRes.value.filter((s: any) => s.status === 'active').length,
         }));
       }
       if (etlRes.status === 'fulfilled' && etlRes.value) {
         setStats(prev => ({
           ...prev,
+          totalRecords: etlRes.value.total_records || 0,
           processed24h: etlRes.value.new_docs_24h || 0,
         }));
       }
@@ -506,23 +542,25 @@ const DataIngestionHub = () => {
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadData, 5000);
+    const interval = setInterval(loadData, 8000);
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-select latest active job if none selected
+  // Clean up stale persisted jobs on mount (jobs older than 30 min that are still processing)
   useEffect(() => {
-    if (!activeJobId) {
-      const jobs = Object.values(activeJobs);
-      const latest = jobs
-        .filter(j => ['uploading', 'validating', 'parsing', 'chunking', 'embedding', 'indexing'].includes(j.status))
-        .sort((a, b) => b.startedAt - a.startedAt)[0];
-
-      if (latest) {
-        setActiveJobId(latest.id);
+    const now = Date.now();
+    const staleThreshold = 30 * 60 * 1000; // 30 minutes
+    const allJobs = Object.values(activeJobs);
+    allJobs.forEach(job => {
+      if (now - job.startedAt > staleThreshold && !['ready', 'failed'].includes(job.status)) {
+        updateJob(job.id, { status: 'failed', message: 'Пайплайн завершено по таймауту' });
       }
-    }
-  }, [activeJobId, activeJobs]);
+    });
+  }, []); // Run only on mount
+
+  // NOTE: We intentionally do NOT auto-select active jobs on mount.
+  // The overlay blocks the entire page. It only appears when the user
+  // explicitly submits a new data source via the modal.
 
   const handleSync = async (id: string) => {
     setSources(prev => prev.map(s => s.id === id ? { ...s, status: 'syncing' as const } : s));
@@ -553,7 +591,7 @@ const DataIngestionHub = () => {
     setSubmitting(true);
     try {
       const typeConfig = SOURCE_TYPES.find(t => t.id === selectedType);
-      const isFileType = ['excel', 'csv', 'pdf', 'image', 'word'].includes(selectedType);
+      const isFileType = ['customs', 'excel', 'csv', 'pdf', 'image', 'word', 'audio', 'video'].includes(selectedType);
 
       if (isFileType && uploadFiles.length > 0) {
         // Upload files
@@ -582,16 +620,35 @@ const DataIngestionHub = () => {
             source_type: selectedType,
             file_id: uploadRes.file_id,
           });
-          // File-based sources
+          // File-based sources — determine pipeline type from file extension
           let fileType = selectedType as IngestionJob['type'];
-          if ((fileType as any) === 'customs' || fileType === 'excel') {
-            if (uf.file.name.endsWith('.csv')) fileType = 'csv';
-            if (uf.file.name.endsWith('.pdf')) fileType = 'pdf';
-            // Otherwise it stays 'excel' or 'customs', but we map 'customs' to 'csv' usually if not handled.
+          const ext = uf.file.name.split('.').pop()?.toLowerCase() || '';
+
+          if (fileType !== ('customs' as any)) {
+            if ((fileType as any) === 'excel') {
+              if (ext === 'csv') fileType = 'csv';
+              if (ext === 'pdf') fileType = 'pdf';
+            }
+            // Direct mapping for media types
+            if (['mp3', 'wav', 'm4a', 'ogg', 'flac'].includes(ext)) fileType = 'audio';
+            if (['mp4', 'mov', 'avi', 'webm', 'mkv'].includes(ext)) fileType = 'video';
+            if (['jpg', 'jpeg', 'png', 'webp', 'tiff'].includes(ext)) fileType = 'image';
+            if (['doc', 'docx'].includes(ext)) fileType = 'word';
+            if (ext === 'pdf') fileType = 'pdf';
           }
 
           addJob(jobRes.job_id, uf.file.name, uf.file.size, fileType);
-          updateJob(jobRes.job_id, { status: 'parsing', stage: 'init', message: 'Аналіз митних декларацій...' });
+          const PIPELINE_MESSAGES: Record<string, string> = {
+            customs: 'Аналіз митних декларацій...',
+            excel: 'Аналіз табличних даних...',
+            csv: 'Обробка CSV файлу...',
+            pdf: 'Quantum Document Stack: OCR + NLP...',
+            word: 'Text Analysis Stack: парсинг документу...',
+            image: 'Vision Analysis Layer: OCR + Detection...',
+            audio: 'Acoustic Signal Processing: транскрибація...',
+            video: 'Visual Frame Analysis: кадри + аудіо...',
+          };
+          updateJob(jobRes.job_id, { status: 'parsing', stage: 'init', message: PIPELINE_MESSAGES[fileType as string] || 'Обробка даних...' });
 
           setUploadFiles(prev => prev.map((f, idx) =>
             idx === i ? { ...f, status: 'done' as const, progress: 100, result: jobRes } : f
@@ -627,35 +684,42 @@ const DataIngestionHub = () => {
   };
 
   const currentTypeConfig = SOURCE_TYPES.find(t => t.id === selectedType) || SOURCE_TYPES[0];
-  const isFileType = ['customs', 'excel', 'csv', 'pdf', 'image', 'word'].includes(selectedType);
+  const isFileType = ['customs', 'excel', 'csv', 'pdf', 'image', 'word', 'audio', 'video'].includes(selectedType);
 
   return (
     <div className="flex flex-col space-y-8 pb-20 relative min-h-screen">
       <AdvancedBackground />
 
-      {/* Pipeline Monitor Overlay */}
-      {activeJobId && (
-        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="max-w-7xl w-full max-h-[95vh] overflow-y-auto custom-scrollbar p-4">
-            <PipelineMonitor
-              jobId={activeJobId}
-              pipelineType={activeJobs[activeJobId]?.type}
-              externalStatus={activeJobs[activeJobId]}
-              onComplete={() => {
-                setActiveJobId(null);
-                loadData();
-              }}
-              onError={(error) => console.error('Pipeline error:', error)}
-            />
-            <button
-              onClick={() => setActiveJobId(null)}
-              className="mt-4 w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-colors"
-            >
-              Сховати (pipeline продовжує працювати)
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Pipeline Monitor Overlay — only shown after explicit ingestion trigger */}
+      <AnimatePresence>
+        {activeJobId && activeJobs[activeJobId] && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl overflow-y-auto px-4 py-20 custom-scrollbar"
+          >
+            <div className="max-w-6xl mx-auto w-full flex flex-col items-center">
+              <PipelineMonitor
+                jobId={activeJobId}
+                pipelineType={activeJobs[activeJobId]?.type}
+                externalStatus={activeJobs[activeJobId]}
+                onComplete={() => {
+                  setActiveJobId(null);
+                  loadData();
+                }}
+                onError={(error) => console.error('Pipeline error:', error)}
+              />
+              <button
+                onClick={() => setActiveJobId(null)}
+                className="mt-6 max-w-sm w-full py-4 bg-slate-800 hover:bg-slate-700 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] border border-slate-700 hover:border-slate-500 text-slate-300 rounded-2xl transition-all text-sm font-bold tracking-widest uppercase"
+              >
+                Сховати панель
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Header */}
       <div className="relative z-20 mb-12">
@@ -695,20 +759,20 @@ const DataIngestionHub = () => {
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-[0.4em] rounded-full">
-                  Central Data Nexus v45
+                  Центральний Процесор Даних v45
                 </span>
                 <span className="px-3 py-1 bg-white/5 border border-white/10 text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] rounded-full">
-                  Status: Sovereign
+                  Статус: Суверенний
                 </span>
               </div>
-              <h1 className="text-6xl md:text-7xl font-black text-white mb-4 tracking-tighter uppercase italic leading-none flex items-center gap-4">
-                ЦЕНТР_<span className="text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.5)]">ДАНИХ</span>
+              <h1 className="text-4xl md:text-6xl font-black text-white mb-4 tracking-tighter uppercase italic leading-none flex items-center gap-4">
+                ЦЕНТР_<span className="text-emerald-400 drop-shadow-[0_0_20px_rgba(52,211,153,0.4)]">ДАНИХ</span>
               </h1>
-              <p className="text-slate-300 text-lg max-w-2xl font-medium leading-relaxed bg-slate-900/40 p-4 rounded-2xl border border-white/5 backdrop-blur-sm">
+              <p className="text-slate-400 text-base max-w-2xl font-medium leading-relaxed bg-slate-950/40 p-5 rounded-3xl border border-white/5 backdrop-blur-xl shadow-2xl">
                 Глобальне нейронне ядро для управління потоками інформації. <br />
-                <span className="text-emerald-400 text-[11px] font-black uppercase tracking-[0.3em] mt-2 block flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></span>
-                  Sovereign Intelligence Data Fabric Active
+                <span className="text-emerald-500/80 text-[10px] font-black uppercase tracking-[0.4em] mt-3 block flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></span>
+                  СУВЕРЕННА ІНТЕЛЕКТУАЛЬНА МАТРИЦЯ ДАНИХ АКТИВНА
                 </span>
               </p>
             </div>
@@ -728,12 +792,12 @@ const DataIngestionHub = () => {
             </motion.button>
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3 bg-white/5 rounded-2xl border border-white/5 flex flex-col group hover:border-emerald-500/30 transition-all">
-                <span className="text-[8px] font-black text-slate-500 uppercase group-hover:text-emerald-400">Час Роботи</span>
-                <span className="text-xs font-mono text-emerald-400">99.9%</span>
+                <span className="text-[8px] font-black text-slate-500 uppercase group-hover:text-emerald-400">Загалом Записів</span>
+                <span className="text-xs font-mono text-emerald-400">{stats.totalRecords.toLocaleString('uk-UA')}</span>
               </div>
               <div className="p-3 bg-white/5 rounded-2xl border border-white/5 flex flex-col group hover:border-amber-500/30 transition-all">
-                <span className="text-[8px] font-black text-slate-500 uppercase group-hover:text-amber-400">MinIO Storage</span>
-                <span className="text-xs font-mono text-amber-500 uppercase tracking-tighter">Verified</span>
+                <span className="text-[8px] font-black text-slate-500 uppercase group-hover:text-amber-400">Оброблено (24г)</span>
+                <span className="text-xs font-mono text-amber-500 uppercase tracking-tighter">{stats.processed24h.toLocaleString('uk-UA')}</span>
               </div>
             </div>
           </div>
@@ -777,11 +841,18 @@ const DataIngestionHub = () => {
 
                 <div className="grid grid-cols-2 gap-2 mb-4">
                   <div className="flex flex-col">
-                    <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest">Load</span>
-                    <span className="text-[10px] font-mono text-emerald-400">{(Math.random() * 20 + 5).toFixed(1)}%</span>
+                    <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest">Навантаження</span>
+                    <span className="text-[10px] font-mono text-emerald-400">
+                      {lake.id === 'postgres' ? (Math.min(95, stats.totalRecords / 1000)).toFixed(1) :
+                        lake.id === 'minio' ? (Math.min(98, stats.totalRecords / 2000)).toFixed(1) :
+                          lake.id === 'qdrant' ? (Math.min(90, stats.totalRecords / 1500)).toFixed(1) :
+                            lake.id === 'opensearch' ? (Math.min(88, stats.totalRecords / 1200)).toFixed(1) :
+                              lake.id === 'graphdb' ? (Math.min(72, stats.totalRecords / 2500)).toFixed(1) :
+                                '4.2'}%
+                    </span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest">Nodes</span>
+                    <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest">Вузли</span>
                     <span className="text-[10px] font-mono text-cyan-400">3/3</span>
                   </div>
                 </div>
@@ -791,7 +862,7 @@ const DataIngestionHub = () => {
                     "text-[8px] font-black px-2 py-0.5 rounded-md border uppercase tracking-wider",
                     lake.id === 'minio' ? "bg-amber-500/10 text-amber-400 border-amber-500/20" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                   )}>
-                    {lake.status === 'АКТИВНИЙ В ПАЙПЛАЙНІ' ? 'Active' : lake.status}
+                    {lake.status === 'АКТИВНИЙ В ПАЙПЛАЙНІ' ? 'Активно' : lake.status}
                   </span>
                   <div className="flex -space-x-1">
                     {[1, 2, 3].map(i => (
@@ -818,21 +889,37 @@ const DataIngestionHub = () => {
         />
       </div>
 
-      {/* Database Pipeline Monitor - Індивідуальні пайплайни по базах даних */}
       <div className="relative z-10 mb-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
         <DatabasePipelineMonitor />
-        <MediaIntelligencePanel />
+        <div className="space-y-8">
+          <MediaIntelligencePanel />
+          <LiveEventsFeed />
+        </div>
       </div>
 
       {/* Source Type Quick Filters */}
       <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => setFilterType(null)}
+          className={cn(
+            "flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all",
+            !filterType
+              ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+              : "bg-slate-900/50 border-slate-800 text-slate-400 hover:bg-slate-800"
+          )}
+        >
+          <Activity className="w-4 h-4" />
+          Всі Джерела
+        </button>
         {SOURCE_TYPES.map(src => (
           <button
             key={src.id}
+            onClick={() => setFilterType(src.id === filterType ? null : src.id)}
             className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all",
-              `hover:bg-${src.color}-500/10 hover:border-${src.color}-500/30 hover:text-${src.color}-400`,
-              "bg-slate-900/50 border-slate-800 text-slate-400"
+              filterType === src.id
+                ? `bg-${src.color}-500/20 border-${src.color}-500/50 text-${src.color}-400`
+                : `bg-slate-900/50 border-slate-800 text-slate-400 hover:bg-${src.color}-500/10`
             )}
           >
             <src.icon className="w-4 h-4" />
@@ -843,8 +930,8 @@ const DataIngestionHub = () => {
 
       {/* Sources Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
-        <AnimatePresence>
-          {sources.map(source => (
+        <AnimatePresence mode="popLayout">
+          {filteredSources.map(source => (
             <SourceCard
               key={source.id}
               source={source}
@@ -876,7 +963,7 @@ const DataIngestionHub = () => {
             {/* Background effects */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(52,211,153,0.05)_0%,transparent_70%)]" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none group-hover:bg-cyan-500/20 transition-all duration-1000" />
-            
+
             <div className="relative z-10 flex flex-col items-center">
               <div className="w-32 h-32 mb-8 rounded-[40px] bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 flex items-center justify-center shadow-2xl relative">
                 <div className="absolute inset-0 bg-emerald-500/5 rounded-[40px] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />

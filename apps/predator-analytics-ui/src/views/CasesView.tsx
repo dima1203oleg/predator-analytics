@@ -60,15 +60,15 @@ const CasesView: React.FC = () => {
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       result = result.filter(c =>
-        c.title.toLowerCase().includes(q) ||
-        c.situation.toLowerCase().includes(q) ||
-        c.conclusion.toLowerCase().includes(q)
+        (c.title?.toLowerCase() || '').includes(q) ||
+        (c.situation?.toLowerCase() || '').includes(q) ||
+        (c.conclusion?.toLowerCase() || '').includes(q)
       );
     }
 
     return result.sort((a, b) => {
-      const statusOrder = { 'КРИТИЧНО': 0, 'УВАГА': 1, 'БЕЗПЕЧНО': 2, 'АРХІВ': 3 };
-      return (statusOrder[a.status] || 0) - (statusOrder[b.status] || 0) || b.riskScore - a.riskScore;
+      const statusOrder: Record<string, number> = { 'КРИТИЧНО': 0, 'УВАГА': 1, 'БЕЗПЕЧНО': 2, 'АРХІВ': 3 };
+      return (statusOrder[a.status || ''] ?? 9) - (statusOrder[b.status || ''] ?? 9) || (b.riskScore || 0) - (a.riskScore || 0);
     });
   }, [cases, activeFilter, searchQuery]);
 
@@ -86,41 +86,41 @@ const CasesView: React.FC = () => {
     ));
     dispatchEvent('CASE_ARCHIVED', id);
     try {
-        await (api as any).cases.archive(id);
-    } catch(e) { console.error(e); }
+      await (api as any).cases.archive(id);
+    } catch (e) { console.error(e); }
   };
 
   const handleEscalateCase = async (id: string) => {
     dispatchEvent('CASE_ESCALATED', id);
     try {
-        await (api as any).cases.escalate(id);
-    } catch(e) { console.error(e); }
+      await (api as any).cases.escalate(id);
+    } catch (e) { console.error(e); }
   };
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!newCaseData.title) return;
+    e.preventDefault();
+    if (!newCaseData.title) return;
 
-      setCreateLoading(true);
-      try {
-          await (api as any).cases.create({
-              title: newCaseData.title,
-              situation: newCaseData.description,
-              priority: newCaseData.priority,
-              status: newCaseData.priority === 'high' ? 'КРИТИЧНО' : 'УВАГА',
-              source: 'MANUAL_ENTRY'
-          });
+    setCreateLoading(true);
+    try {
+      await (api as any).cases.create({
+        title: newCaseData.title,
+        situation: newCaseData.description,
+        priority: newCaseData.priority,
+        status: newCaseData.priority === 'high' ? 'КРИТИЧНО' : 'УВАГА',
+        source: 'MANUAL_ENTRY'
+      });
 
-          // Reset and reload
-          setIsCreateModalOpen(false);
-          setNewCaseData({ title: '', description: '', priority: 'medium' });
-          loadCases(); // Refresh list
-          dispatchEvent('CASE_CREATED', newCaseData.title);
-      } catch (err) {
-          console.error("Failed to create case", err);
-      } finally {
-          setCreateLoading(false);
-      }
+      // Reset and reload
+      setIsCreateModalOpen(false);
+      setNewCaseData({ title: '', description: '', priority: 'medium' });
+      loadCases(); // Refresh list
+      dispatchEvent('CASE_CREATED', newCaseData.title);
+    } catch (err) {
+      console.error("Failed to create case", err);
+    } finally {
+      setCreateLoading(false);
+    }
   };
 
   return (
@@ -149,11 +149,11 @@ const CasesView: React.FC = () => {
             </div>
 
             <button
-                onClick={() => setIsCreateModalOpen(true)}
-                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 transition-all active:scale-95 whitespace-nowrap"
+              onClick={() => setIsCreateModalOpen(true)}
+              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 transition-all active:scale-95 whitespace-nowrap"
             >
-                <Plus size={18} />
-                Новий Кейс
+              <Plus size={18} />
+              Новий Кейс
             </button>
           </div>
         </div>
@@ -206,10 +206,10 @@ const CasesView: React.FC = () => {
             }
           </p>
           <button
-             onClick={() => setIsCreateModalOpen(true)}
-             className="mt-6 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-colors"
+            onClick={() => setIsCreateModalOpen(true)}
+            className="mt-6 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-colors"
           >
-              Створити перший кейс
+            Створити перший кейс
           </button>
         </div>
       ) : (
@@ -230,86 +230,85 @@ const CasesView: React.FC = () => {
 
       {/* CREATE MODAL */}
       <AnimatePresence>
-          {isCreateModalOpen && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                  <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      onClick={() => setIsCreateModalOpen(false)}
-                      className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-                  />
-                  <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      className="relative w-full max-w-md bg-slate-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl z-10"
-                  >
-                        <div className="p-6 border-b border-white/5 flex justify-between items-center">
-                            <h3 className="text-lg font-black text-white uppercase tracking-tight">Нове Розслідування</h3>
-                            <button
-                                onClick={() => setIsCreateModalOpen(false)}
-                                aria-label="Закрити"
-                                className="text-slate-500 hover:text-white transition-colors"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                        <form onSubmit={handleCreateSubmit} className="p-6 space-y-4">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Назва Кейсу</label>
-                                <input
-                                    className="w-full bg-black/40 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 transition-colors outline-none"
-                                    placeholder="Введіть назву..."
-                                    value={newCaseData.title}
-                                    onChange={(e) => setNewCaseData({...newCaseData, title: e.target.value})}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Опис Ситуації</label>
-                                <textarea
-                                    className="w-full bg-black/40 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 transition-colors outline-none h-32 resize-none"
-                                    placeholder="Опишіть деталі інциденту..."
-                                    value={newCaseData.description}
-                                    onChange={(e) => setNewCaseData({...newCaseData, description: e.target.value})}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Пріоритет</label>
-                                <div className="grid grid-cols-3 gap-2">
-                                    {['low', 'medium', 'high'].map(p => (
-                                        <button
-                                            key={p}
-                                            type="button"
-                                            onClick={() => setNewCaseData({...newCaseData, priority: p})}
-                                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider border transition-all ${
-                                                newCaseData.priority === p
-                                                ? p === 'high' ? 'bg-rose-500 text-white border-rose-500'
-                                                  : p === 'medium' ? 'bg-amber-500 text-white border-amber-500'
-                                                  : 'bg-emerald-500 text-white border-emerald-500'
-                                                : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700'
-                                            }`}
-                                        >
-                                            {p === 'high' ? 'Високий' : p === 'medium' ? 'Середній' : 'Низький'}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="pt-4">
-                                <button
-                                    type="submit"
-                                    disabled={createLoading}
-                                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
-                                >
-                                    {createLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <CheckCircle2 size={18} />}
-                                    Створити Кейс
-                                </button>
-                            </div>
-                        </form>
-                  </motion.div>
+        {isCreateModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsCreateModalOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-md bg-slate-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl z-10"
+            >
+              <div className="p-6 border-b border-white/5 flex justify-between items-center">
+                <h3 className="text-lg font-black text-white uppercase tracking-tight">Нове Розслідування</h3>
+                <button
+                  onClick={() => setIsCreateModalOpen(false)}
+                  aria-label="Закрити"
+                  className="text-slate-500 hover:text-white transition-colors"
+                >
+                  <X size={20} />
+                </button>
               </div>
-          )}
+              <form onSubmit={handleCreateSubmit} className="p-6 space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Назва Кейсу</label>
+                  <input
+                    className="w-full bg-black/40 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 transition-colors outline-none"
+                    placeholder="Введіть назву..."
+                    value={newCaseData.title}
+                    onChange={(e) => setNewCaseData({ ...newCaseData, title: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Опис Ситуації</label>
+                  <textarea
+                    className="w-full bg-black/40 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 transition-colors outline-none h-32 resize-none"
+                    placeholder="Опишіть деталі інциденту..."
+                    value={newCaseData.description}
+                    onChange={(e) => setNewCaseData({ ...newCaseData, description: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Пріоритет</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {['low', 'medium', 'high'].map(p => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setNewCaseData({ ...newCaseData, priority: p })}
+                        className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider border transition-all ${newCaseData.priority === p
+                            ? p === 'high' ? 'bg-rose-500 text-white border-rose-500'
+                              : p === 'medium' ? 'bg-amber-500 text-white border-amber-500'
+                                : 'bg-emerald-500 text-white border-emerald-500'
+                            : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700'
+                          }`}
+                      >
+                        {p === 'high' ? 'Високий' : p === 'medium' ? 'Середній' : 'Низький'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="pt-4">
+                  <button
+                    type="submit"
+                    disabled={createLoading}
+                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {createLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <CheckCircle2 size={18} />}
+                    Створити Кейс
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
       </AnimatePresence>
 
       <CaseDetailModal

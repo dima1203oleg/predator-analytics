@@ -19,6 +19,7 @@ import {
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { premiumLocales } from '../locales/uk/premium';
+import { api } from '../services/api';
 
 // Типи
 interface BriefSection {
@@ -141,9 +142,35 @@ const ExecutiveBriefView: React.FC = () => {
   const [expandedSections, setExpandedSections] = useState<string[]>(['critical', 'opportunities']);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [bookmarkedItems, setBookmarkedItems] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAutoRefresh, setIsAutoRefresh] = useState(true);
   const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [metrics, setMetrics] = useState<DailyMetric[]>([]);
+  const [sections, setSections] = useState<BriefSection[]>([]);
+  const [summary, setSummary] = useState<string>('');
+
+  useEffect(() => {
+    const fetchBrief = async () => {
+      try {
+        setIsLoading(true);
+        const data = await api.getMorningNewspaper();
+        setMetrics(Array.isArray(data.metrics) ? data.metrics : []);
+        setSections(Array.isArray(data.sections) ? data.sections : []);
+        setSummary(data.summary || '');
+        setLastRefresh(new Date());
+      } catch (err) {
+        console.error("Failed to fetch evening brief", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBrief();
+    if (isAutoRefresh) {
+      const interval = setInterval(fetchBrief, 300000); // 5 min
+      return () => clearInterval(interval);
+    }
+  }, [isAutoRefresh]);
 
   // Оновлення часу кожну хвилину
   useEffect(() => {
@@ -285,219 +312,233 @@ const ExecutiveBriefView: React.FC = () => {
 
       {/* Стрічка ключових метрик */}
       <div className="grid grid-cols-4 gap-4">
-        {MOCK_METRICS.map((metric, i) => (
-          <motion.div
-            key={metric.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="bg-slate-900/60 border border-white/5 rounded-3xl p-5 backdrop-blur-xl group hover:border-amber-500/20 transition-all"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{metric.label}</span>
-              <div className={cn(
-                "flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full",
-                metric.trend === 'up' ? "bg-emerald-500/10 text-emerald-400" :
-                metric.trend === 'down' ? "bg-rose-500/10 text-rose-400" :
-                "bg-slate-500/10 text-slate-400"
-              )}>
-                {metric.trend === 'up' ? <TrendingUp size={10} /> :
-                 metric.trend === 'down' ? <TrendingDown size={10} /> :
-                 <Activity size={10} />}
-                {metric.change > 0 ? '+' : ''}{metric.change}%
+        {isLoading && metrics.length === 0 ? (
+          Array(4).fill(0).map((_, i) => (
+            <div key={i} className="h-24 bg-slate-900/60 rounded-3xl animate-pulse border border-white/5" />
+          ))
+        ) : (
+          metrics.map((metric, i) => (
+            <motion.div
+              key={metric.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="bg-slate-900/60 border border-white/5 rounded-3xl p-5 backdrop-blur-xl group hover:border-amber-500/20 transition-all"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{metric.label}</span>
+                {metric.change !== undefined && (
+                  <div className={cn(
+                    "flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full",
+                    metric.trend === 'up' ? "bg-emerald-500/10 text-emerald-400" :
+                      metric.trend === 'down' ? "bg-rose-500/10 text-rose-400" :
+                        "bg-slate-500/10 text-slate-400"
+                  )}>
+                    {metric.trend === 'up' ? <TrendingUp size={10} /> :
+                      metric.trend === 'down' ? <TrendingDown size={10} /> :
+                        <Activity size={10} />}
+                    {metric.change > 0 ? '+' : ''}{metric.change}%
+                  </div>
+                )}
               </div>
-            </div>
-            <div className="flex items-end justify-between">
-              <span className="text-3xl font-black text-white">{metric.value}</span>
-              {metric.sparkline && (
-                <div className="flex items-end gap-0.5 h-8">
-                  {metric.sparkline.map((v, j) => (
-                    <div
-                      key={j}
-                      className={cn(
-                        "w-1.5 rounded-full transition-all",
-                        metric.trend === 'up' ? "bg-emerald-500" :
-                        metric.trend === 'down' ? "bg-rose-500" : "bg-slate-500"
-                      )}
-                      style={{ height: `${(v / Math.max(...metric.sparkline!)) * 100}%`, opacity: 0.3 + (j / metric.sparkline!.length) * 0.7 }}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        ))}
+              <div className="flex items-end justify-between">
+                <span className="text-3xl font-black text-white">{metric.value}</span>
+                {metric.sparkline && (
+                  <div className="flex items-end gap-0.5 h-8">
+                    {metric.sparkline.map((v, j) => (
+                      <div
+                        key={j}
+                        className={cn(
+                          "w-1.5 rounded-full transition-all",
+                          metric.trend === 'up' ? "bg-emerald-500" :
+                            metric.trend === 'down' ? "bg-rose-500" : "bg-slate-500"
+                        )}
+                        style={{ height: `${(v / Math.max(...metric.sparkline!)) * 100}%`, opacity: 0.3 + (j / metric.sparkline!.length) * 0.7 }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          ))
+        )}
       </div>
 
       <div className="grid grid-cols-12 gap-6 flex-1">
         {/* Основний контент брифінгу */}
         <div className="col-span-8 space-y-4">
-          {MOCK_SECTIONS.map((section) => (
-            <motion.div
-              key={section.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={cn(
-                "bg-slate-900/60 border rounded-[32px] overflow-hidden backdrop-blur-xl transition-all",
-                section.priority === 'critical' ? "border-rose-500/20" :
-                section.priority === 'high' ? "border-amber-500/20" :
-                "border-white/5"
-              )}
-            >
-              {/* Заголовок секції */}
-              <button
-                onClick={() => toggleSection(section.id)}
-                title={section.title}
-                className="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-black text-white">{section.title}</span>
-                  <span className={cn(
-                    "text-[9px] font-black px-2 py-0.5 rounded uppercase",
-                    section.priority === 'critical' ? "bg-rose-500/20 text-rose-400" :
-                    section.priority === 'high' ? "bg-amber-500/20 text-amber-400" :
-                    "bg-slate-500/20 text-slate-400"
-                  )}>
-                    {section.items.length} {premiumLocales.executiveBrief.ui.itemsCount}
-                  </span>
-                </div>
-                {expandedSections.includes(section.id) ? (
-                  <ChevronDown size={18} className="text-slate-500" />
-                ) : (
-                  <ChevronRight size={18} className="text-slate-500" />
+          {isLoading && sections.length === 0 ? (
+            Array(3).fill(0).map((_, i) => (
+              <div key={i} className="h-32 bg-slate-900/60 rounded-[32px] animate-pulse border border-white/5" />
+            ))
+          ) : (
+            sections.map((section) => (
+              <motion.div
+                key={section.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={cn(
+                  "bg-slate-900/60 border rounded-[32px] overflow-hidden backdrop-blur-xl transition-all",
+                  section.priority === 'critical' ? "border-rose-500/20" :
+                    section.priority === 'high' ? "border-amber-500/20" :
+                      "border-white/5"
                 )}
-              </button>
+              >
+                {/* Заголовок секції */}
+                <button
+                  onClick={() => toggleSection(section.id)}
+                  title={section.title}
+                  className="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-black text-white">{section.title}</span>
+                    <span className={cn(
+                      "text-[9px] font-black px-2 py-0.5 rounded uppercase",
+                      section.priority === 'critical' ? "bg-rose-500/20 text-rose-400" :
+                        section.priority === 'high' ? "bg-amber-500/20 text-amber-400" :
+                          "bg-slate-500/20 text-slate-400"
+                    )}>
+                      {section.items.length} {premiumLocales.executiveBrief.ui.itemsCount}
+                    </span>
+                  </div>
+                  {expandedSections.includes(section.id) ? (
+                    <ChevronDown size={18} className="text-slate-500" />
+                  ) : (
+                    <ChevronRight size={18} className="text-slate-500" />
+                  )}
+                </button>
 
-              {/* Елементи секції */}
-              <AnimatePresence>
-                {expandedSections.includes(section.id) && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="p-4 pt-0 space-y-3">
-                      {section.items.map((item) => (
-                        <motion.div
-                          key={item.id}
-                          className={cn(
-                            "p-4 bg-black/40 border border-white/5 rounded-2xl transition-all",
-                            expandedItems.includes(item.id) && "border-amber-500/20"
-                          )}
-                        >
-                          {/* Заголовок елементу */}
-                          <div
-                            className="flex items-start gap-4 cursor-pointer"
-                            onClick={() => toggleItem(item.id)}
+                {/* Елементи секції */}
+                <AnimatePresence>
+                  {expandedSections.includes(section.id) && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-4 pt-0 space-y-3">
+                        {section.items.map((item) => (
+                          <motion.div
+                            key={item.id}
+                            className={cn(
+                              "p-4 bg-black/40 border border-white/5 rounded-2xl transition-all",
+                              expandedItems.includes(item.id) && "border-amber-500/20"
+                            )}
                           >
-                            <div className={cn(
-                              "p-2 rounded-xl shrink-0",
-                              item.type === 'alert' ? "bg-rose-500/10" :
-                              item.type === 'opportunity' ? "bg-emerald-500/10" :
-                              item.type === 'insight' ? "bg-cyan-500/10" :
-                              item.type === 'action' ? "bg-amber-500/10" :
-                              "bg-slate-500/10"
-                            )}>
-                              {item.type === 'alert' ? <AlertTriangle size={16} className="text-rose-500" /> :
-                               item.type === 'opportunity' ? <TrendingUp size={16} className="text-emerald-500" /> :
-                               item.type === 'insight' ? <Brain size={16} className="text-cyan-500" /> :
-                               item.type === 'action' ? <CheckCircle size={16} className="text-amber-500" /> :
-                               <Activity size={16} className="text-slate-500" />}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-xs font-black text-white">{item.title}</span>
-                                {item.value && (
-                                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
-                                    {item.value}
-                                  </span>
+                            {/* Заголовок елементу */}
+                            <div
+                              className="flex items-start gap-4 cursor-pointer"
+                              onClick={() => toggleItem(item.id)}
+                            >
+                              <div className={cn(
+                                "p-2 rounded-xl shrink-0",
+                                item.type === 'alert' ? "bg-rose-500/10" :
+                                  item.type === 'opportunity' ? "bg-emerald-500/10" :
+                                    item.type === 'insight' ? "bg-cyan-500/10" :
+                                      item.type === 'action' ? "bg-amber-500/10" :
+                                        "bg-slate-500/10"
+                              )}>
+                                {item.type === 'alert' ? <AlertTriangle size={16} className="text-rose-500" /> :
+                                  item.type === 'opportunity' ? <TrendingUp size={16} className="text-emerald-500" /> :
+                                    item.type === 'insight' ? <Brain size={16} className="text-cyan-500" /> :
+                                      item.type === 'action' ? <CheckCircle size={16} className="text-amber-500" /> :
+                                        <Activity size={16} className="text-slate-500" />}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-xs font-black text-white">{item.title}</span>
+                                  {item.value && (
+                                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
+                                      {item.value}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-[11px] text-slate-400">{item.summary}</p>
+                                {item.tags && (
+                                  <div className="flex items-center gap-2 mt-2">
+                                    {item.tags.map(tag => (
+                                      <span key={tag} className="text-[8px] text-slate-600 bg-slate-800 px-2 py-0.5 rounded">
+                                        #{tag}
+                                      </span>
+                                    ))}
+                                  </div>
                                 )}
                               </div>
-                              <p className="text-[11px] text-slate-400">{item.summary}</p>
-                              {item.tags && (
-                                <div className="flex items-center gap-2 mt-2">
-                                  {item.tags.map(tag => (
-                                    <span key={tag} className="text-[8px] text-slate-600 bg-slate-800 px-2 py-0.5 rounded">
-                                      #{tag}
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2 shrink-0">
-                              <button
-                                onClick={(e) => { e.stopPropagation(); toggleBookmark(item.id); }}
-                                title={premiumLocales.executiveBrief.ui.bookmark}
-                                className={cn(
-                                  "p-1.5 rounded-lg transition-colors",
-                                  bookmarkedItems.includes(item.id)
-                                    ? "bg-amber-500/20 text-amber-400"
-                                    : "bg-white/5 text-slate-500 hover:text-white"
-                                )}
-                              >
-                                <Bookmark size={12} fill={bookmarkedItems.includes(item.id) ? 'currentColor' : 'none'} />
-                              </button>
-                              <ChevronRight
-                                size={14}
-                                className={cn(
-                                  "text-slate-600 transition-transform",
-                                  expandedItems.includes(item.id) && "rotate-90"
-                                )}
-                              />
-                            </div>
-                          </div>
-
-                          {/* Розгорнуті деталі */}
-                          <AnimatePresence>
-                            {expandedItems.includes(item.id) && item.detail && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                className="overflow-hidden"
-                              >
-                                <div className="mt-4 pt-4 border-t border-white/5">
-                                  <p className="text-[11px] text-slate-300 leading-relaxed mb-3">
-                                    {item.detail}
-                                  </p>
-                                  {item.impact && (
-                                    <div className="p-3 bg-amber-500/5 border border-amber-500/10 rounded-xl mb-3">
-                                        <div className="text-[9px] font-black text-amber-500 uppercase tracking-widest mb-1">{premiumLocales.executiveBrief.ui.impact}</div>
-                                      <div className="text-[11px] text-amber-300">{item.impact}</div>
-                                    </div>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); toggleBookmark(item.id); }}
+                                  title={premiumLocales.executiveBrief.ui.bookmark}
+                                  className={cn(
+                                    "p-1.5 rounded-lg transition-colors",
+                                    bookmarkedItems.includes(item.id)
+                                      ? "bg-amber-500/20 text-amber-400"
+                                      : "bg-white/5 text-slate-500 hover:text-white"
                                   )}
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-4">
-                                      {item.source && (
-                                        <span className="text-[9px] text-amber-500/70 flex items-center gap-1">
-                                          <Radio size={10} /> {item.source}
-                                        </span>
-                                      )}
-                                      {item.timestamp && (
-                                        <span className="text-[9px] text-slate-600 flex items-center gap-1">
-                                          <Clock size={10} /> {item.timestamp}
-                                        </span>
+                                >
+                                  <Bookmark size={12} fill={bookmarkedItems.includes(item.id) ? 'currentColor' : 'none'} />
+                                </button>
+                                <ChevronRight
+                                  size={14}
+                                  className={cn(
+                                    "text-slate-600 transition-transform",
+                                    expandedItems.includes(item.id) && "rotate-90"
+                                  )}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Розгорнуті деталі */}
+                            <AnimatePresence>
+                              {expandedItems.includes(item.id) && item.detail && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="mt-4 pt-4 border-t border-white/5">
+                                    <p className="text-[11px] text-slate-300 leading-relaxed mb-3">
+                                      {item.detail}
+                                    </p>
+                                    {item.impact && (
+                                      <div className="p-3 bg-amber-500/5 border border-amber-500/10 rounded-xl mb-3">
+                                        <div className="text-[9px] font-black text-amber-500 uppercase tracking-widest mb-1">{premiumLocales.executiveBrief.ui.impact}</div>
+                                        <div className="text-[11px] text-amber-300">{item.impact}</div>
+                                      </div>
+                                    )}
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-4">
+                                        {item.source && (
+                                          <span className="text-[9px] text-amber-500/70 flex items-center gap-1">
+                                            <Radio size={10} /> {item.source}
+                                          </span>
+                                        )}
+                                        {item.timestamp && (
+                                          <span className="text-[9px] text-slate-600 flex items-center gap-1">
+                                            <Clock size={10} /> {item.timestamp}
+                                          </span>
+                                        )}
+                                      </div>
+                                      {item.actionable && (
+                                        <button className="px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-[9px] font-black text-amber-400 uppercase tracking-widest hover:bg-amber-500/20 transition-colors flex items-center gap-2">
+                                          {premiumLocales.executiveBrief.ui.takeAction} <ArrowUpRight size={10} />
+                                        </button>
                                       )}
                                     </div>
-                                    {item.actionable && (
-                                      <button className="px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-[9px] font-black text-amber-400 uppercase tracking-widest hover:bg-amber-500/20 transition-colors flex items-center gap-2">
-                                        {premiumLocales.executiveBrief.ui.takeAction} <ArrowUpRight size={10} />
-                                      </button>
-                                    )}
                                   </div>
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))
+          )}
         </div>
 
         {/* Бічна панель */}
@@ -540,7 +581,7 @@ const ExecutiveBriefView: React.FC = () => {
             </h3>
             {bookmarkedItems.length > 0 ? (
               <div className="space-y-2">
-                {MOCK_SECTIONS.flatMap(s => s.items).filter(i => bookmarkedItems.includes(i.id)).map(item => (
+                {sections.flatMap(s => s.items).filter(i => bookmarkedItems.includes(i.id)).map(item => (
                   <div key={item.id} className="p-3 bg-black/40 border border-white/5 rounded-xl">
                     <div className="text-[10px] font-bold text-white line-clamp-1">{item.title}</div>
                     <div className="text-[9px] text-slate-500">{TYPE_LABELS[item.type]}</div>
@@ -590,12 +631,13 @@ const ExecutiveBriefView: React.FC = () => {
             </div>
             <p className="text-[11px] text-amber-200/80 leading-relaxed mb-4">
               {(() => {
-                  const txt = premiumLocales.executiveBrief.data.summary.replace('{alerts}', '2').replace('{opportunities}', '4');
-                  const parts = txt.split('{status}');
-                  if (parts.length > 1) {
-                      return <>{parts[0]}<span className="text-emerald-400 font-bold">{premiumLocales.executiveBrief.data.statusPositive}</span>{parts[1]}</>;
-                  }
-                  return txt;
+                if (isLoading && !summary) return 'Завантаження резюме...';
+                const txt = summary || premiumLocales.executiveBrief.data.summary.replace('{alerts}', '2').replace('{opportunities}', '4');
+                const parts = txt.split('{status}');
+                if (parts.length > 1) {
+                  return <>{parts[0]}<span className="text-emerald-400 font-bold">{premiumLocales.executiveBrief.data.statusPositive}</span>{parts[1]}</>;
+                }
+                return txt;
               })()}
             </p>
             <button className="w-full py-3 bg-amber-500/20 border border-amber-500/30 rounded-xl text-[10px] font-black text-amber-400 uppercase tracking-widest hover:bg-amber-500/30 transition-colors flex items-center justify-center gap-2">

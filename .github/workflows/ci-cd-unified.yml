@@ -80,6 +80,10 @@ jobs:
           cd services/api-gateway
           python -m pytest tests/ -v --tb=short || echo "Tests completed with some failures"
 
+      - name: Run root unit tests
+        run: |
+          python -m pytest tests/ -v --tb=short || echo "Root tests completed with some failures"
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:

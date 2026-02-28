@@ -194,7 +194,7 @@ const ResultCard: React.FC<{
                     {/* Snippet with highlight */}
                     <p className="mt-3 text-sm text-slate-300 leading-relaxed">
                         <span dangerouslySetInnerHTML={{
-                            __html: result.snippet.replace(
+                            __html: (result.snippet || '').replace(
                                 /\b(AI|ML|нейронні|пошук|semantic)\b/gi,
                                 '<mark class="bg-gradient-to-r from-cyan-500/30 to-teal-500/30 text-cyan-300 px-1 rounded">$1</mark>'
                             )
@@ -307,13 +307,13 @@ const XAIPanel: React.FC<{
                                 xAxis: { type: 'value', show: false },
                                 yAxis: {
                                     type: 'category',
-                                    data: explanation.top_features.slice(0, 10).map(f => f.token),
+                                    data: (explanation.top_features || []).slice(0, 10).map(f => f.token),
                                     axisLabel: { color: '#94a3b8' },
                                     axisLine: { show: false },
                                     axisTick: { show: false }
                                 },
                                 series: [{
-                                    data: explanation.top_features.slice(0, 10).map(f => f.importance),
+                                    data: (explanation.top_features || []).slice(0, 10).map(f => f.importance),
                                     type: 'bar',
                                     itemStyle: {
                                         color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [

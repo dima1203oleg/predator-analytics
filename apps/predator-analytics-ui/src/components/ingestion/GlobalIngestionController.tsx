@@ -7,6 +7,7 @@ import {
     CheckCircle2,
     ChevronRight,
     Loader2,
+    Settings,
     X
 } from "lucide-react"
 import React, { useEffect, useRef } from "react"
@@ -14,6 +15,7 @@ import { IngestionJob, useIngestionStore } from "../../store/useIngestionStore"
 import { cn } from "../../utils/cn"
 import { Button } from "../ui/button"
 import { PipelineMonitor } from '../pipeline'
+import { STAGE_LIBRARY } from '../../config/pipelineDefinitions'
 
 export function GlobalIngestionController() {
     const { activeJobs, updateJob, removeJob, isHubOpen, setHubOpen } = useIngestionStore()
@@ -128,29 +130,11 @@ export function GlobalIngestionController() {
                             ) : (
                                 <div className="space-y-6">
                                     {jobIds.map(id => (
-                                        <div key={id} className="relative group">
-                                            {typeof PipelineMonitor !== 'undefined' ? (
-                                                <PipelineMonitor
-                                                    jobId={id}
-                                                    pipelineType={activeJobs[id].type}
-                                                    externalStatus={activeJobs[id]}
-                                                    onComplete={() => { }}
-                                                    onError={() => { }}
-                                                />
-                                            ) : (
-                                                <div className="p-4 text-rose-500 font-mono text-xs border border-rose-500/20 rounded-xl bg-rose-500/5">
-                                                    [ERROR: PipelineMonitor not loaded]
-                                                </div>
-                                            )}
-                                            {(activeJobs[id].status === 'ready' || activeJobs[id].status === 'failed') && (
-                                                <button
-                                                    onClick={() => removeJob(id)}
-                                                    className="absolute top-4 right-4 p-2 bg-slate-900/80 rounded-lg text-slate-400 hover:text-white hover:bg-rose-500/20 transition-all z-20"
-                                                >
-                                                    <X size={16} />
-                                                </button>
-                                            )}
-                                        </div>
+                                        <JobHubItem
+                                            key={id}
+                                            job={{ ...activeJobs[id], id }}
+                                            onRemove={() => removeJob(id)}
+                                        />
                                     ))}
                                 </div>
                             )}
@@ -160,11 +144,11 @@ export function GlobalIngestionController() {
                         <div className="p-6 border-t border-white/5 bg-black/40 flex items-center justify-between text-[10px] uppercase font-black tracking-widest text-slate-600">
                             <div className="flex items-center gap-4">
                                 <span>OODA_ID: PRD-HUB-832</span>
-                                <span className="text-emerald-500/50">TRUST_COEFFICIENT: 0.9994</span>
+                                <span className="text-emerald-500/50">КОЕФІЦІЄНТ_ДОВІРИ: 0.9994</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                SYSTEM_SYNC_ACTIVE
+                                СИНХРОНІЗАЦІЯ_СИСТЕМИ_АКТИВНА
                             </div>
                         </div>
                     </motion.div>
@@ -234,7 +218,7 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                                 </h3>
                                 <div className="flex items-center gap-2">
                                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded">
-                                        {job.type || 'Generic Stream'}
+                                        {job.type || 'Загальний потік'}
                                     </span>
                                     <span className="text-[10px] font-mono text-slate-600">
                                         ID: {job.id.substring(0, 8)}
@@ -244,16 +228,24 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                         </div>
 
                         <div className="flex gap-2">
-                            {(isDone || isFailed) && (
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={onRemove}
-                                    className="h-10 w-10 rounded-xl bg-slate-800/50 border border-white/5 hover:bg-rose-500/20 hover:text-rose-400 hover:border-rose-500/30"
-                                >
-                                    <X size={16} />
-                                </Button>
-                            )}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-10 w-10 rounded-xl bg-slate-800/50 border border-white/5 hover:bg-slate-700 transition-colors"
+                                title="Налаштування"
+                                onClick={() => console.log('Settings for job', job.id)}
+                            >
+                                <Settings size={16} className="text-slate-400" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={onRemove}
+                                className="h-10 w-10 rounded-xl bg-slate-800/50 border border-white/5 hover:bg-rose-500/20 hover:text-rose-400 hover:border-rose-500/30"
+                                title="Видалити / Скасувати"
+                            >
+                                <X size={16} />
+                            </Button>
                         </div>
                     </div>
 
@@ -266,11 +258,11 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                             </div>
                             <div className="space-y-2">
                                 <div className="flex justify-between text-sm font-black text-white italic tracking-tight">
-                                    <span>{job.stage || 'Підготовка...'}</span>
+                                    <span>{STAGE_LIBRARY[job.stage]?.label || job.stage || 'Підготовка...'}</span>
                                     <span className="text-[10px] text-slate-600 non-italic">{job.subPhase}</span>
                                 </div>
                                 <p className="text-[11px] text-slate-500 font-medium">
-                                    {job.message || 'Підключення до нейронних конвеєрів...'}
+                                    {job.message || STAGE_LIBRARY[job.stage]?.description || 'Підключення до нейронних конвеєрів...'}
                                 </p>
                             </div>
                         </div>
@@ -278,9 +270,9 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                         <div className="bg-slate-950/40 rounded-2xl p-4 border border-white/5 flex flex-col justify-center items-center text-center">
                             <span className="text-[9px] font-black text-slate-600 uppercase tracking-[0.2em] mb-2">Метрики</span>
                             <div className="text-xl font-black font-mono text-white leading-none">
-                                {job.currentItem?.toLocaleString() || '---'}
+                                {typeof job.currentItem === 'number' ? job.currentItem.toLocaleString() : '0'}
                             </div>
-                            <span className="text-[8px] font-bold text-slate-500 uppercase mt-1">Об'єктів Оброблено</span>
+                            <span className="text-[8px] font-bold text-slate-500 uppercase mt-1">Оброблено</span>
                         </div>
                     </div>
 
@@ -291,18 +283,18 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                             <div className="w-1 h-1 rounded-full bg-slate-800" />
                             <div className="w-1 h-1 rounded-full bg-slate-800" />
                         </div>
-                        <div className="text-slate-500">[{new Date(job.startedAt).toLocaleTimeString()}] PREDATOR_AUTH: SUCCESS</div>
+                        <div className="text-slate-500">[{new Date(job.startedAt).toLocaleTimeString()}] АВТОРИЗАЦІЯ_PREDATOR: УСПІШНО</div>
                         <div className="flex gap-2 text-indigo-400/80">
                             <ChevronRight size={10} className="mt-0.5" />
-                            <span>NODE_RESOLVE: {job.stage}</span>
+                            <span>ЕТАП_ВУЗЛА: {STAGE_LIBRARY[job.stage]?.label || job.stage}</span>
                         </div>
                         <div className="flex gap-2 text-slate-400">
                             <ChevronRight size={10} className="mt-0.5" />
                             <span className="truncate">{job.message}</span>
                         </div>
                         {!isDone && !isFailed && (
-                            <div className="text-emerald-500/60 animate-pulse overflow-hidden whitespace-nowrap">
-                                {`>> SYSTEM_TRACE: ${Math.random().toString(16).substring(2, 12).toUpperCase()} >> DATAPACK_OK`}
+                            <div className="text-emerald-500/60 animate-pulse overflow-hidden whitespace-nowrap text-[9px]">
+                                {`>> SYSTEM_TRACE_OK >> DATAPACK_OK >> СТАН_НОРМА`}
                             </div>
                         )}
                     </div>

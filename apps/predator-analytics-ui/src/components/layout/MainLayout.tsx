@@ -21,7 +21,7 @@ interface MainLayoutProps {
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { isSidebarOpen, deviceMode } = useAppStore();
   const [liveStats, setLiveStats] = useState({
-    cpu: 0, memory: 0, records: 0, stage: 'SOVEREIGN', ooda: 1042
+    cpu: 0, memory: 0, records: 0, stage: 'СУВЕРЕННИЙ', ooda: 1042
   });
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           cpu: metrics.status === 'fulfilled' ? Math.round(metrics.value.cpu ?? prev.cpu) : prev.cpu,
           memory: metrics.status === 'fulfilled' ? Math.round(metrics.value.memory ?? prev.memory) : prev.memory,
           records: dbStats.status === 'fulfilled' ? (dbStats.value.postgresql?.records ?? prev.records) : prev.records,
-          stage: 'SOVEREIGN',
+          stage: 'СУВЕРЕННИЙ',
           ooda: prev.ooda + 1,
         }));
       } catch { }
@@ -125,7 +125,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <main
         className={cn(
           "pt-16 transition-all duration-300 min-h-screen flex flex-col relative",
-          isSidebarOpen ? "lg:ml-[280px]" : "lg:ml-[80px]"
+          isSidebarOpen ? "md:ml-[240px]" : "md:ml-[80px]"
         )}
       >
         {/* Transitional Noise Overlay */}
@@ -170,9 +170,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </div>
 
         <div className="flex items-center gap-4 shrink-0 text-[9px] font-mono">
-          <span className="text-cyan-500">CPU: <span className="text-cyan-300">{liveStats.cpu}%</span></span>
-          <span className="text-purple-500">RAM: <span className="text-purple-300">{liveStats.memory}%</span></span>
-          <span className="text-blue-500">БД: <span className="text-blue-300">{liveStats.records.toLocaleString()} rec</span></span>
+          <span className="text-cyan-500">ЦП: <span className="text-cyan-300">{liveStats.cpu}%</span></span>
+          <span className="text-purple-500">ОЗП: <span className="text-purple-300">{liveStats.memory}%</span></span>
+          <span className="text-blue-500">БД: <span className="text-blue-300">{liveStats.records.toLocaleString()} зап.</span></span>
         </div>
 
         <div className="flex-1 overflow-hidden pointer-events-none">
@@ -181,12 +181,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
             className="whitespace-nowrap text-[9px] font-mono text-slate-600 tracking-tight"
           >
-            {` >> SYSTEM_V45_SOVEREIGN >> OODA_CYCLE: ${liveStats.ooda} >> STAGE: ${liveStats.stage} >> CPU: ${liveStats.cpu}% >> MEM: ${liveStats.memory}% >> DB_RECORDS: ${liveStats.records.toLocaleString()} >> TRUST_COEFFICIENT: 0.9982 >> ANOMALY_INDEX: 0.002 >> ENFORCEMENT_READY >> SYSTEM_V45_SOVEREIGN >> OODA_CYCLE: ${liveStats.ooda} >> STAGE: ${liveStats.stage} `}
+            {` >> СИСТЕМА_V45_СУВЕРЕН >> ЦИКЛ_OODA: ${liveStats.ooda} >> ЕТАП: ${liveStats.stage} >> ЦП: ${liveStats.cpu}% >> ОЗП: ${liveStats.memory}% >> ЗАПИСІВ_БД: ${liveStats.records.toLocaleString()} >> КОЕФІЦІЄНТ_ДОВІРИ: 0.9982 >> ІНДЕКС_АНОМАЛІЙ: 0.002 >> СИСТЕМА_ГОТОВА >> СИСТЕМА_V45_СУВЕРЕН >> ЦИКЛ_OODA: ${liveStats.ooda} >> ЕТАП: ${liveStats.stage} `}
           </motion.div>
         </div>
 
         <div className="flex items-center gap-4 shrink-0 border-l border-white/10 pl-4 h-full">
-          <span className="text-[9px] font-mono text-indigo-400">LATENCY: 12ms</span>
+          <span className="text-[9px] font-mono text-indigo-400">ЗАТРИМКА: 12ms</span>
           <span className="text-[9px] font-mono text-slate-500">{new Date().toLocaleTimeString()}</span>
         </div>
       </div>

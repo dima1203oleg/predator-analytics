@@ -155,8 +155,8 @@ const InsightCard: React.FC<{
                 <button
                   key={i}
                   className={`px-4 py-2 rounded-lg font-bold text-sm transition-colors ${action.type === 'primary'
-                      ? `bg-${type.color}-500/20 text-${type.color}-400 hover:bg-${type.color}-500/30`
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                    ? `bg-${type.color}-500/20 text-${type.color}-400 hover:bg-${type.color}-500/30`
+                    : 'bg-slate-800 text-slate-400 hover:text-white'
                     }`}
                 >
                   {action.label}
@@ -255,8 +255,8 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode }) =
         api.premium.getAiInsights(),
         api.premium.getPredictions()
       ]);
-      setInsightList(insightsData);
-      setPredictionsList(predictionsData);
+      setInsightList(Array.isArray(insightsData) ? insightsData : []);
+      setPredictionsList(Array.isArray(predictionsData) ? predictionsData : []);
     } catch (err) {
       console.error("Failed to fetch AI insights", err);
     } finally {
