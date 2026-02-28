@@ -5,6 +5,7 @@
 3. **Tools**: Використовувати k9s для управління кластером.
 4. **Context7**: Завжди використовувати Context7 MCP для генерації коду, документації та API.
 5. **Git**: Після кожного успішного фіксу або фази — пропонувати git commit з описом.
+6. **Deployment Strategy**: На Mac розгортаємо **ТІЛЬКИ** frontend (`apps/predator-analytics-ui`). Усі інші сервіси (Backend, Databases, Celery, AI Stack) працюють виключно на **NVIDIA server**. Локальний запуск бекенду на Mac заборонений (виняток — Mock API).
 
 ## ⚡ WEB INTERFACE — КАНОНІЧНІ ПРАВИЛА (НЕЗМІННІ)
 
