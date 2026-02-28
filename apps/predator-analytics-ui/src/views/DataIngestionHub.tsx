@@ -806,7 +806,7 @@ const DataIngestionHub = () => {
       </div>
 
       {/* Knowledge Storages (Data Lakes) Section */}
-      < div className="mb-0" >
+      <div className="mb-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Server className="w-5 h-5 text-cyan-400" />
