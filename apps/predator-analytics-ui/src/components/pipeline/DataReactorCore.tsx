@@ -73,22 +73,22 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
     // DB Nodes Config
     const nodes = [
         {
-            id: 'postgres', title: 'PostgreSQL', subtitle: 'Факти (Транзакції)', icon: Database,
+            id: 'postgres', title: 'PostgreSQL (SQL)', subtitle: 'Структуровані Факти', icon: Database,
             color: 'text-yellow-400', glow: 'shadow-yellow-500/50', border: 'border-yellow-500/30', bg: 'bg-yellow-900/20',
             position: 'top-0 right-0 translate-x-[110%] -translate-y-[50%]', stat: stats.postgres
         },
         {
-            id: 'graph', title: 'Графова БД', subtitle: 'Нейронні Зв\'язки', icon: Share2,
+            id: 'graph', title: 'Neo4j (Графи)', subtitle: 'Нейронні Зв\'язки', icon: Share2,
             color: 'text-purple-400', glow: 'shadow-purple-500/50', border: 'border-purple-500/30', bg: 'bg-purple-900/20',
             position: 'bottom-0 right-0 translate-x-[110%] translate-y-[50%]', stat: stats.graph
         },
         {
-            id: 'opensearch', title: 'OpenSearch', subtitle: 'Повнотекстовий Індекс', icon: Search,
+            id: 'opensearch', title: 'Пошуковий Індекс', subtitle: 'Повнотекстовий Пошук', icon: Search,
             color: 'text-cyan-400', glow: 'shadow-cyan-500/50', border: 'border-cyan-500/30', bg: 'bg-cyan-900/20',
             position: 'top-0 left-0 -translate-x-[110%] -translate-y-[50%]', stat: stats.opensearch
         },
         {
-            id: 'qdrant', title: 'Qdrant', subtitle: 'Векторний Простір', icon: Target,
+            id: 'qdrant', title: 'Векторна БД', subtitle: 'Векторний Простір', icon: Target,
             color: 'text-emerald-400', glow: 'shadow-emerald-500/50', border: 'border-emerald-500/30', bg: 'bg-emerald-900/20',
             position: 'bottom-0 left-0 -translate-x-[110%] translate-y-[50%]', stat: stats.qdrant
         },
