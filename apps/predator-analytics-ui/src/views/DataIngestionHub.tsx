@@ -80,17 +80,17 @@ const SOURCE_TYPES = [
   { id: 'word', label: 'Word', icon: File, color: 'sky', desc: 'Документи .docx/.doc', accept: '.docx,.doc' },
   { id: 'audio', label: 'Аудіо', icon: Radio, color: 'pink', desc: 'Транскрибування аудіо (MP3, WAV, M4A)', accept: '.mp3,.wav,.m4a,.ogg,.flac' },
   { id: 'video', label: 'Відео', icon: Camera, color: 'red', desc: 'Транскрибування та аналіз відео', accept: '.mp4,.mov,.avi,.webm,.mkv' },
-  { id: 'api', label: 'API', icon: Zap, color: 'orange', desc: 'Публічні/приватні API джерела' },
-  { id: 'rss', label: 'RSS/Atom', icon: Rss, color: 'lime', desc: 'Новинні стрічки та фіди' },
+  { id: 'api', label: 'API / Зовнішні', icon: Zap, color: 'orange', desc: 'Публічні/приватні API джерела' },
+  { id: 'rss', label: 'RSS / Новини', icon: Rss, color: 'lime', desc: 'Новинні стрічки та фіди' },
 ];
 
 const DATA_LAKES_REGISTRY = [
   { id: 'minio', name: 'MinIO', version: 'RELEASE.2024-01', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Об\'єктне Сховище (Сирі дані)', icon: Archive, color: 'orange', glow: 'yellow' },
-  { id: 'postgres', name: 'PostgreSQL', version: '16.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Реляційна БД (Факти)', icon: Database, color: 'blue', glow: 'blue' },
+  { id: 'postgres', name: 'PostgreSQL', version: '16.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Реляційна БД (SQL)', icon: Database, color: 'blue', glow: 'blue' },
   { id: 'qdrant', name: 'Qdrant', version: '1.7.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Векторна БД (Семантика)', icon: Target, color: 'emerald', glow: 'green' },
-  { id: 'opensearch', name: 'OpenSearch', version: '2.11.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Пошукова Система (Пошук)', icon: Search, color: 'cyan', glow: 'blue' },
+  { id: 'opensearch', name: 'OpenSearch', version: '2.11.1', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Пошуковий Індекс (Повнотекстовий)', icon: Search, color: 'cyan', glow: 'blue' },
   { id: 'graphdb', name: 'Neo4j', version: '5.16.0', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Графова БД (Зв\'язки)', icon: Share2, color: 'purple', glow: 'purple' },
-  { id: 'redis', name: 'Redis', version: '7.2.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Кеш в ОЗП (Кеш)', icon: Zap, color: 'red', glow: 'red' },
+  { id: 'redis', name: 'Redis', version: '7.2.4', status: 'АКТИВНИЙ В ПАЙПЛАЙНІ', desc: 'Кеш у пам\'яті (Кеш)', icon: Zap, color: 'red', glow: 'red' },
 ];
 
 // Stat cards were replaced by TacticalCard grid below. Empty component list to keep file clean.
@@ -439,7 +439,7 @@ const LiveEventsFeed = () => {
           <h3 className="text-sm font-black text-white uppercase tracking-widest leading-none">Живий Потік Подій</h3>
         </div>
         <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
-          Нексус Реал-Тайм
+          Пряма Трансляція
         </div>
       </div>
 
@@ -478,7 +478,7 @@ const LiveEventsFeed = () => {
       </div>
 
       <button className="mt-4 w-full py-3 rounded-xl border border-white/5 bg-white/5 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] hover:bg-emerald-500/10 hover:border-emerald-500/20 hover:text-emerald-400 transition-all">
-        Переглянути Всі Логи
+        ПЕРЕГЛЯНУТИ ВСІ ПОДІЇ
       </button>
     </div>
   );
@@ -687,7 +687,7 @@ const DataIngestionHub = () => {
   const isFileType = ['customs', 'excel', 'csv', 'pdf', 'image', 'word', 'audio', 'video'].includes(selectedType);
 
   return (
-    <div className="flex flex-col space-y-8 pb-20 relative min-h-screen">
+    <div className="flex flex-col space-y-8 pb-20 relative min-h-screen px-4 md:px-8 lg:px-12 max-w-[1600px] mx-auto">
       <AdvancedBackground />
 
       {/* Pipeline Monitor Overlay — only shown after explicit ingestion trigger */}
