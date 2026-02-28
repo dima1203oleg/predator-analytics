@@ -90,18 +90,6 @@ export const Sidebar = () => {
           { name: premiumLocales.sidebar.items.builder || 'Конструктор', path: '/builder', icon: Layers, premium: true },
           { name: premiumLocales.sidebar.items.modeling, path: '/modeling', icon: TrendingUp, premium: true },
           { name: premiumLocales.sidebar.items.competitors || 'Конкуренти', path: '/competitor-intel', icon: Network, premium: true },
-          { name: premiumLocales.sidebar.items.entityGraph || 'Граф Сутностей', path: '/entity-graph', icon: Globe, premium: true },
-        ]
-
-
-
-
-
-  const hasAccess = (item: any) => {
-          if (item.role === 'admin' && userRole !== 'admin') return false;
-          if (item.premium && userRole === 'client') return false;
-          return true;
-        };
 
         return(
     <motion.aside
