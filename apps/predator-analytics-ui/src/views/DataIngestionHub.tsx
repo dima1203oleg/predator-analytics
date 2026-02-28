@@ -722,11 +722,11 @@ const DataIngestionHub = () => {
       </AnimatePresence>
 
       {/* Header */}
-      <div className="relative z-20 mb-12">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
-          <div className="flex items-center gap-10">
+      <div className="relative z-20 mb-12 flex flex-col items-center text-center">
+        <div className="flex flex-col items-center gap-10">
+          <div className="flex flex-col items-center">
             {/* The Reactor Visual */}
-            <div className="relative w-32 h-32 flex-shrink-0">
+            <div className="relative w-32 h-32 mb-8">
               <motion.div
                 animate={{ rotate: 360, scale: [1, 1.05, 1] }}
                 transition={{ rotate: { duration: 20, repeat: Infinity, ease: "linear" }, scale: { duration: 4, repeat: Infinity } }}
@@ -756,48 +756,49 @@ const DataIngestionHub = () => {
               ))}
             </div>
 
-            <div>
-              <div className="flex items-center gap-3 mb-4">
+            <div className="flex flex-col items-center">
+              <div className="flex items-center gap-3 mb-6 justify-center">
                 <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-[0.4em] rounded-full">
-                  Центральний Процесор Даних v45
+                  Процесор Даних v45
                 </span>
                 <span className="px-3 py-1 bg-white/5 border border-white/10 text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] rounded-full">
-                  Статус: Суверенний
+                  Статус: Активно
                 </span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-white mb-4 tracking-tighter uppercase italic leading-none flex items-center gap-4">
+              <h1 className="text-4xl md:text-7xl font-black text-white mb-6 tracking-tighter uppercase italic leading-none">
                 ЦЕНТР_<span className="text-emerald-400 drop-shadow-[0_0_20px_rgba(52,211,153,0.4)]">ДАНИХ</span>
               </h1>
-              <p className="text-slate-400 text-base max-w-2xl font-medium leading-relaxed bg-slate-950/40 p-5 rounded-3xl border border-white/5 backdrop-blur-xl shadow-2xl">
-                Глобальне нейронне ядро для управління потоками інформації. <br />
-                <span className="text-emerald-500/80 text-[10px] font-black uppercase tracking-[0.4em] mt-3 block flex items-center gap-2">
+              <p className="text-slate-400 text-lg max-w-3xl font-medium leading-relaxed bg-slate-950/40 p-6 rounded-[32px] border border-white/5 backdrop-blur-xl shadow-2xl mx-auto">
+                Глобальне ядро управління потоками інформації. <br />
+                <span className="text-emerald-500/80 text-[10px] font-black uppercase tracking-[0.4em] mt-4 block flex items-center justify-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></span>
-                  СУВЕРЕННА ІНТЕЛЕКТУАЛЬНА МАТРИЦЯ ДАНИХ АКТИВНА
+                  ІНТЕЛЕКТУАЛЬНА МАТРИЦЯ АКТИВОВАНА
                 </span>
               </p>
             </div>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col items-center gap-6 mt-4 w-full max-w-xl mx-auto">
             <motion.button
               whileHover={{ scale: 1.03, filter: 'brightness(1.1)' }}
               whileTap={{ scale: 0.97 }}
               onClick={() => setIsModalOpen(true)}
-              className="group relative flex items-center gap-4 px-12 py-6 bg-gradient-to-r from-emerald-600 via-emerald-500 to-cyan-600 text-white rounded-[28px] transition-all shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] font-black tracking-[0.2em] text-sm overflow-hidden border border-emerald-400/50"
+              className="group relative flex items-center justify-center gap-4 w-full px-12 py-6 bg-gradient-to-r from-emerald-600 via-emerald-500 to-cyan-600 text-white rounded-[28px] transition-all shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] font-black tracking-[0.2em] text-sm overflow-hidden border border-emerald-400/50"
             >
               <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-[length:250%_250%,100%_100%] animate-[shimmer_3s_infinite] opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
               <Plus className="w-7 h-7 relative z-10" />
               <span className="relative z-10 drop-shadow-md">ІНТЕГРУВАТИ НОВЕ ДЖЕРЕЛО</span>
             </motion.button>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 bg-white/5 rounded-2xl border border-white/5 flex flex-col group hover:border-emerald-500/30 transition-all">
-                <span className="text-[8px] font-black text-slate-500 uppercase group-hover:text-emerald-400">Загалом Записів</span>
-                <span className="text-xs font-mono text-emerald-400">{stats.totalRecords.toLocaleString('uk-UA')}</span>
+
+            <div className="grid grid-cols-2 gap-4 w-full">
+              <div className="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col items-center group hover:border-emerald-500/30 transition-all">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-emerald-400 mb-1">Загалом Записів</span>
+                <span className="text-lg font-mono text-emerald-400">{stats.totalRecords.toLocaleString('uk-UA')}</span>
               </div>
-              <div className="p-3 bg-white/5 rounded-2xl border border-white/5 flex flex-col group hover:border-amber-500/30 transition-all">
-                <span className="text-[8px] font-black text-slate-500 uppercase group-hover:text-amber-400">Оброблено (24г)</span>
-                <span className="text-xs font-mono text-amber-500 uppercase tracking-tighter">{stats.processed24h.toLocaleString('uk-UA')}</span>
+              <div className="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col items-center group hover:border-amber-500/30 transition-all">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-amber-400 mb-1">Оброблено (24г)</span>
+                <span className="text-lg font-mono text-amber-500 uppercase tracking-tighter">{stats.processed24h.toLocaleString('uk-UA')}</span>
               </div>
             </div>
           </div>
@@ -805,7 +806,7 @@ const DataIngestionHub = () => {
       </div>
 
       {/* Knowledge Storages (Data Lakes) Section */}
-      <div className="mb-0">
+      < div className="mb-0" >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Server className="w-5 h-5 text-cyan-400" />
@@ -874,10 +875,10 @@ const DataIngestionHub = () => {
             </TacticalCard>
           ))}
         </div>
-      </div>
+      </div >
 
       {/* Active Jobs Monitor - показує всі процеси в реальному часі */}
-      <div className="relative z-10">
+      < div className="relative z-10" >
         <ActiveJobsPanel
           maxJobs={8}
           className="mb-8"
@@ -887,7 +888,7 @@ const DataIngestionHub = () => {
             }
           }}
         />
-      </div>
+      </div >
 
       <div className="relative z-10 mb-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
         <DatabasePipelineMonitor />
