@@ -441,141 +441,139 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                                 {status?.progress?.details || 'Встановлення багатовимірних маршрутів даних...'}
                             </div>
                             <div className="flex gap-4">
-                                <div className="flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-lg border border-white/5">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-                                    <span className="text-[10px] text-slate-300 uppercase font-bold tracking-widest">PostgreSQL</span>
-                                </div>
-                                <div className="flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-lg border border-white/5">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-pink-500 shadow-[0_0_8px_#ec4899]" />
-                                    <span className="text-[10px] text-slate-300 uppercase font-bold tracking-widest">GraphDB</span>
-                                </div>
+                                <span className="text-[10px] text-slate-300 uppercase font-bold tracking-widest">PostgreSQL (SQL)</span>
+                            </div>
+                            <div className="flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-lg border border-white/5">
+                                <span className="w-2.5 h-2.5 rounded-full bg-pink-500 shadow-[0_0_8px_#ec4899]" />
+                                <span className="text-[10px] text-slate-300 uppercase font-bold tracking-widest">Neo4j (Граф)</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                {/* 2. Event Log */}
-                <div className="w-full">
-                    <div className="bg-slate-900/60 rounded-[24px] border border-white/5 p-6 backdrop-blur-md">
-                        <div className="text-[10px] text-slate-400 font-black uppercase mb-4 px-1 flex flex-row items-center gap-2 border-b border-white/10 pb-2">
-                            <Activity size={14} className="text-emerald-500" /> Журнал подій
-                        </div>
-                        <div className="space-y-2 max-h-[160px] overflow-y-auto custom-scrollbar pr-2">
-                            {(status?.error || status?.progress?.details) ? (
-                                [1, 2, 3, 4, 5].map(i => (
-                                    <motion.div
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: i * 0.05 }}
-                                        key={i}
-                                        className="text-[10px] font-mono p-2.5 rounded-xl bg-black/40 border-l-2 border-emerald-500/50 text-emerald-400/80 leading-relaxed shadow-sm hover:bg-emerald-500/5 transition-colors group flex justify-between items-center"
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-slate-600 font-bold text-[8px]">[SYSEVENT_{100 + i}]</span>
-                                            <span className="group-hover:text-emerald-300 transition-colors uppercase">
-                                                {(status?.progress?.details ?? 'СИНХРОНІЗАЦІЯ_МАНІФЕСТУ...')}
-                                            </span>
-                                        </div>
-                                        <span className="text-slate-700 text-[8px]">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
-                                    </motion.div>
-                                ))
-                            ) : (
-                                <div className="h-20 flex flex-col items-center justify-center text-slate-700 gap-2 border border-dashed border-white/5 rounded-2xl">
-                                    <Activity size={16} className="opacity-20 animate-pulse" />
-                                    <span className="text-[9px] uppercase font-black tracking-widest">Очікування телеметрії...</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* 3. System Metrics */}
-                <div className="w-full">
-                    <div className="bg-slate-900/80 rounded-3xl border border-white/5 p-6 backdrop-blur-xl shadow-xl">
-                        <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-6 flex items-center gap-2 border-b border-white/10 pb-3">
-                            <Brain size={14} className="text-emerald-400" /> Системні метрики
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6">
-                            <div className="bg-slate-950/60 p-4 md:p-5 rounded-2xl border border-emerald-500/20 flex flex-col justify-between min-h-[110px] overflow-hidden">
-                                <div className="flex justify-between items-start gap-4">
-                                    <div className="flex flex-col">
-                                        <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Метрика Потоку</span>
-                                        <span className="text-xs font-bold text-slate-300">Оброблено Записів</span>
-                                    </div>
-                                    <span className="text-xl md:text-2xl font-black text-white font-mono leading-none shrink-0">
-                                        {status?.progress?.records_processed?.toLocaleString() || '0'}
-                                    </span>
-                                </div>
-                                <div className="h-2 bg-black/40 rounded-full overflow-hidden border border-white/5 p-[1px] mt-4">
-                                    <motion.div
-                                        animate={{ width: `${Math.min(100, (status?.progress?.records_processed || 0) / (status?.progress?.records_total || 1) * 100)}%` }}
-                                        className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full shadow-[0_0_15px_#10b981]"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex flex-col items-center justify-center">
-                                    <p className="text-[9px] text-emerald-500/80 font-black uppercase mb-1">Успішно</p>
-                                    <p className="text-2xl font-black text-emerald-400 font-mono">
-                                        {status?.metadata?.parser_stats?.success || status?.progress?.records_processed || '0'}
-                                    </p>
-                                </div>
-                                <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/10 flex flex-col items-center justify-center">
-                                    <p className="text-[9px] text-rose-500/80 font-black uppercase mb-1">Помилки</p>
-                                    <p className="text-2xl font-black text-rose-500 font-mono">
-                                        {status?.metadata?.parser_stats?.rejected || '0'}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="p-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex flex-col justify-between min-h-[110px]">
-                                <div className="flex justify-between items-center mb-4">
-                                    <span className="text-[10px] font-black text-indigo-300 uppercase tracking-wider">Якість Даних</span>
-                                    <span className="text-sm font-black text-white underline decoration-indigo-500/50 underline-offset-4">99.2%</span>
-                                </div>
-                                <div className="flex gap-1.5 h-3">
-                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
-                                        <div key={i} className={cn("flex-1 rounded-sm", i <= 9 ? "bg-emerald-500 shadow-[0_0_5px_#10b981]" : "bg-slate-800")} />
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* 4. Stage Navigator */}
-                <div className="w-full">
-                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 px-2">
-                        {stagesList.map((stage, idx) => {
-                            const isActive = idx === currentIdx;
-                            const isPast = idx < currentIdx;
-                            const StageIcon = stage.icon;
-
-                            return (
-                                <div key={stage.id} className="flex flex-col items-center gap-2 min-w-[70px]">
-                                    <div className={cn(
-                                        "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 border-2 shrink-0",
-                                        isPast ? "bg-emerald-500 border-emerald-400 shadow-[0_0_15px_#10b98166]" :
-                                            isActive ? "bg-slate-900 border-emerald-500 ring-4 ring-emerald-500/20 shadow-[0_0_20px_#10b98133]" :
-                                                "bg-slate-950 border-white/5 opacity-40"
-                                    )}>
-                                        {isPast ? <CheckCircle size={20} className="text-white" /> : <StageIcon size={20} className={cn(isActive ? "text-emerald-400" : "text-slate-700")} />}
-                                    </div>
-                                    <span className={cn(
-                                        "text-[9px] font-black uppercase tracking-tighter text-center w-full truncate px-1",
-                                        isPast ? "text-emerald-500/70" : isActive ? "text-white" : "text-slate-500"
-                                    )}>
-                                        {stage.label}
-                                    </span>
-                                </div>
-                            );
-                        })}
                     </div>
                 </div>
             </div>
+
+            {/* 2. Event Log */}
+            <div className="w-full">
+                <div className="bg-slate-900/60 rounded-[24px] border border-white/5 p-6 backdrop-blur-md">
+                    <div className="text-[10px] text-slate-400 font-black uppercase mb-4 px-1 flex flex-row items-center gap-2 border-b border-white/10 pb-2">
+                        <Activity size={14} className="text-emerald-500" /> Журнал подій
+                    </div>
+                    <div className="space-y-2 max-h-[160px] overflow-y-auto custom-scrollbar pr-2">
+                        {(status?.error || status?.progress?.details) ? (
+                            [1, 2, 3, 4, 5].map(i => (
+                                <motion.div
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.05 }}
+                                    key={i}
+                                    className="text-[10px] font-mono p-2.5 rounded-xl bg-black/40 border-l-2 border-emerald-500/50 text-emerald-400/80 leading-relaxed shadow-sm hover:bg-emerald-500/5 transition-colors group flex justify-between items-center"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-slate-600 font-bold text-[8px]">[SYSEVENT_{100 + i}]</span>
+                                        <span className="group-hover:text-emerald-300 transition-colors uppercase">
+                                            {(status?.progress?.details ?? 'СИНХРОНІЗАЦІЯ_МАНІФЕСТУ...')}
+                                        </span>
+                                    </div>
+                                    <span className="text-slate-700 text-[8px]">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                                </motion.div>
+                            ))
+                        ) : (
+                            <div className="h-20 flex flex-col items-center justify-center text-slate-700 gap-2 border border-dashed border-white/5 rounded-2xl">
+                                <Activity size={16} className="opacity-20 animate-pulse" />
+                                <span className="text-[9px] uppercase font-black tracking-widest">Очікування телеметрії...</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* 3. System Metrics */}
+            <div className="w-full">
+                <div className="bg-slate-900/80 rounded-3xl border border-white/5 p-6 backdrop-blur-xl shadow-xl">
+                    <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-6 flex items-center gap-2 border-b border-white/10 pb-3">
+                        <Brain size={14} className="text-emerald-400" /> Системні метрики
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6">
+                        <div className="bg-slate-950/60 p-4 md:p-5 rounded-2xl border border-emerald-500/20 flex flex-col justify-between min-h-[110px] overflow-hidden">
+                            <div className="flex justify-between items-start gap-4">
+                                <div className="flex flex-col">
+                                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Метрика Потоку</span>
+                                    <span className="text-xs font-bold text-slate-300">Оброблено Записів</span>
+                                </div>
+                                <span className="text-xl md:text-2xl font-black text-white font-mono leading-none shrink-0">
+                                    {status?.progress?.records_processed?.toLocaleString() || '0'}
+                                </span>
+                            </div>
+                            <div className="h-2 bg-black/40 rounded-full overflow-hidden border border-white/5 p-[1px] mt-4">
+                                <motion.div
+                                    animate={{ width: `${Math.min(100, (status?.progress?.records_processed || 0) / (status?.progress?.records_total || 1) * 100)}%` }}
+                                    className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full shadow-[0_0_15px_#10b981]"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex flex-col items-center justify-center">
+                                <p className="text-[9px] text-emerald-500/80 font-black uppercase mb-1">Успішно</p>
+                                <p className="text-2xl font-black text-emerald-400 font-mono">
+                                    {status?.metadata?.parser_stats?.success || status?.progress?.records_processed || '0'}
+                                </p>
+                            </div>
+                            <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/10 flex flex-col items-center justify-center">
+                                <p className="text-[9px] text-rose-500/80 font-black uppercase mb-1">Помилки</p>
+                                <p className="text-2xl font-black text-rose-500 font-mono">
+                                    {status?.metadata?.parser_stats?.rejected || '0'}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="p-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex flex-col justify-between min-h-[110px]">
+                            <div className="flex justify-between items-center mb-4">
+                                <span className="text-[10px] font-black text-indigo-300 uppercase tracking-wider">Якість Даних</span>
+                                <span className="text-sm font-black text-white underline decoration-indigo-500/50 underline-offset-4">99.2%</span>
+                            </div>
+                            <div className="flex gap-1.5 h-3">
+                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
+                                    <div key={i} className={cn("flex-1 rounded-sm", i <= 9 ? "bg-emerald-500 shadow-[0_0_5px_#10b981]" : "bg-slate-800")} />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* 4. Stage Navigator */}
+            <div className="w-full">
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 px-2">
+                    {stagesList.map((stage, idx) => {
+                        const isActive = idx === currentIdx;
+                        const isPast = idx < currentIdx;
+                        const StageIcon = stage.icon;
+
+                        return (
+                            <div key={stage.id} className="flex flex-col items-center gap-2 min-w-[70px]">
+                                <div className={cn(
+                                    "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 border-2 shrink-0",
+                                    isPast ? "bg-emerald-500 border-emerald-400 shadow-[0_0_15px_#10b98166]" :
+                                        isActive ? "bg-slate-900 border-emerald-500 ring-4 ring-emerald-500/20 shadow-[0_0_20px_#10b98133]" :
+                                            "bg-slate-950 border-white/5 opacity-40"
+                                )}>
+                                    {isPast ? <CheckCircle size={20} className="text-white" /> : <StageIcon size={20} className={cn(isActive ? "text-emerald-400" : "text-slate-700")} />}
+                                </div>
+                                <span className={cn(
+                                    "text-[9px] font-black uppercase tracking-tighter text-center w-full truncate px-1",
+                                    isPast ? "text-emerald-500/70" : isActive ? "text-white" : "text-slate-500"
+                                )}>
+                                    {stage.label}
+                                </span>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
         </div>
+        </div >
     );
 };
 
