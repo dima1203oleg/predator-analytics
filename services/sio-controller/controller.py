@@ -13,7 +13,6 @@ import httpx
 from datetime import datetime
 from services.shared.logging_config import get_logger
 from services.shared.events import PredatorEvent
-from services.shared.constants import AUTONOMY_L1
 
 logger = get_logger(__name__)
 
@@ -21,8 +20,8 @@ RTB_ENGINE_URL = os.getenv("RTB_ENGINE_URL", "http://predator-analytics-rtb-engi
 PROM_URL = os.getenv("PROMETHEUS_URL", "http://prometheus-server")
 
 class SIOController:
-    """
-    Self-Improvement Orchestrator.
+    """Self-Improvement Orchestrator.
+
     Manages the full autonomous improvement cycle.
     """
     def __init__(self):
