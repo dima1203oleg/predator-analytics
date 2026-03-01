@@ -5,7 +5,7 @@ from __future__ import annotations
 Unified State Register of Legal Entities.
 """
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from .base import BaseConnector, ConnectorResult
 
@@ -19,29 +19,17 @@ class RegistryConnector(BaseConnector):
     """
 
     def __init__(self):
-        super().__init__(
-            name="EDR (Business Registry)",
-            base_url="https://data.gov.ua/api/3/action",
-            timeout=30.0
-        )
+        super().__init__(name="EDR (Business Registry)", base_url="https://data.gov.ua/api/3/action", timeout=30.0)
         self.dataset_id = "1c7f3815-3259-45e0-bdf1-64dca07ddc10"
 
-    async def search(
-        self,
-        query: str,
-        limit: int = 20,
-        **kwargs
-    ) -> ConnectorResult:
+    async def search(self, query: str, limit: int = 20, **kwargs) -> ConnectorResult:
         """Search companies in EDR.
 
         Args:
             query: Company name or EDRPOU code
             limit: Maximum results to return
         """
-        params = {
-            "q": query,
-            "rows": limit
-        }
+        params = {"q": query, "rows": limit}
 
         result = await self._request("GET", "/package_search", params=params)
 
@@ -67,12 +55,7 @@ class RegistryConnector(BaseConnector):
 
         return None
 
-    async def search_companies(
-        self,
-        name: str,
-        limit: int = 20,
-        include_closed: bool = False
-    ) -> ConnectorResult:
+    async def search_companies(self, name: str, limit: int = 20, include_closed: bool = False) -> ConnectorResult:
         """Search companies by name.
 
         Args:
@@ -84,10 +67,7 @@ class RegistryConnector(BaseConnector):
 
         if result.success and result.data and not include_closed:
             # Filter out closed companies if needed
-            result.data = [
-                c for c in result.data
-                if c.get("state", "").lower() != "closed"
-            ]
+            result.data = [c for c in result.data if c.get("state", "").lower() != "closed"]
             result.records_count = len(result.data)
 
         return result
@@ -95,12 +75,7 @@ class RegistryConnector(BaseConnector):
     async def get_beneficial_owners(self, edrpou: str) -> ConnectorResult:
         """Get beneficial owners for a company."""
         # Would need specific API endpoint
-        return ConnectorResult(
-            success=True,
-            data=[],
-            source=self.name,
-            records_count=0
-        )
+        return ConnectorResult(success=True, data=[], source=self.name, records_count=0)
 
 
 # Singleton instance

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 
 logger = logging.getLogger("predator.fusion")
@@ -15,10 +15,7 @@ class SearchFusion:
         self.default_limit = default_limit
 
     def reciprocal_rank_fusion(
-        self,
-        results_os: list[dict[str, Any]],
-        results_vec: list[dict[str, Any]],
-        limit: int | None = None
+        self, results_os: list[dict[str, Any]], results_vec: list[dict[str, Any]], limit: int | None = None
     ) -> list[dict[str, Any]]:
         """Applies RRF to merge OpenSearch and Qdrant results."""
         limit = limit or self.default_limit
@@ -29,7 +26,7 @@ class SearchFusion:
         query: str,
         opensearch_results: list[dict[str, Any]] | None = None,
         qdrant_results: list[dict[str, Any]] | None = None,
-        limit: int = 20
+        limit: int = 20,
     ) -> dict[str, Any]:
         """Performs hybrid search fusion."""
         os_results = opensearch_results or []
@@ -40,18 +37,12 @@ class SearchFusion:
         return {
             "results": fused,
             "total": len(fused),
-            "sources": {
-                "opensearch": len(os_results),
-                "qdrant": len(vec_results)
-            }
+            "sources": {"opensearch": len(os_results), "qdrant": len(vec_results)},
         }
 
 
 def reciprocal_rank_fusion(
-    results_os: list[dict[str, Any]],
-    results_vec: list[dict[str, Any]],
-    k: int = 60,
-    limit: int = 20
+    results_os: list[dict[str, Any]], results_vec: list[dict[str, Any]], k: int = 60, limit: int = 20
 ) -> list[dict[str, Any]]:
     """Implements Reciprocal Rank Fusion (RRF) algorithm.
     Paper: https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf.
@@ -71,7 +62,8 @@ def reciprocal_rank_fusion(
     # Process OpenSearch results
     for rank, doc in enumerate(results_os):
         doc_id = str(doc.get("id"))
-        if not doc_id: continue
+        if not doc_id:
+            continue
 
         # Keep document data
         if doc_id not in doc_map:
@@ -89,7 +81,8 @@ def reciprocal_rank_fusion(
     # Process Vector results
     for rank, doc in enumerate(results_vec):
         doc_id = str(doc.get("id"))
-        if not doc_id: continue
+        if not doc_id:
+            continue
 
         if doc_id not in doc_map:
             doc_map[doc_id] = doc
@@ -124,7 +117,7 @@ def reciprocal_rank_fusion(
         if "rank_vec" in doc["fusion_debug"] and doc["fusion_debug"]["rank_vec"] < 3:
             reasons.append("Семантична відповідність контексту (Vector)")
         if "rank_os" in doc["fusion_debug"] and "rank_vec" in doc["fusion_debug"]:
-             reasons.append("Підтверджено гібридним перехресним аналізом")
+            reasons.append("Підтверджено гібридним перехресним аналізом")
 
         doc["ai_reason"] = " 🔥 " + " | ".join(reasons) if reasons else "Знайдено за непрямими ознаками"
 
@@ -132,11 +125,9 @@ def reciprocal_rank_fusion(
 
     return final_results
 
+
 async def hybrid_search_with_rrf(
-    query: str,
-    limit: int = 20,
-    tenant_id: str = "default",
-    index_name: str = "idx_staging_customs"
+    query: str, limit: int = 20, tenant_id: str = "default", index_name: str = "idx_staging_customs"
 ) -> dict[str, Any]:
     """Виконує реальний гібридний пошук:
     1. Паралельні запити до OpenSearch та Qdrant.
@@ -170,7 +161,7 @@ async def hybrid_search_with_rrf(
                 "id": hit["_id"],
                 "content": source.get("content", ""),
                 "metadata": source,
-                "score": hit["_score"]
+                "score": hit["_score"],
             })
 
         # Перетворюємо результати Qdrant
@@ -180,7 +171,7 @@ async def hybrid_search_with_rrf(
                 "id": hit["id"],
                 "content": hit["metadata"].get("content", ""),
                 "metadata": hit["metadata"],
-                "score": hit["score"]
+                "score": hit["score"],
             })
 
         # Фінальна фузія

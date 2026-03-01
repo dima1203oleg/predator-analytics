@@ -5,7 +5,7 @@ from __future__ import annotations
 https://bank.gov.ua/NBUStatService/.
 """
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from .base import BaseConnector, ConnectorResult
 
@@ -23,18 +23,9 @@ class NBUFXConnector(BaseConnector):
     """
 
     def __init__(self):
-        super().__init__(
-            name="NBU Exchange Rates",
-            base_url="https://bank.gov.ua/NBUStatService/v1",
-            timeout=15.0
-        )
+        super().__init__(name="NBU Exchange Rates", base_url="https://bank.gov.ua/NBUStatService/v1", timeout=15.0)
 
-    async def search(
-        self,
-        query: str,
-        limit: int = 20,
-        **kwargs
-    ) -> ConnectorResult:
+    async def search(self, query: str, limit: int = 20, **kwargs) -> ConnectorResult:
         """Search exchange rates by currency code.
 
         Args:
@@ -47,21 +38,14 @@ class NBUFXConnector(BaseConnector):
         """Get exchange rate by currency code."""
         return await self.get_rate(currency_code)
 
-    async def get_rate(
-        self,
-        currency_code: str = "USD",
-        rate_date: date | None = None
-    ) -> ConnectorResult:
+    async def get_rate(self, currency_code: str = "USD", rate_date: date | None = None) -> ConnectorResult:
         """Get exchange rate for specific currency.
 
         Args:
             currency_code: ISO 4217 currency code (USD, EUR, PLN, etc.)
             rate_date: Date for historical rate (default: today)
         """
-        params = {
-            "valcode": currency_code.upper(),
-            "json": ""
-        }
+        params = {"valcode": currency_code.upper(), "json": ""}
 
         if rate_date:
             params["date"] = rate_date.strftime("%Y%m%d")
@@ -77,7 +61,7 @@ class NBUFXConnector(BaseConnector):
                     "name": rate_data.get("txt"),
                     "rate": rate_data.get("rate"),
                     "date": rate_data.get("exchangedate"),
-                    "r030": rate_data.get("r030")
+                    "r030": rate_data.get("r030"),
                 }
                 result.records_count = 1
 

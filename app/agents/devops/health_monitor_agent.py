@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from ..core.base_agent import AgentConfig, AgentResponse, BaseAgent
 
@@ -35,10 +35,6 @@ class HealthMonitorAgent(BaseAgent):
 
         return AgentResponse(
             agent_name=self.name,
-            result={
-                "status": "degraded" if issues else "healthy",
-                "details": report,
-                "action_plan": action_plan
-            },
-            metadata={"checked_count": len(report)}
+            result={"status": "degraded" if issues else "healthy", "details": report, "action_plan": action_plan},
+            metadata={"checked_count": len(report)},
         )

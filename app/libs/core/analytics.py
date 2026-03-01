@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any
 
 import duckdb
 
@@ -12,13 +12,14 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("core.analytics")
 
+
 class AnalyticsEngine:
     """WinSURF Analytics Core powered by DuckDB.
     Provides ultra-fast SQL analysis on local dataframes, CSVs, and Parquet files.
     """
 
     def __init__(self):
-        self.conn = duckdb.connect(database=':memory:')
+        self.conn = duckdb.connect(database=":memory:")
 
     def register_dataframe(self, name: str, df: pd.DataFrame):
         """Registers a pandas DataFrame as a SQL table."""
@@ -30,7 +31,7 @@ class AnalyticsEngine:
         try:
             logger.debug(f"Executing SQL: {sql}")
             result = self.conn.execute(sql).fetchdf()
-            return result.to_dict(orient='records')
+            return result.to_dict(orient="records")
         except Exception as e:
             logger.exception(f"SQL Error: {e}")
             raise
@@ -44,5 +45,6 @@ class AnalyticsEngine:
         except Exception as e:
             logger.exception(f"CSV Analysis failed: {e}")
             raise
+
 
 analytics = AnalyticsEngine()

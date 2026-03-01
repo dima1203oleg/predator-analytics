@@ -2,23 +2,20 @@ from __future__ import annotations
 
 
 """Arbiter for Constitutional Control of ETL Pipeline - AZR Engine v45-S."""
-import asyncio
 from datetime import datetime
-import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-import httpx
-
-from app.libs.core.config import settings
 from app.libs.core.etl_state_machine import ETLState
 from app.libs.core.structured_logger import get_logger
 
 
 logger = get_logger("etl.arbiter")
 
+
 class TruthLedgerClient:
     """Mock client for Truth Ledger until full integration."""
+
     def __init__(self, base_url: str | None = None):
         self.base_url = base_url or os.getenv("LEDGER_SERVICE_URL", "http://truth-ledger:8000")
 
@@ -32,7 +29,8 @@ class TruthLedgerClient:
 
     async def get_etl_state(self, job_id: str):
         # Mocking ledger state
-        return type('LedgerEntry', (), {"state": "PROCESSING", "verified": True})()
+        return type("LedgerEntry", (), {"state": "PROCESSING", "verified": True})()
+
 
 class ETLSovereignArbiter:
     """Арбітер для конституційного контролю ETL Pipeline
@@ -79,7 +77,7 @@ class ETLSovereignArbiter:
             "state": job_state,
             "constitutional_compliance": len(violations) == 0,
             "violations": violations,
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
     async def verify_real_data(self, job_id: str, job_data: dict) -> bool:
@@ -91,7 +89,8 @@ class ETLSovereignArbiter:
         """Перевірка, що відображений стан = реальний стан."""
         # In real system, query Backend DB vs Truth Ledger
         ledger_entry = await self.truth_ledger.get_etl_state(job_id)
-        if not ledger_entry: return False
+        if not ledger_entry:
+            return False
         return displayed_state == ledger_entry.state and ledger_entry.verified is True
 
     async def verify_progress_monotonicity(self, job_id: str, job_data: dict) -> bool:
@@ -112,10 +111,7 @@ class ETLSovereignArbiter:
     async def handle_violations(self, job_id: str, violations: list[str]):
         """Обробка порушень конституційних аксіом."""
         await self.truth_ledger.record_violation(
-            entity_type="ETL_JOB",
-            entity_id=job_id,
-            violations=violations,
-            severity="HIGH"
+            entity_type="ETL_JOB", entity_id=job_id, violations=violations, severity="HIGH"
         )
         # Logic to freeze job and notify human would follow...
         logger.critical(f"CONSTITUTIONAL VIOLATION for job {job_id}: {violations}")

@@ -7,7 +7,7 @@ Part of Predator Analytics v45.1 Agent System.
 import asyncio
 import logging
 import time
-from typing import Any, Dict, List
+from typing import Any
 import uuid
 
 from app.libs.agents.state import AgentState, AnalysisResult, CaseTemplate, QueryResult
@@ -68,12 +68,10 @@ async def analyzer_node(state: AgentState) -> dict[str, Any]:
         fusion_results = {
             "query": query,
             "databases_queried": list(query_results.keys()),
-            "total_records": sum(
-                len(r.get("results", [])) for r in query_results.values()
-            ),
+            "total_records": sum(len(r.get("results", [])) for r in query_results.values()),
             "analysis_count": len(analysis_results),
             "cases_generated": len(generated_cases),
-            "execution_time_ms": (time.time() - start_time) * 1000
+            "execution_time_ms": (time.time() - start_time) * 1000,
         }
 
         updates.append(f"✨ Аналіз завершено за {fusion_results['execution_time_ms']:.0f}мс")
@@ -87,16 +85,13 @@ async def analyzer_node(state: AgentState) -> dict[str, Any]:
             "processing_stats": {
                 "analyzer_execution_ms": fusion_results["execution_time_ms"],
                 "databases_count": len(query_results),
-                "findings_count": len(analysis_results)
-            }
+                "findings_count": len(analysis_results),
+            },
         }
 
     except Exception as e:
         logger.exception(f"E2E Analyzer failed: {e}")
-        return {
-            "error": f"Помилка аналізу: {e!s}",
-            "stream_updates": [*updates, f"❌ Помилка: {e!s}"]
-        }
+        return {"error": f"Помилка аналізу: {e!s}", "stream_updates": [*updates, f"❌ Помилка: {e!s}"]}
 
 
 async def _execute_multi_db_query(query: str, tenant_id: str) -> dict[str, QueryResult]:
@@ -112,13 +107,16 @@ async def _execute_multi_db_query(query: str, tenant_id: str) -> dict[str, Query
             start = time.time()
             async with get_db_ctx() as db:
                 # Full-text search in PostgreSQL using pg_trgm
-                result = await db.execute(text("""
+                result = await db.execute(
+                    text("""
                     SELECT id, title, content, source_type, created_at
                     FROM gold.documents
                     WHERE similarity(content, :query) > 0.1
                     ORDER BY similarity(content, :query) DESC
                     LIMIT 20
-                """), {"query": query})
+                """),
+                    {"query": query},
+                )
                 rows = result.fetchall()
 
                 return QueryResult(
@@ -126,17 +124,11 @@ async def _execute_multi_db_query(query: str, tenant_id: str) -> dict[str, Query
                     query=query,
                     results=[dict(r._mapping) for r in rows] if rows else [],
                     execution_time_ms=(time.time() - start) * 1000,
-                    error=None
+                    error=None,
                 )
         except Exception as e:
             logger.warning(f"PostgreSQL query failed: {e}")
-            return QueryResult(
-                database="postgresql",
-                query=query,
-                results=[],
-                execution_time_ms=0,
-                error=str(e)
-            )
+            return QueryResult(database="postgresql", query=query, results=[], execution_time_ms=0, error=str(e))
 
     async def query_opensearch():
         try:
@@ -145,12 +137,7 @@ async def _execute_multi_db_query(query: str, tenant_id: str) -> dict[str, Query
             start = time.time()
             indexer = OpenSearchIndexer()
 
-            response = await indexer.search(
-                index_name="documents_safe",
-                query=query,
-                size=20,
-                tenant_id=tenant_id
-            )
+            response = await indexer.search(index_name="documents_safe", query=query, size=20, tenant_id=tenant_id)
 
             hits = response.get("hits", {}).get("hits", [])
 
@@ -161,17 +148,11 @@ async def _execute_multi_db_query(query: str, tenant_id: str) -> dict[str, Query
                 query=query,
                 results=[{"id": h["_id"], **h["_source"]} for h in hits],
                 execution_time_ms=(time.time() - start) * 1000,
-                error=None
+                error=None,
             )
         except Exception as e:
             logger.warning(f"OpenSearch query failed: {e}")
-            return QueryResult(
-                database="opensearch",
-                query=query,
-                results=[],
-                execution_time_ms=0,
-                error=str(e)
-            )
+            return QueryResult(database="opensearch", query=query, results=[], execution_time_ms=0, error=str(e))
 
     async def query_qdrant():
         try:
@@ -185,35 +166,17 @@ async def _execute_multi_db_query(query: str, tenant_id: str) -> dict[str, Query
             # Generate embedding for semantic search
             query_vector = await embedder.generate_embedding_async(query)
 
-            hits = await qdrant.search(
-                query_vector=query_vector,
-                limit=20,
-                tenant_id=tenant_id
-            )
+            hits = await qdrant.search(query_vector=query_vector, limit=20, tenant_id=tenant_id)
 
             return QueryResult(
-                database="qdrant",
-                query=query,
-                results=hits,
-                execution_time_ms=(time.time() - start) * 1000,
-                error=None
+                database="qdrant", query=query, results=hits, execution_time_ms=(time.time() - start) * 1000, error=None
             )
         except Exception as e:
             logger.warning(f"Qdrant query failed: {e}")
-            return QueryResult(
-                database="qdrant",
-                query=query,
-                results=[],
-                execution_time_ms=0,
-                error=str(e)
-            )
+            return QueryResult(database="qdrant", query=query, results=[], execution_time_ms=0, error=str(e))
 
     # Execute all queries in parallel
-    pg_result, os_result, qd_result = await asyncio.gather(
-        query_postgres(),
-        query_opensearch(),
-        query_qdrant()
-    )
+    pg_result, os_result, qd_result = await asyncio.gather(query_postgres(), query_opensearch(), query_qdrant())
 
     results["postgresql"] = pg_result
     results["opensearch"] = os_result
@@ -249,17 +212,19 @@ async def _analyze_results(query_results: dict[str, QueryResult], query: str) ->
     high_freq.sort(key=lambda x: -x[1])
 
     for pattern, count in high_freq[:5]:
-        analysis.append(AnalysisResult(
-            id=str(uuid.uuid4()),
-            type="pattern",
-            confidence=min(0.5 + count * 0.1, 0.95),
-            description=f"Виявлено повторюваний патерн: '{pattern}' ({count} входжень)",
-            data_points=[{"pattern": pattern, "count": count}],
-            recommendations=[
-                f"Перевірити контекст використання '{pattern}'",
-                "Провести додатковий аналіз пов'язаних записів"
-            ]
-        ))
+        analysis.append(
+            AnalysisResult(
+                id=str(uuid.uuid4()),
+                type="pattern",
+                confidence=min(0.5 + count * 0.1, 0.95),
+                description=f"Виявлено повторюваний патерн: '{pattern}' ({count} входжень)",
+                data_points=[{"pattern": pattern, "count": count}],
+                recommendations=[
+                    f"Перевірити контекст використання '{pattern}'",
+                    "Провести додатковий аналіз пов'язаних записів",
+                ],
+            )
+        )
 
     # 3. Check for anomalies (high values, unusual distributions)
     for item in all_results[:10]:
@@ -268,22 +233,25 @@ async def _analyze_results(query_results: dict[str, QueryResult], query: str) ->
         if any(kw in content.lower() for kw in ["$", "usd", "eur", "грн"]):
             # Extract numbers
             import re
-            numbers = re.findall(r'[\d,]+(?:\.\d+)?', content)
+
+            numbers = re.findall(r"[\d,]+(?:\.\d+)?", content)
             for num_str in numbers:
                 try:
                     num = float(num_str.replace(",", ""))
                     if num > 100000:  # High value threshold
-                        analysis.append(AnalysisResult(
-                            id=str(uuid.uuid4()),
-                            type="anomaly",
-                            confidence=0.75,
-                            description=f"Виявлено операцію з високою вартістю: {num:,.0f}",
-                            data_points=[item],
-                            recommendations=[
-                                "Перевірити джерело та легітимність транзакції",
-                                "Порівняти з типовими операціями в цьому секторі"
-                            ]
-                        ))
+                        analysis.append(
+                            AnalysisResult(
+                                id=str(uuid.uuid4()),
+                                type="anomaly",
+                                confidence=0.75,
+                                description=f"Виявлено операцію з високою вартістю: {num:,.0f}",
+                                data_points=[item],
+                                recommendations=[
+                                    "Перевірити джерело та легітимність транзакції",
+                                    "Порівняти з типовими операціями в цьому секторі",
+                                ],
+                            )
+                        )
                         break
                 except:
                     pass
@@ -305,10 +273,10 @@ async def _generate_case_from_analysis(result: AnalysisResult) -> CaseTemplate:
     return CaseTemplate(
         title=f"Аналіз: {result.get('type', 'unknown').upper()}",
         situation=result.get("description", "Виявлено підозрілу активність"),
-        conclusion=f"Автоматичний аналіз виявив патерн з впевненістю {result.get('confidence', 0)*100:.0f}%",
+        conclusion=f"Автоматичний аналіз виявив патерн з впевненістю {result.get('confidence', 0) * 100:.0f}%",
         status=status,
         risk_score=risk_score,
         sector="BIZ",  # Default sector
         evidence=result.get("data_points", []),
-        ai_insight=". ".join(result.get("recommendations", []))
+        ai_insight=". ".join(result.get("recommendations", [])),
     )

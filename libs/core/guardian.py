@@ -1,24 +1,27 @@
-"""
-Predator Analytics v45 - Self-Healing Guardian
+"""Predator Analytics v45 - Self-Healing Guardian
 Core module for system diagnostics, auto-recovery and schema integrity.
 """
-import logging
+
 import asyncio
-from typing import Dict, List, Any
+import logging
 import socket
-from libs.core.database import get_db_ctx, init_db
+from typing import Any, Dict, List
+
 from libs.core.config import settings
-from libs.core.redis import redis_client
+from libs.core.database import get_db_ctx, init_db
 from libs.core.mq import broker
+from libs.core.redis import redis_client
+
 
 logger = logging.getLogger("predator.guardian")
+
 
 class GuardianService:
     def __init__(self):
         self.health_history = []
         self.last_fix_timestamp = None
 
-    async def check_infrastructure(self) -> Dict[str, Any]:
+    async def check_infrastructure(self) -> dict[str, Any]:
         """Check all critical backend dependencies."""
         results = {}
 
@@ -51,16 +54,13 @@ class GuardianService:
 
         return results
 
-    async def check_database_health(self) -> Dict[str, Any]:
+    async def check_database_health(self) -> dict[str, Any]:
         """Verify DB connectivity and extension availability."""
         from sqlalchemy import text
+
         status = {
             "status": "healthy",
-            "checks": {
-                "connectivity": "UNKNOWN",
-                "extension_trgm": "UNKNOWN",
-                "schema_gold": "UNKNOWN"
-            }
+            "checks": {"connectivity": "UNKNOWN", "extension_trgm": "UNKNOWN", "schema_gold": "UNKNOWN"},
         }
         try:
             async with get_db_ctx() as db:
@@ -73,7 +73,9 @@ class GuardianService:
                 status["checks"]["extension_trgm"] = "OK" if res.fetchone() else "MISSING"
 
                 # 3. Schemas
-                res = await db.execute(text("SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'gold'"))
+                res = await db.execute(
+                    text("SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'gold'")
+                )
                 status["checks"]["schema_gold"] = "OK" if res.fetchone() else "MISSING"
 
         except Exception as e:
@@ -83,35 +85,42 @@ class GuardianService:
 
         return status
 
-    async def verify_schema_integrity(self) -> List[str]:
+    async def verify_schema_integrity(self) -> list[str]:
         """Detect missing tables or columns in the critical Gold Layer."""
         from sqlalchemy import text
+
         issues = []
         critical_tables = ["data_sources", "ml_datasets", "ml_jobs", "trinity_audit_logs"]
 
         try:
             async with get_db_ctx() as db:
                 for table in critical_tables:
-                    res = await db.execute(text(f"SELECT 1 FROM information_schema.tables WHERE table_schema = 'gold' AND table_name = '{table}'"))
+                    res = await db.execute(
+                        text(
+                            f"SELECT 1 FROM information_schema.tables WHERE table_schema = 'gold' AND table_name = '{table}'"
+                        )
+                    )
                     if not res.fetchone():
                         issues.append(f"MISSING_TABLE: gold.{table}")
 
                 # Check for unique constraints in gold schema
-                res = await db.execute(text("""
-                    SELECT 1 FROM information_schema.table_constraints 
-                    WHERE constraint_name = 'data_sources_name_unique' 
+                res = await db.execute(
+                    text("""
+                    SELECT 1 FROM information_schema.table_constraints
+                    WHERE constraint_name = 'data_sources_name_unique'
                     AND table_schema = 'gold'
-                """))
+                """)
+                )
                 if not res.fetchone():
                     issues.append("MISSING_CONSTRAINT: gold.data_sources.name_unique")
 
         except Exception as e:
             logger.error(f"Помилка верифікації схеми Guardian: {e}")
-            issues.append(f"VERIFICATION_ERROR: {str(e)}")
+            issues.append(f"VERIFICATION_ERROR: {e!s}")
 
         return issues
 
-    async def run_auto_recovery(self) -> Dict[str, Any]:
+    async def run_auto_recovery(self) -> dict[str, Any]:
         """Attempt to fix detected issues automatically."""
         results = {"status": "started", "fixed_issues": []}
         from sqlalchemy import text
@@ -127,7 +136,8 @@ class GuardianService:
         try:
             async with get_db_ctx() as db:
                 # Fix data_sources unique constraint in gold schema
-                await db.execute(text("""
+                await db.execute(
+                    text("""
                     DO $$
                     BEGIN
                         IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'gold' AND table_name = 'data_sources') THEN
@@ -136,11 +146,13 @@ class GuardianService:
                             END IF;
                         END IF;
                     END $$;
-                """))
+                """)
+                )
                 results["fixed_issues"].append("DATA_SOURCES_UNIQUE_CONSTRAINT_FIX")
 
                 # Fix ml_datasets unique constraint in gold schema
-                await db.execute(text("""
+                await db.execute(
+                    text("""
                     DO $$
                     BEGIN
                         IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'gold' AND table_name = 'ml_datasets') THEN
@@ -149,7 +161,8 @@ class GuardianService:
                             END IF;
                         END IF;
                     END $$;
-                """))
+                """)
+                )
                 results["fixed_issues"].append("ML_DATASETS_UNIQUE_CONSTRAINT_FIX")
 
                 await db.commit()
@@ -171,7 +184,7 @@ class GuardianService:
 
                 # 2. Trigger auto-recovery if critical issues found
                 if any(v == "DOWN" for v in infra.values()) or schema_issues:
-                    logger.warning(f"⚠️ Guardian виявив деградацію системи. Запуск автоматичного відновлення...")
+                    logger.warning("⚠️ Guardian виявив деградацію системи. Запуск автоматичного відновлення...")
                     await self.run_auto_recovery()
 
                 # 3. Heartbeat log
@@ -180,6 +193,7 @@ class GuardianService:
             except Exception as e:
                 logger.error(f"Помилка циклу Guardian: {e}")
 
-            await asyncio.sleep(300) # Reconcile every 5 minutes
+            await asyncio.sleep(300)  # Reconcile every 5 minutes
+
 
 guardian = GuardianService()

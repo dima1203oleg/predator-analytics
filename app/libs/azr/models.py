@@ -16,13 +16,12 @@ NO-AI-OVERRIDE CLAUSE ACTIVE
 """
 
 
-
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 import hashlib
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any
 from uuid import UUID, uuid4
 
 
@@ -38,14 +37,14 @@ IMMUTABLE_CORE_COMPONENTS = frozenset({
     "ArbiterAuthority",
     "TruthLedger",
     "GPUPolicy",
-    "CLIFirstPrinciple"
+    "CLIFirstPrinciple",
 })
 
 RATE_LIMITS = {
     "LOW": {"amount": 10, "period_days": 1},
     "MEDIUM": {"amount": 3, "period_days": 7},
     "HIGH": {"amount": 1, "period_days": 30},
-    "EXTREME": {"amount": 1, "period_days": 90}
+    "EXTREME": {"amount": 1, "period_days": 90},
 }
 
 
@@ -53,16 +52,19 @@ RATE_LIMITS = {
 # ENUMS
 # ═══════════════════════════════════════════════════════════════
 
-class RiskLevel(str, Enum):
+
+class RiskLevel(StrEnum):
     """Amendment risk classification (Axiom 9)."""
+
     LOW = "LOW"
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"
     EXTREME = "EXTREME"
 
 
-class AmendmentState(str, Enum):
+class AmendmentState(StrEnum):
     """Amendment lifecycle states."""
+
     PROPOSED = "PROPOSED"
     VALIDATING = "VALIDATING"
     SIMULATING = "SIMULATING"
@@ -76,24 +78,27 @@ class AmendmentState(str, Enum):
     REJECTED = "REJECTED"
 
 
-class AmendmentCategory(str, Enum):
+class AmendmentCategory(StrEnum):
     """Categories of amendments."""
+
     PARAMETER_TUNING = "PARAMETER_TUNING"
     ALGORITHMIC_CHANGE = "ALGORITHMIC_CHANGE"
     ARCHITECTURAL_CHANGE = "ARCHITECTURAL_CHANGE"
     CONSTITUTIONAL_CHANGE = "CONSTITUTIONAL_CHANGE"
 
 
-class ImpactScope(str, Enum):
+class ImpactScope(StrEnum):
     """Scope of amendment impact."""
+
     SINGLE_COMPONENT = "SINGLE_COMPONENT"
     MULTIPLE_COMPONENTS = "MULTIPLE_COMPONENTS"
     SYSTEM_WIDE = "SYSTEM_WIDE"
     CROSS_SYSTEM = "CROSS_SYSTEM"
 
 
-class RollbackTimeframe(str, Enum):
+class RollbackTimeframe(StrEnum):
     """Time required for rollback."""
+
     INSTANT = "INSTANT"
     MINUTES = "MINUTES"
     HOURS = "HOURS"
@@ -101,16 +106,18 @@ class RollbackTimeframe(str, Enum):
     IMPOSSIBLE = "IMPOSSIBLE"
 
 
-class ApprovalTier(str, Enum):
+class ApprovalTier(StrEnum):
     """Arbiter approval tiers (Axiom 12)."""
+
     BASIC = "ARBITER_BASIC"
     AUDIT = "ARBITER_AUDIT"
     COURT = "ARBITER_COURT"
     SUPER_MAJORITY = "SUPER_MAJORITY"
 
 
-class ViolationSeverity(str, Enum):
+class ViolationSeverity(StrEnum):
     """Constitutional violation severity."""
+
     INFO = "INFO"
     LOW = "LOW"
     MEDIUM = "MEDIUM"
@@ -122,11 +129,13 @@ class ViolationSeverity(str, Enum):
 # DATA MODELS
 # ═══════════════════════════════════════════════════════════════
 
+
 @dataclass
 class CryptographicCommitment:
     """Cryptographic commitment for amendment (Axiom 11)
     Every proposal must have a binding commitment.
     """
+
     commitment_id: UUID
     proposal_id: UUID
     merkle_root: str
@@ -137,20 +146,24 @@ class CryptographicCommitment:
 
     def compute_hash(self) -> str:
         """Compute SHA3-512 hash of commitment."""
-        content = json.dumps({
-            "commitment_id": str(self.commitment_id),
-            "proposal_id": str(self.proposal_id),
-            "merkle_root": self.merkle_root,
-            "signature": self.signature,
-            "timestamp": self.timestamp.isoformat(),
-            "binding": self.binding
-        }, sort_keys=True)
+        content = json.dumps(
+            {
+                "commitment_id": str(self.commitment_id),
+                "proposal_id": str(self.proposal_id),
+                "merkle_root": self.merkle_root,
+                "signature": self.signature,
+                "timestamp": self.timestamp.isoformat(),
+                "binding": self.binding,
+            },
+            sort_keys=True,
+        )
         return hashlib.sha3_512(content.encode()).hexdigest()
 
 
 @dataclass
 class RollbackPlan:
     """Required rollback plan for amendments (Axiom 9)."""
+
     plan_id: UUID
     amendment_id: UUID
     steps: list[dict[str, Any]]
@@ -163,16 +176,17 @@ class RollbackPlan:
     def is_valid(self) -> bool:
         """Check if rollback plan meets requirements."""
         return (
-            len(self.steps) > 0 and
-            self.estimated_duration_minutes > 0 and
-            len(self.data_preservation_strategy) > 0 and
-            len(self.rollback_triggers) > 0
+            len(self.steps) > 0
+            and self.estimated_duration_minutes > 0
+            and len(self.data_preservation_strategy) > 0
+            and len(self.rollback_triggers) > 0
         )
 
 
 @dataclass
 class CommitteeApproval:
     """Multi-party approval record (Axiom 12)."""
+
     committee_name: str
     votes_for: int
     votes_against: int
@@ -193,6 +207,7 @@ class CommitteeApproval:
 @dataclass
 class VerifiableProof:
     """Verifiable proof for claims (Axiom 13)."""
+
     proof_id: UUID
     claim_id: UUID
     proof_type: str  # merkle, zk, signature, etc.
@@ -206,6 +221,7 @@ class VerifiableProof:
 @dataclass
 class ConstitutionalViolation:
     """Record of constitutional violation."""
+
     violation_id: str
     axiom: str
     severity: ViolationSeverity
@@ -220,6 +236,7 @@ class ConstitutionalViolation:
 @dataclass
 class RiskAssessment:
     """Formal risk assessment for amendments."""
+
     score: float
     classification: RiskLevel
     approval_level: ApprovalTier
@@ -233,7 +250,7 @@ class RiskAssessment:
         amendment_type: AmendmentCategory,
         impact_scope: ImpactScope,
         complexity_score: float,
-        rollback_timeframe: RollbackTimeframe
+        rollback_timeframe: RollbackTimeframe,
     ) -> RiskAssessment:
         """Calculate risk score using formal model.
         Deterministic - no AI interpretation allowed.
@@ -243,7 +260,7 @@ class RiskAssessment:
             AmendmentCategory.PARAMETER_TUNING: 0.1,
             AmendmentCategory.ALGORITHMIC_CHANGE: 0.3,
             AmendmentCategory.ARCHITECTURAL_CHANGE: 0.6,
-            AmendmentCategory.CONSTITUTIONAL_CHANGE: 0.9
+            AmendmentCategory.CONSTITUTIONAL_CHANGE: 0.9,
         }
         base_risk = base_risks[amendment_type]
 
@@ -252,7 +269,7 @@ class RiskAssessment:
             ImpactScope.SINGLE_COMPONENT: 1.0,
             ImpactScope.MULTIPLE_COMPONENTS: 1.5,
             ImpactScope.SYSTEM_WIDE: 2.0,
-            ImpactScope.CROSS_SYSTEM: 3.0
+            ImpactScope.CROSS_SYSTEM: 3.0,
         }
         scope_mult = scope_multipliers[impact_scope]
 
@@ -265,7 +282,7 @@ class RiskAssessment:
             RollbackTimeframe.MINUTES: 0.7,
             RollbackTimeframe.HOURS: 0.9,
             RollbackTimeframe.DAYS: 1.2,
-            RollbackTimeframe.IMPOSSIBLE: 2.0
+            RollbackTimeframe.IMPOSSIBLE: 2.0,
         }
         rollback_factor = rollback_factors[rollback_timeframe]
 
@@ -298,12 +315,7 @@ class RiskAssessment:
             constraints.append("REQUIRES_EXTERNAL_SECURITY_AUDIT")
             constraints.append("HUMAN_APPROVAL_REQUIRED")
 
-        return cls(
-            score=score,
-            classification=risk_class,
-            approval_level=approval,
-            constraints=constraints
-        )
+        return cls(score=score, classification=risk_class, approval_level=approval, constraints=constraints)
 
 
 @dataclass
@@ -311,6 +323,7 @@ class AmendmentProposal:
     """Formal amendment proposal structure.
     Implements requirements from Axiom 9 (bounded self-improvement).
     """
+
     # Identity
     id: UUID = field(default_factory=uuid4)
     version: str = "1.0"
@@ -353,15 +366,18 @@ class AmendmentProposal:
 
     def compute_hash(self) -> str:
         """Compute hash for chain integrity."""
-        content = json.dumps({
-            "id": str(self.id),
-            "title": self.title,
-            "category": self.category.value,
-            "target_components": self.target_components,
-            "change_specification": self.change_specification,
-            "previous_hash": self.previous_hash,
-            "timestamp": self.created_at.isoformat()
-        }, sort_keys=True)
+        content = json.dumps(
+            {
+                "id": str(self.id),
+                "title": self.title,
+                "category": self.category.value,
+                "target_components": self.target_components,
+                "change_specification": self.change_specification,
+                "previous_hash": self.previous_hash,
+                "timestamp": self.created_at.isoformat(),
+            },
+            sort_keys=True,
+        )
         return hashlib.sha3_512(content.encode()).hexdigest()
 
     def transition_state(self, new_state: AmendmentState, reason: str = "") -> None:
@@ -370,7 +386,7 @@ class AmendmentProposal:
             "from_state": self.current_state.value,
             "to_state": new_state.value,
             "timestamp": datetime.utcnow().isoformat(),
-            "reason": reason
+            "reason": reason,
         })
         self.current_state = new_state
 
@@ -383,37 +399,43 @@ class AmendmentProposal:
         # Axiom 10: Check immutable core
         for component in self.target_components:
             if component in IMMUTABLE_CORE_COMPONENTS:
-                violations.append(ConstitutionalViolation(
-                    violation_id="AZR-001",
-                    axiom="10",
-                    severity=ViolationSeverity.CRITICAL,
-                    message=f"Cannot modify immutable core: {component}",
-                    action="BLOCK_IMMEDIATELY",
-                    escalation="EMERGENCY_GOVERNANCE"
-                ))
+                violations.append(
+                    ConstitutionalViolation(
+                        violation_id="AZR-001",
+                        axiom="10",
+                        severity=ViolationSeverity.CRITICAL,
+                        message=f"Cannot modify immutable core: {component}",
+                        action="BLOCK_IMMEDIATELY",
+                        escalation="EMERGENCY_GOVERNANCE",
+                    )
+                )
 
         # Axiom 9: Check rollback plan for high risk
         if self.risk_assessment and self.risk_assessment.classification in [RiskLevel.HIGH, RiskLevel.EXTREME]:
             if not self.rollback_plan or not self.rollback_plan.is_valid():
-                violations.append(ConstitutionalViolation(
-                    violation_id="AZR-005",
-                    axiom="9",
-                    severity=ViolationSeverity.HIGH,
-                    message="High-risk amendment requires valid rollback plan",
-                    action="BLOCK_UNTIL_ROLLBACK_PLAN",
-                    escalation="TECHNICAL_COMMITTEE"
-                ))
+                violations.append(
+                    ConstitutionalViolation(
+                        violation_id="AZR-005",
+                        axiom="9",
+                        severity=ViolationSeverity.HIGH,
+                        message="High-risk amendment requires valid rollback plan",
+                        action="BLOCK_UNTIL_ROLLBACK_PLAN",
+                        escalation="TECHNICAL_COMMITTEE",
+                    )
+                )
 
         # Axiom 11: Check cryptographic commitment
         if self.current_state != AmendmentState.PROPOSED and not self.commitment:
-            violations.append(ConstitutionalViolation(
-                violation_id="AZR-003",
-                axiom="11",
-                severity=ViolationSeverity.HIGH,
-                message="Amendment lacks cryptographic commitment",
-                action="BLOCK_UNTIL_COMMITMENT",
-                escalation="TECHNICAL_REVIEW"
-            ))
+            violations.append(
+                ConstitutionalViolation(
+                    violation_id="AZR-003",
+                    axiom="11",
+                    severity=ViolationSeverity.HIGH,
+                    message="Amendment lacks cryptographic commitment",
+                    action="BLOCK_UNTIL_COMMITMENT",
+                    escalation="TECHNICAL_REVIEW",
+                )
+            )
 
         return violations
 
@@ -427,6 +449,7 @@ class AZRAmendmentRecord:
     """Immutable record for Truth Ledger.
     Implements Axiom 14 (temporal irreversibility).
     """
+
     amendment_id: UUID
     proposal: AmendmentProposal
 
@@ -474,9 +497,11 @@ class AZRAmendmentRecord:
 # ROLLBACK TRIGGER DEFINITIONS
 # ═══════════════════════════════════════════════════════════════
 
+
 @dataclass
 class RollbackTrigger:
     """Automatic rollback trigger definition."""
+
     trigger_type: str
     severity: ViolationSeverity
     threshold: float
@@ -495,30 +520,30 @@ DEFAULT_ROLLBACK_TRIGGERS = [
         "type": "CONSTITUTIONAL_VIOLATION",
         "threshold": 0,
         "severity": "CRITICAL",
-        "description": "Any constitutional violation triggers immediate rollback"
+        "description": "Any constitutional violation triggers immediate rollback",
     },
     {
         "type": "PERFORMANCE_DEGRADATION",
         "threshold": 5.0,  # percent
         "severity": "HIGH",
-        "description": "Performance degradation above 5%"
+        "description": "Performance degradation above 5%",
     },
     {
         "type": "ERROR_RATE_INCREASE",
         "threshold": 1.0,  # percent
         "severity": "HIGH",
-        "description": "Error rate increase above 1%"
+        "description": "Error rate increase above 1%",
     },
     {
         "type": "USER_COMPLAINTS",
         "threshold": 10,  # count
         "severity": "MEDIUM",
-        "description": "User complaints threshold exceeded"
+        "description": "User complaints threshold exceeded",
     },
     {
         "type": "RESOURCE_ANOMALY",
         "threshold": 0,
         "severity": "MEDIUM",
-        "description": "Resource usage anomalies detected"
-    }
+        "description": "Resource usage anomalies detected",
+    },
 ]

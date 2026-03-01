@@ -3,11 +3,10 @@ from __future__ import annotations
 import builtins
 import contextlib
 from datetime import datetime, timedelta
-import glob
 import json
 import os
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 from prometheus_client import REGISTRY
 
@@ -62,6 +61,7 @@ class EvolutionService:
         """Aggregate real-time system and application metrics."""
         try:
             from app.libs.core.system_metrics import get_system_snapshot
+
             snapshot = get_system_snapshot()
             cpu_usage = snapshot.cpu_percent
             mem_percent = snapshot.memory_percent
@@ -72,33 +72,25 @@ class EvolutionService:
             disk_percent = 0.0
 
         # Prometheus Metrics
-        total_requests = self._get_prometheus_value('http_requests_total')
+        total_requests = self._get_prometheus_value("http_requests_total")
 
         # Custom App Metrics from metrics.py
-        search_count = self._get_prometheus_value('search_requests_total')
-        doc_count = self._get_prometheus_value('documents_total')
+        search_count = self._get_prometheus_value("search_requests_total")
+        doc_count = self._get_prometheus_value("documents_total")
 
         # Calculate derived metrics
-        ai_success_rate = 0.985 # Sovereign Baseline
+        ai_success_rate = 0.985  # Sovereign Baseline
 
         return {
             "timestamp": datetime.now().isoformat(),
-            "system": {
-                "cpu_percent": cpu_usage,
-                "memory_percent": mem_percent,
-                "disk_usage": disk_percent
-            },
+            "system": {"cpu_percent": cpu_usage, "memory_percent": mem_percent, "disk_usage": disk_percent},
             "application": {
                 "total_requests": int(total_requests),
-                "active_connections": int(self._get_prometheus_value('active_connections')),
+                "active_connections": int(self._get_prometheus_value("active_connections")),
                 "documents_indexed": int(doc_count),
-                "searches_performed": int(search_count)
+                "searches_performed": int(search_count),
             },
-            "ai_performance": {
-                "success_rate": ai_success_rate,
-                "arbitration_confidence": 0.94,
-                "active_agents": 12
-            }
+            "ai_performance": {"success_rate": ai_success_rate, "arbitration_confidence": 0.94, "active_agents": 12},
         }
 
     async def _get_code_metrics(self):
@@ -110,6 +102,7 @@ class EvolutionService:
                 import asyncio
 
                 from app.services.code_quality_analyzer import code_quality_analyzer
+
                 loop = asyncio.get_event_loop()
                 self._cached_analysis = await loop.run_in_executor(None, code_quality_analyzer.analyze_codebase)
                 self._last_analysis_time = now
@@ -138,7 +131,7 @@ class EvolutionService:
                 # Count completed cycles
                 stmt = select(func.count()).select_from(SICycle)
                 res = await sess.execute(stmt)
-                cycle_count = res.scalar() or 42 # Fallback to 42 if 0
+                cycle_count = res.scalar() or 42  # Fallback to 42 if 0
 
                 # Count tournament optimizations
                 stmt2 = select(func.count()).select_from(NasTournament)
@@ -153,7 +146,9 @@ class EvolutionService:
 
         stats = {
             "intelligence_gain": metrics["ai_performance"]["success_rate"],
-            "fixed_bugs": int(metrics["application"]["total_requests"] / 100) if metrics["application"]["total_requests"] > 0 else 5,
+            "fixed_bugs": int(metrics["application"]["total_requests"] / 100)
+            if metrics["application"]["total_requests"] > 0
+            else 5,
             "optimizations": optimizations,
             "success_rate": metrics["ai_performance"]["success_rate"],
             "cycle_count": cycle_count,
@@ -162,7 +157,7 @@ class EvolutionService:
             "files_analyzed": summary.get("total_files", 0),
             "active_agents": metrics["ai_performance"]["active_agents"],
             "cortex_status": self._get_cortex_status(),
-            "timestamp": metrics["timestamp"]
+            "timestamp": metrics["timestamp"],
         }
 
         # Merge full metrics for UI compatibility
@@ -179,7 +174,7 @@ class EvolutionService:
                     return {
                         "compliance_score": data.get("compliance_score", 0),
                         "node_count": len(data.get("nodes", [])),
-                        "compliant_nodes": len([n for n in data.get("nodes", []) if n.get("compliant")])
+                        "compliant_nodes": len([n for n in data.get("nodes", []) if n.get("compliant")]),
                     }
         except Exception:
             pass
@@ -188,7 +183,7 @@ class EvolutionService:
     async def save_snapshot(self):
         """Save current state to history."""
         stats = await self.get_latest_stats()
-        with open(self.history_file, 'a') as f:
+        with open(self.history_file, "a") as f:
             f.write(json.dumps(stats) + "\n")
 
     async def get_history(self, period: str = "24h") -> list[dict[str, Any]]:
@@ -198,7 +193,7 @@ class EvolutionService:
             # Read last N lines. Rough implementation.
             with open(self.history_file) as f:
                 lines = f.readlines()
-                for line in lines[-100:]: # Last 100 points
+                for line in lines[-100:]:  # Last 100 points
                     with contextlib.suppress(builtins.BaseException):
                         history.append(json.loads(line))
         return history
@@ -207,6 +202,7 @@ class EvolutionService:
         """Fetch recent activities from Truth Ledger."""
         try:
             from app.libs.core.constitutional import get_ledger
+
             ledger = get_ledger()
             entries = ledger.get_entries(limit=limit)
 
@@ -221,13 +217,13 @@ class EvolutionService:
                     "data": {
                         "message": f"{e.get('entity', '')} | {e.get('details', '')}",
                         "hash": e.get("hash", "0x0"),
-                        "status": "VERIFIED"
-                    }
+                        "status": "VERIFIED",
+                    },
                 }
                 for e in entries
             ]
         except Exception as e:
-            logger.error(f"Failed to fetch experience from ledger: {e}")
+            logger.exception(f"Failed to fetch experience from ledger: {e}")
             return self._get_mock_experience(limit)
 
     def _get_mock_experience(self, limit: int) -> list[dict[str, Any]]:
@@ -236,13 +232,14 @@ class EvolutionService:
             {
                 "timestamp": now.isoformat(),
                 "event": "AI_EVOLUTION_HEARTBEAT",
-                "data": {"message": "Sovereign intelligence loop active. All systems optimal."}
+                "data": {"message": "Sovereign intelligence loop active. All systems optimal."},
             },
             {
                 "timestamp": (now - timedelta(minutes=10)).isoformat(),
                 "event": "CHAOS_STRESS_TEST",
-                "data": {"description": "Network latency injection successful. Recovery MTTR: 12s"}
-            }
+                "data": {"description": "Network latency injection successful. Recovery MTTR: 12s"},
+            },
         ][:limit]
+
 
 evolution_service = EvolutionService()

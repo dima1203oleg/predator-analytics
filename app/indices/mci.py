@@ -53,8 +53,11 @@ def calculate_mci_normalized(
         MCI score (0-100). Higher = larger gap.
     """
     raw = calculate_mci(
-        import_volume, production,
-        domestic_sales, export_volume, inventory_change,
+        import_volume,
+        production,
+        domestic_sales,
+        export_volume,
+        inventory_change,
     )
 
     if total_market_volume <= 0:

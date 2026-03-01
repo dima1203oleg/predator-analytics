@@ -7,11 +7,11 @@ Generates PDF and Markdown reports for test runs.
 Supports watermarks, signatures, and comprehensive formatting.
 """
 
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import io
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 try:
@@ -20,6 +20,7 @@ try:
     from reportlab.lib.units import cm, inch
     from reportlab.pdfgen import canvas
     from reportlab.platypus import Table, TableStyle
+
     REPORTLAB_AVAILABLE = True
 except ImportError:
     REPORTLAB_AVAILABLE = False
@@ -45,11 +46,7 @@ class ReportGenerator:
         os.makedirs(self.reports_dir, exist_ok=True)
 
     def generate_pdf(
-        self,
-        run_id: str,
-        data: dict[str, Any],
-        include_watermark: bool = True,
-        include_signature: bool = True
+        self, run_id: str, data: dict[str, Any], include_watermark: bool = True, include_signature: bool = True
     ) -> dict[str, Any]:
         """Generate PDF report."""
         try:
@@ -107,19 +104,21 @@ class ReportGenerator:
                 ["Час обробки", data.get("processing_time", "12.5s")],
             ]
 
-            table = Table(stats, colWidths=[3*inch, 2*inch])
-            table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#4472C4')),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('FONTSIZE', (0, 0), (-1, -1), 10),
-                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-            ]))
+            table = Table(stats, colWidths=[3 * inch, 2 * inch])
+            table.setStyle(
+                TableStyle([
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#4472C4")),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                    ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                ])
+            )
 
             table.wrapOn(c, width, height)
-            table.drawOn(c, inch, y_pos - 1.5*inch)
+            table.drawOn(c, inch, y_pos - 1.5 * inch)
 
             y_pos -= 2.5 * inch
 
@@ -128,32 +127,38 @@ class ReportGenerator:
             c.drawString(inch, y_pos, "Використані моделі")
             y_pos -= 0.5 * inch
 
-            models_used = data.get("models_used", [
-                {"name": "Groq", "calls": 450, "avg_latency": "1.2s"},
-                {"name": "Gemini", "calls": 50, "avg_latency": "2.1s"},
-            ])
+            models_used = data.get(
+                "models_used",
+                [
+                    {"name": "Groq", "calls": 450, "avg_latency": "1.2s"},
+                    {"name": "Gemini", "calls": 50, "avg_latency": "2.1s"},
+                ],
+            )
 
             model_data = [["Модель", "Кількість викликів", "Середній час"]]
             for model in models_used:
                 model_data.append([
                     model.get("name", "Unknown"),
                     str(model.get("calls", 0)),
-                    model.get("avg_latency", "N/A")
+                    model.get("avg_latency", "N/A"),
                 ])
 
-            model_table = Table(model_data, colWidths=[2*inch, 2*inch, 1.5*inch])
+            model_table = Table(model_data, colWidths=[2 * inch, 2 * inch, 1.5 * inch])
             from reportlab.lib import colors
-            model_table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#4472C4')),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('FONTSIZE', (0, 0), (-1, -1), 10),
-                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-            ]))
+
+            model_table.setStyle(
+                TableStyle([
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#4472C4")),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                    ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, -1), 10),
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                ])
+            )
 
             model_table.wrapOn(c, width, height)
-            model_table.drawOn(c, inch, y_pos - 1*inch)
+            model_table.drawOn(c, inch, y_pos - 1 * inch)
 
             if include_signature:
                 self._add_signature(c, width, height)
@@ -162,7 +167,7 @@ class ReportGenerator:
             c.save()
 
             # Write to file
-            with open(filepath, 'wb') as f:
+            with open(filepath, "wb") as f:
                 f.write(buffer.getvalue())
 
             logger.info(f"Generated PDF report: {filepath}")
@@ -172,7 +177,7 @@ class ReportGenerator:
                 "path": filepath,
                 "filename": filename,
                 "size": len(buffer.getvalue()),
-                "url": f"/api/v1/e2e/reports/download/{run_id}/{filename}"
+                "url": f"/api/v1/e2e/reports/download/{run_id}/{filename}",
             }
 
         except ImportError as e:
@@ -182,11 +187,7 @@ class ReportGenerator:
             logger.exception(f"PDF generation error: {e}")
             return {"success": False, "error": str(e)}
 
-    def generate_customs_dossier(
-        self,
-        company_id: str,
-        data: dict[str, Any]
-    ) -> dict[str, Any]:
+    def generate_customs_dossier(self, company_id: str, data: dict[str, Any]) -> dict[str, Any]:
         """Generate a specialized Tactical Intelligence Dossier (Section 7.2).
         Includes graph connections and social intelligence.
         """
@@ -198,22 +199,22 @@ class ReportGenerator:
         report = self.generate_markdown(run_id, data)
 
         # Add customs-specific formatting to the markdown
-        customs_header = f"""# ТАКТИЧНЕ ДОСЬЄ: {data.get('company_name', company_id)}
+        customs_header = f"""# ТАКТИЧНЕ ДОСЬЄ: {data.get("company_name", company_id)}
 ## 🛡️ Конфіденційно | Рівень доступу: SOVEREIGN
 
 ### РЕЗЮМЕ РОЗВІДКИ
-{data.get('conclusion', 'Аналіз не виявив критичних ризиків.')}
+{data.get("conclusion", "Аналіз не виявив критичних ризиків.")}
 
 ### 🕸️ ЗВ'ЯЗКИ ТА ГРАФ
-- **Кількість декларацій:** {data.get('total_records', 0)}
-- **Згадки у Telegram:** {data.get('telegram_mentions', 0)}
-- **Пов'язані особи:** {', '.join(data.get('related_entities', ['Не виявлено']))}
+- **Кількість декларацій:** {data.get("total_records", 0)}
+- **Згадки у Telegram:** {data.get("telegram_mentions", 0)}
+- **Пов'язані особи:** {", ".join(data.get("related_entities", ["Не виявлено"]))}
 """
-        report['content'] = customs_header + report['content']
+        report["content"] = customs_header + report["content"]
 
         # Save updated content
-        with open(report['path'], 'w', encoding='utf-8') as f:
-            f.write(report['content'])
+        with open(report["path"], "w", encoding="utf-8") as f:
+            f.write(report["content"])
 
         return report
 
@@ -221,28 +222,28 @@ class ReportGenerator:
         """Add page header."""
         # Logo placeholder
         canvas.setFillColorRGB(0.27, 0.45, 0.77)  # Blue color
-        canvas.rect(0.5*inch, height - 1.2*inch, 1*inch, 0.6*inch, fill=1)
+        canvas.rect(0.5 * inch, height - 1.2 * inch, 1 * inch, 0.6 * inch, fill=1)
 
         canvas.setFillColorRGB(1, 1, 1)
         canvas.setFont("Helvetica-Bold", 16)
-        canvas.drawString(0.6*inch, height - 0.9*inch, "PA")
+        canvas.drawString(0.6 * inch, height - 0.9 * inch, "PA")
 
         # Title
         canvas.setFillColorRGB(0, 0, 0)
         canvas.setFont("Helvetica-Bold", 24)
-        canvas.drawString(2*inch, height - inch, title)
+        canvas.drawString(2 * inch, height - inch, title)
 
         # Separator line
         canvas.setStrokeColorRGB(0.27, 0.45, 0.77)
         canvas.setLineWidth(2)
-        canvas.line(0.5*inch, height - 1.5*inch, width - 0.5*inch, height - 1.5*inch)
+        canvas.line(0.5 * inch, height - 1.5 * inch, width - 0.5 * inch, height - 1.5 * inch)
 
     def _add_watermark(self, canvas, width, height):
         """Add watermark to page."""
         canvas.saveState()
         canvas.setFont("Helvetica-Bold", 60)
         canvas.setFillColorRGB(0.95, 0.95, 0.95)
-        canvas.translate(width/2, height/2)
+        canvas.translate(width / 2, height / 2)
         canvas.rotate(45)
         canvas.drawCentredString(0, 0, self.watermark_text)
         canvas.restoreState()
@@ -253,10 +254,11 @@ class ReportGenerator:
             return
 
         from reportlab.lib import colors
+
         canvas.setFont("Helvetica-Oblique", 10)
         canvas.setFillColor(colors.grey)
-        canvas.drawString(inch, 0.8*inch, f"Підписано: {self.signature}")
-        canvas.drawRightString(width - inch, 0.8*inch, datetime.now().strftime("%d.%m.%Y"))
+        canvas.drawString(inch, 0.8 * inch, f"Підписано: {self.signature}")
+        canvas.drawRightString(width - inch, 0.8 * inch, datetime.now().strftime("%d.%m.%Y"))
 
         # Separator line
         canvas.setStrokeColor(colors.lightgrey)
@@ -321,22 +323,12 @@ startxref
 %%EOF
 """
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             f.write(content)
 
-        return {
-            "success": True,
-            "path": filepath,
-            "filename": filename,
-            "basic": True
-        }
+        return {"success": True, "path": filepath, "filename": filename, "basic": True}
 
-    def generate_markdown(
-        self,
-        run_id: str,
-        data: dict[str, Any],
-        logs: list[str] | None = None
-    ) -> dict[str, Any]:
+    def generate_markdown(self, run_id: str, data: dict[str, Any], logs: list[str] | None = None) -> dict[str, Any]:
         """Generate Markdown report for developers."""
         filename = f"report_{run_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
         filepath = os.path.join(self.reports_dir, filename)
@@ -352,10 +344,13 @@ startxref
                 f"{datetime.now().strftime('%H:%M:%S')} [INFO] Обробка завершена",
             ]
 
-        models_used = data.get("models_used", [
-            {"name": "Groq", "calls": 450, "avg_latency": "1.2s"},
-            {"name": "Gemini", "calls": 50, "avg_latency": "2.1s"},
-        ])
+        models_used = data.get(
+            "models_used",
+            [
+                {"name": "Groq", "calls": 450, "avg_latency": "1.2s"},
+                {"name": "Gemini", "calls": 50, "avg_latency": "2.1s"},
+            ],
+        )
 
         fallback_events = data.get("fallback_events", [])
         warnings = data.get("warnings", [])
@@ -368,20 +363,20 @@ startxref
 | Параметр | Значення |
 |----------|----------|
 | Run ID | `{run_id}` |
-| Дата | {datetime.now().strftime('%d.%m.%Y %H:%M:%S')} |
-| Статус | {data.get('status', '✅ Успішно')} |
-| Тип тесту | {data.get('test_type', 'Full E2E')} |
-| Середовище | {data.get('environment', 'Production')} |
+| Дата | {datetime.now().strftime("%d.%m.%Y %H:%M:%S")} |
+| Статус | {data.get("status", "✅ Успішно")} |
+| Тип тесту | {data.get("test_type", "Full E2E")} |
+| Середовище | {data.get("environment", "Production")} |
 
 ## Статистика обробки
 
 | Метрика | Значення |
 |---------|----------|
-| Всього записів | {data.get('total_records', 500)} |
-| Успішно оброблено | {data.get('successful_records', 495)} |
-| Помилок | {data.get('failed_records', 5)} |
-| Час обробки | {data.get('processing_time', '12.5s')} |
-| Середній час на запис | {data.get('avg_per_record', '25ms')} |
+| Всього записів | {data.get("total_records", 500)} |
+| Успішно оброблено | {data.get("successful_records", 495)} |
+| Помилок | {data.get("failed_records", 5)} |
+| Час обробки | {data.get("processing_time", "12.5s")} |
+| Середній час на запис | {data.get("avg_per_record", "25ms")} |
 
 ## Логи виконання
 
@@ -391,11 +386,11 @@ startxref
 
 ## Технічні деталі
 
-- **Версія системи:** {data.get('version', '21.0.0')}
-- **Час обробки кожного запису:** {data.get('avg_per_record', '~25ms')}
-- **Використана пам'ять:** {data.get('memory_used', '512MB')}
-- **CPU навантаження:** {data.get('cpu_usage', '45%')}
-- **Модель за замовчуванням:** {data.get('default_model', 'Groq (llama-70b)')}
+- **Версія системи:** {data.get("version", "21.0.0")}
+- **Час обробки кожного запису:** {data.get("avg_per_record", "~25ms")}
+- **Використана пам'ять:** {data.get("memory_used", "512MB")}
+- **CPU навантаження:** {data.get("cpu_usage", "45%")}
+- **Модель за замовчуванням:** {data.get("default_model", "Groq (llama-70b)")}
 
 ### Використані моделі
 
@@ -434,11 +429,10 @@ startxref
 
 """
 
-        recommendations = data.get("recommendations", [
-            "Всі тести пройдено успішно",
-            "Середній час відповіді в межах норми",
-            "Fallback логіка працює коректно"
-        ])
+        recommendations = data.get(
+            "recommendations",
+            ["Всі тести пройдено успішно", "Середній час відповіді в межах норми", "Fallback логіка працює коректно"],
+        )
 
         for i, rec in enumerate(recommendations, 1):
             content += f"{i}. {rec}\n"
@@ -446,7 +440,7 @@ startxref
         content += f"""
 ## Висновки
 
-{data.get('conclusion', 'Система готова до продуктивної експлуатації. Всі ключові функції працюють відповідно до специфікації.')}
+{data.get("conclusion", "Система готова до продуктивної експлуатації. Всі ключові функції працюють відповідно до специфікації.")}
 
 ---
 
@@ -456,7 +450,7 @@ startxref
 """
 
         # Write file
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             f.write(content)
 
         logger.info(f"Generated Markdown report: {filepath}")
@@ -466,12 +460,13 @@ startxref
             "path": filepath,
             "filename": filename,
             "content": content,
-            "url": f"/api/v1/e2e/reports/download/{run_id}/{filename}"
+            "url": f"/api/v1/e2e/reports/download/{run_id}/{filename}",
         }
 
 
 # Singleton
 _generator = ReportGenerator()
+
 
 def get_report_generator() -> ReportGenerator:
     return _generator

@@ -12,30 +12,35 @@ Implements durable, fault-tolerant workflows for:
 
 from dataclasses import dataclass
 from datetime import timedelta
-from enum import Enum
+from enum import StrEnum
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 # Temporal imports (with fallback for when not installed)
 try:
     from temporalio import activity, workflow
     from temporalio.common import RetryPolicy
+
     TEMPORAL_AVAILABLE = True
 except ImportError:
     TEMPORAL_AVAILABLE = False
+
     # Stub decorators for when Temporal is not available
     class workflow:
         @staticmethod
         def defn(cls):
             return cls
+
         @staticmethod
         def run(fn):
             return fn
+
     class activity:
         @staticmethod
         def defn(fn):
             return fn
+
 
 logger = logging.getLogger(__name__)
 
@@ -44,9 +49,11 @@ logger = logging.getLogger(__name__)
 # DATA CLASSES
 # =============================================================================
 
+
 @dataclass
 class SelfImprovementInput:
     """Input for self-improvement workflow."""
+
     cycle_id: str
     trigger: str  # 'scheduled', 'manual', 'anomaly'
     target_metrics: list[str] = None
@@ -56,6 +63,7 @@ class SelfImprovementInput:
 @dataclass
 class SelfImprovementResult:
     """Result of self-improvement workflow."""
+
     cycle_id: str
     success: bool
     stages_completed: dict[str, bool]
@@ -70,6 +78,7 @@ class SelfImprovementResult:
 @dataclass
 class HealingInput:
     """Input for self-healing workflow."""
+
     recovery_id: str
     component: str
     failure_type: str
@@ -79,6 +88,7 @@ class HealingInput:
 @dataclass
 class HealingResult:
     """Result of self-healing workflow."""
+
     recovery_id: str
     success: bool
     strategy_used: str
@@ -87,7 +97,7 @@ class HealingResult:
     error: str | None = None
 
 
-class ImprovementStage(str, Enum):
+class ImprovementStage(StrEnum):
     DIAGNOSE = "diagnose"
     AUGMENT = "augment"
     TRAIN = "train"
@@ -100,6 +110,7 @@ class ImprovementStage(str, Enum):
 # =============================================================================
 
 if TEMPORAL_AVAILABLE:
+
     @activity.defn
     async def diagnose_performance() -> dict[str, Any]:
         """Analyze current system performance and identify improvement areas."""
@@ -113,68 +124,66 @@ if TEMPORAL_AVAILABLE:
 
         # Identify bottlenecks
         bottlenecks = []
-        if metrics.get('avg_latency_ms', 0) > 2000:
-            bottlenecks.append({'type': 'latency', 'value': metrics['avg_latency_ms']})
-        if metrics.get('error_rate', 0) > 0.05:
-            bottlenecks.append({'type': 'error_rate', 'value': metrics['error_rate']})
+        if metrics.get("avg_latency_ms", 0) > 2000:
+            bottlenecks.append({"type": "latency", "value": metrics["avg_latency_ms"]})
+        if metrics.get("error_rate", 0) > 0.05:
+            bottlenecks.append({"type": "error_rate", "value": metrics["error_rate"]})
 
         # Check agent performance
         agent_issues = []
         for agent_type, agent in orchestrator.agents.items():
-            if agent.state.status == 'error':
+            if agent.state.status == "error":
                 agent_issues.append({
-                    'agent': agent_type.value,
-                    'status': agent.state.status,
-                    'metrics': agent.state.metrics
+                    "agent": agent_type.value,
+                    "status": agent.state.status,
+                    "metrics": agent.state.metrics,
                 })
 
         return {
-            'current_metrics': metrics,
-            'health_status': health.get('status', 'unknown'),
-            'bottlenecks': bottlenecks,
-            'agent_issues': agent_issues,
-            'improvement_areas': [b['type'] for b in bottlenecks]
+            "current_metrics": metrics,
+            "health_status": health.get("status", "unknown"),
+            "bottlenecks": bottlenecks,
+            "agent_issues": agent_issues,
+            "improvement_areas": [b["type"] for b in bottlenecks],
         }
-
 
     @activity.defn
     async def generate_improvements(diagnosis: dict[str, Any]) -> list[dict[str, Any]]:
         """Generate improvement suggestions based on diagnosis."""
         improvements = []
 
-        for area in diagnosis.get('improvement_areas', []):
-            if area == 'latency':
+        for area in diagnosis.get("improvement_areas", []):
+            if area == "latency":
                 improvements.append({
-                    'type': 'optimization',
-                    'target': 'llm_router',
-                    'action': 'adjust_timeout',
-                    'params': {'timeout_reduction': 0.2}
+                    "type": "optimization",
+                    "target": "llm_router",
+                    "action": "adjust_timeout",
+                    "params": {"timeout_reduction": 0.2},
                 })
                 improvements.append({
-                    'type': 'caching',
-                    'target': 'response_cache',
-                    'action': 'increase_cache_size',
-                    'params': {'size_increase': 1.5}
+                    "type": "caching",
+                    "target": "response_cache",
+                    "action": "increase_cache_size",
+                    "params": {"size_increase": 1.5},
                 })
-            elif area == 'error_rate':
+            elif area == "error_rate":
                 improvements.append({
-                    'type': 'fallback',
-                    'target': 'llm_router',
-                    'action': 'adjust_fallback_chain',
-                    'params': {'add_redundancy': True}
+                    "type": "fallback",
+                    "target": "llm_router",
+                    "action": "adjust_fallback_chain",
+                    "params": {"add_redundancy": True},
                 })
 
         # Agent-specific improvements
-        for issue in diagnosis.get('agent_issues', []):
+        for issue in diagnosis.get("agent_issues", []):
             improvements.append({
-                'type': 'agent_recovery',
-                'target': issue['agent'],
-                'action': 'reinitialize',
-                'params': {}
+                "type": "agent_recovery",
+                "target": issue["agent"],
+                "action": "reinitialize",
+                "params": {},
             })
 
         return improvements
-
 
     @activity.defn
     async def apply_training(improvements: list[dict[str, Any]]) -> dict[str, Any]:
@@ -189,27 +198,22 @@ if TEMPORAL_AVAILABLE:
         for improvement in improvements:
             try:
                 # Simulate applying improvement
-                if improvement['type'] == 'optimization':
+                if improvement["type"] == "optimization":
                     # Apply optimization
                     applied.append(improvement)
-                elif improvement['type'] == 'caching':
+                elif improvement["type"] == "caching":
                     # Adjust cache settings
                     applied.append(improvement)
-                elif improvement['type'] == 'fallback':
+                elif improvement["type"] == "fallback":
                     # Adjust fallback configuration
                     applied.append(improvement)
-                elif improvement['type'] == 'agent_recovery':
+                elif improvement["type"] == "agent_recovery":
                     # Reinitialize agent
                     applied.append(improvement)
             except Exception as e:
-                failed.append({**improvement, 'error': str(e)})
+                failed.append({**improvement, "error": str(e)})
 
-        return {
-            'applied': applied,
-            'failed': failed,
-            'success_rate': len(applied) / max(len(improvements), 1)
-        }
-
+        return {"applied": applied, "failed": failed, "success_rate": len(applied) / max(len(improvements), 1)}
 
     @activity.defn
     async def evaluate_improvements(training_result: dict[str, Any]) -> dict[str, Any]:
@@ -226,21 +230,20 @@ if TEMPORAL_AVAILABLE:
 
         # Calculate improvement score
         base_score = 0.7  # Default
-        if training_result['success_rate'] > 0.8:
+        if training_result["success_rate"] > 0.8:
             base_score += 0.1
-        if new_metrics.get('avg_latency_ms', 0) < 1500:
+        if new_metrics.get("avg_latency_ms", 0) < 1500:
             base_score += 0.1
-        if new_metrics.get('error_rate', 0) < 0.02:
+        if new_metrics.get("error_rate", 0) < 0.02:
             base_score += 0.1
 
         return {
-            'new_metrics': new_metrics,
-            'score': min(base_score, 1.0),
-            'improvements_applied': len(training_result.get('applied', [])),
-            'improvements_failed': len(training_result.get('failed', [])),
-            'should_promote': base_score > 0.75
+            "new_metrics": new_metrics,
+            "score": min(base_score, 1.0),
+            "improvements_applied": len(training_result.get("applied", [])),
+            "improvements_failed": len(training_result.get("failed", [])),
+            "should_promote": base_score > 0.75,
         }
-
 
     @activity.defn
     async def promote_improvements(evaluation: dict[str, Any]) -> bool:
@@ -248,7 +251,7 @@ if TEMPORAL_AVAILABLE:
         from app.agents.orchestrator.metrics import record_self_improvement
         from app.agents.orchestrator.superintelligence import get_superintelligence
 
-        if not evaluation.get('should_promote', False):
+        if not evaluation.get("should_promote", False):
             return False
 
         get_superintelligence()
@@ -258,35 +261,33 @@ if TEMPORAL_AVAILABLE:
             # In a real implementation, this would persist configuration changes
 
             # Record metrics
-            record_self_improvement('promote', True, evaluation['score'])
+            record_self_improvement("promote", True, evaluation["score"])
 
             logger.info(f"Self-improvement promoted with score: {evaluation['score']}")
             return True
 
         except Exception as e:
             logger.exception(f"Failed to promote improvements: {e}")
-            record_self_improvement('promote', False)
+            record_self_improvement("promote", False)
             return False
-
 
     # Healing Activities
     @activity.defn
     async def diagnose_failure(component: str, failure_type: str) -> dict[str, Any]:
         """Diagnose the failure and determine recovery strategy."""
         strategies = {
-            'connection_error': ['reconnect', 'restart', 'failover'],
-            'timeout': ['increase_timeout', 'scale', 'restart'],
-            'resource_exhaustion': ['scale', 'cleanup', 'restart'],
-            'unknown': ['restart', 'rollback']
+            "connection_error": ["reconnect", "restart", "failover"],
+            "timeout": ["increase_timeout", "scale", "restart"],
+            "resource_exhaustion": ["scale", "cleanup", "restart"],
+            "unknown": ["restart", "rollback"],
         }
 
         return {
-            'component': component,
-            'failure_type': failure_type,
-            'available_strategies': strategies.get(failure_type, strategies['unknown']),
-            'recommended': strategies.get(failure_type, strategies['unknown'])[0]
+            "component": component,
+            "failure_type": failure_type,
+            "available_strategies": strategies.get(failure_type, strategies["unknown"]),
+            "recommended": strategies.get(failure_type, strategies["unknown"])[0],
         }
-
 
     @activity.defn
     async def execute_recovery(component: str, strategy: str) -> bool:
@@ -299,19 +300,19 @@ if TEMPORAL_AVAILABLE:
         success = False
 
         try:
-            if strategy == 'restart':
+            if strategy == "restart":
                 # Restart component
                 success = True
-            elif strategy == 'reconnect':
+            elif strategy == "reconnect":
                 # Attempt reconnection
                 success = True
-            elif strategy == 'scale':
+            elif strategy == "scale":
                 # Scale up resources
                 success = True
-            elif strategy == 'failover':
+            elif strategy == "failover":
                 # Switch to backup
                 success = True
-            elif strategy == 'rollback':
+            elif strategy == "rollback":
                 # Rollback to previous state
                 success = True
             else:
@@ -333,6 +334,7 @@ if TEMPORAL_AVAILABLE:
 # =============================================================================
 
 if TEMPORAL_AVAILABLE:
+
     @workflow.defn
     class SelfImprovementWorkflow:
         """Durable workflow for self-improvement cycle.
@@ -348,6 +350,7 @@ if TEMPORAL_AVAILABLE:
         @workflow.run
         async def run(self, input: SelfImprovementInput) -> SelfImprovementResult:
             import time
+
             start = time.time()
 
             stages_completed = {}
@@ -362,18 +365,16 @@ if TEMPORAL_AVAILABLE:
                 diagnosis = await workflow.execute_activity(
                     diagnose_performance,
                     start_to_close_timeout=timedelta(minutes=5),
-                    retry_policy=RetryPolicy(maximum_attempts=3)
+                    retry_policy=RetryPolicy(maximum_attempts=3),
                 )
-                stages_completed['diagnose'] = True
-                old_score = diagnosis.get('current_metrics', {}).get('success_rate', 0.7)
+                stages_completed["diagnose"] = True
+                old_score = diagnosis.get("current_metrics", {}).get("success_rate", 0.7)
 
                 # Stage 2: AUGMENT
                 improvements = await workflow.execute_activity(
-                    generate_improvements,
-                    args=[diagnosis],
-                    start_to_close_timeout=timedelta(minutes=5)
+                    generate_improvements, args=[diagnosis], start_to_close_timeout=timedelta(minutes=5)
                 )
-                stages_completed['augment'] = True
+                stages_completed["augment"] = True
 
                 if not improvements:
                     return SelfImprovementResult(
@@ -385,45 +386,37 @@ if TEMPORAL_AVAILABLE:
                         old_score=old_score,
                         promoted=False,
                         duration_seconds=time.time() - start,
-                        error="No improvements needed"
+                        error="No improvements needed",
                     )
 
                 # Stage 3: TRAIN
                 training_result = await workflow.execute_activity(
-                    apply_training,
-                    args=[improvements],
-                    start_to_close_timeout=timedelta(minutes=30)
+                    apply_training, args=[improvements], start_to_close_timeout=timedelta(minutes=30)
                 )
-                stages_completed['train'] = True
+                stages_completed["train"] = True
 
                 # Stage 4: EVALUATE
                 evaluation = await workflow.execute_activity(
-                    evaluate_improvements,
-                    args=[training_result],
-                    start_to_close_timeout=timedelta(minutes=10)
+                    evaluate_improvements, args=[training_result], start_to_close_timeout=timedelta(minutes=10)
                 )
-                stages_completed['evaluate'] = True
-                new_score = evaluation.get('score', old_score)
+                stages_completed["evaluate"] = True
+                new_score = evaluation.get("score", old_score)
 
                 # Stage 5: PROMOTE
-                if evaluation.get('should_promote', False):
+                if evaluation.get("should_promote", False):
                     approved = await workflow.execute_activity(
-                        manual_approval_check,
-                        args=[evaluation],
-                        start_to_close_timeout=timedelta(minutes=5)
+                        manual_approval_check, args=[evaluation], start_to_close_timeout=timedelta(minutes=5)
                     )
                     if approved:
                         promoted = await workflow.execute_activity(
-                            promote_improvements,
-                            args=[evaluation],
-                            start_to_close_timeout=timedelta(minutes=5)
+                            promote_improvements, args=[evaluation], start_to_close_timeout=timedelta(minutes=5)
                         )
                     else:
                         promoted = False
-                        logger.info('Manual approval not granted, skipping promotion.')
+                        logger.info("Manual approval not granted, skipping promotion.")
                 else:
                     promoted = False
-                stages_completed['promote'] = True
+                stages_completed["promote"] = True
 
             except Exception as e:
                 error = str(e)
@@ -438,9 +431,8 @@ if TEMPORAL_AVAILABLE:
                 old_score=old_score,
                 promoted=promoted,
                 duration_seconds=time.time() - start,
-                error=error
+                error=error,
             )
-
 
     @workflow.defn
     class SelfHealingWorkflow:
@@ -452,6 +444,7 @@ if TEMPORAL_AVAILABLE:
         @workflow.run
         async def run(self, input: HealingInput) -> HealingResult:
             import time
+
             start = time.time()
 
             attempts = 0
@@ -464,11 +457,11 @@ if TEMPORAL_AVAILABLE:
                 diagnosis = await workflow.execute_activity(
                     diagnose_failure,
                     args=[input.component, input.failure_type],
-                    start_to_close_timeout=timedelta(minutes=2)
+                    start_to_close_timeout=timedelta(minutes=2),
                 )
 
                 # Try each strategy until one succeeds
-                for strategy in diagnosis['available_strategies']:
+                for strategy in diagnosis["available_strategies"]:
                     attempts += 1
                     strategy_used = strategy
 
@@ -480,8 +473,8 @@ if TEMPORAL_AVAILABLE:
                             maximum_attempts=2,
                             initial_interval=timedelta(seconds=1),
                             maximum_interval=timedelta(seconds=30),
-                            backoff_coefficient=2.0
-                        )
+                            backoff_coefficient=2.0,
+                        ),
                     )
 
                     if success:
@@ -497,16 +490,17 @@ if TEMPORAL_AVAILABLE:
             return HealingResult(
                 recovery_id=input.recovery_id,
                 success=success,
-                strategy_used=strategy_used or 'none',
+                strategy_used=strategy_used or "none",
                 attempts=attempts,
                 recovery_time_seconds=time.time() - start,
-                error=error
+                error=error,
             )
 
 
 # =============================================================================
 # WORKFLOW STARTER
 # =============================================================================
+
 
 class WorkflowStarter:
     """Helper class to start Temporal workflows.
@@ -521,10 +515,7 @@ class WorkflowStarter:
         """Start a self-improvement workflow."""
         if self.client and TEMPORAL_AVAILABLE:
             handle = await self.client.start_workflow(
-                SelfImprovementWorkflow.run,
-                input,
-                id=f"self-improvement-{input.cycle_id}",
-                task_queue=self.task_queue
+                SelfImprovementWorkflow.run, input, id=f"self-improvement-{input.cycle_id}", task_queue=self.task_queue
             )
             return handle.id
         # Fallback: run synchronously
@@ -535,10 +526,7 @@ class WorkflowStarter:
         """Start a self-healing workflow."""
         if self.client and TEMPORAL_AVAILABLE:
             handle = await self.client.start_workflow(
-                SelfHealingWorkflow.run,
-                input,
-                id=f"self-healing-{input.recovery_id}",
-                task_queue=self.task_queue
+                SelfHealingWorkflow.run, input, id=f"self-healing-{input.recovery_id}", task_queue=self.task_queue
             )
             return handle.id
         # Fallback: run synchronously
@@ -572,4 +560,5 @@ async def manual_approval_check(evaluation: dict[str, Any]) -> bool:
     # In a real system, this could query a database or external service for approval status.
     # For now, return False by default or check a config flag.
     from libs.core.config import settings
-    return getattr(settings, 'MANUAL_GATE_APPROVED', False)
+
+    return getattr(settings, "MANUAL_GATE_APPROVED", False)

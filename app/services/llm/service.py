@@ -8,13 +8,12 @@ from dataclasses import dataclass
 from enum import Enum
 import os
 import random
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import httpx
 
+from app.core.config import settings
 from app.libs.core.logger import setup_logger
-
-from ...core.config import settings
 
 
 logger = setup_logger("predator.backend.llm")
@@ -52,10 +51,12 @@ class LLMService:
     def __init__(self):
         self.providers: dict[str, dict[str, Any]] = {}
         self._key_cooldowns: dict[str, float] = {}  # {key_string: timestamp_blocked_until}
-        self._provider_cooldowns: dict[str, float] = {} # {provider_name: timestamp_blocked_until}
+        self._provider_cooldowns: dict[str, float] = {}  # {provider_name: timestamp_blocked_until}
 
         # Usage tracking
-        self._usage_stats: dict[str, dict[str, Any]] = {} # {provider: {"tokens": 0, "cost": 0.0, "latency_total": 0.0, "count": 0}}
+        self._usage_stats: dict[
+            str, dict[str, Any]
+        ] = {}  # {provider: {"tokens": 0, "cost": 0.0, "latency_total": 0.0, "count": 0}}
         self._total_tokens = 0
         self._total_cost = 0.0
 
@@ -73,6 +74,7 @@ class LLMService:
         if raw_key.startswith("[") and raw_key.endswith("]"):
             try:
                 import json
+
                 keys = json.loads(raw_key)
                 if isinstance(keys, list):
                     result = [str(k).strip("[]\"' ") for k in keys if k]
@@ -94,6 +96,7 @@ class LLMService:
         # Try secure storage first
         try:
             from app.core.llm_keys_storage import LLMKeysStorage
+
             storage = LLMKeysStorage()
             keys = storage.list_keys(provider)
             if keys:
@@ -106,7 +109,7 @@ class LLMService:
             "groq": "GROQ_API_KEY",
             "mistral": "MISTRAL_API_KEY",
             "gemini": "GEMINI_API_KEY",
-            "openrouter": "OPENROUTER_API_KEY"
+            "openrouter": "OPENROUTER_API_KEY",
         }
         env_key = env_mapping.get(provider, provider.upper() + "_API_KEY")
         return self._get_keys(env_key, None)
@@ -129,9 +132,9 @@ class LLMService:
                 "llama-3.3-70b-versatile",
                 "llama-3.2-11b-vision-preview",
                 "mixtral-8x7b-32768",
-                "llama-3.1-8b-instant"
+                "llama-3.1-8b-instant",
             ],
-            "api_keys": self._get_keys_from_storage("groq")
+            "api_keys": self._get_keys_from_storage("groq"),
         }
 
         # Mistral - RELIABLE & FREE
@@ -145,9 +148,9 @@ class LLMService:
                 "mistral-large-latest",
                 "mistral-small-latest",
                 "pixtral-12b-2409",
-                "open-mixtral-8x7b"
+                "open-mixtral-8x7b",
             ],
-            "api_keys": list(set(mistral_keys))
+            "api_keys": list(set(mistral_keys)),
         }
 
         # Gemini - POWERFUL & FREE (Gemini 2.0 Flash Exp)
@@ -158,12 +161,8 @@ class LLMService:
         self.providers["gemini"] = {
             "base_url": settings.LLM_GEMINI_BASE_URL,
             "model": settings.GEMINI_MODEL,
-            "models_available": [
-                "gemini-2.0-flash-exp",
-                "gemini-1.5-pro",
-                "gemini-1.5-flash"
-            ],
-            "api_keys": list(set(gemini_keys))
+            "models_available": ["gemini-2.0-flash-exp", "gemini-1.5-pro", "gemini-1.5-flash"],
+            "api_keys": list(set(gemini_keys)),
         }
 
         # OpenRouter - ACCESS TO MANY MODELS
@@ -174,9 +173,9 @@ class LLMService:
                 "google/gemini-2.0-flash-exp:free",
                 "mistralai/mistral-7b-instruct:free",
                 "meta-llama/llama-3.2-3b-instruct:free",
-                "qwen/qwen-2-7b-instruct:free"
+                "qwen/qwen-2-7b-instruct:free",
             ],
-            "api_keys": self._get_keys_from_storage("openrouter")
+            "api_keys": self._get_keys_from_storage("openrouter"),
         }
 
         # Ollama - LOCAL FALLBACK
@@ -184,7 +183,7 @@ class LLMService:
             "base_url": settings.LLM_OLLAMA_BASE_URL,
             "model": settings.OLLAMA_MODEL,
             "models_available": ["llama3.1:8b-instruct", "qwen2.5-coder:7b", "mistral", "llama3"],
-            "api_key": None
+            "api_key": None,
         }
 
         # Optional providers from environment
@@ -206,41 +205,42 @@ class LLMService:
         self.providers["cohere"] = {
             "base_url": "https://api.cohere.ai/v1",
             "model": "command-r",
-            "api_keys": self._get_keys_from_storage("cohere")
+            "api_keys": self._get_keys_from_storage("cohere"),
         }
 
         # HuggingFace
         self.providers["huggingface"] = {
             "base_url": "https://api-inference.huggingface.co/models",
             "model": "meta-llama/Meta-Llama-3-70B-Instruct",
-            "api_keys": self._get_keys_from_storage("huggingface")
+            "api_keys": self._get_keys_from_storage("huggingface"),
         }
 
         # DeepSeek
         self.providers["deepseek"] = {
             "base_url": "https://api.deepseek.com",
             "model": "deepseek-chat",
-            "api_keys": self._get_keys_from_storage("deepseek")
+            "api_keys": self._get_keys_from_storage("deepseek"),
         }
 
         # Together AI
         self.providers["together"] = {
             "base_url": "https://api.together.xyz/v1",
             "model": "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
-            "api_keys": self._get_keys_from_storage("together")
+            "api_keys": self._get_keys_from_storage("together"),
         }
 
         # Grok (xAI)
         self.providers["grok"] = {
             "base_url": "https://api.x.ai/v1",
             "model": "grok-2-latest",
-            "api_keys": self._get_keys_from_storage("grok")
+            "api_keys": self._get_keys_from_storage("grok"),
         }
 
     def _save_to_secure_storage(self, provider: str):
         """Save provider configuration to secure storage."""
         try:
             from app.core.llm_keys_storage import LLMKeysStorage
+
             storage = LLMKeysStorage()
             if provider in self.providers and "api_keys" in self.providers[provider]:
                 for key in self.providers[provider]["api_keys"]:
@@ -269,7 +269,7 @@ class LLMService:
                 "model": config["model"],
                 "models_available": config.get("models_available", [config["model"]]),
                 "keys_count": len(config.get("api_keys", [1])),
-                "available": True
+                "available": True,
             }
             for name, config in self.providers.items()
         ]
@@ -281,7 +281,7 @@ class LLMService:
         mode: str = "auto",
         preferred_provider: str | None = None,
         max_tokens: int = 1000,
-        temperature: float = 0.7
+        temperature: float = 0.7,
     ) -> LLMResponse:
         fallback_chain = settings.LLM_FALLBACK_CHAIN.split(",")
 
@@ -311,11 +311,7 @@ class LLMService:
             try:
                 logger.debug(f"LLM_ROUTER: Attempting {provider_name}...")
                 response = await self.generate(
-                    prompt=prompt,
-                    system=system,
-                    provider=provider_name,
-                    max_tokens=max_tokens,
-                    temperature=temperature
+                    prompt=prompt, system=system, provider=provider_name, max_tokens=max_tokens, temperature=temperature
                 )
                 if response.success:
                     logger.info(f"LLM_ROUTER: Success with {provider_name} [Model: {response.model}]")
@@ -337,9 +333,10 @@ class LLMService:
         provider: str | None = None,
         max_tokens: int = 2048,
         temperature: float = 0.7,
-        format: str | None = None
+        format: str | None = None,
     ) -> LLMResponse:
         import time
+
         start_time = time.time()
         default_provider = settings.LLM_DEFAULT_PROVIDER
 
@@ -361,15 +358,22 @@ class LLMService:
         config = self.providers[selected_provider]
         keys = config.get("api_keys", [None])
         if not keys and selected_provider != "ollama":
-             return LLMResponse(False, "", selected_provider, config["model"], error="No API keys available")
+            return LLMResponse(False, "", selected_provider, config["model"], error="No API keys available")
 
         import time
+
         current_time = time.time()
 
         # Check provider cooldown
         if self._provider_cooldowns.get(selected_provider, 0) > current_time:
-             remaining = int(self._provider_cooldowns[selected_provider] - current_time)
-             return LLMResponse(False, "", selected_provider, config["model"], error=f"Provider {selected_provider} is on cooldown for {remaining}s")
+            remaining = int(self._provider_cooldowns[selected_provider] - current_time)
+            return LLMResponse(
+                False,
+                "",
+                selected_provider,
+                config["model"],
+                error=f"Provider {selected_provider} is on cooldown for {remaining}s",
+            )
 
         # Try keys for this provider
         last_err_msg = "Unknown error"
@@ -378,11 +382,11 @@ class LLMService:
         for api_key in keys:
             # Ollama doesn't need a key
             if not api_key and selected_provider != "ollama":
-                 continue
+                continue
 
             api_key = str(api_key).strip("[]\"' ")
             if not api_key:
-                 continue
+                continue
 
             # Check key cooldown
             if self._key_cooldowns.get(api_key, 0) > current_time:
@@ -391,14 +395,20 @@ class LLMService:
             keys_attempted += 1
             try:
                 if selected_provider == "gemini":
-                    response = await self._call_gemini(prompt, system, config, max_tokens, temperature, format, api_key=api_key)
+                    response = await self._call_gemini(
+                        prompt, system, config, max_tokens, temperature, format, api_key=api_key
+                    )
                 elif selected_provider in ["groq", "mistral", "openrouter", "deepseek", "together", "grok"]:
-                    response = await self._call_openai_compatible(prompt, system, config, max_tokens, temperature, selected_provider, format, api_key=api_key)
+                    response = await self._call_openai_compatible(
+                        prompt, system, config, max_tokens, temperature, selected_provider, format, api_key=api_key
+                    )
                 elif selected_provider == "cohere":
                     response = await self._call_cohere(prompt, system, config, max_tokens, temperature, api_key=api_key)
                 elif selected_provider == "huggingface":
-                    response = await self._call_huggingface(prompt, system, config, max_tokens, temperature, api_key=api_key)
-                else: # Ollama does not use api_key
+                    response = await self._call_huggingface(
+                        prompt, system, config, max_tokens, temperature, api_key=api_key
+                    )
+                else:  # Ollama does not use api_key
                     response = await self._call_ollama(prompt, system, config, max_tokens, temperature)
 
                 if response.success:
@@ -433,10 +443,18 @@ class LLMService:
 
         # If we exhausted all available keys
         if keys_attempted > 0:
-            logger.warning(f"All available keys for {selected_provider} are on cooldown or failed. Provider cooldown: 30s")
+            logger.warning(
+                f"All available keys for {selected_provider} are on cooldown or failed. Provider cooldown: 30s"
+            )
             self._provider_cooldowns[selected_provider] = current_time + 30
 
-        return LLMResponse(False, "", selected_provider, config["model"], error=f"All keys failed or cooling down for {selected_provider}. Last error: {last_err_msg}")
+        return LLMResponse(
+            False,
+            "",
+            selected_provider,
+            config["model"],
+            error=f"All keys failed or cooling down for {selected_provider}. Last error: {last_err_msg}",
+        )
 
     def _update_stats(self, response: LLMResponse):
         """Update internal usage statistics."""
@@ -455,9 +473,9 @@ class LLMService:
         # Rough cost estimation (placeholder for real dynamic rates)
         rate = 0.0
         if "pro" in response.model.lower() or "large" in response.model.lower():
-            rate = 0.000015 # $15 per 1M tokens
+            rate = 0.000015  # $15 per 1M tokens
         else:
-            rate = 0.000002 # $2 per 1M tokens
+            rate = 0.000002  # $2 per 1M tokens
 
         cost = response.tokens_used * rate
         stats["cost"] += cost
@@ -470,16 +488,16 @@ class LLMService:
         return {
             "total_tokens": self._total_tokens,
             "total_cost": round(self._total_cost, 4),
-            "providers": self._usage_stats
+            "providers": self._usage_stats,
         }
 
     async def _call_cohere(self, prompt, system, config, max_tokens, temperature, api_key=None):
         async with httpx.AsyncClient() as client:
-            selected_key = api_key or random.choice(config['api_keys'])
+            selected_key = api_key or random.choice(config["api_keys"])
             headers = {
                 "Authorization": f"Bearer {selected_key}",
                 "Content-Type": "application/json",
-                "Request-Source": "python-client" # optional
+                "Request-Source": "python-client",  # optional
             }
             # Cohere chat endpoint
             payload = {
@@ -487,30 +505,26 @@ class LLMService:
                 "message": prompt,
                 "preamble": system,
                 "max_tokens": max_tokens,
-                "temperature": temperature
+                "temperature": temperature,
             }
             response = await client.post(f"{config['base_url']}/chat", headers=headers, json=payload, timeout=60.0)
             data = response.json()
             if response.status_code != 200:
-                 return LLMResponse(False, "", "cohere", config["model"], error=f"Cohere Error: {data}")
+                return LLMResponse(False, "", "cohere", config["model"], error=f"Cohere Error: {data}")
 
             return LLMResponse(True, data.get("text", ""), "cohere", config["model"])
 
     async def _call_huggingface(self, prompt, system, config, max_tokens, temperature, api_key=None):
         # Using serverless inference API
         async with httpx.AsyncClient() as client:
-            selected_key = api_key or random.choice(config['api_keys'])
+            selected_key = api_key or random.choice(config["api_keys"])
             headers = {"Authorization": f"Bearer {selected_key}"}
             # HF Prompt structuring depends on model, but usually pure generation
             full_prompt = f"{system}\nUser: {prompt}\nAssistant:" if system else f"User: {prompt}\nAssistant:"
 
             payload = {
                 "inputs": full_prompt,
-                "parameters": {
-                    "max_new_tokens": max_tokens,
-                    "temperature": temperature,
-                    "return_full_text": False
-                }
+                "parameters": {"max_new_tokens": max_tokens, "temperature": temperature, "return_full_text": False},
             }
             # config['model'] should be the full path e.g. "meta-llama/Meta-Llama-3-8B-Instruct"
             url = f"{config['base_url']}/{config['model']}"
@@ -530,10 +544,15 @@ class LLMService:
                 contents.append({"role": "user", "parts": [{"text": f"System: {system}"}]})
             contents.append({"role": "user", "parts": [{"text": prompt}]})
             selected_key = api_key or random.choice(config["api_keys"])
-            response = await client.post(url, params={"key": selected_key}, json={
-                "contents": contents,
-                "generationConfig": {"maxOutputTokens": max_tokens, "temperature": temperature}
-            }, timeout=60.0)
+            response = await client.post(
+                url,
+                params={"key": selected_key},
+                json={
+                    "contents": contents,
+                    "generationConfig": {"maxOutputTokens": max_tokens, "temperature": temperature},
+                },
+                timeout=60.0,
+            )
             data = response.json()
             if response.status_code != 200:
                 logger.error(f"Gemini API Error {response.status_code}: {data}")
@@ -548,7 +567,9 @@ class LLMService:
 
             return LLMResponse(True, text, "gemini", config["model"], tokens_used=tokens)
 
-    async def _call_openai_compatible(self, prompt, system, config, max_tokens, temperature, provider_name, format=None, api_key=None):
+    async def _call_openai_compatible(
+        self, prompt, system, config, max_tokens, temperature, provider_name, format=None, api_key=None
+    ):
         async with httpx.AsyncClient() as client:
             messages = []
             if system:
@@ -561,12 +582,14 @@ class LLMService:
                 "model": config["model"],
                 "messages": messages,
                 "max_tokens": max_tokens,
-                "temperature": temperature
+                "temperature": temperature,
             }
             if format == "json":
                 payload["response_format"] = {"type": "json_object"}
 
-            response = await client.post(f"{config['base_url']}/chat/completions", headers=headers, json=payload, timeout=60.0)
+            response = await client.post(
+                f"{config['base_url']}/chat/completions", headers=headers, json=payload, timeout=60.0
+            )
 
             if response.status_code != 200:
                 try:
@@ -575,7 +598,13 @@ class LLMService:
                 except:
                     err_msg = response.text
                 logger.error(f"{provider_name} error {response.status_code}: {err_msg}")
-                return LLMResponse(False, "", provider_name, config["model"], error=f"{provider_name} API Error {response.status_code}: {err_msg}")
+                return LLMResponse(
+                    False,
+                    "",
+                    provider_name,
+                    config["model"],
+                    error=f"{provider_name} API Error {response.status_code}: {err_msg}",
+                )
 
             try:
                 data = response.json()
@@ -585,21 +614,27 @@ class LLMService:
 
             if "choices" not in data:
                 logger.error(f"{provider_name} unexpected response: {data}")
-                return LLMResponse(False, "", provider_name, config["model"], error=f"{provider_name} Error: No choices")
+                return LLMResponse(
+                    False, "", provider_name, config["model"], error=f"{provider_name} Error: No choices"
+                )
 
             usage = data.get("usage", {})
             tokens = usage.get("total_tokens", 0)
-            if tokens == 0: # Fallback estimate
+            if tokens == 0:  # Fallback estimate
                 tokens = len(prompt.split()) + len(data["choices"][0]["message"]["content"].split()) + 20
 
-            return LLMResponse(True, data["choices"][0]["message"]["content"], provider_name, config["model"], tokens_used=tokens)
+            return LLMResponse(
+                True, data["choices"][0]["message"]["content"], provider_name, config["model"], tokens_used=tokens
+            )
 
     async def _call_ollama(self, prompt, system, config, max_tokens, temperature):
         async with httpx.AsyncClient() as client:
             full_prompt = f"{system}\n\n{prompt}" if system else prompt
-            response = await client.post(f"{config['base_url']}/generate", json={
-                "model": config["model"], "prompt": full_prompt, "stream": False
-            }, timeout=120.0)
+            response = await client.post(
+                f"{config['base_url']}/generate",
+                json={"model": config["model"], "prompt": full_prompt, "stream": False},
+                timeout=120.0,
+            )
 
             data = response.json()
             if response.status_code != 200:
@@ -609,8 +644,10 @@ class LLMService:
 
             return LLMResponse(True, data.get("response", ""), "ollama", config["model"])
 
+
 # Singleton instance
 llm_service = LLMService()
+
 
 def get_llm_service() -> LLMService:
     return llm_service

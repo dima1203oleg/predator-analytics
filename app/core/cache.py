@@ -9,7 +9,7 @@ import hashlib
 import json
 import logging
 import os
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import redis.asyncio as aioredis
 
@@ -30,11 +30,7 @@ async def get_redis() -> aioredis.Redis:
     if _redis_client is None:
         redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
         _redis_client = await aioredis.from_url(
-            redis_url,
-            encoding="utf-8",
-            decode_responses=True,
-            socket_timeout=5,
-            socket_connect_timeout=5
+            redis_url, encoding="utf-8", decode_responses=True, socket_timeout=5, socket_connect_timeout=5
         )
     return _redis_client
 
@@ -46,7 +42,7 @@ def cache_key_generator(prefix: str, func_name: str, *args, **kwargs) -> str:
 
     # Add args
     for arg in args:
-        if hasattr(arg, '__dict__'):
+        if hasattr(arg, "__dict__"):
             key_parts.append(str(arg.__dict__))
         else:
             key_parts.append(str(arg))
@@ -76,6 +72,7 @@ def cache_response(ttl: int = 300, prefix: str = "cache"):
         async def search_documents(query: str, limit: int = 10):
             ...
     """
+
     def decorator(func: Callable):
         @wraps(func)
         async def wrapper(*args, **kwargs):
@@ -107,6 +104,7 @@ def cache_response(ttl: int = 300, prefix: str = "cache"):
                 return await func(*args, **kwargs)
 
         return wrapper
+
     return decorator
 
 

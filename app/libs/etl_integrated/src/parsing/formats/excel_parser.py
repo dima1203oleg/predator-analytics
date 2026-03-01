@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from collections.abc import Generator
+import contextlib
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 import xml.etree.ElementTree as ET
 import zipfile
 
@@ -12,8 +12,9 @@ from ..data_parser import ParseResult
 
 logger = logging.getLogger("sovereign_excel_parser")
 
+
 class ExcelParser:
-    """Sovereign Excel Parser (Dependency-Free)
+    """Sovereign Excel Parser (Dependency-Free).
     ---------------------------------------
     Reads .xlsx files using standard zipfile and xml libraries.
     Memory-efficient streaming for massive files.
@@ -27,12 +28,12 @@ class ExcelParser:
             logger.info(f"📊 Sovereign Parsing: {file_path}")
 
             # 1. Open the XLSX (it's a zip)
-            with zipfile.ZipFile(file_path, 'r') as z:
+            with zipfile.ZipFile(file_path, "r") as z:
                 # 2. Load Shared Strings (needed to resolve text values)
                 shared_strings = self._get_shared_strings(z)
 
                 # 3. Load Worksheet 1
-                data = self._parse_worksheet(z, 'xl/worksheets/sheet1.xml', shared_strings)
+                data = self._parse_worksheet(z, "xl/worksheets/sheet1.xml", shared_strings)
 
                 if not data:
                     return ParseResult(False, error="No data found in sheet1")
@@ -41,12 +42,12 @@ class ExcelParser:
                 result.metadata = {
                     "source": "sovereign_parser_v1",
                     "rows": len(data),
-                    "file": os.path.basename(file_path)
+                    "file": os.path.basename(file_path),
                 }
                 return result
 
         except Exception as e:
-            logger.error(f"Sovereign parse error: {e}")
+            logger.exception(f"Sovereign parse error: {e}")
             return ParseResult(False, error=str(e))
 
     def _get_shared_strings(self, z: zipfile.ZipFile) -> list[str]:
@@ -54,62 +55,64 @@ class ExcelParser:
         strings = []
         try:
             # Check if sharedStrings exists
-            if 'xl/sharedStrings.xml' not in z.namelist():
+            if "xl/sharedStrings.xml" not in z.namelist():
                 return []
 
-            with z.open('xl/sharedStrings.xml') as f:
+            with z.open("xl/sharedStrings.xml") as f:
                 # Simple parser for shared strings
-                context = ET.iterparse(f, events=('start', 'end'))
+                context = ET.iterparse(f, events=("start", "end"))
                 current_text = []
                 for event, elem in context:
-                    tag = elem.tag.split('}')[-1]
-                    if event == 'end' and tag == 't':
+                    tag = elem.tag.split("}")[-1]
+                    if event == "end" and tag == "t":
                         strings.append(elem.text or "".join(current_text))
                         elem.clear()
         except Exception:
             pass
         return strings
 
-    def _parse_worksheet(self, z: zipfile.ZipFile, sheet_rel_path: str, shared_strings: list[str]) -> list[dict[str, Any]]:
+    def _parse_worksheet(
+        self, z: zipfile.ZipFile, sheet_rel_path: str, shared_strings: list[str]
+    ) -> list[dict[str, Any]]:
         """Parse rows from the worksheet XML using iterparse for memory efficiency."""
         data = []
         headers = []
 
         try:
             with z.open(sheet_rel_path) as f:
-                context = ET.iterparse(f, events=('start', 'end'))
+                context = ET.iterparse(f, events=("start", "end"))
 
                 current_row = {}
                 current_cell_ref = ""
                 is_shared_string = False
 
                 for event, elem in context:
-                    tag = elem.tag.split('}')[-1]
+                    tag = elem.tag.split("}")[-1]
 
-                    if event == 'start':
-                        if tag == 'c': # Cell
-                            current_cell_ref = elem.get('r', '')
-                            is_shared_string = (elem.get('t') == 's')
+                    if event == "start":
+                        if tag == "c":  # Cell
+                            current_cell_ref = elem.get("r", "")
+                            is_shared_string = elem.get("t") == "s"
 
-                    elif event == 'end':
-                        if tag == 'v' or tag == 't': # Value or Inline String
+                    elif event == "end":
+                        if tag in {"v", "t"}:  # Value or Inline String
                             val = elem.text
                             if is_shared_string and val is not None:
-                                try:
+                                with contextlib.suppress(IndexError, ValueError):
                                     val = shared_strings[int(val)]
-                                except (IndexError, ValueError):
-                                    pass
 
                             # Extract column alpha ref (e.g. 'A' from 'A1')
                             col_ref = "".join([c for c in current_cell_ref if c.isalpha()])
                             current_row[col_ref] = val
 
-                        elif tag == 'row':
+                        elif tag == "row":
                             if current_row:
                                 if not headers:
                                     # Normalize headers
                                     sorted_cols = sorted(current_row.keys(), key=lambda x: (len(x), x))
-                                    headers = [str(current_row[c]) if current_row[c] else f"Col_{c}" for c in sorted_cols]
+                                    headers = [
+                                        str(current_row[c]) if current_row[c] else f"Col_{c}" for c in sorted_cols
+                                    ]
                                 else:
                                     row_dict = {}
                                     sorted_cols = sorted(current_row.keys(), key=lambda x: (len(x), x))
@@ -119,12 +122,12 @@ class ExcelParser:
                                     data.append(row_dict)
 
                             current_row = {}
-                            elem.clear() # Memory cleanup
+                            elem.clear()  # Memory cleanup
 
                 # Limit limit for security/speed if too large for simple list?
                 # User wants "між всіма базами", usually means full process.
 
         except Exception as e:
-            logger.error(f"Worksheet parse fatal: {e}")
+            logger.exception(f"Worksheet parse fatal: {e}")
 
         return data

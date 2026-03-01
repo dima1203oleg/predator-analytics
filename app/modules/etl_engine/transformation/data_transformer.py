@@ -9,8 +9,7 @@ Provides validation and mapping of parsed data to a unified schema.
 
 from datetime import datetime
 import logging
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 
 try:
@@ -21,14 +20,24 @@ except ImportError:
 try:
     from pydantic import BaseModel, Field, ValidationError, validator
 except ImportError:
+
     class BaseModel:
         def __init__(self, **kwargs):
-            for k, v in kwargs.items(): setattr(self, k, v)
-        def dict(self): return self.__dict__
-    def Field(*args, **kwargs): return None
+            for k, v in kwargs.items():
+                setattr(self, k, v)
+
+        def dict(self):
+            return self.__dict__
+
+    def Field(*args, **kwargs):
+        return None
+
     def validator(*args, **kwargs):
         return lambda x: x
-    class ValidationError(Exception): pass
+
+    class ValidationError(Exception):
+        pass
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -40,6 +49,7 @@ class CompanySchema(BaseModel):
 
     This schema defines the structure for company information extracted from datasets.
     """
+
     name: str = Field(..., description="Company name")
     registration_number: str = Field(..., description="Company registration number (e.g., ЄДРПОУ)")
     address: str = Field(..., description="Company address")
@@ -53,6 +63,7 @@ class DirectorSchema(BaseModel):
 
     This schema defines the structure for individual/director information extracted from datasets.
     """
+
     name: str = Field(..., description="Person's name")
     position: str = Field(..., description="Person's position/role")
     company: str = Field(..., description="Associated company")
@@ -66,6 +77,7 @@ class UnifiedSchema(BaseModel):
     This schema defines the standard structure that all parsed data
     should be transformed into for consistency across different sources.
     """
+
     name: str = Field(..., description="Person's name")
     age: int = Field(..., description="Person's age", ge=0, le=150)
     city: str = Field(..., description="Person's city of residence")
@@ -82,15 +94,14 @@ class UnifiedSchema(BaseModel):
                     "city": "New York",
                     "score": 85.5,
                     "source_format": "csv",
-                    "timestamp": "2024-01-23T12:00:00"
+                    "timestamp": "2024-01-23T12:00:00",
                 }
             ]
         }
 
 
 class TransformResult:
-    """Result container for transformation operations.
-    """
+    """Result container for transformation operations."""
 
     def __init__(self, success: bool, data: Any | None = None, error: str | None = None):
         self.success = success
@@ -120,9 +131,9 @@ class DataTransformer:
         self.director_schema = DirectorSchema
         logger.info("DataTransformer initialized with unified schemas")
 
-    def validate_data(self, data: dict[str |  Any, list[dict[str, Any]]],
-                     source_format: str = "unknown",
-                     schema_type: str = "unified") -> TransformResult:
+    def validate_data(
+        self, data: dict[str | Any, list[dict[str, Any]]], source_format: str = "unknown", schema_type: str = "unified"
+    ) -> TransformResult:
         """Validate data against the specified schema.
 
         Args:
@@ -155,10 +166,7 @@ class DataTransformer:
                         validated_records.append(validated_record.dict())
                     except ValidationError as ve:
                         logger.warning(f"Validation error in record {i}: {ve}")
-                        return TransformResult(
-                            False,
-                            error=f"Validation error in record {i}: {ve!s}"
-                        )
+                        return TransformResult(False, error=f"Validation error in record {i}: {ve!s}")
 
                 return TransformResult(True, data=validated_records)
             # Validate single record
@@ -170,15 +178,14 @@ class DataTransformer:
 
         except ValidationError as ve:
             error_msg = f"Schema validation failed: {ve!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return TransformResult(False, error=error_msg)
         except Exception as e:
             error_msg = f"Validation failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return TransformResult(False, error=error_msg)
 
-    def transform_from_dataframe(self, df: pd.DataFrame,
-                                source_format: str = "unknown") -> TransformResult:
+    def transform_from_dataframe(self, df: pd.DataFrame, source_format: str = "unknown") -> TransformResult:
         """Transform data from pandas DataFrame to unified schema.
 
         Args:
@@ -197,11 +204,10 @@ class DataTransformer:
 
         except Exception as e:
             error_msg = f"DataFrame transformation failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return TransformResult(False, error=error_msg)
 
-    def transform_from_dict(self, data: dict[str, Any],
-                           source_format: str = "unknown") -> TransformResult:
+    def transform_from_dict(self, data: dict[str, Any], source_format: str = "unknown") -> TransformResult:
         """Transform data from dictionary to unified schema.
 
         Args:
@@ -232,17 +238,12 @@ class DataTransformer:
                                 "name": person_content.get("name", ""),
                                 "age": int(person_content.get("age", 0)),
                                 "city": person_content.get("city", ""),
-                                "score": float(person_content.get("score", 0.0))
+                                "score": float(person_content.get("score", 0.0)),
                             }
                             records.append(record)
                         else:
                             # Handle case where person is a string or other type
-                            record = {
-                                "name": str(person),
-                                "age": 0,
-                                "city": "unknown",
-                                "score": 0.0
-                            }
+                            record = {"name": str(person), "age": 0, "city": "unknown", "score": 0.0}
                             records.append(record)
                     return self.validate_data(records, source_format)
                 # Single person record
@@ -255,7 +256,7 @@ class DataTransformer:
                     "name": person_content.get("name", ""),
                     "age": int(person_content.get("age", 0)),
                     "city": person_content.get("city", ""),
-                    "score": float(person_content.get("score", 0.0))
+                    "score": float(person_content.get("score", 0.0)),
                 }
                 return self.validate_data(record, source_format)
             # Direct dictionary transformation
@@ -263,10 +264,10 @@ class DataTransformer:
 
         except Exception as e:
             error_msg = f"Dictionary transformation failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return TransformResult(False, error=error_msg)
 
-    def normalize_data_types(self, data: dict[str |  Any, list[dict[str, Any]]]) -> TransformResult:
+    def normalize_data_types(self, data: dict[str | Any, list[dict[str, Any]]]) -> TransformResult:
         """Normalize data types to ensure consistency.
 
         Args:
@@ -276,6 +277,7 @@ class DataTransformer:
             TransformResult containing normalized data or error
         """
         try:
+
             def normalize_record(record: dict[str, Any]) -> dict[str, Any]:
                 """Normalize a single record."""
                 normalized = record.copy()
@@ -310,7 +312,7 @@ class DataTransformer:
 
         except Exception as e:
             error_msg = f"Data normalization failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return TransformResult(False, error=error_msg)
 
     def get_schema(self) -> dict[str, Any]:
@@ -321,7 +323,7 @@ class DataTransformer:
         """
         return self.schema.schema()
 
-    def validate_schema_compatibility(self, data_sample: dict[str |  Any, list[dict[str, Any]]]) -> TransformResult:
+    def validate_schema_compatibility(self, data_sample: dict[str | Any, list[dict[str, Any]]]) -> TransformResult:
         """Validate that a data sample is compatible with the unified schema.
 
         Args:
@@ -344,19 +346,13 @@ class DataTransformer:
             missing_fields = [field for field in required_fields if field not in sample_record]
 
             if missing_fields:
-                return TransformResult(
-                    False,
-                    error=f"Missing required fields: {', '.join(missing_fields)}"
-                )
+                return TransformResult(False, error=f"Missing required fields: {', '.join(missing_fields)}")
 
-            return TransformResult(
-                True,
-                data={"message": "Data sample is compatible with unified schema"}
-            )
+            return TransformResult(True, data={"message": "Data sample is compatible with unified schema"})
 
         except Exception as e:
             error_msg = f"Schema compatibility check failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return TransformResult(False, error=error_msg)
 
 

@@ -11,12 +11,13 @@ import hashlib
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 from app.libs.core.structured_logger import get_logger
 
 
 logger = get_logger("services.truth_ledger")
+
 
 class TruthLedger:
     def __init__(self, storage_path: str = "/app/.azr/ledger.jsonl"):
@@ -37,7 +38,7 @@ class TruthLedger:
                 while pos > 0:
                     f.seek(pos)
                     if f.read(1) == b"\n":
-                         break
+                        break
                     pos -= 1
                 last_line = f.readline().decode().strip()
                 if last_line:
@@ -55,7 +56,7 @@ class TruthLedger:
             "action_type": action_type,
             "payload": payload,
             "status": status,
-            "previous_hash": self._last_hash
+            "previous_hash": self._last_hash,
         }
 
         # Розрахунок хешу для забезпечення цілісності (Axiom-003)
@@ -97,6 +98,7 @@ class TruthLedger:
             return True
         except Exception:
             return False
+
 
 # Global instance for easy access
 truth_ledger = TruthLedger()

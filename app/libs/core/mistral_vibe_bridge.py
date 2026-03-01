@@ -19,11 +19,11 @@ import asyncio
 import logging
 import os
 from pathlib import Path
-import subprocess
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 logger = logging.getLogger("mistral_vibe_bridge")
+
 
 class MistralVibeAdapter:
     """🔌 Адаптер для роботи з Mistral Vibe CLI.
@@ -33,23 +33,21 @@ class MistralVibeAdapter:
 
     def __init__(self, project_root: str = "/Users/dima-mac/Documents/Predator_21"):
         self.root = Path(project_root)
-        self.vibe_bin = "vibe" # Default CLI name
+        self.vibe_bin = "vibe"  # Default CLI name
         self.auto_approve = os.getenv("SOVEREIGN_AUTO_APPROVE", "true").lower() == "true"
 
     async def check_availability(self) -> bool:
         """Перевіряє чи встановлено vibe в системі."""
         try:
             process = await asyncio.create_subprocess_exec(
-                self.vibe_bin, "--version",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                self.vibe_bin, "--version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
             await process.wait()
             return process.returncode == 0
         except Exception:
             return False
 
-    async def execute_task(self, prompt: str, context_files: list[str | None] = None) -> dict[str, Any]:
+    async def execute_task(self, prompt: str, context_files: list[str | None] | None = None) -> dict[str, Any]:
         """Виконує завдання у гібридному режимі.
         Якщо CLI не знайдено - використовує внутрішній Sovereign Engine.
         """
@@ -61,21 +59,21 @@ class MistralVibeAdapter:
 
         # Real action: If prompt is specific (like my test), I will actually do it
         if "ProjectCortex" in prompt and "timing" in prompt:
-             logger.info("⚡ Executing Sovereign Patch on ProjectCortex...")
-             # This represents the AI actually applying the change
-             await asyncio.sleep(1)
-             return {
+            logger.info("⚡ Executing Sovereign Patch on ProjectCortex...")
+            # This represents the AI actually applying the change
+            await asyncio.sleep(1)
+            return {
                 "success": True,
                 "mode": "sovereign",
                 "output": "Successfully added timing decorators to ProjectCortex methods.",
-                "task": prompt
+                "task": prompt,
             }
 
         return {
             "success": True,
             "mode": "sovereign-sim",
             "output": f"Simulated Sovereign patch for: {prompt}",
-            "task": prompt
+            "task": prompt,
         }
 
     async def _execute_cli(self, prompt: str) -> dict[str, Any]:
@@ -89,14 +87,13 @@ class MistralVibeAdapter:
         logger.info(f"🤖 Delegating task to Mistral Vibe CLI: {prompt}")
         try:
             process = await asyncio.create_subprocess_exec(
-                *cmd, cwd=str(self.root),
-                stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+                *cmd, cwd=str(self.root), stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
             stdout, stderr = await process.communicate()
             return {
                 "success": process.returncode == 0,
                 "output": (stdout if process.returncode == 0 else stderr).decode(),
-                "task": prompt
+                "task": prompt,
             }
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -108,8 +105,10 @@ class MistralVibeAdapter:
         # Real implementation would call 'vibe search query' or similar
         return []
 
+
 # Singleton
 _vibe_instance: MistralVibeAdapter | None = None
+
 
 def get_vibe_adapter() -> MistralVibeAdapter:
     global _vibe_instance

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -20,7 +19,7 @@ class CERSResponse(BaseModel):
     weights: dict[str, float] = Field(description="Weights used for each layer")
     confidence: float = Field(ge=0, le=1, description="Confidence score")
     decorrelation_applied: bool = False
-    calculated_at: Optional[datetime] = None
+    calculated_at: datetime | None = None
 
 
 class CERSHistoryItem(BaseModel):

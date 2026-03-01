@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 """UA Sources V1 API."""
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter
 
@@ -17,12 +17,8 @@ async def get_status():
     """Get UA Sources status."""
     return {
         "status": "OPERATIONAL",
-        "sources": {
-            "prozorro": "ACTIVE",
-            "edr": "ACTIVE",
-            "nbu": "ACTIVE"
-        },
-        "timestamp": datetime.now(UTC).isoformat()
+        "sources": {"prozorro": "ACTIVE", "edr": "ACTIVE", "nbu": "ACTIVE"},
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
@@ -31,9 +27,4 @@ async def search(q: str, sources: str = "all"):
     """Search across UA sources."""
     """Search across UA sources using AI Engine"""
     result = await ai_engine.analyze(query=q, depth="standard")
-    return {
-        "query": q,
-        "results": result.sources,
-        "analysis": result.answer,
-        "confidence": result.confidence
-    }
+    return {"query": q, "results": result.sources, "analysis": result.answer, "confidence": result.confidence}

@@ -1,27 +1,33 @@
 from __future__ import annotations
 
-import asyncio
 import json
 import logging
-from typing import Any, Dict, List, Optional
 
 from .registry import registry
 
 
 logger = logging.getLogger("tools.v45")
 
-@registry.register(name="get_v45_pulse", description="Get real-time system pulse score and health status from v45 Aggregator")
+
+@registry.register(
+    name="get_v45_pulse", description="Get real-time system pulse score and health status from v45 Aggregator"
+)
 async def get_v45_pulse() -> str:
     """Retrieve current health score, active alerts, and degradation reasons."""
     try:
         # Dynamic import to avoid circular dependency
         from app.services.health_aggregator import health_aggregator
+
         pulse = await health_aggregator.get_system_pulse()
         return json.dumps(pulse, indent=2)
     except Exception as e:
         return f"Error fetching pulse: {e}"
 
-@registry.register(name="manage_simulation", description="Manage Digital Twin simulations (start_stress_test, start_data_poisoning, list_simulations)")
+
+@registry.register(
+    name="manage_simulation",
+    description="Manage Digital Twin simulations (start_stress_test, start_data_poisoning, list_simulations)",
+)
 async def manage_simulation(action: str, target: str = "backend", intensity: float = 0.5) -> str:
     """Start or list digital twin simulations.
     Actions: start_stress_test, start_data_poisoning, list_simulations, get_status.
@@ -45,15 +51,20 @@ async def manage_simulation(action: str, target: str = "backend", intensity: flo
     except Exception as e:
         return f"Simulation error: {e}"
 
-@registry.register(name="trigger_guardian_recovery", description="Manually trigger the Self-Healing Guardian recovery loop")
+
+@registry.register(
+    name="trigger_guardian_recovery", description="Manually trigger the Self-Healing Guardian recovery loop"
+)
 async def trigger_guardian_recovery() -> str:
     """Force the Guardian to run its auto-recovery logic immediately."""
     try:
         from app.libs.core.guardian import guardian
+
         res = await guardian.run_auto_recovery()
         return json.dumps(res, indent=2)
     except Exception as e:
         return f"Guardian trigger failed: {e}"
+
 
 @registry.register(name="system_maintenance", description="Execute AI Maintenance tasks (vacuum_db, reclaim_vectors)")
 async def system_maintenance(task: str) -> str:
@@ -77,9 +88,9 @@ async def system_maintenance(task: str) -> str:
 
 # ===== NEW V45.1 TOOLS =====
 
+
 @registry.register(
-    name="e2e_analyze",
-    description="Execute E2E multi-database analysis across PostgreSQL, OpenSearch, and Qdrant"
+    name="e2e_analyze", description="Execute E2E multi-database analysis across PostgreSQL, OpenSearch, and Qdrant"
 )
 async def e2e_analyze(query: str, databases: list[str] | None = None, limit: int = 10) -> str:
     """Perform cross-database analysis and pattern detection.
@@ -96,24 +107,18 @@ async def e2e_analyze(query: str, databases: list[str] | None = None, limit: int
             "query": query,
             "databases": databases or ["postgresql", "opensearch"],
             "limit_per_db": limit,
-            "generate_cases": True
+            "generate_cases": True,
         }
 
         async with httpx.AsyncClient(timeout=60.0) as client:
-            response = await client.post(
-                "http://localhost:8000/api/v45/analyze/e2e",
-                json=payload
-            )
+            response = await client.post("http://localhost:8000/api/v45/analyze/e2e", json=payload)
             return response.text
 
     except Exception as e:
         return json.dumps({"error": str(e), "success": False})
 
 
-@registry.register(
-    name="optimizer_status",
-    description="Get Autonomous Optimizer status, metrics and drift history"
-)
+@registry.register(name="optimizer_status", description="Get Autonomous Optimizer status, metrics and drift history")
 async def optimizer_status() -> str:
     """Get current autonomous optimizer status including:
     - Running state and interval
@@ -123,37 +128,28 @@ async def optimizer_status() -> str:
     """
     try:
         from app.services.autonomous_optimizer import autonomous_optimizer
+
         status = autonomous_optimizer.get_status()
         return json.dumps(status, indent=2)
     except Exception as e:
         return json.dumps({"error": str(e)})
 
 
-@registry.register(
-    name="force_optimization",
-    description="Force an immediate optimization check cycle"
-)
+@registry.register(name="force_optimization", description="Force an immediate optimization check cycle")
 async def force_optimization() -> str:
     """Trigger immediate drift check and optimization if needed."""
     try:
         from app.services.autonomous_optimizer import autonomous_optimizer
+
         result = await autonomous_optimizer.force_check()
         return json.dumps(result, indent=2)
     except Exception as e:
         return json.dumps({"error": str(e), "success": False})
 
 
-@registry.register(
-    name="create_case",
-    description="Create a new case from analysis findings"
-)
+@registry.register(name="create_case", description="Create a new case from analysis findings")
 async def create_case(
-    title: str,
-    situation: str,
-    conclusion: str,
-    risk_score: int = 50,
-    sector: str = "BIZ",
-    status: str = "УВАГА"
+    title: str, situation: str, conclusion: str, risk_score: int = 50, sector: str = "BIZ", status: str = "УВАГА"
 ) -> str:
     """Create a new case in the system.
 
@@ -174,24 +170,18 @@ async def create_case(
             "conclusion": conclusion,
             "riskScore": risk_score,
             "sector": sector,
-            "status": status
+            "status": status,
         }
 
         async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(
-                "http://localhost:8000/api/v1/cases/",
-                json=payload
-            )
+            response = await client.post("http://localhost:8000/api/v1/cases/", json=payload)
             return response.text
 
     except Exception as e:
         return json.dumps({"error": str(e), "success": False})
 
 
-@registry.register(
-    name="list_data_sources",
-    description="List all available data sources and their status"
-)
+@registry.register(name="list_data_sources", description="List all available data sources and their status")
 async def list_data_sources() -> str:
     """Get list of all data sources with their current status."""
     try:
@@ -206,8 +196,7 @@ async def list_data_sources() -> str:
 
 
 @registry.register(
-    name="query_database",
-    description="Execute a query on a specific database (postgresql, opensearch, qdrant)"
+    name="query_database", description="Execute a query on a specific database (postgresql, opensearch, qdrant)"
 )
 async def query_database(database: str, query: str, limit: int = 10) -> str:
     """Query a specific database.
@@ -226,7 +215,7 @@ async def query_database(database: str, query: str, limit: int = 10) -> str:
             async with get_db_ctx() as db:
                 result = await db.execute(
                     text("SELECT * FROM gold.documents WHERE content ILIKE :pattern LIMIT :limit"),
-                    {"pattern": f"%{query}%", "limit": limit}
+                    {"pattern": f"%{query}%", "limit": limit},
                 )
                 rows = result.fetchall()
                 return json.dumps([dict(r._mapping) for r in rows], indent=2, default=str)
@@ -235,11 +224,7 @@ async def query_database(database: str, query: str, limit: int = 10) -> str:
             from app.services.opensearch_indexer import OpenSearchIndexer
 
             indexer = OpenSearchIndexer()
-            response = await indexer.search(
-                index_name="documents_safe",
-                query=query,
-                size=limit
-            )
+            response = await indexer.search(index_name="documents_safe", query=query, size=limit)
             await indexer.close()
             hits = response.get("hits", {}).get("hits", [])
             return json.dumps([h["_source"] for h in hits], indent=2)
@@ -261,10 +246,7 @@ async def query_database(database: str, query: str, limit: int = 10) -> str:
         return json.dumps({"error": str(e)})
 
 
-@registry.register(
-    name="get_system_stats",
-    description="Get comprehensive system statistics"
-)
+@registry.register(name="get_system_stats", description="Get comprehensive system statistics")
 async def get_system_stats() -> str:
     """Get system-wide statistics including document counts, models, and storage."""
     try:

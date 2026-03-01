@@ -4,18 +4,18 @@ from __future__ import annotations
 """RBAC (Role-Based Access Control) System
 Defines Roles, Permissions and Enforcement logic.
 """
-from enum import Enum
-from typing import Dict, List, Union
+from enum import StrEnum
 
 
-class Role(str, Enum):
-    ADMIN = "admin"           # Full access
-    ANALYST = "analyst"       # Can run operations and analyses
-    VIEWER = "viewer"         # Read-only
-    SYSTEM = "system"         # Internal services / God mode
-    BOT = "bot"               # Automated agents
+class Role(StrEnum):
+    ADMIN = "admin"  # Full access
+    ANALYST = "analyst"  # Can run operations and analyses
+    VIEWER = "viewer"  # Read-only
+    SYSTEM = "system"  # Internal services / God mode
+    BOT = "bot"  # Automated agents
 
-class Permission(str, Enum):
+
+class Permission(StrEnum):
     # Data Access
     READ_DATA = "read:data"
     WRITE_DATA = "write:data"
@@ -31,30 +31,23 @@ class Permission(str, Enum):
     VIEW_LOGS = "view:logs"
     SYSTEM_CONFIG = "system:config"
 
+
 # Permission Matrix
 ROLE_PERMISSIONS: dict[Role, list[Permission]] = {
     Role.ADMIN: list(Permission),  # All permissions
-    Role.SYSTEM: list(Permission), # All permissions
-
+    Role.SYSTEM: list(Permission),  # All permissions
     Role.ANALYST: [
         Permission.READ_DATA,
         Permission.WRITE_DATA,
         Permission.EXECUTE_MISSION,
         Permission.MANAGE_AGENTS,
         Permission.TRIGGER_ETL,
-        Permission.VIEW_LOGS
+        Permission.VIEW_LOGS,
     ],
-
-    Role.BOT: [
-        Permission.READ_DATA,
-        Permission.WRITE_DATA,
-        Permission.EXECUTE_MISSION
-    ],
-
-    Role.VIEWER: [
-        Permission.READ_DATA
-    ]
+    Role.BOT: [Permission.READ_DATA, Permission.WRITE_DATA, Permission.EXECUTE_MISSION],
+    Role.VIEWER: [Permission.READ_DATA],
 }
+
 
 def verify_permission(user_roles: list[str | Role], required_permission: Permission) -> bool:
     """Check if any of the user's roles grant the required permission."""
@@ -71,6 +64,7 @@ def verify_permission(user_roles: list[str | Role], required_permission: Permiss
             continue
 
     return False
+
 
 def verify_role(user_roles: list[str | Role], required_role: Role) -> bool:
     """Check if the user has the specific role (or implies it, hierarchically).

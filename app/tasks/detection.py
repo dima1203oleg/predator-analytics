@@ -9,6 +9,7 @@ from app.services.detection_service import detection_service
 
 logger = logging.getLogger(__name__)
 
+
 @celery_app.task(name="app.tasks.detection.run_autonomous_detection")
 def run_autonomous_detection():
     """Background Celery task to run the detection cycle."""

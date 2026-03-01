@@ -26,9 +26,7 @@ class MinerAgent(BaseAgent):
 
         if not data or not isinstance(data, list):
             return AgentResponse(
-                agent_name=self.name,
-                result={"insights": [], "message": "No data provided"},
-                metadata={"model": "none"}
+                agent_name=self.name, result={"insights": [], "message": "No data provided"}, metadata={"model": "none"}
             )
 
         insights = []
@@ -45,7 +43,7 @@ class MinerAgent(BaseAgent):
         return AgentResponse(
             agent_name=self.name,
             result={"insights": insights, "count": len(insights)},
-            metadata={"model": "statistical_analysis", "threshold": self.zscore_threshold}
+            metadata={"model": "statistical_analysis", "threshold": self.zscore_threshold},
         )
 
     async def _detect_anomalies(self, data: list[dict]) -> list[str]:
@@ -94,7 +92,9 @@ class MinerAgent(BaseAgent):
             total = len(data)
             for val, count in value_counts.items():
                 if count / total > 0.3 and val:
-                    insights.append(f"Патерн: {field}='{val}' зустрічається в {count}/{total} записах ({count/total*100:.1f}%)")
+                    insights.append(
+                        f"Патерн: {field}='{val}' зустрічається в {count}/{total} записах ({count / total * 100:.1f}%)"
+                    )
 
         return insights or ["Значущих патернів не виявлено"]
 
@@ -109,13 +109,13 @@ class MinerAgent(BaseAgent):
             values = [r.get(num_field) for r in data if isinstance(r.get(num_field), (int, float))]
             if len(values) >= 5:
                 # Простий тренд - порівняння першої і останньої третини
-                first_third = statistics.mean(values[:len(values)//3])
-                last_third = statistics.mean(values[-len(values)//3:])
+                first_third = statistics.mean(values[: len(values) // 3])
+                last_third = statistics.mean(values[-len(values) // 3 :])
 
                 if last_third > first_third * 1.1:
-                    insights.append(f"Зростаючий тренд у {num_field}: +{(last_third/first_third-1)*100:.1f}%")
+                    insights.append(f"Зростаючий тренд у {num_field}: +{(last_third / first_third - 1) * 100:.1f}%")
                 elif last_third < first_third * 0.9:
-                    insights.append(f"Спадаючий тренд у {num_field}: {(last_third/first_third-1)*100:.1f}%")
+                    insights.append(f"Спадаючий тренд у {num_field}: {(last_third / first_third - 1) * 100:.1f}%")
 
         return insights or ["Значущих трендів не виявлено"]
 

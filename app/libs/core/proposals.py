@@ -2,17 +2,17 @@ from __future__ import annotations
 
 
 """Multi-Agent Coordination & Improvement Proposals - SOM v45."""
-import asyncio
 from datetime import datetime
 from enum import Enum
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 import uuid
 
 from pydantic import BaseModel
 
 
 logger = logging.getLogger(__name__)
+
 
 class AgentRole(Enum):
     ARCHITECT = "architect"
@@ -22,14 +22,17 @@ class AgentRole(Enum):
     ARBITER = "arbiter"  # legacy/core arbiter
     HUMAN = "human"
 
+
 class ProposalPriority(Enum):
     LOW = "LOW"
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"
     CRITICAL = "CRITICAL"
 
+
 class ImprovementProposal(BaseModel):
     """Пропозиція вдосконалення від SOM."""
+
     id: str = str(uuid.uuid4())
     title: str
     description: str
@@ -41,6 +44,7 @@ class ImprovementProposal(BaseModel):
     formal_verification_required: bool = False
     created_at: str = datetime.utcnow().isoformat()
     status: str = "PENDING"  # PENDING, TESTING, APPROVED, REJECTED, APPLIED
+
 
 class AgentCoordinationProtocol:
     def __init__(self, axiom_registry: Any):
@@ -64,11 +68,7 @@ class AgentCoordinationProtocol:
         workflow = self._determine_workflow(proposal)
         proposal.status = "VALIDATED"
 
-        return {
-            "status": "ACCEPTED",
-            "proposal_id": proposal.id,
-            "workflow": workflow
-        }
+        return {"status": "ACCEPTED", "proposal_id": proposal.id, "workflow": workflow}
 
     async def _check_compliance(self, proposal: ImprovementProposal) -> dict:
         """Перевірка на відповідність аксіомам."""

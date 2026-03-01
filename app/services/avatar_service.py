@@ -1,17 +1,18 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict
+from typing import Any
 
 from .model_router import ModelRouter
 
 
 logger = logging.getLogger("service.avatar")
 
+
 class AvatarService:
     def __init__(self):
         self.router = ModelRouter()
-        self.tts_engine = "sadtalker" # Placeholder
+        self.tts_engine = "sadtalker"  # Placeholder
         self.voice_id = "uk-UA-Dima"
 
     async def interact(self, text_input: str, user_id: str, emotion: str = "neutral") -> dict[str, Any]:
@@ -26,7 +27,7 @@ class AvatarService:
         # We inject a system prompt for the Avatar persona
         system_prompt = {
             "role": "system",
-            "content": "You are Nexus, the AI avatar of Predator Analytics. You are professional, sarcastic, and highly intelligent. Keep answers concise."
+            "content": "You are Nexus, the AI avatar of Predator Analytics. You are professional, sarcastic, and highly intelligent. Keep answers concise.",
         }
         messages = [system_prompt, {"role": "user", "content": text_input}]
 
@@ -40,6 +41,6 @@ class AvatarService:
             "animation_data": {
                 "emotion": emotion,
                 "duration": len(llm_response) * 0.1,
-                "visemes": [] # Placeholder for lip-sync data
-            }
+                "visemes": [],  # Placeholder for lip-sync data
+            },
         }

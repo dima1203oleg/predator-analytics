@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict
+from typing import Any
 
 from ..core.base_agent import AgentConfig, AgentResponse, BaseAgent
 
@@ -14,12 +14,7 @@ class ArbiterAgent(BaseAgent):
 
     def __init__(self):
         super().__init__(AgentConfig(name="ArbiterAgent"))
-        self.quality_weights = {
-            "length": 0.2,
-            "specificity": 0.3,
-            "completeness": 0.3,
-            "structure": 0.2
-        }
+        self.quality_weights = {"length": 0.2, "specificity": 0.3, "completeness": 0.3, "structure": 0.2}
 
     async def process(self, inputs: dict[str, Any]) -> AgentResponse:
         candidates = inputs.get("candidates", [])
@@ -29,16 +24,14 @@ class ArbiterAgent(BaseAgent):
 
         if not candidates:
             return AgentResponse(
-                agent_name=self.name,
-                result={"best_response": "", "score": 0},
-                metadata={"method": "no_candidates"}
+                agent_name=self.name, result={"best_response": "", "score": 0}, metadata={"method": "no_candidates"}
             )
 
         if len(candidates) == 1:
             return AgentResponse(
                 agent_name=self.name,
                 result={"best_response": candidates[0], "score": 1.0},
-                metadata={"method": "single_candidate"}
+                metadata={"method": "single_candidate"},
             )
 
         # Оцінюємо кожного кандидата
@@ -56,9 +49,9 @@ class ArbiterAgent(BaseAgent):
             result={
                 "best_response": best_response,
                 "score": best_score,
-                "rankings": [{"response": r[:100], "score": s} for r, s in scored[:3]]
+                "rankings": [{"response": r[:100], "score": s} for r, s in scored[:3]],
             },
-            metadata={"method": "quality_scoring", "candidates_count": len(candidates)}
+            metadata={"method": "quality_scoring", "candidates_count": len(candidates)},
         )
 
     async def _score_response(self, response: str, query: str) -> float:

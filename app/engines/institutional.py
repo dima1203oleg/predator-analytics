@@ -9,12 +9,13 @@ Output: InstitutionalScore per region/entity.
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
+import logging
 
 from app.core.confidence import ConfidenceScore, quick_confidence
 from app.indices.aai import calculate_aai
 from app.indices.pls import calculate_pls
+
 
 logger = logging.getLogger("predator.engines.institutional")
 
@@ -67,7 +68,10 @@ def compute_institutional_score(
 
     logger.info(
         "Institutional score computed: ueid=%s aai=%.1f pls=%.1f agg=%.1f",
-        ueid, aai, pls, aggregate,
+        ueid,
+        aai,
+        pls,
+        aggregate,
     )
 
     return InstitutionalScore(

@@ -2,10 +2,11 @@
 
 Component: shared.
 """
+
+from datetime import UTC, datetime
 import json
 import logging
 import sys
-from datetime import datetime, timezone
 from typing import Any
 
 
@@ -17,7 +18,7 @@ class JSONFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         log_record: dict[str, Any] = {
-            "timestamp": datetime.now(tz=timezone.utc).isoformat(),
+            "timestamp": datetime.now(tz=UTC).isoformat(),
             "level": record.levelname,
             "logger": record.name,
             "message": record.getMessage(),
@@ -38,7 +39,8 @@ class JSONFormatter(logging.Formatter):
 
         # Add extra fields but exclude internal logging attributes
         extra = {
-            k: v for k, v in record.__dict__.items()
+            k: v
+            for k, v in record.__dict__.items()
             if k not in logging.LogRecord("", 0, "", 0, "", [], None).__dict__
             and k not in ["message", "component", "trace_id", "correlation_id", "event_id"]
         }
@@ -69,7 +71,8 @@ def setup_logging(component_name: str, level: str = "INFO") -> None:
 
     # Log startup
     root_logger.info(
-        "Logging initialized for %s", component_name,
+        "Logging initialized for %s",
+        component_name,
         extra={"component": component_name},
     )
 

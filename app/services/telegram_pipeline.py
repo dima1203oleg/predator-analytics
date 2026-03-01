@@ -12,15 +12,11 @@ from __future__ import annotations
 - Автоматична класифікація та роутинг до баз даних
 """
 
-import asyncio
-from datetime import UTC, datetime, timezone
-import hashlib
-import json
+from datetime import UTC, datetime
 import logging
 import os
 from pathlib import Path
-import tempfile
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from .document_processor import get_document_processor
 from .media_processor import get_media_processor
@@ -38,35 +34,26 @@ class ContentRouter:
             "primary_db": "opensearch",
             "index": "customs_intel",
             "vector_db": "qdrant",
-            "collection": "customs_embeddings"
+            "collection": "customs_embeddings",
         },
         "business_intelligence": {
             "primary_db": "opensearch",
             "index": "business_intel",
             "vector_db": "qdrant",
-            "collection": "business_embeddings"
+            "collection": "business_embeddings",
         },
-        "general_intelligence": {
-            "primary_db": "opensearch",
-            "index": "general_intel",
-            "vector_db": None
-        },
-        "documents": {
-            "primary_db": "postgresql",
-            "table": "documents",
-            "storage": "minio",
-            "bucket": "documents"
-        },
+        "general_intelligence": {"primary_db": "opensearch", "index": "general_intel", "vector_db": None},
+        "documents": {"primary_db": "postgresql", "table": "documents", "storage": "minio", "bucket": "documents"},
         "media_transcripts": {
             "primary_db": "opensearch",
             "index": "media_transcripts",
             "vector_db": "qdrant",
-            "collection": "transcript_embeddings"
+            "collection": "transcript_embeddings",
         },
         "noise": {
             "primary_db": None,  # Не зберігаємо
-            "archive": True
-        }
+            "archive": True,
+        },
     }
 
     @classmethod
@@ -85,17 +72,10 @@ class TelegramIntelligencePipeline:
         os.makedirs(self.temp_dir, exist_ok=True)
 
         # Статистика
-        self.stats = {
-            "processed": 0,
-            "valuable": 0,
-            "noise": 0,
-            "errors": 0
-        }
+        self.stats = {"processed": 0, "valuable": 0, "noise": 0, "errors": 0}
 
     async def process_message(
-        self,
-        message: dict[str, Any],
-        channel_info: dict[str, Any] | None = None
+        self, message: dict[str, Any], channel_info: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         """Обробка одного повідомлення з Telegram."""
         result = {
@@ -107,7 +87,7 @@ class TelegramIntelligencePipeline:
             "extracted_data": {},
             "classification": {},
             "routing": {},
-            "status": "pending"
+            "status": "pending",
         }
 
         try:
@@ -189,13 +169,9 @@ class TelegramIntelligencePipeline:
             entity_type = entity.get("type")
             offset = entity.get("offset", 0)
             length = entity.get("length", 0)
-            entity_text = text[offset:offset + length]
+            entity_text = text[offset : offset + length]
 
-            entities.append({
-                "type": entity_type,
-                "text": entity_text,
-                "offset": offset
-            })
+            entities.append({"type": entity_type, "text": entity_text, "offset": offset})
 
         return {
             "text": text,
@@ -203,7 +179,7 @@ class TelegramIntelligencePipeline:
             "has_urls": any(e["type"] == "url" for e in entities),
             "has_mentions": any(e["type"] == "mention" for e in entities),
             "char_count": len(text),
-            "word_count": len(text.split())
+            "word_count": len(text.split()),
         }
 
     async def _process_voice_message(self, message: dict[str, Any]) -> dict[str, Any]:
@@ -222,14 +198,14 @@ class TelegramIntelligencePipeline:
                 "file_size": voice.get("file_size", 0),
                 "language": result.get("transcript", {}).get("language", "uk"),
                 "confidence": result.get("classification", {}).get("confidence", 0),
-                "segments": result.get("transcript", {}).get("segments", [])
+                "segments": result.get("transcript", {}).get("segments", []),
             }
 
         return {
             "duration": voice.get("duration", 0),
             "file_size": voice.get("file_size", 0),
             "pending_download": True,
-            "mime_type": voice.get("mime_type", "audio/ogg")
+            "mime_type": voice.get("mime_type", "audio/ogg"),
         }
 
     async def _process_video_message(self, message: dict[str, Any]) -> dict[str, Any]:
@@ -249,14 +225,14 @@ class TelegramIntelligencePipeline:
                 "height": video.get("height", 0),
                 "file_size": video.get("file_size", 0),
                 "frame_texts": result.get("frame_texts", []),
-                "has_audio": result.get("metadata", {}).get("has_audio", False)
+                "has_audio": result.get("metadata", {}).get("has_audio", False),
             }
 
         return {
             "caption": caption,
             "duration": video.get("duration", 0),
             "file_size": video.get("file_size", 0),
-            "pending_download": True
+            "pending_download": True,
         }
 
     async def _process_video_note(self, message: dict[str, Any]) -> dict[str, Any]:
@@ -271,13 +247,10 @@ class TelegramIntelligencePipeline:
                 "transcript": result.get("transcript", {}).get("text", ""),
                 "duration": video_note.get("duration", 0),
                 "length": video_note.get("length", 0),  # діаметр
-                "file_size": video_note.get("file_size", 0)
+                "file_size": video_note.get("file_size", 0),
             }
 
-        return {
-            "duration": video_note.get("duration", 0),
-            "pending_download": True
-        }
+        return {"duration": video_note.get("duration", 0), "pending_download": True}
 
     async def _process_document(self, message: dict[str, Any]) -> dict[str, Any]:
         """Обробка документів (PDF, Excel, Word, тощо)."""
@@ -309,7 +282,7 @@ class TelegramIntelligencePipeline:
                 "file_size": document.get("file_size", 0),
                 "caption": caption,
                 "processing_result": result.get("status"),
-                "metadata": result.get("metadata", {})
+                "metadata": result.get("metadata", {}),
             }
 
         return {
@@ -317,7 +290,7 @@ class TelegramIntelligencePipeline:
             "mime_type": mime_type,
             "file_size": document.get("file_size", 0),
             "caption": caption,
-            "pending_download": True
+            "pending_download": True,
         }
 
     async def _process_photo(self, message: dict[str, Any]) -> dict[str, Any]:
@@ -344,13 +317,10 @@ class TelegramIntelligencePipeline:
                 "width": largest_photo.get("width", 0),
                 "height": largest_photo.get("height", 0),
                 "file_size": largest_photo.get("file_size", 0),
-                "ocr_confidence": result.get("metadata", {}).get("avg_confidence", 0)
+                "ocr_confidence": result.get("metadata", {}).get("avg_confidence", 0),
             }
 
-        return {
-            "caption": caption,
-            "pending_download": True
-        }
+        return {"caption": caption, "pending_download": True}
 
     async def _process_audio_file(self, message: dict[str, Any]) -> dict[str, Any]:
         """Обробка аудіо файлу (музика, подкаст)."""
@@ -366,7 +336,7 @@ class TelegramIntelligencePipeline:
                 "title": audio.get("title", ""),
                 "performer": audio.get("performer", ""),
                 "duration": audio.get("duration", 0),
-                "caption": caption
+                "caption": caption,
             }
 
         return {
@@ -374,15 +344,10 @@ class TelegramIntelligencePipeline:
             "performer": audio.get("performer", ""),
             "duration": audio.get("duration", 0),
             "caption": caption,
-            "pending_download": True
+            "pending_download": True,
         }
 
-    async def _classify_and_enrich(
-        self,
-        text: str,
-        content_type: str,
-        message: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _classify_and_enrich(self, text: str, content_type: str, message: dict[str, Any]) -> dict[str, Any]:
         """Класифікація та збагачення контенту."""
         # Базова класифікація від media_processor
         base_classification = await self.media_processor._classify_content(text)
@@ -412,9 +377,7 @@ class TelegramIntelligencePipeline:
         return base_classification
 
     async def process_channel_batch(
-        self,
-        messages: list[dict[str, Any]],
-        channel_info: dict[str, Any]
+        self, messages: list[dict[str, Any]], channel_info: dict[str, Any]
     ) -> dict[str, Any]:
         """Обробка пакету повідомлень з каналу."""
         results = []
@@ -437,7 +400,7 @@ class TelegramIntelligencePipeline:
             "noise_count": len(noise_items),
             "valuable_items": valuable_items,
             "noise_items": noise_items,
-            "stats": self.stats.copy()
+            "stats": self.stats.copy(),
         }
 
     def get_stats(self) -> dict[str, Any]:
@@ -445,7 +408,7 @@ class TelegramIntelligencePipeline:
         return {
             **self.stats,
             "value_rate": self.stats["valuable"] / max(self.stats["processed"], 1) * 100,
-            "error_rate": self.stats["errors"] / max(self.stats["processed"], 1) * 100
+            "error_rate": self.stats["errors"] / max(self.stats["processed"], 1) * 100,
         }
 
 

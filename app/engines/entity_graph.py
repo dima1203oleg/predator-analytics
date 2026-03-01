@@ -17,15 +17,16 @@ Approximation error: < 5% for p95.
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any, Optional
+from enum import StrEnum
+import logging
+from typing import Any
+
 
 logger = logging.getLogger("predator.engines.entity_graph")
 
 
-class NodeType(str, Enum):
+class NodeType(StrEnum):
     COMPANY = "Company"
     PERSON = "Person"
     BROKER = "Broker"
@@ -36,7 +37,7 @@ class NodeType(str, Enum):
     MEDIA_MENTION = "MediaMention"
 
 
-class EdgeType(str, Enum):
+class EdgeType(StrEnum):
     IMPORTS = "IMPORTS"
     OWNS = "OWNS"
     DIRECTS = "DIRECTS"
@@ -77,7 +78,7 @@ class CentralityMetrics:
     betweenness: float = 0.0
     eigenvector: float = 0.0
     pagerank: float = 0.0
-    community_id: Optional[int] = None
+    community_id: int | None = None
 
 
 class EntityGraphEngine:
@@ -135,8 +136,7 @@ class EntityGraphEngine:
     async def upsert_edge(self, edge: GraphEdge) -> None:
         """Create or update an edge in the graph."""
         if not self._driver:
-            logger.debug("Graph stub: upsert_edge %s -[%s]-> %s",
-                         edge.source_ueid, edge.edge_type, edge.target_ueid)
+            logger.debug("Graph stub: upsert_edge %s -[%s]-> %s", edge.source_ueid, edge.edge_type, edge.target_ueid)
             return
 
         query = f"""

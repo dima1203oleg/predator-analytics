@@ -12,10 +12,11 @@ Python 3.12 | Distributed Sovereign Intelligence
 
 import asyncio
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 logger = logging.getLogger("azr_neural_mesh")
+
 
 class NeuralMesh:
     """🛰️ Нейронна Мережа.
@@ -25,7 +26,7 @@ class NeuralMesh:
     def __init__(self):
         self.nodes = [
             {"id": "NODE-NVIDIA-01", "status": "online", "load": 12, "ip": "10.0.0.45"},
-            {"id": "NODE-EDGE-01", "status": "sleeping", "load": 0, "ip": "192.168.1.12"}
+            {"id": "NODE-EDGE-01", "status": "sleeping", "load": 0, "ip": "192.168.1.12"},
         ]
 
     async def sync_nodes(self):
@@ -39,8 +40,12 @@ class NeuralMesh:
         logger.info(f"⚡ Dispatching heavy training to {node_id}...")
         return {"ticket_id": f"TASK-{node_id}-99", "status": "queued"}
 
+
 _mesh = None
+
+
 def get_neural_mesh() -> NeuralMesh:
     global _mesh
-    if _mesh is None: _mesh = NeuralMesh()
+    if _mesh is None:
+        _mesh = NeuralMesh()
     return _mesh

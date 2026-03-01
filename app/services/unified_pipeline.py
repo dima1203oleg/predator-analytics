@@ -11,23 +11,20 @@ from __future__ import annotations
 - Валідація якості даних
 """
 
-import asyncio
-from datetime import UTC, datetime, timezone
-from enum import Enum
-import hashlib
-import json
+from datetime import UTC, datetime
+from enum import StrEnum
 import logging
 import os
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 import uuid
 
 
 logger = logging.getLogger("pipeline.unified")
 
 
-class SourceType(str, Enum):
+class SourceType(StrEnum):
     """Типи джерел даних."""
+
     EXCEL = "excel"
     CSV = "csv"
     PDF = "pdf"
@@ -41,25 +38,28 @@ class SourceType(str, Enum):
     RSS = "rss"
 
 
-class DataQuality(str, Enum):
+class DataQuality(StrEnum):
     """Рівень якості даних."""
-    HIGH = "high"        # Повний комплект, перевірено
-    MEDIUM = "medium"    # Базові поля заповнені
-    LOW = "low"          # Мінімальні дані
+
+    HIGH = "high"  # Повний комплект, перевірено
+    MEDIUM = "medium"  # Базові поля заповнені
+    LOW = "low"  # Мінімальні дані
     INVALID = "invalid"  # Некоректні дані
 
 
-class TargetDatabase(str, Enum):
+class TargetDatabase(StrEnum):
     """Цільові бази даних."""
-    POSTGRESQL = "postgresql"    # Структуровані дані
-    OPENSEARCH = "opensearch"    # Повнотекстовий пошук
-    QDRANT = "qdrant"            # Векторна БД (embeddings)
-    REDIS = "redis"              # Кеш, real-time
-    MINIO = "minio"              # Файлове сховище
+
+    POSTGRESQL = "postgresql"  # Структуровані дані
+    OPENSEARCH = "opensearch"  # Повнотекстовий пошук
+    QDRANT = "qdrant"  # Векторна БД (embeddings)
+    REDIS = "redis"  # Кеш, real-time
+    MINIO = "minio"  # Файлове сховище
 
 
-class PipelineStage(str, Enum):
+class PipelineStage(StrEnum):
     """Стадії пайплайну."""
+
     INGESTION = "ingestion"
     EXTRACTION = "extraction"
     ENRICHMENT = "enrichment"
@@ -86,20 +86,20 @@ class UnifiedDataPipeline:
                     PipelineStage.INGESTION,
                     PipelineStage.EXTRACTION,
                     PipelineStage.VALIDATION,
-                    PipelineStage.INDEXING
+                    PipelineStage.INDEXING,
                 ],
                 "targets": [TargetDatabase.POSTGRESQL, TargetDatabase.OPENSEARCH],
-                "enrichment": ["column_types", "statistics"]
+                "enrichment": ["column_types", "statistics"],
             },
             SourceType.CSV: {
                 "stages": [
                     PipelineStage.INGESTION,
                     PipelineStage.EXTRACTION,
                     PipelineStage.VALIDATION,
-                    PipelineStage.INDEXING
+                    PipelineStage.INDEXING,
                 ],
                 "targets": [TargetDatabase.POSTGRESQL, TargetDatabase.OPENSEARCH],
-                "enrichment": ["column_types", "statistics"]
+                "enrichment": ["column_types", "statistics"],
             },
             SourceType.PDF: {
                 "stages": [
@@ -107,10 +107,10 @@ class UnifiedDataPipeline:
                     PipelineStage.EXTRACTION,
                     PipelineStage.ENRICHMENT,
                     PipelineStage.CLASSIFICATION,
-                    PipelineStage.INDEXING
+                    PipelineStage.INDEXING,
                 ],
                 "targets": [TargetDatabase.OPENSEARCH, TargetDatabase.QDRANT, TargetDatabase.MINIO],
-                "enrichment": ["ner", "embedding", "summary"]
+                "enrichment": ["ner", "embedding", "summary"],
             },
             SourceType.IMAGE: {
                 "stages": [
@@ -118,10 +118,10 @@ class UnifiedDataPipeline:
                     PipelineStage.EXTRACTION,  # OCR
                     PipelineStage.ENRICHMENT,
                     PipelineStage.CLASSIFICATION,
-                    PipelineStage.INDEXING
+                    PipelineStage.INDEXING,
                 ],
                 "targets": [TargetDatabase.OPENSEARCH, TargetDatabase.MINIO],
-                "enrichment": ["ocr", "ner"]
+                "enrichment": ["ocr", "ner"],
             },
             SourceType.AUDIO: {
                 "stages": [
@@ -129,10 +129,10 @@ class UnifiedDataPipeline:
                     PipelineStage.EXTRACTION,  # Транскрипція
                     PipelineStage.ENRICHMENT,
                     PipelineStage.CLASSIFICATION,
-                    PipelineStage.INDEXING
+                    PipelineStage.INDEXING,
                 ],
                 "targets": [TargetDatabase.OPENSEARCH, TargetDatabase.QDRANT, TargetDatabase.MINIO],
-                "enrichment": ["transcription", "ner", "embedding", "speaker_diarization"]
+                "enrichment": ["transcription", "ner", "embedding", "speaker_diarization"],
             },
             SourceType.VIDEO: {
                 "stages": [
@@ -140,10 +140,10 @@ class UnifiedDataPipeline:
                     PipelineStage.EXTRACTION,  # Аудіо + кадри
                     PipelineStage.ENRICHMENT,
                     PipelineStage.CLASSIFICATION,
-                    PipelineStage.INDEXING
+                    PipelineStage.INDEXING,
                 ],
                 "targets": [TargetDatabase.OPENSEARCH, TargetDatabase.QDRANT, TargetDatabase.MINIO],
-                "enrichment": ["transcription", "frame_ocr", "ner", "embedding"]
+                "enrichment": ["transcription", "frame_ocr", "ner", "embedding"],
             },
             SourceType.TELEGRAM: {
                 "stages": [
@@ -151,10 +151,10 @@ class UnifiedDataPipeline:
                     PipelineStage.EXTRACTION,
                     PipelineStage.ENRICHMENT,
                     PipelineStage.CLASSIFICATION,
-                    PipelineStage.INDEXING
+                    PipelineStage.INDEXING,
                 ],
                 "targets": [TargetDatabase.OPENSEARCH, TargetDatabase.QDRANT, TargetDatabase.REDIS],
-                "enrichment": ["media_processing", "ner", "embedding", "entity_linking"]
+                "enrichment": ["media_processing", "ner", "embedding", "entity_linking"],
             },
             SourceType.WEBSITE: {
                 "stages": [
@@ -162,31 +162,31 @@ class UnifiedDataPipeline:
                     PipelineStage.EXTRACTION,
                     PipelineStage.ENRICHMENT,
                     PipelineStage.CLASSIFICATION,
-                    PipelineStage.INDEXING
+                    PipelineStage.INDEXING,
                 ],
                 "targets": [TargetDatabase.OPENSEARCH, TargetDatabase.QDRANT],
-                "enrichment": ["html_parsing", "ner", "embedding", "link_extraction"]
+                "enrichment": ["html_parsing", "ner", "embedding", "link_extraction"],
             },
             SourceType.API: {
                 "stages": [
                     PipelineStage.INGESTION,
                     PipelineStage.EXTRACTION,
                     PipelineStage.VALIDATION,
-                    PipelineStage.INDEXING
+                    PipelineStage.INDEXING,
                 ],
                 "targets": [TargetDatabase.POSTGRESQL, TargetDatabase.OPENSEARCH],
-                "enrichment": ["schema_validation", "deduplication"]
+                "enrichment": ["schema_validation", "deduplication"],
             },
             SourceType.RSS: {
                 "stages": [
                     PipelineStage.INGESTION,
                     PipelineStage.EXTRACTION,
                     PipelineStage.ENRICHMENT,
-                    PipelineStage.INDEXING
+                    PipelineStage.INDEXING,
                 ],
                 "targets": [TargetDatabase.OPENSEARCH, TargetDatabase.REDIS],
-                "enrichment": ["ner", "categorization"]
-            }
+                "enrichment": ["ner", "categorization"],
+            },
         }
 
     @property
@@ -194,6 +194,7 @@ class UnifiedDataPipeline:
         """Lazy load document processor."""
         if self._doc_processor is None:
             from .document_processor import get_document_processor
+
             self._doc_processor = get_document_processor()
         return self._doc_processor
 
@@ -202,6 +203,7 @@ class UnifiedDataPipeline:
         """Lazy load media processor."""
         if self._media_processor is None:
             from .media_processor import get_media_processor
+
             self._media_processor = get_media_processor()
         return self._media_processor
 
@@ -210,6 +212,7 @@ class UnifiedDataPipeline:
         """Lazy load telegram pipeline."""
         if self._telegram_pipeline is None:
             from .telegram_pipeline import get_telegram_pipeline
+
             self._telegram_pipeline = get_telegram_pipeline()
         return self._telegram_pipeline
 
@@ -217,7 +220,7 @@ class UnifiedDataPipeline:
         self,
         source_type: str | SourceType,
         input_data: str | dict[str, Any] | bytes,
-        options: dict[str, Any] | None = None
+        options: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Головна точка входу для обробки даних.
 
@@ -237,11 +240,7 @@ class UnifiedDataPipeline:
             try:
                 source_type = SourceType(source_type)
             except ValueError:
-                return {
-                    "job_id": job_id,
-                    "status": "error",
-                    "error": f"Невідомий тип джерела: {source_type}"
-                }
+                return {"job_id": job_id, "status": "error", "error": f"Невідомий тип джерела: {source_type}"}
 
         # Ініціалізація результату
         result = {
@@ -255,7 +254,7 @@ class UnifiedDataPipeline:
             "metadata": {},
             "targets": [],
             "quality": None,
-            "errors": []
+            "errors": [],
         }
 
         # Отримання конфігурації пайплайну
@@ -281,9 +280,7 @@ class UnifiedDataPipeline:
             # === STAGE 3: ENRICHMENT (опціонально) ===
             if PipelineStage.ENRICHMENT in config["stages"]:
                 result["current_stage"] = PipelineStage.ENRICHMENT.value
-                enriched_data = await self._stage_enrichment(
-                    source_type, extracted_data, config["enrichment"], options
-                )
+                enriched_data = await self._stage_enrichment(source_type, extracted_data, config["enrichment"], options)
                 result["data"]["enriched"] = enriched_data
                 result["stages_completed"].append(PipelineStage.ENRICHMENT.value)
             else:
@@ -306,9 +303,7 @@ class UnifiedDataPipeline:
 
             # === STAGE 6: INDEXING ===
             result["current_stage"] = PipelineStage.INDEXING.value
-            indexing_results = await self._stage_indexing(
-                source_type, enriched_data, config["targets"], options
-            )
+            indexing_results = await self._stage_indexing(source_type, enriched_data, config["targets"], options)
             result["targets"] = indexing_results
             result["stages_completed"].append(PipelineStage.INDEXING.value)
 
@@ -327,16 +322,13 @@ class UnifiedDataPipeline:
         return result
 
     async def _stage_ingestion(
-        self,
-        source_type: SourceType,
-        input_data: str | dict | bytes,
-        options: dict[str, Any]
+        self, source_type: SourceType, input_data: str | dict | bytes, options: dict[str, Any]
     ) -> dict[str, Any]:
         """Стадія завантаження даних."""
         result = {
             "source_type": source_type.value,
             "input_type": type(input_data).__name__,
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         if isinstance(input_data, str):
@@ -361,6 +353,7 @@ class UnifiedDataPipeline:
             result["size"] = len(input_data)
             # Зберігаємо у тимчасовий файл
             import tempfile
+
             with tempfile.NamedTemporaryFile(delete=False, suffix=".bin") as f:
                 f.write(input_data)
                 result["file_path"] = f.name
@@ -368,10 +361,7 @@ class UnifiedDataPipeline:
         return result
 
     async def _stage_extraction(
-        self,
-        source_type: SourceType,
-        ingested: dict[str, Any],
-        options: dict[str, Any]
+        self, source_type: SourceType, ingested: dict[str, Any], options: dict[str, Any]
     ) -> dict[str, Any]:
         """Стадія витягнення даних."""
         file_path = ingested.get("file_path")
@@ -416,18 +406,13 @@ class UnifiedDataPipeline:
             if url:
                 return await self.doc_processor.process_url(url, "api", options)
 
-        elif source_type == SourceType.RSS:
-            if url:
-                return await self.doc_processor.process_url(url, "rss", options)
+        elif source_type == SourceType.RSS and url:
+            return await self.doc_processor.process_url(url, "rss", options)
 
         return {"status": "no_extraction", "reason": "Немає даних для обробки"}
 
     async def _stage_enrichment(
-        self,
-        source_type: SourceType,
-        extracted: dict[str, Any],
-        enrichment_types: list[str],
-        options: dict[str, Any]
+        self, source_type: SourceType, extracted: dict[str, Any], enrichment_types: list[str], options: dict[str, Any]
     ) -> dict[str, Any]:
         """Стадія збагачення даних (NER, embeddings, тощо)."""
         enriched = dict(extracted)
@@ -456,10 +441,7 @@ class UnifiedDataPipeline:
         return enriched
 
     async def _stage_classification(
-        self,
-        source_type: SourceType,
-        data: dict[str, Any],
-        options: dict[str, Any]
+        self, source_type: SourceType, data: dict[str, Any], options: dict[str, Any]
     ) -> dict[str, Any]:
         """Стадія класифікації контенту."""
         text_content = self._extract_text_content(data)
@@ -469,17 +451,14 @@ class UnifiedDataPipeline:
                 "is_valuable": False,
                 "confidence": 0.5,
                 "category": "unknown",
-                "reason": "Немає текстового контенту"
+                "reason": "Немає текстового контенту",
             }
 
         # Використовуємо класифікатор з media_processor
         return await self.media_processor._classify_content(text_content)
 
     async def _stage_validation(
-        self,
-        source_type: SourceType,
-        data: dict[str, Any],
-        options: dict[str, Any]
+        self, source_type: SourceType, data: dict[str, Any], options: dict[str, Any]
     ) -> dict[str, Any]:
         """Стадія валідації якості даних."""
         issues = []
@@ -515,15 +494,11 @@ class UnifiedDataPipeline:
             "quality": quality.value,
             "issues": issues,
             "is_valid": quality != DataQuality.INVALID,
-            "checked_at": datetime.now(UTC).isoformat()
+            "checked_at": datetime.now(UTC).isoformat(),
         }
 
     async def _stage_indexing(
-        self,
-        source_type: SourceType,
-        data: dict[str, Any],
-        targets: list[TargetDatabase],
-        options: dict[str, Any]
+        self, source_type: SourceType, data: dict[str, Any], targets: list[TargetDatabase], options: dict[str, Any]
     ) -> list[dict[str, Any]]:
         """Стадія індексації в цільові бази даних."""
         results = []
@@ -545,15 +520,15 @@ class UnifiedDataPipeline:
 
                 results.append({
                     "target": target.value if isinstance(target, TargetDatabase) else str(target),
-                    **result
+                    **result,
                 })
 
             except Exception as e:
-                logger.error(f"Indexing to {target} failed: {e}")
+                logger.exception(f"Indexing to {target} failed: {e}")
                 results.append({
                     "target": target.value if isinstance(target, TargetDatabase) else str(target),
                     "status": "error",
-                    "error": str(e)
+                    "error": str(e),
                 })
 
         return results
@@ -563,10 +538,7 @@ class UnifiedDataPipeline:
     def _extract_text_content(self, data: dict[str, Any]) -> str:
         """Витягнути текстовий контент з даних."""
         # Пробуємо різні поля
-        text_fields = [
-            "text", "full_text", "transcript", "content",
-            "extracted_text", "caption", "description"
-        ]
+        text_fields = ["text", "full_text", "transcript", "content", "extracted_text", "caption", "description"]
 
         for field in text_fields:
             if data.get(field):
@@ -593,25 +565,20 @@ class UnifiedDataPipeline:
         # Базова реалізація через regex (можна замінити на spaCy/transformers)
         import re
 
-        entities = {
-            "organizations": [],
-            "persons": [],
-            "locations": [],
-            "dates": [],
-            "money": [],
-            "codes": []
-        }
+        entities = {"organizations": [], "persons": [], "locations": [], "dates": [], "money": [], "codes": []}
 
         # Коди ТН ЗЕД (митні)
-        hs_codes = re.findall(r'\b\d{4}[\.\s]?\d{2}[\.\s]?\d{2}[\.\s]?\d{2}\b', text)
+        hs_codes = re.findall(r"\b\d{4}[\.\s]?\d{2}[\.\s]?\d{2}[\.\s]?\d{2}\b", text)
         entities["codes"].extend([{"type": "hs_code", "value": c} for c in hs_codes[:20]])
 
         # Суми (гроші)
-        money_patterns = re.findall(r'(?:USD|EUR|UAH|грн|\$|€)\s*[\d\s,\.]+|\d+[\s,\.]*(?:USD|EUR|UAH|грн)', text, re.IGNORECASE)
+        money_patterns = re.findall(
+            r"(?:USD|EUR|UAH|грн|\$|€)\s*[\d\s,\.]+|\d+[\s,\.]*(?:USD|EUR|UAH|грн)", text, re.IGNORECASE
+        )
         entities["money"].extend([{"value": m.strip()} for m in money_patterns[:20]])
 
         # Дати
-        date_patterns = re.findall(r'\d{1,2}[\./-]\d{1,2}[\./-]\d{2,4}', text)
+        date_patterns = re.findall(r"\d{1,2}[\./-]\d{1,2}[\./-]\d{2,4}", text)
         entities["dates"].extend([{"value": d} for d in date_patterns[:20]])
 
         return entities
@@ -619,12 +586,7 @@ class UnifiedDataPipeline:
     async def _generate_embedding(self, text: str) -> dict[str, Any]:
         """Генерація векторного ембедінгу."""
         # TODO: Інтеграція з моделлю ембедінгів (sentence-transformers, OpenAI)
-        return {
-            "status": "pending",
-            "model": "nomic-embed-text",
-            "dimensions": 768,
-            "text_length": len(text)
-        }
+        return {"status": "pending", "model": "nomic-embed-text", "dimensions": 768, "text_length": len(text)}
 
     async def _generate_summary(self, text: str) -> dict[str, Any]:
         """Генерація резюме тексту."""
@@ -632,7 +594,7 @@ class UnifiedDataPipeline:
         return {
             "summary": text[:500] + "..." if len(text) > 500 else text,
             "original_length": len(text),
-            "method": "truncation"
+            "method": "truncation",
         }
 
     def _calculate_statistics(self, records: list[dict]) -> dict[str, Any]:
@@ -643,78 +605,51 @@ class UnifiedDataPipeline:
         return {
             "total_records": len(records),
             "columns": list(records[0].keys()) if records else [],
-            "sample_size": min(len(records), 5)
+            "sample_size": min(len(records), 5),
         }
 
     # === DATABASE INDEXING METHODS ===
 
     async def _index_to_postgresql(
-        self,
-        source_type: SourceType,
-        data: dict[str, Any],
-        options: dict[str, Any]
+        self, source_type: SourceType, data: dict[str, Any], options: dict[str, Any]
     ) -> dict[str, Any]:
         """Індексація в PostgreSQL."""
         # TODO: Реальна інтеграція
         records = data.get("records", [])
-        return {
-            "status": "simulated",
-            "records_count": len(records),
-            "table": f"data_{source_type.value}"
-        }
+        return {"status": "simulated", "records_count": len(records), "table": f"data_{source_type.value}"}
 
     async def _index_to_opensearch(
-        self,
-        source_type: SourceType,
-        data: dict[str, Any],
-        options: dict[str, Any]
+        self, source_type: SourceType, data: dict[str, Any], options: dict[str, Any]
     ) -> dict[str, Any]:
         """Індексація в OpenSearch."""
         text_content = self._extract_text_content(data)
-        return {
-            "status": "simulated",
-            "index": f"predator_{source_type.value}",
-            "document_size": len(text_content)
-        }
+        return {"status": "simulated", "index": f"predator_{source_type.value}", "document_size": len(text_content)}
 
     async def _index_to_qdrant(
-        self,
-        source_type: SourceType,
-        data: dict[str, Any],
-        options: dict[str, Any]
+        self, source_type: SourceType, data: dict[str, Any], options: dict[str, Any]
     ) -> dict[str, Any]:
         """Індексація в Qdrant (векторна БД)."""
         embedding = data.get("enrichments", {}).get("embedding", {})
         return {
             "status": "simulated" if embedding.get("status") == "pending" else "skipped",
-            "collection": f"predator_{source_type.value}_vectors"
+            "collection": f"predator_{source_type.value}_vectors",
         }
 
     async def _index_to_redis(
-        self,
-        source_type: SourceType,
-        data: dict[str, Any],
-        options: dict[str, Any]
+        self, source_type: SourceType, data: dict[str, Any], options: dict[str, Any]
     ) -> dict[str, Any]:
         """Індексація в Redis (кеш/real-time)."""
-        return {
-            "status": "simulated",
-            "key_prefix": f"predator:{source_type.value}:",
-            "ttl": 3600
-        }
+        return {"status": "simulated", "key_prefix": f"predator:{source_type.value}:", "ttl": 3600}
 
     async def _index_to_minio(
-        self,
-        source_type: SourceType,
-        data: dict[str, Any],
-        options: dict[str, Any]
+        self, source_type: SourceType, data: dict[str, Any], options: dict[str, Any]
     ) -> dict[str, Any]:
         """Збереження файлів в MinIO."""
         file_path = data.get("file_path")
         return {
             "status": "simulated" if file_path else "skipped",
             "bucket": "predator-documents",
-            "object_key": f"{source_type.value}/{datetime.now().strftime('%Y/%m/%d')}/"
+            "object_key": f"{source_type.value}/{datetime.now().strftime('%Y/%m/%d')}/",
         }
 
 

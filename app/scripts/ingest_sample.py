@@ -6,7 +6,7 @@ import uuid
 
 
 # Add project root to sys.path
-sys.path.append('/app')
+sys.path.append("/app")
 
 from app.libs.core.database import get_db_ctx
 from app.libs.core.models import Document
@@ -38,13 +38,14 @@ async def ingest():
                 title=title,
                 content=content,
                 source_type="CUSTOMS",
-                meta=record
+                meta=record,
             )
             db.add(doc)
 
         await db.commit()
 
     print("✅ Ingested 50 documents into gold.documents")
+
 
 if __name__ == "__main__":
     asyncio.run(ingest())

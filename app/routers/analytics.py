@@ -4,7 +4,7 @@ from __future__ import annotations
 """Predator Analytics - Analytics Router
 Deep analytics and risk assessment endpoints.
 """
-from datetime import UTC, datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, Query
 
@@ -13,9 +13,6 @@ from app.services.ai_engine import ai_engine
 
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
-
-
-
 
 
 @router.post("/deepscan")
@@ -27,7 +24,7 @@ async def run_deep_scan(query: AnalyticsQuery):
             sectors=query.sectors,
             depth=query.depth,
             llm_mode=query.llm_mode.value,
-            preferred_provider=query.preferred_provider
+            preferred_provider=query.preferred_provider,
         )
 
         return {
@@ -38,10 +35,10 @@ async def run_deep_scan(query: AnalyticsQuery):
                 "answer": result.answer,
                 "confidence": result.confidence,
                 "model_used": result.model_used,
-                "sources_count": len(result.sources)
+                "sources_count": len(result.sources),
             },
             "sources": result.sources,
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -65,16 +62,14 @@ async def get_risk_assessment(edrpou: str) -> RiskAssessment:
             conn = await asyncpg.connect(db_url)
 
             # Check if company exists (table: companies per models.py)
-            company = await conn.fetchrow(
-                "SELECT * FROM companies WHERE edrpou = $1", edrpou
-            )
+            company = await conn.fetchrow("SELECT * FROM companies WHERE edrpou = $1", edrpou)
             if company:
                 entity_data.update({
                     "name": company.get("name", ""),
                     "tax_debtor": company.get("is_tax_debtor", False),
                     "court_cases": company.get("court_cases", 0),
                     "sanctioned": company.get("is_sanctioned", False),
-                    "years_active": 5  # Default, can calculate from registration_date
+                    "years_active": 5,  # Default, can calculate from registration_date
                 })
             await conn.close()
         except Exception:
@@ -88,14 +83,14 @@ async def get_risk_assessment(edrpou: str) -> RiskAssessment:
         risk_level=RiskLevel(assessment.risk_level.value),
         score=assessment.score,
         factors=assessment.factors,
-        recommendations=assessment.mitigations
+        recommendations=assessment.mitigations,
     )
 
 
 @router.get("/trends")
 async def get_analytics_trends(
     sector: str = Query("GOV", description="Sector to analyze"),
-    period: str = Query("7d", description="Time period: 1d, 7d, 30d, 90d")
+    period: str = Query("7d", description="Time period: 1d, 7d, 30d, 90d"),
 ):
     """Get trend analytics for a sector."""
     days = {"1d": 1, "7d": 7, "30d": 30, "90d": 90}.get(period, 7)
@@ -104,11 +99,7 @@ async def get_analytics_trends(
     base_date = datetime.now(UTC)
     for i in range(days):
         date = base_date - timedelta(days=days - i - 1)
-        trends.append(TrendData(
-            date=date.strftime("%Y-%m-%d"),
-            value=100 + (i * 2),
-            change=2.5 if i > 0 else 0
-        ))
+        trends.append(TrendData(date=date.strftime("%Y-%m-%d"), value=100 + (i * 2), change=2.5 if i > 0 else 0))
 
     return {
         "sector": sector,
@@ -118,8 +109,8 @@ async def get_analytics_trends(
             "average": sum(t.value for t in trends) / len(trends),
             "min": min(t.value for t in trends),
             "max": max(t.value for t in trends),
-            "growth": trends[-1].value - trends[0].value if trends else 0
-        }
+            "growth": trends[-1].value - trends[0].value if trends else 0,
+        },
     }
 
 
@@ -134,7 +125,7 @@ async def get_risk_forecast(days: int = 7):
         forecasts.append({
             "date": date.strftime("%Y-%m-%d"),
             "predicted_risk": random.randint(20, 60),
-            "confidence": random.randint(75, 95)
+            "confidence": random.randint(75, 95),
         })
 
     return {"forecasts": forecasts, "model": "ARIMA-v2"}
@@ -165,43 +156,30 @@ async def get_sector_distribution():
                 get_count("tenders"),
                 get_count("companies"),
                 get_count("ua_customs_imports"),
-                get_count("exchange_rates")
+                get_count("exchange_rates"),
             )
 
-            counts = {
-                "GOV": gov_f,
-                "BIZ": biz_f,
-                "CUSTOMS": customs_f,
-                "FX": fx_f
-            }
+            counts = {"GOV": gov_f, "BIZ": biz_f, "CUSTOMS": customs_f, "FX": fx_f}
             await conn.close()
 
             total = sum(counts.values())
             for sector, count in counts.items():
                 pct = round(count / total * 100, 1) if total > 0 else 0
-                sectors_data.append({
-                    "name": sector,
-                    "percentage": pct,
-                    "records": count
-                })
+                sectors_data.append({"name": sector, "percentage": pct, "records": count})
         except Exception:
             # Fallback to estimates if DB unavailable
             sectors_data = [
                 {"name": "GOV", "percentage": 45, "records": 0},
                 {"name": "BIZ", "percentage": 30, "records": 0},
                 {"name": "CUSTOMS", "percentage": 15, "records": 0},
-                {"name": "FX", "percentage": 10, "records": 0}
+                {"name": "FX", "percentage": 10, "records": 0},
             ]
     else:
         sectors_data = [
             {"name": "GOV", "percentage": 45, "records": 0},
             {"name": "BIZ", "percentage": 30, "records": 0},
             {"name": "CUSTOMS", "percentage": 15, "records": 0},
-            {"name": "FX", "percentage": 10, "records": 0}
+            {"name": "FX", "percentage": 10, "records": 0},
         ]
 
-    return {
-        "sectors": sectors_data,
-        "total_records": total,
-        "last_updated": datetime.now(UTC).isoformat()
-    }
+    return {"sectors": sectors_data, "total_records": total, "last_updated": datetime.now(UTC).isoformat()}

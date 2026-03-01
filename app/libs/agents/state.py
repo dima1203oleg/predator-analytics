@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import operator
-from typing import Annotated, Any, Dict, List, Optional, TypedDict, Union
+from typing import Annotated, Any, TypedDict
 
 
 class ToolOutput(TypedDict):
@@ -10,35 +10,43 @@ class ToolOutput(TypedDict):
     output: str
     timestamp: float
 
+
 class PlanStep(TypedDict):
     id: str
     description: str
-    status: str # pending, active, completed, failed
+    status: str  # pending, active, completed, failed
     result: str | None
 
+
 class AgentMessage(TypedDict):
-    role: str # user, assistant, system, tool
+    role: str  # user, assistant, system, tool
     content: str
     name: str | None
 
+
 class DataSourceInfo(TypedDict):
     """Information about a data source used in analysis."""
+
     id: str
     name: str
     type: str  # FILE, API, DATABASE
     records_count: int
     status: str  # ONLINE, OFFLINE, PROCESSING
 
+
 class QueryResult(TypedDict):
     """Result from querying a specific database."""
+
     database: str  # postgresql, opensearch, qdrant
     query: str
     results: list[dict[str, Any]]
     execution_time_ms: float
     error: str | None
 
+
 class AnalysisResult(TypedDict):
     """Structured result of data analysis."""
+
     id: str
     type: str  # anomaly, pattern, correlation, risk
     confidence: float
@@ -46,8 +54,10 @@ class AnalysisResult(TypedDict):
     data_points: list[dict[str, Any]]
     recommendations: list[str]
 
+
 class CaseTemplate(TypedDict):
     """Template for generating a case from analysis."""
+
     title: str
     situation: str
     conclusion: str
@@ -57,11 +67,13 @@ class CaseTemplate(TypedDict):
     evidence: list[dict[str, Any]]
     ai_insight: str
 
+
 class AgentState(TypedDict):
     """The state of the agent graph.
     Propagates through all nodes.
     Supports E2E analytics workflow: Data → Parse → Distribute → Analyze → Query → Response.
     """
+
     # Messages history with append-only semantics
     messages: Annotated[list[AgentMessage], operator.add]
 
@@ -81,7 +93,7 @@ class AgentState(TypedDict):
     artifacts: dict[str, Any]
 
     # V45 Inner Monologue / Thinking Process
-    thinking: list[str] # Stream of thoughts
+    thinking: list[str]  # Stream of thoughts
 
     # Errors if any
     error: str | None

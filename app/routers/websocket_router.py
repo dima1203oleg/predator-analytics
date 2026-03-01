@@ -1,23 +1,21 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import logging
 
-from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 import psutil
 
-from app.services.websocket_service import get_websocket_manager, manager
+from app.services.websocket_service import manager
 
 
 logger = logging.getLogger("predator.websocket.api")
 router = APIRouter()
 
+
 @router.websocket("/ws/v1/system-events")
-async def system_events_websocket(
-    websocket: WebSocket,
-    tenant_id: str | None = None
-):
+async def system_events_websocket(websocket: WebSocket, tenant_id: str | None = None):
     await manager.connect(websocket, tenant_id)
     try:
         while True:
@@ -29,7 +27,7 @@ async def system_events_websocket(
         manager.disconnect(websocket, tenant_id)
         logger.info(f"WebSocket disconnected: {tenant_id or 'broadcast'}")
     except Exception as e:
-        logger.error(f"WebSocket error: {e}")
+        logger.exception(f"WebSocket error: {e}")
         manager.disconnect(websocket, tenant_id)
 
 
@@ -46,7 +44,7 @@ async def realtime_metrics_websocket(websocket: WebSocket):
             # Gather real system metrics
             cpu_percent = psutil.cpu_percent(interval=1)
             memory = psutil.virtual_memory()
-            disk = psutil.disk_usage('/')
+            disk = psutil.disk_usage("/")
 
             # Network I/O
             net_io = psutil.net_io_counters()
@@ -54,28 +52,20 @@ async def realtime_metrics_websocket(websocket: WebSocket):
             metrics = {
                 "type": "metrics",
                 "timestamp": datetime.now(UTC).isoformat(),
-                "cpu": {
-                    "percent": cpu_percent,
-                    "cores": psutil.cpu_count()
-                },
+                "cpu": {"percent": cpu_percent, "cores": psutil.cpu_count()},
                 "memory": {
                     "total": memory.total,
                     "available": memory.available,
                     "percent": memory.percent,
-                    "used": memory.used
+                    "used": memory.used,
                 },
-                "disk": {
-                    "total": disk.total,
-                    "used": disk.used,
-                    "free": disk.free,
-                    "percent": disk.percent
-                },
+                "disk": {"total": disk.total, "used": disk.used, "free": disk.free, "percent": disk.percent},
                 "network": {
                     "bytes_sent": net_io.bytes_sent,
                     "bytes_recv": net_io.bytes_recv,
                     "packets_sent": net_io.packets_sent,
-                    "packets_recv": net_io.packets_recv
-                }
+                    "packets_recv": net_io.packets_recv,
+                },
             }
 
             await websocket.send_json(metrics)
@@ -84,4 +74,4 @@ async def realtime_metrics_websocket(websocket: WebSocket):
     except WebSocketDisconnect:
         logger.info("WebSocket /ws/metrics disconnected")
     except Exception as e:
-        logger.error(f"WebSocket /ws/metrics error: {e}")
+        logger.exception(f"WebSocket /ws/metrics error: {e}")

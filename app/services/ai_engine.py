@@ -5,13 +5,13 @@ from __future__ import annotations
 Combines LLM with Ukrainian data sources for intelligent analysis.
 """
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-from ..connectors.nbu_fx import nbu_fx_connector
-from ..connectors.prozorro import prozorro_connector
-from ..connectors.registry import registry_connector
+from app.connectors.prozorro import prozorro_connector
+from app.connectors.registry import registry_connector
+
 from .llm import llm_service
 
 
@@ -29,7 +29,7 @@ class AnalysisResult:
     timestamp: datetime
 
 
-from ..core.prompts import get_prompt
+from app.core.prompts import get_prompt
 
 
 class AIEngine:
@@ -47,7 +47,7 @@ class AIEngine:
         depth: str = "standard",
         llm_mode: str = "auto",
         preferred_provider: str | None = None,
-        tenant_id: str = "default"
+        tenant_id: str = "default",
     ) -> AnalysisResult:
         """Виконує всебічний аналіз:
         1. Зовнішні реєстри (Prozorro, EDR).
@@ -89,9 +89,11 @@ class AIEngine:
                     "name": "Predator Internal (Hybrid)",
                     "type": "internal",
                     "count": internal_data["total"],
-                    "data": internal_data["results"][:5]
+                    "data": internal_data["results"][:5],
                 })
-                internal_text = "\n".join([f"- {r.get('content', '')} (AI: {r.get('ai_reason', '')})" for r in internal_data["results"][:5]])
+                internal_text = "\n".join([
+                    f"- {r.get('content', '')} (AI: {r.get('ai_reason', '')})" for r in internal_data["results"][:5]
+                ])
                 context_parts.append(f"Внутрішні дані Predator:\n{internal_text}")
         except Exception as e:
             logger.exception(f"Помилка внутрішнього пошуку: {e}")
@@ -108,10 +110,7 @@ class AIEngine:
         """
 
         llm_response = await llm_service.generate_with_routing(
-            prompt=prompt,
-            system=self.system_prompt,
-            mode=llm_mode,
-            preferred_provider=preferred_provider
+            prompt=prompt, system=self.system_prompt, mode=llm_mode, preferred_provider=preferred_provider
         )
         answer = llm_response.content if llm_response.success else "Помилка відповіді AI."
         model_used = f"{llm_response.provider}/{llm_response.model}"
@@ -122,7 +121,7 @@ class AIEngine:
                 query=query,
                 analysis_answer=answer,
                 sources=sources,
-                entity_id=query if len(query) == 8 and query.isdigit() else None
+                entity_id=query if len(query) == 8 and query.isdigit() else None,
             )
 
         processing_time = (time.time() - start_time) * 1000
@@ -133,7 +132,7 @@ class AIEngine:
             confidence=0.9 if sources else 0.7,
             processing_time_ms=processing_time,
             model_used=model_used,
-            timestamp=datetime.now(UTC)
+            timestamp=datetime.now(UTC),
         )
 
     async def quick_check(self, edrpou: str) -> dict[str, Any]:
@@ -144,7 +143,7 @@ class AIEngine:
             "edrpou": edrpou,
             "found": company is not None,
             "data": company,
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
 

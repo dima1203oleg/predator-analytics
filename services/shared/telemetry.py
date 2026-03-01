@@ -2,6 +2,7 @@
 
 Component: shared.
 """
+
 import logging
 import os
 
@@ -10,6 +11,7 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
 
 logger = logging.getLogger(__name__)
 

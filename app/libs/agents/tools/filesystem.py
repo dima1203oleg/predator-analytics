@@ -12,8 +12,10 @@ logger = logging.getLogger("tools.fs")
 # Current working directory as root
 ROOT_DIR = Path(os.getcwd()).resolve()
 
+
 def _resolve_path(path: str) -> Path:
     return (ROOT_DIR / path).resolve()
+
 
 @registry.register(name="read_file", description="Read file content. Args: path (string)")
 def read_file(path: str) -> str:
@@ -34,6 +36,7 @@ def read_file(path: str) -> str:
         logger.exception(f"FS Read Error: {e}")
         return f"Error reading file: {e}"
 
+
 @registry.register(name="list_directory", description="List files in directory. Args: path (string)")
 def list_directory(path: str = ".") -> str:
     """List contents of a directory."""
@@ -47,13 +50,15 @@ def list_directory(path: str = ".") -> str:
         items = []
         for item in target.iterdir():
             # Skip hidden files
-            if item.name.startswith("."): continue
+            if item.name.startswith("."):
+                continue
 
             type_label = "[DIR] " if item.is_dir() else "      "
             items.append(f"{type_label}{item.name}")
         return "\n".join(sorted(items))
     except Exception as e:
         return f"Error listing directory: {e}"
+
 
 @registry.register(name="write_file", description="Write content to file. Args: path (string), content (string)")
 def write_file(path: str, content: str) -> str:

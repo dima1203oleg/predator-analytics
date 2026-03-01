@@ -12,10 +12,11 @@ from celery import shared_task
 from app.libs.core.config import settings
 from app.libs.core.database import get_db_ctx
 from app.libs.core.models.entities import MLDataset, MLJob
-from app.libs.core.structured_logger import get_logger, log_business_event
+from app.libs.core.structured_logger import get_logger
 
 
 logger = get_logger("tasks.ml_workers")
+
 
 @shared_task(name="tasks.ml.process_job", queue="analytics")
 def process_ml_job(job_id: str):
@@ -33,6 +34,7 @@ def process_ml_job(job_id: str):
                 # 1. Fetch Job
                 # We interpret job_id as UUID string
                 import uuid
+
                 try:
                     j_uuid = uuid.UUID(job_id)
                 except ValueError:
@@ -50,10 +52,10 @@ def process_ml_job(job_id: str):
 
                 dataset = await sess.get(MLDataset, job.dataset_id)
                 if not dataset:
-                     logger.error("ml_dataset_not_found", job_id=job_id, dataset_id=job.dataset_id)
-                     job.status = "failed"
-                     await sess.commit()
-                     return {"status": "failed", "error": "Dataset not found"}
+                    logger.error("ml_dataset_not_found", job_id=job_id, dataset_id=job.dataset_id)
+                    job.status = "failed"
+                    await sess.commit()
+                    return {"status": "failed", "error": "Dataset not found"}
 
                 # 2. Extract Data Source
                 # dvc_path is like "pg://staging_customs"
@@ -71,7 +73,9 @@ def process_ml_job(job_id: str):
 
                 records = []
                 # Use raw asyncpg for efficiency reading staging
-                raw_conn = await asyncpg.connect(settings.CLEAN_DATABASE_URL.replace("postgresql+asyncpg://", "postgresql://"))
+                raw_conn = await asyncpg.connect(
+                    settings.CLEAN_DATABASE_URL.replace("postgresql+asyncpg://", "postgresql://")
+                )
                 try:
                     # Limit to recent/unprocessed or just all for now (POC)
                     # Ideally we track what is processed. For now, take last 1000 for demo.
@@ -80,14 +84,14 @@ def process_ml_job(job_id: str):
                     for r in rows:
                         # Construct a text representation for embedding
                         # Naive approach: join all text values
-                        text_parts = [str(v) for k,v in r.items() if k not in ['id', 'created_at'] and v]
+                        text_parts = [str(v) for k, v in r.items() if k not in ["id", "created_at"] and v]
                         records.append(" ".join(text_parts))
                 except Exception as e:
-                     logger.exception("ml_staging_read_failed", error=str(e))
-                     job.status = "failed"
-                     job.metrics = {"error": str(e)}
-                     await sess.commit()
-                     return {"status": "failed", "error": str(e)}
+                    logger.exception("ml_staging_read_failed", error=str(e))
+                    job.status = "failed"
+                    job.metrics = {"error": str(e)}
+                    await sess.commit()
+                    return {"status": "failed", "error": str(e)}
                 finally:
                     await raw_conn.close()
 
@@ -112,13 +116,13 @@ def process_ml_job(job_id: str):
 
                 docs_to_index = []
                 for _i, row in enumerate(rows):
-                    doc_id = str(row['id'])
-                    text_parts = [str(v) for k, v in row.items() if k not in ['id', 'created_at'] and v]
+                    doc_id = str(row["id"])
+                    text_parts = [str(v) for k, v in row.items() if k not in ["id", "created_at"] and v]
                     full_text = " ".join(text_parts)
 
                     vector = await embedder.generate_embedding_async(full_text)
 
-                    metadata = {k: str(v) for k, v in row.items() if k not in ['id', 'created_at']}
+                    metadata = {k: str(v) for k, v in row.items() if k not in ["id", "created_at"]}
                     metadata["source_table"] = table_name
 
                     docs_to_index.append({
@@ -127,17 +131,17 @@ def process_ml_job(job_id: str):
                         "content": full_text,
                         "embedding": vector,
                         "metadata": metadata,
-                        "tenant_id": str(dataset.tenant_id)
+                        "tenant_id": str(dataset.tenant_id),
                     })
 
                 # 4. РЕАЛЬНЕ ЗБЕРЕЖЕННЯ (Triple-DB Sync)
                 os_results = await opensearch_indexer.index_documents(
-                    index_name=index_name,
-                    documents=docs_to_index,
-                    tenant_id=str(dataset.tenant_id)
+                    index_name=index_name, documents=docs_to_index, tenant_id=str(dataset.tenant_id)
                 )
 
-                q_batch = [{"id": d["id"], "embedding": d["embedding"], "metadata": d["metadata"]} for d in docs_to_index]
+                q_batch = [
+                    {"id": d["id"], "embedding": d["embedding"], "metadata": d["metadata"]} for d in docs_to_index
+                ]
                 await qdrant.index_batch(q_batch, tenant_id=str(dataset.tenant_id))
 
                 logger.info("ml_job_indexed_success", count=len(docs_to_index))
@@ -147,7 +151,7 @@ def process_ml_job(job_id: str):
                     "processed_rows": len(docs_to_index),
                     "vector_dim": embedder.vector_size,
                     "model": embedder.model_name,
-                    "os_status": os_results
+                    "os_status": os_results,
                 }
                 await sess.commit()
                 return {"status": "success", "processed": len(docs_to_index)}
@@ -158,16 +162,17 @@ def process_ml_job(job_id: str):
             try:
                 # New session to ensure we can write error even if main transaction failed
                 async with get_db_ctx() as err_sess:
-                     err_job = await err_sess.get(MLJob, j_uuid)
-                     if err_job:
-                         err_job.status = "failed"
-                         err_job.metrics = {"error": str(e)}
-                         await err_sess.commit()
+                    err_job = await err_sess.get(MLJob, j_uuid)
+                    if err_job:
+                        err_job.status = "failed"
+                        err_job.metrics = {"error": str(e)}
+                        await err_sess.commit()
             except:
                 pass
             return {"status": "failed", "error": str(e)}
 
     return asyncio.run(run_job())
+
 
 @shared_task(name="tasks.ml.self_improvement_cycle", queue="analytics")
 def self_improvement_task():

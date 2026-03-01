@@ -4,7 +4,7 @@ from __future__ import annotations
 """Telegram Logic Service - Telegram bot business logic
 Handles message processing and response generation.
 """
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import logging
 
 from .ai_engine import ai_engine
@@ -39,12 +39,7 @@ class TelegramLogic:
 /help - Допомога
         """
 
-    async def process_message(
-        self,
-        text: str,
-        user_id: int,
-        chat_id: int
-    ) -> str:
+    async def process_message(self, text: str, user_id: int, chat_id: int) -> str:
         """Process incoming message.
 
         Args:
@@ -156,7 +151,8 @@ class TelegramLogic:
         # Build connector status
         connectors_text = ""
         for name, status in health.items():
-            if name == "full_system_check": continue
+            if name == "full_system_check":
+                continue
             icon = "✅" if status == "ONLINE" else ("⚠️" if status == "DEGRADED" else "❌")
             connectors_text += f"{icon} {name.upper()}: {status}\n"
 
@@ -168,7 +164,7 @@ class TelegramLogic:
 
 *Інтеграції:*
 {connectors_text}
-Час: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S')} UTC
+Час: {datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S")} UTC
         """
 
     async def _handle_query(self, text: str, user_id: int) -> str:

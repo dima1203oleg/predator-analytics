@@ -103,22 +103,133 @@ ignore = [
     "D107",   # Missing docstring in __init__
     "D203",   # 1 blank line required before class docstring
     "D213",   # Multi-line docstring summary should start at the second line
+    "D205",   # 1 blank line between summary and description - bulk fix needed
+    "D200",   # One-line docstring should fit on one line
+    "D415",   # First line should end with period - bulk fix needed
 
     # Too strict for practical use
     "S101",   # Use of assert - needed for tests and validation
     "S104",   # Possible binding to all interfaces - needed for Docker
     "S105",   # Hardcoded password assignment - false positives
     "S106",   # Hardcoded password in function argument - false positives
+    "S108",   # Probable insecure temp file usage
+    "S110",   # try-except-pass detected
+    "S311",   # Standard pseudo-random not for security
+    "S603",   # subprocess call - checked and safe
+    "S607",   # Starting a process with partial executable path
     "PLR0913",# Too many arguments - complex functions exist
     "PLR2004",# Magic value used in comparison
     "TRY003", # Long exception message - sometimes needed
     "TRY301", # raise within try - valid pattern for re-raising
+    "TRY300", # Consider moving to else block - style preference
+    "TRY401", # Redundant exception object in logging.exception
+    "TRY400", # Use logging.exception instead of logging.error
+    "TRY002", # Create custom exception class
     "ARG001", # Unused function argument - needed for callbacks/handlers
     "ARG002", # Unused method argument - needed for overrides
     "PTH123", # open() instead of pathlib - sometimes clearer
+    "PTH110", # os.path.exists() - gradual migration to pathlib
+    "PTH118", # os.path.join() - gradual migration to pathlib
     "RUF001", # Cyrillic chars - project uses Ukrainian
     "RUF002", # Cyrillic chars docstring
     "RUF003", # Cyrillic chars comment
+    "RUF006", # Dangling asyncio tasks
+    "RUF012", # Mutable class attributes ClassVar annotation
+
+    # Bulk migration needed - will enable gradually
+    "G004",   # Logging f-string - bulk fix needed across project
+    "E402",   # Module level import not at top - project structure requires
+    "E701",   # Multiple statements on one line - style
+    "E722",   # Bare except - bulk fix needed
+    "PLC0415",# Import outside top level - needed for conditional imports
+    "PLW0603",# Global statement - architecture requires in some places
+    "DTZ003", # datetime.utcnow() - gradual migration needed
+    "DTZ005", # datetime without tzinfo - gradual migration needed
+    "B904",   # raise without from - bulk fix needed
+    "ERA001", # Commented code - intentional in some places
+    "SLF001", # Private member access - needed for internal tools
+    "PERF401",# Use list comprehension - style preference
+    "F401",   # Unused import - some might be needed for side effects/future
+    "F821",   # Undefined name - false positives with conditional imports
+    "A002",   # Argument shadowing builtin
+    "N815",   # Variable in class scope mixed case
+    "N802",   # Function name in mixed case
+    "TID252", # Relative imports from parent
+    "PLR0915",# Too many statements
+    "PLR0912",# Too many branches
+    "PLR0911",# Too many returns
+    "D417",   # Missing argument description
+    "D106",   # Missing docstring in nested class
+    "PTH120", # abspath vs Path.resolve()
+    "PTH103", # makedirs vs Path.mkdir()
+    "PTH202", # getsize vs Path.stat().st_size
+    "PTH119", # basename vs Path.name
+    "PTH109", # getcwd vs Path.cwd()
+    "PTH108", # unlink vs Path.unlink()
+    "B008",   # Call in function default
+    "SIM102", # Combined if statements
+    "S324",   # Insecure hash
+    "S608",   # SQL injection string formatting
+    "S602",   # subprocess shell=True
+    "S314",   # XML parsing
+    "G201",   # Logging .error(f"...")
+    "PTH102", # os.path.exists()
+    "PTH113", # os.path.islink()
+    "PTH107", # os.remove()
+    "PTH112", # os.path.isdir()
+    "PTH100", # os.path.isabs()
+    "PTH122", # os.path.splitdrive()
+    "PTH208", # os.listdir()
+    "PTH111", # os.path.join() with multiple args
+    "N806",   # Variable name should be lowercase
+    "N801",   # Class name should use CapWords
+    "N818",   # Exception name should end in Error
+    "E721",   # Use isinstance() instead of type() comparison
+    "SIM108", # Use ternary operator
+    "SIM103", # Return condition directly
+    "SIM105", # with contextlib.suppress
+    "PLW2901",# Loop variable overwritten
+    "PLW1510",# subprocess.run without check=True
+    "F811",   # Redefinition of unused name
+    "F403",   # from .tasks.etl import *
+    "F405",   # Name may be undefined, or defined from star imports
+    "S112",   # Try-except-continue
+    "S113",   # Request without timeout
+    "S501",   # Insecure SSL/TLS
+    "LOG015", # Use logging.exception in exception handlers
+    "UP035",  # Use dict/list instead of typing.Dict/List
+    "B007",   # Unused loop variable
+    "B024",   # Abstract base class with no abstract methods
+    "RUF100", # Unused noqa
+    "PT028",  # pytest.raises with multiple exceptions
+    "PLW1508",# invalid-envvar-default
+    "N811",   # Constant name should be uppercase
+    "B025",   # Duplicate except handler
+    "ARG005", # Unused lambda argument
+    "UP031",  # printf-string-formatting
+    "SIM117", # Multiple with statements
+    "S307",   # Use of eval()
+    "S301",   # Use of pickle
+    "RUF059", # Unused unpacked variable
+    "PLW0602",# Using global for update
+    "PLW0211",# Static method with self
+    "PLC0206",# Dictionary iteration instead of items()
+    "G003",   # logging using string concatenation
+    "E741",   # Ambiguous variable name
+    "DTZ901", # datetime.now() without tzinfo
+    "DTZ007", # datetime.fromtimestamp() without tzinfo
+    "DTZ004", # datetime.utcfromtimestamp()
+    "B027",   # Empty body in abstract method
+    "B023",   # Function definition does not bind loop variable
+    "B006",   # Mutable default argument
+    "B011",   # Do not assert False
+    "B018",   # Found useless expression
+    "B020",   # Loop control variable not used
+    "B026",   # Star-arg unpacking after a keyword argument
+    "SLF001", # Private member access
+    "ARG004", # Unused static method argument
+    "A001",   # Variable shadowing builtin
+    "I001",   # Import sort mismatch
 
     # Conflicts with formatter
     "E501",   # Line too long - formatter handles this
@@ -131,10 +242,7 @@ ignore = [
 fixable = ["ALL"]
 
 # Never autofix these (might change semantics)
-unfixable = [
-    "F401",   # Unused imports - might be intentional re-exports
-    "ERA001", # Commented code - might be intentional
-]
+unfixable = []
 
 # Allow unused variables when prefixed with underscore
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"

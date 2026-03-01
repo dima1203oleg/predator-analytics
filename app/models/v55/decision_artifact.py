@@ -7,7 +7,7 @@ Spec 3.3: retention 7+ years, trigger forbids UPDATE/DELETE.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -16,14 +16,14 @@ class DecisionArtifactCreate(BaseModel):
     """Request to record a decision artifact."""
 
     decision_type: str = Field(description="Type of decision (signal, cers, prediction, etc.)")
-    tenant_id: Optional[str] = None
-    trace_id: Optional[str] = None
+    tenant_id: str | None = None
+    trace_id: str | None = None
     input_fingerprint: str = Field(description="SHA-256 of input data")
-    model_fingerprint: Optional[str] = Field(None, description="SHA-256 of model used")
+    model_fingerprint: str | None = Field(None, description="SHA-256 of model used")
     output_fingerprint: str = Field(description="SHA-256 of output data")
     confidence_score: float = Field(ge=0, le=1)
-    explanation: Optional[dict[str, Any]] = None
-    sources: Optional[list[str]] = None
+    explanation: dict[str, Any] | None = None
+    sources: list[str] | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -33,14 +33,14 @@ class DecisionArtifactResponse(BaseModel):
     decision_id: str
     timestamp: datetime
     decision_type: str
-    tenant_id: Optional[str] = None
-    trace_id: Optional[str] = None
+    tenant_id: str | None = None
+    trace_id: str | None = None
     input_fingerprint: str
-    model_fingerprint: Optional[str] = None
+    model_fingerprint: str | None = None
     output_fingerprint: str
     confidence_score: float
-    explanation: Optional[dict[str, Any]] = None
-    sources: Optional[list[str]] = None
+    explanation: dict[str, Any] | None = None
+    sources: list[str] | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 

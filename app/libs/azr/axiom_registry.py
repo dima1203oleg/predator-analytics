@@ -13,11 +13,11 @@ Cannot be modified at runtime.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 import hashlib
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import yaml
 
@@ -25,24 +25,27 @@ import yaml
 logger = logging.getLogger("azr.axiom_registry")
 
 
-class AxiomLevel(str, Enum):
+class AxiomLevel(StrEnum):
     """Axiom importance levels."""
-    FUNDAMENTAL = "FUNDAMENTAL"    # Cannot be modified under any circumstances
-    ABSOLUTE = "ABSOLUTE"          # Cannot be modified by AZR
+
+    FUNDAMENTAL = "FUNDAMENTAL"  # Cannot be modified under any circumstances
+    ABSOLUTE = "ABSOLUTE"  # Cannot be modified by AZR
     CONSTITUTIONAL = "CONSTITUTIONAL"  # Requires super-majority
-    OPERATIONAL = "OPERATIONAL"    # Requires court approval
+    OPERATIONAL = "OPERATIONAL"  # Requires court approval
 
 
-class AxiomStatus(str, Enum):
+class AxiomStatus(StrEnum):
     """Axiom enforcement status."""
+
     ENFORCED = "ENFORCED"
     DEGRADED = "DEGRADED"
-    SUSPENDED = "SUSPENDED"    # Only for non-fundamental
+    SUSPENDED = "SUSPENDED"  # Only for non-fundamental
 
 
 @dataclass
 class Constraint:
     """A constraint defined by an axiom."""
+
     id: str
     description: str
     check_expression: str = ""
@@ -53,6 +56,7 @@ class Constraint:
 @dataclass
 class Axiom:
     """Constitutional axiom definition."""
+
     id: str
     name: str
     name_en: str
@@ -91,7 +95,7 @@ class Axiom:
             "status": self.status.value,
             "immutability": self.immutability,
             "constraints_count": len(self.constraints),
-            "content_hash": self.content_hash[:16] + "..."
+            "content_hash": self.content_hash[:16] + "...",
         }
 
 
@@ -161,13 +165,15 @@ class AxiomRegistry:
         constraints = []
         for c in data.get("constraints", []):
             if isinstance(c, dict):
-                constraints.append(Constraint(
-                    id=c.get("id", ""),
-                    description=c.get("description", ""),
-                    check_expression=c.get("check_expression", ""),
-                    violation_severity=c.get("violation_severity", "HIGH"),
-                    violation_action=c.get("violation_action", "BLOCK")
-                ))
+                constraints.append(
+                    Constraint(
+                        id=c.get("id", ""),
+                        description=c.get("description", ""),
+                        check_expression=c.get("check_expression", ""),
+                        violation_severity=c.get("violation_severity", "HIGH"),
+                        violation_action=c.get("violation_action", "BLOCK"),
+                    )
+                )
 
         # Parse enforcement
         enforcement = []
@@ -189,14 +195,12 @@ class AxiomRegistry:
             immutability=data["immutability"],
             enforcement=enforcement,
             constraints=constraints,
-            created_at=datetime.fromisoformat(data["created_at"]) if "created_at" in data else None
+            created_at=datetime.fromisoformat(data["created_at"]) if "created_at" in data else None,
         )
 
     def _compute_registry_hash(self) -> str:
         """Compute hash of all axioms for integrity verification."""
-        combined = "".join(
-            a.content_hash for a in sorted(self._axioms.values(), key=lambda x: x.id)
-        )
+        combined = "".join(a.content_hash for a in sorted(self._axioms.values(), key=lambda x: x.id))
         return hashlib.sha3_512(combined.encode()).hexdigest()
 
     # ═══════════════════════════════════════════════════════════════
@@ -261,7 +265,7 @@ class AxiomRegistry:
                     "constraint_id": constraint.id,
                     "violation": constraint.description,
                     "severity": constraint.violation_severity,
-                    "action": constraint.violation_action
+                    "action": constraint.violation_action,
                 }
 
         return None
@@ -327,7 +331,7 @@ class AxiomRegistry:
                     "axiom_name": axiom.name,
                     "violation": "Entity not registered in system registry",
                     "severity": "CRITICAL",
-                    "action": "BLOCK_AND_ALERT"
+                    "action": "BLOCK_AND_ALERT",
                 }
         return None
 
@@ -339,7 +343,7 @@ class AxiomRegistry:
                 "axiom_name": axiom.name,
                 "violation": "Critical action without human approval",
                 "severity": "CRITICAL",
-                "action": "BLOCK_EXECUTION"
+                "action": "BLOCK_EXECUTION",
             }
         return None
 
@@ -353,7 +357,7 @@ class AxiomRegistry:
                 "axiom_name": axiom.name,
                 "violation": f"Risk score {risk_score:.2%} exceeds threshold 20%",
                 "severity": "CRITICAL" if risk_score >= 0.30 else "HIGH",
-                "action": "BLOCK_EXECUTION"
+                "action": "BLOCK_EXECUTION",
             }
 
         if not action.get("rollback_plan"):
@@ -362,7 +366,7 @@ class AxiomRegistry:
                 "axiom_name": axiom.name,
                 "violation": "No rollback plan provided",
                 "severity": "HIGH",
-                "action": "BLOCK_UNTIL_PLAN_PROVIDED"
+                "action": "BLOCK_UNTIL_PLAN_PROVIDED",
             }
 
         return None
@@ -375,7 +379,7 @@ class AxiomRegistry:
             "axiom_count": len(self._axioms),
             "registry_hash": self._registry_hash[:32] + "..." if self._registry_hash else None,
             "integrity_valid": self.verify_registry_integrity() if self._loaded else None,
-            "axioms": [a.to_dict() for a in sorted(self._axioms.values(), key=lambda x: x.id)]
+            "axioms": [a.to_dict() for a in sorted(self._axioms.values(), key=lambda x: x.id)],
         }
 
 

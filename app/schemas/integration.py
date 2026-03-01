@@ -3,20 +3,20 @@ from __future__ import annotations
 
 """Integration Schemas."""
 from datetime import datetime
-from enum import Enum
-from typing import Any, Dict, Optional
+from enum import StrEnum
+from typing import Any
 
 from pydantic import BaseModel
 
 
-class IntegrationType(str, Enum):
+class IntegrationType(StrEnum):
     WEBHOOK = "webhook"
     API = "api"
     DATABASE = "database"
     STREAM = "stream"
 
 
-class IntegrationStatus(str, Enum):
+class IntegrationStatus(StrEnum):
     ACTIVE = "ACTIVE"
     INACTIVE = "INACTIVE"
     ERROR = "ERROR"

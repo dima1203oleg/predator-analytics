@@ -7,7 +7,7 @@ Provides endpoints for multi-model consensus queries.
 
 from datetime import datetime
 import logging
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from prometheus_client import REGISTRY
@@ -30,37 +30,33 @@ router = APIRouter(prefix="/council", tags=["LLM Council"])
 # Request/Response Models
 class CouncilQueryRequest(BaseModel):
     """Request for council deliberation."""
+
     query: str = Field(..., description="Question or task for the council")
     context: str | None = Field(None, description="Background information")
     models: list[str] | None = Field(
-        default=['gemini', 'groq'],
-        description="Models to include in council (defaults to free tier)"
+        default=["gemini", "groq"], description="Models to include in council (defaults to free tier)"
     )
-    enable_peer_review: bool = Field(
-        default=True,
-        description="Enable peer review phase (slower but higher quality)"
-    )
-    chairman_model: str | None = Field(
-        None,
-        description="Model to use as chairman (default: gpt4)"
-    )
+    enable_peer_review: bool = Field(default=True, description="Enable peer review phase (slower but higher quality)")
+    chairman_model: str | None = Field(None, description="Model to use as chairman (default: gpt4)")
 
 
 class CouncilQueryResponse(BaseModel):
     """Response from council deliberation."""
+
     request_id: str
     final_answer: str
     confidence: float
     contributing_models: list[str]
     peer_review_summary: dict[str, Any]
     dissenting_opinions: list[dict[str, str]]
-    individual_responses: list[dict[str, Any]] = [] # New: Full debate history
+    individual_responses: list[dict[str, Any]] = []  # New: Full debate history
     metadata: dict[str, Any]
     timestamp: datetime
 
 
 class CouncilStatsResponse(BaseModel):
     """Statistics about council performance."""
+
     total_deliberations: int
     average_confidence: float
     average_deliberation_time: float
@@ -81,19 +77,13 @@ def get_council() -> LLMCouncilOrchestrator:
             logger.info(f"Initialized council with {len(_council_instance.members)} members")
         except Exception as e:
             logger.exception(f"Failed to initialize council: {e}")
-            raise HTTPException(
-                status_code=503,
-                detail=f"LLM Council unavailable: {e!s}"
-            )
+            raise HTTPException(status_code=503, detail=f"LLM Council unavailable: {e!s}")
 
     return _council_instance
 
 
 @router.post("/query", response_model=CouncilQueryResponse)
-async def query_council(
-    request: CouncilQueryRequest,
-    background_tasks: BackgroundTasks
-):
+async def query_council(request: CouncilQueryRequest, background_tasks: BackgroundTasks):
     """Query the LLM Council for a consensus answer.
 
     The council will:
@@ -105,6 +95,7 @@ async def query_council(
     """
     try:
         import time
+
         start_time = time.time()
 
         # If specific models requested, create a dynamic council, else use global
@@ -112,9 +103,7 @@ async def query_council(
 
         # Deliberate
         result: ConsensusResult = await council.deliberate(
-            query=request.query,
-            context=request.context,
-            enable_peer_review=request.enable_peer_review
+            query=request.query, context=request.context, enable_peer_review=request.enable_peer_review
         )
 
         # Track metrics (Prometheus)
@@ -127,7 +116,7 @@ async def query_council(
                 latency=elapsed,
                 confidence=result.confidence,
                 num_peer_reviews=len(result.peer_reviews),
-                peer_review_enabled=request.enable_peer_review
+                peer_review_enabled=request.enable_peer_review,
             )
         except Exception as me:
             logger.warning(f"Failed to track metrics: {me}")
@@ -138,20 +127,11 @@ async def query_council(
         # Generate request ID
         request_id = f"council_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
 
-        background_tasks.add_task(
-            _log_to_mlflow,
-            request_id=request_id,
-            query=request.query,
-            result=result
-        )
+        background_tasks.add_task(_log_to_mlflow, request_id=request_id, query=request.query, result=result)
 
         # Save to DB
         background_tasks.add_task(
-            _save_council_session,
-            request_id=request_id,
-            query=request.query,
-            context=request.context,
-            result=result
+            _save_council_session, request_id=request_id, query=request.query, context=request.context, result=result
         )
 
         return CouncilQueryResponse(
@@ -163,15 +143,12 @@ async def query_council(
             dissenting_opinions=result.dissenting_opinions,
             individual_responses=result.individual_responses,
             metadata=result.metadata,
-            timestamp=datetime.now()
+            timestamp=datetime.now(),
         )
 
     except Exception as e:
         logger.exception(f"Council query failed: {e}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Council deliberation failed: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Council deliberation failed: {e!s}")
 
 
 @router.post("/strategy", response_model=CouncilQueryResponse)
@@ -195,8 +172,8 @@ async def council_strategy_session(background_tasks: BackgroundTasks):
 
         # Collect system stats for context
         try:
-            opensearch_docs = REGISTRY.get_sample_value('opensearch_docs_total') or 0
-            qdrant_vectors = REGISTRY.get_sample_value('qdrant_vectors_total') or 0
+            opensearch_docs = REGISTRY.get_sample_value("opensearch_docs_total") or 0
+            qdrant_vectors = REGISTRY.get_sample_value("qdrant_vectors_total") or 0
             # Try to get sum of all processed documents
             # Note: get_sample_value requires exact labels usually, or we iterate.
             # For simplicity, we grab the gauges if available.
@@ -210,18 +187,14 @@ async def council_strategy_session(background_tasks: BackgroundTasks):
         result = await council.deliberate(
             query=query,
             context=f"GOVERNANCE_MODE: High-level strategic planning session.\n{context_stats}",
-            enable_peer_review=True
+            enable_peer_review=True,
         )
 
         request_id = f"strategy_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
         # Save to DB
         background_tasks.add_task(
-            _save_council_session,
-            request_id=request_id,
-            query=query,
-            context=context_stats,
-            result=result
+            _save_council_session, request_id=request_id, query=query, context=context_stats, result=result
         )
 
         return CouncilQueryResponse(
@@ -233,12 +206,11 @@ async def council_strategy_session(background_tasks: BackgroundTasks):
             dissenting_opinions=result.dissenting_opinions,
             individual_responses=result.individual_responses,
             metadata=result.metadata,
-            timestamp=datetime.now()
+            timestamp=datetime.now(),
         )
     except Exception as e:
         logger.exception(f"Strategy session failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 
 @router.get("/history")
@@ -258,6 +230,7 @@ async def get_council_history(limit: int = 10):
         logger.exception(f"Failed to fetch history: {e}")
         return []
 
+
 @router.get("/stats", response_model=CouncilStatsResponse)
 async def get_council_stats():
     """Get statistics about council performance."""
@@ -268,10 +241,7 @@ async def get_council_stats():
         return CouncilStatsResponse(**stats)
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to get stats: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to get stats: {e!s}")
 
 
 @router.post("/reset")
@@ -295,22 +265,15 @@ async def council_health():
             "status": "healthy",
             "members": [m.model_id for m in council.members],
             "chairman": council.chairman.model_id,
-            "total_deliberations": len(council.deliberation_history)
+            "total_deliberations": len(council.deliberation_history),
         }
 
     except Exception as e:
-        return {
-            "status": "unhealthy",
-            "error": str(e)
-        }
+        return {"status": "unhealthy", "error": str(e)}
 
 
 # Helper Functions
-async def _log_to_mlflow(
-    request_id: str,
-    query: str,
-    result: ConsensusResult
-):
+async def _log_to_mlflow(request_id: str, query: str, result: ConsensusResult):
     """Log council deliberation to MLflow."""
     try:
         import mlflow
@@ -324,19 +287,13 @@ async def _log_to_mlflow(
             # Log metrics
             mlflow.log_metric("confidence", result.confidence)
             mlflow.log_metric("num_peer_reviews", len(result.peer_reviews))
-            mlflow.log_metric(
-                "deliberation_time",
-                result.metadata.get("deliberation_time_seconds", 0)
-            )
+            mlflow.log_metric("deliberation_time", result.metadata.get("deliberation_time_seconds", 0))
 
             # Log artifacts
             mlflow.log_text(result.final_answer, "final_answer.txt")
 
             if result.dissenting_opinions:
-                mlflow.log_dict(
-                    {"dissenting": result.dissenting_opinions},
-                    "dissenting_opinions.json"
-                )
+                mlflow.log_dict({"dissenting": result.dissenting_opinions}, "dissenting_opinions.json")
 
             logger.info(f"Logged council deliberation to MLflow: {request_id}")
 
@@ -344,12 +301,7 @@ async def _log_to_mlflow(
         logger.warning(f"Failed to log to MLflow: {e}")
 
 
-async def _save_council_session(
-    request_id: str,
-    query: str,
-    context: str | None,
-    result: ConsensusResult
-):
+async def _save_council_session(request_id: str, query: str, context: str | None, result: ConsensusResult):
     """Save council session to PostgreSQL."""
     try:
         async with async_session_maker() as session:
@@ -362,7 +314,7 @@ async def _save_council_session(
                 participants=result.contributing_models,
                 dissenting_opinions=result.dissenting_opinions,
                 peer_reviews=[r.dict() for r in result.peer_reviews],
-                meta_info=result.metadata
+                meta_info=result.metadata,
             )
             session.add(db_session)
             await session.commit()
@@ -371,15 +323,10 @@ async def _save_council_session(
         logger.exception(f"❌ Failed to save council session to DB: {e}")
 
 
-
 def _format_peer_review_summary(peer_reviews: list[Any]) -> dict[str, Any]:
     """Helper to format peer review summary for responses."""
     if not peer_reviews:
-        return {
-            "total_reviews": 0,
-            "by_model": {},
-            "average_scores": {}
-        }
+        return {"total_reviews": 0, "by_model": {}, "average_scores": {}}
 
     # Group reviews by reviewed model
     by_model = {}
@@ -390,16 +337,15 @@ def _format_peer_review_summary(peer_reviews: list[Any]) -> dict[str, Any]:
         by_model[model].append({
             "reviewer": review.reviewer_id,
             "score": review.score,
-            "critique": review.critique[:100] + "..." if len(review.critique) > 100 else review.critique
+            "critique": review.critique[:100] + "..." if len(review.critique) > 100 else review.critique,
         })
 
     return {
         "total_reviews": len(peer_reviews),
         "by_model": by_model,
         "average_scores": {
-            model: sum(r["score"] for r in reviews) / len(reviews)
-            for model, reviews in by_model.items()
-        }
+            model: sum(r["score"] for r in reviews) / len(reviews) for model, reviews in by_model.items()
+        },
     }
 
 
@@ -416,19 +362,19 @@ async def get_example_usage():
                 "query": "Проаналізуй аномалії в митних деклараціях за 2024 рік",
                 "context": "Датасет містить 10,000 декларацій з різними товарами",
                 "models": ["gpt4", "claude", "gpt3.5"],
-                "enable_peer_review": True
-            }
+                "enable_peer_review": True,
+            },
         },
         "workflow": [
             "1. Independent Generation: Each model answers independently",
             "2. Peer Review: Models critique each other's responses",
             "3. Consensus: Chairman synthesizes best answer",
-            "4. Return: High-quality consensus with confidence score"
+            "4. Return: High-quality consensus with confidence score",
         ],
         "benefits": [
             "Higher accuracy than single model",
             "Reduced hallucinations through peer review",
             "Diversity of perspectives",
-            "Confidence scoring based on agreement"
-        ]
+            "Confidence scoring based on agreement",
+        ],
     }

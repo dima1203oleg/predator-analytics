@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import asyncio
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 
 class MorningNewspaperService:
@@ -23,15 +22,16 @@ class MorningNewspaperService:
                 {
                     "title": "Митна Картина",
                     "content": "Виявлено 3 нові схеми підміни кодів УКТЗЕД у секторі електроніки.",
-                    "priority": "high"
+                    "priority": "high",
                 },
                 {
                     "title": "Макроекономіка",
                     "content": "Курс гривні стабільний, але попит на валюту з боку імпортерів пального зростає.",
-                    "priority": "medium"
-                }
+                    "priority": "medium",
+                },
             ],
-            "ai_verdict": "Рекомендовано посилити контроль за товарною групою 85 за напрямком Польща-Україна."
+            "ai_verdict": "Рекомендовано посилити контроль за товарною групою 85 за напрямком Польща-Україна.",
         }
+
 
 newspaper_service = MorningNewspaperService()

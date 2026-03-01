@@ -13,9 +13,11 @@ sys.path.append(str(ROOT_DIR))
 # Mock environment if needed
 os.environ["ENVIRONMENT"] = "production"
 
+
 async def main():
     try:
         from app.services.etl_ingestion import ETLIngestionService
+
         service = ETLIngestionService()
 
         file_path = "/app/uploads/Березень_2024.xlsx"
@@ -29,7 +31,9 @@ async def main():
     except Exception as e:
         print(f"Failed to trigger ingestion: {e}")
         import traceback
+
         traceback.print_exc()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

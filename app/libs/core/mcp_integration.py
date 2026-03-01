@@ -1,4 +1,4 @@
-"""🔌 MCP INTEGRATION LAYER - Model Context Protocol for AZR
+"""🔌 MCP INTEGRATION LAYER - Model Context Protocol for AZR.
 ==========================================================
 Core component for AZR v40 Sovereign Architecture.
 
@@ -23,11 +23,9 @@ Python 3.12 | Ukrainian Documentation
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 import asyncio
-from collections.abc import Awaitable, Callable
 from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 import json
 import logging
@@ -35,7 +33,11 @@ import os
 from pathlib import Path
 import threading
 import time
-from typing import Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any
+
+
+if TYPE_CHECKING:
+    from collections.abc import Awaitable, Callable
 
 
 logging.basicConfig(level=logging.INFO)
@@ -46,8 +48,10 @@ logger = logging.getLogger("mcp_integration")
 # 📊 MCP TYPES
 # ============================================================================
 
+
 class MCPToolType(Enum):
     """Types of MCP tools."""
+
     FUNCTION = "function"
     RESOURCE = "resource"
     PROMPT = "prompt"
@@ -55,6 +59,7 @@ class MCPToolType(Enum):
 
 class MCPProtocol(Enum):
     """MCP transport protocols."""
+
     STDIO = "stdio"
     HTTP = "http"
     WEBSOCKET = "websocket"
@@ -63,6 +68,7 @@ class MCPProtocol(Enum):
 @dataclass
 class MCPTool:
     """Definition of an MCP tool."""
+
     name: str
     description: str
     tool_type: MCPToolType
@@ -73,24 +79,21 @@ class MCPTool:
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
-        d['tool_type'] = self.tool_type.value
+        d["tool_type"] = self.tool_type.value
         return d
 
     def to_openai_function(self) -> dict[str, Any]:
         """Convert to OpenAI function calling format."""
         return {
             "type": "function",
-            "function": {
-                "name": self.name,
-                "description": self.description,
-                "parameters": self.parameters
-            }
+            "function": {"name": self.name, "description": self.description, "parameters": self.parameters},
         }
 
 
 @dataclass
 class MCPToolCall:
     """Record of an MCP tool call."""
+
     call_id: str
     tool_name: str
     arguments: dict[str, Any]
@@ -106,6 +109,7 @@ class MCPToolCall:
 @dataclass
 class MCPServerConfig:
     """Configuration for an MCP server connection."""
+
     name: str
     protocol: MCPProtocol
     endpoint: str  # Path for STDIO, URL for HTTP/WS
@@ -115,15 +119,16 @@ class MCPServerConfig:
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
-        d['protocol'] = self.protocol.value
+        d["protocol"] = self.protocol.value
         # Don't expose auth token
-        d['auth_token'] = "***" if self.auth_token else None
+        d["auth_token"] = "***" if self.auth_token else None
         return d
 
 
 # ============================================================================
 # 🔧 MCP TOOL REGISTRY
 # ============================================================================
+
 
 class MCPToolRegistry:
     """Registry for MCP tools.
@@ -139,11 +144,7 @@ class MCPToolRegistry:
         # Rate limiting
         self._call_counts: dict[str, list[float]] = {}
 
-    def register_tool(
-        self,
-        tool: MCPTool,
-        handler: Callable[..., Awaitable[Any]]
-    ) -> None:
+    def register_tool(self, tool: MCPTool, handler: Callable[..., Awaitable[Any]]) -> None:
         """Register a tool with its handler."""
         with self._lock:
             self._tools[tool.name] = tool
@@ -156,7 +157,7 @@ class MCPToolRegistry:
         description: str,
         parameters: dict[str, Any],
         handler: Callable[..., Awaitable[Any]],
-        requires_auth: bool = False
+        requires_auth: bool = False,
     ) -> MCPTool:
         """Convenience method to register a function tool."""
         tool = MCPTool(
@@ -164,7 +165,7 @@ class MCPToolRegistry:
             description=description,
             tool_type=MCPToolType.FUNCTION,
             parameters=parameters,
-            requires_auth=requires_auth
+            requires_auth=requires_auth,
         )
         self.register_tool(tool, handler)
         return tool
@@ -192,9 +193,7 @@ class MCPToolRegistry:
 
         # Clean old entries
         if tool_name in self._call_counts:
-            self._call_counts[tool_name] = [
-                t for t in self._call_counts[tool_name] if t > minute_ago
-            ]
+            self._call_counts[tool_name] = [t for t in self._call_counts[tool_name] if t > minute_ago]
         else:
             self._call_counts[tool_name] = []
 
@@ -206,10 +205,7 @@ class MCPToolRegistry:
         return True
 
     async def invoke(
-        self,
-        tool_name: str,
-        arguments: dict[str, Any],
-        auth_context: dict[str, Any] | None = None
+        self, tool_name: str, arguments: dict[str, Any], auth_context: dict[str, Any] | None = None
     ) -> MCPToolCall:
         """Invoke a tool and return result."""
         call_id = f"call_{int(time.time_ns()) % 1000000:012d}"
@@ -219,10 +215,7 @@ class MCPToolRegistry:
         tool = self._tools.get(tool_name)
         if not tool:
             call = MCPToolCall(
-                call_id=call_id,
-                tool_name=tool_name,
-                arguments=arguments,
-                error=f"Tool '{tool_name}' not found"
+                call_id=call_id, tool_name=tool_name, arguments=arguments, error=f"Tool '{tool_name}' not found"
             )
             self._call_history.append(call)
             return call
@@ -230,22 +223,14 @@ class MCPToolRegistry:
         # Check auth if required
         if tool.requires_auth and not auth_context:
             call = MCPToolCall(
-                call_id=call_id,
-                tool_name=tool_name,
-                arguments=arguments,
-                error="Authentication required"
+                call_id=call_id, tool_name=tool_name, arguments=arguments, error="Authentication required"
             )
             self._call_history.append(call)
             return call
 
         # Check rate limit
         if not self._check_rate_limit(tool_name):
-            call = MCPToolCall(
-                call_id=call_id,
-                tool_name=tool_name,
-                arguments=arguments,
-                error="Rate limit exceeded"
-            )
+            call = MCPToolCall(call_id=call_id, tool_name=tool_name, arguments=arguments, error="Rate limit exceeded")
             self._call_history.append(call)
             return call
 
@@ -259,21 +244,13 @@ class MCPToolRegistry:
             duration = (time.perf_counter() - start) * 1000
 
             call = MCPToolCall(
-                call_id=call_id,
-                tool_name=tool_name,
-                arguments=arguments,
-                result=result,
-                duration_ms=duration
+                call_id=call_id, tool_name=tool_name, arguments=arguments, result=result, duration_ms=duration
             )
 
         except Exception as e:
             duration = (time.perf_counter() - start) * 1000
             call = MCPToolCall(
-                call_id=call_id,
-                tool_name=tool_name,
-                arguments=arguments,
-                error=str(e),
-                duration_ms=duration
+                call_id=call_id, tool_name=tool_name, arguments=arguments, error=str(e), duration_ms=duration
             )
 
         self._call_history.append(call)
@@ -295,7 +272,7 @@ class MCPToolRegistry:
             "total_calls": len(self._call_history),
             "success_count": success_count,
             "error_count": error_count,
-            "success_rate": success_count / max(1, len(self._call_history)) * 100
+            "success_rate": success_count / max(1, len(self._call_history)) * 100,
         }
 
 
@@ -303,8 +280,9 @@ class MCPToolRegistry:
 # 🌐 MCP CLIENT
 # ============================================================================
 
+
 class MCPClient:
-    """🔌 MCP Client для підключення до зовнішніх серверів
+    """🔌 MCP Client для підключення до зовнішніх серверів.
 
     Підтримує:
     - STDIO (локальні процеси)
@@ -337,11 +315,9 @@ class MCPClient:
             elif self.config.protocol == MCPProtocol.HTTP:
                 # HTTP connection
                 import httpx
+
                 async with httpx.AsyncClient() as client:
-                    resp = await client.get(
-                        f"{self.config.endpoint}/health",
-                        timeout=self.config.timeout_seconds
-                    )
+                    resp = await client.get(f"{self.config.endpoint}/health", timeout=self.config.timeout_seconds)
                     if resp.status_code == 200:
                         self._connected = True
                         self._session_id = resp.headers.get("X-Session-ID")
@@ -360,7 +336,7 @@ class MCPClient:
             return self._connected
 
         except Exception as e:
-            logger.error(f"Failed to connect to MCP server {self.config.name}: {e}")
+            logger.exception(f"Failed to connect to MCP server {self.config.name}: {e}")
             return False
 
     async def disconnect(self) -> None:
@@ -379,7 +355,7 @@ class MCPClient:
                 name=f"{self.config.name}_health",
                 description=f"Check health of {self.config.name}",
                 tool_type=MCPToolType.FUNCTION,
-                parameters={"type": "object", "properties": {}}
+                parameters={"type": "object", "properties": {}},
             ),
             MCPTool(
                 name=f"{self.config.name}_query",
@@ -387,12 +363,10 @@ class MCPClient:
                 tool_type=MCPToolType.FUNCTION,
                 parameters={
                     "type": "object",
-                    "properties": {
-                        "query": {"type": "string", "description": "Query string"}
-                    },
-                    "required": ["query"]
-                }
-            )
+                    "properties": {"query": {"type": "string", "description": "Query string"}},
+                    "required": ["query"],
+                },
+            ),
         ]
 
     @property
@@ -403,11 +377,7 @@ class MCPClient:
     def available_tools(self) -> list[MCPTool]:
         return list(self._tools)
 
-    async def call_tool(
-        self,
-        tool_name: str,
-        arguments: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def call_tool(self, tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         """Call a tool on the remote server."""
         if not self._connected:
             return {"error": "Not connected"}
@@ -416,7 +386,7 @@ class MCPClient:
         return {
             "result": f"Called {tool_name} with {arguments}",
             "server": self.config.name,
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
 
@@ -424,8 +394,9 @@ class MCPClient:
 # 🤖 MCP AGENT ORCHESTRATOR
 # ============================================================================
 
+
 class MCPAgentOrchestrator:
-    """🤖 Оркестратор AI Агентів з MCP Інтеграцією
+    """🤖 Оркестратор AI Агентів з MCP Інтеграцією.
 
     Координує:
     - Multiple AI providers (Mistral, OpenAI, Ollama)
@@ -469,12 +440,13 @@ class MCPAgentOrchestrator:
         async def get_system_health() -> dict[str, Any]:
             try:
                 from app.libs.core.system_metrics import get_system_snapshot
+
                 snapshot = get_system_snapshot()
                 return {
                     "cpu_percent": snapshot.cpu_percent,
                     "memory_percent": snapshot.memory_percent,
                     "disk_percent": snapshot.disk_percent,
-                    "timestamp": datetime.now(UTC).isoformat()
+                    "timestamp": datetime.now(UTC).isoformat(),
                 }
             except Exception as e:
                 return {"error": f"Metrics collection failed: {e!s}"}
@@ -483,7 +455,7 @@ class MCPAgentOrchestrator:
             name="get_system_health",
             description="Get current system health metrics (CPU, Memory, Disk)",
             parameters={"type": "object", "properties": {}},
-            handler=get_system_health
+            handler=get_system_health,
         )
 
         # AZR status tool
@@ -497,28 +469,29 @@ class MCPAgentOrchestrator:
                     "FormalStateMachine",
                     "RedTeamAgent",
                     "GraphRAGMemory",
-                    "MCPIntegration"
+                    "MCPIntegration",
                 ],
-                "timestamp": datetime.now(UTC).isoformat()
+                "timestamp": datetime.now(UTC).isoformat(),
             }
 
         self.registry.register_function(
             name="get_azr_status",
             description="Get current AZR engine status and capabilities",
             parameters={"type": "object", "properties": {}},
-            handler=get_azr_status
+            handler=get_azr_status,
         )
 
         # Truth Ledger query tool
         async def query_truth_ledger(limit: int = 10) -> dict[str, Any]:
             try:
                 from app.libs.core.merkle_ledger import get_truth_ledger
+
                 ledger = get_truth_ledger(self.storage_path)
                 entries = ledger.get_latest_entries(limit)
                 return {
                     "total_entries": ledger.length,
                     "merkle_root": ledger.merkle_root[:32] + "...",
-                    "recent_entries": [e.to_dict() for e in entries]
+                    "recent_entries": [e.to_dict() for e in entries],
                 }
             except Exception as e:
                 return {"error": str(e)}
@@ -530,23 +503,23 @@ class MCPAgentOrchestrator:
                 "type": "object",
                 "properties": {
                     "limit": {"type": "integer", "description": "Number of entries to return", "default": 10}
-                }
+                },
             },
-            handler=query_truth_ledger
+            handler=query_truth_ledger,
         )
 
         # Knowledge Graph query tool
         async def query_knowledge_graph(query: str, limit: int = 5) -> dict[str, Any]:
             try:
                 from app.libs.core.graph_rag_memory import get_knowledge_graph
+
                 kg = get_knowledge_graph(self.storage_path)
                 similar = kg.find_similar(query, limit)
                 return {
                     "query": query,
                     "results": [
-                        {"label": node.label, "type": node.node_type.value, "similarity": sim}
-                        for node, sim in similar
-                    ]
+                        {"label": node.label, "type": node.node_type.value, "similarity": sim} for node, sim in similar
+                    ],
                 }
             except Exception as e:
                 return {"error": str(e)}
@@ -558,11 +531,11 @@ class MCPAgentOrchestrator:
                 "type": "object",
                 "properties": {
                     "query": {"type": "string", "description": "Search query"},
-                    "limit": {"type": "integer", "description": "Max results", "default": 5}
+                    "limit": {"type": "integer", "description": "Max results", "default": 5},
                 },
-                "required": ["query"]
+                "required": ["query"],
             },
-            handler=query_knowledge_graph
+            handler=query_knowledge_graph,
         )
 
     async def register_mcp_server(self, config: MCPServerConfig) -> bool:
@@ -575,9 +548,11 @@ class MCPAgentOrchestrator:
 
             # Register discovered tools
             for tool in client.available_tools:
+
                 async def make_handler(c: MCPClient, t: str):
                     async def handler(**kwargs):
                         return await c.call_tool(t, kwargs)
+
                     return handler
 
                 handler = await make_handler(client, tool.name)
@@ -594,17 +569,13 @@ class MCPAgentOrchestrator:
             await client.disconnect()
 
     def configure_provider(
-        self,
-        name: str,
-        api_key: str | None = None,
-        endpoint: str | None = None,
-        model: str | None = None
+        self, name: str, api_key: str | None = None, endpoint: str | None = None, model: str | None = None
     ) -> None:
         """Configure an AI provider."""
         self._providers[name] = {
             "api_key": api_key or os.environ.get(f"{name.upper()}_API_KEY"),
             "endpoint": endpoint,
-            "model": model
+            "model": model,
         }
 
     async def run_agent(
@@ -613,7 +584,7 @@ class MCPAgentOrchestrator:
         tools: list[str] | None = None,
         provider: str | None = None,
         conversation_id: str | None = None,
-        max_tool_calls: int = 5
+        max_tool_calls: int = 5,
     ) -> dict[str, Any]:
         """Run an AI agent with MCP tools.
 
@@ -635,10 +606,7 @@ class MCPAgentOrchestrator:
             self._conversations[conversation_id] = []
 
         # Add user message
-        self._conversations[conversation_id].append({
-            "role": "user",
-            "content": prompt
-        })
+        self._conversations[conversation_id].append({"role": "user", "content": prompt})
 
         # Get available tools
         available_tools = self.registry.list_tools()
@@ -651,19 +619,12 @@ class MCPAgentOrchestrator:
         # Agent loop
         for iteration in range(max_tool_calls):
             # Generate response (simulate for now)
-            response = await self._generate_response(
-                provider,
-                self._conversations[conversation_id],
-                available_tools
-            )
+            response = await self._generate_response(provider, self._conversations[conversation_id], available_tools)
 
             if response.get("tool_call"):
                 # Execute tool call
                 tool_call = response["tool_call"]
-                result = await self.registry.invoke(
-                    tool_call["name"],
-                    tool_call.get("arguments", {})
-                )
+                result = await self.registry.invoke(tool_call["name"], tool_call.get("arguments", {}))
 
                 tool_calls_made.append(result.to_dict())
 
@@ -671,19 +632,16 @@ class MCPAgentOrchestrator:
                 self._conversations[conversation_id].append({
                     "role": "assistant",
                     "content": None,
-                    "tool_call": tool_call
+                    "tool_call": tool_call,
                 })
                 self._conversations[conversation_id].append({
                     "role": "tool",
-                    "content": json.dumps(result.result or {"error": result.error})
+                    "content": json.dumps(result.result or {"error": result.error}),
                 })
             else:
                 # Final response
                 final_response = response.get("content", "No response generated")
-                self._conversations[conversation_id].append({
-                    "role": "assistant",
-                    "content": final_response
-                })
+                self._conversations[conversation_id].append({"role": "assistant", "content": final_response})
                 break
 
         return {
@@ -692,23 +650,18 @@ class MCPAgentOrchestrator:
             "tool_calls": tool_calls_made,
             "provider": provider,
             "iterations": iteration + 1,
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     async def _generate_response(
-        self,
-        provider: str,
-        messages: list[dict[str, Any]],
-        tools: list[MCPTool]
+        self, provider: str, messages: list[dict[str, Any]], tools: list[MCPTool]
     ) -> dict[str, Any]:
         """Generate response from AI provider."""
         # Check if last message was a tool result
         if messages and messages[-1].get("role") == "tool":
             # Generate final response based on tool result
             tool_result = messages[-1]["content"]
-            return {
-                "content": f"На основі аналізу: {tool_result[:200]}..."
-            }
+            return {"content": f"На основі аналізу: {tool_result[:200]}..."}
 
         # Check if we should call a tool
         last_message = messages[-1]["content"] if messages else ""
@@ -719,7 +672,7 @@ class MCPAgentOrchestrator:
             "status": "get_azr_status",
             "ledger": "query_truth_ledger",
             "knowledge": "query_knowledge_graph",
-            "search": "query_knowledge_graph"
+            "search": "query_knowledge_graph",
         }
 
         for keyword, tool_name in tool_keywords.items():
@@ -729,14 +682,14 @@ class MCPAgentOrchestrator:
                     return {
                         "tool_call": {
                             "name": tool_name,
-                            "arguments": {"query": last_message} if "query" in tool.parameters.get("properties", {}) else {}
+                            "arguments": {"query": last_message}
+                            if "query" in tool.parameters.get("properties", {})
+                            else {},
                         }
                     }
 
         # No tool needed, generate direct response
-        return {
-            "content": f"Обробляю запит: '{last_message[:100]}'. Система AZR готова до роботи."
-        }
+        return {"content": f"Обробляю запит: '{last_message[:100]}'. Система AZR готова до роботи."}
 
     def get_stats(self) -> dict[str, Any]:
         """Get orchestrator statistics."""
@@ -745,7 +698,7 @@ class MCPAgentOrchestrator:
             "registered_tools": len(self.registry.list_tools()),
             "active_conversations": len(self._conversations),
             "tool_stats": self.registry.get_stats(),
-            "providers": list(self._providers.keys())
+            "providers": list(self._providers.keys()),
         }
 
 
@@ -771,6 +724,7 @@ def get_mcp_orchestrator(storage_path: str | Path = "/tmp/azr_logs") -> MCPAgent
 # 🧪 SELF-TEST
 # ============================================================================
 
+
 async def run_self_test():
     print("🔌 MCP INTEGRATION - Self-Test")
     print("=" * 60)
@@ -794,10 +748,7 @@ async def run_self_test():
 
     # Test agent run
     print("\n🤖 Testing Agent Run:")
-    response = await orchestrator.run_agent(
-        prompt="What is the current system health?",
-        provider="ollama"
-    )
+    response = await orchestrator.run_agent(prompt="What is the current system health?", provider="ollama")
     print(f"  Response: {response['response'][:100]}...")
     print(f"  Tool calls: {len(response['tool_calls'])}")
 

@@ -26,6 +26,7 @@ from app.libs.core.database import get_db, get_db_ctx
 # - libs.core.red_team_agent (Adversarial Security Testing)
 # - libs.core.azr_unified (Unified AZR Organism)
 
+
 # Lazy imports for modules with optional dependencies
 def __getattr__(name: str):
     """Lazy loading for modules with optional dependencies."""
@@ -47,10 +48,12 @@ def __getattr__(name: str):
 
     if name in lazy_modules:
         import importlib
+
         module = importlib.import_module(lazy_modules[name])
         return getattr(module, name)
 
     raise AttributeError(f"module 'libs.core' has no attribute '{name}'")
+
 
 __all__ = [
     "get_db",

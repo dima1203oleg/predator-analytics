@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime
-import json
 import logging
 import os
 
@@ -11,20 +9,21 @@ from h2o.automl import H2OAutoML
 import pandas as pd
 from sqlalchemy import select
 
+
 try:
     from app.libs.core.config import settings
     from app.libs.core.database import get_db_ctx
     from app.libs.core.models.entities import AugmentedDataset, MLJob
 except ImportError:
-    from libs.core.config import settings
     from libs.core.database import get_db_ctx
-    from libs.core.models.entities import AugmentedDataset, MLJob
+    from libs.core.models.entities import AugmentedDataset
 
 
 logger = logging.getLogger("h2o_manager")
 logger.setLevel(logging.INFO)
 
 H2O_URL = os.getenv("H2O_URL", "http://predator_h2o_automl:54321")
+
 
 class H2OManager:
     def __init__(self):
@@ -77,7 +76,7 @@ class H2OManager:
                     # Replace single backslashes that are NOT followed by a valid escape char with double backslashes
                     try:
                         # This regex finds backslashes not followed by ", \, /, b, f, n, r, t, u
-                        fixed_str = re.sub(r'\\(?![\\"/bfnrtu])', r'\\\\', json_str)
+                        fixed_str = re.sub(r'\\(?![\\"/bfnrtu])', r"\\\\", json_str)
                         return json.loads(fixed_str)
                     except Exception:
                         return None
@@ -97,7 +96,9 @@ class H2OManager:
                     failed_count += 1
 
             if failed_count > 0:
-                logger.warning(f"⚠️ Failed to parse {failed_count} JSON rows due to formatting errors. Proceeding with {len(rows)} valid rows.")
+                logger.warning(
+                    f"⚠️ Failed to parse {failed_count} JSON rows due to formatting errors. Proceeding with {len(rows)} valid rows."
+                )
 
             if not rows:
                 logger.error("All rows failed to parse.")
@@ -116,13 +117,12 @@ class H2OManager:
 
             # Step A: Try to use existing column
             if "risk_score" in df.columns:
-                df["risk_score"] = pd.to_numeric(df["risk_score"], errors='coerce')
+                df["risk_score"] = pd.to_numeric(df["risk_score"], errors="coerce")
             else:
                 df["risk_score"] = float("nan")
 
             # Step B: Extract 'Risk Score: 0.87' from 'output' text if column is NaN
             # Regex looks for "Risk Score:" or "Score:" followed by a number between 0 and 1
-            import re
             risk_pattern = r"(?:Risk|Anomaly)\s*Score[:\s]+(0?\.\d+|1\.0|1)"
 
             def extract_score(row):
@@ -154,7 +154,16 @@ class H2OManager:
                 text_lower = text.lower()
 
                 # Strong indicators of anomaly
-                high_risk_keywords = ["detected", "alert", "critical", "breach", "unauthorized", "malicious", "attack", "fraud confirmed"]
+                high_risk_keywords = [
+                    "detected",
+                    "alert",
+                    "critical",
+                    "breach",
+                    "unauthorized",
+                    "malicious",
+                    "attack",
+                    "fraud confirmed",
+                ]
                 # Indicators of normal behavior
                 low_risk_keywords = ["normal", "routine", "verified", "safe", "legitimate", "success", "no issues"]
 
@@ -182,10 +191,14 @@ class H2OManager:
             anomaly_count = df["is_anomaly"].sum()
             total_count = len(df)
 
-            logger.info(f"📊 Feature Extraction: Found {df['extracted_score'].count()} explicit scores out of {total_count} rows.")
+            logger.info(
+                f"📊 Feature Extraction: Found {df['extracted_score'].count()} explicit scores out of {total_count} rows."
+            )
 
             if anomaly_count < 10 or anomaly_count > (total_count - 10):
-                logger.warning(f"⚠️ Imbalanced classes (Anomalies: {anomaly_count}/{total_count}). Forcing synthetic balance for training stability.")
+                logger.warning(
+                    f"⚠️ Imbalanced classes (Anomalies: {anomaly_count}/{total_count}). Forcing synthetic balance for training stability."
+                )
                 # Force at least 15% minority class
                 target_minority_size = int(total_count * 0.15)
 
@@ -195,7 +208,9 @@ class H2OManager:
                     df.loc[flip_indices, "is_anomaly"] = 1
                 else:
                     # Create more normals
-                    flip_indices = df[df["is_anomaly"] == 1].sample(n=anomaly_count - (total_count - target_minority_size)).index
+                    flip_indices = (
+                        df[df["is_anomaly"] == 1].sample(n=anomaly_count - (total_count - target_minority_size)).index
+                    )
                     df.loc[flip_indices, "is_anomaly"] = 0
 
             logger.info(f"📊 Training on {len(df)} samples. Final Anomaly Count: {df['is_anomaly'].sum()}")
@@ -214,9 +229,9 @@ class H2OManager:
             if y in x:
                 x.remove(y)
             if "risk_score" in x:
-                x.remove("risk_score") # Prevent data leakage if it exists
+                x.remove("risk_score")  # Prevent data leakage if it exists
             if "extracted_score" in x:
-                x.remove("extracted_score") # Prevent data leakage from regex extraction
+                x.remove("extracted_score")  # Prevent data leakage from regex extraction
 
             # Keep text columns! H2O AutoML handles NLP.
             # Only remove 'meta' which is usually a dict and breaks things
@@ -250,10 +265,7 @@ class H2OManager:
                 "status": "success",
                 "model_id": aml.leader.model_id,
                 "path": model_path,
-                "metrics": {
-                    "auc": aml.leader.auc(),
-                    "logloss": aml.leader.logloss()
-                }
+                "metrics": {"auc": aml.leader.auc(), "logloss": aml.leader.logloss()},
             }
 
         try:
@@ -280,7 +292,11 @@ class H2OManager:
             if not os.path.exists(models_dir):
                 return {"error": "No models found (directory missing)"}
 
-            files = [os.path.join(models_dir, f) for f in os.listdir(models_dir) if os.path.isfile(os.path.join(models_dir, f))]
+            files = [
+                os.path.join(models_dir, f)
+                for f in os.listdir(models_dir)
+                if os.path.isfile(os.path.join(models_dir, f))
+            ]
             if not files:
                 return {"error": "No models available yet"}
 
@@ -310,11 +326,8 @@ class H2OManager:
                 for _idx, row in preds_df.iterrows():
                     # If classification: 'predict', 'p0', 'p1' (if binary)
                     # If regression: 'predict'
-                    score = row.get('p1', row.get('predict', 0.0))
-                    results.append({
-                        "anomaly_score": float(score),
-                        "is_anomaly": bool(score > 0.5)
-                    })
+                    score = row.get("p1", row.get("predict", 0.0))
+                    results.append({"anomaly_score": float(score), "is_anomaly": bool(score > 0.5)})
                 return results
             except Exception as e:
                 logger.exception(f"H2O Prediction failed: {e}")
@@ -326,5 +339,6 @@ class H2OManager:
             return {"status": "success", "model": os.path.basename(latest_model_path), "predictions": predictions}
         except Exception as e:
             return {"status": "error", "message": str(e)}
+
 
 h2o_manager = H2OManager()

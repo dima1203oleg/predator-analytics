@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Union
+from typing import Any
 
 
 """
@@ -14,7 +14,6 @@ results in the Knowledge Graph.
 from datetime import datetime
 import logging
 from pathlib import Path
-from typing import Dict, List
 
 
 try:
@@ -22,9 +21,9 @@ try:
 except ImportError:
     pd = None
 
-from transformation.data_transformer import DataTransformer, TransformResult
+from transformation.data_transformer import DataTransformer
 
-from parsing.data_parser import DataParser, ParseResult
+from parsing.data_parser import DataParser
 
 
 # Set up logging
@@ -47,8 +46,7 @@ class DatasetParser:
         self.data_transformer = DataTransformer()
         logger.info("DatasetParser initialized")
 
-    def parse_dataset(self, file_path: str |  Path,
-                     dataset_type: str = "auto") -> dict[str, Any]:
+    def parse_dataset(self, file_path: str | Path, dataset_type: str = "auto") -> dict[str, Any]:
         """Parse a dataset file and extract key information.
 
         Args:
@@ -61,11 +59,7 @@ class DatasetParser:
         file_path = Path(file_path)
 
         if not file_path.exists():
-            return {
-                "success": False,
-                "error": f"File not found: {file_path}",
-                "file_path": str(file_path)
-            }
+            return {"success": False, "error": f"File not found: {file_path}", "file_path": str(file_path)}
 
         # Parse the file using the appropriate parser
         parse_result = self.data_parser.parse(file_path)
@@ -75,7 +69,7 @@ class DatasetParser:
                 "success": False,
                 "error": f"Parsing failed: {parse_result.error}",
                 "file_path": str(file_path),
-                "format": file_path.suffix.lower()[1:]  # Remove dot
+                "format": file_path.suffix.lower()[1:],  # Remove dot
             }
 
         # Convert to DataFrame for easier processing
@@ -91,7 +85,7 @@ class DatasetParser:
                 return {
                     "success": False,
                     "error": f"Failed to convert to DataFrame: {e!s}",
-                    "file_path": str(file_path)
+                    "file_path": str(file_path),
                 }
         else:
             df = parse_result.data
@@ -117,7 +111,7 @@ class DatasetParser:
             transform_result = self.data_transformer.validate_data(
                 extracted_data,
                 source_format=file_path.suffix.lower()[1:],  # Remove dot
-                schema_type=schema_type
+                schema_type=schema_type,
             )
 
             if not transform_result.success:
@@ -125,7 +119,7 @@ class DatasetParser:
                     "success": False,
                     "error": f"Data transformation failed: {transform_result.error}",
                     "file_path": str(file_path),
-                    "dataset_type": dataset_type
+                    "dataset_type": dataset_type,
                 }
 
             return {
@@ -138,8 +132,8 @@ class DatasetParser:
                 "metadata": {
                     "rows_processed": len(df),
                     "columns": list(df.columns),
-                    "timestamp": datetime.now().isoformat()
-                }
+                    "timestamp": datetime.now().isoformat(),
+                },
             }
 
         except Exception as e:
@@ -147,7 +141,7 @@ class DatasetParser:
                 "success": False,
                 "error": f"Data extraction failed: {e!s}",
                 "file_path": str(file_path),
-                "dataset_type": dataset_type
+                "dataset_type": dataset_type,
             }
 
     def _detect_dataset_type(self, df: pd.DataFrame) -> str:
@@ -162,12 +156,12 @@ class DatasetParser:
         columns = [col.lower() for col in df.columns]
 
         # Check for company-related columns
-        company_indicators = ['company', 'registration', 'edrpou', 'business', 'organization']
+        company_indicators = ["company", "registration", "edrpou", "business", "organization"]
         if any(indicator in str(columns) for indicator in company_indicators):
             return "company"
 
         # Check for director/person-related columns
-        director_indicators = ['director', 'position', 'role', 'title', 'executive']
+        director_indicators = ["director", "position", "role", "title", "executive"]
         if any(indicator in str(columns) for indicator in director_indicators):
             return "director"
 
@@ -189,26 +183,28 @@ class DatasetParser:
             record = {}
 
             # Map common column names to schema fields
-            if 'name' in row or 'company' in row or 'organization' in row:
-                record['name'] = str(row.get('name', row.get('company', row.get('organization', ''))))
+            if "name" in row or "company" in row or "organization" in row:
+                record["name"] = str(row.get("name", row.get("company", row.get("organization", ""))))
 
-            if 'registration' in row or 'edrpou' in row or 'reg_number' in row:
-                record['registration_number'] = str(row.get('registration', row.get('edrpou', row.get('reg_number', ''))))
+            if "registration" in row or "edrpou" in row or "reg_number" in row:
+                record["registration_number"] = str(
+                    row.get("registration", row.get("edrpou", row.get("reg_number", "")))
+                )
 
-            if 'address' in row or 'location' in row:
-                record['address'] = str(row.get('address', row.get('location', '')))
+            if "address" in row or "location" in row:
+                record["address"] = str(row.get("address", row.get("location", "")))
 
             # Handle directors (can be single value or list)
             directors = []
-            if 'director' in row:
-                directors.append(str(row['director']))
-            if 'directors' in row:
-                if isinstance(row['directors'], list):
-                    directors.extend([str(d) for d in row['directors']])
+            if "director" in row:
+                directors.append(str(row["director"]))
+            if "directors" in row:
+                if isinstance(row["directors"], list):
+                    directors.extend([str(d) for d in row["directors"]])
                 else:
-                    directors.append(str(row['directors']))
+                    directors.append(str(row["directors"]))
 
-            record['directors'] = directors or []
+            record["directors"] = directors or []
 
             extracted_records.append(record)
 
@@ -229,14 +225,14 @@ class DatasetParser:
             record = {}
 
             # Map common column names to schema fields
-            if 'name' in row or 'director' in row or 'person' in row:
-                record['name'] = str(row.get('name', row.get('director', row.get('person', ''))))
+            if "name" in row or "director" in row or "person" in row:
+                record["name"] = str(row.get("name", row.get("director", row.get("person", ""))))
 
-            if 'position' in row or 'role' in row or 'title' in row:
-                record['position'] = str(row.get('position', row.get('role', row.get('title', ''))))
+            if "position" in row or "role" in row or "title" in row:
+                record["position"] = str(row.get("position", row.get("role", row.get("title", ""))))
 
-            if 'company' in row or 'organization' in row or 'business' in row:
-                record['company'] = str(row.get('company', row.get('organization', row.get('business', ''))))
+            if "company" in row or "organization" in row or "business" in row:
+                record["company"] = str(row.get("company", row.get("organization", row.get("business", ""))))
 
             extracted_records.append(record)
 
@@ -257,17 +253,16 @@ class DatasetParser:
             record = {}
 
             # Map common column names to schema fields with default values
-            record['name'] = str(row.get('name', row.get('person', 'Unknown')))
-            record['age'] = int(row.get('age', 25))  # Default age
-            record['city'] = str(row.get('city', row.get('location', 'Unknown')))
-            record['score'] = float(row.get('score', row.get('rating', 50.0)))  # Default score
+            record["name"] = str(row.get("name", row.get("person", "Unknown")))
+            record["age"] = int(row.get("age", 25))  # Default age
+            record["city"] = str(row.get("city", row.get("location", "Unknown")))
+            record["score"] = float(row.get("score", row.get("rating", 50.0)))  # Default score
 
             extracted_records.append(record)
 
         return extracted_records
 
-    async def log_to_knowledge_graph(self, parse_result: dict[str, Any],
-                                    namespace: str = "global") -> dict[str, Any]:
+    async def log_to_knowledge_graph(self, parse_result: dict[str, Any], namespace: str = "global") -> dict[str, Any]:
         """Log parsing results to Knowledge Graph.
 
         Args:
@@ -281,19 +276,14 @@ class DatasetParser:
             return {
                 "success": False,
                 "error": "Cannot log failed parsing result to Knowledge Graph",
-                "original_error": parse_result.get("error", "Unknown error")
+                "original_error": parse_result.get("error", "Unknown error"),
             }
 
         try:
             # Import Knowledge Graph here to avoid circular imports
             from src.brain.knowledge_graph import knowledge_graph
 
-            kg_results = {
-                "nodes_added": 0,
-                "edges_added": 0,
-                "success": True,
-                "errors": []
-            }
+            kg_results = {"nodes_added": 0, "edges_added": 0, "success": True, "errors": []}
 
             dataset_type = parse_result["dataset_type"]
             file_path = parse_result["file_path"]
@@ -310,9 +300,9 @@ class DatasetParser:
                     "dataset_type": dataset_type,
                     "rows_processed": parse_result["metadata"]["rows_processed"],
                     "timestamp": parse_result["metadata"]["timestamp"],
-                    "description": f"Dataset containing {dataset_type} information"
+                    "description": f"Dataset containing {dataset_type} information",
                 },
-                namespace=namespace
+                namespace=namespace,
             )
 
             if dataset_success:
@@ -332,7 +322,7 @@ class DatasetParser:
                             "registration_number": entity_data.get("registration_number", ""),
                             "address": entity_data.get("address", ""),
                             "directors": entity_data.get("directors", []),
-                            "source_dataset": file_path
+                            "source_dataset": file_path,
                         }
                     elif dataset_type == "director":
                         node_type = "DIRECTOR"
@@ -340,7 +330,7 @@ class DatasetParser:
                             "name": entity_data.get("name", ""),
                             "position": entity_data.get("position", ""),
                             "company": entity_data.get("company", ""),
-                            "source_dataset": file_path
+                            "source_dataset": file_path,
                         }
                     else:  # unified/personal
                         node_type = "PERSON"
@@ -349,14 +339,11 @@ class DatasetParser:
                             "age": entity_data.get("age", 0),
                             "city": entity_data.get("city", ""),
                             "score": entity_data.get("score", 0.0),
-                            "source_dataset": file_path
+                            "source_dataset": file_path,
                         }
 
                     entity_success = await knowledge_graph.add_node(
-                        node_type=node_type,
-                        node_id=entity_id,
-                        attributes=attributes,
-                        namespace=namespace
+                        node_type=node_type, node_id=entity_id, attributes=attributes, namespace=namespace
                     )
 
                     if entity_success:
@@ -367,11 +354,8 @@ class DatasetParser:
                             source_id=dataset_node_id,
                             target_id=entity_id,
                             relation="CONTAINS",
-                            attributes={
-                                "dataset_type": dataset_type,
-                                "index": i
-                            },
-                            namespace=namespace
+                            attributes={"dataset_type": dataset_type, "index": i},
+                            namespace=namespace,
                         )
 
                         if edge_success:
@@ -379,23 +363,17 @@ class DatasetParser:
                     else:
                         kg_results["errors"].append(f"Failed to add entity node {entity_id}")
 
-            logger.info(f"Knowledge Graph logging completed: {kg_results['nodes_added']} nodes, {kg_results['edges_added']} edges added")
+            logger.info(
+                f"Knowledge Graph logging completed: {kg_results['nodes_added']} nodes, {kg_results['edges_added']} edges added"
+            )
             return kg_results
 
         except ImportError:
             logger.warning("Knowledge Graph module not available - skipping KG logging")
-            return {
-                "success": False,
-                "error": "Knowledge Graph module not available",
-                "warning": "KG logging skipped"
-            }
+            return {"success": False, "error": "Knowledge Graph module not available", "warning": "KG logging skipped"}
         except Exception as e:
-            logger.error(f"Failed to log to Knowledge Graph: {e!s}")
-            return {
-                "success": False,
-                "error": f"Knowledge Graph logging failed: {e!s}",
-                "exception": str(e)
-            }
+            logger.exception(f"Failed to log to Knowledge Graph: {e!s}")
+            return {"success": False, "error": f"Knowledge Graph logging failed: {e!s}", "exception": str(e)}
 
 
 def create_dataset_parser() -> DatasetParser:

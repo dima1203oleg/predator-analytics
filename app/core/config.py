@@ -28,10 +28,12 @@ try:
 except ImportError as e:
     # If libs is not found, we might face issue
     print(f"CRITICAL: Could not import settings from app.libs.core.config: {e}")
+
     # Minimal mock to avoid immediate crash during import scanning, but app will fail later
     class MockSettings:
         PROJECT_NAME = "Predator"
         VERSION = "v45"
         API_V1_STR = "/api/v1"
         SECRET_KEY = "mock"
+
     settings = MockSettings()

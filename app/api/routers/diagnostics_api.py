@@ -7,6 +7,7 @@ from app.services.diagnostics_service import DiagnosticsService
 
 router = APIRouter(tags=["System Diagnostics"])
 
+
 @router.post("/system/diagnostics/run")
 async def run_diagnostics():
     """Triggers a full system diagnostic check.
@@ -18,13 +19,10 @@ async def run_diagnostics():
         results = await service.run_full_diagnostics()
         report = service.generate_report()
 
-        return {
-            "status": "success",
-            "results": results,
-            "report_markdown": report
-        }
+        return {"status": "success", "results": results, "report_markdown": report}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/system/diagnostics/report")
 async def get_report():

@@ -6,7 +6,6 @@ from __future__ import annotations
 """
 from datetime import datetime
 import logging
-from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
@@ -23,6 +22,7 @@ router = APIRouter(prefix="/cases", tags=["Кейси"])
 # ============================================================================
 # Pydantic Models
 # ============================================================================
+
 
 class Evidence(BaseModel):
     id: str
@@ -72,12 +72,13 @@ class CaseResponse(BaseModel):
 # ENDPOINTS
 # ============================================================================
 
+
 @router.get("/")
 async def list_cases(
     status: str | None = Query(None, description="Фільтр за статусом"),
     sector: str | None = Query(None, description="Фільтр за сектором"),
     limit: int = Query(50, ge=1, le=200),
-    offset: int = Query(0, ge=0)
+    offset: int = Query(0, ge=0),
 ):
     """Отримати список кейсів.
 
@@ -89,12 +90,14 @@ async def list_cases(
     try:
         async with get_db_ctx() as db:
             # Перевіряємо чи є таблиця cases
-            result = await db.execute(text("""
+            result = await db.execute(
+                text("""
                 SELECT EXISTS (
                     SELECT FROM information_schema.tables
                     WHERE table_schema = 'gold' AND table_name = 'cases'
                 )
-            """))
+            """)
+            )
             table_exists = result.scalar()
 
             if not table_exists:
@@ -146,12 +149,14 @@ async def get_case_stats():
     """Отримати статистику кейсів."""
     try:
         async with get_db_ctx() as db:
-            result = await db.execute(text("""
+            result = await db.execute(
+                text("""
                 SELECT EXISTS (
                     SELECT FROM information_schema.tables
                     WHERE table_schema = 'gold' AND table_name = 'cases'
                 )
-            """))
+            """)
+            )
             if not result.scalar():
                 # Demo stats
                 return {
@@ -161,10 +166,11 @@ async def get_case_stats():
                     "safe": 1,
                     "archived": 0,
                     "avgRiskScore": 62,
-                    "isDemo": True
+                    "isDemo": True,
                 }
 
-            stats = await db.execute(text("""
+            stats = await db.execute(
+                text("""
                 SELECT
                     COUNT(*) as total,
                     COUNT(*) FILTER (WHERE status = 'КРИТИЧНО') as critical,
@@ -173,7 +179,8 @@ async def get_case_stats():
                     COUNT(*) FILTER (WHERE status = 'АРХІВ') as archived,
                     COALESCE(AVG(risk_score), 0) as avg_risk
                 FROM gold.cases
-            """))
+            """)
+            )
             row = stats.fetchone()
 
             return {
@@ -183,7 +190,7 @@ async def get_case_stats():
                 "safe": row.safe or 0,
                 "archived": row.archived or 0,
                 "avgRiskScore": round(row.avg_risk or 0, 1),
-                "isDemo": False
+                "isDemo": False,
             }
     except Exception as e:
         logger.exception(f"Case stats failed: {e}")
@@ -195,10 +202,7 @@ async def get_case(case_id: str):
     """Отримати деталі кейсу."""
     try:
         async with get_db_ctx() as db:
-            result = await db.execute(
-                text("SELECT * FROM gold.cases WHERE id = :id"),
-                {"id": case_id}
-            )
+            result = await db.execute(text("SELECT * FROM gold.cases WHERE id = :id"), {"id": case_id})
             row = result.fetchone()
 
             if not row:
@@ -227,20 +231,23 @@ async def create_case(case: CaseCreate):
     """Створити новий кейс."""
     try:
         async with get_db_ctx() as db:
-            result = await db.execute(text("""
+            result = await db.execute(
+                text("""
                 INSERT INTO gold.cases (title, situation, conclusion, status, risk_score, sector, entity_id, ai_insight)
                 VALUES (:title, :situation, :conclusion, :status, :risk_score, :sector, :entity_id, :ai_insight)
                 RETURNING id
-            """), {
-                "title": case.title,
-                "situation": case.situation,
-                "conclusion": case.conclusion or "",
-                "status": case.status,
-                "risk_score": case.riskScore,
-                "sector": case.sector,
-                "entity_id": case.entityId,
-                "ai_insight": case.aiInsight
-            })
+            """),
+                {
+                    "title": case.title,
+                    "situation": case.situation,
+                    "conclusion": case.conclusion or "",
+                    "status": case.status,
+                    "risk_score": case.riskScore,
+                    "sector": case.sector,
+                    "entity_id": case.entityId,
+                    "ai_insight": case.aiInsight,
+                },
+            )
             await db.commit()
             new_id = result.scalar()
 
@@ -295,8 +302,7 @@ async def archive_case(case_id: str):
     try:
         async with get_db_ctx() as db:
             await db.execute(
-                text("UPDATE gold.cases SET status = 'АРХІВ', updated_at = NOW() WHERE id = :id"),
-                {"id": case_id}
+                text("UPDATE gold.cases SET status = 'АРХІВ', updated_at = NOW() WHERE id = :id"), {"id": case_id}
             )
             await db.commit()
             return {"id": case_id, "status": "archived"}
@@ -311,8 +317,7 @@ async def escalate_case(case_id: str):
     try:
         async with get_db_ctx() as db:
             await db.execute(
-                text("UPDATE gold.cases SET status = 'КРИТИЧНО', updated_at = NOW() WHERE id = :id"),
-                {"id": case_id}
+                text("UPDATE gold.cases SET status = 'КРИТИЧНО', updated_at = NOW() WHERE id = :id"), {"id": case_id}
             )
             await db.commit()
             return {"id": case_id, "status": "escalated"}
@@ -324,6 +329,7 @@ async def escalate_case(case_id: str):
 # ============================================================================
 # Helper Functions
 # ============================================================================
+
 
 def row_to_case(row) -> dict:
     """Конвертувати рядок БД в CaseResponse."""
@@ -339,7 +345,7 @@ def row_to_case(row) -> dict:
         "updatedAt": row.updated_at.isoformat() if row.updated_at else "",
         "entityId": row.entity_id,
         "evidence": [],  # TODO: Load from evidence table
-        "aiInsight": row.ai_insight
+        "aiInsight": row.ai_insight,
     }
 
 
@@ -358,7 +364,7 @@ def get_demo_cases() -> list[dict]:
             "createdAt": (now.isoformat()),
             "updatedAt": (now.isoformat()),
             "evidence": [],
-            "aiInsight": "Рекомендую терміново перевірити пов'язані контракти #4821 та #4823."
+            "aiInsight": "Рекомендую терміново перевірити пов'язані контракти #4821 та #4823.",
         },
         {
             "id": "case-002",
@@ -370,7 +376,7 @@ def get_demo_cases() -> list[dict]:
             "sector": "GOV",
             "createdAt": (now.isoformat()),
             "updatedAt": (now.isoformat()),
-            "evidence": []
+            "evidence": [],
         },
         {
             "id": "case-003",
@@ -382,7 +388,7 @@ def get_demo_cases() -> list[dict]:
             "sector": "BIZ",
             "createdAt": (now.isoformat()),
             "updatedAt": (now.isoformat()),
-            "evidence": []
+            "evidence": [],
         },
         {
             "id": "case-004",
@@ -394,7 +400,7 @@ def get_demo_cases() -> list[dict]:
             "sector": "MED",
             "createdAt": (now.isoformat()),
             "updatedAt": (now.isoformat()),
-            "evidence": []
+            "evidence": [],
         },
         {
             "id": "case-005",
@@ -407,6 +413,6 @@ def get_demo_cases() -> list[dict]:
             "createdAt": (now.isoformat()),
             "updatedAt": (now.isoformat()),
             "evidence": [],
-            "aiInsight": "Критично: виявлено зв'язок з промисловим комплексом \"ХімПром\"."
-        }
+            "aiInsight": 'Критично: виявлено зв\'язок з промисловим комплексом "ХімПром".',
+        },
     ]

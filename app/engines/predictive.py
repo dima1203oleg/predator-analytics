@@ -10,10 +10,11 @@ concentration risk, scheme emergence.
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass, field
+import logging
 
 from app.core.confidence import ConfidenceScore, quick_confidence
+
 
 logger = logging.getLogger("predator.engines.predictive")
 
@@ -79,7 +80,10 @@ def compute_predictive_score(
 
     logger.info(
         "Predictive score computed: ueid=%s disappear=%.1f regulatory=%.1f agg=%.1f",
-        ueid, disappearance, regulatory, aggregate,
+        ueid,
+        disappearance,
+        regulatory,
+        aggregate,
     )
 
     return PredictiveScore(

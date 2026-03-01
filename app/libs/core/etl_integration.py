@@ -12,7 +12,6 @@ import logging
 import os
 from pathlib import Path
 import sys
-from typing import Any, Dict, List, Optional, Union
 
 
 # --- BRIDGE SETUP ---
@@ -33,6 +32,7 @@ except ImportError as e:
 
 logger = logging.getLogger("azr_etl_cortex")
 
+
 @dataclass
 class ETLJobResult:
     job_id: str
@@ -40,6 +40,7 @@ class ETLJobResult:
     records_transformed: int
     success: bool
     errors: list[str]
+
 
 class AZRETLPipeline:
     def __init__(self):
@@ -49,7 +50,7 @@ class AZRETLPipeline:
             self.distributor = DataDistributor()
             logger.info("✅ ETL Components Loaded successfully.")
         except Exception as e:
-            logger.error(f"❌ ETL component load failed: {e}")
+            logger.exception(f"❌ ETL component load failed: {e}")
             self.parser = None
 
     async def run_pipeline(self, file_paths: list[str]) -> ETLJobResult:
@@ -65,8 +66,8 @@ class AZRETLPipeline:
                     errs.append(f"Parse error: {res.error}")
                     continue
 
-                fmt = Path(fp).suffix.lower().replace('.', '')
-                if hasattr(res.data, 'to_dict'):
+                fmt = Path(fp).suffix.lower().replace(".", "")
+                if hasattr(res.data, "to_dict"):
                     tx = self.transformer.transform_from_dataframe(res.data, fmt)
                 else:
                     tx = self.transformer.transform_from_dict(res.data, fmt)
@@ -80,10 +81,14 @@ class AZRETLPipeline:
             except Exception as ex:
                 errs.append(f"Error {fp}: {ex!s}")
 
-        return ETLJobResult(f"ETL-{os.getpid()}", processed, records, len(errs)==0, errs)
+        return ETLJobResult(f"ETL-{os.getpid()}", processed, records, len(errs) == 0, errs)
+
 
 _inst: AZRETLPipeline | None = None
+
+
 def get_etl_pipeline():
     global _inst
-    if _inst is None: _inst = AZRETLPipeline()
+    if _inst is None:
+        _inst = AZRETLPipeline()
     return _inst

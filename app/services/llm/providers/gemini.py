@@ -27,30 +27,23 @@ class GeminiProvider(BaseLLMProvider):
         contents = []
         if system:
             contents.append({
-                "role": "user", # Gemini uses 'user'/'model' roles, system prompt often passed as first user message or distinct field in v1beta
-                "parts": [{"text": f"System input: {system}\n\nUser input: {prompt}"}]
+                "role": "user",  # Gemini uses 'user'/'model' roles, system prompt often passed as first user message or distinct field in v1beta
+                "parts": [{"text": f"System input: {system}\n\nUser input: {prompt}"}],
             })
         else:
-            contents.append({
-                "role": "user",
-                "parts": [{"text": prompt}]
-            })
+            contents.append({"role": "user", "parts": [{"text": prompt}]})
 
         payload = {
             "contents": contents,
             "generationConfig": {
                 "temperature": kwargs.get("temperature", 0.7),
-                "maxOutputTokens": kwargs.get("max_tokens", 2048)
-            }
+                "maxOutputTokens": kwargs.get("max_tokens", 2048),
+            },
         }
 
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    url,
-                    json=payload,
-                    timeout=30.0
-                )
+                response = await client.post(url, json=payload, timeout=30.0)
 
                 if response.status_code != 200:
                     return LLMResponse(
@@ -58,7 +51,7 @@ class GeminiProvider(BaseLLMProvider):
                         content="",
                         provider=self.provider_name,
                         model=self.model,
-                        error=f"API Error {response.status_code}: {response.text}"
+                        error=f"API Error {response.status_code}: {response.text}",
                     )
 
                 data = response.json()
@@ -74,7 +67,7 @@ class GeminiProvider(BaseLLMProvider):
                         content="",
                         provider=self.provider_name,
                         model=self.model,
-                        error=f"Parsing Error: {e!s} - Data: {str(data)[:100]}"
+                        error=f"Parsing Error: {e!s} - Data: {str(data)[:100]}",
                     )
 
                 return LLMResponse(
@@ -83,14 +76,8 @@ class GeminiProvider(BaseLLMProvider):
                     provider=self.provider_name,
                     model=self.model,
                     tokens_used=tokens,
-                    latency_ms=(time.time() - start_time) * 1000
+                    latency_ms=(time.time() - start_time) * 1000,
                 )
 
         except Exception as e:
-            return LLMResponse(
-                success=False,
-                content="",
-                provider=self.provider_name,
-                model=self.model,
-                error=str(e)
-            )
+            return LLMResponse(success=False, content="", provider=self.provider_name, model=self.model, error=str(e))

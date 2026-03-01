@@ -5,11 +5,11 @@ from __future__ import annotations
 Secure secrets management.
 """
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 import httpx
 
-from ..core.config import settings
+from app.core.config import settings
 
 
 logger = logging.getLogger(__name__)
@@ -26,11 +26,7 @@ class VaultService:
         self.cache = {}
         self.cache_ttl = 300  # 5 minutes
 
-    async def get_secret(
-        self,
-        path: str,
-        key: str | None = None
-    ) -> Any | None:
+    async def get_secret(self, path: str, key: str | None = None) -> Any | None:
         """Get secret from Vault.
 
         Args:
@@ -43,18 +39,17 @@ class VaultService:
 
         # Check cache
         import time
+
         cache_key = f"{path}:{key or 'ALL'}"
         if cache_key in self.cache:
             entry = self.cache[cache_key]
-            if time.time() - entry['timestamp'] < self.cache_ttl:
-                return entry['data']
+            if time.time() - entry["timestamp"] < self.cache_ttl:
+                return entry["data"]
 
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(
-                    f"{self.vault_addr}/v1/{path}",
-                    headers={"X-Vault-Token": self.vault_token},
-                    timeout=10.0
+                    f"{self.vault_addr}/v1/{path}", headers={"X-Vault-Token": self.vault_token}, timeout=10.0
                 )
                 response.raise_for_status()
                 data = response.json()
@@ -65,10 +60,7 @@ class VaultService:
                 result = secret_data.get(key) if key else secret_data
 
                 # Update cache
-                self.cache[cache_key] = {
-                    'data': result,
-                    'timestamp': time.time()
-                }
+                self.cache[cache_key] = {"data": result, "timestamp": time.time()}
 
                 return result
 
@@ -76,11 +68,7 @@ class VaultService:
             logger.exception(f"Vault error: {e}")
             return None
 
-    async def set_secret(
-        self,
-        path: str,
-        data: dict[str, Any]
-    ) -> bool:
+    async def set_secret(self, path: str, data: dict[str, Any]) -> bool:
         """Write secret to Vault."""
         if not self.enabled:
             logger.warning("Vault not configured")
@@ -92,7 +80,7 @@ class VaultService:
                     f"{self.vault_addr}/v1/{path}",
                     headers={"X-Vault-Token": self.vault_token},
                     json={"data": data},
-                    timeout=10.0
+                    timeout=10.0,
                 )
                 response.raise_for_status()
                 return True
@@ -108,15 +96,12 @@ class VaultService:
 
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"{self.vault_addr}/v1/sys/health",
-                    timeout=5.0
-                )
+                response = await client.get(f"{self.vault_addr}/v1/sys/health", timeout=5.0)
                 data = response.json()
                 return {
                     "status": "healthy" if data.get("initialized") else "unhealthy",
                     "sealed": data.get("sealed", True),
-                    "configured": True
+                    "configured": True,
                 }
         except Exception as e:
             return {"status": "error", "error": str(e), "configured": True}

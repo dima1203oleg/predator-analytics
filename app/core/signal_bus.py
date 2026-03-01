@@ -8,11 +8,12 @@ Topics follow the pattern: predator.{domain}.{event}
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 import json
 import logging
-from datetime import UTC, datetime
-from typing import Any, Optional
+from typing import Any
 from uuid import uuid4
+
 
 logger = logging.getLogger("predator.core.signal_bus")
 
@@ -26,34 +27,28 @@ TOPICS: dict[str, str] = {
     "entity.created": "Нова сутність UEID створена",
     "entity.updated": "Сутність оновлена",
     "entity.resolved": "Entity resolution виконано",
-
     # Data events
     "data.ingested": "Дані завантажені та проіндексовані",
     "data.enriched": "Дані збагачені",
     "data.validated": "Дані валідовані",
-
     # Signal events (per analytical layer)
     "signal.behavioral": "Поведінковий сигнал (BVI/ASS/CP)",
     "signal.institutional": "Інституційний сигнал (AAI/PLS)",
     "signal.influence": "Сигнал впливу (IM/HCI)",
     "signal.structural": "Структурний сигнал (MCI/PFI)",
     "signal.predictive": "Прогностичний сигнал",
-
     # CERS events
     "cers.updated": "CERS перераховано для суб'єкта",
     "cers.level_changed": "Рівень CERS змінився",
-
     # Alert events
     "alert.critical": "Критичне сповіщення",
     "alert.warning": "Попередження",
     "alert.anomaly": "Виявлено аномалію",
-
     # Ingestion lifecycle
     "ingestion.started": "Інгестія розпочата",
     "ingestion.progress": "Прогрес інгестії",
     "ingestion.completed": "Інгестія завершена",
     "ingestion.failed": "Інгестія зазнала невдачі",
-
     # Decision artifacts
     "decision.recorded": "Рішення зафіксовано в Decision Ledger",
 }
@@ -63,12 +58,13 @@ TOPICS: dict[str, str] = {
 # Signal Envelope
 # ═══════════════════════════════════════════════════════════════
 
+
 def create_signal_envelope(
     topic: str,
     payload: dict[str, Any],
-    ueid: Optional[str] = None,
-    trace_id: Optional[str] = None,
-    confidence: Optional[float] = None,
+    ueid: str | None = None,
+    trace_id: str | None = None,
+    confidence: float | None = None,
 ) -> dict[str, Any]:
     """Create a standardized signal envelope for the bus.
 
@@ -97,6 +93,7 @@ def create_signal_envelope(
 # ═══════════════════════════════════════════════════════════════
 # Kafka Producer Abstraction
 # ═══════════════════════════════════════════════════════════════
+
 
 class SignalBus:
     """Async Kafka producer wrapper for the Signal Bus.
@@ -138,9 +135,9 @@ class SignalBus:
         self,
         topic: str,
         payload: dict[str, Any],
-        ueid: Optional[str] = None,
-        trace_id: Optional[str] = None,
-        confidence: Optional[float] = None,
+        ueid: str | None = None,
+        trace_id: str | None = None,
+        confidence: float | None = None,
     ) -> str:
         """Emit a signal to the bus.
 
@@ -161,10 +158,9 @@ class SignalBus:
                 await self._producer.send_and_wait(kafka_topic, envelope)
                 logger.debug("Signal emitted: %s → %s", topic, envelope["signal_id"])
             except Exception as e:
-                logger.error("Failed to emit signal %s: %s", topic, e)
+                logger.exception("Failed to emit signal %s: %s", topic, e)
         else:
-            logger.info("Signal (log-only): %s | ueid=%s | confidence=%s",
-                        topic, ueid, confidence)
+            logger.info("Signal (log-only): %s | ueid=%s | confidence=%s", topic, ueid, confidence)
 
         return envelope["signal_id"]
 

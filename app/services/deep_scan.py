@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
-from ..connectors.prozorro import prozorro_connector
-from ..connectors.registry import registry_connector
-from ..connectors.tax import tax_connector
+from app.connectors.prozorro import prozorro_connector
+from app.connectors.registry import registry_connector
+from app.connectors.tax import tax_connector
 
 
 logger = logging.getLogger(__name__)
@@ -35,10 +35,7 @@ class DeepScanService:
         }
 
     async def scan(
-        self,
-        query: str,
-        sectors: list[str] | None = None,
-        sources: list[str] | None = None
+        self, query: str, sectors: list[str] | None = None, sources: list[str] | None = None
     ) -> DeepScanResult:
         """Perform deep scan across multiple sources.
 
@@ -48,6 +45,7 @@ class DeepScanService:
             sources: Specific sources to query
         """
         import time
+
         start_time = time.time()
 
         sectors = sectors or ["GOV", "BIZ"]
@@ -82,15 +80,10 @@ class DeepScanService:
             risk_score=risk_score,
             entities_found=total_entities,
             processing_time_ms=processing_time,
-            timestamp=datetime.now(UTC)
+            timestamp=datetime.now(UTC),
         )
 
-    async def _query_source(
-        self,
-        name: str,
-        connector,
-        query: str
-    ) -> dict[str, Any]:
+    async def _query_source(self, name: str, connector, query: str) -> dict[str, Any]:
         """Query a single source."""
         try:
             result = await connector.search(query, limit=10)
@@ -99,16 +92,11 @@ class DeepScanService:
                 "type": "registry",
                 "success": result.success,
                 "count": result.records_count,
-                "data": result.data[:5] if result.data else []
+                "data": result.data[:5] if result.data else [],
             }
         except Exception as e:
             logger.exception(f"Error querying {name}: {e}")
-            return {
-                "name": name,
-                "success": False,
-                "error": str(e),
-                "count": 0
-            }
+            return {"name": name, "success": False, "error": str(e), "count": 0}
 
     def _calculate_risk_score(self, results: list[dict]) -> float:
         """Calculate aggregate risk score."""

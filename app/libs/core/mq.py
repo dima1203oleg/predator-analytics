@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, Any
 
 
 try:
@@ -19,10 +19,12 @@ if TYPE_CHECKING:
 
 logger = get_logger("predator.mq")
 
+
 class MessageBroker:
     """Async RabbitMQ Client for Event Bus pattern.
     Uses 'predator.events' Topic Exchange.
     """
+
     def __init__(self):
         self.connection: Any = None
         self.channel: Any = None
@@ -40,17 +42,12 @@ class MessageBroker:
 
         try:
             logger.info(f"Connecting to RabbitMQ at {settings.RABBITMQ_URL}...")
-            self.connection = await aio_pika.connect_robust(
-                settings.RABBITMQ_URL,
-                timeout=5
-            )
+            self.connection = await aio_pika.connect_robust(settings.RABBITMQ_URL, timeout=5)
             self.channel = await self.connection.channel()
 
             # Topic exchange allows routing via keys like "ingest.created", "ingest.failed"
             self.exchange = await self.channel.declare_exchange(
-                "predator.events",
-                aio_pika.ExchangeType.TOPIC,
-                durable=True
+                "predator.events", aio_pika.ExchangeType.TOPIC, durable=True
             )
             logger.info("✅ Connected to RabbitMQ Event Bus")
         except Exception as e:
@@ -76,9 +73,9 @@ class MessageBroker:
                     delivery_mode=aio_pika.DeliveryMode.PERSISTENT,
                     correlation_id=correlation_id,
                     content_type="application/json",
-                    app_id="predator-backend"
+                    app_id="predator-backend",
                 ),
-                routing_key=routing_key
+                routing_key=routing_key,
             )
             logger.debug(f"Published event: {routing_key}")
             return True
@@ -123,6 +120,7 @@ class MessageBroker:
         self._closing = True
         if self.connection:
             await self.connection.close()
+
 
 # Singleton instance
 broker = MessageBroker()

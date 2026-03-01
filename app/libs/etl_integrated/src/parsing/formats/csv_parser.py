@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Union
-
 
 """
 CSV Parser Implementation
@@ -10,7 +8,6 @@ Handles parsing of CSV files using pandas.
 """
 
 from pathlib import Path
-from typing import Dict
 
 
 try:
@@ -37,7 +34,7 @@ class CSVParser:
             "skipinitialspace": True,
         }
 
-    def parse(self, file_path: str |  Path, **kwargs) -> ParseResult:
+    def parse(self, file_path: str | Path, **kwargs) -> ParseResult:
         """Parse a CSV file.
 
         Args:
@@ -81,10 +78,9 @@ class CSVParser:
         except Exception as e:
             return ParseResult(False, error=f"Failed to parse CSV: {e!s}")
 
-    def parse_with_options(self, file_path: str |  Path,
-                          sep: str = ",",
-                          header: int |  str | None = "infer",
-                          encoding: str = "utf-8") -> ParseResult:
+    def parse_with_options(
+        self, file_path: str | Path, sep: str = ",", header: int | str | None = "infer", encoding: str = "utf-8"
+    ) -> ParseResult:
         """Parse CSV with explicit options.
 
         Args:

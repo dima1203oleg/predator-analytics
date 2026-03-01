@@ -5,16 +5,15 @@ from __future__ import annotations
 Забезпечує персистентність стану AZR між перезавантаженнями та адаптивне навчання.
 Axiom-006: Continuity of Consciousness.
 """
-import asyncio
-from datetime import datetime
 import json
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from app.libs.core.structured_logger import get_logger
 
 
 logger = get_logger("services.azr.memory")
+
 
 class SovereignMemory:
     def __init__(self, storage_path: str = "/app/.azr/memory/azr_state.json"):
@@ -29,18 +28,18 @@ class SovereignMemory:
                 "cycle_count": 0,
                 "model_performance": {
                     "llama3.1:8b": {"success": 0, "fail": 0, "score": 1.0},
-                    "mistral:7b": {"success": 0, "fail": 0, "score": 0.9}
+                    "mistral:7b": {"success": 0, "fail": 0, "score": 0.9},
                 },
                 "active_experiments": [],
                 "last_successful_action": None,
-                "known_issues": []
+                "known_issues": [],
             }
         try:
             with open(self.path) as f:
                 return json.load(f)
         except Exception as e:
             logger.exception(f"Failed to load memory: {e}. Resetting.")
-            return self._load_state() # Recursive reset if corrupt? Better return defaults.
+            return self._load_state()  # Recursive reset if corrupt? Better return defaults.
 
     def save_state(self):
         """Зберігає поточний стан на диск."""
@@ -48,7 +47,7 @@ class SovereignMemory:
             temp_path = self.path.with_suffix(".tmp")
             with open(temp_path, "w") as f:
                 json.dump(self.state, f, indent=2)
-            temp_path.replace(self.path) # Atomic write
+            temp_path.replace(self.path)  # Atomic write
         except Exception as e:
             logger.exception(f"Failed to save state: {e}")
 
@@ -92,6 +91,7 @@ class SovereignMemory:
             if len(self.state["known_issues"]) > 100:
                 self.state["known_issues"].pop(0)
             self.save_state()
+
 
 # Global instance
 sovereign_memory = SovereignMemory()

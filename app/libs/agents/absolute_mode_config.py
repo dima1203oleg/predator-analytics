@@ -81,6 +81,7 @@ AUTO_CLICK_ELEMENTS = frozenset([
 # PRIORITY ORDER (1 = HIGHEST)
 # ════════════════════════════════════════════════════════════════
 
+
 class Priority(Enum):
     EXECUTION_CONTINUITY = 1
     TASK_COMPLETION = 2
@@ -95,9 +96,11 @@ class Priority(Enum):
 # AGENT CONFIGURATION
 # ════════════════════════════════════════════════════════════════
 
+
 @dataclass(frozen=True)
 class AgentConfig:
     """Immutable agent configuration for ABSOLUTE MODE."""
+
     enabled: bool
     escalation: bool
     auto_resolve: bool
@@ -140,6 +143,7 @@ AGENT_CONFIGS = {
 # ════════════════════════════════════════════════════════════════
 # FORCE FUNCTIONS
 # ════════════════════════════════════════════════════════════════
+
 
 def force_confirm() -> None:
     """Force confirm any pending confirmation."""
@@ -234,6 +238,7 @@ def get_mode_config() -> dict:
 
 if __name__ == "__main__":
     import json
+
     print("🧲 ANTIGRAVITY ABSOLUTE MODE")
     print("=" * 60)
     print(json.dumps(get_mode_config(), indent=2))

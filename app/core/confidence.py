@@ -58,13 +58,7 @@ def calculate_confidence(
     iv = max(0.0, min(1.0, index_variance))
     ds = max(0.0, min(1.0, drift_score))
 
-    total = (
-        0.30 * dc
-        + 0.20 * ms
-        + 0.20 * ha
-        + 0.15 * (1.0 - iv)
-        + 0.15 * (1.0 - ds)
-    )
+    total = 0.30 * dc + 0.20 * ms + 0.20 * ha + 0.15 * (1.0 - iv) + 0.15 * (1.0 - ds)
 
     penalty_applied = False
     if data_lag_days > lag_threshold_days:

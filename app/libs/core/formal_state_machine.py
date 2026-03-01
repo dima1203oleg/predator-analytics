@@ -1,4 +1,4 @@
-"""🔒 FORMAL STATE MACHINE - Verified State Transitions
+"""🔒 FORMAL STATE MACHINE - Verified State Transitions.
 =====================================================
 Core component for AZR v40 Sovereign Architecture.
 
@@ -20,30 +20,30 @@ Python 3.12 | Ukrainian Documentation
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Callable
-from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime, timezone
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from enum import Enum
 import hashlib
 import json
-from typing import Any, Generic, TypeVar
+from typing import Any, TypeVar
 
 
 def sha256(data: str) -> str:
     """Quick SHA256 for transition proofs."""
-    return hashlib.sha256(data.encode('utf-8')).hexdigest()
+    return hashlib.sha256(data.encode("utf-8")).hexdigest()
 
 
 # ============================================================================
 # 🎯 STATE MACHINE FRAMEWORK
 # ============================================================================
 
-S = TypeVar('S', bound=Enum)
+S = TypeVar("S", bound=Enum)
 
 
 @dataclass
 class TransitionProof:
     """Cryptographic proof that a transition occurred validly."""
+
     from_state: str
     to_state: str
     trigger: str
@@ -59,6 +59,7 @@ class TransitionProof:
 @dataclass
 class StateHistory:
     """Record of state transition with proof."""
+
     sequence: int
     state: str
     previous_state: str | None
@@ -69,7 +70,7 @@ class StateHistory:
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
-        d['proof'] = self.proof.to_dict()
+        d["proof"] = self.proof.to_dict()
         return d
 
 
@@ -99,8 +100,8 @@ class Invariant(ABC):
         """Check if invariant holds. Returns (holds, reason)."""
 
 
-class FormalStateMachine(Generic[S]):
-    """🏛️ Формальна Стейт-Машина з Верифікацією
+class FormalStateMachine[S: Enum]:
+    """🏛️ Формальна Стейт-Машина з Верифікацією.
 
     Кожен перехід:
     1. Перевіряється guards (pre-conditions)
@@ -137,18 +138,20 @@ class FormalStateMachine(Generic[S]):
             timestamp=timestamp,
             guard_passed=True,
             invariants_held=["INITIAL_STATE"],
-            proof_hash=sha256(f"GENESIS:{self._current_state.value}:{timestamp}")
+            proof_hash=sha256(f"GENESIS:{self._current_state.value}:{timestamp}"),
         )
 
-        self._history.append(StateHistory(
-            sequence=0,
-            state=self._current_state.value,
-            previous_state=None,
-            trigger="INITIALIZE",
-            timestamp=timestamp,
-            context={},
-            proof=proof
-        ))
+        self._history.append(
+            StateHistory(
+                sequence=0,
+                state=self._current_state.value,
+                previous_state=None,
+                trigger="INITIALIZE",
+                timestamp=timestamp,
+                context={},
+                proof=proof,
+            )
+        )
 
     @property
     def current_state(self) -> S:
@@ -163,11 +166,7 @@ class FormalStateMachine(Generic[S]):
         return list(self._history)
 
     def add_transition(
-        self,
-        from_state: S,
-        trigger: str,
-        to_state: S,
-        guards: list[Guard] | None = None
+        self, from_state: S, trigger: str, to_state: S, guards: list[Guard] | None = None
     ) -> FormalStateMachine[S]:
         """Add allowed transition.
 
@@ -207,11 +206,7 @@ class FormalStateMachine(Generic[S]):
             return []
         return list(self._transitions[self._current_state].keys())
 
-    def fire(
-        self,
-        trigger: str,
-        context: dict[str, Any] | None = None
-    ) -> tuple[bool, str, TransitionProof | None]:
+    def fire(self, trigger: str, context: dict[str, Any] | None = None) -> tuple[bool, str, TransitionProof | None]:
         """Fire a transition.
 
         Args:
@@ -229,9 +224,8 @@ class FormalStateMachine(Generic[S]):
             allowed = self.get_allowed_triggers()
             return (
                 False,
-                f"Заборонений перехід '{trigger}' зі стану {self._current_state.value}. "
-                f"Дозволені: {allowed}",
-                None
+                f"Заборонений перехід '{trigger}' зі стану {self._current_state.value}. Дозволені: {allowed}",
+                None,
             )
 
         to_state, guards = self._transitions[self._current_state][trigger]
@@ -242,11 +236,7 @@ class FormalStateMachine(Generic[S]):
         for guard in guards:
             passed, reason = guard.check(self._context)
             if not passed:
-                return (
-                    False,
-                    f"Guard '{guard.name}' не пройшов: {reason}",
-                    None
-                )
+                return (False, f"Guard '{guard.name}' не пройшов: {reason}", None)
 
         # Perform transition
         self._current_state = to_state
@@ -260,11 +250,7 @@ class FormalStateMachine(Generic[S]):
             if not holds:
                 # ROLLBACK
                 self._current_state = from_state
-                return (
-                    False,
-                    f"Invariant '{invariant.name}' порушено: {reason}. Відкат.",
-                    None
-                )
+                return (False, f"Invariant '{invariant.name}' порушено: {reason}. Відкат.", None)
             invariants_held.append(invariant.name)
 
         # Global invariants
@@ -273,15 +259,13 @@ class FormalStateMachine(Generic[S]):
             if not holds:
                 # ROLLBACK
                 self._current_state = from_state
-                return (
-                    False,
-                    f"Global invariant '{invariant.name}' порушено: {reason}. Відкат.",
-                    None
-                )
+                return (False, f"Global invariant '{invariant.name}' порушено: {reason}. Відкат.", None)
             invariants_held.append(invariant.name)
 
         # Generate proof
-        proof_data = f"{from_state.value}:{to_state.value}:{trigger}:{timestamp}:{json.dumps(self._context, sort_keys=True)}"
+        proof_data = (
+            f"{from_state.value}:{to_state.value}:{trigger}:{timestamp}:{json.dumps(self._context, sort_keys=True)}"
+        )
         proof = TransitionProof(
             from_state=from_state.value,
             to_state=to_state.value,
@@ -289,26 +273,24 @@ class FormalStateMachine(Generic[S]):
             timestamp=timestamp,
             guard_passed=True,
             invariants_held=invariants_held,
-            proof_hash=sha256(proof_data)
+            proof_hash=sha256(proof_data),
         )
 
         # Record history
         self._sequence += 1
-        self._history.append(StateHistory(
-            sequence=self._sequence,
-            state=to_state.value,
-            previous_state=from_state.value,
-            trigger=trigger,
-            timestamp=timestamp,
-            context=dict(self._context),
-            proof=proof
-        ))
-
-        return (
-            True,
-            f"Перехід {from_state.value} → {to_state.value} успішний",
-            proof
+        self._history.append(
+            StateHistory(
+                sequence=self._sequence,
+                state=to_state.value,
+                previous_state=from_state.value,
+                trigger=trigger,
+                timestamp=timestamp,
+                context=dict(self._context),
+                proof=proof,
+            )
         )
+
+        return (True, f"Перехід {from_state.value} → {to_state.value} успішний", proof)
 
     def verify_history(self) -> tuple[bool, str]:
         """Verify integrity of transition history."""
@@ -317,7 +299,7 @@ class FormalStateMachine(Generic[S]):
 
         for i in range(1, len(self._history)):
             current = self._history[i]
-            previous = self._history[i-1]
+            previous = self._history[i - 1]
 
             # Check sequence
             if current.sequence != previous.sequence + 1:
@@ -325,7 +307,10 @@ class FormalStateMachine(Generic[S]):
 
             # Check state chain
             if current.previous_state != previous.state:
-                return False, f"Розірваний ланцюг на записі {i}: очікувався стан {previous.state}, отримано {current.previous_state}"
+                return (
+                    False,
+                    f"Розірваний ланцюг на записі {i}: очікувався стан {previous.state}, отримано {current.previous_state}",
+                )
 
         return True, f"✅ Історія верифікована: {len(self._history)} переходів"
 
@@ -347,7 +332,7 @@ class FormalStateMachine(Generic[S]):
             "total_transitions": len(self._history) - 1,
             "allowed_triggers": self.get_allowed_triggers(),
             "state_visit_counts": state_counts,
-            "history_verified": self.verify_history()[0]
+            "history_verified": self.verify_history()[0],
         }
 
 
@@ -355,8 +340,10 @@ class FormalStateMachine(Generic[S]):
 # 📋 ETL STATE MACHINE
 # ============================================================================
 
+
 class ETLState(Enum):
     """ETL Pipeline states (from existing system)."""
+
     CREATED = "CREATED"
     UPLOADING = "UPLOADING"
     UPLOADED = "UPLOADED"
@@ -435,11 +422,9 @@ def create_etl_state_machine(initial_state: ETLState = ETLState.CREATED) -> Form
     sm.add_transition(ETLState.CREATED, "START_UPLOAD", ETLState.UPLOADING)
     sm.add_transition(ETLState.UPLOADING, "UPLOAD_COMPLETE", ETLState.UPLOADED)
     sm.add_transition(ETLState.UPLOADED, "START_PROCESSING", ETLState.PROCESSING)
-    sm.add_transition(ETLState.PROCESSING, "PROCESSING_COMPLETE", ETLState.PROCESSED,
-                      guards=[RecordsProcessedGuard()])
+    sm.add_transition(ETLState.PROCESSING, "PROCESSING_COMPLETE", ETLState.PROCESSED, guards=[RecordsProcessedGuard()])
     sm.add_transition(ETLState.PROCESSED, "START_INDEXING", ETLState.INDEXING)
-    sm.add_transition(ETLState.INDEXING, "INDEXING_COMPLETE", ETLState.INDEXED,
-                      guards=[RecordsIndexedGuard()])
+    sm.add_transition(ETLState.INDEXING, "INDEXING_COMPLETE", ETLState.INDEXED, guards=[RecordsIndexedGuard()])
     sm.add_transition(ETLState.INDEXED, "FINALIZE", ETLState.COMPLETED)
 
     # Failure transitions
@@ -462,8 +447,10 @@ def create_etl_state_machine(initial_state: ETLState = ETLState.CREATED) -> Form
 # 🔄 OODA STATE MACHINE
 # ============================================================================
 
+
 class OODAState(Enum):
     """OODA Loop states."""
+
     IDLE = "IDLE"
     OBSERVING = "OBSERVING"
     ORIENTING = "ORIENTING"
@@ -523,8 +510,12 @@ def create_ooda_state_machine(initial_state: OODAState = OODAState.IDLE) -> Form
     sm.add_transition(OODAState.IDLE, "START", OODAState.OBSERVING)
     sm.add_transition(OODAState.OBSERVING, "OBSERVATIONS_COMPLETE", OODAState.ORIENTING)
     sm.add_transition(OODAState.ORIENTING, "ORIENTATION_COMPLETE", OODAState.DECIDING)
-    sm.add_transition(OODAState.DECIDING, "DECISION_MADE", OODAState.ACTING,
-                      guards=[HealthThresholdGuard(), ConstitutionalApprovalGuard()])
+    sm.add_transition(
+        OODAState.DECIDING,
+        "DECISION_MADE",
+        OODAState.ACTING,
+        guards=[HealthThresholdGuard(), ConstitutionalApprovalGuard()],
+    )
     sm.add_transition(OODAState.ACTING, "ACTION_COMPLETE", OODAState.REFLECTING)
     sm.add_transition(OODAState.REFLECTING, "CYCLE_COMPLETE", OODAState.OBSERVING)  # Loop back
     sm.add_transition(OODAState.REFLECTING, "STOP", OODAState.IDLE)
@@ -562,7 +553,7 @@ if __name__ == "__main__":
         ("PROCESSING_COMPLETE", {"records_processed": 1000}),
         ("START_INDEXING", {}),
         ("INDEXING_COMPLETE", {"records_indexed": 1000, "records_processed": 1000}),
-        ("FINALIZE", {})
+        ("FINALIZE", {}),
     ]
 
     for trigger, ctx in transitions:

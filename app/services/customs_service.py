@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-import json
-import logging
-import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 import uuid
 
 import asyncpg
@@ -15,6 +12,7 @@ from app.services.report_generator import get_report_generator
 
 
 logger = get_logger("service.customs")
+
 
 class CustomsService:
     """Service for handling Customs Intelligence and Dossier Synthesis using REAL Data."""
@@ -57,14 +55,14 @@ class CustomsService:
             records = []
             for r in rows:
                 records.append({
-                    "id": str(r['id']),
-                    "company": r['company'],
-                    "hs_code": r['hs_code'],
-                    "declared_value": float(r['declared_value']),
-                    "weight": float(r['weight']),
-                    "risk_score": r['risk_score'],
-                    "origin": r['origin'],
-                    "timestamp": r['timestamp'].isoformat() if r['timestamp'] else datetime.now().isoformat()
+                    "id": str(r["id"]),
+                    "company": r["company"],
+                    "hs_code": r["hs_code"],
+                    "declared_value": float(r["declared_value"]),
+                    "weight": float(r["weight"]),
+                    "risk_score": r["risk_score"],
+                    "origin": r["origin"],
+                    "timestamp": r["timestamp"].isoformat() if r["timestamp"] else datetime.now().isoformat(),
                 })
             return records
         finally:
@@ -78,19 +76,25 @@ class CustomsService:
         # For now, we enhance the report with real counts
         conn = await self._get_conn()
         try:
-            count = await conn.fetchval("""
+            count = await conn.fetchval(
+                """
                 SELECT COUNT(*)
                 FROM customs.participants p
                 JOIN customs.declaration_participants dp ON p.id = dp.participant_id
                 WHERE p.name = $1
-            """, company_name)
+            """,
+                company_name,
+            )
 
-            telegram_mentions = await conn.fetchval("""
+            telegram_mentions = await conn.fetchval(
+                """
                 SELECT COUNT(*)
                 FROM customs.telegram_links tl
                 JOIN customs.participants p ON tl.target_id = p.id AND tl.target_type = 'COMPANY'
                 WHERE p.name = $1
-            """, company_name)
+            """,
+                company_name,
+            )
         finally:
             await conn.close()
 
@@ -104,26 +108,26 @@ class CustomsService:
             "processing_time": "0.8s",
             "models_used": [
                 {"name": "Graph_Nexus_v2", "calls": 1, "avg_latency": "240ms"},
-                {"name": "Predator_LLM_v45", "calls": 2, "avg_latency": "1.2s"}
+                {"name": "Predator_LLM_v45", "calls": 2, "avg_latency": "1.2s"},
             ],
             "recommendations": [
                 f"Verify {telegram_mentions} social intelligence signals found in Customs_of_Ukraine.",
-                "Inspect pricing consistency across all registered declarations."
+                "Inspect pricing consistency across all registered declarations.",
             ],
-            "conclusion": f"The entity '{company_name}' has been cross-referenced with {telegram_mentions} Telegram intelligence signals and {count} official records."
+            "conclusion": f"The entity '{company_name}' has been cross-referenced with {telegram_mentions} Telegram intelligence signals and {count} official records.",
         }
 
-        result = self.report_gen.generate_pdf(
+        return self.report_gen.generate_pdf(
             run_id=f"DOSSIER_{company_name.replace(' ', '_')}_{datetime.now().strftime('%H%M%S')}",
             data=intel_data,
             include_watermark=True,
-            include_signature=True
+            include_signature=True,
         )
-        return result
 
     async def get_modeling_data(self, persona: str, mode: str = "presets") -> dict[str, Any]:
         """Generate modeling data (Hybrid: Real stats + Mock for non-existing periods)."""
         import random
+
         # Real logic would aggregate by day
         days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         time_data = []
@@ -131,9 +135,9 @@ class CustomsService:
             time_data.append({
                 "name": d,
                 "value": random.randint(4000, 12000),
-                "risk": random.randint(100, 5000) if persona == "INQUISITOR" else random.randint(50, 2000)
+                "risk": random.randint(100, 5000) if persona == "INQUISITOR" else random.randint(50, 2000),
             })
-        return {"time_data": time_data, "summary": {"total": sum(float(x['value']) for x in time_data)}}
+        return {"time_data": time_data, "summary": {"total": sum(float(x["value"]) for x in time_data)}}
 
     async def get_anomalies(self) -> list[dict[str, Any]]:
         """Identify tactical anomalies from Telegram & DB."""
@@ -153,14 +157,24 @@ class CustomsService:
                     "id": f"TG-{uuid.uuid4().hex[:4]}",
                     "type": "SOCIAL_CRITICAL",
                     "severity": "CRITICAL",
-                    "desc": f"Критична згадка {r['company']} у Telegram каналі 'Customs_of_Ukraine'. Виявлено негативний сентимент щодо цінової політики."
+                    "desc": f"Критична згадка {r['company']} у Telegram каналі 'Customs_of_Ukraine'. Виявлено негативний сентимент щодо цінової політики.",
                 })
 
             # Default fallback if no real data yet
             if not anomalies:
                 anomalies = [
-                    {"id": "A-01", "type": "PRICING", "severity": "HIGH", "desc": "Виявлено значне відхилення ціни (+180%) для групи товарів 8471 (Обчислювальні машини)."},
-                    {"id": "A-02", "type": "VOLUME", "severity": "MEDIUM", "desc": "Аномальний сплеск експорту брухту стратегічних металів (Група 72)."}
+                    {
+                        "id": "A-01",
+                        "type": "PRICING",
+                        "severity": "HIGH",
+                        "desc": "Виявлено значне відхилення ціни (+180%) для групи товарів 8471 (Обчислювальні машини).",
+                    },
+                    {
+                        "id": "A-02",
+                        "type": "VOLUME",
+                        "severity": "MEDIUM",
+                        "desc": "Аномальний сплеск експорту брухту стратегічних металів (Група 72).",
+                    },
                 ]
             return anomalies
         finally:
@@ -171,7 +185,7 @@ class CustomsService:
         1. Relational (PostgreSQL)
         2. Vector (Qdrant)
         3. Search (OpenSearch)
-        4. Graph (Neo4j)
+        4. Graph (Neo4j).
         """
         if not records:
             return
@@ -198,22 +212,27 @@ class CustomsService:
 
                     # UPSERT Participants
                     participants_map = {}
-                    for role in ['exporter', 'importer', 'declarant']:
-                        name = record.get(f'{role}_name')
-                        code = record.get(f'{role}_code')
+                    for role in ["exporter", "importer", "declarant"]:
+                        name = record.get(f"{role}_name")
+                        code = record.get(f"{role}_code")
                         if name:
-                             pid = await conn.fetchval("""
+                            pid = await conn.fetchval(
+                                """
                                 INSERT INTO customs.participants (name, code, country, risk_profile)
                                 VALUES ($1, $2, 'UA', 'UNKNOWN')
                                 ON CONFLICT (name) DO UPDATE SET last_seen = NOW()
                                 RETURNING id
-                             """, name, code)
-                             if not pid:
-                                 pid = await conn.fetchval("SELECT id FROM customs.participants WHERE name = $1", name)
-                             participants_map[role] = pid
+                             """,
+                                name,
+                                code,
+                            )
+                            if not pid:
+                                pid = await conn.fetchval("SELECT id FROM customs.participants WHERE name = $1", name)
+                            participants_map[role] = pid
 
-                    decl_num = record.get('declaration_number', f"AUTO-{uuid.uuid4().hex[:8]}")
-                    decl_id = await conn.fetchval("""
+                    decl_num = record.get("declaration_number", f"AUTO-{uuid.uuid4().hex[:8]}")
+                    decl_id = await conn.fetchval(
+                        """
                         INSERT INTO customs.declarations (
                             declaration_number, flow_type, customs_office, declaration_date,
                             total_customs_value, total_invoice_value, currency
@@ -222,36 +241,57 @@ class CustomsService:
                         ON CONFLICT (declaration_number) DO UPDATE SET updated_at = NOW()
                         RETURNING id
                     """,
-                    decl_num, record.get('flow_type', 'IM_40'), record.get('customs_office', 'UA100000'), record.get('date', datetime.now()),
-                    float(record.get('customs_value', 0)), float(record.get('invoice_value', 0)), record.get('currency', 'USD'))
+                        decl_num,
+                        record.get("flow_type", "IM_40"),
+                        record.get("customs_office", "UA100000"),
+                        record.get("date", datetime.now()),
+                        float(record.get("customs_value", 0)),
+                        float(record.get("invoice_value", 0)),
+                        record.get("currency", "USD"),
+                    )
 
                     if not decl_id:
-                         decl_id = await conn.fetchval("SELECT id FROM customs.declarations WHERE declaration_number = $1", decl_num)
+                        decl_id = await conn.fetchval(
+                            "SELECT id FROM customs.declarations WHERE declaration_number = $1", decl_num
+                        )
 
                     for role, pid in participants_map.items():
-                         await conn.execute("""
+                        await conn.execute(
+                            """
                             INSERT INTO customs.declaration_participants (declaration_id, participant_id, role)
                             VALUES ($1, $2, $3)
                             ON CONFLICT DO NOTHING
-                         """, decl_id, pid, role.upper())
+                         """,
+                            decl_id,
+                            pid,
+                            role.upper(),
+                        )
 
-                    await conn.execute("""
+                    await conn.execute(
+                        """
                         INSERT INTO customs.goods (
                             declaration_id, goods_description, hs_code, net_weight_kg,
                             gross_weight_kg, origin_country
                         )
                         VALUES ($1, $2, $3, $4, $5, $6)
-                    """, decl_id, record.get('goods_description', 'N/A'), record.get('hs_code', '0000'), float(record.get('net_weight', 0)), float(record.get('gross_weight', 0)), record.get('origin_country', 'UA'))
+                    """,
+                        decl_id,
+                        record.get("goods_description", "N/A"),
+                        record.get("hs_code", "0000"),
+                        float(record.get("net_weight", 0)),
+                        float(record.get("gross_weight", 0)),
+                        record.get("origin_country", "UA"),
+                    )
 
                     # PREPARE DATA FOR OTHER SYSTEMS
                     # Search Document
                     doc = {
                         "declaration_number": decl_num,
-                        "description": record.get('goods_description', ''),
-                        "importer": record.get('importer_name', ''),
-                        "exporter": record.get('exporter_name', ''),
-                        "value": float(record.get('customs_value', 0)),
-                        "date": datetime.now().isoformat()
+                        "description": record.get("goods_description", ""),
+                        "importer": record.get("importer_name", ""),
+                        "exporter": record.get("exporter_name", ""),
+                        "value": float(record.get("customs_value", 0)),
+                        "date": datetime.now().isoformat(),
                     }
                     search_docs.append(doc)
 
@@ -270,8 +310,8 @@ class CustomsService:
             logger.info("Bulk ingestion into ALL systems completed.")
 
         except Exception as e:
-            logger.error(f"Ingestion failed: {e}")
-            raise e
+            logger.exception(f"Ingestion failed: {e}")
+            raise
         finally:
             await conn.close()
 
@@ -280,7 +320,7 @@ class CustomsService:
         Flow:
         1. OpenSearch (Full Text)
         2. Qdrant (Semantic Vectors)
-        3. Real-time Analysis (Sentiment/NER) -> Graph API (future)
+        3. Real-time Analysis (Sentiment/NER) -> Graph API (future).
         """
         if not messages:
             return
@@ -298,34 +338,26 @@ class CustomsService:
             for msg in messages:
                 # Prepare Search Doc
                 doc_id = f"{source}_{msg.get('id', uuid.uuid4())}"
-                text = msg.get('text', '') or ''
-                date = msg.get('date')
+                text = msg.get("text", "") or ""
+                date = msg.get("date")
 
                 # Allow date objects or strings
-                if hasattr(date, 'isoformat'):
-                    date_iso = date.isoformat()
-                else:
-                    date_iso = str(date)
+                date_iso = date.isoformat() if hasattr(date, "isoformat") else str(date)
 
                 doc = {
                     "id": doc_id,
                     "content": text,
                     "source": source,
-                    "channel": msg.get('channel_name', 'unknown'),
-                    "views": msg.get('views', 0),
+                    "channel": msg.get("channel_name", "unknown"),
+                    "views": msg.get("views", 0),
                     "date": date_iso,
-                    "type": "intel_report"
+                    "type": "intel_report",
                 }
                 search_docs.append(doc)
 
                 # Prepare Vector
                 vector_texts.append(text)
-                vector_payloads.append({
-                    "doc_id": doc_id,
-                    "source": source,
-                    "date": date_iso,
-                    "type": "intelligence"
-                })
+                vector_payloads.append({"doc_id": doc_id, "source": source, "date": date_iso, "type": "intelligence"})
 
             # 1. Index in OpenSearch
             await search_engine.index_documents(search_docs)
@@ -337,7 +369,8 @@ class CustomsService:
             logger.info(f"✅ Successfully digested {len(messages)} intel items.")
 
         except Exception as e:
-            logger.error(f"Intelligence ingestion failed: {e}")
+            logger.exception(f"Intelligence ingestion failed: {e}")
             # Non-blocking error - we don't convert raw intel to SQL yet
+
 
 customs_service = CustomsService()

@@ -7,7 +7,7 @@ Multi-Agent Decision Arbiter for conflict resolution and consensus.
 from dataclasses import dataclass
 from enum import Enum
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 
 logger = logging.getLogger(__name__)
@@ -46,12 +46,7 @@ class ArbiterService:
         self.agent_weights: dict[str, float] = {}
         self.consensus_threshold: float = 0.7
 
-    async def collect_votes(
-        self,
-        agents: list[dict[str, Any]],
-        query: str,
-        timeout: float = 30.0
-    ) -> list[AgentVote]:
+    async def collect_votes(self, agents: list[dict[str, Any]], query: str, timeout: float = 30.0) -> list[AgentVote]:
         votes = []
         for agent in agents:
             vote = AgentVote(
@@ -60,15 +55,13 @@ class ArbiterService:
                 decision="approve",
                 confidence=0.85,
                 reasoning=f"Agent {agent.get('id')} analysis complete",
-                weight=self.agent_weights.get(agent.get("id"), 1.0)
+                weight=self.agent_weights.get(agent.get("id"), 1.0),
             )
             votes.append(vote)
         return votes
 
     async def make_decision(
-        self,
-        votes: list[AgentVote],
-        strategy: DecisionType = DecisionType.WEIGHTED
+        self, votes: list[AgentVote], strategy: DecisionType = DecisionType.WEIGHTED
     ) -> ArbiterDecision:
         if not votes:
             return ArbiterDecision(
@@ -77,7 +70,7 @@ class ArbiterService:
                 confidence=0.0,
                 votes=[],
                 reasoning="No votes received",
-                dissenting_opinions=[]
+                dissenting_opinions=[],
             )
 
         if strategy == DecisionType.WEIGHTED:
@@ -86,6 +79,7 @@ class ArbiterService:
 
     def _weighted_decision(self, votes: list[AgentVote]) -> ArbiterDecision:
         from collections import defaultdict
+
         weighted_scores: dict[str, float] = defaultdict(float)
 
         for vote in votes:
@@ -102,7 +96,7 @@ class ArbiterService:
             confidence=weighted_scores[winner] / total_weight if total_weight > 0 else 0,
             votes=votes,
             reasoning=f"Weighted decision with score {weighted_scores[winner]:.2f}",
-            dissenting_opinions=dissenting
+            dissenting_opinions=dissenting,
         )
 
 

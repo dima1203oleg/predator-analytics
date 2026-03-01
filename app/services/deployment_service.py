@@ -3,12 +3,13 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
-from typing import Any, Dict
+from typing import Any
 
 import httpx
 
 
 logger = logging.getLogger(__name__)
+
 
 class DeploymentService:
     """Handles Git operations (PRs via Aider concept) and ArgoCD deployments."""
@@ -33,7 +34,9 @@ class DeploymentService:
         try:
             # For the demo, we simulate success
             await asyncio.sleep(1)
-            pr_url = f"https://github.com/dima1203oleg/predator-analytics/pull/{branch_name.rsplit('-', maxsplit=1)[-1]}"
+            pr_url = (
+                f"https://github.com/dima1203oleg/predator-analytics/pull/{branch_name.rsplit('-', maxsplit=1)[-1]}"
+            )
             return {"success": True, "pr_url": pr_url, "branch": branch_name}
         except Exception as e:
             logger.exception(f"Failed to create PR: {e}")
@@ -58,5 +61,6 @@ class DeploymentService:
         except Exception as e:
             logger.exception(f"ArgoCD sync error: {e}")
             return {"success": False, "error": str(e)}
+
 
 deployment_service = DeploymentService()

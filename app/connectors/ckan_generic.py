@@ -5,7 +5,6 @@ from __future__ import annotations
 Used for data.gov.ua and similar platforms.
 """
 import logging
-from typing import Dict, Optional
 
 from .base import BaseConnector, ConnectorResult
 
@@ -18,24 +17,12 @@ class CKANGenericConnector(BaseConnector):
     Works with data.gov.ua and similar platforms.
     """
 
-    def __init__(
-        self,
-        name: str = "CKAN Portal",
-        base_url: str = "https://data.gov.ua/api/3/action"
-    ):
+    def __init__(self, name: str = "CKAN Portal", base_url: str = "https://data.gov.ua/api/3/action"):
         super().__init__(name=name, base_url=base_url, timeout=30.0)
 
-    async def search(
-        self,
-        query: str,
-        limit: int = 20,
-        **kwargs
-    ) -> ConnectorResult:
+    async def search(self, query: str, limit: int = 20, **kwargs) -> ConnectorResult:
         """Search datasets in CKAN portal."""
-        params = {
-            "q": query,
-            "rows": limit
-        }
+        params = {"q": query, "rows": limit}
 
         result = await self._request("GET", "/package_search", params=params)
 
@@ -57,11 +44,7 @@ class CKANGenericConnector(BaseConnector):
         return await self._request("GET", "/resource_show", params=params)
 
     async def datastore_search(
-        self,
-        resource_id: str,
-        query: str | None = None,
-        filters: dict | None = None,
-        limit: int = 100
+        self, resource_id: str, query: str | None = None, filters: dict | None = None, limit: int = 100
     ) -> ConnectorResult:
         """Search within a datastore resource.
 
@@ -71,10 +54,7 @@ class CKANGenericConnector(BaseConnector):
             filters: Field-specific filters
             limit: Maximum records
         """
-        params = {
-            "resource_id": resource_id,
-            "limit": limit
-        }
+        params = {"resource_id": resource_id, "limit": limit}
 
         if query:
             params["q"] = query

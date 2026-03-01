@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 from fastapi import APIRouter, Query
 
@@ -12,6 +11,7 @@ from app.models.v55.decision_artifact import (
     DecisionArtifactListResponse,
     DecisionArtifactResponse,
 )
+
 
 logger = logging.getLogger("predator.api.v2.decisions")
 router = APIRouter(prefix="/decisions", tags=["v2-decisions"])
@@ -51,8 +51,8 @@ async def record_decision(body: DecisionArtifactCreate) -> DecisionArtifactRespo
     summary="Список рішень",
 )
 async def list_decisions(
-    decision_type: Optional[str] = Query(None),
-    trace_id: Optional[str] = Query(None),
+    decision_type: str | None = Query(None),
+    trace_id: str | None = Query(None),
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ) -> DecisionArtifactListResponse:

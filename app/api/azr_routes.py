@@ -15,11 +15,10 @@ NO-AI-OVERRIDE CLAUSE ACTIVE
 
 from datetime import datetime
 import logging
-from typing import Any, Dict, List, Optional
-from uuid import UUID, uuid4
+from typing import Any
+from uuid import uuid4
 
-from fastapi import APIRouter, Depends, HTTPException, Path, Query
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException, Path, Query
 from pydantic import BaseModel, Field
 
 from app.libs.azr import (
@@ -31,11 +30,6 @@ from app.libs.azr import (
     ApprovalTier,
     AZRConstitutionalValidator,
     AZRRiskAssessmentService,
-    ConstitutionalViolation,
-    ImpactScope,
-    RiskAssessment,
-    RiskLevel,
-    RollbackTimeframe,
     get_constitution_summary,
 )
 
@@ -48,8 +42,10 @@ router = APIRouter(prefix="/azr", tags=["AZR - Autonomous Zero-Risk Amendment"])
 # REQUEST/RESPONSE MODELS
 # ═══════════════════════════════════════════════════════════════
 
+
 class ProposalCreateRequest(BaseModel):
     """Request to create a new amendment proposal."""
+
     title: str = Field(..., min_length=10, max_length=500)
     description: str = Field(..., min_length=50)
     category: str = Field(..., description="PARAMETER_TUNING, ALGORITHMIC_CHANGE, etc.")
@@ -62,6 +58,7 @@ class ProposalCreateRequest(BaseModel):
 
 class ProposalResponse(BaseModel):
     """Response with proposal details."""
+
     id: str
     title: str
     description: str
@@ -76,6 +73,7 @@ class ProposalResponse(BaseModel):
 
 class RiskAssessmentResponse(BaseModel):
     """Risk assessment result."""
+
     proposal_id: str
     score: float
     classification: str
@@ -86,6 +84,7 @@ class RiskAssessmentResponse(BaseModel):
 
 class ConstitutionResponse(BaseModel):
     """Constitution summary response."""
+
     version: str
     immutable_components: list[str]
     axioms: dict[str, str]
@@ -95,6 +94,7 @@ class ConstitutionResponse(BaseModel):
 
 class ViolationResponse(BaseModel):
     """Constitutional violation details."""
+
     violation_id: str
     axiom: str
     severity: str
@@ -105,6 +105,7 @@ class ViolationResponse(BaseModel):
 
 class ApprovalRequest(BaseModel):
     """Request for committee approval."""
+
     committee: str = Field(..., description="technical, security, business, arbiter")
     votes_for: int = Field(..., ge=0)
     votes_against: int = Field(..., ge=0)
@@ -128,6 +129,7 @@ proposals_store: dict[str, AmendmentProposal] = {}
 # CONSTITUTION ENDPOINTS
 # ═══════════════════════════════════════════════════════════════
 
+
 @router.get("/constitution", response_model=ConstitutionResponse)
 async def get_constitution():
     """Get the active constitution summary.
@@ -139,7 +141,7 @@ async def get_constitution():
         immutable_components=summary["immutable_components"],
         axioms=summary["axioms"],
         guarantees=summary["guarantees"],
-        no_ai_override=summary["no_ai_override"]
+        no_ai_override=summary["no_ai_override"],
     )
 
 
@@ -154,10 +156,10 @@ async def get_axioms():
                 "id": int(k),
                 "name": v,
                 "formal_logic": f"See constitution document for axiom {k}",
-                "immutability": "ABSOLUTE"
+                "immutability": "ABSOLUTE",
             }
             for k, v in summary["axioms"].items()
-        ]
+        ],
     }
 
 
@@ -170,13 +172,14 @@ async def verify_constitution():
         "enforcement": ["OPA", "Runtime", "Arbiter", "CI/CD"],
         "immutable_core_protected": True,
         "no_ai_override_active": True,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
     }
 
 
 # ═══════════════════════════════════════════════════════════════
 # PROPOSAL ENDPOINTS
 # ═══════════════════════════════════════════════════════════════
+
 
 @router.post("/proposals", response_model=ProposalResponse)
 async def create_proposal(request: ProposalCreateRequest):
@@ -203,13 +206,14 @@ async def create_proposal(request: ProposalCreateRequest):
     # Set rollback plan if provided
     if request.rollback_plan:
         from app.libs.azr.models import RollbackPlan
+
         proposal.rollback_plan = RollbackPlan(
             plan_id=uuid4(),
             amendment_id=proposal.id,
             steps=request.rollback_plan.get("steps", []),
             estimated_duration_minutes=request.rollback_plan.get("duration_minutes", 60),
             data_preservation_strategy=request.rollback_plan.get("data_strategy", ""),
-            rollback_triggers=request.rollback_plan.get("triggers", [])
+            rollback_triggers=request.rollback_plan.get("triggers", []),
         )
 
     # Validate constitutional compliance
@@ -224,15 +228,10 @@ async def create_proposal(request: ProposalCreateRequest):
                 "error": "CONSTITUTIONAL_VIOLATION",
                 "message": "Proposal violates constitutional axioms",
                 "violations": [
-                    {
-                        "id": v.violation_id,
-                        "axiom": v.axiom,
-                        "severity": v.severity.value,
-                        "message": v.message
-                    }
+                    {"id": v.violation_id, "axiom": v.axiom, "severity": v.severity.value, "message": v.message}
                     for v in critical
-                ]
-            }
+                ],
+            },
         )
 
     # Store proposal
@@ -251,14 +250,9 @@ async def create_proposal(request: ProposalCreateRequest):
         created_at=proposal.created_at.isoformat(),
         is_constitutional=len(violations) == 0,
         violations=[
-            {
-                "id": v.violation_id,
-                "axiom": v.axiom,
-                "severity": v.severity.value,
-                "message": v.message
-            }
+            {"id": v.violation_id, "axiom": v.axiom, "severity": v.severity.value, "message": v.message}
             for v in violations
-        ]
+        ],
     )
 
 
@@ -266,7 +260,7 @@ async def create_proposal(request: ProposalCreateRequest):
 async def list_proposals(
     state: str | None = Query(None, description="Filter by state"),
     risk_level: str | None = Query(None, description="Filter by risk level"),
-    limit: int = Query(50, ge=1, le=200)
+    limit: int = Query(50, ge=1, le=200),
 ):
     """List all amendment proposals."""
     proposals = list(proposals_store.values())
@@ -289,10 +283,10 @@ async def list_proposals(
                 "category": p.category.value,
                 "state": p.current_state.value,
                 "risk_level": p.risk_assessment.classification.value if p.risk_assessment else None,
-                "created_at": p.created_at.isoformat()
+                "created_at": p.created_at.isoformat(),
             }
             for p in proposals[:limit]
-        ]
+        ],
     }
 
 
@@ -316,20 +310,16 @@ async def get_proposal(proposal_id: str = Path(...)):
         created_at=proposal.created_at.isoformat(),
         is_constitutional=len(violations) == 0,
         violations=[
-            {
-                "id": v.violation_id,
-                "axiom": v.axiom,
-                "severity": v.severity.value,
-                "message": v.message
-            }
+            {"id": v.violation_id, "axiom": v.axiom, "severity": v.severity.value, "message": v.message}
             for v in violations
-        ]
+        ],
     )
 
 
 # ═══════════════════════════════════════════════════════════════
 # RISK ASSESSMENT ENDPOINTS
 # ═══════════════════════════════════════════════════════════════
+
 
 @router.post("/proposals/{proposal_id}/assess-risk", response_model=RiskAssessmentResponse)
 async def assess_proposal_risk(proposal_id: str = Path(...)):
@@ -347,10 +337,7 @@ async def assess_proposal_risk(proposal_id: str = Path(...)):
     proposal.risk_assessment = assessment
     proposal.transition_state(AmendmentState.VALIDATING, "Risk assessment completed")
 
-    logger.info(
-        f"Risk assessment for {proposal_id}: "
-        f"score={assessment.score}, level={assessment.classification.value}"
-    )
+    logger.info(f"Risk assessment for {proposal_id}: score={assessment.score}, level={assessment.classification.value}")
 
     return RiskAssessmentResponse(
         proposal_id=proposal_id,
@@ -358,7 +345,7 @@ async def assess_proposal_risk(proposal_id: str = Path(...)):
         classification=assessment.classification.value,
         approval_level=assessment.approval_level.value,
         constraints=assessment.constraints,
-        assessed_at=assessment.assessed_at.isoformat()
+        assessed_at=assessment.assessed_at.isoformat(),
     )
 
 
@@ -371,15 +358,13 @@ async def get_approval_requirements(approval_level: str = Path(...)):
         raise HTTPException(400, f"Invalid approval level. Must be one of: {[t.value for t in ApprovalTier]}")
 
     requirements = risk_service.get_approval_requirements(tier)
-    return {
-        "approval_level": approval_level,
-        "requirements": requirements
-    }
+    return {"approval_level": approval_level, "requirements": requirements}
 
 
 # ═══════════════════════════════════════════════════════════════
 # VALIDATION ENDPOINTS
 # ═══════════════════════════════════════════════════════════════
+
 
 @router.post("/proposals/{proposal_id}/validate")
 async def validate_proposal(proposal_id: str = Path(...)):
@@ -404,11 +389,11 @@ async def validate_proposal(proposal_id: str = Path(...)):
                 "severity": v.severity.value,
                 "message": v.message,
                 "action": v.action,
-                "escalation": v.escalation
+                "escalation": v.escalation,
             }
             for v in violations
         ],
-        "validated_at": datetime.utcnow().isoformat()
+        "validated_at": datetime.utcnow().isoformat(),
     }
 
 
@@ -423,14 +408,14 @@ async def validate_components(components: list[str]):
         results.append({
             "component": component,
             "modifiable": not is_immutable,
-            "reason": "IMMUTABLE_CORE (Axiom 10)" if is_immutable else None
+            "reason": "IMMUTABLE_CORE (Axiom 10)" if is_immutable else None,
         })
 
     return {
         "total_checked": len(components),
         "modifiable_count": sum(1 for r in results if r["modifiable"]),
         "immutable_count": sum(1 for r in results if not r["modifiable"]),
-        "results": results
+        "results": results,
     }
 
 
@@ -438,11 +423,9 @@ async def validate_components(components: list[str]):
 # APPROVAL ENDPOINTS
 # ═══════════════════════════════════════════════════════════════
 
+
 @router.post("/proposals/{proposal_id}/approve")
-async def submit_approval(
-    proposal_id: str = Path(...),
-    request: ApprovalRequest = ...
-):
+async def submit_approval(proposal_id: str = Path(...), request: ApprovalRequest = ...):
     """Submit committee approval for a proposal.
     Implements Axiom 12 (Multi-Party Accountability).
     """
@@ -457,6 +440,7 @@ async def submit_approval(
 
     # Create approval record
     from app.libs.azr.models import CommitteeApproval
+
     approval = CommitteeApproval(
         committee_name=request.committee,
         votes_for=request.votes_for,
@@ -464,7 +448,7 @@ async def submit_approval(
         total_votes=request.total_votes,
         signatures=request.signatures,
         deliberation_notes=request.notes or "",
-        approved_at=datetime.utcnow() if request.votes_for > request.votes_against else None
+        approved_at=datetime.utcnow() if request.votes_for > request.votes_against else None,
     )
 
     # Store approval
@@ -475,10 +459,7 @@ async def submit_approval(
     if request.committee in ["security", "arbiter"] and not approval.is_unanimous:
         warnings.append(f"{request.committee} approval must be unanimous for final deployment")
 
-    logger.info(
-        f"Approval submitted for {proposal_id}: "
-        f"committee={request.committee}, approved={approval.is_approved}"
-    )
+    logger.info(f"Approval submitted for {proposal_id}: committee={request.committee}, approved={approval.is_approved}")
 
     return {
         "proposal_id": proposal_id,
@@ -488,7 +469,7 @@ async def submit_approval(
         "votes_for": request.votes_for,
         "votes_against": request.votes_against,
         "warnings": warnings,
-        "submitted_at": datetime.utcnow().isoformat()
+        "submitted_at": datetime.utcnow().isoformat(),
     }
 
 
@@ -511,35 +492,28 @@ async def get_approval_status(proposal_id: str = Path(...)):
                 "unanimous": approval.is_unanimous,
                 "votes_for": approval.votes_for,
                 "votes_against": approval.votes_against,
-                "approved_at": approval.approved_at.isoformat() if approval.approved_at else None
+                "approved_at": approval.approved_at.isoformat() if approval.approved_at else None,
             }
         else:
-            status[committee] = {
-                "submitted": False,
-                "approved": False,
-                "unanimous": False
-            }
+            status[committee] = {"submitted": False, "approved": False, "unanimous": False}
 
     # Check if all required approvals are met
-    all_approved = all(
-        status[c]["approved"] for c in required
-    )
-    unanimous_where_required = all(
-        status[c]["unanimous"] for c in ["security", "arbiter"] if status[c]["submitted"]
-    )
+    all_approved = all(status[c]["approved"] for c in required)
+    unanimous_where_required = all(status[c]["unanimous"] for c in ["security", "arbiter"] if status[c]["submitted"])
 
     return {
         "proposal_id": proposal_id,
         "status": status,
         "all_committees_approved": all_approved,
         "security_arbiter_unanimous": unanimous_where_required,
-        "ready_for_deployment": all_approved and unanimous_where_required
+        "ready_for_deployment": all_approved and unanimous_where_required,
     }
 
 
 # ═══════════════════════════════════════════════════════════════
 # METRICS & ANALYTICS
 # ═══════════════════════════════════════════════════════════════
+
 
 @router.get("/metrics")
 async def get_azr_metrics():
@@ -563,7 +537,7 @@ async def get_azr_metrics():
         "constitutional_violations": 0,  # TODO: Implement from DB
         "rollback_rate": 0.0,  # TODO: Implement from DB
         "constitution_version": CONSTITUTION_VERSION,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
     }
 
 
@@ -577,5 +551,5 @@ async def azr_health():
         "axioms_enforced": [9, 10, 11, 12, 13, 14],
         "opa_connected": True,  # TODO: Реалізувати справжню перевірку
         "truth_ledger_accessible": True,  # TODO: Реалізувати справжню перевірку
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
     }

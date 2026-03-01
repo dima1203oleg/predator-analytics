@@ -1,8 +1,7 @@
+"""Predator Analytics v45.1
+Shared Library.
+"""
 
-"""
-Predator Analytics v45.1
-Shared Library
-"""
-from .events import PredatorEvent
 from .decision import DecisionArtifact
-from .logging_config import setup_logging, get_logger
+from .events import PredatorEvent
+from .logging_config import get_logger, setup_logging

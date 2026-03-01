@@ -5,14 +5,13 @@ from __future__ import annotations
 Замість інструкцій "як зробити" - реально виконує дії.
 """
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 import hashlib
 import logging
 import os
 import re
 import subprocess
-from typing import Dict, List, Optional
 
 import httpx
 
@@ -27,16 +26,18 @@ MLFLOW_URL = os.getenv("MLFLOW_URL", "http://localhost:5000")
 
 class TaskStatus(Enum):
     """Статус задачі."""
-    PENDING = "pending"           # Очікує підтвердження
-    CONFIRMED = "confirmed"       # Підтверджено, готово до виконання
-    EXECUTING = "executing"       # Виконується
-    COMPLETED = "completed"       # Успішно завершено
-    FAILED = "failed"             # Помилка
-    CANCELLED = "cancelled"       # Скасовано
+
+    PENDING = "pending"  # Очікує підтвердження
+    CONFIRMED = "confirmed"  # Підтверджено, готово до виконання
+    EXECUTING = "executing"  # Виконується
+    COMPLETED = "completed"  # Успішно завершено
+    FAILED = "failed"  # Помилка
+    CANCELLED = "cancelled"  # Скасовано
 
 
 class TaskCategory(Enum):
     """Категорія задачі."""
+
     DOCKER = "docker"
     GIT = "git"
     KUBERNETES = "kubernetes"
@@ -49,32 +50,33 @@ class TaskCategory(Enum):
     MONITOR = "monitor"
     SEARCH = "search"
     # Нові категорії
-    REMOTE = "remote"           # Віддалений NVIDIA сервер
-    BACKUP = "backup"           # Бекапи
-    MLFLOW = "mlflow"           # MLflow операції
-    ARGOCD = "argocd"           # ArgoCD CI/CD
-    GPU = "gpu"                 # GPU-специфічні команди
-    NETWORK = "network"         # Ngrok/SSH
-    CELERY = "celery"           # Celery workers
-    OPENSEARCH = "opensearch"   # OpenSearch
-    QDRANT = "qdrant"           # Qdrant vector DB
+    REMOTE = "remote"  # Віддалений NVIDIA сервер
+    BACKUP = "backup"  # Бекапи
+    MLFLOW = "mlflow"  # MLflow операції
+    ARGOCD = "argocd"  # ArgoCD CI/CD
+    GPU = "gpu"  # GPU-специфічні команди
+    NETWORK = "network"  # Ngrok/SSH
+    CELERY = "celery"  # Celery workers
+    OPENSEARCH = "opensearch"  # OpenSearch
+    QDRANT = "qdrant"  # Qdrant vector DB
     OTHER = "other"
 
 
 @dataclass
 class PendingTask:
     """Задача, що очікує підтвердження."""
+
     task_id: str
     user_id: int
     chat_id: int
     category: TaskCategory
     description: str
-    commands: list[str]                    # Shell команди для виконання
-    is_dangerous: bool = False             # Потенційно небезпечна (rm, drop, etc.)
-    requires_confirmation: bool = True      # Потребує підтвердження
+    commands: list[str]  # Shell команди для виконання
+    is_dangerous: bool = False  # Потенційно небезпечна (rm, drop, etc.)
+    requires_confirmation: bool = True  # Потребує підтвердження
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
-    timeout_seconds: int = 300              # Скільки секунд чекати підтвердження
-    callback_data: str | None = None     # Дані для callback button
+    timeout_seconds: int = 300  # Скільки секунд чекати підтвердження
+    callback_data: str | None = None  # Дані для callback button
 
     def is_expired(self) -> bool:
         """Перевіряє чи задача прострочена."""
@@ -85,6 +87,7 @@ class PendingTask:
 @dataclass
 class ExecutionResult:
     """Результат виконання задачі."""
+
     task_id: str
     status: TaskStatus
     output: str
@@ -111,7 +114,6 @@ class TaskExecutor:
             "docker_restart": ("docker compose restart {service}", False),
             "docker_logs": ("docker compose logs --tail=100 {service}", False),
             "docker_build": ("docker compose up -d --build {service}", False),
-
             # Git
             "git_status": ("git status --short", False),
             "git_pull": ("git pull origin main", False),
@@ -120,20 +122,17 @@ class TaskExecutor:
             "git_add": ("git add .", True),
             "git_commit": ("git commit -m '{message}'", True),
             "git_push": ("git push origin main", True),
-
             # Kubernetes
             "k8s_pods": ("kubectl get pods -A", False),
             "k8s_nodes": ("kubectl get nodes", False),
             "k8s_services": ("kubectl get services -A", False),
             "k8s_logs": ("kubectl logs {pod} -n {namespace} --tail=50", False),
             "k8s_restart": ("kubectl rollout restart deployment/{deployment} -n {namespace}", True),
-
             # System
             "sys_disk": ("df -h /", False),
             "sys_memory": ("vm_stat", False),
             "sys_cpu": ("top -l 1 -n 0 | grep 'CPU'", False),
             "sys_uptime": ("uptime", False),
-
             # Files
             "file_list": ("ls -la {path}", False),
             "file_read": ("cat {path}", False),
@@ -228,7 +227,18 @@ class TaskExecutor:
         task_id = self.generate_task_id(user_id, text)
 
         # Визначаємо сервіс якщо вказано
-        services = ["redis", "postgres", "qdrant", "opensearch", "minio", "backend", "frontend", "celery", "nginx", "mlflow"]
+        services = [
+            "redis",
+            "postgres",
+            "qdrant",
+            "opensearch",
+            "minio",
+            "backend",
+            "frontend",
+            "celery",
+            "nginx",
+            "mlflow",
+        ]
         target_service = None
         for svc in services:
             if svc in text_lower:
@@ -300,7 +310,7 @@ class TaskExecutor:
             description=description,
             commands=commands,
             requires_confirmation=requires_confirmation,
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
         if requires_confirmation:
@@ -327,7 +337,9 @@ class TaskExecutor:
 
         elif any(kw in text_lower for kw in ["коміт", "commit", "закомітити", "зберегти зміни"]):
             # Витягуємо повідомлення коміту
-            msg_match = re.search(r'(?:повідомлення|message|з текстом|msg)[:\s]+["\']?(.+?)["\']?$', text, re.IGNORECASE)
+            msg_match = re.search(
+                r'(?:повідомлення|message|з текстом|msg)[:\s]+["\']?(.+?)["\']?$', text, re.IGNORECASE
+            )
             if msg_match:
                 commit_msg = msg_match.group(1).strip()
             else:
@@ -366,7 +378,7 @@ class TaskExecutor:
             commands=commands,
             requires_confirmation=requires_confirmation,
             is_dangerous=is_dangerous,
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
         if requires_confirmation:
@@ -395,7 +407,7 @@ class TaskExecutor:
 
         elif any(kw in text_lower for kw in ["рестарт", "restart", "перезапусти"]):
             # Витягуємо назву deployment
-            deploy_match = re.search(r'(?:deployment|деплоймент|додаток)[:\s]+(\w+)', text_lower)
+            deploy_match = re.search(r"(?:deployment|деплоймент|додаток)[:\s]+(\w+)", text_lower)
             if deploy_match:
                 deployment = deploy_match.group(1)
                 commands = [f"kubectl rollout restart deployment/{deployment} -n predator"]
@@ -411,10 +423,7 @@ class TaskExecutor:
             description = "📜 Показати логи backend pod'ів"
 
         else:
-            commands = [
-                "kubectl get nodes -o wide",
-                "kubectl get pods -A | head -20"
-            ]
+            commands = ["kubectl get nodes -o wide", "kubectl get pods -A | head -20"]
             description = "☸️ Огляд Kubernetes кластера"
 
         task = PendingTask(
@@ -425,7 +434,7 @@ class TaskExecutor:
             description=description,
             commands=commands,
             requires_confirmation=requires_confirmation,
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
         if requires_confirmation:
@@ -457,11 +466,7 @@ class TaskExecutor:
 
         else:
             # Загальний статус
-            commands = [
-                "uptime",
-                "df -h / | tail -1",
-                "top -l 1 -n 0 | grep 'CPU\\|PhysMem'"
-            ]
+            commands = ["uptime", "df -h / | tail -1", "top -l 1 -n 0 | grep 'CPU\\|PhysMem'"]
             description = "📊 Системний статус"
 
         return PendingTask(
@@ -472,18 +477,14 @@ class TaskExecutor:
             description=description,
             commands=commands,
             requires_confirmation=False,  # Системні запити завжди безпечні
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
     async def _analyze_deploy_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
         """Аналізує запит на деплой."""
         task_id = self.generate_task_id(user_id, text)
 
-        commands = [
-            "git fetch origin",
-            "git pull origin main",
-            "docker compose up -d --build"
-        ]
+        commands = ["git fetch origin", "git pull origin main", "docker compose up -d --build"]
         description = "🚀 Повний деплой: pull + build + restart"
 
         task = PendingTask(
@@ -495,7 +496,7 @@ class TaskExecutor:
             commands=commands,
             requires_confirmation=True,
             is_dangerous=True,
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
         self.pending_tasks[task_id] = task
@@ -506,7 +507,7 @@ class TaskExecutor:
         task_id = self.generate_task_id(user_id, text)
 
         # Витягуємо шлях до файлу
-        path_match = re.search(r'файл[:\s]+([^\s]+)', text_lower)
+        path_match = re.search(r"файл[:\s]+([^\s]+)", text_lower)
         file_path = path_match.group(1) if path_match else "."
 
         if any(kw in text_lower for kw in ["покажи", "прочитай", "read", "cat"]):
@@ -527,7 +528,7 @@ class TaskExecutor:
             description=description,
             commands=commands,
             requires_confirmation=False,
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
     # ==================== НОВІ КАТЕГОРІЇ ====================
@@ -544,7 +545,7 @@ class TaskExecutor:
                 "REMOTE:hostname",
                 "REMOTE:uptime",
                 "REMOTE:docker ps --format 'table {{.Names}}\t{{.Status}}' | head -10",
-                "REMOTE:nvidia-smi --query-gpu=name,memory.used,memory.total --format=csv,noheader 2>/dev/null || echo 'GPU N/A'"
+                "REMOTE:nvidia-smi --query-gpu=name,memory.used,memory.total --format=csv,noheader 2>/dev/null || echo 'GPU N/A'",
             ]
             description = "🖥️ Статус NVIDIA сервера"
             requires_confirmation = False
@@ -568,7 +569,7 @@ class TaskExecutor:
             commands = [
                 "REMOTE:cd ~/predator-analytics && git pull origin main",
                 "REMOTE:cd ~/predator-analytics && docker compose pull",
-                "REMOTE:cd ~/predator-analytics && docker compose up -d --build"
+                "REMOTE:cd ~/predator-analytics && docker compose up -d --build",
             ]
             description = "🚀 Деплой на NVIDIA сервері"
 
@@ -584,11 +585,7 @@ class TaskExecutor:
 
         else:
             # Загальний статус
-            commands = [
-                "REMOTE:hostname && uptime",
-                "REMOTE:df -h / | tail -1",
-                "REMOTE:free -h | grep Mem"
-            ]
+            commands = ["REMOTE:hostname && uptime", "REMOTE:df -h / | tail -1", "REMOTE:free -h | grep Mem"]
             description = "🖥️ Огляд NVIDIA сервера"
             requires_confirmation = False
 
@@ -600,7 +597,7 @@ class TaskExecutor:
             description=description,
             commands=commands,
             requires_confirmation=requires_confirmation,
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
         if requires_confirmation:
@@ -615,7 +612,7 @@ class TaskExecutor:
         if any(kw in text_lower for kw in ["статус", "status", "моніторинг"]):
             commands = [
                 "REMOTE:nvidia-smi",
-                "REMOTE:nvidia-smi --query-gpu=name,memory.used,memory.total,temperature.gpu,utilization.gpu --format=csv"
+                "REMOTE:nvidia-smi --query-gpu=name,memory.used,memory.total,temperature.gpu,utilization.gpu --format=csv",
             ]
             description = "🎮 GPU статус (nvidia-smi)"
         elif any(kw in text_lower for kw in ["процес", "process", "що запущено"]):
@@ -625,7 +622,9 @@ class TaskExecutor:
             commands = ["REMOTE:nvidia-smi --query-gpu=memory.used,memory.free,memory.total --format=csv"]
             description = "🎮 GPU пам'ять"
         else:
-            commands = ["REMOTE:nvidia-smi --query-gpu=name,memory.used,memory.total,utilization.gpu,temperature.gpu --format=csv,noheader"]
+            commands = [
+                "REMOTE:nvidia-smi --query-gpu=name,memory.used,memory.total,utilization.gpu,temperature.gpu --format=csv,noheader"
+            ]
             description = "🎮 GPU інформація"
 
         return PendingTask(
@@ -636,7 +635,7 @@ class TaskExecutor:
             description=description,
             commands=commands,
             requires_confirmation=False,
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
     async def _analyze_database_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
@@ -648,11 +647,13 @@ class TaskExecutor:
 
         if "postgres" in text_lower:
             if any(kw in text_lower for kw in ["статус", "status"]):
-                commands = ["docker exec predator_postgres psql -U predator -c '\\l' 2>/dev/null || echo 'PostgreSQL not running'"]
+                commands = [
+                    "docker exec predator_postgres psql -U predator -c '\\l' 2>/dev/null || echo 'PostgreSQL not running'"
+                ]
                 description = "🗄️ PostgreSQL статус"
             elif any(kw in text_lower for kw in ["запит", "query", "виконай"]):
                 # Витягуємо SQL запит
-                sql_match = re.search(r'(?:запит|query)[:\s]+(.+)', text, re.IGNORECASE)
+                sql_match = re.search(r"(?:запит|query)[:\s]+(.+)", text, re.IGNORECASE)
                 if sql_match:
                     sql = sql_match.group(1).strip()
                     commands = [f'docker exec predator_postgres psql -U predator -c "{sql}"']
@@ -670,7 +671,7 @@ class TaskExecutor:
         elif "opensearch" in text_lower:
             commands = [
                 f"curl -s {OPENSEARCH_URL}/_cluster/health | python3 -m json.tool 2>/dev/null || echo 'OpenSearch not available'",
-                f"curl -s {OPENSEARCH_URL}/_cat/indices?v | head -20"
+                f"curl -s {OPENSEARCH_URL}/_cat/indices?v | head -20",
             ]
             description = "🔍 OpenSearch статус"
 
@@ -686,7 +687,7 @@ class TaskExecutor:
                 "docker exec predator_postgres psql -U predator -c 'SELECT 1' 2>/dev/null && echo '✅ PostgreSQL OK' || echo '❌ PostgreSQL FAIL'",
                 "docker exec predator_redis redis-cli PING 2>/dev/null && echo '✅ Redis OK' || echo '❌ Redis FAIL'",
                 f"curl -s {OPENSEARCH_URL}/_cluster/health | grep -q 'green\\|yellow' && echo '✅ OpenSearch OK' || echo '⚠️ OpenSearch'",
-                f"curl -s {QDRANT_URL}/collections | grep -q 'collections' && echo '✅ Qdrant OK' || echo '⚠️ Qdrant'"
+                f"curl -s {QDRANT_URL}/collections | grep -q 'collections' && echo '✅ Qdrant OK' || echo '⚠️ Qdrant'",
             ]
             description = "🗄️ Статус всіх баз даних"
 
@@ -698,7 +699,7 @@ class TaskExecutor:
             description=description,
             commands=commands,
             requires_confirmation=requires_confirmation,
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
         if requires_confirmation:
@@ -715,13 +716,13 @@ class TaskExecutor:
         if "postgres" in text_lower or "база" in text_lower:
             commands = [
                 f"docker exec predator_postgres pg_dump -U predator predator > ~/backups/postgres_backup_{timestamp}.sql",
-                f"echo 'Backup saved to ~/backups/postgres_backup_{timestamp}.sql'"
+                f"echo 'Backup saved to ~/backups/postgres_backup_{timestamp}.sql'",
             ]
             description = f"💾 Бекап PostgreSQL ({timestamp})"
         elif "redis" in text_lower:
             commands = [
                 "docker exec predator_redis redis-cli BGSAVE",
-                f"docker cp predator_redis:/data/dump.rdb ~/backups/redis_backup_{timestamp}.rdb"
+                f"docker cp predator_redis:/data/dump.rdb ~/backups/redis_backup_{timestamp}.rdb",
             ]
             description = f"💾 Бекап Redis ({timestamp})"
         else:
@@ -729,7 +730,7 @@ class TaskExecutor:
                 "mkdir -p ~/backups",
                 f"docker exec predator_postgres pg_dump -U predator predator > ~/backups/postgres_{timestamp}.sql",
                 f"docker cp predator_redis:/data/dump.rdb ~/backups/redis_{timestamp}.rdb 2>/dev/null || true",
-                "echo 'Backups saved to ~/backups/'"
+                "echo 'Backups saved to ~/backups/'",
             ]
             description = f"💾 Повний бекап баз ({timestamp})"
 
@@ -742,7 +743,7 @@ class TaskExecutor:
             commands=commands,
             requires_confirmation=True,
             is_dangerous=False,
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
         self.pending_tasks[task_id] = task
@@ -784,7 +785,7 @@ class TaskExecutor:
             description=description,
             commands=commands,
             requires_confirmation=requires_confirmation,
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
         if requires_confirmation:
@@ -797,18 +798,24 @@ class TaskExecutor:
         task_id = self.generate_task_id(user_id, text)
 
         if any(kw in text_lower for kw in ["experiment", "експеримент"]):
-            commands = [f"curl -s {MLFLOW_URL}/api/2.0/mlflow/experiments/search | python3 -m json.tool 2>/dev/null | head -50"]
+            commands = [
+                f"curl -s {MLFLOW_URL}/api/2.0/mlflow/experiments/search | python3 -m json.tool 2>/dev/null | head -50"
+            ]
             description = "📊 MLflow експерименти"
         elif any(kw in text_lower for kw in ["model", "модел"]):
-            commands = [f"curl -s {MLFLOW_URL}/api/2.0/mlflow/registered-models/search | python3 -m json.tool 2>/dev/null | head -50"]
+            commands = [
+                f"curl -s {MLFLOW_URL}/api/2.0/mlflow/registered-models/search | python3 -m json.tool 2>/dev/null | head -50"
+            ]
             description = "🤖 MLflow моделі"
         elif any(kw in text_lower for kw in ["run", "запуск"]):
-            commands = [f"curl -s {MLFLOW_URL}/api/2.0/mlflow/runs/search -d '{{}}' | python3 -m json.tool 2>/dev/null | head -50"]
+            commands = [
+                f"curl -s {MLFLOW_URL}/api/2.0/mlflow/runs/search -d '{{}}' | python3 -m json.tool 2>/dev/null | head -50"
+            ]
             description = "🏃 MLflow запуски"
         else:
             commands = [
                 f"curl -s {MLFLOW_URL}/health 2>/dev/null && echo '✅ MLflow OK' || echo '❌ MLflow not available'",
-                f"curl -s {MLFLOW_URL}/api/2.0/mlflow/experiments/search | python3 -c 'import sys,json; d=json.load(sys.stdin); print(\"Experiments:\", len(d.get(\"experiments\", [])))' 2>/dev/null || true"
+                f'curl -s {MLFLOW_URL}/api/2.0/mlflow/experiments/search | python3 -c \'import sys,json; d=json.load(sys.stdin); print("Experiments:", len(d.get("experiments", [])))\' 2>/dev/null || true',
             ]
             description = "📊 MLflow статус"
 
@@ -820,7 +827,7 @@ class TaskExecutor:
             description=description,
             commands=commands,
             requires_confirmation=False,
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
     async def _analyze_celery_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
@@ -848,7 +855,7 @@ class TaskExecutor:
                 description=description,
                 commands=commands,
                 requires_confirmation=True,
-                callback_data=f"exec_{task_id}"
+                callback_data=f"exec_{task_id}",
             )
         else:
             commands = [
@@ -864,7 +871,7 @@ class TaskExecutor:
             description=description,
             commands=commands,
             requires_confirmation=False,
-            callback_data=f"exec_{task_id}"
+            callback_data=f"exec_{task_id}",
         )
 
     async def execute_task(self, task: PendingTask) -> ExecutionResult:
@@ -877,6 +884,7 @@ class TaskExecutor:
         - без префікса - локальна команда
         """
         import time
+
         start_time = time.time()
 
         outputs = []
@@ -887,6 +895,7 @@ class TaskExecutor:
         if any(cmd.startswith("REMOTE:") for cmd in task.commands):
             try:
                 from .remote_server import remote_server
+
                 remote_server_manager = remote_server
             except ImportError:
                 errors.append("Remote server module not available")
@@ -937,7 +946,9 @@ class TaskExecutor:
                                         name = app.get("metadata", {}).get("name", "?")
                                         status = app.get("status", {}).get("sync", {}).get("status", "?")
                                         health = app.get("status", {}).get("health", {}).get("status", "?")
-                                        emoji = "✅" if health == "Healthy" else "⚠️" if health == "Progressing" else "❌"
+                                        emoji = (
+                                            "✅" if health == "Healthy" else "⚠️" if health == "Progressing" else "❌"
+                                        )
                                         status_lines.append(f"{emoji} {name}: {status}/{health}")
                                     outputs.append("\n".join(status_lines))
                                 else:
@@ -946,9 +957,7 @@ class TaskExecutor:
                             elif action == "ARGOCD_SYNC":
                                 app_name = f"predator-{target}"
                                 resp = await client.post(
-                                    f"{argocd_server}/api/v1/applications/{app_name}/sync",
-                                    headers=headers,
-                                    json={}
+                                    f"{argocd_server}/api/v1/applications/{app_name}/sync", headers=headers, json={}
                                 )
                                 if resp.status_code in [200, 201]:
                                     outputs.append(f"✅ ArgoCD sync initiated for {app_name}")
@@ -958,7 +967,9 @@ class TaskExecutor:
                             elif action == "ARGOCD_ROLLBACK":
                                 app_name = f"predator-{target}"
                                 # Get current revision first
-                                resp = await client.get(f"{argocd_server}/api/v1/applications/{app_name}", headers=headers)
+                                resp = await client.get(
+                                    f"{argocd_server}/api/v1/applications/{app_name}", headers=headers
+                                )
                                 if resp.status_code == 200:
                                     history = resp.json().get("status", {}).get("history", [])
                                     if len(history) >= 2:
@@ -966,7 +977,7 @@ class TaskExecutor:
                                         resp = await client.post(
                                             f"{argocd_server}/api/v1/applications/{app_name}/rollback",
                                             headers=headers,
-                                            json={"id": prev_revision}
+                                            json={"id": prev_revision},
                                         )
                                         if resp.status_code in [200, 201]:
                                             outputs.append(f"↩️ Rollback to {prev_revision[:8]} initiated")
@@ -983,12 +994,7 @@ class TaskExecutor:
 
                 # ======== ЛОКАЛЬНІ КОМАНДИ ========
                 result = subprocess.run(
-                    cmd,
-                    check=False, shell=True,
-                    capture_output=True,
-                    text=True,
-                    timeout=120,
-                    cwd=self.project_dir
+                    cmd, check=False, shell=True, capture_output=True, text=True, timeout=120, cwd=self.project_dir
                 )
 
                 if result.stdout:
@@ -1014,7 +1020,7 @@ class TaskExecutor:
                 output=full_output[:3000],
                 error=full_error[:1000] if full_error else None,
                 execution_time_ms=execution_time,
-                commands_executed=task.commands
+                commands_executed=task.commands,
             )
 
             self.execution_history.append(exec_result)
@@ -1026,16 +1032,12 @@ class TaskExecutor:
                 status=TaskStatus.FAILED,
                 output="",
                 error="⏱️ Timeout: команда виконувалась занадто довго (>120с)",
-                commands_executed=task.commands
+                commands_executed=task.commands,
             )
         except Exception as e:
             logger.exception(f"Task execution error: {e}")
             return ExecutionResult(
-                task_id=task.task_id,
-                status=TaskStatus.FAILED,
-                output="",
-                error=str(e),
-                commands_executed=task.commands
+                task_id=task.task_id, status=TaskStatus.FAILED, output="", error=str(e), commands_executed=task.commands
             )
 
     def confirm_task(self, task_id: str) -> PendingTask | None:

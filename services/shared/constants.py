@@ -1,7 +1,5 @@
-
-"""
-Constants: shared
-Predator Analytics v45.1
+"""Constants: shared
+Predator Analytics v45.1.
 """
 
 # Versioning

@@ -1,21 +1,19 @@
-
-"""
-Module: artifact
+"""Module: artifact
 Component: rtb-engine
-Predator Analytics v45.1
+Predator Analytics v45.1.
 """
+
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, Optional
 import uuid
-from services.shared.events import PredatorEvent
+
 
 @dataclass
 class DecisionArtifact:
-    """
-    Immutable audit record for every RTB Engine decision (Spec Part 3.2.2).
+    """Immutable audit record for every RTB Engine decision (Spec Part 3.2.2).
     Stored in PostgreSQL for 365 days.
     """
+
     decision_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: datetime = field(default_factory=datetime.utcnow)
 
@@ -30,20 +28,20 @@ class DecisionArtifact:
     rule_condition: str = ""
 
     # Decision details
-    decision: str = ""       # APPROVE / REJECT / ESCALATE / OBSERVE
+    decision: str = ""  # APPROVE / REJECT / ESCALATE / OBSERVE
     reason: str = ""
-    autonomy_level: str = "L0" # L0 / L1 / L2 / L3
+    autonomy_level: str = "L0"  # L0 / L1 / L2 / L3
 
     # LLM advice (if consulted)
     llm_consulted: bool = False
-    llm_trace_id: Optional[str] = None
-    llm_response: Optional[str] = None
+    llm_trace_id: str | None = None
+    llm_response: str | None = None
 
     # Resulting action
-    action_type: str = "none"    # git_pr / k8s_job / notification / none
-    action_artifact: str = ""    # Job ID, PR URL, etc.
+    action_type: str = "none"  # git_pr / k8s_job / notification / none
+    action_artifact: str = ""  # Job ID, PR URL, etc.
 
-    metadata: Dict = field(default_factory=dict)
+    metadata: dict = field(default_factory=dict)
     tenant_id: str = "default"
 
     def to_dict(self) -> dict:
@@ -61,5 +59,5 @@ class DecisionArtifact:
             "llm_consulted": self.llm_consulted,
             "action_type": self.action_type,
             "action_artifact": self.action_artifact,
-            "metadata": self.metadata
+            "metadata": self.metadata,
         }

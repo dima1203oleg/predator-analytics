@@ -3,16 +3,15 @@ from __future__ import annotations
 import asyncio
 from datetime import datetime
 import logging
-from typing import Optional
 
 from app.services.graph_service import graph_builder
 from app.services.llm import llm_service
+from app.services.llm_council import CouncilMember, CouncilResponse, PeerReview
 from app.services.ops_service import ops_service
-
-from .. import CouncilMember, CouncilResponse, PeerReview
 
 
 logger = logging.getLogger(__name__)
+
 
 class OpsCouncilMember(CouncilMember):
     """Infrastructure Sentinel - A council member that provides real-time system context.
@@ -23,29 +22,30 @@ class OpsCouncilMember(CouncilMember):
         super().__init__(model_id=model_id, provider=provider)
         self.diagnostics_report = ""
 
-    async def generate_response(
-        self,
-        query: str,
-        context: str | None = None
-    ) -> CouncilResponse:
+    async def generate_response(self, query: str, context: str | None = None) -> CouncilResponse:
         """Gather system diagnostics and synthesize a fact-based opinion."""
         logger.info(f"Ops Sentinel gathering evidence for query: {query}")
 
         # 1. Gather Real Data
         try:
             from app.services.system_control_service import system_control_service
+
             lockdown_status = "ACTIVE" if await system_control_service.is_lockdown() else "DISABLED"
 
             # We run both doctor and container status if query is infra-related
             tasks = [
                 ops_service.diagnose_system(query),
                 ops_service.execute_tool("get_container_status", {}),
-                graph_builder.get_graph_summary(tenant_id="00000000-0000-0000-0000-000000000000") # Default tenant
+                graph_builder.get_graph_summary(tenant_id="00000000-0000-0000-0000-000000000000"),  # Default tenant
             ]
             diag_results = await asyncio.gather(*tasks)
 
             graph_sum = diag_results[2]
-            graph_info = f"Nodes: {graph_sum.get('total_nodes', 0)}, Edges: {graph_sum.get('total_edges', 0)}" if 'error' not in graph_sum else "N/A"
+            graph_info = (
+                f"Nodes: {graph_sum.get('total_nodes', 0)}, Edges: {graph_sum.get('total_edges', 0)}"
+                if "error" not in graph_sum
+                else "N/A"
+            )
 
             self.diagnostics_report = f"--- SECURITY PROTOCOL ---\nSYSTEM LOCKDOWN: {lockdown_status}\n\n--- KNOWLEDGE GRAPH ---\n{graph_info}\n\n--- COMPREHENSIVE DIAGNOSTICS ---\n{diag_results[0]}\n\n--- DOCKER STATUS ---\n{diag_results[1]}"
         except Exception as e:
@@ -67,9 +67,7 @@ class OpsCouncilMember(CouncilMember):
         """
 
         synth_response = await llm_service.generate_with_routing(
-            prompt=prompt,
-            system="Predator Ops Sentinel Mode. Focus on facts and infra stability.",
-            mode="fast"
+            prompt=prompt, system="Predator Ops Sentinel Mode. Focus on facts and infra stability.", mode="fast"
         )
 
         response = CouncilResponse(
@@ -78,17 +76,13 @@ class OpsCouncilMember(CouncilMember):
             confidence=0.95 if synth_response.success else 0.5,
             reasoning="Evidence gathered via System Doctor and Docker CLI.",
             metadata={"raw_diagnostics": self.diagnostics_report},
-            timestamp=datetime.now()
+            timestamp=datetime.now(),
         )
 
         self.response_history.append(response)
         return response
 
-    async def review_response(
-        self,
-        response: CouncilResponse,
-        original_query: str
-    ) -> PeerReview:
+    async def review_response(self, response: CouncilResponse, original_query: str) -> PeerReview:
         """Review another model's response based on whether it contradicts real-world infra data."""
         prompt = f"""
         As the Ops Sentinel, verify if this peer response is consistent with the current system state.
@@ -104,12 +98,12 @@ class OpsCouncilMember(CouncilMember):
         review_res = await llm_service.generate_with_routing(
             prompt=prompt,
             system="Predator Ops Audit Mode. Check for contradictions with manual diagnostics.",
-            mode="fast"
+            mode="fast",
         )
 
         # Simple extraction logic (usually would be more structured)
         content = review_res.content
-        score = 0.8 # Default
+        score = 0.8  # Default
         if "contradict" in content.lower() or "incorrect" in content.lower():
             score = 0.4
 
@@ -119,5 +113,5 @@ class OpsCouncilMember(CouncilMember):
             score=score,
             critique=content,
             strengths=["Uses infra-awareness"] if score > 0.7 else [],
-            weaknesses=["Ignores system health"] if score < 0.6 else []
+            weaknesses=["Ignores system health"] if score < 0.6 else [],
         )

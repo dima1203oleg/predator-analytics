@@ -5,18 +5,21 @@ from __future__ import annotations
 Comprehensive dependency checks for Kubernetes probes.
 """
 import asyncio
+import contextlib
 from datetime import datetime
 import logging
 import os
 import time
-from typing import Any, Dict
+from typing import Any
 
 from fastapi import APIRouter, Response, WebSocket, WebSocketDisconnect
-from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Health"])
+
 
 @router.get("/metrics")
 async def metrics_endpoint():
@@ -28,6 +31,7 @@ async def metrics_endpoint():
 async def get_agents_status():
     """Get status of all autonomous agents from the orchestrator."""
     from libs.core.autonomy.orchestrator import orchestrator
+
     return orchestrator.get_stats()
 
 
@@ -41,31 +45,30 @@ async def omniscience_ws(websocket: WebSocket):
             # Get latest status using existing logic
             status = await get_sovereign_status()
             await websocket.send_json(status)
-            await asyncio.sleep(2) # 2s pulse
+            await asyncio.sleep(2)  # 2s pulse
     except WebSocketDisconnect:
         logger.info("❌ Omniscience WS Client disconnected")
     except Exception as e:
-        logger.error(f"WS Error: {e}")
+        logger.exception(f"WS Error: {e}")
     finally:
-        try:
+        with contextlib.suppress(BaseException):
             await websocket.close()
-        except:
-            pass
 
 
 async def get_system_metrics() -> dict[str, Any]:
-    """Get real-time system metrics (CPU, Memory, etc.)"""
+    """Get real-time system metrics (CPU, Memory, etc.)."""
     try:
         import psutil
+
         return {
             "cpu_percent": psutil.cpu_percent(interval=None),
             "memory_percent": psutil.virtual_memory().percent,
             "timestamp": datetime.utcnow().isoformat(),
-            "active_containers": 0, # Placeholder or integrate with docker
-            "container_raw": "NVIDIA_GOD_SERVER"
+            "active_containers": 0,  # Placeholder or integrate with docker
+            "container_raw": "NVIDIA_GOD_SERVER",
         }
     except Exception as e:
-        logger.error(f"Failed to get system metrics: {e}")
+        logger.exception(f"Failed to get system metrics: {e}")
         return {"cpu_percent": 0, "memory_percent": 0, "error": str(e)}
 
 
@@ -81,10 +84,7 @@ async def check_postgres() -> dict[str, Any]:
             await conn.execute(text("SELECT 1"))
         latency = (time.time() - start) * 1000
 
-        return {
-            "status": "healthy",
-            "latency_ms": round(latency, 2)
-        }
+        return {"status": "healthy", "latency_ms": round(latency, 2)}
     except Exception as e:
         logger.exception(f"PostgreSQL check failed: {e}")
         return {"status": "unhealthy", "error": str(e)}
@@ -103,10 +103,7 @@ async def check_redis() -> dict[str, Any]:
         await redis.close()
 
         latency = (time.time() - start) * 1000
-        return {
-            "status": "healthy",
-            "latency_ms": round(latency, 2)
-        }
+        return {"status": "healthy", "latency_ms": round(latency, 2)}
     except Exception as e:
         logger.exception(f"Redis check failed: {e}")
         return {"status": "unhealthy", "error": str(e)}
@@ -133,7 +130,7 @@ async def check_qdrant() -> dict[str, Any]:
             "status": "healthy",
             "latency_ms": round(latency, 2),
             "collections": len(collections),
-            "vectors_count": total_points
+            "vectors_count": total_points,
         }
     except Exception as e:
         logger.exception(f"Qdrant check failed: {e}")
@@ -148,12 +145,7 @@ async def check_opensearch() -> dict[str, Any]:
         opensearch_url = os.getenv("OPENSEARCH_URL", "http://localhost:9200")
         start = time.time()
 
-        client = AsyncOpenSearch(
-            hosts=[opensearch_url],
-            use_ssl=False,
-            verify_certs=False,
-            timeout=5
-        )
+        client = AsyncOpenSearch(hosts=[opensearch_url], use_ssl=False, verify_certs=False, timeout=5)
         info = await client.info()
 
         # Get total docs count
@@ -167,7 +159,7 @@ async def check_opensearch() -> dict[str, Any]:
             "status": "healthy",
             "latency_ms": round(latency, 2),
             "version": info.get("version", {}).get("number", "unknown"),
-            "docs_count": total_docs
+            "docs_count": total_docs,
         }
     except Exception as e:
         logger.exception(f"OpenSearch check failed: {e}")
@@ -186,7 +178,7 @@ async def check_llm_providers() -> dict[str, Any]:
         return {
             "status": "healthy" if available else "degraded",
             "available_providers": available,
-            "total_providers": len(status)
+            "total_providers": len(status),
         }
     except Exception as e:
         logger.exception(f"LLM check failed: {e}")
@@ -207,23 +199,15 @@ async def readiness_check(response: Response):
     Checks all critical dependencies.
     """
     # Run checks in parallel
-    checks = await asyncio.gather(
-        check_postgres(),
-        check_redis(),
-        return_exceptions=True
-    )
+    checks = await asyncio.gather(check_postgres(), check_redis(), return_exceptions=True)
 
     results = {
         "postgres": checks[0] if not isinstance(checks[0], Exception) else {"status": "error", "error": str(checks[0])},
-        "redis": checks[1] if not isinstance(checks[1], Exception) else {"status": "error", "error": str(checks[1])}
+        "redis": checks[1] if not isinstance(checks[1], Exception) else {"status": "error", "error": str(checks[1])},
     }
 
     # Determine overall status
-    all_healthy = all(
-        r.get("status") == "healthy"
-        for r in results.values()
-        if isinstance(r, dict)
-    )
+    all_healthy = all(r.get("status") == "healthy" for r in results.values() if isinstance(r, dict))
 
     if not all_healthy:
         response.status_code = 503
@@ -231,7 +215,7 @@ async def readiness_check(response: Response):
     return {
         "status": "ready" if all_healthy else "not_ready",
         "checks": results,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
     }
 
 
@@ -249,15 +233,17 @@ async def full_health_check(response: Response):
         check_qdrant(),
         check_opensearch(),
         check_llm_providers(),
-        return_exceptions=True
+        return_exceptions=True,
     )
 
     results = {
         "postgres": checks[0] if not isinstance(checks[0], Exception) else {"status": "error", "error": str(checks[0])},
         "redis": checks[1] if not isinstance(checks[1], Exception) else {"status": "error", "error": str(checks[1])},
         "qdrant": checks[2] if not isinstance(checks[2], Exception) else {"status": "error", "error": str(checks[2])},
-        "opensearch": checks[3] if not isinstance(checks[3], Exception) else {"status": "error", "error": str(checks[3])},
-        "llm": checks[4] if not isinstance(checks[4], Exception) else {"status": "error", "error": str(checks[4])}
+        "opensearch": checks[3]
+        if not isinstance(checks[3], Exception)
+        else {"status": "error", "error": str(checks[3])},
+        "llm": checks[4] if not isinstance(checks[4], Exception) else {"status": "error", "error": str(checks[4])},
     }
 
     total_time = (time.time() - start_time) * 1000
@@ -278,16 +264,12 @@ async def full_health_check(response: Response):
 
     return {
         "status": overall_status,
-        "summary": {
-            "healthy": healthy_count,
-            "unhealthy": unhealthy_count,
-            "degraded": degraded_count
-        },
+        "summary": {"healthy": healthy_count, "unhealthy": unhealthy_count, "degraded": degraded_count},
         "checks": results,
         "check_duration_ms": round(total_time, 2),
         "timestamp": datetime.utcnow().isoformat(),
         "version": os.getenv("APP_VERSION", "22.0.0"),
-        "environment": os.getenv("ENVIRONMENT", "development")
+        "environment": os.getenv("ENVIRONMENT", "development"),
     }
 
 
@@ -298,6 +280,7 @@ async def liveness_probe():
     """
     return {"status": "alive"}
 
+
 @router.get("/health/v45")
 async def v45_production_check():
     """v45 Sovereign Production Health Check."""
@@ -306,7 +289,7 @@ async def v45_production_check():
         "system": "PREDATOR",
         "version": "30.0.0",
         "mode": "SOVEREIGN",
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
     }
 
 
@@ -314,25 +297,25 @@ async def v45_production_check():
 async def get_sovereign_status():
     """Canonical V45 System Status. Used by Dashboard and healthchecks."""
     metrics = await get_system_metrics()
-    
+
     # Run a quick check on main services
     db_status = await check_postgres()
     redis_status = await check_redis()
-    
+
     overall_status = "HEALTHY"
     if db_status["status"] != "healthy" or redis_status["status"] != "healthy":
         overall_status = "DEGRADED"
-        
+
     return {
         "pulse": {
             "score": 100 if overall_status == "HEALTHY" else 50,
             "status": overall_status,
             "reasons": [] if overall_status == "HEALTHY" else ["Database or Redis degraded"],
-            "alerts": []
+            "alerts": [],
         },
         "system": metrics,
         "training": {"active": False, "progress": 0},
         "audit_logs": [],
         "sagas": [],
-        "v45Realtime": metrics
+        "v45Realtime": metrics,
     }

@@ -2,12 +2,14 @@
 
 Component: shared.schema_registry.
 """
+
 import json
 import logging
 from pathlib import Path
 from typing import Any, ClassVar
 
 import jsonschema
+
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +31,7 @@ class EventValidator:
         if key in cls._cache:
             return cls._cache[key]
 
-        filename = f"predator.events.{event_type}.v{version.split('.')[0]}.json"
+        filename = f"predator.events.{event_type}.v{version.split('.', maxsplit=1)[0]}.json"
         path = SCHEMAS_DIR / filename
 
         if not path.exists():
@@ -65,7 +67,9 @@ class EventValidator:
         except jsonschema.ValidationError as e:
             logger.exception(
                 "Event validation failed for %s v%s: %s",
-                event_type, version, e.message,
+                event_type,
+                version,
+                e.message,
             )
             return False
         else:

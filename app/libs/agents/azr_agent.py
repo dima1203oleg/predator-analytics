@@ -7,17 +7,19 @@ import logging
 import os
 import subprocess
 import tempfile
-from typing import Any, Dict, List
+from typing import Any
 
 from agents.contract import AgentContext, AZRAgentContract
 
 
 logger = logging.getLogger("agent.azr")
 
+
 class PredatorAZRAgent(AZRAgentContract):
     """Autonomous Zone Recovery (AZR) Agent.
     Implements Self-Healing and Improvement Loops strictly via CLI.
     """
+
     name = "predator_azr_v1"
     version = "1.0.0"
     required_permissions = ["system:read", "azr:propose", "db:read_metrics"]
@@ -90,7 +92,7 @@ class PredatorAZRAgent(AZRAgentContract):
         import os
 
         # Write proposal to a temp file for CLI consumption
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write(proposal_yaml)
             tmp_path = f.name
 
@@ -115,11 +117,7 @@ class PredatorAZRAgent(AZRAgentContract):
                 env["PYTHONPATH"] = f"{context.workspace_root}:{env.get('PYTHONPATH', '')}"
 
             result = subprocess.run(
-                cmd,
-                check=False, capture_output=True,
-                text=True,
-                env=env,
-                cwd=context.workspace_root
+                cmd, check=False, capture_output=True, text=True, env=env, cwd=context.workspace_root
             )
 
             if result.returncode != 0:
@@ -146,7 +144,7 @@ type: AUTO_RECOVERY
 timestamp: {datetime.now().isoformat()}
 agent: {self.name}
 issues:
-{json.dumps(analysis.get('issues', []), indent=2)}
+{json.dumps(analysis.get("issues", []), indent=2)}
 proposed_actions:
   - action: verify_all_nodes
   - action: re_sync_ledger_from_consensus

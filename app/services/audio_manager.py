@@ -1,20 +1,19 @@
 import os
-from google.cloud import texttospeech
-from google.cloud import speech
+
+from google.cloud import speech, texttospeech
+
 
 class AudioManager:
-    """
-    Клас для управління аудіо-операціями за допомогою Google Cloud Services.
+    """Клас для управління аудіо-операціями за допомогою Google Cloud Services.
     Включає Text-to-Speech (TTS) та Speech-to-Text (STT).
     """
 
     def __init__(self):
-        """
-        Ініціалізація клієнтів Google Cloud.
+        """Ініціалізація клієнтів Google Cloud.
         Передбачає, що змінна оточення GOOGLE_APPLICATION_CREDENTIALS вже встановлена.
         """
         # Перевірка наявності ключів (не обов'язкова, бібліотека сама перевірить, але корисно для логування)
-        if not os.environ.get('GOOGLE_APPLICATION_CREDENTIALS'):
+        if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
             print("УВАГА: Змінна оточення GOOGLE_APPLICATION_CREDENTIALS не знайдена.")
 
         # Клієнти ініціалізуються ліниво або тут. Краще тут для перевірки з'єднання при старті.
@@ -22,8 +21,7 @@ class AudioManager:
         self.stt_client = speech.SpeechClient()
 
     def text_to_speech(self, text: str, output_filename: str = "output.mp3"):
-        """
-        Перетворює текст на мовлення та зберігає у файл MP3.
+        """Перетворює текст на мовлення та зберігає у файл MP3.
 
         :param text: Текст для озвучення.
         :param output_filename: Шлях до файлу для збереження результату.
@@ -35,18 +33,14 @@ class AudioManager:
         voice = texttospeech.VoiceSelectionParams(
             language_code="uk-UA",
             name="uk-UA-Wavenet-A",  # Можна змінити на інший варіант, наприклад, 'uk-UA-Standard-A'
-            ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
+            ssml_gender=texttospeech.SsmlVoiceGender.FEMALE,
         )
 
         # Налаштування аудіофайлу (MP3)
-        audio_config = texttospeech.AudioConfig(
-            audio_encoding=texttospeech.AudioEncoding.MP3
-        )
+        audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
 
         # Виконання запиту
-        response = self.tts_client.synthesize_speech(
-            input=synthesis_input, voice=voice, audio_config=audio_config
-        )
+        response = self.tts_client.synthesize_speech(input=synthesis_input, voice=voice, audio_config=audio_config)
 
         # Збереження у файл
         with open(output_filename, "wb") as out:
@@ -54,8 +48,7 @@ class AudioManager:
             print(f"Аудіо контент записано у файл '{output_filename}'")
 
     def speech_to_text(self, audio_filename: str) -> str:
-        """
-        Транскрибує аудіофайл у текст.
+        """Транскрибує аудіофайл у текст.
 
         :param audio_filename: Шлях до аудіофайлу (MP3, WAV, тощо).
         :return: Розпізнаний текст.
@@ -75,12 +68,12 @@ class AudioManager:
         # Let's try to infer or specify MP3 if the filename hints it.
 
         encoding = speech.RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED
-        if audio_filename.lower().endswith('.mp3'):
-             encoding = speech.RecognitionConfig.AudioEncoding.MP3
+        if audio_filename.lower().endswith(".mp3"):
+            encoding = speech.RecognitionConfig.AudioEncoding.MP3
 
         config = speech.RecognitionConfig(
             encoding=encoding,
-            sample_rate_hertz=24000, # WaveNet default is often 24k, but context usually matches file.
+            sample_rate_hertz=24000,  # WaveNet default is often 24k, but context usually matches file.
             # Якщо sample_rate_hertz не вказано, сервер спробує визначити з заголовку файлу (для WAV/FLAC/MP3).
             language_code="uk-UA",
         )
@@ -93,5 +86,4 @@ class AudioManager:
         for result in response.results:
             transcript_builder.append(result.alternatives[0].transcript)
 
-        full_transcript = " ".join(transcript_builder)
-        return full_transcript
+        return " ".join(transcript_builder)

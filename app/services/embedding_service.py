@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import logging
 import os
-from typing import List
 
 import numpy as np
 
@@ -10,6 +8,7 @@ from app.libs.core.structured_logger import get_logger
 
 
 logger = get_logger("service.embedding")
+
 
 class EmbeddingService:
     """Service for generating text embeddings for semantic search.
@@ -27,6 +26,7 @@ class EmbeddingService:
             model_name: Ollama model name (default: nomic-embed-text)
         """
         from app.libs.core.config import settings
+
         self.model_name = os.environ.get("EMBEDDING_MODEL", model_name)
         self.ollama_url = f"{settings.LLM_OLLAMA_BASE_URL}/embeddings"
         self.vector_size = 768  # default for nomic-embed-text
@@ -38,6 +38,7 @@ class EmbeddingService:
 
     def _load_dummy_model(self):
         """Load compliant dummy model for local/basic tiers."""
+
         class DummyModel:
             def encode(self, text, convert_to_numpy=True, show_progress_bar=False):
                 # Return 384-dim vector with small noise (matches all-MiniLM-L6-v2)
@@ -52,12 +53,11 @@ class EmbeddingService:
     async def generate_embedding_async(self, text: str) -> list[float]:
         """Generate embedding vector asynchronously via Ollama."""
         import httpx
+
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    self.ollama_url,
-                    json={"model": self.model_name, "prompt": text},
-                    timeout=30.0
+                    self.ollama_url, json={"model": self.model_name, "prompt": text}, timeout=30.0
                 )
                 response.raise_for_status()
                 data = response.json()
@@ -69,12 +69,9 @@ class EmbeddingService:
     def generate_embedding(self, text: str) -> list[float]:
         """Generate embedding vector via Ollama (Blocking)."""
         import requests
+
         try:
-            response = requests.post(
-                self.ollama_url,
-                json={"model": self.model_name, "prompt": text},
-                timeout=30.0
-            )
+            response = requests.post(self.ollama_url, json={"model": self.model_name, "prompt": text}, timeout=30.0)
             response.raise_for_status()
             data = response.json()
             return data.get("embedding", [0.0] * self.vector_size)
@@ -144,10 +141,11 @@ class EmbeddingService:
 
     def _load_clip_model(self):
         """Lazy load CLIP model."""
-        if not hasattr(self, 'clip_model') or self.clip_model is None:
+        if not hasattr(self, "clip_model") or self.clip_model is None:
             try:
                 from sentence_transformers import SentenceTransformer
-                self.clip_model = SentenceTransformer('clip-ViT-B-32')
+
+                self.clip_model = SentenceTransformer("clip-ViT-B-32")
                 logger.info("clip_model_loaded", model="clip-ViT-B-32")
             except Exception as e:
                 logger.exception(f"Failed to load CLIP model: {e}")
@@ -165,6 +163,7 @@ class EmbeddingService:
 
             if image_path:
                 from PIL import Image
+
                 image = Image.open(image_path)
                 return self.clip_model.encode(image).tolist()
 
@@ -177,6 +176,7 @@ class EmbeddingService:
 
 # Singleton
 _embedding_service = EmbeddingService()
+
 
 def get_embedding_service() -> EmbeddingService:
     return _embedding_service

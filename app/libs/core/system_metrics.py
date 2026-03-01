@@ -1,4 +1,4 @@
-"""📊 SYSTEM METRICS UTILITY - Cross-platform metrics with fallbacks
+"""📊 SYSTEM METRICS UTILITY - Cross-platform metrics with fallbacks.
 ================================================================
 Provides system metrics (CPU, Memory, Disk) using psutil if available,
 otherwise falls back to native OS commands (optimized for macOS/Linux).
@@ -6,12 +6,12 @@ otherwise falls back to native OS commands (optimized for macOS/Linux).
 
 from dataclasses import dataclass
 import logging
-import os
 import platform
 import subprocess
 
 
 logger = logging.getLogger("system_metrics")
+
 
 @dataclass
 class SystemSnapshot:
@@ -19,14 +19,16 @@ class SystemSnapshot:
     memory_percent: float
     disk_percent: float
 
+
 def get_cpu_usage() -> float:
     """Get CPU usage percentage."""
     try:
         import psutil
+
         return psutil.cpu_percent(interval=0.1)
     except (ImportError, Exception):
         try:
-            if platform.system() == "Darwin": # macOS
+            if platform.system() == "Darwin":  # macOS
                 # Fallback: use sysctl for load average (less accurate but no permissions needed)
                 # sysctl -n vm.loadavg -> "{ 2.34 1.89 1.55 }"
                 try:
@@ -41,7 +43,7 @@ def get_cpu_usage() -> float:
                 except Exception:
                     # Last resort fallback if sysctl fails
                     return 0.0
-            else: # Linux fallback
+            else:  # Linux fallback
                 # /proc/loadavg / 10 is a very rough estimate, or use 'top'
                 cmd = "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\\([0-9.]*\\)%* id.*/\\1/' | awk '{print 100 - $1}'"
                 res = subprocess.check_output(cmd, shell=True).decode().strip()
@@ -50,26 +52,32 @@ def get_cpu_usage() -> float:
             logger.debug(f"CPU fallback failed: {e}")
             return 0.0
 
+
 def get_memory_usage() -> float:
     """Get Memory usage percentage."""
     try:
         import psutil
+
         return psutil.virtual_memory().percent
     except (ImportError, Exception):
         try:
-            if platform.system() == "Darwin": # macOS
+            if platform.system() == "Darwin":  # macOS
                 # vm_stat
                 vm = subprocess.check_output("vm_stat", shell=True).decode()
-                lines = vm.split('\n')
+                lines = vm.split("\n")
                 pages_free = 0
                 pages_active = 0
                 pages_inactive = 0
                 pages_wired = 0
                 for line in lines:
-                    if 'Pages free' in line: pages_free = int(line.split()[-1].strip('.'))
-                    if 'Pages active' in line: pages_active = int(line.split()[-1].strip('.'))
-                    if 'Pages inactive' in line: pages_inactive = int(line.split()[-1].strip('.'))
-                    if 'Pages wired' in line: pages_wired = int(line.split()[-1].strip('.'))
+                    if "Pages free" in line:
+                        pages_free = int(line.split()[-1].strip("."))
+                    if "Pages active" in line:
+                        pages_active = int(line.split()[-1].strip("."))
+                    if "Pages inactive" in line:
+                        pages_inactive = int(line.split()[-1].strip("."))
+                    if "Pages wired" in line:
+                        pages_wired = int(line.split()[-1].strip("."))
 
                 used = pages_active + pages_wired
                 total = used + pages_free + pages_inactive
@@ -82,10 +90,12 @@ def get_memory_usage() -> float:
             logger.debug(f"Memory fallback failed: {e}")
             return 0.0
 
+
 def get_disk_usage(path: str = "/") -> float:
     """Get Disk usage percentage."""
     try:
         import psutil
+
         return psutil.disk_usage(path).percent
     except (ImportError, Exception):
         try:
@@ -97,10 +107,7 @@ def get_disk_usage(path: str = "/") -> float:
             logger.debug(f"Disk fallback failed: {e}")
             return 0.0
 
+
 def get_system_snapshot() -> SystemSnapshot:
     """Collect all core metrics."""
-    return SystemSnapshot(
-        cpu_percent=get_cpu_usage(),
-        memory_percent=get_memory_usage(),
-        disk_percent=get_disk_usage()
-    )
+    return SystemSnapshot(cpu_percent=get_cpu_usage(), memory_percent=get_memory_usage(), disk_percent=get_disk_usage())

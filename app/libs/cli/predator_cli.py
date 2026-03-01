@@ -19,7 +19,6 @@ import json
 import os
 from pathlib import Path
 import sys
-from typing import Optional
 
 import click
 import httpx
@@ -35,6 +34,7 @@ console = Console()
 # Configuration
 API_BASE_URL = os.getenv("PREDATOR_API_URL", "http://localhost:8090/api")
 API_TOKEN = os.getenv("PREDATOR_API_TOKEN", "")
+
 
 def get_client():
     """Create HTTP client with auth headers."""
@@ -68,19 +68,20 @@ def ingest(file: str, dataset_type: str, name: str | None, async_mode: bool):
 
     source_name = name or file_path.stem.replace("_", " ").title()
 
-    console.print(Panel(f"""
+    console.print(
+        Panel(
+            f"""
 [bold cyan]📥 PREDATOR INGESTION[/bold cyan]
 
 📄 File: {file_path.name}
 📊 Type: {dataset_type}
 🏷️  Name: {source_name}
-    """, title="Ingestion Task"))
+    """,
+            title="Ingestion Task",
+        )
+    )
 
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        console=console
-    ) as progress:
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
         task = progress.add_task("Uploading file...", total=None)
 
         try:
@@ -121,6 +122,7 @@ def ingest(file: str, dataset_type: str, name: str | None, async_mode: bool):
                         sys.exit(1)
 
                     import time
+
                     time.sleep(2)
 
                 console.print("\n[green]✅ Ingestion completed![/green]")
@@ -142,32 +144,29 @@ def ingest(file: str, dataset_type: str, name: str | None, async_mode: bool):
 @click.option("--async", "async_mode", is_flag=True, help="Run asynchronously")
 def train(dataset_id: str, target: str, config: str | None, async_mode: bool):
     """🧠 Train ML model on a dataset."""
-    console.print(Panel(f"""
+    console.print(
+        Panel(
+            f"""
 [bold magenta]🧠 PREDATOR ML TRAINING[/bold magenta]
 
 📊 Dataset: {dataset_id}
 🎯 Target: {target}
-    """, title="Training Task"))
+    """,
+            title="Training Task",
+        )
+    )
 
     config_data = {}
     if config:
         with open(config) as f:
             config_data = json.load(f)
 
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        console=console
-    ) as progress:
+    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
         progress.add_task("Submitting training job...", total=None)
 
         try:
             with get_client() as client:
-                payload = {
-                    "dataset_id": dataset_id,
-                    "target": target,
-                    "config": config_data
-                }
+                payload = {"dataset_id": dataset_id, "target": target, "config": config_data}
                 response = client.post("/v45/training/start", json=payload)
 
                 if response.status_code != 200:
@@ -208,11 +207,7 @@ def search(query: str, mode: str, limit: int, dataset: str | None, output: str):
 
     try:
         with get_client() as client:
-            params = {
-                "q": query,
-                "mode": mode,
-                "limit": limit
-            }
+            params = {"q": query, "mode": mode, "limit": limit}
             if dataset:
                 params["dataset_id"] = dataset
 
@@ -237,10 +232,7 @@ def search(query: str, mode: str, limit: int, dataset: str | None, output: str):
 
             for i, hit in enumerate(results.get("hits", []), 1):
                 table.add_row(
-                    str(i),
-                    hit.get("title", "Untitled")[:50],
-                    f"{hit.get('score', 0):.3f}",
-                    hit.get("source", "N/A")
+                    str(i), hit.get("title", "Untitled")[:50], f"{hit.get('score', 0):.3f}", hit.get("source", "N/A")
                 )
 
             console.print(table)
@@ -272,20 +264,22 @@ def status(job_id: str | None, show_all: bool, job_type: str | None):
 
                 status_data = response.json()
 
-                status_color = {
-                    "queued": "yellow",
-                    "running": "blue",
-                    "completed": "green",
-                    "failed": "red"
-                }.get(status_data["status"], "white")
+                status_color = {"queued": "yellow", "running": "blue", "completed": "green", "failed": "red"}.get(
+                    status_data["status"], "white"
+                )
 
-                console.print(Panel(f"""
+                console.print(
+                    Panel(
+                        f"""
 [bold]Job ID:[/bold] {job_id}
-[bold]Status:[/bold] [{status_color}]{status_data['status'].upper()}[/{status_color}]
-[bold]Type:[/bold] {status_data.get('type', 'N/A')}
-[bold]Created:[/bold] {status_data.get('created_at', 'N/A')}
-[bold]Progress:[/bold] {status_data.get('progress', 'N/A')}%
-                """, title="📊 Job Status"))
+[bold]Status:[/bold] [{status_color}]{status_data["status"].upper()}[/{status_color}]
+[bold]Type:[/bold] {status_data.get("type", "N/A")}
+[bold]Created:[/bold] {status_data.get("created_at", "N/A")}
+[bold]Progress:[/bold] {status_data.get("progress", "N/A")}%
+                """,
+                        title="📊 Job Status",
+                    )
+                )
 
                 if status_data.get("error"):
                     console.print(f"[red]Error: {status_data['error']}[/red]")
@@ -300,23 +294,28 @@ def status(job_id: str | None, show_all: bool, job_type: str | None):
 
                 system = response.json()
 
-                console.print(Panel(f"""
+                console.print(
+                    Panel(
+                        f"""
 [bold cyan]🦅 PREDATOR ANALYTICS v45.0[/bold cyan]
 
-[bold]System Stage:[/bold] {system.get('stage', 'N/A')}
+[bold]System Stage:[/bold] {system.get("stage", "N/A")}
 
 [bold]Components:[/bold]
-  • PostgreSQL: {'🟢' if system.get('postgres_healthy') else '🔴'}
-  • Redis: {'🟢' if system.get('redis_healthy') else '🔴'}
-  • OpenSearch: {'🟢' if system.get('opensearch_healthy') else '🔴'}
-  • Qdrant: {'🟢' if system.get('qdrant_healthy') else '🔴'}
-  • RabbitMQ: {'🟢' if system.get('rabbitmq_healthy') else '🔴'}
+  • PostgreSQL: {"🟢" if system.get("postgres_healthy") else "🔴"}
+  • Redis: {"🟢" if system.get("redis_healthy") else "🔴"}
+  • OpenSearch: {"🟢" if system.get("opensearch_healthy") else "🔴"}
+  • Qdrant: {"🟢" if system.get("qdrant_healthy") else "🔴"}
+  • RabbitMQ: {"🟢" if system.get("rabbitmq_healthy") else "🔴"}
 
 [bold]Stats:[/bold]
-  • Documents: {system.get('total_documents', 0):,}
-  • Vectors: {system.get('total_vectors', 0):,}
-  • Active Jobs: {system.get('active_jobs', 0)}
-                """, title="System Status"))
+  • Documents: {system.get("total_documents", 0):,}
+  • Vectors: {system.get("total_vectors", 0):,}
+  • Active Jobs: {system.get("active_jobs", 0)}
+                """,
+                        title="System Status",
+                    )
+                )
 
     except httpx.RequestError as e:
         console.print(f"[red]❌ Connection error: {e}[/red]")
@@ -367,13 +366,18 @@ def config(show: bool, set_key):
     config_path = Path.home() / ".predator" / "config.json"
 
     if show or not set_key:
-        console.print(Panel(f"""
+        console.print(
+            Panel(
+                f"""
 [bold]Predator CLI Configuration[/bold]
 
 API URL: {API_BASE_URL}
-Token Set: {'Yes' if API_TOKEN else 'No'}
+Token Set: {"Yes" if API_TOKEN else "No"}
 Config File: {config_path}
-        """, title="⚙️ Configuration"))
+        """,
+                title="⚙️ Configuration",
+            )
+        )
         return
 
     # Set configuration

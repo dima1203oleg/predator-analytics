@@ -12,7 +12,10 @@ from app.libs.core.models import GraphEdge, GraphNode
 
 logger = logging.getLogger(__name__)
 
-@registry.register(name="search_knowledge_graph", description="Search the knowledge graph for entities and relationships")
+
+@registry.register(
+    name="search_knowledge_graph", description="Search the knowledge graph for entities and relationships"
+)
 async def search_knowledge_graph(query: str, tenant_id: str, depth: int = 1):
     """Search key entities and their relationships in the Knowledge Graph.
     Useful for answering questions about connections between people, companies, and events.
@@ -23,12 +26,11 @@ async def search_knowledge_graph(query: str, tenant_id: str, depth: int = 1):
     async with async_session_maker() as session:
         try:
             # 1. Find Seed Nodes
-            stmt = select(GraphNode).where(
-                and_(
-                    GraphNode.tenant_id == uuid.UUID(tenant_id),
-                    GraphNode.name.ilike(f"%{query}%")
-                )
-            ).limit(5)
+            stmt = (
+                select(GraphNode)
+                .where(and_(GraphNode.tenant_id == uuid.UUID(tenant_id), GraphNode.name.ilike(f"%{query}%")))
+                .limit(5)
+            )
 
             result = await session.execute(stmt)
             seed_nodes = result.scalars().all()
@@ -46,10 +48,7 @@ async def search_knowledge_graph(query: str, tenant_id: str, depth: int = 1):
                     break
 
                 stmt = select(GraphEdge).where(
-                    or_(
-                        GraphEdge.source_id.in_(current_layer_ids),
-                        GraphEdge.target_id.in_(current_layer_ids)
-                    )
+                    or_(GraphEdge.source_id.in_(current_layer_ids), GraphEdge.target_id.in_(current_layer_ids))
                 )
                 result = await session.execute(stmt)
                 edges = result.scalars().all()
@@ -58,7 +57,8 @@ async def search_knowledge_graph(query: str, tenant_id: str, depth: int = 1):
 
                 for edge in edges:
                     eid = str(edge.id)
-                    if eid in collected_edges: continue
+                    if eid in collected_edges:
+                        continue
 
                     collected_edges[eid] = edge
 
@@ -66,8 +66,10 @@ async def search_knowledge_graph(query: str, tenant_id: str, depth: int = 1):
                     tid = str(edge.target_id)
 
                     # Add missing nodes to fetch list
-                    if sid not in collected_nodes: next_layer_ids.add(sid)
-                    if tid not in collected_nodes: next_layer_ids.add(tid)
+                    if sid not in collected_nodes:
+                        next_layer_ids.add(sid)
+                    if tid not in collected_nodes:
+                        next_layer_ids.add(tid)
 
                 if not next_layer_ids:
                     break
@@ -91,7 +93,9 @@ async def search_knowledge_graph(query: str, tenant_id: str, depth: int = 1):
                 source = collected_nodes.get(str(edge.source_id))
                 target = collected_nodes.get(str(edge.target_id))
                 if source and target:
-                    summary.append(f"- {source.name} [{source.label}] --{edge.relation}--> {target.name} [{target.label}]")
+                    summary.append(
+                        f"- {source.name} [{source.label}] --{edge.relation}--> {target.name} [{target.label}]"
+                    )
 
             return "\n".join(summary)
 

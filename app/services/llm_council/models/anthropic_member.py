@@ -7,7 +7,7 @@ Uses Anthropic's Claude as a council participant.
 
 from datetime import datetime
 import os
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 try:
@@ -16,37 +16,21 @@ except ModuleNotFoundError:
     AsyncAnthropic = None
 import json
 
-from .. import CouncilMember, CouncilResponse, PeerReview
+from app.services.llm_council import CouncilMember, CouncilResponse, PeerReview
 
 
 class ClaudeCouncilMember(CouncilMember):
     """Claude as a council member."""
 
-    def __init__(
-        self,
-        model_id: str = "claude-3-opus-20240229",
-        config: dict[str, Any] | None = None
-    ):
-        super().__init__(
-            model_id=model_id,
-            provider="anthropic",
-            config=config or {}
-        )
+    def __init__(self, model_id: str = "claude-3-opus-20240229", config: dict[str, Any] | None = None):
+        super().__init__(model_id=model_id, provider="anthropic", config=config or {})
 
         api_key = self.config.get("api_key") or os.getenv("ANTHROPIC_API_KEY")
         self.client = AsyncAnthropic(api_key=api_key) if AsyncAnthropic is not None and api_key else None
 
-        self.default_params = {
-            "temperature": 0.7,
-            "max_tokens": 2048,
-            **self.config.get("params", {})
-        }
+        self.default_params = {"temperature": 0.7, "max_tokens": 2048, **self.config.get("params", {})}
 
-    async def generate_response(
-        self,
-        query: str,
-        context: str | None = None
-    ) -> CouncilResponse:
+    async def generate_response(self, query: str, context: str | None = None) -> CouncilResponse:
         """Generate independent response."""
         system_prompt = "You are an expert analyst providing detailed, accurate responses."
 
@@ -60,13 +44,8 @@ class ClaudeCouncilMember(CouncilMember):
             message = await self.client.messages.create(
                 model=self.model_id,
                 system=system_prompt,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": query
-                    }
-                ],
-                **self.default_params
+                messages=[{"role": "user", "content": query}],
+                **self.default_params,
             )
 
             response_text = message.content[0].text
@@ -76,13 +55,10 @@ class ClaudeCouncilMember(CouncilMember):
                 text=response_text,
                 confidence=self._estimate_confidence(response_text),
                 metadata={
-                    "usage": {
-                        "input_tokens": message.usage.input_tokens,
-                        "output_tokens": message.usage.output_tokens
-                    },
-                    "stop_reason": message.stop_reason
+                    "usage": {"input_tokens": message.usage.input_tokens, "output_tokens": message.usage.output_tokens},
+                    "stop_reason": message.stop_reason,
                 },
-                timestamp=datetime.now()
+                timestamp=datetime.now(),
             )
 
             self.response_history.append(response)
@@ -91,11 +67,7 @@ class ClaudeCouncilMember(CouncilMember):
         except Exception as e:
             raise Exception(f"Claude generation failed: {e!s}")
 
-    async def review_response(
-        self,
-        response: CouncilResponse,
-        original_query: str
-    ) -> PeerReview:
+    async def review_response(self, response: CouncilResponse, original_query: str) -> PeerReview:
         """Review another model's response."""
         review_prompt = await self._format_review_prompt(response, original_query)
         review_prompt += "\n\nProvide your review in JSON format."
@@ -114,14 +86,9 @@ Always respond with valid JSON in this format:
   "weaknesses": ["weakness1", "weakness2"],
   "critique": "detailed analysis"
 }""",
-                messages=[
-                    {
-                        "role": "user",
-                        "content": review_prompt
-                    }
-                ],
+                messages=[{"role": "user", "content": review_prompt}],
                 temperature=0.3,
-                max_tokens=1000
+                max_tokens=1000,
             )
 
             review_text = message.content[0].text
@@ -135,7 +102,7 @@ Always respond with valid JSON in this format:
                 score=float(review_data.get("score", 0.5)),
                 critique=review_data.get("critique", ""),
                 strengths=review_data.get("strengths", []),
-                weaknesses=review_data.get("weaknesses", [])
+                weaknesses=review_data.get("weaknesses", []),
             )
 
         except Exception as e:
@@ -145,7 +112,7 @@ Always respond with valid JSON in this format:
                 score=0.5,
                 critique=f"Review failed: {e!s}",
                 strengths=[],
-                weaknesses=["Unable to complete review"]
+                weaknesses=["Unable to complete review"],
             )
 
     def _extract_json(self, text: str) -> dict[str, Any]:
@@ -153,7 +120,7 @@ Always respond with valid JSON in this format:
         try:
             # Try to find JSON block
             if "```json" in text:
-                json_str = text.split("```json")[1].split("```")[0].strip()
+                json_str = text.split("```json")[1].split("```", maxsplit=1)[0].strip()
             elif "{" in text and "}" in text:
                 # Extract first JSON object
                 start = text.index("{")
@@ -164,22 +131,23 @@ Always respond with valid JSON in this format:
 
             return json.loads(json_str)
         except:
-            return {
-                "score": 0.5,
-                "strengths": [],
-                "weaknesses": ["Could not parse review"],
-                "critique": text
-            }
+            return {"score": 0.5, "strengths": [], "weaknesses": ["Could not parse review"], "critique": text}
 
     def _estimate_confidence(self, text: str) -> float:
         """Estimate confidence from response text."""
         uncertainty_markers = [
-            "not sure", "might", "possibly", "perhaps", "unclear",
-            "uncertain", "cannot confirm", "difficult to say", "may be"
+            "not sure",
+            "might",
+            "possibly",
+            "perhaps",
+            "unclear",
+            "uncertain",
+            "cannot confirm",
+            "difficult to say",
+            "may be",
         ]
 
         text_lower = text.lower()
         uncertainty_count = sum(1 for marker in uncertainty_markers if marker in text_lower)
 
         return max(0.3, 0.85 - (uncertainty_count * 0.1))
-

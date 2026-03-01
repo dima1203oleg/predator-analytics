@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("agent.worker")
 
+
 async def worker_node(state: AgentState):
     """Executes the current step using available tools (ReAct loop)."""
     step = state.get("current_step", "Unknown step")
@@ -28,7 +29,7 @@ async def worker_node(state: AgentState):
         return {"error": "LLM Service unavailable (ImportError)"}
 
     # Prepare Context & Tools
-    context_part = json.dumps(state.get("context", {}), default=str)[:1000] # Limit context size
+    context_part = json.dumps(state.get("context", {}), default=str)[:1000]  # Limit context size
     tools = registry.get_tools_list()
     tools_desc = "\n".join([f"- {t.name}: {t.description}" for t in tools])
 
@@ -60,8 +61,8 @@ Format 2 (Completion):
         # 1. Think & Choose Tool
         response = await llm_service.generate(
             prompt=prompt,
-            provider="groq", # Coder Phase - Fast & Accurate
-            temperature=0.0
+            provider="groq",  # Coder Phase - Fast & Accurate
+            temperature=0.0,
         )
 
         if not response.success:
@@ -78,10 +79,7 @@ Format 2 (Completion):
             action = json.loads(content)
         except json.JSONDecodeError:
             # Fallback: treat whole content as answer if possible
-            return {
-                "thinking": ["Failed to parse JSON, returning raw content"],
-                "final_response": content
-            }
+            return {"thinking": ["Failed to parse JSON, returning raw content"], "final_response": content}
 
         # 3. Execute
         if "tool" in action:
@@ -91,7 +89,7 @@ Format 2 (Completion):
 
             # Check if tool exists
             if not registry.get_tool(tool_name):
-                 return {"error": f"Tool {tool_name} not found"}
+                return {"error": f"Tool {tool_name} not found"}
 
             result = await registry.execute(tool_name, args)
 
@@ -102,18 +100,20 @@ Format 2 (Completion):
 
             return {
                 "thinking": [action.get("thought", f"Executing tool: {tool_name}")],
-                "tool_outputs": [{
-                    "tool_name": tool_name,
-                    "tool_input": json.dumps(args),
-                    "output": result_str,
-                    "timestamp": time.time()
-                }]
+                "tool_outputs": [
+                    {
+                        "tool_name": tool_name,
+                        "tool_input": json.dumps(args),
+                        "output": result_str,
+                        "timestamp": time.time(),
+                    }
+                ],
             }
 
         if "final_answer" in action:
             return {
                 "thinking": [action.get("thought", "Synthesizing final strategic result.")],
-                "final_response": action["final_answer"]
+                "final_response": action["final_answer"],
             }
 
     except Exception as e:

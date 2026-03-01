@@ -3,7 +3,6 @@ from __future__ import annotations
 
 """RAG Service - Retrieval Augmented Generation."""
 import logging
-from typing import Dict, List
 
 
 logger = logging.getLogger(__name__)

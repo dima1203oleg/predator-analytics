@@ -1,17 +1,18 @@
 import logging
-from typing import List, Optional
+
 
 logger = logging.getLogger("app.core.llm_keys_storage")
 
+
 class LLMKeysStorage:
-    """
-    Mock storage for LLM keys.
+    """Mock storage for LLM keys.
     In production, this would interface with Vault or an encrypted DB table.
     """
+
     def __init__(self):
         self._keys = {}
 
-    def list_keys(self, provider: str) -> List[str]:
+    def list_keys(self, provider: str) -> list[str]:
         return self._keys.get(provider, [])
 
     def add_key(self, provider: str, key: str):

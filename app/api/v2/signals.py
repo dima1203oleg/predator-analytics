@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 from fastapi import APIRouter, Query
 
 from app.models.v55.signal import SignalListResponse
+
 
 logger = logging.getLogger("predator.api.v2.signals")
 router = APIRouter(prefix="/signals", tags=["v2-signals"])
@@ -19,9 +19,9 @@ router = APIRouter(prefix="/signals", tags=["v2-signals"])
     summary="Потік сигналів",
 )
 async def list_signals(
-    ueid: Optional[str] = Query(None, description="Фільтр за UEID"),
-    layer: Optional[str] = Query(None, description="behavioral | institutional | influence | structural | predictive"),
-    signal_type: Optional[str] = Query(None, description="anomaly | alert | warning | info | prediction"),
+    ueid: str | None = Query(None, description="Фільтр за UEID"),
+    layer: str | None = Query(None, description="behavioral | institutional | influence | structural | predictive"),
+    signal_type: str | None = Query(None, description="anomaly | alert | warning | info | prediction"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
 ) -> SignalListResponse:

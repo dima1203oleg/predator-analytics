@@ -4,10 +4,11 @@ import asyncio
 from datetime import datetime
 import logging
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 
 logger = logging.getLogger("service.test_runner")
+
 
 class TestRunnerService:
     """Service to execute system tests and benchmarks programmatically.
@@ -52,11 +53,7 @@ class TestRunnerService:
             return await self._simulate_test("Load Test (10k req)", duration=5.0)
 
         else:
-            return {
-                "status": "failed",
-                "logs": [f"Unknown test suite type: {suite_type}"],
-                "duration": "0s"
-            }
+            return {"status": "failed", "logs": [f"Unknown test suite type: {suite_type}"], "duration": "0s"}
 
         # Execute Command
         return await self._execute_subprocess(cmd)
@@ -67,9 +64,7 @@ class TestRunnerService:
 
         try:
             process = await asyncio.create_subprocess_exec(
-                *cmd,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
 
             stdout, stderr = await process.communicate()
@@ -80,7 +75,7 @@ class TestRunnerService:
             if stderr:
                 logs.extend(stderr.decode().splitlines())
 
-            duration = (datetime.now() - datetime.now()).total_seconds() # Fix timing logic
+            duration = (datetime.now() - datetime.now()).total_seconds()  # Fix timing logic
 
             # Simple heuristic for passing
             is_passed = process.returncode == 0
@@ -89,16 +84,12 @@ class TestRunnerService:
                 "status": "passed" if is_passed else "failed",
                 "logs": logs,
                 "duration": f"{duration:.2f}s",
-                "raw_output": stdout.decode()
+                "raw_output": stdout.decode(),
             }
 
         except Exception as e:
             logger.exception(f"Test execution failed: {e}")
-            return {
-                "status": "failed",
-                "logs": [f"Execution Error: {e!s}"],
-                "duration": "0s"
-            }
+            return {"status": "failed", "logs": [f"Execution Error: {e!s}"], "duration": "0s"}
 
     async def _simulate_test(self, name: str, duration: float) -> dict[str, Any]:
         """Simulates a test run for missing tools."""
@@ -110,13 +101,15 @@ class TestRunnerService:
                 "> Checking dependencies... OK",
                 "> Running heuristics... OK",
                 "> scanning_modules... DONE",
-                f"> {name} Completed Successfully."
+                f"> {name} Completed Successfully.",
             ],
-            "duration": f"{duration}s"
+            "duration": f"{duration}s",
         }
+
 
 # Singleton accessor
 _test_runner = TestRunnerService()
+
 
 def get_test_runner() -> TestRunnerService:
     return _test_runner

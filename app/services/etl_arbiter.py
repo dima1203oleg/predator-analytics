@@ -7,7 +7,7 @@ import hashlib
 import json
 import logging
 
-from sqlalchemy import desc, select, update
+from sqlalchemy import desc, select
 
 from app.libs.core.database import get_db_ctx
 from app.libs.core.etl_state_machine import ETLState, ETLStateMachine
@@ -16,6 +16,7 @@ from app.libs.core.models.truth_ledger import TruthLedger
 
 
 logger = logging.getLogger("service.etl_arbiter")
+
 
 class ETLArbiter:
     """ARBITER SYSTEM for Predator Analytics v45.
@@ -26,7 +27,7 @@ class ETLArbiter:
     def __init__(self):
         self.running = False
         self._task = None
-        self.check_interval = 60 # Check every minute
+        self.check_interval = 60  # Check every minute
 
     async def start(self):
         self.running = True
@@ -56,11 +57,9 @@ class ETLArbiter:
             # Fetch active jobs
             # Fetch active jobs + recently completed (for audit)
             # Active (not terminal)
-            stmt = select(ETLJob).where(ETLJob.state.notin_([
-                ETLState.COMPLETED.value,
-                ETLState.FAILED.value,
-                ETLState.CANCELLED.value
-            ]))
+            stmt = select(ETLJob).where(
+                ETLJob.state.notin_([ETLState.COMPLETED.value, ETLState.FAILED.value, ETLState.CANCELLED.value])
+            )
             result = await sess.execute(stmt)
             active_jobs = result.scalars().all()
 
@@ -72,13 +71,10 @@ class ETLArbiter:
             # For now, rely on active check catching INDEXED before completion or Ingestion Service doing it right.
             # To be safe per spec "No Fake Completion":
             cutoff = datetime.utcnow() - timedelta(minutes=10)
-            audit_stmt = select(ETLJob).where(
-                (ETLJob.state == ETLState.COMPLETED.value) &
-                (ETLJob.updated_at > cutoff)
-            )
+            audit_stmt = select(ETLJob).where((ETLJob.state == ETLState.COMPLETED.value) & (ETLJob.updated_at > cutoff))
             audit_res = await sess.execute(audit_stmt)
             for job in audit_res.scalars().all():
-                 await self._check_job(sess, job)
+                await self._check_job(sess, job)
 
     async def _check_job(self, sess, job: ETLJob):
         """Check invariants for a single job."""
@@ -89,13 +85,15 @@ class ETLArbiter:
         threshold_map = {
             ETLState.UPLOADING.value: timedelta(minutes=2),
             ETLState.PROCESSING.value: timedelta(minutes=5),
-            ETLState.INDEXING.value: timedelta(minutes=10)
+            ETLState.INDEXING.value: timedelta(minutes=10),
         }
         limit = threshold_map.get(job.state, timedelta(minutes=5))
 
         if datetime.utcnow() - updated_at > limit:
             logger.warning(f"⚖️ Arbiter detected STALLED job {job.id}. State: {job.state}. Last update: {updated_at}")
-            await self._fail_job(sess, job, f"Arbiter Timeout: Job stalled in {job.state} for > {limit.seconds//60} mins")
+            await self._fail_job(
+                sess, job, f"Arbiter Timeout: Job stalled in {job.state} for > {limit.seconds // 60} mins"
+            )
             return
 
         # 2. Progress Truth Check
@@ -104,10 +102,10 @@ class ETLArbiter:
 
         # Force sync if discrepancy > 2% (Stickier Arbiter)
         if abs(computed_percent - current_percent) > 2:
-             # logger.info(f"⚖️ Arbiter sync progress for {job.id}: {current_percent}% -> {computed_percent}%")
-             job.progress = {**(job.progress or {}), "percent": computed_percent}
-             sess.add(job)
-             await sess.commit()
+            # logger.info(f"⚖️ Arbiter sync progress for {job.id}: {current_percent}% -> {computed_percent}%")
+            job.progress = {**(job.progress or {}), "percent": computed_percent}
+            sess.add(job)
+            await sess.commit()
 
         # 3. Indexing Invariant (No Zero Indexing)
         # Check this for both INDEXED and COMPLETED if records_total > 0
@@ -116,9 +114,8 @@ class ETLArbiter:
             total = (job.progress or {}).get("records_total", 0)
 
             if total > 0 and indexed == 0:
-                 logger.error(f"⚖️ Arbiter violation: Job {job.id} is {job.state} but records_indexed=0")
-                 await self._fail_job(sess, job, "Arbiter Violation: Zero records indexed (Fake Completion)")
-
+                logger.error(f"⚖️ Arbiter violation: Job {job.id} is {job.state} but records_indexed=0")
+                await self._fail_job(sess, job, "Arbiter Violation: Zero records indexed (Fake Completion)")
 
     async def _fail_job(self, sess, job: ETLJob, reason: str):
         """Fail a job and record it in the Truth Ledger."""
@@ -139,7 +136,9 @@ class ETLArbiter:
         # 1. Get previous hash (Simple implementation: last hash for this job, or global genesis)
         # For simplicity in v45.0 locally, let's chain per job.
         # Ideally: Global Merkle Tree.
-        stmt = select(TruthLedger).where(TruthLedger.job_id == str(job.id)).order_by(desc(TruthLedger.created_at)).limit(1)
+        stmt = (
+            select(TruthLedger).where(TruthLedger.job_id == str(job.id)).order_by(desc(TruthLedger.created_at)).limit(1)
+        )
         res = await sess.execute(stmt)
         last_entry = res.scalar_one_or_none()
 
@@ -149,12 +148,12 @@ class ETLArbiter:
         # Payload matched to SQL trigger logic
         # job_id + prev + new + metrics + prev_hash + tier
         payload = (
-            str(job.id) +
-            str(prev_state) +
-            str(job.state) +
-            json.dumps(job.progress or {}) +
-            (prev_hash or "GENESIS") +
-            "basic" # tier
+            str(job.id)
+            + str(prev_state)
+            + str(job.state)
+            + json.dumps(job.progress or {})
+            + (prev_hash or "GENESIS")
+            + "basic"  # tier
         )
         current_hash = hashlib.sha256(payload.encode()).hexdigest()
 
@@ -169,8 +168,9 @@ class ETLArbiter:
             previous_hash=prev_hash,
             current_hash=current_hash,
             consensus_tier="basic",
-            created_by="etl_arbiter"
+            created_by="etl_arbiter",
         )
         sess.add(entry)
+
 
 etl_arbiter = ETLArbiter()

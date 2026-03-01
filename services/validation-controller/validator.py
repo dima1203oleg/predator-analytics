@@ -1,18 +1,21 @@
-"""
-Validation Controller for Predator Analytics v45.1.
+"""Validation Controller for Predator Analytics v45.1.
 
 This component manages the decentralized validation network and model promotion.
 """
+
 import logging
 import random
 from typing import TYPE_CHECKING
+
 
 if TYPE_CHECKING:
     from services.shared.events import PredatorEvent
 
 from services.training_controller.reqistry import ModelRegistry
 
+
 logger = logging.getLogger(__name__)
+
 
 class ModelValidator:
     """Validates "Staging" models before promotion.
@@ -38,20 +41,20 @@ class ModelValidator:
         # In real life: Load model artifact -> Predict on Test Set -> Calc Metrics
         rng = random.SystemRandom()
         validation_score = rng.uniform(baseline_score - 0.05, baseline_score + 0.10)
-        
+
         # 3. Compare
         is_better = validation_score > baseline_score
         logger.info("Validation: Candidate=%.4f, Baseline=%.4f, Better=%s", validation_score, baseline_score, is_better)
-        
+
         return is_better, validation_score
 
     async def handle_validation_request(self, event: "PredatorEvent"):
         """Handle 'TrainingCompleted' event."""
         model_id = event.context.get("model_id")
         version = event.context.get("version")
-        
-        approved, score = await self.validate_candidate(model_id, version)
-        
+
+        approved, _score = await self.validate_candidate(model_id, version)
+
         if approved:
             # Emit Promotion Event (or call registry directly for simplicity in Phase 1)
             await self.registry.promote_model_to_production(model_id, version)

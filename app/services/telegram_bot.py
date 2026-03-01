@@ -25,6 +25,7 @@ class TelegramBotService:
 
         try:
             import httpx
+
             url = f"https://api.telegram.org/bot{self.token}/sendMessage"
             logger.info(f"Sending message to {chat_id}: {text}")
             async with httpx.AsyncClient() as client:

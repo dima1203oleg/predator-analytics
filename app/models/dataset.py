@@ -1,9 +1,11 @@
-from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
+from typing import Any
 
-class DatasetType(str, Enum):
+from pydantic import BaseModel, Field
+
+
+class DatasetType(StrEnum):
     CUSTOMS = "customs"
     COMPANIES = "companies"
     PERSONS = "persons"
@@ -11,21 +13,23 @@ class DatasetType(str, Enum):
     MEDIA = "media"
     CUSTOM = "custom"
 
-class DatasetStatus(str, Enum):
+
+class DatasetStatus(StrEnum):
     DRAFT = "draft"
     PROCESSING = "processing"
     READY = "ready"
     ACTIVE = "active"
     ARCHIVED = "archived"
 
+
 class Dataset(BaseModel):
     id: str
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     type: DatasetType
     owner_id: str
     created_at: datetime
-    updated_at: Optional[datetime] = None
+    updated_at: datetime | None = None
 
     status: DatasetStatus = DatasetStatus.DRAFT
     records_count: int = 0
@@ -35,12 +39,13 @@ class Dataset(BaseModel):
     is_training_source: bool = False
     is_generation_template: bool = False
 
-    schema_definition: Optional[Dict[str, Any]] = Field(None, alias="schema")
-    sample_records: Optional[List[Dict[str, Any]]] = None
+    schema_definition: dict[str, Any] | None = Field(None, alias="schema")
+    sample_records: list[dict[str, Any]] | None = None
+
 
 class DatasetCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=200)
-    description: Optional[str] = None
+    description: str | None = None
     type: DatasetType
     is_training_source: bool = False
     is_generation_template: bool = False

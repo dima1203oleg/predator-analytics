@@ -2,18 +2,23 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 
 try:
     from notion_client import AsyncClient
+
     NOTION_AVAILABLE = True
 except ImportError:
     NOTION_AVAILABLE = False
+
     class AsyncClient:
-        def __init__(self, auth=None): pass
+        def __init__(self, auth=None):
+            pass
+
 
 logger = logging.getLogger("service.notion")
+
 
 class NotionService:
     """Service for integrating with Notion API.
@@ -62,7 +67,7 @@ class NotionService:
                     "title": title,
                     "url": item["url"],
                     "type": item["object"],
-                    "last_edited": item["last_edited_time"]
+                    "last_edited": item["last_edited_time"],
                 })
             return results
 
@@ -106,10 +111,7 @@ class NotionService:
                 "content": full_content,
                 "source": "notion",
                 "category": "documentation",
-                "metadata": {
-                    "page_id": page_id,
-                    "url": page.get("url")
-                }
+                "metadata": {"page_id": page_id, "url": page.get("url")},
             }
 
             # 4. Index via OpenSearch (Lazy import)
@@ -126,7 +128,7 @@ class NotionService:
                 documents=[document],
                 pii_safe=True,
                 embedding_service=embedder,
-                qdrant_service=qdrant
+                qdrant_service=qdrant,
             )
 
             return 1
@@ -135,8 +137,10 @@ class NotionService:
             logger.exception(f"Failed to index notion page: {e}")
             raise Exception(str(e))
 
+
 # Singleton
 notion_service = NotionService()
+
 
 def get_notion_service():
     return notion_service

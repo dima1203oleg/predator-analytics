@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 import httpx
 
 
 logger = logging.getLogger(__name__)
+
 
 class MonitoringService:
     """Integration with Prometheus, RabbitMQ, and ArgoCD for real-time monitoring.
@@ -28,20 +29,22 @@ class MonitoringService:
             "cpu_load": 0.0,
             "cpu_usage": 0.0,  # Alias for UI compatibility
             "memory_usage": 0.0,
-            "ram_usage": 0.0,   # Alias for UI compatibility
+            "ram_usage": 0.0,  # Alias for UI compatibility
             "status": "offline",
-            "anomaly_score": 0.0
+            "anomaly_score": 0.0,
         }
         try:
             async with httpx.AsyncClient(timeout=2) as client:
                 # CPU Query
-                cpu_resp = await client.get(f"{self.prometheus_url}/api/v1/query", params={
-                    "query": "100 * (1 - avg(rate(node_cpu_seconds_total{mode='idle'}[5m])))"
-                })
+                cpu_resp = await client.get(
+                    f"{self.prometheus_url}/api/v1/query",
+                    params={"query": "100 * (1 - avg(rate(node_cpu_seconds_total{mode='idle'}[5m])))"},
+                )
                 # Memory Query
-                mem_resp = await client.get(f"{self.prometheus_url}/api/v1/query", params={
-                    "query": "100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))"
-                })
+                mem_resp = await client.get(
+                    f"{self.prometheus_url}/api/v1/query",
+                    params={"query": "100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))"},
+                )
 
                 if cpu_resp.status_code == 200:
                     data = cpu_resp.json()
@@ -65,6 +68,7 @@ class MonitoringService:
         if metrics["status"] == "offline":
             try:
                 import psutil
+
                 cpu = psutil.cpu_percent(interval=None)
                 ram = psutil.virtual_memory().percent
                 metrics["cpu_load"] = cpu
@@ -77,8 +81,8 @@ class MonitoringService:
 
         # Anomaly Calculation (Strictly based on real data)
         if metrics["status"] in ["online", "local"]:
-            cpu_factor = max(0.0, (metrics["cpu_load"] - 70) / 30) # Only above 70%
-            mem_factor = max(0.0, (metrics["memory_usage"] - 85) / 15) # Only above 85%
+            cpu_factor = max(0.0, (metrics["cpu_load"] - 70) / 30)  # Only above 70%
+            mem_factor = max(0.0, (metrics["memory_usage"] - 85) / 15)  # Only above 85%
             metrics["anomaly_score"] = round(min(1.0, cpu_factor + mem_factor), 2)
 
         return metrics
@@ -95,7 +99,7 @@ class MonitoringService:
                             "name": q.get("name"),
                             "messages": q.get("messages", 0),
                             "consumers": q.get("consumers", 0),
-                            "rate": q.get("messages_details", {}).get("rate", 0)
+                            "rate": q.get("messages_details", {}).get("rate", 0),
                         }
                         for q in queues_data
                     ]
@@ -128,12 +132,13 @@ class MonitoringService:
                 "prometheus": metrics["status"] == "online",
                 "rabbitmq": len(queues) > 0,
                 "vector_db": True,
-                "coordinator": True
-            }
+                "coordinator": True,
+            },
         }
 
     async def get_realtime_metrics(self) -> dict[str, Any]:
         """Alias for get_detailed_health for v45 compatibility."""
         return await self.get_detailed_health()
+
 
 monitoring_service = MonitoringService()

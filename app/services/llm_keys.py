@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 import logging
 import os
-from typing import Dict, List, Optional
 
 
 logger = logging.getLogger(__name__)
@@ -17,6 +16,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class APIKeyStatus:
     """Track API key health."""
+
     key: str
     provider: str
     failures: int = 0
@@ -75,78 +75,78 @@ class LLMKeyManager:
             "env_single": "GROQ_API_KEY",
             "base_url": "https://api.groq.com/openai/v1",
             "default_model": "llama-3.3-70b-versatile",
-            "models": ["llama-3.3-70b-versatile", "mixtral-8x7b-32768", "llama-3.1-8b-instant"]
+            "models": ["llama-3.3-70b-versatile", "mixtral-8x7b-32768", "llama-3.1-8b-instant"],
         },
         "gemini": {
             "env_key": "GEMINI_API_KEYS",
             "env_single": "GEMINI_API_KEY",
             "base_url": "https://generativelanguage.googleapis.com/v1",
             "default_model": "gemini-2.0-flash-exp",
-            "models": ["gemini-2.0-flash-exp", "gemini-1.5-flash", "gemini-1.5-pro"]
+            "models": ["gemini-2.0-flash-exp", "gemini-1.5-flash", "gemini-1.5-pro"],
         },
         "mistral": {
             "env_key": "MISTRAL_API_KEYS",
             "env_single": "MISTRAL_API_KEY",
             "base_url": "https://api.mistral.ai/v1",
             "default_model": "mistral-large-latest",
-            "models": ["mistral-large-latest", "mistral-medium-latest", "codestral-latest"]
+            "models": ["mistral-large-latest", "mistral-medium-latest", "codestral-latest"],
         },
         "openai": {
             "env_key": "OPENAI_API_KEYS",
             "env_single": "OPENAI_API_KEY",
             "base_url": "https://api.openai.com/v1",
             "default_model": "gpt-4o-mini",
-            "models": ["gpt-4o-mini", "gpt-4o", "gpt-3.5-turbo"]
+            "models": ["gpt-4o-mini", "gpt-4o", "gpt-3.5-turbo"],
         },
         "huggingface": {
             "env_key": "HUGGINGFACE_API_KEYS",
             "env_single": "HUGGINGFACE_API_KEY",
             "base_url": "https://api-inference.huggingface.co/models",
             "default_model": "meta-llama/Llama-2-70b-chat-hf",
-            "models": ["meta-llama/Llama-2-70b-chat-hf", "mistralai/Mixtral-8x7B-Instruct-v0.1"]
+            "models": ["meta-llama/Llama-2-70b-chat-hf", "mistralai/Mixtral-8x7B-Instruct-v0.1"],
         },
         "openrouter": {
             "env_key": "OPENROUTER_API_KEY",
             "env_single": "OPENROUTER_API_KEY",
             "base_url": "https://openrouter.ai/api/v1",
             "default_model": "meta-llama/llama-3.1-70b-instruct:free",
-            "models": ["meta-llama/llama-3.1-70b-instruct:free", "google/gemma-2-9b-it:free"]
+            "models": ["meta-llama/llama-3.1-70b-instruct:free", "google/gemma-2-9b-it:free"],
         },
         "together": {
             "env_key": "TOGETHER_API_KEY",
             "env_single": "TOGETHER_API_KEY",
             "base_url": "https://api.together.xyz/v1",
             "default_model": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
-            "models": ["meta-llama/Llama-3.3-70B-Instruct-Turbo", "mistralai/Mixtral-8x7B-Instruct-v0.1"]
+            "models": ["meta-llama/Llama-3.3-70B-Instruct-Turbo", "mistralai/Mixtral-8x7B-Instruct-v0.1"],
         },
         "cohere": {
             "env_key": "COHERE_API_KEY",
             "env_single": "COHERE_API_KEY",
             "base_url": "https://api.cohere.ai/v1",
             "default_model": "command-r-plus",
-            "models": ["command-r-plus", "command-r", "command"]
+            "models": ["command-r-plus", "command-r", "command"],
         },
         "deepseek": {
             "env_key": "DEEPSEEK_API_KEY",
             "env_single": "DEEPSEEK_API_KEY",
             "base_url": "https://api.deepseek.com/v1",
             "default_model": "deepseek-chat",
-            "models": ["deepseek-chat", "deepseek-coder"]
+            "models": ["deepseek-chat", "deepseek-coder"],
         },
         "xai": {
             "env_key": "XAI_API_KEY",
             "env_single": "XAI_API_KEY",
             "base_url": "https://api.x.ai/v1",
             "default_model": "grok-beta",
-            "models": ["grok-beta", "grok-3-latest"]
+            "models": ["grok-beta", "grok-3-latest"],
         },
         "ollama": {
             "env_key": "OLLAMA_BASE_URL",
             "env_single": "OLLAMA_BASE_URL",
             "base_url": os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
             "default_model": "qwen2.5-coder:7b",
-            "models": ["qwen2.5-coder:7b", "llama3.2", "mistral"]
-        }
+            "models": ["qwen2.5-coder:7b", "llama3.2", "mistral"],
+        },
     }
 
     def __init__(self):
@@ -234,7 +234,7 @@ class LLMKeyManager:
                 "available_keys": sum(1 for k in keys if k.is_available()),
                 "disabled_keys": sum(1 for k in keys if k.is_disabled),
                 "in_cooldown": sum(1 for k in keys if k.cooldown_until and datetime.now() < k.cooldown_until),
-                "config": self.PROVIDERS_CONFIG.get(provider, {})
+                "config": self.PROVIDERS_CONFIG.get(provider, {}),
             }
         return status
 
@@ -253,6 +253,7 @@ class LLMKeyManager:
 
 # Global singleton
 _key_manager: LLMKeyManager | None = None
+
 
 def get_key_manager() -> LLMKeyManager:
     """Get or create global key manager instance."""

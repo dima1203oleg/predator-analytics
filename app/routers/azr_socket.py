@@ -9,15 +9,15 @@ Broadcasts OODA cycles, ZK proofs, and Chaos events in real-time.
 """
 
 import asyncio
-import json
-from typing import List
+import contextlib
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from app.libs.core.azr import get_azr, get_status
+from app.libs.core.azr import get_azr
 
 
 router = APIRouter()
+
 
 class ConnectionManager:
     def __init__(self):
@@ -32,17 +32,16 @@ class ConnectionManager:
 
     async def broadcast(self, message: dict):
         for connection in self.active_connections:
-            try:
+            with contextlib.suppress(Exception):
                 await connection.send_json(message)
-            except Exception:
-                pass
+
 
 manager = ConnectionManager()
 
+
 @router.websocket("/ws/azr-brain")
 async def azr_brain_socket(websocket: WebSocket):
-    """Real-time feed of AZR's consciousness.
-    """
+    """Real-time feed of AZR's consciousness."""
     await manager.connect(websocket)
     try:
         # Get reference to the brain
@@ -60,7 +59,7 @@ async def azr_brain_socket(websocket: WebSocket):
                 "phase": status["phase"],
                 "health": status["health"],
                 "cycles": status["cycle_count"],
-                "ledger_size": status["truth_ledger"]["entries"]
+                "ledger_size": status["truth_ledger"]["entries"],
             })
 
             # 2. Check for new Truth Ledger entries (Thoughts/Actions)
@@ -77,8 +76,8 @@ async def azr_brain_socket(websocket: WebSocket):
                     "prediction": {
                         # Mocking prediction visualization data if not available directly in stats
                         "cpu_trend": "stable",
-                        "next_action": "OBSERVE"
-                    }
+                        "next_action": "OBSERVE",
+                    },
                 })
 
                 # Check for threats active
@@ -86,10 +85,10 @@ async def azr_brain_socket(websocket: WebSocket):
                     await manager.broadcast({
                         "type": "ALERT",
                         "level": "warning",
-                        "message": "System stability slightly degraded. Self-healing active."
+                        "message": "System stability slightly degraded. Self-healing active.",
                     })
 
-            await asyncio.sleep(1) # Frequency 1Hz
+            await asyncio.sleep(1)  # Frequency 1Hz
 
     except WebSocketDisconnect:
         manager.disconnect(websocket)

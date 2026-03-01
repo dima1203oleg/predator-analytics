@@ -36,5 +36,6 @@ class TestGovernance(unittest.TestCase):
         assert not OperationalPolicy.check_technology(["php"])["approved"]
         assert OperationalPolicy.check_technology(["python", "postgres"])["approved"]
 
+
 if __name__ == "__main__":
     unittest.main()

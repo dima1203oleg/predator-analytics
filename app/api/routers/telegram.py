@@ -8,7 +8,7 @@ import os
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
 from pydantic import BaseModel
 
-from ...services.telegram_assistant import get_assistant, init_assistant
+from app.services.telegram_assistant import get_assistant, init_assistant
 
 
 logger = logging.getLogger(__name__)
@@ -24,11 +24,13 @@ else:
 
 class WebhookSetup(BaseModel):
     """Webhook setup request."""
+
     url: str
 
 
 class MessageRequest(BaseModel):
     """Direct message request."""
+
     chat_id: int
     text: str
     parse_mode: str = "Markdown"
@@ -68,9 +70,7 @@ async def telegram_webhook(request: Request, background_tasks: BackgroundTasks):
                             show_menu = True
 
                     await bot.send_message(
-                        chat_id=chat_id,
-                        text=response,
-                        reply_markup=bot.main_menu_keyboard if show_menu else None
+                        chat_id=chat_id, text=response, reply_markup=bot.main_menu_keyboard if show_menu else None
                     )
             except Exception as e:
                 logger.exception(f"Error in background task: {e}")
@@ -95,8 +95,10 @@ async def get_bot_status():
         "last_ngrok": {
             "host": bot.last_ngrok.ssh_host if bot and bot.last_ngrok else None,
             "port": bot.last_ngrok.ssh_port if bot and bot.last_ngrok else None,
-            "updated": bot.last_ngrok.parsed_at.isoformat() if bot and bot.last_ngrok else None
-        } if bot else None
+            "updated": bot.last_ngrok.parsed_at.isoformat() if bot and bot.last_ngrok else None,
+        }
+        if bot
+        else None,
     }
 
 
@@ -129,11 +131,7 @@ async def send_message(msg: MessageRequest):
     if not bot:
         raise HTTPException(status_code=500, detail="Bot not initialized")
 
-    success = await bot.send_message(
-        chat_id=msg.chat_id,
-        text=msg.text,
-        parse_mode=msg.parse_mode
-    )
+    success = await bot.send_message(chat_id=msg.chat_id, text=msg.text, parse_mode=msg.parse_mode)
     return {"ok": success}
 
 
@@ -149,7 +147,7 @@ async def get_ngrok_info():
             "ssh_host": bot.last_ngrok.ssh_host,
             "ssh_port": bot.last_ngrok.ssh_port,
             "http_url": bot.last_ngrok.http_url,
-            "updated": bot.last_ngrok.parsed_at.isoformat()
+            "updated": bot.last_ngrok.parsed_at.isoformat(),
         }
     }
 
@@ -164,5 +162,5 @@ async def get_menu():
     return {
         "main_menu": bot.main_menu_keyboard,
         "inline_menu": bot.inline_menu,
-        "commands": list(bot.system_commands.keys())
+        "commands": list(bot.system_commands.keys()),
     }

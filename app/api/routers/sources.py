@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -16,16 +15,18 @@ from app.services.auth_service import get_current_user
 router = APIRouter(prefix="/sources", tags=["Sources"])
 logger = logging.getLogger("api.sources")
 
+
 class DataSource(BaseModel):
     id: str
     name: str
-    type: str # OFFICIAL, INTERNAL, UPLOADED
-    status: str # ONLINE, SYNCING
+    type: str  # OFFICIAL, INTERNAL, UPLOADED
+    status: str  # ONLINE, SYNCING
     records_count: int
     size_mb: float
     last_update: str
     table_name: str
     ml_status: str | None = None
+
 
 @router.get("/", response_model=list[DataSource])
 async def get_data_sources(user: dict = Depends(get_current_user)):
@@ -46,12 +47,7 @@ async def get_data_sources(user: dict = Depends(get_current_user)):
 
                 # If status is indexed, implies it's ready
                 # status mapping: parsing -> SYNCING, indexed -> ONLINE, error -> ERROR
-                status_map = {
-                    "draft": "OFFLINE",
-                    "parsing": "SYNCING",
-                    "indexed": "ONLINE",
-                    "error": "ERROR"
-                }
+                status_map = {"draft": "OFFLINE", "parsing": "SYNCING", "indexed": "ONLINE", "error": "ERROR"}
 
                 # Resolve ML Status
                 ml_status = "IDLE"
@@ -70,10 +66,10 @@ async def get_data_sources(user: dict = Depends(get_current_user)):
                     "type": "UPLOADED" if e.connector == "upload" else "OFFICIAL",
                     "status": status_map.get(e.status, "OFFLINE"),
                     "records_count": config.get("last_count", 0),
-                    "size_mb": 0.0, # Placeholder
+                    "size_mb": 0.0,  # Placeholder
                     "last_update": e.updated_at.isoformat() if e.updated_at else "N/A",
                     "table_name": table_name,
-                    "ml_status": ml_status
+                    "ml_status": ml_status,
                 })
 
             return sources

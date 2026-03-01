@@ -7,7 +7,6 @@ Enforces secure handling of API keys and credentials.
 import base64
 import logging
 import os
-from typing import Optional
 
 from cryptography.fernet import Fernet
 
@@ -16,11 +15,14 @@ from app.libs.core.config import settings
 
 logger = logging.getLogger("predator.secrets")
 
+
 class SecretManager:
     def __init__(self):
         # In a real v45 system, this would connect to Vault or AWS Secrets Manager
         # Here we use a Master Encryption Key from env if available, or a default for R&D
-        self.master_key = os.getenv("PREDATOR_MASTER_KEY", base64.urlsafe_b64encode(b"predator_v45_master_secret_key_!"))
+        self.master_key = os.getenv(
+            "PREDATOR_MASTER_KEY", base64.urlsafe_b64encode(b"predator_v45_master_secret_key_!")
+        )
         try:
             self.fernet = Fernet(self.master_key)
         except Exception as e:
@@ -44,7 +46,7 @@ class SecretManager:
                 return self.fernet.decrypt(val[4:].encode()).decode()
             except Exception as e:
                 logger.exception(f"Failed to decrypt secret {key}: {e}")
-                return val # Fallback to raw if decryption fails
+                return val  # Fallback to raw if decryption fails
 
         return val
 
@@ -53,5 +55,6 @@ class SecretManager:
         if not self.fernet:
             return plain_text
         return f"ENC:{self.fernet.encrypt(plain_text.encode()).decode()}"
+
 
 secret_manager = SecretManager()

@@ -7,6 +7,7 @@ from app.services.newspaper_service import newspaper_service
 
 router = APIRouter(prefix="/newspaper", tags=["premium"])
 
+
 @router.get("/")
 async def get_today_newspaper():
     """Get the latest Morning Brief."""

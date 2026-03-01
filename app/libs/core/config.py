@@ -4,52 +4,44 @@ from __future__ import annotations
 """Core Configuration
 Shared settings for all Predator services.
 """
-import sys
-
-
 # ⚜️ ETERNAL RUNTIME GUARD
-if sys.version_info < (3, 12):
-    print("\n" + "!"*80, file=sys.stderr)
-    print("❌ FATAL: RUNTIME VERSION MISMATCH", file=sys.stderr)
-    print("   PREDATOR ANALYTICS v45+ STRICTLY REQUIRES PYTHON 3.12.", file=sys.stderr)
-    print(f"   DETECTED: {sys.version}", file=sys.stderr)
-    print("   ACTION: Upgrade to 3.12.x and recreate virtual environments.", file=sys.stderr)
-    print("!"*80 + "\n", file=sys.stderr)
-    sys.exit(1)
-
 from functools import lru_cache
 import json
 import os
-from typing import Any, List, Optional
+from typing import Any
 
 
 # 🛡️ FALLBACK: DO ANY METHOD TO WORK WITHOUT PYDANTIC IF NEEDED
 try:
     from pydantic import field_validator
     from pydantic_settings import BaseSettings, SettingsConfigDict
+
     HAS_PYDANTIC = True
 except ImportError:
     HAS_PYDANTIC = False
+
     # Hack to allow code to run: Define dummy classes
     class BaseSettings:
         def __init__(self, **kwargs):
             # Load from env vars for all annotations
-            for name, _ in self.__annotations__.items():
+            for name in self.__annotations__:
                 val = os.getenv(name)
                 if val is not None:
                     setattr(self, name, val)
                 elif hasattr(self, name):
-                    pass # Keep default
+                    pass  # Keep default
                 else:
                     setattr(self, name, None)
 
     def field_validator(*args, **kwargs):
         def decorator(f):
             return f
+
         return decorator
 
     def SettingsConfigDict(*args, **kwargs):
         return {}
+
 
 # Dynamic Project Root Detection
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
@@ -59,7 +51,8 @@ class Settings(BaseSettings):
     """Application settings with environment variable support."""
 
     if HAS_PYDANTIC:
-        @field_validator('CORS_ORIGINS', mode='before')
+
+        @field_validator("CORS_ORIGINS", mode="before")
         @classmethod
         def parse_cors_origins(cls, v):
             """Parse CORS_ORIGINS from various formats."""
@@ -68,22 +61,22 @@ class Settings(BaseSettings):
             if isinstance(v, str):
                 v = v.strip()
                 # Try JSON first
-                if v.startswith('['):
+                if v.startswith("["):
                     try:
                         return json.loads(v)
                     except json.JSONDecodeError:
                         pass
                 # Fallback to comma-separated
-                return [x.strip() for x in v.split(',') if x.strip()]
+                return [x.strip() for x in v.split(",") if x.strip()]
             return ["*"]
 
-        @field_validator('GEMINI_API_KEYS', mode='before')
+        @field_validator("GEMINI_API_KEYS", mode="before")
         @classmethod
         def parse_gemini_keys(cls, v):
             if isinstance(v, list):
                 return v
             if isinstance(v, str):
-                return [x.strip() for x in v.split(',') if x.strip()]
+                return [x.strip() for x in v.split(",") if x.strip()]
             return []
 
     # App
@@ -99,12 +92,12 @@ class Settings(BaseSettings):
     CONSTITUTION_HASH: str = "3f05c27896098e41471c246fb39e6a0dd43f7b11ff7c46db8f0195d3d3cae3cd"
     CONSTITUTION_PATH: str = os.path.join(PROJECT_ROOT, "docs/v45_CONSTITUTION.md")
     CORS_ORIGINS: list[str] = [
-        "*", # Allow all in development/standalone modes for easier access
+        "*",  # Allow all in development/standalone modes for easier access
         os.getenv("FRONTEND_URL", "http://localhost:3000"),
         os.getenv("FRONTEND_DEV_URL", "http://localhost:5173"),
-        "https://jolyn-bifid-eligibly.ngrok-free.dev", # New Root Canonical URL
+        "https://jolyn-bifid-eligibly.ngrok-free.dev",  # New Root Canonical URL
         "http://localhost:8082",
-        "http://localhost:8092"
+        "http://localhost:8092",
     ]
 
     # Database
@@ -123,7 +116,8 @@ class Settings(BaseSettings):
     def CLEAN_DATABASE_URL(self) -> str:
         """Returns DSN without driver suffix, safe for asyncpg.connect()."""
         import re
-        return re.sub(r'postgresql\+[^:]+:', 'postgresql:', self.DATABASE_URL)
+
+        return re.sub(r"postgresql\+[^:]+:", "postgresql:", self.DATABASE_URL)
 
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 5
@@ -213,7 +207,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
 
     # Upload limits
-    MAX_UPLOAD_SIZE: int = 1024 * 1024 * 1024 # 1GB
+    MAX_UPLOAD_SIZE: int = 1024 * 1024 * 1024  # 1GB
     MAX_FILE_SIZE_MB: int = 1024
 
     # Monitoring
@@ -227,11 +221,13 @@ class Settings(BaseSettings):
     FLOWER_PASSWORD: str | None = os.getenv("FLOWER_PASSWORD", "admin")
 
     if HAS_PYDANTIC:
+
         @field_validator("SECRET_KEY", mode="after")
         @classmethod
         def validate_secret_key(cls, v):
             if v == "change-in-production":
                 import logging
+
                 logging.warning("⚠️  SECURITY RISKS: Default SECRET_KEY detected! Use a strong key in production.")
             return v
 
@@ -239,11 +235,13 @@ class Settings(BaseSettings):
             env_file=".env" if os.access(".env", os.R_OK) else None,
             env_file_encoding="utf-8",
             case_sensitive=True,
-            extra="ignore"
+            extra="ignore",
         )
+
 
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
+
 
 settings = get_settings()

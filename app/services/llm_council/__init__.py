@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 class CouncilResponse(BaseModel):
     """Response from a council member."""
+
     model_id: str
     text: str
     confidence: float
@@ -20,6 +21,7 @@ class CouncilResponse(BaseModel):
 
 class PeerReview(BaseModel):
     """Peer review of another model's response."""
+
     reviewer_id: str
     reviewed_response_id: str
     score: float  # 0.0 to 1.0
@@ -30,6 +32,7 @@ class PeerReview(BaseModel):
 
 class ConsensusResult(BaseModel):
     """Final consensus from the council."""
+
     final_answer: str
     confidence: float
     contributing_models: list[str]
@@ -50,26 +53,14 @@ class CouncilMember(ABC):
         self.response_history: list[CouncilResponse] = []
 
     @abstractmethod
-    async def generate_response(
-        self,
-        query: str,
-        context: str | None = None
-    ) -> CouncilResponse:
+    async def generate_response(self, query: str, context: str | None = None) -> CouncilResponse:
         """Generate independent response to query."""
 
     @abstractmethod
-    async def review_response(
-        self,
-        response: CouncilResponse,
-        original_query: str
-    ) -> PeerReview:
+    async def review_response(self, response: CouncilResponse, original_query: str) -> PeerReview:
         """Review another model's response."""
 
-    async def _format_review_prompt(
-        self,
-        response: CouncilResponse,
-        original_query: str
-    ) -> str:
+    async def _format_review_prompt(self, response: CouncilResponse, original_query: str) -> str:
         """Format prompt for peer review."""
         return f"""You are evaluating another AI model's response. Be critical but fair.
 

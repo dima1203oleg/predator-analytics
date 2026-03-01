@@ -5,7 +5,6 @@ from __future__ import annotations
 https://public.api.openprocurement.org/.
 """
 import logging
-from typing import Optional
 
 from .base import BaseConnector, ConnectorResult
 
@@ -19,19 +18,9 @@ class ProzorroConnector(BaseConnector):
     """
 
     def __init__(self):
-        super().__init__(
-            name="Prozorro",
-            base_url="https://public.api.openprocurement.org/api/2.5",
-            timeout=30.0
-        )
+        super().__init__(name="Prozorro", base_url="https://public.api.openprocurement.org/api/2.5", timeout=30.0)
 
-    async def search(
-        self,
-        query: str,
-        limit: int = 20,
-        status: str | None = None,
-        **kwargs
-    ) -> ConnectorResult:
+    async def search(self, query: str, limit: int = 20, status: str | None = None, **kwargs) -> ConnectorResult:
         """Search Prozorro tenders.
 
         Args:
@@ -39,10 +28,7 @@ class ProzorroConnector(BaseConnector):
             limit: Maximum results to return
             status: Filter by tender status (active, complete, cancelled)
         """
-        params = {
-            "opt_fields": "title,description,status,value,dateModified",
-            "limit": min(limit, 100)
-        }
+        params = {"opt_fields": "title,description,status,value,dateModified", "limit": min(limit, 100)}
 
         if status:
             params["status"] = status
@@ -55,7 +41,8 @@ class ProzorroConnector(BaseConnector):
             if query:
                 query_lower = query.lower()
                 tenders = [
-                    t for t in tenders
+                    t
+                    for t in tenders
                     if query_lower in str(t.get("title", "")).lower()
                     or query_lower in str(t.get("description", "")).lower()
                 ]

@@ -3,16 +3,17 @@ from __future__ import annotations
 from datetime import datetime
 import enum
 
-from sqlalchemy import JSON, Boolean, Column, DateTime, Enum, ForeignKey, Integer, String
+from sqlalchemy import JSON, Column, DateTime, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from app.libs.core.database import Base
 
 
-class ConsensusMode(str, enum.Enum):
+class ConsensusMode(enum.StrEnum):
     BASIC = "basic"
     AUDIT = "audit"
     COURT = "court"
+
 
 class TruthLedger(Base):
     __tablename__ = "truth_ledger"
@@ -27,7 +28,7 @@ class TruthLedger(Base):
 
     # Evidence
     real_metrics = Column(JSON, nullable=False, default={})
-    arbiter_decision = Column(String, nullable=False) # APPROVE/DENY
+    arbiter_decision = Column(String, nullable=False)  # APPROVE/DENY
     arbiter_reason = Column(String, nullable=True)
 
     # Cryptographic Chain
@@ -44,13 +45,14 @@ class TruthLedger(Base):
     # Signatures (simplified linkage)
     signatures = relationship("LedgerSignature", back_populates="ledger_entry")
 
+
 class LedgerSignature(Base):
     __tablename__ = "ledger_signatures"
     __table_args__ = {"schema": "truth"}
 
     ledger_id = Column(Integer, ForeignKey("truth.truth_ledger.id"), primary_key=True)
     witness_id = Column(String, primary_key=True)
-    signature = Column(String, nullable=False) # Base64 encoded signature
+    signature = Column(String, nullable=False)  # Base64 encoded signature
     signed_at = Column(DateTime, default=datetime.utcnow)
 
     ledger_entry = relationship("TruthLedger", back_populates="signatures")

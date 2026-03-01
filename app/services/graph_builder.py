@@ -5,9 +5,9 @@ from __future__ import annotations
 Builds connection graphs between entities.
 """
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import logging
-from typing import Any, Dict, List, Set
+from typing import Any
 
 
 logger = logging.getLogger(__name__)
@@ -48,12 +48,7 @@ class GraphBuilderService:
         self.max_depth = 3
         self.max_nodes = 100
 
-    async def build_graph(
-        self,
-        root_entity: str,
-        entity_type: str = "company",
-        depth: int = 2
-    ) -> EntityGraph:
+    async def build_graph(self, root_entity: str, entity_type: str = "company", depth: int = 2) -> EntityGraph:
         """Build entity relationship graph.
 
         Args:
@@ -67,30 +62,16 @@ class GraphBuilderService:
         visited: set[str] = set()
 
         # Add root node
-        root_node = GraphNode(
-            id=root_entity,
-            type=entity_type,
-            name=root_entity,
-            properties={"level": 0}
-        )
+        root_node = GraphNode(id=root_entity, type=entity_type, name=root_entity, properties={"level": 0})
         nodes[root_entity] = root_node
 
         # Explore connections
         await self._explore_entity(
-            entity_id=root_entity,
-            current_depth=0,
-            max_depth=depth,
-            nodes=nodes,
-            edges=edges,
-            visited=visited
+            entity_id=root_entity, current_depth=0, max_depth=depth, nodes=nodes, edges=edges, visited=visited
         )
 
         return EntityGraph(
-            nodes=list(nodes.values()),
-            edges=edges,
-            root_entity=root_entity,
-            depth=depth,
-            created_at=datetime.now(UTC)
+            nodes=list(nodes.values()), edges=edges, root_entity=root_entity, depth=depth, created_at=datetime.now(UTC)
         )
 
     async def _explore_entity(
@@ -100,7 +81,7 @@ class GraphBuilderService:
         max_depth: int,
         nodes: dict[str, GraphNode],
         edges: list[GraphEdge],
-        visited: set[str]
+        visited: set[str],
     ):
         """Recursively explore entity connections."""
         if current_depth >= max_depth or entity_id in visited:
@@ -123,15 +104,17 @@ class GraphBuilderService:
                     id=target_id,
                     type=conn.get("type", "unknown"),
                     name=conn.get("name", target_id),
-                    properties={"level": current_depth + 1}
+                    properties={"level": current_depth + 1},
                 )
 
-            edges.append(GraphEdge(
-                source=entity_id,
-                target=target_id,
-                type=conn.get("relation", "related_to"),
-                weight=conn.get("weight", 1.0)
-            ))
+            edges.append(
+                GraphEdge(
+                    source=entity_id,
+                    target=target_id,
+                    type=conn.get("relation", "related_to"),
+                    weight=conn.get("weight", 1.0),
+                )
+            )
 
             # Recursively explore
             await self._explore_entity(
@@ -140,7 +123,7 @@ class GraphBuilderService:
                 max_depth=max_depth,
                 nodes=nodes,
                 edges=edges,
-                visited=visited
+                visited=visited,
             )
 
     async def _get_connections(self, entity_id: str) -> list[dict[str, Any]]:
@@ -153,23 +136,11 @@ class GraphBuilderService:
         elements = []
 
         for node in graph.nodes:
-            elements.append({
-                "data": {
-                    "id": node.id,
-                    "label": node.name,
-                    "type": node.type,
-                    **node.properties
-                }
-            })
+            elements.append({"data": {"id": node.id, "label": node.name, "type": node.type, **node.properties}})
 
         for edge in graph.edges:
             elements.append({
-                "data": {
-                    "source": edge.source,
-                    "target": edge.target,
-                    "label": edge.type,
-                    "weight": edge.weight
-                }
+                "data": {"source": edge.source, "target": edge.target, "label": edge.type, "weight": edge.weight}
             })
 
         return {"elements": elements}

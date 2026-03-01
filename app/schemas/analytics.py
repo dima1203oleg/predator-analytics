@@ -2,13 +2,12 @@ from __future__ import annotations
 
 
 """Analytics Schemas."""
-from enum import Enum
-from typing import List, Optional
+from enum import StrEnum
 
 from pydantic import BaseModel
 
 
-class RiskLevel(str, Enum):
+class RiskLevel(StrEnum):
     MINIMAL = "MINIMAL"  # Мінімальний ризик
     LOW = "LOW"
     MEDIUM = "MEDIUM"
@@ -16,11 +15,11 @@ class RiskLevel(str, Enum):
     CRITICAL = "CRITICAL"
 
 
-class LLMMode(str, Enum):
-    AUTO = "auto"          # Smart routing based on complexity
-    FAST = "fast"          # Force fast model (Groq/Mistral)
-    PRECISE = "precise"    # Force smart model (GPT-4/Claude)
-    COUNCIL = "council"    # Multi-model consensus
+class LLMMode(StrEnum):
+    AUTO = "auto"  # Smart routing based on complexity
+    FAST = "fast"  # Force fast model (Groq/Mistral)
+    PRECISE = "precise"  # Force smart model (GPT-4/Claude)
+    COUNCIL = "council"  # Multi-model consensus
 
 
 class AnalyticsQuery(BaseModel):

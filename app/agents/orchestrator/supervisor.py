@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from ...services.federation_service import get_federation_service
 from ...services.llm import llm_service
@@ -13,10 +13,12 @@ from ..data.retriever_agent import RetrieverAgent
 
 logger = logging.getLogger("nexus.supervisor")
 
+
 class NexusSupervisor:
     """Main orchestration engine for Predator Analytics MAS.
     Coordinates agents to fulfill user requests.
     """
+
     def __init__(self):
         self.retriever = RetrieverAgent()
         self.miner = MinerAgent()
@@ -24,7 +26,9 @@ class NexusSupervisor:
         self.crawler = CrawlerAgent()
         logger.info("NexusSupervisor initialized with core agents")
 
-    async def handle_request(self, user_query: str, mode: str = "auto", request_context: dict[str, Any] | None = None) -> dict[str, Any]:
+    async def handle_request(
+        self, user_query: str, mode: str = "auto", request_context: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """Processes a high-level user request through the agent pipeline.
         Supported modes: 'auto', 'fast', 'precise', 'council', 'chat'.
         """
@@ -39,8 +43,8 @@ class NexusSupervisor:
             retrieval = await self.retriever.process({"query": user_query})
             return {
                 "query": user_query,
-                "answer": f"[FAST] Found {len(retrieval.result.get('data',[]))} records. Summary not generated.",
-                "trace": [{"agent": "retriever", "status": "success"}]
+                "answer": f"[FAST] Found {len(retrieval.result.get('data', []))} records. Summary not generated.",
+                "trace": [{"agent": "retriever", "status": "success"}],
             }
 
         # 1.5 Chat Mode (LLM Direct)
@@ -53,28 +57,39 @@ class NexusSupervisor:
                 fed_service = get_federation_service()
                 nodes = fed_service.get_active_nodes()
                 if not nodes:
-                     answer = "⚠️ **System Alert**: No Edge Nodes are currently connected to the Federation."
+                    answer = "⚠️ **System Alert**: No Edge Nodes are currently connected to the Federation."
                 else:
                     answer = "### 🌍 Federation Status\n\n"
                     for n in nodes:
-                        answer += f"**🖥️ {n['info']['hostname']}**\n- ID: `{n['info']['node_id']}`\n- Status: 🟢 {n['status'].upper()}\n- Load: {n.get('load',0)}%\n- Tasks Completed: {n.get('tasks_completed', 0)}\n\n"
-                return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "nexus", "action": "federation_status"}]}
+                        answer += f"**🖥️ {n['info']['hostname']}**\n- ID: `{n['info']['node_id']}`\n- Status: 🟢 {n['status'].upper()}\n- Load: {n.get('load', 0)}%\n- Tasks Completed: {n.get('tasks_completed', 0)}\n\n"
+                return {
+                    "query": user_query,
+                    "answer": answer,
+                    "mode": "chat",
+                    "trace": [{"agent": "nexus", "action": "federation_status"}],
+                }
 
             # Task Dispatch (Scan CSV)
             if ("scan" in user_query_lower or "import" in user_query_lower) and ".csv" in user_query_lower:
                 fed_service = get_federation_service()
-                path = "/Users/dima-mac/Documents/Predator_21/sample_data/companies_ukraine.csv" # Demo logic
+                path = "/Users/dima-mac/Documents/Predator_21/sample_data/companies_ukraine.csv"  # Demo logic
                 try:
                     task_id = fed_service.dispatch_task("scan_csv", {"path": path})
                     answer = f"🚀 **Federation Protocol Initiated**\n\nI have dispatched task `{task_id}` to the Edge Cluster.\n**Target**: `{path}`\n\nThe node will begin processing immediately."
                 except Exception as e:
                     answer = f"⚠️ **Dispatch Failed**: {e!s}\n\nPlease ensure at least one Edge Node is online."
 
-                return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "nexus", "action": "dispatch_task"}]}
+                return {
+                    "query": user_query,
+                    "answer": answer,
+                    "mode": "chat",
+                    "trace": [{"agent": "nexus", "action": "dispatch_task"}],
+                }
 
             # Local Ingestion (Knowledge Base)
             if "ingest" in user_query_lower or "learn" in user_query_lower:
                 from ...services.ingestor import ingestor_service
+
                 # In a real app, parse path from query. For demo, default to sample.
                 path = "/Users/dima-mac/Documents/Predator_21/sample_data/companies_ukraine.csv"
                 try:
@@ -83,13 +98,19 @@ class NexusSupervisor:
                 except Exception as e:
                     answer = f"⚠️ **Ingestion Failed**: {e!s}"
 
-                return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "nexus", "action": "ingest_data"}]}
+                return {
+                    "query": user_query,
+                    "answer": answer,
+                    "mode": "chat",
+                    "trace": [{"agent": "nexus", "action": "ingest_data"}],
+                }
 
             # Web Crawling
             if "crawl" in user_query_lower or "scan http" in user_query_lower:
                 # Extract URL (naive)
                 import re
-                url_match = re.search(r'https?://[^\s]+', user_query)
+
+                url_match = re.search(r"https?://[^\s]+", user_query)
                 if url_match:
                     url = url_match.group(0)
                     answer = f"🕷️ **Autonomous Crawler Activated**\n\nTarget: `{url}`\n\nI am deploying a scout to map this domain. Content will be extracted and indexed into the Knowledge Base."
@@ -108,9 +129,14 @@ class NexusSupervisor:
                     except Exception as e:
                         answer += f"\n\n⚠️ **Mission Failed**: {e!s}"
                 else:
-                     answer = "⚠️ Please provide a valid HTTP(S) URL to crawl."
+                    answer = "⚠️ Please provide a valid HTTP(S) URL to crawl."
 
-                return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "crawler", "status": "success"}]}
+                return {
+                    "query": user_query,
+                    "answer": answer,
+                    "mode": "chat",
+                    "trace": [{"agent": "crawler", "status": "success"}],
+                }
 
             # Shadow Protocol (Hidden Layer)
             if "shadow" in user_query_lower or "classified" in user_query_lower or "decrypt" in user_query_lower:
@@ -118,7 +144,7 @@ class NexusSupervisor:
 
                 if "decrypt" in user_query_lower or "read" in user_query_lower:
                     # Naive extraction: Get the word after 'decrypt' or 'read'
-                     # Or just try to find a known doc ID in the string
+                    # Or just try to find a known doc ID in the string
                     docs = shadow_service.list_classified_docs()
                     target = None
                     for d in docs:
@@ -127,8 +153,8 @@ class NexusSupervisor:
                             break
 
                     if not target:
-                         # Fallback to last word
-                         target = user_query.rsplit(maxsplit=1)[-1]
+                        # Fallback to last word
+                        target = user_query.rsplit(maxsplit=1)[-1]
 
                     doc = shadow_service.reveal_document(target)
                     if doc:
@@ -136,35 +162,44 @@ class NexusSupervisor:
                     else:
                         answer = f"🚫 **Access Denied**: Document `{target}` not found or integrity compromised."
 
-                    return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "nexus", "action": "shadow_decrypt"}]}
+                    return {
+                        "query": user_query,
+                        "answer": answer,
+                        "mode": "chat",
+                        "trace": [{"agent": "nexus", "action": "shadow_decrypt"}],
+                    }
 
                 # Default: List
                 docs = shadow_service.list_classified_docs()
                 if not docs:
-                        answer = "🔒 **Shadow Layer**: No classified documents found."
+                    answer = "🔒 **Shadow Layer**: No classified documents found."
                 else:
                     answer = "🔒 **Shadow Protocol Activated**\n\n**Authentication**: `VERIFIED`\n**Clearance**: `OMEGA`\n\n**Available Intelligence**:\n"
                     for doc in docs:
                         answer += f"- 📁 `{doc}`\n"
                     answer += "\nTo decrypt a file, say: `Decrypt <doc_id>`"
-                return {"query": user_query, "answer": answer, "mode": "chat", "trace": [{"agent": "nexus", "action": "shadow_access"}]}
+                return {
+                    "query": user_query,
+                    "answer": answer,
+                    "mode": "chat",
+                    "trace": [{"agent": "nexus", "action": "shadow_access"}],
+                }
 
             try:
                 llm = llm_service
                 answer = await llm.generate(
                     user_query,
-                    system_prompt="You are Predator, an advanced AI analytics system. Be concise, professional, and authoritarian."
+                    system_prompt="You are Predator, an advanced AI analytics system. Be concise, professional, and authoritarian.",
                 )
                 return {
                     "query": user_query,
                     "answer": answer,
                     "mode": "chat",
-                    "trace": [{"agent": "llm", "status": "success"}]
+                    "trace": [{"agent": "llm", "status": "success"}],
                 }
             except Exception as e:
                 logger.error(f"[{correlation_id}] Chat component failed: {e}", exc_info=True)
                 # Fallback: continue to standard flow below
-
 
         # 1.8 Deep Mode (Agentic Graph)
         if mode in ["deep", "agentic"]:
@@ -183,7 +218,7 @@ class NexusSupervisor:
                     "plan": [],
                     "tool_outputs": [],
                     "thinking": [],
-                    "error": None
+                    "error": None,
                 }
 
                 # Execute Graph
@@ -198,7 +233,7 @@ class NexusSupervisor:
                     "answer": answer,
                     "mode": mode,
                     "thoughts": thoughts,
-                    "trace": [{"agent": "deep_graph", "status": "success", "steps": len(thoughts)}]
+                    "trace": [{"agent": "deep_graph", "status": "success", "steps": len(thoughts)}],
                 }
 
             except Exception as e:
@@ -207,7 +242,7 @@ class NexusSupervisor:
                     "query": user_query,
                     "answer": f"⚠️ Agentic Brain Error: {e!s}",
                     "mode": mode,
-                    "trace": [{"agent": "deep_graph", "status": "failed"}]
+                    "trace": [{"agent": "deep_graph", "status": "failed"}],
                 }
 
         try:
@@ -227,13 +262,14 @@ class NexusSupervisor:
 
                 try:
                     from app.services.llm_council.council_orchestrator import create_default_council
+
                     council = create_default_council()
 
                     # Run real deliberation
                     result = await council.conduct_deliberation(
                         query=user_query,
                         context=f"Data Source: {source}. Insights: {len(insights)} found.",
-                        enable_peer_review=True
+                        enable_peer_review=True,
                     )
 
                     final_answer = result.final_answer
@@ -245,8 +281,8 @@ class NexusSupervisor:
                             {"agent": "retriever", "status": "success"},
                             {"agent": "miner", "status": "success"},
                             {"agent": "council_orchestrator", "status": "success"},
-                            *[{"agent": f"model_{m}", "status": "voted"} for m in result.contributing_models]
-                        ]
+                            *[{"agent": f"model_{m}", "status": "voted"} for m in result.contributing_models],
+                        ],
                     }
                 except Exception as council_error:
                     logger.exception(f"Council failed: {council_error}")
@@ -260,10 +296,7 @@ class NexusSupervisor:
                 "query": user_query,
                 "answer": final_answer,
                 "mode": mode,
-                "trace": [
-                    {"agent": "retriever", "status": "success"},
-                    {"agent": "miner", "status": "success"}
-                ]
+                "trace": [{"agent": "retriever", "status": "success"}, {"agent": "miner", "status": "success"}],
             }
         except Exception as e:
             logger.critical(f"[{correlation_id}] Critical supervisor failure: {e}", exc_info=True)
@@ -271,11 +304,13 @@ class NexusSupervisor:
                 "query": user_query,
                 "answer": "⚠️ System Error: The analytical core encountered a critical failure. Please try again later.",
                 "error": str(e),
-                "trace": [{"agent": "nexus", "status": "failed"}]
+                "trace": [{"agent": "nexus", "status": "failed"}],
             }
+
 
 # Singleton Instance
 _supervisor_instance: NexusSupervisor | None = None
+
 
 def get_nexus_supervisor() -> NexusSupervisor:
     global _supervisor_instance

@@ -12,6 +12,7 @@ from src.mlops.augmentor import AugmentorManager
 
 logger = logging.getLogger(__name__)
 
+
 @celery_app.task(bind=True, name="app.tasks.augmentation.process_augmentation", queue="analytics")
 def process_augmentation_task(self, doc_id_str: str, num_variants: int = 2):
     """Celery task to generate synthetic data for a document."""
@@ -30,6 +31,7 @@ def process_augmentation_task(self, doc_id_str: str, num_variants: int = 2):
     except Exception as e:
         logger.exception(f"Augmentation task failed: {e}")
         raise self.retry(exc=e, countdown=60, max_retries=3)
+
 
 @celery_app.task(name="app.tasks.augmentation.bulk_augment", queue="analytics")
 def bulk_augment_task(tenant_id_str: str, limit: int = 10):

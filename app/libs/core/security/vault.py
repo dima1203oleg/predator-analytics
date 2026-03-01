@@ -6,17 +6,18 @@ Provides unified access to secrets via HashiCorp Vault or Environment Variables.
 """
 import logging
 import os
-from typing import Dict, Optional, Union
 
 from app.libs.core.config import settings
 
 
 logger = logging.getLogger("predator.security.vault")
 
+
 class SecretManager:
     """Manages access to sensitive configuration.
     Priority: HashiCorp Vault > Environment Variables.
     """
+
     def __init__(self):
         self._vault_client = None
         self._use_vault = bool(settings.VAULT_TOKEN)
@@ -24,10 +25,8 @@ class SecretManager:
         if self._use_vault:
             try:
                 import hvac
-                self._vault_client = hvac.Client(
-                    url=settings.VAULT_ADDR,
-                    token=settings.VAULT_TOKEN
-                )
+
+                self._vault_client = hvac.Client(url=settings.VAULT_ADDR, token=settings.VAULT_TOKEN)
                 if self._vault_client.is_authenticated():
                     logger.info("🔐 Connected to HashiCorp Vault")
                 else:
@@ -62,10 +61,9 @@ class SecretManager:
                     mount_point, vault_path = vault_path.split("/", 1)
 
                 response = self._vault_client.secrets.kv.v2.read_secret_version(
-                    path=vault_path,
-                    mount_point=mount_point
+                    path=vault_path, mount_point=mount_point
                 )
-                data = response['data']['data']
+                data = response["data"]["data"]
                 if key in data:
                     return data[key]
             except Exception as e:
@@ -73,6 +71,7 @@ class SecretManager:
 
         # 2. Fallback to ENV
         return os.getenv(key)
+
 
 # Singleton instance
 vault = SecretManager()

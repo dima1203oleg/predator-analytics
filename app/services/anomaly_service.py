@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 
@@ -12,6 +11,7 @@ from app.services.evolution_service import evolution_service
 
 logger = get_logger("service.anomaly")
 
+
 class AnomalyService:
     """Advanced Anomaly Detection Service (v45.0).
     Uses Statistical Methods (Z-Score) and Forecasting (Linear Regression/Exp Smoothing)
@@ -19,8 +19,8 @@ class AnomalyService:
     """
 
     def __init__(self):
-        self.history_window = 100 # Analyze last 100 points
-        self.z_threshold = 3.0    # Sigma
+        self.history_window = 100  # Analyze last 100 points
+        self.z_threshold = 3.0  # Sigma
 
     async def detect_anomalies(self) -> dict[str, Any]:
         """Main entry point for anomaly detection.
@@ -70,11 +70,13 @@ class AnomalyService:
             "forecast": {
                 "metric": "health_score",
                 "next_predicted_value": round(forecast, 2),
-                "trend": "degrading" if forecast < health_scores[-1] else "stable"
-            }
+                "trend": "degrading" if forecast < health_scores[-1] else "stable",
+            },
         }
 
-    def _detect_z_score_outliers(self, data: list[float], metric_name: str, invert: bool = False) -> list[dict[str, Any]]:
+    def _detect_z_score_outliers(
+        self, data: list[float], metric_name: str, invert: bool = False
+    ) -> list[dict[str, Any]]:
         if not data:
             return []
 
@@ -103,7 +105,7 @@ class AnomalyService:
                 "mean": mean,
                 "z_score": round(z_score, 2),
                 "severity": "high" if abs(z_score) > 4 else "medium",
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             })
 
         return anomalies
@@ -131,5 +133,6 @@ class AnomalyService:
             logger.warning("anomaly_alert", **anomaly)
             # TODO: Integrate real Telegram User/Chat ID from config
             # await notification_service.send_telegram(msg)
+
 
 anomaly_service = AnomalyService()

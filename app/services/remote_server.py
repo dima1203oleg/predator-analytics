@@ -11,13 +11,13 @@ Handles:
 """
 import asyncio
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import json
 import logging
 from pathlib import Path
 import re
 import subprocess
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 
 logger = logging.getLogger(__name__)
@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ServerConnection:
     """Інформація про підключення до сервера."""
+
     host: str
     port: int
     user: str = "root"
@@ -46,6 +47,7 @@ class ServerConnection:
 @dataclass
 class RemoteExecutionResult:
     """Результат виконання команди на віддаленому сервері."""
+
     command: str
     success: bool
     output: str
@@ -89,7 +91,7 @@ class RemoteServerManager:
                     port=data.get("port", 22),
                     user=data.get("user", "root"),
                     http_url=data.get("http_url", ""),
-                    is_active=False  # Буде перевірено при наступному повідомленні
+                    is_active=False,  # Буде перевірено при наступному повідомленні
                 )
                 logger.info(f"Loaded last connection: {self.current_connection.host}:{self.current_connection.port}")
         except Exception as e:
@@ -99,13 +101,18 @@ class RemoteServerManager:
         """Зберігає підключення у файл."""
         state_file = Path.home() / ".predator_ngrok_state.json"
         try:
-            state_file.write_text(json.dumps({
-                "host": conn.host,
-                "port": conn.port,
-                "user": conn.user,
-                "http_url": conn.http_url,
-                "last_seen": conn.last_seen.isoformat()
-            }, indent=2))
+            state_file.write_text(
+                json.dumps(
+                    {
+                        "host": conn.host,
+                        "port": conn.port,
+                        "user": conn.user,
+                        "http_url": conn.http_url,
+                        "last_seen": conn.last_seen.isoformat(),
+                    },
+                    indent=2,
+                )
+            )
         except Exception as e:
             logger.exception(f"Failed to save connection state: {e}")
 
@@ -119,19 +126,19 @@ class RemoteServerManager:
         4. ngrok URLs повідомлення
         """
         # Формат 1: SSH: tcp://host:port
-        ssh_pattern = r'SSH[:\s]+tcp://([^:]+):(\d+)'
+        ssh_pattern = r"SSH[:\s]+tcp://([^:]+):(\d+)"
         ssh_match = re.search(ssh_pattern, text, re.IGNORECASE)
 
         # Формат 2: ssh command
-        ssh_cmd_pattern = r'ssh\s+(?:\S+@)?(\S+)\s+-p\s*(\d+)'
+        ssh_cmd_pattern = r"ssh\s+(?:\S+@)?(\S+)\s+-p\s*(\d+)"
         ssh_cmd_match = re.search(ssh_cmd_pattern, text, re.IGNORECASE)
 
         # Формат 3: host:port (наприклад 0.tcp.eu.ngrok.io:12345)
-        host_port_pattern = r'(\d+\.tcp\.[a-z]+\.ngrok\.io):(\d+)'
+        host_port_pattern = r"(\d+\.tcp\.[a-z]+\.ngrok\.io):(\d+)"
         host_port_match = re.search(host_port_pattern, text, re.IGNORECASE)
 
         # HTTP URL
-        http_pattern = r'HTTP[:\s]+(https?://[^\s]+)'
+        http_pattern = r"HTTP[:\s]+(https?://[^\s]+)"
         http_match = re.search(http_pattern, text, re.IGNORECASE)
         http_url = http_match.group(1) if http_match else ""
 
@@ -149,12 +156,7 @@ class RemoteServerManager:
             port = int(host_port_match.group(2))
 
         if host and port:
-            return ServerConnection(
-                host=host,
-                port=port,
-                http_url=http_url,
-                is_active=True
-            )
+            return ServerConnection(host=host, port=port, http_url=http_url, is_active=True)
 
         return None
 
@@ -189,7 +191,7 @@ class RemoteServerManager:
 📡 **Дані підключення:**
 • Host: `{conn.host}`
 • Port: `{conn.port}`
-• HTTP: {conn.http_url or 'N/A'}
+• HTTP: {conn.http_url or "N/A"}
 
 🔧 **Оновлено:**
 {chr(10).join(results)}
@@ -216,7 +218,7 @@ ssh -p {conn.port} {conn.user}@{conn.host}
                 content = config_path.read_text()
 
             # Шукаємо блок dev-ngrok
-            pattern = rf'(Host\s+{self.ssh_alias}\s*\n(?:[^\n]*\n)*?)(?=Host\s|\Z)'
+            pattern = rf"(Host\s+{self.ssh_alias}\s*\n(?:[^\n]*\n)*?)(?=Host\s|\Z)"
             match = re.search(pattern, content, re.IGNORECASE)
 
             # Визначаємо який ключ використовувати
@@ -234,7 +236,7 @@ ssh -p {conn.port} {conn.user}@{conn.host}
 
             if match:
                 # Оновлюємо існуючий блок
-                content = content[:match.start()] + new_block + content[match.end():]
+                content = content[: match.start()] + new_block + content[match.end() :]
             else:
                 # Додаємо новий блок
                 content = content.rstrip() + "\n\n" + new_block
@@ -265,8 +267,8 @@ ssh -p {conn.port} {conn.user}@{conn.host}
                 updates["NVIDIA_HTTP_URL"] = conn.http_url
 
             for key, value in updates.items():
-                pattern = rf'^{key}=.*$'
-                replacement = f'{key}={value}'
+                pattern = rf"^{key}=.*$"
+                replacement = f"{key}={value}"
 
                 if re.search(pattern, content, re.MULTILINE):
                     content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
@@ -284,14 +286,12 @@ ssh -p {conn.port} {conn.user}@{conn.host}
     async def execute_remote(self, command: str, timeout: int = 60) -> RemoteExecutionResult:
         """Виконує команду на віддаленому сервері через SSH."""
         import time
+
         start_time = time.time()
 
         if not self.current_connection:
             return RemoteExecutionResult(
-                command=command,
-                success=False,
-                output="",
-                error="No active connection. Send ngrok data first."
+                command=command, success=False, output="", error="No active connection. Send ngrok data first."
             )
 
         conn = self.current_connection
@@ -300,11 +300,16 @@ ssh -p {conn.port} {conn.user}@{conn.host}
             # Формуємо SSH команду
             ssh_cmd = [
                 "ssh",
-                "-o", "StrictHostKeyChecking=no",
-                "-o", "UserKnownHostsFile=/dev/null",
-                "-o", "LogLevel=ERROR",
-                "-o", f"ConnectTimeout={min(timeout, 30)}",
-                "-p", str(conn.port),
+                "-o",
+                "StrictHostKeyChecking=no",
+                "-o",
+                "UserKnownHostsFile=/dev/null",
+                "-o",
+                "LogLevel=ERROR",
+                "-o",
+                f"ConnectTimeout={min(timeout, 30)}",
+                "-p",
+                str(conn.port),
             ]
 
             # Додаємо ключ якщо є
@@ -316,12 +321,7 @@ ssh -p {conn.port} {conn.user}@{conn.host}
 
             logger.info(f"Executing remote: {command}")
 
-            result = subprocess.run(
-                ssh_cmd,
-                check=False, capture_output=True,
-                text=True,
-                timeout=timeout
-            )
+            result = subprocess.run(ssh_cmd, check=False, capture_output=True, text=True, timeout=timeout)
 
             execution_time = (time.time() - start_time) * 1000
 
@@ -331,24 +331,14 @@ ssh -p {conn.port} {conn.user}@{conn.host}
                 output=result.stdout or "",
                 error=result.stderr if result.returncode != 0 else "",
                 execution_time_ms=execution_time,
-                server=f"{conn.host}:{conn.port}"
+                server=f"{conn.host}:{conn.port}",
             )
 
         except subprocess.TimeoutExpired:
-            return RemoteExecutionResult(
-                command=command,
-                success=False,
-                output="",
-                error=f"Timeout after {timeout}s"
-            )
+            return RemoteExecutionResult(command=command, success=False, output="", error=f"Timeout after {timeout}s")
         except Exception as e:
             logger.exception(f"Remote execution error: {e}")
-            return RemoteExecutionResult(
-                command=command,
-                success=False,
-                output="",
-                error=str(e)
-            )
+            return RemoteExecutionResult(command=command, success=False, output="", error=str(e))
 
     async def check_connection(self) -> tuple[bool, str]:
         """Перевіряє чи активне підключення до сервера."""
@@ -386,27 +376,25 @@ ssh -p {conn.port} {conn.user}@{conn.host}
         return {
             "status": "connected" if self.current_connection.is_active else "unknown",
             "host": f"{self.current_connection.host}:{self.current_connection.port}",
-            "data": results
+            "data": results,
         }
 
     async def sync_files_to_remote(self, local_path: str, remote_path: str) -> RemoteExecutionResult:
         """Синхронізує файли на віддалений сервер."""
         if not self.current_connection:
-            return RemoteExecutionResult(
-                command="rsync",
-                success=False,
-                output="",
-                error="No active connection"
-            )
+            return RemoteExecutionResult(command="rsync", success=False, output="", error="No active connection")
 
         conn = self.current_connection
 
         try:
             cmd = [
-                "rsync", "-avz", "--progress",
-                "-e", f"ssh -p {conn.port} -o StrictHostKeyChecking=no",
+                "rsync",
+                "-avz",
+                "--progress",
+                "-e",
+                f"ssh -p {conn.port} -o StrictHostKeyChecking=no",
                 local_path,
-                f"{conn.user}@{conn.host}:{remote_path}"
+                f"{conn.user}@{conn.host}:{remote_path}",
             ]
 
             result = subprocess.run(cmd, check=False, capture_output=True, text=True, timeout=300)
@@ -415,15 +403,10 @@ ssh -p {conn.port} {conn.user}@{conn.host}
                 command=" ".join(cmd),
                 success=result.returncode == 0,
                 output=result.stdout,
-                error=result.stderr if result.returncode != 0 else ""
+                error=result.stderr if result.returncode != 0 else "",
             )
         except Exception as e:
-            return RemoteExecutionResult(
-                command="rsync",
-                success=False,
-                output="",
-                error=str(e)
-            )
+            return RemoteExecutionResult(command="rsync", success=False, output="", error=str(e))
 
     async def deploy_to_remote(self) -> list[RemoteExecutionResult]:
         """Повний деплой на віддалений сервер."""
@@ -438,8 +421,7 @@ ssh -p {conn.port} {conn.user}@{conn.host}
 
         # 2. Docker build & up
         result = await self.execute_remote(
-            "cd ~/predator-analytics && docker compose pull && docker compose up -d --build",
-            timeout=300
+            "cd ~/predator-analytics && docker compose pull && docker compose up -d --build", timeout=300
         )
         results.append(result)
 
@@ -475,14 +457,14 @@ HTTP: https://jolyn-bifid-eligibly.ngrok-free.dev/admin
 • Host: `{conn.host}`
 • Port: `{conn.port}`
 • User: `{conn.user}`
-• HTTP: {conn.http_url or 'N/A'}
+• HTTP: {conn.http_url or "N/A"}
 
 📋 **Підключення:**
 ```bash
 ssh {self.ssh_alias}
 ```
 
-⏰ Останнє оновлення: {conn.last_seen.strftime('%Y-%m-%d %H:%M:%S')} UTC
+⏰ Останнє оновлення: {conn.last_seen.strftime("%Y-%m-%d %H:%M:%S")} UTC
 """
 
 

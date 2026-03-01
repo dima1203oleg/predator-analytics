@@ -3,13 +3,12 @@ from __future__ import annotations
 
 """ETL Schemas."""
 from datetime import datetime
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 
 from pydantic import BaseModel
 
 
-class ETLJobStatus(str, Enum):
+class ETLJobStatus(StrEnum):
     PENDING = "PENDING"
     RUNNING = "RUNNING"
     COMPLETED = "COMPLETED"

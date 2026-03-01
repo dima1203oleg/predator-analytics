@@ -10,7 +10,7 @@ Handles distribution of data to PostgreSQL relational database.
 from datetime import datetime
 import json
 import logging
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 import uuid
 
 
@@ -42,7 +42,7 @@ class PostgreSQLAdapter:
         else:
             logger.info("PostgreSQL adapter disabled")
 
-    def distribute(self, data: dict[str |  Any, list[dict[str, Any]]]) -> DistributionResult:
+    def distribute(self, data: dict[str | Any, list[dict[str, Any]]]) -> DistributionResult:
         """Distribute data to PostgreSQL.
 
         Args:
@@ -54,18 +54,12 @@ class PostgreSQLAdapter:
         from .data_distributor import DistributionResult
 
         if not self.enabled:
-            return DistributionResult(
-                False, "postgresql",
-                error="PostgreSQL adapter is disabled"
-            )
+            return DistributionResult(False, "postgresql", error="PostgreSQL adapter is disabled")
 
         try:
             # Validate data
             if not data:
-                return DistributionResult(
-                    False, "postgresql",
-                    error="No data provided for PostgreSQL distribution"
-                )
+                return DistributionResult(False, "postgresql", error="No data provided for PostgreSQL distribution")
 
             # Convert single record to list for uniform processing
             if isinstance(data, dict):
@@ -83,21 +77,20 @@ class PostgreSQLAdapter:
                 logger.info(f"Sample record: {json.dumps(data[0], indent=2)}")
 
             # Return success result with metadata
-            result = DistributionResult(
-                True, "postgresql",
+            return DistributionResult(
+                True,
+                "postgresql",
                 data={
                     "table": self.table_name,
                     "records_inserted": record_count,
                     "timestamp": datetime.now().isoformat(),
-                    "sample_data": data[0] if record_count > 0 else None
-                }
+                    "sample_data": data[0] if record_count > 0 else None,
+                },
             )
-
-            return result
 
         except Exception as e:
             error_msg = f"PostgreSQL distribution failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "postgresql", error=error_msg)
 
     def _ensure_table_exists(self) -> None:
@@ -133,10 +126,7 @@ class PostgreSQLAdapter:
         from .data_distributor import DistributionResult
 
         if not self.enabled:
-            return DistributionResult(
-                False, "postgresql",
-                error="PostgreSQL adapter is disabled"
-            )
+            return DistributionResult(False, "postgresql", error="PostgreSQL adapter is disabled")
 
         try:
             target_table = table_name or self.table_name
@@ -145,16 +135,12 @@ class PostgreSQLAdapter:
             logger.info(f"Simulating PostgreSQL table creation: {target_table}")
 
             return DistributionResult(
-                True, "postgresql",
-                data={
-                    "table": target_table,
-                    "message": "Table created successfully (simulated)"
-                }
+                True, "postgresql", data={"table": target_table, "message": "Table created successfully (simulated)"}
             )
 
         except Exception as e:
             error_msg = f"PostgreSQL table creation failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "postgresql", error=error_msg)
 
     def execute_query(self, query: str) -> DistributionResult:
@@ -169,27 +155,25 @@ class PostgreSQLAdapter:
         from .data_distributor import DistributionResult
 
         if not self.enabled:
-            return DistributionResult(
-                False, "postgresql",
-                error="PostgreSQL adapter is disabled"
-            )
+            return DistributionResult(False, "postgresql", error="PostgreSQL adapter is disabled")
 
         try:
             # Simulate query execution
             logger.info(f"Simulating PostgreSQL query execution: {query[:50]}...")
 
             return DistributionResult(
-                True, "postgresql",
+                True,
+                "postgresql",
                 data={
                     "query": query[:100] + "..." if len(query) > 100 else query,
                     "message": "Query executed successfully (simulated)",
-                    "rows_affected": 0  # Simulated
-                }
+                    "rows_affected": 0,  # Simulated
+                },
             )
 
         except Exception as e:
             error_msg = f"PostgreSQL query execution failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "postgresql", error=error_msg)
 
     def get_table_schema(self) -> dict[str, Any]:
@@ -209,9 +193,9 @@ class PostgreSQLAdapter:
                 {"name": "source_format", "type": "VARCHAR(50)", "nullable": False},
                 {"name": "timestamp", "type": "TIMESTAMP", "nullable": False},
                 {"name": "created_at", "type": "TIMESTAMP", "nullable": False},
-                {"name": "updated_at", "type": "TIMESTAMP", "nullable": False}
+                {"name": "updated_at", "type": "TIMESTAMP", "nullable": False},
             ],
-            "description": "Table for storing ETL processed people data"
+            "description": "Table for storing ETL processed people data",
         }
 
     def is_healthy(self) -> bool:
@@ -228,25 +212,20 @@ class PostgreSQLAdapter:
         from .data_distributor import DistributionResult
 
         if not self.enabled:
-            return DistributionResult(
-                False, "postgresql",
-                error="PostgreSQL adapter is disabled"
-            )
+            return DistributionResult(False, "postgresql", error="PostgreSQL adapter is disabled")
 
         try:
             logger.info("Simulating PostgreSQL transaction begin")
 
             return DistributionResult(
-                True, "postgresql",
-                data={
-                    "message": "Transaction begun successfully (simulated)",
-                    "transaction_id": str(uuid.uuid4())
-                }
+                True,
+                "postgresql",
+                data={"message": "Transaction begun successfully (simulated)", "transaction_id": str(uuid.uuid4())},
             )
 
         except Exception as e:
             error_msg = f"PostgreSQL transaction begin failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "postgresql", error=error_msg)
 
     def commit_transaction(self) -> DistributionResult:
@@ -258,22 +237,16 @@ class PostgreSQLAdapter:
         from .data_distributor import DistributionResult
 
         if not self.enabled:
-            return DistributionResult(
-                False, "postgresql",
-                error="PostgreSQL adapter is disabled"
-            )
+            return DistributionResult(False, "postgresql", error="PostgreSQL adapter is disabled")
 
         try:
             logger.info("Simulating PostgreSQL transaction commit")
 
             return DistributionResult(
-                True, "postgresql",
-                data={
-                    "message": "Transaction committed successfully (simulated)"
-                }
+                True, "postgresql", data={"message": "Transaction committed successfully (simulated)"}
             )
 
         except Exception as e:
             error_msg = f"PostgreSQL transaction commit failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "postgresql", error=error_msg)

@@ -6,11 +6,12 @@ from __future__ import annotations
 """
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class MenuState(Enum):
     """Стан меню."""
+
     MAIN = "main"
     DOCKER = "docker"
     KUBERNETES = "kubernetes"
@@ -26,6 +27,7 @@ class MenuState(Enum):
 @dataclass
 class MenuItem:
     """Елемент меню."""
+
     text: str
     callback_data: str
     emoji: str = ""
@@ -52,24 +54,24 @@ class TelegramMenuBuilder:
             "inline_keyboard": [
                 [
                     {"text": "📊 Статус системи", "callback_data": "menu_status"},
-                    {"text": "🖥️ Моніторинг", "callback_data": "menu_monitoring"}
+                    {"text": "🖥️ Моніторинг", "callback_data": "menu_monitoring"},
                 ],
                 [
                     {"text": "🎮 NVIDIA Сервер", "callback_data": "menu_nvidia"},  # НОВА КНОПКА
-                    {"text": "🐳 Docker", "callback_data": "menu_docker"}
+                    {"text": "🐳 Docker", "callback_data": "menu_docker"},
                 ],
                 [
                     {"text": "☸️ Kubernetes", "callback_data": "menu_k8s"},
-                    {"text": "📦 Git/Deploy", "callback_data": "menu_deploy"}
+                    {"text": "📦 Git/Deploy", "callback_data": "menu_deploy"},
                 ],
                 [
                     {"text": "🔗 Network", "callback_data": "menu_network"},
-                    {"text": "🧠 AI Assistant", "callback_data": "menu_ai"}
+                    {"text": "🧠 AI Assistant", "callback_data": "menu_ai"},
                 ],
                 [
                     {"text": "⚙️ Налаштування", "callback_data": "menu_settings"},
-                    {"text": "❓ Допомога", "callback_data": "show_help"}
-                ]
+                    {"text": "❓ Допомога", "callback_data": "show_help"},
+                ],
             ]
         }
 
@@ -79,27 +81,25 @@ class TelegramMenuBuilder:
             "inline_keyboard": [
                 [
                     {"text": "📊 Статус сервера", "callback_data": "nvidia_status"},
-                    {"text": "🎮 GPU Info", "callback_data": "nvidia_gpu"}
+                    {"text": "🎮 GPU Info", "callback_data": "nvidia_gpu"},
                 ],
                 [
                     {"text": "🐳 Docker (remote)", "callback_data": "nvidia_docker"},
-                    {"text": "📜 Логи", "callback_data": "nvidia_logs_select"}
+                    {"text": "📜 Логи", "callback_data": "nvidia_logs_select"},
                 ],
                 [
                     {"text": "🚀 Деплой на сервер", "callback_data": "nvidia_deploy"},
-                    {"text": "🔄 Перезапуск", "callback_data": "nvidia_restart"}
+                    {"text": "🔄 Перезапуск", "callback_data": "nvidia_restart"},
                 ],
                 [
                     {"text": "💾 Память/Диск", "callback_data": "nvidia_resources"},
-                    {"text": "🔗 Connection", "callback_data": "nvidia_connection"}
+                    {"text": "🔗 Connection", "callback_data": "nvidia_connection"},
                 ],
                 [
                     {"text": "🧪 Test SSH", "callback_data": "nvidia_test_ssh"},
-                    {"text": "📡 Ngrok Info", "callback_data": "nvidia_ngrok"}
+                    {"text": "📡 Ngrok Info", "callback_data": "nvidia_ngrok"},
                 ],
-                [
-                    {"text": "⬅️ Назад", "callback_data": "menu_main"}
-                ]
+                [{"text": "⬅️ Назад", "callback_data": "menu_main"}],
             ]
         }
 
@@ -109,23 +109,21 @@ class TelegramMenuBuilder:
             "inline_keyboard": [
                 [
                     {"text": "📊 Статус контейнерів", "callback_data": "docker_ps"},
-                    {"text": "📜 Логи", "callback_data": "docker_logs_select"}
+                    {"text": "📜 Логи", "callback_data": "docker_logs_select"},
                 ],
                 [
                     {"text": "▶️ Запустити все", "callback_data": "docker_up"},
-                    {"text": "⏹️ Зупинити все", "callback_data": "docker_down"}
+                    {"text": "⏹️ Зупинити все", "callback_data": "docker_down"},
                 ],
                 [
                     {"text": "🔄 Перезапустити...", "callback_data": "docker_restart_select"},
-                    {"text": "🔨 Build & Run", "callback_data": "docker_build_select"}
+                    {"text": "🔨 Build & Run", "callback_data": "docker_build_select"},
                 ],
                 [
                     {"text": "📈 Ресурси", "callback_data": "docker_stats"},
-                    {"text": "🗑️ Очистити", "callback_data": "docker_prune"}
+                    {"text": "🗑️ Очистити", "callback_data": "docker_prune"},
                 ],
-                [
-                    {"text": "⬅️ Назад", "callback_data": "menu_main"}
-                ]
+                [{"text": "⬅️ Назад", "callback_data": "menu_main"}],
             ]
         }
 
@@ -158,7 +156,7 @@ class TelegramMenuBuilder:
         # Додаємо "Всі" та "Назад"
         keyboard.append([
             {"text": "🔄 ВСІ СЕРВІСИ", "callback_data": f"docker_{action}_all"},
-            {"text": "⬅️ Назад", "callback_data": "menu_docker"}
+            {"text": "⬅️ Назад", "callback_data": "menu_docker"},
         ])
 
         return {"inline_keyboard": keyboard}
@@ -167,25 +165,20 @@ class TelegramMenuBuilder:
         """Меню Kubernetes."""
         return {
             "inline_keyboard": [
-                [
-                    {"text": "📦 Pods", "callback_data": "k8s_pods"},
-                    {"text": "🖥️ Nodes", "callback_data": "k8s_nodes"}
-                ],
+                [{"text": "📦 Pods", "callback_data": "k8s_pods"}, {"text": "🖥️ Nodes", "callback_data": "k8s_nodes"}],
                 [
                     {"text": "🔌 Services", "callback_data": "k8s_services"},
-                    {"text": "📜 Deployments", "callback_data": "k8s_deployments"}
+                    {"text": "📜 Deployments", "callback_data": "k8s_deployments"},
                 ],
                 [
                     {"text": "📊 Cluster Info", "callback_data": "k8s_info"},
-                    {"text": "📜 Logs", "callback_data": "k8s_logs_select"}
+                    {"text": "📜 Logs", "callback_data": "k8s_logs_select"},
                 ],
                 [
                     {"text": "🔄 Rollout Restart", "callback_data": "k8s_restart_select"},
-                    {"text": "📈 Metrics", "callback_data": "k8s_metrics"}
+                    {"text": "📈 Metrics", "callback_data": "k8s_metrics"},
                 ],
-                [
-                    {"text": "⬅️ Назад", "callback_data": "menu_main"}
-                ]
+                [{"text": "⬅️ Назад", "callback_data": "menu_main"}],
             ]
         }
 
@@ -196,26 +189,22 @@ class TelegramMenuBuilder:
                 [
                     {"text": "💾 Диск", "callback_data": "sys_disk"},
                     {"text": "🧠 RAM", "callback_data": "sys_memory"},
-                    {"text": "⚡ CPU", "callback_data": "sys_cpu"}
+                    {"text": "⚡ CPU", "callback_data": "sys_cpu"},
                 ],
                 [
                     {"text": "⏰ Uptime", "callback_data": "sys_uptime"},
-                    {"text": "🖥️ System Info", "callback_data": "sys_info"}
+                    {"text": "🖥️ System Info", "callback_data": "sys_info"},
                 ],
                 [
                     {"text": "🔍 OpenSearch", "callback_data": "mon_opensearch"},
-                    {"text": "📐 Qdrant", "callback_data": "mon_qdrant"}
+                    {"text": "📐 Qdrant", "callback_data": "mon_qdrant"},
                 ],
                 [
                     {"text": "⚙️ Celery Workers", "callback_data": "mon_celery"},
-                    {"text": "📊 Backend Health", "callback_data": "mon_backend"}
+                    {"text": "📊 Backend Health", "callback_data": "mon_backend"},
                 ],
-                [
-                    {"text": "🔄 Повний статус", "callback_data": "status_full"}
-                ],
-                [
-                    {"text": "⬅️ Назад", "callback_data": "menu_main"}
-                ]
+                [{"text": "🔄 Повний статус", "callback_data": "status_full"}],
+                [{"text": "⬅️ Назад", "callback_data": "menu_main"}],
             ]
         }
 
@@ -225,26 +214,22 @@ class TelegramMenuBuilder:
             "inline_keyboard": [
                 [
                     {"text": "📊 Git Status", "callback_data": "git_status"},
-                    {"text": "📜 Git Log", "callback_data": "git_log"}
+                    {"text": "📜 Git Log", "callback_data": "git_log"},
                 ],
                 [
                     {"text": "📥 Git Pull", "callback_data": "git_pull"},
-                    {"text": "📊 Git Diff", "callback_data": "git_diff"}
+                    {"text": "📊 Git Diff", "callback_data": "git_diff"},
                 ],
                 [
                     {"text": "💾 Commit Changes", "callback_data": "git_commit_prompt"},
-                    {"text": "📤 Push", "callback_data": "git_push"}
+                    {"text": "📤 Push", "callback_data": "git_push"},
                 ],
-                [
-                    {"text": "🚀 ПОВНИЙ ДЕПЛОЙ", "callback_data": "deploy_full"}
-                ],
+                [{"text": "🚀 ПОВНИЙ ДЕПЛОЙ", "callback_data": "deploy_full"}],
                 [
                     {"text": "📋 ArgoCD Apps", "callback_data": "argocd_apps"},
-                    {"text": "🔄 ArgoCD Sync", "callback_data": "argocd_sync_select"}
+                    {"text": "🔄 ArgoCD Sync", "callback_data": "argocd_sync_select"},
                 ],
-                [
-                    {"text": "⬅️ Назад", "callback_data": "menu_main"}
-                ]
+                [{"text": "⬅️ Назад", "callback_data": "menu_main"}],
             ]
         }
 
@@ -254,15 +239,13 @@ class TelegramMenuBuilder:
             "inline_keyboard": [
                 [
                     {"text": "🔗 Ngrok Info", "callback_data": "ngrok_info"},
-                    {"text": "📡 SSH Config", "callback_data": "ssh_config"}
+                    {"text": "📡 SSH Config", "callback_data": "ssh_config"},
                 ],
                 [
                     {"text": "🔄 Restart Ngrok", "callback_data": "ngrok_restart"},
-                    {"text": "📋 Connection Info", "callback_data": "connect_info"}
+                    {"text": "📋 Connection Info", "callback_data": "connect_info"},
                 ],
-                [
-                    {"text": "⬅️ Назад", "callback_data": "menu_main"}
-                ]
+                [{"text": "⬅️ Назад", "callback_data": "menu_main"}],
             ]
         }
 
@@ -272,19 +255,17 @@ class TelegramMenuBuilder:
             "inline_keyboard": [
                 [
                     {"text": "🔍 Пошук", "callback_data": "ai_search_prompt"},
-                    {"text": "🧠 Аналіз", "callback_data": "ai_analyze_prompt"}
+                    {"text": "🧠 Аналіз", "callback_data": "ai_analyze_prompt"},
                 ],
                 [
                     {"text": "💬 Чат з AI", "callback_data": "ai_chat"},
-                    {"text": "🤖 LLM Council", "callback_data": "ai_council"}
+                    {"text": "🤖 LLM Council", "callback_data": "ai_council"},
                 ],
                 [
                     {"text": "📊 LLM Провайдери", "callback_data": "menu_llm"},
-                    {"text": "📈 AI Статистика", "callback_data": "ai_stats"}
+                    {"text": "📈 AI Статистика", "callback_data": "ai_stats"},
                 ],
-                [
-                    {"text": "⬅️ Назад", "callback_data": "menu_main"}
-                ]
+                [{"text": "⬅️ Назад", "callback_data": "menu_main"}],
             ]
         }
 
@@ -294,15 +275,13 @@ class TelegramMenuBuilder:
             "inline_keyboard": [
                 [
                     {"text": "📋 Список провайдерів", "callback_data": "llm_list"},
-                    {"text": "➕ Додати ключ", "callback_data": "llm_add_key"}
+                    {"text": "➕ Додати ключ", "callback_data": "llm_add_key"},
                 ],
                 [
                     {"text": "🧪 Тестувати ключ", "callback_data": "llm_test_key"},
-                    {"text": "📊 Статистика", "callback_data": "llm_stats"}
+                    {"text": "📊 Статистика", "callback_data": "llm_stats"},
                 ],
-                [
-                    {"text": "⬅️ Назад", "callback_data": "menu_ai"}
-                ]
+                [{"text": "⬅️ Назад", "callback_data": "menu_ai"}],
             ]
         }
 
@@ -312,19 +291,17 @@ class TelegramMenuBuilder:
             "inline_keyboard": [
                 [
                     {"text": "🔁 Auto Deploy", "callback_data": "settings_auto_deploy"},
-                    {"text": "↩️ Auto Rollback", "callback_data": "settings_auto_rollback"}
+                    {"text": "↩️ Auto Rollback", "callback_data": "settings_auto_rollback"},
                 ],
                 [
                     {"text": "🔄 Auto Restart Ngrok", "callback_data": "settings_auto_restart"},
-                    {"text": "👤 Authorization", "callback_data": "settings_auth"}
+                    {"text": "👤 Authorization", "callback_data": "settings_auth"},
                 ],
                 [
                     {"text": "🧠 LLM Settings", "callback_data": "menu_llm"},
-                    {"text": "📊 Bot Stats", "callback_data": "settings_bot_stats"}
+                    {"text": "📊 Bot Stats", "callback_data": "settings_bot_stats"},
                 ],
-                [
-                    {"text": "⬅️ Назад", "callback_data": "menu_main"}
-                ]
+                [{"text": "⬅️ Назад", "callback_data": "menu_main"}],
             ]
         }
 
@@ -336,7 +313,7 @@ class TelegramMenuBuilder:
             "inline_keyboard": [
                 [
                     {"text": confirm_text, "callback_data": f"confirm_{task_id}"},
-                    {"text": "❌ Скасувати", "callback_data": f"cancel_{task_id}"}
+                    {"text": "❌ Скасувати", "callback_data": f"cancel_{task_id}"},
                 ]
             ]
         }
@@ -347,20 +324,20 @@ class TelegramMenuBuilder:
             "inline_keyboard": [
                 [
                     {"text": "🔄 Restart Backend", "callback_data": "quick_restart_backend"},
-                    {"text": "📜 Backend Logs", "callback_data": "quick_logs_backend"}
+                    {"text": "📜 Backend Logs", "callback_data": "quick_logs_backend"},
                 ],
                 [
                     {"text": "📥 Git Pull", "callback_data": "quick_git_pull"},
-                    {"text": "🚀 Full Deploy", "callback_data": "quick_deploy"}
+                    {"text": "🚀 Full Deploy", "callback_data": "quick_deploy"},
                 ],
                 [
                     {"text": "🎮 GPU Status", "callback_data": "quick_gpu"},
-                    {"text": "🖥️ NVIDIA Status", "callback_data": "quick_nvidia"}
+                    {"text": "🖥️ NVIDIA Status", "callback_data": "quick_nvidia"},
                 ],
                 [
                     {"text": "📊 All Status", "callback_data": "quick_status"},
-                    {"text": "⬅️ Меню", "callback_data": "menu_main"}
-                ]
+                    {"text": "⬅️ Меню", "callback_data": "menu_main"},
+                ],
             ]
         }
 
@@ -368,24 +345,12 @@ class TelegramMenuBuilder:
         """Клавіатура швидких дій (reply keyboard)."""
         return {
             "keyboard": [
-                [
-                    {"text": "📊 Статус"},
-                    {"text": "🎮 NVIDIA"},
-                    {"text": "🐳 Docker"}
-                ],
-                [
-                    {"text": "☸️ K8s"},
-                    {"text": "📦 Git"},
-                    {"text": "🔗 Ngrok"}
-                ],
-                [
-                    {"text": "🧠 AI"},
-                    {"text": "🚀 Деплой"},
-                    {"text": "❓ Меню"}
-                ]
+                [{"text": "📊 Статус"}, {"text": "🎮 NVIDIA"}, {"text": "🐳 Docker"}],
+                [{"text": "☸️ K8s"}, {"text": "📦 Git"}, {"text": "🔗 Ngrok"}],
+                [{"text": "🧠 AI"}, {"text": "🚀 Деплой"}, {"text": "❓ Меню"}],
             ],
             "resize_keyboard": True,
-            "one_time_keyboard": False
+            "one_time_keyboard": False,
         }
 
     def get_menu_for_state(self, state: MenuState) -> dict[str, Any]:
@@ -492,8 +457,9 @@ class MessageFormatter:
 """
 
     @staticmethod
-    def format_task_result(description: str, output: str, error: str | None = None,
-                           execution_time_ms: float = 0) -> str:
+    def format_task_result(
+        description: str, output: str, error: str | None = None, execution_time_ms: float = 0
+    ) -> str:
         """Форматує результат виконання."""
         status = "✅ *Успішно виконано*" if not error else "❌ *Помилка виконання*"
         time_str = f"⏱️ {execution_time_ms:.0f}ms" if execution_time_ms > 0 else ""
@@ -545,9 +511,9 @@ class MessageFormatter:
 
         # NVIDIA сервер
         if nvidia_status:
-            status_emoji = "🟢" if nvidia_status.get('connected') else "🔴"
+            status_emoji = "🟢" if nvidia_status.get("connected") else "🔴"
             msg += f"\n*{status_emoji} NVIDIA Сервер:*\n"
-            if nvidia_status.get('connected'):
+            if nvidia_status.get("connected"):
                 msg += f"• Host: `{nvidia_status.get('host', 'N/A')}`\n"
                 msg += f"• GPU: {nvidia_status.get('gpu', 'N/A')}\n"
                 msg += f"• Docker: {nvidia_status.get('docker', 'N/A')}\n"
@@ -563,16 +529,16 @@ class MessageFormatter:
 📈 *Статистика бота*
 
 *Сьогодні:*
-• 🔧 Виконано задач: {stats.get('tasks_today', 0)}
-• ✅ Успішних: {stats.get('success_today', 0)}
-• ❌ Помилок: {stats.get('errors_today', 0)}
+• 🔧 Виконано задач: {stats.get("tasks_today", 0)}
+• ✅ Успішних: {stats.get("success_today", 0)}
+• ❌ Помилок: {stats.get("errors_today", 0)}
 
 *Всього:*
-• 📊 Всього задач: {stats.get('total_tasks', 0)}
-• ⏰ Uptime бота: {stats.get('uptime', 'N/A')}
+• 📊 Всього задач: {stats.get("total_tasks", 0)}
+• ⏰ Uptime бота: {stats.get("uptime", "N/A")}
 
 *Останні дії:*
-{stats.get('recent_actions', 'Немає даних')}
+{stats.get("recent_actions", "Немає даних")}
 """
 
     @staticmethod
@@ -590,7 +556,7 @@ ssh -p {ssh_port} root@{ssh_host}
 ssh dev-ngrok
 ```
 
-*HTTP:* {http_url or 'N/A'}
+*HTTP:* {http_url or "N/A"}
 
 *SCP (копіювання файлів):*
 ```
@@ -602,4 +568,3 @@ scp -P {ssh_port} file.txt root@{ssh_host}:~/
 # Singleton
 menu_builder = TelegramMenuBuilder()
 message_formatter = MessageFormatter()
-

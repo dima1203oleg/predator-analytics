@@ -9,12 +9,13 @@ Output: StructuralScore per sector/entity.
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
+import logging
 
 from app.core.confidence import ConfidenceScore, quick_confidence
 from app.indices.mci import calculate_mci_normalized
 from app.indices.pfi import calculate_pfi_normalized
+
 
 logger = logging.getLogger("predator.engines.structural_gaps")
 
@@ -62,12 +63,18 @@ def compute_structural_score(
         StructuralScore with all metrics.
     """
     mci = calculate_mci_normalized(
-        import_volume, production,
-        domestic_sales, export_volume, inventory_change,
+        import_volume,
+        production,
+        domestic_sales,
+        export_volume,
+        inventory_change,
         total_market_volume,
     )
     pfi = calculate_pfi_normalized(
-        import_volume, domestic_sales, export_volume, inventory_change,
+        import_volume,
+        domestic_sales,
+        export_volume,
+        inventory_change,
     )
 
     aggregate = 0.30 * mci + 0.30 * pfi + 0.20 * trade_discrepancy + 0.20 * logistics_gap
@@ -77,7 +84,10 @@ def compute_structural_score(
 
     logger.info(
         "Structural score computed: ueid=%s mci=%.1f pfi=%.1f agg=%.1f",
-        ueid, mci, pfi, aggregate,
+        ueid,
+        mci,
+        pfi,
+        aggregate,
     )
 
     return StructuralScore(

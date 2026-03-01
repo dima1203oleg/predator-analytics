@@ -4,10 +4,11 @@ import hashlib
 import logging
 import os
 import re
-from typing import Any, Dict, List
+from typing import Any
 
 
 logger = logging.getLogger("service.pii_masking")
+
 
 class PIIMaskingService:
     """Service for masking Personally Identifiable Information (PII).
@@ -22,13 +23,21 @@ class PIIMaskingService:
             "phone": r"\+?\d{10,13}",
             "email": r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}",
             "passport": r"[A-Z]{2}\d{6}",
-            "iban": r"UA\d{27}"
+            "iban": r"UA\d{27}",
         }
 
         # Fields that should always be masked in 'safe' indices
         self.always_mask = [
-            "edrpou", "ipn", "phone", "email", "passport", "iban",
-            "company_name", "person_name", "address", "tax_id"
+            "edrpou",
+            "ipn",
+            "phone",
+            "email",
+            "passport",
+            "iban",
+            "company_name",
+            "person_name",
+            "address",
+            "tax_id",
         ]
 
     def mask_document(self, document: dict[str, Any], mode: str = "safe") -> dict[str, Any]:
@@ -111,7 +120,7 @@ class PIIMaskingService:
                     "type": field_type,
                     "value": match.group(),
                     "start": match.start(),
-                    "end": match.end()
+                    "end": match.end(),
                 })
 
         return detections
@@ -126,11 +135,7 @@ class PIIMaskingService:
         masked_text = text
         for detection in detections:
             masked_value = self._mask_value(detection["value"], detection["type"])
-            masked_text = (
-                masked_text[:detection["start"]] +
-                masked_value +
-                masked_text[detection["end"]:]
-            )
+            masked_text = masked_text[: detection["start"]] + masked_value + masked_text[detection["end"] :]
 
         return masked_text
 

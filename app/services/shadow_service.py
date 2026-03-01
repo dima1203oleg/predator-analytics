@@ -9,7 +9,7 @@ import base64
 import json
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -17,6 +17,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 
 logger = logging.getLogger(__name__)
+
 
 class ShadowService:
     """Manages the 'Shadow Layer' - an encrypted local file store."""
@@ -34,7 +35,7 @@ class ShadowService:
 
     def _generate_cipher(self, password: str) -> Fernet:
         """Derive a Fernet key from a password."""
-        salt = b'predator_salt_v1' # In prod, random salt stored separately
+        salt = b"predator_salt_v1"  # In prod, random salt stored separately
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,
@@ -84,24 +85,31 @@ class ShadowService:
         except Exception:
             return []
 
+
 # Singleton
 # Use absolute path relative to this file to be safe, or just utilize a data dir env var
-_base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) # ua-sources root
+_base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # ua-sources root
 _shadow_path = os.path.join(_base_dir, "data", "shadow_layer")
 
 shadow_service = ShadowService(storage_path=_shadow_path)
 
 # Seed some dummy data for the demo
 if not shadow_service.list_classified_docs():
-    shadow_service.seal_document("omega_directive", {
-        "title": "OMEGA Directive - Autonomous Drone Swarm",
-        "clearance": "TOP SECRET",
-        "content": "The OMEGA protocol authorizes autonomous engagement of digital threats. Edge nodes are permitted to counter-scan hostile IPs without human intervention.",
-        "author": "The Architect"
-    })
-    shadow_service.seal_document("black_ledger", {
-        "title": "Project Black Ledger",
-        "clearance": "RESTRICTED",
-        "content": "Financial anomalies detected in Sector 7 suggest a massive money laundering operation using shell companies linked to 'GrainCorp'.",
-        "author": "Financial Auditor Agent"
-    })
+    shadow_service.seal_document(
+        "omega_directive",
+        {
+            "title": "OMEGA Directive - Autonomous Drone Swarm",
+            "clearance": "TOP SECRET",
+            "content": "The OMEGA protocol authorizes autonomous engagement of digital threats. Edge nodes are permitted to counter-scan hostile IPs without human intervention.",
+            "author": "The Architect",
+        },
+    )
+    shadow_service.seal_document(
+        "black_ledger",
+        {
+            "title": "Project Black Ledger",
+            "clearance": "RESTRICTED",
+            "content": "Financial anomalies detected in Sector 7 suggest a massive money laundering operation using shell companies linked to 'GrainCorp'.",
+            "author": "Financial Auditor Agent",
+        },
+    )

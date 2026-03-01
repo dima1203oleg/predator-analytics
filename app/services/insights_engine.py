@@ -1,25 +1,26 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 import logging
-import random
 import uuid
 
 
-class InsightType(str, Enum):
+class InsightType(StrEnum):
     PREDICTION = "prediction"
     ANOMALY = "anomaly"
     OPPORTUNITY = "opportunity"
     RISK = "risk"
     RECOMMENDATION = "recommendation"
 
-class InsightPriority(str, Enum):
+
+class InsightPriority(StrEnum):
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"
     LOW = "low"
+
 
 @dataclass
 class AIInsight:
@@ -35,6 +36,7 @@ class AIInsight:
     actionable: bool
     actions: list[dict] | None = None
     saved: bool = False
+
 
 class InsightsEngine:
     """Engine for generating automatic AI insights and anomaly detection."""
@@ -60,7 +62,7 @@ class InsightsEngine:
                 category="Закупівлі",
                 created_at=datetime.now(UTC),
                 actionable=True,
-                actions=[{"label": "Знайти постачальників", "type": "primary"}]
+                actions=[{"label": "Знайти постачальників", "type": "primary"}],
             ),
             AIInsight(
                 id=str(uuid.uuid4())[:8],
@@ -73,8 +75,9 @@ class InsightsEngine:
                 category="Ризики",
                 created_at=datetime.now(UTC),
                 actionable=True,
-                actions=[{"label": "Розпочати розслідування", "type": "primary"}]
-            )
+                actions=[{"label": "Розпочати розслідування", "type": "primary"}],
+            ),
         ]
+
 
 insights_engine = InsightsEngine()

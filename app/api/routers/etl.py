@@ -2,12 +2,10 @@ from __future__ import annotations
 
 
 """ETL Router - Predator Analytics v45-S."""
-import logging
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from app.libs.core.etl_arbiter import ETLSovereignArbiter
-from app.libs.core.etl_state_machine_v45s import ETLState, ETLStateMachineV45S
 from app.libs.core.structured_logger import get_logger
 from app.services.etl_ingestion import ETLIngestionService
 
@@ -16,6 +14,7 @@ logger = get_logger("api.etl")
 router = APIRouter(prefix="/etl", tags=["ETL"])
 etl_service = ETLIngestionService()
 arbiter = ETLSovereignArbiter()
+
 
 @router.get("/jobs")
 async def list_jobs(limit: int = 50, offset: int = 0):
@@ -38,18 +37,24 @@ async def list_jobs(limit: int = 50, offset: int = 0):
                     "job_id": str(j.id),
                     "source_file": j.source_file,
                     "state": j.state,
-                    "progress": j.progress or {"percent": 0, "records_total": 0, "records_processed": 0, "records_indexed": 0},
-                    "constitutional_compliance": True, # Aggregated compliance
+                    "progress": j.progress
+                    or {"percent": 0, "records_total": 0, "records_processed": 0, "records_indexed": 0},
+                    "constitutional_compliance": True,  # Aggregated compliance
                     "timestamps": {
                         "created_at": j.created_at.isoformat() if j.created_at else None,
-                        "state_entered_at": j.timestamps.get("state_entered_at") if j.timestamps else j.updated_at.isoformat() if j.updated_at else None,
-                        "updated_at": j.updated_at.isoformat() if j.updated_at else None
+                        "state_entered_at": j.timestamps.get("state_entered_at")
+                        if j.timestamps
+                        else j.updated_at.isoformat()
+                        if j.updated_at
+                        else None,
+                        "updated_at": j.updated_at.isoformat() if j.updated_at else None,
                     },
-                    "errors": j.errors or []
+                    "errors": j.errors or [],
                 }
                 for j in jobs
-            ]
+            ],
         }
+
 
 @router.get("/jobs/{job_id}")
 async def get_job(job_id: str):
@@ -67,8 +72,12 @@ async def get_job(job_id: str):
         # Build timestamps object
         timestamps = {
             "created_at": job.created_at.isoformat() if job.created_at else None,
-            "state_entered_at": job.timestamps.get("state_entered_at") if job.timestamps else job.updated_at.isoformat() if job.updated_at else None,
-            "updated_at": job.updated_at.isoformat() if job.updated_at else None
+            "state_entered_at": job.timestamps.get("state_entered_at")
+            if job.timestamps
+            else job.updated_at.isoformat()
+            if job.updated_at
+            else None,
+            "updated_at": job.updated_at.isoformat() if job.updated_at else None,
         }
 
         # Constitutional Monitoring Check
@@ -77,7 +86,7 @@ async def get_job(job_id: str):
             "state": job.state,
             "progress": job.progress,
             "errors": job.errors,
-            "meta": {"dataset_type": job.dataset_type}
+            "meta": {"dataset_type": job.dataset_type},
         }
         compliance = await arbiter.monitor_etl_job(str(job.id), job_dict)
 
@@ -85,17 +94,19 @@ async def get_job(job_id: str):
             "job_id": str(job.id),
             "source_file": job.source_file,
             "state": job.state,
-            "progress": job.progress or {"percent": 0, "records_total": 0, "records_processed": 0, "records_indexed": 0},
+            "progress": job.progress
+            or {"percent": 0, "records_total": 0, "records_processed": 0, "records_indexed": 0},
             "timestamps": timestamps,
             "errors": job.errors or [],
             "constitutional_compliance": compliance["constitutional_compliance"],
-            "violations": compliance["violations"]
+            "violations": compliance["violations"],
         }
+
 
 @router.get("/status")
 async def get_global_status():
     """Simplified global ETL status for the 'Truth Invariant' verification."""
-    from sqlalchemy import func, select
+    from sqlalchemy import select
 
     from app.libs.core.database import get_db_ctx
     from app.libs.core.etl_state_machine import ETLState
@@ -103,11 +114,9 @@ async def get_global_status():
 
     async with get_db_ctx() as sess:
         # Active jobs
-        stmt = select(ETLJob).where(ETLJob.state.notin_([
-            ETLState.COMPLETED.value,
-            ETLState.FAILED.value,
-            ETLState.CANCELLED.value
-        ]))
+        stmt = select(ETLJob).where(
+            ETLJob.state.notin_([ETLState.COMPLETED.value, ETLState.FAILED.value, ETLState.CANCELLED.value])
+        )
         res = await sess.execute(stmt)
         active_jobs = res.scalars().all()
 
@@ -115,13 +124,10 @@ async def get_global_status():
         global_percent = 100
         if is_running:
             global_percent = min([j.progress.get("percent", 0) for j in active_jobs])
-            global_percent = min(global_percent, 99) # Never 100 if active
+            global_percent = min(global_percent, 99)  # Never 100 if active
 
-        return {
-            "etl_running": is_running,
-            "global_progress": global_percent,
-            "active_jobs_count": len(active_jobs)
-        }
+        return {"etl_running": is_running, "global_progress": global_percent, "active_jobs_count": len(active_jobs)}
+
 
 @router.post("/process-local")
 async def process_local_file(file_path: str, dataset_type: str = "customs"):
@@ -136,6 +142,7 @@ async def process_local_file(file_path: str, dataset_type: str = "customs"):
     except Exception as e:
         logger.exception(f"ETL Local Process Failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post("/upload")
 async def upload_and_process(file: UploadFile = File(...), dataset_type: str = "customs"):
@@ -159,10 +166,7 @@ async def upload_and_process(file: UploadFile = File(...), dataset_type: str = "
 
 @router.post("/process")
 async def process_unified(
-    file: UploadFile = File(None),
-    source_type: str = "excel",
-    url: str = None,
-    options: str = None
+    file: UploadFile = File(None), source_type: str = "excel", url: str | None = None, options: str | None = None
 ):
     """Уніфікований пайплайн обробки будь-якого типу джерела.
 
@@ -189,6 +193,7 @@ async def process_unified(
     if options:
         try:
             import json
+
             parsed_options = json.loads(options)
         except Exception:
             pass
@@ -202,16 +207,14 @@ async def process_unified(
             tmp_path = tmp.name
 
         try:
-            result = await pipeline.process(source_type, tmp_path, parsed_options)
-            return result
+            return await pipeline.process(source_type, tmp_path, parsed_options)
         finally:
             if os.path.exists(tmp_path):
                 os.unlink(tmp_path)
 
     # Якщо передано URL - обробляємо як URL
     elif url:
-        result = await pipeline.process(source_type, url, parsed_options)
-        return result
+        return await pipeline.process(source_type, url, parsed_options)
 
     else:
         raise HTTPException(status_code=400, detail="Потрібен file або url")
@@ -222,7 +225,7 @@ async def get_pipeline_stats():
     """Отримати статистику пайплайнів."""
     from app.services.unified_pipeline import get_unified_pipeline
 
-    pipeline = get_unified_pipeline()
+    get_unified_pipeline()
 
     return {
         "status": "operational",
@@ -237,8 +240,8 @@ async def get_pipeline_stats():
             {"type": "telegram", "description": "Telegram канали"},
             {"type": "website", "description": "Веб-сайти"},
             {"type": "api", "description": "API джерела"},
-            {"type": "rss", "description": "RSS/Atom фіди"}
+            {"type": "rss", "description": "RSS/Atom фіди"},
         ],
         "target_databases": ["postgresql", "opensearch", "qdrant", "redis", "minio"],
-        "enrichment_capabilities": ["ner", "embedding", "ocr", "transcription", "classification"]
+        "enrichment_capabilities": ["ner", "embedding", "ocr", "transcription", "classification"],
     }

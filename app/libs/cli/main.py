@@ -10,9 +10,6 @@ from __future__ import annotations
 """
 
 import asyncio
-import json
-from pathlib import Path
-from typing import Dict, List, Optional
 
 import click
 import httpx
@@ -23,6 +20,7 @@ from rich.table import Table
 
 
 console = Console()
+
 
 class PredatorClient:
     """HTTP клієнт для Predator API (UA)."""
@@ -51,32 +49,34 @@ class PredatorClient:
 
 
 @click.group()
-@click.option('--api-url', default='http://localhost:8090', help='URL до Predator API')
+@click.option("--api-url", default="http://localhost:8090", help="URL до Predator API")
 @click.pass_context
 def cli(ctx, api_url):
     """🛡️ Predator Analytics CLI v45.0 - Командний центр (UA)."""
     ctx.ensure_object(dict)
-    ctx.obj['API_URL'] = api_url
-    ctx.obj['client'] = PredatorClient(api_url)
+    ctx.obj["API_URL"] = api_url
+    ctx.obj["client"] = PredatorClient(api_url)
 
 
 @cli.command()
 @click.pass_context
 def status(ctx):
     """📊 Системний статус та здоров'я сервісів."""
-    client = ctx.obj['client']
+    client = ctx.obj["client"]
 
     async def run():
-        console.print(Panel(
-            "[bold cyan]Predator Analytics v45.0[/bold cyan]\n"
-            "[dim]Повний системний огляд (NVIDIA Server Integrated)[/dim]",
-            title="📊 Статус Системи"
-        ))
+        console.print(
+            Panel(
+                "[bold cyan]Predator Analytics v45.0[/bold cyan]\n"
+                "[dim]Повний системний огляд (NVIDIA Server Integrated)[/dim]",
+                title="📊 Статус Системи",
+            )
+        )
 
         with console.status("[bold green]Перевірка сервісів..."):
             try:
-                health = await client.get('/health')
-                autonomy = await client.get('/api/v1/system/autonomy/status')
+                health = await client.get("/health")
+                autonomy = await client.get("/api/v1/system/autonomy/status")
             except Exception as e:
                 console.print(f"[red]✗ Помилка з'єднання: {e}[/red]")
                 await client.close()
@@ -87,7 +87,7 @@ def status(ctx):
         services_table.add_column("Компонент", style="cyan")
         services_table.add_column("Статус", style="white")
 
-        services = health.get('services', {})
+        services = health.get("services", {})
         for name, svc_status in services.items():
             icon = "🟢" if svc_status == "healthy" else "🔴"
             services_table.add_row(name, f"{icon} {svc_status}")
@@ -95,7 +95,7 @@ def status(ctx):
         console.print(services_table)
 
         # Автономність та Агенти
-        agents = autonomy.get('systems', {})
+        agents = autonomy.get("systems", {})
         if agents:
             console.print("\n[bold]🤖 Суверенні AI-Агенти (v45):[/bold]")
             agents_table = Table()
@@ -107,7 +107,7 @@ def status(ctx):
                 agents_table.add_row(
                     agent_name.replace("_", " ").title(),
                     agent_info.get("status", "unknown"),
-                    str(agent_info.get("level", "N/A"))
+                    str(agent_info.get("level", "N/A")),
                 )
             console.print(agents_table)
 
@@ -117,28 +117,28 @@ def status(ctx):
 
 
 @cli.command()
-@click.argument('task')
+@click.argument("task")
 @click.pass_context
 def sovereign_cycle(ctx, task):
     """🚀 Запустити повний суверенний цикл автовдосконалення (7 Агентів)."""
-    client = ctx.obj['client']
+    client = ctx.obj["client"]
 
     async def run():
-        console.print(Panel(
-            f"[bold yellow]Задача:[/bold yellow] {task}\n"
-            f"[dim]Агенти: Gemini, Vibe, Mistral, Aider/Copilot, Claude, DeepSeek, CodeLlama[/dim]",
-            title="🚀 Sovereign Self-Improvement Cycle (v45)"
-        ))
+        console.print(
+            Panel(
+                f"[bold yellow]Задача:[/bold yellow] {task}\n"
+                f"[dim]Агенти: Gemini, Vibe, Mistral, Aider/Copilot, Claude, DeepSeek, CodeLlama[/dim]",
+                title="🚀 Sovereign Self-Improvement Cycle (v45)",
+            )
+        )
 
         with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-            console=console
+            SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console
         ) as progress:
             progress.add_task("🤖 Запуск агентів...", total=None)
 
             try:
-                result = await client.post('/api/v45/agents/run-cycle', {"task": task})
+                result = await client.post("/api/v45/agents/run-cycle", {"task": task})
                 console.print(f"\n[bold green]✅ Результат:[/bold green] {result.get('message', 'Успішно')}")
             except Exception as e:
                 console.print(f"\n[red]❌ Помилка циклу: {e}[/red]")
@@ -152,14 +152,14 @@ def sovereign_cycle(ctx, task):
 @click.pass_context
 def doctor(ctx):
     """🩺 Повна діагностика та автовиправлення інфраструктури."""
-    client = ctx.obj['client']
+    client = ctx.obj["client"]
 
     async def run():
         console.print("[bold cyan]🩺 Запуск Системного Лікаря Predator v45 | Neural Analytics...[/bold cyan]")
 
         with console.status("[bold green]Сканування вразливостей та помилок..."):
             try:
-                await client.post('/api/v45/system/doctor', {})
+                await client.post("/api/v45/system/doctor", {})
 
                 table = Table(title="Діагностичний Звіт")
                 table.add_column("Компонент", style="cyan")
@@ -184,13 +184,13 @@ def doctor(ctx):
 @click.pass_context
 def knowledge(ctx):
     """📚 Переглянути базу знань та досвід Llama 3.1."""
-    client = ctx.obj['client']
+    client = ctx.obj["client"]
 
     async def run():
         console.print(Panel("[bold]📚 Журнал досвіду моделі Llama 3.1 8b[/bold]", subtitle="Auto-Learning v45"))
 
         try:
-            stats = await client.get('/api/v45/stats')
+            stats = await client.get("/api/v45/stats")
             console.print(f"🔹 Всього синтетичних кейсів: [bold cyan]{stats.get('synthetic_examples', 0)}[/bold cyan]")
 
             table = Table()
@@ -209,21 +209,18 @@ def knowledge(ctx):
 
 
 @cli.command()
-@click.option('--model', default='llama3.1:8b', help='Назва моделі для навчання')
+@click.option("--model", default="llama3.1:8b", help="Назва моделі для навчання")
 @click.pass_context
 def llama_train(ctx, model):
     """🧠 Запустити автонавчання локальної моделі Llama 3.1."""
-    client = ctx.obj['client']
+    client = ctx.obj["client"]
 
     async def run():
         console.print(f"🧠 [bold cyan]Запуск навчання моделі {model}...[/bold cyan]")
 
         with console.status("[bold green]Оптимізація ваг (K M Quantization)..."):
             try:
-                result = await client.post('/api/v45/ml-training/start', {
-                    "model": model,
-                    "provider": "ollama"
-                })
+                result = await client.post("/api/v45/ml-training/start", {"model": model, "provider": "ollama"})
                 console.print(f"✅ Навчання ініціалізовано. Job ID: {result.get('job_id')}")
             except Exception as e:
                 console.print(f"[red]Помилка: {e}[/red]")
@@ -234,20 +231,20 @@ def llama_train(ctx, model):
 
 
 @cli.command()
-@click.argument('job_id')
+@click.argument("job_id")
 @click.pass_context
 def logs(ctx, job_id):
     """📋 Переглянути українізовані логи задачі."""
-    client = ctx.obj['client']
+    client = ctx.obj["client"]
 
     async def run():
         console.print(f"📋 [bold]Логи для задачі {job_id}:[/bold]")
         try:
-            logs_data = await client.get(f'/api/v45/jobs/{job_id}/logs')
-            for entry in logs_data.get('logs', []):
-                time = entry.get('timestamp', '')[11:19]
-                level = entry.get('level', 'INFO')
-                msg = entry.get('message', '')
+            logs_data = await client.get(f"/api/v45/jobs/{job_id}/logs")
+            for entry in logs_data.get("logs", []):
+                time = entry.get("timestamp", "")[11:19]
+                level = entry.get("level", "INFO")
+                msg = entry.get("message", "")
                 console.print(f"[dim]{time}[/dim] [[bold white]{level}[/bold white]] {msg}")
         except Exception as e:
             console.print(f"[red]Помилка завантаження логів: {e}[/red]")
@@ -256,5 +253,5 @@ def logs(ctx, job_id):
     asyncio.run(run())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli(obj={})

@@ -7,11 +7,11 @@ Handles bulk data import from various sources into Qdrant Vector DB.
 import asyncio
 import csv
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 import uuid
 
 from .embedding_service import get_embedding_service
@@ -59,22 +59,15 @@ class IngestorService:
         # Read CSV immediately to get record count (could be optimized for huge files)
         records = []
         try:
-            with open(file_path, encoding='utf-8', errors='ignore') as f:
+            with open(file_path, encoding="utf-8", errors="ignore") as f:
                 reader = csv.DictReader(f)
                 records = list(reader)
         except Exception as e:
             raise ValueError(f"Failed to parse CSV: {e}")
 
-        return await self.start_ingestion(
-            source=f"csv:{os.path.basename(file_path)}",
-            config={"records": records}
-        )
+        return await self.start_ingestion(source=f"csv:{os.path.basename(file_path)}", config={"records": records})
 
-    async def start_ingestion(
-        self,
-        source: str,
-        config: dict[str, Any]
-    ) -> IngestionJob:
+    async def start_ingestion(self, source: str, config: dict[str, Any]) -> IngestionJob:
         """Start a new ingestion job.
 
         Args:
@@ -93,7 +86,7 @@ class IngestorService:
             records_failed=0,
             started_at=None,
             completed_at=None,
-            error=None
+            error=None,
         )
 
         self.active_jobs[job_id] = job
@@ -133,8 +126,8 @@ class IngestorService:
                         job.records_failed += len(chunk)
                         logger.exception(f"Batch processing error in job {job_id}: {e}")
 
-                    chunk = [] # Reset
-                    await asyncio.sleep(0.01) # Yield
+                    chunk = []  # Reset
+                    await asyncio.sleep(0.01)  # Yield
 
             job.status = IngestionStatus.COMPLETED
             logger.info(f"Ingestion job {job_id} completed successfully")
@@ -158,7 +151,7 @@ class IngestorService:
             # Simple concatenation strategy
             # Filter out empty values and join
             values = [str(v) for k, v in r.items() if v and len(str(v)) < 1000]
-            texts.append(" ".join(values[:5])) # Limit to first 5 fields to avoid huge context
+            texts.append(" ".join(values[:5]))  # Limit to first 5 fields to avoid huge context
 
         # 2. Generate Embeddings (Batch)
         # Verify if generate_batch_embeddings is async-compatible?
@@ -166,11 +159,7 @@ class IngestorService:
         # We should wrap it.
 
         loop = asyncio.get_event_loop()
-        embeddings = await loop.run_in_executor(
-            None,
-            embedding_service.generate_batch_embeddings,
-            texts
-        )
+        embeddings = await loop.run_in_executor(None, embedding_service.generate_batch_embeddings, texts)
 
         # 3. Prepare Qdrant payload
         documents = []
@@ -178,7 +167,7 @@ class IngestorService:
             documents.append({
                 "id": record.get("id") or str(uuid.uuid4()),
                 "embedding": embeddings[i],
-                "metadata": record
+                "metadata": record,
             })
 
         # 4. Index

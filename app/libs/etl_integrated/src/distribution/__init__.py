@@ -21,5 +21,5 @@ __all__ = [
     "MinIOAdapter",
     "OpenSearchAdapter",
     "PostgreSQLAdapter",
-    "QuadrantAdapter"
+    "QuadrantAdapter",
 ]
