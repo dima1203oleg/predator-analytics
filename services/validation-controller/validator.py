@@ -8,13 +8,14 @@ import logging
 import random
 from typing import Dict, Tuple
 from services.shared.events import PredatorEvent
-from services.training_controller.reqistry import ModelRegistry, ModelMetadata
+from services.training_controller.reqistry import ModelRegistry
 
 logger = logging.getLogger(__name__)
 
 class ModelValidator:
     """
     Validates "Staging" models before promotion.
+
     Part 3.3.4 (Validation Controller).
     """
 
@@ -24,6 +25,7 @@ class ModelValidator:
     async def validate_candidate(self, model_id: str, version: str) -> Tuple[bool, float]:
         """
         Runs validation suite on a candidate model.
+
         Returns (approved, validation_score).
         """
         logger.info("Validating model candidate %s:%s", model_id, version)
