@@ -284,6 +284,7 @@ class QdrantService:
 
 # Singleton
 _qdrant_service = QdrantService()
+qdrant_service = _qdrant_service
 
 def get_qdrant_service() -> QdrantService:
     return _qdrant_service
