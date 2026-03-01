@@ -6,7 +6,6 @@ import asyncio
 import os
 
 import httpx
-from datetime import datetime
 from services.shared.logging_config import get_logger
 from services.shared.events import PredatorEvent
 

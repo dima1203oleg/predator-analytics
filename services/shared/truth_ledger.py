@@ -14,7 +14,7 @@ from services.shared.events import PredatorEvent
 logger = get_logger(__name__)
 
 CH_HOST = os.getenv("CLICKHOUSE_HOST", "localhost")
-CH_PORT = os.getenv("CLICKHOUSE_PORT", 8123)
+CH_PORT = os.getenv("CLICKHOUSE_PORT", "8123")
 CH_USER = os.getenv("CLICKHOUSE_USER", "default")
 CH_PASS = os.getenv("CLICKHOUSE_PASSWORD", "")
 
