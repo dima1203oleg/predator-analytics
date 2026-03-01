@@ -53,8 +53,9 @@ class SIOController:
             logger.exception("Failed to trigger RTB")
 
     async def run_cycle(self):
-        """
-        The Full SIO Cycle (Section 3.7.3):
+        """Executes the full SIO Self-Improvement Cycle (Section 3.7.3).
+
+        Steps:
         1. MONITOR
         2. DIAGNOSE (via RTB -> LLM)
         3. AUGMENT
