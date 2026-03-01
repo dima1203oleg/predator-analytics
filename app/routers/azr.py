@@ -14,6 +14,13 @@ router = APIRouter(prefix="/azr", tags=["AZR v32 - Sovereign Engine"])
 # --- Models ---
 
 
+class AzrStatus(BaseModel):
+    """Schema for AZR Engine status."""
+    status: str
+    version: str
+    health: str
+
+
 class ChaosRequest(BaseModel):
     scenario: str
     duration_seconds: int = 30
