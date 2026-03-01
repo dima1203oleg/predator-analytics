@@ -6,7 +6,7 @@ Section 3.1.2 of Spec.
 import clickhouse_connect
 import os
 import json
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 from services.shared.logging_config import get_logger
 from services.shared.events import PredatorEvent
@@ -75,13 +75,18 @@ class TruthLedger:
         if not self.client:
             self.connect()
             
-        query = f"""
+        query = """
             SELECT hour, avg_metric
             FROM model_performance_stats
-            WHERE tenant_id = '{tenant_id}'
-              AND event_type = '{event_type}'
-              AND hour > now() - INTERVAL {hours} HOUR
+            WHERE tenant_id = %(tenant_id)s
+              AND event_type = %(event_type)s
+              AND hour > now() - INTERVAL %(hours)s HOUR
             ORDER BY hour ASC
         """
-        result = self.client.query(query)
+        params = {
+            "tenant_id": tenant_id,
+            "event_type": event_type,
+            "hours": hours
+        }
+        result = self.client.query(query, parameters=params)
         return [{"timestamp": row[0], "value": row[1]} for row in result.result_rows]
