@@ -8,10 +8,31 @@ const TabsContext = React.createContext<{
     onValueChange: (v: string) => void;
 } | null>(null);
 
-const Tabs = ({ children, defaultValue, className }: { children: React.ReactNode, defaultValue: string, className?: string }) => {
-    const [value, setValue] = React.useState(defaultValue);
+const Tabs = ({
+    children,
+    defaultValue,
+    value: controlledValue,
+    onValueChange,
+    className
+}: {
+    children: React.ReactNode,
+    defaultValue?: string,
+    value?: string,
+    onValueChange?: (v: string) => void,
+    className?: string
+}) => {
+    const [internalValue, setInternalValue] = React.useState(defaultValue || "");
+    const value = controlledValue !== undefined ? controlledValue : internalValue;
+
+    const handleValueChange = (v: string) => {
+        if (controlledValue === undefined) {
+            setInternalValue(v);
+        }
+        onValueChange?.(v);
+    };
+
     return (
-        <TabsContext.Provider value={{ value, onValueChange: setValue }}>
+        <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
             <div className={cn("w-full", className)}>
                 {children}
             </div>
@@ -20,24 +41,24 @@ const Tabs = ({ children, defaultValue, className }: { children: React.ReactNode
 };
 
 const TabsList = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
+    HTMLDivElement,
+    React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    role="tablist"
-    className={cn(
-      "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
-      className
-    )}
-    {...props}
-  />
+    <div
+        ref={ref}
+        role="tablist"
+        className={cn(
+            "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+            className
+        )}
+        {...props}
+    />
 ))
 TabsList.displayName = "TabsList"
 
 const TabsTrigger = React.forwardRef<
-  HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement> & { value: string }
+    HTMLButtonElement,
+    React.ButtonHTMLAttributes<HTMLButtonElement> & { value: string }
 >(({ className, value, onClick, ...props }, ref) => {
     const context = React.useContext(TabsContext)
     const isActive = context?.value === value
@@ -63,8 +84,8 @@ const TabsTrigger = React.forwardRef<
 TabsTrigger.displayName = "TabsTrigger"
 
 const TabsContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { value: string }
+    HTMLDivElement,
+    React.HTMLAttributes<HTMLDivElement> & { value: string }
 >(({ className, value, ...props }, ref) => {
     const context = React.useContext(TabsContext)
     if (context?.value !== value) return null

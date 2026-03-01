@@ -29,6 +29,16 @@
     --glow-indigo: rgba(99, 102, 241, 0.4);
     --glow-orange: rgba(249, 115, 22, 0.4);
     --glow-amber: rgba(245, 158, 11, 0.35);
+
+    /* God-Mode Neon Palette */
+    --neon-cyan: #00f3ff;
+    --neon-magenta: #ff00ff;
+    --neon-yellow: #fff300;
+    --neon-green: #39ff14;
+    --neon-orange: #ff6600;
+    
+    --glow-neon-cyan: rgba(0, 243, 255, 0.5);
+    --glow-neon-magenta: rgba(255, 0, 255, 0.5);
 }
 
 .pt-safe {

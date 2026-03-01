@@ -43,5 +43,8 @@ USER predator_user
 # Відкриття порту
 EXPOSE $PORT
 
-# Команда запуску
-CMD ["python", "main.py"]
+# Встановлення PYTHONPATH для коректного імпорту app та libs
+ENV PYTHONPATH=/app
+
+# Команда запуску через модуль для правильного розпізнавання пакету app
+CMD ["python", "-m", "app.main"]
