@@ -21,7 +21,7 @@ from uuid import uuid4
 
 import pytest
 
-from libs.azr import (
+from app.libs.azr import (
     # Constants
     CONSTITUTION_VERSION,
     IMMUTABLE_CORE_COMPONENTS,
@@ -54,6 +54,7 @@ from libs.azr import (
 # CONSTITUTIONAL FIXTURE
 # ═══════════════════════════════════════════════════════════════
 
+
 @pytest.fixture()
 def validator():
     """Create constitutional validator instance."""
@@ -83,8 +84,8 @@ def valid_proposal():
             steps=[{"action": "revert", "target": "batch_size"}],
             estimated_duration_minutes=5,
             data_preservation_strategy="no_data_loss",
-            rollback_triggers=["performance_degradation"]
-        )
+            rollback_triggers=["performance_degradation"],
+        ),
     )
 
 
@@ -104,6 +105,7 @@ def unconstitutional_proposal():
 # ═══════════════════════════════════════════════════════════════
 # AXIOM 9: LAW OF BOUNDED SELF-IMPROVEMENT
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestAxiom9BoundedSelfImprovement:
     """Tests for Axiom 9: System may improve itself with absolute constraints."""
@@ -134,7 +136,7 @@ class TestAxiom9BoundedSelfImprovement:
             score=0.7,
             classification=RiskLevel.HIGH,
             approval_level=ApprovalTier.COURT,
-            constraints=["REQUIRES_ROLLBACK_PLAN"]
+            constraints=["REQUIRES_ROLLBACK_PLAN"],
         )
 
         violations = validator.validate_proposal(proposal)
@@ -156,14 +158,14 @@ class TestAxiom9BoundedSelfImprovement:
                 estimated_duration_minutes=30,
                 tested=False,  # NOT TESTED!
                 data_preservation_strategy="backup",
-                rollback_triggers=["error_rate"]
-            )
+                rollback_triggers=["error_rate"],
+            ),
         )
         proposal.risk_assessment = RiskAssessment(
             score=0.7,
             classification=RiskLevel.HIGH,
             approval_level=ApprovalTier.COURT,
-            constraints=[]
+            constraints=[],
         )
 
         violations = validator.validate_proposal(proposal)
@@ -175,6 +177,7 @@ class TestAxiom9BoundedSelfImprovement:
 # AXIOM 10: LAW OF CORE INVIOLABILITY
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestAxiom10CoreInviolability:
     """Tests for Axiom 10: Immutable core cannot be modified."""
 
@@ -185,20 +188,23 @@ class TestAxiom10CoreInviolability:
             "ArbiterAuthority",
             "TruthLedger",
             "GPUPolicy",
-            "CLIFirstPrinciple"
+            "CLIFirstPrinciple",
         }
-        assert required.issubset(IMMUTABLE_CORE_COMPONENTS), \
+        assert required.issubset(IMMUTABLE_CORE_COMPONENTS), (
             "All required immutable components must be defined"
+        )
 
     def test_constitutional_axioms_protected(self, validator, unconstitutional_proposal):
         """Attempting to modify ConstitutionalAxioms must trigger violation."""
         violations = validator.validate_proposal(unconstitutional_proposal)
         axiom10_violations = [v for v in violations if v.axiom == "10"]
 
-        assert len(axiom10_violations) > 0, \
+        assert len(axiom10_violations) > 0, (
             "Modifying ConstitutionalAxioms must trigger Axiom 10 violation"
-        assert any(v.severity == ViolationSeverity.CRITICAL for v in axiom10_violations), \
+        )
+        assert any(v.severity == ViolationSeverity.CRITICAL for v in axiom10_violations), (
             "Axiom 10 violation must be CRITICAL"
+        )
 
     def test_arbiter_authority_protected(self, validator):
         """ArbiterAuthority cannot be modified."""
@@ -242,6 +248,7 @@ class TestAxiom10CoreInviolability:
 # AXIOM 11: LAW OF COMPLETE COMMITMENT
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestAxiom11CompleteCommitment:
     """Tests for Axiom 11: Cryptographic commitment required."""
 
@@ -254,7 +261,7 @@ class TestAxiom11CompleteCommitment:
             category=AmendmentCategory.PARAMETER_TUNING,
             target_components=["ETLEngine"],
             current_state=AmendmentState.VALIDATING,  # Past PROPOSED
-            commitment=None  # NO COMMITMENT!
+            commitment=None,  # NO COMMITMENT!
         )
 
         violations = validator.validate_proposal(proposal)
@@ -276,8 +283,8 @@ class TestAxiom11CompleteCommitment:
                 merkle_root="abc123",
                 signature="sig123",
                 timestamp=datetime.utcnow(),
-                binding=False  # NOT BINDING!
-            )
+                binding=False,  # NOT BINDING!
+            ),
         )
 
         violations = validator.validate_proposal(proposal)
@@ -298,6 +305,7 @@ class TestAxiom11CompleteCommitment:
 # AXIOM 12: LAW OF MULTI-PARTY ACCOUNTABILITY
 # ═══════════════════════════════════════════════════════════════
 
+
 class TestAxiom12MultiPartyAccountability:
     """Tests for Axiom 12: Multi-party approval required."""
 
@@ -316,7 +324,11 @@ class TestAxiom12MultiPartyAccountability:
 
         # Change to test state
         original_state = proposal.current_state
-        proposal.current_state = AmendmentState("AWAITING_DEPLOYMENT") if hasattr(AmendmentState, "AWAITING_DEPLOYMENT") else original_state
+        proposal.current_state = (
+            AmendmentState("AWAITING_DEPLOYMENT")
+            if hasattr(AmendmentState, "AWAITING_DEPLOYMENT")
+            else original_state
+        )
 
         # Note: The validator only checks in AWAITING_DEPLOYMENT state
         # For this test, we just verify the rule exists in the validator logic
@@ -335,7 +347,7 @@ class TestAxiom12MultiPartyAccountability:
             committee_name="security",
             votes_for=2,
             votes_against=1,  # NOT UNANIMOUS!
-            total_votes=3
+            total_votes=3,
         )
 
         # Security non-unanimous check happens during deployment validation
@@ -354,7 +366,7 @@ class TestAxiom12MultiPartyAccountability:
             committee_name="arbiter",
             votes_for=4,
             votes_against=1,  # NOT UNANIMOUS!
-            total_votes=5
+            total_votes=5,
         )
 
         assert not proposal.approvals["arbiter"].is_unanimous
@@ -363,6 +375,7 @@ class TestAxiom12MultiPartyAccountability:
 # ═══════════════════════════════════════════════════════════════
 # AXIOM 13: LAW OF INVERSE PROOF
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestAxiom13InverseProof:
     """Tests for Axiom 13: Claims must have verifiable proofs."""
@@ -379,7 +392,7 @@ class TestAxiom13InverseProof:
                 "claims": [
                     {"statement": "Improves performance by 50%"}  # NO PROOF!
                 ]
-            }
+            },
         )
 
         violations = validator.validate_proposal(proposal)
@@ -398,10 +411,10 @@ class TestAxiom13InverseProof:
                 "claims": [
                     {
                         "statement": "Improves performance",
-                        "proof": {"data": "some_data"}  # NO VERIFICATION METHOD!
+                        "proof": {"data": "some_data"},  # NO VERIFICATION METHOD!
                     }
                 ]
-            }
+            },
         )
 
         violations = validator.validate_proposal(proposal)
@@ -412,6 +425,7 @@ class TestAxiom13InverseProof:
 # ═══════════════════════════════════════════════════════════════
 # AXIOM 14: LAW OF TEMPORAL IRREVERSIBILITY
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestAxiom14TemporalIrreversibility:
     """Tests for Axiom 14: Timestamps are immutable and monotonic."""
@@ -425,9 +439,17 @@ class TestAxiom14TemporalIrreversibility:
             category=AmendmentCategory.PARAMETER_TUNING,
             target_components=["ETLEngine"],
             states_history=[
-                {"from_state": "PROPOSED", "to_state": "VALIDATING", "timestamp": "2026-01-12T10:00:00"},
-                {"from_state": "VALIDATING", "to_state": "SIMULATING", "timestamp": "2026-01-12T09:00:00"},  # EARLIER!
-            ]
+                {
+                    "from_state": "PROPOSED",
+                    "to_state": "VALIDATING",
+                    "timestamp": "2026-01-12T10:00:00",
+                },
+                {
+                    "from_state": "VALIDATING",
+                    "to_state": "SIMULATING",
+                    "timestamp": "2026-01-12T09:00:00",
+                },  # EARLIER!
+            ],
         )
 
         violations = validator.validate_proposal(proposal)
@@ -445,6 +467,7 @@ class TestAxiom14TemporalIrreversibility:
 # ═══════════════════════════════════════════════════════════════
 # RISK ASSESSMENT TESTS
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestRiskAssessment:
     """Tests for deterministic risk assessment model."""
@@ -472,8 +495,8 @@ class TestRiskAssessment:
                 steps=[{"action": "revert"}],
                 estimated_duration_minutes=1,
                 data_preservation_strategy="none",
-                rollback_triggers=["any"]
-            )
+                rollback_triggers=["any"],
+            ),
         )
 
         assessment = risk_service.assess_amendment_risk(proposal)
@@ -493,7 +516,7 @@ class TestRiskAssessment:
             amendment_type=AmendmentCategory.CONSTITUTIONAL_CHANGE,
             impact_scope=ImpactScope.SYSTEM_WIDE,
             complexity_score=8.0,
-            rollback_timeframe=RollbackTimeframe.IMPOSSIBLE
+            rollback_timeframe=RollbackTimeframe.IMPOSSIBLE,
         )
 
         assert assessment.classification == RiskLevel.EXTREME
@@ -503,6 +526,7 @@ class TestRiskAssessment:
 # ═══════════════════════════════════════════════════════════════
 # CONSTITUTION INTEGRITY TESTS
 # ═══════════════════════════════════════════════════════════════
+
 
 class TestConstitutionIntegrity:
     """Tests for constitution integrity and enforcement."""
@@ -545,10 +569,12 @@ class TestConstitutionIntegrity:
 # ═══════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
-    pytest.main([
-        __file__,
-        "-v",
-        "--tb=short",
-        "-x",  # Stop on first failure
-        "--strict-markers",
-    ])
+    pytest.main(
+        [
+            __file__,
+            "-v",
+            "--tb=short",
+            "-x",  # Stop on first failure
+            "--strict-markers",
+        ]
+    )

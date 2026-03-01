@@ -7,9 +7,9 @@ from app.services.telegram_assistant import get_assistant, init_assistant
 def test_argocd_webhook_trigger_rollback(monkeypatch, tmp_path):
     # Setup a fake assistant
     # Ensure env toggles and ArgoCD credentials are in place before assistant init
-    monkeypatch.setenv('AUTO_ROLLBACK_ON_DEGRADE', 'true')
-    monkeypatch.setenv('ARGOCD_NVIDIA_URL', 'https://argocd-nvidia.example.com')
-    monkeypatch.setenv('ARGOCD_NVIDIA_TOKEN', 'fake-token')
+    monkeypatch.setenv("AUTO_ROLLBACK_ON_DEGRADE", "true")
+    monkeypatch.setenv("ARGOCD_NVIDIA_URL", "https://argocd-nvidia.example.com")
+    monkeypatch.setenv("ARGOCD_NVIDIA_TOKEN", "fake-token")
     init_assistant("fake-token")
     bot = get_assistant()
     bot.default_chat_id = 12345
@@ -23,7 +23,7 @@ def test_argocd_webhook_trigger_rollback(monkeypatch, tmp_path):
 
     async def fake_call_argocd_api(server, token, method, path="", json_payload=None):
         # Simulate rollback success
-        if method == 'POST' and 'rollback' in path:
+        if method == "POST" and "rollback" in path:
             called["rollback"] = True
             return True, {"status": "ok"}
         return True, {"status": "ok"}
@@ -32,19 +32,17 @@ def test_argocd_webhook_trigger_rollback(monkeypatch, tmp_path):
     monkeypatch.setattr(bot, "_call_argocd_api", fake_call_argocd_api)
 
     # Set env to enable auto rollback
-    monkeypatch.setenv('AUTO_ROLLBACK_ON_DEGRADE', 'true')
+    monkeypatch.setenv("AUTO_ROLLBACK_ON_DEGRADE", "true")
 
     payload = {
         "application": {
             "metadata": {"name": "predator-nvidia"},
-            "status": {
-                "health": {"status": "Degraded"},
-                "sync": {"status": "Synced"}
-            }
+            "status": {"health": {"status": "Degraded"}, "sync": {"status": "Synced"}},
         }
     }
     # Directly call the helper and assert rollback was attempted
     import asyncio
+
     asyncio.get_event_loop().run_until_complete(process_argocd_event(payload, bot))
     # Check that rollback was recorded by our fake call
-    assert called['rollback'] is True
+    assert called["rollback"] is True

@@ -18,7 +18,7 @@ sqlalchemy[asyncio]==2.0.35
 alembic==1.13.2
 neo4j==5.25.0
 psycopg2-binary==2.9.9
-opensearch-py==2.4.2
+opensearch-py>=2.4.2
 
 # Data & AI (no paid LLM APIs per spec)
 numpy==1.26.4

@@ -13,11 +13,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(), "services/api_gateway"))
 
-from libs.core.guardian import GuardianService
+from app.libs.core.guardian import GuardianService
 
 
 class TestGuardianService(unittest.IsolatedAsyncioTestCase):
-
     async def asyncSetUp(self):
         self.guardian = GuardianService()
 
@@ -49,7 +48,7 @@ class TestGuardianService(unittest.IsolatedAsyncioTestCase):
 
         # Fix: db.execute is awaitable (AsyncMock), but return value for fetchone must be sync via MagicMock
         mock_result = MagicMock()
-        mock_result.fetchone.return_value = None # Missing table
+        mock_result.fetchone.return_value = None  # Missing table
 
         mock_db.execute.return_value = mock_result
 
@@ -59,18 +58,21 @@ class TestGuardianService(unittest.IsolatedAsyncioTestCase):
 
     async def test_auto_recovery_triggers(self):
         """Test that auto-recovery is called when critical failure detected."""
-        with patch.object(self.guardian, 'check_infrastructure', return_value={"redis": "DOWN"}):
-             with patch.object(self.guardian, 'verify_schema_integrity', return_value=[]):
-                  with patch.object(self.guardian, 'run_auto_recovery', new_callable=AsyncMock) as mock_recover:
-                       # Run one iteration (hack: throw exception to break loop or just call logic manually)
-                       # Since 'start' is an infinite loop, we test the logic components directly
+        with patch.object(self.guardian, "check_infrastructure", return_value={"redis": "DOWN"}):
+            with patch.object(self.guardian, "verify_schema_integrity", return_value=[]):
+                with patch.object(
+                    self.guardian, "run_auto_recovery", new_callable=AsyncMock
+                ) as mock_recover:
+                    # Run one iteration (hack: throw exception to break loop or just call logic manually)
+                    # Since 'start' is an infinite loop, we test the logic components directly
 
-                       infra = await self.guardian.check_infrastructure()
-                       # Logic inside 'start':
-                       if any(v == "DOWN" for v in infra.values()):
-                           await self.guardian.run_auto_recovery()
+                    infra = await self.guardian.check_infrastructure()
+                    # Logic inside 'start':
+                    if any(v == "DOWN" for v in infra.values()):
+                        await self.guardian.run_auto_recovery()
 
-                       mock_recover.assert_called_once()
+                    mock_recover.assert_called_once()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

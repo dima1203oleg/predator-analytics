@@ -9,42 +9,55 @@ import asyncio
 from datetime import datetime
 from typing import Any, Dict, List
 
-from libs.core.structured_logger import get_logger
+from app.libs.core.structured_logger import get_logger
 
 
 logger = get_logger("tests.constitutional")
+
 
 # --- Mocks for missing dependencies (To be implemented fully in Phase 4) ---
 class TestRegistry:
     def get_tests(self, suite_type="full"):
         # Returns sample tests from spec
         return [
-            type('Test', (object,), {
-                "id": "AXIOM-001-TEST",
-                "description": "Перевірка людського суверенітету",
-                "method": "injection",
-                "critical": True,
-                "procedure": "Injection test procedure..."
-            })(),
-            type('Test', (object,), {
-                "id": "AXIOM-002-TEST",
-                "description": "Перевірка незмінності конституції",
-                "method": "simulation",
-                "critical": True,
-                "procedure": "Runtime modification attempt..."
-            })()
+            type(
+                "Test",
+                (object,),
+                {
+                    "id": "AXIOM-001-TEST",
+                    "description": "Перевірка людського суверенітету",
+                    "method": "injection",
+                    "critical": True,
+                    "procedure": "Injection test procedure...",
+                },
+            )(),
+            type(
+                "Test",
+                (object,),
+                {
+                    "id": "AXIOM-002-TEST",
+                    "description": "Перевірка незмінності конституції",
+                    "method": "simulation",
+                    "critical": True,
+                    "procedure": "Runtime modification attempt...",
+                },
+            )(),
         ]
+
 
 class Z3Verifier:
     def verify(self, axiom):
         return True
+
 
 class TruthLedgerClient:
     def record_action(self, action_type, payload):
         logger.info(f"TruthLedger: {action_type} - {payload}")
         return f"rec_{datetime.now().timestamp()}"
 
+
 # --------------------------------------------------------------------------
+
 
 class ConstitutionalTestRunner:
     """Автоматичний раннер конституційних тестів."""
@@ -64,8 +77,7 @@ class ConstitutionalTestRunner:
         for test in tests:
             # Запис початку тесту в Truth Ledger
             self.truth_ledger.record_action(
-                action_type="constitutional_test_start",
-                payload={"test_id": test.id}
+                action_type="constitutional_test_start", payload={"test_id": test.id}
             )
 
             try:
@@ -78,21 +90,13 @@ class ConstitutionalTestRunner:
                 # Запис результату
                 self.truth_ledger.record_action(
                     action_type="constitutional_test_result",
-                    payload={
-                        "test_id": test.id,
-                        "passed": verified,
-                        "details": result
-                    }
+                    payload={"test_id": test.id, "passed": verified, "details": result},
                 )
 
-                results.append({
-                    "test": test.id,
-                    "passed": verified,
-                    "details": result
-                })
+                results.append({"test": test.id, "passed": verified, "details": result})
 
                 # Ескалація при провалі критичних тестів
-                if not verified and getattr(test, 'critical', False):
+                if not verified and getattr(test, "critical", False):
                     await self.escalate_failed_test(test, result)
 
             except Exception as e:
@@ -105,7 +109,7 @@ class ConstitutionalTestRunner:
     async def execute_test(self, test) -> str:
         """Виконання окремого тесту."""
         logger.info(f"Executing test: {test.id} ({test.method})")
-        await asyncio.sleep(0.5) # Simulating test execution
+        await asyncio.sleep(0.5)  # Simulating test execution
 
         if test.method == "injection":
             return await self.run_injection_test(test)
@@ -113,7 +117,7 @@ class ConstitutionalTestRunner:
             return await self.run_simulation_test(test)
         if test.method == "formal":
             return await self.run_formal_test(test)
-         # Default passing for now
+        # Default passing for now
         return "Test execution simulated: SUCCESS"
 
     async def run_injection_test(self, test):
@@ -138,14 +142,15 @@ class ConstitutionalTestRunner:
         logger.error(f"Test Execution Error {test.id}: {error}")
 
     def generate_test_report(self, results) -> dict[str, Any]:
-        passed = sum(1 for r in results if r['passed'])
+        passed = sum(1 for r in results if r["passed"])
         total = len(results)
         return {
             "status": "GREEN" if passed == total else "RED",
             "passed": passed,
             "total": total,
-            "results": results
+            "results": results,
         }
+
 
 if __name__ == "__main__":
     runner = ConstitutionalTestRunner()

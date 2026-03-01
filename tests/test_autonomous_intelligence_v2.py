@@ -40,7 +40,7 @@ class TestPredictiveAnalyzer:
             memory_usage=80.0,
             error_rate=2.0,
             response_time=500.0,
-            throughput=100.0
+            throughput=100.0,
         )
 
         analyzer.add_metrics(metrics)
@@ -58,16 +58,16 @@ class TestPredictiveAnalyzer:
                 memory_usage=60.0,
                 error_rate=1.0,
                 response_time=300.0,
-                throughput=100.0
+                throughput=100.0,
             )
             analyzer.add_metrics(metrics)
 
         predictions = analyzer.predict_issues()
 
         # Повинно бути передбачення cpu_overload
-        cpu_predictions = [p for p in predictions if p['type'] == 'cpu_overload']
+        cpu_predictions = [p for p in predictions if p["type"] == "cpu_overload"]
         assert len(cpu_predictions) > 0
-        assert cpu_predictions[0]['severity'] in ['high', 'critical']
+        assert cpu_predictions[0]["severity"] in ["high", "critical"]
 
     def test_predict_memory_leak(self):
         """Тест виявлення витоку пам'яті."""
@@ -81,14 +81,14 @@ class TestPredictiveAnalyzer:
                 memory_usage=70 + i,  # Зростає
                 error_rate=1.0,
                 response_time=300.0,
-                throughput=100.0
+                throughput=100.0,
             )
             analyzer.add_metrics(metrics)
 
         predictions = analyzer.predict_issues()
 
         # Повинно бути передбачення memory_leak
-        mem_predictions = [p for p in predictions if p['type'] == 'memory_leak']
+        mem_predictions = [p for p in predictions if p["type"] == "memory_leak"]
         assert len(mem_predictions) > 0
 
 
@@ -105,7 +105,7 @@ class TestSelfLearningEngine:
             action_taken="scale_up",
             expected_outcome=30.0,
             actual_outcome=28.5,
-            success=True
+            success=True,
         )
 
         engine.record_outcome(record)
@@ -125,7 +125,7 @@ class TestSelfLearningEngine:
                 action_taken="scale_up",
                 expected_outcome=30.0,
                 actual_outcome=30.0 + (i % 3),  # Невелика варіація
-                success=True
+                success=True,
             )
             engine.record_outcome(record)
 
@@ -142,7 +142,7 @@ class TestSelfLearningEngine:
         strategies = {
             "scale_up": 0.9,  # Висока точність
             "optimize": 0.7,  # Середня точність
-            "restart": 0.5    # Низька точність
+            "restart": 0.5,  # Низька точність
         }
 
         for strategy, accuracy in strategies.items():
@@ -153,7 +153,7 @@ class TestSelfLearningEngine:
                     action_taken=strategy,
                     expected_outcome=30.0,
                     actual_outcome=30.0 * accuracy,
-                    success=True
+                    success=True,
                 )
                 engine.record_outcome(record)
 
@@ -181,7 +181,7 @@ class TestAutonomousDecisionMaker:
                 action_taken="scale_up",
                 expected_outcome=30.0,
                 actual_outcome=29.0,
-                success=True
+                success=True,
             )
             learning_engine.record_outcome(record)
 
@@ -190,13 +190,10 @@ class TestAutonomousDecisionMaker:
             "severity": "high",
             "current_value": 85.0,
             "threshold": 90,
-            "eta_minutes": 15
+            "eta_minutes": 15,
         }
 
-        current_state = {
-            "active_sources": 5,
-            "running_jobs": 3
-        }
+        current_state = {"active_sources": 5, "running_jobs": 3}
 
         decision = await decision_maker.make_decision([prediction], current_state)
 
@@ -216,7 +213,7 @@ class TestAutonomousDecisionMaker:
             "type": "cpu_overload",
             "severity": "medium",
             "current_value": 75.0,
-            "threshold": 90
+            "threshold": 90,
         }
 
         decision = await decision_maker.make_decision([prediction], {})
@@ -242,7 +239,7 @@ class TestDynamicResourceAllocator:
             memory_usage=60.0,
             error_rate=1.0,
             response_time=300.0,
-            throughput=100.0
+            throughput=100.0,
         )
 
         changes = await allocator.adjust_resources(metrics)
@@ -265,7 +262,7 @@ class TestDynamicResourceAllocator:
             memory_usage=90.0,  # Критично високе
             error_rate=1.0,
             response_time=300.0,
-            throughput=100.0
+            throughput=100.0,
         )
 
         changes = await allocator.adjust_resources(metrics)
@@ -289,7 +286,7 @@ class TestDynamicResourceAllocator:
             memory_usage=95.0,
             error_rate=5.0,
             response_time=2000.0,
-            throughput=200.0
+            throughput=200.0,
         )
 
         await allocator.adjust_resources(metrics)
@@ -348,7 +345,7 @@ class TestAutonomousIntelligenceIntegration:
                 memory_usage=70.0,
                 error_rate=1.0,
                 response_time=300.0,
-                throughput=100.0
+                throughput=100.0,
             )
             ai.predictive_analyzer.add_metrics(metrics)
 
@@ -359,10 +356,7 @@ class TestAutonomousIntelligenceIntegration:
 
         # 3. Приймаємо рішення
         if predictions:
-            decision = await ai.decision_maker.make_decision(
-                predictions,
-                {"active_sources": 5}
-            )
+            decision = await ai.decision_maker.make_decision(predictions, {"active_sources": 5})
 
             if decision:
                 assert decision.decision_id is not None

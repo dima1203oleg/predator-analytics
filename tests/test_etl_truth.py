@@ -16,11 +16,10 @@ sys.path.append(os.path.join(os.getcwd(), "services/api_gateway"))
 import pytest
 
 from app.services.etl_arbiter import ETLArbiter  # Now valid because 'app' is in path
-from libs.core.etl_state_machine import ETLState, ETLStateMachine
+from app.libs.core.etl_state_machine import ETLState, ETLStateMachine
 
 
 class TestETLTruthfulness(unittest.TestCase):
-
     def test_state_transitions(self):
         """Verify strict state machine transitions."""
         # Valid
@@ -29,7 +28,9 @@ class TestETLTruthfulness(unittest.TestCase):
 
         # Invalid (Skipping steps)
         assert not ETLStateMachine.can_transition(ETLState.CREATED, ETLState.PROCESSING)
-        assert not ETLStateMachine.can_transition(ETLState.PROCESSED, ETLState.COMPLETED) # Must go INDEXING->INDEXED first
+        assert not ETLStateMachine.can_transition(
+            ETLState.PROCESSED, ETLState.COMPLETED
+        )  # Must go INDEXING->INDEXED first
 
     def test_invariants_indexing(self):
         """Verify 'No Zero Indexing' invariant."""
@@ -68,5 +69,6 @@ class TestETLTruthfulness(unittest.TestCase):
         # 60 + (0.5 * 30) = 75
         assert p == 75
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
