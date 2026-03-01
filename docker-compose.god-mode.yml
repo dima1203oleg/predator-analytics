@@ -1,0 +1,516 @@
+# ══════════════════════════════════════════════════════════════════
+# docker-compose.god-mode.yml
+# PREDATOR Analytics — GOD-MODE Server Stack (194.177.1.240)
+# Запуск: docker compose -f docker-compose.god-mode.yml up -d
+#
+# Еволюція docker-compose.server.yml → Повна God-Mode архітектура:
+#   ├── LiteLLM AI Gateway     :4000  ← 15 ключів Gemini + Ollama GPU
+#   ├── Backend API (FastAPI)  :9080  ← Python 3.12 Strict
+#   ├── Celery Workers + Beat
+#   ├── PostgreSQL 16 (FTS UA) :5432  ← Оновлено з pg15
+#   ├── Redis 7 (Semantic Cache):6379
+#   ├── Qdrant (Vector DB)     :6333
+#   ├── OpenSearch 2.17        :9200
+#   ├── MinIO (S3-сумісне)     :9000
+#   ├── Redpanda (Kafka)       :9092
+#   ├── Ollama (GPU/Coder)     :11434 ← Qwen2.5-Coder-7B
+#   ├── SonarQube (QA Server)  :9100  ← НОВЕ: перенесено на сервер
+#   ├── Frontend Mirror        :3030
+#   ├── Prometheus             :9090
+#   ├── Grafana                :3001
+#   └── Telegram Bot
+# ══════════════════════════════════════════════════════════════════
+
+name: predator-god-mode
+
+services:
+
+  # ═══════════════════════════════════════════════════════════════
+  # 🤖 AI GATEWAY — LiteLLM (15 ключів Gemini + Ollama GPU)
+  # OpenAI-сумісний API: POST http://194.177.1.240:4000/chat/completions
+  # ═══════════════════════════════════════════════════════════════
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: predator_litellm
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./services/api-gateway/configs/litellm_config.yaml:/app/config.yaml:ro
+    environment:
+      # ── 15 ключів Gemini (Round-Robin ротація) ──
+      GEMINI_KEY_1: ${GEMINI_KEY_1}
+      GEMINI_KEY_2: ${GEMINI_KEY_2}
+      GEMINI_KEY_3: ${GEMINI_KEY_3}
+      GEMINI_KEY_4: ${GEMINI_KEY_4}
+      GEMINI_KEY_5: ${GEMINI_KEY_5}
+      GEMINI_KEY_6: ${GEMINI_KEY_6}
+      GEMINI_KEY_7: ${GEMINI_KEY_7}
+      GEMINI_KEY_8: ${GEMINI_KEY_8}
+      GEMINI_KEY_9: ${GEMINI_KEY_9}
+      GEMINI_KEY_10: ${GEMINI_KEY_10}
+      GEMINI_KEY_11: ${GEMINI_KEY_11}
+      GEMINI_KEY_12: ${GEMINI_KEY_12}
+      GEMINI_KEY_13: ${GEMINI_KEY_13}
+      GEMINI_KEY_14: ${GEMINI_KEY_14}
+      GEMINI_KEY_15: ${GEMINI_KEY_15}
+      # ── Gateway security ──
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-predator-litellm-secret}
+      REDIS_PASSWORD_LITE: ${REDIS_PASSWORD:-}
+      DATABASE_URL: ${DATABASE_URL}
+      LITELLM_LOG: "INFO"
+    command: ["--config", "/app/config.yaml", "--port", "4000", "--num_workers", "4"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    restart: unless-stopped
+    networks: [predator-god-net]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ═══════════════════════════════════════════════════════════════
+  # 🗄️ DATA STACK
+  # ═══════════════════════════════════════════════════════════════
+
+  # PostgreSQL 16 з українським повнотекстовим пошуком
+  postgres:
+    image: postgres:16-alpine
+    container_name: predator_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-predator_db}
+      # Українська локаль для FTS
+      POSTGRES_INITDB_ARGS: "--locale=uk_UA.UTF-8 --data-checksums"
+      LANG: uk_UA.UTF-8
+      LC_ALL: uk_UA.UTF-8
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -d ${POSTGRES_DB:-predator_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+  # SonarQube PostgreSQL (окрема база)
+  postgres-sonar:
+    image: postgres:16-alpine
+    container_name: predator_postgres_sonar
+    environment:
+      POSTGRES_USER: sonarqube
+      POSTGRES_PASSWORD: ${SONAR_POSTGRES_PASSWORD:-sonar_password}
+      POSTGRES_DB: sonarqube
+    volumes:
+      - postgres_sonar_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonarqube -d sonarqube"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+  redis:
+    image: redis:7-alpine
+    container_name: predator_redis
+    command: >
+      redis-server
+      --maxmemory 4gb
+      --maxmemory-policy allkeys-lru
+      --save 60 1000
+      --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+  qdrant:
+    image: qdrant/qdrant:v1.9.7
+    container_name: predator_qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      QDRANT__SERVICE__GRPC_PORT: "6334"
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+  opensearch:
+    image: opensearchproject/opensearch:2.17.1
+    container_name: predator_opensearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=false
+      - "OPENSEARCH_JAVA_OPTS=-Xms2g -Xmx2g"
+      - DISABLE_SECURITY_PLUGIN=true
+    ulimits:
+      memlock: { soft: -1, hard: -1 }
+    ports:
+      - "9200:9200"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    deploy:
+      resources:
+        limits:
+          memory: 5G
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+  minio:
+    image: minio/minio:latest
+    container_name: predator_minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+  redpanda:
+    image: docker.redpanda.com/vectorized/redpanda:v24.2.19
+    container_name: predator_redpanda
+    command:
+      - redpanda start
+      - --smp 2
+      - --overprovisioned
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://194.177.1.240:19092
+    ports:
+      - "19092:19092"
+      - "9644:9644"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f localhost:9644/v1/status/ready || exit 1"]
+      interval: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+  # ═══════════════════════════════════════════════════════════════
+  # 🧠 AI / ML STACK
+  # ═══════════════════════════════════════════════════════════════
+  ollama:
+    image: ollama/ollama:latest
+    container_name: predator_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    deploy:
+      resources:
+        limits:
+          memory: 20G
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+  # Завантаження моделей: Qwen2.5-Coder-7B (основна для кодування)
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: predator_ollama_init
+    depends_on:
+      - ollama
+    entrypoint: >
+      /bin/sh -c "
+        sleep 15 &&
+        ollama pull qwen2.5-coder:7b &&
+        ollama pull qwen2.5 &&
+        ollama pull llama3.2 &&
+        ollama pull nomic-embed-text &&
+        echo '🚀 Усі моделі завантажено!'"
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    networks: [predator-god-net]
+    restart: "no"
+
+  # ═══════════════════════════════════════════════════════════════
+  # 🔧 CORE BACKEND (FastAPI + Python 3.12 Strict)
+  # ═══════════════════════════════════════════════════════════════
+  backend:
+    image: ghcr.io/dima1203oleg/predator-backend:latest
+    container_name: predator_backend
+    ports:
+      - "9080:8000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: redis://redis:6379/0
+      QDRANT_URL: http://qdrant:6333
+      OPENSEARCH_URL: http://opensearch:9200
+      MINIO_ENDPOINT: minio:9000
+      KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
+      LITELLM_BASE_URL: http://litellm:4000
+      LITELLM_API_KEY: ${LITELLM_MASTER_KEY:-predator-litellm-secret}
+      ENV: production
+      LANG: uk_UA.UTF-8
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      litellm:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+    restart: unless-stopped
+    networks: [predator-god-net]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v45/system/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  celery_worker:
+    image: ghcr.io/dima1203oleg/predator-backend:latest
+    container_name: predator_celery_worker
+    command: celery -A app.core.celery_app worker --loglevel=info -Q etl,ingestion,maintenance,monitoring --prefetch-multiplier=1 --concurrency=8
+    env_file: [.env]
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: redis://redis:6379/0
+      QDRANT_URL: http://qdrant:6333
+      LITELLM_BASE_URL: http://litellm:4000
+      LITELLM_API_KEY: ${LITELLM_MASTER_KEY:-predator-litellm-secret}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+  celery_beat:
+    image: ghcr.io/dima1203oleg/predator-backend:latest
+    container_name: predator_celery_beat
+    command: celery -A app.core.celery_app beat --loglevel=info
+    env_file: [.env]
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+  orchestrator:
+    image: ghcr.io/dima1203oleg/predator-orchestrator:latest
+    container_name: predator_orchestrator
+    env_file: [.env]
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: redis://redis:6379/1
+      QDRANT_URL: http://qdrant:6333
+      OLLAMA_BASE_URL: http://ollama:11434
+      LITELLM_BASE_URL: http://litellm:4000
+      LITELLM_API_KEY: ${LITELLM_MASTER_KEY:-predator-litellm-secret}
+    volumes:
+      - orchestrator_logs:/app/logs
+    depends_on:
+      backend:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+  # ═══════════════════════════════════════════════════════════════
+  # 🌐 FRONTEND (дзеркало — для прямого доступу до серверного UI)
+  # ═══════════════════════════════════════════════════════════════
+  frontend:
+    image: ghcr.io/dima1203oleg/predator-frontend:latest
+    container_name: predator_frontend_mirror
+    ports:
+      - "3030:80"
+    environment:
+      VITE_API_URL: "http://194.177.1.240:9080"
+      VITE_LITELLM_URL: "http://194.177.1.240:4000"
+    restart: unless-stopped
+    networks: [predator-god-net]
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # ═══════════════════════════════════════════════════════════════
+  # 🔍 SONARQUBE — Перенесено на NVIDIA Server (20 ядер!)
+  # http://194.177.1.240:9100 (admin/admin при першому запуску)
+  # Сканує код на OWASP Top 10, технічний борг, code smells
+  # ═══════════════════════════════════════════════════════════════
+  sonarqube:
+    image: sonarqube:10.7-community
+    container_name: predator_sonarqube
+    ports:
+      - "9100:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+      SONAR_JDBC_URL: "jdbc:postgresql://postgres-sonar:5432/sonarqube"
+      SONAR_JDBC_USERNAME: sonarqube
+      SONAR_JDBC_PASSWORD: ${SONAR_POSTGRES_PASSWORD:-sonar_password}
+    volumes:
+      - sonar_data:/opt/sonarqube/data
+      - sonar_logs:/opt/sonarqube/logs
+      - sonar_extensions:/opt/sonarqube/extensions
+    ulimits:
+      nofile:
+        soft: 131072
+        hard: 131072
+    depends_on:
+      postgres-sonar:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    restart: unless-stopped
+    networks: [predator-god-net]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/api/system/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+
+  # ═══════════════════════════════════════════════════════════════
+  # 📊 OBSERVABILITY
+  # ═══════════════════════════════════════════════════════════════
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: predator_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./infra/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=30d"
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: predator_grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-predator-grafana}
+      GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+    restart: unless-stopped
+    networks: [predator-god-net]
+    depends_on:
+      - prometheus
+
+  # ═══════════════════════════════════════════════════════════════
+  # 📱 TELEGRAM BOT
+  # ═══════════════════════════════════════════════════════════════
+  telegram-bot:
+    image: ghcr.io/dima1203oleg/predator-orchestrator:latest
+    container_name: predator_telegram_bot
+    command: python3 -m orchestrator.telegram.bot
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_ADMIN_IDS: ${TELEGRAM_ADMIN_IDS}
+      REDIS_URL: redis://redis:6379/1
+      POSTGRES_DSN: ${DATABASE_URL}
+      LITELLM_BASE_URL: http://litellm:4000
+      LITELLM_API_KEY: ${LITELLM_MASTER_KEY:-predator-litellm-secret}
+      ENVIRONMENT: production
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [predator-god-net]
+
+volumes:
+  postgres_data:
+  postgres_sonar_data:
+  redis_data:
+  qdrant_data:
+  opensearch_data:
+  minio_data:
+  redpanda_data:
+  ollama_data:
+  orchestrator_logs:
+  prometheus_data:
+  grafana_data:
+  sonar_data:
+  sonar_logs:
+  sonar_extensions:
+
+networks:
+  predator-god-net:
+    driver: bridge
+    name: predator-god-net
+    ipam:
+      config:
+        - subnet: 172.22.0.0/16

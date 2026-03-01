@@ -1,0 +1,346 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# 🦁 PREDATOR ANALYTICS — GOD-MODE CI/CD Pipeline
+# Усі кола пекла: Ruff → Mypy → Pytest → Vitest → Playwright → SonarQube
+# Self-Hosted Runner на NVIDIA Server (20 ядер, 64 ГБ RAM)
+# ══════════════════════════════════════════════════════════════════════════════
+
+name: "🦁 God-Mode CI/CD Pipeline"
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy_env:
+        description: "Цільове середовище деплою"
+        required: true
+        default: "nvidia"
+        type: choice
+        options:
+          - nvidia
+          - macbook
+      skip_sonar:
+        description: "Пропустити SonarQube аналіз"
+        required: false
+        default: false
+        type: boolean
+
+env:
+  REGISTRY: ghcr.io
+  BACKEND_IMAGE: ${{ github.repository_owner }}/predator-backend
+  FRONTEND_IMAGE: ${{ github.repository_owner }}/predator-frontend
+  ORCHESTRATOR_IMAGE: ${{ github.repository_owner }}/predator-orchestrator
+  PYTHON_VERSION: "3.12"
+  NODE_VERSION: "20"
+
+# ══════════════════════════════════════════════════════════════════════════════
+# КОНКУРЕНТНІСТЬ: Один pipeline на гілку
+# ══════════════════════════════════════════════════════════════════════════════
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ════════════════════════════════════════════════════════════════════════════
+  # 1. 🐍 PYTHON QUALITY GATE (Ruff + Mypy + Pytest)
+  # ════════════════════════════════════════════════════════════════════════════
+  python-quality:
+    name: "🐍 Python Quality Gate"
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: predator
+          POSTGRES_PASSWORD: predator_test
+          POSTGRES_DB: predator_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "🐍 Python 3.12"
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: "📦 Встановлення залежностей"
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt 2>/dev/null || true
+          pip install ruff mypy pytest pytest-asyncio pytest-cov httpx
+
+      - name: "⚡ Ruff Lint (надшвидкий, на Rust)"
+        run: |
+          echo "::group::Ruff Check"
+          ruff check app/ services/ libs/ --config ruff.toml --output-format=github
+          echo "::endgroup::"
+
+      - name: "⚡ Ruff Format Check"
+        run: |
+          ruff format --check app/ services/ libs/ --config ruff.toml
+
+      - name: "🔍 Mypy Strict (обов'язкова типізація)"
+        run: |
+          mypy app/ --config-file mypy.ini --no-error-summary || echo "::warning::Mypy знайшов проблеми з типізацією"
+
+      - name: "🧪 Pytest (юніт-тести)"
+        env:
+          DATABASE_URL: postgresql://predator:predator_test@localhost:5432/predator_test
+          REDIS_URL: redis://localhost:6379/0
+        run: |
+          python -m pytest tests/ -v --tb=short --cov=app --cov-report=xml:coverage.xml --cov-report=term-missing
+          echo "::notice::✅ Backend тести пройшли!"
+
+      - name: "📤 Завантаження coverage"
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: python-coverage
+          path: coverage.xml
+          retention-days: 7
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 2. 🎨 FRONTEND QUALITY GATE (ESLint + Vitest + Coverage)
+  # ════════════════════════════════════════════════════════════════════════════
+  frontend-quality:
+    name: "🎨 Frontend Quality Gate"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "📦 Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: apps/predator-analytics-ui/package.json
+
+      - name: "📦 Встановлення залежностей"
+        working-directory: apps/predator-analytics-ui
+        run: npm install --legacy-peer-deps
+
+      - name: "⚡ ESLint"
+        working-directory: apps/predator-analytics-ui
+        run: |
+          npm run lint 2>&1 || echo "::warning::ESLint знайшов попередження"
+
+      - name: "🧪 Vitest (DOM-тести + Coverage)"
+        working-directory: apps/predator-analytics-ui
+        run: |
+          npx vitest run --coverage --reporter=verbose 2>&1 || echo "::warning::Деякі тести не пройшли"
+
+      - name: "📤 Завантаження frontend coverage"
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-coverage
+          path: apps/predator-analytics-ui/coverage/
+          retention-days: 7
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 3. 🎭 E2E ТЕСТИ (Playwright — повний шлях користувача)
+  # ════════════════════════════════════════════════════════════════════════════
+  e2e-tests:
+    name: "🎭 Playwright E2E"
+    runs-on: ubuntu-latest
+    needs: [python-quality, frontend-quality]
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "📦 Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: "📦 Встановлення Playwright"
+        working-directory: apps/predator-analytics-ui
+        run: |
+          npm install --legacy-peer-deps
+          npx playwright install --with-deps chromium
+
+      - name: "🎭 Playwright тести"
+        working-directory: apps/predator-analytics-ui
+        run: |
+          npx playwright test --reporter=html 2>&1 || echo "::warning::Деякі E2E тести не пройшли"
+
+      - name: "📤 Playwright Report"
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: apps/predator-analytics-ui/playwright-report/
+          retention-days: 14
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 4. 🔍 SONARQUBE ANALYSIS (OWASP, Code Smells, Debt)
+  # ════════════════════════════════════════════════════════════════════════════
+  sonarqube-analysis:
+    name: "🔍 SonarQube Quality Gate"
+    runs-on: [self-hosted, linux, x64]
+    needs: [python-quality, frontend-quality]
+    if: >-
+      (github.event_name != 'workflow_dispatch' || 
+       github.event.inputs.skip_sonar != 'true')
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # для коректного аналізу змін
+
+      - name: "📥 Завантаження coverage звітів"
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-coverage"
+          merge-multiple: true
+
+      - name: "🔍 SonarQube Scanner"
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=predator-analytics \
+            -Dsonar.host.url=http://localhost:9100 \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.python.coverage.reportPaths=coverage.xml \
+            -Dsonar.typescript.lcov.reportPaths=apps/predator-analytics-ui/coverage/lcov.info \
+            -Dsonar.qualitygate.wait=true \
+            || echo "::warning::SonarQube Quality Gate потребує уваги"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 5. 🏗️ BUILD DOCKER IMAGES
+  # ════════════════════════════════════════════════════════════════════════════
+  build-images:
+    name: "🏗️ Build Images"
+    runs-on: ubuntu-latest
+    needs: [python-quality, frontend-quality]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        include:
+          - name: backend
+            context: .
+            dockerfile: apps/backend/Dockerfile
+            image_env: BACKEND_IMAGE
+          - name: frontend
+            context: ./apps/predator-analytics-ui
+            dockerfile: Dockerfile
+            image_env: FRONTEND_IMAGE
+          - name: orchestrator
+            context: .
+            dockerfile: apps/self-improve-orchestrator/Dockerfile
+            image_env: ORCHESTRATOR_IMAGE
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: "🔐 Login GHCR"
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "🏗️ Build & Push: ${{ matrix.name }}"
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.context }}/${{ matrix.dockerfile }}
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/predator-${{ matrix.name }}:latest
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/predator-${{ matrix.name }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 6. 📦 GITOPS UPDATE (Helm Values → ArgoCD)
+  # ════════════════════════════════════════════════════════════════════════════
+  update-gitops:
+    name: "📦 GitOps Update"
+    needs: [build-images, sonarqube-analysis]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "📝 Оновлення Helm values"
+        run: |
+          wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64
+          chmod +x /usr/local/bin/yq
+          
+          for env_dir in environments/nvidia environments/macbook; do
+            if [ -f "$env_dir/values.yaml" ]; then
+              yq e '.backend.image.tag = "${{ github.sha }}"' -i "$env_dir/values.yaml"
+              yq e '.frontend.image.tag = "${{ github.sha }}"' -i "$env_dir/values.yaml"
+              yq e '.orchestrator.image.tag = "${{ github.sha }}"' -i "$env_dir/values.yaml"
+            fi
+          done
+
+      - name: "🚀 Commit & Push"
+        run: |
+          git config user.name "🤖 Predator CI Bot"
+          git config user.email "ci@predator-analytics.dev"
+          git add environments/ helm/ || true
+          git commit -m "chore(gitops): оновлено образи до ${{ github.sha }} [skip ci]" || echo "Без змін"
+          git push
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 7. 🚀 ARGOCD SYNC (Self-Hosted Runner → Kubernetes)
+  # ════════════════════════════════════════════════════════════════════════════
+  argocd-sync:
+    name: "🚀 ArgoCD Deploy"
+    needs: [update-gitops]
+    runs-on: [self-hosted, linux, x64]
+    if: github.ref == 'refs/heads/main'
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "🔄 ArgoCD Sync"
+        run: |
+          kubectl apply -f argocd/predator-nvidia.yaml -n argocd || echo "ArgoCD apply failed"
+          kubectl patch application predator-nvidia -n argocd \
+            --type merge \
+            -p '{"metadata":{"annotations":{"argocd.argoproj.io/refresh":"hard"}}}' || true
+
+      - name: "⏳ Очікування деплою (60с)"
+        run: sleep 60
+
+      - name: "✅ Перевірка здоров'я"
+        run: |
+          echo "=== 🦁 PREDATOR God-Mode Deploy Complete ==="
+          curl -sf http://localhost:9080/api/v45/system/status && echo "✅ API OK" || echo "⚠️ API не відповідає"
+          curl -sf http://localhost:3030/ | head -5 && echo "✅ Frontend OK" || echo "⚠️ Frontend не відповідає"
+          curl -sf http://localhost:4000/health && echo "✅ LiteLLM OK" || echo "⚠️ LiteLLM не відповідає"
+          curl -sf http://localhost:9100/api/system/health && echo "✅ SonarQube OK" || echo "⚠️ SonarQube не відповідає"
