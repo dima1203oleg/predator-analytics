@@ -15,11 +15,11 @@ echo ""
 
 # 1. Синхронізація requirements.txt
 echo "📤 Крок 1: Синхронізація requirements.txt..."
-rsync -avz services/api-gateway/requirements.txt $SERVER:$REMOTE_ROOT/services/api-gateway/requirements.txt
+rsync -avz services/api_gateway/requirements.txt $SERVER:$REMOTE_ROOT/services/api_gateway/requirements.txt
 
 # 2. Синхронізація коду (на всякий випадок)
 echo "📤 Крок 2: Синхронізація коду бекенду..."
-rsync -avz services/api-gateway/app/ $SERVER:$REMOTE_ROOT/services/api-gateway/app/
+rsync -avz services/api_gateway/app/ $SERVER:$REMOTE_ROOT/services/api_gateway/app/
 
 # 3. Перебудова бекенду БЕЗ кешу
 echo "🏗️ Крок 3: Перебудова контейнера backend (без кешу)..."

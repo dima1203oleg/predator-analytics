@@ -18,7 +18,7 @@ else
     echo "⚠️ Using system python3"
 fi
 
-MCP_DIR="services/mcp-devtools"
+MCP_DIR="services/mcp_devtools"
 VENV_DIR="$MCP_DIR/.venv"
 
 # Remove old venv if using wrong Python version

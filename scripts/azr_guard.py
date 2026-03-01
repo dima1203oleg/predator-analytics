@@ -20,7 +20,7 @@ logger = logging.getLogger("AZR_GUARD")
 ROOT_DIR = Path("/Users/dima-mac/Documents/Predator_21")
 
 # Axiom 15.1: Ukrainian Language Scope
-ALLOWED_NON_UKR_PATHS = ["node_modules", ".git", "venv", "dist", "libs/bridge", "services/mcp-devtools"]
+ALLOWED_NON_UKR_PATHS = ["node_modules", ".git", "venv", "dist", "libs/bridge", "services/mcp_devtools"]
 
 # Axiom 16: Stability Blackzone (Files AZR agents are FORBIDDEN to modernize)
 STABILITY_BLACKZONE = [

@@ -248,7 +248,7 @@ def main():
             except requests.exceptions.ConnectionError:
                 print(f"\n{Colors.RED}❌ Cannot connect to API at {api_url}{Colors.ENDC}")
                 print(f"\n{Colors.YELLOW}Make sure the backend is running:{Colors.ENDC}")
-                print("  cd services/api-gateway")
+                print("  cd services/api_gateway")
                 print("  python -m uvicorn app.main:app --reload")
 
             except Exception as e:

@@ -6,7 +6,7 @@ PORT="6666"
 REMOTE_ROOT="/home/dima/predator-analytics"
 
 echo "🚀 Синхронізація Backend коду..."
-rsync -avz -e "ssh -p $PORT" --exclude '__pycache__' services/api-gateway/ $SERVER:$REMOTE_ROOT/services/api-gateway/
+rsync -avz -e "ssh -p $PORT" --exclude '__pycache__' services/api_gateway/ $SERVER:$REMOTE_ROOT/services/api_gateway/
 rsync -avz -e "ssh -p $PORT" --exclude '__pycache__' libs/ $SERVER:$REMOTE_ROOT/libs/
 
 echo "🏗️ Перезбірка Backend через Docker Compose..."

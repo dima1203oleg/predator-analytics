@@ -22,7 +22,7 @@ if sys.version_info < (3, 12):
 # Add project roots
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
-sys.path.insert(0, str(PROJECT_ROOT / "services/api-gateway"))
+sys.path.insert(0, str(PROJECT_ROOT / "services/api_gateway"))
 
 def print_result(name: str, status: bool, detail: str = ""):
     icon = "✅" if status else "❌"

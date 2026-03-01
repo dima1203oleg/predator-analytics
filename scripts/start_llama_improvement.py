@@ -72,7 +72,7 @@ async def main():
     if success:
         await start_background_loop()
         print("\n\033[1;97mСистема Predator v45 | Neural Analyticsтепер знаходиться в режимі автономного самонавчання.\033[0m")
-        print("\033[1;90mЛоги доступні через: tail -f services/api-gateway/app.log (structured JSON)\033[0m\n")
+        print("\033[1;90mЛоги доступні через: tail -f services/api_gateway/app.log (structured JSON)\033[0m\n")
 
 if __name__ == "__main__":
     try:

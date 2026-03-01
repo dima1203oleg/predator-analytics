@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-# services/api-gateway/app/services/state_derivation.py
+# services/api_gateway/app/services/state_derivation.py
 from datetime import datetime
 from enum import StrEnum
 import hashlib

@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 sys.path.append(os.getcwd()) # Add root for libs
-sys.path.append(os.path.join(os.getcwd(), "services/api-gateway")) # Add api-gateway
+sys.path.append(os.path.join(os.getcwd(), "services/api_gateway")) # Add api-gateway
 
 # Mock libs if running standalone without full env
 try:

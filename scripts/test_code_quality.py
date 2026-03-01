@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 
 
 # Adjust path
-sys.path.append("/Users/dima-mac/Documents/Predator_21/services/api-gateway")
+sys.path.append("/Users/dima-mac/Documents/Predator_21/services/api_gateway")
 
 # Mock libs
 sys.modules["libs"] = MagicMock()
@@ -22,7 +22,7 @@ async def test_analyzer():
     print("Testing CodeQualityAnalyzer...")
 
     # Analyze current directory (repo root partially) or api-gateway root
-    root_dir = "/Users/dima-mac/Documents/Predator_21/services/api-gateway/app"
+    root_dir = "/Users/dima-mac/Documents/Predator_21/services/api_gateway/app"
     analyzer = CodeQualityAnalyzer(root_dir=root_dir)
 
     analysis = analyzer.analyze_codebase()

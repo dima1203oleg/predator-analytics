@@ -11,7 +11,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 
 sys.path.append(os.getcwd())
-sys.path.append(os.path.join(os.getcwd(), "services/api-gateway"))
+sys.path.append(os.path.join(os.getcwd(), "services/api_gateway"))
 
 from libs.core.guardian import GuardianService
 

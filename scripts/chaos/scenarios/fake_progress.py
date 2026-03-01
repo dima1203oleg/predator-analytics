@@ -17,7 +17,7 @@ from uuid import uuid4
 
 # Ensure project root is in path
 sys.path.append(os.getcwd())
-sys.path.append(os.path.join(os.getcwd(), "services/api-gateway"))
+sys.path.append(os.path.join(os.getcwd(), "services/api_gateway"))
 
 from app.services.state_derivation import StateDerivationEngine
 from libs.core.database import get_db_ctx

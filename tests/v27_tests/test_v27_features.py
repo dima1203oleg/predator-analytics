@@ -10,7 +10,7 @@ import pytest
 
 
 # Add specific service path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../services/api-gateway')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../services/api_gateway')))
 
 from app.routers.azr import AzrStatus, get_azr_status
 from app.routers.google_integrations import SuggestionPushRequest, get_suggestions, push_suggestion

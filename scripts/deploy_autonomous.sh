@@ -71,9 +71,9 @@ elif [ -f ".venv/bin/activate" ]; then
 fi
 
 # Встановлення залежностей
-if [ -f "services/api-gateway/requirements.txt" ]; then
+if [ -f "services/api_gateway/requirements.txt" ]; then
     print_status "Встановлення залежностей..."
-    pip3 install -r services/api-gateway/requirements.txt --quiet
+    pip3 install -r services/api_gateway/requirements.txt --quiet
     print_status "Залежності встановлено"
 else
     print_warning "requirements.txt не знайдено"
@@ -90,9 +90,9 @@ echo "---------------------------"
 
 # Перевірка основних файлів
 FILES=(
-    "services/api-gateway/app/services/autonomous_intelligence_v2.py"
-    "services/api-gateway/app/api/v45_routes.py"
-    "services/api-gateway/app/main.py"
+    "services/api_gateway/app/services/autonomous_intelligence_v2.py"
+    "services/api_gateway/app/api/v45_routes.py"
+    "services/api_gateway/app/main.py"
     ".agent/workflows/ultra_autonomous.md"
 )
 
@@ -166,7 +166,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     fi
 
     # Запуск backend
-    cd services/api-gateway
+    cd services/api_gateway
     print_status "Запуск uvicorn..."
     echo ""
     echo "📊 Backend запускається на http://localhost:8000"

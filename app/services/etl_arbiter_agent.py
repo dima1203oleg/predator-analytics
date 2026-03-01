@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-# services/api-gateway/app/services/etl_arbiter_agent.py
+# services/api_gateway/app/services/etl_arbiter_agent.py
 import asyncio
 from dataclasses import dataclass
 from datetime import datetime, timedelta
