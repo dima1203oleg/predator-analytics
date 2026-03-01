@@ -32,13 +32,15 @@ from uuid import UUID, uuid4
 CONSTITUTION_VERSION = "v45"
 CONSTITUTION_HASH_ALGORITHM = "SHA3-512"
 
-IMMUTABLE_CORE_COMPONENTS = frozenset({
-    "ConstitutionalAxioms",
-    "ArbiterAuthority",
-    "TruthLedger",
-    "GPUPolicy",
-    "CLIFirstPrinciple",
-})
+IMMUTABLE_CORE_COMPONENTS = frozenset(
+    {
+        "ConstitutionalAxioms",
+        "ArbiterAuthority",
+        "TruthLedger",
+        "GPUPolicy",
+        "CLIFirstPrinciple",
+    }
+)
 
 RATE_LIMITS = {
     "LOW": {"amount": 10, "period_days": 1},
@@ -315,7 +317,9 @@ class RiskAssessment:
             constraints.append("REQUIRES_EXTERNAL_SECURITY_AUDIT")
             constraints.append("HUMAN_APPROVAL_REQUIRED")
 
-        return cls(score=score, classification=risk_class, approval_level=approval, constraints=constraints)
+        return cls(
+            score=score, classification=risk_class, approval_level=approval, constraints=constraints
+        )
 
 
 @dataclass
@@ -382,12 +386,14 @@ class AmendmentProposal:
 
     def transition_state(self, new_state: AmendmentState, reason: str = "") -> None:
         """Record state transition with timestamp."""
-        self.states_history.append({
-            "from_state": self.current_state.value,
-            "to_state": new_state.value,
-            "timestamp": datetime.utcnow().isoformat(),
-            "reason": reason,
-        })
+        self.states_history.append(
+            {
+                "from_state": self.current_state.value,
+                "to_state": new_state.value,
+                "timestamp": datetime.utcnow().isoformat(),
+                "reason": reason,
+            }
+        )
         self.current_state = new_state
 
     def validate_constitutional_compliance(self) -> list[ConstitutionalViolation]:
@@ -411,7 +417,10 @@ class AmendmentProposal:
                 )
 
         # Axiom 9: Check rollback plan for high risk
-        if self.risk_assessment and self.risk_assessment.classification in [RiskLevel.HIGH, RiskLevel.EXTREME]:
+        if self.risk_assessment and self.risk_assessment.classification in [
+            RiskLevel.HIGH,
+            RiskLevel.EXTREME,
+        ]:
             if not self.rollback_plan or not self.rollback_plan.is_valid():
                 violations.append(
                     ConstitutionalViolation(

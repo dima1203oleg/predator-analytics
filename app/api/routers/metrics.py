@@ -7,7 +7,14 @@ Consolidates all application metrics into a single registry and endpoint.
 import logging
 
 from fastapi import APIRouter, Response
-from prometheus_client import CONTENT_TYPE_LATEST, REGISTRY, Counter, Gauge, Histogram, generate_latest
+from prometheus_client import (
+    CONTENT_TYPE_LATEST,
+    REGISTRY,
+    Counter,
+    Gauge,
+    Histogram,
+    generate_latest,
+)
 
 
 # Import shared metrics from middleware to avoid duplication
@@ -85,7 +92,10 @@ LLM_COUNCIL_CONFIDENCE_SCORE = _get_or_create_metric(
 )
 
 LLM_COUNCIL_PEER_REVIEWS = _get_or_create_metric(
-    Histogram, "llm_council_peer_reviews", "Number of peer reviews conducted", buckets=[0, 2, 4, 6, 8, 12, 20]
+    Histogram,
+    "llm_council_peer_reviews",
+    "Number of peer reviews conducted",
+    buckets=[0, 2, 4, 6, 8, 12, 20],
 )
 
 LLM_COUNCIL_COST_USD = _get_or_create_metric(
@@ -119,7 +129,9 @@ MODEL_TOKENS_USED = _get_or_create_metric(
 # ETL & INGESTION METRICS
 # ============================================================================
 
-ETL_TASKS_TOTAL = _get_or_create_metric(Counter, "etl_tasks_total", "Total ETL tasks executed", ["task_type", "status"])
+ETL_TASKS_TOTAL = _get_or_create_metric(
+    Counter, "etl_tasks_total", "Total ETL tasks executed", ["task_type", "status"]
+)
 
 ETL_TASK_DURATION_SECONDS = _get_or_create_metric(
     Histogram,
@@ -149,21 +161,31 @@ DB_QUERY_DURATION_SECONDS = _get_or_create_metric(
     buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0],
 )
 
-DB_CONNECTIONS_ACTIVE = _get_or_create_metric(Gauge, "db_connections_active", "Active database connections")
+DB_CONNECTIONS_ACTIVE = _get_or_create_metric(
+    Gauge, "db_connections_active", "Active database connections"
+)
 
 CACHE_HITS_TOTAL = _get_or_create_metric(Counter, "cache_hits_total", "Cache hits", ["cache_type"])
 
-CACHE_MISSES_TOTAL = _get_or_create_metric(Counter, "cache_misses_total", "Cache misses", ["cache_type"])
+CACHE_MISSES_TOTAL = _get_or_create_metric(
+    Counter, "cache_misses_total", "Cache misses", ["cache_type"]
+)
 
 # ============================================================================
 # SYSTEM STATE METRICS
 # ============================================================================
 
-OPENSEARCH_DOCS_TOTAL = _get_or_create_metric(Gauge, "opensearch_docs_total", "Total documents in OpenSearch")
+OPENSEARCH_DOCS_TOTAL = _get_or_create_metric(
+    Gauge, "opensearch_docs_total", "Total documents in OpenSearch"
+)
 
-QDRANT_VECTORS_TOTAL = _get_or_create_metric(Gauge, "qdrant_vectors_total", "Total vectors in Qdrant")
+QDRANT_VECTORS_TOTAL = _get_or_create_metric(
+    Gauge, "qdrant_vectors_total", "Total vectors in Qdrant"
+)
 
-DOCUMENTS_TOTAL = _get_or_create_metric(Gauge, "documents_total", "Total documents in gold schema", ["category"])
+DOCUMENTS_TOTAL = _get_or_create_metric(
+    Gauge, "documents_total", "Total documents in gold schema", ["category"]
+)
 
 STAGING_RECORDS_UNPROCESSED = _get_or_create_metric(
     Gauge, "staging_records_unprocessed", "Unprocessed records in staging"
@@ -232,16 +254,22 @@ class MetricsHelper:
                 LLM_COUNCIL_COST_USD.labels(model_provider=provider).inc(cost)
 
     @staticmethod
-    def track_model_inference(model_name: str, latency: float, success: bool, tokens: dict | None = None):
+    def track_model_inference(
+        model_name: str, latency: float, success: bool, tokens: dict | None = None
+    ):
         status = "success" if success else "error"
         MODEL_INFERENCE_TOTAL.labels(model_name=model_name, status=status).inc()
         if success:
             MODEL_INFERENCE_LATENCY.labels(model_name=model_name).observe(latency)
             if tokens:
                 if "prompt" in tokens:
-                    MODEL_TOKENS_USED.labels(model_name=model_name, type="prompt").inc(tokens["prompt"])
+                    MODEL_TOKENS_USED.labels(model_name=model_name, type="prompt").inc(
+                        tokens["prompt"]
+                    )
                 if "completion" in tokens:
-                    MODEL_TOKENS_USED.labels(model_name=model_name, type="completion").inc(tokens["completion"])
+                    MODEL_TOKENS_USED.labels(model_name=model_name, type="completion").inc(
+                        tokens["completion"]
+                    )
 
     @staticmethod
     def track_cache(cache_type: str, hit: bool):

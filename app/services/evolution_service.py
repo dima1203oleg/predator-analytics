@@ -34,7 +34,9 @@ class EvolutionService:
         self._cached_analysis = None
         self._last_analysis_time = 0.0
 
-    def _get_prometheus_value(self, metric_name: str, labels: dict[str, str] | None = None) -> float:
+    def _get_prometheus_value(
+        self, metric_name: str, labels: dict[str, str] | None = None
+    ) -> float:
         """Helper to extract value from Prometheus Registry."""
         try:
             val = 0.0
@@ -83,14 +85,22 @@ class EvolutionService:
 
         return {
             "timestamp": datetime.now().isoformat(),
-            "system": {"cpu_percent": cpu_usage, "memory_percent": mem_percent, "disk_usage": disk_percent},
+            "system": {
+                "cpu_percent": cpu_usage,
+                "memory_percent": mem_percent,
+                "disk_usage": disk_percent,
+            },
             "application": {
                 "total_requests": int(total_requests),
                 "active_connections": int(self._get_prometheus_value("active_connections")),
                 "documents_indexed": int(doc_count),
                 "searches_performed": int(search_count),
             },
-            "ai_performance": {"success_rate": ai_success_rate, "arbitration_confidence": 0.94, "active_agents": 12},
+            "ai_performance": {
+                "success_rate": ai_success_rate,
+                "arbitration_confidence": 0.94,
+                "active_agents": 12,
+            },
         }
 
     async def _get_code_metrics(self):
@@ -104,7 +114,9 @@ class EvolutionService:
                 from app.services.code_quality_analyzer import code_quality_analyzer
 
                 loop = asyncio.get_event_loop()
-                self._cached_analysis = await loop.run_in_executor(None, code_quality_analyzer.analyze_codebase)
+                self._cached_analysis = await loop.run_in_executor(
+                    None, code_quality_analyzer.analyze_codebase
+                )
                 self._last_analysis_time = now
             except Exception as e:
                 logger.exception(f"failed_code_analysis: {e}")
@@ -174,7 +186,9 @@ class EvolutionService:
                     return {
                         "compliance_score": data.get("compliance_score", 0),
                         "node_count": len(data.get("nodes", [])),
-                        "compliant_nodes": len([n for n in data.get("nodes", []) if n.get("compliant")]),
+                        "compliant_nodes": len(
+                            [n for n in data.get("nodes", []) if n.get("compliant")]
+                        ),
                     }
         except Exception:
             pass

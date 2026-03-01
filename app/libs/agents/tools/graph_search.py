@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 
 
 @registry.register(
-    name="search_knowledge_graph", description="Search the knowledge graph for entities and relationships"
+    name="search_knowledge_graph",
+    description="Search the knowledge graph for entities and relationships",
 )
 async def search_knowledge_graph(query: str, tenant_id: str, depth: int = 1):
     """Search key entities and their relationships in the Knowledge Graph.
@@ -28,7 +29,12 @@ async def search_knowledge_graph(query: str, tenant_id: str, depth: int = 1):
             # 1. Find Seed Nodes
             stmt = (
                 select(GraphNode)
-                .where(and_(GraphNode.tenant_id == uuid.UUID(tenant_id), GraphNode.name.ilike(f"%{query}%")))
+                .where(
+                    and_(
+                        GraphNode.tenant_id == uuid.UUID(tenant_id),
+                        GraphNode.name.ilike(f"%{query}%"),
+                    )
+                )
                 .limit(5)
             )
 
@@ -48,7 +54,10 @@ async def search_knowledge_graph(query: str, tenant_id: str, depth: int = 1):
                     break
 
                 stmt = select(GraphEdge).where(
-                    or_(GraphEdge.source_id.in_(current_layer_ids), GraphEdge.target_id.in_(current_layer_ids))
+                    or_(
+                        GraphEdge.source_id.in_(current_layer_ids),
+                        GraphEdge.target_id.in_(current_layer_ids),
+                    )
                 )
                 result = await session.execute(stmt)
                 edges = result.scalars().all()
@@ -87,7 +96,9 @@ async def search_knowledge_graph(query: str, tenant_id: str, depth: int = 1):
             # 3. Format Validation
             # LLMs prefer text summaries or simplified JSON
             summary = []
-            summary.append(f"Found {len(collected_nodes)} entities and {len(collected_edges)} relationships.")
+            summary.append(
+                f"Found {len(collected_nodes)} entities and {len(collected_edges)} relationships."
+            )
 
             for edge in collected_edges.values():
                 source = collected_nodes.get(str(edge.source_id))

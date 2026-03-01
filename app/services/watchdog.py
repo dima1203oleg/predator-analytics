@@ -99,7 +99,14 @@ class SystemWatchdog:
 
                 # Try to construct keyboard manually structure: {inline_keyboard: [[{...}]]}
                 keyboard = {
-                    "inline_keyboard": [[{"text": f"🗑 Purge {q['name']}", "callback_data": f"queue_purge_{q['name']}"}]]
+                    "inline_keyboard": [
+                        [
+                            {
+                                "text": f"🗑 Purge {q['name']}",
+                                "callback_data": f"queue_purge_{q['name']}",
+                            }
+                        ]
+                    ]
                 }
 
                 # Use public method if available, else private

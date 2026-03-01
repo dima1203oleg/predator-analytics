@@ -31,7 +31,10 @@ class OllamaProvider(BaseLLMProvider):
             "model": self.model,
             "messages": messages,
             "stream": False,
-            "options": {"temperature": kwargs.get("temperature", 0.7), "num_predict": kwargs.get("max_tokens", 2048)},
+            "options": {
+                "temperature": kwargs.get("temperature", 0.7),
+                "num_predict": kwargs.get("max_tokens", 2048),
+            },
         }
 
         try:
@@ -66,4 +69,10 @@ class OllamaProvider(BaseLLMProvider):
                 )
 
         except Exception as e:
-            return LLMResponse(success=False, content="", provider=self.provider_name, model=self.model, error=str(e))
+            return LLMResponse(
+                success=False,
+                content="",
+                provider=self.provider_name,
+                model=self.model,
+                error=str(e),
+            )

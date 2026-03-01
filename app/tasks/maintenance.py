@@ -54,7 +54,11 @@ def cleanup_staging(days: int = 90):
             # Vacuum analyze for performance
             await conn.execute("VACUUM ANALYZE staging.raw_data")
 
-            return {"status": "success", "deleted_count": deleted_count, "cutoff_date": cutoff_date.isoformat()}
+            return {
+                "status": "success",
+                "deleted_count": deleted_count,
+                "cutoff_date": cutoff_date.isoformat(),
+            }
 
         except Exception as e:
             logger.exception(f"[CLEANUP] Failed: {e}")
@@ -173,7 +177,12 @@ def backup_postgres():
 
         size_bytes = os.path.getsize(filename)
 
-        return {"status": "success", "file": filename, "size_bytes": size_bytes, "timestamp": timestamp}
+        return {
+            "status": "success",
+            "file": filename,
+            "size_bytes": size_bytes,
+            "timestamp": timestamp,
+        }
 
     except Exception as e:
         logger.exception(f"[BACKUP] Failed: {e}")

@@ -22,7 +22,9 @@ class MultiModelArbitrator:
         self.consensus_threshold = config.get("consensus_threshold", 0.67)
         self.timeout = config.get("timeout", 30)
 
-    async def arbitrate(self, prompt: str, context: str, options: dict[str, Any | None] | None = None):
+    async def arbitrate(
+        self, prompt: str, context: str, options: dict[str, Any | None] | None = None
+    ):
         """Арбітраж запиту між множинними моделями."""
         logger.info(f"Starting arbitration for prompt: {prompt[:50]}...")
 
@@ -35,10 +37,14 @@ class MultiModelArbitrator:
 
         try:
             # Очікування відповідей з таймаутом
-            responses = await asyncio.wait_for(asyncio.gather(*tasks, return_exceptions=True), timeout=self.timeout)
+            responses = await asyncio.wait_for(
+                asyncio.gather(*tasks, return_exceptions=True), timeout=self.timeout
+            )
 
             # Аналіз відповідей
-            valid_responses = [r for r in responses if not isinstance(r, Exception) and r is not None]
+            valid_responses = [
+                r for r in responses if not isinstance(r, Exception) and r is not None
+            ]
 
             if len(valid_responses) >= 2:
                 consensus_result = self.check_consensus(valid_responses)
@@ -120,7 +126,9 @@ class MultiModelArbitrator:
 
         # 1. 4-та модель (DeepSeek-R1)
         try:
-            fourth_model_response = await self._safe_generate(self.models[3], prompt, context, {"break_tie": True})
+            fourth_model_response = await self._safe_generate(
+                self.models[3], prompt, context, {"break_tie": True}
+            )
             if not fourth_model_response:
                 raise Exception("Backup model failed")
 

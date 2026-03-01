@@ -190,7 +190,9 @@ async def create_proposal(request: ProposalCreateRequest):
     try:
         category = AmendmentCategory(request.category)
     except ValueError:
-        raise HTTPException(400, f"Невірна категорія. Має бути одна з: {[c.value for c in AmendmentCategory]}")
+        raise HTTPException(
+            400, f"Невірна категорія. Має бути одна з: {[c.value for c in AmendmentCategory]}"
+        )
 
     proposal = AmendmentProposal(
         id=uuid4(),
@@ -228,7 +230,12 @@ async def create_proposal(request: ProposalCreateRequest):
                 "error": "CONSTITUTIONAL_VIOLATION",
                 "message": "Proposal violates constitutional axioms",
                 "violations": [
-                    {"id": v.violation_id, "axiom": v.axiom, "severity": v.severity.value, "message": v.message}
+                    {
+                        "id": v.violation_id,
+                        "axiom": v.axiom,
+                        "severity": v.severity.value,
+                        "message": v.message,
+                    }
                     for v in critical
                 ],
             },
@@ -250,7 +257,12 @@ async def create_proposal(request: ProposalCreateRequest):
         created_at=proposal.created_at.isoformat(),
         is_constitutional=len(violations) == 0,
         violations=[
-            {"id": v.violation_id, "axiom": v.axiom, "severity": v.severity.value, "message": v.message}
+            {
+                "id": v.violation_id,
+                "axiom": v.axiom,
+                "severity": v.severity.value,
+                "message": v.message,
+            }
             for v in violations
         ],
     )
@@ -269,7 +281,11 @@ async def list_proposals(
     if state:
         proposals = [p for p in proposals if p.current_state.value == state]
     if risk_level:
-        proposals = [p for p in proposals if p.risk_assessment and p.risk_assessment.classification.value == risk_level]
+        proposals = [
+            p
+            for p in proposals
+            if p.risk_assessment and p.risk_assessment.classification.value == risk_level
+        ]
 
     # Sort by created_at descending
     proposals.sort(key=lambda p: p.created_at, reverse=True)
@@ -305,12 +321,19 @@ async def get_proposal(proposal_id: str = Path(...)):
         description=proposal.description,
         category=proposal.category.value,
         current_state=proposal.current_state.value,
-        risk_level=proposal.risk_assessment.classification.value if proposal.risk_assessment else None,
+        risk_level=proposal.risk_assessment.classification.value
+        if proposal.risk_assessment
+        else None,
         risk_score=proposal.risk_assessment.score if proposal.risk_assessment else None,
         created_at=proposal.created_at.isoformat(),
         is_constitutional=len(violations) == 0,
         violations=[
-            {"id": v.violation_id, "axiom": v.axiom, "severity": v.severity.value, "message": v.message}
+            {
+                "id": v.violation_id,
+                "axiom": v.axiom,
+                "severity": v.severity.value,
+                "message": v.message,
+            }
             for v in violations
         ],
     )
@@ -337,7 +360,9 @@ async def assess_proposal_risk(proposal_id: str = Path(...)):
     proposal.risk_assessment = assessment
     proposal.transition_state(AmendmentState.VALIDATING, "Risk assessment completed")
 
-    logger.info(f"Risk assessment for {proposal_id}: score={assessment.score}, level={assessment.classification.value}")
+    logger.info(
+        f"Risk assessment for {proposal_id}: score={assessment.score}, level={assessment.classification.value}"
+    )
 
     return RiskAssessmentResponse(
         proposal_id=proposal_id,
@@ -355,7 +380,9 @@ async def get_approval_requirements(approval_level: str = Path(...)):
     try:
         tier = ApprovalTier(approval_level)
     except ValueError:
-        raise HTTPException(400, f"Invalid approval level. Must be one of: {[t.value for t in ApprovalTier]}")
+        raise HTTPException(
+            400, f"Invalid approval level. Must be one of: {[t.value for t in ApprovalTier]}"
+        )
 
     requirements = risk_service.get_approval_requirements(tier)
     return {"approval_level": approval_level, "requirements": requirements}
@@ -405,11 +432,13 @@ async def validate_components(components: list[str]):
     results = []
     for component in components:
         is_immutable = component in IMMUTABLE_CORE_COMPONENTS
-        results.append({
-            "component": component,
-            "modifiable": not is_immutable,
-            "reason": "IMMUTABLE_CORE (Axiom 10)" if is_immutable else None,
-        })
+        results.append(
+            {
+                "component": component,
+                "modifiable": not is_immutable,
+                "reason": "IMMUTABLE_CORE (Axiom 10)" if is_immutable else None,
+            }
+        )
 
     return {
         "total_checked": len(components),
@@ -459,7 +488,9 @@ async def submit_approval(proposal_id: str = Path(...), request: ApprovalRequest
     if request.committee in ["security", "arbiter"] and not approval.is_unanimous:
         warnings.append(f"{request.committee} approval must be unanimous for final deployment")
 
-    logger.info(f"Approval submitted for {proposal_id}: committee={request.committee}, approved={approval.is_approved}")
+    logger.info(
+        f"Approval submitted for {proposal_id}: committee={request.committee}, approved={approval.is_approved}"
+    )
 
     return {
         "proposal_id": proposal_id,
@@ -499,7 +530,9 @@ async def get_approval_status(proposal_id: str = Path(...)):
 
     # Check if all required approvals are met
     all_approved = all(status[c]["approved"] for c in required)
-    unanimous_where_required = all(status[c]["unanimous"] for c in ["security", "arbiter"] if status[c]["submitted"])
+    unanimous_where_required = all(
+        status[c]["unanimous"] for c in ["security", "arbiter"] if status[c]["submitted"]
+    )
 
     return {
         "proposal_id": proposal_id,

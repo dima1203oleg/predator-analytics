@@ -74,7 +74,9 @@ def _z_score_normalize(values: list[float]) -> list[float]:
     return [(v - mean) / std for v in values]
 
 
-def _min_max_scale(values: list[float], target_min: float = 0.0, target_max: float = 100.0) -> list[float]:
+def _min_max_scale(
+    values: list[float], target_min: float = 0.0, target_max: float = 100.0
+) -> list[float]:
     """Min-max scaling to target range."""
     if not values:
         return values

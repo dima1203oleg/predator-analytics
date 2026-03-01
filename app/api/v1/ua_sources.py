@@ -27,4 +27,9 @@ async def search(q: str, sources: str = "all"):
     """Search across UA sources."""
     """Search across UA sources using AI Engine"""
     result = await ai_engine.analyze(query=q, depth="standard")
-    return {"query": q, "results": result.sources, "analysis": result.answer, "confidence": result.confidence}
+    return {
+        "query": q,
+        "results": result.sources,
+        "analysis": result.answer,
+        "confidence": result.confidence,
+    }

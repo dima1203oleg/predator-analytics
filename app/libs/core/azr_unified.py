@@ -432,7 +432,10 @@ class AZRUnifiedOrganism:
                         logger.warning(f"🔥 RESURRECTION DETECTED (Downtime: {downtime:.0f}s)")
                         self.truth_ledger.append(
                             "AZR_RESURRECTION",
-                            {"downtime_seconds": downtime, "last_event": last_entries[0].event_type},
+                            {
+                                "downtime_seconds": downtime,
+                                "last_event": last_entries[0].event_type,
+                            },
                             {"actor": "azr_phoenix_protocol"},
                         )
 
@@ -469,7 +472,9 @@ class AZRUnifiedOrganism:
         logger.info(f"🚀 AZR Started (duration: {duration_hours}h)")
 
         # Record start
-        self.truth_ledger.append("AZR_STARTED", {"duration_hours": duration_hours}, {"actor": "azr_unified"})
+        self.truth_ledger.append(
+            "AZR_STARTED", {"duration_hours": duration_hours}, {"actor": "azr_unified"}
+        )
 
         # Start main loop
         asyncio.create_task(self._main_loop(duration_hours))
@@ -479,7 +484,9 @@ class AZRUnifiedOrganism:
         self._running = False
         self.state_machine.fire("STOP", {})
 
-        self.truth_ledger.append("AZR_STOPPED", {"cycles_completed": self._cycle_count}, {"actor": "azr_unified"})
+        self.truth_ledger.append(
+            "AZR_STOPPED", {"cycles_completed": self._cycle_count}, {"actor": "azr_unified"}
+        )
 
         logger.info(f"🛑 AZR Stopped after {self._cycle_count} cycles")
 
@@ -488,7 +495,9 @@ class AZRUnifiedOrganism:
         self._frozen = True
         self.state_machine.fire("EMERGENCY_FREEZE", {"reason": reason})
 
-        self.truth_ledger.append("AZR_FROZEN", {"reason": reason}, {"actor": "azr_unified", "severity": "critical"})
+        self.truth_ledger.append(
+            "AZR_FROZEN", {"reason": reason}, {"actor": "azr_unified", "severity": "critical"}
+        )
 
         await self._send_alert(f"🚨 AZR FROZEN: {reason}", "critical")
         logger.warning(f"🧊 AZR FROZEN: {reason}")
@@ -536,7 +545,9 @@ class AZRUnifiedOrganism:
                 if decisions:
                     context = {
                         "health_score": metrics.health_score,
-                        "constitutional_approved": all(d.constitutional_approved for d in decisions),
+                        "constitutional_approved": all(
+                            d.constitutional_approved for d in decisions
+                        ),
                     }
                     success, msg, _ = self.state_machine.fire("DECISION_MADE", context)
                     if not success:
@@ -559,7 +570,9 @@ class AZRUnifiedOrganism:
                 self._record_cycle(metrics, decisions, cycle_duration)
 
                 # Adaptive sleep
-                sleep_time = self._cycle_interval if metrics.health_score > 80 else self._cycle_interval // 2
+                sleep_time = (
+                    self._cycle_interval if metrics.health_score > 80 else self._cycle_interval // 2
+                )
                 await asyncio.sleep(sleep_time)
 
             except Exception as e:
@@ -620,7 +633,9 @@ class AZRUnifiedOrganism:
         if metrics.cpu_percent > 90:
             orientation["anomalies"].append({"type": "high_cpu", "value": metrics.cpu_percent})
         if metrics.memory_percent > 85:
-            orientation["anomalies"].append({"type": "high_memory", "value": metrics.memory_percent})
+            orientation["anomalies"].append(
+                {"type": "high_memory", "value": metrics.memory_percent}
+            )
         if metrics.disk_percent > 90:
             orientation["anomalies"].append({"type": "high_disk", "value": metrics.disk_percent})
 
@@ -632,7 +647,9 @@ class AZRUnifiedOrganism:
             try:
                 r = httpx.get("http://localhost:3000", timeout=2.0)
                 if r.status_code != 200:
-                    orientation["anomalies"].append({"type": "web_ui_unhealthy", "status": r.status_code})
+                    orientation["anomalies"].append(
+                        {"type": "web_ui_unhealthy", "status": r.status_code}
+                    )
             except Exception:
                 orientation["anomalies"].append({"type": "web_ui_unreachable", "status": "down"})
         except ImportError:
@@ -650,19 +667,30 @@ class AZRUnifiedOrganism:
             from dataclasses import asdict
 
             # Match strict TypedDict schema: list[dict[str, float | str]]
-            orientation["forecast"] = [{"metric": "cpu", **asdict(pred_cpu)}, {"metric": "memory", **asdict(pred_mem)}]
+            orientation["forecast"] = [
+                {"metric": "cpu", **asdict(pred_cpu)},
+                {"metric": "memory", **asdict(pred_mem)},
+            ]
 
             # Pre-emptive anomalies
             if pred_cpu.predicted_value_5min > 95 and pred_cpu.confidence > 0.5:
-                logger.warning(f"🔮 PREDICTION: CPU Spike imminent ({pred_cpu.predicted_value_5min:.1f}%)")
-                orientation["anomalies"].append({"type": "predictive_high_cpu", "value": pred_cpu.predicted_value_5min})
+                logger.warning(
+                    f"🔮 PREDICTION: CPU Spike imminent ({pred_cpu.predicted_value_5min:.1f}%)"
+                )
+                orientation["anomalies"].append(
+                    {"type": "predictive_high_cpu", "value": pred_cpu.predicted_value_5min}
+                )
 
             if pred_mem.predicted_value_5min > 95 and pred_mem.confidence > 0.5:
-                logger.warning(f"🔮 PREDICTION: Memory Overflow imminent ({pred_mem.predicted_value_5min:.1f}%)")
-                orientation["anomalies"].append({
-                    "type": "predictive_high_memory",
-                    "value": pred_mem.predicted_value_5min,
-                })
+                logger.warning(
+                    f"🔮 PREDICTION: Memory Overflow imminent ({pred_mem.predicted_value_5min:.1f}%)"
+                )
+                orientation["anomalies"].append(
+                    {
+                        "type": "predictive_high_memory",
+                        "value": pred_mem.predicted_value_5min,
+                    }
+                )
 
         except Exception as e:
             logger.exception(f"Prediction error: {e}")
@@ -846,7 +874,11 @@ class AZRUnifiedOrganism:
             # Record in Truth Ledger
             self.truth_ledger.append(
                 f"AZR_ACTION_{outcome}",
-                {"action_id": action.action_id, "action_type": action.action_type, "decision_id": decision.decision_id},
+                {
+                    "action_id": action.action_id,
+                    "action_type": action.action_type,
+                    "decision_id": decision.decision_id,
+                },
             )
 
             # Record in Knowledge Graph
@@ -859,7 +891,9 @@ class AZRUnifiedOrganism:
 
         except Exception as e:
             self._blocked_count += 1
-            self.truth_ledger.append("AZR_ACTION_FAILED", {"action_id": action.action_id, "error": str(e)})
+            self.truth_ledger.append(
+                "AZR_ACTION_FAILED", {"action_id": action.action_id, "error": str(e)}
+            )
 
     async def _execute_action(self, action: AZRAction) -> bool:
         """Execute specific action type."""
@@ -934,7 +968,9 @@ class AZRUnifiedOrganism:
                     files = [str(f) for f in Path(source_dir).glob("*") if f.is_file()]
                     if files:
                         result = await self.etl.run_pipeline(files)
-                        logger.info(f"🔄 ETL COMPLETED: {result.records_transformed} records processed")
+                        logger.info(
+                            f"🔄 ETL COMPLETED: {result.records_transformed} records processed"
+                        )
 
                         self.truth_ledger.append(
                             "AZR_ETL_COMPLETED",
@@ -1055,7 +1091,9 @@ class AZRUnifiedOrganism:
                 {"actor": "azr_learning_cortex"},
             )
 
-    def _record_cycle(self, metrics: SystemMetrics, decisions: list[AZRDecision], duration_ms: float):
+    def _record_cycle(
+        self, metrics: SystemMetrics, decisions: list[AZRDecision], duration_ms: float
+    ):
         """Record cycle in event store."""
         try:
             from app.libs.core.event_sourcing import Event, EventCategory
@@ -1097,7 +1135,11 @@ class AZRUnifiedOrganism:
             async with httpx.AsyncClient() as client:
                 await client.post(
                     f"https://api.telegram.org/bot{self._telegram_token}/sendMessage",
-                    json={"chat_id": self._telegram_chat_id, "text": text, "parse_mode": "Markdown"},
+                    json={
+                        "chat_id": self._telegram_chat_id,
+                        "text": text,
+                        "parse_mode": "Markdown",
+                    },
                 )
         except Exception:
             pass

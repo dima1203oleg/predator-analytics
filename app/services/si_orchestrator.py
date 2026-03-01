@@ -94,7 +94,12 @@ class SIOrchestrator:
     Manages the autonomous lifecycle: Monitor -> Diagnose -> Train -> Deploy.
     """
 
-    THRESHOLDS = {"ndcg_at_10_min": 0.80, "latency_p95_max": 800, "error_rate_max": 0.01, "cost_daily_max": 50.0}
+    THRESHOLDS = {
+        "ndcg_at_10_min": 0.80,
+        "latency_p95_max": 800,
+        "error_rate_max": 0.01,
+        "cost_daily_max": 50.0,
+    }
 
     def __init__(self):
         self.collector = SignalCollector()
@@ -204,7 +209,9 @@ class SIOrchestrator:
                     continue
 
                 # Prepare candidates for augmentor
-                doc_dicts = [{"id": str(d.id), "content": d.content, "title": d.title} for d in docs]
+                doc_dicts = [
+                    {"id": str(d.id), "content": d.content, "title": d.title} for d in docs
+                ]
                 system_tenant = uuid.uuid4()  # Or use a real tenant from context
 
                 # 2. Augment

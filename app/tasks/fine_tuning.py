@@ -16,7 +16,9 @@ async def start_h2o_finetuning(dataset_id: str, job_id: str, model_name: str = "
     """Simulates or triggers the H2O LLM Studio fine-tuning process.
     In a real scenario, this would call the H2O LLM Studio API or start a docker container.
     """
-    logger.info(f"🚀 Starting H2O Fine-tuning (Job: {job_id}) for dataset {dataset_id} on model {model_name}")
+    logger.info(
+        f"🚀 Starting H2O Fine-tuning (Job: {job_id}) for dataset {dataset_id} on model {model_name}"
+    )
 
     conn = await asyncpg.connect(settings.CLEAN_DATABASE_URL)
     try:

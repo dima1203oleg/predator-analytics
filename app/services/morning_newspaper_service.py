@@ -98,13 +98,17 @@ class MorningNewspaperService:
         """AI-driven recommendations based on system state."""
         # Simple rule-based for now, could be LLM-driven later
         recs = []
-        pending_tasks = await conn.fetchval("SELECT count(*) FROM staging.raw_data WHERE processed = FALSE")
+        pending_tasks = await conn.fetchval(
+            "SELECT count(*) FROM staging.raw_data WHERE processed = FALSE"
+        )
         if pending_tasks > 100:
             recs.append("Рекомендується збільшити кількість ETL воркерів для обробки черги.")
 
         doc_count = await conn.fetchval("SELECT count(*) FROM gold.documents")
         if doc_count > 1000:
-            recs.append("Система накопичила достатньо даних для проведення глибокого семантичного аналізу трендів.")
+            recs.append(
+                "Система накопичила достатньо даних для проведення глибокого семантичного аналізу трендів."
+            )
 
         recs.append("Проведіть аудит AZR-політик для оптимізації автономного прийняття рішень.")
         return recs[:3]

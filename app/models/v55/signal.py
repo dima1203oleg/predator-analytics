@@ -16,7 +16,9 @@ class SignalResponse(BaseModel):
     signal_type_ua: str = Field(description="Тип сигналу українською")
     topic: str
     ueid: str | None = None
-    layer: str = Field(description="behavioral | institutional | influence | structural | predictive")
+    layer: str = Field(
+        description="behavioral | institutional | influence | structural | predictive"
+    )
     layer_ua: str = Field(description="Назва шару українською")
     score: float = Field(ge=0, le=100)
     confidence: float = Field(ge=0, le=1)

@@ -74,7 +74,9 @@ class QuadrantAdapter:
         try:
             # Validate data
             if not data:
-                return DistributionResult(False, "quadrant", error="No data provided for Quadrant distribution")
+                return DistributionResult(
+                    False, "quadrant", error="No data provided for Quadrant distribution"
+                )
 
             # Convert single record to list for uniform processing
             if isinstance(data, dict):
@@ -217,23 +219,27 @@ class QuadrantAdapter:
             query_embedding = self._generate_embedding(query_record)
 
             # Simulate similarity search
-            logger.info(f"Simulating Quadrant similarity search in collection '{self.collection_name}'")
+            logger.info(
+                f"Simulating Quadrant similarity search in collection '{self.collection_name}'"
+            )
             logger.info(f"Query embedding shape: {query_embedding.shape}")
 
             # Generate simulated results
             simulated_results = []
             for i in range(min(limit, 3)):  # Return up to 3 simulated results
                 similarity_score = 0.8 - (i * 0.1)  # Decreasing similarity
-                simulated_results.append({
-                    "id": str(uuid.uuid4()),
-                    "similarity": similarity_score,
-                    "record": {
-                        "name": f"Similar Person {i + 1}",
-                        "age": 25 + i,
-                        "city": f"City {i + 1}",
-                        "score": 80.0 + (i * 2.5),
-                    },
-                })
+                simulated_results.append(
+                    {
+                        "id": str(uuid.uuid4()),
+                        "similarity": similarity_score,
+                        "record": {
+                            "name": f"Similar Person {i + 1}",
+                            "age": 25 + i,
+                            "city": f"City {i + 1}",
+                            "score": 80.0 + (i * 2.5),
+                        },
+                    }
+                )
 
             return DistributionResult(
                 True,

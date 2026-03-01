@@ -25,7 +25,9 @@ logger = logging.getLogger(__name__)
 # =============================================================================
 
 # Request Metrics
-AI_REQUESTS_TOTAL = Counter("predator_ai_requests_total", "Total number of AI requests processed", ["mode", "status"])
+AI_REQUESTS_TOTAL = Counter(
+    "predator_ai_requests_total", "Total number of AI requests processed", ["mode", "status"]
+)
 
 AI_REQUEST_LATENCY = Histogram(
     "predator_ai_request_latency_seconds",
@@ -42,10 +44,14 @@ AI_REQUEST_TOKENS = Counter(
 
 # Agent Metrics
 AI_AGENTS_STATUS = Gauge(
-    "predator_ai_agent_status", "Current status of AI agents (1=healthy, 0=error)", ["agent_type", "agent_name"]
+    "predator_ai_agent_status",
+    "Current status of AI agents (1=healthy, 0=error)",
+    ["agent_type", "agent_name"],
 )
 
-AI_AGENT_TASKS = Counter("predator_ai_agent_tasks_total", "Total tasks processed by agents", ["agent_type", "status"])
+AI_AGENT_TASKS = Counter(
+    "predator_ai_agent_tasks_total", "Total tasks processed by agents", ["agent_type", "status"]
+)
 
 AI_AGENT_LATENCY = Histogram(
     "predator_ai_agent_latency_seconds",
@@ -55,7 +61,9 @@ AI_AGENT_LATENCY = Histogram(
 )
 
 # LLM Router Metrics
-LLM_ROUTER_REQUESTS = Counter("predator_llm_router_requests_total", "LLM router requests", ["provider", "status"])
+LLM_ROUTER_REQUESTS = Counter(
+    "predator_llm_router_requests_total", "LLM router requests", ["provider", "status"]
+)
 
 LLM_ROUTER_LATENCY = Histogram(
     "predator_llm_router_latency_seconds",
@@ -65,12 +73,16 @@ LLM_ROUTER_LATENCY = Histogram(
 )
 
 LLM_ROUTER_FALLBACKS = Counter(
-    "predator_llm_router_fallbacks_total", "Number of LLM router fallbacks", ["from_provider", "to_provider"]
+    "predator_llm_router_fallbacks_total",
+    "Number of LLM router fallbacks",
+    ["from_provider", "to_provider"],
 )
 
 # Self-Healing Metrics
 HEALING_EVENTS = Counter(
-    "predator_healing_events_total", "Self-healing events triggered", ["component", "strategy", "status"]
+    "predator_healing_events_total",
+    "Self-healing events triggered",
+    ["component", "strategy", "status"],
 )
 
 HEALING_RECOVERY_TIME = Histogram(
@@ -81,12 +93,15 @@ HEALING_RECOVERY_TIME = Histogram(
 )
 
 SYSTEM_HEALTH_STATUS = Gauge(
-    "predator_system_health_status", "System health status (3=healthy, 2=degraded, 1=recovering, 0=critical)"
+    "predator_system_health_status",
+    "System health status (3=healthy, 2=degraded, 1=recovering, 0=critical)",
 )
 
 # Self-Improvement Metrics
 SELF_IMPROVEMENT_CYCLES = Counter(
-    "predator_self_improvement_cycles_total", "Self-improvement cycles executed", ["stage", "status"]
+    "predator_self_improvement_cycles_total",
+    "Self-improvement cycles executed",
+    ["stage", "status"],
 )
 
 SELF_IMPROVEMENT_PERFORMANCE = Gauge(
@@ -187,7 +202,9 @@ def update_system_health(status: str):
 
 def update_agent_status(agent_type: str, agent_name: str, is_healthy: bool):
     """Update agent status gauge."""
-    AI_AGENTS_STATUS.labels(agent_type=agent_type, agent_name=agent_name).set(1 if is_healthy else 0)
+    AI_AGENTS_STATUS.labels(agent_type=agent_type, agent_name=agent_name).set(
+        1 if is_healthy else 0
+    )
 
 
 def record_tokens(input_tokens: int, output_tokens: int):
@@ -211,7 +228,9 @@ def record_self_improvement(stage: str, success: bool, score: float | None = Non
 
 def init_orchestrator_info(version: str, agents: list, llm_providers: list):
     """Initialize orchestrator info metric."""
-    ORCHESTRATOR_INFO.info({"version": version, "agents": ",".join(agents), "llm_providers": ",".join(llm_providers)})
+    ORCHESTRATOR_INFO.info(
+        {"version": version, "agents": ",".join(agents), "llm_providers": ",".join(llm_providers)}
+    )
 
 
 # =============================================================================
@@ -247,7 +266,11 @@ class AIMetricsCollector:
 
         try:
             # Set orchestrator info
-            agents = [agent.value for agent in orchestrator.agents] if hasattr(orchestrator, "agents") else []
+            agents = (
+                [agent.value for agent in orchestrator.agents]
+                if hasattr(orchestrator, "agents")
+                else []
+            )
             llm_providers = ["groq", "gemini", "ollama"]
             init_orchestrator_info("v45.0", agents, llm_providers)
 

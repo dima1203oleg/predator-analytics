@@ -66,7 +66,9 @@ class ExcelParser:
                         strings.append(t.text or "")
                     else:
                         # Handle formatted text runs <r><t>...</t></r>
-                        full_t = "".join([node.text for node in si.findall(".//ns:t", ns) if node.text])
+                        full_t = "".join(
+                            [node.text for node in si.findall(".//ns:t", ns) if node.text]
+                        )
                         strings.append(full_t)
         except KeyError:
             # No shared strings file means only numbers/inline strings

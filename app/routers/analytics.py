@@ -64,13 +64,15 @@ async def get_risk_assessment(edrpou: str) -> RiskAssessment:
             # Check if company exists (table: companies per models.py)
             company = await conn.fetchrow("SELECT * FROM companies WHERE edrpou = $1", edrpou)
             if company:
-                entity_data.update({
-                    "name": company.get("name", ""),
-                    "tax_debtor": company.get("is_tax_debtor", False),
-                    "court_cases": company.get("court_cases", 0),
-                    "sanctioned": company.get("is_sanctioned", False),
-                    "years_active": 5,  # Default, can calculate from registration_date
-                })
+                entity_data.update(
+                    {
+                        "name": company.get("name", ""),
+                        "tax_debtor": company.get("is_tax_debtor", False),
+                        "court_cases": company.get("court_cases", 0),
+                        "sanctioned": company.get("is_sanctioned", False),
+                        "years_active": 5,  # Default, can calculate from registration_date
+                    }
+                )
             await conn.close()
         except Exception:
             pass
@@ -99,7 +101,11 @@ async def get_analytics_trends(
     base_date = datetime.now(UTC)
     for i in range(days):
         date = base_date - timedelta(days=days - i - 1)
-        trends.append(TrendData(date=date.strftime("%Y-%m-%d"), value=100 + (i * 2), change=2.5 if i > 0 else 0))
+        trends.append(
+            TrendData(
+                date=date.strftime("%Y-%m-%d"), value=100 + (i * 2), change=2.5 if i > 0 else 0
+            )
+        )
 
     return {
         "sector": sector,
@@ -122,11 +128,13 @@ async def get_risk_forecast(days: int = 7):
     forecasts = []
     for i in range(days):
         date = datetime.now(UTC) + timedelta(days=i)
-        forecasts.append({
-            "date": date.strftime("%Y-%m-%d"),
-            "predicted_risk": random.randint(20, 60),
-            "confidence": random.randint(75, 95),
-        })
+        forecasts.append(
+            {
+                "date": date.strftime("%Y-%m-%d"),
+                "predicted_risk": random.randint(20, 60),
+                "confidence": random.randint(75, 95),
+            }
+        )
 
     return {"forecasts": forecasts, "model": "ARIMA-v2"}
 
@@ -182,4 +190,8 @@ async def get_sector_distribution():
             {"name": "FX", "percentage": 10, "records": 0},
         ]
 
-    return {"sectors": sectors_data, "total_records": total, "last_updated": datetime.now(UTC).isoformat()}
+    return {
+        "sectors": sectors_data,
+        "total_records": total,
+        "last_updated": datetime.now(UTC).isoformat(),
+    }

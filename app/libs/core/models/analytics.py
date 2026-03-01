@@ -20,7 +20,9 @@ class BehavioralProfile(Base):
     __table_args__ = {"schema": "gold"}
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    entity_id = Column(UUID(as_uuid=True), index=True, nullable=False)  # Refers to Company.id or User.id
+    entity_id = Column(
+        UUID(as_uuid=True), index=True, nullable=False
+    )  # Refers to Company.id or User.id
     entity_type = Column(String(50), nullable=False)  # 'company', 'broker'
 
     # Behavioral Metrics
@@ -91,7 +93,9 @@ class PredictiveAlert(Base):
     __table_args__ = {"schema": "gold"}
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    predictive_type = Column(String(100), nullable=False)  # 'disappearance', 'price_spike', 'sanction'
+    predictive_type = Column(
+        String(100), nullable=False
+    )  # 'disappearance', 'price_spike', 'sanction'
     probability = Column(Float, nullable=False)  # 0.0 - 1.0
 
     entity_id = Column(UUID(as_uuid=True), index=True)
@@ -111,7 +115,9 @@ class StructuralAnomaly(Base):
     __table_args__ = {"schema": "gold"}
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    anomaly_type = Column(String(100), nullable=False)  # 'import_without_market', 'demand_without_import'
+    anomaly_type = Column(
+        String(100), nullable=False
+    )  # 'import_without_market', 'demand_without_import'
     region = Column(String(100), index=True)  # 166: Regional economy without explanation
     uctzed_code = Column(String(20), index=True)  # 161: Commodity code
 
@@ -156,7 +162,9 @@ class DecisionArtifact(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     tenant_id = Column(String(255), nullable=True)  # If multi-tenant
     trace_id = Column(String(64), nullable=False, index=True)  # UUID or string tracking the context
-    decision_type = Column(String(50), nullable=False)  # e.g., 'CERS_CALCULATION', 'PREDICTIVE_ALERT_FIRED'
+    decision_type = Column(
+        String(50), nullable=False
+    )  # e.g., 'CERS_CALCULATION', 'PREDICTIVE_ALERT_FIRED'
 
     # Payload
     input_context_hash = Column(String(64), nullable=False)  # SHA-256 of the inputs

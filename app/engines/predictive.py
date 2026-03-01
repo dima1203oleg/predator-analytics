@@ -62,9 +62,15 @@ def compute_predictive_score(
     # Phase 1: Heuristic model (weighted combination)
     # Phase 3: Replace with trained models from MLflow
 
-    disappearance = 0.40 * behavioral_aggregate + 0.30 * structural_aggregate + 0.30 * institutional_aggregate
-    regulatory = 0.30 * institutional_aggregate + 0.40 * influence_aggregate + 0.30 * structural_aggregate
-    concentration = 0.50 * influence_aggregate + 0.30 * structural_aggregate + 0.20 * behavioral_aggregate
+    disappearance = (
+        0.40 * behavioral_aggregate + 0.30 * structural_aggregate + 0.30 * institutional_aggregate
+    )
+    regulatory = (
+        0.30 * institutional_aggregate + 0.40 * influence_aggregate + 0.30 * structural_aggregate
+    )
+    concentration = (
+        0.50 * influence_aggregate + 0.30 * structural_aggregate + 0.20 * behavioral_aggregate
+    )
     scheme = 0.35 * structural_aggregate + 0.35 * behavioral_aggregate + 0.30 * influence_aggregate
 
     # Clamp all to 0-100

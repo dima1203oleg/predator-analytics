@@ -84,9 +84,9 @@ class AZRAction:
 
     def __post_init__(self):
         if not self.fingerprint:
-            self.fingerprint = hashlib.md5(f"{self.type}:{json.dumps(self.meta, sort_keys=True)}".encode()).hexdigest()[
-                :12
-            ]
+            self.fingerprint = hashlib.md5(
+                f"{self.type}:{json.dumps(self.meta, sort_keys=True)}".encode()
+            ).hexdigest()[:12]
 
 
 @dataclass
@@ -118,7 +118,16 @@ class ConstitutionalGuardV2:
         ("AXIOM_7", "ISOLATION", "Зміни повинні спочатку тестуватися в пісочниці"),
     ]
 
-    FORBIDDEN_PATHS = ["/security", "/auth", "/governance", "/rbac", "keycloak", ".env", "secrets", "credentials"]
+    FORBIDDEN_PATHS = [
+        "/security",
+        "/auth",
+        "/governance",
+        "/rbac",
+        "keycloak",
+        ".env",
+        "secrets",
+        "credentials",
+    ]
 
     def __init__(self):
         self.axioms: list[tuple[str, str, str]] = list(self.CORE_AXIOMS)
@@ -161,7 +170,9 @@ class ConstitutionalGuardV2:
             return False, "ЗАБЛОКОВАНО: Погіршення безпеки не дозволяється"
 
         # Check destructive actions
-        if action.type in ["DELETE_DATA", "DROP_TABLE", "DESTROY"] and not action.meta.get("has_backup"):
+        if action.type in ["DELETE_DATA", "DROP_TABLE", "DESTROY"] and not action.meta.get(
+            "has_backup"
+        ):
             self._record_violation(action, "Деструктивна дія без резервної копії")
             return False, "ЗАБЛОКОВАНО: Деструктивні дії вимагають підтвердження наявності бекапу"
 
@@ -182,7 +193,9 @@ class ConstitutionalGuardV2:
             "reason": reason,
             "timestamp": datetime.now(UTC).isoformat(),
         }
-        log_security_event(logger, "constitutional_violation", "critical", action_id=action.id, reason=reason)
+        log_security_event(
+            logger, "constitutional_violation", "critical", action_id=action.id, reason=reason
+        )
 
 
 # ============================================================================
@@ -325,13 +338,15 @@ class PredictiveAnomalyDetector:
             z_score = abs(value - mean) / std if std > 0 else 0
 
             if z_score > self.anomaly_threshold:
-                anomalies.append({
-                    "metric": key,
-                    "current_value": value,
-                    "expected_range": (mean - 2 * std, mean + 2 * std),
-                    "z_score": z_score,
-                    "severity": "high" if z_score > 3 else "medium",
-                })
+                anomalies.append(
+                    {
+                        "metric": key,
+                        "current_value": value,
+                        "expected_range": (mean - 2 * std, mean + 2 * std),
+                        "z_score": z_score,
+                        "severity": "high" if z_score > 3 else "medium",
+                    }
+                )
 
         return anomalies
 
@@ -400,7 +415,11 @@ class MultiModelConsensus:
     async def vote(self, prompt: str, options: list[str]) -> dict:
         """Get consensus vote from multiple models."""
         if not self.available_models:
-            return {"winner": options[0] if options else None, "confidence": 0.5, "method": "fallback"}
+            return {
+                "winner": options[0] if options else None,
+                "confidence": 0.5,
+                "method": "fallback",
+            }
 
         votes = {}
         responses = []
@@ -420,18 +439,29 @@ class MultiModelConsensus:
                 logger.warning(f"Model {provider}/{model} failed: {e}")
 
         if not votes:
-            return {"winner": options[0] if options else None, "confidence": 0.3, "method": "no_votes"}
+            return {
+                "winner": options[0] if options else None,
+                "confidence": 0.3,
+                "method": "no_votes",
+            }
 
         # Find winner
         winner = max(votes.items(), key=lambda x: x[1])
         total_weight = sum(votes.values())
         confidence = winner[1] / total_weight if total_weight > 0 else 0.5
 
-        return {"winner": winner[0], "confidence": confidence, "votes": votes, "method": "consensus"}
+        return {
+            "winner": winner[0],
+            "confidence": confidence,
+            "votes": votes,
+            "method": "consensus",
+        }
 
     async def _query_model(self, provider: str, model: str, prompt: str, options: list[str]) -> str:
         """Query a specific model for decision."""
-        full_prompt = f"{prompt}\n\nOptions: {', '.join(options)}\n\nChoose one option and explain briefly."
+        full_prompt = (
+            f"{prompt}\n\nOptions: {', '.join(options)}\n\nChoose one option and explain briefly."
+        )
 
         if provider == "ollama":
             try:
@@ -464,7 +494,9 @@ class CanaryControllerV2:
         self.health_check_count = 3
         self.health_check_interval = 5  # seconds
 
-    async def deploy_with_canary(self, action: AZRAction, rollout_pct: int = 10) -> tuple[bool, str]:
+    async def deploy_with_canary(
+        self, action: AZRAction, rollout_pct: int = 10
+    ) -> tuple[bool, str]:
         """Deploy action with canary rollout."""
         self.current_rollout_percentage = rollout_pct
 
@@ -513,7 +545,10 @@ class CanaryControllerV2:
 
         try:
             proc = await asyncio.create_subprocess_shell(
-                "git reset --hard HEAD^", cwd="/app", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+                "git reset --hard HEAD^",
+                cwd="/app",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
             )
             await proc.communicate()
         except Exception as e:
@@ -638,7 +673,11 @@ class AZREngineV32:
         self.total_actions_blocked = 0
         self.total_rollbacks = 0
 
-        logger.info("azr_v32_initialized", root=str(self.root), merkle_root=self.truth_ledger.merkle_root[:32])
+        logger.info(
+            "azr_v32_initialized",
+            root=str(self.root),
+            merkle_root=self.truth_ledger.merkle_root[:32],
+        )
 
     # ========================================================================
     # 🎯 MAIN LOOP
@@ -887,7 +926,8 @@ class AZREngineV32:
                 self._log_audit(action, "BLOCKED", reason)
                 asyncio.create_task(
                     self._send_telegram_alert(
-                        f"Конституційне блокування:\nДія: {action.type}\nПричина: {reason}", "critical"
+                        f"Конституційне блокування:\nДія: {action.type}\nПричина: {reason}",
+                        "critical",
                     )
                 )
                 continue
@@ -911,7 +951,9 @@ class AZREngineV32:
                     self.memory.record_experience(action, "ROLLBACK", -0.5)
                     self._log_audit(action, "ROLLBACK", message)
                     asyncio.create_task(
-                        self._send_telegram_alert(f"Дію відкочено:\nДія: {action.type}\nПричина: {message}", "warning")
+                        self._send_telegram_alert(
+                            f"Дію відкочено:\nДія: {action.type}\nПричина: {message}", "warning"
+                        )
                     )
 
             except Exception as e:
@@ -925,7 +967,9 @@ class AZREngineV32:
             return await self._run_code_quality(), "Перевірку якості коду завершено"
 
         if action.type == "HEALTH_RECOVERY":
-            return await self._attempt_health_recovery(action), "Спроба відновлення здоров'я системи"
+            return await self._attempt_health_recovery(
+                action
+            ), "Спроба відновлення здоров'я системи"
 
         if action.type == "ANOMALY_RESPONSE":
             return await self._handle_anomaly(action), "Аномалію опрацьовано"
@@ -947,7 +991,9 @@ class AZREngineV32:
         try:
             # Run Ruff
             proc = await asyncio.create_subprocess_shell(
-                "ruff check /app --fix --quiet", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+                "ruff check /app --fix --quiet",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
             )
             await proc.communicate()
             return True
@@ -1046,12 +1092,14 @@ class AZREngineV32:
             # Also write to legacy file for backward compatibility
             with open(self.audit_log_path, "a") as f:
                 f.write(
-                    json.dumps({
-                        **payload,
-                        "timestamp": ledger_entry.timestamp,
-                        "merkle_root": ledger_entry.merkle_root,
-                        "ledger_sequence": ledger_entry.sequence,
-                    })
+                    json.dumps(
+                        {
+                            **payload,
+                            "timestamp": ledger_entry.timestamp,
+                            "merkle_root": ledger_entry.merkle_root,
+                            "ledger_sequence": ledger_entry.sequence,
+                        }
+                    )
                     + "\n"
                 )
 
@@ -1111,15 +1159,17 @@ class AZREngineV32:
         decisions = []
         for e in entries:
             p = e.payload
-            decisions.append({
-                "id": p.get("action_id"),
-                "type": p.get("action_type"),
-                "status": p.get("status"),
-                "reasoning": p.get("reasoning"),
-                "outcome": p.get("message"),
-                "timestamp": e.timestamp,
-                "sequence": e.sequence,
-            })
+            decisions.append(
+                {
+                    "id": p.get("action_id"),
+                    "type": p.get("action_type"),
+                    "status": p.get("status"),
+                    "reasoning": p.get("reasoning"),
+                    "outcome": p.get("message"),
+                    "timestamp": e.timestamp,
+                    "sequence": e.sequence,
+                }
+            )
         return decisions
 
 

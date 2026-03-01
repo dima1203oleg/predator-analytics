@@ -98,7 +98,15 @@ class AZRRiskAssessmentService:
                 return AmendmentCategory.ARCHITECTURAL_CHANGE
 
         # Check for algorithmic changes
-        algorithmic_keywords = ["algorithm", "parser", "indexer", "processor", "analyzer", "calculator", "engine"]
+        algorithmic_keywords = [
+            "algorithm",
+            "parser",
+            "indexer",
+            "processor",
+            "analyzer",
+            "calculator",
+            "engine",
+        ]
         for keyword in algorithmic_keywords:
             if keyword in str(proposal.change_specification).lower():
                 return AmendmentCategory.ALGORITHMIC_CHANGE
@@ -178,7 +186,9 @@ class AZRRiskAssessmentService:
         period_start = datetime.utcnow() - timedelta(days=limit["period_days"])
 
         # Query recent amendments of same risk level
-        recent_count = await self.ledger_client.count_amendments(risk_level=risk_level.value, since=period_start)
+        recent_count = await self.ledger_client.count_amendments(
+            risk_level=risk_level.value, since=period_start
+        )
 
         if recent_count >= limit["amount"]:
             return ConstitutionalViolation(
@@ -457,7 +467,9 @@ class AZRConstitutionalValidator:
 
         return violations
 
-    def _check_temporal_integrity(self, proposal: AmendmentProposal) -> list[ConstitutionalViolation]:
+    def _check_temporal_integrity(
+        self, proposal: AmendmentProposal
+    ) -> list[ConstitutionalViolation]:
         """Check Axiom 14: Temporal integrity."""
         violations = []
 

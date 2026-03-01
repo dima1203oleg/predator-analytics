@@ -49,7 +49,9 @@ class VaultService:
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(
-                    f"{self.vault_addr}/v1/{path}", headers={"X-Vault-Token": self.vault_token}, timeout=10.0
+                    f"{self.vault_addr}/v1/{path}",
+                    headers={"X-Vault-Token": self.vault_token},
+                    timeout=10.0,
                 )
                 response.raise_for_status()
                 data = response.json()

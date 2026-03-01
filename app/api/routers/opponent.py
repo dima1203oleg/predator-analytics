@@ -14,7 +14,11 @@ router = APIRouter(prefix="/opponent", tags=["Opponent"])
 async def ask_opponent(query: str, sector: str = "GOV"):
     """Ask opponent engine."""
     result = await opponent_engine.analyze_opponent(query=query, sector=sector)
-    return {"query": query, "answer": result.get("analysis", ""), "sources": result.get("sources", [])}
+    return {
+        "query": query,
+        "answer": result.get("analysis", ""),
+        "sources": result.get("sources", []),
+    }
 
 
 @router.post("/analyze")

@@ -46,5 +46,6 @@ async def readiness_check():
     status_code = 200 if all_ready else 503
 
     return JSONResponse(
-        status_code=status_code, content={"status": "ready" if all_ready else "degraded", "checks": checks}
+        status_code=status_code,
+        content={"status": "ready" if all_ready else "degraded", "checks": checks},
     )

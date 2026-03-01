@@ -188,7 +188,9 @@ async def _run_sync(source_id: str, source: DataSourceEntity):
 
         async with get_db_ctx() as sess:
             await sess.execute(
-                update(DataSourceEntity).where(DataSourceEntity.id == uuid.UUID(source_id)).values(status="error")
+                update(DataSourceEntity)
+                .where(DataSourceEntity.id == uuid.UUID(source_id))
+                .values(status="error")
             )
             await sess.commit()
 
@@ -351,7 +353,9 @@ async def get_source(source_id: str, user: dict = Depends(get_current_user)):
 
 
 @router.patch("/{source_id}", response_model=SourceResponse)
-async def update_source(source_id: str, source_update: SourceUpdate, user: dict = Depends(get_current_user)):
+async def update_source(
+    source_id: str, source_update: SourceUpdate, user: dict = Depends(get_current_user)
+):
     """Оновити джерело даних."""
     try:
         async with get_db_ctx() as sess:
@@ -445,7 +449,9 @@ async def test_source_connection(config: TestSourceRequest, user: dict = Depends
         connector = _get_connector_for_type(config.type)
 
         if not connector:
-            return TestSourceResponse(success=False, message=f"Connector для типу '{config.type}' не підтримується")
+            return TestSourceResponse(
+                success=False, message=f"Connector для типу '{config.type}' не підтримується"
+            )
 
         # Виконуємо тестовий запит
         if config.type == "telegram":
@@ -456,7 +462,9 @@ async def test_source_connection(config: TestSourceRequest, user: dict = Depends
         elif config.type == "web":
             if not config.url:
                 return TestSourceResponse(success=False, message="Не вказано URL")
-            result = await connector.search(config.url, limit=1, use_playwright=config.usePlaywright)
+            result = await connector.search(
+                config.url, limit=1, use_playwright=config.usePlaywright
+            )
 
         elif config.type == "rss":
             if not config.url:
@@ -487,7 +495,9 @@ async def test_source_connection(config: TestSourceRequest, user: dict = Depends
                 sample_data=sample_data,
             )
         return TestSourceResponse(
-            success=False, message=result.error or "Невідома помилка", latency_ms=round(latency_ms, 2)
+            success=False,
+            message=result.error or "Невідома помилка",
+            latency_ms=round(latency_ms, 2),
         )
 
     except Exception as e:
@@ -536,7 +546,9 @@ async def sync_source(
 
 
 @router.get("/{source_id}/preview")
-async def preview_source_data(source_id: str, limit: int = 10, user: dict = Depends(get_current_user)):
+async def preview_source_data(
+    source_id: str, limit: int = 10, user: dict = Depends(get_current_user)
+):
     """Переглянути дані з джерела (без збереження)."""
     try:
         async with get_db_ctx() as sess:

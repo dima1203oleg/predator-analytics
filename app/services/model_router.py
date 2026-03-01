@@ -50,7 +50,9 @@ class ModelRouter:
         self._current_gemini_key_idx += 1
         return key
 
-    async def chat_completion(self, model: str, messages: list[dict[str, str]], temperature: float = 0.7) -> str:
+    async def chat_completion(
+        self, model: str, messages: list[dict[str, str]], temperature: float = 0.7
+    ) -> str:
         """Routes request with automatic fallback: Groq -> Gemini -> Ollama."""
         provider = self._determine_provider(model)
         logger.info(f"Routing request for model '{model}' to primary provider '{provider}'")
@@ -123,7 +125,9 @@ class ModelRouter:
             return "groq"
         return "gemini"
 
-    async def _call_gemini(self, model: str, messages: list[dict[str, str]], temperature: float) -> str:
+    async def _call_gemini(
+        self, model: str, messages: list[dict[str, str]], temperature: float
+    ) -> str:
         api_key = self._get_next_gemini_key()
         if not api_key:
             return "Error: Gemini API key not configured"
@@ -135,7 +139,10 @@ class ModelRouter:
             contents.append({"role": role, "parts": [{"text": msg["content"]}]})
 
         url = f"{self.providers['gemini']}/models/{model}:generateContent?key={api_key}"
-        payload = {"contents": contents, "generationConfig": {"temperature": temperature, "maxOutputTokens": 2048}}
+        payload = {
+            "contents": contents,
+            "generationConfig": {"temperature": temperature, "maxOutputTokens": 2048},
+        }
 
         async with aiohttp.ClientSession() as session:
             try:
@@ -155,12 +162,17 @@ class ModelRouter:
                 logger.exception(f"Gemini request failed: {e}")
                 return f"Error: {e!s}"
 
-    async def _call_groq(self, model: str, messages: list[dict[str, str]], temperature: float) -> str:
+    async def _call_groq(
+        self, model: str, messages: list[dict[str, str]], temperature: float
+    ) -> str:
         if not self.api_keys["groq"]:
             return "Error: Groq API key not configured"
 
         url = f"{self.providers['groq']}/chat/completions"
-        headers = {"Authorization": f"Bearer {self.api_keys['groq']}", "Content-Type": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {self.api_keys['groq']}",
+            "Content-Type": "application/json",
+        }
         payload = {"model": model, "messages": messages, "temperature": temperature}
         async with aiohttp.ClientSession() as session:
             try:
@@ -172,9 +184,16 @@ class ModelRouter:
             except Exception as e:
                 return f"Error: {e!s}"
 
-    async def _call_ollama(self, model: str, messages: list[dict[str, str]], temperature: float) -> str:
+    async def _call_ollama(
+        self, model: str, messages: list[dict[str, str]], temperature: float
+    ) -> str:
         url = f"{self.providers['ollama']}/api/chat"
-        payload = {"model": model, "messages": messages, "stream": False, "options": {"temperature": temperature}}
+        payload = {
+            "model": model,
+            "messages": messages,
+            "stream": False,
+            "options": {"temperature": temperature},
+        }
         async with aiohttp.ClientSession() as session:
             try:
                 async with session.post(url, json=payload) as resp:
@@ -185,20 +204,27 @@ class ModelRouter:
             except Exception as e:
                 return f"Error connecting to Ollama: {e!s}"
 
-    async def _call_openai(self, model: str, messages: list[dict[str, str]], temperature: float) -> str:
+    async def _call_openai(
+        self, model: str, messages: list[dict[str, str]], temperature: float
+    ) -> str:
         if not self.api_keys["openai"]:
             return "Error: OpenAI API key not configured"
         # Standard OpenAI chat completion
         url = f"{self.providers['openai']}/chat/completions"
         headers = {"Authorization": f"Bearer {self.api_keys['openai']}"}
         payload = {"model": model, "messages": messages, "temperature": temperature}
-        async with aiohttp.ClientSession() as session, session.post(url, headers=headers, json=payload) as resp:
+        async with (
+            aiohttp.ClientSession() as session,
+            session.post(url, headers=headers, json=payload) as resp,
+        ):
             if resp.status == 200:
                 data = await resp.json()
                 return data["choices"][0]["message"]["content"]
             return f"Error: OpenAI returned {resp.status}"
 
-    async def _call_lm_studio(self, model: str, messages: list[dict[str, str]], temperature: float) -> str:
+    async def _call_lm_studio(
+        self, model: str, messages: list[dict[str, str]], temperature: float
+    ) -> str:
         """Call local LM Studio (OpenAI compatible)."""
         url = f"{self.providers['lm_studio']}/chat/completions"
         payload = {

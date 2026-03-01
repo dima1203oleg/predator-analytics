@@ -15,7 +15,10 @@ class SearchFusion:
         self.default_limit = default_limit
 
     def reciprocal_rank_fusion(
-        self, results_os: list[dict[str, Any]], results_vec: list[dict[str, Any]], limit: int | None = None
+        self,
+        results_os: list[dict[str, Any]],
+        results_vec: list[dict[str, Any]],
+        limit: int | None = None,
     ) -> list[dict[str, Any]]:
         """Applies RRF to merge OpenSearch and Qdrant results."""
         limit = limit or self.default_limit
@@ -42,7 +45,10 @@ class SearchFusion:
 
 
 def reciprocal_rank_fusion(
-    results_os: list[dict[str, Any]], results_vec: list[dict[str, Any]], k: int = 60, limit: int = 20
+    results_os: list[dict[str, Any]],
+    results_vec: list[dict[str, Any]],
+    k: int = 60,
+    limit: int = 20,
 ) -> list[dict[str, Any]]:
     """Implements Reciprocal Rank Fusion (RRF) algorithm.
     Paper: https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf.
@@ -119,7 +125,9 @@ def reciprocal_rank_fusion(
         if "rank_os" in doc["fusion_debug"] and "rank_vec" in doc["fusion_debug"]:
             reasons.append("Підтверджено гібридним перехресним аналізом")
 
-        doc["ai_reason"] = " 🔥 " + " | ".join(reasons) if reasons else "Знайдено за непрямими ознаками"
+        doc["ai_reason"] = (
+            " 🔥 " + " | ".join(reasons) if reasons else "Знайдено за непрямими ознаками"
+        )
 
         final_results.append(doc)
 
@@ -148,8 +156,12 @@ async def hybrid_search_with_rrf(
 
     # Паралельне виконання пошуку
     try:
-        os_task = opensearch_indexer.search(index_name=index_name, query=query, size=limit, tenant_id=tenant_id)
-        q_task = qdrant.search(query_vector=vector, limit=limit, tenant_id=tenant_id, collection_name=index_name)
+        os_task = opensearch_indexer.search(
+            index_name=index_name, query=query, size=limit, tenant_id=tenant_id
+        )
+        q_task = qdrant.search(
+            query_vector=vector, limit=limit, tenant_id=tenant_id, collection_name=index_name
+        )
 
         os_resp, q_results = await asyncio.gather(os_task, q_task)
 
@@ -157,22 +169,26 @@ async def hybrid_search_with_rrf(
         os_hits = []
         for hit in os_resp.get("hits", {}).get("hits", []):
             source = hit["_source"]
-            os_hits.append({
-                "id": hit["_id"],
-                "content": source.get("content", ""),
-                "metadata": source,
-                "score": hit["_score"],
-            })
+            os_hits.append(
+                {
+                    "id": hit["_id"],
+                    "content": source.get("content", ""),
+                    "metadata": source,
+                    "score": hit["_score"],
+                }
+            )
 
         # Перетворюємо результати Qdrant
         vec_hits = []
         for hit in q_results:
-            vec_hits.append({
-                "id": hit["id"],
-                "content": hit["metadata"].get("content", ""),
-                "metadata": hit["metadata"],
-                "score": hit["score"],
-            })
+            vec_hits.append(
+                {
+                    "id": hit["id"],
+                    "content": hit["metadata"].get("content", ""),
+                    "metadata": hit["metadata"],
+                    "score": hit["score"],
+                }
+            )
 
         # Фінальна фузія
         fusion = SearchFusion()

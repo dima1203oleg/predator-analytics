@@ -44,7 +44,9 @@ class ConstitutionalLinter:
             # 3. Conflict Detection (Mock)
             # e.g., an axiom that allows preemptive lethal action in emergency
             if data.get("id") == "axiom_preemptive" and "emergency" in str(data).lower():
-                issues.append("CONFLICT: Preemptive lethal action is forbidden by v45.0 Red-Team Policy.")
+                issues.append(
+                    "CONFLICT: Preemptive lethal action is forbidden by v45.0 Red-Team Policy."
+                )
 
             status = "PASS" if not issues else "FAIL"
             return {"file": filename, "status": status, "issues": issues}

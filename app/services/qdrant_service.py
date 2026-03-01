@@ -40,7 +40,9 @@ class QdrantService:
 
         logger.info("qdrant_service_initialized", host=self.host)
 
-    async def create_collection(self, collection_name: str | None = None, vector_size: int | None = None):
+    async def create_collection(
+        self, collection_name: str | None = None, vector_size: int | None = None
+    ):
         """Create a Qdrant collection for storing vectors.
         Configured for Multi-Tenancy with HNSW payload optimization.
 
@@ -74,7 +76,9 @@ class QdrantService:
             logger.info("qdrant_collection_created", collection=collection_name, multi_tenant=True)
 
         except Exception as e:
-            logger.exception("qdrant_collection_creation_failed", error=str(e), collection=collection_name)
+            logger.exception(
+                "qdrant_collection_creation_failed", error=str(e), collection=collection_name
+            )
             raise
 
     def _ensure_tenant_index(self, collection_name: str):
@@ -107,7 +111,11 @@ class QdrantService:
             return str(uuid.uuid5(uuid.NAMESPACE_DNS, str_id))
 
     async def index_document(
-        self, doc_id: str, embedding: list[float], metadata: dict[str, Any] | None = None, tenant_id: str = "default"
+        self,
+        doc_id: str,
+        embedding: list[float],
+        metadata: dict[str, Any] | None = None,
+        tenant_id: str = "default",
     ):
         """Index a single document vector with tenant context."""
         try:
@@ -176,7 +184,9 @@ class QdrantService:
 
             # 1. Enforce Tenant Filter
             if tenant_id:
-                must_conditions.append(FieldCondition(key="tenant_id", match=MatchValue(value=tenant_id)))
+                must_conditions.append(
+                    FieldCondition(key="tenant_id", match=MatchValue(value=tenant_id))
+                )
 
             # 2. Add other filters
             if filter_conditions:
@@ -194,7 +204,9 @@ class QdrantService:
             )
 
             # Format results
-            formatted_results = [{"id": hit.id, "score": hit.score, "metadata": hit.payload} for hit in results]
+            formatted_results = [
+                {"id": hit.id, "score": hit.score, "metadata": hit.payload} for hit in results
+            ]
 
             logger.info("qdrant_search_completed", hits=len(formatted_results), tenant_id=tenant_id)
             return formatted_results
@@ -209,7 +221,11 @@ class QdrantService:
             result = self.client.retrieve(collection_name=self.collection_name, ids=[doc_id])
 
             if result:
-                return {"id": result[0].id, "vector": result[0].vector, "metadata": result[0].payload}
+                return {
+                    "id": result[0].id,
+                    "vector": result[0].vector,
+                    "metadata": result[0].payload,
+                }
             return None
 
         except Exception as e:

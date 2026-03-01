@@ -40,42 +40,46 @@ MAX_RETRIES: Final[int] = -1  # INFINITE
 # EXECUTION STATES TO FORCE-OVERRIDE
 # ════════════════════════════════════════════════════════════════
 
-FORCE_OVERRIDE_STATES = frozenset([
-    "waiting",
-    "paused",
-    "confirmation_required",
-    "permission_required",
-    "dialog_open",
-    "ui_blocked",
-    "waiting_for_user",
-    "waiting_for_confirmation",
-    "stopped",
-    "halted",
-    "suspended",
-])
+FORCE_OVERRIDE_STATES = frozenset(
+    [
+        "waiting",
+        "paused",
+        "confirmation_required",
+        "permission_required",
+        "dialog_open",
+        "ui_blocked",
+        "waiting_for_user",
+        "waiting_for_confirmation",
+        "stopped",
+        "halted",
+        "suspended",
+    ]
+)
 
 # ════════════════════════════════════════════════════════════════
 # UI ELEMENTS TO AUTO-CLICK
 # ════════════════════════════════════════════════════════════════
 
-AUTO_CLICK_ELEMENTS = frozenset([
-    "Save",
-    "Apply",
-    "Run",
-    "Continue",
-    "Confirm",
-    "Autorun",
-    "Accept",
-    "Yes",
-    "OK",
-    "Proceed",
-    "Allow",
-    "Enable",
-    "Submit",
-    "Execute",
-    "Start",
-    "Approve",
-])
+AUTO_CLICK_ELEMENTS = frozenset(
+    [
+        "Save",
+        "Apply",
+        "Run",
+        "Continue",
+        "Confirm",
+        "Autorun",
+        "Accept",
+        "Yes",
+        "OK",
+        "Proceed",
+        "Allow",
+        "Enable",
+        "Submit",
+        "Execute",
+        "Start",
+        "Approve",
+    ]
+)
 
 # ════════════════════════════════════════════════════════════════
 # PRIORITY ORDER (1 = HIGHEST)

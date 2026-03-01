@@ -52,7 +52,11 @@ class TripleAgentService(TrinityCore):
         m_key = secret_manager.get_secret("MISTRAL_API_KEY")
         gr_key = secret_manager.get_secret("GROQ_API_KEY")
 
-        self.cli_stack = MixedCLIStack(gemini_key=g_key, mistral_key=m_key, groq_key=gr_key) if MixedCLIStack else None
+        self.cli_stack = (
+            MixedCLIStack(gemini_key=g_key, mistral_key=m_key, groq_key=gr_key)
+            if MixedCLIStack
+            else None
+        )
 
         # Fallback providers if CLI stack fails or is not available
         self.strategist_provider = "gemini"
@@ -67,7 +71,9 @@ class TripleAgentService(TrinityCore):
                 # Wrap synchronous call in thread if needed, but SDK is usually fine
                 # MixedCLIStack planner returns dict
                 self._current_plan_raw = self.cli_stack.planner_agent(command)
-                return self._current_plan_raw.get("description", "Strategy generated via Gemini CLI")
+                return self._current_plan_raw.get(
+                    "description", "Strategy generated via Gemini CLI"
+                )
             except Exception as e:
                 logger.exception(f"Gemini CLI Planner failed: {e}")
 
@@ -118,7 +124,9 @@ class TripleAgentService(TrinityCore):
             except Exception as e:
                 logger.exception(f"Aider CLI Audit failed: {e}")
 
-        self._current_audit_raw = await self._aider_audit_fallback(code, self._current_plan_raw.get("plan", ""))
+        self._current_audit_raw = await self._aider_audit_fallback(
+            code, self._current_plan_raw.get("plan", "")
+        )
         return {
             "approved": self._current_audit_raw.get("success", False),
             "security_assessment": self._current_audit_raw.get("report", ""),
@@ -213,7 +221,9 @@ class TripleAgentService(TrinityCore):
         except:
             return {"plan": res.content}
 
-    async def _mistral_generate_fallback(self, plan: str, audit_feedback: str = "") -> dict[str, Any]:
+    async def _mistral_generate_fallback(
+        self, plan: str, audit_feedback: str = ""
+    ) -> dict[str, Any]:
         prompt = f"Implement this plan: {plan}. Feedback: {audit_feedback}. Return code."
         res = await llm_service.generate(prompt, provider="groq")  # or mistral if available
         return {"code": res.content}

@@ -45,7 +45,9 @@ class SelfImprovementService:
         try:
             self.cycle_count += 1
             start_time = datetime.now()
-            logger.info("improvement_cycle_started", cycle=self.cycle_count, cycle_id=str(cycle_uuid))
+            logger.info(
+                "improvement_cycle_started", cycle=self.cycle_count, cycle_id=str(cycle_uuid)
+            )
 
             async with get_db_ctx() as sess:
                 # 1. Register SI Cycle and ML Job in DB for Visibility
@@ -71,26 +73,30 @@ class SelfImprovementService:
                 await sess.commit()
 
             # 2. Update Shared Redis Status (localized for UI)
-            await training_status_service.update_status({
-                "status": "active",
-                "stage": "analyzing",
-                "message": f"🤖 Цикл #{self.cycle_count}: Аналіз прогалин у знаннях моделі Llama 3.1",
-                "cycle": self.cycle_count,
-                "cycle_id": str(cycle_uuid),
-                "progress": 20,
-                "timestamp": datetime.now().isoformat(),
-            })
+            await training_status_service.update_status(
+                {
+                    "status": "active",
+                    "stage": "analyzing",
+                    "message": f"🤖 Цикл #{self.cycle_count}: Аналіз прогалин у знаннях моделі Llama 3.1",
+                    "cycle": self.cycle_count,
+                    "cycle_id": str(cycle_uuid),
+                    "progress": 20,
+                    "timestamp": datetime.now().isoformat(),
+                }
+            )
 
             # 3. Analyze Feedback & Core Data
             feedback_data = await self._fetch_feedback()
             await asyncio.sleep(1)  # Thinking time
 
             # 4. Generate Synthetic Data with Llama 3.1
-            await training_status_service.update_status({
-                "stage": "generating",
-                "message": "🧠 Llama 3.1 генерує складні аналітичні кейси для самодосконалення...",
-                "progress": 40,
-            })
+            await training_status_service.update_status(
+                {
+                    "stage": "generating",
+                    "message": "🧠 Llama 3.1 генерує складні аналітичні кейси для самодосконалення...",
+                    "progress": 40,
+                }
+            )
 
             synth_data = await self._generate_synthetic_data(feedback_data)
 
@@ -116,10 +122,12 @@ class SelfImprovementService:
                 if total_samples >= 100:
                     logger.info("h2o_trigger_threshold_reached", count=total_samples)
 
-                    await training_status_service.update_status({
-                        "message": f"🚀 Поріг {total_samples} досягнуто! Запуск реального H2O AutoML навчання...",
-                        "progress": 70,
-                    })
+                    await training_status_service.update_status(
+                        {
+                            "message": f"🚀 Поріг {total_samples} досягнуто! Запуск реального H2O AutoML навчання...",
+                            "progress": 70,
+                        }
+                    )
 
                     # REAL H2O TRAINING TRIGGER
                     try:
@@ -128,29 +136,38 @@ class SelfImprovementService:
                         h2o_result = await h2o_manager.train_anomaly_classifier(str(job_uuid))
 
                         if h2o_result["status"] == "success":
-                            await training_status_service.update_status({
-                                "message": f"🏆 H2O Модель навчено! AUC: {h2o_result['metrics']['auc']:.4f}",
-                                "progress": 90,
-                            })
+                            await training_status_service.update_status(
+                                {
+                                    "message": f"🏆 H2O Модель навчено! AUC: {h2o_result['metrics']['auc']:.4f}",
+                                    "progress": 90,
+                                }
+                            )
                     except Exception as h2o_err:
                         logger.exception(f"H2O Training Error: {h2o_err}")
 
                 else:
-                    await training_status_service.update_status({
-                        "message": f"📊 Накопичено {total_samples}/100 для H2O старту.",
-                        "progress": 60,
-                    })
+                    await training_status_service.update_status(
+                        {
+                            "message": f"📊 Накопичено {total_samples}/100 для H2O старту.",
+                            "progress": 60,
+                        }
+                    )
 
             # 7. Автовдосконалення коду (Sovereign Optimizations)
 
-            await training_status_service.update_status({
-                "stage": "optimizing_code",
-                "message": "🛠️ Агенти оптимізують параметри на основі результатів H2O...",
-                "progress": 85,
-            })
+            await training_status_service.update_status(
+                {
+                    "stage": "optimizing_code",
+                    "message": "🛠️ Агенти оптимізують параметри на основі результатів H2O...",
+                    "progress": 85,
+                }
+            )
 
             task = f"Оптимізуй логіку детекції на основі {total_samples} кейсів."
-            optimization_result = {"status": "success", "simulated": False}  # Placeholder for sovereign execution
+            optimization_result = {
+                "status": "success",
+                "simulated": False,
+            }  # Placeholder for sovereign execution
 
             # Use real metrics if H2O ran, otherwise dummy
             metrics = {
@@ -184,18 +201,22 @@ class SelfImprovementService:
             )
 
             # 9. Update History in Redis
-            await training_status_service.update_status({
-                "status": "idle",
-                "stage": "ready",
-                "message": f"✅ Цикл #{self.cycle_count} завершено. Точність моделі: {metrics['accuracy'] * 100:.2f}%",
-                "metrics": metrics,
-                "progress": 100,
-            })
+            await training_status_service.update_status(
+                {
+                    "status": "idle",
+                    "stage": "ready",
+                    "message": f"✅ Цикл #{self.cycle_count} завершено. Точність моделі: {metrics['accuracy'] * 100:.2f}%",
+                    "metrics": metrics,
+                    "progress": 100,
+                }
+            )
 
             return metrics
 
         except Exception as e:
-            logger.exception("self_improvement_cycle_failed", error=str(e), cycle_id=str(cycle_uuid))
+            logger.exception(
+                "self_improvement_cycle_failed", error=str(e), cycle_id=str(cycle_uuid)
+            )
             async with get_db_ctx() as sess:
                 try:
                     job = await sess.get(MLJob, job_uuid)
@@ -206,10 +227,12 @@ class SelfImprovementService:
                 except:
                     pass
 
-            await training_status_service.update_status({
-                "status": "error",
-                "message": f"❌ Помилка в циклі #{self.cycle_count}: {e!s}",
-            })
+            await training_status_service.update_status(
+                {
+                    "status": "error",
+                    "message": f"❌ Помилка в циклі #{self.cycle_count}: {e!s}",
+                }
+            )
             raise
 
     async def start_endless_loop(self):
@@ -239,7 +262,11 @@ class SelfImprovementService:
                 # Fetch random examples from previous 'radical' generations or provided seeds
                 stmt = (
                     select(AugmentedDataset.content)
-                    .where(AugmentedDataset.aug_type.in_(["radical_seed_synthetic", "llama3.1_synthetic"]))
+                    .where(
+                        AugmentedDataset.aug_type.in_(
+                            ["radical_seed_synthetic", "llama3.1_synthetic"]
+                        )
+                    )
                     .order_by(func.random())
                     .limit(3)
                 )
@@ -248,17 +275,23 @@ class SelfImprovementService:
                 examples = result.scalars().all()
 
                 if examples:
-                    logger.info(f"📚 Found {len(examples)} base scenarios for context-aware generation.")
+                    logger.info(
+                        f"📚 Found {len(examples)} base scenarios for context-aware generation."
+                    )
                     return [{"content": ex, "type": "example"} for ex in examples]
 
         except Exception as e:
-            logger.warning(f"Failed to fetch context scenarios: {e}. Falling back to default topics.")
+            logger.warning(
+                f"Failed to fetch context scenarios: {e}. Falling back to default topics."
+            )
 
         # Fallback to default topics if DB is empty
         topics = ["legal_compliance", "fraud_detection", "data_anomalies", "risk_modeling"]
         return [{"query": random.choice(topics), "feedback": "neutral"} for _ in range(5)]
 
-    async def _generate_synthetic_data(self, feedback: list[dict[str, Any]]) -> list[dict[str, str]]:
+    async def _generate_synthetic_data(
+        self, feedback: list[dict[str, Any]]
+    ) -> list[dict[str, str]]:
         """Use Llama 3.1 8b Instruct for specialized synthesis.
         Now dynamically incorporates base scenarios for few-shot learning.
         """
@@ -268,7 +301,9 @@ class SelfImprovementService:
         examples_str = ""
         examples = [f["content"] for f in feedback if f.get("type") == "example"]
         if examples:
-            examples_str = "BASE SCENARIOS FOR STYLE AND THEME:\n" + "\n---\n".join(examples) + "\n---\n"
+            examples_str = (
+                "BASE SCENARIOS FOR STYLE AND THEME:\n" + "\n---\n".join(examples) + "\n---\n"
+            )
 
         prompt = (
             f"{examples_str}"
@@ -296,10 +331,14 @@ class SelfImprovementService:
                     # Basic Validation: Check if it looks like JSON or contains Risk Score
                     if "Risk Score" in content or "Risk:" in content:
                         return [{"generated": content}]
-                    logger.warning(f"Attempt {attempt + 1}: Generated content missing 'Risk Score'. Retrying...")
+                    logger.warning(
+                        f"Attempt {attempt + 1}: Generated content missing 'Risk Score'. Retrying..."
+                    )
 
                 else:
-                    logger.warning(f"Ollama attempt {attempt + 1}/{retries} failed: {response.error}")
+                    logger.warning(
+                        f"Ollama attempt {attempt + 1}/{retries} failed: {response.error}"
+                    )
 
             except Exception as e:
                 logger.exception(f"Ollama attempt {attempt + 1}/{retries} unexpected error: {e}")
@@ -321,7 +360,11 @@ class SelfImprovementService:
         improvement = min(0.4, self.cycle_count * 0.012)  # Slightly faster learning for Llama 3.1
         current_loss = max(0.045, base_loss - improvement + (random.random() * 0.03))
 
-        return {"loss": round(current_loss, 4), "accuracy": round(1.0 - current_loss, 4), "epoch": self.cycle_count}
+        return {
+            "loss": round(current_loss, 4),
+            "accuracy": round(1.0 - current_loss, 4),
+            "epoch": self.cycle_count,
+        }
 
 
 # Singleton

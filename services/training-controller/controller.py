@@ -39,7 +39,9 @@ def create_training_job_spec(model_id: str, image: str, params: dict[str, Any]) 
         name="trainer",
         image=image,
         env=[
-            client.V1EnvVar(name="MLFLOW_TRACKING_URI", value="http://predator-analytics-mlflow:5000"),
+            client.V1EnvVar(
+                name="MLFLOW_TRACKING_URI", value="http://predator-analytics-mlflow:5000"
+            ),
             client.V1EnvVar(name="MODEL_PARAMS", value=str(params)),
         ],
         resources=client.V1ResourceRequirements(
@@ -49,7 +51,9 @@ def create_training_job_spec(model_id: str, image: str, params: dict[str, Any]) 
 
     template = client.V1PodTemplateSpec(
         metadata=client.V1ObjectMeta(labels={"app": "predator-trainer", "model": model_id}),
-        spec=client.V1PodSpec(restart_policy="Never", containers=[container], priority_class_name="predator-low"),
+        spec=client.V1PodSpec(
+            restart_policy="Never", containers=[container], priority_class_name="predator-low"
+        ),
     )
 
     spec = client.V1JobSpec(template=template, backoff_limit=2, ttl_seconds_after_finished=3600)
@@ -69,7 +73,9 @@ async def launch_training_job(event: PredatorEvent):
         logger.error("No model_id in training event")
         return
 
-    logger.info("Launching training for %s", model_id, extra={"correlation_id": event.correlation_id})
+    logger.info(
+        "Launching training for %s", model_id, extra={"correlation_id": event.correlation_id}
+    )
 
     try:
         # In real scenario, we'd lookup image from Model Registry/Config

@@ -18,6 +18,8 @@ def run_autonomous_detection():
     # Run async logic in sync Celery task
     loop = asyncio.get_event_loop()
     if loop.is_running():
-        future = asyncio.run_coroutine_threadsafe(detection_service.run_detection_cycle(limit=20), loop)
+        future = asyncio.run_coroutine_threadsafe(
+            detection_service.run_detection_cycle(limit=20), loop
+        )
         return future.result()
     return asyncio.run(detection_service.run_detection_cycle(limit=20))

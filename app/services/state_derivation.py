@@ -51,7 +51,11 @@ class StateDerivationEngine:
 
         transition_valid = True
 
-        if previous_state and previous_state in self.TERMINAL_STATES and derived_state != previous_state:
+        if (
+            previous_state
+            and previous_state in self.TERMINAL_STATES
+            and derived_state != previous_state
+        ):
             transition_valid = False
         # 1. Compute Evidence Hash
         evidence_hash = self._compute_evidence_hash(facts)
@@ -69,7 +73,9 @@ class StateDerivationEngine:
         # If 'metrics' contains 'previous_metrics' (hack for regulation), use it.
         monotonicity_violations = []
         if "previous_metrics" in metrics:
-            monotonicity_violations = self._check_monotonicity([{"metrics": metrics["previous_metrics"]}], metrics)
+            monotonicity_violations = self._check_monotonicity(
+                [{"metrics": metrics["previous_metrics"]}], metrics
+            )
 
         # 5. Policy Check (OPA)
         # We do this simulating the OPA input for additional rigorous checks
@@ -112,12 +118,16 @@ class StateDerivationEngine:
             payload = fact.get("payload") or {}
 
             if ftype in ["row_parsed", "processing_completed"]:
-                metrics["records_processed"] = payload.get("rows_processed", metrics["records_processed"])
+                metrics["records_processed"] = payload.get(
+                    "rows_processed", metrics["records_processed"]
+                )
                 metrics["records_total"] = payload.get("total_rows", metrics["records_total"])
             elif ftype in ["batch_indexed", "indexing_completed"]:
                 metrics["records_indexed"] = payload.get("rows_indexed", metrics["records_indexed"])
             elif ftype in ["file_upload_progress", "file_upload_completed"]:
-                metrics["bytes_processed"] = payload.get("bytes_processed", metrics["bytes_processed"])
+                metrics["bytes_processed"] = payload.get(
+                    "bytes_processed", metrics["bytes_processed"]
+                )
                 metrics["bytes_total"] = payload.get("total_bytes", metrics["bytes_total"])
             elif ftype == "error_occurred":
                 metrics["error_count"] += 1
@@ -141,11 +151,17 @@ class StateDerivationEngine:
                         return ETLState.INDEXING_FAILED
             return ETLState.FAILED
 
-        if metrics["records_indexed"] > 0 and metrics["records_indexed"] >= metrics["records_total"]:
+        if (
+            metrics["records_indexed"] > 0
+            and metrics["records_indexed"] >= metrics["records_total"]
+        ):
             return ETLState.COMPLETED
         if metrics["records_indexed"] > 0:
             return ETLState.INDEXING
-        if metrics["records_processed"] > 0 and metrics["records_processed"] >= metrics["records_total"]:
+        if (
+            metrics["records_processed"] > 0
+            and metrics["records_processed"] >= metrics["records_total"]
+        ):
             return ETLState.PROCESSED
         if metrics["records_processed"] > 0:
             return ETLState.PROCESSING
@@ -172,12 +188,15 @@ class StateDerivationEngine:
         canonical_json = json.dumps(sorted_facts, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(canonical_json.encode()).hexdigest()
 
-    def _validate_transition(self, previous_state: ETLState | None, derived_state: ETLState) -> bool:
+    def _validate_transition(
+        self, previous_state: ETLState | None, derived_state: ETLState
+    ) -> bool:
         if previous_state:
             if previous_state in self.TERMINAL_STATES and derived_state != previous_state:
                 return False  # Terminal state violation
-            if derived_state != previous_state and derived_state not in self.ALLOWED_TRANSITIONS.get(
-                previous_state, set()
+            if (
+                derived_state != previous_state
+                and derived_state not in self.ALLOWED_TRANSITIONS.get(previous_state, set())
             ):
                 return False  # Illegal transition
         return True

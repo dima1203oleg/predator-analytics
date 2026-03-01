@@ -21,7 +21,12 @@ class DatasetVersionManager:
         self.table = "dataset_versions"
 
     def register_version(
-        self, name: str, version: str, source: str, row_count: int, metadata: dict[str, Any] | None = None
+        self,
+        name: str,
+        version: str,
+        source: str,
+        row_count: int,
+        metadata: dict[str, Any] | None = None,
     ) -> bool:
         """Register a new version of a dataset."""
         try:
@@ -93,7 +98,9 @@ class FineTuningOrchestrator:
         try:
             with get_db_sync() as session:
                 result = session.execute(
-                    text("SELECT scenario_id, description, logic, meta_data FROM knowledge_base.analytic_scenarios")
+                    text(
+                        "SELECT scenario_id, description, logic, meta_data FROM knowledge_base.analytic_scenarios"
+                    )
                 )
                 rows = result.fetchall()
 
@@ -134,7 +141,9 @@ class FineTuningOrchestrator:
         try:
             with get_db_sync() as session:
                 # 1. Check if we have enough new data in analytic_scenarios
-                result = session.execute(text("SELECT COUNT(*) FROM knowledge_base.analytic_scenarios"))
+                result = session.execute(
+                    text("SELECT COUNT(*) FROM knowledge_base.analytic_scenarios")
+                )
                 count = result.scalar()
 
                 # Threshold for a new training run
@@ -205,7 +214,11 @@ class ShadowEvaluator:
                         text(
                             "INSERT INTO ml_ops.model_evaluations (metric_name, value, metadata) VALUES (:m, :v, :meta)"
                         ),
-                        {"m": "shadow_divergence", "v": 1.0, "meta": json.dumps({"context": context, "diff": True})},
+                        {
+                            "m": "shadow_divergence",
+                            "v": 1.0,
+                            "meta": json.dumps({"context": context, "diff": True}),
+                        },
                     )
             else:
                 logger.info("✅ Shadow model matches champion.")

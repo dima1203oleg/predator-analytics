@@ -43,10 +43,22 @@ class ComponentRegistry:
 
     # Critical components that MUST be loaded
     REQUIRED_COMPONENTS: list[dict[str, any]] = [
-        {"name": "provenance", "module": "app.provenance.tracker", "health_check": "check_provenance_storage"},
-        {"name": "metrics", "module": "app.metrics.collector", "health_check": "check_metrics_backend"},
+        {
+            "name": "provenance",
+            "module": "app.provenance.tracker",
+            "health_check": "check_provenance_storage",
+        },
+        {
+            "name": "metrics",
+            "module": "app.metrics.collector",
+            "health_check": "check_metrics_backend",
+        },
         {"name": "ai", "module": "app.ai.orchestrator", "health_check": "check_llm_availability"},
-        {"name": "ingestion", "module": "app.pipelines.ingestion", "health_check": "check_storage_access"},
+        {
+            "name": "ingestion",
+            "module": "app.pipelines.ingestion",
+            "health_check": "check_storage_access",
+        },
         {"name": "azr", "module": "app.azr.engine", "health_check": "check_azr_constraints"},
         {"name": "security", "module": "app.core.security", "health_check": "check_auth_provider"},
     ]
@@ -68,19 +80,27 @@ class ComponentRegistry:
         # Register required components
         for comp in self.REQUIRED_COMPONENTS:
             self._register_component(
-                name=comp["name"], module_path=comp["module"], required=True, health_check=comp.get("health_check")
+                name=comp["name"],
+                module_path=comp["module"],
+                required=True,
+                health_check=comp.get("health_check"),
             )
 
         # Register optional components
         for comp in self.OPTIONAL_COMPONENTS:
             self._register_component(
-                name=comp["name"], module_path=comp["module"], required=False, health_check=comp.get("health_check")
+                name=comp["name"],
+                module_path=comp["module"],
+                required=False,
+                health_check=comp.get("health_check"),
             )
 
         self._initialized = True
         logger.info(f"✅ Registered {len(self._components)} components")
 
-    def _register_component(self, name: str, module_path: str, required: bool, health_check: str | None = None) -> None:
+    def _register_component(
+        self, name: str, module_path: str, required: bool, health_check: str | None = None
+    ) -> None:
         """Register a single component."""
         try:
             # Try to import the module
@@ -185,9 +205,15 @@ class ComponentRegistry:
             "summary": {
                 "total": len(self._components),
                 "required": sum(1 for c in self._components.values() if c.required),
-                "healthy": sum(1 for c in self._components.values() if c.status == ComponentStatus.HEALTHY),
-                "degraded": sum(1 for c in self._components.values() if c.status == ComponentStatus.DEGRADED),
-                "failed": sum(1 for c in self._components.values() if c.status == ComponentStatus.FAILED),
+                "healthy": sum(
+                    1 for c in self._components.values() if c.status == ComponentStatus.HEALTHY
+                ),
+                "degraded": sum(
+                    1 for c in self._components.values() if c.status == ComponentStatus.DEGRADED
+                ),
+                "failed": sum(
+                    1 for c in self._components.values() if c.status == ComponentStatus.FAILED
+                ),
             },
         }
 

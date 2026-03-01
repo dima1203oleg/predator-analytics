@@ -70,7 +70,9 @@ async def telegram_webhook(request: Request, background_tasks: BackgroundTasks):
                             show_menu = True
 
                     await bot.send_message(
-                        chat_id=chat_id, text=response, reply_markup=bot.main_menu_keyboard if show_menu else None
+                        chat_id=chat_id,
+                        text=response,
+                        reply_markup=bot.main_menu_keyboard if show_menu else None,
                     )
             except Exception as e:
                 logger.exception(f"Error in background task: {e}")

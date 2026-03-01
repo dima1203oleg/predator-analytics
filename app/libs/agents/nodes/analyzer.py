@@ -91,7 +91,10 @@ async def analyzer_node(state: AgentState) -> dict[str, Any]:
 
     except Exception as e:
         logger.exception(f"E2E Analyzer failed: {e}")
-        return {"error": f"Помилка аналізу: {e!s}", "stream_updates": [*updates, f"❌ Помилка: {e!s}"]}
+        return {
+            "error": f"Помилка аналізу: {e!s}",
+            "stream_updates": [*updates, f"❌ Помилка: {e!s}"],
+        }
 
 
 async def _execute_multi_db_query(query: str, tenant_id: str) -> dict[str, QueryResult]:
@@ -128,7 +131,9 @@ async def _execute_multi_db_query(query: str, tenant_id: str) -> dict[str, Query
                 )
         except Exception as e:
             logger.warning(f"PostgreSQL query failed: {e}")
-            return QueryResult(database="postgresql", query=query, results=[], execution_time_ms=0, error=str(e))
+            return QueryResult(
+                database="postgresql", query=query, results=[], execution_time_ms=0, error=str(e)
+            )
 
     async def query_opensearch():
         try:
@@ -137,7 +142,9 @@ async def _execute_multi_db_query(query: str, tenant_id: str) -> dict[str, Query
             start = time.time()
             indexer = OpenSearchIndexer()
 
-            response = await indexer.search(index_name="documents_safe", query=query, size=20, tenant_id=tenant_id)
+            response = await indexer.search(
+                index_name="documents_safe", query=query, size=20, tenant_id=tenant_id
+            )
 
             hits = response.get("hits", {}).get("hits", [])
 
@@ -152,7 +159,9 @@ async def _execute_multi_db_query(query: str, tenant_id: str) -> dict[str, Query
             )
         except Exception as e:
             logger.warning(f"OpenSearch query failed: {e}")
-            return QueryResult(database="opensearch", query=query, results=[], execution_time_ms=0, error=str(e))
+            return QueryResult(
+                database="opensearch", query=query, results=[], execution_time_ms=0, error=str(e)
+            )
 
     async def query_qdrant():
         try:
@@ -169,14 +178,22 @@ async def _execute_multi_db_query(query: str, tenant_id: str) -> dict[str, Query
             hits = await qdrant.search(query_vector=query_vector, limit=20, tenant_id=tenant_id)
 
             return QueryResult(
-                database="qdrant", query=query, results=hits, execution_time_ms=(time.time() - start) * 1000, error=None
+                database="qdrant",
+                query=query,
+                results=hits,
+                execution_time_ms=(time.time() - start) * 1000,
+                error=None,
             )
         except Exception as e:
             logger.warning(f"Qdrant query failed: {e}")
-            return QueryResult(database="qdrant", query=query, results=[], execution_time_ms=0, error=str(e))
+            return QueryResult(
+                database="qdrant", query=query, results=[], execution_time_ms=0, error=str(e)
+            )
 
     # Execute all queries in parallel
-    pg_result, os_result, qd_result = await asyncio.gather(query_postgres(), query_opensearch(), query_qdrant())
+    pg_result, os_result, qd_result = await asyncio.gather(
+        query_postgres(), query_opensearch(), query_qdrant()
+    )
 
     results["postgresql"] = pg_result
     results["opensearch"] = os_result
@@ -185,7 +202,9 @@ async def _execute_multi_db_query(query: str, tenant_id: str) -> dict[str, Query
     return results
 
 
-async def _analyze_results(query_results: dict[str, QueryResult], query: str) -> list[AnalysisResult]:
+async def _analyze_results(
+    query_results: dict[str, QueryResult], query: str
+) -> list[AnalysisResult]:
     """Analyze and cross-reference results from all databases."""
     analysis = []
 

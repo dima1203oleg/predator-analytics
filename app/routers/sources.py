@@ -50,7 +50,9 @@ async def get_data_sources():
     """Get all available data sources (PostgreSQL tables).
     Combines legacy staging_ tables with v45 gold.data_sources registry.
     """
-    db_url = os.getenv("DATABASE_URL", "postgresql://admin:predator_password@postgres:5432/predator_db")
+    db_url = os.getenv(
+        "DATABASE_URL", "postgresql://admin:predator_password@postgres:5432/predator_db"
+    )
     # Clean scheme for asyncpg
     if "://" in db_url:
         scheme, rest = db_url.split("://", 1)
@@ -93,17 +95,21 @@ async def get_data_sources():
 
                 table_name = config.get("table_name", "gold.registry")
 
-                sources.append({
-                    "id": str(row["id"]),
-                    "name": row["name"],
-                    "type": row["source_type"].upper(),
-                    "status": "ONLINE",
-                    "records_count": row.get("doc_count", 0),
-                    "size_mb": "LIVE",
-                    "last_update": row["updated_at"].strftime("%Y-%m-%d %H:%M") if row["updated_at"] else "N/A",
-                    "table_name": table_name,
-                    "ml_status": (row["ml_job_status"] or "IDLE").upper(),
-                })
+                sources.append(
+                    {
+                        "id": str(row["id"]),
+                        "name": row["name"],
+                        "type": row["source_type"].upper(),
+                        "status": "ONLINE",
+                        "records_count": row.get("doc_count", 0),
+                        "size_mb": "LIVE",
+                        "last_update": row["updated_at"].strftime("%Y-%m-%d %H:%M")
+                        if row["updated_at"]
+                        else "N/A",
+                        "table_name": table_name,
+                        "ml_status": (row["ml_job_status"] or "IDLE").upper(),
+                    }
+                )
         except Exception as ge:
             logger.warning(f"Gold registry fetch failed: {ge}")
 
@@ -119,7 +125,9 @@ async def get_data_sources():
 
 @router.post("/", response_model=dict)
 async def create_source(source: CreateSourceModel):
-    db_url = os.getenv("DATABASE_URL", "postgresql://admin:predator_password@postgres:5432/predator_db")
+    db_url = os.getenv(
+        "DATABASE_URL", "postgresql://admin:predator_password@postgres:5432/predator_db"
+    )
     if "://" in db_url:
         scheme, rest = db_url.split("://", 1)
         if "+" in scheme:
@@ -177,7 +185,9 @@ async def create_source(source: CreateSourceModel):
 @router.get("/connectors", response_model=list[Connector])
 async def list_connectors():
     """Endpoint for ParsersView UI."""
-    db_url = os.getenv("DATABASE_URL", "postgresql://admin:predator_password@postgres:5432/predator_db")
+    db_url = os.getenv(
+        "DATABASE_URL", "postgresql://admin:predator_password@postgres:5432/predator_db"
+    )
     if "://" in db_url:
         scheme, rest = db_url.split("://", 1)
         if "+" in scheme:
@@ -208,16 +218,22 @@ async def list_connectors():
             if ftype == "web":
                 ftype = "website"
 
-            connectors.append({
-                "id": str(row["id"]),
-                "name": row["name"],
-                "type": ftype,
-                "status": row["status"] if row["status"] in ["active", "syncing", "error"] else "idle",
-                "lastSync": row["updated_at"].strftime("%H:%M %d.%m") if row["updated_at"] else "Never",
-                "itemsCount": row["count"] or 0,
-                "description": conf.get("url") or row["name"],
-                "config": conf,
-            })
+            connectors.append(
+                {
+                    "id": str(row["id"]),
+                    "name": row["name"],
+                    "type": ftype,
+                    "status": row["status"]
+                    if row["status"] in ["active", "syncing", "error"]
+                    else "idle",
+                    "lastSync": row["updated_at"].strftime("%H:%M %d.%m")
+                    if row["updated_at"]
+                    else "Never",
+                    "itemsCount": row["count"] or 0,
+                    "description": conf.get("url") or row["name"],
+                    "config": conf,
+                }
+            )
 
     except Exception as e:
         logger.exception(f"Failed to list connectors: {e}")

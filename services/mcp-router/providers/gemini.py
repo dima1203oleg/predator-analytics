@@ -53,7 +53,9 @@ class GeminiProvider(LLMProvider):
         if context:
             # Prepend context to prompt for simplicity in REST call
             context_str = json.dumps(context, indent=2)
-            payload["contents"][0]["parts"][0]["text"] = f"Context:\n{context_str}\n\nTask:\n{prompt}"
+            payload["contents"][0]["parts"][0]["text"] = (
+                f"Context:\n{context_str}\n\nTask:\n{prompt}"
+            )
 
         try:
             start_time = time.time()

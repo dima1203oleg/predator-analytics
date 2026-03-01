@@ -33,7 +33,9 @@ class LLMCache:
         payload = f"{model}:{prompt}:{context_str}"
         return f"llm_cache:{hashlib.sha256(payload.encode()).hexdigest()}"
 
-    async def get_cached(self, prompt: str, context: dict | None, model: str) -> dict[str, Any] | None:
+    async def get_cached(
+        self, prompt: str, context: dict | None, model: str
+    ) -> dict[str, Any] | None:
         try:
             key = self._generate_key(prompt, context, model)
             cached = await self.redis.get(key)
@@ -45,7 +47,9 @@ class LLMCache:
             logger.warning(f"Cache get failed: {e}")
             return None
 
-    async def set_cached(self, prompt: str, context: dict | None, model: str, response: dict[str, Any]) -> None:
+    async def set_cached(
+        self, prompt: str, context: dict | None, model: str, response: dict[str, Any]
+    ) -> None:
         try:
             key = self._generate_key(prompt, context, model)
             await self.redis.setex(key, self.ttl, json.dumps(response))

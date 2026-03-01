@@ -122,12 +122,16 @@ class MLTrainingPayload(BaseModel):
 
     dataset_id: str = Field(..., description="Dataset UUID")
     model_type: MLModelType = Field(default=MLModelType.AUTOML)
-    hyperparameters: dict[str, Any] = Field(default_factory=dict, description="Model hyperparameters")
+    hyperparameters: dict[str, Any] = Field(
+        default_factory=dict, description="Model hyperparameters"
+    )
     training_config: dict[str, Any] | None = Field(
         None, description="Advanced training config (epochs, batch_size, etc)"
     )
     auto_deploy: bool = Field(default=False, description="Auto-deploy if accuracy > threshold")
-    accuracy_threshold: float = Field(default=0.85, ge=0.0, le=1.0, description="Min accuracy for auto-deploy")
+    accuracy_threshold: float = Field(
+        default=0.85, ge=0.0, le=1.0, description="Min accuracy for auto-deploy"
+    )
 
     @field_validator("dataset_id")
     @classmethod
@@ -180,7 +184,13 @@ class IndexingTaskPayload(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
-                "documents": [{"id": "doc_001", "content": "Митна декларація...", "metadata": {"source": "customs"}}],
+                "documents": [
+                    {
+                        "id": "doc_001",
+                        "content": "Митна декларація...",
+                        "metadata": {"source": "customs"},
+                    }
+                ],
                 "index_name": "documents_2024",
                 "collection_name": "documents",
                 "batch_size": 100,
@@ -198,14 +208,21 @@ class MaintenanceTaskPayload(BaseModel):
     Task: tasks.maintenance.run_maintenance_task
     """
 
-    operation: str = Field(..., pattern="^(vacuum_db|reclaim_vectors|optimize_indexes|cleanup_old_data)$")
+    operation: str = Field(
+        ..., pattern="^(vacuum_db|reclaim_vectors|optimize_indexes|cleanup_old_data)$"
+    )
     target: str | None = Field(None, description="Specific target (table name, collection, etc)")
     dry_run: bool = Field(default=False, description="Simulate without applying changes")
     schedule_time: datetime | None = Field(None, description="Run at specific time")
 
     model_config = {
         "json_schema_extra": {
-            "example": {"operation": "vacuum_db", "target": "documents", "dry_run": False, "schedule_time": None}
+            "example": {
+                "operation": "vacuum_db",
+                "target": "documents",
+                "dry_run": False,
+                "schedule_time": None,
+            }
         }
     }
 

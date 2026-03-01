@@ -106,7 +106,9 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str = "postgres"
     POSTGRES_PORT: str = "5432"
     POSTGRES_DB: str = "predator_db"
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://admin:@postgres:5432/predator_db")
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL", "postgresql+asyncpg://admin:@postgres:5432/predator_db"
+    )
 
     @property
     def SYNC_DATABASE_URL(self) -> str:
@@ -228,7 +230,9 @@ class Settings(BaseSettings):
             if v == "change-in-production":
                 import logging
 
-                logging.warning("⚠️  SECURITY RISKS: Default SECRET_KEY detected! Use a strong key in production.")
+                logging.warning(
+                    "⚠️  SECURITY RISKS: Default SECRET_KEY detected! Use a strong key in production."
+                )
             return v
 
         model_config = SettingsConfigDict(

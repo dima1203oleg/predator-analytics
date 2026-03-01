@@ -23,8 +23,12 @@ class ServiceAgentOrchestrator:
 
         results = {
             "aider": await self._run_aider(component_path) if self.aider_enabled else "skipped",
-            "gemini_audit": await self._run_gemini_audit(component_path) if self.gemini_enabled else "skipped",
-            "mistral_lint": await self._run_mistral_lint(component_path) if self.mistral_enabled else "skipped",
+            "gemini_audit": await self._run_gemini_audit(component_path)
+            if self.gemini_enabled
+            else "skipped",
+            "mistral_lint": await self._run_mistral_lint(component_path)
+            if self.mistral_enabled
+            else "skipped",
         }
 
         logger.info("refinement_cycle_completed", results=results)

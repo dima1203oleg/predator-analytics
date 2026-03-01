@@ -39,7 +39,9 @@ class Settings(BaseSettings):
     CELERY_RESULT_BACKEND: str = "redis://redis:6379/1"
 
     # Message Queue (Event Bus)
-    RABBITMQ_URL: str = os.getenv("RABBITMQ_URL", "amqp://predator:predator_secret_key@rabbitmq:5672/")
+    RABBITMQ_URL: str = os.getenv(
+        "RABBITMQ_URL", "amqp://predator:predator_secret_key@rabbitmq:5672/"
+    )
 
     # Infrastructure
     QDRANT_URL: str = "http://qdrant:6333"
@@ -123,7 +125,9 @@ class Settings(BaseSettings):
     FLOWER_USER: str | None = "admin"
     FLOWER_PASSWORD: str | None = "admin"
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
+    )
 
 
 @lru_cache

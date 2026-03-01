@@ -63,7 +63,10 @@ class AgentOrchestrator:
 
     def get_stats(self) -> list[dict[str, Any]]:
         """Retrieve execution statistics from all agents."""
-        return [{"name": agent.name, "stats": agent.stats, "is_running": agent.is_running} for agent in self.agents]
+        return [
+            {"name": agent.name, "stats": agent.stats, "is_running": agent.is_running}
+            for agent in self.agents
+        ]
 
 
 # Global instance for easy access in FastAPI

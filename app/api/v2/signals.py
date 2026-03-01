@@ -20,8 +20,12 @@ router = APIRouter(prefix="/signals", tags=["v2-signals"])
 )
 async def list_signals(
     ueid: str | None = Query(None, description="Фільтр за UEID"),
-    layer: str | None = Query(None, description="behavioral | institutional | influence | structural | predictive"),
-    signal_type: str | None = Query(None, description="anomaly | alert | warning | info | prediction"),
+    layer: str | None = Query(
+        None, description="behavioral | institutional | influence | structural | predictive"
+    ),
+    signal_type: str | None = Query(
+        None, description="anomaly | alert | warning | info | prediction"
+    ),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
 ) -> SignalListResponse:

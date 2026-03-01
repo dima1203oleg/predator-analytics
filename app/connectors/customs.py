@@ -18,7 +18,9 @@ class CustomsConnector(BaseConnector):
     """
 
     def __init__(self):
-        super().__init__(name="UA Customs", base_url="https://data.gov.ua/api/3/action", timeout=30.0)
+        super().__init__(
+            name="UA Customs", base_url="https://data.gov.ua/api/3/action", timeout=30.0
+        )
         self.datasets = {
             "import_stats": "customs-import-stats",
             "export_stats": "customs-export-stats",
@@ -42,7 +44,9 @@ class CustomsConnector(BaseConnector):
         params = {"id": record_id}
         return await self._request("GET", "/package_show", params=params)
 
-    async def get_import_statistics(self, year: int | None = None, hs_code: str | None = None) -> ConnectorResult:
+    async def get_import_statistics(
+        self, year: int | None = None, hs_code: str | None = None
+    ) -> ConnectorResult:
         """Get import statistics."""
         # This would query actual customs data
         # For now, return placeholder
@@ -53,7 +57,9 @@ class CustomsConnector(BaseConnector):
             records_count=0,
         )
 
-    async def get_export_statistics(self, year: int | None = None, hs_code: str | None = None) -> ConnectorResult:
+    async def get_export_statistics(
+        self, year: int | None = None, hs_code: str | None = None
+    ) -> ConnectorResult:
         """Get export statistics."""
         return ConnectorResult(
             success=True,

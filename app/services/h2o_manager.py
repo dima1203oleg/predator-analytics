@@ -165,7 +165,15 @@ class H2OManager:
                     "fraud confirmed",
                 ]
                 # Indicators of normal behavior
-                low_risk_keywords = ["normal", "routine", "verified", "safe", "legitimate", "success", "no issues"]
+                low_risk_keywords = [
+                    "normal",
+                    "routine",
+                    "verified",
+                    "safe",
+                    "legitimate",
+                    "success",
+                    "no issues",
+                ]
 
                 if any(k in text_lower for k in high_risk_keywords):
                     return 0.9
@@ -204,16 +212,24 @@ class H2OManager:
 
                 if anomaly_count < target_minority_size:
                     # Created more anomalies
-                    flip_indices = df[df["is_anomaly"] == 0].sample(n=target_minority_size - anomaly_count).index
+                    flip_indices = (
+                        df[df["is_anomaly"] == 0]
+                        .sample(n=target_minority_size - anomaly_count)
+                        .index
+                    )
                     df.loc[flip_indices, "is_anomaly"] = 1
                 else:
                     # Create more normals
                     flip_indices = (
-                        df[df["is_anomaly"] == 1].sample(n=anomaly_count - (total_count - target_minority_size)).index
+                        df[df["is_anomaly"] == 1]
+                        .sample(n=anomaly_count - (total_count - target_minority_size))
+                        .index
                     )
                     df.loc[flip_indices, "is_anomaly"] = 0
 
-            logger.info(f"📊 Training on {len(df)} samples. Final Anomaly Count: {df['is_anomaly'].sum()}")
+            logger.info(
+                f"📊 Training on {len(df)} samples. Final Anomaly Count: {df['is_anomaly'].sum()}"
+            )
             logger.info(f"Columns available: {list(df.columns)}")
 
         # 2. Convert to H2O Frame via Pandas
@@ -245,7 +261,12 @@ class H2OManager:
 
             # Run AutoML
             logger.info(f"Training AutoML with predictors: {x}")
-            aml = H2OAutoML(max_models=5, seed=1, max_runtime_secs=120, project_name=f"predator_anomaly_{job_id}")
+            aml = H2OAutoML(
+                max_models=5,
+                seed=1,
+                max_runtime_secs=120,
+                project_name=f"predator_anomaly_{job_id}",
+            )
             aml.train(x=x, y=y, training_frame=hf)
 
             lb = aml.leaderboard
@@ -335,8 +356,14 @@ class H2OManager:
 
         loop = asyncio.get_running_loop()
         try:
-            predictions = await loop.run_in_executor(None, lambda: run_h2o_predict(latest_model_path, data))
-            return {"status": "success", "model": os.path.basename(latest_model_path), "predictions": predictions}
+            predictions = await loop.run_in_executor(
+                None, lambda: run_h2o_predict(latest_model_path, data)
+            )
+            return {
+                "status": "success",
+                "model": os.path.basename(latest_model_path),
+                "predictions": predictions,
+            }
         except Exception as e:
             return {"status": "error", "message": str(e)}
 

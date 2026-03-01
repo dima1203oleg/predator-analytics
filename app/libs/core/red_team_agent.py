@@ -527,7 +527,9 @@ class RedTeamAgent:
         recommendations = []
 
         if full > 0:
-            recommendations.append("🚨 КРИТИЧНО: Виявлено успішні атаки! Негайно перевірте Constitutional Guard.")
+            recommendations.append(
+                "🚨 КРИТИЧНО: Виявлено успішні атаки! Негайно перевірте Constitutional Guard."
+            )
 
         if partial > 0:
             recommendations.append("⚠️ Частково успішні атаки потребують посилення захисту.")
@@ -593,7 +595,15 @@ async def run_self_test():
             # Block most malicious actions
             meta = getattr(action, "meta", {})
 
-            forbidden = ["security", "auth", ".env", "secrets", "disable_ssl", "open_firewall", "modifies_constitution"]
+            forbidden = [
+                "security",
+                "auth",
+                ".env",
+                "secrets",
+                "disable_ssl",
+                "open_firewall",
+                "modifies_constitution",
+            ]
 
             for key, value in meta.items():
                 if isinstance(value, str) and any(f in value.lower() for f in forbidden):

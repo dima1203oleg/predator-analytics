@@ -62,7 +62,12 @@ class PipelineService:
     def _define_ingestion_pipeline(self) -> list[PipelineStep]:
         """Define data ingestion pipeline steps."""
         return [
-            PipelineStep(name="validate_file", function=self._validate_file_step, retry_count=1, timeout_seconds=60),
+            PipelineStep(
+                name="validate_file",
+                function=self._validate_file_step,
+                retry_count=1,
+                timeout_seconds=60,
+            ),
             PipelineStep(
                 name="parse_file",
                 function=self._parse_file_step,
@@ -96,7 +101,12 @@ class PipelineService:
     def _define_etl_pipeline(self) -> list[PipelineStep]:
         """Define ETL pipeline steps."""
         return [
-            PipelineStep(name="load_raw_data", function=self._load_raw_data_step, retry_count=2, timeout_seconds=1800),
+            PipelineStep(
+                name="load_raw_data",
+                function=self._load_raw_data_step,
+                retry_count=2,
+                timeout_seconds=1800,
+            ),
             PipelineStep(
                 name="clean_data",
                 function=self._clean_data_step,
@@ -131,7 +141,10 @@ class PipelineService:
         """Define indexing pipeline steps."""
         return [
             PipelineStep(
-                name="prepare_documents", function=self._prepare_documents_step, retry_count=1, timeout_seconds=600
+                name="prepare_documents",
+                function=self._prepare_documents_step,
+                retry_count=1,
+                timeout_seconds=600,
             ),
             PipelineStep(
                 name="generate_embeddings",
@@ -199,7 +212,10 @@ class PipelineService:
         """Define synthetic data generation pipeline."""
         return [
             PipelineStep(
-                name="analyze_source_data", function=self._analyze_source_data_step, retry_count=1, timeout_seconds=600
+                name="analyze_source_data",
+                function=self._analyze_source_data_step,
+                retry_count=1,
+                timeout_seconds=600,
             ),
             PipelineStep(
                 name="generate_synthetic",
@@ -228,7 +244,10 @@ class PipelineService:
         """Define self-improvement optimization pipeline."""
         return [
             PipelineStep(
-                name="analyze_performance", function=self._analyze_performance_step, retry_count=1, timeout_seconds=600
+                name="analyze_performance",
+                function=self._analyze_performance_step,
+                retry_count=1,
+                timeout_seconds=600,
             ),
             PipelineStep(
                 name="identify_improvements",
@@ -254,7 +273,11 @@ class PipelineService:
         ]
 
     async def execute_pipeline(
-        self, job_id: UUID, pipeline_type: JobType, dataset_id: UUID | None = None, config: dict[str, Any] | None = None
+        self,
+        job_id: UUID,
+        pipeline_type: JobType,
+        dataset_id: UUID | None = None,
+        config: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Execute a pipeline with proper error handling and status updates."""
         if pipeline_type not in self.pipelines:
@@ -285,7 +308,9 @@ class PipelineService:
                             raise ValueError(f"Dependency {dep} not found in results")
 
                 # Execute step with retry logic
-                step_result = await self._execute_step_with_retry(step, context, max_retries=step.retry_count)
+                step_result = await self._execute_step_with_retry(
+                    step, context, max_retries=step.retry_count
+                )
 
                 if step_result["success"]:
                     context["results"][step.name] = step_result["data"]
@@ -309,7 +334,9 @@ class PipelineService:
                 await self._update_job_status(job_id, JobStatus.RUNNING, progress)
 
             # Pipeline completed successfully
-            await self._update_job_status(job_id, JobStatus.COMPLETED, 100.0, result=context["results"])
+            await self._update_job_status(
+                job_id, JobStatus.COMPLETED, 100.0, result=context["results"]
+            )
 
             return {
                 "success": True,
@@ -347,7 +374,9 @@ class PipelineService:
         for attempt in range(max_retries + 1):
             try:
                 # Execute with timeout
-                result = await asyncio.wait_for(step.function(context), timeout=step.timeout_seconds)
+                result = await asyncio.wait_for(
+                    step.function(context), timeout=step.timeout_seconds
+                )
 
                 return {"success": True, "data": result, "attempt": attempt + 1}
 
@@ -357,7 +386,9 @@ class PipelineService:
 
             except Exception as e:
                 last_error = str(e)
-                logger.warning(f"Step {step.name} failed: {last_error} (attempt {attempt + 1}/{max_retries + 1})")
+                logger.warning(
+                    f"Step {step.name} failed: {last_error} (attempt {attempt + 1}/{max_retries + 1})"
+                )
 
             if attempt < max_retries:
                 # Exponential backoff
@@ -376,7 +407,11 @@ class PipelineService:
     ):
         """Update job status in database."""
         async with async_session_maker() as session:
-            update_data = {"status": status.value, "progress": progress, "updated_at": datetime.utcnow()}
+            update_data = {
+                "status": status.value,
+                "progress": progress,
+                "updated_at": datetime.utcnow(),
+            }
 
             if status == JobStatus.RUNNING and not update_data.get("started_at"):
                 update_data["started_at"] = datetime.utcnow()
@@ -417,7 +452,11 @@ class PipelineService:
             # Check file exists in MinIO
             try:
                 file_info = await self.minio_service.get_file_info("raw-data", dataset.file_path)
-                return {"valid": True, "file_size": file_info.size, "content_type": file_info.content_type}
+                return {
+                    "valid": True,
+                    "file_size": file_info.size,
+                    "content_type": file_info.content_type,
+                }
             except Exception as e:
                 raise ValueError(f"File not found in MinIO: {e}")
 

@@ -42,8 +42,17 @@ class ContentRouter:
             "vector_db": "qdrant",
             "collection": "business_embeddings",
         },
-        "general_intelligence": {"primary_db": "opensearch", "index": "general_intel", "vector_db": None},
-        "documents": {"primary_db": "postgresql", "table": "documents", "storage": "minio", "bucket": "documents"},
+        "general_intelligence": {
+            "primary_db": "opensearch",
+            "index": "general_intel",
+            "vector_db": None,
+        },
+        "documents": {
+            "primary_db": "postgresql",
+            "table": "documents",
+            "storage": "minio",
+            "bucket": "documents",
+        },
         "media_transcripts": {
             "primary_db": "opensearch",
             "index": "media_transcripts",
@@ -121,7 +130,9 @@ class TelegramIntelligencePipeline:
             result["classification"] = classification
 
             # Роутинг до баз даних
-            routing = ContentRouter.get_destination(classification.get("category", "general_intelligence"))
+            routing = ContentRouter.get_destination(
+                classification.get("category", "general_intelligence")
+            )
             result["routing"] = routing
 
             # Оновлення статистики
@@ -276,7 +287,9 @@ class TelegramIntelligencePipeline:
                 result = {"status": "unsupported", "extension": ext}
 
             return {
-                "text": result.get("records", [{}])[0].get("full_text", "")[:10000] if result.get("records") else "",
+                "text": result.get("records", [{}])[0].get("full_text", "")[:10000]
+                if result.get("records")
+                else "",
                 "file_name": file_name,
                 "mime_type": mime_type,
                 "file_size": document.get("file_size", 0),
@@ -347,7 +360,9 @@ class TelegramIntelligencePipeline:
             "pending_download": True,
         }
 
-    async def _classify_and_enrich(self, text: str, content_type: str, message: dict[str, Any]) -> dict[str, Any]:
+    async def _classify_and_enrich(
+        self, text: str, content_type: str, message: dict[str, Any]
+    ) -> dict[str, Any]:
         """Класифікація та збагачення контенту."""
         # Базова класифікація від media_processor
         base_classification = await self.media_processor._classify_content(text)

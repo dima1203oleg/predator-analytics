@@ -25,7 +25,12 @@ class VoiceCortex:
 
     def __init__(self):
         self.is_listening = False
-        self.supported_commands = ["start evolution", "stop system", "status report", "deploy patch"]
+        self.supported_commands = [
+            "start evolution",
+            "stop system",
+            "status report",
+            "deploy patch",
+        ]
 
     async def interpret_command(self, audio_data: str) -> dict[str, Any]:
         """Перетворює аудіо-сигнал (Base64 або URL) у команду для AZR."""
@@ -33,7 +38,11 @@ class VoiceCortex:
 
         # Simulation of LLM-based voice intent recognition
         # In real integration: speech_to_text -> LLM extraction -> command
-        command_map = {"evolution": "EVOLVE_UI_INTERFACE", "report": "SYSTEM_STATUS_REPORT", "fix": "MISTRAL_VIBE_TASK"}
+        command_map = {
+            "evolution": "EVOLVE_UI_INTERFACE",
+            "report": "SYSTEM_STATUS_REPORT",
+            "fix": "MISTRAL_VIBE_TASK",
+        }
 
         detected_intent = "unknown"
         for key in command_map:

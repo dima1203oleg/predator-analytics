@@ -59,7 +59,11 @@ class DatasetParser:
         file_path = Path(file_path)
 
         if not file_path.exists():
-            return {"success": False, "error": f"File not found: {file_path}", "file_path": str(file_path)}
+            return {
+                "success": False,
+                "error": f"File not found: {file_path}",
+                "file_path": str(file_path),
+            }
 
         # Parse the file using the appropriate parser
         parse_result = self.data_parser.parse(file_path)
@@ -184,7 +188,9 @@ class DatasetParser:
 
             # Map common column names to schema fields
             if "name" in row or "company" in row or "organization" in row:
-                record["name"] = str(row.get("name", row.get("company", row.get("organization", ""))))
+                record["name"] = str(
+                    row.get("name", row.get("company", row.get("organization", "")))
+                )
 
             if "registration" in row or "edrpou" in row or "reg_number" in row:
                 record["registration_number"] = str(
@@ -232,7 +238,9 @@ class DatasetParser:
                 record["position"] = str(row.get("position", row.get("role", row.get("title", ""))))
 
             if "company" in row or "organization" in row or "business" in row:
-                record["company"] = str(row.get("company", row.get("organization", row.get("business", ""))))
+                record["company"] = str(
+                    row.get("company", row.get("organization", row.get("business", "")))
+                )
 
             extracted_records.append(record)
 
@@ -262,7 +270,9 @@ class DatasetParser:
 
         return extracted_records
 
-    async def log_to_knowledge_graph(self, parse_result: dict[str, Any], namespace: str = "global") -> dict[str, Any]:
+    async def log_to_knowledge_graph(
+        self, parse_result: dict[str, Any], namespace: str = "global"
+    ) -> dict[str, Any]:
         """Log parsing results to Knowledge Graph.
 
         Args:
@@ -343,7 +353,10 @@ class DatasetParser:
                         }
 
                     entity_success = await knowledge_graph.add_node(
-                        node_type=node_type, node_id=entity_id, attributes=attributes, namespace=namespace
+                        node_type=node_type,
+                        node_id=entity_id,
+                        attributes=attributes,
+                        namespace=namespace,
                     )
 
                     if entity_success:
@@ -370,10 +383,18 @@ class DatasetParser:
 
         except ImportError:
             logger.warning("Knowledge Graph module not available - skipping KG logging")
-            return {"success": False, "error": "Knowledge Graph module not available", "warning": "KG logging skipped"}
+            return {
+                "success": False,
+                "error": "Knowledge Graph module not available",
+                "warning": "KG logging skipped",
+            }
         except Exception as e:
             logger.exception(f"Failed to log to Knowledge Graph: {e!s}")
-            return {"success": False, "error": f"Knowledge Graph logging failed: {e!s}", "exception": str(e)}
+            return {
+                "success": False,
+                "error": f"Knowledge Graph logging failed: {e!s}",
+                "exception": str(e),
+            }
 
 
 def create_dataset_parser() -> DatasetParser:

@@ -93,20 +93,24 @@ class AnomalyService:
         anomalies = []
         # If invert is True, we care about negative Z-scores (drops in value)
         is_anomaly = False
-        if (invert and z_score < -self.z_threshold) or (not invert and abs(z_score) > self.z_threshold):
+        if (invert and z_score < -self.z_threshold) or (
+            not invert and abs(z_score) > self.z_threshold
+        ):
             is_anomaly = True
 
         if is_anomaly:
-            anomalies.append({
-                "type": "statistical_outlier",
-                "method": "z_score",
-                "metric": metric_name,
-                "current_value": current_value,
-                "mean": mean,
-                "z_score": round(z_score, 2),
-                "severity": "high" if abs(z_score) > 4 else "medium",
-                "timestamp": datetime.now().isoformat(),
-            })
+            anomalies.append(
+                {
+                    "type": "statistical_outlier",
+                    "method": "z_score",
+                    "metric": metric_name,
+                    "current_value": current_value,
+                    "mean": mean,
+                    "z_score": round(z_score, 2),
+                    "severity": "high" if abs(z_score) > 4 else "medium",
+                    "timestamp": datetime.now().isoformat(),
+                }
+            )
 
         return anomalies
 

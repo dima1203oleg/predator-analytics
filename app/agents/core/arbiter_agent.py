@@ -14,7 +14,12 @@ class ArbiterAgent(BaseAgent):
 
     def __init__(self):
         super().__init__(AgentConfig(name="ArbiterAgent"))
-        self.quality_weights = {"length": 0.2, "specificity": 0.3, "completeness": 0.3, "structure": 0.2}
+        self.quality_weights = {
+            "length": 0.2,
+            "specificity": 0.3,
+            "completeness": 0.3,
+            "structure": 0.2,
+        }
 
     async def process(self, inputs: dict[str, Any]) -> AgentResponse:
         candidates = inputs.get("candidates", [])
@@ -24,7 +29,9 @@ class ArbiterAgent(BaseAgent):
 
         if not candidates:
             return AgentResponse(
-                agent_name=self.name, result={"best_response": "", "score": 0}, metadata={"method": "no_candidates"}
+                agent_name=self.name,
+                result={"best_response": "", "score": 0},
+                metadata={"method": "no_candidates"},
             )
 
         if len(candidates) == 1:
@@ -67,12 +74,16 @@ class ArbiterAgent(BaseAgent):
         elif length > 2000:
             length_score = 0.5
         else:
-            length_score = min(length / 200, 1.0) if length < 200 else max(0.5, 1 - (length - 1000) / 2000)
+            length_score = (
+                min(length / 200, 1.0) if length < 200 else max(0.5, 1 - (length - 1000) / 2000)
+            )
         score += self.quality_weights["length"] * length_score
 
         # Specificity score (наявність конкретних даних)
         specificity_indicators = ["ЄДРПОУ", "грн", "UAH", "%", "№", "код", "дата"]
-        specificity_count = sum(1 for ind in specificity_indicators if ind.lower() in response.lower())
+        specificity_count = sum(
+            1 for ind in specificity_indicators if ind.lower() in response.lower()
+        )
         specificity_score = min(specificity_count / 3, 1.0)
         score += self.quality_weights["specificity"] * specificity_score
 

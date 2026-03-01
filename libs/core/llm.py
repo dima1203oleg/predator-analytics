@@ -58,7 +58,9 @@ class LLMService:
         self.providers["mistral"] = {
             "base_url": settings.LLM_MISTRAL_BASE_URL,
             "model": settings.MISTRAL_MODEL,
-            "api_keys": [k.strip() for k in (settings.MISTRAL_API_KEY or "").split(",") if k.strip()],
+            "api_keys": [
+                k.strip() for k in (settings.MISTRAL_API_KEY or "").split(",") if k.strip()
+            ],
         }
         # Gemini
         gemini_keys = [k.strip() for k in (settings.GEMINI_API_KEY or "").split(",") if k.strip()]
@@ -90,7 +92,9 @@ class LLMService:
         if selected_provider not in self.providers:
             # Simple fallback logic
             for p in ["groq", "gemini", "mistral", "ollama"]:
-                if p in self.providers and self.providers[p].get("api_keys" if p != "ollama" else "base_url"):
+                if p in self.providers and self.providers[p].get(
+                    "api_keys" if p != "ollama" else "base_url"
+                ):
                     selected_provider = p
                     break
 
@@ -137,10 +141,17 @@ class LLMService:
                 timeout=60.0,
             )
             data = response.json()
-            text = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+            text = (
+                data.get("candidates", [{}])[0]
+                .get("content", {})
+                .get("parts", [{}])[0]
+                .get("text", "")
+            )
             return LLMResponse(True, text, "gemini", config["model"])
 
-    async def _call_openai_compatible(self, prompt, system, config, max_tokens, temperature, provider_name):
+    async def _call_openai_compatible(
+        self, prompt, system, config, max_tokens, temperature, provider_name
+    ):
         async with httpx.AsyncClient() as client:
             messages = []
             if system:
@@ -164,7 +175,9 @@ class LLMService:
                 timeout=60.0,
             )
             data = response.json()
-            return LLMResponse(True, data["choices"][0]["message"]["content"], provider_name, config["model"])
+            return LLMResponse(
+                True, data["choices"][0]["message"]["content"], provider_name, config["model"]
+            )
 
     async def _call_ollama(self, prompt, system, config, max_tokens, temperature):
         async with httpx.AsyncClient() as client:

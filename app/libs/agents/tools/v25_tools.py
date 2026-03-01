@@ -10,7 +10,8 @@ logger = logging.getLogger("tools.v45")
 
 
 @registry.register(
-    name="get_v45_pulse", description="Get real-time system pulse score and health status from v45 Aggregator"
+    name="get_v45_pulse",
+    description="Get real-time system pulse score and health status from v45 Aggregator",
 )
 async def get_v45_pulse() -> str:
     """Retrieve current health score, active alerts, and degradation reasons."""
@@ -53,7 +54,8 @@ async def manage_simulation(action: str, target: str = "backend", intensity: flo
 
 
 @registry.register(
-    name="trigger_guardian_recovery", description="Manually trigger the Self-Healing Guardian recovery loop"
+    name="trigger_guardian_recovery",
+    description="Manually trigger the Self-Healing Guardian recovery loop",
 )
 async def trigger_guardian_recovery() -> str:
     """Force the Guardian to run its auto-recovery logic immediately."""
@@ -66,7 +68,10 @@ async def trigger_guardian_recovery() -> str:
         return f"Guardian trigger failed: {e}"
 
 
-@registry.register(name="system_maintenance", description="Execute AI Maintenance tasks (vacuum_db, reclaim_vectors)")
+@registry.register(
+    name="system_maintenance",
+    description="Execute AI Maintenance tasks (vacuum_db, reclaim_vectors)",
+)
 async def system_maintenance(task: str) -> str:
     """Execute pro-active maintenance tasks to optimize performance.
     Tasks: vacuum_db, reclaim_vectors.
@@ -90,7 +95,8 @@ async def system_maintenance(task: str) -> str:
 
 
 @registry.register(
-    name="e2e_analyze", description="Execute E2E multi-database analysis across PostgreSQL, OpenSearch, and Qdrant"
+    name="e2e_analyze",
+    description="Execute E2E multi-database analysis across PostgreSQL, OpenSearch, and Qdrant",
 )
 async def e2e_analyze(query: str, databases: list[str] | None = None, limit: int = 10) -> str:
     """Perform cross-database analysis and pattern detection.
@@ -118,7 +124,10 @@ async def e2e_analyze(query: str, databases: list[str] | None = None, limit: int
         return json.dumps({"error": str(e), "success": False})
 
 
-@registry.register(name="optimizer_status", description="Get Autonomous Optimizer status, metrics and drift history")
+@registry.register(
+    name="optimizer_status",
+    description="Get Autonomous Optimizer status, metrics and drift history",
+)
 async def optimizer_status() -> str:
     """Get current autonomous optimizer status including:
     - Running state and interval
@@ -135,7 +144,9 @@ async def optimizer_status() -> str:
         return json.dumps({"error": str(e)})
 
 
-@registry.register(name="force_optimization", description="Force an immediate optimization check cycle")
+@registry.register(
+    name="force_optimization", description="Force an immediate optimization check cycle"
+)
 async def force_optimization() -> str:
     """Trigger immediate drift check and optimization if needed."""
     try:
@@ -149,7 +160,12 @@ async def force_optimization() -> str:
 
 @registry.register(name="create_case", description="Create a new case from analysis findings")
 async def create_case(
-    title: str, situation: str, conclusion: str, risk_score: int = 50, sector: str = "BIZ", status: str = "УВАГА"
+    title: str,
+    situation: str,
+    conclusion: str,
+    risk_score: int = 50,
+    sector: str = "BIZ",
+    status: str = "УВАГА",
 ) -> str:
     """Create a new case in the system.
 
@@ -181,7 +197,9 @@ async def create_case(
         return json.dumps({"error": str(e), "success": False})
 
 
-@registry.register(name="list_data_sources", description="List all available data sources and their status")
+@registry.register(
+    name="list_data_sources", description="List all available data sources and their status"
+)
 async def list_data_sources() -> str:
     """Get list of all data sources with their current status."""
     try:
@@ -196,7 +214,8 @@ async def list_data_sources() -> str:
 
 
 @registry.register(
-    name="query_database", description="Execute a query on a specific database (postgresql, opensearch, qdrant)"
+    name="query_database",
+    description="Execute a query on a specific database (postgresql, opensearch, qdrant)",
 )
 async def query_database(database: str, query: str, limit: int = 10) -> str:
     """Query a specific database.

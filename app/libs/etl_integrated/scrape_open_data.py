@@ -122,7 +122,9 @@ def main():
             print("Parsed data successfully")
 
             # Transform to unified schema
-            transform_result = transformer.transform_from_dataframe(parse_result.data, source_format="json")
+            transform_result = transformer.transform_from_dataframe(
+                parse_result.data, source_format="json"
+            )
 
             if transform_result.success:
                 print(f"Transformed {len(transform_result.data)} records")

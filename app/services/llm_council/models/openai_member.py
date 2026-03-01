@@ -28,11 +28,20 @@ class GPT4CouncilMember(CouncilMember):
         api_key = self.config.get("api_key") or os.getenv("OPENAI_API_KEY")
         self.client = AsyncOpenAI(api_key=api_key) if AsyncOpenAI is not None and api_key else None
 
-        self.default_params = {"temperature": 0.7, "max_tokens": 2000, **self.config.get("params", {})}
+        self.default_params = {
+            "temperature": 0.7,
+            "max_tokens": 2000,
+            **self.config.get("params", {}),
+        }
 
     async def generate_response(self, query: str, context: str | None = None) -> CouncilResponse:
         """Generate independent response."""
-        messages = [{"role": "system", "content": "You are an expert analyst providing detailed, accurate responses."}]
+        messages = [
+            {
+                "role": "system",
+                "content": "You are an expert analyst providing detailed, accurate responses.",
+            }
+        ]
 
         if context:
             messages.append({"role": "system", "content": f"Background context:\n{context}"})

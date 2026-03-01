@@ -11,7 +11,9 @@ logger = logging.getLogger(__name__)
 
 class PostgresDispatcher:
     def sync_fact(self, record: "CanonicalDeclaration"):
-        logger.info(f"[POSTGRES] Facts saved for {record.declaration_id}, value: {record.financials.total_value}")
+        logger.info(
+            f"[POSTGRES] Facts saved for {record.declaration_id}, value: {record.financials.total_value}"
+        )
         return True
 
 
@@ -29,7 +31,9 @@ class OpenSearchDispatcher:
 
 class QdrantDispatcher:
     def create_embedding(self, record: "CanonicalDeclaration"):
-        logger.info(f"[QDRANT] Vectorized {len(record.items)} descriptions for {record.actor.company_name}")
+        logger.info(
+            f"[QDRANT] Vectorized {len(record.items)} descriptions for {record.actor.company_name}"
+        )
         return True
 
 
@@ -60,9 +64,13 @@ class RouterEngine:
             self.qdrant.create_embedding(declaration)
 
             # Якщо всі 4 успішні - публікуємо подію DECLARATION_FULLY_ASSIMILATED в Redis/Kafka (mocked for now)
-            logger.info(f"🚀 [REACTOR] Declaration {declaration.declaration_id} FULLY ASSIMILATED across 4 dimensions.")
+            logger.info(
+                f"🚀 [REACTOR] Declaration {declaration.declaration_id} FULLY ASSIMILATED across 4 dimensions."
+            )
             return True
 
         except Exception as e:
-            logger.exception(f"[REACTOR ENGINE] Split failed for {declaration.declaration_id}: {e!s}")
+            logger.exception(
+                f"[REACTOR ENGINE] Split failed for {declaration.declaration_id}: {e!s}"
+            )
             return False

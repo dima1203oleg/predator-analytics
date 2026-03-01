@@ -109,13 +109,18 @@ class ExcelParser:
                             if current_row:
                                 if not headers:
                                     # Normalize headers
-                                    sorted_cols = sorted(current_row.keys(), key=lambda x: (len(x), x))
+                                    sorted_cols = sorted(
+                                        current_row.keys(), key=lambda x: (len(x), x)
+                                    )
                                     headers = [
-                                        str(current_row[c]) if current_row[c] else f"Col_{c}" for c in sorted_cols
+                                        str(current_row[c]) if current_row[c] else f"Col_{c}"
+                                        for c in sorted_cols
                                     ]
                                 else:
                                     row_dict = {}
-                                    sorted_cols = sorted(current_row.keys(), key=lambda x: (len(x), x))
+                                    sorted_cols = sorted(
+                                        current_row.keys(), key=lambda x: (len(x), x)
+                                    )
                                     for i, c in enumerate(sorted_cols):
                                         if i < len(headers):
                                             row_dict[headers[i]] = current_row.get(c)

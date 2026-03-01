@@ -47,7 +47,12 @@ async def get_data_sources(user: dict = Depends(get_current_user)):
 
                 # If status is indexed, implies it's ready
                 # status mapping: parsing -> SYNCING, indexed -> ONLINE, error -> ERROR
-                status_map = {"draft": "OFFLINE", "parsing": "SYNCING", "indexed": "ONLINE", "error": "ERROR"}
+                status_map = {
+                    "draft": "OFFLINE",
+                    "parsing": "SYNCING",
+                    "indexed": "ONLINE",
+                    "error": "ERROR",
+                }
 
                 # Resolve ML Status
                 ml_status = "IDLE"
@@ -55,22 +60,28 @@ async def get_data_sources(user: dict = Depends(get_current_user)):
                     stmt_ds = select(MLDataset).where(MLDataset.dvc_path == f"pg://{table_name}")
                     ds = (await sess.execute(stmt_ds)).scalars().first()
                     if ds:
-                        stmt_job = select(MLJob).where(MLJob.dataset_id == ds.id).order_by(MLJob.created_at.desc())
+                        stmt_job = (
+                            select(MLJob)
+                            .where(MLJob.dataset_id == ds.id)
+                            .order_by(MLJob.created_at.desc())
+                        )
                         job = (await sess.execute(stmt_job)).scalars().first()
                         if job:
                             ml_status = job.status.upper()
 
-                sources.append({
-                    "id": str(e.id),
-                    "name": e.name,
-                    "type": "UPLOADED" if e.connector == "upload" else "OFFICIAL",
-                    "status": status_map.get(e.status, "OFFLINE"),
-                    "records_count": config.get("last_count", 0),
-                    "size_mb": 0.0,  # Placeholder
-                    "last_update": e.updated_at.isoformat() if e.updated_at else "N/A",
-                    "table_name": table_name,
-                    "ml_status": ml_status,
-                })
+                sources.append(
+                    {
+                        "id": str(e.id),
+                        "name": e.name,
+                        "type": "UPLOADED" if e.connector == "upload" else "OFFICIAL",
+                        "status": status_map.get(e.status, "OFFLINE"),
+                        "records_count": config.get("last_count", 0),
+                        "size_mb": 0.0,  # Placeholder
+                        "last_update": e.updated_at.isoformat() if e.updated_at else "N/A",
+                        "table_name": table_name,
+                        "ml_status": ml_status,
+                    }
+                )
 
             return sources
 

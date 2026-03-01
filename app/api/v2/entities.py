@@ -39,7 +39,13 @@ async def resolve_entity(body: EntityCreate) -> EntityResponse:
         ueid = generate_ueid()
         is_new = True
 
-    logger.info("Entity resolved: ueid=%s name=%s edrpou=%s is_new=%s", ueid, name_normalized, body.edrpou, is_new)
+    logger.info(
+        "Entity resolved: ueid=%s name=%s edrpou=%s is_new=%s",
+        ueid,
+        name_normalized,
+        body.edrpou,
+        is_new,
+    )
 
     return EntityResponse(
         ueid=ueid,

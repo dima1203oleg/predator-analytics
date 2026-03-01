@@ -117,7 +117,12 @@ class PredatorAZRAgent(AZRAgentContract):
                 env["PYTHONPATH"] = f"{context.workspace_root}:{env.get('PYTHONPATH', '')}"
 
             result = subprocess.run(
-                cmd, check=False, capture_output=True, text=True, env=env, cwd=context.workspace_root
+                cmd,
+                check=False,
+                capture_output=True,
+                text=True,
+                env=env,
+                cwd=context.workspace_root,
             )
 
             if result.returncode != 0:

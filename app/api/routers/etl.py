@@ -38,7 +38,12 @@ async def list_jobs(limit: int = 50, offset: int = 0):
                     "source_file": j.source_file,
                     "state": j.state,
                     "progress": j.progress
-                    or {"percent": 0, "records_total": 0, "records_processed": 0, "records_indexed": 0},
+                    or {
+                        "percent": 0,
+                        "records_total": 0,
+                        "records_processed": 0,
+                        "records_indexed": 0,
+                    },
                     "constitutional_compliance": True,  # Aggregated compliance
                     "timestamps": {
                         "created_at": j.created_at.isoformat() if j.created_at else None,
@@ -115,7 +120,9 @@ async def get_global_status():
     async with get_db_ctx() as sess:
         # Active jobs
         stmt = select(ETLJob).where(
-            ETLJob.state.notin_([ETLState.COMPLETED.value, ETLState.FAILED.value, ETLState.CANCELLED.value])
+            ETLJob.state.notin_(
+                [ETLState.COMPLETED.value, ETLState.FAILED.value, ETLState.CANCELLED.value]
+            )
         )
         res = await sess.execute(stmt)
         active_jobs = res.scalars().all()
@@ -126,7 +133,11 @@ async def get_global_status():
             global_percent = min([j.progress.get("percent", 0) for j in active_jobs])
             global_percent = min(global_percent, 99)  # Never 100 if active
 
-        return {"etl_running": is_running, "global_progress": global_percent, "active_jobs_count": len(active_jobs)}
+        return {
+            "etl_running": is_running,
+            "global_progress": global_percent,
+            "active_jobs_count": len(active_jobs),
+        }
 
 
 @router.post("/process-local")
@@ -166,7 +177,10 @@ async def upload_and_process(file: UploadFile = File(...), dataset_type: str = "
 
 @router.post("/process")
 async def process_unified(
-    file: UploadFile = File(None), source_type: str = "excel", url: str | None = None, options: str | None = None
+    file: UploadFile = File(None),
+    source_type: str = "excel",
+    url: str | None = None,
+    options: str | None = None,
 ):
     """Уніфікований пайплайн обробки будь-якого типу джерела.
 

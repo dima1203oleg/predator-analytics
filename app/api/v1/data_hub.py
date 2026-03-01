@@ -76,7 +76,9 @@ async def get_source(source_id: UUID, current_user: User = Depends(get_current_u
 
 
 @router.put("/sources/{source_id}", response_model=SourceResponse)
-async def update_source(source_id: UUID, update_data: SourceUpdate, current_user: User = Depends(get_current_user)):
+async def update_source(
+    source_id: UUID, update_data: SourceUpdate, current_user: User = Depends(get_current_user)
+):
     """Update source."""
     source = await data_hub_service.update_source(source_id, update_data)
     if not source:
@@ -99,7 +101,9 @@ async def delete_source(source_id: UUID, current_user: User = Depends(get_curren
 
 
 @router.post("/datasets", response_model=DatasetResponse)
-async def create_dataset(dataset_data: DatasetCreate, current_user: User = Depends(get_current_user)):
+async def create_dataset(
+    dataset_data: DatasetCreate, current_user: User = Depends(get_current_user)
+):
     """Create new dataset."""
     try:
         return await data_hub_service.create_dataset(dataset_data)
@@ -117,7 +121,9 @@ async def list_datasets(
 ):
     """List datasets with filters."""
     try:
-        return await data_hub_service.list_datasets(source_id=source_id, status=status, limit=limit, offset=offset)
+        return await data_hub_service.list_datasets(
+            source_id=source_id, status=status, limit=limit, offset=offset
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -132,7 +138,9 @@ async def get_dataset(dataset_id: UUID, current_user: User = Depends(get_current
 
 
 @router.put("/datasets/{dataset_id}", response_model=DatasetResponse)
-async def update_dataset(dataset_id: UUID, update_data: DatasetUpdate, current_user: User = Depends(get_current_user)):
+async def update_dataset(
+    dataset_id: UUID, update_data: DatasetUpdate, current_user: User = Depends(get_current_user)
+):
     """Update dataset."""
     dataset = await data_hub_service.update_dataset(dataset_id, update_data)
     if not dataset:
@@ -188,7 +196,9 @@ async def upload_file_wizard(
     - Returns preview.
     """
     try:
-        return await data_hub_service.upload_file_wizard(file=file, source_name=source_name, description=description)
+        return await data_hub_service.upload_file_wizard(
+            file=file, source_name=source_name, description=description
+        )
     except HTTPException:
         raise
     except Exception as e:
@@ -196,7 +206,9 @@ async def upload_file_wizard(
 
 
 @router.post("/preview")
-async def preview_file(file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
+async def preview_file(
+    file: UploadFile = File(...), current_user: User = Depends(get_current_user)
+):
     """Generate preview of uploaded file without saving."""
     try:
         # Save to temp file
@@ -284,7 +296,9 @@ async def get_data_hub_stats(current_user: User = Depends(get_current_user)):
 
 
 @router.post("/datasets/{dataset_id}/retry")
-async def retry_dataset_processing(dataset_id: UUID, current_user: User = Depends(get_current_user)):
+async def retry_dataset_processing(
+    dataset_id: UUID, current_user: User = Depends(get_current_user)
+):
     """Retry failed dataset processing."""
     dataset = await data_hub_service.get_dataset(dataset_id)
     if not dataset:

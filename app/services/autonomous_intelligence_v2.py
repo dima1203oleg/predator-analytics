@@ -42,7 +42,15 @@ class PredictiveMetrics:
 
     def to_vector(self) -> np.ndarray:
         """Конвертація в вектор для ML."""
-        return np.array([self.cpu_usage, self.memory_usage, self.error_rate, self.response_time, self.throughput])
+        return np.array(
+            [
+                self.cpu_usage,
+                self.memory_usage,
+                self.error_rate,
+                self.response_time,
+                self.throughput,
+            ]
+        )
 
 
 @dataclass
@@ -101,50 +109,58 @@ class PredictiveAnalyzer:
         cpu_values = [m.cpu_usage for m in recent]
         cpu_trend = self._calculate_trend(cpu_values)
         if cpu_trend > 0.5 and cpu_values[-1] > 70:
-            predictions.append({
-                "type": "cpu_overload",
-                "severity": "high",
-                "eta_minutes": self._estimate_time_to_threshold(cpu_values, 90),
-                "current_value": cpu_values[-1],
-                "threshold": 90,
-                "trend": cpu_trend,
-            })
+            predictions.append(
+                {
+                    "type": "cpu_overload",
+                    "severity": "high",
+                    "eta_minutes": self._estimate_time_to_threshold(cpu_values, 90),
+                    "current_value": cpu_values[-1],
+                    "threshold": 90,
+                    "trend": cpu_trend,
+                }
+            )
 
         # Memory trend
         mem_values = [m.memory_usage for m in recent]
         mem_trend = self._calculate_trend(mem_values)
         if mem_trend > 0.3 and mem_values[-1] > 75:
-            predictions.append({
-                "type": "memory_leak",
-                "severity": "critical",
-                "eta_minutes": self._estimate_time_to_threshold(mem_values, 95),
-                "current_value": mem_values[-1],
-                "threshold": 95,
-                "trend": mem_trend,
-            })
+            predictions.append(
+                {
+                    "type": "memory_leak",
+                    "severity": "critical",
+                    "eta_minutes": self._estimate_time_to_threshold(mem_values, 95),
+                    "current_value": mem_values[-1],
+                    "threshold": 95,
+                    "trend": mem_trend,
+                }
+            )
 
         # Error rate spike
         error_values = [m.error_rate for m in recent]
         if self._detect_anomaly(error_values):
-            predictions.append({
-                "type": "error_spike",
-                "severity": "high",
-                "current_value": error_values[-1],
-                "baseline": np.mean(error_values[:-10]),
-                "deviation": self._calculate_deviation(error_values),
-            })
+            predictions.append(
+                {
+                    "type": "error_spike",
+                    "severity": "high",
+                    "current_value": error_values[-1],
+                    "baseline": np.mean(error_values[:-10]),
+                    "deviation": self._calculate_deviation(error_values),
+                }
+            )
 
         # Response time degradation
         rt_values = [m.response_time for m in recent]
         rt_trend = self._calculate_trend(rt_values)
         if rt_trend > 0.4 and rt_values[-1] > 1000:  # >1s
-            predictions.append({
-                "type": "performance_degradation",
-                "severity": "medium",
-                "current_value": rt_values[-1],
-                "baseline": np.mean(rt_values[:50]),
-                "trend": rt_trend,
-            })
+            predictions.append(
+                {
+                    "type": "performance_degradation",
+                    "severity": "medium",
+                    "current_value": rt_values[-1],
+                    "baseline": np.mean(rt_values[:50]),
+                    "trend": rt_trend,
+                }
+            )
 
         return predictions
 
@@ -220,7 +236,9 @@ class SelfLearningEngine:
 
         # Зберігати останні 100 записів для кожної стратегії
         if len(self.strategy_scores[record.action_taken]) > 100:
-            self.strategy_scores[record.action_taken] = self.strategy_scores[record.action_taken][-100:]
+            self.strategy_scores[record.action_taken] = self.strategy_scores[record.action_taken][
+                -100:
+            ]
 
     def get_strategy_confidence(self, strategy: str) -> float:
         """Отримати впевненість у стратегії."""
@@ -250,7 +268,9 @@ class SelfLearningEngine:
         return {
             "total_records": len(self.learning_records),
             "strategies_learned": len(self.strategy_scores),
-            "average_accuracy": np.mean([np.mean(scores) for scores in self.strategy_scores.values()])
+            "average_accuracy": np.mean(
+                [np.mean(scores) for scores in self.strategy_scores.values()]
+            )
             if self.strategy_scores
             else 0.0,
             "best_strategy": max(self.strategy_scores.keys(), key=self.get_strategy_confidence)
@@ -276,7 +296,9 @@ class AutonomousDecisionMaker:
 
         # Сортувати за серйозністю
         severity_order = {"critical": 3, "high": 2, "medium": 1, "low": 0}
-        predictions.sort(key=lambda p: severity_order.get(p.get("severity", "low"), 0), reverse=True)
+        predictions.sort(
+            key=lambda p: severity_order.get(p.get("severity", "low"), 0), reverse=True
+        )
 
         top_prediction = predictions[0]
 
@@ -284,10 +306,12 @@ class AutonomousDecisionMaker:
         decision_type = self._map_prediction_to_decision(top_prediction)
 
         # Отримати рекомендовану стратегію
-        strategy, confidence = self.learning_engine.recommend_strategy({
-            "prediction": top_prediction,
-            "state": current_state,
-        })
+        strategy, confidence = self.learning_engine.recommend_strategy(
+            {
+                "prediction": top_prediction,
+                "state": current_state,
+            }
+        )
 
         # Створити рішення
         decision = AutonomousDecision(
@@ -306,7 +330,9 @@ class AutonomousDecisionMaker:
             logger.info(f"🤖 AUTONOMOUS DECISION: {decision_type} (confidence: {confidence:.2%})")
             await self._execute_decision(decision)
         else:
-            logger.warning(f"⚠️ Decision confidence too low ({confidence:.2%}), requires manual approval")
+            logger.warning(
+                f"⚠️ Decision confidence too low ({confidence:.2%}), requires manual approval"
+            )
 
         return decision
 
@@ -335,7 +361,9 @@ class AutonomousDecisionMaker:
             f"Threshold: {prediction.get('threshold', 'N/A')}"
         )
 
-    def _generate_actions(self, decision_type: str, prediction: dict[str, Any]) -> list[dict[str, Any]]:
+    def _generate_actions(
+        self, decision_type: str, prediction: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Згенерувати список дій."""
         actions = []
 
@@ -357,9 +385,21 @@ class AutonomousDecisionMaker:
         """Оцінити очікуваний вплив."""
         # Базові оцінки впливу
         impact_estimates = {
-            "scale_up": {"cpu_reduction": 30.0, "response_time_improvement": 40.0, "cost_increase": 25.0},
-            "restart": {"memory_freed": 60.0, "downtime_seconds": 5.0, "error_rate_reduction": 80.0},
-            "optimize": {"performance_improvement": 25.0, "cpu_reduction": 15.0, "duration_minutes": 10.0},
+            "scale_up": {
+                "cpu_reduction": 30.0,
+                "response_time_improvement": 40.0,
+                "cost_increase": 25.0,
+            },
+            "restart": {
+                "memory_freed": 60.0,
+                "downtime_seconds": 5.0,
+                "error_rate_reduction": 80.0,
+            },
+            "optimize": {
+                "performance_improvement": 25.0,
+                "cpu_reduction": 15.0,
+                "duration_minutes": 10.0,
+            },
         }
 
         return impact_estimates.get(decision_type, {})
@@ -415,34 +455,44 @@ class DynamicResourceAllocator:
 
         # CPU-based scaling
         if metrics.cpu_usage > 80:
-            new_cores = min(self.current_allocation["cpu_cores"] + 1, self.max_allocation["cpu_cores"])
+            new_cores = min(
+                self.current_allocation["cpu_cores"] + 1, self.max_allocation["cpu_cores"]
+            )
             if new_cores != self.current_allocation["cpu_cores"]:
                 changes["cpu_cores"] = new_cores
                 self.current_allocation["cpu_cores"] = new_cores
 
         elif metrics.cpu_usage < 30:
-            new_cores = max(self.current_allocation["cpu_cores"] - 1, self.min_allocation["cpu_cores"])
+            new_cores = max(
+                self.current_allocation["cpu_cores"] - 1, self.min_allocation["cpu_cores"]
+            )
             if new_cores != self.current_allocation["cpu_cores"]:
                 changes["cpu_cores"] = new_cores
                 self.current_allocation["cpu_cores"] = new_cores
 
         # Memory-based scaling
         if metrics.memory_usage > 85:
-            new_memory = min(int(self.current_allocation["memory_mb"] * 1.5), self.max_allocation["memory_mb"])
+            new_memory = min(
+                int(self.current_allocation["memory_mb"] * 1.5), self.max_allocation["memory_mb"]
+            )
             if new_memory != self.current_allocation["memory_mb"]:
                 changes["memory_mb"] = new_memory
                 self.current_allocation["memory_mb"] = new_memory
 
         # Worker scaling based on throughput
         if metrics.throughput > 100 and metrics.response_time > 1000:
-            new_workers = min(self.current_allocation["workers"] + 2, self.max_allocation["workers"])
+            new_workers = min(
+                self.current_allocation["workers"] + 2, self.max_allocation["workers"]
+            )
             if new_workers != self.current_allocation["workers"]:
                 changes["workers"] = new_workers
                 self.current_allocation["workers"] = new_workers
 
         if changes:
             logger.info(f"🔧 Resource allocation adjusted: {changes}")
-            log_business_event(logger, "resource_allocation_changed", changes=changes, reason="automatic_scaling")
+            log_business_event(
+                logger, "resource_allocation_changed", changes=changes, reason="automatic_scaling"
+            )
 
         return changes
 
@@ -543,7 +593,9 @@ class AutonomousIntelligenceV2:
         """Отримати поточний стан системи."""
         async with get_db_ctx() as db:
             # Кількість активних джерел
-            sources_result = await db.execute(select(DataSource).where(DataSource.status == "indexed"))
+            sources_result = await db.execute(
+                select(DataSource).where(DataSource.status == "indexed")
+            )
             active_sources = len(sources_result.scalars().all())
 
             # Кількість запущених завдань

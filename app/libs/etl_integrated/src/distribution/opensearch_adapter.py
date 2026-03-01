@@ -60,7 +60,9 @@ class OpenSearchAdapter:
         try:
             # Validate data
             if not data:
-                return DistributionResult(False, "opensearch", error="No data provided for OpenSearch distribution")
+                return DistributionResult(
+                    False, "opensearch", error="No data provided for OpenSearch distribution"
+                )
 
             # Convert single record to list for uniform processing
             if isinstance(data, dict):
@@ -82,7 +84,9 @@ class OpenSearchAdapter:
 
             # Simulate document indexing
             record_count = len(data)
-            logger.info(f"Simulating OpenSearch indexing: {record_count} documents into index '{self.index_name}'")
+            logger.info(
+                f"Simulating OpenSearch indexing: {record_count} documents into index '{self.index_name}'"
+            )
 
             # Log sample document
             if len(data) > 0:
@@ -211,17 +215,19 @@ class OpenSearchAdapter:
             # Generate simulated results
             simulated_results = []
             for i in range(min(limit, 5)):  # Return up to 5 simulated results
-                simulated_results.append({
-                    "_id": str(uuid.uuid4()),
-                    "_score": 1.0 - (i * 0.1),  # Decreasing score
-                    "_source": {
-                        "name": f"Search Result {i + 1}",
-                        "age": 20 + i,
-                        "city": f"Search City {i + 1}",
-                        "score": 70.0 + (i * 5.0),
-                        "source_format": "json",
-                    },
-                })
+                simulated_results.append(
+                    {
+                        "_id": str(uuid.uuid4()),
+                        "_score": 1.0 - (i * 0.1),  # Decreasing score
+                        "_source": {
+                            "name": f"Search Result {i + 1}",
+                            "age": 20 + i,
+                            "city": f"Search City {i + 1}",
+                            "score": 70.0 + (i * 5.0),
+                            "source_format": "json",
+                        },
+                    }
+                )
 
             return DistributionResult(
                 True,
@@ -251,9 +257,15 @@ class OpenSearchAdapter:
             "index": self.index_name,
             "mappings": {
                 "properties": {
-                    "name": {"type": "text", "fields": {"keyword": {"type": "keyword", "ignore_above": 256}}},
+                    "name": {
+                        "type": "text",
+                        "fields": {"keyword": {"type": "keyword", "ignore_above": 256}},
+                    },
                     "age": {"type": "integer"},
-                    "city": {"type": "text", "fields": {"keyword": {"type": "keyword", "ignore_above": 256}}},
+                    "city": {
+                        "type": "text",
+                        "fields": {"keyword": {"type": "keyword", "ignore_above": 256}},
+                    },
                     "score": {"type": "float"},
                     "source_format": {"type": "keyword"},
                     "timestamp": {"type": "date"},
@@ -284,11 +296,15 @@ class OpenSearchAdapter:
         try:
             # Validate documents
             if not documents:
-                return DistributionResult(False, "opensearch", error="No documents provided for bulk indexing")
+                return DistributionResult(
+                    False, "opensearch", error="No documents provided for bulk indexing"
+                )
 
             # Simulate bulk indexing
             doc_count = len(documents)
-            logger.info(f"Simulating OpenSearch bulk indexing: {doc_count} documents into index '{self.index_name}'")
+            logger.info(
+                f"Simulating OpenSearch bulk indexing: {doc_count} documents into index '{self.index_name}'"
+            )
 
             return DistributionResult(
                 True,
@@ -324,7 +340,10 @@ class OpenSearchAdapter:
             return DistributionResult(
                 True,
                 "opensearch",
-                data={"index": self.index_name, "message": "Index refreshed successfully (simulated)"},
+                data={
+                    "index": self.index_name,
+                    "message": "Index refreshed successfully (simulated)",
+                },
             )
 
         except Exception as e:

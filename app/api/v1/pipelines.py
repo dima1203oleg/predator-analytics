@@ -55,7 +55,9 @@ async def execute_pipeline(
             job = await _create_generic_job(job_data, current_user.id)
 
         # Execute pipeline in background
-        background_tasks.add_task(pipeline_service.execute_pipeline, job.id, pipeline_type, dataset_id, config)
+        background_tasks.add_task(
+            pipeline_service.execute_pipeline, job.id, pipeline_type, dataset_id, config
+        )
 
         return {
             "success": True,
@@ -82,10 +84,19 @@ async def trigger_ingestion_pipeline(
 
         # Execute pipeline in background
         background_tasks.add_task(
-            pipeline_service.execute_pipeline, job.id, JobType.INGESTION, dataset_id, {"auto_index": True}
+            pipeline_service.execute_pipeline,
+            job.id,
+            JobType.INGESTION,
+            dataset_id,
+            {"auto_index": True},
         )
 
-        return {"success": True, "job_id": job.id, "dataset_id": dataset_id, "message": "Ingestion pipeline started"}
+        return {
+            "success": True,
+            "job_id": job.id,
+            "dataset_id": dataset_id,
+            "message": "Ingestion pipeline started",
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ingestion failed: {e!s}")
@@ -111,9 +122,16 @@ async def trigger_etl_pipeline(
         job = await _create_job(job_data)
 
         # Execute pipeline in background
-        background_tasks.add_task(pipeline_service.execute_pipeline, job.id, JobType.ETL, dataset_id, config)
+        background_tasks.add_task(
+            pipeline_service.execute_pipeline, job.id, JobType.ETL, dataset_id, config
+        )
 
-        return {"success": True, "job_id": job.id, "dataset_id": dataset_id, "message": "ETL pipeline started"}
+        return {
+            "success": True,
+            "job_id": job.id,
+            "dataset_id": dataset_id,
+            "message": "ETL pipeline started",
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"ETL failed: {e!s}")
@@ -139,9 +157,16 @@ async def trigger_indexing_pipeline(
         job = await _create_job(job_data)
 
         # Execute pipeline in background
-        background_tasks.add_task(pipeline_service.execute_pipeline, job.id, JobType.INDEXING, dataset_id, config)
+        background_tasks.add_task(
+            pipeline_service.execute_pipeline, job.id, JobType.INDEXING, dataset_id, config
+        )
 
-        return {"success": True, "job_id": job.id, "dataset_id": dataset_id, "message": "Indexing pipeline started"}
+        return {
+            "success": True,
+            "job_id": job.id,
+            "dataset_id": dataset_id,
+            "message": "Indexing pipeline started",
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Indexing failed: {e!s}")
@@ -167,9 +192,16 @@ async def trigger_training_pipeline(
         job = await _create_job(job_data)
 
         # Execute pipeline in background
-        background_tasks.add_task(pipeline_service.execute_pipeline, job.id, JobType.TRAINING, dataset_id, config)
+        background_tasks.add_task(
+            pipeline_service.execute_pipeline, job.id, JobType.TRAINING, dataset_id, config
+        )
 
-        return {"success": True, "job_id": job.id, "dataset_id": dataset_id, "message": "Training pipeline started"}
+        return {
+            "success": True,
+            "job_id": job.id,
+            "dataset_id": dataset_id,
+            "message": "Training pipeline started",
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Training failed: {e!s}")
@@ -195,7 +227,9 @@ async def trigger_synthetic_pipeline(
         job = await _create_job(job_data)
 
         # Execute pipeline in background
-        background_tasks.add_task(pipeline_service.execute_pipeline, job.id, JobType.SYNTHETIC, dataset_id, config)
+        background_tasks.add_task(
+            pipeline_service.execute_pipeline, job.id, JobType.SYNTHETIC, dataset_id, config
+        )
 
         return {
             "success": True,
@@ -226,7 +260,9 @@ async def trigger_optimization_pipeline(
         job = await _create_job(job_data)
 
         # Execute pipeline in background
-        background_tasks.add_task(pipeline_service.execute_pipeline, job.id, JobType.OPTIMIZATION, None, config)
+        background_tasks.add_task(
+            pipeline_service.execute_pipeline, job.id, JobType.OPTIMIZATION, None, config
+        )
 
         return {"success": True, "job_id": job.id, "message": "Optimization pipeline started"}
 
@@ -324,7 +360,11 @@ async def retry_pipeline_job(job_id: UUID, current_user: User = Depends(get_curr
 
         background_tasks = BackgroundTasks()
         background_tasks.add_task(
-            pipeline_service.execute_pipeline, job_id, JobType(job.job_type), job.dataset_id, job.config
+            pipeline_service.execute_pipeline,
+            job_id,
+            JobType(job.job_type),
+            job.dataset_id,
+            job.config,
         )
 
         return {"success": True, "job_id": job_id, "message": "Job retry started"}

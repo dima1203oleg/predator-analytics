@@ -38,7 +38,12 @@ class TelegramIngestRequest(BaseModel):
 
 
 async def process_file_async(
-    job_id: str, content: bytes, filename: str, file_type: str, user_id: str, dataset_name: str | None
+    job_id: str,
+    content: bytes,
+    filename: str,
+    file_type: str,
+    user_id: str,
+    dataset_name: str | None,
 ):
     """Background task to process file with granular progress updates."""
     job = ingestion_jobs.get(job_id)
@@ -228,7 +233,8 @@ async def upload_file(
 
     if file_ext not in allowed_extensions:
         raise HTTPException(
-            status_code=400, detail=f"Unsupported file format. Allowed: {', '.join(allowed_extensions)}"
+            status_code=400,
+            detail=f"Unsupported file format. Allowed: {', '.join(allowed_extensions)}",
         )
 
     # Read content (In prod: stream to disk/S3 for large files)
@@ -277,7 +283,9 @@ async def upload_file(
 
 @router.post("/telegram", response_model=dict)
 async def ingest_telegram(
-    request: TelegramIngestRequest, background_tasks: BackgroundTasks, current_user=Depends(get_current_user)
+    request: TelegramIngestRequest,
+    background_tasks: BackgroundTasks,
+    current_user=Depends(get_current_user),
 ):
     """Initiate Telegram channel parsing."""
     job_id = str(uuid.uuid4())
@@ -289,7 +297,9 @@ async def ingest_telegram(
         status=IngestionStatus.UPLOADING,
         user_id=getattr(current_user, "id", "anonymous"),
         created_at=datetime.utcnow(),
-        progress=IngestionProgress(stage="CREATED", percent=0, message="Запит на парсинг Telegram прийнято"),
+        progress=IngestionProgress(
+            stage="CREATED", percent=0, message="Запит на парсинг Telegram прийнято"
+        ),
     )
 
     ingestion_jobs[job_id] = job
@@ -317,23 +327,27 @@ async def list_jobs():
     """List all active and recent ingestion jobs."""
     jobs_list = []
     for job_id, job in ingestion_jobs.items():
-        jobs_list.append({
-            "job_id": job_id,
-            "source_file": job.filename,
-            "state": job.status.value,
-            "display_name": getattr(job, "display_name", job.filename),
-            "progress": {
-                "percent": job.progress.percent,
-                "records_processed": job.progress.current_item,
-                "records_total": job.progress.total_items,
-            },
-            "timestamps": {
-                "created_at": job.created_at.isoformat() if job.created_at else datetime.utcnow().isoformat(),
-                "updated_at": job.updated_at.isoformat()
-                if hasattr(job, "updated_at") and job.updated_at
-                else datetime.utcnow().isoformat(),
-            },
-        })
+        jobs_list.append(
+            {
+                "job_id": job_id,
+                "source_file": job.filename,
+                "state": job.status.value,
+                "display_name": getattr(job, "display_name", job.filename),
+                "progress": {
+                    "percent": job.progress.percent,
+                    "records_processed": job.progress.current_item,
+                    "records_total": job.progress.total_items,
+                },
+                "timestamps": {
+                    "created_at": job.created_at.isoformat()
+                    if job.created_at
+                    else datetime.utcnow().isoformat(),
+                    "updated_at": job.updated_at.isoformat()
+                    if hasattr(job, "updated_at") and job.updated_at
+                    else datetime.utcnow().isoformat(),
+                },
+            }
+        )
 
     # Sort by created_at descending
     jobs_list.sort(key=lambda x: x["timestamps"]["created_at"], reverse=True)

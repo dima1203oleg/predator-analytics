@@ -116,12 +116,14 @@ class PIIMaskingService:
         for field_type, pattern in self.pii_fields.items():
             matches = re.finditer(pattern, text)
             for match in matches:
-                detections.append({
-                    "type": field_type,
-                    "value": match.group(),
-                    "start": match.start(),
-                    "end": match.end(),
-                })
+                detections.append(
+                    {
+                        "type": field_type,
+                        "value": match.group(),
+                        "start": match.start(),
+                        "end": match.end(),
+                    }
+                )
 
         return detections
 
@@ -135,7 +137,9 @@ class PIIMaskingService:
         masked_text = text
         for detection in detections:
             masked_value = self._mask_value(detection["value"], detection["type"])
-            masked_text = masked_text[: detection["start"]] + masked_value + masked_text[detection["end"] :]
+            masked_text = (
+                masked_text[: detection["start"]] + masked_value + masked_text[detection["end"] :]
+            )
 
         return masked_text
 

@@ -79,12 +79,17 @@ def health_check():
             try:
                 minio_url = settings.MINIO_ENDPOINT
                 resp = await client.get(f"http://{minio_url}/minio/health/live")
-                results["components"]["minio"] = {"status": "healthy" if resp.status_code == 200 else "degraded"}
+                results["components"]["minio"] = {
+                    "status": "healthy" if resp.status_code == 200 else "degraded"
+                }
             except Exception as e:
                 results["components"]["minio"] = {"status": "unhealthy", "error": str(e)}
 
         # Overall status
-        all_healthy = all(c.get("status") in ["healthy", "green", "yellow"] for c in results["components"].values())
+        all_healthy = all(
+            c.get("status") in ["healthy", "green", "yellow"]
+            for c in results["components"].values()
+        )
         results["overall"] = "healthy" if all_healthy else "degraded"
 
         logger.info(f"[HEALTH] Check complete: {results['overall']}")
@@ -113,9 +118,18 @@ def collect_index_stats():
                 data = resp.json()
 
                 stats["opensearch"] = {
-                    "total_docs": data.get("_all", {}).get("primaries", {}).get("docs", {}).get("count", 0),
-                    "size_bytes": data.get("_all", {}).get("primaries", {}).get("store", {}).get("size_in_bytes", 0),
-                    "search_total": data.get("_all", {}).get("primaries", {}).get("search", {}).get("query_total", 0),
+                    "total_docs": data.get("_all", {})
+                    .get("primaries", {})
+                    .get("docs", {})
+                    .get("count", 0),
+                    "size_bytes": data.get("_all", {})
+                    .get("primaries", {})
+                    .get("store", {})
+                    .get("size_in_bytes", 0),
+                    "search_total": data.get("_all", {})
+                    .get("primaries", {})
+                    .get("search", {})
+                    .get("query_total", 0),
                 }
             except Exception as e:
                 stats["opensearch"]["error"] = str(e)
@@ -166,7 +180,9 @@ def collect_etl_metrics():
             metrics = {"timestamp": now.isoformat(), "staging": {}, "gold": {}, "processing": {}}
 
             # Staging metrics
-            metrics["staging"]["total"] = await conn.fetchval("SELECT COUNT(*) FROM staging.raw_data")
+            metrics["staging"]["total"] = await conn.fetchval(
+                "SELECT COUNT(*) FROM staging.raw_data"
+            )
             metrics["staging"]["unprocessed"] = await conn.fetchval(
                 "SELECT COUNT(*) FROM staging.raw_data WHERE processed = FALSE"
             )
@@ -186,7 +202,9 @@ def collect_etl_metrics():
             # Processing rate
             if metrics["staging"]["total"] > 0:
                 processed = metrics["staging"]["total"] - metrics["staging"]["unprocessed"]
-                metrics["processing"]["rate_percent"] = round(processed / metrics["staging"]["total"] * 100, 2)
+                metrics["processing"]["rate_percent"] = round(
+                    processed / metrics["staging"]["total"] * 100, 2
+                )
             else:
                 metrics["processing"]["rate_percent"] = 100.0
 

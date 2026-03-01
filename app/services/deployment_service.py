@@ -19,7 +19,9 @@ class DeploymentService:
         self.argocd_token = os.getenv("ARGOCD_TOKEN")
         self.repo_path = "/Users/dima-mac/Documents/Predator_21"
 
-    async def create_pull_request(self, branch_name: str, commit_message: str, code: str) -> dict[str, Any]:
+    async def create_pull_request(
+        self, branch_name: str, commit_message: str, code: str
+    ) -> dict[str, Any]:
         """Simulates Aider pushing a branch and creating a PR.
         In a real scenario, this would call 'aider --message "..." --commit' or Git APIs.
         """
@@ -34,9 +36,7 @@ class DeploymentService:
         try:
             # For the demo, we simulate success
             await asyncio.sleep(1)
-            pr_url = (
-                f"https://github.com/dima1203oleg/predator-analytics/pull/{branch_name.rsplit('-', maxsplit=1)[-1]}"
-            )
+            pr_url = f"https://github.com/dima1203oleg/predator-analytics/pull/{branch_name.rsplit('-', maxsplit=1)[-1]}"
             return {"success": True, "pr_url": pr_url, "branch": branch_name}
         except Exception as e:
             logger.exception(f"Failed to create PR: {e}")

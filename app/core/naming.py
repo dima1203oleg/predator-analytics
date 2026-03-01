@@ -17,7 +17,9 @@ class DataLayerType(Enum):
 
 class NamingPolicy:
     @staticmethod
-    def get_index_name(base_name: str, version: int = 1, type: DataLayerType = DataLayerType.OPENSEARCH) -> str:
+    def get_index_name(
+        base_name: str, version: int = 1, type: DataLayerType = DataLayerType.OPENSEARCH
+    ) -> str:
         """Generate canonical versioned name for an index/collection.
 
         Args:

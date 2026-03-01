@@ -38,12 +38,16 @@ class MonitoringService:
                 # CPU Query
                 cpu_resp = await client.get(
                     f"{self.prometheus_url}/api/v1/query",
-                    params={"query": "100 * (1 - avg(rate(node_cpu_seconds_total{mode='idle'}[5m])))"},
+                    params={
+                        "query": "100 * (1 - avg(rate(node_cpu_seconds_total{mode='idle'}[5m])))"
+                    },
                 )
                 # Memory Query
                 mem_resp = await client.get(
                     f"{self.prometheus_url}/api/v1/query",
-                    params={"query": "100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))"},
+                    params={
+                        "query": "100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))"
+                    },
                 )
 
                 if cpu_resp.status_code == 200:

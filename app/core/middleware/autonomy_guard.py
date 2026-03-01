@@ -45,7 +45,9 @@ class AutonomyGuardMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         # 3. Перевірка на заборонені дії
-        logger.info(f"🛡️ AutonomyGuard: Intercepted write request from Agent {agent_id} to {method} {path}")
+        logger.info(
+            f"🛡️ AutonomyGuard: Intercepted write request from Agent {agent_id} to {method} {path}"
+        )
 
         # Якщо шлях у білому списку -- дозволяємо
         for allowed_path in ALLOWED_WRITE_PATHS:

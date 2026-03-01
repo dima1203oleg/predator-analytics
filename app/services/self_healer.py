@@ -126,7 +126,9 @@ OUTPUT ONLY THE REFACTORED PYTHON CODE:"""
             try:
                 ast.parse(new_code)
             except SyntaxError as e:
-                logger.warning(f"Syntax error in first attempt: {e}. Retrying with error context...")
+                logger.warning(
+                    f"Syntax error in first attempt: {e}. Retrying with error context..."
+                )
                 # Second attempt with error feedback
                 new_code = await attempt_refactor(code_content, error_msg=str(e))
                 if not new_code:

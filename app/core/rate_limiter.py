@@ -64,7 +64,9 @@ class RateLimiter:
         midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
         return int(midnight.timestamp())
 
-    async def check(self, user_id: str, plan: str = "free", resource: str = "api") -> tuple[bool, int]:
+    async def check(
+        self, user_id: str, plan: str = "free", resource: str = "api"
+    ) -> tuple[bool, int]:
         """Check if request is allowed under rate limit.
 
         Args:
@@ -103,7 +105,9 @@ class RateLimiter:
             allowed = current <= limit
 
             if not allowed:
-                logger.warning(f"Rate limit exceeded: user={user_id}, plan={plan}, current={current}, limit={limit}")
+                logger.warning(
+                    f"Rate limit exceeded: user={user_id}, plan={plan}, current={current}, limit={limit}"
+                )
 
             return allowed, remaining
 

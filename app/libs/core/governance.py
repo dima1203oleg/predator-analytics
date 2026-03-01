@@ -69,7 +69,10 @@ class OperationalPolicy:
                     "reason": "Direct kubectl modification prohibited in PRODUCTION. Use GitOps (ArgoCD).",
                 }
             if "pip install" in cmd_lower:
-                return {"approved": False, "reason": "Runtime package installation prohibited in PRODUCTION."}
+                return {
+                    "approved": False,
+                    "reason": "Runtime package installation prohibited in PRODUCTION.",
+                }
 
         return {"approved": True, "reason": "Command is safe within current policy."}
 
@@ -101,7 +104,9 @@ class OperationalPolicy:
         """Request authorization for high-compute task (Constitutional Gatekeeping)."""
         arbiter = get_arbiter()
         decision = arbiter.decide(
-            action_type="high_compute_task", context={"component": component, **task_details}, sender="governance_lib"
+            action_type="high_compute_task",
+            context={"component": component, **task_details},
+            sender="governance_lib",
         )
 
         if decision.get("allowed"):

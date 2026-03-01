@@ -28,7 +28,10 @@ async def argocd_webhook(request: Request, background_tasks: BackgroundTasks):
         logger.exception(f"Failed to parse ArgoCD webhook payload: {e}")
         raise HTTPException(status_code=400, detail="Invalid JSON")
 
-    logger.info("Received ArgoCD webhook: %s", payload.get("application", {}).get("metadata", {}).get("name"))
+    logger.info(
+        "Received ArgoCD webhook: %s",
+        payload.get("application", {}).get("metadata", {}).get("name"),
+    )
     assistant = get_assistant()
     if not assistant:
         logger.warning("Telegram assistant not initialized; ignoring webhook")
@@ -57,7 +60,9 @@ async def process_argocd_event(payload: dict[str, Any], assistant) -> None:
     """Process a single ArgoCD webhook payload and notify assistant, optionally trigger rollback.
     This is a public helper so tests can call it directly.
     """
-    app = payload.get("application", {}).get("metadata", {}).get("name") or payload.get("application", {}).get("name")
+    app = payload.get("application", {}).get("metadata", {}).get("name") or payload.get(
+        "application", {}
+    ).get("name")
     status = payload.get("application", {}).get("status", {})
     op_state = payload.get("operationState") or status.get("operationState")
     health = status.get("health", {}).get("status") if status.get("health") else None
@@ -83,10 +88,16 @@ async def process_argocd_event(payload: dict[str, Any], assistant) -> None:
     if auto_rb is None:
         auto_rb = os.getenv("AUTO_ROLLBACK_ON_DEGRADE", "false").lower() in ("1", "true", "yes")
     if auto_rb and app and health and health.lower() != "healthy":
-        await assistant._send_telegram_message(chat, f"⚠️ App {app} unhealthy; attempting rollback...")
+        await assistant._send_telegram_message(
+            chat, f"⚠️ App {app} unhealthy; attempting rollback..."
+        )
         server, token = assistant._get_argocd_credentials("nvidia")
         ok, res = await assistant._call_argocd_api(
-            server, token, "POST", f"/applications/{app}/rollback", json_payload={"revision": "previous"}
+            server,
+            token,
+            "POST",
+            f"/applications/{app}/rollback",
+            json_payload={"revision": "previous"},
         )
         if ok:
             await assistant._send_telegram_message(chat, f"✅ Rollback requested for {app}")

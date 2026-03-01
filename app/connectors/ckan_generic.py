@@ -17,7 +17,9 @@ class CKANGenericConnector(BaseConnector):
     Works with data.gov.ua and similar platforms.
     """
 
-    def __init__(self, name: str = "CKAN Portal", base_url: str = "https://data.gov.ua/api/3/action"):
+    def __init__(
+        self, name: str = "CKAN Portal", base_url: str = "https://data.gov.ua/api/3/action"
+    ):
         super().__init__(name=name, base_url=base_url, timeout=30.0)
 
     async def search(self, query: str, limit: int = 20, **kwargs) -> ConnectorResult:
@@ -44,7 +46,11 @@ class CKANGenericConnector(BaseConnector):
         return await self._request("GET", "/resource_show", params=params)
 
     async def datastore_search(
-        self, resource_id: str, query: str | None = None, filters: dict | None = None, limit: int = 100
+        self,
+        resource_id: str,
+        query: str | None = None,
+        filters: dict | None = None,
+        limit: int = 100,
     ) -> ConnectorResult:
         """Search within a datastore resource.
 

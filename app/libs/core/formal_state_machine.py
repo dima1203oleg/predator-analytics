@@ -206,7 +206,9 @@ class FormalStateMachine[S: Enum]:
             return []
         return list(self._transitions[self._current_state].keys())
 
-    def fire(self, trigger: str, context: dict[str, Any] | None = None) -> tuple[bool, str, TransitionProof | None]:
+    def fire(
+        self, trigger: str, context: dict[str, Any] | None = None
+    ) -> tuple[bool, str, TransitionProof | None]:
         """Fire a transition.
 
         Args:
@@ -259,13 +261,15 @@ class FormalStateMachine[S: Enum]:
             if not holds:
                 # ROLLBACK
                 self._current_state = from_state
-                return (False, f"Global invariant '{invariant.name}' порушено: {reason}. Відкат.", None)
+                return (
+                    False,
+                    f"Global invariant '{invariant.name}' порушено: {reason}. Відкат.",
+                    None,
+                )
             invariants_held.append(invariant.name)
 
         # Generate proof
-        proof_data = (
-            f"{from_state.value}:{to_state.value}:{trigger}:{timestamp}:{json.dumps(self._context, sort_keys=True)}"
-        )
+        proof_data = f"{from_state.value}:{to_state.value}:{trigger}:{timestamp}:{json.dumps(self._context, sort_keys=True)}"
         proof = TransitionProof(
             from_state=from_state.value,
             to_state=to_state.value,
@@ -405,7 +409,9 @@ class NoErrorsInvariant(Invariant):
         return True, "Без критичних помилок"
 
 
-def create_etl_state_machine(initial_state: ETLState = ETLState.CREATED) -> FormalStateMachine[ETLState]:
+def create_etl_state_machine(
+    initial_state: ETLState = ETLState.CREATED,
+) -> FormalStateMachine[ETLState]:
     """Create formally verified ETL state machine.
 
     State Diagram:
@@ -422,9 +428,16 @@ def create_etl_state_machine(initial_state: ETLState = ETLState.CREATED) -> Form
     sm.add_transition(ETLState.CREATED, "START_UPLOAD", ETLState.UPLOADING)
     sm.add_transition(ETLState.UPLOADING, "UPLOAD_COMPLETE", ETLState.UPLOADED)
     sm.add_transition(ETLState.UPLOADED, "START_PROCESSING", ETLState.PROCESSING)
-    sm.add_transition(ETLState.PROCESSING, "PROCESSING_COMPLETE", ETLState.PROCESSED, guards=[RecordsProcessedGuard()])
+    sm.add_transition(
+        ETLState.PROCESSING,
+        "PROCESSING_COMPLETE",
+        ETLState.PROCESSED,
+        guards=[RecordsProcessedGuard()],
+    )
     sm.add_transition(ETLState.PROCESSED, "START_INDEXING", ETLState.INDEXING)
-    sm.add_transition(ETLState.INDEXING, "INDEXING_COMPLETE", ETLState.INDEXED, guards=[RecordsIndexedGuard()])
+    sm.add_transition(
+        ETLState.INDEXING, "INDEXING_COMPLETE", ETLState.INDEXED, guards=[RecordsIndexedGuard()]
+    )
     sm.add_transition(ETLState.INDEXED, "FINALIZE", ETLState.COMPLETED)
 
     # Failure transitions
@@ -491,7 +504,9 @@ class ConstitutionalApprovalGuard(Guard):
         return False, "Конституційне схвалення відсутнє"
 
 
-def create_ooda_state_machine(initial_state: OODAState = OODAState.IDLE) -> FormalStateMachine[OODAState]:
+def create_ooda_state_machine(
+    initial_state: OODAState = OODAState.IDLE,
+) -> FormalStateMachine[OODAState]:
     """Create formally verified OODA Loop state machine.
 
     State Diagram:
@@ -525,7 +540,13 @@ def create_ooda_state_machine(initial_state: OODAState = OODAState.IDLE) -> Form
     sm.add_transition(OODAState.PAUSED, "RESUME", OODAState.IDLE)
 
     # Emergency freeze (from any active state)
-    for state in [OODAState.OBSERVING, OODAState.ORIENTING, OODAState.DECIDING, OODAState.ACTING, OODAState.REFLECTING]:
+    for state in [
+        OODAState.OBSERVING,
+        OODAState.ORIENTING,
+        OODAState.DECIDING,
+        OODAState.ACTING,
+        OODAState.REFLECTING,
+    ]:
         sm.add_transition(state, "EMERGENCY_FREEZE", OODAState.FROZEN)
 
     sm.add_transition(OODAState.FROZEN, "UNFREEZE", OODAState.IDLE)

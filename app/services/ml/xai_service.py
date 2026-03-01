@@ -28,7 +28,9 @@ class XAIService:
         self._shap_explainer = None
         logger.info("XAI Service initialized")
 
-    def explain_rerank_score(self, query: str, document: str, score: float, top_k_features: int = 10) -> dict[str, Any]:
+    def explain_rerank_score(
+        self, query: str, document: str, score: float, top_k_features: int = 10
+    ) -> dict[str, Any]:
         """Explain why a document got a particular rerank score.
 
         Uses token importance analysis to show which words
@@ -61,7 +63,9 @@ class XAIService:
                 position_factor = 1.0 - (i / 200) * 0.2
                 importance *= position_factor
 
-                token_scores.append({"token": token, "importance": round(importance, 3), "position": i})
+                token_scores.append(
+                    {"token": token, "importance": round(importance, 3), "position": i}
+                )
 
             # Sort by importance
             token_scores.sort(key=lambda x: x["importance"], reverse=True)
@@ -87,7 +91,9 @@ class XAIService:
             logger.exception(f"Explanation generation failed: {e}")
             return {"method": "fallback", "error": str(e), "score": score}
 
-    def explain_with_shap(self, model, inputs: list[str], predictions: list[float]) -> list[dict[str, Any]]:
+    def explain_with_shap(
+        self, model, inputs: list[str], predictions: list[float]
+    ) -> list[dict[str, Any]]:
         """Generate SHAP explanations for model predictions.
 
         Note: Requires shap package and compatible model.
@@ -114,8 +120,12 @@ class XAIService:
                 exp = {
                     "input": inp[:200],
                     "prediction": pred,
-                    "shap_values": shap_values[i].values.tolist() if hasattr(shap_values[i], "values") else [],
-                    "base_value": float(shap_values[i].base_values) if hasattr(shap_values[i], "base_values") else 0,
+                    "shap_values": shap_values[i].values.tolist()
+                    if hasattr(shap_values[i], "values")
+                    else [],
+                    "base_value": float(shap_values[i].base_values)
+                    if hasattr(shap_values[i], "base_values")
+                    else 0,
                 }
                 explanations.append(exp)
 
@@ -128,7 +138,9 @@ class XAIService:
             logger.exception(f"SHAP explanation failed: {e}")
             return [{"error": str(e)}]
 
-    def explain_search_results(self, query: str, results: list[dict[str, Any]], top_k: int = 5) -> list[dict[str, Any]]:
+    def explain_search_results(
+        self, query: str, results: list[dict[str, Any]], top_k: int = 5
+    ) -> list[dict[str, Any]]:
         """Explain why each search result was ranked as it was.
 
         Args:

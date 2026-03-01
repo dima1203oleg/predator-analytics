@@ -25,7 +25,9 @@ class SovereignObserverModuleV45:
     def __init__(self):
         # Basis from v45-S (carried over)
         self.axiom_registry = AxiomRegistry(
-            settings.CONSTITUTION_PATH.replace("v45_CONSTITUTION.md", "axioms/v1/constitutional_axioms.yaml")
+            settings.CONSTITUTION_PATH.replace(
+                "v45_CONSTITUTION.md", "axioms/v1/constitutional_axioms.yaml"
+            )
         )
         self.test_runner = ConstitutionalTestRunner(
             suite_path=settings.CONSTITUTION_PATH.replace(
@@ -52,7 +54,10 @@ class SovereignObserverModuleV45:
         from app.libs.core.proposals import ProposalPriority
 
         proposal = ImprovementProposal(
-            title=title, description=description, priority=ProposalPriority.MEDIUM, proposed_by=AgentRole.ARCHITECT
+            title=title,
+            description=description,
+            priority=ProposalPriority.MEDIUM,
+            proposed_by=AgentRole.ARCHITECT,
         )
 
         return await self.coordination.submit_proposal(proposal)

@@ -18,7 +18,9 @@ class SystemPulseAgent(AutonomousAgent):
     """
 
     def __init__(self, api_base_url: str = "http://localhost:8000"):
-        super().__init__(name="SystemPulse_v45", capabilities=["health_monitor", "service_control", "self_heal"])
+        super().__init__(
+            name="SystemPulse_v45", capabilities=["health_monitor", "service_control", "self_heal"]
+        )
         self.api_base_url = api_base_url.rstrip("/")
 
     async def observe(self) -> Any:
@@ -27,7 +29,9 @@ class SystemPulseAgent(AutonomousAgent):
             import httpx
 
             async with httpx.AsyncClient() as client:
-                response = await client.get(f"{self.api_base_url}/api/v1/system/status", timeout=5.0)
+                response = await client.get(
+                    f"{self.api_base_url}/api/v1/system/status", timeout=5.0
+                )
                 if response.status_code == 200:
                     return response.json()
         except Exception as e:
@@ -44,10 +48,12 @@ class SystemPulseAgent(AutonomousAgent):
         if status != "HEALTHY":
             plan["should_act"] = True
             reasons = pulse.get("reasons", [])
-            plan["actions"].append({
-                "type": "log_degradation",
-                "details": f"System status {status}. Reasons: {reasons}",
-            })
+            plan["actions"].append(
+                {
+                    "type": "log_degradation",
+                    "details": f"System status {status}. Reasons: {reasons}",
+                }
+            )
 
             if any("Database" in str(r) for r in reasons):
                 plan["actions"].append({"type": "restart_component", "target": "postgres"})

@@ -61,7 +61,9 @@ class VectorStore:
                 logger.info(f"Creating Qdrant collection: {self.collection_name}")
                 self.client.create_collection(
                     self.collection_name,
-                    vectors_config=models.VectorParams(size=self.dim, distance=models.Distance.COSINE),
+                    vectors_config=models.VectorParams(
+                        size=self.dim, distance=models.Distance.COSINE
+                    ),
                 )
         except Exception as e:
             logger.exception(f"Failed to ensure collection: {e}")
@@ -82,7 +84,9 @@ class VectorStore:
         points = []
         for i, vec in enumerate(vectors):
             points.append(
-                models.PointStruct(id=str(uuid.uuid4()), vector=vec, payload={"text": texts[i], **payloads[i]})
+                models.PointStruct(
+                    id=str(uuid.uuid4()), vector=vec, payload={"text": texts[i], **payloads[i]}
+                )
             )
 
         if self.client:
@@ -104,7 +108,10 @@ class VectorStore:
 
         try:
             results = self.client.search(self.collection_name, query_vector=vec, limit=limit)
-            return [{"score": r.score, "text": r.payload.get("text"), "metadata": r.payload} for r in results]
+            return [
+                {"score": r.score, "text": r.payload.get("text"), "metadata": r.payload}
+                for r in results
+            ]
         except Exception as e:
             logger.exception(f"Search failed: {e}")
             return []

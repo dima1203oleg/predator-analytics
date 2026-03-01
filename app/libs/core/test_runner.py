@@ -41,7 +41,8 @@ class ConstitutionalTestRunner:
                 # Запис початку тесту в Truth Ledger (if client exists)
                 if self.truth_ledger:
                     self.truth_ledger.record_action(
-                        action_type="constitutional_test_start", payload={"test_id": test.get("test_id")}
+                        action_type="constitutional_test_start",
+                        payload={"test_id": test.get("test_id")},
                     )
 
                 try:
@@ -55,24 +56,32 @@ class ConstitutionalTestRunner:
                     if self.truth_ledger:
                         self.truth_ledger.record_action(
                             action_type="constitutional_test_result",
-                            payload={"test_id": test.get("test_id"), "passed": verified, "details": result},
+                            payload={
+                                "test_id": test.get("test_id"),
+                                "passed": verified,
+                                "details": result,
+                            },
                         )
 
-                    results.append({
-                        "test": test.get("test_id"),
-                        "category": cat_name,
-                        "passed": verified,
-                        "details": result,
-                    })
+                    results.append(
+                        {
+                            "test": test.get("test_id"),
+                            "category": cat_name,
+                            "passed": verified,
+                            "details": result,
+                        }
+                    )
 
                 except Exception as e:
                     logger.exception(f"Test {test.get('test_id')} failed: {e}")
-                    results.append({
-                        "test": test.get("test_id"),
-                        "category": cat_name,
-                        "passed": False,
-                        "error": str(e),
-                    })
+                    results.append(
+                        {
+                            "test": test.get("test_id"),
+                            "category": cat_name,
+                            "passed": False,
+                            "error": str(e),
+                        }
+                    )
 
         return self.generate_test_report(results)
 

@@ -25,7 +25,9 @@ class RedisClient:
             redis_url = settings.REDIS_URL
             logger.info(f"Connecting to Redis at {redis_url}...")
             try:
-                cls._instance = redis.from_url(redis_url, decode_responses=True, socket_connect_timeout=5)
+                cls._instance = redis.from_url(
+                    redis_url, decode_responses=True, socket_connect_timeout=5
+                )
                 # Test connection
                 await cls._instance.ping()
                 logger.info("✅ Connected to Redis")

@@ -76,9 +76,14 @@ class ConnectionManager:
         if tenant_id and tenant_id in self.active_connections:
             targets = self.active_connections[tenant_id]
             if targets:
-                await asyncio.gather(*[ws.send_text(payload) for ws in targets], return_exceptions=True)
+                await asyncio.gather(
+                    *[ws.send_text(payload) for ws in targets], return_exceptions=True
+                )
         elif self.broadcast_connections:
-            await asyncio.gather(*[ws.send_text(payload) for ws in self.broadcast_connections], return_exceptions=True)
+            await asyncio.gather(
+                *[ws.send_text(payload) for ws in self.broadcast_connections],
+                return_exceptions=True,
+            )
 
 
 manager = ConnectionManager()

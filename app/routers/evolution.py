@@ -67,7 +67,9 @@ async def get_evolution_status():
 
 
 @router.post("/start")
-async def start_evolution(config: EvolutionConfig | None = None, background_tasks: BackgroundTasks = None):
+async def start_evolution(
+    config: EvolutionConfig | None = None, background_tasks: BackgroundTasks = None
+):
     """Start a new evolution cycle."""
     global _evolution_state
 
@@ -94,7 +96,9 @@ async def start_evolution(config: EvolutionConfig | None = None, background_task
         new_tournament = NasTournamentDB(
             id=tournament_id,
             topic_id="evolution_cycle",
-            name=config.name if config else f"Evolution Cycle #{_evolution_state.current_generation}",
+            name=config.name
+            if config
+            else f"Evolution Cycle #{_evolution_state.current_generation}",
             dataset_id=config.dataset_id if config else "system",
             strategy=config.strategy if config else "EVOLUTIONARY",
             status="RUNNING",
@@ -106,7 +110,11 @@ async def start_evolution(config: EvolutionConfig | None = None, background_task
         session.add(new_tournament)
         await session.commit()
 
-    return {"message": "Evolution started", "status": _evolution_state, "tournament_id": tournament_id}
+    return {
+        "message": "Evolution started",
+        "status": _evolution_state,
+        "tournament_id": tournament_id,
+    }
 
 
 @router.post("/stop")
@@ -163,7 +171,9 @@ async def get_nas_tournaments():
     """Get list of NAS tournaments from Real DB."""
     try:
         async with async_session_maker() as session:
-            result = await session.execute(select(NasTournamentDB).order_by(desc(NasTournamentDB.start_time)))
+            result = await session.execute(
+                select(NasTournamentDB).order_by(desc(NasTournamentDB.start_time))
+            )
             tournaments = result.scalars().all()
 
             return [

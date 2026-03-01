@@ -36,7 +36,8 @@ class CodeReviewer:
         try:
             async with httpx.AsyncClient(timeout=60.0) as client:
                 resp = await client.post(
-                    MCP_ROUTER_URL, json={"prompt": prompt, "task_type": "code_review", "trace_id": "review-job-1"}
+                    MCP_ROUTER_URL,
+                    json={"prompt": prompt, "task_type": "code_review", "trace_id": "review-job-1"},
                 )
                 return resp.json()
         except Exception as e:

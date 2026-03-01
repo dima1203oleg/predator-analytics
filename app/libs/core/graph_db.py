@@ -15,7 +15,9 @@ class Neo4jGraph:
     Implements Section 5.3: Graph DB Schema and Relationships.
     """
 
-    def __init__(self, uri: str | None = None, user: str | None = None, password: str | None = None):
+    def __init__(
+        self, uri: str | None = None, user: str | None = None, password: str | None = None
+    ):
         self.uri = uri or os.getenv("NEO4J_URI", "bolt://neo4j:7687")
         self.user = user or os.getenv("NEO4J_USER", "neo4j")
         self.password = password or os.getenv("NEO4J_PASSWORD", "666666")

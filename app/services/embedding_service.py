@@ -71,7 +71,9 @@ class EmbeddingService:
         import requests
 
         try:
-            response = requests.post(self.ollama_url, json={"model": self.model_name, "prompt": text}, timeout=30.0)
+            response = requests.post(
+                self.ollama_url, json={"model": self.model_name, "prompt": text}, timeout=30.0
+            )
             response.raise_for_status()
             data = response.json()
             return data.get("embedding", [0.0] * self.vector_size)
@@ -151,7 +153,9 @@ class EmbeddingService:
                 logger.exception(f"Failed to load CLIP model: {e}")
                 raise
 
-    def generate_clip_embedding(self, text: str | None = None, image_path: str | None = None) -> list[float]:
+    def generate_clip_embedding(
+        self, text: str | None = None, image_path: str | None = None
+    ) -> list[float]:
         """Generate multimodal embedding using CLIP.
         Supports text OR image input.
         """

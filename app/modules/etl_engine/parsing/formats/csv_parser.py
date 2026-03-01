@@ -75,7 +75,11 @@ class CSVParser:
             return ParseResult(False, error=f"Failed to parse CSV: {e!s}")
 
     def parse_with_options(
-        self, file_path: str | Path, sep: str = ",", header: int | str | None = "infer", encoding: str = "utf-8"
+        self,
+        file_path: str | Path,
+        sep: str = ",",
+        header: int | str | None = "infer",
+        encoding: str = "utf-8",
     ) -> ParseResult:
         """Parse CSV with explicit options.
 

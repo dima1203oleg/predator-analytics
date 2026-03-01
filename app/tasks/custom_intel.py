@@ -74,7 +74,9 @@ class CustomsIntelProcessor:
 
             # Link to Companies (via EDRPOU)
             for code in edrpous:
-                part_id = await conn.fetchval("SELECT id FROM customs.participants WHERE code = $1", code)
+                part_id = await conn.fetchval(
+                    "SELECT id FROM customs.participants WHERE code = $1", code
+                )
                 if part_id:
                     await conn.execute(
                         """
@@ -102,14 +104,21 @@ class CustomsIntelProcessor:
             await conn.close()
 
     async def _sync_to_graph(
-        self, doc_id: str, hs_codes: list[str], decl_nums: list[str], edrpous: list[str], sentiment: str
+        self,
+        doc_id: str,
+        hs_codes: list[str],
+        decl_nums: list[str],
+        edrpous: list[str],
+        sentiment: str,
     ):
         """Sync findings to Neo4j Graph DB.
         Section 5.3: Mandatory nodes: Company, Declaration, Goods.
         """
         # Note: In real production, use a dedicated Neo4j driver.
         # This is the logic structure.
-        logger.info(f"Graph Sync: Linking post {doc_id} to {len(decl_nums)} decls and {len(edrpous)} companies.")
+        logger.info(
+            f"Graph Sync: Linking post {doc_id} to {len(decl_nums)} decls and {len(edrpous)} companies."
+        )
 
         # Cypher Example:
         # MERGE (post:TelegramPost {id: $doc_id})
@@ -129,12 +138,16 @@ def analyze_customs_intel(self, doc_id: str):
         conn = await asyncpg.connect(db_url)
         try:
             # Fetch document
-            doc = await conn.fetchrow("SELECT content, meta FROM gold.documents WHERE id = $1", uuid.UUID(doc_id))
+            doc = await conn.fetchrow(
+                "SELECT content, meta FROM gold.documents WHERE id = $1", uuid.UUID(doc_id)
+            )
             if not doc:
                 return
 
             processor = CustomsIntelProcessor(db_url)
-            await processor.process_telegram_document(doc_id, doc["content"], json.loads(doc["meta"]))
+            await processor.process_telegram_document(
+                doc_id, doc["content"], json.loads(doc["meta"])
+            )
         finally:
             await conn.close()
 

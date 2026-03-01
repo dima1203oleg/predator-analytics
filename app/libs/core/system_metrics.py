@@ -37,7 +37,9 @@ def get_cpu_usage() -> float:
                     load_1min = float(out.strip("{} ").split()[0])
                     # Normalize by core count? For now just raw load or capped.
                     # Getting core count without psutil:
-                    cores = int(subprocess.check_output(["sysctl", "-n", "hw.ncpu"]).decode().strip())
+                    cores = int(
+                        subprocess.check_output(["sysctl", "-n", "hw.ncpu"]).decode().strip()
+                    )
                     usage = (load_1min / cores) * 100.0
                     return min(100.0, usage)
                 except Exception:
@@ -110,4 +112,8 @@ def get_disk_usage(path: str = "/") -> float:
 
 def get_system_snapshot() -> SystemSnapshot:
     """Collect all core metrics."""
-    return SystemSnapshot(cpu_percent=get_cpu_usage(), memory_percent=get_memory_usage(), disk_percent=get_disk_usage())
+    return SystemSnapshot(
+        cpu_percent=get_cpu_usage(),
+        memory_percent=get_memory_usage(),
+        disk_percent=get_disk_usage(),
+    )

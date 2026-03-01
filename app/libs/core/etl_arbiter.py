@@ -23,8 +23,12 @@ class TruthLedgerClient:
         logger.info(f"TruthLedger: Recording {action_type} - {payload}")
         return {"status": "recorded", "timestamp": datetime.now().isoformat()}
 
-    async def record_violation(self, entity_type: str, entity_id: str, violations: list[str], severity: str):
-        logger.error(f"TruthLedger: VIOLATION {severity} for {entity_type}:{entity_id} - {violations}")
+    async def record_violation(
+        self, entity_type: str, entity_id: str, violations: list[str], severity: str
+    ):
+        logger.error(
+            f"TruthLedger: VIOLATION {severity} for {entity_type}:{entity_id} - {violations}"
+        )
         return {"status": "reported", "timestamp": datetime.now().isoformat()}
 
     async def get_etl_state(self, job_id: str):
@@ -61,7 +65,9 @@ class ETLSovereignArbiter:
             violations.append("ETL-AXIOM-003")
 
         # Аксіома 4: Indexing Result Truth
-        if job_state == ETLState.INDEXED and not await self.verify_indexing_result(job_id, job_data):
+        if job_state == ETLState.INDEXED and not await self.verify_indexing_result(
+            job_id, job_data
+        ):
             violations.append("ETL-AXIOM-004")
 
         # Аксіома 5: No Silent Failure
@@ -98,7 +104,10 @@ class ETLSovereignArbiter:
         # Historical progress check would happen here
         current_progress = job_data.get("progress", {}).get("percent", 0)
         # Simplified: check 100% rule
-        return not (current_progress >= 100 and job_data.get("state") not in [ETLState.COMPLETED, ETLState.FAILED])
+        return not (
+            current_progress >= 100
+            and job_data.get("state") not in [ETLState.COMPLETED, ETLState.FAILED]
+        )
 
     async def verify_indexing_result(self, job_id: str, job_data: dict) -> bool:
         indexed = job_data.get("progress", {}).get("records_indexed", 0)

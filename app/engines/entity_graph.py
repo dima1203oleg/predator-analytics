@@ -136,7 +136,12 @@ class EntityGraphEngine:
     async def upsert_edge(self, edge: GraphEdge) -> None:
         """Create or update an edge in the graph."""
         if not self._driver:
-            logger.debug("Graph stub: upsert_edge %s -[%s]-> %s", edge.source_ueid, edge.edge_type, edge.target_ueid)
+            logger.debug(
+                "Graph stub: upsert_edge %s -[%s]-> %s",
+                edge.source_ueid,
+                edge.edge_type,
+                edge.target_ueid,
+            )
             return
 
         query = f"""

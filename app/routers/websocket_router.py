@@ -59,7 +59,12 @@ async def realtime_metrics_websocket(websocket: WebSocket):
                     "percent": memory.percent,
                     "used": memory.used,
                 },
-                "disk": {"total": disk.total, "used": disk.used, "free": disk.free, "percent": disk.percent},
+                "disk": {
+                    "total": disk.total,
+                    "used": disk.used,
+                    "free": disk.free,
+                    "percent": disk.percent,
+                },
                 "network": {
                     "bytes_sent": net_io.bytes_sent,
                     "bytes_recv": net_io.bytes_recv,

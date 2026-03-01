@@ -24,7 +24,9 @@ class PredatorBotV45:
     """
 
     def __init__(self, token: str):
-        logger.warning("⚠️ DEPRECATED: PredatorBotV45 is initialized but should be replaced by WinSURF Bot.")
+        logger.warning(
+            "⚠️ DEPRECATED: PredatorBotV45 is initialized but should be replaced by WinSURF Bot."
+        )
         self.bot = Bot(token=token)
         self.dp = Dispatcher()
         self.temp_results = {}  # Store results for callbacks
@@ -68,7 +70,9 @@ class PredatorBotV45:
 
         from app.services.system_control_service import system_control_service
 
-        lockdown = "🚨 АКТИВНО (LOCKDOWN)" if await system_control_service.is_lockdown() else "✅ Вимкнено"
+        lockdown = (
+            "🚨 АКТИВНО (LOCKDOWN)" if await system_control_service.is_lockdown() else "✅ Вимкнено"
+        )
 
         status = (
             "🏥 **Статус Predator v45 | Neural Analytics.0**\n\n"
@@ -86,7 +90,8 @@ class PredatorBotV45:
         is_active = await system_control_service.toggle_lockdown()
         status = "✅ АКТИВОВАНО" if is_active else "❌ ВИМКНЕНО"
         await message.answer(
-            f"🔒 **РЕЖИМ БЛОКУВАННЯ: {status}**\nВсі деструктивні дії агентів обмежено.", parse_mode="Markdown"
+            f"🔒 **РЕЖИМ БЛОКУВАННЯ: {status}**\nВсі деструктивні дії агентів обмежено.",
+            parse_mode="Markdown",
         )
 
     async def cmd_queues(self, message: Message):
@@ -130,7 +135,9 @@ class PredatorBotV45:
             )
             await message.answer(response, parse_mode="Markdown", reply_markup=builder.as_markup())
         else:
-            await message.answer(f"❌ Помилка: {result.get('error')}\n\n{result.get('audit_report', '')}")
+            await message.answer(
+                f"❌ Помилка: {result.get('error')}\n\n{result.get('audit_report', '')}"
+            )
 
     async def handle_voice(self, message: Message):
         await message.answer("🎙 Отримую голосове повідомлення...")
@@ -229,11 +236,14 @@ class PredatorBotV45:
 
             await callback.message.answer("📄 **Створення Pull Request через Aider...**")
             res = await deployment_service.create_pull_request(
-                branch_name=f"fix-{task_id}", commit_message=f"AI Fix: {task['intent']}", code=task["code"]
+                branch_name=f"fix-{task_id}",
+                commit_message=f"AI Fix: {task['intent']}",
+                code=task["code"],
             )
             if res["success"]:
                 await callback.message.answer(
-                    f"✅ **PR Створено!**\n🔗 [Переглянути PR]({res['pr_url']})", parse_mode="Markdown"
+                    f"✅ **PR Створено!**\n🔗 [Переглянути PR]({res['pr_url']})",
+                    parse_mode="Markdown",
                 )
             else:
                 await callback.message.answer(f"❌ Помилка: {res['error']}")

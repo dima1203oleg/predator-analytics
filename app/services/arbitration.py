@@ -41,7 +41,9 @@ class ArbitrationEngine:
             {"id": "llama", "model": "llama3.1:8b"},
         ]
 
-    async def execute(self, prompt: str, council: list[dict[str, str]] | None = None) -> ArbitrationResult:
+    async def execute(
+        self, prompt: str, council: list[dict[str, str]] | None = None
+    ) -> ArbitrationResult:
         """Executes the arbitration cycle.
         1. Parallel inference
         2. Semantic Consensus (Voting)
@@ -64,7 +66,9 @@ class ArbitrationEngine:
             individual_responses[member["id"]] = results[idx]
 
         # 2. Consensus Selection via Semantic Voting
-        final_answer, best_model, confidence = await self._select_consensus(prompt, individual_responses)
+        final_answer, best_model, confidence = await self._select_consensus(
+            prompt, individual_responses
+        )
 
         result = ArbitrationResult(
             request_id=request_id,
@@ -76,7 +80,12 @@ class ArbitrationEngine:
             timestamp=datetime.now().isoformat(),
         )
 
-        logger.info("arbitration_cycle_completed", request_id=request_id, best_model=best_model, confidence=confidence)
+        logger.info(
+            "arbitration_cycle_completed",
+            request_id=request_id,
+            best_model=best_model,
+            confidence=confidence,
+        )
 
         # Async metrics logging
         self._log_metrics(result)
@@ -90,7 +99,9 @@ class ArbitrationEngine:
             provider = self.router._determine_provider(model_name)
             messages = [{"role": "user", "content": prompt}]
             # Use lower temperature for consistency
-            return await self.router._execute_provider_call(provider, model_name, messages, temp=0.3)
+            return await self.router._execute_provider_call(
+                provider, model_name, messages, temp=0.3
+            )
         except Exception as e:
             logger.exception("arbitration_model_failed", member=member_id, error=str(e))
             return f"Error: {e!s}"

@@ -51,12 +51,14 @@ class SlackService:
             response = self.client.conversations_list(types="public_channel", limit=100)
             channels = []
             for ch in response["channels"]:
-                channels.append({
-                    "id": ch["id"],
-                    "name": ch["name"],
-                    "members_count": ch["num_members"],
-                    "topic": ch["topic"]["value"],
-                })
+                channels.append(
+                    {
+                        "id": ch["id"],
+                        "name": ch["name"],
+                        "members_count": ch["num_members"],
+                        "topic": ch["topic"]["value"],
+                    }
+                )
             return channels
         except SlackApiError as e:
             logger.exception(f"Slack API error: {e}")
@@ -74,7 +76,13 @@ class SlackService:
                 if "subtype" in msg:
                     continue  # Skip system messages
 
-                messages.append({"ts": msg["ts"], "user": msg.get("user", "unknown"), "text": msg.get("text", "")})
+                messages.append(
+                    {
+                        "ts": msg["ts"],
+                        "user": msg.get("user", "unknown"),
+                        "text": msg.get("text", ""),
+                    }
+                )
             return messages
         except SlackApiError as e:
             logger.exception(f"Failed to fetch history: {e}")
@@ -91,14 +99,16 @@ class SlackService:
             if len(msg["text"]) < 10:
                 continue
 
-            documents.append({
-                "title": f"Slack Message in #{channel_id}",
-                "content": msg["text"],
-                "source": "slack",
-                "category": "communication",
-                "created_at": msg["ts"],  # Needs conversion logic
-                "metadata": {"channel_id": channel_id, "user_id": msg["user"]},
-            })
+            documents.append(
+                {
+                    "title": f"Slack Message in #{channel_id}",
+                    "content": msg["text"],
+                    "source": "slack",
+                    "category": "communication",
+                    "created_at": msg["ts"],  # Needs conversion logic
+                    "metadata": {"channel_id": channel_id, "user_id": msg["user"]},
+                }
+            )
 
         if not documents:
             return 0

@@ -62,13 +62,15 @@ class NotionService:
                             title = val["title"][0]["plain_text"]
                             break
 
-                results.append({
-                    "id": item["id"],
-                    "title": title,
-                    "url": item["url"],
-                    "type": item["object"],
-                    "last_edited": item["last_edited_time"],
-                })
+                results.append(
+                    {
+                        "id": item["id"],
+                        "title": title,
+                        "url": item["url"],
+                        "type": item["object"],
+                        "last_edited": item["last_edited_time"],
+                    }
+                )
             return results
 
         except Exception as e:

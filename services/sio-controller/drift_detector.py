@@ -37,11 +37,16 @@ class DriftDetector:
             "model_id": model_id,
             "drift_score": drift_score,
             "is_drifted": is_drifted,
-            "metrics": {"p_value": 1 - drift_score, "feature_importance_shift": random.random() < 0.2},
+            "metrics": {
+                "p_value": 1 - drift_score,
+                "feature_importance_shift": random.random() < 0.2,
+            },
         }
 
     def create_drift_event(self, analysis_result: dict[str, Any]) -> PredatorEvent:
         """Wraps analysis result into a PredatorEvent."""
         return PredatorEvent(
-            event_type="DataDriftDetected", source="sio-controller.drift_detector", context=analysis_result
+            event_type="DataDriftDetected",
+            source="sio-controller.drift_detector",
+            context=analysis_result,
         )

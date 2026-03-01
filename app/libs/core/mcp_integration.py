@@ -86,7 +86,11 @@ class MCPTool:
         """Convert to OpenAI function calling format."""
         return {
             "type": "function",
-            "function": {"name": self.name, "description": self.description, "parameters": self.parameters},
+            "function": {
+                "name": self.name,
+                "description": self.description,
+                "parameters": self.parameters,
+            },
         }
 
 
@@ -193,7 +197,9 @@ class MCPToolRegistry:
 
         # Clean old entries
         if tool_name in self._call_counts:
-            self._call_counts[tool_name] = [t for t in self._call_counts[tool_name] if t > minute_ago]
+            self._call_counts[tool_name] = [
+                t for t in self._call_counts[tool_name] if t > minute_ago
+            ]
         else:
             self._call_counts[tool_name] = []
 
@@ -215,7 +221,10 @@ class MCPToolRegistry:
         tool = self._tools.get(tool_name)
         if not tool:
             call = MCPToolCall(
-                call_id=call_id, tool_name=tool_name, arguments=arguments, error=f"Tool '{tool_name}' not found"
+                call_id=call_id,
+                tool_name=tool_name,
+                arguments=arguments,
+                error=f"Tool '{tool_name}' not found",
             )
             self._call_history.append(call)
             return call
@@ -223,14 +232,22 @@ class MCPToolRegistry:
         # Check auth if required
         if tool.requires_auth and not auth_context:
             call = MCPToolCall(
-                call_id=call_id, tool_name=tool_name, arguments=arguments, error="Authentication required"
+                call_id=call_id,
+                tool_name=tool_name,
+                arguments=arguments,
+                error="Authentication required",
             )
             self._call_history.append(call)
             return call
 
         # Check rate limit
         if not self._check_rate_limit(tool_name):
-            call = MCPToolCall(call_id=call_id, tool_name=tool_name, arguments=arguments, error="Rate limit exceeded")
+            call = MCPToolCall(
+                call_id=call_id,
+                tool_name=tool_name,
+                arguments=arguments,
+                error="Rate limit exceeded",
+            )
             self._call_history.append(call)
             return call
 
@@ -244,13 +261,21 @@ class MCPToolRegistry:
             duration = (time.perf_counter() - start) * 1000
 
             call = MCPToolCall(
-                call_id=call_id, tool_name=tool_name, arguments=arguments, result=result, duration_ms=duration
+                call_id=call_id,
+                tool_name=tool_name,
+                arguments=arguments,
+                result=result,
+                duration_ms=duration,
             )
 
         except Exception as e:
             duration = (time.perf_counter() - start) * 1000
             call = MCPToolCall(
-                call_id=call_id, tool_name=tool_name, arguments=arguments, error=str(e), duration_ms=duration
+                call_id=call_id,
+                tool_name=tool_name,
+                arguments=arguments,
+                error=str(e),
+                duration_ms=duration,
             )
 
         self._call_history.append(call)
@@ -317,7 +342,9 @@ class MCPClient:
                 import httpx
 
                 async with httpx.AsyncClient() as client:
-                    resp = await client.get(f"{self.config.endpoint}/health", timeout=self.config.timeout_seconds)
+                    resp = await client.get(
+                        f"{self.config.endpoint}/health", timeout=self.config.timeout_seconds
+                    )
                     if resp.status_code == 200:
                         self._connected = True
                         self._session_id = resp.headers.get("X-Session-ID")
@@ -502,7 +529,11 @@ class MCPAgentOrchestrator:
             parameters={
                 "type": "object",
                 "properties": {
-                    "limit": {"type": "integer", "description": "Number of entries to return", "default": 10}
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of entries to return",
+                        "default": 10,
+                    }
                 },
             },
             handler=query_truth_ledger,
@@ -518,7 +549,8 @@ class MCPAgentOrchestrator:
                 return {
                     "query": query,
                     "results": [
-                        {"label": node.label, "type": node.node_type.value, "similarity": sim} for node, sim in similar
+                        {"label": node.label, "type": node.node_type.value, "similarity": sim}
+                        for node, sim in similar
                     ],
                 }
             except Exception as e:
@@ -558,7 +590,9 @@ class MCPAgentOrchestrator:
                 handler = await make_handler(client, tool.name)
                 self.registry.register_tool(tool, handler)
 
-            logger.info(f"Registered MCP server: {config.name} with {len(client.available_tools)} tools")
+            logger.info(
+                f"Registered MCP server: {config.name} with {len(client.available_tools)} tools"
+            )
 
         return success
 
@@ -569,7 +603,11 @@ class MCPAgentOrchestrator:
             await client.disconnect()
 
     def configure_provider(
-        self, name: str, api_key: str | None = None, endpoint: str | None = None, model: str | None = None
+        self,
+        name: str,
+        api_key: str | None = None,
+        endpoint: str | None = None,
+        model: str | None = None,
     ) -> None:
         """Configure an AI provider."""
         self._providers[name] = {
@@ -619,29 +657,39 @@ class MCPAgentOrchestrator:
         # Agent loop
         for iteration in range(max_tool_calls):
             # Generate response (simulate for now)
-            response = await self._generate_response(provider, self._conversations[conversation_id], available_tools)
+            response = await self._generate_response(
+                provider, self._conversations[conversation_id], available_tools
+            )
 
             if response.get("tool_call"):
                 # Execute tool call
                 tool_call = response["tool_call"]
-                result = await self.registry.invoke(tool_call["name"], tool_call.get("arguments", {}))
+                result = await self.registry.invoke(
+                    tool_call["name"], tool_call.get("arguments", {})
+                )
 
                 tool_calls_made.append(result.to_dict())
 
                 # Add to conversation
-                self._conversations[conversation_id].append({
-                    "role": "assistant",
-                    "content": None,
-                    "tool_call": tool_call,
-                })
-                self._conversations[conversation_id].append({
-                    "role": "tool",
-                    "content": json.dumps(result.result or {"error": result.error}),
-                })
+                self._conversations[conversation_id].append(
+                    {
+                        "role": "assistant",
+                        "content": None,
+                        "tool_call": tool_call,
+                    }
+                )
+                self._conversations[conversation_id].append(
+                    {
+                        "role": "tool",
+                        "content": json.dumps(result.result or {"error": result.error}),
+                    }
+                )
             else:
                 # Final response
                 final_response = response.get("content", "No response generated")
-                self._conversations[conversation_id].append({"role": "assistant", "content": final_response})
+                self._conversations[conversation_id].append(
+                    {"role": "assistant", "content": final_response}
+                )
                 break
 
         return {
@@ -748,7 +796,9 @@ async def run_self_test():
 
     # Test agent run
     print("\n🤖 Testing Agent Run:")
-    response = await orchestrator.run_agent(prompt="What is the current system health?", provider="ollama")
+    response = await orchestrator.run_agent(
+        prompt="What is the current system health?", provider="ollama"
+    )
     print(f"  Response: {response['response'][:100]}...")
     print(f"  Tool calls: {len(response['tool_calls'])}")
 

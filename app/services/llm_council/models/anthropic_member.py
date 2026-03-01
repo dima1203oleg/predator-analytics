@@ -22,13 +22,21 @@ from app.services.llm_council import CouncilMember, CouncilResponse, PeerReview
 class ClaudeCouncilMember(CouncilMember):
     """Claude as a council member."""
 
-    def __init__(self, model_id: str = "claude-3-opus-20240229", config: dict[str, Any] | None = None):
+    def __init__(
+        self, model_id: str = "claude-3-opus-20240229", config: dict[str, Any] | None = None
+    ):
         super().__init__(model_id=model_id, provider="anthropic", config=config or {})
 
         api_key = self.config.get("api_key") or os.getenv("ANTHROPIC_API_KEY")
-        self.client = AsyncAnthropic(api_key=api_key) if AsyncAnthropic is not None and api_key else None
+        self.client = (
+            AsyncAnthropic(api_key=api_key) if AsyncAnthropic is not None and api_key else None
+        )
 
-        self.default_params = {"temperature": 0.7, "max_tokens": 2048, **self.config.get("params", {})}
+        self.default_params = {
+            "temperature": 0.7,
+            "max_tokens": 2048,
+            **self.config.get("params", {}),
+        }
 
     async def generate_response(self, query: str, context: str | None = None) -> CouncilResponse:
         """Generate independent response."""
@@ -55,7 +63,10 @@ class ClaudeCouncilMember(CouncilMember):
                 text=response_text,
                 confidence=self._estimate_confidence(response_text),
                 metadata={
-                    "usage": {"input_tokens": message.usage.input_tokens, "output_tokens": message.usage.output_tokens},
+                    "usage": {
+                        "input_tokens": message.usage.input_tokens,
+                        "output_tokens": message.usage.output_tokens,
+                    },
                     "stop_reason": message.stop_reason,
                 },
                 timestamp=datetime.now(),
@@ -131,7 +142,12 @@ Always respond with valid JSON in this format:
 
             return json.loads(json_str)
         except:
-            return {"score": 0.5, "strengths": [], "weaknesses": ["Could not parse review"], "critique": text}
+            return {
+                "score": 0.5,
+                "strengths": [],
+                "weaknesses": ["Could not parse review"],
+                "critique": text,
+            }
 
     def _estimate_confidence(self, text: str) -> float:
         """Estimate confidence from response text."""

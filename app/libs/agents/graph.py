@@ -50,7 +50,16 @@ def should_analyze(state: AgentState) -> str:
     messages = state.get("messages", [])
     if messages:
         last_content = messages[-1].get("content", "").lower()
-        analysis_keywords = ["аналіз", "analyze", "пошук", "search", "знайти", "find", "перевір", "check"]
+        analysis_keywords = [
+            "аналіз",
+            "analyze",
+            "пошук",
+            "search",
+            "знайти",
+            "find",
+            "перевір",
+            "check",
+        ]
         if any(kw in last_content for kw in analysis_keywords):
             return "analyze"
 
@@ -75,7 +84,9 @@ def create_agent_graph():
     workflow.set_entry_point("planner")
 
     # Conditional branch after planner: analyze or work
-    workflow.add_conditional_edges("planner", should_analyze, {"analyze": "analyzer", "skip_analysis": "worker"})
+    workflow.add_conditional_edges(
+        "planner", should_analyze, {"analyze": "analyzer", "skip_analysis": "worker"}
+    )
 
     # Static edges
     workflow.add_edge("analyzer", "worker")  # After analysis, worker processes results
@@ -112,7 +123,13 @@ def create_analysis_graph():
     workflow.add_conditional_edges(
         "critic",
         should_continue,
-        {"approve": END, "give_up": END, "retry": "analyzer", "next_step": END, "generate_cases": END},
+        {
+            "approve": END,
+            "give_up": END,
+            "retry": "analyzer",
+            "next_step": END,
+            "generate_cases": END,
+        },
     )
 
     return workflow.compile()

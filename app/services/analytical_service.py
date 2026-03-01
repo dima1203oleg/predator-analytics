@@ -64,8 +64,18 @@ class AnalyticalService:
                 },
             },
             "thresholds": [
-                {"range": "0.0–0.2", "status": "stable", "label": "✅ Stable", "action": "No action required"},
-                {"range": "0.2–0.4", "status": "watchlist", "label": "🔵 Watchlist", "action": "Monitor quarterly"},
+                {
+                    "range": "0.0–0.2",
+                    "status": "stable",
+                    "label": "✅ Stable",
+                    "action": "No action required",
+                },
+                {
+                    "range": "0.2–0.4",
+                    "status": "watchlist",
+                    "label": "🔵 Watchlist",
+                    "action": "Monitor quarterly",
+                },
                 {
                     "range": "0.4–0.6",
                     "status": "elevated",

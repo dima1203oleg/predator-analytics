@@ -41,7 +41,9 @@ class AESScanner:
         security_issues = self.scan_security()
         coverage_gaps = self.scan_coverage()
 
-        logger.info(f"Scan Complete. Found {len(security_issues)} security issues, {len(coverage_gaps)} coverage gaps.")
+        logger.info(
+            f"Scan Complete. Found {len(security_issues)} security issues, {len(coverage_gaps)} coverage gaps."
+        )
 
         if coverage_gaps:
             # In Phase 2: Call MCP Router -> Generate Test -> Create PR

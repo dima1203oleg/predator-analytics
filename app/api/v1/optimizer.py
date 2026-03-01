@@ -18,7 +18,9 @@ from app.services.auth_service import require_admin
 
 logger = logging.getLogger("api.optimizer")
 
-router = APIRouter(prefix="/optimizer", tags=["Auto-Optimization"], dependencies=[Depends(require_admin)])
+router = APIRouter(
+    prefix="/optimizer", tags=["Auto-Optimization"], dependencies=[Depends(require_admin)]
+)
 
 
 # ============================================================================
@@ -102,7 +104,9 @@ async def trigger_optimization(request: TriggerOptimizationRequest):
 
         optimizer = get_auto_optimizer()
 
-        logger.info(f"Manual optimization triggered: force={request.force}, target={request.target}")
+        logger.info(
+            f"Manual optimization triggered: force={request.force}, target={request.target}"
+        )
 
         # Запускаємо цикл
         await optimizer.run_optimization_cycle()
@@ -162,7 +166,11 @@ async def get_optimization_history(limit: int = 50):
         optimizer = get_auto_optimizer()
         history = optimizer.optimization_history[-limit:]
 
-        return {"total": len(optimizer.optimization_history), "showing": len(history), "history": history}
+        return {
+            "total": len(optimizer.optimization_history),
+            "showing": len(history),
+            "history": history,
+        }
 
     except Exception as e:
         logger.exception(f"Failed to get history: {e}")

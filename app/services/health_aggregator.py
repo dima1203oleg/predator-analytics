@@ -100,7 +100,11 @@ class HealthAggregatorService:
                 "status": "HEALTHY" if score > 80 else ("DEGRADED" if score > 40 else "CRITICAL"),
                 "reasons": reasons,
                 "timestamp": datetime.utcnow().isoformat(),
-                "metrics": {"cpu": cpu, "memory": memory, "active_threads": psutil.Process().num_threads()},
+                "metrics": {
+                    "cpu": cpu,
+                    "memory": memory,
+                    "active_threads": psutil.Process().num_threads(),
+                },
                 "components": {
                     "monitoring": "OK",
                     "training": training.get("status", "unknown"),
@@ -119,7 +123,9 @@ class HealthAggregatorService:
 
     async def _trigger_autonomous_fix(self, reasons: list[str]):
         """Escalates critical issues to Trinity Agent for autonomous arbitration."""
-        logger.warning(f"🚨 SYSTEM CRITICAL! Escalating to Trinity Agent for Arbitration: {reasons}")
+        logger.warning(
+            f"🚨 SYSTEM CRITICAL! Escalating to Trinity Agent for Arbitration: {reasons}"
+        )
         try:
             from .triple_agent_service import triple_agent_service
 
@@ -137,13 +143,17 @@ class HealthAggregatorService:
 
         for reason in reasons:
             if reason not in current_titles:
-                self._alerts.append({
-                    "id": str(uuid.uuid4()),
-                    "title": reason,
-                    "severity": "high" if "Offline" in reason or "Critical" in reason else "warning",
-                    "timestamp": datetime.utcnow().isoformat(),
-                    "acknowledged": False,
-                })
+                self._alerts.append(
+                    {
+                        "id": str(uuid.uuid4()),
+                        "title": reason,
+                        "severity": "high"
+                        if "Offline" in reason or "Critical" in reason
+                        else "warning",
+                        "timestamp": datetime.utcnow().isoformat(),
+                        "acknowledged": False,
+                    }
+                )
 
         # Cleanup acknowledged/old alerts if needed
         if len(self._alerts) > 50:

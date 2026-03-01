@@ -22,7 +22,9 @@ class ChatRequest(BaseModel):
 
 
 @router.post("/chat")
-async def chat_interaction(request: ChatRequest, supervisor: NexusSupervisor = Depends(get_nexus_supervisor)):
+async def chat_interaction(
+    request: ChatRequest, supervisor: NexusSupervisor = Depends(get_nexus_supervisor)
+):
     """Direct interface to Nexus Supervisor (The Brain).
     Supports Voice Interaction via text-to-text.
 
@@ -66,7 +68,10 @@ async def text_to_speech(request: SpeakRequest):
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 "https://texttospeech.googleapis.com/v1/text:synthesize",
-                headers={"X-Goog-Api-Key": settings.GOOGLE_TTS_API_KEY, "Content-Type": "application/json"},
+                headers={
+                    "X-Goog-Api-Key": settings.GOOGLE_TTS_API_KEY,
+                    "Content-Type": "application/json",
+                },
                 json={
                     "input": {"text": request.text},
                     "voice": {"languageCode": request.language, "ssmlGender": request.gender},
@@ -77,7 +82,9 @@ async def text_to_speech(request: SpeakRequest):
 
             if response.status_code != 200:
                 logger.error(f"Google TTS Error: {response.text}")
-                raise HTTPException(status_code=response.status_code, detail="TTS Generation failed")
+                raise HTTPException(
+                    status_code=response.status_code, detail="TTS Generation failed"
+                )
 
             data = response.json()
             return {"audioContent": data["audioContent"]}  # Base64 encoded MP3

@@ -46,7 +46,11 @@ class ReportGenerator:
         os.makedirs(self.reports_dir, exist_ok=True)
 
     def generate_pdf(
-        self, run_id: str, data: dict[str, Any], include_watermark: bool = True, include_signature: bool = True
+        self,
+        run_id: str,
+        data: dict[str, Any],
+        include_watermark: bool = True,
+        include_signature: bool = True,
     ) -> dict[str, Any]:
         """Generate PDF report."""
         try:
@@ -106,15 +110,17 @@ class ReportGenerator:
 
             table = Table(stats, colWidths=[3 * inch, 2 * inch])
             table.setStyle(
-                TableStyle([
-                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#4472C4")),
-                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                    ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                    ("FONTSIZE", (0, 0), (-1, -1), 10),
-                    ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
-                    ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
-                ])
+                TableStyle(
+                    [
+                        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#4472C4")),
+                        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                        ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                        ("FONTSIZE", (0, 0), (-1, -1), 10),
+                        ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                    ]
+                )
             )
 
             table.wrapOn(c, width, height)
@@ -137,24 +143,28 @@ class ReportGenerator:
 
             model_data = [["Модель", "Кількість викликів", "Середній час"]]
             for model in models_used:
-                model_data.append([
-                    model.get("name", "Unknown"),
-                    str(model.get("calls", 0)),
-                    model.get("avg_latency", "N/A"),
-                ])
+                model_data.append(
+                    [
+                        model.get("name", "Unknown"),
+                        str(model.get("calls", 0)),
+                        model.get("avg_latency", "N/A"),
+                    ]
+                )
 
             model_table = Table(model_data, colWidths=[2 * inch, 2 * inch, 1.5 * inch])
             from reportlab.lib import colors
 
             model_table.setStyle(
-                TableStyle([
-                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#4472C4")),
-                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                    ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                    ("FONTSIZE", (0, 0), (-1, -1), 10),
-                    ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
-                ])
+                TableStyle(
+                    [
+                        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#4472C4")),
+                        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                        ("FONTSIZE", (0, 0), (-1, -1), 10),
+                        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                    ]
+                )
             )
 
             model_table.wrapOn(c, width, height)
@@ -328,7 +338,9 @@ startxref
 
         return {"success": True, "path": filepath, "filename": filename, "basic": True}
 
-    def generate_markdown(self, run_id: str, data: dict[str, Any], logs: list[str] | None = None) -> dict[str, Any]:
+    def generate_markdown(
+        self, run_id: str, data: dict[str, Any], logs: list[str] | None = None
+    ) -> dict[str, Any]:
         """Generate Markdown report for developers."""
         filename = f"report_{run_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
         filepath = os.path.join(self.reports_dir, filename)
@@ -431,7 +443,11 @@ startxref
 
         recommendations = data.get(
             "recommendations",
-            ["Всі тести пройдено успішно", "Середній час відповіді в межах норми", "Fallback логіка працює коректно"],
+            [
+                "Всі тести пройдено успішно",
+                "Середній час відповіді в межах норми",
+                "Fallback логіка працює коректно",
+            ],
         )
 
         for i, rec in enumerate(recommendations, 1):

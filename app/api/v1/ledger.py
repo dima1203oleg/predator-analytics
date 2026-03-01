@@ -48,16 +48,24 @@ async def get_juridical_report(id: int):
     # Identify type of report needed
     if payload.get("anomaly_found"):
         doc = transpiler.generate_document(
-            "anomaly_report", {"details": payload.get("result", "Unknown anomaly"), "anomaly_id": f"ledger_{id}_proof"}
+            "anomaly_report",
+            {
+                "details": payload.get("result", "Unknown anomaly"),
+                "anomaly_id": f"ledger_{id}_proof",
+            },
         )
     elif entry.get("entity_type") == "proposal" and entry.get("action") == "execute":
         doc = transpiler.generate_document(
-            "vpc_certificate", {"witness_count": payload.get("witness_count", 0), "context_hash": entry.get("hash")}
+            "vpc_certificate",
+            {"witness_count": payload.get("witness_count", 0), "context_hash": entry.get("hash")},
         )
     else:
         doc = transpiler.generate_document(
             "compliance_affidavit",
-            {"action": entry.get("action"), "entity": f"{entry.get('entity_type')}:{entry.get('entity_id')}"},
+            {
+                "action": entry.get("action"),
+                "entity": f"{entry.get('entity_type')}:{entry.get('entity_id')}",
+            },
         )
 
     return doc.dict()

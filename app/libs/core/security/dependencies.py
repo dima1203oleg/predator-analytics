@@ -47,7 +47,11 @@ async def get_current_user_roles(request: Request) -> list[str]:
             if payload:
                 # Log successful auth
                 log_security_event(
-                    logger, "auth_success", severity="low", sub=payload.get("sub"), roles=payload.get("roles", [])
+                    logger,
+                    "auth_success",
+                    severity="low",
+                    sub=payload.get("sub"),
+                    roles=payload.get("roles", []),
                 )
                 return payload.get("roles", [Role.VIEWER])
         except Exception as e:
@@ -75,7 +79,10 @@ class RequirePermission:
                 user_roles=roles,
                 path=request.url.path,
             )
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Missing permission: {self.permission}")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Missing permission: {self.permission}",
+            )
 
 
 class RequireRole:
@@ -97,4 +104,6 @@ class RequireRole:
                 user_roles=roles,
                 path=request.url.path,
             )
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Missing role: {self.role}")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail=f"Missing role: {self.role}"
+            )

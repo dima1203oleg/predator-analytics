@@ -29,7 +29,10 @@ class RoleGuard:
                     detail="Insufficient permissions for this Sovereign operation.",
                 )
         except Exception:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired Sovereign token.")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or expired Sovereign token.",
+            )
 
 
 def require_role(roles: list[str]):

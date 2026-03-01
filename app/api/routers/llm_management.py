@@ -87,7 +87,9 @@ async def get_providers():
                 name=provider_id.title(),
                 model=config.get("model", ""),
                 base_url=config.get("base_url", ""),
-                api_keys=["***" + k[-4:] for k in config.get("api_keys", [config.get("api_key")]) if k],
+                api_keys=[
+                    "***" + k[-4:] for k in config.get("api_keys", [config.get("api_key")]) if k
+                ],
                 enabled=True,
                 free=provider_id not in ["openai", "anthropic"],
                 description=get_provider_description(provider_id),
@@ -174,14 +176,18 @@ async def remove_api_key(provider_id: str, key_index: int):
 @router.post("/providers/{provider_id}/test")
 async def test_provider(provider_id: str, request: TestKeyRequest):
     """Тестувати API ключ провайдера."""
-    return await test_api_key(provider_id=request.provider_id, api_key=request.api_key, model=request.model)
+    return await test_api_key(
+        provider_id=request.provider_id, api_key=request.api_key, model=request.model
+    )
 
 
 @router.put("/providers/{provider_id}")
 async def update_provider(provider_id: str, request: UpdateProviderRequest):
     """Оновити налаштування провайдера."""
     try:
-        await llm_keys_storage.update_provider_settings(provider_id, enabled=request.enabled, model=request.model)
+        await llm_keys_storage.update_provider_settings(
+            provider_id, enabled=request.enabled, model=request.model
+        )
 
         llm_service._init_providers()
 
@@ -196,7 +202,9 @@ async def get_llm_stats():
     return {
         "total_providers": len(llm_service.providers),
         "active_providers": sum(1 for p in llm_service.providers.values() if p),
-        "total_keys": sum(len(p.get("api_keys", [p.get("api_key")])) for p in llm_service.providers.values()),
+        "total_keys": sum(
+            len(p.get("api_keys", [p.get("api_key")])) for p in llm_service.providers.values()
+        ),
         "providers": llm_service.get_available_providers(),
     }
 
@@ -213,7 +221,16 @@ async def get_llm_full_status():
     total_tokens = 0
 
     # Get list of all providers
-    all_providers = ["groq", "gemini", "mistral", "ollama", "openrouter", "together", "deepseek", "xai"]
+    all_providers = [
+        "groq",
+        "gemini",
+        "mistral",
+        "ollama",
+        "openrouter",
+        "together",
+        "deepseek",
+        "xai",
+    ]
 
     async def check_provider(provider_id: str) -> dict:
         """Check single provider status."""
@@ -230,11 +247,14 @@ async def get_llm_full_status():
             try:
                 start = time.time()
                 response = await asyncio.wait_for(
-                    llm_service.generate(prompt="test", provider=provider_id, max_tokens=1), timeout=10.0
+                    llm_service.generate(prompt="test", provider=provider_id, max_tokens=1),
+                    timeout=10.0,
                 )
                 latency = int((time.time() - start) * 1000)
 
-                status = "online" if response.success else "degraded" if latency < 5000 else "offline"
+                status = (
+                    "online" if response.success else "degraded" if latency < 5000 else "offline"
+                )
             except TimeoutError:
                 status = "offline"
                 latency = 10000
@@ -271,33 +291,39 @@ async def get_llm_full_status():
                 total_tokens += result["tokensUsed"]
                 total_cost += result["costToday"]
         else:
-            providers_status.append({
-                "id": all_providers[i],
-                "name": all_providers[i].title(),
-                "status": "unknown",
-                "latency": 0,
-                "uptime": 0,
-                "tokensUsed": 0,
-                "tokensLimit": 0,
-                "costToday": 0,
-                "isPrimary": False,
-                "lastCheck": datetime.now(UTC).isoformat(),
-                "model": "",
-            })
+            providers_status.append(
+                {
+                    "id": all_providers[i],
+                    "name": all_providers[i].title(),
+                    "status": "unknown",
+                    "latency": 0,
+                    "uptime": 0,
+                    "tokensUsed": 0,
+                    "tokensLimit": 0,
+                    "costToday": 0,
+                    "isPrimary": False,
+                    "lastCheck": datetime.now(UTC).isoformat(),
+                    "model": "",
+                }
+            )
 
     # Build fallback chain
     chain_order = ["Groq", "Gemini", "Mistral", "OpenRouter", "Together", "Ollama"]
     for i, name in enumerate(chain_order):
-        provider = next((p for p in providers_status if p["name"].lower().startswith(name.lower())), None)
-        fallback_chain.append({
-            "provider": name,
-            "order": i + 1,
-            "status": "active"
-            if i == 0 and provider and provider["status"] == "online"
-            else "failed"
-            if provider and provider["status"] == "offline"
-            else "standby",
-        })
+        provider = next(
+            (p for p in providers_status if p["name"].lower().startswith(name.lower())), None
+        )
+        fallback_chain.append(
+            {
+                "provider": name,
+                "order": i + 1,
+                "status": "active"
+                if i == 0 and provider and provider["status"] == "online"
+                else "failed"
+                if provider and provider["status"] == "offline"
+                else "standby",
+            }
+        )
 
     return {
         "providers": providers_status,

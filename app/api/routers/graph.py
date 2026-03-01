@@ -75,7 +75,9 @@ async def search_knowledge_graph(q: str, depth: int = 1, user: dict = Depends(ge
 
 
 @router.get("/graph/visualize")
-async def visualize_neural_nexus(mode: str = "live", limit: int = 100, user: dict = Depends(get_current_user)):
+async def visualize_neural_nexus(
+    mode: str = "live", limit: int = 100, user: dict = Depends(get_current_user)
+):
     """Generate 3D graph visualization data for Neural Nexus.
     Modes:
     - live: Real data from DB
@@ -92,14 +94,16 @@ async def visualize_neural_nexus(mode: str = "live", limit: int = 100, user: dic
         # Threat Clusters
 
         # Central node (Self)
-        nodes.append({
-            "id": "predator_core",
-            "label": "PREDATOR CORE",
-            "type": "system",
-            "riskScore": 0,
-            "connections": 50,
-            "details": "Central Intelligence Unit. Status: ONLINE. Monitoring 15,420 streams.",
-        })
+        nodes.append(
+            {
+                "id": "predator_core",
+                "label": "PREDATOR CORE",
+                "type": "system",
+                "riskScore": 0,
+                "connections": 50,
+                "details": "Central Intelligence Unit. Status: ONLINE. Monitoring 15,420 streams.",
+            }
+        )
 
         for i in range(limit):
             is_threat = random.random() > 0.8
@@ -115,27 +119,36 @@ async def visualize_neural_nexus(mode: str = "live", limit: int = 100, user: dic
             elif node_type == "server":
                 label = f"IP 192.168.{random.randint(0, 255)}.{random.randint(0, 255)}"
 
-            nodes.append({
-                "id": str(i),
-                "label": label,
-                "type": node_type,
-                "riskScore": risk_score,
-                "connections": random.randint(1, 10),
-                "cluster": random.randint(1, 5),
-            })
+            nodes.append(
+                {
+                    "id": str(i),
+                    "label": label,
+                    "type": node_type,
+                    "riskScore": risk_score,
+                    "connections": random.randint(1, 10),
+                    "cluster": random.randint(1, 5),
+                }
+            )
 
             # Create links
             source = str(i)
             target = "predator_core" if i < 5 else str(random.randint(0, i))
 
-            links.append({
-                "source": source,
-                "target": target,
-                "value": random.random(),
-                "type": "risk" if is_threat else "standard",
-            })
+            links.append(
+                {
+                    "source": source,
+                    "target": target,
+                    "value": random.random(),
+                    "type": "risk" if is_threat else "standard",
+                }
+            )
 
-        return {"nodes": nodes, "links": links, "timestamp": datetime.now().isoformat(), "mode": "SIMULATION_ACTIVE"}
+        return {
+            "nodes": nodes,
+            "links": links,
+            "timestamp": datetime.now().isoformat(),
+            "mode": "SIMULATION_ACTIVE",
+        }
 
     # Live Mode
     try:
@@ -144,7 +157,9 @@ async def visualize_neural_nexus(mode: str = "live", limit: int = 100, user: dic
             tenant_id = "00000000-0000-0000-0000-000000000000"
 
         # Get real data via graph_builder
-        graph_data = await graph_builder.get_graph_summary(tenant_id)  # Need full graph here actually
+        graph_data = await graph_builder.get_graph_summary(
+            tenant_id
+        )  # Need full graph here actually
 
         # For now, fallback to simulation if DB is empty to avoid empty screen
         if graph_data.get("total_nodes", 0) < 5:

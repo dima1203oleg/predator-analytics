@@ -38,7 +38,10 @@ class ETLProcessor:
                 errors.append(str(e))
 
         return ProcessorResult(
-            success=failed == 0, records_processed=processed, records_failed=failed, errors=errors[:10]
+            success=failed == 0,
+            records_processed=processed,
+            records_failed=failed,
+            errors=errors[:10],
         )
 
     async def _transform(self, record: dict, pipeline: str) -> dict:

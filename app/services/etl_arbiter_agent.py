@@ -45,7 +45,13 @@ class ETLArbiterAgent:
                 # which the ETL Engine updates. In a full Axiom 8 world, we would also pull from logs/metrics.
                 async with get_db_ctx() as sess:
                     stmt = select(ETLJob).where(
-                        ETLJob.state.notin_([ETLState.COMPLETED.value, ETLState.FAILED.value, ETLState.CANCELLED.value])
+                        ETLJob.state.notin_(
+                            [
+                                ETLState.COMPLETED.value,
+                                ETLState.FAILED.value,
+                                ETLState.CANCELLED.value,
+                            ]
+                        )
                     )
                     result = await sess.execute(stmt)
                     active_jobs = result.scalars().all()
@@ -57,7 +63,9 @@ class ETLArbiterAgent:
                             last_dt = datetime.fromisoformat(last_fact)
                             if datetime.utcnow() - last_dt > timedelta(minutes=5):
                                 self.logger.error(f"⚖️ Job {job.id} STALLED. Failing.")
-                                await self.enforce_invariants(job, ["INV-005: Stalled Job"], ETLState.FAILED)
+                                await self.enforce_invariants(
+                                    job, ["INV-005: Stalled Job"], ETLState.FAILED
+                                )
                                 continue
 
                         # 1. Derive state from facts using the Sovereign Engine
@@ -77,7 +85,9 @@ class ETLArbiterAgent:
 
                         # 2. Validate Transition
                         if not derivation["transition_valid"]:
-                            self.logger.warning(f"⚖️ Illegal transition for {job.id}: {derivation['violations']}")
+                            self.logger.warning(
+                                f"⚖️ Illegal transition for {job.id}: {derivation['violations']}"
+                            )
                             continue
 
                         # 3. Check Invariants
@@ -87,13 +97,19 @@ class ETLArbiterAgent:
                             # 5. Enforce with Specific Actions (v45 Requirement)
                             # Action: revert_to_INDEXING for INV-001 (fake completion)
                             if any("INV-001" in v for v in violations):
-                                self.logger.info(f"⚖️ Fake Completion detected for {job.id}. Reverting to INDEXING.")
-                                await self.record_state_to_ledger(job, derivation)  # Pass full derivation
+                                self.logger.info(
+                                    f"⚖️ Fake Completion detected for {job.id}. Reverting to INDEXING."
+                                )
+                                await self.record_state_to_ledger(
+                                    job, derivation
+                                )  # Pass full derivation
                             else:
                                 await self.enforce_invariants(job, violations, derived_state)
                         # 6. Record legitimate state transition if it changed
                         elif job.state != derived_state.value:
-                            self.logger.info(f"⚖️ Job {job.id}: Derived transition {job.state} -> {derived_state}")
+                            self.logger.info(
+                                f"⚖️ Job {job.id}: Derived transition {job.state} -> {derived_state}"
+                            )
                             await self.record_state_to_ledger(job, derivation)
 
                 await asyncio.sleep(self.check_interval)
@@ -186,7 +202,9 @@ class ETLArbiterAgent:
             previous_state = prev_row.derived_state if prev_row else None
 
             # Calculate Decision Hash (Chained)
-            decision_payload = f"{job.id}{previous_hash}{derived_state.value}{evidence_hash}{confidence}"
+            decision_payload = (
+                f"{job.id}{previous_hash}{derived_state.value}{evidence_hash}{confidence}"
+            )
             decision_hash = hashlib.sha256(decision_payload.encode()).hexdigest()
 
             # 2. Insert into Ledger

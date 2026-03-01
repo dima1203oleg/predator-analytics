@@ -59,7 +59,11 @@ class AgentCoordinationProtocol:
         compliance = await self._check_compliance(proposal)
         if not compliance["passed"]:
             proposal.status = "REJECTED"
-            return {"status": "REJECTED", "reason": "CONSTITUTIONAL_VIOLATION", "violations": compliance["violations"]}
+            return {
+                "status": "REJECTED",
+                "reason": "CONSTITUTIONAL_VIOLATION",
+                "violations": compliance["violations"],
+            }
 
         # 2. Реєстрація
         self.active_proposals[proposal.id] = proposal
@@ -78,7 +82,10 @@ class AgentCoordinationProtocol:
             violations.append("AXIOM-001: Critical proposals MUST require human approval.")
 
         # Axiom-002: Constitutional Immutability
-        if "axiom" in proposal.description.lower() or "constitution" in proposal.description.lower():
+        if (
+            "axiom" in proposal.description.lower()
+            or "constitution" in proposal.description.lower()
+        ):
             if proposal.proposed_by != AgentRole.HUMAN:
                 violations.append("AXIOM-002: Only humans can propose constitutional changes.")
 

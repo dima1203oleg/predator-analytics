@@ -64,12 +64,20 @@ class CopilotAgent:
         target_path = (self.workspace_root / directory).resolve()
 
         if not str(target_path).startswith(str(self.workspace_root)):
-            return ToolResult(tool_name="list_files", output="Access Denied: Path outside workspace", is_error=True)
+            return ToolResult(
+                tool_name="list_files",
+                output="Access Denied: Path outside workspace",
+                is_error=True,
+            )
 
         try:
             # Simple wrapper around ls -F
             proc = await asyncio.create_subprocess_exec(
-                "ls", "-F", str(target_path), stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+                "ls",
+                "-F",
+                str(target_path),
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
             )
             stdout, stderr = await proc.communicate()
 
@@ -85,7 +93,9 @@ class CopilotAgent:
         target_path = (self.workspace_root / file_path).resolve()
 
         if not str(target_path).startswith(str(self.workspace_root)):
-            return ToolResult(tool_name="read_file", output="Access Denied: Path outside workspace", is_error=True)
+            return ToolResult(
+                tool_name="read_file", output="Access Denied: Path outside workspace", is_error=True
+            )
 
         try:
             if not target_path.exists():
@@ -101,13 +111,20 @@ class CopilotAgent:
         target_path = (self.workspace_root / file_path).resolve()
 
         if not str(target_path).startswith(str(self.workspace_root)):
-            return ToolResult(tool_name="write_file", output="Access Denied: Path outside workspace", is_error=True)
+            return ToolResult(
+                tool_name="write_file",
+                output="Access Denied: Path outside workspace",
+                is_error=True,
+            )
 
         try:
             # Ensure parent directories exist
             target_path.parent.mkdir(parents=True, exist_ok=True)
             target_path.write_text(content, encoding="utf-8")
-            return ToolResult(tool_name="write_file", output=f"Successfully wrote {len(content)} bytes to {file_path}")
+            return ToolResult(
+                tool_name="write_file",
+                output=f"Successfully wrote {len(content)} bytes to {file_path}",
+            )
         except Exception as e:
             return ToolResult(tool_name="write_file", output=str(e), is_error=True)
 
@@ -119,11 +136,16 @@ class CopilotAgent:
         # Minimum safety check
         forbidden = ["rm -rf /", ":(){ :|:& };:", "wget", "curl"]
         if any(f in command for f in forbidden):
-            return ToolResult(tool_name="run_shell", output="Command blocked by safety policy", is_error=True)
+            return ToolResult(
+                tool_name="run_shell", output="Command blocked by safety policy", is_error=True
+            )
 
         try:
             proc = await asyncio.create_subprocess_shell(
-                command, cwd=str(self.workspace_root), stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+                command,
+                cwd=str(self.workspace_root),
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
             )
             stdout, stderr = await proc.communicate()
 

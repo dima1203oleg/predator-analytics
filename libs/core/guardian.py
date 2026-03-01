@@ -60,7 +60,11 @@ class GuardianService:
 
         status = {
             "status": "healthy",
-            "checks": {"connectivity": "UNKNOWN", "extension_trgm": "UNKNOWN", "schema_gold": "UNKNOWN"},
+            "checks": {
+                "connectivity": "UNKNOWN",
+                "extension_trgm": "UNKNOWN",
+                "schema_gold": "UNKNOWN",
+            },
         }
         try:
             async with get_db_ctx() as db:
@@ -69,12 +73,16 @@ class GuardianService:
                 status["checks"]["connectivity"] = "OK"
 
                 # 2. Extensions
-                res = await db.execute(text("SELECT extname FROM pg_extension WHERE extname = 'pg_trgm'"))
+                res = await db.execute(
+                    text("SELECT extname FROM pg_extension WHERE extname = 'pg_trgm'")
+                )
                 status["checks"]["extension_trgm"] = "OK" if res.fetchone() else "MISSING"
 
                 # 3. Schemas
                 res = await db.execute(
-                    text("SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'gold'")
+                    text(
+                        "SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'gold'"
+                    )
                 )
                 status["checks"]["schema_gold"] = "OK" if res.fetchone() else "MISSING"
 
@@ -184,7 +192,9 @@ class GuardianService:
 
                 # 2. Trigger auto-recovery if critical issues found
                 if any(v == "DOWN" for v in infra.values()) or schema_issues:
-                    logger.warning("⚠️ Guardian виявив деградацію системи. Запуск автоматичного відновлення...")
+                    logger.warning(
+                        "⚠️ Guardian виявив деградацію системи. Запуск автоматичного відновлення..."
+                    )
                     await self.run_auto_recovery()
 
                 # 3. Heartbeat log

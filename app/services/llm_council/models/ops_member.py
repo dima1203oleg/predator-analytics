@@ -36,7 +36,9 @@ class OpsCouncilMember(CouncilMember):
             tasks = [
                 ops_service.diagnose_system(query),
                 ops_service.execute_tool("get_container_status", {}),
-                graph_builder.get_graph_summary(tenant_id="00000000-0000-0000-0000-000000000000"),  # Default tenant
+                graph_builder.get_graph_summary(
+                    tenant_id="00000000-0000-0000-0000-000000000000"
+                ),  # Default tenant
             ]
             diag_results = await asyncio.gather(*tasks)
 
@@ -67,7 +69,9 @@ class OpsCouncilMember(CouncilMember):
         """
 
         synth_response = await llm_service.generate_with_routing(
-            prompt=prompt, system="Predator Ops Sentinel Mode. Focus on facts and infra stability.", mode="fast"
+            prompt=prompt,
+            system="Predator Ops Sentinel Mode. Focus on facts and infra stability.",
+            mode="fast",
         )
 
         response = CouncilResponse(

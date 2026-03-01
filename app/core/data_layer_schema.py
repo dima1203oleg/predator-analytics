@@ -519,7 +519,12 @@ ENV_CONFIGS = {
         "qdrant": {"nodes": 1},  # Local for fast inference
         "redis": {"cluster": False},  # Local cache
         "minio": {"nodes": 0},  # Use edge
-        "features": {"heavy_ml": True, "gpu_inference": True, "batch_embeddings": True, "fine_tuning": True},
+        "features": {
+            "heavy_ml": True,
+            "gpu_inference": True,
+            "batch_embeddings": True,
+            "fine_tuning": True,
+        },
     },
 }
 

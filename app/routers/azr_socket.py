@@ -54,13 +54,15 @@ async def azr_brain_socket(websocket: WebSocket):
             status = azr.get_status()
 
             # Optimization: Only send heavy data if cycle changed or every 2s
-            await manager.broadcast({
-                "type": "HEARTBEAT",
-                "phase": status["phase"],
-                "health": status["health"],
-                "cycles": status["cycle_count"],
-                "ledger_size": status["truth_ledger"]["entries"],
-            })
+            await manager.broadcast(
+                {
+                    "type": "HEARTBEAT",
+                    "phase": status["phase"],
+                    "health": status["health"],
+                    "cycles": status["cycle_count"],
+                    "ledger_size": status["truth_ledger"]["entries"],
+                }
+            )
 
             # 2. Check for new Truth Ledger entries (Thoughts/Actions)
             # In a real event-driven architecture, we would subscribe to an event bus.
@@ -70,23 +72,27 @@ async def azr_brain_socket(websocket: WebSocket):
                 last_cycle = status["cycle_count"]
 
                 # Send Cycle Analytics
-                await manager.broadcast({
-                    "type": "CYCLE_COMPLETE",
-                    "metrics": status["metrics"],
-                    "prediction": {
-                        # Mocking prediction visualization data if not available directly in stats
-                        "cpu_trend": "stable",
-                        "next_action": "OBSERVE",
-                    },
-                })
+                await manager.broadcast(
+                    {
+                        "type": "CYCLE_COMPLETE",
+                        "metrics": status["metrics"],
+                        "prediction": {
+                            # Mocking prediction visualization data if not available directly in stats
+                            "cpu_trend": "stable",
+                            "next_action": "OBSERVE",
+                        },
+                    }
+                )
 
                 # Check for threats active
                 if status["health"]["score"] < 90:
-                    await manager.broadcast({
-                        "type": "ALERT",
-                        "level": "warning",
-                        "message": "System stability slightly degraded. Self-healing active.",
-                    })
+                    await manager.broadcast(
+                        {
+                            "type": "ALERT",
+                            "level": "warning",
+                            "message": "System stability slightly degraded. Self-healing active.",
+                        }
+                    )
 
             await asyncio.sleep(1)  # Frequency 1Hz
 

@@ -59,7 +59,9 @@ class PostgreSQLAdapter:
         try:
             # Validate data
             if not data:
-                return DistributionResult(False, "postgresql", error="No data provided for PostgreSQL distribution")
+                return DistributionResult(
+                    False, "postgresql", error="No data provided for PostgreSQL distribution"
+                )
 
             # Convert single record to list for uniform processing
             if isinstance(data, dict):
@@ -70,7 +72,9 @@ class PostgreSQLAdapter:
 
             # Simulate data insertion
             record_count = len(data)
-            logger.info(f"Simulating PostgreSQL insertion: {record_count} records into table '{self.table_name}'")
+            logger.info(
+                f"Simulating PostgreSQL insertion: {record_count} records into table '{self.table_name}'"
+            )
 
             # Log sample data
             if len(data) > 0:
@@ -135,7 +139,9 @@ class PostgreSQLAdapter:
             logger.info(f"Simulating PostgreSQL table creation: {target_table}")
 
             return DistributionResult(
-                True, "postgresql", data={"table": target_table, "message": "Table created successfully (simulated)"}
+                True,
+                "postgresql",
+                data={"table": target_table, "message": "Table created successfully (simulated)"},
             )
 
         except Exception as e:
@@ -220,7 +226,10 @@ class PostgreSQLAdapter:
             return DistributionResult(
                 True,
                 "postgresql",
-                data={"message": "Transaction begun successfully (simulated)", "transaction_id": str(uuid.uuid4())},
+                data={
+                    "message": "Transaction begun successfully (simulated)",
+                    "transaction_id": str(uuid.uuid4()),
+                },
             )
 
         except Exception as e:
@@ -243,7 +252,9 @@ class PostgreSQLAdapter:
             logger.info("Simulating PostgreSQL transaction commit")
 
             return DistributionResult(
-                True, "postgresql", data={"message": "Transaction committed successfully (simulated)"}
+                True,
+                "postgresql",
+                data={"message": "Transaction committed successfully (simulated)"},
             )
 
         except Exception as e:

@@ -45,9 +45,16 @@ class PredatorMonitor:
                 indices = await client.get(f"{self.opensearch_url}/_cat/indices?format=json")
                 indices_data = indices.json()
 
-                total_docs = sum(int(idx.get("docs.count", 0)) for idx in indices_data if idx.get("docs.count"))
+                total_docs = sum(
+                    int(idx.get("docs.count", 0)) for idx in indices_data if idx.get("docs.count")
+                )
                 total_size = sum(
-                    float(idx.get("store.size", "0").replace("kb", "").replace("mb", "").replace("gb", ""))
+                    float(
+                        idx.get("store.size", "0")
+                        .replace("kb", "")
+                        .replace("mb", "")
+                        .replace("gb", "")
+                    )
                     for idx in indices_data
                     if idx.get("store.size")
                 )
@@ -89,12 +96,14 @@ class PredatorMonitor:
                     coll_info = await client.get(f"{self.qdrant_url}/collections/{coll_name}")
                     coll_data = coll_info.json().get("result", {})
 
-                    result["collections"].append({
-                        "name": coll_name,
-                        "vectors_count": coll_data.get("vectors_count", 0),
-                        "points_count": coll_data.get("points_count", 0),
-                        "status": coll_data.get("status", "unknown"),
-                    })
+                    result["collections"].append(
+                        {
+                            "name": coll_name,
+                            "vectors_count": coll_data.get("vectors_count", 0),
+                            "points_count": coll_data.get("points_count", 0),
+                            "status": coll_data.get("status", "unknown"),
+                        }
+                    )
 
                 result["total_collections"] = len(result["collections"])
                 result["status"] = "online"
@@ -145,7 +154,11 @@ class PredatorMonitor:
             async with httpx.AsyncClient(timeout=5) as client:
                 response = await client.get(f"{self.backend_url}/api/etl/jobs")
                 data = response.json()
-                return {"status": "online", "total_jobs": data.get("total", 0), "jobs": data.get("jobs", [])[:5]}
+                return {
+                    "status": "online",
+                    "total_jobs": data.get("total", 0),
+                    "jobs": data.get("jobs", [])[:5],
+                }
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
@@ -154,7 +167,11 @@ class PredatorMonitor:
         try:
             # Nodes
             nodes_result = subprocess.run(
-                ["kubectl", "get", "nodes", "-o", "json"], check=False, capture_output=True, text=True, timeout=10
+                ["kubectl", "get", "nodes", "-o", "json"],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
 
             nodes_data = {"nodes": [], "total_nodes": 0}
@@ -162,15 +179,21 @@ class PredatorMonitor:
                 nodes_json = json.loads(nodes_result.stdout)
                 nodes_data["total_nodes"] = len(nodes_json.get("items", []))
                 for node in nodes_json.get("items", []):
-                    nodes_data["nodes"].append({
-                        "name": node["metadata"]["name"],
-                        "status": node["status"]["conditions"][-1]["type"],
-                        "ready": node["status"]["conditions"][-1]["status"] == "True",
-                    })
+                    nodes_data["nodes"].append(
+                        {
+                            "name": node["metadata"]["name"],
+                            "status": node["status"]["conditions"][-1]["type"],
+                            "ready": node["status"]["conditions"][-1]["status"] == "True",
+                        }
+                    )
 
             # Namespaces
             ns_result = subprocess.run(
-                ["kubectl", "get", "namespaces", "-o", "name"], check=False, capture_output=True, text=True, timeout=10
+                ["kubectl", "get", "namespaces", "-o", "name"],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             namespaces = ns_result.stdout.split("\n") if ns_result.returncode == 0 else []
 
@@ -262,7 +285,13 @@ class AICodeAgent:
 
             if language == "bash":
                 result = subprocess.run(
-                    code, check=False, shell=True, capture_output=True, text=True, timeout=30, cwd=self.project_dir
+                    code,
+                    check=False,
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                    cwd=self.project_dir,
                 )
                 output = result.stdout or result.stderr
                 return result.returncode == 0, output[:2000]
@@ -313,7 +342,12 @@ class AICodeAgent:
                 cmd.append(test_path)
 
             result = subprocess.run(
-                cmd, check=False, capture_output=True, text=True, timeout=60, cwd=f"{self.project_dir}/ua-sources"
+                cmd,
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=60,
+                cwd=f"{self.project_dir}/ua-sources",
             )
 
             output = result.stdout or result.stderr

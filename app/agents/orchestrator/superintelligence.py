@@ -142,10 +142,15 @@ class LLMRouter:
 
         for provider in providers:
             try:
-                response = await self._call_provider(provider, prompt, system_prompt, temperature, max_tokens)
+                response = await self._call_provider(
+                    provider, prompt, system_prompt, temperature, max_tokens
+                )
 
                 # Cache successful response
-                self.cache[cache_key] = {"response": response, "timestamp": datetime.utcnow().timestamp()}
+                self.cache[cache_key] = {
+                    "response": response,
+                    "timestamp": datetime.utcnow().timestamp(),
+                }
 
                 return {**response, "provider": provider, "cached": False}
 
@@ -174,7 +179,10 @@ class LLMRouter:
             return {
                 "content": response,
                 "model": provider,
-                "usage": {"prompt_tokens": len(prompt.split()), "completion_tokens": len(response.split())},
+                "usage": {
+                    "prompt_tokens": len(prompt.split()),
+                    "completion_tokens": len(response.split()),
+                },
             }
 
         except Exception as e:
@@ -232,7 +240,13 @@ class HUMINTAgent(BaseAgent):
         iocs = self._extract_iocs(text)
         entities = self._extract_entities(text)
 
-        return {"agent": self.name, "type": "humint", "iocs": iocs, "entities": entities, "confidence": 0.78}
+        return {
+            "agent": self.name,
+            "type": "humint",
+            "iocs": iocs,
+            "entities": entities,
+            "confidence": 0.78,
+        }
 
     def _extract_iocs(self, text: str) -> list[dict[str, str]]:
         """Extract Indicators of Compromise."""
@@ -307,7 +321,9 @@ class CYBINTAgent(BaseAgent):
 
         enriched = []
         for ioc in iocs:
-            enriched.append({**ioc, "threat_score": self._calculate_threat_score(ioc), "related_campaigns": []})
+            enriched.append(
+                {**ioc, "threat_score": self._calculate_threat_score(ioc), "related_campaigns": []}
+            )
 
         return {"agent": self.name, "type": "cybint", "enriched_iocs": enriched, "confidence": 0.88}
 
@@ -409,7 +425,11 @@ class RefinerAgent(BaseAgent):
 
         try:
             result = await self.llm.query(refine_prompt)
-            return {"agent": self.name, "refined": result.get("content", response), "improved": True}
+            return {
+                "agent": self.name,
+                "refined": result.get("content", response),
+                "improved": True,
+            }
         except Exception as e:
             return {"agent": self.name, "refined": response, "improved": False, "error": str(e)}
 
@@ -467,12 +487,14 @@ class SelfHealingController:
         strategy = self._determine_strategy(component)
 
         recovery_id = str(uuid.uuid4())[:8]
-        self.recovery_history.append({
-            "id": recovery_id,
-            "component": component,
-            "strategy": strategy.value,
-            "started_at": datetime.utcnow().isoformat(),
-        })
+        self.recovery_history.append(
+            {
+                "id": recovery_id,
+                "component": component,
+                "strategy": strategy.value,
+                "started_at": datetime.utcnow().isoformat(),
+            }
+        )
 
         try:
             if strategy == RecoveryStrategy.RESTART:
@@ -679,7 +701,11 @@ class SuperIntelligenceOrchestrator:
                 asyncio.create_task(self.healing.trigger_recovery("orchestrator"))
 
             return OrchestratorResponse(
-                query=user_query, answer=f"⚠️ Error: {e!s}", mode=mode, error=str(e), health=self.healing.health
+                query=user_query,
+                answer=f"⚠️ Error: {e!s}",
+                mode=mode,
+                error=str(e),
+                health=self.healing.health,
             )
 
     async def _handle_fast(self, query: str, correlation_id: str) -> dict[str, Any]:
@@ -687,7 +713,10 @@ class SuperIntelligenceOrchestrator:
         retrieval = await self.retriever.process({"query": query})
         data = retrieval.result.get("data", [])
 
-        return {"answer": f"[FAST] Found {len(data)} records.", "trace": [{"agent": "retriever", "status": "success"}]}
+        return {
+            "answer": f"[FAST] Found {len(data)} records.",
+            "trace": [{"agent": "retriever", "status": "success"}],
+        }
 
     async def _handle_chat(
         self, query: str, context: dict[str, Any], correlation_id: str, thoughts: list[ThoughtTrace]
@@ -719,12 +748,17 @@ class SuperIntelligenceOrchestrator:
             return {
                 "answer": result.get("content", ""),
                 "provider": result.get("provider"),
-                "trace": [{"agent": "llm", "status": "success", "provider": result.get("provider")}],
+                "trace": [
+                    {"agent": "llm", "status": "success", "provider": result.get("provider")}
+                ],
             }
 
         except Exception as e:
             logger.exception(f"Chat failed: {e}")
-            return {"answer": f"⚠️ LLM Error: {e!s}", "trace": [{"agent": "llm", "status": "failed"}]}
+            return {
+                "answer": f"⚠️ LLM Error: {e!s}",
+                "trace": [{"agent": "llm", "status": "failed"}],
+            }
 
     async def _handle_deep(
         self, query: str, context: dict[str, Any], correlation_id: str, thoughts: list[ThoughtTrace]
@@ -745,7 +779,9 @@ class SuperIntelligenceOrchestrator:
         )
 
         humint_result = await self.agents[AgentType.HUMINT].process({"text": query})
-        trace.append({"agent": "humint", "status": "success", "iocs": len(humint_result.get("iocs", []))})
+        trace.append(
+            {"agent": "humint", "status": "success", "iocs": len(humint_result.get("iocs", []))}
+        )
 
         # Step 2: CYBINT - Enrich IOCs
         if humint_result.get("iocs"):
@@ -823,7 +859,11 @@ class SuperIntelligenceOrchestrator:
         result = await self.llm.query(synthesis_prompt)
         trace.append({"agent": "llm", "status": "success"})
 
-        return {"answer": result.get("content", ""), "provider": result.get("provider"), "trace": trace}
+        return {
+            "answer": result.get("content", ""),
+            "provider": result.get("provider"),
+            "trace": trace,
+        }
 
     async def _handle_council(
         self, query: str, context: dict[str, Any], correlation_id: str, thoughts: list[ThoughtTrace]
@@ -842,7 +882,8 @@ class SuperIntelligenceOrchestrator:
 
         # Get response from primary
         result = await self.llm.query(
-            query, system_prompt="You are an expert analyst. Provide a detailed, well-reasoned response."
+            query,
+            system_prompt="You are an expert analyst. Provide a detailed, well-reasoned response.",
         )
 
         return {
@@ -897,7 +938,9 @@ class SuperIntelligenceOrchestrator:
             )
         )
 
-        critique = await self.agents[AgentType.CRITIC].process({"response": response, "context": context})
+        critique = await self.agents[AgentType.CRITIC].process(
+            {"response": response, "context": context}
+        )
 
         quality_score = critique.get("quality_score", 0)
 
@@ -914,7 +957,9 @@ class SuperIntelligenceOrchestrator:
                 )
             )
 
-            refined = await self.agents[AgentType.REFINER].process({"response": response, "critique": critique})
+            refined = await self.agents[AgentType.REFINER].process(
+                {"response": response, "critique": critique}
+            )
 
             if refined.get("improved"):
                 result["answer"] = refined.get("refined", response)
@@ -938,7 +983,9 @@ class SuperIntelligenceOrchestrator:
         return {
             **health,
             "metrics": self.metrics,
-            "agents": {agent_type.value: agent.state.status for agent_type, agent in self.agents.items()},
+            "agents": {
+                agent_type.value: agent.state.status for agent_type, agent in self.agents.items()
+            },
         }
 
     # ========================================================================
@@ -955,7 +1002,11 @@ class SuperIntelligenceOrchestrator:
         """
         logger.info("🔄 Starting Self-Improvement Cycle...")
 
-        cycle_result = {"cycle_id": str(uuid.uuid4())[:8], "started_at": datetime.utcnow().isoformat(), "stages": {}}
+        cycle_result = {
+            "cycle_id": str(uuid.uuid4())[:8],
+            "started_at": datetime.utcnow().isoformat(),
+            "stages": {},
+        }
 
         # 1. DIAGNOSE
         logger.info("📊 Stage 1: DIAGNOSE")
@@ -1027,7 +1078,11 @@ class SuperIntelligenceOrchestrator:
 
     async def _promote_model(self, training: dict[str, Any]) -> dict[str, Any]:
         """Promote new model to production."""
-        return {"model_id": training.get("model_id"), "promoted_at": datetime.utcnow().isoformat(), "status": "active"}
+        return {
+            "model_id": training.get("model_id"),
+            "promoted_at": datetime.utcnow().isoformat(),
+            "status": "active",
+        }
 
 
 # ============================================================================
