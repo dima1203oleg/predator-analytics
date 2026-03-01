@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     path: helm/predator-analytics
-    repoURL: https://github.com/predator-analytics/predator
+    repoURL: https://github.com/dima1203oleg/predator-analytics
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
