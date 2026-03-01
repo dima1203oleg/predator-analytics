@@ -1,50 +1,51 @@
+"""Event schema for Predator Analytics v45.1.
 
+Component: shared.
+Section 2.3 of Spec.
 """
-Module: events
-Component: shared
-Predator Analytics v45.1
-"""
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Dict, Optional
-import uuid
+from __future__ import annotations
+
+import contextlib
 import hashlib
 import json
+import uuid
+from dataclasses import dataclass, field
+from datetime import datetime
+
 
 @dataclass
 class PredatorEvent:
-    """
-    Base Event Schema for Predator System (Part 2.3 of Spec).
+    """Base Event Schema for Predator System (Part 2.3 of Spec).
+
     Enforces idempotency keys and correlation IDs.
     """
+
     event_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     event_type: str = ""                # e.g., "ModelPerformanceDegraded"
     correlation_id: str = ""            # Chain UUID
-    causation_id: Optional[str] = None  # Parent event_id
+    causation_id: str | None = None     # Parent event_id
     timestamp: datetime = field(default_factory=datetime.utcnow)
     source: str = ""                    # Component name
     version: str = "1.0"               # Schema version
-    context: Dict = field(default_factory=dict)
+    context: dict = field(default_factory=dict)
     idempotency_key: str = ""           # Computed hash
     tenant_id: str = "default"          # Multi-tenant support
 
     def __post_init__(self):
         # Allow passing string timestamps (from JSON deserialization)
         if isinstance(self.timestamp, str):
-            try:
+            with contextlib.suppress(ValueError):
                 self.timestamp = datetime.fromisoformat(self.timestamp.replace('Z', '+00:00'))
-            except ValueError:
-                pass # Keep as string if parsing fails, though type hint says datetime
 
         if not self.correlation_id:
             self.correlation_id = self.event_id
-        
+
         if not self.idempotency_key:
             self.idempotency_key = self._compute_idempotency_key()
 
     def _compute_idempotency_key(self) -> str:
-        """
-        Computes deterministic hash based on event type, source and context.
+        """Compute deterministic hash based on event type, source and context.
+
         Used to prevent duplicate processing.
         """
         # Sort keys to ensure consistent JSON representation
@@ -66,7 +67,7 @@ class PredatorEvent:
             "idempotency_key": self.idempotency_key,
             "tenant_id": self.tenant_id
         }
-    
+
     @classmethod
     def from_dict(cls, data: dict) -> 'PredatorEvent':
         """Deserialize from dictionary."""
