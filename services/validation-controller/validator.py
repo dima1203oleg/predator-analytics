@@ -6,8 +6,11 @@ Predator Analytics v45.1
 """
 import logging
 import random
-from typing import Dict, Tuple
-from services.shared.events import PredatorEvent
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from services.shared.events import PredatorEvent
+
 from services.training_controller.reqistry import ModelRegistry
 
 logger = logging.getLogger(__name__)
@@ -22,7 +25,7 @@ class ModelValidator:
     def __init__(self):
         self.registry = ModelRegistry()
 
-    async def validate_candidate(self, model_id: str, version: str) -> Tuple[bool, float]:
+    async def validate_candidate(self, model_id: str, version: str) -> tuple[bool, float]:
         """
         Runs validation suite on a candidate model.
 
@@ -45,7 +48,7 @@ class ModelValidator:
         
         return is_better, validation_score
 
-    async def handle_validation_request(self, event: PredatorEvent):
+    async def handle_validation_request(self, event: "PredatorEvent"):
         """Handle 'TrainingCompleted' event."""
         model_id = event.context.get("model_id")
         version = event.context.get("version")
