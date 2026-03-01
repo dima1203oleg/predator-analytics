@@ -16,6 +16,7 @@ router = APIRouter(prefix="/azr", tags=["AZR v32 - Sovereign Engine"])
 
 class AzrStatus(BaseModel):
     """Schema for AZR Engine status."""
+
     status: str
     version: str
     health: str
