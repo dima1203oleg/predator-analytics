@@ -1,0 +1,86 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🦁 PREDATOR ANALYTICS — .AGENTIGNORE (Дієта Контексту)
+# Файл для AI-агента (Antigravity/Cursor/Context7).
+# Виключає 95% "сміття", залишаючи тільки чистий код (економія мільйонів токенів).
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ── Залежності та оточення ──
+node_modules/
+.venv/
+venv/
+env/
+.env*
+!.env.example          # Agent повинен бачити структуру змінних, але не секрети
+
+# ── Python Cache ──
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ── Типізація та Лінтери ──
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# ── Frontend Збірка ──
+apps/predator-analytics-ui/dist/
+apps/predator-analytics-ui/build/
+apps/predator-analytics-ui/.vite/
+apps/predator-analytics-ui/coverage/
+apps/predator-analytics-ui/playwright-report/
+apps/predator-analytics-ui/test-results/
+
+# ── Дампи Баз Даних та Логи ──
+*.sql                  # Сирі SQL дампи (читати тільки файли міграцій Alembic)
+*.sqlite
+*.sqlite3
+*.log                  # Заборона на читання логів (вони величезні)
+infra/postgres/data/
+infra/redis/data/
+infra/qdrant/data/
+infra/minio/data/
+
+# ── Git та IDE ──
+.git/
+.github/               # Якщо агент не редагує CI/CD пайплайни
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ── Специфічне для OSINT ──
+*.csv                  # Сирі таблиці (ми працюємо з логікою, не з даними)
+*.xlsx
+*.pdf
+*.jsonl                # Великі дампи для масового імпорту
+
+# ── Тимчасові та Media ──
+tmp/
+temp/
+/public/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.svg                  # Іконки нам читати як код не потрібно
