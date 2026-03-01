@@ -1,0 +1,13 @@
+apiVersion: v2
+name: predator-god-mode
+description: 🦁 PREDATOR ANALYTICS God-Mode Architecture (FastAPI 3.12, Nginx React, Celery Workers)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+# ══════════════════════════════════════════════════════════════════
+# Маніфест чарту:
+# - Розділено на Backend, Frontend, Celery Worker/Beat, AI Gateway
+# - Підтримка Zero-Downtime deploy
+# - Жорсткі Resource Limits
+# ══════════════════════════════════════════════════════════════════

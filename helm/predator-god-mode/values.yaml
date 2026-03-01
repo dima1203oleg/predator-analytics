@@ -1,0 +1,145 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🦁 PREDATOR ANALYTICS — HELM VALUES (GOD-MODE)
+# Конфігурація для розгортання в Kubernetes через ArgoCD
+# ═══════════════════════════════════════════════════════════════════════════════
+
+replicaCount: 1
+
+# Глобальні змінні середовища
+global:
+  environment: "production"
+  timezone: "Europe/Kyiv"
+  locale: "uk_UA.UTF-8" # Тотальна українізація
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 1. 🐍 BACKEND (FastAPI / Python 3.12)
+# ═══════════════════════════════════════════════════════════════════════════════
+backend:
+  enabled: true
+  replicaCount: 2 # High Availability
+  image:
+    repository: ghcr.io/dima1203oleg/predator-backend
+    tag: "latest" # Буде оновлено CI/CD
+    pullPolicy: Always
+  
+  service:
+    type: ClusterIP
+    port: 9080
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "512Mi"
+    limits:
+      cpu: "2000m"
+      memory: "2Gi"
+
+  # Zero Downtime Deploy Strategy
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1       # Дозволяє +1 под при оновленні
+      maxUnavailable: 0 # Жодного даунтайму
+      
+  # Health Checks (Гарантія працездатності)
+  livenessProbe:
+    httpGet:
+      path: /api/v45/system/status
+      port: 9080
+    initialDelaySeconds: 15
+    periodSeconds: 10
+  readinessProbe:
+    httpGet:
+      path: /api/v45/system/status
+      port: 9080
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 2. 🎨 FRONTEND (React + Vite + Nginx)
+# ═══════════════════════════════════════════════════════════════════════════════
+frontend:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/dima1203oleg/predator-frontend
+    tag: "latest"
+    pullPolicy: Always
+  
+  service:
+    type: ClusterIP
+    port: 3030 # Завжди 3030
+
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi" # Nginx дуже легкий
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 3. ⚙️ CELERY WORKERS (OSINT Processing)
+# ═══════════════════════════════════════════════════════════════════════════════
+celeryWorker:
+  enabled: true
+  replicaCount: 4 # Задіюємо ядра сервера
+  image:
+    repository: ghcr.io/dima1203oleg/predator-backend
+    tag: "latest"
+  command: ["celery", "-A", "app.worker", "worker", "-l", "info", "-c", "4"]
+  
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "1Gi"
+    limits:
+      cpu: "4000m"
+      memory: "4Gi"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 4. 🧠 AI GATEWAY (LiteLLM)
+# ═══════════════════════════════════════════════════════════════════════════════
+litellm:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/berriai/litellm
+    tag: "main-v1.59.8"
+  command: ["--config", "/app/config.yaml", "--detailed_debug"]
+  service:
+    type: ClusterIP
+    port: 4000
+    
+# ═══════════════════════════════════════════════════════════════════════════════
+# INGRESS (Об'єднання усього на один домен/IP)
+# ═══════════════════════════════════════════════════════════════════════════════
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+  hosts:
+    - host: predator.local
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            serviceName: predator-frontend
+            servicePort: 3030
+        - path: /api
+          pathType: Prefix
+          backend:
+            serviceName: predator-backend
+            servicePort: 9080
+        - path: /ai
+          pathType: Prefix
+          backend:
+            serviceName: predator-litellm
+            servicePort: 4000
