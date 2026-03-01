@@ -18,18 +18,18 @@ class PredatorUser(HttpUser):
         email = f"{username}@example.com"
         password = "password123"
 
-        with self.client.post("/api/v1/auth/register", json={
-            "email": email,
-            "password": password,
-            "name": "Load Test User"
-        }, catch_response=True) as response:
+        with self.client.post(
+            "/api/v1/auth/register",
+            json={"email": email, "password": password, "name": "Load Test User"},
+            catch_response=True,
+        ) as response:
             if response.status_code == 201:
                 self.token = response.json().get("access_token")
             elif response.status_code in {400, 409}:
                 # Assuming user exists, login
-                login_resp = self.client.post("/api/v1/auth/login", json={
-                    "email": email, "password": password
-                })
+                login_resp = self.client.post(
+                    "/api/v1/auth/login", json={"email": email, "password": password}
+                )
                 if login_resp.status_code == 200:
                     self.token = login_resp.json().get("access_token")
 

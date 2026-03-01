@@ -24,6 +24,7 @@ TEST_MESSAGE = "Тестове повідомлення"
 
 # ==================== UNIT TESTS ====================
 
+
 class TestMenuSystem:
     """Тести системи меню."""
 
@@ -71,6 +72,7 @@ class TestMenuSystem:
         except ImportError:
             print("⚠️  Skipping menu back button test - module not available")
 
+
 class TestSystemController:
     """Тести системного контролера."""
 
@@ -101,6 +103,7 @@ class TestSystemController:
             print("✅ Processes test passed")
         except ImportError:
             print("⚠️  Skipping processes test - module not available")
+
 
 class TestAIController:
     """Тести AI контролера."""
@@ -135,6 +138,7 @@ class TestAIController:
         except ImportError:
             print("⚠️  Skipping AI chat test - module not available")
 
+
 class TestContextManager:
     """Тести менеджера контексту."""
 
@@ -142,7 +146,10 @@ class TestContextManager:
     async def test_context_creation(self):
         """Тест створення контексту."""
         try:
-            from backend.orchestrator.agents.telegram_bot_v4_advanced import ContextManager, UserContext
+            from backend.orchestrator.agents.telegram_bot_v4_advanced import (
+                ContextManager,
+                UserContext,
+            )
 
             # Mock Redis
             mock_redis = AsyncMock()
@@ -180,7 +187,9 @@ class TestContextManager:
         except ImportError:
             print("⚠️  Skipping add message test - module not available")
 
+
 # ==================== INTEGRATION TESTS ====================
+
 
 class TestBotIntegration:
     """Інтеграційні тести бота."""
@@ -203,13 +212,15 @@ class TestBotIntegration:
         except Exception as e:
             print(f"⚠️  Bot initialization test skipped: {e}")
 
+
 # ==================== MANUAL TESTS ====================
+
 
 async def manual_test_system_status():
     """Ручний тест статусу системи."""
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("MANUAL TEST: System Status")
-    print("="*50)
+    print("=" * 50)
 
     try:
         from backend.orchestrator.agents.telegram_bot_v4_advanced import SystemController
@@ -220,11 +231,12 @@ async def manual_test_system_status():
     except Exception as e:
         print(f"❌ Error: {e}")
 
+
 async def manual_test_processes():
     """Ручний тест процесів."""
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("MANUAL TEST: Processes")
-    print("="*50)
+    print("=" * 50)
 
     try:
         from backend.orchestrator.agents.telegram_bot_v4_advanced import SystemController
@@ -235,11 +247,12 @@ async def manual_test_processes():
     except Exception as e:
         print(f"❌ Error: {e}")
 
+
 async def manual_test_docker():
     """Ручний тест Docker."""
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("MANUAL TEST: Docker")
-    print("="*50)
+    print("=" * 50)
 
     try:
         from backend.orchestrator.agents.telegram_bot_v4_advanced import DockerController
@@ -250,11 +263,12 @@ async def manual_test_docker():
     except Exception as e:
         print(f"❌ Error: {e}")
 
+
 async def manual_test_git():
     """Ручний тест Git."""
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("MANUAL TEST: Git")
-    print("="*50)
+    print("=" * 50)
 
     try:
         from backend.orchestrator.agents.telegram_bot_v4_advanced import GitController
@@ -268,7 +282,9 @@ async def manual_test_git():
     except Exception as e:
         print(f"❌ Error: {e}")
 
+
 # ==================== MAIN ====================
+
 
 async def run_all_manual_tests():
     """Запустити всі ручні тести."""
@@ -279,9 +295,10 @@ async def run_all_manual_tests():
     await manual_test_docker()
     await manual_test_git()
 
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("✅ All manual tests completed!")
-    print("="*50)
+    print("=" * 50)
+
 
 def run_unit_tests():
     """Запустити юніт тести."""
@@ -309,6 +326,7 @@ def run_unit_tests():
 
     print("\n✅ All unit tests completed!")
 
+
 if __name__ == "__main__":
     import argparse
 
@@ -317,13 +335,13 @@ if __name__ == "__main__":
         "--mode",
         choices=["unit", "manual", "all"],
         default="all",
-        help="Test mode: unit, manual, or all"
+        help="Test mode: unit, manual, or all",
     )
 
     args = parser.parse_args()
 
     print("🚀 Telegram Bot V4.0 - Test Suite")
-    print("="*50)
+    print("=" * 50)
 
     if args.mode in ["unit", "all"]:
         run_unit_tests()
