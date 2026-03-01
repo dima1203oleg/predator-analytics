@@ -3,9 +3,8 @@
 This component manages the self-improvement cycle (Section 3.7.3).
 """
 import asyncio
-import json
-import logging
 import os
+
 import httpx
 from datetime import datetime
 from services.shared.logging_config import get_logger
