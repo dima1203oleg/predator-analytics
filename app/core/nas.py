@@ -5,10 +5,10 @@ from __future__ import annotations
 Self-evolution and model optimization.
 """
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 
 logger = logging.getLogger(__name__)
@@ -48,13 +48,7 @@ class NASEngine:
 
     def __init__(self, config: NASConfig = None):
         self.config = config or NASConfig()
-        self.state = NASState(
-            phase=NASPhase.IDLE,
-            generation=0,
-            best_fitness=0.0,
-            active=False,
-            logs=[]
-        )
+        self.state = NASState(phase=NASPhase.IDLE, generation=0, best_fitness=0.0, active=False, logs=[])
 
     async def start_evolution(self) -> NASState:
         """Start evolution cycle."""
@@ -78,7 +72,7 @@ class NASEngine:
             "generation": self.state.generation,
             "best_fitness": self.state.best_fitness,
             "active": self.state.active,
-            "logs": self.state.logs[-10:]
+            "logs": self.state.logs[-10:],
         }
 
 

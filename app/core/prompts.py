@@ -114,8 +114,9 @@ PROMPTS = {
     "summarizer": SUMMARIZER_PROMPT,
     "corruption_detector": CORRUPTION_DETECTOR_PROMPT,
     "tender_analyzer": TENDER_ANALYZER_PROMPT,
-    "council_synthesis": COUNCIL_SYNTHESIS_PROMPT_TEMPLATE
+    "council_synthesis": COUNCIL_SYNTHESIS_PROMPT_TEMPLATE,
 }
+
 
 def get_prompt(name: str, **kwargs) -> str:
     """Get prompt by name, optionally formatting with kwargs."""

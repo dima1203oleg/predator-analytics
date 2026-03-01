@@ -1,5 +1,4 @@
-"""
-Predator Analytics v45.0 — Market Nervous System Routes
+"""Predator Analytics v45.0 — Market Nervous System Routes
 Covers all 5 analytical layers (101-200) + CERS API.
 
 Endpoints:
@@ -9,33 +8,38 @@ Endpoints:
   GET /nerve/overview        — Strategic Governance overview
   POST /nerve/scan           — Trigger deep scan for an entity
 """
+
+from typing import TYPE_CHECKING
+
 from fastapi import APIRouter, HTTPException, Query
-from typing import Dict, Any, Optional
-from uuid import UUID
+
 from app.services.analytical_service import analytical_service
+
+
+if TYPE_CHECKING:
+    from uuid import UUID
+
 
 nerve_router = APIRouter(prefix="/nerve", tags=["market-nervous-system"])
 
 
 @nerve_router.get("/pulse", summary="Economic Climate Index (Dataset #200)")
 async def get_market_pulse():
-    """
-    📡 Глобальний Економічний Пульс.
+    """📡 Глобальний Економічний Пульс.
     Агрегує всі 5 шарів у Composite Economic Risk Score (CERS).
     Оновлюється кожні 60 секунд NerveMonitor'ом.
     """
     try:
         return await analytical_service.get_market_pulse()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Pulse fetch failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Pulse fetch failed: {e!s}")
 
 
 @nerve_router.get("/profile/{entity_id}", summary="Full CERS Entity Profile")
-async def get_entity_profile(entity_id: UUID):
-    """
-    🔬 Повний V45 профіль компанії — 'Кредитний рентген'.
+async def get_entity_profile(entity_id: "UUID"):
+    """🔬 Повний V45 профіль компанії — 'Кредитний рентген'.
     Повертає CERS + сигнали усіх 5 аналітичних шарів.
-    
+
     Використовується:
     - Банками (скоринг ризику)
     - Правоохоронцями (детектор схем)
@@ -44,14 +48,13 @@ async def get_entity_profile(entity_id: UUID):
     try:
         return await analytical_service.get_entity_profile(entity_id)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Profile fetch failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Profile fetch failed: {e!s}")
 
 
 @nerve_router.get("/cers/formula", summary="CERS formula explanation")
 async def get_cers_explanation():
-    """
-    📐 Пояснення формули CERS для клієнтського онбордингу.
-    
+    """📐 Пояснення формули CERS для клієнтського онбордингу.
+
     CERS = 0.25×Behavioral + 0.20×Institutional + 0.20×Influence
          + 0.15×Structural + 0.20×Predictive
     """
@@ -60,25 +63,24 @@ async def get_cers_explanation():
 
 @nerve_router.get("/overview", summary="Strategic Governance market overview")
 async def get_market_overview():
-    """
-    🏛️ Стратегічний огляд ринку для державних органів.
+    """🏛️ Стратегічний огляд ринку для державних органів.
     Концентрує ключові ризики по всіх шарах.
     """
     try:
         return await analytical_service.get_market_overview()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Overview failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Overview failed: {e!s}")
 
 
 @nerve_router.post("/scan/{entity_id}", summary="Trigger deep entity scan")
-async def trigger_entity_scan(entity_id: UUID, entity_type: str = Query(default="company")):
-    """
-    🚨 Запустити глибоке сканування сутності (компанія, брокер, пост).
+async def trigger_entity_scan(entity_id: "UUID", entity_type: str = Query(default="company")):
+    """🚨 Запустити глибоке сканування сутності (компанія, брокер, пост).
     Оновлює всі шари: behavioral profile, influence connections, predictive alerts.
     """
     try:
         from libs.core.analytics_engine import analytics_engine
-        result = await analytics_engine.scan_entity(entity_id, entity_type)
+
+        await analytics_engine.scan_entity(entity_id, entity_type)
         return {
             "scan_initiated": True,
             "entity_id": str(entity_id),
@@ -87,15 +89,14 @@ async def trigger_entity_scan(entity_id: UUID, entity_type: str = Query(default=
             "status": "completed",
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Scan failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Scan failed: {e!s}")
 
 
 @nerve_router.get("/alerts/recent", summary="Recent predictive alerts")
 async def get_recent_alerts(limit: int = Query(default=10, ge=1, le=100)):
-    """
-    🔔 Останні предиктивні алерти (Шар 5: Predictive 181-200).
-    """
+    """🔔 Останні предиктивні алерти (Шар 5: Predictive 181-200)."""
     from datetime import datetime, timedelta
+
     # Placeholder until Sprint 2 Redis alert stream
     alerts = [
         {
@@ -134,10 +135,9 @@ async def get_recent_alerts(limit: int = Query(default=10, ge=1, le=100)):
 
 @nerve_router.get("/layers/status", summary="Status of all 5 analytical layers")
 async def get_layers_status():
-    """
-    🧠 Статус усіх 5 аналітичних шарів Нервової Системи.
-    """
+    """🧠 Статус усіх 5 аналітичних шарів Нервової Системи."""
     from datetime import datetime
+
     return {
         "nerve_system_version": "v45.0",
         "layers": {

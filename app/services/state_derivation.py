@@ -2,14 +2,13 @@ from __future__ import annotations
 
 # services/api-gateway/app/services/state_derivation.py
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 import hashlib
 import json
-from typing import Dict, List, Optional
 import uuid
 
 
-class ETLState(str, Enum):
+class ETLState(StrEnum):
     CREATED = "CREATED"
     UPLOADING = "UPLOADING"
     UPLOADED = "UPLOADED"
@@ -23,6 +22,7 @@ class ETLState(str, Enum):
     UPLOAD_FAILED = "UPLOAD_FAILED"
     PROCESSING_FAILED = "PROCESSING_FAILED"
     INDEXING_FAILED = "INDEXING_FAILED"
+
 
 class StateDerivationEngine:
     """Sovereign State Derivation Engine (Law of Derived ETL State v45).
@@ -39,7 +39,7 @@ class StateDerivationEngine:
         ETLState.INDEXED: {ETLState.COMPLETED},
         ETLState.UPLOAD_FAILED: {ETLState.FAILED},
         ETLState.PROCESSING_FAILED: {ETLState.FAILED},
-        ETLState.INDEXING_FAILED: {ETLState.FAILED}
+        ETLState.INDEXING_FAILED: {ETLState.FAILED},
     }
 
     TERMINAL_STATES = {ETLState.COMPLETED, ETLState.FAILED, ETLState.CANCELLED}
@@ -69,7 +69,7 @@ class StateDerivationEngine:
         # If 'metrics' contains 'previous_metrics' (hack for regulation), use it.
         monotonicity_violations = []
         if "previous_metrics" in metrics:
-             monotonicity_violations = self._check_monotonicity([{"metrics": metrics["previous_metrics"]}], metrics)
+            monotonicity_violations = self._check_monotonicity([{"metrics": metrics["previous_metrics"]}], metrics)
 
         # 5. Policy Check (OPA)
         # We do this simulating the OPA input for additional rigorous checks
@@ -77,13 +77,15 @@ class StateDerivationEngine:
         # Here we do Python-native logic validation.
         violations = []
         if not transition_valid:
-             violations.append(f"ILLEGAL_TRANSITION: {previous_state} -> {derived_state}")
+            violations.append(f"ILLEGAL_TRANSITION: {previous_state} -> {derived_state}")
         violations.extend(monotonicity_violations)
         if heartbeat_violation:
             violations.append(heartbeat_violation)
 
         # 6. Confidence Score
-        confidence = self._calculate_confidence(previous_state, derived_state, {"transition_valid": transition_valid}, violations)
+        confidence = self._calculate_confidence(
+            previous_state, derived_state, {"transition_valid": transition_valid}, violations
+        )
 
         return {
             "state": derived_state,
@@ -92,7 +94,7 @@ class StateDerivationEngine:
             "violations": violations,
             "metrics": metrics,
             "transition_valid": transition_valid,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
         }
 
     def _aggregate_metrics(self, facts: list[dict]) -> dict:
@@ -103,7 +105,7 @@ class StateDerivationEngine:
             "bytes_processed": 0,
             "bytes_total": 0,
             "error_count": 0,
-            "last_heartbeat": None
+            "last_heartbeat": None,
         }
         for fact in facts:
             ftype = fact.get("fact_type")
@@ -131,26 +133,33 @@ class StateDerivationEngine:
                 if fact.get("fact_type") == "error_occurred":
                     ctx = fact.get("payload", {}).get("error_context", {})
                     stage = ctx.get("stage", "")
-                    if "upload" in stage: return ETLState.UPLOAD_FAILED
-                    if "processing" in stage: return ETLState.PROCESSING_FAILED
-                    if "indexing" in stage: return ETLState.INDEXING_FAILED
+                    if "upload" in stage:
+                        return ETLState.UPLOAD_FAILED
+                    if "processing" in stage:
+                        return ETLState.PROCESSING_FAILED
+                    if "indexing" in stage:
+                        return ETLState.INDEXING_FAILED
             return ETLState.FAILED
 
         if metrics["records_indexed"] > 0 and metrics["records_indexed"] >= metrics["records_total"]:
             return ETLState.COMPLETED
-        if metrics["records_indexed"] > 0: return ETLState.INDEXING
+        if metrics["records_indexed"] > 0:
+            return ETLState.INDEXING
         if metrics["records_processed"] > 0 and metrics["records_processed"] >= metrics["records_total"]:
             return ETLState.PROCESSED
-        if metrics["records_processed"] > 0: return ETLState.PROCESSING
+        if metrics["records_processed"] > 0:
+            return ETLState.PROCESSING
         if metrics["bytes_processed"] > 0 and metrics["bytes_processed"] >= metrics["bytes_total"]:
             return ETLState.UPLOADED
-        if metrics["bytes_processed"] > 0: return ETLState.UPLOADING
+        if metrics["bytes_processed"] > 0:
+            return ETLState.UPLOADING
         return ETLState.CREATED
 
     def _check_heartbeat_violation(self, facts: list[dict], state: ETLState) -> str | None:
         if state in {ETLState.UPLOADING, ETLState.PROCESSING, ETLState.INDEXING}:
             heartbeats = [f for f in facts if f.get("fact_type") == "heartbeat"]
-            if not heartbeats: return None # Initial state
+            if not heartbeats:
+                return None  # Initial state
             latest = max(heartbeats, key=lambda x: x["timestamp"])
             last_ts = datetime.fromisoformat(latest["timestamp"])
             gap = (datetime.utcnow() - last_ts).total_seconds()
@@ -160,18 +169,22 @@ class StateDerivationEngine:
 
     def _compute_evidence_hash(self, facts: list[dict]) -> str:
         sorted_facts = sorted(facts, key=lambda x: x.get("fact_id", str(uuid.uuid4())))
-        canonical_json = json.dumps(sorted_facts, sort_keys=True, separators=(',', ':'))
+        canonical_json = json.dumps(sorted_facts, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(canonical_json.encode()).hexdigest()
 
     def _validate_transition(self, previous_state: ETLState | None, derived_state: ETLState) -> bool:
         if previous_state:
             if previous_state in self.TERMINAL_STATES and derived_state != previous_state:
-                return False # Terminal state violation
-            if derived_state != previous_state and derived_state not in self.ALLOWED_TRANSITIONS.get(previous_state, set()):
-                return False # Illegal transition
+                return False  # Terminal state violation
+            if derived_state != previous_state and derived_state not in self.ALLOWED_TRANSITIONS.get(
+                previous_state, set()
+            ):
+                return False  # Illegal transition
         return True
 
-    def _calculate_confidence(self, db_state: ETLState, derived_state: ETLState, verification: dict, violations: list) -> float:
+    def _calculate_confidence(
+        self, db_state: ETLState, derived_state: ETLState, verification: dict, violations: list
+    ) -> float:
         """Calculate confidence based on Constitution 'Confidence Law'.
         rules:
           - if violations == 0 and verification_passed == true -> confidence = 1.0
@@ -184,15 +197,15 @@ class StateDerivationEngine:
         # Penalties based on Law
         if violations:
             confidence = 0.6  # Cap at < 0.7 for violations
-            if any("INV-007" in v for v in violations): # Monotonicity violation is severe
-                 confidence = 0.3
+            if any("INV-007" in v for v in violations):  # Monotonicity violation is severe
+                confidence = 0.3
 
         if not verification.get("transition_valid", False):
-            confidence = 0.4 # Cap at < 0.5 for invalid transitions
+            confidence = 0.4  # Cap at < 0.5 for invalid transitions
 
         # Additional heuristics (minor)
         if db_state == derived_state:
-            confidence += 0.0 # No penalty, stable
+            confidence += 0.0  # No penalty, stable
         else:
             # Transitioning state is slightly less confident until confirmed?
             # Actually, per Law, if no violations, it's 1.0. Law overrides heuristics.

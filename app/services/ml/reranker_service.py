@@ -6,7 +6,6 @@ Implements MS MARCO MiniLM-based reranking for search results.
 """
 # from sentence_transformers import CrossEncoder # Lazily imported
 import logging
-from typing import Dict, List, Tuple
 
 
 logger = logging.getLogger(__name__)
@@ -27,6 +26,7 @@ class RerankerService:
         self.model = None
         try:
             from sentence_transformers import CrossEncoder
+
             self.model = CrossEncoder(model_name, max_length=512)
             logger.info("Reranker model loaded successfully")
         except ImportError:
@@ -35,11 +35,7 @@ class RerankerService:
             logger.exception(f"Failed to load reranker model: {e}")
 
     def rerank(
-        self,
-        query: str,
-        documents: list[dict],
-        top_k: int = 10,
-        score_field: str = "title"
+        self, query: str, documents: list[dict], top_k: int = 10, score_field: str = "title"
     ) -> list[tuple[dict, float]]:
         """Rerank documents based on semantic relevance to query.
 
@@ -89,6 +85,7 @@ class RerankerService:
 
 # Singleton instance
 _reranker_instance = None
+
 
 def get_reranker() -> RerankerService:
     """Dependency injection for FastAPI."""

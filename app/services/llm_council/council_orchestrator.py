@@ -13,7 +13,7 @@ Workflow:
 import asyncio
 from datetime import datetime
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from . import ConsensusResult, CouncilMember, CouncilResponse, PeerReview
 from .models.anthropic_member import ClaudeCouncilMember
@@ -43,12 +43,7 @@ class LLMCouncilOrchestrator:
         )
     """
 
-    def __init__(
-        self,
-        members: list[CouncilMember],
-        chairman: CouncilMember | None = None,
-        min_consensus: float = 0.7
-    ):
+    def __init__(self, members: list[CouncilMember], chairman: CouncilMember | None = None, min_consensus: float = 0.7):
         """Args:
         members: List of council members (different LLMs)
         chairman: The model that will synthesize final answer (defaults to first member)
@@ -61,10 +56,7 @@ class LLMCouncilOrchestrator:
         self.deliberation_history: list[dict[str, Any]] = []
 
     async def deliberate(
-        self,
-        query: str,
-        context: str | None = None,
-        enable_peer_review: bool = True
+        self, query: str, context: str | None = None, enable_peer_review: bool = True
     ) -> ConsensusResult:
         """Main deliberation workflow.
 
@@ -81,7 +73,8 @@ class LLMCouncilOrchestrator:
 
         # Step 0: Inject System Context
         try:
-            from ..system_control_service import SystemControlService
+            from app.services.system_control_service import SystemControlService
+
             control_service = SystemControlService()
             is_locked = await control_service.is_lockdown()
             if is_locked:
@@ -109,11 +102,7 @@ class LLMCouncilOrchestrator:
 
         # Step 3: Consensus Formation
         logger.info("Step 3: Chairman forming consensus")
-        consensus = await self._form_consensus(
-            query=query,
-            responses=responses,
-            peer_reviews=peer_reviews
-        )
+        consensus = await self._form_consensus(query=query, responses=responses, peer_reviews=peer_reviews)
 
         # Add metadata
         elapsed_time = (datetime.now() - start_time).total_seconds()
@@ -121,29 +110,18 @@ class LLMCouncilOrchestrator:
             "deliberation_time_seconds": elapsed_time,
             "num_members": len(self.members),
             "peer_reviews_conducted": len(peer_reviews),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
         # Store in history
-        self.deliberation_history.append({
-            "query": query,
-            "result": consensus,
-            "timestamp": datetime.now()
-        })
+        self.deliberation_history.append({"query": query, "result": consensus, "timestamp": datetime.now()})
 
         logger.info(f"Deliberation completed in {elapsed_time:.2f}s")
         return consensus
 
-    async def _parallel_generation(
-        self,
-        query: str,
-        context: str | None
-    ) -> list[CouncilResponse]:
+    async def _parallel_generation(self, query: str, context: str | None) -> list[CouncilResponse]:
         """Step 1: All members generate responses simultaneously."""
-        tasks = [
-            member.generate_response(query, context)
-            for member in self.members
-        ]
+        tasks = [member.generate_response(query, context) for member in self.members]
 
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -157,11 +135,7 @@ class LLMCouncilOrchestrator:
 
         return responses
 
-    async def _peer_review_phase(
-        self,
-        responses: list[CouncilResponse],
-        original_query: str
-    ) -> list[PeerReview]:
+    async def _peer_review_phase(self, responses: list[CouncilResponse], original_query: str) -> list[PeerReview]:
         """Step 2: Each member reviews others' responses
         Models act as judges for each other.
         """
@@ -172,9 +146,7 @@ class LLMCouncilOrchestrator:
             for response in responses:
                 # Don't review your own response
                 if response.model_id != reviewer.model_id:
-                    review_tasks.append(
-                        reviewer.review_response(response, original_query)
-                    )
+                    review_tasks.append(reviewer.review_response(response, original_query))
 
         reviews = await asyncio.gather(*review_tasks, return_exceptions=True)
 
@@ -185,10 +157,7 @@ class LLMCouncilOrchestrator:
         return peer_reviews
 
     async def _form_consensus(
-        self,
-        query: str,
-        responses: list[CouncilResponse],
-        peer_reviews: list[PeerReview]
+        self, query: str, responses: list[CouncilResponse], peer_reviews: list[PeerReview]
     ) -> ConsensusResult:
         """Step 3: Chairman synthesizes all information into final answer
         Takes into account:
@@ -199,10 +168,7 @@ class LLMCouncilOrchestrator:
         # Calculate average peer review score for each response
         response_scores = {}
         for response in responses:
-            relevant_reviews = [
-                r for r in peer_reviews
-                if r.reviewed_response_id == response.model_id
-            ]
+            relevant_reviews = [r for r in peer_reviews if r.reviewed_response_id == response.model_id]
 
             if relevant_reviews:
                 avg_score = sum(r.score for r in relevant_reviews) / len(relevant_reviews)
@@ -212,15 +178,13 @@ class LLMCouncilOrchestrator:
                 response_scores[response.model_id] = response.confidence
 
         # Prepare synthesis prompt for chairman
-        synthesis_prompt = self._build_synthesis_prompt(
-            query, responses, peer_reviews, response_scores
-        )
+        synthesis_prompt = self._build_synthesis_prompt(query, responses, peer_reviews, response_scores)
 
         # Chairman creates final answer
         try:
             chairman_response = await self.chairman.generate_response(
                 query=synthesis_prompt,
-                context=None  # All context is in the prompt
+                context=None,  # All context is in the prompt
             )
 
             final_answer = chairman_response.text
@@ -241,18 +205,11 @@ class LLMCouncilOrchestrator:
                 dissenting.append({
                     "model": response.model_id,
                     "text": response.text[:200] + "...",  # Truncate
-                    "score": score
+                    "score": score,
                 })
 
         # Collect all individual responses for transparency
-        all_responses = [
-            {
-                "model_id": r.model_id,
-                "text": r.text,
-                "confidence": r.confidence
-            }
-            for r in responses
-        ]
+        all_responses = [{"model_id": r.model_id, "text": r.text, "confidence": r.confidence} for r in responses]
 
         return ConsensusResult(
             final_answer=final_answer,
@@ -261,7 +218,7 @@ class LLMCouncilOrchestrator:
             peer_reviews=peer_reviews,
             chairman_reasoning=f"Synthesized from {len(responses)} responses with avg review score {avg_score:.2f}",
             dissenting_opinions=dissenting,
-            individual_responses=all_responses
+            individual_responses=all_responses,
         )
 
     def _build_synthesis_prompt(
@@ -269,7 +226,7 @@ class LLMCouncilOrchestrator:
         original_query: str,
         responses: list[CouncilResponse],
         peer_reviews: list[PeerReview],
-        scores: dict[str, float]
+        scores: dict[str, float],
     ) -> str:
         """Build prompt for chairman to synthesize consensus."""
         prompt = f"""You are the chairman of a council of AI models. Your task is to synthesize the best possible answer from multiple perspectives.
@@ -314,30 +271,22 @@ Final Answer:"""
             return {"total_deliberations": 0}
 
         total = len(self.deliberation_history)
-        avg_confidence = sum(
-            d["result"].confidence for d in self.deliberation_history
-        ) / total
+        avg_confidence = sum(d["result"].confidence for d in self.deliberation_history) / total
 
-        avg_time = sum(
-            d["result"].metadata.get("deliberation_time_seconds", 0)
-            for d in self.deliberation_history
-        ) / total
+        avg_time = (
+            sum(d["result"].metadata.get("deliberation_time_seconds", 0) for d in self.deliberation_history) / total
+        )
 
         return {
             "total_deliberations": total,
             "average_confidence": avg_confidence,
             "average_deliberation_time": avg_time,
-            "member_participation": {
-                member.model_id: len(member.response_history)
-                for member in self.members
-            }
+            "member_participation": {member.model_id: len(member.response_history) for member in self.members},
         }
 
 
 # Factory function for easy setup
-def create_default_council(
-    include_models: list[str] | None = None
-) -> LLMCouncilOrchestrator:
+def create_default_council(include_models: list[str] | None = None) -> LLMCouncilOrchestrator:
     """Create a council with default configuration.
 
     Args:
@@ -347,7 +296,7 @@ def create_default_council(
     Returns:
         Configured LLMCouncilOrchestrator
     """
-    include_models = include_models or ['gemini', 'groq']
+    include_models = include_models or ["gemini", "groq"]
 
     members = []
 
@@ -358,7 +307,7 @@ def create_default_council(
         model = getattr(member, "model", None)
         return model is not None
 
-    if 'gpt4' in include_models:
+    if "gpt4" in include_models:
         try:
             m = GPT4CouncilMember()
             if _is_member_configured(m):
@@ -368,7 +317,7 @@ def create_default_council(
         except:
             logger.warning("GPT-4 not available")
 
-    if 'gpt3.5' in include_models:
+    if "gpt3.5" in include_models:
         try:
             m = GPT3_5CouncilMember()
             if _is_member_configured(m):
@@ -378,7 +327,7 @@ def create_default_council(
         except:
             logger.warning("GPT-3.5 not available")
 
-    if 'claude' in include_models:
+    if "claude" in include_models:
         try:
             m = ClaudeCouncilMember()
             if _is_member_configured(m):
@@ -388,7 +337,7 @@ def create_default_council(
         except:
             logger.warning("Claude not available")
 
-    if 'gemini' in include_models:
+    if "gemini" in include_models:
         try:
             m = GeminiCouncilMember()
             if _is_member_configured(m):
@@ -398,7 +347,7 @@ def create_default_council(
         except:
             logger.warning("Gemini not available")
 
-    if 'groq' in include_models:
+    if "groq" in include_models:
         try:
             m = GroqCouncilMember()
             if _is_member_configured(m):
@@ -411,6 +360,7 @@ def create_default_council(
     # Always add Ops Sentinel for V45.0 system awareness
     try:
         from .models.ops_member import OpsCouncilMember
+
         members.append(OpsCouncilMember())
         logger.info("Ops Sentinel added to Council.")
     except Exception as e:
@@ -420,10 +370,6 @@ def create_default_council(
         raise Exception("No council members available. Check API keys.")
 
     # Use Gemini as chairman if available (highest quality of free ones)
-    chairman = next((m for m in members if 'gemini' in m.model_id.lower()), members[0])
+    chairman = next((m for m in members if "gemini" in m.model_id.lower()), members[0])
 
-    return LLMCouncilOrchestrator(
-        members=members,
-        chairman=chairman,
-        min_consensus=0.7
-    )
+    return LLMCouncilOrchestrator(members=members, chairman=chairman, min_consensus=0.7)

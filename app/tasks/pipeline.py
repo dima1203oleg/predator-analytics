@@ -12,16 +12,13 @@ from app.tasks.customs_parser import CustomsExcelParser
 
 logger = get_logger("predator.workers.pipeline")
 
-@shared_task(
-    name="tasks.workers.process_pipeline_task",
-    queue="ingestion",
-    bind=True,
-    max_retries=3
-)
+
+@shared_task(name="tasks.workers.process_pipeline_task", queue="ingestion", bind=True, max_retries=3)
 def process_pipeline_task(self, source_id: str, file_location: str):
     """Executes the strict Knowledge Pipeline FSM:
-    UPLOADED -> PARSING -> TRANSFORMING -> STORING -> INDEXING -> READY
+    UPLOADED -> PARSING -> TRANSFORMING -> STORING -> INDEXING -> READY.
     """
+
     async def run_pipeline():
         redis_client = aioredis.from_url(os.getenv("REDIS_URL", "redis://redis:6379/0"), decode_responses=True)
         pipeline = KnowledgePipeline(redis_client)
@@ -33,7 +30,7 @@ def process_pipeline_task(self, source_id: str, file_location: str):
             await pipeline.transition(source_id, PipelineState.PARSING, progress=10)
 
             stats = None
-            if file_location.lower().endswith('.xlsx'):
+            if file_location.lower().endswith(".xlsx"):
                 logger.info(f"Detected Excel file, running Customs Parser: {file_location}")
                 parser = CustomsExcelParser(file_location)
                 stats = parser.load_and_parse()
@@ -41,14 +38,14 @@ def process_pipeline_task(self, source_id: str, file_location: str):
                 # Update metadata in Redis with parsing results
                 key = pipeline._get_key(source_id)
                 current_data = await redis_client.hgetall(key)
-                meta = json.loads(current_data.get('metadata', '{}'))
-                meta['parser_stats'] = stats
-                await redis_client.hset(key, 'metadata', json.dumps(meta))
+                meta = json.loads(current_data.get("metadata", "{}"))
+                meta["parser_stats"] = stats
+                await redis_client.hset(key, "metadata", json.dumps(meta))
 
-                if stats.get('rejected', 0) > stats.get('total_rows', 1) * 0.5: # 50% fail threshold
+                if stats.get("rejected", 0) > stats.get("total_rows", 1) * 0.5:  # 50% fail threshold
                     raise ValueError(f"Parser rejected too many rows: {stats['rejected']} / {stats['total_rows']}")
             else:
-                await asyncio.sleep(2) # Simulating Parsing for other types
+                await asyncio.sleep(2)  # Simulating Parsing for other types
 
             # 2. TRANSFORMING
             await pipeline.transition(source_id, PipelineState.TRANSFORMING, progress=40)
@@ -67,7 +64,7 @@ def process_pipeline_task(self, source_id: str, file_location: str):
             #    - Create new entity
             # ----------------------------------------------
 
-            await asyncio.sleep(2) # Placeholder for actual logic
+            await asyncio.sleep(2)  # Placeholder for actual logic
 
             await pipeline.transition(source_id, PipelineState.STORING, progress=70)
             await asyncio.sleep(1)
@@ -82,7 +79,7 @@ def process_pipeline_task(self, source_id: str, file_location: str):
             logger.info(f"Pipeline completed for {source_id}")
 
         except Exception as e:
-            logger.error(f"Pipeline failed for {source_id}: {e}")
+            logger.exception(f"Pipeline failed for {source_id}: {e}")
             await pipeline.fail(source_id, str(e))
             # Don't re-raise if we want to avoid infinite loop of retries in this demo
             # In prod, we might retry certain errors

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Optional
 
 import httpx
 
@@ -10,6 +9,7 @@ from app.libs.core.config import settings
 
 
 logger = logging.getLogger(__name__)
+
 
 class AudioService:
     """Service for Speech-to-Text (STT) and Text-to-Speech (TTS).
@@ -32,11 +32,12 @@ class AudioService:
                 payload = {
                     "input": {"text": text},
                     "voice": {"languageCode": "uk-UA", "name": "uk-UA-Wavenet-A"},
-                    "audioConfig": {"audioEncoding": "MP3"}
+                    "audioConfig": {"audioEncoding": "MP3"},
                 }
                 response = await client.post(f"{self.tts_url}?key={self.api_key}", json=payload)
                 if response.status_code == 200:
                     import base64
+
                     audio_content = response.json().get("audioContent")
                     return base64.b64decode(audio_content)
                 logger.error(f"TTS failed: {response.text}")
@@ -53,6 +54,7 @@ class AudioService:
 
         try:
             import base64
+
             audio_b64 = base64.b64encode(audio_content).decode("utf-8")
             async with httpx.AsyncClient(timeout=10) as client:
                 payload = {
@@ -60,9 +62,9 @@ class AudioService:
                         "encoding": "OGG_OPUS",
                         "sampleRateHertz": 16000,
                         "languageCode": "uk-UA",
-                        "enableAutomaticPunctuation": True
+                        "enableAutomaticPunctuation": True,
                     },
-                    "audio": {"content": audio_b64}
+                    "audio": {"content": audio_b64},
                 }
                 response = await client.post(f"{self.stt_url}?key={self.api_key}", json=payload)
                 if response.status_code == 200:
@@ -75,5 +77,6 @@ class AudioService:
         except Exception as e:
             logger.exception(f"STT Error: {e}")
             return None
+
 
 audio_service = AudioService()

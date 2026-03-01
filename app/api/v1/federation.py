@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -11,6 +11,7 @@ from app.services.federation_service import get_federation_service
 
 router = APIRouter(tags=["federation"])
 
+
 class EdgeNodeRegistration(BaseModel):
     node_id: str
     hostname: str
@@ -18,10 +19,12 @@ class EdgeNodeRegistration(BaseModel):
     capabilities: list[str]
     resources: dict[str, float]
 
+
 class TaskRequest(BaseModel):
     target_node_id: str | None = None
-    type: str # "scan_csv"
+    type: str  # "scan_csv"
     payload: dict
+
 
 class TaskResult(BaseModel):
     task_id: str
@@ -29,10 +32,12 @@ class TaskResult(BaseModel):
     result: dict[str, Any]
     status: str
 
+
 @router.post("/federation/register", dependencies=[Depends(require_admin)])
 async def register_node(node: EdgeNodeRegistration):
     service = get_federation_service()
     return service.register_node(node.dict())
+
 
 @router.post("/federation/heartbeat/{node_id}")
 async def heartbeat(node_id: str, load: float = 0.0):
@@ -44,10 +49,12 @@ async def heartbeat(node_id: str, load: float = 0.0):
 
     return {"status": "ok", "tasks": tasks}
 
+
 @router.get("/federation/nodes", dependencies=[Depends(require_admin)])
 async def list_nodes():
     service = get_federation_service()
     return service.get_active_nodes()
+
 
 @router.post("/federation/dispatch", dependencies=[Depends(require_admin)])
 async def dispatch_task(task: TaskRequest):
@@ -57,6 +64,7 @@ async def dispatch_task(task: TaskRequest):
         return {"status": "queued", "task_id": task_id}
     except Exception as e:
         raise HTTPException(status_code=503, detail=str(e))
+
 
 @router.post("/federation/submit_result")
 async def submit_result(result: TaskResult):

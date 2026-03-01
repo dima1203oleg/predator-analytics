@@ -5,7 +5,7 @@ import logging
 import os
 import sys
 import time
-from typing import Any, Dict
+from typing import Any
 import uuid
 
 from .llm import llm_service
@@ -106,14 +106,14 @@ class TripleAgentService(TrinityCore):
                     self._current_code_raw["code"] = fixed_code
                     return {
                         "approved": True,
-                        "security_assessment": "Aider CLI: Code reviewed and auto-fixed for security standards."
+                        "security_assessment": "Aider CLI: Code reviewed and auto-fixed for security standards.",
                     }
 
                 # If Aider failed or didn't return code, fallback
                 res = await self._aider_audit_fallback(code, self._current_plan_raw.get("plan", ""))
                 return {
                     "approved": res.get("success", False),
-                    "security_assessment": f"Aider Review (Fallback): {res.get('report', '')}"
+                    "security_assessment": f"Aider Review (Fallback): {res.get('report', '')}",
                 }
             except Exception as e:
                 logger.exception(f"Aider CLI Audit failed: {e}")
@@ -121,7 +121,7 @@ class TripleAgentService(TrinityCore):
         self._current_audit_raw = await self._aider_audit_fallback(code, self._current_plan_raw.get("plan", ""))
         return {
             "approved": self._current_audit_raw.get("success", False),
-            "security_assessment": self._current_audit_raw.get("report", "")
+            "security_assessment": self._current_audit_raw.get("report", ""),
         }
 
     async def process_command(self, user_command: str) -> dict[str, Any]:
@@ -133,18 +133,15 @@ class TripleAgentService(TrinityCore):
         # 1. Initialize LangGraph Agent
         try:
             from app.libs.agents.graph import create_agent_graph
+
             agent_graph = create_agent_graph()
 
             # Initial State
             initial_state = {
                 "messages": [{"role": "user", "content": user_command}],
-                "context": {
-                    "original_request": user_command,
-                    "retries": 0,
-                    "plan_index": 0
-                },
+                "context": {"original_request": user_command, "retries": 0, "plan_index": 0},
                 "current_step": "START",
-                "error": None
+                "error": None,
             }
 
             logger.info(f"🚀 Trinity Agent Graph started for: {user_command}")
@@ -179,7 +176,7 @@ class TripleAgentService(TrinityCore):
                         status="verified" if success else "blocked",
                         final_output=str(last_output),
                         risk_level="low" if success else "high",
-                        execution_time_ms=execution_time_ms
+                        execution_time_ms=execution_time_ms,
                     )
                     db.add(log_entry)
                 logger.info("✅ Trinity audit log saved.")
@@ -193,18 +190,18 @@ class TripleAgentService(TrinityCore):
                 "plan": plan,
                 "code": final_code,
                 "history": final_state.get("messages", []),
-                "intent": "autonomous_action"
+                "intent": "autonomous_action",
             }
 
         except Exception as e:
             logger.exception(f"❌ LangGraph Execution Failed: {e}")
-             # Fallback to old Logic or just fail gracefully
+            # Fallback to old Logic or just fail gracefully
             return {
                 "success": False,
                 "error": str(e),
                 "audit_report": "Agent Graph Critical Failure",
                 "plan": [],
-                "code": ""
+                "code": "",
             }
 
     async def _gemini_plan_fallback(self, command: str) -> dict[str, Any]:
@@ -218,7 +215,7 @@ class TripleAgentService(TrinityCore):
 
     async def _mistral_generate_fallback(self, plan: str, audit_feedback: str = "") -> dict[str, Any]:
         prompt = f"Implement this plan: {plan}. Feedback: {audit_feedback}. Return code."
-        res = await llm_service.generate(prompt, provider="groq") # or mistral if available
+        res = await llm_service.generate(prompt, provider="groq")  # or mistral if available
         return {"code": res.content}
 
     async def _aider_audit_fallback(self, code: str, plan: str) -> dict[str, Any]:
@@ -228,5 +225,6 @@ class TripleAgentService(TrinityCore):
             return json.loads(res.content)
         except:
             return {"success": True, "report": "Audit passed (fallback parsing error)"}
+
 
 triple_agent_service = TripleAgentService()

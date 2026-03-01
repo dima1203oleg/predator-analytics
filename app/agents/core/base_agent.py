@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -10,17 +10,20 @@ from pydantic import BaseModel
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class AgentConfig(BaseModel):
     name: str
     model: str = "gemini-pro"
     temperature: float = 0.0
     tools: list[str] = []
 
+
 class AgentResponse(BaseModel):
     agent_name: str
     result: Any
     metadata: dict[str, Any] = {}
     error: str | None = None
+
 
 class BaseAgent:
     def __init__(self, config: AgentConfig):

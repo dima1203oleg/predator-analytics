@@ -11,16 +11,14 @@ from __future__ import annotations
 """
 
 import asyncio
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import hashlib
-import io
 import json
 import logging
 import os
 from pathlib import Path
 import subprocess
-import tempfile
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 
 logger = logging.getLogger("service.media_processor")
@@ -52,6 +50,7 @@ class MediaProcessor:
         # Whisper (OpenAI)
         try:
             import whisper
+
             self.has_whisper = True
             logger.info("✅ Whisper доступний для транскрипції")
         except ImportError:
@@ -69,6 +68,7 @@ class MediaProcessor:
         # OpenCV для відео
         try:
             import cv2
+
             self.has_opencv = True
             logger.info("✅ OpenCV доступний для відео-аналізу")
         except ImportError:
@@ -80,11 +80,7 @@ class MediaProcessor:
             self.has_groq = True
             logger.info("✅ Groq API доступний для Whisper")
 
-    async def process_audio(
-        self,
-        file_path: str,
-        options: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+    async def process_audio(self, file_path: str, options: dict[str, Any] | None = None) -> dict[str, Any]:
         """Обробка аудіо файлу з транскрипцією."""
         options = options or {}
         language = options.get("language", self.default_language)
@@ -95,7 +91,7 @@ class MediaProcessor:
             "processed_at": datetime.now(UTC).isoformat(),
             "status": "pending",
             "transcript": None,
-            "metadata": {}
+            "metadata": {},
         }
 
         try:
@@ -130,11 +126,7 @@ class MediaProcessor:
 
         return result
 
-    async def process_video(
-        self,
-        file_path: str,
-        options: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+    async def process_video(self, file_path: str, options: dict[str, Any] | None = None) -> dict[str, Any]:
         """Обробка відео файлу."""
         options = options or {}
         extract_frames = options.get("extract_frames", True)
@@ -147,7 +139,7 @@ class MediaProcessor:
             "status": "pending",
             "transcript": None,
             "frames": [],
-            "metadata": {}
+            "metadata": {},
         }
 
         try:
@@ -190,12 +182,7 @@ class MediaProcessor:
             return {"error": "FFmpeg не доступний"}
 
         try:
-            cmd = [
-                "ffprobe", "-v", "quiet",
-                "-print_format", "json",
-                "-show_format", "-show_streams",
-                file_path
-            ]
+            cmd = ["ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", file_path]
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
             data = json.loads(result.stdout)
 
@@ -210,10 +197,10 @@ class MediaProcessor:
                 "format": format_info.get("format_name", ""),
                 "codec": audio_stream.get("codec_name", ""),
                 "sample_rate": int(audio_stream.get("sample_rate", 0)),
-                "channels": int(audio_stream.get("channels", 0))
+                "channels": int(audio_stream.get("channels", 0)),
             }
         except Exception as e:
-            logger.error(f"Помилка отримання метаданих: {e}")
+            logger.exception(f"Помилка отримання метаданих: {e}")
             return {"error": str(e)}
 
     async def _get_video_metadata(self, file_path: str) -> dict[str, Any]:
@@ -222,12 +209,7 @@ class MediaProcessor:
             return {"error": "FFmpeg не доступний"}
 
         try:
-            cmd = [
-                "ffprobe", "-v", "quiet",
-                "-print_format", "json",
-                "-show_format", "-show_streams",
-                file_path
-            ]
+            cmd = ["ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", file_path]
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
             data = json.loads(result.stdout)
 
@@ -246,17 +228,13 @@ class MediaProcessor:
                 "height": int(video_stream.get("height", 0)),
                 "fps": eval(video_stream.get("r_frame_rate", "0/1")) if video_stream.get("r_frame_rate") else 0,
                 "audio_codec": audio_stream.get("codec_name", ""),
-                "has_audio": bool(audio_stream)
+                "has_audio": bool(audio_stream),
             }
         except Exception as e:
-            logger.error(f"Помилка отримання метаданих відео: {e}")
+            logger.exception(f"Помилка отримання метаданих відео: {e}")
             return {"error": str(e)}
 
-    async def _transcribe_with_whisper(
-        self,
-        file_path: str,
-        language: str = "uk"
-    ) -> dict[str, Any]:
+    async def _transcribe_with_whisper(self, file_path: str, language: str = "uk") -> dict[str, Any]:
         """Транскрипція через локальний Whisper."""
         import whisper
 
@@ -265,30 +243,20 @@ class MediaProcessor:
         # Запуск в thread pool (Whisper блокуючий)
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(
-            None,
-            lambda: model.transcribe(file_path, language=language, task="transcribe")
+            None, lambda: model.transcribe(file_path, language=language, task="transcribe")
         )
 
         return {
             "text": result["text"],
             "language": result.get("language", language),
             "segments": [
-                {
-                    "start": seg["start"],
-                    "end": seg["end"],
-                    "text": seg["text"]
-                }
-                for seg in result.get("segments", [])
+                {"start": seg["start"], "end": seg["end"], "text": seg["text"]} for seg in result.get("segments", [])
             ],
             "engine": "whisper-local",
-            "model": self.whisper_model
+            "model": self.whisper_model,
         }
 
-    async def _transcribe_with_groq(
-        self,
-        file_path: str,
-        language: str = "uk"
-    ) -> dict[str, Any]:
+    async def _transcribe_with_groq(self, file_path: str, language: str = "uk") -> dict[str, Any]:
         """Транскрипція через Groq Whisper API (швидше)."""
         import httpx
 
@@ -307,17 +275,13 @@ class MediaProcessor:
         async with httpx.AsyncClient(timeout=120) as client:
             with open(file_path, "rb") as f:
                 files = {"file": (Path(file_path).name, f, "audio/mpeg")}
-                data = {
-                    "model": "whisper-large-v3",
-                    "language": language,
-                    "response_format": "verbose_json"
-                }
+                data = {"model": "whisper-large-v3", "language": language, "response_format": "verbose_json"}
 
                 response = await client.post(
                     "https://api.groq.com/openai/v1/audio/transcriptions",
                     headers={"Authorization": f"Bearer {api_key}"},
                     files=files,
-                    data=data
+                    data=data,
                 )
                 response.raise_for_status()
                 result = response.json()
@@ -326,16 +290,12 @@ class MediaProcessor:
             "text": result.get("text", ""),
             "language": result.get("language", language),
             "segments": [
-                {
-                    "start": seg.get("start", 0),
-                    "end": seg.get("end", 0),
-                    "text": seg.get("text", "")
-                }
+                {"start": seg.get("start", 0), "end": seg.get("end", 0), "text": seg.get("text", "")}
                 for seg in result.get("segments", [])
             ],
             "engine": "groq-whisper",
             "model": "whisper-large-v3",
-            "duration": result.get("duration", 0)
+            "duration": result.get("duration", 0),
         }
 
     async def _extract_audio_from_video(self, video_path: str) -> str | None:
@@ -344,18 +304,10 @@ class MediaProcessor:
             logger.error("FFmpeg не доступний для витягнення аудіо")
             return None
 
-        output_path = os.path.join(
-            self.temp_dir,
-            f"audio_{hashlib.md5(video_path.encode()).hexdigest()[:8]}.mp3"
-        )
+        output_path = os.path.join(self.temp_dir, f"audio_{hashlib.md5(video_path.encode()).hexdigest()[:8]}.mp3")
 
         try:
-            cmd = [
-                "ffmpeg", "-y", "-i", video_path,
-                "-vn", "-acodec", "libmp3lame",
-                "-q:a", "2",
-                output_path
-            ]
+            cmd = ["ffmpeg", "-y", "-i", video_path, "-vn", "-acodec", "libmp3lame", "-q:a", "2", output_path]
             result = subprocess.run(cmd, capture_output=True, timeout=300)
 
             if result.returncode == 0 and os.path.exists(output_path):
@@ -367,11 +319,7 @@ class MediaProcessor:
             logger.exception(f"Помилка витягнення аудіо: {e}")
             return None
 
-    async def _extract_key_frames(
-        self,
-        video_path: str,
-        interval: int = 30
-    ) -> list[dict[str, Any]]:
+    async def _extract_key_frames(self, video_path: str, interval: int = 30) -> list[dict[str, Any]]:
         """Витягнення ключових кадрів з відео."""
         if not self.has_opencv:
             return []
@@ -382,7 +330,7 @@ class MediaProcessor:
         cap = cv2.VideoCapture(video_path)
 
         fps = cap.get(cv2.CAP_PROP_FPS) or 30
-        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         frame_interval = int(fps * interval)
 
         frame_idx = 0
@@ -396,16 +344,11 @@ class MediaProcessor:
 
                 # Зберегти кадр
                 frame_path = os.path.join(
-                    self.temp_dir,
-                    f"frame_{hashlib.md5(video_path.encode()).hexdigest()[:8]}_{frame_idx}.jpg"
+                    self.temp_dir, f"frame_{hashlib.md5(video_path.encode()).hexdigest()[:8]}_{frame_idx}.jpg"
                 )
                 cv2.imwrite(frame_path, frame)
 
-                frames.append({
-                    "frame_idx": frame_idx,
-                    "timestamp": timestamp,
-                    "path": frame_path
-                })
+                frames.append({"frame_idx": frame_idx, "timestamp": timestamp, "path": frame_path})
 
             frame_idx += 1
 
@@ -427,10 +370,7 @@ class MediaProcessor:
                 text = pytesseract.image_to_string(image, lang="ukr+eng")
 
                 if text.strip():
-                    results.append({
-                        "timestamp": frame["timestamp"],
-                        "text": text.strip()
-                    })
+                    results.append({"timestamp": frame["timestamp"], "text": text.strip()})
             except Exception as e:
                 logger.warning(f"OCR помилка для кадру: {e}")
 
@@ -439,24 +379,42 @@ class MediaProcessor:
     async def _classify_content(self, text: str) -> dict[str, Any]:
         """Класифікація контенту (корисний/шум)."""
         if not text or len(text) < 20:
-            return {
-                "is_valuable": False,
-                "confidence": 0.9,
-                "reason": "Занадто короткий текст",
-                "category": "noise"
-            }
+            return {"is_valuable": False, "confidence": 0.9, "reason": "Занадто короткий текст", "category": "noise"}
 
         # Ключові слова для митної тематики
         customs_keywords = [
-            "митни", "декларац", "імпорт", "експорт", "товар",
-            "вантаж", "контейнер", "мит", "податок", "акциз",
-            "розмитнен", "перетин", "кордон", "санкц", "ембарго",
-            "контрабанд", "ліцензі", "сертифікат", "інвойс"
+            "митни",
+            "декларац",
+            "імпорт",
+            "експорт",
+            "товар",
+            "вантаж",
+            "контейнер",
+            "мит",
+            "податок",
+            "акциз",
+            "розмитнен",
+            "перетин",
+            "кордон",
+            "санкц",
+            "ембарго",
+            "контрабанд",
+            "ліцензі",
+            "сертифікат",
+            "інвойс",
         ]
 
         business_keywords = [
-            "компані", "фірм", "підприємств", "контракт", "угод",
-            "постачальник", "покупець", "оплат", "рахунок", "transact"
+            "компані",
+            "фірм",
+            "підприємств",
+            "контракт",
+            "угод",
+            "постачальник",
+            "покупець",
+            "оплат",
+            "рахунок",
+            "transact",
         ]
 
         text_lower = text.lower()
@@ -472,43 +430,36 @@ class MediaProcessor:
                 "confidence": min(0.5 + total_score * 0.1, 0.95),
                 "reason": f"Знайдено {customs_score} митних та {business_score} бізнес-термінів",
                 "category": "customs_intelligence" if customs_score > business_score else "business_intelligence",
-                "keywords_found": {
-                    "customs": customs_score,
-                    "business": business_score
-                }
+                "keywords_found": {"customs": customs_score, "business": business_score},
             }
         if total_score >= 1:
             return {
                 "is_valuable": True,
                 "confidence": 0.6,
                 "reason": "Потенційно релевантний контент",
-                "category": "general_intelligence"
+                "category": "general_intelligence",
             }
         return {
             "is_valuable": False,
             "confidence": 0.7,
             "reason": "Не знайдено релевантних ключових слів",
-            "category": "noise"
+            "category": "noise",
         }
 
-    async def _save_transcript(
-        self,
-        source_path: str,
-        transcript: dict[str, Any]
-    ) -> str:
+    async def _save_transcript(self, source_path: str, transcript: dict[str, Any]) -> str:
         """Збереження транскрипту у файл."""
         file_hash = hashlib.md5(source_path.encode()).hexdigest()[:12]
         output_path = os.path.join(
-            self.output_dir,
-            f"transcript_{file_hash}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            self.output_dir, f"transcript_{file_hash}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         )
 
         with open(output_path, "w", encoding="utf-8") as f:
-            json.dump({
-                "source": source_path,
-                "transcript": transcript,
-                "saved_at": datetime.now(UTC).isoformat()
-            }, f, ensure_ascii=False, indent=2)
+            json.dump(
+                {"source": source_path, "transcript": transcript, "saved_at": datetime.now(UTC).isoformat()},
+                f,
+                ensure_ascii=False,
+                indent=2,
+            )
 
         return output_path
 

@@ -9,14 +9,17 @@ from app.services.integrations.slack_service import get_slack_service
 
 router = APIRouter(prefix="/integrations", tags=["External Integrations"])
 
+
 class SyncRequest(BaseModel):
     source: str  # 'slack', 'notion'
-    target_id: str # channel_id or page_id
+    target_id: str  # channel_id or page_id
+
 
 @router.get("/slack/status")
 async def slack_status():
     service = get_slack_service()
     return {"configured": service.is_configured()}
+
 
 @router.get("/slack/channels")
 async def list_slack_channels():
@@ -28,6 +31,7 @@ async def list_slack_channels():
         return await service.list_channels()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post("/slack/sync")
 async def sync_slack_channel(request: SyncRequest, background_tasks: BackgroundTasks):
@@ -44,10 +48,12 @@ async def sync_slack_channel(request: SyncRequest, background_tasks: BackgroundT
 
     return {"status": "started", "message": f"Syncing channel {request.target_id} in background"}
 
+
 @router.get("/notion/status")
 async def notion_status():
     service = get_notion_service()
     return {"configured": service.is_configured()}
+
 
 @router.get("/notion/search")
 async def search_notion(query: str = ""):
@@ -55,6 +61,7 @@ async def search_notion(query: str = ""):
     if not service.is_configured():
         raise HTTPException(status_code=400, detail="Notion not configured")
     return await service.search(query)
+
 
 @router.post("/notion/sync")
 async def sync_notion_page(request: SyncRequest, background_tasks: BackgroundTasks):

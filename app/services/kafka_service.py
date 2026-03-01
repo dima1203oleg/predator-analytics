@@ -1,6 +1,8 @@
 import logging
 
+
 logger = logging.getLogger("app.services.kafka_service")
+
 
 class KafkaService:
     async def publish_event(self, topic: str, data: dict):
@@ -10,5 +12,6 @@ class KafkaService:
     async def send_message(self, topic: str, data: dict):
         """Alias for publish_event to support v45+ naming conventions."""
         return await self.publish_event(topic, data)
+
 
 kafka_service = KafkaService()

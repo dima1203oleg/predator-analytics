@@ -5,23 +5,24 @@ from __future__ import annotations
 import asyncio
 from datetime import datetime
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 
 
 logger = logging.getLogger(__name__)
 
+
 class MultiModelArbitrator:
     """Арбітраж між множинними AI моделями."""
 
-    def __init__(self, models: list[Any], config: dict[str, Any | None] = None):
+    def __init__(self, models: list[Any], config: dict[str, Any | None] | None = None):
         self.models = models  # List of model client objects
         config = config or {}
-        self.consensus_threshold = config.get('consensus_threshold', 0.67)
-        self.timeout = config.get('timeout', 30)
+        self.consensus_threshold = config.get("consensus_threshold", 0.67)
+        self.timeout = config.get("timeout", 30)
 
-    async def arbitrate(self, prompt: str, context: str, options: dict[str, Any | None] = None):
+    async def arbitrate(self, prompt: str, context: str, options: dict[str, Any | None] | None = None):
         """Арбітраж запиту між множинними моделями."""
         logger.info(f"Starting arbitration for prompt: {prompt[:50]}...")
 
@@ -34,10 +35,7 @@ class MultiModelArbitrator:
 
         try:
             # Очікування відповідей з таймаутом
-            responses = await asyncio.wait_for(
-                asyncio.gather(*tasks, return_exceptions=True),
-                timeout=self.timeout
-            )
+            responses = await asyncio.wait_for(asyncio.gather(*tasks, return_exceptions=True), timeout=self.timeout)
 
             # Аналіз відповідей
             valid_responses = [r for r in responses if not isinstance(r, Exception) and r is not None]
@@ -45,14 +43,14 @@ class MultiModelArbitrator:
             if len(valid_responses) >= 2:
                 consensus_result = self.check_consensus(valid_responses)
 
-                if consensus_result['has_consensus']:
+                if consensus_result["has_consensus"]:
                     logger.info("Consensus reached.")
                     return {
-                        'status': 'consensus',
-                        'decision': consensus_result['consensus_decision'],
-                        'confidence': consensus_result['confidence'],
-                        'model_agreement': consensus_result['agreement_matrix'],
-                        'timestamp': datetime.utcnow().isoformat()
+                        "status": "consensus",
+                        "decision": consensus_result["consensus_decision"],
+                        "confidence": consensus_result["confidence"],
+                        "model_agreement": consensus_result["agreement_matrix"],
+                        "timestamp": datetime.utcnow().isoformat(),
                     }
 
             # Немає консенсусу - ескалація до 4-ї моделі
@@ -64,7 +62,7 @@ class MultiModelArbitrator:
             return await self.handle_timeout(prompt, context)
         except Exception as e:
             logger.exception(f"Arbitration error: {e}")
-            return {'status': 'error', 'detail': str(e)}
+            return {"status": "error", "detail": str(e)}
 
     async def _safe_generate(self, model, prompt, context, options):
         try:
@@ -78,7 +76,7 @@ class MultiModelArbitrator:
     def check_consensus(self, responses: list[str]) -> dict:
         """Перевірка чи є консенсус між моделями."""
         if not responses:
-            return {'has_consensus': False}
+            return {"has_consensus": False}
 
         # Mock embedding/similarity for implementation structure
         # In real case, use sentence-transformers or similar
@@ -92,7 +90,7 @@ class MultiModelArbitrator:
                     if responses[i].strip() == responses[j].strip():
                         sim_matrix[i][j] = 1.0
                     else:
-                        sim_matrix[i][j] = 0.5 # Default low similarity
+                        sim_matrix[i][j] = 0.5  # Default low similarity
 
         consensus = False
         consensus_decision = None
@@ -109,20 +107,20 @@ class MultiModelArbitrator:
                 break
 
         return {
-            'has_consensus': consensus,
-            'consensus_decision': consensus_decision,
-            'confidence': float(np.mean(sim_matrix)),
-            'agreement_matrix': sim_matrix.tolist()
+            "has_consensus": consensus,
+            "consensus_decision": consensus_decision,
+            "confidence": float(np.mean(sim_matrix)),
+            "agreement_matrix": sim_matrix.tolist(),
         }
 
     async def escalate_arbitration(self, prompt, context, responses):
         """Ескалація при відсутності консенсусу."""
         if len(self.models) < 4:
-            return {'status': 'human_arbitration_required', 'reason': 'No backup model available'}
+            return {"status": "human_arbitration_required", "reason": "No backup model available"}
 
         # 1. 4-та модель (DeepSeek-R1)
         try:
-            fourth_model_response = await self._safe_generate(self.models[3], prompt, context, {'break_tie': True})
+            fourth_model_response = await self._safe_generate(self.models[3], prompt, context, {"break_tie": True})
             if not fourth_model_response:
                 raise Exception("Backup model failed")
 
@@ -132,25 +130,25 @@ class MultiModelArbitrator:
                 if not isinstance(resp, Exception) and resp is not None:
                     if resp.strip() == fourth_model_response.strip():
                         return {
-                            'status': 'escalation_resolved',
-                            'decision': resp,
-                            'tie_breaker': 'fourth_model',
-                            'confidence': 1.0
+                            "status": "escalation_resolved",
+                            "decision": resp,
+                            "tie_breaker": "fourth_model",
+                            "confidence": 1.0,
                         }
         except Exception as e:
             logger.exception(f"Escalation failed: {e}")
 
         # 3. Ескалація до людини
         return {
-            'status': 'human_arbitration_required',
-            'prompt': prompt,
-            'model_responses': [str(r) for r in responses],
-            'timestamp': datetime.utcnow().isoformat()
+            "status": "human_arbitration_required",
+            "prompt": prompt,
+            "model_responses": [str(r) for r in responses],
+            "timestamp": datetime.utcnow().isoformat(),
         }
 
     async def handle_timeout(self, prompt, context):
         return {
-            'status': 'timeout',
-            'emergency_action': 'System freeze until resolution',
-            'timestamp': datetime.utcnow().isoformat()
+            "status": "timeout",
+            "emergency_action": "System freeze until resolution",
+            "timestamp": datetime.utcnow().isoformat(),
         }

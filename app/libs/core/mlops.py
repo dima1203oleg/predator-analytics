@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from datetime import datetime
 import json
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from sqlalchemy import text
 
@@ -13,6 +12,7 @@ from app.libs.core.database import get_db_sync
 
 logger = logging.getLogger("libs.core.mlops")
 
+
 class DatasetVersionManager:
     """✅ Dataset Versioning Engine - Manages versions, lineage, and metadata of training data."""
 
@@ -20,13 +20,23 @@ class DatasetVersionManager:
         self.schema = "ml_ops"
         self.table = "dataset_versions"
 
-    def register_version(self, name: str, version: str, source: str, row_count: int, metadata: dict[str, Any] | None = None) -> bool:
+    def register_version(
+        self, name: str, version: str, source: str, row_count: int, metadata: dict[str, Any] | None = None
+    ) -> bool:
         """Register a new version of a dataset."""
         try:
             with get_db_sync() as session:
                 session.execute(
-                    text(f"INSERT INTO {self.schema}.{self.table} (name, version, source, row_count, metadata) VALUES (:name, :version, :source, :row_count, :metadata)"),
-                    {"name": name, "version": version, "source": source, "row_count": row_count, "metadata": json.dumps(metadata or {})}
+                    text(
+                        f"INSERT INTO {self.schema}.{self.table} (name, version, source, row_count, metadata) VALUES (:name, :version, :source, :row_count, :metadata)"
+                    ),
+                    {
+                        "name": name,
+                        "version": version,
+                        "source": source,
+                        "row_count": row_count,
+                        "metadata": json.dumps(metadata or {}),
+                    },
                 )
             logger.info(f"✅ Registered dataset version: {name} v{version}")
             return True
@@ -39,8 +49,10 @@ class DatasetVersionManager:
         try:
             with get_db_sync() as session:
                 result = session.execute(
-                    text(f"SELECT * FROM {self.schema}.{self.table} WHERE name = :name ORDER BY created_at DESC LIMIT 1"),
-                    {"name": name}
+                    text(
+                        f"SELECT * FROM {self.schema}.{self.table} WHERE name = :name ORDER BY created_at DESC LIMIT 1"
+                    ),
+                    {"name": name},
                 )
                 row = result.fetchone()
                 if row:
@@ -49,6 +61,7 @@ class DatasetVersionManager:
         except Exception as e:
             logger.exception(f"❌ Failed to fetch latest version: {e}")
             return None
+
 
 class DatasetQualityScorer:
     """➕ Dataset Quality Scorer - Evaluates noise, bias, coverage, and drift."""
@@ -61,8 +74,9 @@ class DatasetQualityScorer:
             "bias_score": 0.12,
             "coverage_score": 0.85,
             "drift_score": 0.02,
-            "overall_quality": 0.89
+            "overall_quality": 0.89,
         }
+
 
 class FineTuningOrchestrator:
     """➕ Fine-Tuning Orchestrator - Manages the lifecycle: select data -> train -> eval -> deploy."""
@@ -78,18 +92,20 @@ class FineTuningOrchestrator:
         logger.info(f"📂 Preparing training data for version {version}...")
         try:
             with get_db_sync() as session:
-                result = session.execute(text("SELECT scenario_id, description, logic, meta_data FROM knowledge_base.analytic_scenarios"))
+                result = session.execute(
+                    text("SELECT scenario_id, description, logic, meta_data FROM knowledge_base.analytic_scenarios")
+                )
                 rows = result.fetchall()
 
                 output_file = os.path.join(self.export_dir, f"train_v{version}.jsonl")
 
-                with open(output_file, 'w', encoding='utf-8') as f:
+                with open(output_file, "w", encoding="utf-8") as f:
                     for row in rows:
                         # Convert to Alpaca or Llama-instruct format
                         entry = {
                             "instruction": "Analyze the following analytical scenario and identify the core logic and risks.",
                             "input": row.description,
-                            "output": json.dumps({"logic": row.logic, "metadata": row.meta_data})
+                            "output": json.dumps({"logic": row.logic, "metadata": row.meta_data}),
                         }
                         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
@@ -105,8 +121,10 @@ class FineTuningOrchestrator:
         # In v45-C this would call a Webhook or push to a Redis queue
         with get_db_sync() as session:
             session.execute(
-                text("UPDATE ml_ops.dataset_versions SET metadata = jsonb_set(metadata, '{status}', '\"training_in_progress\"') WHERE version = :v"),
-                {"v": version}
+                text(
+                    "UPDATE ml_ops.dataset_versions SET metadata = jsonb_set(metadata, '{status}', '\"training_in_progress\"') WHERE version = :v"
+                ),
+                {"v": version},
             )
 
     async def run_cycle(self) -> bool:
@@ -123,7 +141,11 @@ class FineTuningOrchestrator:
                 THRESHOLD = 50
 
                 # Check last registered version
-                last_ver_res = session.execute(text("SELECT version FROM ml_ops.dataset_versions WHERE name='Radical_Analytical_Scenarios_UA' ORDER BY created_at DESC LIMIT 1"))
+                last_ver_res = session.execute(
+                    text(
+                        "SELECT version FROM ml_ops.dataset_versions WHERE name='Radical_Analytical_Scenarios_UA' ORDER BY created_at DESC LIMIT 1"
+                    )
+                )
                 last_ver = last_ver_res.scalar() or "0.0.0"
 
                 logger.info(f"📊 Current scenarios: {count}, last registered version: {last_ver}")
@@ -139,7 +161,7 @@ class FineTuningOrchestrator:
                         version=new_version,
                         source="Autonomous_Evolution_Loop",
                         row_count=count,
-                        metadata={"status": "training_triggered", "base_model": "llama3.1-8b"}
+                        metadata={"status": "training_triggered", "base_model": "llama3.1-8b"},
                     )
 
                     # 3. Prepare dataset
@@ -156,6 +178,7 @@ class FineTuningOrchestrator:
             logger.exception(f"❌ Fine-tuning cycle failed: {e}")
             return False
 
+
 class ModelLifecycleManager:
     """➕ Model Lifecycle Manager - train -> eval -> prod -> retire."""
 
@@ -165,6 +188,7 @@ class ModelLifecycleManager:
     def promote_model(self, model_id: str, current_state: str, target_state: str):
         logger.info(f"🔄 Promoting model {model_id} from {current_state} to {target_state}")
         # Logic to update model metadata in DB
+
 
 class ShadowEvaluator:
     """➕ Shadow Deployment - Runs model parallel without user impact."""
@@ -178,20 +202,24 @@ class ShadowEvaluator:
                 # In v45-S we would log this to a 'divergence_ledger' table
                 with get_db_sync() as session:
                     session.execute(
-                        text("INSERT INTO ml_ops.model_evaluations (metric_name, value, metadata) VALUES (:m, :v, :meta)"),
-                        {"m": "shadow_divergence", "v": 1.0, "meta": json.dumps({"context": context, "diff": True})}
+                        text(
+                            "INSERT INTO ml_ops.model_evaluations (metric_name, value, metadata) VALUES (:m, :v, :meta)"
+                        ),
+                        {"m": "shadow_divergence", "v": 1.0, "meta": json.dumps({"context": context, "diff": True})},
                     )
             else:
                 logger.info("✅ Shadow model matches champion.")
         except Exception as e:
             logger.exception(f"❌ Shadow evaluation failed: {e}")
 
+
 class HallucinationDetector:
     """➕ Hallucination Detector - Factcheck and consistency score."""
 
     def calculate_consistency(self, outputs: list[str]) -> float:
         """Measure how many similar answers the model gives for same prompt."""
-        return 0.95 # Mock score
+        return 0.95  # Mock score
+
 
 class AutoTrainScheduler:
     """➕ Auto-Train Scheduler - Triggers cycles based on events or time."""

@@ -1,13 +1,14 @@
 import asyncio
 import random
 import time
-from typing import Dict, Any, List
+from typing import Any, Dict, List
+
 
 class AZRUnifiedOrganism:
-    """
-    AZR Unified Organism v40.0.0 (Sovereign) prototype.
+    """AZR Unified Organism v40.0.0 (Sovereign) prototype.
     Handles the OODA loop and self-improvement cycles.
     """
+
     def __init__(self, root_path):
         self.root = root_path
         self._running = False
@@ -43,7 +44,7 @@ class AZRUnifiedOrganism:
             "Updating Security Heuristics",
             "Compressing Memory Context",
             "Validating Constitutional Axioms",
-            "Pruning Neural Pathways"
+            "Pruning Neural Pathways",
         ]
 
         while self._running:
@@ -62,29 +63,23 @@ class AZRUnifiedOrganism:
                 latency = random.randint(50, 200)
                 print(f" [AZR-CORE] Cycle {self._cycle_count}: {action} completed in {latency}ms")
 
-    def get_status(self) -> Dict[str, Any]:
+    def get_status(self) -> dict[str, Any]:
         uptime = time.time() - self.start_time if self.start_time else 0
         return {
             "version": "40.0.0 (Sovereign)",
-            "health": {"score": 98.5 + (random.random() * 1.5)}, # Dynamic health
+            "health": {"score": 98.5 + (random.random() * 1.5)},  # Dynamic health
             "capabilities": ["optimization", "security", "autonomy", "self-healing"],
-            "truth_ledger": {
-                "entries": 1240 + (self._cycle_count * 3),
-                "valid": True
-            },
+            "truth_ledger": {"entries": 1240 + (self._cycle_count * 3), "valid": True},
             "cycle_count": self._cycle_count,
             "metrics": self.metrics,
-            "uptime_seconds": uptime
+            "uptime_seconds": uptime,
         }
 
-    async def run_security_audit(self) -> Dict[str, Any]:
+    async def run_security_audit(self) -> dict[str, Any]:
         """Simulates a security audit"""
-        await asyncio.sleep(1) # Fake delay
-        return {
-            "vulnerability_score": 0.0,
-            "block_rate": "100%",
-            "recommendations": []
-        }
+        await asyncio.sleep(1)  # Fake delay
+        return {"vulnerability_score": 0.0, "block_rate": "100%", "recommendations": []}
+
 
 def get_azr_organism(root_path):
     return AZRUnifiedOrganism(root_path)

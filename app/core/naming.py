@@ -14,8 +14,8 @@ class DataLayerType(Enum):
     POSTGRES_TABLE = "pg"
     MINIO_BUCKET = "s3"
 
-class NamingPolicy:
 
+class NamingPolicy:
     @staticmethod
     def get_index_name(base_name: str, version: int = 1, type: DataLayerType = DataLayerType.OPENSEARCH) -> str:
         """Generate canonical versioned name for an index/collection.
@@ -60,7 +60,7 @@ class NamingPolicy:
         clean_name = base_name.lower().replace(" ", "_")
 
         if type == DataLayerType.OPENSEARCH:
-            return clean_name.replace('_', '-')
+            return clean_name.replace("_", "-")
 
         if type == DataLayerType.QDRANT:
             return f"{clean_name}_vectors"
@@ -73,6 +73,7 @@ class NamingPolicy:
         Ex: s3://raw-imports/prod/2024/file.xlsx.
         """
         return f"{bucket_role}/{contour}/{filename}"
+
 
 # --- Usage Example ---
 if __name__ == "__main__":

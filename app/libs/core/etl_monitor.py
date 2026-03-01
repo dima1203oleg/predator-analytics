@@ -7,13 +7,14 @@ Real-time monitoring and validation of the ETL Pipeline.
 import asyncio
 from datetime import datetime
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from app.libs.core.etl_arbiter import ETLSovereignArbiter
 from app.libs.core.etl_state_machine_v45s import ETLState, ETLStateMachineV45S
 
 
 logger = logging.getLogger(__name__)
+
 
 class ETLConstitutionalMonitor:
     """Реалізація моніторингу ETL з конституційними перевірками."""
@@ -46,7 +47,7 @@ class ETLConstitutionalMonitor:
             "compliance": compliance,
             "anomalies": anomalies,
             "real_progress": metrics["progress_percent"],
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
         }
 
     def _extract_metrics(self, job: dict) -> dict:
@@ -58,7 +59,7 @@ class ETLConstitutionalMonitor:
             "progress_percent": progress.get("percent", 0),
             "records_processed": progress.get("records_processed", 0),
             "records_indexed": progress.get("records_indexed", 0),
-            "timestamps": job.get("timestamps", {})
+            "timestamps": job.get("timestamps", {}),
         }
 
     def detect_anomalies(self, job: dict, metrics: dict) -> list[str]:
@@ -93,4 +94,4 @@ class ETLConstitutionalMonitor:
                     await self.monitor_job(job["job_id"], job)
             except Exception as e:
                 logger.exception(f"Error in continuous monitoring loop: {e}")
-            await asyncio.sleep(5) # 5s interval for mock, 1s for production
+            await asyncio.sleep(5)  # 5s interval for mock, 1s for production

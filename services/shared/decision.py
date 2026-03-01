@@ -1,26 +1,29 @@
-
-"""
-Module: decision
+"""Module: decision
 Component: shared
-Predator Analytics v45.1
+Predator Analytics v45.1.
 """
+
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, Optional
+from typing import TYPE_CHECKING
 import uuid
-from .events import PredatorEvent
+
+
+if TYPE_CHECKING:
+    from .events import PredatorEvent
+
 
 @dataclass
 class DecisionArtifact:
-    """
-    Immutable artifact of an RTB Engine decision.
+    """Immutable artifact of an RTB Engine decision.
     Part 3.2.2 of Technical Specification.
     """
+
     decision_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: datetime = field(default_factory=datetime.utcnow)
 
     # Triggering event
-    trigger_event: Optional[PredatorEvent] = None
+    trigger_event: "PredatorEvent | None" = None
     correlation_id: str = ""
 
     # Rule Information
@@ -29,32 +32,32 @@ class DecisionArtifact:
     rule_condition: str = ""
 
     # Context snapshot
-    context_snapshot: Dict = field(default_factory=dict)
+    context_snapshot: dict = field(default_factory=dict)
     context_hash: str = ""  # SHA256 for lineage
 
     # LLM consultation (if any)
     llm_consulted: bool = False
-    llm_prompt: Optional[str] = None
-    llm_response: Optional[str] = None
-    llm_provider: Optional[str] = None
-    llm_model: Optional[str] = None
-    llm_trace_id: Optional[str] = None
+    llm_prompt: str | None = None
+    llm_response: str | None = None
+    llm_provider: str | None = None
+    llm_model: str | None = None
+    llm_trace_id: str | None = None
 
     # Decision details
-    decision: str = ""       # APPROVE / REJECT / ESCALATE / OBSERVE
+    decision: str = ""  # APPROVE / REJECT / ESCALATE / OBSERVE
     reason: str = ""
-    autonomy_level: str = "" # L0 / L1 / L2 / L3
+    autonomy_level: str = ""  # L0 / L1 / L2 / L3
     human_approval_required: bool = False
-    human_approved_by: Optional[str] = None
-    human_approved_at: Optional[datetime] = None
+    human_approved_by: str | None = None
+    human_approved_at: datetime | None = None
 
     # Resulting action
-    action_type: str = ""    # git_pr / k8s_job / notification / none
+    action_type: str = ""  # git_pr / k8s_job / notification / none
     action_artifact: str = ""  # PR URL, Job ID, etc.
 
     # Lineage information
-    data_hash: Optional[str] = None   # SHA256 of data used
-    model_hash: Optional[str] = None  # SHA256 of model
+    data_hash: str | None = None  # SHA256 of data used
+    model_hash: str | None = None  # SHA256 of model
 
     # Multi-tenancy
     tenant_id: str = "default"
@@ -86,5 +89,5 @@ class DecisionArtifact:
             "action_artifact": self.action_artifact,
             "data_hash": self.data_hash,
             "model_hash": self.model_hash,
-            "tenant_id": self.tenant_id
+            "tenant_id": self.tenant_id,
         }

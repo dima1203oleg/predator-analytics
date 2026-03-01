@@ -7,7 +7,7 @@ Implements Circuit Breaker and Retry logic.
 from functools import wraps
 import logging
 import time
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any
 
 
 if TYPE_CHECKING:
@@ -16,8 +16,10 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class CircuitBreakerOpenException(Exception):
     pass
+
 
 class CircuitBreaker:
     def __init__(self, failure_threshold: int = 5, recovery_timeout: int = 60, name: str = "default"):
@@ -26,7 +28,7 @@ class CircuitBreaker:
         self.name = name
 
         self.failures = 0
-        self.state = "CLOSED" # CLOSED, OPEN, HALF-OPEN
+        self.state = "CLOSED"  # CLOSED, OPEN, HALF-OPEN
         self.last_failure_time = 0
 
     async def call(self, func: Callable, *args, **kwargs) -> Any:
@@ -66,16 +68,20 @@ class CircuitBreaker:
         self.failures = 0
         self.state = "CLOSED"
 
+
 # Global registry
 _breakers: dict[str, CircuitBreaker] = {}
+
 
 def get_circuit_breaker(name: str) -> CircuitBreaker:
     if name not in _breakers:
         _breakers[name] = CircuitBreaker(name=name)
     return _breakers[name]
 
+
 def circuit_breaker(name: str = "default", failure_threshold: int = 5, recovery_timeout: int = 60):
     """Decorator pattern for Circuit Breaker (Async only)."""
+
     def decorator(func):
         # Register or get existing
         if name not in _breakers:
@@ -86,5 +92,7 @@ def circuit_breaker(name: str = "default", failure_threshold: int = 5, recovery_
         @wraps(func)
         async def wrapper(*args, **kwargs):
             return await cb.call(func, *args, **kwargs)
+
         return wrapper
+
     return decorator

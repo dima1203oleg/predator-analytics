@@ -11,6 +11,7 @@ from app.libs.core.config import settings
 
 logger = logging.getLogger(__name__)
 
+
 async def start_h2o_finetuning(dataset_id: str, job_id: str, model_name: str = "qwen2.5:7b"):
     """Simulates or triggers the H2O LLM Studio fine-tuning process.
     In a real scenario, this would call the H2O LLM Studio API or start a docker container.
@@ -27,7 +28,7 @@ async def start_h2o_finetuning(dataset_id: str, job_id: str, model_name: str = "
             """,
             "ML_TRAINING_START",
             json.dumps({"dataset": dataset_id, "model": model_name, "status": "initializing"}),
-            "info"
+            "info",
         )
 
         # Simulate progress updates
@@ -42,10 +43,13 @@ async def start_h2o_finetuning(dataset_id: str, job_id: str, model_name: str = "
         logger.exception(f"❌ Fine-tuning failed: {e}")
         await conn.execute(
             "INSERT INTO audit.system_logs (event_type, details, severity) VALUES ($1, $2, $3)",
-            "ML_TRAINING_ERROR", str(e), "error"
+            "ML_TRAINING_ERROR",
+            str(e),
+            "error",
         )
     finally:
         await conn.close()
+
 
 if __name__ == "__main__":
     asyncio.run(start_h2o_finetuning("synthetic_customs_2024", "predator-v45-base"))

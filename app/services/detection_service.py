@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import json
 import logging
 
@@ -14,6 +14,7 @@ from app.services.triple_agent_service import triple_agent_service
 
 logger = logging.getLogger("service.detection")
 
+
 class DetectionService:
     """Autonomous Intelligent Detection Engine.
     Scans gold.documents, performs risk assessment, and generates Cases.
@@ -26,9 +27,11 @@ class DetectionService:
         async with get_db_ctx() as db:
             # 1. Find unanalyzed documents
             # Looking for docs where 'analyzed' key is missing or is false
-            stmt = select(Document).where(
-                (~Document.meta.has_key('analyzed')) | (Document.meta['analyzed'].astext == 'false')
-            ).limit(limit)
+            stmt = (
+                select(Document)
+                .where((~Document.meta.has_key("analyzed")) | (Document.meta["analyzed"].astext == "false"))
+                .limit(limit)
+            )
 
             result = await db.execute(stmt)
             docs = result.scalars().all()
@@ -53,11 +56,11 @@ class DetectionService:
                         "tax_debtor": meta.get("tax_debtor", False),
                         "sanctioned": meta.get("sanctioned", False),
                         "years_active": meta.get("years_active", 5),
-                        "sector": meta.get("sector", "BIZ")
+                        "sector": meta.get("sector", "BIZ"),
                     }
 
-                    edrpou = normalized_meta['edrpou']
-                    name = normalized_meta['recipient_name']
+                    edrpou = normalized_meta["edrpou"]
+                    name = normalized_meta["recipient_name"]
 
                     # 3. Assess Risk
                     assessment = await risk_engine.assess(edrpou, normalized_meta)
@@ -66,7 +69,7 @@ class DetectionService:
                     # 4. If Risk is HIGH or CRITICAL, or if AI finds something interesting, create a Case
                     is_anomaly = assessment.score > 0.6 or assessment.risk_level.value in ["HIGH", "CRITICAL"]
 
-                    ai_insight = None # Initialize ai_insight
+                    ai_insight = None  # Initialize ai_insight
                     if is_anomaly:
                         print(f"DEBUG: ANOMALY DETECTED for {name}")
                         # AI Secondary Check (Optional but premium)
@@ -78,7 +81,9 @@ class DetectionService:
 
                             ai_insight = f"【PLANNED ANALYSIS】: {result.get('plan', '')}\n\n"
                             ai_insight += f"【AI CONCLUSION】: {result.get('code', 'Аналіз завершено без додаткових висновків.')}\n\n"
-                            ai_insight += f"【SECURITY AUDIT】: {result.get('audit_report', 'Перевірено протоколом v45.')}"
+                            ai_insight += (
+                                f"【SECURITY AUDIT】: {result.get('audit_report', 'Перевірено протоколом v45.')}"
+                            )
                         except Exception as ai_e:
                             logger.exception(f"AI Insight failed for document {doc.id}: {ai_e}")
                             ai_insight = "AI аналіз тимчасово недоступний через обмеження API."
@@ -91,17 +96,21 @@ class DetectionService:
                             conclusion=f"Виявлено високий рівень ризику ({int(assessment.score * 100)}%). {ai_insight[:500] if ai_insight else ''}",
                             status="КРИТИЧНО" if assessment.score > 0.8 else "УВАГА",
                             risk_score=int(assessment.score * 100),
-                            sector=meta.get('sector', 'BIZ'),
+                            sector=meta.get("sector", "BIZ"),
                             entity_id=edrpou,
                             ai_insight=ai_insight,
-                            evidence=[{
-                                "id": str(doc.id),
-                                "type": doc.source_type.upper(),
-                                "source": "Internal Database",
-                                "summary": f"Document ID: {doc.id}",
-                                "riskLevel": int(assessment.score * 100),
-                                "timestamp": doc.created_at.isoformat() if doc.created_at else datetime.now().isoformat()
-                            }]
+                            evidence=[
+                                {
+                                    "id": str(doc.id),
+                                    "type": doc.source_type.upper(),
+                                    "source": "Internal Database",
+                                    "summary": f"Document ID: {doc.id}",
+                                    "riskLevel": int(assessment.score * 100),
+                                    "timestamp": doc.created_at.isoformat()
+                                    if doc.created_at
+                                    else datetime.now().isoformat(),
+                                }
+                            ],
                         )
                         db.add(new_case)
                         cases_created += 1
@@ -109,9 +118,9 @@ class DetectionService:
 
                     # 6. Mark document as analyzed
                     updated_meta = dict(meta)
-                    updated_meta['analyzed'] = True
-                    updated_meta['analysis_score'] = assessment.score
-                    updated_meta['analysis_time'] = datetime.now(UTC).isoformat()
+                    updated_meta["analyzed"] = True
+                    updated_meta["analysis_score"] = assessment.score
+                    updated_meta["analysis_time"] = datetime.now(UTC).isoformat()
 
                     # Update doc meta
                     doc.meta = updated_meta
@@ -123,5 +132,6 @@ class DetectionService:
 
             await db.commit()
             return cases_created
+
 
 detection_service = DetectionService()

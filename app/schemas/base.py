@@ -4,16 +4,17 @@ from __future__ import annotations
 """UA Sources - Pydantic Schemas
 Request/Response models for API endpoints.
 """
-from datetime import UTC, datetime, timezone
-from enum import Enum
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from enum import StrEnum
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
 # === Enums ===
 
-class RiskLevel(str, Enum):
+
+class RiskLevel(StrEnum):
     MINIMAL = "MINIMAL"
     LOW = "LOW"
     MEDIUM = "MEDIUM"
@@ -21,7 +22,7 @@ class RiskLevel(str, Enum):
     CRITICAL = "CRITICAL"
 
 
-class DataSourceType(str, Enum):
+class DataSourceType(StrEnum):
     PROZORRO = "prozorro"
     EDR = "edr"
     TAX = "tax"
@@ -31,6 +32,7 @@ class DataSourceType(str, Enum):
 
 
 # === Company Schemas ===
+
 
 class CompanyBase(BaseModel):
     edrpou: str = Field(..., min_length=8, max_length=10)
@@ -57,6 +59,7 @@ class CompanyResponse(CompanyBase):
 
 # === Search Schemas ===
 
+
 class SearchQuery(BaseModel):
     query: str = Field(..., min_length=1, max_length=500)
     sources: list[DataSourceType] = Field(default=[DataSourceType.EDR])
@@ -78,6 +81,7 @@ class SearchResponse(BaseModel):
 
 
 # === Risk Assessment Schemas ===
+
 
 class RiskAssessmentRequest(BaseModel):
     edrpou: str
@@ -101,6 +105,7 @@ class RiskAssessmentResponse(BaseModel):
 
 
 # === Tender Schemas ===
+
 
 class TenderBase(BaseModel):
     tender_id: str
@@ -127,6 +132,7 @@ class TenderSearchResponse(BaseModel):
 
 # === Exchange Rate Schemas ===
 
+
 class ExchangeRateResponse(BaseModel):
     currency_code: str
     currency_name: str
@@ -141,6 +147,7 @@ class ExchangeRatesResponse(BaseModel):
 
 
 # === Analysis Schemas ===
+
 
 class AnalysisRequest(BaseModel):
     query: str
@@ -166,6 +173,7 @@ class AnalysisResponse(BaseModel):
 
 
 # === Health Check ===
+
 
 class HealthResponse(BaseModel):
     status: str

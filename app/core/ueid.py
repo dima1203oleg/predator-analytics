@@ -15,9 +15,9 @@ import hashlib
 import logging
 import re
 import uuid
-from typing import Optional
 
 from pydantic import BaseModel, Field
+
 
 logger = logging.getLogger("predator.core.ueid")
 
@@ -29,8 +29,8 @@ class UEIDResult(BaseModel):
     entity_type: str = Field(description="company | person | broker | customs_post")
     name: str
     name_normalized: str
-    edrpou: Optional[str] = None
-    inn: Optional[str] = None
+    edrpou: str | None = None
+    inn: str | None = None
     is_new: bool = Field(default=False, description="True if entity was just created")
     confidence: float = Field(ge=0, le=1, description="Match confidence")
 
@@ -53,18 +53,27 @@ def normalize_name(name: str) -> str:
 
     # Normalize legal forms
     legal_forms = [
-        r"\bтов\b", r"\bтдв\b", r"\bпат\b", r"\bпрат\b",
-        r"\bпп\b", r"\bфоп\b", r"\bат\b", r"\bкт\b",
-        r"\bдп\b", r"\bкп\b", r"\bнп\b",
-        r"\bllc\b", r"\bltd\b", r"\binc\b", r"\bcorp\b",
+        r"\bтов\b",
+        r"\bтдв\b",
+        r"\bпат\b",
+        r"\bпрат\b",
+        r"\bпп\b",
+        r"\bфоп\b",
+        r"\bат\b",
+        r"\bкт\b",
+        r"\bдп\b",
+        r"\bкп\b",
+        r"\bнп\b",
+        r"\bllc\b",
+        r"\bltd\b",
+        r"\binc\b",
+        r"\bcorp\b",
     ]
     for form in legal_forms:
         result = re.sub(form, "", result)
 
     # Collapse whitespace
-    result = re.sub(r"\s+", " ", result).strip()
-
-    return result
+    return re.sub(r"\s+", " ", result).strip()
 
 
 def validate_edrpou(code: str) -> bool:
@@ -86,7 +95,7 @@ def generate_deterministic_ueid(edrpou: str) -> str:
     return str(uuid.uuid5(namespace, edrpou))
 
 
-def fingerprint_entity(name: str, edrpou: Optional[str] = None) -> str:
+def fingerprint_entity(name: str, edrpou: str | None = None) -> str:
     """Create a SHA-256 fingerprint for entity deduplication."""
     normalized = normalize_name(name)
     key = f"{edrpou or ''}:{normalized}"

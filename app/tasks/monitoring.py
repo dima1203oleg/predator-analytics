@@ -29,10 +29,7 @@ def health_check():
     logger.info("[HEALTH] Running system health check")
 
     async def check_all():
-        results = {
-            "timestamp": datetime.now().isoformat(),
-            "components": {}
-        }
+        results = {"timestamp": datetime.now().isoformat(), "components": {}}
 
         async with httpx.AsyncClient(timeout=10.0) as client:
             # Check PostgreSQL
@@ -52,7 +49,7 @@ def health_check():
                 data = resp.json()
                 results["components"]["opensearch"] = {
                     "status": data.get("status", "unknown"),
-                    "nodes": data.get("number_of_nodes", 0)
+                    "nodes": data.get("number_of_nodes", 0),
                 }
             except Exception as e:
                 results["components"]["opensearch"] = {"status": "unhealthy", "error": str(e)}
@@ -64,7 +61,7 @@ def health_check():
                 data = resp.json()
                 results["components"]["qdrant"] = {
                     "status": "healthy",
-                    "collections": len(data.get("result", {}).get("collections", []))
+                    "collections": len(data.get("result", {}).get("collections", [])),
                 }
             except Exception as e:
                 results["components"]["qdrant"] = {"status": "unhealthy", "error": str(e)}
@@ -87,10 +84,7 @@ def health_check():
                 results["components"]["minio"] = {"status": "unhealthy", "error": str(e)}
 
         # Overall status
-        all_healthy = all(
-            c.get("status") in ["healthy", "green", "yellow"]
-            for c in results["components"].values()
-        )
+        all_healthy = all(c.get("status") in ["healthy", "green", "yellow"] for c in results["components"].values())
         results["overall"] = "healthy" if all_healthy else "degraded"
 
         logger.info(f"[HEALTH] Check complete: {results['overall']}")
@@ -109,11 +103,7 @@ def collect_index_stats():
     logger.info("[STATS] Collecting index statistics")
 
     async def collect():
-        stats = {
-            "timestamp": datetime.now().isoformat(),
-            "opensearch": {},
-            "qdrant": {}
-        }
+        stats = {"timestamp": datetime.now().isoformat(), "opensearch": {}, "qdrant": {}}
 
         async with httpx.AsyncClient(timeout=10.0) as client:
             # OpenSearch stats
@@ -125,7 +115,7 @@ def collect_index_stats():
                 stats["opensearch"] = {
                     "total_docs": data.get("_all", {}).get("primaries", {}).get("docs", {}).get("count", 0),
                     "size_bytes": data.get("_all", {}).get("primaries", {}).get("store", {}).get("size_in_bytes", 0),
-                    "search_total": data.get("_all", {}).get("primaries", {}).get("search", {}).get("query_total", 0)
+                    "search_total": data.get("_all", {}).get("primaries", {}).get("search", {}).get("query_total", 0),
                 }
             except Exception as e:
                 stats["opensearch"]["error"] = str(e)
@@ -142,13 +132,15 @@ def collect_index_stats():
                         "vectors_count": result.get("vectors_count", 0),
                         "points_count": result.get("points_count", 0),
                         "indexed_vectors_count": result.get("indexed_vectors_count", 0),
-                        "status": result.get("status", "unknown")
+                        "status": result.get("status", "unknown"),
                     }
             except Exception as e:
                 stats["qdrant"]["error"] = str(e)
 
-        logger.info(f"[STATS] OpenSearch docs: {stats['opensearch'].get('total_docs', 'N/A')}, "
-                   f"Qdrant vectors: {stats['qdrant'].get('vectors_count', 'N/A')}")
+        logger.info(
+            f"[STATS] OpenSearch docs: {stats['opensearch'].get('total_docs', 'N/A')}, "
+            f"Qdrant vectors: {stats['qdrant'].get('vectors_count', 'N/A')}"
+        )
 
         return stats
 
@@ -171,44 +163,30 @@ def collect_etl_metrics():
             last_hour = now - timedelta(hours=1)
             last_day = now - timedelta(days=1)
 
-            metrics = {
-                "timestamp": now.isoformat(),
-                "staging": {},
-                "gold": {},
-                "processing": {}
-            }
+            metrics = {"timestamp": now.isoformat(), "staging": {}, "gold": {}, "processing": {}}
 
             # Staging metrics
-            metrics["staging"]["total"] = await conn.fetchval(
-                "SELECT COUNT(*) FROM staging.raw_data"
-            )
+            metrics["staging"]["total"] = await conn.fetchval("SELECT COUNT(*) FROM staging.raw_data")
             metrics["staging"]["unprocessed"] = await conn.fetchval(
                 "SELECT COUNT(*) FROM staging.raw_data WHERE processed = FALSE"
             )
             metrics["staging"]["last_hour"] = await conn.fetchval(
-                "SELECT COUNT(*) FROM staging.raw_data WHERE fetched_at > $1",
-                last_hour
+                "SELECT COUNT(*) FROM staging.raw_data WHERE fetched_at > $1", last_hour
             )
 
             # Gold metrics
-            metrics["gold"]["total"] = await conn.fetchval(
-                "SELECT COUNT(*) FROM gold.documents"
-            )
+            metrics["gold"]["total"] = await conn.fetchval("SELECT COUNT(*) FROM gold.documents")
             metrics["gold"]["last_hour"] = await conn.fetchval(
-                "SELECT COUNT(*) FROM gold.documents WHERE created_at > $1",
-                last_hour
+                "SELECT COUNT(*) FROM gold.documents WHERE created_at > $1", last_hour
             )
             metrics["gold"]["last_day"] = await conn.fetchval(
-                "SELECT COUNT(*) FROM gold.documents WHERE created_at > $1",
-                last_day
+                "SELECT COUNT(*) FROM gold.documents WHERE created_at > $1", last_day
             )
 
             # Processing rate
             if metrics["staging"]["total"] > 0:
                 processed = metrics["staging"]["total"] - metrics["staging"]["unprocessed"]
-                metrics["processing"]["rate_percent"] = round(
-                    processed / metrics["staging"]["total"] * 100, 2
-                )
+                metrics["processing"]["rate_percent"] = round(processed / metrics["staging"]["total"] * 100, 2)
             else:
                 metrics["processing"]["rate_percent"] = 100.0
 

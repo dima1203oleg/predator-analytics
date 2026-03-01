@@ -2,23 +2,23 @@ from __future__ import annotations
 
 
 """Connector Registry - Central registry for all data connectors."""
-from typing import Any, Dict
+from typing import Any
 
-from ..connectors.customs import customs_connector
-from ..connectors.nbu_fx import nbu_fx_connector
-from ..connectors.prozorro import prozorro_connector
-from ..connectors.registry import registry_connector
-from ..connectors.tax import tax_connector
+from app.connectors.customs import customs_connector
+from app.connectors.nbu_fx import nbu_fx_connector
+from app.connectors.prozorro import prozorro_connector
+from app.connectors.registry import registry_connector
+from app.connectors.tax import tax_connector
 
 
 # Нові connectors (v45.1)
 try:
-    from ..connectors.telegram_channel import telegram_channel_connector
+    from app.connectors.telegram_channel import telegram_channel_connector
 except ImportError:
     telegram_channel_connector = None
 
 try:
-    from ..connectors.web_scraper import web_scraper_connector
+    from app.connectors.web_scraper import web_scraper_connector
 except ImportError:
     web_scraper_connector = None
 

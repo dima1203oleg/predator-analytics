@@ -18,17 +18,16 @@ Advanced self-improvement system with:
 import asyncio
 from collections import deque
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import hashlib
 import json
 import os
 from pathlib import Path
-from typing import Any, Optional
 import uuid
 
 import yaml
 
-from app.libs.core.merkle_ledger import MerkleTruthLedger, get_truth_ledger, record_truth
+from app.libs.core.merkle_ledger import MerkleTruthLedger, get_truth_ledger
 from app.libs.core.structured_logger import get_logger, log_business_event, log_security_event
 
 
@@ -42,9 +41,11 @@ os.environ.setdefault("SOVEREIGN_AUTO_APPROVE", "true")
 # 📊 DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class SystemHealthScore:
     """Composite health score for the entire system."""
+
     overall: float = 100.0
     cpu_score: float = 100.0
     memory_score: float = 100.0
@@ -56,17 +57,14 @@ class SystemHealthScore:
 
     def calculate_overall(self) -> float:
         """Weighted average of all scores."""
-        weights = {
-            "cpu": 0.15, "memory": 0.15, "disk": 0.10,
-            "api": 0.25, "db": 0.20, "ai": 0.15
-        }
+        weights = {"cpu": 0.15, "memory": 0.15, "disk": 0.10, "api": 0.25, "db": 0.20, "ai": 0.15}
         self.overall = (
-            self.cpu_score * weights["cpu"] +
-            self.memory_score * weights["memory"] +
-            self.disk_score * weights["disk"] +
-            self.api_score * weights["api"] +
-            self.db_score * weights["db"] +
-            self.ai_score * weights["ai"]
+            self.cpu_score * weights["cpu"]
+            + self.memory_score * weights["memory"]
+            + self.disk_score * weights["disk"]
+            + self.api_score * weights["api"]
+            + self.db_score * weights["db"]
+            + self.ai_score * weights["ai"]
         )
         return self.overall
 
@@ -74,6 +72,7 @@ class SystemHealthScore:
 @dataclass
 class AZRAction:
     """Action to be executed by AZR system."""
+
     id: str = field(default_factory=lambda: f"ACT-{uuid.uuid4().hex[:8].upper()}")
     type: str = ""
     priority: int = 5  # 1=critical, 10=optional
@@ -85,14 +84,15 @@ class AZRAction:
 
     def __post_init__(self):
         if not self.fingerprint:
-            self.fingerprint = hashlib.md5(
-                f"{self.type}:{json.dumps(self.meta, sort_keys=True)}".encode()
-            ).hexdigest()[:12]
+            self.fingerprint = hashlib.md5(f"{self.type}:{json.dumps(self.meta, sort_keys=True)}".encode()).hexdigest()[
+                :12
+            ]
 
 
 @dataclass
 class ExperienceRecord:
     """Learning record from past actions."""
+
     action_fingerprint: str
     outcome: str  # SUCCESS, FAILURE, ROLLBACK
     impact_score: float  # -1.0 to 1.0
@@ -103,6 +103,7 @@ class ExperienceRecord:
 # ============================================================================
 # 🛡️ CONSTITUTIONAL GUARD v2
 # ============================================================================
+
 
 class ConstitutionalGuardV2:
     """Enhanced Constitutional Guard with live axiom updates."""
@@ -117,10 +118,7 @@ class ConstitutionalGuardV2:
         ("AXIOM_7", "ISOLATION", "Зміни повинні спочатку тестуватися в пісочниці"),
     ]
 
-    FORBIDDEN_PATHS = [
-        "/security", "/auth", "/governance", "/rbac",
-        "keycloak", ".env", "secrets", "credentials"
-    ]
+    FORBIDDEN_PATHS = ["/security", "/auth", "/governance", "/rbac", "keycloak", ".env", "secrets", "credentials"]
 
     def __init__(self):
         self.axioms: list[tuple[str, str, str]] = list(self.CORE_AXIOMS)
@@ -163,10 +161,9 @@ class ConstitutionalGuardV2:
             return False, "ЗАБЛОКОВАНО: Погіршення безпеки не дозволяється"
 
         # Check destructive actions
-        if action.type in ["DELETE_DATA", "DROP_TABLE", "DESTROY"]:
-            if not action.meta.get("has_backup"):
-                self._record_violation(action, "Деструктивна дія без резервної копії")
-                return False, "ЗАБЛОКОВАНО: Деструктивні дії вимагають підтвердження наявності бекапу"
+        if action.type in ["DELETE_DATA", "DROP_TABLE", "DESTROY"] and not action.meta.get("has_backup"):
+            self._record_violation(action, "Деструктивна дія без резервної копії")
+            return False, "ЗАБЛОКОВАНО: Деструктивні дії вимагають підтвердження наявності бекапу"
 
         # Verify rate limits
         if action.meta.get("requests_per_second", 0) > 100:
@@ -183,17 +180,15 @@ class ConstitutionalGuardV2:
             "action_id": action.id,
             "action_type": action.type,
             "reason": reason,
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
-        log_security_event(
-            logger, "constitutional_violation", "critical",
-            action_id=action.id, reason=reason
-        )
+        log_security_event(logger, "constitutional_violation", "critical", action_id=action.id, reason=reason)
 
 
 # ============================================================================
 # 🧠 EXPERIENCE MEMORY (Self-Learning)
 # ============================================================================
+
 
 class ExperienceMemory:
     """Self-learning memory system that improves decision making over time."""
@@ -243,11 +238,7 @@ class ExperienceMemory:
             action_fingerprint=action.fingerprint,
             outcome=outcome,
             impact_score=impact_score,
-            context={
-                "action_id": action.id,
-                "action_type": action.type,
-                "meta": action.meta
-            }
+            context={"action_id": action.id, "action_type": action.type, "meta": action.meta},
         )
 
         # Add to memory
@@ -256,7 +247,7 @@ class ExperienceMemory:
             "outcome": exp.outcome,
             "impact": exp.impact_score,
             "context": exp.context,
-            "timestamp": exp.timestamp
+            "timestamp": exp.timestamp,
         }
         self.recent_experiences.append(exp_dict)
         self._update_patterns(exp_dict)
@@ -290,13 +281,14 @@ class ExperienceMemory:
             "total_experiences": len(self.recent_experiences),
             "blacklisted_actions": len(self.blacklist),
             "success_patterns": dict(self.success_patterns),
-            "failure_patterns": dict(self.failure_patterns)
+            "failure_patterns": dict(self.failure_patterns),
         }
 
 
 # ============================================================================
 # 🔮 PREDICTIVE ANOMALY DETECTOR
 # ============================================================================
+
 
 class PredictiveAnomalyDetector:
     """Detects anomalies and predicts potential issues before they occur."""
@@ -307,10 +299,7 @@ class PredictiveAnomalyDetector:
 
     def add_observation(self, metrics: dict):
         """Add new metrics observation."""
-        self.metrics_history.append({
-            "timestamp": datetime.now(UTC).isoformat(),
-            **metrics
-        })
+        self.metrics_history.append({"timestamp": datetime.now(UTC).isoformat(), **metrics})
 
     def detect_anomalies(self, current_metrics: dict) -> list[dict]:
         """Detect anomalies in current metrics using Z-score."""
@@ -330,7 +319,7 @@ class PredictiveAnomalyDetector:
 
             mean = sum(historical_values) / len(historical_values)
             variance = sum((x - mean) ** 2 for x in historical_values) / len(historical_values)
-            std = variance ** 0.5 if variance > 0 else 1
+            std = variance**0.5 if variance > 0 else 1
 
             # Z-score
             z_score = abs(value - mean) / std if std > 0 else 0
@@ -339,9 +328,9 @@ class PredictiveAnomalyDetector:
                 anomalies.append({
                     "metric": key,
                     "current_value": value,
-                    "expected_range": (mean - 2*std, mean + 2*std),
+                    "expected_range": (mean - 2 * std, mean + 2 * std),
                     "z_score": z_score,
-                    "severity": "high" if z_score > 3 else "medium"
+                    "severity": "high" if z_score > 3 else "medium",
                 })
 
         return anomalies
@@ -360,8 +349,8 @@ class PredictiveAnomalyDetector:
                 continue
 
             # Simple linear regression
-            first_half = sum(values[:len(values)//2]) / (len(values)//2)
-            second_half = sum(values[len(values)//2:]) / (len(values) - len(values)//2)
+            first_half = sum(values[: len(values) // 2]) / (len(values) // 2)
+            second_half = sum(values[len(values) // 2 :]) / (len(values) - len(values) // 2)
 
             if second_half > first_half * 1.1:
                 trends[key] = "INCREASING"
@@ -377,6 +366,7 @@ class PredictiveAnomalyDetector:
 # 🗳️ MULTI-MODEL CONSENSUS ENGINE
 # ============================================================================
 
+
 class MultiModelConsensus:
     """Voting system for multi-model AI decisions."""
 
@@ -389,7 +379,6 @@ class MultiModelConsensus:
         """Discover available AI models."""
         # Check for Ollama models
         try:
-            import httpx
             # This would be async in real implementation
             self.available_models.append(("ollama", "llama3.1:8b"))
             self.model_weights["ollama"] = 1.0
@@ -438,12 +427,7 @@ class MultiModelConsensus:
         total_weight = sum(votes.values())
         confidence = winner[1] / total_weight if total_weight > 0 else 0.5
 
-        return {
-            "winner": winner[0],
-            "confidence": confidence,
-            "votes": votes,
-            "method": "consensus"
-        }
+        return {"winner": winner[0], "confidence": confidence, "votes": votes, "method": "consensus"}
 
     async def _query_model(self, provider: str, model: str, prompt: str, options: list[str]) -> str:
         """Query a specific model for decision."""
@@ -452,10 +436,11 @@ class MultiModelConsensus:
         if provider == "ollama":
             try:
                 import httpx
+
                 async with httpx.AsyncClient(timeout=30.0) as client:
                     resp = await client.post(
                         "http://ollama:11434/api/generate",
-                        json={"model": model, "prompt": full_prompt, "stream": False}
+                        json={"model": model, "prompt": full_prompt, "stream": False},
                     )
                     if resp.status_code == 200:
                         return resp.json().get("response", "")
@@ -469,6 +454,7 @@ class MultiModelConsensus:
 # ============================================================================
 # 🐥 CANARY CONTROLLER v2
 # ============================================================================
+
 
 class CanaryControllerV2:
     """Enhanced canary deployment with real health monitoring."""
@@ -494,9 +480,9 @@ class CanaryControllerV2:
             health_results.append(healthy)
 
             if not healthy:
-                logger.warning("canary_health_check_failed", check_num=i+1)
+                logger.warning("canary_health_check_failed", check_num=i + 1)
                 await self._rollback(action)
-                return False, f"Перевірка здоров'я {i+1} не вдалася - виконано відкат"
+                return False, f"Перевірка здоров'я {i + 1} не вдалася - виконано відкат"
 
             await asyncio.sleep(self.health_check_interval)
 
@@ -513,6 +499,7 @@ class CanaryControllerV2:
         """Check real system health."""
         try:
             import httpx
+
             async with httpx.AsyncClient(timeout=5.0) as client:
                 resp = await client.get("http://localhost:8000/health")
                 return resp.status_code == 200
@@ -526,19 +513,17 @@ class CanaryControllerV2:
 
         try:
             proc = await asyncio.create_subprocess_shell(
-                "git reset --hard HEAD^",
-                cwd="/app",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                "git reset --hard HEAD^", cwd="/app", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
             await proc.communicate()
         except Exception as e:
-            logger.error(f"Rollback failed: {e}")
+            logger.exception(f"Rollback failed: {e}")
 
 
 # ============================================================================
 # 💥 CHAOS ENGINE
 # ============================================================================
+
 
 class ChaosEngine:
     """Chaos engineering for system resilience testing."""
@@ -561,7 +546,8 @@ class ChaosEngine:
             return None
 
         import random
-        for scenario_id, desc, probability in self.SCENARIOS:
+
+        for scenario_id, _desc, probability in self.SCENARIOS:
             if random.random() < probability:
                 result = await self._execute_scenario(scenario_id)
                 self.results_history.append(result)
@@ -577,7 +563,7 @@ class ChaosEngine:
             "scenario": scenario_id,
             "timestamp": datetime.now(UTC).isoformat(),
             "recovered": False,
-            "recovery_time_ms": 0
+            "recovery_time_ms": 0,
         }
 
         start = datetime.now(UTC)
@@ -604,8 +590,9 @@ class ChaosEngine:
 # 🧠 AZR ENGINE v32 (MAIN CLASS)
 # ============================================================================
 
+
 class AZREngineV32:
-    """🧠 AZR v32 - Sovereign Autonomous Response Engine
+    """🧠 AZR v32 - Sovereign Autonomous Response Engine.
 
     Features:
     - Full OODA Loop (Observe-Orient-Decide-Act)
@@ -696,10 +683,11 @@ class AZREngineV32:
                 # Log cycle completion
                 cycle_duration = (datetime.now(UTC) - cycle_start).total_seconds()
                 log_business_event(
-                    logger, "azr_cycle_completed",
+                    logger,
+                    "azr_cycle_completed",
                     cycle=self.cycle_count,
                     duration_s=cycle_duration,
-                    health_score=self.current_health.overall
+                    health_score=self.current_health.overall,
                 )
 
                 # Adaptive sleep based on health
@@ -723,9 +711,10 @@ class AZREngineV32:
         # 1. System resources
         try:
             import psutil
+
             metrics["cpu"] = psutil.cpu_percent(interval=1)
             metrics["memory"] = psutil.virtual_memory().percent
-            metrics["disk"] = psutil.disk_usage('/').percent
+            metrics["disk"] = psutil.disk_usage("/").percent
 
             self.current_health.cpu_score = max(0, 100 - metrics["cpu"])
             self.current_health.memory_score = max(0, 100 - metrics["memory"])
@@ -738,6 +727,7 @@ class AZREngineV32:
         # 2. API health
         try:
             import httpx
+
             async with httpx.AsyncClient(timeout=5.0) as client:
                 resp = await client.get("http://localhost:8000/health")
                 metrics["api_healthy"] = resp.status_code == 200
@@ -759,6 +749,7 @@ class AZREngineV32:
         # 4. AI models health
         try:
             import httpx
+
             async with httpx.AsyncClient(timeout=5.0) as client:
                 resp = await client.get("http://ollama:11434/api/tags")
                 metrics["ai_healthy"] = resp.status_code == 200
@@ -786,7 +777,7 @@ class AZREngineV32:
         current_metrics = {
             "cpu": self.current_health.cpu_score,
             "memory": self.current_health.memory_score,
-            "disk": self.current_health.disk_score
+            "disk": self.current_health.disk_score,
         }
         anomalies = self.anomaly_detector.detect_anomalies(current_metrics)
 
@@ -802,7 +793,7 @@ class AZREngineV32:
             "anomalies": anomalies,
             "trends": trends,
             "experience": experience_stats,
-            "constitutional_violations": self.guard.violations_count
+            "constitutional_violations": self.guard.violations_count,
         }
 
         logger.info("azr_oriented", **{k: v for k, v in orientation.items() if k != "experience"})
@@ -819,49 +810,59 @@ class AZREngineV32:
         # 1. Handle anomalies
         for anomaly in orientation.get("anomalies", []):
             if anomaly["severity"] == "high":
-                actions.append(AZRAction(
-                    type="ANOMALY_RESPONSE",
-                    priority=2,
-                    reasoning=f"⚠️ Critical anomaly detected in {anomaly['metric']}. Value {anomaly['current_value']:.2f} is outside expected range {anomaly['expected_range']}.",
-                    meta={
-                        "metric": anomaly["metric"],
-                        "current": anomaly["current_value"],
-                        "expected": anomaly["expected_range"]
-                    }
-                ))
+                actions.append(
+                    AZRAction(
+                        type="ANOMALY_RESPONSE",
+                        priority=2,
+                        reasoning=f"⚠️ Critical anomaly detected in {anomaly['metric']}. Value {anomaly['current_value']:.2f} is outside expected range {anomaly['expected_range']}.",
+                        meta={
+                            "metric": anomaly["metric"],
+                            "current": anomaly["current_value"],
+                            "expected": anomaly["expected_range"],
+                        },
+                    )
+                )
                 # Alert admin immediately
-                asyncio.create_task(self._send_telegram_alert(
-                    f"Виявлено аномалію в {anomaly['metric']}!\nЗначення: {anomaly['current_value']:.2f} (Z: {anomaly['z_score']:.2f})",
-                    "warning"
-                ))
+                asyncio.create_task(
+                    self._send_telegram_alert(
+                        f"Виявлено аномалію в {anomaly['metric']}!\nЗначення: {anomaly['current_value']:.2f} (Z: {anomaly['z_score']:.2f})",
+                        "warning",
+                    )
+                )
 
         # 2. Handle degraded health
         if orientation["health_status"] == "degraded":
-            actions.append(AZRAction(
-                type="HEALTH_RECOVERY",
-                priority=1,
-                reasoning=f"🆘 System health score dropped to {orientation['health_score']:.1f}. Initiating emergency recovery protocols.",
-                meta={"health_score": orientation["health_score"]}
-            ))
+            actions.append(
+                AZRAction(
+                    type="HEALTH_RECOVERY",
+                    priority=1,
+                    reasoning=f"🆘 System health score dropped to {orientation['health_score']:.1f}. Initiating emergency recovery protocols.",
+                    meta={"health_score": orientation["health_score"]},
+                )
+            )
 
         # 3. Periodic maintenance (every 10 cycles)
         if self.cycle_count % 10 == 0:
-            actions.append(AZRAction(
-                type="CODE_QUALITY_CHECK",
-                priority=5,
-                reasoning="🧹 Periodic system hygiene: running automated code quality and security scans.",
-                meta={"reason": "periodic"}
-            ))
+            actions.append(
+                AZRAction(
+                    type="CODE_QUALITY_CHECK",
+                    priority=5,
+                    reasoning="🧹 Periodic system hygiene: running automated code quality and security scans.",
+                    meta={"reason": "periodic"},
+                )
+            )
 
         # 4. Trend-based predictions
         trends = orientation.get("trends", {})
         if trends.get("memory") == "INCREASING":
-            actions.append(AZRAction(
-                type="MEMORY_OPTIMIZATION",
-                priority=4,
-                reasoning="🧠 Predicted memory pressure based on increasing usage trend. Proactive garbage collection triggered.",
-                meta={"trend": "increasing", "predicted_issue": True}
-            ))
+            actions.append(
+                AZRAction(
+                    type="MEMORY_OPTIMIZATION",
+                    priority=4,
+                    reasoning="🧠 Predicted memory pressure based on increasing usage trend. Proactive garbage collection triggered.",
+                    meta={"trend": "increasing", "predicted_issue": True},
+                )
+            )
 
         # 5. Filter blacklisted actions
         actions = [a for a in actions if not self.memory.is_blacklisted(a.fingerprint)]
@@ -884,10 +885,11 @@ class AZREngineV32:
             if not approved:
                 self.total_actions_blocked += 1
                 self._log_audit(action, "BLOCKED", reason)
-                asyncio.create_task(self._send_telegram_alert(
-                    f"Конституційне блокування:\nДія: {action.type}\nПричина: {reason}",
-                    "critical"
-                ))
+                asyncio.create_task(
+                    self._send_telegram_alert(
+                        f"Конституційне блокування:\nДія: {action.type}\nПричина: {reason}", "critical"
+                    )
+                )
                 continue
 
             # Check success probability from experience
@@ -908,10 +910,9 @@ class AZREngineV32:
                     self.total_rollbacks += 1
                     self.memory.record_experience(action, "ROLLBACK", -0.5)
                     self._log_audit(action, "ROLLBACK", message)
-                    asyncio.create_task(self._send_telegram_alert(
-                        f"Дію відкочено:\nДія: {action.type}\nПричина: {message}",
-                        "warning"
-                    ))
+                    asyncio.create_task(
+                        self._send_telegram_alert(f"Дію відкочено:\nДія: {action.type}\nПричина: {message}", "warning")
+                    )
 
             except Exception as e:
                 self.memory.record_experience(action, "FAILURE", -1.0)
@@ -934,6 +935,7 @@ class AZREngineV32:
 
         if action.type == "AGENTIC_REFINEMENT":
             from app.services.agent_orchestrator import agent_orchestrator
+
             results = await agent_orchestrator.verify_and_optimize(action.meta.get("path", "/app"))
             return True, f"Редагування агентами завершено: {results}"
 
@@ -945,9 +947,7 @@ class AZREngineV32:
         try:
             # Run Ruff
             proc = await asyncio.create_subprocess_shell(
-                "ruff check /app --fix --quiet",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                "ruff check /app --fix --quiet", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
             await proc.communicate()
             return True
@@ -961,6 +961,7 @@ class AZREngineV32:
         # Clear caches, restart services, etc.
         try:
             import gc
+
             gc.collect()
             return True
         except:
@@ -976,6 +977,7 @@ class AZREngineV32:
         """Optimize memory usage."""
         try:
             import gc
+
             gc.collect()
             return True
         except:
@@ -991,21 +993,25 @@ class AZREngineV32:
             return
 
         emoji = "ℹ️"
-        if level == "critical": emoji = "🚨"
-        elif level == "warning": emoji = "⚠️"
-        elif level == "success": emoji = "✅"
+        if level == "critical":
+            emoji = "🚨"
+        elif level == "warning":
+            emoji = "⚠️"
+        elif level == "success":
+            emoji = "✅"
 
         text = f"{emoji} **Сповіщення AZR v32**\n\n{message}"
 
         try:
             import httpx
+
             async with httpx.AsyncClient() as client:
                 await client.post(
                     f"https://api.telegram.org/bot{self.telegram_token}/sendMessage",
-                    json={"chat_id": self.telegram_chat_id, "text": text, "parse_mode": "Markdown"}
+                    json={"chat_id": self.telegram_chat_id, "text": text, "parse_mode": "Markdown"},
                 )
         except Exception as e:
-            logger.error(f"Failed to send telegram alert: {e}")
+            logger.exception(f"Failed to send telegram alert: {e}")
 
     def _log_audit(self, action: AZRAction, status: str, message: str = ""):
         """Log action to cryptographic Truth Ledger with Merkle proof."""
@@ -1018,20 +1024,15 @@ class AZREngineV32:
             "message": message,
             "reasoning": action.reasoning,
             "cycle": self.cycle_count,
-            "health_score": self.current_health.overall
+            "health_score": self.current_health.overall,
         }
 
-        metadata = {
-            "actor": "azr_engine_v32",
-            "constitutional_guard": status != "BLOCKED"
-        }
+        metadata = {"actor": "azr_engine_v32", "constitutional_guard": status != "BLOCKED"}
 
         try:
             # 🏛️ Record to immutable Merkle Truth Ledger
             ledger_entry = self.truth_ledger.append(
-                event_type=f"AZR_ACTION_{status}",
-                payload=payload,
-                metadata=metadata
+                event_type=f"AZR_ACTION_{status}", payload=payload, metadata=metadata
             )
 
             logger.info(
@@ -1039,20 +1040,23 @@ class AZREngineV32:
                 sequence=ledger_entry.sequence,
                 merkle_root=ledger_entry.merkle_root[:32],
                 action_id=action.id,
-                status=status
+                status=status,
             )
 
             # Also write to legacy file for backward compatibility
             with open(self.audit_log_path, "a") as f:
-                f.write(json.dumps({
-                    **payload,
-                    "timestamp": ledger_entry.timestamp,
-                    "merkle_root": ledger_entry.merkle_root,
-                    "ledger_sequence": ledger_entry.sequence
-                }) + "\n")
+                f.write(
+                    json.dumps({
+                        **payload,
+                        "timestamp": ledger_entry.timestamp,
+                        "merkle_root": ledger_entry.merkle_root,
+                        "ledger_sequence": ledger_entry.sequence,
+                    })
+                    + "\n"
+                )
 
         except Exception as e:
-            logger.error(f"Audit log failed: {e}")
+            logger.exception(f"Audit log failed: {e}")
 
     def get_status(self) -> dict:
         """Get current engine status."""
@@ -1070,20 +1074,20 @@ class AZREngineV32:
                 "disk": self.current_health.disk_score,
                 "api": self.current_health.api_score,
                 "db": self.current_health.db_score,
-                "ai": self.current_health.ai_score
+                "ai": self.current_health.ai_score,
             },
             "metrics": {
                 "total_executed": self.total_actions_executed,
                 "total_blocked": self.total_actions_blocked,
                 "total_rollbacks": self.total_rollbacks,
-                "constitutional_violations": self.guard.violations_count
+                "constitutional_violations": self.guard.violations_count,
             },
             "experience": self.memory.get_stats(),
             "truth_ledger": {
                 "entries": self.truth_ledger.length,
                 "merkle_root": self.truth_ledger.merkle_root[:48] + "...",
                 "integrity_verified": ledger_valid,
-                "integrity_message": ledger_message
+                "integrity_message": ledger_message,
             },
             "capabilities": [
                 "ConstitutionalGuard",
@@ -1092,13 +1096,13 @@ class AZREngineV32:
                 "MultiModelConsensus",
                 "CanaryDeployment",
                 "ChaosEngineering",
-                "MerkleTruthLedger",      # v40
-                "EventSourcing",          # v40
-                "FormalStateMachine",     # v40
-                "GraphRAGMemory",         # v40
-                "MCPIntegration",         # v40
-                "RedTeamAgent"            # v40
-            ]
+                "MerkleTruthLedger",  # v40
+                "EventSourcing",  # v40
+                "FormalStateMachine",  # v40
+                "GraphRAGMemory",  # v40
+                "MCPIntegration",  # v40
+                "RedTeamAgent",  # v40
+            ],
         }
 
     def get_recent_decisions(self, limit: int = 20) -> list[dict]:
@@ -1114,7 +1118,7 @@ class AZREngineV32:
                 "reasoning": p.get("reasoning"),
                 "outcome": p.get("message"),
                 "timestamp": e.timestamp,
-                "sequence": e.sequence
+                "sequence": e.sequence,
             })
         return decisions
 

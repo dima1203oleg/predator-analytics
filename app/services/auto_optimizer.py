@@ -15,7 +15,7 @@ import asyncio
 from datetime import datetime, timedelta
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 
@@ -23,12 +23,14 @@ import numpy as np
 # Conditional imports for optional dependencies
 try:
     from kubernetes import client, config
+
     K8S_AVAILABLE = True
 except ImportError:
     K8S_AVAILABLE = False
 
 try:
     from prometheus_api_client import PrometheusConnect
+
     PROM_AVAILABLE = True
 except ImportError:
     PROM_AVAILABLE = False
@@ -40,11 +42,11 @@ class MetricsAnalyzer:
     """Аналізує метрики з Prometheus/Grafana та визначає потребу в оптимізації."""
 
     QUALITY_GATES = {
-        "ndcg_at_10": 0.75,       # Precision для пошуку
-        "avg_latency_ms": 500,    # Максимальна латентність
-        "error_rate": 0.01,       # Максимум 1% помилок
+        "ndcg_at_10": 0.75,  # Precision для пошуку
+        "avg_latency_ms": 500,  # Максимальна латентність
+        "error_rate": 0.01,  # Максимум 1% помилок
         "cost_per_1k_requests": 0.50,  # Бюджет на 1К запитів
-        "user_satisfaction": 4.0, # NPS мінімум 4/5
+        "user_satisfaction": 4.0,  # NPS мінімум 4/5
         "gpu_utilization": 0.85,  # Максимальне навантаження GPU
     }
 
@@ -122,7 +124,8 @@ class MetricsAnalyzer:
         """Перевіряє відповідність quality gates."""
         failed = []
         for metric, threshold in self.QUALITY_GATES.items():
-            if metric not in metrics: continue
+            if metric not in metrics:
+                continue
 
             val = metrics[metric]
 
@@ -181,6 +184,7 @@ class AutoOptimizer:
         # Check for system lockdown
         try:
             from app.services.system_control_service import system_control_service
+
             if await system_control_service.is_lockdown():
                 logger.warning("AutoOptimizer cycle SKIPPED: SYSTEM LOCKDOWN active.")
                 return
@@ -214,15 +218,35 @@ class AutoOptimizer:
         if "avg_latency_ms" in failed_gates:
             lat = metrics["avg_latency_ms"]
             if lat > 1000:
-                actions.append({"type": "scale_pods", "target": "backend", "replicas": 5, "reason": f"Critical latency {lat:.0f}ms"})
+                actions.append({
+                    "type": "scale_pods",
+                    "target": "backend",
+                    "replicas": 5,
+                    "reason": f"Critical latency {lat:.0f}ms",
+                })
             elif lat > 800:
-                actions.append({"type": "scale_pods", "target": "backend", "replicas": 3, "reason": f"High latency {lat:.0f}ms"})
+                actions.append({
+                    "type": "scale_pods",
+                    "target": "backend",
+                    "replicas": 3,
+                    "reason": f"High latency {lat:.0f}ms",
+                })
             else:
-                 actions.append({"type": "optimize_model", "target": "reranker", "method": "quantization", "reason": "Latency tuning"})
+                actions.append({
+                    "type": "optimize_model",
+                    "target": "reranker",
+                    "method": "quantization",
+                    "reason": "Latency tuning",
+                })
 
         # Low Accuracy Strategy
         if "ndcg_at_10" in failed_gates:
-            actions.append({"type": "retrain_model", "target": "reranker", "dataset": "augmented_latest", "reason": f"Low NDCG {metrics['ndcg_at_10']:.2f}"})
+            actions.append({
+                "type": "retrain_model",
+                "target": "reranker",
+                "dataset": "augmented_latest",
+                "reason": f"Low NDCG {metrics['ndcg_at_10']:.2f}",
+            })
             actions.append({"type": "generate_dataset", "count": 2000, "reason": "Augment training data"})
 
         for action in actions:
@@ -234,11 +258,20 @@ class AutoOptimizer:
         # Check if weekly training needed
         last_train = self._get_last_training_time()
         if (datetime.now() - last_train).days >= 7:
-            await self.execute_action({"type": "scheduled_training", "target": "all_models", "reason": "Weekly maintenance"})
+            await self.execute_action({
+                "type": "scheduled_training",
+                "target": "all_models",
+                "reason": "Weekly maintenance",
+            })
 
         # Idle GPU utilization Strategy -> Run experiments
         if metrics.get("gpu_utilization", 1.0) < 0.4:
-             await self.execute_action({"type": "ab_test", "variants": ["v1", "v2-experimental"], "metric": "ndcg", "reason": "Idle compute available"})
+            await self.execute_action({
+                "type": "ab_test",
+                "variants": ["v1", "v2-experimental"],
+                "metric": "ndcg",
+                "reason": "Idle compute available",
+            })
 
     async def execute_action(self, action: dict[str, Any]):
         """Виконує дію з реальною або мок інтеграцією."""
@@ -251,12 +284,12 @@ class AutoOptimizer:
                     try:
                         # Real K8s scaling logic
                         apps_v1 = client.AppsV1Api()
-                        deployment = apps_v1.read_namespaced_deployment(name=f"predator-{action['target']}", namespace="predator")
-                        deployment.spec.replicas = action['replicas']
+                        deployment = apps_v1.read_namespaced_deployment(
+                            name=f"predator-{action['target']}", namespace="predator"
+                        )
+                        deployment.spec.replicas = action["replicas"]
                         apps_v1.patch_namespaced_deployment(
-                            name=f"predator-{action['target']}",
-                            namespace="predator",
-                            body=deployment
+                            name=f"predator-{action['target']}", namespace="predator", body=deployment
                         )
                         logger.info(f"✅ Successfully scaled {action['target']} to {action['replicas']}")
                     except Exception as k8s_e:
@@ -266,10 +299,13 @@ class AutoOptimizer:
 
             elif act_type == "generate_dataset":
                 from app.services.ml import get_augmentor
+
                 get_augmentor()
                 # Run as background task to not block
                 loop = asyncio.get_event_loop()
-                await loop.run_in_executor(None, lambda: logger.info(f"Generated {action['count']} samples (Simulated)"))
+                await loop.run_in_executor(
+                    None, lambda: logger.info(f"Generated {action['count']} samples (Simulated)")
+                )
 
             elif act_type == "retrain_model":
                 # Call ML API or External Job
@@ -288,7 +324,7 @@ class AutoOptimizer:
         self.optimization_history.append({
             "timestamp": datetime.now().isoformat(),
             "action": action,
-            "metrics": metrics.copy()
+            "metrics": metrics.copy(),
         })
 
     def _get_last_training_time(self) -> datetime:
@@ -298,7 +334,8 @@ class AutoOptimizer:
     def get_optimization_report(self) -> dict[str, Any]:
         """Повертає статус для UI."""
         recent = [
-            opt for opt in self.optimization_history
+            opt
+            for opt in self.optimization_history
             if datetime.fromisoformat(opt["timestamp"]) > datetime.now() - timedelta(hours=24)
         ]
         return {
@@ -306,8 +343,8 @@ class AutoOptimizer:
             "total_optimizations_24h": len(recent),
             "actions_by_type": self._group_by_type(recent),
             "last_action": recent[-1] if recent else None,
-            "quality_gates_status": "passing", # calculated dynamically ideally
-            "next_cycle_in_minutes": 15
+            "quality_gates_status": "passing",  # calculated dynamically ideally
+            "next_cycle_in_minutes": 15,
         }
 
     def _group_by_type(self, optimizations: list[dict]) -> dict[str, int]:
@@ -317,8 +354,10 @@ class AutoOptimizer:
             counts[t] = counts.get(t, 0) + 1
         return counts
 
+
 # Singleton instance
 _auto_optimizer: AutoOptimizer | None = None
+
 
 def get_auto_optimizer() -> AutoOptimizer:
     global _auto_optimizer

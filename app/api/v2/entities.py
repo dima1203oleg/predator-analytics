@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Query
 
 from app.core.ueid import (
-    UEIDResult,
     generate_deterministic_ueid,
     generate_ueid,
     normalize_name,
@@ -17,9 +15,9 @@ from app.core.ueid import (
 from app.models.v55.ueid import (
     EntityCreate,
     EntityResponse,
-    EntitySearchRequest,
     EntitySearchResponse,
 )
+
 
 logger = logging.getLogger("predator.api.v2.entities")
 router = APIRouter(prefix="/entities", tags=["v2-entities"])
@@ -41,8 +39,7 @@ async def resolve_entity(body: EntityCreate) -> EntityResponse:
         ueid = generate_ueid()
         is_new = True
 
-    logger.info("Entity resolved: ueid=%s name=%s edrpou=%s is_new=%s",
-                ueid, name_normalized, body.edrpou, is_new)
+    logger.info("Entity resolved: ueid=%s name=%s edrpou=%s is_new=%s", ueid, name_normalized, body.edrpou, is_new)
 
     return EntityResponse(
         ueid=ueid,
@@ -66,7 +63,7 @@ async def get_entity(ueid: str) -> EntityResponse:
 @router.get("/", response_model=EntitySearchResponse, summary="Пошук суб'єктів")
 async def search_entities(
     q: str = Query(..., min_length=1, description="Пошуковий запит"),
-    entity_type: Optional[str] = Query(None),
+    entity_type: str | None = Query(None),
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ) -> EntitySearchResponse:

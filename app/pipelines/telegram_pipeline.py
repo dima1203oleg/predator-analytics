@@ -1,31 +1,32 @@
-from typing import AsyncGenerator, Dict, Any, List
 import re
+from typing import TYPE_CHECKING
 
 from app.pipelines.base import BasePipeline, SourceType
 
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
+
+
 class TelegramPipeline(BasePipeline):
-    """
-    Pipeline for Telegram channels.
+    """Pipeline for Telegram channels.
     Processes text, photos, documents, audio, video.
     """
 
     source_type = SourceType.TELEGRAM
 
-    async def extract(self, source: Dict) -> AsyncGenerator[Dict, None]:
-        """
-        source = {
+    async def extract(self, source: dict) -> "AsyncGenerator[dict, None]":
+        """Source = {
             "channel": "@channel_name",
             "messages": [...]
-        }
+        }.
         """
         messages = source.get("messages", [])
         for msg in messages:
             yield msg
 
-    async def transform(self, data: Dict) -> Dict:
-        """
-        Transform Telegram message.
-        """
+    async def transform(self, data: dict) -> dict:
+        """Transform Telegram message."""
         doc = {
             "source_type": "telegram",
             "channel": data.get("channel", ""),
@@ -34,7 +35,7 @@ class TelegramPipeline(BasePipeline):
             "raw_text": data.get("text", ""),
             "media": [],
             "extracted_text": "",
-            "entities": []
+            "entities": [],
         }
 
         # Text Processing
@@ -47,20 +48,20 @@ class TelegramPipeline(BasePipeline):
 
         return doc
 
-    def _extract_entities(self, text: str) -> List[Dict]:
-        """Extract entities using regex"""
+    def _extract_entities(self, text: str) -> list[dict]:
+        """Extract entities using regex."""
         entities = []
         if not text:
             return entities
 
         # EDRPOU (8 digits)
-        edrpou_matches = re.findall(r'\b\d{8}\b', text)
+        edrpou_matches = re.findall(r"\b\d{8}\b", text)
         for match in edrpou_matches:
             entities.append({"type": "edrpou", "value": match})
 
         return entities
 
-    async def validate(self, data: Dict) -> bool:
-        """Validate message has content"""
+    async def validate(self, data: dict) -> bool:
+        """Validate message has content."""
         # Must have text or media
         return bool(data.get("text") or data.get("photo") or data.get("document"))

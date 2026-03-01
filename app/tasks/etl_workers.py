@@ -5,7 +5,7 @@ from __future__ import annotations
 Implements separate Parser, Processor, and Indexer agents as per Technical Specification.
 """
 import asyncio
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import json
 import os
 import sys
@@ -22,7 +22,7 @@ from app.libs.core.config import settings
 
 
 # Add root to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../../../'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../../../"))
 
 from app.libs.core.structured_logger import RequestLogger, get_logger
 
@@ -30,23 +30,15 @@ from app.libs.core.structured_logger import RequestLogger, get_logger
 logger = get_logger("predator.workers.etl")
 
 # Data Contracts
-from app.libs.core.contracts.payloads import IndexingTaskPayload
 
 
 async def publish_etl_update(event_type: str, data: dict):
     """Publish ETL update to Redis for WebSocket broadcasting."""
     try:
         r = redis.Redis(
-            host=os.getenv("REDIS_HOST", "redis"),
-            port=int(os.getenv("REDIS_PORT", "6379")),
-            decode_responses=True
+            host=os.getenv("REDIS_HOST", "redis"), port=int(os.getenv("REDIS_PORT", "6379")), decode_responses=True
         )
-        payload = {
-            "type": "etl_update",
-            "event": event_type,
-            "timestamp": datetime.now(UTC).isoformat(),
-            **data
-        }
+        payload = {"type": "etl_update", "event": event_type, "timestamp": datetime.now(UTC).isoformat(), **data}
         await r.publish("predator:system:updates", json.dumps(payload))
     except Exception as e:
         logger.warning(f"Failed to publish ETL update: {e}")
@@ -56,6 +48,7 @@ async def publish_etl_update(event_type: str, data: dict):
 # 1. DATA INGEST PARSER - Collects raw data from external sources
 # ============================================================================
 
+
 @shared_task(
     name="tasks.workers.parse_external_source",
     queue="ingestion",
@@ -64,7 +57,7 @@ async def publish_etl_update(event_type: str, data: dict):
     default_retry_delay=60,
     autoretry_for=(Exception,),
     retry_backoff=True,
-    retry_backoff_max=600
+    retry_backoff_max=600,
 )
 def parse_external_source(self, source_type: str, config: dict | None = None):
     """Parser Agent: Fetch data from external sources and save to staging.raw_data.
@@ -91,45 +84,62 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                 # Select connector based on source type
                 if source_type == "prozorro":
                     from app.connectors.prozorro import prozorro_connector
+
                     result = await prozorro_connector.search(
-                        query=config.get("query") if config else None,
-                        limit=config.get("limit", 50) if config else 50
+                        query=config.get("query") if config else None, limit=config.get("limit", 50) if config else 50
                     )
                     if result.success and result.data:
                         for tender in result.data:
                             # Save to staging.raw_data
-                            staging_id = await conn.fetchval("""
+                            staging_id = await conn.fetchval(
+                                """
                                 INSERT INTO staging.raw_data (source, raw_content, dataset_type, fetched_at)
                                 VALUES ($1, $2, $3, NOW())
                                 RETURNING id
-                            """, "prozorro", json.dumps(tender), "tenders")
+                            """,
+                                "prozorro",
+                                json.dumps(tender),
+                                "tenders",
+                            )
                             staging_ids.append(staging_id)
                             records_fetched += 1
 
                 elif source_type == "nbu":
                     from app.connectors.nbu_fx import nbu_fx_connector
+
                     result = await nbu_fx_connector.get_all_rates()
                     if result.success and result.data:
                         for rate in result.data:
-                            staging_id = await conn.fetchval("""
+                            staging_id = await conn.fetchval(
+                                """
                                 INSERT INTO staging.raw_data (source, raw_content, dataset_type, fetched_at)
                                 VALUES ($1, $2, $3, NOW())
                                 RETURNING id
-                            """, "nbu", json.dumps(rate), "exchange_rates")
+                            """,
+                                "nbu",
+                                json.dumps(rate),
+                                "exchange_rates",
+                            )
                             staging_ids.append(staging_id)
                             records_fetched += 1
 
                 elif source_type == "customs":
                     from app.connectors.customs import CustomsConnector
+
                     connector = CustomsConnector()
                     result = await connector.fetch(config or {})
                     if result.success and result.data:
                         for record in result.data:
-                            staging_id = await conn.fetchval("""
+                            staging_id = await conn.fetchval(
+                                """
                                 INSERT INTO staging.raw_data (source, raw_content, dataset_type, fetched_at)
                                 VALUES ($1, $2, $3, NOW())
                                 RETURNING id
-                            """, "customs", json.dumps(record), "customs")
+                            """,
+                                "customs",
+                                json.dumps(record),
+                                "customs",
+                            )
                             staging_ids.append(staging_id)
                             records_fetched += 1
 
@@ -137,20 +147,26 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                     # Telegram Channel Parsing (v45.1)
                     try:
                         from app.connectors.telegram_channel import telegram_channel_connector
+
                         channel_username = config.get("channelUsername") if config else None
                         if channel_username:
                             result = await telegram_channel_connector.search(
                                 channel_username,
                                 limit=config.get("limit", 100) if config else 100,
-                                channel_username=channel_username
+                                channel_username=channel_username,
                             )
                             if result.success and result.data:
                                 for message in result.data:
-                                    staging_id = await conn.fetchval("""
+                                    staging_id = await conn.fetchval(
+                                        """
                                         INSERT INTO staging.raw_data (source, raw_content, dataset_type, fetched_at)
                                         VALUES ($1, $2, $3, NOW())
                                         RETURNING id
-                                    """, "telegram", json.dumps(message), "telegram_messages")
+                                    """,
+                                        "telegram",
+                                        json.dumps(message),
+                                        "telegram_messages",
+                                    )
                                     staging_ids.append(staging_id)
                                     records_fetched += 1
                             else:
@@ -164,6 +180,7 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                     # Web Scraping (v45.1)
                     try:
                         from app.connectors.web_scraper import web_scraper_connector
+
                         url = config.get("url") if config else None
                         if url:
                             result = await web_scraper_connector.search(
@@ -171,15 +188,20 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                                 limit=config.get("limit", 10) if config else 10,
                                 use_playwright=config.get("usePlaywright", False) if config else False,
                                 follow_links=config.get("followLinks", False) if config else False,
-                                max_depth=config.get("maxDepth", 1) if config else 1
+                                max_depth=config.get("maxDepth", 1) if config else 1,
                             )
                             if result.success and result.data:
                                 for page in result.data:
-                                    staging_id = await conn.fetchval("""
+                                    staging_id = await conn.fetchval(
+                                        """
                                         INSERT INTO staging.raw_data (source, raw_content, dataset_type, fetched_at)
                                         VALUES ($1, $2, $3, NOW())
                                         RETURNING id
-                                    """, "web_scraper", json.dumps(page), "web_pages")
+                                    """,
+                                        "web_scraper",
+                                        json.dumps(page),
+                                        "web_pages",
+                                    )
                                     staging_ids.append(staging_id)
                                     records_fetched += 1
                             else:
@@ -193,16 +215,22 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                     # RSS/Atom Feed Parsing (v45.1)
                     try:
                         from app.connectors.web_scraper import web_scraper_connector
+
                         feed_url = config.get("url") if config else None
                         if feed_url:
                             result = await web_scraper_connector.scrape_rss_feed(feed_url)
                             if result.success and result.data:
                                 for item in result.data:
-                                    staging_id = await conn.fetchval("""
+                                    staging_id = await conn.fetchval(
+                                        """
                                         INSERT INTO staging.raw_data (source, raw_content, dataset_type, fetched_at)
                                         VALUES ($1, $2, $3, NOW())
                                         RETURNING id
-                                    """, "rss_feed", json.dumps(item), "rss_items")
+                                    """,
+                                        "rss_feed",
+                                        json.dumps(item),
+                                        "rss_items",
+                                    )
                                     staging_ids.append(staging_id)
                                     records_fetched += 1
                             else:
@@ -212,17 +240,13 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                     except ImportError:
                         req_logger.exception("web_scraper_connector_not_available")
 
-                req_logger.info(
-                    "ingestion_completed",
-                    records_fetched=records_fetched,
-                    source_type=source_type
-                )
+                req_logger.info("ingestion_completed", records_fetched=records_fetched, source_type=source_type)
 
                 # Trigger processor for new records (Batched)
                 if staging_ids:
                     batch_size = 100
                     for i in range(0, len(staging_ids), batch_size):
-                        batch = staging_ids[i:i + batch_size]
+                        batch = staging_ids[i : i + batch_size]
                         process_staging_records.delay(batch)
                         logger.info(f"Queued processing batch {i // batch_size + 1}: {len(batch)} records")
 
@@ -230,11 +254,11 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                     "status": "success",
                     "source": source_type,
                     "records_fetched": records_fetched,
-                    "staging_ids": staging_ids
+                    "staging_ids": staging_ids,
                 }
 
             except Exception as e:
-                cast('Any', req_logger).error("ingestion_failed", error=str(e), exc_info=True)
+                cast("Any", req_logger).error("ingestion_failed", error=str(e), exc_info=True)
                 return {"status": "failed", "error": str(e)}
             finally:
                 await conn.close()
@@ -246,6 +270,7 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
 # 2. DATA PROCESSOR - Transforms staging to gold
 # ============================================================================
 
+
 @shared_task(
     name="tasks.workers.process_staging_records",
     queue="etl",
@@ -254,7 +279,7 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
     default_retry_delay=30,
     autoretry_for=(Exception,),
     retry_backoff=True,
-    retry_backoff_max=300
+    retry_backoff_max=300,
 )
 def process_staging_records(self, staging_ids: list):
     """Processor Agent: Transform raw data from staging to gold.documents.
@@ -278,11 +303,14 @@ def process_staging_records(self, staging_ids: list):
 
             for staging_id in staging_ids:
                 # Fetch raw record
-                row = await conn.fetchrow("""
+                row = await conn.fetchrow(
+                    """
                     SELECT id, source, raw_content, dataset_type
                     FROM staging.raw_data
                     WHERE id = $1 AND processed = FALSE
-                """, staging_id)
+                """,
+                    staging_id,
+                )
 
                 if not row:
                     continue
@@ -311,7 +339,7 @@ def process_staging_records(self, staging_ids: list):
                     "raw_id": staging_id,
                     "dataset_type": dataset_type,
                     "connector": source_connector,
-                    "original_source": source_connector
+                    "original_source": source_connector,
                 }
 
                 # Transform based on dataset type
@@ -329,11 +357,13 @@ def process_staging_records(self, staging_ids: list):
                     msg_id = rc.get("id", "")
                     title = f"Telegram: {channel} #{msg_id}"
                     content = rc.get("message") or rc.get("text") or ""
-                    meta["author"] = channel # Channel name as author
+                    meta["author"] = channel  # Channel name as author
                     meta["published_date"] = rc.get("date")
                     meta["category"] = "social_media"
                     meta["views"] = rc.get("views")
-                    meta["link"] = f"https://t.me/{rc.get('chat_username')}/{msg_id}" if rc.get('chat_username') else None
+                    meta["link"] = (
+                        f"https://t.me/{rc.get('chat_username')}/{msg_id}" if rc.get("chat_username") else None
+                    )
 
                 elif dataset_type == "web_pages":
                     # Web Scraped Page
@@ -381,16 +411,20 @@ def process_staging_records(self, staging_ids: list):
 
                 # A. Content Hashing for Deduplication
                 import hashlib
-                content_hash = hashlib.md5((title + content).encode('utf-8')).hexdigest()
+
+                content_hash = hashlib.md5((title + content).encode("utf-8")).hexdigest()
                 meta["content_hash"] = content_hash
 
                 # Duplicate Check
                 # Use SQL to check if meta->>'content_hash' exists
-                exists = await conn.fetchval("""
+                exists = await conn.fetchval(
+                    """
                     SELECT id FROM gold.documents
                     WHERE meta->>'content_hash' = $1
                     LIMIT 1
-                """, content_hash)
+                """,
+                    content_hash,
+                )
 
                 if exists:
                     logger.info(f"Skipping duplicate: {title} (Hash: {content_hash})")
@@ -405,7 +439,18 @@ def process_staging_records(self, staging_ids: list):
 
                 # Basic keyword list (In real generic, use TF-IDF or specific libraries)
                 # Here we just look for high-value signal words
-                keywords_of_interest = ["війна", "дрон", "корупція", "тендер", "суд", "бпла", "розвідка", "сбу", "набу", "зсу"]
+                keywords_of_interest = [
+                    "війна",
+                    "дрон",
+                    "корупція",
+                    "тендер",
+                    "суд",
+                    "бпла",
+                    "розвідка",
+                    "сбу",
+                    "набу",
+                    "зсу",
+                ]
                 text_lower = (title + " " + content).lower()
                 found_tags = [kw for kw in keywords_of_interest if kw in text_lower]
                 if found_tags:
@@ -419,17 +464,27 @@ def process_staging_records(self, staging_ids: list):
 
                 # Check duplication? (Optional optimization: check content hash)
 
-                gold_id = await conn.fetchval("""
+                gold_id = await conn.fetchval(
+                    """
                     INSERT INTO gold.documents
                         (tenant_id, title, content, source_type, meta, created_at)
                     VALUES ($1, $2, $3, $4, $5, NOW())
                     RETURNING id
-                """, SYSTEM_TENANT_ID, title, content, dataset_type, json.dumps(meta))
+                """,
+                    SYSTEM_TENANT_ID,
+                    title,
+                    content,
+                    dataset_type,
+                    json.dumps(meta),
+                )
 
                 # --- 3. MARK PROCESSED ---
-                await conn.execute("""
+                await conn.execute(
+                    """
                     UPDATE staging.raw_data SET processed = TRUE WHERE id = $1
-                """, staging_id)
+                """,
+                    staging_id,
+                )
 
                 gold_ids.append(str(gold_id))
                 processed_count += 1
@@ -443,19 +498,16 @@ def process_staging_records(self, staging_ids: list):
 
                 # NEW: Customs Intel Analysis (Serious Mode Section 6)
                 from app.tasks.custom_intel import analyze_customs_intel
+
                 for g_id in gold_ids:
                     # Trigger analysis for telegram and customs documents
                     analyze_customs_intel.delay(g_id)
 
-            return {
-                "status": "success",
-                "processed_count": processed_count,
-                "gold_ids": gold_ids
-            }
+            return {"status": "success", "processed_count": processed_count, "gold_ids": gold_ids}
 
         except Exception as e:
-            req_logger = RequestLogger(logger, "processor", source_type="mixed") # Fallback logger
-            cast('Any', req_logger).error("staging_processing_failed", error=str(e), exc_info=True)
+            req_logger = RequestLogger(logger, "processor", source_type="mixed")  # Fallback logger
+            cast("Any", req_logger).error("staging_processing_failed", error=str(e), exc_info=True)
             return {"status": "failed", "error": str(e)}
         finally:
             await conn.close()
@@ -467,6 +519,7 @@ def process_staging_records(self, staging_ids: list):
 # 3. INDEXING AGENT - Updates OpenSearch + Qdrant
 # ============================================================================
 
+
 @shared_task(
     name="tasks.workers.index_gold_documents",
     queue="etl",
@@ -475,7 +528,7 @@ def process_staging_records(self, staging_ids: list):
     default_retry_delay=30,
     autoretry_for=(Exception,),
     retry_backoff=True,
-    retry_backoff_max=300
+    retry_backoff_max=300,
 )
 def index_gold_documents(self, gold_ids: list):
     """Indexer Agent: Index gold.documents to OpenSearch and Qdrant.
@@ -540,7 +593,7 @@ def index_gold_documents(self, gold_ids: list):
                     "url": meta.get("url"),
                     "link": meta.get("link"),
                     "tags": meta.get("tags", []),
-                    "created_at": row["created_at"].isoformat()
+                    "created_at": row["created_at"].isoformat(),
                 }
                 documents.append(doc)
 
@@ -554,24 +607,25 @@ def index_gold_documents(self, gold_ids: list):
                 documents=documents,
                 pii_safe=True,
                 embedding_service=embedding_service,
-                qdrant_service=qdrant
+                qdrant_service=qdrant,
             )
 
-            logger.info("gold_indexing_batch_completed",
+            logger.info(
+                "gold_indexing_batch_completed",
                 indexed_opensearch=result.get("indexed_opensearch"),
-                indexed_qdrant=result.get("indexed_qdrant")
+                indexed_qdrant=result.get("indexed_qdrant"),
             )
 
             return {
                 "status": "success",
                 "indexed_opensearch": result.get("indexed_opensearch", 0),
                 "indexed_qdrant": result.get("indexed_qdrant", 0),
-                "failed": result.get("failed", 0)
+                "failed": result.get("failed", 0),
             }
 
         except Exception as e:
             req_logger = RequestLogger(logger, "indexer", source_type="mixed")
-            cast('Any', req_logger).error("gold_indexing_failed", error=str(e), exc_info=True)
+            cast("Any", req_logger).error("gold_indexing_failed", error=str(e), exc_info=True)
             return {"status": "failed", "error": str(e)}
         finally:
             await conn.close()
@@ -583,6 +637,7 @@ def index_gold_documents(self, gold_ids: list):
 # ============================================================================
 # SCHEDULED TASKS (Beat Schedule)
 # ============================================================================
+
 
 @shared_task(name="tasks.workers.scheduled_prozorro_sync")
 def scheduled_prozorro_sync():
@@ -616,7 +671,7 @@ def full_reindex():
         # Process in batches of 100
         batch_size = 100
         for i in range(0, len(gold_ids), batch_size):
-            batch = gold_ids[i:i+batch_size]
+            batch = gold_ids[i : i + batch_size]
             index_gold_documents.delay(batch)
 
     return {"status": "started", "total_documents": len(gold_ids)}
@@ -696,11 +751,15 @@ def orchestrate_data_sources():
                     # Update last_run in DB
                     new_last_run = now.isoformat()
                     # Use jsonb_set to update only last_run key
-                    await conn.execute("""
+                    await conn.execute(
+                        """
                         UPDATE gold.data_sources
                         SET schedule = jsonb_set(coalesce(schedule, '{}'), '{last_run}', $1::jsonb)
                         WHERE id = $2
-                    """, json.dumps(new_last_run), row["id"])
+                    """,
+                        json.dumps(new_last_run),
+                        row["id"],
+                    )
 
             return {"status": "success", "triggered": triggered_count}
 

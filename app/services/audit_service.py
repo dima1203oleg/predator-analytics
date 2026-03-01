@@ -1,14 +1,15 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import logging
 import os
-from typing import Any, Dict, Optional
+from typing import Any
 
 import asyncpg
 
 
 logger = logging.getLogger("service.audit")
+
 
 class AuditService:
     """Audit logging service for compliance and security.
@@ -26,7 +27,7 @@ class AuditService:
         resource_type: str,
         resource_id: str,
         pii_fields: list,
-        ip_address: str | None = None
+        ip_address: str | None = None,
     ):
         """Log PII data access for compliance.
 
@@ -42,13 +43,22 @@ class AuditService:
         conn = await asyncpg.connect(self.db_url)
 
         try:
-            await conn.execute("""
+            await conn.execute(
+                """
                 INSERT INTO audit_pii_access (
                     user_id, username, action, resource_type, resource_id,
                     pii_fields, ip_address, timestamp
                 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            """, user_id, username, action, resource_type, resource_id,
-                pii_fields, ip_address, datetime.now(UTC))
+            """,
+                user_id,
+                username,
+                action,
+                resource_type,
+                resource_id,
+                pii_fields,
+                ip_address,
+                datetime.now(UTC),
+            )
 
             logger.info(f"PII access logged: {username} {action} {resource_type}/{resource_id}")
 
@@ -61,7 +71,7 @@ class AuditService:
         severity: str,
         description: str,
         user_id: str | None = None,
-        metadata: dict[str, Any] | None = None
+        metadata: dict[str, Any] | None = None,
     ):
         """Log security events (failed auth, suspicious activity, etc.).
 
@@ -75,12 +85,19 @@ class AuditService:
         conn = await asyncpg.connect(self.db_url)
 
         try:
-            await conn.execute("""
+            await conn.execute(
+                """
                 INSERT INTO audit_security_events (
                     event_type, severity, description, user_id, metadata, timestamp
                 ) VALUES ($1, $2, $3, $4, $5, $6)
-            """, event_type, severity, description, user_id,
-                metadata or {}, datetime.now(UTC))
+            """,
+                event_type,
+                severity,
+                description,
+                user_id,
+                metadata or {},
+                datetime.now(UTC),
+            )
 
             logger.warning(f"Security event: [{severity}] {event_type} - {description}")
 
@@ -88,22 +105,25 @@ class AuditService:
             await conn.close()
 
     async def log_data_modification(
-        self,
-        user_id: str,
-        action: str,
-        table_name: str,
-        record_id: str,
-        changes: dict[str, Any]
+        self, user_id: str, action: str, table_name: str, record_id: str, changes: dict[str, Any]
     ):
         """Log data modifications for audit trail."""
         conn = await asyncpg.connect(self.db_url)
 
         try:
-            await conn.execute("""
+            await conn.execute(
+                """
                 INSERT INTO audit_data_changes (
                     user_id, action, table_name, record_id, changes, timestamp
                 ) VALUES ($1, $2, $3, $4, $5, $6)
-            """, user_id, action, table_name, record_id, changes, datetime.now(UTC))
+            """,
+                user_id,
+                action,
+                table_name,
+                record_id,
+                changes,
+                datetime.now(UTC),
+            )
 
         finally:
             await conn.close()

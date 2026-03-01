@@ -4,29 +4,28 @@ from __future__ import annotations
 """ETL State Machine Logic
 Core business logic for ETL transitions and invariants.
 """
-from datetime import datetime
-from enum import Enum
-from typing import Any, Dict, List
+from enum import StrEnum
 
 
-class ETLState(str, Enum):
+class ETLState(StrEnum):
     # Lifecycle
     CREATED = "CREATED"
     SOURCE_CHECKED = "SOURCE_CHECKED"
-    INGESTED = "INGESTED" # MinIO
+    INGESTED = "INGESTED"  # MinIO
     PARSED = "PARSED"
-    VALIDATED = "VALIDATED" # DQ Check
+    VALIDATED = "VALIDATED"  # DQ Check
     TRANSFORMED = "TRANSFORMED"
     ENTITIES_RESOLVED = "ENTITIES_RESOLVED"
-    LOADED = "LOADED" # PostgreSQL
+    LOADED = "LOADED"  # PostgreSQL
     GRAPH_BUILT = "GRAPH_BUILT"
-    INDEXED = "INDEXED" # OpenSearch
-    VECTORIZED = "VECTORIZED" # Qdrant
+    INDEXED = "INDEXED"  # OpenSearch
+    VECTORIZED = "VECTORIZED"  # Qdrant
     READY = "READY"
 
     # Terminal/Failure
     FAILED = "FAILED"
     CANCELLED = "CANCELLED"
+
 
 class ETLStateMachine:
     VERSION = "2.0"
@@ -80,7 +79,7 @@ class ETLStateMachine:
             ETLState.GRAPH_BUILT,
             ETLState.INDEXED,
             ETLState.VECTORIZED,
-            ETLState.READY
+            ETLState.READY,
         ]
 
         try:

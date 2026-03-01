@@ -5,8 +5,8 @@ from __future__ import annotations
 Source, Dataset, Job, Index, Artifact definitions.
 """
 from datetime import datetime
-from enum import Enum
-from typing import Any, Dict, List, Optional
+from enum import StrEnum
+from typing import Any
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
@@ -22,20 +22,23 @@ Base = declarative_base()
 # ENUMS
 # ============================================================================
 
-class SourceType(str, Enum):
+
+class SourceType(StrEnum):
     FILE = "file"
     API = "api"
     DATABASE = "database"
     STREAM = "stream"
     WEBHOOK = "webhook"
 
-class DatasetStatus(str, Enum):
+
+class DatasetStatus(StrEnum):
     UPLOADED = "uploaded"
     PROCESSING = "processing"
     INDEXED = "indexed"
     FAILED = "failed"
 
-class JobType(str, Enum):
+
+class JobType(StrEnum):
     INGESTION = "ingestion"
     ETL = "etl"
     INDEXING = "indexing"
@@ -43,31 +46,37 @@ class JobType(str, Enum):
     SYNTHETIC = "synthetic"
     OPTIMIZATION = "optimization"
 
-class JobStatus(str, Enum):
+
+class JobStatus(StrEnum):
     QUEUED = "queued"
     RUNNING = "running"
     COMPLETED = "completed"
     FAILED = "failed"
     CANCELLED = "cancelled"
 
-class IndexType(str, Enum):
+
+class IndexType(StrEnum):
     OPENSEARCH = "opensearch"
     QDRANT = "qdrant"
     HYBRID = "hybrid"
 
-class ArtifactType(str, Enum):
+
+class ArtifactType(StrEnum):
     MODEL = "model"
     DATASET = "dataset"
     LOG = "log"
     REPORT = "report"
     CONFIG = "config"
 
+
 # ============================================================================
 # SQL ALCHEMY MODELS
 # ============================================================================
 
+
 class Source(Base):
     """Джерело вихідних даних."""
+
     __tablename__ = "sources"
 
     id = Column(PostgreSQLUUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -83,8 +92,10 @@ class Source(Base):
     # Relationships
     datasets = relationship("Dataset", back_populates="source")
 
+
 class Dataset(Base):
     """Набір даних – результат успішного завантаження та парсингу Source."""
+
     __tablename__ = "datasets"
 
     id = Column(PostgreSQLUUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -112,8 +123,10 @@ class Dataset(Base):
     jobs = relationship("Job", back_populates="dataset")
     indices = relationship("Index", back_populates="dataset")
 
+
 class Job(Base):
     """Завдання/процес – бекенд-компонент, що виконує фонові операції."""
+
     __tablename__ = "jobs"
 
     id = Column(PostgreSQLUUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -144,8 +157,10 @@ class Job(Base):
     dataset = relationship("Dataset", back_populates="jobs")
     artifacts = relationship("Artifact", back_populates="job")
 
+
 class Index(Base):
     """Індекс пошуку – структура даних у OpenSearch або Qdrant."""
+
     __tablename__ = "indices"
 
     id = Column(PostgreSQLUUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -172,8 +187,10 @@ class Index(Base):
     # Relationships
     dataset = relationship("Dataset", back_populates="indices")
 
+
 class Artifact(Base):
     """Артефакт – будь-який файл або об'єкт, згенерований системою."""
+
     __tablename__ = "artifacts"
 
     id = Column(PostgreSQLUUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -202,6 +219,7 @@ class Artifact(Base):
 
 class NasTournament(Base):
     """NAS Tournament для Evolution/AutoML."""
+
     __tablename__ = "nas_tournaments"
 
     id = Column(String(100), primary_key=True)
@@ -221,6 +239,7 @@ class NasTournament(Base):
 
 class NasCandidate(Base):
     """Кандидат NAS - модель-кандидат у турнірі."""
+
     __tablename__ = "nas_candidates"
 
     id = Column(String(100), primary_key=True)
@@ -232,9 +251,11 @@ class NasCandidate(Base):
     provider = Column(String(50))
     created_at = Column(DateTime, default=datetime.utcnow)
 
+
 # ============================================================================
 # PYDANTIC MODELS (API)
 # ============================================================================
+
 
 class SourceCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
@@ -243,12 +264,14 @@ class SourceCreate(BaseModel):
     config: dict[str, Any] | None = None
     meta: dict[str, Any] | None = None
 
+
 class SourceUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=255)
     description: str | None = None
     config: dict[str, Any] | None = None
     meta: dict[str, Any] | None = None
     is_active: bool | None = None
+
 
 class SourceResponse(BaseModel):
     id: UUID
@@ -264,12 +287,14 @@ class SourceResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class DatasetCreate(BaseModel):
     source_id: UUID
     name: str = Field(..., min_length=1, max_length=255)
     description: str | None = None
     file_path: str | None = None
     file_type: str | None = None
+
 
 class DatasetUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=255)
@@ -278,6 +303,7 @@ class DatasetUpdate(BaseModel):
     schema_info: dict[str, Any] | None = None
     processing_log: dict[str, Any] | None = None
     quality_score: float | None = None
+
 
 class DatasetResponse(BaseModel):
     id: UUID
@@ -301,6 +327,7 @@ class DatasetResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class JobCreate(BaseModel):
     dataset_id: UUID | None = None
     job_type: JobType
@@ -309,12 +336,14 @@ class JobCreate(BaseModel):
     config: dict[str, Any] | None = None
     parameters: dict[str, Any] | None = None
 
+
 class JobUpdate(BaseModel):
     status: JobStatus | None = None
     progress: float | None = Field(None, ge=0.0, le=100.0)
     result: dict[str, Any] | None = None
     error_message: str | None = None
     logs: dict[str, Any] | None = None
+
 
 class JobResponse(BaseModel):
     id: UUID
@@ -340,12 +369,14 @@ class JobResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class IndexCreate(BaseModel):
     dataset_id: UUID
     name: str = Field(..., min_length=1, max_length=255)
     index_type: IndexType
     config: dict[str, Any] | None = None
     vector_dimension: int | None = None
+
 
 class IndexUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=255)
@@ -354,6 +385,7 @@ class IndexUpdate(BaseModel):
     index_size: int | None = None
     is_healthy: bool | None = None
     health_check: dict[str, Any] | None = None
+
 
 class IndexResponse(BaseModel):
     id: UUID
@@ -376,6 +408,7 @@ class IndexResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ArtifactCreate(BaseModel):
     job_id: UUID | None = None
     artifact_type: ArtifactType
@@ -387,6 +420,7 @@ class ArtifactCreate(BaseModel):
     version: str | None = None
     tags: list[str] | None = None
 
+
 class ArtifactUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=255)
     description: str | None = None
@@ -394,6 +428,7 @@ class ArtifactUpdate(BaseModel):
     meta: dict[str, Any] | None = None
     version: str | None = None
     tags: list[str] | None = None
+
 
 class ArtifactResponse(BaseModel):
     id: UUID
@@ -417,12 +452,15 @@ class ArtifactResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 # ============================================================================
 # SERVICE LAYER MODELS
 # ============================================================================
 
+
 class DataHubStats(BaseModel):
     """Statistics for Data Hub dashboard."""
+
     total_sources: int
     active_sources: int
     total_datasets: int
@@ -432,15 +470,19 @@ class DataHubStats(BaseModel):
     storage_used: int  # bytes
     recent_uploads: list[DatasetResponse]
 
+
 class UploadWizardResult(BaseModel):
     """Result from upload wizard."""
+
     source: SourceResponse
     dataset: DatasetResponse
     job: JobResponse
     preview: dict[str, Any] | None = None
 
+
 class PipelineConfig(BaseModel):
     """Configuration for ETL/Processing pipelines."""
+
     pipeline_type: JobType
     input_dataset_id: UUID
     config: dict[str, Any]

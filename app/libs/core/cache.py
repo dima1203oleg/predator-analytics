@@ -18,13 +18,12 @@ Features:
 - Compression для великих objects
 """
 
-from datetime import timedelta
 from functools import wraps
 import hashlib
 import json
 import os
 import pickle
-from typing import TYPE_CHECKING, Any, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 import zlib
 
 import redis.asyncio as redis
@@ -39,7 +38,7 @@ if TYPE_CHECKING:
 logger = get_logger("predator.cache")
 
 # Type variable для generic caching
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -49,13 +48,13 @@ T = TypeVar('T')
 REDIS_HOST = os.getenv("REDIS_HOST", "redis")
 REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 REDIS_DB = int(os.getenv("REDIS_CACHE_DB", "1"))  # DB 1 для cache
-REDIS_PASSWORD = os.getenv("REDIS_PASSWORD",None)
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", None)
 
 # Cache TTLs (seconds)
-TTL_SHORT = 60          # 1 minute
-TTL_MEDIUM = 300        # 5 minutes
-TTL_LONG = 3600         # 1 hour
-TTL_DAY = 86400         # 24 hours
+TTL_SHORT = 60  # 1 minute
+TTL_MEDIUM = 300  # 5 minutes
+TTL_LONG = 3600  # 1 hour
+TTL_DAY = 86400  # 24 hours
 
 # Compression threshold (bytes)
 COMPRESSION_THRESHOLD = 1024  # Compress if > 1KB
@@ -64,6 +63,7 @@ COMPRESSION_THRESHOLD = 1024  # Compress if > 1KB
 # ═══════════════════════════════════════════════════════════════════════════
 # CACHE SERVICE
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class CacheService:
     """Production-ready Redis caching service.
@@ -95,16 +95,10 @@ class CacheService:
                 password=REDIS_PASSWORD,
                 decode_responses=False,  # Binary mode для pickle
                 socket_connect_timeout=5,
-                socket_timeout=5
+                socket_timeout=5,
             )
 
-            logger.info(
-                "redis_connected",
-                host=REDIS_HOST,
-                port=REDIS_PORT,
-                db=REDIS_DB,
-                namespace=self.namespace
-            )
+            logger.info("redis_connected", host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, namespace=self.namespace)
 
     async def close(self):
         """Close Redis connection."""
@@ -132,7 +126,7 @@ class CacheService:
                 "cache_compressed",
                 original_size=len(pickled),
                 compressed_size=len(compressed),
-                ratio=f"{len(compressed)/len(pickled):.2%}"
+                ratio=f"{len(compressed) / len(pickled):.2%}",
             )
             return b"COMPRESSED:" + compressed
 
@@ -176,19 +170,10 @@ class CacheService:
 
         except Exception as e:
             self.errors += 1
-            logger.exception(
-                "cache_get_error",
-                key=key,
-                error=str(e)
-            )
+            logger.exception("cache_get_error", key=key, error=str(e))
             return None
 
-    async def set(
-        self,
-        key: str,
-        value: Any,
-        ttl: int = TTL_MEDIUM
-    ) -> bool:
+    async def set(self, key: str, value: Any, ttl: int = TTL_MEDIUM) -> bool:
         """Set value in cache.
 
         Args:
@@ -207,21 +192,12 @@ class CacheService:
 
             await self.redis.setex(full_key, ttl, data)
 
-            logger.debug(
-                "cache_set",
-                key=key,
-                ttl=ttl,
-                size=len(data)
-            )
+            logger.debug("cache_set", key=key, ttl=ttl, size=len(data))
             return True
 
         except Exception as e:
             self.errors += 1
-            logger.exception(
-                "cache_set_error",
-                key=key,
-                error=str(e)
-            )
+            logger.exception("cache_set_error", key=key, error=str(e))
             return False
 
     async def delete(self, key: str) -> bool:
@@ -259,11 +235,7 @@ class CacheService:
 
             if keys:
                 deleted = await self.redis.delete(*keys)
-                logger.info(
-                    "cache_pattern_invalidated",
-                    pattern=pattern,
-                    deleted=deleted
-                )
+                logger.info("cache_pattern_invalidated", pattern=pattern, deleted=deleted)
                 return deleted
 
             return 0
@@ -294,19 +266,14 @@ class CacheService:
             "misses": self.misses,
             "errors": self.errors,
             "total_requests": total_requests,
-            "hit_rate_percent": round(hit_rate, 2)
+            "hit_rate_percent": round(hit_rate, 2),
         }
 
     # ═══════════════════════════════════════════════════════════════════════
     # DECORATOR for function caching
     # ═══════════════════════════════════════════════════════════════════════
 
-    def cached(
-        self,
-        ttl: int = TTL_MEDIUM,
-        key_prefix: str = "",
-        key_builder: Callable | None = None
-    ):
+    def cached(self, ttl: int = TTL_MEDIUM, key_prefix: str = "", key_builder: Callable | None = None):
         """Decorator для автоматичного кешування функцій.
 
         Args:
@@ -319,6 +286,7 @@ class CacheService:
             async def search_documents(query: str, limit: int):
                 return expensive_search(query, limit)
         """
+
         def decorator(func):
             @wraps(func)
             async def wrapper(*args, **kwargs):
@@ -333,19 +301,11 @@ class CacheService:
                 # Try cache
                 cached_value = await self.get(cache_key)
                 if cached_value is not None:
-                    logger.debug(
-                        "function_cache_hit",
-                        function=func.__name__,
-                        key=cache_key
-                    )
+                    logger.debug("function_cache_hit", function=func.__name__, key=cache_key)
                     return cached_value
 
                 # Execute function
-                logger.debug(
-                    "function_cache_miss",
-                    function=func.__name__,
-                    key=cache_key
-                )
+                logger.debug("function_cache_miss", function=func.__name__, key=cache_key)
                 result = await func(*args, **kwargs)
 
                 # Cache result
@@ -354,12 +314,14 @@ class CacheService:
                 return result
 
             return wrapper
+
         return decorator
 
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SPECIALIZED CACHE SERVICES
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class SearchCache(CacheService):
     """Specialized cache для search results."""
@@ -369,39 +331,19 @@ class SearchCache(CacheService):
 
     def make_search_key(self, query: str, mode: str, filters: dict | None = None) -> str:
         """Generate cache key для search query."""
-        key_data = {
-            "query": query.lower().strip(),
-            "mode": mode,
-            "filters": filters or {}
-        }
+        key_data = {"query": query.lower().strip(), "mode": mode, "filters": filters or {}}
         return self._hash_key(key_data)
 
     async def cache_search_results(
-        self,
-        query: str,
-        mode: str,
-        results: list,
-        filters: dict | None = None,
-        ttl: int = TTL_MEDIUM
+        self, query: str, mode: str, results: list, filters: dict | None = None, ttl: int = TTL_MEDIUM
     ):
         """Cache search results."""
         key = self.make_search_key(query, mode, filters)
         await self.set(key, results, ttl)
 
-        logger.info(
-            "search_results_cached",
-            query=query,
-            mode=mode,
-            results_count=len(results),
-            ttl=ttl
-        )
+        logger.info("search_results_cached", query=query, mode=mode, results_count=len(results), ttl=ttl)
 
-    async def get_cached_search(
-        self,
-        query: str,
-        mode: str,
-        filters: dict | None = None
-    ) -> list | None:
+    async def get_cached_search(self, query: str, mode: str, filters: dict | None = None) -> list | None:
         """Get cached search results."""
         key = self.make_search_key(query, mode, filters)
         return await self.get(key)
@@ -413,23 +355,13 @@ class MLCache(CacheService):
     def __init__(self):
         super().__init__(namespace="ml")
 
-    async def cache_prediction(
-        self,
-        model_id: str,
-        input_data: Any,
-        prediction: Any,
-        ttl: int = TTL_LONG
-    ):
+    async def cache_prediction(self, model_id: str, input_data: Any, prediction: Any, ttl: int = TTL_LONG):
         """Cache ML prediction."""
         input_hash = self._hash_key(input_data)
         key = f"{model_id}:{input_hash}"
         await self.set(key, prediction, ttl)
 
-    async def get_cached_prediction(
-        self,
-        model_id: str,
-        input_data: Any
-    ) -> Any | None:
+    async def get_cached_prediction(self, model_id: str, input_data: Any) -> Any | None:
         """Get cached prediction."""
         input_hash = self._hash_key(input_data)
         key = f"{model_id}:{input_hash}"

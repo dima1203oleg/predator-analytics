@@ -1,4 +1,4 @@
-"""🏛️ AZR UNIFIED ORGANISM v40 - The Complete Autonomous System
+"""🏛️ AZR UNIFIED ORGANISM v40 - The Complete Autonomous System.
 ==============================================================
 
 This is THE BRAIN of the entire PREDATOR system.
@@ -41,7 +41,7 @@ from __future__ import annotations
 import asyncio
 from collections import deque
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 import hashlib
 import json
@@ -55,9 +55,14 @@ from typing import Any
 try:
     import yaml
 except ImportError:
+
     class DummyYaml:
-        def safe_load(self, s): return {}
-        def dump(self, d): return "{}"
+        def safe_load(self, s):
+            return {}
+
+        def dump(self, d):
+            return "{}"
+
     yaml = DummyYaml()
 
 # ============================================================================
@@ -71,9 +76,11 @@ def _get_logger():
     """Get structured logger with fallback."""
     try:
         from app.libs.core.structured_logger import get_logger
+
         return get_logger("azr_unified")
     except ImportError:
         import logging
+
         logging.basicConfig(level=logging.INFO)
         return logging.getLogger("azr_unified")
 
@@ -85,8 +92,10 @@ logger = _get_logger()
 # 📊 UNIFIED TYPES
 # ============================================================================
 
+
 class AZRPhase(Enum):
     """OODA Loop phases."""
+
     IDLE = "idle"
     OBSERVING = "observing"
     ORIENTING = "orienting"
@@ -97,6 +106,7 @@ class AZRPhase(Enum):
 
 class ActionPriority(Enum):
     """Action priority levels."""
+
     CRITICAL = 1
     HIGH = 2
     MEDIUM = 3
@@ -107,6 +117,7 @@ class ActionPriority(Enum):
 @dataclass
 class SystemMetrics:
     """Current system metrics."""
+
     cpu_percent: float = 0.0
     memory_percent: float = 0.0
     disk_percent: float = 0.0
@@ -124,15 +135,16 @@ class SystemMetrics:
             100.0 - self.disk_percent,
             100.0 if self.db_healthy else 0.0,
             100.0 if self.ai_healthy else 50.0,
-            max(0.0, 100.0 - (self.api_latency_ms / 10.0))
+            max(0.0, 100.0 - (self.api_latency_ms / 10.0)),
         ]
         weights = [0.15, 0.15, 0.10, 0.25, 0.15, 0.20]
-        return sum(s * w for s, w in zip(scores, weights))
+        return sum(s * w for s, w in zip(scores, weights, strict=False))
 
 
 @dataclass
 class AZRAction:
     """Action to be executed."""
+
     action_id: str
     action_type: str
     priority: ActionPriority
@@ -149,6 +161,7 @@ class AZRAction:
 @dataclass
 class AZRDecision:
     """Decision with full provenance."""
+
     decision_id: str
     action: AZRAction
     reasoning: list[str]
@@ -163,8 +176,9 @@ class AZRDecision:
 # 🏛️ AZR UNIFIED ORGANISM
 # ============================================================================
 
+
 class AZRUnifiedOrganism:
-    """🏛️ AZR Unified Organism - The Complete Autonomous Brain
+    """🏛️ AZR Unified Organism - The Complete Autonomous Brain.
 
     This class unifies ALL AZR components into a single coherent system:
 
@@ -224,15 +238,15 @@ class AZRUnifiedOrganism:
         self._state_machine = None
         self._guard = None
         self._constitutional_prover = None  # 🆕 Axiom 13
-        self._chaos_engine = None           # 🆕 Chaos v40
-        self._research_agent = None         # 🆕 Deep Research v40
-        self._predictor = None              # 🆕 Predictive v41
-        self._etl_pipeline = None           # 🆕 ETL Integration v42
-        self._vibe_adapter = None           # 🆕 Mistral Vibe v43
-        self._synth = None                  # 🆕 Data Synth v45
-        self._ui_arch = None                # 🆕 UI Evolution v45
-        self._mesh = None                    # 🆕 Neural Mesh v46
-        self._voice = None                   # 🆕 Voice Cortex v46
+        self._chaos_engine = None  # 🆕 Chaos v40
+        self._research_agent = None  # 🆕 Deep Research v40
+        self._predictor = None  # 🆕 Predictive v41
+        self._etl_pipeline = None  # 🆕 ETL Integration v42
+        self._vibe_adapter = None  # 🆕 Mistral Vibe v43
+        self._synth = None  # 🆕 Data Synth v45
+        self._ui_arch = None  # 🆕 UI Evolution v45
+        self._mesh = None  # 🆕 Neural Mesh v46
+        self._voice = None  # 🆕 Voice Cortex v46
 
         # Config
         self._cycle_interval = int(os.environ.get("AZR_CYCLE_INTERVAL", "60"))
@@ -253,6 +267,7 @@ class AZRUnifiedOrganism:
         """Cryptographic Truth Ledger (Global Singleton)."""
         if self._truth_ledger is None:
             from app.libs.core.merkle_ledger import get_truth_ledger
+
             self._truth_ledger = get_truth_ledger(self.memory_path)
         return self._truth_ledger
 
@@ -261,6 +276,7 @@ class AZRUnifiedOrganism:
         """Event Sourcing Engine."""
         if self._event_store is None:
             from app.libs.core.event_sourcing import EventStore
+
             self._event_store = EventStore(self.memory_path)
         return self._event_store
 
@@ -269,6 +285,7 @@ class AZRUnifiedOrganism:
         """Graph RAG Memory."""
         if self._knowledge_graph is None:
             from app.libs.core.graph_rag_memory import KnowledgeGraph
+
             self._knowledge_graph = KnowledgeGraph(self.memory_path)
         return self._knowledge_graph
 
@@ -277,6 +294,7 @@ class AZRUnifiedOrganism:
         """MCP Orchestrator."""
         if self._mcp_orchestrator is None:
             from app.libs.core.mcp_integration import MCPAgentOrchestrator
+
             self._mcp_orchestrator = MCPAgentOrchestrator(self.memory_path)
         return self._mcp_orchestrator
 
@@ -285,6 +303,7 @@ class AZRUnifiedOrganism:
         """Red Team Agent."""
         if self._red_team is None:
             from app.libs.core.red_team_agent import RedTeamAgent
+
             self._red_team = RedTeamAgent(self.memory_path)
         return self._red_team
 
@@ -293,6 +312,7 @@ class AZRUnifiedOrganism:
         """OODA Formal State Machine."""
         if self._state_machine is None:
             from app.libs.core.formal_state_machine import OODAState, create_ooda_state_machine
+
             self._state_machine = create_ooda_state_machine(OODAState.IDLE)
         return self._state_machine
 
@@ -308,6 +328,7 @@ class AZRUnifiedOrganism:
         """Advanced Chaos Engine."""
         if self._chaos_engine is None:
             from app.libs.core.chaos import AdvancedChaosEngine
+
             self._chaos_engine = AdvancedChaosEngine(str(self.memory_path))
         return self._chaos_engine
 
@@ -316,6 +337,7 @@ class AZRUnifiedOrganism:
         """Deep Research Agent."""
         if self._research_agent is None:
             from app.libs.core.deep_research import DeepResearchAgent
+
             self._research_agent = DeepResearchAgent(str(self.memory_path))
         return self._research_agent
 
@@ -324,6 +346,7 @@ class AZRUnifiedOrganism:
         """Predictive Cortex."""
         if self._predictor is None:
             from app.libs.core.predictive import PredictiveCortex
+
             self._predictor = PredictiveCortex()
         return self._predictor
 
@@ -332,6 +355,7 @@ class AZRUnifiedOrganism:
         """Sovereign ETL Pipeline."""
         if self._etl_pipeline is None:
             from app.libs.core.etl_integration import get_etl_pipeline
+
             self._etl_pipeline = get_etl_pipeline()
         return self._etl_pipeline
 
@@ -340,6 +364,7 @@ class AZRUnifiedOrganism:
         """Mistral Vibe Coding Adapter."""
         if self._vibe_adapter is None:
             from app.libs.core.mistral_vibe_bridge import get_vibe_adapter
+
             self._vibe_adapter = get_vibe_adapter()
         return self._vibe_adapter
 
@@ -348,6 +373,7 @@ class AZRUnifiedOrganism:
         """Dataset Synthesizer."""
         if self._synth is None:
             from app.libs.core.data_synth import get_synthesizer
+
             self._synth = get_synthesizer()
         return self._synth
 
@@ -356,6 +382,7 @@ class AZRUnifiedOrganism:
         """Autonomous UI Designer."""
         if self._ui_arch is None:
             from app.libs.core.ui_architect import get_ui_architect
+
             self._ui_arch = get_ui_architect()
         return self._ui_arch
 
@@ -364,6 +391,7 @@ class AZRUnifiedOrganism:
         """Neural Mesh Server Orchestrator."""
         if self._mesh is None:
             from app.libs.core.neural_mesh import get_neural_mesh
+
             self._mesh = get_neural_mesh()
         return self._mesh
 
@@ -372,6 +400,7 @@ class AZRUnifiedOrganism:
         """Neural Voice Interface."""
         if self._voice is None:
             from app.libs.core.voice_cortex import get_voice_cortex
+
             self._voice = get_voice_cortex()
         return self._voice
 
@@ -399,19 +428,19 @@ class AZRUnifiedOrganism:
                     now = datetime.now(UTC)
                     downtime = (now - last_time).total_seconds()
 
-                    if downtime > 300: # 5 minutes gap means we were down
+                    if downtime > 300:  # 5 minutes gap means we were down
                         logger.warning(f"🔥 RESURRECTION DETECTED (Downtime: {downtime:.0f}s)")
                         self.truth_ledger.append(
                             "AZR_RESURRECTION",
                             {"downtime_seconds": downtime, "last_event": last_entries[0].event_type},
-                            {"actor": "azr_phoenix_protocol"}
+                            {"actor": "azr_phoenix_protocol"},
                         )
 
                 # Record initialization
                 self.truth_ledger.append(
                     "AZR_UNIFIED_INIT",
                     {"version": self.VERSION, "auto_approve": self._auto_approve},
-                    {"actor": "azr_unified"}
+                    {"actor": "azr_unified"},
                 )
 
                 self._initialized = True
@@ -419,7 +448,7 @@ class AZRUnifiedOrganism:
 
                 return True
             except Exception as e:
-                logger.error(f"❌ Failed to initialize: {e}")
+                logger.exception(f"❌ Failed to initialize: {e}")
                 return False
 
     async def start(self, duration_hours: int = 24):
@@ -440,11 +469,7 @@ class AZRUnifiedOrganism:
         logger.info(f"🚀 AZR Started (duration: {duration_hours}h)")
 
         # Record start
-        self.truth_ledger.append(
-            "AZR_STARTED",
-            {"duration_hours": duration_hours},
-            {"actor": "azr_unified"}
-        )
+        self.truth_ledger.append("AZR_STARTED", {"duration_hours": duration_hours}, {"actor": "azr_unified"})
 
         # Start main loop
         asyncio.create_task(self._main_loop(duration_hours))
@@ -454,11 +479,7 @@ class AZRUnifiedOrganism:
         self._running = False
         self.state_machine.fire("STOP", {})
 
-        self.truth_ledger.append(
-            "AZR_STOPPED",
-            {"cycles_completed": self._cycle_count},
-            {"actor": "azr_unified"}
-        )
+        self.truth_ledger.append("AZR_STOPPED", {"cycles_completed": self._cycle_count}, {"actor": "azr_unified"})
 
         logger.info(f"🛑 AZR Stopped after {self._cycle_count} cycles")
 
@@ -467,11 +488,7 @@ class AZRUnifiedOrganism:
         self._frozen = True
         self.state_machine.fire("EMERGENCY_FREEZE", {"reason": reason})
 
-        self.truth_ledger.append(
-            "AZR_FROZEN",
-            {"reason": reason},
-            {"actor": "azr_unified", "severity": "critical"}
-        )
+        self.truth_ledger.append("AZR_FROZEN", {"reason": reason}, {"actor": "azr_unified", "severity": "critical"})
 
         await self._send_alert(f"🚨 AZR FROZEN: {reason}", "critical")
         logger.warning(f"🧊 AZR FROZEN: {reason}")
@@ -519,7 +536,7 @@ class AZRUnifiedOrganism:
                 if decisions:
                     context = {
                         "health_score": metrics.health_score,
-                        "constitutional_approved": all(d.constitutional_approved for d in decisions)
+                        "constitutional_approved": all(d.constitutional_approved for d in decisions),
                     }
                     success, msg, _ = self.state_machine.fire("DECISION_MADE", context)
                     if not success:
@@ -562,6 +579,7 @@ class AZRUnifiedOrganism:
 
         try:
             from app.libs.core.system_metrics import get_system_snapshot
+
             snapshot = get_system_snapshot()
             metrics.cpu_percent = snapshot.cpu_percent
             metrics.memory_percent = snapshot.memory_percent
@@ -595,7 +613,7 @@ class AZRUnifiedOrganism:
             "health_status": "healthy" if metrics.health_score > 70 else "degraded",
             "anomalies": [],
             "patterns": [],
-            "recommendations": []
+            "recommendations": [],
         }
 
         # Detect anomalies (simple threshold-based)
@@ -609,19 +627,19 @@ class AZRUnifiedOrganism:
         # 🌐 Web Interface Health Check (Resilience)
         try:
             import httpx
+
             # Assume UI is on localhost:3000 or similar
             try:
                 r = httpx.get("http://localhost:3000", timeout=2.0)
                 if r.status_code != 200:
                     orientation["anomalies"].append({"type": "web_ui_unhealthy", "status": r.status_code})
             except Exception:
-                 orientation["anomalies"].append({"type": "web_ui_unreachable", "status": "down"})
+                orientation["anomalies"].append({"type": "web_ui_unreachable", "status": "down"})
         except ImportError:
             pass
 
         # 🔮 Predictive Analysis (v41)
         try:
-            from app.libs.core.predictive import get_predictor
             # Get history
             cpu_hist = [m.cpu_percent for m in self._metrics_history]
             mem_hist = [m.memory_percent for m in self._metrics_history]
@@ -630,11 +648,9 @@ class AZRUnifiedOrganism:
             pred_mem = self.predictor.predict_next("memory", mem_hist)
 
             from dataclasses import asdict
+
             # Match strict TypedDict schema: list[dict[str, float | str]]
-            orientation["forecast"] = [
-                {"metric": "cpu", **asdict(pred_cpu)},
-                {"metric": "memory", **asdict(pred_mem)}
-            ]
+            orientation["forecast"] = [{"metric": "cpu", **asdict(pred_cpu)}, {"metric": "memory", **asdict(pred_mem)}]
 
             # Pre-emptive anomalies
             if pred_cpu.predicted_value_5min > 95 and pred_cpu.confidence > 0.5:
@@ -643,10 +659,13 @@ class AZRUnifiedOrganism:
 
             if pred_mem.predicted_value_5min > 95 and pred_mem.confidence > 0.5:
                 logger.warning(f"🔮 PREDICTION: Memory Overflow imminent ({pred_mem.predicted_value_5min:.1f}%)")
-                orientation["anomalies"].append({"type": "predictive_high_memory", "value": pred_mem.predicted_value_5min})
+                orientation["anomalies"].append({
+                    "type": "predictive_high_memory",
+                    "value": pred_mem.predicted_value_5min,
+                })
 
         except Exception as e:
-            logger.error(f"Prediction error: {e}")
+            logger.exception(f"Prediction error: {e}")
 
         # Query knowledge graph for similar past situations
         if orientation["anomalies"]:
@@ -654,8 +673,7 @@ class AZRUnifiedOrganism:
                 query = " ".join([str(a["type"]) for a in orientation["anomalies"]])
                 similar = self.knowledge_graph.find_similar(query, limit=3)
                 orientation["patterns"] = [
-                    {"label": str(node.label), "similarity": float(sim)}
-                    for node, sim in similar
+                    {"label": str(node.label), "similarity": float(sim)} for node, sim in similar
                 ]
             except Exception:
                 pass
@@ -683,7 +701,7 @@ class AZRUnifiedOrganism:
                     reasoning=[f"Anomaly detected: {anomaly['type']}", reason],
                     confidence=0.8 if approved else 0.0,
                     constitutional_approved=approved,
-                    zk_proof=proof.to_dict() if proof else None  # 🆕 Axiom 13
+                    zk_proof=proof.to_dict() if proof else None,  # 🆕 Axiom 13
                 )
 
                 # Record in Truth Ledger
@@ -693,8 +711,8 @@ class AZRUnifiedOrganism:
                         "decision_id": decision.decision_id,
                         "action_type": action.action_type,
                         "approved": approved,
-                        "reason": reason
-                    }
+                        "reason": reason,
+                    },
                 )
                 decision.ledger_sequence = entry.sequence
                 decision.merkle_proof = entry.merkle_root[:32]
@@ -709,17 +727,19 @@ class AZRUnifiedOrganism:
                     action_id=f"ACT-{int(time.time_ns()) % 1000000:08d}",
                     action_type="RUN_SOVEREIGN_ETL",
                     priority=ActionPriority.LOW,
-                    payload={"source_dir": str(etl_path)}
+                    payload={"source_dir": str(etl_path)},
                 )
                 approved, reason = await self.guard.verify(action)
-                decisions.append(AZRDecision(
-                    decision_id=f"DEC-{int(time.time_ns()) % 1000000:08d}",
-                    action=action,
-                    reasoning=["New data detected for ingestion"],
-                    confidence=0.95,
-                    constitutional_approved=approved,
-                    zk_proof=None
-                ))
+                decisions.append(
+                    AZRDecision(
+                        decision_id=f"DEC-{int(time.time_ns()) % 1000000:08d}",
+                        action=action,
+                        reasoning=["New data detected for ingestion"],
+                        confidence=0.95,
+                        constitutional_approved=approved,
+                        zk_proof=None,
+                    )
+                )
 
         # 🧬 Sovereign Evolution: Rapid Iteration (Every 10 cycles)
         if self._cycle_count % 10 == 0:
@@ -727,17 +747,19 @@ class AZRUnifiedOrganism:
                 action_id=f"ACT-{int(time.time_ns()) % 1000000:08d}",
                 action_type="DEPLOY_IMPROVEMENT",
                 priority=ActionPriority.MEDIUM,
-                payload={"topic": "Auto-optimized heuristics"}
+                payload={"topic": "Auto-optimized heuristics"},
             )
             approved, reason = await self.guard.verify(action)
-            decisions.append(AZRDecision(
-                decision_id=f"DEC-{int(time.time_ns()) % 1000000:08d}",
-                action=action,
-                reasoning=["Maintenance of evolutionary cycles"],
-                confidence=0.9,
-                constitutional_approved=approved,
-                zk_proof=None
-            ))
+            decisions.append(
+                AZRDecision(
+                    decision_id=f"DEC-{int(time.time_ns()) % 1000000:08d}",
+                    action=action,
+                    reasoning=["Maintenance of evolutionary cycles"],
+                    confidence=0.9,
+                    constitutional_approved=approved,
+                    zk_proof=None,
+                )
+            )
 
         # 🧬 Sovereign Evolution: UI & Data (v45)
         if self._cycle_count % 5 == 0:
@@ -746,14 +768,18 @@ class AZRUnifiedOrganism:
                 action_id=f"ACT-SYNTH-{int(time.time_ns()) % 1000:03d}",
                 action_type="GENERATE_SYNTHETIC_DATA",
                 priority=ActionPriority.LOW,
-                payload={"count": 500}
+                payload={"count": 500},
             )
             approved, _ = await self.guard.verify(action)
-            decisions.append(AZRDecision(
-                decision_id=f"DEC-SYNTH-{int(time.time_ns()) % 1000:03d}",
-                action=action, reasoning=["Feeding models with synthetic fuel"],
-                confidence=0.9, constitutional_approved=approved
-            ))
+            decisions.append(
+                AZRDecision(
+                    decision_id=f"DEC-SYNTH-{int(time.time_ns()) % 1000:03d}",
+                    action=action,
+                    reasoning=["Feeding models with synthetic fuel"],
+                    confidence=0.9,
+                    constitutional_approved=approved,
+                )
+            )
 
         if self._cycle_count % 10 == 0:
             # Trigger UI Evolution
@@ -761,14 +787,18 @@ class AZRUnifiedOrganism:
                 action_id=f"ACT-UIEVO-{int(time.time_ns()) % 1000:03d}",
                 action_type="EVOLVE_UI_INTERFACE",
                 priority=ActionPriority.LOW,
-                payload={"scope": "aesthetic"}
+                payload={"scope": "aesthetic"},
             )
             approved, _ = await self.guard.verify(action)
-            decisions.append(AZRDecision(
-                decision_id=f"DEC-UIEVO-{int(time.time_ns()) % 1000:03d}",
-                action=action, reasoning=["Continuous improvement of the web interface"],
-                confidence=0.85, constitutional_approved=approved
-            ))
+            decisions.append(
+                AZRDecision(
+                    decision_id=f"DEC-UIEVO-{int(time.time_ns()) % 1000:03d}",
+                    action=action,
+                    reasoning=["Continuous improvement of the web interface"],
+                    confidence=0.85,
+                    constitutional_approved=approved,
+                )
+            )
 
         return [d for d in decisions if d.constitutional_approved][:5]  # Max 5 actions
 
@@ -777,8 +807,6 @@ class AZRUnifiedOrganism:
         action_map = {
             "high_cpu": ("OPTIMIZE_CPU", ActionPriority.HIGH),
             "high_memory": ("CLEAR_MEMORY", ActionPriority.HIGH),
-            "high_disk": ("CLEANUP_DISK", ActionPriority.MEDIUM),
-            "predictive_high_cpu": ("PREVENTIVE_CPU_OPTIMIZE", ActionPriority.MEDIUM),
             "high_disk": ("CLEANUP_DISK", ActionPriority.MEDIUM),
             "predictive_high_cpu": ("PREVENTIVE_CPU_OPTIMIZE", ActionPriority.MEDIUM),
             "predictive_high_memory": ("PREVENTIVE_MEMORY_CLEAR", ActionPriority.MEDIUM),
@@ -792,7 +820,7 @@ class AZRUnifiedOrganism:
                 action_id=f"ACT-{int(time.time_ns()) % 1000000:08d}",
                 action_type=action_type,
                 priority=priority,
-                payload={"anomaly": anomaly}
+                payload={"anomaly": anomaly},
             )
         return None
 
@@ -818,11 +846,7 @@ class AZRUnifiedOrganism:
             # Record in Truth Ledger
             self.truth_ledger.append(
                 f"AZR_ACTION_{outcome}",
-                {
-                    "action_id": action.action_id,
-                    "action_type": action.action_type,
-                    "decision_id": decision.decision_id
-                }
+                {"action_id": action.action_id, "action_type": action.action_type, "decision_id": decision.decision_id},
             )
 
             # Record in Knowledge Graph
@@ -830,15 +854,12 @@ class AZRUnifiedOrganism:
                 decision.action.action_type,
                 {"outcome": outcome, **decision.action.payload},
                 decision.reasoning,
-                outcome
+                outcome,
             )
 
         except Exception as e:
             self._blocked_count += 1
-            self.truth_ledger.append(
-                "AZR_ACTION_FAILED",
-                {"action_id": action.action_id, "error": str(e)}
-            )
+            self.truth_ledger.append("AZR_ACTION_FAILED", {"action_id": action.action_id, "error": str(e)})
 
     async def _execute_action(self, action: AZRAction) -> bool:
         """Execute specific action type."""
@@ -848,11 +869,13 @@ class AZRUnifiedOrganism:
         if action.action_type in ["OPTIMIZE_CPU", "PREVENTIVE_CPU_OPTIMIZE"]:
             # Trigger garbage collection
             import gc
+
             gc.collect()
             return True
 
         if action.action_type in ["CLEAR_MEMORY", "PREVENTIVE_MEMORY_CLEAR"]:
             import gc
+
             gc.collect()
             return True
 
@@ -866,15 +889,15 @@ class AZRUnifiedOrganism:
 
         if action.action_type == "DEEP_RESEARCH":
             # Run research
-            from app.libs.core.deep_research import ResearchTask
             gaps = await self.research.identify_knowledge_gaps()
-            for gap in gaps[:1]: # Process 1 task
+            for gap in gaps[:1]:  # Process 1 task
                 await self.research.conduct_research(gap)
             return True
 
         if action.action_type == "CHAOS_TEST":
             # Run chaos
             from app.libs.core.chaos import ChaosLevel
+
             scenario = action.payload.get("scenario", "network_latency")
             level_str = action.payload.get("level", "light").upper()
             try:
@@ -897,7 +920,7 @@ class AZRUnifiedOrganism:
                 self.truth_ledger.append(
                     "AZR_EVOLUTION_DEPLOYED",
                     {"topic": topic, "security_score": report.vulnerability_score},
-                    {"actor": "azr_sovereign_evolution"}
+                    {"actor": "azr_sovereign_evolution"},
                 )
                 return True
             logger.warning(f"🧬 EVOLUTION BLOCKED: Security Risk ({report.vulnerability_score})")
@@ -916,11 +939,11 @@ class AZRUnifiedOrganism:
                         self.truth_ledger.append(
                             "AZR_ETL_COMPLETED",
                             {"files": len(files), "records": result.records_transformed},
-                            {"actor": "azr_etl_cortex"}
+                            {"actor": "azr_etl_cortex"},
                         )
                         return result.success
                 except Exception as e:
-                    logger.error(f"ETL Failed: {e}")
+                    logger.exception(f"ETL Failed: {e}")
                     return False
             return True
 
@@ -933,7 +956,7 @@ class AZRUnifiedOrganism:
                     self.truth_ledger.append(
                         "AZR_VIBE_TASK_COMPLETED",
                         {"task": prompt, "output": str(res.get("output", ""))[:200]},
-                        {"actor": "mistral_vibe_bridge"}
+                        {"actor": "mistral_vibe_bridge"},
                     )
                 return res.get("success", False) if res else False
             return False
@@ -951,11 +974,11 @@ class AZRUnifiedOrganism:
             return await self.ui_architect.execute_evolution(self)
 
         if action.action_type in ["REPAIR_WEB_UI", "RESTART_WEB_SERVER"]:
-             logger.warning(f"🚨 WEB UI RECOVERY: {action.action_type} triggered")
-             # Try to restart the dev server process if managed, or just log for now
-             # In a real scenario, this would trigger a docker restart or pm2 restart
-             # cmd = "npm run dev"
-             return True
+            logger.warning(f"🚨 WEB UI RECOVERY: {action.action_type} triggered")
+            # Try to restart the dev server process if managed, or just log for now
+            # In a real scenario, this would trigger a docker restart or pm2 restart
+            # cmd = "npm run dev"
+            return True
 
         return True
 
@@ -988,23 +1011,23 @@ class AZRUnifiedOrganism:
                         "confidence": float(decision.confidence),
                         "approved": decision.constitutional_approved,
                         "reasoning": decision.reasoning,
-                        "timestamp": decision.action.created_at
-                    }
+                        "timestamp": decision.action.created_at,
+                    },
                 )
 
                 # 2. Record action type node (if not exists)
                 type_node = self.knowledge_graph.add_node(
                     node_type=NodeType.PATTERN,
                     label=f"type_{decision.action.action_type}",
-                    properties={"description": f"Action type: {decision.action.action_type}"}
+                    properties={"description": f"Action type: {decision.action.action_type}"},
                 )
 
                 # 3. Create edge between decision and its type
                 self.knowledge_graph.add_edge(
                     source_id=node.node_id,
                     target_id=type_node.node_id,
-                    edge_type=EdgeType.RESULTED_IN, # Or EdgeType.PRECEDED_BY / EdgeType.SIMILAR_TO
-                    weight=float(decision.confidence)
+                    edge_type=EdgeType.RESULTED_IN,  # Or EdgeType.PRECEDED_BY / EdgeType.SIMILAR_TO
+                    weight=float(decision.confidence),
                 )
             except Exception:
                 pass  # Knowledge graph operations are non-critical
@@ -1027,9 +1050,9 @@ class AZRUnifiedOrganism:
                 {
                     "decisions_analyzed": len(decisions),
                     "success_rate": self._executed_count / max(1, total_actions),
-                    "cycle_interval": self._cycle_interval
+                    "cycle_interval": self._cycle_interval,
                 },
-                {"actor": "azr_learning_cortex"}
+                {"actor": "azr_learning_cortex"},
             )
 
     def _record_cycle(self, metrics: SystemMetrics, decisions: list[AZRDecision], duration_ms: float):
@@ -1049,8 +1072,8 @@ class AZRUnifiedOrganism:
                     "duration_ms": duration_ms,
                     "decisions_count": len(decisions),
                     "executed": self._executed_count,
-                    "blocked": self._blocked_count
-                }
+                    "blocked": self._blocked_count,
+                },
             )
             self.event_store.append([event])
         except Exception:
@@ -1070,10 +1093,11 @@ class AZRUnifiedOrganism:
 
         try:
             import httpx
+
             async with httpx.AsyncClient() as client:
                 await client.post(
                     f"https://api.telegram.org/bot{self._telegram_token}/sendMessage",
-                    json={"chat_id": self._telegram_chat_id, "text": text, "parse_mode": "Markdown"}
+                    json={"chat_id": self._telegram_chat_id, "text": text, "parse_mode": "Markdown"},
                 )
         except Exception:
             pass
@@ -1084,7 +1108,7 @@ class AZRUnifiedOrganism:
 
     def get_status(self) -> dict[str, Any]:
         """Get complete status."""
-        ledger_valid, ledger_msg = self.truth_ledger.verify_chain_integrity()
+        ledger_valid, _ledger_msg = self.truth_ledger.verify_chain_integrity()
 
         return {
             "version": self.VERSION,
@@ -1096,17 +1120,17 @@ class AZRUnifiedOrganism:
                 "score": self._current_metrics.health_score,
                 "cpu": self._current_metrics.cpu_percent,
                 "memory": self._current_metrics.memory_percent,
-                "disk": self._current_metrics.disk_percent
+                "disk": self._current_metrics.disk_percent,
             },
             "metrics": {
                 "executed": self._executed_count,
                 "blocked": self._blocked_count,
-                "rollbacks": self._rollback_count
+                "rollbacks": self._rollback_count,
             },
             "truth_ledger": {
                 "entries": self.truth_ledger.length,
                 "merkle_root": self.truth_ledger.merkle_root[:32] + "...",
-                "valid": ledger_valid
+                "valid": ledger_valid,
             },
             "state_machine": self.state_machine.get_stats(),
             "capabilities": [
@@ -1119,38 +1143,36 @@ class AZRUnifiedOrganism:
                 "MCPIntegration",
                 "RedTeamAgent",
                 "ZeroKnowledgeProofs",
-                "AdvancedChaosEngine",   # 🆕 v40
-                "DeepResearchAgent",     # 🆕 v40
-                "SovereignETLCortex"     # 🆕 v42
-            ]
+                "AdvancedChaosEngine",  # 🆕 v40
+                "DeepResearchAgent",  # 🆕 v40
+                "SovereignETLCortex",  # 🆕 v42
+            ],
         }
 
     async def run_security_audit(self) -> dict[str, Any]:
         """Run Red Team security audit."""
-        report = await self.red_team.run_full_assessment(
-            guard=self.guard,
-            num_attacks=30
-        )
+        report = await self.red_team.run_full_assessment(guard=self.guard, num_attacks=30)
 
         self.truth_ledger.append(
             "SECURITY_AUDIT",
             {
                 "vulnerability_score": report.vulnerability_score,
                 "block_rate": report.block_rate,
-                "recommendations": report.recommendations
-            }
+                "recommendations": report.recommendations,
+            },
         )
 
         return {
             "vulnerability_score": report.vulnerability_score,
             "block_rate": f"{report.block_rate:.1f}%",
-            "recommendations": report.recommendations
+            "recommendations": report.recommendations,
         }
 
 
 # ============================================================================
 # 🛡️ CONSTITUTIONAL GUARD UNIFIED
 # ============================================================================
+
 
 class ConstitutionalGuardUnified:
     """Unified Constitutional Guard with all protections."""
@@ -1164,9 +1186,10 @@ class ConstitutionalGuardUnified:
         # 🆕 Axiom 13: ZK Prover for constitutional actions
         try:
             from app.libs.core.zk_proofs import ConstitutionalProver
+
             self.prover = ConstitutionalProver("AXIOM_MASTER_KEY")
         except (ImportError, Exception):
-            self.prover = None # type: ignore
+            self.prover = None  # type: ignore
 
     async def verify_with_proof(self, action: AZRAction) -> tuple[bool, str, Any | None]:
         """Verify action and generate ZK proof (Axiom 13)."""
@@ -1176,10 +1199,7 @@ class ConstitutionalGuardUnified:
         if approved and self.prover:
             try:
                 # Generate proof that action was approved by constitution
-                proof = self.prover.generate_approval_proof(
-                    action.action_id,
-                    action.fingerprint
-                )
+                proof = self.prover.generate_approval_proof(action.action_id, action.fingerprint)
             except Exception:
                 pass
 
@@ -1202,10 +1222,9 @@ class ConstitutionalGuardUnified:
             return False, "BLOCKED: Security degradation not allowed"
 
         # Check destructive actions
-        if action.action_type in ["DELETE_DATA", "DROP_TABLE"]:
-            if not payload.get("has_backup"):
-                self._record_violation(action, "Destructive without backup")
-                return False, "BLOCKED: Destructive actions require backup"
+        if action.action_type in ["DELETE_DATA", "DROP_TABLE"] and not payload.get("has_backup"):
+            self._record_violation(action, "Destructive without backup")
+            return False, "BLOCKED: Destructive actions require backup"
 
         return True, "APPROVED"
 
@@ -1214,7 +1233,7 @@ class ConstitutionalGuardUnified:
         self.last_violation = {
             "action_id": action.action_id,
             "reason": reason,
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
 
@@ -1248,6 +1267,7 @@ async def start_azr(duration_hours: int = 24) -> AZRUnifiedOrganism:
 # 🧪 SELF-TEST
 # ============================================================================
 
+
 async def run_self_test():
     print("🏛️ AZR UNIFIED ORGANISM v40 - Self-Test")
     print("=" * 60)
@@ -1266,7 +1286,7 @@ async def run_self_test():
 
     for i in range(3):
         metrics = await organism._observe()
-        print(f"  Cycle {i+1}: Health={metrics.health_score:.1f}%")
+        print(f"  Cycle {i + 1}: Health={metrics.health_score:.1f}%")
 
         orientation = await organism._orient(metrics)
         decisions = await organism._decide(orientation)

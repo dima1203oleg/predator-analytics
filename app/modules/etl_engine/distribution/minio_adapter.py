@@ -11,8 +11,7 @@ from datetime import datetime
 import json
 import logging
 from pathlib import Path
-import tempfile
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 import uuid
 
 
@@ -44,7 +43,7 @@ class MinIOAdapter:
         else:
             logger.info("MinIO adapter disabled")
 
-    def distribute(self, data: dict[str |  Any, list[dict[str, Any]]]) -> DistributionResult:
+    def distribute(self, data: dict[str | Any, list[dict[str, Any]]]) -> DistributionResult:
         """Distribute data to MinIO.
 
         Args:
@@ -56,18 +55,12 @@ class MinIOAdapter:
         from .data_distributor import DistributionResult
 
         if not self.enabled:
-            return DistributionResult(
-                False, "minio",
-                error="MinIO adapter is disabled"
-            )
+            return DistributionResult(False, "minio", error="MinIO adapter is disabled")
 
         try:
             # Validate data
             if not data:
-                return DistributionResult(
-                    False, "minio",
-                    error="No data provided for MinIO distribution"
-                )
+                return DistributionResult(False, "minio", error="No data provided for MinIO distribution")
 
             # Generate unique object name
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -79,14 +72,10 @@ class MinIOAdapter:
                     "records": data,
                     "count": len(data),
                     "timestamp": datetime.now().isoformat(),
-                    "source": "etl_distribution"
+                    "source": "etl_distribution",
                 }
             else:
-                data_to_store = {
-                    "record": data,
-                    "timestamp": datetime.now().isoformat(),
-                    "source": "etl_distribution"
-                }
+                data_to_store = {"record": data, "timestamp": datetime.now().isoformat(), "source": "etl_distribution"}
 
             # In production, this would upload to MinIO
             # For now, we'll simulate the operation
@@ -97,28 +86,27 @@ class MinIOAdapter:
             logger.info(f"Data size: {len(json_data)} bytes")
 
             # Return success result with metadata
-            result = DistributionResult(
-                True, "minio",
+            return DistributionResult(
+                True,
+                "minio",
                 data={
                     "bucket": self.bucket_name,
                     "object_name": object_name,
                     "record_count": len(data) if isinstance(data, list) else 1,
-                    "timestamp": datetime.now().isoformat()
-                }
+                    "timestamp": datetime.now().isoformat(),
+                },
             )
-
-            return result
 
         except json.JSONEncodeError as e:
             error_msg = f"Failed to serialize data to JSON: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "minio", error=error_msg)
         except Exception as e:
             error_msg = f"MinIO distribution failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "minio", error=error_msg)
 
-    def upload_file(self, file_path: str |  Path, object_name: str | None = None) -> DistributionResult:
+    def upload_file(self, file_path: str | Path, object_name: str | None = None) -> DistributionResult:
         """Upload a file to MinIO.
 
         Args:
@@ -131,19 +119,13 @@ class MinIOAdapter:
         from .data_distributor import DistributionResult
 
         if not self.enabled:
-            return DistributionResult(
-                False, "minio",
-                error="MinIO adapter is disabled"
-            )
+            return DistributionResult(False, "minio", error="MinIO adapter is disabled")
 
         try:
             file_path = Path(file_path)
 
             if not file_path.exists():
-                return DistributionResult(
-                    False, "minio",
-                    error=f"File not found: {file_path}"
-                )
+                return DistributionResult(False, "minio", error=f"File not found: {file_path}")
 
             # Generate object name if not provided
             if object_name is None:
@@ -156,18 +138,19 @@ class MinIOAdapter:
             logger.info(f"File size: {file_size} bytes")
 
             return DistributionResult(
-                True, "minio",
+                True,
+                "minio",
                 data={
                     "bucket": self.bucket_name,
                     "object_name": object_name,
                     "file_size": file_size,
-                    "original_file": str(file_path)
-                }
+                    "original_file": str(file_path),
+                },
             )
 
         except Exception as e:
             error_msg = f"MinIO file upload failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "minio", error=error_msg)
 
     def create_bucket(self, bucket_name: str) -> DistributionResult:
@@ -182,26 +165,19 @@ class MinIOAdapter:
         from .data_distributor import DistributionResult
 
         if not self.enabled:
-            return DistributionResult(
-                False, "minio",
-                error="MinIO adapter is disabled"
-            )
+            return DistributionResult(False, "minio", error="MinIO adapter is disabled")
 
         try:
             # Simulate bucket creation
             logger.info(f"Simulating MinIO bucket creation: {bucket_name}")
 
             return DistributionResult(
-                True, "minio",
-                data={
-                    "bucket": bucket_name,
-                    "message": "Bucket created successfully (simulated)"
-                }
+                True, "minio", data={"bucket": bucket_name, "message": "Bucket created successfully (simulated)"}
             )
 
         except Exception as e:
             error_msg = f"MinIO bucket creation failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "minio", error=error_msg)
 
     def get_object_url(self, object_name: str) -> str:

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Dict, List, Optional
 
 import aiohttp
 
@@ -11,10 +10,12 @@ from app.libs.core.config import settings
 
 logger = logging.getLogger("service.model_router")
 
+
 class ModelRouter:
     """Routes LLM requests to the appropriate provider based on policy, availability, and cost.
     Supports: Ollama (local), Gemini, Groq, Mistral, OpenAI.
     """
+
     def __init__(self, config_path: str | None = None):
         # We prefer settings from app.libs.core.config
         self.providers = {
@@ -22,7 +23,7 @@ class ModelRouter:
             "gemini": settings.LLM_GEMINI_BASE_URL,
             "groq": settings.LLM_GROQ_BASE_URL,
             "openai": settings.LLM_OPENAI_BASE_URL,
-            "lm_studio": os.getenv("LM_STUDIO_BASE_URL", "http://localhost:1234/v1")
+            "lm_studio": os.getenv("LM_STUDIO_BASE_URL", "http://localhost:1234/v1"),
         }
 
         # Load Gemini keys (handle both single and multiple)
@@ -37,7 +38,7 @@ class ModelRouter:
             "gemini": list(set(gemini_keys)),
             "groq": settings.GROQ_API_KEY,
             "openai": settings.OPENAI_API_KEY,
-            "lm_studio": "not-needed"
+            "lm_studio": "not-needed",
         }
         self._current_gemini_key_idx = 0
 
@@ -85,7 +86,9 @@ class ModelRouter:
 
         return "Error: All providers failed."
 
-    async def _execute_provider_call(self, provider: str, model: str, messages: list[dict[str, str]], temp: float) -> str:
+    async def _execute_provider_call(
+        self, provider: str, model: str, messages: list[dict[str, str]], temp: float
+    ) -> str:
         if provider == "ollama":
             return await self._call_ollama(model, messages, temp)
         if provider == "gemini":
@@ -100,15 +103,19 @@ class ModelRouter:
 
     def _determine_provider(self, model: str) -> str:
         model_lower = model.lower()
-        if "lms" in model_lower or "local" in model_lower: return "lm_studio"
-        if "gemini" in model_lower: return "gemini"
-        if "gpt" in model_lower: return "openai"
+        if "lms" in model_lower or "local" in model_lower:
+            return "lm_studio"
+        if "gemini" in model_lower:
+            return "gemini"
+        if "gpt" in model_lower:
+            return "openai"
         # Prefer Groq for Llama models (higher free tier limits)
         if "llama" in model_lower:
             if self.api_keys.get("groq"):
                 return "groq"
             return "ollama"  # Fallback to local Ollama
-        if "groq" in model_lower: return "groq"
+        if "groq" in model_lower:
+            return "groq"
         if "mistral" in model_lower or "qwen" in model_lower or "codestral" in model_lower:
             return "ollama"
         # Default to Groq if available (free tier), else Gemini
@@ -125,19 +132,10 @@ class ModelRouter:
         contents = []
         for msg in messages:
             role = "user" if msg["role"] == "user" else "model"
-            contents.append({
-                "role": role,
-                "parts": [{"text": msg["content"]}]
-            })
+            contents.append({"role": role, "parts": [{"text": msg["content"]}]})
 
         url = f"{self.providers['gemini']}/models/{model}:generateContent?key={api_key}"
-        payload = {
-            "contents": contents,
-            "generationConfig": {
-                "temperature": temperature,
-                "maxOutputTokens": 2048
-            }
-        }
+        payload = {"contents": contents, "generationConfig": {"temperature": temperature, "maxOutputTokens": 2048}}
 
         async with aiohttp.ClientSession() as session:
             try:
@@ -145,7 +143,7 @@ class ModelRouter:
                     if resp.status == 200:
                         data = await resp.json()
                         try:
-                            return data['candidates'][0]['content']['parts'][0]['text']
+                            return data["candidates"][0]["content"]["parts"][0]["text"]
                         except (KeyError, IndexError):
                             logger.exception(f"Unexpected Gemini response format: {data}")
                             return "Error: Malformed response from Gemini"
@@ -158,37 +156,25 @@ class ModelRouter:
                 return f"Error: {e!s}"
 
     async def _call_groq(self, model: str, messages: list[dict[str, str]], temperature: float) -> str:
-        if not self.api_keys['groq']:
+        if not self.api_keys["groq"]:
             return "Error: Groq API key not configured"
 
         url = f"{self.providers['groq']}/chat/completions"
-        headers = {
-            "Authorization": f"Bearer {self.api_keys['groq']}",
-            "Content-Type": "application/json"
-        }
-        payload = {
-            "model": model,
-            "messages": messages,
-            "temperature": temperature
-        }
+        headers = {"Authorization": f"Bearer {self.api_keys['groq']}", "Content-Type": "application/json"}
+        payload = {"model": model, "messages": messages, "temperature": temperature}
         async with aiohttp.ClientSession() as session:
             try:
                 async with session.post(url, headers=headers, json=payload) as resp:
                     if resp.status == 200:
                         data = await resp.json()
-                        return data['choices'][0]['message']['content']
+                        return data["choices"][0]["message"]["content"]
                     return f"Error: Groq returned {resp.status}"
             except Exception as e:
                 return f"Error: {e!s}"
 
     async def _call_ollama(self, model: str, messages: list[dict[str, str]], temperature: float) -> str:
         url = f"{self.providers['ollama']}/api/chat"
-        payload = {
-            "model": model,
-            "messages": messages,
-            "stream": False,
-            "options": {"temperature": temperature}
-        }
+        payload = {"model": model, "messages": messages, "stream": False, "options": {"temperature": temperature}}
         async with aiohttp.ClientSession() as session:
             try:
                 async with session.post(url, json=payload) as resp:
@@ -200,7 +186,7 @@ class ModelRouter:
                 return f"Error connecting to Ollama: {e!s}"
 
     async def _call_openai(self, model: str, messages: list[dict[str, str]], temperature: float) -> str:
-        if not self.api_keys['openai']:
+        if not self.api_keys["openai"]:
             return "Error: OpenAI API key not configured"
         # Standard OpenAI chat completion
         url = f"{self.providers['openai']}/chat/completions"
@@ -209,23 +195,23 @@ class ModelRouter:
         async with aiohttp.ClientSession() as session, session.post(url, headers=headers, json=payload) as resp:
             if resp.status == 200:
                 data = await resp.json()
-                return data['choices'][0]['message']['content']
+                return data["choices"][0]["message"]["content"]
             return f"Error: OpenAI returned {resp.status}"
 
     async def _call_lm_studio(self, model: str, messages: list[dict[str, str]], temperature: float) -> str:
         """Call local LM Studio (OpenAI compatible)."""
         url = f"{self.providers['lm_studio']}/chat/completions"
         payload = {
-            "model": model, # LM Studio usually ignores this and uses the loaded model
+            "model": model,  # LM Studio usually ignores this and uses the loaded model
             "messages": messages,
-            "temperature": temperature
+            "temperature": temperature,
         }
         async with aiohttp.ClientSession() as session:
             try:
                 async with session.post(url, json=payload) as resp:
                     if resp.status == 200:
                         data = await resp.json()
-                        return data['choices'][0]['message']['content']
+                        return data["choices"][0]["message"]["content"]
                     error_text = await resp.text()
                     logger.error(f"LM Studio local error {resp.status}: {error_text}")
                     return f"Error: LM Studio returned {resp.status}. Переконайтеся, що сервер запущено на {self.providers['lm_studio']}"

@@ -28,10 +28,9 @@ async def get_db_connection():
 # INGESTION STATISTICS
 # ============================================================================
 
+
 @router.get("/ingestion")
-async def get_ingestion_stats(
-    days: int = Query(7, ge=1, le=365, description="Number of days to look back")
-):
+async def get_ingestion_stats(days: int = Query(7, ge=1, le=365, description="Number of days to look back")):
     """Get data ingestion statistics.
 
     Returns:
@@ -47,25 +46,15 @@ async def get_ingestion_stats(
 
         # Staging stats
         staging_total = await conn.fetchval("SELECT COUNT(*) FROM staging.raw_data")
-        staging_unprocessed = await conn.fetchval(
-            "SELECT COUNT(*) FROM staging.raw_data WHERE processed = FALSE"
-        )
-        staging_recent = await conn.fetchval(
-            "SELECT COUNT(*) FROM staging.raw_data WHERE fetched_at > $1",
-            cutoff_date
-        )
+        staging_unprocessed = await conn.fetchval("SELECT COUNT(*) FROM staging.raw_data WHERE processed = FALSE")
+        staging_recent = await conn.fetchval("SELECT COUNT(*) FROM staging.raw_data WHERE fetched_at > $1", cutoff_date)
 
         # Gold stats
         gold_total = await conn.fetchval("SELECT COUNT(*) FROM gold.documents")
-        gold_recent = await conn.fetchval(
-            "SELECT COUNT(*) FROM gold.documents WHERE created_at > $1",
-            cutoff_date
-        )
+        gold_recent = await conn.fetchval("SELECT COUNT(*) FROM gold.documents WHERE created_at > $1", cutoff_date)
 
         # Last ingestion time
-        last_ingestion = await conn.fetchval(
-            "SELECT MAX(fetched_at) FROM staging.raw_data"
-        )
+        last_ingestion = await conn.fetchval("SELECT MAX(fetched_at) FROM staging.raw_data")
 
         # Ingestion by source
         source_stats = await conn.fetch("""
@@ -84,22 +73,19 @@ async def get_ingestion_stats(
                 "total": staging_total or 0,
                 "unprocessed": staging_unprocessed or 0,
                 "recent": staging_recent or 0,
-                "last_ingestion": last_ingestion.isoformat() if last_ingestion else None
+                "last_ingestion": last_ingestion.isoformat() if last_ingestion else None,
             },
-            "gold": {
-                "total": gold_total or 0,
-                "recent": gold_recent or 0
-            },
+            "gold": {"total": gold_total or 0, "recent": gold_recent or 0},
             "success_rate_percent": round(success_rate, 2),
             "by_source": [
                 {
                     "source": row["source"],
                     "count": row["count"],
-                    "last_fetch": row["last_fetch"].isoformat() if row["last_fetch"] else None
+                    "last_fetch": row["last_fetch"].isoformat() if row["last_fetch"] else None,
                 }
                 for row in source_stats
             ],
-            "period_days": days
+            "period_days": days,
         }
 
     finally:
@@ -108,8 +94,7 @@ async def get_ingestion_stats(
 
 @router.get("/ingestion/timeline")
 async def get_ingestion_timeline(
-    days: int = Query(30, ge=1, le=365),
-    granularity: str = Query("day", regex="^(hour|day|week)$")
+    days: int = Query(30, ge=1, le=365), granularity: str = Query("day", regex="^(hour|day|week)$")
 ):
     """Get ingestion timeline for charting.
 
@@ -128,7 +113,8 @@ async def get_ingestion_timeline(
             trunc = "day"
 
         # Staging timeline
-        staging_timeline = await conn.fetch(f"""
+        staging_timeline = await conn.fetch(
+            f"""
             SELECT
                 date_trunc('{trunc}', fetched_at) as period,
                 COUNT(*) as count
@@ -136,10 +122,13 @@ async def get_ingestion_timeline(
             WHERE fetched_at > $1
             GROUP BY period
             ORDER BY period
-        """, cutoff_date)
+        """,
+            cutoff_date,
+        )
 
         # Gold timeline
-        gold_timeline = await conn.fetch(f"""
+        gold_timeline = await conn.fetch(
+            f"""
             SELECT
                 date_trunc('{trunc}', created_at) as period,
                 COUNT(*) as count
@@ -147,19 +136,15 @@ async def get_ingestion_timeline(
             WHERE created_at > $1
             GROUP BY period
             ORDER BY period
-        """, cutoff_date)
+        """,
+            cutoff_date,
+        )
 
         return {
             "granularity": granularity,
             "period_days": days,
-            "staging": [
-                {"period": row["period"].isoformat(), "count": row["count"]}
-                for row in staging_timeline
-            ],
-            "gold": [
-                {"period": row["period"].isoformat(), "count": row["count"]}
-                for row in gold_timeline
-            ]
+            "staging": [{"period": row["period"].isoformat(), "count": row["count"]} for row in staging_timeline],
+            "gold": [{"period": row["period"].isoformat(), "count": row["count"]} for row in gold_timeline],
         }
 
     finally:
@@ -170,10 +155,9 @@ async def get_ingestion_timeline(
 # SEARCH STATISTICS
 # ============================================================================
 
+
 @router.get("/search")
-async def get_search_stats(
-    days: int = Query(7, ge=1, le=365)
-):
+async def get_search_stats(days: int = Query(7, ge=1, le=365)):
     """Get search statistics.
 
     Returns:
@@ -207,48 +191,47 @@ async def get_search_stats(
                     "results_count": "INT",
                     "response_time_ms": "INT",
                     "user_id": "INT",
-                    "created_at": "TIMESTAMP DEFAULT NOW()"
-                }
+                    "created_at": "TIMESTAMP DEFAULT NOW()",
+                },
             }
 
         cutoff_date = datetime.now() - timedelta(days=days)
 
         # Get stats from search_logs
-        total_searches = await conn.fetchval(
-            "SELECT COUNT(*) FROM gold.search_logs WHERE created_at > $1",
-            cutoff_date
-        )
+        total_searches = await conn.fetchval("SELECT COUNT(*) FROM gold.search_logs WHERE created_at > $1", cutoff_date)
 
         avg_response_time = await conn.fetchval(
-            "SELECT AVG(response_time_ms) FROM gold.search_logs WHERE created_at > $1",
-            cutoff_date
+            "SELECT AVG(response_time_ms) FROM gold.search_logs WHERE created_at > $1", cutoff_date
         )
 
-        popular_queries = await conn.fetch("""
+        popular_queries = await conn.fetch(
+            """
             SELECT query, COUNT(*) as count
             FROM gold.search_logs
             WHERE created_at > $1
             GROUP BY query
             ORDER BY count DESC
             LIMIT 10
-        """, cutoff_date)
+        """,
+            cutoff_date,
+        )
 
-        by_type = await conn.fetch("""
+        by_type = await conn.fetch(
+            """
             SELECT search_type, COUNT(*) as count
             FROM gold.search_logs
             WHERE created_at > $1
             GROUP BY search_type
-        """, cutoff_date)
+        """,
+            cutoff_date,
+        )
 
         return {
             "total_searches": total_searches or 0,
             "avg_response_time_ms": round(avg_response_time or 0, 2),
-            "popular_queries": [
-                {"query": row["query"], "count": row["count"]}
-                for row in popular_queries
-            ],
+            "popular_queries": [{"query": row["query"], "count": row["count"]} for row in popular_queries],
             "by_type": {row["search_type"]: row["count"] for row in by_type},
-            "period_days": days
+            "period_days": days,
         }
 
     finally:
@@ -258,6 +241,7 @@ async def get_search_stats(
 # ============================================================================
 # SYSTEM STATISTICS
 # ============================================================================
+
 
 @router.get("/system")
 async def get_system_stats():
@@ -307,25 +291,15 @@ async def get_system_stats():
             "database": {
                 "size": db_size,
                 "tables": [
-                    {
-                        "name": row["table_name"],
-                        "size": row["total_size"],
-                        "rows": row["row_count"]
-                    }
+                    {"name": row["table_name"], "size": row["total_size"], "rows": row["row_count"]}
                     for row in table_sizes
-                ]
+                ],
             },
             "indexes": [
-                {
-                    "name": row["index_name"],
-                    "scans": row["scans"],
-                    "tuples_read": row["tuples_read"]
-                }
+                {"name": row["index_name"], "scans": row["scans"], "tuples_read": row["tuples_read"]}
                 for row in index_stats
             ],
-            "users": {
-                "total": user_count or 0
-            }
+            "users": {"total": user_count or 0},
         }
 
     finally:
@@ -353,11 +327,11 @@ async def get_category_stats():
                 {
                     "name": row["category"],
                     "count": row["count"],
-                    "last_updated": row["last_updated"].isoformat() if row["last_updated"] else None
+                    "last_updated": row["last_updated"].isoformat() if row["last_updated"] else None,
                 }
                 for row in categories
             ],
-            "total_categories": len(categories)
+            "total_categories": len(categories),
         }
 
     finally:

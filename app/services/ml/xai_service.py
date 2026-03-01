@@ -5,7 +5,7 @@ from __future__ import annotations
 Provides explanations for ML model predictions using SHAP and LIME.
 """
 import logging
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any
 
 
 if TYPE_CHECKING:
@@ -28,13 +28,7 @@ class XAIService:
         self._shap_explainer = None
         logger.info("XAI Service initialized")
 
-    def explain_rerank_score(
-        self,
-        query: str,
-        document: str,
-        score: float,
-        top_k_features: int = 10
-    ) -> dict[str, Any]:
+    def explain_rerank_score(self, query: str, document: str, score: float, top_k_features: int = 10) -> dict[str, Any]:
         """Explain why a document got a particular rerank score.
 
         Uses token importance analysis to show which words
@@ -67,11 +61,7 @@ class XAIService:
                 position_factor = 1.0 - (i / 200) * 0.2
                 importance *= position_factor
 
-                token_scores.append({
-                    "token": token,
-                    "importance": round(importance, 3),
-                    "position": i
-                })
+                token_scores.append({"token": token, "importance": round(importance, 3), "position": i})
 
             # Sort by importance
             token_scores.sort(key=lambda x: x["importance"], reverse=True)
@@ -88,25 +78,16 @@ class XAIService:
                 "summary": {
                     "query_coverage": round(coverage, 2),
                     "matching_tokens": len(matching_tokens),
-                    "total_query_tokens": len(query_tokens)
+                    "total_query_tokens": len(query_tokens),
                 },
-                "interpretation": self._generate_interpretation(score, coverage)
+                "interpretation": self._generate_interpretation(score, coverage),
             }
 
         except Exception as e:
             logger.exception(f"Explanation generation failed: {e}")
-            return {
-                "method": "fallback",
-                "error": str(e),
-                "score": score
-            }
+            return {"method": "fallback", "error": str(e), "score": score}
 
-    def explain_with_shap(
-        self,
-        model,
-        inputs: list[str],
-        predictions: list[float]
-    ) -> list[dict[str, Any]]:
+    def explain_with_shap(self, model, inputs: list[str], predictions: list[float]) -> list[dict[str, Any]]:
         """Generate SHAP explanations for model predictions.
 
         Note: Requires shap package and compatible model.
@@ -133,8 +114,8 @@ class XAIService:
                 exp = {
                     "input": inp[:200],
                     "prediction": pred,
-                    "shap_values": shap_values[i].values.tolist() if hasattr(shap_values[i], 'values') else [],
-                    "base_value": float(shap_values[i].base_values) if hasattr(shap_values[i], 'base_values') else 0
+                    "shap_values": shap_values[i].values.tolist() if hasattr(shap_values[i], "values") else [],
+                    "base_value": float(shap_values[i].base_values) if hasattr(shap_values[i], "base_values") else 0,
                 }
                 explanations.append(exp)
 
@@ -147,12 +128,7 @@ class XAIService:
             logger.exception(f"SHAP explanation failed: {e}")
             return [{"error": str(e)}]
 
-    def explain_search_results(
-        self,
-        query: str,
-        results: list[dict[str, Any]],
-        top_k: int = 5
-    ) -> list[dict[str, Any]]:
+    def explain_search_results(self, query: str, results: list[dict[str, Any]], top_k: int = 5) -> list[dict[str, Any]]:
         """Explain why each search result was ranked as it was.
 
         Args:
@@ -169,11 +145,7 @@ class XAIService:
             content = result.get("content", result.get("snippet", ""))
             score = result.get("score", result.get("combinedScore", 0))
 
-            explanation = self.explain_rerank_score(
-                query=query,
-                document=content,
-                score=score
-            )
+            explanation = self.explain_rerank_score(query=query, document=content, score=score)
 
             result_with_explanation = dict(result)
             result_with_explanation["explanation"] = explanation
@@ -202,13 +174,10 @@ class XAIService:
         else:
             match = "weak keyword match"
 
-        return f"Document is {relevance} with {match} ({coverage*100:.0f}% query terms found)"
+        return f"Document is {relevance} with {match} ({coverage * 100:.0f}% query terms found)"
 
     def generate_attention_heatmap(
-        self,
-        query: str,
-        document: str,
-        model_attention: np.ndarray | None = None
+        self, query: str, document: str, model_attention: np.ndarray | None = None
     ) -> dict[str, Any]:
         """Generate attention heatmap data for visualization.
 
@@ -241,7 +210,7 @@ class XAIService:
             "query_tokens": query_tokens,
             "doc_tokens": doc_tokens,
             "heatmap": heatmap,
-            "visualization_type": "attention_heatmap"
+            "visualization_type": "attention_heatmap",
         }
 
 

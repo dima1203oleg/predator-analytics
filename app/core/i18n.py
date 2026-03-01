@@ -7,15 +7,15 @@ Russian language is FORBIDDEN.
 
 from __future__ import annotations
 
-from enum import Enum
-from typing import Any
+from enum import StrEnum
 
 
 # ═══════════════════════════════════════════════════════════════
 # CERS Risk Levels
 # ═══════════════════════════════════════════════════════════════
 
-class CERSLevel(str, Enum):
+
+class CERSLevel(StrEnum):
     STABLE = "stable"
     WATCHLIST = "watchlist"
     ELEVATED = "elevated"
@@ -44,14 +44,13 @@ def get_cers_level(score: float) -> str:
     """Determine CERS level from numeric score (0-100)."""
     if score <= 20:
         return CERSLevel.STABLE
-    elif score <= 40:
+    if score <= 40:
         return CERSLevel.WATCHLIST
-    elif score <= 60:
+    if score <= 60:
         return CERSLevel.ELEVATED
-    elif score <= 80:
+    if score <= 80:
         return CERSLevel.HIGH_ALERT
-    else:
-        return CERSLevel.CRITICAL
+    return CERSLevel.CRITICAL
 
 
 def get_cers_label(level: str, lang: str = "uk") -> str:
@@ -171,6 +170,7 @@ LAYERS_UA: dict[str, str] = {
 # ═══════════════════════════════════════════════════════════════
 # Helper function
 # ═══════════════════════════════════════════════════════════════
+
 
 def t(key: str, lang: str = "uk", category: str = "errors") -> str:
     """Translate a key to the given language.

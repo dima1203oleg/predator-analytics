@@ -12,7 +12,7 @@ Handles:
 """
 import asyncio
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 import json
 import logging
@@ -20,7 +20,7 @@ import os
 import re
 import subprocess
 import time
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import httpx
 from sqlalchemy import select
@@ -48,6 +48,7 @@ class MessageType(Enum):
 @dataclass
 class NgrokInfo:
     """Parsed ngrok information."""
+
     ssh_host: str
     ssh_port: int
     http_url: str
@@ -58,6 +59,7 @@ class NgrokInfo:
 @dataclass
 class ServerAction:
     """Server action result."""
+
     action: str
     success: bool
     output: str
@@ -95,21 +97,21 @@ class TelegramAssistant:
             if os.path.exists(self.state_file_path):
                 with open(self.state_file_path) as sf:
                     data = json.load(sf)
-                    if 'auto_restart_ngrok' in data:
-                        self.auto_restart_ngrok = bool(data['auto_restart_ngrok'])
-                    if 'auto_deploy_on_up' in data:
-                        self.auto_deploy_on_up = bool(data['auto_deploy_on_up'])
+                    if "auto_restart_ngrok" in data:
+                        self.auto_restart_ngrok = bool(data["auto_restart_ngrok"])
+                    if "auto_deploy_on_up" in data:
+                        self.auto_deploy_on_up = bool(data["auto_deploy_on_up"])
         except Exception:
             # Do not fail on read errors; default to env values
-            logger.debug('Failed to load bot state file or invalid JSON')
+            logger.debug("Failed to load bot state file or invalid JSON")
 
         # Audit log path
-        self.audit_log_path = os.path.expanduser(os.getenv('PREDATOR_TELEGRAM_AUDIT', '~/.predator_bot_audit.log'))
+        self.audit_log_path = os.path.expanduser(os.getenv("PREDATOR_TELEGRAM_AUDIT", "~/.predator_bot_audit.log"))
         # runtime context for requests (filled while processing an update)
         self.requesting_user_id: int | None = None
         # optional default chat id to use for async notifications
         try:
-            self.default_chat_id = int(os.getenv('TELEGRAM_CHAT_ID', '0')) or None
+            self.default_chat_id = int(os.getenv("TELEGRAM_CHAT_ID", "0")) or None
         except Exception:
             self.default_chat_id = None
 
@@ -127,12 +129,10 @@ class TelegramAssistant:
             "pods": self._cmd_kubernetes_pods,
             "services": self._cmd_services_status,
             "logs": self._cmd_logs,
-
             # Мережеві
             "ngrok": self._cmd_ngrok_info,
             "ssh": self._cmd_ssh_config,
             "connect": self._cmd_connect_info,
-
             # Git/Deploy
             "git": self._cmd_git_status,
             "deploy": self._cmd_deploy_status,
@@ -147,20 +147,17 @@ class TelegramAssistant:
             "argocd_sync_status": self._cmd_argocd_sync_status,
             "auto_rollback": self._cmd_auto_rollback,
             "argocd_rollback": self._cmd_argocd_rollback,
-
             # AI
             "search": self._cmd_ai_search,
             "analyze": self._cmd_ai_analyze,
             "datasets": self._cmd_datasets,
             "ingest": self._cmd_ingest,
             "job": self._cmd_job_status,
-
             # Setup/Configuration (NEW)
             "add_key": self._cmd_add_key,
             "set_model": self._cmd_set_model,
             "auto_restart": self._cmd_auto_restart,
             "predator": self._cmd_predator_cli,
-
             # Queues (V45)
             "queues": self._cmd_queue_status,
             "purge": self._cmd_purge_queue,
@@ -188,7 +185,11 @@ class TelegramAssistant:
 
         target_upper = target.upper()
         server = os.getenv(f"ARGOCD_{target_upper}_URL") or os.getenv("ARGOCD_SERVER")
-        token = os.getenv(f"ARGOCD_{target_upper}_TOKEN") or os.getenv(f"ARGOCD_{target_upper}_PASSWORD") or os.getenv("ARGOCD_TOKEN")
+        token = (
+            os.getenv(f"ARGOCD_{target_upper}_TOKEN")
+            or os.getenv(f"ARGOCD_{target_upper}_PASSWORD")
+            or os.getenv("ARGOCD_TOKEN")
+        )
         return server, token
 
     async def _cmd_auto_deploy(self, args: str) -> str:
@@ -204,18 +205,18 @@ class TelegramAssistant:
         if parts[0] in ("on", "true", "1"):
             self.auto_deploy_on_up = True
             try:
-                with open(self.state_file_path, 'w') as sf:
-                    json.dump({'auto_deploy_on_up': True, 'auto_restart_ngrok': self.auto_restart_ngrok}, sf)
+                with open(self.state_file_path, "w") as sf:
+                    json.dump({"auto_deploy_on_up": True, "auto_restart_ngrok": self.auto_restart_ngrok}, sf)
             except Exception:
-                logger.debug('Failed to persist bot state')
+                logger.debug("Failed to persist bot state")
             return "✅ AUTO_DEPLOY_ON_UP встановлено у: true"
         if parts[0] in ("off", "false", "0"):
             self.auto_deploy_on_up = False
             try:
-                with open(self.state_file_path, 'w') as sf:
-                    json.dump({'auto_deploy_on_up': False, 'auto_restart_ngrok': self.auto_restart_ngrok}, sf)
+                with open(self.state_file_path, "w") as sf:
+                    json.dump({"auto_deploy_on_up": False, "auto_restart_ngrok": self.auto_restart_ngrok}, sf)
             except Exception:
-                logger.debug('Failed to persist bot state')
+                logger.debug("Failed to persist bot state")
             return "✅ AUTO_DEPLOY_ON_UP встановлено у: false"
         return "❌ Невірна команда. Використовуйте: /auto_deploy on|off|status"
 
@@ -241,16 +242,21 @@ class TelegramAssistant:
     def _save_bot_state(self):
         """Зберігає стан бота у файл."""
         try:
-            with open(self.state_file_path, 'w') as sf:
-                json.dump({
-                    'auto_deploy_on_up': self.auto_deploy_on_up,
-                    'auto_restart_ngrok': self.auto_restart_ngrok,
-                    'auto_rollback_on_degrade': getattr(self, 'auto_rollback_on_degrade', False)
-                }, sf)
+            with open(self.state_file_path, "w") as sf:
+                json.dump(
+                    {
+                        "auto_deploy_on_up": self.auto_deploy_on_up,
+                        "auto_restart_ngrok": self.auto_restart_ngrok,
+                        "auto_rollback_on_degrade": getattr(self, "auto_rollback_on_degrade", False),
+                    },
+                    sf,
+                )
         except Exception:
-            logger.debug('Failed to persist bot state')
+            logger.debug("Failed to persist bot state")
 
-    async def _call_argocd_api(self, server: str, token: str, method: str, path: str = "", json_payload: dict | None = None) -> tuple[bool, Any]:
+    async def _call_argocd_api(
+        self, server: str, token: str, method: str, path: str = "", json_payload: dict | None = None
+    ) -> tuple[bool, Any]:
         """Call ArgoCD REST API using httpx; returns (success, result_or_error)."""
         if not server or not token:
             return False, "Missing ArgoCD server or token"
@@ -262,7 +268,7 @@ class TelegramAssistant:
             retries = int(os.getenv("ARGOCD_API_RETRIES", "3"))
             backoff = float(os.getenv("ARGOCD_API_BACKOFF", "1.0"))
             async with httpx.AsyncClient(timeout=30, verify=verify) as client:
-                for attempt in range(1, retries+1):
+                for attempt in range(1, retries + 1):
                     try:
                         if method.upper() == "GET":
                             r = await client.get(url, headers=headers)
@@ -299,11 +305,7 @@ class TelegramAssistant:
         """Send a message to Telegram using the bot token asynchronously. Returns True if OK."""
         if not chat_id:
             return False
-        payload = {
-            'chat_id': chat_id,
-            'text': text,
-            'parse_mode': 'HTML'
-        }
+        payload = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
         url = f"{self.api_url}/sendMessage"
         try:
             async with httpx.AsyncClient(timeout=10) as client:
@@ -313,7 +315,9 @@ class TelegramAssistant:
             logger.exception(f"Failed to send Telegram message: {e}")
             return False
 
-    async def _notify_argocd_sync_result(self, server: str, token: str, app: str, chat_id: int | None = None, timeout: int = 600):
+    async def _notify_argocd_sync_result(
+        self, server: str, token: str, app: str, chat_id: int | None = None, timeout: int = 600
+    ):
         """Poll ArgoCD until sync finishes; send Telegram notice with the result to chat.
         chat_id defaults to configured chat or the last requesting user.
         """
@@ -323,29 +327,32 @@ class TelegramAssistant:
             if not ok:
                 await self._send_telegram_message(chat, f"❌ ArgoCD API error while checking status for {app}: {res}")
                 return
-            status = res.get('status', {})
-            if status.get('sync', {}).get('status') == 'Synced' and status.get('health', {}).get('status') == 'Healthy':
+            status = res.get("status", {})
+            if status.get("sync", {}).get("status") == "Synced" and status.get("health", {}).get("status") == "Healthy":
                 await self._send_telegram_message(chat, f"✅ {app} already Synced & Healthy.")
                 return
             start = time.time()
             while time.time() - start < timeout:
                 ok, res = await self._call_argocd_api(server, token, "GET", f"/applications/{app}")
                 if ok:
-                    st = res.get('status', {})
-                    phase = st.get('operationState', {}).get('phase') if st.get('operationState') else None
-                    sync = st.get('sync', {}).get('status')
-                    health = st.get('health', {}).get('status')
-                    if phase in ('Succeeded',) or (sync == 'Synced' and health == 'Healthy'):
-                        await self._send_telegram_message(chat, f"🔔 ArgoCD sync for {app} completed. Sync: {sync}. Health: {health}.")
+                    st = res.get("status", {})
+                    phase = st.get("operationState", {}).get("phase") if st.get("operationState") else None
+                    sync = st.get("sync", {}).get("status")
+                    health = st.get("health", {}).get("status")
+                    if phase == "Succeeded" or (sync == "Synced" and health == "Healthy"):
+                        await self._send_telegram_message(
+                            chat, f"🔔 ArgoCD sync for {app} completed. Sync: {sync}. Health: {health}."
+                        )
                         return
                 await asyncio.sleep(3)
 
-            await self._send_telegram_message(chat, f"⚠️ Timeout waiting for ArgoCD sync for {app} (waited {timeout}s). Check ArgoCD UI for details.")
+            await self._send_telegram_message(
+                chat, f"⚠️ Timeout waiting for ArgoCD sync for {app} (waited {timeout}s). Check ArgoCD UI for details."
+            )
         except Exception as e:
             logger.exception(f"_notify_argocd_sync_result error: {e}")
             if chat:
                 await self._send_telegram_message(chat, f"❌ Error in ArgoCD sync monitor: {e}")
-
 
     # ==================== NGROK PARSING ====================
 
@@ -359,11 +366,11 @@ class TelegramAssistant:
         Команда: sed -i '' -E '/Host dev-ngrok/,/^Host /{s/(HostName ).*/\17.tcp.eu.ngrok.io/; s/(Port ).*/\115102/;}' ~/.ssh/config
         """
         # Pattern для SSH URL
-        ssh_pattern = r'SSH:\s*tcp://([^:]+):(\d+)'
+        ssh_pattern = r"SSH:\s*tcp://([^:]+):(\d+)"
         ssh_match = re.search(ssh_pattern, text)
 
         # Pattern для HTTP URL
-        http_pattern = r'HTTP:\s*(https?://[^\s]+)'
+        http_pattern = r"HTTP:\s*(https?://[^\s]+)"
         http_match = re.search(http_pattern, text)
 
         if ssh_match:
@@ -372,7 +379,7 @@ class TelegramAssistant:
                 ssh_port=int(ssh_match.group(2)),
                 http_url=http_match.group(1) if http_match else "",
                 raw_message=text,
-                parsed_at=datetime.now(UTC)
+                parsed_at=datetime.now(UTC),
             )
 
         return None
@@ -390,22 +397,14 @@ class TelegramAssistant:
                 content = f.read()
 
             # Шукаємо блок dev-ngrok
-            pattern = r'(Host\s+dev-ngrok\s*\n(?:[^\n]*\n)*?)(?=Host\s|\Z)'
+            pattern = r"(Host\s+dev-ngrok\s*\n(?:[^\n]*\n)*?)(?=Host\s|\Z)"
             match = re.search(pattern, content, re.IGNORECASE)
 
             if match:
                 # Оновлюємо існуючий блок
                 old_block = match.group(1)
-                new_block = re.sub(
-                    r'HostName\s+\S+',
-                    f'HostName {ngrok_info.ssh_host}',
-                    old_block
-                )
-                new_block = re.sub(
-                    r'Port\s+\d+',
-                    f'Port {ngrok_info.ssh_port}',
-                    new_block
-                )
+                new_block = re.sub(r"HostName\s+\S+", f"HostName {ngrok_info.ssh_host}", old_block)
+                new_block = re.sub(r"Port\s+\d+", f"Port {ngrok_info.ssh_port}", new_block)
                 content = content.replace(old_block, new_block)
             else:
                 # Додаємо новий блок
@@ -421,12 +420,14 @@ Host dev-ngrok
                 content += new_block
 
             # Записуємо оновлений конфіг
-            with open(ssh_config, 'w') as f:
+            with open(ssh_config, "w") as f:
                 f.write(content)
 
             self.last_ngrok = ngrok_info
 
-            return True, f"""✅ SSH Config оновлено!
+            return (
+                True,
+                f"""✅ SSH Config оновлено!
 
 🔗 **Нові ngrok дані:**
 • Host: `{ngrok_info.ssh_host}`
@@ -436,7 +437,8 @@ Host dev-ngrok
 📡 **Підключення:**
 ```bash
 ssh dev-ngrok
-```"""
+```""",
+            )
 
         except Exception as e:
             logger.exception(f"Failed to update SSH config: {e}")
@@ -496,8 +498,7 @@ ssh dev-ngrok
             return MessageType.COMMAND
 
         # Button menu items
-        menu_items = ["статус", "сервер", "docker", "k8s", "ngrok", "ssh config",
-                      "deploy", "пошук", "допомога"]
+        menu_items = ["статус", "сервер", "docker", "k8s", "ngrok", "ssh config", "deploy", "пошук", "допомога"]
         if any(item in text_lower for item in menu_items):
             return MessageType.COMMAND
 
@@ -506,7 +507,15 @@ ssh dev-ngrok
     async def _handle_ngrok_update(self, text: str, chat_id: int) -> str:
         """Обробляє оновлення ngrok та оновлює всі конфігурації."""
         text_lower = text.lower() if text else ""
-        down_signals = ["tunnel down", "tunnel is not running", "ngrok tunnel is not running", "not running", "down", "не працює", "тунель"]
+        down_signals = [
+            "tunnel down",
+            "tunnel is not running",
+            "ngrok tunnel is not running",
+            "not running",
+            "down",
+            "не працює",
+            "тунель",
+        ]
         is_down = any(k in text_lower for k in down_signals)
 
         # If down and auto-restart enabled, try to perform restart automatically
@@ -536,7 +545,9 @@ ssh dev-ngrok
             if success and self.auto_deploy_on_up:
                 server, token = self._get_argocd_credentials("nvidia")
                 if server and token:
-                    ok, _ = await self._call_argocd_api(server, token, "POST", "/applications/predator-nvidia/sync", json_payload={})
+                    ok, _ = await self._call_argocd_api(
+                        server, token, "POST", "/applications/predator-nvidia/sync", json_payload={}
+                    )
                     if ok:
                         message = message + "\n\n🔁 Auto ArgoCD sync initiated for predator-nvidia."
                     else:
@@ -558,26 +569,41 @@ ssh dev-ngrok
         # Emoji mapping для reply keyboard та команд
         emoji_map = {
             # Статус
-            "📊": "status", "статус": "status",
-            "🖥️": "status", "сервер": "status",
+            "📊": "status",
+            "статус": "status",
+            "🖥️": "status",
+            "сервер": "status",
             # Docker
-            "🐳": "docker", "docker": "docker",
+            "🐳": "docker",
+            "docker": "docker",
             # Kubernetes
-            "☸️": "k8s", "k8s": "k8s", "pods": "pods",
+            "☸️": "k8s",
+            "k8s": "k8s",
+            "pods": "pods",
             # Network
-            "🔗": "ngrok", "ngrok": "ngrok",
-            "📡": "ssh", "ssh config": "ssh",
+            "🔗": "ngrok",
+            "ngrok": "ngrok",
+            "📡": "ssh",
+            "ssh config": "ssh",
             # Deploy/Git
-            "📦": "git", "git": "git",
-            "🚀": "deploy", "деплой": "deploy", "deploy": "deploy",
+            "📦": "git",
+            "git": "git",
+            "🚀": "deploy",
+            "деплой": "deploy",
+            "deploy": "deploy",
             # AI
-            "🧠": "ai", "ai": "ai",
-            "🔍": "search", "пошук": "search",
+            "🧠": "ai",
+            "ai": "ai",
+            "🔍": "search",
+            "пошук": "search",
             # NVIDIA
-            "🎮": "nvidia", "nvidia": "nvidia",
+            "🎮": "nvidia",
+            "nvidia": "nvidia",
             # Меню/Help
-            "❓": "menu", "меню": "menu",
-            "допомога": "help", "help": "help",
+            "❓": "menu",
+            "меню": "menu",
+            "допомога": "help",
+            "help": "help",
         }
 
         # Визначаємо команду
@@ -625,9 +651,9 @@ ssh dev-ngrok
                 self.requesting_user_id = None
                 # Record audit
                 try:
-                    self._log_audit(user_id, text, success, '' if success else result)
+                    self._log_audit(user_id, text, success, "" if success else result)
                 except Exception:
-                    logger.debug('Failed to write audit log')
+                    logger.debug("Failed to write audit log")
 
             return result
 
@@ -642,18 +668,18 @@ ssh dev-ngrok
             {"name": "etl_queue", "messages": 12, "consumers": 4, "status": "active", "rate": 25},
             {"name": "ml_training", "messages": 3, "consumers": 2, "status": "active", "rate": 5},
             {"name": "indexing", "messages": 0, "consumers": 2, "status": "idle", "rate": 0},
-            {"name": "notifications", "messages": 156, "consumers": 1, "status": "congested", "rate": 8}
+            {"name": "notifications", "messages": 156, "consumers": 1, "status": "congested", "rate": 8},
         ]
 
         text = "📊 <b>RabbitMQ Queue Status</b>\n\n"
         buttons = []
 
         for q in queues:
-            icon = "🟢" if q['status'] == 'idle' else "🟡" if q['status'] == 'active' else "🔴"
+            icon = "🟢" if q["status"] == "idle" else "🟡" if q["status"] == "active" else "🔴"
             text += f"{icon} <b>{q['name']}</b>: {q['messages']} msgs\n"
             text += f"   Consumers: {q['consumers']} | Rate: {q.get('rate', 0)}/s\n\n"
 
-            if q['status'] == 'congested' or q['messages'] > 50:
+            if q["status"] == "congested" or q["messages"] > 50:
                 buttons.append([{"text": f"🗑 Purge {q['name']}", "callback_data": f"queue_purge_{q['name']}"}])
 
         buttons.append([{"text": "🔄 Refresh", "callback_data": "menu_queues"}])
@@ -669,11 +695,11 @@ ssh dev-ngrok
         # Create confirmation task
         user_id = self.requesting_user_id or 0
         task = await self.task_executor.create_task(
-             description=f"Purge queue {queue_name}",
-             user_id=user_id,
-             category=TaskCategory.SYSTEM,
-             is_dangerous=True,
-             commands=[f"rabbitmqadmin purge queue name={queue_name} (SIMULATED)"]
+            description=f"Purge queue {queue_name}",
+            user_id=user_id,
+            category=TaskCategory.SYSTEM,
+            is_dangerous=True,
+            commands=[f"rabbitmqadmin purge queue name={queue_name} (SIMULATED)"],
         )
 
         msg = self.message_formatter.format_task_confirmation(task.description, task.commands, task.is_dangerous)
@@ -699,7 +725,7 @@ ssh dev-ngrok
             return await self._cmd_purge_queue(q_name)
 
         if data == "menu_queues":
-             return await self._cmd_queue_status("")
+            return await self._cmd_queue_status("")
 
         # ============ МЕНЮ НАВІГАЦІЯ ============
         if data.startswith("menu_"):
@@ -714,7 +740,10 @@ ssh dev-ngrok
                 "ai": (self.menu_builder.build_ai_menu(), "🧠 *AI Assistant*"),
                 "settings": (self.menu_builder.build_settings_menu(), "⚙️ *Налаштування*"),
                 "llm": (self.menu_builder.build_llm_menu(), "🤖 *LLM Провайдери*"),
-                "nvidia": (self.menu_builder.build_nvidia_menu(), "🎮 *NVIDIA Сервер*\n\nУправління віддаленим GPU сервером"),
+                "nvidia": (
+                    self.menu_builder.build_nvidia_menu(),
+                    "🎮 *NVIDIA Сервер*\n\nУправління віддаленим GPU сервером",
+                ),
             }
 
             if menu_name in menu_map:
@@ -734,7 +763,7 @@ ssh dev-ngrok
                     description=task.description,
                     output=result.output,
                     error=result.error,
-                    execution_time_ms=result.execution_time_ms
+                    execution_time_ms=result.execution_time_ms,
                 )
                 return response, None
             return "⚠️ Задача не знайдена або прострочена", None
@@ -752,7 +781,9 @@ ssh dev-ngrok
             # Вибір сервісу
             if action in ["restart_select", "logs_select", "build_select"]:
                 actual_action = action.replace("_select", "")
-                return f"📋 *Оберіть сервіс для {actual_action}:*", self.menu_builder.build_docker_services_menu(actual_action)
+                return f"📋 *Оберіть сервіс для {actual_action}:*", self.menu_builder.build_docker_services_menu(
+                    actual_action
+                )
 
             # Прямі дії
             if action == "ps":
@@ -767,7 +798,9 @@ ssh dev-ngrok
                     msg = self.message_formatter.format_task_confirmation(
                         task.description, task.commands, task.is_dangerous
                     )
-                    keyboard = self.menu_builder.build_confirmation_menu(task.task_id, task.description, task.is_dangerous)
+                    keyboard = self.menu_builder.build_confirmation_menu(
+                        task.task_id, task.description, task.is_dangerous
+                    )
                     return msg, keyboard
                 result = await self.task_executor.execute_task(task)
                 return self.message_formatter.format_task_result(task.description, result.output, result.error), None
@@ -779,7 +812,9 @@ ssh dev-ngrok
                     msg = self.message_formatter.format_task_confirmation(
                         task.description, task.commands, task.is_dangerous
                     )
-                    keyboard = self.menu_builder.build_confirmation_menu(task.task_id, task.description, task.is_dangerous)
+                    keyboard = self.menu_builder.build_confirmation_menu(
+                        task.task_id, task.description, task.is_dangerous
+                    )
                     return msg, keyboard
                 result = await self.task_executor.execute_task(task)
                 return self.message_formatter.format_task_result(task.description, result.output, result.error), None
@@ -821,22 +856,23 @@ ssh dev-ngrok
             if action == "status":
                 return await self._cmd_git_status(""), None
             if action == "log":
-                result = subprocess.run(["git", "log", "-n", "10", "--oneline"],
-                    check=False, capture_output=True, text=True, cwd="/Users/dima-mac/Documents/Predator_21")
+                result = subprocess.run(
+                    ["git", "log", "-n", "10", "--oneline"],
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                    cwd="/Users/dima-mac/Documents/Predator_21",
+                )
                 return f"📜 *Git Log*\n```\n{result.stdout}\n```", None
             if action == "pull":
-                task = await self.task_executor._analyze_git_request(
-                    "Git pull", "git pull", user_id, chat_id
-                )
+                task = await self.task_executor._analyze_git_request("Git pull", "git pull", user_id, chat_id)
                 msg = self.message_formatter.format_task_confirmation(
                     task.description, task.commands, task.is_dangerous
                 )
                 keyboard = self.menu_builder.build_confirmation_menu(task.task_id, task.description, task.is_dangerous)
                 return msg, keyboard
             if action == "push":
-                task = await self.task_executor._analyze_git_request(
-                    "Git push", "git push", user_id, chat_id
-                )
+                task = await self.task_executor._analyze_git_request("Git push", "git push", user_id, chat_id)
                 msg = self.message_formatter.format_task_confirmation(
                     task.description, task.commands, task.is_dangerous
                 )
@@ -849,20 +885,17 @@ ssh dev-ngrok
             if action == "pods":
                 return await self._cmd_kubernetes_pods(""), None
             if action == "nodes":
-                result = subprocess.run(["kubectl", "get", "nodes", "-o", "wide"],
-                    check=False, capture_output=True, text=True)
+                result = subprocess.run(
+                    ["kubectl", "get", "nodes", "-o", "wide"], check=False, capture_output=True, text=True
+                )
                 return f"☸️ *Kubernetes Nodes*\n```\n{result.stdout[:1500]}\n```", None
             if action == "services":
                 return await self._cmd_services_status(""), None
 
         # ============ DEPLOY ============
         if data == "deploy_full":
-            task = await self.task_executor._analyze_deploy_request(
-                "Повний деплой", "деплой", user_id, chat_id
-            )
-            msg = self.message_formatter.format_task_confirmation(
-                task.description, task.commands, task.is_dangerous
-            )
+            task = await self.task_executor._analyze_deploy_request("Повний деплой", "деплой", user_id, chat_id)
+            msg = self.message_formatter.format_task_confirmation(task.description, task.commands, task.is_dangerous)
             keyboard = self.menu_builder.build_confirmation_menu(task.task_id, task.description, task.is_dangerous)
             return msg, keyboard
 
@@ -877,38 +910,43 @@ ssh dev-ngrok
                     d = status.get("data", {})
                     msg = f"""🎮 *NVIDIA Server Status*
 
-🖥️ **Host:** `{status.get('host', 'N/A')}`
-📊 **Hostname:** {d.get('hostname', 'N/A')}
-⏰ **Uptime:** {d.get('uptime', 'N/A')}
-💾 **Disk:** {d.get('disk', 'N/A')}
-🧠 **Memory:** {d.get('memory', 'N/A')}
+🖥️ **Host:** `{status.get("host", "N/A")}`
+📊 **Hostname:** {d.get("hostname", "N/A")}
+⏰ **Uptime:** {d.get("uptime", "N/A")}
+💾 **Disk:** {d.get("disk", "N/A")}
+🧠 **Memory:** {d.get("memory", "N/A")}
 
 🎮 **GPU:**
 ```
-{d.get('gpu', 'N/A')}
+{d.get("gpu", "N/A")}
 ```
 
 🐳 **Docker:**
 ```
-{d.get('docker', 'N/A')[:800]}
+{d.get("docker", "N/A")[:800]}
 ```
 """
                     return msg, self.menu_builder.build_nvidia_menu()
-                return f"❌ {status.get('error', 'Not connected')}\n\n{remote_server.get_connection_info()}", self.menu_builder.build_nvidia_menu()
+                return (
+                    f"❌ {status.get('error', 'Not connected')}\n\n{remote_server.get_connection_info()}",
+                    self.menu_builder.build_nvidia_menu(),
+                )
 
             if action == "gpu":
-                task = await self.task_executor._analyze_gpu_request(
-                    "GPU status", "gpu статус", user_id, chat_id
-                )
+                task = await self.task_executor._analyze_gpu_request("GPU status", "gpu статус", user_id, chat_id)
                 result = await self.task_executor.execute_task(task)
-                return self.message_formatter.format_task_result(task.description, result.output, result.error), self.menu_builder.build_nvidia_menu()
+                return self.message_formatter.format_task_result(
+                    task.description, result.output, result.error
+                ), self.menu_builder.build_nvidia_menu()
 
             if action == "docker":
                 task = await self.task_executor._analyze_remote_request(
                     "Docker статус на сервері", "nvidia docker статус", user_id, chat_id
                 )
                 result = await self.task_executor.execute_task(task)
-                return self.message_formatter.format_task_result(task.description, result.output, result.error), self.menu_builder.build_nvidia_menu()
+                return self.message_formatter.format_task_result(
+                    task.description, result.output, result.error
+                ), self.menu_builder.build_nvidia_menu()
 
             if action == "deploy":
                 task = await self.task_executor._analyze_remote_request(
@@ -933,7 +971,10 @@ ssh dev-ngrok
             if action == "resources":
                 result = await remote_server.execute_remote("df -h / && free -h", timeout=30)
                 if result.success:
-                    return f"💾 *NVIDIA Server Resources*\n```\n{result.output}\n```", self.menu_builder.build_nvidia_menu()
+                    return (
+                        f"💾 *NVIDIA Server Resources*\n```\n{result.output}\n```",
+                        self.menu_builder.build_nvidia_menu(),
+                    )
                 return f"❌ {result.error}", self.menu_builder.build_nvidia_menu()
 
             if action == "connection":
@@ -946,22 +987,28 @@ ssh dev-ngrok
             if action == "ngrok":
                 if remote_server.current_connection:
                     conn = remote_server.current_connection
-                    return f"""📡 *Ngrok Tunnel Info*
+                    return (
+                        f"""📡 *Ngrok Tunnel Info*
 
 🔗 **Host:** `{conn.host}`
 🔌 **Port:** `{conn.port}`
-🌐 **HTTP:** {conn.http_url or 'N/A'}
+🌐 **HTTP:** {conn.http_url or "N/A"}
 👤 **User:** {conn.user}
-🟢 **Active:** {'Yes' if conn.is_active else 'Unknown'}
+🟢 **Active:** {"Yes" if conn.is_active else "Unknown"}
 
 📋 **SSH Command:**
 ```
 ssh dev-ngrok
 ```
 
-⏰ **Last Seen:** {conn.last_seen.strftime('%Y-%m-%d %H:%M:%S')} UTC
-""", self.menu_builder.build_nvidia_menu()
-                return "❌ Немає збережених ngrok даних\n\nНадішліть ngrok повідомлення для налаштування", self.menu_builder.build_nvidia_menu()
+⏰ **Last Seen:** {conn.last_seen.strftime("%Y-%m-%d %H:%M:%S")} UTC
+""",
+                        self.menu_builder.build_nvidia_menu(),
+                    )
+                return (
+                    "❌ Немає збережених ngrok даних\n\nНадішліть ngrok повідомлення для налаштування",
+                    self.menu_builder.build_nvidia_menu(),
+                )
 
             if action == "logs_select":
                 # Показуємо меню вибору сервісу для логів
@@ -972,10 +1019,13 @@ ssh dev-ngrok
                     ("🗄️ Postgres", "nvidia_logs_postgres"),
                     ("🔴 Redis", "nvidia_logs_redis"),
                 ]
-                keyboard = {"inline_keyboard": [
-                    [{"text": name, "callback_data": cb} for name, cb in services[i:i+2]]
-                    for i in range(0, len(services), 2)
-                ] + [[{"text": "⬅️ Назад", "callback_data": "menu_nvidia"}]]}
+                keyboard = {
+                    "inline_keyboard": [
+                        [{"text": name, "callback_data": cb} for name, cb in services[i : i + 2]]
+                        for i in range(0, len(services), 2)
+                    ]
+                    + [[{"text": "⬅️ Назад", "callback_data": "menu_nvidia"}]]
+                }
                 return "📜 *Оберіть сервіс для логів:*", keyboard
 
             if action.startswith("logs_"):
@@ -984,7 +1034,9 @@ ssh dev-ngrok
                     f"Логи {service} на сервері", f"nvidia logs {service}", user_id, chat_id
                 )
                 result = await self.task_executor.execute_task(task)
-                return self.message_formatter.format_task_result(task.description, result.output[:2000], result.error), self.menu_builder.build_nvidia_menu()
+                return self.message_formatter.format_task_result(
+                    task.description, result.output[:2000], result.error
+                ), self.menu_builder.build_nvidia_menu()
 
             return "❌ Невідома NVIDIA команда", self.menu_builder.build_nvidia_menu()
 
@@ -1015,12 +1067,12 @@ ssh dev-ngrok
                     "Логи backend", "покажи логи docker backend", user_id, chat_id
                 )
                 result = await self.task_executor.execute_task(task)
-                return self.message_formatter.format_task_result(task.description, result.output, result.error, result.execution_time_ms), None
+                return self.message_formatter.format_task_result(
+                    task.description, result.output, result.error, result.execution_time_ms
+                ), None
 
             if action == "git_pull":
-                task = await self.task_executor._analyze_git_request(
-                    "Git pull", "git pull", user_id, chat_id
-                )
+                task = await self.task_executor._analyze_git_request("Git pull", "git pull", user_id, chat_id)
                 msg = self.message_formatter.format_task_confirmation(
                     task.description, task.commands, task.is_dangerous
                 )
@@ -1028,9 +1080,7 @@ ssh dev-ngrok
                 return msg, keyboard
 
             if action == "deploy":
-                task = await self.task_executor._analyze_deploy_request(
-                    "Повний деплой", "деплой", user_id, chat_id
-                )
+                task = await self.task_executor._analyze_deploy_request("Повний деплой", "деплой", user_id, chat_id)
                 msg = self.message_formatter.format_task_confirmation(
                     task.description, task.commands, task.is_dangerous
                 )
@@ -1038,11 +1088,11 @@ ssh dev-ngrok
                 return msg, keyboard
 
             if action == "gpu":
-                task = await self.task_executor._analyze_gpu_request(
-                    "GPU статус", "gpu статус", user_id, chat_id
-                )
+                task = await self.task_executor._analyze_gpu_request("GPU статус", "gpu статус", user_id, chat_id)
                 result = await self.task_executor.execute_task(task)
-                return self.message_formatter.format_task_result(task.description, result.output, result.error, result.execution_time_ms), self.menu_builder.build_quick_actions_menu()
+                return self.message_formatter.format_task_result(
+                    task.description, result.output, result.error, result.execution_time_ms
+                ), self.menu_builder.build_quick_actions_menu()
 
             if action == "nvidia":
                 status = await remote_server.get_remote_status()
@@ -1050,10 +1100,10 @@ ssh dev-ngrok
                     d = status.get("data", {})
                     msg = f"""🎮 *NVIDIA Server Quick Status*
 
-🖥️ Host: `{status.get('host', 'N/A')}`
-⏰ Uptime: {d.get('uptime', 'N/A')}
-🎮 GPU: {d.get('gpu', 'N/A')[:100]}
-🐳 Docker: {len(d.get('docker', '').split(chr(10)))-1} containers
+🖥️ Host: `{status.get("host", "N/A")}`
+⏰ Uptime: {d.get("uptime", "N/A")}
+🎮 GPU: {d.get("gpu", "N/A")[:100]}
+🐳 Docker: {len(d.get("docker", "").split(chr(10))) - 1} containers
 """
                     return msg, self.menu_builder.build_quick_actions_menu()
                 return remote_server.get_connection_info(), self.menu_builder.build_nvidia_menu()
@@ -1073,12 +1123,15 @@ ssh dev-ngrok
                     "inline_keyboard": [
                         [
                             {"text": "🟢 Увімкнути", "callback_data": "toggle_auto_deploy_on"},
-                            {"text": "🔴 Вимкнути", "callback_data": "toggle_auto_deploy_off"}
+                            {"text": "🔴 Вимкнути", "callback_data": "toggle_auto_deploy_off"},
                         ],
-                        [{"text": "⬅️ Назад", "callback_data": "menu_settings"}]
+                        [{"text": "⬅️ Назад", "callback_data": "menu_settings"}],
                     ]
                 }
-                return f"🔁 *Auto Deploy при появі ngrok*\n\nПоточний статус: {status}\n\nКоли з'являється новий ngrok тунель, автоматично синхронізувати ArgoCD.", keyboard
+                return (
+                    f"🔁 *Auto Deploy при появі ngrok*\n\nПоточний статус: {status}\n\nКоли з'являється новий ngrok тунель, автоматично синхронізувати ArgoCD.",
+                    keyboard,
+                )
 
             if action == "auto_restart":
                 status = "✅ ON" if self.auto_restart_ngrok else "❌ OFF"
@@ -1086,12 +1139,15 @@ ssh dev-ngrok
                     "inline_keyboard": [
                         [
                             {"text": "🟢 Увімкнути", "callback_data": "toggle_auto_restart_on"},
-                            {"text": "🔴 Вимкнути", "callback_data": "toggle_auto_restart_off"}
+                            {"text": "🔴 Вимкнути", "callback_data": "toggle_auto_restart_off"},
                         ],
-                        [{"text": "⬅️ Назад", "callback_data": "menu_settings"}]
+                        [{"text": "⬅️ Назад", "callback_data": "menu_settings"}],
                     ]
                 }
-                return f"🔄 *Auto Restart Ngrok*\n\nПоточний статус: {status}\n\nПри падінні ngrok автоматично спробувати перезапустити.", keyboard
+                return (
+                    f"🔄 *Auto Restart Ngrok*\n\nПоточний статус: {status}\n\nПри падінні ngrok автоматично спробувати перезапустити.",
+                    keyboard,
+                )
 
             if action == "bot_stats":
                 # Збираємо статистику
@@ -1116,8 +1172,8 @@ ssh dev-ngrok
 • ❌ Помилок: {failed_tasks}
 
 *Налаштування:*
-• Auto Deploy: {'✅' if self.auto_deploy_on_up else '❌'}
-• Auto Restart: {'✅' if self.auto_restart_ngrok else '❌'}
+• Auto Deploy: {"✅" if self.auto_deploy_on_up else "❌"}
+• Auto Restart: {"✅" if self.auto_restart_ngrok else "❌"}
 
 *NVIDIA Сервер:* {nvidia_info}
 
@@ -1128,7 +1184,10 @@ ssh dev-ngrok
 
             if action == "auth":
                 users = os.getenv("TELEGRAM_AUTHORIZED_USERS", "")
-                return f"👤 *Авторизовані користувачі*\n\nВаш ID: `{user_id}`\n\nАвторизовані: `{users or 'Не налаштовано'}`", self.menu_builder.build_settings_menu()
+                return (
+                    f"👤 *Авторизовані користувачі*\n\nВаш ID: `{user_id}`\n\nАвторизовані: `{users or 'Не налаштовано'}`",
+                    self.menu_builder.build_settings_menu(),
+                )
 
             return "❌ Невідомі налаштування", self.menu_builder.build_settings_menu()
 
@@ -1179,9 +1238,7 @@ ssh dev-ngrok
                 msg = self.message_formatter.format_task_confirmation(
                     task.description, task.commands, task.is_dangerous
                 )
-                keyboard = self.menu_builder.build_confirmation_menu(
-                    task.task_id, task.description, task.is_dangerous
-                )
+                keyboard = self.menu_builder.build_confirmation_menu(task.task_id, task.description, task.is_dangerous)
                 return msg, keyboard
             # Безпечна задача - виконуємо одразу
             result = await self.task_executor.execute_task(task)
@@ -1211,7 +1268,7 @@ ssh dev-ngrok
 {result[:500]}
 
 Дай коротке пояснення (1-2 речення) що це означає.""",
-                        system="Ти - експерт з DevOps. Поясни просто та зрозуміло."
+                        system="Ти - експерт з DevOps. Поясни просто та зрозуміло.",
                     )
                     return f"{result}\n\n💡 {explanation.content if explanation.success else ''}"
 
@@ -1232,7 +1289,11 @@ ssh dev-ngrok
 
             else:
                 # Загальний чат з LLM Council для складних питань
-                is_complex = len(text.split()) > 15 or "?" in text or any(kw in text.lower() for kw in ["як", "чому", "поясни", "допоможи"])
+                is_complex = (
+                    len(text.split()) > 15
+                    or "?" in text
+                    or any(kw in text.lower() for kw in ["як", "чому", "поясни", "допоможи"])
+                )
 
                 if is_complex:
                     response = await llm_service.run_council(
@@ -1247,7 +1308,7 @@ ssh dev-ngrok
 6. Технічними питаннями
 
 Відповідай детально та професійно українською мовою.""",
-                        max_tokens=1500
+                        max_tokens=1500,
                     )
                     return f"🧠 **LLM Council**\n\n{response.content}" if response.success else "❌ AI недоступний"
                 response = await llm_service.generate_with_routing(
@@ -1261,7 +1322,7 @@ ssh dev-ngrok
 5. Пошук в українських реєстрах
 
 Відповідай коротко та по суті українською мовою. Якщо потрібна команда - вкажи яку.""",
-                    mode="fast"
+                    mode="fast",
                 )
                 return response.content if response.success else "❌ AI недоступний"
 
@@ -1283,16 +1344,26 @@ ssh dev-ngrok
         server_keywords = {
             "статус": "status",
             "диск": "disk",
-            "пам'ять": "memory", "ram": "memory", "память": "memory",
-            "cpu": "cpu", "процесор": "cpu",
-            "docker": "docker", "контейнер": "docker",
-            "kubernetes": "k8s", "k8s": "k8s", "поди": "pods", "pods": "pods",
-            "лог": "logs", "logs": "logs",
-            "рестарт": "restart", "перезапуск": "restart",
+            "пам'ять": "memory",
+            "ram": "memory",
+            "память": "memory",
+            "cpu": "cpu",
+            "процесор": "cpu",
+            "docker": "docker",
+            "контейнер": "docker",
+            "kubernetes": "k8s",
+            "k8s": "k8s",
+            "поди": "pods",
+            "pods": "pods",
+            "лог": "logs",
+            "logs": "logs",
+            "рестарт": "restart",
+            "перезапуск": "restart",
             "ngrok": "ngrok",
             "ssh": "ssh",
             "git": "git",
-            "deploy": "deploy", "деплой": "deploy",
+            "deploy": "deploy",
+            "деплой": "deploy",
         }
 
         for keyword, cmd in server_keywords.items():
@@ -1305,7 +1376,23 @@ ssh dev-ngrok
             return {"type": "search", "query": text}
 
         # Дії (запуск, зупинка, перезапуск сервісів)
-        action_keywords = ["запусти", "зупини", "перезапусти", "start", "stop", "restart", "увімкни", "вимкни", "додай", "add", "провайдер", "provider", "groq", "mistral", "openai"]
+        action_keywords = [
+            "запусти",
+            "зупини",
+            "перезапусти",
+            "start",
+            "stop",
+            "restart",
+            "увімкни",
+            "вимкни",
+            "додай",
+            "add",
+            "провайдер",
+            "provider",
+            "groq",
+            "mistral",
+            "openai",
+        ]
         if any(kw in text_lower for kw in action_keywords):
             return {"type": "action", "query": text, "action_text": text}
 
@@ -1322,22 +1409,31 @@ ssh dev-ngrok
                 if "запусти" in text_lower or "start" in text_lower:
                     result = subprocess.run(
                         ["docker", "compose", "up", "-d"],
-                        check=False, capture_output=True, text=True, timeout=60,
-                        cwd="/Users/dima-mac/Documents/Predator_21"
+                        check=False,
+                        capture_output=True,
+                        text=True,
+                        timeout=60,
+                        cwd="/Users/dima-mac/Documents/Predator_21",
                     )
                     return f"🐳 **Docker Compose запущено**\n```\n{result.stdout[:500]}\n```"
                 if "зупини" in text_lower or "stop" in text_lower:
                     result = subprocess.run(
                         ["docker", "compose", "stop"],
-                        check=False, capture_output=True, text=True, timeout=60,
-                        cwd="/Users/dima-mac/Documents/Predator_21"
+                        check=False,
+                        capture_output=True,
+                        text=True,
+                        timeout=60,
+                        cwd="/Users/dima-mac/Documents/Predator_21",
                     )
                     return f"⏹️ **Docker Compose зупинено**\n```\n{result.stdout[:500]}\n```"
                 if "перезапусти" in text_lower or "restart" in text_lower:
                     result = subprocess.run(
                         ["docker", "compose", "restart"],
-                        check=False, capture_output=True, text=True, timeout=60,
-                        cwd="/Users/dima-mac/Documents/Predator_21"
+                        check=False,
+                        capture_output=True,
+                        text=True,
+                        timeout=60,
+                        cwd="/Users/dima-mac/Documents/Predator_21",
                     )
                     return f"🐳 **Docker Compose перезапущено**\n```\n{result.stdout[:500]}\n```"
 
@@ -1350,15 +1446,21 @@ ssh dev-ngrok
                 if "pull" in text_lower:
                     result = subprocess.run(
                         ["git", "pull"],
-                        check=False, capture_output=True, text=True, timeout=30,
-                        cwd="/Users/dima-mac/Documents/Predator_21"
+                        check=False,
+                        capture_output=True,
+                        text=True,
+                        timeout=30,
+                        cwd="/Users/dima-mac/Documents/Predator_21",
                     )
                     return f"📦 **Git Pull**\n```\n{result.stdout or result.stderr}\n```"
                 if "status" in text_lower or "статус" in text_lower:
                     result = subprocess.run(
                         ["git", "status", "--short"],
-                        check=False, capture_output=True, text=True, timeout=10,
-                        cwd="/Users/dima-mac/Documents/Predator_21"
+                        check=False,
+                        capture_output=True,
+                        text=True,
+                        timeout=10,
+                        cwd="/Users/dima-mac/Documents/Predator_21",
                     )
                     return f"📦 **Git Status**\n```\n{result.stdout or 'Clean'}\n```"
 
@@ -1369,29 +1471,41 @@ ssh dev-ngrok
                     if "логи" in text_lower or "logs" in text_lower:
                         result = subprocess.run(
                             ["docker", "compose", "logs", "--tail=50", service],
-                            check=False, capture_output=True, text=True, timeout=15,
-                            cwd="/Users/dima-mac/Documents/Predator_21"
+                            check=False,
+                            capture_output=True,
+                            text=True,
+                            timeout=15,
+                            cwd="/Users/dima-mac/Documents/Predator_21",
                         )
                         return f"📜 **Логи {service}**\n```\n{result.stdout[-1500:]}\n```"
                     if "перезапусти" in text_lower or "restart" in text_lower:
                         result = subprocess.run(
                             ["docker", "compose", "restart", service],
-                            check=False, capture_output=True, text=True, timeout=30,
-                            cwd="/Users/dima-mac/Documents/Predator_21"
+                            check=False,
+                            capture_output=True,
+                            text=True,
+                            timeout=30,
+                            cwd="/Users/dima-mac/Documents/Predator_21",
                         )
                         return f"🔄 **{service} перезапущено**\n```\n{result.stdout or 'Done'}\n```"
                     if "зупини" in text_lower or "stop" in text_lower:
                         result = subprocess.run(
                             ["docker", "compose", "stop", service],
-                            check=False, capture_output=True, text=True, timeout=15,
-                            cwd="/Users/dima-mac/Documents/Predator_21"
+                            check=False,
+                            capture_output=True,
+                            text=True,
+                            timeout=15,
+                            cwd="/Users/dima-mac/Documents/Predator_21",
                         )
                         return f"⏹️ **{service} зупинено**"
                     if "запусти" in text_lower or "start" in text_lower:
                         result = subprocess.run(
                             ["docker", "compose", "up", "-d", service],
-                            check=False, capture_output=True, text=True, timeout=30,
-                            cwd="/Users/dima-mac/Documents/Predator_21"
+                            check=False,
+                            capture_output=True,
+                            text=True,
+                            timeout=30,
+                            cwd="/Users/dima-mac/Documents/Predator_21",
                         )
                         return f"▶️ **{service} запущено**"
 
@@ -1409,25 +1523,28 @@ ssh dev-ngrok
 Сформуй ОДНУ безпечну shell команду для виконання.
 Формат відповіді: тільки команда, без пояснень, без markdown.
 Якщо команда небезпечна (rm -rf, drop database, тощо) - напиши "UNSAFE:" перед нею.""",
-                system="Ти - DevOps експерт. Генеруй shell команди для macOS."
+                system="Ти - DevOps експерт. Генеруй shell команди для macOS.",
             )
 
             if response.success:
                 cmd = response.content.strip()
 
                 # Перевіряємо безпеку
-                if cmd.startswith("UNSAFE:") or any(danger in cmd for danger in ["rm -rf /", "drop database", "mkfs", "dd if="]):
+                if cmd.startswith("UNSAFE:") or any(
+                    danger in cmd for danger in ["rm -rf /", "drop database", "mkfs", "dd if="]
+                ):
                     return f"⚠️ **Небезпечна операція!**\n\n`{cmd}`\n\nВиконайте вручну якщо впевнені."
 
                 # Виконуємо команду
                 logger.info(f"Executing AI-generated command: {cmd}")
                 result = subprocess.run(
                     cmd,
-                    check=False, shell=True,
+                    check=False,
+                    shell=True,
                     capture_output=True,
                     text=True,
                     timeout=60,
-                    cwd="/Users/dima-mac/Documents/Predator_21"
+                    cwd="/Users/dima-mac/Documents/Predator_21",
                 )
 
                 output = result.stdout or result.stderr or "Виконано без виводу"
@@ -1483,6 +1600,7 @@ $ {cmd}
         # Перевіряємо поточний статус провайдерів
         try:
             from app.services.llm import LLMService
+
             llm = LLMService()
             providers = llm._providers
 
@@ -1495,12 +1613,12 @@ $ {cmd}
                 "mistral": "https://console.mistral.ai/api-keys",
                 "openai": "https://platform.openai.com/api-keys",
                 "together": "https://api.together.xyz/settings/api-keys",
-                "openrouter": "https://openrouter.ai/keys"
+                "openrouter": "https://openrouter.ai/keys",
             }
 
             return f"""🔑 **Додавання провайдера {provider_name.upper()}**
 
-1. Отримай API ключ: {api_key_urls.get(provider_name, 'N/A')}
+1. Отримай API ключ: {api_key_urls.get(provider_name, "N/A")}
 
 2. Додай в `.env`:
 ```
@@ -1565,7 +1683,6 @@ docker compose restart backend
 `/start` або `/menu` — інтерактивне меню
 """
 
-
     async def _cmd_datasets(self, args: str) -> str:
         """/datasets - List available datasets."""
         try:
@@ -1573,27 +1690,32 @@ docker compose restart backend
                 stmt = select(DataSource).order_by(DataSource.created_at.desc()).limit(10)
                 result = await sess.execute(stmt)
                 sources = result.scalars().all()
-                if not sources: return "📭 Немає доступних наборів даних."
+                if not sources:
+                    return "📭 Немає доступних наборів даних."
                 msg = "📚 **Доступні Набори Даних:**\n\n"
                 for s in sources:
                     status_emoji = {"indexed": "✅", "parsing": "🔄", "error": "❌", "draft": "📝"}.get(s.status, "❓")
                     count = s.config.get("last_count", 0) if s.config else 0
                     msg += f"{status_emoji} `{s.name}`\n   🆔 `{s.id!s}`\n   📊 Records: {count}\n\n"
                 return msg
-        except Exception as e: return f"❌ Помилка: {e}"
+        except Exception as e:
+            return f"❌ Помилка: {e}"
 
     async def _cmd_ingest(self, args: str) -> str:
         """/ingest [source_id]."""
-        if not args: return "❌ Вкажіть ID джерела: `/ingest <source_id>`"
+        if not args:
+            return "❌ Вкажіть ID джерела: `/ingest <source_id>`"
         return f"✅ **Ingestion Triggered** for `{args}`\n🆔 Job ID: `job_simulated_123`"
 
     async def _cmd_job_status(self, args: str) -> str:
         """/status [job_id]."""
-        if not args: return "❌ Вкажіть ID задачі: `/job <job_id>`"
+        if not args:
+            return "❌ Вкажіть ID задачі: `/job <job_id>`"
         return f"📊 **Job Status**\n🆔 `{args}`\n🔄 Status: RUNNING (Simulated)"
 
     async def _cmd_server_status(self, args: str) -> str:
-        if args and ("job" in args or len(args) > 10): return await self._cmd_job_status(args)
+        if args and ("job" in args or len(args) > 10):
+            return await self._cmd_job_status(args)
         """Загальний статус сервера"""
         return """📊 **Статус сервера**
 
@@ -1602,15 +1724,16 @@ docker compose restart backend
 🧠 RAM: Перевірте /memory
 ⚡ CPU: Перевірте /cpu
 
-🔗 Ngrok: """ + (f"✅ Активний ({self.last_ngrok.ssh_host}:{self.last_ngrok.ssh_port})" if self.last_ngrok else "⚠️ Очікую дані")
+🔗 Ngrok: """ + (
+            f"✅ Активний ({self.last_ngrok.ssh_host}:{self.last_ngrok.ssh_port})"
+            if self.last_ngrok
+            else "⚠️ Очікую дані"
+        )
 
     async def _cmd_disk_usage(self, args: str) -> str:
         """Використання диску."""
         try:
-            result = subprocess.run(
-                ["df", "-h", "/"],
-                check=False, capture_output=True, text=True, timeout=5
-            )
+            result = subprocess.run(["df", "-h", "/"], check=False, capture_output=True, text=True, timeout=5)
             return f"💾 **Disk Usage**\n```\n{result.stdout}\n```"
         except Exception as e:
             return f"❌ Помилка: {e}"
@@ -1619,20 +1742,22 @@ docker compose restart backend
         """Детальна системна інформація."""
         try:
             import platform
+
             system = platform.system()
 
             output = ""
             if system == "Darwin":  # macOS
                 result = subprocess.run(
-                    ["system_profiler", "SPHardwareDataType"],
-                    check=False, capture_output=True, text=True, timeout=10
+                    ["system_profiler", "SPHardwareDataType"], check=False, capture_output=True, text=True, timeout=10
                 )
                 output = result.stdout
             else:  # Linux
                 # Try lshw (might require sudo, usually fails without)
                 # Fallback to lscpu + free
                 try:
-                    res_lshw = subprocess.run(["lshw", "-short"], check=False, capture_output=True, text=True, timeout=5)
+                    res_lshw = subprocess.run(
+                        ["lshw", "-short"], check=False, capture_output=True, text=True, timeout=5
+                    )
                     if res_lshw.returncode == 0:
                         output = res_lshw.stdout
                     else:
@@ -1640,12 +1765,12 @@ docker compose restart backend
                         res_cpu = subprocess.run(["lscpu"], check=False, capture_output=True, text=True, timeout=5)
                         output = f"LSHW failed/restricted. CPU Info:\n{res_cpu.stdout}"
                 except FileNotFoundError:
-                     res_uname = subprocess.run(["uname", "-a"], check=False, capture_output=True, text=True)
-                     output = f"Basic Info: {res_uname.stdout}"
+                    res_uname = subprocess.run(["uname", "-a"], check=False, capture_output=True, text=True)
+                    output = f"Basic Info: {res_uname.stdout}"
 
             # Filter output to prevent too long message
-            lines = [line for line in output.split('\n') if line.strip()]
-            final_output = "\n".join(lines[:30]) # Limit lines
+            lines = [line for line in output.split("\n") if line.strip()]
+            final_output = "\n".join(lines[:30])  # Limit lines
 
             return f"🖥️ **System Info ({system})**\n```yaml\n{final_output}\n```"
         except Exception as e:
@@ -1655,10 +1780,7 @@ docker compose restart backend
         """RAM використання."""
         try:
             # Mac specific
-            result = subprocess.run(
-                ["vm_stat"],
-                check=False, capture_output=True, text=True, timeout=5
-            )
+            result = subprocess.run(["vm_stat"], check=False, capture_output=True, text=True, timeout=5)
             return f"🧠 **Memory Stats**\n```\n{result.stdout[:500]}\n```"
         except Exception as e:
             return f"❌ Помилка: {e}"
@@ -1667,12 +1789,11 @@ docker compose restart backend
         """CPU використання."""
         try:
             result = subprocess.run(
-                ["top", "-l", "1", "-n", "0"],
-                check=False, capture_output=True, text=True, timeout=10
+                ["top", "-l", "1", "-n", "0"], check=False, capture_output=True, text=True, timeout=10
             )
             # Витягуємо CPU лінію
-            for line in result.stdout.split('\n'):
-                if 'CPU usage' in line:
+            for line in result.stdout.split("\n"):
+                if "CPU usage" in line:
                     return f"⚡ **CPU**\n{line}"
             return f"⚡ **CPU Info**\n```\n{result.stdout[:300]}\n```"
         except Exception as e:
@@ -1681,10 +1802,7 @@ docker compose restart backend
     async def _cmd_uptime(self, args: str) -> str:
         """Аптайм."""
         try:
-            result = subprocess.run(
-                ["uptime"],
-                check=False, capture_output=True, text=True, timeout=5
-            )
+            result = subprocess.run(["uptime"], check=False, capture_output=True, text=True, timeout=5)
             return f"⏰ **Uptime**\n{result.stdout}"
         except Exception as e:
             return f"❌ Помилка: {e}"
@@ -1694,7 +1812,10 @@ docker compose restart backend
         try:
             result = subprocess.run(
                 ["docker", "ps", "--format", "table {{.Names}}\t{{.Status}}\t{{.Ports}}"],
-                check=False, capture_output=True, text=True, timeout=10
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             if result.returncode == 0:
                 return f"🐳 **Docker Containers**\n```\n{result.stdout[:1000]}\n```"
@@ -1706,8 +1827,7 @@ docker compose restart backend
         """K8s статус."""
         try:
             result = subprocess.run(
-                ["kubectl", "cluster-info"],
-                check=False, capture_output=True, text=True, timeout=10
+                ["kubectl", "cluster-info"], check=False, capture_output=True, text=True, timeout=10
             )
             return f"☸️ **Kubernetes**\n```\n{result.stdout[:500]}\n```"
         except Exception as e:
@@ -1718,8 +1838,7 @@ docker compose restart backend
         try:
             ns = args.strip() if args else "default"
             result = subprocess.run(
-                ["kubectl", "get", "pods", "-n", ns],
-                check=False, capture_output=True, text=True, timeout=10
+                ["kubectl", "get", "pods", "-n", ns], check=False, capture_output=True, text=True, timeout=10
             )
             return f"☸️ **Pods ({ns})**\n```\n{result.stdout[:1000]}\n```"
         except Exception as e:
@@ -1737,7 +1856,7 @@ docker compose restart backend
         while i < len(args_parts):
             p = args_parts[i]
             if p in ("--output-dir", "-o") and i + 1 < len(args_parts):
-                outdir = args_parts[i+1]
+                outdir = args_parts[i + 1]
                 i += 1
             elif p in {"--include-secrets", "--no-exclude-secrets"}:
                 exclude_secrets = False
@@ -1753,8 +1872,8 @@ docker compose restart backend
             if proc.returncode != 0:
                 return f"❌ Помилка виконання kubectl dump: {proc.stderr[:1000]}"
             out_lines = proc.stdout.strip().splitlines()
-            tarball = out_lines[-1] if out_lines else ''
-            size_line = out_lines[-2] if len(out_lines) >= 2 else ''
+            tarball = out_lines[-1] if out_lines else ""
+            size_line = out_lines[-2] if len(out_lines) >= 2 else ""
             return f"✅ Kubernetes cluster dump створено: {tarball}\n{size_line}" if tarball else "✅ Dump створено"
         except Exception as e:
             logger.exception(f"Failed to run k8s dump: {e}")
@@ -1765,8 +1884,11 @@ docker compose restart backend
         try:
             result = subprocess.run(
                 ["docker", "compose", "ps"],
-                check=False, capture_output=True, text=True, timeout=10,
-                cwd="/Users/dima-mac/Documents/Predator_21"
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=10,
+                cwd="/Users/dima-mac/Documents/Predator_21",
             )
             return f"📋 **Services**\n```\n{result.stdout[:1000]}\n```"
         except Exception as e:
@@ -1777,8 +1899,7 @@ docker compose restart backend
         service = args.strip() if args else "backend"
         try:
             result = subprocess.run(
-                ["docker", "logs", "--tail", "20", service],
-                check=False, capture_output=True, text=True, timeout=10
+                ["docker", "logs", "--tail", "20", service], check=False, capture_output=True, text=True, timeout=10
             )
             output = result.stdout or result.stderr
             return f"📝 **Logs ({service})**\n```\n{output[:1500]}\n```"
@@ -1793,7 +1914,7 @@ docker compose restart backend
 • Host: `{self.last_ngrok.ssh_host}`
 • Port: `{self.last_ngrok.ssh_port}`
 • HTTP: {self.last_ngrok.http_url}
-• Updated: {self.last_ngrok.parsed_at.strftime('%Y-%m-%d %H:%M:%S')} UTC"""
+• Updated: {self.last_ngrok.parsed_at.strftime("%Y-%m-%d %H:%M:%S")} UTC"""
         return "⚠️ Ngrok дані не отримані. Надішли повідомлення з ngrok URLs."
 
     async def _cmd_ssh_config(self, args: str) -> str:
@@ -1803,7 +1924,7 @@ docker compose restart backend
                 content = f.read()
 
             # Шукаємо блок dev-ngrok
-            pattern = r'(Host\s+dev-ngrok\s*\n(?:[^\n]*\n)*?)(?=Host\s|\Z)'
+            pattern = r"(Host\s+dev-ngrok\s*\n(?:[^\n]*\n)*?)(?=Host\s|\Z)"
             match = re.search(pattern, content, re.IGNORECASE)
 
             if match:
@@ -1832,14 +1953,20 @@ ssh -p {self.last_ngrok.ssh_port} root@{self.last_ngrok.ssh_host}
         try:
             result = subprocess.run(
                 ["git", "status", "-s"],
-                check=False, capture_output=True, text=True, timeout=10,
-                cwd="/Users/dima-mac/Documents/Predator_21"
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=10,
+                cwd="/Users/dima-mac/Documents/Predator_21",
             )
 
             result2 = subprocess.run(
                 ["git", "log", "-1", "--oneline"],
-                check=False, capture_output=True, text=True, timeout=10,
-                cwd="/Users/dima-mac/Documents/Predator_21"
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=10,
+                cwd="/Users/dima-mac/Documents/Predator_21",
             )
 
             return f"""📦 **Git Status**
@@ -1975,7 +2102,7 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
             return f"❌ ArgoCD sync failed: {result}"
         msg = f"🔁 ArgoCD sync initiated for `{app}` — Response: {json.dumps(result) if isinstance(result, dict) else result}"
         # If user asked to wait (e.g., '/argocd_sync confirm predator-nvidia wait'), wait for completion
-        if 'wait' in args:
+        if "wait" in args:
             wait_ok, wait_result = await self._wait_for_argocd_sync(server, token, app, timeout=180)
             if wait_ok:
                 return msg + "\n\n✅ ArgoCD sync completed: " + wait_result
@@ -1984,7 +2111,7 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
         try:
             # Prefer chat from incoming request, else fallback to default chat
             chat = None
-            if hasattr(self, 'requesting_user_id'):
+            if hasattr(self, "requesting_user_id"):
                 chat = self.requesting_user_id
             # spawn background notification task - don't await
             asyncio.create_task(self._notify_argocd_sync_result(server, token, app, chat))
@@ -2003,18 +2130,18 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
                 ok, res = await self._call_argocd_api(server, token, "GET", f"/applications/{app}")
                 if not ok:
                     return False, f"API call failed: {res}"
-                status = res.get('status', {})
-                op_state = status.get('operationState') or {}
-                phase = op_state.get('phase')
-                sync_status = status.get('sync', {}).get('status')
+                status = res.get("status", {})
+                op_state = status.get("operationState") or {}
+                phase = op_state.get("phase")
+                sync_status = status.get("sync", {}).get("status")
                 if not op_state:
                     # No operation - no sync in progress
-                    if sync_status == 'Synced':
-                        return True, 'Synced'
+                    if sync_status == "Synced":
+                        return True, "Synced"
                     # if no op and not synced, just return current sync state
-                    return False, f'Sync status: {sync_status or "Unknown"}'
-                if phase in ('Succeeded', 'Failed', 'Error'):
-                    if phase == 'Succeeded' and sync_status == 'Synced':
+                    return False, f"Sync status: {sync_status or 'Unknown'}"
+                if phase in ("Succeeded", "Failed", "Error"):
+                    if phase == "Succeeded" and sync_status == "Synced":
                         return True, f"Phase: {phase}, Sync: {sync_status}"
                     return False, f"Phase: {phase}, Sync: {sync_status}"
                 # else still running
@@ -2040,11 +2167,11 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
         if not ok:
             return f"❌ ArgoCD API error: {res}"
 
-        status = res.get('status', {})
-        sync = status.get('sync', {}).get('status', 'Unknown')
-        health = status.get('health', {}).get('status', 'Unknown')
-        op_state = status.get('operationState') or {}
-        phase = op_state.get('phase', 'Idle')
+        status = res.get("status", {})
+        sync = status.get("sync", {}).get("status", "Unknown")
+        health = status.get("health", {}).get("status", "Unknown")
+        op_state = status.get("operationState") or {}
+        phase = op_state.get("phase", "Idle")
         msg = f"📋 ArgoCD — {app}\n• Sync: {sync}\n• Health: {health}\n• Operation: {phase}"
 
         # Wait if requested
@@ -2064,8 +2191,8 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
 
         args_parts = args.strip().split()
         confirm = False
-        app = 'predator-nvidia'
-        if args_parts and args_parts[0] == 'confirm':
+        app = "predator-nvidia"
+        if args_parts and args_parts[0] == "confirm":
             confirm = True
             if len(args_parts) > 1:
                 app = args_parts[1]
@@ -2075,11 +2202,13 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
         if not confirm:
             return "⚠️ Для підтвердження виконайте: `/argocd_rollback confirm [app]`"
 
-        server, token = self._get_argocd_credentials('nvidia')
+        server, token = self._get_argocd_credentials("nvidia")
         if not server or not token:
             return "❌ ArgoCD credentials not configured."
 
-        ok, result = await self._call_argocd_api(server, token, 'POST', f'/applications/{app}/rollback', json_payload={'revision': 'previous'})
+        ok, result = await self._call_argocd_api(
+            server, token, "POST", f"/applications/{app}/rollback", json_payload={"revision": "previous"}
+        )
         if ok:
             # Notify and return
             # schedule async notify
@@ -2137,12 +2266,15 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
             return False
         return (self.requesting_user_id is not None) and (self.requesting_user_id in self.authorized_users)
 
-    def _log_audit(self, user_id: int, command: str, success: bool, message: str = '') -> None:
+    def _log_audit(self, user_id: int, command: str, success: bool, message: str = "") -> None:
         """Write an audit entry into a local log (append)."""
         try:
             import datetime as _dt
-            line = f"{_dt.datetime.utcnow().isoformat()}Z user={user_id} success={success} cmd={command} msg={message}\n"
-            with open(self.audit_log_path, 'a') as af:
+
+            line = (
+                f"{_dt.datetime.utcnow().isoformat()}Z user={user_id} success={success} cmd={command} msg={message}\n"
+            )
+            with open(self.audit_log_path, "a") as af:
                 af.write(line)
         except Exception as e:
             logger.debug(f"Failed to write audit log: {e}")
@@ -2150,16 +2282,40 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
     async def _restart_ngrok_on_server(self) -> ServerAction:
         """Tries to restart ngrok on the remote host via SSH alias 'dev-ngrok'."""
         try:
-            cmd = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=10", "dev-ngrok", "sudo", "systemctl", "restart", "ngrok-ssh.service"]
+            cmd = [
+                "ssh",
+                "-o",
+                "BatchMode=yes",
+                "-o",
+                "ConnectTimeout=10",
+                "dev-ngrok",
+                "sudo",
+                "systemctl",
+                "restart",
+                "ngrok-ssh.service",
+            ]
             proc = subprocess.run(cmd, check=False, capture_output=True, text=True, timeout=30)
             if proc.returncode == 0:
                 # get status
-                status_proc = subprocess.run(["ssh", "dev-ngrok", "sudo", "systemctl", "status", "ngrok-ssh.service", "--no-pager", "-n", "20"], check=False, capture_output=True, text=True, timeout=20)
+                status_proc = subprocess.run(
+                    ["ssh", "dev-ngrok", "sudo", "systemctl", "status", "ngrok-ssh.service", "--no-pager", "-n", "20"],
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                    timeout=20,
+                )
                 return ServerAction(action="restart_ngrok", success=True, output=status_proc.stdout)
             # fallback: try to kill and restart
             fallback_cmd = "ssh -o BatchMode=yes -o ConnectTimeout=10 dev-ngrok 'pkill ngrok || true; nohup /usr/local/bin/ngrok tcp 22 --log /var/log/ngrok.log >/dev/null 2>&1 &; sleep 2; echo started'"
-            fallback_proc = subprocess.run(fallback_cmd, check=False, shell=True, capture_output=True, text=True, timeout=30)
-            return ServerAction(action="restart_ngrok", success=(fallback_proc.returncode==0), output=fallback_proc.stdout, error=fallback_proc.stderr)
+            fallback_proc = subprocess.run(
+                fallback_cmd, check=False, shell=True, capture_output=True, text=True, timeout=30
+            )
+            return ServerAction(
+                action="restart_ngrok",
+                success=(fallback_proc.returncode == 0),
+                output=fallback_proc.stdout,
+                error=fallback_proc.stderr,
+            )
         except Exception as e:
             return ServerAction(action="restart_ngrok", success=False, output="", error=str(e))
 
@@ -2212,13 +2368,13 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
         key = parts[1]
 
         if llm_service.add_api_key(provider, key):
-             return f"✅ Ключ успішно додано для **{provider}** і збережено в конфігурації."
+            return f"✅ Ключ успішно додано для **{provider}** і збережено в конфігурації."
         return f"❌ Не вдалося додати ключ. Перевірте назву провайдера ({', '.join(llm_service.providers.keys())})."
 
     async def _cmd_set_model(self, args: str) -> str:
         """Змінити модель: /set_model provider model."""
         if not args:
-             return "❌ Формат: `/set_model provider model`"
+            return "❌ Формат: `/set_model provider model`"
 
         parts = args.split()
         if len(parts) < 2:
@@ -2242,18 +2398,18 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
         if action in ("on", "true", "1"):
             self.auto_restart_ngrok = True
             try:
-                with open(self.state_file_path, 'w') as sf:
-                    json.dump({'auto_deploy_on_up': self.auto_deploy_on_up, 'auto_restart_ngrok': True}, sf)
+                with open(self.state_file_path, "w") as sf:
+                    json.dump({"auto_deploy_on_up": self.auto_deploy_on_up, "auto_restart_ngrok": True}, sf)
             except Exception:
-                logger.debug('Failed to persist bot state')
+                logger.debug("Failed to persist bot state")
             return "✅ Автоматичний перезапуск ngrok увімкнено"
         if action in ("off", "false", "0"):
             self.auto_restart_ngrok = False
             try:
-                with open(self.state_file_path, 'w') as sf:
-                    json.dump({'auto_deploy_on_up': self.auto_deploy_on_up, 'auto_restart_ngrok': False}, sf)
+                with open(self.state_file_path, "w") as sf:
+                    json.dump({"auto_deploy_on_up": self.auto_deploy_on_up, "auto_restart_ngrok": False}, sf)
             except Exception:
-                logger.debug('Failed to persist bot state')
+                logger.debug("Failed to persist bot state")
             return "✅ Автоматичний перезапуск ngrok вимкнено"
         if action in {"status", ""}:
             return f"🔁 AUTO_RESTART_NGROK={'true' if self.auto_restart_ngrok else 'false'}"
@@ -2274,7 +2430,6 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
         parts = args.split()
         command = parts[0].lower()
 
-
         try:
             # Handle 'add provider'
             if command == "add" and len(parts) > 1 and parts[1] == "provider":
@@ -2290,9 +2445,10 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
                         name = item.split("=", 1)[1]
                     elif item.startswith("--key="):
                         key = item.split("=", 1)[1]
-                    elif "--name" in parts and item != "--name": # handle space separated
+                    elif "--name" in parts and item != "--name":  # handle space separated
                         idx = parts.index("--name")
-                        if idx + 1 < len(parts): name = parts[idx+1]
+                        if idx + 1 < len(parts):
+                            name = parts[idx + 1]
 
                 if not name:
                     return "❌ Error: Missing --name parameter"
@@ -2301,12 +2457,14 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
                 # But strict CLI mode requires flags or sequence
 
                 if not key and len(parts) >= 4 and not parts[3].startswith("--"):
-                     # Assume format: add provider Groq key
-                     name = parts[2]
-                     key = parts[3]
+                    # Assume format: add provider Groq key
+                    name = parts[2]
+                    key = parts[3]
 
                 if not key:
-                    return f"⚠️ Provider **{name}** needs a key.\nUse: `predator add provider --name={name} --key=YOUR_KEY`"
+                    return (
+                        f"⚠️ Provider **{name}** needs a key.\nUse: `predator add provider --name={name} --key=YOUR_KEY`"
+                    )
 
                 # Execute logic
                 if llm_service.add_api_key(name.lower(), key):
@@ -2324,11 +2482,7 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
     # ==================== TELEGRAM API ====================
 
     async def send_message(
-        self,
-        chat_id: int,
-        text: str,
-        parse_mode: str = "Markdown",
-        reply_markup: dict | None = None
+        self, chat_id: int, text: str, parse_mode: str = "Markdown", reply_markup: dict | None = None
     ) -> bool:
         """Відправляє повідомлення."""
         if not self.enabled:
@@ -2336,11 +2490,7 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
 
         try:
             async with httpx.AsyncClient() as client:
-                data = {
-                    "chat_id": chat_id,
-                    "text": text,
-                    "parse_mode": parse_mode
-                }
+                data = {"chat_id": chat_id, "text": text, "parse_mode": parse_mode}
                 if reply_markup:
                     data["reply_markup"] = json.dumps(reply_markup)
 
@@ -2354,10 +2504,7 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
         """Відповідає на callback query."""
         try:
             async with httpx.AsyncClient() as client:
-                await client.post(
-                    f"{self.api_url}/answerCallbackQuery",
-                    json={"callback_query_id": callback_id}
-                )
+                await client.post(f"{self.api_url}/answerCallbackQuery", json={"callback_query_id": callback_id})
                 return True
         except Exception as e:
             logger.exception(f"Failed to answer callback: {e}")
@@ -2368,8 +2515,7 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    f"{self.api_url}/setWebhook",
-                    json={"url": url, "allowed_updates": ["message", "callback_query"]}
+                    f"{self.api_url}/setWebhook", json={"url": url, "allowed_updates": ["message", "callback_query"]}
                 )
                 result = response.json()
                 return result.get("ok", False)
@@ -2391,10 +2537,7 @@ ssh dev-ngrok 'cd /root/predator && docker compose restart'
         """Отримує оновлення (polling mode)."""
         try:
             async with httpx.AsyncClient(timeout=timeout + 10) as client:
-                response = await client.get(
-                    f"{self.api_url}/getUpdates",
-                    params={"offset": offset, "timeout": timeout}
-                )
+                response = await client.get(f"{self.api_url}/getUpdates", params={"offset": offset, "timeout": timeout})
                 result = response.json()
                 return result.get("result", [])
         except Exception as e:

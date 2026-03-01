@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Union
+from typing import Any
 
 
 """
@@ -12,17 +12,23 @@ Provides a unified interface for distributing data to multiple storage backends.
 from datetime import datetime
 from enum import Enum
 import logging
-from typing import Dict, List
 
 
 try:
     from pydantic import BaseModel, Field
 except ImportError:
+
     class BaseModel:
         def __init__(self, **kwargs):
-            for k, v in kwargs.items(): setattr(self, k, v)
-        def dict(self): return self.__dict__
-    def Field(*args, **kwargs): return None
+            for k, v in kwargs.items():
+                setattr(self, k, v)
+
+        def dict(self):
+            return self.__dict__
+
+    def Field(*args, **kwargs):
+        return None
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -31,6 +37,7 @@ logger = logging.getLogger(__name__)
 
 class DistributionTarget(Enum):
     """Supported distribution targets."""
+
     MINIO = "minio"
     POSTGRESQL = "postgresql"
     QUADRANT = "quadrant"
@@ -82,7 +89,7 @@ class DistributionConfig(BaseModel):
                     "postgresql_table": "people_data",
                     "quadrant_collection": "people_embeddings",
                     "opensearch_index": "people_index",
-                    "batch_size": 100
+                    "batch_size": 100,
                 }
             ]
         }
@@ -95,7 +102,7 @@ class DataDistributor:
     It provides a unified interface and handles error management across different targets.
     """
 
-    def __init__(self, config: dict[str, Any | None] = None):
+    def __init__(self, config: dict[str, Any | None] | None = None):
         """Initialize the data distributor.
 
         Args:
@@ -105,7 +112,7 @@ class DataDistributor:
         self.adapters = {}
         self._initialize_adapters()
 
-    def _load_config(self, config: dict[str, Any | None] = None) -> DistributionConfig:
+    def _load_config(self, config: dict[str, Any | None] | None = None) -> DistributionConfig:
         """Load and validate configuration."""
         if config is None:
             config = {}
@@ -122,36 +129,35 @@ class DataDistributor:
 
             # Initialize adapters with configuration
             self.adapters[DistributionTarget.MINIO.value] = MinIOAdapter(
-                enabled=self.config.minio_enabled,
-                bucket_name=self.config.minio_bucket
+                enabled=self.config.minio_enabled, bucket_name=self.config.minio_bucket
             )
 
             self.adapters[DistributionTarget.POSTGRESQL.value] = PostgreSQLAdapter(
-                enabled=self.config.postgresql_enabled,
-                table_name=self.config.postgresql_table
+                enabled=self.config.postgresql_enabled, table_name=self.config.postgresql_table
             )
 
             self.adapters[DistributionTarget.QUADRANT.value] = QuadrantAdapter(
-                enabled=self.config.quadrant_enabled,
-                collection_name=self.config.quadrant_collection
+                enabled=self.config.quadrant_enabled, collection_name=self.config.quadrant_collection
             )
 
             self.adapters[DistributionTarget.OPENSEARCH.value] = OpenSearchAdapter(
-                enabled=self.config.opensearch_enabled,
-                index_name=self.config.opensearch_index
+                enabled=self.config.opensearch_enabled, index_name=self.config.opensearch_index
             )
 
             logger.info("All distribution adapters initialized successfully")
 
         except ImportError as e:
-            logger.error(f"Failed to import adapter modules: {e}")
+            logger.exception(f"Failed to import adapter modules: {e}")
             raise
         except Exception as e:
-            logger.error(f"Failed to initialize adapters: {e}")
+            logger.exception(f"Failed to initialize adapters: {e}")
             raise
 
-    def distribute(self, data: dict[str |  Any, list[dict[str, Any]]],
-                   targets: DistributionTarget |  list[DistributionTarget] = DistributionTarget.ALL) -> list[DistributionResult]:
+    def distribute(
+        self,
+        data: dict[str | Any, list[dict[str, Any]]],
+        targets: DistributionTarget | list[DistributionTarget] = DistributionTarget.ALL,
+    ) -> list[DistributionResult]:
         """Distribute data to specified targets.
 
         Args:
@@ -170,7 +176,8 @@ class DataDistributor:
         # Handle DistributionTarget.ALL
         if DistributionTarget.ALL in targets:
             targets = [
-                target for target in DistributionTarget
+                target
+                for target in DistributionTarget
                 if target != DistributionTarget.ALL and self._is_target_enabled(target)
             ]
 
@@ -199,7 +206,7 @@ class DataDistributor:
 
             except Exception as e:
                 error_msg = f"Distribution to {target.value} failed: {e!s}"
-                logger.error(error_msg)
+                logger.exception(error_msg)
                 results.append(DistributionResult(False, target.value, error=error_msg))
 
         return results
@@ -230,7 +237,7 @@ class DataDistributor:
         """Get the adapter for a specific target."""
         return self.adapters.get(target.value)
 
-    def validate_data_for_distribution(self, data: dict[str |  Any, list[dict[str, Any]]]) -> DistributionResult:
+    def validate_data_for_distribution(self, data: dict[str | Any, list[dict[str, Any]]]) -> DistributionResult:
         """Validate that data is suitable for distribution.
 
         Args:
@@ -252,28 +259,27 @@ class DataDistributor:
                 for i, item in enumerate(data):
                     if not isinstance(item, dict):
                         return DistributionResult(
-                            False, "validation",
-                            error=f"Item {i} is not a dictionary: {type(item)}"
+                            False, "validation", error=f"Item {i} is not a dictionary: {type(item)}"
                         )
             elif isinstance(data, dict):
                 # Single record validation
                 pass
             else:
-                return DistributionResult(
-                    False, "validation",
-                    error=f"Unsupported data type: {type(data)}"
-                )
+                return DistributionResult(False, "validation", error=f"Unsupported data type: {type(data)}")
 
             return DistributionResult(True, "validation", data={"message": "Data validation passed"})
 
         except Exception as e:
             error_msg = f"Data validation failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "validation", error=error_msg)
 
-    def distribute_batch(self, data: list[dict[str, Any]],
-                        targets: DistributionTarget |  list[DistributionTarget] = DistributionTarget.ALL,
-                        batch_size: int | None = None) -> list[DistributionResult]:
+    def distribute_batch(
+        self,
+        data: list[dict[str, Any]],
+        targets: DistributionTarget | list[DistributionTarget] = DistributionTarget.ALL,
+        batch_size: int | None = None,
+    ) -> list[DistributionResult]:
         """Distribute data in batches.
 
         Args:
@@ -296,8 +302,8 @@ class DataDistributor:
 
             # Process in batches
             for i in range(0, len(data), batch_size):
-                batch = data[i:i + batch_size]
-                logger.info(f"Processing batch {i//batch_size + 1}: {len(batch)} records")
+                batch = data[i : i + batch_size]
+                logger.info(f"Processing batch {i // batch_size + 1}: {len(batch)} records")
 
                 batch_results = self.distribute(batch, targets)
                 results.extend(batch_results)
@@ -306,7 +312,7 @@ class DataDistributor:
 
         except Exception as e:
             error_msg = f"Batch distribution failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return [DistributionResult(False, "batch", error=error_msg)]
 
     def get_distribution_stats(self) -> dict[str, Any]:
@@ -314,11 +320,11 @@ class DataDistributor:
         return {
             "enabled_targets": [target.value for target in self.get_enabled_targets()],
             "config": self.config.dict(),
-            "adapters_initialized": list(self.adapters.keys())
+            "adapters_initialized": list(self.adapters.keys()),
         }
 
 
-def create_data_distributor(config: dict[str, Any | None] = None) -> DataDistributor:
+def create_data_distributor(config: dict[str, Any | None] | None = None) -> DataDistributor:
     """Factory function to create a DataDistributor instance.
 
     Args:

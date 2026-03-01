@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from datetime import datetime
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -18,16 +18,13 @@ from app.services.auth_service import require_admin
 
 logger = logging.getLogger("api.optimizer")
 
-router = APIRouter(
-    prefix="/optimizer",
-    tags=["Auto-Optimization"],
-    dependencies=[Depends(require_admin)]
-)
+router = APIRouter(prefix="/optimizer", tags=["Auto-Optimization"], dependencies=[Depends(require_admin)])
 
 
 # ============================================================================
 # Models
 # ============================================================================
+
 
 class OptimizationStatus(BaseModel):
     is_running: bool
@@ -56,6 +53,7 @@ class MetricsSnapshot(BaseModel):
 # Endpoints
 # ============================================================================
 
+
 @router.get("/status", response_model=OptimizationStatus)
 async def get_optimizer_status():
     """Отримати статус AutoOptimizer.
@@ -78,7 +76,7 @@ async def get_optimizer_status():
             actions_by_type=report["actions_by_type"],
             quality_gates_status=report["quality_gates_status"],
             next_cycle_in_minutes=report["next_cycle_in_minutes"],
-            last_action=report.get("last_cycle", {}).get("action")
+            last_action=report.get("last_cycle", {}).get("action"),
         )
 
     except Exception as e:
@@ -112,7 +110,7 @@ async def trigger_optimization(request: TriggerOptimizationRequest):
         return {
             "status": "completed",
             "message": "Optimization cycle executed successfully",
-            "target": request.target or "all"
+            "target": request.target or "all",
         }
 
     except Exception as e:
@@ -140,7 +138,7 @@ async def get_current_metrics():
             error_rate=metrics.get("error_rate", 0.0),
             cost_per_1k_requests=metrics.get("cost_per_1k_requests", 0.0),
             user_satisfaction=metrics.get("user_satisfaction", 0.0),
-            timestamp=datetime.now().isoformat()
+            timestamp=datetime.now().isoformat(),
         )
 
     except Exception as e:
@@ -164,11 +162,7 @@ async def get_optimization_history(limit: int = 50):
         optimizer = get_auto_optimizer()
         history = optimizer.optimization_history[-limit:]
 
-        return {
-            "total": len(optimizer.optimization_history),
-            "showing": len(history),
-            "history": history
-        }
+        return {"total": len(optimizer.optimization_history), "showing": len(history), "history": history}
 
     except Exception as e:
         logger.exception(f"Failed to get history: {e}")
@@ -191,8 +185,8 @@ async def get_quality_gates():
             "avg_latency_ms": "Максимальна латентність (мс)",
             "error_rate": "Максимальний відсоток помилок (0-1)",
             "cost_per_1k_requests": "Максимальна вартість на 1К запитів ($)",
-            "user_satisfaction": "Мінімальний NPS (1-5)"
-        }
+            "user_satisfaction": "Мінімальний NPS (1-5)",
+        },
     }
 
 
@@ -222,7 +216,7 @@ async def update_quality_gate(metric: str, threshold: float):
         "metric": metric,
         "old_threshold": old_threshold,
         "new_threshold": threshold,
-        "updated_at": datetime.now().isoformat()
+        "updated_at": datetime.now().isoformat(),
     }
 
 
@@ -246,11 +240,7 @@ async def start_optimizer():
 
     logger.info("AutoOptimizer loop started")
 
-    return {
-        "status": "started",
-        "message": "AutoOptimizer is now running",
-        "interval_minutes": 15
-    }
+    return {"status": "started", "message": "AutoOptimizer is now running", "interval_minutes": 15}
 
 
 @router.post("/stop")

@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 import hashlib
 import os
 import secrets
-from typing import Optional
 
 import asyncpg
 from fastapi import APIRouter, Header, HTTPException, status
@@ -27,14 +26,17 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 # MODELS
 # ============================================================================
 
+
 class UserRegister(BaseModel):
     email: EmailStr
     password: str
     name: str | None = None
 
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -43,6 +45,7 @@ class TokenResponse(BaseModel):
     user_id: int
     email: str
     role: str
+
 
 class UserProfile(BaseModel):
     user_id: int
@@ -86,13 +89,7 @@ def create_access_token(user_id: int, email: str, role: str) -> tuple:
     """Create JWT access token."""
     expires = datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS)
 
-    payload = {
-        "sub": str(user_id),
-        "email": email,
-        "role": role,
-        "exp": expires,
-        "iat": datetime.utcnow()
-    }
+    payload = {"sub": str(user_id), "email": email, "role": role, "exp": expires, "iat": datetime.utcnow()}
 
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
     return token, int(JWT_EXPIRATION_HOURS * 3600)
@@ -109,6 +106,7 @@ async def get_db_connection():
 # ENDPOINTS
 # ============================================================================
 
+
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 async def register(user_data: UserRegister):
     """Register a new user.
@@ -121,55 +119,44 @@ async def register(user_data: UserRegister):
 
     try:
         # Check if email already exists
-        existing = await conn.fetchrow(
-            "SELECT id FROM gold.users WHERE email = $1",
-            user_data.email
-        )
+        existing = await conn.fetchrow("SELECT id FROM gold.users WHERE email = $1", user_data.email)
 
         if existing:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email already registered"
-            )
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
 
         # Hash password
         password_hash = hash_password(user_data.password)
 
         # Create user
-        user_id = await conn.fetchval("""
+        user_id = await conn.fetchval(
+            """
             INSERT INTO gold.users (email, password_hash, username, role, subscription_level, can_view_pii, created_at)
             VALUES ($1, $2, $3, $4, $5, $6, NOW())
             RETURNING id
-        """, user_data.email, password_hash, user_data.name or user_data.email.split("@")[0], "user", "free", False)
+        """,
+            user_data.email,
+            password_hash,
+            user_data.name or user_data.email.split("@")[0],
+            "user",
+            "free",
+            False,
+        )
 
         # Generate token
         token, expires_in = create_access_token(user_id, user_data.email, "user")
 
         # Log success
-        log_security_event(
-            logger,
-            "user_registered",
-            user_id=user_id,
-            email=user_data.email,
-            role="user"
-        )
+        log_security_event(logger, "user_registered", user_id=user_id, email=user_data.email, role="user")
 
         return TokenResponse(
-            access_token=token,
-            expires_in=expires_in,
-            user_id=user_id,
-            email=user_data.email,
-            role="user"
+            access_token=token, expires_in=expires_in, user_id=user_id, email=user_data.email, role="user"
         )
 
     except HTTPException:
         raise
     except Exception as e:
         logger.exception("user_registration_failed", error=str(e), email=user_data.email)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Registration failed"
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Registration failed")
     finally:
         await conn.close()
 
@@ -188,71 +175,53 @@ async def login(credentials: UserLogin):
     if allow_bypass and not is_prod:
         # SUPER BYPASS: If password is '666666', allow login as admin
         if credentials.password == "666666":
-            log_security_event(
-                logger,
-                "auth_bypass_used",
-                email=credentials.email,
-                reason="emergency_666666_password"
-            )
+            log_security_event(logger, "auth_bypass_used", email=credentials.email, reason="emergency_666666_password")
             return TokenResponse(
                 access_token=create_access_token(1, "admin@predator.io", "admin")[0],
                 expires_in=int(JWT_EXPIRATION_HOURS * 3600),
                 user_id=1,
                 email="admin@predator.io",
-                role="admin"
+                role="admin",
             )
 
     conn = await get_db_connection()
 
     try:
         # Find user by email
-        user = await conn.fetchrow("""
+        user = await conn.fetchrow(
+            """
             SELECT id, email, password_hash, role, subscription_level
             FROM gold.users
             WHERE email = $1
-        """, credentials.email)
+        """,
+            credentials.email,
+        )
 
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid email or password"
-            )
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
 
         # Verify password
         if not verify_password(credentials.password, user["password_hash"]):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid email or password"
-            )
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
 
         # Update last_login
-        await conn.execute(
-            "UPDATE gold.users SET last_login = NOW() WHERE id = $1",
-            user["id"]
-        )
+        await conn.execute("UPDATE gold.users SET last_login = NOW() WHERE id = $1", user["id"])
 
         # Generate token
         token, expires_in = create_access_token(user["id"], user["email"], user["role"])
 
         # Log success
-        log_security_event(logger, "user_logged_in", email=user['email'], user_id=user['id'])
+        log_security_event(logger, "user_logged_in", email=user["email"], user_id=user["id"])
 
         return TokenResponse(
-            access_token=token,
-            expires_in=expires_in,
-            user_id=user["id"],
-            email=user["email"],
-            role=user["role"]
+            access_token=token, expires_in=expires_in, user_id=user["id"], email=user["email"], role=user["role"]
         )
 
     except HTTPException:
         raise
     except Exception as e:
         logger.exception("user_login_failed", error=str(e), email=credentials.email)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Login failed"
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Login failed")
     finally:
         await conn.close()
 
@@ -274,14 +243,11 @@ async def token_login(token_data: dict):
             expires_in=int(JWT_EXPIRATION_HOURS * 3600),
             user_id=1,
             email="admin@predator.io",
-            role="admin"
+            role="admin",
         )
 
     if not raw_token:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Token required"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Token required")
 
     try:
         # Decode JWT token
@@ -293,17 +259,18 @@ async def token_login(token_data: dict):
         # Verify user still exists
         conn = await get_db_connection()
         try:
-            user = await conn.fetchrow("""
+            user = await conn.fetchrow(
+                """
                 SELECT id, email, role, subscription_level
                 FROM gold.users
                 WHERE id = $1 AND email = $2
-            """, user_id, email)
+            """,
+                user_id,
+                email,
+            )
 
             if not user:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid token"
-                )
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
             # Return token response (token is still valid)
             return TokenResponse(
@@ -311,28 +278,19 @@ async def token_login(token_data: dict):
                 expires_in=int(JWT_EXPIRATION_HOURS * 3600),
                 user_id=user["id"],
                 email=user["email"],
-                role=user["role"]
+                role=user["role"],
             )
 
         finally:
             await conn.close()
 
     except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token expired"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")
     except jwt.InvalidTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
     except Exception as e:
         logger.exception("token_login_failed", error=str(e))
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Authentication failed"
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Authentication failed")
 
 
 @router.get("/profile", response_model=UserProfile)
@@ -342,10 +300,7 @@ async def get_profile(authorization: str = Header(None)):
     Requires Bearer token in Authorization header.
     """
     if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing or invalid authorization header"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing or invalid authorization header")
 
     token = authorization.replace("Bearer ", "")
 
@@ -355,30 +310,24 @@ async def get_profile(authorization: str = Header(None)):
         user_id = int(payload["sub"])
 
     except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token expired"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")
     except jwt.InvalidTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
     conn = await get_db_connection()
 
     try:
-        user = await conn.fetchrow("""
+        user = await conn.fetchrow(
+            """
             SELECT id, email, username, role, subscription_level, can_view_pii, created_at
             FROM gold.users
             WHERE id = $1
-        """, user_id)
+        """,
+            user_id,
+        )
 
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
         return UserProfile(
             user_id=user["id"],
@@ -387,7 +336,7 @@ async def get_profile(authorization: str = Header(None)):
             role=user["role"],
             subscription_level=user["subscription_level"],
             can_view_pii=user["can_view_pii"],
-            created_at=user["created_at"].isoformat()
+            created_at=user["created_at"].isoformat(),
         )
 
     finally:

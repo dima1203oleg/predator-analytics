@@ -9,7 +9,7 @@ import asyncio
 import json
 import logging
 import os
-from typing import Any, Dict
+from typing import Any
 import uuid
 
 import numpy as np
@@ -27,22 +27,26 @@ from app.models import MLJob, SICycle
 # Optional DevOps libs
 try:
     from kubernetes import client, config
+
     K8S_AVAILABLE = True
 except ImportError:
     K8S_AVAILABLE = False
 
 try:
     from prometheus_api_client import PrometheusConnect
+
     PROM_AVAILABLE = True
 except ImportError:
     PROM_AVAILABLE = False
 
 logger = logging.getLogger("service.si_orchestrator")
 
+
 class SignalCollector:
     """Collects observability signals for the Self-Improvement Loop.
     Sources: Prometheus, OpenSearch Analytics, Cost APIs.
     """
+
     def __init__(self):
         self.prom_url = os.getenv("PROMETHEUS_URL", "http://predator-prometheus:9090")
         self.prom = None
@@ -57,12 +61,12 @@ class SignalCollector:
         Returns: Dict[metric_name, value].
         """
         signals = {
-            "ndcg_at_10": 0.85, # Default baseline (mock)
+            "ndcg_at_10": 0.85,  # Default baseline (mock)
             "latency_p95": 450,
             "gpu_utilization": 0.0,
             "cost_daily": 15.5,
             "etl_backlog": 0,
-            "error_rate": 0.0
+            "error_rate": 0.0,
         }
 
         # 1. Prometheus Signals (Real)
@@ -84,17 +88,13 @@ class SignalCollector:
 
         return signals
 
+
 class SIOrchestrator:
     """♾️ Self-Improvement Orchestrator (v45.0).
     Manages the autonomous lifecycle: Monitor -> Diagnose -> Train -> Deploy.
     """
 
-    THRESHOLDS = {
-        "ndcg_at_10_min": 0.80,
-        "latency_p95_max": 800,
-        "error_rate_max": 0.01,
-        "cost_daily_max": 50.0
-    }
+    THRESHOLDS = {"ndcg_at_10_min": 0.80, "latency_p95_max": 800, "error_rate_max": 0.01, "cost_daily_max": 50.0}
 
     def __init__(self):
         self.collector = SignalCollector()
@@ -121,6 +121,7 @@ class SIOrchestrator:
         # Check for system lockdown
         try:
             from app.services.system_control_service import system_control_service
+
             if await system_control_service.is_lockdown():
                 logger.warning(f"SI Cycle {cycle_id} SKIPPED: SYSTEM LOCKDOWN active.")
                 return
@@ -143,10 +144,10 @@ class SIOrchestrator:
         async with async_session_maker() as session:
             cycle = SICycle(
                 id=cycle_id,
-                tenant_id=uuid.uuid4(), # System tenant
+                tenant_id=uuid.uuid4(),  # System tenant
                 trigger_type=diagnosis["trigger"],
                 status="running",
-                diagnostic_ref=json.dumps(diagnosis)
+                diagnostic_ref=json.dumps(diagnosis),
             )
             session.add(cycle)
             await session.commit()
@@ -174,9 +175,9 @@ class SIOrchestrator:
 
         # Performance Check
         if signals["latency_p95"] > self.THRESHOLDS["latency_p95_max"]:
-             report["action_required"] = True
-             report["trigger"] = "latency_spike"
-             report["plan"].append("scale_replicas")
+            report["action_required"] = True
+            report["trigger"] = "latency_spike"
+            report["plan"].append("scale_replicas")
 
         return report
 
@@ -204,14 +205,14 @@ class SIOrchestrator:
 
                 # Prepare candidates for augmentor
                 doc_dicts = [{"id": str(d.id), "content": d.content, "title": d.title} for d in docs]
-                system_tenant = uuid.uuid4() # Or use a real tenant from context
+                system_tenant = uuid.uuid4()  # Or use a real tenant from context
 
                 # 2. Augment
                 augmentor = get_augmentor()
                 augmented_records = augmentor.augment_dataset(
                     doc_dicts,
                     tenant_id=str(system_tenant),
-                    method="augly_insert" if "augly" in diagnosis.get("plan", []) else "synonym"
+                    method="augly_insert" if "augly" in diagnosis.get("plan", []) else "synonym",
                 )
 
                 # 3. Persist
@@ -221,7 +222,7 @@ class SIOrchestrator:
                         tenant_id=uuid.UUID(rec["tenant_id"]),
                         original_id=uuid.UUID(rec["original_id"]),
                         content=rec["content"],
-                        aug_type=rec["aug_type"]
+                        aug_type=rec["aug_type"],
                     )
                     session.add(db_obj)
 
@@ -231,11 +232,11 @@ class SIOrchestrator:
                 # Mock: Trigger ML Job
                 logger.info("-> Triggering H2O LLM Studio fine-tuning...")
                 job = MLJob(
-                    tenant_id=uuid.uuid4(), # System
+                    tenant_id=uuid.uuid4(),  # System
                     target="reranker",
                     status="queued",
                     si_cycle_id=cycle_id,
-                    metrics={"trigger_ndcg": 0.75}
+                    metrics={"trigger_ndcg": 0.75},
                 )
                 session.add(job)
 
@@ -248,6 +249,7 @@ class SIOrchestrator:
 
 # Singleton
 _orchestrator = SIOrchestrator()
+
 
 def get_si_orchestrator() -> SIOrchestrator:
     return _orchestrator

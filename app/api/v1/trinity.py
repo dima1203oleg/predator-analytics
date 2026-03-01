@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
 router = APIRouter()
 
+
 class TrinityLogSchema(BaseModel):
     id: uuid.UUID
     request_text: str
@@ -31,11 +32,9 @@ class TrinityLogSchema(BaseModel):
     class Config:
         from_attributes = True
 
+
 @router.get("/logs", response_model=list[TrinityLogSchema])
-async def get_trinity_logs(
-    limit: int = 20,
-    db: AsyncSession = Depends(get_db)
-):
+async def get_trinity_logs(limit: int = 20, db: AsyncSession = Depends(get_db)):
     """Fetch recent audit logs from Trinity (Triple Agent)."""
     try:
         query = select(TrinityAuditLog).order_by(desc(TrinityAuditLog.created_at)).limit(limit)
@@ -44,11 +43,9 @@ async def get_trinity_logs(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.get("/logs/{log_id}")
-async def get_trinity_log_detail(
-    log_id: uuid.UUID,
-    db: AsyncSession = Depends(get_db)
-):
+async def get_trinity_log_detail(log_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
     """Fetch detailed reasoning chain for a specific Trinity operation."""
     query = select(TrinityAuditLog).where(TrinityAuditLog.id == log_id)
     result = await db.execute(query)
@@ -62,5 +59,5 @@ async def get_trinity_log_detail(
         "plan": log.gemini_plan,
         "mistral_output": log.mistral_output,
         "audit": log.copilot_audit,
-        "final_output": log.final_output
+        "final_output": log.final_output,
     }

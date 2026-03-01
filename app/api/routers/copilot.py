@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-from typing import Dict, List
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -11,9 +10,11 @@ from app.agents.copilot import CopilotAgent
 
 router = APIRouter()
 
+
 class ChatRequest(BaseModel):
     message: str
     history: list[dict[str, str]] = []
+
 
 @router.post("/chat")
 async def copilot_chat(request: ChatRequest):

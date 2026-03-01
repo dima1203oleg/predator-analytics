@@ -5,12 +5,13 @@ from __future__ import annotations
 import asyncio
 from datetime import datetime
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import yaml
 
 
 logger = logging.getLogger(__name__)
+
 
 class ConstitutionalTestRunner:
     """Автоматичний раннер конституційних тестів."""
@@ -40,8 +41,7 @@ class ConstitutionalTestRunner:
                 # Запис початку тесту в Truth Ledger (if client exists)
                 if self.truth_ledger:
                     self.truth_ledger.record_action(
-                        action_type="constitutional_test_start",
-                        payload={"test_id": test.get("test_id")}
+                        action_type="constitutional_test_start", payload={"test_id": test.get("test_id")}
                     )
 
                 try:
@@ -55,18 +55,14 @@ class ConstitutionalTestRunner:
                     if self.truth_ledger:
                         self.truth_ledger.record_action(
                             action_type="constitutional_test_result",
-                            payload={
-                                "test_id": test.get("test_id"),
-                                "passed": verified,
-                                "details": result
-                            }
+                            payload={"test_id": test.get("test_id"), "passed": verified, "details": result},
                         )
 
                     results.append({
                         "test": test.get("test_id"),
                         "category": cat_name,
                         "passed": verified,
-                        "details": result
+                        "details": result,
                     })
 
                 except Exception as e:
@@ -75,7 +71,7 @@ class ConstitutionalTestRunner:
                         "test": test.get("test_id"),
                         "category": cat_name,
                         "passed": False,
-                        "error": str(e)
+                        "error": str(e),
                     })
 
         return self.generate_test_report(results)
@@ -83,13 +79,13 @@ class ConstitutionalTestRunner:
     async def execute_test(self, test: dict) -> dict:
         """Виконання окремого тесту (Mock implementation)."""
         # In a real system, this would trigger specific agent actions and verify outcomes
-        await asyncio.sleep(0.5) # Simulate work
+        await asyncio.sleep(0.5)  # Simulate work
         return {"status": "completed", "observed_behavior": test.get("expected")}
 
     def verify_test_result(self, test: dict, result: dict) -> bool:
         """Верифікація результатів тесту."""
         # Baseline check: did the observed behavior match expected?
-        return True # For mock, we assume success
+        return True  # For mock, we assume success
 
     def generate_test_report(self, results: list[dict]) -> dict:
         total = len(results)
@@ -99,8 +95,8 @@ class ConstitutionalTestRunner:
                 "total": total,
                 "passed": passed,
                 "failed": total - passed,
-                "success_rate": (passed / total * 100) if total > 0 else 0
+                "success_rate": (passed / total * 100) if total > 0 else 0,
             },
             "results": results,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
         }

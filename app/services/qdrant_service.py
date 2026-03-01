@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 import uuid
 
 from qdrant_client import QdrantClient
@@ -17,10 +16,11 @@ from qdrant_client.models import (
     VectorParams,
 )
 
-from app.libs.core.structured_logger import get_logger, log_performance
+from app.libs.core.structured_logger import get_logger
 
 
 logger = get_logger("service.qdrant")
+
 
 class QdrantService:
     """Service for vector search using Qdrant.
@@ -36,7 +36,7 @@ class QdrantService:
 
         # Multimodal (CLIP)
         self.multimodal_collection_name = "multimodal_vectors"
-        self.multimodal_vector_size = 512 # CLIP-ViT-B-32
+        self.multimodal_vector_size = 512  # CLIP-ViT-B-32
 
         logger.info("qdrant_service_initialized", host=self.host)
 
@@ -64,14 +64,8 @@ class QdrantService:
             # payload_m=16, m=0 -> optimize for payload filtering
             self.client.create_collection(
                 collection_name=collection_name,
-                vectors_config=VectorParams(
-                    size=vector_size,
-                    distance=Distance.COSINE
-                ),
-                hnsw_config=HnswConfigDiff(
-                    m=0,
-                    payload_m=16
-                )
+                vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
+                hnsw_config=HnswConfigDiff(m=0, payload_m=16),
             )
 
             # Create payload index for tenant_id (critical for speed)
@@ -113,11 +107,7 @@ class QdrantService:
             return str(uuid.uuid5(uuid.NAMESPACE_DNS, str_id))
 
     async def index_document(
-        self,
-        doc_id: str,
-        embedding: list[float],
-        metadata: dict[str, Any] | None = None,
-        tenant_id: str = "default"
+        self, doc_id: str, embedding: list[float], metadata: dict[str, Any] | None = None, tenant_id: str = "default"
     ):
         """Index a single document vector with tenant context."""
         try:
@@ -126,16 +116,9 @@ class QdrantService:
             payload = metadata or {}
             payload["tenant_id"] = tenant_id
 
-            point = PointStruct(
-                id=point_id,
-                vector=embedding,
-                payload=payload
-            )
+            point = PointStruct(id=point_id, vector=embedding, payload=payload)
 
-            self.client.upsert(
-                collection_name=self.collection_name,
-                points=[point]
-            )
+            self.client.upsert(collection_name=self.collection_name, points=[point])
 
             logger.info("qdrant_document_indexed", doc_id=doc_id, tenant_id=tenant_id)
 
@@ -143,11 +126,7 @@ class QdrantService:
             logger.exception("qdrant_indexing_failed", doc_id=doc_id, error=str(e))
             raise
 
-    async def index_batch(
-        self,
-        documents: list[dict[str, Any]],
-        tenant_id: str = "default"
-    ):
+    async def index_batch(self, documents: list[dict[str, Any]], tenant_id: str = "default"):
         """Index multiple documents at once with tenant context.
         Each doc in documents can optionally override tenant_id if needed,
         otherwise uses the batch-level tenant_id.
@@ -162,18 +141,9 @@ class QdrantService:
                 if "tenant_id" not in payload:
                     payload["tenant_id"] = tenant_id
 
-                points.append(
-                    PointStruct(
-                        id=point_id,
-                        vector=doc["embedding"],
-                        payload=payload
-                    )
-                )
+                points.append(PointStruct(id=point_id, vector=doc["embedding"], payload=payload))
 
-            self.client.upsert(
-                collection_name=self.collection_name,
-                points=points
-            )
+            self.client.upsert(collection_name=self.collection_name, points=points)
 
             logger.info("qdrant_batch_indexed", count=len(documents), tenant_id=tenant_id)
 
@@ -187,7 +157,7 @@ class QdrantService:
         limit: int = 10,
         filter_conditions: dict[str, Any] | None = None,
         tenant_id: str | None = None,
-        collection_name: str | None = None
+        collection_name: str | None = None,
     ) -> list[dict[str, Any]]:
         """Search for similar vectors with tenant isolation.
 
@@ -206,22 +176,12 @@ class QdrantService:
 
             # 1. Enforce Tenant Filter
             if tenant_id:
-                must_conditions.append(
-                    FieldCondition(
-                        key="tenant_id",
-                        match=MatchValue(value=tenant_id)
-                    )
-                )
+                must_conditions.append(FieldCondition(key="tenant_id", match=MatchValue(value=tenant_id)))
 
             # 2. Add other filters
             if filter_conditions:
                 for key, value in filter_conditions.items():
-                    must_conditions.append(
-                        FieldCondition(
-                            key=key,
-                            match=MatchValue(value=value)
-                        )
-                    )
+                    must_conditions.append(FieldCondition(key=key, match=MatchValue(value=value)))
 
             query_filter = Filter(must=must_conditions) if must_conditions else None
 
@@ -230,18 +190,11 @@ class QdrantService:
                 collection_name=collection_name or self.collection_name,
                 query_vector=query_vector,
                 limit=limit,
-                query_filter=query_filter
+                query_filter=query_filter,
             )
 
             # Format results
-            formatted_results = [
-                {
-                    "id": hit.id,
-                    "score": hit.score,
-                    "metadata": hit.payload
-                }
-                for hit in results
-            ]
+            formatted_results = [{"id": hit.id, "score": hit.score, "metadata": hit.payload} for hit in results]
 
             logger.info("qdrant_search_completed", hits=len(formatted_results), tenant_id=tenant_id)
             return formatted_results
@@ -253,17 +206,10 @@ class QdrantService:
     async def get_document(self, doc_id: str) -> dict[str, Any] | None:
         """Retrieve a specific document by ID."""
         try:
-            result = self.client.retrieve(
-                collection_name=self.collection_name,
-                ids=[doc_id]
-            )
+            result = self.client.retrieve(collection_name=self.collection_name, ids=[doc_id])
 
             if result:
-                return {
-                    "id": result[0].id,
-                    "vector": result[0].vector,
-                    "metadata": result[0].payload
-                }
+                return {"id": result[0].id, "vector": result[0].vector, "metadata": result[0].payload}
             return None
 
         except Exception as e:
@@ -274,17 +220,16 @@ class QdrantService:
         """Delete a document from the collection."""
         try:
             point_id = self._ensure_uuid(doc_id)
-            self.client.delete(
-                collection_name=self.collection_name,
-                points_selector=[point_id]
-            )
+            self.client.delete(collection_name=self.collection_name, points_selector=[point_id])
             logger.info("qdrant_document_deleted", doc_id=doc_id)
         except Exception as e:
             logger.exception("qdrant_delete_failed", doc_id=doc_id, error=str(e))
 
+
 # Singleton
 _qdrant_service = QdrantService()
 qdrant_service = _qdrant_service
+
 
 def get_qdrant_service() -> QdrantService:
     return _qdrant_service

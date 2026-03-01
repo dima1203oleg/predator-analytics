@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Optional
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
@@ -17,6 +16,7 @@ from .triple_agent_service import triple_agent_service
 
 logger = logging.getLogger(__name__)
 
+
 class PredatorBotV45:
     """[DEPRECATED] Predator Analytics v45.0 - Unified AI Control Panel
     This service is legacy and replaced by the autonomous 'apps/telegram-bot' microservice.
@@ -27,7 +27,7 @@ class PredatorBotV45:
         logger.warning("⚠️ DEPRECATED: PredatorBotV45 is initialized but should be replaced by WinSURF Bot.")
         self.bot = Bot(token=token)
         self.dp = Dispatcher()
-        self.temp_results = {} # Store results for callbacks
+        self.temp_results = {}  # Store results for callbacks
         self._setup_handlers()
 
     def _setup_handlers(self):
@@ -67,6 +67,7 @@ class PredatorBotV45:
         metrics = await monitoring_service.get_system_metrics()
 
         from app.services.system_control_service import system_control_service
+
         lockdown = "🚨 АКТИВНО (LOCKDOWN)" if await system_control_service.is_lockdown() else "✅ Вимкнено"
 
         status = (
@@ -81,9 +82,12 @@ class PredatorBotV45:
 
     async def cmd_lockdown(self, message: Message):
         from app.services.system_control_service import system_control_service
+
         is_active = await system_control_service.toggle_lockdown()
         status = "✅ АКТИВОВАНО" if is_active else "❌ ВИМКНЕНО"
-        await message.answer(f"🔒 **РЕЖИМ БЛОКУВАННЯ: {status}**\nВсі деструктивні дії агентів обмежено.", parse_mode="Markdown")
+        await message.answer(
+            f"🔒 **РЕЖИМ БЛОКУВАННЯ: {status}**\nВсі деструктивні дії агентів обмежено.", parse_mode="Markdown"
+        )
 
     async def cmd_queues(self, message: Message):
         queues = await monitoring_service.get_queue_status()
@@ -107,13 +111,14 @@ class PredatorBotV45:
             self.temp_results[task_id] = result
 
             from aiogram.utils.keyboard import InlineKeyboardBuilder
+
             builder = InlineKeyboardBuilder()
             builder.button(text="🚀 Розгорнути (ArgoCD)", callback_data=f"deploy_{task_id}")
             builder.button(text="📄 Створити PR (Aider)", callback_data=f"pr_{task_id}")
             builder.adjust(1)
 
             # Format plan if it is a list
-            plan_str = result.get('plan', [])
+            plan_str = result.get("plan", [])
             if isinstance(plan_str, list):
                 plan_str = "\n".join([f"- {step}" for step in plan_str])
 
@@ -137,6 +142,7 @@ class PredatorBotV45:
 
         # Download as bytes
         from io import BytesIO
+
         audio_data = BytesIO()
         await self.bot.download_file(file_path, audio_data)
 
@@ -152,7 +158,8 @@ class PredatorBotV45:
         await self.process_nlp_command(message, text)
 
     async def handle_nlp(self, message: Message):
-        if message.text.startswith("/"): return
+        if message.text.startswith("/"):
+            return
         await self.process_nlp_command(message, message.text)
 
     async def process_nlp_command(self, message: Message, text: str):
@@ -175,21 +182,18 @@ class PredatorBotV45:
             self.temp_results[task_id] = result
 
             from aiogram.utils.keyboard import InlineKeyboardBuilder
+
             builder = InlineKeyboardBuilder()
             builder.button(text="🚀 Розгорнути (ArgoCD)", callback_data=f"deploy_{task_id}")
             builder.button(text="📄 Створити PR (Aider)", callback_data=f"pr_{task_id}")
             builder.adjust(1)
 
             # Format plan if it is a list
-            plan_str = result.get('plan', [])
+            plan_str = result.get("plan", [])
             if isinstance(plan_str, list):
                 plan_str = "\n".join([f"- {step}" for step in plan_str])
 
-            response = (
-                f"✅ **Команду прийнято**\n"
-                f"Інтент: `{result.get('intent')}`\n\n"
-                f"📋 **План:**\n{plan_str}\n"
-            )
+            response = f"✅ **Команду прийнято**\nІнтент: `{result.get('intent')}`\n\n📋 **План:**\n{plan_str}\n"
             await message.answer(response, parse_mode="Markdown", reply_markup=builder.as_markup())
 
             # Text-to-Speech response (brief)
@@ -225,12 +229,12 @@ class PredatorBotV45:
 
             await callback.message.answer("📄 **Створення Pull Request через Aider...**")
             res = await deployment_service.create_pull_request(
-                branch_name=f"fix-{task_id}",
-                commit_message=f"AI Fix: {task['intent']}",
-                code=task['code']
+                branch_name=f"fix-{task_id}", commit_message=f"AI Fix: {task['intent']}", code=task["code"]
             )
             if res["success"]:
-                await callback.message.answer(f"✅ **PR Створено!**\n🔗 [Переглянути PR]({res['pr_url']})", parse_mode="Markdown")
+                await callback.message.answer(
+                    f"✅ **PR Створено!**\n🔗 [Переглянути PR]({res['pr_url']})", parse_mode="Markdown"
+                )
             else:
                 await callback.message.answer(f"❌ Помилка: {res['error']}")
 
@@ -240,7 +244,9 @@ class PredatorBotV45:
         logger.info("🚀 Predator Bot v45.0 (aiogram) starting...")
         await self.dp.start_polling(self.bot)
 
+
 v45_bot: PredatorBotV45 | None = None
+
 
 def init_v45_bot(token: str) -> PredatorBotV45:
     global v45_bot

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 """Data Source Schemas."""
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -11,8 +11,8 @@ from pydantic import BaseModel
 
 class DataSourceBase(BaseModel):
     name: str
-    source_type: str # file, api, telegram, registry
-    connector: str   # upload, api, bot, scraper
+    source_type: str  # file, api, telegram, registry
+    connector: str  # upload, api, bot, scraper
     sector: str | None = None
     config: dict[str, Any] = {}
     schedule: dict[str, Any] | None = None

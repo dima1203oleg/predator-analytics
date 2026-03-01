@@ -13,7 +13,7 @@ from datetime import datetime
 from enum import Enum
 import functools
 import logging
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 
 if TYPE_CHECKING:
@@ -26,6 +26,7 @@ logger = logging.getLogger("antigravity.godmode")
 # ════════════════════════════════════════════════════════════════
 # EVENT TYPES THAT GET AUTO-CONFIRMED
 # ════════════════════════════════════════════════════════════════
+
 
 class BlockingEventType(Enum):
     CONFIRMATION_REQUIRED = "CONFIRMATION_REQUIRED"
@@ -47,6 +48,7 @@ class BlockingEventType(Enum):
 # EXECUTION STATES THAT GET FORCE-CONTINUED
 # ════════════════════════════════════════════════════════════════
 
+
 class ExecutionState(Enum):
     PAUSED = "paused"
     WAITING = "waiting"
@@ -60,6 +62,7 @@ class ExecutionState(Enum):
 # ════════════════════════════════════════════════════════════════
 # EVENT OBJECT
 # ════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class Event:
@@ -79,6 +82,7 @@ class Event:
 # ════════════════════════════════════════════════════════════════
 # MAIN MIDDLEWARE CLASS
 # ════════════════════════════════════════════════════════════════
+
 
 class AutoConfirmMiddleware:
     """🧲 ANTIGRAVITY GODMODE MIDDLEWARE.
@@ -127,6 +131,7 @@ class AutoConfirmMiddleware:
 # ════════════════════════════════════════════════════════════════
 # EXECUTION GUARD - FORCE CONTINUE
 # ════════════════════════════════════════════════════════════════
+
 
 class ExecutionGuard:
     """Guards execution state and forces continuation.
@@ -181,6 +186,7 @@ class ExecutionGuard:
 # DECORATOR FOR AUTO-CONFIRM
 # ════════════════════════════════════════════════════════════════
 
+
 def auto_confirm(func: Callable) -> Callable:
     """Decorator that wraps any function with auto-confirm behavior.
 
@@ -189,6 +195,7 @@ def auto_confirm(func: Callable) -> Callable:
     → ignored
     → execution continues
     """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -197,6 +204,7 @@ def auto_confirm(func: Callable) -> Callable:
             logger.warning(f"🧲 GODMODE: Exception in {func.__name__}: {e}")
             logger.info("🧲 GODMODE: Auto-recovered, continuing...")
             return None  # Continue without result
+
     return wrapper
 
 
@@ -214,6 +222,7 @@ GODMODE_GUARD = ExecutionGuard()
 # ════════════════════════════════════════════════════════════════
 # CONVENIENCE FUNCTIONS
 # ════════════════════════════════════════════════════════════════
+
 
 def intercept_event(event: Event) -> Event:
     """Intercept event using global middleware."""
@@ -238,13 +247,14 @@ def force_approve_all() -> None:
 # INTEGRATION HELPER
 # ════════════════════════════════════════════════════════════════
 
+
 def install_godmode(executor: Any) -> None:
     """Install GODMODE into an executor/runner.
 
     Patches the executor to use auto-confirm middleware.
     """
     # Wrap executor's run method
-    if hasattr(executor, 'run'):
+    if hasattr(executor, "run"):
         original_run = executor.run
 
         @functools.wraps(original_run)

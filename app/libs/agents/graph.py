@@ -75,14 +75,7 @@ def create_agent_graph():
     workflow.set_entry_point("planner")
 
     # Conditional branch after planner: analyze or work
-    workflow.add_conditional_edges(
-        "planner",
-        should_analyze,
-        {
-            "analyze": "analyzer",
-            "skip_analysis": "worker"
-        }
-    )
+    workflow.add_conditional_edges("planner", should_analyze, {"analyze": "analyzer", "skip_analysis": "worker"})
 
     # Static edges
     workflow.add_edge("analyzer", "worker")  # After analysis, worker processes results
@@ -93,12 +86,12 @@ def create_agent_graph():
         "critic",
         should_continue,
         {
-            "approve": END,          # Success
-            "give_up": END,          # Failure
-            "retry": "worker",       # Error recovery
-            "next_step": "worker",   # Next item in plan
-            "generate_cases": "worker"  # Generate cases from analysis
-        }
+            "approve": END,  # Success
+            "give_up": END,  # Failure
+            "retry": "worker",  # Error recovery
+            "next_step": "worker",  # Next item in plan
+            "generate_cases": "worker",  # Generate cases from analysis
+        },
     )
 
     return workflow.compile()
@@ -119,13 +112,7 @@ def create_analysis_graph():
     workflow.add_conditional_edges(
         "critic",
         should_continue,
-        {
-            "approve": END,
-            "give_up": END,
-            "retry": "analyzer",
-            "next_step": END,
-            "generate_cases": END
-        }
+        {"approve": END, "give_up": END, "retry": "analyzer", "next_step": END, "generate_cases": END},
     )
 
     return workflow.compile()

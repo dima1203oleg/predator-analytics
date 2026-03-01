@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Any, Dict
+from typing import Any
 import uuid
 
 from sqlalchemy import and_, or_, select, text
@@ -38,6 +38,7 @@ Rules:
 3. Return ONLY valid JSON.
 """
 
+
 class GraphBuilderService:
     def __init__(self):
         pass
@@ -53,9 +54,9 @@ class GraphBuilderService:
             response = await llm_service.generate(
                 prompt=text,
                 system=GRAPH_EXTRACTION_PROMPT,
-                provider="gemini", # Use Gemini 1.5 Flash for better stability/quality
+                provider="gemini",  # Use Gemini 1.5 Flash for better stability/quality
                 temperature=0.0,
-                format="json" # If provider supports it, otherwise prompt instructions imply it
+                format="json",  # If provider supports it, otherwise prompt instructions imply it
             )
 
             if not response.success:
@@ -80,7 +81,7 @@ class GraphBuilderService:
             # Extract JSON block if wrapped in ```json ... ```
             clean_content = content
             if "```json" in content:
-                clean_content = content.split("```json")[1].split("```")[0].strip()
+                clean_content = content.split("```json")[1].split("```", maxsplit=1)[0].strip()
             elif "```" in content:
                 clean_content = content.split("```", maxsplit=1)[0].strip()
 
@@ -91,7 +92,7 @@ class GraphBuilderService:
 
     async def _persist_graph(self, data: dict, doc_id: str, tenant_id: str):
         """Save nodes and edges to Postgres, handling deduplication."""
-        nodes_map = {} # Name -> UUID
+        nodes_map = {}  # Name -> UUID
 
         async with async_session_maker() as session:
             try:
@@ -99,7 +100,8 @@ class GraphBuilderService:
                 for node_data in data.get("nodes", []):
                     name = node_data.get("name")
                     label = node_data.get("label", "CONCEPT")
-                    if not name: continue
+                    if not name:
+                        continue
 
                     # Check existence by name + tenant
                     stmt = select(GraphNode).where(
@@ -116,10 +118,10 @@ class GraphBuilderService:
                             tenant_id=uuid.UUID(tenant_id),
                             name=name,
                             label=label,
-                            properties=node_data.get("properties", {})
+                            properties=node_data.get("properties", {}),
                         )
                         session.add(new_node)
-                        await session.flush() # Get ID
+                        await session.flush()  # Get ID
                         nodes_map[name] = new_node.id
 
                 # --- PROCESS EDGES ---
@@ -128,7 +130,7 @@ class GraphBuilderService:
                     target_name = edge_data.get("target")
 
                     if source_name not in nodes_map or target_name not in nodes_map:
-                        continue # Skip if node creation failed
+                        continue  # Skip if node creation failed
 
                     source_id = nodes_map[source_name]
                     target_id = nodes_map[target_name]
@@ -139,7 +141,7 @@ class GraphBuilderService:
                         and_(
                             GraphEdge.source_id == source_id,
                             GraphEdge.target_id == target_id,
-                            GraphEdge.relation == relation
+                            GraphEdge.relation == relation,
                         )
                     )
                     result = await session.execute(stmt)
@@ -152,7 +154,7 @@ class GraphBuilderService:
                             relation=relation,
                             weight=edge_data.get("weight", 1.0),
                             doc_id=uuid.UUID(doc_id),
-                            properties=edge_data.get("properties", {})
+                            properties=edge_data.get("properties", {}),
                         )
                         session.add(new_edge)
 
@@ -184,12 +186,11 @@ class GraphBuilderService:
             try:
                 # 1. Find Seed Nodes (Fuzzy Match / Trigram)
                 # Using simple ILIKE for portability, but trigram (similar_to) is better if extension enabled
-                stmt = select(GraphNode).where(
-                    and_(
-                        GraphNode.tenant_id == uuid.UUID(tenant_id),
-                        GraphNode.name.ilike(f"%{query}%")
-                    )
-                ).limit(5)
+                stmt = (
+                    select(GraphNode)
+                    .where(and_(GraphNode.tenant_id == uuid.UUID(tenant_id), GraphNode.name.ilike(f"%{query}%")))
+                    .limit(5)
+                )
 
                 result = await session.execute(stmt)
                 seed_nodes = result.scalars().all()
@@ -213,10 +214,7 @@ class GraphBuilderService:
 
                     # Find edges where current nodes are source OR target
                     stmt = select(GraphEdge).where(
-                        or_(
-                            GraphEdge.source_id.in_(current_layer_ids),
-                            GraphEdge.target_id.in_(current_layer_ids)
-                        )
+                        or_(GraphEdge.source_id.in_(current_layer_ids), GraphEdge.target_id.in_(current_layer_ids))
                     )
                     result = await session.execute(stmt)
                     edges = result.scalars().all()
@@ -251,12 +249,7 @@ class GraphBuilderService:
 
                 # 3. Format Response
                 nodes_list = [
-                    {
-                        "id": str(n.id),
-                        "name": n.name,
-                        "label": n.label,
-                        "properties": n.properties
-                    }
+                    {"id": str(n.id), "name": n.name, "label": n.label, "properties": n.properties}
                     for n in collected_nodes.values()
                 ]
 
@@ -267,7 +260,7 @@ class GraphBuilderService:
                         "target": str(e.target_id),
                         "relation": e.relation,
                         "weight": e.weight,
-                        "doc_id": str(e.doc_id) if e.doc_id else None
+                        "doc_id": str(e.doc_id) if e.doc_id else None,
                     }
                     for e in collected_edges.values()
                 ]
@@ -275,10 +268,7 @@ class GraphBuilderService:
                 return {
                     "nodes": nodes_list,
                     "edges": edges_list,
-                    "stats": {
-                        "nodes_count": len(nodes_list),
-                        "edges_count": len(edges_list)
-                    }
+                    "stats": {"nodes_count": len(nodes_list), "edges_count": len(edges_list)},
                 }
 
             except Exception as e:
@@ -310,10 +300,11 @@ class GraphBuilderService:
                     "total_nodes": total_nodes,
                     "total_edges": total_edges,
                     "categories": label_counts,
-                    "timestamp": uuid.uuid4().hex # For cache busting
+                    "timestamp": uuid.uuid4().hex,  # For cache busting
                 }
             except Exception as e:
                 logger.exception(f"Graph summary failed: {e}")
                 return {"error": str(e)}
+
 
 graph_builder = GraphBuilderService()

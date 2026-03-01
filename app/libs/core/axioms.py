@@ -2,15 +2,13 @@ from __future__ import annotations
 
 
 """Axiom Registry and Verification - AZR Engine v45-S."""
-from datetime import datetime
 import logging
-from pathlib import Path
-from typing import Dict, List, Optional
 
 import yaml
 
 
 logger = logging.getLogger(__name__)
+
 
 class Axiom:
     def __init__(self, data: dict):
@@ -20,6 +18,7 @@ class Axiom:
         self.enforcement_level = data.get("enforcement_level")
         self.verification_method = data.get("verification_method")
         self.description = data.get("description")
+
 
 class AxiomRegistry:
     def __init__(self, config_path: str):

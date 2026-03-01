@@ -24,7 +24,7 @@ class MistralProvider(BaseLLMProvider):
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Accept": "application/json",
         }
 
         messages = []
@@ -37,17 +37,12 @@ class MistralProvider(BaseLLMProvider):
             "messages": messages,
             "temperature": kwargs.get("temperature", 0.7),
             "max_tokens": kwargs.get("max_tokens", 2048),
-            "safe_prompt": False
+            "safe_prompt": False,
         }
 
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    self.base_url,
-                    json=payload,
-                    headers=headers,
-                    timeout=30.0
-                )
+                response = await client.post(self.base_url, json=payload, headers=headers, timeout=30.0)
 
                 if response.status_code != 200:
                     return LLMResponse(
@@ -55,7 +50,7 @@ class MistralProvider(BaseLLMProvider):
                         content="",
                         provider=self.provider_name,
                         model=self.model,
-                        error=f"API Error {response.status_code}: {response.text}"
+                        error=f"API Error {response.status_code}: {response.text}",
                     )
 
                 data = response.json()
@@ -68,14 +63,8 @@ class MistralProvider(BaseLLMProvider):
                     provider=self.provider_name,
                     model=self.model,
                     tokens_used=tokens,
-                    latency_ms=(time.time() - start_time) * 1000
+                    latency_ms=(time.time() - start_time) * 1000,
                 )
 
         except Exception as e:
-            return LLMResponse(
-                success=False,
-                content="",
-                provider=self.provider_name,
-                model=self.model,
-                error=str(e)
-            )
+            return LLMResponse(success=False, content="", provider=self.provider_name, model=self.model, error=str(e))

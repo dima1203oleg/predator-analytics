@@ -1,18 +1,18 @@
 from __future__ import annotations
 
 import asyncio
-from concurrent.futures import Future
 import logging
 import time
-from typing import Any, Dict, List, Tuple
 
 
 logger = logging.getLogger("predator.ml.batch_embedder")
+
 
 class BatchEmbeddingService:
     """Background worker for dynamic batch processing of embedding requests.
     Collects individual requests and processes them in batches for maximum throughput.
     """
+
     def __init__(self, embedding_service, batch_size: int = 32, wait_time: float = 0.05):
         """Initialize batching service.
 
@@ -70,7 +70,7 @@ class BatchEmbeddingService:
                 batch_texts.append(text)
                 futures.append(future)
             except TimeoutError:
-                continue # No requests, keep waiting
+                continue  # No requests, keep waiting
             except asyncio.CancelledError:
                 break
 

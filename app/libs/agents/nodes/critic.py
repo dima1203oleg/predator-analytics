@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("agent.critic")
 
+
 async def critic_node(state: AgentState):
     """Reviews the worker's output and determines if the plan is complete."""
     logger.info("🧐 CRITIC: Reviewing result...")
@@ -24,7 +25,8 @@ async def critic_node(state: AgentState):
     audit_report = "Security assessment in progress..."
     try:
         from app.services.triple_agent_service import triple_agent_service
-        result_text = str(last_output.get('tool_output') or last_output.get('result', 'No result'))
+
+        result_text = str(last_output.get("tool_output") or last_output.get("result", "No result"))
         audit_res = await triple_agent_service.security_review(result_text)
         audit_report = audit_res.get("security_assessment", "Audit passed.")
 
@@ -52,7 +54,7 @@ async def critic_node(state: AgentState):
         logger.info("✅ Worker signaled completion.")
         return {
             "current_step": "COMPLETE",
-            "thinking": thinking + "Mission accomplished. Strategy successfully finalized."
+            "thinking": thinking + "Mission accomplished. Strategy successfully finalized.",
         }
 
     # 5. Advance Plan
@@ -64,9 +66,9 @@ async def critic_node(state: AgentState):
         return {
             "current_step": next_step,
             "context": {**context, "plan_index": next_idx},
-            "last_output": {}, # Clear output
+            "last_output": {},  # Clear output
             "error": None,
-            "thinking": thinking + f"Proceeding to next strategic milestone: {next_step}"
+            "thinking": thinking + f"Proceeding to next strategic milestone: {next_step}",
         }
 
     # 6. Plan Exhausted
@@ -74,7 +76,7 @@ async def critic_node(state: AgentState):
         logger.info("🏁 All steps executed.")
         return {
             "current_step": "COMPLETE",
-            "thinking": thinking + "All strategic steps completed. System state verified."
+            "thinking": thinking + "All strategic steps completed. System state verified.",
         }
 
     return {"error": "Plan empty or invalid state", "thinking": "Critique failed: internal inconsistency."}

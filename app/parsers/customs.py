@@ -3,7 +3,7 @@ from __future__ import annotations
 
 """Customs Parser - Parse customs data."""
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ class CustomsParser:
             "receiver": raw_data.get("receiver"),
             "goods": raw_data.get("goods", []),
             "value": raw_data.get("value"),
-            "currency": raw_data.get("currency", "USD")
+            "currency": raw_data.get("currency", "USD"),
         }
 
     def parse_statistics(self, raw_data: list[dict]) -> list[dict]:
@@ -32,7 +32,7 @@ class CustomsParser:
                 "hs_code": item.get("code"),
                 "description": item.get("desc"),
                 "quantity": item.get("qty"),
-                "value": item.get("val")
+                "value": item.get("val"),
             }
             for item in raw_data
         ]

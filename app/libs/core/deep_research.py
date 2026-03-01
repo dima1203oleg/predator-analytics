@@ -1,4 +1,4 @@
-"""🕵️ DEEP RESEARCH AGENT v40 - Autonomous Knowledge Acquisition
+"""🕵️ DEEP RESEARCH AGENT v40 - Autonomous Knowledge Acquisition.
 ==============================================================
 Core component for AZR v40 Sovereign Architecture.
 
@@ -20,10 +20,8 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timezone
-import json
+from datetime import UTC, datetime
 import logging
-from typing import Any, Dict, List, Optional, Union
 
 
 # Lazy imports to avoid circular dependencies
@@ -33,19 +31,22 @@ from typing import Any, Dict, List, Optional, Union
 
 logger = logging.getLogger("deep_research_v40")
 
+
 @dataclass
 class ResearchTask:
     """A unit of research work."""
+
     task_id: str
     topic: str
     questions: list[str]
-    status: str = "pending" # pending, active, completed, failed
+    status: str = "pending"  # pending, active, completed, failed
     findings: list[str] = field(default_factory=list)
     sources: list[str] = field(default_factory=list)
     created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
+
 class DeepResearchAgent:
-    """🕵️ Агент Глибокого Дослідження
+    """🕵️ Агент Глибокого Дослідження.
 
     Автономно навчається, заповнюючи прогалини в базі знань.
     """
@@ -57,6 +58,7 @@ class DeepResearchAgent:
     async def _get_headers(self) -> dict[str, str]:
         """Get Mistral-inspired headers from Project Cortex."""
         from app.libs.core.project_cortex import get_project_cortex
+
         cortex = get_project_cortex()
         return cortex.get_mistral_research_config()
 
@@ -65,22 +67,25 @@ class DeepResearchAgent:
         In a real scenario, this uses graph analysis algorithms.
         """
         try:
-            from app.libs.core.graph_rag_memory import NodeType, get_knowledge_graph
-            kg = get_knowledge_graph()
+            from app.libs.core.graph_rag_memory import get_knowledge_graph
+
+            get_knowledge_graph()
 
             # Simple heuristic: Find decision nodes with low confidence or missing outcomes
             # This is a placeholder logic
             gaps = []
 
             # Simulated gap
-            gaps.append(ResearchTask(
-                task_id=f"RES-{len(self.active_tasks)+1}",
-                topic="Advanced ZK-SNARK protocols optimization",
-                questions=[
-                    "What are the most efficient ZK-SNARK schemes for Python?",
-                    "How to implement Halo2 proofs without trusted setup?"
-                ]
-            ))
+            gaps.append(
+                ResearchTask(
+                    task_id=f"RES-{len(self.active_tasks) + 1}",
+                    topic="Advanced ZK-SNARK protocols optimization",
+                    questions=[
+                        "What are the most efficient ZK-SNARK schemes for Python?",
+                        "How to implement Halo2 proofs without trusted setup?",
+                    ],
+                )
+            )
 
             return gaps
         except Exception:
@@ -93,6 +98,7 @@ class DeepResearchAgent:
 
         try:
             from app.libs.core.mcp_integration import get_mcp_orchestrator
+
             mcp = get_mcp_orchestrator()
 
             # 1. Search for information
@@ -133,26 +139,25 @@ class DeepResearchAgent:
             return task
 
         except Exception as e:
-            logger.error(f"❌ RESEARCH FAILED: {e}")
+            logger.exception(f"❌ RESEARCH FAILED: {e}")
             task.status = "failed"
             return task
 
     def _synthesize(self, findings: list[str]) -> str:
         """Synthesize findings into a coherent conclusion."""
-        return f"Research Conclusion: Based on {len(findings)} sources, the optimal path is identified. " + " ".join(findings[:1])
+        return f"Research Conclusion: Based on {len(findings)} sources, the optimal path is identified. " + " ".join(
+            findings[:1]
+        )
 
     def _update_memory(self, task: ResearchTask, summary: str):
         """Add research results to Knowledge Graph."""
         try:
-            from app.libs.core.graph_rag_memory import EdgeType, NodeType, get_knowledge_graph
+            from app.libs.core.graph_rag_memory import NodeType, get_knowledge_graph
+
             kg = get_knowledge_graph()
 
             # Create Knowledge Node
-            node = kg.add_node(
-                NodeType.PATTERN,
-                f"Research: {task.topic}",
-                {"summary": summary, "sources": task.sources}
-            )
+            kg.add_node(NodeType.PATTERN, f"Research: {task.topic}", {"summary": summary, "sources": task.sources})
 
             # Link to generic concept (simplified)
             # kg.add_edge(node.node_id, "CONCEPT_ROOT", EdgeType.LEARNED_FROM)
@@ -164,19 +169,18 @@ class DeepResearchAgent:
         """Record completion in Truth Ledger."""
         try:
             from app.libs.core.merkle_ledger import record_truth
+
             record_truth(
                 "RESEARCH_COMPLETED",
-                {
-                    "task_id": task.task_id,
-                    "topic": task.topic,
-                    "findings_count": len(task.findings)
-                }
+                {"task_id": task.task_id, "topic": task.topic, "findings_count": len(task.findings)},
             )
         except Exception:
             pass
 
+
 # Singleton
 _research_agent: DeepResearchAgent | None = None
+
 
 def get_research_agent() -> DeepResearchAgent:
     global _research_agent
@@ -184,7 +188,9 @@ def get_research_agent() -> DeepResearchAgent:
         _research_agent = DeepResearchAgent()
     return _research_agent
 
+
 if __name__ == "__main__":
+
     async def test():
         agent = get_research_agent()
         task = ResearchTask("TEST-1", "Quantum Resistance", ["What is Kyber?"])

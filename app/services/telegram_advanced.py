@@ -15,7 +15,7 @@ import json
 import logging
 import os
 import subprocess
-from typing import Any, Dict, Tuple
+from typing import Any
 
 import httpx
 
@@ -46,7 +46,11 @@ class PredatorMonitor:
                 indices_data = indices.json()
 
                 total_docs = sum(int(idx.get("docs.count", 0)) for idx in indices_data if idx.get("docs.count"))
-                total_size = sum(float(idx.get("store.size", "0").replace("kb", "").replace("mb", "").replace("gb", "")) for idx in indices_data if idx.get("store.size"))
+                total_size = sum(
+                    float(idx.get("store.size", "0").replace("kb", "").replace("mb", "").replace("gb", ""))
+                    for idx in indices_data
+                    if idx.get("store.size")
+                )
 
                 return {
                     "status": health_data.get("status", "unknown"),
@@ -60,10 +64,10 @@ class PredatorMonitor:
                             "name": idx.get("index"),
                             "docs": idx.get("docs.count", "0"),
                             "size": idx.get("store.size", "0"),
-                            "health": idx.get("health", "unknown")
+                            "health": idx.get("health", "unknown"),
                         }
                         for idx in indices_data[:10]  # Top 10
-                    ]
+                    ],
                 }
         except Exception as e:
             logger.exception(f"OpenSearch error: {e}")
@@ -89,7 +93,7 @@ class PredatorMonitor:
                         "name": coll_name,
                         "vectors_count": coll_data.get("vectors_count", 0),
                         "points_count": coll_data.get("points_count", 0),
-                        "status": coll_data.get("status", "unknown")
+                        "status": coll_data.get("status", "unknown"),
                     })
 
                 result["total_collections"] = len(result["collections"])
@@ -106,8 +110,11 @@ class PredatorMonitor:
             # Через celery inspect
             result = subprocess.run(
                 ["celery", "-A", "app.core.celery_app", "inspect", "active"],
-                check=False, capture_output=True, text=True, timeout=10,
-                cwd=f"{self.project_dir}/apps/backend"
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=10,
+                cwd=f"{self.project_dir}/apps/backend",
             )
 
             active_tasks = "No active tasks"
@@ -117,14 +124,17 @@ class PredatorMonitor:
             # Workers stats
             result2 = subprocess.run(
                 ["celery", "-A", "app.core.celery_app", "inspect", "stats"],
-                check=False, capture_output=True, text=True, timeout=10,
-                cwd=f"{self.project_dir}/apps/backend"
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=10,
+                cwd=f"{self.project_dir}/apps/backend",
             )
 
             return {
                 "status": "online" if result.returncode == 0 else "offline",
                 "active_tasks": active_tasks,
-                "workers_stats": result2.stdout[:500] if result2.returncode == 0 else "N/A"
+                "workers_stats": result2.stdout[:500] if result2.returncode == 0 else "N/A",
             }
         except Exception as e:
             return {"status": "error", "error": str(e)}
@@ -135,11 +145,7 @@ class PredatorMonitor:
             async with httpx.AsyncClient(timeout=5) as client:
                 response = await client.get(f"{self.backend_url}/api/etl/jobs")
                 data = response.json()
-                return {
-                    "status": "online",
-                    "total_jobs": data.get("total", 0),
-                    "jobs": data.get("jobs", [])[:5]
-                }
+                return {"status": "online", "total_jobs": data.get("total", 0), "jobs": data.get("jobs", [])[:5]}
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
@@ -148,8 +154,7 @@ class PredatorMonitor:
         try:
             # Nodes
             nodes_result = subprocess.run(
-                ["kubectl", "get", "nodes", "-o", "json"],
-                check=False, capture_output=True, text=True, timeout=10
+                ["kubectl", "get", "nodes", "-o", "json"], check=False, capture_output=True, text=True, timeout=10
             )
 
             nodes_data = {"nodes": [], "total_nodes": 0}
@@ -160,20 +165,22 @@ class PredatorMonitor:
                     nodes_data["nodes"].append({
                         "name": node["metadata"]["name"],
                         "status": node["status"]["conditions"][-1]["type"],
-                        "ready": node["status"]["conditions"][-1]["status"] == "True"
+                        "ready": node["status"]["conditions"][-1]["status"] == "True",
                     })
 
             # Namespaces
             ns_result = subprocess.run(
-                ["kubectl", "get", "namespaces", "-o", "name"],
-                check=False, capture_output=True, text=True, timeout=10
+                ["kubectl", "get", "namespaces", "-o", "name"], check=False, capture_output=True, text=True, timeout=10
             )
-            namespaces = ns_result.stdout.split('\n') if ns_result.returncode == 0 else []
+            namespaces = ns_result.stdout.split("\n") if ns_result.returncode == 0 else []
 
             # Pods across all namespaces
             pods_result = subprocess.run(
                 ["kubectl", "get", "pods", "--all-namespaces", "-o", "json"],
-                check=False, capture_output=True, text=True, timeout=10
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
 
             pods_data = {"total": 0, "running": 0, "pending": 0, "failed": 0}
@@ -192,7 +199,10 @@ class PredatorMonitor:
             # Services
             svc_result = subprocess.run(
                 ["kubectl", "get", "services", "--all-namespaces", "-o", "json"],
-                check=False, capture_output=True, text=True, timeout=10
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             services_count = 0
             if svc_result.returncode == 0:
@@ -204,7 +214,7 @@ class PredatorMonitor:
                 "nodes": nodes_data,
                 "namespaces": len(namespaces),
                 "pods": pods_data,
-                "services": services_count
+                "services": services_count,
             }
 
         except Exception as e:
@@ -232,14 +242,17 @@ class AICodeAgent:
             if language == "python":
                 # Створюємо тимчасовий файл
                 temp_file = f"/tmp/telegram_code_{datetime.now().timestamp()}.py"
-                with open(temp_file, 'w') as f:
+                with open(temp_file, "w") as f:
                     f.write(code)
 
                 # Виконуємо
                 result = subprocess.run(
                     ["python3", temp_file],
-                    check=False, capture_output=True, text=True, timeout=30,
-                    cwd=self.project_dir
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                    cwd=self.project_dir,
                 )
 
                 os.remove(temp_file)
@@ -249,9 +262,7 @@ class AICodeAgent:
 
             if language == "bash":
                 result = subprocess.run(
-                    code, check=False, shell=True,
-                    capture_output=True, text=True, timeout=30,
-                    cwd=self.project_dir
+                    code, check=False, shell=True, capture_output=True, text=True, timeout=30, cwd=self.project_dir
                 )
                 output = result.stdout or result.stderr
                 return result.returncode == 0, output[:2000]
@@ -267,7 +278,7 @@ class AICodeAgent:
             full_path = os.path.join(self.project_dir, path)
             os.makedirs(os.path.dirname(full_path), exist_ok=True)
 
-            with open(full_path, 'w') as f:
+            with open(full_path, "w") as f:
                 f.write(content)
 
             return True, f"✅ Файл створено: {path}"
@@ -287,7 +298,7 @@ class AICodeAgent:
 
             new_content = content.replace(search, replace)
 
-            with open(full_path, 'w') as f:
+            with open(full_path, "w") as f:
                 f.write(new_content)
 
             return True, f"✅ Файл відредаговано: {path}"
@@ -302,9 +313,7 @@ class AICodeAgent:
                 cmd.append(test_path)
 
             result = subprocess.run(
-                cmd,
-                check=False, capture_output=True, text=True, timeout=60,
-                cwd=f"{self.project_dir}/ua-sources"
+                cmd, check=False, capture_output=True, text=True, timeout=60, cwd=f"{self.project_dir}/ua-sources"
             )
 
             output = result.stdout or result.stderr
@@ -326,7 +335,7 @@ async def get_full_system_status() -> str:
         predator_monitor.get_celery_status(),
         predator_monitor.get_etl_status(),
         predator_monitor.get_k8s_detailed_status(),
-        predator_monitor.get_backend_health()
+        predator_monitor.get_backend_health(),
     ]
 
     results = await asyncio.gather(*tasks, return_exceptions=True)

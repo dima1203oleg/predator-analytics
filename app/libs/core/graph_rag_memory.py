@@ -1,4 +1,4 @@
-"""🧠 GRAPH RAG MEMORY - Knowledge Graph with Semantic Reasoning
+"""🧠 GRAPH RAG MEMORY - Knowledge Graph with Semantic Reasoning.
 ===============================================================
 Core component for AZR v40 Sovereign Architecture.
 
@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 import hashlib
 import json
@@ -33,41 +33,45 @@ from typing import Any
 
 def simple_hash(text: str) -> str:
     """Simple hash for IDs."""
-    return hashlib.sha256(text.encode('utf-8')).hexdigest()[:16]
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
 # ============================================================================
 # 📊 KNOWLEDGE GRAPH TYPES
 # ============================================================================
 
+
 class NodeType(Enum):
     """Types of nodes in the knowledge graph."""
-    DECISION = "decision"         # AZR decision node
-    ACTION = "action"             # Executed action
-    OBSERVATION = "observation"   # System observation
-    CONTEXT = "context"           # Contextual information
-    OUTCOME = "outcome"           # Result of action
-    RULE = "rule"                 # Constitutional rule
-    PATTERN = "pattern"           # Learned pattern
-    ENTITY = "entity"             # System entity
+
+    DECISION = "decision"  # AZR decision node
+    ACTION = "action"  # Executed action
+    OBSERVATION = "observation"  # System observation
+    CONTEXT = "context"  # Contextual information
+    OUTCOME = "outcome"  # Result of action
+    RULE = "rule"  # Constitutional rule
+    PATTERN = "pattern"  # Learned pattern
+    ENTITY = "entity"  # System entity
 
 
 class EdgeType(Enum):
     """Types of edges in the knowledge graph."""
-    TRIGGERED_BY = "triggered_by"       # A was triggered by B
-    RESULTED_IN = "resulted_in"         # A resulted in B
-    OBSERVED_DURING = "observed_during" # A observed during B
-    LEARNED_FROM = "learned_from"       # Pattern learned from experience
-    VIOLATES = "violates"               # Action violates rule
-    COMPLIES_WITH = "complies_with"     # Action complies with rule
-    SIMILAR_TO = "similar_to"           # Semantic similarity
-    PRECEDED_BY = "preceded_by"         # Temporal ordering
-    CAUSED = "caused"                   # Causal relationship
+
+    TRIGGERED_BY = "triggered_by"  # A was triggered by B
+    RESULTED_IN = "resulted_in"  # A resulted in B
+    OBSERVED_DURING = "observed_during"  # A observed during B
+    LEARNED_FROM = "learned_from"  # Pattern learned from experience
+    VIOLATES = "violates"  # Action violates rule
+    COMPLIES_WITH = "complies_with"  # Action complies with rule
+    SIMILAR_TO = "similar_to"  # Semantic similarity
+    PRECEDED_BY = "preceded_by"  # Temporal ordering
+    CAUSED = "caused"  # Causal relationship
 
 
 @dataclass
 class KnowledgeNode:
     """Node in the knowledge graph."""
+
     node_id: str
     node_type: NodeType
     label: str
@@ -77,18 +81,19 @@ class KnowledgeNode:
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
-        d['node_type'] = self.node_type.value
+        d["node_type"] = self.node_type.value
         return d
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> KnowledgeNode:
-        data['node_type'] = NodeType(data['node_type'])
+        data["node_type"] = NodeType(data["node_type"])
         return cls(**data)
 
 
 @dataclass
 class KnowledgeEdge:
     """Edge in the knowledge graph."""
+
     edge_id: str
     source_id: str
     target_id: str
@@ -99,18 +104,19 @@ class KnowledgeEdge:
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
-        d['edge_type'] = self.edge_type.value
+        d["edge_type"] = self.edge_type.value
         return d
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> KnowledgeEdge:
-        data['edge_type'] = EdgeType(data['edge_type'])
+        data["edge_type"] = EdgeType(data["edge_type"])
         return cls(**data)
 
 
 @dataclass
 class ReasoningChain:
     """Chain of reasoning for a decision."""
+
     decision_id: str
     steps: list[dict[str, Any]]
     confidence: float
@@ -126,6 +132,7 @@ class ReasoningChain:
 # 🧮 SIMPLE EMBEDDING (No external dependencies)
 # ============================================================================
 
+
 class SimpleEmbedder:
     """Simple TF-IDF-like embedder without external dependencies.
     For production, replace with sentence-transformers or similar.
@@ -140,7 +147,8 @@ class SimpleEmbedder:
     def _tokenize(self, text: str) -> list[str]:
         """Simple tokenization."""
         import re
-        return re.findall(r'\w+', text.lower())
+
+        return re.findall(r"\w+", text.lower())
 
     def fit(self, texts: list[str]) -> None:
         """Build vocabulary from texts."""
@@ -154,7 +162,7 @@ class SimpleEmbedder:
         self.doc_count = len(texts)
 
         # Top words by frequency, limited to dim
-        sorted_words = sorted(doc_freq.items(), key=lambda x: -x[1])[:self.dim]
+        sorted_words = sorted(doc_freq.items(), key=lambda x: -x[1])[: self.dim]
         self.vocabulary = {word: i for i, (word, _) in enumerate(sorted_words)}
 
         # IDF calculation
@@ -181,7 +189,7 @@ class SimpleEmbedder:
                 vector[idx] = tfidf
 
         # Normalize
-        norm = math.sqrt(sum(x*x for x in vector)) or 1.0
+        norm = math.sqrt(sum(x * x for x in vector)) or 1.0
         return [x / norm for x in vector]
 
     def similarity(self, vec1: list[float], vec2: list[float]) -> float:
@@ -189,16 +197,16 @@ class SimpleEmbedder:
         if len(vec1) != len(vec2):
             return 0.0
 
-        dot = sum(a * b for a, b in zip(vec1, vec2))
-        return dot  # Already normalized
+        return sum(a * b for a, b in zip(vec1, vec2, strict=False))
 
 
 # ============================================================================
 # 🧠 KNOWLEDGE GRAPH
 # ============================================================================
 
+
 class KnowledgeGraph:
-    """🏛️ Граф Знань для Когнітивного Контексту
+    """🏛️ Граф Знань для Когнітивного Контексту.
 
     Зберігає:
     - Рішення та їх причини
@@ -239,20 +247,20 @@ class KnowledgeGraph:
     def _load(self) -> None:
         """Load graph from disk."""
         if self.nodes_file.exists():
-            with open(self.nodes_file, encoding='utf-8') as f:
+            with open(self.nodes_file, encoding="utf-8") as f:
                 for line in f:
                     if line.strip():
                         try:
                             node = KnowledgeNode.from_dict(json.loads(line))
                             self._nodes[node.node_id] = node
                             self._by_type[node.node_type].append(node.node_id)
-                            if node.properties.get('text'):
-                                self._embedding_texts.append(node.properties['text'])
+                            if node.properties.get("text"):
+                                self._embedding_texts.append(node.properties["text"])
                         except Exception:
                             pass
 
         if self.edges_file.exists():
-            with open(self.edges_file, encoding='utf-8') as f:
+            with open(self.edges_file, encoding="utf-8") as f:
                 for line in f:
                     if line.strip():
                         try:
@@ -268,11 +276,7 @@ class KnowledgeGraph:
             self.embedder.fit(self._embedding_texts)
 
     def add_node(
-        self,
-        node_type: NodeType,
-        label: str,
-        properties: dict[str, Any] | None = None,
-        node_id: str | None = None
+        self, node_type: NodeType, label: str, properties: dict[str, Any] | None = None, node_id: str | None = None
     ) -> KnowledgeNode:
         """Add node to graph."""
         with self._lock:
@@ -282,7 +286,7 @@ class KnowledgeGraph:
             properties = properties or {}
 
             # Generate embedding if text available
-            text = properties.get('text', label)
+            text = properties.get("text", label)
             self._embedding_texts.append(text)
 
             # Refit embedder periodically
@@ -292,18 +296,14 @@ class KnowledgeGraph:
             embedding = self.embedder.embed(text)
 
             node = KnowledgeNode(
-                node_id=node_id,
-                node_type=node_type,
-                label=label,
-                properties=properties,
-                embedding=embedding
+                node_id=node_id, node_type=node_type, label=label, properties=properties, embedding=embedding
             )
 
             self._nodes[node_id] = node
             self._by_type[node_type].append(node_id)
 
             # Persist
-            with open(self.nodes_file, 'a', encoding='utf-8') as f:
+            with open(self.nodes_file, "a", encoding="utf-8") as f:
                 f.write(json.dumps(node.to_dict()) + "\n")
 
             return node
@@ -314,7 +314,7 @@ class KnowledgeGraph:
         target_id: str,
         edge_type: EdgeType,
         properties: dict[str, Any] | None = None,
-        weight: float = 1.0
+        weight: float = 1.0,
     ) -> KnowledgeEdge | None:
         """Add edge between nodes."""
         if source_id not in self._nodes or target_id not in self._nodes:
@@ -329,7 +329,7 @@ class KnowledgeGraph:
                 target_id=target_id,
                 edge_type=edge_type,
                 properties=properties or {},
-                weight=weight
+                weight=weight,
             )
 
             self._edges[edge_id] = edge
@@ -337,7 +337,7 @@ class KnowledgeGraph:
             self._incoming[target_id].append(edge_id)
 
             # Persist
-            with open(self.edges_file, 'a', encoding='utf-8') as f:
+            with open(self.edges_file, "a", encoding="utf-8") as f:
                 f.write(json.dumps(edge.to_dict()) + "\n")
 
             return edge
@@ -373,7 +373,7 @@ class KnowledgeGraph:
         query_embedding = self.embedder.embed(text)
 
         similarities = []
-        for node_id, node in self._nodes.items():
+        for node in self._nodes.values():
             if node.embedding:
                 sim = self.embedder.similarity(query_embedding, node.embedding)
                 similarities.append((node, sim))
@@ -408,7 +408,7 @@ class KnowledgeGraph:
                 "node_id": node_id,
                 "type": node.node_type.value,
                 "label": node.label,
-                "properties": node.properties
+                "properties": node.properties,
             }
             steps.append(step)
 
@@ -425,7 +425,7 @@ class KnowledgeGraph:
         if len(steps) <= 1:
             explanation = f"Рішення '{decision_node.label}' було прийнято автономно."
         else:
-            causes = [s['label'] for s in steps[1:4]]
+            causes = [s["label"] for s in steps[1:4]]
             explanation = f"Рішення '{decision_node.label}' було прийнято через: {', '.join(causes)}"
 
         return ReasoningChain(
@@ -433,42 +433,26 @@ class KnowledgeGraph:
             steps=steps,
             confidence=min(1.0, len(evidence) * 0.2),
             explanation=explanation,
-            supporting_evidence=evidence
+            supporting_evidence=evidence,
         )
 
     def record_decision(
-        self,
-        decision_label: str,
-        context: dict[str, Any],
-        observations: list[str],
-        outcome: str | None = None
+        self, decision_label: str, context: dict[str, Any], observations: list[str], outcome: str | None = None
     ) -> str:
         """Record a decision with full context.
         Creates nodes for decision, context, observations, and links them.
         """
         # Create decision node
-        decision = self.add_node(
-            NodeType.DECISION,
-            decision_label,
-            {"text": decision_label, **context}
-        )
+        decision = self.add_node(NodeType.DECISION, decision_label, {"text": decision_label, **context})
 
         # Create observation nodes and link
         for obs_text in observations:
-            obs_node = self.add_node(
-                NodeType.OBSERVATION,
-                obs_text[:100],
-                {"text": obs_text}
-            )
+            obs_node = self.add_node(NodeType.OBSERVATION, obs_text[:100], {"text": obs_text})
             self.add_edge(obs_node.node_id, decision.node_id, EdgeType.TRIGGERED_BY)
 
         # Create outcome node if provided
         if outcome:
-            outcome_node = self.add_node(
-                NodeType.OUTCOME,
-                outcome,
-                {"text": outcome}
-            )
+            outcome_node = self.add_node(NodeType.OUTCOME, outcome, {"text": outcome})
             self.add_edge(decision.node_id, outcome_node.node_id, EdgeType.RESULTED_IN)
 
         return decision.node_id
@@ -485,7 +469,7 @@ class KnowledgeGraph:
             "",
             f"🎯 {chain.explanation}",
             "",
-            f"📊 Ланцюг причин ({len(chain.steps)} кроків):"
+            f"📊 Ланцюг причин ({len(chain.steps)} кроків):",
         ]
 
         for step in chain.steps[:5]:
@@ -510,7 +494,7 @@ class KnowledgeGraph:
             "total_edges": len(self._edges),
             "node_types": type_counts,
             "vocabulary_size": len(self.embedder.vocabulary),
-            "storage_path": str(self.storage_path)
+            "storage_path": str(self.storage_path),
         }
 
 
@@ -550,21 +534,21 @@ if __name__ == "__main__":
         "Масштабування API Gateway",
         {"reason": "high_load", "health_score": 45.0},
         ["Навантаження CPU 95%", "Час відповіді API > 2s", "Черга запитів переповнена"],
-        "Успішне масштабування, латентність знижена на 60%"
+        "Успішне масштабування, латентність знижена на 60%",
     )
 
     decision2 = kg.record_decision(
         "Запуск очищення кешу",
         {"reason": "memory_pressure", "health_score": 70.0},
         ["Використання RAM 85%", "GC паузи > 100ms"],
-        "Звільнено 2GB пам'яті"
+        "Звільнено 2GB пам'яті",
     )
 
     decision3 = kg.record_decision(
         "Блокування підозрілого запиту",
         {"reason": "security_alert", "source_ip": "192.168.1.100"},
         ["SQL injection спроба", "Аномальна частота запитів"],
-        "Запит заблоковано, IP додано в blacklist"
+        "Запит заблоковано, IP додано в blacklist",
     )
 
     print("  ✅ Recorded 3 decisions")

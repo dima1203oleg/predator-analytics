@@ -2,11 +2,14 @@
 
 Component: training-controller
 """
+
 import logging
 
 from pydantic import BaseModel
 
+
 logger = logging.getLogger(__name__)
+
 
 class ModelMetadata(BaseModel):
     model_id: str
@@ -17,12 +20,13 @@ class ModelMetadata(BaseModel):
     artifact_uri: str
     training_params: dict
 
+
 class ModelRegistry:
     """Abstraction for MLflow Model Registry.
 
     In Phase 1, we simulate registry operations or wrap MLflow Client.
     """
-    
+
     def __init__(self, tracking_uri: str = "http://predator-analytics-mlflow:5000"):
         self.tracking_uri = tracking_uri
         # In real impl: self.client = MlflowClient(tracking_uri=tracking_uri)
@@ -40,12 +44,12 @@ class ModelRegistry:
         if key not in self._mock_registry:
             logger.error("Model %s not found", key)
             return False
-        
+
         # Demote current prod
         for m in self._mock_registry.values():
             if m.model_id == model_id and m.status == "production":
                 m.status = "archived"
-        
+
         # Promote new
         self._mock_registry[key].status = "production"
         logger.info("Promoted %s to PRODUCTION", key)

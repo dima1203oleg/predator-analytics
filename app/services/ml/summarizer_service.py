@@ -5,7 +5,6 @@ from __future__ import annotations
 Generates concise summaries using T5 or BART models.
 """
 import logging
-from typing import Optional
 
 from transformers import pipeline
 
@@ -28,16 +27,11 @@ class SummarizerService:
         self.summarizer = pipeline(
             "summarization",
             model=model_name,
-            device=-1  # CPU, change to 0 for GPU
+            device=-1,  # CPU, change to 0 for GPU
         )
         logger.info("Summarizer model loaded")
 
-    def summarize(
-        self,
-        text: str,
-        max_length: int = 130,
-        min_length: int = 30
-    ) -> str | None:
+    def summarize(self, text: str, max_length: int = 130, min_length: int = 30) -> str | None:
         """Generate summary for input text.
 
         Args:
@@ -55,14 +49,9 @@ class SummarizerService:
             # Truncate if too long (models have token limits)
             text_truncated = text[:2048]
 
-            result = self.summarizer(
-                text_truncated,
-                max_length=max_length,
-                min_length=min_length,
-                do_sample=False
-            )
+            result = self.summarizer(text_truncated, max_length=max_length, min_length=min_length, do_sample=False)
 
-            summary = result[0]['summary_text']
+            summary = result[0]["summary_text"]
             logger.info(f"Generated summary ({len(summary)} chars)")
             return summary
 
@@ -73,6 +62,7 @@ class SummarizerService:
 
 # Singleton
 _summarizer_instance = None
+
 
 def get_summarizer() -> SummarizerService:
     """Dependency for FastAPI."""

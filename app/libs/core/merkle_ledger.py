@@ -1,4 +1,4 @@
-"""🏛️ MERKLE TRUTH LEDGER - Cryptographic Immutable Audit Chain
+"""🏛️ MERKLE TRUTH LEDGER - Cryptographic Immutable Audit Chain.
 =============================================================
 Core component for AZR v40 Sovereign Architecture.
 
@@ -18,34 +18,34 @@ Python 3.12 | Ukrainian Documentation
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime, timezone
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 import hashlib
 import json
 import os
 from pathlib import Path
 import threading
-import time
 from typing import Any
 
 
 def sha3_512(data: str | bytes) -> str:
     """Compute SHA3-512 hash of data."""
     if isinstance(data, str):
-        data = data.encode('utf-8')
+        data = data.encode("utf-8")
     return hashlib.sha3_512(data).hexdigest()
 
 
 def sha3_256(data: str | bytes) -> str:
     """Compute SHA3-256 hash (for shorter hashes where needed)."""
     if isinstance(data, str):
-        data = data.encode('utf-8')
+        data = data.encode("utf-8")
     return hashlib.sha3_256(data).hexdigest()
 
 
 @dataclass
 class LedgerEntry:
     """Immutable record in the Truth Ledger."""
+
     sequence: int
     timestamp: str
     event_type: str
@@ -64,19 +64,24 @@ class LedgerEntry:
 
     def compute_entry_hash(self) -> str:
         """Hash of this entry for chain linking."""
-        canonical = json.dumps({
-            "sequence": self.sequence,
-            "timestamp": self.timestamp,
-            "event_type": self.event_type,
-            "payload_hash": self.payload_hash,
-            "previous_hash": self.previous_hash,
-        }, sort_keys=True, ensure_ascii=False)
+        canonical = json.dumps(
+            {
+                "sequence": self.sequence,
+                "timestamp": self.timestamp,
+                "event_type": self.event_type,
+                "payload_hash": self.payload_hash,
+                "previous_hash": self.previous_hash,
+            },
+            sort_keys=True,
+            ensure_ascii=False,
+        )
         return sha3_512(canonical)
 
 
 @dataclass
 class MerkleProof:
     """Proof that an entry exists in the ledger at specific position."""
+
     entry_hash: str
     merkle_root: str
     proof_path: list[tuple[str, str]]  # List of (hash, position: 'left'|'right')
@@ -87,7 +92,7 @@ class MerkleProof:
 
 
 class MerkleTruthLedger:
-    """🏛️ Криптографічний Незмінний Реєстр Істини
+    """🏛️ Криптографічний Незмінний Реєстр Істини.
 
     Кожен запис:
     1. Хешується через SHA3-512
@@ -125,7 +130,7 @@ class MerkleTruthLedger:
     def _load_state(self) -> None:
         """Load ledger state from disk."""
         if self.ledger_file.exists():
-            with open(self.ledger_file, encoding='utf-8') as f:
+            with open(self.ledger_file, encoding="utf-8") as f:
                 for line in f:
                     if line.strip():
                         try:
@@ -143,10 +148,10 @@ class MerkleTruthLedger:
         """Append entry to persistent storage with ATOMIC guarantee.
         Uses fsync to ensure data survives immediate power loss.
         """
-        with open(self.ledger_file, 'a', encoding='utf-8') as f:
+        with open(self.ledger_file, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry.to_dict(), ensure_ascii=False) + "\n")
-            f.flush()            # Flush Python buffer
-            os.fsync(f.fileno()) # Force write to physical disk (Critical for blackouts)
+            f.flush()  # Flush Python buffer
+            os.fsync(f.fileno())  # Force write to physical disk (Critical for blackouts)
 
     def _compute_merkle_root(self, hashes: list[str]) -> str:
         """Compute Merkle root from list of hashes."""
@@ -175,12 +180,7 @@ class MerkleTruthLedger:
 
         return current_level[0]
 
-    def append(
-        self,
-        event_type: str,
-        payload: dict[str, Any],
-        metadata: dict[str, Any] | None = None
-    ) -> LedgerEntry:
+    def append(self, event_type: str, payload: dict[str, Any], metadata: dict[str, Any] | None = None) -> LedgerEntry:
         """Append new event to the Truth Ledger.
 
         Args:
@@ -207,10 +207,7 @@ class MerkleTruthLedger:
             payload_hash = sha3_512(payload_canonical)
 
             # Get previous hash
-            if self._entries:
-                previous_hash = self._entry_hashes[-1]
-            else:
-                previous_hash = self.GENESIS_HASH
+            previous_hash = self._entry_hashes[-1] if self._entries else self.GENESIS_HASH
 
             # Create entry (merkle_root will be computed after)
             entry = LedgerEntry(
@@ -220,12 +217,12 @@ class MerkleTruthLedger:
                 payload=full_payload,
                 payload_hash=payload_hash,
                 previous_hash=previous_hash,
-                merkle_root=""  # Placeholder
+                merkle_root="",  # Placeholder
             )
 
             # Compute entry hash and add to list
             entry_hash = entry.compute_entry_hash()
-            new_hashes = self._entry_hashes + [entry_hash]
+            new_hashes = [*self._entry_hashes, entry_hash]
 
             # Compute new Merkle root
             merkle_root = self._compute_merkle_root(new_hashes)
@@ -284,10 +281,7 @@ class MerkleTruthLedger:
                 new_seq = i + 1
 
                 # Get previous hash
-                if new_entries:
-                    prev_hash = new_hashes[-1]
-                else:
-                    prev_hash = self.GENESIS_HASH
+                prev_hash = new_hashes[-1] if new_entries else self.GENESIS_HASH
 
                 # Recompute payload hash
                 payload_canonical = json.dumps(old_entry.payload, sort_keys=True, ensure_ascii=False)
@@ -301,7 +295,7 @@ class MerkleTruthLedger:
                     payload=old_entry.payload,
                     payload_hash=payload_hash,
                     previous_hash=prev_hash,
-                    merkle_root=""  # Will compute after
+                    merkle_root="",  # Will compute after
                 )
 
                 entry_hash = corrected_entry.compute_entry_hash()
@@ -317,7 +311,7 @@ class MerkleTruthLedger:
                 "original_entries": original_count,
                 "removed_entries": removed_count,
                 "final_entries": len(new_entries),
-                "repair_timestamp": datetime.now(UTC).isoformat()
+                "repair_timestamp": datetime.now(UTC).isoformat(),
             }
 
             checkpoint_seq = len(new_entries) + 1
@@ -331,7 +325,7 @@ class MerkleTruthLedger:
                 payload=checkpoint_payload,
                 payload_hash=sha3_512(payload_canonical),
                 previous_hash=prev_hash,
-                merkle_root=""
+                merkle_root="",
             )
 
             checkpoint_hash = checkpoint_entry.compute_entry_hash()
@@ -346,12 +340,13 @@ class MerkleTruthLedger:
             self._current_merkle_root = new_entries[-1].merkle_root
 
             # 6. Rewrite ledger file (atomic)
-            backup_file = self.ledger_file.with_suffix('.jsonl.bak')
+            backup_file = self.ledger_file.with_suffix(".jsonl.bak")
             if self.ledger_file.exists():
                 import shutil
+
                 shutil.copy(self.ledger_file, backup_file)
 
-            with open(self.ledger_file, 'w', encoding='utf-8') as f:
+            with open(self.ledger_file, "w", encoding="utf-8") as f:
                 for entry in new_entries:
                     f.write(json.dumps(entry.to_dict(), ensure_ascii=False) + "\n")
                 f.flush()
@@ -360,7 +355,11 @@ class MerkleTruthLedger:
             # 7. Verify
             is_valid, msg = self.verify_chain_integrity()
             if is_valid:
-                return True, f"✅ Реєстр відновлено: {removed_count} пошкоджених записів видалено, {len(new_entries)} записів збережено", removed_count
+                return (
+                    True,
+                    f"✅ Реєстр відновлено: {removed_count} пошкоджених записів видалено, {len(new_entries)} записів збережено",
+                    removed_count,
+                )
             return False, f"❌ Відновлення не вдалось: {msg}", 0
 
     def verify_chain_integrity(self) -> tuple[bool, str]:
@@ -376,13 +375,10 @@ class MerkleTruthLedger:
         for i, entry in enumerate(self._entries):
             # Check sequence
             if entry.sequence != i + 1:
-                return False, f"Порушена послідовність на записі {i}: очікувалось {i+1}, отримано {entry.sequence}"
+                return False, f"Порушена послідовність на записі {i}: очікувалось {i + 1}, отримано {entry.sequence}"
 
             # Check previous hash
-            if i == 0:
-                expected_prev = self.GENESIS_HASH
-            else:
-                expected_prev = self._entry_hashes[i - 1]
+            expected_prev = self.GENESIS_HASH if i == 0 else self._entry_hashes[i - 1]
 
             if entry.previous_hash != expected_prev:
                 return False, f"Розірваний ланцюг на записі {i}: previous_hash не відповідає"
@@ -446,10 +442,7 @@ class MerkleTruthLedger:
             current_index = current_index // 2
 
         return MerkleProof(
-            entry_hash=entry_hash,
-            merkle_root=self._current_merkle_root,
-            proof_path=proof_path,
-            verified=True
+            entry_hash=entry_hash, merkle_root=self._current_merkle_root, proof_path=proof_path, verified=True
         )
 
     def verify_proof(self, proof: MerkleProof) -> bool:
@@ -457,10 +450,7 @@ class MerkleTruthLedger:
         current_hash = proof.entry_hash
 
         for sibling_hash, position in proof.proof_path:
-            if position == "left":
-                combined = sibling_hash + current_hash
-            else:
-                combined = current_hash + sibling_hash
+            combined = sibling_hash + current_hash if position == "left" else current_hash + sibling_hash
             current_hash = sha3_512(combined)
 
         return current_hash == proof.merkle_root
@@ -492,7 +482,7 @@ class MerkleTruthLedger:
             "genesis_hash": self.GENESIS_HASH[:64] + "...",
             "event_type_counts": event_types,
             "storage_path": str(self.storage_path),
-            "integrity_verified": self.verify_chain_integrity()[0]
+            "integrity_verified": self.verify_chain_integrity()[0],
         }
 
     @property
@@ -524,11 +514,7 @@ def get_truth_ledger(storage_path: str | Path = "/tmp/azr_logs") -> MerkleTruthL
         return _ledger_instance
 
 
-def record_truth(
-    event_type: str,
-    payload: dict[str, Any],
-    metadata: dict[str, Any] | None = None
-) -> LedgerEntry:
+def record_truth(event_type: str, payload: dict[str, Any], metadata: dict[str, Any] | None = None) -> LedgerEntry:
     """Convenience function to record an event to the global Truth Ledger.
 
     Usage:
@@ -575,9 +561,7 @@ if __name__ == "__main__":
     entries = []
     for i in range(5):
         entry = ledger.append(
-            event_type="TEST_EVENT",
-            payload={"index": i, "message": f"Test entry {i}"},
-            metadata={"test": True}
+            event_type="TEST_EVENT", payload={"index": i, "message": f"Test entry {i}"}, metadata={"test": True}
         )
         entries.append(entry)
         print(f"✅ Entry {entry.sequence}: hash={entry.payload_hash[:32]}...")

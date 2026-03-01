@@ -1,30 +1,27 @@
-import logging
-import uuid
-import json
 import asyncio
 from datetime import datetime
-from typing import Optional, List, Dict, Any
+import json
+import logging
+import uuid
+
+from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, UploadFile
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks, Depends
-from fastapi.responses import StreamingResponse
-
-from app.models.ingestion import (
-    IngestionJob,
-    IngestionStatus,
-    IngestionProgress,
-    ChunkUploadRequest,
-    IngestionResponse
-)
-from app.services.ingestion_service import IngestionService
 from app.connectors.telegram_channel import telegram_channel_connector
+from app.models.ingestion import IngestionJob, IngestionProgress, IngestionResponse, IngestionStatus
+from app.services.ingestion_service import IngestionService
 from app.services.telegram_pipeline import get_telegram_pipeline
+
 
 # In a real app, use a real auth dependency. Mocking for now if file doesn't exist
 try:
     from app.core.security import get_current_user
 except ImportError:
-    async def get_current_user(): return type('User', (), {'id': 'mock-user-id'})
+
+    async def get_current_user():
+        return type("User", (), {"id": "mock-user-id"})
+
 
 router = APIRouter(prefix="/ingest", tags=["ingestion"])
 logger = logging.getLogger(__name__)
@@ -32,23 +29,18 @@ logger = logging.getLogger(__name__)
 # In-memory storage for jobs (Use Redis in production)
 ingestion_jobs: dict = {}
 
+
 class TelegramIngestRequest(BaseModel):
     url: str
-    name: Optional[str] = None
-    sector: Optional[str] = None
+    name: str | None = None
+    sector: str | None = None
     limit: int = 100
 
+
 async def process_file_async(
-    job_id: str,
-    content: bytes,
-    filename: str,
-    file_type: str,
-    user_id: str,
-    dataset_name: Optional[str]
+    job_id: str, content: bytes, filename: str, file_type: str, user_id: str, dataset_name: str | None
 ):
-    """
-    Background task to process file with granular progress updates.
-    """
+    """Background task to process file with granular progress updates."""
     job = ingestion_jobs.get(job_id)
     if not job:
         return
@@ -61,7 +53,7 @@ async def process_file_async(
         job.progress.stage = "validating"
         job.progress.message = "Перевірка структури файлу..."
         job.updated_at = datetime.utcnow()
-        await asyncio.sleep(0.5) # UX feel
+        await asyncio.sleep(0.5)  # UX feel
 
         await service.validate_file(content, file_type)
         job.progress.percent = 10
@@ -73,11 +65,11 @@ async def process_file_async(
         job.updated_at = datetime.utcnow()
 
         records = []
-        if file_type in ['.xlsx', '.xls', '.csv']:
+        if file_type in [".xlsx", ".xls", ".csv"]:
             records = await service.parse_excel(content, filename)
-        elif file_type == '.pdf':
+        elif file_type == ".pdf":
             records = await service.parse_pdf(content)
-        elif file_type in ['.docx', '.doc', '.txt']:
+        elif file_type in [".docx", ".doc", ".txt"]:
             records = await service.parse_document(content, file_type)
         else:
             # Fallback or unknown
@@ -106,7 +98,7 @@ async def process_file_async(
             job.progress.current_item = i + 1
             # Scale progress from 40% to 70%
             job.progress.percent = 40 + ((i + 1) / total_chunks) * 30
-            job.progress.message = f"Створення embeddings: {i+1}/{total_chunks}"
+            job.progress.message = f"Створення embeddings: {i + 1}/{total_chunks}"
 
             await service.create_embedding(chunk)
 
@@ -119,7 +111,7 @@ async def process_file_async(
             job.progress.current_item = i + 1
             # Scale progress from 70% to 95%
             job.progress.percent = 70 + ((i + 1) / total_chunks) * 25
-            job.progress.message = f"Індексація даних: {i+1}/{total_chunks}"
+            job.progress.message = f"Індексація даних: {i + 1}/{total_chunks}"
 
             await service.index_chunk(chunk)
 
@@ -141,19 +133,12 @@ async def process_file_async(
         job.status = IngestionStatus.FAILED
         job.progress.stage = "failed"
         job.error = str(e)
-        job.progress.message = f"Помилка: {str(e)}"
+        job.progress.message = f"Помилка: {e!s}"
         job.updated_at = datetime.utcnow()
 
-async def process_telegram_async(
-    job_id: str,
-    url: str,
-    limit: int,
-    user_id: str,
-    config: dict
-):
-    """
-    Background task to process Telegram channel with Telethon.
-    """
+
+async def process_telegram_async(job_id: str, url: str, limit: int, user_id: str, config: dict):
+    """Background task to process Telegram channel with Telethon."""
     job = ingestion_jobs.get(job_id)
     if not job:
         return
@@ -166,10 +151,10 @@ async def process_telegram_async(
         job.progress.stage = "AUTH"
         job.progress.message = "Підключення до Telegram API..."
         job.updated_at = datetime.utcnow()
-        
+
         # Extract username from URL
-        username = url.split('/')[-1].replace('@', '')
-        
+        username = url.rsplit("/", maxsplit=1)[-1].replace("@", "")
+
         # Phase 2: Fetching
         job.status = IngestionStatus.PARSING
         job.progress.stage = "FETCH"
@@ -180,7 +165,7 @@ async def process_telegram_async(
         # Get history via Telethon connector
         # Note: In a real app, we'd ensure the connector is initialized with valid session
         result = await telegram_channel_connector.fetch_channel_history(username, limit=limit)
-        
+
         if not result.success:
             raise ValueError(f"Telethon error: {result.error}")
 
@@ -198,16 +183,16 @@ async def process_telegram_async(
         for i, msg in enumerate(messages):
             job.progress.current_item = i + 1
             job.progress.percent = 30 + ((i + 1) / len(messages)) * 60
-            job.progress.message = f"Обробка повідомлень: {i+1}/{len(messages)}"
+            job.progress.message = f"Обробка повідомлень: {i + 1}/{len(messages)}"
 
             # Process via Intelligence Pipeline
             # We pass a simplified message dict or the raw one if compat
             await pipeline.process_message(msg, {"name": username})
-            
+
             # Simulated indexing for now as in process_file_async
             processed_count += 1
             if i % 10 == 0:
-                 await asyncio.sleep(0.1) # Yield to event loop
+                await asyncio.sleep(0.1)  # Yield to event loop
 
         # Phase 4: Finalizing
         job.status = IngestionStatus.READY
@@ -221,7 +206,7 @@ async def process_telegram_async(
         job.status = IngestionStatus.FAILED
         job.progress.stage = "failed"
         job.error = str(e)
-        job.progress.message = f"Помилка: {str(e)}"
+        job.progress.message = f"Помилка: {e!s}"
         job.updated_at = datetime.utcnow()
 
 
@@ -229,30 +214,28 @@ async def process_telegram_async(
 async def health():
     return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
 
+
 @router.post("/upload", response_model=IngestionResponse)
 async def upload_file(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
-    dataset_name: Optional[str] = None,
-    current_user = Depends(get_current_user)
+    dataset_name: str | None = None,
+    current_user=Depends(get_current_user),
 ):
-    """
-    Upload file for ingestion with background processing.
-    """
-    allowed_extensions = {'.xlsx', '.xls', '.csv', '.pdf', '.docx', '.doc', '.txt', '.json'}
-    file_ext = '.' + file.filename.split('.')[-1].lower() if '.' in file.filename else ''
+    """Upload file for ingestion with background processing."""
+    allowed_extensions = {".xlsx", ".xls", ".csv", ".pdf", ".docx", ".doc", ".txt", ".json"}
+    file_ext = "." + file.filename.split(".")[-1].lower() if "." in file.filename else ""
 
     if file_ext not in allowed_extensions:
         raise HTTPException(
-            status_code=400,
-            detail=f"Unsupported file format. Allowed: {', '.join(allowed_extensions)}"
+            status_code=400, detail=f"Unsupported file format. Allowed: {', '.join(allowed_extensions)}"
         )
 
     # Read content (In prod: stream to disk/S3 for large files)
     try:
         content = await file.read()
-    except Exception as e:
-         raise HTTPException(status_code=400, detail="Failed to read file")
+    except Exception:
+        raise HTTPException(status_code=400, detail="Failed to read file")
 
     # Limit size (e.g. 500MB)
     if len(content) > 500 * 1024 * 1024:
@@ -265,13 +248,9 @@ async def upload_file(
         file_size=len(content),
         file_type=file_ext,
         status=IngestionStatus.UPLOADING,
-        user_id=getattr(current_user, 'id', 'anonymous'),
+        user_id=getattr(current_user, "id", "anonymous"),
         created_at=datetime.utcnow(),
-        progress=IngestionProgress(
-            stage="queued",
-            percent=0,
-            message="Файл в черзі на обробку"
-        )
+        progress=IngestionProgress(stage="queued", percent=0, message="Файл в черзі на обробку"),
     )
 
     ingestion_jobs[job_id] = job
@@ -283,8 +262,8 @@ async def upload_file(
         content=content,
         filename=file.filename,
         file_type=file_ext,
-        user_id=getattr(current_user, 'id', 'anonymous'),
-        dataset_name=dataset_name
+        user_id=getattr(current_user, "id", "anonymous"),
+        dataset_name=dataset_name,
     )
 
     return IngestionResponse(
@@ -292,18 +271,15 @@ async def upload_file(
         status=IngestionStatus.UPLOADING,
         message="Файл прийнято до обробки",
         status_url=f"/api/v1/ingest/status/{job_id}",
-        stream_url=f"/api/v1/ingest/stream/{job_id}"
+        stream_url=f"/api/v1/ingest/stream/{job_id}",
     )
+
 
 @router.post("/telegram", response_model=dict)
 async def ingest_telegram(
-    request: TelegramIngestRequest,
-    background_tasks: BackgroundTasks,
-    current_user = Depends(get_current_user)
+    request: TelegramIngestRequest, background_tasks: BackgroundTasks, current_user=Depends(get_current_user)
 ):
-    """
-    Initiate Telegram channel parsing.
-    """
+    """Initiate Telegram channel parsing."""
     job_id = str(uuid.uuid4())
     job = IngestionJob(
         id=job_id,
@@ -311,13 +287,9 @@ async def ingest_telegram(
         file_size=0,
         file_type="telegram",
         status=IngestionStatus.UPLOADING,
-        user_id=getattr(current_user, 'id', 'anonymous'),
+        user_id=getattr(current_user, "id", "anonymous"),
         created_at=datetime.utcnow(),
-        progress=IngestionProgress(
-            stage="CREATED",
-            percent=0,
-            message="Запит на парсинг Telegram прийнято"
-        )
+        progress=IngestionProgress(stage="CREATED", percent=0, message="Запит на парсинг Telegram прийнято"),
     )
 
     ingestion_jobs[job_id] = job
@@ -328,22 +300,21 @@ async def ingest_telegram(
         job_id=job_id,
         url=request.url,
         limit=request.limit,
-        user_id=getattr(current_user, 'id', 'anonymous'),
-        config={"name": request.name, "sector": request.sector}
+        user_id=getattr(current_user, "id", "anonymous"),
+        config={"name": request.name, "sector": request.sector},
     )
 
     return {
         "status": "success",
         "job_id": job_id,
-        "source_id": job_id, # Frontend compat
-        "message": "Парсинг розпочато"
+        "source_id": job_id,  # Frontend compat
+        "message": "Парсинг розпочато",
     }
+
 
 @router.get("/jobs")
 async def list_jobs():
-    """
-    List all active and recent ingestion jobs.
-    """
+    """List all active and recent ingestion jobs."""
     jobs_list = []
     for job_id, job in ingestion_jobs.items():
         jobs_list.append({
@@ -354,33 +325,33 @@ async def list_jobs():
             "progress": {
                 "percent": job.progress.percent,
                 "records_processed": job.progress.current_item,
-                "records_total": job.progress.total_items
+                "records_total": job.progress.total_items,
             },
             "timestamps": {
                 "created_at": job.created_at.isoformat() if job.created_at else datetime.utcnow().isoformat(),
-                "updated_at": job.updated_at.isoformat() if hasattr(job, "updated_at") and job.updated_at else datetime.utcnow().isoformat()
-            }
+                "updated_at": job.updated_at.isoformat()
+                if hasattr(job, "updated_at") and job.updated_at
+                else datetime.utcnow().isoformat(),
+            },
         })
-    
+
     # Sort by created_at descending
     jobs_list.sort(key=lambda x: x["timestamps"]["created_at"], reverse=True)
     return {"jobs": jobs_list}
 
+
 @router.get("/status/{job_id}")
 async def get_status(job_id: str):
-    """
-    Poll handling status.
-    """
+    """Poll handling status."""
     job = ingestion_jobs.get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
     return job
 
+
 @router.get("/stream/{job_id}")
 async def stream_progress(job_id: str):
-    """
-    Server-Sent Events (SSE) for real-time progress updates.
-    """
+    """Server-Sent Events (SSE) for real-time progress updates."""
     if job_id not in ingestion_jobs:
         raise HTTPException(status_code=404, detail="Job not found")
 
@@ -406,7 +377,7 @@ async def stream_progress(job_id: str):
                     "current": job.progress.current_item,
                     "total": job.progress.total_items,
                     "message": job.progress.message,
-                    "error": job.error
+                    "error": job.error,
                 }
                 yield f"data: {json.dumps(data)}\n\n"
 
@@ -417,7 +388,7 @@ async def stream_progress(job_id: str):
                     "stage": job.progress.stage,
                     "percent": 100 if job.status == IngestionStatus.READY else job.progress.percent,
                     "message": job.progress.message,
-                    "error": job.error
+                    "error": job.error,
                 }
                 yield f"data: {json.dumps(data)}\n\n"
                 break
@@ -427,8 +398,5 @@ async def stream_progress(job_id: str):
     return StreamingResponse(
         event_generator(),
         media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive"
-        }
+        headers={"Cache-Control": "no-cache", "Connection": "keep-alive"},
     )

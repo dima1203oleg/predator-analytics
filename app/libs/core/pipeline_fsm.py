@@ -1,9 +1,11 @@
 from datetime import datetime
 from enum import Enum
 import json
-from typing import List, Optional
+from typing import TYPE_CHECKING
 
-import redis.asyncio as aioredis
+
+if TYPE_CHECKING:
+    import redis.asyncio as aioredis
 
 
 class PipelineState(Enum):
@@ -17,14 +19,15 @@ class PipelineState(Enum):
     READY = "READY"
     FAILED = "FAILED"
 
+
 class KnowledgePipeline:
-    """Manages the Knowledge Import Pipeline FSM using Redis as the Single Source of Truth.
-    """
-    def __init__(self, redis_client: aioredis.Redis):
+    """Manages the Knowledge Import Pipeline FSM using Redis as the Single Source of Truth."""
+
+    def __init__(self, redis_client: "aioredis.Redis"):
         self.redis = redis_client
 
     async def initialize(self, source_id: str, metadata: dict) -> str:
-        """Initialize the pipeline for a new source"""
+        """Initialize the pipeline for a new source."""
         key = self._get_key(source_id)
         data = {
             "state": PipelineState.UPLOADED.value,
@@ -35,20 +38,19 @@ class KnowledgePipeline:
             "updated_at": datetime.now().isoformat(),
             "task_id": metadata.get("task_id", ""),
             "filename": metadata.get("filename", ""),
-            "errors": "[]"
+            "errors": "[]",
         }
         await self.redis.hset(key, mapping=data)
         # Set expiry for 24 hours to keep history
         await self.redis.expire(key, 86400)
         return key
 
-    async def transition(self, source_id: str, new_state: PipelineState, progress: int = None, details: str = None) -> None:
-        """Transition to a new state"""
+    async def transition(
+        self, source_id: str, new_state: PipelineState, progress: int | None = None, details: str | None = None
+    ) -> None:
+        """Transition to a new state."""
         key = self._get_key(source_id)
-        update = {
-            "state": new_state.value,
-            "updated_at": datetime.now().isoformat()
-        }
+        update = {"state": new_state.value, "updated_at": datetime.now().isoformat()}
         if progress is not None:
             update["progress"] = progress
 
@@ -60,26 +62,23 @@ class KnowledgePipeline:
         await self.redis.hset(key, mapping=update)
 
     async def fail(self, source_id: str, error_message: str) -> None:
-        """Mark pipeline as FAILED"""
+        """Mark pipeline as FAILED."""
         key = self._get_key(source_id)
 
         # Get existing errors
         current_errors = await self.redis.hget(key, "errors")
         errors = json.loads(current_errors) if current_errors else []
-        errors.append({
-            "timestamp": datetime.now().isoformat(),
-            "message": error_message
-        })
+        errors.append({"timestamp": datetime.now().isoformat(), "message": error_message})
 
         update = {
             "state": PipelineState.FAILED.value,
             "errors": json.dumps(errors),
-            "updated_at": datetime.now().isoformat()
+            "updated_at": datetime.now().isoformat(),
         }
         await self.redis.hset(key, mapping=update)
 
     async def get_status(self, source_id: str) -> dict:
-        """Get current pipeline status"""
+        """Get current pipeline status."""
         key = self._get_key(source_id)
         data = await self.redis.hgetall(key)
         if not data:

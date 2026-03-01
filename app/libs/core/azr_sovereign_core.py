@@ -1,4 +1,4 @@
-"""🏛️ AZR SOVEREIGN CORE v40 - Unified Architecture
+"""🏛️ AZR SOVEREIGN CORE v40 - Unified Architecture.
 ==================================================
 The ultimate integration of all AZR v40 components.
 
@@ -32,13 +32,11 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import json
 import logging
-import os
 from pathlib import Path
 import threading
-import time
 from typing import Any
 
 
@@ -50,9 +48,11 @@ logger = logging.getLogger("azr_sovereign_core")
 # 📊 CORE TYPES
 # ============================================================================
 
+
 @dataclass
 class AZRCapability:
     """Description of an AZR capability."""
+
     name: str
     version: str
     status: str  # healthy, degraded, offline
@@ -63,6 +63,7 @@ class AZRCapability:
 @dataclass
 class AZRHealth:
     """Overall health status of AZR system."""
+
     overall_score: float
     components: dict[str, float]
     capabilities: list[AZRCapability]
@@ -71,7 +72,7 @@ class AZRHealth:
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
-        d['capabilities'] = [asdict(c) for c in self.capabilities]
+        d["capabilities"] = [asdict(c) for c in self.capabilities]
         return d
 
 
@@ -79,8 +80,9 @@ class AZRHealth:
 # 🏛️ AZR SOVEREIGN CORE
 # ============================================================================
 
+
 class AZRSovereignCore:
-    """🏛️ AZR Sovereign Core v40
+    """🏛️ AZR Sovereign Core v40.
 
     Центральне ядро автономної системи, що об'єднує:
     - Криптографічний реєстр істини
@@ -133,30 +135,35 @@ class AZRSovereignCore:
 
                 # 1. Merkle Truth Ledger
                 from app.libs.core.merkle_ledger import get_truth_ledger
+
                 self._truth_ledger = get_truth_ledger(self.storage_path)
                 self._component_health["truth_ledger"] = 100.0
                 logger.info("  ✅ Merkle Truth Ledger initialized")
 
                 # 2. Event Sourcing
                 from app.libs.core.event_sourcing import get_event_store
+
                 self._event_store = get_event_store(self.storage_path)
                 self._component_health["event_store"] = 100.0
                 logger.info("  ✅ Event Sourcing Engine initialized")
 
                 # 3. Knowledge Graph
                 from app.libs.core.graph_rag_memory import get_knowledge_graph
+
                 self._knowledge_graph = get_knowledge_graph(self.storage_path)
                 self._component_health["knowledge_graph"] = 100.0
                 logger.info("  ✅ Graph RAG Memory initialized")
 
                 # 4. MCP Orchestrator
                 from app.libs.core.mcp_integration import get_mcp_orchestrator
+
                 self._mcp_orchestrator = get_mcp_orchestrator(self.storage_path)
                 self._component_health["mcp_orchestrator"] = 100.0
                 logger.info("  ✅ MCP Integration initialized")
 
                 # 5. Red Team Agent
                 from app.libs.core.red_team_agent import RedTeamAgent
+
                 self._red_team_agent = RedTeamAgent(self.storage_path)
                 self._component_health["red_team_agent"] = 100.0
                 logger.info("  ✅ Red Team Agent initialized")
@@ -167,9 +174,9 @@ class AZRSovereignCore:
                     payload={
                         "version": self.VERSION,
                         "components": list(self._component_health.keys()),
-                        "storage_path": str(self.storage_path)
+                        "storage_path": str(self.storage_path),
                     },
-                    metadata={"actor": "azr_sovereign_core"}
+                    metadata={"actor": "azr_sovereign_core"},
                 )
 
                 self._initialized = True
@@ -177,7 +184,7 @@ class AZRSovereignCore:
                 return True
 
             except Exception as e:
-                logger.error(f"Failed to initialize AZR Core: {e}")
+                logger.exception(f"Failed to initialize AZR Core: {e}")
                 return False
 
     # ========================================================================
@@ -189,6 +196,7 @@ class AZRSovereignCore:
         """Access Merkle Truth Ledger."""
         if not self._truth_ledger:
             from app.libs.core.merkle_ledger import get_truth_ledger
+
             self._truth_ledger = get_truth_ledger(self.storage_path)
         return self._truth_ledger
 
@@ -197,6 +205,7 @@ class AZRSovereignCore:
         """Access Event Sourcing Engine."""
         if not self._event_store:
             from app.libs.core.event_sourcing import get_event_store
+
             self._event_store = get_event_store(self.storage_path)
         return self._event_store
 
@@ -205,6 +214,7 @@ class AZRSovereignCore:
         """Access Graph RAG Memory."""
         if not self._knowledge_graph:
             from app.libs.core.graph_rag_memory import get_knowledge_graph
+
             self._knowledge_graph = get_knowledge_graph(self.storage_path)
         return self._knowledge_graph
 
@@ -213,6 +223,7 @@ class AZRSovereignCore:
         """Access MCP Orchestrator."""
         if not self._mcp_orchestrator:
             from app.libs.core.mcp_integration import get_mcp_orchestrator
+
             self._mcp_orchestrator = get_mcp_orchestrator(self.storage_path)
         return self._mcp_orchestrator
 
@@ -221,6 +232,7 @@ class AZRSovereignCore:
         """Access Red Team Agent."""
         if not self._red_team_agent:
             from app.libs.core.red_team_agent import RedTeamAgent
+
             self._red_team_agent = RedTeamAgent(self.storage_path)
         return self._red_team_agent
 
@@ -235,104 +247,108 @@ class AZRSovereignCore:
         # Check Truth Ledger
         try:
             valid, _ = self.truth_ledger.verify_chain_integrity()
-            capabilities.append(AZRCapability(
-                name="MerkleTruthLedger",
-                version="1.0",
-                status="healthy" if valid else "degraded",
-                description="Криптографічний незмінний реєстр",
-                metrics=self.truth_ledger.get_stats()
-            ))
+            capabilities.append(
+                AZRCapability(
+                    name="MerkleTruthLedger",
+                    version="1.0",
+                    status="healthy" if valid else "degraded",
+                    description="Криптографічний незмінний реєстр",
+                    metrics=self.truth_ledger.get_stats(),
+                )
+            )
             self._component_health["truth_ledger"] = 100.0 if valid else 50.0
         except Exception as e:
-            capabilities.append(AZRCapability(
-                name="MerkleTruthLedger",
-                version="1.0",
-                status="offline",
-                description=f"Error: {e}",
-                metrics={}
-            ))
+            capabilities.append(
+                AZRCapability(
+                    name="MerkleTruthLedger", version="1.0", status="offline", description=f"Error: {e}", metrics={}
+                )
+            )
             self._component_health["truth_ledger"] = 0.0
 
         # Check Event Store
         try:
             stats = self.event_store.get_stats()
-            capabilities.append(AZRCapability(
-                name="EventSourcing",
-                version="1.0",
-                status="healthy",
-                description="Event Sourcing для Time Travel",
-                metrics=stats
-            ))
+            capabilities.append(
+                AZRCapability(
+                    name="EventSourcing",
+                    version="1.0",
+                    status="healthy",
+                    description="Event Sourcing для Time Travel",
+                    metrics=stats,
+                )
+            )
             self._component_health["event_store"] = 100.0
         except Exception as e:
-            capabilities.append(AZRCapability(
-                name="EventSourcing",
-                version="1.0",
-                status="offline",
-                description=f"Error: {e}",
-                metrics={}
-            ))
+            capabilities.append(
+                AZRCapability(
+                    name="EventSourcing", version="1.0", status="offline", description=f"Error: {e}", metrics={}
+                )
+            )
             self._component_health["event_store"] = 0.0
 
         # Check Knowledge Graph
         try:
             stats = self.knowledge_graph.get_stats()
-            capabilities.append(AZRCapability(
-                name="GraphRAGMemory",
-                version="1.0",
-                status="healthy",
-                description="Семантична пам'ять та reasoning",
-                metrics=stats
-            ))
+            capabilities.append(
+                AZRCapability(
+                    name="GraphRAGMemory",
+                    version="1.0",
+                    status="healthy",
+                    description="Семантична пам'ять та reasoning",
+                    metrics=stats,
+                )
+            )
             self._component_health["knowledge_graph"] = 100.0
         except Exception as e:
-            capabilities.append(AZRCapability(
-                name="GraphRAGMemory",
-                version="1.0",
-                status="offline",
-                description=f"Error: {e}",
-                metrics={}
-            ))
+            capabilities.append(
+                AZRCapability(
+                    name="GraphRAGMemory", version="1.0", status="offline", description=f"Error: {e}", metrics={}
+                )
+            )
             self._component_health["knowledge_graph"] = 0.0
 
         # Check MCP Orchestrator
         try:
             stats = self.mcp.get_stats()
-            capabilities.append(AZRCapability(
-                name="MCPIntegration",
-                version="1.0",
-                status="healthy",
-                description="Model Context Protocol інтеграція",
-                metrics=stats
-            ))
+            capabilities.append(
+                AZRCapability(
+                    name="MCPIntegration",
+                    version="1.0",
+                    status="healthy",
+                    description="Model Context Protocol інтеграція",
+                    metrics=stats,
+                )
+            )
             self._component_health["mcp_orchestrator"] = 100.0
         except Exception as e:
-            capabilities.append(AZRCapability(
-                name="MCPIntegration",
-                version="1.0",
-                status="offline",
-                description=f"Error: {e}",
-                metrics={}
-            ))
+            capabilities.append(
+                AZRCapability(
+                    name="MCPIntegration", version="1.0", status="offline", description=f"Error: {e}", metrics={}
+                )
+            )
             self._component_health["mcp_orchestrator"] = 0.0
 
         # Add Formal State Machine
-        capabilities.append(AZRCapability(
-            name="FormalStateMachine",
-            version="1.0",
-            status="healthy",
-            description="Верифіковані state transitions",
-            metrics={}
-        ))
+        capabilities.append(
+            AZRCapability(
+                name="FormalStateMachine",
+                version="1.0",
+                status="healthy",
+                description="Верифіковані state transitions",
+                metrics={},
+            )
+        )
 
         # Add Red Team Agent
-        capabilities.append(AZRCapability(
-            name="RedTeamAgent",
-            version="1.0",
-            status="healthy",
-            description="Adversarial security testing",
-            metrics={}
-        ))
+        capabilities.append(
+            AZRCapability(
+                name="RedTeamAgent",
+                version="1.0",
+                status="healthy",
+                description="Adversarial security testing",
+                metrics={},
+            )
+        )
 
         # Calculate overall score
         overall = sum(self._component_health.values()) / max(1, len(self._component_health))
@@ -341,7 +357,7 @@ class AZRSovereignCore:
             overall_score=overall,
             components=dict(self._component_health),
             capabilities=capabilities,
-            constitutional_compliant=overall >= 90.0
+            constitutional_compliant=overall >= 90.0,
         )
 
     def get_status(self) -> dict[str, Any]:
@@ -353,60 +369,39 @@ class AZRSovereignCore:
             "initialized": self._initialized,
             "health": health.to_dict(),
             "storage_path": str(self.storage_path),
-            "capabilities_summary": {
-                c.name: c.status for c in health.capabilities
-            }
+            "capabilities_summary": {c.name: c.status for c in health.capabilities},
         }
 
     # ========================================================================
     # 🎯 HIGH-LEVEL OPERATIONS
     # ========================================================================
 
-    def record_decision(
-        self,
-        decision: str,
-        context: dict[str, Any],
-        observations: list[str]
-    ) -> dict[str, Any]:
+    def record_decision(self, decision: str, context: dict[str, Any], observations: list[str]) -> dict[str, Any]:
         """Record a decision with full provenance.
         Uses Truth Ledger + Knowledge Graph.
         """
         # Record in Truth Ledger
         ledger_entry = self.truth_ledger.append(
-            event_type="AZR_DECISION",
-            payload={
-                "decision": decision,
-                "context": context,
-                "observations": observations
-            }
+            event_type="AZR_DECISION", payload={"decision": decision, "context": context, "observations": observations}
         )
 
         # Record in Knowledge Graph for reasoning
-        decision_id = self.knowledge_graph.record_decision(
-            decision,
-            context,
-            observations
-        )
+        decision_id = self.knowledge_graph.record_decision(decision, context, observations)
 
         return {
             "decision_id": decision_id,
             "ledger_sequence": ledger_entry.sequence,
             "merkle_root": ledger_entry.merkle_root[:32],
-            "timestamp": ledger_entry.timestamp
+            "timestamp": ledger_entry.timestamp,
         }
 
     def explain_decision(self, decision_id: str) -> str:
-        """Explain a past decision using Knowledge Graph.
-        """
+        """Explain a past decision using Knowledge Graph."""
         return self.knowledge_graph.explain_decision(decision_id)
 
     async def run_security_assessment(self, guard: Any = None) -> dict[str, Any]:
-        """Run adversarial security assessment.
-        """
-        report = await self.red_team.run_full_assessment(
-            guard=guard,
-            num_attacks=30
-        )
+        """Run adversarial security assessment."""
+        report = await self.red_team.run_full_assessment(guard=guard, num_attacks=30)
 
         # Record in Truth Ledger
         self.truth_ledger.append(
@@ -414,46 +409,33 @@ class AZRSovereignCore:
             payload={
                 "vulnerability_score": report.vulnerability_score,
                 "block_rate": report.block_rate,
-                "total_attacks": report.total_attacks
-            }
+                "total_attacks": report.total_attacks,
+            },
         )
 
         return {
             "vulnerability_score": report.vulnerability_score,
             "block_rate": f"{report.block_rate:.1f}%",
-            "recommendations": report.recommendations
+            "recommendations": report.recommendations,
         }
 
-    async def run_agent(
-        self,
-        prompt: str,
-        tools: list[str] | None = None
-    ) -> dict[str, Any]:
-        """Run MCP agent with integrated AZR tools.
-        """
+    async def run_agent(self, prompt: str, tools: list[str] | None = None) -> dict[str, Any]:
+        """Run MCP agent with integrated AZR tools."""
         return await self.mcp.run_agent(prompt, tools)
 
     def verify_integrity(self) -> dict[str, Any]:
-        """Verify system integrity across all components.
-        """
+        """Verify system integrity across all components."""
         results = {}
 
         # Truth Ledger
         valid, msg = self.truth_ledger.verify_chain_integrity()
-        results["truth_ledger"] = {
-            "valid": valid,
-            "message": msg
-        }
+        results["truth_ledger"] = {"valid": valid, "message": msg}
 
         # Add more verifications as needed
 
         overall_valid = all(r.get("valid", False) for r in results.values())
 
-        return {
-            "overall_valid": overall_valid,
-            "components": results,
-            "timestamp": datetime.now(UTC).isoformat()
-        }
+        return {"overall_valid": overall_valid, "components": results, "timestamp": datetime.now(UTC).isoformat()}
 
 
 # ============================================================================
@@ -485,6 +467,7 @@ async def initialize_azr() -> AZRSovereignCore:
 # 🧪 SELF-TEST
 # ============================================================================
 
+
 async def run_self_test():
     print("🏛️ AZR SOVEREIGN CORE v40 - Self-Test")
     print("=" * 60)
@@ -509,7 +492,7 @@ async def run_self_test():
     result = core.record_decision(
         "Активувати автономний режим",
         {"health_score": 95.0, "risk_level": "low"},
-        ["Система стабільна", "Всі тести пройдено", "Немає аномалій"]
+        ["Система стабільна", "Всі тести пройдено", "Немає аномалій"],
     )
     print(f"  Decision ID: {result['decision_id']}")
     print(f"  Ledger Sequence: {result['ledger_sequence']}")
@@ -525,19 +508,24 @@ async def run_self_test():
     print("\n🔍 Verifying Integrity...")
     integrity = core.verify_integrity()
     print(f"  Overall Valid: {integrity['overall_valid']}")
-    for comp, result in integrity['components'].items():
-        status = "✅" if result['valid'] else "❌"
+    for comp, result in integrity["components"].items():
+        status = "✅" if result["valid"] else "❌"
         print(f"    {status} {comp}: {result['message'][:50]}...")
 
     # Full status
     print("\n📋 Full Status:")
     status = core.get_status()
-    print(json.dumps({
-        "version": status["version"],
-        "initialized": status["initialized"],
-        "health_score": status["health"]["overall_score"],
-        "capabilities": status["capabilities_summary"]
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "version": status["version"],
+                "initialized": status["initialized"],
+                "health_score": status["health"]["overall_score"],
+                "capabilities": status["capabilities_summary"],
+            },
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

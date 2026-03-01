@@ -2,9 +2,9 @@ from __future__ import annotations
 
 
 """Databases Router - Database management endpoints with REAL connections."""
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import logging
-from typing import Any, Dict
+from typing import Any
 import urllib.parse
 
 import asyncpg
@@ -19,9 +19,11 @@ from app.core.config import settings
 router = APIRouter(prefix="/databases", tags=["Databases"])
 logger = logging.getLogger(__name__)
 
+
 class QueryRequest(BaseModel):
     query: str
     params: dict = {}
+
 
 class CypherRequest(BaseModel):
     query: str
@@ -34,12 +36,19 @@ async def _get_pg_dsn():
         return None
     return settings.CLEAN_DATABASE_URL
 
+
 async def check_postgres_status() -> dict[str, Any]:
     """Check PostgreSQL real status."""
     try:
         dsn = await _get_pg_dsn()
         if not dsn:
-             return {"id": "postgres", "name": "PostgreSQL (SQLite Mode)", "type": "SQL", "status": "CONNECTED", "version": "SQLite"}
+            return {
+                "id": "postgres",
+                "name": "PostgreSQL (SQLite Mode)",
+                "type": "SQL",
+                "status": "CONNECTED",
+                "version": "SQLite",
+            }
 
         conn = await asyncpg.connect(dsn)
         version = await conn.fetchval("SELECT version()")
@@ -59,7 +68,7 @@ async def check_postgres_status() -> dict[str, Any]:
             "version": version.split()[0:2] if version else [],
             "size_mb": round(size / 1024 / 1024, 2) if size else 0,
             "tables": tables or 0,
-            "host": display_host
+            "host": display_host,
         }
     except Exception as e:
         logger.exception(f"PostgreSQL check failed: {e}")
@@ -81,7 +90,7 @@ async def check_redis_status() -> dict[str, Any]:
             "version": info.get("redis_version", "Unknown"),
             "used_memory_mb": round(info.get("used_memory", 0) / 1024 / 1024, 2),
             "keys": info.get("db0", {}).get("keys", 0) if isinstance(info.get("db0"), dict) else 0,
-            "host": settings.REDIS_URL.split("@")[-1] # Simple parsing
+            "host": settings.REDIS_URL.split("@")[-1],  # Simple parsing
         }
     except Exception as e:
         logger.exception(f"Redis check failed: {e}")
@@ -104,7 +113,7 @@ async def check_qdrant_status() -> dict[str, Any]:
                     "status": "CONNECTED",
                     "collections": [c["name"] for c in collections],
                     "collections_count": len(collections),
-                    "host": base_url
+                    "host": base_url,
                 }
     except Exception as e:
         logger.exception(f"Qdrant check failed: {e}")
@@ -131,7 +140,7 @@ async def check_opensearch_status() -> dict[str, Any]:
                     "cluster_status": health.get("status"),
                     "nodes": health.get("number_of_nodes", 1),
                     "indices_count": len([i for i in indices if not i["index"].startswith(".")]),
-                    "host": base_url
+                    "host": base_url,
                 }
     except Exception as e:
         logger.exception(f"OpenSearch check failed: {e}")
@@ -142,6 +151,7 @@ async def check_minio_status() -> dict[str, Any]:
     """Check MinIO real status and list buckets."""
     try:
         from app.services.minio_service import minio_service
+
         buckets = await minio_service.list_buckets()
         return {
             "id": "minio",
@@ -150,7 +160,7 @@ async def check_minio_status() -> dict[str, Any]:
             "status": "CONNECTED",
             "buckets_count": len(buckets),
             "buckets": buckets,
-            "host": settings.MINIO_ENDPOINT
+            "host": settings.MINIO_ENDPOINT,
         }
     except Exception as e:
         logger.warning(f"MinIO service check failed: {e}")
@@ -162,8 +172,15 @@ async def check_minio_status() -> dict[str, Any]:
             async with httpx.AsyncClient() as client:
                 resp = await client.get(url, timeout=3)
                 if resp.status_code == 200:
-                    return {"id": "minio", "name": "MinIO", "type": "ObjectStorage", "status": "CONNECTED", "host": endpoint}
-        except: pass
+                    return {
+                        "id": "minio",
+                        "name": "MinIO",
+                        "type": "ObjectStorage",
+                        "status": "CONNECTED",
+                        "host": endpoint,
+                    }
+        except:
+            pass
     return {"id": "minio", "name": "MinIO", "type": "ObjectStorage", "status": "ERROR", "host": settings.MINIO_ENDPOINT}
 
 
@@ -172,10 +189,10 @@ async def list_minio_buckets():
     """List real MinIO buckets using the service."""
     try:
         from app.services.minio_service import minio_service
-        buckets = await minio_service.list_buckets()
-        return buckets
+
+        return await minio_service.list_buckets()
     except Exception as e:
-        logger.error(f"Failed to list buckets: {e}")
+        logger.exception(f"Failed to list buckets: {e}")
         return []
 
 
@@ -185,8 +202,8 @@ async def get_training_pairs():
     # For now returns real DB entries if available, otherwise empty list (no more hardcoded mocks)
     try:
         from app.libs.core.database import get_db_ctx
-        from app.libs.core.models import TrinityAuditLog  # Using audit log as source for now
-        async with get_db_ctx() as db:
+
+        async with get_db_ctx():
             # Logic here to fetch real pairs
             return []
     except:
@@ -205,7 +222,7 @@ async def list_databases():
         check_qdrant_status(),
         check_opensearch_status(),
         check_minio_status(),
-        return_exceptions=True
+        return_exceptions=True,
     )
 
     databases = []
@@ -236,7 +253,7 @@ async def get_vector_collections():
                             "name": col["name"],
                             "vectors_count": col_data.get("vectors_count", 0),
                             "points_count": col_data.get("points_count", 0),
-                            "status": col_data.get("status", "unknown")
+                            "status": col_data.get("status", "unknown"),
                         })
                 return detailed
     except Exception as e:
@@ -252,7 +269,7 @@ async def get_database_status(db_id: str):
         "redis": check_redis_status,
         "qdrant": check_qdrant_status,
         "opensearch": check_opensearch_status,
-        "minio": check_minio_status
+        "minio": check_minio_status,
     }
 
     checker = checkers.get(db_id)
@@ -284,14 +301,11 @@ async def execute_query(request: QueryRequest):
                 "columns": columns,
                 "rows": data,
                 "row_count": len(rows),
-                "execution_time_ms": (datetime.now(UTC) - start).total_seconds() * 1000
+                "execution_time_ms": (datetime.now(UTC) - start).total_seconds() * 1000,
             }
         else:
             await conn.execute(request.query)
-            result = {
-                "status": "SUCCESS",
-                "execution_time_ms": (datetime.now(UTC) - start).total_seconds() * 1000
-            }
+            result = {"status": "SUCCESS", "execution_time_ms": (datetime.now(UTC) - start).total_seconds() * 1000}
 
         await conn.close()
         return result
@@ -309,7 +323,7 @@ async def execute_cypher(request: CypherRequest):
         "nodes": [],
         "relationships": [],
         "message": "Neo4j not configured. Add NEO4J_URI to enable graph queries.",
-        "execution_time_ms": 0
+        "execution_time_ms": 0,
     }
 
 
@@ -319,7 +333,8 @@ async def get_database_stats(db_id: str):
     if db_id == "postgres":
         try:
             dsn = await _get_pg_dsn()
-            if not dsn: return {"id": db_id, "message": "SQLite mode"}
+            if not dsn:
+                return {"id": db_id, "message": "SQLite mode"}
 
             conn = await asyncpg.connect(dsn)
             size = await conn.fetchval("SELECT pg_database_size(current_database())")
@@ -331,7 +346,7 @@ async def get_database_stats(db_id: str):
                 "size_mb": round(size / 1024 / 1024, 2) if size else 0,
                 "tables": tables or 0,
                 "rows_total": rows or 0,
-                "last_backup": datetime.now(UTC).isoformat()
+                "last_backup": datetime.now(UTC).isoformat(),
             }
         except Exception as e:
             raise HTTPException(status_code=503, detail=str(e))
@@ -343,19 +358,15 @@ async def get_database_stats(db_id: str):
 async def trigger_backup(db_id: str):
     """Trigger database backup."""
     if db_id != "postgres":
-         # Only Postgres implemented for now
-         return {"id": db_id, "status": "SKIPPED", "message": "Backup not supported for this DB type"}
+        # Only Postgres implemented for now
+        return {"id": db_id, "status": "SKIPPED", "message": "Backup not supported for this DB type"}
 
     try:
         from app.tasks.maintenance import backup_postgres
+
         task = backup_postgres.delay()
 
-        return {
-            "id": db_id,
-            "backup_id": task.id,
-            "status": "STARTED",
-            "message": "Backup job queued in background"
-        }
+        return {"id": db_id, "backup_id": task.id, "status": "STARTED", "message": "Backup job queued in background"}
     except Exception as e:
         logger.exception(f"Backup trigger failed: {e}")
         raise HTTPException(status_code=500, detail="Backup queue unavailable")

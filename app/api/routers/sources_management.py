@@ -5,13 +5,12 @@ from __future__ import annotations
 API для управління джерелами даних (Telegram, Web, RSS, API).
 """
 from datetime import datetime
-import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 import uuid
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel, Field
-from sqlalchemy import delete, select, update
+from sqlalchemy import select, update
 
 from app.libs.core.database import get_db_ctx
 from app.libs.core.models.entities import DataSource as DataSourceEntity
@@ -27,8 +26,10 @@ router = APIRouter(prefix="/sources", tags=["Джерела Даних"])
 # SCHEMAS
 # ============================================================================
 
+
 class SourceConfigBase(BaseModel):
     """Базова конфігурація джерела."""
+
     name: str = Field(..., min_length=1, max_length=255, description="Назва джерела")
     type: str = Field(..., description="Тип: telegram, web, rss, registry, api")
     url: str | None = Field(None, description="URL для web/rss/api")
@@ -47,6 +48,7 @@ class SourceCreate(SourceConfigBase):
 
 class SourceUpdate(BaseModel):
     """Оновлення джерела."""
+
     name: str | None = None
     url: str | None = None
     channelUsername: str | None = None
@@ -57,6 +59,7 @@ class SourceUpdate(BaseModel):
 
 class SourceResponse(BaseModel):
     """Відповідь з інформацією про джерело."""
+
     id: str
     name: str
     type: str
@@ -80,6 +83,7 @@ class TestSourceRequest(SourceConfigBase):
 
 class TestSourceResponse(BaseModel):
     """Результат тестування."""
+
     success: bool
     message: str
     records_count: int = 0
@@ -89,6 +93,7 @@ class TestSourceResponse(BaseModel):
 
 class SyncSourceRequest(BaseModel):
     """Запит на синхронізацію."""
+
     force: bool = False
     limit: int | None = 100
 
@@ -97,19 +102,24 @@ class SyncSourceRequest(BaseModel):
 # HELPERS
 # ============================================================================
 
+
 def _get_connector_for_type(source_type: str):
     """Отримати connector для типу джерела."""
     if source_type == "telegram":
         from app.connectors.telegram_channel import telegram_channel_connector
+
         return telegram_channel_connector
     if source_type == "web":
         from app.connectors.web_scraper import web_scraper_connector
+
         return web_scraper_connector
     if source_type == "rss":
         from app.connectors.web_scraper import web_scraper_connector
+
         return web_scraper_connector  # RSS обробляється тим же connector
     if source_type == "registry":
         from app.connectors.ckan_generic import ckan_connector
+
         return ckan_connector
     if source_type == "api":
         # Generic API connector
@@ -120,6 +130,7 @@ def _get_connector_for_type(source_type: str):
 async def _run_sync(source_id: str, source: DataSourceEntity):
     """Фоновий процес синхронізації."""
     import time
+
     start_time = time.time()
 
     try:
@@ -133,15 +144,14 @@ async def _run_sync(source_id: str, source: DataSourceEntity):
         # Виконуємо синхронізацію залежно від типу
         if source.source_type == "telegram":
             result = await connector.fetch_channel_history(
-                config.get("channelUsername"),
-                limit=config.get("limit", 100)
+                config.get("channelUsername"), limit=config.get("limit", 100)
             )
         elif source.source_type == "web":
             result = await connector.search(
                 config.get("url"),
                 use_playwright=config.get("usePlaywright", False),
                 follow_links=config.get("followLinks", False),
-                max_depth=config.get("maxDepth", 1)
+                max_depth=config.get("maxDepth", 1),
             )
         elif source.source_type == "rss":
             result = await connector.scrape_rss_feed(config.get("url"))
@@ -159,8 +169,8 @@ async def _run_sync(source_id: str, source: DataSourceEntity):
                         **config,
                         "last_sync": datetime.utcnow().isoformat(),
                         "last_count": result.records_count,
-                        "sync_duration_ms": (time.time() - start_time) * 1000
-                    }
+                        "sync_duration_ms": (time.time() - start_time) * 1000,
+                    },
                 )
             )
             await sess.commit()
@@ -178,9 +188,7 @@ async def _run_sync(source_id: str, source: DataSourceEntity):
 
         async with get_db_ctx() as sess:
             await sess.execute(
-                update(DataSourceEntity)
-                .where(DataSourceEntity.id == uuid.UUID(source_id))
-                .values(status="error")
+                update(DataSourceEntity).where(DataSourceEntity.id == uuid.UUID(source_id)).values(status="error")
             )
             await sess.commit()
 
@@ -189,12 +197,13 @@ async def _run_sync(source_id: str, source: DataSourceEntity):
 # ENDPOINTS
 # ============================================================================
 
+
 @router.get("/", response_model=list[SourceResponse])
 async def list_sources(
     type: str | None = None,
     status: str | None = None,
     sector: str | None = None,
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user),
 ):
     """Отримати список всіх джерел даних.
 
@@ -231,7 +240,7 @@ async def list_sources(
                     records_count=s.config.get("last_count", 0) if s.config else 0,
                     last_sync=s.config.get("last_sync") if s.config else None,
                     created_at=s.created_at.isoformat() if s.created_at else "",
-                    updated_at=s.updated_at.isoformat() if s.updated_at else None
+                    updated_at=s.updated_at.isoformat() if s.updated_at else None,
                 )
                 for s in sources
             ]
@@ -242,10 +251,7 @@ async def list_sources(
 
 
 @router.post("/", response_model=SourceResponse)
-async def create_source(
-    source: SourceCreate,
-    user: dict = Depends(get_current_user)
-):
+async def create_source(source: SourceCreate, user: dict = Depends(get_current_user)):
     """Створити нове джерело даних."""
     try:
         # Визначаємо connector
@@ -254,7 +260,7 @@ async def create_source(
             "web": "web_scraper",
             "rss": "rss_feed",
             "registry": "ckan_api",
-            "api": "rest_api"
+            "api": "rest_api",
         }
         connector = connector_map.get(source.type, "unknown")
 
@@ -264,7 +270,7 @@ async def create_source(
             "channelUsername": source.channelUsername,
             "usePlaywright": source.usePlaywright,
             "followLinks": source.followLinks,
-            "maxDepth": source.maxDepth
+            "maxDepth": source.maxDepth,
         }
 
         # Видаляємо None значення
@@ -283,7 +289,7 @@ async def create_source(
                 tenant_id=uuid.UUID(user.get("tenant_id", "00000000-0000-0000-0000-000000000000")),
                 config=config,
                 sector=source.sector,
-                schedule=schedule
+                schedule=schedule,
             )
 
             sess.add(new_source)
@@ -304,7 +310,7 @@ async def create_source(
                 records_count=0,
                 last_sync=None,
                 created_at=new_source.created_at.isoformat(),
-                updated_at=None
+                updated_at=None,
             )
 
     except Exception as e:
@@ -313,10 +319,7 @@ async def create_source(
 
 
 @router.get("/{source_id}", response_model=SourceResponse)
-async def get_source(
-    source_id: str,
-    user: dict = Depends(get_current_user)
-):
+async def get_source(source_id: str, user: dict = Depends(get_current_user)):
     """Отримати інформацію про конкретне джерело."""
     try:
         async with get_db_ctx() as sess:
@@ -337,7 +340,7 @@ async def get_source(
                 records_count=source.config.get("last_count", 0) if source.config else 0,
                 last_sync=source.config.get("last_sync") if source.config else None,
                 created_at=source.created_at.isoformat(),
-                updated_at=source.updated_at.isoformat() if source.updated_at else None
+                updated_at=source.updated_at.isoformat() if source.updated_at else None,
             )
 
     except HTTPException:
@@ -348,11 +351,7 @@ async def get_source(
 
 
 @router.patch("/{source_id}", response_model=SourceResponse)
-async def update_source(
-    source_id: str,
-    source_update: SourceUpdate,
-    user: dict = Depends(get_current_user)
-):
+async def update_source(source_id: str, source_update: SourceUpdate, user: dict = Depends(get_current_user)):
     """Оновити джерело даних."""
     try:
         async with get_db_ctx() as sess:
@@ -400,7 +399,7 @@ async def update_source(
                 records_count=source.config.get("last_count", 0) if source.config else 0,
                 last_sync=source.config.get("last_sync") if source.config else None,
                 created_at=source.created_at.isoformat(),
-                updated_at=source.updated_at.isoformat() if source.updated_at else None
+                updated_at=source.updated_at.isoformat() if source.updated_at else None,
             )
 
     except HTTPException:
@@ -411,10 +410,7 @@ async def update_source(
 
 
 @router.delete("/{source_id}")
-async def delete_source(
-    source_id: str,
-    user: dict = Depends(get_current_user)
-):
+async def delete_source(source_id: str, user: dict = Depends(get_current_user)):
     """Видалити джерело даних."""
     try:
         async with get_db_ctx() as sess:
@@ -439,22 +435,17 @@ async def delete_source(
 
 
 @router.post("/test", response_model=TestSourceResponse)
-async def test_source_connection(
-    config: TestSourceRequest,
-    user: dict = Depends(get_current_user)
-):
+async def test_source_connection(config: TestSourceRequest, user: dict = Depends(get_current_user)):
     """Тестувати підключення до джерела без збереження."""
     import time
+
     start_time = time.time()
 
     try:
         connector = _get_connector_for_type(config.type)
 
         if not connector:
-            return TestSourceResponse(
-                success=False,
-                message=f"Connector для типу '{config.type}' не підтримується"
-            )
+            return TestSourceResponse(success=False, message=f"Connector для типу '{config.type}' не підтримується")
 
         # Виконуємо тестовий запит
         if config.type == "telegram":
@@ -465,11 +456,7 @@ async def test_source_connection(
         elif config.type == "web":
             if not config.url:
                 return TestSourceResponse(success=False, message="Не вказано URL")
-            result = await connector.search(
-                config.url,
-                limit=1,
-                use_playwright=config.usePlaywright
-            )
+            result = await connector.search(config.url, limit=1, use_playwright=config.usePlaywright)
 
         elif config.type == "rss":
             if not config.url:
@@ -497,20 +484,15 @@ async def test_source_connection(
                 message=f"Підключення успішне! Знайдено {result.records_count} записів",
                 records_count=result.records_count,
                 latency_ms=round(latency_ms, 2),
-                sample_data=sample_data
+                sample_data=sample_data,
             )
         return TestSourceResponse(
-            success=False,
-            message=result.error or "Невідома помилка",
-            latency_ms=round(latency_ms, 2)
+            success=False, message=result.error or "Невідома помилка", latency_ms=round(latency_ms, 2)
         )
 
     except Exception as e:
         logger.exception(f"Помилка тестування джерела: {e}")
-        return TestSourceResponse(
-            success=False,
-            message=str(e)
-        )
+        return TestSourceResponse(success=False, message=str(e))
 
 
 @router.post("/{source_id}/sync")
@@ -518,7 +500,7 @@ async def sync_source(
     source_id: str,
     request: SyncSourceRequest,
     background_tasks: BackgroundTasks,
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user),
 ):
     """Запустити синхронізацію джерела даних (фоновий процес)."""
     try:
@@ -543,7 +525,7 @@ async def sync_source(
                 "status": "started",
                 "source_id": source_id,
                 "source_name": source.name,
-                "message": "Синхронізацію запущено у фоновому режимі"
+                "message": "Синхронізацію запущено у фоновому режимі",
             }
 
     except HTTPException:
@@ -554,11 +536,7 @@ async def sync_source(
 
 
 @router.get("/{source_id}/preview")
-async def preview_source_data(
-    source_id: str,
-    limit: int = 10,
-    user: dict = Depends(get_current_user)
-):
+async def preview_source_data(source_id: str, limit: int = 10, user: dict = Depends(get_current_user)):
     """Переглянути дані з джерела (без збереження)."""
     try:
         async with get_db_ctx() as sess:
@@ -575,24 +553,18 @@ async def preview_source_data(
 
             # Отримуємо дані
             if source.source_type == "telegram":
-                result = await connector.search(
-                    config.get("channelUsername", ""),
-                    limit=limit
-                )
+                result = await connector.search(config.get("channelUsername", ""), limit=limit)
             elif source.source_type == "rss":
                 result = await connector.scrape_rss_feed(config.get("url", ""))
             else:
-                result = await connector.search(
-                    config.get("url", ""),
-                    limit=limit
-                )
+                result = await connector.search(config.get("url", ""), limit=limit)
 
             if result.success:
                 return {
                     "source_id": source_id,
                     "source_name": source.name,
                     "records_count": result.records_count,
-                    "data": result.data[:limit] if isinstance(result.data, list) else result.data
+                    "data": result.data[:limit] if isinstance(result.data, list) else result.data,
                 }
             raise HTTPException(status_code=400, detail=result.error)
 

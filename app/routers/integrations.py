@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 """Integrations Router - External system integrations."""
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter
 
@@ -19,11 +19,7 @@ async def list_integrations():
     integrations = []
 
     for name in connector_registry.list_all():
-        integrations.append({
-            "id": name,
-            "name": name.upper(),
-            "status": statuses.get(name, "UNKNOWN")
-        })
+        integrations.append({"id": name, "name": name.upper(), "status": statuses.get(name, "UNKNOWN")})
 
     return integrations
 
@@ -34,8 +30,4 @@ async def get_integration_status(integration_id: str):
     statuses = await connector_registry.health_check_all()
     status = statuses.get(integration_id, "UNKNOWN")
 
-    return {
-        "id": integration_id,
-        "status": status,
-        "last_sync": datetime.now(UTC).isoformat()
-    }
+    return {"id": integration_id, "status": status, "last_sync": datetime.now(UTC).isoformat()}

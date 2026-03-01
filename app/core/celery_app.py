@@ -13,7 +13,6 @@ celery_app = Celery(
     "ua_sources",
     broker=settings.CELERY_BROKER_URL,
     backend=settings.CELERY_RESULT_BACKEND,
-
     include=[
         "app.tasks.etl",
         "app.tasks.ua_sources",
@@ -22,8 +21,8 @@ celery_app = Celery(
         "app.tasks.monitoring",
         "app.tasks.ingestion",
         "app.tasks.augmentation",
-        "app.tasks.ml_workers"
-    ]
+        "app.tasks.ml_workers",
+    ],
 )
 
 # Celery configuration
@@ -40,18 +39,17 @@ celery_app.conf.update(
     # Result expiration
     # Result expiration
     result_expires=86400,  # 24 hours
-
     # Monitoring Events (Critical for v45 JobQueueMonitor)
     worker_send_task_events=True,
     task_send_sent_event=True,
-
     # Reliability & Enterprise Resilience
     task_acks_late=True,
     worker_cancel_long_running_tasks_on_connection_loss=True,
     task_reject_on_worker_lost=True,
-
     # Flower Security (v45.0)
-    flower_basic_auth=f"{settings.FLOWER_USER}:{settings.FLOWER_PASSWORD}" if settings.FLOWER_USER and settings.FLOWER_PASSWORD else None,
+    flower_basic_auth=f"{settings.FLOWER_USER}:{settings.FLOWER_PASSWORD}"
+    if settings.FLOWER_USER and settings.FLOWER_PASSWORD
+    else None,
 )
 
 # Task routes - assign tasks to specific queues

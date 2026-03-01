@@ -4,7 +4,6 @@ from __future__ import annotations
 """Base LLM Provider Interface."""
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -16,6 +15,7 @@ class LLMResponse:
     tokens_used: int = 0
     latency_ms: float = 0
     error: str | None = None
+
 
 class BaseLLMProvider(ABC):
     def __init__(self, api_key: str, model: str):

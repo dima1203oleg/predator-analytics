@@ -15,11 +15,11 @@ Implements:
 
 import asyncio
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-from enum import Enum
+from datetime import datetime
+from enum import StrEnum
 import json
 import logging
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any
 import uuid
 
 
@@ -30,21 +30,24 @@ logger = logging.getLogger("predator.superintelligence")
 # ENUMS & DATA CLASSES
 # ============================================================================
 
-class AgentType(str, Enum):
+
+class AgentType(StrEnum):
     """Intelligence agent types following Multi-INT doctrine."""
-    SIGINT = "sigint"      # Signals Intelligence (network traffic)
-    HUMINT = "humint"      # Human Intelligence (text analysis, NLP)
-    TECHINT = "techint"    # Technical Intelligence (system logs)
-    CYBINT = "cybint"      # Cyber Intelligence (threat intel)
-    OSINT = "osint"        # Open Source Intelligence
-    LLM = "llm"            # Large Language Model
-    CRITIC = "critic"      # Quality assurance
-    REFINER = "refiner"    # Response improvement
+
+    SIGINT = "sigint"  # Signals Intelligence (network traffic)
+    HUMINT = "humint"  # Human Intelligence (text analysis, NLP)
+    TECHINT = "techint"  # Technical Intelligence (system logs)
+    CYBINT = "cybint"  # Cyber Intelligence (threat intel)
+    OSINT = "osint"  # Open Source Intelligence
+    LLM = "llm"  # Large Language Model
+    CRITIC = "critic"  # Quality assurance
+    REFINER = "refiner"  # Response improvement
     EXECUTOR = "executor"  # Action execution
 
 
-class RecoveryStrategy(str, Enum):
+class RecoveryStrategy(StrEnum):
     """Self-healing recovery strategies."""
+
     RESTART = "restart"
     ROLLBACK = "rollback"
     SCALE = "scale"
@@ -52,8 +55,9 @@ class RecoveryStrategy(str, Enum):
     MANUAL = "manual"
 
 
-class SystemHealth(str, Enum):
+class SystemHealth(StrEnum):
     """System health states."""
+
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     RECOVERING = "recovering"
@@ -63,6 +67,7 @@ class SystemHealth(str, Enum):
 @dataclass
 class AgentState:
     """State container for agent execution."""
+
     agent_id: str
     agent_type: AgentType
     status: str = "idle"
@@ -74,6 +79,7 @@ class AgentState:
 @dataclass
 class ThoughtTrace:
     """Reasoning trace for XAI (Explainable AI)."""
+
     step: int
     agent: str
     action: str
@@ -86,6 +92,7 @@ class ThoughtTrace:
 @dataclass
 class OrchestratorResponse:
     """Structured response from the orchestrator."""
+
     query: str
     answer: str
     mode: str
@@ -100,6 +107,7 @@ class OrchestratorResponse:
 # ============================================================================
 # LLM ROUTER - Fallback Chain
 # ============================================================================
+
 
 class LLMRouter:
     """Intelligent LLM Router with fallback chain.
@@ -118,7 +126,7 @@ class LLMRouter:
         system_prompt: str | None = None,
         model: str = "auto",
         temperature: float = 0.7,
-        max_tokens: int = 4096
+        max_tokens: int = 4096,
     ) -> dict[str, Any]:
         """Query LLM with automatic fallback."""
         # Check cache first
@@ -134,21 +142,12 @@ class LLMRouter:
 
         for provider in providers:
             try:
-                response = await self._call_provider(
-                    provider, prompt, system_prompt, temperature, max_tokens
-                )
+                response = await self._call_provider(provider, prompt, system_prompt, temperature, max_tokens)
 
                 # Cache successful response
-                self.cache[cache_key] = {
-                    "response": response,
-                    "timestamp": datetime.utcnow().timestamp()
-                }
+                self.cache[cache_key] = {"response": response, "timestamp": datetime.utcnow().timestamp()}
 
-                return {
-                    **response,
-                    "provider": provider,
-                    "cached": False
-                }
+                return {**response, "provider": provider, "cached": False}
 
             except Exception as e:
                 last_error = str(e)
@@ -159,12 +158,7 @@ class LLMRouter:
         raise Exception(f"All LLM providers failed. Last error: {last_error}")
 
     async def _call_provider(
-        self,
-        provider: str,
-        prompt: str,
-        system_prompt: str,
-        temperature: float,
-        max_tokens: int
+        self, provider: str, prompt: str, system_prompt: str, temperature: float, max_tokens: int
     ) -> dict[str, Any]:
         """Call specific LLM provider."""
         # Import actual LLM service
@@ -175,15 +169,12 @@ class LLMRouter:
             if system_prompt:
                 full_prompt = f"System: {system_prompt}\n\nUser: {prompt}"
 
-            response = await llm_service.generate(
-                full_prompt,
-                system_prompt=system_prompt
-            )
+            response = await llm_service.generate(full_prompt, system_prompt=system_prompt)
 
             return {
                 "content": response,
                 "model": provider,
-                "usage": {"prompt_tokens": len(prompt.split()), "completion_tokens": len(response.split())}
+                "usage": {"prompt_tokens": len(prompt.split()), "completion_tokens": len(response.split())},
             }
 
         except Exception as e:
@@ -195,6 +186,7 @@ class LLMRouter:
 # INTELLIGENCE AGENTS
 # ============================================================================
 
+
 class BaseAgent:
     """Base class for all intelligence agents."""
 
@@ -202,10 +194,7 @@ class BaseAgent:
         self.agent_id = str(uuid.uuid4())[:8]
         self.agent_type = agent_type
         self.name = name
-        self.state = AgentState(
-            agent_id=self.agent_id,
-            agent_type=agent_type
-        )
+        self.state = AgentState(agent_id=self.agent_id, agent_type=agent_type)
 
     async def process(self, input_data: dict[str, Any]) -> dict[str, Any]:
         """Process input and return results."""
@@ -226,12 +215,7 @@ class SIGINTAgent(BaseAgent):
     async def process(self, input_data: dict[str, Any]) -> dict[str, Any]:
         """Analyze network signals and traffic patterns."""
         # Integration with network monitoring
-        return {
-            "agent": self.name,
-            "type": "sigint",
-            "findings": [],
-            "confidence": 0.85
-        }
+        return {"agent": self.name, "type": "sigint", "findings": [], "confidence": 0.85}
 
 
 class HUMINTAgent(BaseAgent):
@@ -248,32 +232,27 @@ class HUMINTAgent(BaseAgent):
         iocs = self._extract_iocs(text)
         entities = self._extract_entities(text)
 
-        return {
-            "agent": self.name,
-            "type": "humint",
-            "iocs": iocs,
-            "entities": entities,
-            "confidence": 0.78
-        }
+        return {"agent": self.name, "type": "humint", "iocs": iocs, "entities": entities, "confidence": 0.78}
 
     def _extract_iocs(self, text: str) -> list[dict[str, str]]:
         """Extract Indicators of Compromise."""
         import re
+
         iocs = []
 
         # IP addresses
-        ips = re.findall(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b', text)
+        ips = re.findall(r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b", text)
         for ip in ips:
             iocs.append({"type": "ip", "value": ip})
 
         # Domains
-        domains = re.findall(r'\b[a-zA-Z0-9-]+\.[a-zA-Z]{2,}\b', text)
+        domains = re.findall(r"\b[a-zA-Z0-9-]+\.[a-zA-Z]{2,}\b", text)
         for domain in domains:
             if domain not in ["example.com", "test.com"]:
                 iocs.append({"type": "domain", "value": domain})
 
         # Hashes (MD5, SHA256)
-        hashes = re.findall(r'\b[a-fA-F0-9]{32,64}\b', text)
+        hashes = re.findall(r"\b[a-fA-F0-9]{32,64}\b", text)
         for h in hashes:
             hash_type = "md5" if len(h) == 32 else "sha256"
             iocs.append({"type": hash_type, "value": h})
@@ -306,7 +285,7 @@ class TECHINTAgent(BaseAgent):
             "type": "techint",
             "anomalies": anomalies,
             "log_count": len(logs),
-            "confidence": 0.82
+            "confidence": 0.82,
         }
 
     def _is_anomalous(self, log: dict[str, Any]) -> bool:
@@ -328,18 +307,9 @@ class CYBINTAgent(BaseAgent):
 
         enriched = []
         for ioc in iocs:
-            enriched.append({
-                **ioc,
-                "threat_score": self._calculate_threat_score(ioc),
-                "related_campaigns": []
-            })
+            enriched.append({**ioc, "threat_score": self._calculate_threat_score(ioc), "related_campaigns": []})
 
-        return {
-            "agent": self.name,
-            "type": "cybint",
-            "enriched_iocs": enriched,
-            "confidence": 0.88
-        }
+        return {"agent": self.name, "type": "cybint", "enriched_iocs": enriched, "confidence": 0.88}
 
     def _calculate_threat_score(self, ioc: dict[str, str]) -> float:
         """Calculate threat score for IOC."""
@@ -363,7 +333,7 @@ class OSINTAgent(BaseAgent):
             "target": target,
             "findings": [],
             "sources": [],
-            "confidence": 0.75
+            "confidence": 0.75,
         }
 
 
@@ -400,7 +370,7 @@ class CriticAgent(BaseAgent):
                 "quality_score": 0.8,  # Parse from LLM response
                 "issues": [],
                 "suggestions": [],
-                "passed": True
+                "passed": True,
             }
         except Exception as e:
             logger.exception(f"Critic failed: {e}")
@@ -408,7 +378,7 @@ class CriticAgent(BaseAgent):
                 "agent": self.name,
                 "quality_score": 0.5,
                 "passed": True,  # Default pass on error
-                "error": str(e)
+                "error": str(e),
             }
 
 
@@ -431,19 +401,15 @@ class RefinerAgent(BaseAgent):
         Improve the following response based on the critique.
 
         Original Response: {response}
-        Issues: {json.dumps(critique.get('issues', []))}
-        Suggestions: {json.dumps(critique.get('suggestions', []))}
+        Issues: {json.dumps(critique.get("issues", []))}
+        Suggestions: {json.dumps(critique.get("suggestions", []))}
 
         Provide an improved response.
         """
 
         try:
             result = await self.llm.query(refine_prompt)
-            return {
-                "agent": self.name,
-                "refined": result.get("content", response),
-                "improved": True
-            }
+            return {"agent": self.name, "refined": result.get("content", response), "improved": True}
         except Exception as e:
             return {"agent": self.name, "refined": response, "improved": False, "error": str(e)}
 
@@ -451,6 +417,7 @@ class RefinerAgent(BaseAgent):
 # ============================================================================
 # SELF-HEALING CONTROLLER
 # ============================================================================
+
 
 class SelfHealingController:
     """Monitors system health and triggers recovery actions."""
@@ -468,7 +435,7 @@ class SelfHealingController:
             "database": await self._check_database(),
             "redis": await self._check_redis(),
             "llm": await self._check_llm(),
-            "agents": await self._check_agents()
+            "agents": await self._check_agents(),
         }
 
         failed = [k for k, v in checks.items() if not v]
@@ -489,7 +456,7 @@ class SelfHealingController:
             "status": self.health.value,
             "checks": checks,
             "failed": failed,
-            "timestamp": self.last_check.isoformat()
+            "timestamp": self.last_check.isoformat(),
         }
 
     async def trigger_recovery(self, component: str) -> dict[str, Any]:
@@ -504,7 +471,7 @@ class SelfHealingController:
             "id": recovery_id,
             "component": component,
             "strategy": strategy.value,
-            "started_at": datetime.utcnow().isoformat()
+            "started_at": datetime.utcnow().isoformat(),
         })
 
         try:
@@ -518,20 +485,12 @@ class SelfHealingController:
             self.recovery_progress = 1.0
             self.health = SystemHealth.HEALTHY
 
-            return {
-                "recovery_id": recovery_id,
-                "status": "completed",
-                "strategy": strategy.value
-            }
+            return {"recovery_id": recovery_id, "status": "completed", "strategy": strategy.value}
 
         except Exception as e:
             logger.exception(f"Recovery failed: {e}")
             self.health = SystemHealth.CRITICAL
-            return {
-                "recovery_id": recovery_id,
-                "status": "failed",
-                "error": str(e)
-            }
+            return {"recovery_id": recovery_id, "status": "failed", "error": str(e)}
 
     def _determine_strategy(self, component: str) -> RecoveryStrategy:
         """Determine best recovery strategy based on component and history."""
@@ -590,6 +549,7 @@ class SelfHealingController:
 # SUPERINTELLIGENCE ORCHESTRATOR
 # ============================================================================
 
+
 class SuperIntelligenceOrchestrator:
     """Main AI orchestration engine for Predator Analytics v45.0.
 
@@ -624,7 +584,7 @@ class SuperIntelligenceOrchestrator:
             "total_requests": 0,
             "successful_requests": 0,
             "avg_latency_ms": 0,
-            "agent_utilization": 0
+            "agent_utilization": 0,
         }
 
         # Legacy agents (backward compatibility)
@@ -641,10 +601,7 @@ class SuperIntelligenceOrchestrator:
         logger.info("🧠 SuperIntelligence Orchestrator v45.0 initialized")
 
     async def handle_request(
-        self,
-        user_query: str,
-        mode: str = "auto",
-        context: dict[str, Any] | None = None
+        self, user_query: str, mode: str = "auto", context: dict[str, Any] | None = None
     ) -> OrchestratorResponse:
         """Process user request through the intelligence pipeline.
 
@@ -674,7 +631,7 @@ class SuperIntelligenceOrchestrator:
                     answer="⚠️ System is recovering. Please try again shortly.",
                     mode=mode,
                     health=SystemHealth.CRITICAL,
-                    recovery_progress=self.healing.recovery_progress
+                    recovery_progress=self.healing.recovery_progress,
                 )
 
             # Route to appropriate handler
@@ -708,9 +665,9 @@ class SuperIntelligenceOrchestrator:
                 metadata={
                     "correlation_id": correlation_id,
                     "duration_ms": duration_ms,
-                    "provider": result.get("provider")
+                    "provider": result.get("provider"),
                 },
-                health=self.healing.health
+                health=self.healing.health,
             )
 
         except Exception as e:
@@ -722,11 +679,7 @@ class SuperIntelligenceOrchestrator:
                 asyncio.create_task(self.healing.trigger_recovery("orchestrator"))
 
             return OrchestratorResponse(
-                query=user_query,
-                answer=f"⚠️ Error: {e!s}",
-                mode=mode,
-                error=str(e),
-                health=self.healing.health
+                query=user_query, answer=f"⚠️ Error: {e!s}", mode=mode, error=str(e), health=self.healing.health
             )
 
     async def _handle_fast(self, query: str, correlation_id: str) -> dict[str, Any]:
@@ -734,35 +687,30 @@ class SuperIntelligenceOrchestrator:
         retrieval = await self.retriever.process({"query": query})
         data = retrieval.result.get("data", [])
 
-        return {
-            "answer": f"[FAST] Found {len(data)} records.",
-            "trace": [{"agent": "retriever", "status": "success"}]
-        }
+        return {"answer": f"[FAST] Found {len(data)} records.", "trace": [{"agent": "retriever", "status": "success"}]}
 
     async def _handle_chat(
-        self,
-        query: str,
-        context: dict[str, Any],
-        correlation_id: str,
-        thoughts: list[ThoughtTrace]
+        self, query: str, context: dict[str, Any], correlation_id: str, thoughts: list[ThoughtTrace]
     ) -> dict[str, Any]:
         """Chat mode - LLM conversation."""
         # Add thought trace
-        thoughts.append(ThoughtTrace(
-            step=1,
-            agent="llm_router",
-            action="generate_response",
-            reasoning="Processing user query through LLM with context",
-            confidence=0.9,
-            duration_ms=0
-        ))
+        thoughts.append(
+            ThoughtTrace(
+                step=1,
+                agent="llm_router",
+                action="generate_response",
+                reasoning="Processing user query through LLM with context",
+                confidence=0.9,
+                duration_ms=0,
+            )
+        )
 
         start = datetime.utcnow()
 
         try:
             result = await self.llm.query(
                 query,
-                system_prompt="You are Predator, an advanced AI analytics system for cybersecurity. Be concise, professional, and authoritative. Respond in the same language as the user."
+                system_prompt="You are Predator, an advanced AI analytics system for cybersecurity. Be concise, professional, and authoritative. Respond in the same language as the user.",
             )
 
             duration = (datetime.utcnow() - start).total_seconds() * 1000
@@ -771,55 +719,61 @@ class SuperIntelligenceOrchestrator:
             return {
                 "answer": result.get("content", ""),
                 "provider": result.get("provider"),
-                "trace": [{"agent": "llm", "status": "success", "provider": result.get("provider")}]
+                "trace": [{"agent": "llm", "status": "success", "provider": result.get("provider")}],
             }
 
         except Exception as e:
             logger.exception(f"Chat failed: {e}")
-            return {
-                "answer": f"⚠️ LLM Error: {e!s}",
-                "trace": [{"agent": "llm", "status": "failed"}]
-            }
+            return {"answer": f"⚠️ LLM Error: {e!s}", "trace": [{"agent": "llm", "status": "failed"}]}
 
     async def _handle_deep(
-        self,
-        query: str,
-        context: dict[str, Any],
-        correlation_id: str,
-        thoughts: list[ThoughtTrace]
+        self, query: str, context: dict[str, Any], correlation_id: str, thoughts: list[ThoughtTrace]
     ) -> dict[str, Any]:
         """Deep mode - full multi-agent pipeline."""
         trace = []
 
         # Step 1: HUMINT - Extract entities and IOCs from query
-        thoughts.append(ThoughtTrace(
-            step=1, agent="humint", action="extract_intelligence",
-            reasoning="Analyzing query for entities and IOCs",
-            confidence=0.85, duration_ms=0
-        ))
+        thoughts.append(
+            ThoughtTrace(
+                step=1,
+                agent="humint",
+                action="extract_intelligence",
+                reasoning="Analyzing query for entities and IOCs",
+                confidence=0.85,
+                duration_ms=0,
+            )
+        )
 
         humint_result = await self.agents[AgentType.HUMINT].process({"text": query})
         trace.append({"agent": "humint", "status": "success", "iocs": len(humint_result.get("iocs", []))})
 
         # Step 2: CYBINT - Enrich IOCs
         if humint_result.get("iocs"):
-            thoughts.append(ThoughtTrace(
-                step=2, agent="cybint", action="enrich_iocs",
-                reasoning="Enriching IOCs with threat intelligence",
-                confidence=0.88, duration_ms=0
-            ))
+            thoughts.append(
+                ThoughtTrace(
+                    step=2,
+                    agent="cybint",
+                    action="enrich_iocs",
+                    reasoning="Enriching IOCs with threat intelligence",
+                    confidence=0.88,
+                    duration_ms=0,
+                )
+            )
 
-            await self.agents[AgentType.CYBINT].process({
-                "iocs": humint_result.get("iocs", [])
-            })
+            await self.agents[AgentType.CYBINT].process({"iocs": humint_result.get("iocs", [])})
             trace.append({"agent": "cybint", "status": "success"})
 
         # Step 3: Retrieval
-        thoughts.append(ThoughtTrace(
-            step=3, agent="retriever", action="search_knowledge_base",
-            reasoning="Searching for relevant data",
-            confidence=0.9, duration_ms=0
-        ))
+        thoughts.append(
+            ThoughtTrace(
+                step=3,
+                agent="retriever",
+                action="search_knowledge_base",
+                reasoning="Searching for relevant data",
+                confidence=0.9,
+                duration_ms=0,
+            )
+        )
 
         retrieval = await self.retriever.process({"query": query})
         data = retrieval.result.get("data", [])
@@ -827,11 +781,16 @@ class SuperIntelligenceOrchestrator:
 
         # Step 4: Analysis
         if data:
-            thoughts.append(ThoughtTrace(
-                step=4, agent="miner", action="analyze_data",
-                reasoning="Extracting insights from retrieved data",
-                confidence=0.82, duration_ms=0
-            ))
+            thoughts.append(
+                ThoughtTrace(
+                    step=4,
+                    agent="miner",
+                    action="analyze_data",
+                    reasoning="Extracting insights from retrieved data",
+                    confidence=0.82,
+                    duration_ms=0,
+                )
+            )
 
             miner_result = await self.miner.process({"data": data})
             insights = miner_result.result.get("insights", [])
@@ -840,18 +799,23 @@ class SuperIntelligenceOrchestrator:
             insights = []
 
         # Step 5: LLM Synthesis
-        thoughts.append(ThoughtTrace(
-            step=5, agent="llm", action="synthesize_response",
-            reasoning="Generating comprehensive response",
-            confidence=0.9, duration_ms=0
-        ))
+        thoughts.append(
+            ThoughtTrace(
+                step=5,
+                agent="llm",
+                action="synthesize_response",
+                reasoning="Generating comprehensive response",
+                confidence=0.9,
+                duration_ms=0,
+            )
+        )
 
         synthesis_prompt = f"""
         Query: {query}
 
         Retrieved Data: {len(data)} records
         Insights: {json.dumps(insights[:5])}
-        IOCs Found: {json.dumps(humint_result.get('iocs', [])[:5])}
+        IOCs Found: {json.dumps(humint_result.get("iocs", [])[:5])}
 
         Provide a comprehensive analysis.
         """
@@ -859,63 +823,51 @@ class SuperIntelligenceOrchestrator:
         result = await self.llm.query(synthesis_prompt)
         trace.append({"agent": "llm", "status": "success"})
 
-        return {
-            "answer": result.get("content", ""),
-            "provider": result.get("provider"),
-            "trace": trace
-        }
+        return {"answer": result.get("content", ""), "provider": result.get("provider"), "trace": trace}
 
     async def _handle_council(
-        self,
-        query: str,
-        context: dict[str, Any],
-        correlation_id: str,
-        thoughts: list[ThoughtTrace]
+        self, query: str, context: dict[str, Any], correlation_id: str, thoughts: list[ThoughtTrace]
     ) -> dict[str, Any]:
         """Council mode - multi-model consensus."""
-        thoughts.append(ThoughtTrace(
-            step=1, agent="council", action="gather_opinions",
-            reasoning="Gathering responses from multiple LLM models",
-            confidence=0.85, duration_ms=0
-        ))
+        thoughts.append(
+            ThoughtTrace(
+                step=1,
+                agent="council",
+                action="gather_opinions",
+                reasoning="Gathering responses from multiple LLM models",
+                confidence=0.85,
+                duration_ms=0,
+            )
+        )
 
         # Get response from primary
         result = await self.llm.query(
-            query,
-            system_prompt="You are an expert analyst. Provide a detailed, well-reasoned response."
+            query, system_prompt="You are an expert analyst. Provide a detailed, well-reasoned response."
         )
 
         return {
             "answer": f"[COUNCIL] {result.get('content', '')}",
             "provider": result.get("provider"),
-            "trace": [{"agent": "council", "status": "success"}]
+            "trace": [{"agent": "council", "status": "success"}],
         }
 
     async def _handle_tactical(
-        self,
-        query: str,
-        context: dict[str, Any],
-        correlation_id: str,
-        thoughts: list[ThoughtTrace]
+        self, query: str, context: dict[str, Any], correlation_id: str, thoughts: list[ThoughtTrace]
     ) -> dict[str, Any]:
         """Tactical mode - mobile-optimized, concise responses."""
         result = await self.llm.query(
             query,
-            system_prompt="You are Predator Tactical. Provide extremely concise responses (max 2-3 sentences). Use bullet points. Mobile-optimized."
+            system_prompt="You are Predator Tactical. Provide extremely concise responses (max 2-3 sentences). Use bullet points. Mobile-optimized.",
         )
 
         return {
             "answer": result.get("content", ""),
             "provider": result.get("provider"),
-            "trace": [{"agent": "tactical", "status": "success"}]
+            "trace": [{"agent": "tactical", "status": "success"}],
         }
 
     async def _handle_auto(
-        self,
-        query: str,
-        context: dict[str, Any],
-        correlation_id: str,
-        thoughts: list[ThoughtTrace]
+        self, query: str, context: dict[str, Any], correlation_id: str, thoughts: list[ThoughtTrace]
     ) -> dict[str, Any]:
         """Auto mode - intelligent routing."""
         # Simple heuristic for mode selection
@@ -928,40 +880,41 @@ class SuperIntelligenceOrchestrator:
         return await self._handle_chat(query, context, correlation_id, thoughts)
 
     async def _apply_reflective_loop(
-        self,
-        result: dict[str, Any],
-        context: dict[str, Any],
-        thoughts: list[ThoughtTrace]
+        self, result: dict[str, Any], context: dict[str, Any], thoughts: list[ThoughtTrace]
     ) -> dict[str, Any]:
         """Apply Critic → Refiner loop for quality assurance."""
         response = result.get("answer", "")
 
         # Critic evaluation
-        thoughts.append(ThoughtTrace(
-            step=len(thoughts) + 1, agent="critic", action="evaluate_response",
-            reasoning="Evaluating response quality",
-            confidence=0.9, duration_ms=0
-        ))
+        thoughts.append(
+            ThoughtTrace(
+                step=len(thoughts) + 1,
+                agent="critic",
+                action="evaluate_response",
+                reasoning="Evaluating response quality",
+                confidence=0.9,
+                duration_ms=0,
+            )
+        )
 
-        critique = await self.agents[AgentType.CRITIC].process({
-            "response": response,
-            "context": context
-        })
+        critique = await self.agents[AgentType.CRITIC].process({"response": response, "context": context})
 
         quality_score = critique.get("quality_score", 0)
 
         # Refine if quality is below threshold
         if quality_score < 0.9:
-            thoughts.append(ThoughtTrace(
-                step=len(thoughts) + 1, agent="refiner", action="improve_response",
-                reasoning=f"Quality score {quality_score:.2f} below threshold, refining",
-                confidence=0.85, duration_ms=0
-            ))
+            thoughts.append(
+                ThoughtTrace(
+                    step=len(thoughts) + 1,
+                    agent="refiner",
+                    action="improve_response",
+                    reasoning=f"Quality score {quality_score:.2f} below threshold, refining",
+                    confidence=0.85,
+                    duration_ms=0,
+                )
+            )
 
-            refined = await self.agents[AgentType.REFINER].process({
-                "response": response,
-                "critique": critique
-            })
+            refined = await self.agents[AgentType.REFINER].process({"response": response, "critique": critique})
 
             if refined.get("improved"):
                 result["answer"] = refined.get("refined", response)
@@ -985,10 +938,7 @@ class SuperIntelligenceOrchestrator:
         return {
             **health,
             "metrics": self.metrics,
-            "agents": {
-                agent_type.value: agent.state.status
-                for agent_type, agent in self.agents.items()
-            }
+            "agents": {agent_type.value: agent.state.status for agent_type, agent in self.agents.items()},
         }
 
     # ========================================================================
@@ -1005,11 +955,7 @@ class SuperIntelligenceOrchestrator:
         """
         logger.info("🔄 Starting Self-Improvement Cycle...")
 
-        cycle_result = {
-            "cycle_id": str(uuid.uuid4())[:8],
-            "started_at": datetime.utcnow().isoformat(),
-            "stages": {}
-        }
+        cycle_result = {"cycle_id": str(uuid.uuid4())[:8], "started_at": datetime.utcnow().isoformat(), "stages": {}}
 
         # 1. DIAGNOSE
         logger.info("📊 Stage 1: DIAGNOSE")
@@ -1060,39 +1006,28 @@ class SuperIntelligenceOrchestrator:
             "success_rate": success_rate,
             "avg_latency": 1.0 if self.metrics["avg_latency_ms"] < 500 else 0.5,
             "agent_health": 0.95,  # Placeholder
-            "llm_quality": 0.85   # Placeholder
+            "llm_quality": 0.85,  # Placeholder
         }
 
     async def _augment_data(self, weak_areas: list[str]) -> dict[str, Any]:
         """Generate training data for weak areas."""
-        return {
-            "generated_samples": 100,
-            "target_areas": weak_areas
-        }
+        return {"generated_samples": 100, "target_areas": weak_areas}
 
     async def _train_models(self, augmentation: dict[str, Any]) -> dict[str, Any]:
         """Train/fine-tune models with new data."""
         return {
             "model_id": f"model_{datetime.utcnow().strftime('%Y%m%d_%H%M')}",
             "samples_used": augmentation.get("generated_samples", 0),
-            "training_time_s": 60
+            "training_time_s": 60,
         }
 
     async def _evaluate_improvements(self, training: dict[str, Any]) -> dict[str, Any]:
         """Evaluate if new model is better."""
-        return {
-            "improved": True,
-            "improvement_pct": 5.2,
-            "new_metrics": {"accuracy": 0.92}
-        }
+        return {"improved": True, "improvement_pct": 5.2, "new_metrics": {"accuracy": 0.92}}
 
     async def _promote_model(self, training: dict[str, Any]) -> dict[str, Any]:
         """Promote new model to production."""
-        return {
-            "model_id": training.get("model_id"),
-            "promoted_at": datetime.utcnow().isoformat(),
-            "status": "active"
-        }
+        return {"model_id": training.get("model_id"), "promoted_at": datetime.utcnow().isoformat(), "status": "active"}
 
 
 # ============================================================================

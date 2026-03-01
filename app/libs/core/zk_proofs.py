@@ -1,4 +1,4 @@
-"""🔐 ZERO-KNOWLEDGE PROOF LAYER (ZKP)
+"""🔐 ZERO-KNOWLEDGE PROOF LAYER (ZKP).
 =====================================
 Core component for AZR v40 Sovereign Architecture.
 
@@ -37,8 +37,9 @@ from typing import Any
 P = 0xFFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7EDEE386BFB5A899FA5AE9F24117C4B1FE649286651ECE65381FFFFFFFFFFFFFFFF
 G = 2
 
+
 def power(a, b, m):
-    """Modular exponentiation: (a^b) % m"""
+    """Modular exponentiation: (a^b) % m."""
     res = 1
     a %= m
     while b > 0:
@@ -48,23 +49,27 @@ def power(a, b, m):
         b //= 2
     return res
 
+
 def hash_to_int(data: str) -> int:
     """Hash string to integer."""
     h = hashlib.sha256(data.encode()).hexdigest()
     return int(h, 16)
 
+
 # ============================================================================
 # 📜 ZK PROOF TYPES
 # ============================================================================
 
+
 @dataclass
 class ZKProof:
     """Non-interactive Zero Knowledge Proof structure."""
+
     protocol: str = "SCHNORR_NIZK"
     public_key: str = ""  # The public statement (Y = G^x)
     commitment: str = ""  # The random commitment (R = G^k)
-    challenge: str = ""   # The challenge hash (e = H(P, R, msg))
-    response: str = ""    # The response (s = k - x*e)
+    challenge: str = ""  # The challenge hash (e = H(P, R, msg))
+    response: str = ""  # The response (s = k - x*e)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -107,17 +112,11 @@ class ZKProver:
         # Using addition s = k + x*e for easier implementation here
         s = (k + self.secret * e) % (P - 1)
 
-        return ZKProof(
-            public_key=str(self.public_key),
-            commitment=str(R),
-            challenge=str(e),
-            response=str(s)
-        )
+        return ZKProof(public_key=str(self.public_key), commitment=str(R), challenge=str(e), response=str(s))
 
 
 class ZKVerifier:
-    """Verifies Zero-Knowledge Proofs.
-    """
+    """Verifies Zero-Knowledge Proofs."""
 
     @staticmethod
     def verify(proof: ZKProof, message: str) -> bool:
@@ -155,6 +154,7 @@ class ZKVerifier:
 # 🏛️ CONSTITUTIONAL PROOF GENERATOR
 # ============================================================================
 
+
 class ConstitutionalProver:
     """Proves that a strict constitutional check was performed
     by signing the approval with a private key derived from the Axiom hash.
@@ -169,8 +169,7 @@ class ConstitutionalProver:
         self.zk = ZKProver(self.secret)
 
     def generate_approval_proof(self, action_id: str, context_hash: str) -> ZKProof:
-        """Generate a ZK proof that this specific Axiom approves this Action context.
-        """
+        """Generate a ZK proof that this specific Axiom approves this Action context."""
         message = f"APPROVED:{self.axiom_id}:{action_id}:{context_hash}"
         return self.zk.prove(message)
 
@@ -209,7 +208,7 @@ if __name__ == "__main__":
 
     # 4. Attempt Fake Proof
     print("\n4️⃣ Checking Fake Proof...")
-    fake_proof = ZKProof("SCHNORR", proof.public_key, proof.commitment, proof.challenge, str(int(proof.response)+1))
+    fake_proof = ZKProof("SCHNORR", proof.public_key, proof.commitment, proof.challenge, str(int(proof.response) + 1))
     is_fake_valid = ZKVerifier.verify(fake_proof, msg)
     print(f"   ❌ Fake Valid: {is_fake_valid}")
 

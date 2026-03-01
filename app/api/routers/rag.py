@@ -2,12 +2,12 @@ from __future__ import annotations
 
 
 """RAG Router - Retrieval Augmented Generation."""
-from typing import Any, Dict, List
+from typing import Any
 
 from fastapi import APIRouter
 
-from ...services.ai_engine import ai_engine
-from ...services.rag import rag_service
+from app.services.ai_engine import ai_engine
+from app.services.rag import rag_service
 
 
 router = APIRouter(prefix="/rag", tags=["RAG"])
@@ -22,18 +22,14 @@ async def rag_query(query: str, top_k: int = 5):
     # If no docs, use AI engine directly
     if not docs:
         result = await ai_engine.analyze(query=query)
-        return {
-            "query": query,
-            "answer": result.answer,
-            "sources": result.sources
-        }
+        return {"query": query, "answer": result.answer, "sources": result.sources}
 
     # Generate answer with context
     answer = await rag_service.generate(query, docs)
     return {
         "query": query,
         "answer": answer,
-        "sources": [{"content": d.get("content", "")[:200], "score": d.get("score", 0)} for d in docs]
+        "sources": [{"content": d.get("content", "")[:200], "score": d.get("score", 0)} for d in docs],
     }
 
 

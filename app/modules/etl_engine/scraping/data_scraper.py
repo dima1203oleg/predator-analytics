@@ -13,7 +13,7 @@ from enum import Enum
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 import xml.etree.ElementTree as ET
 
 from bs4 import BeautifulSoup
@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 
 class ScrapeFormat(Enum):
     """Supported output formats for scraped data."""
+
     CSV = "csv"
     JSON = "json"
     XML = "xml"
@@ -67,9 +68,9 @@ class DataScraper:
         self.user_agent = user_agent
         self.session = requests.Session()
         self.session.headers.update({
-            'User-Agent': self.user_agent,
-            'Accept': 'text/html,application/json,application/xml,*/*',
-            'Accept-Language': 'en-US,en;q=0.5'
+            "User-Agent": self.user_agent,
+            "Accept": "text/html,application/json,application/xml,*/*",
+            "Accept-Language": "en-US,en;q=0.5",
         })
         logger.info("DataScraper initialized")
 
@@ -90,13 +91,13 @@ class DataScraper:
             response.raise_for_status()
 
             # Parse HTML content
-            soup = BeautifulSoup(response.content, 'html.parser')
+            soup = BeautifulSoup(response.content, "html.parser")
 
             result = ScrapeResult(True, data=soup)
             result.metadata = {
-                'url': url,
-                'status_code': response.status_code,
-                'content_type': response.headers.get('Content-Type', 'unknown')
+                "url": url,
+                "status_code": response.status_code,
+                "content_type": response.headers.get("Content-Type", "unknown"),
             }
 
             logger.info(f"Successfully scraped {url}")
@@ -104,15 +105,14 @@ class DataScraper:
 
         except requests.exceptions.RequestException as e:
             error_msg = f"Failed to scrape {url}: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
         except Exception as e:
             error_msg = f"Unexpected error scraping {url}: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
 
-    def scrape_api_endpoint(self, url: str, params: dict | None = None,
-                           timeout: int = 30) -> ScrapeResult:
+    def scrape_api_endpoint(self, url: str, params: dict | None = None, timeout: int = 30) -> ScrapeResult:
         """Scrape data from a REST API endpoint.
 
         Args:
@@ -138,9 +138,9 @@ class DataScraper:
 
             result = ScrapeResult(True, data=data)
             result.metadata = {
-                'url': url,
-                'status_code': response.status_code,
-                'content_type': response.headers.get('Content-Type', 'unknown')
+                "url": url,
+                "status_code": response.status_code,
+                "content_type": response.headers.get("Content-Type", "unknown"),
             }
 
             logger.info(f"Successfully scraped API endpoint {url}")
@@ -148,15 +148,14 @@ class DataScraper:
 
         except requests.exceptions.RequestException as e:
             error_msg = f"Failed to scrape API endpoint {url}: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
         except Exception as e:
             error_msg = f"Unexpected error scraping API endpoint {url}: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
 
-    def extract_structured_data(self, html_content: Any,
-                               selectors: dict[str, str]) -> ScrapeResult:
+    def extract_structured_data(self, html_content: Any, selectors: dict[str, str]) -> ScrapeResult:
         """Extract structured data from HTML content using CSS selectors.
 
         Args:
@@ -173,7 +172,7 @@ class DataScraper:
             extracted_data = []
 
             # Find all items matching the main selector
-            items = html_content.select(selectors.get('item', ''))
+            items = html_content.select(selectors.get("item", ""))
 
             if not items:
                 logger.warning("No items found with provided selectors")
@@ -183,7 +182,7 @@ class DataScraper:
                 record = {}
 
                 for field_name, selector in selectors.items():
-                    if field_name == 'item':
+                    if field_name == "item":
                         continue
 
                     elements = item.select(selector)
@@ -197,22 +196,22 @@ class DataScraper:
                 extracted_data.append(record)
 
             result = ScrapeResult(True, data=extracted_data)
-            result.metadata = {
-                'records_extracted': len(extracted_data),
-                'fields': list(selectors.keys())
-            }
+            result.metadata = {"records_extracted": len(extracted_data), "fields": list(selectors.keys())}
 
             logger.info(f"Extracted {len(extracted_data)} records using selectors")
             return result
 
         except Exception as e:
             error_msg = f"Failed to extract structured data: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
 
-    def save_data(self, data: list[dict[str, Any]] | dict[str, Any],
-                 file_path: str | Path,
-                 format: ScrapeFormat = ScrapeFormat.JSON) -> ScrapeResult:
+    def save_data(
+        self,
+        data: list[dict[str, Any]] | dict[str, Any],
+        file_path: str | Path,
+        format: ScrapeFormat = ScrapeFormat.JSON,
+    ) -> ScrapeResult:
         """Save scraped data to a file in the specified format.
 
         Args:
@@ -241,32 +240,27 @@ class DataScraper:
 
         except Exception as e:
             error_msg = f"Failed to save data to {file_path}: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
 
-    def _save_json(self, data: list[dict[str |  Any], dict[str, Any]],
-                  file_path: Path) -> ScrapeResult:
+    def _save_json(self, data: list[dict[str | Any], dict[str, Any]], file_path: Path) -> ScrapeResult:
         """Save data as JSON file."""
         try:
-            with open(file_path, 'w', encoding='utf-8') as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
 
             result = ScrapeResult(True, data=str(file_path))
-            result.metadata = {
-                'format': 'json',
-                'file_size': file_path.stat().st_size
-            }
+            result.metadata = {"format": "json", "file_size": file_path.stat().st_size}
 
             logger.info(f"Successfully saved JSON data to {file_path}")
             return result
 
         except Exception as e:
             error_msg = f"Failed to save JSON data: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
 
-    def _save_csv(self, data: list[dict[str |  Any], dict[str, Any]],
-                 file_path: Path) -> ScrapeResult:
+    def _save_csv(self, data: list[dict[str | Any], dict[str, Any]], file_path: Path) -> ScrapeResult:
         """Save data as CSV file."""
         try:
             if isinstance(data, dict):
@@ -278,28 +272,23 @@ class DataScraper:
             # Get fieldnames from first record
             fieldnames = list(data[0].keys())
 
-            with open(file_path, 'w', encoding='utf-8', newline='') as f:
+            with open(file_path, "w", encoding="utf-8", newline="") as f:
                 writer = csv.DictWriter(f, fieldnames=fieldnames)
                 writer.writeheader()
                 writer.writerows(data)
 
             result = ScrapeResult(True, data=str(file_path))
-            result.metadata = {
-                'format': 'csv',
-                'records': len(data),
-                'file_size': file_path.stat().st_size
-            }
+            result.metadata = {"format": "csv", "records": len(data), "file_size": file_path.stat().st_size}
 
             logger.info(f"Successfully saved CSV data to {file_path}")
             return result
 
         except Exception as e:
             error_msg = f"Failed to save CSV data: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
 
-    def _save_xml(self, data: list[dict[str |  Any], dict[str, Any]],
-                 file_path: Path) -> ScrapeResult:
+    def _save_xml(self, data: list[dict[str | Any], dict[str, Any]], file_path: Path) -> ScrapeResult:
         """Save data as XML file."""
         try:
             if isinstance(data, dict):
@@ -309,10 +298,10 @@ class DataScraper:
                 return ScrapeResult(False, error="No data to save as XML")
 
             # Create root element
-            root = ET.Element('data')
+            root = ET.Element("data")
 
             for i, record in enumerate(data):
-                item = ET.SubElement(root, 'item', {'id': str(i)})
+                item = ET.SubElement(root, "item", {"id": str(i)})
 
                 for key, value in record.items():
                     if value is not None:
@@ -321,27 +310,27 @@ class DataScraper:
 
             # Create XML tree and save
             tree = ET.ElementTree(root)
-            ET.indent(tree, space='  ', level=0)
-            tree.write(file_path, encoding='utf-8', xml_declaration=True)
+            ET.indent(tree, space="  ", level=0)
+            tree.write(file_path, encoding="utf-8", xml_declaration=True)
 
             result = ScrapeResult(True, data=str(file_path))
-            result.metadata = {
-                'format': 'xml',
-                'records': len(data),
-                'file_size': file_path.stat().st_size
-            }
+            result.metadata = {"format": "xml", "records": len(data), "file_size": file_path.stat().st_size}
 
             logger.info(f"Successfully saved XML data to {file_path}")
             return result
 
         except Exception as e:
             error_msg = f"Failed to save XML data: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
 
-    def scrape_and_save(self, url: str, output_path: str |  Path,
-                       format: ScrapeFormat = ScrapeFormat.JSON,
-                       selectors: dict[str, str | None] = None) -> ScrapeResult:
+    def scrape_and_save(
+        self,
+        url: str,
+        output_path: str | Path,
+        format: ScrapeFormat = ScrapeFormat.JSON,
+        selectors: dict[str, str | None] | None = None,
+    ) -> ScrapeResult:
         """Convenience method to scrape a web page and save the extracted data.
 
         Args:
@@ -370,7 +359,7 @@ class DataScraper:
                 data = extract_result.data
             else:
                 # If no selectors, try to extract all text content
-                data = [{'content': scrape_result.data.get_text(strip=True)}]
+                data = [{"content": scrape_result.data.get_text(strip=True)}]
 
             # Step 3: Save the data
             save_result = self.save_data(data, output_path, format)
@@ -381,9 +370,9 @@ class DataScraper:
             # Combine metadata
             combined_result = ScrapeResult(True, data=str(output_path))
             combined_result.metadata = {
-                'scrape': scrape_result.metadata,
-                'extract': extract_result.metadata if selectors else None,
-                'save': save_result.metadata
+                "scrape": scrape_result.metadata,
+                "extract": extract_result.metadata if selectors else None,
+                "save": save_result.metadata,
             }
 
             logger.info(f"Successfully completed scrape-and-save operation: {url} -> {output_path}")
@@ -391,7 +380,7 @@ class DataScraper:
 
         except Exception as e:
             error_msg = f"Scrape-and-save operation failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
 
     def get_scraping_stats(self) -> dict[str, Any]:
@@ -401,9 +390,9 @@ class DataScraper:
             Dictionary containing scraping statistics
         """
         return {
-            'user_agent': self.user_agent,
-            'session_active': bool(self.session),
-            'timestamp': datetime.now().isoformat()
+            "user_agent": self.user_agent,
+            "session_active": bool(self.session),
+            "timestamp": datetime.now().isoformat(),
         }
 
 

@@ -31,10 +31,7 @@ class OllamaProvider(BaseLLMProvider):
             "model": self.model,
             "messages": messages,
             "stream": False,
-            "options": {
-                "temperature": kwargs.get("temperature", 0.7),
-                "num_predict": kwargs.get("max_tokens", 2048)
-            }
+            "options": {"temperature": kwargs.get("temperature", 0.7), "num_predict": kwargs.get("max_tokens", 2048)},
         }
 
         try:
@@ -42,7 +39,7 @@ class OllamaProvider(BaseLLMProvider):
                 response = await client.post(
                     self.base_url,
                     json=payload,
-                    timeout=60.0 # Local inference can be slow
+                    timeout=60.0,  # Local inference can be slow
                 )
 
                 if response.status_code != 200:
@@ -51,7 +48,7 @@ class OllamaProvider(BaseLLMProvider):
                         content="",
                         provider=self.provider_name,
                         model=self.model,
-                        error=f"API Error {response.status_code}: {response.text}"
+                        error=f"API Error {response.status_code}: {response.text}",
                     )
 
                 data = response.json()
@@ -65,14 +62,8 @@ class OllamaProvider(BaseLLMProvider):
                     provider=self.provider_name,
                     model=self.model,
                     tokens_used=tokens,
-                    latency_ms=(time.time() - start_time) * 1000
+                    latency_ms=(time.time() - start_time) * 1000,
                 )
 
         except Exception as e:
-            return LLMResponse(
-                success=False,
-                content="",
-                provider=self.provider_name,
-                model=self.model,
-                error=str(e)
-            )
+            return LLMResponse(success=False, content="", provider=self.provider_name, model=self.model, error=str(e))

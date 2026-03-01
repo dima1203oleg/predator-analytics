@@ -10,16 +10,16 @@ Uses real ETL data as seeds and LLMs for contextual expansion.
 Python 3.12 | Sovereign Evolution
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime
 import json
 import logging
-import os
 from pathlib import Path
 import random
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 logger = logging.getLogger("azr_data_synth")
+
 
 class DatasetSynthesizer:
     """🧬 Автономний синтезатор датасетів.
@@ -32,8 +32,7 @@ class DatasetSynthesizer:
         self.seed_path = Path("/Users/dima-mac/Documents/Predator_21/data/etl_in")
 
     async def generate_synthetic_batch(self, count: int = 100) -> str:
-        """Генерує батч синтетичних даних на основі існуючих патернів.
-        """
+        """Генерує батч синтетичних даних на основі існуючих патернів."""
         logger.info(f"🧬 Generating synthetic batch: {count} records")
 
         # 1. Discover seeds
@@ -48,21 +47,21 @@ class DatasetSynthesizer:
             # Create a "Synthetic Twin"
             record = {
                 "name": f"Synth_{seed['name']}_{random.randint(100, 999)}",
-                "age": max(18, min(80, seed['age'] + random.randint(-10, 10))),
-                "city": seed['city'],
-                "score": max(0.0, min(100.0, seed['score'] + random.uniform(-5.0, 5.0))),
+                "age": max(18, min(80, seed["age"] + random.randint(-10, 10))),
+                "city": seed["city"],
+                "score": max(0.0, min(100.0, seed["score"] + random.uniform(-5.0, 5.0))),
                 "metadata": {
                     "is_synthetic": True,
                     "generated_at": datetime.now().isoformat(),
-                    "seed_origin": "etl_source"
-                }
+                    "seed_origin": "etl_source",
+                },
             }
             synthetic_data.append(record)
 
         # 2. Save to Dataset Studio
         filename = f"synthetic_v1_{int(datetime.now().timestamp())}.json"
         save_path = self.storage / filename
-        with open(save_path, 'w', encoding='utf-8') as f:
+        with open(save_path, "w", encoding="utf-8") as f:
             json.dump(synthetic_data, f, indent=2)
 
         logger.info(f"✅ Synthetic dataset saved: {save_path}")
@@ -75,11 +74,14 @@ class DatasetSynthesizer:
             for f in self.seed_path.glob("*.json"):
                 with open(f) as file:
                     data = json.load(file)
-                    if isinstance(data, list): seeds.extend(data)
-                    else: seeds.append(data)
+                    if isinstance(data, list):
+                        seeds.extend(data)
+                    else:
+                        seeds.append(data)
         except Exception as e:
             logger.warning(f"Could not load seeds: {e}")
         return seeds
+
 
 def get_synthesizer() -> DatasetSynthesizer:
     return DatasetSynthesizer()

@@ -26,9 +26,8 @@ def _sigmoid(x: float) -> float:
     """Numerically stable sigmoid function."""
     if x >= 0:
         return 1.0 / (1.0 + math.exp(-x))
-    else:
-        exp_x = math.exp(x)
-        return exp_x / (1.0 + exp_x)
+    exp_x = math.exp(x)
+    return exp_x / (1.0 + exp_x)
 
 
 def calculate_cp(

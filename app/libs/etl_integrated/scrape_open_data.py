@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Union
-
 
 #!/usr/bin/env python3
 """
@@ -10,10 +8,8 @@ Open Data Portal Scraper
 Main script to automate scraping, parsing, and saving data from open data portals.
 """
 
-import os
 from pathlib import Path
 import sys
-from typing import Dict
 
 
 # Add the ETL module to Python path
@@ -22,7 +18,7 @@ sys.path.insert(0, str(etl_module_path))
 
 from distribution.data_distributor import DataDistributor, DistributionTarget
 from parsing.data_parser import DataFormat, DataParser
-from scraping.data_scraper import DataScraper, ScrapeFormat, ScrapeResult
+from scraping.data_scraper import DataScraper, ScrapeFormat
 from transformation.data_transformer import DataTransformer
 
 
@@ -41,8 +37,8 @@ def main():
             "item": "div.user-card",
             "name": "h2.user-name",
             "email": "p.user-email",
-            "phone": "p.user-phone"
-        }
+            "phone": "p.user-phone",
+        },
     }
 
     # Initialize components
@@ -95,7 +91,7 @@ def main():
         url=web_url,
         output_path=Path(config["output_dir"]) / "web_data.csv",
         format=ScrapeFormat.CSV,
-        selectors=selectors
+        selectors=selectors,
     )
 
     if scrape_save_result.success:
@@ -126,10 +122,7 @@ def main():
             print("Parsed data successfully")
 
             # Transform to unified schema
-            transform_result = transformer.transform_from_dataframe(
-                parse_result.data,
-                source_format="json"
-            )
+            transform_result = transformer.transform_from_dataframe(parse_result.data, source_format="json")
 
             if transform_result.success:
                 print(f"Transformed {len(transform_result.data)} records")
@@ -137,7 +130,7 @@ def main():
                 # Distribute the data
                 dist_results = distributor.distribute(
                     transform_result.data,
-                    targets=[DistributionTarget.MINIO]  # Just MinIO for demo
+                    targets=[DistributionTarget.MINIO],  # Just MinIO for demo
                 )
 
                 for dist_result in dist_results:
@@ -152,6 +145,7 @@ def main():
 
     print("\n=== Scraping Pipeline Complete ===")
     from scraping.data_scraper import LOG_DIR
+
     print(f"Check {LOG_DIR / 'scraping_audit.log'} for detailed logs")
 
 

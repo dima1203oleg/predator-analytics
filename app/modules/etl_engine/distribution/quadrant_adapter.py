@@ -10,7 +10,7 @@ Handles distribution of data to Quadrant vector database.
 from datetime import datetime
 import json
 import logging
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 import uuid
 
 import numpy as np
@@ -44,7 +44,7 @@ class QuadrantAdapter:
         else:
             logger.info("Quadrant adapter disabled")
 
-    def distribute(self, data: dict[str |  Any, list[dict[str, Any]]]) -> DistributionResult:
+    def distribute(self, data: dict[str | Any, list[dict[str, Any]]]) -> DistributionResult:
         """Distribute data to Quadrant.
 
         Args:
@@ -56,18 +56,12 @@ class QuadrantAdapter:
         from .data_distributor import DistributionResult
 
         if not self.enabled:
-            return DistributionResult(
-                False, "quadrant",
-                error="Quadrant adapter is disabled"
-            )
+            return DistributionResult(False, "quadrant", error="Quadrant adapter is disabled")
 
         try:
             # Validate data
             if not data:
-                return DistributionResult(
-                    False, "quadrant",
-                    error="No data provided for Quadrant distribution"
-                )
+                return DistributionResult(False, "quadrant", error="No data provided for Quadrant distribution")
 
             # Convert single record to list for uniform processing
             if isinstance(data, dict):
@@ -84,7 +78,9 @@ class QuadrantAdapter:
 
             # Simulate data insertion with embeddings
             record_count = len(data)
-            logger.info(f"Simulating Quadrant insertion: {record_count} records with embeddings into collection '{self.collection_name}'")
+            logger.info(
+                f"Simulating Quadrant insertion: {record_count} records with embeddings into collection '{self.collection_name}'"
+            )
 
             # Log sample data and embedding
             if len(data) > 0:
@@ -92,22 +88,21 @@ class QuadrantAdapter:
                 logger.info(f"Sample embedding shape: {embeddings[0].shape}")
 
             # Return success result with metadata
-            result = DistributionResult(
-                True, "quadrant",
+            return DistributionResult(
+                True,
+                "quadrant",
                 data={
                     "collection": self.collection_name,
                     "records_inserted": record_count,
                     "embedding_dimension": embeddings[0].shape[0] if record_count > 0 else 0,
                     "timestamp": datetime.now().isoformat(),
-                    "sample_data": data[0] if record_count > 0 else None
-                }
+                    "sample_data": data[0] if record_count > 0 else None,
+                },
             )
-
-            return result
 
         except Exception as e:
             error_msg = f"Quadrant distribution failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "quadrant", error=error_msg)
 
     def _generate_embedding(self, record: dict[str, Any]) -> np.ndarray:
@@ -149,7 +144,7 @@ class QuadrantAdapter:
             "name": self.collection_name,
             "vector_dimension": 128,  # Standard embedding dimension
             "distance_metric": "cosine",
-            "description": "Collection for storing people data embeddings"
+            "description": "Collection for storing people data embeddings",
         }
         logger.debug(f"Collection config: {json.dumps(collection_config, indent=2)}")
 
@@ -165,10 +160,7 @@ class QuadrantAdapter:
         from .data_distributor import DistributionResult
 
         if not self.enabled:
-            return DistributionResult(
-                False, "quadrant",
-                error="Quadrant adapter is disabled"
-            )
+            return DistributionResult(False, "quadrant", error="Quadrant adapter is disabled")
 
         try:
             target_collection = collection_name or self.collection_name
@@ -177,18 +169,19 @@ class QuadrantAdapter:
             logger.info(f"Simulating Quadrant collection creation: {target_collection}")
 
             return DistributionResult(
-                True, "quadrant",
+                True,
+                "quadrant",
                 data={
                     "collection": target_collection,
                     "message": "Collection created successfully (simulated)",
                     "vector_dimension": 128,
-                    "distance_metric": "cosine"
-                }
+                    "distance_metric": "cosine",
+                },
             )
 
         except Exception as e:
             error_msg = f"Quadrant collection creation failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "quadrant", error=error_msg)
 
     def search_similar(self, query_record: dict[str, Any], limit: int = 5) -> DistributionResult:
@@ -204,10 +197,7 @@ class QuadrantAdapter:
         from .data_distributor import DistributionResult
 
         if not self.enabled:
-            return DistributionResult(
-                False, "quadrant",
-                error="Quadrant adapter is disabled"
-            )
+            return DistributionResult(False, "quadrant", error="Quadrant adapter is disabled")
 
         try:
             # Generate embedding for query
@@ -225,27 +215,28 @@ class QuadrantAdapter:
                     "id": str(uuid.uuid4()),
                     "similarity": similarity_score,
                     "record": {
-                        "name": f"Similar Person {i+1}",
+                        "name": f"Similar Person {i + 1}",
                         "age": 25 + i,
-                        "city": f"City {i+1}",
-                        "score": 80.0 + (i * 2.5)
-                    }
+                        "city": f"City {i + 1}",
+                        "score": 80.0 + (i * 2.5),
+                    },
                 })
 
             return DistributionResult(
-                True, "quadrant",
+                True,
+                "quadrant",
                 data={
                     "collection": self.collection_name,
                     "query": query_record,
                     "results": simulated_results,
                     "limit": limit,
-                    "timestamp": datetime.now().isoformat()
-                }
+                    "timestamp": datetime.now().isoformat(),
+                },
             )
 
         except Exception as e:
             error_msg = f"Quadrant similarity search failed: {e!s}"
-            logger.error(error_msg)
+            logger.exception(error_msg)
             return DistributionResult(False, "quadrant", error=error_msg)
 
     def get_collection_info(self) -> dict[str, Any]:
@@ -260,7 +251,7 @@ class QuadrantAdapter:
             "distance_metric": "cosine",
             "record_count": 0,  # Simulated
             "created_at": datetime.now().isoformat(),
-            "description": "Collection for storing people data embeddings"
+            "description": "Collection for storing people data embeddings",
         }
 
     def is_healthy(self) -> bool:

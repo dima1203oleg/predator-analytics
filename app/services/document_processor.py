@@ -13,16 +13,12 @@ from __future__ import annotations
 - API - зовнішні джерела
 """
 
-import asyncio
-from datetime import UTC, datetime, timezone
-import io
+from datetime import UTC, datetime
 import json
 import logging
-import mimetypes
 import os
 from pathlib import Path
-import tempfile
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 logger = logging.getLogger("service.document_processor")
@@ -51,45 +47,48 @@ class DocumentProcessor:
 
         try:
             import pypdf
+
             self.has_pypdf = True
         except ImportError:
             logger.warning("pypdf not available - PDF processing disabled")
 
         try:
             import pytesseract
+
             self.has_tesseract = True
         except ImportError:
             logger.warning("pytesseract not available - OCR disabled")
 
         try:
             import docx
+
             self.has_docx = True
         except ImportError:
             logger.warning("python-docx not available - Word processing disabled")
 
         try:
-            import pandas
+            import pandas as pd
+
             self.has_pandas = True
         except ImportError:
             logger.warning("pandas not available - Excel/CSV processing disabled")
 
         try:
             from telethon import TelegramClient
+
             self.has_telethon = True
         except ImportError:
             logger.warning("telethon not available - Telegram parsing disabled")
 
         try:
             from bs4 import BeautifulSoup
+
             self.has_beautifulsoup = True
         except ImportError:
             logger.warning("beautifulsoup4 not available - Web scraping limited")
 
     async def process_file(
-        self,
-        file_path: str,
-        source_type: str,
-        options: dict[str, Any] | None = None
+        self, file_path: str, source_type: str, options: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         """Обробка файлу відповідно до типу джерела."""
         options = options or {}
@@ -99,7 +98,7 @@ class DocumentProcessor:
             "processed_at": datetime.now(UTC).isoformat(),
             "status": "pending",
             "records": [],
-            "metadata": {}
+            "metadata": {},
         }
 
         try:
@@ -124,17 +123,10 @@ class DocumentProcessor:
 
         return result
 
-    async def _process_excel_csv(
-        self,
-        file_path: str,
-        options: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _process_excel_csv(self, file_path: str, options: dict[str, Any]) -> dict[str, Any]:
         """Обробка Excel та CSV файлів."""
         if not self.has_pandas:
-            return {
-                "status": "error",
-                "error": "pandas не встановлено. Виконайте: pip install pandas openpyxl"
-            }
+            return {"status": "error", "error": "pandas не встановлено. Виконайте: pip install pandas openpyxl"}
 
         import pandas as pd
 
@@ -162,21 +154,14 @@ class DocumentProcessor:
                 "total_rows": len(df),
                 "columns": list(df.columns),
                 "file_size": os.path.getsize(file_path),
-                "sheet_name": options.get("sheet_name", "default")
-            }
+                "sheet_name": options.get("sheet_name", "default"),
+            },
         }
 
-    async def _process_pdf(
-        self,
-        file_path: str,
-        options: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _process_pdf(self, file_path: str, options: dict[str, Any]) -> dict[str, Any]:
         """Обробка PDF документів."""
         if not self.has_pypdf:
-            return {
-                "status": "error",
-                "error": "pypdf не встановлено. Виконайте: pip install pypdf"
-            }
+            return {"status": "error", "error": "pypdf не встановлено. Виконайте: pip install pypdf"}
 
         from pypdf import PdfReader
 
@@ -186,11 +171,7 @@ class DocumentProcessor:
 
         for i, page in enumerate(reader.pages):
             text = page.extract_text() or ""
-            pages.append({
-                "page_number": i + 1,
-                "text": text,
-                "char_count": len(text)
-            })
+            pages.append({"page_number": i + 1, "text": text, "char_count": len(text)})
             full_text.append(text)
 
         # Об'єднаний текст
@@ -206,21 +187,14 @@ class DocumentProcessor:
                 "total_pages": len(reader.pages),
                 "total_chars": len(combined_text),
                 "file_size": os.path.getsize(file_path),
-                "pdf_info": dict(reader.metadata) if reader.metadata else {}
-            }
+                "pdf_info": dict(reader.metadata) if reader.metadata else {},
+            },
         }
 
-    async def _process_image(
-        self,
-        file_path: str,
-        options: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _process_image(self, file_path: str, options: dict[str, Any]) -> dict[str, Any]:
         """OCR обробка зображень (Tesseract)."""
         if not self.has_tesseract:
-            return {
-                "status": "error",
-                "error": "pytesseract не встановлено. Виконайте: pip install pytesseract pillow"
-            }
+            return {"status": "error", "error": "pytesseract не встановлено. Виконайте: pip install pytesseract pillow"}
 
         from PIL import Image
         import pytesseract
@@ -255,21 +229,14 @@ class DocumentProcessor:
                 "word_count": len(words),
                 "avg_confidence": round(avg_confidence, 2),
                 "language": lang,
-                "file_size": os.path.getsize(file_path)
-            }
+                "file_size": os.path.getsize(file_path),
+            },
         }
 
-    async def _process_word(
-        self,
-        file_path: str,
-        options: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _process_word(self, file_path: str, options: dict[str, Any]) -> dict[str, Any]:
         """Обробка Word документів (.docx)."""
         if not self.has_docx:
-            return {
-                "status": "error",
-                "error": "python-docx не встановлено. Виконайте: pip install python-docx"
-            }
+            return {"status": "error", "error": "python-docx не встановлено. Виконайте: pip install python-docx"}
 
         from docx import Document
 
@@ -281,10 +248,7 @@ class DocumentProcessor:
 
         for para in document.paragraphs:
             if para.text.strip():
-                paragraphs.append({
-                    "text": para.text,
-                    "style": para.style.name if para.style else "Normal"
-                })
+                paragraphs.append({"text": para.text, "style": para.style.name if para.style else "Normal"})
                 full_text.append(para.text)
 
         # Таблиці
@@ -303,25 +267,16 @@ class DocumentProcessor:
             "file_path": file_path,
             "processed_at": datetime.now(UTC).isoformat(),
             "status": "completed",
-            "records": [{
-                "full_text": combined_text,
-                "paragraphs": paragraphs,
-                "tables": tables
-            }],
+            "records": [{"full_text": combined_text, "paragraphs": paragraphs, "tables": tables}],
             "metadata": {
                 "paragraph_count": len(paragraphs),
                 "table_count": len(tables),
                 "char_count": len(combined_text),
-                "file_size": os.path.getsize(file_path)
-            }
+                "file_size": os.path.getsize(file_path),
+            },
         }
 
-    async def process_url(
-        self,
-        url: str,
-        source_type: str,
-        options: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+    async def process_url(self, url: str, source_type: str, options: dict[str, Any] | None = None) -> dict[str, Any]:
         """Обробка URL джерел (Telegram, Website, API, RSS)."""
         options = options or {}
 
@@ -333,16 +288,9 @@ class DocumentProcessor:
             return await self._process_api(url, options)
         if source_type == "rss":
             return await self._process_rss(url, options)
-        return {
-            "status": "error",
-            "error": f"Невідомий тип URL джерела: {source_type}"
-        }
+        return {"status": "error", "error": f"Невідомий тип URL джерела: {source_type}"}
 
-    async def _process_telegram(
-        self,
-        channel: str,
-        options: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _process_telegram(self, channel: str, options: dict[str, Any]) -> dict[str, Any]:
         """Парсинг Telegram каналу."""
         # Для реального парсингу потрібен Telethon та API ключі
         # Тут реалізовано заглушку для демонстрації
@@ -357,17 +305,10 @@ class DocumentProcessor:
             "status": "pending_setup",
             "message": f"Канал {channel_name} додано до моніторингу. Налаштуйте TELEGRAM_API_ID та TELEGRAM_API_HASH для активації.",
             "records": [],
-            "metadata": {
-                "requires_api_keys": True,
-                "channel_name": channel_name
-            }
+            "metadata": {"requires_api_keys": True, "channel_name": channel_name},
         }
 
-    async def _process_website(
-        self,
-        url: str,
-        options: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _process_website(self, url: str, options: dict[str, Any]) -> dict[str, Any]:
         """Скрейпінг веб-сайту."""
         import httpx
 
@@ -384,6 +325,7 @@ class DocumentProcessor:
 
             if self.has_beautifulsoup:
                 from bs4 import BeautifulSoup
+
                 soup = BeautifulSoup(html, "html.parser")
 
                 # Видалення скриптів та стилів
@@ -403,33 +345,26 @@ class DocumentProcessor:
                 "url": url,
                 "processed_at": datetime.now(UTC).isoformat(),
                 "status": "completed",
-                "records": [{
-                    "url": url,
-                    "title": title,
-                    "description": description,
-                    "text": text[:50000]  # Обмеження на 50К символів
-                }],
+                "records": [
+                    {
+                        "url": url,
+                        "title": title,
+                        "description": description,
+                        "text": text[:50000],  # Обмеження на 50К символів
+                    }
+                ],
                 "metadata": {
                     "status_code": response.status_code,
                     "content_type": response.headers.get("content-type", ""),
                     "content_length": len(html),
-                    "title": title
-                }
+                    "title": title,
+                },
             }
 
         except Exception as e:
-            return {
-                "source_type": "website",
-                "url": url,
-                "status": "error",
-                "error": str(e)
-            }
+            return {"source_type": "website", "url": url, "status": "error", "error": str(e)}
 
-    async def _process_api(
-        self,
-        url: str,
-        options: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _process_api(self, url: str, options: dict[str, Any]) -> dict[str, Any]:
         """Отримання даних з API."""
         import httpx
 
@@ -460,23 +395,14 @@ class DocumentProcessor:
                 "metadata": {
                     "status_code": response.status_code,
                     "content_type": response.headers.get("content-type", ""),
-                    "record_count": len(records)
-                }
+                    "record_count": len(records),
+                },
             }
 
         except Exception as e:
-            return {
-                "source_type": "api",
-                "url": url,
-                "status": "error",
-                "error": str(e)
-            }
+            return {"source_type": "api", "url": url, "status": "error", "error": str(e)}
 
-    async def _process_rss(
-        self,
-        url: str,
-        options: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _process_rss(self, url: str, options: dict[str, Any]) -> dict[str, Any]:
         """Парсинг RSS/Atom фідів."""
         import httpx
 
@@ -488,6 +414,7 @@ class DocumentProcessor:
 
             # Базовий парсинг XML
             import xml.etree.ElementTree as ET
+
             root = ET.fromstring(content)
 
             items = []
@@ -498,16 +425,18 @@ class DocumentProcessor:
                     "title": item.findtext("title", ""),
                     "link": item.findtext("link", ""),
                     "description": item.findtext("description", ""),
-                    "pubDate": item.findtext("pubDate", "")
+                    "pubDate": item.findtext("pubDate", ""),
                 })
 
             # Atom
             for entry in root.findall(".//{http://www.w3.org/2005/Atom}entry"):
                 items.append({
                     "title": entry.findtext("{http://www.w3.org/2005/Atom}title", ""),
-                    "link": entry.find("{http://www.w3.org/2005/Atom}link").get("href", "") if entry.find("{http://www.w3.org/2005/Atom}link") is not None else "",
+                    "link": entry.find("{http://www.w3.org/2005/Atom}link").get("href", "")
+                    if entry.find("{http://www.w3.org/2005/Atom}link") is not None
+                    else "",
                     "description": entry.findtext("{http://www.w3.org/2005/Atom}summary", ""),
-                    "pubDate": entry.findtext("{http://www.w3.org/2005/Atom}updated", "")
+                    "pubDate": entry.findtext("{http://www.w3.org/2005/Atom}updated", ""),
                 })
 
             return {
@@ -518,17 +447,12 @@ class DocumentProcessor:
                 "records": items,
                 "metadata": {
                     "item_count": len(items),
-                    "feed_type": "rss" if root.find(".//item") is not None else "atom"
-                }
+                    "feed_type": "rss" if root.find(".//item") is not None else "atom",
+                },
             }
 
         except Exception as e:
-            return {
-                "source_type": "rss",
-                "url": url,
-                "status": "error",
-                "error": str(e)
-            }
+            return {"source_type": "rss", "url": url, "status": "error", "error": str(e)}
 
 
 # Singleton

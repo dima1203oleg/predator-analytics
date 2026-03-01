@@ -6,11 +6,10 @@ Manages Sources, Datasets, and Jobs lifecycle.
 """
 from datetime import datetime
 import logging
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any
 
 from fastapi import HTTPException, UploadFile
-from sqlalchemy import and_, delete, func, select, update
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import delete, func, select, update
 
 from app.core.db import async_session_maker
 from app.models.entities import (
@@ -41,6 +40,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class DataHubService:
     """Core service for Data Hub functionality."""
 
@@ -60,7 +60,7 @@ class DataHubService:
                 description=source_data.description,
                 source_type=source_data.source_type.value,
                 config=source_data.config,
-                meta=source_data.meta
+                meta=source_data.meta,
             )
             session.add(source)
             await session.commit()
@@ -72,18 +72,12 @@ class DataHubService:
     async def get_source(self, source_id: UUID) -> SourceResponse | None:
         """Get source by ID."""
         async with async_session_maker() as session:
-            result = await session.execute(
-                select(Source).where(Source.id == source_id)
-            )
+            result = await session.execute(select(Source).where(Source.id == source_id))
             source = result.scalar_one_or_none()
             return SourceResponse.from_orm(source) if source else None
 
     async def list_sources(
-        self,
-        source_type: SourceType | None = None,
-        is_active: bool | None = None,
-        limit: int = 50,
-        offset: int = 0
+        self, source_type: SourceType | None = None, is_active: bool | None = None, limit: int = 50, offset: int = 0
     ) -> list[SourceResponse]:
         """List sources with filters."""
         async with async_session_maker() as session:
@@ -107,8 +101,8 @@ class DataHubService:
             update_dict = update_data.dict(exclude_unset=True)
             if update_dict:
                 # Convert enum values
-                if 'source_type' in update_dict:
-                    update_dict['source_type'] = update_dict['source_type'].value
+                if "source_type" in update_dict:
+                    update_dict["source_type"] = update_dict["source_type"].value
 
                 stmt = update(Source).where(Source.id == source_id).values(**update_dict)
                 await session.execute(stmt)
@@ -119,10 +113,7 @@ class DataHubService:
     async def delete_source(self, source_id: UUID) -> bool:
         """Delete source (soft delete by setting is_active=False)."""
         async with async_session_maker() as session:
-            stmt = update(Source).where(Source.id == source_id).values(
-                is_active=False,
-                updated_at=datetime.utcnow()
-            )
+            stmt = update(Source).where(Source.id == source_id).values(is_active=False, updated_at=datetime.utcnow())
             result = await session.execute(stmt)
             await session.commit()
 
@@ -144,7 +135,7 @@ class DataHubService:
                 description=dataset_data.description,
                 file_path=dataset_data.file_path,
                 file_type=dataset_data.file_type,
-                status=DatasetStatus.UPLOADED
+                status=DatasetStatus.UPLOADED,
             )
             session.add(dataset)
             await session.commit()
@@ -174,11 +165,7 @@ class DataHubService:
             return response
 
     async def list_datasets(
-        self,
-        source_id: UUID | None = None,
-        status: DatasetStatus | None = None,
-        limit: int = 50,
-        offset: int = 0
+        self, source_id: UUID | None = None, status: DatasetStatus | None = None, limit: int = 50, offset: int = 0
     ) -> list[DatasetResponse]:
         """List datasets with filters."""
         async with async_session_maker() as session:
@@ -208,8 +195,8 @@ class DataHubService:
             update_dict = update_data.dict(exclude_unset=True)
             if update_dict:
                 # Convert enum values
-                if 'status' in update_dict:
-                    update_dict['status'] = update_dict['status'].value
+                if "status" in update_dict:
+                    update_dict["status"] = update_dict["status"].value
 
                 stmt = update(Dataset).where(Dataset.id == dataset_id).values(**update_dict)
                 await session.execute(stmt)
@@ -234,10 +221,7 @@ class DataHubService:
     # ========================================================================
 
     async def upload_file_wizard(
-        self,
-        file: UploadFile,
-        source_name: str | None = None,
-        description: str | None = None
+        self, file: UploadFile, source_name: str | None = None, description: str | None = None
     ) -> UploadWizardResult:
         """Complete upload wizard flow:
         1. Create Source
@@ -256,11 +240,7 @@ class DataHubService:
                 name=source_name,
                 description=description,
                 source_type=source_type,
-                config={
-                    "filename": file.filename,
-                    "content_type": file.content_type,
-                    "upload_method": "wizard"
-                }
+                config={"filename": file.filename, "content_type": file.content_type, "upload_method": "wizard"},
             )
             source = await self.create_source(source_data)
 
@@ -276,21 +256,18 @@ class DataHubService:
             fd, temp_file_path = tempfile.mkstemp()
             preview = {}
             try:
-                with os.fdopen(fd, 'wb') as tmp:
+                with os.fdopen(fd, "wb") as tmp:
                     # Retrieve file in 1MB chunks
                     while content := await file.read(1024 * 1024):
                         tmp.write(content)
 
-                await file.seek(0) # Reset if needed for preview, but we use temp path
+                await file.seek(0)  # Reset if needed for preview, but we use temp path
 
                 # Generate preview (while file exists)
                 preview = await self._generate_preview(temp_file_path, file.filename)
 
                 await self.minio_service.upload_file(
-                    bucket="raw-data",
-                    object_name=object_name,
-                    file_path=temp_file_path,
-                    content_type=file.content_type
+                    bucket="raw-data", object_name=object_name, file_path=temp_file_path, content_type=file.content_type
                 )
             finally:
                 if os.path.exists(temp_file_path):
@@ -302,7 +279,7 @@ class DataHubService:
                 name=f"Dataset: {file.filename}",
                 description=f"Uploaded from {file.filename}",
                 file_path=object_name,
-                file_type=file.filename.split('.')[-1].lower()
+                file_type=file.filename.split(".")[-1].lower(),
             )
             dataset = await self.create_dataset(dataset_data)
 
@@ -311,12 +288,7 @@ class DataHubService:
 
             # 5. Preview generated above (while file existed)
 
-            return UploadWizardResult(
-                source=source,
-                dataset=dataset,
-                job=job,
-                preview=preview
-            )
+            return UploadWizardResult(source=source, dataset=dataset, job=job, preview=preview)
 
         except Exception as e:
             logger.exception(f"Upload wizard failed: {e}")
@@ -327,11 +299,11 @@ class DataHubService:
         try:
             import pandas as pd
 
-            file_ext = filename.rsplit('.', maxsplit=1)[-1].lower()
+            file_ext = filename.rsplit(".", maxsplit=1)[-1].lower()
 
-            if file_ext in ['csv', 'tsv']:
+            if file_ext in ["csv", "tsv"]:
                 df = pd.read_csv(file_path, nrows=10)
-            elif file_ext in ['xlsx', 'xls']:
+            elif file_ext in ["xlsx", "xls"]:
                 df = pd.read_excel(file_path, nrows=10)
             else:
                 return {"error": f"Preview not supported for {file_ext} files"}
@@ -339,8 +311,8 @@ class DataHubService:
             return {
                 "columns": list(df.columns),
                 "dtypes": df.dtypes.to_dict(),
-                "sample_rows": df.head(5).to_dict('records'),
-                "shape_preview": f"Showing 5 of {len(df)} columns"
+                "sample_rows": df.head(5).to_dict("records"),
+                "shape_preview": f"Showing 5 of {len(df)} columns",
             }
 
         except Exception as e:
@@ -360,10 +332,7 @@ class DataHubService:
                 name=f"Ingestion for dataset {dataset_id}",
                 description="Parse and process uploaded file",
                 status=JobStatus.QUEUED.value,
-                config={
-                    "pipeline": "ingestion",
-                    "auto_index": True
-                }
+                config={"pipeline": "ingestion", "auto_index": True},
             )
             session.add(job)
             await session.commit()
@@ -380,10 +349,10 @@ class DataHubService:
         # This would typically use Celery or background tasks
         # For now, we'll mark it as running
         async with async_session_maker() as session:
-            stmt = update(Job).where(Job.id == job_id).values(
-                status=JobStatus.RUNNING.value,
-                started_at=datetime.utcnow(),
-                progress=0.0
+            stmt = (
+                update(Job)
+                .where(Job.id == job_id)
+                .values(status=JobStatus.RUNNING.value, started_at=datetime.utcnow(), progress=0.0)
             )
             await session.execute(stmt)
             await session.commit()
@@ -394,9 +363,7 @@ class DataHubService:
     async def get_job(self, job_id: UUID) -> JobResponse | None:
         """Get job by ID."""
         async with async_session_maker() as session:
-            result = await session.execute(
-                select(Job).where(Job.id == job_id)
-            )
+            result = await session.execute(select(Job).where(Job.id == job_id))
             job = result.scalar_one_or_none()
 
             if not job:
@@ -414,7 +381,7 @@ class DataHubService:
         job_type: JobType | None = None,
         status: JobStatus | None = None,
         limit: int = 50,
-        offset: int = 0
+        offset: int = 0,
     ) -> list[JobResponse]:
         """List jobs with filters."""
         async with async_session_maker() as session:
@@ -449,35 +416,23 @@ class DataHubService:
         """Get statistics for Data Hub dashboard."""
         async with async_session_maker() as session:
             # Sources stats
-            total_sources = await session.scalar(
-                select(func.count(Source.id))
-            )
-            active_sources = await session.scalar(
-                select(func.count(Source.id)).where(Source.is_active)
-            )
+            total_sources = await session.scalar(select(func.count(Source.id)))
+            active_sources = await session.scalar(select(func.count(Source.id)).where(Source.is_active))
 
             # Datasets stats
-            total_datasets = await session.scalar(
-                select(func.count(Dataset.id))
-            )
+            total_datasets = await session.scalar(select(func.count(Dataset.id)))
 
             datasets_by_status = {}
             for status in DatasetStatus:
-                count = await session.scalar(
-                    select(func.count(Dataset.id)).where(Dataset.status == status.value)
-                )
+                count = await session.scalar(select(func.count(Dataset.id)).where(Dataset.status == status.value))
                 datasets_by_status[status.value] = count
 
             # Jobs stats
-            total_jobs = await session.scalar(
-                select(func.count(Job.id))
-            )
+            total_jobs = await session.scalar(select(func.count(Job.id)))
 
             jobs_by_status = {}
             for status in JobStatus:
-                count = await session.scalar(
-                    select(func.count(Job.id)).where(Job.status == status.value)
-                )
+                count = await session.scalar(select(func.count(Job.id)).where(Job.status == status.value))
                 jobs_by_status[status.value] = count
 
             # Storage stats (simplified)
@@ -485,10 +440,7 @@ class DataHubService:
 
             # Recent uploads
             recent_datasets_result = await session.execute(
-                select(Dataset)
-                .join(Source)
-                .order_by(Dataset.created_at.desc())
-                .limit(5)
+                select(Dataset).join(Source).order_by(Dataset.created_at.desc()).limit(5)
             )
             recent_datasets = recent_datasets_result.scalars().all()
             recent_uploads = []
@@ -505,8 +457,9 @@ class DataHubService:
                 total_jobs=total_jobs or 0,
                 jobs_by_status=jobs_by_status,
                 storage_used=storage_used,
-                recent_uploads=recent_uploads
+                recent_uploads=recent_uploads,
             )
+
 
 # Singleton instance
 data_hub_service = DataHubService()

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import time
-from typing import Dict, List, Optional
 
 
 class FederationService:
@@ -18,14 +17,14 @@ class FederationService:
             "info": node_data,
             "last_seen": time.time(),
             "status": "online",
-            "tasks_completed": 0
+            "tasks_completed": 0,
         }
         print(f"🌍 [FederationService] Node Registered: {node_id}")
         return {"status": "registered", "master_node": "Predator-Core-Prime"}
 
     def heartbeat(self, node_id: str, load: float) -> list[dict] | None:
         if node_id not in self.edge_nodes:
-            return None # Indicate need for re-registration
+            return None  # Indicate need for re-registration
 
         self.edge_nodes[node_id]["last_seen"] = time.time()
         self.edge_nodes[node_id]["status"] = "online"
@@ -42,12 +41,7 @@ class FederationService:
 
     def dispatch_task(self, type: str, payload: dict, target_node_id: str | None = None) -> str:
         task_id = f"task-{int(time.time())}"
-        task_data = {
-            "task_id": task_id,
-            "type": type,
-            "payload": payload,
-            "created_at": time.time()
-        }
+        task_data = {"task_id": task_id, "type": type, "payload": payload, "created_at": time.time()}
 
         target = target_node_id
         if not target:
@@ -70,7 +64,7 @@ class FederationService:
             "node_id": node_id,
             "result": result,
             "status": status,
-            "completed_at": time.time()
+            "completed_at": time.time(),
         }
         if node_id in self.edge_nodes:
             self.edge_nodes[node_id]["tasks_completed"] += 1
@@ -85,8 +79,10 @@ class FederationService:
             results.append(data)
         return results
 
+
 # Singleton instance
 _federation_service = FederationService()
+
 
 def get_federation_service():
     return _federation_service

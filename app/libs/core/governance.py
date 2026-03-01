@@ -1,29 +1,27 @@
 from __future__ import annotations
 
 from datetime import datetime
-from enum import Enum
-import hashlib
-import json
-from typing import Any, Dict, List
-
-from sqlalchemy import text
+from enum import StrEnum
+from typing import Any
 
 from app.libs.core.constitutional import get_arbiter, get_ledger
-from app.libs.core.database import get_db_sync
 from app.libs.core.logger import setup_logger
 
 
 logger = setup_logger("predator.governance")
 
-class SecurityStage(str, Enum):
-    RND = "rnd"           # Все дозволено, експерименти
-    STAGING = "staging"   # Перевірка перед продом
-    PRODUCTION = "prod"   # Тільки затверджені дії, read-only infra
 
-class WinSURFDecision(str, Enum):
+class SecurityStage(StrEnum):
+    RND = "rnd"  # Все дозволено, експерименти
+    STAGING = "staging"  # Перевірка перед продом
+    PRODUCTION = "prod"  # Тільки затверджені дії, read-only infra
+
+
+class WinSURFDecision(StrEnum):
     APPROVED = "approved"
     REJECTED = "rejected"
     NEEDS_REVIEW = "needs_review"
+
 
 class OperationalPolicy:
     """Centralized Governance Policy for Predator Analytics v45.
@@ -31,13 +29,23 @@ class OperationalPolicy:
     """
 
     FORBIDDEN_COMMANDS = [
-        "rm -rf /", "mkfs", "dd if=", ":(){ :|:& };:", # Fork bomb
-        "chmod 777 -R /", "shutdown", "reboot"
+        "rm -rf /",
+        "mkfs",
+        "dd if=",
+        ":(){ :|:& };:",  # Fork bomb
+        "chmod 777 -R /",
+        "shutdown",
+        "reboot",
     ]
 
     FORBIDDEN_TECH = [
-        "mysql", "php", "jenkins", "terraform", "ansible", # Ми юзаємо Postgres, Python, ArgoCD
-        "jquery", "bootstrap"
+        "mysql",
+        "php",
+        "jenkins",
+        "terraform",
+        "ansible",  # Ми юзаємо Postgres, Python, ArgoCD
+        "jquery",
+        "bootstrap",
     ]
 
     @staticmethod
@@ -50,21 +58,18 @@ class OperationalPolicy:
             if bad_cmd.lower() in cmd_lower:
                 return {
                     "approved": False,
-                    "reason": f"Critical Security Violation: Forbidden command sequence '{bad_cmd}'."
+                    "reason": f"Critical Security Violation: Forbidden command sequence '{bad_cmd}'.",
                 }
 
         # 2. Production Constraints
         if stage == SecurityStage.PRODUCTION:
             if "kubectl apply" in cmd_lower or "kubectl delete" in cmd_lower:
-                 return {
+                return {
                     "approved": False,
-                    "reason": "Direct kubectl modification prohibited in PRODUCTION. Use GitOps (ArgoCD)."
+                    "reason": "Direct kubectl modification prohibited in PRODUCTION. Use GitOps (ArgoCD).",
                 }
             if "pip install" in cmd_lower:
-                 return {
-                    "approved": False,
-                    "reason": "Runtime package installation prohibited in PRODUCTION."
-                }
+                return {"approved": False, "reason": "Runtime package installation prohibited in PRODUCTION."}
 
         return {"approved": True, "reason": "Command is safe within current policy."}
 
@@ -75,7 +80,7 @@ class OperationalPolicy:
             if tech.lower() in OperationalPolicy.FORBIDDEN_TECH:
                 return {
                     "approved": False,
-                    "reason": f"Technology '{tech}' is banned by Rationalization Policy. Use approved stack."
+                    "reason": f"Technology '{tech}' is banned by Rationalization Policy. Use approved stack.",
                 }
         return {"approved": True, "reason": "Tech stack aligned with WinSURF."}
 
@@ -88,7 +93,7 @@ class OperationalPolicy:
         return {
             "status": "VALID" if healthy else "CORRUPTED",
             "service": "truth-ledger:8092",
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
     @staticmethod
@@ -96,15 +101,10 @@ class OperationalPolicy:
         """Request authorization for high-compute task (Constitutional Gatekeeping)."""
         arbiter = get_arbiter()
         decision = arbiter.decide(
-            action_type="high_compute_task",
-            context={
-                "component": component,
-                **task_details
-            },
-            sender="governance_lib"
+            action_type="high_compute_task", context={"component": component, **task_details}, sender="governance_lib"
         )
 
-        if decision.get('allowed'):
+        if decision.get("allowed"):
             # Log successful start to ledger
             ledger = get_ledger()
             ledger.log_action(
@@ -112,7 +112,7 @@ class OperationalPolicy:
                 entity_id=component,
                 action="authorized_start",
                 payload=task_details,
-                signature=decision.get('signature')
+                signature=decision.get("signature"),
             )
 
         return decision

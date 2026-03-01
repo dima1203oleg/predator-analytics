@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-from datetime import datetime
 import json
 import logging
 import os
-from typing import List, Optional
-import uuid
 
 import asyncpg
 from fastapi import APIRouter, HTTPException
@@ -17,22 +14,25 @@ from app.tasks.etl_workers import parse_external_source
 router = APIRouter(prefix="/sources", tags=["Sources"])
 logger = logging.getLogger("api.sources")
 
+
 class DataSource(BaseModel):
     id: str
     name: str
-    type: str # OFFICIAL, INTERNAL, UPLOADED
-    status: str # ONLINE, SYNCING
+    type: str  # OFFICIAL, INTERNAL, UPLOADED
+    status: str  # ONLINE, SYNCING
     records_count: int
-    size_mb: str # Changed to string to accommodate '12 MB' format from postgres
+    size_mb: str  # Changed to string to accommodate '12 MB' format from postgres
     last_update: str
     table_name: str
     ml_status: str = "IDLE"
 
+
 class CreateSourceModel(BaseModel):
-    type: str # 'website' or 'telegram'
+    type: str  # 'website' or 'telegram'
     url: str
     name: str | None = None
     active: bool = True
+
 
 class Connector(BaseModel):
     id: str
@@ -44,6 +44,7 @@ class Connector(BaseModel):
     description: str
     config: dict | None = None
 
+
 @router.get("/", response_model=list[DataSource])
 async def get_data_sources():
     """Get all available data sources (PostgreSQL tables).
@@ -51,10 +52,10 @@ async def get_data_sources():
     """
     db_url = os.getenv("DATABASE_URL", "postgresql://admin:predator_password@postgres:5432/predator_db")
     # Clean scheme for asyncpg
-    if '://' in db_url:
-        scheme, rest = db_url.split('://', 1)
-        if '+' in scheme:
-            scheme = scheme.split('+')[0]
+    if "://" in db_url:
+        scheme, rest = db_url.split("://", 1)
+        if "+" in scheme:
+            scheme = scheme.split("+")[0]
         db_url = f"{scheme}://{rest}"
 
     sources = []
@@ -85,7 +86,7 @@ async def get_data_sources():
         try:
             gold_rows = await conn.fetch(gold_query)
             for row in gold_rows:
-                config = row['config']
+                config = row["config"]
                 if isinstance(config, str):
                     config = json.loads(config)
                 config = config or {}
@@ -93,15 +94,15 @@ async def get_data_sources():
                 table_name = config.get("table_name", "gold.registry")
 
                 sources.append({
-                    "id": str(row['id']),
-                    "name": row['name'],
-                    "type": row['source_type'].upper(),
+                    "id": str(row["id"]),
+                    "name": row["name"],
+                    "type": row["source_type"].upper(),
                     "status": "ONLINE",
-                    "records_count": row.get('doc_count', 0),
+                    "records_count": row.get("doc_count", 0),
                     "size_mb": "LIVE",
-                    "last_update": row['updated_at'].strftime("%Y-%m-%d %H:%M") if row['updated_at'] else "N/A",
+                    "last_update": row["updated_at"].strftime("%Y-%m-%d %H:%M") if row["updated_at"] else "N/A",
                     "table_name": table_name,
-                    "ml_status": (row['ml_job_status'] or "IDLE").upper()
+                    "ml_status": (row["ml_job_status"] or "IDLE").upper(),
                 })
         except Exception as ge:
             logger.warning(f"Gold registry fetch failed: {ge}")
@@ -115,12 +116,14 @@ async def get_data_sources():
         if conn:
             await conn.close()
 
+
 @router.post("/", response_model=dict)
 async def create_source(source: CreateSourceModel):
     db_url = os.getenv("DATABASE_URL", "postgresql://admin:predator_password@postgres:5432/predator_db")
-    if '://' in db_url:
-        scheme, rest = db_url.split('://', 1)
-        if '+' in scheme: scheme = scheme.split('+')[0]
+    if "://" in db_url:
+        scheme, rest = db_url.split("://", 1)
+        if "+" in scheme:
+            scheme = scheme.split("+")[0]
         db_url = f"{scheme}://{rest}"
 
     conn = await asyncpg.connect(db_url)
@@ -131,28 +134,31 @@ async def create_source(source: CreateSourceModel):
 
         if source_type == "telegram":
             # Extract username
-            username = source.url.replace("https://t.me/", "").replace("@", "").strip('/')
+            username = source.url.replace("https://t.me/", "").replace("@", "").strip("/")
             config["channelUsername"] = username
             config["url"] = source.url
             name = source.name or f"Telegram: {username}"
-            description = f"Моніторинг каналу @{username}"
         elif source_type == "web":
             config["url"] = source.url
             config["usePlaywright"] = True
             name = source.name or source.url
-            description = f"Скрапінг сайту {source.url}"
         else:
             config["url"] = source.url
             name = source.name or source.url
-            description = "Зовнішнє джерело"
 
         # Insert into gold.data_sources
-        source_id = await conn.fetchval("""
+        source_id = await conn.fetchval(
+            """
             INSERT INTO gold.data_sources
                 (name, source_type, status, config, schedule, created_at, updated_at)
             VALUES ($1, $2, 'active', $3, $4, NOW(), NOW())
             RETURNING id
-        """, name, source_type, json.dumps(config), json.dumps({"cron": "* * * * *"})) # Schedule every minute for testing
+        """,
+            name,
+            source_type,
+            json.dumps(config),
+            json.dumps({"cron": "* * * * *"}),
+        )  # Schedule every minute for testing
 
         logger.info(f"Created source {source_id}")
 
@@ -162,18 +168,20 @@ async def create_source(source: CreateSourceModel):
         return {"status": "created", "id": str(source_id)}
 
     except Exception as e:
-        logger.error(f"Failed to create source: {e}")
+        logger.exception(f"Failed to create source: {e}")
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         await conn.close()
 
+
 @router.get("/connectors", response_model=list[Connector])
 async def list_connectors():
-    """Endpoint for ParsersView UI"""
+    """Endpoint for ParsersView UI."""
     db_url = os.getenv("DATABASE_URL", "postgresql://admin:predator_password@postgres:5432/predator_db")
-    if '://' in db_url:
-        scheme, rest = db_url.split('://', 1)
-        if '+' in scheme: scheme = scheme.split('+')[0]
+    if "://" in db_url:
+        scheme, rest = db_url.split("://", 1)
+        if "+" in scheme:
+            scheme = scheme.split("+")[0]
         db_url = f"{scheme}://{rest}"
 
     conn = await asyncpg.connect(db_url)
@@ -190,27 +198,29 @@ async def list_connectors():
         """)
 
         for row in rows:
-            conf = row['config']
-            if isinstance(conf, str): conf = json.loads(conf)
+            conf = row["config"]
+            if isinstance(conf, str):
+                conf = json.loads(conf)
             conf = conf or {}
 
             # Map type to frontend type
-            ftype = row['source_type']
-            if ftype == 'web': ftype = 'website'
+            ftype = row["source_type"]
+            if ftype == "web":
+                ftype = "website"
 
             connectors.append({
-                "id": str(row['id']),
-                "name": row['name'],
+                "id": str(row["id"]),
+                "name": row["name"],
                 "type": ftype,
-                "status": row['status'] if row['status'] in ['active', 'syncing', 'error'] else 'idle',
-                "lastSync": row['updated_at'].strftime("%H:%M %d.%m") if row['updated_at'] else "Never",
-                "itemsCount": row['count'] or 0,
-                "description": conf.get('url') or row['name'],
-                "config": conf
+                "status": row["status"] if row["status"] in ["active", "syncing", "error"] else "idle",
+                "lastSync": row["updated_at"].strftime("%H:%M %d.%m") if row["updated_at"] else "Never",
+                "itemsCount": row["count"] or 0,
+                "description": conf.get("url") or row["name"],
+                "config": conf,
             })
 
     except Exception as e:
-        logger.error(f"Failed to list connectors: {e}")
+        logger.exception(f"Failed to list connectors: {e}")
     finally:
         await conn.close()
 

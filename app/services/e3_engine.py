@@ -2,16 +2,15 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime
-import json
 import logging
-import os
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from app.services.azr_engine import azr_engine
 
 
 logger = logging.getLogger("E3")
+
 
 class EternalEvolutionEngine:
     """🚀 Predator Eternal Evolution Engine (E3).
@@ -37,8 +36,8 @@ class EternalEvolutionEngine:
             "terms": {
                 "client_basic": "Клієнтський доступ",
                 "client_premium": "Преміум-аналітика",
-                "admin": "Адміністрування системи"
-            }
+                "admin": "Адміністрування системи",
+            },
         }
 
     async def start(self):
@@ -87,7 +86,7 @@ class EternalEvolutionEngine:
             "Dashboard": "Дашборд",
             "Analytics": "Аналітика",
             "Infrastructure": "Інфраструктура",
-            "Service Status": "Стан Сервісів"
+            "Service Status": "Стан Сервісів",
         }
         # In a real scenario, this would scan .tsx files and apply sed or patch.
         # For now, we simulate the logic.
@@ -109,8 +108,9 @@ class EternalEvolutionEngine:
 
         # 2. AI Model Refinement
         from app.services.autonomous_intelligence_v2 import autonomous_intelligence_v2
-        config = autonomous_intelligence_v2.get_status().get('config', {})
-        if config.get('min_confidence', 0) > 0.7:
+
+        config = autonomous_intelligence_v2.get_status().get("config", {})
+        if config.get("min_confidence", 0) > 0.7:
             logger.info("✅ E3: Auto-adjusted min_confidence to 0.6 for better adaptive response")
 
         # 3. Health Check
@@ -125,9 +125,10 @@ class EternalEvolutionEngine:
             "metrics": {
                 "terminology_fixes": self._evolution_cycles * 2,
                 "performance_tweaks": self._evolution_cycles + 5,
-                "security_verifications": self._evolution_cycles * 10
-            }
+                "security_verifications": self._evolution_cycles * 10,
+            },
         }
+
 
 # Global instance
 project_root = "/Users/dima-mac/Documents/Predator_21"

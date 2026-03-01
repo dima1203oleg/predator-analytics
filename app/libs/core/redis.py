@@ -5,7 +5,6 @@ from __future__ import annotations
 Shared Redis connection management for Predator Analytics.
 """
 import logging
-from typing import Optional
 
 import redis.asyncio as redis
 
@@ -14,8 +13,10 @@ from .config import settings
 
 logger = logging.getLogger("predator.redis")
 
+
 class RedisClient:
     """Async Redis Client for caching and state management."""
+
     _instance: redis.Redis | None = None
 
     @classmethod
@@ -24,11 +25,7 @@ class RedisClient:
             redis_url = settings.REDIS_URL
             logger.info(f"Connecting to Redis at {redis_url}...")
             try:
-                cls._instance = redis.from_url(
-                    redis_url,
-                    decode_responses=True,
-                    socket_connect_timeout=5
-                )
+                cls._instance = redis.from_url(redis_url, decode_responses=True, socket_connect_timeout=5)
                 # Test connection
                 await cls._instance.ping()
                 logger.info("✅ Connected to Redis")
@@ -43,6 +40,7 @@ class RedisClient:
         if cls._instance:
             await cls._instance.close()
             cls._instance = None
+
 
 async def get_redis() -> redis.Redis:
     return await RedisClient.get_instance()

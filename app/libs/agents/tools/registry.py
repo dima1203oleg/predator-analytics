@@ -3,12 +3,13 @@ from __future__ import annotations
 from collections.abc import Callable
 import inspect
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
 
 logger = logging.getLogger("tools.registry")
+
 
 class ToolDefinition(BaseModel):
     name: str
@@ -19,12 +20,14 @@ class ToolDefinition(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
+
 class ToolRegistry:
     def __init__(self):
         self._tools: dict[str, ToolDefinition] = {}
 
     def register(self, name: str | None = None, description: str | None = None):
         """Decorator to register a tool."""
+
         def decorator(func: Callable):
             tool_name = name or func.__name__
             tool_desc = description or func.__doc__ or "No description provided."
@@ -34,29 +37,30 @@ class ToolRegistry:
             sig = inspect.signature(func)
             params = {}
             for param_name, param in sig.parameters.items():
-                if param_name in ["self", "args", "kwargs"]: continue
+                if param_name in ["self", "args", "kwargs"]:
+                    continue
 
                 # Simple type mapping
                 param_type = "string"
-                if param.annotation == int: param_type = "integer"
-                elif param.annotation == bool: param_type = "boolean"
-                elif param.annotation == float: param_type = "number"
-                elif param.annotation == list: param_type = "array"
-                elif param.annotation == dict: param_type = "object"
+                if param.annotation == int:
+                    param_type = "integer"
+                elif param.annotation == bool:
+                    param_type = "boolean"
+                elif param.annotation == float:
+                    param_type = "number"
+                elif param.annotation == list:
+                    param_type = "array"
+                elif param.annotation == dict:
+                    param_type = "object"
 
-                params[param_name] = {
-                    "type": param_type,
-                    "description": f"Parameter {param_name}"
-                }
+                params[param_name] = {"type": param_type, "description": f"Parameter {param_name}"}
 
             self._tools[tool_name] = ToolDefinition(
-                name=tool_name,
-                description=tool_desc.strip(),
-                parameters=params,
-                func=func
+                name=tool_name, description=tool_desc.strip(), parameters=params, func=func
             )
             logger.info(f"🔧 Registered tool: {tool_name}")
             return func
+
         return decorator
 
     def get_tool(self, name: str) -> ToolDefinition | None:
@@ -77,9 +81,9 @@ class ToolRegistry:
                     "parameters": {
                         "type": "object",
                         "properties": tool.parameters,
-                        "required": list(tool.parameters.keys())
-                    }
-                }
+                        "required": list(tool.parameters.keys()),
+                    },
+                },
             })
         return schemas
 
@@ -96,6 +100,7 @@ class ToolRegistry:
         except Exception as e:
             logger.exception(f"Tool execution failed: {e}")
             return f"Error: {e!s}"
+
 
 # Global Registry
 registry = ToolRegistry()

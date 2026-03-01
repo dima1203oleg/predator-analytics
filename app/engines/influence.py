@@ -9,12 +9,13 @@ Output: InfluenceScore per UEID.
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
+import logging
 
 from app.core.confidence import ConfidenceScore, quick_confidence
 from app.indices.hci import calculate_hci
 from app.indices.im import calculate_im
+
 
 logger = logging.getLogger("predator.engines.influence")
 
@@ -68,7 +69,10 @@ def compute_influence_score(
 
     logger.info(
         "Influence score computed: ueid=%s im=%.1f hci=%.1f agg=%.1f",
-        ueid, im, hci, aggregate,
+        ueid,
+        im,
+        hci,
+        aggregate,
     )
 
     return InfluenceScore(

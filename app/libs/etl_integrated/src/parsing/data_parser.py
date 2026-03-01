@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Union
+from typing import Any
 
 
 """
@@ -12,7 +12,6 @@ Provides a unified interface for parsing different data formats.
 from enum import Enum
 import importlib
 from pathlib import Path
-from typing import Dict, List
 
 
 try:
@@ -23,6 +22,7 @@ except ImportError:
 
 class DataFormat(Enum):
     """Supported data formats."""
+
     CSV = "csv"
     JSON = "json"
     XML = "xml"
@@ -77,7 +77,7 @@ class DataParser:
             except (ImportError, AttributeError) as e:
                 print(f"Warning: Could not load {fmt} parser: {e}")
 
-    def parse(self, file_path: str |  Path, format_hint: DataFormat | None = None) -> ParseResult:
+    def parse(self, file_path: str | Path, format_hint: DataFormat | None = None) -> ParseResult:
         """Parse data from a file.
 
         Args:
@@ -105,8 +105,7 @@ class DataParser:
 
         # Parse the data
         try:
-            result = parser.parse(file_path)
-            return result
+            return parser.parse(file_path)
         except Exception as e:
             return ParseResult(False, error=f"Parsing failed: {e!s}")
 
@@ -128,7 +127,7 @@ class DataParser:
         """Get list of supported formats."""
         return [fmt.value for fmt in DataFormat]
 
-    def parse_to_dataframe(self, file_path: str |  Path, format_hint: DataFormat | None = None) -> ParseResult:
+    def parse_to_dataframe(self, file_path: str | Path, format_hint: DataFormat | None = None) -> ParseResult:
         """Parse data and return as pandas DataFrame.
 
         Args:

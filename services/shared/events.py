@@ -3,14 +3,15 @@
 Component: shared.
 Section 2.3 of Spec.
 """
+
 from __future__ import annotations
 
 import contextlib
+from dataclasses import dataclass, field
+from datetime import datetime
 import hashlib
 import json
 import uuid
-from dataclasses import dataclass, field
-from datetime import datetime
 
 
 @dataclass
@@ -21,21 +22,21 @@ class PredatorEvent:
     """
 
     event_id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    event_type: str = ""                # e.g., "ModelPerformanceDegraded"
-    correlation_id: str = ""            # Chain UUID
-    causation_id: str | None = None     # Parent event_id
+    event_type: str = ""  # e.g., "ModelPerformanceDegraded"
+    correlation_id: str = ""  # Chain UUID
+    causation_id: str | None = None  # Parent event_id
     timestamp: datetime = field(default_factory=datetime.utcnow)
-    source: str = ""                    # Component name
-    version: str = "1.0"               # Schema version
+    source: str = ""  # Component name
+    version: str = "1.0"  # Schema version
     context: dict = field(default_factory=dict)
-    idempotency_key: str = ""           # Computed hash
-    tenant_id: str = "default"          # Multi-tenant support
+    idempotency_key: str = ""  # Computed hash
+    tenant_id: str = "default"  # Multi-tenant support
 
     def __post_init__(self):
         # Allow passing string timestamps (from JSON deserialization)
         if isinstance(self.timestamp, str):
             with contextlib.suppress(ValueError):
-                self.timestamp = datetime.fromisoformat(self.timestamp.replace('Z', '+00:00'))
+                self.timestamp = datetime.fromisoformat(self.timestamp)
 
         if not self.correlation_id:
             self.correlation_id = self.event_id
@@ -65,11 +66,11 @@ class PredatorEvent:
             "version": self.version,
             "context": self.context,
             "idempotency_key": self.idempotency_key,
-            "tenant_id": self.tenant_id
+            "tenant_id": self.tenant_id,
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'PredatorEvent':
+    def from_dict(cls, data: dict) -> PredatorEvent:
         """Deserialize from dictionary."""
         # Filter out unknown fields to be safe
         known_fields = cls.__dataclass_fields__.keys()

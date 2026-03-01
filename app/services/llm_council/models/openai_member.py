@@ -7,7 +7,7 @@ Uses OpenAI's GPT-4 as a council participant.
 
 from datetime import datetime
 import os
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 try:
@@ -16,64 +16,35 @@ except ModuleNotFoundError:
     AsyncOpenAI = None
 import json
 
-from .. import CouncilMember, CouncilResponse, PeerReview
+from app.services.llm_council import CouncilMember, CouncilResponse, PeerReview
 
 
 class GPT4CouncilMember(CouncilMember):
     """GPT-4 as a council member."""
 
-    def __init__(
-        self,
-        model_id: str = "gpt-4-turbo-preview",
-        config: dict[str, Any] | None = None
-    ):
-        super().__init__(
-            model_id=model_id,
-            provider="openai",
-            config=config or {}
-        )
+    def __init__(self, model_id: str = "gpt-4-turbo-preview", config: dict[str, Any] | None = None):
+        super().__init__(model_id=model_id, provider="openai", config=config or {})
 
         api_key = self.config.get("api_key") or os.getenv("OPENAI_API_KEY")
         self.client = AsyncOpenAI(api_key=api_key) if AsyncOpenAI is not None and api_key else None
 
-        self.default_params = {
-            "temperature": 0.7,
-            "max_tokens": 2000,
-            **self.config.get("params", {})
-        }
+        self.default_params = {"temperature": 0.7, "max_tokens": 2000, **self.config.get("params", {})}
 
-    async def generate_response(
-        self,
-        query: str,
-        context: str | None = None
-    ) -> CouncilResponse:
+    async def generate_response(self, query: str, context: str | None = None) -> CouncilResponse:
         """Generate independent response."""
-        messages = [
-            {
-                "role": "system",
-                "content": "You are an expert analyst providing detailed, accurate responses."
-            }
-        ]
+        messages = [{"role": "system", "content": "You are an expert analyst providing detailed, accurate responses."}]
 
         if context:
-            messages.append({
-                "role": "system",
-                "content": f"Background context:\n{context}"
-            })
+            messages.append({"role": "system", "content": f"Background context:\n{context}"})
 
-        messages.append({
-            "role": "user",
-            "content": query
-        })
+        messages.append({"role": "user", "content": query})
 
         if self.client is None:
             raise Exception("OpenAI client is not configured")
 
         try:
             completion = await self.client.chat.completions.create(
-                model=self.model_id,
-                messages=messages,
-                **self.default_params
+                model=self.model_id, messages=messages, **self.default_params
             )
 
             response_text = completion.choices[0].message.content
@@ -87,9 +58,9 @@ class GPT4CouncilMember(CouncilMember):
                 confidence=confidence,
                 metadata={
                     "usage": completion.usage.model_dump() if completion.usage else {},
-                    "finish_reason": completion.choices[0].finish_reason
+                    "finish_reason": completion.choices[0].finish_reason,
                 },
-                timestamp=datetime.now()
+                timestamp=datetime.now(),
             )
 
             self.response_history.append(response)
@@ -98,11 +69,7 @@ class GPT4CouncilMember(CouncilMember):
         except Exception as e:
             raise Exception(f"GPT-4 generation failed: {e!s}")
 
-    async def review_response(
-        self,
-        response: CouncilResponse,
-        original_query: str
-    ) -> PeerReview:
+    async def review_response(self, response: CouncilResponse, original_query: str) -> PeerReview:
         """Review another model's response."""
         review_prompt = await self._format_review_prompt(response, original_query)
 
@@ -116,12 +83,9 @@ Provide structured feedback in JSON format:
   "strengths": ["strength1", "strength2"],
   "weaknesses": ["weakness1", "weakness2"],
   "critique": "detailed analysis"
-}"""
+}""",
             },
-            {
-                "role": "user",
-                "content": review_prompt
-            }
+            {"role": "user", "content": review_prompt},
         ]
 
         if self.client is None:
@@ -133,7 +97,7 @@ Provide structured feedback in JSON format:
                 messages=messages,
                 temperature=0.3,  # Lower temperature for more analytical review
                 max_tokens=1000,
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
             )
 
             review_data = json.loads(completion.choices[0].message.content)
@@ -144,7 +108,7 @@ Provide structured feedback in JSON format:
                 score=float(review_data.get("score", 0.5)),
                 critique=review_data.get("critique", ""),
                 strengths=review_data.get("strengths", []),
-                weaknesses=review_data.get("weaknesses", [])
+                weaknesses=review_data.get("weaknesses", []),
             )
 
         except Exception as e:
@@ -155,7 +119,7 @@ Provide structured feedback in JSON format:
                 score=0.5,
                 critique=f"Review failed: {e!s}",
                 strengths=[],
-                weaknesses=["Unable to complete review"]
+                weaknesses=["Unable to complete review"],
             )
 
     def _estimate_confidence(self, text: str) -> float:
@@ -163,8 +127,14 @@ Provide structured feedback in JSON format:
         Look for uncertainty markers.
         """
         uncertainty_markers = [
-            "not sure", "might", "possibly", "perhaps", "unclear",
-            "uncertain", "cannot confirm", "difficult to say"
+            "not sure",
+            "might",
+            "possibly",
+            "perhaps",
+            "unclear",
+            "uncertain",
+            "cannot confirm",
+            "difficult to say",
         ]
 
         text_lower = text.lower()
@@ -174,12 +144,8 @@ Provide structured feedback in JSON format:
         return max(0.3, 0.8 - (uncertainty_count * 0.1))
 
 
-
 class GPT3_5CouncilMember(GPT4CouncilMember):
     """GPT-3.5 Turbo as a council member (faster, cheaper alternative)."""
 
     def __init__(self, config: dict[str, Any] | None = None):
-        super().__init__(
-            model_id="gpt-3.5-turbo",
-            config=config
-        )
+        super().__init__(model_id="gpt-3.5-turbo", config=config)

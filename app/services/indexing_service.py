@@ -1,9 +1,12 @@
 import logging
+
+from app.services.embedding_service import get_embedding_service
 from app.services.opensearch_indexer import opensearch_indexer
 from app.services.qdrant_service import qdrant_service
-from app.services.embedding_service import get_embedding_service
+
 
 logger = logging.getLogger("app.services.indexing_service")
+
 
 class IndexingService:
     def __init__(self):
@@ -16,16 +19,15 @@ class IndexingService:
         return True
 
     async def index_documents(self, documents: list, dataset_type: str = "custom", index_name: str = "documents"):
-        """
-        Real bulk indexing into OpenSearch and Qdrant.
-        """
+        """Real bulk indexing into OpenSearch and Qdrant."""
         logger.info(f"Initiating real indexing for {len(documents)} documents")
         return await opensearch_indexer.index_documents(
             index_name=index_name,
             documents=documents,
             embedding_service=self.embedding_service,
             qdrant_service=qdrant_service,
-            tenant_id="default"
+            tenant_id="default",
         )
+
 
 indexing_service = IndexingService()

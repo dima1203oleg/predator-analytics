@@ -3,6 +3,7 @@
 Component: shared.
 Section 3.1.2 of Spec.
 """
+
 from __future__ import annotations
 
 import json
@@ -12,6 +13,7 @@ from typing import TYPE_CHECKING, Any
 import clickhouse_connect
 
 from services.shared.logging_config import get_logger
+
 
 if TYPE_CHECKING:
     from services.shared.events import PredatorEvent
@@ -66,12 +68,18 @@ class TruthLedger:
         try:
             if self.client:
                 self.client.insert(
-                    'predator_truth_ledger',
+                    "predator_truth_ledger",
                     data,
                     column_names=[
-                        'event_id', 'event_type', 'timestamp', 'source',
-                        'tenant_id', 'correlation_id', 'payload',
-                        'metric_value', 'integrity_hash',
+                        "event_id",
+                        "event_type",
+                        "timestamp",
+                        "source",
+                        "tenant_id",
+                        "correlation_id",
+                        "payload",
+                        "metric_value",
+                        "integrity_hash",
                     ],
                 )
                 logger.debug("Event %s persisted to Truth Ledger", event.event_id)
@@ -79,7 +87,10 @@ class TruthLedger:
             logger.exception("Failed to persist to Truth Ledger")
 
     def query_metrics(
-        self, tenant_id: str, event_type: str, hours: int = 24,
+        self,
+        tenant_id: str,
+        event_type: str,
+        hours: int = 24,
     ) -> list[dict[str, Any]]:
         """Query the Truth Ledger for specific metrics."""
         if not self.client:

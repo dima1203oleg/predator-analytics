@@ -15,7 +15,7 @@ import logging
 import os
 from pathlib import Path
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 def time_method(func):
@@ -24,11 +24,14 @@ def time_method(func):
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        logging.getLogger("azr_project_cortex").info(f"⏱️ Method {func.__name__} took {end-start:.4f}s")
+        logging.getLogger("azr_project_cortex").info(f"⏱️ Method {func.__name__} took {end - start:.4f}s")
         return result
+
     return wrapper
 
+
 logger = logging.getLogger("azr_project_cortex")
+
 
 class ProjectCortex:
     MISTRAL_USER_AGENT = "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; MistralAI-User/1.0; +https://docs.mistral.ai/robots)"
@@ -53,23 +56,19 @@ class ProjectCortex:
                     file_tree[rel_path] = {
                         "size": path.stat().st_size,
                         "ext": path.suffix,
-                        "modified": path.stat().st_mtime
+                        "modified": path.stat().st_mtime,
                     }
             except (PermissionError, OSError):
                 continue
 
-        return {
-            "total_files": len(file_tree),
-            "tree": file_tree,
-            "root": str(self.root)
-        }
+        return {"total_files": len(file_tree), "tree": file_tree, "root": str(self.root)}
 
     def get_mistral_research_config(self) -> dict[str, str]:
         """Provides headers for web research mimicking Mistral."""
         return {
             "User-Agent": self.MISTRAL_USER_AGENT,
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "X-AI-Origin": "Mistral-Inspired-AZR"
+            "X-AI-Origin": "Mistral-Inspired-AZR",
         }
 
     @time_method
@@ -82,6 +81,7 @@ class ProjectCortex:
             if p.exists():
                 critical.append(entry)
         return critical
+
 
 def get_project_cortex(root_dir: str | None = None) -> ProjectCortex:
     root = root_dir or os.getcwd()

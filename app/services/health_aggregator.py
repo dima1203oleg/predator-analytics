@@ -2,10 +2,8 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime
-import logging
-import random
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 import psutil
 
@@ -17,6 +15,7 @@ from .training_status_service import training_status_service
 
 
 logger = setup_logger("predator.backend.health_aggregator")
+
 
 class HealthAggregatorService:
     """V45 Canonical Health Aggregator.
@@ -42,7 +41,11 @@ class HealthAggregatorService:
             # 1. Gather component status
             metrics = await monitoring_service.get_realtime_metrics()
             training = await training_status_service.get_latest_status()
-            sim_status = simulation_service.get_status("ongoing_stress_test") if hasattr(simulation_service, 'get_status') else {"status": "idle"}
+            sim_status = (
+                simulation_service.get_status("ongoing_stress_test")
+                if hasattr(simulation_service, "get_status")
+                else {"status": "idle"}
+            )
 
             # 2. Infrastructure metrics
             cpu = psutil.cpu_percent()
@@ -88,7 +91,7 @@ class HealthAggregatorService:
             self._generate_auto_alerts(reasons)
 
             # 5. Autonomous Arbitration (v45 Premium)
-            if score < 40 and now - getattr(self, 'last_intervention', 0) > 300:
+            if score < 40 and now - getattr(self, "last_intervention", 0) > 300:
                 self.last_intervention = now
                 asyncio.create_task(self._trigger_autonomous_fix(reasons))
 
@@ -97,17 +100,13 @@ class HealthAggregatorService:
                 "status": "HEALTHY" if score > 80 else ("DEGRADED" if score > 40 else "CRITICAL"),
                 "reasons": reasons,
                 "timestamp": datetime.utcnow().isoformat(),
-                "metrics": {
-                    "cpu": cpu,
-                    "memory": memory,
-                    "active_threads": psutil.Process().num_threads()
-                },
+                "metrics": {"cpu": cpu, "memory": memory, "active_threads": psutil.Process().num_threads()},
                 "components": {
                     "monitoring": "OK",
                     "training": training.get("status", "unknown"),
-                    "simulation": sim_status.get("status", "idle")
+                    "simulation": sim_status.get("status", "idle"),
                 },
-                "alerts": self._alerts[-5:] # Latest 5 alerts
+                "alerts": self._alerts[-5:],  # Latest 5 alerts
             }
 
             self.cached_pulse = pulse
@@ -123,6 +122,7 @@ class HealthAggregatorService:
         logger.warning(f"🚨 SYSTEM CRITICAL! Escalating to Trinity Agent for Arbitration: {reasons}")
         try:
             from .triple_agent_service import triple_agent_service
+
             command = f"Arbitration needed. SYSTEM_SCORE < 40. Issues: {reasons}. Run diagnostics and fix_issue recursively until healthy."
             # Fire and forget (it will log its own progress)
             asyncio.create_task(triple_agent_service.process_command(command))
@@ -132,7 +132,8 @@ class HealthAggregatorService:
     def _generate_auto_alerts(self, reasons: list[str]):
         """Internal alerting logic based on health reasons."""
         import uuid
-        current_titles = [a['title'] for a in self._alerts]
+
+        current_titles = [a["title"] for a in self._alerts]
 
         for reason in reasons:
             if reason not in current_titles:
@@ -141,11 +142,12 @@ class HealthAggregatorService:
                     "title": reason,
                     "severity": "high" if "Offline" in reason or "Critical" in reason else "warning",
                     "timestamp": datetime.utcnow().isoformat(),
-                    "acknowledged": False
+                    "acknowledged": False,
                 })
 
         # Cleanup acknowledged/old alerts if needed
         if len(self._alerts) > 50:
             self._alerts = self._alerts[-50:]
+
 
 health_aggregator = HealthAggregatorService()

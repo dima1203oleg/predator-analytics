@@ -4,9 +4,9 @@ from __future__ import annotations
 """Predator Analytics - Evolution Router
 NAS (Neural Architecture Search) and Self-Evolution endpoints.
 """
-from datetime import UTC, datetime, timezone
-from enum import Enum
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from enum import StrEnum
+from typing import Any
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel
@@ -20,7 +20,7 @@ from app.models import NasTournament as NasTournamentDB
 router = APIRouter(prefix="/evolution", tags=["Evolution"])
 
 
-class EvolutionPhase(str, Enum):
+class EvolutionPhase(StrEnum):
     IDLE = "IDLE"
     DETECTION = "DETECTION"
     MUTATION = "MUTATION"
@@ -56,7 +56,7 @@ _evolution_state = EvolutionStatus(
     active=False,
     logs=["System ready for evolution cycle"],
     current_generation=0,
-    best_fitness=0.0
+    best_fitness=0.0,
 )
 
 
@@ -67,10 +67,7 @@ async def get_evolution_status():
 
 
 @router.post("/start")
-async def start_evolution(
-    config: EvolutionConfig | None = None,
-    background_tasks: BackgroundTasks = None
-):
+async def start_evolution(config: EvolutionConfig | None = None, background_tasks: BackgroundTasks = None):
     """Start a new evolution cycle."""
     global _evolution_state
 
@@ -87,7 +84,7 @@ async def start_evolution(
             "[BRAIN] Initializing neural architecture search...",
         ],
         current_generation=1,
-        best_fitness=0.0
+        best_fitness=0.0,
     )
 
     # Create real tournament record
@@ -104,16 +101,12 @@ async def start_evolution(
             current_generation=1,
             max_generations=config.max_generations if config else 10,
             start_time=datetime.now(UTC),
-            configuration=config.dict() if config else {}
+            configuration=config.dict() if config else {},
         )
         session.add(new_tournament)
         await session.commit()
 
-    return {
-        "message": "Evolution started",
-        "status": _evolution_state,
-        "tournament_id": tournament_id
-    }
+    return {"message": "Evolution started", "status": _evolution_state, "tournament_id": tournament_id}
 
 
 @router.post("/stop")
@@ -134,14 +127,11 @@ async def stop_evolution():
 @router.get("/history")
 async def get_evolution_history(limit: int = 10):
     """Get evolution history."""
-    return {
-        "generations": [],
-        "total": 0,
-        "message": "History tracking enabled"
-    }
+    return {"generations": [], "total": 0, "message": "History tracking enabled"}
 
 
 # --- NAS EXTENSIONS ---
+
 
 class NasTournament(BaseModel):
     id: str
@@ -157,6 +147,7 @@ class NasTournament(BaseModel):
     start_time: str
     duration: str
 
+
 class ModelCandidate(BaseModel):
     id: str
     tournament_id: str
@@ -166,14 +157,13 @@ class ModelCandidate(BaseModel):
     status: str
     provider: str
 
+
 @router.get("/tournaments", response_model=list[NasTournament])
 async def get_nas_tournaments():
     """Get list of NAS tournaments from Real DB."""
     try:
         async with async_session_maker() as session:
-            result = await session.execute(
-                select(NasTournamentDB).order_by(desc(NasTournamentDB.start_time))
-            )
+            result = await session.execute(select(NasTournamentDB).order_by(desc(NasTournamentDB.start_time)))
             tournaments = result.scalars().all()
 
             return [
@@ -186,23 +176,25 @@ async def get_nas_tournaments():
                     status=t.status,
                     current_generation=t.current_generation,
                     max_generations=t.max_generations,
-                    candidates_count=0, # TODO: join count
+                    candidates_count=0,  # TODO: join count
                     best_score=t.best_score,
                     start_time=t.start_time.isoformat() if t.start_time else "",
-                    duration="-" # Calc duration
-                ) for t in tournaments
+                    duration="-",  # Calc duration
+                )
+                for t in tournaments
             ]
     except Exception as e:
         # Fallback to empty list or handle error
         print(f"DB Error: {e}")
         return []
 
+
 @router.get("/models", response_model=list[ModelCandidate])
 async def get_nas_models(tournament_id: str | None = None):
     """Get model candidates from Real DB."""
     try:
         async with async_session_maker() as session:
-            query = select(NasCandidateDB).order_by(desc(NasCandidateDB.metrics['accuracy']))
+            query = select(NasCandidateDB).order_by(desc(NasCandidateDB.metrics["accuracy"]))
             if tournament_id:
                 query = query.where(NasCandidateDB.tournament_id == tournament_id)
 
@@ -217,16 +209,19 @@ async def get_nas_models(tournament_id: str | None = None):
                     generation=c.generation,
                     metrics=c.metrics,
                     status=c.status,
-                    provider=c.provider
-                ) for c in candidates
+                    provider=c.provider,
+                )
+                for c in candidates
             ]
     except Exception:
         return []
+
 
 from fastapi import WebSocket, WebSocketDisconnect
 
 
 # ... existing code ...
+
 
 class ConnectionManager:
     def __init__(self):
@@ -246,39 +241,47 @@ class ConnectionManager:
             except:
                 self.disconnect(connection)
 
+
 manager = ConnectionManager()
+
 
 @router.get("/metrics/current")
 async def get_current_metrics():
     """Get current real-time metrics including system and AI performance."""
     from app.services.evolution_service import evolution_service
+
     return await evolution_service.get_latest_stats()
+
 
 @router.get("/cortex-map")
 async def get_cortex_map():
     """Get real-time cortex visualization data."""
     from pathlib import Path
+
     try:
         path = Path("/tmp/azr_logs/cortex_map.json")
         if path.exists():
             import json
+
             with open(path) as f:
                 return json.load(f)
     except Exception:
         pass
     return {"error": "Cortex map not available"}
 
+
 @router.get("/metrics/history")
 async def get_metrics_history(period: str = "24h"):
     """Get historical metrics."""
     from app.services.evolution_service import evolution_service
+
     return await evolution_service.get_history(period)
+
 
 @router.websocket("/metrics/stream")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     import asyncio
-    import json
 
     from app.services.evolution_service import evolution_service
 
@@ -286,25 +289,28 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             data = await evolution_service.get_latest_stats()
             await websocket.send_json(data)
-            await asyncio.sleep(2) # 2 seconds update rate
+            await asyncio.sleep(2)  # 2 seconds update rate
     except WebSocketDisconnect:
         manager.disconnect(websocket)
     except Exception as e:
         print(f"WS Error: {e}")
         manager.disconnect(websocket)
 
+
 # Background Metrics Snapshot Loop
 async def start_metrics_snapshot_loop():
     import asyncio
 
     from app.services.evolution_service import evolution_service
+
     while True:
         try:
             await evolution_service.save_snapshot()
-            await asyncio.sleep(300) # 5 minutes
+            await asyncio.sleep(300)  # 5 minutes
         except Exception as e:
             print(f"Snapshot error: {e}")
             await asyncio.sleep(60)
+
 
 # We can start this loop when the router module is imported if we are careful,
 # or better, rely on main.py to start it.

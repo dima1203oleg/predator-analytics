@@ -7,13 +7,11 @@ from datetime import datetime, timedelta
 import json
 import logging
 import subprocess
-from typing import Dict, List, Optional
-import uuid
 
 from sqlalchemy import select
 
 from app.libs.core.database import get_db_ctx
-from app.libs.core.etl_state_machine import ETLState, ETLStateMachine
+from app.libs.core.etl_state_machine import ETLState
 from app.libs.core.models.entities import ETLJob
 from app.services.state_derivation import StateDerivationEngine
 
@@ -25,6 +23,7 @@ class ETLFact:
     metric_type: str
     value: float
     source: str  # "etl_engine", "storage", "logs"
+
 
 class ETLArbiterAgent:
     """Arbiter Agent for ETL. Does not execute ETL, only observes facts and derives state.
@@ -45,11 +44,9 @@ class ETLArbiterAgent:
                 # In this implementation, 'facts' are retrieved from the Job's progress JSONB
                 # which the ETL Engine updates. In a full Axiom 8 world, we would also pull from logs/metrics.
                 async with get_db_ctx() as sess:
-                    stmt = select(ETLJob).where(ETLJob.state.notin_([
-                        ETLState.COMPLETED.value,
-                        ETLState.FAILED.value,
-                        ETLState.CANCELLED.value
-                    ]))
+                    stmt = select(ETLJob).where(
+                        ETLJob.state.notin_([ETLState.COMPLETED.value, ETLState.FAILED.value, ETLState.CANCELLED.value])
+                    )
                     result = await sess.execute(stmt)
                     active_jobs = result.scalars().all()
 
@@ -68,7 +65,13 @@ class ETLArbiterAgent:
                         # For now, we use the Job's progress as the mock of latest facts summary
                         # In a full v45 world, we would pass the actual fact list.
                         # Since derivation engine expects facts, we'll wrap progress into a summary fact
-                        facts_mock = [{"fact_type": "heartbeat", "timestamp": last_fact or datetime.utcnow().isoformat(), "payload": job.progress}]
+                        facts_mock = [
+                            {
+                                "fact_type": "heartbeat",
+                                "timestamp": last_fact or datetime.utcnow().isoformat(),
+                                "payload": job.progress,
+                            }
+                        ]
                         derivation = self.engine.derive_state(facts_mock, ETLState(job.state))
                         derived_state = derivation["state"]
 
@@ -85,7 +88,7 @@ class ETLArbiterAgent:
                             # Action: revert_to_INDEXING for INV-001 (fake completion)
                             if any("INV-001" in v for v in violations):
                                 self.logger.info(f"⚖️ Fake Completion detected for {job.id}. Reverting to INDEXING.")
-                                await self.record_state_to_ledger(job, derivation) # Pass full derivation
+                                await self.record_state_to_ledger(job, derivation)  # Pass full derivation
                             else:
                                 await self.enforce_invariants(job, violations, derived_state)
                         # 6. Record legitimate state transition if it changed
@@ -103,18 +106,23 @@ class ETLArbiterAgent:
 
     def check_invariants(self, job: ETLJob, derived_state: ETLState) -> list[str]:
         """Verify invariants via OPA CLI."""
-        input_data = {
-            "state": derived_state.value,
-            "metrics": job.progress or {}
-        }
+        input_data = {"state": derived_state.value, "metrics": job.progress or {}}
 
         try:
             result = subprocess.run(
-                ["opa", "eval", "--data", "policies/opa/etl_invariants.rego",
-                 "--input", "-", "data.predator.etl.invariants"],
-                check=False, input=json.dumps(input_data).encode(),
+                [
+                    "opa",
+                    "eval",
+                    "--data",
+                    "policies/opa/etl_invariants.rego",
+                    "--input",
+                    "-",
+                    "data.predator.etl.invariants",
+                ],
+                check=False,
+                input=json.dumps(input_data).encode(),
                 capture_output=True,
-                text=True
+                text=True,
             )
 
             if result.returncode != 0:
@@ -141,7 +149,17 @@ class ETLArbiterAgent:
         self.logger.warning(f"⚖️ Invariant Violation for {job.id}: {violations}")
 
         # Force fail through CLI or direct DB update (CLI preferred for auditing)
-        subprocess.run(["python3", "scripts/predatorctl.py", "etl", "force-fail", str(job.id), f"Arbiter Violation: {', '.join(violations)}"], check=False)
+        subprocess.run(
+            [
+                "python3",
+                "scripts/predatorctl.py",
+                "etl",
+                "force-fail",
+                str(job.id),
+                f"Arbiter Violation: {', '.join(violations)}",
+            ],
+            check=False,
+        )
 
     async def record_state_to_ledger(self, job: ETLJob, derivation: dict):
         """Record the derived state transition into the Truth Ledger with canonical hashing and chaining."""
@@ -158,8 +176,10 @@ class ETLArbiterAgent:
         async with get_db_ctx() as sess:
             # 1. Get previous decision hash for chaining
             prev_result = await sess.execute(
-                text("SELECT decision_hash, derived_state FROM truth.etl_state_decisions WHERE job_id = :jid ORDER BY derived_at DESC LIMIT 1"),
-                {"jid": str(job.id)}
+                text(
+                    "SELECT decision_hash, derived_state FROM truth.etl_state_decisions WHERE job_id = :jid ORDER BY derived_at DESC LIMIT 1"
+                ),
+                {"jid": str(job.id)},
             )
             prev_row = prev_result.fetchone()
             previous_hash = prev_row.decision_hash if prev_row else None
@@ -193,8 +213,8 @@ class ETLArbiterAgent:
                     "conf": confidence,
                     "vios": json.dumps(violations),
                     "prev_hash": previous_hash,
-                    "dec_hash": decision_hash
-                }
+                    "dec_hash": decision_hash,
+                },
             )
 
             # 3. Update Job State (The Result)
@@ -204,7 +224,8 @@ class ETLArbiterAgent:
             if db_job and db_job.state != derived_state.value:
                 db_job.state = derived_state.value
                 # Also update json progress with new derivation metadata
-                if not db_job.progress: db_job.progress = {}
+                if not db_job.progress:
+                    db_job.progress = {}
                 db_job.progress["last_derived_at"] = datetime.utcnow().isoformat()
                 db_job.progress["last_evidence_hash"] = evidence_hash
 

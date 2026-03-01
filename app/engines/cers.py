@@ -17,13 +17,13 @@ Levels:
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import logging
 import math
-from dataclasses import dataclass
-from typing import Optional
 
 from app.core.confidence import ConfidenceScore, quick_confidence
-from app.core.i18n import CERSLevel, get_cers_label, get_cers_level
+from app.core.i18n import get_cers_label, get_cers_level
+
 
 logger = logging.getLogger("predator.engines.cers")
 
@@ -83,10 +83,7 @@ def _min_max_scale(values: list[float], target_min: float = 0.0, target_max: flo
     if abs(v_max - v_min) < 1e-9:
         mid = (target_min + target_max) / 2
         return [mid] * len(values)
-    return [
-        target_min + (v - v_min) / (v_max - v_min) * (target_max - target_min)
-        for v in values
-    ]
+    return [target_min + (v - v_min) / (v_max - v_min) * (target_max - target_min) for v in values]
 
 
 def _check_correlation(scores: list[float]) -> float:
@@ -108,8 +105,8 @@ def calculate_cers(
     behavioral: float,
     institutional: float,
     influence: float,
-    structural: Optional[float] = None,
-    predictive: Optional[float] = None,
+    structural: float | None = None,
+    predictive: float | None = None,
     data_completeness: float = 0.5,
 ) -> CERSResult:
     """Calculate CERS (Composite Economic Risk Score).
@@ -154,7 +151,7 @@ def calculate_cers(
 
     # Weighted sum
     weight_values = [weights[name] for name in layer_names]
-    cers_score = sum(n * w for n, w in zip(normalized, weight_values))
+    cers_score = sum(n * w for n, w in zip(normalized, weight_values, strict=False))
     cers_score = round(max(0.0, min(100.0, cers_score)), 2)
 
     # Determine level
@@ -163,13 +160,18 @@ def calculate_cers(
     level_en = get_cers_label(level, "en")
 
     # Components
-    components = {name: round(score, 2) for name, score in zip(layer_names, scores)}
+    components = {name: round(score, 2) for name, score in zip(layer_names, scores, strict=False)}
 
     confidence = quick_confidence(data_completeness)
 
     logger.info(
         "CERS computed: ueid=%s score=%.1f level=%s (%s) layers=%d conf=%.2f",
-        ueid, cers_score, level, level_ua, len(scores), confidence.total,
+        ueid,
+        cers_score,
+        level,
+        level_ua,
+        len(scores),
+        confidence.total,
     )
 
     return CERSResult(

@@ -2,20 +2,27 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 
 try:
     from slack_sdk import WebClient
     from slack_sdk.errors import SlackApiError
+
     SLACK_AVAILABLE = True
 except ImportError:
     SLACK_AVAILABLE = False
+
     class WebClient:
-        def __init__(self, token=None): pass
-    class SlackApiError(Exception): pass
+        def __init__(self, token=None):
+            pass
+
+    class SlackApiError(Exception):
+        pass
+
 
 logger = logging.getLogger("service.slack")
+
 
 class SlackService:
     """Service for integrating with Slack API.
@@ -48,7 +55,7 @@ class SlackService:
                     "id": ch["id"],
                     "name": ch["name"],
                     "members_count": ch["num_members"],
-                    "topic": ch["topic"]["value"]
+                    "topic": ch["topic"]["value"],
                 })
             return channels
         except SlackApiError as e:
@@ -65,13 +72,9 @@ class SlackService:
             messages = []
             for msg in response["messages"]:
                 if "subtype" in msg:
-                    continue # Skip system messages
+                    continue  # Skip system messages
 
-                messages.append({
-                    "ts": msg["ts"],
-                    "user": msg.get("user", "unknown"),
-                    "text": msg.get("text", "")
-                })
+                messages.append({"ts": msg["ts"], "user": msg.get("user", "unknown"), "text": msg.get("text", "")})
             return messages
         except SlackApiError as e:
             logger.exception(f"Failed to fetch history: {e}")
@@ -85,18 +88,16 @@ class SlackService:
         # 2. Convert to Predator Documents format
         documents = []
         for msg in messages:
-            if len(msg["text"]) < 10: continue
+            if len(msg["text"]) < 10:
+                continue
 
             documents.append({
                 "title": f"Slack Message in #{channel_id}",
                 "content": msg["text"],
                 "source": "slack",
                 "category": "communication",
-                "created_at": msg["ts"], # Needs conversion logic
-                "metadata": {
-                    "channel_id": channel_id,
-                    "user_id": msg["user"]
-                }
+                "created_at": msg["ts"],  # Needs conversion logic
+                "metadata": {"channel_id": channel_id, "user_id": msg["user"]},
             })
 
         if not documents:
@@ -116,13 +117,15 @@ class SlackService:
             documents=documents,
             pii_safe=True,
             embedding_service=embedder,
-            qdrant_service=qdrant
+            qdrant_service=qdrant,
         )
 
         return len(documents)
 
+
 # Singleton
 slack_service = SlackService()
+
 
 def get_slack_service():
     return slack_service

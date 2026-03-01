@@ -4,13 +4,17 @@ import asyncio
 import json
 import logging
 import os
-from typing import Any, Dict, List, Set
+from typing import TYPE_CHECKING
 
-from fastapi import WebSocket, WebSocketDisconnect
 import redis.asyncio as redis
 
 
+if TYPE_CHECKING:
+    from fastapi import WebSocket
+
+
 logger = logging.getLogger("predator.websocket")
+
 
 class ConnectionManager:
     def __init__(self):
@@ -37,11 +41,11 @@ class ConnectionManager:
                         tenant_id = data.get("tenant_id")
                         await self.broadcast(data, tenant_id=tenant_id)
                     except Exception as e:
-                        logger.error(f"Error processing Pub/Sub message: {e}")
+                        logger.exception(f"Error processing Pub/Sub message: {e}")
         except Exception as e:
-            logger.error(f"Redis Pub/Sub listener failed: {e}")
+            logger.exception(f"Redis Pub/Sub listener failed: {e}")
             await asyncio.sleep(5)
-            asyncio.create_task(self.start_listener()) # Retry
+            asyncio.create_task(self.start_listener())  # Retry
 
     async def connect(self, websocket: WebSocket, tenant_id: str | None = None):
         await websocket.accept()
@@ -72,17 +76,13 @@ class ConnectionManager:
         if tenant_id and tenant_id in self.active_connections:
             targets = self.active_connections[tenant_id]
             if targets:
-                await asyncio.gather(
-                    *[ws.send_text(payload) for ws in targets],
-                    return_exceptions=True
-                )
+                await asyncio.gather(*[ws.send_text(payload) for ws in targets], return_exceptions=True)
         elif self.broadcast_connections:
-            await asyncio.gather(
-                *[ws.send_text(payload) for ws in self.broadcast_connections],
-                return_exceptions=True
-            )
+            await asyncio.gather(*[ws.send_text(payload) for ws in self.broadcast_connections], return_exceptions=True)
+
 
 manager = ConnectionManager()
+
 
 def get_websocket_manager():
     return manager

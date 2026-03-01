@@ -80,10 +80,12 @@ __all__ = [
     "ViolationSeverity",
 ]
 
+
 # Constitutional Version Check
 def verify_constitution_active() -> bool:
     """Verify constitutional framework is active and enforced."""
     return CONSTITUTION_VERSION == "v45"
+
 
 def get_constitution_summary() -> dict:
     """Get summary of active constitution."""

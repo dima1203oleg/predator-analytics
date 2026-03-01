@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -15,7 +15,7 @@ class SignalResponse(BaseModel):
     signal_type: str = Field(description="anomaly | alert | warning | info | prediction | pattern")
     signal_type_ua: str = Field(description="Тип сигналу українською")
     topic: str
-    ueid: Optional[str] = None
+    ueid: str | None = None
     layer: str = Field(description="behavioral | institutional | influence | structural | predictive")
     layer_ua: str = Field(description="Назва шару українською")
     score: float = Field(ge=0, le=100)

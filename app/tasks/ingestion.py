@@ -11,6 +11,7 @@ from src.ingestion.manager import IngestionManager
 
 logger = logging.getLogger(__name__)
 
+
 @celery_app.task(bind=True, name="app.tasks.ingestion.process_file", queue="ingestion")
 def process_file_task(self, record_id: str):
     """Celery task to process an uploaded file.

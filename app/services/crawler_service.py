@@ -6,9 +6,9 @@ Fetches and processes external web content for hydration into the Knowledge Base
 """
 import asyncio
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import logging
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 from urllib.parse import urljoin, urlparse
 
 import aiohttp
@@ -21,6 +21,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class CrawlResult:
     url: str
@@ -30,6 +31,7 @@ class CrawlResult:
     metadata: dict[str, Any]
     status: int
     timestamp: datetime
+
 
 class CrawlerService:
     """Service for autonomously crawling web pages.
@@ -47,8 +49,7 @@ class CrawlerService:
     async def _get_session(self) -> aiohttp.ClientSession:
         if self.session is None or self.session.closed:
             self.session = aiohttp.ClientSession(
-                headers={"User-Agent": self.user_agent},
-                timeout=aiohttp.ClientTimeout(total=15)
+                headers={"User-Agent": self.user_agent}, timeout=aiohttp.ClientTimeout(total=15)
             )
         return self.session
 
@@ -75,7 +76,7 @@ class CrawlerService:
         if not BeautifulSoup:
             return CrawlResult(url, "No BS4", html[:500], [], {}, status, datetime.now(UTC))
 
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(html, "lxml")
 
         # Remove script and style elements
         for script in soup(["script", "style", "nav", "footer", "header"]):
@@ -88,18 +89,18 @@ class CrawlerService:
         # Break multi-headlines into a line each
         chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
         # Drop blank lines
-        clean_text = '\n'.join(chunk for chunk in chunks if chunk)
+        clean_text = "\n".join(chunk for chunk in chunks if chunk)
 
         # Extract title
         title = soup.title.string if soup.title else "No Title"
 
         # Extract links
         links = []
-        for a in soup.find_all('a', href=True):
-            href = a['href']
+        for a in soup.find_all("a", href=True):
+            href = a["href"]
             full_url = urljoin(url, href)
             # Basic filter (http/https only)
-            if full_url.startswith('http'):
+            if full_url.startswith("http"):
                 links.append(full_url)
 
         # Metadata
@@ -112,10 +113,10 @@ class CrawlerService:
             url=url,
             title=title.strip(),
             content=clean_text,
-            links=list(set(links))[:50], # Limit links
+            links=list(set(links))[:50],  # Limit links
             metadata={"description": meta_desc},
             status=status,
-            timestamp=datetime.now(UTC)
+            timestamp=datetime.now(UTC),
         )
 
     async def crawl_site_bfs(self, start_url: str, max_pages: int = 10) -> list[CrawlResult]:
@@ -154,8 +155,10 @@ class CrawlerService:
         if self.session:
             await self.session.close()
 
+
 # Singleton
 _crawler_service = CrawlerService()
+
 
 def get_crawler_service() -> CrawlerService:
     return _crawler_service

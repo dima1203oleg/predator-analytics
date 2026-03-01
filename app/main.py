@@ -1,24 +1,15 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import UTC, datetime, timezone
-import logging
-import os
-from pathlib import Path
-import sys
-from typing import Any, Dict, List, Optional
-import uuid
+from datetime import UTC, datetime
 
-from fastapi import BackgroundTasks, Depends, FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
 
-from app.libs.core.cache import get_cache
 from app.libs.core.config import settings
 from app.libs.core.mq import broker
 from app.libs.core.otel import setup_otel
-from app.libs.core.structured_logger import get_logger, log_business_event, setup_structured_logging
+from app.libs.core.structured_logger import get_logger
 
 
 # 🦁 PREDATOR SUPER-APP CORE INITIALIZED
@@ -28,10 +19,11 @@ logger = get_logger("predator.api.main")
 from libs.core.autonomy.orchestrator import orchestrator
 from libs.core.autonomy.pulse_agent import SystemPulseAgent
 
+
 app = FastAPI(
     title="Predator Analytics v55.0 API",
     description="Економічний радар: система раннього попередження, аналізу ризиків та інформаційної переваги",
-    version="55.0.0"
+    version="55.0.0",
 )
 
 # Initialize OpenTelemetry
@@ -91,6 +83,7 @@ app.include_router(customs_router.router, prefix="/api/v1")
 # v32 Autonomous Response
 try:
     from app.routers import azr as azr_router
+
     app.include_router(azr_router.router, prefix="/api/v1")
 except ImportError:
     logger.warning("AZR Router not found")
@@ -100,6 +93,7 @@ except ImportError:
 # ============================================================================
 try:
     from app.api.v2.router import v2_router
+
     app.include_router(v2_router)
     logger.info("v2 API routers mounted at /api/v2")
 except ImportError as e:
@@ -108,6 +102,7 @@ except ImportError as e:
 # ============================================================================
 # STARTUP & UTILS
 # ============================================================================
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -123,6 +118,7 @@ async def startup_event():
     # Start Autonomous Response Engine if available
     try:
         from app.services.azr_engine_v32 import azr_engine_v32
+
         await azr_engine_v32.start()
         app.state.azr = azr_engine_v32
         logger.info("✅ AZR v32 Engine STARTED")
@@ -137,13 +133,15 @@ async def startup_event():
         app.state.agents = orchestrator
         logger.info("✅ Sovereign Agents (v45) INITIALIZED")
     except Exception as e:
-        logger.error(f"Sovereign Agents failed to start: {e}")
+        logger.exception(f"Sovereign Agents failed to start: {e}")
+
 
 @app.on_event("shutdown")
 async def shutdown_event():
     await orchestrator.stop()
     await broker.disconnect()
     logger.info("PREDATOR_SHUTDOWN_COMPLETE")
+
 
 @app.get("/")
 async def root():
@@ -152,9 +150,11 @@ async def root():
         "version": "55.0.0",
         "status": "OPERATIONAL",
         "autonomy_level": "SOVEREIGN",
-        "timestamp": datetime.now(UTC).isoformat()
+        "timestamp": datetime.now(UTC).isoformat(),
     }
+
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

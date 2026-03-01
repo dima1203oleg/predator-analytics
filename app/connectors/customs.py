@@ -5,7 +5,6 @@ from __future__ import annotations
 Import/Export statistics and declarations.
 """
 import logging
-from typing import Optional
 
 from .base import BaseConnector, ConnectorResult
 
@@ -19,27 +18,15 @@ class CustomsConnector(BaseConnector):
     """
 
     def __init__(self):
-        super().__init__(
-            name="UA Customs",
-            base_url="https://data.gov.ua/api/3/action",
-            timeout=30.0
-        )
+        super().__init__(name="UA Customs", base_url="https://data.gov.ua/api/3/action", timeout=30.0)
         self.datasets = {
             "import_stats": "customs-import-stats",
             "export_stats": "customs-export-stats",
         }
 
-    async def search(
-        self,
-        query: str,
-        limit: int = 20,
-        **kwargs
-    ) -> ConnectorResult:
+    async def search(self, query: str, limit: int = 20, **kwargs) -> ConnectorResult:
         """Search customs records."""
-        params = {
-            "q": query,
-            "rows": limit
-        }
+        params = {"q": query, "rows": limit}
 
         result = await self._request("GET", "/package_search", params=params)
 
@@ -55,40 +42,24 @@ class CustomsConnector(BaseConnector):
         params = {"id": record_id}
         return await self._request("GET", "/package_show", params=params)
 
-    async def get_import_statistics(
-        self,
-        year: int | None = None,
-        hs_code: str | None = None
-    ) -> ConnectorResult:
+    async def get_import_statistics(self, year: int | None = None, hs_code: str | None = None) -> ConnectorResult:
         """Get import statistics."""
         # This would query actual customs data
         # For now, return placeholder
         return ConnectorResult(
             success=True,
-            data={
-                "year": year or 2024,
-                "total_value_usd": 0,
-                "records": []
-            },
+            data={"year": year or 2024, "total_value_usd": 0, "records": []},
             source=self.name,
-            records_count=0
+            records_count=0,
         )
 
-    async def get_export_statistics(
-        self,
-        year: int | None = None,
-        hs_code: str | None = None
-    ) -> ConnectorResult:
+    async def get_export_statistics(self, year: int | None = None, hs_code: str | None = None) -> ConnectorResult:
         """Get export statistics."""
         return ConnectorResult(
             success=True,
-            data={
-                "year": year or 2024,
-                "total_value_usd": 0,
-                "records": []
-            },
+            data={"year": year or 2024, "total_value_usd": 0, "records": []},
             source=self.name,
-            records_count=0
+            records_count=0,
         )
 
     async def fetch(self, config: dict) -> ConnectorResult:

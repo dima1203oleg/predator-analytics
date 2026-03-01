@@ -5,13 +5,13 @@ import json
 import logging
 import os
 import sys
-from typing import Optional
 
 
 class WinSURFFormatter(logging.Formatter):
     """Structured JSON Formatter for Predator Analytics v45+.
     Enables better log analysis for AI Agents and Observability tools.
     """
+
     def format(self, record):
         log_entry = {
             "timestamp": datetime.utcfromtimestamp(record.created).isoformat(),
@@ -21,12 +21,13 @@ class WinSURFFormatter(logging.Formatter):
             "module": record.module,
             "func": record.funcName,
             "line": record.lineno,
-            "env": os.getenv("ENVIRONMENT", "rnd")
+            "env": os.getenv("ENVIRONMENT", "rnd"),
         }
         if record.exc_info:
             log_entry["exception"] = self.formatException(record.exc_info)
 
         return json.dumps(log_entry)
+
 
 def setup_logger(name: str, level: int | None = None) -> logging.Logger:
     """Configures a logger with WinSURF standards.
@@ -52,8 +53,7 @@ def setup_logger(name: str, level: int | None = None) -> logging.Logger:
         else:
             # Clean human-readable format for R&D
             formatter = logging.Formatter(
-                '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                datefmt='%Y-%m-%d %H:%M:%S'
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
             )
             handler.setFormatter(formatter)
 
@@ -61,6 +61,7 @@ def setup_logger(name: str, level: int | None = None) -> logging.Logger:
         logger.propagate = False
 
     return logger
+
 
 # Global system-wide logger
 system_logger = setup_logger("predator.sys")

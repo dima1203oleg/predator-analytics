@@ -7,7 +7,6 @@ Redis-based rate limiting with plan-based quotas.
 from datetime import datetime, timedelta
 import logging
 import os
-from typing import Optional, Tuple
 
 
 logger = logging.getLogger("core.rate_limiter")
@@ -17,7 +16,7 @@ PLAN_LIMITS = {
     "free": 100,
     "premium": 10000,
     "enterprise": 100000,
-    "admin": -1  # unlimited
+    "admin": -1,  # unlimited
 }
 
 
@@ -47,6 +46,7 @@ class RateLimiter:
         if self._client is None:
             try:
                 import redis.asyncio as redis
+
                 self._client = redis.from_url(self.redis_url, decode_responses=True)
                 logger.info(f"Rate limiter connected to Redis: {self.redis_url}")
             except ImportError:
@@ -64,12 +64,7 @@ class RateLimiter:
         midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
         return int(midnight.timestamp())
 
-    async def check(
-        self,
-        user_id: str,
-        plan: str = "free",
-        resource: str = "api"
-    ) -> tuple[bool, int]:
+    async def check(self, user_id: str, plan: str = "free", resource: str = "api") -> tuple[bool, int]:
         """Check if request is allowed under rate limit.
 
         Args:
@@ -108,10 +103,7 @@ class RateLimiter:
             allowed = current <= limit
 
             if not allowed:
-                logger.warning(
-                    f"Rate limit exceeded: user={user_id}, plan={plan}, "
-                    f"current={current}, limit={limit}"
-                )
+                logger.warning(f"Rate limit exceeded: user={user_id}, plan={plan}, current={current}, limit={limit}")
 
             return allowed, remaining
 
@@ -141,10 +133,7 @@ class RateLimiter:
             ttl = await self.client.ttl(window_key)
             reset_at = datetime.utcnow() + timedelta(seconds=max(0, ttl))
 
-            return {
-                "current": current,
-                "reset_at": reset_at.isoformat() + "Z"
-            }
+            return {"current": current, "reset_at": reset_at.isoformat() + "Z"}
 
         except Exception as e:
             logger.exception(f"Failed to get usage: {e}")
@@ -198,9 +187,9 @@ async def check_rate_limit(user_id: str, plan: str = "free"):
                 "error": "Rate limit exceeded",
                 "message": f"You have exceeded your {plan} plan limit. Upgrade for more requests.",
                 "reset_at": usage.get("reset_at"),
-                "upgrade_url": "/pricing"
+                "upgrade_url": "/pricing",
             },
-            headers={"Retry-After": str(usage.get("reset_at", "86400"))}
+            headers={"Retry-After": str(usage.get("reset_at", "86400"))},
         )
 
     return remaining

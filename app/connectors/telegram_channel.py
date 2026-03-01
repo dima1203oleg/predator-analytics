@@ -4,12 +4,11 @@ from __future__ import annotations
 """Telegram Channel Connector - Парсинг публічних та приватних каналів
 Використовує Telethon для доступу до Telegram API.
 """
-import asyncio
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta, timezone
+from datetime import UTC, datetime
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from .base import BaseConnector, ConnectorResult, ConnectorStatus
 
@@ -22,6 +21,7 @@ try:
     from telethon.errors import ChannelPrivateError, UsernameNotOccupiedError
     from telethon.tl.functions.channels import GetFullChannelRequest
     from telethon.tl.functions.messages import GetHistoryRequest
+
     TELETHON_AVAILABLE = True
 except ImportError:
     TELETHON_AVAILABLE = False
@@ -31,6 +31,7 @@ except ImportError:
 @dataclass
 class TelegramMessage:
     """Структура повідомлення з Telegram."""
+
     id: int
     channel_id: int
     channel_name: str
@@ -58,11 +59,7 @@ class TelegramChannelConnector(BaseConnector):
     """
 
     def __init__(self):
-        super().__init__(
-            name="Telegram Channels",
-            base_url="https://api.telegram.org",
-            timeout=60.0
-        )
+        super().__init__(name="Telegram Channels", base_url="https://api.telegram.org", timeout=60.0)
 
         self.api_id = os.getenv("TELEGRAM_API_ID")
         self.api_hash = os.getenv("TELEGRAM_API_HASH")
@@ -87,11 +84,7 @@ class TelegramChannelConnector(BaseConnector):
             return None
 
         if self._client is None:
-            self._client = TelegramClient(
-                self.session_name,
-                int(self.api_id),
-                self.api_hash
-            )
+            self._client = TelegramClient(self.session_name, int(self.api_id), self.api_hash)
 
         if not self._connected:
             await self._client.start(phone=self.phone)
@@ -107,12 +100,7 @@ class TelegramChannelConnector(BaseConnector):
             self._connected = False
             logger.info("Telethon клієнт відключено")
 
-    async def search(
-        self,
-        query: str,
-        limit: int = 50,
-        **kwargs
-    ) -> ConnectorResult:
+    async def search(self, query: str, limit: int = 50, **kwargs) -> ConnectorResult:
         """Пошук повідомлень у каналі.
 
         Args:
@@ -126,10 +114,7 @@ class TelegramChannelConnector(BaseConnector):
         """
         if not self.is_configured:
             return ConnectorResult(
-                success=False,
-                data=None,
-                error="Telegram connector не налаштований",
-                source=self.name
+                success=False, data=None, error="Telegram connector не налаштований", source=self.name
             )
 
         try:
@@ -150,9 +135,13 @@ class TelegramChannelConnector(BaseConnector):
             try:
                 entity = await client.get_entity(channel_username)
             except UsernameNotOccupiedError:
-                return ConnectorResult(success=False, data=None, error=f"Канал {channel_username} не знайдено", source=self.name)
+                return ConnectorResult(
+                    success=False, data=None, error=f"Канал {channel_username} не знайдено", source=self.name
+                )
             except ChannelPrivateError:
-                return ConnectorResult(success=False, data=None, error=f"Канал {channel_username} приватний", source=self.name)
+                return ConnectorResult(
+                    success=False, data=None, error=f"Канал {channel_username} приватний", source=self.name
+                )
 
             # Отримуємо історію
             messages = []
@@ -172,24 +161,19 @@ class TelegramChannelConnector(BaseConnector):
                     msg_data = TelegramMessage(
                         id=message.id,
                         channel_id=entity.id,
-                        channel_name=getattr(entity, 'username', str(entity.id)),
+                        channel_name=getattr(entity, "username", str(entity.id)),
                         text=message.text,
                         date=message.date,
                         views=message.views or 0,
                         forwards=message.forwards or 0,
                         media_type=type(message.media).__name__ if message.media else None,
-                        reply_to_id=message.reply_to_msg_id if message.reply_to else None
+                        reply_to_id=message.reply_to_msg_id if message.reply_to else None,
                     )
                     messages.append(msg_data.__dict__)
 
             logger.info(f"Знайдено {len(messages)} повідомлень у каналі {channel_username}")
 
-            return ConnectorResult(
-                success=True,
-                data=messages,
-                source=self.name,
-                records_count=len(messages)
-            )
+            return ConnectorResult(success=True, data=messages, source=self.name, records_count=len(messages))
 
         except Exception as e:
             logger.exception(f"Помилка пошуку в Telegram: {e}")
@@ -216,33 +200,23 @@ class TelegramChannelConnector(BaseConnector):
 
             channel_info = {
                 "id": entity.id,
-                "username": getattr(entity, 'username', None),
-                "title": getattr(entity, 'title', None),
-                "participants_count": getattr(full_channel.full_chat, 'participants_count', 0),
-                "about": getattr(full_channel.full_chat, 'about', None),
-                "linked_chat_id": getattr(full_channel.full_chat, 'linked_chat_id', None),
+                "username": getattr(entity, "username", None),
+                "title": getattr(entity, "title", None),
+                "participants_count": getattr(full_channel.full_chat, "participants_count", 0),
+                "about": getattr(full_channel.full_chat, "about", None),
+                "linked_chat_id": getattr(full_channel.full_chat, "linked_chat_id", None),
             }
 
             # Кешуємо
             self._channel_cache[channel_username] = channel_info
 
-            return ConnectorResult(
-                success=True,
-                data=channel_info,
-                source=self.name,
-                records_count=1
-            )
+            return ConnectorResult(success=True, data=channel_info, source=self.name, records_count=1)
 
         except Exception as e:
             logger.exception(f"Помилка отримання каналу {channel_username}: {e}")
             return ConnectorResult(success=False, data=None, error=str(e), source=self.name)
 
-    async def fetch_channel_history(
-        self,
-        channel_username: str,
-        limit: int = 100,
-        min_id: int = 0
-    ) -> ConnectorResult:
+    async def fetch_channel_history(self, channel_username: str, limit: int = 100, min_id: int = 0) -> ConnectorResult:
         """Отримати історію повідомлень каналу для ETL.
 
         Args:
@@ -250,11 +224,7 @@ class TelegramChannelConnector(BaseConnector):
             limit: Максимальна кількість
             min_id: ID з якого почати (для інкрементального завантаження)
         """
-        return await self.search(
-            query=channel_username,
-            limit=limit,
-            channel_username=channel_username
-        )
+        return await self.search(query=channel_username, limit=limit, channel_username=channel_username)
 
     async def subscribe_to_channel(self, channel_username: str) -> ConnectorResult:
         """Підписатися на канал для отримання нових повідомлень.
@@ -270,14 +240,10 @@ class TelegramChannelConnector(BaseConnector):
             "channel_id": info_result.data["id"],
             "poll_interval_seconds": 300,  # 5 хвилин
             "last_message_id": 0,
-            "status": "active"
+            "status": "active",
         }
 
-        return ConnectorResult(
-            success=True,
-            data=subscription_config,
-            source=self.name
-        )
+        return ConnectorResult(success=True, data=subscription_config, source=self.name)
 
     async def health_check(self) -> ConnectorStatus:
         """Перевірка стану connector'а."""

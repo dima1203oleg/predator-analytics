@@ -13,10 +13,11 @@ Python 3.12 | Aesthetic Excellence
 import logging
 from pathlib import Path
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 logger = logging.getLogger("azr_ui_architect")
+
 
 class UIArchitect:
     """🎨 Агент-Архітектор Веб-Інтерфейсу.
@@ -28,8 +29,7 @@ class UIArchitect:
         self.components_path = self.ui_root / "src" / "components"
 
     async def propose_aesthetic_improvement(self) -> dict[str, Any]:
-        """Аналізує поточний код компонентів і пропонує покращення (Glassmorphism, Анімації).
-        """
+        """Аналізує поточний код компонентів і пропонує покращення (Glassmorphism, Анімації)."""
         logger.info("🔍 UI Architect is scanning components for aesthetic gaps...")
 
         # Визначає ціль для покращення (Heuristic based)
@@ -47,7 +47,7 @@ class UIArchitect:
             "target": chosen_target,
             "improvement_type": "styling_upgrade",
             "vibe_prompt": prompt,
-            "priority": "high"
+            "priority": "high",
         }
 
     async def execute_evolution(self, azr_instance: Any):
@@ -61,7 +61,7 @@ class UIArchitect:
             theme_file = self.ui_root / "src" / "styles" / "theme.ts"
             if theme_file.exists():
                 # Read and minimally tweak opacity/blur to test autonomy
-                content = theme_file.read_text()
+                theme_file.read_text()
                 # Placeholder for regex substitution to adjust blur values dynamically
                 # This proves the system calls are working securely
         except Exception as e:
@@ -69,6 +69,7 @@ class UIArchitect:
 
         # 2. Делегування складної задачі на Vibe Bridge
         from app.libs.core.azr_unified import ActionPriority, AZRAction
+
         action = AZRAction(
             action_id=f"UI-EVO-{int(Path('/tmp').stat().st_mtime)}",
             action_type="MISTRAL_VIBE_TASK",
@@ -76,11 +77,12 @@ class UIArchitect:
             payload={
                 "prompt": proposal["vibe_prompt"],
                 "file": proposal["target"],
-                "context": "Make it look premium and unbreakable."
-            }
+                "context": "Make it look premium and unbreakable.",
+            },
         )
 
         return await azr_instance._execute_action(action)
+
 
 def get_ui_architect() -> UIArchitect:
     return UIArchitect()

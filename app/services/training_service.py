@@ -8,16 +8,15 @@ Specifically configured for Llama 3.1 8b Instruct as the core engine.
 """
 import asyncio
 from datetime import datetime
-import json
 import random
-from typing import Any, Dict, List
+from typing import Any
 import uuid
 
 from sqlalchemy import func, select
 
 from app.libs.core.config import settings
 from app.libs.core.database import get_db_ctx
-from app.libs.core.models.entities import AugmentedDataset, Document, MLJob, SICycle
+from app.libs.core.models.entities import AugmentedDataset, MLJob, SICycle
 from app.libs.core.structured_logger import get_logger, log_business_event
 from app.services.llm.service import get_llm_service
 from app.services.training_status_service import training_status_service
@@ -27,6 +26,7 @@ logger = get_logger("service.self_improvement")
 
 # Constants for the "Genesis" tenant in headless autonomous mode
 GENESIS_TENANT_ID = uuid.UUID("00000000-0000-0000-0000-000000000000")
+
 
 class SelfImprovementService:
     def __init__(self):
@@ -54,7 +54,7 @@ class SelfImprovementService:
                     tenant_id=GENESIS_TENANT_ID,
                     trigger_type="autonomous_timer",
                     status="running",
-                    created_at=datetime.now()
+                    created_at=datetime.now(),
                 )
 
                 new_job = MLJob(
@@ -63,7 +63,7 @@ class SelfImprovementService:
                     target="llama3.1_self_correction",
                     status="running",
                     si_cycle_id=cycle_uuid,
-                    created_at=datetime.now()
+                    created_at=datetime.now(),
                 )
 
                 sess.add(new_cycle)
@@ -78,18 +78,18 @@ class SelfImprovementService:
                 "cycle": self.cycle_count,
                 "cycle_id": str(cycle_uuid),
                 "progress": 20,
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             })
 
             # 3. Analyze Feedback & Core Data
             feedback_data = await self._fetch_feedback()
-            await asyncio.sleep(1) # Thinking time
+            await asyncio.sleep(1)  # Thinking time
 
             # 4. Generate Synthetic Data with Llama 3.1
             await training_status_service.update_status({
                 "stage": "generating",
                 "message": "🧠 Llama 3.1 генерує складні аналітичні кейси для самодосконалення...",
-                "progress": 40
+                "progress": 40,
             })
 
             synth_data = await self._generate_synthetic_data(feedback_data)
@@ -103,7 +103,7 @@ class SelfImprovementService:
                             tenant_id=GENESIS_TENANT_ID,
                             content=item.get("generated"),
                             aug_type="llama3.1_synthetic",
-                            created_at=datetime.now()
+                            created_at=datetime.now(),
                         )
                         sess.add(aug_entry)
                     await sess.commit()
@@ -118,18 +118,19 @@ class SelfImprovementService:
 
                     await training_status_service.update_status({
                         "message": f"🚀 Поріг {total_samples} досягнуто! Запуск реального H2O AutoML навчання...",
-                        "progress": 70
+                        "progress": 70,
                     })
 
                     # REAL H2O TRAINING TRIGGER
                     try:
                         from app.services.h2o_manager import h2o_manager
+
                         h2o_result = await h2o_manager.train_anomaly_classifier(str(job_uuid))
 
                         if h2o_result["status"] == "success":
-                             await training_status_service.update_status({
+                            await training_status_service.update_status({
                                 "message": f"🏆 H2O Модель навчено! AUC: {h2o_result['metrics']['auc']:.4f}",
-                                "progress": 90
+                                "progress": 90,
                             })
                     except Exception as h2o_err:
                         logger.exception(f"H2O Training Error: {h2o_err}")
@@ -137,20 +138,19 @@ class SelfImprovementService:
                 else:
                     await training_status_service.update_status({
                         "message": f"📊 Накопичено {total_samples}/100 для H2O старту.",
-                        "progress": 60
+                        "progress": 60,
                     })
 
             # 7. Автовдосконалення коду (Sovereign Optimizations)
-            from orchestrator.agents.v45_sovereign_registry import sovereign_orchestrator
 
             await training_status_service.update_status({
                 "stage": "optimizing_code",
                 "message": "🛠️ Агенти оптимізують параметри на основі результатів H2O...",
-                "progress": 85
+                "progress": 85,
             })
 
             task = f"Оптимізуй логіку детекції на основі {total_samples} кейсів."
-            optimization_result = {"status": "success", "simulated": False} # Placeholder for sovereign execution
+            optimization_result = {"status": "success", "simulated": False}  # Placeholder for sovereign execution
 
             # Use real metrics if H2O ran, otherwise dummy
             metrics = {
@@ -158,10 +158,10 @@ class SelfImprovementService:
                 "accuracy": 0.95,
                 "epoch": self.cycle_count,
             }
-            if 'h2o_result' in locals() and h2o_result.get('metrics'):
-                metrics['auc'] = h2o_result['metrics']['auc']
-                metrics['logloss'] = h2o_result['metrics']['logloss']
-                metrics['model_id'] = h2o_result['model_id']
+            if "h2o_result" in locals() and h2o_result.get("metrics"):
+                metrics["auc"] = h2o_result["metrics"]["auc"]
+                metrics["logloss"] = h2o_result["metrics"]["logloss"]
+                metrics["model_id"] = h2o_result["model_id"]
 
             # 8. Update DB with results
             async with get_db_ctx() as sess:
@@ -180,16 +180,16 @@ class SelfImprovementService:
                 loss=metrics["loss"],
                 accuracy=metrics["accuracy"],
                 data_points=len(synth_data),
-                model=self.model_name
+                model=self.model_name,
             )
 
             # 9. Update History in Redis
             await training_status_service.update_status({
                 "status": "idle",
                 "stage": "ready",
-                "message": f"✅ Цикл #{self.cycle_count} завершено. Точність моделі: {metrics['accuracy']*100:.2f}%",
+                "message": f"✅ Цикл #{self.cycle_count} завершено. Точність моделі: {metrics['accuracy'] * 100:.2f}%",
                 "metrics": metrics,
-                "progress": 100
+                "progress": 100,
             })
 
             return metrics
@@ -208,7 +208,7 @@ class SelfImprovementService:
 
             await training_status_service.update_status({
                 "status": "error",
-                "message": f"❌ Помилка в циклі #{self.cycle_count}: {e!s}"
+                "message": f"❌ Помилка в циклі #{self.cycle_count}: {e!s}",
             })
             raise
 
@@ -228,7 +228,7 @@ class SelfImprovementService:
                 # Run every 30 seconds in "aggressive" endless mode for AZR
                 await asyncio.sleep(30)
             except Exception:
-                await asyncio.sleep(60) # Slow retry on fatal error
+                await asyncio.sleep(60)  # Slow retry on fatal error
 
     async def _fetch_feedback(self) -> list[dict[str, Any]]:
         """Fetch existing 'radical' scenarios from the DB to use as base context.
@@ -237,9 +237,12 @@ class SelfImprovementService:
         try:
             async with get_db_ctx() as sess:
                 # Fetch random examples from previous 'radical' generations or provided seeds
-                stmt = select(AugmentedDataset.content).where(
-                    AugmentedDataset.aug_type.in_(["radical_seed_synthetic", "llama3.1_synthetic"])
-                ).order_by(func.random()).limit(3)
+                stmt = (
+                    select(AugmentedDataset.content)
+                    .where(AugmentedDataset.aug_type.in_(["radical_seed_synthetic", "llama3.1_synthetic"]))
+                    .order_by(func.random())
+                    .limit(3)
+                )
 
                 result = await sess.execute(stmt)
                 examples = result.scalars().all()
@@ -285,7 +288,7 @@ class SelfImprovementService:
                     prompt=prompt,
                     provider=self.training_model_provider,
                     temperature=0.8,
-                    max_tokens=1500 # Increased from 1000 for longer context
+                    max_tokens=1500,  # Increased from 1000 for longer context
                 )
 
                 if response.success:
@@ -293,16 +296,16 @@ class SelfImprovementService:
                     # Basic Validation: Check if it looks like JSON or contains Risk Score
                     if "Risk Score" in content or "Risk:" in content:
                         return [{"generated": content}]
-                    logger.warning(f"Attempt {attempt+1}: Generated content missing 'Risk Score'. Retrying...")
+                    logger.warning(f"Attempt {attempt + 1}: Generated content missing 'Risk Score'. Retrying...")
 
                 else:
-                    logger.warning(f"Ollama attempt {attempt+1}/{retries} failed: {response.error}")
+                    logger.warning(f"Ollama attempt {attempt + 1}/{retries} failed: {response.error}")
 
             except Exception as e:
-                logger.exception(f"Ollama attempt {attempt+1}/{retries} unexpected error: {e}")
+                logger.exception(f"Ollama attempt {attempt + 1}/{retries} unexpected error: {e}")
 
             if attempt < retries - 1:
-                wait_time = delay * (2 ** attempt)
+                wait_time = delay * (2**attempt)
                 logger.info(f"Cooling down for {wait_time}s before retry...")
                 await asyncio.sleep(wait_time)
 
@@ -315,14 +318,11 @@ class SelfImprovementService:
         await asyncio.sleep(3)
 
         base_loss = 0.5
-        improvement = min(0.4, self.cycle_count * 0.012) # Slightly faster learning for Llama 3.1
+        improvement = min(0.4, self.cycle_count * 0.012)  # Slightly faster learning for Llama 3.1
         current_loss = max(0.045, base_loss - improvement + (random.random() * 0.03))
 
-        return {
-            "loss": round(current_loss, 4),
-            "accuracy": round(1.0 - current_loss, 4),
-            "epoch": self.cycle_count
-        }
+        return {"loss": round(current_loss, 4), "accuracy": round(1.0 - current_loss, 4), "epoch": self.cycle_count}
+
 
 # Singleton
 self_improvement_service = SelfImprovementService()

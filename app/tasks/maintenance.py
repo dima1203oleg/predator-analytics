@@ -38,10 +38,13 @@ def cleanup_staging(days: int = 90):
             cutoff_date = datetime.now() - timedelta(days=days)
 
             # Only delete processed records
-            result = await conn.execute("""
+            result = await conn.execute(
+                """
                 DELETE FROM staging.raw_data
                 WHERE processed = TRUE AND fetched_at < $1
-            """, cutoff_date)
+            """,
+                cutoff_date,
+            )
 
             # Parse result like "DELETE 42"
             deleted_count = int(result.split()[-1]) if result else 0
@@ -51,11 +54,7 @@ def cleanup_staging(days: int = 90):
             # Vacuum analyze for performance
             await conn.execute("VACUUM ANALYZE staging.raw_data")
 
-            return {
-                "status": "success",
-                "deleted_count": deleted_count,
-                "cutoff_date": cutoff_date.isoformat()
-            }
+            return {"status": "success", "deleted_count": deleted_count, "cutoff_date": cutoff_date.isoformat()}
 
         except Exception as e:
             logger.exception(f"[CLEANUP] Failed: {e}")
@@ -82,9 +81,12 @@ def cleanup_search_logs(days: int = 30):
         try:
             cutoff_date = datetime.now() - timedelta(days=days)
 
-            result = await conn.execute("""
+            result = await conn.execute(
+                """
                 DELETE FROM gold.search_logs WHERE created_at < $1
-            """, cutoff_date)
+            """,
+                cutoff_date,
+            )
 
             deleted_count = int(result.split()[-1]) if result else 0
 
@@ -112,11 +114,7 @@ def optimize_indexes():
 
         try:
             # Reindex main tables
-            tables = [
-                "gold.documents",
-                "gold.users",
-                "staging.raw_data"
-            ]
+            tables = ["gold.documents", "gold.users", "staging.raw_data"]
 
             for table in tables:
                 try:
@@ -175,12 +173,7 @@ def backup_postgres():
 
         size_bytes = os.path.getsize(filename)
 
-        return {
-            "status": "success",
-            "file": filename,
-            "size_bytes": size_bytes,
-            "timestamp": timestamp
-        }
+        return {"status": "success", "file": filename, "size_bytes": size_bytes, "timestamp": timestamp}
 
     except Exception as e:
         logger.exception(f"[BACKUP] Failed: {e}")

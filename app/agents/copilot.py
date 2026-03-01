@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 
 try:
@@ -18,6 +18,7 @@ class ToolResult(BaseModel):
     output: str
     is_error: bool = False
 
+
 class CopilotAgent:
     """Predator v45 | Neural AnalyticsCopilot Agent (Gemini-powered).
 
@@ -32,7 +33,7 @@ class CopilotAgent:
         if genai is None:
             raise Exception("Gemini client library not installed")
         genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-1.5-pro') # Using latest capable model
+        self.model = genai.GenerativeModel("gemini-1.5-pro")  # Using latest capable model
 
         self.system_prompt = f"""
         You are the Predator v45 | Neural AnalyticsSystem Copilot.
@@ -63,14 +64,12 @@ class CopilotAgent:
         target_path = (self.workspace_root / directory).resolve()
 
         if not str(target_path).startswith(str(self.workspace_root)):
-             return ToolResult(tool_name="list_files", output="Access Denied: Path outside workspace", is_error=True)
+            return ToolResult(tool_name="list_files", output="Access Denied: Path outside workspace", is_error=True)
 
         try:
             # Simple wrapper around ls -F
             proc = await asyncio.create_subprocess_exec(
-                "ls", "-F", str(target_path),
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                "ls", "-F", str(target_path), stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
             stdout, stderr = await proc.communicate()
 
@@ -86,29 +85,28 @@ class CopilotAgent:
         target_path = (self.workspace_root / file_path).resolve()
 
         if not str(target_path).startswith(str(self.workspace_root)):
-             return ToolResult(tool_name="read_file", output="Access Denied: Path outside workspace", is_error=True)
+            return ToolResult(tool_name="read_file", output="Access Denied: Path outside workspace", is_error=True)
 
         try:
             if not target_path.exists():
                 return ToolResult(tool_name="read_file", output="File not found", is_error=True)
 
-            content = target_path.read_text(encoding='utf-8')
+            content = target_path.read_text(encoding="utf-8")
             return ToolResult(tool_name="read_file", output=content)
         except Exception as e:
             return ToolResult(tool_name="read_file", output=str(e), is_error=True)
-
 
     async def write_file(self, file_path: str, content: str) -> ToolResult:
         """Writes content to a file (overwrites)."""
         target_path = (self.workspace_root / file_path).resolve()
 
         if not str(target_path).startswith(str(self.workspace_root)):
-             return ToolResult(tool_name="write_file", output="Access Denied: Path outside workspace", is_error=True)
+            return ToolResult(tool_name="write_file", output="Access Denied: Path outside workspace", is_error=True)
 
         try:
             # Ensure parent directories exist
             target_path.parent.mkdir(parents=True, exist_ok=True)
-            target_path.write_text(content, encoding='utf-8')
+            target_path.write_text(content, encoding="utf-8")
             return ToolResult(tool_name="write_file", output=f"Successfully wrote {len(content)} bytes to {file_path}")
         except Exception as e:
             return ToolResult(tool_name="write_file", output=str(e), is_error=True)
@@ -121,21 +119,18 @@ class CopilotAgent:
         # Minimum safety check
         forbidden = ["rm -rf /", ":(){ :|:& };:", "wget", "curl"]
         if any(f in command for f in forbidden):
-             return ToolResult(tool_name="run_shell", output="Command blocked by safety policy", is_error=True)
+            return ToolResult(tool_name="run_shell", output="Command blocked by safety policy", is_error=True)
 
         try:
             proc = await asyncio.create_subprocess_shell(
-                command,
-                cwd=str(self.workspace_root),
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                command, cwd=str(self.workspace_root), stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
             stdout, stderr = await proc.communicate()
 
             output = f"STDOUT:\n{stdout.decode()}\nSTDERR:\n{stderr.decode()}"
             return ToolResult(tool_name="run_shell", output=output, is_error=proc.returncode != 0)
         except Exception as e:
-             return ToolResult(tool_name="run_shell", output=str(e), is_error=True)
+            return ToolResult(tool_name="run_shell", output=str(e), is_error=True)
 
     def get_agent_definition(self) -> dict[str, Any]:
         """Returns the blueprint for the self-improvement loop registry."""
@@ -144,5 +139,5 @@ class CopilotAgent:
             "type": "system_maintenance",
             "model": "gemini-1.5-pro",
             "capabilities": ["fs_read", "fs_write", "shell_exec"],
-            "version": "1.0.0"
+            "version": "1.0.0",
         }

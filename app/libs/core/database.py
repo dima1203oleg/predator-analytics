@@ -17,30 +17,61 @@ try:
     from sqlalchemy import create_engine, text
     from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
     from sqlalchemy.orm import Session, declarative_base, sessionmaker
+
     HAS_SQLALCHEMY = True
 except ImportError:
     HAS_SQLALCHEMY = False
+
     class DummyEngine:
-        def dispose(self): pass
-        async def dispose(self): pass
-        def begin(self): return MagicMock()
+        def dispose(self):
+            pass
 
-    def create_engine(*args, **kwargs): return DummyEngine()
-    def create_async_engine(*args, **kwargs): return DummyEngine()
-    def text(s): return s
-    def declarative_base(): return MagicMock
-    def sessionmaker(*args, **kwargs): return MagicMock()
-    def async_sessionmaker(*args, **kwargs): return MagicMock()
+        async def dispose(self):
+            pass
 
-    class Session: pass
+        def begin(self):
+            return MagicMock()
+
+    def create_engine(*args, **kwargs):
+        return DummyEngine()
+
+    def create_async_engine(*args, **kwargs):
+        return DummyEngine()
+
+    def text(s):
+        return s
+
+    def declarative_base():
+        return MagicMock
+
+    def sessionmaker(*args, **kwargs):
+        return MagicMock()
+
+    def async_sessionmaker(*args, **kwargs):
+        return MagicMock()
+
+    class Session:
+        pass
+
     class AsyncSession:
         async def execute(self, *args, **kwargs):
             return MagicMock(scalar_one_or_none=lambda: None, scalars=lambda: MagicMock(all=list))
-        async def commit(self): pass
-        async def rollback(self): pass
-        async def close(self): pass
-        def add(self, *args, **kwargs): pass
-        async def get(self, *args, **kwargs): return None
+
+        async def commit(self):
+            pass
+
+        async def rollback(self):
+            pass
+
+        async def close(self):
+            pass
+
+        def add(self, *args, **kwargs):
+            pass
+
+        async def get(self, *args, **kwargs):
+            return None
+
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator, Generator
@@ -62,31 +93,20 @@ if is_async:
         pool_size=settings.DB_POOL_SIZE,
         max_overflow=settings.DB_MAX_OVERFLOW,
         echo=settings.DEBUG,
-        future=True
+        future=True,
     )
     # Session factory
     async_session_maker = async_sessionmaker(
-        engine,
-        class_=AsyncSession,
-        expire_on_commit=False,
-        autocommit=False,
-        autoflush=False
+        engine, class_=AsyncSession, expire_on_commit=False, autocommit=False, autoflush=False
     )
 
     # Also create sync engine for scripts/predatorctl
     sync_url = settings.DATABASE_URL.replace("+asyncpg", "")
     sync_engine = create_engine(
-        sync_url,
-        pool_size=settings.DB_POOL_SIZE,
-        max_overflow=settings.DB_MAX_OVERFLOW,
-        echo=settings.DEBUG
+        sync_url, pool_size=settings.DB_POOL_SIZE, max_overflow=settings.DB_MAX_OVERFLOW, echo=settings.DEBUG
     )
     sync_session_maker = sessionmaker(
-        sync_engine,
-        class_=Session,
-        expire_on_commit=False,
-        autocommit=False,
-        autoflush=False
+        sync_engine, class_=Session, expire_on_commit=False, autocommit=False, autoflush=False
     )
 else:
     # Create sync engine for Celery/Scripts
@@ -94,17 +114,11 @@ else:
         settings.DATABASE_URL,
         pool_size=settings.DB_POOL_SIZE,
         max_overflow=settings.DB_MAX_OVERFLOW,
-        echo=settings.DEBUG
+        echo=settings.DEBUG,
     )
     sync_engine = engine
     # Sync Session factory
-    sync_session_maker = sessionmaker(
-        engine,
-        class_=Session,
-        expire_on_commit=False,
-        autocommit=False,
-        autoflush=False
-    )
+    sync_session_maker = sessionmaker(engine, class_=Session, expire_on_commit=False, autocommit=False, autoflush=False)
     # Maintain compatibility with async symbols (will fail if called, but won't crash on import)
     async_session_maker = sync_session_maker
 
@@ -127,6 +141,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         finally:
             await session.close()
 
+
 from contextlib import asynccontextmanager
 
 
@@ -143,6 +158,7 @@ async def get_db_ctx() -> AsyncGenerator[AsyncSession, None]:
         finally:
             await session.close()
 
+
 @contextmanager
 def get_db_sync() -> Generator[Session, None, None]:
     """Context manager for using sync DB session in tasks/scripts."""
@@ -158,9 +174,10 @@ def get_db_sync() -> Generator[Session, None, None]:
 
 
 async def init_db() -> None:
-    """Initialize database tables and extensions"""
+    """Initialize database tables and extensions."""
     # Import all models to ensure they are registered in Base.metadata
-    import libs.core.models.entities # noqa
+    import libs.core.models.entities  # noqa
+
     schemas = ["gold", "silver", "bronze", "staging"]
     if is_async:
         async with engine.begin() as conn:

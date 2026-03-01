@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Union
+from typing import Any
 
 
 """
@@ -9,9 +9,7 @@ XML Parser Implementation
 Handles parsing of XML files using xml.etree.ElementTree.
 """
 
-import json
 from pathlib import Path
-from typing import Dict, List
 from xml.etree import ElementTree as ET
 
 
@@ -35,7 +33,7 @@ class XMLParser:
             "encoding": "utf-8",
         }
 
-    def parse(self, file_path: str |  Path, **kwargs) -> ParseResult:
+    def parse(self, file_path: str | Path, **kwargs) -> ParseResult:
         """Parse an XML file.
 
         Args:
@@ -119,7 +117,7 @@ class XMLParser:
 
         return result
 
-    def parse_to_dataframe(self, file_path: str |  Path) -> ParseResult:
+    def parse_to_dataframe(self, file_path: str | Path) -> ParseResult:
         """Parse XML file and return as pandas DataFrame.
 
         Args:
@@ -185,7 +183,7 @@ class XMLParser:
         # If the XML has multiple records, process each one
         if isinstance(xml_dict, dict):
             # Check if it's a list of records
-            for key, value in xml_dict.items():
+            for value in xml_dict.values():
                 if isinstance(value, list):
                     for item in value:
                         if isinstance(item, dict):
@@ -200,7 +198,7 @@ class XMLParser:
         # Fallback: create DataFrame with XML content as string
         return pd.DataFrame([{"xml_content": str(xml_dict)}])
 
-    def parse_to_dict(self, file_path: str |  Path) -> ParseResult:
+    def parse_to_dict(self, file_path: str | Path) -> ParseResult:
         """Parse XML file and return as dictionary.
 
         Args:

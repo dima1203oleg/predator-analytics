@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("agent.planner")
 
+
 async def planner_node(state: AgentState):
     """Generates a plan from the user request."""
     logger.info("🧠 PLANNER: Generating plan...")
@@ -30,9 +31,9 @@ async def planner_node(state: AgentState):
     except ImportError:
         return {"error": "LLM Service unavailable"}
 
-
     # Use Trinity Strategist (Gemini CLI)
     from app.services.triple_agent_service import triple_agent_service
+
     plan_text = await triple_agent_service.analyze_with_context(last_msg)
 
     plan = []
@@ -41,7 +42,7 @@ async def planner_node(state: AgentState):
         if "[" in plan_text and "]" in plan_text:
             start = plan_text.find("[")
             end = plan_text.rfind("]")
-            plan = json.loads(plan_text[start:end+1])
+            plan = json.loads(plan_text[start : end + 1])
         else:
             plan = [s.strip() for s in plan_text.split("\n") if s.strip()]
     except Exception as e:
@@ -53,10 +54,5 @@ async def planner_node(state: AgentState):
     return {
         "current_step": plan[0],
         "thinking": f"Architectural reasoning: Analyzing request '{last_msg}'. Strategy chosen: Plan-and-Execute. Steps derived from Trinitarian Strategy.",
-        "context": {
-            **context,
-            "plan": plan,
-            "completed_steps": [],
-            "plan_index": 0
-        }
+        "context": {**context, "plan": plan, "completed_steps": [], "plan_index": 0},
     }

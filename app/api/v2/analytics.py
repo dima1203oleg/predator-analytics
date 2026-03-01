@@ -2,18 +2,14 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import UTC, datetime
-from typing import Optional
+import logging
 
 from fastapi import APIRouter, HTTPException, Path, Query
 
-from app.engines.behavioral import compute_behavioral_score
 from app.engines.cers import calculate_cers
-from app.engines.influence import compute_influence_score
-from app.engines.institutional import compute_institutional_score
-from app.engines.structural_gaps import compute_structural_score
 from app.models.v55.cers import CERSHistoryResponse, CERSResponse
+
 
 logger = logging.getLogger("predator.api.v2.analytics")
 router = APIRouter(prefix="/analytics", tags=["v2-analytics"])
@@ -46,8 +42,8 @@ async def calculate_cers_endpoint(
     behavioral: float = 50.0,
     institutional: float = 50.0,
     influence: float = 50.0,
-    structural: Optional[float] = None,
-    predictive: Optional[float] = None,
+    structural: float | None = None,
+    predictive: float | None = None,
 ) -> CERSResponse:
     """Calculate CERS on-demand for an entity with provided layer scores."""
     result = calculate_cers(

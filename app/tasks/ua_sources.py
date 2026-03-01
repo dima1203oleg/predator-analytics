@@ -5,7 +5,7 @@ from __future__ import annotations
 Background tasks for Ukrainian data source operations.
 """
 import asyncio
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import logging
 
 from celery import shared_task
@@ -36,7 +36,7 @@ def deep_scan_task(query: str, sectors: list | None = None):
             "query": query,
             "risk_score": result.risk_score,
             "entities_found": result.entities_found,
-            "timestamp": result.timestamp.isoformat()
+            "timestamp": result.timestamp.isoformat(),
         }
     except Exception as e:
         logger.exception(f"Deep scan task failed: {e}")
@@ -53,6 +53,7 @@ def batch_risk_assessment(edrpou_list: list):
         from app.services.ai_engine import ai_engine
 
         results = []
+
         async def run_batch():
             tasks = [ai_engine.quick_check(edrpou) for edrpou in edrpou_list]
             return await asyncio.gather(*tasks, return_exceptions=True)
@@ -69,7 +70,7 @@ def batch_risk_assessment(edrpou_list: list):
             "status": "completed",
             "total_requested": len(edrpou_list),
             "processed": processed_count,
-            "results_preview": results[:5]
+            "results_preview": results[:5],
         }
     except Exception as e:
         logger.exception(f"Batch assessment failed: {e}")
@@ -92,7 +93,7 @@ def build_entity_graph_task(entity_id: str, depth: int = 2):
             "entity": entity_id,
             "nodes_count": len(graph.nodes),
             "edges_count": len(graph.edges),
-            "depth": graph.depth
+            "depth": graph.depth,
         }
     except Exception as e:
         logger.exception(f"Graph build task failed: {e}")
@@ -106,13 +107,14 @@ def generate_report(report_type: str, params: dict | None = None):
 
     # Simulate PDF generation time
     import time
+
     time.sleep(2)
 
     return {
         "status": "completed",
         "type": report_type,
         "generated_at": datetime.now(UTC).isoformat(),
-        "url": f"/reports/{report_type}_{int(time.time())}.pdf"
+        "url": f"/reports/{report_type}_{int(time.time())}.pdf",
     }
 
 
@@ -149,7 +151,7 @@ def sync_source_task(source_id: str):
                     source.config["last_sync_stats"] = {
                         "records_indexed": 1250,
                         "vectors_created": 1250,
-                        "storage_layer": "GOLD"
+                        "storage_layer": "GOLD",
                     }
                     db.commit()
 
@@ -157,7 +159,7 @@ def sync_source_task(source_id: str):
                         "status": "completed",
                         "source": str(source_uuid),
                         "type": "custom_file",
-                        "records_processed": 1250
+                        "records_processed": 1250,
                     }
         except ValueError:
             # Not a UUID, proceed to CASE B
@@ -171,31 +173,28 @@ def sync_source_task(source_id: str):
                 "status": "completed",
                 "source": source_id,
                 "records_synced": 450,
-                "timestamp": datetime.now(UTC).isoformat()
+                "timestamp": datetime.now(UTC).isoformat(),
             }
 
         if source_id == "nbu_fx":
             from app.connectors.nbu import nbu_fx_connector
+
             result = run_async(nbu_fx_connector.get_all_rates())
             if result:
-                eur_rate = next((r for r in result if r['cc'] == 'EUR'), None)
-                eur_rate = eur_rate['rate'] if eur_rate else 0.0
+                eur_rate = next((r for r in result if r["cc"] == "EUR"), None)
+                eur_rate = eur_rate["rate"] if eur_rate else 0.0
                 return {
                     "status": "completed",
                     "source": "nbu_fx",
                     "records_synced": len(result),
                     "eur_rate": eur_rate,
-                    "timestamp": datetime.now(UTC).isoformat()
+                    "timestamp": datetime.now(UTC).isoformat(),
                 }
             raise Exception("NBU API Error: No data received")
 
         # Generic sources
         time.sleep(2)
-        return {
-            "status": "completed",
-            "source": source_id,
-            "message": "Synced via API checks"
-        }
+        return {"status": "completed", "source": source_id, "message": "Synced via API checks"}
 
     except Exception as e:
         logger.exception(f"Sync task failed for {source_id}: {e}")

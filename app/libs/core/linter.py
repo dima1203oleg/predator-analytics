@@ -2,17 +2,19 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 import yaml
 
 
 logger = logging.getLogger("core.linter")
 
+
 class ConstitutionalLinter:
     """Constitutional Linter (v45.0).
     Checks Axiom YAML files for structural integrity and logical conflicts.
     """
+
     def __init__(self, laws_dir: str):
         self.laws_dir = laws_dir
         self.required_fields = ["id", "description", "constraints"]
@@ -58,6 +60,7 @@ class ConstitutionalLinter:
             if filename.endswith(".yaml") and not filename.startswith("._"):
                 results.append(self.lint_file(filename))
         return results
+
 
 def get_linter(laws_dir: str) -> ConstitutionalLinter:
     return ConstitutionalLinter(laws_dir)

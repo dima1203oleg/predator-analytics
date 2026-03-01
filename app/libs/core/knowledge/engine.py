@@ -1,4 +1,4 @@
-"""PREDATOR Knowledge Pipeline v31 - Core Architecture
+"""PREDATOR Knowledge Pipeline v31 - Core Architecture.
 
 9 КРИТИЧНИХ ШАРІВ ІНЖЕНЕРІЇ РЕАЛЬНОСТІ:
 
@@ -14,25 +14,30 @@
 
 Це не ETL. Це система формування знання з відповідальністю.
 """
+
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from collections.abc import Callable
 from dataclasses import dataclass, field
 import datetime
-from enum import Enum
+from enum import StrEnum
 import hashlib
 import json
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any
 import uuid
+
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 # ═══════════════════════════════════════════════════════════════════════════
 # 1️⃣ WORKFLOW / STATE MACHINE (FSM)
 # ═══════════════════════════════════════════════════════════════════════════
 
-class PipelineState(str, Enum):
+
+class PipelineState(StrEnum):
     """Finite State Machine for Pipeline."""
+
     CREATED = "CREATED"
     SOURCE_CHECKED = "SOURCE_CHECKED"
     INGESTED = "INGESTED"
@@ -85,6 +90,7 @@ class StateTransition:
 @dataclass
 class WorkflowEvent:
     """Tracks state transitions for audit."""
+
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     job_id: str = ""
     from_state: str | None = None
@@ -103,7 +109,7 @@ class WorkflowOrchestrator:
         self.db = db_session
         self.state_handlers: dict[PipelineState, Callable] = {}
 
-    async def transition(self, job_id: str, to_state: PipelineState, metadata: dict = None) -> bool:
+    async def transition(self, job_id: str, to_state: PipelineState, metadata: dict | None = None) -> bool:
         """Execute state transition with validation."""
         current = await self._get_current_state(job_id)
 
@@ -115,7 +121,7 @@ class WorkflowOrchestrator:
             job_id=job_id,
             from_state=current.value if current else None,
             to_state=to_state.value,
-            metadata=metadata or {}
+            metadata=metadata or {},
         )
 
         # Persist to Redis (UI truth)
@@ -141,11 +147,7 @@ class WorkflowOrchestrator:
         """Persist state to Redis with event metadata."""
         await self.redis.hset(
             f"pipeline:state:{job_id}",
-            mapping={
-                "state": state.value,
-                "timestamp": event.timestamp,
-                "event_id": event.id
-            }
+            mapping={"state": state.value, "timestamp": event.timestamp, "event_id": event.id},
         )
 
     async def _log_event(self, event: WorkflowEvent):
@@ -161,7 +163,8 @@ class InvalidStateTransition(Exception):
 # 2️⃣ DATA QUALITY ENGINE (DQ)
 # ═══════════════════════════════════════════════════════════════════════════
 
-class QualityCheckResult(str, Enum):
+
+class QualityCheckResult(StrEnum):
     PASSED = "PASSED"
     WARNING = "WARNING"
     FAILED = "FAILED"
@@ -171,6 +174,7 @@ class QualityCheckResult(str, Enum):
 @dataclass
 class QualityRule:
     """A single data quality rule."""
+
     id: str
     name: str
     description: str
@@ -183,6 +187,7 @@ class QualityRule:
 @dataclass
 class QualityReport:
     """Full quality report for a dataset."""
+
     job_id: str
     timestamp: str = field(default_factory=lambda: datetime.datetime.now().isoformat())
     total_rows: int = 0
@@ -212,10 +217,12 @@ class DataQualityEngine:
         "valid_hs_code": lambda v, p: len(str(v)) in [6, 8, 10],
         "sum_matches": lambda row, p: abs(row.get(p["sum_field"]) - sum(row.get(f) for f in p["addends"])) < 0.01,
         "no_duplicate": lambda row, ctx: row.get(ctx["key_field"]) not in ctx.get("seen_keys", set()),
-        "date_not_future": lambda v, _: datetime.datetime.fromisoformat(str(v)) <= datetime.datetime.now() if v else True,
+        "date_not_future": lambda v, _: (
+            datetime.datetime.fromisoformat(str(v)) <= datetime.datetime.now() if v else True
+        ),
     }
 
-    def __init__(self, rules: list[QualityRule] = None):
+    def __init__(self, rules: list[QualityRule] | None = None):
         self.rules = rules or []
         self.profile_stats = {}
 
@@ -236,22 +243,13 @@ class DataQualityEngine:
                 result = self._check_rule(rule, row, context)
 
                 if result == QualityCheckResult.FAILED:
-                    report.checks.append({
-                        "row": i,
-                        "rule": rule.id,
-                        "result": "FAILED",
-                        "severity": rule.severity
-                    })
+                    report.checks.append({"row": i, "rule": rule.id, "result": "FAILED", "severity": rule.severity})
                     if rule.severity == "critical":
                         row_valid = False
 
                 elif result == QualityCheckResult.WARNING:
                     report.warnings += 1
-                    report.checks.append({
-                        "row": i,
-                        "rule": rule.id,
-                        "result": "WARNING"
-                    })
+                    report.checks.append({"row": i, "rule": rule.id, "result": "WARNING"})
 
             if row_valid:
                 report.valid_rows += 1
@@ -306,7 +304,7 @@ class DataQualityEngine:
             non_null = [v for v in values if v is not None]
 
             profile["null_counts"][col] = len(values) - len(non_null)
-            profile["unique_counts"][col] = len(set(str(v) for v in non_null))
+            profile["unique_counts"][col] = len({str(v) for v in non_null})
 
             # Numeric stats
             numeric = [v for v in non_null if isinstance(v, (int, float))]
@@ -328,7 +326,7 @@ class DataQualityEngine:
                     "type": "high_null_rate",
                     "column": col,
                     "rate": null_ratio,
-                    "message": f"Column '{col}' has {null_ratio*100:.1f}% null values"
+                    "message": f"Column '{col}' has {null_ratio * 100:.1f}% null values",
                 })
 
         return anomalies
@@ -338,9 +336,11 @@ class DataQualityEngine:
 # 3️⃣ ENTITY RESOLUTION ENGINE
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class EntityMatch:
     """Result of entity matching."""
+
     source_id: str
     matched_id: str
     confidence: float  # 0.0 - 1.0
@@ -365,6 +365,7 @@ class EntityResolutionEngine:
     def normalize(self, name: str) -> str:
         """Normalize company/entity name."""
         import re
+
         result = name.upper()
         for pattern, replacement in self.normalization_rules:
             result = re.sub(pattern, replacement, result)
@@ -388,7 +389,7 @@ class EntityResolutionEngine:
         matches = []
 
         name = entity.get("name", "")
-        normalized = self.normalize(name)
+        self.normalize(name)
         edrpou = entity.get("edrpou") or entity.get("code")
 
         # 1. Exact EDRPOU match (highest confidence)
@@ -444,9 +445,11 @@ class EntityResolutionEngine:
 # 4️⃣ DATA VERSIONING & REPROCESSING
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class DataVersion:
     """Tracks versions of data and processing."""
+
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     source_id: str = ""
     source_hash: str = ""  # SHA256 of source file
@@ -474,11 +477,7 @@ class VersioningEngine:
         # Get current active version
         current = await self._get_active_version(source_id)
 
-        version = DataVersion(
-            source_id=source_id,
-            source_hash=source_hash,
-            supersedes=current.id if current else None
-        )
+        version = DataVersion(source_id=source_id, source_hash=source_hash, supersedes=current.id if current else None)
 
         # Store version
         await self._store_version(version)
@@ -507,8 +506,9 @@ class VersioningEngine:
     async def _calculate_hash(self, path: str) -> str:
         """Calculate SHA256 hash of file."""
         import aiofiles
+
         sha256 = hashlib.sha256()
-        async with aiofiles.open(path, 'rb') as f:
+        async with aiofiles.open(path, "rb") as f:
             while chunk := await f.read(8192):
                 sha256.update(chunk)
         return sha256.hexdigest()
@@ -529,9 +529,11 @@ class VersioningEngine:
 # 5️⃣ DATA OBSERVABILITY LAYER
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class DataMetrics:
     """Data-specific metrics for observability."""
+
     job_id: str
     stage: str
     timestamp: str = field(default_factory=lambda: datetime.datetime.now().isoformat())
@@ -563,49 +565,31 @@ class DataObservabilityLayer:
         from prometheus_client import Counter, Gauge, Histogram
 
         self.rows_processed = Counter(
-            'data_rows_processed_total',
-            'Total rows processed',
-            ['job_id', 'stage', 'status']
+            "data_rows_processed_total", "Total rows processed", ["job_id", "stage", "status"]
         )
 
-        self.rows_dropped = Counter(
-            'data_rows_dropped_total',
-            'Total rows dropped',
-            ['job_id', 'stage', 'reason']
-        )
+        self.rows_dropped = Counter("data_rows_dropped_total", "Total rows dropped", ["job_id", "stage", "reason"])
 
         self.data_latency = Histogram(
-            'data_stage_latency_seconds',
-            'Data processing latency per stage',
-            ['stage'],
-            buckets=[0.1, 0.5, 1, 2, 5, 10, 30, 60, 120]
+            "data_stage_latency_seconds",
+            "Data processing latency per stage",
+            ["stage"],
+            buckets=[0.1, 0.5, 1, 2, 5, 10, 30, 60, 120],
         )
 
-        self.quality_score = Gauge(
-            'data_quality_score',
-            'Current data quality score (0-100)',
-            ['job_id']
-        )
+        self.quality_score = Gauge("data_quality_score", "Current data quality score (0-100)", ["job_id"])
 
         self.anomalies_detected = Counter(
-            'data_anomalies_detected_total',
-            'Total anomalies detected',
-            ['job_id', 'anomaly_type']
+            "data_anomalies_detected_total", "Total anomalies detected", ["job_id", "anomaly_type"]
         )
 
     def record_stage(self, metrics: DataMetrics):
         """Record metrics for a pipeline stage."""
-        self.rows_processed.labels(
-            job_id=metrics.job_id,
-            stage=metrics.stage,
-            status="processed"
-        ).inc(metrics.rows_in)
+        self.rows_processed.labels(job_id=metrics.job_id, stage=metrics.stage, status="processed").inc(metrics.rows_in)
 
-        self.rows_dropped.labels(
-            job_id=metrics.job_id,
-            stage=metrics.stage,
-            reason="validation"
-        ).inc(metrics.rows_dropped)
+        self.rows_dropped.labels(job_id=metrics.job_id, stage=metrics.stage, reason="validation").inc(
+            metrics.rows_dropped
+        )
 
         self.data_latency.labels(stage=metrics.stage).observe(metrics.latency_ms / 1000)
 
@@ -615,10 +599,7 @@ class DataObservabilityLayer:
 
     def record_anomaly(self, job_id: str, anomaly_type: str):
         """Record detected anomaly."""
-        self.anomalies_detected.labels(
-            job_id=job_id,
-            anomaly_type=anomaly_type
-        ).inc()
+        self.anomalies_detected.labels(job_id=job_id, anomaly_type=anomaly_type).inc()
 
     async def get_pipeline_health(self, job_id: str) -> dict:
         """Get overall pipeline health for a job."""
@@ -630,7 +611,7 @@ class DataObservabilityLayer:
             "total_rows": 0,
             "dropped_rows": 0,
             "quality_score": 0.0,
-            "anomalies": 0
+            "anomalies": 0,
         }
 
 
@@ -638,9 +619,11 @@ class DataObservabilityLayer:
 # 6️⃣ RULES / POLICY ENGINE
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class Rule:
     """A business/fraud rule definition."""
+
     id: str
     name: str
     description: str
@@ -656,7 +639,7 @@ class Rule:
 class RuleEngine:
     """No-code rules execution engine."""
 
-    def __init__(self, rules_path: str = None):
+    def __init__(self, rules_path: str | None = None):
         self.rules: dict[str, Rule] = {}
         self.operators = {
             "eq": lambda a, b: a == b,
@@ -677,6 +660,7 @@ class RuleEngine:
     def load_rules(self, path: str):
         """Load rules from YAML/JSON file."""
         import yaml
+
         with open(path) as f:
             data = yaml.safe_load(f)
 
@@ -684,7 +668,7 @@ class RuleEngine:
             rule = Rule(**rule_data)
             self.rules[rule.id] = rule
 
-    def evaluate(self, entity: dict, context: dict = None) -> list[dict]:
+    def evaluate(self, entity: dict, context: dict | None = None) -> list[dict]:
         """Evaluate all rules against an entity."""
         results = []
         context = context or {}
@@ -700,7 +684,7 @@ class RuleEngine:
                     "category": rule.category,
                     "triggered": True,
                     "actions": rule.actions,
-                    "timestamp": datetime.datetime.now().isoformat()
+                    "timestamp": datetime.datetime.now().isoformat(),
                 }
                 results.append(result)
 
@@ -774,9 +758,11 @@ class RuleEngine:
 # 7️⃣ EXPLAINABILITY & AUDIT TRAIL
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class Explanation:
     """Explanation of a system decision."""
+
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     entity_id: str = ""
     decision_type: str = ""  # risk_flag, entity_merge, rule_trigger
@@ -793,7 +779,7 @@ class Explanation:
 
         for i, factor in enumerate(self.factors, 1):
             lines.append(f"  {i}. {factor.get('description', 'N/A')}")
-            if factor.get('weight'):
+            if factor.get("weight"):
                 lines.append(f"     Вага: {factor['weight']}")
 
         if self.evidence:
@@ -807,6 +793,7 @@ class Explanation:
 @dataclass
 class AuditEntry:
     """Immutable audit log entry."""
+
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: str = field(default_factory=lambda: datetime.datetime.now().isoformat())
     actor: str = "system"  # system, user:id, rule:id
@@ -830,8 +817,8 @@ class ExplainabilityEngine:
         entity_id: str,
         decision_type: str,
         rules_triggered: list[dict],
-        graph_paths: list[dict] = None,
-        embedding_matches: list[dict] = None
+        graph_paths: list[dict] | None = None,
+        embedding_matches: list[dict] | None = None,
     ) -> Explanation:
         """Generate explanation for a decision."""
         factors = []
@@ -845,13 +832,10 @@ class ExplainabilityEngine:
                 "type": "rule",
                 "id": rule.get("rule_id"),
                 "description": f"Спрацювало правило: {rule.get('rule_name')}",
-                "weight": weight
+                "weight": weight,
             })
             total_weight += weight
-            evidence.append({
-                "type": "rule_trigger",
-                "value": rule.get("rule_id")
-            })
+            evidence.append({"type": "rule_trigger", "value": rule.get("rule_id")})
 
         # Factor 2: Graph connections
         if graph_paths:
@@ -859,7 +843,7 @@ class ExplainabilityEngine:
                 factors.append({
                     "type": "graph",
                     "description": f"Зв'язок у графі: {path.get('description')}",
-                    "weight": path.get("weight", 0.2)
+                    "weight": path.get("weight", 0.2),
                 })
                 total_weight += path.get("weight", 0.2)
 
@@ -869,7 +853,7 @@ class ExplainabilityEngine:
                 factors.append({
                     "type": "semantic",
                     "description": f"Семантична схожість з {match.get('matched_id')}",
-                    "weight": match.get("similarity", 0.0) * 0.3
+                    "weight": match.get("similarity", 0.0) * 0.3,
                 })
                 total_weight += match.get("similarity", 0.0) * 0.3
 
@@ -877,11 +861,7 @@ class ExplainabilityEngine:
         confidence = min(total_weight, 1.0)
 
         explanation = Explanation(
-            entity_id=entity_id,
-            decision_type=decision_type,
-            confidence=confidence,
-            factors=factors,
-            evidence=evidence
+            entity_id=entity_id, decision_type=decision_type, confidence=confidence, factors=factors, evidence=evidence
         )
 
         # Log to audit
@@ -890,13 +870,7 @@ class ExplainabilityEngine:
         return explanation
 
     def log_action(
-        self,
-        actor: str,
-        action: str,
-        entity_type: str,
-        entity_id: str,
-        changes: dict = None,
-        reason: str = ""
+        self, actor: str, action: str, entity_type: str, entity_id: str, changes: dict | None = None, reason: str = ""
     ) -> AuditEntry:
         """Log an action to audit trail."""
         entry = AuditEntry(
@@ -905,7 +879,7 @@ class ExplainabilityEngine:
             entity_type=entity_type,
             entity_id=entity_id,
             changes=changes or {},
-            reason=reason
+            reason=reason,
         )
 
         self.audit_log.append(entry)
@@ -928,7 +902,7 @@ class ExplainabilityEngine:
             entity_type="entity",
             entity_id=explanation.entity_id,
             changes={"explanation_id": explanation.id},
-            reason=explanation.decision_type
+            reason=explanation.decision_type,
         )
 
     def _flush_audit_log(self):
@@ -939,9 +913,11 @@ class ExplainabilityEngine:
 # 8️⃣ HUMAN-IN-THE-LOOP
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class ReviewTask:
     """A task for human review."""
+
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     task_type: str = ""  # entity_merge, false_positive, rule_feedback
     priority: str = "normal"  # critical, high, normal, low
@@ -971,7 +947,7 @@ class HumanInTheLoopController:
         entity_type: str,
         suggestion: dict,
         priority: str = "normal",
-        context: dict = None
+        context: dict | None = None,
     ) -> ReviewTask:
         """Create a review task for human."""
         task = ReviewTask(
@@ -980,17 +956,14 @@ class HumanInTheLoopController:
             entity_id=entity_id,
             entity_type=entity_type,
             suggestion=suggestion,
-            context=context or {}
+            context=context or {},
         )
 
         self.tasks[task.id] = task
 
         # Notify if critical
         if priority in ["critical", "high"] and self.notifications:
-            self.notifications.send(
-                channel="review_queue",
-                message=f"Нове завдання на огляд: {task_type} ({priority})"
-            )
+            self.notifications.send(channel="review_queue", message=f"Нове завдання на огляд: {task_type} ({priority})")
 
         return task
 
@@ -998,8 +971,8 @@ class HumanInTheLoopController:
         self,
         task_id: str,
         decision: str,  # approve, reject, modify
-        corrections: dict = None,
-        notes: str = ""
+        corrections: dict | None = None,
+        notes: str = "",
     ) -> bool:
         """Submit human feedback on a task."""
         task = self.tasks.get(task_id)
@@ -1008,11 +981,7 @@ class HumanInTheLoopController:
 
         task.status = "completed"
         task.completed_at = datetime.datetime.now().isoformat()
-        task.feedback = {
-            "decision": decision,
-            "corrections": corrections or {},
-            "notes": notes
-        }
+        task.feedback = {"decision": decision, "corrections": corrections or {}, "notes": notes}
 
         # Apply corrections
         if decision == "approve":
@@ -1024,17 +993,16 @@ class HumanInTheLoopController:
 
         return True
 
-    def get_pending_tasks(self, user_id: str = None, priority: str = None) -> list[ReviewTask]:
+    def get_pending_tasks(self, user_id: str | None = None, priority: str | None = None) -> list[ReviewTask]:
         """Get pending review tasks."""
         tasks = [t for t in self.tasks.values() if t.status == "pending"]
 
         if priority:
             tasks = [t for t in tasks if t.priority == priority]
 
-        return sorted(tasks, key=lambda t: (
-            {"critical": 0, "high": 1, "normal": 2, "low": 3}.get(t.priority, 99),
-            t.created_at
-        ))
+        return sorted(
+            tasks, key=lambda t: ({"critical": 0, "high": 1, "normal": 2, "low": 3}.get(t.priority, 99), t.created_at)
+        )
 
     def _apply_suggestion(self, task: ReviewTask):
         """Apply the system's suggestion."""
@@ -1057,9 +1025,11 @@ class HumanInTheLoopController:
 # 9️⃣ LOAD / COST GOVERNOR
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class ResourceBudget:
     """Budget configuration for a resource type."""
+
     resource_type: str  # llm, embedding, telegram, scraping
     daily_limit: float = 100.0
     hourly_limit: float = 10.0
@@ -1098,10 +1068,7 @@ class LoadCostGovernor:
 
         # Check daily limit
         daily = await self._get_usage(resource_type, "day")
-        if daily + units > budget.daily_limit:
-            return False
-
-        return True
+        return not daily + units > budget.daily_limit
 
     async def record_usage(self, resource_type: str, units: float = 1.0, cost: float = 0.0):
         """Record resource usage."""
@@ -1124,11 +1091,10 @@ class LoadCostGovernor:
     async def enter_degradation_mode(self, reason: str):
         """Enable degradation mode (reduce non-critical operations)."""
         self.degradation_mode = True
-        await self.redis.set("system:degradation", json.dumps({
-            "enabled": True,
-            "reason": reason,
-            "timestamp": datetime.datetime.now().isoformat()
-        }))
+        await self.redis.set(
+            "system:degradation",
+            json.dumps({"enabled": True, "reason": reason, "timestamp": datetime.datetime.now().isoformat()}),
+        )
 
     async def exit_degradation_mode(self):
         """Exit degradation mode."""
@@ -1175,43 +1141,35 @@ class LoadCostGovernor:
 # ═══════════════════════════════════════════════════════════════════════════
 
 __all__ = [
-    # State Machine
-    "PipelineState",
-    "StateTransition",
-    "WorkflowOrchestrator",
-    "WorkflowEvent",
-
-    # Data Quality
-    "DataQualityEngine",
-    "QualityRule",
-    "QualityReport",
-
-    # Entity Resolution
-    "EntityResolutionEngine",
-    "EntityMatch",
-
-    # Versioning
-    "VersioningEngine",
-    "DataVersion",
-
+    "AuditEntry",
+    "DataMetrics",
     # Observability
     "DataObservabilityLayer",
-    "DataMetrics",
-
-    # Rules Engine
-    "RuleEngine",
-    "Rule",
-
+    # Data Quality
+    "DataQualityEngine",
+    "DataVersion",
+    "EntityMatch",
+    # Entity Resolution
+    "EntityResolutionEngine",
     # Explainability
     "ExplainabilityEngine",
     "Explanation",
-    "AuditEntry",
-
     # Human-in-the-loop
     "HumanInTheLoopController",
-    "ReviewTask",
-
     # Cost Governor
     "LoadCostGovernor",
+    # State Machine
+    "PipelineState",
+    "QualityReport",
+    "QualityRule",
     "ResourceBudget",
+    "ReviewTask",
+    "Rule",
+    # Rules Engine
+    "RuleEngine",
+    "StateTransition",
+    # Versioning
+    "VersioningEngine",
+    "WorkflowEvent",
+    "WorkflowOrchestrator",
 ]

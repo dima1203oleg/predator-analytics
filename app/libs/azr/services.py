@@ -15,8 +15,7 @@ NO-AI-OVERRIDE CLAUSE ACTIVE
 
 from datetime import datetime, timedelta
 import logging
-from typing import Any, Dict, List, Optional
-from uuid import UUID
+from typing import Any
 
 from app.libs.azr.models import (
     IMMUTABLE_CORE_COMPONENTS,
@@ -44,10 +43,7 @@ class AZRRiskAssessmentService:
     def __init__(self, ledger_client=None):
         self.ledger_client = ledger_client
 
-    def assess_amendment_risk(
-        self,
-        proposal: AmendmentProposal
-    ) -> RiskAssessment:
+    def assess_amendment_risk(self, proposal: AmendmentProposal) -> RiskAssessment:
         """Perform full risk assessment on amendment proposal.
         Returns deterministic risk score and classification.
         """
@@ -68,7 +64,7 @@ class AZRRiskAssessmentService:
             amendment_type=amendment_type,
             impact_scope=impact_scope,
             complexity_score=complexity_score,
-            rollback_timeframe=rollback_timeframe
+            rollback_timeframe=rollback_timeframe,
         )
 
         logger.info(
@@ -89,18 +85,20 @@ class AZRRiskAssessmentService:
 
         # Check for architectural changes
         architectural_keywords = [
-            "schema", "migration", "database", "api_version",
-            "protocol", "architecture", "service_split"
+            "schema",
+            "migration",
+            "database",
+            "api_version",
+            "protocol",
+            "architecture",
+            "service_split",
         ]
         for keyword in architectural_keywords:
             if keyword in str(proposal.change_specification).lower():
                 return AmendmentCategory.ARCHITECTURAL_CHANGE
 
         # Check for algorithmic changes
-        algorithmic_keywords = [
-            "algorithm", "parser", "indexer", "processor",
-            "analyzer", "calculator", "engine"
-        ]
+        algorithmic_keywords = ["algorithm", "parser", "indexer", "processor", "analyzer", "calculator", "engine"]
         for keyword in algorithmic_keywords:
             if keyword in str(proposal.change_specification).lower():
                 return AmendmentCategory.ALGORITHMIC_CHANGE
@@ -167,9 +165,7 @@ class AZRRiskAssessmentService:
         return RollbackTimeframe.DAYS
 
     async def check_rate_limits(
-        self,
-        proposal: AmendmentProposal,
-        risk_level: RiskLevel
+        self, proposal: AmendmentProposal, risk_level: RiskLevel
     ) -> ConstitutionalViolation | None:
         """Check if rate limit is exceeded for this risk level.
         Implements Axiom 9 rate limiting.
@@ -182,10 +178,7 @@ class AZRRiskAssessmentService:
         period_start = datetime.utcnow() - timedelta(days=limit["period_days"])
 
         # Query recent amendments of same risk level
-        recent_count = await self.ledger_client.count_amendments(
-            risk_level=risk_level.value,
-            since=period_start
-        )
+        recent_count = await self.ledger_client.count_amendments(risk_level=risk_level.value, since=period_start)
 
         if recent_count >= limit["amount"]:
             return ConstitutionalViolation(
@@ -193,9 +186,9 @@ class AZRRiskAssessmentService:
                 axiom="9",
                 severity=ViolationSeverity.HIGH,
                 message=f"Rate limit exceeded: {recent_count}/{limit['amount']} "
-                        f"amendments in {limit['period_days']} days",
+                f"amendments in {limit['period_days']} days",
                 action="QUEUE_FOR_NEXT_PERIOD",
-                escalation="ARBITER_BASIC"
+                escalation="ARBITER_BASIC",
             )
 
         return None
@@ -217,10 +210,7 @@ class AZRRiskAssessmentService:
 
         return constraints
 
-    def get_approval_requirements(
-        self,
-        approval_level: ApprovalTier
-    ) -> dict[str, Any]:
+    def get_approval_requirements(self, approval_level: ApprovalTier) -> dict[str, Any]:
         """Get detailed approval requirements for tier."""
         requirements = {
             ApprovalTier.BASIC: {
@@ -228,26 +218,31 @@ class AZRRiskAssessmentService:
                 "quorum": {"technical": 0.5},
                 "unanimous_required": [],
                 "witnesses": 1,
-                "timeout_hours": 24
+                "timeout_hours": 24,
             },
             ApprovalTier.AUDIT: {
                 "committees": ["technical", "security"],
                 "quorum": {"technical": 0.6, "security": 0.8},
                 "unanimous_required": [],
                 "witnesses": 3,
-                "timeout_hours": 48
+                "timeout_hours": 48,
             },
             ApprovalTier.COURT: {
                 "committees": ["technical", "security", "business", "arbiter"],
                 "quorum": {"technical": 0.8, "security": 1.0, "business": 0.8, "arbiter": 1.0},
                 "unanimous_required": ["security", "arbiter"],
                 "witnesses": 5,
-                "timeout_hours": 72
+                "timeout_hours": 72,
             },
             ApprovalTier.SUPER_MAJORITY: {
                 "committees": ["technical", "security", "business", "arbiter", "governance"],
-                "quorum": {"technical": 1.0, "security": 1.0, "business": 1.0,
-                          "arbiter": 1.0, "governance": 0.78},  # 7/9
+                "quorum": {
+                    "technical": 1.0,
+                    "security": 1.0,
+                    "business": 1.0,
+                    "arbiter": 1.0,
+                    "governance": 0.78,
+                },  # 7/9
                 "unanimous_required": ["security", "arbiter"],
                 "witnesses": 9,
                 "timeout_hours": 168,  # 7 days
@@ -255,9 +250,9 @@ class AZRRiskAssessmentService:
                     "90_days_production",
                     "zero_major_incidents",
                     "external_audit",
-                    "stakeholder_consensus"
-                ]
-            }
+                    "stakeholder_consensus",
+                ],
+            },
         }
 
         return requirements.get(approval_level, requirements[ApprovalTier.COURT])
@@ -268,10 +263,7 @@ class AZRConstitutionalValidator:
     Implements checks for all axioms (9-14).
     """
 
-    def validate_proposal(
-        self,
-        proposal: AmendmentProposal
-    ) -> list[ConstitutionalViolation]:
+    def validate_proposal(self, proposal: AmendmentProposal) -> list[ConstitutionalViolation]:
         """Validate proposal against all constitutional axioms.
         Returns list of violations (empty if compliant).
         """
@@ -297,30 +289,26 @@ class AZRConstitutionalValidator:
 
         return violations
 
-    def _check_immutable_core(
-        self,
-        proposal: AmendmentProposal
-    ) -> list[ConstitutionalViolation]:
+    def _check_immutable_core(self, proposal: AmendmentProposal) -> list[ConstitutionalViolation]:
         """Check Axiom 10: No modification of immutable core."""
         violations = []
 
         for component in proposal.target_components:
             if component in IMMUTABLE_CORE_COMPONENTS:
-                violations.append(ConstitutionalViolation(
-                    violation_id="AZR-001",
-                    axiom="10",
-                    severity=ViolationSeverity.CRITICAL,
-                    message=f"Attempt to modify immutable core: {component}",
-                    action="BLOCK_IMMEDIATELY",
-                    escalation="EMERGENCY_GOVERNANCE"
-                ))
+                violations.append(
+                    ConstitutionalViolation(
+                        violation_id="AZR-001",
+                        axiom="10",
+                        severity=ViolationSeverity.CRITICAL,
+                        message=f"Attempt to modify immutable core: {component}",
+                        action="BLOCK_IMMEDIATELY",
+                        escalation="EMERGENCY_GOVERNANCE",
+                    )
+                )
 
         return violations
 
-    def _check_rollback_plan(
-        self,
-        proposal: AmendmentProposal
-    ) -> list[ConstitutionalViolation]:
+    def _check_rollback_plan(self, proposal: AmendmentProposal) -> list[ConstitutionalViolation]:
         """Check Axiom 9: Rollback plan requirements."""
         violations = []
 
@@ -329,60 +317,62 @@ class AZRConstitutionalValidator:
 
         if proposal.risk_assessment.classification in [RiskLevel.HIGH, RiskLevel.EXTREME]:
             if not proposal.rollback_plan:
-                violations.append(ConstitutionalViolation(
-                    violation_id="AZR-005",
-                    axiom="9",
-                    severity=ViolationSeverity.HIGH,
-                    message="High-risk amendment requires rollback plan",
-                    action="BLOCK_UNTIL_ROLLBACK_PLAN",
-                    escalation="TECHNICAL_COMMITTEE"
-                ))
+                violations.append(
+                    ConstitutionalViolation(
+                        violation_id="AZR-005",
+                        axiom="9",
+                        severity=ViolationSeverity.HIGH,
+                        message="High-risk amendment requires rollback plan",
+                        action="BLOCK_UNTIL_ROLLBACK_PLAN",
+                        escalation="TECHNICAL_COMMITTEE",
+                    )
+                )
             elif not proposal.rollback_plan.tested:
-                violations.append(ConstitutionalViolation(
-                    violation_id="AZR-006",
-                    axiom="9",
-                    severity=ViolationSeverity.MEDIUM,
-                    message="Rollback plan must be tested before approval",
-                    action="REQUIRE_ROLLBACK_TEST",
-                    escalation="TECHNICAL_COMMITTEE"
-                ))
+                violations.append(
+                    ConstitutionalViolation(
+                        violation_id="AZR-006",
+                        axiom="9",
+                        severity=ViolationSeverity.MEDIUM,
+                        message="Rollback plan must be tested before approval",
+                        action="REQUIRE_ROLLBACK_TEST",
+                        escalation="TECHNICAL_COMMITTEE",
+                    )
+                )
 
         return violations
 
-    def _check_commitment(
-        self,
-        proposal: AmendmentProposal
-    ) -> list[ConstitutionalViolation]:
+    def _check_commitment(self, proposal: AmendmentProposal) -> list[ConstitutionalViolation]:
         """Check Axiom 11: Cryptographic commitment."""
         violations = []
 
         # Commitment required after proposal stage
-        if proposal.current_state.value not in ["PROPOSED"]:
+        if proposal.current_state.value != "PROPOSED":
             if not proposal.commitment:
-                violations.append(ConstitutionalViolation(
-                    violation_id="AZR-003",
-                    axiom="11",
-                    severity=ViolationSeverity.HIGH,
-                    message="Amendment lacks cryptographic commitment",
-                    action="BLOCK_UNTIL_COMMITMENT",
-                    escalation="TECHNICAL_REVIEW"
-                ))
+                violations.append(
+                    ConstitutionalViolation(
+                        violation_id="AZR-003",
+                        axiom="11",
+                        severity=ViolationSeverity.HIGH,
+                        message="Amendment lacks cryptographic commitment",
+                        action="BLOCK_UNTIL_COMMITMENT",
+                        escalation="TECHNICAL_REVIEW",
+                    )
+                )
             elif not proposal.commitment.binding:
-                violations.append(ConstitutionalViolation(
-                    violation_id="AZR-003b",
-                    axiom="11",
-                    severity=ViolationSeverity.HIGH,
-                    message="Commitment must be binding",
-                    action="MAKE_COMMITMENT_BINDING",
-                    escalation="TECHNICAL_REVIEW"
-                ))
+                violations.append(
+                    ConstitutionalViolation(
+                        violation_id="AZR-003b",
+                        axiom="11",
+                        severity=ViolationSeverity.HIGH,
+                        message="Commitment must be binding",
+                        action="MAKE_COMMITMENT_BINDING",
+                        escalation="TECHNICAL_REVIEW",
+                    )
+                )
 
         return violations
 
-    def _check_approvals(
-        self,
-        proposal: AmendmentProposal
-    ) -> list[ConstitutionalViolation]:
+    def _check_approvals(self, proposal: AmendmentProposal) -> list[ConstitutionalViolation]:
         """Check Axiom 12: Multi-party approval."""
         violations = []
 
@@ -394,45 +384,48 @@ class AZRConstitutionalValidator:
 
         for committee in required_committees:
             if committee not in proposal.approvals:
-                violations.append(ConstitutionalViolation(
-                    violation_id="AZR-007",
-                    axiom="12",
-                    severity=ViolationSeverity.HIGH,
-                    message=f"Missing approval from {committee} committee",
-                    action="BLOCK_UNTIL_ALL_APPROVALS",
-                    escalation="GOVERNANCE_BOARD"
-                ))
+                violations.append(
+                    ConstitutionalViolation(
+                        violation_id="AZR-007",
+                        axiom="12",
+                        severity=ViolationSeverity.HIGH,
+                        message=f"Missing approval from {committee} committee",
+                        action="BLOCK_UNTIL_ALL_APPROVALS",
+                        escalation="GOVERNANCE_BOARD",
+                    )
+                )
             else:
                 approval = proposal.approvals[committee]
 
                 # Security must be unanimous
                 if committee == "security" and not approval.is_unanimous:
-                    violations.append(ConstitutionalViolation(
-                        violation_id="AZR-008",
-                        axiom="12",
-                        severity=ViolationSeverity.CRITICAL,
-                        message="Security approval must be unanimous",
-                        action="REJECT_AMENDMENT",
-                        escalation="SECURITY_COUNCIL"
-                    ))
+                    violations.append(
+                        ConstitutionalViolation(
+                            violation_id="AZR-008",
+                            axiom="12",
+                            severity=ViolationSeverity.CRITICAL,
+                            message="Security approval must be unanimous",
+                            action="REJECT_AMENDMENT",
+                            escalation="SECURITY_COUNCIL",
+                        )
+                    )
 
                 # Arbiter must be unanimous
                 if committee == "arbiter" and not approval.is_unanimous:
-                    violations.append(ConstitutionalViolation(
-                        violation_id="AZR-009",
-                        axiom="12",
-                        severity=ViolationSeverity.CRITICAL,
-                        message="Arbiter approval must be unanimous",
-                        action="REJECT_AMENDMENT",
-                        escalation="ARBITER_COURT"
-                    ))
+                    violations.append(
+                        ConstitutionalViolation(
+                            violation_id="AZR-009",
+                            axiom="12",
+                            severity=ViolationSeverity.CRITICAL,
+                            message="Arbiter approval must be unanimous",
+                            action="REJECT_AMENDMENT",
+                            escalation="ARBITER_COURT",
+                        )
+                    )
 
         return violations
 
-    def _check_proofs(
-        self,
-        proposal: AmendmentProposal
-    ) -> list[ConstitutionalViolation]:
+    def _check_proofs(self, proposal: AmendmentProposal) -> list[ConstitutionalViolation]:
         """Check Axiom 13: Proof requirements."""
         violations = []
 
@@ -440,48 +433,51 @@ class AZRConstitutionalValidator:
 
         for claim in claims:
             if not claim.get("proof"):
-                violations.append(ConstitutionalViolation(
-                    violation_id="AZR-010",
-                    axiom="13",
-                    severity=ViolationSeverity.MEDIUM,
-                    message=f"Claim '{claim.get('statement', 'unknown')}' lacks proof",
-                    action="REQUIRE_PROOF",
-                    escalation="TECHNICAL_COMMITTEE"
-                ))
+                violations.append(
+                    ConstitutionalViolation(
+                        violation_id="AZR-010",
+                        axiom="13",
+                        severity=ViolationSeverity.MEDIUM,
+                        message=f"Claim '{claim.get('statement', 'unknown')}' lacks proof",
+                        action="REQUIRE_PROOF",
+                        escalation="TECHNICAL_COMMITTEE",
+                    )
+                )
             elif not claim.get("proof", {}).get("verification_method"):
-                violations.append(ConstitutionalViolation(
-                    violation_id="AZR-011",
-                    axiom="13",
-                    severity=ViolationSeverity.MEDIUM,
-                    message="Proof not independently verifiable",
-                    action="ADD_VERIFICATION_METHOD",
-                    escalation="AUDIT_TEAM"
-                ))
+                violations.append(
+                    ConstitutionalViolation(
+                        violation_id="AZR-011",
+                        axiom="13",
+                        severity=ViolationSeverity.MEDIUM,
+                        message="Proof not independently verifiable",
+                        action="ADD_VERIFICATION_METHOD",
+                        escalation="AUDIT_TEAM",
+                    )
+                )
 
         return violations
 
-    def _check_temporal_integrity(
-        self,
-        proposal: AmendmentProposal
-    ) -> list[ConstitutionalViolation]:
+    def _check_temporal_integrity(self, proposal: AmendmentProposal) -> list[ConstitutionalViolation]:
         """Check Axiom 14: Temporal integrity."""
         violations = []
 
         # Check state history is monotonic
         if len(proposal.states_history) >= 2:
             for i in range(1, len(proposal.states_history)):
-                prev_ts = proposal.states_history[i-1].get("timestamp", "")
+                prev_ts = proposal.states_history[i - 1].get("timestamp", "")
                 curr_ts = proposal.states_history[i].get("timestamp", "")
 
                 if curr_ts < prev_ts:
-                    violations.append(ConstitutionalViolation(
-                        violation_id="AZR-012",
-                        axiom="14",
-                        severity=ViolationSeverity.CRITICAL,
-                        message="Non-monotonic timestamp detected in state history",
-                        action="FORENSIC_INVESTIGATION",
-                        escalation="SECURITY_COUNCIL"
-                    ))
+                    violations.append(
+                        ConstitutionalViolation(
+                            violation_id="AZR-012",
+                            axiom="14",
+                            severity=ViolationSeverity.CRITICAL,
+                            message="Non-monotonic timestamp detected in state history",
+                            action="FORENSIC_INVESTIGATION",
+                            escalation="SECURITY_COUNCIL",
+                        )
+                    )
                     break
 
         return violations

@@ -9,14 +9,14 @@ Output: BehavioralScore per UEID.
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
-from typing import Optional
+import logging
 
 from app.core.confidence import ConfidenceScore, quick_confidence
 from app.indices.ass import calculate_ass
 from app.indices.bvi import calculate_bvi
 from app.indices.cp import calculate_cp
+
 
 logger = logging.getLogger("predator.engines.behavioral")
 
@@ -78,7 +78,12 @@ def compute_behavioral_score(
 
     logger.info(
         "Behavioral score computed: ueid=%s bvi=%.1f ass=%.1f cp=%.1f agg=%.1f conf=%.2f",
-        ueid, bvi, ass, cp, aggregate, confidence.total,
+        ueid,
+        bvi,
+        ass,
+        cp,
+        aggregate,
+        confidence.total,
     )
 
     return BehavioralScore(

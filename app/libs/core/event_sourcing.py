@@ -1,4 +1,4 @@
-"""🔄 EVENT SOURCING ENGINE - Time Travel & State Reconstruction
+"""🔄 EVENT SOURCING ENGINE - Time Travel & State Reconstruction.
 ==============================================================
 Core component for AZR v40 Sovereign Architecture.
 
@@ -20,37 +20,43 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from collections.abc import Callable
+import contextlib
 from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 import json
-import os
 from pathlib import Path
 import threading
 import time
-from typing import Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from app.libs.core.merkle_ledger import get_truth_ledger, sha3_256
+
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 # ============================================================================
 # 📦 EVENT TYPES
 # ============================================================================
 
+
 class EventCategory(Enum):
     """Categories of system events."""
-    AZR = "azr"                    # AZR Engine events
-    ETL = "etl"                    # ETL Pipeline events
-    SECURITY = "security"          # Security events
+
+    AZR = "azr"  # AZR Engine events
+    ETL = "etl"  # ETL Pipeline events
+    SECURITY = "security"  # Security events
     CONSTITUTIONAL = "constitutional"  # Constitutional violations
-    SYSTEM = "system"              # System-level events
-    USER = "user"                  # User actions
+    SYSTEM = "system"  # System-level events
+    USER = "user"  # User actions
 
 
 @dataclass
 class Event:
     """Base event class for event sourcing."""
+
     event_id: str
     event_type: str
     category: EventCategory
@@ -63,24 +69,27 @@ class Event:
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
-        d['category'] = self.category.value
+        d["category"] = self.category.value
         return d
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Event:
-        data['category'] = EventCategory(data['category'])
+        data["category"] = EventCategory(data["category"])
         return cls(**data)
 
     @property
     def hash(self) -> str:
         """Deterministic hash of event."""
-        canonical = json.dumps({
-            "event_id": self.event_id,
-            "event_type": self.event_type,
-            "aggregate_id": self.aggregate_id,
-            "payload": self.payload,
-            "timestamp": self.timestamp
-        }, sort_keys=True)
+        canonical = json.dumps(
+            {
+                "event_id": self.event_id,
+                "event_type": self.event_type,
+                "aggregate_id": self.aggregate_id,
+                "payload": self.payload,
+                "timestamp": self.timestamp,
+            },
+            sort_keys=True,
+        )
         return sha3_256(canonical)
 
 
@@ -88,9 +97,11 @@ class Event:
 # 📸 SNAPSHOTS
 # ============================================================================
 
+
 @dataclass
 class Snapshot:
     """State snapshot for efficient reconstruction."""
+
     aggregate_id: str
     aggregate_type: str
     state: dict[str, Any]
@@ -110,7 +121,7 @@ class Snapshot:
 # 🏗️ AGGREGATE BASE
 # ============================================================================
 
-T = TypeVar('T', bound='Aggregate')
+T = TypeVar("T", bound="Aggregate")
 
 
 class Aggregate(ABC):
@@ -138,8 +149,9 @@ class Aggregate(ABC):
     def restore_state(self, state: dict[str, Any]) -> None:
         """Restore state from dictionary."""
 
-    def record_event(self, event_type: str, payload: dict[str, Any],
-                     category: EventCategory = EventCategory.SYSTEM) -> Event:
+    def record_event(
+        self, event_type: str, payload: dict[str, Any], category: EventCategory = EventCategory.SYSTEM
+    ) -> Event:
         """Record a new event (does not persist until saved)."""
         event = Event(
             event_id=f"EVT-{sha3_256(f'{self.aggregate_id}:{time.time_ns()}')[:16]}",
@@ -148,7 +160,7 @@ class Aggregate(ABC):
             aggregate_id=self.aggregate_id,
             aggregate_type=self.aggregate_type,
             payload=payload,
-            version=self.version + len(self._pending_events) + 1
+            version=self.version + len(self._pending_events) + 1,
         )
         self._pending_events.append(event)
         self.apply(event)
@@ -184,8 +196,9 @@ class Aggregate(ABC):
 # 💾 EVENT STORE
 # ============================================================================
 
+
 class EventStore:
-    """🏛️ Подієвий Сховок (Event Store)
+    """🏛️ Подієвий Сховок (Event Store).
 
     Зберігає всі події системи у append-only форматі.
     Підтримує:
@@ -221,7 +234,7 @@ class EventStore:
         """Load events and snapshots from disk."""
         # Load events
         if self.events_file.exists():
-            with open(self.events_file, encoding='utf-8') as f:
+            with open(self.events_file, encoding="utf-8") as f:
                 for line in f:
                     if line.strip():
                         try:
@@ -235,7 +248,7 @@ class EventStore:
 
         # Load snapshots
         if self.snapshots_file.exists():
-            with open(self.snapshots_file, encoding='utf-8') as f:
+            with open(self.snapshots_file, encoding="utf-8") as f:
                 for line in f:
                     if line.strip():
                         try:
@@ -249,7 +262,7 @@ class EventStore:
 
     def append(self, events: list[Event]) -> None:
         """Append events to the store."""
-        with self._lock, open(self.events_file, 'a', encoding='utf-8') as f:
+        with self._lock, open(self.events_file, "a", encoding="utf-8") as f:
             for event in events:
                 # Update sequence
                 self._sequence += 1
@@ -264,10 +277,8 @@ class EventStore:
 
                 # Call handlers
                 for handler in self._event_handlers.get(event.event_type, []):
-                    try:
+                    with contextlib.suppress(Exception):
                         handler(event)
-                    except Exception:
-                        pass
 
                 # Also record to Truth Ledger for cryptographic proof
                 try:
@@ -278,8 +289,8 @@ class EventStore:
                             "event_id": event.event_id,
                             "event_type": event.event_type,
                             "aggregate_id": event.aggregate_id,
-                            "event_hash": event.hash
-                        }
+                            "event_hash": event.hash,
+                        },
                     )
                 except Exception:
                     pass
@@ -304,12 +315,12 @@ class EventStore:
             aggregate_type=aggregate.aggregate_type,
             state=aggregate.get_state(),
             version=aggregate.version,
-            event_sequence=self._sequence
+            event_sequence=self._sequence,
         )
 
         with self._lock:
             self._snapshots[aggregate.aggregate_id] = snapshot
-            with open(self.snapshots_file, 'a', encoding='utf-8') as f:
+            with open(self.snapshots_file, "a", encoding="utf-8") as f:
                 f.write(json.dumps(snapshot.to_dict()) + "\n")
 
         return snapshot
@@ -344,13 +355,14 @@ class EventStore:
             "total_snapshots": len(self._snapshots),
             "current_sequence": self._sequence,
             "event_type_counts": event_counts,
-            "storage_path": str(self.storage_path)
+            "storage_path": str(self.storage_path),
         }
 
 
 # ============================================================================
 # 🎯 AZR STATE AGGREGATE
 # ============================================================================
+
 
 class AZRStateAggregate(Aggregate):
     """Event-sourced aggregate for AZR Engine state.
@@ -413,7 +425,7 @@ class AZRStateAggregate(Aggregate):
             "total_actions_executed": self.total_actions_executed,
             "total_actions_blocked": self.total_actions_blocked,
             "total_rollbacks": self.total_rollbacks,
-            "last_cycle_timestamp": self.last_cycle_timestamp
+            "last_cycle_timestamp": self.last_cycle_timestamp,
         }
 
     def restore_state(self, state: dict[str, Any]) -> None:
@@ -436,29 +448,24 @@ class AZRStateAggregate(Aggregate):
         return self.record_event("AZR_STOPPED", {}, EventCategory.AZR)
 
     def complete_cycle(self, cycle: int, health_score: float, duration_ms: int) -> Event:
-        return self.record_event("AZR_CYCLE_COMPLETED", {
-            "cycle": cycle,
-            "health_score": health_score,
-            "duration_ms": duration_ms
-        }, EventCategory.AZR)
+        return self.record_event(
+            "AZR_CYCLE_COMPLETED",
+            {"cycle": cycle, "health_score": health_score, "duration_ms": duration_ms},
+            EventCategory.AZR,
+        )
 
     def record_action_executed(self, action_id: str, action_type: str) -> Event:
-        return self.record_event("AZR_ACTION_EXECUTED", {
-            "action_id": action_id,
-            "action_type": action_type
-        }, EventCategory.AZR)
+        return self.record_event(
+            "AZR_ACTION_EXECUTED", {"action_id": action_id, "action_type": action_type}, EventCategory.AZR
+        )
 
     def record_action_blocked(self, action_id: str, reason: str) -> Event:
-        return self.record_event("AZR_ACTION_BLOCKED", {
-            "action_id": action_id,
-            "reason": reason
-        }, EventCategory.CONSTITUTIONAL)
+        return self.record_event(
+            "AZR_ACTION_BLOCKED", {"action_id": action_id, "reason": reason}, EventCategory.CONSTITUTIONAL
+        )
 
     def record_rollback(self, action_id: str, reason: str) -> Event:
-        return self.record_event("AZR_ROLLBACK", {
-            "action_id": action_id,
-            "reason": reason
-        }, EventCategory.AZR)
+        return self.record_event("AZR_ROLLBACK", {"action_id": action_id, "reason": reason}, EventCategory.AZR)
 
 
 # ============================================================================

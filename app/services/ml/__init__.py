@@ -16,5 +16,5 @@ __all__ = [
     "get_augmentor",
     "get_reranker",
     "get_summarizer",
-    "get_xai_service"
+    "get_xai_service",
 ]

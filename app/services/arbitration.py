@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime
-import logging
-from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 
@@ -12,6 +10,7 @@ from app.services.model_router import ModelRouter
 
 
 logger = get_logger("service.arbitration")
+
 
 class ArbitrationResult(BaseModel):
     request_id: str
@@ -22,21 +21,24 @@ class ArbitrationResult(BaseModel):
     best_model: str
     timestamp: str
 
+
 class ArbitrationEngine:
     """Multi-Model Arbitration Engine (v45.0).
     Executes parallel inference across multiple AI providers and selects the optimal consensus using semantic similarity.
     """
+
     def __init__(self, model_router: ModelRouter):
         self.router = model_router
         from app.services.embedding_service import get_embedding_service
+
         self.embedding_service = get_embedding_service()
         # Fallback chain priorities
         self.priority_chain = ["gemini", "mistral", "llama", "claude"]
         # Configuration for models to participate in arbitration
         self.default_council = [
             {"id": "gemini", "model": "gemini-1.5-flash"},
-            {"id": "mistral", "model": "mistral"}, # Usually local via Ollama
-            {"id": "llama", "model": "llama3.1:8b"}
+            {"id": "mistral", "model": "mistral"},  # Usually local via Ollama
+            {"id": "llama", "model": "llama3.1:8b"},
         ]
 
     async def execute(self, prompt: str, council: list[dict[str, str]] | None = None) -> ArbitrationResult:
@@ -71,7 +73,7 @@ class ArbitrationEngine:
             contributing_models=[m["id"] for m in council],
             individual_responses=individual_responses,
             best_model=best_model,
-            timestamp=datetime.now().isoformat()
+            timestamp=datetime.now().isoformat(),
         )
 
         logger.info("arbitration_cycle_completed", request_id=request_id, best_model=best_model, confidence=confidence)
@@ -126,7 +128,7 @@ class ArbitrationEngine:
 
         # Normalize scores (average similarity to others)
         for id_ in scores:
-            scores[id_] /= (n - 1)
+            scores[id_] /= n - 1
 
         # Select winner (Majority wins via semantic proximity)
         best_id = max(scores, key=scores.get)
@@ -134,8 +136,8 @@ class ArbitrationEngine:
 
         # If confidence is too low (<0.5), it means high disagreement. Fallback to priority chain.
         if confidence < 0.5:
-             logger.warning("Low consensus confidence", confidence=confidence, winner=best_id)
-             return self._fallback_selection(valid_responses)
+            logger.warning("Low consensus confidence", confidence=confidence, winner=best_id)
+            return self._fallback_selection(valid_responses)
 
         return valid_responses[best_id], best_id, confidence
 
@@ -152,6 +154,7 @@ class ArbitrationEngine:
     def _log_metrics(self, result: ArbitrationResult):
         # Placeholder for detailed metrics logging
         pass
+
 
 # Singleton instance for the system
 

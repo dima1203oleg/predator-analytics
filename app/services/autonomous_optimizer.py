@@ -11,16 +11,14 @@ Enhanced self-optimization system with:
 """
 import asyncio
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-import logging
-from typing import Any, Dict, List, Optional
+from datetime import datetime
+from typing import Any
 import uuid
 
-from sqlalchemy import func, select, text, update
+from sqlalchemy import select, text, update
 
-from app.libs.core.config import settings
 from app.libs.core.database import get_db_ctx
-from app.libs.core.models import DataSource, MLDataset, MLJob
+from app.libs.core.models import DataSource, MLJob
 from app.libs.core.structured_logger import get_logger, log_business_event, log_performance
 
 
@@ -30,6 +28,7 @@ logger = get_logger("predator.optimizer")
 @dataclass
 class OptimizationMetrics:
     """Tracks optimization performance over time."""
+
     total_optimizations: int = 0
     successful_optimizations: int = 0
     failed_optimizations: int = 0
@@ -45,9 +44,8 @@ class OptimizationMetrics:
             self.total_drift_compensated += drift
             # Running average
             self.average_precision = (
-                (self.average_precision * (self.successful_optimizations - 1) + precision)
-                / self.successful_optimizations
-            )
+                self.average_precision * (self.successful_optimizations - 1) + precision
+            ) / self.successful_optimizations
         else:
             self.failed_optimizations += 1
 
@@ -56,7 +54,7 @@ class OptimizationMetrics:
             "timestamp": self.last_optimization_time.isoformat(),
             "success": success,
             "drift": drift,
-            "precision": precision if success else 0
+            "precision": precision if success else 0,
         })
         # Keep last 100 records
         if len(self.optimization_history) > 100:
@@ -68,15 +66,11 @@ class OptimizationMetrics:
             "successful_optimizations": self.successful_optimizations,
             "failed_optimizations": self.failed_optimizations,
             "success_rate": (
-                self.successful_optimizations / self.total_optimizations * 100
-                if self.total_optimizations > 0 else 0
+                self.successful_optimizations / self.total_optimizations * 100 if self.total_optimizations > 0 else 0
             ),
             "total_drift_compensated": self.total_drift_compensated,
             "average_precision": round(self.average_precision, 4),
-            "last_optimization": (
-                self.last_optimization_time.isoformat()
-                if self.last_optimization_time else None
-            )
+            "last_optimization": (self.last_optimization_time.isoformat() if self.last_optimization_time else None),
         }
 
 
@@ -88,7 +82,7 @@ class AutonomousOptimizerService:
     def __init__(self):
         self._is_running = False
         self._base_interval = 300  # 5 minutes base
-        self._min_interval = 60    # 1 minute minimum
+        self._min_interval = 60  # 1 minute minimum
         self._max_interval = 1800  # 30 minutes maximum
         self._current_interval = self._base_interval
         self._metrics = OptimizationMetrics()
@@ -127,17 +121,11 @@ class AutonomousOptimizerService:
         """Adaptive scheduling based on drift patterns."""
         if drift_detected:
             # Increase check frequency when drift detected
-            self._current_interval = max(
-                self._min_interval,
-                self._current_interval // 2
-            )
+            self._current_interval = max(self._min_interval, self._current_interval // 2)
             logger.debug(f"⚡ Increased check frequency: {self._current_interval}s")
         else:
             # Gradually decrease frequency when stable
-            self._current_interval = min(
-                self._max_interval,
-                int(self._current_interval * 1.2)
-            )
+            self._current_interval = min(self._max_interval, int(self._current_interval * 1.2))
 
     async def check_and_optimize(self) -> bool:
         """Detect drift and trigger optimization. Returns True if drift found."""
@@ -146,9 +134,7 @@ class AutonomousOptimizerService:
 
         async with get_db_ctx() as db:
             # Fetch all indexed sources
-            result = await db.execute(
-                select(DataSource).where(DataSource.status.in_(['indexed', 'online']))
-            )
+            result = await db.execute(select(DataSource).where(DataSource.status.in_(["indexed", "online"])))
             sources = result.scalars().all()
 
             for source in sources:
@@ -162,9 +148,7 @@ class AutonomousOptimizerService:
 
                 try:
                     # Get current row count
-                    count_res = await db.execute(
-                        text(f"SELECT COUNT(*) FROM {table_name}")
-                    )
+                    count_res = await db.execute(text(f"SELECT COUNT(*) FROM {table_name}"))
                     current_count = count_res.scalar() or 0
                 except Exception as e:
                     logger.warning(f"Could not check count for {table_name}: {e}")
@@ -178,17 +162,12 @@ class AutonomousOptimizerService:
                     # Calculate velocity
                     velocity = self._calculate_velocity()
 
-                    logger.info(
-                        f"🚀 DRIFT DETECTED: {source.name} | "
-                        f"+{drift} rows | Velocity: {velocity:.1f}/min"
-                    )
+                    logger.info(f"🚀 DRIFT DETECTED: {source.name} | +{drift} rows | Velocity: {velocity:.1f}/min")
 
                     # Determine optimization level based on drift magnitude
                     opt_level = self._determine_optimization_level(drift, velocity)
 
-                    await self._trigger_optimization(
-                        db, source, current_count, drift, opt_level
-                    )
+                    await self._trigger_optimization(db, source, current_count, drift, opt_level)
 
         return drift_detected
 
@@ -211,20 +190,12 @@ class AutonomousOptimizerService:
             return 3  # Medium - standard optimization
         if drift > 100 or velocity > 5:
             return 2  # Low - light optimization
-        return 1      # Minimal - incremental update
+        return 1  # Minimal - incremental update
 
-    async def _trigger_optimization(
-        self, db, source, new_count: int, drift: int, level: int
-    ):
+    async def _trigger_optimization(self, db, source, new_count: int, drift: int, level: int):
         """Execute optimization pipeline at specified level."""
         self._optimization_level = level
-        level_names = {
-            1: "INCREMENTAL",
-            2: "LIGHT",
-            3: "STANDARD",
-            4: "ENHANCED",
-            5: "FULL_RETRAIN"
-        }
+        level_names = {1: "INCREMENTAL", 2: "LIGHT", 3: "STANDARD", 4: "ENHANCED", 5: "FULL_RETRAIN"}
 
         job_id = uuid.uuid4()
         new_job = MLJob(
@@ -236,8 +207,8 @@ class AutonomousOptimizerService:
                 "drift_amount": drift,
                 "optimization_level": level,
                 "level_name": level_names.get(level, "UNKNOWN"),
-                "started_at": datetime.utcnow().isoformat()
-            }
+                "started_at": datetime.utcnow().isoformat(),
+            },
         )
         db.add(new_job)
         await db.flush()
@@ -254,13 +225,9 @@ class AutonomousOptimizerService:
         await db.commit()
 
         # Process asynchronously
-        asyncio.create_task(
-            self._execute_optimization(job_id, source.id, drift, level)
-        )
+        asyncio.create_task(self._execute_optimization(job_id, source.id, drift, level))
 
-    async def _execute_optimization(
-        self, job_id: uuid.UUID, source_id, drift: int, level: int
-    ):
+    async def _execute_optimization(self, job_id: uuid.UUID, source_id, drift: int, level: int):
         """Execute actual optimization work."""
         # Simulate processing time based on level
         processing_time = 10 + (level * 5)  # 15-35 seconds
@@ -268,6 +235,7 @@ class AutonomousOptimizerService:
 
         # Generate realistic metrics based on level
         import random
+
         base_precision = 0.85 + (level * 0.02) + random.uniform(-0.02, 0.03)
         precision = min(0.99, max(0.80, base_precision))
         f1_score = precision * random.uniform(0.93, 0.98)
@@ -285,16 +253,12 @@ class AutonomousOptimizerService:
                         "ndcg": round(ndcg, 4),
                         "drift_compensated": drift,
                         "optimization_level": level,
-                        "finalized_at": datetime.utcnow().isoformat()
-                    }
+                        "finalized_at": datetime.utcnow().isoformat(),
+                    },
                 )
             )
 
-            await db.execute(
-                update(DataSource)
-                .where(DataSource.id == source_id)
-                .values(status="indexed")
-            )
+            await db.execute(update(DataSource).where(DataSource.id == source_id).values(status="indexed"))
             await db.commit()
 
         # Record metrics
@@ -305,11 +269,7 @@ class AutonomousOptimizerService:
             await self._generate_anomaly_case(drift, level, precision)
 
         log_performance(
-            logger,
-            "optimization_cycle",
-            duration_ms=int(processing_time * 1000),
-            level=level,
-            rows_processed=drift
+            logger, "optimization_cycle", duration_ms=int(processing_time * 1000), level=level, rows_processed=drift
         )
 
         log_business_event(
@@ -318,27 +278,24 @@ class AutonomousOptimizerService:
             job_id=str(job_id),
             level=level,
             precision=precision,
-            drift_compensated=drift
+            drift_compensated=drift,
         )
 
-        logger.info(
-            f"✅ Optimization L{level} Complete",
-            job_id=str(job_id),
-            precision=f"{precision:.2%}",
-            drift=drift
-        )
+        logger.info(f"✅ Optimization L{level} Complete", job_id=str(job_id), precision=f"{precision:.2%}", drift=drift)
 
     async def _generate_anomaly_case(self, drift: int, level: int, precision: float):
         """Automatically generate a case when significant anomalies detected."""
         try:
             async with get_db_ctx() as db:
                 # Check if cases table exists
-                result = await db.execute(text("""
+                result = await db.execute(
+                    text("""
                     SELECT EXISTS (
                         SELECT FROM information_schema.tables
                         WHERE table_schema = 'gold' AND table_name = 'cases'
                     )
-                """))
+                """)
+                )
                 if not result.scalar():
                     logger.debug("Cases table not found, skipping case generation")
                     return
@@ -347,19 +304,22 @@ class AutonomousOptimizerService:
                 risk_score = min(95, 50 + (drift // 100) + (level * 5))
                 status = "КРИТИЧНО" if risk_score >= 80 else "УВАГА"
 
-                await db.execute(text("""
+                await db.execute(
+                    text("""
                     INSERT INTO gold.cases (id, title, situation, conclusion, status, risk_score, sector, ai_insight, created_at, updated_at)
                     VALUES (:id, :title, :situation, :conclusion, :status, :risk_score, :sector, :ai_insight, NOW(), NOW())
-                """), {
-                    "id": str(case_id),
-                    "title": "Автоматичне виявлення: Аномальний дрифт даних",
-                    "situation": f"Система зафіксувала значний дрифт даних: {drift} нових записів. Рівень оптимізації: L{level}.",
-                    "conclusion": f"Автоматична оптимізація виконана з точністю {precision:.2%}. Рекомендується перевірка джерела даних.",
-                    "status": status,
-                    "risk_score": risk_score,
-                    "sector": "SYS",
-                    "ai_insight": "Дрифт компенсовано автоматично. Якщо подібні аномалії повторюються, розгляньте збільшення частоти моніторингу."
-                })
+                """),
+                    {
+                        "id": str(case_id),
+                        "title": "Автоматичне виявлення: Аномальний дрифт даних",
+                        "situation": f"Система зафіксувала значний дрифт даних: {drift} нових записів. Рівень оптимізації: L{level}.",
+                        "conclusion": f"Автоматична оптимізація виконана з точністю {precision:.2%}. Рекомендується перевірка джерела даних.",
+                        "status": status,
+                        "risk_score": risk_score,
+                        "sector": "SYS",
+                        "ai_insight": "Дрифт компенсовано автоматично. Якщо подібні аномалії повторюються, розгляньте збільшення частоти моніторингу.",
+                    },
+                )
                 await db.commit()
 
                 logger.info(f"📋 Auto-generated case for anomaly: {case_id}")
@@ -375,7 +335,7 @@ class AutonomousOptimizerService:
             "optimization_level": self._optimization_level,
             "metrics": self._metrics.to_dict(),
             "recent_drift_history": self._drift_history[-10:] if self._drift_history else [],
-            "velocity_per_minute": self._calculate_velocity()
+            "velocity_per_minute": self._calculate_velocity(),
         }
 
     async def force_check(self) -> dict[str, Any]:
@@ -385,7 +345,7 @@ class AutonomousOptimizerService:
         return {
             "drift_detected": drift_detected,
             "timestamp": datetime.utcnow().isoformat(),
-            "status": self.get_status()
+            "status": self.get_status(),
         }
 
 

@@ -1,4 +1,4 @@
-"""Predator v45 | Neural Analytics- Autonomous Evolution Engine (AEM)
+"""Predator v45 | Neural Analytics- Autonomous Evolution Engine (AEM).
 ================================================
 
 The core module for self-improvement, meta-learning, and evolutionary optimization.
@@ -14,24 +14,25 @@ Layers:
 8. Evolutionary Fitness Evaluation
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 import hashlib
-import json
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
-class EvolutionPhase(str, Enum):
+class EvolutionPhase(StrEnum):
     """Current phase of autonomous evolution."""
+
     MONITORING = "phase_1_monitoring"
     RECOMMENDATIONS = "phase_2_recommendations"
     LIMITED_AUTONOMY = "phase_3_limited_autonomy"
     FULL_AUTONOMY = "phase_4_full_autonomy"
 
 
-class HypothesisType(str, Enum):
+class HypothesisType(StrEnum):
     """Types of improvement hypotheses."""
+
     ARCHITECTURAL = "architectural"
     ALGORITHMIC = "algorithmic"
     PERFORMANCE = "performance"
@@ -40,8 +41,9 @@ class HypothesisType(str, Enum):
     INFRASTRUCTURE = "infrastructure"
 
 
-class RiskLevel(str, Enum):
+class RiskLevel(StrEnum):
     """Risk level for improvements."""
+
     NONE = "none"
     LOW = "low"
     MEDIUM = "medium"
@@ -49,8 +51,9 @@ class RiskLevel(str, Enum):
     CRITICAL = "critical"
 
 
-class VerificationResult(str, Enum):
+class VerificationResult(StrEnum):
     """Result of formal verification."""
+
     VALID = "valid"
     INVALID = "invalid"
     UNKNOWN = "unknown"
@@ -60,6 +63,7 @@ class VerificationResult(str, Enum):
 @dataclass
 class SystemMetrics:
     """Current system metrics for self-diagnosis."""
+
     timestamp: datetime
 
     # Performance metrics
@@ -95,6 +99,7 @@ class SystemMetrics:
 @dataclass
 class PerformanceGap:
     """Identified performance gap."""
+
     id: str
     component: str
     metric: str
@@ -108,6 +113,7 @@ class PerformanceGap:
 @dataclass
 class ImprovementHypothesis:
     """A hypothesis for system improvement."""
+
     id: str
     type: HypothesisType
     component: str
@@ -126,6 +132,7 @@ class ImprovementHypothesis:
 @dataclass
 class FitnessScore:
     """Multi-objective fitness evaluation."""
+
     improvement_id: str
 
     # Individual metrics (0-1 scale)
@@ -147,6 +154,7 @@ class FitnessScore:
 @dataclass
 class ConstitutionalCheck:
     """Result of constitutional compliance check."""
+
     improvement_id: str
     principle_id: str
     principle_text: str
@@ -158,6 +166,7 @@ class ConstitutionalCheck:
 @dataclass
 class SafetyCouncilReview:
     """Review from Safety Council agent."""
+
     agent_id: str
     agent_name: str
     improvement_id: str
@@ -170,6 +179,7 @@ class SafetyCouncilReview:
 @dataclass
 class EvolutionaryRecord:
     """Record in the evolutionary history database."""
+
     id: str
     generation: int
     hypothesis: ImprovementHypothesis
@@ -203,7 +213,7 @@ class MetaLearningController:
             "autonomy_boundaries": {},
             "evolution_phases": {},
             "safety_council": {},
-            "fitness_evaluation": {}
+            "fitness_evaluation": {},
         }
 
     def diagnose_system(self) -> SystemMetrics:
@@ -236,7 +246,7 @@ class MetaLearningController:
             test_coverage=0.78,
             cyclomatic_complexity=12.5,
             technical_debt_hours=180.0,
-            security_vulnerabilities=3
+            security_vulnerabilities=3,
         )
 
     def identify_performance_gaps(self, metrics: SystemMetrics) -> list[PerformanceGap]:
@@ -251,47 +261,50 @@ class MetaLearningController:
 
         # Example gap detection logic
         if metrics.latency_p99_ms > 200:
-            gaps.append(PerformanceGap(
-                id=f"gap-{hashlib.md5(b'latency').hexdigest()[:8]}",
-                component="api_gateway",
-                metric="latency_p99",
-                current_value=metrics.latency_p99_ms,
-                target_value=200.0,
-                gap_percent=((metrics.latency_p99_ms - 200) / 200) * 100,
-                priority=1,
-                detected_at=datetime.now()
-            ))
+            gaps.append(
+                PerformanceGap(
+                    id=f"gap-{hashlib.md5(b'latency').hexdigest()[:8]}",
+                    component="api_gateway",
+                    metric="latency_p99",
+                    current_value=metrics.latency_p99_ms,
+                    target_value=200.0,
+                    gap_percent=((metrics.latency_p99_ms - 200) / 200) * 100,
+                    priority=1,
+                    detected_at=datetime.now(),
+                )
+            )
 
         if metrics.error_rate > 0.01:
-            gaps.append(PerformanceGap(
-                id=f"gap-{hashlib.md5(b'errors').hexdigest()[:8]}",
-                component="system",
-                metric="error_rate",
-                current_value=metrics.error_rate,
-                target_value=0.01,
-                gap_percent=((metrics.error_rate - 0.01) / 0.01) * 100,
-                priority=2,
-                detected_at=datetime.now()
-            ))
+            gaps.append(
+                PerformanceGap(
+                    id=f"gap-{hashlib.md5(b'errors').hexdigest()[:8]}",
+                    component="system",
+                    metric="error_rate",
+                    current_value=metrics.error_rate,
+                    target_value=0.01,
+                    gap_percent=((metrics.error_rate - 0.01) / 0.01) * 100,
+                    priority=2,
+                    detected_at=datetime.now(),
+                )
+            )
 
         if metrics.test_coverage < 0.80:
-            gaps.append(PerformanceGap(
-                id=f"gap-{hashlib.md5(b'coverage').hexdigest()[:8]}",
-                component="codebase",
-                metric="test_coverage",
-                current_value=metrics.test_coverage,
-                target_value=0.80,
-                gap_percent=((0.80 - metrics.test_coverage) / 0.80) * 100,
-                priority=3,
-                detected_at=datetime.now()
-            ))
+            gaps.append(
+                PerformanceGap(
+                    id=f"gap-{hashlib.md5(b'coverage').hexdigest()[:8]}",
+                    component="codebase",
+                    metric="test_coverage",
+                    current_value=metrics.test_coverage,
+                    target_value=0.80,
+                    gap_percent=((0.80 - metrics.test_coverage) / 0.80) * 100,
+                    priority=3,
+                    detected_at=datetime.now(),
+                )
+            )
 
         return sorted(gaps, key=lambda g: g.priority)
 
-    def generate_improvement_hypotheses(
-        self,
-        gaps: list[PerformanceGap]
-    ) -> list[ImprovementHypothesis]:
+    def generate_improvement_hypotheses(self, gaps: list[PerformanceGap]) -> list[ImprovementHypothesis]:
         """Generate improvement hypotheses based on identified gaps.
 
         Uses:
@@ -303,54 +316,50 @@ class MetaLearningController:
 
         for gap in gaps:
             if gap.metric == "latency_p99":
-                hypotheses.append(ImprovementHypothesis(
-                    id=f"hyp-{hashlib.md5(gap.id.encode()).hexdigest()[:8]}",
-                    type=HypothesisType.PERFORMANCE,
-                    component=gap.component,
-                    title="Implement response caching with Redis",
-                    description=f"Add caching layer to reduce {gap.metric} from {gap.current_value}ms to {gap.target_value}ms",
-                    expected_improvement=f"{gap.gap_percent:.1f}% latency reduction",
-                    risk_level=RiskLevel.LOW,
-                    implementation_steps=[
-                        "Identify cacheable endpoints",
-                        "Configure Redis cache with TTL",
-                        "Add cache invalidation logic",
-                        "Deploy with canary rollout"
-                    ],
-                    verification_requirements=[
-                        "performance_test",
-                        "cache_hit_rate_test",
-                        "data_consistency_test"
-                    ],
-                    estimated_effort_hours=8.0,
-                    confidence=0.85,
-                    generated_at=datetime.now()
-                ))
+                hypotheses.append(
+                    ImprovementHypothesis(
+                        id=f"hyp-{hashlib.md5(gap.id.encode()).hexdigest()[:8]}",
+                        type=HypothesisType.PERFORMANCE,
+                        component=gap.component,
+                        title="Implement response caching with Redis",
+                        description=f"Add caching layer to reduce {gap.metric} from {gap.current_value}ms to {gap.target_value}ms",
+                        expected_improvement=f"{gap.gap_percent:.1f}% latency reduction",
+                        risk_level=RiskLevel.LOW,
+                        implementation_steps=[
+                            "Identify cacheable endpoints",
+                            "Configure Redis cache with TTL",
+                            "Add cache invalidation logic",
+                            "Deploy with canary rollout",
+                        ],
+                        verification_requirements=["performance_test", "cache_hit_rate_test", "data_consistency_test"],
+                        estimated_effort_hours=8.0,
+                        confidence=0.85,
+                        generated_at=datetime.now(),
+                    )
+                )
 
             elif gap.metric == "test_coverage":
-                hypotheses.append(ImprovementHypothesis(
-                    id=f"hyp-{hashlib.md5(gap.id.encode()).hexdigest()[:8]}",
-                    type=HypothesisType.CODE_QUALITY,
-                    component=gap.component,
-                    title="Auto-generate unit tests with AI",
-                    description=f"Increase test coverage from {gap.current_value:.0%} to {gap.target_value:.0%}",
-                    expected_improvement=f"{gap.gap_percent:.1f}% coverage increase",
-                    risk_level=RiskLevel.NONE,
-                    implementation_steps=[
-                        "Analyze uncovered code paths",
-                        "Generate test cases with LLM",
-                        "Validate generated tests",
-                        "Merge to codebase"
-                    ],
-                    verification_requirements=[
-                        "test_execution",
-                        "coverage_report",
-                        "mutation_testing"
-                    ],
-                    estimated_effort_hours=4.0,
-                    confidence=0.90,
-                    generated_at=datetime.now()
-                ))
+                hypotheses.append(
+                    ImprovementHypothesis(
+                        id=f"hyp-{hashlib.md5(gap.id.encode()).hexdigest()[:8]}",
+                        type=HypothesisType.CODE_QUALITY,
+                        component=gap.component,
+                        title="Auto-generate unit tests with AI",
+                        description=f"Increase test coverage from {gap.current_value:.0%} to {gap.target_value:.0%}",
+                        expected_improvement=f"{gap.gap_percent:.1f}% coverage increase",
+                        risk_level=RiskLevel.NONE,
+                        implementation_steps=[
+                            "Analyze uncovered code paths",
+                            "Generate test cases with LLM",
+                            "Validate generated tests",
+                            "Merge to codebase",
+                        ],
+                        verification_requirements=["test_execution", "coverage_report", "mutation_testing"],
+                        estimated_effort_hours=4.0,
+                        confidence=0.90,
+                        generated_at=datetime.now(),
+                    )
+                )
 
         return hypotheses
 
@@ -374,16 +383,16 @@ class MetaLearningController:
             "stability_impact": 0.20,
             "security_impact": 0.15,
             "maintenance_cost": 0.10,
-            "constitutional_alignment": 0.10
+            "constitutional_alignment": 0.10,
         }
 
         total = (
-            performance_gain * weights["performance_gain"] +
-            resource_efficiency * weights["resource_efficiency"] +
-            stability_impact * weights["stability_impact"] +
-            security_impact * weights["security_impact"] +
-            maintenance_cost * weights["maintenance_cost"] +
-            constitutional_alignment * weights["constitutional_alignment"]
+            performance_gain * weights["performance_gain"]
+            + resource_efficiency * weights["resource_efficiency"]
+            + stability_impact * weights["stability_impact"]
+            + security_impact * weights["security_impact"]
+            + maintenance_cost * weights["maintenance_cost"]
+            + constitutional_alignment * weights["constitutional_alignment"]
         )
 
         return FitnessScore(
@@ -396,13 +405,10 @@ class MetaLearningController:
             constitutional_alignment=constitutional_alignment,
             total_fitness=total,
             evaluated_at=datetime.now(),
-            passed_threshold=total >= 0.6 and constitutional_alignment >= 0.8
+            passed_threshold=total >= 0.6 and constitutional_alignment >= 0.8,
         )
 
-    def check_constitutional_compliance(
-        self,
-        hypothesis: ImprovementHypothesis
-    ) -> list[ConstitutionalCheck]:
+    def check_constitutional_compliance(self, hypothesis: ImprovementHypothesis) -> list[ConstitutionalCheck]:
         """Verify hypothesis against constitutional rules.
 
         Uses Z3 theorem prover for formal verification where applicable.
@@ -411,28 +417,35 @@ class MetaLearningController:
 
         # Check against immutable principles
         principles = [
-            ("SEC-001", "Never decrease system security", hypothesis.type != HypothesisType.SECURITY or hypothesis.risk_level != RiskLevel.CRITICAL),
+            (
+                "SEC-001",
+                "Never decrease system security",
+                hypothesis.type != HypothesisType.SECURITY or hypothesis.risk_level != RiskLevel.CRITICAL,
+            ),
             ("TRN-001", "All autonomous decisions must be explainable", True),
-            ("STB-001", "Preserve backward compatibility when possible", hypothesis.risk_level in [RiskLevel.NONE, RiskLevel.LOW]),
+            (
+                "STB-001",
+                "Preserve backward compatibility when possible",
+                hypothesis.risk_level in [RiskLevel.NONE, RiskLevel.LOW],
+            ),
             ("ETH-002", "Human oversight must remain possible", True),
         ]
 
         for principle_id, principle_text, compliant in principles:
-            checks.append(ConstitutionalCheck(
-                improvement_id=hypothesis.id,
-                principle_id=principle_id,
-                principle_text=principle_text,
-                compliant=compliant,
-                explanation=f"Hypothesis {'complies with' if compliant else 'may violate'} {principle_id}",
-                severity="critical" if "security" in principle_text.lower() else "high"
-            ))
+            checks.append(
+                ConstitutionalCheck(
+                    improvement_id=hypothesis.id,
+                    principle_id=principle_id,
+                    principle_text=principle_text,
+                    compliant=compliant,
+                    explanation=f"Hypothesis {'complies with' if compliant else 'may violate'} {principle_id}",
+                    severity="critical" if "security" in principle_text.lower() else "high",
+                )
+            )
 
         return checks
 
-    def run_safety_council_review(
-        self,
-        hypothesis: ImprovementHypothesis
-    ) -> list[SafetyCouncilReview]:
+    def run_safety_council_review(self, hypothesis: ImprovementHypothesis) -> list[SafetyCouncilReview]:
         """Multi-agent review by Safety Council.
 
         Each agent evaluates from their perspective.
@@ -459,21 +472,22 @@ class MetaLearningController:
                 concerns.append(f"High risk: {hypothesis.risk_level.value}")
                 approved = False
 
-            reviews.append(SafetyCouncilReview(
-                agent_id=agent_id,
-                agent_name=agent_name,
-                improvement_id=hypothesis.id,
-                approved=approved,
-                concerns=concerns,
-                conditions=conditions,
-                reviewed_at=datetime.now()
-            ))
+            reviews.append(
+                SafetyCouncilReview(
+                    agent_id=agent_id,
+                    agent_name=agent_name,
+                    improvement_id=hypothesis.id,
+                    approved=approved,
+                    concerns=concerns,
+                    conditions=conditions,
+                    reviewed_at=datetime.now(),
+                )
+            )
 
         return reviews
 
     def propose_improvement(self) -> ImprovementHypothesis | None:
-        """Main entry point: Generate a verified improvement proposal.
-        """
+        """Main entry point: Generate a verified improvement proposal."""
         # Phase 1: Diagnose
         metrics = self.diagnose_system()
 
@@ -553,8 +567,7 @@ class AutonomousRetrainingOrchestrator:
 
 
 class EvolutionaryProgressTracker:
-    """Track long-term evolutionary progress.
-    """
+    """Track long-term evolutionary progress."""
 
     def __init__(self):
         self.generations: list[dict] = []
@@ -565,8 +578,13 @@ class EvolutionaryProgressTracker:
             "generation": generation,
             "timestamp": datetime.now().isoformat(),
             "improvements_count": len(improvements),
-            "average_fitness": sum(i.fitness.total_fitness for i in improvements) / len(improvements) if improvements else 0,
-            "success_rate": sum(1 for i in improvements if i.actual_improvement and i.actual_improvement > 0) / len(improvements) if improvements else 0
+            "average_fitness": sum(i.fitness.total_fitness for i in improvements) / len(improvements)
+            if improvements
+            else 0,
+            "success_rate": sum(1 for i in improvements if i.actual_improvement and i.actual_improvement > 0)
+            / len(improvements)
+            if improvements
+            else 0,
         })
 
     def get_progress_report(self) -> dict[str, Any]:
@@ -582,5 +600,7 @@ class EvolutionaryProgressTracker:
             "current_generation": latest["generation"],
             "average_fitness_trend": latest["average_fitness"] - first["average_fitness"],
             "success_rate_trend": latest["success_rate"] - first["success_rate"],
-            "improvements_velocity": sum(g["improvements_count"] for g in self.generations[-4:]) / 4 if len(self.generations) >= 4 else 0
+            "improvements_velocity": sum(g["improvements_count"] for g in self.generations[-4:]) / 4
+            if len(self.generations) >= 4
+            else 0,
         }

@@ -1,26 +1,31 @@
-
-"""
-Module: store
+"""Module: store
 Component: rtb-engine
-Predator Analytics v45.1
+Predator Analytics v45.1.
 """
-import asyncpg
+
+import json
 import logging
 import os
-import json
-from typing import Optional
-from services.shared.decision import DecisionArtifact
+from typing import TYPE_CHECKING
+
+import asyncpg
+
+
+if TYPE_CHECKING:
+    from services.shared.decision import DecisionArtifact
+
 
 logger = logging.getLogger(__name__)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+
 class AuditStore:
-    """
-    Persists RTB decisions to the Audit Ledger (PostgreSQL).
+    """Persists RTB decisions to the Audit Ledger (PostgreSQL).
     Section 3.2.2 of Spec.
     """
-    def __init__(self, dsn: Optional[str] = None):
+
+    def __init__(self, dsn: str | None = None):
         self.dsn = dsn or DATABASE_URL
         self.pool = None
 
@@ -29,7 +34,7 @@ class AuditStore:
             self.pool = await asyncpg.create_pool(self.dsn)
             logger.info("Audit Store connected to PostgreSQL")
 
-    async def save(self, artifact: DecisionArtifact):
+    async def save(self, artifact: "DecisionArtifact"):
         """Saves a DecisionArtifact to the database."""
         if not self.pool:
             await self.connect()
@@ -48,11 +53,11 @@ class AuditStore:
                     artifact.rule_id,
                     json.dumps(artifact.to_dict()),
                     artifact.correlation_id,
-                    artifact.context_hash  # Simplified hash usage
+                    artifact.context_hash,  # Simplified hash usage
                 )
             logger.debug(f"Audit record saved: {artifact.decision_id}")
         except Exception as e:
-            logger.error(f"Failed to save audit record: {e}")
+            logger.exception(f"Failed to save audit record: {e}")
 
     async def close(self):
         if self.pool:

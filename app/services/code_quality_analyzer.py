@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import ast
-import logging
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 from app.libs.core.structured_logger import get_logger
 
 
 logger = get_logger("service.code_quality")
+
 
 class CodeQualityAnalyzer:
     """Autonomous Code Quality Analyzer (v45.0).
@@ -18,7 +18,7 @@ class CodeQualityAnalyzer:
     def __init__(self, root_dir: str = "/app"):
         # Default to current working dir if /app doesn't exist (local dev)
         self.root_dir = root_dir if os.path.exists(root_dir) else os.getcwd()
-        self.ignore_dirs = {'.git', '__pycache__', '.venv', 'node_modules', 'tests', 'migrations'}
+        self.ignore_dirs = {".git", "__pycache__", ".venv", "node_modules", "tests", "migrations"}
 
     def analyze_codebase(self) -> dict[str, Any]:
         """Scans all Python files in the root directory.
@@ -47,23 +47,23 @@ class CodeQualityAnalyzer:
                     full_path = os.path.join(root, file)
                     try:
                         # Quick binary check - skip files with null bytes
-                        with open(full_path, 'rb') as bf:
+                        with open(full_path, "rb") as bf:
                             chunk = bf.read(512)
-                            if b'\x00' in chunk:
+                            if b"\x00" in chunk:
                                 continue  # Binary file, skip
 
                         metrics = self._analyze_file(full_path)
                         if metrics:
                             files_analyzed.append(metrics)
                             total_files += 1
-                            total_lines += metrics['loc']
-                            total_complexity += metrics['complexity']
+                            total_lines += metrics["loc"]
+                            total_complexity += metrics["complexity"]
                     except Exception as e:
                         logger.warning("failed_to_analyze_file", file=file, error=str(e))
 
         # Sort by complexity to find candidates for refactoring
-        top_complex = sorted(files_analyzed, key=lambda x: x['complexity'], reverse=True)[:10]
-        top_large = sorted(files_analyzed, key=lambda x: x['loc'], reverse=True)[:10]
+        top_complex = sorted(files_analyzed, key=lambda x: x["complexity"], reverse=True)[:10]
+        top_large = sorted(files_analyzed, key=lambda x: x["loc"], reverse=True)[:10]
 
         avg_complexity = total_complexity / total_files if total_files > 0 else 0
 
@@ -75,10 +75,10 @@ class CodeQualityAnalyzer:
                 "total_lines": total_lines,
                 "total_complexity": total_complexity,
                 "avg_complexity": round(avg_complexity, 2),
-                "avg_lines_per_file": round(total_lines / total_files if total_files else 0, 1)
+                "avg_lines_per_file": round(total_lines / total_files if total_files else 0, 1),
             },
             "top_offenders_complexity": top_complex,
-            "top_offenders_size": top_large
+            "top_offenders_size": top_large,
         }
 
     def _analyze_file(self, file_path: str) -> dict[str, Any]:
@@ -123,7 +123,7 @@ class CodeQualityAnalyzer:
             "complexity": complexity,
             "functions": functions,
             "classes": classes,
-            "score": round(complexity / loc * 100, 2) if loc > 0 else 0 # Density of complexity
+            "score": round(complexity / loc * 100, 2) if loc > 0 else 0,  # Density of complexity
         }
 
     async def generate_improvements(self) -> list[dict[str, Any]]:
@@ -132,27 +132,28 @@ class CodeQualityAnalyzer:
         tasks = []
 
         # 1. High Complexity Check
-        for file in analysis['top_offenders_complexity']:
-            if file['complexity'] > 20: # Arbitrary threshold
+        for file in analysis["top_offenders_complexity"]:
+            if file["complexity"] > 20:  # Arbitrary threshold
                 tasks.append({
                     "title": f"Refactor High Complexity: {file['file']}",
                     "description": f"File has complexity score of {file['complexity']}. Break down large functions or split classes.",
-                    "priority": "high" if file['complexity'] > 40 else "medium",
+                    "priority": "high" if file["complexity"] > 40 else "medium",
                     "type": "refactor",
-                    "metrics": file
+                    "metrics": file,
                 })
 
         # 2. Large File Check
-        for file in analysis['top_offenders_size']:
-            if file['loc'] > 300:
+        for file in analysis["top_offenders_size"]:
+            if file["loc"] > 300:
                 tasks.append({
                     "title": f"Split Large File: {file['file']}",
                     "description": f"File has {file['loc']} lines of code. Consider modularizing.",
                     "priority": "low",
                     "type": "cleanup",
-                    "metrics": file
+                    "metrics": file,
                 })
 
         return tasks
+
 
 code_quality_analyzer = CodeQualityAnalyzer()

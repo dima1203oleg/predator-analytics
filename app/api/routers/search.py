@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 import sys
 import time
-from typing import Any, Dict, Optional
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
@@ -18,7 +18,7 @@ from app.services.qdrant_service import QdrantService
 
 
 # Add libs to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../../../'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../../../"))
 
 try:
     from app.libs.core.cache import TTL_MEDIUM, get_search_cache
@@ -29,6 +29,7 @@ try:
     CACHING_ENABLED = True
 except ImportError:
     import logging
+
     logger = logging.getLogger("api.search")
     CACHING_ENABLED = False
     logger.warning("redis_cache_unavailable", status="running_without_cache")
@@ -40,11 +41,14 @@ router = APIRouter(prefix="/search", tags=["Search"])
 def get_indexer():
     return OpenSearchIndexer()
 
+
 def get_qdrant():
     return QdrantService()
 
+
 def get_embedding():
     return EmbeddingService()
+
 
 @router.get("/")
 async def search(
@@ -58,7 +62,7 @@ async def search(
     indexer: OpenSearchIndexer = Depends(get_indexer),
     qdrant: QdrantService = Depends(get_qdrant),
     embedder: EmbeddingService = Depends(get_embedding),
-    user: dict = Depends(get_current_user)  # Auth dependency for tenant context
+    user: dict = Depends(get_current_user),  # Auth dependency for tenant context
 ):
     """Universal semantic search across all documents.
     Supports full-text search, filtering, and pagination.
@@ -74,7 +78,7 @@ async def search(
         if mode in ["hybrid", "text"]:
             # Build query body
             query_body = {
-                "from": 0, # Get more candidates for fusion
+                "from": 0,  # Get more candidates for fusion
                 "size": limit * 2 if mode == "hybrid" else limit,
                 "query": {
                     "bool": {
@@ -84,19 +88,14 @@ async def search(
                                     "query": q,
                                     "fields": ["title^3", "description^2", "category", "edrpou"],
                                     "type": "best_fields",
-                                    "fuzziness": "AUTO"
+                                    "fuzziness": "AUTO",
                                 }
                             }
                         ],
-                        "filter": []
+                        "filter": [],
                     }
                 },
-                "highlight": {
-                    "fields": {
-                        "description": {"fragment_size": 150, "number_of_fragments": 1},
-                        "title": {}
-                    }
-                }
+                "highlight": {"fields": {"description": {"fragment_size": 150, "number_of_fragments": 1}, "title": {}}},
             }
 
             # Apply filters
@@ -106,11 +105,7 @@ async def search(
                 query_body["query"]["bool"]["filter"].append({"term": {"source.keyword": source}})
 
             # Pass tenant_id to indexer
-            os_resp = await indexer.search(
-                index_name="documents_safe",
-                query_body=query_body,
-                tenant_id=tenant_id
-            )
+            os_resp = await indexer.search(index_name="documents_safe", query_body=query_body, tenant_id=tenant_id)
             text_hits = os_resp.get("hits", {}).get("hits", [])
             total = os_resp.get("hits", {}).get("total", {}).get("value", 0)
 
@@ -123,7 +118,8 @@ async def search(
 
                 # Build filters
                 filters = {}
-                if category: filters["category"] = category
+                if category:
+                    filters["category"] = category
                 # if source: filters["source"] = source # Qdrant schema dependent
 
                 # Pass tenant_id to qdrant service
@@ -131,15 +127,17 @@ async def search(
                     query_vector=query_vector,
                     limit=limit * 2 if mode == "hybrid" else limit,
                     filter_conditions=filters,
-                    tenant_id=tenant_id
+                    tenant_id=tenant_id,
                 )
                 if mode == "semantic":
-                    total = len(vector_hits) # Qdrant total is approximate or just list len
+                    total = len(vector_hits)  # Qdrant total is approximate or just list len
             except Exception as e:
                 logger.exception("semantic_search_failed", error=str(e), tenant_id=tenant_id)
-                if mode == "semantic": raise
+                if mode == "semantic":
+                    raise
 
-                if mode == "semantic": raise
+                if mode == "semantic":
+                    raise
 
         # 3. Hybrid Fusion & Reranking
         # print(f"Text hits: {len(text_hits)}, Vector hits: {len(vector_hits)}")
@@ -151,24 +149,13 @@ async def search(
 
             # Map Elastic results to Dict format expected by RRF
             os_input = [
-                {
-                    "id": h["_id"],
-                    "score": h["_score"],
-                    "data": h["_source"],
-                    "highlights": h.get("highlight", {})
-                }
+                {"id": h["_id"], "score": h["_score"], "data": h["_source"], "highlights": h.get("highlight", {})}
                 for h in text_hits
             ]
 
             # Map Qdrant results to Dict format
             vec_input = [
-                {
-                    "id": h["id"],
-                    "score": h["score"],
-                    "data": h["metadata"],
-                    "highlights": {}
-                }
-                for h in vector_hits
+                {"id": h["id"], "score": h["score"], "data": h["metadata"], "highlights": {}} for h in vector_hits
             ]
 
             # Perform Fusion
@@ -180,6 +167,7 @@ async def search(
                 try:
                     # print("Importing reranker")
                     from app.services.ml import get_reranker
+
                     reranker = get_reranker()
 
                     # Prepare docs for reranker (needs title + content)
@@ -189,7 +177,7 @@ async def search(
                         # RerankerService uses 'documents' list.
                         # We pass the 'data' dict which has 'title' and 'content'
                         doc_data = c["data"]
-                        doc_data["id"] = c["id"] # Inject ID just in case
+                        doc_data["id"] = c["id"]  # Inject ID just in case
                         docs_to_rank.append(doc_data)
 
                     # print(f"Calling rerank service with {len(docs_to_rank)} docs")
@@ -207,7 +195,7 @@ async def search(
                         if did and did in cand_map:
                             cand = cand_map[did]
                             cand["rerank_score"] = float(score)
-                            cand["combinedScore"] = float(score) # Use rerank score as final
+                            cand["combinedScore"] = float(score)  # Use rerank score as final
                             final_results.append(cand)
 
                 except ImportError as e:
@@ -223,22 +211,13 @@ async def search(
 
         elif mode == "text":
             final_results = [
-                {
-                    "id": h["_id"],
-                    "score": h["_score"],
-                    "data": h["_source"],
-                    "highlights": h.get("highlight", {})
-                } for h in text_hits
+                {"id": h["_id"], "score": h["_score"], "data": h["_source"], "highlights": h.get("highlight", {})}
+                for h in text_hits
             ]
 
         elif mode == "semantic":
             final_results = [
-                {
-                    "id": h["id"],
-                    "score": h["score"],
-                    "data": h["metadata"],
-                    "highlights": {}
-                } for h in vector_hits
+                {"id": h["id"], "score": h["score"], "data": h["metadata"], "highlights": {}} for h in vector_hits
             ]
 
         # Format output
@@ -247,13 +226,13 @@ async def search(
             formatted_results.append({
                 "id": res["id"],
                 "title": res["data"].get("title"),
-                "snippet": res["data"].get("description") or res["data"].get("content") or "...", # Fallback
+                "snippet": res["data"].get("description") or res["data"].get("content") or "...",  # Fallback
                 "score": res.get("rerank_score") or res.get("final_score") or res.get("score"),
                 "semanticScore": res.get("vector_score"),
                 "source": res["data"].get("source", "unknown"),
                 "category": res["data"].get("category", "general"),
                 "searchType": mode,
-                "combinedScore": res.get("combinedScore", res.get("final_score", 0))
+                "combinedScore": res.get("combinedScore", res.get("final_score", 0)),
             })
 
         duration = time.time() - start_time
@@ -261,8 +240,8 @@ async def search(
 
         return {
             "results": formatted_results,
-            "total": total if mode == "text" else len(final_results), # Total is tricky in hybrid
-            "searchType": mode
+            "total": total if mode == "text" else len(final_results),  # Total is tricky in hybrid
+            "searchType": mode,
         }
 
     except Exception as e:
@@ -274,14 +253,12 @@ async def search(
 
 class FeedbackRequest(BaseModel):
     result_id: str
-    feedback_type: str # positive, negative
+    feedback_type: str  # positive, negative
     query: str | None = None
 
+
 @router.post("/feedback")
-async def submit_feedback(
-    feedback: FeedbackRequest,
-    user: dict = Depends(get_current_user)
-):
+async def submit_feedback(feedback: FeedbackRequest, user: dict = Depends(get_current_user)):
     """Submit RLHF feedback (positive/negative) for a search result.
     Updates click-through data for future training.
     """
@@ -290,10 +267,10 @@ async def submit_feedback(
         # Log to tracking service (Mock for now, would be PostgreSQL/ClickHouse)
         logger.info(
             "rlhf_feedback_received",
-            user_id=user.get('sub'),
+            user_id=user.get("sub"),
             result_id=feedback.result_id,
             feedback_type=feedback.feedback_type,
-            tenant_id=tenant_id
+            tenant_id=tenant_id,
         )
 
         # In a real impl, this would update a 'user_feedback' table
@@ -309,7 +286,7 @@ async def search_companies(
     q: str = Query(..., min_length=1),
     limit: int = 20,
     indexer: OpenSearchIndexer = Depends(get_indexer),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user),
 ):
     """Specialized search for companies."""
     start_time = time.time()
@@ -328,18 +305,12 @@ async def search_companies(
                             }
                         }
                     ],
-                    "filter": [
-                        {"term": {"category.keyword": "company"}}
-                    ]
+                    "filter": [{"term": {"category.keyword": "company"}}],
                 }
-            }
+            },
         }
 
-        response = await indexer.search(
-            "documents_safe",
-            query_body=query_body,
-            tenant_id=tenant_id
-        )
+        response = await indexer.search("documents_safe", query_body=query_body, tenant_id=tenant_id)
 
         hits = response.get("hits", {}).get("hits", [])
         companies = [h["_source"] for h in hits]
@@ -347,11 +318,7 @@ async def search_companies(
         duration = time.time() - start_time
         track_search_request("companies", duration, len(companies))
 
-        return {
-            "query": q,
-            "companies": companies,
-            "total": response.get("hits", {}).get("total", {}).get("value", 0)
-        }
+        return {"query": q, "companies": companies, "total": response.get("hits", {}).get("total", {}).get("value", 0)}
     except Exception as e:
         logger.exception("company_search_failed", error=str(e), query=q)
         raise HTTPException(status_code=500, detail=str(e))
@@ -364,7 +331,7 @@ async def search_tenders(
     q: str = Query(..., min_length=1),
     limit: int = 20,
     indexer: OpenSearchIndexer = Depends(get_indexer),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user),
 ):
     """Specialized search for tenders."""
     start_time = time.time()
@@ -383,18 +350,12 @@ async def search_tenders(
                             }
                         }
                     ],
-                    "filter": [
-                        {"term": {"category.keyword": "tender"}}
-                    ]
+                    "filter": [{"term": {"category.keyword": "tender"}}],
                 }
-            }
+            },
         }
 
-        response = await indexer.search(
-            "documents_safe",
-            query_body=query_body,
-            tenant_id=tenant_id
-        )
+        response = await indexer.search("documents_safe", query_body=query_body, tenant_id=tenant_id)
 
         hits = response.get("hits", {}).get("hits", [])
         tenders = [h["_source"] for h in hits]
@@ -402,11 +363,7 @@ async def search_tenders(
         duration = time.time() - start_time
         track_search_request("tenders", duration, len(tenders))
 
-        return {
-            "query": q,
-            "tenders": tenders,
-            "total": response.get("hits", {}).get("total", {}).get("value", 0)
-        }
+        return {"query": q, "tenders": tenders, "total": response.get("hits", {}).get("total", {}).get("value", 0)}
     except Exception as e:
         logger.exception("tender_search_failed", error=str(e), query=q)
         raise HTTPException(status_code=500, detail=str(e))
@@ -419,7 +376,7 @@ async def suggest(
     q: str = Query(..., min_length=1),
     limit: int = 5,
     indexer: OpenSearchIndexer = Depends(get_indexer),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user),
 ):
     """Search suggestions."""
     try:
@@ -427,25 +384,13 @@ async def suggest(
 
         query_body = {
             "size": limit,
-            "query": {
-                "match_phrase_prefix": {
-                    "title": {
-                        "query": q,
-                        "max_expansions": 10
-                    }
-                }
-            },
-            "_source": ["title", "id", "category"]
+            "query": {"match_phrase_prefix": {"title": {"query": q, "max_expansions": 10}}},
+            "_source": ["title", "id", "category"],
         }
-        response = await indexer.search(
-            "documents_safe",
-            query_body=query_body,
-            tenant_id=tenant_id
-        )
+        response = await indexer.search("documents_safe", query_body=query_body, tenant_id=tenant_id)
         hits = response.get("hits", {}).get("hits", [])
         suggestions = [
-            {"text": h["_source"].get("title"), "id": h["_id"], "category": h["_source"].get("category")}
-            for h in hits
+            {"text": h["_source"].get("title"), "id": h["_id"], "category": h["_source"].get("category")} for h in hits
         ]
         track_search_request("suggestions", 0.1, len(suggestions))
         return suggestions
@@ -460,11 +405,12 @@ class CustomsSearchRequest(BaseModel):
     limit: int = 50
     filters: dict[str, Any] | None = None
 
+
 @router.post("/customs")
 async def customs_search(
     request: CustomsSearchRequest,
     indexer: OpenSearchIndexer = Depends(get_indexer),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user),
 ):
     """Dedicated search for Customs Declarations (ua_customs_imports).
     Uses 'customs' alias for zero-downtime updates.
@@ -487,42 +433,30 @@ async def customs_search(
                                     "код_товару^3",
                                     "торгуюча_країна",
                                     "митниця_оформлення",
-                                    "номер_митної_декларації"
+                                    "номер_митної_декларації",
                                 ],
                                 "type": "best_fields",
-                                "operator": "and"
+                                "operator": "and",
                             }
                         }
                     ],
-                    "filter": []
+                    "filter": [],
                 }
             },
             "size": request.limit,
             "highlight": {
-                "fields": {
-                    "опис_товару": {"fragment_size": 200, "number_of_fragments": 1},
-                    "код_товару": {}
-                }
+                "fields": {"опис_товару": {"fragment_size": 200, "number_of_fragments": 1}, "код_товару": {}}
             },
             "aggs": {
-                "top_countries": {
-                    "terms": {"field": "торгуюча_країна.keyword", "size": 10}
-                },
-                "top_codes": {
-                    "terms": {"field": "код_товару.keyword", "size": 10}
-                },
-                "top_offices": {
-                    "terms": {"field": "митниця_оформлення.keyword", "size": 10}
-                }
-            }
+                "top_countries": {"terms": {"field": "торгуюча_країна.keyword", "size": 10}},
+                "top_codes": {"terms": {"field": "код_товару.keyword", "size": 10}},
+                "top_offices": {"terms": {"field": "митниця_оформлення.keyword", "size": 10}},
+            },
         }
 
         # Execute search
         response = await indexer.search(
-            index_name="customs",
-            query_body=os_query_body,
-            size=request.limit,
-            tenant_id=tenant_id
+            index_name="customs", query_body=os_query_body, size=request.limit, tenant_id=tenant_id
         )
 
         hits = response.get("hits", {}).get("hits", [])
@@ -531,17 +465,14 @@ async def customs_search(
         aggs = response.get("aggregations", {})
         analytics = {
             "top_countries": [
-                {"name": b["key"], "count": b["doc_count"]}
-                for b in aggs.get("top_countries", {}).get("buckets", [])
+                {"name": b["key"], "count": b["doc_count"]} for b in aggs.get("top_countries", {}).get("buckets", [])
             ],
             "top_codes": [
-                {"code": b["key"], "count": b["doc_count"]}
-                for b in aggs.get("top_codes", {}).get("buckets", [])
+                {"code": b["key"], "count": b["doc_count"]} for b in aggs.get("top_codes", {}).get("buckets", [])
             ],
             "top_offices": [
-                {"name": b["key"], "count": b["doc_count"]}
-                for b in aggs.get("top_offices", {}).get("buckets", [])
-            ]
+                {"name": b["key"], "count": b["doc_count"]} for b in aggs.get("top_offices", {}).get("buckets", [])
+            ],
         }
 
         # Map Results
@@ -555,13 +486,13 @@ async def customs_search(
                 "country_trading": source.get("торгуюча_країна"),
                 "customs_office": source.get("митниця_оформлення"),
                 "decl_number": source.get("номер_митної_декларації"),
-                "score": h.get("_score")
+                "score": h.get("_score"),
             })
 
         return {
             "total": response.get("hits", {}).get("total", {}).get("value", 0),
             "results": results,
-            "analytics": analytics
+            "analytics": analytics,
         }
 
     except Exception as e:
@@ -575,12 +506,13 @@ class MultimodalRequest(BaseModel):
     query: str
     limit: int = 10
 
+
 @router.post("/multimodal")
 async def multimodal_search(
     request: MultimodalRequest,
     qdrant: QdrantService = Depends(get_qdrant),
     embedder: EmbeddingService = Depends(get_embedding),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(get_current_user),
 ):
     """Multimodal Semantic Search (Text-to-Image / Image-to-Image).
     Uses CLIP embeddings for search.
@@ -597,7 +529,7 @@ async def multimodal_search(
             query_vector=vector,
             limit=request.limit,
             tenant_id=tenant_id,
-            collection_name=qdrant.multimodal_collection_name
+            collection_name=qdrant.multimodal_collection_name,
         )
 
         return {"hits": hits}

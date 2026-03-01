@@ -12,69 +12,58 @@ CELERY_BEAT_SCHEDULE = {
     # ============================================================================
     # DATA INGESTION (Parser)
     # ============================================================================
-
     "prozorro-sync-hourly": {
         "task": "tasks.workers.parse_external_source",
         "schedule": crontab(minute=0),  # Every hour at :00
         "args": ("prozorro", {"limit": 100}),
-        "options": {"queue": "ingestion"}
+        "options": {"queue": "ingestion"},
     },
-
     "nbu-rates-daily": {
         "task": "tasks.workers.parse_external_source",
         "schedule": crontab(hour=9, minute=0),  # Every day at 09:00
         "args": ("nbu", {}),
-        "options": {"queue": "ingestion"}
+        "options": {"queue": "ingestion"},
     },
-
     "customs-sync-every-6-hours": {
         "task": "tasks.workers.parse_external_source",
         "schedule": crontab(hour="*/6", minute=30),  # Every 6 hours at :30
         "args": ("customs", {"limit": 200}),
-        "options": {"queue": "ingestion"}
+        "options": {"queue": "ingestion"},
     },
-
     # ============================================================================
     # MAINTENANCE TASKS
     # ============================================================================
-
     "full-reindex-weekly": {
         "task": "tasks.workers.full_reindex",
         "schedule": crontab(hour=2, minute=0, day_of_week="sunday"),  # Sunday 02:00
-        "options": {"queue": "etl"}
+        "options": {"queue": "etl"},
     },
-
     "cleanup-old-staging-monthly": {
         "task": "tasks.maintenance.cleanup_staging",
         "schedule": crontab(hour=3, minute=0, day_of_month=1),  # 1st of month at 03:00
         "args": (90,),  # Keep 90 days
-        "options": {"queue": "maintenance"}
+        "options": {"queue": "maintenance"},
     },
-
     # ============================================================================
     # HEALTH CHECKS
     # ============================================================================
-
     "health-check-every-5-min": {
         "task": "tasks.monitoring.health_check",
         "schedule": crontab(minute="*/5"),  # Every 5 minutes
-        "options": {"queue": "monitoring", "expires": 300}
+        "options": {"queue": "monitoring", "expires": 300},
     },
-
     "index-stats-hourly": {
         "task": "tasks.monitoring.collect_index_stats",
         "schedule": crontab(minute=15),  # Every hour at :15
-        "options": {"queue": "monitoring"}
+        "options": {"queue": "monitoring"},
     },
-
     # ============================================================================
     # AUTONOMOUS INTELLIGENCE (Predator Core v45)
     # ============================================================================
-
     "autonomous-detection-every-2-min": {
         "task": "app.tasks.detection.run_autonomous_detection",
         "schedule": crontab(minute="*/2"),
-        "options": {"queue": "analytics"}
+        "options": {"queue": "analytics"},
     },
 }
 

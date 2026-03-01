@@ -1,15 +1,15 @@
 from datetime import datetime
 import hashlib
-import json
 import logging
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import pandas as pd
 
 
 # Configure logging
 logger = logging.getLogger(__name__)
+
 
 class CustomsExcelParser:
     """Production-ready parser for Customs Excel files (e.g., March_2024.xlsx).
@@ -23,14 +23,12 @@ class CustomsExcelParser:
         "declaration_date": [r"дата.*оформлення", r"date", r"дата"],
         "customs_office": [r"митниця", r"customs", r"пост"],
         "regime": [r"режим", r"regime", r"тип.*декларації"],
-
         # Participants
         "importer_name": [r"імпортер", r"importer", r"одержувач", r"платник"],
         "importer_code": [r"код.*імпортера", r"єдрпоу.*імпортера", r"importer.*code"],
         "exporter_name": [r"експортер", r"exporter", r"відправник"],
         "exporter_country": [r"країна.*відправлення", r"sender.*country"],
         "origin_country": [r"країна.*походження", r"origin.*country"],
-
         # Goods
         "hs_code": [r"код.*товару", r"уктзед", r"hs_code"],
         "goods_description": [r"опис.*товару", r"name", r"description"],
@@ -46,15 +44,8 @@ class CustomsExcelParser:
     def __init__(self, file_path: str):
         self.file_path = file_path
         self.df: pd.DataFrame | None = None
-        self.column_map: dict[str, str] = {} # actual_col_name -> target_field
-        self.stats = {
-            "total_rows": 0,
-            "success": 0,
-            "rejected": 0,
-            "duplicates": 0,
-            "anomalies": 0,
-            "errors": []
-        }
+        self.column_map: dict[str, str] = {}  # actual_col_name -> target_field
+        self.stats = {"total_rows": 0, "success": 0, "rejected": 0, "duplicates": 0, "anomalies": 0, "errors": []}
         self.results: list[dict[str, Any]] = []
 
     def load_and_parse(self) -> dict[str, Any]:
@@ -65,7 +56,7 @@ class CustomsExcelParser:
             self._process_rows()
             return self.stats
         except Exception as e:
-            logger.error(f"Critical parser error: {e}")
+            logger.exception(f"Critical parser error: {e}")
             self.stats["errors"].append(str(e))
             return self.stats
 
@@ -74,7 +65,7 @@ class CustomsExcelParser:
         logger.info(f"Loading {self.file_path}...")
         # Load only header first to detect structure? No, load all for now.
         # Assuming header is in the first few rows. We'll search for it.
-        self.df = pd.read_excel(self.file_path, header=None) # Load raw first
+        self.df = pd.read_excel(self.file_path, header=None)  # Load raw first
         self._detect_header()
 
     def _detect_header(self):
@@ -124,7 +115,8 @@ class CustomsExcelParser:
                         found_fields.add(field)
                         mapped = True
                         break
-                if mapped: break
+                if mapped:
+                    break
 
         logger.info(f"Mapped {len(found_fields)} fields: {list(found_fields)}")
         missing_required = set(self.REQUIRED_FIELDS) - found_fields
@@ -178,22 +170,22 @@ class CustomsExcelParser:
         norm = data.copy()
 
         # Normalize text fields
-        for field in ['importer_name', 'exporter_name', 'goods_description', 'customs_office']:
+        for field in ["importer_name", "exporter_name", "goods_description", "customs_office"]:
             if field in norm:
                 norm[field] = str(norm[field]).strip().upper().replace("  ", " ")
 
         # Normalize Company Names (Remove formal prefixes for matching)
-        if 'importer_name' in norm:
-            norm['importer_name'] = re.sub(r'^(ТОВ|ПП|ДП|АТ|ТЗОВ)\s+"|"', '', norm['importer_name']).strip()
+        if "importer_name" in norm:
+            norm["importer_name"] = re.sub(r'^(ТОВ|ПП|ДП|АТ|ТЗОВ)\s+"|"', "", norm["importer_name"]).strip()
 
         # Normalize Dates
-        if 'declaration_date' in norm:
-            d = norm['declaration_date']
+        if "declaration_date" in norm:
+            d = norm["declaration_date"]
             # Pandas usually handles datetime objects, ensure it's ISO string
             if isinstance(d, datetime):
-                norm['declaration_date'] = d.strftime('%Y-%m-%d')
+                norm["declaration_date"] = d.strftime("%Y-%m-%d")
             else:
-                norm['declaration_date'] = str(d) # Fallback
+                norm["declaration_date"] = str(d)  # Fallback
 
         return norm
 
@@ -201,7 +193,7 @@ class CustomsExcelParser:
         """Create a unique hash for the record content."""
         # Join values sorted by key to ensure consistency
         s = "|".join([str(data.get(k, "")) for k in sorted(data.keys())])
-        return hashlib.md5(s.encode('utf-8')).hexdigest()
+        return hashlib.md5(s.encode("utf-8")).hexdigest()
 
     def _validate_record(self, data: dict, row_hash: str, seen_hashes: set) -> str | None:
         """Return error string if invalid, else None."""
@@ -218,16 +210,16 @@ class CustomsExcelParser:
                 return f"Missing required field: {req}"
 
         # Strict Date Validation
-        if 'declaration_date' in data:
+        if "declaration_date" in data:
             try:
-                d = datetime.strptime(data['declaration_date'], '%Y-%m-%d')
+                d = datetime.strptime(data["declaration_date"], "%Y-%m-%d")
                 if d.year < 2000 or d > datetime.now():
                     return f"Invalid date: {data['declaration_date']} (out of realistic range)"
             except ValueError:
                 return f"Invalid date format: {data['declaration_date']}"
 
         # Strict Numeric Validation
-        for num_field in ['net_weight', 'gross_weight', 'customs_value', 'invoice_value']:
+        for num_field in ["net_weight", "gross_weight", "customs_value", "invoice_value"]:
             if num_field in data:
                 try:
                     val = float(data[num_field])
@@ -237,13 +229,13 @@ class CustomsExcelParser:
                     return f"Non-numeric value for {num_field}: {data[num_field]}"
 
         # Anomaly Detection (Simple heuristics)
-        if 'customs_value' in data and 'invoice_value' in data:
+        if "customs_value" in data and "invoice_value" in data:
             try:
-                cv = float(data['customs_value'])
-                iv = float(data['invoice_value'])
+                cv = float(data["customs_value"])
+                iv = float(data["invoice_value"])
                 if cv > iv * 10:
                     self.stats["anomalies"] += 1
-                    data['_anomaly'] = "High customs/invoice ratio"
+                    data["_anomaly"] = "High customs/invoice ratio"
             except:
                 pass
 
@@ -262,5 +254,5 @@ class CustomsExcelParser:
             logger.warning("No results to export.")
             return
 
-        pd.DataFrame(self.results).to_json(output_path, orient='records', force_ascii=False, indent=2)
+        pd.DataFrame(self.results).to_json(output_path, orient="records", force_ascii=False, indent=2)
         logger.info(f"Exported {len(self.results)} records to {output_path}")

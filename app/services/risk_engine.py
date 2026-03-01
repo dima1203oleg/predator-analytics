@@ -3,10 +3,10 @@ from __future__ import annotations
 
 """Risk Engine Service - Risk assessment and scoring."""
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 
 logger = logging.getLogger(__name__)
@@ -36,19 +36,9 @@ class RiskEngine:
     """
 
     def __init__(self):
-        self.risk_weights = {
-            "tax_debt": 0.3,
-            "court_cases": 0.25,
-            "sanctions": 0.35,
-            "age": 0.05,
-            "activity": 0.05
-        }
+        self.risk_weights = {"tax_debt": 0.3, "court_cases": 0.25, "sanctions": 0.35, "age": 0.05, "activity": 0.05}
 
-    async def assess(
-        self,
-        entity_id: str,
-        entity_data: dict[str, Any]
-    ) -> RiskAssessment:
+    async def assess(self, entity_id: str, entity_data: dict[str, Any]) -> RiskAssessment:
         """Perform risk assessment on an entity.
 
         Args:
@@ -97,7 +87,7 @@ class RiskEngine:
             score=score,
             factors=factors,
             mitigations=mitigations,
-            timestamp=datetime.now(UTC)
+            timestamp=datetime.now(UTC),
         )
 
     def _score_to_level(self, score: float) -> RiskLevel:
@@ -112,10 +102,7 @@ class RiskEngine:
             return RiskLevel.HIGH
         return RiskLevel.CRITICAL
 
-    async def batch_assess(
-        self,
-        entities: list[dict[str, Any]]
-    ) -> list[RiskAssessment]:
+    async def batch_assess(self, entities: list[dict[str, Any]]) -> list[RiskAssessment]:
         """Assess multiple entities."""
         results = []
         for entity in entities:

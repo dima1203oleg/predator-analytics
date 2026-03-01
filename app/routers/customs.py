@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-import json
 import logging
-import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 import uuid
 
 import asyncpg
@@ -17,6 +15,7 @@ from app.libs.core.config import settings
 router = APIRouter(prefix="/customs", tags=["Customs Intelligence"])
 logger = logging.getLogger("api.customs")
 
+
 # --- MODELS ---
 class RegistryRecord(BaseModel):
     id: str
@@ -27,20 +26,20 @@ class RegistryRecord(BaseModel):
     date: str
     status: str = "VERIFIED"
 
+
 class AnomalyRecord(BaseModel):
     id: str
-    type: str # PRICE_SPIKE, UNUSUAL_ROUTE, SHELL_COMPANY
+    type: str  # PRICE_SPIKE, UNUSUAL_ROUTE, SHELL_COMPANY
     description: str
-    severity: str # CRITICAL, HIGH, MEDIUM
+    severity: str  # CRITICAL, HIGH, MEDIUM
     timestamp: str
+
 
 # --- ENDPOINTS ---
 
+
 @router.get("/registry", response_model=dict[str, Any])
-async def get_customs_registry(
-    query: str | None = Query(None),
-    limit: int = 50
-):
+async def get_customs_registry(query: str | None = Query(None), limit: int = 50):
     """Get the production customs registry (Gold Layer).
     Section 7.1: Search by company, HS code, or declaration number.
     """
@@ -73,17 +72,18 @@ async def get_customs_registry(
         results = []
         for r in rows:
             results.append({
-                "id": str(r['id']),
-                "company": r['company'],
-                "hs_code": r['hs_code'],
-                "weight": float(r['weight']) if r['weight'] else 0,
-                "declared_value": float(r['declared_value']) if r['declared_value'] else 0,
-                "date": r['date'].isoformat() if r['date'] else ""
+                "id": str(r["id"]),
+                "company": r["company"],
+                "hs_code": r["hs_code"],
+                "weight": float(r["weight"]) if r["weight"] else 0,
+                "declared_value": float(r["declared_value"]) if r["declared_value"] else 0,
+                "date": r["date"].isoformat() if r["date"] else "",
             })
 
         return {"status": "success", "data": results}
     finally:
         await conn.close()
+
 
 @router.get("/anomalies")
 async def get_customs_anomalies():
@@ -107,13 +107,13 @@ async def get_customs_anomalies():
         # 2. Heuristic Price Anomalies (Mocked for now as we don't have enough data history)
         results = []
         for r in telegram_anomalies:
-            target = r['declaration_number'] or r['company'] or "Unknown"
+            target = r["declaration_number"] or r["company"] or "Unknown"
             results.append({
-                "id": str(r['id']),
+                "id": str(r["id"]),
                 "type": "SOCIAL_CRITICAL",
                 "description": f"Критична згадка {target} у Telegram: {r['sentiment']}",
                 "severity": "CRITICAL",
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             })
 
         # Add a static anomaly if list is empty for UI polish
@@ -123,18 +123,16 @@ async def get_customs_anomalies():
                 "type": "PRICE_SPIKE",
                 "description": "Виявлено відхилення ціни (>300%) на групу товарів 8471",
                 "severity": "HIGH",
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             })
 
         return {"status": "success", "data": results}
     finally:
         await conn.close()
 
+
 @router.get("/modeling")
-async def get_customs_modeling(
-    persona: str = "TITAN",
-    mode: str = "presets"
-):
+async def get_customs_modeling(persona: str = "TITAN", mode: str = "presets"):
     """Analytical modeling data for Recharts.
     Section 7.1.
     """
@@ -146,20 +144,15 @@ async def get_customs_modeling(
     time_data = []
     base_date = datetime.now() - timedelta(days=30)
     for i in range(10):
-        date = base_date + timedelta(days=i*3)
+        date = base_date + timedelta(days=i * 3)
         time_data.append({
             "name": date.strftime("%d %b"),
             "value": int(5000 * multiplier + (i * 200)),
-            "risk": int(1000 + (i * 500) if i % 3 == 0 else 500)
+            "risk": int(1000 + (i * 500) if i % 3 == 0 else 500),
         })
 
-    return {
-        "status": "success",
-        "data": {
-            "time_data": time_data,
-            "persona_focus": persona
-        }
-    }
+    return {"status": "success", "data": {"time_data": time_data, "persona_focus": persona}}
+
 
 @router.post("/dossier/synthesize")
 async def synthesize_dossier(data: dict[str, Any]):
@@ -168,7 +161,7 @@ async def synthesize_dossier(data: dict[str, Any]):
     """
     company_name = data.get("company_name")
     if not company_name:
-         raise HTTPException(status_code=400, detail="Company name required")
+        raise HTTPException(status_code=400, detail="Company name required")
 
     # Placeholder for LLM logic
     # 1. Fetch graph connections
@@ -178,5 +171,5 @@ async def synthesize_dossier(data: dict[str, Any]):
     return {
         "status": "success",
         "dossier_id": str(uuid.uuid4()),
-        "summary": f"Strategic dossier for {company_name} synthesized using Graph Neural Network."
+        "summary": f"Strategic dossier for {company_name} synthesized using Graph Neural Network.",
     }

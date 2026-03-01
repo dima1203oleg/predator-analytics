@@ -21,10 +21,7 @@ class OpenAIProvider(BaseLLMProvider):
     async def generate(self, prompt: str, system: str = "", **kwargs) -> LLMResponse:
         start_time = time.time()
 
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
-        }
+        headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
 
         messages = []
         if system:
@@ -35,17 +32,12 @@ class OpenAIProvider(BaseLLMProvider):
             "model": self.model,
             "messages": messages,
             "temperature": kwargs.get("temperature", 0.7),
-            "max_tokens": kwargs.get("max_tokens", 2048)
+            "max_tokens": kwargs.get("max_tokens", 2048),
         }
 
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    self.base_url,
-                    json=payload,
-                    headers=headers,
-                    timeout=30.0
-                )
+                response = await client.post(self.base_url, json=payload, headers=headers, timeout=30.0)
 
                 if response.status_code != 200:
                     return LLMResponse(
@@ -53,7 +45,7 @@ class OpenAIProvider(BaseLLMProvider):
                         content="",
                         provider=self.provider_name,
                         model=self.model,
-                        error=f"API Error {response.status_code}: {response.text}"
+                        error=f"API Error {response.status_code}: {response.text}",
                     )
 
                 data = response.json()
@@ -66,14 +58,8 @@ class OpenAIProvider(BaseLLMProvider):
                     provider=self.provider_name,
                     model=self.model,
                     tokens_used=tokens,
-                    latency_ms=(time.time() - start_time) * 1000
+                    latency_ms=(time.time() - start_time) * 1000,
                 )
 
         except Exception as e:
-            return LLMResponse(
-                success=False,
-                content="",
-                provider=self.provider_name,
-                model=self.model,
-                error=str(e)
-            )
+            return LLMResponse(success=False, content="", provider=self.provider_name, model=self.model, error=str(e))

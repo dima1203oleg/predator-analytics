@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Union
-
 
 """
 JSON Parser Implementation
@@ -11,7 +9,6 @@ Handles parsing of JSON files using pandas and standard json library.
 
 import json
 from pathlib import Path
-from typing import Dict, List
 
 
 try:
@@ -35,7 +32,7 @@ class JSONParser:
             "orient": "records",  # Default for pandas
         }
 
-    def parse(self, file_path: str |  Path, **kwargs) -> ParseResult:
+    def parse(self, file_path: str | Path, **kwargs) -> ParseResult:
         """Parse a JSON file.
 
         Args:
@@ -64,7 +61,7 @@ class JSONParser:
                 data = df
             except (ValueError, json.JSONDecodeError):
                 # Fall back to standard json library for non-tabular JSON
-                with open(file_path, encoding=options.get('encoding', 'utf-8')) as f:
+                with open(file_path, encoding=options.get("encoding", "utf-8")) as f:
                     data = json.load(f)
 
             # Add metadata
@@ -89,7 +86,7 @@ class JSONParser:
         except Exception as e:
             return ParseResult(False, error=f"Failed to parse JSON: {e!s}")
 
-    def parse_to_dict(self, file_path: str |  Path) -> ParseResult:
+    def parse_to_dict(self, file_path: str | Path) -> ParseResult:
         """Parse JSON file and return as Python dictionary/list.
 
         Args:
@@ -113,8 +110,7 @@ class JSONParser:
 
         return result
 
-    def parse_to_dataframe(self, file_path: str |  Path,
-                          orient: str = "records") -> ParseResult:
+    def parse_to_dataframe(self, file_path: str | Path, orient: str = "records") -> ParseResult:
         """Parse JSON file and return as pandas DataFrame.
 
         Args:

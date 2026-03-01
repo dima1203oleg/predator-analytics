@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 from app.libs.core.structured_logger import get_logger
 from app.services.code_quality_analyzer import code_quality_analyzer
 
 
 logger = get_logger("service.mission_discoverer")
+
 
 class MissionDiscoverer:
     """Analyzes system state and analytics to generate actionable missions (tasks).
@@ -23,9 +24,9 @@ class MissionDiscoverer:
             missions.append({
                 "type": "code_improvement",
                 "source": "CodeQualityAnalyzer",
-                "priority": imp['priority'],
+                "priority": imp["priority"],
                 "payload": imp,
-                "status": "pending_execution"
+                "status": "pending_execution",
             })
 
         # 2. Anomaly Missions (Future: from AnomalyService)
@@ -33,5 +34,6 @@ class MissionDiscoverer:
 
         logger.info("missions_discovered", count=len(missions))
         return missions
+
 
 mission_discoverer = MissionDiscoverer()

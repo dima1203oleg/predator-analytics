@@ -1,17 +1,17 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List
-
-import requests
+from typing import Any
 
 
 logger = logging.getLogger("collectors.ua_gov")
+
 
 class UAGovCollector:
     """Уніфікований колектор для державних даних України (v45.0).
     Інтеграція з ProZorro, OpenDataBot (mock), та Державним реєстром.
     """
+
     def __init__(self, api_key: str | None = None):
         self.api_key = api_key
         self.prozorro_base = "https://public.api.openprocurement.org/api/2.5"
@@ -29,12 +29,14 @@ class UAGovCollector:
             # resp = requests.get(f"{self.prozorro_base}/tenders", params=params)
             # return resp.json().get('data', [])
 
-            return [{
-                "id": "UA-2024-03-12-0001",
-                "title": f"Тестовий тендер: {query or 'Без запиту'}",
-                "status": "active.enquiries",
-                "value": {"amount": 500000, "currency": "UAH"}
-            }]
+            return [
+                {
+                    "id": "UA-2024-03-12-0001",
+                    "title": f"Тестовий тендер: {query or 'Без запиту'}",
+                    "status": "active.enquiries",
+                    "value": {"amount": 500000, "currency": "UAH"},
+                }
+            ]
         except Exception as e:
             logger.exception(f"Помилка ProZorro: {e}")
             return []
@@ -47,8 +49,9 @@ class UAGovCollector:
             "name": "ТОВ 'ПРЕДАТОР ЧЕК-ПОЙНТ'",
             "status": "registered",
             "risk_score": 0.05,
-            "sanctions": False
+            "sanctions": False,
         }
+
 
 def get_ua_collector() -> UAGovCollector:
     return UAGovCollector()

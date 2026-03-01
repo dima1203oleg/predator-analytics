@@ -6,13 +6,13 @@ Unified interface for multi-LLM routing with automatic failover.
 """
 import asyncio
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 import logging
 import os
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any
 
 import litellm
-from litellm import Router, acompletion
+from litellm import Router
 
 
 if TYPE_CHECKING:
@@ -22,8 +22,9 @@ if TYPE_CHECKING:
 logger = logging.getLogger("predator.llm_gateway")
 
 
-class ModelTier(str, Enum):
+class ModelTier(StrEnum):
     """Model tier for routing decisions."""
+
     PRIMARY = "primary"
     BACKUP = "backup"
     FAST = "fast"
@@ -33,6 +34,7 @@ class ModelTier(str, Enum):
 @dataclass
 class LLMResponse:
     """Standardized LLM response."""
+
     content: str
     model: str
     tokens_used: int
@@ -74,7 +76,7 @@ class LiteLLMGateway:
                     "model": "anthropic/claude-3-5-sonnet-20241022",
                     "api_key": os.getenv("ANTHROPIC_API_KEY"),
                 },
-                "model_info": {"tier": "primary"}
+                "model_info": {"tier": "primary"},
             },
             # Backup: GPT-4o
             {
@@ -83,7 +85,7 @@ class LiteLLMGateway:
                     "model": "openai/gpt-4o",
                     "api_key": os.getenv("OPENAI_API_KEY"),
                 },
-                "model_info": {"tier": "backup"}
+                "model_info": {"tier": "backup"},
             },
             # Fast: Groq
             {
@@ -92,7 +94,7 @@ class LiteLLMGateway:
                     "model": "groq/llama-3.1-70b-versatile",
                     "api_key": os.getenv("GROQ_API_KEY"),
                 },
-                "model_info": {"tier": "fast"}
+                "model_info": {"tier": "fast"},
             },
         ]
 
@@ -111,10 +113,7 @@ class LiteLLMGateway:
         redis_url = os.getenv("REDIS_URL", "redis://redis:6379")
         try:
             litellm.cache = litellm.Cache(
-                type="redis",
-                host=redis_url.split("://")[1].split(":")[0],
-                port=6379,
-                ttl=3600
+                type="redis", host=redis_url.split("://")[1].split(":")[0], port=6379, ttl=3600
             )
             logger.info("✅ LiteLLM Redis cache enabled")
         except Exception as e:
@@ -153,6 +152,7 @@ class LiteLLMGateway:
         messages.append({"role": "user", "content": prompt})
 
         import time
+
         start_time = time.time()
 
         try:
@@ -173,7 +173,7 @@ class LiteLLMGateway:
                 model=response.model,
                 tokens_used=response.usage.total_tokens,
                 latency_ms=latency_ms,
-                cached=getattr(response, '_hidden_params', {}).get('cache_hit', False),
+                cached=getattr(response, "_hidden_params", {}).get("cache_hit", False),
             )
 
         except Exception as e:
@@ -218,7 +218,7 @@ class LiteLLMGateway:
         """
         system_prompt = f"""Ви — PREDATOR AI, експертна аналітична система.
 
-Мова відповіді: {'Українська' if language == 'uk' else 'English'}
+Мова відповіді: {"Українська" if language == "uk" else "English"}
 
 Ваші принципи:
 1. Точність: Базуйтесь на фактах, уникайте припущень
@@ -226,7 +226,7 @@ class LiteLLMGateway:
 3. Дієвість: Надавайте конкретні рекомендації
 4. Критичність: Виявляйте аномалії та ризики
 
-Контекст даних: {context or 'Загальний аналіз'}
+Контекст даних: {context or "Загальний аналіз"}
 """
 
         return await self.complete(

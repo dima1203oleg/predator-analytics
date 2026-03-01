@@ -7,13 +7,11 @@ from __future__ import annotations
 """
 import asyncio
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import hashlib
-import json
 import logging
 import os
 import re
-from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
@@ -27,6 +25,7 @@ logger = logging.getLogger(__name__)
 # Спробуємо імпортувати Playwright
 try:
     from playwright.async_api import async_playwright
+
     PLAYWRIGHT_AVAILABLE = True
 except ImportError:
     PLAYWRIGHT_AVAILABLE = False
@@ -36,6 +35,7 @@ except ImportError:
 @dataclass
 class ScrapedPage:
     """Структура скрапленої сторінки."""
+
     url: str
     title: str
     content: str
@@ -52,6 +52,7 @@ class ScrapedPage:
 @dataclass
 class RSSFeedItem:
     """Елемент RSS/Atom фіду."""
+
     title: str
     link: str
     description: str
@@ -80,19 +81,19 @@ class WebScraperConnector(BaseConnector):
         super().__init__(
             name="Web Scraper",
             base_url="",  # Динамічний
-            timeout=float(os.getenv("WEB_SCRAPER_TIMEOUT", "30"))
+            timeout=float(os.getenv("WEB_SCRAPER_TIMEOUT", "30")),
         )
 
-        self.user_agent = os.getenv(
-            "WEB_SCRAPER_USER_AGENT",
-            "Predator-Analytics-Bot/1.0 (+https://predator.ai/bot)"
-        )
+        self.user_agent = os.getenv("WEB_SCRAPER_USER_AGENT", "Predator-Analytics-Bot/1.0 (+https://predator.ai/bot)")
         self.rate_limit_ms = int(os.getenv("WEB_SCRAPER_RATE_LIMIT", "500"))
 
         # Чорний список доменів (не скрапимо)
         self.blocked_domains = [
-            "facebook.com", "twitter.com", "instagram.com",  # Соцмережі
-            "google.com", "bing.com",  # Пошукові системи
+            "facebook.com",
+            "twitter.com",
+            "instagram.com",  # Соцмережі
+            "google.com",
+            "bing.com",  # Пошукові системи
         ]
 
         # Кеш скрапленого контенту
@@ -115,19 +116,14 @@ class WebScraperConnector(BaseConnector):
 
     def _clean_text(self, text: str) -> str:
         """Очищення тексту від зайвих пробілів."""
-        text = re.sub(r'\s+', ' ', text)
+        text = re.sub(r"\s+", " ", text)
         return text.strip()
 
     def _compute_hash(self, content: str) -> str:
         """Обчислення хешу контенту для дедуплікації."""
-        return hashlib.md5(content.encode('utf-8')).hexdigest()
+        return hashlib.md5(content.encode("utf-8")).hexdigest()
 
-    async def search(
-        self,
-        query: str,
-        limit: int = 10,
-        **kwargs
-    ) -> ConnectorResult:
+    async def search(self, query: str, limit: int = 10, **kwargs) -> ConnectorResult:
         """Пошук по URL або скрапінг сторінки.
 
         Args:
@@ -146,18 +142,12 @@ class WebScraperConnector(BaseConnector):
         # Перевіряємо чи query є URL
         if not query.startswith(("http://", "https://")):
             return ConnectorResult(
-                success=False,
-                data=None,
-                error="Запит має бути валідним URL (http:// або https://)",
-                source=self.name
+                success=False, data=None, error="Запит має бути валідним URL (http:// або https://)", source=self.name
             )
 
         if not self._is_allowed(query):
             return ConnectorResult(
-                success=False,
-                data=None,
-                error="Скрапінг цього домену заблоковано політикою",
-                source=self.name
+                success=False, data=None, error="Скрапінг цього домену заблоковано політикою", source=self.name
             )
 
         try:
@@ -194,12 +184,7 @@ class WebScraperConnector(BaseConnector):
 
             logger.info(f"Скраплено {len(pages)} сторінок з {query}")
 
-            return ConnectorResult(
-                success=True,
-                data=pages,
-                source=self.name,
-                records_count=len(pages)
-            )
+            return ConnectorResult(success=True, data=pages, source=self.name, records_count=len(pages))
 
         except Exception as e:
             logger.exception(f"Помилка скрапінгу {query}: {e}")
@@ -214,9 +199,9 @@ class WebScraperConnector(BaseConnector):
                     headers={
                         "User-Agent": self.user_agent,
                         "Accept": "text/html,application/xhtml+xml",
-                        "Accept-Language": "uk-UA,uk;q=0.9,en;q=0.8"
+                        "Accept-Language": "uk-UA,uk;q=0.9,en;q=0.8",
                     },
-                    follow_redirects=True
+                    follow_redirects=True,
                 )
                 response.raise_for_status()
 
@@ -235,10 +220,7 @@ class WebScraperConnector(BaseConnector):
         try:
             async with async_playwright() as p:
                 browser = await p.chromium.launch(headless=True)
-                context = await browser.new_context(
-                    user_agent=self.user_agent,
-                    locale="uk-UA"
-                )
+                context = await browser.new_context(user_agent=self.user_agent, locale="uk-UA")
                 page = await context.new_page()
 
                 await page.goto(url, wait_until="networkidle", timeout=int(self.timeout * 1000))
@@ -258,50 +240,50 @@ class WebScraperConnector(BaseConnector):
 
     def _parse_html(self, url: str, html: str) -> ScrapedPage:
         """Парсинг HTML та екстракція структурованих даних."""
-        soup = BeautifulSoup(html, 'html.parser')
+        soup = BeautifulSoup(html, "html.parser")
 
         # Видаляємо скрипти та стилі
         for script in soup(["script", "style", "noscript"]):
             script.decompose()
 
         # Заголовок
-        title_tag = soup.find('title')
+        title_tag = soup.find("title")
         title = title_tag.get_text().strip() if title_tag else ""
 
         # Мета-теги
-        meta_desc = soup.find('meta', attrs={'name': 'description'})
-        meta_description = meta_desc.get('content', '') if meta_desc else None
+        meta_desc = soup.find("meta", attrs={"name": "description"})
+        meta_description = meta_desc.get("content", "") if meta_desc else None
 
-        meta_kw = soup.find('meta', attrs={'name': 'keywords'})
-        meta_keywords = meta_kw.get('content', '') if meta_kw else None
+        meta_kw = soup.find("meta", attrs={"name": "keywords"})
+        meta_keywords = meta_kw.get("content", "") if meta_kw else None
 
         # Основний текстовий контент
         # Пріоритет: article > main > body
         main_content = (
-            soup.find('article') or
-            soup.find('main') or
-            soup.find('div', class_=re.compile(r'content|article|post|entry')) or
-            soup.body
+            soup.find("article")
+            or soup.find("main")
+            or soup.find("div", class_=re.compile(r"content|article|post|entry"))
+            or soup.body
         )
 
         text_content = self._clean_text(main_content.get_text()) if main_content else ""
 
         # Посилання
         links = []
-        for a in soup.find_all('a', href=True):
-            href = a['href']
-            if href.startswith('/'):
+        for a in soup.find_all("a", href=True):
+            href = a["href"]
+            if href.startswith("/"):
                 href = urljoin(url, href)
-            if href.startswith('http'):
+            if href.startswith("http"):
                 links.append(href)
 
         # Зображення
         images = []
-        for img in soup.find_all('img', src=True):
-            src = img['src']
-            if src.startswith('/'):
+        for img in soup.find_all("img", src=True):
+            src = img["src"]
+            if src.startswith("/"):
                 src = urljoin(url, src)
-            if src.startswith('http'):
+            if src.startswith("http"):
                 images.append(src)
 
         return ScrapedPage(
@@ -315,7 +297,7 @@ class WebScraperConnector(BaseConnector):
             images=list(set(images))[:20],
             scraped_at=datetime.now(UTC),
             content_hash=self._compute_hash(text_content),
-            word_count=len(text_content.split())
+            word_count=len(text_content.split()),
         )
 
     async def get_by_id(self, url: str) -> ConnectorResult:
@@ -330,61 +312,56 @@ class WebScraperConnector(BaseConnector):
         """
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
-                response = await client.get(
-                    feed_url,
-                    headers={"User-Agent": self.user_agent},
-                    follow_redirects=True
-                )
+                response = await client.get(feed_url, headers={"User-Agent": self.user_agent}, follow_redirects=True)
                 response.raise_for_status()
 
-                soup = BeautifulSoup(response.text, 'xml')
+                soup = BeautifulSoup(response.text, "xml")
 
                 items = []
 
                 # RSS формат
-                for item in soup.find_all('item'):
-                    title = item.find('title')
-                    link = item.find('link')
-                    description = item.find('description')
-                    item.find('pubDate')
-                    author = item.find('author') or item.find('dc:creator')
-                    categories = [cat.get_text() for cat in item.find_all('category')]
+                for item in soup.find_all("item"):
+                    title = item.find("title")
+                    link = item.find("link")
+                    description = item.find("description")
+                    item.find("pubDate")
+                    author = item.find("author") or item.find("dc:creator")
+                    categories = [cat.get_text() for cat in item.find_all("category")]
 
-                    items.append(RSSFeedItem(
-                        title=title.get_text().strip() if title else "",
-                        link=link.get_text().strip() if link else "",
-                        description=self._clean_text(description.get_text()) if description else "",
-                        pub_date=None,  # TODO: Parse date
-                        author=author.get_text().strip() if author else None,
-                        categories=categories
-                    ).__dict__)
+                    items.append(
+                        RSSFeedItem(
+                            title=title.get_text().strip() if title else "",
+                            link=link.get_text().strip() if link else "",
+                            description=self._clean_text(description.get_text()) if description else "",
+                            pub_date=None,  # TODO: Parse date
+                            author=author.get_text().strip() if author else None,
+                            categories=categories,
+                        ).__dict__
+                    )
 
                 # Atom формат
-                for entry in soup.find_all('entry'):
-                    title = entry.find('title')
-                    link = entry.find('link')
-                    summary = entry.find('summary') or entry.find('content')
-                    entry.find('published') or entry.find('updated')
-                    author_tag = entry.find('author')
-                    author = author_tag.find('name') if author_tag else None
+                for entry in soup.find_all("entry"):
+                    title = entry.find("title")
+                    link = entry.find("link")
+                    summary = entry.find("summary") or entry.find("content")
+                    entry.find("published") or entry.find("updated")
+                    author_tag = entry.find("author")
+                    author = author_tag.find("name") if author_tag else None
 
-                    items.append(RSSFeedItem(
-                        title=title.get_text().strip() if title else "",
-                        link=link.get('href', '') if link else "",
-                        description=self._clean_text(summary.get_text()) if summary else "",
-                        pub_date=None,
-                        author=author.get_text().strip() if author else None,
-                        categories=[]
-                    ).__dict__)
+                    items.append(
+                        RSSFeedItem(
+                            title=title.get_text().strip() if title else "",
+                            link=link.get("href", "") if link else "",
+                            description=self._clean_text(summary.get_text()) if summary else "",
+                            pub_date=None,
+                            author=author.get_text().strip() if author else None,
+                            categories=[],
+                        ).__dict__
+                    )
 
                 logger.info(f"Отримано {len(items)} записів з RSS {feed_url}")
 
-                return ConnectorResult(
-                    success=True,
-                    data=items,
-                    source=self.name,
-                    records_count=len(items)
-                )
+                return ConnectorResult(success=True, data=items, source=self.name, records_count=len(items))
 
         except Exception as e:
             logger.exception(f"Помилка парсингу RSS {feed_url}: {e}")
@@ -417,7 +394,7 @@ class WebScraperConnector(BaseConnector):
                             "format": res.get("format"),
                             "url": res.get("url"),
                             "size": res.get("size"),
-                            "last_modified": res.get("last_modified")
+                            "last_modified": res.get("last_modified"),
                         })
 
                     dataset_info = {
@@ -428,21 +405,11 @@ class WebScraperConnector(BaseConnector):
                         "tags": [t.get("name") for t in result.get("tags", [])],
                         "resources": resources,
                         "metadata_created": result.get("metadata_created"),
-                        "metadata_modified": result.get("metadata_modified")
+                        "metadata_modified": result.get("metadata_modified"),
                     }
 
-                    return ConnectorResult(
-                        success=True,
-                        data=dataset_info,
-                        source=self.name,
-                        records_count=1
-                    )
-                return ConnectorResult(
-                    success=False,
-                    data=None,
-                    error="Датасет не знайдено",
-                    source=self.name
-                )
+                    return ConnectorResult(success=True, data=dataset_info, source=self.name, records_count=1)
+                return ConnectorResult(success=False, data=None, error="Датасет не знайдено", source=self.name)
 
         except Exception as e:
             logger.exception(f"Помилка отримання датасету {dataset_id}: {e}")

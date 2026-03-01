@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from app.libs.core.governance import OperationalPolicy, SecurityStage
 from app.libs.core.logger import setup_logger
@@ -8,10 +8,12 @@ from app.libs.core.logger import setup_logger
 
 logger = setup_logger("predator.trinity")
 
+
 class TrinityCore:
     """The heart of Predator Analytics v45+.
     Unifies WinSURF Governance, Strategic Planning, and Secure Execution.
     """
+
     def __init__(self, strategist, coder, auditor, ops=None):
         self.strategist = strategist
         self.coder = coder
@@ -25,6 +27,7 @@ class TrinityCore:
         # 0. System Lockdown Enforcement
         try:
             from app.services.system_control_service import system_control_service
+
             if await system_control_service.is_lockdown():
                 # Allow only basic information queries during lockdown
                 safe_keywords = ["status", "здоров'я", "info", "допомога", "help"]
@@ -35,7 +38,7 @@ class TrinityCore:
                     return {
                         "success": False,
                         "error": "⛔ SYSTEM LOCKDOWN ACTIVE: All modifications and high-privilege actions are restricted by the core security protocol.",
-                        "history": ["🚨 Lockdown Policy: Operation blocked by root governance."]
+                        "history": ["🚨 Lockdown Policy: Operation blocked by root governance."],
                     }
         except Exception as e:
             logger.exception(f"Failed to check lockdown status in TrinityCore: {e}")
@@ -46,7 +49,7 @@ class TrinityCore:
             return {
                 "success": False,
                 "error": f"WinSURF Blocked: {policy['reason']}",
-                "audit_report": f"Governance Violation: {policy['reason']}"
+                "audit_report": f"Governance Violation: {policy['reason']}",
             }
 
         history = ["🛡️ WinSURF: Approval granted."]
@@ -69,7 +72,7 @@ class TrinityCore:
             if any(word in query.lower() for word in ["fix", "generate", "patch", "diagnose"]):
                 code = await self.coder.generate_code(query)
                 if code.startswith(("❌", "# Error")):
-                     return {"success": False, "error": f"Generation Failure: {code}", "history": history}
+                    return {"success": False, "error": f"Generation Failure: {code}", "history": history}
                 history.append("⚙️ Generation: Code block produced.")
 
             # 4. Audit Phase (Copilot)
@@ -79,7 +82,7 @@ class TrinityCore:
                     "success": False,
                     "error": f"Audit Failed: {audit.get('security_assessment')}",
                     "audit_report": audit.get("security_assessment"),
-                    "history": history
+                    "history": history,
                 }
             history.append("✅ Audit: Security check passed.")
 
@@ -88,7 +91,7 @@ class TrinityCore:
                 "plan": plan,
                 "code": code,
                 "history": history,
-                "audit_report": audit["security_assessment"]
+                "audit_report": audit["security_assessment"],
             }
 
         except Exception as e:

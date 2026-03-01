@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 from datetime import datetime
-import logging
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 from opensearchpy import AsyncOpenSearch, helpers
 
@@ -11,6 +10,7 @@ from app.libs.core.structured_logger import get_logger, log_performance
 
 
 logger = get_logger("service.opensearch_indexer")
+
 
 class OpenSearchIndexer:
     """Service for indexing data into OpenSearch.
@@ -27,7 +27,7 @@ class OpenSearchIndexer:
             hosts=[self.host],
             http_auth=None,  # Disabled security in dev
             use_ssl=False,
-            verify_certs=False
+            verify_certs=False,
         )
 
     async def create_index(self, index_name: str, mappings: dict[str, Any] | None = None):
@@ -39,33 +39,20 @@ class OpenSearchIndexer:
 
         # Default mappings with Ukrainian analyzer
         body = {
-            "settings": {
-                "analysis": {
-                    "analyzer": {
-                        "default": {
-                            "type": "standard"
-                        }
-                    }
-                }
-            },
+            "settings": {"analysis": {"analyzer": {"default": {"type": "standard"}}}},
             "mappings": {
                 "properties": {
                     "tenant_id": {"type": "keyword"},
                     "title": {
                         "type": "text",
                         "analyzer": "standard",
-                        "fields": {
-                            "keyword": {"type": "keyword", "ignore_above": 256}
-                        }
+                        "fields": {"keyword": {"type": "keyword", "ignore_above": 256}},
                     },
-                    "content": {
-                        "type": "text",
-                        "analyzer": "standard"
-                    },
+                    "content": {"type": "text", "analyzer": "standard"},
                     "category": {"type": "keyword"},
-                    "created_at": {"type": "date"}
+                    "created_at": {"type": "date"},
                 }
-            }
+            },
         }
 
         if mappings:
@@ -78,12 +65,7 @@ class OpenSearchIndexer:
         """Ensure tenant_id mapping exists on existing index."""
         try:
             await self.client.indices.put_mapping(
-                index=index_name,
-                body={
-                    "properties": {
-                        "tenant_id": {"type": "keyword"}
-                    }
-                }
+                index=index_name, body={"properties": {"tenant_id": {"type": "keyword"}}}
             )
         except Exception as e:
             logger.warning("opensearch_mapping_update_failed", index_name=index_name, error=str(e))
@@ -95,7 +77,7 @@ class OpenSearchIndexer:
         content: str,
         metadata: dict[str, Any] | None = None,
         tenant_id: str = "default",
-        index_name: str = "documents"
+        index_name: str = "documents",
     ):
         """Index a single document."""
         try:
@@ -105,16 +87,11 @@ class OpenSearchIndexer:
                 "content": content,
                 "tenant_id": tenant_id,
                 "created_at": datetime.now().isoformat(),
-                **(metadata or {})
+                **(metadata or {}),
             }
             doc_data = self._mask_pii(doc_data)
 
-            await self.client.index(
-                index=index_name,
-                id=str(doc_id),
-                body=doc_data,
-                refresh=True
-            )
+            await self.client.index(index=index_name, id=str(doc_id), body=doc_data, refresh=True)
 
             logger.info("opensearch_document_indexed", doc_id=doc_id, index_name=index_name)
         except Exception as e:
@@ -128,7 +105,7 @@ class OpenSearchIndexer:
         pii_safe: bool = True,
         embedding_service: Any = None,
         qdrant_service: Any = None,
-        tenant_id: str = "default"
+        tenant_id: str = "default",
     ) -> dict[str, Any]:
         """Bulk index documents into OpenSearch AND Qdrant (Dual Indexing).
 
@@ -141,10 +118,7 @@ class OpenSearchIndexer:
             tenant_id: Tenant context for isolation
         """
         logger.info(
-            "opensearch_bulk_indexing_started",
-            count=len(documents),
-            index_name=index_name,
-            tenant_id=tenant_id
+            "opensearch_bulk_indexing_started", count=len(documents), index_name=index_name, tenant_id=tenant_id
         )
 
         # 1. Apply PII masking and Inject Tenant ID
@@ -164,7 +138,7 @@ class OpenSearchIndexer:
             {
                 "_index": index_name,
                 "_source": doc,
-                "_id": doc.get("id") # Ensure ID consistency
+                "_id": doc.get("id"),  # Ensure ID consistency
             }
             for doc in processed_docs
         ]
@@ -197,14 +171,10 @@ class OpenSearchIndexer:
                         "source": doc.get("source", "unknown"),
                         "category": doc.get("category"),
                         "published_date": doc.get("published_date"),
-                        "tenant_id": doc.get("tenant_id")
+                        "tenant_id": doc.get("tenant_id"),
                     }
 
-                    qdrant_docs.append({
-                        "id": doc_id,
-                        "embedding": embedding,
-                        "metadata": metadata
-                    })
+                    qdrant_docs.append({"id": doc_id, "embedding": embedding, "metadata": metadata})
 
                 # Bulk upsert to Qdrant with tenant context
                 if qdrant_docs:
@@ -215,11 +185,7 @@ class OpenSearchIndexer:
             except Exception as e:
                 logger.exception("qdrant_indexing_failed", error=str(e))
 
-        return {
-            "indexed_opensearch": success,
-            "indexed_qdrant": qdrant_count,
-            "failed": len(failed) if failed else 0
-        }
+        return {"indexed_opensearch": success, "indexed_qdrant": qdrant_count, "failed": len(failed) if failed else 0}
 
     def _mask_pii(self, document: dict[str, Any]) -> dict[str, Any]:
         """Mask PII fields in document.
@@ -247,7 +213,7 @@ class OpenSearchIndexer:
         query: str | None = None,
         query_body: dict[str, Any] | None = None,
         size: int = 10,
-        tenant_id: str | None = None
+        tenant_id: str | None = None,
     ) -> dict[str, Any]:
         """Execute a search query with tenant isolation.
 
@@ -277,16 +243,11 @@ class OpenSearchIndexer:
                         # Wrap existing dict filter into a list
                         current_query["bool"]["filter"] = [
                             current_query["bool"]["filter"],
-                            {"term": {"tenant_id": tenant_id}}
+                            {"term": {"tenant_id": tenant_id}},
                         ]
                 else:
                     # Wrap simple query into a bool query with tenant filter
-                    body["query"] = {
-                        "bool": {
-                            "must": current_query,
-                            "filter": [{"term": {"tenant_id": tenant_id}}]
-                        }
-                    }
+                    body["query"] = {"bool": {"must": current_query, "filter": [{"term": {"tenant_id": tenant_id}}]}}
                 logger.info("opensearch_search_tenant_filter_applied", tenant_id=tenant_id)
 
         elif query:
@@ -296,7 +257,7 @@ class OpenSearchIndexer:
                     "query": query,
                     "fields": ["title^3", "content", "category"],
                     "type": "best_fields",
-                    "fuzziness": "AUTO"
+                    "fuzziness": "AUTO",
                 }
             }
 
@@ -305,30 +266,15 @@ class OpenSearchIndexer:
                 filter_clause.append({"term": {"tenant_id": tenant_id}})
 
             body = {
-                "query": {
-                    "bool": {
-                        "must": must_clause,
-                        "filter": filter_clause
-                    }
-                },
+                "query": {"bool": {"must": must_clause, "filter": filter_clause}},
                 "size": size,
-                "highlight": {
-                    "fields": {
-                        "content": {"fragment_size": 150, "number_of_fragments": 1},
-                        "title": {}
-                    }
-                }
+                "highlight": {"fields": {"content": {"fragment_size": 150, "number_of_fragments": 1}, "title": {}}},
             }
         # Match all (filtered by tenant)
         elif tenant_id:
             body = {
-                "query": {
-                    "bool": {
-                        "must": {"match_all": {}},
-                        "filter": [{"term": {"tenant_id": tenant_id}}]
-                    }
-                },
-                "size": size
+                "query": {"bool": {"must": {"match_all": {}}, "filter": [{"term": {"tenant_id": tenant_id}}]}},
+                "size": size,
             }
         else:
             body = {"query": {"match_all": {}}, "size": size}
@@ -343,6 +289,7 @@ class OpenSearchIndexer:
     async def close(self):
         """Close the client connection."""
         await self.client.close()
+
 
 # Singleton instance
 opensearch_indexer = OpenSearchIndexer()

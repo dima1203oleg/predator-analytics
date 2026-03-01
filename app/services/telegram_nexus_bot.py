@@ -11,7 +11,7 @@ Predator Analytics Nexus Telegram Bot - Інтелектуальний пуль�
 """
 import logging
 import os
-from typing import Any, Dict, Optional
+from typing import Any
 
 import httpx
 
@@ -42,18 +42,15 @@ class NexusTelegramBot(TelegramAssistant):
             "agents": self._cmd_agents_status,
             "orchestrate": self._cmd_orchestrate,
             "arbiter": self._cmd_arbiter_status,
-
             # Датасети та аналітика
             "datasets": self._cmd_datasets_list,
             "analyze": self._cmd_analyze_dataset,
             "anomalies": self._cmd_find_anomalies,
             "forecast": self._cmd_forecast,
-
             # ML та моделі
             "models": self._cmd_models_status,
             "train": self._cmd_train_model,
             "inference": self._cmd_run_inference,
-
             # Система
             "health": self._cmd_system_health,
             "metrics": self._cmd_system_metrics,
@@ -77,7 +74,7 @@ class NexusTelegramBot(TelegramAssistant):
                 return f"⚠️ **Помилка за протоколом Triple Agent**\n\nПричина: {error_msg}\n\nЗвіт аудиту:\n{audit}"
 
             # Format plan if it is a list
-            plan_str = result.get('plan', [])
+            plan_str = result.get("plan", [])
             if isinstance(plan_str, list):
                 plan_str = "\n".join([f"- {step}" for step in plan_str])
 
@@ -103,8 +100,8 @@ class NexusTelegramBot(TelegramAssistant):
                         "intent": intent_data.get("intent"),
                         "agents": intent_data.get("agents", []),
                         "params": intent_data.get("params", {}),
-                        "use_arbiter": True
-                    }
+                        "use_arbiter": True,
+                    },
                 )
                 result = response.json()
 
@@ -233,14 +230,13 @@ class NexusTelegramBot(TelegramAssistant):
         try:
             async with httpx.AsyncClient(timeout=120) as client:
                 response = await client.post(
-                    f"{self.nexus_api_url}/api/v1/self-improve/start",
-                    json={"mode": args or "auto"}
+                    f"{self.nexus_api_url}/api/v1/self-improve/start", json={"mode": args or "auto"}
                 )
                 result = response.json()
 
                 return f"""🔄 **Самовдосконалення запущено**
 
-Режим: {result.get('mode', 'auto')}
+Режим: {result.get("mode", "auto")}
 Етапи:
   1. ✅ Діагностика
   2. 🔄 Аналіз дрейфу
@@ -278,7 +274,7 @@ class NexusTelegramBot(TelegramAssistant):
         import re
 
         # Шукаємо JSON блок
-        json_match = re.search(r'\{.*\}', text, re.DOTALL)
+        json_match = re.search(r"\{.*\}", text, re.DOTALL)
         if json_match:
             try:
                 return json.loads(json_match.group(0))

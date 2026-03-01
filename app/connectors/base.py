@@ -6,10 +6,10 @@ Abstract base class for all Ukrainian data source connectors.
 """
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 # import httpx
@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 class ConnectorStatus(Enum):
     """Connector health status."""
+
     HEALTHY = "HEALTHY"
     DEGRADED = "DEGRADED"
     OFFLINE = "OFFLINE"
@@ -29,6 +30,7 @@ class ConnectorStatus(Enum):
 @dataclass
 class ConnectorResult:
     """Standard result from connector operations."""
+
     success: bool
     data: Any
     error: str | None = None
@@ -50,13 +52,7 @@ class BaseConnector(ABC):
     - health_check(): Check connector status
     """
 
-    def __init__(
-        self,
-        name: str,
-        base_url: str,
-        timeout: float = 30.0,
-        max_retries: int = 3
-    ):
+    def __init__(self, name: str, base_url: str, timeout: float = 30.0, max_retries: int = 3):
         self.name = name
         self.base_url = base_url
         self.timeout = timeout
@@ -87,11 +83,7 @@ class BaseConnector(ABC):
         #     self._client = None
 
     async def _request(
-        self,
-        method: str,
-        endpoint: str,
-        params: dict | None = None,
-        data: dict | None = None
+        self, method: str, endpoint: str, params: dict | None = None, data: dict | None = None
     ) -> ConnectorResult:
         """Make HTTP request with error handling."""
         # Placeholder for now
@@ -138,12 +130,7 @@ class BaseConnector(ABC):
         # return None
 
     @abstractmethod
-    async def search(
-        self,
-        query: str,
-        limit: int = 20,
-        **kwargs
-    ) -> ConnectorResult:
+    async def search(self, query: str, limit: int = 20, **kwargs) -> ConnectorResult:
         """Search for data in the source."""
 
     @abstractmethod
@@ -169,5 +156,5 @@ class BaseConnector(ABC):
             "name": self.name,
             "status": self._status.value,
             "last_check": self._last_check.isoformat() if self._last_check else None,
-            "base_url": self.base_url
+            "base_url": self.base_url,
         }

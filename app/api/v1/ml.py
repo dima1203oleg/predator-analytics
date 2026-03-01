@@ -5,7 +5,7 @@ from __future__ import annotations
 Provides endpoints for ML services: reranking, summarization.
 """
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -19,6 +19,7 @@ router = APIRouter(prefix="/ml", tags=["Machine Learning"])
 # ============================================================================
 # Request/Response Models
 # ============================================================================
+
 
 class RerankRequest(BaseModel):
     query: str
@@ -48,6 +49,7 @@ class SummarizeResponse(BaseModel):
 # Endpoints
 # ============================================================================
 
+
 @router.post("/rerank", response_model=RerankResponse)
 async def rerank_documents(request: RerankRequest):
     """Rerank search results using Cross-Encoder model.
@@ -69,10 +71,7 @@ async def rerank_documents(request: RerankRequest):
 
         reranker = get_reranker()
         ranked = reranker.rerank(
-            query=request.query,
-            documents=request.documents,
-            top_k=request.top_k,
-            score_field=request.score_field
+            query=request.query, documents=request.documents, top_k=request.top_k, score_field=request.score_field
         )
 
         # Format response
@@ -88,10 +87,7 @@ async def rerank_documents(request: RerankRequest):
 
     except ImportError as e:
         logger.exception(f"ML service not available: {e}")
-        raise HTTPException(
-            status_code=503,
-            detail="Reranker service not available. Install sentence-transformers."
-        )
+        raise HTTPException(status_code=503, detail="Reranker service not available. Install sentence-transformers.")
     except Exception as e:
         logger.exception(f"Reranking failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -115,34 +111,20 @@ async def summarize_text(request: SummarizeRequest):
         from app.services.ml import get_summarizer
 
         summarizer = get_summarizer()
-        summary = summarizer.summarize(
-            text=request.text,
-            max_length=request.max_length,
-            min_length=request.min_length
-        )
+        summary = summarizer.summarize(text=request.text, max_length=request.max_length, min_length=request.min_length)
 
         if not summary:
-            raise HTTPException(
-                status_code=400,
-                detail="Text too short or could not be summarized"
-            )
+            raise HTTPException(status_code=400, detail="Text too short or could not be summarized")
 
         word_count = len(summary.split())
 
         logger.info(f"Generated summary: {word_count} words")
 
-        return SummarizeResponse(
-            summary=summary,
-            model="facebook/bart-large-cnn",
-            word_count=word_count
-        )
+        return SummarizeResponse(summary=summary, model="facebook/bart-large-cnn", word_count=word_count)
 
     except ImportError as e:
         logger.exception(f"Summarizer not available: {e}")
-        raise HTTPException(
-            status_code=503,
-            detail="Summarizer service not available. Install transformers."
-        )
+        raise HTTPException(status_code=503, detail="Summarizer service not available. Install transformers.")
     except HTTPException:
         raise
     except Exception as e:
@@ -153,16 +135,11 @@ async def summarize_text(request: SummarizeRequest):
 @router.get("/health")
 async def ml_health_check():
     """Check ML services availability."""
-    status = {
-        "reranker": False,
-        "summarizer": False,
-        "embedding": False,
-        "augmentor": False,
-        "xai": False
-    }
+    status = {"reranker": False, "summarizer": False, "embedding": False, "augmentor": False, "xai": False}
 
     try:
         from app.services.ml import get_reranker
+
         get_reranker()
         status["reranker"] = True
     except Exception:
@@ -170,6 +147,7 @@ async def ml_health_check():
 
     try:
         from app.services.ml import get_summarizer
+
         get_summarizer()
         status["summarizer"] = True
     except Exception:
@@ -177,6 +155,7 @@ async def ml_health_check():
 
     try:
         from app.services.embedding_service import EmbeddingService
+
         EmbeddingService()
         status["embedding"] = True
     except Exception:
@@ -184,6 +163,7 @@ async def ml_health_check():
 
     try:
         from app.services.ml import get_augmentor
+
         get_augmentor()
         status["augmentor"] = True
     except Exception:
@@ -191,6 +171,7 @@ async def ml_health_check():
 
     try:
         from app.services.ml import get_xai_service
+
         get_xai_service()
         status["xai"] = True
     except Exception:
@@ -202,6 +183,7 @@ async def ml_health_check():
 # ============================================================================
 # Data Augmentation Endpoints (TZ v5.0)
 # ============================================================================
+
 
 class AugmentRequest(BaseModel):
     text: str
@@ -235,18 +217,13 @@ async def augment_text(request: AugmentRequest):
 
         augmentor = get_augmentor()
         variations = augmentor.augment_text(
-            text=request.text,
-            method=request.method,
-            num_variations=request.num_variations
+            text=request.text, method=request.method, num_variations=request.num_variations
         )
 
         logger.info(f"Generated {len(variations)} augmentations using '{request.method}'")
 
         return AugmentResponse(
-            original=request.text,
-            variations=variations,
-            method=request.method,
-            count=len(variations)
+            original=request.text, variations=variations, method=request.method, count=len(variations)
         )
 
     except Exception as e:
@@ -294,9 +271,9 @@ async def generate_dataset(request: DatasetGenerateRequest):
         # Generate augmented dataset
         augmented = augmentor.augment_dataset(
             documents=documents,
-            tenant_id=documents[0]["tenant_id"], # Group by tenant of first doc
+            tenant_id=documents[0]["tenant_id"],  # Group by tenant of first doc
             method=request.method,
-            variations_per_doc=request.variations_per_doc
+            variations_per_doc=request.variations_per_doc,
         )
 
         # Store in augmented_datasets table
@@ -311,7 +288,7 @@ async def generate_dataset(request: DatasetGenerateRequest):
                     tenant_id=uuid.UUID(item["tenant_id"]),
                     original_id=uuid.UUID(item["original_id"]),
                     content=item["content"],
-                    aug_type=item["aug_type"]
+                    aug_type=item["aug_type"],
                 )
                 session.add(aug_record)
             await session.commit()
@@ -323,7 +300,7 @@ async def generate_dataset(request: DatasetGenerateRequest):
             "source_documents": len(documents),
             "generated_variations": len(augmented),
             "method": request.method,
-            "stored": True
+            "stored": True,
         }
 
     except HTTPException:
@@ -336,6 +313,7 @@ async def generate_dataset(request: DatasetGenerateRequest):
 # ============================================================================
 # XAI (Explainable AI) Endpoints (TZ v5.0)
 # ============================================================================
+
 
 class ExplainRequest(BaseModel):
     query: str
@@ -372,17 +350,9 @@ async def explain_result(request: ExplainRequest):
         content = document.get("content", "")
 
         # Generate explanation
-        explanation = xai.explain_rerank_score(
-            query=request.query,
-            document=content,
-            score=request.score
-        )
+        explanation = xai.explain_rerank_score(query=request.query, document=content, score=request.score)
 
-        return {
-            "document_id": request.document_id,
-            "query": request.query,
-            "explanation": explanation
-        }
+        return {"document_id": request.document_id, "query": request.query, "explanation": explanation}
 
     except HTTPException:
         raise
@@ -422,7 +392,7 @@ async def explain_document(document_id: str, query: str):
             "document_id": document_id,
             "title": document.get("title"),
             "explanation": explanation,
-            "attention_heatmap": heatmap
+            "attention_heatmap": heatmap,
         }
 
     except HTTPException:

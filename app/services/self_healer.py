@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 import ast
-import logging
 import os
-from typing import Any, Dict, Optional
+from typing import Any
 
 from app.libs.core.structured_logger import get_logger
 from app.services.llm.service import llm_service
 
 
 logger = get_logger("service.self_healer")
+
 
 class SelfHealer:
     """Autonomous Self-Healing Agent.
@@ -21,7 +21,7 @@ class SelfHealer:
         task_type = task.get("type", "")
         payload = task.get("payload", {})
 
-        logger.info("healer_attempting_task", type=task_type, target=payload.get('title'))
+        logger.info("healer_attempting_task", type=task_type, target=payload.get("title"))
 
         if task_type == "code_improvement":
             return await self._heal_code(payload)
@@ -38,14 +38,14 @@ class SelfHealer:
         full_path = ""
         # Handle relative/absolute paths
         if file_path.startswith("/"):
-             full_path = file_path
+            full_path = file_path
         else:
-             # Assume relative to api-gateway root or project root
-             # Try project root first
-             full_path = os.path.abspath(file_path)
-             if not os.path.exists(full_path):
-                 # Try adding /app if in container
-                 full_path = f"/app/{file_path}"
+            # Assume relative to api-gateway root or project root
+            # Try project root first
+            full_path = os.path.abspath(file_path)
+            if not os.path.exists(full_path):
+                # Try adding /app if in container
+                full_path = f"/app/{file_path}"
 
         if not os.path.exists(full_path):
             logger.warning(f"File not found for healing: {full_path}")
@@ -96,7 +96,7 @@ OUTPUT ONLY THE REFACTORED PYTHON CODE:"""
                     prompt=prompt,
                     system="You are a Python code refactoring engine. Output ONLY valid Python code. No markdown. No explanations.",
                     max_tokens=6000,
-                    temperature=0.1
+                    temperature=0.1,
                 )
 
                 if not response.success:
@@ -152,5 +152,6 @@ OUTPUT ONLY THE REFACTORED PYTHON CODE:"""
         except Exception as e:
             logger.exception(f"Healer exception: {e}")
             return False
+
 
 self_healer = SelfHealer()

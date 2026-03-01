@@ -6,9 +6,6 @@ Handles stress tests, invariant monitoring, and system resilience.
 """
 import asyncio
 from datetime import datetime
-import os
-import time
-from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel
@@ -21,23 +18,22 @@ logger = get_logger("predator.api.som")
 
 router = APIRouter(prefix="/som", tags=["SOM Chaos Engine"])
 
+
 class ChaosStatus(BaseModel):
     chaos_mode: bool
     active_tests: list[str]
     last_event: str | None
     health_score: float
 
-_chaos_state = {
-    "chaos_mode": False,
-    "active_tests": [],
-    "last_event": None,
-    "health_score": 100.0
-}
+
+_chaos_state = {"chaos_mode": False, "active_tests": [], "last_event": None, "health_score": 100.0}
+
 
 @router.get("/chaos/scenarios")
 async def list_scenarios():
     """List all available chaos engineering scenarios."""
     return {"scenarios": chaos_tester.scenarios}
+
 
 @router.post("/chaos/run/{scenario_id}")
 async def run_specific_scenario(scenario_id: str, background_tasks: BackgroundTasks):
@@ -53,10 +49,8 @@ async def run_specific_scenario(scenario_id: str, background_tasks: BackgroundTa
     # Run in background
     background_tasks.add_task(_run_and_update_state, scenario_id)
 
-    return {
-        "status": "initiated",
-        "scenario": scenario
-    }
+    return {"status": "initiated", "scenario": scenario}
+
 
 async def _run_and_update_state(scenario_id: str):
     await chaos_tester.run_scenario(scenario_id)
@@ -70,6 +64,7 @@ async def _run_and_update_state(scenario_id: str):
 async def get_chaos_status():
     """Get current status of Chaos Engineering engine."""
     return _chaos_state
+
 
 @router.post("/chaos/spike")
 async def trigger_chaos_spike(duration: int = 15, background_tasks: BackgroundTasks = None):
@@ -92,11 +87,8 @@ async def trigger_chaos_spike(duration: int = 15, background_tasks: BackgroundTa
         # Fallback if no background tasks (shouldn't happen with correct usage)
         asyncio.create_task(_run_random_and_reset())
 
-    return {
-        "status": "initiated",
-        "duration_seconds": duration,
-        "active_tests": _chaos_state["active_tests"]
-    }
+    return {"status": "initiated", "duration_seconds": duration, "active_tests": _chaos_state["active_tests"]}
+
 
 async def _run_random_and_reset():
     await chaos_tester.run_random_test()
@@ -105,17 +97,29 @@ async def _run_random_and_reset():
     _chaos_state["last_event"] = f"Random test completed at {datetime.now().isoformat()}"
     logger.info("chaos_spike_completed")
 
+
 @router.get("/invariants")
 async def check_invariants():
     """Check system invariants (Rules that must never be broken)."""
     return {
         "invariants": [
             {"id": "INV_001", "name": "Atomic Truth", "status": "PASSING", "description": "Ledger must match DB state"},
-            {"id": "INV_002", "name": "Zero Tamper", "status": "PASSING", "description": "Constitution hash must match golden reference"},
-            {"id": "INV_003", "name": "Budget Guard", "status": "PASSING", "description": "AI spend must not exceed daily limit"}
+            {
+                "id": "INV_002",
+                "name": "Zero Tamper",
+                "status": "PASSING",
+                "description": "Constitution hash must match golden reference",
+            },
+            {
+                "id": "INV_003",
+                "name": "Budget Guard",
+                "status": "PASSING",
+                "description": "AI spend must not exceed daily limit",
+            },
         ],
-        "overall_integrity": "100%"
+        "overall_integrity": "100%",
     }
+
 
 @router.get("/anomalies")
 async def get_anomalies():
@@ -123,4 +127,5 @@ async def get_anomalies():
     Returns Z-score analysis, forecasts, and active anomalies.
     """
     from app.services.anomaly_service import anomaly_service
+
     return await anomaly_service.detect_anomalies()

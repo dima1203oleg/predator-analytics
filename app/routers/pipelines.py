@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import random
-from typing import Any, Dict, List
 
 from fastapi import APIRouter, HTTPException
 
@@ -16,17 +15,18 @@ DB_PIPELINES = {
     "graph": {"name": "Neo4j Graph Database", "color": "emerald", "progress": 0, "status": "idle"},
 }
 
+
 @router.get("/")
 async def list_pipelines():
     """Get status of all active data pipelines."""
     # Simulate dynamic progress
-    for db_id, data in DB_PIPELINES.items():
+    for data in DB_PIPELINES.values():
         if data["status"] == "running":
             data["progress"] = min(100, data["progress"] + random.randint(1, 5))
             if data["progress"] == 100:
                 data["status"] = "completed"
                 # Start next idle pipeline if exists
-                for next_db, next_data in DB_PIPELINES.items():
+                for next_data in DB_PIPELINES.values():
                     if next_data["status"] == "idle":
                         next_data["status"] = "running"
                         break
@@ -37,9 +37,11 @@ async def list_pipelines():
             **v,
             "items_processed": 1000 + random.randint(1, 500),
             "items_total": 2500,
-            "latency_ms": 10 + random.randint(1, 50)
-        } for k, v in DB_PIPELINES.items()
+            "latency_ms": 10 + random.randint(1, 50),
+        }
+        for k, v in DB_PIPELINES.items()
     ]
+
 
 @router.post("/{db_id}/restart")
 async def restart_pipeline(db_id: str):

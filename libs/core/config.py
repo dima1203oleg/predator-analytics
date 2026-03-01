@@ -1,12 +1,13 @@
-"""
-Core Configuration
+"""Core Configuration
 Shared settings for all Predator services.
 """
-from pydantic_settings import BaseSettings, SettingsConfigDict
+
 from functools import lru_cache
-from typing import Optional, List, Union, Any, Dict
 import json
 import os
+from typing import Any, Dict, List, Optional, Union
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -20,13 +21,15 @@ class Settings(BaseSettings):
 
     # API
     API_V1_PREFIX: str = "/api/v1"
-    CORS_ORIGINS: List[str] = [
+    CORS_ORIGINS: list[str] = [
         os.getenv("FRONTEND_URL", "http://localhost:3000"),
-        os.getenv("FRONTEND_DEV_URL", "http://localhost:5173")
+        os.getenv("FRONTEND_DEV_URL", "http://localhost:5173"),
     ]
 
     # Database
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://predator:predator_password@localhost:5432/predator_db")
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL", "postgresql+asyncpg://predator:predator_password@localhost:5432/predator_db"
+    )
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 5
 
@@ -47,7 +50,7 @@ class Settings(BaseSettings):
 
     # Vault (Secrets)
     VAULT_ADDR: str = "http://vault:8200"
-    VAULT_TOKEN: Optional[str] = None
+    VAULT_TOKEN: str | None = None
 
     # External Ukrainian APIs
     PROZORRO_API_URL: str = "https://public.api.openprocurement.org/api/2.5"
@@ -57,18 +60,18 @@ class Settings(BaseSettings):
     COURT_API_URL: str = "https://reyestr.court.gov.ua/api"
 
     # LLM Settings
-    OPENAI_API_KEY: Optional[str] = None
-    GEMINI_API_KEY: Optional[str] = None
+    OPENAI_API_KEY: str | None = None
+    GEMINI_API_KEY: str | None = None
     # GEMINI_API_KEYS removed from Settings class to bypass Pydantic parsing issues
-    ANTHROPIC_API_KEY: Optional[str] = None
-    GROQ_API_KEY: Optional[str] = None
-    MISTRAL_API_KEY: Optional[str] = None
-    OPENROUTER_API_KEY: Optional[str] = None
-    HUGGINGFACE_API_KEY: Optional[str] = None
-    COHERE_API_KEY: Optional[str] = None
-    TOGETHER_API_KEY: Optional[str] = None
-    XAI_API_KEY: Optional[str] = None
-    DEEPSEEK_API_KEY: Optional[str] = None
+    ANTHROPIC_API_KEY: str | None = None
+    GROQ_API_KEY: str | None = None
+    MISTRAL_API_KEY: str | None = None
+    OPENROUTER_API_KEY: str | None = None
+    HUGGINGFACE_API_KEY: str | None = None
+    COHERE_API_KEY: str | None = None
+    TOGETHER_API_KEY: str | None = None
+    XAI_API_KEY: str | None = None
+    DEEPSEEK_API_KEY: str | None = None
 
     # LLM Base URLs
     LLM_OPENAI_BASE_URL: str = "https://api.openai.com/v1"
@@ -101,9 +104,9 @@ class Settings(BaseSettings):
     AUTO_APPROVAL_ENABLED: bool = True
 
     # TTS/STT
-    GOOGLE_TTS_API_KEY: Optional[str] = None
-    TELEGRAM_BOT_TOKEN: Optional[str] = os.getenv("TELEGRAM_BOT_TOKEN")
-    TELEGRAM_ADMIN_ID: Optional[str] = os.getenv("TELEGRAM_ADMIN_ID")
+    GOOGLE_TTS_API_KEY: str | None = None
+    TELEGRAM_BOT_TOKEN: str | None = os.getenv("TELEGRAM_BOT_TOKEN")
+    TELEGRAM_ADMIN_ID: str | None = os.getenv("TELEGRAM_ADMIN_ID")
 
     # Path Management
     PROJECT_ROOT: str = os.getenv("PROJECT_ROOT", "/app")
@@ -117,18 +120,15 @@ class Settings(BaseSettings):
     PROMETHEUS_ENABLED: bool = True
 
     # Flower Security
-    FLOWER_USER: Optional[str] = "admin"
-    FLOWER_PASSWORD: Optional[str] = "admin"
+    FLOWER_USER: str | None = "admin"
+    FLOWER_PASSWORD: str | None = "admin"
 
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        case_sensitive=True,
-        extra="ignore"
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore")
 
-@lru_cache()
+
+@lru_cache
 def get_settings() -> Settings:
     return Settings()
+
 
 settings = get_settings()

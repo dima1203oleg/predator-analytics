@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-from neo4j import AsyncGraphDatabase, GraphDatabase
+from neo4j import AsyncGraphDatabase
 
 
 logger = logging.getLogger("predator.core.graph")
+
 
 class Neo4jGraph:
     """Neo4j Graph Database Manager (Serious Mode v1.0)
@@ -26,10 +27,7 @@ class Neo4jGraph:
     async def sync_company(self, name: str, code: str, country: str = "UA") -> str:
         """Create or update a Company node."""
         async with self._driver.session() as session:
-            result = await session.execute_write(
-                self._merge_company, name, code, country
-            )
-            return result
+            return await session.execute_write(self._merge_company, name, code, country)
 
     @staticmethod
     async def _merge_company(tx, name, code, country):
@@ -75,14 +73,15 @@ class Neo4jGraph:
         RETURN d.number
         """
         # Note: apoc is needed for dynamic relationship types, or use CASE/conditional
-        await tx.run(query,
-            number=data['number'],
-            date=data['date'],
-            regime=data['regime'],
-            value=data['value'],
-            currency=data['currency'],
-            office=data['office'],
-            participants=data['participants']
+        await tx.run(
+            query,
+            number=data["number"],
+            date=data["date"],
+            regime=data["regime"],
+            value=data["value"],
+            currency=data["currency"],
+            office=data["office"],
+            participants=data["participants"],
         )
 
     async def link_telegram_post(self, post_id: str, content: str, mentions: list[dict[str, str]]):
@@ -98,6 +97,7 @@ class Neo4jGraph:
             SET r.type = m.type
             """
             await session.run(query, id=post_id, content=content, mentions=mentions)
+
 
 # Singleton
 graph_db = Neo4jGraph()

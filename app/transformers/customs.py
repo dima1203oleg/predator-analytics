@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 """Customs Transformer."""
-from typing import Any, Dict, List
+from typing import Any
 
 
 def transform_declaration(raw: dict) -> dict[str, Any]:

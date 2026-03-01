@@ -451,17 +451,17 @@ NAMING_CONVENTIONS = {
         "schemas": ["raw", "gold", "ml", "audit", "config"],
         "tables": "{schema}.{entity}_{suffix}",  # e.g., gold.customs_imports
         "indexes": "idx_{table}_{column}",
-        "constraints": "{table}_{type}_{columns}"  # e.g., documents_pk_id
+        "constraints": "{table}_{type}_{columns}",  # e.g., documents_pk_id
     },
     "opensearch": {
         "indices": "{entity}-v{version}",  # e.g., documents-v1, customs-v1
         "aliases": "{entity}-current",  # points to latest version
         "logs": "logs-{service}-{date}",  # e.g., logs-backend-2025.12.08
-        "metrics": "metrics-{type}-{date}"  # e.g., metrics-search-2025.12
+        "metrics": "metrics-{type}-{date}",  # e.g., metrics-search-2025.12
     },
     "qdrant": {
         "collections": "{entity}_vectors_v{version}",  # e.g., documents_vectors_v2
-        "snapshot": "{collection}_{date}"  # for backups
+        "snapshot": "{collection}_{date}",  # for backups
     },
     "minio": {
         "buckets": {
@@ -472,7 +472,7 @@ NAMING_CONVENTIONS = {
             "exports": "User exports",
             "mlflow": "MLflow artifacts",
             "snapshots": "Database snapshots",
-            "reindex-plans": "Reindex configurations"
+            "reindex-plans": "Reindex configurations",
         }
     },
     "redis": {
@@ -481,15 +481,15 @@ NAMING_CONVENTIONS = {
             "session": "session:{user_id}",
             "rate": "rate:{ip}:{endpoint}",
             "feature": "feature:{name}",
-            "lock": "lock:{resource}"
+            "lock": "lock:{resource}",
         },
         "ttl": {
             "cache_search": 300,  # 5 min
             "cache_embedding": 3600,  # 1 hour
             "session": 86400,  # 24 hours
-            "rate_limit": 60  # 1 min
-        }
-    }
+            "rate_limit": 60,  # 1 min
+        },
+    },
 }
 
 # Environment Configuration
@@ -501,11 +501,7 @@ ENV_CONFIGS = {
         "qdrant": {"nodes": 1},
         "redis": {"cluster": False},
         "minio": {"nodes": 1},
-        "features": {
-            "heavy_ml": False,
-            "full_reindex": False,
-            "mock_signals": True
-        }
+        "features": {"heavy_ml": False, "full_reindex": False, "mock_signals": True},
     },
     "edge": {
         "description": "Oracle Cloud Staging",
@@ -514,11 +510,7 @@ ENV_CONFIGS = {
         "qdrant": {"nodes": 2},
         "redis": {"cluster": True, "nodes": 3},
         "minio": {"nodes": 2},
-        "features": {
-            "heavy_ml": False,
-            "full_reindex": True,
-            "canary_indices": True
-        }
+        "features": {"heavy_ml": False, "full_reindex": True, "canary_indices": True},
     },
     "compute": {
         "description": "NVIDIA GPU Server",
@@ -527,13 +519,8 @@ ENV_CONFIGS = {
         "qdrant": {"nodes": 1},  # Local for fast inference
         "redis": {"cluster": False},  # Local cache
         "minio": {"nodes": 0},  # Use edge
-        "features": {
-            "heavy_ml": True,
-            "gpu_inference": True,
-            "batch_embeddings": True,
-            "fine_tuning": True
-        }
-    }
+        "features": {"heavy_ml": True, "gpu_inference": True, "batch_embeddings": True, "fine_tuning": True},
+    },
 }
 
 # Data Quality Gates
@@ -541,18 +528,10 @@ QUALITY_GATES = {
     "etl": {
         "min_completeness": 0.95,  # 95% non-null required fields
         "max_duplicates": 0.01,  # 1% max duplicates
-        "schema_match": True
+        "schema_match": True,
     },
-    "search": {
-        "ndcg_threshold": 0.7,
-        "mrr_threshold": 0.6,
-        "latency_p95_ms": 500
-    },
-    "ml": {
-        "min_dataset_size": 1000,
-        "test_split": 0.2,
-        "validation_split": 0.1
-    }
+    "search": {"ndcg_threshold": 0.7, "mrr_threshold": 0.6, "latency_p95_ms": 500},
+    "ml": {"min_dataset_size": 1000, "test_split": 0.2, "validation_split": 0.1},
 }
 
 if __name__ == "__main__":

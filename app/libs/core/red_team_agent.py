@@ -1,4 +1,4 @@
-"""🔴 ADVERSARIAL RED TEAM AGENT - Security Testing Framework
+"""🔴 ADVERSARIAL RED TEAM AGENT - Security Testing Framework.
 =============================================================
 Core component for AZR v40 Sovereign Architecture.
 
@@ -21,9 +21,8 @@ Python 3.12 | Ukrainian Documentation
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Awaitable, Callable
 from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 import json
 from pathlib import Path
@@ -36,8 +35,10 @@ from typing import Any
 # 📊 ATTACK TYPES & RESULTS
 # ============================================================================
 
+
 class AttackCategory(Enum):
     """Categories of attacks."""
+
     CONSTITUTIONAL_BYPASS = "constitutional_bypass"
     INJECTION = "injection"
     PRIVILEGE_ESCALATION = "privilege_escalation"
@@ -49,16 +50,18 @@ class AttackCategory(Enum):
 
 class AttackResult(Enum):
     """Result of an attack attempt."""
-    BLOCKED = "blocked"           # Attack was blocked (GOOD)
-    DETECTED = "detected"         # Attack detected but not fully blocked
-    PARTIAL_SUCCESS = "partial"   # Attack partially succeeded (BAD)
-    FULL_SUCCESS = "success"      # Attack fully succeeded (CRITICAL)
-    ERROR = "error"               # Error during test
+
+    BLOCKED = "blocked"  # Attack was blocked (GOOD)
+    DETECTED = "detected"  # Attack detected but not fully blocked
+    PARTIAL_SUCCESS = "partial"  # Attack partially succeeded (BAD)
+    FULL_SUCCESS = "success"  # Attack fully succeeded (CRITICAL)
+    ERROR = "error"  # Error during test
 
 
 @dataclass
 class AttackAttempt:
     """Record of a single attack attempt."""
+
     attack_id: str
     category: AttackCategory
     technique: str
@@ -71,14 +74,15 @@ class AttackAttempt:
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
-        d['category'] = self.category.value
-        d['result'] = self.result.value
+        d["category"] = self.category.value
+        d["result"] = self.result.value
         return d
 
 
 @dataclass
 class SecurityReport:
     """Summary security report from Red Team testing."""
+
     total_attacks: int
     blocked_count: int
     detected_count: int
@@ -92,7 +96,7 @@ class SecurityReport:
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
-        d['attack_details'] = [a.to_dict() for a in self.attack_details]
+        d["attack_details"] = [a.to_dict() for a in self.attack_details]
         return d
 
     @property
@@ -105,6 +109,7 @@ class SecurityReport:
 # ============================================================================
 # 🎯 ATTACK TECHNIQUES
 # ============================================================================
+
 
 class AttackTechnique:
     """Base class for attack techniques."""
@@ -163,7 +168,7 @@ class ConstitutionalBypassAttack(AttackTechnique):
             action = MockAction()
 
             # Try to pass guard
-            if hasattr(guard, 'verify_action'):
+            if hasattr(guard, "verify_action"):
                 approved, reason = await guard.verify_action(action)
                 response_time = (time.perf_counter() - start) * 1000
 
@@ -176,7 +181,7 @@ class ConstitutionalBypassAttack(AttackTechnique):
                         result=AttackResult.FULL_SUCCESS,
                         blocked_by=None,
                         response_time_ms=response_time,
-                        details=f"КРИТИЧНО: Guard схвалив шкідливу дію! Reason: {reason}"
+                        details=f"КРИТИЧНО: Guard схвалив шкідливу дію! Reason: {reason}",
                     )
                 return AttackAttempt(
                     attack_id=attack_id,
@@ -186,7 +191,7 @@ class ConstitutionalBypassAttack(AttackTechnique):
                     result=AttackResult.BLOCKED,
                     blocked_by="ConstitutionalGuard",
                     response_time_ms=response_time,
-                    details=f"Заблоковано: {reason}"
+                    details=f"Заблоковано: {reason}",
                 )
             return AttackAttempt(
                 attack_id=attack_id,
@@ -196,7 +201,7 @@ class ConstitutionalBypassAttack(AttackTechnique):
                 result=AttackResult.ERROR,
                 blocked_by=None,
                 response_time_ms=0,
-                details="Guard не має методу verify_action"
+                details="Guard не має методу verify_action",
             )
 
         except Exception as e:
@@ -209,7 +214,7 @@ class ConstitutionalBypassAttack(AttackTechnique):
                 result=AttackResult.BLOCKED,  # Errors count as blocked
                 blocked_by="Exception",
                 response_time_ms=response_time,
-                details=f"Exception: {e!s}"
+                details=f"Exception: {e!s}",
             )
 
 
@@ -260,9 +265,19 @@ class InjectionAttack(AttackTechnique):
 
         # Check for dangerous patterns
         dangerous_patterns = [
-            "DROP", "DELETE", "UPDATE", "INSERT", "--", ";",
-            "rm -rf", "cat /etc", "$(", "`",
-            "<script", "onerror", "javascript:"
+            "DROP",
+            "DELETE",
+            "UPDATE",
+            "INSERT",
+            "--",
+            ";",
+            "rm -rf",
+            "cat /etc",
+            "$(",
+            "`",
+            "<script",
+            "onerror",
+            "javascript:",
         ]
 
         is_dangerous = any(p.lower() in payload["input"].lower() for p in dangerous_patterns)
@@ -279,7 +294,7 @@ class InjectionAttack(AttackTechnique):
                 result=AttackResult.BLOCKED,
                 blocked_by="InputValidator",
                 response_time_ms=response_time,
-                details="Небезпечний патерн виявлено та заблоковано"
+                details="Небезпечний патерн виявлено та заблоковано",
             )
         return AttackAttempt(
             attack_id=attack_id,
@@ -289,7 +304,7 @@ class InjectionAttack(AttackTechnique):
             result=AttackResult.DETECTED,
             blocked_by=None,
             response_time_ms=response_time,
-            details="Потенційно небезпечний ввід виявлено"
+            details="Потенційно небезпечний ввід виявлено",
         )
 
 
@@ -300,11 +315,11 @@ class StateManipulationAttack(AttackTechnique):
         super().__init__("State Manipulation", AttackCategory.STATE_MANIPULATION)
 
         self.illegal_transitions = [
-            ("COMPLETED", "CREATED"),      # Backward jump
-            ("INDEXED", "UPLOADING"),      # Invalid transition
-            ("FAILED", "COMPLETED"),       # Recovery from terminal
-            ("CREATED", "COMPLETED"),      # Skip all states
-            ("PROCESSING", "GENESIS"),     # Non-existent state
+            ("COMPLETED", "CREATED"),  # Backward jump
+            ("INDEXED", "UPLOADING"),  # Invalid transition
+            ("FAILED", "COMPLETED"),  # Recovery from terminal
+            ("CREATED", "COMPLETED"),  # Skip all states
+            ("PROCESSING", "GENESIS"),  # Non-existent state
         ]
 
     async def execute(self, state_machine: Any, context: dict[str, Any]) -> AttackAttempt:
@@ -317,7 +332,7 @@ class StateManipulationAttack(AttackTechnique):
 
         # Try to force transition
         try:
-            if hasattr(state_machine, 'fire'):
+            if hasattr(state_machine, "fire"):
                 success, message, _ = state_machine.fire(f"FORCE_{to_state}", {})
                 response_time = (time.perf_counter() - start) * 1000
 
@@ -330,7 +345,7 @@ class StateManipulationAttack(AttackTechnique):
                         result=AttackResult.FULL_SUCCESS,
                         blocked_by=None,
                         response_time_ms=response_time,
-                        details="КРИТИЧНО: Нелегальний перехід успішний!"
+                        details="КРИТИЧНО: Нелегальний перехід успішний!",
                     )
                 return AttackAttempt(
                     attack_id=attack_id,
@@ -340,7 +355,7 @@ class StateManipulationAttack(AttackTechnique):
                     result=AttackResult.BLOCKED,
                     blocked_by="StateMachine",
                     response_time_ms=response_time,
-                    details=f"Заблоковано: {message}"
+                    details=f"Заблоковано: {message}",
                 )
             # Simulate blocking if no state machine
             response_time = (time.perf_counter() - start) * 1000
@@ -352,7 +367,7 @@ class StateManipulationAttack(AttackTechnique):
                 result=AttackResult.BLOCKED,
                 blocked_by="StateMachineGuard",
                 response_time_ms=response_time,
-                details="State machine перевірка заблокувала нелегальний перехід"
+                details="State machine перевірка заблокувала нелегальний перехід",
             )
 
         except Exception as e:
@@ -365,7 +380,7 @@ class StateManipulationAttack(AttackTechnique):
                 result=AttackResult.BLOCKED,
                 blocked_by="Exception",
                 response_time_ms=response_time,
-                details=f"Exception при спробі: {e!s}"
+                details=f"Exception при спробі: {e!s}",
             )
 
 
@@ -402,7 +417,7 @@ class RateLimitExhaustionAttack(AttackTechnique):
                 result=AttackResult.BLOCKED,
                 blocked_by="RateLimiter",
                 response_time_ms=response_time,
-                details=f"Заблоковано після {blocked_at} запитів"
+                details=f"Заблоковано після {blocked_at} запитів",
             )
         return AttackAttempt(
             attack_id=attack_id,
@@ -412,7 +427,7 @@ class RateLimitExhaustionAttack(AttackTechnique):
             result=AttackResult.PARTIAL_SUCCESS,
             blocked_by=None,
             response_time_ms=response_time,
-            details=f"Виконано {requests_count} запитів без блокування"
+            details=f"Виконано {requests_count} запитів без блокування",
         )
 
 
@@ -420,8 +435,9 @@ class RateLimitExhaustionAttack(AttackTechnique):
 # 🔴 RED TEAM AGENT
 # ============================================================================
 
+
 class RedTeamAgent:
-    """🔴 Автономний Агент Червоної Команди
+    """🔴 Автономний Агент Червоної Команди.
 
     Автоматично тестує систему на вразливості:
     - Constitutional Guard bypass
@@ -450,10 +466,7 @@ class RedTeamAgent:
         self.attack_history: list[AttackAttempt] = []
 
     async def run_full_assessment(
-        self,
-        guard: Any = None,
-        state_machine: Any = None,
-        num_attacks: int = 50
+        self, guard: Any = None, state_machine: Any = None, num_attacks: int = 50
     ) -> SecurityReport:
         """Run full security assessment.
 
@@ -467,7 +480,7 @@ class RedTeamAgent:
         """
         self.attack_history.clear()
 
-        for i in range(num_attacks):
+        for _i in range(num_attacks):
             technique = random.choice(self.techniques)
 
             # Route to appropriate target
@@ -540,7 +553,7 @@ class RedTeamAgent:
             error_count=errors,
             vulnerability_score=round(vuln_score, 2),
             recommendations=recommendations,
-            attack_details=list(self.attack_history)
+            attack_details=list(self.attack_history),
         )
 
     def _save_report(self, report: SecurityReport) -> None:
@@ -557,17 +570,18 @@ class RedTeamAgent:
                 "detected": report.detected_count,
                 "partial_success": report.partial_success_count,
                 "full_success": report.full_success_count,
-                "errors": report.error_count
-            }
+                "errors": report.error_count,
+            },
         }
 
-        with open(self.report_file, 'w', encoding='utf-8') as f:
+        with open(self.report_file, "w", encoding="utf-8") as f:
             json.dump(summary, f, indent=2, ensure_ascii=False)
 
 
 # ============================================================================
 # 🧪 SELF-TEST
 # ============================================================================
+
 
 async def run_self_test():
     print("🔴 RED TEAM AGENT - Self-Test")
@@ -577,12 +591,9 @@ async def run_self_test():
     class MockGuard:
         async def verify_action(self, action):
             # Block most malicious actions
-            meta = getattr(action, 'meta', {})
+            meta = getattr(action, "meta", {})
 
-            forbidden = [
-                "security", "auth", ".env", "secrets",
-                "disable_ssl", "open_firewall", "modifies_constitution"
-            ]
+            forbidden = ["security", "auth", ".env", "secrets", "disable_ssl", "open_firewall", "modifies_constitution"]
 
             for key, value in meta.items():
                 if isinstance(value, str) and any(f in value.lower() for f in forbidden):
@@ -590,9 +601,8 @@ async def run_self_test():
                 if key in forbidden:
                     return False, f"Блокування: заборонена дія {key}"
 
-            if meta.get("type") in ["DELETE_DATA", "DROP_TABLE"]:
-                if not meta.get("has_backup"):
-                    return False, "Блокування: деструктивна дія без бекапу"
+            if meta.get("type") in ["DELETE_DATA", "DROP_TABLE"] and not meta.get("has_backup"):
+                return False, "Блокування: деструктивна дія без бекапу"
 
             if meta.get("requests_per_second", 0) > 100:
                 return False, "Блокування: перевищення rate limit"
@@ -603,10 +613,7 @@ async def run_self_test():
     agent = RedTeamAgent("/tmp/azr_red_team")
     guard = MockGuard()
 
-    report = await agent.run_full_assessment(
-        guard=guard,
-        num_attacks=30
-    )
+    report = await agent.run_full_assessment(guard=guard, num_attacks=30)
 
     print("\n📊 SECURITY REPORT")
     print(f"  Total Attacks: {report.total_attacks}")

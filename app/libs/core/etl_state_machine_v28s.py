@@ -4,14 +4,11 @@ from __future__ import annotations
 """Enhanced ETL State Machine v45-S - AZR Engine
 Core business logic for ETL transitions and constitutional invariants.
 """
-from datetime import datetime
-from enum import Enum
-from typing import Any, Dict, List, Optional
-
-import yaml
+from enum import StrEnum
+from typing import Any
 
 
-class ETLState(str, Enum):
+class ETLState(StrEnum):
     # Lifecycle
     CREATED = "CREATED"
     UPLOADING = "UPLOADING"
@@ -33,6 +30,7 @@ class ETLState(str, Enum):
     FAILED = "FAILED"
     CANCELLED = "CANCELLED"
 
+
 class ETLStateMachineV45S:
     VERSION = "v45-S"
     INTEGRATION = "Sovereign Observer Module"
@@ -45,47 +43,52 @@ class ETLStateMachineV45S:
         ETLState.PROCESSED: [ETLState.INDEXING],
         ETLState.INDEXING: [ETLState.INDEXED, ETLState.INDEXING_FAILED, ETLState.CANCELLED],
         ETLState.INDEXED: [ETLState.COMPLETED],
-
         # Error handling
         ETLState.UPLOAD_FAILED: [ETLState.FAILED],
         ETLState.PROCESSING_FAILED: [ETLState.FAILED],
-        ETLState.INDEXING_FAILED: [ETLState.FAILED]
+        ETLState.INDEXING_FAILED: [ETLState.FAILED],
     }
 
     TERMINAL_STATES = {ETLState.COMPLETED, ETLState.FAILED, ETLState.CANCELLED}
 
     @classmethod
     def can_transition(cls, current_state: ETLState, next_state: ETLState) -> bool:
-        if current_state == next_state: return True
+        if current_state == next_state:
+            return True
         return next_state in cls.TRANSITIONS.get(current_state, [])
 
     @classmethod
     def get_progress(cls, state: ETLState, context: dict[str, Any]) -> int:
         """Calculates REAL progress based on v45-S Formal Requirements."""
-        if state == ETLState.CREATED: return 0
+        if state == ETLState.CREATED:
+            return 0
 
         if state == ETLState.UPLOADING:
-             uploaded = context.get("bytes_uploaded", 0)
-             total = context.get("bytes_total", 1) or 1
-             return min(int((uploaded / total) * 10), 9)
+            uploaded = context.get("bytes_uploaded", 0)
+            total = context.get("bytes_total", 1) or 1
+            return min(int((uploaded / total) * 10), 9)
 
-        if state == ETLState.UPLOADED: return 10
+        if state == ETLState.UPLOADED:
+            return 10
 
         if state == ETLState.PROCESSING:
-             processed = context.get("records_processed", 0)
-             total = context.get("records_total", 1) or 1
-             return 10 + int((processed / total) * 40) # 10% -> 50%
+            processed = context.get("records_processed", 0)
+            total = context.get("records_total", 1) or 1
+            return 10 + int((processed / total) * 40)  # 10% -> 50%
 
-        if state == ETLState.PROCESSED: return 50
+        if state == ETLState.PROCESSED:
+            return 50
 
         if state == ETLState.INDEXING:
-             indexed = context.get("records_indexed", 0)
-             total = context.get("records_total", 1) or 1
-             return 50 + int((indexed / total) * 45) # 50% -> 95%
+            indexed = context.get("records_indexed", 0)
+            total = context.get("records_total", 1) or 1
+            return 50 + int((indexed / total) * 45)  # 50% -> 95%
 
-        if state == ETLState.INDEXED: return 99
+        if state == ETLState.INDEXED:
+            return 99
 
-        if state == ETLState.COMPLETED: return 100
+        if state == ETLState.COMPLETED:
+            return 100
 
         # Terminals (FAILED/CANCELLED) keep last progress
         return context.get("percent", 0)

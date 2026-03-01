@@ -1,9 +1,11 @@
-from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
+from typing import Any
 
-class IngestionStatus(str, Enum):
+from pydantic import BaseModel, Field
+
+
+class IngestionStatus(StrEnum):
     UPLOADING = "uploading"
     UPLOADED = "uploaded"
     VALIDATING = "validating"
@@ -14,12 +16,14 @@ class IngestionStatus(str, Enum):
     READY = "ready"
     FAILED = "failed"
 
+
 class IngestionProgress(BaseModel):
     stage: str
     percent: float = 0
     current_item: int = 0
     total_items: int = 0
     message: str = ""
+
 
 class IngestionJob(BaseModel):
     id: str
@@ -31,10 +35,11 @@ class IngestionJob(BaseModel):
     created_at: datetime
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     progress: IngestionProgress
-    chunks_total: Optional[int] = None
-    chunks_received: Optional[int] = None
-    metadata: Optional[Dict[str, Any]] = None
-    error: Optional[str] = None
+    chunks_total: int | None = None
+    chunks_received: int | None = None
+    metadata: dict[str, Any] | None = None
+    error: str | None = None
+
 
 class ChunkUploadRequest(BaseModel):
     filename: str
@@ -42,6 +47,7 @@ class ChunkUploadRequest(BaseModel):
     total_chunks: int
     file_type: str
     chunk_size: int = 5 * 1024 * 1024  # 5MB default
+
 
 class IngestionResponse(BaseModel):
     job_id: str

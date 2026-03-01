@@ -10,14 +10,17 @@ Integrates with OODA loop to provide a 'Safety Buffer'.
 Python 3.12 | Zero-Failure Architecture
 """
 
-import asyncio
-from collections.abc import Callable
 from datetime import datetime
 import logging
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any
+
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 logger = logging.getLogger("azr_shadow_executor")
+
 
 class ShadowExecutor:
     """🛡️ Тіньовий Виконавець.
@@ -29,8 +32,7 @@ class ShadowExecutor:
         self.safe_mode = True
 
     async def validate_and_execute(self, action_id: str, action_func: Callable, *args, **kwargs) -> dict[str, Any]:
-        """Верифікує дію перед запуском.
-        """
+        """Верифікує дію перед запуском."""
         logger.info(f"🛡️ Shadow Pre-flight check for action: {action_id}")
 
         # 1. Simulate Side Effects (Heuristic)
@@ -50,7 +52,7 @@ class ShadowExecutor:
             return {"success": True, "result": result}
 
         except Exception as e:
-            logger.error(f"🚨 Shadow Executor caught CRITICAL FAILURE: {e}")
+            logger.exception(f"🚨 Shadow Executor caught CRITICAL FAILURE: {e}")
             # Here we would trigger emergency rollback
             return {"success": False, "error": str(e)}
 
@@ -69,8 +71,12 @@ class ShadowExecutor:
 
         return min(1.0, risk)
 
+
 _executor: ShadowExecutor | None = None
+
+
 def get_shadow_executor() -> ShadowExecutor:
     global _executor
-    if _executor is None: _executor = ShadowExecutor()
+    if _executor is None:
+        _executor = ShadowExecutor()
     return _executor

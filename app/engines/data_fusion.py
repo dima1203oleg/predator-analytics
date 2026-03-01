@@ -12,17 +12,18 @@ Performs Entity Resolution → assigns UEID.
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any, Optional
+from enum import StrEnum
+import logging
+from typing import Any
 
-from app.core.ueid import UEIDResult, fingerprint_entity, normalize_name
+from app.core.ueid import fingerprint_entity, normalize_name
+
 
 logger = logging.getLogger("predator.engines.data_fusion")
 
 
-class DataSource(str, Enum):
+class DataSource(StrEnum):
     """Supported data sources."""
 
     CUSTOMS = "customs"
@@ -131,10 +132,7 @@ def fuse_record(
         FusedRecord ready for entity resolution and indexing.
     """
     normalizer = NORMALIZERS.get(source)
-    if normalizer:
-        normalized = normalizer(raw)
-    else:
-        normalized = raw
+    normalized = normalizer(raw) if normalizer else raw
 
     # Extract entity identifier
     name = normalized.get("importer_name") or normalized.get("name") or normalized.get("seller_name", "")
