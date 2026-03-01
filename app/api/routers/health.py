@@ -19,6 +19,22 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["Health"])
 
 
+async def get_system_metrics() -> dict[str, Any]:
+    """Get real-time system metrics (CPU, Memory, etc.)"""
+    try:
+        import psutil
+        return {
+            "cpu_percent": psutil.cpu_percent(interval=None),
+            "memory_percent": psutil.virtual_memory().percent,
+            "timestamp": datetime.utcnow().isoformat(),
+            "active_containers": 0, # Placeholder or integrate with docker
+            "container_raw": "NVIDIA_GOD_SERVER"
+        }
+    except Exception as e:
+        logger.error(f"Failed to get system metrics: {e}")
+        return {"cpu_percent": 0, "memory_percent": 0, "error": str(e)}
+
+
 async def check_postgres() -> dict[str, Any]:
     """Check PostgreSQL connection."""
     try:
@@ -256,5 +272,33 @@ async def v45_production_check():
         "system": "PREDATOR",
         "version": "30.0.0",
         "mode": "SOVEREIGN",
-        "timestamp": datetime.now(timezone.utc).isoformat()
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+
+@router.get("/system/status")
+async def get_sovereign_status():
+    """Canonical V45 System Status. Used by Dashboard and healthchecks."""
+    metrics = await get_system_metrics()
+    
+    # Run a quick check on main services
+    db_status = await check_postgres()
+    redis_status = await check_redis()
+    
+    overall_status = "HEALTHY"
+    if db_status["status"] != "healthy" or redis_status["status"] != "healthy":
+        overall_status = "DEGRADED"
+        
+    return {
+        "pulse": {
+            "score": 100 if overall_status == "HEALTHY" else 50,
+            "status": overall_status,
+            "reasons": [] if overall_status == "HEALTHY" else ["Database or Redis degraded"],
+            "alerts": []
+        },
+        "system": metrics,
+        "training": {"active": False, "progress": 0},
+        "audit_logs": [],
+        "sagas": [],
+        "v45Realtime": metrics
     }
