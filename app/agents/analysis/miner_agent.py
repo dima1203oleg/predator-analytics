@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import statistics
-from typing import Any, Dict, List
+from typing import Any
 
 from ..core.base_agent import AgentConfig, AgentResponse, BaseAgent
 
@@ -21,7 +21,8 @@ class MinerAgent(BaseAgent):
         data = inputs.get("data", [])
         analysis_type = inputs.get("type", "anomaly")
 
-        self._log_activity(f"Mining insights from {len(data) if isinstance(data, list) else 0} records")
+        count = len(data) if isinstance(data, list) else 0
+        self._log_activity("Mining insights from %d records" % count)
 
         if not data or not isinstance(data, list):
             return AgentResponse(
