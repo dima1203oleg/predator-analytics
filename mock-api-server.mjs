@@ -31,10 +31,14 @@ app.use(express.json({ limit: '100mb' }));
 // Multer for audio uploads
 const upload = multer({ dest: 'uploads/' });
 
-// Google Cloud Clients - Using the correct TTS key from Predator_50
+// Google Cloud Clients - Using the correct TTS key from Predator_50 or GOOGLE_CLOUD_API_KEY
 const GOOGLE_KEY_PATH = './Predator_50/secrets/google-tts-key.json';
-const speechClient = new speech.SpeechClient({ keyFilename: GOOGLE_KEY_PATH });
-const ttsClient = new textToSpeech.TextToSpeechClient({ keyFilename: GOOGLE_KEY_PATH });
+const googleOptions = process.env.GOOGLE_CLOUD_API_KEY
+  ? { apiKey: process.env.GOOGLE_CLOUD_API_KEY }
+  : { keyFilename: GOOGLE_KEY_PATH };
+
+const speechClient = new speech.SpeechClient(googleOptions);
+const ttsClient = new textToSpeech.TextToSpeechClient(googleOptions);
 
 // Remote Ollama Configuration (NVIDIA Server)
 const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
@@ -47,7 +51,8 @@ const GEMINI_KEYS = [
   process.env.GEMINI_KEY_4,
   process.env.GEMINI_KEY_5,
   process.env.GEMINI_KEY_6,
-  process.env.GEMINI_KEY_7
+  process.env.GEMINI_KEY_7,
+  process.env.GOOGLE_CLOUD_API_KEY
 ].filter(Boolean);
 
 let currentKeyIndex = 0;
