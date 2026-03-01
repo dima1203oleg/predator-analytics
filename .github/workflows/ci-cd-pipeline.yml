@@ -98,16 +98,16 @@ jobs:
               with:
                   node-version: "20"
                   cache: "npm"
-                  cache-dependency-path: apps/frontend/package.json
+                  cache-dependency-path: apps/predator-analytics-ui/package.json
 
             - name: Install Dependencies
               run: |
-                  cd apps/frontend
+                  cd apps/predator-analytics-ui
                   npm install
 
             - name: Build Frontend
               run: |
-                  cd apps/frontend
+                  cd apps/predator-analytics-ui
                   npm run build
 
             - name: Set up Docker Buildx
@@ -124,7 +124,7 @@ jobs:
             - name: Build and Push Frontend
               uses: docker/build-push-action@v5
               with:
-                  context: ./apps/frontend
+                  context: ./apps/predator-analytics-ui
                   push: ${{ github.event_name != 'pull_request' }}
                   tags: |
                       ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest

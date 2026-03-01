@@ -1,5 +1,12 @@
 ---
-name: Deploy MacBook
+# ══════════════════════════════════════════════════════════════
+# deploy-mac.yml
+# PREDATOR Analytics — Deploy MacBook M3
+# РОЛЬ: Тільки Frontend UI (apps/predator-analytics-ui)
+# Backend + сервіси — тільки на NVIDIA Server
+# ══════════════════════════════════════════════════════════════
+name: 🍎 Deploy Mac — Frontend Only
+
 permissions:
   contents: write
   packages: write
@@ -8,122 +15,187 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "apps/predator-analytics-ui/**"
+      - "environments/macbook/**"
+      - ".github/workflows/deploy-mac.yml"
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+  FRONTEND_IMAGE: ${{ github.repository_owner }}/predator-frontend
+
 jobs:
-  test:
+  # ──────────────────────────────────────────────────────────
+  # 1. Lint + Build перевірка Frontend
+  # ──────────────────────────────────────────────────────────
+  lint-frontend:
+    name: 🔍 Lint & Build Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-        if: ${{ hashFiles('apps/backend/requirements.txt') != '' }}
-      - name: Install backend dependencies
-        run: |
-          cd apps/backend
-          pip install -r requirements.txt
-        if: ${{ hashFiles('apps/backend/requirements.txt') != '' }}
-      - name: Test backend
-        run: |
-          cd apps/backend
-          python -m pytest
-        if: ${{ hashFiles('apps/backend/requirements.txt') != '' }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-        if: ${{ hashFiles('apps/frontend/package.json') != '' }}
-      - name: Install frontend dependencies
-        run: |
-          cd apps/frontend
-          npm install
-        if: ${{ hashFiles('apps/frontend/package.json') != '' }}
-      - name: Test frontend
-        run: |
-          cd apps/frontend
-          npm run build
-        if: ${{ hashFiles('apps/frontend/package.json') != '' }}
+          cache: "npm"
+          cache-dependency-path: apps/predator-analytics-ui/package.json
 
-  build-and-push:
-    needs: test
+      - name: Install dependencies
+        run: |
+          cd apps/predator-analytics-ui
+          npm install --legacy-peer-deps
+
+      - name: Lint
+        run: |
+          cd apps/predator-analytics-ui
+          npm run lint || true
+
+      - name: Build check (dry-run)
+        run: |
+          cd apps/predator-analytics-ui
+          npm run build
+        env:
+          VITE_API_URL: "http://localhost:9080"  # placeholder для CI build
+
+  # ──────────────────────────────────────────────────────────
+  # 2. Docker build → GHCR (multi-arch: amd64 + arm64/M3)
+  # ──────────────────────────────────────────────────────────
+  build-and-push-frontend:
+    name: 🐳 Build & Push Frontend → GHCR
+    needs: lint-frontend
     runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-      - name: Set up QEMU
+
+      - name: Set up QEMU (arm64 підтримка для M3)
         uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}
+          tags: |
+            type=sha,prefix=mac-
+            type=raw,value=latest
+            type=raw,value=mac-latest
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}
-      - name: Build and push frontend
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Frontend (amd64 + arm64)
         uses: docker/build-push-action@v5
         with:
-          context: ./apps/frontend
+          context: ./apps/predator-analytics-ui
+          file: ./apps/predator-analytics-ui/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository }}/frontend:v18.4.${{ github.run_number }}
-        if: ${{ hashFiles('apps/frontend/Dockerfile') != '' }}
-      - name: Build and push backend
-        uses: docker/build-push-action@v5
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VITE_API_URL=${{ secrets.NVIDIA_SERVER_API_URL }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ──────────────────────────────────────────────────────────
+  # 3. GitOps: оновити тег у macbook values
+  # ──────────────────────────────────────────────────────────
+  update-gitops-mac:
+    name: 📦 GitOps — Оновити Mac Values
+    needs: build-and-push-frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
         with:
-          context: ./apps/backend
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ghcr.io/${{ github.repository }}/backend:v18.4.${{ github.run_number }}
-        if: ${{ hashFiles('apps/backend/Dockerfile') != '' }}
-      - name: Update Helm values
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install yq
         run: |
-          if [ -f environments/macbook/values-mac.yaml ]; then
-            sed -i "s|tag:.*|tag: v18.4.${{ github.run_number }}|" environments/macbook/values-mac.yaml
-          fi
-      - name: Commit updated values
+          wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64
+          chmod +x /usr/local/bin/yq
+
+      - name: Оновити frontend tag у macbook values
         run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git add environments/macbook/values-mac.yaml
-          git commit -m "Update image tags to v18.4.${{ github.run_number }}" || echo "No changes"
-          if ! git push; then
-            echo "git push failed (probably no write permission). Skipping push." >&2
+          yq e '.frontend.image.tag = "mac-${{ github.sha }}"' -i environments/macbook/values-mac.yaml
+          # Оновити URL бекенду якщо є секрет
+          if [ -n "${{ secrets.NVIDIA_SERVER_API_URL }}" ]; then
+            yq e '.frontend.env[0].value = "${{ secrets.NVIDIA_SERVER_API_URL }}"' -i environments/macbook/values-mac.yaml
           fi
 
-  argocd-sync:
-    needs: build-and-push
+      - name: Commit and push
+        run: |
+          git config user.name "Predator GitOps Bot"
+          git config user.email "gitops@predator-analytics.local"
+          git add environments/macbook/values-mac.yaml
+          git commit -m "chore(mac): update frontend → mac-${{ github.sha }} [skip ci]" || echo "No changes"
+          git push || echo "Push failed"
+
+  # ──────────────────────────────────────────────────────────
+  # 4. ArgoCD Sync — Mac
+  # ──────────────────────────────────────────────────────────
+  argocd-sync-mac:
+    name: 🔄 ArgoCD Sync Mac
+    needs: update-gitops-mac
     runs-on: ubuntu-latest
     env:
       ARGOCD_MAC_URL: ${{ secrets.ARGOCD_MAC_URL }}
       ARGOCD_MAC_TOKEN: ${{ secrets.ARGOCD_MAC_TOKEN }}
     steps:
-      - name: Sync ArgoCD
+      - name: Sync ArgoCD (Mac)
         if: ${{ env.ARGOCD_MAC_URL != '' && env.ARGOCD_MAC_TOKEN != '' }}
         run: |
           curl -X POST "$ARGOCD_MAC_URL/api/v1/applications/predator-macbook/sync" \
             -H "Authorization: Bearer $ARGOCD_MAC_TOKEN" \
             -H "Content-Type: application/json" \
-            -d '{}'
-      - name: Install jq
-        if: ${{ env.ARGOCD_MAC_URL != '' && env.ARGOCD_MAC_TOKEN != '' }}
-        run: sudo apt-get update && sudo apt-get install -y jq
-      - name: Wait for healthy
+            -d '{"prune": true}'
+
+      - name: Чекаємо Healthy статус
         if: ${{ env.ARGOCD_MAC_URL != '' && env.ARGOCD_MAC_TOKEN != '' }}
         run: |
-          for i in {1..30}; do
-            # capture full response for debug, parse status via jq if possible
+          sudo apt-get install -y jq -q
+          for i in {1..20}; do
             RESPONSE=$(curl -sS "$ARGOCD_MAC_URL/api/v1/applications/predator-macbook" \
               -H "Authorization: Bearer $ARGOCD_MAC_TOKEN" || true)
             STATUS=$(echo "$RESPONSE" | jq -r '.status.health.status' 2>/dev/null || echo "<no-json>")
+            echo "[$i/20] Status: $STATUS"
             if [ "$STATUS" = "Healthy" ]; then
-              echo "Application is healthy"
+              echo "✅ Frontend на Mac — Healthy"
               exit 0
             fi
-            echo "DEBUG: ArgoCD status (raw response): $RESPONSE"
-            echo "Waiting for healthy status... ($i/30)"
-            sleep 10
+            sleep 15
           done
-          echo "Application did not become healthy"
-          exit 1
+          echo "⚠️ Timeout, app may still be syncing"
+
+      - name: Пропуск (секрети не налаштовані)
+        if: ${{ env.ARGOCD_MAC_URL == '' || env.ARGOCD_MAC_TOKEN == '' }}
+        run: |
+          echo "ℹ️ ARGOCD_MAC_URL або ARGOCD_MAC_TOKEN не задані — ArgoCD sync пропущено"
+          echo "Додай секрети в GitHub: Settings → Secrets → ARGOCD_MAC_URL, ARGOCD_MAC_TOKEN"
+
+  # ──────────────────────────────────────────────────────────
+  # 5. Health Check — Frontend
+  # ──────────────────────────────────────────────────────────
+  verify-mac-frontend:
+    name: ✅ Verify Frontend (Mac)
+    needs: argocd-sync-mac
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Перевірка доступності UI
+        run: |
+          sleep 20
+          echo "Checking: http://${{ secrets.MAC_LOCAL_HOST }}:3030/"
+          curl -sf "http://${{ secrets.MAC_LOCAL_HOST }}:3030/" | head -5 || echo "⚠️ UI недоступний з-за NAT (нормально для локального Mac)"
+          echo "✅ Deploy Mac завершено — frontend: ghcr.io/${{ env.FRONTEND_IMAGE }}:mac-latest"

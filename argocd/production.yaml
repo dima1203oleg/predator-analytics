@@ -8,9 +8,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: "https://github.com/predator-analytics/predator-v45" # Placeholder
+    repoURL: "https://github.com/dima1203oleg/predator-analytics"
     targetRevision: HEAD
-    path: helm/predator
+    path: environments/nvidia
     helm:
       valueFiles:
         - values.yaml
