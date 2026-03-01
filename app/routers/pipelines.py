@@ -9,9 +9,24 @@ router = APIRouter(prefix="/pipelines", tags=["pipelines"])
 
 # Mock status for different database pipelines
 DB_PIPELINES = {
-    "minio": {"name": "MinIO Object Storage", "color": "rose", "progress": 100, "status": "completed"},
-    "postgres": {"name": "PostgreSQL Database", "color": "blue", "progress": 85, "status": "running"},
-    "qdrant": {"name": "Qdrant Vector Engine", "color": "purple", "progress": 40, "status": "running"},
+    "minio": {
+        "name": "MinIO Object Storage",
+        "color": "rose",
+        "progress": 100,
+        "status": "completed",
+    },
+    "postgres": {
+        "name": "PostgreSQL Database",
+        "color": "blue",
+        "progress": 85,
+        "status": "running",
+    },
+    "qdrant": {
+        "name": "Qdrant Vector Engine",
+        "color": "purple",
+        "progress": 40,
+        "status": "running",
+    },
     "graph": {"name": "Neo4j Graph Database", "color": "emerald", "progress": 0, "status": "idle"},
 }
 

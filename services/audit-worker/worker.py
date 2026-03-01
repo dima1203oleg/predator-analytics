@@ -48,11 +48,13 @@ class AuditWorker:
             audit_id = uuid.uuid4()
             payload = evt.context
 
-            integrity_hash = self._compute_integrity_hash({
-                "audit_id": str(audit_id),
-                "event_type": evt.event_type,
-                "payload": payload,
-            })
+            integrity_hash = self._compute_integrity_hash(
+                {
+                    "audit_id": str(audit_id),
+                    "event_type": evt.event_type,
+                    "payload": payload,
+                }
+            )
 
             async with self.db_pool.acquire() as conn:
                 await conn.execute(

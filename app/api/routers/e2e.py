@@ -101,7 +101,9 @@ async def get_model_health(model_name: str):
         "status": "healthy" if is_available else "unavailable",
         "api_key_configured": is_available,
         "provider": provider,
-        "model_version": providers.get(provider, {}).get("default_model", "unknown") if is_available else None,
+        "model_version": providers.get(provider, {}).get("default_model", "unknown")
+        if is_available
+        else None,
         "gpu_available": model_name == "karpathy" and is_available,
     }
 
@@ -117,9 +119,19 @@ async def test_model(model_name: str, request: ModelTestRequest):
     if model_name in _mock_state:
         mock_config = _mock_state[model_name]
         if mock_config.get("mode") == "fail":
-            return {"success": False, "error": f"Mock failure for {model_name}", "fallback_used": True, "is_mock": True}
+            return {
+                "success": False,
+                "error": f"Mock failure for {model_name}",
+                "fallback_used": True,
+                "is_mock": True,
+            }
         if mock_config.get("mode") == "rate_limit":
-            return {"success": False, "error": "Rate limit exceeded", "fallback_used": True, "is_mock": True}
+            return {
+                "success": False,
+                "error": "Rate limit exceeded",
+                "fallback_used": True,
+                "is_mock": True,
+            }
         if mock_config.get("mode") == "mock":
             return {
                 "success": True,
@@ -133,7 +145,12 @@ async def test_model(model_name: str, request: ModelTestRequest):
     start_time = time.time()
 
     try:
-        model_map = {"groq": "groq", "deepseek": "deepseek", "gemini": "gemini", "karpathy": "ollama"}
+        model_map = {
+            "groq": "groq",
+            "deepseek": "deepseek",
+            "gemini": "gemini",
+            "karpathy": "ollama",
+        }
 
         provider = model_map.get(model_name)
         if not provider:
@@ -280,7 +297,9 @@ async def create_test_run(request: TestRunRequest, background_tasks: BackgroundT
     _processing_status = {"status": "processing", "run_id": run_id, "progress": 0}
 
     # Start background processing
-    background_tasks.add_task(_process_test_run, run_id, request.test_type, request.generate_reports)
+    background_tasks.add_task(
+        _process_test_run, run_id, request.test_type, request.generate_reports
+    )
 
     return {"run_id": run_id, "status": "started", "message": "Test run initiated"}
 
@@ -330,7 +349,12 @@ async def get_processing_stats(run_id: str | None = None):
             "status": run.get("status"),
         }
 
-    return {"total_records": 500, "successful_records": 495, "failed_records": 5, "status": "completed"}
+    return {
+        "total_records": 500,
+        "successful_records": 495,
+        "failed_records": 5,
+        "status": "completed",
+    }
 
 
 # ===============================
@@ -349,10 +373,18 @@ async def generate_report(request: ReportGenerateRequest):
 
     if format_type == "pdf":
         report_url = f"/api/v1/e2e/reports/download/{run_id}/report_{timestamp}.pdf"
-        return {"success": True, "pdf_url": report_url, "generated_at": datetime.now(UTC).isoformat()}
+        return {
+            "success": True,
+            "pdf_url": report_url,
+            "generated_at": datetime.now(UTC).isoformat(),
+        }
     if format_type == "markdown":
         report_url = f"/api/v1/e2e/reports/download/{run_id}/report_{timestamp}.md"
-        return {"success": True, "markdown_url": report_url, "generated_at": datetime.now(UTC).isoformat()}
+        return {
+            "success": True,
+            "markdown_url": report_url,
+            "generated_at": datetime.now(UTC).isoformat(),
+        }
     raise HTTPException(status_code=400, detail=f"Unknown format: {format_type}")
 
 
@@ -593,7 +625,11 @@ async def email_report(request: EmailReportRequest):
 @router.get("/reports/archive")
 async def get_archived_reports(older_than_days: int = 30):
     """Get archived reports."""
-    return {"archived_count": 15, "storage_location": "/data/reports/archive", "older_than_days": older_than_days}
+    return {
+        "archived_count": 15,
+        "storage_location": "/data/reports/archive",
+        "older_than_days": older_than_days,
+    }
 
 
 # ===============================
@@ -610,7 +646,11 @@ async def get_opensearch_logs(run_id: str):
         "run_id": run_id,
         "entries": [
             {"timestamp": datetime.now().isoformat(), "level": "INFO", "message": "Test started"},
-            {"timestamp": datetime.now().isoformat(), "level": "INFO", "message": "Processing complete"},
+            {
+                "timestamp": datetime.now().isoformat(),
+                "level": "INFO",
+                "message": "Processing complete",
+            },
         ],
     }
 
@@ -624,7 +664,14 @@ async def search_opensearch(request: OpenSearchSearchRequest):
         "index": request.index,
         "hits": {
             "total": 10,
-            "hits": [{"_source": {"message": "Sample log entry", "timestamp": datetime.now().isoformat()}}],
+            "hits": [
+                {
+                    "_source": {
+                        "message": "Sample log entry",
+                        "timestamp": datetime.now().isoformat(),
+                    }
+                }
+            ],
         },
     }
 
@@ -637,7 +684,10 @@ async def count_indexed_documents():
 
         client = OpenSearch(
             hosts=[{"host": os.getenv("OPENSEARCH_HOST", "localhost"), "port": 9200}],
-            http_auth=(os.getenv("OPENSEARCH_USER", "admin"), os.getenv("OPENSEARCH_PASSWORD", "admin")),
+            http_auth=(
+                os.getenv("OPENSEARCH_USER", "admin"),
+                os.getenv("OPENSEARCH_PASSWORD", "admin"),
+            ),
             use_ssl=False,
             verify_certs=False,
         )

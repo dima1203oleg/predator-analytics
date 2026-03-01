@@ -70,13 +70,25 @@ class AIEngine:
             # Пошук в ЄДР
             edr_result = await registry_connector.search(query, limit=5)
             if edr_result.success and edr_result.data:
-                sources.append({"name": "ЄДР (Реєстр бізнесу)", "type": "registry", "data": edr_result.data[:3]})
+                sources.append(
+                    {
+                        "name": "ЄДР (Реєстр бізнесу)",
+                        "type": "registry",
+                        "data": edr_result.data[:3],
+                    }
+                )
                 context_parts.append(f"Дані ЄДР: {edr_result.data[:3]}")
 
             # Пошук у Prozorro
             proz_result = await prozorro_connector.search(query, limit=5)
             if proz_result.success and proz_result.data:
-                sources.append({"name": "Prozorro (Тендери)", "type": "procurement", "data": proz_result.data[:3]})
+                sources.append(
+                    {
+                        "name": "Prozorro (Тендери)",
+                        "type": "procurement",
+                        "data": proz_result.data[:3],
+                    }
+                )
                 context_parts.append(f"Тендери Prozorro: {proz_result.data[:3]}")
         except Exception as e:
             logger.exception(f"Помилка зовнішнього пошуку: {e}")
@@ -85,21 +97,30 @@ class AIEngine:
         try:
             internal_data = await hybrid_search_with_rrf(query, tenant_id=tenant_id)
             if internal_data["results"]:
-                sources.append({
-                    "name": "Predator Internal (Hybrid)",
-                    "type": "internal",
-                    "count": internal_data["total"],
-                    "data": internal_data["results"][:5],
-                })
-                internal_text = "\n".join([
-                    f"- {r.get('content', '')} (AI: {r.get('ai_reason', '')})" for r in internal_data["results"][:5]
-                ])
+                sources.append(
+                    {
+                        "name": "Predator Internal (Hybrid)",
+                        "type": "internal",
+                        "count": internal_data["total"],
+                        "data": internal_data["results"][:5],
+                    }
+                )
+                internal_text = "\n".join(
+                    [
+                        f"- {r.get('content', '')} (AI: {r.get('ai_reason', '')})"
+                        for r in internal_data["results"][:5]
+                    ]
+                )
                 context_parts.append(f"Внутрішні дані Predator:\n{internal_text}")
         except Exception as e:
             logger.exception(f"Помилка внутрішнього пошуку: {e}")
 
         # 3. Генерація висновків
-        context = "\n\n".join(context_parts) if context_parts else "Дані в реєстрах та внутрішній базі не знайдено."
+        context = (
+            "\n\n".join(context_parts)
+            if context_parts
+            else "Дані в реєстрах та внутрішній базі не знайдено."
+        )
         prompt = f"""
         ЗАПИТ КОРИСТУВАЧА: {query}
         ЗІБРАНИЙ КОНТЕКСТ:
@@ -110,7 +131,10 @@ class AIEngine:
         """
 
         llm_response = await llm_service.generate_with_routing(
-            prompt=prompt, system=self.system_prompt, mode=llm_mode, preferred_provider=preferred_provider
+            prompt=prompt,
+            system=self.system_prompt,
+            mode=llm_mode,
+            preferred_provider=preferred_provider,
         )
         answer = llm_response.content if llm_response.success else "Помилка відповіді AI."
         model_used = f"{llm_response.provider}/{llm_response.model}"

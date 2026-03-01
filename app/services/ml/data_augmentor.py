@@ -86,7 +86,9 @@ class DataAugmentor:
 
         self._initialized = True
 
-    def augment_text(self, text: str, method: str = "synonym", num_variations: int = 3) -> list[str]:
+    def augment_text(
+        self, text: str, method: str = "synonym", num_variations: int = 3
+    ) -> list[str]:
         """Generate variations of input text."""
         self._load_augmenters()
         variations = []
@@ -217,7 +219,9 @@ class DataAugmentor:
             if not original_content or len(original_content) < 20:
                 continue
 
-            variations = self.augment_text(original_content, method=method, num_variations=variations_per_doc)
+            variations = self.augment_text(
+                original_content, method=method, num_variations=variations_per_doc
+            )
 
             for var_content in variations:
                 record = {
@@ -230,7 +234,9 @@ class DataAugmentor:
                 }
                 augmented_records.append(record)
 
-        logger.info(f"Augmented {len(documents)} docs -> {len(augmented_records)} records for tenant {tenant_id}")
+        logger.info(
+            f"Augmented {len(documents)} docs -> {len(augmented_records)} records for tenant {tenant_id}"
+        )
         return augmented_records
 
 

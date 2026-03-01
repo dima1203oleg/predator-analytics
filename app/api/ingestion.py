@@ -120,7 +120,9 @@ async def process_dataset_task(job_id: str, file_path: str, filename: str, datas
 
 
 @router.post("/upload")
-async def upload_dataset(background_tasks: BackgroundTasks, file: UploadFile = File(...), dataset_type: str = "custom"):
+async def upload_dataset(
+    background_tasks: BackgroundTasks, file: UploadFile = File(...), dataset_type: str = "custom"
+):
     """V45 Improved Ingestion Engine.
     Initiates asynchronous processing and returns a Job ID immediately.
     """
@@ -139,14 +141,27 @@ async def upload_dataset(background_tasks: BackgroundTasks, file: UploadFile = F
         "job_id": job_id,
         "source_file": file.filename,
         "state": "CREATED",
-        "progress": {"percent": 0, "stage": "queued", "records_processed": 0, "records_total": 0, "records_indexed": 0},
-        "timestamps": {"created_at": datetime.utcnow().isoformat(), "updated_at": datetime.utcnow().isoformat()},
+        "progress": {
+            "percent": 0,
+            "stage": "queued",
+            "records_processed": 0,
+            "records_total": 0,
+            "records_indexed": 0,
+        },
+        "timestamps": {
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat(),
+        },
         "errors": [],
     }
 
     # Start background process
     background_tasks.add_task(
-        process_dataset_task, job_id=job_id, file_path=temp_path, filename=file.filename, dataset_type=dataset_type
+        process_dataset_task,
+        job_id=job_id,
+        file_path=temp_path,
+        filename=file.filename,
+        dataset_type=dataset_type,
     )
 
     return {"status": "success", "job_id": job_id, "message": "Ingestion initiated successfully"}
@@ -155,7 +170,9 @@ async def upload_dataset(background_tasks: BackgroundTasks, file: UploadFile = F
 @router.get("/jobs")
 async def list_jobs(limit: int = 20):
     """List active and recent ingestion jobs."""
-    jobs_list = sorted(GLOBAL_JOBS.values(), key=lambda x: x["timestamps"]["created_at"], reverse=True)
+    jobs_list = sorted(
+        GLOBAL_JOBS.values(), key=lambda x: x["timestamps"]["created_at"], reverse=True
+    )
     return {"jobs": jobs_list[:limit]}
 
 
@@ -180,7 +197,10 @@ async def ingest_telegram(background_tasks: BackgroundTasks, request: dict[str, 
         "source_file": f"telegram://{name}",
         "state": "CREATED",
         "progress": {"percent": 0, "stage": "queued", "records_processed": 0, "records_total": 0},
-        "timestamps": {"created_at": datetime.utcnow().isoformat(), "updated_at": datetime.utcnow().isoformat()},
+        "timestamps": {
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat(),
+        },
     }
 
     # Mock some progress in a task

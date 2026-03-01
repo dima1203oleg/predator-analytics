@@ -61,7 +61,9 @@ HTTP_RESPONSE_SIZE = _get_or_create_metric(
 )
 
 # Active connections
-ACTIVE_CONNECTIONS = _get_or_create_metric(Gauge, "http_active_connections", "Number of active HTTP connections")
+ACTIVE_CONNECTIONS = _get_or_create_metric(
+    Gauge, "http_active_connections", "Number of active HTTP connections"
+)
 
 # Rate limiting
 RATE_LIMIT_EXCEEDED = _get_or_create_metric(
@@ -83,7 +85,12 @@ class RateLimitExceeded(HTTPException):
 class RateLimiter:
     """Redis-based rate limiter with sliding window."""
 
-    def __init__(self, redis_url: str | None = None, requests_per_minute: int = 60, requests_per_hour: int = 1000):
+    def __init__(
+        self,
+        redis_url: str | None = None,
+        requests_per_minute: int = 60,
+        requests_per_hour: int = 1000,
+    ):
         self.redis_url = redis_url or os.getenv("REDIS_URL", "redis://localhost:6379/0")
         self.requests_per_minute = requests_per_minute
         self.requests_per_hour = requests_per_hour
@@ -93,7 +100,11 @@ class RateLimiter:
         if self._redis is None:
             try:
                 self._redis = await aioredis.from_url(
-                    self.redis_url, encoding="utf-8", decode_responses=True, socket_timeout=2, socket_connect_timeout=2
+                    self.redis_url,
+                    encoding="utf-8",
+                    decode_responses=True,
+                    socket_timeout=2,
+                    socket_connect_timeout=2,
                 )
             except Exception as e:
                 logger.warning(f"Redis connection failed: {e}")
@@ -142,7 +153,9 @@ class RateLimiter:
 class RateLimitMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, requests_per_minute: int = 60, requests_per_hour: int = 1000):
         super().__init__(app)
-        self.limiter = RateLimiter(requests_per_minute=requests_per_minute, requests_per_hour=requests_per_hour)
+        self.limiter = RateLimiter(
+            requests_per_minute=requests_per_minute, requests_per_hour=requests_per_hour
+        )
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         client_ip = request.client.host if request.client else "unknown"
@@ -172,8 +185,12 @@ class MetricsMiddleware(BaseHTTPMiddleware):
             ACTIVE_CONNECTIONS.dec()
             raise
         latency = time.time() - start
-        HTTP_REQUESTS_TOTAL.labels(method=request.method, endpoint=request.url.path, status=status).inc()
-        HTTP_REQUEST_DURATION.labels(method=request.method, endpoint=request.url.path).observe(latency)
+        HTTP_REQUESTS_TOTAL.labels(
+            method=request.method, endpoint=request.url.path, status=status
+        ).inc()
+        HTTP_REQUEST_DURATION.labels(method=request.method, endpoint=request.url.path).observe(
+            latency
+        )
         ACTIVE_CONNECTIONS.dec()
         return response
 
@@ -212,7 +229,8 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
         except Exception as e:
             duration = time.time() - start_time
             logger.exception(
-                f"Request failed: {e}", extra={"correlation_id": correlation_id, "duration": duration, "error": str(e)}
+                f"Request failed: {e}",
+                extra={"correlation_id": correlation_id, "duration": duration, "error": str(e)},
             )
             # Re-raise to let ErrorHandlerMiddleware handle response
             raise

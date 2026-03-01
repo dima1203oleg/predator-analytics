@@ -13,14 +13,18 @@ from app.tasks.customs_parser import CustomsExcelParser
 logger = get_logger("predator.workers.pipeline")
 
 
-@shared_task(name="tasks.workers.process_pipeline_task", queue="ingestion", bind=True, max_retries=3)
+@shared_task(
+    name="tasks.workers.process_pipeline_task", queue="ingestion", bind=True, max_retries=3
+)
 def process_pipeline_task(self, source_id: str, file_location: str):
     """Executes the strict Knowledge Pipeline FSM:
     UPLOADED -> PARSING -> TRANSFORMING -> STORING -> INDEXING -> READY.
     """
 
     async def run_pipeline():
-        redis_client = aioredis.from_url(os.getenv("REDIS_URL", "redis://redis:6379/0"), decode_responses=True)
+        redis_client = aioredis.from_url(
+            os.getenv("REDIS_URL", "redis://redis:6379/0"), decode_responses=True
+        )
         pipeline = KnowledgePipeline(redis_client)
 
         try:
@@ -42,8 +46,12 @@ def process_pipeline_task(self, source_id: str, file_location: str):
                 meta["parser_stats"] = stats
                 await redis_client.hset(key, "metadata", json.dumps(meta))
 
-                if stats.get("rejected", 0) > stats.get("total_rows", 1) * 0.5:  # 50% fail threshold
-                    raise ValueError(f"Parser rejected too many rows: {stats['rejected']} / {stats['total_rows']}")
+                if (
+                    stats.get("rejected", 0) > stats.get("total_rows", 1) * 0.5
+                ):  # 50% fail threshold
+                    raise ValueError(
+                        f"Parser rejected too many rows: {stats['rejected']} / {stats['total_rows']}"
+                    )
             else:
                 await asyncio.sleep(2)  # Simulating Parsing for other types
 

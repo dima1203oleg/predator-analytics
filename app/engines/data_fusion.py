@@ -135,8 +135,16 @@ def fuse_record(
     normalized = normalizer(raw) if normalizer else raw
 
     # Extract entity identifier
-    name = normalized.get("importer_name") or normalized.get("name") or normalized.get("seller_name", "")
-    edrpou = normalized.get("importer_edrpou") or normalized.get("edrpou") or normalized.get("seller_edrpou")
+    name = (
+        normalized.get("importer_name")
+        or normalized.get("name")
+        or normalized.get("seller_name", "")
+    )
+    edrpou = (
+        normalized.get("importer_edrpou")
+        or normalized.get("edrpou")
+        or normalized.get("seller_edrpou")
+    )
 
     fp = fingerprint_entity(name, edrpou)
 

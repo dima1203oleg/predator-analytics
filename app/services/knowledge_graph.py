@@ -35,7 +35,12 @@ class KnowledgeGraphService:
 
     async def get_summary(self) -> dict[str, Any]:
         """Get graph statistics."""
-        return {"total_nodes": 142050, "total_edges": 285400, "density": 0.002, "last_update": "2026-02-04T20:00:00Z"}
+        return {
+            "total_nodes": 142050,
+            "total_edges": 285400,
+            "density": 0.002,
+            "last_update": "2026-02-04T20:00:00Z",
+        }
 
 
 knowledge_graph_service = KnowledgeGraphService()

@@ -9,7 +9,9 @@ datasets_db = {}
 
 
 class DatasetService:
-    async def list_datasets(self, owner_id: str, dataset_type: DatasetType | None = None) -> list[Dataset]:
+    async def list_datasets(
+        self, owner_id: str, dataset_type: DatasetType | None = None
+    ) -> list[Dataset]:
         """List datasets for a user."""
         results = [d for d in datasets_db.values() if d.owner_id == owner_id]
         if dataset_type:

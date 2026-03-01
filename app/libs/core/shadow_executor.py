@@ -31,7 +31,9 @@ class ShadowExecutor:
         self.history = []
         self.safe_mode = True
 
-    async def validate_and_execute(self, action_id: str, action_func: Callable, *args, **kwargs) -> dict[str, Any]:
+    async def validate_and_execute(
+        self, action_id: str, action_func: Callable, *args, **kwargs
+    ) -> dict[str, Any]:
         """Верифікує дію перед запуском."""
         logger.info(f"🛡️ Shadow Pre-flight check for action: {action_id}")
 

@@ -45,7 +45,14 @@ class CustomsExcelParser:
         self.file_path = file_path
         self.df: pd.DataFrame | None = None
         self.column_map: dict[str, str] = {}  # actual_col_name -> target_field
-        self.stats = {"total_rows": 0, "success": 0, "rejected": 0, "duplicates": 0, "anomalies": 0, "errors": []}
+        self.stats = {
+            "total_rows": 0,
+            "success": 0,
+            "rejected": 0,
+            "duplicates": 0,
+            "anomalies": 0,
+            "errors": [],
+        }
         self.results: list[dict[str, Any]] = []
 
     def load_and_parse(self) -> dict[str, Any]:
@@ -176,7 +183,9 @@ class CustomsExcelParser:
 
         # Normalize Company Names (Remove formal prefixes for matching)
         if "importer_name" in norm:
-            norm["importer_name"] = re.sub(r'^(ТОВ|ПП|ДП|АТ|ТЗОВ)\s+"|"', "", norm["importer_name"]).strip()
+            norm["importer_name"] = re.sub(
+                r'^(ТОВ|ПП|ДП|АТ|ТЗОВ)\s+"|"', "", norm["importer_name"]
+            ).strip()
 
         # Normalize Dates
         if "declaration_date" in norm:
@@ -254,5 +263,7 @@ class CustomsExcelParser:
             logger.warning("No results to export.")
             return
 
-        pd.DataFrame(self.results).to_json(output_path, orient="records", force_ascii=False, indent=2)
+        pd.DataFrame(self.results).to_json(
+            output_path, orient="records", force_ascii=False, indent=2
+        )
         logger.info(f"Exported {len(self.results)} records to {output_path}")

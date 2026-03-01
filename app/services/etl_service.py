@@ -44,8 +44,12 @@ class ETLService:
                         "decl_number": str(row.get("decl_number", row.get("номер_декларації", ""))),
                         "description": str(row.get("description", row.get("опис_товару", ""))),
                         "hs_code": str(row.get("hs_code", row.get("код_тнзед", ""))),
-                        "country_trading": str(row.get("country_trading", row.get("країна_торгівлі", ""))),
-                        "customs_office": str(row.get("customs_office", row.get("митний_орган", ""))),
+                        "country_trading": str(
+                            row.get("country_trading", row.get("країна_торгівлі", ""))
+                        ),
+                        "customs_office": str(
+                            row.get("customs_office", row.get("митний_орган", ""))
+                        ),
                         "raw_data": row.to_dict(),
                     }
                     if doc["description"] and doc["description"] != "nan":
@@ -53,11 +57,19 @@ class ETLService:
             else:
                 # Generic mapping
                 for _, row in df.head(500).iterrows():
-                    doc = {"description": str(row.values[0]) if len(row) > 0 else "Empty row", "meta": row.to_dict()}
+                    doc = {
+                        "description": str(row.values[0]) if len(row) > 0 else "Empty row",
+                        "meta": row.to_dict(),
+                    }
                     documents.append(doc)
 
             logger.info(f"✅ ETL: Successfully extracted {len(documents)} documents")
-            return {"success": True, "documents": documents, "rows_processed": len(df), "dataset_type": dataset_type}
+            return {
+                "success": True,
+                "documents": documents,
+                "rows_processed": len(df),
+                "dataset_type": dataset_type,
+            }
 
         except Exception as e:
             logger.exception(f"❌ ETL Failed: {e}")

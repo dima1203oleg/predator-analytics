@@ -156,54 +156,64 @@ async def get_system_pulse():
         # Check each service
         try:
             pg_status = await health.check_postgres()
-            services.append({
-                "name": "PostgreSQL",
-                "status": pg_status.get("status", "unknown"),
-                "latency": pg_status.get("latency_ms", 0),
-                "uptime": "99.99%",
-            })
+            services.append(
+                {
+                    "name": "PostgreSQL",
+                    "status": pg_status.get("status", "unknown"),
+                    "latency": pg_status.get("latency_ms", 0),
+                    "uptime": "99.99%",
+                }
+            )
         except:
             services.append({"name": "PostgreSQL", "status": "unknown", "latency": 0})
 
         try:
             redis_status = await health.check_redis()
-            services.append({
-                "name": "Redis",
-                "status": redis_status.get("status", "unknown"),
-                "latency": redis_status.get("latency_ms", 0),
-                "uptime": "99.9%",
-            })
+            services.append(
+                {
+                    "name": "Redis",
+                    "status": redis_status.get("status", "unknown"),
+                    "latency": redis_status.get("latency_ms", 0),
+                    "uptime": "99.9%",
+                }
+            )
         except:
             services.append({"name": "Redis", "status": "unknown", "latency": 0})
 
         try:
             qdrant_status = await health.check_qdrant()
-            services.append({
-                "name": "Qdrant",
-                "status": qdrant_status.get("status", "unknown"),
-                "latency": qdrant_status.get("latency_ms", 0),
-                "uptime": "99.8%",
-            })
+            services.append(
+                {
+                    "name": "Qdrant",
+                    "status": qdrant_status.get("status", "unknown"),
+                    "latency": qdrant_status.get("latency_ms", 0),
+                    "uptime": "99.8%",
+                }
+            )
         except:
             services.append({"name": "Qdrant", "status": "unknown", "latency": 0})
 
         try:
             os_status = await health.check_opensearch()
-            services.append({
-                "name": "OpenSearch",
-                "status": os_status.get("status", "unknown"),
-                "latency": os_status.get("latency_ms", 0),
-                "uptime": "99.7%",
-            })
+            services.append(
+                {
+                    "name": "OpenSearch",
+                    "status": os_status.get("status", "unknown"),
+                    "latency": os_status.get("latency_ms", 0),
+                    "uptime": "99.7%",
+                }
+            )
         except:
             services.append({"name": "OpenSearch", "status": "unknown", "latency": 0})
 
         # Add API Gateway and Celery
-        services.extend([
-            {"name": "API Gateway", "status": "healthy", "latency": 5.0, "uptime": "99.99%"},
-            {"name": "Celery Workers", "status": "healthy", "latency": 0.0, "uptime": "99.9%"},
-            {"name": "LLM Gateway", "status": "healthy", "latency": 200.0, "uptime": "99.5%"},
-        ])
+        services.extend(
+            [
+                {"name": "API Gateway", "status": "healthy", "latency": 5.0, "uptime": "99.99%"},
+                {"name": "Celery Workers", "status": "healthy", "latency": 0.0, "uptime": "99.9%"},
+                {"name": "LLM Gateway", "status": "healthy", "latency": 200.0, "uptime": "99.5%"},
+            ]
+        )
 
         # Calculate overall health score
         healthy_count = sum(1 for s in services if s["status"] == "healthy")
@@ -318,7 +328,9 @@ async def get_v45_system_status():
         async with get_db_ctx() as db:
             active_res = await db.execute(
                 select(ETLJob).where(
-                    ETLJob.state.notin_([ETLState.COMPLETED.value, ETLState.FAILED.value, ETLState.CANCELLED.value])
+                    ETLJob.state.notin_(
+                        [ETLState.COMPLETED.value, ETLState.FAILED.value, ETLState.CANCELLED.value]
+                    )
                 )
             )
             active_jobs = active_res.scalars().all()
@@ -388,7 +400,11 @@ async def get_optimizer_status():
         "is_running": True,
         "quality_gates_status": "PASSING",
         "next_cycle_in_minutes": random.randint(5, 15),
-        "last_action": {"type": "auto_retrain", "timestamp": datetime.now(UTC).isoformat(), "success": True},
+        "last_action": {
+            "type": "auto_retrain",
+            "timestamp": datetime.now(UTC).isoformat(),
+            "success": True,
+        },
         "current_mode": "auto",
         "optimization_level": "aggressive",
     }
@@ -403,7 +419,9 @@ async def get_system_stats():
             # Query counts
             doc_count = await db.scalar(select(func.count()).select_from(Document))
             aug_count = await db.scalar(select(func.count()).select_from(AugmentedDataset))
-            model_count = await db.scalar(select(func.count()).select_from(MLJob).where(MLJob.status == "succeeded"))
+            model_count = await db.scalar(
+                select(func.count()).select_from(MLJob).where(MLJob.status == "succeeded")
+            )
 
             # For DB size, we might need raw SQL
             result = await db.execute(text("SELECT pg_database_size(current_database())"))
@@ -502,14 +520,16 @@ async def get_ml_jobs():
 
             real_jobs = []
             for job in jobs:
-                real_jobs.append({
-                    "id": str(job.id),
-                    "name": job.target or "Unknown Job",
-                    "status": job.status,
-                    "progress": 100 if job.status == "succeeded" else 0,
-                    "startedAt": job.created_at.isoformat(),
-                    "metrics": job.metrics or {"loss": 0, "accuracy": 0, "epoch": 0},
-                })
+                real_jobs.append(
+                    {
+                        "id": str(job.id),
+                        "name": job.target or "Unknown Job",
+                        "status": job.status,
+                        "progress": 100 if job.status == "succeeded" else 0,
+                        "startedAt": job.created_at.isoformat(),
+                        "metrics": job.metrics or {"loss": 0, "accuracy": 0, "epoch": 0},
+                    }
+                )
 
             # If no real jobs, add the autonomous training if it's running
             auto_status = await training_status_service.get_latest_status()
@@ -543,15 +563,17 @@ async def get_optimizer_history():
         # Format for UI
         formatted = []
         for i, entry in enumerate(history):
-            formatted.append({
-                "id": f"opt-{i:03d}",
-                "type": "drift_compensation",
-                "timestamp": entry["timestamp"],
-                "trigger": f"Drift detected (+{entry['drift']} nodes)",
-                "result": "success" if entry["success"] else "failed",
-                "impact": f"+{entry['precision']:.2%} precision improvement",
-                "score": int(entry["precision"] * 100),  # For DSPy chart compatibility
-            })
+            formatted.append(
+                {
+                    "id": f"opt-{i:03d}",
+                    "type": "drift_compensation",
+                    "timestamp": entry["timestamp"],
+                    "trigger": f"Drift detected (+{entry['drift']} nodes)",
+                    "result": "success" if entry["success"] else "failed",
+                    "impact": f"+{entry['precision']:.2%} precision improvement",
+                    "score": int(entry["precision"] * 100),  # For DSPy chart compatibility
+                }
+            )
 
         return {
             "history": formatted,
@@ -796,23 +818,27 @@ async def get_arbitration_scores():
     """Fetch latest arbitration scores from the AI Council sessions."""
     try:
         async with get_db_ctx() as db:
-            result = await db.execute(select(CouncilSession).order_by(CouncilSession.created_at.desc()).limit(2))
+            result = await db.execute(
+                select(CouncilSession).order_by(CouncilSession.created_at.desc()).limit(2)
+            )
             sessions = result.scalars().all()
 
             scores = []
             for s in sessions:
                 # Map CouncilSession data to ArbitrationScore format
-                scores.append({
-                    "modelId": s.id,
-                    "modelName": f"Arbiter-{str(s.id)[:4]}",
-                    "criteria": {
-                        "safety": s.confidence or 0.9,
-                        "logic": 0.85,  # Derived or static if not in DB
-                        "cost": 0.95,
-                        "performance": 0.8,
-                    },
-                    "totalScore": s.confidence or 0.88,
-                })
+                scores.append(
+                    {
+                        "modelId": s.id,
+                        "modelName": f"Arbiter-{str(s.id)[:4]}",
+                        "criteria": {
+                            "safety": s.confidence or 0.9,
+                            "logic": 0.85,  # Derived or static if not in DB
+                            "cost": 0.95,
+                            "performance": 0.8,
+                        },
+                        "totalScore": s.confidence or 0.88,
+                    }
+                )
 
             # Fallback if no sessions
             if not scores:
@@ -820,13 +846,23 @@ async def get_arbitration_scores():
                     {
                         "modelId": "gemini",
                         "modelName": "Gemini 2.0",
-                        "criteria": {"safety": 0.92, "logic": 0.88, "cost": 0.95, "performance": 0.9},
+                        "criteria": {
+                            "safety": 0.92,
+                            "logic": 0.88,
+                            "cost": 0.95,
+                            "performance": 0.9,
+                        },
                         "totalScore": 0.91,
                     },
                     {
                         "modelId": "deepseek",
                         "modelName": "DeepSeek R1",
-                        "criteria": {"safety": 0.85, "logic": 0.92, "cost": 0.8, "performance": 0.85},
+                        "criteria": {
+                            "safety": 0.85,
+                            "logic": 0.92,
+                            "cost": 0.8,
+                            "performance": 0.85,
+                        },
                         "totalScore": 0.86,
                     },
                 ]
@@ -870,7 +906,9 @@ async def get_trinity_audit_logs():
     """Returns recent Trinity audit logs."""
     try:
         async with get_db_ctx() as db:
-            result = await db.execute(select(TrinityAuditLog).order_by(TrinityAuditLog.created_at.desc()).limit(10))
+            result = await db.execute(
+                select(TrinityAuditLog).order_by(TrinityAuditLog.created_at.desc()).limit(10)
+            )
             logs = result.scalars().all()
             return [
                 {
@@ -913,7 +951,9 @@ async def get_monitoring_logs(limit: int = 10):
     # For now, we return structured system events from Audit logs as a proxy
     try:
         async with get_db_ctx() as db:
-            result = await db.execute(select(TrinityAuditLog).order_by(TrinityAuditLog.created_at.desc()).limit(limit))
+            result = await db.execute(
+                select(TrinityAuditLog).order_by(TrinityAuditLog.created_at.desc()).limit(limit)
+            )
             logs = result.scalars().all()
             return [
                 {
@@ -960,7 +1000,9 @@ async def run_maintenance(request: MaintenanceRequest):
         }
         tool = allowed.get(request.action)
         if not tool:
-            raise HTTPException(status_code=400, detail=f"Unsupported maintenance action: {request.action}")
+            raise HTTPException(
+                status_code=400, detail=f"Unsupported maintenance action: {request.action}"
+            )
 
         report = await ops_service.execute_tool(tool, {})
         return {"status": "ok", "action": request.action, "report": report}
@@ -1078,7 +1120,9 @@ async def trigger_etl_sync():
 
         # Fire-and-forget pipeline execution
         asyncio.create_task(
-            pipeline_service.execute_pipeline(job_id, JobType.ETL, dataset_id=None, config={"mode": "global_sync"})
+            pipeline_service.execute_pipeline(
+                job_id, JobType.ETL, dataset_id=None, config={"mode": "global_sync"}
+            )
         )
 
         return {"status": "success", "message": "ETL sync job queued", "job_id": str(job_id)}
@@ -1099,7 +1143,8 @@ async def restart_services():
     from app.services.kafka_service import kafka_service
 
     await kafka_service.send_message(
-        "system_events", {"action": "system_restart", "timestamp": time.time(), "severity": "CRITICAL"}
+        "system_events",
+        {"action": "system_restart", "timestamp": time.time(), "severity": "CRITICAL"},
     )
     # This would normally talk to Docker socket or systemd
     return {"status": "success", "message": "Процес перезапуску підсистем активовано"}
@@ -1121,7 +1166,8 @@ async def generate_synthetic_dataset(config: dict[str, Any]):
     rows = config.get("documentCount", 500)
 
     await kafka_service.send_message(
-        "system_events", {"action": "dataset_generation_start", "config": config, "filename": filename}
+        "system_events",
+        {"action": "dataset_generation_start", "config": config, "filename": filename},
     )
 
     # Run in thread pool to not block event loop
@@ -1136,7 +1182,8 @@ async def generate_synthetic_dataset(config: dict[str, Any]):
             result["minio_path"] = f"datasets/{object_name}"
 
             await kafka_service.send_message(
-                "system_events", {"action": "dataset_generation_success", "minio_path": result["minio_path"]}
+                "system_events",
+                {"action": "dataset_generation_success", "minio_path": result["minio_path"]},
             )
         except Exception as e:
             logger.exception(f"Failed to upload dataset to MinIO: {e}")
@@ -1263,32 +1310,42 @@ async def get_real_sagas():
                         "id": "processing",
                         "name": "Обробка",
                         "status": proc_st,
-                        "progress": 100 if proc_st == "completed" else progress_val if proc_st == "running" else 0,
+                        "progress": 100
+                        if proc_st == "completed"
+                        else progress_val
+                        if proc_st == "running"
+                        else 0,
                         "records": job.progress.get("records_processed", 0) if job.progress else 0,
                     },
                     {
                         "id": "indexing",
                         "name": "Індексація",
                         "status": idx_st,
-                        "progress": 100 if idx_st == "completed" else progress_val if idx_st == "running" else 0,
+                        "progress": 100
+                        if idx_st == "completed"
+                        else progress_val
+                        if idx_st == "running"
+                        else 0,
                         "records": job.progress.get("records_indexed", 0) if job.progress else 0,
                     },
                     {"id": "ml", "name": "ML Аналіз", "status": ml_st, "progress": 0},
                 ]
 
-                sagas.append({
-                    "id": str(job.id),
-                    "name": f"Імпорт: {job.source_file}",
-                    "source": job.source_file,
-                    "status": "completed"
-                    if st == ETLState.COMPLETED.value
-                    else "failed"
-                    if st in [ETLState.FAILED.value, ETLState.CANCELLED.value]
-                    else "running",
-                    "totalProgress": progress_val,
-                    "startedAt": job.created_at.isoformat(),
-                    "steps": steps,
-                })
+                sagas.append(
+                    {
+                        "id": str(job.id),
+                        "name": f"Імпорт: {job.source_file}",
+                        "source": job.source_file,
+                        "status": "completed"
+                        if st == ETLState.COMPLETED.value
+                        else "failed"
+                        if st in [ETLState.FAILED.value, ETLState.CANCELLED.value]
+                        else "running",
+                        "totalProgress": progress_val,
+                        "startedAt": job.created_at.isoformat(),
+                        "steps": steps,
+                    }
+                )
 
             return sagas
     except Exception as e:
@@ -1309,21 +1366,25 @@ async def get_real_alerts():
         alerts = []
         for svc, data in health.get("services", {}).items():
             if data.get("status") != "UP":
-                alerts.append({
-                    "severity": "critical",
-                    "name": f"ServiceDown: {svc}",
-                    "summary": f"Сервіс {svc} недоступний або має помилки.",
-                    "activeAt": "Зараз",
-                })
+                alerts.append(
+                    {
+                        "severity": "critical",
+                        "name": f"ServiceDown: {svc}",
+                        "summary": f"Сервіс {svc} недоступний або має помилки.",
+                        "activeAt": "Зараз",
+                    }
+                )
 
         # Add latency alert if high
         if health.get("performance", {}).get("p95_latency", 0) > 500:
-            alerts.append({
-                "severity": "warning",
-                "name": "HighLatency",
-                "summary": "Затримка P95 перевищує 500мс",
-                "activeAt": "Щойно",
-            })
+            alerts.append(
+                {
+                    "severity": "warning",
+                    "name": "HighLatency",
+                    "summary": "Затримка P95 перевищує 500мс",
+                    "activeAt": "Щойно",
+                }
+            )
 
         return alerts
     except Exception:
@@ -1501,7 +1562,9 @@ async def e2e_analysis(request: AnalysisRequest):
                 from app.services.opensearch_indexer import OpenSearchIndexer
 
                 indexer = OpenSearchIndexer()
-                os_response = await indexer.search(index_name="documents_safe", query=query, size=request.limit_per_db)
+                os_response = await indexer.search(
+                    index_name="documents_safe", query=query, size=request.limit_per_db
+                )
                 hits = os_response.get("hits", {}).get("hits", [])
                 os_data = [{"id": h["_id"], **h["_source"]} for h in hits]
                 results["opensearch"] = {"count": len(os_data), "records": os_data}
@@ -1520,7 +1583,9 @@ async def e2e_analysis(request: AnalysisRequest):
                 qdrant = QdrantService()
                 embedder = EmbeddingService()
                 query_vector = await embedder.generate_embedding_async(query)
-                qd_results = await qdrant.search(query_vector=query_vector, limit=request.limit_per_db)
+                qd_results = await qdrant.search(
+                    query_vector=query_vector, limit=request.limit_per_db
+                )
                 results["qdrant"] = {"count": len(qd_results), "records": qd_results}
                 all_records.extend(qd_results)
             except Exception as e:
@@ -1543,16 +1608,18 @@ async def e2e_analysis(request: AnalysisRequest):
         high_freq.sort(key=lambda x: -x[1])
 
         for pattern, count in high_freq[:5]:
-            analysis_findings.append({
-                "id": str(uuid.uuid4()),
-                "type": "pattern",
-                "confidence": min(0.5 + count * 0.1, 0.95),
-                "description": f"Виявлено повторюваний патерн: '{pattern}' ({count} входжень)",
-                "recommendations": [
-                    f"Перевірити контекст використання '{pattern}'",
-                    "Провести додатковий аналіз пов'язаних записів",
-                ],
-            })
+            analysis_findings.append(
+                {
+                    "id": str(uuid.uuid4()),
+                    "type": "pattern",
+                    "confidence": min(0.5 + count * 0.1, 0.95),
+                    "description": f"Виявлено повторюваний патерн: '{pattern}' ({count} входжень)",
+                    "recommendations": [
+                        f"Перевірити контекст використання '{pattern}'",
+                        "Провести додатковий аналіз пов'язаних записів",
+                    ],
+                }
+            )
 
         # 5. Generate cases
         generated_cases = []
@@ -1560,16 +1627,22 @@ async def e2e_analysis(request: AnalysisRequest):
             for finding in analysis_findings:
                 if finding.get("confidence", 0) > 0.7:
                     risk_score = int(finding["confidence"] * 100)
-                    status = "КРИТИЧНО" if risk_score >= 80 else ("УВАГА" if risk_score >= 50 else "БЕЗПЕЧНО")
-                    generated_cases.append({
-                        "title": f"Аналіз: {finding['type'].upper()}",
-                        "situation": finding["description"],
-                        "conclusion": f"Автоматичний аналіз виявив патерн з впевненістю {finding['confidence'] * 100:.0f}%",
-                        "status": status,
-                        "risk_score": risk_score,
-                        "sector": "BIZ",
-                        "ai_insight": ". ".join(finding.get("recommendations", [])),
-                    })
+                    status = (
+                        "КРИТИЧНО"
+                        if risk_score >= 80
+                        else ("УВАГА" if risk_score >= 50 else "БЕЗПЕЧНО")
+                    )
+                    generated_cases.append(
+                        {
+                            "title": f"Аналіз: {finding['type'].upper()}",
+                            "situation": finding["description"],
+                            "conclusion": f"Автоматичний аналіз виявив патерн з впевненістю {finding['confidence'] * 100:.0f}%",
+                            "status": status,
+                            "risk_score": risk_score,
+                            "sector": "BIZ",
+                            "ai_insight": ". ".join(finding.get("recommendations", [])),
+                        }
+                    )
 
         execution_time = (time.time() - start_time) * 1000
 
@@ -1667,7 +1740,11 @@ async def process_ai_query(request: AIQueryRequest):
     except Exception as e:
         logger.exception(f"AI Query failed: {e}")
         return AIQueryResponse(
-            query=request.query, answer=f"⚠️ Помилка AI: {e!s}", mode=request.mode, health="critical", error=str(e)
+            query=request.query,
+            answer=f"⚠️ Помилка AI: {e!s}",
+            mode=request.mode,
+            health="critical",
+            error=str(e),
         )
 
 
@@ -1752,16 +1829,22 @@ async def get_ai_agents():
 
         agents = []
         for agent_type, agent in orchestrator.agents.items():
-            agents.append({
-                "id": agent.agent_id,
-                "type": agent_type.value,
-                "name": agent.name,
-                "status": agent.state.status,
-                "last_heartbeat": agent.state.last_heartbeat.isoformat(),
-                "metrics": agent.state.metrics,
-            })
+            agents.append(
+                {
+                    "id": agent.agent_id,
+                    "type": agent_type.value,
+                    "name": agent.name,
+                    "status": agent.state.status,
+                    "last_heartbeat": agent.state.last_heartbeat.isoformat(),
+                    "metrics": agent.state.metrics,
+                }
+            )
 
-        return {"agents": agents, "total": len(agents), "healthy": sum(1 for a in agents if a["status"] != "error")}
+        return {
+            "agents": agents,
+            "total": len(agents),
+            "healthy": sum(1 for a in agents if a["status"] != "error"),
+        }
 
     except Exception as e:
         logger.exception(f"Get agents failed: {e}")
@@ -1859,7 +1942,10 @@ async def ai_stream_ws(websocket: WebSocket):
                 "type": "health_update",
                 "health": health.get("status"),
                 "metrics": orchestrator.metrics,
-                "agents": {agent_type.value: agent.state.status for agent_type, agent in orchestrator.agents.items()},
+                "agents": {
+                    agent_type.value: agent.state.status
+                    for agent_type, agent in orchestrator.agents.items()
+                },
                 "timestamp": datetime.now(UTC).isoformat(),
             }
 
@@ -1930,7 +2016,12 @@ async def start_self_improvement_workflow(reason: str = "manual"):
         starter = get_workflow_starter()
         workflow_id = await starter.start_self_improvement(input_data)
 
-        return {"status": "started", "workflow_id": workflow_id, "cycle_id": cycle_id, "trigger": reason}
+        return {
+            "status": "started",
+            "workflow_id": workflow_id,
+            "cycle_id": cycle_id,
+            "trigger": reason,
+        }
 
     except Exception as e:
         logger.exception(f"Failed to start self-improvement workflow: {e}")
@@ -1938,7 +2029,9 @@ async def start_self_improvement_workflow(reason: str = "manual"):
 
 
 @v45_router.post("/workflow/self-healing")
-async def start_self_healing_workflow(component: str = "all", failure_type: str = "unknown", severity: str = "medium"):
+async def start_self_healing_workflow(
+    component: str = "all", failure_type: str = "unknown", severity: str = "medium"
+):
     """🏥 Start Self-Healing Workflow via Temporal.
 
     Triggers a durable self-healing recovery workflow.
@@ -1950,13 +2043,21 @@ async def start_self_healing_workflow(component: str = "all", failure_type: str 
 
         recovery_id = str(uuid.uuid4())
         input_data = HealingInput(
-            recovery_id=recovery_id, component=component, failure_type=failure_type, severity=severity
+            recovery_id=recovery_id,
+            component=component,
+            failure_type=failure_type,
+            severity=severity,
         )
 
         starter = get_workflow_starter()
         workflow_id = await starter.start_self_healing(input_data)
 
-        return {"status": "started", "workflow_id": workflow_id, "recovery_id": recovery_id, "component": component}
+        return {
+            "status": "started",
+            "workflow_id": workflow_id,
+            "recovery_id": recovery_id,
+            "component": component,
+        }
 
     except Exception as e:
         logger.exception(f"Failed to start self-healing workflow: {e}")
@@ -2023,7 +2124,9 @@ async def get_current_predictions():
             "predictions": predictions,
             "count": len(predictions),
             "timestamp": datetime.now(UTC).isoformat(),
-            "metrics_collected": len(autonomous_intelligence_v2.predictive_analyzer.metrics_history),
+            "metrics_collected": len(
+                autonomous_intelligence_v2.predictive_analyzer.metrics_history
+            ),
         }
     except Exception as e:
         logger.exception(f"Predictions fetch failed: {e}")
@@ -2083,13 +2186,19 @@ async def get_learning_statistics():
         strategy_details = {}
         for strategy, scores in autonomous_intelligence_v2.learning_engine.strategy_scores.items():
             strategy_details[strategy] = {
-                "confidence": autonomous_intelligence_v2.learning_engine.get_strategy_confidence(strategy),
+                "confidence": autonomous_intelligence_v2.learning_engine.get_strategy_confidence(
+                    strategy
+                ),
                 "total_uses": len(scores),
                 "recent_accuracy": scores[-10:] if len(scores) >= 10 else scores,
                 "average_accuracy": sum(scores) / len(scores) if scores else 0.0,
             }
 
-        return {**stats, "strategy_details": strategy_details, "timestamp": datetime.now(UTC).isoformat()}
+        return {
+            **stats,
+            "strategy_details": strategy_details,
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
     except Exception as e:
         logger.exception(f"Learning stats fetch failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -2178,7 +2287,9 @@ async def update_autonomy_config(config: AutonomyConfigUpdate):
             autonomous_intelligence_v2.decision_maker.min_confidence = config.min_confidence
 
         if config.anomaly_threshold is not None:
-            autonomous_intelligence_v2.predictive_analyzer.anomaly_threshold = config.anomaly_threshold
+            autonomous_intelligence_v2.predictive_analyzer.anomaly_threshold = (
+                config.anomaly_threshold
+            )
 
         return {
             "status": "updated",
@@ -2227,7 +2338,9 @@ async def get_autonomous_health():
             if success_rate < 0.5:
                 health_score -= 20
 
-        health_status = "healthy" if health_score >= 80 else "degraded" if health_score >= 50 else "critical"
+        health_status = (
+            "healthy" if health_score >= 80 else "degraded" if health_score >= 50 else "critical"
+        )
 
         return {
             "status": health_status,
@@ -2237,7 +2350,9 @@ async def get_autonomous_health():
                 "predictive_analyzer": "healthy"
                 if status.get("predictive_analyzer", {}).get("metrics_collected", 0) > 0
                 else "initializing",
-                "learning_engine": "healthy" if learning_stats.get("total_records", 0) > 0 else "initializing",
+                "learning_engine": "healthy"
+                if learning_stats.get("total_records", 0) > 0
+                else "initializing",
                 "decision_maker": "healthy" if len(decisions) > 0 else "initializing",
                 "resource_allocator": "healthy",
             },
@@ -2245,4 +2360,9 @@ async def get_autonomous_health():
         }
     except Exception as e:
         logger.exception(f"Health check failed: {e}")
-        return {"status": "critical", "health_score": 0, "error": str(e), "timestamp": datetime.now(UTC).isoformat()}
+        return {
+            "status": "critical",
+            "health_score": 0,
+            "error": str(e),
+            "timestamp": datetime.now(UTC).isoformat(),
+        }

@@ -65,7 +65,9 @@ class IngestionCircuitBreaker:
     """
 
     def __init__(
-        self, limits: ResourceLimits = ResourceLimits(), config: CircuitBreakerConfig = CircuitBreakerConfig()
+        self,
+        limits: ResourceLimits = ResourceLimits(),
+        config: CircuitBreakerConfig = CircuitBreakerConfig(),
     ):
         self.limits = limits
         self.config = config
@@ -102,7 +104,10 @@ class IngestionCircuitBreaker:
         # Check file size (basic anomaly detection)
         max_size_bytes = self.limits.max_memory_gb * 1024 * 1024 * 1024
         if file_size_bytes > max_size_bytes:
-            return False, f"File size {file_size_bytes / 1e9:.2f}GB exceeds limit {self.limits.max_memory_gb}GB"
+            return (
+                False,
+                f"File size {file_size_bytes / 1e9:.2f}GB exceeds limit {self.limits.max_memory_gb}GB",
+            )
 
         return True, None
 
@@ -208,7 +213,11 @@ class IngestionCircuitBreaker:
 
                 try:
                     # Read only first few rows to check format
-                    df = pd.read_csv(file_path, nrows=10) if file_type == "csv" else pd.read_excel(file_path, nrows=10)
+                    df = (
+                        pd.read_csv(file_path, nrows=10)
+                        if file_type == "csv"
+                        else pd.read_excel(file_path, nrows=10)
+                    )
 
                     if len(df.columns) == 0:
                         return False, AnomalyType.MALFORMED_DATA, "No columns found"
@@ -245,7 +254,10 @@ class IngestionCircuitBreaker:
         self.failure_count += 1
         self.last_failure_time = datetime.utcnow()
 
-        if self.failure_count >= self.config.failure_threshold and self.state != CircuitBreakerState.OPEN:
+        if (
+            self.failure_count >= self.config.failure_threshold
+            and self.state != CircuitBreakerState.OPEN
+        ):
             self.state = CircuitBreakerState.OPEN
             self.state_changed_at = datetime.utcnow()
             logger.error(
@@ -263,7 +275,11 @@ class IngestionCircuitBreaker:
 
     def _create_abort_result(self, anomaly_type: AnomalyType) -> dict[str, Any]:
         """Create result for aborted job."""
-        return {"aborted": True, "anomaly_type": anomaly_type.value, "circuit_breaker_state": self.state.value}
+        return {
+            "aborted": True,
+            "anomaly_type": anomaly_type.value,
+            "circuit_breaker_state": self.state.value,
+        }
 
     def reset(self) -> None:
         """Reset circuit breaker to closed state."""

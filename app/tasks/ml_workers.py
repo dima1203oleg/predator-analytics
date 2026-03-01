@@ -79,12 +79,16 @@ def process_ml_job(job_id: str):
                 try:
                     # Limit to recent/unprocessed or just all for now (POC)
                     # Ideally we track what is processed. For now, take last 1000 for demo.
-                    rows = await raw_conn.fetch(f"SELECT * FROM {table_name} ORDER BY id DESC LIMIT 1000")
+                    rows = await raw_conn.fetch(
+                        f"SELECT * FROM {table_name} ORDER BY id DESC LIMIT 1000"
+                    )
                     # Convert to list of dicts/strings
                     for r in rows:
                         # Construct a text representation for embedding
                         # Naive approach: join all text values
-                        text_parts = [str(v) for k, v in r.items() if k not in ["id", "created_at"] and v]
+                        text_parts = [
+                            str(v) for k, v in r.items() if k not in ["id", "created_at"] and v
+                        ]
                         records.append(" ".join(text_parts))
                 except Exception as e:
                     logger.exception("ml_staging_read_failed", error=str(e))
@@ -117,7 +121,9 @@ def process_ml_job(job_id: str):
                 docs_to_index = []
                 for _i, row in enumerate(rows):
                     doc_id = str(row["id"])
-                    text_parts = [str(v) for k, v in row.items() if k not in ["id", "created_at"] and v]
+                    text_parts = [
+                        str(v) for k, v in row.items() if k not in ["id", "created_at"] and v
+                    ]
                     full_text = " ".join(text_parts)
 
                     vector = await embedder.generate_embedding_async(full_text)
@@ -125,14 +131,16 @@ def process_ml_job(job_id: str):
                     metadata = {k: str(v) for k, v in row.items() if k not in ["id", "created_at"]}
                     metadata["source_table"] = table_name
 
-                    docs_to_index.append({
-                        "id": doc_id,
-                        "title": f"Запис #{doc_id} з {table_name}",
-                        "content": full_text,
-                        "embedding": vector,
-                        "metadata": metadata,
-                        "tenant_id": str(dataset.tenant_id),
-                    })
+                    docs_to_index.append(
+                        {
+                            "id": doc_id,
+                            "title": f"Запис #{doc_id} з {table_name}",
+                            "content": full_text,
+                            "embedding": vector,
+                            "metadata": metadata,
+                            "tenant_id": str(dataset.tenant_id),
+                        }
+                    )
 
                 # 4. РЕАЛЬНЕ ЗБЕРЕЖЕННЯ (Triple-DB Sync)
                 os_results = await opensearch_indexer.index_documents(
@@ -140,7 +148,8 @@ def process_ml_job(job_id: str):
                 )
 
                 q_batch = [
-                    {"id": d["id"], "embedding": d["embedding"], "metadata": d["metadata"]} for d in docs_to_index
+                    {"id": d["id"], "embedding": d["embedding"], "metadata": d["metadata"]}
+                    for d in docs_to_index
                 ]
                 await qdrant.index_batch(q_batch, tenant_id=str(dataset.tenant_id))
 

@@ -112,7 +112,9 @@ class ZKProver:
         # Using addition s = k + x*e for easier implementation here
         s = (k + self.secret * e) % (P - 1)
 
-        return ZKProof(public_key=str(self.public_key), commitment=str(R), challenge=str(e), response=str(s))
+        return ZKProof(
+            public_key=str(self.public_key), commitment=str(R), challenge=str(e), response=str(s)
+        )
 
 
 class ZKVerifier:
@@ -208,7 +210,9 @@ if __name__ == "__main__":
 
     # 4. Attempt Fake Proof
     print("\n4️⃣ Checking Fake Proof...")
-    fake_proof = ZKProof("SCHNORR", proof.public_key, proof.commitment, proof.challenge, str(int(proof.response) + 1))
+    fake_proof = ZKProof(
+        "SCHNORR", proof.public_key, proof.commitment, proof.challenge, str(int(proof.response) + 1)
+    )
     is_fake_valid = ZKVerifier.verify(fake_proof, msg)
     print(f"   ❌ Fake Valid: {is_fake_valid}")
 

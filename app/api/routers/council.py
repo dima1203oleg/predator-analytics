@@ -15,7 +15,10 @@ from pydantic import BaseModel, Field
 
 from app.core.db import async_session_maker
 from app.models import CouncilSession
-from app.services.llm_council.council_orchestrator import LLMCouncilOrchestrator, create_default_council
+from app.services.llm_council.council_orchestrator import (
+    LLMCouncilOrchestrator,
+    create_default_council,
+)
 
 
 if TYPE_CHECKING:
@@ -34,9 +37,12 @@ class CouncilQueryRequest(BaseModel):
     query: str = Field(..., description="Question or task for the council")
     context: str | None = Field(None, description="Background information")
     models: list[str] | None = Field(
-        default=["gemini", "groq"], description="Models to include in council (defaults to free tier)"
+        default=["gemini", "groq"],
+        description="Models to include in council (defaults to free tier)",
     )
-    enable_peer_review: bool = Field(default=True, description="Enable peer review phase (slower but higher quality)")
+    enable_peer_review: bool = Field(
+        default=True, description="Enable peer review phase (slower but higher quality)"
+    )
     chairman_model: str | None = Field(None, description="Model to use as chairman (default: gpt4)")
 
 
@@ -99,11 +105,17 @@ async def query_council(request: CouncilQueryRequest, background_tasks: Backgrou
         start_time = time.time()
 
         # If specific models requested, create a dynamic council, else use global
-        council = create_default_council(include_models=request.models) if request.models else get_council()
+        council = (
+            create_default_council(include_models=request.models)
+            if request.models
+            else get_council()
+        )
 
         # Deliberate
         result: ConsensusResult = await council.deliberate(
-            query=request.query, context=request.context, enable_peer_review=request.enable_peer_review
+            query=request.query,
+            context=request.context,
+            enable_peer_review=request.enable_peer_review,
         )
 
         # Track metrics (Prometheus)
@@ -127,11 +139,17 @@ async def query_council(request: CouncilQueryRequest, background_tasks: Backgrou
         # Generate request ID
         request_id = f"council_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
 
-        background_tasks.add_task(_log_to_mlflow, request_id=request_id, query=request.query, result=result)
+        background_tasks.add_task(
+            _log_to_mlflow, request_id=request_id, query=request.query, result=result
+        )
 
         # Save to DB
         background_tasks.add_task(
-            _save_council_session, request_id=request_id, query=request.query, context=request.context, result=result
+            _save_council_session,
+            request_id=request_id,
+            query=request.query,
+            context=request.context,
+            result=result,
         )
 
         return CouncilQueryResponse(
@@ -194,7 +212,11 @@ async def council_strategy_session(background_tasks: BackgroundTasks):
 
         # Save to DB
         background_tasks.add_task(
-            _save_council_session, request_id=request_id, query=query, context=context_stats, result=result
+            _save_council_session,
+            request_id=request_id,
+            query=query,
+            context=context_stats,
+            result=result,
         )
 
         return CouncilQueryResponse(
@@ -287,13 +309,17 @@ async def _log_to_mlflow(request_id: str, query: str, result: ConsensusResult):
             # Log metrics
             mlflow.log_metric("confidence", result.confidence)
             mlflow.log_metric("num_peer_reviews", len(result.peer_reviews))
-            mlflow.log_metric("deliberation_time", result.metadata.get("deliberation_time_seconds", 0))
+            mlflow.log_metric(
+                "deliberation_time", result.metadata.get("deliberation_time_seconds", 0)
+            )
 
             # Log artifacts
             mlflow.log_text(result.final_answer, "final_answer.txt")
 
             if result.dissenting_opinions:
-                mlflow.log_dict({"dissenting": result.dissenting_opinions}, "dissenting_opinions.json")
+                mlflow.log_dict(
+                    {"dissenting": result.dissenting_opinions}, "dissenting_opinions.json"
+                )
 
             logger.info(f"Logged council deliberation to MLflow: {request_id}")
 
@@ -301,7 +327,9 @@ async def _log_to_mlflow(request_id: str, query: str, result: ConsensusResult):
         logger.warning(f"Failed to log to MLflow: {e}")
 
 
-async def _save_council_session(request_id: str, query: str, context: str | None, result: ConsensusResult):
+async def _save_council_session(
+    request_id: str, query: str, context: str | None, result: ConsensusResult
+):
     """Save council session to PostgreSQL."""
     try:
         async with async_session_maker() as session:
@@ -334,17 +362,22 @@ def _format_peer_review_summary(peer_reviews: list[Any]) -> dict[str, Any]:
         model = review.reviewed_response_id
         if model not in by_model:
             by_model[model] = []
-        by_model[model].append({
-            "reviewer": review.reviewer_id,
-            "score": review.score,
-            "critique": review.critique[:100] + "..." if len(review.critique) > 100 else review.critique,
-        })
+        by_model[model].append(
+            {
+                "reviewer": review.reviewer_id,
+                "score": review.score,
+                "critique": review.critique[:100] + "..."
+                if len(review.critique) > 100
+                else review.critique,
+            }
+        )
 
     return {
         "total_reviews": len(peer_reviews),
         "by_model": by_model,
         "average_scores": {
-            model: sum(r["score"] for r in reviews) / len(reviews) for model, reviews in by_model.items()
+            model: sum(r["score"] for r in reviews) / len(reviews)
+            for model, reviews in by_model.items()
         },
     }
 

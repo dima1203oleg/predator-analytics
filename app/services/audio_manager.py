@@ -40,7 +40,9 @@ class AudioManager:
         audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
 
         # Виконання запиту
-        response = self.tts_client.synthesize_speech(input=synthesis_input, voice=voice, audio_config=audio_config)
+        response = self.tts_client.synthesize_speech(
+            input=synthesis_input, voice=voice, audio_config=audio_config
+        )
 
         # Збереження у файл
         with open(output_filename, "wb") as out:

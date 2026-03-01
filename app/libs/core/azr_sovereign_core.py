@@ -260,7 +260,11 @@ class AZRSovereignCore:
         except Exception as e:
             capabilities.append(
                 AZRCapability(
-                    name="MerkleTruthLedger", version="1.0", status="offline", description=f"Error: {e}", metrics={}
+                    name="MerkleTruthLedger",
+                    version="1.0",
+                    status="offline",
+                    description=f"Error: {e}",
+                    metrics={},
                 )
             )
             self._component_health["truth_ledger"] = 0.0
@@ -281,7 +285,11 @@ class AZRSovereignCore:
         except Exception as e:
             capabilities.append(
                 AZRCapability(
-                    name="EventSourcing", version="1.0", status="offline", description=f"Error: {e}", metrics={}
+                    name="EventSourcing",
+                    version="1.0",
+                    status="offline",
+                    description=f"Error: {e}",
+                    metrics={},
                 )
             )
             self._component_health["event_store"] = 0.0
@@ -302,7 +310,11 @@ class AZRSovereignCore:
         except Exception as e:
             capabilities.append(
                 AZRCapability(
-                    name="GraphRAGMemory", version="1.0", status="offline", description=f"Error: {e}", metrics={}
+                    name="GraphRAGMemory",
+                    version="1.0",
+                    status="offline",
+                    description=f"Error: {e}",
+                    metrics={},
                 )
             )
             self._component_health["knowledge_graph"] = 0.0
@@ -323,7 +335,11 @@ class AZRSovereignCore:
         except Exception as e:
             capabilities.append(
                 AZRCapability(
-                    name="MCPIntegration", version="1.0", status="offline", description=f"Error: {e}", metrics={}
+                    name="MCPIntegration",
+                    version="1.0",
+                    status="offline",
+                    description=f"Error: {e}",
+                    metrics={},
                 )
             )
             self._component_health["mcp_orchestrator"] = 0.0
@@ -376,13 +392,16 @@ class AZRSovereignCore:
     # 🎯 HIGH-LEVEL OPERATIONS
     # ========================================================================
 
-    def record_decision(self, decision: str, context: dict[str, Any], observations: list[str]) -> dict[str, Any]:
+    def record_decision(
+        self, decision: str, context: dict[str, Any], observations: list[str]
+    ) -> dict[str, Any]:
         """Record a decision with full provenance.
         Uses Truth Ledger + Knowledge Graph.
         """
         # Record in Truth Ledger
         ledger_entry = self.truth_ledger.append(
-            event_type="AZR_DECISION", payload={"decision": decision, "context": context, "observations": observations}
+            event_type="AZR_DECISION",
+            payload={"decision": decision, "context": context, "observations": observations},
         )
 
         # Record in Knowledge Graph for reasoning
@@ -435,7 +454,11 @@ class AZRSovereignCore:
 
         overall_valid = all(r.get("valid", False) for r in results.values())
 
-        return {"overall_valid": overall_valid, "components": results, "timestamp": datetime.now(UTC).isoformat()}
+        return {
+            "overall_valid": overall_valid,
+            "components": results,
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
 
 
 # ============================================================================

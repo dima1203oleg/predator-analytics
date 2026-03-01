@@ -49,7 +49,9 @@ class TruthLedger:
 
         return "0" * 64
 
-    def record_action(self, action_type: str, payload: dict[str, Any], status: str = "COMMITTED") -> str:
+    def record_action(
+        self, action_type: str, payload: dict[str, Any], status: str = "COMMITTED"
+    ) -> str:
         """Створює імутабельний запис про дію."""
         record = {
             "timestamp": datetime.now().isoformat(),
@@ -90,7 +92,9 @@ class TruthLedger:
                         return False
 
                     # Перерахунок хешу
-                    recalculated = hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
+                    recalculated = hashlib.sha256(
+                        json.dumps(data, sort_keys=True).encode()
+                    ).hexdigest()
                     if recalculated != actual_hash:
                         return False
 

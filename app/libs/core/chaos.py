@@ -78,7 +78,9 @@ class AdvancedChaosEngine:
         # Select scenario handler
         handler = getattr(self, f"_scenario_{scenario_name}", None)
         if not handler:
-            return ChaosResult(experiment_id, scenario_name, level.value, 0, "Unknown scenario", False, 0)
+            return ChaosResult(
+                experiment_id, scenario_name, level.value, 0, "Unknown scenario", False, 0
+            )
 
         try:
             # Execute chaos
@@ -109,7 +111,9 @@ class AdvancedChaosEngine:
 
         except Exception as e:
             logger.exception(f"❌ CHAOS FAILED: {e}")
-            return ChaosResult(experiment_id, scenario_name, level.value, 0, f"Error: {e}", False, 0)
+            return ChaosResult(
+                experiment_id, scenario_name, level.value, 0, f"Error: {e}", False, 0
+            )
 
     def _record_to_ledger(self, result: ChaosResult):
         """Record experiment result to cryptographic ledger."""

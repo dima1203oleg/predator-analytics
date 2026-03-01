@@ -77,7 +77,11 @@ class DataHubService:
             return SourceResponse.from_orm(source) if source else None
 
     async def list_sources(
-        self, source_type: SourceType | None = None, is_active: bool | None = None, limit: int = 50, offset: int = 0
+        self,
+        source_type: SourceType | None = None,
+        is_active: bool | None = None,
+        limit: int = 50,
+        offset: int = 0,
     ) -> list[SourceResponse]:
         """List sources with filters."""
         async with async_session_maker() as session:
@@ -94,7 +98,9 @@ class DataHubService:
             sources = result.scalars().all()
             return [SourceResponse.from_orm(s) for s in sources]
 
-    async def update_source(self, source_id: UUID, update_data: SourceUpdate) -> SourceResponse | None:
+    async def update_source(
+        self, source_id: UUID, update_data: SourceUpdate
+    ) -> SourceResponse | None:
         """Update source."""
         async with async_session_maker() as session:
             # Build update dict
@@ -113,7 +119,11 @@ class DataHubService:
     async def delete_source(self, source_id: UUID) -> bool:
         """Delete source (soft delete by setting is_active=False)."""
         async with async_session_maker() as session:
-            stmt = update(Source).where(Source.id == source_id).values(is_active=False, updated_at=datetime.utcnow())
+            stmt = (
+                update(Source)
+                .where(Source.id == source_id)
+                .values(is_active=False, updated_at=datetime.utcnow())
+            )
             result = await session.execute(stmt)
             await session.commit()
 
@@ -144,7 +154,9 @@ class DataHubService:
             logger.info(f"Created dataset: {dataset.name} from source {dataset.source_id}")
             return DatasetResponse.from_orm(dataset)
 
-    async def get_dataset(self, dataset_id: UUID, include_source: bool = True) -> DatasetResponse | None:
+    async def get_dataset(
+        self, dataset_id: UUID, include_source: bool = True
+    ) -> DatasetResponse | None:
         """Get dataset by ID."""
         async with async_session_maker() as session:
             query = select(Dataset).where(Dataset.id == dataset_id)
@@ -165,7 +177,11 @@ class DataHubService:
             return response
 
     async def list_datasets(
-        self, source_id: UUID | None = None, status: DatasetStatus | None = None, limit: int = 50, offset: int = 0
+        self,
+        source_id: UUID | None = None,
+        status: DatasetStatus | None = None,
+        limit: int = 50,
+        offset: int = 0,
     ) -> list[DatasetResponse]:
         """List datasets with filters."""
         async with async_session_maker() as session:
@@ -189,7 +205,9 @@ class DataHubService:
 
             return responses
 
-    async def update_dataset(self, dataset_id: UUID, update_data: DatasetUpdate) -> DatasetResponse | None:
+    async def update_dataset(
+        self, dataset_id: UUID, update_data: DatasetUpdate
+    ) -> DatasetResponse | None:
         """Update dataset."""
         async with async_session_maker() as session:
             update_dict = update_data.dict(exclude_unset=True)
@@ -240,7 +258,11 @@ class DataHubService:
                 name=source_name,
                 description=description,
                 source_type=source_type,
-                config={"filename": file.filename, "content_type": file.content_type, "upload_method": "wizard"},
+                config={
+                    "filename": file.filename,
+                    "content_type": file.content_type,
+                    "upload_method": "wizard",
+                },
             )
             source = await self.create_source(source_data)
 
@@ -267,7 +289,10 @@ class DataHubService:
                 preview = await self._generate_preview(temp_file_path, file.filename)
 
                 await self.minio_service.upload_file(
-                    bucket="raw-data", object_name=object_name, file_path=temp_file_path, content_type=file.content_type
+                    bucket="raw-data",
+                    object_name=object_name,
+                    file_path=temp_file_path,
+                    content_type=file.content_type,
                 )
             finally:
                 if os.path.exists(temp_file_path):
@@ -417,14 +442,18 @@ class DataHubService:
         async with async_session_maker() as session:
             # Sources stats
             total_sources = await session.scalar(select(func.count(Source.id)))
-            active_sources = await session.scalar(select(func.count(Source.id)).where(Source.is_active))
+            active_sources = await session.scalar(
+                select(func.count(Source.id)).where(Source.is_active)
+            )
 
             # Datasets stats
             total_datasets = await session.scalar(select(func.count(Dataset.id)))
 
             datasets_by_status = {}
             for status in DatasetStatus:
-                count = await session.scalar(select(func.count(Dataset.id)).where(Dataset.status == status.value))
+                count = await session.scalar(
+                    select(func.count(Dataset.id)).where(Dataset.status == status.value)
+                )
                 datasets_by_status[status.value] = count
 
             # Jobs stats
@@ -432,7 +461,9 @@ class DataHubService:
 
             jobs_by_status = {}
             for status in JobStatus:
-                count = await session.scalar(select(func.count(Job.id)).where(Job.status == status.value))
+                count = await session.scalar(
+                    select(func.count(Job.id)).where(Job.status == status.value)
+                )
                 jobs_by_status[status.value] = count
 
             # Storage stats (simplified)

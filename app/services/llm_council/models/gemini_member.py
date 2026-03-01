@@ -37,7 +37,9 @@ class GeminiCouncilMember(CouncilMember):
         messages.append({"role": "user", "content": query})
 
         try:
-            response_text = await self.router.chat_completion(model=self.model_id, messages=messages, temperature=0.7)
+            response_text = await self.router.chat_completion(
+                model=self.model_id, messages=messages, temperature=0.7
+            )
 
             council_response = CouncilResponse(
                 model_id=self.model_id,
@@ -76,7 +78,9 @@ Respond ONLY with valid JSON in this format:
 
         try:
             review_text = await self.router.chat_completion(
-                model=self.model_id, messages=[{"role": "user", "content": review_prompt}], temperature=0.3
+                model=self.model_id,
+                messages=[{"role": "user", "content": review_prompt}],
+                temperature=0.3,
             )
 
             # Extract JSON from response
@@ -120,7 +124,12 @@ Respond ONLY with valid JSON in this format:
 
             return json.loads(json_str)
         except:
-            return {"score": 0.5, "strengths": [], "weaknesses": ["Could not parse review"], "critique": text}
+            return {
+                "score": 0.5,
+                "strengths": [],
+                "weaknesses": ["Could not parse review"],
+                "critique": text,
+            }
 
     def _estimate_confidence(self, text: str) -> float:
         """Estimate confidence from response text."""

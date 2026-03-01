@@ -87,7 +87,11 @@ async def trigger_chaos_spike(duration: int = 15, background_tasks: BackgroundTa
         # Fallback if no background tasks (shouldn't happen with correct usage)
         asyncio.create_task(_run_random_and_reset())
 
-    return {"status": "initiated", "duration_seconds": duration, "active_tests": _chaos_state["active_tests"]}
+    return {
+        "status": "initiated",
+        "duration_seconds": duration,
+        "active_tests": _chaos_state["active_tests"],
+    }
 
 
 async def _run_random_and_reset():
@@ -103,7 +107,12 @@ async def check_invariants():
     """Check system invariants (Rules that must never be broken)."""
     return {
         "invariants": [
-            {"id": "INV_001", "name": "Atomic Truth", "status": "PASSING", "description": "Ledger must match DB state"},
+            {
+                "id": "INV_001",
+                "name": "Atomic Truth",
+                "status": "PASSING",
+                "description": "Ledger must match DB state",
+            },
             {
                 "id": "INV_002",
                 "name": "Zero Tamper",

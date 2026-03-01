@@ -93,7 +93,9 @@ class RemoteServerManager:
                     http_url=data.get("http_url", ""),
                     is_active=False,  # Буде перевірено при наступному повідомленні
                 )
-                logger.info(f"Loaded last connection: {self.current_connection.host}:{self.current_connection.port}")
+                logger.info(
+                    f"Loaded last connection: {self.current_connection.host}:{self.current_connection.port}"
+                )
         except Exception as e:
             logger.debug(f"Failed to load connection state: {e}")
 
@@ -291,7 +293,10 @@ ssh -p {conn.port} {conn.user}@{conn.host}
 
         if not self.current_connection:
             return RemoteExecutionResult(
-                command=command, success=False, output="", error="No active connection. Send ngrok data first."
+                command=command,
+                success=False,
+                output="",
+                error="No active connection. Send ngrok data first.",
             )
 
         conn = self.current_connection
@@ -321,7 +326,9 @@ ssh -p {conn.port} {conn.user}@{conn.host}
 
             logger.info(f"Executing remote: {command}")
 
-            result = subprocess.run(ssh_cmd, check=False, capture_output=True, text=True, timeout=timeout)
+            result = subprocess.run(
+                ssh_cmd, check=False, capture_output=True, text=True, timeout=timeout
+            )
 
             execution_time = (time.time() - start_time) * 1000
 
@@ -335,7 +342,9 @@ ssh -p {conn.port} {conn.user}@{conn.host}
             )
 
         except subprocess.TimeoutExpired:
-            return RemoteExecutionResult(command=command, success=False, output="", error=f"Timeout after {timeout}s")
+            return RemoteExecutionResult(
+                command=command, success=False, output="", error=f"Timeout after {timeout}s"
+            )
         except Exception as e:
             logger.exception(f"Remote execution error: {e}")
             return RemoteExecutionResult(command=command, success=False, output="", error=str(e))
@@ -379,10 +388,14 @@ ssh -p {conn.port} {conn.user}@{conn.host}
             "data": results,
         }
 
-    async def sync_files_to_remote(self, local_path: str, remote_path: str) -> RemoteExecutionResult:
+    async def sync_files_to_remote(
+        self, local_path: str, remote_path: str
+    ) -> RemoteExecutionResult:
         """Синхронізує файли на віддалений сервер."""
         if not self.current_connection:
-            return RemoteExecutionResult(command="rsync", success=False, output="", error="No active connection")
+            return RemoteExecutionResult(
+                command="rsync", success=False, output="", error="No active connection"
+            )
 
         conn = self.current_connection
 
@@ -421,13 +434,16 @@ ssh -p {conn.port} {conn.user}@{conn.host}
 
         # 2. Docker build & up
         result = await self.execute_remote(
-            "cd ~/predator-analytics && docker compose pull && docker compose up -d --build", timeout=300
+            "cd ~/predator-analytics && docker compose pull && docker compose up -d --build",
+            timeout=300,
         )
         results.append(result)
 
         # 3. Health check
         await asyncio.sleep(10)
-        result = await self.execute_remote("curl -s http://localhost:8000/health || echo 'Health check failed'")
+        result = await self.execute_remote(
+            "curl -s http://localhost:8000/health || echo 'Health check failed'"
+        )
         results.append(result)
 
         return results

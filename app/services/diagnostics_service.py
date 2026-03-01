@@ -11,7 +11,9 @@ import psutil
 
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger("Diagnostics")
 
 
@@ -21,7 +23,12 @@ class DiagnosticsService:
     """
 
     def __init__(self):
-        self.results = {"infrastructure": {}, "ai_brain": {}, "data_ingestion": {}, "overall_status": "PENDING"}
+        self.results = {
+            "infrastructure": {},
+            "ai_brain": {},
+            "data_ingestion": {},
+            "overall_status": "PENDING",
+        }
         # Load API keys from secure storage only
         from app.core.llm_keys_storage import llm_keys_storage
 
@@ -171,7 +178,11 @@ class DiagnosticsService:
     async def _test_llm_api(self, name, url, key, model):
         """Generic OpenAI-compatible API test."""
         start = time.time()
-        payload = {"model": model, "messages": [{"role": "user", "content": "ping"}], "max_tokens": 5}
+        payload = {
+            "model": model,
+            "messages": [{"role": "user", "content": "ping"}],
+            "max_tokens": 5,
+        }
         headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
         timeout = aiohttp.ClientTimeout(total=5)
 

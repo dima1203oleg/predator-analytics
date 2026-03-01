@@ -139,7 +139,9 @@ def sovereign_cycle(ctx, task):
 
             try:
                 result = await client.post("/api/v45/agents/run-cycle", {"task": task})
-                console.print(f"\n[bold green]✅ Результат:[/bold green] {result.get('message', 'Успішно')}")
+                console.print(
+                    f"\n[bold green]✅ Результат:[/bold green] {result.get('message', 'Успішно')}"
+                )
             except Exception as e:
                 console.print(f"\n[red]❌ Помилка циклу: {e}[/red]")
 
@@ -155,7 +157,9 @@ def doctor(ctx):
     client = ctx.obj["client"]
 
     async def run():
-        console.print("[bold cyan]🩺 Запуск Системного Лікаря Predator v45 | Neural Analytics...[/bold cyan]")
+        console.print(
+            "[bold cyan]🩺 Запуск Системного Лікаря Predator v45 | Neural Analytics...[/bold cyan]"
+        )
 
         with console.status("[bold green]Сканування вразливостей та помилок..."):
             try:
@@ -187,11 +191,17 @@ def knowledge(ctx):
     client = ctx.obj["client"]
 
     async def run():
-        console.print(Panel("[bold]📚 Журнал досвіду моделі Llama 3.1 8b[/bold]", subtitle="Auto-Learning v45"))
+        console.print(
+            Panel(
+                "[bold]📚 Журнал досвіду моделі Llama 3.1 8b[/bold]", subtitle="Auto-Learning v45"
+            )
+        )
 
         try:
             stats = await client.get("/api/v45/stats")
-            console.print(f"🔹 Всього синтетичних кейсів: [bold cyan]{stats.get('synthetic_examples', 0)}[/bold cyan]")
+            console.print(
+                f"🔹 Всього синтетичних кейсів: [bold cyan]{stats.get('synthetic_examples', 0)}[/bold cyan]"
+            )
 
             table = Table()
             table.add_column("Дата", style="dim")
@@ -220,7 +230,9 @@ def llama_train(ctx, model):
 
         with console.status("[bold green]Оптимізація ваг (K M Quantization)..."):
             try:
-                result = await client.post("/api/v45/ml-training/start", {"model": model, "provider": "ollama"})
+                result = await client.post(
+                    "/api/v45/ml-training/start", {"model": model, "provider": "ollama"}
+                )
                 console.print(f"✅ Навчання ініціалізовано. Job ID: {result.get('job_id')}")
             except Exception as e:
                 console.print(f"[red]Помилка: {e}[/red]")

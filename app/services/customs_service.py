@@ -54,16 +54,20 @@ class CustomsService:
 
             records = []
             for r in rows:
-                records.append({
-                    "id": str(r["id"]),
-                    "company": r["company"],
-                    "hs_code": r["hs_code"],
-                    "declared_value": float(r["declared_value"]),
-                    "weight": float(r["weight"]),
-                    "risk_score": r["risk_score"],
-                    "origin": r["origin"],
-                    "timestamp": r["timestamp"].isoformat() if r["timestamp"] else datetime.now().isoformat(),
-                })
+                records.append(
+                    {
+                        "id": str(r["id"]),
+                        "company": r["company"],
+                        "hs_code": r["hs_code"],
+                        "declared_value": float(r["declared_value"]),
+                        "weight": float(r["weight"]),
+                        "risk_score": r["risk_score"],
+                        "origin": r["origin"],
+                        "timestamp": r["timestamp"].isoformat()
+                        if r["timestamp"]
+                        else datetime.now().isoformat(),
+                    }
+                )
             return records
         finally:
             await conn.close()
@@ -132,12 +136,19 @@ class CustomsService:
         days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         time_data = []
         for d in days:
-            time_data.append({
-                "name": d,
-                "value": random.randint(4000, 12000),
-                "risk": random.randint(100, 5000) if persona == "INQUISITOR" else random.randint(50, 2000),
-            })
-        return {"time_data": time_data, "summary": {"total": sum(float(x["value"]) for x in time_data)}}
+            time_data.append(
+                {
+                    "name": d,
+                    "value": random.randint(4000, 12000),
+                    "risk": random.randint(100, 5000)
+                    if persona == "INQUISITOR"
+                    else random.randint(50, 2000),
+                }
+            )
+        return {
+            "time_data": time_data,
+            "summary": {"total": sum(float(x["value"]) for x in time_data)},
+        }
 
     async def get_anomalies(self) -> list[dict[str, Any]]:
         """Identify tactical anomalies from Telegram & DB."""
@@ -153,12 +164,14 @@ class CustomsService:
 
             anomalies = []
             for r in telegram_alerts:
-                anomalies.append({
-                    "id": f"TG-{uuid.uuid4().hex[:4]}",
-                    "type": "SOCIAL_CRITICAL",
-                    "severity": "CRITICAL",
-                    "desc": f"Критична згадка {r['company']} у Telegram каналі 'Customs_of_Ukraine'. Виявлено негативний сентимент щодо цінової політики.",
-                })
+                anomalies.append(
+                    {
+                        "id": f"TG-{uuid.uuid4().hex[:4]}",
+                        "type": "SOCIAL_CRITICAL",
+                        "severity": "CRITICAL",
+                        "desc": f"Критична згадка {r['company']} у Telegram каналі 'Customs_of_Ukraine'. Виявлено негативний сентимент щодо цінової політики.",
+                    }
+                )
 
             # Default fallback if no real data yet
             if not anomalies:
@@ -227,7 +240,9 @@ class CustomsService:
                                 code,
                             )
                             if not pid:
-                                pid = await conn.fetchval("SELECT id FROM customs.participants WHERE name = $1", name)
+                                pid = await conn.fetchval(
+                                    "SELECT id FROM customs.participants WHERE name = $1", name
+                                )
                             participants_map[role] = pid
 
                     decl_num = record.get("declaration_number", f"AUTO-{uuid.uuid4().hex[:8]}")
@@ -252,7 +267,8 @@ class CustomsService:
 
                     if not decl_id:
                         decl_id = await conn.fetchval(
-                            "SELECT id FROM customs.declarations WHERE declaration_number = $1", decl_num
+                            "SELECT id FROM customs.declarations WHERE declaration_number = $1",
+                            decl_num,
                         )
 
                     for role, pid in participants_map.items():
@@ -357,7 +373,9 @@ class CustomsService:
 
                 # Prepare Vector
                 vector_texts.append(text)
-                vector_payloads.append({"doc_id": doc_id, "source": source, "date": date_iso, "type": "intelligence"})
+                vector_payloads.append(
+                    {"doc_id": doc_id, "source": source, "date": date_iso, "type": "intelligence"}
+                )
 
             # 1. Index in OpenSearch
             await search_engine.index_documents(search_docs)

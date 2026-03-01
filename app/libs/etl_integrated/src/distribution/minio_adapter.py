@@ -61,7 +61,9 @@ class MinIOAdapter:
         try:
             # Validate data
             if not data:
-                return DistributionResult(False, "minio", error="No data provided for MinIO distribution")
+                return DistributionResult(
+                    False, "minio", error="No data provided for MinIO distribution"
+                )
 
             # Generate unique object name
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -76,14 +78,20 @@ class MinIOAdapter:
                     "source": "etl_distribution",
                 }
             else:
-                data_to_store = {"record": data, "timestamp": datetime.now().isoformat(), "source": "etl_distribution"}
+                data_to_store = {
+                    "record": data,
+                    "timestamp": datetime.now().isoformat(),
+                    "source": "etl_distribution",
+                }
 
             # In production, this would upload to MinIO
             # For now, we'll simulate the operation
             json_data = json.dumps(data_to_store, indent=2, default=str)
 
             # Simulate MinIO upload
-            logger.info(f"Simulating MinIO upload to bucket '{self.bucket_name}', object '{object_name}'")
+            logger.info(
+                f"Simulating MinIO upload to bucket '{self.bucket_name}', object '{object_name}'"
+            )
             logger.info(f"Data size: {len(json_data)} bytes")
 
             # Return success result with metadata
@@ -107,7 +115,9 @@ class MinIOAdapter:
             logger.exception(error_msg)
             return DistributionResult(False, "minio", error=error_msg)
 
-    def upload_file(self, file_path: str | Path, object_name: str | None = None) -> DistributionResult:
+    def upload_file(
+        self, file_path: str | Path, object_name: str | None = None
+    ) -> DistributionResult:
         """Upload a file to MinIO.
 
         Args:
@@ -173,7 +183,9 @@ class MinIOAdapter:
             logger.info(f"Simulating MinIO bucket creation: {bucket_name}")
 
             return DistributionResult(
-                True, "minio", data={"bucket": bucket_name, "message": "Bucket created successfully (simulated)"}
+                True,
+                "minio",
+                data={"bucket": bucket_name, "message": "Bucket created successfully (simulated)"},
             )
 
         except Exception as e:

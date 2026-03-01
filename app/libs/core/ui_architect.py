@@ -24,7 +24,9 @@ class UIArchitect:
     Постійно доробляє та поліпшує фронтенд.
     """
 
-    def __init__(self, ui_root: str = "/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui"):
+    def __init__(
+        self, ui_root: str = "/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui"
+    ):
         self.ui_root = Path(ui_root)
         self.components_path = self.ui_root / "src" / "components"
 
@@ -33,7 +35,11 @@ class UIArchitect:
         logger.info("🔍 UI Architect is scanning components for aesthetic gaps...")
 
         # Визначає ціль для покращення (Heuristic based)
-        targets = ["SovereignAZRBrain.tsx", "EvolutionDashboard.tsx", "UnifiedAutonomyDashboard.tsx"]
+        targets = [
+            "SovereignAZRBrain.tsx",
+            "EvolutionDashboard.tsx",
+            "UnifiedAutonomyDashboard.tsx",
+        ]
         chosen_target = targets[int(time.time()) % len(targets)]
 
         prompt = (
@@ -54,7 +60,9 @@ class UIArchitect:
         """Запускає процес еволюції через Mistral Vibe або застосовує автоматичні патчі."""
         proposal = await self.propose_aesthetic_improvement()
 
-        logger.info(f"🎨 Executing UI Evolution: {proposal['improvement_type']} -> {proposal['target']}")
+        logger.info(
+            f"🎨 Executing UI Evolution: {proposal['improvement_type']} -> {proposal['target']}"
+        )
 
         # 1. Спроба автоматичного тюнінгу теми (якщо це можливо)
         try:

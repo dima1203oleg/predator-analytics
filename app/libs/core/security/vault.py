@@ -26,14 +26,18 @@ class SecretManager:
             try:
                 import hvac
 
-                self._vault_client = hvac.Client(url=settings.VAULT_ADDR, token=settings.VAULT_TOKEN)
+                self._vault_client = hvac.Client(
+                    url=settings.VAULT_ADDR, token=settings.VAULT_TOKEN
+                )
                 if self._vault_client.is_authenticated():
                     logger.info("🔐 Connected to HashiCorp Vault")
                 else:
                     logger.warning("⚠️ Vault token invalid. Falling back to ENV.")
                     self._use_vault = False
             except ImportError:
-                logger.warning("⚠️ 'hvac' library not found. Install it for Vault support. Falling back to ENV.")
+                logger.warning(
+                    "⚠️ 'hvac' library not found. Install it for Vault support. Falling back to ENV."
+                )
                 self._use_vault = False
             except Exception as e:
                 logger.exception(f"❌ Vault connection failed: {e}. Falling back to ENV.")

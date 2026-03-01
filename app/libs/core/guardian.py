@@ -38,7 +38,11 @@ class GuardianService:
         async def check_tcp(name: str, url: str, default_port: int):
             try:
                 # Robust parsing
-                host_port = url.rsplit("@", maxsplit=1)[-1].rsplit("//", maxsplit=1)[-1].split("/", maxsplit=1)[0]
+                host_port = (
+                    url.rsplit("@", maxsplit=1)[-1]
+                    .rsplit("//", maxsplit=1)[-1]
+                    .split("/", maxsplit=1)[0]
+                )
                 if ":" in host_port:
                     host, port = host_port.split(":")
                     port = int(port)
@@ -86,7 +90,11 @@ class GuardianService:
 
         status = {
             "status": "healthy",
-            "checks": {"connectivity": "UNKNOWN", "extension_trgm": "UNKNOWN", "schema_gold": "UNKNOWN"},
+            "checks": {
+                "connectivity": "UNKNOWN",
+                "extension_trgm": "UNKNOWN",
+                "schema_gold": "UNKNOWN",
+            },
         }
         try:
             async with get_db_ctx() as db:
@@ -95,12 +103,16 @@ class GuardianService:
                 status["checks"]["connectivity"] = "OK"
 
                 # 2. Extensions
-                res = await db.execute(text("SELECT extname FROM pg_extension WHERE extname = 'pg_trgm'"))
+                res = await db.execute(
+                    text("SELECT extname FROM pg_extension WHERE extname = 'pg_trgm'")
+                )
                 status["checks"]["extension_trgm"] = "OK" if res.fetchone() else "MISSING"
 
                 # 3. Schemas
                 res = await db.execute(
-                    text("SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'gold'")
+                    text(
+                        "SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'gold'"
+                    )
                 )
                 status["checks"]["schema_gold"] = "OK" if res.fetchone() else "MISSING"
 
@@ -207,7 +219,11 @@ class GuardianService:
                 # For safety in this context, we'll run a lighter version or simulated optimization
                 await db.execute(text("ANALYZE"))
                 await db.commit()
-            return {"status": "success", "action": "VACUUM_ANALYZE", "impact": "Improved Query Planner accuracy"}
+            return {
+                "status": "success",
+                "action": "VACUUM_ANALYZE",
+                "impact": "Improved Query Planner accuracy",
+            }
         except Exception as e:
             logger.exception(f"Vacuum failed: {e}")
             return {"status": "failed", "error": str(e)}
@@ -261,11 +277,13 @@ class GuardianService:
                             pass
 
                 # 3. Health Reporting (Future: Push to Dashboard)
-                self.health_history.append({
-                    "timestamp": asyncio.get_running_loop().time(),
-                    "infra": infra,
-                    "issues": len(schema_issues),
-                })
+                self.health_history.append(
+                    {
+                        "timestamp": asyncio.get_running_loop().time(),
+                        "infra": infra,
+                        "issues": len(schema_issues),
+                    }
+                )
                 # Keep last 100 checks
                 if len(self.health_history) > 100:
                     self.health_history.pop(0)

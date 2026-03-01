@@ -49,7 +49,9 @@ class SummarizerService:
             # Truncate if too long (models have token limits)
             text_truncated = text[:2048]
 
-            result = self.summarizer(text_truncated, max_length=max_length, min_length=min_length, do_sample=False)
+            result = self.summarizer(
+                text_truncated, max_length=max_length, min_length=min_length, do_sample=False
+            )
 
             summary = result[0]["summary_text"]
             logger.info(f"Generated summary ({len(summary)} chars)")

@@ -41,7 +41,12 @@ class FederationService:
 
     def dispatch_task(self, type: str, payload: dict, target_node_id: str | None = None) -> str:
         task_id = f"task-{int(time.time())}"
-        task_data = {"task_id": task_id, "type": type, "payload": payload, "created_at": time.time()}
+        task_data = {
+            "task_id": task_id,
+            "type": type,
+            "payload": payload,
+            "created_at": time.time(),
+        }
 
         target = target_node_id
         if not target:

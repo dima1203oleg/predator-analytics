@@ -75,7 +75,11 @@ class OpsService:
         except ImportError:
             checks["system"] = {"cpu": "nominal", "memory": "nominal", "disk": "nominal"}
 
-        overall = "healthy" if all(v.get("status") in ("ok", "nominal") for v in checks.values()) else "degraded"
+        overall = (
+            "healthy"
+            if all(v.get("status") in ("ok", "nominal") for v in checks.values())
+            else "degraded"
+        )
 
         return {
             "status": overall,
@@ -159,7 +163,12 @@ class OpsService:
             return {
                 "tool": tool_name,
                 "status": "unknown_tool",
-                "available": ["market_pulse", "entity_scan", "system_diagnose", "find_structural_gaps"],
+                "available": [
+                    "market_pulse",
+                    "entity_scan",
+                    "system_diagnose",
+                    "find_structural_gaps",
+                ],
             }
 
         except Exception as e:

@@ -48,7 +48,9 @@ class DistributionTarget(Enum):
 class DistributionResult:
     """Result container for distribution operations."""
 
-    def __init__(self, success: bool, target: str, data: Any | None = None, error: str | None = None):
+    def __init__(
+        self, success: bool, target: str, data: Any | None = None, error: str | None = None
+    ):
         self.success = success
         self.target = target
         self.data = data
@@ -72,7 +74,9 @@ class DistributionConfig(BaseModel):
 
     minio_bucket: str = Field(default="etl-data", description="MinIO bucket name")
     postgresql_table: str = Field(default="people_data", description="PostgreSQL table name")
-    quadrant_collection: str = Field(default="people_embeddings", description="Quadrant collection name")
+    quadrant_collection: str = Field(
+        default="people_embeddings", description="Quadrant collection name"
+    )
     opensearch_index: str = Field(default="people_index", description="OpenSearch index name")
 
     batch_size: int = Field(default=100, description="Batch size for distribution operations")
@@ -137,7 +141,8 @@ class DataDistributor:
             )
 
             self.adapters[DistributionTarget.QUADRANT.value] = QuadrantAdapter(
-                enabled=self.config.quadrant_enabled, collection_name=self.config.quadrant_collection
+                enabled=self.config.quadrant_enabled,
+                collection_name=self.config.quadrant_collection,
             )
 
             self.adapters[DistributionTarget.OPENSEARCH.value] = OpenSearchAdapter(
@@ -237,7 +242,9 @@ class DataDistributor:
         """Get the adapter for a specific target."""
         return self.adapters.get(target.value)
 
-    def validate_data_for_distribution(self, data: dict[str | Any, list[dict[str, Any]]]) -> DistributionResult:
+    def validate_data_for_distribution(
+        self, data: dict[str | Any, list[dict[str, Any]]]
+    ) -> DistributionResult:
         """Validate that data is suitable for distribution.
 
         Args:
@@ -265,9 +272,13 @@ class DataDistributor:
                 # Single record validation
                 pass
             else:
-                return DistributionResult(False, "validation", error=f"Unsupported data type: {type(data)}")
+                return DistributionResult(
+                    False, "validation", error=f"Unsupported data type: {type(data)}"
+                )
 
-            return DistributionResult(True, "validation", data={"message": "Data validation passed"})
+            return DistributionResult(
+                True, "validation", data={"message": "Data validation passed"}
+            )
 
         except Exception as e:
             error_msg = f"Data validation failed: {e!s}"

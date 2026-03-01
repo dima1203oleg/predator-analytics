@@ -117,7 +117,10 @@ class LLMKeyManager:
             "env_single": "TOGETHER_API_KEY",
             "base_url": "https://api.together.xyz/v1",
             "default_model": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
-            "models": ["meta-llama/Llama-3.3-70B-Instruct-Turbo", "mistralai/Mixtral-8x7B-Instruct-v0.1"],
+            "models": [
+                "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+                "mistralai/Mixtral-8x7B-Instruct-v0.1",
+            ],
         },
         "cohere": {
             "env_key": "COHERE_API_KEY",
@@ -233,7 +236,9 @@ class LLMKeyManager:
                 "total_keys": len(keys),
                 "available_keys": sum(1 for k in keys if k.is_available()),
                 "disabled_keys": sum(1 for k in keys if k.is_disabled),
-                "in_cooldown": sum(1 for k in keys if k.cooldown_until and datetime.now() < k.cooldown_until),
+                "in_cooldown": sum(
+                    1 for k in keys if k.cooldown_until and datetime.now() < k.cooldown_until
+                ),
                 "config": self.PROVIDERS_CONFIG.get(provider, {}),
             }
         return status

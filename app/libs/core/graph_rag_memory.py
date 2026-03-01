@@ -276,7 +276,11 @@ class KnowledgeGraph:
             self.embedder.fit(self._embedding_texts)
 
     def add_node(
-        self, node_type: NodeType, label: str, properties: dict[str, Any] | None = None, node_id: str | None = None
+        self,
+        node_type: NodeType,
+        label: str,
+        properties: dict[str, Any] | None = None,
+        node_id: str | None = None,
     ) -> KnowledgeNode:
         """Add node to graph."""
         with self._lock:
@@ -296,7 +300,11 @@ class KnowledgeGraph:
             embedding = self.embedder.embed(text)
 
             node = KnowledgeNode(
-                node_id=node_id, node_type=node_type, label=label, properties=properties, embedding=embedding
+                node_id=node_id,
+                node_type=node_type,
+                label=label,
+                properties=properties,
+                embedding=embedding,
             )
 
             self._nodes[node_id] = node
@@ -321,7 +329,9 @@ class KnowledgeGraph:
             return None
 
         with self._lock:
-            edge_id = f"edge_{simple_hash(f'{source_id}:{target_id}:{edge_type.value}:{time.time_ns()}')}"
+            edge_id = (
+                f"edge_{simple_hash(f'{source_id}:{target_id}:{edge_type.value}:{time.time_ns()}')}"
+            )
 
             edge = KnowledgeEdge(
                 edge_id=edge_id,
@@ -415,7 +425,11 @@ class KnowledgeGraph:
             # Find causes (incoming edges with causal types)
             for edge_id in self._incoming.get(node_id, []):
                 edge = self._edges.get(edge_id)
-                if edge and edge.edge_type in [EdgeType.TRIGGERED_BY, EdgeType.CAUSED, EdgeType.OBSERVED_DURING]:
+                if edge and edge.edge_type in [
+                    EdgeType.TRIGGERED_BY,
+                    EdgeType.CAUSED,
+                    EdgeType.OBSERVED_DURING,
+                ]:
                     evidence.append(f"{edge.edge_type.value}: {edge.source_id} → {edge.target_id}")
                     traverse_backward(edge.source_id, depth + 1)
 
@@ -426,7 +440,9 @@ class KnowledgeGraph:
             explanation = f"Рішення '{decision_node.label}' було прийнято автономно."
         else:
             causes = [s["label"] for s in steps[1:4]]
-            explanation = f"Рішення '{decision_node.label}' було прийнято через: {', '.join(causes)}"
+            explanation = (
+                f"Рішення '{decision_node.label}' було прийнято через: {', '.join(causes)}"
+            )
 
         return ReasoningChain(
             decision_id=decision_id,
@@ -437,13 +453,19 @@ class KnowledgeGraph:
         )
 
     def record_decision(
-        self, decision_label: str, context: dict[str, Any], observations: list[str], outcome: str | None = None
+        self,
+        decision_label: str,
+        context: dict[str, Any],
+        observations: list[str],
+        outcome: str | None = None,
     ) -> str:
         """Record a decision with full context.
         Creates nodes for decision, context, observations, and links them.
         """
         # Create decision node
-        decision = self.add_node(NodeType.DECISION, decision_label, {"text": decision_label, **context})
+        decision = self.add_node(
+            NodeType.DECISION, decision_label, {"text": decision_label, **context}
+        )
 
         # Create observation nodes and link
         for obs_text in observations:

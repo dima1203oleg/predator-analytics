@@ -19,7 +19,9 @@ async def list_integrations():
     integrations = []
 
     for name in connector_registry.list_all():
-        integrations.append({"id": name, "name": name.upper(), "status": statuses.get(name, "UNKNOWN")})
+        integrations.append(
+            {"id": name, "name": name.upper(), "status": statuses.get(name, "UNKNOWN")}
+        )
 
     return integrations
 

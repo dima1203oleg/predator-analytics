@@ -42,7 +42,9 @@ class MistralProvider(BaseLLMProvider):
 
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.post(self.base_url, json=payload, headers=headers, timeout=30.0)
+                response = await client.post(
+                    self.base_url, json=payload, headers=headers, timeout=30.0
+                )
 
                 if response.status_code != 200:
                     return LLMResponse(
@@ -67,4 +69,10 @@ class MistralProvider(BaseLLMProvider):
                 )
 
         except Exception as e:
-            return LLMResponse(success=False, content="", provider=self.provider_name, model=self.model, error=str(e))
+            return LLMResponse(
+                success=False,
+                content="",
+                provider=self.provider_name,
+                model=self.model,
+                error=str(e),
+            )

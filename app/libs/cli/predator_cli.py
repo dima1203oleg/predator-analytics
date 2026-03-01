@@ -54,10 +54,16 @@ def cli():
 # INGEST COMMAND
 # ============================================================================
 @cli.command()
-@click.option("--file", "-f", required=True, type=click.Path(exists=True), help="Path to file (CSV, Excel)")
-@click.option("--type", "-t", "dataset_type", default="customs", help="Dataset type: customs, tax, generic")
+@click.option(
+    "--file", "-f", required=True, type=click.Path(exists=True), help="Path to file (CSV, Excel)"
+)
+@click.option(
+    "--type", "-t", "dataset_type", default="customs", help="Dataset type: customs, tax, generic"
+)
 @click.option("--name", "-n", help="Optional source name")
-@click.option("--async", "async_mode", is_flag=True, help="Run asynchronously (don't wait for completion)")
+@click.option(
+    "--async", "async_mode", is_flag=True, help="Run asynchronously (don't wait for completion)"
+)
 def ingest(file: str, dataset_type: str, name: str | None, async_mode: bool):
     """📥 Ingest data from file into the platform."""
     file_path = Path(file)
@@ -81,7 +87,9 @@ def ingest(file: str, dataset_type: str, name: str | None, async_mode: bool):
         )
     )
 
-    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
+    with Progress(
+        SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console
+    ) as progress:
         task = progress.add_task("Uploading file...", total=None)
 
         try:
@@ -139,8 +147,12 @@ def ingest(file: str, dataset_type: str, name: str | None, async_mode: bool):
 # ============================================================================
 @cli.command()
 @click.option("--dataset-id", "-d", required=True, help="Dataset UUID to train on")
-@click.option("--target", "-t", default="embeddings", help="Target: embeddings, reranker, classifier, anomaly")
-@click.option("--config", "-c", type=click.Path(exists=True), help="Optional config file (JSON/YAML)")
+@click.option(
+    "--target", "-t", default="embeddings", help="Target: embeddings, reranker, classifier, anomaly"
+)
+@click.option(
+    "--config", "-c", type=click.Path(exists=True), help="Optional config file (JSON/YAML)"
+)
 @click.option("--async", "async_mode", is_flag=True, help="Run asynchronously")
 def train(dataset_id: str, target: str, config: str | None, async_mode: bool):
     """🧠 Train ML model on a dataset."""
@@ -161,7 +173,9 @@ def train(dataset_id: str, target: str, config: str | None, async_mode: bool):
         with open(config) as f:
             config_data = json.load(f)
 
-    with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console) as progress:
+    with Progress(
+        SpinnerColumn(), TextColumn("[progress.description]{task.description}"), console=console
+    ) as progress:
         progress.add_task("Submitting training job...", total=None)
 
         try:
@@ -184,7 +198,9 @@ def train(dataset_id: str, target: str, config: str | None, async_mode: bool):
                     return
 
                 # Poll for completion (simplified)
-                console.print("\n[yellow]Training in progress... Use --async for background execution.[/yellow]")
+                console.print(
+                    "\n[yellow]Training in progress... Use --async for background execution.[/yellow]"
+                )
 
         except httpx.RequestError as e:
             console.print(f"[red]❌ Connection error: {e}[/red]")
@@ -232,7 +248,10 @@ def search(query: str, mode: str, limit: int, dataset: str | None, output: str):
 
             for i, hit in enumerate(results.get("hits", []), 1):
                 table.add_row(
-                    str(i), hit.get("title", "Untitled")[:50], f"{hit.get('score', 0):.3f}", hit.get("source", "N/A")
+                    str(i),
+                    hit.get("title", "Untitled")[:50],
+                    f"{hit.get('score', 0):.3f}",
+                    hit.get("source", "N/A"),
                 )
 
             console.print(table)
@@ -264,9 +283,12 @@ def status(job_id: str | None, show_all: bool, job_type: str | None):
 
                 status_data = response.json()
 
-                status_color = {"queued": "yellow", "running": "blue", "completed": "green", "failed": "red"}.get(
-                    status_data["status"], "white"
-                )
+                status_color = {
+                    "queued": "yellow",
+                    "running": "blue",
+                    "completed": "green",
+                    "failed": "red",
+                }.get(status_data["status"], "white")
 
                 console.print(
                     Panel(
@@ -406,7 +428,9 @@ def health():
                 if response.status_code == 200:
                     console.print(f"  🟢 {name}: [green]Healthy[/green]")
                 else:
-                    console.print(f"  🟡 {name}: [yellow]Degraded ({response.status_code})[/yellow]")
+                    console.print(
+                        f"  🟡 {name}: [yellow]Degraded ({response.status_code})[/yellow]"
+                    )
         except:
             console.print(f"  🔴 {name}: [red]Unreachable[/red]")
 

@@ -35,12 +35,20 @@ class TestRunnerService:
         if suite_type == "unit":
             # Running logic-heavy tests as "unit"
             target_files = ["test_semantic_search.py", "test_etl_workers.py"]
-            cmd = ["pytest"] + [os.path.join(self.TEST_DIR, f) for f in target_files] + ["-v", "--disable-warnings"]
+            cmd = (
+                ["pytest"]
+                + [os.path.join(self.TEST_DIR, f) for f in target_files]
+                + ["-v", "--disable-warnings"]
+            )
 
         elif suite_type == "integration":
             # Running API integration tests
             target_files = ["test_auth_api.py", "test_documents_api.py", "test_stats_api.py"]
-            cmd = ["pytest"] + [os.path.join(self.TEST_DIR, f) for f in target_files] + ["-v", "--disable-warnings"]
+            cmd = (
+                ["pytest"]
+                + [os.path.join(self.TEST_DIR, f) for f in target_files]
+                + ["-v", "--disable-warnings"]
+            )
 
         elif suite_type == "security":
             # Placeholder for safety check
@@ -53,7 +61,11 @@ class TestRunnerService:
             return await self._simulate_test("Load Test (10k req)", duration=5.0)
 
         else:
-            return {"status": "failed", "logs": [f"Unknown test suite type: {suite_type}"], "duration": "0s"}
+            return {
+                "status": "failed",
+                "logs": [f"Unknown test suite type: {suite_type}"],
+                "duration": "0s",
+            }
 
         # Execute Command
         return await self._execute_subprocess(cmd)

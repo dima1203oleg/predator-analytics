@@ -84,7 +84,9 @@ class WebScraperConnector(BaseConnector):
             timeout=float(os.getenv("WEB_SCRAPER_TIMEOUT", "30")),
         )
 
-        self.user_agent = os.getenv("WEB_SCRAPER_USER_AGENT", "Predator-Analytics-Bot/1.0 (+https://predator.ai/bot)")
+        self.user_agent = os.getenv(
+            "WEB_SCRAPER_USER_AGENT", "Predator-Analytics-Bot/1.0 (+https://predator.ai/bot)"
+        )
         self.rate_limit_ms = int(os.getenv("WEB_SCRAPER_RATE_LIMIT", "500"))
 
         # Чорний список доменів (не скрапимо)
@@ -142,12 +144,18 @@ class WebScraperConnector(BaseConnector):
         # Перевіряємо чи query є URL
         if not query.startswith(("http://", "https://")):
             return ConnectorResult(
-                success=False, data=None, error="Запит має бути валідним URL (http:// або https://)", source=self.name
+                success=False,
+                data=None,
+                error="Запит має бути валідним URL (http:// або https://)",
+                source=self.name,
             )
 
         if not self._is_allowed(query):
             return ConnectorResult(
-                success=False, data=None, error="Скрапінг цього домену заблоковано політикою", source=self.name
+                success=False,
+                data=None,
+                error="Скрапінг цього домену заблоковано політикою",
+                source=self.name,
             )
 
         try:
@@ -184,7 +192,9 @@ class WebScraperConnector(BaseConnector):
 
             logger.info(f"Скраплено {len(pages)} сторінок з {query}")
 
-            return ConnectorResult(success=True, data=pages, source=self.name, records_count=len(pages))
+            return ConnectorResult(
+                success=True, data=pages, source=self.name, records_count=len(pages)
+            )
 
         except Exception as e:
             logger.exception(f"Помилка скрапінгу {query}: {e}")
@@ -312,7 +322,9 @@ class WebScraperConnector(BaseConnector):
         """
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
-                response = await client.get(feed_url, headers={"User-Agent": self.user_agent}, follow_redirects=True)
+                response = await client.get(
+                    feed_url, headers={"User-Agent": self.user_agent}, follow_redirects=True
+                )
                 response.raise_for_status()
 
                 soup = BeautifulSoup(response.text, "xml")
@@ -332,7 +344,9 @@ class WebScraperConnector(BaseConnector):
                         RSSFeedItem(
                             title=title.get_text().strip() if title else "",
                             link=link.get_text().strip() if link else "",
-                            description=self._clean_text(description.get_text()) if description else "",
+                            description=self._clean_text(description.get_text())
+                            if description
+                            else "",
                             pub_date=None,  # TODO: Parse date
                             author=author.get_text().strip() if author else None,
                             categories=categories,
@@ -361,7 +375,9 @@ class WebScraperConnector(BaseConnector):
 
                 logger.info(f"Отримано {len(items)} записів з RSS {feed_url}")
 
-                return ConnectorResult(success=True, data=items, source=self.name, records_count=len(items))
+                return ConnectorResult(
+                    success=True, data=items, source=self.name, records_count=len(items)
+                )
 
         except Exception as e:
             logger.exception(f"Помилка парсингу RSS {feed_url}: {e}")
@@ -388,14 +404,16 @@ class WebScraperConnector(BaseConnector):
                     # Екстрактуємо ресурси (файли для завантаження)
                     resources = []
                     for res in result.get("resources", []):
-                        resources.append({
-                            "id": res.get("id"),
-                            "name": res.get("name"),
-                            "format": res.get("format"),
-                            "url": res.get("url"),
-                            "size": res.get("size"),
-                            "last_modified": res.get("last_modified"),
-                        })
+                        resources.append(
+                            {
+                                "id": res.get("id"),
+                                "name": res.get("name"),
+                                "format": res.get("format"),
+                                "url": res.get("url"),
+                                "size": res.get("size"),
+                                "last_modified": res.get("last_modified"),
+                            }
+                        )
 
                     dataset_info = {
                         "id": result.get("id"),
@@ -408,8 +426,12 @@ class WebScraperConnector(BaseConnector):
                         "metadata_modified": result.get("metadata_modified"),
                     }
 
-                    return ConnectorResult(success=True, data=dataset_info, source=self.name, records_count=1)
-                return ConnectorResult(success=False, data=None, error="Датасет не знайдено", source=self.name)
+                    return ConnectorResult(
+                        success=True, data=dataset_info, source=self.name, records_count=1
+                    )
+                return ConnectorResult(
+                    success=False, data=None, error="Датасет не знайдено", source=self.name
+                )
 
         except Exception as e:
             logger.exception(f"Помилка отримання датасету {dataset_id}: {e}")

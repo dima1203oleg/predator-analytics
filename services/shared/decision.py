@@ -84,7 +84,9 @@ class DecisionArtifact:
             "autonomy_level": self.autonomy_level,
             "human_approval_required": self.human_approval_required,
             "human_approved_by": self.human_approved_by,
-            "human_approved_at": self.human_approved_at.isoformat() + "Z" if self.human_approved_at else None,
+            "human_approved_at": self.human_approved_at.isoformat() + "Z"
+            if self.human_approved_at
+            else None,
             "action_type": self.action_type,
             "action_artifact": self.action_artifact,
             "data_hash": self.data_hash,

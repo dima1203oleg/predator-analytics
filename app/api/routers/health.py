@@ -145,7 +145,9 @@ async def check_opensearch() -> dict[str, Any]:
         opensearch_url = os.getenv("OPENSEARCH_URL", "http://localhost:9200")
         start = time.time()
 
-        client = AsyncOpenSearch(hosts=[opensearch_url], use_ssl=False, verify_certs=False, timeout=5)
+        client = AsyncOpenSearch(
+            hosts=[opensearch_url], use_ssl=False, verify_certs=False, timeout=5
+        )
         info = await client.info()
 
         # Get total docs count
@@ -202,8 +204,12 @@ async def readiness_check(response: Response):
     checks = await asyncio.gather(check_postgres(), check_redis(), return_exceptions=True)
 
     results = {
-        "postgres": checks[0] if not isinstance(checks[0], Exception) else {"status": "error", "error": str(checks[0])},
-        "redis": checks[1] if not isinstance(checks[1], Exception) else {"status": "error", "error": str(checks[1])},
+        "postgres": checks[0]
+        if not isinstance(checks[0], Exception)
+        else {"status": "error", "error": str(checks[0])},
+        "redis": checks[1]
+        if not isinstance(checks[1], Exception)
+        else {"status": "error", "error": str(checks[1])},
     }
 
     # Determine overall status
@@ -237,13 +243,21 @@ async def full_health_check(response: Response):
     )
 
     results = {
-        "postgres": checks[0] if not isinstance(checks[0], Exception) else {"status": "error", "error": str(checks[0])},
-        "redis": checks[1] if not isinstance(checks[1], Exception) else {"status": "error", "error": str(checks[1])},
-        "qdrant": checks[2] if not isinstance(checks[2], Exception) else {"status": "error", "error": str(checks[2])},
+        "postgres": checks[0]
+        if not isinstance(checks[0], Exception)
+        else {"status": "error", "error": str(checks[0])},
+        "redis": checks[1]
+        if not isinstance(checks[1], Exception)
+        else {"status": "error", "error": str(checks[1])},
+        "qdrant": checks[2]
+        if not isinstance(checks[2], Exception)
+        else {"status": "error", "error": str(checks[2])},
         "opensearch": checks[3]
         if not isinstance(checks[3], Exception)
         else {"status": "error", "error": str(checks[3])},
-        "llm": checks[4] if not isinstance(checks[4], Exception) else {"status": "error", "error": str(checks[4])},
+        "llm": checks[4]
+        if not isinstance(checks[4], Exception)
+        else {"status": "error", "error": str(checks[4])},
     }
 
     total_time = (time.time() - start_time) * 1000
@@ -264,7 +278,11 @@ async def full_health_check(response: Response):
 
     return {
         "status": overall_status,
-        "summary": {"healthy": healthy_count, "unhealthy": unhealthy_count, "degraded": degraded_count},
+        "summary": {
+            "healthy": healthy_count,
+            "unhealthy": unhealthy_count,
+            "degraded": degraded_count,
+        },
         "checks": results,
         "check_duration_ms": round(total_time, 2),
         "timestamp": datetime.utcnow().isoformat(),

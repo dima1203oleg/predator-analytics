@@ -58,7 +58,9 @@ class ETLArbiter:
             # Fetch active jobs + recently completed (for audit)
             # Active (not terminal)
             stmt = select(ETLJob).where(
-                ETLJob.state.notin_([ETLState.COMPLETED.value, ETLState.FAILED.value, ETLState.CANCELLED.value])
+                ETLJob.state.notin_(
+                    [ETLState.COMPLETED.value, ETLState.FAILED.value, ETLState.CANCELLED.value]
+                )
             )
             result = await sess.execute(stmt)
             active_jobs = result.scalars().all()
@@ -71,7 +73,9 @@ class ETLArbiter:
             # For now, rely on active check catching INDEXED before completion or Ingestion Service doing it right.
             # To be safe per spec "No Fake Completion":
             cutoff = datetime.utcnow() - timedelta(minutes=10)
-            audit_stmt = select(ETLJob).where((ETLJob.state == ETLState.COMPLETED.value) & (ETLJob.updated_at > cutoff))
+            audit_stmt = select(ETLJob).where(
+                (ETLJob.state == ETLState.COMPLETED.value) & (ETLJob.updated_at > cutoff)
+            )
             audit_res = await sess.execute(audit_stmt)
             for job in audit_res.scalars().all():
                 await self._check_job(sess, job)
@@ -90,9 +94,13 @@ class ETLArbiter:
         limit = threshold_map.get(job.state, timedelta(minutes=5))
 
         if datetime.utcnow() - updated_at > limit:
-            logger.warning(f"⚖️ Arbiter detected STALLED job {job.id}. State: {job.state}. Last update: {updated_at}")
+            logger.warning(
+                f"⚖️ Arbiter detected STALLED job {job.id}. State: {job.state}. Last update: {updated_at}"
+            )
             await self._fail_job(
-                sess, job, f"Arbiter Timeout: Job stalled in {job.state} for > {limit.seconds // 60} mins"
+                sess,
+                job,
+                f"Arbiter Timeout: Job stalled in {job.state} for > {limit.seconds // 60} mins",
             )
             return
 
@@ -114,8 +122,12 @@ class ETLArbiter:
             total = (job.progress or {}).get("records_total", 0)
 
             if total > 0 and indexed == 0:
-                logger.error(f"⚖️ Arbiter violation: Job {job.id} is {job.state} but records_indexed=0")
-                await self._fail_job(sess, job, "Arbiter Violation: Zero records indexed (Fake Completion)")
+                logger.error(
+                    f"⚖️ Arbiter violation: Job {job.id} is {job.state} but records_indexed=0"
+                )
+                await self._fail_job(
+                    sess, job, "Arbiter Violation: Zero records indexed (Fake Completion)"
+                )
 
     async def _fail_job(self, sess, job: ETLJob, reason: str):
         """Fail a job and record it in the Truth Ledger."""
@@ -131,13 +143,18 @@ class ETLArbiter:
         await sess.commit()
         logger.info(f"⚖️ Arbiter FAIL applied to {job.id}")
 
-    async def _record_verdict(self, sess, job: ETLJob, decision: str, prev_state: str, reason: str | None = None):
+    async def _record_verdict(
+        self, sess, job: ETLJob, decision: str, prev_state: str, reason: str | None = None
+    ):
         """Record a decision into the Truth Ledger with cryptographic chaining."""
         # 1. Get previous hash (Simple implementation: last hash for this job, or global genesis)
         # For simplicity in v45.0 locally, let's chain per job.
         # Ideally: Global Merkle Tree.
         stmt = (
-            select(TruthLedger).where(TruthLedger.job_id == str(job.id)).order_by(desc(TruthLedger.created_at)).limit(1)
+            select(TruthLedger)
+            .where(TruthLedger.job_id == str(job.id))
+            .order_by(desc(TruthLedger.created_at))
+            .limit(1)
         )
         res = await sess.execute(stmt)
         last_entry = res.scalar_one_or_none()

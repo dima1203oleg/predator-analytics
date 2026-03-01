@@ -160,7 +160,9 @@ class TaskExecutor:
 
     def is_command_dangerous(self, command: str) -> bool:
         """Перевіряє чи команда небезпечна."""
-        return any(re.search(pattern, command, re.IGNORECASE) for pattern in self.dangerous_patterns)
+        return any(
+            re.search(pattern, command, re.IGNORECASE) for pattern in self.dangerous_patterns
+        )
 
     async def analyze_request(self, text: str, user_id: int, chat_id: int) -> PendingTask | None:
         """Аналізує запит користувача та визначає що потрібно виконати
@@ -169,7 +171,10 @@ class TaskExecutor:
         text_lower = text.lower().strip()
 
         # ======== ВІДДАЛЕНИЙ СЕРВЕР NVIDIA ========
-        if any(kw in text_lower for kw in ["nvidia", "сервер", "remote", "віддалений", "gpu сервер", "на сервері"]):
+        if any(
+            kw in text_lower
+            for kw in ["nvidia", "сервер", "remote", "віддалений", "gpu сервер", "на сервері"]
+        ):
             return await self._analyze_remote_request(text, text_lower, user_id, chat_id)
 
         # ======== GPU КОМАНДИ ========
@@ -193,7 +198,10 @@ class TaskExecutor:
             return await self._analyze_argocd_request(text, text_lower, user_id, chat_id)
 
         # ======== БАЗИ ДАНИХ ========
-        if any(kw in text_lower for kw in ["database", "база", "postgres", "redis", "opensearch", "qdrant"]):
+        if any(
+            kw in text_lower
+            for kw in ["database", "база", "postgres", "redis", "opensearch", "qdrant"]
+        ):
             return await self._analyze_database_request(text, text_lower, user_id, chat_id)
 
         # ======== БЕКАПИ ========
@@ -209,7 +217,10 @@ class TaskExecutor:
             return await self._analyze_celery_request(text, text_lower, user_id, chat_id)
 
         # ======== СИСТЕМНІ КОМАНДИ ========
-        if any(kw in text_lower for kw in ["диск", "пам'ять", "память", "cpu", "процесор", "статус", "система"]):
+        if any(
+            kw in text_lower
+            for kw in ["диск", "пам'ять", "память", "cpu", "процесор", "статус", "система"]
+        ):
             return await self._analyze_system_request(text, text_lower, user_id, chat_id)
 
         # ======== ДЕПЛОЙ ========
@@ -222,7 +233,9 @@ class TaskExecutor:
 
         return None
 
-    async def _analyze_docker_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_docker_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує Docker запит."""
         task_id = self.generate_task_id(user_id, text)
 
@@ -318,7 +331,9 @@ class TaskExecutor:
 
         return task
 
-    async def _analyze_git_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_git_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує Git запит."""
         task_id = self.generate_task_id(user_id, text)
         commands = []
@@ -338,12 +353,16 @@ class TaskExecutor:
         elif any(kw in text_lower for kw in ["коміт", "commit", "закомітити", "зберегти зміни"]):
             # Витягуємо повідомлення коміту
             msg_match = re.search(
-                r'(?:повідомлення|message|з текстом|msg)[:\s]+["\']?(.+?)["\']?$', text, re.IGNORECASE
+                r'(?:повідомлення|message|з текстом|msg)[:\s]+["\']?(.+?)["\']?$',
+                text,
+                re.IGNORECASE,
             )
             if msg_match:
                 commit_msg = msg_match.group(1).strip()
             else:
-                commit_msg = f"Auto-commit from Telegram at {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+                commit_msg = (
+                    f"Auto-commit from Telegram at {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+                )
 
             commands = ["git add .", f'git commit -m "{commit_msg}"']
             description = f"💾 Закомітити зміни: '{commit_msg[:50]}...'"
@@ -386,7 +405,9 @@ class TaskExecutor:
 
         return task
 
-    async def _analyze_k8s_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_k8s_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує Kubernetes запит."""
         task_id = self.generate_task_id(user_id, text)
         commands = []
@@ -442,7 +463,9 @@ class TaskExecutor:
 
         return task
 
-    async def _analyze_system_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_system_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує системний запит."""
         task_id = self.generate_task_id(user_id, text)
         commands = []
@@ -480,7 +503,9 @@ class TaskExecutor:
             callback_data=f"exec_{task_id}",
         )
 
-    async def _analyze_deploy_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_deploy_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує запит на деплой."""
         task_id = self.generate_task_id(user_id, text)
 
@@ -502,7 +527,9 @@ class TaskExecutor:
         self.pending_tasks[task_id] = task
         return task
 
-    async def _analyze_file_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_file_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує файловий запит."""
         task_id = self.generate_task_id(user_id, text)
 
@@ -533,7 +560,9 @@ class TaskExecutor:
 
     # ==================== НОВІ КАТЕГОРІЇ ====================
 
-    async def _analyze_remote_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_remote_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує запит для віддаленого NVIDIA сервера."""
         task_id = self.generate_task_id(user_id, text)
         commands = []
@@ -579,13 +608,19 @@ class TaskExecutor:
                 if svc in text_lower:
                     service = svc
                     break
-            commands = [f"REMOTE:cd ~/predator-analytics && docker compose logs --tail=100 {service}"]
+            commands = [
+                f"REMOTE:cd ~/predator-analytics && docker compose logs --tail=100 {service}"
+            ]
             description = f"📜 Логи {service} на NVIDIA сервері"
             requires_confirmation = False
 
         else:
             # Загальний статус
-            commands = ["REMOTE:hostname && uptime", "REMOTE:df -h / | tail -1", "REMOTE:free -h | grep Mem"]
+            commands = [
+                "REMOTE:hostname && uptime",
+                "REMOTE:df -h / | tail -1",
+                "REMOTE:free -h | grep Mem",
+            ]
             description = "🖥️ Огляд NVIDIA сервера"
             requires_confirmation = False
 
@@ -605,7 +640,9 @@ class TaskExecutor:
 
         return task
 
-    async def _analyze_gpu_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_gpu_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує GPU запит (виконується на NVIDIA сервері)."""
         task_id = self.generate_task_id(user_id, text)
 
@@ -619,7 +656,9 @@ class TaskExecutor:
             commands = ["REMOTE:nvidia-smi --query-compute-apps=pid,name,used_memory --format=csv"]
             description = "🎮 GPU процеси"
         elif any(kw in text_lower for kw in ["пам'ять", "memory", "vram"]):
-            commands = ["REMOTE:nvidia-smi --query-gpu=memory.used,memory.free,memory.total --format=csv"]
+            commands = [
+                "REMOTE:nvidia-smi --query-gpu=memory.used,memory.free,memory.total --format=csv"
+            ]
             description = "🎮 GPU пам'ять"
         else:
             commands = [
@@ -638,7 +677,9 @@ class TaskExecutor:
             callback_data=f"exec_{task_id}",
         )
 
-    async def _analyze_database_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_database_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує запит бази даних."""
         task_id = self.generate_task_id(user_id, text)
         commands = []
@@ -707,7 +748,9 @@ class TaskExecutor:
 
         return task
 
-    async def _analyze_backup_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_backup_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує запит бекапу."""
         task_id = self.generate_task_id(user_id, text)
 
@@ -749,7 +792,9 @@ class TaskExecutor:
         self.pending_tasks[task_id] = task
         return task
 
-    async def _analyze_argocd_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_argocd_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує ArgoCD запит."""
         task_id = self.generate_task_id(user_id, text)
 
@@ -793,7 +838,9 @@ class TaskExecutor:
 
         return task
 
-    async def _analyze_mlflow_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_mlflow_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує MLflow запит."""
         task_id = self.generate_task_id(user_id, text)
 
@@ -830,7 +877,9 @@ class TaskExecutor:
             callback_data=f"exec_{task_id}",
         )
 
-    async def _analyze_celery_request(self, text: str, text_lower: str, user_id: int, chat_id: int) -> PendingTask:
+    async def _analyze_celery_request(
+        self, text: str, text_lower: str, user_id: int, chat_id: int
+    ) -> PendingTask:
         """Аналізує Celery запит."""
         task_id = self.generate_task_id(user_id, text)
 
@@ -926,8 +975,12 @@ class TaskExecutor:
                     target = parts[1] if len(parts) > 1 else "nvidia"
 
                     # Отримуємо credentials з env
-                    argocd_server = os.getenv(f"ARGOCD_{target.upper()}_SERVER", os.getenv("ARGOCD_SERVER", ""))
-                    argocd_token = os.getenv(f"ARGOCD_{target.upper()}_TOKEN", os.getenv("ARGOCD_TOKEN", ""))
+                    argocd_server = os.getenv(
+                        f"ARGOCD_{target.upper()}_SERVER", os.getenv("ARGOCD_SERVER", "")
+                    )
+                    argocd_token = os.getenv(
+                        f"ARGOCD_{target.upper()}_TOKEN", os.getenv("ARGOCD_TOKEN", "")
+                    )
 
                     if not argocd_server or not argocd_token:
                         outputs.append(f"⚠️ ArgoCD credentials for {target} not configured")
@@ -938,16 +991,28 @@ class TaskExecutor:
                             headers = {"Authorization": f"Bearer {argocd_token}"}
 
                             if action == "ARGOCD_STATUS":
-                                resp = await client.get(f"{argocd_server}/api/v1/applications", headers=headers)
+                                resp = await client.get(
+                                    f"{argocd_server}/api/v1/applications", headers=headers
+                                )
                                 if resp.status_code == 200:
                                     apps = resp.json().get("items", [])
                                     status_lines = [f"📊 ArgoCD Apps ({len(apps)} total):"]
                                     for app in apps[:10]:
                                         name = app.get("metadata", {}).get("name", "?")
-                                        status = app.get("status", {}).get("sync", {}).get("status", "?")
-                                        health = app.get("status", {}).get("health", {}).get("status", "?")
+                                        status = (
+                                            app.get("status", {}).get("sync", {}).get("status", "?")
+                                        )
+                                        health = (
+                                            app.get("status", {})
+                                            .get("health", {})
+                                            .get("status", "?")
+                                        )
                                         emoji = (
-                                            "✅" if health == "Healthy" else "⚠️" if health == "Progressing" else "❌"
+                                            "✅"
+                                            if health == "Healthy"
+                                            else "⚠️"
+                                            if health == "Progressing"
+                                            else "❌"
                                         )
                                         status_lines.append(f"{emoji} {name}: {status}/{health}")
                                     outputs.append("\n".join(status_lines))
@@ -957,7 +1022,9 @@ class TaskExecutor:
                             elif action == "ARGOCD_SYNC":
                                 app_name = f"predator-{target}"
                                 resp = await client.post(
-                                    f"{argocd_server}/api/v1/applications/{app_name}/sync", headers=headers, json={}
+                                    f"{argocd_server}/api/v1/applications/{app_name}/sync",
+                                    headers=headers,
+                                    json={},
                                 )
                                 if resp.status_code in [200, 201]:
                                     outputs.append(f"✅ ArgoCD sync initiated for {app_name}")
@@ -968,7 +1035,8 @@ class TaskExecutor:
                                 app_name = f"predator-{target}"
                                 # Get current revision first
                                 resp = await client.get(
-                                    f"{argocd_server}/api/v1/applications/{app_name}", headers=headers
+                                    f"{argocd_server}/api/v1/applications/{app_name}",
+                                    headers=headers,
                                 )
                                 if resp.status_code == 200:
                                     history = resp.json().get("status", {}).get("history", [])
@@ -980,7 +1048,9 @@ class TaskExecutor:
                                             json={"id": prev_revision},
                                         )
                                         if resp.status_code in [200, 201]:
-                                            outputs.append(f"↩️ Rollback to {prev_revision[:8]} initiated")
+                                            outputs.append(
+                                                f"↩️ Rollback to {prev_revision[:8]} initiated"
+                                            )
                                         else:
                                             errors.append(f"Rollback failed: {resp.status_code}")
                                     else:
@@ -994,7 +1064,13 @@ class TaskExecutor:
 
                 # ======== ЛОКАЛЬНІ КОМАНДИ ========
                 result = subprocess.run(
-                    cmd, check=False, shell=True, capture_output=True, text=True, timeout=120, cwd=self.project_dir
+                    cmd,
+                    check=False,
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=120,
+                    cwd=self.project_dir,
                 )
 
                 if result.stdout:
@@ -1037,7 +1113,11 @@ class TaskExecutor:
         except Exception as e:
             logger.exception(f"Task execution error: {e}")
             return ExecutionResult(
-                task_id=task.task_id, status=TaskStatus.FAILED, output="", error=str(e), commands_executed=task.commands
+                task_id=task.task_id,
+                status=TaskStatus.FAILED,
+                output="",
+                error=str(e),
+                commands_executed=task.commands,
             )
 
     def confirm_task(self, task_id: str) -> PendingTask | None:

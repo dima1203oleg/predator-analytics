@@ -48,7 +48,9 @@ class NASEngine:
 
     def __init__(self, config: NASConfig = None):
         self.config = config or NASConfig()
-        self.state = NASState(phase=NASPhase.IDLE, generation=0, best_fitness=0.0, active=False, logs=[])
+        self.state = NASState(
+            phase=NASPhase.IDLE, generation=0, best_fitness=0.0, active=False, logs=[]
+        )
 
     async def start_evolution(self) -> NASState:
         """Start evolution cycle."""

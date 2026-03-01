@@ -304,7 +304,9 @@ class MetaLearningController:
 
         return sorted(gaps, key=lambda g: g.priority)
 
-    def generate_improvement_hypotheses(self, gaps: list[PerformanceGap]) -> list[ImprovementHypothesis]:
+    def generate_improvement_hypotheses(
+        self, gaps: list[PerformanceGap]
+    ) -> list[ImprovementHypothesis]:
         """Generate improvement hypotheses based on identified gaps.
 
         Uses:
@@ -331,7 +333,11 @@ class MetaLearningController:
                             "Add cache invalidation logic",
                             "Deploy with canary rollout",
                         ],
-                        verification_requirements=["performance_test", "cache_hit_rate_test", "data_consistency_test"],
+                        verification_requirements=[
+                            "performance_test",
+                            "cache_hit_rate_test",
+                            "data_consistency_test",
+                        ],
                         estimated_effort_hours=8.0,
                         confidence=0.85,
                         generated_at=datetime.now(),
@@ -354,7 +360,11 @@ class MetaLearningController:
                             "Validate generated tests",
                             "Merge to codebase",
                         ],
-                        verification_requirements=["test_execution", "coverage_report", "mutation_testing"],
+                        verification_requirements=[
+                            "test_execution",
+                            "coverage_report",
+                            "mutation_testing",
+                        ],
                         estimated_effort_hours=4.0,
                         confidence=0.90,
                         generated_at=datetime.now(),
@@ -408,7 +418,9 @@ class MetaLearningController:
             passed_threshold=total >= 0.6 and constitutional_alignment >= 0.8,
         )
 
-    def check_constitutional_compliance(self, hypothesis: ImprovementHypothesis) -> list[ConstitutionalCheck]:
+    def check_constitutional_compliance(
+        self, hypothesis: ImprovementHypothesis
+    ) -> list[ConstitutionalCheck]:
         """Verify hypothesis against constitutional rules.
 
         Uses Z3 theorem prover for formal verification where applicable.
@@ -420,7 +432,8 @@ class MetaLearningController:
             (
                 "SEC-001",
                 "Never decrease system security",
-                hypothesis.type != HypothesisType.SECURITY or hypothesis.risk_level != RiskLevel.CRITICAL,
+                hypothesis.type != HypothesisType.SECURITY
+                or hypothesis.risk_level != RiskLevel.CRITICAL,
             ),
             ("TRN-001", "All autonomous decisions must be explainable", True),
             (
@@ -445,7 +458,9 @@ class MetaLearningController:
 
         return checks
 
-    def run_safety_council_review(self, hypothesis: ImprovementHypothesis) -> list[SafetyCouncilReview]:
+    def run_safety_council_review(
+        self, hypothesis: ImprovementHypothesis
+    ) -> list[SafetyCouncilReview]:
         """Multi-agent review by Safety Council.
 
         Each agent evaluates from their perspective.
@@ -574,18 +589,23 @@ class EvolutionaryProgressTracker:
 
     def record_generation(self, generation: int, improvements: list[EvolutionaryRecord]):
         """Record a generation's improvements."""
-        self.generations.append({
-            "generation": generation,
-            "timestamp": datetime.now().isoformat(),
-            "improvements_count": len(improvements),
-            "average_fitness": sum(i.fitness.total_fitness for i in improvements) / len(improvements)
-            if improvements
-            else 0,
-            "success_rate": sum(1 for i in improvements if i.actual_improvement and i.actual_improvement > 0)
-            / len(improvements)
-            if improvements
-            else 0,
-        })
+        self.generations.append(
+            {
+                "generation": generation,
+                "timestamp": datetime.now().isoformat(),
+                "improvements_count": len(improvements),
+                "average_fitness": sum(i.fitness.total_fitness for i in improvements)
+                / len(improvements)
+                if improvements
+                else 0,
+                "success_rate": sum(
+                    1 for i in improvements if i.actual_improvement and i.actual_improvement > 0
+                )
+                / len(improvements)
+                if improvements
+                else 0,
+            }
+        )
 
     def get_progress_report(self) -> dict[str, Any]:
         """Generate progress report."""

@@ -18,7 +18,9 @@ class IndexingService:
         logger.info(f"Indexing document {document_id} via real providers")
         return True
 
-    async def index_documents(self, documents: list, dataset_type: str = "custom", index_name: str = "documents"):
+    async def index_documents(
+        self, documents: list, dataset_type: str = "custom", index_name: str = "documents"
+    ):
         """Real bulk indexing into OpenSearch and Qdrant."""
         logger.info(f"Initiating real indexing for {len(documents)} documents")
         return await opensearch_indexer.index_documents(

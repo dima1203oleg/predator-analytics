@@ -95,17 +95,26 @@ async def search(
                         "filter": [],
                     }
                 },
-                "highlight": {"fields": {"description": {"fragment_size": 150, "number_of_fragments": 1}, "title": {}}},
+                "highlight": {
+                    "fields": {
+                        "description": {"fragment_size": 150, "number_of_fragments": 1},
+                        "title": {},
+                    }
+                },
             }
 
             # Apply filters
             if category:
-                query_body["query"]["bool"]["filter"].append({"term": {"category.keyword": category}})
+                query_body["query"]["bool"]["filter"].append(
+                    {"term": {"category.keyword": category}}
+                )
             if source:
                 query_body["query"]["bool"]["filter"].append({"term": {"source.keyword": source}})
 
             # Pass tenant_id to indexer
-            os_resp = await indexer.search(index_name="documents_safe", query_body=query_body, tenant_id=tenant_id)
+            os_resp = await indexer.search(
+                index_name="documents_safe", query_body=query_body, tenant_id=tenant_id
+            )
             text_hits = os_resp.get("hits", {}).get("hits", [])
             total = os_resp.get("hits", {}).get("total", {}).get("value", 0)
 
@@ -149,13 +158,19 @@ async def search(
 
             # Map Elastic results to Dict format expected by RRF
             os_input = [
-                {"id": h["_id"], "score": h["_score"], "data": h["_source"], "highlights": h.get("highlight", {})}
+                {
+                    "id": h["_id"],
+                    "score": h["_score"],
+                    "data": h["_source"],
+                    "highlights": h.get("highlight", {}),
+                }
                 for h in text_hits
             ]
 
             # Map Qdrant results to Dict format
             vec_input = [
-                {"id": h["id"], "score": h["score"], "data": h["metadata"], "highlights": {}} for h in vector_hits
+                {"id": h["id"], "score": h["score"], "data": h["metadata"], "highlights": {}}
+                for h in vector_hits
             ]
 
             # Perform Fusion
@@ -183,7 +198,9 @@ async def search(
                     # print(f"Calling rerank service with {len(docs_to_rank)} docs")
                     # Rerank
                     # returns List[Tuple[Dict, float]]
-                    ranked_results = reranker.rerank(q, docs_to_rank, top_k=limit, score_field="both")
+                    ranked_results = reranker.rerank(
+                        q, docs_to_rank, top_k=limit, score_field="both"
+                    )
                     # print(f"Rerank returned {len(ranked_results)} results")
 
                     # Reconstruct sorted results
@@ -211,29 +228,39 @@ async def search(
 
         elif mode == "text":
             final_results = [
-                {"id": h["_id"], "score": h["_score"], "data": h["_source"], "highlights": h.get("highlight", {})}
+                {
+                    "id": h["_id"],
+                    "score": h["_score"],
+                    "data": h["_source"],
+                    "highlights": h.get("highlight", {}),
+                }
                 for h in text_hits
             ]
 
         elif mode == "semantic":
             final_results = [
-                {"id": h["id"], "score": h["score"], "data": h["metadata"], "highlights": {}} for h in vector_hits
+                {"id": h["id"], "score": h["score"], "data": h["metadata"], "highlights": {}}
+                for h in vector_hits
             ]
 
         # Format output
         formatted_results = []
         for res in final_results:
-            formatted_results.append({
-                "id": res["id"],
-                "title": res["data"].get("title"),
-                "snippet": res["data"].get("description") or res["data"].get("content") or "...",  # Fallback
-                "score": res.get("rerank_score") or res.get("final_score") or res.get("score"),
-                "semanticScore": res.get("vector_score"),
-                "source": res["data"].get("source", "unknown"),
-                "category": res["data"].get("category", "general"),
-                "searchType": mode,
-                "combinedScore": res.get("combinedScore", res.get("final_score", 0)),
-            })
+            formatted_results.append(
+                {
+                    "id": res["id"],
+                    "title": res["data"].get("title"),
+                    "snippet": res["data"].get("description")
+                    or res["data"].get("content")
+                    or "...",  # Fallback
+                    "score": res.get("rerank_score") or res.get("final_score") or res.get("score"),
+                    "semanticScore": res.get("vector_score"),
+                    "source": res["data"].get("source", "unknown"),
+                    "category": res["data"].get("category", "general"),
+                    "searchType": mode,
+                    "combinedScore": res.get("combinedScore", res.get("final_score", 0)),
+                }
+            )
 
         duration = time.time() - start_time
         track_search_request(mode, duration, len(formatted_results))
@@ -310,7 +337,9 @@ async def search_companies(
             },
         }
 
-        response = await indexer.search("documents_safe", query_body=query_body, tenant_id=tenant_id)
+        response = await indexer.search(
+            "documents_safe", query_body=query_body, tenant_id=tenant_id
+        )
 
         hits = response.get("hits", {}).get("hits", [])
         companies = [h["_source"] for h in hits]
@@ -318,7 +347,11 @@ async def search_companies(
         duration = time.time() - start_time
         track_search_request("companies", duration, len(companies))
 
-        return {"query": q, "companies": companies, "total": response.get("hits", {}).get("total", {}).get("value", 0)}
+        return {
+            "query": q,
+            "companies": companies,
+            "total": response.get("hits", {}).get("total", {}).get("value", 0),
+        }
     except Exception as e:
         logger.exception("company_search_failed", error=str(e), query=q)
         raise HTTPException(status_code=500, detail=str(e))
@@ -355,7 +388,9 @@ async def search_tenders(
             },
         }
 
-        response = await indexer.search("documents_safe", query_body=query_body, tenant_id=tenant_id)
+        response = await indexer.search(
+            "documents_safe", query_body=query_body, tenant_id=tenant_id
+        )
 
         hits = response.get("hits", {}).get("hits", [])
         tenders = [h["_source"] for h in hits]
@@ -363,7 +398,11 @@ async def search_tenders(
         duration = time.time() - start_time
         track_search_request("tenders", duration, len(tenders))
 
-        return {"query": q, "tenders": tenders, "total": response.get("hits", {}).get("total", {}).get("value", 0)}
+        return {
+            "query": q,
+            "tenders": tenders,
+            "total": response.get("hits", {}).get("total", {}).get("value", 0),
+        }
     except Exception as e:
         logger.exception("tender_search_failed", error=str(e), query=q)
         raise HTTPException(status_code=500, detail=str(e))
@@ -387,10 +426,17 @@ async def suggest(
             "query": {"match_phrase_prefix": {"title": {"query": q, "max_expansions": 10}}},
             "_source": ["title", "id", "category"],
         }
-        response = await indexer.search("documents_safe", query_body=query_body, tenant_id=tenant_id)
+        response = await indexer.search(
+            "documents_safe", query_body=query_body, tenant_id=tenant_id
+        )
         hits = response.get("hits", {}).get("hits", [])
         suggestions = [
-            {"text": h["_source"].get("title"), "id": h["_id"], "category": h["_source"].get("category")} for h in hits
+            {
+                "text": h["_source"].get("title"),
+                "id": h["_id"],
+                "category": h["_source"].get("category"),
+            }
+            for h in hits
         ]
         track_search_request("suggestions", 0.1, len(suggestions))
         return suggestions
@@ -445,7 +491,10 @@ async def customs_search(
             },
             "size": request.limit,
             "highlight": {
-                "fields": {"опис_товару": {"fragment_size": 200, "number_of_fragments": 1}, "код_товару": {}}
+                "fields": {
+                    "опис_товару": {"fragment_size": 200, "number_of_fragments": 1},
+                    "код_товару": {},
+                }
             },
             "aggs": {
                 "top_countries": {"terms": {"field": "торгуюча_країна.keyword", "size": 10}},
@@ -465,13 +514,16 @@ async def customs_search(
         aggs = response.get("aggregations", {})
         analytics = {
             "top_countries": [
-                {"name": b["key"], "count": b["doc_count"]} for b in aggs.get("top_countries", {}).get("buckets", [])
+                {"name": b["key"], "count": b["doc_count"]}
+                for b in aggs.get("top_countries", {}).get("buckets", [])
             ],
             "top_codes": [
-                {"code": b["key"], "count": b["doc_count"]} for b in aggs.get("top_codes", {}).get("buckets", [])
+                {"code": b["key"], "count": b["doc_count"]}
+                for b in aggs.get("top_codes", {}).get("buckets", [])
             ],
             "top_offices": [
-                {"name": b["key"], "count": b["doc_count"]} for b in aggs.get("top_offices", {}).get("buckets", [])
+                {"name": b["key"], "count": b["doc_count"]}
+                for b in aggs.get("top_offices", {}).get("buckets", [])
             ],
         }
 
@@ -479,15 +531,17 @@ async def customs_search(
         results = []
         for h in hits:
             source = h.get("_source", {})
-            results.append({
-                "id": str(source.get("id") or h.get("_id")),
-                "description": source.get("опис_товару"),
-                "hs_code": source.get("код_товару"),
-                "country_trading": source.get("торгуюча_країна"),
-                "customs_office": source.get("митниця_оформлення"),
-                "decl_number": source.get("номер_митної_декларації"),
-                "score": h.get("_score"),
-            })
+            results.append(
+                {
+                    "id": str(source.get("id") or h.get("_id")),
+                    "description": source.get("опис_товару"),
+                    "hs_code": source.get("код_товару"),
+                    "country_trading": source.get("торгуюча_країна"),
+                    "customs_office": source.get("митниця_оформлення"),
+                    "decl_number": source.get("номер_митної_декларації"),
+                    "score": h.get("_score"),
+                }
+            )
 
         return {
             "total": response.get("hits", {}).get("total", {}).get("value", 0),

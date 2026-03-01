@@ -75,11 +75,13 @@ class DataScraper:
         """
         self.user_agent = user_agent
         self.session = requests.Session()
-        self.session.headers.update({
-            "User-Agent": self.user_agent,
-            "Accept": "text/html,application/json,application/xml,*/*",
-            "Accept-Language": "en-US,en;q=0.5",
-        })
+        self.session.headers.update(
+            {
+                "User-Agent": self.user_agent,
+                "Accept": "text/html,application/json,application/xml,*/*",
+                "Accept-Language": "en-US,en;q=0.5",
+            }
+        )
         logger.info("DataScraper initialized")
 
     def scrape_web_page(self, url: str, timeout: int = 30) -> ScrapeResult:
@@ -120,7 +122,9 @@ class DataScraper:
             logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
 
-    def scrape_api_endpoint(self, url: str, params: dict | None = None, timeout: int = 30) -> ScrapeResult:
+    def scrape_api_endpoint(
+        self, url: str, params: dict | None = None, timeout: int = 30
+    ) -> ScrapeResult:
         """Scrape data from a REST API endpoint.
 
         Args:
@@ -204,7 +208,10 @@ class DataScraper:
                 extracted_data.append(record)
 
             result = ScrapeResult(True, data=extracted_data)
-            result.metadata = {"records_extracted": len(extracted_data), "fields": list(selectors.keys())}
+            result.metadata = {
+                "records_extracted": len(extracted_data),
+                "fields": list(selectors.keys()),
+            }
 
             logger.info(f"Extracted {len(extracted_data)} records using selectors")
             return result
@@ -251,7 +258,9 @@ class DataScraper:
             logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
 
-    def _save_json(self, data: list[dict[str | Any], dict[str, Any]], file_path: Path) -> ScrapeResult:
+    def _save_json(
+        self, data: list[dict[str | Any], dict[str, Any]], file_path: Path
+    ) -> ScrapeResult:
         """Save data as JSON file."""
         try:
             with open(file_path, "w", encoding="utf-8") as f:
@@ -268,7 +277,9 @@ class DataScraper:
             logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
 
-    def _save_csv(self, data: list[dict[str | Any], dict[str, Any]], file_path: Path) -> ScrapeResult:
+    def _save_csv(
+        self, data: list[dict[str | Any], dict[str, Any]], file_path: Path
+    ) -> ScrapeResult:
         """Save data as CSV file."""
         try:
             if isinstance(data, dict):
@@ -286,7 +297,11 @@ class DataScraper:
                 writer.writerows(data)
 
             result = ScrapeResult(True, data=str(file_path))
-            result.metadata = {"format": "csv", "records": len(data), "file_size": file_path.stat().st_size}
+            result.metadata = {
+                "format": "csv",
+                "records": len(data),
+                "file_size": file_path.stat().st_size,
+            }
 
             logger.info(f"Successfully saved CSV data to {file_path}")
             return result
@@ -296,7 +311,9 @@ class DataScraper:
             logger.exception(error_msg)
             return ScrapeResult(False, error=error_msg)
 
-    def _save_xml(self, data: list[dict[str | Any], dict[str, Any]], file_path: Path) -> ScrapeResult:
+    def _save_xml(
+        self, data: list[dict[str | Any], dict[str, Any]], file_path: Path
+    ) -> ScrapeResult:
         """Save data as XML file."""
         try:
             if isinstance(data, dict):
@@ -322,7 +339,11 @@ class DataScraper:
             tree.write(file_path, encoding="utf-8", xml_declaration=True)
 
             result = ScrapeResult(True, data=str(file_path))
-            result.metadata = {"format": "xml", "records": len(data), "file_size": file_path.stat().st_size}
+            result.metadata = {
+                "format": "xml",
+                "records": len(data),
+                "file_size": file_path.stat().st_size,
+            }
 
             logger.info(f"Successfully saved XML data to {file_path}")
             return result

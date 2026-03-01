@@ -58,7 +58,10 @@ async def create_mission(request: CreateMissionRequest, background_tasks: Backgr
 
     # Створюємо місію
     mission = await planner.create_mission(
-        title=request.title, description=request.description, priority=priority, context=request.context
+        title=request.title,
+        description=request.description,
+        priority=priority,
+        context=request.context,
     )
 
     # Плануємо задачі
@@ -171,7 +174,11 @@ async def create_data_processing_mission(background_tasks: BackgroundTasks):
     mission = await planner.plan_mission(mission)
     background_tasks.add_task(planner.execute_mission, mission)
 
-    return {"success": True, "mission_id": mission.mission_id, "tasks": [task.description for task in mission.tasks]}
+    return {
+        "success": True,
+        "mission_id": mission.mission_id,
+        "tasks": [task.description for task in mission.tasks],
+    }
 
 
 @router.post("/test/system-health", response_model=dict)
@@ -189,4 +196,8 @@ async def create_health_check_mission(background_tasks: BackgroundTasks):
     mission = await planner.plan_mission(mission)
     background_tasks.add_task(planner.execute_mission, mission)
 
-    return {"success": True, "mission_id": mission.mission_id, "tasks": [task.description for task in mission.tasks]}
+    return {
+        "success": True,
+        "mission_id": mission.mission_id,
+        "tasks": [task.description for task in mission.tasks],
+    }

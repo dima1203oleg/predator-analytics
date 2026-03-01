@@ -64,7 +64,9 @@ class GroqProvider(LLMProvider):
                     "eval_count": usage.get("completion_tokens", 0),
                     "model": model,
                     "provider": "groq",
-                    "latency_ms": data.get("x_groq", {}).get("usage", {}).get("total_time", 0) * 1000 or 0,
+                    "latency_ms": data.get("x_groq", {}).get("usage", {}).get("total_time", 0)
+                    * 1000
+                    or 0,
                 }
 
         except httpx.HTTPError as e:

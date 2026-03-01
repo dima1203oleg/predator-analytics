@@ -44,7 +44,12 @@ class ModelValidator:
 
         # 3. Compare
         is_better = validation_score > baseline_score
-        logger.info("Validation: Candidate=%.4f, Baseline=%.4f, Better=%s", validation_score, baseline_score, is_better)
+        logger.info(
+            "Validation: Candidate=%.4f, Baseline=%.4f, Better=%s",
+            validation_score,
+            baseline_score,
+            is_better,
+        )
 
         return is_better, validation_score
 

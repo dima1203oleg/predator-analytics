@@ -46,7 +46,11 @@ class KnowledgePipeline:
         return key
 
     async def transition(
-        self, source_id: str, new_state: PipelineState, progress: int | None = None, details: str | None = None
+        self,
+        source_id: str,
+        new_state: PipelineState,
+        progress: int | None = None,
+        details: str | None = None,
     ) -> None:
         """Transition to a new state."""
         key = self._get_key(source_id)

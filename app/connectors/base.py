@@ -142,7 +142,9 @@ class BaseConnector(ABC):
         try:
             client = await self._get_client()
             response = await client.get("/", timeout=5.0)
-            self._status = ConnectorStatus.HEALTHY if response.status_code < 500 else ConnectorStatus.DEGRADED
+            self._status = (
+                ConnectorStatus.HEALTHY if response.status_code < 500 else ConnectorStatus.DEGRADED
+            )
         except Exception:
             self._status = ConnectorStatus.OFFLINE
 

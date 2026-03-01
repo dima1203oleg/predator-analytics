@@ -51,10 +51,14 @@ class MessageBroker:
             )
             logger.info("✅ Connected to RabbitMQ Event Bus")
         except Exception as e:
-            logger.warning(f"⚠️ RabbitMQ Connection Failed: {e}. Event Bus functionality will be limited.")
+            logger.warning(
+                f"⚠️ RabbitMQ Connection Failed: {e}. Event Bus functionality will be limited."
+            )
             self.connection = None
 
-    async def publish(self, routing_key: str, message: dict, correlation_id: str | None = None) -> bool:
+    async def publish(
+        self, routing_key: str, message: dict, correlation_id: str | None = None
+    ) -> bool:
         """Publish a message to the exchange."""
         if aio_pika is None:
             return False
@@ -83,7 +87,9 @@ class MessageBroker:
             logger.exception(f"Failed to publish event {routing_key}: {e}")
             return False
 
-    async def subscribe(self, queue_name: str, routing_keys: list[str], callback: Callable[[dict], Awaitable[None]]):
+    async def subscribe(
+        self, queue_name: str, routing_keys: list[str], callback: Callable[[dict], Awaitable[None]]
+    ):
         """Subscribe to messages."""
         if aio_pika is None:
             return

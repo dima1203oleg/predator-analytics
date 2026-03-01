@@ -35,6 +35,10 @@ class HealthMonitorAgent(BaseAgent):
 
         return AgentResponse(
             agent_name=self.name,
-            result={"status": "degraded" if issues else "healthy", "details": report, "action_plan": action_plan},
+            result={
+                "status": "degraded" if issues else "healthy",
+                "details": report,
+                "action_plan": action_plan,
+            },
             metadata={"checked_count": len(report)},
         )

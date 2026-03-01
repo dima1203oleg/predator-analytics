@@ -33,7 +33,13 @@ def create_access_token(data: dict[str, Any], expires_delta: int = 3600) -> str:
     header = {"alg": ALGORITHM, "typ": "JWT"}
 
     payload = data.copy()
-    payload.update({"exp": int(time.time()) + expires_delta, "iat": int(time.time()), "iss": "predator-sovereign-core"})
+    payload.update(
+        {
+            "exp": int(time.time()) + expires_delta,
+            "iat": int(time.time()),
+            "iss": "predator-sovereign-core",
+        }
+    )
 
     header_json = json.dumps(header, sort_keys=True).encode("utf-8")
     payload_json = json.dumps(payload, sort_keys=True).encode("utf-8")
@@ -60,7 +66,9 @@ def decode_access_token(token: str) -> dict[str, Any] | None:
 
         # Verify Signature
         signing_input = f"{header_b64}.{payload_b64}".encode()
-        expected_signature = hmac.new(SECRET_KEY.encode("utf-8"), signing_input, hashlib.sha256).digest()
+        expected_signature = hmac.new(
+            SECRET_KEY.encode("utf-8"), signing_input, hashlib.sha256
+        ).digest()
 
         if _base64_url_encode(expected_signature) != signature_b64:
             return None

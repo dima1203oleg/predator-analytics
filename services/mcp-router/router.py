@@ -32,8 +32,16 @@ llm_cache = LLMCache()
 # Configuration from Spec (Part 3.2.1)
 # Format: "provider/model"
 ROUTING_RULES = {
-    "code_generation": ["ollama/codellama:7b", "ollama/deepseek-coder-v2:16b", "ollama/qwen2.5-coder:7b"],
-    "code_review": ["ollama/deepseek-coder-v2:16b", "ollama/qwen2.5-coder:7b", "ollama/codellama:7b"],
+    "code_generation": [
+        "ollama/codellama:7b",
+        "ollama/deepseek-coder-v2:16b",
+        "ollama/qwen2.5-coder:7b",
+    ],
+    "code_review": [
+        "ollama/deepseek-coder-v2:16b",
+        "ollama/qwen2.5-coder:7b",
+        "ollama/codellama:7b",
+    ],
     "analysis": ["ollama/llama3.1:8b", "groq/llama-3.1-70b-versatile"],
     "summarization": ["ollama/llama3.1:8b", "gemini/gemini-2.0-flash"],
     "reasoning": ["groq/llama-3.1-70b-versatile", "gemini/gemini-2.0-flash"],
@@ -85,11 +93,14 @@ async def query_llm(request: LLMRequest):
             if i > 0:
                 fallback_used = True
                 logger.info(
-                    "Triggering fallback", extra={"from": candidates[i - 1], "to": candidate, "trace_id": trace_id}
+                    "Triggering fallback",
+                    extra={"from": candidates[i - 1], "to": candidate, "trace_id": trace_id},
                 )
 
             start_time = time.time()
-            response = await provider.generate_response(prompt=request.prompt, model=p_model, context=request.context)
+            response = await provider.generate_response(
+                prompt=request.prompt, model=p_model, context=request.context
+            )
             latency = (time.time() - start_time) * 1000
 
             # Enrich response
@@ -107,13 +118,20 @@ async def query_llm(request: LLMRequest):
 
             logger.info(
                 "LLM query successful",
-                extra={"provider": p_name, "model": p_model, "latency_ms": result["latency_ms"], "trace_id": trace_id},
+                extra={
+                    "provider": p_name,
+                    "model": p_model,
+                    "latency_ms": result["latency_ms"],
+                    "trace_id": trace_id,
+                },
             )
 
             return result
 
         except Exception as e:
-            logger.warning(f"Provider {candidate} failed", extra={"error": str(e), "trace_id": trace_id})
+            logger.warning(
+                f"Provider {candidate} failed", extra={"error": str(e), "trace_id": trace_id}
+            )
             last_error = e
             continue
 
@@ -133,4 +151,7 @@ async def health_check():
     for name, p in providers.items():
         provider_status[name] = await p.health_check()
 
-    return {"status": "healthy" if any(provider_status.values()) else "unhealthy", "providers": provider_status}
+    return {
+        "status": "healthy" if any(provider_status.values()) else "unhealthy",
+        "providers": provider_status,
+    }

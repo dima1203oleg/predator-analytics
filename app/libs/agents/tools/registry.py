@@ -73,18 +73,20 @@ class ToolRegistry:
         """Format tools for LLM Function Calling (OpenAI format)."""
         schemas = []
         for tool in self._tools.values():
-            schemas.append({
-                "type": "function",
-                "function": {
-                    "name": tool.name,
-                    "description": tool.description,
-                    "parameters": {
-                        "type": "object",
-                        "properties": tool.parameters,
-                        "required": list(tool.parameters.keys()),
+            schemas.append(
+                {
+                    "type": "function",
+                    "function": {
+                        "name": tool.name,
+                        "description": tool.description,
+                        "parameters": {
+                            "type": "object",
+                            "properties": tool.parameters,
+                            "required": list(tool.parameters.keys()),
+                        },
                     },
-                },
-            })
+                }
+            )
         return schemas
 
     async def execute(self, tool_name: str, args: dict[str, Any]) -> Any:

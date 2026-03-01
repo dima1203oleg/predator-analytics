@@ -26,7 +26,9 @@ class MinerAgent(BaseAgent):
 
         if not data or not isinstance(data, list):
             return AgentResponse(
-                agent_name=self.name, result={"insights": [], "message": "No data provided"}, metadata={"model": "none"}
+                agent_name=self.name,
+                result={"insights": [], "message": "No data provided"},
+                metadata={"model": "none"},
             )
 
         insights = []
@@ -70,7 +72,9 @@ class MinerAgent(BaseAgent):
                     zscore = abs((val - mean) / stdev)
                     if zscore > self.zscore_threshold:
                         record_id = record.get("id", record.get("edrpou", f"record_{i}"))
-                        insights.append(f"Аномалія в {field}: {record_id} має значення {val} (Z-score: {zscore:.2f})")
+                        insights.append(
+                            f"Аномалія в {field}: {record_id} має значення {val} (Z-score: {zscore:.2f})"
+                        )
 
         if not insights:
             insights.append("Аномалій не виявлено в наданих даних")
@@ -113,9 +117,13 @@ class MinerAgent(BaseAgent):
                 last_third = statistics.mean(values[-len(values) // 3 :])
 
                 if last_third > first_third * 1.1:
-                    insights.append(f"Зростаючий тренд у {num_field}: +{(last_third / first_third - 1) * 100:.1f}%")
+                    insights.append(
+                        f"Зростаючий тренд у {num_field}: +{(last_third / first_third - 1) * 100:.1f}%"
+                    )
                 elif last_third < first_third * 0.9:
-                    insights.append(f"Спадаючий тренд у {num_field}: {(last_third / first_third - 1) * 100:.1f}%")
+                    insights.append(
+                        f"Спадаючий тренд у {num_field}: {(last_third / first_third - 1) * 100:.1f}%"
+                    )
 
         return insights or ["Значущих трендів не виявлено"]
 

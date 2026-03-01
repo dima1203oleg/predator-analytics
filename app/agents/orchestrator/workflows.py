@@ -133,11 +133,13 @@ if TEMPORAL_AVAILABLE:
         agent_issues = []
         for agent_type, agent in orchestrator.agents.items():
             if agent.state.status == "error":
-                agent_issues.append({
-                    "agent": agent_type.value,
-                    "status": agent.state.status,
-                    "metrics": agent.state.metrics,
-                })
+                agent_issues.append(
+                    {
+                        "agent": agent_type.value,
+                        "status": agent.state.status,
+                        "metrics": agent.state.metrics,
+                    }
+                )
 
         return {
             "current_metrics": metrics,
@@ -154,34 +156,42 @@ if TEMPORAL_AVAILABLE:
 
         for area in diagnosis.get("improvement_areas", []):
             if area == "latency":
-                improvements.append({
-                    "type": "optimization",
-                    "target": "llm_router",
-                    "action": "adjust_timeout",
-                    "params": {"timeout_reduction": 0.2},
-                })
-                improvements.append({
-                    "type": "caching",
-                    "target": "response_cache",
-                    "action": "increase_cache_size",
-                    "params": {"size_increase": 1.5},
-                })
+                improvements.append(
+                    {
+                        "type": "optimization",
+                        "target": "llm_router",
+                        "action": "adjust_timeout",
+                        "params": {"timeout_reduction": 0.2},
+                    }
+                )
+                improvements.append(
+                    {
+                        "type": "caching",
+                        "target": "response_cache",
+                        "action": "increase_cache_size",
+                        "params": {"size_increase": 1.5},
+                    }
+                )
             elif area == "error_rate":
-                improvements.append({
-                    "type": "fallback",
-                    "target": "llm_router",
-                    "action": "adjust_fallback_chain",
-                    "params": {"add_redundancy": True},
-                })
+                improvements.append(
+                    {
+                        "type": "fallback",
+                        "target": "llm_router",
+                        "action": "adjust_fallback_chain",
+                        "params": {"add_redundancy": True},
+                    }
+                )
 
         # Agent-specific improvements
         for issue in diagnosis.get("agent_issues", []):
-            improvements.append({
-                "type": "agent_recovery",
-                "target": issue["agent"],
-                "action": "reinitialize",
-                "params": {},
-            })
+            improvements.append(
+                {
+                    "type": "agent_recovery",
+                    "target": issue["agent"],
+                    "action": "reinitialize",
+                    "params": {},
+                }
+            )
 
         return improvements
 
@@ -213,7 +223,11 @@ if TEMPORAL_AVAILABLE:
             except Exception as e:
                 failed.append({**improvement, "error": str(e)})
 
-        return {"applied": applied, "failed": failed, "success_rate": len(applied) / max(len(improvements), 1)}
+        return {
+            "applied": applied,
+            "failed": failed,
+            "success_rate": len(applied) / max(len(improvements), 1),
+        }
 
     @activity.defn
     async def evaluate_improvements(training_result: dict[str, Any]) -> dict[str, Any]:
@@ -372,7 +386,9 @@ if TEMPORAL_AVAILABLE:
 
                 # Stage 2: AUGMENT
                 improvements = await workflow.execute_activity(
-                    generate_improvements, args=[diagnosis], start_to_close_timeout=timedelta(minutes=5)
+                    generate_improvements,
+                    args=[diagnosis],
+                    start_to_close_timeout=timedelta(minutes=5),
                 )
                 stages_completed["augment"] = True
 
@@ -391,13 +407,17 @@ if TEMPORAL_AVAILABLE:
 
                 # Stage 3: TRAIN
                 training_result = await workflow.execute_activity(
-                    apply_training, args=[improvements], start_to_close_timeout=timedelta(minutes=30)
+                    apply_training,
+                    args=[improvements],
+                    start_to_close_timeout=timedelta(minutes=30),
                 )
                 stages_completed["train"] = True
 
                 # Stage 4: EVALUATE
                 evaluation = await workflow.execute_activity(
-                    evaluate_improvements, args=[training_result], start_to_close_timeout=timedelta(minutes=10)
+                    evaluate_improvements,
+                    args=[training_result],
+                    start_to_close_timeout=timedelta(minutes=10),
                 )
                 stages_completed["evaluate"] = True
                 new_score = evaluation.get("score", old_score)
@@ -405,11 +425,15 @@ if TEMPORAL_AVAILABLE:
                 # Stage 5: PROMOTE
                 if evaluation.get("should_promote", False):
                     approved = await workflow.execute_activity(
-                        manual_approval_check, args=[evaluation], start_to_close_timeout=timedelta(minutes=5)
+                        manual_approval_check,
+                        args=[evaluation],
+                        start_to_close_timeout=timedelta(minutes=5),
                     )
                     if approved:
                         promoted = await workflow.execute_activity(
-                            promote_improvements, args=[evaluation], start_to_close_timeout=timedelta(minutes=5)
+                            promote_improvements,
+                            args=[evaluation],
+                            start_to_close_timeout=timedelta(minutes=5),
                         )
                     else:
                         promoted = False
@@ -515,7 +539,10 @@ class WorkflowStarter:
         """Start a self-improvement workflow."""
         if self.client and TEMPORAL_AVAILABLE:
             handle = await self.client.start_workflow(
-                SelfImprovementWorkflow.run, input, id=f"self-improvement-{input.cycle_id}", task_queue=self.task_queue
+                SelfImprovementWorkflow.run,
+                input,
+                id=f"self-improvement-{input.cycle_id}",
+                task_queue=self.task_queue,
             )
             return handle.id
         # Fallback: run synchronously
@@ -526,7 +553,10 @@ class WorkflowStarter:
         """Start a self-healing workflow."""
         if self.client and TEMPORAL_AVAILABLE:
             handle = await self.client.start_workflow(
-                SelfHealingWorkflow.run, input, id=f"self-healing-{input.recovery_id}", task_queue=self.task_queue
+                SelfHealingWorkflow.run,
+                input,
+                id=f"self-healing-{input.recovery_id}",
+                task_queue=self.task_queue,
             )
             return handle.id
         # Fallback: run synchronously

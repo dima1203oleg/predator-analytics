@@ -62,11 +62,15 @@ class EternalEvolutionEngine:
                 logger.info(f"🔄 E3 Cycle #{self._evolution_cycles}: Scanning for improvements...")
 
                 # Constitutional Verification via AZR Engine
-                if await azr_engine.guard.verify_action("evolution_cycle", {"cycle": self._evolution_cycles}):
+                if await azr_engine.guard.verify_action(
+                    "evolution_cycle", {"cycle": self._evolution_cycles}
+                ):
                     await self._evolve_frontend()
                     await self._evolve_backend()
                 else:
-                    logger.error("🚫 AZR CONSTITUTIONAL BLOCK: Evolution cycle suspended for axiom violation!")
+                    logger.error(
+                        "🚫 AZR CONSTITUTIONAL BLOCK: Evolution cycle suspended for axiom violation!"
+                    )
 
                 self._last_evolution = datetime.utcnow().isoformat()
 

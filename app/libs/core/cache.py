@@ -98,7 +98,13 @@ class CacheService:
                 socket_timeout=5,
             )
 
-            logger.info("redis_connected", host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, namespace=self.namespace)
+            logger.info(
+                "redis_connected",
+                host=REDIS_HOST,
+                port=REDIS_PORT,
+                db=REDIS_DB,
+                namespace=self.namespace,
+            )
 
     async def close(self):
         """Close Redis connection."""
@@ -273,7 +279,9 @@ class CacheService:
     # DECORATOR for function caching
     # ═══════════════════════════════════════════════════════════════════════
 
-    def cached(self, ttl: int = TTL_MEDIUM, key_prefix: str = "", key_builder: Callable | None = None):
+    def cached(
+        self, ttl: int = TTL_MEDIUM, key_prefix: str = "", key_builder: Callable | None = None
+    ):
         """Decorator для автоматичного кешування функцій.
 
         Args:
@@ -335,15 +343,24 @@ class SearchCache(CacheService):
         return self._hash_key(key_data)
 
     async def cache_search_results(
-        self, query: str, mode: str, results: list, filters: dict | None = None, ttl: int = TTL_MEDIUM
+        self,
+        query: str,
+        mode: str,
+        results: list,
+        filters: dict | None = None,
+        ttl: int = TTL_MEDIUM,
     ):
         """Cache search results."""
         key = self.make_search_key(query, mode, filters)
         await self.set(key, results, ttl)
 
-        logger.info("search_results_cached", query=query, mode=mode, results_count=len(results), ttl=ttl)
+        logger.info(
+            "search_results_cached", query=query, mode=mode, results_count=len(results), ttl=ttl
+        )
 
-    async def get_cached_search(self, query: str, mode: str, filters: dict | None = None) -> list | None:
+    async def get_cached_search(
+        self, query: str, mode: str, filters: dict | None = None
+    ) -> list | None:
         """Get cached search results."""
         key = self.make_search_key(query, mode, filters)
         return await self.get(key)
@@ -355,7 +372,9 @@ class MLCache(CacheService):
     def __init__(self):
         super().__init__(namespace="ml")
 
-    async def cache_prediction(self, model_id: str, input_data: Any, prediction: Any, ttl: int = TTL_LONG):
+    async def cache_prediction(
+        self, model_id: str, input_data: Any, prediction: Any, ttl: int = TTL_LONG
+    ):
         """Cache ML prediction."""
         input_hash = self._hash_key(input_data)
         key = f"{model_id}:{input_hash}"

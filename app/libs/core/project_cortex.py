@@ -24,7 +24,9 @@ def time_method(func):
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        logging.getLogger("azr_project_cortex").info(f"⏱️ Method {func.__name__} took {end - start:.4f}s")
+        logging.getLogger("azr_project_cortex").info(
+            f"⏱️ Method {func.__name__} took {end - start:.4f}s"
+        )
         return result
 
     return wrapper

@@ -38,11 +38,18 @@ async def generate_insight(req: InsightRequest):
         async with httpx.AsyncClient(timeout=45.0) as client:
             resp = await client.post(
                 MCP_ROUTER_URL,
-                json={"prompt": req.query, "task_type": "analysis", "context": req.context, "trace_id": trace_id},
+                json={
+                    "prompt": req.query,
+                    "task_type": "analysis",
+                    "context": req.context,
+                    "trace_id": trace_id,
+                },
             )
             data = resp.json()
 
-            return InsightResponse(insight=data.get("content", "No insight generated."), trace_id=trace_id)
+            return InsightResponse(
+                insight=data.get("content", "No insight generated."), trace_id=trace_id
+            )
 
     except Exception as e:
         logger.exception(f"Insight generation failed: {e}")

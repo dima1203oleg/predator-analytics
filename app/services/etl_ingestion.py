@@ -27,13 +27,19 @@ class ETLIngestionService:
     """
 
     def __init__(self):
-        raw_db_url = os.getenv("DATABASE_URL", "postgresql://predator:predator_password@localhost:5432/predator_db")
+        raw_db_url = os.getenv(
+            "DATABASE_URL", "postgresql://predator:predator_password@localhost:5432/predator_db"
+        )
         # Ensure asyncpg compatible URL (no +asyncpg) for direct asyncpg usage
         self.db_url = raw_db_url.replace("postgresql+asyncpg://", "postgresql://")
         self.supported_formats = [".csv", ".xlsx", ".xls"]
 
     async def _update_job_state(
-        self, job_id: uuid.UUID, state: ETLState, context: dict[str, Any] | None = None, error: str | None = None
+        self,
+        job_id: uuid.UUID,
+        state: ETLState,
+        context: dict[str, Any] | None = None,
+        error: str | None = None,
     ):
         """Helper to safely transition job state."""
         async with get_db_ctx() as sess:
@@ -43,8 +49,16 @@ class ETLIngestionService:
                 return
 
             current_state = ETLState(job.state)
-            if not ETLStateMachine.can_transition(current_state, state) and state != ETLState.FAILED:
-                logger.warning("illegal_state_transition", job_id=str(job_id), current=current_state, target=state)
+            if (
+                not ETLStateMachine.can_transition(current_state, state)
+                and state != ETLState.FAILED
+            ):
+                logger.warning(
+                    "illegal_state_transition",
+                    job_id=str(job_id),
+                    current=current_state,
+                    target=state,
+                )
 
             job.state = state.value
 
@@ -58,7 +72,9 @@ class ETLIngestionService:
 
                 # Emit facts via Message Broker (v45.2 optimization)
                 for k, v in new_progress.items():
-                    await broker.publish(f"etl.fact.{k}", {"job_id": str(job_id), "metric_type": k, "value": v})
+                    await broker.publish(
+                        f"etl.fact.{k}", {"job_id": str(job_id), "metric_type": k, "value": v}
+                    )
 
             # Timestamps
             current_timestamps = job.timestamps or {}
@@ -68,9 +84,13 @@ class ETLIngestionService:
             # Errors & Notifications
             if error:
                 errors = job.errors or []
-                errors.append({"at": datetime.utcnow().isoformat(), "message": error, "state": state.value})
+                errors.append(
+                    {"at": datetime.utcnow().isoformat(), "message": error, "state": state.value}
+                )
                 job.errors = errors
-                await broker.publish("etl.error", {"job_id": str(job_id), "error": error, "state": state.value})
+                await broker.publish(
+                    "etl.error", {"job_id": str(job_id), "error": error, "state": state.value}
+                )
 
             sess.add(job)
             await sess.commit()
@@ -94,14 +114,22 @@ class ETLIngestionService:
                 source_file=filename,
                 state=ETLState.CREATED.value,
                 dataset_type=dataset_type,
-                progress={"percent": 0, "records_total": 0, "records_processed": 0, "records_indexed": 0},
+                progress={
+                    "percent": 0,
+                    "records_total": 0,
+                    "records_processed": 0,
+                    "records_indexed": 0,
+                },
                 timestamps={"created_at": datetime.utcnow().isoformat()},
             )
             sess.add(job)
             await sess.commit()
             logger.info("etl_job_created", job_id=str(job_id), filename=filename)
 
-        from app.modules.etl_engine.distribution.data_distributor import DataDistributor, DistributionTarget
+        from app.modules.etl_engine.distribution.data_distributor import (
+            DataDistributor,
+            DistributionTarget,
+        )
         from app.modules.etl_engine.parsing.data_parser import DataParser
         from app.modules.etl_engine.transformation.data_transformer import DataTransformer
 
@@ -130,7 +158,9 @@ class ETLIngestionService:
                 )
 
                 # Streaming Flow: Read Chunk -> Transform -> Distribute
-                async for _batch_idx, df_chunk in self._read_excel_batched(file_path, str(job_id), chunk_size=2000):
+                async for _batch_idx, df_chunk in self._read_excel_batched(
+                    file_path, str(job_id), chunk_size=2000
+                ):
                     chunk_size = len(df_chunk)
 
                     # A. Transform
@@ -140,7 +170,9 @@ class ETLIngestionService:
                         records = transform_result.data
 
                     # B. Distribute
-                    await asyncio.to_thread(distributor.distribute_batch, records, DistributionTarget.ALL, 500)
+                    await asyncio.to_thread(
+                        distributor.distribute_batch, records, DistributionTarget.ALL, 500
+                    )
 
                     # C. Update Progress
                     total_records_processed += chunk_size
@@ -164,7 +196,9 @@ class ETLIngestionService:
 
                 # Completion
                 await self._update_job_state(
-                    job_id, ETLState.INDEXED, {"progress": {"percent": 100, "records_total": total_records_processed}}
+                    job_id,
+                    ETLState.INDEXED,
+                    {"progress": {"percent": 100, "records_total": total_records_processed}},
                 )
 
             else:
@@ -179,7 +213,9 @@ class ETLIngestionService:
                 df = parse_result.data
                 total_records = len(df)
 
-                await self._update_job_state(job_id, ETLState.UPLOADED, {"progress": {"records_total": total_records}})
+                await self._update_job_state(
+                    job_id, ETLState.UPLOADED, {"progress": {"records_total": total_records}}
+                )
 
                 # TRANSFORMATION
                 await self._update_job_state(job_id, ETLState.PROCESSING)
@@ -193,15 +229,25 @@ class ETLIngestionService:
                     job_id, ETLState.INDEXING, {"progress": {"records_processed": len(records)}}
                 )
 
-                await asyncio.to_thread(distributor.distribute_batch, records, DistributionTarget.ALL, 100)
+                await asyncio.to_thread(
+                    distributor.distribute_batch, records, DistributionTarget.ALL, 100
+                )
 
                 await self._update_job_state(
-                    job_id, ETLState.INDEXED, {"progress": {"records_indexed": len(records), "percent": 100}}
+                    job_id,
+                    ETLState.INDEXED,
+                    {"progress": {"records_indexed": len(records), "percent": 100}},
                 )
                 total_records_processed = len(records)
 
-            logger.info("etl_job_completed_modular", job_id=str(job_id), records=total_records_processed)
-            return {"status": "success", "job_id": str(job_id), "record_count": total_records_processed}
+            logger.info(
+                "etl_job_completed_modular", job_id=str(job_id), records=total_records_processed
+            )
+            return {
+                "status": "success",
+                "job_id": str(job_id),
+                "record_count": total_records_processed,
+            }
 
         except Exception as e:
             logger.exception("etl_job_failed", job_id=str(job_id), error=str(e))
@@ -217,7 +263,9 @@ class ETLIngestionService:
         if ext == ".csv":
             return await loop.run_in_executor(None, lambda: pd.read_csv(file_path, low_memory=True))
         if ext in [".xlsx", ".xls"]:
-            return await loop.run_in_executor(None, lambda: pd.read_excel(file_path, engine="openpyxl"))
+            return await loop.run_in_executor(
+                None, lambda: pd.read_excel(file_path, engine="openpyxl")
+            )
         raise ValueError(f"Unsupported file format: {ext}")
 
     async def _create_table_if_not_exists(self, df: pd.DataFrame, table_name: str):
@@ -238,14 +286,18 @@ class ETLIngestionService:
                 return 0
             columns_list = list(records[0].keys())
             placeholders = ", ".join([f"${i + 1}" for i in range(len(columns_list))])
-            insert_sql = f"INSERT INTO {table_name} ({', '.join(columns_list)}) VALUES ({placeholders})"
+            insert_sql = (
+                f"INSERT INTO {table_name} ({', '.join(columns_list)}) VALUES ({placeholders})"
+            )
             batch_values = [[str(r[col]) for col in columns_list] for r in records]
             await conn.executemany(insert_sql, batch_values)
             return len(records)
         finally:
             await conn.close()
 
-    async def _read_excel_batched(self, file_path: str, job_id: str = "unknown", chunk_size: int = 1000):
+    async def _read_excel_batched(
+        self, file_path: str, job_id: str = "unknown", chunk_size: int = 1000
+    ):
         """Yields DataFrames from Excel file in chunks using openpyxl.
         This ensures we don't block the loop for too long and can update progress.
         """
@@ -278,7 +330,8 @@ class ETLIngestionService:
             # Axiom 8 Heartbeat: every 100 rows
             if row_count % 100 == 0:
                 await broker.publish(
-                    "etl.heartbeat", {"job_id": job_id, "metric_type": "heartbeat", "value": row_count}
+                    "etl.heartbeat",
+                    {"job_id": job_id, "metric_type": "heartbeat", "value": row_count},
                 )
 
             if len(rows) >= chunk_size:

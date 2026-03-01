@@ -194,7 +194,15 @@ async def get_case_stats():
             }
     except Exception as e:
         logger.exception(f"Case stats failed: {e}")
-        return {"total": 0, "critical": 0, "attention": 0, "safe": 0, "archived": 0, "avgRiskScore": 0, "error": str(e)}
+        return {
+            "total": 0,
+            "critical": 0,
+            "attention": 0,
+            "safe": 0,
+            "archived": 0,
+            "avgRiskScore": 0,
+            "error": str(e),
+        }
 
 
 @router.get("/{case_id}")
@@ -202,7 +210,9 @@ async def get_case(case_id: str):
     """Отримати деталі кейсу."""
     try:
         async with get_db_ctx() as db:
-            result = await db.execute(text("SELECT * FROM gold.cases WHERE id = :id"), {"id": case_id})
+            result = await db.execute(
+                text("SELECT * FROM gold.cases WHERE id = :id"), {"id": case_id}
+            )
             row = result.fetchone()
 
             if not row:
@@ -302,7 +312,8 @@ async def archive_case(case_id: str):
     try:
         async with get_db_ctx() as db:
             await db.execute(
-                text("UPDATE gold.cases SET status = 'АРХІВ', updated_at = NOW() WHERE id = :id"), {"id": case_id}
+                text("UPDATE gold.cases SET status = 'АРХІВ', updated_at = NOW() WHERE id = :id"),
+                {"id": case_id},
             )
             await db.commit()
             return {"id": case_id, "status": "archived"}
@@ -317,7 +328,10 @@ async def escalate_case(case_id: str):
     try:
         async with get_db_ctx() as db:
             await db.execute(
-                text("UPDATE gold.cases SET status = 'КРИТИЧНО', updated_at = NOW() WHERE id = :id"), {"id": case_id}
+                text(
+                    "UPDATE gold.cases SET status = 'КРИТИЧНО', updated_at = NOW() WHERE id = :id"
+                ),
+                {"id": case_id},
             )
             await db.commit()
             return {"id": case_id, "status": "escalated"}

@@ -30,7 +30,12 @@ class SIOController:
     async def get_metrics(self) -> dict:
         """Fetches model performance from Prometheus/MLflow."""
         # Simulated metric fetch
-        return {"model_id": "fraud-detector-v1", "accuracy": 0.88, "baseline": 0.95, "drift_score": 0.07}
+        return {
+            "model_id": "fraud-detector-v1",
+            "accuracy": 0.88,
+            "baseline": 0.95,
+            "drift_score": 0.07,
+        }
 
     async def trigger_rtb_event(self, event_type: str, context: dict):
         """Emits an event to RTB Engine to drive the decision loop."""
@@ -58,7 +63,11 @@ class SIOController:
         metrics = await self.get_metrics()
 
         if metrics["accuracy"] < metrics["baseline"]:
-            logger.warning("Performance degradation detected: %f < %f", metrics["accuracy"], metrics["baseline"])
+            logger.warning(
+                "Performance degradation detected: %f < %f",
+                metrics["accuracy"],
+                metrics["baseline"],
+            )
 
             # 2. TRIGGER RTB (This starts the chain from Spec 4.1)
             await self.trigger_rtb_event(

@@ -62,7 +62,11 @@ class StateTransition:
         PipelineState.CREATED: [PipelineState.SOURCE_CHECKED, PipelineState.FAILED],
         PipelineState.SOURCE_CHECKED: [PipelineState.INGESTED, PipelineState.FAILED],
         PipelineState.INGESTED: [PipelineState.QUALITY_CHECKED, PipelineState.FAILED],
-        PipelineState.QUALITY_CHECKED: [PipelineState.PARSED, PipelineState.FAILED, PipelineState.PAUSED],
+        PipelineState.QUALITY_CHECKED: [
+            PipelineState.PARSED,
+            PipelineState.FAILED,
+            PipelineState.PAUSED,
+        ],
         PipelineState.PARSED: [PipelineState.ENTITIES_RESOLVED, PipelineState.FAILED],
         PipelineState.ENTITIES_RESOLVED: [PipelineState.TRANSFORMED, PipelineState.FAILED],
         PipelineState.TRANSFORMED: [PipelineState.LOADED, PipelineState.FAILED],
@@ -109,7 +113,9 @@ class WorkflowOrchestrator:
         self.db = db_session
         self.state_handlers: dict[PipelineState, Callable] = {}
 
-    async def transition(self, job_id: str, to_state: PipelineState, metadata: dict | None = None) -> bool:
+    async def transition(
+        self, job_id: str, to_state: PipelineState, metadata: dict | None = None
+    ) -> bool:
         """Execute state transition with validation."""
         current = await self._get_current_state(job_id)
 
@@ -215,8 +221,12 @@ class DataQualityEngine:
         "positive_number": lambda v, _: isinstance(v, (int, float)) and v > 0,
         "valid_country_code": lambda v, p: len(str(v)) == 2,
         "valid_hs_code": lambda v, p: len(str(v)) in [6, 8, 10],
-        "sum_matches": lambda row, p: abs(row.get(p["sum_field"]) - sum(row.get(f) for f in p["addends"])) < 0.01,
-        "no_duplicate": lambda row, ctx: row.get(ctx["key_field"]) not in ctx.get("seen_keys", set()),
+        "sum_matches": lambda row, p: (
+            abs(row.get(p["sum_field"]) - sum(row.get(f) for f in p["addends"])) < 0.01
+        ),
+        "no_duplicate": lambda row, ctx: (
+            row.get(ctx["key_field"]) not in ctx.get("seen_keys", set())
+        ),
         "date_not_future": lambda v, _: (
             datetime.datetime.fromisoformat(str(v)) <= datetime.datetime.now() if v else True
         ),
@@ -243,7 +253,9 @@ class DataQualityEngine:
                 result = self._check_rule(rule, row, context)
 
                 if result == QualityCheckResult.FAILED:
-                    report.checks.append({"row": i, "rule": rule.id, "result": "FAILED", "severity": rule.severity})
+                    report.checks.append(
+                        {"row": i, "rule": rule.id, "result": "FAILED", "severity": rule.severity}
+                    )
                     if rule.severity == "critical":
                         row_valid = False
 
@@ -281,7 +293,11 @@ class DataQualityEngine:
 
             if check_fn(row, params):
                 return QualityCheckResult.PASSED
-            return QualityCheckResult.WARNING if rule.severity != "critical" else QualityCheckResult.FAILED
+            return (
+                QualityCheckResult.WARNING
+                if rule.severity != "critical"
+                else QualityCheckResult.FAILED
+            )
         except Exception:
             return QualityCheckResult.FAILED
 
@@ -322,12 +338,14 @@ class DataQualityEngine:
         for col in profile.get("columns", []):
             null_ratio = profile["null_counts"].get(col, 0) / len(data) if data else 0
             if null_ratio > 0.5:
-                anomalies.append({
-                    "type": "high_null_rate",
-                    "column": col,
-                    "rate": null_ratio,
-                    "message": f"Column '{col}' has {null_ratio * 100:.1f}% null values",
-                })
+                anomalies.append(
+                    {
+                        "type": "high_null_rate",
+                        "column": col,
+                        "rate": null_ratio,
+                        "message": f"Column '{col}' has {null_ratio * 100:.1f}% null values",
+                    }
+                )
 
         return anomalies
 
@@ -477,7 +495,9 @@ class VersioningEngine:
         # Get current active version
         current = await self._get_active_version(source_id)
 
-        version = DataVersion(source_id=source_id, source_hash=source_hash, supersedes=current.id if current else None)
+        version = DataVersion(
+            source_id=source_id, source_hash=source_hash, supersedes=current.id if current else None
+        )
 
         # Store version
         await self._store_version(version)
@@ -568,7 +588,9 @@ class DataObservabilityLayer:
             "data_rows_processed_total", "Total rows processed", ["job_id", "stage", "status"]
         )
 
-        self.rows_dropped = Counter("data_rows_dropped_total", "Total rows dropped", ["job_id", "stage", "reason"])
+        self.rows_dropped = Counter(
+            "data_rows_dropped_total", "Total rows dropped", ["job_id", "stage", "reason"]
+        )
 
         self.data_latency = Histogram(
             "data_stage_latency_seconds",
@@ -577,7 +599,9 @@ class DataObservabilityLayer:
             buckets=[0.1, 0.5, 1, 2, 5, 10, 30, 60, 120],
         )
 
-        self.quality_score = Gauge("data_quality_score", "Current data quality score (0-100)", ["job_id"])
+        self.quality_score = Gauge(
+            "data_quality_score", "Current data quality score (0-100)", ["job_id"]
+        )
 
         self.anomalies_detected = Counter(
             "data_anomalies_detected_total", "Total anomalies detected", ["job_id", "anomaly_type"]
@@ -585,11 +609,13 @@ class DataObservabilityLayer:
 
     def record_stage(self, metrics: DataMetrics):
         """Record metrics for a pipeline stage."""
-        self.rows_processed.labels(job_id=metrics.job_id, stage=metrics.stage, status="processed").inc(metrics.rows_in)
+        self.rows_processed.labels(
+            job_id=metrics.job_id, stage=metrics.stage, status="processed"
+        ).inc(metrics.rows_in)
 
-        self.rows_dropped.labels(job_id=metrics.job_id, stage=metrics.stage, reason="validation").inc(
-            metrics.rows_dropped
-        )
+        self.rows_dropped.labels(
+            job_id=metrics.job_id, stage=metrics.stage, reason="validation"
+        ).inc(metrics.rows_dropped)
 
         self.data_latency.labels(stage=metrics.stage).observe(metrics.latency_ms / 1000)
 
@@ -828,40 +854,50 @@ class ExplainabilityEngine:
         # Factor 1: Rules
         for rule in rules_triggered:
             weight = rule.get("weight", 0.3)
-            factors.append({
-                "type": "rule",
-                "id": rule.get("rule_id"),
-                "description": f"Спрацювало правило: {rule.get('rule_name')}",
-                "weight": weight,
-            })
+            factors.append(
+                {
+                    "type": "rule",
+                    "id": rule.get("rule_id"),
+                    "description": f"Спрацювало правило: {rule.get('rule_name')}",
+                    "weight": weight,
+                }
+            )
             total_weight += weight
             evidence.append({"type": "rule_trigger", "value": rule.get("rule_id")})
 
         # Factor 2: Graph connections
         if graph_paths:
             for path in graph_paths:
-                factors.append({
-                    "type": "graph",
-                    "description": f"Зв'язок у графі: {path.get('description')}",
-                    "weight": path.get("weight", 0.2),
-                })
+                factors.append(
+                    {
+                        "type": "graph",
+                        "description": f"Зв'язок у графі: {path.get('description')}",
+                        "weight": path.get("weight", 0.2),
+                    }
+                )
                 total_weight += path.get("weight", 0.2)
 
         # Factor 3: Embedding similarity
         if embedding_matches:
             for match in embedding_matches:
-                factors.append({
-                    "type": "semantic",
-                    "description": f"Семантична схожість з {match.get('matched_id')}",
-                    "weight": match.get("similarity", 0.0) * 0.3,
-                })
+                factors.append(
+                    {
+                        "type": "semantic",
+                        "description": f"Семантична схожість з {match.get('matched_id')}",
+                        "weight": match.get("similarity", 0.0) * 0.3,
+                    }
+                )
                 total_weight += match.get("similarity", 0.0) * 0.3
 
         # Normalize confidence
         confidence = min(total_weight, 1.0)
 
         explanation = Explanation(
-            entity_id=entity_id, decision_type=decision_type, confidence=confidence, factors=factors, evidence=evidence
+            entity_id=entity_id,
+            decision_type=decision_type,
+            confidence=confidence,
+            factors=factors,
+            evidence=evidence,
         )
 
         # Log to audit
@@ -870,7 +906,13 @@ class ExplainabilityEngine:
         return explanation
 
     def log_action(
-        self, actor: str, action: str, entity_type: str, entity_id: str, changes: dict | None = None, reason: str = ""
+        self,
+        actor: str,
+        action: str,
+        entity_type: str,
+        entity_id: str,
+        changes: dict | None = None,
+        reason: str = "",
     ) -> AuditEntry:
         """Log an action to audit trail."""
         entry = AuditEntry(
@@ -963,7 +1005,9 @@ class HumanInTheLoopController:
 
         # Notify if critical
         if priority in ["critical", "high"] and self.notifications:
-            self.notifications.send(channel="review_queue", message=f"Нове завдання на огляд: {task_type} ({priority})")
+            self.notifications.send(
+                channel="review_queue", message=f"Нове завдання на огляд: {task_type} ({priority})"
+            )
 
         return task
 
@@ -993,7 +1037,9 @@ class HumanInTheLoopController:
 
         return True
 
-    def get_pending_tasks(self, user_id: str | None = None, priority: str | None = None) -> list[ReviewTask]:
+    def get_pending_tasks(
+        self, user_id: str | None = None, priority: str | None = None
+    ) -> list[ReviewTask]:
         """Get pending review tasks."""
         tasks = [t for t in self.tasks.values() if t.status == "pending"]
 
@@ -1001,7 +1047,11 @@ class HumanInTheLoopController:
             tasks = [t for t in tasks if t.priority == priority]
 
         return sorted(
-            tasks, key=lambda t: ({"critical": 0, "high": 1, "normal": 2, "low": 3}.get(t.priority, 99), t.created_at)
+            tasks,
+            key=lambda t: (
+                {"critical": 0, "high": 1, "normal": 2, "low": 3}.get(t.priority, 99),
+                t.created_at,
+            ),
         )
 
     def _apply_suggestion(self, task: ReviewTask):
@@ -1093,7 +1143,13 @@ class LoadCostGovernor:
         self.degradation_mode = True
         await self.redis.set(
             "system:degradation",
-            json.dumps({"enabled": True, "reason": reason, "timestamp": datetime.datetime.now().isoformat()}),
+            json.dumps(
+                {
+                    "enabled": True,
+                    "reason": reason,
+                    "timestamp": datetime.datetime.now().isoformat(),
+                }
+            ),
         )
 
     async def exit_degradation_mode(self):

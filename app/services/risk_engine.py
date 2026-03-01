@@ -36,7 +36,13 @@ class RiskEngine:
     """
 
     def __init__(self):
-        self.risk_weights = {"tax_debt": 0.3, "court_cases": 0.25, "sanctions": 0.35, "age": 0.05, "activity": 0.05}
+        self.risk_weights = {
+            "tax_debt": 0.3,
+            "court_cases": 0.25,
+            "sanctions": 0.35,
+            "age": 0.05,
+            "activity": 0.05,
+        }
 
     async def assess(self, entity_id: str, entity_data: dict[str, Any]) -> RiskAssessment:
         """Perform risk assessment on an entity.

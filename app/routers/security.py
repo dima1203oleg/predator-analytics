@@ -75,13 +75,15 @@ async def get_audit_log(limit: int = 50):
             )
 
             for row in rows:
-                entries.append({
-                    "id": str(row["id"]),
-                    "user": row["username"],
-                    "action": row["action"],
-                    "resource": f"{row['resource_type']}/{row['resource_id']}",
-                    "timestamp": row["timestamp"].isoformat() if row["timestamp"] else None,
-                })
+                entries.append(
+                    {
+                        "id": str(row["id"]),
+                        "user": row["username"],
+                        "action": row["action"],
+                        "resource": f"{row['resource_type']}/{row['resource_id']}",
+                        "timestamp": row["timestamp"].isoformat() if row["timestamp"] else None,
+                    }
+                )
 
             total = await conn.fetchval("SELECT COUNT(*) FROM audit_pii_access")
         except Exception as e:
@@ -115,16 +117,20 @@ async def get_waf_logs(limit: int = 20):
 
             for row in rows:
                 ip = row["metadata"].get("ip", "0.0.0.0") if row.get("metadata") else "0.0.0.0"
-                country = row["metadata"].get("country", "Unknown") if row.get("metadata") else "Unknown"
-                logs.append({
-                    "id": str(row["id"]),
-                    "ip": ip,
-                    "country": country,
-                    "path": row["description"],
-                    "rule": row["metadata"].get("rule", "generic_block"),
-                    "action": "BLOCK",
-                    "timestamp": row["timestamp"].isoformat() if row["timestamp"] else None,
-                })
+                country = (
+                    row["metadata"].get("country", "Unknown") if row.get("metadata") else "Unknown"
+                )
+                logs.append(
+                    {
+                        "id": str(row["id"]),
+                        "ip": ip,
+                        "country": country,
+                        "path": row["description"],
+                        "rule": row["metadata"].get("rule", "generic_block"),
+                        "action": "BLOCK",
+                        "timestamp": row["timestamp"].isoformat() if row["timestamp"] else None,
+                    }
+                )
         except Exception as e:
             logger.exception("waf_log_fetch_failed", error=str(e))
         finally:
@@ -180,7 +186,9 @@ async def trigger_security_scan():
                 datetime.now(UTC),
             )
             # Log to structured logger as well
-            log_security_event(logger, "manual_scan_triggered", "low", scan_id=scan_id, source="api")
+            log_security_event(
+                logger, "manual_scan_triggered", "low", scan_id=scan_id, source="api"
+            )
             logger.info("security_scan_started", scan_id=scan_id)
         except Exception as e:
             logger.exception("security_scan_log_failed", error=str(e))
@@ -209,13 +217,15 @@ async def get_threats():
             """)
 
             for row in rows:
-                threats.append({
-                    "id": row["id"],
-                    "type": row["event_type"],
-                    "severity": row["severity"],
-                    "description": row["description"],
-                    "timestamp": row["timestamp"].isoformat() if row["timestamp"] else None,
-                })
+                threats.append(
+                    {
+                        "id": row["id"],
+                        "type": row["event_type"],
+                        "severity": row["severity"],
+                        "description": row["description"],
+                        "timestamp": row["timestamp"].isoformat() if row["timestamp"] else None,
+                    }
+                )
                 if row["severity"] in breakdown:
                     breakdown[row["severity"]] += 1
 

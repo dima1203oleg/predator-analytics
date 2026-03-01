@@ -14,7 +14,11 @@ class IntegrationService:
 
     def register(self, name: str, config: dict):
         """Register integration."""
-        self.integrations[name] = {"config": config, "status": "ACTIVE", "registered_at": datetime.now(UTC)}
+        self.integrations[name] = {
+            "config": config,
+            "status": "ACTIVE",
+            "registered_at": datetime.now(UTC),
+        }
 
     def get_status(self, name: str) -> dict[str, Any]:
         """Get integration status."""

@@ -49,7 +49,11 @@ class IngestionService:
         Handles large files by reading in chunks if necessary (for now full read).
         """
         try:
-            df = pd.read_csv(io.BytesIO(content)) if filename.endswith(".csv") else pd.read_excel(io.BytesIO(content))
+            df = (
+                pd.read_csv(io.BytesIO(content))
+                if filename.endswith(".csv")
+                else pd.read_excel(io.BytesIO(content))
+            )
 
             # Basic cleaning
             df = df.where(pd.notnull(df), None)
@@ -79,7 +83,9 @@ class IngestionService:
         """OCR for images (mock implementation)."""
         return [{"content": "OCR content placeholder", "type": "image"}]
 
-    async def create_chunks(self, records: list[dict[str, Any]], chunk_size: int = 100) -> list[list[dict[str, Any]]]:
+    async def create_chunks(
+        self, records: list[dict[str, Any]], chunk_size: int = 100
+    ) -> list[list[dict[str, Any]]]:
         """Split records into chunks for processing."""
         return [records[i : i + chunk_size] for i in range(0, len(records), chunk_size)]
 

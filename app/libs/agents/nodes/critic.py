@@ -43,7 +43,9 @@ async def critic_node(state: AgentState):
         audit_report = f"Audit skipped due to error: {e}"
 
     # 2. Reasoning Trace for UI
-    thinking = f"Critic thinking: Analysis of step '{current_step}' completed. Result: {audit_report}. "
+    thinking = (
+        f"Critic thinking: Analysis of step '{current_step}' completed. Result: {audit_report}. "
+    )
 
     # 3. Handle Errors
     if state.get("error"):
@@ -79,4 +81,7 @@ async def critic_node(state: AgentState):
             "thinking": thinking + "All strategic steps completed. System state verified.",
         }
 
-    return {"error": "Plan empty or invalid state", "thinking": "Critique failed: internal inconsistency."}
+    return {
+        "error": "Plan empty or invalid state",
+        "thinking": "Critique failed: internal inconsistency.",
+    }

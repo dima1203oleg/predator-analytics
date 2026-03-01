@@ -116,7 +116,9 @@ class MetricsAnalyzer:
         z_score = abs((current_value - mean) / std)
 
         if z_score > self.anomaly_threshold:
-            logger.warning(f"Anomaly in {metric_name}: {current_value:.2f} (z-score: {z_score:.2f})")
+            logger.warning(
+                f"Anomaly in {metric_name}: {current_value:.2f} (z-score: {z_score:.2f})"
+            )
             return True
         return False
 
@@ -130,7 +132,12 @@ class MetricsAnalyzer:
             val = metrics[metric]
 
             # Metrics where LOWER is better
-            if metric in ["avg_latency_ms", "error_rate", "cost_per_1k_requests", "etl_lag_seconds"]:
+            if metric in [
+                "avg_latency_ms",
+                "error_rate",
+                "cost_per_1k_requests",
+                "etl_lag_seconds",
+            ]:
                 if val > threshold:
                     failed.append(metric)
                     logger.warning(f"Quality gate failed: {metric} ({val:.2f} > {threshold})")
@@ -209,7 +216,9 @@ class AutoOptimizer:
 
         logger.info("=== AutoOptimizer Cycle End ===")
 
-    async def self_heal(self, metrics: dict[str, float], failed_gates: list[str], anomalies: list[str]):
+    async def self_heal(
+        self, metrics: dict[str, float], failed_gates: list[str], anomalies: list[str]
+    ):
         """Реактивні дії для виправлення проблем."""
         logger.info(f"Self-healing: failed={failed_gates}, anomalies={anomalies}")
         actions = []
@@ -218,36 +227,46 @@ class AutoOptimizer:
         if "avg_latency_ms" in failed_gates:
             lat = metrics["avg_latency_ms"]
             if lat > 1000:
-                actions.append({
-                    "type": "scale_pods",
-                    "target": "backend",
-                    "replicas": 5,
-                    "reason": f"Critical latency {lat:.0f}ms",
-                })
+                actions.append(
+                    {
+                        "type": "scale_pods",
+                        "target": "backend",
+                        "replicas": 5,
+                        "reason": f"Critical latency {lat:.0f}ms",
+                    }
+                )
             elif lat > 800:
-                actions.append({
-                    "type": "scale_pods",
-                    "target": "backend",
-                    "replicas": 3,
-                    "reason": f"High latency {lat:.0f}ms",
-                })
+                actions.append(
+                    {
+                        "type": "scale_pods",
+                        "target": "backend",
+                        "replicas": 3,
+                        "reason": f"High latency {lat:.0f}ms",
+                    }
+                )
             else:
-                actions.append({
-                    "type": "optimize_model",
-                    "target": "reranker",
-                    "method": "quantization",
-                    "reason": "Latency tuning",
-                })
+                actions.append(
+                    {
+                        "type": "optimize_model",
+                        "target": "reranker",
+                        "method": "quantization",
+                        "reason": "Latency tuning",
+                    }
+                )
 
         # Low Accuracy Strategy
         if "ndcg_at_10" in failed_gates:
-            actions.append({
-                "type": "retrain_model",
-                "target": "reranker",
-                "dataset": "augmented_latest",
-                "reason": f"Low NDCG {metrics['ndcg_at_10']:.2f}",
-            })
-            actions.append({"type": "generate_dataset", "count": 2000, "reason": "Augment training data"})
+            actions.append(
+                {
+                    "type": "retrain_model",
+                    "target": "reranker",
+                    "dataset": "augmented_latest",
+                    "reason": f"Low NDCG {metrics['ndcg_at_10']:.2f}",
+                }
+            )
+            actions.append(
+                {"type": "generate_dataset", "count": 2000, "reason": "Augment training data"}
+            )
 
         for action in actions:
             await self.execute_action(action)
@@ -258,20 +277,24 @@ class AutoOptimizer:
         # Check if weekly training needed
         last_train = self._get_last_training_time()
         if (datetime.now() - last_train).days >= 7:
-            await self.execute_action({
-                "type": "scheduled_training",
-                "target": "all_models",
-                "reason": "Weekly maintenance",
-            })
+            await self.execute_action(
+                {
+                    "type": "scheduled_training",
+                    "target": "all_models",
+                    "reason": "Weekly maintenance",
+                }
+            )
 
         # Idle GPU utilization Strategy -> Run experiments
         if metrics.get("gpu_utilization", 1.0) < 0.4:
-            await self.execute_action({
-                "type": "ab_test",
-                "variants": ["v1", "v2-experimental"],
-                "metric": "ndcg",
-                "reason": "Idle compute available",
-            })
+            await self.execute_action(
+                {
+                    "type": "ab_test",
+                    "variants": ["v1", "v2-experimental"],
+                    "metric": "ndcg",
+                    "reason": "Idle compute available",
+                }
+            )
 
     async def execute_action(self, action: dict[str, Any]):
         """Виконує дію з реальною або мок інтеграцією."""
@@ -289,9 +312,13 @@ class AutoOptimizer:
                         )
                         deployment.spec.replicas = action["replicas"]
                         apps_v1.patch_namespaced_deployment(
-                            name=f"predator-{action['target']}", namespace="predator", body=deployment
+                            name=f"predator-{action['target']}",
+                            namespace="predator",
+                            body=deployment,
                         )
-                        logger.info(f"✅ Successfully scaled {action['target']} to {action['replicas']}")
+                        logger.info(
+                            f"✅ Successfully scaled {action['target']} to {action['replicas']}"
+                        )
                     except Exception as k8s_e:
                         logger.exception(f"❌ K8s scaling failed: {k8s_e}")
                 else:
@@ -321,11 +348,13 @@ class AutoOptimizer:
             logger.exception(f"Action execution failed: {e}")
 
     def _log_action(self, action, metrics):
-        self.optimization_history.append({
-            "timestamp": datetime.now().isoformat(),
-            "action": action,
-            "metrics": metrics.copy(),
-        })
+        self.optimization_history.append(
+            {
+                "timestamp": datetime.now().isoformat(),
+                "action": action,
+                "metrics": metrics.copy(),
+            }
+        )
 
     def _get_last_training_time(self) -> datetime:
         # Mock - 8 days ago to trigger logic

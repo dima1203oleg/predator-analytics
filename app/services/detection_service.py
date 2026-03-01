@@ -29,7 +29,10 @@ class DetectionService:
             # Looking for docs where 'analyzed' key is missing or is false
             stmt = (
                 select(Document)
-                .where((~Document.meta.has_key("analyzed")) | (Document.meta["analyzed"].astext == "false"))
+                .where(
+                    (~Document.meta.has_key("analyzed"))
+                    | (Document.meta["analyzed"].astext == "false")
+                )
                 .limit(limit)
             )
 
@@ -52,7 +55,9 @@ class DetectionService:
                     # Map Ukrainian keys to expected standard keys
                     normalized_meta = {
                         "edrpou": meta.get("Отримувач (ЄДРПОУ)", meta.get("edrpou", "unknown")),
-                        "recipient_name": meta.get("Отримувач (назва)", meta.get("recipient_name", doc.title)),
+                        "recipient_name": meta.get(
+                            "Отримувач (назва)", meta.get("recipient_name", doc.title)
+                        ),
                         "tax_debtor": meta.get("tax_debtor", False),
                         "sanctioned": meta.get("sanctioned", False),
                         "years_active": meta.get("years_active", 5),
@@ -67,7 +72,10 @@ class DetectionService:
                     print(f"DEBUG: Doc {doc.id} - Entity: {name} - Score: {assessment.score}")
 
                     # 4. If Risk is HIGH or CRITICAL, or if AI finds something interesting, create a Case
-                    is_anomaly = assessment.score > 0.6 or assessment.risk_level.value in ["HIGH", "CRITICAL"]
+                    is_anomaly = assessment.score > 0.6 or assessment.risk_level.value in [
+                        "HIGH",
+                        "CRITICAL",
+                    ]
 
                     ai_insight = None  # Initialize ai_insight
                     if is_anomaly:
@@ -81,9 +89,7 @@ class DetectionService:
 
                             ai_insight = f"【PLANNED ANALYSIS】: {result.get('plan', '')}\n\n"
                             ai_insight += f"【AI CONCLUSION】: {result.get('code', 'Аналіз завершено без додаткових висновків.')}\n\n"
-                            ai_insight += (
-                                f"【SECURITY AUDIT】: {result.get('audit_report', 'Перевірено протоколом v45.')}"
-                            )
+                            ai_insight += f"【SECURITY AUDIT】: {result.get('audit_report', 'Перевірено протоколом v45.')}"
                         except Exception as ai_e:
                             logger.exception(f"AI Insight failed for document {doc.id}: {ai_e}")
                             ai_insight = "AI аналіз тимчасово недоступний через обмеження API."

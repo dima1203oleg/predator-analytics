@@ -49,7 +49,11 @@ class ConstitutionalGuard:
                         self.AXIOMS = []
                         for ax in data["axioms"]:
                             self.AXIOMS.append(f"{ax['name']}: {ax['description'].strip()}")
-                        logger.info("constitutional_axioms_loaded_yaml", count=len(self.AXIOMS), source=str(yaml_path))
+                        logger.info(
+                            "constitutional_axioms_loaded_yaml",
+                            count=len(self.AXIOMS),
+                            source=str(yaml_path),
+                        )
                         return
             except ImportError:
                 logger.warning("PyYAML not installed, skipping YAML loading")
@@ -77,7 +81,9 @@ class ConstitutionalGuard:
                     if in_section and line.strip() and line.strip()[0].isdigit() and "." in line:
                         axiom = line.split(".", 1)[1].strip()
                         self.AXIOMS.append(axiom)
-                logger.info("constitution_loaded", axioms_count=len(self.AXIOMS), source=str(spec_path))
+                logger.info(
+                    "constitution_loaded", axioms_count=len(self.AXIOMS), source=str(spec_path)
+                )
             except Exception as e:
                 logger.exception(f"❌ Не вдалося завантажити Конституцію: {e}")
                 self.AXIOMS = ["НЕВІДОМИЙ СТАН - ЗАМОРОЗКА СИСТЕМИ"]
@@ -91,15 +97,23 @@ class ConstitutionalGuard:
 
         if "UNKNOWN STATE" in self.AXIOMS or "НЕВІДОМИЙ СТАН - ЗАМОРОЗКА СИСТЕМИ" in self.AXIOMS:
             logger.critical("constitution_trigger_freeze", reason="unknown_state_axiom")
-            log_security_event(logger, "constitutional_freeze", "critical", reason="spec_unreadable")
+            log_security_event(
+                logger, "constitutional_freeze", "critical", reason="spec_unreadable"
+            )
             return False
 
         if "path" in metadata:
             forbidden = ["/security", "/auth", "/governance", "RBAC", "keycloak"]
             if any(term in metadata["path"] for term in forbidden):
-                logger.warning("constitutional_violation", reason="restricted_path", path=metadata["path"])
+                logger.warning(
+                    "constitutional_violation", reason="restricted_path", path=metadata["path"]
+                )
                 log_security_event(
-                    logger, "constitutional_violation", "high", reason="restricted_path_access", path=metadata["path"]
+                    logger,
+                    "constitutional_violation",
+                    "high",
+                    reason="restricted_path_access",
+                    path=metadata["path"],
                 )
                 return False
 
@@ -118,7 +132,12 @@ class ConstitutionalGuard:
 class PolicyEngine:
     def __init__(self):
         self.rights_level = "R2"
-        self.config = {"enabled": True, "max_changes_per_cycle": 3, "forbidden_paths": [], "allowed": {}}
+        self.config = {
+            "enabled": True,
+            "max_changes_per_cycle": 3,
+            "forbidden_paths": [],
+            "allowed": {},
+        }
         self._load_policy()
 
     def _load_policy(self):
@@ -141,7 +160,9 @@ class PolicyEngine:
                 data = yaml.safe_load(yaml_content)
                 if "autonomy" in data:
                     self.config.update(data["autonomy"])
-                    logger.info(f"📜 Policy Engine: DSL завантажено. Макс змін: {self.config['max_changes_per_cycle']}")
+                    logger.info(
+                        f"📜 Policy Engine: DSL завантажено. Макс змін: {self.config['max_changes_per_cycle']}"
+                    )
         except Exception as e:
             logger.exception(f"❌ Помилка парсингу політики: {e}")
 
@@ -204,7 +225,10 @@ class CanaryController:
         logger.info(f"⏪ ROLLBACK: Відкат {action['type']} {action['meta']}")
         try:
             process = await asyncio.create_subprocess_shell(
-                "git reset --hard HEAD^", cwd="/app", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+                "git reset --hard HEAD^",
+                cwd="/app",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
             )
             await process.communicate()
             logger.info("✅ Стан системи відновлено (Git Reset).")
@@ -370,7 +394,9 @@ class ZARSupervisor:
             client = MistralClient(api_key=api_key)
             prompt = f"Optimize this implementation using advanced design patterns (SAGA, Digital Twin, Sovereign AI):\n{context.get('description')}\n{context.get('source_code', '')}"
 
-            resp = client.chat(model="mistral-large-latest", messages=[ChatMessage(role="user", content=prompt)])
+            resp = client.chat(
+                model="mistral-large-latest", messages=[ChatMessage(role="user", content=prompt)]
+            )
             return {"status": "SUCCESS", "insight": resp.choices[0].message.content}
         except Exception as e:
             return {"status": "ERROR", "error": str(e)}
@@ -460,7 +486,9 @@ class AZREngineV31ZARUnified:
 
             # Mistral Refactor for complex backend tasks
             if action["type"] == "PERFORMANCE_TWEAK" or action["type"] == "OPTIMIZATION":
-                mistral_insight = await self.zar_supervisor.execute_capability("DEEP_REFACTORING", action["meta"])
+                mistral_insight = await self.zar_supervisor.execute_capability(
+                    "DEEP_REFACTORING", action["meta"]
+                )
                 if mistral_insight.get("status") == "SUCCESS":
                     action["meta"]["mistral_advice"] = mistral_insight["insight"]
 
@@ -528,19 +556,23 @@ class AZREngineV31ZARUnified:
 
         # Rule-based basics
         if state.get("metrics", {}).get("cpu", 0) > 85:
-            actions.append({
-                "type": "PERFORMANCE_TWEAK",
-                "meta": {"reason": "high_cpu", "current_cpu": state["metrics"]["cpu"]},
-                "fingerprint": f"cpu_tweak_{self.cycle_count}",
-            })
+            actions.append(
+                {
+                    "type": "PERFORMANCE_TWEAK",
+                    "meta": {"reason": "high_cpu", "current_cpu": state["metrics"]["cpu"]},
+                    "fingerprint": f"cpu_tweak_{self.cycle_count}",
+                }
+            )
 
         # Smart Logic: Every 10 cycles, propose a code refactor if system status is 'degraded'
         if self.cycle_count % 10 == 0 or state.get("status") == "degraded":
-            actions.append({
-                "type": "OPTIMIZATION",
-                "meta": {"reason": "periodic_maintenance", "system_state": state.get("status")},
-                "fingerprint": f"refactor_cycle_{self.cycle_count}",
-            })
+            actions.append(
+                {
+                    "type": "OPTIMIZATION",
+                    "meta": {"reason": "periodic_maintenance", "system_state": state.get("status")},
+                    "fingerprint": f"refactor_cycle_{self.cycle_count}",
+                }
+            )
 
         logger.info("azr_planning_completed", actions_found=len(actions))
         return actions

@@ -37,27 +37,29 @@ class NexusTelegramBot(TelegramAssistant):
         self.enable_autonomous = os.getenv("TELEGRAM_AUTONOMOUS_MODE", "true").lower() == "true"
 
         # Додаткові команди для Nexus
-        self.system_commands.update({
-            # Агенти та оркестрація
-            "agents": self._cmd_agents_status,
-            "orchestrate": self._cmd_orchestrate,
-            "arbiter": self._cmd_arbiter_status,
-            # Датасети та аналітика
-            "datasets": self._cmd_datasets_list,
-            "analyze": self._cmd_analyze_dataset,
-            "anomalies": self._cmd_find_anomalies,
-            "forecast": self._cmd_forecast,
-            # ML та моделі
-            "models": self._cmd_models_status,
-            "train": self._cmd_train_model,
-            "inference": self._cmd_run_inference,
-            # Система
-            "health": self._cmd_system_health,
-            "metrics": self._cmd_system_metrics,
-            "queues": self._cmd_queues_status,
-            "triple": self._cmd_triple_agent,
-            "self_improve": self._cmd_self_improvement,
-        })
+        self.system_commands.update(
+            {
+                # Агенти та оркестрація
+                "agents": self._cmd_agents_status,
+                "orchestrate": self._cmd_orchestrate,
+                "arbiter": self._cmd_arbiter_status,
+                # Датасети та аналітика
+                "datasets": self._cmd_datasets_list,
+                "analyze": self._cmd_analyze_dataset,
+                "anomalies": self._cmd_find_anomalies,
+                "forecast": self._cmd_forecast,
+                # ML та моделі
+                "models": self._cmd_models_status,
+                "train": self._cmd_train_model,
+                "inference": self._cmd_run_inference,
+                # Система
+                "health": self._cmd_system_health,
+                "metrics": self._cmd_system_metrics,
+                "queues": self._cmd_queues_status,
+                "triple": self._cmd_triple_agent,
+                "self_improve": self._cmd_self_improvement,
+            }
+        )
 
     async def _process_natural_language(self, text: str, user_id: int) -> str:
         """Обробка природномовних команд через LLM

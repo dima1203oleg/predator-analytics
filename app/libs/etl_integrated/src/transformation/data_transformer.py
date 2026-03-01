@@ -55,7 +55,9 @@ class CompanySchema(BaseModel):
     address: str = Field(..., description="Company address")
     directors: list[str] = Field(default_factory=list, description="List of company directors")
     source_format: str = Field(..., description="Original data format (csv, json, xml)")
-    timestamp: datetime = Field(default_factory=datetime.now, description="Transformation timestamp")
+    timestamp: datetime = Field(
+        default_factory=datetime.now, description="Transformation timestamp"
+    )
 
 
 class DirectorSchema(BaseModel):
@@ -68,7 +70,9 @@ class DirectorSchema(BaseModel):
     position: str = Field(..., description="Person's position/role")
     company: str = Field(..., description="Associated company")
     source_format: str = Field(..., description="Original data format (csv, json, xml)")
-    timestamp: datetime = Field(default_factory=datetime.now, description="Transformation timestamp")
+    timestamp: datetime = Field(
+        default_factory=datetime.now, description="Transformation timestamp"
+    )
 
 
 class UnifiedSchema(BaseModel):
@@ -83,7 +87,9 @@ class UnifiedSchema(BaseModel):
     city: str = Field(..., description="Person's city of residence")
     score: float = Field(..., description="Person's score", ge=0.0, le=100.0)
     source_format: str = Field(..., description="Original data format (csv, json, xml)")
-    timestamp: datetime = Field(default_factory=datetime.now, description="Transformation timestamp")
+    timestamp: datetime = Field(
+        default_factory=datetime.now, description="Transformation timestamp"
+    )
 
     class Config:
         json_schema_extra = {
@@ -132,7 +138,10 @@ class DataTransformer:
         logger.info("DataTransformer initialized with unified schemas")
 
     def validate_data(
-        self, data: dict[str | Any, list[dict[str, Any]]], source_format: str = "unknown", schema_type: str = "unified"
+        self,
+        data: dict[str | Any, list[dict[str, Any]]],
+        source_format: str = "unknown",
+        schema_type: str = "unified",
     ) -> TransformResult:
         """Validate data against the specified schema.
 
@@ -171,7 +180,9 @@ class DataTransformer:
                         validated_records.append(record_dict)
                     except ValidationError as ve:
                         logger.warning(f"Validation error in record {i}: {ve}")
-                        return TransformResult(False, error=f"Validation error in record {i}: {ve!s}")
+                        return TransformResult(
+                            False, error=f"Validation error in record {i}: {ve!s}"
+                        )
 
                 return TransformResult(True, data=validated_records)
             # Validate single record
@@ -195,7 +206,9 @@ class DataTransformer:
             logger.exception(error_msg)
             return TransformResult(False, error=error_msg)
 
-    def transform_from_dataframe(self, df: pd.DataFrame, source_format: str = "unknown") -> TransformResult:
+    def transform_from_dataframe(
+        self, df: pd.DataFrame, source_format: str = "unknown"
+    ) -> TransformResult:
         """Transform data from pandas DataFrame to unified schema.
 
         Args:
@@ -217,7 +230,9 @@ class DataTransformer:
             logger.exception(error_msg)
             return TransformResult(False, error=error_msg)
 
-    def transform_from_dict(self, data: dict[str, Any], source_format: str = "unknown") -> TransformResult:
+    def transform_from_dict(
+        self, data: dict[str, Any], source_format: str = "unknown"
+    ) -> TransformResult:
         """Transform data from dictionary to unified schema.
 
         Args:
@@ -242,7 +257,9 @@ class DataTransformer:
                             person_content = person
                             if "@attributes" in person_content:
                                 # Skip attributes for main data
-                                person_content = {k: v for k, v in person_content.items() if k != "@attributes"}
+                                person_content = {
+                                    k: v for k, v in person_content.items() if k != "@attributes"
+                                }
 
                             record = {
                                 "name": person_content.get("name", ""),
@@ -253,7 +270,12 @@ class DataTransformer:
                             records.append(record)
                         else:
                             # Handle case where person is a string or other type
-                            record = {"name": str(person), "age": 0, "city": "unknown", "score": 0.0}
+                            record = {
+                                "name": str(person),
+                                "age": 0,
+                                "city": "unknown",
+                                "score": 0.0,
+                            }
                             records.append(record)
                     return self.validate_data(records, source_format)
                 # Single person record
@@ -333,7 +355,9 @@ class DataTransformer:
         """
         return self.schema.schema()
 
-    def validate_schema_compatibility(self, data_sample: dict[str | Any, list[dict[str, Any]]]) -> TransformResult:
+    def validate_schema_compatibility(
+        self, data_sample: dict[str | Any, list[dict[str, Any]]]
+    ) -> TransformResult:
         """Validate that a data sample is compatible with the unified schema.
 
         Args:
@@ -356,9 +380,13 @@ class DataTransformer:
             missing_fields = [field for field in required_fields if field not in sample_record]
 
             if missing_fields:
-                return TransformResult(False, error=f"Missing required fields: {', '.join(missing_fields)}")
+                return TransformResult(
+                    False, error=f"Missing required fields: {', '.join(missing_fields)}"
+                )
 
-            return TransformResult(True, data={"message": "Data sample is compatible with unified schema"})
+            return TransformResult(
+                True, data={"message": "Data sample is compatible with unified schema"}
+            )
 
         except Exception as e:
             error_msg = f"Schema compatibility check failed: {e!s}"

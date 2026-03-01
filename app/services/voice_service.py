@@ -59,7 +59,10 @@ class VoiceService:
         if not self.creds.valid:
             self.creds.refresh(GoogleRequest())
 
-        return {"Authorization": f"Bearer {self.creds.token}", "Content-Type": "application/json; charset=utf-8"}
+        return {
+            "Authorization": f"Bearer {self.creds.token}",
+            "Content-Type": "application/json; charset=utf-8",
+        }
 
     def text_to_speech(self, text: str, output_filename: str) -> str:
         """Перетворює текст у мовлення (MP3) через REST API."""
@@ -68,7 +71,11 @@ class VoiceService:
         url = "https://texttospeech.googleapis.com/v1/text:synthesize"
         data = {
             "input": {"text": text},
-            "voice": {"languageCode": self.language_code, "name": self.voice_name, "ssmlGender": "FEMALE"},
+            "voice": {
+                "languageCode": self.language_code,
+                "name": self.voice_name,
+                "ssmlGender": "FEMALE",
+            },
             "audioConfig": {"audioEncoding": "MP3", "pitch": -1.2, "speakingRate": 0.95},
         }
 

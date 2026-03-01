@@ -126,7 +126,10 @@ class DocumentProcessor:
     async def _process_excel_csv(self, file_path: str, options: dict[str, Any]) -> dict[str, Any]:
         """Обробка Excel та CSV файлів."""
         if not self.has_pandas:
-            return {"status": "error", "error": "pandas не встановлено. Виконайте: pip install pandas openpyxl"}
+            return {
+                "status": "error",
+                "error": "pandas не встановлено. Виконайте: pip install pandas openpyxl",
+            }
 
         import pandas as pd
 
@@ -161,7 +164,10 @@ class DocumentProcessor:
     async def _process_pdf(self, file_path: str, options: dict[str, Any]) -> dict[str, Any]:
         """Обробка PDF документів."""
         if not self.has_pypdf:
-            return {"status": "error", "error": "pypdf не встановлено. Виконайте: pip install pypdf"}
+            return {
+                "status": "error",
+                "error": "pypdf не встановлено. Виконайте: pip install pypdf",
+            }
 
         from pypdf import PdfReader
 
@@ -194,7 +200,10 @@ class DocumentProcessor:
     async def _process_image(self, file_path: str, options: dict[str, Any]) -> dict[str, Any]:
         """OCR обробка зображень (Tesseract)."""
         if not self.has_tesseract:
-            return {"status": "error", "error": "pytesseract не встановлено. Виконайте: pip install pytesseract pillow"}
+            return {
+                "status": "error",
+                "error": "pytesseract не встановлено. Виконайте: pip install pytesseract pillow",
+            }
 
         from PIL import Image
         import pytesseract
@@ -236,7 +245,10 @@ class DocumentProcessor:
     async def _process_word(self, file_path: str, options: dict[str, Any]) -> dict[str, Any]:
         """Обробка Word документів (.docx)."""
         if not self.has_docx:
-            return {"status": "error", "error": "python-docx не встановлено. Виконайте: pip install python-docx"}
+            return {
+                "status": "error",
+                "error": "python-docx не встановлено. Виконайте: pip install python-docx",
+            }
 
         from docx import Document
 
@@ -248,7 +260,9 @@ class DocumentProcessor:
 
         for para in document.paragraphs:
             if para.text.strip():
-                paragraphs.append({"text": para.text, "style": para.style.name if para.style else "Normal"})
+                paragraphs.append(
+                    {"text": para.text, "style": para.style.name if para.style else "Normal"}
+                )
                 full_text.append(para.text)
 
         # Таблиці
@@ -276,7 +290,9 @@ class DocumentProcessor:
             },
         }
 
-    async def process_url(self, url: str, source_type: str, options: dict[str, Any] | None = None) -> dict[str, Any]:
+    async def process_url(
+        self, url: str, source_type: str, options: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """Обробка URL джерел (Telegram, Website, API, RSS)."""
         options = options or {}
 
@@ -421,23 +437,27 @@ class DocumentProcessor:
 
             # RSS 2.0
             for item in root.findall(".//item"):
-                items.append({
-                    "title": item.findtext("title", ""),
-                    "link": item.findtext("link", ""),
-                    "description": item.findtext("description", ""),
-                    "pubDate": item.findtext("pubDate", ""),
-                })
+                items.append(
+                    {
+                        "title": item.findtext("title", ""),
+                        "link": item.findtext("link", ""),
+                        "description": item.findtext("description", ""),
+                        "pubDate": item.findtext("pubDate", ""),
+                    }
+                )
 
             # Atom
             for entry in root.findall(".//{http://www.w3.org/2005/Atom}entry"):
-                items.append({
-                    "title": entry.findtext("{http://www.w3.org/2005/Atom}title", ""),
-                    "link": entry.find("{http://www.w3.org/2005/Atom}link").get("href", "")
-                    if entry.find("{http://www.w3.org/2005/Atom}link") is not None
-                    else "",
-                    "description": entry.findtext("{http://www.w3.org/2005/Atom}summary", ""),
-                    "pubDate": entry.findtext("{http://www.w3.org/2005/Atom}updated", ""),
-                })
+                items.append(
+                    {
+                        "title": entry.findtext("{http://www.w3.org/2005/Atom}title", ""),
+                        "link": entry.find("{http://www.w3.org/2005/Atom}link").get("href", "")
+                        if entry.find("{http://www.w3.org/2005/Atom}link") is not None
+                        else "",
+                        "description": entry.findtext("{http://www.w3.org/2005/Atom}summary", ""),
+                        "pubDate": entry.findtext("{http://www.w3.org/2005/Atom}updated", ""),
+                    }
+                )
 
             return {
                 "source_type": "rss",

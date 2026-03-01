@@ -6,7 +6,18 @@ Shared SQLAlchemy entities for Predator Analytics.
 """
 import uuid
 
-from sqlalchemy import JSON, Boolean, Column, DateTime, Float, ForeignKey, Index, Integer, String, Text
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+)
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -68,7 +79,11 @@ class Company(Base):
     risk_assessments = relationship("RiskAssessment", back_populates="company")
 
     # Optimization Indexes
-    __table_args__ = (Index("idx_companies_kved", "kved"), Index("idx_companies_status", "status"), {"schema": "gold"})
+    __table_args__ = (
+        Index("idx_companies_kved", "kved"),
+        Index("idx_companies_status", "status"),
+        {"schema": "gold"},
+    )
 
 
 class Tender(Base):
@@ -347,7 +362,12 @@ class GraphNode(Base):
     updated_at = Column(DateTime, onupdate=func.now())
 
     __table_args__ = (
-        Index("idx_graph_nodes_name_trgm", "name", postgresql_using="gin", postgresql_ops={"name": "gin_trgm_ops"}),
+        Index(
+            "idx_graph_nodes_name_trgm",
+            "name",
+            postgresql_using="gin",
+            postgresql_ops={"name": "gin_trgm_ops"},
+        ),
         Index("idx_graph_nodes_label", "label"),
         {"schema": "gold"},
     )
@@ -443,7 +463,10 @@ class ETLJob(Base):
     source_file = Column(String(255), nullable=False)
     state = Column(String(50), nullable=False)  # ENUM
 
-    progress = Column(JSONB, default={"percent": 0, "records_total": 0, "records_processed": 0, "records_indexed": 0})
+    progress = Column(
+        JSONB,
+        default={"percent": 0, "records_total": 0, "records_processed": 0, "records_indexed": 0},
+    )
     timestamps = Column(JSONB, default={})
     errors = Column(JSONB, default=[])
 

@@ -37,7 +37,9 @@ class AxiomRegistry:
                 for axiom_data in data.get("axioms", []):
                     axiom = Axiom(axiom_data)
                     self.axioms[axiom.id] = axiom
-            logger.info(f"Loaded {len(self.axioms)} axioms from {self.config_path} (v{self.version})")
+            logger.info(
+                f"Loaded {len(self.axioms)} axioms from {self.config_path} (v{self.version})"
+            )
         except Exception as e:
             logger.exception(f"Failed to load axioms: {e}")
 

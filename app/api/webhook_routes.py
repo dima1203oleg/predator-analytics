@@ -30,13 +30,15 @@ class AlertmanagerWebhookPayload:
             labels = alert.get("labels", {})
             v45_action = labels.get("v45_action")
             if v45_action:
-                actions.append({
-                    "action": v45_action,
-                    "severity": labels.get("severity", "info"),
-                    "component": labels.get("component", "unknown"),
-                    "summary": alert.get("annotations", {}).get("summary"),
-                    "description": alert.get("annotations", {}).get("description"),
-                })
+                actions.append(
+                    {
+                        "action": v45_action,
+                        "severity": labels.get("severity", "info"),
+                        "component": labels.get("component", "unknown"),
+                        "summary": alert.get("annotations", {}).get("summary"),
+                        "description": alert.get("annotations", {}).get("description"),
+                    }
+                )
         return actions
 
 

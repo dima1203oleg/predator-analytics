@@ -78,7 +78,12 @@ async def consult_llm(prompt: str, trace_id: str, context: dict | None) -> dict 
         async with httpx.AsyncClient(timeout=30.0) as client:
             resp = await client.post(
                 MCP_ROUTER_URL,
-                json={"prompt": prompt, "task_type": "analysis", "trace_id_override": trace_id, "context": context},
+                json={
+                    "prompt": prompt,
+                    "task_type": "analysis",
+                    "trace_id_override": trace_id,
+                    "context": context,
+                },
             )
             return resp.json() if resp.status_code == 200 else None
     except Exception as e:
@@ -92,7 +97,9 @@ async def process_event_logic(event: PredatorEvent):
         logger.info("System HALTED. Skipping event.")
         return
 
-    logger.info(f"Processing event {event.event_type}", extra={"correlation_id": event.correlation_id})
+    logger.info(
+        f"Processing event {event.event_type}", extra={"correlation_id": event.correlation_id}
+    )
 
     # 1. Match Rules
     rules = loader.get_rules_for_event(event.event_type)
@@ -112,7 +119,9 @@ async def process_event_logic(event: PredatorEvent):
                 )
 
             # 4. Create Decision Artifact
-            context_hash = hashlib.sha256(json.dumps(event.context, sort_keys=True).encode()).hexdigest()
+            context_hash = hashlib.sha256(
+                json.dumps(event.context, sort_keys=True).encode()
+            ).hexdigest()
 
             artifact = DecisionArtifact(
                 trigger_event=event,

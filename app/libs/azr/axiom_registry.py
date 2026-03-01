@@ -153,7 +153,9 @@ class AxiomRegistry:
         self._loaded = True
         self._load_time = datetime.utcnow()
 
-        logger.info(f"📜 Loaded {len(self._axioms)} axioms. Registry hash: {self._registry_hash[:16]}...")
+        logger.info(
+            f"📜 Loaded {len(self._axioms)} axioms. Registry hash: {self._registry_hash[:16]}..."
+        )
         return True
 
     def _load_axiom_file(self, filepath: Path) -> Axiom:
@@ -179,7 +181,9 @@ class AxiomRegistry:
         enforcement = []
         if "enforcement" in data:
             if isinstance(data["enforcement"], dict):
-                enforcement = data["enforcement"].get("primary", []) + data["enforcement"].get("secondary", [])
+                enforcement = data["enforcement"].get("primary", []) + data["enforcement"].get(
+                    "secondary", []
+                )
             elif isinstance(data["enforcement"], list):
                 enforcement = data["enforcement"]
 
@@ -200,7 +204,9 @@ class AxiomRegistry:
 
     def _compute_registry_hash(self) -> str:
         """Compute hash of all axioms for integrity verification."""
-        combined = "".join(a.content_hash for a in sorted(self._axioms.values(), key=lambda x: x.id))
+        combined = "".join(
+            a.content_hash for a in sorted(self._axioms.values(), key=lambda x: x.id)
+        )
         return hashlib.sha3_512(combined.encode()).hexdigest()
 
     # ═══════════════════════════════════════════════════════════════

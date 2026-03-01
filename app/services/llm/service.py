@@ -78,7 +78,9 @@ class LLMService:
                 keys = json.loads(raw_key)
                 if isinstance(keys, list):
                     result = [str(k).strip("[]\"' ") for k in keys if k]
-                    logger.info(f"Parsed keys for {env_key} (JSON): {len(result)} keys. First: {result[0][:4]}...")
+                    logger.info(
+                        f"Parsed keys for {env_key} (JSON): {len(result)} keys. First: {result[0][:4]}..."
+                    )
                     return result
             except Exception:
                 pass
@@ -88,7 +90,9 @@ class LLMService:
         parts = clean_key.split(",")
         result = [p.strip("[]\"' ") for p in parts if p.strip("[]\"' ")]
         if result:
-            logger.info(f"Parsed keys for {env_key} (Manual): {len(result)} keys. First: {result[0][:4]}...")
+            logger.info(
+                f"Parsed keys for {env_key} (Manual): {len(result)} keys. First: {result[0][:4]}..."
+            )
         return result
 
     def _get_keys_from_storage(self, provider: str) -> list[str]:
@@ -311,10 +315,16 @@ class LLMService:
             try:
                 logger.debug(f"LLM_ROUTER: Attempting {provider_name}...")
                 response = await self.generate(
-                    prompt=prompt, system=system, provider=provider_name, max_tokens=max_tokens, temperature=temperature
+                    prompt=prompt,
+                    system=system,
+                    provider=provider_name,
+                    max_tokens=max_tokens,
+                    temperature=temperature,
                 )
                 if response.success:
-                    logger.info(f"LLM_ROUTER: Success with {provider_name} [Model: {response.model}]")
+                    logger.info(
+                        f"LLM_ROUTER: Success with {provider_name} [Model: {response.model}]"
+                    )
                     return response
 
                 logger.warning(f"LLM_ROUTER: {provider_name} returned error: {response.error}")
@@ -358,7 +368,9 @@ class LLMService:
         config = self.providers[selected_provider]
         keys = config.get("api_keys", [None])
         if not keys and selected_provider != "ollama":
-            return LLMResponse(False, "", selected_provider, config["model"], error="No API keys available")
+            return LLMResponse(
+                False, "", selected_provider, config["model"], error="No API keys available"
+            )
 
         import time
 
@@ -398,18 +410,36 @@ class LLMService:
                     response = await self._call_gemini(
                         prompt, system, config, max_tokens, temperature, format, api_key=api_key
                     )
-                elif selected_provider in ["groq", "mistral", "openrouter", "deepseek", "together", "grok"]:
+                elif selected_provider in [
+                    "groq",
+                    "mistral",
+                    "openrouter",
+                    "deepseek",
+                    "together",
+                    "grok",
+                ]:
                     response = await self._call_openai_compatible(
-                        prompt, system, config, max_tokens, temperature, selected_provider, format, api_key=api_key
+                        prompt,
+                        system,
+                        config,
+                        max_tokens,
+                        temperature,
+                        selected_provider,
+                        format,
+                        api_key=api_key,
                     )
                 elif selected_provider == "cohere":
-                    response = await self._call_cohere(prompt, system, config, max_tokens, temperature, api_key=api_key)
+                    response = await self._call_cohere(
+                        prompt, system, config, max_tokens, temperature, api_key=api_key
+                    )
                 elif selected_provider == "huggingface":
                     response = await self._call_huggingface(
                         prompt, system, config, max_tokens, temperature, api_key=api_key
                     )
                 else:  # Ollama does not use api_key
-                    response = await self._call_ollama(prompt, system, config, max_tokens, temperature)
+                    response = await self._call_ollama(
+                        prompt, system, config, max_tokens, temperature
+                    )
 
                 if response.success:
                     response.latency_ms = (time.time() - start_time) * 1000
@@ -427,8 +457,15 @@ class LLMService:
                     continue
 
                 # 401/403: Unauthorized/Invalid key
-                if "401" in err_str or "403" in err_str or "unauthorized" in err_str or "invalid api key" in err_str:
-                    logger.error(f"LLM key 401 for {selected_provider}, cooling down for 1 hour (invalid)...")
+                if (
+                    "401" in err_str
+                    or "403" in err_str
+                    or "unauthorized" in err_str
+                    or "invalid api key" in err_str
+                ):
+                    logger.error(
+                        f"LLM key 401 for {selected_provider}, cooling down for 1 hour (invalid)..."
+                    )
                     self._key_cooldowns[api_key] = current_time + 3600
                     last_err_msg = response.error
                     continue
@@ -437,7 +474,9 @@ class LLMService:
                 return response
 
             except Exception as e:
-                logger.exception(f"LLM exception with {selected_provider} and key {api_key[:8]}...: {e}")
+                logger.exception(
+                    f"LLM exception with {selected_provider} and key {api_key[:8]}...: {e}"
+                )
                 last_err_msg = str(e)
                 continue
 
@@ -507,24 +546,36 @@ class LLMService:
                 "max_tokens": max_tokens,
                 "temperature": temperature,
             }
-            response = await client.post(f"{config['base_url']}/chat", headers=headers, json=payload, timeout=60.0)
+            response = await client.post(
+                f"{config['base_url']}/chat", headers=headers, json=payload, timeout=60.0
+            )
             data = response.json()
             if response.status_code != 200:
-                return LLMResponse(False, "", "cohere", config["model"], error=f"Cohere Error: {data}")
+                return LLMResponse(
+                    False, "", "cohere", config["model"], error=f"Cohere Error: {data}"
+                )
 
             return LLMResponse(True, data.get("text", ""), "cohere", config["model"])
 
-    async def _call_huggingface(self, prompt, system, config, max_tokens, temperature, api_key=None):
+    async def _call_huggingface(
+        self, prompt, system, config, max_tokens, temperature, api_key=None
+    ):
         # Using serverless inference API
         async with httpx.AsyncClient() as client:
             selected_key = api_key or random.choice(config["api_keys"])
             headers = {"Authorization": f"Bearer {selected_key}"}
             # HF Prompt structuring depends on model, but usually pure generation
-            full_prompt = f"{system}\nUser: {prompt}\nAssistant:" if system else f"User: {prompt}\nAssistant:"
+            full_prompt = (
+                f"{system}\nUser: {prompt}\nAssistant:" if system else f"User: {prompt}\nAssistant:"
+            )
 
             payload = {
                 "inputs": full_prompt,
-                "parameters": {"max_new_tokens": max_tokens, "temperature": temperature, "return_full_text": False},
+                "parameters": {
+                    "max_new_tokens": max_tokens,
+                    "temperature": temperature,
+                    "return_full_text": False,
+                },
             }
             # config['model'] should be the full path e.g. "meta-llama/Meta-Llama-3-8B-Instruct"
             url = f"{config['base_url']}/{config['model']}"
@@ -536,7 +587,9 @@ class LLMService:
 
             return LLMResponse(False, "", "huggingface", config["model"], error=f"HF Error: {data}")
 
-    async def _call_gemini(self, prompt, system, config, max_tokens, temperature, format=None, api_key=None):
+    async def _call_gemini(
+        self, prompt, system, config, max_tokens, temperature, format=None, api_key=None
+    ):
         async with httpx.AsyncClient() as client:
             url = f"{config['base_url']}/models/{config['model']}:generateContent"
             contents = []
@@ -556,9 +609,16 @@ class LLMService:
             data = response.json()
             if response.status_code != 200:
                 logger.error(f"Gemini API Error {response.status_code}: {data}")
-                return LLMResponse(False, "", "gemini", config["model"], error=f"Gemini API Error: {data}")
+                return LLMResponse(
+                    False, "", "gemini", config["model"], error=f"Gemini API Error: {data}"
+                )
 
-            text = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+            text = (
+                data.get("candidates", [{}])[0]
+                .get("content", {})
+                .get("parts", [{}])[0]
+                .get("text", "")
+            )
 
             # Gemini doesn't report tokens in the same way, but let's estimate
             # or try to find in response (usageMetadata)
@@ -568,7 +628,15 @@ class LLMService:
             return LLMResponse(True, text, "gemini", config["model"], tokens_used=tokens)
 
     async def _call_openai_compatible(
-        self, prompt, system, config, max_tokens, temperature, provider_name, format=None, api_key=None
+        self,
+        prompt,
+        system,
+        config,
+        max_tokens,
+        temperature,
+        provider_name,
+        format=None,
+        api_key=None,
     ):
         async with httpx.AsyncClient() as client:
             messages = []
@@ -588,7 +656,10 @@ class LLMService:
                 payload["response_format"] = {"type": "json_object"}
 
             response = await client.post(
-                f"{config['base_url']}/chat/completions", headers=headers, json=payload, timeout=60.0
+                f"{config['base_url']}/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=60.0,
             )
 
             if response.status_code != 200:
@@ -610,21 +681,37 @@ class LLMService:
                 data = response.json()
             except Exception:
                 logger.exception(f"{provider_name} failed to parse JSON: {response.text}")
-                return LLMResponse(False, "", provider_name, config["model"], error=f"{provider_name} JSON Parse Error")
+                return LLMResponse(
+                    False,
+                    "",
+                    provider_name,
+                    config["model"],
+                    error=f"{provider_name} JSON Parse Error",
+                )
 
             if "choices" not in data:
                 logger.error(f"{provider_name} unexpected response: {data}")
                 return LLMResponse(
-                    False, "", provider_name, config["model"], error=f"{provider_name} Error: No choices"
+                    False,
+                    "",
+                    provider_name,
+                    config["model"],
+                    error=f"{provider_name} Error: No choices",
                 )
 
             usage = data.get("usage", {})
             tokens = usage.get("total_tokens", 0)
             if tokens == 0:  # Fallback estimate
-                tokens = len(prompt.split()) + len(data["choices"][0]["message"]["content"].split()) + 20
+                tokens = (
+                    len(prompt.split()) + len(data["choices"][0]["message"]["content"].split()) + 20
+                )
 
             return LLMResponse(
-                True, data["choices"][0]["message"]["content"], provider_name, config["model"], tokens_used=tokens
+                True,
+                data["choices"][0]["message"]["content"],
+                provider_name,
+                config["model"],
+                tokens_used=tokens,
             )
 
     async def _call_ollama(self, prompt, system, config, max_tokens, temperature):

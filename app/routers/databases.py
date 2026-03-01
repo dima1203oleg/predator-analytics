@@ -53,7 +53,9 @@ async def check_postgres_status() -> dict[str, Any]:
         conn = await asyncpg.connect(dsn)
         version = await conn.fetchval("SELECT version()")
         size = await conn.fetchval("SELECT pg_database_size(current_database())")
-        tables = await conn.fetchval("SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'")
+        tables = await conn.fetchval(
+            "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'"
+        )
         await conn.close()
 
         # Parse host from DSN for display
@@ -72,7 +74,13 @@ async def check_postgres_status() -> dict[str, Any]:
         }
     except Exception as e:
         logger.exception(f"PostgreSQL check failed: {e}")
-        return {"id": "postgres", "name": "PostgreSQL", "type": "SQL", "status": "ERROR", "error": str(e)}
+        return {
+            "id": "postgres",
+            "name": "PostgreSQL",
+            "type": "SQL",
+            "status": "ERROR",
+            "error": str(e),
+        }
 
 
 async def check_redis_status() -> dict[str, Any]:
@@ -136,7 +144,9 @@ async def check_opensearch_status() -> dict[str, Any]:
                     "id": "opensearch",
                     "name": "OpenSearch",
                     "type": "Search",
-                    "status": "CONNECTED" if health.get("status") in ["green", "yellow"] else "DEGRADED",
+                    "status": "CONNECTED"
+                    if health.get("status") in ["green", "yellow"]
+                    else "DEGRADED",
                     "cluster_status": health.get("status"),
                     "nodes": health.get("number_of_nodes", 1),
                     "indices_count": len([i for i in indices if not i["index"].startswith(".")]),
@@ -144,7 +154,13 @@ async def check_opensearch_status() -> dict[str, Any]:
                 }
     except Exception as e:
         logger.exception(f"OpenSearch check failed: {e}")
-    return {"id": "opensearch", "name": "OpenSearch", "type": "Search", "status": "ERROR", "host": base_url}
+    return {
+        "id": "opensearch",
+        "name": "OpenSearch",
+        "type": "Search",
+        "status": "ERROR",
+        "host": base_url,
+    }
 
 
 async def check_minio_status() -> dict[str, Any]:
@@ -167,7 +183,11 @@ async def check_minio_status() -> dict[str, Any]:
         # Fallback to health URL if service fails or not initialized
         endpoint = settings.MINIO_ENDPOINT
         protocol = "https" if "443" in endpoint else "http"
-        url = f"{endpoint}/minio/health/live" if "://" in endpoint else f"{protocol}://{endpoint}/minio/health/live"
+        url = (
+            f"{endpoint}/minio/health/live"
+            if "://" in endpoint
+            else f"{protocol}://{endpoint}/minio/health/live"
+        )
         try:
             async with httpx.AsyncClient() as client:
                 resp = await client.get(url, timeout=3)
@@ -181,7 +201,13 @@ async def check_minio_status() -> dict[str, Any]:
                     }
         except:
             pass
-    return {"id": "minio", "name": "MinIO", "type": "ObjectStorage", "status": "ERROR", "host": settings.MINIO_ENDPOINT}
+    return {
+        "id": "minio",
+        "name": "MinIO",
+        "type": "ObjectStorage",
+        "status": "ERROR",
+        "host": settings.MINIO_ENDPOINT,
+    }
 
 
 @router.get("/minio/buckets")
@@ -249,12 +275,14 @@ async def get_vector_collections():
                     col_resp = await client.get(f"{base_url}/collections/{col['name']}", timeout=5)
                     if col_resp.status_code == 200:
                         col_data = col_resp.json().get("result", {})
-                        detailed.append({
-                            "name": col["name"],
-                            "vectors_count": col_data.get("vectors_count", 0),
-                            "points_count": col_data.get("points_count", 0),
-                            "status": col_data.get("status", "unknown"),
-                        })
+                        detailed.append(
+                            {
+                                "name": col["name"],
+                                "vectors_count": col_data.get("vectors_count", 0),
+                                "points_count": col_data.get("points_count", 0),
+                                "status": col_data.get("status", "unknown"),
+                            }
+                        )
                 return detailed
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Qdrant unavailable: {e!s}")
@@ -305,7 +333,10 @@ async def execute_query(request: QueryRequest):
             }
         else:
             await conn.execute(request.query)
-            result = {"status": "SUCCESS", "execution_time_ms": (datetime.now(UTC) - start).total_seconds() * 1000}
+            result = {
+                "status": "SUCCESS",
+                "execution_time_ms": (datetime.now(UTC) - start).total_seconds() * 1000,
+            }
 
         await conn.close()
         return result
@@ -338,7 +369,9 @@ async def get_database_stats(db_id: str):
 
             conn = await asyncpg.connect(dsn)
             size = await conn.fetchval("SELECT pg_database_size(current_database())")
-            tables = await conn.fetchval("SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'")
+            tables = await conn.fetchval(
+                "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'"
+            )
             rows = await conn.fetchval("SELECT SUM(n_live_tup) FROM pg_stat_user_tables")
             await conn.close()
             return {
@@ -359,14 +392,23 @@ async def trigger_backup(db_id: str):
     """Trigger database backup."""
     if db_id != "postgres":
         # Only Postgres implemented for now
-        return {"id": db_id, "status": "SKIPPED", "message": "Backup not supported for this DB type"}
+        return {
+            "id": db_id,
+            "status": "SKIPPED",
+            "message": "Backup not supported for this DB type",
+        }
 
     try:
         from app.tasks.maintenance import backup_postgres
 
         task = backup_postgres.delay()
 
-        return {"id": db_id, "backup_id": task.id, "status": "STARTED", "message": "Backup job queued in background"}
+        return {
+            "id": db_id,
+            "backup_id": task.id,
+            "status": "STARTED",
+            "message": "Backup job queued in background",
+        }
     except Exception as e:
         logger.exception(f"Backup trigger failed: {e}")
         raise HTTPException(status_code=500, detail="Backup queue unavailable")

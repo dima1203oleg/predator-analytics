@@ -21,13 +21,15 @@ class MissionDiscoverer:
         logger.info("scanning_for_code_quality_missions")
         improvements = await code_quality_analyzer.generate_improvements()
         for imp in improvements:
-            missions.append({
-                "type": "code_improvement",
-                "source": "CodeQualityAnalyzer",
-                "priority": imp["priority"],
-                "payload": imp,
-                "status": "pending_execution",
-            })
+            missions.append(
+                {
+                    "type": "code_improvement",
+                    "source": "CodeQualityAnalyzer",
+                    "priority": imp["priority"],
+                    "payload": imp,
+                    "status": "pending_execution",
+                }
+            )
 
         # 2. Anomaly Missions (Future: from AnomalyService)
         # 3. Security Missions (Future: from SOM)

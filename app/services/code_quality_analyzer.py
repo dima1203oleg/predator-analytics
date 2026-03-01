@@ -134,24 +134,28 @@ class CodeQualityAnalyzer:
         # 1. High Complexity Check
         for file in analysis["top_offenders_complexity"]:
             if file["complexity"] > 20:  # Arbitrary threshold
-                tasks.append({
-                    "title": f"Refactor High Complexity: {file['file']}",
-                    "description": f"File has complexity score of {file['complexity']}. Break down large functions or split classes.",
-                    "priority": "high" if file["complexity"] > 40 else "medium",
-                    "type": "refactor",
-                    "metrics": file,
-                })
+                tasks.append(
+                    {
+                        "title": f"Refactor High Complexity: {file['file']}",
+                        "description": f"File has complexity score of {file['complexity']}. Break down large functions or split classes.",
+                        "priority": "high" if file["complexity"] > 40 else "medium",
+                        "type": "refactor",
+                        "metrics": file,
+                    }
+                )
 
         # 2. Large File Check
         for file in analysis["top_offenders_size"]:
             if file["loc"] > 300:
-                tasks.append({
-                    "title": f"Split Large File: {file['file']}",
-                    "description": f"File has {file['loc']} lines of code. Consider modularizing.",
-                    "priority": "low",
-                    "type": "cleanup",
-                    "metrics": file,
-                })
+                tasks.append(
+                    {
+                        "title": f"Split Large File: {file['file']}",
+                        "description": f"File has {file['loc']} lines of code. Consider modularizing.",
+                        "priority": "low",
+                        "type": "cleanup",
+                        "metrics": file,
+                    }
+                )
 
         return tasks
 

@@ -33,7 +33,9 @@ def _shannon_entropy(items: list[str]) -> float:
     n_categories = len(counts)
     if n_categories <= 1:
         return 0.0
-    entropy = -sum((count / total) * math.log2(count / total) for count in counts.values() if count > 0)
+    entropy = -sum(
+        (count / total) * math.log2(count / total) for count in counts.values() if count > 0
+    )
     max_entropy = math.log2(n_categories)
     return entropy / max_entropy if max_entropy > 0 else 0.0
 

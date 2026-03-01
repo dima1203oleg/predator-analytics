@@ -26,7 +26,9 @@ class RuleLoader:
                 data = yaml.safe_load(f)
                 self._version = data.get("version", "1.0")
                 self._rules = data.get("rules", [])
-                logger.info(f"Loaded {len(self._rules)} rules from {self.rules_path} (Ver: {self._version})")
+                logger.info(
+                    f"Loaded {len(self._rules)} rules from {self.rules_path} (Ver: {self._version})"
+                )
         except Exception as e:
             logger.exception(f"Failed to load rules: {e}")
             raise

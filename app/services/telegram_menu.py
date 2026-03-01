@@ -154,10 +154,12 @@ class TelegramMenuBuilder:
             keyboard.append(row)
 
         # Додаємо "Всі" та "Назад"
-        keyboard.append([
-            {"text": "🔄 ВСІ СЕРВІСИ", "callback_data": f"docker_{action}_all"},
-            {"text": "⬅️ Назад", "callback_data": "menu_docker"},
-        ])
+        keyboard.append(
+            [
+                {"text": "🔄 ВСІ СЕРВІСИ", "callback_data": f"docker_{action}_all"},
+                {"text": "⬅️ Назад", "callback_data": "menu_docker"},
+            ]
+        )
 
         return {"inline_keyboard": keyboard}
 
@@ -165,7 +167,10 @@ class TelegramMenuBuilder:
         """Меню Kubernetes."""
         return {
             "inline_keyboard": [
-                [{"text": "📦 Pods", "callback_data": "k8s_pods"}, {"text": "🖥️ Nodes", "callback_data": "k8s_nodes"}],
+                [
+                    {"text": "📦 Pods", "callback_data": "k8s_pods"},
+                    {"text": "🖥️ Nodes", "callback_data": "k8s_nodes"},
+                ],
                 [
                     {"text": "🔌 Services", "callback_data": "k8s_services"},
                     {"text": "📜 Deployments", "callback_data": "k8s_deployments"},
@@ -305,7 +310,9 @@ class TelegramMenuBuilder:
             ]
         }
 
-    def build_confirmation_menu(self, task_id: str, description: str, is_dangerous: bool = False) -> dict[str, Any]:
+    def build_confirmation_menu(
+        self, task_id: str, description: str, is_dangerous: bool = False
+    ) -> dict[str, Any]:
         """Меню підтвердження виконання задачі."""
         confirm_text = "✅ Підтвердити" if not is_dangerous else "⚠️ Підтвердити (НЕБЕЗПЕЧНО)"
 
@@ -427,7 +434,9 @@ class MessageFormatter:
 """
 
     @staticmethod
-    def format_task_confirmation(description: str, commands: list[str], is_dangerous: bool = False) -> str:
+    def format_task_confirmation(
+        description: str, commands: list[str], is_dangerous: bool = False
+    ) -> str:
         """Форматує підтвердження задачі."""
         warning = "\n⚠️ *УВАГА: Потенційно небезпечна операція!*\n" if is_dangerous else ""
 

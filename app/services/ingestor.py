@@ -65,7 +65,9 @@ class IngestorService:
         except Exception as e:
             raise ValueError(f"Failed to parse CSV: {e}")
 
-        return await self.start_ingestion(source=f"csv:{os.path.basename(file_path)}", config={"records": records})
+        return await self.start_ingestion(
+            source=f"csv:{os.path.basename(file_path)}", config={"records": records}
+        )
 
     async def start_ingestion(self, source: str, config: dict[str, Any]) -> IngestionJob:
         """Start a new ingestion job.
@@ -159,16 +161,20 @@ class IngestorService:
         # We should wrap it.
 
         loop = asyncio.get_event_loop()
-        embeddings = await loop.run_in_executor(None, embedding_service.generate_batch_embeddings, texts)
+        embeddings = await loop.run_in_executor(
+            None, embedding_service.generate_batch_embeddings, texts
+        )
 
         # 3. Prepare Qdrant payload
         documents = []
         for i, record in enumerate(records):
-            documents.append({
-                "id": record.get("id") or str(uuid.uuid4()),
-                "embedding": embeddings[i],
-                "metadata": record,
-            })
+            documents.append(
+                {
+                    "id": record.get("id") or str(uuid.uuid4()),
+                    "embedding": embeddings[i],
+                    "metadata": record,
+                }
+            )
 
         # 4. Index
         await qdrant.index_batch(documents)

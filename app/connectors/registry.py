@@ -19,7 +19,11 @@ class RegistryConnector(BaseConnector):
     """
 
     def __init__(self):
-        super().__init__(name="EDR (Business Registry)", base_url="https://data.gov.ua/api/3/action", timeout=30.0)
+        super().__init__(
+            name="EDR (Business Registry)",
+            base_url="https://data.gov.ua/api/3/action",
+            timeout=30.0,
+        )
         self.dataset_id = "1c7f3815-3259-45e0-bdf1-64dca07ddc10"
 
     async def search(self, query: str, limit: int = 20, **kwargs) -> ConnectorResult:
@@ -55,7 +59,9 @@ class RegistryConnector(BaseConnector):
 
         return None
 
-    async def search_companies(self, name: str, limit: int = 20, include_closed: bool = False) -> ConnectorResult:
+    async def search_companies(
+        self, name: str, limit: int = 20, include_closed: bool = False
+    ) -> ConnectorResult:
         """Search companies by name.
 
         Args:

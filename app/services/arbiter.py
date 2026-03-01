@@ -46,7 +46,9 @@ class ArbiterService:
         self.agent_weights: dict[str, float] = {}
         self.consensus_threshold: float = 0.7
 
-    async def collect_votes(self, agents: list[dict[str, Any]], query: str, timeout: float = 30.0) -> list[AgentVote]:
+    async def collect_votes(
+        self, agents: list[dict[str, Any]], query: str, timeout: float = 30.0
+    ) -> list[AgentVote]:
         votes = []
         for agent in agents:
             vote = AgentVote(

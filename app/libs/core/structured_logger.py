@@ -51,7 +51,9 @@ if HAS_STRUCTLOG:
             structlog.processors.StackInfoRenderer(),
             structlog.processors.format_exc_info,
             structlog.processors.UnicodeDecoder(),
-            structlog.processors.JSONRenderer() if use_json else structlog.dev.ConsoleRenderer(colors=True),
+            structlog.processors.JSONRenderer()
+            if use_json
+            else structlog.dev.ConsoleRenderer(colors=True),
         ]
         structlog.configure(
             processors=processors,
@@ -60,7 +62,9 @@ if HAS_STRUCTLOG:
             wrapper_class=structlog.stdlib.BoundLogger,
             cache_logger_on_first_use=True,
         )
-        logging.basicConfig(format="%(message)s", stream=sys.stdout, level=getattr(logging, log_level.upper()))
+        logging.basicConfig(
+            format="%(message)s", stream=sys.stdout, level=getattr(logging, log_level.upper())
+        )
         return structlog.get_logger()
 
 else:
@@ -90,7 +94,12 @@ else:
             self.logger.exception(self._format(event, kwargs))
 
         def _format(self, event, kwargs):
-            data = {**self._context, **kwargs, "event": event, "timestamp": datetime.now().isoformat()}
+            data = {
+                **self._context,
+                **kwargs,
+                "event": event,
+                "timestamp": datetime.now().isoformat(),
+            }
             return json.dumps(data)
 
     def setup_structured_logging(log_level: str = LOG_LEVEL, use_json: bool = True):
@@ -138,4 +147,6 @@ def log_business_event(logger, event_name, **attributes):
 
 
 def log_security_event(logger, event_type, severity, **details):
-    logger.warning(f"security_{event_type}", event_category="security", severity=severity, **details)
+    logger.warning(
+        f"security_{event_type}", event_category="security", severity=severity, **details
+    )

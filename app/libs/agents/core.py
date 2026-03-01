@@ -72,7 +72,11 @@ class TrinityCore:
             if any(word in query.lower() for word in ["fix", "generate", "patch", "diagnose"]):
                 code = await self.coder.generate_code(query)
                 if code.startswith(("❌", "# Error")):
-                    return {"success": False, "error": f"Generation Failure: {code}", "history": history}
+                    return {
+                        "success": False,
+                        "error": f"Generation Failure: {code}",
+                        "history": history,
+                    }
                 history.append("⚙️ Generation: Code block produced.")
 
             # 4. Audit Phase (Copilot)

@@ -30,7 +30,11 @@ async def get_redis() -> aioredis.Redis:
     if _redis_client is None:
         redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
         _redis_client = await aioredis.from_url(
-            redis_url, encoding="utf-8", decode_responses=True, socket_timeout=5, socket_connect_timeout=5
+            redis_url,
+            encoding="utf-8",
+            decode_responses=True,
+            socket_timeout=5,
+            socket_connect_timeout=5,
         )
     return _redis_client
 

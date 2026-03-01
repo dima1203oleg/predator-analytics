@@ -13,14 +13,20 @@ class AZRSovereignMemory:
     STORES high-entropy solutions in a PERMITTED root location.
     """
 
-    def __init__(self, project_root: str = "/Users/dima-mac/Documents/Predator_21", storage_path: str | None = None):
+    def __init__(
+        self,
+        project_root: str = "/Users/dima-mac/Documents/Predator_21",
+        storage_path: str | None = None,
+    ):
         self.project_root = project_root
         if storage_path:
             self.storage_path = storage_path
         else:
             self.storage_path = os.path.join(self.project_root, "azr_memory.jsonl")
 
-    def record_solution(self, mutation_type: str, target: str, solution: str, metrics: dict[str, Any]):
+    def record_solution(
+        self, mutation_type: str, target: str, solution: str, metrics: dict[str, Any]
+    ):
         """Records a successful mutation into permanent history."""
         entry = {
             "timestamp": datetime.utcnow().isoformat(),
@@ -74,4 +80,8 @@ class AZRSovereignMemory:
                 with contextlib.suppress(BaseException):
                     targets.add(json.loads(line)["target_hash"])
 
-        return {"solutions_stored": count, "unique_targets_mastered": len(targets), "memory_integrity": "STABLE"}
+        return {
+            "solutions_stored": count,
+            "unique_targets_mastered": len(targets),
+            "memory_integrity": "STABLE",
+        }

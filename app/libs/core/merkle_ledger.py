@@ -180,7 +180,9 @@ class MerkleTruthLedger:
 
         return current_level[0]
 
-    def append(self, event_type: str, payload: dict[str, Any], metadata: dict[str, Any] | None = None) -> LedgerEntry:
+    def append(
+        self, event_type: str, payload: dict[str, Any], metadata: dict[str, Any] | None = None
+    ) -> LedgerEntry:
         """Append new event to the Truth Ledger.
 
         Args:
@@ -284,7 +286,9 @@ class MerkleTruthLedger:
                 prev_hash = new_hashes[-1] if new_entries else self.GENESIS_HASH
 
                 # Recompute payload hash
-                payload_canonical = json.dumps(old_entry.payload, sort_keys=True, ensure_ascii=False)
+                payload_canonical = json.dumps(
+                    old_entry.payload, sort_keys=True, ensure_ascii=False
+                )
                 payload_hash = sha3_512(payload_canonical)
 
                 # Create corrected entry
@@ -375,7 +379,10 @@ class MerkleTruthLedger:
         for i, entry in enumerate(self._entries):
             # Check sequence
             if entry.sequence != i + 1:
-                return False, f"Порушена послідовність на записі {i}: очікувалось {i + 1}, отримано {entry.sequence}"
+                return (
+                    False,
+                    f"Порушена послідовність на записі {i}: очікувалось {i + 1}, отримано {entry.sequence}",
+                )
 
             # Check previous hash
             expected_prev = self.GENESIS_HASH if i == 0 else self._entry_hashes[i - 1]
@@ -394,7 +401,10 @@ class MerkleTruthLedger:
         if computed_root != self._current_merkle_root:
             return False, f"Merkle root не відповідає: обчислений={computed_root[:32]}..."
 
-        return True, f"✅ Реєстр дійсний: {len(self._entries)} записів, root={self._current_merkle_root[:32]}..."
+        return (
+            True,
+            f"✅ Реєстр дійсний: {len(self._entries)} записів, root={self._current_merkle_root[:32]}...",
+        )
 
     def get_proof(self, sequence: int) -> MerkleProof | None:
         """Generate Merkle proof for entry at given sequence.
@@ -425,7 +435,9 @@ class MerkleTruthLedger:
             # Find sibling
             if current_index % 2 == 0:
                 # Left node, sibling is to the right
-                sibling_index = current_index + 1 if current_index + 1 < len(hashes) else current_index
+                sibling_index = (
+                    current_index + 1 if current_index + 1 < len(hashes) else current_index
+                )
                 proof_path.append((hashes[sibling_index], "right"))
             else:
                 # Right node, sibling is to the left
@@ -435,14 +447,19 @@ class MerkleTruthLedger:
             # Move up
             next_level = []
             for i in range(0, len(hashes), 2):
-                combined = hashes[i] + hashes[i + 1] if i + 1 < len(hashes) else hashes[i] + hashes[i]
+                combined = (
+                    hashes[i] + hashes[i + 1] if i + 1 < len(hashes) else hashes[i] + hashes[i]
+                )
                 next_level.append(sha3_512(combined))
 
             hashes = next_level
             current_index = current_index // 2
 
         return MerkleProof(
-            entry_hash=entry_hash, merkle_root=self._current_merkle_root, proof_path=proof_path, verified=True
+            entry_hash=entry_hash,
+            merkle_root=self._current_merkle_root,
+            proof_path=proof_path,
+            verified=True,
         )
 
     def verify_proof(self, proof: MerkleProof) -> bool:
@@ -450,7 +467,9 @@ class MerkleTruthLedger:
         current_hash = proof.entry_hash
 
         for sibling_hash, position in proof.proof_path:
-            combined = sibling_hash + current_hash if position == "left" else current_hash + sibling_hash
+            combined = (
+                sibling_hash + current_hash if position == "left" else current_hash + sibling_hash
+            )
             current_hash = sha3_512(combined)
 
         return current_hash == proof.merkle_root
@@ -514,7 +533,9 @@ def get_truth_ledger(storage_path: str | Path = "/tmp/azr_logs") -> MerkleTruthL
         return _ledger_instance
 
 
-def record_truth(event_type: str, payload: dict[str, Any], metadata: dict[str, Any] | None = None) -> LedgerEntry:
+def record_truth(
+    event_type: str, payload: dict[str, Any], metadata: dict[str, Any] | None = None
+) -> LedgerEntry:
     """Convenience function to record an event to the global Truth Ledger.
 
     Usage:
@@ -561,7 +582,9 @@ if __name__ == "__main__":
     entries = []
     for i in range(5):
         entry = ledger.append(
-            event_type="TEST_EVENT", payload={"index": i, "message": f"Test entry {i}"}, metadata={"test": True}
+            event_type="TEST_EVENT",
+            payload={"index": i, "message": f"Test entry {i}"},
+            metadata={"test": True},
         )
         entries.append(entry)
         print(f"✅ Entry {entry.sequence}: hash={entry.payload_hash[:32]}...")

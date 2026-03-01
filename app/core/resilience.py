@@ -22,7 +22,9 @@ class CircuitBreakerOpenException(Exception):
 
 
 class CircuitBreaker:
-    def __init__(self, failure_threshold: int = 5, recovery_timeout: int = 60, name: str = "default"):
+    def __init__(
+        self, failure_threshold: int = 5, recovery_timeout: int = 60, name: str = "default"
+    ):
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
         self.name = name
@@ -62,7 +64,9 @@ class CircuitBreaker:
 
         if self.failures >= self.failure_threshold:
             self.state = "OPEN"
-            logger.error(f"Circuit {self.name} Opened! Blocking requests for {self.recovery_timeout}s")
+            logger.error(
+                f"Circuit {self.name} Opened! Blocking requests for {self.recovery_timeout}s"
+            )
 
     def reset(self):
         self.failures = 0

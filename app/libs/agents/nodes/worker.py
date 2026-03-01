@@ -79,7 +79,10 @@ Format 2 (Completion):
             action = json.loads(content)
         except json.JSONDecodeError:
             # Fallback: treat whole content as answer if possible
-            return {"thinking": ["Failed to parse JSON, returning raw content"], "final_response": content}
+            return {
+                "thinking": ["Failed to parse JSON, returning raw content"],
+                "final_response": content,
+            }
 
         # 3. Execute
         if "tool" in action:

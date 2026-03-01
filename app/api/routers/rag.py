@@ -29,7 +29,9 @@ async def rag_query(query: str, top_k: int = 5):
     return {
         "query": query,
         "answer": answer,
-        "sources": [{"content": d.get("content", "")[:200], "score": d.get("score", 0)} for d in docs],
+        "sources": [
+            {"content": d.get("content", "")[:200], "score": d.get("score", 0)} for d in docs
+        ],
     }
 
 

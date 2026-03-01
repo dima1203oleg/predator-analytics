@@ -111,7 +111,9 @@ class DeepResearchAgent:
                     logger.info(f"  🔍 Searching: {q} (using Mistral headers)")
                     # We pass headers to the tool if it supports it,
                     # or configure the underlying HTTP client.
-                    result = await mcp.registry.invoke(search_tool.name, {"query": q, "headers": headers})
+                    result = await mcp.registry.invoke(
+                        search_tool.name, {"query": q, "headers": headers}
+                    )
                     if result.result:
                         # Process result (simplified)
                         snippet = str(result.result)[:200]
@@ -121,7 +123,9 @@ class DeepResearchAgent:
                 # Simulation mode if no internet tools
                 logger.info("  ⚠️ No search tools found. Running simulation/internal analysis.")
                 await asyncio.sleep(2)
-                task.findings.append("Simulated analysis: ZK-STARKs offer better post-quantum security than SNARKs.")
+                task.findings.append(
+                    "Simulated analysis: ZK-STARKs offer better post-quantum security than SNARKs."
+                )
                 task.sources.append("Internal_Simulation_v40")
 
             # 2. Synthesize findings
@@ -145,8 +149,9 @@ class DeepResearchAgent:
 
     def _synthesize(self, findings: list[str]) -> str:
         """Synthesize findings into a coherent conclusion."""
-        return f"Research Conclusion: Based on {len(findings)} sources, the optimal path is identified. " + " ".join(
-            findings[:1]
+        return (
+            f"Research Conclusion: Based on {len(findings)} sources, the optimal path is identified. "
+            + " ".join(findings[:1])
         )
 
     def _update_memory(self, task: ResearchTask, summary: str):
@@ -157,7 +162,11 @@ class DeepResearchAgent:
             kg = get_knowledge_graph()
 
             # Create Knowledge Node
-            kg.add_node(NodeType.PATTERN, f"Research: {task.topic}", {"summary": summary, "sources": task.sources})
+            kg.add_node(
+                NodeType.PATTERN,
+                f"Research: {task.topic}",
+                {"summary": summary, "sources": task.sources},
+            )
 
             # Link to generic concept (simplified)
             # kg.add_edge(node.node_id, "CONCEPT_ROOT", EdgeType.LEARNED_FROM)
@@ -172,7 +181,11 @@ class DeepResearchAgent:
 
             record_truth(
                 "RESEARCH_COMPLETED",
-                {"task_id": task.task_id, "topic": task.topic, "findings_count": len(task.findings)},
+                {
+                    "task_id": task.task_id,
+                    "topic": task.topic,
+                    "findings_count": len(task.findings),
+                },
             )
         except Exception:
             pass

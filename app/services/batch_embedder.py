@@ -33,7 +33,9 @@ class BatchEmbeddingService:
         if not self._running:
             self._running = True
             self._worker_task = asyncio.create_task(self._process_batches())
-            logger.info(f"BatchEmbeddingService started (batch_size={self.batch_size}, wait_time={self.wait_time}s)")
+            logger.info(
+                f"BatchEmbeddingService started (batch_size={self.batch_size}, wait_time={self.wait_time}s)"
+            )
 
     def stop(self):
         """Stop the background worker."""

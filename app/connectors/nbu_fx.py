@@ -23,7 +23,11 @@ class NBUFXConnector(BaseConnector):
     """
 
     def __init__(self):
-        super().__init__(name="NBU Exchange Rates", base_url="https://bank.gov.ua/NBUStatService/v1", timeout=15.0)
+        super().__init__(
+            name="NBU Exchange Rates",
+            base_url="https://bank.gov.ua/NBUStatService/v1",
+            timeout=15.0,
+        )
 
     async def search(self, query: str, limit: int = 20, **kwargs) -> ConnectorResult:
         """Search exchange rates by currency code.
@@ -38,7 +42,9 @@ class NBUFXConnector(BaseConnector):
         """Get exchange rate by currency code."""
         return await self.get_rate(currency_code)
 
-    async def get_rate(self, currency_code: str = "USD", rate_date: date | None = None) -> ConnectorResult:
+    async def get_rate(
+        self, currency_code: str = "USD", rate_date: date | None = None
+    ) -> ConnectorResult:
         """Get exchange rate for specific currency.
 
         Args:

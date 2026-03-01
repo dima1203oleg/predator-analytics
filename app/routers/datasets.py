@@ -42,7 +42,9 @@ async def get_dataset(dataset_id: str, current_user=Depends(get_current_user)):
 
 
 @router.post("/{dataset_id}/activate")
-async def activate_dataset(dataset_id: str, active: bool = True, current_user=Depends(get_current_user)):
+async def activate_dataset(
+    dataset_id: str, active: bool = True, current_user=Depends(get_current_user)
+):
     """Activate/Deactivate dataset."""
     await service.activate_dataset(dataset_id, active)
     return {"status": "ok", "active": active}

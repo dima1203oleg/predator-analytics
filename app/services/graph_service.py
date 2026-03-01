@@ -159,7 +159,9 @@ class GraphBuilderService:
                         session.add(new_edge)
 
                 await session.commit()
-                logger.info(f"Graph persisted for doc {doc_id}: {len(data['nodes'])} nodes, {len(data['edges'])} edges")
+                logger.info(
+                    f"Graph persisted for doc {doc_id}: {len(data['nodes'])} nodes, {len(data['edges'])} edges"
+                )
 
                 # --- SYNC TO NEO4J (Section 5.3) ---
                 try:
@@ -188,7 +190,12 @@ class GraphBuilderService:
                 # Using simple ILIKE for portability, but trigram (similar_to) is better if extension enabled
                 stmt = (
                     select(GraphNode)
-                    .where(and_(GraphNode.tenant_id == uuid.UUID(tenant_id), GraphNode.name.ilike(f"%{query}%")))
+                    .where(
+                        and_(
+                            GraphNode.tenant_id == uuid.UUID(tenant_id),
+                            GraphNode.name.ilike(f"%{query}%"),
+                        )
+                    )
                     .limit(5)
                 )
 
@@ -214,7 +221,10 @@ class GraphBuilderService:
 
                     # Find edges where current nodes are source OR target
                     stmt = select(GraphEdge).where(
-                        or_(GraphEdge.source_id.in_(current_layer_ids), GraphEdge.target_id.in_(current_layer_ids))
+                        or_(
+                            GraphEdge.source_id.in_(current_layer_ids),
+                            GraphEdge.target_id.in_(current_layer_ids),
+                        )
                     )
                     result = await session.execute(stmt)
                     edges = result.scalars().all()
@@ -228,7 +238,11 @@ class GraphBuilderService:
                         collected_edges[str(edge.id)] = edge
 
                         # Identify neighbor
-                        neighbor_id = edge.target_id if edge.source_id in collected_node_ids else edge.source_id
+                        neighbor_id = (
+                            edge.target_id
+                            if edge.source_id in collected_node_ids
+                            else edge.source_id
+                        )
 
                         if neighbor_id not in collected_node_ids:
                             next_layer_ids.add(neighbor_id)

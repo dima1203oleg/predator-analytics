@@ -11,7 +11,12 @@ from uuid import UUID
 from sqlalchemy import func, select, text
 
 from libs.core.database import get_db_ctx
-from libs.core.models.analytics import BehavioralProfile, InfluenceGraph, InstitutionalBias, PredictiveAlert
+from libs.core.models.analytics import (
+    BehavioralProfile,
+    InfluenceGraph,
+    InstitutionalBias,
+    PredictiveAlert,
+)
 from libs.core.models.entities import Company
 
 
@@ -123,7 +128,9 @@ class InfluenceMiner:
             for conn in connections:
                 t_id = UUID(conn["target_id"])
                 # Safe check
-                res = await db.execute(select(InfluenceGraph).filter_by(source_id=entity_id, target_id=t_id))
+                res = await db.execute(
+                    select(InfluenceGraph).filter_by(source_id=entity_id, target_id=t_id)
+                )
                 if not res.scalar_one_or_none():
                     db_conn = InfluenceGraph(
                         source_id=entity_id,
@@ -208,12 +215,23 @@ class AnalyticalEngine:
         self.predictive = PredictiveScenarioEngine()
 
     def _compute_cers(
-        self, behavioral: float, institutional: float, influence: float, structural: float, predictive: float
+        self,
+        behavioral: float,
+        institutional: float,
+        influence: float,
+        structural: float,
+        predictive: float,
     ) -> dict[str, Any]:
         """Composite Economic Risk Score (CERS) — TZ Part 4.
         Weights: Behavioral(25%) + Institutional(20%) + Influence(20%) + Structural(15%) + Predictive(20%)
         """
-        score = 0.25 * behavioral + 0.20 * institutional + 0.20 * influence + 0.15 * structural + 0.20 * predictive
+        score = (
+            0.25 * behavioral
+            + 0.20 * institutional
+            + 0.20 * influence
+            + 0.15 * structural
+            + 0.20 * predictive
+        )
         # Map to human-readable status
         if score < 0.2:
             status = "stable"
@@ -254,15 +272,31 @@ class AnalyticalEngine:
         # Layer 1: Behavioral
         behavioral_score = 0.35  # 0=volatile, 1=predictable/suspicious-stable
         behavioral_signals = [
-            {"type": "importer_with_memory", "score": 0.82, "description": "Highly repetitive HS code patterns"},
-            {"type": "behavioral_temperature", "score": 0.15, "description": "Low volatility — predictable patterns"},
+            {
+                "type": "importer_with_memory",
+                "score": 0.82,
+                "description": "Highly repetitive HS code patterns",
+            },
+            {
+                "type": "behavioral_temperature",
+                "score": 0.15,
+                "description": "Low volatility — predictable patterns",
+            },
         ]
 
         # Layer 2: Institutional
         institutional_score = 0.72  # 0=normal, 1=highly asymmetric
         institutional_signals = [
-            {"type": "loyalty_index", "score": 0.88, "description": "Customs post ЦЕНТР-01 — high loyalty bias"},
-            {"type": "permit_asymmetry", "score": 1.45, "description": "45% faster clearance vs market average"},
+            {
+                "type": "loyalty_index",
+                "score": 0.88,
+                "description": "Customs post ЦЕНТР-01 — high loyalty bias",
+            },
+            {
+                "type": "permit_asymmetry",
+                "score": 1.45,
+                "description": "45% faster clearance vs market average",
+            },
         ]
 
         # Layer 3: Influence
@@ -271,13 +305,19 @@ class AnalyticalEngine:
             UUID(entity_id) if len(entity_id) == 36 else UUID(int=0)
         )
         influence_signals = [
-            {"type": c["type"], "weight": c["weight"], "is_shadow": c["is_shadow"]} for c in connections
+            {"type": c["type"], "weight": c["weight"], "is_shadow": c["is_shadow"]}
+            for c in connections
         ]
 
         # Layer 4: Structural
         structural_score = 0.55
         structural_signals = [
-            {"type": "import_without_market", "gap_magnitude": 5_000_000, "uctzed": "8517", "confidence": 0.88},
+            {
+                "type": "import_without_market",
+                "gap_magnitude": 5_000_000,
+                "uctzed": "8517",
+                "confidence": 0.88,
+            },
         ]
 
         # Layer 5: Predictive
@@ -366,7 +406,11 @@ class AnalyticalEngine:
 
             pulse_record = MarketPulse(
                 turbulence_index=turbulence,
-                system_health="stable" if turbulence < 0.6 else "elevated" if turbulence < 0.8 else "turbulent",
+                system_health="stable"
+                if turbulence < 0.6
+                else "elevated"
+                if turbulence < 0.8
+                else "turbulent",
                 active_anomalies=14,
                 behavioral_score=behavioral_score,
                 institutional_score=institutional_score,
@@ -382,7 +426,10 @@ class AnalyticalEngine:
                 "score": turbulence,
                 "trend": "stable" if turbulence < 0.5 else "elevated",
                 "anomalies_detected": pulse_record.active_anomalies,
-                "structural_blind_spots": {"latest_anomaly": "import_without_market", "magnitude": 5_000_000},
+                "structural_blind_spots": {
+                    "latest_anomaly": "import_without_market",
+                    "magnitude": 5_000_000,
+                },
                 "timestamp": pulse_record.timestamp.isoformat(),
                 # V45 CERS enriched fields
                 "turbulence_index": pulse_record.turbulence_index,

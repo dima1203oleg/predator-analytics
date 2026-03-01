@@ -95,7 +95,9 @@ class OpenSearchIndexer:
 
             logger.info("opensearch_document_indexed", doc_id=doc_id, index_name=index_name)
         except Exception as e:
-            logger.exception("opensearch_indexing_failed", doc_id=doc_id, index_name=index_name, error=str(e))
+            logger.exception(
+                "opensearch_indexing_failed", doc_id=doc_id, index_name=index_name, error=str(e)
+            )
             raise
 
     async def index_documents(
@@ -118,7 +120,10 @@ class OpenSearchIndexer:
             tenant_id: Tenant context for isolation
         """
         logger.info(
-            "opensearch_bulk_indexing_started", count=len(documents), index_name=index_name, tenant_id=tenant_id
+            "opensearch_bulk_indexing_started",
+            count=len(documents),
+            index_name=index_name,
+            tenant_id=tenant_id,
         )
 
         # 1. Apply PII masking and Inject Tenant ID
@@ -185,7 +190,11 @@ class OpenSearchIndexer:
             except Exception as e:
                 logger.exception("qdrant_indexing_failed", error=str(e))
 
-        return {"indexed_opensearch": success, "indexed_qdrant": qdrant_count, "failed": len(failed) if failed else 0}
+        return {
+            "indexed_opensearch": success,
+            "indexed_qdrant": qdrant_count,
+            "failed": len(failed) if failed else 0,
+        }
 
     def _mask_pii(self, document: dict[str, Any]) -> dict[str, Any]:
         """Mask PII fields in document.
@@ -247,7 +256,12 @@ class OpenSearchIndexer:
                         ]
                 else:
                     # Wrap simple query into a bool query with tenant filter
-                    body["query"] = {"bool": {"must": current_query, "filter": [{"term": {"tenant_id": tenant_id}}]}}
+                    body["query"] = {
+                        "bool": {
+                            "must": current_query,
+                            "filter": [{"term": {"tenant_id": tenant_id}}],
+                        }
+                    }
                 logger.info("opensearch_search_tenant_filter_applied", tenant_id=tenant_id)
 
         elif query:
@@ -268,12 +282,22 @@ class OpenSearchIndexer:
             body = {
                 "query": {"bool": {"must": must_clause, "filter": filter_clause}},
                 "size": size,
-                "highlight": {"fields": {"content": {"fragment_size": 150, "number_of_fragments": 1}, "title": {}}},
+                "highlight": {
+                    "fields": {
+                        "content": {"fragment_size": 150, "number_of_fragments": 1},
+                        "title": {},
+                    }
+                },
             }
         # Match all (filtered by tenant)
         elif tenant_id:
             body = {
-                "query": {"bool": {"must": {"match_all": {}}, "filter": [{"term": {"tenant_id": tenant_id}}]}},
+                "query": {
+                    "bool": {
+                        "must": {"match_all": {}},
+                        "filter": [{"term": {"tenant_id": tenant_id}}],
+                    }
+                },
                 "size": size,
             }
         else:

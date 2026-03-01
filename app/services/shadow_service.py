@@ -81,14 +81,18 @@ class ShadowService:
     def list_classified_docs(self) -> list[str]:
         """List available classified documents."""
         try:
-            return [f.replace(".enc", "") for f in os.listdir(self.storage_path) if f.endswith(".enc")]
+            return [
+                f.replace(".enc", "") for f in os.listdir(self.storage_path) if f.endswith(".enc")
+            ]
         except Exception:
             return []
 
 
 # Singleton
 # Use absolute path relative to this file to be safe, or just utilize a data dir env var
-_base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # ua-sources root
+_base_dir = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)  # ua-sources root
 _shadow_path = os.path.join(_base_dir, "data", "shadow_layer")
 
 shadow_service = ShadowService(storage_path=_shadow_path)

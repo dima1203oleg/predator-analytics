@@ -16,7 +16,9 @@ logger = logging.getLogger("router.stats")
 
 router = APIRouter(prefix="/stats", tags=["Analytics & Statistics"])
 
-DB_URL = os.getenv("DATABASE_URL", "postgresql://predator:predator_password@localhost:5432/predator_db")
+DB_URL = os.getenv(
+    "DATABASE_URL", "postgresql://predator:predator_password@localhost:5432/predator_db"
+)
 
 
 async def get_db_connection():
@@ -30,7 +32,9 @@ async def get_db_connection():
 
 
 @router.get("/ingestion")
-async def get_ingestion_stats(days: int = Query(7, ge=1, le=365, description="Number of days to look back")):
+async def get_ingestion_stats(
+    days: int = Query(7, ge=1, le=365, description="Number of days to look back"),
+):
     """Get data ingestion statistics.
 
     Returns:
@@ -46,12 +50,18 @@ async def get_ingestion_stats(days: int = Query(7, ge=1, le=365, description="Nu
 
         # Staging stats
         staging_total = await conn.fetchval("SELECT COUNT(*) FROM staging.raw_data")
-        staging_unprocessed = await conn.fetchval("SELECT COUNT(*) FROM staging.raw_data WHERE processed = FALSE")
-        staging_recent = await conn.fetchval("SELECT COUNT(*) FROM staging.raw_data WHERE fetched_at > $1", cutoff_date)
+        staging_unprocessed = await conn.fetchval(
+            "SELECT COUNT(*) FROM staging.raw_data WHERE processed = FALSE"
+        )
+        staging_recent = await conn.fetchval(
+            "SELECT COUNT(*) FROM staging.raw_data WHERE fetched_at > $1", cutoff_date
+        )
 
         # Gold stats
         gold_total = await conn.fetchval("SELECT COUNT(*) FROM gold.documents")
-        gold_recent = await conn.fetchval("SELECT COUNT(*) FROM gold.documents WHERE created_at > $1", cutoff_date)
+        gold_recent = await conn.fetchval(
+            "SELECT COUNT(*) FROM gold.documents WHERE created_at > $1", cutoff_date
+        )
 
         # Last ingestion time
         last_ingestion = await conn.fetchval("SELECT MAX(fetched_at) FROM staging.raw_data")
@@ -143,8 +153,14 @@ async def get_ingestion_timeline(
         return {
             "granularity": granularity,
             "period_days": days,
-            "staging": [{"period": row["period"].isoformat(), "count": row["count"]} for row in staging_timeline],
-            "gold": [{"period": row["period"].isoformat(), "count": row["count"]} for row in gold_timeline],
+            "staging": [
+                {"period": row["period"].isoformat(), "count": row["count"]}
+                for row in staging_timeline
+            ],
+            "gold": [
+                {"period": row["period"].isoformat(), "count": row["count"]}
+                for row in gold_timeline
+            ],
         }
 
     finally:
@@ -198,7 +214,9 @@ async def get_search_stats(days: int = Query(7, ge=1, le=365)):
         cutoff_date = datetime.now() - timedelta(days=days)
 
         # Get stats from search_logs
-        total_searches = await conn.fetchval("SELECT COUNT(*) FROM gold.search_logs WHERE created_at > $1", cutoff_date)
+        total_searches = await conn.fetchval(
+            "SELECT COUNT(*) FROM gold.search_logs WHERE created_at > $1", cutoff_date
+        )
 
         avg_response_time = await conn.fetchval(
             "SELECT AVG(response_time_ms) FROM gold.search_logs WHERE created_at > $1", cutoff_date
@@ -229,7 +247,9 @@ async def get_search_stats(days: int = Query(7, ge=1, le=365)):
         return {
             "total_searches": total_searches or 0,
             "avg_response_time_ms": round(avg_response_time or 0, 2),
-            "popular_queries": [{"query": row["query"], "count": row["count"]} for row in popular_queries],
+            "popular_queries": [
+                {"query": row["query"], "count": row["count"]} for row in popular_queries
+            ],
             "by_type": {row["search_type"]: row["count"] for row in by_type},
             "period_days": days,
         }
@@ -296,7 +316,11 @@ async def get_system_stats():
                 ],
             },
             "indexes": [
-                {"name": row["index_name"], "scans": row["scans"], "tuples_read": row["tuples_read"]}
+                {
+                    "name": row["index_name"],
+                    "scans": row["scans"],
+                    "tuples_read": row["tuples_read"],
+                }
                 for row in index_stats
             ],
             "users": {"total": user_count or 0},
@@ -327,7 +351,9 @@ async def get_category_stats():
                 {
                     "name": row["category"],
                     "count": row["count"],
-                    "last_updated": row["last_updated"].isoformat() if row["last_updated"] else None,
+                    "last_updated": row["last_updated"].isoformat()
+                    if row["last_updated"]
+                    else None,
                 }
                 for row in categories
             ],

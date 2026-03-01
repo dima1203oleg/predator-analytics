@@ -12,7 +12,9 @@ from .base import BaseLLMProvider, LLMResponse
 class GeminiProvider(BaseLLMProvider):
     def __init__(self, api_key: str, model: str = "gemini-2.0-flash-exp"):
         super().__init__(api_key, model)
-        self.base_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+        self.base_url = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+        )
 
     @property
     def provider_name(self) -> str:
@@ -26,10 +28,12 @@ class GeminiProvider(BaseLLMProvider):
         # Prepare contents
         contents = []
         if system:
-            contents.append({
-                "role": "user",  # Gemini uses 'user'/'model' roles, system prompt often passed as first user message or distinct field in v1beta
-                "parts": [{"text": f"System input: {system}\n\nUser input: {prompt}"}],
-            })
+            contents.append(
+                {
+                    "role": "user",  # Gemini uses 'user'/'model' roles, system prompt often passed as first user message or distinct field in v1beta
+                    "parts": [{"text": f"System input: {system}\n\nUser input: {prompt}"}],
+                }
+            )
         else:
             contents.append({"role": "user", "parts": [{"text": prompt}]})
 
@@ -80,4 +84,10 @@ class GeminiProvider(BaseLLMProvider):
                 )
 
         except Exception as e:
-            return LLMResponse(success=False, content="", provider=self.provider_name, model=self.model, error=str(e))
+            return LLMResponse(
+                success=False,
+                content="",
+                provider=self.provider_name,
+                model=self.model,
+                error=str(e),
+            )

@@ -103,7 +103,10 @@ if is_async:
     # Also create sync engine for scripts/predatorctl
     sync_url = settings.DATABASE_URL.replace("+asyncpg", "")
     sync_engine = create_engine(
-        sync_url, pool_size=settings.DB_POOL_SIZE, max_overflow=settings.DB_MAX_OVERFLOW, echo=settings.DEBUG
+        sync_url,
+        pool_size=settings.DB_POOL_SIZE,
+        max_overflow=settings.DB_MAX_OVERFLOW,
+        echo=settings.DEBUG,
     )
     sync_session_maker = sessionmaker(
         sync_engine, class_=Session, expire_on_commit=False, autocommit=False, autoflush=False
@@ -118,7 +121,9 @@ else:
     )
     sync_engine = engine
     # Sync Session factory
-    sync_session_maker = sessionmaker(engine, class_=Session, expire_on_commit=False, autocommit=False, autoflush=False)
+    sync_session_maker = sessionmaker(
+        engine, class_=Session, expire_on_commit=False, autocommit=False, autoflush=False
+    )
     # Maintain compatibility with async symbols (will fail if called, but won't crash on import)
     async_session_maker = sync_session_maker
 

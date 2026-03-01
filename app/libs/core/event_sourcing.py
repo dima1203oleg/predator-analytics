@@ -150,7 +150,10 @@ class Aggregate(ABC):
         """Restore state from dictionary."""
 
     def record_event(
-        self, event_type: str, payload: dict[str, Any], category: EventCategory = EventCategory.SYSTEM
+        self,
+        event_type: str,
+        payload: dict[str, Any],
+        category: EventCategory = EventCategory.SYSTEM,
     ) -> Event:
         """Record a new event (does not persist until saved)."""
         event = Event(
@@ -456,16 +459,22 @@ class AZRStateAggregate(Aggregate):
 
     def record_action_executed(self, action_id: str, action_type: str) -> Event:
         return self.record_event(
-            "AZR_ACTION_EXECUTED", {"action_id": action_id, "action_type": action_type}, EventCategory.AZR
+            "AZR_ACTION_EXECUTED",
+            {"action_id": action_id, "action_type": action_type},
+            EventCategory.AZR,
         )
 
     def record_action_blocked(self, action_id: str, reason: str) -> Event:
         return self.record_event(
-            "AZR_ACTION_BLOCKED", {"action_id": action_id, "reason": reason}, EventCategory.CONSTITUTIONAL
+            "AZR_ACTION_BLOCKED",
+            {"action_id": action_id, "reason": reason},
+            EventCategory.CONSTITUTIONAL,
         )
 
     def record_rollback(self, action_id: str, reason: str) -> Event:
-        return self.record_event("AZR_ROLLBACK", {"action_id": action_id, "reason": reason}, EventCategory.AZR)
+        return self.record_event(
+            "AZR_ROLLBACK", {"action_id": action_id, "reason": reason}, EventCategory.AZR
+        )
 
 
 # ============================================================================

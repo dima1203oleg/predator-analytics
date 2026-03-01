@@ -57,7 +57,9 @@ class CaseEngineService:
 
                 try:
                     # Clean markdown if any
-                    clean_content = response.content.replace("```json", "").replace("```", "").strip()
+                    clean_content = (
+                        response.content.replace("```json", "").replace("```", "").strip()
+                    )
                     data = json.loads(clean_content)
                     title = data.get("title", title)
                     situation = data.get("situation", situation)

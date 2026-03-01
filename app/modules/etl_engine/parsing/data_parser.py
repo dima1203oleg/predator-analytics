@@ -130,7 +130,9 @@ class DataParser:
         """Get list of supported formats."""
         return [fmt.value for fmt in DataFormat]
 
-    def parse_to_dataframe(self, file_path: str | Path, format_hint: DataFormat | None = None) -> ParseResult:
+    def parse_to_dataframe(
+        self, file_path: str | Path, format_hint: DataFormat | None = None
+    ) -> ParseResult:
         """Parse data and return as pandas DataFrame.
 
         Args:

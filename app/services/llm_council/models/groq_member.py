@@ -22,17 +22,28 @@ from app.services.llm_council import CouncilMember, CouncilResponse, PeerReview
 class GroqCouncilMember(CouncilMember):
     """Groq LLaMA as a council member (fast inference)."""
 
-    def __init__(self, model_id: str = "llama-3.1-8b-instant", config: dict[str, Any] | None = None):
+    def __init__(
+        self, model_id: str = "llama-3.1-8b-instant", config: dict[str, Any] | None = None
+    ):
         super().__init__(model_id=model_id, provider="groq", config=config or {})
 
         api_key = self.config.get("api_key") or os.getenv("GROQ_API_KEY")
         self.client = AsyncGroq(api_key=api_key) if AsyncGroq is not None and api_key else None
 
-        self.default_params = {"temperature": 0.7, "max_tokens": 2048, **self.config.get("params", {})}
+        self.default_params = {
+            "temperature": 0.7,
+            "max_tokens": 2048,
+            **self.config.get("params", {}),
+        }
 
     async def generate_response(self, query: str, context: str | None = None) -> CouncilResponse:
         """Generate independent response."""
-        messages = [{"role": "system", "content": "You are an expert analyst providing detailed, accurate responses."}]
+        messages = [
+            {
+                "role": "system",
+                "content": "You are an expert analyst providing detailed, accurate responses.",
+            }
+        ]
 
         if context:
             messages.append({"role": "system", "content": f"Background context:\n{context}"})
@@ -140,7 +151,12 @@ Respond ONLY with valid JSON, no additional text.""",
 
             return json.loads(json_str)
         except:
-            return {"score": 0.5, "strengths": [], "weaknesses": ["Could not parse review"], "critique": text}
+            return {
+                "score": 0.5,
+                "strengths": [],
+                "weaknesses": ["Could not parse review"],
+                "critique": text,
+            }
 
     def _estimate_confidence(self, text: str) -> float:
         """Estimate confidence from response text."""

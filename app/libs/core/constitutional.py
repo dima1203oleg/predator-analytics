@@ -55,7 +55,12 @@ class LedgerClient:
         self.base_url = base_url or os.environ.get("LEDGER_URL", "http://truth-ledger:8000")
 
     def log_action(
-        self, entity_type: str, entity_id: str, action: str, payload: dict[str, Any], signature: str | None = None
+        self,
+        entity_type: str,
+        entity_id: str,
+        action: str,
+        payload: dict[str, Any],
+        signature: str | None = None,
     ) -> dict | None:
         """Commit a verified action to the ledger."""
         try:

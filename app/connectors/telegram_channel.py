@@ -59,7 +59,9 @@ class TelegramChannelConnector(BaseConnector):
     """
 
     def __init__(self):
-        super().__init__(name="Telegram Channels", base_url="https://api.telegram.org", timeout=60.0)
+        super().__init__(
+            name="Telegram Channels", base_url="https://api.telegram.org", timeout=60.0
+        )
 
         self.api_id = os.getenv("TELEGRAM_API_ID")
         self.api_hash = os.getenv("TELEGRAM_API_HASH")
@@ -80,7 +82,9 @@ class TelegramChannelConnector(BaseConnector):
     async def _get_client(self) -> TelegramClient | None:
         """Ініціалізація та підключення клієнта Telethon."""
         if not self.is_configured:
-            logger.error("Telegram connector не налаштований. Встановіть TELEGRAM_API_ID та TELEGRAM_API_HASH")
+            logger.error(
+                "Telegram connector не налаштований. Встановіть TELEGRAM_API_ID та TELEGRAM_API_HASH"
+            )
             return None
 
         if self._client is None:
@@ -114,13 +118,18 @@ class TelegramChannelConnector(BaseConnector):
         """
         if not self.is_configured:
             return ConnectorResult(
-                success=False, data=None, error="Telegram connector не налаштований", source=self.name
+                success=False,
+                data=None,
+                error="Telegram connector не налаштований",
+                source=self.name,
             )
 
         try:
             client = await self._get_client()
             if not client:
-                return ConnectorResult(success=False, data=None, error="Не вдалося підключитися", source=self.name)
+                return ConnectorResult(
+                    success=False, data=None, error="Не вдалося підключитися", source=self.name
+                )
 
             channel_username = kwargs.get("channel_username", query)
             date_from = kwargs.get("date_from")
@@ -136,11 +145,17 @@ class TelegramChannelConnector(BaseConnector):
                 entity = await client.get_entity(channel_username)
             except UsernameNotOccupiedError:
                 return ConnectorResult(
-                    success=False, data=None, error=f"Канал {channel_username} не знайдено", source=self.name
+                    success=False,
+                    data=None,
+                    error=f"Канал {channel_username} не знайдено",
+                    source=self.name,
                 )
             except ChannelPrivateError:
                 return ConnectorResult(
-                    success=False, data=None, error=f"Канал {channel_username} приватний", source=self.name
+                    success=False,
+                    data=None,
+                    error=f"Канал {channel_username} приватний",
+                    source=self.name,
                 )
 
             # Отримуємо історію
@@ -173,7 +188,9 @@ class TelegramChannelConnector(BaseConnector):
 
             logger.info(f"Знайдено {len(messages)} повідомлень у каналі {channel_username}")
 
-            return ConnectorResult(success=True, data=messages, source=self.name, records_count=len(messages))
+            return ConnectorResult(
+                success=True, data=messages, source=self.name, records_count=len(messages)
+            )
 
         except Exception as e:
             logger.exception(f"Помилка пошуку в Telegram: {e}")
@@ -186,12 +203,16 @@ class TelegramChannelConnector(BaseConnector):
             channel_username: Username каналу (без @)
         """
         if not self.is_configured:
-            return ConnectorResult(success=False, data=None, error="Telegram не налаштований", source=self.name)
+            return ConnectorResult(
+                success=False, data=None, error="Telegram не налаштований", source=self.name
+            )
 
         try:
             client = await self._get_client()
             if not client:
-                return ConnectorResult(success=False, data=None, error="Не вдалося підключитися", source=self.name)
+                return ConnectorResult(
+                    success=False, data=None, error="Не вдалося підключитися", source=self.name
+                )
 
             entity = await client.get_entity(channel_username)
 
@@ -210,13 +231,17 @@ class TelegramChannelConnector(BaseConnector):
             # Кешуємо
             self._channel_cache[channel_username] = channel_info
 
-            return ConnectorResult(success=True, data=channel_info, source=self.name, records_count=1)
+            return ConnectorResult(
+                success=True, data=channel_info, source=self.name, records_count=1
+            )
 
         except Exception as e:
             logger.exception(f"Помилка отримання каналу {channel_username}: {e}")
             return ConnectorResult(success=False, data=None, error=str(e), source=self.name)
 
-    async def fetch_channel_history(self, channel_username: str, limit: int = 100, min_id: int = 0) -> ConnectorResult:
+    async def fetch_channel_history(
+        self, channel_username: str, limit: int = 100, min_id: int = 0
+    ) -> ConnectorResult:
         """Отримати історію повідомлень каналу для ETL.
 
         Args:
@@ -224,7 +249,9 @@ class TelegramChannelConnector(BaseConnector):
             limit: Максимальна кількість
             min_id: ID з якого почати (для інкрементального завантаження)
         """
-        return await self.search(query=channel_username, limit=limit, channel_username=channel_username)
+        return await self.search(
+            query=channel_username, limit=limit, channel_username=channel_username
+        )
 
     async def subscribe_to_channel(self, channel_username: str) -> ConnectorResult:
         """Підписатися на канал для отримання нових повідомлень.

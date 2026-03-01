@@ -67,7 +67,9 @@ async def get_anomalies():
 
 # --- FAIL-SAFE LOCAL IMPORT ENDPOINT ---
 @router.post("/import-local", response_model=dict[str, Any])
-async def import_local_file(file_path: str = Query(..., description="Path relative to /app directory")):
+async def import_local_file(
+    file_path: str = Query(..., description="Path relative to /app directory"),
+):
     """Trigger import for a file that already exists in the container.
     Safe implementation with local imports.
     """
@@ -82,7 +84,9 @@ async def import_local_file(file_path: str = Query(..., description="Path relati
     full_path = f"/app/app/{file_path}"
 
     if not os.path.exists(full_path):
-        return JSONResponse(status_code=404, content={"error": f"File not found in container: {full_path}"})
+        return JSONResponse(
+            status_code=404, content={"error": f"File not found in container: {full_path}"}
+        )
 
     try:
         logger.info(f"🚀 Starting Magic Import for: {full_path}")
@@ -104,7 +108,11 @@ async def import_local_file(file_path: str = Query(..., description="Path relati
             except Exception:
                 pass
 
-            return {"success": True, "message": "Import completed successfully (Synchronous)", "stats": stats}
+            return {
+                "success": True,
+                "message": "Import completed successfully (Synchronous)",
+                "stats": stats,
+            }
         return {"success": False, "message": "Parsing failed", "stats": stats}
 
     except Exception as e:

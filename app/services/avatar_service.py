@@ -15,7 +15,9 @@ class AvatarService:
         self.tts_engine = "sadtalker"  # Placeholder
         self.voice_id = "uk-UA-Dima"
 
-    async def interact(self, text_input: str, user_id: str, emotion: str = "neutral") -> dict[str, Any]:
+    async def interact(
+        self, text_input: str, user_id: str, emotion: str = "neutral"
+    ) -> dict[str, Any]:
         """Process user input to Avatar:
         1. Get LLM response (persona-based)
         2. Generate Audio (TTS mock)

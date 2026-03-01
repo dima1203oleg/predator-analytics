@@ -40,14 +40,19 @@ class MistralVibeAdapter:
         """Перевіряє чи встановлено vibe в системі."""
         try:
             process = await asyncio.create_subprocess_exec(
-                self.vibe_bin, "--version", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+                self.vibe_bin,
+                "--version",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
             )
             await process.wait()
             return process.returncode == 0
         except Exception:
             return False
 
-    async def execute_task(self, prompt: str, context_files: list[str | None] | None = None) -> dict[str, Any]:
+    async def execute_task(
+        self, prompt: str, context_files: list[str | None] | None = None
+    ) -> dict[str, Any]:
         """Виконує завдання у гібридному режимі.
         Якщо CLI не знайдено - використовує внутрішній Sovereign Engine.
         """
@@ -87,7 +92,10 @@ class MistralVibeAdapter:
         logger.info(f"🤖 Delegating task to Mistral Vibe CLI: {prompt}")
         try:
             process = await asyncio.create_subprocess_exec(
-                *cmd, cwd=str(self.root), stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+                *cmd,
+                cwd=str(self.root),
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
             )
             stdout, stderr = await process.communicate()
             return {

@@ -240,7 +240,11 @@ class UnifiedDataPipeline:
             try:
                 source_type = SourceType(source_type)
             except ValueError:
-                return {"job_id": job_id, "status": "error", "error": f"Невідомий тип джерела: {source_type}"}
+                return {
+                    "job_id": job_id,
+                    "status": "error",
+                    "error": f"Невідомий тип джерела: {source_type}",
+                }
 
         # Ініціалізація результату
         result = {
@@ -280,7 +284,9 @@ class UnifiedDataPipeline:
             # === STAGE 3: ENRICHMENT (опціонально) ===
             if PipelineStage.ENRICHMENT in config["stages"]:
                 result["current_stage"] = PipelineStage.ENRICHMENT.value
-                enriched_data = await self._stage_enrichment(source_type, extracted_data, config["enrichment"], options)
+                enriched_data = await self._stage_enrichment(
+                    source_type, extracted_data, config["enrichment"], options
+                )
                 result["data"]["enriched"] = enriched_data
                 result["stages_completed"].append(PipelineStage.ENRICHMENT.value)
             else:
@@ -289,7 +295,9 @@ class UnifiedDataPipeline:
             # === STAGE 4: CLASSIFICATION ===
             if PipelineStage.CLASSIFICATION in config["stages"]:
                 result["current_stage"] = PipelineStage.CLASSIFICATION.value
-                classification = await self._stage_classification(source_type, enriched_data, options)
+                classification = await self._stage_classification(
+                    source_type, enriched_data, options
+                )
                 result["data"]["classification"] = classification
                 result["stages_completed"].append(PipelineStage.CLASSIFICATION.value)
 
@@ -303,7 +311,9 @@ class UnifiedDataPipeline:
 
             # === STAGE 6: INDEXING ===
             result["current_stage"] = PipelineStage.INDEXING.value
-            indexing_results = await self._stage_indexing(source_type, enriched_data, config["targets"], options)
+            indexing_results = await self._stage_indexing(
+                source_type, enriched_data, config["targets"], options
+            )
             result["targets"] = indexing_results
             result["stages_completed"].append(PipelineStage.INDEXING.value)
 
@@ -412,7 +422,11 @@ class UnifiedDataPipeline:
         return {"status": "no_extraction", "reason": "Немає даних для обробки"}
 
     async def _stage_enrichment(
-        self, source_type: SourceType, extracted: dict[str, Any], enrichment_types: list[str], options: dict[str, Any]
+        self,
+        source_type: SourceType,
+        extracted: dict[str, Any],
+        enrichment_types: list[str],
+        options: dict[str, Any],
     ) -> dict[str, Any]:
         """Стадія збагачення даних (NER, embeddings, тощо)."""
         enriched = dict(extracted)
@@ -426,13 +440,17 @@ class UnifiedDataPipeline:
                     enriched["enrichments"]["ner"] = await self._extract_entities(text_content)
 
                 elif enrichment_type == "embedding" and text_content:
-                    enriched["enrichments"]["embedding"] = await self._generate_embedding(text_content)
+                    enriched["enrichments"]["embedding"] = await self._generate_embedding(
+                        text_content
+                    )
 
                 elif enrichment_type == "summary" and text_content and len(text_content) > 500:
                     enriched["enrichments"]["summary"] = await self._generate_summary(text_content)
 
                 elif enrichment_type == "statistics" and extracted.get("records"):
-                    enriched["enrichments"]["statistics"] = self._calculate_statistics(extracted["records"])
+                    enriched["enrichments"]["statistics"] = self._calculate_statistics(
+                        extracted["records"]
+                    )
 
             except Exception as e:
                 logger.warning(f"Enrichment {enrichment_type} failed: {e}")
@@ -498,7 +516,11 @@ class UnifiedDataPipeline:
         }
 
     async def _stage_indexing(
-        self, source_type: SourceType, data: dict[str, Any], targets: list[TargetDatabase], options: dict[str, Any]
+        self,
+        source_type: SourceType,
+        data: dict[str, Any],
+        targets: list[TargetDatabase],
+        options: dict[str, Any],
     ) -> list[dict[str, Any]]:
         """Стадія індексації в цільові бази даних."""
         results = []
@@ -518,18 +540,26 @@ class UnifiedDataPipeline:
                 else:
                     result = {"status": "skipped", "reason": f"Невідома база: {target}"}
 
-                results.append({
-                    "target": target.value if isinstance(target, TargetDatabase) else str(target),
-                    **result,
-                })
+                results.append(
+                    {
+                        "target": target.value
+                        if isinstance(target, TargetDatabase)
+                        else str(target),
+                        **result,
+                    }
+                )
 
             except Exception as e:
                 logger.exception(f"Indexing to {target} failed: {e}")
-                results.append({
-                    "target": target.value if isinstance(target, TargetDatabase) else str(target),
-                    "status": "error",
-                    "error": str(e),
-                })
+                results.append(
+                    {
+                        "target": target.value
+                        if isinstance(target, TargetDatabase)
+                        else str(target),
+                        "status": "error",
+                        "error": str(e),
+                    }
+                )
 
         return results
 
@@ -538,7 +568,15 @@ class UnifiedDataPipeline:
     def _extract_text_content(self, data: dict[str, Any]) -> str:
         """Витягнути текстовий контент з даних."""
         # Пробуємо різні поля
-        text_fields = ["text", "full_text", "transcript", "content", "extracted_text", "caption", "description"]
+        text_fields = [
+            "text",
+            "full_text",
+            "transcript",
+            "content",
+            "extracted_text",
+            "caption",
+            "description",
+        ]
 
         for field in text_fields:
             if data.get(field):
@@ -565,7 +603,14 @@ class UnifiedDataPipeline:
         # Базова реалізація через regex (можна замінити на spaCy/transformers)
         import re
 
-        entities = {"organizations": [], "persons": [], "locations": [], "dates": [], "money": [], "codes": []}
+        entities = {
+            "organizations": [],
+            "persons": [],
+            "locations": [],
+            "dates": [],
+            "money": [],
+            "codes": [],
+        }
 
         # Коди ТН ЗЕД (митні)
         hs_codes = re.findall(r"\b\d{4}[\.\s]?\d{2}[\.\s]?\d{2}[\.\s]?\d{2}\b", text)
@@ -573,7 +618,9 @@ class UnifiedDataPipeline:
 
         # Суми (гроші)
         money_patterns = re.findall(
-            r"(?:USD|EUR|UAH|грн|\$|€)\s*[\d\s,\.]+|\d+[\s,\.]*(?:USD|EUR|UAH|грн)", text, re.IGNORECASE
+            r"(?:USD|EUR|UAH|грн|\$|€)\s*[\d\s,\.]+|\d+[\s,\.]*(?:USD|EUR|UAH|грн)",
+            text,
+            re.IGNORECASE,
         )
         entities["money"].extend([{"value": m.strip()} for m in money_patterns[:20]])
 
@@ -586,7 +633,12 @@ class UnifiedDataPipeline:
     async def _generate_embedding(self, text: str) -> dict[str, Any]:
         """Генерація векторного ембедінгу."""
         # TODO: Інтеграція з моделлю ембедінгів (sentence-transformers, OpenAI)
-        return {"status": "pending", "model": "nomic-embed-text", "dimensions": 768, "text_length": len(text)}
+        return {
+            "status": "pending",
+            "model": "nomic-embed-text",
+            "dimensions": 768,
+            "text_length": len(text),
+        }
 
     async def _generate_summary(self, text: str) -> dict[str, Any]:
         """Генерація резюме тексту."""
@@ -616,14 +668,22 @@ class UnifiedDataPipeline:
         """Індексація в PostgreSQL."""
         # TODO: Реальна інтеграція
         records = data.get("records", [])
-        return {"status": "simulated", "records_count": len(records), "table": f"data_{source_type.value}"}
+        return {
+            "status": "simulated",
+            "records_count": len(records),
+            "table": f"data_{source_type.value}",
+        }
 
     async def _index_to_opensearch(
         self, source_type: SourceType, data: dict[str, Any], options: dict[str, Any]
     ) -> dict[str, Any]:
         """Індексація в OpenSearch."""
         text_content = self._extract_text_content(data)
-        return {"status": "simulated", "index": f"predator_{source_type.value}", "document_size": len(text_content)}
+        return {
+            "status": "simulated",
+            "index": f"predator_{source_type.value}",
+            "document_size": len(text_content),
+        }
 
     async def _index_to_qdrant(
         self, source_type: SourceType, data: dict[str, Any], options: dict[str, Any]

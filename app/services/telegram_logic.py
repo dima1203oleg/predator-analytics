@@ -146,7 +146,9 @@ class TelegramLogic:
 
         # Format status
         api_status = "✅ Online"
-        db_status = "✅ Connected" if health.get("full_system_check", {}).get("database") else "⚠️ Degraded"
+        db_status = (
+            "✅ Connected" if health.get("full_system_check", {}).get("database") else "⚠️ Degraded"
+        )
 
         # Build connector status
         connectors_text = ""

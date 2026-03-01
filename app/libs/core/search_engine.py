@@ -23,7 +23,9 @@ class SearchEngine:
         try:
             from opensearchpy import OpenSearch
 
-            self.client = OpenSearch(hosts=[{"host": self.host, "port": self.port}], http_compress=True, use_ssl=False)
+            self.client = OpenSearch(
+                hosts=[{"host": self.host, "port": self.port}], http_compress=True, use_ssl=False
+            )
             logger.info(f"✅ OpenSearch client initialized: {self.host}:{self.port}")
         except ImportError:
             logger.warning("⚠️ OpenSearch library not installed.")
@@ -51,7 +53,14 @@ class SearchEngine:
         try:
             response = self.client.search(
                 index=self.index_name,
-                body={"query": {"multi_match": {"query": query, "fields": ["title", "content", "company_name"]}}},
+                body={
+                    "query": {
+                        "multi_match": {
+                            "query": query,
+                            "fields": ["title", "content", "company_name"],
+                        }
+                    }
+                },
             )
             return [hit["_source"] for hit in response["hits"]["hits"]]
         except Exception as e:

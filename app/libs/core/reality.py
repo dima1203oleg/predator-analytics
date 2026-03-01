@@ -76,7 +76,9 @@ class RealityContextEngine:
             )
 
         # Mock analysis logic based on v45.0 principles
-        temporal_coherent = random.choice([True, True, True, False])  # High probability of coherence
+        temporal_coherent = random.choice(
+            [True, True, True, False]
+        )  # High probability of coherence
 
         # Axiom IGNORANCE: If ignorance is declared, prefer inaction
         if observation.ignorance_declared:
@@ -84,7 +86,9 @@ class RealityContextEngine:
                 executable=False,
                 confidence=0.0,
                 reason="AXIOM_IGNORANCE_ENFORCED",
-                details={"policy": "If ignorance is declared, system must prefer inaction over speculation"},
+                details={
+                    "policy": "If ignorance is declared, system must prefer inaction over speculation"
+                },
             )
 
         # Counterfactual analysis: Alternatives must be less plausible than primary decision
@@ -151,7 +155,9 @@ class SemanticGate:
                 break
 
         if normalized != term:
-            logger.warning(f"Semantic Gate: Euphemism '{term}' reduced to physical truth: '{normalized}'")
+            logger.warning(
+                f"Semantic Gate: Euphemism '{term}' reduced to physical truth: '{normalized}'"
+            )
         return normalized
 
 
@@ -273,7 +279,11 @@ class JuridicalTranspiler:
         # Simulated legal translation logic
         if type == "anomaly_report":
             evidence = f"Anomaly detected in system behavior: {data.get('details', 'No details provided')}."
-            basis = ["Criminal Code UA Art 361", "Cybersecurity Law of Ukraine", "Predator Constitutional Axiom CRC"]
+            basis = [
+                "Criminal Code UA Art 361",
+                "Cybersecurity Law of Ukraine",
+                "Predator Constitutional Axiom CRC",
+            ]
         else:
             evidence = f"Observed physical change verified by {data.get('witness_count', 0)} independent witnesses."
             basis = ["GDPR Art 25", "ISO 27001:2022", "Predator Constitution v45.0"]
@@ -286,7 +296,9 @@ class JuridicalTranspiler:
             "verification_hash": data.get("context_hash", data.get("anomaly_id", "0x0")),
         }
 
-        return LegalDocument(title=title, content=legal_content, ledger_hash=f"legal_{random.getrandbits(64):x}")
+        return LegalDocument(
+            title=title, content=legal_content, ledger_hash=f"legal_{random.getrandbits(64):x}"
+        )
 
 
 # --- FORMAL VERIFICATION Z3 WRAPPER ---

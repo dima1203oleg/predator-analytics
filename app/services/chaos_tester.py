@@ -46,7 +46,9 @@ class ChaosTester:
             else:
                 logger.warning("chaos_config_not_found", path=self.config_path)
                 # Default mock scenarios if file missing
-                self.scenarios = [{"id": "mock_spike", "name": "Initial Stress Test", "target": "system"}]
+                self.scenarios = [
+                    {"id": "mock_spike", "name": "Initial Stress Test", "target": "system"}
+                ]
         except Exception as e:
             logger.exception(f"failed_to_load_chaos_scenarios: {e}")
 
@@ -72,7 +74,10 @@ class ChaosTester:
             # Implementation of difference scenarios
             if scenario_id == "database_latency":
                 # Simulation: Sleep to mimic latency
-                latency = float(scenario.get("params", {}).get("latency", "500ms").replace("ms", "")) / 1000
+                latency = (
+                    float(scenario.get("params", {}).get("latency", "500ms").replace("ms", ""))
+                    / 1000
+                )
                 logger.info(f"simulating_db_latency: {latency}s")
                 await asyncio.sleep(latency)
 
@@ -107,7 +112,8 @@ class ChaosTester:
             # Record success in ledger
             mttr = random.randint(2, 15)
             truth_ledger.record_action(
-                "CHAOS_TEST_COMPLETED", {"scenario": scenario_id, "status": "RECOVERED", "mttr": f"{mttr}s"}
+                "CHAOS_TEST_COMPLETED",
+                {"scenario": scenario_id, "status": "RECOVERED", "mttr": f"{mttr}s"},
             )
             logger.info("chaos_scenario_completed", scenario=scenario["name"])
             return True
@@ -115,7 +121,9 @@ class ChaosTester:
         except Exception as e:
             error_msg = str(e)
             logger.exception(f"chaos_scenario_failed: {e}")
-            truth_ledger.record_action("CHAOS_TEST_FAILED", {"scenario": scenario_id, "error": error_msg})
+            truth_ledger.record_action(
+                "CHAOS_TEST_FAILED", {"scenario": scenario_id, "error": error_msg}
+            )
             success = False
             return False
 

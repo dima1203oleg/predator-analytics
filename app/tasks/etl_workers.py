@@ -36,9 +36,16 @@ async def publish_etl_update(event_type: str, data: dict):
     """Publish ETL update to Redis for WebSocket broadcasting."""
     try:
         r = redis.Redis(
-            host=os.getenv("REDIS_HOST", "redis"), port=int(os.getenv("REDIS_PORT", "6379")), decode_responses=True
+            host=os.getenv("REDIS_HOST", "redis"),
+            port=int(os.getenv("REDIS_PORT", "6379")),
+            decode_responses=True,
         )
-        payload = {"type": "etl_update", "event": event_type, "timestamp": datetime.now(UTC).isoformat(), **data}
+        payload = {
+            "type": "etl_update",
+            "event": event_type,
+            "timestamp": datetime.now(UTC).isoformat(),
+            **data,
+        }
         await r.publish("predator:system:updates", json.dumps(payload))
     except Exception as e:
         logger.warning(f"Failed to publish ETL update: {e}")
@@ -86,7 +93,8 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                     from app.connectors.prozorro import prozorro_connector
 
                     result = await prozorro_connector.search(
-                        query=config.get("query") if config else None, limit=config.get("limit", 50) if config else 50
+                        query=config.get("query") if config else None,
+                        limit=config.get("limit", 50) if config else 50,
                     )
                     if result.success and result.data:
                         for tender in result.data:
@@ -186,7 +194,9 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                             result = await web_scraper_connector.search(
                                 url,
                                 limit=config.get("limit", 10) if config else 10,
-                                use_playwright=config.get("usePlaywright", False) if config else False,
+                                use_playwright=config.get("usePlaywright", False)
+                                if config
+                                else False,
                                 follow_links=config.get("followLinks", False) if config else False,
                                 max_depth=config.get("maxDepth", 1) if config else 1,
                             )
@@ -240,7 +250,9 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                     except ImportError:
                         req_logger.exception("web_scraper_connector_not_available")
 
-                req_logger.info("ingestion_completed", records_fetched=records_fetched, source_type=source_type)
+                req_logger.info(
+                    "ingestion_completed", records_fetched=records_fetched, source_type=source_type
+                )
 
                 # Trigger processor for new records (Batched)
                 if staging_ids:
@@ -248,7 +260,9 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
                     for i in range(0, len(staging_ids), batch_size):
                         batch = staging_ids[i : i + batch_size]
                         process_staging_records.delay(batch)
-                        logger.info(f"Queued processing batch {i // batch_size + 1}: {len(batch)} records")
+                        logger.info(
+                            f"Queued processing batch {i // batch_size + 1}: {len(batch)} records"
+                        )
 
                 return {
                     "status": "success",
@@ -362,7 +376,9 @@ def process_staging_records(self, staging_ids: list):
                     meta["category"] = "social_media"
                     meta["views"] = rc.get("views")
                     meta["link"] = (
-                        f"https://t.me/{rc.get('chat_username')}/{msg_id}" if rc.get("chat_username") else None
+                        f"https://t.me/{rc.get('chat_username')}/{msg_id}"
+                        if rc.get("chat_username")
+                        else None
                     )
 
                 elif dataset_type == "web_pages":
@@ -429,7 +445,9 @@ def process_staging_records(self, staging_ids: list):
                 if exists:
                     logger.info(f"Skipping duplicate: {title} (Hash: {content_hash})")
                     # Mark as processed anyway to remove from queue
-                    await conn.execute("UPDATE staging.raw_data SET processed = TRUE WHERE id = $1", staging_id)
+                    await conn.execute(
+                        "UPDATE staging.raw_data SET processed = TRUE WHERE id = $1", staging_id
+                    )
                     continue
 
                 # B. Simple Auto-Tagging (Keyword Extraction)
@@ -734,7 +752,9 @@ def orchestrate_data_sources():
                     should_run = next_run <= now
 
                 if should_run:
-                    logger.info(f"Triggering scheduled collection for {row['name']} ({row['source_type']})")
+                    logger.info(
+                        f"Triggering scheduled collection for {row['name']} ({row['source_type']})"
+                    )
 
                     # Prepare config
                     config = row["config"]

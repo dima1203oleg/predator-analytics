@@ -53,7 +53,9 @@ class NexusSupervisor:
             user_query_lower = user_query.lower()
 
             # Status Check
-            if "status" in user_query_lower and ("node" in user_query_lower or "system" in user_query_lower):
+            if "status" in user_query_lower and (
+                "node" in user_query_lower or "system" in user_query_lower
+            ):
                 fed_service = get_federation_service()
                 nodes = fed_service.get_active_nodes()
                 if not nodes:
@@ -70,7 +72,9 @@ class NexusSupervisor:
                 }
 
             # Task Dispatch (Scan CSV)
-            if ("scan" in user_query_lower or "import" in user_query_lower) and ".csv" in user_query_lower:
+            if (
+                "scan" in user_query_lower or "import" in user_query_lower
+            ) and ".csv" in user_query_lower:
                 fed_service = get_federation_service()
                 path = "/Users/dima-mac/Documents/Predator_21/sample_data/companies_ukraine.csv"  # Demo logic
                 try:
@@ -139,7 +143,11 @@ class NexusSupervisor:
                 }
 
             # Shadow Protocol (Hidden Layer)
-            if "shadow" in user_query_lower or "classified" in user_query_lower or "decrypt" in user_query_lower:
+            if (
+                "shadow" in user_query_lower
+                or "classified" in user_query_lower
+                or "decrypt" in user_query_lower
+            ):
                 from ...services.shadow_service import shadow_service
 
                 if "decrypt" in user_query_lower or "read" in user_query_lower:
@@ -225,7 +233,9 @@ class NexusSupervisor:
                 # invoke returns the final state
                 final_state = await graph.invoke(initial_state)
 
-                answer = final_state.get("final_response") or "Agent finished without a final response."
+                answer = (
+                    final_state.get("final_response") or "Agent finished without a final response."
+                )
                 thoughts = final_state.get("thinking", [])
 
                 return {
@@ -281,13 +291,18 @@ class NexusSupervisor:
                             {"agent": "retriever", "status": "success"},
                             {"agent": "miner", "status": "success"},
                             {"agent": "council_orchestrator", "status": "success"},
-                            *[{"agent": f"model_{m}", "status": "voted"} for m in result.contributing_models],
+                            *[
+                                {"agent": f"model_{m}", "status": "voted"}
+                                for m in result.contributing_models
+                            ],
                         ],
                     }
                 except Exception as council_error:
                     logger.exception(f"Council failed: {council_error}")
                     # Fallback
-                    final_answer = f"Council unavailable ({council_error!s}). Analyzing via Singleton."
+                    final_answer = (
+                        f"Council unavailable ({council_error!s}). Analyzing via Singleton."
+                    )
 
             # Default/Precise Mode logic
             final_answer = f"Analysis of {source} complete. Found {len(insights)} insights: {', '.join(insights)}"
@@ -296,7 +311,10 @@ class NexusSupervisor:
                 "query": user_query,
                 "answer": final_answer,
                 "mode": mode,
-                "trace": [{"agent": "retriever", "status": "success"}, {"agent": "miner", "status": "success"}],
+                "trace": [
+                    {"agent": "retriever", "status": "success"},
+                    {"agent": "miner", "status": "success"},
+                ],
             }
         except Exception as e:
             logger.critical(f"[{correlation_id}] Critical supervisor failure: {e}", exc_info=True)
