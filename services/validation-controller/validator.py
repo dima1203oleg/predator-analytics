@@ -26,7 +26,7 @@ class ModelValidator:
         Runs validation suite on a candidate model.
         Returns (approved, validation_score).
         """
-        logger.info(f"Validating model candidate {model_id}:{version}")
+        logger.info("Validating model candidate %s:%s", model_id, version)
 
         # 1. Fetch current production baseline
         prod_model = await self.registry.get_production_model(model_id)
@@ -34,11 +34,12 @@ class ModelValidator:
 
         # 2. Simulate validation run (Test Set evaluation)
         # In real life: Load model artifact -> Predict on Test Set -> Calc Metrics
-        validation_score = random.uniform(baseline_score - 0.05, baseline_score + 0.10)
+        rng = random.SystemRandom()
+        validation_score = rng.uniform(baseline_score - 0.05, baseline_score + 0.10)
         
         # 3. Compare
         is_better = validation_score > baseline_score
-        logger.info(f"Validation: Candidate={validation_score:.4f}, Baseline={baseline_score:.4f}, Better={is_better}")
+        logger.info("Validation: Candidate=%.4f, Baseline=%.4f, Better=%s", validation_score, baseline_score, is_better)
         
         return is_better, validation_score
 
@@ -54,4 +55,4 @@ class ModelValidator:
             await self.registry.promote_model_to_production(model_id, version)
             # Emit 'ModelPromoted' event...
         else:
-            logger.info(f"Model {model_id}:{version} rejected.")
+            logger.info("Model %s:%s rejected.", model_id, version)

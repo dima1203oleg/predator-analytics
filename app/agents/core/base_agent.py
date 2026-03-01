@@ -42,7 +42,7 @@ class BaseAgent:
         log_fn = getattr(self.logger, level, None)
         if not callable(log_fn):
             log_fn = self.logger.info
-        log_fn(f"[{self.name}] {message}")
+        log_fn("[%s] %s", self.name, message)
 
     def _log_error(self, message: str):
-        self.logger.error(f"[{self.name}] ERROR: {message}")
+        self.logger.error("[%s] ERROR: %s", self.name, message)
