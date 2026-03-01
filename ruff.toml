@@ -40,9 +40,9 @@ ignore = [
 
 [format]
 exclude = [
-    "services/mcp-router/providers/gemini.py",
-    "services/mcp-router/providers/groq.py",
-    "services/mcp-router/providers/ollama.py",
+    "services/mcp_router/providers/gemini.py",
+    "services/mcp_router/providers/groq.py",
+    "services/mcp_router/providers/ollama.py",
 ]
 quote-style = "double"
 indent-style = "space"
