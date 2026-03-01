@@ -2,7 +2,6 @@
 
 Component: sio-controller
 """
-import logging
 import random
 from typing import Any
 

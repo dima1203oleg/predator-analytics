@@ -1,22 +1,21 @@
+"""SIO Controller for Predator Analytics v45.1.
 
-"""
-Module: controller
-Component: sio-controller
-Predator Analytics v45.1
-Section 3.7.3 of Spec.
+This component manages the self-improvement cycle (Section 3.7.3).
 """
 import asyncio
-import logging
 import json
+import logging
 import os
+import random
+from typing import Any
+
 import httpx
 from datetime import datetime
-from services.shared.logging_config import setup_logging
+from services.shared.logging_config import get_logger
 from services.shared.events import PredatorEvent
 from services.shared.constants import AUTONOMY_L1
 
-setup_logging("sio-controller")
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 RTB_ENGINE_URL = os.getenv("RTB_ENGINE_URL", "http://predator-analytics-rtb-engine:8081/events")
 PROM_URL = os.getenv("PROMETHEUS_URL", "http://prometheus-server")
@@ -49,9 +48,9 @@ class SIOController:
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 await client.post(RTB_ENGINE_URL, json=event.to_dict())
-                logger.info(f"Triggered RTB for {event_type}")
-        except Exception as e:
-            logger.error(f"Failed to trigger RTB: {e}")
+                logger.info("Triggered RTB for %s", event_type)
+        except Exception:
+            logger.exception("Failed to trigger RTB")
 
     async def run_cycle(self):
         """
@@ -68,7 +67,11 @@ class SIOController:
         metrics = await self.get_metrics()
         
         if metrics["accuracy"] < metrics["baseline"]:
-            logger.warning(f"Performance degradation detected: {metrics['accuracy']} < {metrics['baseline']}")
+            logger.warning(
+                "Performance degradation detected: %f < %f",
+                metrics["accuracy"],
+                metrics["baseline"]
+            )
             
             # 2. TRIGGER RTB (This starts the chain from Spec 4.1)
             await self.trigger_rtb_event(
