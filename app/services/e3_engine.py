@@ -22,7 +22,7 @@ class EternalEvolutionEngine:
     def __init__(self, project_root: str):
         self.project_root = Path(project_root)
         self.ui_root = self.project_root / "apps/predator-analytics-ui"
-        self.backend_root = self.project_root / "services/api-gateway"
+        self.backend_root = self.project_root / "services/api_gateway"
         self._is_running = False
         self._evolution_cycles = 0
         self._last_evolution = None

@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, patch
 
 # Adjust path to find app
 # We need to add the parent of 'app' to sys.path
-sys.path.append("/Users/dima-mac/Documents/Predator_21/services/api-gateway")
+sys.path.append("/Users/dima-mac/Documents/Predator_21/services/api_gateway")
 
 # Mock things before importing chaos_tester
 # We need to mock 'app.services.truth_ledger' and 'libs.core.structured_logger'

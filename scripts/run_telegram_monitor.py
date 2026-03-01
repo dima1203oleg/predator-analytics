@@ -13,7 +13,7 @@ import time
 
 
 # Adjust path to access app modules
-sys.path.append(os.path.join(os.getcwd(), 'services/api-gateway'))
+sys.path.append(os.path.join(os.getcwd(), 'services/api_gateway'))
 
 from sqlalchemy import select
 

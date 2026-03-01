@@ -102,7 +102,7 @@ jobs:
 
       - name: "🧪 Pytest (юніт-тести)"
         env:
-          DATABASE_URL: postgresql://predator:predator_test@localhost:5432/predator_test
+          DATABASE_URL: postgresql+asyncpg://predator:predator_test@localhost:5432/predator_test
           REDIS_URL: redis://localhost:6379/0
         run: |
           python -m pytest tests/ -v --tb=short --cov=app --cov-report=xml:coverage.xml --cov-report=term-missing

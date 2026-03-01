@@ -32,7 +32,7 @@ services:
     ports:
       - "4000:4000"
     volumes:
-      - ./services/api-gateway/configs/litellm_config.yaml:/app/config.yaml:ro
+      - ./services/api_gateway/configs/litellm_config.yaml:/app/config.yaml:ro
     environment:
       # ── 7 ключів Gemini (ротація під навантаженням) ──
       GEMINI_KEY_1: ${GEMINI_KEY_1}

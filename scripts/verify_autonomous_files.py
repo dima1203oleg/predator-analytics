@@ -31,15 +31,15 @@ def main():
     files_to_check = [
         # Код
         (
-            project_root / "services/api-gateway/app/services/autonomous_intelligence_v2.py",
+            project_root / "services/api_gateway/app/services/autonomous_intelligence_v2.py",
             "Autonomous Intelligence v2.0 - Основний код"
         ),
         (
-            project_root / "services/api-gateway/app/api/v45_routes.py",
+            project_root / "services/api_gateway/app/api/v45_routes.py",
             "API Routes - Endpoints для AI v2.0"
         ),
         (
-            project_root / "services/api-gateway/app/main.py",
+            project_root / "services/api_gateway/app/main.py",
             "Main Application - Інтеграція AI v2.0"
         ),
 
@@ -110,7 +110,7 @@ def main():
         print("   - Інструкції: AUTONOMY_COMPLETE.md")
         print("   - Детальний аналіз: AUTONOMY_ANALYSIS_v45.md")
         print("\n🚀 Наступні кроки:")
-        print("   1. Запустити backend: cd services/api-gateway && python -m uvicorn app.main:app --reload")
+        print("   1. Запустити backend: cd services/api_gateway && python -m uvicorn app.main:app --reload")
         print("   2. Перевірити статус: curl http://localhost:8000/system/autonomy/status")
         print("   3. Моніторити роботу через API endpoints")
     else:

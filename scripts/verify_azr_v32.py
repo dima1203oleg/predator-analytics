@@ -47,7 +47,7 @@ async def test_azr_logic():
         from services.api_gateway.app.services.azr_engine_v32 import AZREngineV32
     except ImportError:
         # Налаштування шляху для імпорту
-        sys.path.append(os.path.join(os.getcwd(), 'services/api-gateway'))
+        sys.path.append(os.path.join(os.getcwd(), 'services/api_gateway'))
         from app.services.azr_engine_v32 import AZREngineV32
 
     # Ініціалізація

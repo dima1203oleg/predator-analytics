@@ -19,7 +19,7 @@ def status():
     """Check connectivity to MCP DevTools server."""
     console.print("📡 Scanning for MCP Server...")
     # This usually works via Stdio, but we can monitor the process
-    os.system("pgrep -f 'services/mcp-devtools/server.py' && echo '[green]✓ DevTools Server ONLINE[/green]' || echo '[red]✗ DevTools Server OFFLINE[/red]'")
+    os.system("pgrep -f 'services/mcp_devtools/server.py' && echo '[green]✓ DevTools Server ONLINE[/green]' || echo '[red]✗ DevTools Server OFFLINE[/red]'")
 
 @app.command()
 def tools():
@@ -29,7 +29,7 @@ def tools():
     table.add_column("Capability", style="magenta")
     table.add_column("Description")
 
-    # Static list based on services/mcp-devtools/server.py
+    # Static list based on services/mcp_devtools/server.py
     table.add_row("python", "run_python_lint", "Ruff-powered code clean")
     table.add_row("ui", "run_ui_lint", "Oxlint-powered UI Polish")
     table.add_row("ui", "run_dead_code", "Dead code cleanup via Knip")

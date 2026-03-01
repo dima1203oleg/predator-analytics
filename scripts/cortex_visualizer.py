@@ -115,10 +115,10 @@ def analyze_system():
     print(f"{BOLD}{MAGENTA}🧠 AZR CORTEX VISUALIZER{RESET} - Scanning Neural Architecture...")
 
     components = [
-        Component("API Gateway", "services/api-gateway", "service", ["PostgreSQL", "Redis", "Ollama"]),
-        Component("Constitutional Guard", "services/constitutional-core", "service", ["Truth Ledger"]),
-        Component("SOM (Sovereign Observer)", "services/constitutional-core/app/modules/som", "service", ["API Gateway", "PostgreSQL"]),
-        Component("MCP DevTools", "services/mcp-devtools", "service", []),
+        Component("API Gateway", "services/api_gateway", "service", ["PostgreSQL", "Redis", "Ollama"]),
+        Component("Constitutional Guard", "services/constitutional_core", "service", ["Truth Ledger"]),
+        Component("SOM (Sovereign Observer)", "services/constitutional_core/app/modules/som", "service", ["API Gateway", "PostgreSQL"]),
+        Component("MCP DevTools", "services/mcp_devtools", "service", []),
         Component("Predator Analytics UI", "apps/predator-analytics-ui", "frontend", ["API Gateway", "SOM"]),
         Component("AZR Agent", "agents", "agent", ["predatorctl"]), # Assuming root agents dir or specific
         # Infra

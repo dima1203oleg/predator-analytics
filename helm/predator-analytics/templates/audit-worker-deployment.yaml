@@ -27,7 +27,7 @@ spec:
       containers:
         - name: audit-worker
           image: "ghcr.io/predator-analytics/audit-worker:latest"
-          command: ["python", "services/audit-worker/worker.py"]
+          command: ["python", "services/audit_worker/worker.py"]
           env:
             - name: DATABASE_URL
               value: "postgresql://predator_app:$(DB_PASSWORD)@{{ include "predator-analytics.fullname" . }}-postgresql:5432/predator_audit"

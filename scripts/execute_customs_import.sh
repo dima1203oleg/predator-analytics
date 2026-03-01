@@ -5,7 +5,7 @@
 
 INPUT_FILE="$1"
 CONTAINER_NAME="predator_backend"
-TEMP_DIR="services/api-gateway/app/data"
+TEMP_DIR="services/api_gateway/app/data"
 CONTAINER_PATH="/app/app/data/import_target.xlsx"
 
 if [ -z "$INPUT_FILE" ]; then
@@ -21,9 +21,9 @@ fi
 echo "📦 Preparing to import: $INPUT_FILE"
 
 # Ensure target directory exists for Docker mount
-# In our docker-compose.yml: ./services/api-gateway/app:/app/app
-# So we place it in services/api-gateway/app/data
-MOUNTED_DATA_DIR="services/api-gateway/app/data"
+# In our docker-compose.yml: ./services/api_gateway/app:/app/app
+# So we place it in services/api_gateway/app/data
+MOUNTED_DATA_DIR="services/api_gateway/app/data"
 mkdir -p "$MOUNTED_DATA_DIR"
 
 # Copy file to a location mounted in the container

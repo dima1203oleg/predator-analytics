@@ -9,8 +9,8 @@ REMOTE_BASE="/home/dima/predator-analytics"
 LOCAL_UI="/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui"
 REMOTE_UI="$REMOTE_BASE/apps/predator-analytics-ui"
 
-LOCAL_API="/Users/dima-mac/Documents/Predator_21/services/api-gateway"
-REMOTE_API="$REMOTE_BASE/services/api-gateway"
+LOCAL_API="/Users/dima-mac/Documents/Predator_21/services/api_gateway"
+REMOTE_API="$REMOTE_BASE/services/api_gateway"
 
 DOCKER_COMPOSE="/Users/dima-mac/Documents/Predator_21/docker-compose.prod.yml"
 

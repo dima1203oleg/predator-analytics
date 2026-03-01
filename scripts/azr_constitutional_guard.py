@@ -30,7 +30,7 @@ ALLOWED_NON_UKR_PATHS = [
     "build",
     "__pycache__",
     "libs/bridge", # Third-party libs
-    "services/mcp-devtools" # System code
+    "services/mcp_devtools" # System code
 ]
 
 def check_runtime_version():
@@ -98,7 +98,7 @@ def check_ui_sentinel_health():
     """Verify that UI Sentinel is operational and scanning."""
     logger.info("🔍 Перевірка стану UI Sentinel (Autonomous UI Guard)...")
     # Simulate a check for sentinel status
-    if os.path.exists(ROOT_DIR / "services/mcp-devtools/ui_sentinel.py"):
+    if os.path.exists(ROOT_DIR / "services/mcp_devtools/ui_sentinel.py"):
         logger.info("✅ UI Sentinel виявлений та готовий до роботи.")
         return True
     logger.error("❌ UI Sentinel MISSING! Потрібна деплоймент конфігурація.")

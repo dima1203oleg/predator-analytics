@@ -13,7 +13,7 @@ app = typer.Typer(help="🛡️ PREDATOR UI Sentinel - Continuous Web Interface 
 console = Console()
 
 # UI Sentinel Path
-SENTINEL_SCRIPT = "/Users/dima-mac/Documents/Predator_21/services/mcp-devtools/ui_sentinel.py"
+SENTINEL_SCRIPT = "/Users/dima-mac/Documents/Predator_21/services/mcp_devtools/ui_sentinel.py"
 
 @app.command()
 def audit():

@@ -7,7 +7,7 @@ import time
 
 # Add project root and service root to path
 ROOT_DIR = "/Users/dima-mac/Documents/Predator_21"
-SERVICE_DIR = os.path.join(ROOT_DIR, "services/api-gateway")
+SERVICE_DIR = os.path.join(ROOT_DIR, "services/api_gateway")
 
 sys.path.insert(0, ROOT_DIR)
 sys.path.insert(0, SERVICE_DIR)

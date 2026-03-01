@@ -8,7 +8,7 @@
 
 cd "/Users/dima-mac/Documents/Predator_21"
 PROJECT_ROOT=$(pwd)
-PYTHON_BIN="$PROJECT_ROOT/services/mcp-devtools/.venv/bin/python"
+PYTHON_BIN="$PROJECT_ROOT/services/mcp_devtools/.venv/bin/python"
 LOG_DIR="/tmp/azr_logs"
 mkdir -p "$LOG_DIR"
 
@@ -39,10 +39,10 @@ alias predatorctl="$PREDATORCTL_BIN $PROJECT_ROOT/predatorctl/predatorctl/app.py
 PREDATORCTL="$PREDATORCTL_BIN $PROJECT_ROOT/predatorctl/predatorctl/app.py"
 if ! lsof -i :8765 > /dev/null; then
     echo "📡 Starting UI Sentinel MCP Server (Port 8765)..."
-    PYTHONPATH=. $PYTHON_BIN services/mcp-devtools/ui_sentinel.py > "$LOG_DIR/ui_sentinel.log" 2>&1 &
+    PYTHONPATH=. $PYTHON_BIN services/mcp_devtools/ui_sentinel.py > "$LOG_DIR/ui_sentinel.log" 2>&1 &
 fi
 
-if ! pgrep -f "services/mcp-devtools/server.py" > /dev/null; then
+if ! pgrep -f "services/mcp_devtools/server.py" > /dev/null; then
     echo "🛠️ Starting MCP DevTools Server..."
     ./scripts/start_mcp_devtools.sh > "$LOG_DIR/mcp.log" 2>&1 &
 fi
@@ -56,7 +56,7 @@ fi
 # 2. Start Backend API (FastAPI)
 if ! lsof -i :8090 > /dev/null; then
     echo "⚙️ Starting Backend API Gateway (Port 8090)..."
-    cd services/api-gateway
+    cd services/api_gateway
     # Assuming uvicorn is in the venv managed by start_mcp or similar
     # For now, running directly via the found 3.10 python if it has deps
     nohup $PYTHON_BIN -m uvicorn app.main:app --host 0.0.0.0 --port 8090 > "$LOG_DIR/backend.log" 2>&1 &

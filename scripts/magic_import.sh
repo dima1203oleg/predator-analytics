@@ -2,7 +2,7 @@
 # Magic Import Script - Bypassing Docker CLI restrictions
 
 FILE_PATH="$1"
-TARGET_DIR="services/api-gateway/app/data_staging"
+TARGET_DIR="services/api_gateway/app/data_staging"
 FILENAME=$(basename "$FILE_PATH")
 
 echo "magic_import: 🪄 Starting API-based import..."

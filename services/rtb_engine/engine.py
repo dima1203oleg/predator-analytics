@@ -29,7 +29,7 @@ app = FastAPI(title="Predator RTB Engine", version="25.1")
 SYSTEM_MODE = "ACTIVE"  # ACTIVE, QUARANTINE, HALTED
 
 # Initialize Infrastructure
-RULES_PATH = os.getenv("RULES_PATH", "services/rtb-engine/rules/model_rules.yaml")
+RULES_PATH = os.getenv("RULES_PATH", "services/rtb_engine/rules/model_rules.yaml")
 loader = RuleLoader(RULES_PATH)
 loader.load_rules()
 

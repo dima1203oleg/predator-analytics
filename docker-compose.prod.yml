@@ -49,7 +49,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: services/api-gateway/Dockerfile.prod
+      dockerfile: services/api_gateway/Dockerfile.prod
     container_name: predator-backend
     restart: unless-stopped
     shm_size: '2gb'
@@ -285,7 +285,7 @@ services:
   celery-worker:
     build:
       context: .
-      dockerfile: services/api-gateway/Dockerfile.prod
+      dockerfile: services/api_gateway/Dockerfile.prod
     container_name: predator-celery-worker
     command: celery -A app.core.celery_app worker --loglevel=info
     env_file: .env
@@ -315,7 +315,7 @@ services:
   celery-beat:
     build:
       context: .
-      dockerfile: services/api-gateway/Dockerfile.prod
+      dockerfile: services/api_gateway/Dockerfile.prod
     container_name: predator-celery-beat
     command: celery -A app.core.celery_app beat --loglevel=info
     env_file: .env

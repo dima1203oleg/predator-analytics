@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 
 # Adjust path
-sys.path.append("/Users/dima-mac/Documents/Predator_21/services/api-gateway")
+sys.path.append("/Users/dima-mac/Documents/Predator_21/services/api_gateway")
 
 # Mock libs
 sys.modules["libs"] = MagicMock()

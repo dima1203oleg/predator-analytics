@@ -11,7 +11,7 @@ import unittest
 # Add project root
 sys.path.append(os.getcwd())
 # Add api-gateway root to find 'app'
-sys.path.append(os.path.join(os.getcwd(), "services/api-gateway"))
+sys.path.append(os.path.join(os.getcwd(), "services/api_gateway"))
 
 import pytest
 
