@@ -22,9 +22,11 @@ opensearch-py[async]>=2.4.2
 
 # Data & AI (no paid LLM APIs per spec)
 numpy==1.26.4
-pandas==2.2.1
-scipy==1.14.0
-scikit-learn==1.5.2
+pandas==2.2.2
+scikit-learn==1.4.2
+scipy==1.13.0
+sentence-transformers==2.7.0
+qdrant-client==1.8.2
 tenacity==8.5.0
 
 # Messaging (Signal Bus)
@@ -47,11 +49,16 @@ uuid6==2024.7.10
 # MLOps Client
 mlflow-skinny==2.16.0
 
-# Security
+# Security & Utility
 python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.1.2
+pyyaml==6.0.1
+watchdog==4.0.0
 
 # DEV / TEST
 pytest==8.3.3
 pytest-asyncio==0.24.0
+pytest-timeout==2.3.1
 bandit==1.7.10
 ruff==0.6.0
