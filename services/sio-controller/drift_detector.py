@@ -12,14 +12,14 @@ from services.shared.logging_config import get_logger
 logger = get_logger(__name__, component="sio-controller")
 
 class DriftDetector:
-    """
-    Detects data and model drift using Evidently/WhyLogs principles.
+    """Detects data and model drift using Evidently/WhyLogs principles.
+
     In Phase 1/2, it provides a simulated analysis that interfaces with RTB.
     """
     
     async def analyze_drift(self, model_id: str, dataset_ref: str) -> dict[str, Any]:
-        """
-        Performs drift analysis and returns metrics.
+        """Performs drift analysis and returns metrics.
+
         In production, this would call Evidently or WhyLogs.
         """
         logger.info("Starting drift analysis for %s", model_id, extra={"dataset": dataset_ref})
