@@ -54,7 +54,6 @@ from app.api.routers import e2e as testing_router
 from app.api.routers import health as health_router
 from app.api.routers import opponent as opponent_router
 from app.api.routers import search as search_router
-from app.api.routers import som as som_router
 from app.api.routers import stats as stats_router
 from app.routers.datasets import router as datasets_router
 from app.routers.graph import router as graph_router
@@ -78,14 +77,16 @@ app.include_router(newspaper_router, prefix="/api/v1")
 
 # Core Modules
 app.include_router(auth_router.router, prefix="/api/v1")
-app.include_router(stats_router.router, prefix="/api/v1")
+try:
+    app.include_router(stats_router.router, prefix="/api/v1")
+except Exception as e:
+    logger.warning(f"Stats Router failed to load: {e}")
 app.include_router(search_router.router, prefix="/api/v1")
 app.include_router(health_router.router, prefix="/api/v45")
 app.include_router(council_router.router, prefix="/api/v1")
 app.include_router(opponent_router.router, prefix="/api/v1")
 app.include_router(testing_router.router, prefix="/api/v1")
 app.include_router(customs_router.router, prefix="/api/v1")
-app.include_router(som_router.router, prefix="/api/v1")
 
 # v32 Autonomous Response
 try:
