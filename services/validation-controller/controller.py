@@ -1,8 +1,6 @@
+"""Validation Controller API for Predator Analytics v45.1.
 
-"""
-Module: controller
-Component: validation-controller
-Predator Analytics v45.1
+This service acts as an entry point for model validation requests.
 """
 import logging
 from fastapi import FastAPI, BackgroundTasks
