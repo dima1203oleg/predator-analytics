@@ -1,8 +1,6 @@
+"""Metrics definitions for Predator Analytics v45.1.
 
-"""
-Module: metrics
-Component: shared
-Predator Analytics v45.1
+Component: shared.
 Section 3.5 of Spec.
 """
 from prometheus_client import Counter, Histogram, Gauge

@@ -1,23 +1,23 @@
+"""Logging configuration for Predator Analytics v45.1.
 
+Component: shared.
 """
-Module: logging_config
-Component: shared
-Predator Analytics v45.1
-"""
-import logging
 import json
+import logging
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
+
 class JSONFormatter(logging.Formatter):
-    """
-    Structured JSON Formatter for Predator Analytics.
+    """Structured JSON Formatter for Predator Analytics.
+
     Ensures all logs are machine-readable for Loki/OpenSearch.
     """
+
     def format(self, record: logging.LogRecord) -> str:
         log_record: dict[str, Any] = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(tz=timezone.utc).isoformat(),
             "level": record.levelname,
             "logger": record.name,
             "message": record.getMessage(),
@@ -47,10 +47,9 @@ class JSONFormatter(logging.Formatter):
 
         return json.dumps(log_record)
 
+
 def setup_logging(component_name: str, level: str = "INFO") -> None:
-    """
-    Configures root logger to output JSON to stdout.
-    """
+    """Configure root logger to output JSON to stdout."""
     # Create handler
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(JSONFormatter())
@@ -60,32 +59,32 @@ def setup_logging(component_name: str, level: str = "INFO") -> None:
     root_logger.handlers = [handler]
     root_logger.setLevel(getattr(logging, level.upper()))
 
-    # Inject component name filter (optional, simplest is to just rely on extra)
-    # But for cleaner logs, we can set a factory or adapter. 
-    # For now, we assume usage via logger.info(..., extra={"component": "..."}) 
-    # or rely on the global setup.
-    
     # Silence noisy libraries
     logging.getLogger("uvicorn.access").handlers = [handler]
     logging.getLogger("uvicorn.error").handlers = [handler]
-    
+
     # Set proper level for third-party libs
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("chromadb").setLevel(logging.WARNING)
 
     # Log startup
-    root_logger.info(f"Logging initialized for {component_name}", extra={"component": component_name})
+    root_logger.info(
+        "Logging initialized for %s", component_name,
+        extra={"component": component_name},
+    )
+
 
 class ComponentLogger(logging.LoggerAdapter):
-    """
-    Adapter to automatically inject component name into logs.
-    """
+    """Adapter to automatically inject component name into logs."""
+
     def __init__(self, logger: logging.Logger, component: str):
         super().__init__(logger, {"component": component})
 
     def process(self, msg, kwargs):
         return msg, kwargs
 
+
 def get_logger(name: str, component: str = "unknown") -> logging.LoggerAdapter:
+    """Get a component-aware logger."""
     logger = logging.getLogger(name)
     return ComponentLogger(logger, component)
