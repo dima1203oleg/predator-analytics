@@ -1,0 +1,85 @@
+# ══════════════════════════════════════════════════════════════════
+# docker-compose.mac.yml
+# PREDATOR Analytics — MacBook M3 (Локальна розробка)
+# Запуск: docker compose -f docker-compose.mac.yml up -d
+#
+# ЗОНА 1: Тільки UI + інструменти розробки
+#   ├── Frontend UI         :3030  (dev-сервер Vite)
+#   └── SonarQube           :9000  (локальна перевірка коду)
+#
+# Всі запити UI → NVIDIA Server (194.177.1.240)
+# ══════════════════════════════════════════════════════════════════
+
+name: predator-mac
+
+services:
+
+  # ═══════════════════════════════════════════════════════════════
+  # 🖥️ Frontend UI — Dev режим (Vite hot-reload)
+  # Зміни в коді → миттєво видно в браузері
+  # ═══════════════════════════════════════════════════════════════
+  frontend-dev:
+    image: node:20-alpine
+    container_name: predator_ui_dev
+    working_dir: /app
+    command: sh -c "npm install --legacy-peer-deps && npx vite --port 3030 --host 0.0.0.0"
+    ports:
+      - "3030:3030"
+    volumes:
+      # Монтуємо код локально — hot-reload без rebuild
+      - ./apps/predator-analytics-ui:/app:cached
+      - ui_node_modules:/app/node_modules
+    environment:
+      # ← Всі API запити → NVIDIA Server (змінити IP якщо потрібно)
+      VITE_API_URL: "http://194.177.1.240:9080"
+      VITE_WS_URL: "ws://194.177.1.240:9080/ws"
+      VITE_LITELLM_URL: "http://194.177.1.240:4000"
+      VITE_LITELLM_KEY: "${LITELLM_MASTER_KEY:-predator-litellm-secret}"
+      VITE_ENV: "mac-dev"
+      VITE_MOCK_API: "${USE_MOCK_API:-false}"
+      # Якщо сервер недоступний — можна перемкнутись на mock:
+      # VITE_MOCK_API: "true"
+      NODE_ENV: development
+    restart: unless-stopped
+    networks: [predator-mac-net]
+
+  # ═══════════════════════════════════════════════════════════════
+  # 🔍 SonarQube — локальна перевірка коду на Mac
+  # http://localhost:9000 (admin/admin при першому запуску)
+  # ═══════════════════════════════════════════════════════════════
+  sonarqube:
+    image: sonarqube:10.4-community
+    container_name: predator_sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+      # Підключення до PostgreSQL на NVIDIA Server для збереження аналізів
+      SONAR_JDBC_URL: "jdbc:postgresql://194.177.1.240:5432/sonarqube"
+      SONAR_JDBC_USERNAME: ${SONAR_POSTGRES_USER:-admin}
+      SONAR_JDBC_PASSWORD: ${SONAR_POSTGRES_PASSWORD:-predator_password}
+    volumes:
+      - sonar_data:/opt/sonarqube/data
+      - sonar_logs:/opt/sonarqube/logs
+      - sonar_extensions:/opt/sonarqube/extensions
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    deploy:
+      resources:
+        limits:
+          memory: 3G       # SonarQube потребує мінімум 2GB
+    restart: unless-stopped
+    networks: [predator-mac-net]
+
+volumes:
+  ui_node_modules:          # кешуємо node_modules в volume (швидше)
+  sonar_data:
+  sonar_logs:
+  sonar_extensions:
+
+networks:
+  predator-mac-net:
+    driver: bridge
+    name: predator-mac-net
