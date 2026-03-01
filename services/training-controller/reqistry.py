@@ -3,7 +3,6 @@
 Component: training-controller
 """
 import logging
-from datetime import datetime
 
 from pydantic import BaseModel
 
@@ -19,8 +18,8 @@ class ModelMetadata(BaseModel):
     training_params: dict
 
 class ModelRegistry:
-    """
-    Abstraction for MLflow Model Registry.
+    """Abstraction for MLflow Model Registry.
+
     In Phase 1, we simulate registry operations or wrap MLflow Client.
     """
     
