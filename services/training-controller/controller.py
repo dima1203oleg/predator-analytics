@@ -20,7 +20,7 @@ app = FastAPI(title="Predator Training Controller", version="25.1")
 # Initialize K8s Client
 try:
     config.load_incluster_config()
-except:
+except Exception:
     try:
         config.load_kube_config()
     except Exception as e:
@@ -88,8 +88,8 @@ async def launch_training_job(event: PredatorEvent):
         batch_api.create_namespaced_job(namespace="predator-analytics", body=job_spec)
         logger.info("Training Job created: %s", job_spec.metadata.name)
 
-    except Exception as e:
-        logger.exception("Failed to create training job: %s", e)
+    except Exception:
+        logger.exception("Failed to create training job")
 
 @app.post("/events/train")
 async def handle_training_trigger(event_dict: dict, background_tasks: BackgroundTasks):
