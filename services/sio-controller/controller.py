@@ -6,9 +6,6 @@ import asyncio
 import json
 import logging
 import os
-import random
-from typing import Any
-
 import httpx
 from datetime import datetime
 from services.shared.logging_config import get_logger
