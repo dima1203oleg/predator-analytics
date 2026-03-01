@@ -1,31 +1,93 @@
-# Antigravity Rules — PREDATOR Analytics
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🦁 PREDATOR ANALYTICS — GOD-MODE SYSTEM RULES
+# Версія: 2.0 | Дата: 2026-03-01
+# Маніфест архітектури рівня Netflix / Palantir / monobank
+# ═══════════════════════════════════════════════════════════════════════════════
 
-1. **Language**: Завжди відповідати українською.
-2. **Context**: Deployment target — NVIDIA server (k3s). Local environment — Mac (Development).
-3. **Tools**: Використовувати k9s для управління кластером.
-4. **Context7**: Завжди використовувати Context7 MCP для генерації коду, документації та API.
-5. **Git**: Після кожного успішного фіксу або фази — пропонувати git commit з описом.
-6. **Deployment Strategy**: На Mac розгортаємо **ТІЛЬКИ** frontend (`apps/predator-analytics-ui`). Усі інші сервіси (Backend, Databases, Celery, AI Stack) працюють виключно на **NVIDIA server**. Локальний запуск бекенду на Mac заборонений (виняток — Mock API).
+# ── ПРАВИЛО 1: МОВА ──
+# Завжди відповідати ВИКЛЮЧНО українською мовою.
+# Всі коментарі, документація, інтерфейси, назви комітів та логи — українською.
+
+# ── ПРАВИЛО 2: АРХІТЕКТУРА ──
+# Mac M3 = Тонкий клієнт (Antigravity IDE + Frontend Dev :3030).
+# NVIDIA Server = 100% важкої роботи (Backend, DB, AI, тести, деплой).
+# Мережа: Tailscale VPN / HTTP API між зонами.
+
+# ── ПРАВИЛО 3: BACKEND ──
+# Backend пишеш ТІЛЬКИ на Python 3.12 (strict typing).
+# FastAPI — єдиний фреймворк. Async/await всюди.
+# Ruff (лінтер) + Mypy (strict) — обов'язкові перед кожним комітом.
+
+# ── ПРАВИЛО 4: FRONTEND ──
+# Фреймворк: Vite + React + Tailwind CSS + Shadcn UI.
+# State: TanStack Query (React Query) для API кешування.
+# Стилізація: Tailwind utility classes + Shadcn компоненти.
+# Агент маніпулює DOM через чітку структуру та зрозумілі id/aria-label.
+
+# ── ПРАВИЛО 5: ТЕСТУВАННЯ ──
+# Backend: Pytest для юніт-тестів Python.
+# Frontend DOM: Vitest + React Testing Library (шукай кнопку по тексту, не по div.class-123).
+# E2E: Playwright (повний шлях користувача у headless браузері).
+# Quality Gate: SonarQube на NVIDIA Server (:9100) — блокує merge.
+
+# ── ПРАВИЛО 6: CONTEXT7 ──
+# Завжди використовувати Context7 MCP для генерації коду, документації та API.
+
+# ── ПРАВИЛО 7: GIT ──
+# Після кожного успішного фіксу або фази — пропонувати git commit з описом.
+# Формат: "feat|fix|chore|docs(scope): опис українською"
+
+# ── ПРАВИЛО 8: DEPLOYMENT ──
+# На Mac розгортаємо ТІЛЬКИ frontend (apps/predator-analytics-ui).
+# Усі інші сервіси (Backend, DB, Celery, AI Stack) — на NVIDIA Server.
+# Локальний запуск бекенду на Mac заборонений (виняток — Mock API).
+# GitOps: GitHub Actions Self-Hosted Runner → ArgoCD → k3s.
+
+# ── ПРАВИЛО 9: ДІЄТА ТОКЕНІВ ──
+# НЕ читай: .venv, node_modules, dist, __pycache__, .git, coverage/, .mypy_cache
 
 ## ⚡ WEB INTERFACE — КАНОНІЧНІ ПРАВИЛА (НЕЗМІННІ)
 
-6. **ЄДИНИЙ ПОРТ**: Веб-інтерфейс PREDATOR Analytics завжди запускається на порту **3030**.
-   - URL: http://localhost:3030
-   - Ніколи не використовувати інший порт для основного UI.
+10. **ЄДИНИЙ ПОРТ**: Веб-інтерфейс PREDATOR Analytics завжди запускається на порту **3030**.
+    - URL: http://localhost:3030
+    - Ніколи не використовувати інший порт для основного UI.
 
-7. **ЄДИНА ДИРЕКТОРІЯ UI**: Єдина правильна версія веб-інтерфейсу:
-   - **Директорія**: `/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui`
-   - Це PREDATOR Analytics v45+ (повна версія з усіма компонентами).
-   - Ніякі інші директорії (public_ui, v30_ui_new, v30_ui, v30_final_3034) НЕ є робочою версією UI.
+11. **ЄДИНА ДИРЕКТОРІЯ UI**: Єдина правильна версія веб-інтерфейсу:
+    - **Директорія**: `/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui`
+    - Це PREDATOR Analytics v45+ (повна версія з усіма компонентами).
+    - Ніякі інші директорії (public_ui, v30_ui_new, v30_ui, v30_final_3034) НЕ є робочою версією UI.
 
-8. **ЗАПУСК UI**: Завжди запускати з директорії `/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui`:
-   ```bash
-   cd /Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui && npx vite --port 3030 --host
-   ```
+12. **ЗАПУСК UI**: Завжди запускати з директорії `/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui`:
+    ```bash
+    cd /Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui && npx vite --port 3030 --host
+    ```
 
-9. **MOCK API**: Якщо backend недоступний — запускати `/Users/dima-mac/Documents/Predator_21/mock-api-server.mjs` на порту **9080**.
+13. **MOCK API**: Якщо backend недоступний — запускати `/Users/dima-mac/Documents/Predator_21/mock-api-server.mjs` на порту **9080**.
 
-10. **УКРАЇНІЗАЦІЯ (MANDATORY)**: У цьому проекті ЗАВЖДИ має бути 100% українська локалізація.
+14. **УКРАЇНІЗАЦІЯ (MANDATORY)**: У цьому проекті ЗАВЖДИ має бути 100% українська локалізація.
     - Повна українізація веб-інтерфейсу: буквально кожне слово, кнопка, заголовок та повідомлення мають бути українською мовою.
     - Англійська мова в UI — це критична помилка.
     - Всі нові компоненти мають створюватися з українським текстом або використовувати i18n з пріоритетом UA.
+
+## 🔧 СТЕК ТЕХНОЛОГІЙ (КАНОНІЧНИЙ)
+
+| Шар | Технологія | Версія |
+|-----|-----------|--------|
+| Backend | Python + FastAPI | 3.12 |
+| Linter | Ruff | latest |
+| Type Check | Mypy (strict) | latest |
+| Backend Tests | Pytest + pytest-asyncio | latest |
+| Frontend | Vite + React | 5.x + 18.x |
+| UI Kit | Tailwind CSS + Shadcn UI | 3.x |
+| State | TanStack Query | 5.x |
+| Frontend Tests | Vitest + React Testing Library | latest |
+| E2E | Playwright | latest |
+| QA | SonarQube Community | 10.7 |
+| AI Gateway | LiteLLM | latest |
+| GPU Fallback | Ollama (Qwen2.5-Coder-7B) | latest |
+| Data | PostgreSQL 16, Redis 7 | latest |
+| Container | Docker + Docker Compose | latest |
+| Orchestration | Kubernetes (k3s) + Helm | latest |
+| GitOps | ArgoCD | latest |
+| CI/CD | GitHub Actions (Self-Hosted) | latest |
+| VPN | Tailscale | latest |
