@@ -94,8 +94,11 @@ describe('SmartDashboard View', () => {
         render(<SmartDashboard />)
 
         // Чекаємо на завантаження даних та рендеринг карток
-        await waitFor(() => {
-            expect(screen.getByText(/(Дохід|KPI|Активні)/i)).toBeInTheDocument()
-        })
+        // findByText чекає автоматично
+        const metricTitle = await screen.findByText(/Дохід/i)
+        expect(metricTitle).toBeInTheDocument()
+
+        const activeSegments = await screen.findByText(/Активні/i)
+        expect(activeSegments).toBeInTheDocument()
     })
 })

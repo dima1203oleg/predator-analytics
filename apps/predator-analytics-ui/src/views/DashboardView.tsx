@@ -5,7 +5,7 @@
  * Persona: TITAN (Business) / INQUISITOR (Control) / SOVEREIGN (Full Alpha)
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -174,8 +174,8 @@ const SmartDashboard: React.FC = () => {
         }
     }, [wsData]);
 
-    // Chart Options
-    const getProfitChartOption = () => ({
+    // ─── MEMOIZED CHART OPTIONS ──────────────────────────────────────────────
+    const profitChartOption = useMemo(() => ({
         backgroundColor: 'transparent',
         tooltip: {
             trigger: 'axis',
@@ -225,9 +225,9 @@ const SmartDashboard: React.FC = () => {
                 itemStyle: { borderRadius: [4, 4, 0, 0] }
             }
         ]
-    });
+    }), []);
 
-    const getSystemHealthOption = () => ({
+    const systemHealthOption = useMemo(() => ({
         backgroundColor: 'transparent',
         tooltip: {
             trigger: 'axis',
@@ -251,9 +251,9 @@ const SmartDashboard: React.FC = () => {
                 ]
             }
         ]
-    });
+    }), []);
 
-    const getRealtimeChartOption = () => ({
+    const realtimeChartOption = useMemo(() => ({
         backgroundColor: 'transparent',
         tooltip: {
             trigger: 'axis',
@@ -293,7 +293,7 @@ const SmartDashboard: React.FC = () => {
                 lineStyle: { color: '#8b5cf6', width: 1 }
             }
         ]
-    });
+    }), [realtimeData]);
 
     return (
         <div className="min-h-screen p-4 space-y-6 text-slate-100 bg-slate-950 lg:p-8">
@@ -396,7 +396,7 @@ const SmartDashboard: React.FC = () => {
                         </CardHeader>
                         <CardContent className="h-[350px]">
                             <ReactECharts
-                                option={getProfitChartOption()}
+                                option={profitChartOption}
                                 style={{ height: '100%', width: '100%' }}
                                 opts={{ renderer: 'svg' }}
                             />
@@ -422,7 +422,7 @@ const SmartDashboard: React.FC = () => {
                             <CardContent className="space-y-4">
                                 <div className="h-[120px]">
                                     <ReactECharts
-                                        option={getRealtimeChartOption()}
+                                        option={realtimeChartOption}
                                         style={{ height: '100%', width: '100%' }}
                                     />
                                 </div>
