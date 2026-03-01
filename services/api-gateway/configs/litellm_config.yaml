@@ -1,0 +1,157 @@
+# ══════════════════════════════════════════════════════════════════
+# LiteLLM AI Gateway — Predator Analytics
+# Сервер: 194.177.1.240
+# Балансує 7 ключів Gemini з auto-fallback та retry-логікою
+# Всі запити з Mac і Frontend → цей шлюз на NVIDIA Server
+# OpenAI-сумісний API: POST http://194.177.1.240:4000/chat/completions
+# ══════════════════════════════════════════════════════════════════
+
+model_list:
+  # ── Gemini 2.0 Flash (основна модель — швидка і дешева) ──────────
+  - model_name: gemini-flash          # публічна назва для запитів
+    litellm_params:
+      model: gemini/gemini-2.0-flash-exp
+      api_key: os.environ/GEMINI_KEY_1
+      rpm: 15                         # free tier: 15 RPM per key
+      tpm: 1000000
+
+  - model_name: gemini-flash
+    litellm_params:
+      model: gemini/gemini-2.0-flash-exp
+      api_key: os.environ/GEMINI_KEY_2
+      rpm: 15
+      tpm: 1000000
+
+  - model_name: gemini-flash
+    litellm_params:
+      model: gemini/gemini-2.0-flash-exp
+      api_key: os.environ/GEMINI_KEY_3
+      rpm: 15
+      tpm: 1000000
+
+  - model_name: gemini-flash
+    litellm_params:
+      model: gemini/gemini-2.0-flash-exp
+      api_key: os.environ/GEMINI_KEY_4
+      rpm: 15
+      tpm: 1000000
+
+  - model_name: gemini-flash
+    litellm_params:
+      model: gemini/gemini-2.0-flash-exp
+      api_key: os.environ/GEMINI_KEY_5
+      rpm: 15
+      tpm: 1000000
+
+  - model_name: gemini-flash
+    litellm_params:
+      model: gemini/gemini-2.0-flash-exp
+      api_key: os.environ/GEMINI_KEY_6
+      rpm: 15
+      tpm: 1000000
+
+  - model_name: gemini-flash
+    litellm_params:
+      model: gemini/gemini-2.0-flash-exp
+      api_key: os.environ/GEMINI_KEY_7
+      rpm: 15
+      tpm: 1000000
+
+  # ── Gemini 2.0 Flash Thinking (розмірковування, важчі задачі) ────
+  - model_name: gemini-thinking
+    litellm_params:
+      model: gemini/gemini-2.0-flash-thinking-exp
+      api_key: os.environ/GEMINI_KEY_1
+      rpm: 10
+
+  - model_name: gemini-thinking
+    litellm_params:
+      model: gemini/gemini-2.0-flash-thinking-exp
+      api_key: os.environ/GEMINI_KEY_2
+      rpm: 10
+
+  - model_name: gemini-thinking
+    litellm_params:
+      model: gemini/gemini-2.0-flash-thinking-exp
+      api_key: os.environ/GEMINI_KEY_3
+      rpm: 10
+
+  # ── Gemini 1.5 Pro (для довгих контекстів — 1M токенів) ──────────
+  - model_name: gemini-pro
+    litellm_params:
+      model: gemini/gemini-1.5-pro-latest
+      api_key: os.environ/GEMINI_KEY_4
+      rpm: 2
+      tpm: 32000
+
+  - model_name: gemini-pro
+    litellm_params:
+      model: gemini/gemini-1.5-pro-latest
+      api_key: os.environ/GEMINI_KEY_5
+      rpm: 2
+      tpm: 32000
+
+  # ── Ollama (локальний LLM на NVIDIA GPU — безкоштовно) ───────────
+  - model_name: ollama-llama           # fallback без інтернету
+    litellm_params:
+      model: ollama/llama3.2
+      api_base: http://ollama:11434    # внутрішній docker-сервіс
+
+  - model_name: ollama-qwen
+    litellm_params:
+      model: ollama/qwen2.5
+      api_base: http://ollama:11434
+
+  # ── Alias: "default" → gemini-flash (для сумісності з Antigravity) ──
+  - model_name: default
+    litellm_params:
+      model: gemini/gemini-2.0-flash-exp
+      api_key: os.environ/GEMINI_KEY_1
+
+# ══════════════════════════════════════════════════════════════════
+# Маршрутизатор: балансування навантаження між 7 ключами
+# ══════════════════════════════════════════════════════════════════
+router_settings:
+  routing_strategy: usage-based-routing-v2  # балансує за реальним RPM
+  num_retries: 3                            # при помилці — спробувати інший ключ
+  timeout: 60
+  retry_after: 5                            # секунд між спробами
+  allowed_fails: 2                          # скільки разів ключ може впасти
+
+  # Redis для спільного стану між репліками LiteLLM
+  redis_host: redis                         # docker service name
+  redis_port: 6379
+  redis_password: os.environ/REDIS_PASSWORD_LITE
+
+  # Кеш відповідей (економія RPM)
+  cache_params:
+    type: redis
+    max_connections: 50
+    supported_call_types:
+      - acompletion
+      - completion
+
+# ══════════════════════════════════════════════════════════════════
+# Загальні налаштування LiteLLM Proxy
+# ══════════════════════════════════════════════════════════════════
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY  # API ключ для захисту gateway
+  database_url: os.environ/DATABASE_URL       # зберігати логи/billing у Postgres
+  store_model_in_db: true
+  disable_spend_logs: false
+
+  # CORS для Mac Frontend
+  allow_origins:
+    - "http://localhost:3030"
+    - "http://127.0.0.1:3030"
+    - "http://194.177.1.240:3030"
+    - "*"                                     # для розробки; обмежити у prod
+
+litellm_settings:
+  # Логування у форматі OpenTelemetry → Prometheus
+  success_callback: ["prometheus"]
+  failure_callback: ["prometheus"]
+  # Обертання помилок у зрозумілі повідомлення
+  json_logs: true
+  set_verbose: false
+  drop_params: true                           # ігнорувати непідтримувані параметри
