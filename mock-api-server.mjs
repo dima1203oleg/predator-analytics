@@ -2753,30 +2753,55 @@ const server = app.listen(PORT, () => {
 });
 
 // WebSocket for real-time updates
-const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({ noServer: true });
+
+server.on('upgrade', (request, socket, head) => {
+  const pathname = new URL(request.url, `http://${request.headers.host}`).pathname;
+
+  if (pathname === '/api/v45/ws/omniscience') {
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.emit('connection', ws, request);
+    });
+  } else {
+    socket.destroy();
+  }
+});
+
 wss.on('connection', (ws) => {
+  console.log('✅ New Omniscience WS Client connected');
+
   const interval = setInterval(() => {
+    if (ws.readyState !== 1) return;
+
+    const cpu = 24 + Math.random() * 15;
+    const ram = 45 + Math.random() * 20;
+    const timestamp = new Date().toISOString();
+
     ws.send(JSON.stringify({
-      type: 'metrics',
-      data: { cpu: 24 + Math.random() * 15, memory: 45 + Math.random() * 20, timestamp: new Date().toISOString(), db_records: DB_FACTS.length },
-      // Omniscience compatibility
       pulse: {
-        score: 98,
-        status: 'HEALTHY',
-        reasons: ['Neural Core Operational'],
+        score: pulseScore,
+        status: pulseScore > 90 ? 'HEALTHY' : 'DEGRADED',
+        reasons: pulseScore > 90 ? ['Neural Core Operational'] : ['Minor latency in sector 7'],
         alerts: []
       },
       system: {
-        cpu_percent: 24 + Math.random() * 15,
-        memory_percent: 45 + Math.random() * 20,
-        timestamp: new Date().toISOString(),
+        cpu_percent: cpu,
+        memory_percent: ram,
+        timestamp: timestamp,
         active_containers: 12,
-        container_raw: "v45-ready"
+        container_raw: "v45-ready-nvidia"
       },
+      training: { active: false, progress: 0 },
+      audit_logs: [],
       sagas: [],
-      audit_logs: []
+      v45Realtime: {
+        cpu: cpu,
+        memory: ram,
+        timestamp: timestamp
+      }
     }));
   }, 2000);
+
   ws.on('close', () => clearInterval(interval));
 });
 

@@ -54,35 +54,49 @@ const MetricCard: React.FC<{
     trendType?: 'up' | 'down' | 'neutral';
     icon: React.ReactNode;
     description?: string;
-    color?: string;
+    color?: 'blue' | 'emerald' | 'amber' | 'rose' | 'cyan' | 'magenta';
 }> = ({ title, value, trend, trendType, icon, description, color = 'blue' }) => (
     <motion.div
-        whileHover={{ scale: 1.02 }}
-        className="relative overflow-hidden"
+        whileHover={{ scale: 1.02, translateY: -4 }}
+        className="relative overflow-hidden group"
     >
-        <Card className="bg-slate-900/40 border-slate-800/50 backdrop-blur-md">
+        <div className={cn(
+            "absolute -inset-0.5 bg-gradient-to-r opacity-20 group-hover:opacity-100 transition duration-500 blur",
+            color === 'blue' ? "from-blue-600 to-cyan-600" :
+                color === 'emerald' ? "from-emerald-600 to-teal-600" :
+                    color === 'amber' ? "from-amber-600 to-orange-600" :
+                        color === 'rose' ? "from-rose-600 to-pink-600" :
+                            "from-purple-600 to-indigo-600"
+        )}></div>
+        <Card className="relative bg-slate-925/80 border-slate-800/50 backdrop-blur-xl">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-sm font-medium text-slate-400">{title}</CardTitle>
-                <div className={cn("p-2 rounded-lg bg-opacity-20", `bg-${color}-500 text-${color}-400`)}>
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-slate-500">{title}</CardTitle>
+                <div className={cn("p-2 rounded-lg bg-opacity-20",
+                    color === 'blue' ? "bg-blue-500 text-blue-400" :
+                        color === 'emerald' ? "bg-emerald-500 text-emerald-400" :
+                            color === 'amber' ? "bg-amber-500 text-amber-400" :
+                                color === 'rose' ? "bg-rose-500 text-rose-400" :
+                                    "bg-slate-500 text-slate-400"
+                )}>
                     {icon}
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold text-slate-100">{value}</div>
-                <div className="flex items-center mt-1 space-x-2">
+                <div className="text-3xl font-black tracking-tighter text-slate-100">{value}</div>
+                <div className="flex items-center mt-2 space-x-2">
                     {trend && (
                         <span className={cn(
-                            "text-xs font-semibold px-1.5 py-0.5 rounded flex items-center gap-1",
-                            trendType === 'up' ? "bg-emerald-500/10 text-emerald-400" :
-                                trendType === 'down' ? "bg-rose-500/10 text-rose-400" :
-                                    "bg-slate-500/10 text-slate-400"
+                            "text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1",
+                            trendType === 'up' ? "bg-emerald-500/20 text-emerald-400" :
+                                trendType === 'down' ? "bg-rose-500/20 text-rose-400" :
+                                    "bg-slate-500/20 text-slate-400"
                         )}>
                             {trendType === 'up' ? <ArrowUpRight className="w-3 h-3" /> :
                                 trendType === 'down' ? <ArrowDownRight className="w-3 h-3" /> : null}
                             {trend}
                         </span>
                     )}
-                    {description && <p className="text-xs text-slate-500">{description}</p>}
+                    {description && <p className="text-[10px] uppercase font-bold text-slate-500 tracking-widest">{description}</p>}
                 </div>
             </CardContent>
         </Card>
@@ -114,9 +128,41 @@ const ActivityFeedItem: React.FC<{
     </div>
 );
 
-// ─── MAIN DASHBOARD ───────────────────────────────────────────────────────────
-const SmartDashboard: React.FC = () => {
-    const { persona } = useAppStore();
+
+const DashboardHeader: React.FC<{ persona: string }> = ({ persona }) => (
+    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <div className="flex items-center gap-3 mb-2">
+                <Badge className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase">
+                    v55.0 God-Mode Active
+                </Badge>
+                <div className="flex gap-1">
+                    {[1, 2, 3].map(i => (
+                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }}></div>
+                    ))}
+                </div>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white">
+                SITUATION <span className="text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">COMMAND</span> CENTER
+            </h1>
+            <p className="text-slate-500 text-sm mt-2 font-medium uppercase tracking-widest flex items-center gap-2">
+                <Activity className="w-4 h-4 text-cyan-500" />
+                Real-time Sovereignty Protocol engaged
+            </p>
+        </div>
+
+        <div className="flex gap-3">
+            <Button variant="outline" className="bg-slate-900/40 border-slate-800 text-slate-400 hover:text-white uppercase text-[10px] font-bold tracking-widest">
+                <Layers className="w-3.5 h-3.5 mr-2" /> System Map
+            </Button>
+            <Button variant="outline" className="bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 uppercase text-[10px] font-bold tracking-widest">
+                <Zap className="w-3.5 h-3.5 mr-2" /> Pulse Sync
+            </Button>
+        </div>
+    </div>
+);
+
+const DashboardCoreContent: React.FC<{ persona: string }> = ({ persona }) => {
     const [mode, setMode] = useState<DashboardMode>(persona === 'TITAN' ? 'PROFIT' : 'CONTROL');
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -124,18 +170,18 @@ const SmartDashboard: React.FC = () => {
 
     const fetchData = async () => {
         try {
-            const [dashStats, dbStatsData, sysStatus, jobs] = await Promise.allSettled([
+            const [dashStats, sysStatus, jobs, agentStats] = await Promise.allSettled([
                 api.premium.getDashboardStats(),
-                fetch('/api/v1/database/stats').then(r => r.json()),
-                fetch('/api/v1/system/status').then(r => r.json()),
+                fetch('/api/v45/system/status').then(r => r.json()),
                 api.getETLJobs(5),
+                fetch('/api/v45/agents/status').then(r => r.json()),
             ]);
 
             setStats({
                 dash: dashStats.status === 'fulfilled' ? dashStats.value : null,
-                db: dbStatsData.status === 'fulfilled' ? dbStatsData.value : null,
                 sys: sysStatus.status === 'fulfilled' ? sysStatus.value : null,
                 jobs: jobs.status === 'fulfilled' ? jobs.value : [],
+                agents: agentStats.status === 'fulfilled' ? agentStats.value : [],
             });
         } catch (e) {
             console.error('Data error:', e);
@@ -174,324 +220,137 @@ const SmartDashboard: React.FC = () => {
         }
     }, [wsData]);
 
-    // ─── MEMOIZED CHART OPTIONS ──────────────────────────────────────────────
     const profitChartOption = useMemo(() => ({
         backgroundColor: 'transparent',
-        tooltip: {
-            trigger: 'axis',
-            backgroundColor: '#0f172a',
-            borderColor: '#1e293b',
-            textStyle: { color: '#f1f5f9', fontSize: 12 }
-        },
-        legend: {
-            data: ['Фіз. особи', 'Корпорації', 'Тренд'],
-            textStyle: { color: '#94a3b8', fontSize: 10 },
-            top: 0
-        },
-        grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
-        xAxis: {
-            type: 'category',
-            data: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'],
-            axisLine: { lineStyle: { color: '#1e293b' } },
-            axisLabel: { color: '#64748b' }
-        },
-        yAxis: {
-            type: 'value',
-            splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } },
-            axisLabel: { color: '#64748b' }
-        },
+        tooltip: { trigger: 'axis', backgroundColor: '#020617', borderColor: '#1e293b', textStyle: { color: '#f1f5f9' } },
+        grid: { left: '3%', right: '4%', bottom: '3%', top: '10%', containLabel: true },
+        xAxis: { type: 'category', data: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'], axisLabel: { color: '#64748b' } },
+        yAxis: { type: 'value', splitLine: { show: true, lineStyle: { color: '#1e293b' } }, axisLabel: { color: '#64748b' } },
         series: [
-            {
-                name: 'Фіз. особи',
-                type: 'line',
-                data: [120, 132, 101, 134, 90, 230, 210],
-                smooth: true,
-                color: '#10b981',
-                areaStyle: { opacity: 0.1 }
-            },
-            {
-                name: 'Корпорації',
-                type: 'line',
-                data: [220, 182, 191, 234, 290, 330, 310],
-                smooth: true,
-                color: '#3b82f6'
-            },
-            {
-                name: 'Тренд',
-                type: 'bar',
-                data: [150, 232, 201, 154, 190, 330, 410],
-                color: '#6366f1',
-                barWidth: '20%',
-                itemStyle: { borderRadius: [4, 4, 0, 0] }
-            }
+            { name: 'Growth', type: 'line', smooth: true, data: [120, 132, 101, 134, 90, 230, 210], itemStyle: { color: '#00f3ff' }, areaStyle: { opacity: 0.05 } }
         ]
     }), []);
-
-    const systemHealthOption = useMemo(() => ({
-        backgroundColor: 'transparent',
-        tooltip: {
-            trigger: 'axis',
-            backgroundColor: '#0f172a',
-            borderColor: '#1e293b',
-            textStyle: { color: '#f1f5f9', fontSize: 12 }
-        },
-        series: [
-            {
-                name: 'System Health',
-                type: 'pie',
-                radius: ['60%', '80%'],
-                avoidLabelOverlap: false,
-                itemStyle: { borderRadius: 10, borderColor: '#0f172a', borderWidth: 2 },
-                label: { show: false },
-                emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' } },
-                data: [
-                    { value: 85, name: 'Normal', itemStyle: { color: '#10b981' } },
-                    { value: 10, name: 'Warning', itemStyle: { color: '#f59e0b' } },
-                    { value: 5, name: 'Critical', itemStyle: { color: '#ef4444' } }
-                ]
-            }
-        ]
-    }), []);
-
-    const realtimeChartOption = useMemo(() => ({
-        backgroundColor: 'transparent',
-        tooltip: {
-            trigger: 'axis',
-            backgroundColor: '#0f172a',
-            borderColor: '#1e293b',
-            textStyle: { color: '#f1f5f9', fontSize: 12 }
-        },
-        grid: { left: '2%', right: '2%', bottom: '2%', top: '2%', containLabel: false },
-        xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            show: false,
-            data: realtimeData.map(d => d.time)
-        },
-        yAxis: { type: 'value', show: false, max: 100 },
-        series: [
-            {
-                name: 'CPU',
-                type: 'line',
-                smooth: true,
-                symbol: 'none',
-                areaStyle: {
-                    color: {
-                        type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-                        colorStops: [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: 'transparent' }]
-                    }
-                },
-                data: realtimeData.map(d => d.cpu),
-                lineStyle: { color: '#3b82f6', width: 1 }
-            },
-            {
-                name: 'Memory',
-                type: 'line',
-                smooth: true,
-                symbol: 'none',
-                data: realtimeData.map(d => d.memory),
-                lineStyle: { color: '#8b5cf6', width: 1 }
-            }
-        ]
-    }), [realtimeData]);
 
     return (
-        <div className="min-h-screen p-4 space-y-6 text-slate-100 bg-slate-950 lg:p-8">
-            <AnimatePresence>
-                {/* ─── HEADER ─── */}
-                <motion.header
-                    initial={{ y: -20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center"
-                >
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 shadow-lg shadow-blue-500/20">
-                            <Layers className="w-8 h-8 text-white" />
-                        </div>
+        <div className="space-y-8">
+            {/* Top Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <MetricCard
+                    title="Active Sovereignty Score"
+                    value={`${wsData?.pulse?.score || 98}%`}
+                    icon={<Shield className="w-5 h-5" />}
+                    color="cyan"
+                    trend="+2.4%"
+                    trendType="up"
+                    description="AI Autonomy Level"
+                />
+                <MetricCard
+                    title="Real-time Throughput"
+                    value="42.8 GB/s"
+                    icon={<Zap className="w-5 h-5" />}
+                    color="amber"
+                    trend="Optimal"
+                    description="IO Pipeline Load"
+                />
+                <MetricCard
+                    title="Neural Nodes"
+                    value="12/12"
+                    icon={<Activity className="w-5 h-5" />}
+                    color="emerald"
+                    description="Clusters Active"
+                />
+                <MetricCard
+                    title="Security Level"
+                    value="MAX"
+                    icon={<Globe className="w-5 h-5" />}
+                    color="blue"
+                    description="No threats detected"
+                />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Main Control Panel */}
+                <Card className="lg:col-span-2 bg-slate-925/40 border-slate-800/50 backdrop-blur-xl">
+                    <CardHeader className="flex flex-row items-center justify-between">
                         <div>
-                            <h1 className="text-3xl font-extrabold tracking-tight">
-                                Global_<span className="text-blue-500">Situation</span>
-                            </h1>
-                            <div className="flex items-center gap-2 mt-1">
-                                <Badge variant="outline" className="text-[10px] font-mono border-slate-700 bg-slate-900/50">
-                                    V45.0_GOD_MODE
-                                </Badge>
-                                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs border border-emerald-500/20">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                    SYSTEM_ONLINE
-                                </div>
-                            </div>
+                            <CardTitle className="text-xl font-black text-white">SYSTEM DYNAMICS</CardTitle>
+                            <CardDescription className="text-slate-500 uppercase text-[10px] tracking-widest font-bold">Latency & Performance Tracing</CardDescription>
                         </div>
-                    </div>
+                        <Tabs value={mode} onValueChange={(v: string) => setMode(v as DashboardMode)}>
+                            <TabsList className="bg-slate-900/60 border-slate-800">
+                                <TabsTrigger value="PROFIT" className="data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-400">MARKET</TabsTrigger>
+                                <TabsTrigger value="CONTROL" className="data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-400">ENGINE</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                    </CardHeader>
+                    <CardContent className="h-[400px]">
+                        <ReactECharts option={profitChartOption} style={{ height: '100%', width: '100%' }} />
+                    </CardContent>
+                </Card>
 
-                    <div className="flex items-center gap-2 p-1 border rounded-xl bg-slate-900/40 border-slate-800">
-                        <Button
-                            variant={mode === 'PROFIT' ? 'default' : 'ghost'}
-                            size="sm"
-                            onClick={() => setMode('PROFIT')}
-                            className={cn("rounded-lg transition-all", mode === 'PROFIT' && "bg-blue-600 text-white shadow-lg shadow-blue-500/30")}
-                        >
-                            <TrendingUp className="w-4 h-4 mr-2" />
-                            Бізнес
-                        </Button>
-                        <Button
-                            variant={mode === 'CONTROL' ? 'default' : 'ghost'}
-                            size="sm"
-                            onClick={() => setMode('CONTROL')}
-                            className={cn("rounded-lg transition-all", mode === 'CONTROL' && "bg-indigo-600 text-white shadow-lg shadow-indigo-500/30")}
-                        >
-                            <Shield className="w-4 h-4 mr-2" />
-                            Контроль
-                        </Button>
-                    </div>
-                </motion.header>
-
-                {/* ─── METRICS GRID ─── */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <MetricCard
-                        title="Дохід (24г)"
-                        value={stats?.dash?.profit?.[0]?.value || '$142,500'}
-                        trend="+12.4%"
-                        trendType="up"
-                        icon={<TrendingUp className="w-5 h-5" />}
-                        color="emerald"
-                    />
-                    <MetricCard
-                        title="Активні Сегменти"
-                        value="42"
-                        trend="Sturdy"
-                        trendType="neutral"
-                        icon={<Globe className="w-5 h-5" />}
-                        color="blue"
-                    />
-                    <MetricCard
-                        title="Здоров'я Системи"
-                        value="99.9%"
-                        icon={<Activity className="w-5 h-5" />}
-                        color="indigo"
-                    />
-                    <MetricCard
-                        title="CPU / RAM"
-                        value={`${wsData?.system?.cpu_percent || 0}% / ${wsData?.system?.memory_percent || 0}%`}
-                        trend={isConnected ? "ONLINE" : "OFFLINE"}
-                        trendType={isConnected ? "up" : "down"}
-                        icon={<Server className="w-5 h-5" />}
-                        color="rose"
-                    />
-                </div>
-
-                {/* ─── CENTER CONTENT ─── */}
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    {/* Main Analytics Chart */}
-                    <Card className="lg:col-span-2 bg-slate-900/40 border-slate-800/50 backdrop-blur-md">
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <div>
-                                <CardTitle>{mode === 'PROFIT' ? 'Динаміка ринку' : 'Аномалії та ризики'}</CardTitle>
-                                <CardDescription>Статистика за останній тиждень</CardDescription>
-                            </div>
-                            <Button variant="outline" size="sm" className="border-slate-700">
-                                <Clock className="w-4 h-4 mr-2" />
-                                1 Tиждень
-                            </Button>
-                        </CardHeader>
-                        <CardContent className="h-[350px]">
-                            <ReactECharts
-                                option={profitChartOption}
-                                style={{ height: '100%', width: '100%' }}
-                                opts={{ renderer: 'svg' }}
-                            />
-                        </CardContent>
-                    </Card>
-
-                    {/* Side Panel: System Pulse */}
-                    <div className="space-y-6">
-                        <Card className="bg-slate-900/40 border-slate-800/50 backdrop-blur-md">
-                            <CardHeader>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <Zap className="w-5 h-5 text-amber-500" />
-                                        <CardTitle className="text-lg">Real-time Pulse</CardTitle>
+                {/* Sovereign Agent Status */}
+                <Card className="bg-slate-925/40 border-slate-800/50 backdrop-blur-xl">
+                    <CardHeader>
+                        <CardTitle className="text-xl font-black text-white flex items-center gap-2">
+                            <Sparkles className="w-5 h-5 text-cyan-400" />
+                            SOVEREIGN AGENTS
+                        </CardTitle>
+                        <CardDescription className="text-slate-500 uppercase text-[10px] tracking-widest font-bold">Autonomous Self-Healing Loop</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {stats?.agents?.map((agent: any, idx: number) => (
+                                <div key={idx} className="p-4 rounded-xl bg-slate-900/60 border border-slate-800/50 hover:border-cyan-500/30 transition-all group">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm font-bold text-slate-200">{agent.name}</span>
+                                        <Badge className={cn(
+                                            "capitalize px-2 py-0",
+                                            agent.is_running ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                                        )}>
+                                            {agent.is_running ? 'Active' : 'Standby'}
+                                        </Badge>
                                     </div>
-                                    {isConnected ? (
-                                        <Badge className="bg-emerald-500/20 text-emerald-400 border-none">ACTIVE</Badge>
-                                    ) : (
-                                        <Badge className="bg-rose-500/20 text-rose-400 border-none">OFFLINE</Badge>
-                                    )}
-                                </div>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="h-[120px]">
-                                    <ReactECharts
-                                        option={realtimeChartOption}
-                                        style={{ height: '100%', width: '100%' }}
-                                    />
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="p-3 border rounded-xl bg-slate-950/40 border-slate-800">
-                                        <p className="text-xs text-slate-500">CPU Load</p>
-                                        <p className="text-xl font-bold">{wsData?.system?.cpu_percent ?? 0}%</p>
+                                    <div className="grid grid-cols-2 gap-2 mt-3">
+                                        <div className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Cycles: <span className="text-slate-300 ml-1">{agent.stats?.cycles || 0}</span></div>
+                                        <div className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Last Action: <span className="text-slate-300 ml-1">Observing</span></div>
                                     </div>
-                                    <div className="p-3 border rounded-xl bg-slate-950/40 border-slate-800">
-                                        <p className="text-xs text-slate-500">RAM Load</p>
-                                        <p className="text-xl font-bold">{wsData?.system?.memory_percent ?? 0}%</p>
+                                    <div className="mt-3 w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                                        <motion.div
+                                            className="h-full bg-cyan-500/50"
+                                            initial={{ width: 0 }}
+                                            animate={{ width: agent.is_running ? '100%' : '0%' }}
+                                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                        />
                                     </div>
                                 </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="bg-slate-900/40 border-slate-800/50 backdrop-blur-md">
-                            <CardHeader>
-                                <CardTitle className="flex items-center justify-between text-lg">
-                                    <span>Поточні Операції</span>
-                                    <Badge variant="outline" className="border-slate-700 text-slate-400">{stats?.jobs?.length || 0}</Badge>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-0 px-4 pb-4">
-                                <ScrollArea className="h-[180px]">
-                                    <div className="space-y-1">
-                                        {stats?.jobs?.map((job: any) => (
-                                            <ActivityFeedItem
-                                                key={job.id}
-                                                icon={<Database className="w-4 h-4" />}
-                                                title={`ETL: ${job.name || job.id}`}
-                                                time={new Date().toLocaleTimeString()}
-                                                status={job.status === 'RUNNING' ? 'info' : 'success'}
-                                            />
-                                        ))}
-                                        {(!stats?.jobs || stats?.jobs.length === 0) && (
-                                            <div className="flex flex-col items-center justify-center h-[150px] space-y-2 opacity-50">
-                                                <ZapOff className="w-8 h-8" />
-                                                <p className="text-xs">Жодних активних операцій</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </ScrollArea>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
-
-                {/* ─── FOOTER HIGHLIGHT ─── */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="flex flex-col items-center justify-between gap-4 p-4 border rounded-2xl bg-blue-600/5 border-blue-500/10 md:flex-row"
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-blue-500/20">
-                            <Sparkles className="w-5 h-5 text-blue-400" />
+                            ))}
+                            {(!stats?.agents || stats.agents.length === 0) && (
+                                <div className="text-center py-12 text-slate-600 italic text-sm border-2 border-dashed border-slate-800/50 rounded-xl">
+                                    Initializing collective intelligence...
+                                </div>
+                            )}
                         </div>
-                        <p className="text-sm text-slate-300">
-                            Система працює в режимі <span className="font-bold text-blue-400">TRUTH_ONLY</span>.
-                            Всі дані надходять з реальних джерел без затримок.
-                        </p>
-                    </div>
-                    <Button variant="outline" size="sm" className="border-blue-500/30 text-blue-400 hover:bg-blue-500/10">
-                        Генерувати Альфа-звіт
-                    </Button>
-                </motion.div>
-            </AnimatePresence>
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
+    );
+};
+
+// ─── MAIN DASHBOARD ───────────────────────────────────────────────────────────
+const SmartDashboard: React.FC = () => {
+    const { persona } = useAppStore();
+    return (
+        <div className="relative min-h-screen bg-black overflow-hidden selection:bg-cyan-500/30">
+            {/* Background Layers */}
+            <div className="absolute inset-0 bg-cyber-grid bg-[length:50px_50px] opacity-[0.03] pointer-events-none"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(6,182,212,0.15),transparent_70%)] pointer-events-none"></div>
+            <div className="absolute inset-0 cyber-scanline animate-scanline-fast opacity-[0.02] pointer-events-none"></div>
+
+            <div className="relative z-10 p-6 lg:p-12 space-y-12 max-w-[1700px] mx-auto">
+                <DashboardHeader persona={persona} />
+                <DashboardCoreContent persona={persona} />
+            </div>
         </div>
     );
 };

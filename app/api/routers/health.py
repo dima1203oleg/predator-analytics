@@ -11,12 +11,46 @@ import os
 import time
 from typing import Any, Dict
 
-from fastapi import APIRouter, Response
-
+from fastapi import APIRouter, Response, WebSocket, WebSocketDisconnect
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Health"])
+
+@router.get("/metrics")
+async def metrics_endpoint():
+    """Prometheus metrics endpoint."""
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+
+@router.get("/agents/status")
+async def get_agents_status():
+    """Get status of all autonomous agents from the orchestrator."""
+    from libs.core.autonomy.orchestrator import orchestrator
+    return orchestrator.get_stats()
+
+
+@router.websocket("/ws/omniscience")
+async def omniscience_ws(websocket: WebSocket):
+    """Real-time system pulse and metrics via WebSocket."""
+    await websocket.accept()
+    logger.info("✅ Omniscience WS Client connected to Real Backend")
+    try:
+        while True:
+            # Get latest status using existing logic
+            status = await get_sovereign_status()
+            await websocket.send_json(status)
+            await asyncio.sleep(2) # 2s pulse
+    except WebSocketDisconnect:
+        logger.info("❌ Omniscience WS Client disconnected")
+    except Exception as e:
+        logger.error(f"WS Error: {e}")
+    finally:
+        try:
+            await websocket.close()
+        except:
+            pass
 
 
 async def get_system_metrics() -> dict[str, Any]:

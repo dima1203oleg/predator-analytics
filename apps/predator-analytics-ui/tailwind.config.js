@@ -79,6 +79,9 @@ export default {
           purple: '#bc13fe',
           green: '#0aff0a',
           cyan: '#00e5ff',
+          magenta: '#ff00ff',
+          yellow: '#fff300',
+          orange: '#ff6600',
         },
       },
       backgroundImage: {

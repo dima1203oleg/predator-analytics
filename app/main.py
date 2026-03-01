@@ -24,6 +24,10 @@ from app.libs.core.structured_logger import get_logger, log_business_event, setu
 # 🦁 PREDATOR SUPER-APP CORE INITIALIZED
 logger = get_logger("predator.api.main")
 
+# Autonomous AI Orchestration
+from libs.core.autonomy.orchestrator import orchestrator
+from libs.core.autonomy.pulse_agent import SystemPulseAgent
+
 app = FastAPI(
     title="Predator Analytics v55.0 API",
     description="Економічний радар: система раннього попередження, аналізу ризиків та інформаційної переваги",
@@ -76,7 +80,7 @@ app.include_router(newspaper_router, prefix="/api/v1")
 app.include_router(auth_router.router, prefix="/api/v1")
 app.include_router(stats_router.router, prefix="/api/v1")
 app.include_router(search_router.router, prefix="/api/v1")
-app.include_router(health_router.router, prefix="/api/v1")
+app.include_router(health_router.router, prefix="/api/v45")
 app.include_router(council_router.router, prefix="/api/v1")
 app.include_router(opponent_router.router, prefix="/api/v1")
 app.include_router(testing_router.router, prefix="/api/v1")
@@ -124,8 +128,19 @@ async def startup_event():
     except Exception as e:
         logger.warning(f"AZR Engine failed to start: {e}")
 
+    # Initialize and Start Sovereign Agents (v45)
+    try:
+        pulse_agent = SystemPulseAgent(api_base_url="http://localhost:8000")
+        orchestrator.register_agent(pulse_agent)
+        await orchestrator.start()
+        app.state.agents = orchestrator
+        logger.info("✅ Sovereign Agents (v45) INITIALIZED")
+    except Exception as e:
+        logger.error(f"Sovereign Agents failed to start: {e}")
+
 @app.on_event("shutdown")
 async def shutdown_event():
+    await orchestrator.stop()
     await broker.disconnect()
     logger.info("PREDATOR_SHUTDOWN_COMPLETE")
 
