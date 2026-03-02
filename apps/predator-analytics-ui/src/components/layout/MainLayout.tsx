@@ -181,7 +181,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
             className="whitespace-nowrap text-[9px] font-mono text-slate-600 tracking-tight"
           >
-            {` >> СИСТЕМА_V45_СУВЕРЕН >> ЦИКЛ_OODA: ${liveStats.ooda} >> ЕТАП: ${liveStats.stage} >> ЦП: ${liveStats.cpu}% >> ОЗП: ${liveStats.memory}% >> ЗАПИСІВ_БД: ${liveStats.records.toLocaleString()} >> КОЕФІЦІЄНТ_ДОВІРИ: 0.9982 >> ІНДЕКС_АНОМАЛІЙ: 0.002 >> СИСТЕМА_ГОТОВА >> СИСТЕМА_V45_СУВЕРЕН >> ЦИКЛ_OODA: ${liveStats.ooda} >> ЕТАП: ${liveStats.stage} `}
+            {` >> SYSTEM_V55_SOVEREIGN >> OODA_CYCLE: ${liveStats.ooda} >> STAGE: ${liveStats.stage} >> CPU: ${liveStats.cpu}% >> MEM: ${liveStats.memory}% >> DB_RECORDS: ${liveStats.records.toLocaleString()} >> TRUST_COEFFICIENT: 0.9982 >> ANOMALY_INDEX: 0.002 >> ENFORCEMENT_READY >> SYSTEM_V55_SOVEREIGN >> OODA_CYCLE: ${liveStats.ooda} >> STAGE: ${liveStats.stage} `}
           </motion.div>
         </div>
 

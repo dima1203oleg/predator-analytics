@@ -19,16 +19,16 @@ from pathlib import Path
 
 
 class EvolutionService:
-    def __init__(self, metrics_dir: str = "/app/metrics/evolution"):
-        self.metrics_dir = Path(metrics_dir)
-        try:
-            self.metrics_dir.mkdir(parents=True, exist_ok=True)
-        except OSError:
-            # Fallback for local dev if permissions issue
-            self.metrics_dir = Path("metrics/evolution")
-            self.metrics_dir.mkdir(parents=True, exist_ok=True)
+    def __init__(self, metrics_dir: str | None = None):
+        from app.libs.core.config import settings
+        
+        # Use settings-based directory by default
+        self._metrics_dir_base = Path(metrics_dir or settings.AZR_HOME) / "metrics" / "evolution"
+        
+        # Removed mkdir(parents=True, exist_ok=True) from __init__ to prevent side-effects on import.
+        # Directory will be created lazily when saving snapshots.
 
-        self.history_file = os.path.join(self.metrics_dir, "history.jsonl")
+        self.history_file = self._metrics_dir_base / "history.jsonl"
 
         # Caching for heavy code analysis
         self._cached_analysis = None
@@ -196,6 +196,9 @@ class EvolutionService:
 
     async def save_snapshot(self):
         """Save current state to history."""
+        # Ensure directory exists before saving
+        self._metrics_dir_base.mkdir(parents=True, exist_ok=True)
+        
         stats = await self.get_latest_stats()
         with open(self.history_file, "a") as f:
             f.write(json.dumps(stats) + "\n")

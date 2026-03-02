@@ -137,8 +137,10 @@ class ConstitutionalGuardV2:
 
     def _load_custom_axioms(self):
         """Load additional axioms from YAML config."""
+        from app.libs.core.config import PROJECT_ROOT
+
         yaml_paths = [
-            Path("/app/config/axioms/constitutional_axioms.yaml"),
+            Path(PROJECT_ROOT) / "config/axioms/constitutional_axioms.yaml",
             Path("config/axioms/constitutional_axioms.yaml"),
         ]
         for path in yaml_paths:
@@ -208,7 +210,7 @@ class ExperienceMemory:
 
     def __init__(self, storage_path: Path):
         self.storage_path = storage_path
-        self.storage_path.mkdir(parents=True, exist_ok=True)
+        # Removed mkdir(parents=True, exist_ok=True) from __init__ for Cloud-Native compliance (no side-effects on import)
         self.memory_file = self.storage_path / "experience_memory.jsonl"
         self.blacklist_file = self.storage_path / "failure_blacklist.json"
 
@@ -266,6 +268,7 @@ class ExperienceMemory:
         self._update_patterns(exp_dict)
 
         # Persist to disk
+        self.storage_path.mkdir(parents=True, exist_ok=True)
         with open(self.memory_file, "a") as f:
             f.write(json.dumps(exp_dict) + "\n")
 
@@ -275,6 +278,7 @@ class ExperienceMemory:
             self._save_blacklist()
 
     def _save_blacklist(self):
+        self.storage_path.mkdir(parents=True, exist_ok=True)
         self.blacklist_file.write_text(json.dumps(list(self.blacklist)))
 
     def is_blacklisted(self, fingerprint: str) -> bool:
@@ -641,10 +645,13 @@ class AZREngineV32:
 
     VERSION = "v32.0.0"
 
-    def __init__(self, project_root: str = "/app"):
-        self.root = Path(project_root)
-        self.memory_path = self.root / ".azr" / "memory"
-        self.memory_path.mkdir(parents=True, exist_ok=True)
+    def __init__(self, azr_root: str | None = None):
+        from app.libs.core.config import settings
+
+        self.root = Path(azr_root or settings.AZR_HOME)
+        self.memory_path = self.root / "memory"
+        # Removed mkdir from __init__ to prevent side-effects on import.
+        # Infrastructure is now created lazily via ensure_infrastructure() or on first write.
 
         # Core components
         self.guard = ConstitutionalGuardV2()
@@ -676,8 +683,18 @@ class AZREngineV32:
         logger.info(
             "azr_v32_initialized",
             root=str(self.root),
-            merkle_root=self.truth_ledger.merkle_root[:32],
+            version=self.VERSION
         )
+
+    def ensure_infrastructure(self):
+        """Lazily create required directory structure."""
+        if not self.memory_path.exists():
+            try:
+                self.memory_path.mkdir(parents=True, exist_ok=True)
+                logger.info("azr_infrastructure_created", path=str(self.memory_path))
+            except Exception as e:
+                logger.error("azr_infrastructure_failed", error=str(e))
+        return self.memory_path.exists()
 
     # ========================================================================
     # 🎯 MAIN LOOP
@@ -688,6 +705,9 @@ class AZREngineV32:
         if self.is_running:
             logger.warning("azr_already_running")
             return
+
+        # Ensure infra exists before starting
+        self.ensure_infrastructure()
 
         self.is_running = True
         logger.info("azr_v32_started", duration_hours=duration_hours)
@@ -1177,7 +1197,9 @@ class AZREngineV32:
 # 🏭 SINGLETON INSTANCE
 # ============================================================================
 
-azr_engine_v32 = AZREngineV32(os.environ.get("AZR_ROOT", "/app"))
+# The engine now uses settings.AZR_HOME by default and initializes lazily.
+# This prevents OSError [Errno 30] Read-only file system during imports.
+azr_engine_v32 = AZREngineV32()
 
 # Backward compatibility alias
 azr_engine = azr_engine_v32

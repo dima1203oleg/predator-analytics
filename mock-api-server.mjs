@@ -1299,7 +1299,7 @@ app.post('/api/v45/system/lockdown', (req, res) => {
 });
 
 // System metrics (handles both v1 format and v45 Omniscience expectations)
-app.get(['/api/v1/system/metrics', '/v1/system/metrics', '/api/v45/system/status'], (req, res) => {
+app.get(['/api/v1/system/metrics', '/v1/system/metrics', '/api/v45/system/status', '/api/v55/system/status', '/api/v2/system/status'], (req, res) => {
   res.json({
     health_score: 98 + Math.random() * 2,
     advisor_note: "Sovereign AI Active: Всі системи працюють стабільно.",

@@ -111,7 +111,8 @@ class MerkleTruthLedger:
 
     def __init__(self, storage_path: str | Path = "/tmp/azr_logs"):
         self.storage_path = Path(storage_path)
-        self.storage_path.mkdir(parents=True, exist_ok=True)
+        # Removed mkdir(parents=True, exist_ok=True) from __init__ for Cloud-Native compliance.
+        # Infrastructure is now created lazily during write operations.
 
         self.ledger_file = self.storage_path / "truth_ledger.jsonl"
         self.merkle_file = self.storage_path / "merkle_roots.json"
@@ -148,6 +149,8 @@ class MerkleTruthLedger:
         """Append entry to persistent storage with ATOMIC guarantee.
         Uses fsync to ensure data survives immediate power loss.
         """
+        # Ensure directory exists before writing
+        self.storage_path.mkdir(parents=True, exist_ok=True)
         with open(self.ledger_file, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry.to_dict(), ensure_ascii=False) + "\n")
             f.flush()  # Flush Python buffer
@@ -350,6 +353,7 @@ class MerkleTruthLedger:
 
                 shutil.copy(self.ledger_file, backup_file)
 
+            self.storage_path.mkdir(parents=True, exist_ok=True)
             with open(self.ledger_file, "w", encoding="utf-8") as f:
                 for entry in new_entries:
                     f.write(json.dumps(entry.to_dict(), ensure_ascii=False) + "\n")

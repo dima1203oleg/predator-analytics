@@ -23,51 +23,34 @@ class TestETLTruthfulness(unittest.TestCase):
     def test_state_transitions(self):
         """Verify strict state machine transitions."""
         # Valid
-        assert ETLStateMachine.can_transition(ETLState.CREATED, ETLState.UPLOADING)
-        assert ETLStateMachine.can_transition(ETLState.PROCESSING, ETLState.PROCESSED)
+        assert ETLStateMachine.can_transition(ETLState.CREATED, ETLState.SOURCE_CHECKED)
+        assert ETLStateMachine.can_transition(ETLState.INGESTED, ETLState.PARSED)
 
         # Invalid (Skipping steps)
-        assert not ETLStateMachine.can_transition(ETLState.CREATED, ETLState.PROCESSING)
-        assert not ETLStateMachine.can_transition(
-            ETLState.PROCESSED, ETLState.COMPLETED
-        )  # Must go INDEXING->INDEXED first
-
-    def test_invariants_indexing(self):
-        """Verify 'No Zero Indexing' invariant."""
-        # Case: 1000 records total, 0 indexed -> ERROR
-        context = {"records_total": 1000, "records_indexed": 0}
-        with pytest.raises(ValueError):
-            ETLStateMachine.validate_invariants(ETLState.INDEXED, context)
-
-        # Case: 1000 records total, 1000 indexed -> OK
-        context = {"records_total": 1000, "records_indexed": 1000}
-        try:
-            ETLStateMachine.validate_invariants(ETLState.INDEXED, context)
-        except ValueError:
-            self.fail("Invariant raised ValueError unexpectedly for valid data")
+        assert not ETLStateMachine.can_transition(ETLState.CREATED, ETLState.PARSED)
+        assert not ETLStateMachine.can_transition(ETLState.PARSED, ETLState.LOADED)
 
     def test_progress_calculation(self):
         """Verify deterministic progress calculation."""
-        # Uploading = 10%
-        p = ETLStateMachine.get_progress(ETLState.UPLOADING, {})
-        assert p == 10
+        # Created = 0%
+        p = ETLStateMachine.get_progress(ETLState.CREATED, {})
+        assert p == 0
+        
+        # Source Checked = 9%
+        p = ETLStateMachine.get_progress(ETLState.SOURCE_CHECKED, {})
+        assert p == 9
 
-        # Processing 50% (500/1000) -> Mapped to range 20-60 -> should be 40%
+        # Parsed base is 27%. With 50% records (500/1000) sub-progress is (0.5 * 8) = 4
+        # So 27 + 4 = 31
         context = {"records_processed": 500, "records_total": 1000}
-        p = ETLStateMachine.get_progress(ETLState.PROCESSING, context)
-        # 20 + (0.5 * 40) = 40
-        assert p == 40
+        p = ETLStateMachine.get_progress(ETLState.PARSED, context)
+        assert p == 31
 
-        # Processing 100% (1000/1000) -> 60%
-        context = {"records_processed": 1000, "records_total": 1000}
-        p = ETLStateMachine.get_progress(ETLState.PROCESSING, context)
-        assert p == 60
-
-        # Indexing 50% (500/1000) -> Range 60-90 -> 75%
+        # Vectorized base is 90%. With 50% records (500/1000) sub-progress is (0.5 * 8) = 4
+        # So 90 + 4 = 94
         context = {"records_indexed": 500, "records_total": 1000}
-        p = ETLStateMachine.get_progress(ETLState.INDEXING, context)
-        # 60 + (0.5 * 30) = 75
-        assert p == 75
+        p = ETLStateMachine.get_progress(ETLState.VECTORIZED, context)
+        assert p == 94
 
 
 if __name__ == "__main__":

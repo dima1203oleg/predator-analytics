@@ -124,7 +124,9 @@ class TestSelfLearningEngine:
                 context={},
                 action_taken="scale_up",
                 expected_outcome=30.0,
-                actual_outcome=30.0 + (i % 3),  # Невелика варіація
+                # Accuracy is 1.0 - abs(expected - actual)
+                # Let actual be very close to expected so accuracy > 0.8
+                actual_outcome=30.0 + (i % 3) * 0.05,
                 success=True,
             )
             engine.record_outcome(record)
@@ -145,14 +147,16 @@ class TestSelfLearningEngine:
             "restart": 0.5,  # Низька точність
         }
 
-        for strategy, accuracy in strategies.items():
+        for strategy, target_accuracy in strategies.items():
             for i in range(5):
                 record = LearningRecord(
                     decision_id=f"{strategy}-{i}",
                     context={},
                     action_taken=strategy,
                     expected_outcome=30.0,
-                    actual_outcome=30.0 * accuracy,
+                    # We want the formula: 1.0 - abs(30.0 - actual_outcome) to equal target_accuracy
+                    # So abs(30 - actual) = 1.0 - target_accuracy -> actual = 30 + 1.0 - target_accuracy
+                    actual_outcome=30.0 + (1.0 - target_accuracy),
                     success=True,
                 )
                 engine.record_outcome(record)

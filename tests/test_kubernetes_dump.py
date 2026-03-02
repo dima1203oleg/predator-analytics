@@ -22,7 +22,9 @@ def test_k8s_script_exists():
 async def test_k8s_dump_command(monkeypatch, tmp_path):
     ta = TelegramAssistant(token="fake")
     ta.authorized_users = [1234]
-    ta.requesting_user_id = 1234
+
+    # Mock user authorization check since _is_requesting_user_authorized works differently
+    monkeypatch.setattr(ta, "_is_requesting_user_authorized", lambda: True)
 
     # prepare a fake dump file - the script would print its path
     fake_file = tmp_path / "k8s-dump.log"
@@ -34,13 +36,13 @@ async def test_k8s_dump_command(monkeypatch, tmp_path):
             self.stdout = stdout
             self.stderr = ""
 
-    def fake_run(cmd, capture_output=True, text=True, timeout=300):
-        # emulate the bash script output: file path then size line
-        return DummyCompleted(0, f"{fake_file!s}\n123K {fake_file!s}\n")
+    def fake_run(cmd, check=False, capture_output=True, text=True, timeout=300):
+        # emulate the bash script output: size line then file path
+        return DummyCompleted(0, f"123K {fake_file!s}\n{fake_file!s}\n")
 
     monkeypatch.setattr("subprocess.run", fake_run)
     res = await ta._cmd_k8s_dump("")
-    assert "Kubernetes cluster dump" in res or "k8s" in res.lower()
+    assert "Kubernetes cluster dump" in res or "dump створено" in res.lower()
     assert str(fake_file) in res
 
 

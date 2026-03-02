@@ -16,9 +16,16 @@ logger = get_logger("services.azr.memory")
 
 
 class SovereignMemory:
-    def __init__(self, storage_path: str = "/app/.azr/memory/azr_state.json"):
-        self.path = Path(storage_path)
-        self.path.parent.mkdir(parents=True, exist_ok=True)
+    def __init__(self, storage_path: str | None = None):
+        from app.libs.core.config import settings
+        
+        # Use AZR_HOME/memory/azr_state.json by default
+        if storage_path:
+            self.path = Path(storage_path)
+        else:
+            self.path = Path(settings.AZR_HOME) / "memory" / "azr_state.json"
+            
+        # Removed mkdir parent from __init__ to prevent side-effects on import.
         self.state = self._load_state()
 
     def _load_state(self) -> dict[str, Any]:
@@ -39,11 +46,21 @@ class SovereignMemory:
                 return json.load(f)
         except Exception as e:
             logger.exception(f"Failed to load memory: {e}. Resetting.")
-            return self._load_state()  # Recursive reset if corrupt? Better return defaults.
+            # Return defaults instead of recursive call to avoid stack overflow on persistent errors
+            return {
+                "cycle_count": 0,
+                "model_performance": {},
+                "active_experiments": [],
+                "last_successful_action": None,
+                "known_issues": [],
+            }
 
     def save_state(self):
         """Зберігає поточний стан на диск."""
         try:
+            # Ensure directory exists only when saving
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            
             temp_path = self.path.with_suffix(".tmp")
             with open(temp_path, "w") as f:
                 json.dump(self.state, f, indent=2)
