@@ -39,6 +39,12 @@ if HAS_STRUCTLOG:
         event_dict["timestamp"] = datetime.utcnow().isoformat() + "Z"
         return event_dict
 
+    def rename_event_to_message(logger, method_name, event_dict):
+        # Rename 'event' key to 'message' for consistency with tests
+        if "event" in event_dict:
+            event_dict["message"] = event_dict.pop("event")
+        return event_dict
+
     def setup_structured_logging(log_level: str = LOG_LEVEL, use_json: bool = True):
         processors = [
             structlog.stdlib.filter_by_level,
@@ -47,6 +53,7 @@ if HAS_STRUCTLOG:
             add_service_context,
             add_correlation_id,
             add_timestamp,
+            rename_event_to_message,
             structlog.stdlib.PositionalArgumentsFormatter(),
             structlog.processors.StackInfoRenderer(),
             structlog.processors.format_exc_info,
@@ -97,7 +104,7 @@ else:
             data = {
                 **self._context,
                 **kwargs,
-                "event": event,
+                "message": event,
                 "timestamp": datetime.now().isoformat(),
             }
             return json.dumps(data)
@@ -130,12 +137,24 @@ class RequestLogger:
         self.operation = operation
         self.context = initial_context
         self.start_time = datetime.now()
+        self.correlation_id = None
 
     def __enter__(self):
-        return self.logger.bind(operation=self.operation, **self.context)
+        # Generate correlation_id and log start event
+        self.correlation_id = str(uuid.uuid4())
+        self.start_time = datetime.now()
+        start_msg = f"{self.operation}_started"
+        self.logger.info(start_msg, correlation_id=self.correlation_id, **self.context)
+        # Return a bound logger with operation and correlation_id for inner usage
+        return self.logger.bind(operation=self.operation, correlation_id=self.correlation_id, **self.context)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
+        # Compute duration and log completed event
+        duration_ms = int((datetime.now() - self.start_time).total_seconds() * 1000)
+        completed_msg = f"{self.operation}_completed"
+        self.logger.info(completed_msg, correlation_id=self.correlation_id, duration_ms=duration_ms)
+        # Do not suppress exceptions
+        return False
 
 
 def log_performance(logger, operation, duration_ms, **metadata):
