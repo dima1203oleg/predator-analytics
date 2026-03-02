@@ -119,3 +119,8 @@ nohup.out
 *.pid
 temp_*
 mock-api.log
+
+# Test coverage
+.coverage
+coverage.xml
+htmlcov/
