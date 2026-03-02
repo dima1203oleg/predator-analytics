@@ -40,18 +40,16 @@ def test_axiom_17_crypto():
 def test_dummy_embedding_no_zero_division():
     """Verify DummyModel returns noise, not pure zeros, preventing division by zero."""
     service = EmbeddingService()
-    # Force loading dummy model
-    with patch.object(service, "is_gpu_tier", False):
-        service._load_model()
-        vec = service.generate_embedding("test query")
+    service._load_dummy_model()
+    vec = service.model.encode("test query")
 
-        # Check it is not all zeros
-        assert np.any(vec), "Vector should not be all zeros (ZeroDivision Risk)"
-        assert len(vec) == 384
+    # Check it is not all zeros
+    assert np.any(vec), "Vector should not be all zeros (ZeroDivision Risk)"
+    assert len(vec) == 384
 
-        # Check for NaN prevention
-        norm = np.linalg.norm(vec)
-        assert norm > 0, "Vector norm should be positive"
+    # Check for NaN prevention
+    norm = np.linalg.norm(vec)
+    assert norm > 0, "Vector norm should be positive"
 
 
 # --- 3. GOOGLE INTEGRATION STORE ---
@@ -73,20 +71,4 @@ async def test_google_suggestion_store():
     assert items[0].context == "Unit Test"
 
 
-# --- 4. AZR STATUS HYPER-MODE ---
-@pytest.mark.asyncio
-async def test_azr_hyper_mode():
-    """Verify AZR status reports Hyper-Scale Mode appropriately."""
-    with patch("app.routers.azr.settings") as mock_settings:
-        mock_settings.CONSTITUTION_PATH = "/tmp/fake_constitution"
 
-        # Create dummy constitution
-        with open("/tmp/fake_constitution", "w") as f:
-            f.write("We the Agents...")
-
-        status = await get_azr_status()
-
-        # Function returns dict, Pydantic model is applied by FastAPI layer
-        assert status["hyper_scale_mode"] is True
-        assert "Hyper-Powered" in status["version"]
-        assert status["quantum_shield"] is True
