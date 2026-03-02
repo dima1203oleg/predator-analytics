@@ -117,7 +117,8 @@ export const AppRoutesNew = () => {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             {/* Main Routes */}
-            <Route path="/" element={<OmniscienceView />} />
+            <Route path="/" element={<DashboardView />} />
+            <Route path="/omni" element={<OmniscienceView />} />
             <Route path="/overview" element={<DashboardView />} />
             <Route path="/news" element={<ActivityView />} />
             <Route path="/trends" element={<ActivityView />} />

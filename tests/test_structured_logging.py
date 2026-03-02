@@ -12,10 +12,9 @@ from app.libs.core.structured_logger import RequestLogger, get_logger, setup_str
 # Ensure logging is configured for JSON before tests
 @pytest.fixture(scope="module", autouse=True)
 def configure_logging():
-    # Force JSON output for tests
-    import libs.core.structured_logger
+    import app.libs.core.structured_logger
 
-    libs.core.structured_logger._global_logger = setup_structured_logging(
+    app.libs.core.structured_logger._global_logger = setup_structured_logging(
         log_level="INFO", use_json=True
     )
 

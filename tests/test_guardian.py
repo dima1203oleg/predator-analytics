@@ -20,7 +20,7 @@ class TestGuardianService(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.guardian = GuardianService()
 
-    @patch("libs.core.guardian.RedisClient")
+    @patch("app.libs.core.guardian.RedisClient")
     async def test_check_infrastructure_mocked(self, MockRedis):
         """Test infrastructure checks with mocked dependencies."""
         mock_redis_instance = AsyncMock()
@@ -40,7 +40,7 @@ class TestGuardianService(unittest.IsolatedAsyncioTestCase):
         assert results["rabbitmq"] == "DOWN"
         assert results["qdrant"] == "DOWN"
 
-    @patch("libs.core.guardian.get_db_ctx")
+    @patch("app.libs.core.guardian.get_db_ctx")
     async def test_schema_integrity_mocked(self, mock_get_db):
         """Test schema validation logic."""
         mock_db = AsyncMock()

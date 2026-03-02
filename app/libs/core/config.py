@@ -91,6 +91,7 @@ class Settings(BaseSettings):
     # --- CONSTITUTIONAL CORE (v45.2) ---
     CONSTITUTION_HASH: str = "3f05c27896098e41471c246fb39e6a0dd43f7b11ff7c46db8f0195d3d3cae3cd"
     CONSTITUTION_PATH: str = os.path.join(PROJECT_ROOT, "docs/v45_CONSTITUTION.md")
+    AZR_HOME: str = os.getenv("AZR_HOME", "/app/.azr")
     CORS_ORIGINS: list[str] = [
         "*",  # Allow all in development/standalone modes for easier access
         os.getenv("FRONTEND_URL", "http://localhost:3000"),

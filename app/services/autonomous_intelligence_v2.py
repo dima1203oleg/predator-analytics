@@ -172,7 +172,7 @@ class PredictiveAnalyzer:
         y = np.array(values)
         slope = np.polyfit(x, y, 1)[0]
         # Нормалізувати slope до діапазону -1..1
-        return np.tanh(slope / np.std(y) if np.std(y) > 0 else 0)
+        return float(np.tanh(slope))
 
     def _detect_anomaly(self, values: list[float]) -> bool:
         """Виявити аномалію."""
