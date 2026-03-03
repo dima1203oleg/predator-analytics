@@ -10,6 +10,7 @@ from app.models.v55.orm.decision_artifact import DecisionArtifactORM
 from app.models.v55.orm.cers_score import CERSScoreORM
 from app.models.v55.orm.signal import SignalORM
 from app.models.v55.orm.behavioral_score import BehavioralScoreORM
+from app.models.v55.orm.fused_record import FusedRecordORM
 
 __all__ = [
     "EntityORM",
@@ -17,4 +18,5 @@ __all__ = [
     "CERSScoreORM",
     "SignalORM",
     "BehavioralScoreORM",
+    "FusedRecordORM",
 ]
