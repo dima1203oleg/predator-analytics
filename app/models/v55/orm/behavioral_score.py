@@ -29,8 +29,13 @@ class BehavioralScoreORM(Base):
     ass = Column(Float, nullable=False, comment="Adaptation Speed Score")
     cp = Column(Float, nullable=False, comment="Collapse Probability")
     inertia_index = Column(Float, nullable=True, comment="Behavioral Inertia Index")
+    aggregate = Column(
+        Float, nullable=False, server_default="0", comment="Weighted aggregate 0-100"
+    )
     confidence = Column(Float, nullable=False)
-    calculated_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+    calculated_at = Column(
+        DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc)
+    )
     data_window_start = Column(Date, nullable=True)
     data_window_end = Column(Date, nullable=True)
 

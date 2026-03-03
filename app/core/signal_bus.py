@@ -139,7 +139,7 @@ class SignalBus:
         trace_id: str | None = None,
         confidence: float | None = None,
     ) -> str:
-        """Emit a signal to the bus.
+        """Emit a signal to the bus AND persist it to v55.signals.
 
         Returns:
             signal_id of the emitted signal.
@@ -152,6 +152,55 @@ class SignalBus:
             confidence=confidence,
         )
 
+        # ─── 1. Persist to DB ───
+        try:
+            from app.libs.core.database import get_db_ctx
+            from app.repositories.signal_repository import SignalRepository
+
+            # Determine layer from topic
+            layer = "behavioral"
+            for candidate in (
+                "behavioral",
+                "institutional",
+                "influence",
+                "structural",
+                "predictive",
+            ):
+                if candidate in topic:
+                    layer = candidate
+                    break
+            if "cers" in topic:
+                layer = "behavioral"  # CERS is meta, attach to behavioral
+            if "data" in topic or "entity" in topic or "ingestion" in topic:
+                layer = "behavioral"  # fallback layer for data events
+
+            # Determine signal_type
+            signal_type = "info"
+            if "alert" in topic or "critical" in topic:
+                signal_type = "alert"
+            elif "warning" in topic:
+                signal_type = "warning"
+            elif "anomaly" in topic:
+                signal_type = "anomaly"
+
+            async with get_db_ctx() as db:
+                repo = SignalRepository(db)
+                await repo.create_signal(
+                    signal_type=signal_type,
+                    topic=topic,
+                    layer=layer,
+                    ueid=ueid,
+                    score=payload.get("score"),
+                    confidence=confidence,
+                    summary=TOPICS.get(topic, topic),
+                    details=payload,
+                    sources=payload.get("sources", []),
+                    trace_id=envelope.get("trace_id"),
+                )
+        except Exception as e:
+            logger.warning("Signal persistence failed (non-fatal): %s", e)
+
+        # ─── 2. Push to Kafka/Redpanda ───
         if self._connected and self._producer:
             try:
                 kafka_topic = f"predator.{topic.replace('.', '_')}"

@@ -32,6 +32,7 @@ class BehavioralRepository:
             ass=score.ass,
             cp=score.cp,
             inertia_index=score.inertia_index,
+            aggregate=score.aggregate,
             confidence=score.confidence.total,
         )
 

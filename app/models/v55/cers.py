@@ -28,6 +28,8 @@ class CERSHistoryItem(BaseModel):
     score: float
     level: str
     level_ua: str
+    level_en: str = ""
+    confidence: float = 0.0
     calculated_at: datetime
 
 
