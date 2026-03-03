@@ -20,21 +20,22 @@ from pathlib import Path
 
 class EvolutionService:
     def __init__(self, storage: Any = None):
-        from app.libs.core.storage import FileStorageProvider
+        from app.libs.core.storage import StorageProvider, FileStorageProvider
         from app.libs.core.config import settings
         
         if storage is None:
-            self.storage = FileStorageProvider(Path(settings.AZR_HOME))
+            self.storage: StorageProvider = FileStorageProvider(Path(settings.AZR_HOME))
         elif isinstance(storage, (str, Path)):
-            self.storage = FileStorageProvider(Path(storage))
+            self.storage: StorageProvider = FileStorageProvider(Path(storage))
         else:
-            self.storage = storage
+            self.storage: StorageProvider = storage
 
         # Relative paths
         self.history_rel_path = "metrics/evolution/history.jsonl"
+        self.cortex_rel_path = "metrics/evolution/cortex.json"
 
         # Caching for heavy code analysis
-        self._cached_analysis = None
+        self._cached_analysis: dict[str, Any] | None = None
         self._last_analysis_time = 0.0
 
     def _get_prometheus_value(
@@ -106,7 +107,7 @@ class EvolutionService:
             },
         }
 
-    async def _get_code_metrics(self):
+    async def _get_code_metrics(self) -> dict[str, Any]:
         """Lazy load code metrics (cached for 1 hour)."""
         now = time.time()
         if not self._cached_analysis or (now - self._last_analysis_time > 3600):
@@ -253,7 +254,7 @@ class EvolutionService:
                 "event": "CHAOS_STRESS_TEST",
                 "data": {"description": "Network latency injection successful. Recovery MTTR: 12s"},
             },
-        ][:limit]
+        ][:limit] # type: ignore
 
 
 evolution_service = EvolutionService()
