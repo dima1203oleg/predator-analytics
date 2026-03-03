@@ -109,14 +109,15 @@ class MerkleTruthLedger:
 
     GENESIS_HASH = sha3_512("PREDATOR_AZR_GENESIS_BLOCK_v40")
 
-    def __init__(self, storage_path: str | Path = "/tmp/azr_logs"):
-        self.storage_path = Path(storage_path)
-        # Removed mkdir(parents=True, exist_ok=True) from __init__ for Cloud-Native compliance.
-        # Infrastructure is now created lazily during write operations.
+    def __init__(self, storage: Any = "/tmp/azr_logs"):
+        from app.libs.core.storage import StorageProvider, FileStorageProvider
+        if isinstance(storage, (str, Path)):
+            self.storage = FileStorageProvider(Path(storage))
+        else:
+            self.storage = storage
 
-        self.ledger_file = self.storage_path / "truth_ledger.jsonl"
-        self.merkle_file = self.storage_path / "merkle_roots.json"
-        self.state_file = self.storage_path / "ledger_state.json"
+        self.ledger_rel_path = "truth_ledger.jsonl"
+        self.state_rel_path = "ledger_state.json"
 
         # In-memory state
         self._lock = threading.Lock()
@@ -129,32 +130,25 @@ class MerkleTruthLedger:
         self._load_state()
 
     def _load_state(self) -> None:
-        """Load ledger state from disk."""
-        if self.ledger_file.exists():
-            with open(self.ledger_file, encoding="utf-8") as f:
-                for line in f:
-                    if line.strip():
-                        try:
-                            entry = LedgerEntry.from_dict(json.loads(line))
-                            self._entries.append(entry)
-                            self._entry_hashes.append(entry.compute_entry_hash())
-                        except Exception:
-                            pass
+        """Load ledger state from StorageProvider."""
+        content = self.storage.read_text(self.ledger_rel_path)
+        if content:
+            for line in content.splitlines():
+                if line.strip():
+                    try:
+                        entry = LedgerEntry.from_dict(json.loads(line))
+                        self._entries.append(entry)
+                        self._entry_hashes.append(entry.compute_entry_hash())
+                    except Exception:
+                        pass
 
             if self._entries:
                 self._sequence = self._entries[-1].sequence
                 self._current_merkle_root = self._entries[-1].merkle_root
 
     def _save_entry(self, entry: LedgerEntry) -> None:
-        """Append entry to persistent storage with ATOMIC guarantee.
-        Uses fsync to ensure data survives immediate power loss.
-        """
-        # Ensure directory exists before writing
-        self.storage_path.mkdir(parents=True, exist_ok=True)
-        with open(self.ledger_file, "a", encoding="utf-8") as f:
-            f.write(json.dumps(entry.to_dict(), ensure_ascii=False) + "\n")
-            f.flush()  # Flush Python buffer
-            os.fsync(f.fileno())  # Force write to physical disk (Critical for blackouts)
+        """Append entry to persistent storage via StorageProvider."""
+        self.storage.append_line(self.ledger_rel_path, entry.to_dict())
 
     def _compute_merkle_root(self, hashes: list[str]) -> str:
         """Compute Merkle root from list of hashes."""
@@ -346,19 +340,15 @@ class MerkleTruthLedger:
             self._sequence = len(new_entries)
             self._current_merkle_root = new_entries[-1].merkle_root
 
-            # 6. Rewrite ledger file (atomic)
-            backup_file = self.ledger_file.with_suffix(".jsonl.bak")
-            if self.ledger_file.exists():
-                import shutil
+            # 6. Rewrite ledger file (via StorageProvider)
+            backup_rel_path = self.ledger_rel_path + ".bak"
+            if self.storage.exists(self.ledger_rel_path):
+                self.storage.copy(self.ledger_rel_path, backup_rel_path)
 
-                shutil.copy(self.ledger_file, backup_file)
-
-            self.storage_path.mkdir(parents=True, exist_ok=True)
-            with open(self.ledger_file, "w", encoding="utf-8") as f:
-                for entry in new_entries:
-                    f.write(json.dumps(entry.to_dict(), ensure_ascii=False) + "\n")
-                f.flush()
-                os.fsync(f.fileno())
+            # 6. Save repaired ledger via StorageProvider
+            self.storage.write_lines(
+                self.ledger_rel_path, [e.to_dict() for e in new_entries]
+            )
 
             # 7. Verify
             is_valid, msg = self.verify_chain_integrity()
@@ -504,7 +494,8 @@ class MerkleTruthLedger:
             "merkle_root": self._current_merkle_root[:64] + "...",
             "genesis_hash": self.GENESIS_HASH[:64] + "...",
             "event_type_counts": event_types,
-            "storage_path": str(self.storage_path),
+            "storage_provider": self.storage.__class__.__name__,
+            "ledger_file": self.ledger_rel_path,
             "integrity_verified": self.verify_chain_integrity()[0],
         }
 
@@ -527,13 +518,13 @@ _ledger_instance: MerkleTruthLedger | None = None
 _ledger_lock = threading.Lock()
 
 
-def get_truth_ledger(storage_path: str | Path = "/tmp/azr_logs") -> MerkleTruthLedger:
+def get_truth_ledger(storage: Any = "/tmp/azr_logs") -> MerkleTruthLedger:
     """Get or create the global Truth Ledger instance."""
     global _ledger_instance
 
     with _ledger_lock:
         if _ledger_instance is None:
-            _ledger_instance = MerkleTruthLedger(storage_path)
+            _ledger_instance = MerkleTruthLedger(storage)
         return _ledger_instance
 
 
