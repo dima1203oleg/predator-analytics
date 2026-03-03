@@ -16,6 +16,7 @@ Advanced self-improvement system with:
 """
 
 import asyncio
+from typing import Any
 from collections import deque
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -642,13 +643,16 @@ class AZREngineV32:
 
     VERSION = "v32.0.0"
 
-    def __init__(self, azr_root: str | None = None):
+    def __init__(self, azr_root: str | None = None, storage: Any | None = None):
         from app.libs.core.config import settings
 
-        self.root = Path(azr_root or settings.AZR_HOME)
-        
-        # Initialize Architecture-Level Storage Provider
-        self.storage = FileStorageProvider(self.root)
+        if storage:
+            self.storage = storage
+            self.root = Path(self.storage.base_path)
+        else:
+            self.root = Path(azr_root or settings.AZR_HOME)
+            # Initialize Architecture-Level Storage Provider
+            self.storage = FileStorageProvider(self.root)
         
         # Core components using StorageProvider
         self.guard = ConstitutionalGuardV2(self.storage)
