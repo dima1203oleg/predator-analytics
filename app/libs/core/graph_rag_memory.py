@@ -220,12 +220,17 @@ class KnowledgeGraph:
     - Виведення причинно-наслідкових зв'язків
     """
 
-    def __init__(self, storage_path: str | Path = "/tmp/azr_logs"):
-        self.storage_path = Path(storage_path)
-        self.storage_path.mkdir(parents=True, exist_ok=True)
+    def __init__(self, storage: Any = "/tmp/azr_logs"):
+        from app.libs.core.storage import FileStorageProvider
+        
+        if isinstance(storage, (str, Path)):
+            self.storage = FileStorageProvider(Path(storage))
+        else:
+            self.storage = storage
 
-        self.nodes_file = self.storage_path / "knowledge_nodes.jsonl"
-        self.edges_file = self.storage_path / "knowledge_edges.jsonl"
+        # Relative paths for abstraction
+        self.nodes_rel_path = "knowledge/knowledge_nodes.jsonl"
+        self.edges_rel_path = "knowledge/knowledge_edges.jsonl"
 
         self._lock = threading.Lock()
 
@@ -245,31 +250,31 @@ class KnowledgeGraph:
         self._load()
 
     def _load(self) -> None:
-        """Load graph from disk."""
-        if self.nodes_file.exists():
-            with open(self.nodes_file, encoding="utf-8") as f:
-                for line in f:
-                    if line.strip():
-                        try:
-                            node = KnowledgeNode.from_dict(json.loads(line))
-                            self._nodes[node.node_id] = node
-                            self._by_type[node.node_type].append(node.node_id)
-                            if node.properties.get("text"):
-                                self._embedding_texts.append(node.properties["text"])
-                        except Exception:
-                            pass
+        """Load graph from storage."""
+        nodes_content = self.storage.read_text(self.nodes_rel_path)
+        if nodes_content:
+            for line in nodes_content.splitlines():
+                if line.strip():
+                    try:
+                        node = KnowledgeNode.from_dict(json.loads(line))
+                        self._nodes[node.node_id] = node
+                        self._by_type[node.node_type].append(node.node_id)
+                        if node.properties.get("text"):
+                            self._embedding_texts.append(node.properties["text"])
+                    except Exception:
+                        pass
 
-        if self.edges_file.exists():
-            with open(self.edges_file, encoding="utf-8") as f:
-                for line in f:
-                    if line.strip():
-                        try:
-                            edge = KnowledgeEdge.from_dict(json.loads(line))
-                            self._edges[edge.edge_id] = edge
-                            self._outgoing[edge.source_id].append(edge.edge_id)
-                            self._incoming[edge.target_id].append(edge.edge_id)
-                        except Exception:
-                            pass
+        edges_content = self.storage.read_text(self.edges_rel_path)
+        if edges_content:
+            for line in edges_content.splitlines():
+                if line.strip():
+                    try:
+                        edge = KnowledgeEdge.from_dict(json.loads(line))
+                        self._edges[edge.edge_id] = edge
+                        self._outgoing[edge.source_id].append(edge.edge_id)
+                        self._incoming[edge.target_id].append(edge.edge_id)
+                    except Exception:
+                        pass
 
         # Fit embedder on existing texts
         if self._embedding_texts:
@@ -311,8 +316,7 @@ class KnowledgeGraph:
             self._by_type[node_type].append(node_id)
 
             # Persist
-            with open(self.nodes_file, "a", encoding="utf-8") as f:
-                f.write(json.dumps(node.to_dict()) + "\n")
+            self.storage.append_line(self.nodes_rel_path, node.to_dict())
 
             return node
 
@@ -347,8 +351,7 @@ class KnowledgeGraph:
             self._incoming[target_id].append(edge_id)
 
             # Persist
-            with open(self.edges_file, "a", encoding="utf-8") as f:
-                f.write(json.dumps(edge.to_dict()) + "\n")
+            self.storage.append_line(self.edges_rel_path, edge.to_dict())
 
             return edge
 
@@ -516,7 +519,7 @@ class KnowledgeGraph:
             "total_edges": len(self._edges),
             "node_types": type_counts,
             "vocabulary_size": len(self.embedder.vocabulary),
-            "storage_path": str(self.storage_path),
+            "storage_provider": self.storage.__class__.__name__,
         }
 
 
@@ -528,13 +531,13 @@ _knowledge_graph_instance: KnowledgeGraph | None = None
 _kg_lock = threading.Lock()
 
 
-def get_knowledge_graph(storage_path: str | Path = "/tmp/azr_logs") -> KnowledgeGraph:
+def get_knowledge_graph(storage: Any = "/tmp/azr_logs") -> KnowledgeGraph:
     """Get or create global Knowledge Graph instance."""
     global _knowledge_graph_instance
 
     with _kg_lock:
         if _knowledge_graph_instance is None:
-            _knowledge_graph_instance = KnowledgeGraph(storage_path)
+            _knowledge_graph_instance = KnowledgeGraph(storage)
         return _knowledge_graph_instance
 
 
