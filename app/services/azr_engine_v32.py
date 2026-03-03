@@ -367,8 +367,9 @@ class PredictiveAnomalyDetector:
                 continue
 
             # Simple linear regression
-            first_half = sum(values[: len(values) // 2]) / (len(values) // 2)
-            second_half = sum(values[len(values) // 2 :]) / (len(values) - len(values) // 2)
+            values_f: list[float] = [float(v) for v in values]
+            first_half = sum(values_f[: len(values_f) // 2]) / (len(values_f) // 2) # type: ignore
+            second_half = sum(values_f[len(values_f) // 2 :]) / (len(values_f) - len(values_f) // 2) # type: ignore
 
             if second_half > first_half * 1.1:
                 trends[key] = "INCREASING"
@@ -506,6 +507,7 @@ class CanaryControllerV2:
         logger.info("canary_started", action_id=action.id, rollout_pct=rollout_pct)
 
         # Phase 1: Initial rollout
+        import asyncio
         await asyncio.sleep(2)
 
         # Phase 2: Health monitoring
@@ -547,11 +549,12 @@ class CanaryControllerV2:
         self.current_rollout_percentage = 0
 
         try:
+            import asyncio
             proc = await asyncio.create_subprocess_shell(
                 "git reset --hard HEAD^",
                 cwd="/app",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
             )
             await proc.communicate()
         except Exception as e:
@@ -584,6 +587,7 @@ class ChaosEngine:
             return None
 
         import random
+        import asyncio
 
         for scenario_id, _desc, probability in self.SCENARIOS:
             if random.random() < probability:
@@ -611,6 +615,7 @@ class ChaosEngine:
             _ = [x**2 for x in range(100000)]
 
         elif scenario_id == "network_latency":
+            import asyncio
             await asyncio.sleep(0.5)
 
         elif scenario_id == "api_error":
@@ -644,8 +649,9 @@ class AZREngineV32:
 
     VERSION = "v32.0.0"
 
-    def __init__(self, azr_root: str | None = None, storage: Any | None = None):
+    def __init__(self, azr_root: str | None = None, storage: StorageProvider | None = None):
         from app.libs.core.config import settings
+        import asyncio # Added for _main_loop
 
         if storage:
             self.storage = storage
@@ -709,6 +715,7 @@ class AZREngineV32:
         self.is_running = True
         logger.info("azr_v32_started", duration_hours=duration_hours)
 
+        import asyncio
         asyncio.create_task(self._main_loop(duration_hours))
 
     async def stop(self):
@@ -748,10 +755,12 @@ class AZREngineV32:
 
                 # Adaptive sleep based on health
                 sleep_time = 60 if self.current_health.overall > 80 else 30
+                import asyncio
                 await asyncio.sleep(sleep_time)
 
             except Exception as e:
                 logger.exception(f"AZR cycle error: {e}")
+                import asyncio
                 await asyncio.sleep(120)
 
     # ========================================================================
@@ -831,8 +840,8 @@ class AZREngineV32:
         """Orient - analyze observations and detect issues."""
         # 1. Detect anomalies
         current_metrics = {
-            "cpu": self.current_health.cpu_score,
-            "memory": self.current_health.memory_score,
+            "trend_cpu": self.anomaly_detector.metrics_history[-1].get("cpu", 0) if self.anomaly_detector.metrics_history else 0, # type: ignore
+            "trend_mem": self.anomaly_detector.metrics_history[-1].get("memory", 0) if self.anomaly_detector.metrics_history else 0, # type: ignore
             "disk": self.current_health.disk_score,
         }
         anomalies = self.anomaly_detector.detect_anomalies(current_metrics)
@@ -1009,8 +1018,8 @@ class AZREngineV32:
             # Run Ruff
             proc = await asyncio.create_subprocess_shell(
                 "ruff check /app --fix --quiet",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
             )
             await proc.communicate()
             return True
@@ -1149,7 +1158,6 @@ class AZREngineV32:
                 "entries": self.truth_ledger.length,
                 "merkle_root": self.truth_ledger.merkle_root[:48] + "...",
                 "integrity_verified": ledger_valid,
-                "integrity_message": ledger_message,
             },
             "capabilities": [
                 "ConstitutionalGuard",
