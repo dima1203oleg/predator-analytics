@@ -179,40 +179,34 @@ class EvolutionService:
     def _get_cortex_status(self) -> dict[str, Any]:
         """Fetch real-time cortex status from the visualizer output."""
         try:
-            cortex_path = Path("/tmp/azr_logs/cortex_map.json")
-            if cortex_path.exists():
-                with open(cortex_path) as f:
-                    data = json.load(f)
-                    return {
-                        "compliance_score": data.get("compliance_score", 0),
-                        "node_count": len(data.get("nodes", [])),
-                        "compliant_nodes": len(
-                            [n for n in data.get("nodes", []) if n.get("compliant")]
-                        ),
-                    }
+            content = self.storage.read_text(self.cortex_rel_path)
+            if content:
+                data = json.loads(content)
+                return {
+                    "compliance_score": data.get("compliance_score", 0),
+                    "node_count": len(data.get("nodes", [])),
+                    "compliant_nodes": len(
+                        [n for n in data.get("nodes", []) if n.get("compliant")]
+                    ),
+                }
         except Exception:
             pass
         return {"compliance_score": 0, "node_count": 0, "compliant_nodes": 0}
 
     async def save_snapshot(self):
         """Save current state to history."""
-        # Ensure directory exists before saving
-        self._metrics_dir_base.mkdir(parents=True, exist_ok=True)
-        
         stats = await self.get_latest_stats()
-        with open(self.history_file, "a") as f:
-            f.write(json.dumps(stats) + "\n")
+        self.storage.append_line(self.history_rel_path, stats)
 
     async def get_history(self, period: str = "24h") -> list[dict[str, Any]]:
         """Read history from file."""
         history = []
-        if os.path.exists(self.history_file):
-            # Read last N lines. Rough implementation.
-            with open(self.history_file) as f:
-                lines = f.readlines()
-                for line in lines[-100:]:  # Last 100 points
-                    with contextlib.suppress(builtins.BaseException):
-                        history.append(json.loads(line))
+        content = self.storage.read_text(self.history_rel_path)
+        if content:
+            lines = content.splitlines()
+            for line in lines[-100:]:  # Last 100 points
+                with contextlib.suppress(builtins.BaseException):
+                    history.append(json.loads(line))
         return history
 
     async def get_recent_experience(self, limit: int = 10) -> list[dict[str, Any]]:
