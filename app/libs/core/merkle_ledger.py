@@ -393,11 +393,11 @@ class MerkleTruthLedger:
         # Verify final Merkle root
         computed_root = self._compute_merkle_root(self._entry_hashes)
         if computed_root != self._current_merkle_root:
-            return False, f"Merkle root не відповідає: обчислений={computed_root[:32]}..."
+            return False, f"Merkle root не відповідає: обчислений={str(computed_root)[:32]}..."
 
         return (
             True,
-            f"✅ Реєстр дійсний: {len(self._entries)} записів, root={self._current_merkle_root[:32]}...",
+            f"✅ Реєстр дійсний: {len(self._entries)} записів, root={str(self._current_merkle_root)[:32]}...",
         )
 
     def get_proof(self, sequence: int) -> MerkleProof | None:
