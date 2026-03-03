@@ -161,3 +161,90 @@ def fuse_record(
         fingerprint=fp,
         quality_score=round(quality, 2),
     )
+
+
+async def process_batch(
+    session: Any,  # AsyncSession
+    records: list[dict[str, Any]],
+    source: DataSource,
+    entity_type: str = "company"
+) -> FusionResult:
+    """Process a batch of raw records through the data fusion pipeline.
+    
+    Validates rules, normalizes data, resolves UEID via EntityRepository,
+    persists FusedRecordORM via FusedRecordRepository, and emits signal_bus events.
+    """
+    from app.repositories.entity_repository import EntityRepository
+    from app.repositories.fused_record_repository import FusedRecordRepository
+    from app.core.signal_bus import signal_bus
+    
+    entity_repo = EntityRepository(session)
+    fused_repo = FusedRecordRepository(session)
+    
+    result = FusionResult(records_processed=len(records))
+    
+    for raw in records:
+        try:
+            # Step 1: Normalize & Prepare
+            prepared = fuse_record(raw, source)
+            
+            # Step 2: Entity Resolution / Creation
+            name = (
+                prepared.normalized_data.get("importer_name") or
+                prepared.normalized_data.get("name") or 
+                prepared.normalized_data.get("seller_name", "Unknown Entity")
+            )
+            edrpou = (
+                prepared.normalized_data.get("importer_edrpou") or
+                prepared.normalized_data.get("edrpou") or
+                prepared.normalized_data.get("seller_edrpou")
+            )
+            
+            # Use 'inn' if parsed and available, otherwise None
+            inn = raw.get("inn")
+            
+            entity, is_new = await entity_repo.resolve_or_create(
+                name=name,
+                entity_type=entity_type,
+                edrpou=edrpou,
+                inn=inn,
+                metadata={"source": str(source)},
+            )
+            
+            prepared.ueid = str(entity.ueid)
+            if is_new:
+                result.entities_created += 1
+                await signal_bus.emit(
+                    topic="entity.created",
+                    payload={"name": entity.name, "edrpou": entity.edrpou},
+                    ueid=str(entity.ueid),
+                )
+            else:
+                result.entities_resolved += 1
+            
+            # Step 3: Persist the Fused Record
+            await fused_repo.save_record(
+                ueid=entity.ueid,
+                source=str(prepared.source),
+                raw_data=prepared.raw_data,
+                normalized_data=prepared.normalized_data,
+                fingerprint=prepared.fingerprint,
+                quality_score=prepared.quality_score,
+            )
+            
+            result.records_fused.append(prepared)
+            
+            # Step 4: Emit Pipeline Event
+            await signal_bus.emit(
+                topic="data.ingested",
+                payload={"source": str(source), "quality": prepared.quality_score},
+                ueid=str(entity.ueid),
+                confidence=prepared.quality_score,
+            )
+            
+        except Exception as e:
+            logger.exception("Fusion failed for record")
+            result.errors.append(str(e))
+            
+    # Allow caller to commit
+    return result
