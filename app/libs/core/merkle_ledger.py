@@ -511,21 +511,35 @@ class MerkleTruthLedger:
 
 
 # ============================================================================
-# 🔗 GLOBAL SINGLETON
+# 🔗 KEYED SINGLETONS
 # ============================================================================
 
-_ledger_instance: MerkleTruthLedger | None = None
+_ledger_instances: dict[str, MerkleTruthLedger] = {}
 _ledger_lock = threading.Lock()
 
 
 def get_truth_ledger(storage: Any = "/tmp/azr_logs") -> MerkleTruthLedger:
-    """Get or create the global Truth Ledger instance."""
-    global _ledger_instance
+    """Get or create the Truth Ledger instance for a specific storage path."""
+    global _ledger_instances
+    
+    # Normalize path key
+    from app.libs.core.storage import StorageProvider
+    if isinstance(storage, StorageProvider):
+        path_key = str(storage.base_path)
+    else:
+        path_key = str(Path(storage).absolute())
 
     with _ledger_lock:
-        if _ledger_instance is None:
-            _ledger_instance = MerkleTruthLedger(storage)
-        return _ledger_instance
+        if path_key not in _ledger_instances:
+            _ledger_instances[path_key] = MerkleTruthLedger(storage)
+        return _ledger_instances[path_key]
+
+
+def reset_ledger_singletons():
+    """External hook to clear singletons (primarily for testing)."""
+    global _ledger_instances
+    with _ledger_lock:
+        _ledger_instances.clear()
 
 
 def record_truth(

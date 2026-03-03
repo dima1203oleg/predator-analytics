@@ -19,16 +19,19 @@ from pathlib import Path
 
 
 class EvolutionService:
-    def __init__(self, metrics_dir: str | None = None):
+    def __init__(self, storage: Any = None):
+        from app.libs.core.storage import FileStorageProvider
         from app.libs.core.config import settings
         
-        # Use settings-based directory by default
-        self._metrics_dir_base = Path(metrics_dir or settings.AZR_HOME) / "metrics" / "evolution"
-        
-        # Removed mkdir(parents=True, exist_ok=True) from __init__ to prevent side-effects on import.
-        # Directory will be created lazily when saving snapshots.
+        if storage is None:
+            self.storage = FileStorageProvider(Path(settings.AZR_HOME))
+        elif isinstance(storage, (str, Path)):
+            self.storage = FileStorageProvider(Path(storage))
+        else:
+            self.storage = storage
 
-        self.history_file = self._metrics_dir_base / "history.jsonl"
+        # Relative paths
+        self.history_rel_path = "metrics/evolution/history.jsonl"
 
         # Caching for heavy code analysis
         self._cached_analysis = None

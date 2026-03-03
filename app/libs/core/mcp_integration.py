@@ -758,21 +758,35 @@ class MCPAgentOrchestrator:
 
 
 # ============================================================================
-# 🔗 GLOBAL SINGLETON
+# 🔗 KEYED SINGLETONS
 # ============================================================================
 
-_orchestrator_instance: MCPAgentOrchestrator | None = None
+_orchestrator_instances: dict[str, MCPAgentOrchestrator] = {}
 _orch_lock = threading.Lock()
 
 
 def get_mcp_orchestrator(storage: Any = "/tmp/azr_logs") -> MCPAgentOrchestrator:
-    """Get or create global MCP Orchestrator instance."""
-    global _orchestrator_instance
+    """Get or create the MCP Orchestrator instance for a specific storage path."""
+    global _orchestrator_instances
+    
+    # Normalize path key
+    from app.libs.core.storage import StorageProvider
+    if isinstance(storage, StorageProvider):
+        path_key = str(storage.base_path)
+    else:
+        path_key = str(Path(storage).absolute())
 
     with _orch_lock:
-        if _orchestrator_instance is None:
-            _orchestrator_instance = MCPAgentOrchestrator(storage)
-        return _orchestrator_instance
+        if path_key not in _orchestrator_instances:
+            _orchestrator_instances[path_key] = MCPAgentOrchestrator(storage)
+        return _orchestrator_instances[path_key]
+
+
+def reset_mcp_singletons():
+    """External hook to clear singletons (primarily for testing)."""
+    global _orchestrator_instances
+    with _orch_lock:
+        _orchestrator_instances.clear()
 
 
 # ============================================================================
