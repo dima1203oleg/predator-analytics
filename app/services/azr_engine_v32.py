@@ -27,6 +27,7 @@ from pathlib import Path
 import uuid
 
 import yaml
+import subprocess
 
 from app.libs.core.merkle_ledger import MerkleTruthLedger, get_truth_ledger
 from app.libs.core.structured_logger import get_logger, log_business_event, log_security_event
@@ -358,7 +359,7 @@ class PredictiveAnomalyDetector:
             return {}
 
         trends = {}
-        recent = list(self.metrics_history)[-20:]
+        recent = list(self.metrics_history)[-20:] # type: ignore
 
         for key in ["cpu", "memory", "disk"]:
             values = [m.get(key, 0) for m in recent if key in m]
@@ -388,7 +389,7 @@ class MultiModelConsensus:
     """Voting system for multi-model AI decisions."""
 
     def __init__(self):
-        self.available_models = []
+        self.available_models: list[tuple[str, str]] = []
         self.model_weights = {}
         self._discover_models()
 
@@ -811,7 +812,7 @@ class AZREngineV32:
                 self.current_health.ai_score = 100 if metrics["ai_healthy"] else 50
         except:
             metrics["ai_healthy"] = False
-            self.current_health.ai_score = 50
+            self.current_health.ai_score = 50.0
 
         # Calculate overall health
         self.current_health.calculate_overall()
