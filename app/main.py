@@ -108,6 +108,36 @@ except ImportError as e:
 async def startup_event():
     logger.info("PREDATOR_V55_BOOT_START", mode="SOVEREIGN")
 
+    # ─── v55 Schema & Tables ───
+    try:
+        from sqlalchemy import text as sa_text
+        from app.libs.core.database import engine as db_engine
+
+        async with db_engine.begin() as conn:
+            await conn.execute(sa_text("CREATE SCHEMA IF NOT EXISTS v55"))
+            await conn.execute(sa_text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
+            logger.info("✅ v55 schema ready")
+
+        # Import all v55 ORM models so metadata knows about them
+        import app.models.v55.orm  # noqa: F401
+        from app.libs.core.database import Base
+
+        async with db_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+            logger.info("✅ v55 tables synced")
+    except Exception as e:
+        logger.warning("v55 schema init skipped: %s", e)
+
+    # ─── Signal Bus ───
+    try:
+        from app.core.signal_bus import signal_bus
+
+        await signal_bus.connect()
+        app.state.signal_bus = signal_bus
+        logger.info("✅ Signal Bus initialized")
+    except Exception as e:
+        logger.warning("Signal Bus init skipped: %s", e)
+
     # Connect to Message Broker
     try:
         await asyncio.wait_for(broker.connect(), timeout=5.0)
@@ -138,6 +168,22 @@ async def startup_event():
 
 @app.on_event("shutdown")
 async def shutdown_event():
+    # Disconnect Signal Bus
+    try:
+        from app.core.signal_bus import signal_bus
+
+        await signal_bus.disconnect()
+    except Exception:
+        pass
+
+    # Close DB connections
+    try:
+        from app.libs.core.database import close_db
+
+        await close_db()
+    except Exception:
+        pass
+
     await orchestrator.stop()
     await broker.disconnect()
     logger.info("PREDATOR_SHUTDOWN_COMPLETE")
