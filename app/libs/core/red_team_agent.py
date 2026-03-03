@@ -448,11 +448,16 @@ class RedTeamAgent:
     Генерує звіт з оцінкою вразливості.
     """
 
-    def __init__(self, storage_path: str | Path = "/tmp/azr_logs"):
-        self.storage_path = Path(storage_path)
-        self.storage_path.mkdir(parents=True, exist_ok=True)
+    def __init__(self, storage: Any = "/tmp/azr_logs"):
+        from app.libs.core.storage import FileStorageProvider
+        
+        if isinstance(storage, (str, Path)):
+            self.storage = FileStorageProvider(Path(storage))
+        else:
+            self.storage = storage
 
-        self.report_file = self.storage_path / "red_team_report.json"
+        # Relative paths
+        self.report_rel_path = "security/red_team_report.json"
 
         # Attack techniques
         self.techniques: list[AttackTechnique] = [
@@ -576,8 +581,8 @@ class RedTeamAgent:
             },
         }
 
-        with open(self.report_file, "w", encoding="utf-8") as f:
-            json.dump(summary, f, indent=2, ensure_ascii=False)
+        content = json.dumps(summary, indent=2, ensure_ascii=False)
+        self.storage.write_text(self.report_rel_path, content)
 
 
 # ============================================================================

@@ -29,6 +29,8 @@ import yaml
 
 from app.libs.core.merkle_ledger import MerkleTruthLedger, get_truth_ledger
 from app.libs.core.structured_logger import get_logger, log_business_event, log_security_event
+from app.libs.core.storage import StorageProvider, FileStorageProvider
+from app.libs.core.config import settings
 
 
 logger = get_logger("azr_engine_v32")
@@ -129,33 +131,38 @@ class ConstitutionalGuardV2:
         "credentials",
     ]
 
-    def __init__(self):
+    def __init__(self, storage: StorageProvider | None = None):
+        self.storage = storage
         self.axioms: list[tuple[str, str, str]] = list(self.CORE_AXIOMS)
         self.violations_count = 0
         self.last_violation: dict | None = None
-        self._load_custom_axioms()
+        
+        if self.storage:
+            self._load_custom_axioms()
 
     def _load_custom_axioms(self):
-        """Load additional axioms from YAML config."""
-        from app.libs.core.config import PROJECT_ROOT
+        """Load additional axioms from YAML config via StorageProvider."""
+        if not self.storage:
+            return
 
-        yaml_paths = [
-            Path(PROJECT_ROOT) / "config/axioms/constitutional_axioms.yaml",
-            Path("config/axioms/constitutional_axioms.yaml"),
+        yaml_rel_paths = [
+            "config/axioms/constitutional_axioms.yaml",
         ]
-        for path in yaml_paths:
-            if path.exists():
+        
+        for rel_path in yaml_rel_paths:
+            content = self.storage.read_text(rel_path)
+            if content:
                 try:
-                    with open(path) as f:
-                        data = yaml.safe_load(f)
-                        if data and "axioms" in data:
-                            for ax in data["axioms"]:
-                                axiom_tuple = (ax["id"], ax["name"], ax["description"])
-                                if axiom_tuple not in self.axioms:
-                                    self.axioms.append(axiom_tuple)
-                    logger.info("custom_axioms_loaded", count=len(self.axioms), source=str(path))
+                    import yaml
+                    data = yaml.safe_load(content)
+                    if data and "axioms" in data:
+                        for ax in data["axioms"]:
+                            axiom_tuple = (ax["id"], ax["name"], ax["description"])
+                            if axiom_tuple not in self.axioms:
+                                self.axioms.append(axiom_tuple)
+                    logger.info("custom_axioms_loaded", count=len(self.axioms), source=rel_path)
                 except Exception as e:
-                    logger.warning(f"Failed to load custom axioms: {e}")
+                    logger.warning(f"Failed to load custom axioms from {rel_path}: {e}")
 
     async def verify_action(self, action: AZRAction) -> tuple[bool, str]:
         """Verify action against all constitutional axioms."""
@@ -206,13 +213,12 @@ class ConstitutionalGuardV2:
 
 
 class ExperienceMemory:
-    """Self-learning memory system that improves decision making over time."""
+    """Self-learning memory system and state persistence using StorageProvider."""
 
-    def __init__(self, storage_path: Path):
-        self.storage_path = storage_path
-        # Removed mkdir(parents=True, exist_ok=True) from __init__ for Cloud-Native compliance (no side-effects on import)
-        self.memory_file = self.storage_path / "experience_memory.jsonl"
-        self.blacklist_file = self.storage_path / "failure_blacklist.json"
+    def __init__(self, storage: StorageProvider):
+        self.storage = storage
+        self.memory_rel_path = "experience/experience_memory.jsonl"
+        self.blacklist_rel_path = "experience/failure_blacklist.json"
 
         # In-memory caches
         self.recent_experiences: deque = deque(maxlen=1000)
@@ -223,21 +229,23 @@ class ExperienceMemory:
         self._load_recent()
 
     def _load_blacklist(self) -> set:
-        if self.blacklist_file.exists():
-            return set(json.loads(self.blacklist_file.read_text()))
+        content = self.storage.read_text(self.blacklist_rel_path)
+        if content:
+            return set(json.loads(content))
         return set()
 
     def _load_recent(self):
-        """Load recent experiences into memory."""
-        if self.memory_file.exists():
-            with open(self.memory_file) as f:
-                for line in f:
-                    try:
-                        exp = json.loads(line)
-                        self.recent_experiences.append(exp)
-                        self._update_patterns(exp)
-                    except:
-                        pass
+        """Load recent experiences into memory via StorageProvider."""
+        # Use simpler approach: read file line by line if possible, or full read for now
+        content = self.storage.read_text(self.memory_rel_path)
+        if content:
+            for line in content.splitlines():
+                try:
+                    exp = json.loads(line)
+                    self.recent_experiences.append(exp)
+                    self._update_patterns(exp)
+                except:
+                    pass
 
     def _update_patterns(self, exp: dict):
         """Update success/failure patterns for learning."""
@@ -248,29 +256,19 @@ class ExperienceMemory:
             self.failure_patterns[action_type] = self.failure_patterns.get(action_type, 0) + 1
 
     def record_experience(self, action: AZRAction, outcome: str, impact_score: float = 0.0):
-        """Record action outcome for future learning."""
-        exp = ExperienceRecord(
-            action_fingerprint=action.fingerprint,
-            outcome=outcome,
-            impact_score=impact_score,
-            context={"action_id": action.id, "action_type": action.type, "meta": action.meta},
-        )
-
-        # Add to memory
+        """Record action outcome for future learning via StorageProvider."""
         exp_dict = {
-            "fingerprint": exp.action_fingerprint,
-            "outcome": exp.outcome,
-            "impact": exp.impact_score,
-            "context": exp.context,
-            "timestamp": exp.timestamp,
+            "fingerprint": action.fingerprint,
+            "outcome": outcome,
+            "impact": impact_score,
+            "context": {"action_id": action.id, "action_type": action.type, "meta": action.meta},
+            "timestamp": datetime.now().isoformat(),
         }
         self.recent_experiences.append(exp_dict)
         self._update_patterns(exp_dict)
 
-        # Persist to disk
-        self.storage_path.mkdir(parents=True, exist_ok=True)
-        with open(self.memory_file, "a") as f:
-            f.write(json.dumps(exp_dict) + "\n")
+        # Persist via abstraction (Atomic mkdir is inside append_line)
+        self.storage.append_line(self.memory_rel_path, exp_dict)
 
         # Add failures to blacklist
         if outcome == "FAILURE" and impact_score < -0.5:
@@ -278,8 +276,7 @@ class ExperienceMemory:
             self._save_blacklist()
 
     def _save_blacklist(self):
-        self.storage_path.mkdir(parents=True, exist_ok=True)
-        self.blacklist_file.write_text(json.dumps(list(self.blacklist)))
+        self.storage.write_text(self.blacklist_rel_path, json.dumps(list(self.blacklist)))
 
     def is_blacklisted(self, fingerprint: str) -> bool:
         return fingerprint in self.blacklist
@@ -425,7 +422,7 @@ class MultiModelConsensus:
                 "method": "fallback",
             }
 
-        votes = {}
+        votes: dict[str, float] = {}
         responses = []
 
         for provider, model in self.available_models[:3]:  # Max 3 models
@@ -649,20 +646,20 @@ class AZREngineV32:
         from app.libs.core.config import settings
 
         self.root = Path(azr_root or settings.AZR_HOME)
-        self.memory_path = self.root / "memory"
-        # Removed mkdir from __init__ to prevent side-effects on import.
-        # Infrastructure is now created lazily via ensure_infrastructure() or on first write.
-
-        # Core components
-        self.guard = ConstitutionalGuardV2()
-        self.memory = ExperienceMemory(self.memory_path)
+        
+        # Initialize Architecture-Level Storage Provider
+        self.storage = FileStorageProvider(self.root)
+        
+        # Core components using StorageProvider
+        self.guard = ConstitutionalGuardV2(self.storage)
+        self.memory = ExperienceMemory(self.storage)
         self.anomaly_detector = PredictiveAnomalyDetector()
         self.consensus = MultiModelConsensus()
         self.canary = CanaryControllerV2()
         self.chaos = ChaosEngine()
 
         # 🏛️ Cryptographic Truth Ledger (v40 Architecture)
-        self.truth_ledger: MerkleTruthLedger = get_truth_ledger(self.memory_path)
+        self.truth_ledger: MerkleTruthLedger = get_truth_ledger(self.storage)
 
         # Telegram Config
         self.telegram_token = os.environ.get("TELEGRAM_BOT_TOKEN")
@@ -673,7 +670,7 @@ class AZREngineV32:
         self.cycle_count = 0
         self.current_health = SystemHealthScore()
         self.action_queue: deque = deque(maxlen=100)
-        self.audit_log_path = self.memory_path / "audit_log.jsonl"
+        self.audit_log_rel_path = "memory/audit_log.jsonl"
 
         # Metrics
         self.total_actions_executed = 0
@@ -687,14 +684,9 @@ class AZREngineV32:
         )
 
     def ensure_infrastructure(self):
-        """Lazily create required directory structure."""
-        if not self.memory_path.exists():
-            try:
-                self.memory_path.mkdir(parents=True, exist_ok=True)
-                logger.info("azr_infrastructure_created", path=str(self.memory_path))
-            except Exception as e:
-                logger.error("azr_infrastructure_failed", error=str(e))
-        return self.memory_path.exists()
+        """Lazily create required directory structure via StorageProvider."""
+        # Simple existence check for the root directory through providers view
+        return self.storage.base_path.exists()
 
     # ========================================================================
     # 🎯 MAIN LOOP
@@ -1109,19 +1101,16 @@ class AZREngineV32:
                 status=status,
             )
 
-            # Also write to legacy file for backward compatibility
-            with open(self.audit_log_path, "a") as f:
-                f.write(
-                    json.dumps(
-                        {
-                            **payload,
-                            "timestamp": ledger_entry.timestamp,
-                            "merkle_root": ledger_entry.merkle_root,
-                            "ledger_sequence": ledger_entry.sequence,
-                        }
-                    )
-                    + "\n"
-                )
+            # Also write to legacy file via StorageProvider
+            self.storage.append_line(
+                self.audit_log_rel_path,
+                {
+                    **payload,
+                    "timestamp": ledger_entry.timestamp,
+                    "merkle_root": ledger_entry.merkle_root,
+                    "ledger_sequence": ledger_entry.sequence,
+                }
+            )
 
         except Exception as e:
             logger.exception(f"Audit log failed: {e}")

@@ -440,9 +440,16 @@ class MCPAgentOrchestrator:
         )
     """
 
-    def __init__(self, storage_path: str | Path = "/tmp/azr_logs"):
-        self.storage_path = Path(storage_path)
-        self.storage_path.mkdir(parents=True, exist_ok=True)
+    def __init__(self, storage: Any = "/tmp/azr_logs"):
+        from app.libs.core.storage import FileStorageProvider
+        
+        if isinstance(storage, (str, Path)):
+            self.storage = FileStorageProvider(Path(storage))
+        else:
+            self.storage = storage
+
+        # Relative paths
+        self.logs_rel_path = "mcp/mcp_audit.jsonl"
 
         # Tool registry (local tools)
         self.registry = MCPToolRegistry()
@@ -513,7 +520,7 @@ class MCPAgentOrchestrator:
             try:
                 from app.libs.core.merkle_ledger import get_truth_ledger
 
-                ledger = get_truth_ledger(self.storage_path)
+                ledger = get_truth_ledger(self.storage)
                 entries = ledger.get_latest_entries(limit)
                 return {
                     "total_entries": ledger.length,
@@ -544,7 +551,7 @@ class MCPAgentOrchestrator:
             try:
                 from app.libs.core.graph_rag_memory import get_knowledge_graph
 
-                kg = get_knowledge_graph(self.storage_path)
+                kg = get_knowledge_graph(self.storage)
                 similar = kg.find_similar(query, limit)
                 return {
                     "query": query,
@@ -758,13 +765,13 @@ _orchestrator_instance: MCPAgentOrchestrator | None = None
 _orch_lock = threading.Lock()
 
 
-def get_mcp_orchestrator(storage_path: str | Path = "/tmp/azr_logs") -> MCPAgentOrchestrator:
+def get_mcp_orchestrator(storage: Any = "/tmp/azr_logs") -> MCPAgentOrchestrator:
     """Get or create global MCP Orchestrator instance."""
     global _orchestrator_instance
 
     with _orch_lock:
         if _orchestrator_instance is None:
-            _orchestrator_instance = MCPAgentOrchestrator(storage_path)
+            _orchestrator_instance = MCPAgentOrchestrator(storage)
         return _orchestrator_instance
 
 
