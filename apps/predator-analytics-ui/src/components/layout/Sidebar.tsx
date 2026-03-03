@@ -39,7 +39,10 @@ import {
   FileText,
   ZapOff,
   Crosshair,
-  Coffee
+  Coffee,
+  MessageSquare,
+  Target,
+  Layout
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useSystemMetrics } from '../../hooks/useSystemMetrics';
@@ -73,6 +76,7 @@ export const Sidebar = () => {
         { name: 'Паноптикон (Omni)', path: '/omni', icon: Globe, premium: true },
         { name: 'Стрічка Подій', path: '/news', icon: Radio },
         { name: 'Ранковий Бриф', path: '/morning-brief', icon: Coffee, premium: true },
+        { name: 'Тренди Системи', path: '/trends', icon: TrendingUp },
       ]
     },
     {
@@ -82,8 +86,10 @@ export const Sidebar = () => {
         { name: 'Ризик-Скоринг', path: '/risk-scoring', icon: AlertCircle, premium: true },
         { name: 'Пошук Постачальників', path: '/suppliers', icon: ShoppingBag, premium: true },
         { name: 'Торгові Потоки', path: '/trade-map', icon: Map, premium: true },
+        { name: 'Аналіз Конкурентів', path: '/competitor-intel', icon: Target, premium: true },
         { name: 'Детектор Санкцій', path: '/sanctions', icon: Shield, premium: true },
         { name: 'Моделювання Сценаріїв', path: '/modeling', icon: Repeat, premium: true },
+        { name: 'Порівняння Цін', path: '/price-compare', icon: BarChart, premium: true },
       ]
     },
     {
@@ -93,6 +99,7 @@ export const Sidebar = () => {
         { name: 'Веб-Консоль', path: '/search', icon: Globe },
         { name: 'Радар Зв\'язків', path: '/analytics', icon: Network },
         { name: 'Граф Сутностей', path: '/entity-graph', icon: Share2Icon, premium: true },
+        { name: 'Мережевий Граф (V2)', path: '/graph', icon: Network },
         { name: 'Архіви Та Справи', path: '/cases', icon: ShieldAlert },
         { name: 'Бібліотека Документів', path: '/documents', icon: Archive },
       ]
@@ -102,6 +109,8 @@ export const Sidebar = () => {
       items: [
         { name: 'Нейронний Інджестинг', path: '/data-hub', icon: Zap },
         { name: 'Студія Датасетів', path: '/datasets', icon: Boxes },
+        { name: 'Бази Даних', path: '/databases', icon: Database },
+        { name: 'Парсери Та ETL', path: '/parsers', icon: Layers },
         { name: 'Митна Розвідка (PRO)', path: '/customs-intel', icon: Ship, premium: true },
         { name: 'Центр Експорту', path: '/export', icon: Repeat, premium: true },
       ]
@@ -112,6 +121,8 @@ export const Sidebar = () => {
         { name: 'Флот AI Агентів', path: '/agents', icon: Bot },
         { name: 'Оркестратор (NAS)', path: '/llm/nas', icon: Cpu },
         { name: 'Навчання Моделей', path: '/training', icon: BrainCircuit, premium: true },
+        { name: 'Інтелект-система', path: '/intelligence', icon: ZapOff },
+        { name: 'Мовна Модель (LLM)', path: '/llm', icon: MessageSquare, premium: true },
         { name: 'Суперінтелект', path: '/super', icon: Zap, role: 'admin' },
         { name: 'Лабораторія Інсайтів', path: '/ai-insights', icon: Eye, premium: true },
       ]
@@ -121,8 +132,21 @@ export const Sidebar = () => {
       items: [
         { name: 'Завод Компонентів', path: '/factory', icon: Factory, premium: true },
         { name: 'Протокол Еволюції', path: '/autonomy', icon: TrendingUp, premium: true },
+        { name: 'Діаграма Еволюції', path: '/evolution', icon: Activity, premium: true },
         { name: 'Інженерія Знань', path: '/knowledge', icon: Library, premium: true },
         { name: 'Конструктор Систем', path: '/builder', icon: Layers, premium: true },
+      ]
+    },
+    {
+      title: 'БІЗНЕС ТА ІНСТРУМЕНТИ',
+      items: [
+        { name: 'Генератор Звітів', path: '/reports', icon: FileText, premium: true },
+        { name: 'Центр Інтеграцій', path: '/integrations', icon: Network, premium: true },
+        { name: 'Real-time Дашборд', path: '/realtime', icon: Activity, premium: true },
+        { name: 'Бібліотека Віджетів', path: '/widgets', icon: Layout, premium: true },
+        { name: 'API Документація', path: '/api-docs', icon: BookOpen },
+        { name: 'Мобільний Центр', path: '/mobile', icon: Smartphone },
+        { name: 'Преміум Хаб', path: '/premium', icon: Trophy },
       ]
     },
     {
@@ -132,6 +156,8 @@ export const Sidebar = () => {
         { name: 'Комплаєнс Аудит', path: '/compliance', icon: FileCheck },
         { name: 'Ядро Безпеки', path: '/security', icon: Lock, role: 'admin' },
         { name: 'Верифікація', path: '/verify-system', icon: ShieldCheck, role: 'admin' },
+        { name: 'Управління (Gov)', path: '/governance', icon: Shield, role: 'admin' },
+        { name: 'Розгортання (Dev)', path: '/deployment', icon: Cpu, role: 'admin' },
         { name: 'Налаштування', path: '/settings', icon: Settings },
       ]
     }

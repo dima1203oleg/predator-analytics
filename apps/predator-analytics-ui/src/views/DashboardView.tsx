@@ -129,12 +129,14 @@ const ActivityFeedItem: React.FC<{
 );
 
 
+import { premiumLocales } from '../locales/uk/premium';
+
 const DashboardHeader: React.FC<{ persona: string }> = ({ persona }) => (
     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
             <div className="flex items-center gap-3 mb-2">
                 <Badge className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase">
-                    v55.0 God-Mode Active
+                    {premiumLocales.dashboard.godModeActive}
                 </Badge>
                 <div className="flex gap-1">
                     {[1, 2, 3].map(i => (
@@ -143,20 +145,20 @@ const DashboardHeader: React.FC<{ persona: string }> = ({ persona }) => (
                 </div>
             </div>
             <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white">
-                SITUATION <span className="text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">COMMAND</span> CENTER
+                {premiumLocales.dashboard.situationCommandCenter.split(' ')[0]} <span className="text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">{premiumLocales.dashboard.situationCommandCenter.split(' ').slice(1).join(' ')}</span>
             </h1>
             <p className="text-slate-500 text-sm mt-2 font-medium uppercase tracking-widest flex items-center gap-2">
                 <Activity className="w-4 h-4 text-cyan-500" />
-                Real-time Sovereignty Protocol engaged
+                {premiumLocales.dashboard.sovereigntyProtocol}
             </p>
         </div>
 
         <div className="flex gap-3">
             <Button variant="outline" className="bg-slate-900/40 border-slate-800 text-slate-400 hover:text-white uppercase text-[10px] font-bold tracking-widest">
-                <Layers className="w-3.5 h-3.5 mr-2" /> System Map
+                <Layers className="w-3.5 h-3.5 mr-2" /> {premiumLocales.dashboard.systemMap}
             </Button>
             <Button variant="outline" className="bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 uppercase text-[10px] font-bold tracking-widest">
-                <Zap className="w-3.5 h-3.5 mr-2" /> Pulse Sync
+                <Zap className="w-3.5 h-3.5 mr-2" /> {premiumLocales.dashboard.pulseSync}
             </Button>
         </div>
     </div>
@@ -236,35 +238,35 @@ const DashboardCoreContent: React.FC<{ persona: string }> = ({ persona }) => {
             {/* Top Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <MetricCard
-                    title="Active Sovereignty Score"
+                    title={premiumLocales.dashboard.metrics.sovereigntyScore}
                     value={`${wsData?.pulse?.score || 98}%`}
                     icon={<Shield className="w-5 h-5" />}
                     color="cyan"
                     trend="+2.4%"
                     trendType="up"
-                    description="AI Autonomy Level"
+                    description={premiumLocales.dashboard.metrics.aiAutonomy}
                 />
                 <MetricCard
-                    title="Real-time Throughput"
-                    value="42.8 GB/s"
+                    title={premiumLocales.dashboard.metrics.throughput}
+                    value="42.8 GB/с"
                     icon={<Zap className="w-5 h-5" />}
                     color="amber"
-                    trend="Optimal"
-                    description="IO Pipeline Load"
+                    trend={premiumLocales.dashboard.metrics.optimal}
+                    description={premiumLocales.dashboard.metrics.ioPipeline}
                 />
                 <MetricCard
-                    title="Neural Nodes"
+                    title={premiumLocales.dashboard.metrics.neuralNodes}
                     value="12/12"
                     icon={<Activity className="w-5 h-5" />}
                     color="emerald"
-                    description="Clusters Active"
+                    description={premiumLocales.dashboard.metrics.clustersActive}
                 />
                 <MetricCard
-                    title="Security Level"
-                    value="MAX"
+                    title={premiumLocales.dashboard.metrics.securityLevel}
+                    value={premiumLocales.dashboard.metrics.max}
                     icon={<Globe className="w-5 h-5" />}
                     color="blue"
-                    description="No threats detected"
+                    description={premiumLocales.dashboard.metrics.noThreats}
                 />
             </div>
 
@@ -273,13 +275,13 @@ const DashboardCoreContent: React.FC<{ persona: string }> = ({ persona }) => {
                 <Card className="lg:col-span-2 bg-slate-925/40 border-slate-800/50 backdrop-blur-xl">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <div>
-                            <CardTitle className="text-xl font-black text-white">SYSTEM DYNAMICS</CardTitle>
-                            <CardDescription className="text-slate-500 uppercase text-[10px] tracking-widest font-bold">Latency & Performance Tracing</CardDescription>
+                            <CardTitle className="text-xl font-black text-white">{premiumLocales.dashboard.dynamics.title}</CardTitle>
+                            <CardDescription className="text-slate-500 uppercase text-[10px] tracking-widest font-bold">{premiumLocales.dashboard.dynamics.subtitle}</CardDescription>
                         </div>
                         <Tabs value={mode} onValueChange={(v: string) => setMode(v as DashboardMode)}>
                             <TabsList className="bg-slate-900/60 border-slate-800">
-                                <TabsTrigger value="PROFIT" className="data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-400">MARKET</TabsTrigger>
-                                <TabsTrigger value="CONTROL" className="data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-400">ENGINE</TabsTrigger>
+                                <TabsTrigger value="PROFIT" className="data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-400">{premiumLocales.dashboard.dynamics.market}</TabsTrigger>
+                                <TabsTrigger value="CONTROL" className="data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-400">{premiumLocales.dashboard.dynamics.engine}</TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </CardHeader>
@@ -293,9 +295,9 @@ const DashboardCoreContent: React.FC<{ persona: string }> = ({ persona }) => {
                     <CardHeader>
                         <CardTitle className="text-xl font-black text-white flex items-center gap-2">
                             <Sparkles className="w-5 h-5 text-cyan-400" />
-                            SOVEREIGN AGENTS
+                            {premiumLocales.dashboard.agents.title}
                         </CardTitle>
-                        <CardDescription className="text-slate-500 uppercase text-[10px] tracking-widest font-bold">Autonomous Self-Healing Loop</CardDescription>
+                        <CardDescription className="text-slate-500 uppercase text-[10px] tracking-widest font-bold">{premiumLocales.dashboard.agents.subtitle}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
@@ -307,12 +309,12 @@ const DashboardCoreContent: React.FC<{ persona: string }> = ({ persona }) => {
                                             "capitalize px-2 py-0",
                                             agent.is_running ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border-rose-500/20"
                                         )}>
-                                            {agent.is_running ? 'Active' : 'Standby'}
+                                            {agent.is_running ? premiumLocales.dashboard.agents.active : premiumLocales.dashboard.agents.standby}
                                         </Badge>
                                     </div>
                                     <div className="grid grid-cols-2 gap-2 mt-3">
-                                        <div className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Cycles: <span className="text-slate-300 ml-1">{agent.stats?.cycles || 0}</span></div>
-                                        <div className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Last Action: <span className="text-slate-300 ml-1">Observing</span></div>
+                                        <div className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">{premiumLocales.dashboard.agents.cycles}: <span className="text-slate-300 ml-1">{agent.stats?.cycles || 0}</span></div>
+                                        <div className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">{premiumLocales.dashboard.agents.lastAction}: <span className="text-slate-300 ml-1">{premiumLocales.dashboard.agents.observing}</span></div>
                                     </div>
                                     <div className="mt-3 w-full bg-slate-800 h-1 rounded-full overflow-hidden">
                                         <motion.div
@@ -326,7 +328,7 @@ const DashboardCoreContent: React.FC<{ persona: string }> = ({ persona }) => {
                             ))}
                             {(!stats?.agents || stats.agents.length === 0) && (
                                 <div className="text-center py-12 text-slate-600 italic text-sm border-2 border-dashed border-slate-800/50 rounded-xl">
-                                    Initializing collective intelligence...
+                                    {premiumLocales.dashboard.agents.initializing}
                                 </div>
                             )}
                         </div>

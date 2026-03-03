@@ -37,7 +37,7 @@ const AppContext = createContext<AppState | null>(null);
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   // Initialize state from localStorage if available
   const [userRole, setUserRole] = useState<UserRole>(() =>
-    (localStorage.getItem('userRole') as UserRole) || 'premium'
+    (localStorage.getItem('userRole') as UserRole) || 'admin'
   );
   const [persona, setPersonaState] = useState<InterlinkPersona>(() =>
     (localStorage.getItem('interlinkPersona') as InterlinkPersona) || 'TITAN'
