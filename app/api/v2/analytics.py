@@ -205,11 +205,33 @@ async def get_cers_history(
 )
 async def get_all_indices(
     ueid: str = Path(description="UEID суб'єкта"),
+    db: AsyncSession = Depends(get_db),
 ) -> dict:
     """Get all calculated indices for an entity."""
-    # TODO: Fetch behavioral, predictive, and other models.
+    from app.repositories.behavioral_repository import BehavioralRepository
+
+    behav_repo = BehavioralRepository(db)
+    b_score = await behav_repo.get_latest_for_ueid(ueid)
+
+    indices = {}
+    if b_score:
+        indices["behavioral"] = {
+            "bvi": b_score.bvi,
+            "ass": b_score.ass,
+            "cp": b_score.cp,
+            "inertia_index": b_score.inertia_index,
+            "confidence": b_score.confidence,
+            "calculated_at": b_score.calculated_at.isoformat() if b_score.calculated_at else None,
+        }
+
+    if not indices:
+        return {
+            "ueid": ueid,
+            "indices": {},
+            "message": "Індекси ще не обчислені для цього суб'єкта",
+        }
+
     return {
         "ueid": ueid,
-        "indices": {},
-        "message": "Індекси ще не обчислені для цього суб'єкта",
+        "indices": indices,
     }

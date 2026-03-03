@@ -22,6 +22,7 @@ import logging
 import math
 
 from app.core.confidence import ConfidenceScore, quick_confidence
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.i18n import get_cers_label, get_cers_level
 
 
@@ -187,3 +188,94 @@ def calculate_cers(
         decorrelation_applied=decorrelation_applied,
         confidence=confidence,
     )
+
+
+async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
+    """Process CERS meta-scoring for an entity by fetching sub-layer indices.
+    
+    1. Fetches Behavioral, Institutional, etc scores.
+    2. Computes the composite CERS.
+    3. Persists it via CersRepository.
+    4. Writes a WORM DecisionArtifact.
+    5. Emits 'cers.updated' signal.
+    """
+    import hashlib
+    import json
+    from app.repositories.behavioral_repository import BehavioralRepository
+    from app.repositories.cers_repository import CersRepository
+    from app.repositories.decision_repository import DecisionRepository
+    from app.models.v55.decision_artifact import DecisionArtifactCreate
+    from app.core.signal_bus import signal_bus
+    
+    # Repos
+    behav_repo = BehavioralRepository(db)
+    cers_repo = CersRepository(db)
+    decision_repo = DecisionRepository(db)
+    
+    # Try fetching sub-layer scores
+    behav_score_orm = await behav_repo.get_latest_for_ueid(ueid)
+    
+    # We fallback to defaults if no score exists yet since this is Phase 2 where only Behavioral is fully wired
+    behavioral_val = behav_score_orm.aggregate if behav_score_orm else 50.0
+    institutional_val = 50.0
+    influence_val = 50.0
+    
+    # TODO: Add institutional and influence fetching when those layers are built
+    
+    # For now completeness tracks what we actually found
+    data_completeness = 0.5
+    if behav_score_orm:
+        data_completeness += 0.16  # bump confidence since we have some real data
+        
+    result = calculate_cers(
+        ueid=ueid,
+        behavioral=behavioral_val,
+        institutional=institutional_val,
+        influence=influence_val,
+        structural=None,    # Phase 2 excludes this
+        predictive=None,    # Phase 2 excludes this
+        data_completeness=data_completeness,
+    )
+    
+    # Save CERS
+    await cers_repo.save_score(result)
+    
+    # Record WORM decision artifact
+    input_data = {
+        "behavioral": behavioral_val,
+        "institutional": institutional_val,
+        "influence": influence_val,
+    }
+    input_fp = hashlib.sha256(json.dumps(input_data, sort_keys=True).encode("utf-8")).hexdigest()
+    output_fp = hashlib.sha256(f"{result.score}:{result.level}".encode("utf-8")).hexdigest()
+    
+    artifact = DecisionArtifactCreate(
+        decision_type="cers",
+        input_fingerprint=input_fp,
+        model_fingerprint="CERS_V55",
+        output_fingerprint=output_fp,
+        confidence_score=result.confidence.total,
+        explanation={
+            "score": result.score,
+            "level": result.level,
+            "components": result.components,
+            "weights": result.weights_used,
+        },
+        sources=["app.engines.cers", "app.engines.behavioral"],
+        metadata={"ueid": ueid},
+    )
+    await decision_repo.create_artifact(artifact)
+    
+    # Emit to SignalBus
+    await signal_bus.emit(
+        topic="cers.updated",
+        payload={
+            "score": result.score,
+            "level": result.level,
+        },
+        ueid=ueid,
+        confidence=result.confidence.total,
+    )
+    
+    return result
+
