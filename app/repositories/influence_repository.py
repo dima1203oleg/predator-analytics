@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.engines.influence import InfluenceScore
 from app.models.v55.orm.influence_score import InfluenceScoreORM
+from app.core.ueid import parse_ueid
 
 
 logger = logging.getLogger("predator.repo.influence")
@@ -29,7 +30,7 @@ class InfluenceRepository:
         """Persist an Influence score to the database."""
         try:
             orm_obj = InfluenceScoreORM(
-                ueid=UUID(score.ueid) if isinstance(score.ueid, str) else score.ueid,
+                ueid=parse_ueid(score.ueid),
                 im=score.im,
                 hci=score.hci,
                 shadow_cluster_score=score.shadow_cluster_score,
@@ -45,11 +46,12 @@ class InfluenceRepository:
             logger.exception("Failed to save Influence score for ueid=%s", score.ueid)
             raise e
 
-    async def get_latest_score(self, ueid: str) -> InfluenceScoreORM | None:
+    async def get_latest_for_ueid(self, ueid: str | UUID) -> InfluenceScoreORM | None:
         """Get the most recent Influence score for a given UEID."""
+        parsed_ueid = parse_ueid(ueid)
         stmt = (
             select(InfluenceScoreORM)
-            .where(InfluenceScoreORM.ueid == (UUID(ueid) if isinstance(ueid, str) else ueid))
+            .where(InfluenceScoreORM.ueid == parsed_ueid)
             .order_by(InfluenceScoreORM.calculated_at.desc())
             .limit(1)
         )

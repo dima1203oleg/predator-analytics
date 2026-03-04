@@ -24,6 +24,7 @@ import math
 from app.core.confidence import ConfidenceScore, quick_confidence
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.i18n import get_cers_label, get_cers_level
+from app.core.ueid import parse_ueid
 
 
 logger = logging.getLogger("predator.engines.cers")
@@ -220,10 +221,10 @@ async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
     
     # Try fetching sub-layer mapping (Spec 5.8: Full CERS — 5 layers)
     behav_orm = await behav_repo.get_latest_for_ueid(ueid)
-    inst_orm = await inst_repo.get_latest_score(ueid)
-    infl_orm = await infl_repo.get_latest_score(ueid)
-    struct_orm = await struct_repo.get_latest_score(ueid)
-    pred_orm = await pred_repo.get_latest_score(ueid)
+    inst_orm = await inst_repo.get_latest_for_ueid(ueid)
+    infl_orm = await infl_repo.get_latest_for_ueid(ueid)
+    struct_orm = await struct_repo.get_latest_for_ueid(ueid)
+    pred_orm = await pred_repo.get_latest_for_ueid(ueid)
     
     behavioral_val = behav_orm.aggregate if behav_orm else 50.0
     institutional_val = inst_orm.aggregate if inst_orm else 50.0

@@ -15,6 +15,7 @@ import hashlib
 import logging
 import re
 import uuid
+from typing import Union
 
 from pydantic import BaseModel, Field
 
@@ -100,3 +101,18 @@ def fingerprint_entity(name: str, edrpou: str | None = None) -> str:
     normalized = normalize_name(name)
     key = f"{edrpou or ''}:{normalized}"
     return hashlib.sha256(key.encode("utf-8")).hexdigest()
+
+
+def parse_ueid(ueid: Union[str, uuid.UUID]) -> uuid.UUID:
+    """Safely parse UEID into a UUID object.
+    
+    Raises:
+        ValueError: If ueid is not a valid UUID string.
+    """
+    if isinstance(ueid, uuid.UUID):
+        return ueid
+    try:
+        return uuid.UUID(str(ueid))
+    except (ValueError, AttributeError) as e:
+        logger.error(f"Invalid UEID format: {ueid}")
+        raise ValueError(f"Invalid UEID format: {ueid}") from e

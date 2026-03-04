@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.engines.institutional import InstitutionalScore
 from app.models.v55.orm.institutional_score import InstitutionalScoreORM
+from app.core.ueid import parse_ueid
 
 
 logger = logging.getLogger("predator.repo.institutional")
@@ -29,7 +30,7 @@ class InstitutionalRepository:
         """Persist an Institutional score to the database."""
         try:
             orm_obj = InstitutionalScoreORM(
-                ueid=UUID(score.ueid) if isinstance(score.ueid, str) else score.ueid,
+                ueid=parse_ueid(score.ueid),
                 aai=score.aai,
                 pls=score.pls,
                 rdi=score.rdi,
@@ -46,11 +47,12 @@ class InstitutionalRepository:
             logger.exception("Failed to save Institutional score for ueid=%s", score.ueid)
             raise e
 
-    async def get_latest_score(self, ueid: str) -> InstitutionalScoreORM | None:
+    async def get_latest_for_ueid(self, ueid: str | UUID) -> InstitutionalScoreORM | None:
         """Get the most recent Institutional score for a given UEID."""
+        parsed_ueid = parse_ueid(ueid)
         stmt = (
             select(InstitutionalScoreORM)
-            .where(InstitutionalScoreORM.ueid == (UUID(ueid) if isinstance(ueid, str) else ueid))
+            .where(InstitutionalScoreORM.ueid == parsed_ueid)
             .order_by(InstitutionalScoreORM.calculated_at.desc())
             .limit(1)
         )
