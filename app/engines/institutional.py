@@ -159,7 +159,7 @@ async def process_entity(ueid: str, session: AsyncSession) -> InstitutionalScore
         layer=SignalLayer.INSTITUTIONAL,
         priority=SignalPriority.CRITICAL if score.aggregate > 80 else SignalPriority.HIGH if score.aggregate > 60 else SignalPriority.ROUTINE,
         score=score.aggregate,
-        confidence=score.confidence.final_score,
+        confidence=score.confidence.total,
         summary=f"Інституційний зріз: AAI={score.aai:.1f}, PLS={score.pls:.1f} (Post: {primary_post})",
         metadata={
             "aai": score.aai,

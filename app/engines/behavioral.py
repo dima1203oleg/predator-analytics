@@ -116,7 +116,7 @@ async def process_entity(ueid: str, db: AsyncSession) -> BehavioralScore:
     from app.repositories.behavioral_repository import BehavioralRepository
     from app.repositories.decision_repository import DecisionRepository
     from app.models.v55.decision_artifact import DecisionArtifactCreate
-    from app.core.signal_bus import signal_bus
+    from app.core.signal_bus import SignalBus
 
     fused_repo = FusedRecordRepository(db)
     behav_repo = BehavioralRepository(db)
@@ -218,17 +218,26 @@ async def process_entity(ueid: str, db: AsyncSession) -> BehavioralScore:
     )
     await decis_repo.create_artifact(artifact)
 
-    # 5. Emit updated signal
-    await signal_bus.emit(
+    # 5. Emit updated signal using V55Signal
+    bus = SignalBus.get_instance()
+    from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
+    
+    signal = V55Signal(
+        signal_type="BEHAVIORAL_SCORING",
         topic="behavioral.updated",
-        payload={
+        ueid=ueid,
+        layer=SignalLayer.BEHAVIORAL,
+        priority=SignalPriority.CRITICAL if score.aggregate > 80 else SignalPriority.HIGH if score.aggregate > 60 else SignalPriority.ROUTINE,
+        score=score.aggregate,
+        confidence=score.confidence.total,
+        summary=f"Поведінковий зріз оновлено: BVI={score.bvi:.1f}, CP={score.cp:.1f}",
+        metadata={
             "bvi": score.bvi,
             "ass": score.ass,
             "cp": score.cp,
             "aggregate": score.aggregate,
-        },
-        ueid=ueid,
-        confidence=score.confidence.total,
+        }
     )
+    await bus.emit(signal, session=db)
 
     return score

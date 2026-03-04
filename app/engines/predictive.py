@@ -165,7 +165,7 @@ async def process_entity(ueid: str, session: AsyncSession) -> PredictiveScore:
         layer=SignalLayer.PREDICTIVE,
         priority=SignalPriority.CRITICAL if score.aggregate > 80 else SignalPriority.HIGH if score.aggregate > 60 else SignalPriority.ROUTINE,
         score=score.aggregate,
-        confidence=score.confidence.final_score,
+        confidence=score.confidence.total,
         summary=f"Прогнозування ризиків: Disappearance={score.disappearance_risk:.1f}, Scheme={score.scheme_emergence_risk:.1f}",
         metadata={
             "disappearance_risk": score.disappearance_risk,
