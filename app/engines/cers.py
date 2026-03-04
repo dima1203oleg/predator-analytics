@@ -199,52 +199,71 @@ async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
     4. Writes a WORM DecisionArtifact.
     5. Emits 'cers.updated' signal.
     """
-    import hashlib
-    import json
     from app.repositories.behavioral_repository import BehavioralRepository
+    from app.repositories.institutional_repository import InstitutionalRepository
+    from app.repositories.influence_repository import InfluenceRepository
+    from app.repositories.structural_repository import StructuralRepository
+    from app.repositories.predictive_repository import PredictiveRepository
     from app.repositories.cers_repository import CersRepository
     from app.repositories.decision_repository import DecisionRepository
     from app.models.v55.decision_artifact import DecisionArtifactCreate
-    from app.core.signal_bus import signal_bus
+    from app.core.signal_bus import SignalBus
     
     # Repos
     behav_repo = BehavioralRepository(db)
+    inst_repo = InstitutionalRepository(db)
+    infl_repo = InfluenceRepository(db)
+    struct_repo = StructuralRepository(db)
+    pred_repo = PredictiveRepository(db)
     cers_repo = CersRepository(db)
     decision_repo = DecisionRepository(db)
     
-    # Try fetching sub-layer scores
-    behav_score_orm = await behav_repo.get_latest_for_ueid(ueid)
+    # Try fetching sub-layer mapping (Spec 5.8: Full CERS — 5 layers)
+    behav_orm = await behav_repo.get_latest_for_ueid(ueid)
+    inst_orm = await inst_repo.get_latest_score(ueid)
+    infl_orm = await infl_repo.get_latest_score(ueid)
+    struct_orm = await struct_repo.get_latest_score(ueid)
+    pred_orm = await pred_repo.get_latest_score(ueid)
     
-    # We fallback to defaults if no score exists yet since this is Phase 2 where only Behavioral is fully wired
-    behavioral_val = behav_score_orm.aggregate if behav_score_orm else 50.0
-    institutional_val = 50.0
-    influence_val = 50.0
+    behavioral_val = behav_orm.aggregate if behav_orm else 50.0
+    institutional_val = inst_orm.aggregate if inst_orm else 50.0
+    influence_val = infl_orm.aggregate if infl_orm else 50.0
+    structural_val = struct_orm.aggregate if struct_orm else 50.0
+    predictive_val = pred_orm.aggregate if pred_orm else 50.0
     
-    # TODO: Add institutional and influence fetching when those layers are built
+    # Completeness tracks real data presence
+    data_completeness = 0.2 # Baseline
+    layers_found = 0
+    if behav_orm: layers_found += 1
+    if inst_orm: layers_found += 1
+    if infl_orm: layers_found += 1
+    if struct_orm: layers_found += 1
+    if pred_orm: layers_found += 1
     
-    # For now completeness tracks what we actually found
-    data_completeness = 0.5
-    if behav_score_orm:
-        data_completeness += 0.16  # bump confidence since we have some real data
+    data_completeness += (layers_found * 0.15)
         
     result = calculate_cers(
         ueid=ueid,
         behavioral=behavioral_val,
         institutional=institutional_val,
         influence=influence_val,
-        structural=None,    # Phase 2 excludes this
-        predictive=None,    # Phase 2 excludes this
-        data_completeness=data_completeness,
+        structural=structural_val,
+        predictive=predictive_val,
+        data_completeness=min(1.0, data_completeness),
     )
     
     # Save CERS
     await cers_repo.save_score(result)
     
     # Record WORM decision artifact
+    import hashlib
+    import json
     input_data = {
         "behavioral": behavioral_val,
         "institutional": institutional_val,
         "influence": influence_val,
+        "structural": structural_val,
+        "predictive": predictive_val,
     }
     input_fp = hashlib.sha256(json.dumps(input_data, sort_keys=True).encode("utf-8")).hexdigest()
     output_fp = hashlib.sha256(f"{result.score}:{result.level}".encode("utf-8")).hexdigest()
@@ -252,7 +271,7 @@ async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
     artifact = DecisionArtifactCreate(
         decision_type="cers",
         input_fingerprint=input_fp,
-        model_fingerprint="CERS_V55",
+        model_fingerprint="CERS_V55_FULL",
         output_fingerprint=output_fp,
         confidence_score=result.confidence.total,
         explanation={
@@ -260,22 +279,40 @@ async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
             "level": result.level,
             "components": result.components,
             "weights": result.weights_used,
+            "layers_count": layers_found,
         },
-        sources=["app.engines.cers", "app.engines.behavioral"],
+        sources=[
+            "app.engines.cers", 
+            "app.engines.behavioral",
+            "app.engines.institutional",
+            "app.engines.influence",
+            "app.engines.structural_gaps",
+            "app.engines.predictive"
+        ],
         metadata={"ueid": ueid},
     )
     await decision_repo.create_artifact(artifact)
     
     # Emit to SignalBus
-    await signal_bus.emit(
+    bus = SignalBus.get_instance()
+    from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
+    
+    signal = V55Signal(
+        signal_type="CERS_SCORING",
         topic="cers.updated",
-        payload={
-            "score": result.score,
-            "level": result.level,
-        },
         ueid=ueid,
+        layer=SignalLayer.META,
+        priority=SignalPriority.CRITICAL if result.score > 80 else SignalPriority.HIGH if result.score > 60 else SignalPriority.ROUTINE,
+        score=result.score,
         confidence=result.confidence.total,
+        summary=f"CERS оновлено: {result.score} ({result.level_ua})",
+        metadata={
+            "level": result.level,
+            "level_ua": result.level_ua,
+            "components": result.components
+        }
     )
+    await bus.emit(signal, session=db)
     
     return result
 
