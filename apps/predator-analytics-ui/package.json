@@ -1,6 +1,6 @@
 {
-  "name": "predator-analytics-v45-universe",
-  "version": "45.0.0",
+  "name": "predator-analytics-ui",
+  "version": "55.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -39,7 +39,6 @@
     "framer-motion": "^11.0.0",
     "idb": "^8.0.0",
     "lucide-react": "^0.294.0",
-    "pg": "^8.18.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0",
