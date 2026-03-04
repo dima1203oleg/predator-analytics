@@ -11,10 +11,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import logging
+from typing import Optional
+
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.confidence import ConfidenceScore, quick_confidence
+from app.core.signal_bus import SignalBus
 from app.indices.aai import calculate_aai
 from app.indices.pls import calculate_pls
+from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
 
 
 logger = logging.getLogger("predator.engines.institutional")
@@ -83,3 +88,60 @@ def compute_institutional_score(
         aggregate=aggregate,
         confidence=confidence,
     )
+
+
+async def process_entity(ueid: str, session: AsyncSession) -> InstitutionalScore:
+    """Run Institutional Analysis for a specific entity.
+    Features async DB persistence and real-time scaling out via SignalBus.
+    """
+    from app.repositories.institutional_repository import InstitutionalRepository
+    repo = InstitutionalRepository(session)
+    
+    # 🚨 PREDATOR LAZY LOADING / MOCKS
+    # Temporarily generate semi-random metrics until full integration
+    import random
+    avg_release = random.uniform(1.0, 48.0)
+    national_mean = 12.0
+    company_flow = random.uniform(10, 500)
+    total_flow = company_flow * random.uniform(1.0, 5.0)
+    r_divergence = random.uniform(0.0, 100.0)
+    r_shift = random.uniform(0.0, 100.0)
+    data_comp = random.uniform(0.5, 1.0)
+
+    score = compute_institutional_score(
+        ueid,
+        avg_release_time_region=avg_release,
+        national_mean_release_time=national_mean,
+        company_flow_through_post=company_flow,
+        total_company_flow=total_flow,
+        regional_divergence=r_divergence,
+        regulatory_shift=r_shift,
+        data_completeness=data_comp,
+    )
+
+    # 1. DB Persistence
+    await repo.save_score(score)
+
+    # 2. Emit Signal (v55 standard)
+    bus = SignalBus.get_instance()
+    signal = V55Signal(
+        signal_type="INSTITUTIONAL_SCORING",
+        topic="institutional.analyzed",
+        ueid=ueid,
+        layer=SignalLayer.INSTITUTIONAL,
+        priority=SignalPriority.CRITICAL if score.aggregate > 80 else SignalPriority.HIGH if score.aggregate > 60 else SignalPriority.ROUTINE,
+        score=score.aggregate,
+        confidence=score.confidence.final_score,
+        summary=f"Інституційний зріз: AAI={score.aai:.1f}, PLS={score.pls:.1f}",
+        metadata={
+            "aai": score.aai,
+            "pls": score.pls,
+            "rdi": score.rdi,
+            "rsi": score.rsi
+        }
+    )
+    # emit expects db session for persistence fallback
+    await bus.emit(signal, session=session)
+
+    logger.info("Institutional Engine processed ueid=%s, agg=%.1f", ueid, score.aggregate)
+    return score

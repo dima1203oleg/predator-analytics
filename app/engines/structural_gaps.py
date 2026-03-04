@@ -11,10 +11,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import logging
+from typing import Optional
+
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.confidence import ConfidenceScore, quick_confidence
+from app.core.signal_bus import SignalBus
 from app.indices.mci import calculate_mci_normalized
 from app.indices.pfi import calculate_pfi_normalized
+from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
 
 
 logger = logging.getLogger("predator.engines.structural_gaps")
@@ -99,3 +104,64 @@ def compute_structural_score(
         aggregate=aggregate,
         confidence=confidence,
     )
+
+
+async def process_entity(ueid: str, session: AsyncSession) -> StructuralScore:
+    """Run Structural Gaps Analysis for a specific entity.
+    Features async DB persistence and real-time scaling out via SignalBus.
+    """
+    from app.repositories.structural_repository import StructuralRepository
+    repo = StructuralRepository(session)
+    
+    # 🚨 PREDATOR LAZY LOADING / MOCKS
+    # Temporarily generate semi-random metrics until full integration
+    import random
+    imports = random.uniform(10.0, 1000.0)
+    production = random.uniform(10.0, 1000.0)
+    domestic = random.uniform(10.0, 800.0)
+    exports = random.uniform(10.0, 500.0)
+    inventory = random.uniform(-100.0, 100.0)
+    market = max(100.0, imports + production)
+    t_diff = random.uniform(0.0, 100.0)
+    l_gap = random.uniform(0.0, 100.0)
+    data_comp = random.uniform(0.5, 1.0)
+
+    score = compute_structural_score(
+        ueid,
+        import_volume=imports,
+        production=production,
+        domestic_sales=domestic,
+        export_volume=exports,
+        inventory_change=inventory,
+        total_market_volume=market,
+        trade_discrepancy=t_diff,
+        logistics_gap=l_gap,
+        data_completeness=data_comp,
+    )
+
+    # 1. DB Persistence
+    await repo.save_score(score)
+
+    # 2. Emit Signal (v55 standard)
+    bus = SignalBus.get_instance()
+    signal = V55Signal(
+        signal_type="STRUCTURAL_GAPS_SCORING",
+        topic="structural_gaps.analyzed",
+        ueid=ueid,
+        layer=SignalLayer.STRUCTURAL,
+        priority=SignalPriority.CRITICAL if score.aggregate > 80 else SignalPriority.HIGH if score.aggregate > 60 else SignalPriority.ROUTINE,
+        score=score.aggregate,
+        confidence=score.confidence.final_score,
+        summary=f"Структурні аномалії: MCI={score.mci:.1f}, TDI={score.tdi:.1f}",
+        metadata={
+            "mci": score.mci,
+            "pfi": score.pfi,
+            "tdi": score.tdi,
+            "lgs": score.lgs
+        }
+    )
+    # emit expects db session for persistence fallback
+    await bus.emit(signal, session=session)
+
+    logger.info("Structural Gaps Engine processed ueid=%s, agg=%.1f", ueid, score.aggregate)
+    return score
