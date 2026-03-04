@@ -23,7 +23,9 @@ import {
   Ship,
   TrendingUp,
   Trophy,
+  Radar,
   Zap,
+
   DollarSign,
   AlertCircle,
   BarChart,
@@ -42,7 +44,8 @@ import {
   Coffee,
   MessageSquare,
   Target,
-  Layout
+  Layout,
+  Waves
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useSystemMetrics } from '../../hooks/useSystemMetrics';
@@ -87,7 +90,9 @@ export const Sidebar = () => {
         { name: 'Пошук Постачальників', path: '/suppliers', icon: ShoppingBag, premium: true },
         { name: 'Торгові Потоки', path: '/trade-map', icon: Map, premium: true },
         { name: 'Аналіз Конкурентів', path: '/competitor-intel', icon: Target, premium: true },
+        { name: 'Радар Конкурентів', path: '/competitor-radar', icon: Radar, premium: true },
         { name: 'Детектор Санкцій', path: '/sanctions', icon: Shield, premium: true },
+
         { name: 'Моделювання Сценаріїв', path: '/modeling', icon: Repeat, premium: true },
         { name: 'Порівняння Цін', path: '/price-compare', icon: BarChart, premium: true },
       ]
@@ -120,6 +125,7 @@ export const Sidebar = () => {
       title: 'ОПЕРАЦІЇ ТА ЯДРО ШІ',
       items: [
         { name: 'Флот AI Агентів', path: '/agents', icon: Bot },
+        { name: 'Центр Двигунів v55', path: '/engines', icon: Waves },
         { name: 'Оркестратор (NAS)', path: '/llm/nas', icon: Cpu },
         { name: 'Навчання Моделей', path: '/training', icon: BrainCircuit, premium: true },
         { name: 'Інтелект-система', path: '/intelligence', icon: ZapOff },

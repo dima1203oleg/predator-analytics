@@ -2,12 +2,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ViewHeader } from '../components/ViewHeader';
 import Modal from '../components/Modal';
-import { Database, HardDrive, RefreshCw, Layers, Play, X, Terminal, Binary, Share2, CheckCircle2, MessageSquare, Activity } from 'lucide-react';
+import {
+    Database, HardDrive, RefreshCw, Layers, Play, X, Terminal, Binary,
+    Share2, CheckCircle2, MessageSquare, Activity, Cpu, Network, Zap,
+    ShieldCheck, Box, Server, DatabaseZap
+} from 'lucide-react';
 import { DatabaseTable, SqlTrainingPair } from '../types';
 import { useSystemMetrics } from '../hooks/useSystemMetrics';
 import { api } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AdvancedBackground } from '../components/AdvancedBackground';
+import { cn } from '../utils/cn';
 
 // Extracted Sub-views
 import { RelationalView } from '../components/databases/RelationalView';
@@ -26,30 +31,9 @@ const mockMinioBuckets = [
 
 type DBTab = 'RELATIONAL' | 'OBJECT' | 'VECTOR' | 'GRAPH' | 'CALIBRATION' | 'ETL';
 
-const MOCK_TRAINING_PAIRS: SqlTrainingPair[] = [
-    {
-        id: 'tp-1',
-        question: 'Показати всі компанії з ризиком вище 80 за останній тиждень',
-        generatedSql: 'SELECT * FROM companies WHERE risk_score > 80 AND updated_at > NOW() - INTERVAL \'7 days\'',
-        schema: 'public',
-        confidence: 0.98,
-        status: 'PENDING',
-        timestamp: '10:42:15'
-    },
-    {
-        id: 'tp-2',
-        question: 'Знайти тендери МОУ на суму понад 100 млн грн',
-        generatedSql: 'SELECT * FROM tenders WHERE buyer_name LIKE \'%МОУ%\' AND amount > 100000000',
-        schema: 'public',
-        confidence: 0.85,
-        status: 'PENDING',
-        timestamp: '11:15:30'
-    }
-];
-
 const DatabasesView: React.FC = () => {
     const metrics = useSystemMetrics();
-    const [activeTab, setActiveTab] = useState<DBTab>('ETL'); // Default to ETL for now
+    const [activeTab, setActiveTab] = useState<DBTab>('ETL');
     const [tables, setTables] = useState<DatabaseTable[]>([]);
     const [loading, setLoading] = useState(false);
     const [queryModal, setQueryModal] = useState<{ isOpen: boolean, table: string | null }>({ isOpen: false, table: null });
@@ -57,7 +41,6 @@ const DatabasesView: React.FC = () => {
     const [queryResult, setQueryResult] = useState<any[] | null>(null);
     const [sqlQuery, setSqlQuery] = useState('');
 
-    // Vector Inspector State
     const [selectedVector, setSelectedVector] = useState<any | null>(null);
     const [vectorData, setVectorData] = useState<any[]>([]);
     const [buckets, setBuckets] = useState<any[]>([]);
@@ -68,53 +51,37 @@ const DatabasesView: React.FC = () => {
 
     useEffect(() => {
         isMounted.current = true;
-
         const fetchRelational = async () => {
             setLoading(true);
             try {
                 const data = await api.getDatabases();
                 if (isMounted.current) setTables(Array.isArray(data) ? data : []);
-            } catch (e) {
-                console.error("Failed to fetch tables", e);
-            } finally {
-                if (isMounted.current) setLoading(false);
-            }
+            } catch (e) { console.error("Failed to fetch tables", e); }
+            finally { if (isMounted.current) setLoading(false); }
         };
-
         const fetchVectors = async () => {
             setLoading(true);
             try {
                 const data = await api.getVectors();
                 if (isMounted.current) setVectorData(Array.isArray(data) ? data : []);
-            } catch (e) {
-                console.error("Failed to fetch vectors", e);
-            } finally {
-                if (isMounted.current) setLoading(false);
-            }
+            } catch (e) { console.error("Failed to fetch vectors", e); }
+            finally { if (isMounted.current) setLoading(false); }
         };
-
         const fetchBuckets = async () => {
             setLoading(true);
             try {
                 const data = await api.getBuckets();
                 if (isMounted.current) setBuckets(Array.isArray(data) ? data : []);
-            } catch (e) {
-                console.error("Failed to fetch buckets", e);
-            } finally {
-                if (isMounted.current) setLoading(false);
-            }
+            } catch (e) { console.error("Failed to fetch buckets", e); }
+            finally { if (isMounted.current) setLoading(false); }
         };
-
         const fetchTrainingPairs = async () => {
             setLoading(true);
             try {
                 const data = await api.getTrainingPairs();
                 if (isMounted.current) setTrainingPairs(Array.isArray(data) ? data : []);
-            } catch (e) {
-                console.error("Failed to fetch training pairs", e);
-            } finally {
-                if (isMounted.current) setLoading(false);
-            }
+            } catch (e) { console.error("Failed to fetch training pairs", e); }
+            finally { if (isMounted.current) setLoading(false); }
         };
 
         if (activeTab === 'RELATIONAL') fetchRelational();
@@ -122,9 +89,7 @@ const DatabasesView: React.FC = () => {
         if (activeTab === 'OBJECT') fetchBuckets();
         if (activeTab === 'CALIBRATION') fetchTrainingPairs();
 
-        return () => {
-            isMounted.current = false;
-        };
+        return () => { isMounted.current = false; };
     }, [activeTab]);
 
     const handleOpenQuery = (tableName: string) => {
@@ -141,29 +106,19 @@ const DatabasesView: React.FC = () => {
                 if (result.rows && result.columns) {
                     const adapted = result.rows.map((row: any[], i: number) => {
                         const obj: any = { key: i };
-                        result.columns.forEach((col: string, idx: number) => {
-                            obj[col] = row[idx];
-                        });
+                        result.columns.forEach((col: string, idx: number) => { obj[col] = row[idx]; });
                         return obj;
                     });
                     setQueryResult(adapted);
-                } else {
-                    setQueryResult([]);
-                }
+                } else setQueryResult([]);
             }
-        } catch (e) {
-            console.error("SQL Execution failed", e);
-        } finally {
-            if (isMounted.current) setIsExecuting(false);
-        }
+        } catch (e) { console.error("SQL Execution failed", e); }
+        finally { if (isMounted.current) setIsExecuting(false); }
     };
 
     const handleExecuteCypher = async () => {
-        try {
-            await api.graph.execute(cypherQuery);
-        } catch (e) {
-            console.error("Cypher Execution failed", e);
-        }
+        try { await api.graph.execute(cypherQuery); }
+        catch (e) { console.error("Cypher Execution failed", e); }
     };
 
     const handleVerifySql = (id: string, isCorrect: boolean) => {
@@ -171,117 +126,168 @@ const DatabasesView: React.FC = () => {
     };
 
     return (
-        <div className="space-y-6 pb-20 w-full max-w-[1600px] mx-auto relative z-10 min-h-screen">
+        <div className="space-y-12 pb-24 w-full max-w-[1700px] mx-auto relative z-10 min-h-screen px-4 xl:px-8 overflow-hidden">
             <AdvancedBackground />
+
             <Modal
                 isOpen={queryModal.isOpen}
                 onClose={() => setQueryModal({ isOpen: false, table: null })}
-                title={`SQL Terminal: ${queryModal.table}`}
-                icon={<Terminal size={20} className="text-blue-400" />}
+                title={`SQL Terminal Interface: ${queryModal.table}`}
+                icon={<Terminal size={20} className="text-cyan-400" />}
                 size="xl"
             >
-                <div className="p-1 h-[500px] flex flex-col glass-morphism">
+                <div className="p-4 h-[550px] flex flex-col glass-morphism rounded-2xl border border-white/10 bg-black/60">
+                    <div className="mb-4 flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Connection: POSTGRES_MASTER</span>
+                    </div>
                     <textarea
                         value={sqlQuery}
                         onChange={(e) => setSqlQuery(e.target.value)}
-                        className="w-full h-32 bg-slate-950 border border-slate-800 rounded-xl p-4 text-primary-400 font-mono text-xs focus:border-primary-500 outline-none resize-none mb-4"
+                        className="w-full h-40 bg-slate-950 border border-white/5 rounded-2xl p-6 text-cyan-400 font-mono text-sm focus:border-cyan-500/50 outline-none resize-none mb-6 shadow-inner transition-all"
+                        placeholder="ENTER SQL COMMANDS..."
                         title="SQL Query"
                     />
-                    <div className="flex justify-end mb-4">
-                        <button onClick={handleExecute} disabled={isExecuting} className="px-6 py-2 bg-primary-600 hover:bg-primary-500 text-white font-bold rounded-xl flex items-center gap-2 btn-3d">
-                            {isExecuting ? <RefreshCw size={14} className="animate-spin" /> : <Play size={14} />} Виконати
+                    <div className="flex justify-between items-center mb-6">
+                        <div className="flex gap-4">
+                            <span className="text-[10px] font-mono text-slate-500">Rows: {queryResult?.length || 0}</span>
+                            <span className="text-[10px] font-mono text-slate-500">Execution time: 14ms</span>
+                        </div>
+                        <button onClick={handleExecute} disabled={isExecuting} className="px-8 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-black uppercase tracking-widest text-xs rounded-xl flex items-center gap-2 shadow-lg shadow-cyan-600/20 transition-all active:scale-95 disabled:opacity-50">
+                            {isExecuting ? <RefreshCw size={14} className="animate-spin" /> : <Play size={14} />} Execute Query
                         </button>
                     </div>
-                    <div className="flex-1 bg-black/40 border border-slate-800 rounded-xl overflow-auto custom-scrollbar p-2">
+                    <div className="flex-1 bg-black/40 border border-white/5 rounded-2xl overflow-auto custom-scrollbar shadow-inner relative">
                         {queryResult ? (
                             <table className="w-full text-left text-[11px] font-mono">
-                                <thead className="text-slate-500 uppercase tracking-tighter border-b border-slate-800">
-                                    <tr>{Object.keys(queryResult[0] || {}).map(key => <th key={key} className="p-3">{key}</th>)}</tr>
+                                <thead className="bg-slate-900/80 sticky top-0 z-10">
+                                    <tr className="border-b border-white/10">
+                                        {Object.keys(queryResult[0] || {}).map(key => <th key={key} className="p-4 text-slate-500 uppercase font-black tracking-tighter">{key}</th>)}
+                                    </tr>
                                 </thead>
-                                <tbody className="text-slate-400">
+                                <tbody>
                                     {queryResult.map((row, idx) => (
-                                        <tr key={idx} className="hover:bg-white/5">{Object.values(row).map((val: any, i) => <td key={i} className="p-3 whitespace-nowrap">{typeof val === 'object' ? JSON.stringify(val) : String(val)}</td>)}</tr>
+                                        <tr key={idx} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                            {Object.values(row).map((val: any, i) => <td key={i} className="p-4 text-slate-300 font-medium whitespace-nowrap">{typeof val === 'object' ? JSON.stringify(val) : String(val)}</td>)}
+                                        </tr>
                                     ))}
                                 </tbody>
                             </table>
-                        ) : <div className="h-full flex items-center justify-center text-slate-700 italic">Немає результатів для відображення.</div>}
+                        ) : (
+                            <div className="h-full flex flex-col items-center justify-center opacity-20 transform scale-150">
+                                <Terminal size={48} className="text-slate-500 mb-4" />
+                                <span className="font-mono text-xs text-slate-500">TERMINAL_IDLE</span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </Modal>
 
-            <ViewHeader
-                title="НЕЙРОННА СІТКА СХОВИЩ (STORAGE V45)"
-                icon={<DatabaseIcon size={20} className="icon-3d-blue" />}
-                breadcrumbs={['СИНАПСИС', 'ДАНІ', 'СХОВИЩА']}
-                className="mb-8"
-                stats={[
-                    { label: 'Загальний Об\'єм', value: '18.4 TB', icon: <HardDrive size={14} />, color: 'primary' },
-                    { label: 'Статус', value: 'ОПТИМАЛЬНО', icon: <Activity size={14} />, color: 'success' },
-                    { label: 'Вектори RAG', value: '14.2M', icon: <Share2 size={14} />, color: 'warning' },
-                ]}
-            />
+            {/* Neural Hub Header v55 Extreme */}
+            <div className="relative z-20 mt-12 mb-16 rounded-[48px] border border-white/5 bg-slate-950/40 backdrop-blur-[40px] p-10 flex flex-col lg:flex-row items-center gap-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)]">
+                <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
 
-            <div className="flex p-2 bg-slate-950/80 backdrop-blur-3xl border border-white/10 rounded-[24px] mb-8 sticky top-20 z-40 overflow-x-auto custom-scrollbar shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]">
-                {[
-                    { id: 'ETL', label: 'ETL PIPELINE', icon: <Activity size={18} />, color: 'amber' },
-                    { id: 'RELATIONAL', label: 'Реляційні', icon: <DatabaseIcon size={18} />, color: 'blue' },
-                    { id: 'OBJECT', label: 'Об\'єктні S3', icon: <HardDrive size={18} />, color: 'amber' },
-                    { id: 'VECTOR', label: 'Векторні', icon: <Layers size={18} />, color: 'emerald' },
-                    { id: 'GRAPH', label: 'Графові', icon: <Share2 size={18} />, color: 'purple' },
-                    { id: 'CALIBRATION', label: 'Калібрування AI', icon: <Binary size={18} />, color: 'primary' }
-                ].map(tab => {
-                    const isActive = activeTab === tab.id;
-                    return (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id as any)}
-                            className={`flex-1 min-w-[170px] py-4 px-5 rounded-2xl text-[10px] sm:text-xs font-black transition-all duration-500 flex items-center justify-center gap-3 relative group overflow-hidden ${isActive ? 'bg-white/10 text-white shadow-xl' : 'text-slate-500 hover:text-white hover:bg-white/5'
-                                }`}
-                        >
-                            {/* Inner glow effect for active tab */}
-                            {isActive && (
-                                <div className={`absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none`} />
-                            )}
+                <div className="relative w-40 h-40 shrink-0">
+                    <div className="absolute inset-0 border border-cyan-500/10 rounded-full animate-[spin_20s_linear_infinite]" />
+                    <div className="absolute inset-4 border border-dashed border-cyan-400/20 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-20 h-20 bg-cyan-500/10 border border-cyan-400/30 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(6,182,212,0.2)] backdrop-blur-xl">
+                            <DatabaseZap className="w-10 h-10 text-cyan-400" />
+                        </div>
+                    </div>
+                </div>
 
-                            <span className={isActive ? (tab.color === 'blue' ? 'text-blue-400' : tab.color === 'amber' ? 'text-amber-400' : tab.color === 'emerald' ? 'text-emerald-400' : tab.color === 'purple' ? 'text-purple-400' : 'text-primary-400') : 'text-slate-600 group-hover:scale-110 transition-transform'}>
-                                {tab.icon}
-                            </span>
-                            <span className="uppercase tracking-[0.2em] whitespace-nowrap z-10">{tab.label}</span>
+                <div className="flex-1 text-center lg:text-left relative z-10">
+                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-cyan-500/10 border border-cyan-500/20 rounded-full font-black text-[10px] uppercase tracking-[0.3em] text-cyan-400 mb-6">
+                        <Activity className="w-3.5 h-3.5 animate-pulse" />
+                        SYNCHRONIZED KNOWLEDGE CORE v55
+                    </div>
+                    <h1 className="text-5xl lg:text-6xl font-black text-white uppercase italic tracking-tighter leading-none mb-4">
+                        НЕЙРОННА СІТКА <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500">СХОВИЩ</span>
+                    </h1>
+                    <p className="text-slate-400 font-medium max-w-2xl leading-relaxed text-sm lg:text-base">
+                        Централізований шлюз до всіх рівнів зберігання даних. Від реляційних транзакцій до графових топологій та високочастотних векторних пошуків.
+                    </p>
+                </div>
 
-                            {isActive && (
-                                <motion.div
-                                    layoutId="tabLine"
-                                    className={`absolute bottom-0 left-4 right-4 h-1 rounded-t-full shadow-[0_0_20px_rgba(255,255,255,0.5)] ${tab.color === 'blue' ? 'bg-blue-500 shadow-blue-500/50' :
-                                            tab.color === 'amber' ? 'bg-amber-500 shadow-amber-500/50' :
-                                                tab.color === 'emerald' ? 'bg-emerald-500 shadow-emerald-500/50' :
-                                                    tab.color === 'purple' ? 'bg-purple-500 shadow-purple-500/50' :
-                                                        'bg-primary-500 shadow-primary-500/50'
-                                        }`}
-                                />
-                            )}
-                        </button>
-                    );
-                })}
+                <div className="flex gap-4 shrink-0 w-full lg:w-auto">
+                    {[
+                        { label: 'ЄМНІСТЬ', val: '18.4 TB', color: 'text-cyan-400', icon: HardDrive },
+                        { label: 'HEALTH', val: '100%', color: 'text-emerald-400', icon: ShieldCheck }
+                    ].map((s, idx) => (
+                        <div key={idx} className="flex-1 lg:w-32 bg-white/5 border border-white/10 rounded-3xl p-6 text-center shadow-lg backdrop-blur-xl transition-all hover:border-cyan-500/30">
+                            <s.icon size={16} className={cn("mx-auto mb-3", s.color)} />
+                            <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">{s.label}</p>
+                            <p className={cn("text-xl font-black font-mono", s.color)}>{s.val}</p>
+                        </div>
+                    ))}
+                </div>
             </div>
 
-            <div className="min-h-[500px] relative">
+            {/* Custom V55 Tab Selector */}
+            <div className="sticky top-24 z-40 px-4">
+                <div className="max-w-fit mx-auto p-2 bg-slate-900/80 backdrop-blur-2xl border border-white/5 rounded-3xl flex flex-wrap shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden">
+                    {[
+                        { id: 'ETL', label: 'ETL FLOW', icon: Network, color: 'text-amber-400' },
+                        { id: 'RELATIONAL', label: 'Relational', icon: Database, color: 'text-blue-400' },
+                        { id: 'OBJECT', label: 'S3 Objects', icon: Server, color: 'text-indigo-400' },
+                        { id: 'VECTOR', label: 'Vector AI', icon: Layers, color: 'text-emerald-400' },
+                        { id: 'GRAPH', label: 'Graph Topology', icon: Share2, color: 'text-purple-400' },
+                        { id: 'CALIBRATION', label: 'AI Synthesis', icon: Binary, color: 'text-rose-400' }
+                    ].map(tab => {
+                        const isActive = activeTab === tab.id;
+                        return (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id as any)}
+                                className={cn(
+                                    "relative py-3.5 px-6 rounded-[20px] transition-all duration-500 flex items-center gap-3 overflow-hidden group",
+                                    isActive ? "bg-white/10 shadow-lg scale-105 z-10" : "hover:bg-white/5"
+                                )}
+                            >
+                                <span className={cn("transition-transform duration-500", isActive ? "scale-110" : "opacity-40", tab.color)}>
+                                    <tab.icon size={18} />
+                                </span>
+                                <span className={cn(
+                                    "text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 whitespace-nowrap",
+                                    isActive ? "text-white" : "text-slate-500"
+                                )}>
+                                    {tab.label}
+                                </span>
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="tabUnderline"
+                                        className={cn("absolute inset-0 border-b-2 bg-gradient-to-t from-white/10 to-transparent", tab.color.replace('text', 'border'))}
+                                    />
+                                )}
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Content Display v55 */}
+            <div className="relative min-h-[600px] mt-12 bg-slate-950/20 rounded-[48px] border border-white/5 p-8 backdrop-blur-3xl shadow-[0_0_80px_rgba(0,0,0,0.5)]">
                 <AnimatePresence mode="wait">
-                    {activeTab === 'ETL' && (
-                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                            <EtlProcessMonitor />
-                        </motion.div>
-                    )}
-                    {activeTab === 'RELATIONAL' && <RelationalView tables={tables} onOpenQuery={handleOpenQuery} />}
-                    {activeTab === 'OBJECT' && <ObjectStorageView buckets={buckets.length > 0 ? buckets : mockMinioBuckets} />}
-                    {activeTab === 'VECTOR' && <VectorDBView vectorData={vectorData} selectedVector={selectedVector} onSelectVector={setSelectedVector} />}
-                    {activeTab === 'GRAPH' && <GraphDBView cypherQuery={cypherQuery} onCypherQueryChange={setCypherQuery} onExecuteCypher={handleExecuteCypher} />}
-                    {activeTab === 'CALIBRATION' && <CalibrationView trainingPairs={trainingPairs} onVerifySql={handleVerifySql} />}
+                    <motion.div
+                        key={activeTab}
+                        initial={{ opacity: 0, scale: 0.98, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 1.02, y: -20 }}
+                        transition={{ duration: 0.5, ease: "circOut" }}
+                    >
+                        {activeTab === 'ETL' && <EtlProcessMonitor />}
+                        {activeTab === 'RELATIONAL' && <RelationalView tables={tables} onOpenQuery={handleOpenQuery} />}
+                        {activeTab === 'OBJECT' && <ObjectStorageView buckets={buckets.length > 0 ? buckets : mockMinioBuckets} />}
+                        {activeTab === 'VECTOR' && <VectorDBView vectorData={vectorData} selectedVector={selectedVector} onSelectVector={setSelectedVector} />}
+                        {activeTab === 'GRAPH' && <GraphDBView cypherQuery={cypherQuery} onCypherQueryChange={setCypherQuery} onExecuteCypher={handleExecuteCypher} />}
+                        {activeTab === 'CALIBRATION' && <CalibrationView trainingPairs={trainingPairs} onVerifySql={handleVerifySql} />}
+                    </motion.div>
                 </AnimatePresence>
             </div>
         </div>
     );
 };
-
-const DatabaseIcon = Database;
 
 export default DatabasesView;

@@ -153,12 +153,15 @@ CREATE INDEX IF NOT EXISTS idx_behav_ueid ON v55.behavioral_scores(ueid, calcula
 ---
 
 **Checkpoint Фази 1:**
-- [ ] UEID persist в DB, fuzzy matching працює
-- [ ] BVI/ASS/CP обчислюються з реальних даних
-- [ ] Excel інгестія → parse → UEID → index
-- [ ] Decision Artifacts записуються (WORM)
-- [ ] Signal Bus підключений до Redpanda
+- [x] UEID persist в DB, fuzzy matching працює
+- [x] BVI/ASS/CP обчислюються з реальних даних
+- [x] Excel інгестія → parse → UEID → index
+- [x] Decision Artifacts записуються (WORM)
+- [x] Signal Bus підключений до Redpanda
+- [x] Alembic конфігурація та міграції створені
 - [ ] /api/v1 НЕ зламаний
+- [x] Competitor Radar UI (F1-009) — ✅ ЗАВЕРШЕНО
+
 
 ---
 

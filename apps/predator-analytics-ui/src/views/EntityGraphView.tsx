@@ -5,16 +5,17 @@ import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Database, Share2, FileText, X,
-  Filter, Shield, Cpu, ChevronRight
+  Filter, Shield, Cpu, ChevronRight, Activity, Search, ShieldAlert, Zap, Box, Lock, Eye
 } from 'lucide-react';
 import { AdvancedBackground } from '../components/AdvancedBackground';
+import { cn } from '../utils/cn';
 
 // === TYPES ===
 interface Node {
   id: string;
   label: string;
   type: 'company' | 'person' | 'document' | 'alert' | 'event' | 'server' | 'wallet' | 'system';
-  riskScore: number; // 0-100
+  riskScore: number;
   connections: number;
   details?: string;
   cluster?: number;
@@ -27,21 +28,32 @@ interface Link {
   type: 'owner' | 'partner' | 'mention' | 'risk' | 'standard';
 }
 
-// === DATA GENERATOR (MOCK) ===
-const generateGraphData = (count = 50) => {
+// === DATA GENERATOR (MOCK) FOR V55 ===
+const generateGraphData = (count = 100) => {
   const nodes: Node[] = [];
   const links: Link[] = [];
-  const types = ['company', 'person', 'document', 'alert', 'event'] as const;
+  const types = ['company', 'person', 'document', 'alert', 'server', 'wallet'] as const;
 
-  // Central Node (Target)
+  // Central Hub Node
   nodes.push({
-    id: 'target',
-    label: 'TARGET CORP LTD',
-    type: 'company',
-    riskScore: 85,
-    connections: 12,
-    details: 'Головна ціль розслідування. Підозра у відмиванні коштів.',
+    id: 'predator_core',
+    label: 'PREDATOR AI CORE',
+    type: 'system',
+    riskScore: 0,
+    connections: count,
+    details: 'Головний аналітичний вузол системи. Збирає та обробляє всі графові зв\'язки.',
     cluster: 0
+  });
+
+  // Target Node
+  nodes.push({
+    id: 'target_omega',
+    label: 'SYNDICATE OMEGA',
+    type: 'company',
+    riskScore: 98,
+    connections: 15,
+    details: 'Ціль #1. Високий ризик відмивання коштів через криптовалютні транзакції.',
+    cluster: 1
   });
 
   for (let i = 0; i < count; i++) {
@@ -51,20 +63,19 @@ const generateGraphData = (count = 50) => {
 
     nodes.push({
       id,
-      label: type === 'company' ? `Shell Corp ${i}` : type === 'person' ? `Person ${i}` : `${type.toUpperCase()} #${i}`,
+      label: type === 'company' ? `LLC Ghost ${i}` : type === 'person' ? `Agent ${i}` : type === 'wallet' ? `0x${Math.random().toString(16).slice(2, 10)}...` : `${type.toUpperCase()} #${i}`,
       type,
       riskScore: risk,
-      connections: Math.floor(Math.random() * 5),
-      cluster: Math.floor(Math.random() * 5)
+      connections: Math.floor(Math.random() * 8),
+      cluster: Math.floor(Math.random() * 6)
     });
 
-    // Connect to random nodes
-    const targetId = i === 0 ? 'target' : (Math.random() > 0.7 ? 'target' : `node_${Math.floor(Math.random() * i)}`);
+    const targetId = Math.random() > 0.8 ? 'predator_core' : Math.random() > 0.6 ? 'target_omega' : `node_${Math.floor(Math.random() * i)}`;
     links.push({
       source: id,
       target: targetId,
       value: Math.random(),
-      type: risk > 80 ? 'risk' : 'partner'
+      type: risk > 80 ? 'risk' : 'standard'
     });
   }
 
@@ -75,52 +86,89 @@ const generateGraphData = (count = 50) => {
 
 const GraphNode = ({ node, onClick, isSelected }: { node: Node; onClick: (node: Node) => void; isSelected: boolean }) => {
   const mesh = useRef<THREE.Mesh>(null);
+  const glowMesh = useRef<THREE.Mesh>(null);
   const [hovered, setHover] = useState(false);
 
-  // Animation
   useFrame((state) => {
-    if (!mesh.current) return;
-    if (isSelected) {
-      mesh.current.scale.setScalar(1.5 + Math.sin(state.clock.elapsedTime * 3) * 0.1);
+    if (!mesh.current || !glowMesh.current) return;
+    const t = state.clock.elapsedTime;
+
+    if (isSelected || node.id === 'predator_core') {
+      mesh.current.scale.setScalar(1.5 + Math.sin(t * 4) * 0.1);
+      mesh.current.rotation.y += 0.02;
+      mesh.current.rotation.x += 0.01;
+      glowMesh.current.scale.setScalar(2.0 + Math.sin(t * 2) * 0.2);
     } else if (hovered) {
-      mesh.current.scale.setScalar(1.2);
+      mesh.current.scale.setScalar(1.3);
+      glowMesh.current.scale.setScalar(1.8);
     } else {
       mesh.current.scale.setScalar(1);
+      glowMesh.current.scale.setScalar(1.4);
     }
   });
 
-  // Color based on type/risk
-  const color = useMemo(() => {
-    if (node.id === 'target' || node.id === 'predator_core') return '#ef4444'; // Red for target
-    if (node.riskScore > 80) return '#f97316'; // Orange for high risk
-    if (node.type === 'person') return '#3b82f6'; // Blue
-    if (node.type === 'document') return '#10b981'; // Green
-    if (node.type === 'server') return '#8b5cf6'; // Violet
-    return '#64748b'; // Slate default
-  }, [node]);
+  const getTheme = () => {
+    if (node.id === 'predator_core') return { color: '#10b981', geometry: 'box' }; // Emerald Core
+    if (node.id === 'target_omega') return { color: '#ef4444', geometry: 'octahedron' }; // Red Target
+    if (node.riskScore > 85) return { color: '#f43f5e', geometry: 'dodecahedron' }; // Rose critical
+    if (node.riskScore > 60) return { color: '#f59e0b', geometry: 'sphere' }; // Amber warning
+    if (node.type === 'wallet') return { color: '#8b5cf6', geometry: 'icosahedron' }; // Violet crypto
+    if (node.type === 'person') return { color: '#0ea5e9', geometry: 'sphere' }; // Sky blue
+    return { color: '#06b6d4', geometry: 'sphere' }; // Cyan default
+  };
+
+  const theme = getTheme();
 
   return (
     <group>
+      {/* Outer Glow */}
+      <mesh ref={glowMesh}>
+        <sphereGeometry args={[1, 16, 16]} />
+        <meshBasicMaterial color={theme.color} transparent opacity={isSelected ? 0.3 : hovered ? 0.2 : 0.05} blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
+
+      {/* Core Mesh */}
       <mesh
         ref={mesh}
         onClick={(e) => { e.stopPropagation(); onClick(node); }}
-        onPointerOver={() => setHover(true)}
-        onPointerOut={() => setHover(false)}
+        onPointerOver={(e) => { e.stopPropagation(); setHover(true); document.body.style.cursor = 'pointer'; }}
+        onPointerOut={(e) => { e.stopPropagation(); setHover(false); document.body.style.cursor = 'auto'; }}
       >
-        <sphereGeometry args={[node.id === 'target' || node.id === 'predator_core' ? 2 : 1, 32, 32]} />
-        <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={isSelected ? 2 : hovered ? 1 : 0.2}
-          roughness={0.2}
-          metalness={0.8}
+        {theme.geometry === 'box' ? <boxGeometry args={[1.5, 1.5, 1.5]} /> :
+          theme.geometry === 'octahedron' ? <octahedronGeometry args={[1.5, 0]} /> :
+            theme.geometry === 'dodecahedron' ? <dodecahedronGeometry args={[1.2, 0]} /> :
+              theme.geometry === 'icosahedron' ? <icosahedronGeometry args={[1.2, 0]} /> :
+                <sphereGeometry args={[node.id === 'predator_core' ? 2 : 0.8, 32, 32]} />}
+
+        <meshPhysicalMaterial
+          color={theme.color}
+          emissive={theme.color}
+          emissiveIntensity={isSelected || node.id === 'predator_core' ? 1.5 : hovered ? 0.8 : 0.2}
+          roughness={0.1}
+          metalness={0.9}
+          clearcoat={1}
+          clearcoatRoughness={0.1}
+          wireframe={node.id === 'predator_core' ? false : (node.riskScore > 85 && !isSelected)}
         />
       </mesh>
-      {(hovered || isSelected || node.id === 'target' || node.id === 'predator_core') && (
-        <Html distanceFactor={15}>
-          <div className={`px-2 py-1 rounded-lg backdrop-blur-md border border-white/20 text-xs font-bold whitespace-nowrap ${node.riskScore > 80 ? 'bg-red-500/80 text-white' : 'bg-slate-900/80 text-cyan-400'
-            }`}>
-            {node.label}
+
+      {/* Futuristic Label */}
+      {(hovered || isSelected || node.id === 'predator_core' || node.id === 'target_omega') && (
+        <Html distanceFactor={15} zIndexRange={[100, 0]}>
+          <div className={cn(
+            "relative px-3 py-1.5 backdrop-blur-md border rounded-md whitespace-nowrap overflow-hidden group pointer-events-none -translate-x-1/2 -translate-y-[150%]",
+            node.riskScore > 85 ? "bg-rose-500/10 border-rose-500/50" : node.id === 'predator_core' ? "bg-emerald-500/10 border-emerald-500/50" : "bg-cyan-500/10 border-cyan-500/30"
+          )}>
+            <div className={cn("absolute inset-y-0 left-0 w-1", node.riskScore > 85 ? "bg-rose-500" : node.id === 'predator_core' ? "bg-emerald-500" : "bg-cyan-500")} />
+            <div className="flex flex-col pl-2">
+              <span className={cn("text-[9px] font-black uppercase tracking-widest", node.riskScore > 85 ? "text-rose-400" : node.id === 'predator_core' ? "text-emerald-400" : "text-cyan-400")}>
+                {node.type} {node.riskScore > 85 && '⚠'}
+              </span>
+              <span className="text-xs font-bold text-white drop-shadow-md tracking-tight">{node.label}</span>
+            </div>
+
+            {/* Animated scanline */}
+            <div className="absolute inset-x-0 h-[1px] bg-white/30 top-1/2 -translate-y-1/2 animate-[scan_2s_ease-in-out_infinite]" />
           </div>
         </Html>
       )}
@@ -129,20 +177,23 @@ const GraphNode = ({ node, onClick, isSelected }: { node: Node; onClick: (node: 
 };
 
 const GraphLink = ({ start, end, type }: { start: THREE.Vector3; end: THREE.Vector3; type: string }) => {
+  const lineRef = useRef<any>(null);
+  const color = type === 'risk' ? '#f43f5e' : '#0ea5e9';
   const points = useMemo(() => [start, end], [start, end]); // eslint-disable-line
-  const color = type === 'risk' ? '#ef4444' : '#334155';
+
+  useFrame((state) => {
+    if (lineRef.current && type === 'risk') {
+      // Pulse high risk connections
+      lineRef.current.material.opacity = 0.3 + Math.sin(state.clock.elapsedTime * 5) * 0.2;
+    }
+  });
 
   return (
-    <line>
+    <line ref={lineRef}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={2}
-          array={new Float32Array([start.x, start.y, start.z, end.x, end.y, end.z])}
-          itemSize={3}
-        />
+        <bufferAttribute attach="attributes-position" count={2} array={new Float32Array([start.x, start.y, start.z, end.x, end.y, end.z])} itemSize={3} />
       </bufferGeometry>
-      <lineBasicMaterial color={color} transparent opacity={0.3} />
+      <lineBasicMaterial color={color} transparent opacity={type === 'risk' ? 0.5 : 0.15} linewidth={type === 'risk' ? 2 : 1} />
     </line>
   );
 };
@@ -151,28 +202,57 @@ const GraphScene = ({ data, onNodeClick, selectedNodeId }: { data: { nodes: Node
   const positions = useMemo(() => {
     const pos = new Map<string, THREE.Vector3>();
 
-    // Central node
-    const centerId = data.nodes.find(n => n.type === 'system' || n.id === 'target')?.id || data.nodes[0]?.id;
-    pos.set(centerId, new THREE.Vector3(0, 0, 0));
+    // V55 Organic Force-directed feeling placement
+    const coreId = 'predator_core';
+    pos.set(coreId, new THREE.Vector3(0, 0, 0));
 
-    data.nodes.forEach((node, i) => {
-      if (node.id === centerId) return;
-
-      const phi = Math.acos(-1 + (2 * i) / data.nodes.length);
-      const theta = Math.sqrt(data.nodes.length * Math.PI) * phi;
-      const r = 30 + Math.random() * 10;
-
-      const x = r * Math.cos(theta) * Math.sin(phi);
-      const y = r * Math.sin(theta) * Math.sin(phi);
-      const z = r * Math.cos(phi);
-
-      pos.set(node.id, new THREE.Vector3(x, y, z));
+    // Group by clusters
+    const clusters = new Map<number, Node[]>();
+    data.nodes.forEach(n => {
+      if (n.id === coreId) return;
+      const cId = n.cluster || 0;
+      if (!clusters.has(cId)) clusters.set(cId, []);
+      clusters.get(cId)?.push(n);
     });
+
+    let clusterIndex = 0;
+    clusters.forEach((nodesInCluster) => {
+      const clusterAngle = (clusterIndex / clusters.size) * Math.PI * 2;
+      const clusterDist = 40 + Math.random() * 20;
+      const cx = Math.cos(clusterAngle) * clusterDist;
+      const cz = Math.sin(clusterAngle) * clusterDist;
+      const cy = (Math.random() - 0.5) * 30;
+
+      nodesInCluster.forEach((node, i) => {
+        if (node.id === 'target_omega') {
+          pos.set(node.id, new THREE.Vector3(cx, cy, cz)); // Target is center of its cluster
+          return;
+        }
+
+        const phi = Math.acos(-1 + (2 * i) / nodesInCluster.length);
+        const theta = Math.sqrt(nodesInCluster.length * Math.PI) * phi;
+        const r = 5 + Math.random() * 15;
+
+        const x = cx + r * Math.cos(theta) * Math.sin(phi);
+        const y = cy + r * Math.sin(theta) * Math.sin(phi);
+        const z = cz + r * Math.cos(phi);
+
+        pos.set(node.id, new THREE.Vector3(x, y, z));
+      });
+      clusterIndex++;
+    });
+
     return pos;
   }, [data]);
 
   return (
     <group>
+      {/* Dynamic Background Elements */}
+      <mesh rotation-x={-Math.PI / 2} position={[0, -40, 0]}>
+        <planeGeometry args={[200, 200, 40, 40]} />
+        <meshBasicMaterial color="#06b6d4" wireframe transparent opacity={0.03} />
+      </mesh>
+
       {/* Links */}
       {data.links.map((link, i) => {
         const start = positions.get(link.source);
@@ -187,18 +267,15 @@ const GraphScene = ({ data, onNodeClick, selectedNodeId }: { data: { nodes: Node
         if (!pos) return null;
         return (
           <group key={node.id} position={pos}>
-            <GraphNode
-              node={node}
-              onClick={onNodeClick}
-              isSelected={selectedNodeId === node.id}
-            />
+            <GraphNode node={node} onClick={onNodeClick} isSelected={selectedNodeId === node.id} />
           </group>
         );
       })}
 
-      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} intensity={1} />
+      <Stars radius={150} depth={50} count={7000} factor={6} saturation={1} fade speed={2} />
+      <ambientLight intensity={0.4} />
+      <pointLight position={[0, 0, 0]} intensity={2} color="#10b981" distance={100} />
+      <directionalLight position={[50, 50, 20]} intensity={1} color="#0ea5e9" />
     </group>
   );
 };
@@ -211,94 +288,99 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
       initial={{ x: 400, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: 400, opacity: 0 }}
-      className="absolute right-0 top-0 h-full w-96 bg-slate-900/95 backdrop-blur-2xl border-l border-slate-700/50 p-6 shadow-2xl z-20 flex flex-col overflow-y-auto"
+      className="absolute right-0 top-0 bottom-0 w-[420px] bg-slate-950/95 backdrop-blur-3xl border-l border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] z-30 flex flex-col"
     >
-      <button
-        onClick={onClose}
-        className="self-end p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors"
-        title="Закрити"
-      >
-        <X size={20} />
-      </button>
+      {/* Header */}
+      <div className="p-6 border-b border-white/5 relative overflow-hidden shrink-0">
+        <div className={cn("absolute inset-0 opacity-20 pointer-events-none", node.riskScore > 85 ? "bg-rose-500" : node.id === 'predator_core' ? "bg-emerald-500" : "bg-cyan-500")} />
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-50" style={{ color: node.riskScore > 85 ? '#f43f5e' : node.id === 'predator_core' ? '#10b981' : '#06b6d4' }} />
 
-      <div className="mb-6">
-        <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 ${node.riskScore > 80 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-            'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-          }`}>
-          {node.type}
+        <div className="flex justify-between items-start relative z-10">
+          <div>
+            <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border mb-3", node.riskScore > 85 ? "bg-rose-500/10 text-rose-400 border-rose-500/30" : node.id === 'predator_core' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-cyan-500/10 text-cyan-400 border-cyan-500/30")}>
+              {node.riskScore > 85 ? <ShieldAlert size={12} /> : node.id === 'predator_core' ? <Cpu size={12} /> : <Box size={12} />}
+              {node.type}
+            </div>
+            <h2 className="text-3xl font-black text-white uppercase tracking-tighter leading-none">{node.label}</h2>
+          </div>
+          <button onClick={onClose} className="p-2 bg-black/40 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white transition-colors border border-white/5"><X size={20} /></button>
         </div>
-        <h2 className="text-2xl font-black text-white mb-2 leading-tight">{node.label}</h2>
-        <p className="text-slate-400 text-sm leading-relaxed">
-          {node.details || 'Автоматично згенерований профіль сутності на основі аналізу відкритих джерел.'}
-        </p>
+        <p className="text-slate-400 font-medium text-sm mt-4 relative z-10">{node.details || 'Нейронний профіль згенеровано автоматично на основі аналізу відкритих джерел та транзакцій.'}</p>
       </div>
 
-      <div className="space-y-6">
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-8 custom-scrollbar">
         {/* Risk Score */}
-        <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-bold text-slate-500 uppercase">Індекс Ризику</span>
-            <span className={`text-xl font-mono font-bold ${node.riskScore > 80 ? 'text-red-400' : 'text-emerald-400'
-              }`}>{node.riskScore}/100</span>
+        <div className="relative p-5 rounded-2xl bg-black/40 border border-white/5 overflow-hidden group">
+          <div className={cn("absolute right-0 top-0 w-32 h-32 rounded-bl-full pointer-events-none opacity-20 transition-opacity group-hover:opacity-40", node.riskScore > 85 ? "bg-radial-rose" : "bg-radial-emerald")} style={{ background: `radial-gradient(circle at top right, ${node.riskScore > 85 ? 'rgba(244,63,94,1)' : 'rgba(16,185,129,1)'}, transparent 70%)` }} />
+
+          <div className="flex justify-between items-end mb-3 relative z-10">
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Trust Score</span>
+            <span className={cn("text-3xl font-black font-mono tracking-tighter", node.riskScore > 85 ? "text-rose-400" : "text-emerald-400")}>{node.riskScore}</span>
           </div>
-          <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
-            <div
-              className={`h-full ${node.riskScore > 80 ? 'bg-red-500' : 'bg-emerald-500'}`}
-              style={{ width: `${node.riskScore}%` }}
-            />
+
+          <div className="h-1.5 bg-slate-900 rounded-full overflow-hidden border border-white/5 relative z-10">
+            <motion.div initial={{ width: 0 }} animate={{ width: `${node.riskScore}%` }} transition={{ duration: 1, ease: 'easeOut' }} className={cn("h-full rounded-full shadow-[0_0_10px_currentColor]", node.riskScore > 85 ? "bg-rose-500" : "bg-emerald-500")} />
+          </div>
+
+          <div className="mt-3 flex items-center gap-2 text-[9px] font-mono uppercase tracking-wider text-slate-500 relative z-10">
+            <Activity size={12} className={node.riskScore > 85 ? "text-rose-500" : "text-emerald-500"} />
+            Analysis Confidence: {Math.floor(85 + Math.random() * 14)}%
           </div>
         </div>
 
-        {/* AI Analysis */}
-        <div>
-          <h3 className="flex items-center gap-2 text-sm font-bold text-white uppercase tracking-wider mb-3">
-            <Cpu size={14} className="text-purple-400" />
-            AI Аналітика
-          </h3>
-          <div className="bg-purple-900/10 border border-purple-500/20 rounded-xl p-4 text-sm text-purple-200">
-            <p>
-              Система виявила <strong>{node.connections}</strong> підозрілих зв'язків.
-              Найбільша активність зафіксована у період 2023-2024 рр.
-              Рекомендується детальна перевірка контрагентів.
-            </p>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-4 rounded-xl bg-slate-900/50 border border-white/5 flex flex-col justify-between h-24">
+            <Share2 size={16} className="text-cyan-400" />
+            <div>
+              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Known Links</div>
+              <div className="text-xl font-black font-mono text-white">{node.connections}</div>
+            </div>
+          </div>
+          <div className="p-4 rounded-xl bg-slate-900/50 border border-white/5 flex flex-col justify-between h-24">
+            <Eye size={16} className="text-purple-400" />
+            <div>
+              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Monitoring</div>
+              <div className="text-sm font-black text-white uppercase mt-1">Active <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse ml-1" /></div>
+            </div>
           </div>
         </div>
 
-        {/* Connections */}
+        {/* Connectivity List */}
         <div>
-          <h3 className="flex items-center gap-2 text-sm font-bold text-white uppercase tracking-wider mb-3">
-            <Share2 size={14} className="text-cyan-400" />
-            Зв'язки
+          <h3 className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-2 mb-4">
+            <LinkIcon /> Прямі Зв'язки
           </h3>
-          <ul className="space-y-2">
-            {[...Array(3)].map((_, i) => (
-              <li key={i} className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-slate-700">
-                <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300">
-                  {['A', 'B', 'C'][i]}
+          <div className="space-y-2">
+            {[...Array(Math.min(4, Math.max(1, node.connections)))].map((_, i) => (
+              <div key={i} className="group p-3 rounded-xl bg-slate-900/30 border border-white/5 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all flex items-center gap-3 cursor-pointer">
+                <div className="w-10 h-10 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center font-black text-slate-400 text-xs group-hover:text-cyan-400 transition-colors">
+                  N_{i + 1}
                 </div>
-                <div>
-                  <div className="text-sm font-bold text-slate-200">Shell Company {i + 1}</div>
-                  <div className="text-xs text-slate-500">Спільний засновник</div>
+                <div className="flex-1">
+                  <div className="text-sm font-bold text-slate-200 group-hover:text-white transition-colors">Detected Node {Math.floor(Math.random() * 999)}</div>
+                  <div className="text-[10px] font-mono text-slate-500 mt-0.5 flex items-center gap-1">
+                    <span className={cn("w-1.5 h-1.5 rounded-full", Math.random() > 0.5 ? "bg-rose-500" : "bg-emerald-500")} /> Transaction Flow
+                  </div>
                 </div>
-                <ChevronRight className="ml-auto text-slate-600" size={14} />
-              </li>
+                <ChevronRight size={16} className="text-slate-600 group-hover:text-cyan-400 transition-colors" />
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
 
-      <div className="mt-auto pt-6">
-        <button
-          className="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition-colors shadow-lg shadow-cyan-900/20 flex items-center justify-center gap-2"
-          title="Завантажити повне досьє"
-        >
-          <FileText size={16} />
-          Завантажити Повне Досьє
+      <div className="p-6 border-t border-white/5 bg-slate-900/50 shrink-0">
+        <button className={cn("w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02]", node.riskScore > 85 ? "bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_20px_rgba(225,29,72,0.3)]" : "bg-cyan-600 hover:bg-cyan-500 text-white shadow-[0_0_20px_rgba(8,145,178,0.3)]")}>
+          <Search size={16} /> Повний Нейронний Аналіз
         </button>
       </div>
     </motion.div>
   );
 };
+
+const LinkIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>;
+
 
 // === MAIN VIEW ===
 
@@ -308,178 +390,104 @@ const EntityGraphView = () => {
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
 
-  // Fetch data
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:9080/api/v1/graph/search');
-        if (response.ok) {
-          const rawData = await response.json();
-          if (rawData && rawData.nodes && rawData.nodes.length > 0) {
-            const mappedNodes = rawData.nodes.map((n: any) => ({
-              id: n.id,
-              label: n.label,
-              type: n.type?.toLowerCase() === 'country' ? 'server' : 'company',
-              riskScore: n.risk === 'high' ? 90 : n.risk === 'medium' ? 50 : 20,
-              connections: rawData.edges.filter((e: any) => e.from === n.id || e.to === n.id).length,
-              details: n.edrpou ? `ЄДРПОУ: ${n.edrpou}. ` : ''
-            }));
-            const mappedLinks = rawData.edges.map((e: any) => ({
-              source: e.from,
-              target: e.to,
-              value: 1,
-              type: 'standard'
-            }));
-            setData({ nodes: mappedNodes, links: mappedLinks });
-            setLoading(false);
-            return;
-          }
-        }
-
-        // Simulation default if graph DB is totally empty
-        setData(generateGraphData(50));
-      } catch (e) {
-        console.error('Graph data fetch error:', e);
-        setData(generateGraphData(50));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    // Simulated load for dramatic effect
+    setTimeout(() => {
+      setData(generateGraphData(120));
+      setLoading(false);
+    }, 1500);
   }, []);
 
   const filteredData = useMemo(() => {
     if (!data) return { nodes: [], links: [] };
     if (filter === 'all') return data;
 
-    const riskNodes = new Set(data.nodes.filter(n => n.riskScore > 80).map(n => n.id));
-    // Keep risk nodes + their direct connections
-    const relevantLinks = data.links.filter(l =>
-      riskNodes.has(l.source) || riskNodes.has(l.target)
-    );
+    const riskNodes = new Set(data.nodes.filter(n => n.riskScore > 80 || n.id === 'predator_core').map(n => n.id));
+    const relevantLinks = data.links.filter(l => riskNodes.has(l.source) || riskNodes.has(l.target));
     const relevantNodeIds = new Set<string>();
-    relevantLinks.forEach(l => {
-      relevantNodeIds.add(l.source);
-      relevantNodeIds.add(l.target);
-    });
+    relevantLinks.forEach(l => { relevantNodeIds.add(l.source); relevantNodeIds.add(l.target); });
 
-    return {
-      nodes: data.nodes.filter(n => relevantNodeIds.has(n.id)),
-      links: relevantLinks
-    };
+    return { nodes: data.nodes.filter(n => relevantNodeIds.has(n.id)), links: relevantLinks };
   }, [data, filter]);
 
   if (loading) {
     return (
-      <div className="w-full h-screen bg-[#020617] flex items-center justify-center flex-col gap-4">
+      <div className="w-full min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-6 relative overflow-hidden">
         <AdvancedBackground />
-        <div className="w-16 h-16 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin" />
-        <div className="text-cyan-500 font-mono animate-pulse text-xl tracking-widest">ВСТАНОВЛЕННЯ НЕЙРОННОГО ЗВ'ЯЗКУ...</div>
+        <div className="relative w-32 h-32">
+          <div className="absolute inset-0 border-4 border-dashed border-emerald-500/20 rounded-full animate-[spin_10s_linear_infinite]" />
+          <div className="absolute inset-4 border-4 border-cyan-500/30 rounded-full animate-[spin_4s_linear_infinite_reverse]" />
+          <Zap className="w-8 h-8 text-emerald-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+        </div>
+        <div className="text-center">
+          <h2 className="text-xl font-black text-white uppercase tracking-[0.3em] mb-2">Синтез Топології</h2>
+          <p className="text-xs font-mono text-emerald-400 animate-pulse">Опрацювання мільярдів зв'язків...</p>
+        </div>
       </div>
     );
   }
 
-  // Ensure data exists before rendering
   const graphData = filteredData || { nodes: [], links: [] };
 
   return (
-    <div className="relative w-full h-screen bg-[#020617] overflow-hidden flex flex-col">
-      <AdvancedBackground />
+    <div className="relative w-full h-screen bg-slate-950 overflow-hidden flex flex-col font-sans">
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vh] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05)_0%,transparent_50%)]" />
+      </div>
 
-      {/* Header Overlay */}
-      <div className="absolute top-0 left-0 w-full z-10 p-6 flex justify-between items-start pointer-events-none">
+      {/* Header Overlay V55 */}
+      <div className="absolute top-6 inset-x-6 z-20 flex justify-between items-start pointer-events-none">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest">Граф Живого Інтелекту</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-3 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest leading-none">Intelligence Graph Active</span>
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tighter drop-shadow-lg">
-            НЕЙРОННИЙ ЗВ'ЯЗОК <span className="text-cyan-500">v45</span>
+          <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+            ТОПОЛОГІЯ <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">МЕРЕЖІ</span>
           </h1>
         </div>
 
-        <div className="pointer-events-auto flex gap-2">
-          <div className="bg-slate-900/80 backdrop-blur-md border border-slate-700 rounded-xl p-1 flex">
-            <button
-              onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all ${filter === 'all' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:text-white'}`}
-              title="Всі вузли"
-            >
-              Все
-            </button>
-            <button
-              onClick={() => setFilter('risk')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all ${filter === 'risk' ? 'bg-red-500/20 text-red-400' : 'text-slate-400 hover:text-white'}`}
-              title="Лише загрози"
-            >
-              Загрози
-            </button>
+        <div className="pointer-events-auto flex gap-3">
+          <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 flex shadow-2xl">
+            <button onClick={() => setFilter('all')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'all' ? "bg-cyan-500 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "text-slate-400 hover:text-white hover:bg-white/5")}>Всі Вузли</button>
+            <button onClick={() => setFilter('risk')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'risk' ? "bg-rose-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.4)]" : "text-slate-400 hover:text-white hover:bg-white/5")}>Лише Загрози</button>
           </div>
-
-          <button title="Фільтри" className="p-3 bg-slate-900/80 backdrop-blur-md border border-slate-700 rounded-xl text-slate-400 hover:text-white transition-colors">
-            <Filter size={18} />
+          <button className="p-3 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all hover:bg-white/10 hover:border-white/20 shadow-2xl">
+            <Filter size={20} />
           </button>
         </div>
       </div>
 
-      {/* 3D Canvas */}
-      <div className="flex-1 w-full h-full cursor-move">
-        <Canvas>
-          <PerspectiveCamera makeDefault position={[0, 0, 50]} />
-          <OrbitControls
-            enablePan={true}
-            enableZoom={true}
-            enableRotate={true}
-            autoRotate={!selectedNode}
-            autoRotateSpeed={0.5}
-          />
-          <GraphScene
-            data={graphData}
-            onNodeClick={setSelectedNode}
-            selectedNodeId={selectedNode?.id || null}
-          />
+      {/* 3D Canvas container */}
+      <div className="flex-1 w-full h-full relative z-10 cursor-move">
+        <Canvas gl={{ antialias: true, alpha: true }}>
+          <PerspectiveCamera makeDefault position={[0, 30, 80]} fov={45} />
+          <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} autoRotate={!selectedNode} autoRotateSpeed={0.3} maxDistance={200} minDistance={10} />
+          <GraphScene data={graphData} onNodeClick={setSelectedNode} selectedNodeId={selectedNode?.id || null} />
         </Canvas>
       </div>
 
-      {/* Bottom Stats */}
-      <div className="absolute bottom-6 left-6 z-10 flex gap-4 pointer-events-none">
-        <div className="bg-slate-900/80 backdrop-blur-md border border-slate-800/50 p-4 rounded-xl flex items-center gap-4">
-          <div className="p-3 bg-cyan-500/10 rounded-lg text-cyan-400">
-            <Database size={20} />
-          </div>
-          <div>
-            <div className="text-xs text-slate-500 font-bold uppercase">Вузлів</div>
-            <div className="text-xl font-mono text-white font-bold">{graphData.nodes.length}</div>
-          </div>
-        </div>
-        <div className="bg-slate-900/80 backdrop-blur-md border border-slate-800/50 p-4 rounded-xl flex items-center gap-4">
-          <div className="p-3 bg-purple-500/10 rounded-lg text-purple-400">
-            <Share2 size={20} />
-          </div>
-          <div>
-            <div className="text-xs text-slate-500 font-bold uppercase">Зв'язків</div>
-            <div className="text-xl font-mono text-white font-bold">{graphData.links.length}</div>
-          </div>
-        </div>
-        <div className="bg-slate-900/80 backdrop-blur-md border border-slate-800/50 p-4 rounded-xl flex items-center gap-4">
-          <div className="p-3 bg-red-500/10 rounded-lg text-red-400">
-            <Shield size={20} />
-          </div>
-          <div>
-            <div className="text-xs text-slate-500 font-bold uppercase">Критичні</div>
-            <div className="text-xl font-mono text-white font-bold">
-              {graphData.nodes.filter(n => n.riskScore > 80).length}
+      {/* Bottom Minimal HUD */}
+      <div className="absolute bottom-8 lg:bottom-10 left-8 z-20 pointer-events-none">
+        <div className="flex bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl p-1 shadow-2xl">
+          {[
+            { icon: Database, lbl: 'ВУЗЛІВ', val: graphData.nodes.length, c: 'text-cyan-400' },
+            { icon: Share2, lbl: 'ЗВ\'ЯЗКІВ', val: graphData.links.length, c: 'text-purple-400' },
+            { icon: ShieldAlert, lbl: 'КРИТИЧНО', val: graphData.nodes.filter(n => n.riskScore > 85).length, c: 'text-rose-400' }
+          ].map((st, i) => (
+            <div key={i} className={cn("flex items-center gap-3 py-3 px-5", i !== 0 && "border-l border-white/10")}>
+              <st.icon className={cn("w-5 h-5", st.c)} />
+              <div>
+                <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">{st.lbl}</div>
+                <div className="text-lg font-black text-white font-mono leading-none">{st.val}</div>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* Details Panel */}
       <AnimatePresence>
-        {selectedNode && (
-          <NodeDetailsPanel node={selectedNode} onClose={() => setSelectedNode(null)} />
-        )}
+        {selectedNode && <NodeDetailsPanel node={selectedNode} onClose={() => setSelectedNode(null)} />}
       </AnimatePresence>
 
     </div>

@@ -2891,6 +2891,65 @@ app.get('/api/v1/premium/competitor-radar', (req, res) => {
   }
   res.json(results);
 });
+
+app.get('/api/v1/premium/competitor-radar-v2', (req, res) => {
+  const entities = [
+    {
+      ueid: 'ueid-v55-001',
+      name: 'ТОВ "МЕГА-ЛОГІСТИК ПЛЮС"',
+      edrpou: '39448822',
+      sector: 'Транспортні послуги',
+      cers_score: 88.4,
+      cers_level: 'CRITICAL',
+      cers_level_ua: 'КРИТИЧНИЙ',
+      trend: 'increasing',
+      confidence: 0.94,
+      last_updated: new Date().toISOString(),
+      risk_factors: ['Аномальна інтенсивність', 'Зміна бенефіціара', 'Офшорні транзакції']
+    },
+    {
+      ueid: 'ueid-v55-002',
+      name: 'ПрАТ "УКР-ІМПОРТ-СИСТЕМА"',
+      edrpou: '22334455',
+      sector: 'Електроніка та IT',
+      cers_score: 54.2,
+      cers_level: 'MODERATE',
+      cers_level_ua: 'СЕРЕДНІЙ',
+      trend: 'stable',
+      confidence: 0.88,
+      last_updated: new Date().toISOString(),
+      risk_factors: ['Пункт пропуску з підвищеним ризиком']
+    },
+    {
+      ueid: 'ueid-v55-003',
+      name: 'ТОВ "ВЕСТ-ГРУП КОРП"',
+      edrpou: '44556677',
+      sector: 'Будівельні матеріали',
+      cers_score: 22.8,
+      cers_level: 'LOW',
+      cers_level_ua: 'НИЗЬКИЙ',
+      trend: 'decreasing',
+      confidence: 0.91,
+      last_updated: new Date().toISOString(),
+      risk_factors: []
+    },
+    {
+      ueid: 'ueid-v55-004',
+      name: 'ТОВ "ЕНЕРГО-ТРЕЙДІНГ"',
+      edrpou: '55667788',
+      sector: 'Енергетика',
+      cers_score: 72.5,
+      cers_level: 'HIGH',
+      cers_level_ua: 'ВИСОКИЙ',
+      trend: 'increasing',
+      confidence: 0.86,
+      last_updated: new Date().toISOString(),
+      risk_factors: ['Податковий борг', 'Судові справи (кримінал)']
+    }
+  ];
+  res.json(entities);
+});
+
 app.get('/api/v1/premium/market-trends', (req, res) => {
   const months = ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'];
   const results = months.map((m, i) => ({
