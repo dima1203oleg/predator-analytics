@@ -1,40 +1,75 @@
 apiVersion: v2
 name: predator-umbrella
-description: A Helm chart for Predator Analytics v45.0
+description: "PREDATOR Analytics v55.1 — Umbrella Helm Chart"
 type: application
-version: 0.2.0
-appVersion: "21.0.0"
+version: 1.0.0
+appVersion: "55.1.0"
 
 dependencies:
+  # ── Data Stack ──
   - name: postgresql
-    version: 12.5.0
+    version: 15.5.0
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
+
   - name: redis
-    version: 17.11.0
+    version: 19.5.0
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
-  - name: qdrant
-    version: 0.4.0
-    repository: https://qdrant.github.io/qdrant-helm
-    condition: qdrant.enabled
-  - name: minio
-    version: 12.8.0
-    repository: https://charts.bitnami.com/bitnami
-    condition: minio.enabled
-  - name: keycloak
-    version: 16.0.0
-    repository: https://charts.bitnami.com/bitnami
-    condition: keycloak.enabled
+
   - name: opensearch
-    version: 2.15.0
+    version: 2.21.0
     repository: https://opensearch-project.github.io/helm-charts
     condition: opensearch.enabled
-  - name: prometheus
-    version: 25.0.0
+
+  - name: qdrant
+    version: 0.9.0
+    repository: https://qdrant.github.io/qdrant-helm
+    condition: qdrant.enabled
+
+  - name: minio
+    version: 14.6.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: minio.enabled
+
+  # Kafka via Redpanda (lightweight drop-in)
+  - name: redpanda
+    version: 5.8.0
+    repository: https://charts.redpanda.com
+    condition: redpanda.enabled
+
+  # ── Graph DB ──
+  - name: neo4j
+    version: 5.19.0
+    repository: https://helm.neo4j.com/neo4j
+    condition: neo4j.enabled
+
+  # ── Auth ──
+  - name: keycloak
+    version: 21.4.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: keycloak.enabled
+
+  # ── Observability ──
+  - name: kube-prometheus-stack
+    version: 61.0.0
     repository: https://prometheus-community.github.io/helm-charts
-    condition: prometheus.enabled
-  - name: grafana
-    version: 7.0.0
+    condition: monitoring.enabled
+    alias: monitoring
+
+  - name: loki
+    version: 6.6.0
     repository: https://grafana.github.io/helm-charts
-    condition: grafana.enabled
+    condition: loki.enabled
+
+  # ── GitOps ──
+  - name: argo-cd
+    version: 7.3.0
+    repository: https://argoproj.github.io/argo-helm
+    condition: argocd.enabled
+
+  # ── Security ──
+  - name: cert-manager
+    version: 1.15.0
+    repository: https://charts.jetstack.io
+    condition: certManager.enabled

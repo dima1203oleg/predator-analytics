@@ -220,13 +220,15 @@ class KnowledgeGraph:
     - Виведення причинно-наслідкових зв'язків
     """
 
-    def __init__(self, storage: Any = "/tmp/azr_logs"):
-        from app.libs.core.storage import FileStorageProvider
+    def __init__(self, storage: Any):
+        from app.libs.core.storage import FileStorageProvider, StorageProvider
         
         if isinstance(storage, (str, Path)):
             self.storage = FileStorageProvider(Path(storage))
-        else:
+        elif isinstance(storage, StorageProvider):
             self.storage = storage
+        else:
+            raise TypeError(f"Invalid storage type: {type(storage)}")
 
         # Relative paths for abstraction
         self.nodes_rel_path = "knowledge/knowledge_nodes.jsonl"
@@ -515,16 +517,14 @@ class KnowledgeGraph:
         type_counts = {t.value: len(ids) for t, ids in self._by_type.items()}
 
         return {
-            "total_nodes": len(self._nodes),
-            "total_edges": len(self._edges),
-            "node_types": type_counts,
-            "vocabulary_size": len(self.embedder.vocabulary),
-            "storage_provider": self.storage.__class__.__name__,
+            "nodes": len(self._nodes),
+            "edges": len(self._edges),
+            "by_type": {t.value: len(ids) for t, ids in self._by_type.items()},
+            "storage": str(self.storage.base_path),
         }
 
 
 # ============================================================================
-# 🔗 GLOBAL SINGLETON
 # ============================================================================
 
 _knowledge_graph_instance: KnowledgeGraph | None = None
