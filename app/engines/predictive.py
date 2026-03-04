@@ -12,8 +12,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import logging
+from typing import Optional
+
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.confidence import ConfidenceScore, quick_confidence
+from app.core.signal_bus import SignalBus
+from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
 
 
 logger = logging.getLogger("predator.engines.predictive")
@@ -102,3 +107,56 @@ def compute_predictive_score(
         confidence=confidence,
         model_versions={"phase": "1", "type": "heuristic"},
     )
+
+
+async def process_entity(ueid: str, session: AsyncSession) -> PredictiveScore:
+    """Run Predictive Analysis for a specific entity.
+    Features async DB persistence and real-time scaling out via SignalBus.
+    """
+    from app.repositories.predictive_repository import PredictiveRepository
+    repo = PredictiveRepository(session)
+    
+    # 🚨 PREDATOR LAZY LOADING / MOCKS
+    # Temporarily generate semi-random metrics until full MLflow integration
+    import random
+    beh = random.uniform(0.0, 100.0)
+    inst = random.uniform(0.0, 100.0)
+    infl = random.uniform(0.0, 100.0)
+    struct = random.uniform(0.0, 100.0)
+    data_comp = random.uniform(0.5, 1.0)
+
+    score = compute_predictive_score(
+        ueid,
+        behavioral_aggregate=beh,
+        institutional_aggregate=inst,
+        influence_aggregate=infl,
+        structural_aggregate=struct,
+        data_completeness=data_comp,
+    )
+
+    # 1. DB Persistence
+    await repo.save_score(score)
+
+    # 2. Emit Signal (v55 standard)
+    bus = SignalBus.get_instance()
+    signal = V55Signal(
+        signal_type="PREDICTIVE_SCORING",
+        topic="predictive.analyzed",
+        ueid=ueid,
+        layer=SignalLayer.PREDICTIVE,
+        priority=SignalPriority.CRITICAL if score.aggregate > 80 else SignalPriority.HIGH if score.aggregate > 60 else SignalPriority.ROUTINE,
+        score=score.aggregate,
+        confidence=score.confidence.final_score,
+        summary=f"Прогнозування ризиків: Disappearance={score.disappearance_risk:.1f}, Scheme={score.scheme_emergence_risk:.1f}",
+        metadata={
+            "disappearance_risk": score.disappearance_risk,
+            "regulatory_intervention_risk": score.regulatory_intervention_risk,
+            "concentration_risk": score.concentration_risk,
+            "scheme_emergence_risk": score.scheme_emergence_risk
+        }
+    )
+    # emit expects db session for persistence fallback
+    await bus.emit(signal, session=session)
+
+    logger.info("Predictive Engine processed ueid=%s, agg=%.1f", ueid, score.aggregate)
+    return score
