@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.engines.structural_gaps import StructuralScore
 from app.models.v55.orm.structural_score import StructuralScoreORM
+from app.core.ueid import parse_ueid
 
 
 logger = logging.getLogger("predator.repo.structural")
@@ -29,7 +30,7 @@ class StructuralRepository:
         """Persist a Structural score to the database."""
         try:
             orm_obj = StructuralScoreORM(
-                ueid=UUID(score.ueid) if isinstance(score.ueid, str) else score.ueid,
+                ueid=parse_ueid(score.ueid),
                 mci=score.mci,
                 pfi=score.pfi,
                 tdi=score.tdi,
@@ -46,11 +47,12 @@ class StructuralRepository:
             logger.exception("Failed to save Structural score for ueid=%s", score.ueid)
             raise e
 
-    async def get_latest_score(self, ueid: str) -> StructuralScoreORM | None:
+    async def get_latest_for_ueid(self, ueid: str | UUID) -> StructuralScoreORM | None:
         """Get the most recent Structural score for a given UEID."""
+        parsed_ueid = parse_ueid(ueid)
         stmt = (
             select(StructuralScoreORM)
-            .where(StructuralScoreORM.ueid == (UUID(ueid) if isinstance(ueid, str) else ueid))
+            .where(StructuralScoreORM.ueid == parsed_ueid)
             .order_by(StructuralScoreORM.calculated_at.desc())
             .limit(1)
         )

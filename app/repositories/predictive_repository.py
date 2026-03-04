@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.engines.predictive import PredictiveScore
 from app.models.v55.orm.predictive_score import PredictiveScoreORM
+from app.core.ueid import parse_ueid
 
 
 logger = logging.getLogger("predator.repo.predictive")
@@ -29,7 +30,7 @@ class PredictiveRepository:
         """Persist a Predictive score to the database."""
         try:
             orm_obj = PredictiveScoreORM(
-                ueid=UUID(score.ueid) if isinstance(score.ueid, str) else score.ueid,
+                ueid=parse_ueid(score.ueid),
                 disappearance_risk=score.disappearance_risk,
                 regulatory_intervention_risk=score.regulatory_intervention_risk,
                 concentration_risk=score.concentration_risk,
@@ -46,11 +47,12 @@ class PredictiveRepository:
             logger.exception("Failed to save Predictive score for ueid=%s", score.ueid)
             raise e
 
-    async def get_latest_score(self, ueid: str) -> PredictiveScoreORM | None:
+    async def get_latest_for_ueid(self, ueid: str | UUID) -> PredictiveScoreORM | None:
         """Get the most recent Predictive score for a given UEID."""
+        parsed_ueid = parse_ueid(ueid)
         stmt = (
             select(PredictiveScoreORM)
-            .where(PredictiveScoreORM.ueid == (UUID(ueid) if isinstance(ueid, str) else ueid))
+            .where(PredictiveScoreORM.ueid == parsed_ueid)
             .order_by(PredictiveScoreORM.calculated_at.desc())
             .limit(1)
         )
