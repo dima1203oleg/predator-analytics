@@ -2978,6 +2978,167 @@ app.get('/api/v1/newspaper', (req, res) => {
   });
 });
 
+// =============================================
+// 🚀 API v2 — PREDATOR v55 ENDPOINTS
+// =============================================
+
+const v2Jobs = {};
+
+// POST /api/v2/ingestion/upload
+app.post('/api/v2/ingestion/upload', (req, res) => {
+  const job_id = `v2-${Date.now()}`;
+  const source = req.query.source || req.body?.source || 'customs';
+  const recordsCount = Math.floor(Math.random() * 500) + 50;
+
+  v2Jobs[job_id] = {
+    job_id,
+    status: 'pending',
+    source,
+    records_total: recordsCount,
+    records_processed: 0,
+    entities_created: 0,
+    entities_resolved: 0,
+    errors: [],
+    started_at: new Date().toISOString(),
+    finished_at: null
+  };
+
+  // Simulate processing
+  let processed = 0;
+  const interval = setInterval(() => {
+    processed = Math.min(recordsCount, processed + Math.floor(recordsCount / 10));
+    if (v2Jobs[job_id]) {
+      v2Jobs[job_id].status = processed >= recordsCount ? 'done' : 'running';
+      v2Jobs[job_id].records_processed = processed;
+      v2Jobs[job_id].entities_created = Math.floor(processed * 0.3);
+      v2Jobs[job_id].entities_resolved = Math.floor(processed * 0.7);
+      if (processed >= recordsCount) {
+        v2Jobs[job_id].finished_at = new Date().toISOString();
+        clearInterval(interval);
+      }
+    }
+  }, 800);
+
+  res.json({
+    job_id,
+    status: 'pending',
+    records_count: recordsCount,
+    message: `Файл прийнятий. ${recordsCount} записів у черзі.`
+  });
+});
+
+// GET /api/v2/ingestion/jobs/:job_id
+app.get('/api/v2/ingestion/jobs/:job_id', (req, res) => {
+  const job = v2Jobs[req.params.job_id];
+  if (!job) {
+    return res.status(404).json({ detail: `Job '${req.params.job_id}' не знайдено` });
+  }
+  res.json(job);
+});
+
+// GET /api/v2/ingestion/progress/:job_id (SSE)
+app.get('/api/v2/ingestion/progress/:job_id', (req, res) => {
+  const { job_id } = req.params;
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.flushHeaders();
+
+  const tick = setInterval(() => {
+    const job = v2Jobs[job_id] || { job_id, status: 'done', records_total: 0, records_processed: 0 };
+    res.write(`event: progress\ndata: ${JSON.stringify(job)}\n\n`);
+    if (job.status === 'done' || job.status === 'failed') {
+      clearInterval(tick);
+      res.end();
+    }
+  }, 1000);
+
+  req.on('close', () => clearInterval(tick));
+});
+
+// POST /api/v2/ingestion/trigger/:source_type
+app.post('/api/v2/ingestion/trigger/:source_type', (req, res) => {
+  const { source_type } = req.params;
+  const task_id = `celery-${Date.now()}`;
+  res.json({ status: 'queued', source: source_type, task_id });
+});
+
+// POST /api/v2/pipeline/run
+app.post('/api/v2/pipeline/run', (req, res) => {
+  const { source, records = [], entity_type = 'company' } = req.body || {};
+  const uniqueEntities = Math.floor(records.length * 0.6) || 3;
+  res.json({
+    pipeline: 'v55-full',
+    source: source || 'customs',
+    unique_entities: uniqueEntities,
+    steps: {
+      data_fusion: { entities_created: Math.floor(uniqueEntities * 0.4), entities_resolved: Math.floor(uniqueEntities * 0.6), records_fused: records.length },
+      behavioral: { status: 'ok', entities_scored: uniqueEntities },
+      institutional: { status: 'ok', entities_scored: uniqueEntities },
+      influence: { status: 'ok', entities_scored: uniqueEntities },
+      structural: { status: 'ok', entities_scored: uniqueEntities },
+      predictive: { status: 'ok', entities_scored: uniqueEntities },
+      cers: { status: 'ok', entities_scored: uniqueEntities }
+    }
+  });
+});
+
+// POST /api/v2/pipeline/entity/:ueid/rescore
+app.post('/api/v2/pipeline/entity/:ueid/rescore', (req, res) => {
+  const { ueid } = req.params;
+  res.json({
+    ueid,
+    behavioral: { bvi: 45.2, ass: 32.1, cp: 67.8, aggregate: 48.4, confidence: 0.82 },
+    institutional: { aai: 55.0, pls: 42.0, aggregate: 50.1, confidence: 0.75 },
+    influence: { im: 38.5, hci: 29.4, aggregate: 35.2, confidence: 0.70 },
+    structural: { mci: 41.0, tdi: 25.5, aggregate: 36.8, confidence: 0.68 },
+    predictive: { disappearance_risk: 22.1, scheme_emergence_risk: 31.4, aggregate: 27.3, confidence: 0.65 },
+    cers: { score: 41.2, level: 'MEDIUM', level_ua: 'СЕРЕДНІЙ', level_en: 'MEDIUM', confidence: 0.73 },
+    status: 'rescored'
+  });
+});
+
+// GET /api/v2/entities/
+app.get('/api/v2/entities/', (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  res.json({ entities: [], total: 0, page, limit });
+});
+
+// POST /api/v2/entities/resolve
+app.post('/api/v2/entities/resolve', (req, res) => {
+  const { name, edrpou } = req.body || {};
+  res.json({
+    ueid: `UA-${edrpou || '00000000'}-MOCK`,
+    name: name || 'Unknown',
+    edrpou,
+    created: true
+  });
+});
+
+// GET /api/v2/signals/
+app.get('/api/v2/signals/', (req, res) => {
+  res.json({ signals: [], total: 0 });
+});
+
+// GET /api/v2/analytics/entity/:ueid
+app.get('/api/v2/analytics/entity/:ueid', (req, res) => {
+  res.json({
+    ueid: req.params.ueid,
+    cers: { score: 41.2, level: 'MEDIUM', level_ua: 'СЕРЕДНІЙ' },
+    behavioral: { aggregate: 48.4 },
+    institutional: { aggregate: 50.1 },
+    influence: { aggregate: 35.2 },
+    structural: { aggregate: 36.8 },
+    predictive: { aggregate: 27.3 }
+  });
+});
+
+// GET /api/v2/decisions/
+app.get('/api/v2/decisions/', (req, res) => {
+  res.json({ decisions: [], total: 0 });
+});
+
 // Catch-all for any missing endpoints (must be last)
 app.use('/api', (req, res) => {
   console.log(`[MOCK] Unhandled ${req.method} ${req.path}`);
