@@ -95,24 +95,50 @@ async def process_entity(ueid: str, session: AsyncSession) -> InstitutionalScore
     Features async DB persistence and real-time scaling out via SignalBus.
     """
     from app.repositories.institutional_repository import InstitutionalRepository
-    repo = InstitutionalRepository(session)
+    from app.repositories.fused_record_repository import FusedRecordRepository
     
-    # 🚨 PREDATOR LAZY LOADING / MOCKS
-    # Temporarily generate semi-random metrics until full integration
-    import random
-    avg_release = random.uniform(1.0, 48.0)
+    repo = InstitutionalRepository(session)
+    fused_repo = FusedRecordRepository(session)
+    
+    # 1. Fetch historical fused records
+    fused_records = await fused_repo.get_by_ueid(ueid, limit=500)
+    
+    # 2. Extract Metrics for PLS (Post Loyalty Score)
+    post_flows: dict[str, float] = {}
+    total_flow = 0.0
+    
+    for record in fused_records:
+        if record.source == "customs":
+            data = record.normalized_data
+            value = float(data.get("value_usd", 0))
+            post = data.get("customs_post", "UNKNOWN")
+            
+            post_flows[post] = post_flows.get(post, 0.0) + value
+            total_flow += value
+            
+    # Find primary post
+    primary_post = "UNKNOWN"
+    max_post_flow = 0.0
+    if post_flows:
+        primary_post, max_post_flow = max(post_flows.items(), key=lambda x: x[1])
+
+    # 3. Derive AAI (Administrative Asymmetry Index) 
+    # Since we don't have release_times yet, we use post load as a proxy or stick to stable defaults
+    # In Phase 2: AAI is simulated based on post diversity (less posts = higher asymmetry)
+    avg_release = 12.0 # Default fallback
     national_mean = 12.0
-    company_flow = random.uniform(10, 500)
-    total_flow = company_flow * random.uniform(1.0, 5.0)
-    r_divergence = random.uniform(0.0, 100.0)
-    r_shift = random.uniform(0.0, 100.0)
-    data_comp = random.uniform(0.5, 1.0)
+    
+    # 4. Regional Divergence & Regulatory Shift (simulated for now, but stable)
+    r_divergence = 25.0 if len(post_flows) > 2 else 55.0
+    r_shift = 15.0 if total_flow > 100000 else 40.0
+    
+    data_comp = min(1.0, (len(fused_records) / 20.0) + 0.2) if fused_records else 0.2
 
     score = compute_institutional_score(
         ueid,
         avg_release_time_region=avg_release,
         national_mean_release_time=national_mean,
-        company_flow_through_post=company_flow,
+        company_flow_through_post=max_post_flow,
         total_company_flow=total_flow,
         regional_divergence=r_divergence,
         regulatory_shift=r_shift,
@@ -124,6 +150,8 @@ async def process_entity(ueid: str, session: AsyncSession) -> InstitutionalScore
 
     # 2. Emit Signal (v55 standard)
     bus = SignalBus.get_instance()
+    from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
+    
     signal = V55Signal(
         signal_type="INSTITUTIONAL_SCORING",
         topic="institutional.analyzed",
@@ -132,16 +160,17 @@ async def process_entity(ueid: str, session: AsyncSession) -> InstitutionalScore
         priority=SignalPriority.CRITICAL if score.aggregate > 80 else SignalPriority.HIGH if score.aggregate > 60 else SignalPriority.ROUTINE,
         score=score.aggregate,
         confidence=score.confidence.final_score,
-        summary=f"Інституційний зріз: AAI={score.aai:.1f}, PLS={score.pls:.1f}",
+        summary=f"Інституційний зріз: AAI={score.aai:.1f}, PLS={score.pls:.1f} (Post: {primary_post})",
         metadata={
             "aai": score.aai,
             "pls": score.pls,
             "rdi": score.rdi,
-            "rsi": score.rsi
+            "rsi": score.rsi,
+            "primary_post": primary_post,
+            "records_count": len(fused_records)
         }
     )
-    # emit expects db session for persistence fallback
     await bus.emit(signal, session=session)
 
-    logger.info("Institutional Engine processed ueid=%s, agg=%.1f", ueid, score.aggregate)
+    logger.info("Institutional Engine processed ueid=%s, agg=%.1f, posts=%d", ueid, score.aggregate, len(post_flows))
     return score

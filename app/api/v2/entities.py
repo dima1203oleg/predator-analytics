@@ -95,7 +95,7 @@ async def search_entities(
 ) -> EntitySearchResponse:
     """Search entities by name (fuzzy) or EDRPOU (exact)."""
     repo = EntityRepository(db)
-    results = await repo.search(query=q, entity_type=entity_type, limit=limit, offset=offset)
+    results, total = await repo.search(query=q, entity_type=entity_type, limit=limit, offset=offset)
     
     items = [
         EntityResponse(
@@ -113,7 +113,7 @@ async def search_entities(
     ]
     
     return EntitySearchResponse(
-        total=len(items),  # Full count would need a separate count query
+        total=total,
         items=items,
         query=q,
     )
