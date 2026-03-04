@@ -108,6 +108,7 @@ export const Sidebar = () => {
       title: 'ДАНІ ТА МИТНИЦЯ',
       items: [
         { name: 'Нейронний Інджестинг', path: '/data-hub', icon: Zap },
+        { name: 'Оркестратор (Pipeline)', path: '/pipeline', icon: Activity },
         { name: 'Студія Датасетів', path: '/datasets', icon: Boxes },
         { name: 'Бази Даних', path: '/databases', icon: Database },
         { name: 'Парсери Та ETL', path: '/parsers', icon: Layers },

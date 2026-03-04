@@ -42,6 +42,7 @@ const PremiumHubView = lazy(() => import('./views/PremiumHubView'));
 const KnowledgeEngineeringView = lazy(() => import('./views/KnowledgeEngineeringView'));
 const AutonomyDashboard = lazy(() => import('./views/AutonomyDashboard'));
 const ComponentsRegistryView = lazy(() => import('./views/ComponentsRegistryView'));
+const PipelineManagerView = lazy(() => import('./views/PipelineManagerView'));
 
 // Premium Commercial Views
 const CustomsIntelligencePremium = lazy(() => import('./views/CustomsIntelligencePremium'));
@@ -149,6 +150,7 @@ export const AppRoutesNew = () => {
             <Route path="/llm" element={<LLMView />} />
             <Route path="/llm/nas" element={<NasView />} />
             <Route path="/agents" element={<AgentsView />} />
+            <Route path="/pipeline" element={<PipelineManagerView />} />
             <Route path="/training" element={<ModelTrainingView />} />
             <Route path="/super" element={<SuperIntelligenceView />} />
             <Route path="/evolution" element={<EvolutionView />} />
