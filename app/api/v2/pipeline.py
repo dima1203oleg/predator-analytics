@@ -108,6 +108,10 @@ async def rescore_entity(
     Useful when new data has been added outside the pipeline, or for manual recalculations.
     """
     from app.engines.behavioral import process_entity as behavioral_process
+    from app.engines.institutional import process_entity as institutional_process
+    from app.engines.influence import process_entity as influence_process
+    from app.engines.structural_gaps import process_entity as structural_process
+    from app.engines.predictive import process_entity as predictive_process
     from app.engines.cers import process_entity as cers_process
 
     logger.info("Rescore triggered for ueid=%s", ueid)
@@ -126,7 +130,59 @@ async def rescore_entity(
         logger.exception("Behavioral rescore failed for %s", ueid)
         raise HTTPException(status_code=500, detail=f"Behavioral scoring failed: {e}")
 
-    # CERS
+    # 2. Institutional
+    try:
+        inst = await institutional_process(ueid, db)
+        institutional_result = {
+            "aai": inst.aai,
+            "pls": inst.pls,
+            "aggregate": inst.aggregate,
+            "confidence": inst.confidence.total,
+        }
+    except Exception as e:
+        logger.exception("Institutional rescore failed for %s", ueid)
+        institutional_result = {"error": str(e)}
+
+    # 3. Influence
+    try:
+        infl = await influence_process(ueid, db)
+        influence_result = {
+            "im": infl.im,
+            "hci": infl.hci,
+            "aggregate": infl.aggregate,
+            "confidence": infl.confidence.total,
+        }
+    except Exception as e:
+        logger.exception("Influence rescore failed for %s", ueid)
+        influence_result = {"error": str(e)}
+
+    # 4. Structural Gaps
+    try:
+        struct = await structural_process(ueid, db)
+        structural_result = {
+            "mci": struct.mci,
+            "tdi": struct.tdi,
+            "aggregate": struct.aggregate,
+            "confidence": struct.confidence.total,
+        }
+    except Exception as e:
+        logger.exception("Structural rescore failed for %s", ueid)
+        structural_result = {"error": str(e)}
+
+    # 5. Predictive
+    try:
+        pred = await predictive_process(ueid, db)
+        predictive_result = {
+            "disappearance_risk": pred.disappearance_risk,
+            "scheme_emergence_risk": pred.scheme_emergence_risk,
+            "aggregate": pred.aggregate,
+            "confidence": pred.confidence.total,
+        }
+    except Exception as e:
+        logger.exception("Predictive rescore failed for %s", ueid)
+        predictive_result = {"error": str(e)}
+
+    # 6. CERS
     try:
         cers = await cers_process(ueid, db)
         cers_result = {
@@ -143,6 +199,10 @@ async def rescore_entity(
     return {
         "ueid": ueid,
         "behavioral": behavioral_result,
+        "institutional": institutional_result,
+        "influence": influence_result,
+        "structural": structural_result,
+        "predictive": predictive_result,
         "cers": cers_result,
         "status": "rescored",
     }

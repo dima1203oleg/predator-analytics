@@ -176,7 +176,8 @@ async def process_batch(
     """
     from app.repositories.entity_repository import EntityRepository
     from app.repositories.fused_record_repository import FusedRecordRepository
-    from app.core.signal_bus import signal_bus
+    from app.core.signal_bus import SignalBus
+    from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
     
     entity_repo = EntityRepository(session)
     fused_repo = FusedRecordRepository(session)
@@ -214,11 +215,17 @@ async def process_batch(
             prepared.ueid = str(entity.ueid)
             if is_new:
                 result.entities_created += 1
-                await signal_bus.emit(
+                bus = SignalBus.get_instance()
+                signal = V55Signal(
+                    signal_type="ENTITY_CREATED",
                     topic="entity.created",
-                    payload={"name": entity.name, "edrpou": entity.edrpou},
                     ueid=str(entity.ueid),
+                    layer=SignalLayer.FUSION,
+                    priority=SignalPriority.MEDIUM,
+                    summary=f"Суб'єкт створений: {entity.name} ({entity.edrpou})",
+                    metadata={"source": str(source)},
                 )
+                await bus.emit(signal, session=session)
             else:
                 result.entities_resolved += 1
             
@@ -235,12 +242,18 @@ async def process_batch(
             result.records_fused.append(prepared)
             
             # Step 4: Emit Pipeline Event
-            await signal_bus.emit(
+            bus = SignalBus.get_instance()
+            ingest_signal = V55Signal(
+                signal_type="DATA_INGESTED",
                 topic="data.ingested",
-                payload={"source": str(source), "quality": prepared.quality_score},
                 ueid=str(entity.ueid),
+                layer=SignalLayer.FUSION,
+                priority=SignalPriority.ROUTINE,
+                score=prepared.quality_score,
                 confidence=prepared.quality_score,
+                summary=f"Запис імпортовано з {source}: якість={prepared.quality_score}",
             )
+            await bus.emit(ingest_signal, session=session)
             
         except Exception as e:
             logger.exception("Fusion failed for record")

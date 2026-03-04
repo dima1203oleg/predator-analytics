@@ -9,9 +9,10 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_db
-from app.core.signal_bus import signal_bus
+from app.core.signal_bus import SignalBus
 from app.engines.cers import calculate_cers
 from app.models.v55.cers import CERSHistoryItem, CERSHistoryResponse, CERSResponse
+from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
 from app.models.v55.decision_artifact import DecisionArtifactCreate
 from app.repositories.cers_repository import CersRepository
 from app.repositories.decision_repository import DecisionRepository
@@ -125,15 +126,22 @@ async def calculate_cers_endpoint(
     await decision_repo.create_artifact(artifact)
 
     # 3. Emit to SignalBus
-    await signal_bus.emit(
+    bus = SignalBus.get_instance()
+    signal = V55Signal(
+        signal_type="CERS_MANUAL_CALC",
         topic="cers.updated",
-        payload={
-            "score": result.score,
-            "level": result.level,
-        },
         ueid=ueid,
+        layer=SignalLayer.META,
+        priority=SignalPriority.CRITICAL if result.score > 80 else SignalPriority.HIGH if result.score > 60 else SignalPriority.ROUTINE,
+        score=result.score,
         confidence=result.confidence.total,
+        summary=f"Ручне обчислення CERS: {result.score} ({result.level_ua})",
+        metadata={
+            "level": result.level,
+            "components": result.components,
+        }
     )
+    await bus.emit(signal, session=db)
 
     return CERSResponse(
         ueid=result.ueid,
@@ -209,19 +217,72 @@ async def get_all_indices(
 ) -> dict:
     """Get all calculated indices for an entity."""
     from app.repositories.behavioral_repository import BehavioralRepository
-
-    behav_repo = BehavioralRepository(db)
-    b_score = await behav_repo.get_latest_for_ueid(ueid)
+    from app.repositories.institutional_repository import InstitutionalRepository
+    from app.repositories.influence_repository import InfluenceRepository
+    from app.repositories.structural_repository import StructuralRepository
+    from app.repositories.predictive_repository import PredictiveRepository
 
     indices = {}
+    
+    # 1. Behavioral
+    behav_repo = BehavioralRepository(db)
+    b_score = await behav_repo.get_latest_for_ueid(ueid)
     if b_score:
         indices["behavioral"] = {
+            "aggregate": b_score.aggregate,
             "bvi": b_score.bvi,
             "ass": b_score.ass,
             "cp": b_score.cp,
-            "inertia_index": b_score.inertia_index,
             "confidence": b_score.confidence,
             "calculated_at": b_score.calculated_at.isoformat() if b_score.calculated_at else None,
+        }
+
+    # 2. Institutional
+    inst_repo = InstitutionalRepository(db)
+    i_score = await inst_repo.get_latest_for_ueid(ueid)
+    if i_score:
+        indices["institutional"] = {
+            "aggregate": i_score.aggregate,
+            "aai": i_score.aai,
+            "pls": i_score.pls,
+            "confidence": i_score.confidence,
+            "calculated_at": i_score.calculated_at.isoformat() if i_score.calculated_at else None,
+        }
+
+    # 3. Influence
+    infl_repo = InfluenceRepository(db)
+    inf_score = await infl_repo.get_latest_for_ueid(ueid)
+    if inf_score:
+        indices["influence"] = {
+            "aggregate": inf_score.aggregate,
+            "im": inf_score.im,
+            "hci": inf_score.hci,
+            "confidence": inf_score.confidence,
+            "calculated_at": inf_score.calculated_at.isoformat() if inf_score.calculated_at else None,
+        }
+
+    # 4. Structural
+    struct_repo = StructuralRepository(db)
+    s_score = await struct_repo.get_latest_for_ueid(ueid)
+    if s_score:
+        indices["structural"] = {
+            "aggregate": s_score.aggregate,
+            "mci": s_score.mci,
+            "tdi": s_score.tdi,
+            "confidence": s_score.confidence,
+            "calculated_at": s_score.calculated_at.isoformat() if s_score.calculated_at else None,
+        }
+
+    # 5. Predictive
+    pred_repo = PredictiveRepository(db)
+    p_score = await pred_repo.get_latest_for_ueid(ueid)
+    if p_score:
+        indices["predictive"] = {
+            "aggregate": p_score.aggregate,
+            "disappearance_risk": p_score.disappearance_risk,
+            "scheme_emergence_risk": p_score.scheme_emergence_risk,
+            "confidence": p_score.confidence,
+            "calculated_at": p_score.calculated_at.isoformat() if p_score.calculated_at else None,
         }
 
     if not indices:
