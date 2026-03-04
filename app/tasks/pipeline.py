@@ -12,6 +12,11 @@ from app.core.db import async_session_maker
 from app.repositories.entity_repository import EntityRepository
 from app.repositories.fused_record_repository import FusedRecordRepository
 from app.engines.cers import process_entity as process_cers
+from app.engines.behavioral import process_entity as process_behavioral
+from app.engines.institutional import process_entity as process_institutional
+from app.engines.influence import process_entity as process_influence
+from app.engines.structural_gaps import process_entity as process_structural
+from app.engines.predictive import process_entity as process_predictive
 
 
 logger = get_logger("predator.workers.pipeline")
@@ -127,6 +132,14 @@ def process_pipeline_task(self, source_id: str, file_location: str):
                 for ueid in unique_ueids:
                     try:
                         logger.info(f"Triggering analysis for UEID: {ueid}")
+                        logger.info(f"Triggering analysis for UEID: {ueid}")
+                        # 1. Intermediary Layers
+                        await process_behavioral(ueid, session)
+                        await process_institutional(ueid, session)
+                        await process_influence(ueid, session)
+                        await process_structural(ueid, session)
+                        await process_predictive(ueid, session)
+                        # 2. Meta-Scoring (CERS)
                         await process_cers(ueid, session)
                     except Exception as engine_err:
                         logger.error(f"Engine failed for {ueid}: {engine_err}")
