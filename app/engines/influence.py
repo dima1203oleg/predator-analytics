@@ -160,7 +160,7 @@ async def process_entity(ueid: str, session: AsyncSession) -> InfluenceScore:
         layer=SignalLayer.INFLUENCE,
         priority=SignalPriority.CRITICAL if score.aggregate > 80 else SignalPriority.HIGH if score.aggregate > 60 else SignalPriority.ROUTINE,
         score=score.aggregate,
-        confidence=score.confidence.final_score,
+        confidence=score.confidence.total,
         summary=f"Вплив оновлено: IM={score.im:.1f}, HCI={score.hci:.1f}, Founders={founders_count}",
         metadata={
             "im": score.im,

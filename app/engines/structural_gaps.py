@@ -170,7 +170,7 @@ async def process_entity(ueid: str, session: AsyncSession) -> StructuralScore:
         layer=SignalLayer.STRUCTURAL,
         priority=SignalPriority.CRITICAL if score.aggregate > 80 else SignalPriority.HIGH if score.aggregate > 60 else SignalPriority.ROUTINE,
         score=score.aggregate,
-        confidence=score.confidence.final_score,
+        confidence=score.confidence.total,
         summary=f"Структурні аномалії: MCI={score.mci:.1f}, TDI={score.tdi:.1f}",
         metadata={
             "mci": score.mci,

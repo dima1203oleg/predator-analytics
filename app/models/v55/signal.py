@@ -35,3 +35,35 @@ class SignalListResponse(BaseModel):
     items: list[SignalResponse]
     page: int
     page_size: int
+
+
+# ─── v55 Internal Models for Engines ───
+
+from enum import StrEnum
+
+class SignalLayer(StrEnum):
+    BEHAVIORAL = "behavioral"
+    INSTITUTIONAL = "institutional"
+    INFLUENCE = "influence"
+    STRUCTURAL = "structural"
+    PREDICTIVE = "predictive"
+    META = "meta"
+
+class SignalPriority(StrEnum):
+    ROUTINE = "routine"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+class V55Signal(BaseModel):
+    """Internal signal model used by analytical engines."""
+    signal_type: str
+    topic: str
+    ueid: str
+    layer: SignalLayer
+    priority: SignalPriority = SignalPriority.ROUTINE
+    score: float = 0.0
+    confidence: float = 1.0
+    summary: str
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    sources: list[str] = Field(default_factory=list)

@@ -131,22 +131,46 @@ class SignalBus:
             self._connected = False
             logger.info("Signal Bus disconnected")
 
+    @classmethod
+    def get_instance(cls) -> SignalBus:
+        """Get global SignalBus instance."""
+        global signal_bus
+        return signal_bus
+
     async def emit(
         self,
-        topic: str,
-        payload: dict[str, Any],
+        signal: str | Any,
+        payload: dict[str, Any] | None = None,
         ueid: str | None = None,
         trace_id: str | None = None,
         confidence: float | None = None,
+        session: Any | None = None,
     ) -> str:
         """Emit a signal to the bus AND persist it to v55.signals.
+        
+        Supports both positional arguments and V55Signal objects.
 
         Returns:
             signal_id of the emitted signal.
         """
+        # Handle V55Signal object
+        if hasattr(signal, "topic"):
+            topic = signal.topic
+            payload = signal.metadata or {}
+            if signal.score is not None:
+                payload["score"] = signal.score
+            ueid = signal.ueid
+            confidence = signal.confidence
+            layer = signal.layer
+            signal_type = signal.signal_type
+        else:
+            topic = str(signal)
+            layer = None
+            signal_type = None
+
         envelope = create_signal_envelope(
             topic=topic,
-            payload=payload,
+            payload=payload or {},
             ueid=ueid,
             trace_id=trace_id,
             confidence=confidence,
@@ -157,46 +181,55 @@ class SignalBus:
             from app.libs.core.database import get_db_ctx
             from app.repositories.signal_repository import SignalRepository
 
-            # Determine layer from topic
-            layer = "behavioral"
-            for candidate in (
-                "behavioral",
-                "institutional",
-                "influence",
-                "structural",
-                "predictive",
-            ):
-                if candidate in topic:
-                    layer = candidate
-                    break
-            if "cers" in topic:
-                layer = "behavioral"  # CERS is meta, attach to behavioral
-            if "data" in topic or "entity" in topic or "ingestion" in topic:
-                layer = "behavioral"  # fallback layer for data events
+            # Determine layer from topic if not provided
+            if not layer:
+                layer = "behavioral"
+                for candidate in (
+                    "behavioral",
+                    "institutional",
+                    "influence",
+                    "structural",
+                    "predictive",
+                ):
+                    if candidate in topic:
+                        layer = candidate
+                        break
+                if "cers" in topic:
+                    layer = "meta"
+                if "data" in topic or "entity" in topic or "ingestion" in topic:
+                    layer = "behavioral"
 
-            # Determine signal_type
-            signal_type = "info"
-            if "alert" in topic or "critical" in topic:
-                signal_type = "alert"
-            elif "warning" in topic:
-                signal_type = "warning"
-            elif "anomaly" in topic:
-                signal_type = "anomaly"
+            # Determine signal_type if not provided
+            if not signal_type:
+                signal_type = "info"
+                if "alert" in topic or "critical" in topic:
+                    signal_type = "alert"
+                elif "warning" in topic:
+                    signal_type = "warning"
+                elif "anomaly" in topic:
+                    signal_type = "anomaly"
 
-            async with get_db_ctx() as db:
-                repo = SignalRepository(db)
+            async def _persist(db_session):
+                repo = SignalRepository(db_session)
                 await repo.create_signal(
-                    signal_type=signal_type,
+                    signal_type=str(signal_type),
                     topic=topic,
-                    layer=layer,
+                    layer=str(layer),
                     ueid=ueid,
-                    score=payload.get("score"),
+                    score=payload.get("score") if payload else None,
                     confidence=confidence,
                     summary=TOPICS.get(topic, topic),
-                    details=payload,
-                    sources=payload.get("sources", []),
+                    details=payload or {},
+                    sources=payload.get("sources", []) if payload else [],
                     trace_id=envelope.get("trace_id"),
                 )
+
+            if session:
+                await _persist(session)
+            else:
+                async with get_db_ctx() as db:
+                    await _persist(db)
+                    await db.commit()
         except Exception as e:
             logger.warning("Signal persistence failed (non-fatal): %s", e)
 
