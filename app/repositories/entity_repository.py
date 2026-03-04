@@ -6,11 +6,11 @@ import logging
 from typing import Any
 import uuid
 
-from sqlalchemy import or_, select
+from sqlalchemy import or_, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.v55.orm.entity import EntityORM
-from app.core.ueid import fingerprint_entity, generate_deterministic_ueid, normalize_name, validate_edrpou
+from app.core.ueid import fingerprint_entity, generate_deterministic_ueid, normalize_name, validate_edrpou, parse_ueid
 
 
 logger = logging.getLogger("predator.repo.entity")
@@ -24,7 +24,7 @@ class EntityRepository:
 
     async def get_by_ueid(self, ueid: str | uuid.UUID) -> EntityORM | None:
         """Fetch entity by exact UEID."""
-        parsed_uuid = uuid.UUID(str(ueid)) if isinstance(ueid, str) else ueid
+        parsed_uuid = parse_ueid(ueid)
         stmt = select(EntityORM).where(EntityORM.ueid == parsed_uuid)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
@@ -35,14 +35,18 @@ class EntityRepository:
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def search(self, query: str, entity_type: str | None = None, limit: int = 20, offset: int = 0) -> list[EntityORM]:
-        """Search entities leveraging pg_trgm for fuzzy matching."""
+    async def search(self, query: str, entity_type: str | None = None, limit: int = 20, offset: int = 0) -> tuple[list[EntityORM], int]:
+        """Search entities leveraging pg_trgm for fuzzy matching.
+        
+        Returns:
+            Tuple of (entities list, total count)
+        """
         normalized_query = normalize_name(query)
         if not normalized_query:
-            return []
+            return [], 0
 
         # If it looks like an EDRPOU/INN, search by that exactly
-        if query.isdigit() and len(query) in (8, 10, 12):
+        if query.isdigit() and len(query) in (8, 10, 12, 14):
             stmt = select(EntityORM).where(or_(EntityORM.edrpou == query, EntityORM.inn == query))
         else:
             # Otherwise use pg_trgm SIMILARITY text search operator
@@ -55,9 +59,20 @@ class EntityRepository:
         if entity_type:
             stmt = stmt.where(EntityORM.entity_type == entity_type)
 
-        stmt = stmt.offset(offset).limit(limit)
-        result = await self.session.execute(stmt)
-        return list(result.scalars().all())
+        # Execute search for items
+        items_stmt = stmt.offset(offset).limit(limit)
+        items_result = await self.session.execute(items_stmt)
+        items = list(items_result.scalars().all())
+        
+        # In a real production environment with millions of rows, 
+        # we'd want a more optimized way to get the total count, 
+        # but for Phase 1 we'll use a simple count query.
+        
+        count_stmt = select(func.count()).select_from(stmt.subquery())
+        count_result = await self.session.execute(count_stmt)
+        total = count_result.scalar_one()
+
+        return items, total
 
     async def resolve_or_create(
         self,

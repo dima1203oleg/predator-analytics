@@ -114,23 +114,40 @@ async def process_entity(ueid: str, session: AsyncSession) -> PredictiveScore:
     Features async DB persistence and real-time scaling out via SignalBus.
     """
     from app.repositories.predictive_repository import PredictiveRepository
-    repo = PredictiveRepository(session)
+    from app.repositories.behavioral_repository import BehavioralRepository
+    from app.repositories.institutional_repository import InstitutionalRepository
+    from app.repositories.influence_repository import InfluenceRepository
+    from app.repositories.structural_repository import StructuralRepository
     
-    # 🚨 PREDATOR LAZY LOADING / MOCKS
-    # Temporarily generate semi-random metrics until full MLflow integration
-    import random
-    beh = random.uniform(0.0, 100.0)
-    inst = random.uniform(0.0, 100.0)
-    infl = random.uniform(0.0, 100.0)
-    struct = random.uniform(0.0, 100.0)
-    data_comp = random.uniform(0.5, 1.0)
-
+    repo = PredictiveRepository(session)
+    beh_repo = BehavioralRepository(session)
+    inst_repo = InstitutionalRepository(session)
+    infl_repo = InfluenceRepository(session)
+    struct_repo = StructuralRepository(session)
+    
+    # 1. Fetch latest scores from all layers for features
+    beh_score = await beh_repo.get_latest_for_ueid(ueid)
+    inst_score = await inst_repo.get_latest_for_ueid(ueid)
+    infl_score = await infl_repo.get_latest_for_ueid(ueid)
+    struct_score = await struct_repo.get_latest_for_ueid(ueid)
+    
+    # Extract aggregates or use safe defaults
+    beh_val = beh_score.aggregate if beh_score else 50.0
+    inst_val = inst_score.aggregate if inst_score else 50.0
+    infl_val = infl_score.aggregate if infl_score else 50.0
+    struct_val = struct_score.aggregate if struct_score else 50.0
+    
+    # Calculate data completeness based on how many layers are available
+    available_layers = [s for s in [beh_score, inst_score, infl_score, struct_score] if s is not None]
+    data_comp = 0.2 + (len(available_layers) * 0.2)
+    
+    # 2. Compute predictive score
     score = compute_predictive_score(
         ueid,
-        behavioral_aggregate=beh,
-        institutional_aggregate=inst,
-        influence_aggregate=infl,
-        structural_aggregate=struct,
+        behavioral_aggregate=beh_val,
+        institutional_aggregate=inst_val,
+        influence_aggregate=infl_val,
+        structural_aggregate=struct_val,
         data_completeness=data_comp,
     )
 
@@ -139,6 +156,8 @@ async def process_entity(ueid: str, session: AsyncSession) -> PredictiveScore:
 
     # 2. Emit Signal (v55 standard)
     bus = SignalBus.get_instance()
+    from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
+    
     signal = V55Signal(
         signal_type="PREDICTIVE_SCORING",
         topic="predictive.analyzed",
@@ -152,10 +171,15 @@ async def process_entity(ueid: str, session: AsyncSession) -> PredictiveScore:
             "disappearance_risk": score.disappearance_risk,
             "regulatory_intervention_risk": score.regulatory_intervention_risk,
             "concentration_risk": score.concentration_risk,
-            "scheme_emergence_risk": score.scheme_emergence_risk
+            "scheme_emergence_risk": score.scheme_emergence_risk,
+            "inputs": {
+                "behavioral": beh_val,
+                "institutional": inst_val,
+                "influence": infl_val,
+                "structural": struct_val
+            }
         }
     )
-    # emit expects db session for persistence fallback
     await bus.emit(signal, session=session)
 
     logger.info("Predictive Engine processed ueid=%s, agg=%.1f", ueid, score.aggregate)

@@ -95,26 +95,51 @@ async def process_entity(ueid: str, session: AsyncSession) -> InfluenceScore:
     Features async DB persistence and real-time scaling out via SignalBus.
     """
     from app.repositories.influence_repository import InfluenceRepository
-    repo = InfluenceRepository(session)
+    from app.repositories.fused_record_repository import FusedRecordRepository
     
-    # 🚨 PREDATOR LAZY LOADING / MOCKS
-    # Temporarily generate semi-random metrics until full Neo4j Graph queries are injected
-    import random
-    eigenvector = random.uniform(0.1, 0.9)
-    betweenness = random.uniform(0.1, 0.8)
-    market_share = random.uniform(0.01, 0.5)
-    reg_prox = random.uniform(0.0, 1.0)
-    hhi_ben = random.uniform(1000, 8000)
-    hhi_form = random.uniform(1000, 8000)
-    shadow = random.uniform(0.0, 100.0)
-    data_comp = random.uniform(0.4, 1.0)
+    repo = InfluenceRepository(session)
+    fused_repo = FusedRecordRepository(session)
+    
+    # 1. Fetch historical fused records
+    fused_records = await fused_repo.get_by_ueid(ueid, limit=500)
+    
+    # 2. Extract Data for Influence
+    total_flow = 0.0
+    founders_count = 1
+    industry_type = "GENERAL"
+    
+    for record in fused_records:
+        if record.source == "customs":
+            total_flow += float(record.normalized_data.get("value_usd", 0))
+        elif record.source == "edr":
+            data = record.normalized_data
+            founders_count = len(data.get("founders", [])) or 1
+            activities = data.get("activities", [])
+            if activities:
+                industry_type = activities[0]
+                
+    # 3. Derive Indices
+    # Market Share (simplified: entity flow vs conservative 1B market)
+    market_share = min(1.0, total_flow / 1_000_000_000.0) 
+    
+    # HHI (Herfindahl-Hirschman Index) estimate from founders
+    # If 1 founder = 10000, 2 founders = 5000, etc. (assuming equal split for now)
+    hhi_ben = 10000.0 / founders_count 
+    hhi_form = hhi_ben
+    
+    # Graph Centralities (Mock these for now but keep them stable)
+    eigenvector = 0.1 + (total_flow / 10_000_000.0)
+    betweenness = 0.05 + (market_share * 0.5)
+    
+    shadow = 10.0 if founders_count > 5 else 5.0
+    data_comp = min(1.0, (len(fused_records) / 15.0) + 0.3) if fused_records else 0.3
 
     score = compute_influence_score(
         ueid,
-        eigenvector=eigenvector,
-        betweenness=betweenness,
+        eigenvector=min(1.0, eigenvector),
+        betweenness=min(1.0, betweenness),
         market_share=market_share,
-        regulatory_proximity=reg_prox,
+        regulatory_proximity=0.1, # Default
         hhi_beneficial=hhi_ben,
         hhi_formal=hhi_form,
         shadow_cluster_score=shadow,
@@ -126,6 +151,8 @@ async def process_entity(ueid: str, session: AsyncSession) -> InfluenceScore:
 
     # 2. Emit Signal (v55 standard)
     bus = SignalBus.get_instance()
+    from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
+    
     signal = V55Signal(
         signal_type="INFLUENCE_SCORING",
         topic="influence.analyzed",
@@ -134,15 +161,16 @@ async def process_entity(ueid: str, session: AsyncSession) -> InfluenceScore:
         priority=SignalPriority.CRITICAL if score.aggregate > 80 else SignalPriority.HIGH if score.aggregate > 60 else SignalPriority.ROUTINE,
         score=score.aggregate,
         confidence=score.confidence.final_score,
-        summary=f"Вплив оновлено: IM={score.im:.1f}, HCI={score.hci:.1f}, Shadow={score.shadow_cluster_score:.1f}",
+        summary=f"Вплив оновлено: IM={score.im:.1f}, HCI={score.hci:.1f}, Founders={founders_count}",
         metadata={
             "im": score.im,
             "hci": score.hci,
-            "shadow_cluster": score.shadow_cluster_score
+            "shadow_cluster": score.shadow_cluster_score,
+            "founders_count": founders_count,
+            "market_share_est": market_share
         }
     )
-    # emit expects db session for persistence fallback
     await bus.emit(signal, session=session)
 
-    logger.info("Influence Engine processed ueid=%s, agg=%.1f", ueid, score.aggregate)
+    logger.info("Influence Engine processed ueid=%s, agg=%.1f, founders=%d", ueid, score.aggregate, founders_count)
     return score

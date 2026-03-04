@@ -111,26 +111,43 @@ async def process_entity(ueid: str, session: AsyncSession) -> StructuralScore:
     Features async DB persistence and real-time scaling out via SignalBus.
     """
     from app.repositories.structural_repository import StructuralRepository
-    repo = StructuralRepository(session)
+    from app.repositories.fused_record_repository import FusedRecordRepository
     
-    # 🚨 PREDATOR LAZY LOADING / MOCKS
-    # Temporarily generate semi-random metrics until full integration
-    import random
-    imports = random.uniform(10.0, 1000.0)
-    production = random.uniform(10.0, 1000.0)
-    domestic = random.uniform(10.0, 800.0)
-    exports = random.uniform(10.0, 500.0)
-    inventory = random.uniform(-100.0, 100.0)
-    market = max(100.0, imports + production)
-    t_diff = random.uniform(0.0, 100.0)
-    l_gap = random.uniform(0.0, 100.0)
-    data_comp = random.uniform(0.5, 1.0)
+    repo = StructuralRepository(session)
+    fused_repo = FusedRecordRepository(session)
+    
+    # 1. Fetch historical fused records
+    fused_records = await fused_repo.get_by_ueid(ueid, limit=500)
+    
+    # 2. Extract Volumes
+    imports = 0.0
+    domestic_sales = 0.0
+    production = 0.0 # Often requires industrial production data
+    exports = 0.0
+    inventory = 0.0
+    
+    for record in fused_records:
+        data = record.normalized_data
+        if record.source == "customs":
+            imports += float(data.get("value_usd", 0))
+        elif record.source == "tax":
+            # Assuming if they are the seller, it's domestic sales
+            domestic_sales += float(data.get("amount", 0))
+            
+    # Estimate market volume as total activity
+    market = max(1000.0, imports + domestic_sales)
+    
+    # 3. Stable Fallbacks for Trade/Logistics discrepancies
+    t_diff = 15.0 if imports > 0 and domestic_sales > 0 else 45.0
+    l_gap = 20.0 if imports > 100000 else 10.0
+    
+    data_comp = min(1.0, (len(fused_records) / 25.0) + 0.1) if fused_records else 0.2
 
     score = compute_structural_score(
         ueid,
         import_volume=imports,
         production=production,
-        domestic_sales=domestic,
+        domestic_sales=domestic_sales,
         export_volume=exports,
         inventory_change=inventory,
         total_market_volume=market,
@@ -144,6 +161,8 @@ async def process_entity(ueid: str, session: AsyncSession) -> StructuralScore:
 
     # 2. Emit Signal (v55 standard)
     bus = SignalBus.get_instance()
+    from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
+    
     signal = V55Signal(
         signal_type="STRUCTURAL_GAPS_SCORING",
         topic="structural_gaps.analyzed",
@@ -157,10 +176,11 @@ async def process_entity(ueid: str, session: AsyncSession) -> StructuralScore:
             "mci": score.mci,
             "pfi": score.pfi,
             "tdi": score.tdi,
-            "lgs": score.lgs
+            "lgs": score.lgs,
+            "imports": imports,
+            "domestic_sales": domestic_sales
         }
     )
-    # emit expects db session for persistence fallback
     await bus.emit(signal, session=session)
 
     logger.info("Structural Gaps Engine processed ueid=%s, agg=%.1f", ueid, score.aggregate)
