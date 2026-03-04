@@ -111,12 +111,15 @@ class Settings(BaseSettings):
         
         return default_path
     CORS_ORIGINS: list[str] = [
-        "*",  # Allow all in development/standalone modes for easier access
-        os.getenv("FRONTEND_URL", "http://localhost:3000"),
-        os.getenv("FRONTEND_DEV_URL", "http://localhost:5173"),
-        "https://jolyn-bifid-eligibly.ngrok-free.dev",  # New Root Canonical URL
+        "http://localhost:3030",
+        "http://127.0.0.1:3030",
+        "http://localhost:3000",
+        "http://localhost:5173",
         "http://localhost:8082",
         "http://localhost:8092",
+        os.getenv("FRONTEND_URL", "http://localhost:3030"),
+        os.getenv("FRONTEND_DEV_URL", "http://localhost:3030"),
+        "https://jolyn-bifid-eligibly.ngrok-free.dev",
     ]
 
     # Database
