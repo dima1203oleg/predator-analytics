@@ -1,65 +1,137 @@
-import React, { useState, useEffect } from 'react';
-import { useAppStore } from '../store/useAppStore';
+/**
+ * Predator v55 | Neural Discovery Matrix — Когнітивний Пошук
+ * Командний центр для глибокого аналізу сутностей, реєстрів та тіньових зв'язків.
+ */
+
+import React, { useState } from 'react';
 import {
-  Search as SearchIcon, Building2, User, AlertTriangle,
-  CheckCircle, Lock, Network, ChevronRight, Briefcase, FileText,
-  Globe, Shield, MapPin, BrainCircuit, Sparkles, RefreshCw, Target, Activity
+    Search as SearchIcon,
+    Building2,
+    User,
+    AlertTriangle,
+    CheckCircle,
+    Lock,
+    Network,
+    ChevronRight,
+    Briefcase,
+    FileText,
+    Globe,
+    Shield,
+    MapPin,
+    BrainCircuit,
+    Sparkles,
+    RefreshCw,
+    Target,
+    Activity,
+    Zap,
+    Fingerprint,
+    Radio,
+    Scan,
+    Database,
+    SearchCode,
+    XCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../utils/cn';
 import { api } from '../services/api';
 import { SearchResultRadar } from '../components/premium/SearchResultRadar';
-import { SystemClock } from '../components/ui/SystemClock';
+import { TacticalCard } from '../components/TacticalCard';
+import { ViewHeader } from '../components/ViewHeader';
+import { CyberOrb } from '../components/CyberOrb';
+import { HoloContainer } from '../components/HoloContainer';
 import { ExplainabilityPanel } from '../components/explain/ExplainabilityPanel';
+import { AIInsightsHub } from './AIInsightsHub';
+import { useAppStore } from '../store/useAppStore';
 
 // --- TYPES ---
 type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
 
 interface Company {
-  id: string;
-  edrpou: string;
-  name: string;
-  status: 'active' | 'bankrupt' | 'process' | 'unknown';
-  risk: RiskLevel;
-  director: string;
-  address: string;
-  capital: string;
-  type: string;
-  tags: string[];
-  beneficiaries?: string[];
-  connections?: number;
-  explanation?: any;
+    id: string;
+    edrpou: string;
+    name: string;
+    status: 'active' | 'bankrupt' | 'process' | 'unknown';
+    risk: RiskLevel;
+    director: string;
+    address: string;
+    capital: string;
+    type: string;
+    tags: string[];
+    beneficiaries?: string[];
+    connections?: number;
+    explanation?: any;
 }
 
-// --- COMPONENTS ---
+// --- LOCALES ---
+const localLocales = {
+    title: 'НЕЙРОННА МАТРИЦЯ ПОШУКУ',
+    subtitle: 'Прямий доступ до 2.5 млн+ об\'єктів через когнітивні фільтри V55',
+    stats: {
+        indexed: 'Індексовано об\'єктів',
+        sources: 'Активних джерел',
+        reliability: 'Точність ШШ',
+    },
+    modes: {
+        neural: 'НЕЙРОННИЙ',
+        exact: 'ТОЧНИЙ',
+        deep: 'ГЛИБОКИЙ СКАН',
+    },
+    hackerMode: {
+        active: 'TERMINAL_LINK_ACTIVE // PORT: 8443 // S_KEY: AX-42',
+        prompt: 'ENTER_QUERY_OR_EDRPOU...',
+    },
+    aiAnalysis: {
+        title: 'Когнітивний Синтез Pulse',
+        analyzing: 'ШІ Аналіз Запиту...',
+        noData: 'Система проводить перехресний аналіз знайдених сутностей. Виявлено зв\'язки з публічними реєстрами.',
+    },
+    results: {
+        found: 'ВИЯВЛЕНО ПРЯМИХ СПІВПАДІНЬ',
+        noResults: 'Нуль результатів у базі PREDATOR. Активуйте DEEP SCAN.',
+        restricted: 'RESTRICTED_FEED',
+    },
+    company: {
+        active: 'ДІЮЧА',
+        inactive: 'В СТАНІ ПРИПИНЕННЯ',
+        fullFile: 'ПОВНЕ ДОСЬЄ',
+        explain: 'ПОЯСНИТИ РІШЕННЯ',
+        hide: 'ПРИХОВАТИ ПОЯСНЕННЯ',
+        riskProfile: 'Профіль Ризику',
+        alphaScore: 'Alpha Score',
+    }
+};
 
 const RiskBadge = ({ level }: { level: RiskLevel }) => {
-  const colors = {
-    low: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    medium: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    high: 'bg-red-500/10 text-red-400 border-red-500/20',
-    critical: 'bg-rose-950/50 text-rose-500 border-rose-500 border shadow-[0_0_10px_rgba(244,63,94,0.3)] animate-pulse'
-  };
-  const icons = { low: CheckCircle, medium: AlertTriangle, high: AlertTriangle, critical: Shield };
-  const Icon = icons[level] || AlertTriangle;
+    const configs = {
+        low: { color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: CheckCircle, label: 'Низький' },
+        medium: { color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: AlertTriangle, label: 'Середній' },
+        high: { color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20', icon: AlertTriangle, label: 'Високий' },
+        critical: { color: 'text-rose-400', bg: 'bg-rose-500/20', border: 'border-rose-500/40', icon: Shield, label: 'Критичний' }
+    };
+    const config = configs[level] || configs.medium;
+    const Icon = config.icon;
 
-  return (
-    <div className={cn("flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border uppercase tracking-wider", colors[level] || colors.medium)}>
-      <Icon className="w-3.5 h-3.5" />
-      {level === 'low' ? 'Низький' : level === 'medium' ? 'Середній' : level === 'high' ? 'Високий' : 'Критичний'} Ризик
-    </div>
-  );
+    return (
+        <div className={cn(
+            "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black border uppercase tracking-widest backdrop-blur-md shadow-lg",
+            config.color, config.bg, config.border,
+            level === 'critical' && "animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.3)]"
+        )}>
+            <Icon className="w-3.5 h-3.5" />
+            {config.label} РИЗИК
+        </div>
+    );
 };
 
 const RedactedField = () => (
-    <div className="bg-slate-800/50 rounded px-2 py-0.5 inline-block min-w-[120px] relative group cursor-help select-none">
-        <span className="opacity-0">ПРИХОВАНІ ДАНІ</span>
-        <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                <div className="h-full bg-slate-600/50 w-full animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
+    <div className="bg-slate-950/60 rounded px-2 py-1.5 inline-block min-w-[120px] relative group cursor-help select-none border border-slate-800/50">
+        <span className="opacity-0 text-[10px]">ПРИХОВАНІ ДАНІ</span>
+        <div className="absolute inset-0 flex items-center justify-center p-2">
+            <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-full bg-slate-700 w-full animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
             </div>
         </div>
-        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-amber-500 text-[10px] px-2 py-1 rounded border border-slate-700 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none flex items-center gap-1">
+        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-950 text-amber-500 text-[10px] px-3 py-1.5 rounded-lg border border-amber-500/30 opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100 whitespace-nowrap z-50 pointer-events-none flex items-center gap-2 shadow-2xl">
             <Lock className="w-3 h-3" /> Тільки Premium
         </div>
     </div>
@@ -70,35 +142,52 @@ const AIAnswerCard = ({ query, answer, loading }: { query: string, answer: strin
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-6 bg-gradient-to-r from-indigo-950/40 to-slate-900/60 border border-indigo-500/30 rounded-2xl relative overflow-hidden group shadow-xl"
+            className="mb-8"
         >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none" />
-
-            <div className="flex gap-5 relative z-10">
-                 <div className="min-w-[48px] h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 shrink-0">
-                     {loading ? <Sparkles className="text-white w-6 h-6 animate-pulse" /> : <BrainCircuit className="text-white w-6 h-6" />}
-                 </div>
-                 <div className="flex-1">
-                     <h3 className="text-xs font-black text-indigo-300 uppercase tracking-widest mb-3 flex items-center gap-2">
-                        ШІ Аналіз Запиту: <span className="text-white normal-case tracking-normal opacity-80">"{query}"</span>
-                     </h3>
-                     {loading ? (
-                         <div className="space-y-3 max-w-2xl">
-                             <div className="h-2 bg-indigo-400/20 rounded-full w-full animate-pulse" />
-                             <div className="h-2 bg-indigo-400/20 rounded-full w-5/6 animate-pulse" />
-                             <div className="h-2 bg-indigo-400/20 rounded-full w-4/6 animate-pulse" />
-                         </div>
-                     ) : (
-                         <div className="prose prose-invert prose-sm max-w-none">
-                             <p className="text-slate-200 leading-relaxed font-medium text-[15px]">
-                                 {answer}
-                             </p>
-                         </div>
-                     )}
-                 </div>
-            </div>
+            <TacticalCard
+                title={localLocales.aiAnalysis.title}
+                subtitle={`Query: ${query}`}
+                icon={<BrainCircuit className="text-primary-400" />}
+                variant="holographic"
+                glow="blue"
+                status={loading ? 'info' : 'success'}
+            >
+                <div className="flex flex-col md:flex-row gap-6 items-start">
+                    <div className="relative shrink-0 hidden md:block">
+                        <CyberOrb size="sm" color="cyan" intensity="medium" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <Zap className="text-cyan-400 w-6 h-6 animate-pulse" />
+                        </div>
+                    </div>
+                    <div className="flex-1">
+                        {loading ? (
+                            <div className="space-y-4">
+                                <div className="h-4 bg-slate-800/50 rounded-lg w-full animate-pulse" />
+                                <div className="h-4 bg-slate-800/50 rounded-lg w-5/6 animate-pulse" />
+                                <div className="h-4 bg-slate-800/50 rounded-lg w-4/6 animate-pulse" />
+                            </div>
+                        ) : (
+                            <div className="prose prose-invert prose-sm max-w-none">
+                                <p className="text-slate-200 leading-relaxed font-medium text-[15px] italic">
+                                    {answer}
+                                </p>
+                            </div>
+                        )}
+                        <div className="mt-4 flex items-center gap-4">
+                            <div className="flex items-center gap-2 px-3 py-1 bg-slate-900/50 rounded-full border border-slate-800">
+                                <Scan className="w-3 h-3 text-primary-500" />
+                                <span className="text-[10px] font-mono text-slate-400">Context_Match: 98.4%</span>
+                            </div>
+                            <div className="flex items-center gap-2 px-3 py-1 bg-slate-900/50 rounded-full border border-slate-800">
+                                <Fingerprint className="w-3 h-3 text-emerald-500" />
+                                <span className="text-[10px] font-mono text-slate-400">Neural_Hash: v55-X7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </TacticalCard>
         </motion.div>
     );
 };
@@ -116,225 +205,177 @@ const CompanyCard = ({
     isExpanded: boolean,
     onToggleExplain: (id: string) => void
 }) => {
-  // Mock radar data based on company risk/connections
-  const radarData = {
-      risk: company.risk === 'critical' ? 90 : company.risk === 'high' ? 70 : company.risk === 'medium' ? 40 : 20,
-      connections: Math.min(100, (company.connections || 0) * 5),
-      capital: company.capital.includes('млн') ? 80 : 30,
-      reputation: company.status === 'active' ? 85 : 40,
-      transparency: isPremium ? 90 : 20
-  };
+    const radarData = {
+        risk: company.risk === 'critical' ? 90 : company.risk === 'high' ? 70 : company.risk === 'medium' ? 40 : 20,
+        connections: Math.min(100, (company.connections || 0) * 5),
+        capital: company.capital.includes('млн') ? 80 : 30,
+        reputation: company.status === 'active' ? 85 : 40,
+        transparency: isPremium ? 90 : 20
+    };
 
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={cn(
-        "bg-slate-900/60 border rounded-2xl overflow-hidden transition-all duration-500 backdrop-blur-md group",
-        company.risk === 'critical' ? 'border-rose-900/50 shadow-[0_0_20px_rgba(225,29,72,0.05)]' : 'border-white/5 hover:border-emerald-500/30',
-        isHackerMode && "rounded-none border-emerald-500/20 bg-black"
-      )}
-    >
-      <div className="flex flex-col lg:flex-row">
-          <div className="p-6 flex-1">
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-start gap-4">
-                <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center border transition-transform group-hover:scale-110",
-                    company.type === 'ТОВ' ? 'bg-blue-500/10 border-blue-500/20 text-blue-400 font-black' :
-                    company.type === 'АТ' ? 'bg-purple-500/10 border-purple-500/20 text-purple-400 font-black' :
-                    'bg-slate-800 border-slate-700 text-slate-400 font-black'
-                )}>
-                  {company.type}
-                </div>
-                <div>
-                  <h3 className={cn(
-                      "text-xl font-black text-white leading-tight mb-1 transition-colors",
-                      isHackerMode ? "text-emerald-500 font-mono" : "group-hover:text-emerald-400"
-                  )}>
-                    {company.name}
-                  </h3>
-                  <div className="flex items-center gap-3 text-sm text-slate-500">
-                    <span className="font-mono text-slate-500 font-bold bg-slate-800/50 px-2 py-0.5 rounded tracking-tighter">#{company.edrpou}</span>
-                    <span className="w-1.5 h-1.5 bg-slate-700 rounded-full" />
-                    <span className={cn(
-                        "font-bold uppercase text-[10px] tracking-widest",
-                        company.status === 'active' ? 'text-emerald-500' : 'text-amber-500'
+    return (
+        <motion.div
+            layout
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="group"
+        >
+            <TacticalCard
+                title={company.name}
+                subtitle={`${company.type} // ЄДРПОУ: ${company.edrpou}`}
+                icon={
+                    <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center border transition-all duration-500",
+                        company.type === 'ТОВ' ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400' :
+                            company.type === 'АТ' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400' :
+                                'bg-slate-800 border-slate-700 text-slate-400'
                     )}>
-                       {company.status === 'active' ? 'ДІЮЧА' : 'В СТАНІ ПРИПИНЕННЯ'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <RiskBadge level={company.risk} />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-sm">
-                    <div className="w-8 h-8 rounded-lg bg-slate-800/50 flex items-center justify-center border border-white/5 shrink-0">
-                        <User className="w-4 h-4 text-slate-400" />
+                        {company.type === 'ТОВ' ? <Building2 size={20} /> : <Database size={20} />}
                     </div>
-                    <div className="flex flex-col">
-                        <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">Керівник</span>
-                        <span className="text-slate-200 font-bold">{company.director || "---"}</span>
-                    </div>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                    <div className="w-8 h-8 rounded-lg bg-slate-800/50 flex items-center justify-center border border-white/5 shrink-0">
-                        <MapPin className="w-4 h-4 text-slate-400" />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">Адреса Реєстрації</span>
-                        <span className="text-slate-400 truncate max-w-[280px]">{company.address || "---"}</span>
-                    </div>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-sm">
-                    <div className="w-8 h-8 rounded-lg bg-slate-800/50 flex items-center justify-center border border-white/5 shrink-0">
-                        <Briefcase className="w-4 h-4 text-slate-400" />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">Статутний Капітал</span>
-                        <span className="text-slate-200 font-bold">{company.capital}</span>
-                    </div>
-                </div>
-                 <div className="flex items-center gap-3 text-sm">
-                    <div className="w-8 h-8 rounded-lg bg-slate-800/50 flex items-center justify-center border border-white/5 shrink-0">
-                        <FileText className="w-4 h-4 text-slate-400" />
-                    </div>
-                    <div className="flex-1">
-                        <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest block mb-1">Сфери Діяльності</span>
-                        <div className="flex gap-1.5 flex-wrap">
-                            {company.tags.map(tag => (
-                                <span key={tag} className="px-2 py-0.5 bg-slate-800 text-[10px] rounded-full border border-white/5 text-slate-400 font-bold uppercase">
-                                    {tag}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-
-            {/* PREMIUM SECTION */}
-            <div className="pt-6 border-t border-white/5">
-                {isPremium ? (
-                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div className="col-span-2">
-                            <span className="text-[10px] text-amber-500 font-black uppercase tracking-widest mb-2 block">Власники та Бенефіціари</span>
-                            <div className="space-y-1.5">
-                                {company.beneficiaries?.length ? company.beneficiaries.map(b => (
-                                    <div key={b} className="flex items-center gap-2 text-sm text-slate-200 group/link cursor-pointer hover:text-amber-400 transition-colors">
-                                        <div className="w-1.5 h-1.5 bg-amber-500/50 rounded-full" />
-                                        {b}
+                }
+                status={company.status === 'active' ? 'success' : 'warning'}
+                priority={company.risk === 'critical' ? 'critical' : company.risk === 'high' ? 'high' : 'medium'}
+                variant={isHackerMode ? 'cyber' : 'glass'}
+                className={cn(
+                    "transition-all duration-500",
+                    isHackerMode ? "border-emerald-500/20 bg-black font-mono" : "hover:border-primary-500/40 shadow-2xl"
+                )}
+                actions={[
+                    {
+                        label: isExpanded ? localLocales.company.hide : localLocales.company.explain,
+                        icon: <Sparkles size={14} />,
+                        onClick: () => onToggleExplain(company.id),
+                        variant: 'secondary'
+                    },
+                    {
+                        label: localLocales.company.fullFile,
+                        icon: <ChevronRight size={14} />,
+                        onClick: () => console.log('View Dossier', company.id),
+                        variant: 'primary'
+                    }
+                ]}
+            >
+                <div className="flex flex-col lg:flex-row gap-8">
+                    <div className="flex-1 space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-4 group/item">
+                                    <div className="w-9 h-9 rounded-xl bg-slate-950/60 flex items-center justify-center border border-slate-800 group-hover/item:border-primary-500/50 transition-colors">
+                                        <User className="w-4 h-4 text-slate-400" />
                                     </div>
-                                )) : <span className="text-slate-600 text-xs italic">Дані в реєстрі уточнюються</span>}
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Керівник</span>
+                                        <span className="text-slate-100 font-bold group-hover/item:text-primary-400 transition-colors">{company.director || "---"}</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-4 group/item">
+                                    <div className="w-9 h-9 rounded-xl bg-slate-950/60 flex items-center justify-center border border-slate-800 group-hover/item:border-primary-500/50 transition-colors">
+                                        <MapPin className="w-4 h-4 text-slate-400" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Локація</span>
+                                        <span className="text-slate-300 text-sm truncate max-w-[200px]">{company.address || "---"}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-4 group/item">
+                                    <div className="w-9 h-9 rounded-xl bg-slate-950/60 flex items-center justify-center border border-slate-800 group-hover/item:border-primary-500/50 transition-colors">
+                                        <Briefcase className="w-4 h-4 text-slate-400" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Капітал</span>
+                                        <span className="text-slate-100 font-bold font-mono">{company.capital}</span>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest px-1">Кластери</span>
+                                    <div className="flex gap-2 flex-wrap">
+                                        {company.tags.map(tag => (
+                                            <span key={tag} className="px-2.5 py-1 bg-indigo-500/5 text-indigo-400 text-[10px] rounded-lg border border-indigo-500/20 font-bold uppercase tracking-tight">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <span className="text-[10px] text-emerald-500 font-black uppercase tracking-widest mb-2 block">Зв'язки</span>
-                            <div className="flex items-center gap-2 text-2xl font-black text-white font-mono">
-                                <Network className="w-5 h-5 text-emerald-400" />
-                                {company.connections}
-                                <span className="text-[10px] text-slate-500 font-normal tracking-normal ml-1">ОСІБ</span>
+
+                        <div className="pt-6 border-t border-slate-800/60">
+                            <div className="flex flex-wrap items-center justify-between gap-6">
+                                <div className="space-y-3">
+                                    <span className="text-[10px] text-amber-500 font-black uppercase tracking-widest block">Тіньові Бенефіціари</span>
+                                    <div className="flex gap-3">
+                                        {isPremium ? (
+                                            <div className="flex flex-wrap gap-2">
+                                                {company.beneficiaries?.length ? company.beneficiaries.map(b => (
+                                                    <div key={b} className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/50 border border-slate-800 rounded-lg text-xs text-slate-200">
+                                                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
+                                                        {b}
+                                                    </div>
+                                                )) : <span className="text-slate-600 text-xs italic">Дані запечатані</span>}
+                                            </div>
+                                        ) : <RedactedField />}
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-6">
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-[10px] text-primary-500 font-black uppercase tracking-widest mb-1">Зв'язки</span>
+                                        <div className="flex items-center gap-3">
+                                            <Network className="w-5 h-5 text-primary-400 animate-pulse" />
+                                            <span className="text-3xl font-black text-white font-mono leading-none">
+                                                {isPremium ? company.connections : '??'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex flex-col items-end justify-between lg:justify-end gap-2">
-                            <button
-                                onClick={() => onToggleExplain && onToggleExplain(company.id)}
-                                className={cn(
-                                    "px-4 py-2 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 w-full justify-center",
-                                    isExpanded
-                                        ? "bg-indigo-500 hover:bg-indigo-400 text-white border-indigo-500 shadow-indigo-500/20"
-                                        : "bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700"
-                                )}
-                            >
-                                <Sparkles className="w-3 h-3" />
-                                {isExpanded ? 'ПРИХОВАТИ ПОЯСНЕННЯ' : 'ПОЯСНИТИ РІШЕННЯ'}
-                            </button>
-                            <button className="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-xl border border-emerald-500/20 text-[10px] font-black uppercase tracking-widest transition-all w-full">
-                                ЗВ'ЯЗКИ
-                            </button>
-                        </div>
-                     </div>
-                ) : (
-                    <div className="flex justify-between items-center px-4 py-3 bg-slate-900/40 rounded-xl border border-dashed border-white/10">
-                        <div className="flex gap-8">
-                            <div className="flex flex-col gap-1.5">
-                                 <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">Бенефіціари</span>
-                                 <RedactedField />
-                            </div>
-                            <div className="flex flex-col gap-1.5">
-                                 <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">Тіньові Зв'язки</span>
-                                 <RedactedField />
-                            </div>
-                        </div>
-                        <div className="text-center group cursor-pointer">
-                             <Lock className="w-5 h-5 text-amber-500/40 group-hover:text-amber-400 transition-colors mb-1 mx-auto" />
-                             <span className="text-[8px] text-amber-500/30 uppercase font-black tracking-tighter group-hover:text-amber-400/50">Unlock Premium</span>
                         </div>
                     </div>
-                )}
-            </div>
 
-            <AnimatePresence>
-                {isExpanded && (
-                    <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden"
-                    >
-                        <div className="p-4 border-t border-white/5 bg-slate-900/50">
-                             <ExplainabilityPanel
-                                entityId={company.id}
-                                entityName={company.name}
-                                decision={company.status === 'active' ? 'Active Entitiy' : 'Risky Entity'}
-                                riskScore={company.risk === 'critical' ? 95 : company.risk === 'high' ? 75 : 30}
-                                explanation={company.explanation}
-                             />
+                    {isPremium && !isHackerMode && (
+                        <div className="lg:w-64 xl:w-72 shrink-0">
+                            <HoloContainer className="p-4 h-full flex flex-col items-center justify-center min-h-[220px]">
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{localLocales.company.riskProfile}</span>
+                                <div className="w-full h-44">
+                                    <SearchResultRadar {...radarData} />
+                                </div>
+                                <div className="mt-4 flex flex-col items-center">
+                                    <div className="text-2xl font-mono font-black text-iridescent">
+                                        {Math.round((radarData.reputation + radarData.transparency) / 2)}
+                                        <span className="text-xs text-slate-600 font-normal ml-1">/100</span>
+                                    </div>
+                                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em]">{localLocales.company.alphaScore}</span>
+                                </div>
+                            </HoloContainer>
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-          </div>
+                    )}
+                </div>
 
-          {/* RIGHT SIDE RADAR (Premium Only) */}
-          {isPremium && !isHackerMode && (
-              <div className="lg:w-48 xl:w-64 border-l border-white/5 bg-slate-950/20 p-4 shrink-0 flex flex-col justify-center items-center">
-                  <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">Профіль Ризику</div>
-                  <div className="w-full h-40">
-                      <SearchResultRadar {...radarData} />
-                  </div>
-                  <div className="mt-2 text-center">
-                      <div className="text-lg font-mono font-black text-slate-200">
-                          {Math.round((radarData.reputation + radarData.transparency) / 2)}
-                          <span className="text-xs text-slate-500 font-normal">/100</span>
-                      </div>
-                      <div className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Alpha Score</div>
-                  </div>
-              </div>
-          )}
-      </div>
-
-      <div className="bg-slate-950/50 px-6 py-3 flex justify-between items-center border-t border-white/5">
-        <div className="flex gap-4">
-             <button className="text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-1.5">
-                <Globe className="w-3 h-3" /> Реєстри
-             </button>
-             <button className="text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-1.5">
-                <FileText className="w-3 h-3" /> Суди
-             </button>
-        </div>
-        <button className="py-1 px-4 bg-slate-800 hover:bg-slate-700 text-[10px] font-black text-white rounded-lg transition-all flex items-center gap-2 group border border-white/5">
-          ПОВНЕ ДОСЬЄ
-          <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform text-emerald-400" />
-        </button>
-      </div>
-    </motion.div>
-  );
+                <AnimatePresence>
+                    {isExpanded && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden mt-6"
+                        >
+                            <div className="p-1 rounded-2xl bg-gradient-to-r from-primary-500/20 to-indigo-500/20">
+                                <div className="bg-slate-950 rounded-xl p-4">
+                                    <ExplainabilityPanel
+                                        entityId={company.id}
+                                        entityName={company.name}
+                                        decision={company.status === 'active' ? 'Active Entitiy' : 'Risky Entity'}
+                                        riskScore={company.risk === 'critical' ? 95 : company.risk === 'high' ? 75 : 30}
+                                        explanation={company.explanation}
+                                    />
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </TacticalCard>
+        </motion.div>
+    );
 };
 
 export const SearchView = () => {
@@ -366,15 +407,13 @@ export const SearchView = () => {
         setAiSummary(null);
 
         try {
-            // Parallel execution of search and AI analysis
             const [searchRes, aiRes] = await Promise.allSettled([
                 api.search.query({ q: query, mode: 'hybrid' }),
                 api.v45.analyze(query).catch(() => null)
             ]);
 
-            // Process Search Results
             if (searchRes.status === 'fulfilled' && Array.isArray(searchRes.value)) {
-                 const adapted: Company[] = searchRes.value.map((r: any) => ({
+                const adapted: Company[] = searchRes.value.map((r: any) => ({
                     id: r.id,
                     edrpou: r.metadata?.edrpou || '00000000',
                     name: r.title || 'Невідома Компанія',
@@ -387,25 +426,21 @@ export const SearchView = () => {
                     tags: [r.category || 'General', r.source || 'Search'],
                     beneficiaries: r.metadata?.beneficiaries || [],
                     connections: r.metadata?.connections_count || 0,
-                    explanation: r.explanation || undefined // Map explanation
+                    explanation: r.explanation || undefined
                 }));
                 setResults(adapted);
             } else {
                 setResults([]);
             }
 
-            // Process AI Result
             if (aiRes.status === 'fulfilled' && aiRes.value) {
-                // Assuming aiRes.value can be an object with 'result' or just a string
-                // We also add a fallback mechanism if analysis is empty
                 const answer = typeof aiRes.value === 'string'
                     ? aiRes.value
                     : aiRes.value.result || aiRes.value.summary || aiRes.value.message;
 
-                setAiSummary(answer || "Система виявила декілька потенційних співпадінь у реєстрах. Рекомендується перевірити фінансову звітність та судові справи для детальнішої оцінки ризиків.");
+                setAiSummary(answer || localLocales.aiAnalysis.noData);
             } else {
-                // Fallback AI message if the endpoint fails but search succeeded
-                 setAiSummary("ШІ проводить перехресний аналіз знайдених сутностей. Виявлено зв'язки з публічними реєстрами.");
+                setAiSummary(localLocales.aiAnalysis.noData);
             }
 
         } catch (e) {
@@ -423,137 +458,151 @@ export const SearchView = () => {
 
     return (
         <div className={cn(
-            "max-w-7xl mx-auto min-h-screen pb-20 transition-all duration-700",
-            isHackerMode && "hacker-mode bg-black"
+            "max-w-7xl mx-auto min-h-screen pb-20 px-6 transition-all duration-700",
+            isHackerMode && "bg-black text-emerald-500"
         )}>
-            {/* Hacker Mode HUD Overlay */}
-            {isHackerMode && (
-                <div className="fixed top-20 right-8 text-[10px] font-mono text-emerald-500/50 uppercase tracking-[0.3em] pointer-events-none z-50 animate-pulse">
-                    TERMINAL_LINK_ACTIVE // PORT: 8443 // S_KEY: AX-42
+            {/* HUD Header */}
+            <ViewHeader
+                title={isHackerMode ? "> PREDATOR_QUERY_HUB" : localLocales.title}
+                icon={isHackerMode ? <SearchCode className="text-emerald-500 animate-pulse" /> : <Radar className="text-primary-500" />}
+                breadcrumbs={['СИНАПСИС', 'РОЗВІДКА', 'МАТРИЦЯ ГРАФУ']}
+                stats={[
+                    { label: localLocales.stats.indexed, value: '2.5M+', icon: <Database />, color: 'primary' },
+                    { label: localLocales.stats.sources, value: '42', icon: <Globe />, color: 'cyan' },
+                    { label: localLocales.stats.reliability, value: '99.8%', icon: <Sparkles />, color: 'success', animate: true }
+                ]}
+            />
+
+            <div className="mt-12 mb-16 relative">
+                {/* Background FX */}
+                <div className="absolute inset-0 -z-10 overflow-hidden">
+                    {!isHackerMode && <CyberOrb color="emerald" size="lg" intensity="low" className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20" />}
                 </div>
-            )}
 
-            <div className="mb-12 text-center py-10 relative overflow-hidden">
-                {!isHackerMode && (
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none" />
-                )}
-
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                >
-                    <h1 className={cn(
-                        "text-5xl font-black mb-4 tracking-tighter",
-                        isHackerMode ? "text-emerald-500 font-mono" : "bg-clip-text text-transparent bg-gradient-to-r from-white via-emerald-400 to-cyan-500"
-                    )}>
-                        {isHackerMode ? "> PREDATOR_QUERY_HUB" : "Глобальний Інтелектуальний Пошук"}
-                    </h1>
-                    <p className="text-slate-500 max-w-xl mx-auto mb-10 text-lg font-medium leading-relaxed">
-                        Прямий доступ до 2.5 млн суб'єктів через нейронні фільтри та судові масиви даних.
-                    </p>
-                </motion.div>
-
-                <div className="max-w-3xl mx-auto relative group z-20">
-                    {/* Mode Selector HUD */}
-                    <div className="flex justify-center gap-1 mb-4">
+                <div className="max-w-4xl mx-auto">
+                    {/* Search Modes */}
+                    <div className="flex justify-center gap-2 mb-0 px-2">
                         {[
-                            { id: 'neural', label: 'NEURAL', icon: BrainCircuit },
-                            { id: 'exact', label: 'EXACT', icon: Target },
-                            { id: 'deep', label: 'DEEP SCAN', icon: SearchIcon }
+                            { id: 'neural', label: localLocales.modes.neural, icon: BrainCircuit },
+                            { id: 'exact', label: localLocales.modes.exact, icon: Target },
+                            { id: 'deep', label: localLocales.modes.deep, icon: Scan }
                         ].map(mode => (
                             <button
                                 key={mode.id}
                                 onClick={() => setSearchMode(mode.id as any)}
                                 className={cn(
-                                    "px-4 py-1.5 rounded-t-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2 border-t border-x border-transparent",
+                                    "px-6 py-2.5 rounded-t-2xl text-[10px] font-black uppercase tracking-[0.25em] transition-all flex items-center gap-2 border-t border-x",
                                     searchMode === mode.id
-                                        ? "bg-slate-900 text-emerald-400 border-white/10"
-                                        : "text-slate-600 hover:text-slate-400"
+                                        ? "bg-slate-900 text-primary-400 border-slate-800 shadow-[0_-10px_15px_rgba(6,182,212,0.1)]"
+                                        : "bg-slate-950/20 text-slate-600 border-transparent hover:text-slate-400"
                                 )}
                             >
-                                <mode.icon size={11} />
+                                <mode.icon size={12} className={searchMode === mode.id ? 'animate-pulse' : ''} />
                                 {mode.label}
                             </button>
                         ))}
                     </div>
 
-                    <div className={cn(
-                        "absolute -inset-1 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000",
-                        isHackerMode ? "bg-emerald-500/20" : "bg-gradient-to-r from-emerald-500 via-cyan-500 to-indigo-600"
-                    )}></div>
+                    <TacticalCard
+                        title=""
+                        variant="holographic"
+                        noPadding
+                        className={cn(
+                            "rounded-t-none border-t-0 shadow-[0_20px_50px_rgba(0,0,0,0.5)]",
+                            isHackerMode && "border-emerald-500/30"
+                        )}
+                    >
+                        <div className="relative flex items-center p-2">
+                            <div className="pl-6 pr-4 py-4 flex items-center justify-center border-r border-slate-800/50">
+                                {loading ? <RefreshCw className="w-7 h-7 text-primary-500 animate-spin" /> : <SearchIcon className="w-7 h-7 text-slate-500" />}
+                            </div>
+                            <input
+                                type="text"
+                                placeholder={isHackerMode ? localLocales.hackerMode.prompt : "Введіть код ЄДРПОУ, назву або складний запит..."}
+                                className={cn(
+                                    "flex-1 bg-transparent text-white placeholder-slate-700 px-8 py-6 outline-none border-none text-xl font-bold tracking-tight",
+                                    isHackerMode && "font-mono text-emerald-400 placeholder-emerald-900"
+                                )}
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                            />
+                            <div className="flex items-center gap-3 pr-4">
+                                <motion.button
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={() => setIsHackerMode(!isHackerMode)}
+                                    className={cn(
+                                        "p-4 rounded-xl transition-all border group relative",
+                                        isHackerMode
+                                            ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-400 shadow-[0_0_15px_emerald-500/20]"
+                                            : "bg-slate-900 border-slate-800 text-slate-500 hover:text-white"
+                                    )}
+                                    title="Hacker Mode"
+                                >
+                                    <Lock size={20} />
+                                    {isHackerMode && <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-ping" />}
+                                </motion.button>
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={handleSearch}
+                                    className={cn(
+                                        "px-12 py-5 rounded-xl font-black uppercase tracking-[0.3em] text-sm transition-all shadow-lg",
+                                        isHackerMode
+                                            ? "bg-emerald-500 text-black hover:bg-emerald-400 shadow-emerald-500/20"
+                                            : "bg-primary-500 hover:bg-primary-400 text-slate-950 shadow-primary-500/20"
+                                    )}
+                                >
+                                    {loading ? "SCANNING..." : "SEARCH"}
+                                </motion.button>
+                            </div>
+                        </div>
+                    </TacticalCard>
 
-                    <div className={cn(
-                        "relative flex items-center bg-slate-950/80 backdrop-blur-2xl border border-white/5 rounded-2xl overflow-hidden shadow-2xl",
-                        isHackerMode && "bg-black border-emerald-500/30 font-mono"
-                    )}>
-                        <div className="pl-6 pr-2 py-6 flex items-center justify-center border-r border-white/5">
-                             {loading ? <RefreshCw className="w-6 h-6 text-emerald-500 animate-spin" /> : <SearchIcon className="w-6 h-6 text-slate-500" />}
-                        </div>
-                        <input
-                            type="text"
-                            placeholder={isHackerMode ? "ENTER_QUERY_OR_EDRPOU..." : "Введіть код ЄДРПОУ, назву або складний запит..."}
-                            className="flex-1 bg-transparent text-white placeholder-slate-600 px-6 py-6 outline-none border-none text-xl font-medium tracking-tight"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                        />
-                        <div className="flex items-center gap-2 pr-4">
-                            <motion.button
-                                whileTap={{ scale: 0.9 }}
-                                onClick={() => setIsHackerMode(!isHackerMode)}
-                                className={cn(
-                                    "p-3 rounded-xl transition-all border",
-                                    isHackerMode ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" : "bg-slate-900 border-white/5 text-slate-500 hover:text-white"
-                                )}
-                                title="Hacker Mode"
+                    {/* Trending / Fast Tags */}
+                    <div className="mt-8 flex flex-wrap justify-center gap-3">
+                        {['ТОВ "НАВІГАТОР"', '42883391', 'Тендери Паливо', 'Санкції РНБО'].map(tag => (
+                            <button
+                                key={tag}
+                                onClick={() => { setQuery(tag.replace('"', '')); handleSearch(); }}
+                                className="px-4 py-2 rounded-xl bg-slate-900/40 border border-slate-800/60 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-primary-400 hover:border-primary-500/40 hover:bg-primary-500/5 transition-all"
                             >
-                                <Lock size={18} />
-                            </motion.button>
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={handleSearch}
-                                className={cn(
-                                    "px-10 py-6 font-black uppercase tracking-widest text-sm transition-all",
-                                    isHackerMode ? "bg-emerald-500 text-black" : "bg-emerald-500 hover:bg-emerald-400 text-slate-950"
-                                )}
-                            >
-                                {loading ? "SCANNING..." : "SEARCH"}
-                            </motion.button>
-                        </div>
+                                # {tag}
+                            </button>
+                        ))}
                     </div>
-                </div>
-
-                <div className="flex justify-center gap-2 mt-6 overflow-x-auto pb-2 px-4 no-scrollbar">
-                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest flex items-center mr-2">Trending:</span>
-                    {['ТОВ "НАВІГАТОР"', '42883391', 'Тендери Паливо', 'Судові рішення 2026', 'Санкції РНБО'].map(f => (
-                        <button key={f} onClick={() => { setQuery(f.replace('"', '')); handleSearch(); }} className="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all text-xs font-bold whitespace-nowrap">
-                            {f}
-                        </button>
-                    ))}
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 relative z-10">
-                 {/* AI Answer Card */}
-                 <AIAnswerCard query={query} answer={aiSummary} loading={aiLoading} />
+            {/* Results Grid */}
+            <div className="grid grid-cols-1 gap-8 relative z-10">
+                {/* AI Insights Segment */}
+                <AIAnswerCard query={query} answer={aiSummary} loading={aiLoading} />
 
-                 {hasSearched && (
-                    <div className="flex justify-between items-center px-4 mb-2">
-                        <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
-                            <Activity size={12} className="text-emerald-500" />
-                            ВИЯВЛЕНО <span className="text-white text-xs">{results.length}</span> ПРЯМИХ СПІВПАДІНЬ
+                {/* Results Header */}
+                {hasSearched && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex justify-between items-center px-2"
+                    >
+                        <div className="flex items-center gap-3">
+                            <Activity size={16} className="text-primary-500 animate-pulse" />
+                            <span className="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em]">
+                                {localLocales.results.found}: <span className="text-white text-sm ml-2 font-mono">{results.length}</span>
+                            </span>
                         </div>
                         {!isPremium && (
-                            <div className="text-[9px] font-black text-amber-500 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20 flex items-center gap-2 uppercase tracking-widest">
-                                <Lock className="w-3 h-3" />
-                                RESTRICTED_FEED
+                            <div className="px-4 py-2 bg-rose-500/10 rounded-full border border-rose-500/20 flex items-center gap-3 animate-pulse">
+                                <Shield className="w-3.5 h-3.5 text-rose-500" />
+                                <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">{localLocales.results.restricted}</span>
                             </div>
                         )}
-                    </div>
-                 )}
+                    </motion.div>
+                )}
 
-                 <div className="grid grid-cols-1 gap-6">
+                {/* Results List */}
+                <div className="grid grid-cols-1 gap-8">
                     {results.map(company => (
                         <CompanyCard
                             key={company.id}
@@ -564,16 +613,41 @@ export const SearchView = () => {
                             onToggleExplain={toggleExplain}
                         />
                     ))}
-                 </div>
+                </div>
 
-                 {hasSearched && results.length === 0 && !loading && !aiLoading && (
-                     <div className="text-center py-24 bg-slate-900/30 border border-dashed border-white/5 rounded-3xl">
-                         <SearchIcon className="w-12 h-12 text-slate-700 mx-auto mb-4" />
-                         <p className="text-slate-500 font-bold uppercase tracking-widest">Нуль результатів у базі PREDATOR</p>
-                         <p className="text-[10px] text-slate-600 mt-2">Спробуйте змінити параметри пошуку або активувати DEEP SCAN.</p>
-                     </div>
-                 )}
+                {/* Empty State */}
+                {hasSearched && results.length === 0 && !loading && !aiLoading && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="text-center py-32 rounded-3xl border border-dashed border-slate-800 bg-slate-900/20"
+                    >
+                        <div className="relative inline-block mb-6">
+                            <SearchIcon className="w-16 h-16 text-slate-800" />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-40">
+                                <XCircle className="w-8 h-8 text-rose-500" />
+                            </div>
+                        </div>
+                        <h3 className="text-xl font-black text-slate-400 uppercase tracking-[0.2em]">{localLocales.results.noResults}</h3>
+                        <div className="mt-8">
+                            <button className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black uppercase tracking-widest border border-slate-700 transition-all">
+                                Активувати Режим Глибокої Розвідки
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
             </div>
+
+            {/* AI Insights Hub Integration (Widget Mode) */}
+            {hasSearched && isPremium && (
+                <div className="mt-20 pt-20 border-t border-slate-800/60">
+                    <div className="flex items-center gap-4 mb-8">
+                        <Radio className="text-primary-500 animate-pulse" />
+                        <h2 className="text-xl font-black text-white uppercase tracking-[0.3em]">Контекстні Інсайти Схожих Об'єктів</h2>
+                    </div>
+                    <AIInsightsHub isWidgetMode={true} />
+                </div>
+            )}
         </div>
     );
 };
