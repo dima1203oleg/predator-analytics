@@ -580,8 +580,9 @@ export const api = {
             return (await v45Client.get('/premium/price-anomalies')).data;
         },
         getCompetitorRadar: async () => {
-            return (await apiClient.get('/premium/competitor-radar')).data;
+            return (await apiClient.get('/premium/competitor-radar-v2')).data;
         },
+
         getMarketTrends: async () => {
             return (await apiClient.get('/premium/market-trends')).data;
         }

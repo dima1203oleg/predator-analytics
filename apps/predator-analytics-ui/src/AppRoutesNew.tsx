@@ -43,6 +43,8 @@ const KnowledgeEngineeringView = lazy(() => import('./views/KnowledgeEngineering
 const AutonomyDashboard = lazy(() => import('./views/AutonomyDashboard'));
 const ComponentsRegistryView = lazy(() => import('./views/ComponentsRegistryView'));
 const PipelineManagerView = lazy(() => import('./views/PipelineManagerView'));
+const EntityRadarView = lazy(() => import('./views/EntityRadarView'));
+
 
 // Premium Commercial Views
 const CustomsIntelligencePremium = lazy(() => import('./views/CustomsIntelligencePremium'));
@@ -73,6 +75,7 @@ const ScenarioModeling = lazy(() => import('./views/ScenarioModeling'));
 const DatasetsPage = lazy(() => import('./views/datasets/DatasetsPage'));
 const AutoFactoryView = lazy(() => import('./views/AutoFactoryView'));
 const ModelTrainingView = lazy(() => import('./views/ModelTrainingView'));
+const EnginesView = lazy(() => import('./views/EnginesView'));
 
 
 
@@ -152,6 +155,7 @@ export const AppRoutesNew = () => {
             <Route path="/agents" element={<AgentsView />} />
             <Route path="/pipeline" element={<PipelineManagerView />} />
             <Route path="/training" element={<ModelTrainingView />} />
+            <Route path="/engines" element={<EnginesView />} />
             <Route path="/super" element={<SuperIntelligenceView />} />
             <Route path="/evolution" element={<EvolutionView />} />
 
@@ -160,7 +164,9 @@ export const AppRoutesNew = () => {
             <Route path="/premium-hub" element={<PremiumHubView />} />
             <Route path="/builder" element={<DashboardBuilderView />} />
             <Route path="/competitor-intel" element={<CompetitorIntelligenceView />} />
+            <Route path="/competitor-radar" element={<EntityRadarView />} />
             <Route path="/morning-brief" element={<ExecutiveBriefView />} />
+
             <Route path="/entity-graph" element={<EntityGraphView />} />
             <Route path="/knowledge" element={<KnowledgeEngineeringView />} />
             <Route path="/autonomy" element={<AutonomyDashboard />} />
