@@ -24,13 +24,20 @@ SIGNAL_TYPE_UA = {
     "info": "Інформація",
     "prediction": "Прогноз",
     "pattern": "Паттерн",
+    "ENTITY_CREATED": "Суб'єкт створений",
+    "DATA_INGESTED": "Запис імпортовано",
+    "CERS_MANUAL_CALC": "Ручне обчислення CERS",
+    "SCORE_UPDATED": "Оцінка оновлена",
 }
 LAYER_UA = {
+    "fusion": "Злиття даних",
     "behavioral": "Поведінковий",
     "institutional": "Інституційний",
     "influence": "Впливу",
     "structural": "Структурний",
     "predictive": "Прогностичний",
+    "meta": "Мета-оцінка (CERS)",
+    "graph": "Графовий аналіз",
 }
 
 
