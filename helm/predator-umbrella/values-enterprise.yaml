@@ -1,0 +1,85 @@
+# PREDATOR ANALYTICS v55.1 - ENTERPRISE PROFILE
+# Highly Available (HA), Scalable, Production Grade Deployment
+
+predator-backend:
+  replicaCount: 5
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "2Gi"
+    limits:
+      cpu: "4000m"
+      memory: "8Gi"
+
+predator-frontend:
+  replicaCount: 3
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+
+postgresql:
+  architecture: "replication"
+  replicaCount: 2
+  primary:
+    resources:
+      requests:
+        cpu: "2000m"
+        memory: "4Gi"
+
+redis:
+  architecture: "replication"
+  sentinel:
+    enabled: true
+
+neo4j:
+  neo4j:
+    mode: cluster
+    resources:
+      requests:
+        cpu: "2000m"
+        memory: "4Gi"
+
+redpanda:
+  statefulset:
+    replicas: 3
+
+qdrant:
+  replicaCount: 3
+
+opensearch:
+  replicas: 3
+  resources:
+    requests:
+      cpu: "2000m"
+      memory: "4Gi"
+
+minio:
+  mode: distributed
+  replicas: 4
+
+kube-prometheus-stack:
+  enabled: true
+  grafana:
+    enabled: true
+  prometheus:
+    prometheusSpec:
+      retention: "30d"
+
+loki:
+  enabled: true
+  loki:
+    auth_enabled: false
+    commonConfig:
+      replication_factor: 1 # Change to 3 in a real multi-node HA
+
+argo-cd:
+  enabled: true
+
+cert-manager:
+  enabled: true
