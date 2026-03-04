@@ -42,10 +42,14 @@ async def run_full_pipeline(
         Pipeline execution summary.
     """
     from app.engines.behavioral import process_entity as behavioral_process
+    from app.engines.institutional import process_entity as institutional_process
+    from app.engines.influence import process_entity as influence_process
+    from app.engines.structural_gaps import process_entity as structural_process
+    from app.engines.predictive import process_entity as predictive_process
     from app.engines.cers import process_entity as cers_process
 
     # ─── Step 1: Data Fusion ───
-    logger.info("Pipeline Step 1/3: Data Fusion — %d records from [%s]", len(records), source)
+    logger.info("Pipeline Step 1/7: Data Fusion — %d records from [%s]", len(records), source)
 
     data_source = (
         DataSource(source) if source in DataSource.__members__.values() else DataSource.CUSTOMS
@@ -69,31 +73,57 @@ async def run_full_pipeline(
     unique_ueids = list({r.ueid for r in fusion_result.records_fused if r.ueid})
 
     # ─── Step 2: Behavioral Scoring ───
-    logger.info("Pipeline Step 2/3: Behavioral Engine — %d entities", len(unique_ueids))
-
+    logger.info("Pipeline Step 2/7: Behavioral Engine — %d entities", len(unique_ueids))
     behavioral_results = {}
-    behavioral_errors = []
     for ueid in unique_ueids:
         try:
-            score = await behavioral_process(ueid, db)
-            behavioral_results[ueid] = {
-                "bvi": score.bvi,
-                "ass": score.ass,
-                "cp": score.cp,
-                "aggregate": score.aggregate,
-            }
-        except Exception as e:
+            await behavioral_process(ueid, db)
+            behavioral_results[ueid] = "success"
+        except Exception:
             logger.exception("Behavioral scoring failed for ueid=%s", ueid)
-            behavioral_errors.append({"ueid": ueid, "error": str(e)})
 
-    logger.info(
-        "Behavioral done: scored=%d errors=%d",
-        len(behavioral_results),
-        len(behavioral_errors),
-    )
+    # ─── Step 3: Institutional Scoring ───
+    logger.info("Pipeline Step 3/7: Institutional Engine — %d entities", len(unique_ueids))
+    institutional_results = {}
+    for ueid in unique_ueids:
+        try:
+            await institutional_process(ueid, db)
+            institutional_results[ueid] = "success"
+        except Exception:
+            logger.exception("Institutional scoring failed for ueid=%s", ueid)
 
-    # ─── Step 3: CERS Meta-Scoring ───
-    logger.info("Pipeline Step 3/3: CERS Engine — %d entities", len(unique_ueids))
+    # ─── Step 4: Influence Scoring ───
+    logger.info("Pipeline Step 4/7: Influence Engine — %d entities", len(unique_ueids))
+    influence_results = {}
+    for ueid in unique_ueids:
+        try:
+            await influence_process(ueid, db)
+            influence_results[ueid] = "success"
+        except Exception:
+            logger.exception("Influence scoring failed for ueid=%s", ueid)
+
+    # ─── Step 5: Structural Gaps ───
+    logger.info("Pipeline Step 5/7: Structural Gaps — %d entities", len(unique_ueids))
+    structural_results = {}
+    for ueid in unique_ueids:
+        try:
+            await structural_process(ueid, db)
+            structural_results[ueid] = "success"
+        except Exception:
+            logger.exception("Structural scoring failed for ueid=%s", ueid)
+
+    # ─── Step 6: Predictive Engine ───
+    logger.info("Pipeline Step 6/7: Predictive Engine — %d entities", len(unique_ueids))
+    predictive_results = {}
+    for ueid in unique_ueids:
+        try:
+            await predictive_process(ueid, db)
+            predictive_results[ueid] = "success"
+        except Exception:
+            logger.exception("Predictive scoring failed for ueid=%s", ueid)
+
+    # ─── Step 7: CERS Meta-Scoring ───
+    logger.info("Pipeline Step 7/7: CERS Engine — %d entities", len(unique_ueids))
 
     cers_results = {}
     cers_errors = []
@@ -124,27 +154,27 @@ async def run_full_pipeline(
                 "records_processed": fusion_result.records_processed,
                 "entities_resolved": fusion_result.entities_resolved,
                 "entities_created": fusion_result.entities_created,
-                "errors": fusion_result.errors[:10],  # cap errors in response
+                "errors": fusion_result.errors[:10],
             },
-            "behavioral": {
-                "entities_scored": len(behavioral_results),
-                "errors": behavioral_errors[:10],
-                "results": behavioral_results,
+            "engines": {
+                "behavioral": len(behavioral_results),
+                "institutional": len(institutional_results),
+                "influence": len(influence_results),
+                "structural": len(structural_results),
+                "predictive": len(predictive_results),
             },
             "cers": {
                 "entities_scored": len(cers_results),
                 "errors": cers_errors[:10],
-                "results": cers_results,
             },
         },
         "unique_entities": len(unique_ueids),
     }
 
     logger.info(
-        "Pipeline complete: %d records → %d entities → %d behavioral → %d CERS",
+        "Pipeline complete: %d records → %d entities → %d CERS",
         fusion_result.records_processed,
         len(unique_ueids),
-        len(behavioral_results),
         len(cers_results),
     )
 
