@@ -11,6 +11,7 @@ from app.models.v55.orm.cers_score import CERSScoreORM
 from app.models.v55.orm.signal import SignalORM
 from app.models.v55.orm.behavioral_score import BehavioralScoreORM
 from app.models.v55.orm.fused_record import FusedRecordORM
+from app.models.v55.orm.influence_score import InfluenceScoreORM
 
 __all__ = [
     "EntityORM",
@@ -19,4 +20,5 @@ __all__ = [
     "SignalORM",
     "BehavioralScoreORM",
     "FusedRecordORM",
+    "InfluenceScoreORM",
 ]

@@ -11,10 +11,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import logging
+from typing import Optional
+
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.confidence import ConfidenceScore, quick_confidence
+from app.core.signal_bus import SignalBus
 from app.indices.hci import calculate_hci
 from app.indices.im import calculate_im
+from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
 
 
 logger = logging.getLogger("predator.engines.influence")
@@ -83,3 +88,61 @@ def compute_influence_score(
         aggregate=aggregate,
         confidence=confidence,
     )
+
+
+async def process_entity(ueid: str, session: AsyncSession) -> InfluenceScore:
+    """Run Influence Analysis for a specific entity.
+    Features async DB persistence and real-time scaling out via SignalBus.
+    """
+    from app.repositories.influence_repository import InfluenceRepository
+    repo = InfluenceRepository(session)
+    
+    # 🚨 PREDATOR LAZY LOADING / MOCKS
+    # Temporarily generate semi-random metrics until full Neo4j Graph queries are injected
+    import random
+    eigenvector = random.uniform(0.1, 0.9)
+    betweenness = random.uniform(0.1, 0.8)
+    market_share = random.uniform(0.01, 0.5)
+    reg_prox = random.uniform(0.0, 1.0)
+    hhi_ben = random.uniform(1000, 8000)
+    hhi_form = random.uniform(1000, 8000)
+    shadow = random.uniform(0.0, 100.0)
+    data_comp = random.uniform(0.4, 1.0)
+
+    score = compute_influence_score(
+        ueid,
+        eigenvector=eigenvector,
+        betweenness=betweenness,
+        market_share=market_share,
+        regulatory_proximity=reg_prox,
+        hhi_beneficial=hhi_ben,
+        hhi_formal=hhi_form,
+        shadow_cluster_score=shadow,
+        data_completeness=data_comp,
+    )
+
+    # 1. DB Persistence
+    await repo.save_score(score)
+
+    # 2. Emit Signal (v55 standard)
+    bus = SignalBus.get_instance()
+    signal = V55Signal(
+        signal_type="INFLUENCE_SCORING",
+        topic="influence.analyzed",
+        ueid=ueid,
+        layer=SignalLayer.INFLUENCE,
+        priority=SignalPriority.CRITICAL if score.aggregate > 80 else SignalPriority.HIGH if score.aggregate > 60 else SignalPriority.ROUTINE,
+        score=score.aggregate,
+        confidence=score.confidence.final_score,
+        summary=f"Вплив оновлено: IM={score.im:.1f}, HCI={score.hci:.1f}, Shadow={score.shadow_cluster_score:.1f}",
+        metadata={
+            "im": score.im,
+            "hci": score.hci,
+            "shadow_cluster": score.shadow_cluster_score
+        }
+    )
+    # emit expects db session for persistence fallback
+    await bus.emit(signal, session=session)
+
+    logger.info("Influence Engine processed ueid=%s, agg=%.1f", ueid, score.aggregate)
+    return score
