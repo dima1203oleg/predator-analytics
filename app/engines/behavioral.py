@@ -138,7 +138,7 @@ async def process_entity(ueid: str, db: AsyncSession) -> BehavioralScore:
 
     for record in reversed(fused_records):
         data = record.normalized_data
-        if record.source == "customs":
+        if "customs" in record.source.lower():
             customs_count += 1
             if "customs_post" in data and data["customs_post"]:
                 regions.append(data["customs_post"])
@@ -159,7 +159,7 @@ async def process_entity(ueid: str, db: AsyncSession) -> BehavioralScore:
                     last_date = decl_date
                 except ValueError:
                     pass
-        elif record.source == "tax":
+        elif "tax" in record.source.lower():
             tax_count += 1
 
     # Fallback to realistic defaults if not enough data

@@ -109,9 +109,9 @@ async def process_entity(ueid: str, session: AsyncSession) -> InfluenceScore:
     industry_type = "GENERAL"
     
     for record in fused_records:
-        if record.source == "customs":
+        if "customs" in record.source.lower():
             total_flow += float(record.normalized_data.get("value_usd", 0))
-        elif record.source == "edr":
+        elif "edr" in record.source.lower():
             data = record.normalized_data
             founders_count = len(data.get("founders", [])) or 1
             activities = data.get("activities", [])
