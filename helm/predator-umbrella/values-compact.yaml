@@ -1,0 +1,64 @@
+# PREDATOR ANALYTICS v55.1 - COMPACT PROFILE
+# Suitable for Local Mac, Minikube, or small Cloud VM deployment
+# Minimal footprint, no HA.
+
+predator-backend:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+predator-frontend:
+  replicaCount: 1
+
+postgresql:
+  architecture: "standalone"
+  primary:
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "512Mi"
+
+redis:
+  architecture: "standalone"
+
+neo4j:
+  neo4j:
+    mode: standalone
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "1Gi"
+
+redpanda:
+  statefulset:
+    replicas: 1
+
+qdrant:
+  replicaCount: 1
+
+opensearch:
+  replicas: 1
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+
+minio:
+  mode: standalone
+
+kube-prometheus-stack:
+  enabled: false # Disable full observability for compact
+
+loki:
+  enabled: false
+
+argo-cd:
+  enabled: false # Let's assume manual helm install or single Argo deployment is done separately
+
+cert-manager:
+  enabled: false
