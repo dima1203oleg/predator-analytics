@@ -1,16 +1,25 @@
 /**
+ * 👑 Executive Sovereign Brief | v55 Premium Matrix
  * PREDATOR Ранковий Брифінг Керівника
- * Персоналізований щоденний дайджест для преміум клієнтів
- * Повна українська локалізація
+ * 
+ * Персоналізований щоденний дайджест для преміум-клієнтів.
+ * Включає:
+ * - Стрічку критичних метрик
+ * - Пріоритетні сповіщення та можливості
+ * - AI-генерований резюме-звіт
+ * - Спектральний аналіз ризиків
+ * 
+ * © 2026 PREDATOR Analytics - Повна українізація v55
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sun, Moon, Coffee, TrendingUp, TrendingDown, AlertTriangle, CheckCircle,
   Clock, Calendar, Zap, Target, Download, Share2, RefreshCw,
   ChevronRight, ChevronDown, Bookmark, Bell, Crown,
-  Activity, FileText, ArrowUpRight, Sparkles, Brain, Radio, Play, Pause
+  Activity, FileText, ArrowUpRight, Sparkles, Brain, Radio, Play, Pause,
+  Layers, Shield, Globe, Terminal, Box, Boxes, Hexagon
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
@@ -20,6 +29,9 @@ import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { premiumLocales } from '../locales/uk/premium';
 import { api } from '../services/api';
+import { TacticalCard } from '../components/TacticalCard';
+import { CyberOrb } from '../components/CyberOrb';
+import { HoloContainer } from '../components/HoloContainer';
 
 // Типи
 interface BriefSection {
@@ -53,86 +65,19 @@ interface DailyMetric {
   sparkline?: number[];
 }
 
-// Українські переклади типів використовуються з premiumLocales, але тут ще може бути мапінг якщо потрібно, або видалити.
-// Для сумісності з типами можна залишити, але брати значення з локалі.
 const TYPE_LABELS: Record<string, string> = {
-  alert: premiumLocales.executiveBrief.sections.critical.replace('🚨 ', ''), // спрощення
-  opportunity: premiumLocales.executiveBrief.sections.opportunities.replace('📈 ', ''),
-  insight: premiumLocales.executiveBrief.sections.insights.replace('🔮 ', ''),
-  metric: premiumLocales.executiveBrief.metrics.riskLevel, // приблизне, але тут тип
-  news: premiumLocales.executiveBrief.sections.critical, // заглушка
-  action: premiumLocales.executiveBrief.sections.actions.replace('✅ ', ''),
+  alert: 'КРИТИЧНО',
+  opportunity: 'МОЖЛИВІСТЬ',
+  insight: 'ІНСАЙТ',
+  metric: 'МЕТРИКА',
+  news: 'НОВИНИ',
+  action: 'ДІЯ',
 };
 
-// Мок-дані з українськими текстами
-const MOCK_METRICS: DailyMetric[] = [
-  { label: premiumLocales.executiveBrief.metrics.activeAlerts, value: '7', change: -2, trend: 'down', sparkline: [12, 10, 8, 9, 7, 7] },
-  { label: premiumLocales.executiveBrief.metrics.opportunities, value: '12', change: 3, trend: 'up', sparkline: [6, 8, 9, 10, 11, 12] },
-  { label: premiumLocales.executiveBrief.metrics.marketScore, value: '78', change: 5, trend: 'up', sparkline: [65, 68, 72, 74, 75, 78] },
-  { label: premiumLocales.executiveBrief.metrics.riskLevel, value: 'НИЗЬКИЙ', change: -8, trend: 'down', sparkline: [35, 32, 28, 25, 22, 18] },
-];
-
-const MOCK_SECTIONS: BriefSection[] = [
-  {
-    id: 'critical',
-    title: premiumLocales.executiveBrief.sections.critical,
-    priority: 'critical',
-    items: premiumLocales.executiveBrief.data.sections.critical.items.map((item, i) => ({
-      ...item,
-      id: `c-${i}`,
-      type: 'alert' as const,
-      timestamp: i === 0 ? '2 години тому' : '4 години тому',
-      tags: i === 0 ? ['конкуренція', 'ціни', 'електроніка'] : ['логістика', 'митниця', 'затримка'],
-      actionable: true
-    }))
-  },
-  {
-    id: 'opportunities',
-    title: premiumLocales.executiveBrief.sections.opportunities,
-    priority: 'high',
-    items: premiumLocales.executiveBrief.data.sections.opportunities.items.map((item, i) => ({
-      ...item,
-      id: `o-${i}`,
-      type: 'opportunity' as const,
-      timestamp: i === 0 ? '6 годин тому' : '1 день тому',
-      tags: i === 0 ? ['хімія', 'розширення', 'ринковий-розрив'] : ['логістика', 'економія', 'румунія'],
-      value: i === 0 ? '$2.4М' : undefined,
-      actionable: true
-    }))
-  },
-  {
-    id: 'insights',
-    title: premiumLocales.executiveBrief.sections.insights,
-    priority: 'medium',
-    items: premiumLocales.executiveBrief.data.sections.insights.items.map((item, i) => ({
-      ...item,
-      id: `i-${i}`,
-      type: 'insight' as const,
-      timestamp: i === 0 ? 'Сьогодні' : 'Вчора',
-      tags: i === 0 ? ['прогноз', 'електроніка', 'Q1-2026'] : ['конкуренція', 'стратегія', 'паливо']
-    }))
-  },
-  {
-    id: 'actions',
-    title: premiumLocales.executiveBrief.sections.actions,
-    priority: 'medium',
-    items: premiumLocales.executiveBrief.data.sections.actions.items.map((item, i) => ({
-      ...item,
-      id: `a-${i}`,
-      type: 'action' as const,
-      tags: i === 0 ? ['ціни', 'перегляд', 'терміново'] : ['комплаєнс', 'документація'],
-      actionable: true
-    }))
-  }
-];
-
 const ACTIVITY_DATA = [
-  { time: '00:00', value: 12 },
-  { time: '04:00', value: 8 },
-  { time: '08:00', value: 45 },
-  { time: '12:00', value: 78 },
-  { time: '16:00', value: 92 },
-  { time: '20:00', value: 56 },
+  { time: '00:00', value: 12 }, { time: '04:00', value: 8 },
+  { time: '08:00', value: 45 }, { time: '12:00', value: 78 },
+  { time: '16:00', value: 92 }, { time: '20:00', value: 56 },
   { time: '24:00', value: 34 },
 ];
 
@@ -149,95 +94,82 @@ const ExecutiveBriefView: React.FC = () => {
   const [sections, setSections] = useState<BriefSection[]>([]);
   const [summary, setSummary] = useState<string>('');
 
-  useEffect(() => {
-    const fetchBrief = async () => {
-      try {
-        setIsLoading(true);
-        const data = await api.getMorningNewspaper();
-        setMetrics(Array.isArray(data.metrics) ? data.metrics : []);
-        setSections(Array.isArray(data.sections) ? data.sections : []);
-        setSummary(data.summary || '');
-        setLastRefresh(new Date());
-      } catch (err) {
-        console.error("Failed to fetch evening brief", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchBrief = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const data = await api.getMorningNewspaper();
+      setMetrics(Array.isArray(data.metrics) ? data.metrics : []);
+      setSections(Array.isArray(data.sections) ? data.sections : []);
+      setSummary(data.summary || '');
+      setLastRefresh(new Date());
+    } catch (err) {
+      console.error("Failed to fetch evening brief", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
+  useEffect(() => {
     fetchBrief();
     if (isAutoRefresh) {
       const interval = setInterval(fetchBrief, 300000); // 5 min
       return () => clearInterval(interval);
     }
-  }, [isAutoRefresh]);
+  }, [fetchBrief, isAutoRefresh]);
 
-  // Оновлення часу кожну хвилину
   useEffect(() => {
     const interval = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(interval);
   }, []);
 
-  // Перевірка преміум доступу
   const isPremium = userRole === 'admin' || userRole === 'premium';
 
-  // Привітання в залежності від часу доби
   const getGreeting = () => {
     const hour = currentTime.getHours();
-    if (hour < 12) return { text: premiumLocales.executiveBrief.greetings.morning, icon: Coffee };
-    if (hour < 17) return { text: premiumLocales.executiveBrief.greetings.afternoon, icon: Sun };
-    return { text: premiumLocales.executiveBrief.greetings.evening, icon: Moon };
+    if (hour < 12) return { text: premiumLocales.executiveBrief.greetings.morning, icon: Coffee, color: 'text-amber-400' };
+    if (hour < 17) return { text: premiumLocales.executiveBrief.greetings.afternoon, icon: Sun, color: 'text-blue-400' };
+    return { text: premiumLocales.executiveBrief.greetings.evening, icon: Moon, color: 'text-indigo-400' };
   };
 
   const greeting = getGreeting();
   const GreetingIcon = greeting.icon;
 
   const toggleSection = (id: string) => {
-    setExpandedSections(prev =>
-      prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
-    );
+    setExpandedSections(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
   };
 
   const toggleItem = (id: string) => {
-    setExpandedItems(prev =>
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    );
+    setExpandedItems(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
   const toggleBookmark = (id: string) => {
-    setBookmarkedItems(prev =>
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    );
+    setBookmarkedItems(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
-  const handleRefresh = async () => {
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setLastRefresh(new Date());
-    setIsLoading(false);
-  };
-
-  // Екран для не-преміум користувачів
   if (!isPremium) {
     return (
       <div className="h-screen flex flex-col items-center justify-center p-8 bg-slate-950 relative overflow-hidden">
         <div className="absolute inset-0 bg-cyber-grid opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent pointer-events-none" />
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 text-center space-y-8 max-w-2xl bg-black/60 p-12 rounded-[64px] border border-amber-500/30 backdrop-blur-3xl"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative z-10 text-center space-y-10 max-w-2xl bg-slate-900/60 p-16 rounded-[64px] border border-amber-500/20 backdrop-blur-3xl shadow-2xl"
         >
-          <div className="w-24 h-24 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-full flex items-center justify-center mx-auto border border-amber-500/50">
-            <Crown className="w-12 h-12 text-amber-500" />
+          <div className="relative inline-block">
+            <div className="absolute inset-0 bg-amber-500/20 blur-[80px] rounded-full scale-150" />
+            <div className="relative w-32 h-32 bg-slate-950 border border-amber-500/40 rounded-[40px] flex items-center justify-center panel-3d mx-auto">
+              <Crown className="w-16 h-16 text-amber-500 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
+            </div>
           </div>
           <div>
-            <h2 className="text-4xl font-black text-white tracking-tighter uppercase mb-4">{premiumLocales.executiveBrief.premium.title}</h2>
-            <p className="text-slate-400 text-sm leading-relaxed font-mono">
+            <h2 className="text-5xl font-black text-white tracking-tighter uppercase mb-6 font-display">{premiumLocales.executiveBrief.premium.title}</h2>
+            <p className="text-slate-400 text-base leading-relaxed font-mono uppercase tracking-widest max-w-md mx-auto opacity-70">
               {premiumLocales.executiveBrief.premium.description}
             </p>
           </div>
-          <button className="px-10 py-5 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-black rounded-3xl hover:shadow-[0_0_40px_rgba(245,158,11,0.4)] transition-all uppercase tracking-[0.2em] transform hover:scale-105 flex items-center gap-3 mx-auto">
-            <Crown size={18} />
+          <button className="px-12 py-6 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-black rounded-[28px] hover:shadow-[0_0_50px_rgba(245,158,11,0.4)] transition-all uppercase tracking-[0.3em] transform hover:scale-105 flex items-center gap-4 mx-auto group shadow-xl">
+            <Crown size={24} className="group-hover:rotate-12 transition-transform" />
             {premiumLocales.executiveBrief.premium.upgrade}
           </button>
         </motion.div>
@@ -246,407 +178,558 @@ const ExecutiveBriefView: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col p-6 gap-6 relative z-10 pb-24">
-      {/* Заголовок з привітанням */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div className="p-4 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-3xl border border-amber-500/30">
-            <GreetingIcon size={32} className="text-amber-500" />
+    <div className="min-h-screen flex flex-col p-10 gap-10 relative z-10 pb-32 animate-in fade-in duration-1000">
+
+      {/* Ambient Lighting Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-amber-500/5 blur-[150px] rounded-full animate-pulse" />
+        <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] bg-blue-500/5 blur-[150px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+      </div>
+
+      {/* Sovereign Header */}
+      <div className="flex flex-col xl:flex-row items-center justify-between gap-10 p-10 bg-slate-950/40 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
+        <div className="flex items-center gap-8 relative z-10">
+          <div className="relative group">
+            <div className={`absolute inset-0 blur-[80px] rounded-full scale-150 opacity-20 transition-all duration-1000 ${greeting.color.replace('text', 'bg')}`} />
+            <div className="relative p-6 bg-slate-900 border border-white/5 rounded-[32px] shadow-2xl panel-3d group-hover:rotate-6 transition-transform duration-700">
+              <GreetingIcon size={40} className={cn(greeting.color, "drop-shadow-[0_0_10px_currentColor]")} />
+            </div>
           </div>
           <div>
-            <div className="flex items-center gap-3 mb-1">
-              <span className="typewriter-effect text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 tracking-tight inline-block">
+            <div className="flex flex-wrap items-center gap-4 mb-3">
+              <h2 className={cn("text-4xl font-black tracking-tighter uppercase leading-none font-display", greeting.color)}>
                 {greeting.text}
-              </span>
-              <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full text-[10px] font-black text-amber-400 uppercase tracking-widest">
-                {persona}
-              </span>
+              </h2>
+              <div className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-slate-400 uppercase tracking-widest backdrop-blur-xl">
+                CORE_IDENTITY: <span className="text-amber-500">{persona}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-4 text-[10px] text-slate-500 font-mono">
-              <span className="flex items-center gap-1">
-                <Calendar size={12} />
+            <div className="flex flex-wrap items-center gap-8 text-[11px] text-slate-500 font-mono font-black uppercase tracking-[0.2em]">
+              <span className="flex items-center gap-3">
+                <Calendar size={14} className="text-slate-600" />
                 {currentTime.toLocaleDateString('uk-UA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
               </span>
-              <span className="flex items-center gap-1">
-                <Clock size={12} />
-                {currentTime.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+              <span className="flex items-center gap-3 pl-8 border-l border-white/10">
+                <Clock size={14} className="text-slate-600" />
+                {currentTime.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="text-right mr-4">
-            <div className="text-[9px] text-slate-600 uppercase tracking-widest">{premiumLocales.executiveBrief.ui.lastUpdate}</div>
-            <div className="text-[10px] text-slate-400 font-mono">{lastRefresh.toLocaleTimeString('uk-UA')}</div>
+        <div className="flex items-center gap-6 relative z-10 w-full xl:w-auto overflow-x-auto pb-2 xl:pb-0">
+          <div className="text-right mr-6 hidden sm:block">
+            <div className="text-[9px] text-slate-600 uppercase tracking-widest mb-1">{premiumLocales.executiveBrief.ui.lastUpdate}</div>
+            <div className="text-[10px] text-slate-400 font-black font-mono">{lastRefresh.toLocaleTimeString('uk-UA')}</div>
           </div>
-          <button
-            onClick={() => setIsAutoRefresh(!isAutoRefresh)}
-            className={cn(
-              "p-2.5 rounded-xl border transition-all",
-              isAutoRefresh
-                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
-                : "bg-white/5 border-white/10 text-slate-400"
-            )}
-            title={isAutoRefresh ? premiumLocales.executiveBrief.ui.autoRefreshOn : premiumLocales.executiveBrief.ui.autoRefreshOff}
-          >
-            {isAutoRefresh ? <Play size={16} /> : <Pause size={16} />}
-          </button>
-          <button
-            onClick={handleRefresh}
-            disabled={isLoading}
-            title={premiumLocales.executiveBrief.ui.refresh}
-            className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white transition-all disabled:opacity-50"
-          >
-            <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
-          </button>
-          <button title={premiumLocales.executiveBrief.ui.share} className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white transition-all">
-            <Share2 size={16} />
-          </button>
-          <button className="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl text-[10px] font-black text-white uppercase tracking-widest shadow-lg hover:scale-105 transition-all flex items-center gap-2">
-            <Download size={14} />
-            {premiumLocales.executiveBrief.ui.exportPdf}
-          </button>
+
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsAutoRefresh(!isAutoRefresh)}
+              className={cn(
+                "p-4 rounded-2xl border transition-all shadow-xl",
+                isAutoRefresh
+                  ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                  : "bg-white/5 border-white/10 text-slate-500"
+              )}
+            >
+              {isAutoRefresh ? <Play size={20} /> : <Pause size={20} />}
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.05, rotate: 180 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={fetchBrief}
+              disabled={isLoading}
+              className="p-4 bg-slate-900 border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl disabled:opacity-50"
+            >
+              <RefreshCw size={20} className={isLoading ? 'animate-spin' : ''} />
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-gradient-to-r from-amber-600 to-orange-600 rounded-[20px] text-[10px] font-black text-white uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:shadow-[0_0_40px_rgba(245,158,11,0.5)] transition-all flex items-center gap-3"
+            >
+              <Download size={16} />
+              {premiumLocales.executiveBrief.ui.exportPdf}
+            </motion.button>
+          </div>
         </div>
       </div>
 
-      {/* Стрічка ключових метрик */}
-      <div className="grid grid-cols-4 gap-4">
-        {isLoading && metrics.length === 0 ? (
-          Array(4).fill(0).map((_, i) => (
-            <div key={i} className="h-24 bg-slate-900/60 rounded-3xl animate-pulse border border-white/5" />
-          ))
-        ) : (
-          metrics.map((metric, i) => (
-            <motion.div
-              key={metric.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-slate-900/60 border border-white/5 rounded-3xl p-5 backdrop-blur-xl group hover:border-amber-500/20 transition-all"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{metric.label}</span>
-                {metric.change !== undefined && (
-                  <div className={cn(
-                    "flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full",
-                    metric.trend === 'up' ? "bg-emerald-500/10 text-emerald-400" :
-                      metric.trend === 'down' ? "bg-rose-500/10 text-rose-400" :
-                        "bg-slate-500/10 text-slate-400"
-                  )}>
-                    {metric.trend === 'up' ? <TrendingUp size={10} /> :
-                      metric.trend === 'down' ? <TrendingDown size={10} /> :
-                        <Activity size={10} />}
-                    {metric.change > 0 ? '+' : ''}{metric.change}%
-                  </div>
-                )}
+      {/* Vital Metrics Ribbon */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {(isLoading && metrics.length === 0 ? Array(4).fill(0) : metrics).map((metric, i) => (
+          <motion.div
+            key={typeof metric === 'number' ? i : metric.label}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="group"
+          >
+            {typeof metric === 'number' ? (
+              <div className="h-32 bg-slate-950/40 rounded-[32px] border border-white/5 animate-pulse" />
+            ) : (
+              <div className="p-8 bg-slate-950/40 border border-white/5 rounded-[40px] backdrop-blur-2xl shadow-xl hover:bg-slate-900/60 transition-all duration-500 relative overflow-hidden panel-3d">
+                <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="flex items-center justify-between mb-6">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] group-hover:text-amber-500 transition-colors">{metric.label}</span>
+                  {metric.change !== undefined && (
+                    <div className={cn(
+                      "flex items-center gap-2 text-[10px] font-black px-3 py-1 rounded-full border shadow-lg",
+                      metric.trend === 'up' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+                        metric.trend === 'down' ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
+                          "bg-slate-500/10 text-slate-400 border-slate-500/20"
+                    )}>
+                      {metric.trend === 'up' ? <TrendingUp size={12} /> : metric.trend === 'down' ? <TrendingDown size={12} /> : <Activity size={12} />}
+                      {metric.change > 0 ? '+' : ''}{metric.change}%
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-end justify-between relative z-10">
+                  <span className="text-4xl font-black text-white font-display tracking-tighter group-hover:scale-105 transition-transform origin-left duration-500">{metric.value}</span>
+                  {metric.sparkline && (
+                    <div className="flex items-end gap-1.5 h-10 pr-2">
+                      {metric.sparkline.map((v, j) => (
+                        <motion.div
+                          key={j}
+                          initial={{ height: 0 }}
+                          animate={{ height: `${(v / Math.max(...metric.sparkline!)) * 100}%` }}
+                          className={cn(
+                            "w-2 rounded-full transition-all duration-700",
+                            metric.trend === 'up' ? "bg-emerald-500" : metric.trend === 'down' ? "bg-rose-500" : "bg-slate-500"
+                          )}
+                          style={{ opacity: 0.2 + (j / metric.sparkline!.length) * 0.8 }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex items-end justify-between">
-                <span className="text-3xl font-black text-white">{metric.value}</span>
-                {metric.sparkline && (
-                  <div className="flex items-end gap-0.5 h-8">
-                    {metric.sparkline.map((v, j) => (
-                      <div
-                        key={j}
-                        className={cn(
-                          "w-1.5 rounded-full transition-all",
-                          metric.trend === 'up' ? "bg-emerald-500" :
-                            metric.trend === 'down' ? "bg-rose-500" : "bg-slate-500"
-                        )}
-                        style={{ height: `${(v / Math.max(...metric.sparkline!)) * 100}%`, opacity: 0.3 + (j / metric.sparkline!.length) * 0.7 }}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          ))
-        )}
+            )}
+          </motion.div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-12 gap-6 flex-1">
-        {/* Основний контент брифінгу */}
-        <div className="col-span-8 space-y-4">
-          {isLoading && sections.length === 0 ? (
-            Array(3).fill(0).map((_, i) => (
-              <div key={i} className="h-32 bg-slate-900/60 rounded-[32px] animate-pulse border border-white/5" />
-            ))
-          ) : (
-            sections.map((section) => (
-              <motion.div
-                key={section.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={cn(
-                  "bg-slate-900/60 border rounded-[32px] overflow-hidden backdrop-blur-xl transition-all",
-                  section.priority === 'critical' ? "border-rose-500/20" :
-                    section.priority === 'high' ? "border-amber-500/20" :
-                      "border-white/5"
-                )}
-              >
-                {/* Заголовок секції */}
-                <button
-                  onClick={() => toggleSection(section.id)}
-                  title={section.title}
-                  className="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-black text-white">{section.title}</span>
-                    <span className={cn(
-                      "text-[9px] font-black px-2 py-0.5 rounded uppercase",
-                      section.priority === 'critical' ? "bg-rose-500/20 text-rose-400" :
-                        section.priority === 'high' ? "bg-amber-500/20 text-amber-400" :
-                          "bg-slate-500/20 text-slate-400"
-                    )}>
-                      {section.items.length} {premiumLocales.executiveBrief.ui.itemsCount}
-                    </span>
+      <div className="grid grid-cols-12 gap-10 flex-1">
+
+        {/* Core Brief Feed */}
+        <div className="col-span-12 xl:col-span-8 flex flex-col gap-10">
+
+          {/* AI Synthesis Hub */}
+          <TacticalCard variant="holographic" title="NEURAL_SYNTHESIS_REPORT" className="p-10 bg-slate-950/60 shadow-2xl relative overflow-hidden group">
+            <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03] pointer-events-none" />
+            <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
+              <div className="relative group/orb shrink-0">
+                <div className="absolute inset-0 bg-amber-500/20 blur-[100px] rounded-full scale-150 group-hover/orb:scale-175 transition-all duration-1000" />
+                <CyberOrb size={200} color="#f59e0b" density={0.8} />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Sparkles size={40} className="text-amber-400 animate-pulse drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
+                </div>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <div className="flex items-center gap-4 mb-6 justify-center md:justify-start">
+                  <div className="p-3 bg-amber-500/10 rounded-2xl border border-amber-500/20 text-amber-400">
+                    <Brain size={24} />
                   </div>
-                  {expandedSections.includes(section.id) ? (
-                    <ChevronDown size={18} className="text-slate-500" />
-                  ) : (
-                    <ChevronRight size={18} className="text-slate-500" />
-                  )}
-                </button>
+                  <span className="text-[12px] font-black text-white uppercase tracking-[0.4em] font-display">{premiumLocales.executiveBrief.ui.aiSummary}</span>
+                </div>
+                <p className="text-lg md:text-xl text-amber-100/80 leading-relaxed font-serif italic mb-8 drop-shadow-sm">
+                  {(() => {
+                    if (isLoading && !summary) return 'Синтез даних у реальному часі...';
+                    const txt = summary || premiumLocales.executiveBrief.data.summary.replace('{alerts}', '2').replace('{opportunities}', '4');
+                    const parts = txt.split('{status}');
+                    if (parts.length > 1) {
+                      return <>{parts[0]}<span className="text-emerald-400 font-bold">{premiumLocales.executiveBrief.data.statusPositive}</span>{parts[1]}</>;
+                    }
+                    return txt;
+                  })()}
+                </p>
+                <div className="flex flex-wrap items-center gap-4 justify-center md:justify-start">
+                  <button className="px-8 py-3 bg-amber-500/20 border border-amber-500/30 rounded-2xl text-[10px] font-black text-amber-400 uppercase tracking-widest hover:bg-amber-500/30 transition-all flex items-center gap-3 shadow-xl">
+                    <Brain size={16} />
+                    {premiumLocales.executiveBrief.ui.askAi}
+                  </button>
+                  <div className="flex items-center gap-3 px-4 py-2 bg-white/5 rounded-2xl border border-white/5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Decision Confidence: 98.4%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </TacticalCard>
 
-                {/* Елементи секції */}
-                <AnimatePresence>
-                  {expandedSections.includes(section.id) && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden"
+          {/* Detailed Intelligence Sections */}
+          <div className="flex flex-col gap-8">
+            {(isLoading && sections.length === 0 ? Array(3).fill(0) : sections).map((section, idx) => (
+              <motion.div
+                key={typeof section === 'number' ? idx : section.id}
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 + idx * 0.1 }}
+                className="group"
+              >
+                {typeof section === 'number' ? (
+                  <div className="h-48 bg-slate-950/40 rounded-[48px] border border-white/5 animate-pulse" />
+                ) : (
+                  <div className={cn(
+                    "bg-slate-950/40 border rounded-[48px] overflow-hidden backdrop-blur-3xl shadow-2xl transition-all duration-700",
+                    section.priority === 'critical' ? "border-rose-500/30 shadow-rose-500/5 bg-rose-500/5" :
+                      section.priority === 'high' ? "border-amber-500/30 shadow-amber-500/5 bg-amber-500/5" : "border-white/5"
+                  )}>
+                    {/* Header */}
+                    <button
+                      onClick={() => toggleSection(section.id)}
+                      className="w-full p-10 flex items-center justify-between hover:bg-white/5 transition-colors relative group"
                     >
-                      <div className="p-4 pt-0 space-y-3">
-                        {section.items.map((item) => (
-                          <motion.div
-                            key={item.id}
-                            className={cn(
-                              "p-4 bg-black/40 border border-white/5 rounded-2xl transition-all",
-                              expandedItems.includes(item.id) && "border-amber-500/20"
-                            )}
-                          >
-                            {/* Заголовок елементу */}
-                            <div
-                              className="flex items-start gap-4 cursor-pointer"
-                              onClick={() => toggleItem(item.id)}
-                            >
-                              <div className={cn(
-                                "p-2 rounded-xl shrink-0",
-                                item.type === 'alert' ? "bg-rose-500/10" :
-                                  item.type === 'opportunity' ? "bg-emerald-500/10" :
-                                    item.type === 'insight' ? "bg-cyan-500/10" :
-                                      item.type === 'action' ? "bg-amber-500/10" :
-                                        "bg-slate-500/10"
-                              )}>
-                                {item.type === 'alert' ? <AlertTriangle size={16} className="text-rose-500" /> :
-                                  item.type === 'opportunity' ? <TrendingUp size={16} className="text-emerald-500" /> :
-                                    item.type === 'insight' ? <Brain size={16} className="text-cyan-500" /> :
-                                      item.type === 'action' ? <CheckCircle size={16} className="text-amber-500" /> :
-                                        <Activity size={16} className="text-slate-500" />}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-xs font-black text-white">{item.title}</span>
-                                  {item.value && (
-                                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
-                                      {item.value}
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-[11px] text-slate-400">{item.summary}</p>
-                                {item.tags && (
-                                  <div className="flex items-center gap-2 mt-2">
-                                    {item.tags.map(tag => (
-                                      <span key={tag} className="text-[8px] text-slate-600 bg-slate-800 px-2 py-0.5 rounded">
-                                        #{tag}
-                                      </span>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-2 shrink-0">
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); toggleBookmark(item.id); }}
-                                  title={premiumLocales.executiveBrief.ui.bookmark}
-                                  className={cn(
-                                    "p-1.5 rounded-lg transition-colors",
-                                    bookmarkedItems.includes(item.id)
-                                      ? "bg-amber-500/20 text-amber-400"
-                                      : "bg-white/5 text-slate-500 hover:text-white"
-                                  )}
-                                >
-                                  <Bookmark size={12} fill={bookmarkedItems.includes(item.id) ? 'currentColor' : 'none'} />
-                                </button>
-                                <ChevronRight
-                                  size={14}
-                                  className={cn(
-                                    "text-slate-600 transition-transform",
-                                    expandedItems.includes(item.id) && "rotate-90"
-                                  )}
-                                />
-                              </div>
-                            </div>
+                      <div className="flex items-center gap-6">
+                        <div className={cn(
+                          "p-4 rounded-[20px] transition-all duration-500 group-hover:scale-110 shadow-xl",
+                          section.priority === 'critical' ? "bg-rose-500/20 text-rose-400 border border-rose-500/30" :
+                            section.priority === 'high' ? "bg-amber-500/20 text-amber-400 border border-amber-500/30" : "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                        )}>
+                          {section.priority === 'critical' ? <AlertTriangle size={24} className="animate-pulse" /> : section.priority === 'high' ? <TrendingUp size={24} /> : <Zap size={24} />}
+                        </div>
+                        <div className="text-left">
+                          <h3 className="text-xl font-black text-white uppercase tracking-tighter font-display mb-1">{section.title}</h3>
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{section.items.length} {premiumLocales.executiveBrief.ui.itemsCount}</span>
+                            <div className={cn("w-1.5 h-1.5 rounded-full", section.priority === 'critical' ? 'bg-rose-500' : section.priority === 'high' ? 'bg-amber-500' : 'bg-blue-500')} />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-3 bg-white/5 rounded-2xl border border-white/5 group-hover:bg-white/10 transition-all">
+                        {expandedSections.includes(section.id) ? <ChevronDown size={24} className="text-slate-400" /> : <ChevronRight size={24} className="text-slate-400" />}
+                      </div>
+                    </button>
 
-                            {/* Розгорнуті деталі */}
-                            <AnimatePresence>
-                              {expandedItems.includes(item.id) && item.detail && (
-                                <motion.div
-                                  initial={{ height: 0, opacity: 0 }}
-                                  animate={{ height: 'auto', opacity: 1 }}
-                                  exit={{ height: 0, opacity: 0 }}
-                                  className="overflow-hidden"
-                                >
-                                  <div className="mt-4 pt-4 border-t border-white/5">
-                                    <p className="text-[11px] text-slate-300 leading-relaxed mb-3">
-                                      {item.detail}
-                                    </p>
-                                    {item.impact && (
-                                      <div className="p-3 bg-amber-500/5 border border-amber-500/10 rounded-xl mb-3">
-                                        <div className="text-[9px] font-black text-amber-500 uppercase tracking-widest mb-1">{premiumLocales.executiveBrief.ui.impact}</div>
-                                        <div className="text-[11px] text-amber-300">{item.impact}</div>
-                                      </div>
-                                    )}
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex items-center gap-4">
-                                        {item.source && (
-                                          <span className="text-[9px] text-amber-500/70 flex items-center gap-1">
-                                            <Radio size={10} /> {item.source}
-                                          </span>
-                                        )}
-                                        {item.timestamp && (
-                                          <span className="text-[9px] text-slate-600 flex items-center gap-1">
-                                            <Clock size={10} /> {item.timestamp}
-                                          </span>
-                                        )}
-                                      </div>
-                                      {item.actionable && (
-                                        <button className="px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-[9px] font-black text-amber-400 uppercase tracking-widest hover:bg-amber-500/20 transition-colors flex items-center gap-2">
-                                          {premiumLocales.executiveBrief.ui.takeAction} <ArrowUpRight size={10} />
-                                        </button>
+                    {/* Content */}
+                    <AnimatePresence>
+                      {expandedSections.includes(section.id) && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="px-10 pb-10 space-y-6">
+                            {section.items.map((item) => (
+                              <motion.div
+                                key={item.id}
+                                layout
+                                className={cn(
+                                  "p-8 bg-slate-900/40 border rounded-[32px] transition-all duration-500 group/item relative overflow-hidden",
+                                  expandedItems.includes(item.id) ? "border-amber-500/40 bg-slate-900/80 shadow-2xl scale-[1.02]" : "border-white/5 hover:border-white/20"
+                                )}
+                              >
+                                <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
+                                <div className="flex items-start gap-8 cursor-pointer relative z-10" onClick={() => toggleItem(item.id)}>
+                                  <div className={cn(
+                                    "p-4 rounded-2xl shrink-0 shadow-lg transition-transform group-hover/item:scale-110 duration-500",
+                                    item.type === 'alert' ? "bg-rose-500/20 text-rose-400 border border-rose-500/30" :
+                                      item.type === 'opportunity' ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" :
+                                        item.type === 'insight' ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30" :
+                                          item.type === 'action' ? "bg-amber-500/20 text-amber-400 border border-amber-500/30" :
+                                            "bg-slate-500/20 text-slate-400 border border-white/10"
+                                  )}>
+                                    {item.type === 'alert' ? <AlertTriangle size={24} className="animate-pulse" /> :
+                                      item.type === 'opportunity' ? <TrendingUp size={24} /> :
+                                        item.type === 'insight' ? <Brain size={24} /> :
+                                          item.type === 'action' ? <CheckCircle size={24} /> : <Activity size={24} />}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex flex-wrap items-center gap-4 mb-3">
+                                      <span className="text-xl font-black text-white uppercase tracking-tighter group-hover/item:text-amber-400 transition-colors">{item.title}</span>
+                                      {item.value && (
+                                        <span className="text-[11px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-4 py-1 rounded-full shadow-lg">
+                                          {item.value}
+                                        </span>
                                       )}
+                                      <div className="px-2 py-0.5 bg-slate-950/60 rounded border border-white/5 text-[8px] font-black text-slate-600 uppercase tracking-widest font-mono">{TYPE_LABELS[item.type]}</div>
+                                    </div>
+                                    <p className="text-sm text-slate-400 leading-relaxed font-medium mb-4 max-w-3xl">{item.summary}</p>
+                                    <div className="flex flex-wrap items-center gap-3">
+                                      {item.tags?.map(tag => (
+                                        <div key={tag} className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/5 text-[9px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors">
+                                          <Hexagon size={10} className="text-slate-600" />
+                                          {tag}
+                                        </div>
+                                      ))}
                                     </div>
                                   </div>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                                  <div className="flex flex-col items-center gap-4 shrink-0 justify-center">
+                                    <motion.button
+                                      whileHover={{ scale: 1.2 }}
+                                      whileTap={{ scale: 0.8 }}
+                                      onClick={(e) => { e.stopPropagation(); toggleBookmark(item.id); }}
+                                      className={cn(
+                                        "p-3 rounded-2xl transition-all shadow-xl",
+                                        bookmarkedItems.includes(item.id)
+                                          ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
+                                          : "bg-white/5 text-slate-500 border border-white/10 hover:text-white"
+                                      )}
+                                    >
+                                      <Bookmark size={18} fill={bookmarkedItems.includes(item.id) ? 'currentColor' : 'none'} />
+                                    </motion.button>
+                                    <div className={cn("p-2 rounded-full transition-transform duration-500", expandedItems.includes(item.id) && "rotate-180 bg-amber-500/10 text-amber-500")}>
+                                      <ChevronDown size={20} className="text-slate-600" />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <AnimatePresence>
+                                  {expandedItems.includes(item.id) && item.detail && (
+                                    <motion.div
+                                      initial={{ height: 0, opacity: 0 }}
+                                      animate={{ height: 'auto', opacity: 1 }}
+                                      exit={{ height: 0, opacity: 0 }}
+                                      className="overflow-hidden relative z-10"
+                                    >
+                                      <div className="mt-8 pt-8 border-t border-white/5">
+                                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                                          <div className="lg:col-span-8">
+                                            <div className="flex items-center gap-3 mb-6">
+                                              <div className="w-6 h-px bg-amber-500/50" />
+                                              <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.4em]">Detailed Analysis</span>
+                                            </div>
+                                            <p className="text-base text-slate-300 leading-loose mb-8 font-medium">
+                                              {item.detail}
+                                            </p>
+                                            <div className="flex flex-wrap items-center gap-8">
+                                              {item.source && (
+                                                <span className="text-[10px] text-amber-500/70 font-black uppercase tracking-widest flex items-center gap-3">
+                                                  <Radio size={14} className="animate-pulse" /> СИГНАЛ: <span className="text-white">{item.source}</span>
+                                                </span>
+                                              )}
+                                              {item.timestamp && (
+                                                <span className="text-[10px] text-slate-600 font-black uppercase tracking-widest flex items-center gap-2">
+                                                  <Clock size={14} /> {item.timestamp}
+                                                </span>
+                                              )}
+                                            </div>
+                                          </div>
+                                          <div className="lg:col-span-4 flex flex-col gap-6">
+                                            {item.impact && (
+                                              <div className="p-6 bg-slate-950 border border-amber-500/20 rounded-3xl shadow-inner relative overflow-hidden group/impact">
+                                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover/impact:opacity-30 transition-opacity">
+                                                  <Target size={40} />
+                                                </div>
+                                                <div className="text-[9px] font-black text-amber-500 uppercase tracking-[0.3em] mb-3">{premiumLocales.executiveBrief.ui.impact}</div>
+                                                <div className="text-sm text-amber-200/80 font-serif italic leading-relaxed">{item.impact}</div>
+                                              </div>
+                                            )}
+                                            {item.actionable && (
+                                              <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                className="w-full py-5 bg-gradient-to-r from-amber-600 to-orange-600 rounded-[24px] text-[11px] font-black text-white uppercase tracking-widest hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-3"
+                                              >
+                                                {premiumLocales.executiveBrief.ui.takeAction} <ArrowUpRight size={18} />
+                                              </motion.button>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </motion.div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )}
               </motion.div>
-            ))
-          )}
+            ))}
+          </div>
         </div>
 
-        {/* Бічна панель */}
-        <div className="col-span-4 space-y-6">
-          {/* Графік активності */}
-          <div className="bg-slate-900/60 border border-white/5 rounded-[32px] p-6 backdrop-blur-xl">
-            <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-              <Activity size={14} className="text-amber-500" />
-              {premiumLocales.executiveBrief.ui.activityToday}
-            </h3>
-            <ResponsiveContainer width="100%" height={150}>
-              <AreaChart data={ACTIVITY_DATA}>
-                <defs>
-                  <linearGradient id="activityGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-                <XAxis dataKey="time" fontSize={8} tick={{ fill: '#64748b' }} axisLine={false} />
-                <YAxis fontSize={8} tick={{ fill: '#64748b' }} axisLine={false} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#020617',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '12px',
-                    fontSize: '10px'
-                  }}
-                />
-                <Area type="monotone" dataKey="value" stroke="#f59e0b" fill="url(#activityGradient)" strokeWidth={2} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+        {/* Intelligence Sidebar */}
+        <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
 
-          {/* Закладки */}
-          <div className="bg-slate-900/60 border border-white/5 rounded-[32px] p-6 backdrop-blur-xl">
-            <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-              <Bookmark size={14} className="text-amber-500" />
-              {premiumLocales.executiveBrief.ui.bookmarks} ({bookmarkedItems.length})
-            </h3>
+          {/* Activity Spectrum */}
+          <TacticalCard variant="holographic" title="DAILY_ACTIVITY_SPECTRUM" className="p-8 bg-slate-950/40 border-white/5 shadow-2xl overflow-hidden group">
+            <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
+            <div className="flex items-center gap-4 mb-8">
+              <div className="p-3 bg-amber-500/10 rounded-2xl border border-amber-500/20 text-amber-400">
+                <Activity size={20} />
+              </div>
+              <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.4em]">{premiumLocales.executiveBrief.ui.activityToday}</span>
+            </div>
+            <div className="h-[220px] w-full mt-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={ACTIVITY_DATA}>
+                  <defs>
+                    <linearGradient id="activityGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                  <XAxis
+                    dataKey="time"
+                    fontSize={8}
+                    tick={{ fill: '#475569' }}
+                    axisLine={false}
+                    tickLine={false}
+                    dy={10}
+                  />
+                  <YAxis
+                    fontSize={8}
+                    tick={{ fill: '#475569' }}
+                    axisLine={false}
+                    tickLine={false}
+                    dx={-10}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#020617',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '20px',
+                      fontSize: '10px',
+                      boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+                      backdropFilter: 'blur(20px)'
+                    }}
+                    itemStyle={{ color: '#f59e0b', fontWeight: 'bold' }}
+                  />
+                  <Area type="monotone" dataKey="value" stroke="#f59e0b" fill="url(#activityGradient)" strokeWidth={4} animationDuration={2000} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </TacticalCard>
+
+          {/* Sovereign Bookmarks */}
+          <div className="p-8 bg-slate-950/60 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 text-indigo-400">
+                  <Bookmark size={20} />
+                </div>
+                <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.4em]">{premiumLocales.executiveBrief.ui.bookmarks}</span>
+              </div>
+              <div className="px-3 py-1 bg-slate-900 rounded-full text-[10px] font-black text-white">{bookmarkedItems.length}</div>
+            </div>
+
             {bookmarkedItems.length > 0 ? (
-              <div className="space-y-2">
+              <div className="flex flex-col gap-4">
                 {sections.flatMap(s => s.items).filter(i => bookmarkedItems.includes(i.id)).map(item => (
-                  <div key={item.id} className="p-3 bg-black/40 border border-white/5 rounded-xl">
-                    <div className="text-[10px] font-bold text-white line-clamp-1">{item.title}</div>
-                    <div className="text-[9px] text-slate-500">{TYPE_LABELS[item.type]}</div>
-                  </div>
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="p-5 bg-slate-950/60 border border-white/5 rounded-3xl hover:border-indigo-500/40 hover:bg-slate-900 transition-all duration-500 cursor-pointer shadow-lg group/bm"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[11px] font-black text-white uppercase tracking-tighter line-clamp-1 group-hover/bm:text-indigo-400 transition-colors">{item.title}</span>
+                      <ArrowUpRight size={14} className="text-slate-700 group-hover/bm:text-indigo-400 group-hover/bm:translate-x-1 transition-all" />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="px-2 py-0.5 bg-slate-900 rounded text-[7px] font-black text-slate-600 uppercase tracking-widest">{TYPE_LABELS[item.type]}</div>
+                      <span className="text-[8px] text-slate-700 font-mono">{item.timestamp}</span>
+                    </div>
+                  </motion.div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <Bookmark size={24} className="text-slate-700 mx-auto mb-2" />
-                <p className="text-[10px] text-slate-600">{premiumLocales.executiveBrief.ui.noBookmarks}</p>
+              <div className="text-center py-16 bg-slate-900/30 rounded-[40px] border border-dashed border-white/5 opacity-40">
+                <Bookmark size={40} className="text-slate-600 mx-auto mb-4" />
+                <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{premiumLocales.executiveBrief.ui.noBookmarks}</p>
               </div>
             )}
           </div>
 
-          {/* Швидкі дії */}
-          <div className="bg-slate-900/60 border border-white/5 rounded-[32px] p-6 backdrop-blur-xl">
-            <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-              <Zap size={14} className="text-amber-500" />
-              {premiumLocales.executiveBrief.ui.quickActions}
-            </h3>
-            <div className="space-y-2">
+          {/* Tactical Quick Actions */}
+          <div className="p-8 bg-slate-950/60 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="p-3 bg-cyan-500/10 rounded-2xl border border-cyan-500/20 text-cyan-400">
+                <Zap size={20} />
+              </div>
+              <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.4em]">{premiumLocales.executiveBrief.ui.quickActions}</span>
+            </div>
+            <div className="grid grid-cols-1 gap-3">
               {[
-                { icon: Bell, label: premiumLocales.executiveBrief.sidebar.configureAlerts },
-                { icon: Target, label: premiumLocales.executiveBrief.sidebar.setGoals },
-                { icon: FileText, label: premiumLocales.executiveBrief.sidebar.generateReport },
-                { icon: Share2, label: premiumLocales.executiveBrief.sidebar.shareBrief },
+                { icon: Bell, label: premiumLocales.executiveBrief.sidebar.configureAlerts, color: 'hover:text-amber-500 hover:border-amber-500/40' },
+                { icon: Target, label: premiumLocales.executiveBrief.sidebar.setGoals, color: 'hover:text-emerald-500 hover:border-emerald-500/40' },
+                { icon: FileText, label: premiumLocales.executiveBrief.sidebar.generateReport, color: 'hover:text-blue-500 hover:border-blue-500/40' },
+                { icon: Share2, label: premiumLocales.executiveBrief.sidebar.shareBrief, color: 'hover:text-purple-500 hover:border-purple-500/40' },
               ].map((action, i) => (
-                <button
+                <motion.button
                   key={i}
-                  title={action.label}
-                  className="w-full p-3 bg-black/40 border border-white/5 rounded-xl hover:border-amber-500/30 transition-all flex items-center gap-3 group text-left"
+                  whileHover={{ x: 10 }}
+                  className={cn(
+                    "w-full p-5 bg-slate-950/60 border border-white/5 rounded-[24px] transition-all duration-500 flex items-center gap-5 group shadow-lg text-left",
+                    action.color
+                  )}
                 >
-                  <action.icon size={14} className="text-slate-500 group-hover:text-amber-500" />
-                  <span className="text-[10px] font-bold text-slate-400 group-hover:text-white">{action.label}</span>
-                </button>
+                  <div className="p-3 bg-slate-900 border border-white/5 rounded-xl group-hover:bg-current group-hover:bg-opacity-10 transition-colors">
+                    <action.icon size={18} className="transition-transform group-hover:scale-110" />
+                  </div>
+                  <span className="text-[11px] font-black text-slate-400 group-hover:text-white uppercase tracking-widest">{action.label}</span>
+                </motion.button>
               ))}
             </div>
           </div>
 
-          {/* AI Підсумок */}
-          <div className="bg-gradient-to-br from-amber-900/40 to-orange-900/40 border border-amber-500/20 rounded-[32px] p-6 backdrop-blur-xl">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-amber-500/20 rounded-xl">
-                <Sparkles size={18} className="text-amber-400" />
-              </div>
-              <div className="text-xs font-black text-white uppercase">{premiumLocales.executiveBrief.ui.aiSummary}</div>
+          {/* Global Connectivity Hub */}
+          <div className="p-8 bg-gradient-to-br from-indigo-900/40 to-blue-900/40 border border-indigo-500/20 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-30 transition-all duration-1000 scale-150">
+              <Globe size={120} className="animate-spin-slow rotate-12" />
             </div>
-            <p className="text-[11px] text-amber-200/80 leading-relaxed mb-4">
-              {(() => {
-                if (isLoading && !summary) return 'Завантаження резюме...';
-                const txt = summary || premiumLocales.executiveBrief.data.summary.replace('{alerts}', '2').replace('{opportunities}', '4');
-                const parts = txt.split('{status}');
-                if (parts.length > 1) {
-                  return <>{parts[0]}<span className="text-emerald-400 font-bold">{premiumLocales.executiveBrief.data.statusPositive}</span>{parts[1]}</>;
-                }
-                return txt;
-              })()}
-            </p>
-            <button className="w-full py-3 bg-amber-500/20 border border-amber-500/30 rounded-xl text-[10px] font-black text-amber-400 uppercase tracking-widest hover:bg-amber-500/30 transition-colors flex items-center justify-center gap-2">
-              <Brain size={14} />
-              {premiumLocales.executiveBrief.ui.askAi}
-            </button>
+            <div className="relative z-10">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 bg-indigo-500/20 rounded-2xl border border-indigo-500/30 text-indigo-400">
+                  <Globe size={20} />
+                </div>
+                <span className="text-[11px] font-black text-white uppercase tracking-[0.4em]">Global Signal Nexus</span>
+              </div>
+              <p className="text-xs text-indigo-100/70 leading-relaxed font-medium mb-8">
+                Вузол Омни-синхронізації виявив нові ринкові патерни в регіоні EMEA. Бажаєте провести глибоке сканування?
+              </p>
+              <button className="w-full py-5 bg-white text-indigo-950 rounded-[28px] text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-slate-100 transition-all group/btn flex items-center justify-center gap-3">
+                <Activity size={16} />
+                ІНІЦІЮВАТИ_СКАНУВАННЯ
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Sovereign Mandate Quote */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="mt-20 p-20 rounded-[64px] bg-slate-950/60 border border-white/5 relative overflow-hidden group shadow-[0_40px_100px_rgba(0,0,0,0.5)]"
+      >
+        <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
+        <div className="relative z-10 text-center flex flex-col items-center">
+          <div className="p-6 bg-slate-900 border border-white/5 rounded-[32px] mb-10 shadow-2xl panel-3d">
+            <Shield className="text-amber-500 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" size={48} />
+          </div>
+          <p className="text-2xl md:text-3xl text-slate-300 font-serif italic leading-relaxed max-w-5xl mx-auto mb-12 group-hover:text-white transition-colors duration-1000">
+            "Стратегія без даних — це галюцинація. Дані без стратегії — це шум. Інтелект Predator — це міст між хаосом ринку та впевненістю вашого рішення."
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-10 pt-10 border-t border-white/5 w-full">
+            <div className="flex items-center gap-4 text-slate-500 hover:text-amber-500 transition-all">
+              <Layers size={18} />
+              <span className="text-[11px] font-black uppercase tracking-[0.5em]">MULTILAYER_INTELLIGENCE</span>
+            </div>
+            <div className="flex items-center gap-4 text-slate-500 hover:text-indigo-500 transition-all">
+              <Shield size={18} />
+              <span className="text-[11px] font-black uppercase tracking-[0.5em]">SOVEREIGN_ENFORCEMENT</span>
+            </div>
+            <div className="flex items-center gap-4 text-slate-500 hover:text-cyan-500 transition-all">
+              <Globe size={18} />
+              <span className="text-[11px] font-black uppercase tracking-[0.5em]">OMNIPRESENT_NEXUS</span>
+            </div>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };

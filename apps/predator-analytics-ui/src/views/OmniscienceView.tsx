@@ -1,38 +1,40 @@
-import { OrbitControls, PerspectiveCamera, Stars } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
-import { AnimatePresence, motion } from 'framer-motion';
+/**
+ * 🌌 Hyper-Omniscience Nexus | v55 Premium Matrix
+ * PREDATOR Omniscience - Центр всеосяжного контролю та нейронного управління.
+ * 
+ * Включає:
+ * - 🪐 Нейронне ядро (Neural Core)
+ * - 🤖 Рада Агентів (Agent Council)
+ * - 📊 Матриця знань (Knowledge Matrix)
+ * - 🛡️ Тіньовий Контроль (Shadow Control)
+ * - 🧬 Революція AZR (AZR Evolution)
+ * 
+ * © 2026 PREDATOR Analytics - Повна українізація v55
+ */
+
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Activity,
-    Brain,
-    BrainCircuit,
-    CheckCircle2,
-    Clock,
-    Cpu,
-    Database,
-    Gauge,
-    GitBranch,
-    Layers,
-    Loader2,
-    Network,
-    Radio,
-    RefreshCw,
-    Search,
-    Send,
-    Shield,
-    Sparkles,
-    Target,
-    Terminal,
-    TrendingUp, Users,
-    XCircle,
-    Zap
+  OrbitControls, PerspectiveCamera, Stars
+} from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import {
+  Activity, Brain, BrainCircuit, CheckCircle2, Clock, Cpu,
+  Database, Gauge, GitBranch, Layers, Loader2, Network, Radio,
+  RefreshCw, Search, Send, Shield, Sparkles, Target, Terminal,
+  TrendingUp, Users, XCircle, Zap, Globe, Hexagon, Box, Boxes,
+  ChevronRight, ArrowUpRight, Power, Settings, Eye, Workflow, BarChart3,
+  Flame, Monitor, ShieldAlert, ZapOff, RadioReceiver, Binary
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { CyberGrid } from '../components/CyberGrid';
-import { HoloContainer } from '../components/HoloContainer';
-import { LLMCouncilPanel } from '../components/LLMCouncilPanel';
-import { NeuralCore } from '../components/NeuralCore';
+
+import { useAppStore } from '../store/useAppStore';
+import { useAgents } from '../context/AgentContext';
+import { api } from '../services/api';
+import { cn } from '../utils/cn';
+import { premiumLocales } from '../locales/uk/premium';
 import { TacticalCard } from '../components/TacticalCard';
-import { TripleAgentPanel } from '../components/TripleAgentPanel';
+import { CyberOrb } from '../components/CyberOrb';
+import { HoloContainer } from '../components/HoloContainer';
 import { ViewHeader } from '../components/ViewHeader';
 import { TelegramIntelligencePanel } from '../components/premium/TelegramIntelligencePanel';
 import AZREvolutionTimeline from '../components/super/AZREvolutionTimeline';
@@ -40,13 +42,12 @@ import { CortexVisualizer } from '../components/super/CortexVisualizer';
 import SovereignAZRBrain from '../components/super/SovereignAZRBrain';
 import SovereignETLMonitor from '../components/super/SovereignETLMonitor';
 import { NeuralPulse } from '../components/ui/NeuralPulse';
-import { useAgents } from '../context/AgentContext';
-import { premiumLocales } from '../locales/uk/premium';
-import { api } from '../services/api';
-import { OmniscienceConnectionMode, OmniscienceRealtimeClient } from '../services/omniscience.service';
-import '../styles/OmniscienceView.css';
-import { cn } from '../utils/cn';
+import { NeuralCore } from '../components/NeuralCore';
+import { LLMCouncilPanel } from '../components/LLMCouncilPanel';
+import { TripleAgentPanel } from '../components/TripleAgentPanel';
+import { OmniscienceRealtimeClient } from '../services/omniscience.service';
 
+// === ТИПИ ТА ІНТЕРФЕЙСИ ===
 interface SystemMetrics {
   health: number;
   activeAgents: number;
@@ -59,1141 +60,495 @@ interface SystemMetrics {
   networkActivity: number;
 }
 
-interface V45Status {
-  automl?: {
-    is_running: boolean;
-    model_version: string;
-    accuracy: number;
-  };
-  flower?: {
-    superlink_connected: boolean;
-    connected_clients: number;
-  };
-  data_pipeline?: {
-    etl_running: boolean;
-    records_synced: number;
-  };
-  opensearch?: {
-    opensearch_docs: number;
-  };
-  qdrant?: {
-    qdrant_vectors: number;
-  };
-  health_score?: number;
-  advisor_note?: string;
-  is_lockdown?: boolean;
-  training?: {
-    status: string;
-    message: string;
-    progress: number;
-    timestamp: string;
-  };
-}
-
 interface AgentStatus {
   id: string;
   name: string;
   status: 'active' | 'idle' | 'thinking' | 'error';
   task: string;
   confidence: number;
-  lastAction: string;
 }
 
-interface KnowledgeNode {
-  id: string;
-  category: string;
-  connections: number;
-  strength: number;
-  lastUpdated: Date;
-}
+// === ДОПОМІЖНІ КОМПОНЕНТИ ===
 
-interface MetricCardProps {
-  icon: React.ElementType;
+const MetricCard: React.FC<{
+  icon: any;
   label: string;
   value: number;
   unit: string;
-  color: 'cyan' | 'blue' | 'purple' | 'green';
-}
-
-const MetricCard: React.FC<MetricCardProps> = ({ icon: Icon, label, value, unit, color }) => {
-  const styleMap: Record<MetricCardProps['color'], { text: string; bg: string; border: string; bar: string; glow: string }> = {
-    cyan: {
-      text: 'text-cyan-400',
-      bg: 'bg-gradient-to-br from-cyan-950/40 to-slate-950/80',
-      border: 'border-cyan-500/30 group-hover:border-cyan-400/60',
-      bar: 'from-cyan-400 via-blue-500 to-cyan-400',
-      glow: 'shadow-[0_0_20px_rgba(34,211,238,0.1)] group-hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]'
-    },
-    blue: {
-      text: 'text-blue-400',
-      bg: 'bg-gradient-to-br from-blue-950/40 to-slate-950/80',
-      border: 'border-blue-500/30 group-hover:border-blue-400/60',
-      bar: 'from-blue-400 via-indigo-500 to-blue-400',
-      glow: 'shadow-[0_0_20px_rgba(59,130,246,0.1)] group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]'
-    },
-    purple: {
-      text: 'text-purple-400',
-      bg: 'bg-gradient-to-br from-purple-950/40 to-slate-950/80',
-      border: 'border-purple-500/30 group-hover:border-purple-400/60',
-      bar: 'from-purple-400 via-pink-500 to-purple-400',
-      glow: 'shadow-[0_0_20px_rgba(168,85,247,0.1)] group-hover:shadow-[0_0_30px_rgba(168,85,247,0.2)]'
-    },
-    green: {
-      text: 'text-emerald-400',
-      bg: 'bg-gradient-to-br from-emerald-950/40 to-slate-950/80',
-      border: 'border-emerald-500/30 group-hover:border-emerald-400/60',
-      bar: 'from-emerald-400 via-teal-500 to-emerald-400',
-      glow: 'shadow-[0_0_20px_rgba(52,211,153,0.1)] group-hover:shadow-[0_0_30px_rgba(52,211,153,0.2)]'
-    },
-  };
-
-  const styles = styleMap[color];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5, scale: 1.02 }}
-      className="relative group w-full"
-    >
-        {/* Animated Border Gradient */}
-        <div className={cn(
-            "absolute -inset-[1px] rounded-[33px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm bg-gradient-to-r",
-            styles.bar
-        )} />
-
-        <div className={cn(
-            "relative p-6 rounded-[32px] backdrop-blur-xl transition-all duration-500 overflow-hidden border",
-            styles.bg,
-            styles.border,
-            styles.glow
-        )}>
-            {/* Background Grid Pattern */}
-            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-
-            <div className="flex items-center gap-6 relative z-10">
-                <div className={cn(
-                    "p-4 rounded-2xl bg-black/40 border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-500",
-                    styles.text
-                )}>
-                    <Icon size={28} className="drop-shadow-[0_0_8px_currentColor]" />
-                </div>
-                <div className="flex-1">
-                    <div className="flex justify-between items-end mb-2">
-                         <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] group-hover:text-slate-300 transition-colors">{label}</div>
-                         {value > 90 && <Zap size={12} className={cn("animate-pulse", styles.text)} />}
-                    </div>
-
-                    <div className={cn(
-                        "text-4xl font-black font-display tracking-tighter leading-none mb-4 drop-shadow-2xl",
-                        styles.text
-                    )}>
-                        {Math.round(value)}<span className="text-lg opacity-50 ml-1 font-mono align-top">{unit}</span>
-                    </div>
-
-                    <div className="h-2 bg-slate-900/80 rounded-full overflow-hidden border border-white/5 relative">
-                        {/* Shimmer Effect on Bar */}
-                        <motion.div
-                            initial={{ x: '-100%' }}
-                            animate={{ x: '200%' }}
-                            transition={{ repeat: Infinity, duration: 2, ease: "linear", repeatDelay: 1 }}
-                            className="absolute inset-0 bg-white/20 z-20 w-1/2 blur-md"
-                        />
-                        <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${value}%` }}
-                            transition={{ duration: 1.5, ease: "easeOut" }}
-                            className={cn("h-full bg-gradient-to-r shadow-[0_0_10px_currentColor]", styles.bar)}
-                        />
-                    </div>
-                </div>
-            </div>
-
-            {/* Corner Accent */}
-            <div className={cn("absolute top-0 right-0 p-4 opacity-20", styles.text)}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M0 0H20V45" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-            </div>
-        </div>
-    </motion.div>
-  );
-};
-
-const AgentCouncilView: React.FC<{ agents: AgentStatus[] }> = ({ agents }) => {
-  return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {agents.map((agent, idx) => (
-          <motion.div
-            key={agent.id}
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: idx * 0.1, type: "spring", stiffness: 100 }}
-            className="group relative"
-          >
-            {/* Holographic Projection Base */}
-            <div className="absolute -inset-1 bg-gradient-to-b from-transparent via-cyan-500/10 to-transparent blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-            <div className="p-8 rounded-[40px] bg-black/40 border border-white/5 backdrop-blur-3xl panel-3d shadow-2xl overflow-hidden relative transition-all duration-500 hover:border-white/10">
-               {/* Background Glow & Noise */}
-               <div className={cn(
-                   "absolute -top-20 -right-20 w-60 h-60 blur-[100px] opacity-10 transition-all duration-1000",
-                   agent.status === 'active' ? 'bg-emerald-500' :
-                   agent.status === 'thinking' ? 'bg-cyan-500' :
-                   agent.status === 'idle' ? 'bg-slate-500' : 'bg-rose-500'
-               )} />
-
-               {/* Digital Scanline */}
-               <div className="absolute inset-0 bg-[url('/scanline.png')] opacity-[0.02] mix-blend-overlay pointer-events-none" />
-
-              <div className="flex items-start justify-between mb-8 relative z-10">
-                <div className="relative">
-                    <div className={cn(
-                        "w-20 h-20 rounded-[28px] flex items-center justify-center border transition-all duration-500 relative overflow-hidden group-hover:scale-105",
-                        agent.status === 'active' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.15)]' :
-                        agent.status === 'thinking' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_30px_rgba(6,182,212,0.15)]' :
-                        agent.status === 'idle' ? 'bg-slate-800/40 border-slate-700/30 text-slate-500' :
-                        'bg-rose-500/10 border-rose-500/30 text-rose-400 shadow-[0_0_30px_rgba(244,63,94,0.15)]'
-                    )}>
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <Brain size={36} className={cn("icon-3d transition-transform duration-700", agent.status === 'thinking' && "animate-pulse")} />
-                    </div>
-                    {/* Pulsing Status Dot */}
-                    <div className={cn(
-                        "absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-4 border-black flex items-center justify-center",
-                        agent.status === 'active' ? 'bg-emerald-500' :
-                        agent.status === 'thinking' ? 'bg-cyan-500' :
-                        agent.status === 'idle' ? 'bg-slate-500' : 'bg-rose-500'
-                    )}>
-                        {agent.status === 'thinking' && <Loader2 size={10} className="text-black animate-spin" />}
-                    </div>
-                </div>
-
-                <div className={cn(
-                    "px-4 py-1.5 rounded-full text-[9px] font-black tracking-[0.2em] uppercase border backdrop-blur-xl transition-colors duration-300",
-                    agent.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-lg shadow-emerald-500/5' :
-                    agent.status === 'thinking' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20 shadow-lg shadow-cyan-500/5' :
-                    agent.status === 'idle' ? 'bg-slate-800/40 text-slate-400 border-slate-700/20' :
-                    'bg-rose-500/10 text-rose-400 border-rose-500/20 shadow-lg shadow-rose-500/5'
-                )}>
-                  {agent.status === 'active' ? premiumLocales.omniscience.agentCouncil.status.active :
-                   agent.status === 'thinking' ? premiumLocales.omniscience.agentCouncil.status.thinking :
-                   agent.status === 'idle' ? premiumLocales.omniscience.agentCouncil.status.idle : premiumLocales.omniscience.agentCouncil.status.error}
-                </div>
-              </div>
-
-              <div className="space-y-6 relative z-10">
-                <div>
-                  <div className="flex items-center gap-2 text-[9px] text-slate-500 font-black uppercase tracking-[0.3em] mb-3">
-                    <Terminal size={10} />
-                    <span>CURRENT_DIRECTIVE</span>
-                  </div>
-                  <div className="text-xs text-slate-300 font-medium leading-relaxed bg-black/40 p-5 rounded-2xl border border-white/5 hacker-terminal-text shadow-inner relative overflow-hidden group-hover:border-white/10 transition-colors">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-transparent via-white/10 to-transparent" />
-                    {agent.task || <span className="opacity-30 italic">Awaiting neural input...</span>}
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-[0.3em] mb-3">
-                    <span className="text-slate-500">CONFIDENCE_INDEX</span>
-                    <span className="text-cyan-400 font-mono text-xs">{agent.confidence}%</span>
-                  </div>
-                  <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden border border-white/5">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${agent.confidence}%` }}
-                      transition={{ duration: 1.5, delay: idx * 0.1, ease: "circOut" }}
-                      className="h-full bg-gradient-to-r from-cyan-600 via-blue-500 to-indigo-500 shadow-[0_0_15px_rgba(37,99,235,0.4)] relative"
-                    >
-                        <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite]" />
-                    </motion.div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        ))}
+  color: string;
+  trend?: string;
+}> = ({ icon: Icon, label, value, unit, color, trend }) => (
+  <TacticalCard variant="glass" className="p-8 group/metric overflow-hidden">
+    <div className="absolute inset-0 bg-cyber-grid opacity-[0.03]" />
+    <div className="flex items-center gap-6 relative z-10">
+      <div className={cn("p-4 rounded-2xl bg-slate-900 border border-white/5 shadow-2xl transition-transform group-hover/metric:scale-110", `text-[${color}]`)}>
+        <Icon size={28} style={{ color }} />
       </div>
-  );
-};
-
-const KnowledgeMatrixView: React.FC<{ onThought?: (t: string) => void }> = ({ onThought }) => {
-  const [summary, setSummary] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchGraph = async () => {
-      try {
-        const data = await api.graph.summary();
-        setSummary(data);
-      } catch (e) {
-        console.error("Failed to fetch graph summary", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchGraph();
-  }, []);
-
-  const categories = summary?.categories
-    ? Object.entries(summary.categories).map(([k, v]: [string, any]) => ({
-        name: k,
-        nodes: v,
-        strength: v > 0 ? 100 : 0 // Simple logic based on presence
-      }))
-    : [];
-
-  return (
-    <div className="flex flex-col h-full relative">
-       <header className="h-16 flex items-center justify-between px-6 border-b border-cyan-500/20 bg-black/40 backdrop-blur-md relative z-20">
-        <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-display font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-[0_0_10px_rgba(6,182,212,0.5)]">
-            {premiumLocales.omniscience.matrix.title} <span className="text-xs align-top opacity-70">GraphRAG v2.1</span>
-          </h1>
+      <div className="flex-1">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">{label}</span>
+          {trend && <span className="text-[10px] font-black text-emerald-400 font-mono">{trend}</span>}
         </div>
-        <div className="flex-1 max-w-md mx-8 flex items-center relative group">
-          <Search className="absolute left-3 text-slate-500 group-focus-within:text-cyan-400 transition-colors" size={16} />
-          <input
-            type="text"
-            placeholder={premiumLocales.omniscience.matrix.search}
-            className="w-full bg-slate-900/50 border border-slate-800 rounded-full py-2 pl-10 pr-4 text-xs font-mono focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 transition-all placeholder:text-slate-600"
-            onKeyDown={async (e) => {
-               if (e.key === 'Enter') {
-                  const query = e.currentTarget.value;
-                  onThought?.(premiumLocales.omniscience.matrix.searchLogs.searching.replace('{query}', query));
-                  try {
-                    const results = await api.graph.search(query);
-                    onThought?.(premiumLocales.omniscience.matrix.searchLogs.found.replace('{count}', (results.nodes?.length || 0).toString()));
-                    // Here we could update the 3D visualization to highlight results
-                  } catch (e) {
-                      onThought?.(premiumLocales.omniscience.matrix.searchLogs.error.replace('{error}', String(e)));
-                  }
-               }
-            }}
+        <div className="flex items-baseline gap-2 mb-4">
+          <span className="text-4xl font-black text-white font-display tracking-tighter">{Math.round(value)}</span>
+          <span className="text-xs font-black text-slate-500 uppercase opacity-50">{unit}</span>
+        </div>
+        <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-white/5">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${value}%` }}
+            className="h-full shadow-[0_0_10px_currentColor]"
+            style={{ backgroundColor: color, color: color }}
           />
         </div>
-        {summary && (
-          <div className="flex gap-6 font-mono text-[10px]">
-            <div className="flex flex-col items-end">
-                <span className="text-slate-500">{premiumLocales.omniscience.matrix.totalEntities}</span>
-                <span className="text-cyan-400 font-bold">{summary.total_nodes?.toLocaleString()}</span>
-            </div>
-            <div className="flex flex-col items-end">
-                <span className="text-slate-500">{premiumLocales.omniscience.matrix.totalEdges}</span>
-                <span className="text-purple-400 font-bold">{summary.total_edges?.toLocaleString()}</span>
-            </div>
-          </div>
-        )}
-      </header>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100%-5rem)] p-6">
-        <TacticalCard variant="holographic"  title={premiumLocales.omniscience.matrix.neuralCore} >
-            <HoloContainer  className="h-full relative overflow-hidden bg-slate-950">
-              <div className="absolute inset-0 z-0">
-                <CyberGrid color="rgba(6,182,212,0.1)" />
-              </div>
-              <div className="relative h-full w-full z-10">
-                <NeuralCore data={{
-                   categories: categories.map((c, i) => ({
-                       label: c.name,
-                       count: c.nodes,
-                       color: i % 2 === 0 ? '#22d3ee' : '#a78bfa'
-                   }))
-                }} />
-              </div>
-            </HoloContainer>
-        </TacticalCard>
-
-        <TacticalCard variant="holographic"  title={premiumLocales.omniscience.matrix.taxonomy} >
-          <HoloContainer  className="h-full overflow-y-auto p-6 scrollbar-hide">
-          <div className="space-y-4">
-            {categories.map((category, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                className="p-4 rounded-xl bg-slate-900/40 border border-purple-500/20 hover:border-purple-500/40 transition-all group"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center border border-purple-500/20">
-                      <Target size={16} className="text-purple-400 group-hover:scale-110 transition-transform" />
-                    </div>
-                    <span className="font-mono text-xs font-bold text-slate-200 uppercase tracking-widest">{category.name}</span>
-                  </div>
-                  <span className="text-[10px] text-slate-500 font-all-caps">{category.nodes.toLocaleString()} {premiumLocales.omniscience.matrix.categories.entities}</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex-1 h-1.5 bg-slate-950 rounded-full overflow-hidden border border-white/5">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${category.strength}%` }}
-                      transition={{ duration: 1.5, ease: "easeOut" }}
-                      className="h-full bg-gradient-to-r from-purple-600 to-pink-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"
-                    />
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-purple-400">{Math.round(category.strength)}%</span>
-                </div>
-              </motion.div>
-            ))}
-
-            {loading && (
-              <div className="flex flex-col items-center justify-center py-20 opacity-50">
-                <RefreshCw className="animate-spin mb-4 text-purple-400" />
-                <span className="text-xs font-mono">{premiumLocales.omniscience.matrix.sync}</span>
-              </div>
-            )}
-          </div>
-          </HoloContainer>
-        </TacticalCard>
       </div>
     </div>
-  );
-};
+  </TacticalCard>
+);
 
-interface ShadowControlViewProps {
-  onAction: (id: string) => void;
-  isLockdown: boolean;
-  activeDiagnostic: boolean;
-}
-
-function ShadowControlView({ onAction, isLockdown, activeDiagnostic }: ShadowControlViewProps) {
-  const controlStyleMap = {
-    yellow: { accent: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', hover: 'hover:border-amber-500/50' },
-    red: { accent: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20', hover: 'hover:border-rose-500/50' },
-    blue: { accent: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', hover: 'hover:border-blue-500/50' },
-    purple: { accent: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', hover: 'hover:border-indigo-500/50' },
-    orange: { accent: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', hover: 'hover:border-orange-500/50' },
-    cyan: { accent: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', hover: 'hover:border-cyan-500/50' },
-  } as const;
-
-  type ControlColor = keyof typeof controlStyleMap;
+const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
+  const statusConfig = {
+    active: { color: '#10b981', label: premiumLocales.omniscience.agentCouncil.status.active, icon: CheckCircle2 },
+    thinking: { color: '#06b6d4', label: premiumLocales.omniscience.agentCouncil.status.thinking, icon: Loader2 },
+    idle: { color: '#64748b', label: premiumLocales.omniscience.agentCouncil.status.idle, icon: Clock },
+    error: { color: '#f43f5e', label: premiumLocales.omniscience.agentCouncil.status.error, icon: XCircle },
+  };
+  const config = statusConfig[agent.status];
 
   return (
-    <div className="h-full space-y-12 pb-20">
-      <div className="flex items-center gap-8 p-10 bg-rose-500/5 border border-rose-500/20 rounded-[40px] shadow-2xl backdrop-blur-3xl panel-3d">
-        <div className="w-20 h-20 rounded-3xl bg-rose-500/10 flex items-center justify-center border border-rose-500/20 shadow-inner">
-          <Shield className="w-10 h-10 text-rose-500 animate-pulse" />
-        </div>
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <h2 className="text-2xl font-black text-rose-500 uppercase tracking-tighter">{premiumLocales.omniscience.shadowControl.title}</h2>
-            <div className="px-3 py-1 bg-rose-500 text-white text-[8px] font-black rounded-lg">{premiumLocales.omniscience.shadowControl.level}</div>
+    <TacticalCard variant="holographic" className="p-8 group/agent overflow-hidden relative">
+      <div className="absolute top-0 right-0 p-6 opacity-10 group-hover/agent:opacity-20 transition-all duration-1000 rotate-12 group-hover/agent:rotate-0 scale-150">
+        <Brain size={80} style={{ color: config.color }} />
+      </div>
+
+      <div className="flex items-start justify-between mb-8 relative z-10">
+        <div className="relative">
+          <div className="absolute inset-0 blur-2xl rounded-full scale-150 opacity-20" style={{ backgroundColor: config.color }} />
+          <div className="relative p-5 bg-slate-900 border border-white/5 rounded-2xl shadow-2xl group-hover/agent:scale-105 transition-transform">
+            <Brain size={32} style={{ color: config.color }} className={cn(agent.status === 'thinking' && "animate-pulse")} />
           </div>
-          <p className="text-xs text-rose-400/60 font-black uppercase tracking-[0.4em]">
-            {premiumLocales.omniscience.shadowControl.warning}
-          </p>
+        </div>
+        <div className="px-4 py-1.5 bg-black/40 border border-white/10 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-2" style={{ color: config.color }}>
+          {agent.status === 'thinking' && <config.icon size={12} className="animate-spin" />}
+          {config.label}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {([
-          { id: 'restart', icon: Zap, label: premiumLocales.omniscience.shadowControl.actions.restart, color: 'yellow', action: 'FULL_RESTART' },
-          { id: 'lockdown', icon: Shield, label: premiumLocales.omniscience.shadowControl.actions.lockdown, color: 'red', action: isLockdown ? 'DISENGAGE' : 'ENGAGE_PROTOCOL' },
-          { id: 'purge', icon: Database, label: premiumLocales.omniscience.shadowControl.actions.purge, color: 'blue', action: 'PURGE_VOLATIME' },
-          { id: 'rollback', icon: GitBranch, label: premiumLocales.omniscience.shadowControl.actions.rollback, color: 'purple', action: 'RESTORE_BASE_STATE' },
-          { id: 'autonomy', icon: Activity, label: premiumLocales.omniscience.shadowControl.actions.autonomy, color: 'orange', action: 'MANUAL_CONTROL' },
-          { id: 'diagnostics', icon: Layers, label: premiumLocales.omniscience.shadowControl.actions.diagnostics, color: 'cyan', action: activeDiagnostic ? 'SCANNING_IN_PROGRESS...' : 'START_SYSTEM_DOCTOR' },
-        ] as Array<{ id: string; icon: React.ElementType; label: string; color: ControlColor; action: string }>).map((control, idx) => (
-          <motion.button
-            key={idx}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.05 }}
-            whileHover={{ y: -5, scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => onAction(control.id)}
-            disabled={activeDiagnostic && control.id === 'diagnostics'}
-            className={cn(
-                "group relative flex flex-col p-10 rounded-[40px] border shadow-2xl transition-all duration-500 backdrop-blur-3xl panel-3d text-left overflow-hidden",
-                controlStyleMap[control.color].border,
-                controlStyleMap[control.color].bg,
-                controlStyleMap[control.color].hover
-            )}
-          >
-            {activeDiagnostic && control.id === 'diagnostics' && (
+      <div className="relative z-10">
+        <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-6">{agent.name}</h3>
+        <div className="space-y-6">
+          <div>
+            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2 block flex items-center gap-2">
+              <Terminal size={10} /> CURRENT_DIRECTIVE
+            </span>
+            <p className="text-xs text-slate-300 font-medium leading-relaxed bg-black/40 p-4 border border-white/5 rounded-xl italic">
+              {agent.task || "Очікування задачі..."}
+            </p>
+          </div>
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">CONFIDENCE_INDEX</span>
+              <span className="text-xs font-black text-white font-mono">{agent.confidence}%</span>
+            </div>
+            <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-white/5">
               <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ duration: 5, repeat: Infinity }}
-                className="absolute bottom-0 left-0 h-1.5 bg-cyan-400 opacity-50 shadow-[0_0_15px_#22d3ee]"
+                animate={{ width: `${agent.confidence}%` }}
+                className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 shadow-[0_0_10px_rgba(37,99,235,0.4)]"
               />
-            )}
-            <div className={cn("inline-flex p-5 rounded-2xl bg-black/40 border border-white/5 mb-8 w-fit transition-transform group-hover:scale-110", controlStyleMap[control.color].accent)}>
-                <control.icon size={32} />
             </div>
-            <h3 className="text-xl font-black text-white mb-2 uppercase tracking-tight">{control.label}</h3>
-            <div className="flex items-center justify-between w-full mt-auto pt-6 border-t border-white/5 font-black text-[9px] uppercase tracking-[0.3em]">
-              <span className="text-slate-500">COMMAND:</span>
-              <span className={cn("px-4 py-1.5 rounded-xl bg-black/40 border border-white/5", controlStyleMap[control.color].accent)}>
-                {control.action}
-              </span>
-            </div>
-          </motion.button>
-        ))}
+          </div>
+        </div>
       </div>
-    </div>
+    </TacticalCard>
   );
-}
+};
 
+// === ГОЛОВНИЙ КОМПОНЕНТ ===
 const OmniscienceView: React.FC = () => {
   const { agents: liveAgents, logs, cyclePhase } = useAgents();
-
-  const [metrics, setMetrics] = useState<SystemMetrics>({
-    health: 100,
-    activeAgents: liveAgents.length,
-    activeContainers: 0,
-    tasksCompleted: 0,
-    knowledgeNodes: 0,
-    autonomyLevel: 0,
-    processingPower: 0,
-    memoryUsage: 0,
-    networkActivity: 0
-  });
-
-  const [connectionMode, setConnectionMode] = useState<OmniscienceConnectionMode>('offline');
-  const [realtimeThoughts, setRealtimeThoughts] = useState<string[]>([]);
   const [selectedView, setSelectedView] = useState<'overview' | 'agents' | 'council' | 'knowledge' | 'control' | 'triple' | 'cortex' | 'sovereign' | 'evolution_dash' | 'telegram'>('overview');
-  const [v45Status, setV45Status] = useState<V45Status | null>(null);
-  const [isLockdown, setIsLockdown] = useState(false);
-  const [activeDiagnostic, setActiveDiagnostic] = useState(false);
-  const [diagnosticReport, setDiagnosticReport] = useState<string | null>(null);
-  const [showRawTelemetry, setShowRawTelemetry] = useState(false);
-  const [trainingStatus, setTrainingStatus] = useState<any>(null);
-
-  const agents: AgentStatus[] = liveAgents.map((agent) => {
-    const statusRaw = (agent.status ?? '').toString().toUpperCase();
-    const status: AgentStatus['status'] =
-      statusRaw === 'IDLE'
-        ? 'idle'
-        : statusRaw === 'ERROR' || statusRaw === 'FAILED'
-          ? 'error'
-          : statusRaw === 'ACTIVE' || statusRaw === 'WORKING' || statusRaw === 'RUNNING'
-            ? 'active'
-            : 'thinking';
-
-    return {
-      id: agent.id,
-      name: agent.name,
-      status,
-      task: agent.lastAction,
-      confidence: agent.efficiency,
-      lastAction: statusRaw || premiumLocales.common.unknownLabel,
-    };
+  const [metrics, setMetrics] = useState<SystemMetrics>({
+    health: 99.8, activeAgents: 0, activeContainers: 14, tasksCompleted: 4281,
+    knowledgeNodes: 124032, autonomyLevel: 84, processingPower: 42, memoryUsage: 38, networkActivity: 62
   });
+  const [v45Status, setV45Status] = useState<any>(null);
+  const [realtimeThoughts, setRealtimeThoughts] = useState<string[]>([]);
 
-  const systemThoughts = [...realtimeThoughts, ...logs.slice(-16).reverse()].slice(0, 24);
-
-  useEffect(() => {
-    const fetchInitialStatus = async () => {
-      try {
-        const [status, lockdown, health] = await Promise.all([
-            api.v45.getSystemStatus(),
-            api.v45.getLockdownStatus(),
-            api.v45.getLiveHealth()
-        ]);
-
-        if (status) {
-          setV45Status(status);
-          setMetrics((prev) => ({
-            ...prev,
-            health: status.health_score ?? prev.health,
-            knowledgeNodes: (status.opensearch?.opensearch_docs || 0) + (status.qdrant?.qdrant_vectors || 0),
-          }));
-        }
-        if (lockdown) {
-            setIsLockdown(lockdown.is_active);
-        }
-        console.log("Initial Health Check:", health);
-      } catch (e) {
-        console.warn("Failed to fetch initial v45 statuses", e);
-      }
-    };
-
-    fetchInitialStatus();
-    const interval = setInterval(fetchInitialStatus, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  // Агенти з контексту
+  const agents: AgentStatus[] = liveAgents.map(a => ({
+    id: a.id,
+    name: a.name,
+    status: (a.status?.toString().toLowerCase() === 'idle' ? 'idle' :
+      a.status?.toString().toLowerCase() === 'error' ? 'error' :
+        a.status?.toString().toLowerCase() === 'thinking' ? 'thinking' : 'active') as any,
+    task: a.lastAction || "Аналіз поточного стану системи",
+    confidence: a.efficiency || 95
+  }));
 
   useEffect(() => {
-    setMetrics((prev) => ({
-      ...prev,
-      activeAgents: liveAgents.length,
-      autonomyLevel:
-        cyclePhase === 'IDLE'
-          ? 78
-          : cyclePhase === 'SCANNING'
-            ? 82
-            : cyclePhase === 'PLANNING'
-              ? 84
-              : cyclePhase === 'CODING'
-                ? 86
-                : cyclePhase === 'TESTING'
-                  ? 88
-                  : cyclePhase === 'SKEPTIC_REVIEW'
-                    ? 90
-                    : cyclePhase === 'ARBITRATION'
-                      ? 92
-                      : cyclePhase === 'PR_REVIEW'
-                        ? 94
-                        : cyclePhase === 'CI_CD'
-                          ? 96
-                          : cyclePhase === 'DEPLOYED'
-                            ? 99
-                            : prev.autonomyLevel,
-    }));
-  }, [liveAgents.length, cyclePhase]);
-
-  useEffect(() => {
-    const client = new OmniscienceRealtimeClient();
-
-    const unsubscribeSnapshot = client.subscribe((snapshot) => {
-      const cpu = snapshot.system?.cpu_percent;
-      const memory = snapshot.system?.memory_percent;
-      const throughput = snapshot.v45Realtime?.throughput?.value;
-      const errorRate = snapshot.v45Realtime?.error_rate?.value;
-      const latency = snapshot.v45Realtime?.latency?.value;
-
-      if (snapshot.training) {
-        setTrainingStatus(snapshot.training);
-      }
-
-      setMetrics((prev) => {
-        const processingPower = typeof cpu === 'number' ? cpu : prev.processingPower;
-        const memoryUsage = typeof memory === 'number' ? memory : prev.memoryUsage;
-        const networkActivity = typeof throughput === 'number'
-          ? Math.max(0, Math.min(100, (throughput / 2000) * 100))
-          : prev.networkActivity;
-
-        const errorPenalty = typeof errorRate === 'number' ? errorRate * 1000 : 0;
-        const latencyPenalty = typeof latency === 'number' && latency > 450 ? (latency - 450) / 50 : 0;
-        const loadPenalty = Math.max(0, (processingPower - 85) / 3) + Math.max(0, (memoryUsage - 85) / 3);
-
-        const health = snapshot.isLive
-          ? Math.max(0, Math.min(100, 100 - errorPenalty - latencyPenalty - loadPenalty))
-          : Math.max(0, prev.health - 0.5);
-
-        const activeContainers = snapshot.system?.active_containers ?? prev.activeContainers;
-
-        return {
-          ...prev,
-          health,
-          processingPower,
-          memoryUsage,
-          networkActivity,
-          activeContainers,
-        };
-      });
-
-      if (snapshot.error) {
-        setRealtimeThoughts((prev) => [`[STREAM] ${snapshot.error}`, ...prev].slice(0, 8));
-      }
-    });
-
-    const unsubscribeStatus = client.onStatusChange((status) => {
-      setConnectionMode(status);
-      setRealtimeThoughts((prev) => [`[STREAM] ЗВ'ЯЗОК: ${status.toUpperCase()}`, ...prev].slice(0, 8));
-    });
-
-    client.start();
-
-    return () => {
-      unsubscribeSnapshot();
-      unsubscribeStatus();
-      client.stop();
-    };
-  }, []);
-
-  const getStatusColor = (status: AgentStatus['status']) => {
-    switch (status) {
-      case 'active': return 'text-green-400';
-      case 'thinking': return 'text-cyan-400';
-      case 'idle': return 'text-slate-400';
-      case 'error': return 'text-red-400';
-    }
-  };
-
-  const getStatusIcon = (status: AgentStatus['status']) => {
-    switch (status) {
-      case 'active': return <CheckCircle2 className="w-4 h-4" />;
-      case 'thinking': return <Loader2 className="w-4 h-4 animate-spin" />;
-      case 'idle': return <Clock className="w-4 h-4" />;
-      case 'error': return <XCircle className="w-4 h-4" />;
-    }
-  };
-
-  const handleControlAction = async (actionId: string) => {
-    switch (actionId) {
-      case 'restart':
-        setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.restartInit, ...prev]);
-        try {
-          const res = await api.v45.runSystemRestart();
-          setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.restartStatus.replace('{report}', (res.report?.slice(0, 50) || '') + '...'), ...prev]);
-        } catch (e) {
-          setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.restartError, ...prev]);
-        }
-        break;
-      case 'lockdown':
-        try {
-          const res = await api.v45.toggleLockdown();
-          setIsLockdown(res.is_active);
-          setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.lockdownToggle.replace('{status}', res.status), ...prev]);
-        } catch (e) {
-          setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.lockdownError, ...prev]);
-        }
-        break;
-      case 'rollback':
-        setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.rollbackInit, ...prev]);
-        try {
-          const res = await api.v45.runSystemRollback();
-          setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.rollbackStatus.replace('{report}', (res.report?.slice(0, 50) || '') + '...'), ...prev]);
-        } catch (e) {
-             setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.rollbackError, ...prev]);
-        }
-        break;
-      case 'purge':
-        setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.purgeInit, ...prev]);
-        await api.saveConfig({ purge_cache: true });
-        setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.purgeSuccess, ...prev]);
-        break;
-      case 'diagnostics':
-        setActiveDiagnostic(true);
-        setDiagnosticReport(null);
-        setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.diagInit, ...prev]);
-        try {
-          const res = await api.v45.runSystemDoctor();
-          setDiagnosticReport(res.report);
-          setRealtimeThoughts((prev) => [
-            premiumLocales.omniscience.shadowControl.logs.diagStatus.replace('{status}', res.status.toUpperCase()),
-            premiumLocales.omniscience.shadowControl.logs.diagReport,
-            ...prev
-          ]);
-        } catch (e) {
-            setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.diagError, ...prev]);
-        } finally {
-          setActiveDiagnostic(false);
-        }
-        break;
-      case 'apply_fix':
-        setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.fixInit, ...prev]);
-        try {
-          // Identify issues from report (simple heuristic or just pass generic ones)
-          const issues = [];
-          if (diagnosticReport?.includes('CRITICAL')) issues.push('RESTART_REDIS'); // Example logic
-
-          const res = await api.v45.applyDoctorFixes(issues.length > 0 ? issues : ['PURGE_CACHE']);
-          setRealtimeThoughts((prev) => [
-            premiumLocales.omniscience.shadowControl.logs.fixStatus.replace('{status}', res.status.toUpperCase()),
-            ...res.results.map((r: string) => `[FIX] ${r}`),
-            ...prev
-          ]);
-          setDiagnosticReport(null);
-        } catch (e) {
-          setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.fixError, ...prev]);
-        }
-        break;
-      case 'autonomy':
-        setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.autonomyInit, ...prev]);
-        await api.v45.optimizer.trigger('Manual override via Omniscience');
-        setRealtimeThoughts((prev) => [premiumLocales.omniscience.shadowControl.logs.autonomySuccess, ...prev]);
-        break;
-    }
-  };
+    setMetrics(prev => ({ ...prev, activeAgents: liveAgents.length }));
+  }, [liveAgents.length]);
 
   return (
-    <div className="min-h-screen w-full bg-[#000000] relative overflow-y-auto">
-      {/* 3D Background */}
-      <div className="absolute inset-0 opacity-30 fixed pointer-events-none">
-        <Canvas>
-          <PerspectiveCamera makeDefault position={[0, 0, 10]} />
-          <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} intensity={1} color="#00f3ff" />
-        </Canvas>
-      </div>
+    <div className="min-h-screen flex flex-col p-10 gap-10 relative z-10 animate-in fade-in duration-1000">
 
-      {/* Dynamic CyberGrid Background */}
-      <CyberGrid color={isLockdown ? '#ef4444' : '#0ea5e9'} className="z-0 opacity-40 transition-colors duration-1000 fixed" />
-      <NeuralPulse />
-
-      {/* Red Alert Overlay */}
-      <AnimatePresence>
-        {isLockdown && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 pointer-events-none z-0 fixed"
-          >
-            <div className="absolute inset-0 bg-red-600/10 animate-pulse" />
-            <div className="absolute top-0 left-0 right-0 h-1 bg-red-500 animate-pulse shadow-[0_0_10px_red]" />
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-red-500 animate-pulse shadow-[0_0_10px_red]" />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Scanline Effect */}
-      <div className="absolute inset-0 pointer-events-none fixed">
-        <div className={`absolute inset-0 bg-gradient-to-b from-transparent ${isLockdown ? 'via-red-500/10' : 'via-cyan-500/5'} to-transparent h-32 animate-scanline`} />
-      </div>
-
-      {/* Main Content */}
-      <div className="relative z-10 h-full flex flex-col p-6 gap-8 min-h-screen">
-        <ViewHeader
-            title={premiumLocales.omniscience.title}
-            icon={<Brain size={24} className="icon-3d-blue" />}
-            breadcrumbs={premiumLocales.omniscience.breadcrumbs}
-            stats={[
-                { label: premiumLocales.omniscience.stats.connection, value: connectionMode === 'ws' ? premiumLocales.common.online : premiumLocales.common.offline, icon: <Radio size={14} />, color: connectionMode === 'ws' ? 'success' : 'warning' },
-                { label: premiumLocales.omniscience.stats.system, value: `${metrics.health.toFixed(1)}%`, icon: <Activity size={14} />, color: metrics.health > 90 ? 'success' : 'warning' },
-                { label: premiumLocales.omniscience.stats.autonomy, value: `${metrics.autonomyLevel}%`, icon: <Sparkles size={14} />, color: 'primary' },
-            ]}
-        />
-
-        {v45Status?.advisor_note && (
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-6 p-6 rounded-[32px] bg-indigo-500/5 border border-indigo-500/20 backdrop-blur-md shadow-2xl"
-          >
-            <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
-              <Brain className="w-7 h-7 text-indigo-400 animate-pulse" />
+      {/* Sovereignty Header */}
+      <ViewHeader
+        title={
+          <div className="flex items-center gap-6">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-blue-500/20 blur-[60px] rounded-full scale-150 opacity-20" />
+              <div className="relative p-5 bg-slate-900 border border-white/5 rounded-[28px] panel-3d shadow-2xl">
+                <Network size={36} className="text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+              </div>
             </div>
-            <div className="flex-1">
-              <div className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-1">{premiumLocales.omniscience.insight.title}</div>
-              <div className="text-lg text-slate-200 font-display font-medium italic tracking-tight">"{v45Status.advisor_note}"</div>
+            <div>
+              <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none font-display">
+                Hyper-Omniscience Nexus
+              </h1>
+              <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.3em] mt-2">
+                V55_SYSTEM_KERNEL // GLOBAL_KNOWLEDGE_MATRIX
+              </p>
             </div>
-            {(v45Status.health_score ?? 100) < 85 && (
-              <button
-                onClick={() => handleControlAction('diagnostics')}
-                className="flex items-center gap-3 px-8 py-4 bg-rose-600 hover:bg-rose-500 text-white rounded-2xl transition-all font-black text-xs uppercase tracking-widest shadow-lg shadow-rose-900/20"
-              >
-                <Zap className="w-4 h-4" /> {premiumLocales.omniscience.insight.restore}
-              </button>
+          </div>
+        }
+        stats={[
+          { label: 'HEALTH', value: `${metrics.health}%`, icon: <Activity size={14} />, color: 'success' },
+          { label: 'NODES', value: metrics.knowledgeNodes.toLocaleString(), icon: <Database size={14} />, color: 'primary' },
+          { label: 'AGENTS', value: metrics.activeAgents.toString(), icon: <Users size={14} />, color: 'purple' },
+        ]}
+      />
+
+      {/* Navigation Matrix */}
+      <div className="flex flex-wrap items-center gap-4 z-20">
+        {[
+          { id: 'overview', label: 'Overview', icon: Globe },
+          { id: 'agents', label: 'Agent Swarm', icon: Users },
+          { id: 'council', label: 'LLM Council', icon: BrainCircuit },
+          { id: 'knowledge', label: premiumLocales.omniscience.matrix.title, icon: Network },
+          { id: 'sovereign', label: 'Sovereign Brain', icon: Eye },
+          { id: 'cortex', label: 'Neural Cortex', icon: Brain },
+          { id: 'control', label: 'Shadow Control', icon: ShieldAlert },
+          { id: 'telegram', label: 'Telegram Intel', icon: Radio },
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setSelectedView(tab.id as any)}
+            className={cn(
+              "px-8 py-5 rounded-[24px] flex items-center gap-4 transition-all duration-500 relative group overflow-hidden border",
+              selectedView === tab.id
+                ? "bg-blue-600 text-white border-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.3)]"
+                : "bg-slate-950/40 text-slate-500 border-white/5 hover:text-white hover:bg-white/5"
             )}
-          </motion.div>
-        )}
+          >
+            <tab.icon size={18} className={cn(selectedView === tab.id ? "icon-3d-white" : "group-hover:scale-110 transition-transform")} />
+            <span className="text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
+            {selectedView === tab.id && (
+              <motion.div layoutId="activeTabGlow" className="absolute inset-x-0 bottom-0 h-1 bg-white/20 blur-sm" />
+            )}
+          </button>
+        ))}
+      </div>
 
-        {/* Navigation Tabs v45 - Shadow Collective Aesthetic */}
-        <div className="flex flex-wrap gap-4 bg-black/60 p-2.5 rounded-[32px] border border-white/5 backdrop-blur-3xl w-fit mx-auto shadow-2xl relative z-20">
-          {[
-            { id: 'overview', label: premiumLocales.omniscience.tabs.overview, icon: Gauge },
-            { id: 'agents', label: premiumLocales.omniscience.tabs.agents, icon: Users },
-            { id: 'council', label: premiumLocales.omniscience.tabs.council, icon: Brain },
-            { id: 'cortex', label: premiumLocales.omniscience.tabs.cortex, icon: Network },
-            { id: 'knowledge', label: premiumLocales.omniscience.tabs.knowledge, icon: Network },
-            { id: 'triple', label: premiumLocales.omniscience.tabs.triple, icon: Terminal },
-            { id: 'control', label: premiumLocales.omniscience.tabs.control, icon: Target },
-            { id: 'sovereign', label: premiumLocales.omniscience.tabs.sovereign, icon: BrainCircuit },
-            { id: 'telegram', label: (premiumLocales.omniscience.tabs as any).telegram, icon: Send },
-            { id: 'evolution_dash', label: premiumLocales.omniscience.tabs.evolution, icon: TrendingUp },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setSelectedView(tab.id as any)}
-              className={cn(
-                "group flex items-center gap-4 px-8 py-4 rounded-[20px] font-black text-[9px] uppercase tracking-[0.3em] transition-all duration-500 relative overflow-hidden",
-                selectedView === tab.id
-                ? 'bg-blue-600 text-white shadow-[0_0_30px_rgba(37,99,235,0.3)]'
-                : 'text-slate-500 hover:text-slate-200 hover:bg-white/5'
-              )}
+      {/* Main Content Area */}
+      <div className="flex-1 min-h-[700px] relative">
+        <AnimatePresence mode="wait">
+          {selectedView === 'overview' && (
+            <motion.div
+              key="overview"
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }}
+              className="flex flex-col gap-10"
             >
-              {selectedView === tab.id && (
-                  <motion.div layoutId="omnTabGlow" className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-20" />
-              )}
-              <tab.icon className={cn("w-4 h-4 relative z-10", selectedView === tab.id ? "icon-3d-white" : "opacity-50 group-hover:opacity-100 transition-opacity")} />
-              <span className="relative z-10">{tab.label}</span>
-            </button>
-          ))}
-        </div>
+              {/* Top Metrics Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+                <MetricCard icon={Cpu} label="Processing Power" value={metrics.processingPower} unit="GHz" color="#60a5fa" trend="+2.4%" />
+                <MetricCard icon={Database} label="Knowledge Density" value={metrics.knowledgeNodes / 2000} unit="GB/s" color="#10b981" trend="+12.8%" />
+                <MetricCard icon={BrainCircuit} label="Autonomy Level" value={metrics.autonomyLevel} unit="LVL" color="#a78bfa" trend="OPTIMAL" />
+                <MetricCard icon={TrendingUp} label="Neural Throughput" value={metrics.networkActivity} unit="MB/s" color="#f59e0b" trend="PEAK" />
+              </div>
 
-        {/* Main Content Area */}
-        <div className="flex-1 grid grid-cols-12 gap-6 overflow-hidden">
-          <AnimatePresence mode="wait">
-            {selectedView === 'overview' && (
-              <motion.div
-                key="overview"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="col-span-12 grid grid-cols-12 gap-6"
-              >
-                {/* Left Column - Metrics */}
-                <div className="col-span-8 flex flex-col gap-6">
-                  {/* Core Metrics Grid */}
-                  <div className="grid grid-cols-4 gap-4">
-                    <MetricCard icon={Cpu} label={premiumLocales.omniscience.metrics.power} value={metrics.processingPower} unit="%" color="cyan" />
-                    <MetricCard icon={Database} label={premiumLocales.omniscience.metrics.memory} value={metrics.memoryUsage} unit="%" color="blue" />
-                    <MetricCard icon={Network} label={premiumLocales.omniscience.metrics.network} value={metrics.networkActivity} unit="%" color="purple" />
-                    <MetricCard icon={Zap} label={premiumLocales.omniscience.metrics.activeAgents} value={metrics.activeAgents} unit="" color="green" />
+              <div className="grid grid-cols-12 gap-10">
+                {/* Neural Core Centerpiece */}
+                <div className="col-span-12 xl:col-span-8 flex flex-col gap-10">
+                  <TacticalCard variant="holographic" className="p-0 h-[600px] bg-slate-950 flex flex-col relative overflow-hidden group/viz">
+                    <div className="absolute top-10 left-10 z-20 flex items-center gap-4">
+                      <div className="p-3 bg-blue-500/20 rounded-xl border border-blue-500/30 text-blue-400">
+                        <Target size={20} className="animate-pulse" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-black text-white uppercase tracking-tighter">Neural Core Visualizer</h3>
+                        <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">REALTIME_MAP_PROPAGATION</p>
+                      </div>
+                    </div>
+                    <div className="absolute inset-0 z-0">
+                      <CyberGrid color="rgba(59,130,246,0.1)" />
+                    </div>
+                    <div className="flex-1 relative z-10">
+                      <NeuralCore data={{
+                        categories: [
+                          { label: 'Юридичні особи', count: 42000, color: '#60a5fa' },
+                          { label: 'Активи', count: 18000, color: '#10b981' },
+                          { label: 'Зв\'язки', count: 124000, color: '#a78bfa' },
+                          { label: 'Санкції', count: 1200, color: '#f43f5e' }
+                        ]
+                      }} />
+                    </div>
+                    <div className="absolute bottom-10 left-10 p-6 bg-black/60 border border-white/5 rounded-2xl backdrop-blur-xl z-20 flex items-center gap-8">
+                      <div className="flex flex-col">
+                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">LATENCY</span>
+                        <span className="text-sm font-black text-white font-mono">14ms</span>
+                      </div>
+                      <div className="w-px h-8 bg-white/5" />
+                      <div className="flex flex-col">
+                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">SYNC_RATE</span>
+                        <span className="text-sm font-black text-emerald-400 font-mono">99.2%</span>
+                      </div>
+                    </div>
+                  </TacticalCard>
+
+                  <div className="grid grid-cols-2 gap-10">
+                    <TacticalCard variant="glass" className="p-8 h-[300px] overflow-hidden">
+                      <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
+                        <Activity size={18} className="text-blue-500" /> System Oscilloscope
+                      </h3>
+                      <div className="flex-1 flex items-center justify-center relative">
+                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+                        <NeuralPulse color="rgba(59,130,246,0.5)" size={200} />
+                      </div>
+                    </TacticalCard>
+                    <TacticalCard variant="glass" className="p-8 h-[300px] overflow-hidden">
+                      <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
+                        <Zap size={18} className="text-amber-500" /> Anomaly Detection
+                      </h3>
+                      <div className="flex flex-col gap-4">
+                        {[
+                          { time: '14:02:11', event: 'Minor drift in vector space detected', level: 'warning' },
+                          { time: '13:58:45', event: 'Cross-shard synchronization successful', level: 'success' },
+                          { time: '13:42:01', event: 'Peak load on Qdrant index reached', level: 'info' }
+                        ].map((log, i) => (
+                          <div key={i} className="flex items-center gap-4 p-4 bg-black/40 border border-white/5 rounded-xl group/log hover:border-white/10 transition-all">
+                            <span className="text-[9px] font-mono text-slate-600 uppercase tracking-widest">{log.time}</span>
+                            <div className={cn("w-1.5 h-1.5 rounded-full", log.level === 'warning' ? 'bg-amber-500' : log.level === 'success' ? 'bg-emerald-500' : 'bg-blue-500')} />
+                            <span className="text-xs text-slate-300 group-hover/log:text-white transition-colors">{log.event}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </TacticalCard>
                   </div>
+                </div>
 
-                  {/* System Thoughts */}
-                  <TacticalCard variant="holographic" title={premiumLocales.omniscience.metrics.thoughtFlow} className="flex-1 overflow-hidden border-white/5">
-                    <div className="space-y-4 overflow-y-auto h-[500px] scrollbar-hide pr-2">
-                      {systemThoughts.map((thought, idx) => (
-                        <motion.div
-                          key={idx}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: idx * 0.02 }}
-                          className="flex items-start gap-4 p-4 rounded-2xl bg-slate-900/50 border border-white/5 hover:border-blue-500/30 transition-all duration-300"
-                        >
-                          <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6] mt-1.5 animate-pulse" />
-                          <p className="text-sm text-slate-300 font-mono flex-1 leading-relaxed">{thought}</p>
-                          <span className="text-[10px] text-slate-600 font-mono">{new Date().toLocaleTimeString('uk-UA')}</span>
-                        </motion.div>
+                {/* Right Sidebar: Agents & Thoughts */}
+                <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
+                  <TacticalCard variant="holographic" className="p-8 bg-slate-950/40 flex flex-col h-full">
+                    <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
+                      <Users size={18} className="text-purple-400" /> Active Agents
+                    </h3>
+                    <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-2 mb-10">
+                      {agents.slice(0, 4).map((agent, i) => (
+                        <div key={i} className="p-5 bg-slate-900/60 border border-white/5 rounded-[24px] panel-3d group/a hover:border-blue-500/30 transition-all">
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              <div className={cn("w-2 h-2 rounded-full animate-pulse", agent.status === 'thinking' ? 'bg-blue-400' : 'bg-emerald-500')} />
+                              <span className="text-[10px] font-black text-white uppercase">{agent.name}</span>
+                            </div>
+                            <span className="text-[9px] font-black text-slate-500 font-mono italic">#{agent.id.slice(0, 4)}</span>
+                          </div>
+                          <p className="text-[10px] text-slate-400 leading-relaxed font-medium mb-4 overflow-hidden text-ellipsis whitespace-nowrap">
+                            {agent.task}
+                          </p>
+                          <div className="h-1 w-full bg-slate-950 rounded-full overflow-hidden">
+                            <motion.div initial={{ width: 0 }} animate={{ width: `${agent.confidence}%` }} className="h-full bg-blue-500" />
+                          </div>
+                        </div>
                       ))}
                     </div>
-                  </TacticalCard>
-                </div>
 
-                {/* Right Column - Agent Quick List */}
-                <div className="col-span-4">
-                  <TacticalCard variant="holographic" title={premiumLocales.omniscience.metrics.liveStatus} className="h-full border-white/5 bg-slate-950/40">
-                    <div className="space-y-4 overflow-y-auto h-[600px] scrollbar-hide pr-2">
-                        {agents.map((agent, idx) => (
-                        <div key={agent.id} className="p-5 rounded-[24px] bg-slate-900/50 border border-white/5 hover:border-purple-500/30 transition-all duration-300">
-                            <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <div className={getStatusColor(agent.status)}>{getStatusIcon(agent.status)}</div>
-                                <span className="font-black text-[11px] text-slate-200 uppercase tracking-widest">{agent.name}</span>
+                    <div className="p-8 bg-black/40 border border-white/5 rounded-[32px]">
+                      <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <Terminal size={12} /> Neural Thoughts Stream
+                      </h4>
+                      <div className="font-mono text-[9px] text-slate-500 space-y-3 h-[250px] overflow-y-auto custom-scrollbar pr-2">
+                        {systemThoughts.map((t, i) => (
+                          <div key={i} className="flex gap-3 relative pb-2 group/t">
+                            <div className="absolute left-0 top-0 bottom-0 w-px bg-white/5 group-hover/t:bg-blue-500/30 transition-colors" />
+                            <div className="pl-4">
+                              <span className="text-blue-500/60 mr-2">>>></span>
+                              <span className="group-hover/t:text-slate-300 transition-colors">{t}</span>
                             </div>
-                            <div className="bg-slate-950 px-2 py-1 rounded-md border border-white/10 text-[9px] font-mono text-slate-500">{agent.lastAction}</div>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-tighter">
-                                    <span className="text-slate-500">{premiumLocales.omniscience.metrics.cognitiveResource}</span>
-                                    <span className="text-blue-400">{agent.confidence}%</span>
-                                </div>
-                                <div className="h-1 bg-black/40 rounded-full overflow-hidden">
-                                     <motion.div
-                                         initial={{ width: 0 }}
-                                         animate={{ width: `${agent.confidence}%` }}
-                                         transition={{ duration: 1, ease: "easeOut" }}
-                                         className="h-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"
-                                     />
-                                </div>
-                            </div>
-                        </div>
+                          </div>
                         ))}
+                        <div className="text-blue-500 animate-pulse">_</div>
+                      </div>
                     </div>
                   </TacticalCard>
                 </div>
-              </motion.div>
-            )}
-
-            {selectedView === 'agents' && (
-              <motion.div
-                key="agents"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="col-span-12 h-full"
-              >
-                <AgentCouncilView agents={agents} />
-              </motion.div>
-            )}
-
-            {selectedView === 'council' && (
-              <motion.div
-                key="council"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="col-span-12 h-full"
-              >
-                <LLMCouncilPanel isLockdown={isLockdown} />
-              </motion.div>
-            )}
-
-            {selectedView === 'cortex' && (
-              <motion.div
-                key="cortex"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="col-span-12 h-full"
-              >
-                  <CortexVisualizer />
-              </motion.div>
-            )}
-
-            {selectedView === 'knowledge' && (
-              <motion.div
-                key="knowledge"
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                className="col-span-12 h-full"
-              >
-                 <KnowledgeMatrixView onThought={(t) => setRealtimeThoughts(prev => [t, ...prev].slice(0, 8))} />
-              </motion.div>
-            )}
-
-            {selectedView === 'control' && (
-              <motion.div
-                key="control"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="col-span-12 h-full"
-              >
-                <ShadowControlView
-                  onAction={handleControlAction}
-                  isLockdown={isLockdown}
-                  activeDiagnostic={activeDiagnostic}
-                />
-              </motion.div>
-            )}
-
-            {selectedView === 'triple' && (
-              <motion.div
-                key="triple"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="col-span-12 h-full"
-              >
-                <TripleAgentPanel isLockdown={isLockdown} />
-              </motion.div>
-            )}
-
-            {selectedView === 'sovereign' && (
-              <motion.div
-                key="sovereign"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="col-span-12 h-full overflow-y-auto"
-              >
-                <SovereignAZRBrain status={v45Status} />
-              </motion.div>
-            )}
-
-            {selectedView === 'evolution_dash' && (
-              <motion.div
-                key="evolution_dash"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -30 }}
-                className="col-span-12 h-full grid grid-cols-12 gap-8"
-              >
-                <div className="col-span-5 h-full">
-                  <SovereignETLMonitor status={v45Status} />
-                </div>
-                <div className="col-span-7 h-full">
-                  <AZREvolutionTimeline status={v45Status} />
-                </div>
-              </motion.div>
-            )}
-
-            {selectedView === 'telegram' && (
-              <motion.div
-                key="telegram"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="col-span-12 h-full"
-              >
-                <TelegramIntelligencePanel />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Diagnostic Report Overlay */}
-        <AnimatePresence>
-          {diagnosticReport && (
-            <motion.div
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 100 }}
-              className="absolute left-1/2 -translate-x-1/2 bottom-12 w-[800px] h-[500px] bg-slate-950/95 border border-purple-500/50 rounded-2xl z-[60] backdrop-blur-2xl flex flex-col shadow-[0_0_50px_rgba(168,85,247,0.2)] overflow-hidden"
-            >
-              <div className="p-4 border-b border-purple-500/30 flex justify-between items-center bg-purple-500/10">
-                <div className="flex items-center gap-3">
-                  <div className="p-1.5 bg-purple-500/20 rounded">
-                    <Activity className="text-purple-400" size={18} />
-                  </div>
-                  <div>
-                    <div className="text-purple-400 font-bold text-sm tracking-wider uppercase">{premiumLocales.common.info} SYSTEM DOCTOR V45</div>
-                    <div className="text-[10px] font-mono text-slate-500 uppercase">{premiumLocales.omniscience.shadowControl.actions.diagnostics}</div>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setDiagnosticReport(null)}
-                  className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
-                  title={premiumLocales.common.close}
-                >
-                  <XCircle size={20} />
-                </button>
-              </div>
-              <div className="flex-1 p-6 overflow-y-auto font-mono text-xs text-slate-300 scrollbar-hide space-y-4">
-                 <div className="p-4 bg-black/50 border border-slate-800 rounded-lg whitespace-pre-wrap leading-relaxed">
-                   {diagnosticReport}
-                 </div>
-              </div>
-              <div className="p-4 bg-slate-900/50 border-t border-purple-500/20 flex justify-between items-center">
-                 <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-green-400" />
-                    <span className="text-[10px] text-slate-400">{premiumLocales.omniscience.telemetry.statusVerified}</span>
-                  </div>
-                  <div className="text-[10px] text-slate-500 font-mono">{premiumLocales.omniscience.telemetry.hash}: {Math.random().toString(36).substring(7).toUpperCase()}</div>
-                </div>
-                <button
-                   onClick={() => handleControlAction('apply_fix')}
-                   className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2"
-                >
-                  <RefreshCw size={14} /> {premiumLocales.common.apply}
-                </button>
               </div>
             </motion.div>
           )}
-        </AnimatePresence>
 
-        {/* Raw Telemetry Overlay - Correctly Placed */}
-        <AnimatePresence>
-          {showRawTelemetry && (
+          {selectedView === 'agents' && (
             <motion.div
-              initial={{ opacity: 0, x: 300 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 300 }}
-              className="absolute right-6 top-24 bottom-24 w-96 bg-black/90 border border-cyan-500/30 rounded-xl z-50 backdrop-blur-xl flex flex-col shadow-2xl overflow-hidden"
+              key="agents"
+              initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
             >
-              <div className="p-4 border-b border-cyan-500/30 flex justify-between items-center bg-cyan-500/10">
-                <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs">
-                  <Radio className="animate-pulse" size={14} /> {premiumLocales.omniscience.telemetry.title}
-                </div>
-                <button onClick={() => setShowRawTelemetry(false)} className="text-slate-500 hover:text-white" title={premiumLocales.common.close}>
-                  <XCircle size={16} />
-                </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+                {agents.map(agent => <AgentCard key={agent.id} agent={agent} />)}
+                <TacticalCard variant="glass" className="p-10 flex flex-col items-center justify-center border-dashed border-white/10 group/new cursor-pointer hover:border-blue-500/30 transition-all">
+                  <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-[32px] flex items-center justify-center mb-6 group-hover/new:scale-110 group-hover/new:bg-blue-600/10 group-hover/new:border-blue-500/30 transition-all">
+                    <Zap size={32} className="text-slate-600 group-hover/new:text-blue-400 group-hover/new:animate-pulse" />
+                  </div>
+                  <h3 className="text-xl font-black text-slate-600 uppercase tracking-tighter group-hover/new:text-white transition-colors">Spawn New Agent</h3>
+                  <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest mt-2 group-hover/new:text-blue-500">INIT_NEURAL_SEED_PROTOCOL</p>
+                </TacticalCard>
               </div>
-              <div className="flex-1 p-4 overflow-y-auto font-mono text-[10px] text-cyan-300 scrollbar-hide">
-                <pre>{JSON.stringify(v45Status, null, 2)}</pre>
-              </div>
-              <div className="p-2 bg-black border-t border-cyan-500/30 text-[8px] text-center text-slate-500 font-mono">
-                {premiumLocales.omniscience.telemetry.secureChannel}
-              </div>
+            </motion.div>
+          )}
+
+          {selectedView === 'council' && (
+            <motion.div key="council" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <LLMCouncilPanel />
+            </motion.div>
+          )}
+
+          {selectedView === 'knowledge' && (
+            <motion.div key="knowledge" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+              <KnowledgeMatrixView onThought={(t) => setRealtimeThoughts(prev => [t, ...prev].slice(0, 10))} />
+            </motion.div>
+          )}
+
+          {selectedView === 'sovereign' && (
+            <motion.div key="sovereign" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="h-full">
+              <SovereignAZRBrain />
+            </motion.div>
+          )}
+
+          {selectedView === 'cortex' && (
+            <motion.div key="cortex" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+              <CortexVisualizer />
+            </motion.div>
+          )}
+
+          {selectedView === 'control' && (
+            <motion.div key="control" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="h-full">
+              <ShadowControlView />
+            </motion.div>
+          )}
+
+          {selectedView === 'telegram' && (
+            <motion.div key="telegram" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+              <TelegramIntelligencePanel />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Floating Action Button - Emergency Override */}
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-full shadow-2xl shadow-red-500/50 flex items-center justify-center group z-50"
-      >
-        <Shield className="w-8 h-8 text-white group-hover:animate-pulse" />
-      </motion.button>
+      {/* Footer System Bar */}
+      <div className="mt-10 p-10 bg-slate-950/60 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+          <div className="flex items-center gap-8">
+            <div className="relative">
+              <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full scale-110 animate-pulse" />
+              <div className="p-4 bg-slate-900 border border-white/10 rounded-2xl relative z-10">
+                <RadioReceiver size={32} className="text-blue-400" />
+              </div>
+            </div>
+            <div>
+              <h4 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Nexus Communication Hub</h4>
+              <p className="text-xs text-slate-500 font-medium">Керування термінальними потоками та нейронними інтерфейсами.</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-12">
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">SYSTEM_CORE</span>
+              <span className="text-xs font-black text-emerald-400">ACTIVE_STABLE</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">QUANTUM_ENTROPY</span>
+              <span className="text-xs font-black text-white">0.0024 ERR/S</span>
+            </div>
+            <div className="flex flex-col text-right">
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">ENCRYPTION</span>
+              <span className="text-xs font-black text-blue-400">PQC_ENABLED</span>
+            </div>
+          </div>
+          <button className="px-10 py-5 bg-white/5 border border-white/10 rounded-[28px] text-[10px] font-black text-white uppercase tracking-[0.3em] hover:bg-white/10 transition-all flex items-center gap-4">
+            SYNC_NODES <RefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-1000" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
+
+// === SUB-VIEWS (INTERNAL) ===
+
+const ShadowControlView: React.FC = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+    {[
+      { icon: Power, label: 'Full System Restart', color: '#f59e0b', action: 'INIT_RELOAD' },
+      { icon: ShieldAlert, label: 'Emergency Lockdown', color: '#f43f5e', action: 'ENGAGE_PROTOCOL' },
+      { icon: Database, label: 'Purge Shared Memory', color: '#3b82f6', action: 'CLEAR_CACHE' },
+      { icon: GitBranch, label: 'State Rollback', color: '#8b5cf6', action: 'RESTORE_BASE' },
+      { icon: Binary, label: 'Deep Diagnostic Scan', color: '#06b6d4', action: 'START_DOCTOR' },
+      { icon: Shield, label: 'Trust Matrix Recalibration', color: '#10b981', action: 'RESET_POLICY' }
+    ].map((ctrl, i) => (
+      <TacticalCard key={i} variant="glass" className="p-10 flex flex-col group/ctrl cursor-pointer border-white/5 hover:border-white/20 transition-all relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover/ctrl:opacity-10 transition-all">
+          <ctrl.icon size={100} style={{ color: ctrl.color }} />
+        </div>
+        <div className="p-5 bg-black/40 border border-white/5 rounded-2xl w-fit mb-8" style={{ color: ctrl.color }}>
+          <ctrl.icon size={32} />
+        </div>
+        <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-4">{ctrl.label}</h3>
+        <div className="mt-auto pt-8 border-t border-white/5 flex items-center justify-between">
+          <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">COMMAND</span>
+          <span className="px-4 py-1.5 bg-black/60 rounded-xl text-[10px] font-black font-mono border border-white/5" style={{ color: ctrl.color }}>{ctrl.action}</span>
+        </div>
+      </TacticalCard>
+    ))}
+  </div>
+);
+
+const KnowledgeMatrixView: React.FC<{ onThought: (t: string) => void }> = ({ onThought }) => (
+  <div className="grid grid-cols-12 gap-10 h-full">
+    <div className="col-span-12 xl:col-span-8">
+      <TacticalCard variant="holographic" className="p-0 h-[600px] bg-slate-950 overflow-hidden relative">
+        <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
+        <div className="relative h-full w-full z-10">
+          <NeuralCore data={{ categories: [] }} />
+        </div>
+      </TacticalCard>
+    </div>
+    <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
+      <TacticalCard variant="glass" className="p-8 h-full">
+        <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8">Taxonomy Matrix</h3>
+        <div className="space-y-6">
+          {['Persons', 'Organizations', 'Locations', 'Assets', 'Events'].map((cat, i) => (
+            <div key={i} className="p-6 bg-slate-900/40 border border-white/5 rounded-2xl group/cat hover:border-blue-500/30 transition-all">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-black text-white uppercase">{cat}</span>
+                <span className="text-[10px] font-black text-slate-500 font-mono">{(Math.random() * 10000).toFixed(0)}</span>
+              </div>
+              <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
+                <motion.div initial={{ width: 0 }} animate={{ width: `${Math.random() * 100}%` }} className="h-full bg-blue-600" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </TacticalCard>
+    </div>
+  </div>
+);
+
+const AdvancedBackground: React.FC = () => (
+  <div className="fixed inset-0 pointer-events-none z-[-1]">
+    <div className="absolute inset-0 bg-slate-950" />
+    <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
+    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-900/10 via-transparent to-purple-900/10" />
+    <div className="absolute top-[20%] left-[10%] w-[40%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full animate-pulse" />
+    <div className="absolute bottom-[20%] right-[10%] w-[40%] h-[40%] bg-indigo-600/5 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+  </div>
+);
 
 export default OmniscienceView;

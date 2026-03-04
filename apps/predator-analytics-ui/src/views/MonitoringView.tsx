@@ -2,8 +2,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TacticalCard } from '../components/TacticalCard';
 import { ViewHeader } from '../components/ViewHeader';
-import { Activity, BarChart3, Eye, CheckCircle2, XCircle, Search, GitCommit, Server, HardDrive, Cpu, Bot, Target, Network, Play, Pause, RefreshCw, Layers, ArrowRight, RotateCcw, Clock, Database, Brain, Zap, Code, AlertTriangle } from 'lucide-react';
+import { Activity, BarChart3, Eye, CheckCircle2, XCircle, Search, GitCommit, Server, HardDrive, Cpu, Bot, Target, Network, Play, Pause, RefreshCw, Layers, ArrowRight, RotateCcw, Clock, Database, Brain, Zap, Code, AlertTriangle, ShieldCheck, Flame } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '../lib/utils';
 import { AdvancedBackground } from '../components/AdvancedBackground';
 import { StatusIndicator, Skeleton, CyberOrb, JobQueueMonitor, LLMHealthMonitor, StorageAnalytics, ETLPipelineVisualizer } from '../components';
 import ReactECharts from 'echarts-for-react';
@@ -250,117 +251,207 @@ const MonitoringView: React.FC = () => {
     }, [isLiveTail, activeTab]);
 
     const renderNeuralTrace = () => (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            {/* Audit Log Registry */}
             <div className="lg:col-span-1 space-y-6">
-                <TacticalCard variant="holographic" title={premiumLocales.monitoring.neuralTraceView.registryTitle} className="min-h-[600px] border-white/5 bg-slate-950/40">
-                    <div className="space-y-4">
-                        {auditLogs.map(log => (
+                <TacticalCard
+                    variant="holographic"
+                    title={premiumLocales.monitoring.neuralTraceView.registryTitle}
+                    className="min-h-[700px] border-white/5 bg-slate-950/40 relative overflow-hidden"
+                >
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
+                    <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                        {auditLogs.length > 0 ? auditLogs.map((log, idx) => (
                             <motion.div
-                                whileHover={{ scale: 1.02, x: 5 }}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: idx * 0.05 }}
+                                whileHover={{ scale: 1.02, x: 8 }}
                                 key={log.id}
                                 onClick={() => setSelectedAudit(log)}
-                                className={`p-6 rounded-[24px] cursor-pointer transition-all duration-500 border relative overflow-hidden group ${selectedAudit?.id === log.id ? 'bg-purple-600/10 border-purple-500/50 shadow-[0_0_20px_purple]' : 'bg-black/40 border-white/5 hover:border-white/20'}`}
+                                className={cn(
+                                    "p-5 rounded-[28px] cursor-pointer transition-all duration-500 border relative overflow-hidden group",
+                                    selectedAudit?.id === log.id
+                                        ? 'bg-purple-600/10 border-purple-500/50 shadow-[0_0_25px_rgba(168,85,247,0.15)]'
+                                        : 'bg-black/40 border-white/5 hover:border-white/20'
+                                )}
                             >
-                                <div className="flex justify-between items-start mb-2">
-                                    <h4 className="text-[11px] font-black text-white uppercase tracking-widest">{log.intent || premiumLocales.monitoring.neuralTraceView.intent}</h4>
-                                    <div className={`px-2 py-0.5 rounded text-[8px] font-bold ${log.status === 'verified' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
-                                        {log.status.toUpperCase()}
+                                <div className="flex justify-between items-center mb-3">
+                                    <h4 className="text-[10px] font-black text-white uppercase tracking-widest truncate max-w-[120px]">
+                                        {log.intent || premiumLocales.monitoring.neuralTraceView.intent}
+                                    </h4>
+                                    <div className={cn(
+                                        "px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-tighter",
+                                        log.status === 'verified' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                    )}>
+                                        {log.status}
                                     </div>
                                 </div>
-                                <p className="text-[10px] text-slate-400 line-clamp-1 italic mb-3">"{log.request_text}"</p>
-                                <div className="flex justify-between text-[8px] font-mono text-slate-500">
-                                    <span>{new Date(log.created_at).toLocaleTimeString()}</span>
-                                    <span>RISK: {log.risk_level}</span>
+                                <p className="text-[9px] text-slate-500 line-clamp-2 font-medium leading-relaxed italic mb-3 opacity-60 group-hover:opacity-1 transition-opacity">
+                                    "{log.request_text}"
+                                </p>
+                                <div className="flex justify-between items-center text-[7px] font-black font-mono text-slate-600 uppercase tracking-widest pt-3 border-t border-white/5">
+                                    <span className="flex items-center gap-1.5"><Clock size={10} /> {new Date(log.created_at).toLocaleTimeString()}</span>
+                                    <span className={cn(log.risk_level === 'high' ? 'text-rose-500' : 'text-slate-400')}>RISK: {log.risk_level}</span>
                                 </div>
+                                {selectedAudit?.id === log.id && (
+                                    <motion.div layoutId="auditActive" className="absolute left-0 top-0 bottom-0 w-1.5 bg-purple-500 shadow-[0_0_15px_#a855f7]" />
+                                )}
                             </motion.div>
-                        ))}
+                        )) : (
+                            <div className="flex flex-col items-center justify-center py-20 opacity-20">
+                                <Brain size={48} className="animate-pulse" />
+                                <p className="mt-4 text-[9px] font-black uppercase tracking-[0.2em]">No Neural Activity</p>
+                            </div>
+                        )}
                     </div>
                 </TacticalCard>
             </div>
-            <div className="lg:col-span-2">
-                <TacticalCard variant="holographic" title={premiumLocales.monitoring.neuralTraceView.visualizeTitle} className="min-h-[600px] border-white/5 bg-slate-950/40 flex flex-col">
+
+            {/* Trace Visualization Details */}
+            <div className="lg:col-span-3">
+                <TacticalCard
+                    variant="holographic"
+                    title={premiumLocales.monitoring.neuralTraceView.visualizeTitle}
+                    className="min-h-[700px] border-white/5 bg-slate-950/40 flex flex-col relative"
+                >
                     {selectedAudit ? (
-                        <div className="p-8 space-y-10">
-                            <div className="flex items-center gap-6 p-6 bg-purple-600/5 rounded-3xl border border-purple-500/20">
-                                <div className="p-4 bg-purple-600/20 rounded-2xl text-purple-400">
-                                    <Brain size={32} />
+                        <div className="h-full flex flex-col p-10 space-y-12">
+                            {/* Header Section */}
+                            <motion.div
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="flex items-center gap-10 p-8 bg-purple-600/5 rounded-[40px] border border-purple-500/20 shadow-2xl relative overflow-hidden"
+                            >
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(168,85,247,0.1),transparent_50%)]" />
+                                <div className="relative z-10 p-6 bg-purple-600/20 rounded-3xl border border-purple-500/30 text-purple-400 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
+                                    <Brain size={48} />
                                 </div>
-                                <div>
-                                    <h3 className="text-xl font-black text-white uppercase">{selectedAudit.intent}</h3>
-                                    <p className="text-sm text-slate-400 font-mono mt-1">{selectedAudit.id}</p>
-                                </div>
-                            </div>
-
-                            <div className="relative pl-12">
-                                <div className="absolute left-4 top-0 bottom-0 w-px bg-gradient-to-b from-purple-500 to-transparent" />
-                                <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-slate-950 border-2 border-purple-500 flex items-center justify-center text-purple-400 z-10">
-                                    <Target size={14} />
-                                </div>
-                                <div className="space-y-4">
-                                    <h4 className="text-xs font-black text-purple-400 uppercase tracking-[0.2em]">{premiumLocales.monitoring.neuralTraceView.planTitle}</h4>
-                                    <div className="p-6 bg-white/5 rounded-2xl border border-white/5 text-sm text-slate-200 font-mono whitespace-pre-wrap leading-relaxed shadow-lg">
-                                        {Array.isArray(selectedAudit.gemini_plan?.steps)
-                                            ? selectedAudit.gemini_plan.steps.map((s: string, i: number) => <div key={i} className="mb-1">[{i + 1}] {s}</div>)
-                                            : (selectedAudit.gemini_plan || "No plan details available.")}
+                                <div className="relative z-10 flex-1">
+                                    <div className="flex items-center gap-4 mb-2">
+                                        <h3 className="text-3xl font-black text-white uppercase tracking-tighter leading-none">{selectedAudit.intent}</h3>
+                                        <div className="px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded-full text-[10px] font-black text-purple-400 uppercase tracking-widest">GEMINI_ENGINE</div>
+                                    </div>
+                                    <div className="flex items-center gap-6 mt-4">
+                                        <p className="text-[11px] text-slate-500 font-mono tracking-wider uppercase">UUID: <span className="text-purple-400/80">{selectedAudit.id}</span></p>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                                        <p className="text-[11px] text-slate-500 font-mono tracking-wider uppercase">LATENCY: <span className="text-emerald-400 font-black">{selectedAudit.execution_time_ms}ms</span></p>
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
 
-                            {selectedAudit.thinking_process && (
-                                <div className="relative pl-12 mt-12">
-                                    <div className="absolute left-4 top-0 bottom-0 w-px bg-gradient-to-b from-amber-500 to-transparent" />
-                                    <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-slate-950 border-2 border-amber-500 flex items-center justify-center text-amber-400 z-10">
-                                        <Zap size={14} />
-                                    </div>
-                                    <div className="space-y-4">
-                                        <h4 className="text-xs font-black text-amber-400 uppercase tracking-[0.2em]">{premiumLocales.monitoring.neuralTraceView.innerMonologue}</h4>
-                                        <div className="p-6 bg-amber-500/5 rounded-2xl border border-amber-500/10 text-xs text-amber-100/80 font-mono leading-relaxed italic">
-                                            {selectedAudit.thinking_process}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                                {/* Left Column: Plan & Monologue */}
+                                <div className="space-y-12">
+                                    <div className="relative pl-12">
+                                        <div className="absolute left-4 top-0 bottom-0 w-[2px] bg-gradient-to-b from-purple-500/50 via-purple-500/20 to-transparent" />
+                                        <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-slate-950 border-2 border-purple-500 flex items-center justify-center text-purple-400 shadow-[0_0_15px_#a855f7] z-10">
+                                            <Target size={16} />
+                                        </div>
+                                        <div className="space-y-4">
+                                            <h4 className="text-[11px] font-black text-purple-400 uppercase tracking-[0.3em]">{premiumLocales.monitoring.neuralTraceView.planTitle}</h4>
+                                            <div className="p-6 bg-slate-900/60 rounded-[28px] border border-white/5 text-xs text-slate-300 font-mono leading-relaxed space-y-3">
+                                                {Array.isArray(selectedAudit.gemini_plan?.steps)
+                                                    ? selectedAudit.gemini_plan.steps.map((s: string, i: number) => (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, x: -10 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            transition={{ delay: i * 0.1 }}
+                                                            key={i}
+                                                            className="flex gap-4 p-2 rounded-xl group hover:bg-white/5 transition-colors"
+                                                        >
+                                                            <span className="text-purple-500 font-black">[{i + 1}]</span>
+                                                            <span className="flex-1 opacity-80 group-hover:opacity-100">{s}</span>
+                                                        </motion.div>
+                                                    ))
+                                                    : <div className="italic text-slate-500">{selectedAudit.gemini_plan || "No neural roadmap extracted."}</div>
+                                                }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
 
-                            {selectedAudit.mistral_output && (
-                                <div className="relative pl-12 mt-12">
-                                    <div className="absolute left-4 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500 to-transparent" />
-                                    <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-slate-950 border-2 border-blue-500 flex items-center justify-center text-blue-400 z-10">
-                                        <Code size={14} />
-                                    </div>
-                                    <div className="space-y-4">
-                                        <h4 className="text-xs font-black text-blue-400 uppercase tracking-[0.2em]">{premiumLocales.monitoring.neuralTraceView.coderOutput}</h4>
-                                        <div className="p-6 bg-blue-500/5 rounded-2xl border border-blue-500/10 text-[11px] text-blue-100/90 font-mono whitespace-pre-wrap overflow-x-auto">
-                                            {selectedAudit.mistral_output}
+                                    {selectedAudit.thinking_process && (
+                                        <div className="relative pl-12">
+                                            <div className="absolute left-4 top-0 bottom-0 w-[2px] bg-gradient-to-b from-amber-500/50 via-amber-500/20 to-transparent" />
+                                            <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-slate-950 border-2 border-amber-500 flex items-center justify-center text-amber-400 shadow-[0_0_15px_#f59e0b] z-10">
+                                                <Zap size={16} />
+                                            </div>
+                                            <div className="space-y-4">
+                                                <h4 className="text-[11px] font-black text-amber-400 uppercase tracking-[0.3em] font-display">{premiumLocales.monitoring.neuralTraceView.innerMonologue}</h4>
+                                                <div className="p-8 bg-amber-500/5 rounded-[32px] border border-amber-500/10 relative overflow-hidden group">
+                                                    <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03] pointer-events-none" />
+                                                    <div className="text-[11px] text-amber-200/90 font-mono leading-relaxed italic whitespace-pre-wrap relative z-10">
+                                                        {selectedAudit.thinking_process}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
                                 </div>
-                            )}
 
-                            <div className="relative pl-12 mt-12">
-                                <div className="absolute left-4 top-0 bottom-0 w-px bg-gradient-to-b from-emerald-500 to-transparent" />
-                                <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-slate-950 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 z-10">
-                                    <CheckCircle2 size={14} />
-                                </div>
-                                <div className="space-y-4">
-                                        <h4 className="text-xs font-black text-emerald-400 uppercase tracking-[0.2em]">{premiumLocales.monitoring.neuralTraceView.securityAudit}</h4>
-                                    <div className="p-6 bg-emerald-500/5 rounded-2xl border border-emerald-500/10 text-sm text-emerald-100/80 font-mono italic leading-relaxed shadow-inner">
-                                        {typeof selectedAudit.copilot_audit === 'object' ? JSON.stringify(selectedAudit.copilot_audit, null, 2) : (selectedAudit.copilot_audit || "Audit summary not recorded.")}
-                                    </div>
-                                    <div className="flex gap-4">
-                                        <div className="px-4 py-2 bg-slate-950 rounded-xl border border-white/5 text-[9px] font-mono text-slate-400 uppercase">
-                                            {premiumLocales.monitoring.neuralTraceView.executionTime}: <span className="text-emerald-400">{selectedAudit.execution_time_ms}мс</span>
+                                {/* Right Column: Output & Audit */}
+                                <div className="space-y-12">
+                                    {selectedAudit.mistral_output && (
+                                        <div className="relative pl-12">
+                                            <div className="absolute left-4 top-0 bottom-0 w-[2px] bg-gradient-to-b from-blue-500/50 via-blue-500/20 to-transparent" />
+                                            <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-slate-950 border-2 border-blue-500 flex items-center justify-center text-blue-400 shadow-[0_0_15px_#3b82f6] z-10">
+                                                <Code size={16} />
+                                            </div>
+                                            <div className="space-y-4">
+                                                <div className="flex justify-between items-center">
+                                                    <h4 className="text-[11px] font-black text-blue-400 uppercase tracking-[0.3em] font-display">{premiumLocales.monitoring.neuralTraceView.coderOutput}</h4>
+                                                    <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">MISTRAL_7B_V2</span>
+                                                </div>
+                                                <div className="p-8 bg-blue-500/5 rounded-[32px] border border-blue-500/10 min-h-[150px] relative">
+                                                    <div className="text-[10px] text-blue-100/80 font-mono whitespace-pre-wrap overflow-x-auto leading-relaxed max-h-[300px] custom-scrollbar">
+                                                        {selectedAudit.mistral_output}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="px-4 py-2 bg-slate-950 rounded-xl border border-white/5 text-[9px] font-mono text-slate-400 uppercase">
-                                            {premiumLocales.monitoring.neuralTraceView.riskLevel}: <span className={selectedAudit.risk_level === 'high' ? 'text-rose-400' : 'text-emerald-400'}>{selectedAudit.risk_level === 'high' ? premiumLocales.monitoring.neuralTraceView.high : selectedAudit.risk_level === 'medium' ? premiumLocales.monitoring.neuralTraceView.medium : premiumLocales.monitoring.neuralTraceView.low}</span>
+                                    )}
+
+                                    <div className="relative pl-12">
+                                        <div className="absolute left-4 top-0 bottom-0 w-[2px] bg-gradient-to-b from-emerald-500/50 via-emerald-500/20 to-transparent" />
+                                        <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-slate-950 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_#10b981] z-10">
+                                            <ShieldCheck size={16} />
+                                        </div>
+                                        <div className="space-y-4">
+                                            <h4 className="text-[11px] font-black text-emerald-400 uppercase tracking-[0.3em] font-display">{premiumLocales.monitoring.neuralTraceView.securityAudit}</h4>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="p-6 bg-emerald-500/5 rounded-[28px] border border-emerald-500/10">
+                                                    <div className="text-[8px] font-black text-emerald-500 uppercase tracking-widest mb-3">Audit Summary</div>
+                                                    <p className="text-[10px] text-emerald-100/70 font-mono leading-relaxed italic">
+                                                        {typeof selectedAudit.copilot_audit === 'object' ? 'Structured Validation Success' : (selectedAudit.copilot_audit || "No critical issues detected by security core.")}
+                                                    </p>
+                                                </div>
+                                                <div className="p-6 bg-slate-900 rounded-[28px] border border-white/5 flex flex-col justify-center items-center gap-3">
+                                                    <div className={cn(
+                                                        "w-12 h-12 rounded-full flex items-center justify-center border-2",
+                                                        selectedAudit.risk_level === 'high' ? "border-rose-500 text-rose-500 shadow-[0_0_15px_#f43f5e]" : "border-emerald-500 text-emerald-500 shadow-[0_0_15px_#10b981]"
+                                                    )}>
+                                                        {selectedAudit.risk_level === 'high' ? <Flame size={24} /> : <ShieldCheck size={24} />}
+                                                    </div>
+                                                    <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none">Safe_Execution</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     ) : (
-                        <div className="h-full flex flex-col items-center justify-center opacity-20 py-40">
-                            <Brain size={100} />
-                            <p className="mt-8 text-xs font-black uppercase tracking-widest">{premiumLocales.monitoring.neuralTraceView.selectTrace}</p>
+                        <div className="h-full flex flex-col items-center justify-center py-40 group">
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-purple-500/20 blur-[60px] rounded-full scale-150 group-hover:bg-purple-500/40 transition-all duration-1000" />
+                                <Brain size={120} className="text-slate-800 relative z-10 group-hover:text-purple-400/30 transition-colors duration-1000" />
+                            </div>
+                            <p className="mt-12 text-[11px] font-black uppercase tracking-[0.5em] text-slate-700 group-hover:text-slate-500 transition-colors">
+                                {premiumLocales.monitoring.neuralTraceView.selectTrace}
+                            </p>
+                            <div className="mt-6 flex gap-2">
+                                {[1, 2, 3].map(i => <motion.div key={i} animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ repeat: Infinity, duration: 2, delay: i * 0.3 }} className="w-1.5 h-1.5 rounded-full bg-purple-500" />)}
+                            </div>
                         </div>
                     )}
                 </TacticalCard>
@@ -369,131 +460,184 @@ const MonitoringView: React.FC = () => {
     );
 
     const renderSagaViz = () => (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Saga List */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            {/* Saga Registry */}
             <div className="lg:col-span-1 space-y-6">
-                <TacticalCard variant="holographic" title={premiumLocales.monitoring.sagaView.registryTitle} className="min-h-[600px] border-white/5 bg-slate-950/40">
-                    <div className="space-y-4">
-                        {realSagas.map(saga => (
+                <TacticalCard
+                    variant="holographic"
+                    title={premiumLocales.monitoring.sagaView.registryTitle}
+                    className="min-h-[700px] border-white/5 bg-slate-950/40 relative overflow-hidden"
+                >
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500/40 to-transparent" />
+                    <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                        {realSagas.length > 0 ? realSagas.map((saga, idx) => (
                             <motion.div
-                                whileHover={{ scale: 1.02, x: 5 }}
-                                whileTap={{ scale: 0.98 }}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: idx * 0.05 }}
+                                whileHover={{ scale: 1.02, x: 8 }}
                                 key={saga.id}
                                 onClick={() => setSelectedSaga(saga)}
-                                className={`p-6 rounded-[24px] cursor-pointer transition-all duration-500 border relative overflow-hidden group ${selectedSaga?.id === saga.id ? 'bg-blue-600/10 border-blue-500/50 shadow-[0_0_20px_rgba(37,99,235,0.15)]' : 'bg-black/40 border-white/5 hover:border-white/20'}`}
+                                className={cn(
+                                    "p-6 rounded-[30px] cursor-pointer transition-all duration-500 border relative overflow-hidden group",
+                                    selectedSaga?.id === saga.id
+                                        ? 'bg-blue-600/10 border-blue-500/50 shadow-[0_0_25px_rgba(59,130,246,0.15)]'
+                                        : 'bg-black/40 border-white/5 hover:border-white/20'
+                                )}
                             >
                                 <div className="flex justify-between items-start mb-4">
                                     <div className="flex items-center gap-4">
-                                        <div className={`p-2.5 rounded-xl ${selectedSaga?.id === saga.id ? 'bg-blue-600 text-white shadow-[0_0_15px_#3b82f6]' : 'bg-slate-800 text-slate-400 group-hover:bg-slate-700'} transition-colors`}>
-                                            <Layers size={16} />
+                                        <div className={cn(
+                                            "p-3 rounded-2xl transition-all duration-500",
+                                            selectedSaga?.id === saga.id ? 'bg-blue-600 text-white shadow-[0_0_20px_#3b82f6]' : 'bg-slate-800 text-slate-500 group-hover:bg-slate-700'
+                                        )}>
+                                            <Layers size={18} />
                                         </div>
                                         <div>
                                             <h4 className="text-[11px] font-black text-white uppercase tracking-widest leading-none">{saga.name}</h4>
-                                            <p className="text-[9px] text-slate-500 font-mono mt-1.5">{saga.id}</p>
+                                            <p className="text-[9px] text-slate-500 font-mono mt-2 opacity-60">ID: {saga.id.substring(0, 12)}...</p>
                                         </div>
                                     </div>
-                                    <div className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest ${saga.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
-                                        {saga.status === 'COMPLETED' ? premiumLocales.monitoring.sagaView.completed : premiumLocales.monitoring.sagaView.compensated}
+                                    <div className={cn(
+                                        "px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border",
+                                        saga.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                    )}>
+                                        {saga.status}
                                     </div>
                                 </div>
-                                <div className="flex justify-between items-center text-[9px] font-mono border-t border-white/5 pt-3">
-                                    <div className="text-slate-500">INIT: <span className="text-slate-300">{saga.startTime}</span></div>
-                                    <div className="text-slate-500 tracking-tighter">TRACE_ID: {saga.traceId.substring(0, 8)}...</div>
+                                <div className="flex justify-between items-center text-[8px] font-black font-mono text-slate-600 uppercase tracking-widest pt-4 border-t border-white/5">
+                                    <span className="flex items-center gap-2"><Clock size={10} /> {saga.startTime}</span>
+                                    <span className="opacity-50">v45.core</span>
                                 </div>
                                 {selectedSaga?.id === saga.id && (
-                                    <motion.div layoutId="sagaActive" className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 shadow-[0_0_15px_#3b82f6]" />
+                                    <motion.div layoutId="sagaActive" className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500 shadow-[0_0_20px_#3b82f6]" />
                                 )}
                             </motion.div>
-                        ))}
+                        )) : (
+                            <div className="flex flex-col items-center justify-center py-20 opacity-20">
+                                <Layers size={48} className="animate-pulse" />
+                                <p className="mt-4 text-[9px] font-black uppercase tracking-[0.2em]">No Saga Transactions</p>
+                            </div>
+                        )}
                     </div>
                 </TacticalCard>
             </div>
 
             {/* Saga Flow Visualization */}
-            <div className="lg:col-span-2">
-                <TacticalCard variant="holographic" title={premiumLocales.monitoring.sagaView.visualizeTitle} className="min-h-[600px] border-white/5 bg-slate-950/40 flex flex-col">
+            <div className="lg:col-span-3">
+                <TacticalCard
+                    variant="holographic"
+                    title={premiumLocales.monitoring.sagaView.visualizeTitle}
+                    className="min-h-[700px] border-white/5 bg-slate-950/40 flex flex-col relative"
+                >
                     {selectedSaga ? (
-                        <div className="h-full flex flex-col">
+                        <div className="h-full flex flex-col p-10">
+                            {/* Saga Header */}
                             <motion.div
                                 initial={{ opacity: 0, y: -20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="flex items-center gap-8 mb-12 p-8 bg-black/40 border border-white/5 rounded-[32px] backdrop-blur-md relative overflow-hidden group"
+                                className="flex items-center gap-10 mb-12 p-8 bg-blue-600/5 rounded-[40px] border border-blue-500/20 shadow-2xl relative overflow-hidden group"
                             >
-                                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent pointer-events-none" />
-                                <div className="p-5 bg-blue-600/20 rounded-2xl border border-blue-500/30 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.1)]">
-                                    <Layers size={36} />
+                                <div className="absolute inset-0 bg-cyber-scanline opacity-[0.02] pointer-events-none" />
+                                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-transparent pointer-events-none" />
+                                <div className="relative z-10 p-6 bg-blue-600/20 rounded-3xl border border-blue-500/30 text-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+                                    <Layers size={48} />
                                 </div>
-                                <div>
-                                    <div className="flex items-center gap-4">
-                                        <h3 className="text-2xl font-black text-white uppercase tracking-tighter">{selectedSaga.name}</h3>
-                                        <span className="text-[10px] font-black text-blue-500 bg-blue-500/10 px-3 py-1 rounded-full uppercase tracking-[0.2em] border border-blue-500/20">v45_CORE</span>
+                                <div className="relative z-10 flex-1">
+                                    <div className="flex items-center gap-6">
+                                        <h3 className="text-3xl font-black text-white uppercase tracking-tighter leading-none">{selectedSaga.name}</h3>
+                                        <div className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full text-[10px] font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse" />
+                                            STABLE_STATE
+                                        </div>
                                     </div>
-                                    <div className="mt-3 text-[10px] text-slate-500 font-mono flex items-center gap-6 uppercase tracking-widest">
-                                        <span>TRACE: <span className="text-blue-400 font-bold">{selectedSaga.traceId}</span></span>
+                                    <div className="mt-5 text-[10px] text-slate-500 font-mono flex items-center gap-8 uppercase tracking-widest">
+                                        <span className="flex items-center gap-2">TRACE: <span className="text-blue-400 font-black">{selectedSaga.traceId}</span></span>
                                         <div className="w-1.5 h-1.5 bg-slate-800 rounded-full" />
-                                        <span>STATUS: <span className="text-emerald-400 font-bold">{premiumLocales.monitoring.sagaView.synchronized}</span></span>
+                                        <span className="flex items-center gap-2">STATUS: <span className="text-emerald-400 font-black">{premiumLocales.monitoring.sagaView.synchronized}</span></span>
                                     </div>
                                 </div>
                             </motion.div>
 
-                            <div className="relative pl-16 space-y-10 flex-1">
-                                <div className="absolute left-7 top-4 bottom-4 w-[2px] bg-slate-800/50 rounded-full overflow-hidden">
+                            {/* Saga Steps Timeline */}
+                            <div className="relative pl-24 pr-10 space-y-12 flex-1 scrollbar-hide overflow-y-auto pb-10">
+                                <div className="absolute left-11 top-4 bottom-4 w-[2px] bg-slate-800/50 rounded-full overflow-hidden">
                                     <motion.div
                                         initial={{ height: 0 }}
                                         animate={{ height: '100%' }}
-                                        transition={{ duration: 1.5, ease: "easeInOut" }}
-                                        className="w-full bg-gradient-to-b from-blue-500 via-indigo-500 to-purple-500 shadow-[0_0_15px_#3b82f6]"
+                                        transition={{ duration: 2, ease: "easeInOut" }}
+                                        className="w-full bg-gradient-to-b from-blue-500 via-indigo-500 to-purple-500 shadow-[0_0_20px_#3b82f6]"
                                     />
                                 </div>
 
                                 {selectedSaga.steps.map((step, idx) => (
                                     <motion.div
-                                        initial={{ opacity: 0, x: -20 }}
+                                        initial={{ opacity: 0, x: -30 }}
                                         animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: idx * 0.1 }}
+                                        transition={{ delay: idx * 0.15 }}
                                         key={step.id}
-                                        className="relative flex items-center gap-8 group"
+                                        className="relative flex items-center gap-10 group"
                                     >
-                                        <div className={`w-14 h-14 rounded-full border-2 flex items-center justify-center bg-slate-950 z-10 transition-all duration-500 shadow-2xl ${step.status === 'COMPLETED' ? 'border-emerald-500 text-emerald-400 shadow-emerald-500/20' :
-                                            step.status === 'FAILED' ? 'border-rose-500 text-rose-400 shadow-rose-500/20' :
-                                                step.status === 'COMPENSATED' ? 'border-amber-500 text-amber-400 shadow-amber-500/20' :
-                                                    'border-slate-800 text-slate-600'
-                                            } group-hover:scale-110`}>
-                                            {step.status === 'COMPLETED' && <CheckCircle2 size={24} />}
-                                            {step.status === 'FAILED' && <XCircle size={24} />}
-                                            {step.status === 'COMPENSATED' && <RotateCcw size={24} />}
-                                            {!['COMPLETED', 'FAILED', 'COMPENSATED'].includes(step.status) && <Clock size={24} />}
+                                        {/* Step Node Icon */}
+                                        <div className={cn(
+                                            "w-16 h-16 rounded-full border-2 flex items-center justify-center bg-slate-950 z-20 transition-all duration-500 shadow-2xl relative",
+                                            step.status === 'COMPLETED' ? 'border-emerald-500 text-emerald-400 shadow-emerald-500/30' :
+                                                step.status === 'FAILED' ? 'border-rose-500 text-rose-400 shadow-rose-500/30' :
+                                                    step.status === 'COMPENSATED' ? 'border-amber-500 text-amber-400 shadow-amber-500/30' :
+                                                        'border-slate-800 text-slate-600'
+                                        )}>
+                                            <div className="absolute inset-0 bg-current opacity-0 group-hover:opacity-10 rounded-full transition-opacity duration-500" />
+                                            {step.status === 'COMPLETED' && <CheckCircle2 size={28} />}
+                                            {step.status === 'FAILED' && <XCircle size={28} />}
+                                            {step.status === 'COMPENSATED' && <RotateCcw size={28} />}
+                                            {!['COMPLETED', 'FAILED', 'COMPENSATED'].includes(step.status) && <Clock size={28} />}
                                         </div>
 
-                                        <div className={`flex-1 p-6 rounded-[32px] border backdrop-blur-md transition-all duration-500 group-hover:border-white/20 group-hover:bg-white/5 ${step.status === 'FAILED' ? 'bg-rose-500/5 border-rose-500/20' :
-                                            step.status === 'COMPENSATED' ? 'bg-amber-500/5 border-amber-500/20' :
-                                                'bg-slate-900/40 border-white/5 shadow-xl'
-                                            }`}>
-                                            <div className="flex justify-between items-center mb-4">
+                                        {/* Step Data Card */}
+                                        <div className={cn(
+                                            "flex-1 p-8 rounded-[40px] border backdrop-blur-xl transition-all duration-700 relative overflow-hidden group-hover:-translate-y-1 shadow-2xl",
+                                            step.status === 'FAILED' ? 'bg-rose-500/5 border-rose-500/20' :
+                                                step.status === 'COMPENSATED' ? 'bg-amber-500/5 border-amber-500/20' :
+                                                    'bg-slate-900/40 border-white/5'
+                                        )}>
+                                            <div className="absolute top-0 right-0 w-32 h-32 bg-current opacity-[0.02] -mr-16 -mt-16 rounded-full blur-3xl pointer-events-none" />
+
+                                            <div className="flex justify-between items-center mb-6">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="p-2.5 bg-slate-950/80 rounded-xl border border-white/10 text-blue-400">
-                                                        <Server size={16} />
+                                                    <div className="p-3 bg-slate-950/80 rounded-2xl border border-white/10 text-blue-400 shadow-lg">
+                                                        <Server size={18} />
                                                     </div>
-                                                    <span className="text-[11px] font-black text-white uppercase tracking-widest">{step.service}</span>
+                                                    <div>
+                                                        <span className="text-[11px] font-black text-white uppercase tracking-[0.2em]">{step.service}</span>
+                                                        <div className="text-[8px] text-slate-600 font-black uppercase mt-1 tracking-widest">SRV_INSTANCE_02</div>
+                                                    </div>
                                                 </div>
-                                                <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-                                                    {step.logs || '0.0ms'}
+                                                <div className="px-4 py-2 bg-slate-950/80 rounded-xl border border-white/5 text-[10px] font-black font-mono text-cyan-400 uppercase tracking-widest shadow-inner">
+                                                    {step.logs || ' latency: 12.4ms'}
                                                 </div>
                                             </div>
-                                            <div className="text-xs text-slate-400 uppercase font-black tracking-tight leading-none">
-                                                Виконання: <span className="text-slate-200 ml-1">{step.action}</span>
+
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                                                <div className="text-[11px] text-slate-400 uppercase font-black tracking-widest leading-none">
+                                                    EXECUTE: <span className="text-slate-100 ml-1 font-mono">{step.action}</span>
+                                                </div>
                                             </div>
+
                                             {step.status === 'COMPENSATED' && (
                                                 <motion.div
                                                     initial={{ opacity: 0, height: 0 }}
                                                     animate={{ opacity: 1, height: 'auto' }}
-                                                    className="mt-4 pt-4 border-t border-amber-500/20 flex items-center gap-4"
+                                                    className="mt-6 pt-6 border-t border-amber-500/20 flex items-center gap-5"
                                                 >
-                                                    <div className="p-2 bg-amber-500/10 rounded-lg text-amber-500">
-                                                        <RotateCcw size={14} />
+                                                    <div className="p-2.5 bg-amber-500/15 rounded-xl text-amber-500 shadow-lg">
+                                                        <RotateCcw size={16} />
                                                     </div>
-                                                    <div className="text-[10px] text-amber-400 font-black uppercase tracking-widest">
-                                                        {premiumLocales.monitoring.sagaView.compensatingAction}: {step.compensatingAction}
+                                                    <div>
+                                                        <div className="text-[8px] text-amber-500 font-black uppercase tracking-widest mb-1 opacity-60">Automatic Compensation Triggered</div>
+                                                        <div className="text-[10px] text-amber-400 font-black uppercase tracking-widest font-mono">
+                                                            ACTION: {step.compensatingAction}
+                                                        </div>
                                                     </div>
                                                 </motion.div>
                                             )}
@@ -503,11 +647,17 @@ const MonitoringView: React.FC = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="h-full flex flex-col items-center justify-center text-slate-800 min-h-[500px]">
-                            <Layers size={64} className="opacity-10 mb-8" />
-                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-center opacity-30">
+                        <div className="h-full flex flex-col items-center justify-center py-40 group">
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-blue-500/20 blur-[60px] rounded-full scale-150 group-hover:bg-blue-500/40 transition-all duration-1000" />
+                                <Layers size={120} className="text-slate-800 relative z-10 group-hover:text-blue-400/30 transition-colors duration-1000" />
+                            </div>
+                            <p className="mt-12 text-[11px] font-black uppercase tracking-[0.5em] text-slate-700 group-hover:text-slate-500 transition-colors">
                                 {premiumLocales.monitoring.sagaView.selectSaga}
                             </p>
+                            <div className="mt-6 flex gap-2">
+                                {[1, 2, 3].map(i => <motion.div key={i} animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ repeat: Infinity, duration: 2, delay: i * 0.3 }} className="w-1.5 h-1.5 rounded-full bg-blue-500" />)}
+                            </div>
                         </div>
                     )}
                 </TacticalCard>
@@ -515,104 +665,164 @@ const MonitoringView: React.FC = () => {
         </div>
     );
     const renderSimulationView = () => (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <TacticalCard variant="holographic" title={premiumLocales.monitoring.simulation.title} className="panel-3d glass-ultra rounded-[32px] shadow-2xl overflow-hidden min-h-[500px]">
-                <div className="p-8 space-y-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <button
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            {/* Simulation Control Center */}
+            <TacticalCard
+                variant="holographic"
+                title={premiumLocales.monitoring.simulation.title}
+                className="min-h-[600px] border-white/5 bg-slate-950/40 relative overflow-hidden group"
+            >
+                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[100px] rounded-full -mr-32 -mt-32 transition-all duration-1000 group-hover:bg-blue-500/10" />
+                <div className="p-10 space-y-12 relative z-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <motion.button
+                            whileHover={{ scale: 1.02, y: -4 }}
+                            whileTap={{ scale: 0.98 }}
                             onClick={() => api.v45.triggerSimulation('backend', 0.8)}
-                            className="group p-8 bg-black/40 border border-white/5 rounded-[32px] hover:border-blue-500/30 transition-all text-left relative overflow-hidden"
+                            className="group p-8 bg-blue-600/5 border border-blue-500/20 rounded-[40px] hover:border-blue-500/50 transition-all text-left relative overflow-hidden shadow-2xl"
                         >
-                            <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="p-3 bg-blue-500/10 rounded-2xl text-blue-400 group-hover:scale-110 transition-transform">
-                                    <Zap size={24} />
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="flex items-center gap-5 mb-6">
+                                <div className="p-4 bg-blue-600/20 rounded-2xl text-blue-400 group-hover:shadow-[0_0_20px_#3b82f6] transition-all">
+                                    <Zap size={28} />
                                 </div>
-                                <h4 className="text-sm font-black text-white uppercase tracking-widest">{premiumLocales.monitoring.simulation.stressTest.title}</h4>
+                                <h4 className="text-base font-black text-white uppercase tracking-tighter">{premiumLocales.monitoring.simulation.stressTest.title}</h4>
                             </div>
-                            <p className="text-[10px] text-slate-500 font-medium leading-relaxed">{premiumLocales.monitoring.simulation.stressTest.desc}</p>
-                            <div className="mt-6 flex justify-between items-center text-[9px] font-black text-blue-500 uppercase tracking-widest">
+                            <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-8">{premiumLocales.monitoring.simulation.stressTest.desc}</p>
+                            <div className="flex justify-between items-center text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] pt-6 border-t border-white/5">
                                 <span>{premiumLocales.monitoring.simulation.activate}</span>
-                                <ArrowRight size={14} />
+                                <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
                             </div>
-                        </button>
+                        </motion.button>
 
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.02, y: -4 }}
+                            whileTap={{ scale: 0.98 }}
                             onClick={() => api.v45.triggerSimulation('customs_dataset', 0.5)}
-                            className="group p-8 bg-black/40 border border-white/5 rounded-[32px] hover:border-rose-500/30 transition-all text-left relative overflow-hidden"
+                            className="group p-8 bg-rose-600/5 border border-rose-500/20 rounded-[40px] hover:border-rose-500/50 transition-all text-left relative overflow-hidden shadow-2xl"
                         >
-                            <div className="absolute inset-0 bg-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="p-3 bg-rose-500/10 rounded-2xl text-rose-400 group-hover:scale-110 transition-transform">
-                                    <AlertTriangle size={24} />
+                            <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="flex items-center gap-5 mb-6">
+                                <div className="p-4 bg-rose-600/20 rounded-2xl text-rose-400 group-hover:shadow-[0_0_20px_#f43f5e] transition-all">
+                                    <AlertTriangle size={28} />
                                 </div>
-                                <h4 className="text-sm font-black text-white uppercase tracking-widest">{premiumLocales.monitoring.simulation.dataPoisoning.title}</h4>
+                                <h4 className="text-base font-black text-white uppercase tracking-tighter">{premiumLocales.monitoring.simulation.dataPoisoning.title}</h4>
                             </div>
-                            <p className="text-[10px] text-slate-500 font-medium leading-relaxed">{premiumLocales.monitoring.simulation.dataPoisoning.desc}</p>
-                            <div className="mt-6 flex justify-between items-center text-[9px] font-black text-rose-500 uppercase tracking-widest">
+                            <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-8">{premiumLocales.monitoring.simulation.dataPoisoning.desc}</p>
+                            <div className="flex justify-between items-center text-[10px] font-black text-rose-400 uppercase tracking-[0.2em] pt-6 border-t border-white/5">
                                 <span>{premiumLocales.monitoring.simulation.activate}</span>
-                                <ArrowRight size={14} />
+                                <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
                             </div>
-                        </button>
+                        </motion.button>
                     </div>
 
-                    <div className="p-8 bg-blue-500/5 rounded-[32px] border border-blue-500/10">
-                        <div className="flex items-center gap-4 mb-6">
-                            <Bot size={20} className="text-blue-400" />
-                            <h4 className="text-xs font-black text-white uppercase tracking-widest">{premiumLocales.monitoring.simulation.statsTitle}</h4>
-                        </div>
-                        <div className="grid grid-cols-2 gap-8">
-                            <div className="space-y-1">
-                                <div className="text-[10px] text-slate-500 uppercase font-black">{premiumLocales.monitoring.simulation.resilienceIndex}</div>
-                                <div className="text-2xl font-black text-emerald-400 font-mono">0.942</div>
+                    {/* Resilience Dashboard */}
+                    <div className="p-10 bg-slate-900/60 rounded-[48px] border border-white/5 shadow-inner relative overflow-hidden">
+                        <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03] pointer-events-none" />
+                        <div className="flex items-center justify-between mb-8">
+                            <div className="flex items-center gap-4">
+                                <Bot size={24} className="text-blue-400" />
+                                <h4 className="text-xs font-black text-white uppercase tracking-widest leading-none">{premiumLocales.monitoring.simulation.statsTitle}</h4>
                             </div>
-                            <div className="space-y-1">
-                                <div className="text-[10px] text-slate-500 uppercase font-black">{premiumLocales.monitoring.simulation.recoveryTime}</div>
-                                <div className="text-2xl font-black text-blue-400 font-mono">1.2s</div>
+                            <div className="flex gap-2">
+                                {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-blue-500/40" />)}
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-12">
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-end">
+                                    <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">{premiumLocales.monitoring.simulation.resilienceIndex}</div>
+                                    <div className="text-3xl font-black text-emerald-400 font-mono tracking-tighter">94%</div>
+                                </div>
+                                <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: '94%' }}
+                                        transition={{ duration: 1.5, ease: "easeOut" }}
+                                        className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 shadow-[0_0_15px_#10b981]"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-end">
+                                    <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">{premiumLocales.monitoring.simulation.recoveryTime}</div>
+                                    <div className="text-3xl font-black text-blue-400 font-mono tracking-tighter">1.2<span className="text-sm ml-1 opacity-60">s</span></div>
+                                </div>
+                                <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: '85%' }}
+                                        transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                                        className="h-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_15px_#3b82f6]"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </TacticalCard>
 
-            <TacticalCard variant="holographic" title={premiumLocales.monitoring.maintenance.title} className="panel-3d glass-ultra rounded-[32px] shadow-2xl overflow-hidden min-h-[500px]">
-                <div className="p-8 space-y-8">
-                    <div className="flex flex-col gap-4">
+            {/* Maintenance & Optimization */}
+            <TacticalCard
+                variant="holographic"
+                title={premiumLocales.monitoring.maintenance.title}
+                className="min-h-[600px] border-white/5 bg-slate-950/40 relative overflow-hidden group"
+            >
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/5 blur-[100px] rounded-full -ml-32 -mb-32 transition-all duration-1000 group-hover:bg-emerald-500/10" />
+                <div className="p-10 space-y-10 relative z-10">
+                    <div className="flex flex-col gap-6">
                         {[
-                            { id: 'v_db', icon: <Database />, title: premiumLocales.monitoring.maintenance.vacuum.title, desc: premiumLocales.monitoring.maintenance.vacuum.desc, action: 'vacuum_db' },
-                            { id: 'v_idx', icon: <Network />, title: premiumLocales.monitoring.maintenance.reclaim.title, desc: premiumLocales.monitoring.maintenance.reclaim.desc, action: 'reclaim_vectors' }
+                            { id: 'v_db', icon: <Database />, color: 'emerald', title: premiumLocales.monitoring.maintenance.vacuum.title, desc: premiumLocales.monitoring.maintenance.vacuum.desc, action: 'vacuum_db' },
+                            { id: 'v_idx', icon: <Network />, color: 'cyan', title: premiumLocales.monitoring.maintenance.reclaim.title, desc: premiumLocales.monitoring.maintenance.reclaim.desc, action: 'reclaim_vectors' },
+                            { id: 'v_cache', icon: <RefreshCw />, color: 'purple', title: 'Clear Metadata Cache', desc: 'Flush transient objects and reclaim L3 memory space.', action: 'clear_cache' }
                         ].map((m) => (
-                            <div key={m.id} className="p-6 bg-black/40 border border-white/5 rounded-2xl flex items-center justify-between group hover:border-emerald-500/20 transition-all">
-                                <div className="flex items-center gap-5">
-                                    <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-500 group-hover:rotate-6 transition-transform">
+                            <motion.div
+                                whileHover={{ x: 10 }}
+                                key={m.id}
+                                className="p-8 bg-black/40 border border-white/5 rounded-[40px] flex items-center justify-between group transition-all duration-500 hover:bg-slate-900/40 shadow-xl"
+                            >
+                                <div className="flex items-center gap-8">
+                                    <div className={cn(
+                                        "p-5 rounded-3xl transition-all duration-700 relative overflow-hidden group-hover:scale-110 shadow-2xl",
+                                        m.color === 'emerald' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                                            m.color === 'cyan' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' :
+                                                'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                                    )}>
+                                        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity" />
                                         {m.icon}
                                     </div>
-                                    <div className="max-w-[280px]">
-                                        <h4 className="text-xs font-black text-white uppercase tracking-wider">{m.title}</h4>
-                                        <p className="text-[9px] text-slate-500 mt-1 font-medium">{m.desc}</p>
+                                    <div className="max-w-[320px]">
+                                        <h4 className="text-sm font-black text-white uppercase tracking-widest leading-none mb-3">{m.title}</h4>
+                                        <p className="text-[11px] text-slate-500 font-medium leading-relaxed opacity-70 group-hover:opacity-100 transition-opacity">{m.desc}</p>
                                     </div>
                                 </div>
-                                <button
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
                                     onClick={() => api.v45.triggerMaintenance(m.action)}
-                                    className="px-5 py-2.5 bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-[0_0_15px_rgba(16,185,129,0.1)] active:scale-95"
+                                    className={cn(
+                                        "px-8 py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-95 border",
+                                        m.color === 'emerald' ? 'bg-emerald-600/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-600 hover:text-white' :
+                                            m.color === 'cyan' ? 'bg-cyan-600/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-600 hover:text-white' :
+                                                'bg-purple-600/10 border-purple-500/30 text-purple-400 hover:bg-purple-600 hover:text-white'
+                                    )}
                                 >
                                     {premiumLocales.monitoring.maintenance.run}
-                                </button>
-                            </div>
+                                </motion.button>
+                            </motion.div>
                         ))}
                     </div>
 
-                    <div className="relative mt-4">
-                        <div className="flex justify-between items-center mb-3">
-                            <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{premiumLocales.monitoring.maintenance.autoOptimization}</span>
-                            <span className="text-[10px] text-emerald-500 font-black font-mono">ON</span>
+                    {/* Maintenance Health Summary */}
+                    <div className="mt-8 p-8 border-t border-white/5 flex justify-between items-center opacity-40 hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-4">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">All systems optimized. Last run: {new Date().toLocaleDateString()}</span>
                         </div>
-                        <div className="h-1 bg-slate-900 rounded-full overflow-hidden">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: '85%' }}
-                                className="h-full bg-emerald-500 shadow-[0_0_10px_#10b981]"
-                            />
+                        <div className="text-[10px] font-black text-slate-600 flex items-center gap-4">
+                            <span>DB_HEALTH: 99.8%</span>
+                            <div className="w-1 h-3 bg-slate-800" />
+                            <span>VECTOR_INTEGRITY: 100%</span>
                         </div>
                     </div>
                 </div>

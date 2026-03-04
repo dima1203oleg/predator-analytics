@@ -1,31 +1,22 @@
 /**
- * RealTimeSystemMetrics - Живі метрики системи в реальному часі
- *
- * Відображає:
- * - CPU/RAM/Disk usage
- * - Активні з'єднання
- * - Throughput запитів
- * - Latency P50/P95/P99
- * - Error rate
+ * RealTimeSystemMetrics - v55 Omniscience Real-Time Matrix
+ * 
+ * Преміальна візуалізація системних метрик у реальному часі.
+ * Використовує TacticalCard, Cyber-Scanlines та розширені анімації.
+ * 
+ * © 2026 PREDATOR Analytics - Повна українізація v55
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Cpu,
-  HardDrive,
-  Activity,
-  Zap,
-  AlertTriangle,
-  TrendingUp,
-  TrendingDown,
-  Clock,
-  Users,
-  Database,
-  Wifi,
-  WifiOff,
-  RefreshCw
+  Cpu, HardDrive, Activity, Zap, AlertTriangle,
+  TrendingUp, TrendingDown, Clock, Users, Database,
+  Wifi, WifiOff, RefreshCw, Layers, Shield,
+  ArrowUpRight, ArrowDownRight, Circle
 } from 'lucide-react';
+import { cn } from '../utils/cn';
+import { TacticalCard } from './TacticalCard';
 
 interface SystemMetrics {
   cpu: number;
@@ -47,78 +38,77 @@ interface MetricCardProps {
   label: string;
   value: string | number;
   unit?: string;
-  icon: React.ReactNode;
+  icon: React.ElementType;
   trend?: 'up' | 'down' | 'stable';
   trendValue?: string;
-  color: string;
+  color: 'blue' | 'emerald' | 'purple' | 'cyan' | 'rose' | 'amber' | 'indigo';
   warning?: boolean;
   critical?: boolean;
 }
 
 const MetricCard: React.FC<MetricCardProps> = ({
-  label, value, unit, icon, trend, trendValue, color, warning, critical
+  label, value, unit, icon: Icon, trend, trendValue, color, warning, critical
 }) => {
-  const borderColor = critical ? 'border-rose-500/50' : warning ? 'border-amber-500/50' : `border-${color}-500/20`;
-  const glowColor = critical ? 'shadow-rose-500/20' : warning ? 'shadow-amber-500/20' : `shadow-${color}-500/10`;
+  const colorMap = {
+    blue: 'from-blue-500/20 to-indigo-600/5 text-blue-400 border-blue-500/30 glow-blue',
+    emerald: 'from-emerald-500/20 to-teal-600/5 text-emerald-400 border-emerald-500/30 glow-emerald',
+    purple: 'from-purple-500/20 to-pink-600/5 text-purple-400 border-purple-500/30 glow-purple',
+    cyan: 'from-cyan-500/20 to-blue-600/5 text-cyan-400 border-cyan-500/30 glow-cyan',
+    rose: 'from-rose-500/20 to-red-600/5 text-rose-400 border-rose-500/30 glow-rose',
+    amber: 'from-amber-500/20 to-orange-600/5 text-amber-400 border-amber-500/30 glow-amber',
+    indigo: 'from-indigo-500/20 to-blue-600/5 text-indigo-400 border-indigo-500/30 glow-indigo',
+  };
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className={`
-        relative  rounded-2xl p-4
-        bg-gradient-to-br from-slate-900/80 to-slate-950/90
-        border ${borderColor}
-        backdrop-blur-xl
-        shadow-lg ${glowColor}
-        group hover:scale-[1.02] transition-all duration-300
-      `}
-    >
-      {/* Animated background glow */}
-      <div className={`
-        absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500
-        bg-gradient-to-br from-${color}-500/5 to-transparent
-      `} />
-
-      {/* Pulse indicator for critical/warning */}
-      {(critical || warning) && (
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className={`absolute top-2 right-2 w-2 h-2 rounded-full ${critical ? 'bg-rose-500' : 'bg-amber-500'}`}
-        />
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5, scale: 1.02 }}
+      className={cn(
+        "relative rounded-[32px] p-6 border backdrop-blur-3xl overflow-hidden transition-all duration-500 panel-3d shadow-2xl bg-slate-950/40 group",
+        critical ? 'border-rose-500/50 bg-rose-500/5' : warning ? 'border-amber-500/50 bg-amber-500/5' : 'border-white/5'
       )}
+    >
+      <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-0 group-hover:opacity-40 transition-opacity duration-700" style={{ color: `var(--${color}-400)` }} />
+      <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03] pointer-events-none" />
 
-      <div className="flex items-start justify-between mb-3">
-        <div className={`p-2 rounded-xl bg-${color}-500/10 text-${color}-400`}>
-          {icon}
+      <div className="flex items-start justify-between mb-6 relative z-10">
+        <div className={cn("p-4 rounded-2xl bg-slate-900 border border-white/5 shadow-xl group-hover:scale-110 transition-transform duration-500", !critical && !warning && `text-${color}-400`)}>
+          <Icon size={24} className={critical || warning ? 'animate-pulse' : ''} />
         </div>
         {trend && (
-          <div className={`flex items-center gap-1 text-xs font-bold ${trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-rose-400' : 'text-slate-400'
-            }`}>
-            {trend === 'up' ? <TrendingUp size={12} /> : trend === 'down' ? <TrendingDown size={12} /> : null}
+          <div className={cn(
+            "flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-lg transition-all",
+            trend === 'up' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+              trend === 'down' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' :
+                'bg-slate-500/10 text-slate-400 border-slate-500/20'
+          )}>
+            {trend === 'up' ? <ArrowUpRight size={10} /> : trend === 'down' ? <ArrowDownRight size={10} /> : <Circle size={8} />}
             {trendValue}
           </div>
         )}
       </div>
 
-      <div className="space-y-1">
-        <div className="flex items-baseline gap-1">
-          <span className="text-2xl font-black text-white tracking-tight">{value}</span>
-          {unit && <span className="text-xs text-slate-500 font-mono">{unit}</span>}
+      <div className="space-y-2 relative z-10">
+        <div className="flex items-baseline gap-2">
+          <span className="text-3xl font-black text-white tracking-tighter font-display">{value}</span>
+          {unit && <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest font-mono">{unit}</span>}
         </div>
-        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{label}</div>
+        <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] font-mono group-hover:text-white transition-colors">{label}</div>
       </div>
 
-      {/* Progress bar for percentage metrics */}
       {typeof value === 'number' && unit === '%' && (
-        <div className="mt-3 h-1 bg-slate-800 rounded-full ">
+        <div className="mt-6 h-1.5 bg-slate-900/60 rounded-full overflow-hidden border border-white/5 relative">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${Math.min(value, 100)}%` }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className={`h-full rounded-full ${value > 90 ? 'bg-rose-500' : value > 70 ? 'bg-amber-500' : `bg-${color}-500`
-              }`}
+            transition={{ duration: 1.5, ease: "circOut" }}
+            className={cn(
+              "h-full rounded-full shadow-lg transition-all duration-500",
+              value > 90 ? 'bg-rose-500 shadow-rose-500/40' :
+                value > 75 ? 'bg-amber-500 shadow-amber-500/40' :
+                  `bg-${color}-500 shadow-${color}-500/40`
+            )}
           />
         </div>
       )}
@@ -175,19 +165,15 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
     return () => clearInterval(interval);
   }, [fetchMetrics]);
 
-  // WebSocket connection for real-time updates
   useEffect(() => {
     let ws: WebSocket | null = null;
-
     const connectWebSocket = () => {
       try {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         ws = new WebSocket(`${protocol}//${window.location.host}/api/v45/ws/omniscience`);
-
         ws.onopen = () => setIsConnected(true);
         ws.onclose = () => setIsConnected(false);
         ws.onerror = () => setIsConnected(false);
-
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
@@ -199,187 +185,207 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
               }));
               setLastUpdate(new Date());
             }
-          } catch (e) {
-            // Ignore parse errors
-          }
+          } catch (e) { /* ignore */ }
         };
       } catch (e) {
-        console.warn('WebSocket connection failed, using polling');
+        console.warn('WebSocket failed, using polling');
       }
     };
-
     connectWebSocket();
-
-    return () => {
-      if (ws) ws.close();
-    };
+    return () => ws?.close();
   }, []);
 
   if (compact) {
     return (
-      <div className="flex items-center gap-4 px-4 py-2 rounded-xl bg-slate-900/50 border border-white/5">
-        <div className="flex items-center gap-2">
-          <Cpu size={14} className="text-blue-400" />
-          <span className="text-xs font-mono text-slate-300">{metrics.cpu.toFixed(1)}%</span>
+      <div className="flex items-center gap-6 px-6 py-2.5 rounded-2xl bg-slate-950/60 border border-white/5 backdrop-blur-2xl shadow-xl group">
+        <div className="flex items-center gap-3">
+          <Cpu size={14} className="text-blue-400 group-hover:scale-125 transition-transform" />
+          <span className="text-xs font-black font-mono text-slate-200">{metrics.cpu.toFixed(1)}%</span>
         </div>
-        <div className="flex items-center gap-2">
-          <HardDrive size={14} className="text-emerald-400" />
-          <span className="text-xs font-mono text-slate-300">{metrics.memory.toFixed(1)}%</span>
+        <div className="flex items-center gap-3">
+          <HardDrive size={14} className="text-emerald-400 group-hover:scale-125 transition-transform" />
+          <span className="text-xs font-black font-mono text-slate-200">{metrics.memory.toFixed(1)}%</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Activity size={14} className="text-purple-400" />
-          <span className="text-xs font-mono text-slate-300">{metrics.requestsPerSecond} rps</span>
+        <div className="flex items-center gap-3">
+          <Activity size={14} className="text-cyan-400 group-hover:scale-125 transition-transform" />
+          <span className="text-xs font-black font-mono text-slate-200">{metrics.requestsPerSecond} RPS</span>
         </div>
-        <div className={`flex items-center gap-1 ${isConnected ? 'text-emerald-400' : 'text-rose-400'}`}>
-          {isConnected ? <Wifi size={14} /> : <WifiOff size={14} />}
+        <div className={cn("pl-3 border-l border-white/10 flex items-center gap-2", isConnected ? 'text-emerald-500' : 'text-rose-500')}>
+          {isConnected ? <Wifi size={14} className="animate-pulse" /> : <WifiOff size={14} />}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
-            <Activity size={20} />
+    <div className="flex flex-col gap-10 animate-in fade-in duration-700">
+      {/* Header Matrix Control */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 bg-slate-950/40 border border-white/5 rounded-[40px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+        <div className="flex items-center gap-6 relative z-10">
+          <div className="p-4 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl text-white shadow-[0_0_30px_rgba(37,99,235,0.3)] icon-3d-blue">
+            <Activity size={24} />
           </div>
           <div>
-            <h3 className="text-lg font-black text-white uppercase tracking-tight">Системні Метрики</h3>
-            <div className="flex items-center gap-2 text-xs text-slate-500">
-              <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-              <span>{isConnected ? 'Підключено' : 'Офлайн'}</span>
+            <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none mb-2 font-display">OMNISCIENCE_<span className="text-blue-400">MATRIX</span>_MONITOR</h3>
+            <div className="flex items-center gap-4 text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">
+              <div className="flex items-center gap-2">
+                <div className={cn("w-2 h-2 rounded-full", isConnected ? 'bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse' : 'bg-rose-500')} />
+                <span>{isConnected ? 'СИСТЕМА_В_МЕРЕЖІ' : 'КРИТИЧНО_ОФЛАЙН'}</span>
+              </div>
               {lastUpdate && (
-                <>
-                  <span>•</span>
-                  <span>{lastUpdate.toLocaleTimeString('uk-UA')}</span>
-                </>
+                <div className="flex items-center gap-2 pl-4 border-l border-white/10">
+                  <Clock size={12} />
+                  <span>ОСТАННЄ_ОНОВЛЕННЯ: {lastUpdate.toLocaleTimeString('uk-UA')}</span>
+                </div>
               )}
             </div>
           </div>
         </div>
         <motion.button
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.05, rotate: 180 }}
           whileTap={{ scale: 0.95 }}
           onClick={fetchMetrics}
-          className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 transition-colors"
+          className="p-4 rounded-2xl bg-slate-900 border border-white/5 text-slate-400 hover:text-blue-400 hover:border-blue-500/30 transition-all shadow-xl"
         >
-          <RefreshCw size={16} />
+          <RefreshCw size={20} />
         </motion.button>
       </div>
 
-      {/* Health Score Banner */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className={`
-          p-4 rounded-2xl border
-          ${metrics.healthScore >= 90
-            ? 'bg-emerald-500/10 border-emerald-500/30'
-            : metrics.healthScore >= 70
-              ? 'bg-amber-500/10 border-amber-500/30'
-              : 'bg-rose-500/10 border-rose-500/30'
-          }
-        `}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Zap size={24} className={
-              metrics.healthScore >= 90 ? 'text-emerald-400' :
-                metrics.healthScore >= 70 ? 'text-amber-400' : 'text-rose-400'
-            } />
-            <div>
-              <div className="text-sm font-bold text-white">Health Score</div>
-              <div className="text-xs text-slate-400">Загальний стан системи</div>
+      {/* Vitality Score & Matrix Grid */}
+      <div className="grid grid-cols-12 gap-8">
+
+        {/* Vitality Score Main Hub */}
+        <div className="col-span-12 xl:col-span-4 flex flex-col gap-8">
+          <TacticalCard variant="holographic" title="SYSTEM_VITALITY_CORE" className="flex-1 p-10 flex flex-col items-center justify-center bg-slate-950/60 shadow-2xl overflow-hidden group">
+            <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03] pointer-events-none" />
+            <div className="relative mb-8 mt-4">
+              <div className={cn(
+                "absolute inset-0 blur-[100px] rounded-full scale-150 transition-all duration-1000",
+                metrics.healthScore >= 90 ? 'bg-emerald-500/20' : metrics.healthScore >= 70 ? 'bg-amber-500/20' : 'bg-rose-500/20'
+              )} />
+              <div className="relative w-48 h-48 rounded-full border-4 border-white/5 flex flex-col items-center justify-center shadow-2xl bg-slate-900/40 backdrop-blur-2xl group-hover:scale-105 transition-transform duration-700">
+                <Zap size={48} className={cn(
+                  "mb-2 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]",
+                  metrics.healthScore >= 90 ? 'text-emerald-400' : metrics.healthScore >= 70 ? 'text-amber-400' : 'text-rose-400'
+                )} />
+                <div className="text-5xl font-black text-white tracking-widest font-display drop-shadow-2xl">
+                  {metrics.healthScore.toFixed(0)}%
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="text-3xl font-black text-white">
-            {metrics.healthScore.toFixed(0)}%
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Primary Metrics Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <MetricCard
-          label="CPU"
-          value={metrics.cpu.toFixed(1)}
-          unit="%"
-          icon={<Cpu size={18} />}
-          color="blue"
-          warning={metrics.cpu > 70}
-          critical={metrics.cpu > 90}
-          trend={metrics.cpu > 50 ? 'up' : 'stable'}
-          trendValue={metrics.cpu > 50 ? '+5%' : ''}
-        />
-        <MetricCard
-          label="Memory"
-          value={metrics.memory.toFixed(1)}
-          unit="%"
-          icon={<HardDrive size={18} />}
-          color="emerald"
-          warning={metrics.memory > 70}
-          critical={metrics.memory > 90}
-        />
-        <MetricCard
-          label="Connections"
-          value={metrics.activeConnections}
-          icon={<Users size={18} />}
-          color="purple"
-        />
-        <MetricCard
-          label="RPS"
-          value={metrics.requestsPerSecond}
-          unit="req/s"
-          icon={<Activity size={18} />}
-          color="cyan"
-          trend="up"
-          trendValue="+12%"
-        />
-      </div>
-
-      {/* Latency Metrics */}
-      <div className="p-4 rounded-2xl bg-slate-900/50 border border-white/5">
-        <div className="flex items-center gap-2 mb-4">
-          <Clock size={16} className="text-amber-400" />
-          <span className="text-sm font-bold text-white uppercase tracking-wider">Latency</span>
-        </div>
-        <div className="grid grid-cols-3 gap-4">
-          {[
-            { label: 'P50', value: metrics.latency.p50, color: 'emerald' },
-            { label: 'P95', value: metrics.latency.p95, color: 'amber' },
-            { label: 'P99', value: metrics.latency.p99, color: 'rose' }
-          ].map(({ label, value, color }) => (
-            <div key={label} className="text-center">
-              <div className={`text-xl font-black text-${color}-400`}>{value}ms</div>
-              <div className="text-[10px] text-slate-500 font-bold uppercase">{label}</div>
+            <div className="text-center">
+              <span className="text-[11px] font-black text-slate-500 uppercase tracking-[0.5em] mb-4 block">Коефіцієнт Живучості</span>
+              <p className="text-[9px] text-slate-600 font-mono uppercase tracking-widest max-w-[200px] leading-relaxed mx-auto">
+                Агрегований індекс стабільності вузлів обробки v55.9
+              </p>
             </div>
-          ))}
-        </div>
-      </div>
+          </TacticalCard>
 
-      {/* Error Rate & Uptime */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 rounded-2xl bg-slate-900/50 border border-white/5">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-xs text-slate-500 font-bold uppercase">Error Rate</div>
-              <div className={`text-2xl font-black ${metrics.errorRate < 1 ? 'text-emerald-400' : 'text-rose-400'}`}>
+          <div className="grid grid-cols-2 gap-8">
+            <div className="p-8 rounded-[36px] bg-slate-950/40 border border-white/5 shadow-xl flex flex-col gap-4 group hover:bg-slate-900/60 transition-all duration-500">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Error Rate</span>
+                <AlertTriangle size={16} className={metrics.errorRate < 1 ? 'text-emerald-500' : 'text-rose-500'} />
+              </div>
+              <div className={cn("text-3xl font-black font-display tracking-tighter", metrics.errorRate < 1 ? 'text-emerald-400' : 'text-rose-400')}>
                 {metrics.errorRate.toFixed(2)}%
               </div>
             </div>
-            <AlertTriangle size={24} className={metrics.errorRate < 1 ? 'text-emerald-400' : 'text-rose-400'} />
+            <div className="p-8 rounded-[36px] bg-slate-950/40 border border-white/5 shadow-xl flex flex-col gap-4 group hover:bg-slate-900/60 transition-all duration-500">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Uptime</span>
+                <Shield size={16} className="text-emerald-500" />
+              </div>
+              <div className="text-3xl font-black text-emerald-400 font-display tracking-tighter">
+                {metrics.uptime.toFixed(3)}%
+              </div>
+            </div>
           </div>
         </div>
-        <div className="p-4 rounded-2xl bg-slate-900/50 border border-white/5">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-xs text-slate-500 font-bold uppercase">Uptime</div>
-              <div className="text-2xl font-black text-emerald-400">{metrics.uptime.toFixed(2)}%</div>
-            </div>
-            <Database size={24} className="text-emerald-400" />
+
+        {/* Primary Metrics Grid */}
+        <div className="col-span-12 xl:col-span-8 flex flex-col gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <MetricCard
+              label="ЦЕНТРАЛЬНИЙ_ПРОЦЕСОР"
+              value={metrics.cpu.toFixed(1)}
+              unit="%"
+              icon={Cpu}
+              color="blue"
+              warning={metrics.cpu > 70}
+              critical={metrics.cpu > 90}
+              trend={metrics.cpu > 50 ? 'up' : 'stable'}
+              trendValue={metrics.cpu > 50 ? '+4.2%' : 'STABLE'}
+            />
+            <MetricCard
+              label="ОПЕРАТИВНА_ПАМ'ЯТЬ"
+              value={metrics.memory.toFixed(1)}
+              unit="%"
+              icon={HardDrive}
+              color="emerald"
+              warning={metrics.memory > 70}
+              critical={metrics.memory > 90}
+              trend="stable"
+              trendValue="SYNCED"
+            />
+            <MetricCard
+              label="АКТИВНІ_З'ЄДНАННЯ"
+              value={metrics.activeConnections.toLocaleString()}
+              icon={Users}
+              color="purple"
+              trend="up"
+              trendValue="+128"
+              unit="NODES"
+            />
+            <MetricCard
+              label="ПРОПУСКНА_ЗДАТНІСТЬ"
+              value={metrics.requestsPerSecond}
+              unit="REQ/S"
+              icon={Activity}
+              color="cyan"
+              trend="up"
+              trendValue="+18%"
+            />
           </div>
+
+          {/* Latency Matrix Visualization */}
+          <TacticalCard variant="holographic" title="NETWORK_LATENCY_SPECTRUM" className="p-10 border-white/5 bg-slate-950/40 overflow-hidden relative group">
+            <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
+            <div className="flex items-center gap-6 mb-10">
+              <div className="p-3 bg-amber-500/10 rounded-2xl border border-amber-500/20 text-amber-400">
+                <Clock size={20} />
+              </div>
+              <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.4em]">Response Time Analytics (ms)</span>
+            </div>
+            <div className="grid grid-cols-3 gap-12 relative z-10">
+              {[
+                { label: 'P50_NOMINAL', value: metrics.latency.p50, color: 'emerald', desc: 'Середня швидкість' },
+                { label: 'P95_ELEVATED', value: metrics.latency.p95, color: 'amber', desc: 'Верхній сегмент' },
+                { label: 'P99_CRITICAL', value: metrics.latency.p99, color: 'rose', desc: 'Хвостові запити' }
+              ].map(({ label, value, color, desc }) => (
+                <motion.div key={label} whileHover={{ y: -4 }} className="flex flex-col gap-3 group/item">
+                  <div className={cn(
+                    "text-5xl font-black font-display tracking-tighter drop-shadow-2xl transition-all duration-500",
+                    `text-${color}-400 group-hover/item:scale-110`
+                  )}>
+                    {value}<span className="text-sm font-black text-slate-600 ml-2">ms</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-white uppercase tracking-widest mb-1">{label}</span>
+                    <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest">{desc}</span>
+                  </div>
+                  <div className="mt-4 h-1 bg-slate-900 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min((value / 500) * 100, 100)}%` }}
+                      className={cn("h-full", `bg-${color}-500 shadow-[0_0_10px_#${color === 'rose' ? 'f43f5e' : color === 'amber' ? 'f59e0b' : '10b981'}]`)}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </TacticalCard>
         </div>
       </div>
     </div>

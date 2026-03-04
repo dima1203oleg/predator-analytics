@@ -1,327 +1,442 @@
-import React, { useState, useEffect } from 'react';
+/**
+ * 👁️ Sovereign Observer Matrix | v55 Premium Matrix
+ * PREDATOR SOM (Sovereign Observer Module)
+ * 
+ * Інтерфейс вищого рівня контролю та конституційного нагляду.
+ * Включає:
+ * - Три кільця контролю (Human, Arbiter, Oversight)
+ * - Протокол екстреного роз'єднання (Sovereign Emergency)
+ * - Idea Garden (Сад Гіпотез)
+ * - Стан "Цифрового двійника" (Digital Twin)
+ * 
+ * © 2026 PREDATOR Analytics - Повна українізація v55
+ */
+
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Eye, Shield, AlertTriangle, Zap, Activity,
   Lock, Unlock, GitPullRequest, Terminal,
   Server, Database, Network, Cpu, Radio,
-  Hexagon, Workflow, AlertOctagon, CheckCircle2
+  Hexagon, Workflow, AlertOctagon, CheckCircle2,
+  ChevronRight, ArrowUpRight, ZapOff, Sparkles, Brain,
+  Settings, Power, Target, Layers, Box, Globe
 } from 'lucide-react';
+import { useAppStore } from '../store/useAppStore';
 import { api } from '../services/api';
+import { cn } from '../utils/cn';
+import { premiumLocales } from '../locales/uk/premium';
+import { TacticalCard } from '../components/TacticalCard';
+import { CyberOrb } from '../components/CyberOrb';
+import { HoloContainer } from '../components/HoloContainer';
 
-// ============================================
-// SOVEREIGN OBSERVER MODULE (SOM) INTERFACE
-// v1.0 | Human Sovereignty Interface
-// ============================================
+// === ДОПОМІЖНІ КОМПОНЕНТИ ===
 
+const ControlRing: React.FC<{
+  size: number;
+  label: string;
+  active: boolean;
+  color: string;
+  onClick: () => void;
+  speed: number;
+}> = ({ size, label, active, color, onClick, speed }) => (
+  <motion.div
+    onClick={onClick}
+    className={cn(
+      "absolute rounded-full border-2 flex items-center justify-center transition-all cursor-pointer group",
+      active ? "shadow-[0_0_30px_rgba(var(--ring-color),0.3)] bg-white/[0.02]" : "border-slate-800/50 hover:border-slate-700"
+    )}
+    style={{
+      width: size,
+      height: size,
+      borderColor: active ? color : undefined,
+      //@ts-ignore
+      "--ring-color": color.replace('rgb(', '').replace(')', '')
+    }}
+    animate={{ rotate: speed > 0 ? 360 : -360 }}
+    transition={{ duration: Math.abs(speed), repeat: Infinity, ease: "linear" }}
+  >
+    <div className="absolute top-0 -translate-y-1/2 bg-slate-950 px-3 py-0.5 border border-white/5 rounded-full text-[8px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover:text-white transition-colors">
+      {label}
+    </div>
+    {active && (
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+    )}
+  </motion.div>
+);
+
+// === ГОЛОВНИЙ КОМПОНЕНТ ===
 const SOMView: React.FC = () => {
-  const [systemHealth, setSystemHealth] = useState<number>(98);
+  const [systemHealth, setSystemHealth] = useState<number>(98.4);
   const [constitutionalStatus, setConstitutionalStatus] = useState<'SECURE' | 'WARNING' | 'BREACH'>('SECURE');
   const [activeHypotheses, setActiveHypotheses] = useState<any[]>([]);
   const [emergencyMode, setEmergencyMode] = useState<boolean>(false);
-  const [selectedRing, setSelectedRing] = useState<number>(1);
+  const [selectedRing, setSelectedRing] = useState<number>(3);
+  const [isSimulating, setIsSimulating] = useState(false);
 
-  // Mock Data Loading (Replace with Real API in Phase 2)
   useEffect(() => {
-    // Simulate Idea Garden population
+    // Вантажимо гіпотези
     setActiveHypotheses([
-      { id: 'H-204', type: 'ARCH', confidence: 0.94, desc: 'Optimizing graph traversal with recursive CTEs (Expected +40% speed)' },
-      { id: 'H-205', type: 'SEC', confidence: 0.88, desc: 'Potential anomaly in vector embedding drift detected via IsolationForest' },
-      { id: 'H-209', type: 'DATA', confidence: 0.72, desc: 'Compressing truth ledger historical archives using Zstandard' },
+      { id: 'H-504', type: 'ARCH', confidence: 0.96, desc: 'Оптимізація обходу графа за допомогою рекурсивних CTE (Очікувано +42% швидкості)' },
+      { id: 'H-505', type: 'SEC', confidence: 0.89, desc: 'Виявлено потенційну аномалію в дрейфі векторних ембеддінгів через IsolationForest' },
+      { id: 'H-509', type: 'DATA', confidence: 0.76, desc: 'Стиснення історичних архівів Truth Ledger за допомогою Zstandard v3' },
     ]);
   }, []);
 
-  const handleRedButton = async () => {
-    // PHYSICAL SEVERANCE PROTOCOL
+  const handleEmergencyProtocol = async () => {
+    if (emergencyMode) return;
     setEmergencyMode(true);
     try {
-        await api.som.activateEmergency(3, 'ADMIN_OVERRIDE', 'RED_BUTTON_PRESSED', 'Manual override by operator');
+      await api.som.activateEmergency(3, 'ADMIN_OVERRIDE', 'RED_BUTTON_PRESSED', 'Manual override by operator');
     } catch (e) {
-        console.warn("Emergency signal sent (Simulation mode)");
+      console.warn("Emergency protocol transmitted");
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-slate-200 font-sans selection:bg-rose-500/30">
+    <div className="min-h-screen flex flex-col p-10 gap-10 relative z-10 animate-in fade-in duration-1000">
 
-      {/* 1. TOP HEADER: Constitutional Status */}
-      <header className="border-b border-white/10 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-rose-600 rounded flex items-center justify-center shadow-[0_0_15px_rgba(225,29,72,0.5)]">
-               <Eye className="text-white animate-pulse" size={24} />
-            </div>
-            <div>
-              <h1 className="text-xl font-black tracking-widest text-white">S.O.M.</h1>
-              <p className="text-[10px] text-rose-400 font-mono tracking-[0.2em] uppercase">Sovereign Observer Module</p>
+      {/* Sovereignty Status Bar */}
+      <div className="flex flex-col xl:flex-row items-center justify-between gap-10 p-10 bg-slate-950/40 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+        <div className="absolute inset-0 bg-cyber-grid opacity-[0.03]" />
+        <div className="flex items-center gap-8 relative z-10">
+          <div className="relative">
+            <div className="absolute inset-0 bg-rose-500/20 blur-[60px] rounded-full scale-150 animate-pulse" />
+            <div className="relative p-6 bg-slate-900 border border-rose-500/30 rounded-[32px] panel-3d shadow-2xl group-hover:scale-105 transition-transform">
+              <Eye size={40} className="text-rose-500 animate-pulse drop-shadow-[0_0_15px_rgba(244,63,94,0.6)]" />
             </div>
           </div>
-
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2 font-mono text-xs">
-              <span className="text-slate-500">CONSTITUTIONAL INTEGRITY:</span>
-              <span className={`font-bold ${constitutionalStatus === 'SECURE' ? 'text-emerald-400' : 'text-rose-500'}`}>
-                {constitutionalStatus}
-              </span>
+          <div>
+            <div className="flex items-center gap-4 mb-2">
+              <h1 className="text-4xl font-black tracking-tighter uppercase leading-none font-display text-white">
+                Sovereign Observer
+              </h1>
+              <div className="px-4 py-1.5 bg-rose-500/10 border border-rose-500/20 rounded-full text-[10px] font-black text-rose-500 uppercase tracking-widest">
+                SOM_V55_KERNEL
+              </div>
             </div>
-            <div className="w-px h-8 bg-white/10" />
-            <div className="flex items-center gap-2 font-mono text-xs">
-              <span className="text-slate-500">SYSTEM HEALTH:</span>
-              <span className="text-cyan-400 font-bold">{systemHealth}%</span>
+            <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.3em]">
+              Human-Machine Sovereignty Interface // {constitutionalStatus}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-12 relative z-10">
+          <div className="flex flex-col items-end">
+            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">CONSTITUTION_INTEGRITY</span>
+            <div className="flex items-center gap-3">
+              <div className="h-2 w-32 bg-slate-900 rounded-full overflow-hidden border border-white/5">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: '100%' }}
+                  className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                />
+              </div>
+              <span className="text-xl font-black text-emerald-400 font-mono">100.0%</span>
+            </div>
+          </div>
+          <div className="w-px h-12 bg-white/5" />
+          <div className="flex flex-col items-end">
+            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">SYSTEM_HEALTH</span>
+            <div className="flex items-center gap-3">
+              <span className="text-xl font-black text-blue-400 font-mono">{systemHealth}%</span>
+              <Activity size={18} className="text-blue-500" />
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
-      <main className="max-w-7xl mx-auto p-6 grid grid-cols-12 gap-6">
+      <main className="flex-1 grid grid-cols-12 gap-10">
 
-        {/* 2. LEFT COLUMN: The Three Rings of Control */}
-        <div className="col-span-4 space-y-6">
-          <section className="bg-slate-900/40 border border-white/10 rounded-xl p-6 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-rose-900/10 to-transparent pointer-events-none" />
-            <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-              <Shield size={18} className="text-rose-400" /> Control Rings
+        {/* LEFT: Structural Sovereignty (The Rings) */}
+        <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
+          <TacticalCard variant="holographic" className="p-10 bg-slate-950/40 relative overflow-hidden h-[500px] flex flex-col items-center justify-center">
+            <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
+            <h2 className="absolute top-10 left-10 text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
+              <Shield size={16} className="text-rose-500" /> Rings of Control
             </h2>
 
-            <div className="relative h-64 flex items-center justify-center">
-              {/* Ring 3: Human Sovereignty */}
-              <motion.div
-                className={`absolute w-64 h-64 border-2 rounded-full flex items-center justify-center transition-all cursor-pointer ${selectedRing === 3 ? 'border-rose-500 shadow-[0_0_20px_rgba(225,29,72,0.3)] bg-rose-500/10' : 'border-slate-800'}`}
-                onClick={() => setSelectedRing(3)}
-                animate={{ rotate: 360 }}
-                transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
-              >
-                <div className="absolute top-0 -mt-3 bg-black px-2 text-xs font-mono text-rose-400">HUMAN LAYER</div>
-              </motion.div>
+            <div className="relative w-80 h-80 flex items-center justify-center">
+              <ControlRing
+                size={320} label="Layer III: Human Authority"
+                active={selectedRing === 3} color="#f43f5e"
+                onClick={() => setSelectedRing(3)} speed={120}
+              />
+              <ControlRing
+                size={200} label="Layer II: Arbiter Court"
+                active={selectedRing === 2} color="#a855f7"
+                onClick={() => setSelectedRing(2)} speed={-60}
+              />
+              <ControlRing
+                size={100} label="Layer I: Core Oversight"
+                active={selectedRing === 1} color="#06b6d4"
+                onClick={() => setSelectedRing(1)} speed={30}
+              />
 
-              {/* Ring 2: Arbiter Court */}
-              <motion.div
-                className={`absolute w-40 h-40 border-2 rounded-full flex items-center justify-center transition-all cursor-pointer ${selectedRing === 2 ? 'border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.3)] bg-purple-500/10' : 'border-slate-800'}`}
-                onClick={() => setSelectedRing(2)}
-                animate={{ rotate: -360 }}
-                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-              >
-                <div className="absolute top-0 -mt-3 bg-black px-2 text-xs font-mono text-purple-400">ARBITER LAYER</div>
-              </motion.div>
-
-              {/* Ring 1: Oversight Core */}
-              <motion.div
-                className={`absolute w-20 h-20 border-2 rounded-full flex items-center justify-center transition-all cursor-pointer ${selectedRing === 1 ? 'border-cyan-500 shadow-[0_0_20px_rgba(6,182,212,0.3)] bg-cyan-500/10' : 'border-slate-800'}`}
-                onClick={() => setSelectedRing(1)}
-              >
-                <Eye size={24} className="text-cyan-400" />
-              </motion.div>
+              {/* Inner Core Eye */}
+              <div className="relative z-20 flex flex-col items-center justify-center group cursor-pointer">
+                <div className="absolute inset-0 bg-white/10 blur-xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Eye size={32} className={cn("transition-all", selectedRing === 1 ? "text-cyan-400" : "text-slate-600")} />
+              </div>
             </div>
 
-            <div className="mt-6 p-4 bg-black/40 rounded-lg border border-white/5 font-mono text-xs">
-              <div className="flex justify-between mb-2">
-                <span className="text-slate-500">ACTIVE LAYER:</span>
-                <span className="text-white font-bold">
-                  {selectedRing === 3 ? 'HUMAN SOVEREIGNTY' : selectedRing === 2 ? 'ARBITER COURT' : 'OVERSIGHT CORE'}
+            <div className="absolute bottom-10 inset-x-10 p-6 bg-black/60 border border-white/5 rounded-2xl backdrop-blur-xl">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ACTIVE_LAYER_PROTOCOL</span>
+                <span className="text-[9px] font-black text-white uppercase tracking-widest">
+                  {selectedRing === 3 ? 'ULTIMATE_OVERRIDE' : selectedRing === 2 ? 'JURIDICAL_VERIFICATION' : 'AUTONOMOUS_SCAN'}
                 </span>
               </div>
-              <p className="text-slate-400 leading-relaxed">
-                {selectedRing === 3 && "Ultimate authority. Physical kill-switches and mandatory approval gates enabled."}
-                {selectedRing === 2 && "Juridical layer. Verifies constitutional compliance using AZR Engine and Truth Ledger."}
-                {selectedRing === 1 && "Autonomous monitoring. Anomaly detection and theory generation by SOM Agents."}
+              <p className="text-xs text-slate-400 leading-relaxed italic">
+                {selectedRing === 3 && "Абсолютна влада оператора. Увімкнено фізичні kill-switches та обов'язкові шлюзи схвалення."}
+                {selectedRing === 2 && "Рівень судочинства. Перевірка конституційної відповідності за допомогою AZR Engine."}
+                {selectedRing === 1 && "Автономний моніторинг. Виявлення аномалій та генерація теорій SOM-агентами."}
               </p>
             </div>
-          </section>
+          </TacticalCard>
 
-          {/* EMERGENCY CONTROLS */}
-          <section className="bg-rose-950/20 border border-rose-500/30 rounded-xl p-6 relative">
-            <h2 className="text-sm font-bold text-rose-400 mb-4 flex items-center gap-2 font-mono uppercase">
-              <AlertOctagon size={16} /> Sovereign Emergency Protocol
-            </h2>
-
-            <p className="text-xs text-rose-300/70 mb-6">
-              Activates hardware-level isolation of the SOM module. Irreversible without physical reset.
+          <TacticalCard variant="glass" className="p-10 bg-rose-950/20 border-rose-500/30 relative group/emerg">
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-rose-500/10 blur-[60px] rounded-full group-hover/emerg:scale-150 transition-transform" />
+            <h3 className="text-[11px] font-black text-rose-500 uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
+              <AlertOctagon size={18} /> Sovereign Emergency Protocol
+            </h3>
+            <p className="text-xs text-rose-300/60 leading-relaxed mb-10">
+              Активація апаратної ізоляції SOM-модуля. Це призведе до фізичного розірвання зв'язків з усіма зовнішніми системами. Дія незворотна без фізичного втручання.
             </p>
 
             <button
-              onClick={handleRedButton}
-              className={`w-full py-4 rounded-lg font-black tracking-widest flex items-center justify-center gap-3 transition-all ${
+              onClick={handleEmergencyProtocol}
+              className={cn(
+                "w-full py-6 rounded-[24px] font-black tracking-[0.3em] text-[12px] uppercase flex items-center justify-center gap-4 transition-all duration-700 shadow-2xl overflow-hidden relative",
                 emergencyMode
-                ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
-                : 'bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_30px_rgba(225,29,72,0.4)] border border-rose-400'
-              }`}
+                  ? "bg-slate-900 text-slate-600 cursor-not-allowed border border-slate-800"
+                  : "bg-gradient-to-r from-rose-600 to-rose-800 text-white border border-rose-400/30 hover:shadow-rose-500/40 hover:scale-[1.02]"
+              )}
             >
               {emergencyMode ? (
                 <>
-                  <Lock size={18} /> SYSTEM ISOLATED
+                  <div className="absolute inset-0 bg-cyber-scanline opacity-10" />
+                  <Lock size={20} /> SOM_ISOLATED
                 </>
               ) : (
                 <>
-                  <Activity size={18} /> SEVER CONNECTION
+                  <Power size={20} className="animate-pulse" /> SEVER_CONNECTION_CORE
                 </>
               )}
             </button>
-          </section>
+          </TacticalCard>
         </div>
 
-        {/* 3. CENTER COLUMN: Digital Twin & Idea Garden */}
-        <div className="col-span-5 space-y-6">
-
-
-          {/* OBSERVABILITY & ORGANISM HEALTH */}
-          <section className="bg-slate-900/40 border border-white/10 rounded-xl p-6">
-            <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-              <Activity size={18} className="text-rose-400" /> Organism Health
-            </h2>
-
-            <div className="grid grid-cols-2 gap-3 mb-4">
-               {/* Data Quality */}
-               <div className="p-3 bg-black/40 rounded border border-white/5">
-                  <div className="flex justify-between items-center mb-2">
-                     <span className="text-xs text-slate-400">DQ Score</span>
-                     <span className="text-xs font-bold text-emerald-400">99.4%</span>
-                  </div>
-                  <div className="w-full bg-slate-800 h-1 rounded overflow-hidden">
-                     <div className="bg-emerald-500 h-full w-[99.4%]" />
-                  </div>
-               </div>
-
-               {/* Entity Resolution */}
-               <div className="p-3 bg-black/40 rounded border border-white/5">
-                  <div className="flex justify-between items-center mb-2">
-                     <span className="text-xs text-slate-400">Dedup Rate</span>
-                     <span className="text-xs font-bold text-blue-400">12.8%</span>
-                  </div>
-                  <div className="w-full bg-slate-800 h-1 rounded overflow-hidden">
-                     <div className="bg-blue-500 h-full w-[12.8%]" />
-                  </div>
-               </div>
-            </div>
-
-            <div className="p-3 bg-slate-800/30 rounded border border-white/5">
-               <div className="flex items-center gap-2 mb-2">
-                  <Workflow size={14} className="text-purple-400" />
-                  <span className="text-xs font-bold text-slate-300">Pipeline State</span>
-               </div>
-               <div className="flex items-center gap-1">
-                  {['INGEST', 'PARSE', 'DQ', 'RESOLVE', 'LOAD'].map((step, i) => (
-                     <React.Fragment key={step}>
-                        <div className={`h-1.5 flex-1 rounded-full ${i < 3 ? 'bg-emerald-500' : i === 3 ? 'bg-amber-500 animate-pulse' : 'bg-slate-700'}`} />
-                     </React.Fragment>
-                  ))}
-               </div>
-               <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono uppercase">
-                  <span>Current: ENTITY_RESOLUTION</span>
-                  <span>T-Minus: 34s</span>
-               </div>
-            </div>
-          </section>
-
-          {/* DIGITAL TWIN MONITOR */}
-          <section className="bg-slate-900/40 border border-white/10 rounded-xl p-6">
-            <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-              <Hexagon size={18} className="text-emerald-400" /> Digital Twin Sandbox
-            </h2>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 bg-black/40 rounded-lg border border-white/5">
-                <div className="flex items-center gap-2 mb-2">
-                  <Database size={14} className="text-slate-400" />
-                  <span className="text-xs font-bold text-slate-300">Truth Ledger</span>
-                </div>
-                <div className="text-2xl font-mono text-white">41,209</div>
-                <div className="text-[10px] text-emerald-400 mt-1">● Synced (0ms)</div>
-              </div>
-              <div className="p-4 bg-black/40 rounded-lg border border-white/5">
-                <div className="flex items-center gap-2 mb-2">
-                  <Cpu size={14} className="text-slate-400" />
-                  <span className="text-xs font-bold text-slate-300">RCE Engine</span>
-                </div>
-                <div className="text-2xl font-mono text-white">IDLE</div>
-                <div className="text-[10px] text-emerald-400 mt-1">● Ready</div>
+        {/* CENTER: Organism Intelligence (Analytics & Twin) */}
+        <div className="col-span-12 xl:col-span-5 flex flex-col gap-10">
+          <HoloContainer className="p-10 flex flex-col gap-10 overflow-hidden">
+            <div className="flex items-center justify-between">
+              <h2 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
+                <Activity size={18} className="text-emerald-500" /> Organism Health Matrix
+              </h2>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                <span className="text-[9px] font-black text-emerald-500 uppercase font-mono">LIVE_STREAM</span>
               </div>
             </div>
 
-            <div className="mt-4 p-4 bg-emerald-900/10 border border-emerald-500/20 rounded-lg">
-               <div className="flex justify-between items-center mb-2">
-                 <span className="text-xs font-mono text-emerald-400">LATEST SIMULATION</span>
-                 <span className="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded uppercase font-bold">Passed</span>
-               </div>
-               <p className="text-sm text-slate-300">
-                 Regression test set #892 (Kafka Ingestion) completed in 4.2s. No constitutional violations found.
-               </p>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="p-6 bg-slate-950/40 border border-white/5 rounded-[32px] panel-3d">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">DATA_QUALITY</span>
+                  <span className="text-xs font-black text-emerald-400 font-mono">99.8%</span>
+                </div>
+                <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
+                  <motion.div initial={{ width: 0 }} animate={{ width: '99.8%' }} className="h-full bg-emerald-500" />
+                </div>
+              </div>
+              <div className="p-6 bg-slate-950/40 border border-white/5 rounded-[32px] panel-3d">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ENTITY_SYNC</span>
+                  <span className="text-xs font-black text-blue-400 font-mono">14.2%</span>
+                </div>
+                <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
+                  <motion.div initial={{ width: 0 }} animate={{ width: '14.2%' }} className="h-full bg-blue-500" />
+                </div>
+              </div>
             </div>
-          </section>
 
-          {/* IDEA GARDEN */}
-          <section className="bg-slate-900/40 border border-white/10 rounded-xl p-6 max-h-[400px] overflow-y-auto">
-             <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <Zap size={18} className="text-amber-400" /> Idea Garden
-              <span className="ml-auto text-xs bg-slate-800 px-2 py-1 rounded text-slate-400 font-mono">3 Active</span>
-            </h2>
+            <div className="p-8 bg-slate-950/60 border border-white/5 rounded-[32px]">
+              <div className="flex items-center gap-3 mb-6">
+                <Layers size={16} className="text-indigo-400" />
+                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Pipeline Propagation State</span>
+              </div>
+              <div className="flex items-center gap-2 mb-4">
+                {['IN_INGEST', 'PARSING', 'VAL_DQ', 'RESOLVING', 'PERSISTED'].map((step, i) => (
+                  <div key={i} className="flex-1 flex flex-col gap-2">
+                    <div className={cn(
+                      "h-2 rounded-full transition-all duration-1000",
+                      i < 3 ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]" : i === 3 ? "bg-amber-500 animate-pulse" : "bg-slate-800"
+                    )} />
+                    <span className="text-[7px] font-black text-slate-600 uppercase text-center truncate">{step}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-between text-[9px] font-mono text-slate-500 uppercase">
+                <span>ACTIVE: ENTITY_RESOLUTION_ENGINE</span>
+                <span>T-MINUS: 18.2s</span>
+              </div>
+            </div>
 
-            <div className="space-y-3">
+            <div className="space-y-6">
+              <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
+                <Hexagon size={18} className="text-amber-500" /> Digital Twin Sandbox
+              </h2>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="p-6 bg-slate-950/60 border border-white/5 rounded-[32px] group/item transition-all hover:border-white/20">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Database size={16} className="text-slate-500 group-hover/item:text-blue-400" />
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Truth Ledger</span>
+                  </div>
+                  <div className="text-3xl font-black text-white font-mono tracking-tighter">42,817</div>
+                  <div className="text-[9px] font-black text-emerald-400 uppercase mt-2 font-mono">● SYNCED_0ms</div>
+                </div>
+                <div className="p-6 bg-slate-950/60 border border-white/5 rounded-[32px] group/item transition-all hover:border-white/20">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Cpu size={16} className="text-slate-500 group-hover/item:text-amber-400" />
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">RCE Engine Stage</span>
+                  </div>
+                  <div className="text-3xl font-black text-white font-mono tracking-tighter uppercase">Ready</div>
+                  <div className="text-[9px] font-black text-blue-400 uppercase mt-2 font-mono">● STANDBY_IDLE</div>
+                </div>
+              </div>
+            </div>
+          </HoloContainer>
+
+          <TacticalCard variant="glass" className="p-10 bg-slate-950/40 relative overflow-hidden">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
+                <Zap size={18} className="text-amber-500" /> Idea Garden
+              </h3>
+              <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-black text-slate-400 uppercase font-mono">3_ACTIVE_HYPOTHESES</span>
+            </div>
+
+            <div className="space-y-4">
               {activeHypotheses.map((h, i) => (
                 <motion.div
                   key={h.id}
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="p-4 bg-slate-800/50 border border-white/5 hover:border-amber-500/30 rounded-lg group transition-colors cursor-pointer"
+                  transition={{ delay: i * 0.15 }}
+                  className="p-6 bg-slate-900/60 border border-white/5 rounded-[32px] group/h hover:border-amber-500/40 transition-all cursor-pointer relative overflow-hidden"
                 >
-                   <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                         <span className="text-[10px] font-mono bg-slate-900 px-1.5 py-0.5 rounded text-slate-400">{h.id}</span>
-                         <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                            h.type === 'ARCH' ? 'bg-blue-500/20 text-blue-400' :
-                            h.type === 'SEC' ? 'bg-rose-500/20 text-rose-400' : 'bg-purple-500/20 text-purple-400'
-                         }`}>{h.type}</span>
-                      </div>
-                      <span className="text-xs font-mono text-amber-400 font-bold">{(h.confidence * 100).toFixed(0)}% Conf</span>
-                   </div>
-                   <p className="text-sm text-slate-300 group-hover:text-white transition-colors">
-                     {h.desc}
-                   </p>
-                   <div className="mt-3 flex gap-2">
-                      <button className="text-[10px] bg-slate-700 hover:bg-emerald-600 hover:text-white px-2 py-1 rounded transition-colors">Simulate</button>
-                      <button className="text-[10px] bg-slate-700 hover:bg-blue-600 hover:text-white px-2 py-1 rounded transition-colors">Explain</button>
-                   </div>
+                  <div className="absolute inset-y-0 left-0 w-1 bg-transparent group-hover/h:bg-amber-500 transition-all" />
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-[9px] font-black bg-slate-950 px-2 py-1 rounded-lg text-slate-500 border border-white/5 font-mono">{h.id}</span>
+                      <span className={cn(
+                        "text-[9px] font-black px-2 py-1 rounded-lg uppercase bg-white/5",
+                        h.type === 'ARCH' ? 'text-blue-400 border border-blue-500/20' : 'text-purple-400 border border-purple-500/20'
+                      )}>{h.type}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Sparkles size={12} className="text-amber-500" />
+                      <span className="text-[10px] font-black text-amber-500 font-mono">{(h.confidence * 100).toFixed(0)}% CONFIDENCE</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-300 group-hover/h:text-white transition-colors leading-relaxed mb-6 font-medium">
+                    {h.desc}
+                  </p>
+                  <div className="flex gap-3 h-0 overflow-hidden group-hover/h:h-10 transition-all duration-500">
+                    <button className="px-6 bg-emerald-600 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all">START_SIMULATION</button>
+                    <button className="px-6 bg-white/5 border border-white/10 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">REQUEST_EXPLANATION</button>
+                  </div>
                 </motion.div>
               ))}
             </div>
-          </section>
-
+          </TacticalCard>
         </div>
 
-        {/* 4. RIGHT COLUMN: Agent Swarm & Logs */}
-        <div className="col-span-3 space-y-6">
-          <section className="bg-slate-900/40 border border-white/10 rounded-xl p-6">
-            <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-              <Network size={18} className="text-cyan-400" /> Active Agents
+        {/* RIGHT: Agent Swarm & Logs */}
+        <div className="col-span-12 xl:col-span-3 flex flex-col gap-10">
+          <TacticalCard variant="holographic" className="p-10 bg-slate-950/40 flex flex-col h-full">
+            <h2 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-10 flex items-center gap-3">
+              <Network size={18} className="text-cyan-400" /> Active Agent Swarm
             </h2>
 
-            <div className="space-y-4">
-               {['Architect', 'Engineer', 'Auditor', 'Negotiator'].map((agent, i) => (
-                 <div key={agent} className="flex items-center justify-between p-3 bg-black/20 rounded border border-white/5">
+            <div className="space-y-6 flex-1">
+              {[
+                { name: 'Architect', status: 'SYNTHESIZING', color: 'text-blue-400' },
+                { name: 'Engineer', status: 'REFACTORING', color: 'text-emerald-400' },
+                { name: 'Auditor', status: 'VERIFYING', color: 'text-purple-400' },
+                { name: 'Negotiator', status: 'IDLE_WAIT', color: 'text-slate-500' }
+              ].map((agent, i) => (
+                <div key={agent.name} className="flex flex-col gap-3 p-6 bg-slate-900/40 border border-white/5 rounded-[32px] panel-3d">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                       <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                       <span className="text-sm font-bold text-slate-300">{agent} Agent</span>
+                      <div className={cn("w-2 h-2 rounded-full animate-pulse", agent.status === 'IDLE_WAIT' ? "bg-slate-700" : "bg-emerald-500")} />
+                      <span className="text-[11px] font-black text-white uppercase">{agent.name} Agent</span>
                     </div>
-                    <span className="text-xs font-mono text-slate-500">IDLE</span>
-                 </div>
-               ))}
+                    <Settings size={14} className="text-slate-600 hover:text-white transition-colors cursor-pointer" />
+                  </div>
+                  <div className="flex justify-between items-center bg-black/40 px-3 py-2 rounded-xl border border-white/5">
+                    <span className="text-[8px] font-black text-slate-600 uppercase">STATUS</span>
+                    <span className={cn("text-[9px] font-black uppercase tracking-widest", agent.color)}>{agent.status}</span>
+                  </div>
+                </div>
+              ))}
             </div>
-          </section>
 
-          <section className="bg-slate-900/40 border border-white/10 rounded-xl p-6 flex-1">
-             <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <Terminal size={18} className="text-slate-400" /> Oversight Logs
-            </h2>
-            <div className="font-mono text-[10px] text-slate-400 space-y-2 h-[200px] overflow-y-auto">
-               <p><span className="text-slate-600">[10:42:01]</span> <span className="text-cyan-400">SOM-CORE:</span> Truth Ledger synced. Hash: 8f9a...c2</p>
-               <p><span className="text-slate-600">[10:42:05]</span> <span className="text-rose-400">ANOMALY:</span> Minor drift in RCE temporal coherence (0.04).</p>
-               <p><span className="text-slate-600">[10:42:08]</span> <span className="text-blue-400">ARCHITECT:</span> Generated hypothesis H-209.</p>
-               <p><span className="text-slate-600">[10:42:15]</span> <span className="text-purple-400">ARBITER:</span> Reviewing Proposal #8821 (Auto-Scale).</p>
-               <p><span className="text-slate-600">[10:43:00]</span> <span className="text-emerald-400">SYSTEM:</span> Heartbeat verified. All axioms intact.</p>
+            <div className="mt-10 p-8 bg-black/40 border border-white/5 rounded-[32px] backdrop-blur-3xl">
+              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
+                <Terminal size={14} /> Oversight Command Logs
+              </h3>
+              <div className="font-mono text-[10px] text-slate-500 space-y-3 h-[250px] overflow-y-auto custom-scrollbar pr-3">
+                <p><span className="text-slate-700">[11:04:12]</span> <span className="text-blue-400">SOM_CORE:</span> Truth Ledger synced. MD5_HASH: 9e4b...d1</p>
+                <p><span className="text-slate-700">[11:04:15]</span> <span className="text-rose-500">ANOMALY:</span> Minor drift in RCE temporal coherence (0.02).</p>
+                <p><span className="text-slate-700">[11:04:22]</span> <span className="text-blue-400">ARCHITECT:</span> Generated hypothesis H-504 via Recursive Scan.</p>
+                <p><span className="text-slate-700">[11:04:30]</span> <span className="text-purple-400">ARBITER:</span> Reviewing Proposal #44021 (Truth Persistence).</p>
+                <p><span className="text-slate-700">[11:05:01]</span> <span className="text-emerald-400">SYSTEM:</span> Heartbeat verified. All constitutional axioms intact.</p>
+                <p className="opacity-40 animate-pulse text-[8px]">--- SCANNING_FOR_NEW_LOGS ---</p>
+              </div>
             </div>
-          </section>
+          </TacticalCard>
         </div>
-
       </main>
+
+      {/* Global Observer HUD */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="p-10 bg-slate-950/80 border border-white/10 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden"
+      >
+        <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+          <div className="flex items-center gap-8">
+            <div className="relative">
+              <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-110 animate-pulse" />
+              <div className="p-4 bg-slate-900 border border-rose-500/30 rounded-full">
+                <Globe size={32} className="text-rose-500 animate-spin-slow" />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Universal Sovereignty Monitoring</h3>
+              <p className="text-xs text-slate-500 font-medium">Повний контроль над цифровим двійником реальності в режимі SOM_V55.</p>
+            </div>
+          </div>
+          <div className="flex gap-12">
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 flex items-center gap-2">
+                <Shield size={10} /> SECURITY_ENCLAVE
+              </span>
+              <span className="text-xs font-black text-emerald-400">TITANIUM_SHIELD_V4</span>
+            </div>
+            <div className="flex flex-col text-right">
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 flex items-center gap-2 justify-end">
+                <Radio size={10} /> TRANSMISSION
+              </span>
+              <span className="text-xs font-black text-white uppercase font-mono">ENCRYPTED_AES256</span>
+            </div>
+          </div>
+          <button className="px-10 py-5 bg-rose-500 text-white rounded-[24px] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-rose-600 transition-all shadow-xl flex items-center gap-3">
+            EXPAND_OVERSIGHT_HORIZON <ArrowUpRight size={18} />
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
 };
