@@ -128,9 +128,9 @@ async def process_entity(ueid: str, session: AsyncSession) -> StructuralScore:
     
     for record in fused_records:
         data = record.normalized_data
-        if record.source == "customs":
+        if "customs" in record.source.lower():
             imports += float(data.get("value_usd", 0))
-        elif record.source == "tax":
+        elif "tax" in record.source.lower():
             # Assuming if they are the seller, it's domestic sales
             domestic_sales += float(data.get("amount", 0))
             

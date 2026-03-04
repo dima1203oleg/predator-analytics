@@ -138,6 +138,15 @@ async def startup_event():
     except Exception as e:
         logger.warning("Signal Bus init skipped: %s", e)
 
+    # ─── Signal Consumer ───
+    try:
+        from app.core.signal_consumer import consumer
+        await consumer.start()
+        app.state.signal_consumer = consumer
+        logger.info("✅ Signal Consumer started")
+    except Exception as e:
+        logger.warning("Signal Consumer failed to start: %s", e)
+
     # Connect to Message Broker
     try:
         await asyncio.wait_for(broker.connect(), timeout=5.0)
@@ -186,6 +195,14 @@ async def shutdown_event():
 
     await orchestrator.stop()
     await broker.disconnect()
+    
+    # ─── Signal Consumer ───
+    try:
+        from app.core.signal_consumer import consumer
+        await consumer.stop()
+    except Exception:
+        pass
+    
     logger.info("PREDATOR_SHUTDOWN_COMPLETE")
 
 

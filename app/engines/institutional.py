@@ -108,7 +108,7 @@ async def process_entity(ueid: str, session: AsyncSession) -> InstitutionalScore
     total_flow = 0.0
     
     for record in fused_records:
-        if record.source == "customs":
+        if "customs" in record.source.lower() or "edr" in record.source.lower():
             data = record.normalized_data
             value = float(data.get("value_usd", 0))
             post = data.get("customs_post", "UNKNOWN")
