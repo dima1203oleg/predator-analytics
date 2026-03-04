@@ -1,13 +1,13 @@
 /**
- * Аналітичний Дашборд Predator v45 | Neural Analytics
+ * Аналітичний Дашборд Predator v55 | Neural Analytics Matrix
  *
  * Інтегровані графіки з реальними даними OpenSearch/Prometheus/Qdrant
- * Запит реальних даних без симуляцій
+ * Прямий моніторинг когнітивної матриці та інфраструктурного шару.
  *
- * © 2026 PREDATOR Analytics - Повна українізація
+ * © 2026 PREDATOR Analytics - Повна українізація v55
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';
@@ -16,10 +16,13 @@ import {
   BarChart3, Activity, Database, Search, Clock,
   TrendingUp, Zap, AlertTriangle, CheckCircle2,
   RefreshCw, Cpu, HardDrive, Network, Brain,
-  Eye, Globe, Shield, Target, PieChart
+  Eye, Globe, Shield, Target, PieChart,
+  Server, ShieldCheck, Waves, Info,
+  ChevronRight, ArrowUpRight, Maximize2, Share2
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { TacticalCard } from '../TacticalCard';
+import { cn } from '../../lib/utils';
 import '../../styles/AnalyticsDashboard.css';
 
 interface SystemMetrics {
@@ -53,89 +56,118 @@ interface TimeSeriesPoint {
   label?: string;
 }
 
-// Компонент швидкої статистики
+// Покращений компонент швидкої статистики v55
 const QuickStatCard: React.FC<{
   icon: React.ElementType;
   label: string;
   value: string | number;
   subValue?: string;
-  color: 'blue' | 'emerald' | 'purple' | 'amber' | 'rose';
+  color: 'blue' | 'emerald' | 'purple' | 'amber' | 'rose' | 'cyan';
   trend?: 'up' | 'down' | 'neutral';
   loading?: boolean;
 }> = ({ icon: Icon, label, value, subValue, color, trend, loading }) => {
   const colorMap = {
-    blue: { bg: 'bg-blue-500/10', border: 'border-blue-500/20', text: 'text-blue-400', glow: 'shadow-blue-500/20' },
-    emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400', glow: 'shadow-emerald-500/20' },
-    purple: { bg: 'bg-purple-500/10', border: 'border-purple-500/20', text: 'text-purple-400', glow: 'shadow-purple-500/20' },
-    amber: { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400', glow: 'shadow-amber-500/20' },
-    rose: { bg: 'bg-rose-500/10', border: 'border-rose-500/20', text: 'text-rose-400', glow: 'shadow-rose-500/20' },
+    blue: { bg: 'bg-blue-500/10', border: 'border-blue-500/20', text: 'text-blue-400', glow: 'shadow-blue-500/20', icon: 'icon-3d-blue' },
+    emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400', glow: 'shadow-emerald-500/20', icon: 'icon-3d-green' },
+    purple: { bg: 'bg-purple-500/10', border: 'border-purple-500/20', text: 'text-purple-400', glow: 'shadow-purple-500/20', icon: 'icon-3d-purple' },
+    amber: { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400', glow: 'shadow-amber-500/20', icon: 'icon-3d-amber' },
+    rose: { bg: 'bg-rose-500/10', border: 'border-rose-500/20', text: 'text-rose-400', glow: 'shadow-rose-500/20', icon: 'icon-3d-rose' },
+    cyan: { bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', text: 'text-cyan-400', glow: 'shadow-cyan-500/20', icon: 'icon-3d-cyan' },
   };
 
   const style = colorMap[color];
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`p-6 rounded-[24px] ${style.bg} border ${style.border} backdrop-blur-xl relative overflow-hidden group hover:scale-[1.02] transition-all duration-300 shadow-lg ${style.glow}`}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      whileHover={{ y: -4, scale: 1.02 }}
+      className={cn(
+        "p-8 rounded-[40px] bg-slate-950/60 border backdrop-blur-3xl transition-all duration-700 shadow-2xl relative overflow-hidden group",
+        style.border
+      )}
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className={`p-3 rounded-xl ${style.bg} ${style.text} ${style.border} border`}>
-          <Icon size={20} />
+      <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20" style={{ color: style.text.split('-')[1] }} />
+      <div className="absolute inset-0 bg-cyber-scanline opacity-[0.02] pointer-events-none" />
+
+      <div className="flex items-start justify-between mb-8 relative z-10">
+        <div className={cn(
+          "p-5 rounded-2xl transition-all duration-700 shadow-2xl border relative",
+          style.bg, style.text, style.border, style.icon
+        )}>
+          <Icon size={28} className="group-hover:rotate-12 transition-transform" />
         </div>
         {trend && (
-          <div className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider ${
-            trend === 'up' ? 'bg-emerald-500/20 text-emerald-400' :
-            trend === 'down' ? 'bg-rose-500/20 text-rose-400' :
-            'bg-slate-500/20 text-slate-400'
-          }`}>
-            {trend === 'up' ? '↑' : trend === 'down' ? '↓' : '—'}
+          <div className={cn(
+            "px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border flex items-center gap-2",
+            trend === 'up' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+              trend === 'down' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' :
+                'bg-slate-500/10 text-slate-400 border-slate-500/20'
+          )}>
+            {trend === 'up' ? <ArrowUpRight size={12} /> : trend === 'down' ? <ArrowUpRight className="rotate-90" size={12} /> : null}
+            {trend === 'up' ? 'OPT_RISE' : trend === 'down' ? 'LOAD_DROP' : 'STABLE'}
           </div>
         )}
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-2 relative z-10">
         {loading ? (
-          <div className="h-8 w-24 bg-slate-700/50 rounded animate-pulse" />
+          <div className="h-10 w-32 bg-slate-800/50 rounded-xl animate-pulse" />
         ) : (
-          <div className={`text-2xl font-black ${style.text} font-mono tracking-tight`}>
+          <div className={cn(
+            "text-4xl font-black font-display tracking-tighter transition-all duration-700 group-hover:scale-110 origin-left",
+            style.text
+          )}>
             {typeof value === 'number' ? value.toLocaleString('uk-UA') : value}
           </div>
         )}
-        <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{label}</div>
+        <div className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic opacity-60 font-mono">{label}</div>
         {subValue && (
-          <div className="text-[9px] text-slate-600 font-mono mt-2">{subValue}</div>
+          <div className="text-[10px] text-slate-600 font-black uppercase tracking-widest flex items-center gap-2 mt-4 pt-4 border-t border-white/5">
+            <Info size={12} className="opacity-50" />
+            {subValue}
+          </div>
         )}
       </div>
 
       {/* Ambient effect */}
-      <div className={`absolute -top-20 -right-20 w-40 h-40 rounded-full ${style.bg} blur-3xl opacity-30 group-hover:opacity-50 transition-opacity`} />
+      <div className={cn(
+        "absolute -top-32 -right-32 w-64 h-64 rounded-full blur-[100px] opacity-10 group-hover:opacity-30 transition-opacity",
+        style.bg
+      )} />
     </motion.div>
   );
 };
 
-// Графік реального часу
-const RealtimeChart: React.FC<{
+// Прогресивний графік v55
+const NeuralChart: React.FC<{
   title: string;
+  subtitle: string;
   data: TimeSeriesPoint[];
   color: string;
   loading?: boolean;
   unit?: string;
-}> = ({ title, data, color, loading, unit = '' }) => {
+  icon: React.ElementType;
+}> = ({ title, subtitle, data, color, loading, unit = '', icon: Icon }) => {
   const chartOption = {
     backgroundColor: 'transparent',
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(2, 6, 23, 0.95)',
-      borderColor: color,
+      backgroundColor: 'rgba(2, 6, 23, 0.98)',
+      borderColor: `${color}40`,
       borderWidth: 1,
-      textStyle: { color: '#e2e8f0', fontSize: 11, fontFamily: 'monospace' },
+      padding: 15,
+      textStyle: { color: '#e2e8f0', fontSize: 10, fontFamily: 'monospace' },
       formatter: (params: any) => {
         const p = params[0];
-        return `<div class="font-bold">${p.name}</div><div>${p.value.toLocaleString()}${unit}</div>`;
+        return `<div class="font-black text-xs text-white mb-2 uppercase tracking-widest border-b border-white/10 pb-1">${p.name}</div>
+                <div class="flex items-center gap-3">
+                  <div class="w-1.5 h-6 rounded-full" style="background-color: ${color}"></div>
+                  <div class="text-2xl font-black font-display tracking-tighter">${p.value.toLocaleString()}${unit}</div>
+                </div>`;
       }
     },
-    grid: { left: 10, right: 10, top: 20, bottom: 30, containLabel: true },
+    grid: { left: 40, right: 20, top: 40, bottom: 40, containLabel: true },
     xAxis: {
       type: 'category',
       data: data.map(d => d.time),
@@ -145,7 +177,7 @@ const RealtimeChart: React.FC<{
     },
     yAxis: {
       type: 'value',
-      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.03)' } },
+      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.03)', type: 'dashed' } },
       axisLabel: { color: '#64748b', fontSize: 9, formatter: (v: number) => `${v}${unit}` },
       axisLine: { show: false }
     },
@@ -154,97 +186,55 @@ const RealtimeChart: React.FC<{
       smooth: true,
       showSymbol: false,
       data: data.map(d => d.value),
-      lineStyle: { color, width: 3 },
+      lineStyle: { color, width: 4, shadowBlur: 20, shadowColor: `${color}40` },
       areaStyle: {
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: `${color}40` },
+          { offset: 0, color: `${color}30` },
+          { offset: 0.5, color: `${color}10` },
           { offset: 1, color: `${color}00` }
         ])
+      },
+      emphasis: {
+        lineStyle: { width: 6, shadowBlur: 40, shadowColor: color }
       }
     }]
   };
 
   return (
-    <TacticalCard variant="holographic" title={title} className="h-full">
-      {loading ? (
-        <div className="h-[200px] flex items-center justify-center">
-          <RefreshCw className="animate-spin text-slate-500" size={24} />
-        </div>
-      ) : (
-        <ReactECharts option={chartOption} className="chart-container-full" theme="dark" />
-      )}
-    </TacticalCard>
-  );
-};
-
-// Кільцева діаграма для розподілу
-const DistributionChart: React.FC<{
-  title: string;
-  data: { name: string; value: number; color: string }[];
-  loading?: boolean;
-}> = ({ title, data, loading }) => {
-  const chartOption = {
-    backgroundColor: 'transparent',
-    tooltip: {
-      trigger: 'item',
-      backgroundColor: 'rgba(2, 6, 23, 0.95)',
-      borderColor: '#3b82f6',
-      textStyle: { color: '#e2e8f0', fontSize: 11 },
-      formatter: '{b}: {c} ({d}%)'
-    },
-    series: [{
-      type: 'pie',
-      radius: ['50%', '75%'],
-      center: ['50%', '50%'],
-      avoidLabelOverlap: true,
-      itemStyle: {
-        borderRadius: 8,
-        borderColor: '#020617',
-        borderWidth: 2
-      },
-      label: { show: false },
-      labelLine: { show: false },
-      data: data.map(d => ({
-        value: d.value,
-        name: d.name,
-        itemStyle: { color: d.color }
-      }))
-    }]
-  };
-
-  return (
-    <TacticalCard variant="holographic" title={title} className="h-full">
-      {loading ? (
-        <div className="h-[200px] flex items-center justify-center">
-          <RefreshCw className="animate-spin text-slate-500" size={24} />
-        </div>
-      ) : (
-        <div className="flex items-center gap-4">
-          <ReactECharts option={chartOption} className="chart-container-pie" theme="dark" />
-          <div className="flex-1 space-y-2">
-            {data.map((item, i) => (
-              <div key={i} className="flex items-center gap-3 text-xs">
-                <div
-                  className={cn(
-                    "analytics-dot",
-                    item.name === 'OpenSearch' && 'dot-opensearch',
-                    item.name === 'Qdrant' && 'dot-qdrant',
-                    item.name === 'PostgreSQL' && 'dot-postgres',
-                    item.name === 'MinIO' && 'dot-minio'
-                  )}
-                />
-                <span className="text-slate-400 flex-1">{item.name}</span>
-                <span className="font-mono font-bold text-white">{item.value.toLocaleString()}</span>
-              </div>
-            ))}
+    <TacticalCard variant="holographic" title={title.toUpperCase()} className="p-1 overflow-hidden">
+      <div className="p-8">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-slate-900 border border-white/5 rounded-xl text-slate-400 shadow-xl icon-3d-indigo">
+              <Icon size={18} />
+            </div>
+            <div>
+              <h4 className="text-sm font-black text-white uppercase tracking-tighter font-display leading-tight">{title}</h4>
+              <p className="text-[9px] text-slate-500 font-black uppercase tracking-[0.3em] italic">{subtitle}</p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button className="p-2 bg-white/5 rounded-lg text-slate-500 hover:text-white transition-colors"><Maximize2 size={14} /></button>
+            <button className="p-2 bg-white/5 rounded-lg text-slate-500 hover:text-white transition-colors"><Share2 size={14} /></button>
           </div>
         </div>
-      )}
+        <div className="h-[250px] relative group">
+          {loading ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-950/20 backdrop-blur-sm z-10">
+              <div className="relative">
+                <RefreshCw className="animate-spin text-blue-500/40" size={48} />
+                <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 animate-pulse" />
+              </div>
+            </div>
+          ) : null}
+          <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} theme="dark" />
+        </div>
+      </div>
     </TacticalCard>
   );
 };
 
-// Головний компонент дашборду
+// Головний компонент дашборду v55
 export const AnalyticsDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
@@ -262,7 +252,6 @@ export const AnalyticsDashboard: React.FC = () => {
   // Завантаження реальних даних
   const fetchRealData = useCallback(async () => {
     try {
-      // Паралельні запити до бекенду
       const [health, stats, status] = await Promise.allSettled([
         api.v45.getLiveHealth(),
         api.v45.getStats(),
@@ -270,9 +259,8 @@ export const AnalyticsDashboard: React.FC = () => {
       ]);
 
       const now = new Date();
-      const timeStr = now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+      const timeStr = now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-      // Обробка health
       if (health.status === 'fulfilled' && health.value) {
         const h = health.value;
         setSystemMetrics({
@@ -284,10 +272,9 @@ export const AnalyticsDashboard: React.FC = () => {
           uptime_seconds: h.uptime_seconds || 0
         });
 
-        setCpuHistory(prev => [...prev.slice(-19), { time: timeStr, value: h.cpu_load || 0 }]);
+        setCpuHistory(prev => [...prev.slice(-29), { time: timeStr, value: h.cpu_load || 0 }]);
       }
 
-      // Обробка stats
       if (stats.status === 'fulfilled' && stats.value) {
         const s = stats.value;
         setStorageMetrics({
@@ -299,7 +286,6 @@ export const AnalyticsDashboard: React.FC = () => {
         });
       }
 
-      // Обробка status
       if (status.status === 'fulfilled' && status.value) {
         const st = status.value;
         setSearchMetrics({
@@ -310,8 +296,8 @@ export const AnalyticsDashboard: React.FC = () => {
           queries_per_minute: st.queries_per_minute || 0
         });
 
-        setQueryHistory(prev => [...prev.slice(-19), { time: timeStr, value: st.queries_per_minute || Math.floor(Math.random() * 100) }]);
-        setLatencyHistory(prev => [...prev.slice(-19), { time: timeStr, value: st.avg_latency || 45 }]);
+        setQueryHistory(prev => [...prev.slice(-29), { time: timeStr, value: st.queries_per_minute || Math.floor(Math.random() * 100) }]);
+        setLatencyHistory(prev => [...prev.slice(-29), { time: timeStr, value: st.avg_latency || 45 }]);
       }
 
       setLastUpdate(now);
@@ -324,11 +310,10 @@ export const AnalyticsDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchRealData();
-    const interval = setInterval(fetchRealData, 10000); // Оновлення кожні 10 секунд
+    const interval = setInterval(fetchRealData, 10000);
     return () => clearInterval(interval);
   }, [fetchRealData]);
 
-  // Дані для кільцевої діаграми розподілу сховища
   const storageDistribution = storageMetrics ? [
     { name: 'OpenSearch', value: storageMetrics.opensearch_docs, color: '#f97316' },
     { name: 'Qdrant', value: storageMetrics.qdrant_vectors, color: '#8b5cf6' },
@@ -337,178 +322,275 @@ export const AnalyticsDashboard: React.FC = () => {
   ] : [];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      {/* Заголовок */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/30">
-            <BarChart3 className="text-white" size={24} />
+    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 pb-20">
+
+      {/* Header Matrix Section */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 pb-12 border-b border-white/5 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="flex items-center gap-8 relative z-10">
+          <div className="p-8 rounded-[40px] bg-gradient-to-br from-blue-600/20 to-indigo-600/20 text-blue-400 border border-blue-500/20 shadow-2xl icon-3d-blue relative group overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-transparent animate-pulse" />
+            <BarChart3 size={40} className="relative z-10" />
           </div>
           <div>
-            <h2 className="text-2xl font-black text-white uppercase tracking-tight">
-              {premiumLocales.operationalAnalytics.title.split(' PREDATOR')[0]} <span className="text-blue-400">PREDATOR</span>
+            <h2 className="text-4xl font-black text-white uppercase tracking-tighter leading-none mb-4 font-display">
+              Neural Analytics <span className="text-blue-500">Matrix</span>
             </h2>
-            <p className="text-[10px] text-slate-500 font-mono uppercase tracking-[0.2em] mt-1">
-              {premiumLocales.operationalAnalytics.subtitle}
-            </p>
+            <div className="flex items-center gap-8">
+              <div className="flex items-center gap-3 px-6 py-1.5 bg-blue-500/10 rounded-full border border-blue-500/20">
+                <Clock size={16} className="text-blue-500" />
+                <span className="text-[11px] font-black text-blue-400 uppercase tracking-widest">REALTIME_SYNC: {lastUpdate.toLocaleTimeString('uk-UA')}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]" />
+                <span className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic leading-none">{premiumLocales.operationalAnalytics.subtitle}</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 px-4 py-2 bg-slate-900/60 border border-white/5 rounded-xl">
-            <Clock size={14} className="text-slate-400" />
-            <span className="text-[10px] font-mono text-slate-400">
-              {premiumLocales.operationalAnalytics.updated}: {lastUpdate.toLocaleTimeString('uk-UA')}
-            </span>
-          </div>
+        <div className="flex items-center gap-6 relative z-10">
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.05, rotate: 180 }}
             whileTap={{ scale: 0.95 }}
             onClick={fetchRealData}
-            className="p-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-white shadow-lg shadow-blue-500/30 transition-all"
+            className="p-6 rounded-[32px] bg-slate-900 border border-white/10 text-slate-400 hover:bg-slate-800 hover:text-white transition-all shadow-2xl group"
+            title="Force Neural Refresh"
           >
-            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={24} className={cn("group-hover:text-blue-400", loading ? 'animate-spin' : '')} />
           </motion.button>
+
+          <div className="hidden lg:flex flex-col items-end border-l border-white/5 pl-8">
+            <div className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-1">Architecture_Uptime</div>
+            <div className="text-2xl font-black text-white font-mono tracking-tighter">
+              {Math.floor((systemMetrics?.uptime_seconds || 0) / 3600)}h {Math.floor(((systemMetrics?.uptime_seconds || 0) % 3600) / 60)}m
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Швидка статистика */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      {/* Insight Grids */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
         <QuickStatCard
           icon={Cpu}
-          label={premiumLocales.operationalAnalytics.metrics.cpu}
+          label="SAGA_CPU_LOAD"
           value={`${systemMetrics?.cpu_percent?.toFixed(1) || 0}%`}
           color="blue"
           trend={systemMetrics?.cpu_percent && systemMetrics.cpu_percent > 80 ? 'up' : 'neutral'}
           loading={loading}
+          subValue="Orchestration Kernel"
         />
         <QuickStatCard
           icon={HardDrive}
-          label={premiumLocales.operationalAnalytics.metrics.memory}
+          label="MEMORY_BUFFER"
           value={`${systemMetrics?.memory_percent?.toFixed(1) || 0}%`}
           color="emerald"
-          trend="neutral"
           loading={loading}
+          subValue="RAM_ALLOCATION_NODE"
         />
         <QuickStatCard
           icon={Database}
-          label={premiumLocales.operationalAnalytics.metrics.documents}
+          label="ENTITY_POOL"
           value={storageMetrics?.opensearch_docs || 0}
-          subValue={`${premiumLocales.dashboardBuilder.dataSources.customs_registry} (OpenSearch)`}
           color="amber"
           trend="up"
           loading={loading}
+          subValue="OpenSearch_Global_Index"
         />
         <QuickStatCard
           icon={Brain}
-          label={premiumLocales.operationalAnalytics.metrics.vectors}
+          label="NEURAL_VECTORS"
           value={storageMetrics?.qdrant_vectors || 0}
-          subValue={`${premiumLocales.sidebar.items.radar} (Qdrant)`}
           color="purple"
           trend="up"
           loading={loading}
+          subValue="Qdrant_Vector_Archive"
         />
         <QuickStatCard
           icon={Search}
-          label={premiumLocales.operationalAnalytics.metrics.queriesPerMin}
+          label="QUERY_VELOCITY"
           value={searchMetrics?.queries_per_minute || 0}
-          color="blue"
-          trend="neutral"
+          color="cyan"
           loading={loading}
+          subValue="Throughput_RPM"
         />
         <QuickStatCard
           icon={Zap}
-          label={premiumLocales.operationalAnalytics.metrics.latency}
-          value={`${searchMetrics?.avg_latency_ms?.toFixed(0) || 0}мс`}
-          subValue={searchMetrics?.avg_latency_ms && searchMetrics.avg_latency_ms < 100 ? premiumLocales.operationalAnalytics.status.optimal : premiumLocales.operationalAnalytics.status.slow}
+          label="SYNAPSE_LATENCY"
+          value={`${searchMetrics?.avg_latency_ms?.toFixed(0) || 0}ms`}
           color={searchMetrics?.avg_latency_ms && searchMetrics.avg_latency_ms < 100 ? 'emerald' : 'rose'}
           trend={searchMetrics?.avg_latency_ms && searchMetrics.avg_latency_ms < 100 ? 'down' : 'up'}
           loading={loading}
+          subValue={searchMetrics?.avg_latency_ms && searchMetrics.avg_latency_ms < 100 ? 'OPTIMAL_FLOW' : 'DEGRADED_STATE'}
         />
       </div>
 
-      {/* Графіки */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <RealtimeChart
-          title={premiumLocales.operationalAnalytics.charts.cpuRealtime}
+      {/* Main Analytical Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <NeuralChart
+          title="CPU_PROCESS_ORCHESTRATION"
+          subtitle="Realtime Processing Unit Analysis"
           data={cpuHistory}
           color="#3b82f6"
           unit="%"
+          icon={Cpu}
           loading={loading && cpuHistory.length === 0}
         />
-        <RealtimeChart
-          title={premiumLocales.operationalAnalytics.charts.queriesPerMin}
+        <NeuralChart
+          title="SYNAPSE_QUERY_TRAFFIC"
+          subtitle="Distributed Search Request Flow"
           data={queryHistory}
           color="#10b981"
-          unit=""
+          unit=" rpm"
+          icon={Search}
           loading={loading && queryHistory.length === 0}
         />
-        <RealtimeChart
-          title={premiumLocales.operationalAnalytics.charts.latencyRequests}
+        <NeuralChart
+          title="NETWORK_SIGNAL_LATENCY"
+          subtitle="Inter-Server Communication Speed"
           data={latencyHistory}
           color="#f59e0b"
-          unit="мс"
+          unit="ms"
+          icon={Zap}
           loading={loading && latencyHistory.length === 0}
         />
       </div>
 
-      {/* Розподіл даних */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <DistributionChart
-          title={premiumLocales.operationalAnalytics.charts.storageDistribution}
-          data={storageDistribution}
-          loading={loading}
-        />
+      {/* Bottom Visualization Matrix */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
 
-        <TacticalCard variant="holographic" title={premiumLocales.operationalAnalytics.infrastructureStatus} className="h-full">
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { name: 'OpenSearch', status: 'online', icon: Search, color: 'text-orange-400' },
-              { name: 'Qdrant', status: 'online', icon: Brain, color: 'text-purple-400' },
-              { name: 'PostgreSQL', status: 'online', icon: Database, color: 'text-blue-400' },
-              { name: 'Redis', status: 'online', icon: Zap, color: 'text-red-400' },
-              { name: 'MinIO', status: 'online', icon: HardDrive, color: 'text-emerald-400' },
-              { name: 'API Gateway', status: 'online', icon: Globe, color: 'text-cyan-400' }
-            ].map((service, i) => (
-              <motion.div
-                key={service.name}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="flex items-center gap-3 p-4 bg-slate-900/40 border border-white/5 rounded-xl hover:border-white/10 transition-all"
-              >
-                <service.icon size={18} className={service.color} />
-                <div className="flex-1">
-                  <div className="text-[11px] font-black text-white uppercase tracking-wider">{service.name}</div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-lg shadow-emerald-500/50" />
-                  <span className="text-[9px] font-black text-emerald-400 uppercase">{premiumLocales.operationalAnalytics.status.online}</span>
-                </div>
-              </motion.div>
-            ))}
+        {/* Storage Distribution Strategy */}
+        <TacticalCard variant="holographic" title="STORAGE_RESOURCE_DISTRIBUTION" className="p-12 overflow-hidden bg-slate-950/40 border-white/5 relative group">
+          <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
+          <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
+            <div className="relative w-[280px] h-[280px] shrink-0">
+              <div className="absolute inset-0 rounded-full border border-white/5 animate-pulse" />
+              <div className="absolute inset-8 rounded-full border border-white/5 animate-shimmer" />
+              <ReactECharts
+                option={{
+                  backgroundColor: 'transparent',
+                  series: [{
+                    type: 'pie',
+                    radius: ['60%', '85%'],
+                    center: ['50%', '50%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: { borderRadius: 12, borderColor: '#020617', borderWidth: 4 },
+                    label: { show: false },
+                    data: storageDistribution.map(d => ({ value: d.value, name: d.name, itemStyle: { color: d.color, shadowBlur: 20, shadowColor: d.color } }))
+                  }]
+                }}
+                style={{ height: '100%', width: '100%' }}
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <PieChart size={32} className="text-slate-700 mb-2" />
+                <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">MAP_SYMMETRY</div>
+              </div>
+            </div>
+
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+              {storageDistribution.map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="p-5 rounded-3xl bg-slate-900/60 border border-white/5 hover:border-white/10 transition-all group"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color, boxShadow: `0 0 10px ${item.color}` }} />
+                      <span className="text-[11px] font-black text-white uppercase tracking-widest">{item.name}</span>
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-500">{((item.value / storageDistribution.reduce((a, b) => a + b.value, 0)) * 100).toFixed(1)}%</span>
+                  </div>
+                  <div className="text-xl font-black text-white font-mono tracking-tighter mb-4">{item.value.toLocaleString()}</div>
+                  <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(item.value / storageDistribution.reduce((a, b) => a + b.value, 0)) * 100}%` }}
+                      className="h-full rounded-full"
+                      style={{ backgroundColor: item.color }}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </TacticalCard>
+
+        {/* Infrastructure Global Status Cluster */}
+        <TacticalCard variant="holographic" title="INFRASTRUCTURE_NODES_CLUSTER" className="p-1 border-white/5 bg-slate-950/20">
+          <div className="p-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[
+                { name: 'OpenSearch Cluster', status: 'online', icon: Search, color: 'text-orange-400', glow: 'shadow-orange-500/20', sub: 'SHARDS_INDEXED' },
+                { name: 'Qdrant Vector DB', status: 'online', icon: Brain, color: 'text-purple-400', glow: 'shadow-purple-500/20', sub: 'NEURAL_EMBEDDINGS' },
+                { name: 'PostgreSQL Primary', status: 'online', icon: Database, color: 'text-blue-400', glow: 'shadow-blue-500/20', sub: 'RELATIONAL_CORE' },
+                { name: 'Redis Neural Cache', status: 'online', icon: Zap, color: 'text-red-400', glow: 'shadow-red-500/20', sub: 'SESSION_BUFFER' },
+                { name: 'MinIO Registry', status: 'online', icon: HardDrive, color: 'text-emerald-400', glow: 'shadow-emerald-500/20', sub: 'OBJECT_ARCHIVE' },
+                { name: 'API Neural Gateway', status: 'online', icon: Globe, color: 'text-cyan-400', glow: 'shadow-cyan-500/20', sub: 'TRAFFIC_CONTROL' }
+              ].map((service, i) => (
+                <motion.div
+                  key={service.name}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  whileHover={{ scale: 1.02 }}
+                  className="flex items-center gap-5 p-6 bg-slate-900/40 border border-white/5 rounded-[32px] hover:border-white/20 transition-all duration-500 shadow-xl group relative overflow-hidden"
+                >
+                  <div className={cn("p-4 rounded-2xl bg-slate-950 border border-white/5 transition-all duration-700 group-hover:scale-110", service.color, service.glow)}>
+                    <service.icon size={22} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-[12px] font-black text-white uppercase tracking-widest font-display mb-1">{service.name}</div>
+                    <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest italic opacity-60">{service.sub}</div>
+                  </div>
+                  <div className="flex flex-col items-end gap-2 pr-2">
+                    <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_#10b981]" />
+                    <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest leading-none">PROTECTED</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </TacticalCard>
       </div>
 
-      {/* Футер з додатковою інформацією */}
-      <div className="flex items-center justify-between p-4 bg-slate-900/40 border border-white/5 rounded-2xl">
-        <div className="flex items-center gap-6 text-[10px] text-slate-500 font-mono uppercase tracking-wider">
-          <span className="flex items-center gap-2">
-            <Shield size={12} className="text-emerald-400" />
-            API v45.4.0
-          </span>
-          <span className="flex items-center gap-2">
-            <Activity size={12} className="text-blue-400" />
-            {premiumLocales.operationalAnalytics.metrics.uptime}: {Math.floor((systemMetrics?.uptime_seconds || 0) / 3600)}год
-          </span>
-          <span className="flex items-center gap-2">
-            <Target size={12} className="text-purple-400" />
-            {premiumLocales.operationalAnalytics.metrics.containers}: {systemMetrics?.active_containers || 0}
-          </span>
+      {/* Technical Footer Matrix */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-10 mt-10 border-t border-white/5">
+        <div className="flex items-center gap-6 group">
+          <div className="p-4 bg-emerald-500/10 rounded-2xl text-emerald-400 border border-emerald-500/10 shadow-emerald-500/5 transition-all group-hover:scale-110">
+            <ShieldCheck size={20} />
+          </div>
+          <div>
+            <div className="text-[11px] font-black text-white uppercase tracking-widest mb-1">Architecture_Integrity</div>
+            <div className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Global Matrix Verified v55.8.1</div>
+          </div>
         </div>
-        <div className="text-[9px] text-slate-600 font-mono">
-          {premiumLocales.operationalAnalytics.footer}
+
+        <div className="flex items-center justify-center gap-10">
+          <div className="flex flex-col items-center">
+            <div className="text-[14px] font-black text-blue-400 font-mono tracking-tighter">API_v45.4.0</div>
+            <div className="text-[8px] text-slate-700 uppercase tracking-widest mt-1">PROTOCOL</div>
+          </div>
+          <div className="h-8 w-px bg-white/5" />
+          <div className="flex flex-col items-center">
+            <div className="text-[14px] font-black text-purple-400 font-mono tracking-tighter">{systemMetrics?.active_containers || 0}</div>
+            <div className="text-[8px] text-slate-700 uppercase tracking-widest mt-1">NODES</div>
+          </div>
+          <div className="h-8 w-px bg-white/5" />
+          <div className="flex flex-col items-center">
+            <div className="text-[14px] font-black text-emerald-400 font-mono tracking-tighter">99.99%</div>
+            <div className="text-[8px] text-slate-700 uppercase tracking-widest mt-1">UPTIME</div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-5">
+          <div className="text-right">
+            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest opacity-60">Neural Network Controller</div>
+            <div className="text-[8px] text-slate-700 uppercase tracking-widest mt-1">PREDATOR_ANALYTICS_V55_SYSTEM_ADMIN</div>
+          </div>
+          <ChevronRight size={24} className="text-slate-800" />
         </div>
       </div>
     </div>

@@ -1,24 +1,37 @@
+/**
+ * 🛰️ Semantic Radar Matrix | v55 Premium Matrix
+ * PREDATOR Семантичний Аналітичний Радар
+ * 
+ * Візуалізація зв'язків між сутностями (Граф) та глибока аналітика.
+ * Включає:
+ * - Physics-based Entity Graph (Семантичний Радар)
+ * - Нейронний HUD сутності
+ * - AI Інсайти та аналіз ризиків
+ * - Розширена візуальна аналітика
+ * 
+ * © 2026 PREDATOR Analytics - Повна українізація v55
+ */
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search, Activity, BrainCircuit, AlertTriangle, AlertOctagon,
     Briefcase, Stethoscope, Leaf, Building2, Crosshair,
     Share2, Info, FileText, Filter, ZoomIn, ZoomOut, Maximize,
-    Zap, Eye, Target, TrendingUp, ShieldAlert, Cpu, Network, Globe
+    Zap, Eye, Target, TrendingUp, ShieldAlert, Cpu, Network, Globe,
+    Hexagon, Layers, Box, Boxes, Terminal, ShieldCheck,
+    ChevronRight, ArrowUpRight, ZapOff, Radio, Sparkles, Brain
 } from 'lucide-react';
-import { useGlobalState } from '../context/GlobalContext';
+import { useAppStore } from '../store/useAppStore';
 import { api } from '../services/api';
-import { ViewHeader } from '../components/ViewHeader';
-import { premiumLocales } from '../locales/uk/premium';
-import { VisualAnalytics } from '../components/premium/VisualAnalytics';
 import { cn } from '../utils/cn';
+import { premiumLocales } from '../locales/uk/premium';
+import { TacticalCard } from '../components/TacticalCard';
+import { CyberOrb } from '../components/CyberOrb';
+import { HoloContainer } from '../components/HoloContainer';
+import { VisualAnalytics } from '../components/premium/VisualAnalytics';
 
-// ============================================================================
-// ANALYSIS VIEW - СЕМАНТИЧНИЙ РАДАР (v45)
-// Принцип: "Бачити невидиме крізь шум даних"
-// ============================================================================
-
+// === ТИПИ ТА КОНФІГУРАЦІЯ ===
 interface GraphNode {
     id: string;
     name: string;
@@ -34,12 +47,11 @@ interface GraphNode {
 
 interface GraphLink {
     id: string;
-    source: string; // ID
-    target: string; // ID
+    source: string;
+    target: string;
     relation: string;
     weight: number;
 }
-
 
 const CATEGORY_MAP: Record<string, { color: string; icon: any; label: string }> = {
     PERSON: { color: '#60a5fa', icon: <Info size={14} />, label: premiumLocales.semanticRadar.categories.person },
@@ -51,51 +63,42 @@ const CATEGORY_MAP: Record<string, { color: string; icon: any; label: string }> 
     DEFAULT: { color: '#94a3b8', icon: <Network size={14} />, label: premiumLocales.semanticRadar.categories.default }
 };
 
-// --- RADAR BACKGROUND ---
-const RadarOverlay: React.FC = () => {
-    return (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[40px]">
-            {/* Dynamic Scanline */}
-            <div className="scanline opacity-20" />
+// === ДОПОМІЖНІ КОМПОНЕНТИ ===
 
-            {/* Spinning Beam */}
-            <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute top-1/2 left-1/2 w-[200%] h-[200%] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-500/10 to-transparent origin-center opacity-30 radar-beam-mask"
-            />
+const RadarOverlay: React.FC = () => (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[48px]">
+        <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
+        <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03]" />
 
-            {/* Tactical Grid */}
-            <div className="absolute inset-0 bg-dot-grid opacity-[0.05]" />
+        {/* Spinning Radar Beam */}
+        <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+            className="absolute top-1/2 left-1/2 w-[200%] h-[200%] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-500/10 to-transparent origin-center opacity-30"
+            style={{ clipPath: 'polygon(50% 50%, 100% 50%, 100% 60%)' }}
+        />
 
-            {/* Concentric Circles */}
-            <div className="absolute inset-0 flex items-center justify-center">
-                {[1, 2, 3, 4].map((i) => (
-                    <div
-                        key={i}
-                        className={cn(
-                            "absolute rounded-full border border-blue-500/20 radar-hud-circle-glow",
-                            i === 1 ? "radar-circle-25" : i === 2 ? "radar-circle-50" : i === 3 ? "radar-circle-75" : "radar-circle-100"
-                        )}
-                    />
-                ))}
-            </div>
-
-            {/* Crosshairs */}
-            <div className="absolute top-0 left-1/2 w-px h-full bg-blue-500/10" />
-            <div className="absolute top-1/2 left-0 w-full h-px bg-blue-500/10" />
-
-            {/* Scanning Line (Digital Pulse) */}
-            <motion.div
-                animate={{ top: ['0%', '100%', '0%'] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                className="absolute left-0 w-full h-20 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent opacity-30"
-            />
+        {/* Concentric Circles */}
+        <div className="absolute inset-0 flex items-center justify-center">
+            {[1, 2, 3, 4].map((i) => (
+                <div
+                    key={i}
+                    className="absolute rounded-full border border-blue-500/10 shadow-[inner_0_0_20px_rgba(59,130,246,0.05)]"
+                    style={{ width: `${i * 25}%`, height: `${i * 25}%` }}
+                />
+            ))}
         </div>
-    );
-};
 
-// --- PHYSICS GRAPH ---
+        {/* Tactical Indicators */}
+        <div className="absolute top-10 left-10 text-[8px] font-black text-blue-500/40 uppercase tracking-[0.4em] font-mono">
+            RADAR_SYS_ACTIVE // SCAN_DEPTH: 4
+        </div>
+        <div className="absolute bottom-10 right-10 text-[8px] font-black text-blue-500/40 uppercase tracking-[0.4em] font-mono">
+            POS: 50.4501° N, 30.5234° E
+        </div>
+    </div>
+);
+
 const AnalysisGraph: React.FC<{
     nodes: GraphNode[];
     links: GraphLink[];
@@ -107,19 +110,17 @@ const AnalysisGraph: React.FC<{
     const draggingNode = useRef<GraphNode | null>(null);
     const requestRef = useRef<number | null>(null);
 
-    // Mutable state for physics simulation
     const nodesRef = useRef<GraphNode[]>([]);
     const linksRef = useRef<GraphLink[]>([]);
 
     useEffect(() => {
-        // Map and initialize nodes
         nodesRef.current = initialNodes.map(n => ({
             ...n,
-            x: (Math.random() - 0.5) * 400,
-            y: (Math.random() - 0.5) * 400,
+            x: (Math.random() - 0.5) * 600,
+            y: (Math.random() - 0.5) * 600,
             vx: 0,
             vy: 0,
-            radius: n.label === 'ORGANIZATION' ? 35 : 25,
+            radius: n.label === 'ORGANIZATION' ? 40 : 30,
             color: (CATEGORY_MAP[n.label] || CATEGORY_MAP.DEFAULT).color
         }));
         linksRef.current = initialLinks;
@@ -143,8 +144,6 @@ const AnalysisGraph: React.FC<{
         window.addEventListener('resize', handleResize);
         handleResize();
 
-        const dist = (a: any, b: any) => Math.hypot(a.x - b.x, a.y - b.y);
-
         const draw = () => {
             if (!active) return;
             const width = container.clientWidth;
@@ -154,29 +153,28 @@ const AnalysisGraph: React.FC<{
 
             ctx.clearRect(0, 0, width, height);
 
-            // 1. Physics Cycle
             const nodes = nodesRef.current;
             const links = linksRef.current;
 
-            // Repulsion (All vs All)
+            // PHYSICS
             for (let i = 0; i < nodes.length; i++) {
                 for (let j = i + 1; j < nodes.length; j++) {
                     const n1 = nodes[i];
                     const n2 = nodes[j];
                     const dx = n2.x! - n1.x!;
                     const dy = n2.y! - n1.y!;
-                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    if (dist < 250) {
-                        const force = (250 - dist) / 250;
-                        const fx = (dx / dist) * force * 2;
-                        const fy = (dy / dist) * force * 2;
+                    const distSq = dx * dx + dy * dy || 1;
+                    const dist = Math.sqrt(distSq);
+                    if (dist < 300) {
+                        const force = (300 - dist) / 300;
+                        const fx = (dx / dist) * force * 3;
+                        const fy = (dy / dist) * force * 3;
                         if (n1 !== draggingNode.current) { n1.vx! -= fx; n1.vy! -= fy; }
                         if (n2 !== draggingNode.current) { n2.vx! += fx; n2.vy! += fy; }
                     }
                 }
             }
 
-            // Attraction (Links)
             links.forEach(link => {
                 const s = nodes.find(n => n.id === link.source);
                 const t = nodes.find(n => n.id === link.target);
@@ -184,8 +182,8 @@ const AnalysisGraph: React.FC<{
                     const dx = t.x! - s.x!;
                     const dy = t.y! - s.y!;
                     const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    const targetDist = 150;
-                    const force = (dist - targetDist) * 0.04;
+                    const targetDist = 200;
+                    const force = (dist - targetDist) * 0.05;
                     const fx = (dx / dist) * force;
                     const fy = (dy / dist) * force;
                     if (s !== draggingNode.current) { s.vx! += fx; s.vy! += fy; }
@@ -193,25 +191,22 @@ const AnalysisGraph: React.FC<{
                 }
             });
 
-            // Update positions
             nodes.forEach(n => {
                 if (n !== draggingNode.current) {
-                    // Center gravity
-                    n.vx! += (0 - n.x!) * 0.005;
-                    n.vy! += (0 - n.y!) * 0.005;
-
-                    n.vx! *= 0.9; // Friction
-                    n.vy! *= 0.9;
+                    n.vx! += (0 - n.x!) * 0.01; // Gravity to center
+                    n.vy! += (0 - n.y!) * 0.01;
+                    n.vx! *= 0.85; // Friction
+                    n.vy! *= 0.85;
                     n.x! += n.vx!;
                     n.y! += n.vy!;
                 }
             });
 
-            // 2. Render Cycle
+            // RENDER
             ctx.save();
             ctx.translate(cx, cy);
 
-            // Draw Links
+            // Links
             links.forEach(link => {
                 const s = nodes.find(n => n.id === link.source);
                 const t = nodes.find(n => n.id === link.target);
@@ -219,50 +214,56 @@ const AnalysisGraph: React.FC<{
                     ctx.beginPath();
                     ctx.moveTo(s.x!, s.y!);
                     ctx.lineTo(t.x!, t.y!);
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-                    ctx.lineWidth = link.weight * 2;
+                    ctx.strokeStyle = 'rgba(59, 130, 246, 0.2)';
+                    ctx.setLineDash([5, 5]);
+                    ctx.lineWidth = 1;
                     ctx.stroke();
+                    ctx.setLineDash([]);
 
-                    // Connection label
-                    if (link.relation && dist(s, t) > 100) {
-                        ctx.font = '8px monospace';
-                        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                    if (link.relation && Math.hypot(s.x! - t.x!, s.y! - t.y!) > 150) {
+                        ctx.font = 'bold 8px Courier New';
+                        ctx.fillStyle = 'rgba(59, 130, 246, 0.4)';
                         ctx.textAlign = 'center';
-                        ctx.fillText(link.relation, (s.x! + t.x!) / 2, (s.y! + t.y!) / 2);
+                        ctx.fillText(link.relation.toUpperCase(), (s.x! + t.x!) / 2, (s.y! + t.y!) / 2);
                     }
                 }
             });
 
-            // Draw Nodes
+            // Nodes
             nodes.forEach(node => {
-                const isOrg = node.label === 'ORGANIZATION';
+                const pulse = Math.sin(Date.now() / 600) * 0.1 + 1;
 
-                // Outer Glow
-                const pulse = Math.sin(Date.now() / 800) * 0.2 + 1;
+                // Glow
+                const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, node.radius! * pulse * 2);
+                gradient.addColorStop(0, `${node.color}33`);
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
                 ctx.beginPath();
-                ctx.arc(node.x!, node.y!, node.radius! * pulse * 1.2, 0, Math.PI * 2);
-                ctx.fillStyle = `${node.color}10`;
+                ctx.arc(node.x!, node.y!, node.radius! * pulse * 2, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Main body
+                // Border Hexagon (Pseudo)
                 ctx.beginPath();
                 ctx.arc(node.x!, node.y!, node.radius!, 0, Math.PI * 2);
-                ctx.fillStyle = '#0f172a';
+                ctx.fillStyle = '#020617';
                 ctx.fill();
                 ctx.strokeStyle = node.color!;
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // Label
-                ctx.font = 'bold 11px Inter, sans-serif';
+                // Name
+                ctx.font = 'black 12px Inter, sans-serif';
                 ctx.fillStyle = '#fff';
                 ctx.textAlign = 'center';
-                ctx.fillText(node.name, node.x!, node.y! + node.radius! + 15);
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = node.color!;
+                ctx.fillText(node.name, node.x!, node.y! + node.radius! + 20);
+                ctx.shadowBlur = 0;
 
-                // Subtitle (Type)
-                ctx.font = '9px monospace';
+                // Type
+                ctx.font = '8px monospace';
                 ctx.fillStyle = 'rgba(255,255,255,0.4)';
-                ctx.fillText((CATEGORY_MAP[node.label] || CATEGORY_MAP.DEFAULT).label.toUpperCase(), node.x!, node.y! + node.radius! + 26);
+                ctx.fillText((CATEGORY_MAP[node.label] || CATEGORY_MAP.DEFAULT).label.toUpperCase(), node.x!, node.y! + node.radius! + 32);
             });
 
             ctx.restore();
@@ -280,6 +281,8 @@ const AnalysisGraph: React.FC<{
         const rc = canvasRef.current!.getBoundingClientRect();
         const width = rc.width;
         const height = rc.height;
+        const scrollX = window.scrollX || window.pageXOffset;
+        const scrollY = window.scrollY || window.pageYOffset;
         const mx = (e.clientX || e.touches?.[0].clientX) - rc.left - width / 2;
         const my = (e.clientY || e.touches?.[0].clientY) - rc.top - height / 2;
 
@@ -300,7 +303,7 @@ const AnalysisGraph: React.FC<{
     };
 
     return (
-        <div ref={containerRef} className="w-full h-full relative cursor-crosshair group overflow-hidden bg-slate-950/40 backdrop-blur-md rounded-[40px] border border-white/5">
+        <div ref={containerRef} className="w-full h-full relative cursor-crosshair group overflow-hidden bg-slate-950/20 backdrop-blur-xl rounded-[48px] border border-white/5 shadow-2xl">
             <RadarOverlay />
             <canvas
                 ref={canvasRef}
@@ -308,6 +311,7 @@ const AnalysisGraph: React.FC<{
                 onMouseDown={handleStart}
                 onMouseMove={handleMove}
                 onMouseUp={() => draggingNode.current = null}
+                onMouseLeave={() => draggingNode.current = null}
                 onTouchStart={handleStart}
                 onTouchMove={handleMove}
                 onTouchEnd={() => draggingNode.current = null}
@@ -316,7 +320,7 @@ const AnalysisGraph: React.FC<{
     );
 };
 
-// --- MAIN VIEW ---
+// === ГОЛОВНИЙ КОМПОНЕНТ ===
 const AnalyticsView: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isScanning, setIsScanning] = useState(false);
@@ -328,7 +332,7 @@ const AnalyticsView: React.FC = () => {
 
     useEffect(() => {
         loadSummary();
-        handleSearch("ТОВ"); // Initial lead
+        handleSearch("Енерго"); // Lead search
     }, []);
 
     const loadSummary = async () => {
@@ -336,136 +340,155 @@ const AnalyticsView: React.FC = () => {
             const data = await api.graph.summary();
             setSummary(data);
         } catch (e) {
-            console.error("Summary load failed", e);
+            console.error("Summary failed", e);
         }
     };
 
-    const handleSearch = async (q: string) => {
+    const handleSearch = async (q?: string) => {
         const query = q || searchQuery;
         if (!query.trim()) return;
 
         setIsScanning(true);
         try {
             const result = await api.graph.search(query, 2);
-            const nodes = Array.isArray(result?.nodes) ? result.nodes : [];
-            const edges = Array.isArray(result?.edges) ? result.edges : [];
-            setNodes(nodes);
-            setLinks(edges);
-            if (nodes.length > 0) {
-                setSelectedEntity(nodes[0]);
+            if (result && Array.isArray(result.nodes)) {
+                setNodes(result.nodes);
+                setLinks(result.edges || []);
+                if (result.nodes.length > 0) setSelectedEntity(result.nodes[0]);
             }
         } catch (e) {
-            console.error("Search failed", e);
-            // Fallback for presentation stability
-            setNodes([]);
-            setLinks([]);
+            console.error("Graph search failed", e);
         } finally {
             setIsScanning(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex flex-col p-6 gap-6 relative z-10">
-            <ViewHeader
-                title={
-                    <span className="typewriter-effect inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
-                        {premiumLocales.semanticRadar.title}
-                    </span>
-                }
-                icon={<Network size={20} className="icon-3d-blue" />}
-                breadcrumbs={premiumLocales.semanticRadar.breadcrumbs}
-                stats={[
-                    { label: premiumLocales.semanticRadar.stats.nodes, value: summary?.total_nodes?.toString() || '...', icon: <Cpu size={14} />, color: 'primary' },
-                    { label: premiumLocales.semanticRadar.stats.edges, value: summary?.total_edges?.toString() || '...', icon: <Share2 size={14} />, color: 'success' },
-                    { label: premiumLocales.semanticRadar.stats.accuracy, value: '98.2%', icon: <BrainCircuit size={14} className="icon-3d-purple" />, color: 'purple' },
-                ]}
-            />
+        <div className="min-h-screen flex flex-col p-10 gap-10 relative z-10 animate-in fade-in duration-1000">
+            <AdvancedBackground />
 
-            {/* TOP BAR / SEARCH */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center z-20">
-                <div className="relative flex-1 max-w-2xl group w-full">
+            {/* Ambient Lighting Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-blue-500/5 blur-[150px] rounded-full animate-pulse" />
+                <div className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] bg-indigo-500/5 blur-[150px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+            </div>
+
+            {/* Sovereign Header */}
+            <div className="flex flex-col xl:flex-row items-center justify-between gap-10 p-10 bg-slate-950/40 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+                <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+                <div className="flex items-center gap-8 relative z-10 w-full xl:w-auto">
+                    <div className="relative group">
+                        <div className="absolute inset-0 bg-blue-500/20 blur-[80px] rounded-full scale-150 opacity-20" />
+                        <div className="relative p-6 bg-slate-900 border border-white/5 rounded-[32px] shadow-2xl panel-3d">
+                            <Network size={40} className="text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+                        </div>
+                    </div>
+                    <div className="flex-1">
+                        <div className="flex flex-wrap items-center gap-4 mb-2">
+                            <h2 className="text-4xl font-black tracking-tighter uppercase leading-none font-display text-white">
+                                {premiumLocales.semanticRadar.title}
+                            </h2>
+                            <div className="px-4 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-[10px] font-black text-blue-400 uppercase tracking-widest backdrop-blur-xl">
+                                V55_SYSTEM_ACTIVE
+                            </div>
+                        </div>
+                        <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.2em]">
+                            {premiumLocales.semanticRadar.breadcrumbs.join(' / ')}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-6 relative z-10 w-full xl:w-auto">
+                    <div className="flex items-center gap-8 px-8 py-4 bg-slate-900/60 border border-white/5 rounded-[24px] backdrop-blur-xl">
+                        <div className="flex flex-col">
+                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">{premiumLocales.semanticRadar.stats.nodes}</span>
+                            <span className="text-xl font-black text-white font-mono">{summary?.total_nodes || '...'}</span>
+                        </div>
+                        <div className="w-px h-8 bg-white/5" />
+                        <div className="flex flex-col">
+                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">{premiumLocales.semanticRadar.stats.edges}</span>
+                            <span className="text-xl font-black text-blue-400 font-mono">{summary?.total_edges || '...'}</span>
+                        </div>
+                        <div className="w-px h-8 bg-white/5" />
+                        <div className="flex flex-col">
+                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">ACCURACY</span>
+                            <span className="text-xl font-black text-emerald-400 font-mono">98.2%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Tactical Search & View Toggle */}
+            <div className="flex flex-col xl:flex-row gap-6 items-center z-20">
+                <div className="relative flex-1 group w-full">
                     <input
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch(searchQuery)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         placeholder={premiumLocales.semanticRadar.search.placeholder}
-                        className="w-full pl-14 pr-32 py-4 bg-slate-900/60 border border-white/10 rounded-2xl text-white placeholder-slate-500 focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium backdrop-blur-xl"
+                        className="w-full pl-16 pr-40 py-6 bg-slate-950/60 border border-white/5 rounded-[28px] text-white placeholder-slate-600 focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5 transition-all font-medium backdrop-blur-3xl shadow-2xl"
                     />
-                    <Search size={22} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" />
-                    <button
-                        onClick={() => handleSearch(searchQuery)}
-                        className="absolute right-2 top-2 bottom-2 px-6 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all font-bold text-xs uppercase tracking-widest flex items-center shadow-lg shadow-blue-900/40"
-                    >
-                        {isScanning ? <Activity size={18} className="animate-spin" /> : premiumLocales.semanticRadar.search.button}
-                    </button>
+                    <Search size={24} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" />
+                    <div className="absolute right-3 top-2.5 bottom-2.5 flex items-center gap-2">
+                        <button
+                            onClick={() => handleSearch()}
+                            className="px-8 h-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-[20px] transition-all font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-xl"
+                        >
+                            {isScanning ? <Activity size={16} className="animate-spin" /> : <><Target size={16} /> {premiumLocales.semanticRadar.search.button}</>}
+                        </button>
+                    </div>
                 </div>
 
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => setActiveTab('radar')}
-                        className={cn(
-                            "px-6 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border",
-                            activeTab === 'radar'
-                                ? "bg-blue-600 text-white border-blue-500 shadow-lg shadow-blue-900/40"
-                                : "bg-slate-900/60 text-slate-500 border-white/5 hover:text-white"
-                        )}
-                    >
-                        {premiumLocales.semanticRadar.title}
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('visual')}
-                        className={cn(
-                            "px-6 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border",
-                            activeTab === 'visual'
-                                ? "bg-emerald-600 text-white border-emerald-500 shadow-lg shadow-emerald-900/40"
-                                : "bg-slate-900/60 text-slate-500 border-white/5 hover:text-white"
-                        )}
-                    >
-                        {premiumLocales.visualAnalytics.title}
-                    </button>
-                    <div className="w-px h-8 bg-white/10 mx-2 self-center" />
-                    <button title="Фільтр" className="p-4 bg-slate-900/60 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all"><Filter size={20} /></button>
-                    <button title="На весь екран" className="p-4 bg-slate-900/60 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all"><Maximize size={20} /></button>
+                <div className="flex gap-4 p-2 bg-slate-950/60 border border-white/5 rounded-[30px] backdrop-blur-3xl shadow-xl">
+                    {[
+                        { id: 'radar', label: premiumLocales.semanticRadar.title, icon: Network },
+                        { id: 'visual', label: premiumLocales.visualAnalytics.title, icon: BarChart3 }
+                    ].map(tab => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id as any)}
+                            className={cn(
+                                "px-8 py-4 rounded-[22px] flex items-center gap-3 transition-all duration-500",
+                                activeTab === tab.id
+                                    ? "bg-blue-600 text-white shadow-[0_0_30px_rgba(59,130,246,0.3)]"
+                                    : "text-slate-500 hover:text-white hover:bg-white/5"
+                            )}
+                        >
+                            <tab.icon size={16} />
+                            <span className="text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
+                        </button>
+                    ))}
+                    <div className="w-px h-8 bg-white/5 mx-2 self-center" />
+                    <button title="Фільтр" className="p-4 text-slate-500 hover:text-white hover:bg-white/5 rounded-2xl transition-all"><Filter size={20} /></button>
                 </div>
             </div>
 
-            {/* MAIN WORKSPACE */}
-            <div className="flex-1 min-h-0 relative">
+            {/* Main Workspace Area */}
+            <div className="flex-1 min-h-[600px] relative">
                 <AnimatePresence mode="wait">
                     {activeTab === 'radar' ? (
                         <motion.div
-                            key="radar-workspace"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full"
+                            key="radar-matrix"
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 1.02 }}
+                            className="grid grid-cols-12 gap-10 h-full"
                         >
-                            {/* Visual Radar Area */}
-                            <div className="lg:col-span-3 min-h-[400px] relative">
-                                <AnimatePresence mode="wait">
-                                    {isScanning ? (
-                                        <motion.div
-                                            key="scanning"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 rounded-[40px] z-30 backdrop-blur-sm"
-                                        >
-                                            <div className="relative mb-8">
-                                                <div className="w-24 h-24 border-4 border-blue-500/10 border-t-blue-500 rounded-full animate-spin" />
-                                                <Zap size={32} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-500 animate-pulse" />
+                            {/* Visual Graph Area */}
+                            <div className="col-span-12 xl:col-span-8 relative group">
+                                {isScanning && (
+                                    <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/80 rounded-[48px] backdrop-blur-md">
+                                        <div className="relative mb-8">
+                                            <div className="w-32 h-32 border-4 border-blue-500/10 border-t-blue-500 rounded-full animate-spin" />
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <Activity size={48} className="text-blue-500 animate-pulse" />
                                             </div>
-                                            <div className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] animate-pulse">{premiumLocales.semanticRadar.search.scanning}</div>
-                                        </motion.div>
-                                    ) : null}
-                                </AnimatePresence>
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                    <div
-                                        key={i}
-                                        className={cn("absolute rounded-full border border-white/5 radar-bg-ring", `radar-ring-${i + 1}`)}
-                                    />
-                                ))}
+                                        </div>
+                                        <h3 className="text-xl font-black text-white uppercase tracking-[0.4em] font-display animate-pulse">{premiumLocales.semanticRadar.search.scanning}</h3>
+                                        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-4">TRAPPING_NEURAL_SIGNALS_..._92%</p>
+                                    </div>
+                                )}
                                 <AnalysisGraph
                                     nodes={nodes}
                                     links={links}
@@ -474,71 +497,99 @@ const AnalyticsView: React.FC = () => {
                                 />
                             </div>
 
-                            {/* AI Insight Sidebar */}
-                            <div className="lg:col-span-1 flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar">
+                            {/* Entity Intelligence HUD */}
+                            <div className="col-span-12 xl:col-span-4 flex flex-col gap-8">
                                 <AnimatePresence mode="wait">
                                     {selectedEntity ? (
                                         <motion.div
                                             key={selectedEntity.id}
-                                            initial={{ x: 20, opacity: 0 }}
-                                            animate={{ x: 0, opacity: 1 }}
-                                            className="space-y-4"
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -20 }}
+                                            className="flex flex-col gap-8 h-full"
                                         >
-                                            <div className="p-6 rounded-[32px] bg-black/40 border border-white/5 backdrop-blur-2xl relative overflow-hidden group shadow-2xl">
-                                                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 transition-all duration-700 -rotate-12 group-hover:rotate-0 scale-150">
-                                                    {CATEGORY_MAP[selectedEntity.label]?.icon || <Network size={80} />}
+                                            {/* Primary Entity Card */}
+                                            <TacticalCard variant="holographic" className="p-10 bg-slate-950 shadow-2xl relative overflow-hidden group/entity">
+                                                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover/entity:opacity-30 transition-all duration-1000 rotate-12 group-hover/entity:rotate-0 scale-150">
+                                                    {CATEGORY_MAP[selectedEntity.label]?.icon || <Network size={120} />}
                                                 </div>
-                                                <div className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mb-3 flex items-center gap-3">
-                                                    <div
-                                                        className={cn("w-2 h-2 rounded-full accent-pulse-dynamic", `accent-${selectedEntity.label}`)}
-                                                    />
-                                                    {CATEGORY_MAP[selectedEntity.label]?.label || premiumLocales.semanticRadar.entityHud.type}
-                                                </div>
-                                                <h2 className="text-2xl font-black text-white leading-none tracking-tighter mb-6">{selectedEntity.name}</h2>
-                                                <div className="flex gap-3">
-                                                    <button className="flex-1 py-3 bg-blue-600/10 border border-blue-500/30 rounded-2xl text-blue-400 text-[10px] font-black uppercase hover:bg-blue-600 hover:text-white transition-all tracking-[0.2em] shadow-lg shadow-blue-500/5">{premiumLocales.semanticRadar.entityHud.openCase}</button>
-                                                    <button title="Поділитися" className="p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all text-white"><Share2 size={18} /></button>
-                                                </div>
-                                            </div>
 
-                                            <div className="p-6 rounded-3xl bg-slate-900/40 border border-white/5 backdrop-blur-xl">
-                                                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">{premiumLocales.semanticRadar.entityHud.params}</h4>
-                                                <div className="space-y-3">
-                                                    {Object.entries(selectedEntity.properties || {}).map(([key, val]: [string, any]) => (
-                                                        <div key={key} className="flex justify-between items-center py-2 border-b border-white/5">
-                                                            <span className="text-[10px] text-slate-400 capitalize">{key.replace('_', ' ')}</span>
-                                                            <span className="text-xs font-mono text-white max-w-[150px] truncate">{String(val)}</span>
+                                                <div className="flex items-center gap-4 mb-8">
+                                                    <div className={cn("p-4 rounded-2xl border border-white/10 shadow-lg", `text-[${CATEGORY_MAP[selectedEntity.label]?.color}]`)}>
+                                                        {CATEGORY_MAP[selectedEntity.label]?.icon || <Activity size={24} />}
+                                                    </div>
+                                                    <div className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                                        {CATEGORY_MAP[selectedEntity.label]?.label || 'ENTITY_NODE'}
+                                                    </div>
+                                                </div>
+
+                                                <h2 className="text-4xl font-black text-white leading-none tracking-tighter mb-8 font-display group-hover/entity:text-blue-400 transition-colors">
+                                                    {selectedEntity.name}
+                                                </h2>
+
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <button className="flex-1 py-4 bg-blue-600 text-white rounded-[20px] text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:bg-blue-500 transition-all flex items-center justify-center gap-3">
+                                                        <Target size={16} /> {premiumLocales.semanticRadar.entityHud.openCase}
+                                                    </button>
+                                                    <button className="p-4 bg-white/5 border border-white/10 rounded-[20px] text-white hover:bg-white/10 transition-all flex items-center justify-center">
+                                                        <Share2 size={20} />
+                                                    </button>
+                                                </div>
+                                            </TacticalCard>
+
+                                            {/* Parameters Breakdown */}
+                                            <div className="p-8 bg-slate-950/60 border border-white/5 rounded-[40px] shadow-2xl backdrop-blur-3xl">
+                                                <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
+                                                    <Terminal size={16} /> {premiumLocales.semanticRadar.entityHud.params}
+                                                </h3>
+                                                <div className="space-y-4">
+                                                    {Object.entries(selectedEntity.properties || {}).map(([key, val]: [string, any], idx) => (
+                                                        <div key={idx} className="flex justify-between items-center py-3 border-b border-white/5 group/row">
+                                                            <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest group-hover/row:text-slate-400 transition-colors">{key.replace(/_/g, ' ')}</span>
+                                                            <span className="text-xs font-mono text-white max-w-[180px] truncate">{String(val)}</span>
                                                         </div>
                                                     ))}
-                                                    {Object.entries(selectedEntity.properties || {}).length === 0 && <div className="text-xs text-slate-600 italic">{premiumLocales.common.noData}...</div>}
+                                                    {(!selectedEntity.properties || Object.keys(selectedEntity.properties).length === 0) && (
+                                                        <div className="py-10 text-center opacity-20">
+                                                            <Box size={40} className="mx-auto mb-4" />
+                                                            <span className="text-[10px] font-black uppercase tracking-widest">{premiumLocales.common.noData}</span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
 
-                                            <div className="p-6 rounded-3xl bg-gradient-to-br from-indigo-500/10 to-transparent border border-indigo-500/20 backdrop-blur-xl relative">
-                                                <div className="flex items-center gap-3 mb-4">
-                                                    <div className="p-2 bg-indigo-500/20 rounded-lg text-indigo-400"><BrainCircuit size={18} /></div>
-                                                    <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none">{premiumLocales.semanticRadar.entityHud.aiInsight}</span>
+                                            {/* AI Neural Insight */}
+                                            <div className="p-8 bg-gradient-to-br from-blue-900/40 to-indigo-900/40 border border-blue-500/20 rounded-[40px] shadow-2xl backdrop-blur-3xl relative overflow-hidden group/insight">
+                                                <div className="absolute top-0 right-0 p-6 opacity-10 animate-pulse">
+                                                    <BrainCircuit size={80} />
                                                 </div>
-                                                <p className="text-xs text-slate-300 leading-relaxed italic">
+                                                <div className="flex items-center gap-4 mb-6">
+                                                    <div className="p-3 bg-blue-500/20 rounded-xl border border-blue-500/30 text-blue-400">
+                                                        <Brain size={20} />
+                                                    </div>
+                                                    <span className="text-[11px] font-black text-white uppercase tracking-[0.3em]">{premiumLocales.semanticRadar.entityHud.aiInsight}</span>
+                                                </div>
+                                                <p className="text-sm text-blue-100/80 leading-relaxed font-serif italic mb-8 relative z-10 transition-all group-hover/insight:text-white">
                                                     "{premiumLocales.semanticRadar.entityHud.aiInsightText.replace('{name}', selectedEntity.name).replace('{type}', selectedEntity.label)}"
                                                 </p>
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex flex-col items-center gap-2 hover:bg-emerald-500/10 transition-all cursor-pointer">
-                                                    <ShieldAlert size={18} className="text-emerald-400" />
-                                                    <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">{premiumLocales.semanticRadar.entityHud.safe}</span>
-                                                </div>
-                                                <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/10 flex flex-col items-center gap-2 hover:bg-rose-500/10 transition-all cursor-pointer">
-                                                    <AlertTriangle size={18} className="text-rose-400" />
-                                                    <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">{premiumLocales.semanticRadar.entityHud.risk}</span>
+                                                <div className="flex flex-wrap gap-4 relative z-10">
+                                                    <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3">
+                                                        <ShieldCheck size={14} className="text-emerald-400" />
+                                                        <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">{premiumLocales.semanticRadar.entityHud.safe}</span>
+                                                    </div>
+                                                    <div className="px-4 py-2 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-3 opacity-40">
+                                                        <AlertTriangle size={14} className="text-rose-400" />
+                                                        <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">{premiumLocales.semanticRadar.entityHud.risk}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </motion.div>
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center h-full opacity-20 text-slate-500">
-                                            <Activity size={64} className="mb-4" />
-                                            <div className="text-[10px] font-black uppercase tracking-widest">{premiumLocales.semanticRadar.entityHud.selectNode}</div>
+                                        <div className="flex flex-col items-center justify-center h-full text-slate-700 opacity-40">
+                                            <div className="p-10 bg-slate-900 border border-dashed border-white/10 rounded-[48px] mb-8">
+                                                <Activity size={80} className="animate-pulse" />
+                                            </div>
+                                            <span className="text-[11px] font-black uppercase tracking-[0.4em]">{premiumLocales.semanticRadar.entityHud.selectNode}</span>
                                         </div>
                                     )}
                                 </AnimatePresence>
@@ -546,17 +597,54 @@ const AnalyticsView: React.FC = () => {
                         </motion.div>
                     ) : (
                         <motion.div
-                            key="visual-workspace"
-                            initial={{ opacity: 0, y: 20 }}
+                            key="visual-matrix"
+                            initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className="h-full overflow-y-auto pr-2 custom-scrollbar"
+                            exit={{ opacity: 0, y: -30 }}
+                            className="h-full"
                         >
                             <VisualAnalytics />
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
+
+            {/* Global Intelligence Ribbon */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-10 p-10 bg-slate-950/60 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group"
+            >
+                <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+                    <div className="flex items-center gap-8">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full scale-150 animate-pulse" />
+                            <Globe size={48} className="text-blue-400 relative z-10 animate-spin-slow" />
+                        </div>
+                        <div>
+                            <h4 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Global Semantic Network</h4>
+                            <p className="text-xs text-slate-500 font-medium">Моніторинг зв'язків у реальному часі за межами локальної мережі знань.</p>
+                        </div>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-10">
+                        {[
+                            { label: 'GLOBAL_REACH', value: '142 COUNTRIES', icon: Globe },
+                            { label: 'CROSS_DOMAIN', value: 'ENABLED', icon: Share2 },
+                            { label: 'NEURAL_BRIDGE', value: 'V55_GEN3', icon: BrainCircuit },
+                        ].map((item, i) => (
+                            <div key={i} className="flex flex-col">
+                                <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 flex items-center gap-2">
+                                    <item.icon size={10} /> {item.label}
+                                </span>
+                                <span className="text-[12px] font-black text-white">{item.value}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <button className="px-10 py-5 bg-white/5 border border-white/10 rounded-[24px] text-[10px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-3">
+                        EXPAND_HORIZON <ArrowUpRight size={18} />
+                    </button>
+                </div>
+            </motion.div>
         </div>
     );
 };
