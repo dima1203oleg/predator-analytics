@@ -25,7 +25,7 @@ const apiClient = axios.create({
 // V45 Canonical Client (Internal)
 // V45 Canonical Client (Internal) - REPOINTED TO V1 for Backward Compatibility
 export const v45Client = axios.create({
-    baseURL: '/api/v1',
+    baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     }
@@ -45,6 +45,10 @@ const resilienceInterceptor = (error: any) => {
     // If backend is dead, ensure UI survives with safe fallbacks
     if (!error.response || error.response.status >= 500) {
         console.warn(`[Resilience] API ${error.config?.url} failed. Returning safe fallback.`);
+
+        if (IS_TRUTH_ONLY_MODE) {
+            return Promise.reject(error);
+        }
 
         // Flag global offline mode for UI notification
         if (typeof window !== 'undefined') {
@@ -108,12 +112,6 @@ const resilienceInterceptor = (error: any) => {
 
         // Default empty object
         return Promise.resolve({ data: {} });
-
-        // Generic Fallback heuristic
-        if (error.config?.method === 'get') {
-            // If we suspect it needs an array, give an empty object which is safer than crash
-            return Promise.resolve({ data: {} });
-        }
     }
     return Promise.reject(error);
 };

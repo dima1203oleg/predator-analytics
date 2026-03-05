@@ -20,7 +20,9 @@ import { motion as m } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '../utils/cn';
+import { ViewHeader } from '../components/ViewHeader';
+import { AdvancedBackground } from '../components/AdvancedBackground';
 
 // ─── Engine definitions ───────────────────────────────────────────────────────
 const ENGINES = [
@@ -316,39 +318,38 @@ const EnginesView: React.FC = () => {
     const Icon = selectedEngine.icon;
 
     return (
-        <div className="min-h-screen bg-black relative overflow-hidden pb-24">
+        <div className="min-h-screen relative overflow-hidden pb-24 z-10 p-4 lg:p-8 w-full max-w-[1700px] mx-auto">
             {/* Background */}
-            <div className="absolute inset-0 bg-cyber-grid opacity-[0.025] pointer-events-none" />
-            <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse at 70% 20%, ${selectedEngine.glowColor} 0%, transparent 50%)` }} />
+            <AdvancedBackground />
+            <div className="absolute inset-0 pointer-events-none z-[-1]" style={{ background: `radial-gradient(ellipse at 70% 20%, ${selectedEngine.glowColor} 0%, transparent 50%)` }} />
 
-            <div className="relative z-10 p-6 lg:p-10 max-w-[1800px] mx-auto">
+            <div className="relative z-10 w-full">
                 {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center justify-between mb-8"
-                >
-                    <div>
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="w-7 h-7 rounded-xl flex items-center justify-center" style={{ background: `${selectedEngine.color}20` }}>
-                                <Brain className="w-4 h-4" style={{ color: selectedEngine.color }} />
+                <div className="mb-8">
+                    <ViewHeader
+                        title={`Центр Аналітичних Двигунів: ${selectedEngine.name}`}
+                        icon={<Icon size={20} className="icon-3d-purple" style={{ color: selectedEngine.color }} />}
+                        breadcrumbs={['СИСТЕМА', 'ДВИГУНИ', selectedEngine.shortName]}
+                        stats={[
+                            { label: 'Аномалій', value: ENGINES.reduce((s, e) => s + e.metrics.anomalies, 0).toString(), icon: <AlertTriangle size={14} />, color: 'danger', animate: true },
+                            { label: 'Сигналів', value: ENGINES.reduce((s, e) => s + e.metrics.signals, 0).toString(), icon: <Radio size={14} />, color: 'primary' },
+                            { label: 'Двигунів', value: '6/6 ACTIVE', icon: <Cpu size={14} className="icon-3d-green" />, color: 'success' }
+                        ]}
+                        actions={
+                            <div className="flex gap-3">
+                                <button className="px-5 py-2.5 bg-slate-800/50 hover:bg-slate-700/50 border border-white/10 text-slate-300 hover:text-white font-bold rounded-xl flex items-center gap-2 transition-all active:scale-95 text-xs uppercase tracking-wider backdrop-blur-md">
+                                    <RefreshCw size={14} /> Оновити
+                                </button>
+                                <button
+                                    className="px-5 py-2.5 hover:opacity-80 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2 transition-all active:scale-95 text-xs uppercase tracking-wider backdrop-blur-md"
+                                    style={{ background: `${selectedEngine.color}cc`, borderColor: selectedEngine.color }}
+                                >
+                                    <Zap size={14} /> Калібрувати
+                                </button>
                             </div>
-                            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: selectedEngine.color }}>PREDATOR · АНАЛІТИЧНІ ДВИГУНИ</span>
-                        </div>
-                        <h1 className="text-3xl font-black text-white uppercase tracking-tight">
-                            Центр <span style={{ color: selectedEngine.color, textShadow: `0 0 20px ${selectedEngine.color}50` }}>Двигунів v55</span>
-                        </h1>
-                        <p className="text-slate-500 text-xs mt-1.5 uppercase tracking-widest">6 аналітичних двигунів · Синтез · Калібрування</p>
-                    </div>
-                    <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="border-white/10 bg-white/5 text-slate-400 hover:text-white uppercase text-[9px] font-black tracking-widest">
-                            <RefreshCw className="w-3 h-3 mr-1.5" /> Оновити
-                        </Button>
-                        <Button size="sm" className="text-[9px] font-black tracking-widest uppercase" style={{ background: selectedEngine.color }}>
-                            <Zap className="w-3 h-3 mr-1.5" /> Калібрувати
-                        </Button>
-                    </div>
-                </motion.div>
+                        }
+                    />
+                </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     {/* Engine List */}

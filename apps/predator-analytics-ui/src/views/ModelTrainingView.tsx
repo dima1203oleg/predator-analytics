@@ -19,25 +19,17 @@ import { premiumLocales } from '../locales/uk/premium';
  * Унікальний розділ для навчання та тюнінгу ШІ моделей.
  */
 
-const MOCK_TRAINING_STATS = [
-    { epoch: 1, loss: 2.5, accuracy: 30, val_loss: 2.8 },
-    { epoch: 5, loss: 1.8, accuracy: 55, val_loss: 2.1 },
-    { epoch: 10, loss: 1.2, accuracy: 72, val_loss: 1.5 },
-    { epoch: 15, loss: 0.8, accuracy: 84, val_loss: 1.1 },
-    { epoch: 20, loss: 0.5, accuracy: 91, val_loss: 0.8 },
-    { epoch: 25, loss: 0.3, accuracy: 96, val_loss: 0.5 },
-    { epoch: 30, loss: 0.15, accuracy: 98.5, val_loss: 0.35 },
-];
+
 
 const ModelTrainingView: React.FC = () => {
     const [trainingStatus, setTrainingStatus] = useState<'IDLE' | 'TRAINING' | 'COMPLETED'>('IDLE');
     const [progress, setProgress] = useState(0);
     const [logs, setLogs] = useState<string[]>([]);
     const [activeModel, setActiveModel] = useState('Predator-v45-X-Core');
-    const [stats, setStats] = useState(MOCK_TRAINING_STATS);
+    const [stats, setStats] = useState<any[]>([]);
     const logsEndRef = useRef<HTMLDivElement>(null);
 
-    const API_BASE = 'http://localhost:9080/api/v1';
+    const API_BASE = '/api/v1';
 
     // Fetch status and logs
     useEffect(() => {

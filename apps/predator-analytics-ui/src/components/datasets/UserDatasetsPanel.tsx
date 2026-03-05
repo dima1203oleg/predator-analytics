@@ -44,69 +44,19 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [uploadFile, setUploadFile] = useState<File | null>(null);
 
-    // Mock data for demonstration
-    const MOCK_DATASETS: UserDataset[] = [
-        {
-            id: 'ds-001',
-            name: 'Митні Декларації 2025',
-            filename: 'customs_declarations_2025.xlsx',
-            type: 'excel',
-            size: 15728640, // 15MB
-            rows: 45000,
-            columns: 28,
-            uploadedAt: '2026-02-01T10:30:00Z',
-            isExampleEnabled: true,
-            isReference: true,
-            tags: ['митниця', 'імпорт', 'декларації'],
-            description: 'Реєстр митних декларацій за січень-лютий 2025'
-        },
-        {
-            id: 'ds-002',
-            name: 'Контрагенти Україна',
-            filename: 'counterparties_ua.csv',
-            type: 'csv',
-            size: 5242880, // 5MB
-            rows: 12500,
-            columns: 15,
-            uploadedAt: '2026-01-28T14:15:00Z',
-            isExampleEnabled: false,
-            isReference: false,
-            tags: ['контрагенти', 'ЄДРПОУ'],
-            description: 'База контрагентів з перевіреними даними'
-        },
-        {
-            id: 'ds-003',
-            name: 'Ціни на товари (benchmark)',
-            filename: 'commodity_prices_benchmark.json',
-            type: 'json',
-            size: 2097152, // 2MB
-            rows: 8500,
-            columns: 12,
-            uploadedAt: '2026-01-25T09:00:00Z',
-            isExampleEnabled: true,
-            isReference: false,
-            tags: ['ціни', 'аналітика', 'benchmark'],
-            description: 'Еталонні ціни для виявлення аномалій'
-        },
-    ];
+
 
     // Load datasets
     useEffect(() => {
         const fetchDatasets = async () => {
             setLoading(true);
             try {
-                // Try real API first
-                // const data = await api.datasets.list();
-                // setDatasets(data);
-
-                // Fallback to mock
-                setTimeout(() => {
-                    setDatasets(MOCK_DATASETS);
-                    setLoading(false);
-                }, 500);
+                const res = await api.datasets.list();
+                setDatasets(Array.isArray(res) ? res : (res?.data || []));
             } catch (e) {
                 console.error('Failed to load datasets', e);
-                setDatasets(MOCK_DATASETS);
+                setDatasets([]);
+            } finally {
                 setLoading(false);
             }
         };
@@ -155,7 +105,7 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
                 name: uploadFile.name.replace(/\.[^/.]+$/, ""),
                 filename: uploadFile.name,
                 type: uploadFile.name.endsWith('.csv') ? 'csv' :
-                      uploadFile.name.endsWith('.json') ? 'json' : 'excel',
+                    uploadFile.name.endsWith('.json') ? 'json' : 'excel',
                 size: uploadFile.size,
                 rows: Math.floor(Math.random() * 10000) + 1000,
                 columns: Math.floor(Math.random() * 20) + 5,

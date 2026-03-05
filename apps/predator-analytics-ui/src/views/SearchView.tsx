@@ -40,7 +40,7 @@ import { ViewHeader } from '../components/ViewHeader';
 import { CyberOrb } from '../components/CyberOrb';
 import { HoloContainer } from '../components/HoloContainer';
 import { ExplainabilityPanel } from '../components/explain/ExplainabilityPanel';
-import { AIInsightsHub } from './AIInsightsHub';
+import AIInsightsHub from './AIInsightsHub';
 import { useAppStore } from '../store/useAppStore';
 
 // --- TYPES ---

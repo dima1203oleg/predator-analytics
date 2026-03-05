@@ -42,43 +42,7 @@ interface AIInsight {
   feedback?: 'positive' | 'negative';
 }
 
-const FALLBACK_INSIGHTS: AIInsight[] = [
-  {
-    id: 'ins_1', type: 'risk', priority: 'critical',
-    title: 'Мережева Аномалія: Транскордонна Циклічність',
-    description: 'Алгоритм V-55 виявив каскад підозрілих транзакцій між офшорними вузлами та локальним кластером ТОВ "Альфа". Ознаки прихованого афіліювання.',
-    confidence: 94, impact: '$1.2M Ризику', category: 'Фінансовий Моніторинг',
-    createdAt: new Date(Date.now() - 15 * 60000).toISOString(),
-    actionable: true, actions: [{ label: 'Блокувати операції', type: 'primary' }, { label: 'Глибоке Досьє', type: 'secondary' }],
-    saved: false
-  },
-  {
-    id: 'ins_2', type: 'opportunity', priority: 'high',
-    title: 'Арбітражний Прорив: Логістичний Коридор',
-    description: 'Динамічне зниження загороджувальних мит на 18%. Предиктивна модель рекомендує негайну закупівлю компонентів електроніки.',
-    confidence: 88, impact: '+$450k Економії', category: 'Оптимізація Ланцюгів',
-    createdAt: new Date(Date.now() - 65 * 60000).toISOString(),
-    actionable: true, actions: [{ label: 'Синтезувати Ордер', type: 'primary' }],
-    saved: true
-  },
-  {
-    id: 'ins_3', type: 'prediction', priority: 'medium',
-    title: 'Прогноз Капіталізації: Енергетичний Сектор',
-    description: 'Когнітивний аналіз новинних потоків та ринкових паттернів вказує на ймовірну волатильність активів у Q3 через геополітичний дрейф.',
-    confidence: 79, impact: 'Вплив: Помірний', category: 'Ринкові Тренди',
-    createdAt: new Date(Date.now() - 120 * 60000).toISOString(),
-    actionable: false, saved: false
-  },
-  {
-    id: 'ins_4', type: 'anomaly', priority: 'high',
-    title: 'Атипова Проактивність Конкурента',
-    description: 'Демпінг на 3 стратегічні позиції від "Global Trade". Ймовірна спроба витіснення локальних дистриб\'юторів. Рекомендано контрзаходи.',
-    confidence: 91, impact: 'Конкурентна Загроза', category: 'Комерційна Розвідка',
-    createdAt: new Date().toISOString(),
-    actionable: true, actions: [{ label: 'Аналіз Тарифів', type: 'primary' }],
-    saved: false
-  }
-];
+
 
 const TYPE_CONFIG = {
   prediction: { icon: Brain, color: '#8b5cf6', label: 'Прогноз' },
@@ -108,10 +72,10 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await api.premium.getAiInsights();
-      setInsights(Array.isArray(res) && res.length > 0 ? res : FALLBACK_INSIGHTS);
+      const res = await api.premium.getAiInsights ? await api.premium.getAiInsights() : [];
+      setInsights(Array.isArray(res) && res.length > 0 ? res : []);
     } catch {
-      setInsights(FALLBACK_INSIGHTS);
+      setInsights([]);
     } finally {
       setLoading(false);
     }
@@ -192,9 +156,9 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
           icon={<Brain size={22} className="text-violet-500 drop-shadow-[0_0_10px_rgba(139,92,246,0.6)]" />}
           breadcrumbs={['СИНАПСИС', 'АНАЛІТИКА', 'ІНСАЙТИ']}
           stats={[
-            { label: 'Активні Інсайти', value: insights.length, icon: <Brain size={14} />, color: 'primary' },
-            { label: 'Середня Впевненість', value: '89%', icon: <Crosshair size={14} />, color: 'indigo' },
-            { label: 'Критичні Загрози', value: insights.filter(i => i.priority === 'critical').length, icon: <Flame size={14} />, color: 'rose' },
+            { label: 'Активні Інсайти', value: insights.length.toString(), icon: <Brain size={14} />, color: 'primary' },
+            { label: 'Середня Впевненість', value: '89%', icon: <Crosshair size={14} />, color: 'secondary' },
+            { label: 'Критичні Загрози', value: insights.filter(i => i.priority === 'critical').length.toString(), icon: <Flame size={14} />, color: 'danger' },
           ]}
           actions={
             <div className="flex gap-4">
@@ -398,7 +362,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
 
           <div className="space-y-8">
             <TacticalCard variant="holographic" className="panel-3d flex items-center justify-center p-0 overflow-hidden relative min-h-[400px]">
-              <CyberOrb size={280} color="#8b5cf6" intensity={0.6} pulse={true} className="drop-shadow-[0_0_60px_rgba(139,92,246,0.3)]" />
+              <CyberOrb size={280} color="#8b5cf6" className="drop-shadow-[0_0_60px_rgba(139,92,246,0.3)]" />
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <div className="text-[10px] font-black text-violet-500/50 uppercase tracking-[0.5em] mb-2">Cognitive Core</div>
                 <div className="text-3xl font-black text-white font-mono opacity-80">v55.PULSE</div>

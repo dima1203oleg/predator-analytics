@@ -173,7 +173,7 @@ const OmniscienceView: React.FC = () => {
     knowledgeNodes: 124032, autonomyLevel: 84, processingPower: 42, memoryUsage: 38, networkActivity: 62
   });
   const [v45Status, setV45Status] = useState<any>(null);
-  const [realtimeThoughts, setRealtimeThoughts] = useState<string[]>([]);
+  const [systemThoughts, setSystemThoughts] = useState<string[]>([]);
 
   // Агенти з контексту
   const agents: AgentStatus[] = liveAgents.map(a => ({
@@ -192,6 +192,7 @@ const OmniscienceView: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col p-10 gap-10 relative z-10 animate-in fade-in duration-1000">
+      <AdvancedBackground />
 
       {/* Sovereignty Header */}
       <ViewHeader
@@ -205,32 +206,33 @@ const OmniscienceView: React.FC = () => {
             </div>
             <div>
               <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none font-display">
-                Hyper-Omniscience Nexus
+                Omniscience Nexus
               </h1>
               <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.3em] mt-2">
-                V55_SYSTEM_KERNEL // GLOBAL_KNOWLEDGE_MATRIX
+                V55_SYSTEM_KERNEL // ГЛОБАЛЬНА_МАТРИЦЯ_ЗНАНЬ
               </p>
             </div>
           </div>
         }
+        breadcrumbs={['PREDATOR', 'OMNISCIENCE', 'CORE_V55']}
         stats={[
-          { label: 'HEALTH', value: `${metrics.health}%`, icon: <Activity size={14} />, color: 'success' },
-          { label: 'NODES', value: metrics.knowledgeNodes.toLocaleString(), icon: <Database size={14} />, color: 'primary' },
-          { label: 'AGENTS', value: metrics.activeAgents.toString(), icon: <Users size={14} />, color: 'purple' },
+          { label: 'ЗДОРОВ\'Я', value: `${metrics.health}%`, icon: <Activity size={14} />, color: 'success' },
+          { label: 'ВУЗЛИ', value: metrics.knowledgeNodes.toLocaleString(), icon: <Database size={14} />, color: 'primary' },
+          { label: 'АГЕНТИ', value: metrics.activeAgents.toString(), icon: <Users size={14} />, color: 'purple' },
         ]}
       />
 
       {/* Navigation Matrix */}
       <div className="flex flex-wrap items-center gap-4 z-20">
         {[
-          { id: 'overview', label: 'Overview', icon: Globe },
-          { id: 'agents', label: 'Agent Swarm', icon: Users },
-          { id: 'council', label: 'LLM Council', icon: BrainCircuit },
-          { id: 'knowledge', label: premiumLocales.omniscience.matrix.title, icon: Network },
-          { id: 'sovereign', label: 'Sovereign Brain', icon: Eye },
-          { id: 'cortex', label: 'Neural Cortex', icon: Brain },
-          { id: 'control', label: 'Shadow Control', icon: ShieldAlert },
-          { id: 'telegram', label: 'Telegram Intel', icon: Radio },
+          { id: 'overview', label: premiumLocales.omniscience.tabs.overview, icon: Globe },
+          { id: 'agents', label: premiumLocales.omniscience.tabs.agents, icon: Users },
+          { id: 'council', label: premiumLocales.omniscience.tabs.council, icon: BrainCircuit },
+          { id: 'knowledge', label: premiumLocales.omniscience.tabs.knowledge, icon: Network },
+          { id: 'sovereign', label: premiumLocales.omniscience.tabs.sovereign, icon: Eye },
+          { id: 'cortex', label: premiumLocales.omniscience.tabs.cortex, icon: Brain },
+          { id: 'control', label: premiumLocales.omniscience.tabs.control, icon: ShieldAlert },
+          { id: 'telegram', label: premiumLocales.omniscience.tabs.telegram, icon: Radio },
         ].map(tab => (
           <button
             key={tab.id}
@@ -262,10 +264,10 @@ const OmniscienceView: React.FC = () => {
             >
               {/* Top Metrics Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-                <MetricCard icon={Cpu} label="Processing Power" value={metrics.processingPower} unit="GHz" color="#60a5fa" trend="+2.4%" />
-                <MetricCard icon={Database} label="Knowledge Density" value={metrics.knowledgeNodes / 2000} unit="GB/s" color="#10b981" trend="+12.8%" />
-                <MetricCard icon={BrainCircuit} label="Autonomy Level" value={metrics.autonomyLevel} unit="LVL" color="#a78bfa" trend="OPTIMAL" />
-                <MetricCard icon={TrendingUp} label="Neural Throughput" value={metrics.networkActivity} unit="MB/s" color="#f59e0b" trend="PEAK" />
+                <MetricCard icon={Cpu} label={premiumLocales.omniscience.metrics.power} value={metrics.processingPower} unit="GHz" color="#60a5fa" trend="+2.4%" />
+                <MetricCard icon={Database} label="Щільність Знань" value={metrics.knowledgeNodes / 2000} unit="GB/s" color="#10b981" trend="+12.8%" />
+                <MetricCard icon={BrainCircuit} label={premiumLocales.omniscience.stats.autonomy} value={metrics.autonomyLevel} unit="LVL" color="#a78bfa" trend="OPTIMAL" />
+                <MetricCard icon={TrendingUp} label="Нейронна Пропускна Здатність" value={metrics.networkActivity} unit="MB/s" color="#f59e0b" trend="PEAK" />
               </div>
 
               <div className="grid grid-cols-12 gap-10">
@@ -277,8 +279,8 @@ const OmniscienceView: React.FC = () => {
                         <Target size={20} className="animate-pulse" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-black text-white uppercase tracking-tighter">Neural Core Visualizer</h3>
-                        <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">REALTIME_MAP_PROPAGATION</p>
+                        <h3 className="text-xl font-black text-white uppercase tracking-tighter">Візуалізатор Нейронного Ядра</h3>
+                        <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">РЕАЛЬНИЙ_ЧАС_ПОШИРЕННЯ_МАПИ</p>
                       </div>
                     </div>
                     <div className="absolute inset-0 z-0">
@@ -310,7 +312,7 @@ const OmniscienceView: React.FC = () => {
                   <div className="grid grid-cols-2 gap-10">
                     <TacticalCard variant="glass" className="p-8 h-[300px] overflow-hidden">
                       <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
-                        <Activity size={18} className="text-blue-500" /> System Oscilloscope
+                        <Activity size={18} className="text-blue-500" /> Системний Осцилограф
                       </h3>
                       <div className="flex-1 flex items-center justify-center relative">
                         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
@@ -319,13 +321,13 @@ const OmniscienceView: React.FC = () => {
                     </TacticalCard>
                     <TacticalCard variant="glass" className="p-8 h-[300px] overflow-hidden">
                       <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
-                        <Zap size={18} className="text-amber-500" /> Anomaly Detection
+                        <Zap size={18} className="text-amber-500" /> Детектор Аномалій
                       </h3>
                       <div className="flex flex-col gap-4">
                         {[
-                          { time: '14:02:11', event: 'Minor drift in vector space detected', level: 'warning' },
-                          { time: '13:58:45', event: 'Cross-shard synchronization successful', level: 'success' },
-                          { time: '13:42:01', event: 'Peak load on Qdrant index reached', level: 'info' }
+                          { time: '14:02:11', event: 'Виявлено незначний дрейф у векторному просторі', level: 'warning' },
+                          { time: '13:58:45', event: 'Синхронізація між шардами успішна', level: 'success' },
+                          { time: '13:42:01', event: 'Досягнуто пікового навантаження на індекс Qdrant', level: 'info' }
                         ].map((log, i) => (
                           <div key={i} className="flex items-center gap-4 p-4 bg-black/40 border border-white/5 rounded-xl group/log hover:border-white/10 transition-all">
                             <span className="text-[9px] font-mono text-slate-600 uppercase tracking-widest">{log.time}</span>
@@ -342,7 +344,7 @@ const OmniscienceView: React.FC = () => {
                 <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
                   <TacticalCard variant="holographic" className="p-8 bg-slate-950/40 flex flex-col h-full">
                     <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
-                      <Users size={18} className="text-purple-400" /> Active Agents
+                      <Users size={18} className="text-purple-400" /> Активні Агенти
                     </h3>
                     <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-2 mb-10">
                       {agents.slice(0, 4).map((agent, i) => (
@@ -366,14 +368,14 @@ const OmniscienceView: React.FC = () => {
 
                     <div className="p-8 bg-black/40 border border-white/5 rounded-[32px]">
                       <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <Terminal size={12} /> Neural Thoughts Stream
+                        <Terminal size={12} /> Потік Нейронних Думок
                       </h4>
                       <div className="font-mono text-[9px] text-slate-500 space-y-3 h-[250px] overflow-y-auto custom-scrollbar pr-2">
                         {systemThoughts.map((t, i) => (
                           <div key={i} className="flex gap-3 relative pb-2 group/t">
                             <div className="absolute left-0 top-0 bottom-0 w-px bg-white/5 group-hover/t:bg-blue-500/30 transition-colors" />
                             <div className="pl-4">
-                              <span className="text-blue-500/60 mr-2">>>></span>
+                              <span className="text-blue-500/60 mr-2">{">>>"}</span>
                               <span className="group-hover/t:text-slate-300 transition-colors">{t}</span>
                             </div>
                           </div>
@@ -398,8 +400,8 @@ const OmniscienceView: React.FC = () => {
                   <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-[32px] flex items-center justify-center mb-6 group-hover/new:scale-110 group-hover/new:bg-blue-600/10 group-hover/new:border-blue-500/30 transition-all">
                     <Zap size={32} className="text-slate-600 group-hover/new:text-blue-400 group-hover/new:animate-pulse" />
                   </div>
-                  <h3 className="text-xl font-black text-slate-600 uppercase tracking-tighter group-hover/new:text-white transition-colors">Spawn New Agent</h3>
-                  <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest mt-2 group-hover/new:text-blue-500">INIT_NEURAL_SEED_PROTOCOL</p>
+                  <h3 className="text-xl font-black text-slate-600 uppercase tracking-tighter group-hover/new:text-white transition-colors">Створити Нового Агента</h3>
+                  <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest mt-2 group-hover/new:text-blue-500">ІНІЦІАЛІЗАЦІЯ_ПРОТОКОЛУ_НС</p>
                 </TacticalCard>
               </div>
             </motion.div>
@@ -413,7 +415,7 @@ const OmniscienceView: React.FC = () => {
 
           {selectedView === 'knowledge' && (
             <motion.div key="knowledge" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-              <KnowledgeMatrixView onThought={(t) => setRealtimeThoughts(prev => [t, ...prev].slice(0, 10))} />
+              <KnowledgeMatrixView onThought={(t) => setSystemThoughts(prev => [t, ...prev].slice(0, 10))} />
             </motion.div>
           )}
 
@@ -454,7 +456,7 @@ const OmniscienceView: React.FC = () => {
               </div>
             </div>
             <div>
-              <h4 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Nexus Communication Hub</h4>
+              <h4 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Комунікаційний Хаб Нексус</h4>
               <p className="text-xs text-slate-500 font-medium">Керування термінальними потоками та нейронними інтерфейсами.</p>
             </div>
           </div>
@@ -472,7 +474,7 @@ const OmniscienceView: React.FC = () => {
               <span className="text-xs font-black text-blue-400">PQC_ENABLED</span>
             </div>
           </div>
-          <button className="px-10 py-5 bg-white/5 border border-white/10 rounded-[28px] text-[10px] font-black text-white uppercase tracking-[0.3em] hover:bg-white/10 transition-all flex items-center gap-4">
+          <button className="px-10 py-5 bg-white/5 border border-white/10 rounded-[28px] text-[10px] font-black text-white uppercase tracking-[0.3em] hover:bg-white/10 transition-all flex items-center gap-4 group">
             SYNC_NODES <RefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-1000" />
           </button>
         </div>
@@ -486,12 +488,12 @@ const OmniscienceView: React.FC = () => {
 const ShadowControlView: React.FC = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
     {[
-      { icon: Power, label: 'Full System Restart', color: '#f59e0b', action: 'INIT_RELOAD' },
-      { icon: ShieldAlert, label: 'Emergency Lockdown', color: '#f43f5e', action: 'ENGAGE_PROTOCOL' },
-      { icon: Database, label: 'Purge Shared Memory', color: '#3b82f6', action: 'CLEAR_CACHE' },
-      { icon: GitBranch, label: 'State Rollback', color: '#8b5cf6', action: 'RESTORE_BASE' },
-      { icon: Binary, label: 'Deep Diagnostic Scan', color: '#06b6d4', action: 'START_DOCTOR' },
-      { icon: Shield, label: 'Trust Matrix Recalibration', color: '#10b981', action: 'RESET_POLICY' }
+      { icon: Power, label: 'Повний Перезапуск Системи', color: '#f59e0b', action: 'INIT_RELOAD' },
+      { icon: ShieldAlert, label: 'Екстрене Блокування', color: '#f43f5e', action: 'ENGAGE_PROTOCOL' },
+      { icon: Database, label: 'Очистити Спільну Пам\'ять', color: '#3b82f6', action: 'CLEAR_CACHE' },
+      { icon: GitBranch, label: 'Відкат Стану', color: '#8b5cf6', action: 'RESTORE_BASE' },
+      { icon: Binary, label: 'Глибока Діагностика', color: '#06b6d4', action: 'START_DOCTOR' },
+      { icon: Shield, label: 'Калібрування Матриці Довіри', color: '#10b981', action: 'RESET_POLICY' }
     ].map((ctrl, i) => (
       <TacticalCard key={i} variant="glass" className="p-10 flex flex-col group/ctrl cursor-pointer border-white/5 hover:border-white/20 transition-all relative overflow-hidden">
         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover/ctrl:opacity-10 transition-all">
@@ -522,9 +524,9 @@ const KnowledgeMatrixView: React.FC<{ onThought: (t: string) => void }> = ({ onT
     </div>
     <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
       <TacticalCard variant="glass" className="p-8 h-full">
-        <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8">Taxonomy Matrix</h3>
+        <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8">Матриця Таксономії</h3>
         <div className="space-y-6">
-          {['Persons', 'Organizations', 'Locations', 'Assets', 'Events'].map((cat, i) => (
+          {['Особи', 'Організації', 'Локації', 'Активи', 'Події'].map((cat, i) => (
             <div key={i} className="p-6 bg-slate-900/40 border border-white/5 rounded-2xl group/cat hover:border-blue-500/30 transition-all">
               <div className="flex justify-between items-center mb-4">
                 <span className="text-xs font-black text-white uppercase">{cat}</span>

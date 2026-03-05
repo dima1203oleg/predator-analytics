@@ -15,15 +15,7 @@ export const TRAINING_CONFIGS: Record<TrainingDomain, { label: string, icon: Rea
     SCI: { label: premiumLocales.llm.training.domains.sci, icon: <Leaf size={16} />, steps: premiumLocales.llm.training.steps.sci }
 };
 
-const MOCK_TRAINING_DATA = [
-    { epoch: 1, loss: 2.4, accuracy: 45 },
-    { epoch: 5, loss: 2.1, accuracy: 52 },
-    { epoch: 10, loss: 1.8, accuracy: 61 },
-    { epoch: 15, loss: 1.4, accuracy: 74 },
-    { epoch: 20, loss: 0.9, accuracy: 83 },
-    { epoch: 25, loss: 0.5, accuracy: 89 },
-    { epoch: 30, loss: 0.3, accuracy: 94 },
-];
+
 
 interface LLMTrainingViewProps {
     trainingDomain: TrainingDomain;
@@ -110,34 +102,34 @@ export const LLMTrainingView: React.FC<LLMTrainingViewProps> = ({
 
             <TacticalCard variant="holographic" title={premiumLocales.llm.training.matrix} className="glass-morphism panel-3d">
                 <div className="space-y-4">
-                <div className="h-[300px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={MOCK_TRAINING_DATA}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" />
-                            <XAxis dataKey="epoch" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
-                            <YAxis yAxisId="left" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
-                            <YAxis yAxisId="right" orientation="right" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
-                            <Tooltip contentStyle={{ backgroundColor: '#020617', borderColor: '#ffffff10', borderRadius: '12px' }} />
-                            <Legend />
-                            <Line yAxisId="left" type="monotone" dataKey="loss" stroke="#f43f5e" strokeWidth={2} dot={false} activeDot={{ r: 6 }} name="Втрати (Loss)" />
-                            <Line yAxisId="right" type="monotone" dataKey="accuracy" stroke="#3b82f6" strokeWidth={2} dot={false} activeDot={{ r: 6 }} name="Точність (Accuracy)" />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div>
-                <div className="space-y-4 mt-6">
-                    {[1, 2, 3].map((i) => (
-                        <div key={i} className="p-4 bg-slate-950/50 border border-white/5 rounded-2xl flex items-center justify-between group hover:border-blue-500/20 transition-all">
-                            <div className="flex items-center gap-4">
-                                <div className="p-2.5 bg-slate-900 rounded-xl"><LineChartIcon size={16} className="text-slate-600" /></div>
-                                <div>
-                                    <div className="text-xs font-bold text-slate-200">{premiumLocales.llm.training.experiment} #{i}</div>
-                                    <div className="text-[9px] text-slate-500 font-mono mt-1">{premiumLocales.llm.training.target}: <span className="text-blue-500">K-Forensics</span></div>
+                    <div className="h-[300px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={[]}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff08" />
+                                <XAxis dataKey="epoch" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
+                                <YAxis yAxisId="left" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
+                                <YAxis yAxisId="right" orientation="right" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
+                                <Tooltip contentStyle={{ backgroundColor: '#020617', borderColor: '#ffffff10', borderRadius: '12px' }} />
+                                <Legend />
+                                <Line yAxisId="left" type="monotone" dataKey="loss" stroke="#f43f5e" strokeWidth={2} dot={false} activeDot={{ r: 6 }} name="Втрати (Loss)" />
+                                <Line yAxisId="right" type="monotone" dataKey="accuracy" stroke="#3b82f6" strokeWidth={2} dot={false} activeDot={{ r: 6 }} name="Точність (Accuracy)" />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                    <div className="space-y-4 mt-6">
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className="p-4 bg-slate-950/50 border border-white/5 rounded-2xl flex items-center justify-between group hover:border-blue-500/20 transition-all">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-2.5 bg-slate-900 rounded-xl"><LineChartIcon size={16} className="text-slate-600" /></div>
+                                    <div>
+                                        <div className="text-xs font-bold text-slate-200">{premiumLocales.llm.training.experiment} #{i}</div>
+                                        <div className="text-[9px] text-slate-500 font-mono mt-1">{premiumLocales.llm.training.target}: <span className="text-blue-500">K-Forensics</span></div>
+                                    </div>
                                 </div>
+                                <div className="text-[10px] font-bold text-emerald-500/50 px-3 py-1 bg-emerald-500/5 rounded-lg border border-emerald-500/10">{premiumLocales.llm.training.convergence}</div>
                             </div>
-                            <div className="text-[10px] font-bold text-emerald-500/50 px-3 py-1 bg-emerald-500/5 rounded-lg border border-emerald-500/10">{premiumLocales.llm.training.convergence}</div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
                     <button className="w-full py-4 border border-dashed border-white/5 text-slate-700 hover:text-slate-200 hover:border-blue-500/50 rounded-2xl text-[10px] uppercase tracking-[0.3em] font-bold transition-all mt-6">
                         {premiumLocales.llm.training.synthesize}
                     </button>

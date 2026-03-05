@@ -50,50 +50,7 @@ interface EntityRadarItem {
     };
 }
 
-// --- MOCK DATA ---
-const MOCK_RADAR_DATA: EntityRadarItem[] = [
-    {
-        ueid: 'ueid-001',
-        name: 'ТОВ "ТЕХНО-МАГІСТРАЛЬ"',
-        edrpou: '38291044',
-        sector: 'Логістика / Митні послуги',
-        cers_score: 84.5,
-        cers_level: 'CRITICAL',
-        cers_level_ua: 'КРИТИЧНИЙ',
-        trend: 'increasing',
-        confidence: 0.92,
-        last_updated: '2026-03-04T12:00:00Z',
-        risk_factors: ['Аномальна волатильність', 'Зв\'язки з підсанкційними особами'],
-        radar_metrics: { reputation: 85, financials: 70, connections: 95, regulatory: 88, adverse_media: 60 }
-    },
-    {
-        ueid: 'ueid-002',
-        name: 'ДП "ГЛОБАЛ-ІМПОРТ"',
-        edrpou: '12993844',
-        sector: 'Оптова торгівля паливом',
-        cers_score: 62.1,
-        cers_level: 'HIGH',
-        cers_level_ua: 'ВИСОКИЙ',
-        trend: 'stable',
-        confidence: 0.85,
-        last_updated: '2026-03-04T10:30:00Z',
-        radar_metrics: { reputation: 60, financials: 80, connections: 55, regulatory: 70, adverse_media: 40 }
-    },
-    {
-        ueid: 'ueid-003',
-        name: 'ТОВ "АГРО-ТРЕЙД ОПТ"',
-        edrpou: '44552211',
-        sector: 'Сільське господарство',
-        cers_score: 41.8,
-        cers_level: 'ELEVATED',
-        cers_level_ua: 'ПІДВИЩЕНИЙ',
-        trend: 'decreasing',
-        confidence: 0.78,
-        last_updated: '2026-03-03T15:45:00Z',
-        risk_factors: ['Нетипові суми контрактів'],
-        radar_metrics: { reputation: 40, financials: 50, connections: 30, regulatory: 60, adverse_media: 20 }
-    }
-];
+
 
 // --- SUB-COMPONENTS ---
 
@@ -199,11 +156,12 @@ const EntityRadarView: React.FC = () => {
         const loadRadar = async () => {
             setLoading(true);
             try {
-                const res = await api.premium.getCompetitorRadar().catch(() => ({ data: MOCK_RADAR_DATA }));
-                const data = Array.isArray(res) ? res : res.data || MOCK_RADAR_DATA;
+                const res = await api.premium.getCompetitorRadar ? await api.premium.getCompetitorRadar() : [];
+                const data = Array.isArray(res) ? res : (res?.data || []);
                 setEntities(data);
             } catch (e) {
-                setEntities(MOCK_RADAR_DATA);
+                console.error("Radar load error", e);
+                setEntities([]);
             } finally {
                 setLoading(false);
             }
