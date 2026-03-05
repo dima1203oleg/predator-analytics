@@ -30,6 +30,25 @@ export const intelligenceApi = {
     },
     getCompetitors: async () => {
         return (await apiClient.get('/premium/competitors')).data;
+    },
+    getSanctionsResults: async () => {
+        const res = await apiClient.get('/premium/sanctions/history');
+        return Array.isArray(res.data) ? res.data : (res.data?.results ?? []);
+    },
+    screenSanctions: async (query: string, lists: string[] = ['OFAC', 'EU', 'UN', 'UK', 'PEP']) => {
+        return (await apiClient.post('/premium/sanctions/screen', { query, lists })).data;
+    },
+    getDashboardRecommendations: async (persona: string) => {
+        const res = await apiClient.get(`/premium/dashboard-recommendations?persona=${persona}`);
+        return Array.isArray(res.data) ? res.data : (res.data?.recommendations ?? []);
+    },
+    getWidgetData: async (type: string, source: string = 'customs_registry') => {
+        return (await apiClient.get(`/premium/widget-data?type=${type}&source=${source}`)).data;
+    },
+    saveDashboard: async (dashboard: any) => {
+        const endpoint = dashboard.id ? `/premium/dashboards/${dashboard.id}` : '/premium/dashboards';
+        const method = dashboard.id ? 'put' : 'post';
+        return (await (apiClient as any)[method](endpoint, dashboard)).data;
     }
 };
 

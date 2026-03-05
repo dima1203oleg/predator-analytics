@@ -183,12 +183,28 @@ const DataIngestionHub: React.FC = () => {
 
   const initIngestion = async () => {
     setIsSubmitting(true);
-    // Імітація процесу
-    await new Promise(r => setTimeout(r, 2000));
-    setIsSubmitting(false);
-    setIsModalOpen(false);
-    setFiles([]);
-    // Тут буде виклик API
+    try {
+      for (const fileItem of files) {
+        const formData = new FormData();
+        formData.append('file', fileItem.file);
+        const { apiClient } = await import('../services/api/config');
+        await apiClient.post('/ingest/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          onUploadProgress: (evt) => {
+            const pct = evt.total ? Math.round((evt.loaded / evt.total) * 100) : 0;
+            setFiles(prev => prev.map(f => f.file === fileItem.file ? { ...f, progress: pct, status: 'uploading' } : f));
+          }
+        });
+        setFiles(prev => prev.map(f => f.file === fileItem.file ? { ...f, progress: 100, status: 'success' } : f));
+      }
+      setIsModalOpen(false);
+      setFiles([]);
+    } catch (err: any) {
+      console.error('[DataIngestion] Upload failed:', err);
+      setFiles(prev => prev.map(f => ({ ...f, status: 'error' })));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

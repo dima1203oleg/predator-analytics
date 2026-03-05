@@ -52,7 +52,6 @@ export const QuickActionsBar: React.FC = () => {
         setLoading('analyze');
         try {
           toast.info(locales.quickActions.toasts.analyzeInit, locales.quickActions.toasts.analyzePrep);
-          await new Promise(resolve => setTimeout(resolve, 1000));
           toast.success(locales.quickActions.toasts.analyzeSuccess);
           navigate('/analytics');
         } catch (e: any) {

@@ -12,8 +12,6 @@ export const SchemesWidget: React.FC<{ persona: string }> = ({ persona }) => {
 
   useEffect(() => {
     const loadSchemes = async () => {
-      // Small delay for effect
-      await new Promise(r => setTimeout(r, 800));
       const data = await analyticsService.getDetectedSchemes();
       setSchemes(data);
       setLoading(false);
@@ -46,10 +44,10 @@ export const SchemesWidget: React.FC<{ persona: string }> = ({ persona }) => {
       {/* Content */}
       <div className="p-6 space-y-4">
         {loading ? (
-           <div className="flex flex-col items-center justify-center py-12 gap-3">
-             <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-             <span className="text-xs font-black text-red-500 animate-pulse">{premiumLocales.schemes.scanning}</span>
-           </div>
+          <div className="flex flex-col items-center justify-center py-12 gap-3">
+            <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+            <span className="text-xs font-black text-red-500 animate-pulse">{premiumLocales.schemes.scanning}</span>
+          </div>
         ) : (
           <AnimatePresence>
             {schemes.map((scheme, i) => (
@@ -85,29 +83,29 @@ export const SchemesWidget: React.FC<{ persona: string }> = ({ persona }) => {
 
                 {/* Scheme Flow Visualization */}
                 <div className="flex items-center justify-between p-3 bg-black/60 rounded-xl border border-white/5 mb-4 relative">
-                   {/* Dotted Line */}
-                   <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-slate-800 -translate-y-1/2 z-0 border-t border-dashed border-slate-700" />
+                  {/* Dotted Line */}
+                  <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-slate-800 -translate-y-1/2 z-0 border-t border-dashed border-slate-700" />
 
-                   {scheme.entities.map((entity, idx) => (
-                     <div key={idx} className="relative z-10 flex flex-col items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-400 group-hover:border-red-500/50 group-hover:bg-red-900/10 group-hover:text-red-400 transition-all">
-                           {idx === 0 ? <GitMerge size={14} /> : idx === scheme.entities.length - 1 ? <FileSearch size={14} /> : <Zap size={14} />}
-                        </div>
-                        <span className="text-[8px] text-slate-500 max-w-[60px] text-center truncate">{entity}</span>
-                     </div>
-                   ))}
+                  {scheme.entities.map((entity, idx) => (
+                    <div key={idx} className="relative z-10 flex flex-col items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-400 group-hover:border-red-500/50 group-hover:bg-red-900/10 group-hover:text-red-400 transition-all">
+                        {idx === 0 ? <GitMerge size={14} /> : idx === scheme.entities.length - 1 ? <FileSearch size={14} /> : <Zap size={14} />}
+                      </div>
+                      <span className="text-[8px] text-slate-500 max-w-[60px] text-center truncate">{entity}</span>
+                    </div>
+                  ))}
                 </div>
 
                 <div className="flex items-center justify-between border-t border-white/5 pt-3">
-                   <div className="text-center">
-                     <span className="text-[9px] text-slate-500 uppercase">{premiumLocales.schemes.potentialLoss}</span>
-                     <div className="text-sm font-bold text-white">
-                        {(scheme.impact / 1000000).toFixed(1)}M UAH
-                     </div>
-                   </div>
-                   <button className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-[10px] font-black uppercase rounded-lg shadow-lg shadow-red-900/20 transition-all flex items-center gap-2">
-                     {premiumLocales.schemes.intercept} <ArrowRight size={12} />
-                   </button>
+                  <div className="text-center">
+                    <span className="text-[9px] text-slate-500 uppercase">{premiumLocales.schemes.potentialLoss}</span>
+                    <div className="text-sm font-bold text-white">
+                      {(scheme.impact / 1000000).toFixed(1)}M UAH
+                    </div>
+                  </div>
+                  <button className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-[10px] font-black uppercase rounded-lg shadow-lg shadow-red-900/20 transition-all flex items-center gap-2">
+                    {premiumLocales.schemes.intercept} <ArrowRight size={12} />
+                  </button>
                 </div>
               </motion.div>
             ))}

@@ -119,50 +119,20 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
   // Premium check
   const isPremium = userRole === 'admin' || userRole === 'premium';
 
-  // Load AI recommendations
+  // Load AI recommendations from real API
   useEffect(() => {
     const loadRecommendations = async () => {
       setIsGeneratingAI(true);
       try {
-        // Simulate AI recommendations based on persona
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        const recommendations: AIRecommendation[] = [
-          {
-            id: 'rec_1',
-            widgetType: 'area_chart',
-            title: 'Тренд митних надходжень',
-            description: 'Візуалізація динаміки митних платежів за останні 12 місяців',
-            reasoning: 'На основі вашої персони та історії запитів',
-            dataSource: 'customs_registry',
-            confidence: 0.92,
-            priority: 'high'
-          },
-          {
-            id: 'rec_2',
-            widgetType: 'pie_chart',
-            title: 'Структура імпорту',
-            description: 'Розподіл імпорту за категоріями товарів',
-            reasoning: 'Часто переглядаєте дані про категорії',
-            dataSource: 'customs_registry',
-            confidence: 0.85,
-            priority: 'medium'
-          },
-          {
-            id: 'rec_3',
-            widgetType: 'network_graph',
-            title: 'Зв\'язки компаній',
-            description: 'Мережа бенефіціарів та пов\'язаних осіб',
-            reasoning: 'Рекомендовано для розслідувань',
-            dataSource: 'beneficial_owners',
-            confidence: 0.78,
-            priority: 'high'
-          }
-        ];
-
+        const { apiClient } = await import('../../../services/api/config');
+        const res = await apiClient.get(`/premium/dashboard-recommendations?persona=${persona}`);
+        const recommendations: AIRecommendation[] = Array.isArray(res.data)
+          ? res.data
+          : res.data?.recommendations ?? [];
         setAiRecommendations(recommendations);
       } catch (error) {
-        console.error('Failed to load AI recommendations:', error);
+        console.warn('[DashboardBuilder] AI recommendations unavailable:', error);
+        setAiRecommendations([]);
       } finally {
         setIsGeneratingAI(false);
       }
@@ -171,7 +141,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
     loadRecommendations();
   }, [persona]);
 
-  // Load widget data
+  // Load widget data from real API
   const loadWidgetData = useCallback(async (widgetId: string, config: WidgetConfig) => {
     setWidgetData(prev => ({
       ...prev,
@@ -179,9 +149,11 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
     }));
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
-      const data = generateMockData(config.type);
+      const { apiClient } = await import('../../../services/api/config');
+      const res = await apiClient.get(
+        `/premium/widget-data?type=${config.type}&source=${config.dataSource || 'customs_registry'}`
+      );
+      const data = res.data ?? generateMockData(config.type);
 
       setWidgetData(prev => ({
         ...prev,
@@ -192,6 +164,8 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
         }
       }));
     } catch (error) {
+      // Fallback to placeholder data structure (no mock values) on error
+      console.warn(`[DashboardBuilder] Widget data fetch failed for ${config.type}:`, error);
       setWidgetData(prev => ({
         ...prev,
         [widgetId]: {
@@ -258,7 +232,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
     }
   }, [history, historyIndex]);
 
-  // Save dashboard
+  // Save dashboard to real backend
   const handleSave = async () => {
     setIsSaving(true);
     try {
@@ -274,12 +248,16 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
         views: initialDashboard?.views || 0
       };
 
-      // Simulate API save
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { apiClient } = await import('../../../services/api/config');
+      const endpoint = initialDashboard?.id
+        ? `/premium/dashboards/${initialDashboard.id}`
+        : '/premium/dashboards';
+      const method = initialDashboard?.id ? 'put' : 'post';
+      await apiClient[method](endpoint, dashboard);
 
       onSave?.(dashboard);
     } catch (error) {
-      console.error('Failed to save dashboard:', error);
+      console.error('[DashboardBuilder] Failed to save dashboard:', error);
     } finally {
       setIsSaving(false);
     }
@@ -592,9 +570,9 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
                     "relative group",
                     `col-span-${Math.min(widget.size.width, 12)}`,
                     widget.size.height === 1 ? 'h-24' :
-                    widget.size.height === 2 ? 'h-48' :
-                    widget.size.height === 3 ? 'h-72' :
-                    widget.size.height === 4 ? 'h-96' : 'h-[480px]'
+                      widget.size.height === 2 ? 'h-48' :
+                        widget.size.height === 3 ? 'h-72' :
+                          widget.size.height === 4 ? 'h-96' : 'h-[480px]'
                   )}
                   style={{
                     gridColumn: `span ${Math.min(widget.size.width, 12)}`
@@ -627,7 +605,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
                           e.stopPropagation();
                           handleDeleteWidget(widget.id);
                         }}
-                         className="p-1.5 bg-rose-900 border border-rose-500/30 rounded-lg hover:bg-rose-800 transition-colors"
+                        className="p-1.5 bg-rose-900 border border-rose-500/30 rounded-lg hover:bg-rose-800 transition-colors"
                         title={premiumLocales.dashboardBuilder.canvas.delete}
                       >
                         <Trash2 size={12} className="text-rose-400" />
