@@ -87,7 +87,6 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await new Promise(r => setTimeout(r, 1200)); // Глибоке сканування
     await fetchData();
     setRefreshing(false);
   };

@@ -188,14 +188,24 @@ const SanctionsScreening: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleSearch = () => {
-    if (!searchQuery) return;
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
     setIsSearching(true);
-    setTimeout(() => {
+    try {
+      const { apiClient } = await import('../services/api/config');
+      const res = await apiClient.post('/premium/sanctions/screen', {
+        query: searchQuery,
+        lists: ['OFAC', 'EU', 'UN', 'UK', 'PEP']
+      });
+      const result: ScreeningResult = res.data;
+      setSelectedResult(result);
+      // Add to recent list
+      setRecentScreenings(prev => [result, ...prev.slice(0, 19)]);
+    } catch (err: any) {
+      console.error('[SanctionsScreening] Search failed:', err);
+    } finally {
       setIsSearching(false);
-      // Mock result
-      setSelectedResult(recentScreenings[1]);
-    }, 1500);
+    }
   };
 
   return (

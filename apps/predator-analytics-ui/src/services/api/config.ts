@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 const getMetaEnv = () => {
     try {
@@ -9,23 +9,38 @@ const getMetaEnv = () => {
 };
 
 const metaEnv = getMetaEnv();
+
 export const API_BASE_URL = metaEnv.VITE_API_URL || '/api/v1';
-export const IS_TRUTH_ONLY_MODE = true; // FORCE REAL DATA
+export const API_V45_URL = metaEnv.VITE_V45_API_URL || '/api/v45';
+
+/**
+ * TRUTH-ONLY MODE — no mock fallbacks.
+ * All API errors propagate to the component for proper error display.
+ */
+export const IS_TRUTH_ONLY_MODE = true;
+
+// Default timeout: 15 seconds
+const DEFAULT_TIMEOUT = 15_000;
 
 export const apiClient = axios.create({
     baseURL: API_BASE_URL,
+    timeout: DEFAULT_TIMEOUT,
     headers: {
         'Content-Type': 'application/json',
+        'X-Client-Version': '55.0.0',
     }
 });
 
 export const v45Client = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: API_V45_URL,
+    timeout: DEFAULT_TIMEOUT,
     headers: {
         'Content-Type': 'application/json',
+        'X-Client-Version': '55.0.0',
     }
 });
 
+// ─── Auth Interceptor ────────────────────────────────────────────────────────
 const authInterceptor = (config: any) => {
     const token = sessionStorage.getItem('predator_auth_token');
     if (token) {
@@ -34,30 +49,45 @@ const authInterceptor = (config: any) => {
     return config;
 };
 
-const resilienceInterceptor = (error: any) => {
-    if (!error.response || error.response.status >= 500) {
-        console.warn(`[Resilience] API ${error.config?.url} failed.`);
+// ─── Resilience Interceptor ───────────────────────────────────────────────────
+const resilienceInterceptor = (error: AxiosError) => {
+    const url = error.config?.url ?? 'unknown';
+    const status = error.response?.status;
 
-        if (IS_TRUTH_ONLY_MODE) {
-            return Promise.reject(error);
-        }
-
-        if (typeof window !== 'undefined') {
-            (window as any).__BACKEND_OFFLINE_MODE__ = true;
-            window.dispatchEvent(new CustomEvent('predator-backend-offline'));
-        }
-
-        const url = error.config?.url || '';
-
-        // Minimal fallbacks if NOT in truth-only mode
-        if (url.includes('/status')) return Promise.resolve({ data: { status: 'SYSTEM_OFFLINE' } });
-        return Promise.resolve({ data: {} });
+    if (!error.response || (status && status >= 500)) {
+        // Server error or network failure
+        console.error(`[API] Server/network error: ${error.config?.method?.toUpperCase()} ${url}`, {
+            status,
+            message: error.message,
+        });
+    } else if (status === 401) {
+        console.warn(`[API] Unauthorized (401): ${url} — clearing token`);
+        sessionStorage.removeItem('predator_auth_token');
+    } else if (status === 403) {
+        console.warn(`[API] Forbidden (403): ${url}`);
+    } else if (status === 404) {
+        console.warn(`[API] Not found (404): ${url}`);
+    } else {
+        console.warn(`[API] Error ${status}: ${url}`, error.message);
     }
+
+    // TRUTH-ONLY MODE: always propagate errors to components
     return Promise.reject(error);
 };
 
-apiClient.interceptors.request.use(authInterceptor as any);
-apiClient.interceptors.response.use((r) => r, resilienceInterceptor);
+// ─── Response Success Interceptor ─────────────────────────────────────────────
+const successInterceptor = (response: any) => {
+    // Clear offline mode flag on successful response
+    if (typeof window !== 'undefined' && (window as any).__BACKEND_OFFLINE_MODE__) {
+        (window as any).__BACKEND_OFFLINE_MODE__ = false;
+        window.dispatchEvent(new CustomEvent('predator-backend-online'));
+    }
+    return response;
+};
 
-v45Client.interceptors.request.use(authInterceptor as any);
-v45Client.interceptors.response.use((r) => r, resilienceInterceptor);
+// Apply interceptors to both clients
+apiClient.interceptors.request.use(authInterceptor);
+apiClient.interceptors.response.use(successInterceptor, resilienceInterceptor);
+
+v45Client.interceptors.request.use(authInterceptor);
+v45Client.interceptors.response.use(successInterceptor, resilienceInterceptor);
