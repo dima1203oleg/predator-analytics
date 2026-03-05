@@ -27,6 +27,9 @@ export const intelligenceApi = {
     },
     getForensics: async (query: string) => {
         return (await apiClient.get(`/premium/forensics?query=${encodeURIComponent(query)}`)).data;
+    },
+    getCompetitors: async () => {
+        return (await apiClient.get('/premium/competitors')).data;
     }
 };
 

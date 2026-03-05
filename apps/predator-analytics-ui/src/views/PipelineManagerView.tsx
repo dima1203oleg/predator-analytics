@@ -29,13 +29,13 @@ const PipelineManagerView: React.FC = () => {
         }, {
             onSuccess: (data) => {
                 success(
-                    'Пайплайн завершено успішно / Pipeline completed',
+                    'Пайплайн завершено успішно',
                     `Створено: ${data.steps.fusion.entities_created}, Оцінено: ${data.steps.cers.entities_scored}`
                 );
             },
             onError: (err) => {
                 error(
-                    'Помилка пайплайну / Pipeline Error',
+                    'Помилка виконання пайплайну',
                     err.message
                 );
             }
@@ -47,13 +47,13 @@ const PipelineManagerView: React.FC = () => {
         rescoreEntity.mutate(ueidInput, {
             onSuccess: (data) => {
                 success(
-                    'Перерахунок успішний / Rescore successful',
+                    'Перерахунок завершено успішно',
                     `CERS: ${data.cers.score.toFixed(2)} (${data.cers.level_ua})`
                 );
             },
             onError: (err) => {
                 error(
-                    'Помилка перерахунку / Rescore Error',
+                    'Помилка перерахунку',
                     err.message
                 );
             }
@@ -65,7 +65,7 @@ const PipelineManagerView: React.FC = () => {
             <AdvancedBackground />
 
             <ViewHeader
-                title="Оркестратор Пайплайнів (Pipeline Manager)"
+                title="Оркестратор Пайплайнів"
                 icon={<Activity size={20} className="icon-3d-cyan" />}
                 breadcrumbs={['СИСТЕМА', 'ПАЙПЛАЙНИ', 'КЕРУВАННЯ']}
                 stats={[
@@ -104,7 +104,7 @@ const PipelineManagerView: React.FC = () => {
                             ) : (
                                 <Play className="w-5 h-5 mr-2" />
                             )}
-                            {runPipeline.isPending ? 'Виконання...' : 'ЗАПУСТИТИ ПАЙПЛАЙН (Run Pipeline)'}
+                            {runPipeline.isPending ? 'ВИКОНАННЯ...' : 'ЗАПУСТИТИ ПАЙПЛАЙН'}
                         </Button>
 
                         {runPipeline.isSuccess && runPipeline.data && (
@@ -163,7 +163,7 @@ const PipelineManagerView: React.FC = () => {
                             ) : (
                                 <ShieldAlert className="w-5 h-5 mr-2" />
                             )}
-                            {rescoreEntity.isPending ? 'Перерахунок...' : 'ПЕРЕРАХУВАТИ (Rescore)'}
+                            {rescoreEntity.isPending ? 'ПЕРЕРАХУНОК...' : 'ПЕРЕРАХУВАТИ'}
                         </Button>
 
                         {rescoreEntity.isSuccess && rescoreEntity.data && (
