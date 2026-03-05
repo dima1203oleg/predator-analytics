@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useRunPipeline, useRescoreEntity } from '../hooks/useV2Api';
 import { useToast } from '../context/ToastContext';
+import { ViewHeader } from '../components/ViewHeader';
+import { AdvancedBackground } from '../components/AdvancedBackground';
 
 const PipelineManagerView: React.FC = () => {
     const { success, error } = useToast();
@@ -59,20 +61,21 @@ const PipelineManagerView: React.FC = () => {
     };
 
     return (
-        <div className="p-8 space-y-8 animate-in fade-in max-w-7xl mx-auto">
-            <div className="flex justify-between items-end">
-                <div>
-                    <h1 className="text-4xl font-black tracking-tighter text-white flex items-center gap-3">
-                        <Activity className="w-8 h-8 text-cyan-500" />
-                        PIPELINE <span className="text-cyan-400">ORCHESTRATOR</span>
-                    </h1>
-                    <p className="text-slate-400 mt-2 font-medium tracking-wide">
-                        Управління процесом Data Fusion → Behavioral Analysis → CERS Meta-Scoring
-                    </p>
-                </div>
-            </div>
+        <div className="p-8 space-y-8 animate-in fade-in max-w-[1700px] w-full mx-auto relative z-10 min-h-screen xl:px-8">
+            <AdvancedBackground />
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <ViewHeader
+                title="Оркестратор Пайплайнів (Pipeline Manager)"
+                icon={<Activity size={20} className="icon-3d-cyan" />}
+                breadcrumbs={['СИСТЕМА', 'ПАЙПЛАЙНИ', 'КЕРУВАННЯ']}
+                stats={[
+                    { label: 'Статус', value: 'ОЧІКУВАННЯ', icon: <CheckCircle2 size={14} />, color: 'success' },
+                    { label: 'Data Fusion', value: 'АКТИВНИЙ', icon: <Database size={14} />, color: 'primary' },
+                    { label: 'CERS Scoring', value: 'ГОТОВИЙ', icon: <Target size={14} />, color: 'warning', animate: true },
+                ]}
+            />
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
                 {/* 1. Full Pipeline Run */}
                 <Card className="bg-slate-925/60 border-slate-800/50 backdrop-blur-xl">
                     <CardHeader>

@@ -29,6 +29,8 @@ import { premiumLocales } from '../locales/uk/premium';
 import { TacticalCard } from '../components/TacticalCard';
 import { CyberOrb } from '../components/CyberOrb';
 import { HoloContainer } from '../components/HoloContainer';
+import { ViewHeader } from '../components/ViewHeader';
+import { CyberGrid } from '../components/CyberGrid';
 
 // === ДОПОМІЖНІ КОМПОНЕНТИ ===
 
@@ -95,56 +97,33 @@ const SOMView: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col p-10 gap-10 relative z-10 animate-in fade-in duration-1000">
+      <CyberGrid color="#f43f5e" className="opacity-[0.05]" />
 
-      {/* Sovereignty Status Bar */}
-      <div className="flex flex-col xl:flex-row items-center justify-between gap-10 p-10 bg-slate-950/40 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
-        <div className="absolute inset-0 bg-cyber-grid opacity-[0.03]" />
-        <div className="flex items-center gap-8 relative z-10">
-          <div className="relative">
-            <div className="absolute inset-0 bg-rose-500/20 blur-[60px] rounded-full scale-150 animate-pulse" />
-            <div className="relative p-6 bg-slate-900 border border-rose-500/30 rounded-[32px] panel-3d shadow-2xl group-hover:scale-105 transition-transform">
-              <Eye size={40} className="text-rose-500 animate-pulse drop-shadow-[0_0_15px_rgba(244,63,94,0.6)]" />
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center gap-4 mb-2">
-              <h1 className="text-4xl font-black tracking-tighter uppercase leading-none font-display text-white">
-                Sovereign Observer
-              </h1>
-              <div className="px-4 py-1.5 bg-rose-500/10 border border-rose-500/20 rounded-full text-[10px] font-black text-rose-500 uppercase tracking-widest">
-                SOM_V55_KERNEL
-              </div>
-            </div>
-            <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.3em]">
-              Human-Machine Sovereignty Interface // {constitutionalStatus}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-12 relative z-10">
-          <div className="flex flex-col items-end">
-            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">CONSTITUTION_INTEGRITY</span>
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-32 bg-slate-900 rounded-full overflow-hidden border border-white/5">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: '100%' }}
-                  className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
-                />
-              </div>
-              <span className="text-xl font-black text-emerald-400 font-mono">100.0%</span>
-            </div>
-          </div>
-          <div className="w-px h-12 bg-white/5" />
-          <div className="flex flex-col items-end">
-            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">SYSTEM_HEALTH</span>
-            <div className="flex items-center gap-3">
-              <span className="text-xl font-black text-blue-400 font-mono">{systemHealth}%</span>
-              <Activity size={18} className="text-blue-500" />
-            </div>
-          </div>
-        </div>
-      </div>
+      <ViewHeader
+        title="Суверенний Наглядач"
+        icon={<Eye size={24} />}
+        breadcrumbs={['PREDATOR', 'SOM_V55', 'КОНТРОЛЬ_ЯДРА']}
+        stats={[
+          {
+            label: 'ЦІЛІСНІСТЬ_КОНСТИТУЦІЇ',
+            value: '100.0%',
+            icon: <Shield size={14} />,
+            color: 'success',
+            animate: true
+          },
+          {
+            label: 'ЗДОРОВ\'Я_СИСТЕМИ',
+            value: `${systemHealth}%`,
+            icon: <Activity size={14} />,
+            color: 'primary'
+          },
+          {
+            label: 'СТАТУС',
+            value: constitutionalStatus,
+            color: constitutionalStatus === 'SECURE' ? 'success' : 'danger'
+          }
+        ]}
+      />
 
       <main className="flex-1 grid grid-cols-12 gap-10">
 
@@ -153,22 +132,22 @@ const SOMView: React.FC = () => {
           <TacticalCard variant="holographic" className="p-10 bg-slate-950/40 relative overflow-hidden h-[500px] flex flex-col items-center justify-center">
             <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
             <h2 className="absolute top-10 left-10 text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
-              <Shield size={16} className="text-rose-500" /> Rings of Control
+              <Shield size={16} className="text-rose-500" /> Кільця Контролю
             </h2>
 
             <div className="relative w-80 h-80 flex items-center justify-center">
               <ControlRing
-                size={320} label="Layer III: Human Authority"
+                size={320} label="Рівень III: Людська Влада"
                 active={selectedRing === 3} color="#f43f5e"
                 onClick={() => setSelectedRing(3)} speed={120}
               />
               <ControlRing
-                size={200} label="Layer II: Arbiter Court"
+                size={200} label="Рівень II: Суд Арбітрів"
                 active={selectedRing === 2} color="#a855f7"
                 onClick={() => setSelectedRing(2)} speed={-60}
               />
               <ControlRing
-                size={100} label="Layer I: Core Oversight"
+                size={100} label="Рівень I: Ядро Нагляду"
                 active={selectedRing === 1} color="#06b6d4"
                 onClick={() => setSelectedRing(1)} speed={30}
               />
@@ -182,9 +161,9 @@ const SOMView: React.FC = () => {
 
             <div className="absolute bottom-10 inset-x-10 p-6 bg-black/60 border border-white/5 rounded-2xl backdrop-blur-xl">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ACTIVE_LAYER_PROTOCOL</span>
+                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ПРОТОКОЛ_АКТИВНОГО_РІВНЯ</span>
                 <span className="text-[9px] font-black text-white uppercase tracking-widest">
-                  {selectedRing === 3 ? 'ULTIMATE_OVERRIDE' : selectedRing === 2 ? 'JURIDICAL_VERIFICATION' : 'AUTONOMOUS_SCAN'}
+                  {selectedRing === 3 ? 'АБСОЛЮТНИЙ_ОТРИМУВАЧ' : selectedRing === 2 ? 'ЮРИДИЧНА_ВЕРИФІКАЦІЯ' : 'АВТОНОМНИЙ_СКАН'}
                 </span>
               </div>
               <p className="text-xs text-slate-400 leading-relaxed italic">
@@ -198,7 +177,7 @@ const SOMView: React.FC = () => {
           <TacticalCard variant="glass" className="p-10 bg-rose-950/20 border-rose-500/30 relative group/emerg">
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-rose-500/10 blur-[60px] rounded-full group-hover/emerg:scale-150 transition-transform" />
             <h3 className="text-[11px] font-black text-rose-500 uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
-              <AlertOctagon size={18} /> Sovereign Emergency Protocol
+              <AlertOctagon size={18} /> Суверенний Екстрений Протокол
             </h3>
             <p className="text-xs text-rose-300/60 leading-relaxed mb-10">
               Активація апаратної ізоляції SOM-модуля. Це призведе до фізичного розірвання зв'язків з усіма зовнішніми системами. Дія незворотна без фізичного втручання.
@@ -216,11 +195,11 @@ const SOMView: React.FC = () => {
               {emergencyMode ? (
                 <>
                   <div className="absolute inset-0 bg-cyber-scanline opacity-10" />
-                  <Lock size={20} /> SOM_ISOLATED
+                  <Lock size={20} /> SOM_ІЗОЛЬОВАНО
                 </>
               ) : (
                 <>
-                  <Power size={20} className="animate-pulse" /> SEVER_CONNECTION_CORE
+                  <Power size={20} className="animate-pulse" /> РОЗІРВАТИ_ЗВ'ЯЗОК_ЯДРА
                 </>
               )}
             </button>
@@ -232,18 +211,18 @@ const SOMView: React.FC = () => {
           <HoloContainer className="p-10 flex flex-col gap-10 overflow-hidden">
             <div className="flex items-center justify-between">
               <h2 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
-                <Activity size={18} className="text-emerald-500" /> Organism Health Matrix
+                <Activity size={18} className="text-emerald-500" /> Матриця Здоров'я Організму
               </h2>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                <span className="text-[9px] font-black text-emerald-500 uppercase font-mono">LIVE_STREAM</span>
+                <span className="text-[9px] font-black text-emerald-500 uppercase font-mono">LIVE_ПОТІК</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6">
               <div className="p-6 bg-slate-950/40 border border-white/5 rounded-[32px] panel-3d">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">DATA_QUALITY</span>
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ЯКІСТЬ_ДАНИХ</span>
                   <span className="text-xs font-black text-emerald-400 font-mono">99.8%</span>
                 </div>
                 <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
@@ -252,7 +231,7 @@ const SOMView: React.FC = () => {
               </div>
               <div className="p-6 bg-slate-950/40 border border-white/5 rounded-[32px] panel-3d">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ENTITY_SYNC</span>
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">СИНХР_СУТНОСТЕЙ</span>
                   <span className="text-xs font-black text-blue-400 font-mono">14.2%</span>
                 </div>
                 <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
@@ -264,10 +243,10 @@ const SOMView: React.FC = () => {
             <div className="p-8 bg-slate-950/60 border border-white/5 rounded-[32px]">
               <div className="flex items-center gap-3 mb-6">
                 <Layers size={16} className="text-indigo-400" />
-                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Pipeline Propagation State</span>
+                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Стан Проходження Пайплайнів</span>
               </div>
               <div className="flex items-center gap-2 mb-4">
-                {['IN_INGEST', 'PARSING', 'VAL_DQ', 'RESOLVING', 'PERSISTED'].map((step, i) => (
+                {['INGEST_ВХІД', 'ПАРСИНГ', 'ВАЛІДАЦІЯ', 'РЕЗОЛВІНГ', 'ЗБЕРЕЖЕНО'].map((step, i) => (
                   <div key={i} className="flex-1 flex flex-col gap-2">
                     <div className={cn(
                       "h-2 rounded-full transition-all duration-1000",
@@ -278,31 +257,31 @@ const SOMView: React.FC = () => {
                 ))}
               </div>
               <div className="flex justify-between text-[9px] font-mono text-slate-500 uppercase">
-                <span>ACTIVE: ENTITY_RESOLUTION_ENGINE</span>
-                <span>T-MINUS: 18.2s</span>
+                <span>АКТИВНО: ДВИГУН_РЕЗОЛВІНГУ_СУТНОСТЕЙ</span>
+                <span>T-МІНУС: 18.2s</span>
               </div>
             </div>
 
             <div className="space-y-6">
               <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
-                <Hexagon size={18} className="text-amber-500" /> Digital Twin Sandbox
-              </h2>
+                <Hexagon size={18} className="text-amber-500" /> Пісочниця Цифрового Двійника
+              </h3>
               <div className="grid grid-cols-2 gap-6">
                 <div className="p-6 bg-slate-950/60 border border-white/5 rounded-[32px] group/item transition-all hover:border-white/20">
                   <div className="flex items-center gap-3 mb-4">
                     <Database size={16} className="text-slate-500 group-hover/item:text-blue-400" />
-                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Truth Ledger</span>
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Журнал Істини (Truth Ledger)</span>
                   </div>
                   <div className="text-3xl font-black text-white font-mono tracking-tighter">42,817</div>
-                  <div className="text-[9px] font-black text-emerald-400 uppercase mt-2 font-mono">● SYNCED_0ms</div>
+                  <div className="text-[9px] font-black text-emerald-400 uppercase mt-2 font-mono">● СИНХР_0ms</div>
                 </div>
                 <div className="p-6 bg-slate-950/60 border border-white/5 rounded-[32px] group/item transition-all hover:border-white/20">
                   <div className="flex items-center gap-3 mb-4">
                     <Cpu size={16} className="text-slate-500 group-hover/item:text-amber-400" />
                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">RCE Engine Stage</span>
                   </div>
-                  <div className="text-3xl font-black text-white font-mono tracking-tighter uppercase">Ready</div>
-                  <div className="text-[9px] font-black text-blue-400 uppercase mt-2 font-mono">● STANDBY_IDLE</div>
+                  <div className="text-3xl font-black text-white font-mono tracking-tighter uppercase">Готово</div>
+                  <div className="text-[9px] font-black text-blue-400 uppercase mt-2 font-mono">● ПІДГОТОВЛЕНО</div>
                 </div>
               </div>
             </div>
@@ -311,9 +290,9 @@ const SOMView: React.FC = () => {
           <TacticalCard variant="glass" className="p-10 bg-slate-950/40 relative overflow-hidden">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
-                <Zap size={18} className="text-amber-500" /> Idea Garden
+                <Zap size={18} className="text-amber-500" /> Сад Гіпотез (Idea Garden)
               </h3>
-              <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-black text-slate-400 uppercase font-mono">3_ACTIVE_HYPOTHESES</span>
+              <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-black text-slate-400 uppercase font-mono">3_АКТИВНІ_ГІПОТЕЗИ</span>
             </div>
 
             <div className="space-y-4">
@@ -336,15 +315,15 @@ const SOMView: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <Sparkles size={12} className="text-amber-500" />
-                      <span className="text-[10px] font-black text-amber-500 font-mono">{(h.confidence * 100).toFixed(0)}% CONFIDENCE</span>
+                      <span className="text-[10px] font-black text-amber-500 font-mono">{(h.confidence * 100).toFixed(0)}% ВПЕВНЕНІСТЬ</span>
                     </div>
                   </div>
                   <p className="text-xs text-slate-300 group-hover/h:text-white transition-colors leading-relaxed mb-6 font-medium">
                     {h.desc}
                   </p>
                   <div className="flex gap-3 h-0 overflow-hidden group-hover/h:h-10 transition-all duration-500">
-                    <button className="px-6 bg-emerald-600 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all">START_SIMULATION</button>
-                    <button className="px-6 bg-white/5 border border-white/10 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">REQUEST_EXPLANATION</button>
+                    <button className="px-6 bg-emerald-600 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all">ЗАПУСТИТИ_СИМУЛЯЦІЮ</button>
+                    <button className="px-6 bg-white/5 border border-white/10 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">ЗАПИТАТИ_ПОЯСНЕННЯ</button>
                   </div>
                 </motion.div>
               ))}
@@ -356,26 +335,26 @@ const SOMView: React.FC = () => {
         <div className="col-span-12 xl:col-span-3 flex flex-col gap-10">
           <TacticalCard variant="holographic" className="p-10 bg-slate-950/40 flex flex-col h-full">
             <h2 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-10 flex items-center gap-3">
-              <Network size={18} className="text-cyan-400" /> Active Agent Swarm
+              <Network size={18} className="text-cyan-400" /> Активний Рой Агентів
             </h2>
 
             <div className="space-y-6 flex-1">
               {[
-                { name: 'Architect', status: 'SYNTHESIZING', color: 'text-blue-400' },
-                { name: 'Engineer', status: 'REFACTORING', color: 'text-emerald-400' },
-                { name: 'Auditor', status: 'VERIFYING', color: 'text-purple-400' },
-                { name: 'Negotiator', status: 'IDLE_WAIT', color: 'text-slate-500' }
+                { name: 'Архітектор', status: 'СИНТЕЗУЄ', color: 'text-blue-400' },
+                { name: 'Інженер', status: 'РЕФАКТОРИТЬ', color: 'text-emerald-400' },
+                { name: 'Аудитор', status: 'ВЕРИФІКУЄ', color: 'text-purple-400' },
+                { name: 'Переговорник', status: 'ОЧІКУВАННЯ', color: 'text-slate-500' }
               ].map((agent, i) => (
                 <div key={agent.name} className="flex flex-col gap-3 p-6 bg-slate-900/40 border border-white/5 rounded-[32px] panel-3d">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className={cn("w-2 h-2 rounded-full animate-pulse", agent.status === 'IDLE_WAIT' ? "bg-slate-700" : "bg-emerald-500")} />
-                      <span className="text-[11px] font-black text-white uppercase">{agent.name} Agent</span>
+                      <div className={cn("w-2 h-2 rounded-full animate-pulse", agent.status === 'ОЧІКУВАННЯ' ? "bg-slate-700" : "bg-emerald-500")} />
+                      <span className="text-[11px] font-black text-white uppercase">Агент {agent.name}</span>
                     </div>
                     <Settings size={14} className="text-slate-600 hover:text-white transition-colors cursor-pointer" />
                   </div>
                   <div className="flex justify-between items-center bg-black/40 px-3 py-2 rounded-xl border border-white/5">
-                    <span className="text-[8px] font-black text-slate-600 uppercase">STATUS</span>
+                    <span className="text-[8px] font-black text-slate-600 uppercase">СТАТУС</span>
                     <span className={cn("text-[9px] font-black uppercase tracking-widest", agent.color)}>{agent.status}</span>
                   </div>
                 </div>
@@ -384,15 +363,15 @@ const SOMView: React.FC = () => {
 
             <div className="mt-10 p-8 bg-black/40 border border-white/5 rounded-[32px] backdrop-blur-3xl">
               <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
-                <Terminal size={14} /> Oversight Command Logs
+                <Terminal size={14} /> Логи Командного Нагляду
               </h3>
               <div className="font-mono text-[10px] text-slate-500 space-y-3 h-[250px] overflow-y-auto custom-scrollbar pr-3">
-                <p><span className="text-slate-700">[11:04:12]</span> <span className="text-blue-400">SOM_CORE:</span> Truth Ledger synced. MD5_HASH: 9e4b...d1</p>
-                <p><span className="text-slate-700">[11:04:15]</span> <span className="text-rose-500">ANOMALY:</span> Minor drift in RCE temporal coherence (0.02).</p>
-                <p><span className="text-slate-700">[11:04:22]</span> <span className="text-blue-400">ARCHITECT:</span> Generated hypothesis H-504 via Recursive Scan.</p>
-                <p><span className="text-slate-700">[11:04:30]</span> <span className="text-purple-400">ARBITER:</span> Reviewing Proposal #44021 (Truth Persistence).</p>
-                <p><span className="text-slate-700">[11:05:01]</span> <span className="text-emerald-400">SYSTEM:</span> Heartbeat verified. All constitutional axioms intact.</p>
-                <p className="opacity-40 animate-pulse text-[8px]">--- SCANNING_FOR_NEW_LOGS ---</p>
+                <p><span className="text-slate-700">[11:04:12]</span> <span className="text-blue-400">SOM_ЯДРО:</span> Truth Ledger синхронізовано. MD5_HASH: 9e4b...d1</p>
+                <p><span className="text-slate-700">[11:04:15]</span> <span className="text-rose-500">АНОМАЛІЯ:</span> Мінімальний дрифт у часовій когерентності RCE (0.02).</p>
+                <p><span className="text-slate-700">[11:04:22]</span> <span className="text-blue-400">АРХІТЕКТОР:</span> Згенеровано гіпотезу H-504 через Recursive Scan.</p>
+                <p><span className="text-slate-700">[11:04:30]</span> <span className="text-purple-400">АРБІТР:</span> Розгляд Пропозиції #44021 (Truth Persistence).</p>
+                <p><span className="text-slate-700">[11:05:01]</span> <span className="text-emerald-400">СИСТЕМА:</span> Heartbeat підтверджено. Всі конституційні аксіоми цілі.</p>
+                <p className="opacity-40 animate-pulse text-[8px]">--- СКАНУВАННЯ_НОВИХ_ЛОГІВ ---</p>
               </div>
             </div>
           </TacticalCard>
@@ -414,26 +393,26 @@ const SOMView: React.FC = () => {
               </div>
             </div>
             <div>
-              <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Universal Sovereignty Monitoring</h3>
+              <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Універсальний Моніторинг Суверенітету</h3>
               <p className="text-xs text-slate-500 font-medium">Повний контроль над цифровим двійником реальності в режимі SOM_V55.</p>
             </div>
           </div>
           <div className="flex gap-12">
             <div className="flex flex-col">
               <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 flex items-center gap-2">
-                <Shield size={10} /> SECURITY_ENCLAVE
+                <Shield size={10} /> АНКЛАВ_БЕЗПЕКИ
               </span>
               <span className="text-xs font-black text-emerald-400">TITANIUM_SHIELD_V4</span>
             </div>
             <div className="flex flex-col text-right">
               <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 flex items-center gap-2 justify-end">
-                <Radio size={10} /> TRANSMISSION
+                <Radio size={10} /> ТРАНСМІСІЯ
               </span>
-              <span className="text-xs font-black text-white uppercase font-mono">ENCRYPTED_AES256</span>
+              <span className="text-xs font-black text-white uppercase font-mono">ШИФРУВАННЯ_AES256</span>
             </div>
           </div>
           <button className="px-10 py-5 bg-rose-500 text-white rounded-[24px] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-rose-600 transition-all shadow-xl flex items-center gap-3">
-            EXPAND_OVERSIGHT_HORIZON <ArrowUpRight size={18} />
+            {"РОЗШИРИТИ_ГОРИЗОНТ_НАГЛЯДУ"} <ArrowUpRight size={18} />
           </button>
         </div>
       </motion.div>

@@ -8,6 +8,9 @@ import { api } from '../services/api';
 import { useGlobalState } from '../context/GlobalContext';
 import { useShell, UIShell } from '../context/ShellContext';
 
+import { ViewHeader } from '../components/ViewHeader';
+import { AdvancedBackground } from '../components/AdvancedBackground';
+
 // Extracted Sub-views
 import { CaseCard, Case, CaseStatus } from '../components/cases/CaseCard';
 import { CaseStats } from '../components/cases/CaseStats';
@@ -124,64 +127,66 @@ const CasesView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pb-24 md:pb-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto px-4 md:px-8">
-      <div className="mb-8 pt-8">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-6">
-          <div>
-            <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic flex items-center gap-3">
-              {isCommanderShell ? 'CASE_GOVERNANCE' : isOperatorShell ? 'OPERATIONAL_QUEUE' : 'Управління Розслідуваннями'}
-            </h1>
-            <p className="text-xs font-mono text-slate-500 mt-1 uppercase tracking-widest">
-              SYSTEM_QUEUE: {filteredCases.length} ITEMS // FILTER: {activeFilter}
-            </p>
-          </div>
+    <div className="min-h-screen pb-24 md:pb-8 animate-in fade-in duration-500 max-w-[1700px] mx-auto relative z-10 px-4 xl:px-8">
+      <AdvancedBackground />
 
-          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-            <div className="relative flex-1 sm:w-64">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-              <input
-                type="text"
-                placeholder="Пошук кейсів..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-blue-500/50 transition-colors"
-              />
-            </div>
-
-            <button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 transition-all active:scale-95 whitespace-nowrap"
-            >
-              <Plus size={18} />
-              Новий Кейс
-            </button>
-          </div>
-        </div>
-
-        {cases.some(c => c.status === 'КРИТИЧНО') && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/30 mb-6"
+      <ViewHeader
+        title={isCommanderShell ? 'Кейси (Case Governance)' : isOperatorShell ? 'Черга (Operational Queue)' : 'Управління Розслідуваннями'}
+        icon={<Archive size={20} className="icon-3d-blue" />}
+        breadcrumbs={['СИСТЕМА', 'КЕЙСИ', 'АКТИВНІ']}
+        stats={[
+          { label: 'Всього Кейсів', value: filteredCases.length.toString(), icon: <Archive size={14} />, color: 'primary' },
+          { label: 'Критичні', value: cases.filter(c => c.status === 'КРИТИЧНО').length.toString(), icon: <AlertOctagon size={14} />, color: 'danger', animate: true },
+          { label: 'В роботі', value: cases.filter(c => c.status === 'УВАГА').length.toString(), icon: <Activity className="w-3.5 h-3.5" />, color: 'warning' }
+        ]}
+        actions={
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="px-6 py-2.5 bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/50 text-blue-400 hover:text-white font-bold rounded-xl shadow-[0_0_15px_rgba(59,130,246,0.2)] flex items-center justify-center gap-2 transition-all active:scale-95 whitespace-nowrap text-xs uppercase tracking-wider backdrop-blur-md"
           >
-            <div className="p-2 bg-purple-500/20 rounded-lg">
-              <Sparkles className="w-5 h-5 text-purple-400" />
-            </div>
-            <div className="flex-1">
-              <div className="text-[10px] font-bold text-purple-400 uppercase tracking-wider mb-0.5">
-                Рекомендація AI
-              </div>
-              <div className="text-sm text-slate-200">
-                Виявлено {cases.filter(c => c.status === 'КРИТИЧНО').length} критичних кейсів.
-                Рекомендую розпочати з <span className="text-white font-semibold">"{cases.find(c => c.status === 'КРИТИЧНО')?.title}"</span> — найвищий рівень ризику.
-              </div>
-            </div>
-            <button className="px-4 py-2 bg-purple-500/20 text-purple-400 rounded-lg text-sm font-medium hover:bg-purple-500/30 transition-all">
-              Перейти
-            </button>
-          </motion.div>
-        )}
+            <Plus size={16} />
+            Новий Кейс
+          </button>
+        }
+      />
+
+      <div className="mb-6 relative z-10">
+        <div className="relative flex-1 sm:w-96">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+          <input
+            type="text"
+            placeholder="Пошук кейсів..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-12 pr-4 py-3.5 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 transition-colors shadow-inner"
+          />
+        </div>
       </div>
+
+      {cases.some(c => c.status === 'КРИТИЧНО') && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-4 p-5 rounded-3xl bg-gradient-to-r from-rose-500/10 to-transparent border border-rose-500/20 mb-8 relative z-10 backdrop-blur-xl"
+        >
+          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay pointer-events-none rounded-3xl"></div>
+          <div className="p-3 bg-rose-500/20 rounded-xl relative z-10 border border-rose-500/30">
+            <AlertOctagon className="w-6 h-6 text-rose-400 animate-pulse" />
+          </div>
+          <div className="flex-1 relative z-10">
+            <div className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1 flex items-center gap-2">
+              <Sparkles size={12} /> Рекомендація AI
+            </div>
+            <div className="text-sm font-medium text-slate-300">
+              Виявлено <span className="font-bold text-rose-400">{cases.filter(c => c.status === 'КРИТИЧНО').length} критичних</span> кейсів.
+              Рекомендую розпочати з <span className="text-white font-bold italic">"{cases.find(c => c.status === 'КРИТИЧНО')?.title}"</span>.
+            </div>
+          </div>
+          <button className="px-6 py-2.5 bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 hover:text-white rounded-xl text-xs font-black uppercase tracking-wider border border-rose-500/30 transition-all shadow-[0_0_15px_rgba(225,29,72,0.2)] relative z-10 active:scale-95">
+            ПЕРЕЙТИ
+          </button>
+        </motion.div>
+      )}
 
       <CaseStats
         cases={cases}
@@ -284,10 +289,10 @@ const CasesView: React.FC = () => {
                         type="button"
                         onClick={() => setNewCaseData({ ...newCaseData, priority: p })}
                         className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider border transition-all ${newCaseData.priority === p
-                            ? p === 'high' ? 'bg-rose-500 text-white border-rose-500'
-                              : p === 'medium' ? 'bg-amber-500 text-white border-amber-500'
-                                : 'bg-emerald-500 text-white border-emerald-500'
-                            : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700'
+                          ? p === 'high' ? 'bg-rose-500 text-white border-rose-500'
+                            : p === 'medium' ? 'bg-amber-500 text-white border-amber-500'
+                              : 'bg-emerald-500 text-white border-emerald-500'
+                          : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700'
                           }`}
                       >
                         {p === 'high' ? 'Високий' : p === 'medium' ? 'Середній' : 'Низький'}
