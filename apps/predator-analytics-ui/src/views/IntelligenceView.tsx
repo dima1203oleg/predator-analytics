@@ -57,10 +57,10 @@ const IntelligenceView: React.FC = () => {
                                 </div>
                                 <div>
                                     <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none font-display">
-                                        Intelligence Sanctum
+                                        СВЯТИЛИЩЕ РОЗВІДКИ
                                     </h1>
                                     <p className="text-[11px] font-mono font-black text-indigo-500/60 uppercase tracking-[0.4em] mt-2">
-                                        SOVEREIGN_COGNITIVE_CORE // СИНАПСИС_v55
+                                        СУВЕРЕННЕ_КОГНІТИВНЕ_ЯДРО // СИНАПСИС_v55
                                     </p>
                                 </div>
                             </div>
@@ -101,7 +101,7 @@ const IntelligenceView: React.FC = () => {
                                 <div className="absolute top-8 right-8 z-20 flex items-center gap-3">
                                     <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md">
                                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse outline outline-4 outline-emerald-500/20" />
-                                        <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">SCAN_ACTIVE</span>
+                                        <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">СКАНУВАННЯ_АКТИВНЕ</span>
                                     </div>
                                     <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md text-slate-400">
                                         <span className="text-[10px] font-black uppercase tracking-widest font-mono">ВУЗЛІВ: 14,284</span>
@@ -118,18 +118,18 @@ const IntelligenceView: React.FC = () => {
 
                                 <div className="absolute bottom-8 left-8 p-6 bg-black/60 border border-white/5 rounded-3xl backdrop-blur-2xl z-20 flex items-center gap-10 shadow-3xl">
                                     <div className="flex flex-col">
-                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">LATENCY</span>
+                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">ЛАТЕНТНІСТЬ</span>
                                         <span className="text-lg font-black text-white font-mono">8ms</span>
                                     </div>
                                     <div className="w-px h-10 bg-white/10" />
                                     <div className="flex flex-col">
-                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">ENTROPY_INDEX</span>
+                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">ІНДЕКС_ЕНТРОПІЇ</span>
                                         <span className="text-lg font-black text-amber-500 font-mono">0.122</span>
                                     </div>
                                     <div className="w-px h-10 bg-white/10" />
                                     <div className="flex flex-col">
-                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">VIRTUAL_NODES</span>
-                                        <span className="text-lg font-black text-indigo-400 font-mono">ACTIVE</span>
+                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">ВІРТУАЛЬНІ_ВУЗЛИ</span>
+                                        <span className="text-lg font-black text-indigo-400 font-mono">АКТИВНО</span>
                                     </div>
                                 </div>
                             </TacticalCard>
@@ -182,7 +182,7 @@ const IntelligenceView: React.FC = () => {
                                         </div>
 
                                         <div className="flex flex-wrap gap-3 pt-2">
-                                            {['Sovereign', 'Neural-v55', 'Encrypted', 'Deterministic', 'Autonomous'].map(tag => (
+                                            {['СУВЕРЕННИЙ', 'НЕЙРО-v55', 'ШИФРОВАНИЙ', 'ДЕТЕРМІНІСТИЧНИЙ', 'АВТОНОМНИЙ'].map(tag => (
                                                 <span key={tag} className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black text-slate-500 uppercase tracking-widest hover:border-indigo-500/50 hover:text-indigo-300 transition-all cursor-crosshair">
                                                     {tag}
                                                 </span>
@@ -213,7 +213,7 @@ const IntelligenceView: React.FC = () => {
                                     <div className="text-2xl font-black text-white font-mono opacity-80 tracking-tighter">СИНАПСИС_v55.CORE</div>
                                     <div className="mt-4 flex items-center justify-center gap-2">
                                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                        <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">ENCRYPTED_AND_SIGNED</span>
+                                        <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">ШИФРОВАНО_ТА_ПІДПИСАНО</span>
                                     </div>
                                 </div>
                             </TacticalCard>
@@ -227,8 +227,8 @@ const IntelligenceView: React.FC = () => {
                                 </div>
                                 <div className="space-y-4">
                                     {[
-                                        { label: 'Асинхронний Індекс', val: '99.99%', sub: 'Healthy' },
-                                        { label: 'Векторний Дрейф', val: '0.002', sub: 'Minimal' }
+                                        { label: 'Асинхронний Індекс', val: '99.99%', sub: 'ЗДОРОВО' },
+                                        { label: 'Векторний Дрейф', val: '0.002', sub: 'МІНІМАЛЬНИЙ' }
                                     ].map(stat => (
                                         <div key={stat.label} className="flex items-center justify-between">
                                             <div>

@@ -201,7 +201,7 @@ const DatabasesView: React.FC = () => {
                 <div className="flex-1 text-center lg:text-left relative z-10">
                     <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-cyan-500/10 border border-cyan-500/20 rounded-full font-black text-[10px] uppercase tracking-[0.3em] text-cyan-400 mb-6">
                         <Activity className="w-3.5 h-3.5 animate-pulse" />
-                        SYNCHRONIZED KNOWLEDGE CORE v55
+                        СИНХРОНІЗОВАНЕ ЯДРО ЗНАНЬ v55
                     </div>
                     <h1 className="text-5xl lg:text-6xl font-black text-white uppercase italic tracking-tighter leading-none mb-4">
                         НЕЙРОННА СІТКА <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500">СХОВИЩ</span>
@@ -214,7 +214,7 @@ const DatabasesView: React.FC = () => {
                 <div className="flex gap-4 shrink-0 w-full lg:w-auto">
                     {[
                         { label: 'ЄМНІСТЬ', val: '18.4 TB', color: 'text-cyan-400', icon: HardDrive },
-                        { label: 'HEALTH', val: '100%', color: 'text-emerald-400', icon: ShieldCheck }
+                        { label: 'СТАН СИСТЕМИ', val: '100%', color: 'text-emerald-400', icon: ShieldCheck }
                     ].map((s, idx) => (
                         <div key={idx} className="flex-1 lg:w-32 bg-white/5 border border-white/10 rounded-3xl p-6 text-center shadow-lg backdrop-blur-xl transition-all hover:border-cyan-500/30">
                             <s.icon size={16} className={cn("mx-auto mb-3", s.color)} />
@@ -229,12 +229,12 @@ const DatabasesView: React.FC = () => {
             <div className="sticky top-24 z-40 px-4">
                 <div className="max-w-fit mx-auto p-2 bg-slate-900/80 backdrop-blur-2xl border border-white/5 rounded-3xl flex flex-wrap shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden">
                     {[
-                        { id: 'ETL', label: 'ETL FLOW', icon: Network, color: 'text-amber-400' },
-                        { id: 'RELATIONAL', label: 'Relational', icon: Database, color: 'text-blue-400' },
-                        { id: 'OBJECT', label: 'S3 Objects', icon: Server, color: 'text-indigo-400' },
-                        { id: 'VECTOR', label: 'Vector AI', icon: Layers, color: 'text-emerald-400' },
-                        { id: 'GRAPH', label: 'Graph Topology', icon: Share2, color: 'text-purple-400' },
-                        { id: 'CALIBRATION', label: 'AI Synthesis', icon: Binary, color: 'text-rose-400' }
+                        { id: 'ETL', label: 'ПОТІК ETL', icon: Network, color: 'text-amber-400' },
+                        { id: 'RELATIONAL', label: 'Реляційні', icon: Database, color: 'text-blue-400' },
+                        { id: 'OBJECT', label: 'S3 Об\'єкти', icon: Server, color: 'text-indigo-400' },
+                        { id: 'VECTOR', label: 'Векторний ШІ', icon: Layers, color: 'text-emerald-400' },
+                        { id: 'GRAPH', label: 'Топологія Графу', icon: Share2, color: 'text-purple-400' },
+                        { id: 'CALIBRATION', label: 'ШІ Синтез', icon: Binary, color: 'text-rose-400' }
                     ].map(tab => {
                         const isActive = activeTab === tab.id;
                         return (

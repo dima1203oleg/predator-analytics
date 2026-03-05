@@ -29,6 +29,7 @@ import {
     Scan,
     Database,
     SearchCode,
+    Radar,
     XCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

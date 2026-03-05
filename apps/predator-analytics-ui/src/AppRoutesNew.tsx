@@ -92,7 +92,7 @@ const LoadingFallback = () => (
         </div>
       </div>
       <div className="flex flex-col items-center">
-        <div className="text-emerald-400 font-mono text-xs tracking-[0.5em] animate-pulse mb-1">QUANTUM LINK ESTABLISHED</div>
+        <div className="text-emerald-400 font-mono text-xs tracking-[0.5em] animate-pulse mb-1">КВАНТОВИЙ ЗВ'ЯЗОК ВСТАНОВЛЕНО</div>
         <div className="text-white font-black text-2xl tracking-tighter flex gap-1">
           {["P", "R", "E", "D", "A", "T", "O", "R"].map((char, i) => (
             <motion.span
