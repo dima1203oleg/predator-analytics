@@ -149,6 +149,8 @@ export const api = {
     getRiskEntities: intelligenceApi.getRiskEntities,
     getInvestigations: intelligenceApi.getInvestigations,
     getMarketAnalytics: intelligenceApi.getMarketAnalytics,
+    getMarketSegments: intelligenceApi.getMarketSegments,
+    getOpportunities: intelligenceApi.getOpportunities,
     getAiInsights: intelligenceApi.getAiInsights,
     getTopImporters: intelligenceApi.getTopImporters,
 
