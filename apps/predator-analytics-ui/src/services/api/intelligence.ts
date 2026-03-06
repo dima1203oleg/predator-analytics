@@ -96,6 +96,15 @@ export const intelligenceApi = {
     getMorningNewspaper: async () => {
         return (await apiClient.get('/premium/morning-brief')).data;
     },
+    getRiskEntities: async () => {
+        return (await apiClient.get('/premium/risk-entities')).data;
+    },
+    getInvestigations: async () => {
+        return (await apiClient.get('/premium/investigations')).data;
+    },
+    getMarketAnalytics: async () => {
+        return (await apiClient.get('/premium/market-analytics')).data;
+    },
 };
 
 export const trinityApi = {

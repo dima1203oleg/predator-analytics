@@ -146,6 +146,11 @@ export const api = {
     getNotifications: monitoringApi.getNotifications,
     getMarketTrends: intelligenceApi.getMarketTrends,
     getMorningNewspaper: intelligenceApi.getMorningNewspaper,
+    getRiskEntities: intelligenceApi.getRiskEntities,
+    getInvestigations: intelligenceApi.getInvestigations,
+    getMarketAnalytics: intelligenceApi.getMarketAnalytics,
+    getAiInsights: intelligenceApi.getAiInsights,
+    getTopImporters: intelligenceApi.getTopImporters,
 
     // ─── Database & Query Operations (Legacy / Global) ─────────────────────────
     getDatabases: async () => (await apiClient.get('/databases')).data,
