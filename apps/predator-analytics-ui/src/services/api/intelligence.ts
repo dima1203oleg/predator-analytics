@@ -105,6 +105,12 @@ export const intelligenceApi = {
     getMarketAnalytics: async () => {
         return (await apiClient.get('/premium/market-analytics')).data;
     },
+    getMarketSegments: async () => {
+        return (await apiClient.get('/premium/market-segments')).data;
+    },
+    getOpportunities: async () => {
+        return (await apiClient.get('/premium/opportunities')).data;
+    },
 };
 
 export const trinityApi = {
