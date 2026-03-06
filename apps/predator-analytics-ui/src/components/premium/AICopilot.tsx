@@ -129,7 +129,7 @@ export const Predator: React.FC = () => {
     setActiveAgent('Активація каскаду агентів...');
 
     try {
-      const res = await api.ai.query(query);
+      const res = await api.premium.query(query);
       const answer = res.answer || res.response || res.result;
 
       if (answer) {

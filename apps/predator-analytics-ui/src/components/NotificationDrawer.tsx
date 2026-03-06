@@ -27,8 +27,8 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ isOpen, 
 
     React.useEffect(() => {
         if (isOpen) {
-            import('../services/api').then(({ api }) => {
-                api.v45.getNotifications().then(data => setNotifications(data as Notification[]));
+            import('../services/api/config').then(({ apiClient }) => {
+                apiClient.get('/system/notifications').then(res => setNotifications(res.data as Notification[]));
             });
         }
     }, [isOpen]);
@@ -67,30 +67,27 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ isOpen, 
 
                         <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
                             {notifications.map(n => (
-                                <div key={n.id} className={`p-3 rounded-lg border flex gap-3 relative  group btn-3d ${
-                                    n.type === 'error' ? 'bg-red-900/10 border-red-900/30' :
-                                    n.type === 'warning' ? 'bg-amber-900/10 border-amber-900/30' :
-                                    n.type === 'success' ? 'bg-emerald-900/10 border-emerald-900/30' :
-                                    'bg-slate-900/30 border-slate-800'
-                                }`}>
-                                    <div className={`mt-0.5 shrink-0 ${
-                                        n.type === 'error' ? 'text-red-500 icon-3d-red' :
-                                        n.type === 'warning' ? 'text-amber-500 icon-3d-amber' :
-                                        n.type === 'success' ? 'text-emerald-500 icon-3d-green' :
-                                        'text-blue-500 icon-3d-blue'
+                                <div key={n.id} className={`p-3 rounded-lg border flex gap-3 relative  group btn-3d ${n.type === 'error' ? 'bg-red-900/10 border-red-900/30' :
+                                        n.type === 'warning' ? 'bg-amber-900/10 border-amber-900/30' :
+                                            n.type === 'success' ? 'bg-emerald-900/10 border-emerald-900/30' :
+                                                'bg-slate-900/30 border-slate-800'
                                     }`}>
+                                    <div className={`mt-0.5 shrink-0 ${n.type === 'error' ? 'text-red-500 icon-3d-red' :
+                                            n.type === 'warning' ? 'text-amber-500 icon-3d-amber' :
+                                                n.type === 'success' ? 'text-emerald-500 icon-3d-green' :
+                                                    'text-blue-500 icon-3d-blue'
+                                        }`}>
                                         {n.type === 'error' && <ShieldAlert size={16} />}
                                         {n.type === 'warning' && <AlertTriangle size={16} />}
                                         {n.type === 'success' && <CheckCircle size={16} />}
                                         {n.type === 'info' && <Info size={16} />}
                                     </div>
                                     <div>
-                                        <h4 className={`text-xs font-bold mb-0.5 ${
-                                            n.type === 'error' ? 'text-red-400' :
-                                            n.type === 'warning' ? 'text-amber-400' :
-                                            n.type === 'success' ? 'text-emerald-400' :
-                                            'text-blue-400'
-                                        }`}>{n.title}</h4>
+                                        <h4 className={`text-xs font-bold mb-0.5 ${n.type === 'error' ? 'text-red-400' :
+                                                n.type === 'warning' ? 'text-amber-400' :
+                                                    n.type === 'success' ? 'text-emerald-400' :
+                                                        'text-blue-400'
+                                            }`}>{n.title}</h4>
                                         <p className="text-[10px] text-slate-400 leading-tight mb-1">{n.message}</p>
                                         <span className="text-[9px] text-slate-600 font-mono">{n.time}</span>
                                     </div>

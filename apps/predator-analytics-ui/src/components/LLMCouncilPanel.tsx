@@ -18,7 +18,7 @@ import {
     Maximize2, Share2, Layers, ZapOff
 } from 'lucide-react';
 import { cn } from '../utils/cn';
-import { api } from '../services/api';
+import { api, apiClient } from '../services/api';
 import { CouncilResult } from '../types';
 import { HoloContainer } from './HoloContainer';
 import { TacticalCard } from './TacticalCard';
@@ -62,7 +62,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
 
         try {
             setPhase('GENERATING');
-            const councilPromise = api.runCouncil(query, selectedModels);
+            const councilPromise = apiClient.post('/intelligence/council', { query, models: selectedModels }).then(res => res.data);
 
             // Емуляція фаз для візуальної глибини
             const phaseTimer1 = setTimeout(() => setPhase('REVIEWING'), 3000);
@@ -92,7 +92,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
 
         try {
             setPhase('GENERATING');
-            const data = await api.runCouncilStrategy();
+            const data = (await apiClient.post('/intelligence/council/strategy', {})).data;
             setResult(data);
             setPhase('COMPLETED');
             setQuery("");

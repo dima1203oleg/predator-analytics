@@ -24,8 +24,8 @@ import {
     PIPELINES,
     STAGE_LIBRARY
 } from '../../config/pipelineDefinitions';
-import { api } from '../../services/api';
 import { IngestionJob } from '../../store/useIngestionStore';
+import { apiClient } from '../../services/api/config';
 import { cn } from '../../utils/cn';
 import { NeuralPulse } from '../ui/NeuralPulse';
 import { DataReactorCore } from './DataReactorCore';
@@ -82,7 +82,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
     const pollStatus = useCallback(async () => {
         if (!isMountedRef.current) return;
         try {
-            const data = await api.ingestion.getJobStatus(jobId);
+            const data = (await apiClient.get(`/ingest/status/${jobId}`)).data;
             if (!isMountedRef.current) return;
             setStatus(data);
             setRetryCount(0);

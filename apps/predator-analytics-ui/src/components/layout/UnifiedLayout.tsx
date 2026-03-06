@@ -39,11 +39,7 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({ children }) => {
       </div>
 
       {/* Sidebar Navigation */}
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        isCompact={isTablet}
-      />
+      <Sidebar />
 
       {/* Main Content Area */}
       <div

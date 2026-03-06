@@ -17,7 +17,7 @@ import { cn } from '../../utils/cn';
 // Types
 // ========================
 
-interface OptimizedImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'placeholder'> {
+interface OptimizedImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'placeholder' | 'onDrag' | 'onDragStart' | 'onDragEnd' | 'onAnimationStart'> {
   src: string;
   alt: string;
   width?: number;
@@ -306,7 +306,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       height={pixels}
       containerClassName={cn("rounded-full", className)}
       className="w-full h-full object-cover rounded-full"
-      onLoadingComplete={() => {}}
+      onLoadingComplete={() => { }}
       placeholder="pulse"
       priority
     />

@@ -100,7 +100,14 @@ const formatConfig = {
   pdf: { icon: FileText, color: 'rose', label: 'PDF' }
 };
 
-const statusConfig = {
+interface StatusConfigEntry {
+  color: string;
+  icon: React.ElementType;
+  label: string;
+  animate?: boolean;
+}
+
+const statusConfig: Record<ExportStatus, StatusConfigEntry> = {
   ready: { color: 'emerald', icon: Check, label: 'Готовий' },
   processing: { color: 'cyan', icon: Loader, label: 'Обробка...', animate: true },
   scheduled: { color: 'purple', icon: Calendar, label: 'Заплановано' },
@@ -168,7 +175,7 @@ const ExportJobRow: React.FC<{ job: ExportJob }> = ({ job }) => {
       flex items-center gap-4 p-4 rounded-xl border transition-colors
       ${job.status === 'failed' ? 'bg-rose-500/5 border-rose-500/20' :
         job.status === 'ready' ? 'bg-slate-900/60 border-white/5' :
-        'bg-slate-900/60 border-white/5'}
+          'bg-slate-900/60 border-white/5'}
     `}>
       <div className={`p-2 rounded-lg bg-${format.color}-500/20`}>
         <FormatIcon className={`text-${format.color}-400`} size={20} />
@@ -328,9 +335,8 @@ const DataExportCenter: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${
-                activeTab === tab.id ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-500 hover:text-white'
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${activeTab === tab.id ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-500 hover:text-white'
+                }`}
             >
               <tab.icon size={16} />
               {tab.label}
@@ -389,11 +395,10 @@ const DataExportCenter: React.FC = () => {
                 <button
                   key={key}
                   onClick={() => setSelectedFormat(key as ExportFormat)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-colors ${
-                    selectedFormat === key
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-colors ${selectedFormat === key
                       ? `bg-${config.color}-500/20 text-${config.color}-400 border border-${config.color}-500/30`
                       : 'bg-slate-800 text-slate-400 border border-transparent'
-                  }`}
+                    }`}
                 >
                   <config.icon size={14} />
                   {config.label}

@@ -254,15 +254,15 @@ export const AnalyticsDashboard: React.FC = () => {
     try {
       const [health, stats, status] = await Promise.allSettled([
         api.v45.getLiveHealth(),
-        api.v45.getStats(),
-        api.v45.getSystemStatus()
+        api.getStats(),
+        api.getStatus()
       ]);
 
       const now = new Date();
       const timeStr = now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-      if (health.status === 'fulfilled' && health.value) {
-        const h = health.value;
+      if (health.status === 'fulfilled' && health.value?.data) {
+        const h = health.value.data;
         setSystemMetrics({
           cpu_percent: h.cpu_load || 0,
           memory_percent: h.memory_usage || 0,
@@ -275,8 +275,8 @@ export const AnalyticsDashboard: React.FC = () => {
         setCpuHistory(prev => [...prev.slice(-29), { time: timeStr, value: h.cpu_load || 0 }]);
       }
 
-      if (stats.status === 'fulfilled' && stats.value) {
-        const s = stats.value;
+      if (stats.status === 'fulfilled' && stats.value?.data) {
+        const s = stats.value.data;
         setStorageMetrics({
           opensearch_docs: s.documents_total || s.total_documents || 0,
           qdrant_vectors: s.qdrant_vectors || 0,
@@ -286,8 +286,8 @@ export const AnalyticsDashboard: React.FC = () => {
         });
       }
 
-      if (status.status === 'fulfilled' && status.value) {
-        const st = status.value;
+      if (status.status === 'fulfilled' && status.value?.data) {
+        const st = status.value.data;
         setSearchMetrics({
           total_queries: st.total_queries || 0,
           avg_latency_ms: st.avg_latency || 45,

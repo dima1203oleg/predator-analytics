@@ -6,7 +6,7 @@
  */
 
 import React, { useEffect, useRef, useCallback, ReactNode, KeyboardEvent } from 'react';
-import { cn } from '../../utils/cn';
+import { cn } from './cn';
 
 // ========================
 // Screen Reader Only Text
@@ -17,11 +17,14 @@ interface SrOnlyProps {
   as?: keyof JSX.IntrinsicElements;
 }
 
-export const SrOnly: React.FC<SrOnlyProps> = ({ children, as: Component = 'span' }) => (
-  <Component className="sr-only absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0">
-    {children}
-  </Component>
-);
+export const SrOnly: React.FC<SrOnlyProps> = ({ children, as: Component = 'span' }) => {
+  const Tag = Component as any;
+  return (
+    <Tag className="sr-only absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0">
+      {children}
+    </Tag>
+  );
+};
 
 // ========================
 // Skip Link (for keyboard navigation)
@@ -143,7 +146,7 @@ export const RovingFocus: React.FC<RovingFocusProps> = ({
     const container = containerRef.current;
     if (!container) return;
 
-    const focusable = getFocusableElements(container);
+    const focusable = Array.from(getFocusableElements(container));
     if (focusable.length === 0) return;
 
     const currentIndex = focusable.findIndex(el => el === document.activeElement);

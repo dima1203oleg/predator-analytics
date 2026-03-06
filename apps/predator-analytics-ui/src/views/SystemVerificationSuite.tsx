@@ -18,7 +18,8 @@ import {
   BarChart3, Share2, Upload, FileSpreadsheet,
   ArrowRight, Shield, RefreshCw, Cpu, Box,
   HardDrive, Network, Lock, Save, Globe,
-  Terminal, Beaker, Zap, Fingerprint, Microscope
+  Terminal, Beaker, Zap, Fingerprint, Microscope,
+  AlertTriangle
 } from 'lucide-react';
 
 import { api } from '../services/api';
@@ -275,8 +276,7 @@ const SystemVerificationSuite: React.FC = () => {
   const runControlQuery = async () => {
     try {
       const res = await api.search.query({
-        q: "HS Code: 8542310000",
-        filters: { category: 'customs' }
+        q: "HS Code: 8542310000"
       });
 
       const displayResult = res && res.length > 0 ? res : [
@@ -341,8 +341,10 @@ const SystemVerificationSuite: React.FC = () => {
             </div>
           </div>
         }
+        icon={<Microscope size={24} />}
+        breadcrumbs={['System', 'Verification', 'Control Case']}
         stats={[
-          { label: 'Pipeline State', value: isProcessing ? 'RUNNING' : 'IDLE', icon: <Activity size={14} />, color: isProcessing ? 'primary' : 'slate' },
+          { label: 'Pipeline State', value: isProcessing ? 'RUNNING' : 'IDLE', icon: <Activity size={14} />, color: isProcessing ? 'primary' : 'default' },
           { label: 'Data Version', value: 'v55.3-MAR-MAR', icon: <Database size={14} />, color: 'primary' },
           { label: 'Safety Index', value: '100.0/100', icon: <Shield size={14} />, color: 'success' },
         ]}

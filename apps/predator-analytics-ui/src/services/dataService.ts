@@ -5,7 +5,7 @@
  * Централізує всю логіку отримання даних з backend.
  */
 
-import { api } from './api';
+import { api, apiClient, v45Client } from './api';
 
 // ============================================================================
 // TYPES - Загальні типи для даних
@@ -50,8 +50,8 @@ export interface ServiceStatus {
 class InfrastructureService {
   async getEnvironments(): Promise<DeploymentEnvironment[]> {
     try {
-      const response = await api.v45.getInfrastructure();
-      return response.environments || [];
+      const response = await v45Client.get('/infrastructure');
+      return response.data?.environments || [];
     } catch (error) {
       console.error('[InfraService] Failed to fetch environments:', error);
       return [];
@@ -69,8 +69,8 @@ class InfrastructureService {
 
   async getServices(): Promise<ServiceStatus[]> {
     try {
-      const response = await api.v45.getServicesStatus();
-      return response.services || [];
+      const response = await v45Client.get('/infrastructure/services');
+      return response.data?.services || [];
     } catch (error) {
       console.error('[InfraService] Failed to fetch services:', error);
       return [];
@@ -103,7 +103,7 @@ class DataSourcesService {
 
   async getSources() {
     try {
-      return await api.getSources();
+      return (await apiClient.get('/sources')).data;
     } catch (error) {
       console.error('[DataSourcesService] Failed to fetch sources:', error);
       return [];
@@ -112,7 +112,7 @@ class DataSourcesService {
 
   async getDatabases() {
     try {
-      return await api.getDatabases();
+      return (await apiClient.get('/databases')).data;
     } catch (error) {
       console.error('[DataSourcesService] Failed to fetch databases:', error);
       return [];
@@ -121,7 +121,7 @@ class DataSourcesService {
 
   async getVectors() {
     try {
-      return await api.getVectors();
+      return (await apiClient.get('/vectors')).data;
     } catch (error) {
       console.error('[DataSourcesService] Failed to fetch vectors:', error);
       return [];
@@ -145,7 +145,7 @@ class ETLService {
 
   async getStatus() {
     try {
-      return await api.getETLStatus();
+      return (await apiClient.get('/etl/status')).data;
     } catch (error) {
       console.error('[ETLService] Failed to fetch ETL status:', error);
       return { etl_running: false, global_progress: 0 };
@@ -183,7 +183,7 @@ class SecurityService {
 
   async getSecrets() {
     try {
-      return await api.getSecrets();
+      return (await apiClient.get('/security/secrets')).data;
     } catch (error) {
       console.error('[SecurityService] Failed to fetch secrets:', error);
       return [];
@@ -207,8 +207,8 @@ class SecurityService {
 class AgentsService {
   async getAgents() {
     try {
-      const response = await api.v45.getAgents();
-      return response.agents || [];
+      const response = await v45Client.get('/agents');
+      return response.data?.agents || [];
     } catch (error) {
       console.error('[AgentsService] Failed to fetch agents:', error);
       return [];
@@ -241,7 +241,7 @@ class AgentsService {
 class AnalyticsService {
   async getForecast() {
     try {
-      const response = await api.v45.analytics.getForecast();
+      const response = await v45Client.get('/analytics/forecast');
       return response.data || [];
     } catch (error) {
       console.error('[AnalyticsService] Failed to fetch forecast:', error);
@@ -251,7 +251,7 @@ class AnalyticsService {
 
   async getMarketStructure() {
     try {
-      const response = await api.v45.analytics.getMarketStructure();
+      const response = await v45Client.get('/analytics/market-structure');
       return response.data || [];
     } catch (error) {
       console.error('[AnalyticsService] Failed to fetch market structure:', error);
@@ -261,7 +261,7 @@ class AnalyticsService {
 
   async getRegionalActivity() {
     try {
-      const response = await api.v45.analytics.getRegionalActivity();
+      const response = await v45Client.get('/analytics/regional-activity');
       return response.data || [];
     } catch (error) {
       console.error('[AnalyticsService] Failed to fetch regional activity:', error);
@@ -271,7 +271,7 @@ class AnalyticsService {
 
   async getStats() {
     try {
-      return await api.v45.getStats();
+      return (await v45Client.get('/analytics/stats')).data;
     } catch (error) {
       console.error('[AnalyticsService] Failed to fetch stats:', error);
       return {
@@ -291,7 +291,7 @@ class AnalyticsService {
 class CatalogService {
   async getDataCatalog() {
     try {
-      return await api.getDataCatalog();
+      return (await apiClient.get('/data/catalog')).data;
     } catch (error) {
       console.error('[CatalogService] Failed to fetch data catalog:', error);
       return [];
@@ -300,7 +300,7 @@ class CatalogService {
 
   async getUserTemplates() {
     try {
-      return await api.getUserTemplates();
+      return (await apiClient.get('/templates/user')).data;
     } catch (error) {
       console.error('[CatalogService] Failed to fetch user templates:', error);
       return [];
@@ -309,7 +309,7 @@ class CatalogService {
 
   async getAutoDatasets() {
     try {
-      return await api.getAutoDatasets();
+      return (await apiClient.get('/datasets/auto')).data;
     } catch (error) {
       console.error('[CatalogService] Failed to fetch auto datasets:', error);
       return [];

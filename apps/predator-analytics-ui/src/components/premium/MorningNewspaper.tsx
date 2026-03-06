@@ -7,7 +7,7 @@ import {
   ArrowUpRight, ArrowDownRight, Minus, RefreshCw,
   PieChart, BarChart
 } from 'lucide-react';
-import { api } from '../../services/api';
+import { apiClient } from '../../services/api/config';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';
 
@@ -92,7 +92,7 @@ export const MorningNewspaper: React.FC = () => {
         setLoading(true);
 
         // Load real data from the dedicated newspaper endpoint
-        const data = await api.getMorningNewspaper();
+        const data = (await apiClient.get('/premium/morning-newspaper')).data;
 
         if (data) {
           // Process stats
@@ -105,9 +105,9 @@ export const MorningNewspaper: React.FC = () => {
             systemHealth: s.system_health === 'Optimal' ? 100 : 85,
             recommendations: data.recommendations || [],
             forecasts: [
-                { sector: premiumLocales.executiveBrief.mockNews.sectors.energy, trend: 'up', prediction: premiumLocales.executiveBrief.mockNews.forecasts.energy, confidence: 89 },
-                { sector: premiumLocales.executiveBrief.mockNews.sectors.cyber, trend: 'up', prediction: premiumLocales.executiveBrief.mockNews.forecasts.cyber, confidence: 94 },
-                { sector: premiumLocales.executiveBrief.mockNews.sectors.logistics, trend: 'stable', prediction: premiumLocales.executiveBrief.mockNews.forecasts.logistics, confidence: 76 }
+              { sector: premiumLocales.executiveBrief.mockNews.sectors.energy, trend: 'up', prediction: premiumLocales.executiveBrief.mockNews.forecasts.energy, confidence: 89 },
+              { sector: premiumLocales.executiveBrief.mockNews.sectors.cyber, trend: 'up', prediction: premiumLocales.executiveBrief.mockNews.forecasts.cyber, confidence: 94 },
+              { sector: premiumLocales.executiveBrief.mockNews.sectors.logistics, trend: 'stable', prediction: premiumLocales.executiveBrief.mockNews.forecasts.logistics, confidence: 76 }
             ]
           }));
 
@@ -126,16 +126,16 @@ export const MorningNewspaper: React.FC = () => {
             setNews(newsItems);
           }
         } else {
-             // Fallback Mock Data if API is empty/failed
-             setStats(prev => ({
-                ...prev,
-                forecasts: [
-                    { sector: premiumLocales.executiveBrief.mockNews.sectors.energy, trend: 'up', prediction: premiumLocales.executiveBrief.mockNews.forecasts.energy, confidence: 89 },
-                    { sector: premiumLocales.executiveBrief.mockNews.sectors.cyber, trend: 'up', prediction: premiumLocales.executiveBrief.mockNews.forecasts.cyber, confidence: 94 },
-                    { sector: premiumLocales.executiveBrief.mockNews.sectors.logistics, trend: 'stable', prediction: premiumLocales.executiveBrief.mockNews.forecasts.logistics, confidence: 76 },
-                    { sector: premiumLocales.executiveBrief.mockNews.sectors.fintech, trend: 'down', prediction: premiumLocales.executiveBrief.mockNews.forecasts.fintech, confidence: 82 }
-                ]
-             }));
+          // Fallback Mock Data if API is empty/failed
+          setStats(prev => ({
+            ...prev,
+            forecasts: [
+              { sector: premiumLocales.executiveBrief.mockNews.sectors.energy, trend: 'up', prediction: premiumLocales.executiveBrief.mockNews.forecasts.energy, confidence: 89 },
+              { sector: premiumLocales.executiveBrief.mockNews.sectors.cyber, trend: 'up', prediction: premiumLocales.executiveBrief.mockNews.forecasts.cyber, confidence: 94 },
+              { sector: premiumLocales.executiveBrief.mockNews.sectors.logistics, trend: 'stable', prediction: premiumLocales.executiveBrief.mockNews.forecasts.logistics, confidence: 76 },
+              { sector: premiumLocales.executiveBrief.mockNews.sectors.fintech, trend: 'down', prediction: premiumLocales.executiveBrief.mockNews.forecasts.fintech, confidence: 82 }
+            ]
+          }));
         }
 
       } catch (e) {
@@ -210,10 +210,10 @@ export const MorningNewspaper: React.FC = () => {
               whileTap={{ scale: 0.95 }}
               onClick={() => setExpanded(!expanded)}
               className={cn(
-                  "px-5 py-3 border rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2",
-                  expanded
-                    ? "bg-indigo-600 text-white border-indigo-500 shadow-lg shadow-indigo-500/20"
-                    : "bg-indigo-600/20 hover:bg-indigo-600/30 border-indigo-500/30 text-indigo-400"
+                "px-5 py-3 border rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2",
+                expanded
+                  ? "bg-indigo-600 text-white border-indigo-500 shadow-lg shadow-indigo-500/20"
+                  : "bg-indigo-600/20 hover:bg-indigo-600/30 border-indigo-500/30 text-indigo-400"
               )}
             >
               <Sparkles size={14} />
@@ -262,69 +262,69 @@ export const MorningNewspaper: React.FC = () => {
             exit={{ opacity: 0, height: 0 }}
             className="relative z-10 border-b border-white/5 bg-gradient-to-b from-indigo-950/20 to-black/20 overflow-hidden"
           >
-             <div className="p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                 {/* Industry Forecasts */}
-                 <div>
-                     <h3 className="text-sm font-black text-indigo-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                        <BarChart size={16} />
-                        {premiumLocales.executiveBrief.sections.industryForecasts}
-                     </h3>
-                     <div className="space-y-4">
-                        {stats.forecasts.map((forecast, i) => (
-                            <motion.div
-                                initial={{ x: -20, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: i * 0.1 }}
-                                key={forecast.sector}
-                                className="bg-slate-900/50 border border-white/5 rounded-2xl p-4 hover:border-indigo-500/30 transition-all"
-                            >
-                                <div className="flex justify-between items-center mb-2">
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-xs font-black text-white px-2 py-1 bg-white/5 rounded-lg">{forecast.sector}</span>
-                                        {forecast.trend === 'up' && <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1"><TrendingUp size={12}/> {premiumLocales.executiveBrief.ui.growth}</span>}
-                                        {forecast.trend === 'down' && <span className="text-[10px] font-bold text-rose-400 flex items-center gap-1"><ArrowDownRight size={12}/> {premiumLocales.executiveBrief.ui.decline}</span>}
-                                        {forecast.trend === 'stable' && <span className="text-[10px] font-bold text-blue-400 flex items-center gap-1"><Minus size={12}/> {premiumLocales.executiveBrief.ui.stability}</span>}
-                                    </div>
-                                    <div className="text-[10px] font-mono text-slate-500">
-                                        {premiumLocales.executiveBrief.ui.confidence}: <span className="text-white">{forecast.confidence}%</span>
-                                    </div>
-                                </div>
-                                <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                                    {forecast.prediction}
-                                </p>
-                            </motion.div>
-                        ))}
-                     </div>
-                 </div>
+            <div className="p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Industry Forecasts */}
+              <div>
+                <h3 className="text-sm font-black text-indigo-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <BarChart size={16} />
+                  {premiumLocales.executiveBrief.sections.industryForecasts}
+                </h3>
+                <div className="space-y-4">
+                  {stats.forecasts.map((forecast, i) => (
+                    <motion.div
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: i * 0.1 }}
+                      key={forecast.sector}
+                      className="bg-slate-900/50 border border-white/5 rounded-2xl p-4 hover:border-indigo-500/30 transition-all"
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-black text-white px-2 py-1 bg-white/5 rounded-lg">{forecast.sector}</span>
+                          {forecast.trend === 'up' && <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1"><TrendingUp size={12} /> {premiumLocales.executiveBrief.ui.growth}</span>}
+                          {forecast.trend === 'down' && <span className="text-[10px] font-bold text-rose-400 flex items-center gap-1"><ArrowDownRight size={12} /> {premiumLocales.executiveBrief.ui.decline}</span>}
+                          {forecast.trend === 'stable' && <span className="text-[10px] font-bold text-blue-400 flex items-center gap-1"><Minus size={12} /> {premiumLocales.executiveBrief.ui.stability}</span>}
+                        </div>
+                        <div className="text-[10px] font-mono text-slate-500">
+                          {premiumLocales.executiveBrief.ui.confidence}: <span className="text-white">{forecast.confidence}%</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-slate-300 leading-relaxed font-medium">
+                        {forecast.prediction}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
 
-                 {/* Recommendations */}
-                 <div>
-                    <h3 className="text-sm font-black text-emerald-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                      <Sparkles size={16} />
-                      {premiumLocales.executiveBrief.sections.actions}
-                    </h3>
-                    <div className="space-y-3">
-                      {stats.recommendations.length > 0 ? stats.recommendations.map((rec, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, x: 10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.1 }}
-                          className="flex items-start gap-3 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl group hover:bg-emerald-500/10 transition-all cursor-pointer"
-                        >
-                          <div className="mt-0.5">
-                              <ChevronRight size={16} className="text-emerald-400 group-hover:translate-x-1 transition-transform" />
-                          </div>
-                          <span className="text-sm text-slate-300 font-medium leading-relaxed">{rec}</span>
-                        </motion.div>
-                      )) : (
-                          <div className="text-slate-500 text-xs italic p-4 border border-dashed border-slate-800 rounded-xl">
-                              {premiumLocales.executiveBrief.ui.noRecommendations}
-                          </div>
-                      )}
+              {/* Recommendations */}
+              <div>
+                <h3 className="text-sm font-black text-emerald-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <Sparkles size={16} />
+                  {premiumLocales.executiveBrief.sections.actions}
+                </h3>
+                <div className="space-y-3">
+                  {stats.recommendations.length > 0 ? stats.recommendations.map((rec, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      className="flex items-start gap-3 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl group hover:bg-emerald-500/10 transition-all cursor-pointer"
+                    >
+                      <div className="mt-0.5">
+                        <ChevronRight size={16} className="text-emerald-400 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                      <span className="text-sm text-slate-300 font-medium leading-relaxed">{rec}</span>
+                    </motion.div>
+                  )) : (
+                    <div className="text-slate-500 text-xs italic p-4 border border-dashed border-slate-800 rounded-xl">
+                      {premiumLocales.executiveBrief.ui.noRecommendations}
                     </div>
-                 </div>
-             </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -382,13 +382,13 @@ export const MorningNewspaper: React.FC = () => {
                           <span className={cn(
                             'text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full',
                             item.importance === 'high' ? 'bg-rose-500/20 text-rose-400' :
-                            item.importance === 'medium' ? 'bg-amber-500/20 text-amber-400' :
-                            'bg-slate-500/20 text-slate-400'
+                              item.importance === 'medium' ? 'bg-amber-500/20 text-amber-400' :
+                                'bg-slate-500/20 text-slate-400'
                           )}>
-                             {item.importance === 'high' ? premiumLocales.executiveBrief.mockNews.importance.high :
-                             item.importance === 'medium' ? premiumLocales.executiveBrief.mockNews.importance.medium :
-                             premiumLocales.executiveBrief.mockNews.importance.info
-                           }</span>
+                            {item.importance === 'high' ? premiumLocales.executiveBrief.mockNews.importance.high :
+                              item.importance === 'medium' ? premiumLocales.executiveBrief.mockNews.importance.medium :
+                                premiumLocales.executiveBrief.mockNews.importance.info
+                            }</span>
                           <span className="text-[9px] text-slate-500 font-mono">{item.source}</span>
                         </div>
                         <h4 className="text-sm font-bold text-white mb-1 line-clamp-1 group-hover:text-indigo-300 transition-colors">

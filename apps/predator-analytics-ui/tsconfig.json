@@ -26,5 +26,10 @@
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "strict": true
-  }
+  },
+  "exclude": [
+    "dist",
+    "node_modules",
+    "public/sw.js"
+  ]
 }

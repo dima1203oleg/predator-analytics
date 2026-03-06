@@ -77,17 +77,25 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
     }, []);
 
     // Toggle example status
-    const toggleExample = useCallback((id: string) => {
+    const toggleExample = useCallback(async (id: string) => {
         const dataset = datasets.find(d => d.id === id);
-        if (dataset && !dataset.isExampleEnabled) {
-            onDatasetSelect?.(dataset);
-        }
+        if (!dataset) return;
+        const nextValue = !dataset.isExampleEnabled;
+        if (nextValue) onDatasetSelect?.(dataset);
 
+        // Optimistically update UI
         setDatasets(prev => prev.map(ds =>
-            ds.id === id ? { ...ds, isExampleEnabled: !ds.isExampleEnabled } : ds
+            ds.id === id ? { ...ds, isExampleEnabled: nextValue } : ds
         ));
-        // TODO: Call API to persist
-        // api.datasets.updateExample(id, !currentStatus);
+        try {
+            await api.datasets.update(id, { isExampleEnabled: nextValue });
+        } catch (e) {
+            // Revert on failure
+            console.error('Failed to persist example toggle', e);
+            setDatasets(prev => prev.map(ds =>
+                ds.id === id ? { ...ds, isExampleEnabled: !nextValue } : ds
+            ));
+        }
     }, [datasets, onDatasetSelect]);
 
     // Handle file upload
@@ -96,23 +104,21 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
 
         setUploading(true);
         try {
-            // Simulate upload
-            // const result = await api.datasets.upload(uploadFile);
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
+            const result = await api.datasets.upload(uploadFile);
             const newDataset: UserDataset = {
-                id: `ds-${Date.now()}`,
-                name: uploadFile.name.replace(/\.[^/.]+$/, ""),
-                filename: uploadFile.name,
-                type: uploadFile.name.endsWith('.csv') ? 'csv' :
-                    uploadFile.name.endsWith('.json') ? 'json' : 'excel',
-                size: uploadFile.size,
-                rows: Math.floor(Math.random() * 10000) + 1000,
-                columns: Math.floor(Math.random() * 20) + 5,
-                uploadedAt: new Date().toISOString(),
+                id: result.id || `ds-${Date.now()}`,
+                name: result.name || uploadFile.name.replace(/\.[^/.]+$/, ""),
+                filename: result.filename || uploadFile.name,
+                type: result.type || (uploadFile.name.endsWith('.csv') ? 'csv' :
+                    uploadFile.name.endsWith('.json') ? 'json' : 'excel'),
+                size: result.size || uploadFile.size,
+                rows: result.rows || 0,
+                columns: result.columns || 0,
+                uploadedAt: result.uploaded_at || new Date().toISOString(),
                 isExampleEnabled: false,
-                isReference: false, // 🆕
-                tags: [],
+                isReference: false,
+                tags: result.tags || [],
+                description: result.description,
             };
 
             setDatasets(prev => [newDataset, ...prev]);
@@ -126,10 +132,14 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
     };
 
     // Delete dataset
-    const handleDelete = useCallback((id: string) => {
+    const handleDelete = useCallback(async (id: string) => {
         if (!confirm(premiumLocales.datasetStudio.panels.userDatasets.dataset.deleteConfirm)) return;
-        setDatasets(prev => prev.filter(ds => ds.id !== id));
-        // api.datasets.delete(id);
+        try {
+            await api.datasets.delete(id);
+            setDatasets(prev => prev.filter(ds => ds.id !== id));
+        } catch (e) {
+            console.error('Delete failed', e);
+        }
     }, []);
 
     const formatSize = (bytes: number) => {
