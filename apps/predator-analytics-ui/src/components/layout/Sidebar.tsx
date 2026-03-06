@@ -107,6 +107,7 @@ export const Sidebar = () => {
         { name: 'Мережевий Граф (V2)', path: '/graph', icon: Network },
         { name: 'Архіви Та Справи', path: '/cases', icon: ShieldAlert },
         { name: 'Бібліотека Документів', path: '/documents', icon: Archive },
+        { name: 'Державні Тендери', path: '/tenders', icon: Landmark, premium: true },
       ]
     },
     {

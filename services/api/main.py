@@ -8,7 +8,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from services.api.routes import analytics, health, insights
+from services.api.routes import analytics, health, insights, osint_ua
 from services.shared.logging_config import setup_logging
 
 
@@ -36,6 +36,7 @@ app.add_middleware(
 app.include_router(health.router, tags=["Health"])
 app.include_router(analytics.router, prefix="/v1/analytics", tags=["Analytics"])
 app.include_router(insights.router, prefix="/v1/insights", tags=["Insights"])
+app.include_router(osint_ua.router, prefix="/v1/osint_ua", tags=["OSINT UA"])
 
 
 @app.get("/")
