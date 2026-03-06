@@ -8,6 +8,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../services/api';
+import { useAppStore } from '../store/useAppStore';
+import { premiumLocales } from '../locales/uk/premium';
+import { HoloContainer } from '../components/HoloContainer';
+import { TacticalCard } from '../components/TacticalCard';
+import { CyberOrb } from '../components/CyberOrb';
+import { cn } from '../utils/cn';
 import {
   ShieldAlert,
   AlertTriangle,
@@ -37,7 +43,9 @@ import {
   Clock,
   Crown,
   Lock,
-  Unlock
+  Unlock,
+  RefreshCw,
+  Activity
 } from 'lucide-react';
 
 // ========================
@@ -232,8 +240,8 @@ const InvestigationCard: React.FC<{ investigation: Investigation }> = ({ investi
             {config.label}
           </span>
           <span className={`px-2 py-1 text-xs font-bold rounded-lg ${investigation.priority === 'critical' ? 'bg-rose-500/20 text-rose-400' :
-              investigation.priority === 'high' ? 'bg-amber-500/20 text-amber-400' :
-                'bg-slate-700 text-slate-400'
+            investigation.priority === 'high' ? 'bg-amber-500/20 text-amber-400' :
+              'bg-slate-700 text-slate-400'
             }`}>
             {investigation.priority.toUpperCase()}
           </span>
@@ -261,12 +269,24 @@ const InvestigationCard: React.FC<{ investigation: Investigation }> = ({ investi
 // ========================
 
 const RiskScoringPremium: React.FC = () => {
+  const { userRole, persona } = useAppStore();
   const [riskEntities, setRiskEntities] = useState<RiskEntity[]>([]);
   const [investigations, setInvestigations] = useState<Investigation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
   const [selectedEntity, setSelectedEntity] = useState<RiskEntity | null>(null);
+
+  const personaLabel = useMemo(() => {
+    const labels: Record<string, string> = {
+      BUSINESS: 'Corporate Compliance',
+      GOVERNMENT: 'State Inspector',
+      INTELLIGENCE: 'Protocol Guard',
+      BANKING: 'FinMon Core',
+      MEDIA: 'Truth Hunter'
+    };
+    return labels[persona] || 'Standard';
+  }, [persona]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -312,105 +332,118 @@ const RiskScoringPremium: React.FC = () => {
   }), [riskEntities]);
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
-      {/* Background */}
+    <div className="min-h-screen bg-slate-950 p-10 relative overflow-hidden">
+      {/* Sovereign Background */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-rose-500/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[120px]" />
+        <div className="absolute top-0 right-1/4 w-[800px] h-[800px] bg-rose-500/5 rounded-full blur-[150px] animate-pulse" />
+        <div className="absolute bottom-0 left-1/4 w-[800px] h-[800px] bg-amber-500/5 rounded-full blur-[150px] animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-black text-white flex items-center gap-3">
-              <ShieldAlert className="text-rose-400" />
-              Ризик-Моніторинг
-              <span className="ml-2 px-3 py-1 bg-rose-500/20 text-rose-400 text-sm rounded-full flex items-center gap-1">
-                <Crown size={14} />
-                Government
-              </span>
-            </h1>
-            <p className="text-slate-500 mt-1">
-              Виявлення порушень та схем • Оновлено 5 хв тому
-            </p>
+      <div className="relative z-10 max-w-[1600px] mx-auto">
+        {/* Sovereign Header */}
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 mb-12 p-8 bg-slate-900/40 border border-white/5 rounded-[32px] backdrop-blur-3xl relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 to-transparent pointer-events-none" />
+          <div className="flex items-center gap-6 relative z-10">
+            <div className="p-5 bg-slate-900 border border-white/5 rounded-2xl shadow-2xl panel-3d">
+              <ShieldAlert className="text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.4)]" size={32} />
+            </div>
+            <div>
+              <div className="flex items-center gap-4 mb-2">
+                <h1 className="text-3xl font-black text-white tracking-tighter uppercase font-display">
+                  Ризик-Моніторинг
+                </h1>
+                <div className="px-4 py-1.5 bg-rose-500/20 border border-rose-500/30 text-rose-400 text-[10px] font-black rounded-full flex items-center gap-2 uppercase tracking-widest">
+                  <Crown size={12} />
+                  {personaLabel}
+                </div>
+              </div>
+              <div className="flex items-center gap-4 text-xs text-slate-500 font-mono font-bold uppercase tracking-wider">
+                <span className="flex items-center gap-2">
+                  <Clock size={14} className="text-slate-600" />
+                  Оновлено: 5 ХВ ТОМУ
+                </span>
+                <span className="w-1 h-1 bg-slate-700 rounded-full" />
+                <span className="flex items-center gap-2">
+                  <Fingerprint size={14} className="text-rose-500" />
+                  Система: v45 PROTOCOL
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-rose-500/20 border border-rose-500/30 text-rose-400 rounded-xl font-bold text-sm">
-              <Flag size={16} />
-              Нове розслідування
+          <div className="flex items-center gap-4 relative z-10">
+            <button className="flex items-center gap-3 px-8 py-3.5 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/30 text-rose-400 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(244,63,94,0.1)]">
+              <Flag size={18} />
+              Нове Розслідування
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">
-              <Download size={16} />
-              Звіт
+            <button className="flex items-center gap-3 px-8 py-3.5 bg-slate-800/80 hover:bg-slate-700 border border-white/10 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">
+              <Download size={18} />
+              Intel Report
             </button>
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-          <div
+        {/* Risk Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
+          <TacticalCard
             onClick={() => setSelectedLevel('critical')}
-            className={`p-4 rounded-xl bg-slate-900/60 border cursor-pointer transition-all ${selectedLevel === 'critical' ? 'border-rose-500' : 'border-rose-500/20 hover:border-rose-500/40'
-              }`}
+            title="Критичний"
+            variant="holographic"
+            glow="red"
+            status="error"
+            icon={<XCircle size={20} className="text-rose-500" />}
+            className={cn("cursor-pointer border-rose-500/20 transition-all", selectedLevel === 'critical' && 'border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.2)] bg-rose-500/10')}
           >
-            <div className="flex items-center justify-between mb-2">
-              <XCircle className="text-rose-500" size={20} />
-              <span className="text-2xl font-black text-rose-400">{stats.critical}</span>
-            </div>
-            <p className="text-xs text-slate-500">Критичний</p>
-          </div>
+            <div className="text-3xl font-black text-rose-400">{stats.critical}</div>
+          </TacticalCard>
 
-          <div
+          <TacticalCard
             onClick={() => setSelectedLevel('high')}
-            className={`p-4 rounded-xl bg-slate-900/60 border cursor-pointer transition-all ${selectedLevel === 'high' ? 'border-amber-500' : 'border-amber-500/20 hover:border-amber-500/40'
-              }`}
+            title="Високий"
+            variant="holographic"
+            glow="amber"
+            status="warning"
+            icon={<AlertTriangle size={20} className="text-amber-500" />}
+            className={cn("cursor-pointer border-amber-500/20 transition-all", selectedLevel === 'high' && 'border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.2)] bg-amber-500/10')}
           >
-            <div className="flex items-center justify-between mb-2">
-              <AlertTriangle className="text-amber-500" size={20} />
-              <span className="text-2xl font-black text-amber-400">{stats.high}</span>
-            </div>
-            <p className="text-xs text-slate-500">Високий</p>
-          </div>
+            <div className="text-3xl font-black text-amber-400">{stats.high}</div>
+          </TacticalCard>
 
-          <div
+          <TacticalCard
             onClick={() => setSelectedLevel('medium')}
-            className={`p-4 rounded-xl bg-slate-900/60 border cursor-pointer transition-all ${selectedLevel === 'medium' ? 'border-yellow-500' : 'border-yellow-500/20 hover:border-yellow-500/40'
-              }`}
+            title="Середній"
+            variant="holographic"
+            glow="yellow"
+            status="info"
+            icon={<AlertCircle size={20} className="text-yellow-500" />}
+            className={cn("cursor-pointer border-yellow-500/20 transition-all", selectedLevel === 'medium' && 'border-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.2)] bg-yellow-500/10')}
           >
-            <div className="flex items-center justify-between mb-2">
-              <AlertCircle className="text-yellow-500" size={20} />
-              <span className="text-2xl font-black text-yellow-400">{stats.medium}</span>
-            </div>
-            <p className="text-xs text-slate-500">Середній</p>
-          </div>
+            <div className="text-3xl font-black text-yellow-400">{stats.medium}</div>
+          </TacticalCard>
 
-          <div
+          <TacticalCard
             onClick={() => setSelectedLevel('low')}
-            className={`p-4 rounded-xl bg-slate-900/60 border cursor-pointer transition-all ${selectedLevel === 'low' ? 'border-emerald-500' : 'border-emerald-500/20 hover:border-emerald-500/40'
-              }`}
+            title="Низький"
+            variant="holographic"
+            glow="emerald"
+            status="success"
+            icon={<CheckCircle size={20} className="text-emerald-500" />}
+            className={cn("cursor-pointer border-emerald-500/20 transition-all", selectedLevel === 'low' && 'border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)] bg-emerald-500/10')}
           >
-            <div className="flex items-center justify-between mb-2">
-              <CheckCircle className="text-emerald-500" size={20} />
-              <span className="text-2xl font-black text-emerald-400">{stats.low}</span>
-            </div>
-            <p className="text-xs text-slate-500">Низький</p>
-          </div>
+            <div className="text-3xl font-black text-emerald-400">{stats.low}</div>
+          </TacticalCard>
 
-          <div
+          <TacticalCard
             onClick={() => setSelectedLevel('all')}
-            className={`p-4 rounded-xl bg-gradient-to-r from-rose-500/10 to-amber-500/10 border cursor-pointer ${selectedLevel === 'all' ? 'border-white/30' : 'border-white/10'
-              }`}
+            title="Підозрілі Суми"
+            variant="holographic"
+            glow="indigo"
+            icon={<DollarSign size={20} className="text-white" />}
+            className={cn("cursor-pointer transition-all bg-gradient-to-br from-rose-500/20 to-indigo-500/20", selectedLevel === 'all' && 'border-white/30')}
           >
-            <div className="flex items-center justify-between mb-2">
-              <DollarSign className="text-white" size={20} />
-              <span className="text-xl font-black text-white">
-                ₴{(stats.totalSuspicious / 1000000).toFixed(1)}M
-              </span>
-            </div>
-            <p className="text-xs text-slate-400">Підозрілі суми</p>
-          </div>
+            <div className="text-2xl font-black text-white">₴{(stats.totalSuspicious / 1000000).toFixed(1)}M</div>
+          </TacticalCard>
         </div>
 
         {/* Search */}
@@ -427,55 +460,85 @@ const RiskScoringPremium: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Entities List */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-8 space-y-6">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-lg font-bold text-white">
+              <h2 className="text-xl font-black text-white uppercase tracking-widest flex items-center gap-4">
+                <div className="w-8 h-px bg-rose-500/50" />
                 Суб'єкти під моніторингом
               </h2>
-              <span className="text-sm text-slate-500">
-                {filteredEntities.length} знайдено
+              <span className="text-[10px] text-slate-500 font-mono">
+                {filteredEntities.length} ОБ'ЄКТІВ ВИЯВЛЕНО
               </span>
             </div>
 
-            {loading ? (
-              Array(3).fill(0).map((_, i) => (
-                <div key={i} className="h-32 bg-slate-900/60 rounded-2xl animate-pulse border border-white/5" />
-              ))
-            ) : (
-              filteredEntities.map((entity) => (
-                <EntityCard
-                  key={entity.id}
-                  entity={entity}
-                  onSelect={() => setSelectedEntity(entity)}
-                />
-              ))
-            )}
+            <HoloContainer className="p-1">
+              <div className="space-y-4 max-h-[800px] overflow-y-auto pr-2 custom-scrollbar p-4">
+                {loading ? (
+                  Array(3).fill(0).map((_, i) => (
+                    <div key={i} className="h-32 bg-slate-900/60 rounded-2xl animate-pulse border border-white/5" />
+                  ))
+                ) : (
+                  filteredEntities.map((entity) => (
+                    <EntityCard
+                      key={entity.id}
+                      entity={entity}
+                      onSelect={() => setSelectedEntity(entity)}
+                    />
+                  ))
+                )}
+              </div>
+            </HoloContainer>
           </div>
 
           {/* Active Investigations */}
-          <div>
-            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <Scale className="text-cyan-400" size={20} />
-              Активні Розслідування
-            </h2>
+          <div className="lg:col-span-4 space-y-8">
+            <TacticalCard
+              variant="cyber"
+              glow="cyan"
+              title="Центр Розслідувань"
+              subtitle="Investigation Protocols"
+              icon={<CyberOrb size="sm" status="optimizing" />}
+            >
+              <div className="space-y-4">
+                <div className="p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-2xl">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Activity size={16} className="text-cyan-400" />
+                    <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest">Live Activity Ledger</span>
+                  </div>
+                  <div className="space-y-3">
+                    {loading ? (
+                      Array(2).fill(0).map((_, i) => (
+                        <div key={i} className="h-24 bg-slate-800/30 rounded-xl animate-pulse" />
+                      ))
+                    ) : (
+                      investigations.map((inv) => (
+                        <InvestigationCard key={inv.id} investigation={inv} />
+                      ))
+                    )}
+                  </div>
+                </div>
 
-            <div className="space-y-3">
-              {loading ? (
-                Array(2).fill(0).map((_, i) => (
-                  <div key={i} className="h-24 bg-slate-800/50 rounded-xl animate-pulse" />
-                ))
-              ) : (
-                investigations.map((inv) => (
-                  <InvestigationCard key={inv.id} investigation={inv} />
-                ))
-              )}
-            </div>
+                <button className="w-full py-4 bg-slate-800/50 hover:bg-slate-700/50 border border-white/5 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] transition-all hover:text-white">
+                  Архів Розслідувань
+                </button>
+              </div>
+            </TacticalCard>
 
-            <button className="w-full mt-4 py-3 border border-white/10 rounded-xl text-slate-400 hover:text-white transition-colors text-sm">
-              Всі розслідування
-            </button>
+            <TacticalCard
+              variant="holographic"
+              title="Матриця Зв'язків"
+              icon={<Network size={18} className="text-indigo-400" />}
+            >
+              <div className="flex flex-col items-center justify-center h-48 bg-slate-950/40 rounded-2xl border border-white/5 relative overflow-hidden group p-6 text-center">
+                <Network className="text-indigo-500/20 group-hover:text-indigo-500/40 transition-all scale-150 mb-4" size={60} />
+                <p className="text-[10px] text-slate-500 uppercase tracking-widest">Graph Engine Ready</p>
+                <button className="mt-4 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-black rounded-lg hover:bg-indigo-500/20 transition-all">
+                  ВІДКРИТИ ГРАФ
+                </button>
+              </div>
+            </TacticalCard>
           </div>
         </div>
       </div>

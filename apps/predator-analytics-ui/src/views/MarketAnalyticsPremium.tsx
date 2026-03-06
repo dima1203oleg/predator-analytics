@@ -38,6 +38,12 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { api } from '../services/api';
+import { useAppStore } from '../store/useAppStore';
+import { premiumLocales } from '../locales/uk/premium';
+import { HoloContainer } from '../components/HoloContainer';
+import { TacticalCard } from '../components/TacticalCard';
+import { CyberOrb } from '../components/CyberOrb';
+import { cn } from '../utils/cn';
 
 // ========================
 // Types
@@ -275,11 +281,23 @@ const OpportunityCard: React.FC<{ opportunity: Opportunity }> = ({ opportunity }
 // ========================
 
 const MarketAnalyticsPremium: React.FC = () => {
+  const { userRole, persona } = useAppStore();
   const [marketSegments, setMarketSegments] = useState<MarketSegment[]>([]);
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedSegment, setExpandedSegment] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'quarter' | 'year'>('month');
+
+  const personaLabel = useMemo(() => {
+    const labels: Record<string, string> = {
+      BUSINESS: 'Corporate Alpha',
+      GOVERNMENT: 'State Monitor',
+      INTELLIGENCE: 'Signal Hunter',
+      BANKING: 'Liquidity Core',
+      MEDIA: 'Public Pulse'
+    };
+    return labels[persona] || 'Standard';
+  }, [persona]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -311,126 +329,221 @@ const MarketAnalyticsPremium: React.FC = () => {
   }, [marketSegments]);
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
-      {/* Background */}
+    <div className="min-h-screen bg-slate-950 p-10 relative overflow-hidden">
+      {/* Background FX */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/3 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/3 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[120px]" />
+        <div className="absolute top-0 right-1/4 w-[800px] h-[800px] bg-emerald-500/5 rounded-full blur-[150px] animate-pulse" />
+        <div className="absolute bottom-0 left-1/4 w-[800px] h-[800px] bg-cyan-500/5 rounded-full blur-[150px] animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-black text-white flex items-center gap-3">
-              <BarChart3 className="text-emerald-400" />
-              Ринкова Аналітика
-              <span className="ml-2 px-3 py-1 bg-amber-500/20 text-amber-400 text-sm rounded-full flex items-center gap-1">
-                <Crown size={14} />
-                Premium
-              </span>
-            </h1>
-            <p className="text-slate-500 mt-1">
-              Аналіз ринку імпорту • Січень 2026
-            </p>
+      <div className="relative z-10 max-w-[1600px] mx-auto">
+        {/* Sovereign Header */}
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 mb-12 p-8 bg-slate-900/40 border border-white/5 rounded-[32px] backdrop-blur-3xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none" />
+          <div className="flex items-center gap-6 relative z-10">
+            <div className="p-5 bg-slate-900 border border-white/5 rounded-2xl shadow-2xl panel-3d">
+              <BarChart3 className="text-emerald-400" size={32} />
+            </div>
+            <div>
+              <div className="flex items-center gap-4 mb-2">
+                <h1 className="text-3xl font-black text-white tracking-tighter uppercase font-display">
+                  Ринкова Аналітика
+                </h1>
+                <div className="px-4 py-1.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-black rounded-full flex items-center gap-2 uppercase tracking-widest">
+                  <Crown size={12} />
+                  {personaLabel}
+                </div>
+              </div>
+              <div className="flex items-center gap-4 text-xs text-slate-500 font-mono font-bold uppercase tracking-wider">
+                <span className="flex items-center gap-2">
+                  <Calendar size={14} className="text-slate-600" />
+                  Моніторинг: СІЧЕНЬ 2026
+                </span>
+                <span className="w-1 h-1 bg-slate-700 rounded-full" />
+                <span className="flex items-center gap-2">
+                  <RefreshCw size={14} className={cn("text-emerald-500", loading ? "animate-spin" : "")} />
+                  Live Sync: Активно
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Time Range Selector */}
-            <div className="flex items-center gap-1 p-1 bg-slate-900/60 rounded-xl border border-white/5">
+          <div className="flex items-center gap-4 relative z-10">
+            <div className="flex items-center gap-1 p-1.5 bg-slate-950/60 rounded-2xl border border-white/5 backdrop-blur-md">
               {(['week', 'month', 'quarter', 'year'] as const).map((range) => (
                 <button
                   key={range}
                   onClick={() => setTimeRange(range)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${timeRange === range
-                    ? 'bg-emerald-500/20 text-emerald-400'
+                  className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${timeRange === range
+                    ? 'bg-emerald-500/20 text-emerald-400 shadow-lg'
                     : 'text-slate-500 hover:text-slate-300'
                     }`}
                 >
-                  {range === 'week' ? 'Тиждень' :
-                    range === 'month' ? 'Місяць' :
+                  {range === 'week' ? '7 Днів' :
+                    range === 'month' ? '30 Днів' :
                       range === 'quarter' ? 'Квартал' : 'Рік'}
                 </button>
               ))}
             </div>
 
-            <button className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">
-              <Download size={16} />
-              Експорт
+            <button className="flex items-center gap-3 px-8 py-3.5 bg-slate-800/80 hover:bg-slate-700 border border-white/10 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-xl">
+              <Download size={18} className="text-emerald-400" />
+              Експорт Intel
             </button>
           </div>
         </div>
 
         {/* Summary KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-slate-900/60 border border-white/5 rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-slate-500 text-sm">Загальний обсяг</span>
-              <Package className="text-cyan-400" size={20} />
-            </div>
-            {loading ? <div className="h-8 w-24 bg-slate-800 animate-pulse rounded" /> : <p className="text-3xl font-black text-white">{formatCurrency(totalVolume)}</p>}
-          </div>
-
-          <div className="bg-slate-900/60 border border-white/5 rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-slate-500 text-sm">Середнє зростання</span>
-              <TrendingUp className="text-emerald-400" size={20} />
-            </div>
-            {loading ? <div className="h-8 w-24 bg-slate-800 animate-pulse rounded" /> : <p className="text-3xl font-black text-white">+{avgGrowth.toFixed(1)}%</p>}
-          </div>
-
-          <div className="bg-slate-900/60 border border-white/5 rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-slate-500 text-sm">Активних сегментів</span>
-              <Layers className="text-purple-400" size={20} />
-            </div>
-            {loading ? <div className="h-8 w-24 bg-slate-800 animate-pulse rounded" /> : <p className="text-3xl font-black text-white">{marketSegments.length}</p>}
-          </div>
-
-          <div className="bg-slate-900/60 border border-white/5 rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-slate-500 text-sm">Можливостей</span>
-              <Sparkles className="text-amber-400" size={20} />
-            </div>
-            {loading ? <div className="h-8 w-24 bg-slate-800 animate-pulse rounded" /> : <p className="text-3xl font-black text-white">{opportunities.length}</p>}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Market Segments */}
-          <div className="lg:col-span-2 space-y-4">
-            <h2 className="text-lg font-bold text-white mb-4">Ринкові Сегменти</h2>
-            {marketSegments.map((segment) => (
-              <SegmentCard
-                key={segment.id}
-                segment={segment}
-                isExpanded={expandedSegment === segment.id}
-                onToggle={() => setExpandedSegment(
-                  expandedSegment === segment.id ? null : segment.id
-                )}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
+          <TacticalCard
+            title="Загальний обсяг"
+            variant="holographic"
+            glow="cyan"
+            icon={<Package size={20} className="text-cyan-400" />}
+            metrics={[{ label: 'Value', value: loading ? '...' : formatCurrency(totalVolume), trend: 'up', trendValue: '12%' }]}
+          >
+            <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: '70%' }}
+                className="h-full bg-cyan-500 shadow-[0_0_10px_cyan]"
               />
-            ))}
-          </div>
-
-          {/* Opportunities */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Sparkles className="text-amber-400" size={20} />
-                AI Можливості
-              </h2>
-              <span className="text-xs text-slate-500">Оновлено 5 хв тому</span>
             </div>
+          </TacticalCard>
 
-            <div className="space-y-3">
-              {opportunities.map((opp) => (
-                <OpportunityCard key={opp.id} opportunity={opp} />
+          <TacticalCard
+            title="Середнє зростання"
+            variant="holographic"
+            glow="emerald"
+            icon={<TrendingUp size={20} className="text-emerald-400" />}
+            metrics={[{ label: 'Growth', value: loading ? '...' : `+${avgGrowth.toFixed(1)}%`, trend: 'up', trendValue: '2.4%' }]}
+          >
+            <div className="flex gap-1 items-end h-8">
+              {[4, 6, 3, 8, 5, 9, 7].map((h, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ height: 0 }}
+                  animate={{ height: `${h * 10}%` }}
+                  className="w-1.5 bg-emerald-500/40 rounded-t-sm"
+                />
               ))}
             </div>
+          </TacticalCard>
 
-            <button className="w-full mt-4 py-3 border border-white/10 rounded-xl text-slate-400 hover:text-white hover:border-white/20 transition-colors text-sm">
-              Показати всі можливості
-            </button>
+          <TacticalCard
+            title="Активні сегменти"
+            variant="holographic"
+            glow="purple"
+            icon={<Layers size={20} className="text-purple-400" />}
+            metrics={[{ label: 'Count', value: loading ? '...' : marketSegments.length }]}
+          >
+            <div className="text-[10px] text-slate-500 uppercase font-mono">
+              Cluster Alpha: Stable
+            </div>
+          </TacticalCard>
+
+          <TacticalCard
+            title="AI Можливості"
+            variant="holographic"
+            glow="amber"
+            icon={<Sparkles size={20} className="text-amber-400" />}
+            metrics={[{ label: 'Detected', value: loading ? '...' : opportunities.length, trend: 'up', trendValue: 'New' }]}
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              <span className="text-[10px] text-amber-500/80 font-black uppercase">Ready for Analysis</span>
+            </div>
+          </TacticalCard>
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
+          {/* Market Segments */}
+          <div className="xl:col-span-8 space-y-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-black text-white tracking-widest uppercase flex items-center gap-4">
+                <div className="w-8 h-px bg-emerald-500/50" />
+                Ринкові Сегменти
+              </h2>
+              <div className="flex items-center gap-4">
+                <Search className="text-slate-600" size={18} />
+                <Filter className="text-slate-600" size={18} />
+              </div>
+            </div>
+            
+            <HoloContainer className="p-1">
+              <div className="space-y-4 max-h-[800px] overflow-y-auto pr-2 custom-scrollbar">
+                {marketSegments.map((segment) => (
+                  <SegmentCard
+                    key={segment.id}
+                    segment={segment}
+                    isExpanded={expandedSegment === segment.id}
+                    onToggle={() => setExpandedSegment(
+                      expandedSegment === segment.id ? null : segment.id
+                    )}
+                  />
+                ))}
+                {loading && Array(4).fill(0).map((_, i) => (
+                  <div key={i} className="h-24 bg-slate-900/40 border border-white/5 rounded-2xl animate-pulse" />
+                ))}
+              </div>
+            </HoloContainer>
+          </div>
+
+          {/* Opportunities & Neural Intel */}
+          <div className="xl:col-span-4 space-y-8">
+            <TacticalCard 
+              variant="cyber" 
+              glow="emerald"
+              title="Neural Intelligence" 
+              subtitle="Signal Processing Engine"
+              icon={<CyberOrb size="sm" status="stable" />}
+            >
+              <div className="space-y-4">
+                <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-100 transition-opacity">
+                    <Zap size={14} className="text-emerald-400" />
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-emerald-100/80 italic font-serif">
+                    "Глобальний аналіз потоків вказує на зміщення ліквідності в сегменті {marketSegments[0]?.name || 'Alpha'}. Рекомендовано переглянути стратегію закупівель."
+                  </p>
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Predator AI • v55</span>
+                    <span className="text-[9px] text-slate-500">Confidence: 94.2%</span>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                       <Sparkles size={16} className="text-amber-400" />
+                       AI Траєкторії
+                    </h3>
+                    <span className="text-[10px] text-slate-500">Live Fetch</span>
+                  </div>
+
+                  {opportunities.map((opp) => (
+                    <OpportunityCard key={opp.id} opportunity={opp} />
+                  ))}
+                </div>
+
+                <button className="w-full py-4 bg-slate-800/50 hover:bg-slate-700/50 border border-white/5 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] transition-all hover:text-white">
+                  Показати всі можливості
+                </button>
+              </div>
+            </TacticalCard>
+
+            <TacticalCard
+              variant="glass"
+              title="Матриця Ризиків"
+              icon={<AlertTriangle size={18} className="text-rose-400" />}
+            >
+              <div className="flex items-center justify-center h-40 bg-slate-950/40 rounded-2xl border border-white/5 relative overflow-hidden group">
+                 <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                 <Activity className="text-rose-500/20 group-hover:text-rose-500/40 transition-all scale-150" size={80} />
+                 <span className="absolute bottom-4 text-[10px] font-black text-rose-500/60 uppercase tracking-widest">Anomaly Detection Ready</span>
+              </div>
+            </TacticalCard>
           </div>
         </div>
       </div>
