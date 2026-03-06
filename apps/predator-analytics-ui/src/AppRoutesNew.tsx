@@ -44,6 +44,7 @@ const AutonomyDashboard = lazy(() => import('./views/AutonomyDashboard'));
 const ComponentsRegistryView = lazy(() => import('./views/ComponentsRegistryView'));
 const PipelineManagerView = lazy(() => import('./views/PipelineManagerView'));
 const EntityRadarView = lazy(() => import('./views/EntityRadarView'));
+const TendersView = lazy(() => import('./views/TendersView'));
 
 
 // Premium Commercial Views
@@ -133,6 +134,7 @@ export const AppRoutesNew = () => {
             <Route path="/documents" element={<DocumentsView />} />
             <Route path="/cases" element={<CasesView />} />
             <Route path="/graph" element={<GraphView />} />
+            <Route path="/tenders" element={<TendersView />} />
 
             {/* Data Management */}
             <Route path="/parsers" element={<ParsersView />} />
