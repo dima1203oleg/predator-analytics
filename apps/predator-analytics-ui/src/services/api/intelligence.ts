@@ -93,6 +93,9 @@ export const intelligenceApi = {
         const res = await apiClient.get('/premium/alert-rules');
         return Array.isArray(res.data) ? res.data : (res.data?.rules || []);
     },
+    getMorningNewspaper: async () => {
+        return (await apiClient.get('/premium/morning-brief')).data;
+    },
 };
 
 export const trinityApi = {

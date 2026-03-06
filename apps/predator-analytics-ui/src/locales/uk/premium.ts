@@ -353,6 +353,18 @@ export const premiumLocales = {
       actions: '✅ Рекомендовані дії',
       industryForecasts: 'Галузеві Прогнози (AI)',
       keyEvents: 'Ключові події дня',
+      tradeFlow: '1️⃣ ТОРГОВІ ПОТОКИ (Торгівля)',
+      registers: '2️⃣ ІНСТИТУЦІЙНІ РЕЄСТРИ',
+      osint: '3️⃣ КОНТЕКСТНИЙ OSINT',
+    },
+
+    // Personas
+    personas: {
+      business: 'БІЗНЕС ТА КОРПОРАЦІЇ',
+      government: 'ДЕРЖАВА ТА РЕГУЛЯТОРИ',
+      intelligence: 'РОЗВІДКА ТА ПРАВООХОРОНЦІ',
+      banking: 'БАНКИ ТА КОМПЛАЄНС',
+      media: 'МЕДІА ТА РОЗСЛІДУВАННЯ',
     },
 
     // UI Buttons & Labels
