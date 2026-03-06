@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 type UserRole = 'client' | 'premium' | 'admin';
-export type InterlinkPersona = 'TITAN' | 'INQUISITOR' | 'SOVEREIGN';
+export type InterlinkPersona = 'TITAN' | 'INQUISITOR' | 'SOVEREIGN' | 'BUSINESS' | 'GOVERNMENT' | 'INTELLIGENCE' | 'BANKING' | 'MEDIA';
 type DeviceMode = 'desktop' | 'tablet' | 'mobile';
 type Language = 'ua' | 'en';
 
@@ -54,7 +54,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   }, [userRole, persona]);
 
   const setRole = (role: UserRole) => setUserRole(role);
-  const setPersona = (p: InterlinkPersona) => setPersonaState(p);
+  const setPersona = (p: InterlinkPersona) => {
+    localStorage.setItem('interlinkPersona', p);
+    setPersonaState(p);
+  };
   const setDeviceMode = (mode: DeviceMode) => setDeviceModeState(mode);
   const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
   const setLanguage = (lang: Language) => setLanguageState(lang);

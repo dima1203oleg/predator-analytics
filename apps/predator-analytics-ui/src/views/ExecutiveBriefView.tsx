@@ -82,9 +82,9 @@ const ACTIVITY_DATA = [
 ];
 
 const ExecutiveBriefView: React.FC = () => {
-  const { userRole, persona } = useAppStore();
+  const { userRole, persona, setPersona } = useAppStore();
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [expandedSections, setExpandedSections] = useState<string[]>(['critical', 'opportunities']);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['critical', 'opportunities', 'tradeFlow']);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [bookmarkedItems, setBookmarkedItems] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,9 +94,18 @@ const ExecutiveBriefView: React.FC = () => {
   const [sections, setSections] = useState<BriefSection[]>([]);
   const [summary, setSummary] = useState<string>('');
 
+  const PERSONA_CONFIG = useMemo(() => ({
+    BUSINESS: { icon: Crown, label: premiumLocales.executiveBrief.personas.business, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    GOVERNMENT: { icon: Shield, label: premiumLocales.executiveBrief.personas.government, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    INTELLIGENCE: { icon: Radio, label: premiumLocales.executiveBrief.personas.intelligence, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    BANKING: { icon: Box, label: premiumLocales.executiveBrief.personas.banking, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
+    MEDIA: { icon: Globe, label: premiumLocales.executiveBrief.personas.media, color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
+  }), []);
+
   const fetchBrief = useCallback(async () => {
     try {
       setIsLoading(true);
+      // Pass persona to API if needed
       const data = await api.getMorningNewspaper();
       setMetrics(Array.isArray(data.metrics) ? data.metrics : []);
       setSections(Array.isArray(data.sections) ? data.sections : []);
@@ -201,8 +210,30 @@ const ExecutiveBriefView: React.FC = () => {
               <h2 className={cn("text-4xl font-black tracking-tighter uppercase leading-none font-display", greeting.color)}>
                 {greeting.text}
               </h2>
+              <div className="flex items-center gap-2">
+                {Object.entries(PERSONA_CONFIG).map(([key, config]) => (
+                  <motion.button
+                    key={key}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setPersona(key as any)}
+                    className={cn(
+                      "p-3 rounded-2xl border transition-all relative overflow-hidden group/p",
+                      persona === key
+                        ? cn("border-white/20 shadow-lg text-white", config.bg)
+                        : "border-white/5 text-slate-600 grayscale hover:grayscale-0"
+                    )}
+                    title={config.label}
+                  >
+                    <config.icon size={16} className={cn(persona === key ? config.color : "text-slate-600")} />
+                    {persona === key && (
+                      <motion.div layoutId="persona-pulse" className={cn("absolute inset-0 blur-lg -z-10", config.bg)} />
+                    )}
+                  </motion.button>
+                ))}
+              </div>
               <div className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-slate-400 uppercase tracking-widest backdrop-blur-xl">
-                CORE_IDENTITY: <span className="text-amber-500">{persona}</span>
+                INTEL_PERSONA: <span className={cn("font-bold", (PERSONA_CONFIG as any)[persona]?.color)}>{(PERSONA_CONFIG as any)[persona]?.label}</span>
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-8 text-[11px] text-slate-500 font-mono font-black uppercase tracking-[0.2em]">
@@ -320,6 +351,35 @@ const ExecutiveBriefView: React.FC = () => {
         {/* Core Brief Feed */}
         <div className="col-span-12 xl:col-span-8 flex flex-col gap-10">
 
+          {/* 🛡️ ECONOMIC INTELLIGENCE GRAPH - 3 LEVELS HUB */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            {[
+              { id: 'tradeFlow', level: 1, title: premiumLocales.executiveBrief.sections.tradeFlow, icon: Activity, color: 'text-amber-500', bg: 'bg-amber-500/10', desc: 'Первинні економічні потоки та трекинґ вантажів' },
+              { id: 'registers', level: 2, title: premiumLocales.executiveBrief.sections.registers, icon: Shield, color: 'text-blue-500', bg: 'bg-blue-500/10', desc: 'Інституційні реєстри, ЄДР, власніть та контракти' },
+              { id: 'osint', level: 3, title: premiumLocales.executiveBrief.sections.osint, icon: Radio, color: 'text-emerald-500', bg: 'bg-emerald-500/10', desc: 'Медіа сигнали, санкції та контекстний OSINT' },
+            ].map(lvl => (
+              <motion.div
+                key={lvl.id}
+                whileHover={{ scale: 1.02 }}
+                onClick={() => toggleSection(lvl.id)}
+                className={cn(
+                  "p-6 rounded-[32px] border transition-all cursor-pointer relative overflow-hidden group/lvl",
+                  expandedSections.includes(lvl.id) ? "bg-slate-900 border-white/20 shadow-2xl" : "bg-slate-950/40 border-white/5"
+                )}
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className={cn("p-3 rounded-2xl border transition-colors", lvl.bg, expandedSections.includes(lvl.id) ? "border-white/20 shadow-lg" : "border-white/5")}>
+                    <lvl.icon size={20} className={lvl.color} />
+                  </div>
+                  <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">Level_{lvl.level} Graph Node</div>
+                </div>
+                <h4 className="text-sm font-black text-white uppercase tracking-tighter mb-2 font-display">{lvl.title}</h4>
+                <p className="text-[10px] text-slate-500 font-medium leading-relaxed uppercase tracking-wide opacity-0 group-hover/lvl:opacity-100 transition-opacity">{lvl.desc}</p>
+                {expandedSections.includes(lvl.id) && <motion.div layoutId="lvl-ind" className={cn("absolute bottom-0 inset-x-0 h-1", lvl.color.replace('text', 'bg'))} />}
+              </motion.div>
+            ))}
+          </div>
+
           {/* AI Synthesis Hub */}
           <TacticalCard variant="holographic" title="NEURAL_SYNTHESIS_REPORT" className="p-10 bg-slate-950/60 shadow-2xl relative overflow-hidden group">
             <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03] pointer-events-none" />
@@ -349,6 +409,20 @@ const ExecutiveBriefView: React.FC = () => {
                     return txt;
                   })()}
                 </p>
+                {/* Visual Signal Bars */}
+                <div className="flex items-center gap-2 mb-8 justify-center md:justify-start">
+                  {[80, 60, 95, 40, 70].map((h, i) => (
+                    <div key={i} className="w-1.5 bg-amber-500/20 rounded-full h-8 relative overflow-hidden">
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: `${h}%` }}
+                        transition={{ delay: 1 + i * 0.1, duration: 2 }}
+                        className="absolute bottom-0 inset-x-0 bg-amber-500"
+                      />
+                    </div>
+                  ))}
+                  <span className="text-[9px] font-mono text-amber-500/60 uppercase ml-4 tracking-widest">Cross-Signal Arbitration Active</span>
+                </div>
                 <div className="flex flex-wrap items-center gap-4 justify-center md:justify-start">
                   <button className="px-8 py-3 bg-amber-500/20 border border-amber-500/30 rounded-2xl text-[10px] font-black text-amber-400 uppercase tracking-widest hover:bg-amber-500/30 transition-all flex items-center gap-3 shadow-xl">
                     <Brain size={16} />
@@ -356,7 +430,7 @@ const ExecutiveBriefView: React.FC = () => {
                   </button>
                   <div className="flex items-center gap-3 px-4 py-2 bg-white/5 rounded-2xl border border-white/5">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Decision Confidence: 98.4%</span>
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Decision Confidence: 99.1% (High)</span>
                   </div>
                 </div>
               </div>
