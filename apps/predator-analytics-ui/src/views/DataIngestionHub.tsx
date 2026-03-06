@@ -50,13 +50,23 @@ interface UploadedFile {
 }
 
 const SOURCE_TYPES = [
-  { id: 'customs', label: 'Митні Декларації', icon: FileSpreadsheet, color: 'emerald', desc: 'Авто-аналіз МД (.xlsx, .csv)' },
-  { id: 'excel', label: 'Таблиці / CSV', icon: Grid, color: 'cyan', desc: 'Універсальні реєстри даних' },
-  { id: 'telegram', label: 'Telegram OSINT', icon: MessageSquare, color: 'blue', desc: 'Парсинг каналів та груп' },
-  { id: 'website', label: 'Web Scraper', icon: Globe, color: 'purple', desc: 'Прямий скрейпінг URL / HTML' },
-  { id: 'pdf', label: 'PDF Документи', icon: FileText, color: 'rose', desc: 'OCR та екстракція тексту' },
-  { id: 'api', label: 'External API', icon: Zap, color: 'orange', desc: 'REST/WebSocket конектори' },
-  { id: 'database', label: 'SQL Bridge', icon: Database, color: 'indigo', desc: 'Пряма реплікація БД' },
+  // 1️⃣ Primary Flows
+  { id: 'customs', tier: 1, label: 'Митні Декларації', icon: FileSpreadsheet, color: 'emerald', desc: 'Торговельні потоки (імпорт/експорт)' },
+  { id: 'tax', tier: 1, label: 'Податкові Дані', icon: Activity, color: 'blue', desc: 'ПДВ, фінансові операції' },
+  { id: 'logistics', tier: 1, label: 'Транспорт', icon: Zap, color: 'amber', desc: 'Коносаменти, ТТН, CARGO' },
+  { id: 'energy', tier: 1, label: 'Енергопотоки', icon: CloudLightning, color: 'cyan', desc: 'Енергетика, критична інфраструктура' },
+
+  // 2️⃣ Institutional
+  { id: 'edr', tier: 2, label: 'Реєстри (ЄДР)', icon: Database, color: 'indigo', desc: 'Компанії, бенефіціари, КВЕД' },
+  { id: 'court', tier: 2, label: 'Судові Дані', icon: ShieldAlert, color: 'rose', desc: 'Рішення, провадження, борги' },
+  { id: 'tender', tier: 2, label: 'Тендери', icon: Target, color: 'emerald', desc: 'Держзакупівлі (Prozorro)' },
+  { id: 'budget', tier: 2, label: 'Публічні Фінанси', icon: HardDrive, color: 'cyan', desc: 'Бюджетні платежі, казначейство' },
+  { id: 'license', tier: 2, label: 'Ліцензії', icon: FileText, color: 'blue', desc: 'Дозволи, квоти, сертифікати' },
+  { id: 'demography', tier: 2, label: 'Демографія', icon: Globe, color: 'amber', desc: 'Геодані та населення' },
+
+  // 3️⃣ Open Intelligence
+  { id: 'sanctions', tier: 3, label: 'Санкції/AML', icon: ShieldCheck, color: 'rose', desc: 'Комплаєнс, PEP-реєстри, РНБО' },
+  { id: 'media', tier: 3, label: 'OSINT/Медіа', icon: MessageSquare, color: 'purple', desc: 'Новини, Telegram, витоки' },
 ];
 
 function Grid(props: any) { return <div className="grid grid-cols-2 grid-rows-2 gap-0.5 w-5 h-5"><div className="bg-current opacity-40"></div><div className="bg-current"></div><div className="bg-current"></div><div className="bg-current opacity-40"></div></div> }
@@ -195,7 +205,7 @@ const DataIngestionHub: React.FC = () => {
             setFiles(prev => prev.map(f => f.file === fileItem.file ? { ...f, progress: pct, status: 'uploading' } : f));
           }
         });
-        setFiles(prev => prev.map(f => f.file === fileItem.file ? { ...f, progress: 100, status: 'success' } : f));
+        setFiles(prev => prev.map(f => f.file === fileItem.file ? { ...f, progress: 100, status: 'done' } : f));
       }
       setIsModalOpen(false);
       setFiles([]);
@@ -263,10 +273,10 @@ const DataIngestionHub: React.FC = () => {
               <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.4em]">OMNI_DATA_BRIDGE_V55</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-black text-white italic tracking-tighter uppercase leading-none mb-6 font-display">
-              ЦИТАДЕЛЬ <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">ІНЖЕСТИНГУ</span>
+              DATA <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">FUSION ENGINE</span>
             </h1>
             <p className="text-lg text-slate-400 font-medium leading-relaxed max-w-3xl mb-10 mx-auto xl:mx-0">
-              Глобальний вузол захоплення та нормалізації даних PREDATOR. Обробляйте мільярди запитань з нульовою затримкою завдяки нейронним конвеєрам v55.
+              Цитадель інтеграції даних на базі 3-рівневої онтології: Первинні економічні потоки, Інституційні реєстри та Контекстні OSINT-джерела.
             </p>
 
             <div className="flex flex-wrap items-center justify-center xl:justify-start gap-6">
@@ -298,9 +308,9 @@ const DataIngestionHub: React.FC = () => {
       {/* Multi-Channel Stats Ribbon */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
         {[
-          { label: 'TOTAL_INGESTED_ENTITIES', value: '1.4B+', icon: Layers, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: 'ACTIVE_DATA_NODES', value: '842', icon: Server, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'PEAK_THROUGHPUT', value: '1.2 GB/S', icon: Zap, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+          { label: 'ENTITY_RESOLUTION_RATE', value: '99.9%', icon: Network, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: 'FUSED_DATA_SOURCES', value: '12', icon: Server, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: 'GRAPH_CONNECTIONS', value: '2.4B+', icon: Share2, color: 'text-amber-400', bg: 'bg-amber-500/10' },
           { label: 'SYSTEM_LATENCY', value: '4MS', icon: Activity, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
         ].map((stat, i) => (
           <motion.div
@@ -509,10 +519,31 @@ const DataIngestionHub: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  {SOURCE_TYPES.map(type => (
-                    <SourceTypeCard key={type.id} type={type} isSelected={selectedType === type.id} onClick={() => setSelectedType(type.id)} />
-                  ))}
+                <div className="flex flex-col gap-8">
+                  <div>
+                    <h3 className="text-[11px] font-black text-emerald-400 uppercase tracking-[0.3em] mb-4 flex items-center gap-2"><div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> 1️⃣ ПЕРВИННІ ЕКОНОМІЧНІ ПОТОКИ</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {SOURCE_TYPES.filter(t => t.tier === 1).map(type => (
+                        <SourceTypeCard key={type.id} type={type} isSelected={selectedType === type.id} onClick={() => setSelectedType(type.id)} />
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-[11px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-4 flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" /> 2️⃣ ІНСТИТУЦІЙНІ РЕЄСТРИ</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {SOURCE_TYPES.filter(t => t.tier === 2).map(type => (
+                        <SourceTypeCard key={type.id} type={type} isSelected={selectedType === type.id} onClick={() => setSelectedType(type.id)} />
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-[11px] font-black text-purple-400 uppercase tracking-[0.3em] mb-4 flex items-center gap-2"><div className="w-1.5 h-1.5 bg-purple-500 rounded-full" /> 3️⃣ КОНТЕКСТНІ OSINT-ДЖЕРЕЛА</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {SOURCE_TYPES.filter(t => t.tier === 3).map(type => (
+                        <SourceTypeCard key={type.id} type={type} isSelected={selectedType === type.id} onClick={() => setSelectedType(type.id)} />
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="p-10 bg-slate-950 border border-emerald-500/20 rounded-[48px] relative overflow-hidden group/drop">

@@ -54,6 +54,7 @@ interface UseAlertsOptions {
   level?: string;
   limit?: number;
   resolved?: boolean;
+  [key: string]: any;
 }
 
 export const useAlerts = (options: UseAlertsOptions = {}) => {

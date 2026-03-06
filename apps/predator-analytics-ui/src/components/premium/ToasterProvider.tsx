@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { useSystemEvents } from '../../hooks/useSystemEvents';
+import { premiumLocales } from '../../locales/uk/premium';
 
 type ToastType = 'success' | 'error' | 'warning' | 'info' | 'loading';
 
@@ -65,7 +66,7 @@ export const toast = {
   warning: (title: string, message?: string) => showToast({ type: 'warning', title, message }),
   info: (title: string, message?: string) => showToast({ type: 'info', title, message }),
   loading: (title: string, message?: string) => showToast({ type: 'loading', title, message }),
-  promise: async function<T>(
+  promise: async function <T>(
     promise: Promise<T>,
     msgs: { loading: string; success: string; error: string }
   ): Promise<T> {

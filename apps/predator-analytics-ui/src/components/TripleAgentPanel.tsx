@@ -107,9 +107,9 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
             await new Promise(r => setTimeout(r, 1000));
             setResult(res);
 
+            const isSuccess = res.success && !res.error;
             setSteps(prev => {
                 const s = [...prev];
-                const isSuccess = res.success && !res.error;
 
                 if (res.code) {
                     s[3].status = isSuccess ? 'completed' : 'failed';

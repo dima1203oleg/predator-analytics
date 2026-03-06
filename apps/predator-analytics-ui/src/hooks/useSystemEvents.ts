@@ -24,7 +24,7 @@ export const useSystemEvents = () => {
 
     const baseUrl = envApiUrl
       ? envApiUrl.replace(/^http/, 'ws')
-      : `${protocol}//${window.location.hostname}:9080`;
+      : `${protocol}//${window.location.host}/api/v1`;
 
     const socket = new WebSocket(`${baseUrl}/ws/system/events`);
 

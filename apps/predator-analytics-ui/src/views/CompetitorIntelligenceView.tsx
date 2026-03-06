@@ -26,7 +26,7 @@ import { CyberOrb } from '../components/CyberOrb';
 import { HoloContainer } from '../components/HoloContainer';
 import { PageTransition } from '../components/layout/PageTransition';
 import AIInsightsHub from './AIInsightsHub';
-import { Badge } from '../components/ui/Badge';
+import { Badge } from '../components/ui/badge';
 
 // --- LOCALIZATION ---
 const localLocales = {
@@ -282,7 +282,7 @@ const CompetitorIntelligenceView: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await api.premium.getCompetitors ? await api.premium.getCompetitors() : (await api.get('/premium/competitors')).data;
+        const data = await api.premium.getCompetitors();
         if (data && Array.isArray(data)) {
           setCompetitors(data);
         } else {
@@ -325,7 +325,7 @@ const CompetitorIntelligenceView: React.FC = () => {
     <PageTransition>
       <div className="min-h-screen pb-24 relative overflow-hidden">
         {/* Background Depth */}
-        <HoloContainer className="opacity-40" />
+        <div className="absolute inset-0 opacity-40 pointer-events-none overflow-hidden"><HoloContainer>{null}</HoloContainer></div>
         <div className="absolute top-1/4 -right-20 w-96 h-96 bg-primary-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse" />
         <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none" />
 
@@ -442,7 +442,7 @@ const CompetitorIntelligenceView: React.FC = () => {
             <aside className="space-y-8">
               {/* Visual Flair */}
               <div className="hidden xl:flex justify-center py-6">
-                <CyberOrb size="lg" color="blue" />
+                <CyberOrb size="lg" color="blue" intensity="low" />
               </div>
 
               {/* AI Insights Hub */}

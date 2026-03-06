@@ -41,15 +41,15 @@ const GPUModel: React.FC<GPUModelProps> = ({ load, color }) => {
       </mesh>
 
       {/* Cooling Fans (Simplified 3D Circles) */}
-      {[ -1.2, 1.2 ].map((x, i) => (
+      {[-1.2, 1.2].map((x, i) => (
         <group key={i} position={[x, 0, 0.15]}>
-          <mesh>
-            <cylinderGeometry args={[0.7, 0.7, 0.05, 32]} rotation={[Math.PI / 2, 0, 0]} />
+          <mesh rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.7, 0.7, 0.05, 32]} />
             <meshStandardMaterial color="#0f172a" />
           </mesh>
           <mesh rotation={[Math.PI / 2, 0, 0]}>
-             <torusGeometry args={[0.75, 0.02, 16, 100]} />
-             <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1} />
+            <torusGeometry args={[0.75, 0.02, 16, 100]} />
+            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1} />
           </mesh>
         </group>
       ))}

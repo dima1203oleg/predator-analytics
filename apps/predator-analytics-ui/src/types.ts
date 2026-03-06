@@ -96,6 +96,7 @@ export interface CouncilResult {
     contributing_models: string[];
     peer_review_summary: PeerReviewSummary;
     dissenting_opinions: { model: string; text: string; score: number }[];
+    ranking?: RankItem[];
     metadata: Record<string, any>;
     timestamp: string;
 }
@@ -136,7 +137,10 @@ export enum TabView {
     LLM = 'llm',
     EVOLUTION = 'evolution',
     AGENTS = 'agents',
-    ANALYTICS = 'analytics'
+    ANALYTICS = 'analytics',
+    DEVOPS = 'deployment',      // Mapping for legacy/command use
+    SYSTEM_BRAIN = 'super_intelligence', // Mapping for legacy/command use
+    USER_PORTAL = 'overview'     // Mapping for legacy/command use
 }
 
 // --- NAS & AUTOML TYPES ---

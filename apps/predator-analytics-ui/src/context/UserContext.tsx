@@ -37,6 +37,7 @@ export interface UserProfile {
   tenant_id: string;
   tenant_name: string;
   last_login: string;
+  data_sectors: string[];
 }
 
 interface UserContextType {
@@ -73,7 +74,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       tier: SubscriptionTier.ENTERPRISE,
       tenant_id: 'system',
       tenant_name: 'System Root',
-      last_login: new Date().toISOString()
+      last_login: new Date().toISOString(),
+      data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
     });
     setIsLoading(false);
   }, []);

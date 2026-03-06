@@ -1728,6 +1728,18 @@ app.get('/api/v1/neural/training/stats', (req, res) => {
 });
 
 // Ingestion status
+app.get(['/api/v1/agents', '/api/v1/ai/agents'], (req, res) => {
+  res.json({
+    agents: [
+      { id: 'agent-1', name: 'Web Crawler', status: 'online' },
+      { id: 'agent-2', name: 'Document Analysis', status: 'idle' }
+    ]
+  });
+});
+
+app.get(['/api/v1/ingest/jobs', '/api/v1/ingestion/jobs'], (req, res) => {
+  res.json({ jobs: [] });
+});
 app.get(['/api/v1/ingest/status/:jobId', '/api/v1/ingestion/status/:jobId', '/api/v1/ingestion/jobs/:jobId'], (req, res) => {
   const job = etlJobs.find(j => j.job_id === req.params.jobId);
   if (job) {
@@ -2776,6 +2788,7 @@ wss.on('connection', (ws) => {
     const cpu = 24 + Math.random() * 15;
     const ram = 45 + Math.random() * 20;
     const timestamp = new Date().toISOString();
+    const pulseScore = Math.floor(85 + Math.random() * 15);
 
     ws.send(JSON.stringify({
       pulse: {

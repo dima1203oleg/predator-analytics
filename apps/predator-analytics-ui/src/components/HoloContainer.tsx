@@ -3,7 +3,8 @@ import React from 'react';
 interface HoloContainerProps {
     children: React.ReactNode;
     className?: string;
-    variant?: 'blue' | 'purple' | 'red' | 'green';
+    variant?: 'blue' | 'purple' | 'red' | 'green' | 'matrix';
+    title?: string;
 }
 
 /**
@@ -13,7 +14,8 @@ interface HoloContainerProps {
 export const HoloContainer: React.FC<HoloContainerProps> = ({
     children,
     className = '',
-    variant = 'blue'
+    variant = 'blue',
+    title
 }) => {
 
     // Static mappings to ensure Tailwind JIT detection
@@ -49,6 +51,14 @@ export const HoloContainer: React.FC<HoloContainerProps> = ({
             line: 'via-green-500/50',
             lineTop: 'via-green-500/20',
             glowColor: 'rgba(34,197,94,0.1)'
+        },
+        matrix: {
+            border: 'border-emerald-500/30',
+            borderHover: 'hover:border-emerald-500/50',
+            corner: 'border-emerald-500/50',
+            line: 'via-emerald-500/50',
+            lineTop: 'via-emerald-500/20',
+            glowColor: 'rgba(16,185,129,0.15)'
         }
     };
 
@@ -73,6 +83,12 @@ export const HoloContainer: React.FC<HoloContainerProps> = ({
 
             {/* HUD Status Bar (Top) */}
             <div className={`absolute top-0 left-12 right-12 h-[1px] bg-gradient-to-r from-transparent ${s.lineTop} to-transparent z-20`}></div>
+
+            {title && (
+                <div className="absolute top-0 left-8 -translate-y-1/2 z-30 px-3 py-1 bg-slate-950 border border-white/10 rounded-full">
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group-hover:text-white transition-colors">{title}</span>
+                </div>
+            )}
 
             <div className="relative z-30 h-full w-full">
                 {children}

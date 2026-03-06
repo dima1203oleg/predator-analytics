@@ -207,8 +207,8 @@ const ActivityView: React.FC = () => {
           breadcrumbs={['PREDATOR', 'СИСТЕМА', 'АКТИВНІСТЬ']}
           stats={[
             { label: 'ПОДІЙ_СЬОГОДНІ', value: String(events.length), color: 'primary', icon: <Boxes size={14} /> },
-            { label: 'КРИТИЧНО', value: String(events.filter(e => e.level === 'error').length), color: 'rose', icon: <AlertCircle size={14} /> },
-            { label: 'AI_ВТРУЧАННЯ', value: String(events.filter(e => e.type === 'ai').length), color: 'indigo', icon: <Bot size={14} /> }
+            { label: 'КРИТИЧНО', value: String(events.filter(e => e.level === 'error').length), color: 'danger', icon: <AlertCircle size={14} /> },
+            { label: 'AI_ВТРУЧАННЯ', value: String(events.filter(e => e.type === 'ai').length), color: 'primary', icon: <Bot size={14} /> }
           ]}
           actions={
             <button

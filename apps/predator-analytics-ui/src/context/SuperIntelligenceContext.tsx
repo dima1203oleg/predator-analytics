@@ -233,7 +233,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
     const toggleLoop = () => setIsActive(!isActive);
     const vetoCycle = () => {
         setIsActive(false);
-        api.v45.runSystemRollback(); // Real veto
+        api.restartServices(); // Real veto
     };
 
     // Real Data Polling
@@ -244,8 +244,8 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
             try {
                 // 0. Fetch Real Stage
                 try {
-                    const realStage = await api.v45.getSystemStage();
-                    setStage(realStage);
+                    const status = await api.getStatus();
+                    setStage(status.stage || 'IDLE');
                 } catch (e) { }
 
                 // 1. Fetch Real Logs (Trinity)
@@ -296,7 +296,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
 
                 // 3. Map Real LLM Providers to Brain Nodes
                 const providers = await api.getNasProviders();
-                const sysMetrics = await api.v45.getRealtimeMetrics().catch(() => null);
+                const sysMetrics = await api.v45.getLiveHealth().catch(() => null);
 
                 if (providers && providers.length > 0) {
                     const realBrainNodes: BrainNodeState[] = providers.map((p: any, idx: number) => ({
@@ -353,7 +353,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
 
                 // 5. Fetch Real Arbitration Scores
                 try {
-                    const scores = await api.v45.ml.getArbitrationScores();
+                    const scores = await api.v45.training.getArbitrationScores();
                     if (scores && scores.length > 0) {
                         setArbitrationScores(scores);
                     }

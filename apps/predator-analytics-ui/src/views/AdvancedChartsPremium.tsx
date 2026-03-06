@@ -5,8 +5,9 @@
  * Різні типи візуалізації даних
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { api } from '../services/api';
 import {
   BarChart3,
   PieChart,

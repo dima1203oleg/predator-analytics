@@ -16,7 +16,7 @@ import {
   AlertTriangle, CheckCircle2, Search, Activity, Clock,
   BarChart3, TrendingUp, Zap, Eye, FileText
 } from 'lucide-react';
-import { api } from '../../../services/api';
+import { api, apiClient } from '../../../services/api';
 
 interface OpenSearchStats {
   total_documents: number;
@@ -48,15 +48,15 @@ export const OpenSearch: React.FC = () => {
   const fetchData = useCallback(async () => {
     try {
       const [searchStats, systemStats] = await Promise.allSettled([
-        api.v45.getStats(),
+        apiClient.get('/system/stats'),
         api.v45.getLiveHealth()
       ]);
 
       const now = new Date();
       const timeStr = now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
 
-      if (searchStats.status === 'fulfilled' && searchStats.value) {
-        const s = searchStats.value;
+      if (searchStats.status === 'fulfilled' && searchStats.value?.data) {
+        const s = searchStats.value.data;
         setStats({
           total_documents: s.documents_total || s.total_documents || 0,
           total_indices: s.total_indices || 12,

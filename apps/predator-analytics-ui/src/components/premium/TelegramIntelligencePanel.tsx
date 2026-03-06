@@ -7,7 +7,7 @@ import {
   Clock, Zap, Globe
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
-import { api } from '../../services/api';
+import { api, apiClient } from '../../services/api';
 
 // --- TYPES ---
 interface TelegramChannel {
@@ -62,7 +62,7 @@ export const TelegramIntelligencePanel: React.FC = () => {
 
   const loadFeed = async () => {
     try {
-      const data = await (api as any).getTelegramFeed();
+      const data = (await apiClient.get('/ingest/telegram/feed')).data;
       if (Array.isArray(data)) {
         setMessages(data);
       }
@@ -94,11 +94,11 @@ export const TelegramIntelligencePanel: React.FC = () => {
     addLog(`Initiating connection to target: ${newUrl}`, 'info');
 
     try {
-      const res = await api.ingestion.startJob({
+      const res = (await apiClient.post('/ingest/job', {
         source_type: 'telegram',
         url: newUrl,
         config: { name: newUrl.split('/').pop() }
-      });
+      })).data;
 
       addLog(`Handshake successful. Job ID: ${res.job_id}`, 'success');
       setNewUrl('');

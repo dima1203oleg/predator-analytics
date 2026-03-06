@@ -15,7 +15,7 @@ import {
   Search, Database, TrendingUp, ExternalLink,
   RefreshCw, Activity, FileText, Zap
 } from 'lucide-react';
-import { api } from '../../services/api';
+import { api, apiClient } from '../../services/api';
 import { premiumLocales } from '../../locales/uk/premium';
 
 interface OpenSearchWidgetData {
@@ -42,15 +42,15 @@ export const OpenSearchLiveWidget: React.FC<{
   const fetchData = useCallback(async () => {
     try {
       const [stats, health] = await Promise.allSettled([
-        api.v45.getStats(),
+        apiClient.get('/system/stats'),
         api.v45.getLiveHealth()
       ]);
 
       const now = new Date();
       const timeStr = now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
 
-      if (stats.status === 'fulfilled' && stats.value) {
-        const s = stats.value;
+      if (stats.status === 'fulfilled' && stats.value?.data) {
+        const s = stats.value.data;
         setData({
           totalDocs: s.documents_total || s.total_documents || 0,
           searchRate: s.search_rate || 0,

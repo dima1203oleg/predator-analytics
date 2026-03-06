@@ -1415,6 +1415,40 @@ export const premiumLocales = {
       speak: 'Озвучити метрики',
       metricsVoice: 'Нейронне ядро активне. Модель: {model}. VRAM: {vram} ГБ.',
     },
+    apiKeys: {
+      title: 'УПРАВЛІННЯ КЛЮЧАМИ API',
+      vault: {
+        title: 'СХОВИЩЕ КЛЮЧІВ',
+        description: 'Управління доступом до зовнішніх LLM провайдерів.'
+      },
+      providerLabel: 'Провайдер',
+      addKeyPlaceholder: 'Введіть API ключ...',
+      placeholder: 'Введіть API ключ...',
+      save: 'Зберегти',
+      test: 'Тест',
+      testButton: 'Тест',
+      testNotice: 'Ми автоматично протестуємо ключ перед збереженням.',
+      testSuccess: 'Підключення успішне',
+      testFailed: 'Помилка підключення',
+      addKey: 'Додати Ключ',
+      removeAll: 'Видалити всі ключі',
+      priority: {
+        label: 'Пріоритет',
+        description: 'Система автоматично використовує Groq для швидкості та Gemini для глибокого аналізу. Оптимізатор DSPy вибере найкращий варіант.',
+      },
+      messages: {
+        added: 'Ключ додано',
+        addedDesc: 'API ключ для {id} успішно збережено',
+        confirmDelete: 'Видалити ключ для {id}?',
+        removed: 'Ключ видалено',
+        removedDesc: 'API ключ для {id} успішно видалено',
+        testSuccess: 'Тест пройдено',
+        testSuccessDesc: 'Провайдер {id} працює коректно',
+        testFailed: 'Помилка',
+        commError: 'Помилка зв\'язку',
+        commErrorDesc: 'Не вдалося перевірити провайдера'
+      }
+    },
     inference: {
       title: 'Нейронний Інтерфейс',
       status: {

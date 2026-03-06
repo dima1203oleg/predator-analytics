@@ -2,35 +2,53 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 export type SystemStatus = 'idle' | 'active' | 'processing' | 'alert' | 'critical' | 'quantum';
+type OrbSizeAlias = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+const ORB_SIZE_MAP: Record<OrbSizeAlias, number> = { xs: 60, sm: 100, md: 160, lg: 240, xl: 320 };
 
 interface CyberOrbProps {
     status?: SystemStatus;
-    size?: number;
+    /** Accepts a pixel number OR a named alias: 'sm' | 'md' | 'lg' | 'xl' */
+    size?: number | OrbSizeAlias;
     animated?: boolean;
     pulsing?: boolean;
     interactive?: boolean;
     showMetrics?: boolean;
     onClick?: () => void;
     className?: string;
-    // Legacy support
+    // Legacy / decorative variants accepted but ignored or forwarded
     color?: string;
+    /** 0-1 intensity multiplier (accepted for compat, has no strict effect) */
+    intensity?: number | string;
+    /** Alias for pulsing */
+    pulse?: boolean;
+    /** Density modifier (accepted for compat) */
+    density?: number;
 }
+
 
 export const CyberOrb: React.FC<CyberOrbProps> = ({
     status = 'active',
-    size = 200,
+    size: sizeProp = 200,
     animated = true,
     pulsing = true,
+    pulse,
     interactive = false,
     showMetrics = false,
     onClick,
     className = "",
-    color: legacyColor
+    color: legacyColor,
+    intensity: _intensity,
+    density: _density,
 }) => {
+    // Resolve string alias → pixel number
+    const size: number = typeof sizeProp === 'string'
+        ? (ORB_SIZE_MAP[sizeProp as OrbSizeAlias] ?? 200)
+        : (sizeProp as number);
+    const isPulsing = pulse ?? pulsing;
 
     const getStatusColor = (s: SystemStatus) => {
         if (legacyColor) return legacyColor;
-        switch(s) {
+        switch (s) {
             case 'idle': return '#94a3b8'; // slate-400
             case 'active': return '#0ea5e9'; // sky-500
             case 'processing': return '#3b82f6'; // blue-500
@@ -45,7 +63,7 @@ export const CyberOrb: React.FC<CyberOrbProps> = ({
 
     const getAnimationProps = (s: SystemStatus) => {
         if (!animated) return {};
-        switch(s) {
+        switch (s) {
             case 'processing':
                 return {
                     rotate: 360,
@@ -125,7 +143,7 @@ export const CyberOrb: React.FC<CyberOrbProps> = ({
                     boxShadow: `inset 0 0 40px ${color}4D`
                 }}
                 animate={{
-                    boxShadow: pulsing && animated ? [
+                    boxShadow: isPulsing && animated ? [
                         `inset 0 0 20px ${color}33, 0 0 20px ${color}11`,
                         `inset 0 0 60px ${color}66, 0 0 40px ${color}33`,
                         `inset 0 0 20px ${color}33, 0 0 20px ${color}11`
