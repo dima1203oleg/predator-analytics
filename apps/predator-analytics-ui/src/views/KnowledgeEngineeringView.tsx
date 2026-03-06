@@ -29,15 +29,15 @@ import { DataQualityDashboard } from '../components/quality/DataQualityDashboard
 
 // Tab configuration for 9 layers
 const KNOWLEDGE_TABS = [
-  { id: 'workflow', label: 'Workflow FSM', icon: Workflow, description: 'State Machine & Orchestration' },
-  { id: 'quality', label: 'Data Quality', icon: Shield, description: 'DQ Engine & Validation' },
-  { id: 'entities', label: 'Entity Resolution', icon: Users, description: 'Dedupe & Matching' },
-  { id: 'versioning', label: 'Versioning', icon: GitBranch, description: 'Data Versions & Reprocessing' },
-  { id: 'observability', label: 'Observability', icon: Activity, description: 'Data Metrics & Pipeline Health' },
-  { id: 'rules', label: 'Rules Engine', icon: Scale, description: 'Business Rules & Policies' },
-  { id: 'explain', label: 'Explainability', icon: FileText, description: 'Audit Trail & Decisions' },
-  { id: 'human', label: 'Human Review', icon: UserCheck, description: 'Human-in-the-Loop Queue' },
-  { id: 'costs', label: 'Cost Governor', icon: DollarSign, description: 'Budgets & Rate Limits' },
+  { id: 'workflow', label: 'Воркфлоу FSM', icon: Workflow, description: 'Машина станів та оркестрація' },
+  { id: 'quality', label: 'Якість Даних', icon: Shield, description: 'DQ Engine та валідація' },
+  { id: 'entities', label: 'Entity Resolution', icon: Users, description: 'Дедуплікація та матчинг' },
+  { id: 'versioning', label: 'Версіонування', icon: GitBranch, description: 'Версії даних та репроцесинг' },
+  { id: 'observability', label: 'Обсервабіліті', icon: Activity, description: 'Метрики та здоров’я пайплайнів' },
+  { id: 'rules', label: 'Машина Правил', icon: Scale, description: 'Бізнес-правила та політики' },
+  { id: 'explain', label: 'Пояснюваність', icon: FileText, description: 'Аудит та обґрунтування рішень' },
+  { id: 'human', label: 'Human Review', icon: UserCheck, description: 'Черга ручної перевірки (HITL)' },
+  { id: 'costs', label: 'Контроль Витрат', icon: DollarSign, description: 'Бюджети та ліміти' },
 ];
 
 export const KnowledgeEngineeringView: React.FC = () => {
@@ -100,8 +100,8 @@ export const KnowledgeEngineeringView: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
                     className={`p-3 rounded-lg text-center text-xs font-bold uppercase ${state === 'READY' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' :
-                        state === 'VALIDATED' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' :
-                          'bg-slate-800 text-slate-400 border border-slate-700'
+                      state === 'VALIDATED' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' :
+                        'bg-slate-800 text-slate-400 border border-slate-700'
                       }`}
                   >
                     {state.replace('_', ' ')}
@@ -120,28 +120,80 @@ export const KnowledgeEngineeringView: React.FC = () => {
       case 'entities':
         return (
           <div className="bg-slate-900/90 border border-slate-700/50 rounded-2xl p-6">
-            <h3 className="text-xl font-bold text-white mb-4">Entity Resolution Engine</h3>
-            <div className="space-y-4">
-              <div className="bg-slate-800/50 rounded-xl p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-emerald-400 font-bold">Potential Match</span>
-                  <span className="text-lg font-bold text-white">87%</span>
-                </div>
-                <div className="flex gap-4 items-center">
-                  <div className="flex-1 p-3 bg-blue-500/20 rounded-lg text-center">
-                    <p className="text-blue-400 text-xs uppercase">Entity A</p>
-                    <p className="text-white font-medium">TOV ROMASHKA</p>
-                  </div>
-                  <RefreshCw size={20} className="text-cyan-400" />
-                  <div className="flex-1 p-3 bg-blue-500/20 rounded-lg text-center">
-                    <p className="text-blue-400 text-xs uppercase">Entity B</p>
-                    <p className="text-white font-medium">ROMASHKA LLC</p>
+            <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-wider flex items-center gap-2">
+              <Users className="text-cyan-400" />
+              Entity Resolution Engine
+            </h3>
+
+            <div className="space-y-6">
+              {/* Match Card */}
+              <div className="bg-slate-800/50 rounded-2xl p-8 border border-white/5 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-6">
+                  <div className="text-right">
+                    <span className="text-[10px] text-slate-500 uppercase font-black block mb-1 tracking-widest">Confidence Score</span>
+                    <span className="text-4xl font-black text-emerald-400">94.2%</span>
                   </div>
                 </div>
-                <div className="mt-3 flex gap-2">
-                  <span className="text-xs px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded">Same address</span>
-                  <span className="text-xs px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded">Same director</span>
+
+                <div className="flex flex-col xl:flex-row gap-10 items-center relative z-10">
+                  <div className="flex-1 w-full p-6 bg-slate-950/50 rounded-2xl border border-blue-500/20">
+                    <span className="text-[10px] text-blue-400 uppercase font-black tracking-[0.2em] block mb-3">Об'єкт А (Тір 1/2)</span>
+                    <h4 className="text-xl font-bold text-white uppercase tracking-tight">ТОВ "РОМАШКА ІНВЕСТ"</h4>
+                    <p className="text-xs text-slate-500 mt-2 font-mono">ЄДРПОУ: 12345678</p>
+                    <div className="mt-4 flex gap-2">
+                      <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[9px] font-bold border border-emerald-500/20 uppercase">Trade Data Active</span>
+                      <span className="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 text-[9px] font-bold border border-indigo-500/20 uppercase">Registry Verified</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-16 h-16 rounded-full bg-cyan-500/10 flex items-center justify-center border border-cyan-500/30">
+                      <RefreshCw size={32} className="text-cyan-400 animate-spin-slow" />
+                    </div>
+                    <span className="text-[10px] text-cyan-400 font-black uppercase tracking-[0.3em]">CROSS-FUSION</span>
+                  </div>
+
+                  <div className="flex-1 w-full p-6 bg-slate-950/50 rounded-2xl border border-indigo-500/20">
+                    <span className="text-[10px] text-indigo-400 uppercase font-black tracking-[0.2em] block mb-3">Об'єкт Б (Тір 3)</span>
+                    <h4 className="text-xl font-bold text-white uppercase tracking-tight">ROMASHKA INVESTMENT LLC</h4>
+                    <p className="text-xs text-slate-500 mt-2 font-mono">LEI: 549300V55...</p>
+                    <div className="mt-4 flex gap-2">
+                      <span className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 text-[9px] font-bold border border-purple-500/20 uppercase">OSINT Profile Match</span>
+                    </div>
+                  </div>
                 </div>
+
+                {/* 3-Tier Proof Breakdown */}
+                <div className="mt-10 pt-8 border-t border-white/5 grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="p-5 bg-emerald-500/5 rounded-2xl border border-emerald-500/20 hover:bg-emerald-500/10 transition-colors">
+                    <div className="flex items-center gap-2 mb-3 text-emerald-400">
+                      <Zap size={16} />
+                      <span className="text-[10px] font-black uppercase tracking-wider">1️⃣ Тір: Економічні Потоки</span>
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed font-medium">Збіг адрес доставки та вантажоодержувачів у митних деклараціях (Customs/Logistics Fusion)</p>
+                  </div>
+
+                  <div className="p-5 bg-indigo-500/5 rounded-2xl border border-indigo-500/20 hover:bg-indigo-500/10 transition-colors">
+                    <div className="flex items-center gap-2 mb-3 text-indigo-400">
+                      <Database size={16} />
+                      <span className="text-[10px] font-black uppercase tracking-wider">2️⃣ Тір: Інституційні Реєстри</span>
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed font-medium">Ідентичний склад бенефіціарів у реєстрах ЄДР та зв'язок через судові провадження (Court/EDR Match)</p>
+                  </div>
+
+                  <div className="p-5 bg-purple-500/5 rounded-2xl border border-purple-500/20 hover:bg-purple-500/10 transition-colors">
+                    <div className="flex items-center gap-2 mb-3 text-purple-400">
+                      <Globe size={16} />
+                      <span className="text-[10px] font-black uppercase tracking-wider">3️⃣ Тір: Контексний OSINT</span>
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed font-medium">Афіліація через спільні контактні дані у Telegram витоках та медіа-згадках у розслідуваннях</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button className="px-6 py-2 bg-slate-800 text-slate-400 rounded-xl font-bold text-sm hover:text-white transition-colors uppercase tracking-widest">Mark as Non-Match</button>
+                <button className="px-6 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/20 uppercase tracking-widest">Merge Entities</button>
               </div>
             </div>
           </div>
@@ -160,9 +212,9 @@ export const KnowledgeEngineeringView: React.FC = () => {
                     <div>
                       <h4 className="text-white font-medium">{rule.name}</h4>
                       <span className={`text-xs px-2 py-0.5 rounded ${rule.category === 'fraud' ? 'bg-rose-500/20 text-rose-400' :
-                          rule.category === 'sanctions' ? 'bg-amber-500/20 text-amber-400' :
-                            rule.category === 'customs' ? 'bg-blue-500/20 text-blue-400' :
-                              'bg-slate-700 text-slate-400'
+                        rule.category === 'sanctions' ? 'bg-amber-500/20 text-amber-400' :
+                          rule.category === 'customs' ? 'bg-blue-500/20 text-blue-400' :
+                            'bg-slate-700 text-slate-400'
                         }`}>
                         {rule.category}
                       </span>
@@ -230,14 +282,14 @@ export const KnowledgeEngineeringView: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600">
+        <h1 className="text-3xl font-black text-white flex items-center gap-3 uppercase tracking-tighter italic">
+          <div className="p-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/20">
             <Zap size={28} className="text-white" />
           </div>
-          Knowledge Engineering
+          Knowledge Engineering <span className="text-slate-600">/ v55</span>
         </h1>
-        <p className="text-slate-400 mt-2 ml-16">
-          9 critical layers of knowledge formation system
+        <p className="text-slate-500 mt-3 ml-20 text-sm font-medium uppercase tracking-[0.2em]">
+          9 критичних рівнів формування знань економічного інтелекту
         </p>
       </div>
 
@@ -254,8 +306,8 @@ export const KnowledgeEngineeringView: React.FC = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className={`p-3 rounded-xl flex flex-col items-center gap-2 transition-all ${isActive
-                  ? 'bg-gradient-to-br from-cyan-500/30 to-blue-500/30 border-2 border-cyan-500/50 text-white'
-                  : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:border-slate-600'
+                ? 'bg-gradient-to-br from-cyan-500/30 to-blue-500/30 border-2 border-cyan-500/50 text-white'
+                : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:border-slate-600'
                 }`}
             >
               <Icon size={20} />
