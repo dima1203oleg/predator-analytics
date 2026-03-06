@@ -72,14 +72,19 @@ interface WebhookConfig {
 // ========================
 
 const integrations: Integration[] = [
-  { id: '1', name: '1C:Підприємство', description: 'Синхронізація з 1С', type: 'erp', status: 'connected', icon: '1️⃣', lastSync: '5 хв тому', eventsCount: 1234, isPremium: false },
-  { id: '2', name: 'SAP', description: 'Enterprise Resource Planning', type: 'erp', status: 'disconnected', icon: '💎', isPremium: true },
-  { id: '3', name: 'Salesforce', description: 'CRM інтеграція', type: 'crm', status: 'connected', icon: '☁️', lastSync: '1 год тому', eventsCount: 567, isPremium: true },
-  { id: '4', name: 'HubSpot', description: 'Marketing & CRM', type: 'crm', status: 'pending', icon: '🔶', isPremium: false },
-  { id: '5', name: 'PostgreSQL', description: 'Пряме підключення до БД', type: 'database', status: 'connected', icon: '🐘', lastSync: '2 хв тому', eventsCount: 8901, isPremium: true },
-  { id: '6', name: 'REST API', description: 'Зовнішній API доступ', type: 'api', status: 'connected', icon: '🔗', eventsCount: 45678, isPremium: false },
-  { id: '7', name: 'Bitrix24', description: 'CRM та проекти', type: 'crm', status: 'disconnected', icon: '🔵', isPremium: false },
-  { id: '8', name: 'MongoDB', description: 'NoSQL база даних', type: 'database', status: 'error', icon: '🍃', isPremium: true },
+  // Tier 1: Primary Flows Connectors
+  { id: '1', name: '1C:Підприємство', description: 'Експорт первинних документів та торгівлі', type: 'erp', status: 'connected', icon: '📦', lastSync: '5 хв тому', eventsCount: 1234, isPremium: false },
+  { id: '2', name: 'SAP S/4HANA', description: 'Enterprise Resource Planning (Flows)', type: 'erp', status: 'disconnected', icon: '💎', isPremium: true },
+  { id: '5', name: 'PostgreSQL (Internal ERP)', description: 'Пряма реплікація логістичних даних', type: 'database', status: 'connected', icon: '🐘', lastSync: '2 хв тому', eventsCount: 8901, isPremium: true },
+
+  // Tier 2: Institutional Registry Bridges
+  { id: '9', name: 'YouControl API', description: 'Автоматичне збагачення з реєстрів', type: 'api', status: 'connected', icon: '🔍', lastSync: '10 хв тому', eventsCount: 245, isPremium: true },
+  { id: '10', name: 'OpenDataBot', description: 'Моніторинг змін у реєстрах та судах', type: 'api', status: 'connected', icon: '🤖', lastSync: '1 год тому', eventsCount: 156, isPremium: false },
+
+  // Tier 3: External Context / OSINT
+  { id: '3', name: 'Salesforce', description: 'CRM інтеграція (External Intel)', type: 'crm', status: 'connected', icon: '☁️', lastSync: '1 год тому', eventsCount: 567, isPremium: true },
+  { id: '6', name: 'World-Check API', description: 'Санкційні списки та PEP-комплаєнс', type: 'api', status: 'connected', icon: '🛡️', lastSync: '30 хв тому', eventsCount: 456, isPremium: true },
+  { id: '11', name: 'Telegram Scraper', description: 'Моніторинг каналів та груп', type: 'webhook', status: 'connected', icon: '✈️', lastSync: '5 хв тому', eventsCount: 12450, isPremium: false },
 ];
 
 const webhooks: WebhookConfig[] = [
@@ -119,7 +124,7 @@ const IntegrationCard: React.FC<{ integration: Integration; onConnect: () => voi
         p-4 rounded-xl border transition-all
         ${integration.status === 'connected' ? 'border-emerald-500/30 bg-emerald-500/5' :
           integration.status === 'error' ? 'border-rose-500/30 bg-rose-500/5' :
-          'border-white/5 bg-slate-900/60'}
+            'border-white/5 bg-slate-900/60'}
         ${integration.isPremium && integration.status === 'disconnected' ? 'opacity-60' : ''}
       `}
     >
@@ -159,16 +164,15 @@ const IntegrationCard: React.FC<{ integration: Integration; onConnect: () => voi
           <button
             onClick={onConnect}
             disabled={integration.isPremium && integration.status === 'disconnected'}
-            className={`mt-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-              integration.status === 'connected'
+            className={`mt-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${integration.status === 'connected'
                 ? 'bg-slate-800 text-slate-400 hover:text-white'
                 : integration.isPremium
                   ? 'bg-amber-500/20 text-amber-400'
                   : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
-            }`}
+              }`}
           >
             {integration.status === 'connected' ? 'Налаштувати' :
-             integration.isPremium ? 'Upgrade' : 'Підключити'}
+              integration.isPremium ? 'Upgrade' : 'Підключити'}
           </button>
         </div>
       </div>
@@ -338,9 +342,8 @@ const IntegrationHub: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${
-                activeTab === tab.id ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-500 hover:text-white'
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${activeTab === tab.id ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-500 hover:text-white'
+                }`}
             >
               <tab.icon size={16} />
               {tab.label}
@@ -367,9 +370,8 @@ const IntegrationHub: React.FC = () => {
               <div className="flex gap-2">
                 <button
                   onClick={() => setFilterType('all')}
-                  className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-                    filterType === 'all' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-500 hover:text-white'
-                  }`}
+                  className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${filterType === 'all' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-500 hover:text-white'
+                    }`}
                 >
                   Всі
                 </button>
@@ -377,9 +379,8 @@ const IntegrationHub: React.FC = () => {
                   <button
                     key={key}
                     onClick={() => setFilterType(key as IntegrationType)}
-                    className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-                      filterType === key ? `bg-${config.color}-500/20 text-${config.color}-400` : 'text-slate-500 hover:text-white'
-                    }`}
+                    className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${filterType === key ? `bg-${config.color}-500/20 text-${config.color}-400` : 'text-slate-500 hover:text-white'
+                      }`}
                   >
                     {config.label}
                   </button>
