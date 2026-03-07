@@ -1,50 +1,49 @@
-# Predator Analytics - Minimal Ruff Configuration for CI Unblocking
-# This is a temporary configuration to ensure the Quality Gate passes.
-# We will restore full linting rules gradually.
+# ═══════════════════════════════════════════════════════════════
+# 🦁 PREDATOR Analytics v4.1 — Канонічна конфігурація Ruff
+# Лінтер + форматер для всієї Python кодової бази
+# ═══════════════════════════════════════════════════════════════
 
 target-version = "py312"
-line-length = 100
+line-length = 88
+src = ["app", "tests"]
 
 [lint]
-# Minimal selection to pass the build
-select = ["F"] # Only check for basics
-
-# Ignore everything else that might be causing noise
-ignore = [
-    "F",    # all flake8-fixes
-    "D",    # docstrings
-    "S",    # security
-    "E",    # pycodestyle errors
-    "W",    # pycodestyle warnings
-    "I",    # isort
-    "N",    # naming
-    "UP",   # pyupgrade
-    "B",    # bugbear
-    "A",    # builtins
-    "C4",   # comprehensions
-    "DTZ",  # datetimes
-    "G",    # logging
-    "PIE",  # simple pie
-    "PT",   # pytest
-    "RET",  # return
-    "SIM",  # simplify
-    "ARG",  # unused arguments
-    "PTH",  # pathlib
-    "ERA",  # commented code
-    "PL",   # pylint
-    "TRY",  # tryceratops
-    "PERF", # performance
-    "LOG",  # logging
-    "RUF",  # ruff-specific
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "ARG", # flake8-unused-arguments
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "PTH", # flake8-use-pathlib
+    "RUF", # ruff-specific rules
+    "S",   # flake8-bandit (безпека)
+    "ANN", # flake8-annotations (типізація)
 ]
+ignore = [
+    "ANN101", # Missing type annotation for `self`
+    "ANN102", # Missing type annotation for `cls`
+    "S101",   # Use of assert (дозволено в тестах)
+    "E501",   # Довгі рядки (поки є legacy код)
+    "ANN401", # Dynamically typed expressions (typing.Any)
+    "B008",   # Do not perform function call in argument defaults (FastAPI Depends)
+]
+
+[lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "ANN", "ARG"]
+"app/db/migrations/**/*.py" = ["ANN"]
+"app/services/telegram_*.py" = ["ANN", "ARG"]
+"app/libs/**/*.py" = ["ANN", "ARG"]
+
+[lint.isort]
+known-first-party = ["app"]
+force-sort-within-sections = true
 
 [format]
-exclude = [
-    "services/mcp_router/providers/gemini.py",
-    "services/mcp_router/providers/groq.py",
-    "services/mcp_router/providers/ollama.py",
-]
 quote-style = "double"
 indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
+line-ending = "lf"
