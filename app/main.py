@@ -1,29 +1,90 @@
-from __future__ import annotations
-
 import asyncio
+from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.libs.core.config import settings
+from app.api.v1.canonical_router import api_v1_router
+from app.core.settings import get_settings
 from app.libs.core.mq import broker
 from app.libs.core.otel import setup_otel
 from app.libs.core.structured_logger import get_logger
 
-
-# 🦁 PREDATOR SUPER-APP CORE INITIALIZED
-logger = get_logger("predator.api.main")
-
-# Autonomous AI Orchestration
+# Autonomous AI Orchestration (v4.1)
 from libs.core.autonomy.orchestrator import orchestrator
 from libs.core.autonomy.pulse_agent import SystemPulseAgent
 
+settings = get_settings()
+logger = get_logger("predator.api.main")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Канонічний lifespan context manager PREDATOR Analytics v4.1.
+    Замінює застарілі on_event('startup') та on_event('shutdown').
+    """
+    logger.info("PREDATOR_BOOT_START", mode="CANONICAL", version=settings.APP_VERSION)
+
+    # 1. Ініціалізація БД та схем
+    try:
+        from sqlalchemy import text as sa_text
+        from app.core.database import engine as db_engine
+
+        async with db_engine.begin() as conn:
+            await conn.execute(sa_text("CREATE SCHEMA IF NOT EXISTS v1"))
+            await conn.execute(sa_text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
+            logger.info("✅ Database schema initialized")
+    except Exception as e:
+        logger.warning(f"Database init skipped or failed: {e}")
+
+    # 2. Сервісна шина (Signal Bus)
+    try:
+        from app.core.signal_bus import signal_bus
+        await signal_bus.connect()
+        app.state.signal_bus = signal_bus
+        logger.info("✅ Signal Bus connected")
+    except Exception as e:
+        logger.warning(f"Signal Bus init skipped: {e}")
+
+    # 3. Message Broker (Celery/Redis)
+    try:
+        await asyncio.wait_for(broker.connect(), timeout=5.0)
+        logger.info("✅ Event Bus connected")
+    except Exception:
+        logger.warning("Event Bus connection failed")
+
+    # 4. Автономні агенти (Sovereign Agents)
+    try:
+        pulse_agent = SystemPulseAgent(api_base_url="http://localhost:8000")
+        orchestrator.register_agent(pulse_agent)
+        await orchestrator.start()
+        app.state.agents = orchestrator
+        logger.info("✅ Sovereign Agents (v4.1) initialized")
+    except Exception as e:
+        logger.exception(f"Sovereign Agents failed to start: {e}")
+
+    yield  # 🚀 Застосунок запущено
+
+    # ── SHUTDOWN ──
+    logger.info("PREDATOR_SHUTDOWN_INIT")
+    await orchestrator.stop()
+    await broker.disconnect()
+    
+    try:
+        await signal_bus.disconnect()
+    except Exception:
+        pass
+        
+    logger.info("PREDATOR_SHUTDOWN_COMPLETE")
+
 
 app = FastAPI(
-    title="Predator Analytics v55.0 API",
-    description="Економічний радар: система раннього попередження, аналізу ризиків та інформаційної переваги",
-    version="55.0.0",
+    title="Predator Analytics v4.1",
+    description="Економічний радар: система раннього попередження та OSINT аналітики",
+    version=settings.APP_VERSION,
+    lifespan=lifespan,
 )
 
 # Initialize OpenTelemetry
@@ -38,179 +99,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 🆕 Import v45 Routers
-from app.api.routers import auth as auth_router
-from app.api.routers import council as council_router
-from app.api.routers import customs as customs_router
-from app.api.routers import e2e as testing_router
-from app.api.routers import health as health_router
-from app.api.routers import opponent as opponent_router
-from app.api.routers import search as search_router
-from app.api.routers import stats as stats_router
-from app.routers.datasets import router as datasets_router
-from app.routers.graph import router as graph_router
-from app.routers.ingest import router as ingestion_router
-from app.routers.insights import router as insights_router
-from app.routers.newspaper import router as newspaper_router
-from app.routers.pipelines import router as pipelines_router
-
-
 # ============================================================================
-# API ROUTER INCLUSION
+# API ROUTER INCLUSION (Canonical v4.1)
 # ============================================================================
 
-# v45 Feature Set
-app.include_router(ingestion_router, prefix="/api/v1")
-app.include_router(datasets_router, prefix="/api/v1")
-app.include_router(pipelines_router, prefix="/api/v1")
-app.include_router(insights_router, prefix="/api/v1")
-app.include_router(graph_router, prefix="/api/v1")
-app.include_router(newspaper_router, prefix="/api/v1")
+app.include_router(api_v1_router)
 
-# Core Modules
-app.include_router(auth_router.router, prefix="/api/v1")
-try:
-    app.include_router(stats_router.router, prefix="/api/v1")
-except Exception as e:
-    logger.warning(f"Stats Router failed to load: {e}")
-app.include_router(search_router.router, prefix="/api/v1")
-app.include_router(health_router.router, prefix="/api/v45")
-app.include_router(council_router.router, prefix="/api/v1")
-app.include_router(opponent_router.router, prefix="/api/v1")
-app.include_router(testing_router.router, prefix="/api/v1")
-app.include_router(customs_router.router, prefix="/api/v1")
-
-# v32 Autonomous Response
-try:
-    from app.routers import azr as azr_router
-
-    app.include_router(azr_router.router, prefix="/api/v1")
-except ImportError:
-    logger.warning("AZR Router not found")
-
-# ============================================================================
-# v55 API v2 (Strangler Fig: parallel to v1)
-# ============================================================================
-try:
-    from app.api.v2.router import v2_router
-
-    app.include_router(v2_router)
-    logger.info("v2 API routers mounted at /api/v2")
-except ImportError as e:
-    logger.warning("v2 routers not available: %s", e)
-
-# ============================================================================
-# STARTUP & UTILS
-# ============================================================================
-
-
-@app.on_event("startup")
-async def startup_event():
-    logger.info("PREDATOR_V55_BOOT_START", mode="SOVEREIGN")
-
-    # ─── v55 Schema & Tables ───
-    try:
-        from sqlalchemy import text as sa_text
-        from app.libs.core.database import engine as db_engine
-
-        async with db_engine.begin() as conn:
-            await conn.execute(sa_text("CREATE SCHEMA IF NOT EXISTS v55"))
-            await conn.execute(sa_text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
-            logger.info("✅ v55 schema ready")
-
-        # Import all v55 ORM models so metadata knows about them
-        import app.models.v55.orm  # noqa: F401
-        from app.libs.core.database import Base
-
-        async with db_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-            logger.info("✅ v55 tables synced")
-    except Exception as e:
-        logger.warning("v55 schema init skipped: %s", e)
-
-    # ─── Signal Bus ───
-    try:
-        from app.core.signal_bus import signal_bus
-
-        await signal_bus.connect()
-        app.state.signal_bus = signal_bus
-        logger.info("✅ Signal Bus initialized")
-    except Exception as e:
-        logger.warning("Signal Bus init skipped: %s", e)
-
-    # ─── Signal Consumer ───
-    try:
-        from app.core.signal_consumer import consumer
-        await consumer.start()
-        app.state.signal_consumer = consumer
-        logger.info("✅ Signal Consumer started")
-    except Exception as e:
-        logger.warning("Signal Consumer failed to start: %s", e)
-
-    # Connect to Message Broker
-    try:
-        await asyncio.wait_for(broker.connect(), timeout=5.0)
-        logger.info("✅ Event Bus connected")
-    except Exception as e:
-        logger.warning(f"Event Bus connection failed: {e}")
-
-    # Start Autonomous Response Engine if available
-    try:
-        from app.services.azr_engine_v32 import azr_engine_v32
-
-        await azr_engine_v32.start()
-        app.state.azr = azr_engine_v32
-        logger.info("✅ AZR v32 Engine STARTED")
-    except Exception as e:
-        logger.warning(f"AZR Engine failed to start: {e}")
-
-    # Initialize and Start Sovereign Agents (v45)
-    try:
-        pulse_agent = SystemPulseAgent(api_base_url="http://localhost:8000")
-        orchestrator.register_agent(pulse_agent)
-        await orchestrator.start()
-        app.state.agents = orchestrator
-        logger.info("✅ Sovereign Agents (v45) INITIALIZED")
-    except Exception as e:
-        logger.exception(f"Sovereign Agents failed to start: {e}")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    # Disconnect Signal Bus
-    try:
-        from app.core.signal_bus import signal_bus
-
-        await signal_bus.disconnect()
-    except Exception:
-        pass
-
-    # Close DB connections
-    try:
-        from app.libs.core.database import close_db
-
-        await close_db()
-    except Exception:
-        pass
-
-    await orchestrator.stop()
-    await broker.disconnect()
-    
-    # ─── Signal Consumer ───
-    try:
-        from app.core.signal_consumer import consumer
-        await consumer.stop()
-    except Exception:
-        pass
-    
-    logger.info("PREDATOR_SHUTDOWN_COMPLETE")
+# Legacy / v45 health check (for monitoring compatibility)
+@app.get("/api/v45/health")
+async def legacy_health():
+    return {"status": "HEALTHY", "version": settings.APP_VERSION}
 
 
 @app.get("/")
 async def root():
     return {
         "system": "PREDATOR",
-        "version": "55.0.0",
+        "version": settings.APP_VERSION,
         "status": "OPERATIONAL",
         "autonomy_level": "SOVEREIGN",
         "timestamp": datetime.now(UTC).isoformat(),
@@ -219,5 +124,4 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run(app, host="0.0.0.0", port=8000)
