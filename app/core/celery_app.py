@@ -21,7 +21,7 @@ celery_app = Celery(
         "app.tasks.monitoring",
         "app.tasks.ingestion",
         "app.tasks.augmentation",
-        "app.tasks.ml_workers",
+        "app.workers.canonical_tasks",
     ],
 )
 

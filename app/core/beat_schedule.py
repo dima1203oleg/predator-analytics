@@ -65,6 +65,24 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(minute="*/2"),
         "options": {"queue": "analytics"},
     },
+    # ============================================================================
+    # CANONICAL V4.1 TASKS
+    # ============================================================================
+    "sync-customs-daily": {
+        "task": "sync.customs_data",
+        "schedule": crontab(hour=2, minute=0),  # Every day at 02:00
+        "options": {"queue": "ingestion"},
+    },
+    "sync-sanctions-daily": {
+        "task": "sync.sanctions_lists",
+        "schedule": crontab(hour=3, minute=0),  # Every day at 03:00
+        "options": {"queue": "ingestion"},
+    },
+    "weekly-analytics-report": {
+        "task": "reports.generate_weekly",
+        "schedule": crontab(hour=6, minute=0, day_of_week="monday"),  # Monday 06:00
+        "options": {"queue": "analytics"},
+    },
 }
 
 
