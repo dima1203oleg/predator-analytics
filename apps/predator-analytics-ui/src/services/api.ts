@@ -4,12 +4,20 @@ import { monitoringApi, etlApi, azrApi } from './api/monitoring';
 import { trainingApi, datasetApi, nasApi, dataCatalogApi, mlApi } from './api/ml';
 import { optimizerApi, intelligenceApi, searchApi, trinityApi, somApi, autonomyApi } from './api/intelligence';
 import { ingestionApi } from './api/ingestion';
+import { marketApi } from '@/features/market/api/market';
+import { forecastApi } from '@/features/forecast/api/forecast';
+import { diligenceApi } from '@/features/diligence/api/diligence';
 
 // Re-export config constants and clients for direct use in components
 export { apiClient, v45Client, API_BASE_URL, API_V45_URL, IS_TRUTH_ONLY_MODE };
 
 // Re-export domain APIs for direct modular usage
-export { systemApi, monitoringApi, etlApi, azrApi, trainingApi, datasetApi, nasApi, dataCatalogApi, optimizerApi, intelligenceApi, searchApi, trinityApi, somApi, autonomyApi, ingestionApi, mlApi };
+export {
+    systemApi, monitoringApi, etlApi, azrApi, trainingApi, datasetApi,
+    nasApi, dataCatalogApi, optimizerApi, intelligenceApi, searchApi,
+    trinityApi, somApi, autonomyApi, ingestionApi, mlApi,
+    marketApi, forecastApi, diligenceApi
+};
 
 // ─── Search API (used by SearchView, SearchConsole, SystemVerificationSuite) ──
 const fullSearchApi = {
@@ -70,6 +78,9 @@ export const api = {
     ai: intelligenceApi,
     optimizer: optimizerApi,
     ml: mlApi,
+    market: marketApi,
+    forecast: forecastApi,
+    diligence: diligenceApi,
 
     // ─── Datasets ──────────────────────────────────────────────────────────────
     datasets: datasetApi,
@@ -146,13 +157,15 @@ export const api = {
     getNotifications: monitoringApi.getNotifications,
     getMarketTrends: intelligenceApi.getMarketTrends,
     getMorningNewspaper: intelligenceApi.getMorningNewspaper,
-    getRiskEntities: intelligenceApi.getRiskEntities,
+    getRiskEntities: diligenceApi.getRiskEntities,
     getInvestigations: intelligenceApi.getInvestigations,
-    getMarketAnalytics: intelligenceApi.getMarketAnalytics,
+    getMarketAnalytics: marketApi.getOverview,
     getMarketSegments: intelligenceApi.getMarketSegments,
     getOpportunities: intelligenceApi.getOpportunities,
     getAiInsights: intelligenceApi.getAiInsights,
     getTopImporters: intelligenceApi.getTopImporters,
+    getCompanyProfile: diligenceApi.getCompanyProfile,
+    getDemandForecast: forecastApi.getDemandForecast,
 
     // ─── Database & Query Operations (Legacy / Global) ─────────────────────────
     getDatabases: async () => (await apiClient.get('/databases')).data,

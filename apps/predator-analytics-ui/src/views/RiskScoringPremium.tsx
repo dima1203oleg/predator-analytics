@@ -7,7 +7,8 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { api } from '../services/api';
+import { diligenceApi } from '../features/diligence';
+import { CompanyProfileResponse } from '../features/diligence/types';
 import { useAppStore } from '../store/useAppStore';
 import { premiumLocales } from '../locales/uk/premium';
 import { HoloContainer } from '../components/HoloContainer';
@@ -291,12 +292,30 @@ const RiskScoringPremium: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [entities, invs] = await Promise.all([
-          api.premium.getRiskEntities(),
-          api.premium.getInvestigations()
-        ]);
-        setRiskEntities(entities);
-        setInvestigations(invs);
+        setLoading(true);
+        // Using canonical diligenceApi
+        const entitiesData = await diligenceApi.getRiskEntities();
+
+        // Map backend companies to UI RiskEntity
+        const mappedEntities: RiskEntity[] = (entitiesData as any[]).map(e => ({
+          id: e.id || e.edrpou,
+          name: e.name,
+          edrpou: e.edrpou,
+          riskScore: Math.round(e.risk_score * 100),
+          riskLevel: e.risk_score >= 0.8 ? 'critical' : e.risk_score >= 0.6 ? 'high' : e.risk_score >= 0.4 ? 'medium' : 'low',
+          flags: e.sanctions?.length > 0 ? ['САНКЦІЇ'] : [],
+          lastActivity: 'Нещодавно',
+          totalOperations: 0,
+          suspiciousAmount: 0,
+          linkedEntities: e.owners?.length || 0,
+          investigations: 0
+        }));
+
+        setRiskEntities(mappedEntities);
+
+        // Investigations still from legacy or keep empty for now
+        // const invs = await api.premium.getInvestigations();
+        // setInvestigations(invs);
       } catch (err) {
         console.error("Failed to fetch risk data", err);
       } finally {
@@ -499,7 +518,7 @@ const RiskScoringPremium: React.FC = () => {
               glow="cyan"
               title="Центр Розслідувань"
               subtitle="Investigation Protocols"
-              icon={<CyberOrb size="sm" status="optimizing" />}
+              icon={<CyberOrb size="sm" status="processing" />}
             >
               <div className="space-y-4">
                 <div className="p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-2xl">
