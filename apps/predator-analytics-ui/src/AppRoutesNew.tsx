@@ -72,6 +72,7 @@ const UserAnalyticsDashboard = lazy(() => import('./views/UserAnalyticsDashboard
 const SystemVerificationSuite = lazy(() => import('./views/SystemVerificationSuite'));
 const DataIngestionHub = lazy(() => import('./views/DataIngestionHub'));
 const ScenarioModeling = lazy(() => import('./views/ScenarioModeling'));
+const ForecastView = lazy(() => import('./views/ForecastView'));
 
 const DatasetsPage = lazy(() => import('./views/datasets/DatasetsPage'));
 const AutoFactoryView = lazy(() => import('./views/AutoFactoryView'));
@@ -152,6 +153,7 @@ export const AppRoutesNew = () => {
             <Route path="/dashboards" element={<MonitoringView />} />
             <Route path="/intelligence" element={<IntelligenceView />} />
             <Route path="/customs-intel" element={<CustomsIntelligenceView />} />
+            <Route path="/forecast" element={<ForecastView />} />
             <Route path="/llm" element={<LLMView />} />
             <Route path="/llm/nas" element={<NasView />} />
             <Route path="/agents" element={<AgentsView />} />

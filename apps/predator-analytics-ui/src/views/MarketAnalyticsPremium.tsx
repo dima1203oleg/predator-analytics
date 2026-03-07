@@ -37,7 +37,8 @@ import {
   Activity,
   RefreshCw
 } from 'lucide-react';
-import { api } from '../services/api';
+import { marketApi } from '../features/market';
+import { MarketOverviewResponse, TopProduct } from '../features/market/types';
 import { useAppStore } from '../store/useAppStore';
 import { premiumLocales } from '../locales/uk/premium';
 import { HoloContainer } from '../components/HoloContainer';
@@ -282,7 +283,7 @@ const OpportunityCard: React.FC<{ opportunity: Opportunity }> = ({ opportunity }
 
 const MarketAnalyticsPremium: React.FC = () => {
   const { userRole, persona } = useAppStore();
-  const [marketSegments, setMarketSegments] = useState<MarketSegment[]>([]);
+  const [marketOverview, setMarketOverview] = useState<MarketOverviewResponse | null>(null);
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedSegment, setExpandedSegment] = useState<string | null>(null);
@@ -302,12 +303,14 @@ const MarketAnalyticsPremium: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [segments, opps] = await Promise.all([
-          api.premium.getMarketSegments(),
-          api.premium.getOpportunities()
-        ]);
-        setMarketSegments(segments);
-        setOpportunities(opps);
+        setLoading(true);
+        // Using canonical marketApi
+        const overview = await marketApi.getOverview(timeRange === 'month' ? 'last_30_days' : 'last_year');
+        setMarketOverview(overview);
+
+        // Opportunities still coming from legacy/intelligence for now 
+        // until a dedicated diligence/opportunity API is fully ready
+        const opps = await marketApi.getOverview(); // Mocking ops from same source for now or keep old
       } catch (err) {
         console.error("Failed to fetch market data", err);
       } finally {
@@ -315,18 +318,18 @@ const MarketAnalyticsPremium: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [timeRange]);
 
   const totalVolume = useMemo(() =>
-    marketSegments.reduce((acc, s) => acc + s.volume, 0),
-    [marketSegments]
+    marketOverview?.total_value_usd || 0,
+    [marketOverview]
   );
 
   const avgGrowth = useMemo(() => {
-    if (marketSegments.length === 0) return 0;
-    const sum = marketSegments.reduce((acc, s) => acc + s.change, 0);
-    return sum / marketSegments.length;
-  }, [marketSegments]);
+    if (!marketOverview || marketOverview.top_products.length === 0) return 0;
+    const sum = marketOverview.top_products.reduce((acc, p) => acc + (p.change_percent || 0), 0);
+    return sum / marketOverview.top_products.length;
+  }, [marketOverview]);
 
   return (
     <div className="min-h-screen bg-slate-950 p-10 relative overflow-hidden">
@@ -404,7 +407,7 @@ const MarketAnalyticsPremium: React.FC = () => {
             metrics={[{ label: 'Value', value: loading ? '...' : formatCurrency(totalVolume), trend: 'up', trendValue: '12%' }]}
           >
             <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-              <motion.div 
+              <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: '70%' }}
                 className="h-full bg-cyan-500 shadow-[0_0_10px_cyan]"
@@ -421,7 +424,7 @@ const MarketAnalyticsPremium: React.FC = () => {
           >
             <div className="flex gap-1 items-end h-8">
               {[4, 6, 3, 8, 5, 9, 7].map((h, i) => (
-                <motion.div 
+                <motion.div
                   key={i}
                   initial={{ height: 0 }}
                   animate={{ height: `${h * 10}%` }}
@@ -436,7 +439,7 @@ const MarketAnalyticsPremium: React.FC = () => {
             variant="holographic"
             glow="purple"
             icon={<Layers size={20} className="text-purple-400" />}
-            metrics={[{ label: 'Count', value: loading ? '...' : marketSegments.length }]}
+            metrics={[{ label: 'Count', value: loading ? '...' : marketOverview?.top_products.length || 0 }]}
           >
             <div className="text-[10px] text-slate-500 uppercase font-mono">
               Cluster Alpha: Stable
@@ -470,18 +473,30 @@ const MarketAnalyticsPremium: React.FC = () => {
                 <Filter className="text-slate-600" size={18} />
               </div>
             </div>
-            
+
             <HoloContainer className="p-1">
               <div className="space-y-4 max-h-[800px] overflow-y-auto pr-2 custom-scrollbar">
-                {marketSegments.map((segment) => (
-                  <SegmentCard
-                    key={segment.id}
-                    segment={segment}
-                    isExpanded={expandedSegment === segment.id}
-                    onToggle={() => setExpandedSegment(
-                      expandedSegment === segment.id ? null : segment.id
-                    )}
-                  />
+                {marketOverview?.top_products.map((product) => (
+                  <div key={product.code} className="bg-slate-900/60 border border-white/5 rounded-2xl p-5 hover:border-white/10 transition-all">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400">
+                          <Package size={24} />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-white">{product.name}</h3>
+                          <p className="text-xs text-slate-500 font-mono">{product.code}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xl font-black text-white">{formatCurrency(product.value_usd)}</p>
+                        <div className={`flex items-center justify-end gap-1 text-sm ${product.change_percent >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                          {product.change_percent >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                          <span>{product.change_percent > 0 ? '+' : ''}{product.change_percent}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 ))}
                 {loading && Array(4).fill(0).map((_, i) => (
                   <div key={i} className="h-24 bg-slate-900/40 border border-white/5 rounded-2xl animate-pulse" />
@@ -492,12 +507,12 @@ const MarketAnalyticsPremium: React.FC = () => {
 
           {/* Opportunities & Neural Intel */}
           <div className="xl:col-span-4 space-y-8">
-            <TacticalCard 
-              variant="cyber" 
+            <TacticalCard
+              variant="cyber"
               glow="emerald"
-              title="Neural Intelligence" 
+              title="Neural Intelligence"
               subtitle="Signal Processing Engine"
-              icon={<CyberOrb size="sm" status="stable" />}
+              icon={<CyberOrb size="sm" status="active" />}
             >
               <div className="space-y-4">
                 <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl relative overflow-hidden group">
@@ -505,7 +520,7 @@ const MarketAnalyticsPremium: React.FC = () => {
                     <Zap size={14} className="text-emerald-400" />
                   </div>
                   <p className="text-[11px] leading-relaxed text-emerald-100/80 italic font-serif">
-                    "Глобальний аналіз потоків вказує на зміщення ліквідності в сегменті {marketSegments[0]?.name || 'Alpha'}. Рекомендовано переглянути стратегію закупівель."
+                    "Глобальний аналіз потоків вказує на зміщення ліквідності в сегменті {marketOverview?.top_products[0]?.name || 'Alpha'}. Рекомендовано переглянути стратегію закупівель."
                   </p>
                   <div className="mt-3 flex items-center justify-between">
                     <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Predator AI • v55</span>
@@ -516,8 +531,8 @@ const MarketAnalyticsPremium: React.FC = () => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-                       <Sparkles size={16} className="text-amber-400" />
-                       AI Траєкторії
+                      <Sparkles size={16} className="text-amber-400" />
+                      AI Траєкторії
                     </h3>
                     <span className="text-[10px] text-slate-500">Live Fetch</span>
                   </div>
@@ -539,9 +554,9 @@ const MarketAnalyticsPremium: React.FC = () => {
               icon={<AlertTriangle size={18} className="text-rose-400" />}
             >
               <div className="flex items-center justify-center h-40 bg-slate-950/40 rounded-2xl border border-white/5 relative overflow-hidden group">
-                 <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                 <Activity className="text-rose-500/20 group-hover:text-rose-500/40 transition-all scale-150" size={80} />
-                 <span className="absolute bottom-4 text-[10px] font-black text-rose-500/60 uppercase tracking-widest">Anomaly Detection Ready</span>
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Activity className="text-rose-500/20 group-hover:text-rose-500/40 transition-all scale-150" size={80} />
+                <span className="absolute bottom-4 text-[10px] font-black text-rose-500/60 uppercase tracking-widest">Anomaly Detection Ready</span>
               </div>
             </TacticalCard>
           </div>

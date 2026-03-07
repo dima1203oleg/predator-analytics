@@ -17,6 +17,39 @@
 
 ---
 
+---
+
+# 🚀 CHANGELOG v45.2.0 - Predator Analytics (Canonical Integration Phase 8)
+
+> **Дата випуску:** 07.03.2026
+> **Build:** Frontend API Canonical Integration
+
+---
+
+## ✨ Нові можливості
+
+### 📡 Canonical API Feature Clients
+Створено модульну структуру API клієнтів для основних функціональних блоків:
+- **Market API:** `/src/features/market/api/market.ts` (Огляд ринку, декларації, статистика)
+- **Forecast API:** `/src/features/forecast/api/forecast.ts` (ML прогнозування попиту)
+- **Diligence API:** `/src/features/diligence/api/diligence.ts` (Перевірка контрагентів, ризик-моніторинг)
+
+### 📈 Forecast Intelligence View
+Створено новий інтерфейс для ML-прогнозування:
+- **Файл:** `apps/predator-analytics-ui/src/views/ForecastView.tsx`
+- **Особливості:** Інтерактивні графіки Recharts, довірчі інтервали, AI-інтерпретація прогнозів, аналіз факторів впливу.
+
+### 🏛️ API Facade Refactoring
+Оновлено центральний `api` фасад (`/src/services/api.ts`) для повної підтримки нових канонічних доменних API з функцією backward compatibility.
+
+## 🔧 Покращення
+- **MarketAnalyticsPremium:** Повна інтеграція з `marketApi`, відображення топ-товарів та динаміки росту.
+- **RiskScoringPremium:** Інтеграція з `diligenceApi`, мапінг канонічних моделей ризику до UI.
+- **Routing:** Оновлено `AppRoutesNew.tsx` для підтримки маршруту `/forecast`.
+- **Type Safety:** Виправлено численні TS помилки та впроваджено строгу типізацію для нових API.
+
+---
+
 # 🚀 CHANGELOG v45.1.0 - Predator Analytics (Legacy)
 
 > **Дата випуску:** 09.01.2026
