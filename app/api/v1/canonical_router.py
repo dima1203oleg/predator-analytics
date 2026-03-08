@@ -21,6 +21,8 @@ from app.api.v1.competitors import router as competitors_router
 from app.api.v1.risk import router as risk_router
 from app.api.v1.risk import sanctions_router
 from app.api.v1.analytics import router as analytics_router
+from app.api.v1.warroom import router as warroom_router
+from app.api.v1.graph import router as graph_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 
@@ -37,4 +39,6 @@ api_v1_router.include_router(copilot_router, tags=["AI Копілот"])
 api_v1_router.include_router(risk_router, tags=["Ризик"])
 api_v1_router.include_router(sanctions_router, tags=["Санкції"])
 api_v1_router.include_router(analytics_router, tags=["Аналітика"])
+api_v1_router.include_router(warroom_router, tags=["Командний Центр"])
+api_v1_router.include_router(graph_router, prefix="/graph", tags=["Графи"])
 
