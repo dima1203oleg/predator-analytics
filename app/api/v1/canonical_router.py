@@ -25,6 +25,7 @@ from app.api.v1.warroom import router as warroom_router
 from app.api.v1.graph import router as graph_router
 from app.api.v1.finance import router as finance_router
 from app.api.v1.commerce import router as commerce_router
+from app.api.v1.counter_intel import router as counter_intel_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 
@@ -45,4 +46,5 @@ api_v1_router.include_router(warroom_router, tags=["Командний Цент�
 api_v1_router.include_router(graph_router, prefix="/graph", tags=["Графи"])
 api_v1_router.include_router(finance_router, tags=["Фінансовий Інтелект"])
 api_v1_router.include_router(commerce_router, tags=["Предиктивна Комерція"])
+api_v1_router.include_router(counter_intel_router, tags=["Контррозвідка"])
 
