@@ -2919,6 +2919,90 @@ export const premiumLocales = {
   },
 
   // ============================================
+  // Premium Hub
+  // ============================================
+  hub: {
+    title: 'Premium Intelligence Hub',
+    breadcrumbs: {
+      predator: 'PREDATOR',
+      premium: 'Premium',
+    },
+    stats: {
+      declarations: 'Декларацій',
+      insights: 'Інсайтів',
+      activeAlerts: 'Активних Сповіщень',
+    },
+    tabs: {
+      overview: 'Огляд',
+      tactical: 'Tactical (Live)',
+      analytics: 'Аналітика',
+      sourcing: 'Сорсинг (AI)',
+      modeling: 'Моделювання',
+      logistics: 'Логістика',
+      reports: 'Звіти',
+      builder: 'Конструктор',
+    },
+    search: {
+      placeholder: 'Глобальний Пошук (CMD+K)',
+    },
+    paywall: {
+      title: 'Premium Intelligence Hub',
+      description: 'Отримайте доступ до найпотужнішої аналітичної платформи для бізнес-розвідки, виявлення схем та стратегічного планування на основі реальних митних даних.',
+      cta: 'Активувати Premium — $499/міс',
+      trail: '14 днів безкоштовного trial • Без зобов\'язань',
+    },
+    persona: {
+      mode: 'MODE',
+      titan: {
+        title: 'Бізнес-Розвідка',
+        subtitle: 'Перевага над конкурентами',
+        features: {
+          compAnalysis: 'Конкурентний Аналіз',
+          compAnalysisDesc: 'Хто що імпортує, по якій ціні',
+          marketForecast: 'Ринкові Прогнози',
+          marketForecastDesc: 'Передбачення попиту та цін',
+          supplierInsights: 'Інсайди Постачальників',
+          supplierInsightsDesc: 'Виявлення нових джерел',
+          priceIntel: 'Цінова Розвідка',
+          priceIntelDesc: 'Реальні ціни vs декларовані',
+        }
+      },
+      inquisitor: {
+        title: 'Контрольна Розвідка',
+        subtitle: 'Виявлення порушень та схем',
+        features: {
+          anomalyDetection: 'Детекція Аномалій',
+          anomalyDetectionDesc: 'Підозрілі декларації',
+          evasionSchemes: 'Схеми Ухилення',
+          evasionSchemesDesc: 'Патерни маніпуляцій',
+          profiling: 'Профілювання',
+          profilingDesc: 'Досьє на суб\'єктів',
+          riskScoring: 'Оцінка Ризику',
+          riskScoringDesc: 'Скоринг декларацій',
+        }
+      },
+      sovereign: {
+        title: 'Стратегічна Аналітика',
+        subtitle: 'Макро-тренди та прогнози',
+        features: {
+          geopolitics: 'Геополітика',
+          geopoliticsDesc: 'Вплив на торгівлю',
+          sectorAnalysis: 'Галузевий Аналіз',
+          sectorAnalysisDesc: 'Крос-секторні тренди',
+          aiForecasts: 'AI Прогнози',
+          aiForecastsDesc: 'Машинне передбачення',
+          systemRisks: 'Системні Ризики',
+          systemRisksDesc: 'Кореляційний аналіз',
+        }
+      }
+    },
+    insights: {
+      title: 'Свіжі Інсайти',
+      capabilities: 'Ваші Можливості',
+    }
+  },
+
+  // ============================================
   // Entity Graph
   // ============================================
   graph: {

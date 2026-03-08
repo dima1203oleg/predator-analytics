@@ -176,6 +176,14 @@ export const api = {
     getTrainingPairs: async () => (await apiClient.get('/ml/training-pairs')).data,
     executeQuery: async (sql: string) => (await apiClient.post('/databases/query', { sql })).data,
 
+    // ─── Customs & Market (Legacy) ─────────────────────────────────────────────
+    customs: {
+        getRegistry: async (q: string = '') => {
+            const res = await marketApi.getDeclarations(1, 100, { q } as any);
+            return { data: res.items || [] };
+        },
+    },
+
     // ─── Connectors ────────────────────────────────────────────────────────────
     getConnectors: async () => (await apiClient.get('/connectors')).data,
 };

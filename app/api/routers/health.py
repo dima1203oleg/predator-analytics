@@ -11,6 +11,7 @@ import logging
 import os
 import time
 from typing import Any
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Response, WebSocket, WebSocketDisconnect
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
@@ -63,7 +64,7 @@ async def get_system_metrics() -> dict[str, Any]:
         return {
             "cpu_percent": psutil.cpu_percent(interval=None),
             "memory_percent": psutil.virtual_memory().percent,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "active_containers": 0,  # Placeholder or integrate with docker
             "container_raw": "NVIDIA_GOD_SERVER",
         }
@@ -192,7 +193,7 @@ async def health_check():
     """Basic health check for Kubernetes liveness probe
     Returns 200 if service is running.
     """
-    return {"status": "ok", "timestamp": datetime.utcnow().isoformat()}
+    return {"status": "ok", "timestamp": datetime.now(timezone.utc).isoformat()}
 
 
 @router.get("/health/ready")
@@ -226,7 +227,7 @@ async def readiness_check(response: Response):
     return {
         "status": "ready" if all_healthy else "not_ready",
         "checks": results,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -286,7 +287,7 @@ async def full_health_check(response: Response):
         },
         "checks": results,
         "check_duration_ms": float(f"{total_time:.2f}"),
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "version": os.getenv("APP_VERSION", "22.0.0"),
         "environment": os.getenv("ENVIRONMENT", "development"),
     }
@@ -308,7 +309,7 @@ async def v45_production_check():
         "system": "PREDATOR",
         "version": "30.0.0",
         "mode": "SOVEREIGN",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
