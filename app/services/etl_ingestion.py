@@ -127,17 +127,19 @@ class ETLIngestionService:
             await sess.commit()
             logger.info("etl_job_created", job_id=str(job_id), filename=filename)
 
-        from app.modules.etl_engine.distribution.data_distributor import (
+        from app.modules.etl_engine.distribution import (
             DataDistributor,
             DistributionTarget,
         )
         from app.modules.etl_engine.parsing.data_parser import DataParser
         from app.modules.etl_engine.transformation.data_transformer import DataTransformer
-        from app.modules.etl_engine.deduplication.data_deduplicator import create_data_deduplicator
-        from app.modules.etl_engine.enrichment.price_normalizer import create_price_normalizer
-        from app.modules.etl_engine.enrichment.uktzed_enricher import create_uktzed_enricher
-        from app.modules.etl_engine.enrichment.geo_enricher import create_geo_enricher
-        from app.modules.etl_engine.quality.data_quality import create_quality_reporter
+        from app.modules.etl_engine.deduplication import create_data_deduplicator
+        from app.modules.etl_engine.enrichment import (
+            create_price_normalizer,
+            create_uktzed_enricher,
+            create_geo_enricher,
+        )
+        from app.modules.etl_engine.quality import create_quality_reporter, create_data_validator
 
         try:
             # 2. START ETL (Streaming if Large Excel)
@@ -157,6 +159,7 @@ class ETLIngestionService:
             uktzed_enricher = create_uktzed_enricher()
             geo_enricher = create_geo_enricher()
             quality_reporter = create_quality_reporter()
+            data_validator = create_data_validator()
 
             total_records_processed: int = 0
 
@@ -181,8 +184,11 @@ class ETLIngestionService:
                         records = transform_result.data
                         
                     dedup_result = deduplicator.process_batch(records)
-                    quality_reporter.add_duplicates(len(dedup_result["duplicate_records"]))
+                    quality_reporter.add_duplicates(int(len(dedup_result["duplicate_records"])))
                     records = dedup_result["unique_records"]
+
+                    # A.1 Validate
+                    data_validator.validate_batch(records)
                     
                     if not records:
                         continue
@@ -250,8 +256,11 @@ class ETLIngestionService:
                     records = transform_result.data
                     
                 dedup_result = deduplicator.process_batch(records)
-                quality_reporter.add_duplicates(len(dedup_result["duplicate_records"]))
+                quality_reporter.add_duplicates(int(len(dedup_result["duplicate_records"])))
                 records = dedup_result["unique_records"]
+
+                # VALIDATION
+                data_validator.validate_batch(records)
 
                 # ENRICHMENT
                 records = price_normalizer.process_batch(records)

@@ -2,18 +2,20 @@ from __future__ import annotations
 
 
 """
-Quadrant Distribution Adapter
+Quadrant (Qdrant) Distribution Adapter
 
-Handles distribution of data to Quadrant vector database.
+Handles distribution of data to Qdrant vector database using canonical service.
 """
 
+import asyncio
 from datetime import datetime
 import json
 import logging
 from typing import Any
 import uuid
 
-import numpy as np
+from app.modules.etl_engine.distribution.data_distributor import DistributionResult
+from app.services.qdrant_service import qdrant_service
 
 
 # Set up logging
@@ -22,30 +24,29 @@ logger = logging.getLogger(__name__)
 
 
 class QuadrantAdapter:
-    """Quadrant distribution adapter.
+    """Quadrant (Qdrant) distribution adapter.
 
-    This adapter handles storing vector embeddings in Quadrant database.
-    It supports vector generation, similarity search, and collection management.
+    This adapter handles storing vector embeddings in Qdrant database.
+    It uses the canonical QdrantService for all operations.
     """
 
-    def __init__(self, enabled: bool = True, collection_name: str = "people_embeddings"):
+    def __init__(self, enabled: bool = True, collection_name: str = "documents_vectors"):
         """Initialize the Quadrant adapter.
 
         Args:
             enabled: Whether this adapter is enabled
-            collection_name: Quadrant collection name for storing embeddings
+            collection_name: Qdrant collection name for storing embeddings
         """
         self.enabled = enabled
         self.collection_name = collection_name
-        self.client = None  # Would be initialized with actual Quadrant client in production
-
+        
         if enabled:
             logger.info(f"Quadrant adapter initialized with collection: {collection_name}")
         else:
             logger.info("Quadrant adapter disabled")
 
-    def distribute(self, data: dict[str | Any, list[dict[str, Any]]]) -> DistributionResult:
-        """Distribute data to Quadrant.
+    def distribute(self, data: Any) -> DistributionResult:
+        """Distribute data to Qdrant.
 
         Args:
             data: Data to distribute (single record or list of records)
@@ -53,41 +54,65 @@ class QuadrantAdapter:
         Returns:
             DistributionResult with status and metadata
         """
-        from .data_distributor import DistributionResult
-
         if not self.enabled:
-            return DistributionResult(False, "quadrant", error="Quadrant adapter is disabled")
+            return DistributionResult(True, "quadrant", data={"status": "disabled"})
 
         try:
-            # Validate data
-            if not data:
-                return DistributionResult(
-                    False, "quadrant", error="No data provided for Quadrant distribution"
+            # Prepare records
+            records = []
+            if isinstance(data, list):
+                records = data
+            elif isinstance(data, dict):
+                # Check if it's the wrapper dict from distributor
+                if "records" in data and isinstance(data["records"], list):
+                    records = data["records"]
+                else:
+                    records = [data]
+            else:
+                records = [data]
+
+            if not records:
+                return DistributionResult(True, "quadrant", data={"records_inserted": 0})
+
+            # Prepare batch for Qdrant
+            batch_docs = []
+            for record in records:
+                # We need an ID and an embedding
+                doc_id = record.get("id") or record.get("_id") or str(uuid.uuid4())
+                embedding = record.get("embedding") or record.get("_vector")
+                
+                if embedding is None:
+                    # Generate a fallback deterministic "embedding" if none provided
+                    embedding = self._generate_fallback_embedding(record)
+                
+                # Metadata is the record itself minus special fields
+                metadata: dict[str, Any] = {k: v for k, v in record.items() if not k.startswith("_") and k != "embedding"}
+                
+                batch_docs.append({
+                    "id": doc_id,
+                    "embedding": embedding,
+                    "metadata": metadata
+                })
+
+            # Execute actual indexing via service
+            tenant_id = "default"
+            if records and isinstance(records[0], dict):
+                tenant_id = str(records[0].get("tenant_id", "default"))
+
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                future = asyncio.run_coroutine_threadsafe(
+                    qdrant_service.index_batch(batch_docs, tenant_id=tenant_id),
+                    loop
                 )
+                future.result()
+            else:
+                asyncio.run(qdrant_service.index_batch(batch_docs, tenant_id=tenant_id))
 
-            # Convert single record to list for uniform processing
-            if isinstance(data, dict):
-                data = [data]
-
-            # Ensure collection exists (simulated)
-            self._ensure_collection_exists()
-
-            # Generate embeddings for each record
-            embeddings = []
-            for record in data:
-                embedding = self._generate_embedding(record)
-                embeddings.append(embedding)
-
-            # Simulate data insertion with embeddings
-            record_count = len(data)
+            record_count = len(records)
             logger.info(
-                f"Simulating Quadrant insertion: {record_count} records with embeddings into collection '{self.collection_name}'"
+                f"Successfully indexed {record_count} records into Qdrant collection '{self.collection_name}'"
             )
-
-            # Log sample data and embedding
-            if len(data) > 0:
-                logger.info(f"Sample record: {json.dumps(data[0], indent=2)}")
-                logger.info(f"Sample embedding shape: {embeddings[0].shape}")
 
             # Return success result with metadata
             return DistributionResult(
@@ -96,9 +121,7 @@ class QuadrantAdapter:
                 data={
                     "collection": self.collection_name,
                     "records_inserted": record_count,
-                    "embedding_dimension": embeddings[0].shape[0] if record_count > 0 else 0,
                     "timestamp": datetime.now().isoformat(),
-                    "sample_data": data[0] if record_count > 0 else None,
                 },
             )
 
@@ -107,171 +130,54 @@ class QuadrantAdapter:
             logger.exception(error_msg)
             return DistributionResult(False, "quadrant", error=error_msg)
 
-    def _generate_embedding(self, record: dict[str, Any]) -> np.ndarray:
-        """Generate a vector embedding from a data record.
-
+    def _generate_fallback_embedding(self, record: dict[str, Any]) -> list[float]:
+        """Generate a deterministic fallback vector embedding if none exists.
+        
         Args:
             record: Data record to embed
 
         Returns:
-            NumPy array representing the embedding
+            List of floats representing the embedding
         """
-        # In production, this would use a proper embedding model
-        # For simulation, we'll create a deterministic embedding based on record content
-
-        # Convert record to string for deterministic embedding
-        record_str = json.dumps(record, sort_keys=True)
-
-        # Create a simple hash-based embedding (for simulation only)
-        # In real implementation, this would be replaced with actual embedding model
-        hash_value = hash(record_str)
-
-        # Create a 128-dimensional embedding
-        embedding_size = 128
-        embedding = np.zeros(embedding_size)
-
-        # Fill embedding with deterministic values based on hash
-        for i in range(embedding_size):
-            embedding[i] = (hash_value + i) % 256 / 256.0  # Normalize to [0, 1]
+        # Create a 384-dimensional embedding (matching QdrantService default)
+        embedding_size = 384
+        
+        # Use a hash of the record to seed the "embedding"
+        record_str = json.dumps(record, sort_keys=True, default=str)
+        import hashlib
+        import random
+        h = hashlib.sha256(record_str.encode()).digest()
+        
+        # Use first 4 bytes as seed
+        seed = int.from_bytes(h[0:4], "little")
+        rng = random.Random(seed)
+        
+        embedding = [rng.uniform(-1, 1) for _ in range(embedding_size)]
 
         return embedding
 
-    def _ensure_collection_exists(self) -> None:
-        """Ensure that the target collection exists (simulated)."""
-        # In production, this would create the collection if it doesn't exist
-        logger.info(f"Ensuring collection '{self.collection_name}' exists (simulated)")
-
-        # Simulate collection creation
-        collection_config = {
-            "name": self.collection_name,
-            "vector_dimension": 128,  # Standard embedding dimension
-            "distance_metric": "cosine",
-            "description": "Collection for storing people data embeddings",
-        }
-        logger.debug(f"Collection config: {json.dumps(collection_config, indent=2)}")
-
     def create_collection(self, collection_name: str | None = None) -> DistributionResult:
-        """Create a new collection in Quadrant.
+        """Create a new collection in Qdrant.
 
         Args:
-            collection_name: Optional collection name (uses configured name if None)
+            collection_name: Optional name for the collection
 
         Returns:
-            DistributionResult with creation status
+            DistributionResult with status
         """
-        from .data_distributor import DistributionResult
-
-        if not self.enabled:
-            return DistributionResult(False, "quadrant", error="Quadrant adapter is disabled")
-
+        name = collection_name or self.collection_name
+        
         try:
-            target_collection = collection_name or self.collection_name
-
-            # Simulate collection creation
-            logger.info(f"Simulating Quadrant collection creation: {target_collection}")
-
-            return DistributionResult(
-                True,
-                "quadrant",
-                data={
-                    "collection": target_collection,
-                    "message": "Collection created successfully (simulated)",
-                    "vector_dimension": 128,
-                    "distance_metric": "cosine",
-                },
-            )
-
-        except Exception as e:
-            error_msg = f"Quadrant collection creation failed: {e!s}"
-            logger.exception(error_msg)
-            return DistributionResult(False, "quadrant", error=error_msg)
-
-    def search_similar(self, query_record: dict[str, Any], limit: int = 5) -> DistributionResult:
-        """Search for similar records in Quadrant.
-
-        Args:
-            query_record: Record to find similar records for
-            limit: Maximum number of results to return
-
-        Returns:
-            DistributionResult with search results
-        """
-        from .data_distributor import DistributionResult
-
-        if not self.enabled:
-            return DistributionResult(False, "quadrant", error="Quadrant adapter is disabled")
-
-        try:
-            # Generate embedding for query
-            query_embedding = self._generate_embedding(query_record)
-
-            # Simulate similarity search
-            logger.info(
-                f"Simulating Quadrant similarity search in collection '{self.collection_name}'"
-            )
-            logger.info(f"Query embedding shape: {query_embedding.shape}")
-
-            # Generate simulated results
-            simulated_results = []
-            for i in range(min(limit, 3)):  # Return up to 3 simulated results
-                similarity_score = 0.8 - (i * 0.1)  # Decreasing similarity
-                simulated_results.append(
-                    {
-                        "id": str(uuid.uuid4()),
-                        "similarity": similarity_score,
-                        "record": {
-                            "name": f"Similar Person {i + 1}",
-                            "age": 25 + i,
-                            "city": f"City {i + 1}",
-                            "score": 80.0 + (i * 2.5),
-                        },
-                    }
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                future = asyncio.run_coroutine_threadsafe(
+                    qdrant_service.create_collection(name),
+                    loop
                 )
-
-            return DistributionResult(
-                True,
-                "quadrant",
-                data={
-                    "collection": self.collection_name,
-                    "query": query_record,
-                    "results": simulated_results,
-                    "limit": limit,
-                    "timestamp": datetime.now().isoformat(),
-                },
-            )
-
+                future.result()
+            else:
+                asyncio.run(qdrant_service.create_collection(name))
+                
+            return DistributionResult(True, "quadrant", data={"collection": name})
         except Exception as e:
-            error_msg = f"Quadrant similarity search failed: {e!s}"
-            logger.exception(error_msg)
-            return DistributionResult(False, "quadrant", error=error_msg)
-
-    def get_collection_info(self) -> dict[str, Any]:
-        """Get information about the target collection.
-
-        Returns:
-            Dictionary representing the collection information
-        """
-        return {
-            "collection_name": self.collection_name,
-            "vector_dimension": 128,
-            "distance_metric": "cosine",
-            "record_count": 0,  # Simulated
-            "created_at": datetime.now().isoformat(),
-            "description": "Collection for storing people data embeddings",
-        }
-
-    def is_healthy(self) -> bool:
-        """Check if the Quadrant adapter is healthy and connected."""
-        # In production, this would check the actual Quadrant connection
-        return self.enabled
-
-    def generate_embeddings_batch(self, records: list[dict[str, Any]]) -> list[np.ndarray]:
-        """Generate embeddings for a batch of records.
-
-        Args:
-            records: List of records to embed
-
-        Returns:
-            List of embeddings as NumPy arrays
-        """
-        return [self._generate_embedding(record) for record in records]
+            return DistributionResult(False, "quadrant", error=str(e))

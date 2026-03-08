@@ -2782,6 +2782,41 @@ export const premiumLocales = {
       }
     }
   },
+
+  // ============================================
+  // Opportunities Center
+  // ============================================
+  opportunities: {
+    title: 'Можливості',
+    subtitle: 'AI-інсайти, рекомендації та аналітичні звіти',
+    tabs: {
+      insights: 'AI Інсайти',
+      recommendations: 'Рекомендації',
+      executive: 'Звіт керівнику',
+    },
+    insights: {
+      newCount: '{count} нових інсайтів',
+      analyzing: 'Аналізуємо ринок та генеруємо інсайти...',
+      empty: {
+        title: 'Наразі нових інсайтів немає',
+        subtitle: 'Ми повідомимо вас, як тільки знайдемо щось цікаве.',
+      },
+      priority: 'Пріоритет',
+      confidence: 'Впевненість',
+      impact: 'Вплив',
+      details: 'Детальніше',
+    },
+    recommendations: {
+      title: 'Рекомендації',
+      description: 'Персоналізовані рекомендації продуктів, постачальників та ринків на основі ML аналізу вашого портфеля та поведінки конкурентів.',
+      sprintInfo: '🔄 Sprint 5 — Product Recommender (COMP-111)',
+    },
+    executive: {
+      title: 'Звіт керівнику',
+      description: 'Автогенерований executive brief з ключовими метриками, ризиками та можливостями. Доступний у форматах PDF та PPTX.',
+      phaseInfo: '📋 Phase 2 — Report Generator',
+    }
+  },
 };
 
 export default premiumLocales;

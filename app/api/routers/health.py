@@ -84,7 +84,7 @@ async def check_postgres() -> dict[str, Any]:
             await conn.execute(text("SELECT 1"))
         latency = (time.time() - start) * 1000
 
-        return {"status": "healthy", "latency_ms": round(float(latency), 2)}
+        return {"status": "healthy", "latency_ms": float(f"{latency:.2f}")}
     except Exception as e:
         logger.exception(f"PostgreSQL check failed: {e}")
         return {"status": "unhealthy", "error": str(e)}
@@ -103,7 +103,7 @@ async def check_redis() -> dict[str, Any]:
         await redis.close()
 
         latency = (time.time() - start) * 1000
-        return {"status": "healthy", "latency_ms": round(float(latency), 2)}
+        return {"status": "healthy", "latency_ms": float(f"{latency:.2f}")}
     except Exception as e:
         logger.exception(f"Redis check failed: {e}")
         return {"status": "unhealthy", "error": str(e)}
@@ -128,7 +128,7 @@ async def check_qdrant() -> dict[str, Any]:
         latency = (time.time() - start) * 1000
         return {
             "status": "healthy",
-            "latency_ms": round(float(latency), 2),
+            "latency_ms": float(f"{latency:.2f}"),
             "collections": len(collections),
             "vectors_count": total_points,
         }
@@ -159,7 +159,7 @@ async def check_opensearch() -> dict[str, Any]:
         latency = (time.time() - start) * 1000
         return {
             "status": "healthy",
-            "latency_ms": round(float(latency), 2),
+            "latency_ms": float(f"{latency:.2f}"),
             "version": info.get("version", {}).get("number", "unknown"),
             "docs_count": total_docs,
         }
@@ -285,7 +285,7 @@ async def full_health_check(response: Response):
             "degraded": degraded_count,
         },
         "checks": results,
-        "check_duration_ms": round(float(total_time), 2),
+        "check_duration_ms": float(f"{total_time:.2f}"),
         "timestamp": datetime.utcnow().isoformat(),
         "version": os.getenv("APP_VERSION", "22.0.0"),
         "environment": os.getenv("ENVIRONMENT", "development"),
