@@ -37,6 +37,7 @@ from app.api.v1.retail import router as retail_router
 from app.api.v1.core_ai import router as core_ai_router
 from app.api.v1.ingestion_ocr import router as ingestion_ocr_router
 from app.api.v1.infra_k8s import router as infra_k8s_router
+from app.api.v1.infra_db_postgres import router as infra_db_postgres_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 
@@ -69,4 +70,5 @@ api_v1_router.include_router(retail_router, tags=["Retail & Fashion Modules"])
 api_v1_router.include_router(core_ai_router, tags=["Core AI Infrastructure"])
 api_v1_router.include_router(ingestion_ocr_router, tags=["Data Ingestion & OCR"])
 api_v1_router.include_router(infra_k8s_router, tags=["Infrastructure & Cluster"])
+api_v1_router.include_router(infra_db_postgres_router, tags=["Infrastructure & Databases"])
 
