@@ -12,7 +12,7 @@ import logging
 from typing import Any
 
 
-# import httpx
+import httpx
 
 
 logger = logging.getLogger(__name__)
@@ -61,73 +61,70 @@ class BaseConnector(ABC):
         self._status = ConnectorStatus.UNKNOWN
         self._last_check: datetime | None = None
 
-    async def _get_client(self) -> Any:
+    async def _get_client(self) -> httpx.AsyncClient:
         """Get or create HTTP client with connection pooling."""
-        # if self._client is None:
-        #     self._client = httpx.AsyncClient(
-        #         base_url=self.base_url,
-        #         timeout=self.timeout,
-        #         limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
-        #         headers={
-        #             "User-Agent": "Predator-Analytics/21.0",
-        #             "Accept": "application/json",
-        #             "Accept-Language": "uk-UA,uk;q=0.9,en;q=0.8"
-        #         }
-        #     )
+        if self._client is None:
+            self._client = httpx.AsyncClient(
+                base_url=self.base_url,
+                timeout=self.timeout,
+                limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
+                headers={
+                    "User-Agent": "Predator-Analytics/21.0",
+                    "Accept": "application/json",
+                    "Accept-Language": "uk-UA,uk;q=0.9,en;q=0.8"
+                }
+            )
         return self._client
 
     async def close(self) -> None:
         """Close HTTP client."""
-        # if self._client:
-        #     await self._client.aclose()
-        #     self._client = None
+        if self._client:
+            await self._client.aclose()
+            self._client = None
 
     async def _request(
         self, method: str, endpoint: str, params: dict | None = None, data: dict | None = None
     ) -> ConnectorResult:
         """Make HTTP request with error handling."""
-        # Placeholder for now
-        return ConnectorResult(success=False, data=None, error="HTTP client unavailable")
+        client = await self._get_client()
 
-        # client = await self._get_client()
+        for attempt in range(self.max_retries):
+            try:
+                response = await client.request(
+                    method=method,
+                    url=endpoint,
+                    params=params,
+                    json=data
+                )
+                response.raise_for_status()
 
-        # for attempt in range(self.max_retries):
-        #     try:
-        #         response = await client.request(
-        #             method=method,
-        #             url=endpoint,
-        #             params=params,
-        #             json=data
-        #         )
-        #         response.raise_for_status()
+                return ConnectorResult(
+                    success=True,
+                    data=response.json(),
+                    source=self.name,
+                    records_count=1
+                )
 
-        #         return ConnectorResult(
-        #             success=True,
-        #             data=response.json(),
-        #             source=self.name,
-        #             records_count=1
-        #         )
+            except httpx.HTTPStatusError as e:
+                logger.warning(f"{self.name} HTTP error: {e.response.status_code}")
+                if attempt == self.max_retries - 1:
+                    return ConnectorResult(
+                        success=False,
+                        data=None,
+                        error=f"HTTP {e.response.status_code}",
+                        source=self.name
+                    )
 
-        #     except httpx.HTTPStatusError as e:
-        #         logger.warning(f"{self.name} HTTP error: {e.response.status_code}")
-        #         if attempt == self.max_retries - 1:
-        #             return ConnectorResult(
-        #                 success=False,
-        #                 data=None,
-        #                 error=f"HTTP {e.response.status_code}",
-        #                 source=self.name
-        #             )
-
-        #     except httpx.RequestError as e:
-        #         logger.warning(f"{self.name} request error: {e}")
-        #         if attempt == self.max_retries - 1:
-        #             return ConnectorResult(
-        #                 success=False,
-        #                 data=None,
-        #                 error=str(e),
-        #                 source=self.name
-        #             )
-        # return None
+            except httpx.RequestError as e:
+                logger.warning(f"{self.name} request error: {e}")
+                if attempt == self.max_retries - 1:
+                    return ConnectorResult(
+                        success=False,
+                        data=None,
+                        error=str(e),
+                        source=self.name
+                    )
+        return ConnectorResult(success=False, data=None, error="Unknown error", source=self.name)
 
     @abstractmethod
     async def search(self, query: str, limit: int = 20, **kwargs) -> ConnectorResult:

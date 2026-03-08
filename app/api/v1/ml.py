@@ -426,3 +426,64 @@ async def explain_document(document_id: str, query: str):
     except Exception as e:
         logger.exception(f"Explanation failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+# ============================================================================
+# Training Endpoints (v4.2.0)
+# ============================================================================
+
+class TrainForecastRequest(BaseModel):
+    product_code: str
+    include_market_data: bool = True
+    limit: int = 1000
+
+@router.post("/train/forecast")
+async def train_forecast(request: TrainForecastRequest):
+    """Trigger training for a demand forecast model."""
+    try:
+        from app.services.ml import get_training_service
+        
+        # 1. Fetch data for training (Market/Customs data)
+        # In real scenario, this would query the DB. 
+        # Here we simulate data gathering if DB is sparse.
+        training_data = []
+        if request.include_market_data:
+            # Mocking some trend data for the demonstration
+            import random
+            from datetime import datetime, timedelta
+            now = datetime.now()
+            for i in range(24): # 2 years of monthly data
+                date = (now - timedelta(days=30 * (24 - i))).strftime("%Y-%m-%d")
+                training_data.append({
+                    "date": date,
+                    "volume": 1000 + (i * 50) + random.randint(-200, 200) # upward trend
+                })
+        
+        service = get_training_service()
+        result = await service.train_forecast_model(request.product_code, training_data)
+        
+        if result["status"] == "failed":
+            raise HTTPException(status_code=400, detail=result["error"])
+            
+        return result
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception(f"Training failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/models")
+async def list_models():
+    """List all available ML models and their statuses."""
+    from app.services.ml import get_training_service
+    service = get_training_service()
+    return {"models": service.model_registry}
+
+@router.get("/train/status/{product_code}")
+async def get_train_status(product_code: str):
+    """Get training status and metrics for a product model."""
+    from app.services.ml import get_training_service
+    service = get_training_service()
+    status = service.get_model_status(product_code)
+    if not status:
+        raise HTTPException(status_code=404, detail=f"No model found for {product_code}")
+    return status
