@@ -1,13 +1,14 @@
 """
-Канонічний рівень роботи з БАЗОЮ ДАНИХ PREDATOR Analytics v4.1.
+Канонічний рівень роботи з БАЗОЮ ДАНИХ PREDATOR Analytics v4.2.0.
 
+Єдиний canonical Base для всіх ORM моделей.
 Використовує SQLAlchemy asyncpg pool.
 Конфігурація з app.core.settings.
 """
 
 from __future__ import annotations
 
-from collections.abc import AsyncGenerator, Generator
+from collections.abc import AsyncGenerator
 from typing import Any
 
 from sqlalchemy import NullPool
@@ -16,7 +17,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.orm import DeclarativeBase, declared_attr
+from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass, declared_attr
 
 from app.core.settings import get_settings
 
@@ -45,16 +46,23 @@ SessionLocal = async_sessionmaker(
 )
 
 
-# ── Declarative Base ─────────────────────────────────────────
+# ── Declarative Base (CANONICAL — v4.2.0) ────────────────────
 
 class Base(DeclarativeBase):
     """
-    Базовий клас для всіх моделей БД.
-    З автоматичним найменуванням таблиць у нижньому регістрі.
+    Єдиний базовий клас для ВСІХ ORM моделей PREDATOR Analytics.
+
+    Всі моделі (entities.py, declaration.py, company.py, product.py,
+    country.py, etc.) ПОВИННІ наслідувати саме цей Base.
+
+    Якщо модель визначає __tablename__ явно — використовується явне ім'я.
+    Якщо ні — генерується автоматично в нижньому регістрі.
     """
 
     @declared_attr.directive
     def __tablename__(cls) -> str:
+        # Якщо клас визначив __tablename__ вручну — SQLAlchemy
+        # використає його, не викликаючи declared_attr
         return cls.__name__.lower()
 
 
@@ -63,14 +71,8 @@ class Base(DeclarativeBase):
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
     FastAPI dependency: забезпечує сесію для роутів.
-    
+
     Закривається автоматично після завершення запиту.
     """
     async with SessionLocal() as session:
         yield session
-
-
-def get_db_sync() -> Generator[AsyncSession, None, None]:
-     """Sync version (not recommended, but for legacy compatibility)"""
-     # This is tricky with asyncpg, but for now we keep it async-only
-     pass

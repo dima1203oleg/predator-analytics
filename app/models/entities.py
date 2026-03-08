@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 
-"""Predator Analytics v45 - Canonical Entities
+"""Predator Analytics v4.2.0 - Canonical Entities
 Source, Dataset, Job, Index, Artifact definitions.
+
+NOTE: Base is imported from app.core.database (single source of truth).
+All ORM models must extend this canonical Base.
 """
 from datetime import datetime
 from enum import StrEnum
@@ -12,11 +15,9 @@ from uuid import UUID, uuid4
 from pydantic import BaseModel, Field
 from sqlalchemy import JSON, Boolean, Column, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-
-Base = declarative_base()
+from app.core.database import Base  # Canonical Base (DeclarativeBase)
 
 # ============================================================================
 # ENUMS
