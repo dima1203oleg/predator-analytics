@@ -132,6 +132,7 @@ class ETLIngestionService:
         )
         from app.modules.etl_engine.parsing.data_parser import DataParser
         from app.modules.etl_engine.transformation.data_transformer import DataTransformer
+        from app.modules.etl_engine.deduplication.data_deduplicator import create_data_deduplicator
 
         try:
             # 2. START ETL (Streaming if Large Excel)
@@ -146,6 +147,7 @@ class ETLIngestionService:
             }
             distributor = DataDistributor(config=indexer_config)
             transformer = DataTransformer()
+            deduplicator = create_data_deduplicator()
 
             total_records_processed = 0
 
@@ -163,11 +165,17 @@ class ETLIngestionService:
                 ):
                     chunk_size = len(df_chunk)
 
-                    # A. Transform
+                    # A. Transform & Deduplicate
                     records = df_chunk.to_dict(orient="records")
                     transform_result = transformer.normalize_data_types(records)
                     if transform_result.success:
                         records = transform_result.data
+                        
+                    dedup_result = deduplicator.process_batch(records)
+                    records = dedup_result["unique_records"]
+                    
+                    if not records:
+                        continue
 
                     # B. Distribute
                     await asyncio.to_thread(
@@ -217,12 +225,15 @@ class ETLIngestionService:
                     job_id, ETLState.UPLOADED, {"progress": {"records_total": total_records}}
                 )
 
-                # TRANSFORMATION
+                # TRANSFORMATION & DEDUPLICATION
                 await self._update_job_state(job_id, ETLState.PROCESSING)
                 records = df.to_dict(orient="records")
                 transform_result = transformer.normalize_data_types(records)
                 if transform_result.success:
                     records = transform_result.data
+                    
+                dedup_result = deduplicator.process_batch(records)
+                records = dedup_result["unique_records"]
 
                 # DISTRIBUTION
                 await self._update_job_state(
