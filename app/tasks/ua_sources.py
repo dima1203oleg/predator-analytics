@@ -10,10 +10,8 @@ import logging
 
 from celery import shared_task
 
-
-# Import services inside tasks to avoid circular imports during startup
-# from app.services.deep_scan import deep_scan_service
-# from app.services.graph_builder import graph_builder
+from app.connectors.customs import customs_connector
+from app.connectors.prozorro import prozorro_connector
 
 logger = logging.getLogger(__name__)
 
@@ -167,12 +165,22 @@ def sync_source_task(source_id: str):
 
         # --- CASE B: LEGACY UA SOURCES ---
         if source_id == "customs":
-            logger.info("Checking data.gov.ua API for updates...")
-            time.sleep(1)
+            logger.info("Syncing customs from data.gov.ua via Celery...")
+            result = run_async(customs_connector.fetch_latest_declarations(limit=100))
             return {
                 "status": "completed",
                 "source": source_id,
-                "records_synced": 450,
+                "records_synced": len(result),
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+
+        if source_id == "prozorro":
+            logger.info("Syncing prozorro tenders via Celery...")
+            result = run_async(prozorro_connector.search(query="паливо", limit=50))
+            return {
+                "status": "completed",
+                "source": source_id,
+                "records_synced": result.records_count,
                 "timestamp": datetime.now(UTC).isoformat(),
             }
 

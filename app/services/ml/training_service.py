@@ -21,6 +21,7 @@ from sklearn.metrics import mean_absolute_percentage_error, r2_score
 
 from app.libs.core.database import get_db_sync
 from app.services.ml.forecast_service import get_forecast_service
+from app.services.ml.mlflow_utils import tracker
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +67,12 @@ class TrainingService:
             # 2. Split and Train
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
             
+            # Start tracking run if needed
+            run_name = f"forecast_{product_code}_{job_id}"
+            tracker.start_run(run_name=run_name)
+            tracker.log_param("product_code", product_code)
+            tracker.log_param("data_points", len(df))
+            
             model = GradientBoostingRegressor(
                 n_estimators=150, 
                 learning_rate=0.05, 
@@ -73,11 +80,18 @@ class TrainingService:
                 random_state=42
             )
             model.fit(X_train, y_train)
+            
+            tracker.log_param("n_estimators", 150)
+            tracker.log_param("learning_rate", 0.05)
 
             # 3. Validation
             y_pred = model.predict(X_test)
             mape = mean_absolute_percentage_error(y_test, y_pred)
             r2 = r2_score(y_test, y_pred)
+            
+            tracker.log_metric("mape", float(mape))
+            tracker.log_metric("r2", float(r2))
+            tracker.end_run()
 
             # 4. Registration (Metadata)
             model_info = {

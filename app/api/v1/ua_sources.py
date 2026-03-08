@@ -6,7 +6,12 @@ from datetime import UTC, datetime
 
 from fastapi import APIRouter
 
+import logging
+import uuid
 from app.services.ai_engine import ai_engine
+
+
+logger = logging.getLogger("api.ua_sources")
 
 
 router = APIRouter(prefix="/ua-sources", tags=["UA Sources"])
@@ -17,7 +22,12 @@ async def get_status():
     """Get UA Sources status."""
     return {
         "status": "OPERATIONAL",
-        "sources": {"prozorro": "ACTIVE", "edr": "ACTIVE", "nbu": "ACTIVE"},
+        "sources": {
+            "prozorro": "ACTIVE", 
+            "customs": "ACTIVE",
+            "nbu": "ACTIVE",
+            "tax": "ACTIVE"
+        },
         "timestamp": datetime.now(UTC).isoformat(),
     }
 
@@ -66,4 +76,16 @@ async def sync_source(source_id: str):
         else:
             return {"status": "FAILED", "source": source_id, "error": "No records found on data.gov.ua"}
             
+    if source_id == "prozorro":
+        from app.connectors.prozorro import prozorro_connector
+        
+        # Trigger background search/sync for common keywords
+        result = await prozorro_connector.search(query="паливо", limit=10)
+        
+        return {
+            "status": "COMPLETED",
+            "source": source_id,
+            "records_found": result.records_count,
+            "timestamp": datetime.now(UTC).isoformat()
+        }
     return {"status": "PENDING", "source": source_id, "message": "Sync started in background via Celery"}
