@@ -1,0 +1,87 @@
+{
+    "version": "0.2",
+    "language": "en,uk",
+    "ignorePaths": [
+        "venv/**",
+        "venv_fix/**",
+        "acp_core/venv/**",
+        "node_modules/**",
+        ".git/**",
+        "*.lock",
+        "alembic/versions/**"
+    ],
+    "words": [
+        "poolclass",
+        "sessionmaker",
+        "autoflush",
+        "onupdate",
+        "sqlalchemy",
+        "asyncpg",
+        "devpassword",
+        "qualname",
+        "levelname",
+        "datefmt",
+        "NOTSET",
+        "qdrant",
+        "Qdrant",
+        "QDRANT",
+        "opensearch",
+        "opensearchpy",
+        "OPENSEARCH",
+        "LITELLM",
+        "litellm",
+        "fatf",
+        "FATF",
+        "DCFTA",
+        "EAEU",
+        "MERCOSUR",
+        "OFAC",
+        "SQLUUID",
+        "Postgre",
+        "MAPE",
+        "CERS",
+        "UKTFEA",
+        "healthchecks",
+        "xgboost",
+        "psutil"
+    ],
+    "flagWords": [],
+    "dictionaries": [
+        "uk_UA"
+    ],
+    "dictionaryDefinitions": [
+        {
+            "name": "uk_UA",
+            "path": "",
+            "description": "Ukrainian dictionary placeholder"
+        }
+    ],
+    "languageSettings": [
+        {
+            "languageId": "python",
+            "locale": "en,uk",
+            "dictionaries": [
+                "uk_UA"
+            ]
+        },
+        {
+            "languageId": "typescript,typescriptreact",
+            "locale": "en,uk",
+            "dictionaries": [
+                "uk_UA"
+            ]
+        }
+    ],
+    "enabledLanguageIds": [
+        "python",
+        "typescript",
+        "typescriptreact",
+        "javascript",
+        "ini",
+        "mako"
+    ],
+    "allowCompoundWords": true,
+    "enableFiletypes": [
+        "!mako"
+    ]
+}

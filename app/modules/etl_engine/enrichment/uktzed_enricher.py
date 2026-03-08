@@ -32,17 +32,16 @@ class UktzedEnricher:
             code = record.get("Код товару", "")
 
             # Ensure string (defensive)
-            if not isinstance(code, str):
-                code = str(code) if code else ""
+            code_str: str = str(record.get("Код товару", ""))
 
             # Standardize length if less than 10 digits (some variants trim leading zeroes)
             # Typically 'Код товару' can be 10 digits. We shouldn't pad if it's
             # naturally short, but we should parse what's there.
             
             # The structure is standard logic based
-            c_chapter = code[:2] if len(code) >= 2 else None
-            c_heading = code[:4] if len(code) >= 4 else None
-            c_subheading = code[:6] if len(code) >= 6 else None
+            c_chapter = code_str[:2] if len(code_str) >= 2 else None
+            c_heading = code_str[:4] if len(code_str) >= 4 else None
+            c_subheading = code_str[:6] if len(code_str) >= 6 else None
             
             # Additional enrichment like actual names could happen here based on a local dictionary
             # For now, it just exposes the hierarchical fields to allow aggregation.
@@ -52,7 +51,7 @@ class UktzedEnricher:
             record["_uktzed_subheading"] = c_subheading
             
             # Basic validation
-            record["_is_valid_uktzed"] = len(code) == 10 and code.isdigit()
+            record["_is_valid_uktzed"] = len(code_str) == 10 and code_str.isdigit()
 
             enriched_records.append(record)
 
