@@ -133,6 +133,8 @@ class ETLIngestionService:
         from app.modules.etl_engine.parsing.data_parser import DataParser
         from app.modules.etl_engine.transformation.data_transformer import DataTransformer
         from app.modules.etl_engine.deduplication.data_deduplicator import create_data_deduplicator
+        from app.modules.etl_engine.enrichment.price_normalizer import create_price_normalizer
+        from app.modules.etl_engine.enrichment.uktzed_enricher import create_uktzed_enricher
 
         try:
             # 2. START ETL (Streaming if Large Excel)
@@ -148,6 +150,8 @@ class ETLIngestionService:
             distributor = DataDistributor(config=indexer_config)
             transformer = DataTransformer()
             deduplicator = create_data_deduplicator()
+            price_normalizer = create_price_normalizer()
+            uktzed_enricher = create_uktzed_enricher()
 
             total_records_processed = 0
 
@@ -177,7 +181,11 @@ class ETLIngestionService:
                     if not records:
                         continue
 
-                    # B. Distribute
+                    # B. Enrich (Price & UKTZED)
+                    records = price_normalizer.process_batch(records)
+                    records = uktzed_enricher.process_batch(records)
+
+                    # C. Distribute
                     await asyncio.to_thread(
                         distributor.distribute_batch, records, DistributionTarget.ALL, 500
                     )
@@ -234,6 +242,10 @@ class ETLIngestionService:
                     
                 dedup_result = deduplicator.process_batch(records)
                 records = dedup_result["unique_records"]
+
+                # ENRICHMENT
+                records = price_normalizer.process_batch(records)
+                records = uktzed_enricher.process_batch(records)
 
                 # DISTRIBUTION
                 await self._update_job_state(
