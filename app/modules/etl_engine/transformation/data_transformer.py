@@ -323,6 +323,37 @@ class DataTransformer:
                     if field in normalized:
                         normalized[field] = str(normalized[field])
 
+                # Customs data normalization (Ukraine Customs OSINT)
+                customs_float_fields = [
+                    "Маса, брутто, кг",
+                    "Маса, нетто, кг",
+                    "Вага по митній декларації",
+                    "Фактурна варість, валюта контракту",
+                    "Розрахункова фактурна вартість, дол. США / кг",
+                    "Розрахункова митна вартість, нетто дол. США / кг",
+                    "Розрахункова митна вартість, дол. США / дод. од.",
+                    "Розрахункова митна вартість,брутто дол. США / кг",
+                    "Мін.База Дол/кг.",
+                    "КЗ Нетто Дол/кг.",
+                    "Кількість"
+                ]
+
+                for field in customs_float_fields:
+                    if field in normalized and not pd.isna(normalized[field]) if pd is not None else normalized.get(field) is not None:
+                        try:
+                            # Parse European format floats if needed (e.g. 1,23 -> 1.23) and handle empty strings
+                            val = str(normalized[field]).replace(',', '.').strip()
+                            normalized[field] = float(val) if val else 0.0
+                        except (ValueError, TypeError):
+                            normalized[field] = 0.0
+
+                # Normalize Customs Code (Код товару) as string, strip trailing .0 from float parses
+                if "Код товару" in normalized and not pd.isna(normalized["Код товару"]) if pd is not None else normalized.get("Код товару") is not None:
+                    val_str = str(normalized["Код товару"]).strip()
+                    if val_str.endswith(".0"):
+                        val_str = val_str[:-2]
+                    normalized["Код товару"] = val_str
+
                 return normalized
 
             if isinstance(data, list):
