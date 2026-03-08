@@ -1,263 +1,129 @@
 from __future__ import annotations
 
-
 """
-PostgreSQL Distribution Adapter
+PostgreSQL Distribution Adapter (Canonical v4.2.0)
 
-Handles distribution of data to PostgreSQL relational database.
+Handles distribution of data to PostgreSQL relational database using asyncpg
+for extremely fast bulk insertion. (COMP-041)
 """
 
+import asyncio
 from datetime import datetime
 import json
 import logging
+import os
 from typing import Any
 import uuid
 
+import asyncpg
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
+from .data_distributor import DistributionResult
+
 logger = logging.getLogger(__name__)
-
 
 class PostgreSQLAdapter:
     """PostgreSQL distribution adapter.
 
-    This adapter handles storing structured data in PostgreSQL database.
-    It supports table creation, data insertion, and schema management.
+    Handles storing structured data in PostgreSQL using fast asyncpg bulk inserts.
     """
 
-    def __init__(self, enabled: bool = True, table_name: str = "people_data"):
-        """Initialize the PostgreSQL adapter.
-
-        Args:
-            enabled: Whether this adapter is enabled
-            table_name: PostgreSQL table name for storing data
-        """
+    def __init__(self, enabled: bool = True, table_name: str = "staging_customs_v45"):
         self.enabled = enabled
         self.table_name = table_name
-        self.connection = None  # Would be initialized with actual DB connection in production
+        self.raw_db_url = os.getenv(
+            "DATABASE_URL", "postgresql://predator:predator_password@localhost:5432/predator_db"
+        )
+        # Ensure asyncpg compatible URL (no +asyncpg) for direct asyncpg usage
+        self.db_url = self.raw_db_url.replace("postgresql+asyncpg://", "postgresql://")
+        
+        # Track whether we've created the table during this session
+        self._table_ensured = False
 
         if enabled:
-            logger.info(f"PostgreSQL adapter initialized with table: {table_name}")
+            logger.info(f"PostgreSQL adapter initialized for table: {table_name}")
         else:
-            logger.info("PostgreSQL adapter disabled")
+            logger.info("PostgreSQL adapter is disabled")
 
-    def distribute(self, data: dict[str | Any, list[dict[str, Any]]]) -> DistributionResult:
-        """Distribute data to PostgreSQL.
-
-        Args:
-            data: Data to distribute (single record or list of records)
-
-        Returns:
-            DistributionResult with status and metadata
-        """
-        from .data_distributor import DistributionResult
-
+    def distribute(self, data: dict[str, Any] | list[dict[str, Any]]) -> DistributionResult:
+        """Distribute data to PostgreSQL using asyncpg."""
         if not self.enabled:
-            return DistributionResult(False, "postgresql", error="PostgreSQL adapter is disabled")
+            return DistributionResult(False, "postgresql", error="Adapter is disabled")
+
+        if not data:
+            return DistributionResult(False, "postgresql", error="No data provided")
+
+        records = data if isinstance(data, list) else [data]
 
         try:
-            # Validate data
-            if not data:
-                return DistributionResult(
-                    False, "postgresql", error="No data provided for PostgreSQL distribution"
-                )
-
-            # Convert single record to list for uniform processing
-            if isinstance(data, dict):
-                data = [data]
-
-            # Ensure table exists (simulated)
-            self._ensure_table_exists()
-
-            # Simulate data insertion
-            record_count = len(data)
-            logger.info(
-                f"Simulating PostgreSQL insertion: {record_count} records into table '{self.table_name}'"
-            )
-
-            # Log sample data
-            if len(data) > 0:
-                logger.info(f"Sample record: {json.dumps(data[0], indent=2)}")
-
-            # Return success result with metadata
-            return DistributionResult(
-                True,
-                "postgresql",
-                data={
-                    "table": self.table_name,
-                    "records_inserted": record_count,
-                    "timestamp": datetime.now().isoformat(),
-                    "sample_data": data[0] if record_count > 0 else None,
-                },
-            )
+            # We run the async logic in the current thread. 
+            # If there's an existing loop we must use it (like when called directly),
+            # but usually this adapter is invoked from `asyncio.to_thread`, which has no loop.
+            try:
+                loop = asyncio.get_running_loop()
+                # Run as a task if we are in an event loop (Not ideal for standard use, but safe)
+                result = loop.run_until_complete(self._distribute_async(records))
+            except RuntimeError:
+                # No running loop, perfect for `asyncio.to_thread`
+                result = asyncio.run(self._distribute_async(records))
+                
+            return result
 
         except Exception as e:
             error_msg = f"PostgreSQL distribution failed: {e!s}"
             logger.exception(error_msg)
             return DistributionResult(False, "postgresql", error=error_msg)
 
-    def _ensure_table_exists(self) -> None:
-        """Ensure that the target table exists (simulated)."""
-        # In production, this would create the table if it doesn't exist
-        logger.info(f"Ensuring table '{self.table_name}' exists (simulated)")
+    async def _distribute_async(self, records: list[dict[str, Any]]) -> DistributionResult:
+        """Asynchronous bulk insert implementation."""
+        columns_list = list(records[0].keys())
+        
+        if not self._table_ensured:
+            await self._create_table_dynamic(columns_list)
+            self._table_ensured = True
 
-        # Simulate table creation SQL
-        create_table_sql = f"""
-        CREATE TABLE IF NOT EXISTS {self.table_name} (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            age INTEGER NOT NULL,
-            city VARCHAR(255) NOT NULL,
-            score DECIMAL(5,2) NOT NULL,
-            source_format VARCHAR(50) NOT NULL,
-            timestamp TIMESTAMP NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-        """
-        logger.debug(f"Table creation SQL: {create_table_sql}")
-
-    def create_table(self, table_name: str | None = None) -> DistributionResult:
-        """Create a new table in PostgreSQL.
-
-        Args:
-            table_name: Optional table name (uses configured name if None)
-
-        Returns:
-            DistributionResult with creation status
-        """
-        from .data_distributor import DistributionResult
-
-        if not self.enabled:
-            return DistributionResult(False, "postgresql", error="PostgreSQL adapter is disabled")
-
+        conn = await asyncpg.connect(self.db_url)
         try:
-            target_table = table_name or self.table_name
-
-            # Simulate table creation
-            logger.info(f"Simulating PostgreSQL table creation: {target_table}")
-
-            return DistributionResult(
-                True,
-                "postgresql",
-                data={"table": target_table, "message": "Table created successfully (simulated)"},
-            )
-
-        except Exception as e:
-            error_msg = f"PostgreSQL table creation failed: {e!s}"
-            logger.exception(error_msg)
-            return DistributionResult(False, "postgresql", error=error_msg)
-
-    def execute_query(self, query: str) -> DistributionResult:
-        """Execute a SQL query on PostgreSQL.
-
-        Args:
-            query: SQL query to execute
-
-        Returns:
-            DistributionResult with query execution status
-        """
-        from .data_distributor import DistributionResult
-
-        if not self.enabled:
-            return DistributionResult(False, "postgresql", error="PostgreSQL adapter is disabled")
-
-        try:
-            # Simulate query execution
-            logger.info(f"Simulating PostgreSQL query execution: {query[:50]}...")
-
+            placeholders = ", ".join([f"${i + 1}" for i in range(len(columns_list))])
+            
+            # Escape col names to avoid syntax errors with spaces or special chars
+            safe_cols = ", ".join([f'"{col}"' for col in columns_list])
+            insert_sql = f"INSERT INTO {self.table_name} ({safe_cols}) VALUES ({placeholders})"
+            
+            # Convert all fields to strings for safe text ingestion.
+            # In a strict schema pipeline, we would map to actual types.
+            batch_values = [[str(r.get(col, "")) for col in columns_list] for r in records]
+            
+            await conn.executemany(insert_sql, batch_values)
+            
+            record_count = len(records)
+            logger.info(f"PostgreSQL inserted {record_count} records into '{self.table_name}'")
+            
             return DistributionResult(
                 True,
                 "postgresql",
                 data={
-                    "query": query[:100] + "..." if len(query) > 100 else query,
-                    "message": "Query executed successfully (simulated)",
-                    "rows_affected": 0,  # Simulated
+                    "table": self.table_name,
+                    "records_inserted": record_count,
+                    "timestamp": datetime.now().isoformat()
                 },
             )
+        finally:
+            await conn.close()
 
-        except Exception as e:
-            error_msg = f"PostgreSQL query execution failed: {e!s}"
-            logger.exception(error_msg)
-            return DistributionResult(False, "postgresql", error=error_msg)
-
-    def get_table_schema(self) -> dict[str, Any]:
-        """Get the schema of the target table.
-
-        Returns:
-            Dictionary representing the table schema
-        """
-        return {
-            "table_name": self.table_name,
-            "columns": [
-                {"name": "id", "type": "SERIAL", "nullable": False, "primary_key": True},
-                {"name": "name", "type": "VARCHAR(255)", "nullable": False},
-                {"name": "age", "type": "INTEGER", "nullable": False},
-                {"name": "city", "type": "VARCHAR(255)", "nullable": False},
-                {"name": "score", "type": "DECIMAL(5,2)", "nullable": False},
-                {"name": "source_format", "type": "VARCHAR(50)", "nullable": False},
-                {"name": "timestamp", "type": "TIMESTAMP", "nullable": False},
-                {"name": "created_at", "type": "TIMESTAMP", "nullable": False},
-                {"name": "updated_at", "type": "TIMESTAMP", "nullable": False},
-            ],
-            "description": "Table for storing ETL processed people data",
-        }
-
-    def is_healthy(self) -> bool:
-        """Check if the PostgreSQL adapter is healthy and connected."""
-        # In production, this would check the actual database connection
-        return self.enabled
-
-    def begin_transaction(self) -> DistributionResult:
-        """Begin a database transaction.
-
-        Returns:
-            DistributionResult with transaction status
-        """
-        from .data_distributor import DistributionResult
-
-        if not self.enabled:
-            return DistributionResult(False, "postgresql", error="PostgreSQL adapter is disabled")
-
+    async def _create_table_dynamic(self, columns: list[str]) -> None:
+        """Creates table dynamically based on record columns if it doesn't exist."""
+        conn = await asyncpg.connect(self.db_url)
         try:
-            logger.info("Simulating PostgreSQL transaction begin")
-
-            return DistributionResult(
-                True,
-                "postgresql",
-                data={
-                    "message": "Transaction begun successfully (simulated)",
-                    "transaction_id": str(uuid.uuid4()),
-                },
+            # All TEXT is safe for raw imported data in landing/staging tables
+            cols_def = ", ".join([f'"{col}" TEXT' for col in columns])
+            sql = f"""
+            CREATE TABLE IF NOT EXISTS {self.table_name} (
+                id SERIAL PRIMARY KEY,
+                {cols_def},
+                created_at TIMESTAMP DEFAULT NOW()
             )
-
-        except Exception as e:
-            error_msg = f"PostgreSQL transaction begin failed: {e!s}"
-            logger.exception(error_msg)
-            return DistributionResult(False, "postgresql", error=error_msg)
-
-    def commit_transaction(self) -> DistributionResult:
-        """Commit a database transaction.
-
-        Returns:
-            DistributionResult with commit status
-        """
-        from .data_distributor import DistributionResult
-
-        if not self.enabled:
-            return DistributionResult(False, "postgresql", error="PostgreSQL adapter is disabled")
-
-        try:
-            logger.info("Simulating PostgreSQL transaction commit")
-
-            return DistributionResult(
-                True,
-                "postgresql",
-                data={"message": "Transaction committed successfully (simulated)"},
-            )
-
-        except Exception as e:
-            error_msg = f"PostgreSQL transaction commit failed: {e!s}"
-            logger.exception(error_msg)
-            return DistributionResult(False, "postgresql", error=error_msg)
+            """
+            await conn.execute(sql)
+            logger.debug(f"Ensured table {self.table_name} exists")
+        finally:
+            await conn.close()
