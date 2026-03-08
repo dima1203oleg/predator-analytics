@@ -291,32 +291,7 @@ class ETLIngestionService:
             )
         raise ValueError(f"Unsupported file format: {ext}")
 
-    async def _create_table_if_not_exists(self, df: pd.DataFrame, table_name: str):
-        conn = await asyncpg.connect(self.db_url)
-        try:
-            columns = ", ".join([f"{col} TEXT" for col in df.columns])
-            await conn.execute(
-                f"CREATE TABLE IF NOT EXISTS {table_name} (id SERIAL PRIMARY KEY, {columns}, created_at TIMESTAMP DEFAULT NOW())"
-            )
-        finally:
-            await conn.close()
 
-    async def _load_batch_to_postgres(self, df: pd.DataFrame, table_name: str) -> int:
-        conn = await asyncpg.connect(self.db_url)
-        try:
-            records = df.to_dict("records")
-            if not records:
-                return 0
-            columns_list = list(records[0].keys())
-            placeholders = ", ".join([f"${i + 1}" for i in range(len(columns_list))])
-            insert_sql = (
-                f"INSERT INTO {table_name} ({', '.join(columns_list)}) VALUES ({placeholders})"
-            )
-            batch_values = [[str(r[col]) for col in columns_list] for r in records]
-            await conn.executemany(insert_sql, batch_values)
-            return len(records)
-        finally:
-            await conn.close()
 
     async def _read_excel_batched(
         self, file_path: str, job_id: str = "unknown", chunk_size: int = 1000
