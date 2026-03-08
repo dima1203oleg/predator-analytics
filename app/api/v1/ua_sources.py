@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 
-"""UA Sources V1 API."""
+"""UA Sources V1 API — Extended with all connectors."""
 from datetime import UTC, datetime
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 import logging
-import uuid
 from app.services.ai_engine import ai_engine
 
 
@@ -23,10 +22,14 @@ async def get_status():
     return {
         "status": "OPERATIONAL",
         "sources": {
-            "prozorro": "ACTIVE", 
             "customs": "ACTIVE",
+            "prozorro": "ACTIVE",
             "nbu": "ACTIVE",
-            "tax": "ACTIVE"
+            "tax": "ACTIVE",
+            "court": "ACTIVE",
+            "edrpou": "ACTIVE",
+            "rss": "ACTIVE",
+            "telegram": "ACTIVE",
         },
         "timestamp": datetime.now(UTC).isoformat(),
     }
@@ -34,8 +37,7 @@ async def get_status():
 
 @router.get("/search")
 async def search(q: str, sources: str = "all"):
-    """Search across UA sources."""
-    """Search across UA sources using AI Engine"""
+    """Search across UA sources using AI Engine."""
     result = await ai_engine.analyze(query=q, depth="standard")
     return {
         "query": q,
@@ -43,49 +45,190 @@ async def search(q: str, sources: str = "all"):
         "analysis": result.answer,
         "confidence": result.confidence,
     }
+
+
 @router.post("/sync/{source_id}")
 async def sync_source(source_id: str):
     """Trigger data synchronization for a source."""
     if source_id == "customs":
         from app.connectors.customs import customs_connector
-        from app.modules.etl_engine.distribution.postgresql_adapter import PostgreSQLAdapter
-        
-        # Fetch real data from data.gov.ua
+
         records = await customs_connector.fetch_latest_declarations(limit=50)
-        
         if records:
-            # Push to DB (Simulated distribution)
-            adapter = PostgreSQLAdapter()
-            # asyncpg might not be ready in this env, so we gracefully handle
-            try:
-                # In a real scenario, this would be await adapter.distribute(records)
-                # but we'll simulate the success for now to show the flow
-                logger.info(f"Syncing {len(records)} records from data.gov.ua")
-                pushed = True
-            except Exception as e:
-                logger.warning(f"Could not push to real DB: {e}")
-                pushed = False
-                
+            logger.info(f"Syncing {len(records)} customs records from data.gov.ua")
             return {
                 "status": "COMPLETED",
                 "source": source_id,
                 "records_fetched": len(records),
-                "pushed_to_db": pushed,
-                "sample": records[:2]
+                "sample": records[:2],
             }
-        else:
-            return {"status": "FAILED", "source": source_id, "error": "No records found on data.gov.ua"}
-            
+        return {"status": "FAILED", "source": source_id, "error": "No records found"}
+
     if source_id == "prozorro":
         from app.connectors.prozorro import prozorro_connector
-        
-        # Trigger background search/sync for common keywords
+
         result = await prozorro_connector.search(query="паливо", limit=10)
-        
         return {
             "status": "COMPLETED",
             "source": source_id,
             "records_found": result.records_count,
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
         }
-    return {"status": "PENDING", "source": source_id, "message": "Sync started in background via Celery"}
+
+    if source_id == "court":
+        from app.connectors.court import court_connector
+
+        result = await court_connector.search("", limit=20)
+        return {
+            "status": "COMPLETED",
+            "source": source_id,
+            "records_found": result.records_count,
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+
+    if source_id == "edrpou":
+        return {
+            "status": "PENDING",
+            "source": source_id,
+            "message": "EDRPOU sync requires specific query. Use /ua-sources/edrpou/search",
+        }
+
+    if source_id == "rss":
+        from app.connectors.rss_aggregator import rss_aggregator
+
+        result = await rss_aggregator.fetch(limit=50)
+        return {
+            "status": "COMPLETED",
+            "source": source_id,
+            "records_found": result.records_count,
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+
+    return {
+        "status": "PENDING",
+        "source": source_id,
+        "message": "Sync started in background via Celery",
+    }
+
+
+# --- Court Registry ---
+
+@router.get("/court/search")
+async def search_court(
+    q: str = Query(..., description="Company name, EDRPOU, or person name"),
+    limit: int = Query(20, le=100),
+    category: int | None = Query(None, description="1=civil, 2=criminal, 3=commercial, 4=admin"),
+):
+    """Search Ukrainian court registry (ЄДРСР)."""
+    from app.connectors.court import court_connector
+
+    result = await court_connector.search(q, limit=limit, category=category)
+    return {
+        "query": q,
+        "results": result.data,
+        "total": result.records_count,
+        "source": "court_registry",
+    }
+
+
+@router.get("/court/risk-summary/{entity}")
+async def court_risk_summary(
+    entity: str,
+    edrpou: str | None = Query(None),
+):
+    """Get court-based risk summary for CERS integration."""
+    from app.connectors.court import court_connector
+
+    summary = await court_connector.get_risk_summary(entity, edrpou)
+    return summary
+
+
+# --- EDRPOU ---
+
+@router.get("/edrpou/search")
+async def search_edrpou(
+    q: str = Query(..., description="Company name or 8-digit EDRPOU code"),
+    limit: int = Query(20, le=100),
+):
+    """Search Ukrainian EDRPOU company registry."""
+    from app.connectors.edrpou import edrpou_connector
+
+    result = await edrpou_connector.search(q, limit=limit)
+    return {
+        "query": q,
+        "results": result.data,
+        "total": result.records_count,
+        "source": result.source,
+    }
+
+
+@router.get("/edrpou/{code}")
+async def get_edrpou(code: str):
+    """Get company details by EDRPOU code."""
+    from app.connectors.edrpou import edrpou_connector
+
+    result = await edrpou_connector.get_by_id(code)
+    return {
+        "edrpou": code,
+        "data": result.data,
+        "source": result.source,
+    }
+
+
+# --- RSS Aggregator ---
+
+@router.get("/rss/feed")
+async def get_rss_feed(
+    q: str = Query("", description="Search keywords"),
+    limit: int = Query(50, le=200),
+    source: str | None = Query(None, description="Source key (epravda, rbc, etc.)"),
+    category: str | None = Query(None, description="economics, business, finance, banking"),
+):
+    """Get aggregated RSS feed from Ukrainian business sources."""
+    from app.connectors.rss_aggregator import rss_aggregator
+
+    sources_filter = [source] if source else None
+    result = await rss_aggregator.search(
+        q, limit=limit, sources=sources_filter, category=category,
+    )
+    return {
+        "query": q,
+        "items": result.data,
+        "total": result.records_count,
+        "source": "rss_aggregator",
+    }
+
+
+@router.get("/rss/sources")
+async def get_rss_sources():
+    """Get available RSS sources."""
+    from app.connectors.rss_aggregator import rss_aggregator
+
+    sources = await rss_aggregator.get_all_sources()
+    return {"sources": sources, "total": len(sources)}
+
+
+# --- Sentiment Analysis ---
+
+@router.post("/nlp/sentiment")
+async def analyze_sentiment(text: str = Query(..., description="Ukrainian text to analyze")):
+    """Analyze sentiment of Ukrainian text."""
+    from app.services.nlp.sentiment_analyzer import get_sentiment_analyzer
+
+    analyzer = get_sentiment_analyzer()
+    result = analyzer.analyze(text)
+    return result.to_dict()
+
+
+@router.post("/nlp/sentiment/batch")
+async def analyze_sentiment_batch(texts: list[str]):
+    """Batch sentiment analysis."""
+    from app.services.nlp.sentiment_analyzer import get_sentiment_analyzer
+
+    analyzer = get_sentiment_analyzer()
+    results = analyzer.analyze_batch(texts)
+    return {
+        "results": [r.to_dict() for r in results],
+        "total": len(results),
+    }
+
