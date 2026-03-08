@@ -1,0 +1,93 @@
+# LiteLLM Gateway — PREDATOR Analytics v55.1
+# Маршрутизація до Ollama (локальна GPU) та fallback
+# Документація: https://docs.litellm.ai/docs/proxy/configs
+
+model_list:
+  # ============================================================
+  # Основна LLM — Ollama (локальна, безкоштовна)
+  # ============================================================
+  - model_name: predator-default
+    litellm_params:
+      model: ollama/mistral:7b-instruct
+      api_base: http://ollama:11434
+      timeout: 120
+      stream_timeout: 300
+
+  - model_name: predator-chat
+    litellm_params:
+      model: ollama/mistral:7b-instruct
+      api_base: http://ollama:11434
+      timeout: 120
+      stream_timeout: 300
+
+  - model_name: predator-analysis
+    litellm_params:
+      model: ollama/llama3:8b-instruct
+      api_base: http://ollama:11434
+      timeout: 180
+      stream_timeout: 600
+
+  # ============================================================
+  # Embedding модель для RAG (Qdrant)
+  # ============================================================
+  - model_name: predator-embed
+    litellm_params:
+      model: ollama/nomic-embed-text
+      api_base: http://ollama:11434
+      timeout: 60
+
+  # ============================================================
+  # Fallback моделі (більші для складних задач)
+  # ============================================================
+  - model_name: predator-heavy
+    litellm_params:
+      model: ollama/llama3:70b-instruct
+      api_base: http://ollama:11434
+      timeout: 300
+      stream_timeout: 900
+
+# ============================================================
+# Загальні налаштування
+# ============================================================
+general_settings:
+  master_key: ${LITELLM_MASTER_KEY}
+  database_url: null  # SQLite в пам'яті для dev
+  store_model_in_db: false
+
+litellm_settings:
+  # Логування (без зовнішніх SaaS — HR-15)
+  log_level: INFO
+  success_callback: []
+  failure_callback: []
+
+  # Fallback конфігурація
+  fallbacks:
+    - predator-default:
+        - predator-analysis
+
+  # Таймаути
+  request_timeout: 300
+  num_retries: 2
+  retry_after: 5
+
+  # Обмеження контексту
+  context_window_fallbacks: []
+  set_verbose: false
+
+  # Кешування (Redis)
+  cache: true
+  cache_params:
+    type: redis
+    host: redis
+    port: 6379
+    db: 2
+    ttl: 3600  # 1 година
+
+# ============================================================
+# Router налаштування
+# ============================================================
+router_settings:
+  routing_strategy: simple-shuffle
+  num_retries: 2
+  timeout: 300
+  retry_after: 5

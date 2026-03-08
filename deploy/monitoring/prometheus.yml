@@ -1,0 +1,114 @@
+# Prometheus — PREDATOR Analytics v55.1
+# Конфігурація збору метрик (scrape configs)
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+  external_labels:
+    cluster: predator-dev
+    environment: development
+
+# Правила алертингу
+rule_files:
+  - "alerts.yaml"
+
+# Alertmanager (за потреби)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets: ['alertmanager:9093']
+
+scrape_configs:
+  # ============================================================
+  # Prometheus сам себе
+  # ============================================================
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # ============================================================
+  # PREDATOR Core API
+  # ============================================================
+  - job_name: predator-core-api
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['core-api:8000']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+).*'
+        replacement: '$1'
+
+  # ============================================================
+  # PREDATOR Ingestion Worker
+  # ============================================================
+  - job_name: predator-ingestion-worker
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['ingestion-worker:8080']
+
+  # ============================================================
+  # PREDATOR Graph Service
+  # ============================================================
+  - job_name: predator-graph-service
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['graph-service:8000']
+
+  # ============================================================
+  # PostgreSQL (через postgres_exporter)
+  # ============================================================
+  - job_name: postgres
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'postgres'
+
+  # ============================================================
+  # Neo4j
+  # ============================================================
+  - job_name: neo4j
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['neo4j:2004']
+
+  # ============================================================
+  # Redis (через redis_exporter)
+  # ============================================================
+  - job_name: redis
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  # ============================================================
+  # Kafka (через kafka_exporter)
+  # ============================================================
+  - job_name: kafka
+    static_configs:
+      - targets: ['kafka-exporter:9308']
+
+  # ============================================================
+  # OpenSearch (через opensearch_exporter)
+  # ============================================================
+  - job_name: opensearch
+    metrics_path: /_prometheus/metrics
+    static_configs:
+      - targets: ['opensearch:9200']
+
+  # ============================================================
+  # MinIO
+  # ============================================================
+  - job_name: minio
+    metrics_path: /minio/v2/metrics/cluster
+    static_configs:
+      - targets: ['minio:9000']
+
+  # ============================================================
+  # LiteLLM
+  # ============================================================
+  - job_name: litellm
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['litellm:4000']

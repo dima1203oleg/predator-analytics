@@ -1,11 +1,11 @@
 # ═══════════════════════════════════════════════════════════════
-# 🦁 PREDATOR Analytics v4.1 — Канонічна конфігурація Ruff
+# 🦅 PREDATOR Analytics v55.1 — Канонічна конфігурація Ruff
 # Лінтер + форматер для всієї Python кодової бази
 # ═══════════════════════════════════════════════════════════════
 
 target-version = "py312"
-line-length = 88
-src = ["app", "tests"]
+line-length = 99
+src = ["app", "services", "libs", "tests"]
 
 [lint]
 select = [
@@ -13,37 +13,42 @@ select = [
     "W",   # pycodestyle warnings
     "F",   # pyflakes
     "I",   # isort
+    "N",   # pep8-naming
+    "D",   # pydocstyle
     "B",   # flake8-bugbear
     "C4",  # flake8-comprehensions
     "UP",  # pyupgrade
-    "ARG", # flake8-unused-arguments
+    "A",   # flake8-builtins
     "SIM", # flake8-simplify
     "TCH", # flake8-type-checking
-    "PTH", # flake8-use-pathlib
+    "DTZ", # flake8-datetimez
+    "T20", # flake8-print
     "RUF", # ruff-specific rules
     "S",   # flake8-bandit (безпека)
-    "ANN", # flake8-annotations (типізація)
 ]
 ignore = [
-    "ANN101", # Missing type annotation for `self`
-    "ANN102", # Missing type annotation for `cls`
-    "S101",   # Use of assert (дозволено в тестах)
-    "E501",   # Довгі рядки (поки є legacy код)
-    "ANN401", # Dynamically typed expressions (typing.Any)
-    "B008",   # Do not perform function call in argument defaults (FastAPI Depends)
+    "D100",  # Missing docstring in public module
+    "D104",  # Missing docstring in public package
+    "D203",  # 1 blank line required before class docstring (конфлікт з D211)
+    "D213",  # Multi-line docstring summary should start at the second line (конфлікт з D212)
+    "S101",  # Use of assert (дозволено в тестах)
+    "B008",  # Do not perform function call in argument defaults (FastAPI Depends)
 ]
 
 [lint.per-file-ignores]
-"tests/**/*.py" = ["S101", "ANN", "ARG"]
-"app/db/migrations/**/*.py" = ["ANN"]
-"app/services/telegram_*.py" = ["ANN", "ARG"]
-"app/libs/**/*.py" = ["ANN", "ARG"]
+"tests/**/*.py" = ["D", "S101"]
+"**/conftest.py" = ["D"]
+"**/migrations/**/*.py" = ["D"]
+"**/alembic/**/*.py" = ["D"]
 
 [lint.isort]
-known-first-party = ["app"]
+known-first-party = ["app", "predator_common"]
 force-sort-within-sections = true
 
 [format]
 quote-style = "double"
 indent-style = "space"
 line-ending = "lf"
+docstring-code-format = true
+
+
