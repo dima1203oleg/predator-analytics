@@ -232,3 +232,57 @@ async def analyze_sentiment_batch(texts: list[str]):
         "total": len(results),
     }
 
+
+# --- NER (Named Entity Recognition) ---
+
+@router.post("/nlp/ner")
+async def extract_entities(text: str = Query(..., description="Ukrainian text for NER")):
+    """Extract named entities from Ukrainian text."""
+    from app.services.nlp.ner_service import get_ner_service
+
+    ner = get_ner_service()
+    result = ner.extract(text)
+    return result.to_dict()
+
+
+@router.post("/nlp/ner/batch")
+async def extract_entities_batch(texts: list[str]):
+    """Batch extracting entities."""
+    from app.services.nlp.ner_service import get_ner_service
+
+    ner = get_ner_service()
+    results = ner.extract_batch(texts)
+    return {
+        "results": [r.to_dict() for r in results],
+        "total": len(results),
+    }
+
+
+# --- Telegram Monitor ---
+
+@router.get("/telegram/search")
+async def search_telegram(
+    q: str = Query(..., description="Keywords to search"),
+    limit: int = Query(50, le=200),
+):
+    """Search Telegram business channels."""
+    from app.connectors.telegram_monitor import telegram_monitor
+
+    result = await telegram_monitor.search(q, limit=limit)
+    return {
+        "query": q,
+        "results": result.data,
+        "total": result.records_count,
+        "source": "telegram",
+    }
+
+
+@router.get("/telegram/channels")
+async def get_telegram_channels():
+    """Get monitored Telegram channels."""
+    from app.connectors.telegram_monitor import telegram_monitor
+
+    channels = await telegram_monitor.get_channels()
+    return {"channels": channels, "total": len(channels)}
+
+
