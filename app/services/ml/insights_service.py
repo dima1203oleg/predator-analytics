@@ -39,9 +39,9 @@ class AIInsight:
         confidence: float,
         impact: str,
         category: str,
-        created_at: datetime = None,
+        created_at: datetime | None = None,
         actionable: bool = True,
-        actions: List[Dict[str, str]] = None
+        actions: list[dict[str, str]] | None = None
     ):
         self.id = id
         self.type = type
@@ -76,7 +76,7 @@ class InsightsService:
     def __init__(self):
         logger.info("InsightsService initialized")
 
-    async def generate_market_insights(self, market_data: List[Dict[str, Any]] = None) -> List[AIInsight]:
+    async def generate_market_insights(self, market_data: list[dict[str, Any]] | None = None) -> list[AIInsight]:
         """
         Analyzes market data to find insights.
         
@@ -89,8 +89,9 @@ class InsightsService:
         insights = []
 
         # 1. Price Opportunity (Always included as baseline for UI testing)
+        raw_id: str = uuid.uuid4().hex
         insights.append(AIInsight(
-            id=str(uuid.uuid4())[:8],
+            id=raw_id[:8],
             type=InsightType.OPPORTUNITY,
             priority=InsightPriority.CRITICAL,
             title="Оптимальний час для закупівлі LED панелей",
@@ -102,8 +103,9 @@ class InsightsService:
         ))
 
         # 2. Risk detection
+        risk_id: str = uuid.uuid4().hex
         insights.append(AIInsight(
-            id=str(uuid.uuid4())[:8],
+            id=risk_id[:8],
             type=InsightType.ANOMALY,
             priority=InsightPriority.HIGH,
             title="Незвична активність компанії 'ТехноІмпорт'",
@@ -129,19 +131,29 @@ class InsightsService:
             if len(prices) < 5:
                 return None
                 
-            mean = sum(prices) / len(prices)
+            total_price = sum(prices)
+            mean = total_price / len(prices)
+            
+            if mean <= 0:
+                return None
+
             # Find low prices
             low_prices = [p for p in prices if p < mean * 0.7] # 30% below mean
             
             if low_prices:
+                min_low = min(low_prices)
+                diff_percent = abs((min_low - mean) / mean)
+                savings = mean - min_low
+                
+                insight_id = uuid.uuid4().hex[:8]
                 return AIInsight(
-                    id=str(uuid.uuid4())[:8],
+                    id=insight_id,
                     type=InsightType.OPPORTUNITY,
                     priority=InsightPriority.MEDIUM,
                     title="Виявлено джерела з низькою ціною",
-                    description=f"Знайдено поодинокі декларації з ціною на {abs((min(low_prices)-mean)/mean):.1%} нижче середньоринкової.",
+                    description=f"Знайдено поодинокі декларації з ціною на {diff_percent:.1%} нижче середньоринкової.",
                     confidence=82.0,
-                    impact=f"Гіпотетична економія: ${mean - min(low_prices):.2f}/од",
+                    impact=f"Гіпотетична економія: ${savings:.2f}/од",
                     category="Ціноутворення"
                 )
         except Exception as e:

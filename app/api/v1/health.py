@@ -26,7 +26,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
     try:
         db_start = time.time()
         await db.execute(text("SELECT 1"))
-        db_latency = round(float((time.time() - db_start) * 1000), 2)
+        db_latency = float(f"{(time.time() - db_start) * 1000:.2f}")
     except Exception as e:
         db_status = f"DOWN: {str(e)}"
 
@@ -45,7 +45,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
             }
         },
         "timestamp": time.time(),
-        "total_latency_ms": round(float((time.time() - start_time) * 1000), 2)
+        "total_latency_ms": float(f"{(time.time() - start_time) * 1000:.2f}")
     }
 
 @router.get("/ready")
