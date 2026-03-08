@@ -28,6 +28,7 @@ from app.api.v1.commerce import router as commerce_router
 from app.api.v1.counter_intel import router as counter_intel_router
 from app.api.v1.self_improvement import router as self_improvement_router
 from app.api.v1.smb import router as smb_router
+from app.api.v1.twin import router as twin_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 
@@ -51,4 +52,5 @@ api_v1_router.include_router(commerce_router, tags=["Предиктивна Ко
 api_v1_router.include_router(counter_intel_router, tags=["Контррозвідка"])
 api_v1_router.include_router(self_improvement_router, tags=["Самоаналіз та Розвиток"])
 api_v1_router.include_router(smb_router, tags=["SMB Клієнтські Модулі"])
+api_v1_router.include_router(twin_router, tags=["Digital Twin & Ontology"])
 
