@@ -74,6 +74,11 @@ const DataIngestionHub = lazy(() => import('./views/DataIngestionHub'));
 const ScenarioModeling = lazy(() => import('./views/ScenarioModeling'));
 const ForecastView = lazy(() => import('./views/ForecastView'));
 
+// Canonical v4.2.0 Pages
+const MarketPage = lazy(() => import('./pages/MarketPage'));
+const ForecastPage = lazy(() => import('./pages/ForecastPage'));
+const OpportunitiesPage = lazy(() => import('./pages/OpportunitiesPage'));
+
 const DatasetsPage = lazy(() => import('./views/datasets/DatasetsPage'));
 const AutoFactoryView = lazy(() => import('./views/AutoFactoryView'));
 const ModelTrainingView = lazy(() => import('./views/ModelTrainingView'));
@@ -122,10 +127,15 @@ export const AppRoutesNew = () => {
       <Suspense fallback={<LoadingFallback />}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
-            {/* Main Routes */}
+            {/* 🎯 CANONICAL v4.2.0 MODES */}
             <Route path="/" element={<DashboardView />} />
-            <Route path="/omni" element={<OmniscienceView />} />
             <Route path="/overview" element={<DashboardView />} />
+            <Route path="/market" element={<MarketPage />} />
+            <Route path="/forecast" element={<ForecastPage />} />
+            <Route path="/opportunities" element={<OpportunitiesPage />} />
+
+            {/* Legacy Dashboard Routes */}
+            <Route path="/omni" element={<OmniscienceView />} />
             <Route path="/news" element={<ActivityView />} />
             <Route path="/trends" element={<ActivityView />} />
 

@@ -45,7 +45,8 @@ import {
   MessageSquare,
   Target,
   Layout,
-  Waves
+  Waves,
+  Landmark
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useSystemMetrics } from '../../hooks/useSystemMetrics';
@@ -73,7 +74,16 @@ export const Sidebar = () => {
 
   const navGroups: NavGroup[] = [
     {
-      title: 'ОГЛЯД ТА МОНІТОРИНГ',
+      title: 'ОСНОВНІ РЕЖИМИ (v4.2.0)',
+      items: [
+        { name: 'Огляд', path: '/overview', icon: LayoutDashboard },
+        { name: 'Ринок', path: '/market', icon: Globe },
+        { name: 'Прогноз', path: '/forecast', icon: TrendingUp },
+        { name: 'Можливості', path: '/opportunities', icon: Zap },
+      ]
+    },
+    {
+      title: 'LEGACY РЕЖИМИ (v45/v55)',
       items: [
         { name: 'Головна Панель', path: '/overview', icon: LayoutDashboard },
         { name: 'Паноптикон (Omni)', path: '/omni', icon: Globe, premium: true },
