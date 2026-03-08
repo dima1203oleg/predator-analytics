@@ -186,4 +186,33 @@ export const api = {
 
     // ─── Connectors ────────────────────────────────────────────────────────────
     getConnectors: async () => (await apiClient.get('/connectors')).data,
+
+    // ─── Phase 11-15: Advanced APIs (Wrappers) ──────────────────────────────────
+    warroom: {
+        getDashboardSummary: async () => (await apiClient.get('/warroom/dashboard-summary')).data,
+        generateAttackPlan: async (targetEntity: string) => (await apiClient.post(`/warroom/attack-plan?target_entity=${targetEntity}`)).data,
+    },
+    shadowGraph: {
+        generateMap: async (entityId: string, depth: number = 2) => (await apiClient.get(`/graph/shadow-map?entity_id=${entityId}&depth=${depth}`)).data,
+        findInfluencePath: async (source: string, target: string) => (await apiClient.get(`/graph/influence-path?source_entity=${source}&target_entity=${target}`)).data,
+    },
+    finance: {
+        dcf: async (payload: any) => (await apiClient.post('/finance/valuation/dcf', payload)).data,
+        creditRisk: async (payload: any) => (await apiClient.post('/finance/credit-risk/calculate', payload)).data,
+        portfolioVar: async (payload: any) => (await apiClient.post('/finance/portfolio-risk/var', payload)).data,
+    },
+    commerce: {
+        recommendPrice: async (payload: any) => (await apiClient.post('/commerce/pricing/recommend', payload)).data,
+        optimizeInventory: async (payload: any) => (await apiClient.post('/commerce/inventory/optimize', payload)).data,
+    },
+    counterIntel: {
+        scanDarknet: async (payload: any) => (await apiClient.post('/counter-intel/darknet/scan', payload)).data,
+        detectAttacks: async (payload: any) => (await apiClient.post('/counter-intel/attack-radar/detect', payload)).data,
+        analyzePsyops: async (payload: any) => (await apiClient.post('/counter-intel/psyops/analyze', payload)).data,
+    },
+    selfImprovement: {
+        logFeedback: async (payload: any) => (await apiClient.post('/self-improve/feedback/log', payload)).data,
+        getStats: async () => (await apiClient.get('/self-improve/feedback/stats')).data,
+        detectDrift: async (payload: any) => (await apiClient.post('/self-improve/drift/detect', payload)).data,
+    }
 };
