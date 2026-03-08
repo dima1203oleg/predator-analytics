@@ -33,7 +33,8 @@ class DataDeduplicator:
         # 1. Select the fields to hash
         if self.primary_keys:
             # Extract only specified keys, falling back to empty string if missing
-            data_to_hash = {k: record.get(k, "") for k in self.primary_keys}
+            keys: list[str] = self.primary_keys or []
+            data_to_hash = {k: record.get(k, "") for k in keys}
         else:
             # Hash the whole record (except metadata like timestamp or source if we want them ignored? - usually we hash all)
             data_to_hash = {k: v for k, v in record.items() if k not in ("source_format", "timestamp", "job_id")}

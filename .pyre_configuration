@@ -1,0 +1,21 @@
+{
+  "site_package_search_strategy": "pep561",
+  "source_directories": ["."],
+  "search_path": [
+    "venv/lib/python3.12/site-packages"
+  ],
+  "exclude": [
+    "venv/.*",
+    "venv_fix/.*",
+    "acp_core/venv/.*",
+    "node_modules/.*",
+    "apps/predator-analytics-ui/.*",
+    "\\.git/.*"
+  ],
+  "python_version": "3.12",
+  "strict": false,
+  "ignore_all_errors": [
+    "alembic/versions",
+    "tests"
+  ]
+}
