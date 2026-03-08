@@ -2805,16 +2805,42 @@ export const premiumLocales = {
       confidence: 'Впевненість',
       impact: 'Вплив',
       details: 'Детальніше',
+      types: {
+        opportunity: 'Можливість',
+        risk: 'Ризик',
+        trend: 'Тренд',
+        anomaly: 'Аномалія',
+        prediction: 'Прогноз',
+      },
+      levels: {
+        critical: 'Критичний',
+        high: 'Високий',
+        medium: 'Середній',
+        low: 'Низький',
+      }
     },
     recommendations: {
       title: 'Рекомендації',
       description: 'Персоналізовані рекомендації продуктів, постачальників та ринків на основі ML аналізу вашого портфеля та поведінки конкурентів.',
       sprintInfo: '🔄 Sprint 5 — Product Recommender (COMP-111)',
+      items: {
+        supplier: 'Постачальник',
+        product: 'Продукт',
+        efficiency: 'Ефективність',
+        action: 'Застосувати',
+      }
     },
     executive: {
       title: 'Звіт керівнику',
       description: 'Автогенерований executive brief з ключовими метриками, ризиками та можливостями. Доступний у форматах PDF та PPTX.',
       phaseInfo: '📋 Phase 2 — Report Generator',
+      generate: 'Згенерувати звіт',
+      lastReport: 'Останній звіт: {date}',
+      metrics: {
+        revenue: 'Потенційний дохід',
+        savings: 'Можлива економія',
+        risk: 'Рівень загрози',
+      }
     }
   },
 };
