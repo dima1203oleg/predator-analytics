@@ -2843,6 +2843,121 @@ export const premiumLocales = {
       }
     }
   },
+
+  // ============================================
+  // Alert Center
+  // ============================================
+  alertCenter: {
+    title: 'Центр Сповіщень',
+    subtitle: 'Управління алертами та правилами сповіщень',
+    tabs: {
+      alerts: 'Активні алерти',
+      rules: 'Правила та тригери',
+    },
+    actions: {
+      acknowledge: 'Прочитано',
+      resolve: 'Вирішено',
+      delete: 'Видалити',
+      addRule: 'Створити правило',
+      edit: 'Редагувати',
+      test: 'Тестувати',
+    },
+    stats: {
+      total: 'Усього',
+      active: 'Активно',
+      critical: 'Критично',
+      high: 'Високо',
+    },
+    priority: {
+      critical: 'Критичний',
+      high: 'Високий',
+      medium: 'Середній',
+      low: 'Низький',
+    },
+    category: {
+      price: 'Ціни',
+      competitor: 'Конкуренти',
+      risk: 'Ризики',
+      market: 'Ринок',
+      system: 'Система',
+    },
+    status: {
+      active: 'Активний',
+      acknowledged: 'Переглянуто',
+      resolved: 'Вирішено',
+      snoozed: 'Відкладено',
+    },
+    rules: {
+      title: 'Правила Моніторингу',
+      newRule: 'Нове правило',
+      name: 'Назва правила',
+      condition: 'Умова',
+      threshold: 'Поріг',
+      notifications: 'Сповіщення',
+      triggered: 'Спрацювало {count} разів',
+      lastTrigger: 'Останнє спрацювання: {time}',
+      channels: {
+        email: 'Електронна пошта',
+        push: 'Push-сповіщення',
+        sms: 'SMS',
+      },
+      status: {
+        enabled: 'Увімкнено',
+        disabled: 'Вимкнено',
+      }
+    },
+    empty: {
+      alerts: 'Активних алертів не виявлено. Система працює стабільно.',
+      rules: 'Правила моніторингу не встановлені.',
+    },
+    time: {
+      justNow: 'Щойно',
+      ago: '{time} тому',
+      hours: 'год',
+      days: 'днів',
+    }
+  },
+
+  // ============================================
+  // Entity Graph
+  // ============================================
+  graph: {
+    title: 'Топологія Мережі',
+    subtitle: 'Візуалізація зв\'язків та потоків даних',
+    status: 'Intelligence Graph Active',
+    loading: {
+      title: 'Синтез Топології',
+      description: 'Опрацювання мільярдів зв\'язків...',
+    },
+    filters: {
+      all: 'Всі Вузли',
+      risk: 'Лише Загрози',
+    },
+    stats: {
+      nodes: 'Вузлів',
+      links: 'Зв\'язків',
+      critical: 'Критично',
+    },
+    nodeDetails: {
+      profile: 'Нейронний профіль згенеровано автоматично на основі аналізу відкритих джерел та транзакцій.',
+      trustScore: 'System Trust Score',
+      confidence: 'Analysis Confidence',
+      monitoring: 'Monitoring',
+      activeStatus: 'Active',
+      directConnections: 'Прямі Зв\'яззки',
+      fullAnalysis: 'Повний Нейронний Аналіз',
+    },
+    nodeTypes: {
+      company: 'Компанія',
+      person: 'Особа',
+      document: 'Документ',
+      alert: 'Алерт',
+      event: 'Подія',
+      server: 'Сервер',
+      wallet: 'Гаманець',
+      system: 'Система',
+    }
+  },
 };
 
 export default premiumLocales;

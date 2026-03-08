@@ -86,7 +86,7 @@ export const intelligenceApi = {
         return (await apiClient.get('/premium/market-trends')).data;
     },
     getIntelligenceAlerts: async () => {
-        const res = await apiClient.get('/premium/alerts');
+        const res = await apiClient.get('/premium/intelligence-alerts');
         return Array.isArray(res.data) ? res.data : (res.data?.alerts || []);
     },
     getAlertRules: async () => {

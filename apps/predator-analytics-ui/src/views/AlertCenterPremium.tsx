@@ -7,6 +7,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { api } from '../services/api';
+import { premiumLocales } from '../locales/uk/premium';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bell,
@@ -86,18 +87,18 @@ interface AlertRule {
 // ========================
 
 const priorityConfig = {
-  critical: { color: 'rose', icon: AlertTriangle, label: 'Критичний', bg: 'bg-rose-500/20' },
-  high: { color: 'amber', icon: AlertCircle, label: 'Високий', bg: 'bg-amber-500/20' },
-  medium: { color: 'cyan', icon: Info, label: 'Середній', bg: 'bg-cyan-500/20' },
-  low: { color: 'slate', icon: Info, label: 'Низький', bg: 'bg-slate-500/20' }
+  critical: { color: 'rose', icon: AlertTriangle, label: premiumLocales.alertCenter.priority.critical, bg: 'bg-rose-500/20' },
+  high: { color: 'amber', icon: AlertCircle, label: premiumLocales.alertCenter.priority.high, bg: 'bg-amber-500/20' },
+  medium: { color: 'cyan', icon: Info, label: premiumLocales.alertCenter.priority.medium, bg: 'bg-cyan-500/20' },
+  low: { color: 'slate', icon: Info, label: premiumLocales.alertCenter.priority.low, bg: 'bg-slate-500/20' }
 };
 
 const categoryConfig = {
-  price: { icon: DollarSign, label: 'Ціни', color: 'emerald' },
-  competitor: { icon: Building2, label: 'Конкуренти', color: 'blue' },
-  risk: { icon: Shield, label: 'Ризики', color: 'rose' },
-  market: { icon: TrendingUp, label: 'Ринок', color: 'purple' },
-  system: { icon: Settings, label: 'Система', color: 'slate' }
+  price: { icon: DollarSign, label: premiumLocales.alertCenter.category.price, color: 'emerald' },
+  competitor: { icon: Building2, label: premiumLocales.alertCenter.category.competitor, color: 'blue' },
+  risk: { icon: Shield, label: premiumLocales.alertCenter.category.risk, color: 'rose' },
+  market: { icon: TrendingUp, label: premiumLocales.alertCenter.category.market, color: 'purple' },
+  system: { icon: Settings, label: premiumLocales.alertCenter.category.system, color: 'slate' }
 };
 
 const AlertCard: React.FC<{ alert: Alert; onAcknowledge: () => void; onResolve: () => void }> = ({
@@ -113,9 +114,9 @@ const AlertCard: React.FC<{ alert: Alert; onAcknowledge: () => void; onResolve: 
   const timeAgo = useMemo(() => {
     const diff = Date.now() - new Date(alert.createdAt).getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
-    if (hours < 1) return 'Щойно';
-    if (hours < 24) return `${hours} год тому`;
-    return `${Math.floor(hours / 24)} днів тому`;
+    if (hours < 1) return premiumLocales.alertCenter.time.justNow;
+    if (hours < 24) return premiumLocales.alertCenter.time.ago.replace('{time}', `${hours} ${premiumLocales.alertCenter.time.hours}`);
+    return premiumLocales.alertCenter.time.ago.replace('{time}', `${Math.floor(hours / 24)} ${premiumLocales.alertCenter.time.days}`);
   }, [alert.createdAt]);
 
   return (
@@ -146,12 +147,12 @@ const AlertCard: React.FC<{ alert: Alert; onAcknowledge: () => void; onResolve: 
             </span>
             {alert.status === 'acknowledged' && (
               <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-cyan-500/20 text-cyan-400">
-                Переглянуто
+                {premiumLocales.alertCenter.status.acknowledged}
               </span>
             )}
             {alert.status === 'resolved' && (
               <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-400">
-                Вирішено
+                {premiumLocales.alertCenter.status.resolved}
               </span>
             )}
           </div>
@@ -174,14 +175,14 @@ const AlertCard: React.FC<{ alert: Alert; onAcknowledge: () => void; onResolve: 
             <button
               onClick={onAcknowledge}
               className="p-2 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition-colors"
-              title="Переглянуто"
+              title={premiumLocales.alertCenter.actions.acknowledge}
             >
               <Eye size={16} />
             </button>
             <button
               onClick={onResolve}
               className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors"
-              title="Вирішено"
+              title={premiumLocales.alertCenter.actions.resolve}
             >
               <Check size={16} />
             </button>
@@ -198,45 +199,52 @@ const RuleCard: React.FC<{ rule: AlertRule; onToggle: () => void }> = ({ rule, o
 
   return (
     <div className={`
-      p-4 rounded-xl border transition-all
-      ${rule.isEnabled ? 'border-white/10 bg-slate-900/60' : 'border-white/5 bg-slate-900/40 opacity-60'}
+      flex rounded-xl border transition-all overflow-hidden
+      ${rule.isEnabled ? 'border-purple-500/20 bg-slate-900/60' : 'border-white/5 bg-slate-900/40 opacity-60'}
     `}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
+      <div className="flex-1 p-4 flex flex-col">
+        <div className="flex items-center gap-3 mb-3">
           <div className={`p-2 rounded-lg bg-${category.color}-500/20`}>
             <CategoryIcon className={`text-${category.color}-400`} size={18} />
           </div>
-          <div>
-            <h4 className="font-bold text-white">{rule.name}</h4>
-            <p className="text-xs text-slate-500">{rule.condition}</p>
+          <div className="flex flex-col">
+            <span className="text-white font-bold">{rule.name}</span>
+            <span className={`px-2 py-0.5 text-[10px] w-fit font-bold rounded-full bg-${category.color}-500/20 text-${category.color}-400 uppercase tracking-wider`}>
+              {category.label}
+            </span>
           </div>
         </div>
 
-        {/* Toggle */}
-        <button
-          onClick={onToggle}
-          className={`
-            relative w-12 h-6 rounded-full transition-colors
-            ${rule.isEnabled ? 'bg-emerald-500' : 'bg-slate-700'}
-          `}
-        >
-          <motion.div
-            animate={{ x: rule.isEnabled ? 24 : 2 }}
-            className="absolute top-1 w-4 h-4 bg-white rounded-full"
-          />
-        </button>
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-slate-500 text-sm">{premiumLocales.alertCenter.rules.condition}:</span>
+          <span className="text-slate-300 text-sm font-mono">{rule.condition} ({rule.threshold})</span>
+        </div>
+
+        <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+          <div className="flex gap-2">
+            {rule.notifications.email && <Mail size={14} className="text-slate-500" />}
+            {rule.notifications.push && <Smartphone size={14} className="text-slate-500" />}
+            {rule.notifications.sms && <MessageSquare size={14} className="text-slate-500" />}
+          </div>
+          <div className="text-[10px] text-slate-500 uppercase tracking-tighter">
+            {premiumLocales.alertCenter.rules.triggered.replace('{count}', rule.triggeredCount.toString())}
+          </div>
+        </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          {rule.notifications.email && <Mail size={14} className="text-slate-400" />}
-          {rule.notifications.push && <Bell size={14} className="text-slate-400" />}
-          {rule.notifications.sms && <Smartphone size={14} className="text-slate-400" />}
-        </div>
-        <span className="text-xs text-slate-500">
-          Спрацювань: {rule.triggeredCount}
+      <button
+        onClick={onToggle}
+        className={`
+          w-12 flex flex-col items-center justify-center border-l border-white/5 transition-colors
+          ${rule.isEnabled ? 'bg-purple-500/10 text-purple-400' : 'bg-slate-800/50 text-slate-600'}
+        `}
+        title={rule.isEnabled ? premiumLocales.alertCenter.rules.status.enabled : premiumLocales.alertCenter.rules.status.disabled}
+      >
+        {rule.isEnabled ? <Zap size={18} /> : <EyeOff size={18} />}
+        <span className="text-[10px] font-bold uppercase mt-1 vertical-text">
+          {rule.isEnabled ? 'ON' : 'OFF'}
         </span>
-      </div>
+      </button>
     </div>
   );
 };
@@ -340,21 +348,31 @@ const AlertCenterPremium: React.FC = () => {
           <div>
             <h1 className="text-2xl font-black text-white flex items-center gap-3">
               <BellRing className="text-amber-400" />
-              Центр Сповіщень
+              {premiumLocales.alertCenter.title}
               <span className="ml-2 px-3 py-1 bg-amber-500/20 text-amber-400 text-sm rounded-full flex items-center gap-1">
                 <Crown size={14} />
                 Premium
               </span>
             </h1>
             <p className="text-slate-500 mt-1">
-              Управління алертами та правилами сповіщень
+              {premiumLocales.alertCenter.subtitle}
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-bold text-sm">
-              <Plus size={16} />
-              Нове правило
+          <div className="flex gap-4">
+            <div className="hidden md:flex gap-6">
+              <div className="text-center">
+                <div className="text-2xl font-black text-white">{stats.active}</div>
+                <div className="text-[10px] text-slate-500 uppercase tracking-widest">{premiumLocales.alertCenter.stats.active}</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-black text-rose-500">{stats.critical}</div>
+                <div className="text-[10px] text-slate-500 uppercase tracking-widest">{premiumLocales.alertCenter.stats.critical}</div>
+              </div>
+            </div>
+            <button className="flex items-center gap-2 px-6 py-3 bg-amber-500 text-black font-black rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20">
+              <Plus size={20} />
+              <span className="hidden sm:inline">{premiumLocales.alertCenter.actions.addRule}</span>
             </button>
           </div>
         </div>
@@ -366,7 +384,7 @@ const AlertCenterPremium: React.FC = () => {
               <Bell className="text-slate-400" size={18} />
               <span className="text-2xl font-black text-white">{stats.total}</span>
             </div>
-            <p className="text-xs text-slate-500">Всього алертів</p>
+            <p className="text-xs text-slate-500">{premiumLocales.alertCenter.stats.total}</p>
           </div>
 
           <div className="bg-slate-900/60 border border-cyan-500/20 rounded-xl p-4">
@@ -403,7 +421,7 @@ const AlertCenterPremium: React.FC = () => {
           >
             <span className="flex items-center gap-2">
               <Bell size={16} />
-              Алерти ({stats.active})
+              {premiumLocales.alertCenter.tabs.alerts} ({stats.active})
             </span>
           </button>
           <button
@@ -413,7 +431,7 @@ const AlertCenterPremium: React.FC = () => {
           >
             <span className="flex items-center gap-2">
               <Settings size={16} />
-              Правила ({rules.length})
+              {premiumLocales.alertCenter.tabs.rules} ({rules.length})
             </span>
           </button>
         </div>
@@ -427,7 +445,7 @@ const AlertCenterPremium: React.FC = () => {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                 <input
                   type="text"
-                  placeholder="Пошук алертів..."
+                  placeholder={premiumLocales.alertCenter.rules.name + '...'}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 bg-slate-900/60 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
@@ -440,15 +458,15 @@ const AlertCenterPremium: React.FC = () => {
                     key={f}
                     onClick={() => setFilter(f)}
                     className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${filter === f
-                        ? f === 'all' ? 'bg-white/10 text-white' :
-                          f === 'critical' ? 'bg-rose-500/20 text-rose-400' :
-                            f === 'high' ? 'bg-amber-500/20 text-amber-400' :
-                              f === 'medium' ? 'bg-cyan-500/20 text-cyan-400' :
-                                'bg-slate-700 text-slate-300'
-                        : 'text-slate-500 hover:text-white'
+                      ? f === 'all' ? 'bg-white/10 text-white' :
+                        f === 'critical' ? 'bg-rose-500/20 text-rose-400' :
+                          f === 'high' ? 'bg-amber-500/20 text-amber-400' :
+                            f === 'medium' ? 'bg-cyan-500/20 text-cyan-400' :
+                              'bg-slate-700 text-slate-300'
+                      : 'text-slate-500 hover:text-white'
                       }`}
                   >
-                    {f === 'all' ? 'Всі' : priorityConfig[f].label}
+                    {f === 'all' ? premiumLocales.alertCenter.stats.total : priorityConfig[f].label}
                   </button>
                 ))}
               </div>
@@ -475,7 +493,7 @@ const AlertCenterPremium: React.FC = () => {
                   {filteredAlerts.length === 0 && (
                     <div className="text-center py-12">
                       <Bell className="text-slate-600 mx-auto mb-4" size={48} />
-                      <p className="text-slate-500">Немає алертів</p>
+                      <p className="text-slate-500">{premiumLocales.alertCenter.empty.alerts}</p>
                     </div>
                   )}
                 </>
