@@ -214,5 +214,39 @@ export const api = {
         logFeedback: async (payload: any) => (await apiClient.post('/self-improve/feedback/log', payload)).data,
         getStats: async () => (await apiClient.get('/self-improve/feedback/stats')).data,
         detectDrift: async (payload: any) => (await apiClient.post('/self-improve/drift/detect', payload)).data,
+    },
+    smb: {
+        scanMobRisk: async (payload: any) => (await apiClient.post('/smb/mob-risk/scan', payload)).data,
+        getAirAlarmStatus: async () => (await apiClient.get('/smb/air-alarm/status')).data,
+        predictCashflow: async (days: number = 30) => (await apiClient.get(`/smb/cashflow/predict?days_ahead=${days}`)).data,
+    },
+    twin: {
+        getOntologySummary: async () => (await apiClient.get('/twin/ontology/summary')).data,
+        simulate: async (payload: any) => (await apiClient.post('/twin/simulate', payload)).data,
+    },
+    agro: {
+        predictHarvest: async (payload: any) => (await apiClient.post('/agro/harvest/predict', payload)).data,
+        analyzeExportRisk: async (payload: any) => (await apiClient.post('/agro/export/risk-analyze', payload)).data,
+    },
+    p2: {
+        detectDeepfake: async (payload: any) => (await apiClient.post('/p2/deepfake/detect', payload)).data,
+        optimizeLogistics: async (payload: any) => (await apiClient.post('/p2/logistics/optimize', payload)).data,
+    },
+    gitops: {
+        getPipelineStats: async (pid: string = 'etl-canonical-ua') => (await apiClient.get(`/gitops/pipeline/stats?pid=${pid}`)).data,
+        getActiveIncidents: async () => (await apiClient.get('/gitops/incidents/active')).data,
+        resolveIncident: async (id: string) => (await apiClient.post(`/gitops/incidents/resolve/${id}`)).data,
+    },
+    intelAdvanced: {
+        buildPsychographicProfile: async (payload: any) => (await apiClient.post('/intel/profiler/psychographic', payload)).data,
+    },
+    retail: {
+        analyzeReviews: async (payload: any) => (await apiClient.post('/retail/analysis/reviews', payload)).data,
+        predictTrends: async (cat: string = 'fashion') => (await apiClient.get(`/retail/trends/predict?cat=${cat}`)).data,
+    },
+    coreAi: {
+        storeMemory: async (payload: any) => (await apiClient.post('/core-ai/memory/store', payload)).data,
+        retrieveMemory: async (sessionId: string) => (await apiClient.get(`/core-ai/memory/retrieve?session_id=${sessionId}`)).data,
+        getPrompt: async (name: string, version: string = 'latest') => (await apiClient.get(`/core-ai/prompts/${name}?version=${version}`)).data,
     }
 };
