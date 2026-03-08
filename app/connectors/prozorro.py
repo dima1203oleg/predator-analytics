@@ -23,18 +23,15 @@ class ProzorroConnector(BaseConnector):
         )
 
     async def search(
-        self, query: str, limit: int = 20, status: str | None = None, **kwargs
+        self, query: str, limit: int = 10, status: str | None = None, **kwargs
     ) -> ConnectorResult:
-        """Search Prozorro tenders.
-
-        Args:
-            query: Search query (company name, EDRPOU, or keywords)
-            limit: Maximum results to return
-            status: Filter by tender status (active, complete, cancelled)
-        """
+        """Search Prozorro tenders using the public API."""
+        # The public API /tenders is mostly for polling. 
+        # For actual search by keywords, we often need data.gov.ua datasets or specialized search.
+        # But we'll use the official API's offset-based listing and filter for now as a baseline.
         params = {
-            "opt_fields": "title,description,status,value,dateModified",
-            "limit": min(limit, 100),
+            "opt_fields": "title,description,status,value,dateModified,procuringEntity",
+            "limit": min(limit * 5, 100), # Fetch more to allow filtering
         }
 
         if status:
@@ -44,37 +41,41 @@ class ProzorroConnector(BaseConnector):
 
         if result.success and result.data:
             tenders = result.data.get("data", [])
-            # Filter by query if provided
+            
+            # 2. Advanced Filtering (since public API /tenders doesn't support 'q' param directly)
+            filtered = []
             if query:
-                query_lower = query.lower()
-                tenders = [
-                    t
-                    for t in tenders
-                    if query_lower in str(t.get("title", "")).lower()
-                    or query_lower in str(t.get("description", "")).lower()
-                ]
+                q = query.lower()
+                for t in tenders:
+                    title = str(t.get("title", "")).lower()
+                    desc = str(t.get("description", "")).lower()
+                    owner = str(t.get("procuringEntity", {}).get("name", "")).lower()
+                    edrpou = str(t.get("procuringEntity", {}).get("identifier", {}).get("id", "")).lower()
+                    
+                    if q in title or q in desc or q in owner or q in edrpou:
+                        filtered.append(t)
+            else:
+                filtered = tenders
 
-            result.data = tenders[:limit]
+            result.data = filtered[:limit]
             result.records_count = len(result.data)
+            logger.info(f"Prozorro search for '{query}' returned {len(result.data)} results")
 
         return result
 
     async def get_by_id(self, tender_id: str) -> ConnectorResult:
-        """Get specific tender by ID."""
+        """Get specific tender details."""
         return await self._request("GET", f"/tenders/{tender_id}")
 
-    async def get_tender_documents(self, tender_id: str) -> ConnectorResult:
-        """Get documents attached to a tender."""
-        return await self._request("GET", f"/tenders/{tender_id}/documents")
-
-    async def get_tender_bids(self, tender_id: str) -> ConnectorResult:
-        """Get bids for a tender (if available)."""
-        return await self._request("GET", f"/tenders/{tender_id}/bids")
-
-    async def search_by_edrpou(self, edrpou: str, limit: int = 20) -> ConnectorResult:
-        """Search tenders by company EDRPOU."""
-        # Prozorro doesn't have direct EDRPOU search, so we search in title/description
+    async def search_by_edrpou(self, edrpou: str, limit: int = 10) -> ConnectorResult:
+        """Search tenders where the procuring entity has the given EDRPOU."""
         return await self.search(query=edrpou, limit=limit)
+
+    async def fetch(self, config: dict) -> ConnectorResult:
+        """Generic fetch for ETL worker."""
+        query = config.get("query", "")
+        limit = config.get("limit", 20)
+        return await self.search(query=query, limit=limit)
 
 
 # Singleton instance
