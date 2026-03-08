@@ -66,9 +66,9 @@ class ETLIngestionService:
             if context:
                 current_progress = job.progress or {}
                 new_progress = context.get("progress", {})
-                updated_progress = {**current_progress, **new_progress}
+                updated_progress: dict[str, Any] = {**current_progress, **new_progress}
                 job.progress = updated_progress
-                job.progress["percent"] = ETLStateMachine.get_progress(state, job.progress)
+                job.progress["percent"] = ETLStateMachine.get_progress(state, updated_progress)
 
                 # Emit facts via Message Broker (v45.2 optimization)
                 for k, v in new_progress.items():
@@ -77,7 +77,8 @@ class ETLIngestionService:
                     )
 
             # Timestamps
-            current_timestamps = job.timestamps or {}
+            from typing import cast
+            current_timestamps = cast(dict[str, str], job.timestamps or {})
             current_timestamps[f"entered_{state.value.lower()}"] = datetime.utcnow().isoformat()
             job.timestamps = current_timestamps
 
@@ -135,6 +136,8 @@ class ETLIngestionService:
         from app.modules.etl_engine.deduplication.data_deduplicator import create_data_deduplicator
         from app.modules.etl_engine.enrichment.price_normalizer import create_price_normalizer
         from app.modules.etl_engine.enrichment.uktzed_enricher import create_uktzed_enricher
+        from app.modules.etl_engine.enrichment.geo_enricher import create_geo_enricher
+        from app.modules.etl_engine.quality.data_quality import create_quality_reporter
 
         try:
             # 2. START ETL (Streaming if Large Excel)
@@ -152,8 +155,10 @@ class ETLIngestionService:
             deduplicator = create_data_deduplicator()
             price_normalizer = create_price_normalizer()
             uktzed_enricher = create_uktzed_enricher()
+            geo_enricher = create_geo_enricher()
+            quality_reporter = create_quality_reporter()
 
-            total_records_processed = 0
+            total_records_processed: int = 0
 
             if is_large_excel:
                 logger.info(f"Detected Large Excel: {filename}. Switching to Streaming ETL Mode.")
@@ -167,7 +172,7 @@ class ETLIngestionService:
                 async for _batch_idx, df_chunk in self._read_excel_batched(
                     file_path, str(job_id), chunk_size=2000
                 ):
-                    chunk_size = len(df_chunk)
+                    chunk_size: int = int(len(df_chunk))
 
                     # A. Transform & Deduplicate
                     records = df_chunk.to_dict(orient="records")
@@ -176,14 +181,18 @@ class ETLIngestionService:
                         records = transform_result.data
                         
                     dedup_result = deduplicator.process_batch(records)
+                    quality_reporter.add_duplicates(len(dedup_result["duplicate_records"]))
                     records = dedup_result["unique_records"]
                     
                     if not records:
                         continue
 
-                    # B. Enrich (Price & UKTZED)
+                    # B. Enrich (Price, UKTZED & Geo)
                     records = price_normalizer.process_batch(records)
                     records = uktzed_enricher.process_batch(records)
+                    records = geo_enricher.process_batch(records)
+                    
+                    quality_reporter.process_batch(records)
 
                     # C. Distribute
                     await asyncio.to_thread(
@@ -191,7 +200,7 @@ class ETLIngestionService:
                     )
 
                     # C. Update Progress
-                    total_records_processed += chunk_size
+                    total_records_processed = int(total_records_processed) + chunk_size
 
                     # Update Progress every chunk
                     await self._update_job_state(
@@ -241,11 +250,15 @@ class ETLIngestionService:
                     records = transform_result.data
                     
                 dedup_result = deduplicator.process_batch(records)
+                quality_reporter.add_duplicates(len(dedup_result["duplicate_records"]))
                 records = dedup_result["unique_records"]
 
                 # ENRICHMENT
                 records = price_normalizer.process_batch(records)
                 records = uktzed_enricher.process_batch(records)
+                records = geo_enricher.process_batch(records)
+                
+                quality_reporter.process_batch(records)
 
                 # DISTRIBUTION
                 await self._update_job_state(
@@ -263,13 +276,22 @@ class ETLIngestionService:
                 )
                 total_records_processed = len(records)
 
+            report_data = quality_reporter.generate_report()
+            
+            await self._update_job_state(
+                job_id,
+                ETLState.INDEXED,
+                {"progress": {"quality_report": report_data}}
+            )
+
             logger.info(
-                "etl_job_completed_modular", job_id=str(job_id), records=total_records_processed
+                "etl_job_completed_modular", job_id=str(job_id), records=total_records_processed, quality_score=report_data["quality_score_percent"]
             )
             return {
                 "status": "success",
                 "job_id": str(job_id),
                 "record_count": total_records_processed,
+                "quality_report": report_data
             }
 
         except Exception as e:
@@ -284,11 +306,13 @@ class ETLIngestionService:
         loop = asyncio.get_running_loop()
         ext = Path(file_path).suffix.lower()
         if ext == ".csv":
-            return await loop.run_in_executor(None, lambda: pd.read_csv(file_path, low_memory=True))
+            def _read_csv(*args: Any, **kwargs: Any) -> pd.DataFrame:
+                return pd.read_csv(file_path, low_memory=True)
+            return await loop.run_in_executor(None, _read_csv)
         if ext in [".xlsx", ".xls"]:
-            return await loop.run_in_executor(
-                None, lambda: pd.read_excel(file_path, engine="openpyxl")
-            )
+            def _read_excel(*args: Any, **kwargs: Any) -> pd.DataFrame:
+                return pd.read_excel(file_path, engine="openpyxl")
+            return await loop.run_in_executor(None, _read_excel)
         raise ValueError(f"Unsupported file format: {ext}")
 
 
@@ -305,7 +329,7 @@ class ETLIngestionService:
 
         loop = asyncio.get_running_loop()
 
-        def load_wb():
+        def load_wb(*args: Any, **kwargs: Any):
             return openpyxl.load_workbook(file_path, read_only=True, data_only=True)
 
         wb = await loop.run_in_executor(None, load_wb)
