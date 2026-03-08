@@ -30,14 +30,23 @@ class DataDeduplicator:
 
     def _generate_signature(self, record: dict[str, Any]) -> str:
         """Generate a SHA-256 hash for a dictionary record."""
-        # 1. Select the fields to hash
+        # 1. Select and normalize the fields to hash
         if self.primary_keys:
             # Extract only specified keys, falling back to empty string if missing
             keys: list[str] = self.primary_keys or []
-            data_to_hash = {k: record.get(k, "") for k in keys}
+            # Normalize to string, strip whitespace, and uppercase for case-insensitive matching if it's a code
+            data_to_hash = {
+                k: str(record.get(k, "")).strip().upper() 
+                for k in keys
+            }
         else:
-            # Hash the whole record (except metadata like timestamp or source if we want them ignored? - usually we hash all)
-            data_to_hash = {k: v for k, v in record.items() if k not in ("source_format", "timestamp", "job_id")}
+            # Hash the whole record (except metadata)
+            exclude_keys = ("source_format", "timestamp", "job_id", "_signature")
+            data_to_hash = {
+                k: str(v).strip() 
+                for k, v in record.items() 
+                if k not in exclude_keys
+            }
         
         # 2. Convert to a stable JSON string (sorted keys)
         try:

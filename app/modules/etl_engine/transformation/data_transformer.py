@@ -28,9 +28,12 @@ except ImportError:
 
         def dict(self):
             return self.__dict__
+        
+        def model_dump(self):
+            return self.__dict__
 
-    def Field(*args, **kwargs):
-        return None
+    def Field(default=None, **kwargs):
+        return default
 
     def validator(*args, **kwargs):
         return lambda x: x
@@ -60,6 +63,26 @@ class CompanySchema(BaseModel):
     )
 
 
+class CustomsSchema(BaseModel):
+    """Schema for Customs Declaration data (Ukraine Customs OSINT)."""
+    
+    declaration_number: str = Field(..., alias="Митна декларація")
+    date: datetime = Field(..., alias="Дата")
+    sender: str = Field(..., alias="Відправник")
+    receiver: str = Field(..., alias="Одержувач")
+    product_code: str = Field(..., alias="Код товару")
+    description: str = Field(..., alias="Опис товару")
+    net_weight: float = Field(default=0.0, alias="Маса, нетто, кг")
+    gross_weight: float = Field(default=0.0, alias="Маса, брутто, кг")
+    invoice_value: float = Field(default=0.0, alias="Фактурна варість, валюта контракту")
+    currency: str = Field(default="USD", alias="Валюта")
+    source_format: str = Field(default="canonical", description="Original data format")
+    timestamp: datetime = Field(default_factory=datetime.now)
+
+    class Config:
+        populate_by_name = True
+
+
 class DirectorSchema(BaseModel):
     """Schema for director/person data.
 
@@ -69,11 +92,10 @@ class DirectorSchema(BaseModel):
     name: str = Field(..., description="Person's name")
     position: str = Field(..., description="Person's position/role")
     company: str = Field(..., description="Associated company")
-    source_format: str = Field(..., description="Original data format (csv, json, xml)")
+    source_format: str = Field(default="unknown", description="Original data format")
     timestamp: datetime = Field(
         default_factory=datetime.now, description="Transformation timestamp"
     )
-
 
 class UnifiedSchema(BaseModel):
     """Unified data schema for transformed data.
@@ -135,7 +157,8 @@ class DataTransformer:
         self.unified_schema = UnifiedSchema
         self.company_schema = CompanySchema
         self.director_schema = DirectorSchema
-        logger.info("DataTransformer initialized with unified schemas")
+        self.customs_schema = CustomsSchema
+        logger.info("DataTransformer initialized with unified and customs schemas")
 
     def validate_data(
         self,
@@ -159,6 +182,8 @@ class DataTransformer:
                 schema = self.company_schema
             elif schema_type == "director":
                 schema = self.director_schema
+            elif schema_type == "customs":
+                schema = self.customs_schema
             else:
                 schema = self.unified_schema
 
@@ -172,7 +197,11 @@ class DataTransformer:
                         record_with_metadata["source_format"] = source_format
 
                         validated_record = schema(**record_with_metadata)
-                        validated_records.append(validated_record.dict())
+                        # Use .model_dump() for Pydantic v2, or .dict() for v1/fallback
+                        if hasattr(validated_record, "model_dump"):
+                            validated_records.append(validated_record.model_dump())
+                        else:
+                            validated_records.append(validated_record.dict())
                     except ValidationError as ve:
                         logger.warning(f"Validation error in record {i}: {ve}")
                         return TransformResult(
@@ -185,6 +214,8 @@ class DataTransformer:
             data_with_metadata["source_format"] = source_format
 
             validated_record = schema(**data_with_metadata)
+            if hasattr(validated_record, "model_dump"):
+                return TransformResult(True, data=validated_record.model_dump())
             return TransformResult(True, data=validated_record.dict())
 
         except ValidationError as ve:
@@ -348,11 +379,20 @@ class DataTransformer:
                             normalized[field] = 0.0
 
                 # Normalize Customs Code (Код товару) as string, strip trailing .0 from float parses
-                if "Код товару" in normalized and not pd.isna(normalized["Код товару"]) if pd is not None else normalized.get("Код товару") is not None:
-                    val_str = str(normalized["Код товару"]).strip()
-                    if val_str.endswith(".0"):
-                        val_str = val_str[:-2]
-                    normalized["Код товару"] = val_str
+                customs_code_fields = ["Код товару", "Код ЄДРПОУ"]
+                for field in customs_code_fields:
+                    val_raw = normalized.get(field)
+                    if val_raw is not None:
+                        is_na = False
+                        if pd is not None:
+                            is_na = pd.isna(val_raw)
+                        
+                        if not is_na:
+                            val_str = str(val_raw).strip()
+                            # Handle float representations of codes (e.g. 12345.0)
+                            if val_str.endswith(".0"):
+                                val_str = val_str[:-2]
+                            normalized[field] = val_str
 
                 return normalized
 

@@ -1,7 +1,11 @@
 {
   "site_package_search_strategy": "pep561",
-  "source_directories": ["."],
+  "source_directories": [
+    ".",
+    "/Users/dima-mac/Documents/Predator_21"
+  ],
   "search_path": [
+    ".",
     "venv/lib/python3.12/site-packages"
   ],
   "exclude": [

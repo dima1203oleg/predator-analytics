@@ -1,5 +1,5 @@
-import { apiClient } from '@/services/api/config';
-import { CompanyProfileResponse } from '../types/index';
+import { apiClient, v45Client } from '@/services/api/config';
+import { CompanyProfileResponse, RiskEntity } from '../types/index';
 
 /**
  * API для роботи з перевіркою контрагентів (Due Diligence).
@@ -10,15 +10,15 @@ export const diligenceApi = {
      * Отримати повний профіль компанії.
      */
     getCompanyProfile: async (edrpou: string): Promise<CompanyProfileResponse> => {
-        const response = await apiClient.get<CompanyProfileResponse>(`/v1/diligence/company/${edrpou}`);
+        const response = await apiClient.get<CompanyProfileResponse>(`/diligence/company/${edrpou}`);
         return response.data;
     },
 
     /**
      * Отримати список ризикових об'єктів (компаній).
      */
-    getRiskEntities: async () => {
-        const response = await apiClient.get('/v1/diligence/risk-entities');
+    getRiskEntities: async (): Promise<RiskEntity[]> => {
+        const response = await apiClient.get<RiskEntity[]>('/diligence/risk-entities');
         return response.data;
     }
 };

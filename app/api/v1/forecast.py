@@ -1,83 +1,47 @@
-"""
-📈 Прогнози — /api/v1/forecast
-
-Ендпоінти ML-прогнозування: попит, ціни, імпорт.
-"""
-
-from __future__ import annotations
-
-import math
+from fastapi import APIRouter, Depends, Query, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.database import get_db
+from app.schemas.forecast import ForecastDemandRequest, ForecastResponse, ForecastModelsResponse
 from datetime import datetime, timedelta
+import random
 
-from fastapi import APIRouter, Body
+from app.services.ml.forecast_service import get_forecast_service, ForecastService
 
-router = APIRouter(prefix="/forecast")
+router = APIRouter(prefix="/forecast", tags=["Прогнозування"])
 
-
-@router.post("/demand")
-async def forecast_demand(
-    product_code: str = Body(default="84713000"),
-    months_ahead: int = Body(default=6, ge=1, le=24),
-) -> dict:
+@router.post("/demand", response_model=ForecastResponse)
+async def get_demand_forecast(
+    request: ForecastDemandRequest,
+    db: AsyncSession = Depends(get_db),
+    forecast_service: ForecastService = Depends(get_forecast_service)
+):
     """
-    Прогнозування попиту на товар.
-
-    Повертає прогнозні точки з довірчим інтервалом.
+    Отримати прогноз попиту для товару.
     """
-    points = []
-    for i in range(months_ahead):
-        base_volume = 1000 + (i * 20)
-        seasonality = math.sin((i / 12) * 2 * math.pi) * 100
-        predicted = base_volume + seasonality
+    # 1. Fetch historical data from DB if possible
+    # query = select(Declaration).where(Declaration.product_code == request.product_code)
+    # result = await db.execute(query)
+    # ... logic to convert to history_data list ...
+    
+    # 2. Use ML service
+    forecast_result = forecast_service.predict_demand(
+        product_code=request.product_code,
+        history_data=None, # In production: pass real historical rows here
+        months_ahead=request.months_ahead,
+        model_key=request.model
+    )
+    
+    return forecast_result
 
-        future_date = datetime.now() + timedelta(days=30 * (i + 1))
-
-        points.append({
-            "date": future_date.strftime("%Y-%m-%d"),
-            "predicted_volume": round(predicted),
-            "confidence_lower": round(predicted * 0.85),
-            "confidence_upper": round(predicted * 1.15),
-        })
-
-    return {
-        "product_code": product_code,
-        "product_name": "Портативні ЕОМ (ноутбуки)",
-        "country_code": None,
-        "model_used": "prophet",
-        "confidence_score": 0.78,
-        "mape": 0.12,
-        "data_points_used": 36,
-        "forecast": points,
-        "feature_importance": None,
-        "interpretation_uk": (
-            f"Прогноз для товару «Портативні ЕОМ» має середню впевненість (78%). "
-            f"За нашими оцінками, попит зросте на 12% "
-            f"протягом наступних {months_ahead} місяців."
-        ),
-    }
-
-
-@router.get("/models")
-async def get_available_models() -> dict:
+@router.get("/models", response_model=ForecastModelsResponse)
+async def list_models():
     """
     Список доступних моделей прогнозування.
     """
     return {
         "models": [
-            {
-                "key": "prophet",
-                "name_uk": "Prophet (Facebook)",
-                "description_uk": "Найкраще для сезонних даних",
-            },
-            {
-                "key": "xgboost",
-                "name_uk": "XGBoost",
-                "description_uk": "Найкраще для даних з багатьма факторами",
-            },
-            {
-                "key": "ensemble",
-                "name_uk": "Ансамбль",
-                "description_uk": "Автоматичне поєднання кількох моделей",
-            },
-        ],
+            {"key": "prophet", "name_uk": "FB Prophet (Base)", "description_uk": "Статистична модель часових рядів"},
+            {"key": "xgboost", "name_uk": "XGBoost Regressor", "description_uk": "Градієнтний бустинг для складних патернів"},
+            {"key": "ensemble", "name_uk": "Ensemble (Prophet + XGBoost)", "description_uk": "Ансамбль моделей з максимальною точністю"}
+        ]
     }

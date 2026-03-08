@@ -10,7 +10,7 @@ export const marketApi = {
      * Отримати загальний огляд ринку.
      */
     getOverview: async (period: string = 'last_30_days'): Promise<MarketOverviewResponse> => {
-        const response = await apiClient.get<MarketOverviewResponse>('/v1/market/overview', {
+        const response = await apiClient.get<MarketOverviewResponse>('/market/overview', {
             params: { period }
         });
         return response.data;
@@ -24,8 +24,9 @@ export const marketApi = {
         limit: number = 20,
         filters?: DeclarationFilter
     ): Promise<DeclarationsListResponse> => {
-        const response = await apiClient.post<DeclarationsListResponse>('/v1/market/declarations', filters, {
-            params: { page, limit }
+        // Замінено на GET як у канонічному backend API v1
+        const response = await apiClient.get<DeclarationsListResponse>('/market/declarations', {
+            params: { page, limit, ...filters }
         });
         return response.data;
     },
@@ -34,7 +35,15 @@ export const marketApi = {
      * Отримати статистику по конкретному коду УКТЗЕД.
      */
     getProductStats: async (code: string) => {
-        const response = await apiClient.get(`/v1/market/product/${code}/stats`);
+        const response = await apiClient.get(`/market/product/${code}/stats`);
+        return response.data;
+    },
+
+    /**
+     * Отримати AI-інсайти по ринку.
+     */
+    getInsights: async () => {
+        const response = await apiClient.get('/market/insights');
         return response.data;
     }
 };

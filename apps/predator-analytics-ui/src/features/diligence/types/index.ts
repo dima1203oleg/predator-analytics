@@ -23,6 +23,14 @@ export interface AnomalyRecord {
     date_detected: string;
 }
 
+export interface RiskEntity {
+    edrpou: string;
+    name: string;
+    risk_score: number;
+    risk_level: 'low' | 'medium' | 'high' | 'critical';
+    last_updated: string;
+}
+
 export interface CompanyProfileResponse {
     edrpou: string;
     name: string;

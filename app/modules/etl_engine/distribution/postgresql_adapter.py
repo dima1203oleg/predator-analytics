@@ -17,7 +17,7 @@ import uuid
 
 import asyncpg
 
-from .data_distributor import DistributionResult
+from app.modules.etl_engine.distribution.data_distributor import DistributionResult
 
 logger = logging.getLogger(__name__)
 
