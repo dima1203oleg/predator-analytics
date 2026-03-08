@@ -32,6 +32,7 @@ from app.api.v1.twin import router as twin_router
 from app.api.v1.agro import router as agro_router
 from app.api.v1.p2_features import router as p2_features_router
 from app.api.v1.gitops import router as gitops_router
+from app.api.v1.intel_advanced import router as intel_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 
@@ -59,4 +60,5 @@ api_v1_router.include_router(twin_router, tags=["Digital Twin & Ontology"])
 api_v1_router.include_router(agro_router, tags=["Agro-Industrial Complex (АПК)"])
 api_v1_router.include_router(p2_features_router, tags=["P2 Advanced Features"])
 api_v1_router.include_router(gitops_router, tags=["GitOps & Monitoring"])
+api_v1_router.include_router(intel_router, tags=["Intelligence Services"])
 
