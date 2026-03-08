@@ -25,6 +25,7 @@ import {
 import { useAppStore, InterlinkPersona } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { ViewHeader } from '../components/ViewHeader';
+import { premiumLocales } from '../locales/uk/premium';
 import { api } from '../services/api';
 import { LiveIntelligenceAlerts } from '../components/premium/LiveIntelligenceAlerts';
 import {
@@ -67,17 +68,17 @@ import { TacticalVoiceCommWidget } from '../components/premium/TacticalVoiceComm
 const PERSONA_CONFIG = {
   TITAN: {
     name: 'TITAN',
-    title: 'Бізнес-Розвідка',
-    subtitle: 'Перевага над конкурентами',
+    title: premiumLocales.hub.persona.titan.title,
+    subtitle: premiumLocales.hub.persona.titan.subtitle,
     icon: Target,
     color: 'amber',
     gradient: 'from-amber-500 to-orange-600',
     bgGlow: 'rgba(245, 158, 11, 0.15)',
     features: [
-      { icon: Eye, label: 'Конкурентний Аналіз', desc: 'Хто що імпортує, по якій ціні' },
-      { icon: TrendingUp, label: 'Ринкові Прогнози', desc: 'Передбачення попиту та цін' },
-      { icon: Briefcase, label: 'Інсайди Постачальників', desc: 'Виявлення нових джерел' },
-      { icon: DollarSign, label: 'Цінова Розвідка', desc: 'Реальні ціни vs декларовані' },
+      { icon: Eye, label: premiumLocales.hub.persona.titan.features.compAnalysis, desc: premiumLocales.hub.persona.titan.features.compAnalysisDesc },
+      { icon: TrendingUp, label: premiumLocales.hub.persona.titan.features.marketForecast, desc: premiumLocales.hub.persona.titan.features.marketForecastDesc },
+      { icon: Briefcase, label: premiumLocales.hub.persona.titan.features.supplierInsights, desc: premiumLocales.hub.persona.titan.features.supplierInsightsDesc },
+      { icon: DollarSign, label: premiumLocales.hub.persona.titan.features.priceIntel, desc: premiumLocales.hub.persona.titan.features.priceIntelDesc },
     ],
     dashboards: [
       { id: 'competitor-imports', name: 'Імпорт Конкурентів', type: 'bar' },
@@ -93,17 +94,17 @@ const PERSONA_CONFIG = {
   },
   INQUISITOR: {
     name: 'INQUISITOR',
-    title: 'Контрольна Розвідка',
-    subtitle: "Виявлення порушень та схем",
+    title: premiumLocales.hub.persona.inquisitor.title,
+    subtitle: premiumLocales.hub.persona.inquisitor.subtitle,
     icon: Shield,
     color: 'rose',
     gradient: 'from-rose-500 to-pink-600',
     bgGlow: 'rgba(244, 63, 94, 0.15)',
     features: [
-      { icon: AlertTriangle, label: 'Детекція Аномалій', desc: 'Підозрілі декларації' },
-      { icon: ShieldAlert, label: 'Схеми Ухилення', desc: 'Патерни маніпуляцій' },
-      { icon: Fingerprint, label: 'Профілювання', desc: 'Досьє на суб\'єктів' },
-      { icon: Scale, label: 'Оцінка Ризику', desc: 'Скоринг декларацій' },
+      { icon: AlertTriangle, label: premiumLocales.hub.persona.inquisitor.features.anomalyDetection, desc: premiumLocales.hub.persona.inquisitor.features.anomalyDetectionDesc },
+      { icon: ShieldAlert, label: premiumLocales.hub.persona.inquisitor.features.evasionSchemes, desc: premiumLocales.hub.persona.inquisitor.features.evasionSchemesDesc },
+      { icon: Fingerprint, label: premiumLocales.hub.persona.inquisitor.features.profiling, desc: premiumLocales.hub.persona.inquisitor.features.profilingDesc },
+      { icon: Scale, label: premiumLocales.hub.persona.inquisitor.features.riskScoring, desc: premiumLocales.hub.persona.inquisitor.features.riskScoringDesc },
     ],
     dashboards: [
       { id: 'anomaly-detection', name: 'Виявлені Аномалії', type: 'scatter' },
@@ -119,17 +120,17 @@ const PERSONA_CONFIG = {
   },
   SOVEREIGN: {
     name: 'SOVEREIGN',
-    title: 'Стратегічна Аналітика',
-    subtitle: 'Макро-тренди та прогнози',
+    title: premiumLocales.hub.persona.sovereign.title,
+    subtitle: premiumLocales.hub.persona.sovereign.subtitle,
     icon: Crown,
     color: 'indigo',
     gradient: 'from-indigo-500 to-purple-600',
     bgGlow: 'rgba(99, 102, 241, 0.15)',
     features: [
-      { icon: Globe, label: 'Геополітика', desc: 'Вплив на торгівлю' },
-      { icon: Landmark, label: 'Галузевий Аналіз', desc: 'Крос-секторні тренди' },
-      { icon: BrainCircuit, label: 'AI Прогнози', desc: 'Машинне передбачення' },
-      { icon: Network, label: 'Системні Ризики', desc: 'Кореляційний аналіз' },
+      { icon: Globe, label: premiumLocales.hub.persona.sovereign.features.geopolitics, desc: premiumLocales.hub.persona.sovereign.features.geopoliticsDesc },
+      { icon: Landmark, label: premiumLocales.hub.persona.sovereign.features.sectorAnalysis, desc: premiumLocales.hub.persona.sovereign.features.sectorAnalysisDesc },
+      { icon: BrainCircuit, label: premiumLocales.hub.persona.sovereign.features.aiForecasts, desc: premiumLocales.hub.persona.sovereign.features.aiForecastsDesc },
+      { icon: Network, label: premiumLocales.hub.persona.sovereign.features.systemRisks, desc: premiumLocales.hub.persona.sovereign.features.systemRisksDesc },
     ],
     dashboards: [
       { id: 'trade-flow', name: 'Потоки Торгівлі', type: 'chord' },
@@ -385,11 +386,10 @@ const PremiumHubView: React.FC = () => {
 
           <div className="space-y-4">
             <h1 className="text-4xl font-black text-white tracking-tighter uppercase">
-              Premium Intelligence Hub
+              {premiumLocales.hub.paywall.title}
             </h1>
             <p className="text-slate-400 text-sm leading-relaxed max-w-xl mx-auto">
-              Отримайте доступ до найпотужнішої аналітичної платформи для бізнес-розвідки,
-              виявлення схем та стратегічного планування на основі реальних митних даних.
+              {premiumLocales.hub.paywall.description}
             </p>
           </div>
 
@@ -406,10 +406,10 @@ const PremiumHubView: React.FC = () => {
           <div className="pt-4 space-y-4">
             <button className="w-full py-5 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-black rounded-3xl uppercase tracking-[0.2em] shadow-xl hover:shadow-amber-500/30 hover:scale-[1.02] transition-all">
               <Sparkles className="inline-block mr-3" size={18} />
-              Активувати Premium — $499/міс
+              {premiumLocales.hub.paywall.cta}
             </button>
             <p className="text-[9px] text-slate-600 uppercase tracking-widest">
-              14 днів безкоштовного trial • Без зобов'язань
+              {premiumLocales.hub.paywall.trail}
             </p>
           </div>
         </motion.div>
@@ -424,8 +424,8 @@ const PremiumHubView: React.FC = () => {
         className={cn(
           "fixed inset-0 pointer-events-none transition-all duration-1000",
           persona === 'TITAN' ? "bg-[radial-gradient(ellipse_at_80%_20%,_rgba(245,158,11,0.15),_transparent_60%)]" :
-          persona === 'INQUISITOR' ? "bg-[radial-gradient(ellipse_at_80%_20%,_rgba(244,63,94,0.15),_transparent_60%)]" :
-          "bg-[radial-gradient(ellipse_at_80%_20%,_rgba(99,102,241,0.15),_transparent_60%)]"
+            persona === 'INQUISITOR' ? "bg-[radial-gradient(ellipse_at_80%_20%,_rgba(244,63,94,0.15),_transparent_60%)]" :
+              "bg-[radial-gradient(ellipse_at_80%_20%,_rgba(99,102,241,0.15),_transparent_60%)]"
         )}
       />
 
@@ -440,13 +440,13 @@ const PremiumHubView: React.FC = () => {
       <PredatorChatWidget />
 
       <ViewHeader
-        title="Premium Intelligence Hub"
+        title={premiumLocales.hub.title}
         icon={<Crown size={20} className={`text-${currentConfig.color}-400`} />}
-        breadcrumbs={['PREDATOR', 'Premium', currentConfig.name]}
+        breadcrumbs={[premiumLocales.hub.breadcrumbs.predator, premiumLocales.hub.breadcrumbs.premium, currentConfig.name]}
         stats={[
-          { label: 'Декларацій', value: '142,504', icon: <FileText size={14} />, color: 'primary' },
-          { label: 'Інсайтів', value: '1,247', icon: <Sparkles size={14} />, color: 'success' },
-          { label: 'Активних Сповіщень', value: '23', icon: <AlertTriangle size={14} />, color: 'warning' },
+          { label: premiumLocales.hub.stats.declarations, value: '142,504', icon: <FileText size={14} />, color: 'primary' },
+          { label: premiumLocales.hub.stats.insights, value: '1,247', icon: <Sparkles size={14} />, color: 'success' },
+          { label: premiumLocales.hub.stats.activeAlerts, value: '23', icon: <AlertTriangle size={14} />, color: 'warning' },
         ]}
       />
 
@@ -455,14 +455,14 @@ const PremiumHubView: React.FC = () => {
         {/* Navigation Tabs */}
         <div className="flex items-center gap-2 p-1.5 bg-black/40 border border-white/5 rounded-2xl backdrop-blur-3xl">
           {[
-            { id: 'overview', label: 'Огляд', icon: Layout },
-            { id: 'tactical', label: 'Tactical (Live)', icon: Radio },
-            { id: 'analytics', label: 'Аналітика', icon: BarChart3 },
-            { id: 'sourcing', label: 'Сорсинг (AI)', icon: Globe },
-            { id: 'modeling', label: 'Моделювання', icon: Activity },
-            { id: 'logistics', label: 'Логістика', icon: Truck },
-            { id: 'reports', label: 'Звіти', icon: FileText },
-            { id: 'builder', label: 'Конструктор', icon: Settings },
+            { id: 'overview', label: premiumLocales.hub.tabs.overview, icon: Layout },
+            { id: 'tactical', label: premiumLocales.hub.tabs.tactical, icon: Radio },
+            { id: 'analytics', label: premiumLocales.hub.tabs.analytics, icon: BarChart3 },
+            { id: 'sourcing', label: premiumLocales.hub.tabs.sourcing, icon: Globe },
+            { id: 'modeling', label: premiumLocales.hub.tabs.modeling, icon: Activity },
+            { id: 'logistics', label: premiumLocales.hub.tabs.logistics, icon: Truck },
+            { id: 'reports', label: premiumLocales.hub.tabs.reports, icon: FileText },
+            { id: 'builder', label: premiumLocales.hub.tabs.builder, icon: Settings },
           ].map(tab => (
             <button
               key={tab.id}
@@ -482,7 +482,7 @@ const PremiumHubView: React.FC = () => {
           <button
             onClick={() => setIsSearchOpen(true)}
             className="px-4 py-2.5 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all border border-transparent hover:border-white/10"
-            title="Глобальний Пошук (CMD+K)"
+            title={premiumLocales.hub.search.placeholder}
           >
             <Search size={14} />
           </button>
@@ -531,7 +531,7 @@ const PremiumHubView: React.FC = () => {
 
                 <div className="relative z-10">
                   <div className={cn("text-[10px] font-black uppercase tracking-[0.3em] mb-2", `text-${currentConfig.color}-400`)}>
-                    {currentConfig.name} MODE
+                    {currentConfig.name} {premiumLocales.hub.persona.mode}
                   </div>
                   <h2 className="text-3xl font-black text-white tracking-tight mb-2">
                     {currentConfig.title}
@@ -543,7 +543,7 @@ const PremiumHubView: React.FC = () => {
               {/* Features Grid */}
               <div className="space-y-3">
                 <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-2">
-                  Ваші Можливості
+                  {premiumLocales.hub.insights.capabilities}
                 </h3>
                 {currentConfig.features.map((feature, i) => (
                   <FeatureCard key={i} feature={feature} color={currentConfig.color} delay={i * 0.1} />
@@ -554,7 +554,7 @@ const PremiumHubView: React.FC = () => {
               <div className="space-y-3">
                 <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-2 flex items-center gap-2">
                   <Zap size={12} className={`text-${currentConfig.color}-400`} />
-                  Свіжі Інсайти
+                  {premiumLocales.hub.insights.title}
                 </h3>
                 {currentConfig.insights.map((insight, i) => (
                   <InsightAlert key={i} insight={insight} color={currentConfig.color} index={i} />
@@ -572,17 +572,17 @@ const PremiumHubView: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                   <div className="lg:col-span-2 space-y-4">
                     <div className="h-[400px]">
-                        <ExecutiveBriefingWidget
-                          persona={persona as string}
-                          onOpenDossier={(name) => {
-                            setSelectedEntity(name);
-                            setIsDossierOpen(true);
-                          }}
-                        />
+                      <ExecutiveBriefingWidget
+                        persona={persona as string}
+                        onOpenDossier={(name) => {
+                          setSelectedEntity(name);
+                          setIsDossierOpen(true);
+                        }}
+                      />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <SmartCalculatorWidget persona={persona as string} />
-                        <CompetitorRadarWidget persona={persona as string} />
+                      <SmartCalculatorWidget persona={persona as string} />
+                      <CompetitorRadarWidget persona={persona as string} />
                     </div>
                   </div>
                   <div className="h-full min-h-[400px]">
@@ -601,11 +601,11 @@ const PremiumHubView: React.FC = () => {
                       }}
                     />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                         <SanctionsIntelligenceWidget persona={persona as string} />
-                         <div className="space-y-4">
-                            <RiskScoreWidget entityName="ТОВ Альфа-Трейд" persona={persona as string} />
-                            <SchemesWidget persona={persona as string} />
-                         </div>
+                      <SanctionsIntelligenceWidget persona={persona as string} />
+                      <div className="space-y-4">
+                        <RiskScoreWidget entityName="ТОВ Альфа-Трейд" persona={persona as string} />
+                        <SchemesWidget persona={persona as string} />
+                      </div>
                     </div>
                   </div>
                   <div className="space-y-6">
@@ -693,22 +693,22 @@ const PremiumHubView: React.FC = () => {
             exit={{ opacity: 0, y: -20 }}
             className="grid grid-cols-1 lg:grid-cols-2 gap-6"
           >
-             <SupplierScoutWidget persona="TITAN" />
-             <div className="space-y-6">
-                <TenderIntelligenceWidget persona="TITAN" />
-                <div className="p-6 bg-amber-500/10 border border-amber-500/20 rounded-2xl backdrop-blur-xl">
-                   <h3 className="text-sm font-black text-amber-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                      <Zap size={16} /> Прогноз Дефіциту
-                   </h3>
-                   <p className="text-xs text-slate-300 leading-relaxed mb-4">
-                      AI прогнозує дефіцит на ринку <b>Літієвих батарей (8507)</b> через 3 тижні.
-                      Рекомендовано збільшити закупівлі з Туреччини.
-                   </p>
-                   <button className="w-full py-3 bg-amber-500 text-white font-bold rounded-xl text-xs uppercase hover:bg-amber-600 transition-colors shadow-lg shadow-amber-500/20">
-                      Створити замовлення
-                   </button>
-                </div>
-             </div>
+            <SupplierScoutWidget persona="TITAN" />
+            <div className="space-y-6">
+              <TenderIntelligenceWidget persona="TITAN" />
+              <div className="p-6 bg-amber-500/10 border border-amber-500/20 rounded-2xl backdrop-blur-xl">
+                <h3 className="text-sm font-black text-amber-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <Zap size={16} /> Прогноз Дефіциту
+                </h3>
+                <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                  AI прогнозує дефіцит на ринку <b>Літієвих батарей (8507)</b> через 3 тижні.
+                  Рекомендовано збільшити закупівлі з Туреччини.
+                </p>
+                <button className="w-full py-3 bg-amber-500 text-white font-bold rounded-xl text-xs uppercase hover:bg-amber-600 transition-colors shadow-lg shadow-amber-500/20">
+                  Створити замовлення
+                </button>
+              </div>
+            </div>
           </motion.div>
         )}
 
@@ -720,39 +720,39 @@ const PremiumHubView: React.FC = () => {
             exit={{ opacity: 0, scale: 0.95 }}
             className="space-y-6 h-full pb-12"
           >
-             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 flex flex-col gap-6">
-                   <div className="h-[600px]">
-                      <SupplyChainRadarWidget persona={persona as string} />
-                   </div>
-                   <div className="h-[500px]">
-                      <CompetitorWarBoardWidget persona={persona as string} />
-                   </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 flex flex-col gap-6">
+                <div className="h-[600px]">
+                  <SupplyChainRadarWidget persona={persona as string} />
                 </div>
-                <div className="space-y-6">
-                   <TacticalVoiceCommWidget persona={persona as string} />
-                   <NeuralAutomationWidget persona={persona as string} />
-                   <div className="p-8 bg-slate-950/80 border border-emerald-500/20 rounded-[40px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
-                       <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
-                          <Zap size={64} className="text-emerald-500" />
-                       </div>
-                       <h4 className="text-sm font-black text-emerald-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                          <Activity size={16} className="animate-pulse" /> Live Tactical Actions
-                       </h4>
-                       <div className="space-y-4">
-                           <button className="w-full py-5 bg-emerald-500 text-black font-black rounded-3xl text-xs uppercase tracking-widest hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-3">
-                               Deploy Counter-Risk Saga <ArrowRight size={16} />
-                           </button>
-                           <button className="w-full py-5 bg-white/5 border border-white/10 text-white font-black rounded-3xl text-xs uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-3">
-                               Intercept Competitor Logistics
-                           </button>
-                           <button className="w-full py-5 bg-black text-slate-400 border border-slate-800 rounded-3xl text-xs uppercase tracking-widest hover:border-slate-600 transition-all text-center">
-                               Download Tactical HUD Config
-                           </button>
-                       </div>
-                   </div>
+                <div className="h-[500px]">
+                  <CompetitorWarBoardWidget persona={persona as string} />
                 </div>
-             </div>
+              </div>
+              <div className="space-y-6">
+                <TacticalVoiceCommWidget persona={persona as string} />
+                <NeuralAutomationWidget persona={persona as string} />
+                <div className="p-8 bg-slate-950/80 border border-emerald-500/20 rounded-[40px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
+                    <Zap size={64} className="text-emerald-500" />
+                  </div>
+                  <h4 className="text-sm font-black text-emerald-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                    <Activity size={16} className="animate-pulse" /> Live Tactical Actions
+                  </h4>
+                  <div className="space-y-4">
+                    <button className="w-full py-5 bg-emerald-500 text-black font-black rounded-3xl text-xs uppercase tracking-widest hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-3">
+                      Deploy Counter-Risk Saga <ArrowRight size={16} />
+                    </button>
+                    <button className="w-full py-5 bg-white/5 border border-white/10 text-white font-black rounded-3xl text-xs uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-3">
+                      Intercept Competitor Logistics
+                    </button>
+                    <button className="w-full py-5 bg-black text-slate-400 border border-slate-800 rounded-3xl text-xs uppercase tracking-widest hover:border-slate-600 transition-all text-center">
+                      Download Tactical HUD Config
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
 
@@ -779,8 +779,8 @@ const PremiumHubView: React.FC = () => {
           >
             <LogisticsTrackerWidget persona="TITAN" />
             <div className="space-y-4">
-                 <TradeFlowWidget persona="TITAN" />
-                 <TradeCorridorWidget persona="TITAN" />
+              <TradeFlowWidget persona="TITAN" />
+              <TradeCorridorWidget persona="TITAN" />
             </div>
           </motion.div>
         )}

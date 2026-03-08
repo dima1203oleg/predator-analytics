@@ -97,6 +97,7 @@ export const Sidebar = () => {
       items: [
         { name: 'Ринкова Аналітика', path: '/market-analytics', icon: DollarSign, premium: true },
         { name: 'Ризик-Скоринг', path: '/risk-scoring', icon: AlertCircle, premium: true },
+        { name: 'Центр Сповіщень', path: '/alerts', icon: ShieldAlert, premium: true },
         { name: 'Пошук Постачальників', path: '/suppliers', icon: ShoppingBag, premium: true },
         { name: 'Торгові Потоки', path: '/trade-map', icon: Map, premium: true },
         { name: 'Аналіз Конкурентів', path: '/competitor-intel', icon: Target, premium: true },
