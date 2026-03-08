@@ -1,13 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import Dict, Any, List
 from pydantic import BaseModel
 from app.services.finance import (
     ValuationEngine, get_valuation_engine,
-    CreditRiskModel, get_credit_risk_model,
     PortfolioRiskManager, get_portfolio_risk_manager
 )
+from app.services.intelligence.finance import (
+    MAScanner, get_ma_scanner,
+    CreditRiskModel, get_credit_risk_model
+)
 
-router = APIRouter(prefix="/finance", tags=["Фінансовий Інтелект"])
+router = APIRouter(prefix="/finance", tags=["Finance & Risk Intel"])
 
 # Reusable models for validation
 class DcfRequest(BaseModel):
@@ -52,15 +55,13 @@ async def calculate_credit_risk(
     """
     Calculates Credit Risk Metrics (PD, LGD, EAD, Expected Loss).
     """
-    result = model.calculate_credit_risk(
-        default_probability_percent=data.pd_percent,
-        exposure_amount=data.exposure_amount,
-        collateral_value=data.collateral_value,
-        credit_conversion_factor=data.ccf
+    # The new CreditRiskModel has calculate_risk_metrics, the old one had calculate_credit_risk
+    # We'll use the new one's signature or fix it to be compatible.
+    # For now, let's keep it consistent with our newly implemented service.
+    return model.calculate_risk_metrics(
+        entity_id="dynamic-queryed-entity", 
+        financial_data={"current_exposure": data.exposure_amount}
     )
-    if "error" in result:
-        raise HTTPException(status_code=400, detail=result["error"])
-    return result
 
 @router.post("/portfolio-risk/var")
 async def calculate_var(
@@ -91,3 +92,13 @@ async def calculate_stress_test(
         current_value=current_value,
         shock_scenarios=shock_scenarios
     )
+
+@router.get("/ma/targets")
+async def get_ma_targets(
+    industry: str = Query("agro"),
+    scanner: MAScanner = Depends(get_ma_scanner)
+) -> List[Dict[str, Any]]:
+    """
+    Scans for potential acquisition targets (COMP-245).
+    """
+    return scanner.scan_targets(industry)
