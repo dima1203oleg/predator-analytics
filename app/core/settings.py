@@ -1,5 +1,5 @@
 """
-Канонічна конфігурація PREDATOR Analytics v4.1.
+Канонічна конфігурація PREDATOR Analytics v4.2.0.
 
 Всі налаштування зчитуються зі змінних середовища.
 Типізація обов'язкова (pydantic-settings v2).
@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     )
 
     # ── Загальні ─────────────────────────────────────────────
-    APP_VERSION: str = "4.1.0"
+    APP_VERSION: str = "4.2.0"
     ENVIRONMENT: Literal["development", "testing", "staging", "production"] = (
         "development"
     )
