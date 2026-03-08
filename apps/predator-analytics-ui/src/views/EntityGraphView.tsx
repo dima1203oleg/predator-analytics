@@ -8,6 +8,7 @@ import {
   Filter, Shield, Cpu, ChevronRight, Activity, Search, ShieldAlert, Zap, Box, Lock, Eye
 } from 'lucide-react';
 import { AdvancedBackground } from '../components/AdvancedBackground';
+import { premiumLocales } from '../locales/uk/premium';
 import { cn } from '../utils/cn';
 
 // === TYPES ===
@@ -162,7 +163,7 @@ const GraphNode = ({ node, onClick, isSelected }: { node: Node; onClick: (node: 
             <div className={cn("absolute inset-y-0 left-0 w-1", node.riskScore > 85 ? "bg-rose-500" : node.id === 'predator_core' ? "bg-emerald-500" : "bg-cyan-500")} />
             <div className="flex flex-col pl-2">
               <span className={cn("text-[9px] font-black uppercase tracking-widest", node.riskScore > 85 ? "text-rose-400" : node.id === 'predator_core' ? "text-emerald-400" : "text-cyan-400")}>
-                {node.type} {node.riskScore > 85 && '⚠'}
+                {premiumLocales.graph.nodeTypes[node.type] || node.type} {node.riskScore > 85 && '⚠'}
               </span>
               <span className="text-xs font-bold text-white drop-shadow-md tracking-tight">{node.label}</span>
             </div>
@@ -299,13 +300,13 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
           <div>
             <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border mb-3", node.riskScore > 85 ? "bg-rose-500/10 text-rose-400 border-rose-500/30" : node.id === 'predator_core' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-cyan-500/10 text-cyan-400 border-cyan-500/30")}>
               {node.riskScore > 85 ? <ShieldAlert size={12} /> : node.id === 'predator_core' ? <Cpu size={12} /> : <Box size={12} />}
-              {node.type}
+              {premiumLocales.graph.nodeTypes[node.type] || node.type}
             </div>
             <h2 className="text-3xl font-black text-white uppercase tracking-tighter leading-none">{node.label}</h2>
           </div>
           <button onClick={onClose} className="p-2 bg-black/40 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white transition-colors border border-white/5"><X size={20} /></button>
         </div>
-        <p className="text-slate-400 font-medium text-sm mt-4 relative z-10">{node.details || 'Нейронний профіль згенеровано автоматично на основі аналізу відкритих джерел та транзакцій.'}</p>
+        <p className="text-slate-400 font-medium text-sm mt-4 relative z-10">{node.details || premiumLocales.graph.nodeDetails.profile}</p>
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-8 custom-scrollbar">
@@ -314,7 +315,7 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
           <div className={cn("absolute right-0 top-0 w-32 h-32 rounded-bl-full pointer-events-none opacity-20 transition-opacity group-hover:opacity-40", node.riskScore > 85 ? "bg-radial-rose" : "bg-radial-emerald")} style={{ background: `radial-gradient(circle at top right, ${node.riskScore > 85 ? 'rgba(244,63,94,1)' : 'rgba(16,185,129,1)'}, transparent 70%)` }} />
 
           <div className="flex justify-between items-end mb-3 relative z-10">
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Trust Score</span>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{premiumLocales.graph.nodeDetails.trustScore}</span>
             <span className={cn("text-3xl font-black font-mono tracking-tighter", node.riskScore > 85 ? "text-rose-400" : "text-emerald-400")}>{node.riskScore}</span>
           </div>
 
@@ -324,7 +325,7 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
 
           <div className="mt-3 flex items-center gap-2 text-[9px] font-mono uppercase tracking-wider text-slate-500 relative z-10">
             <Activity size={12} className={node.riskScore > 85 ? "text-rose-500" : "text-emerald-500"} />
-            Analysis Confidence: {Math.floor(85 + Math.random() * 14)}%
+            {premiumLocales.graph.nodeDetails.confidence}: {Math.floor(85 + Math.random() * 14)}%
           </div>
         </div>
 
@@ -333,15 +334,15 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
           <div className="p-4 rounded-xl bg-slate-900/50 border border-white/5 flex flex-col justify-between h-24">
             <Share2 size={16} className="text-cyan-400" />
             <div>
-              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Known Links</div>
+              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">{premiumLocales.graph.stats.links}</div>
               <div className="text-xl font-black font-mono text-white">{node.connections}</div>
             </div>
           </div>
           <div className="p-4 rounded-xl bg-slate-900/50 border border-white/5 flex flex-col justify-between h-24">
             <Eye size={16} className="text-purple-400" />
             <div>
-              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Monitoring</div>
-              <div className="text-sm font-black text-white uppercase mt-1">Active <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse ml-1" /></div>
+              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">{premiumLocales.graph.nodeDetails.monitoring}</div>
+              <div className="text-sm font-black text-white uppercase mt-1">{premiumLocales.graph.nodeDetails.activeStatus} <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse ml-1" /></div>
             </div>
           </div>
         </div>
@@ -349,7 +350,7 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
         {/* Connectivity List */}
         <div>
           <h3 className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-2 mb-4">
-            <LinkIcon /> Прямі Зв'язки
+            <LinkIcon /> {premiumLocales.graph.nodeDetails.directConnections}
           </h3>
           <div className="space-y-2">
             {[...Array(Math.min(4, Math.max(1, node.connections)))].map((_, i) => (
@@ -372,7 +373,7 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
 
       <div className="p-6 border-t border-white/5 bg-slate-900/50 shrink-0">
         <button className={cn("w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02]", node.riskScore > 85 ? "bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_20px_rgba(225,29,72,0.3)]" : "bg-cyan-600 hover:bg-cyan-500 text-white shadow-[0_0_20px_rgba(8,145,178,0.3)]")}>
-          <Search size={16} /> Повний Нейронний Аналіз
+          <Search size={16} /> {premiumLocales.graph.nodeDetails.fullAnalysis}
         </button>
       </div>
     </motion.div>
@@ -420,8 +421,8 @@ const EntityGraphView = () => {
           <Zap className="w-8 h-8 text-emerald-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
         </div>
         <div className="text-center">
-          <h2 className="text-xl font-black text-white uppercase tracking-[0.3em] mb-2">Синтез Топології</h2>
-          <p className="text-xs font-mono text-emerald-400 animate-pulse">Опрацювання мільярдів зв'язків...</p>
+          <h2 className="text-xl font-black text-white uppercase tracking-[0.3em] mb-2">{premiumLocales.graph.loading.title}</h2>
+          <p className="text-xs font-mono text-emerald-400 animate-pulse">{premiumLocales.graph.loading.description}</p>
         </div>
       </div>
     );
@@ -440,17 +441,17 @@ const EntityGraphView = () => {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-3 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest leading-none">Intelligence Graph Active</span>
+            <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest leading-none">{premiumLocales.graph.status}</span>
           </div>
           <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-            ТОПОЛОГІЯ <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">МЕРЕЖІ</span>
+            {premiumLocales.graph.title.split(' ')[0]} <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">{premiumLocales.graph.title.split(' ')[1]}</span>
           </h1>
         </div>
 
         <div className="pointer-events-auto flex gap-3">
           <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 flex shadow-2xl">
-            <button onClick={() => setFilter('all')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'all' ? "bg-cyan-500 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "text-slate-400 hover:text-white hover:bg-white/5")}>Всі Вузли</button>
-            <button onClick={() => setFilter('risk')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'risk' ? "bg-rose-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.4)]" : "text-slate-400 hover:text-white hover:bg-white/5")}>Лише Загрози</button>
+            <button onClick={() => setFilter('all')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'all' ? "bg-cyan-500 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.all}</button>
+            <button onClick={() => setFilter('risk')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'risk' ? "bg-rose-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.4)]" : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.risk}</button>
           </div>
           <button className="p-3 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all hover:bg-white/10 hover:border-white/20 shadow-2xl">
             <Filter size={20} />
@@ -471,9 +472,9 @@ const EntityGraphView = () => {
       <div className="absolute bottom-8 lg:bottom-10 left-8 z-20 pointer-events-none">
         <div className="flex bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl p-1 shadow-2xl">
           {[
-            { icon: Database, lbl: 'ВУЗЛІВ', val: graphData.nodes.length, c: 'text-cyan-400' },
-            { icon: Share2, lbl: 'ЗВ\'ЯЗКІВ', val: graphData.links.length, c: 'text-purple-400' },
-            { icon: ShieldAlert, lbl: 'КРИТИЧНО', val: graphData.nodes.filter(n => n.riskScore > 85).length, c: 'text-rose-400' }
+            { icon: Database, lbl: premiumLocales.graph.stats.nodes, val: graphData.nodes.length, c: 'text-cyan-400' },
+            { icon: Share2, lbl: premiumLocales.graph.stats.links, val: graphData.links.length, c: 'text-purple-400' },
+            { icon: ShieldAlert, lbl: premiumLocales.graph.stats.critical, val: graphData.nodes.filter(n => n.riskScore > 85).length, c: 'text-rose-400' }
           ].map((st, i) => (
             <div key={i} className={cn("flex items-center gap-3 py-3 px-5", i !== 0 && "border-l border-white/10")}>
               <st.icon className={cn("w-5 h-5", st.c)} />
