@@ -20,6 +20,7 @@ from app.api.v1.search import router as search_router
 from app.api.v1.competitors import router as competitors_router
 from app.api.v1.risk import router as risk_router
 from app.api.v1.risk import sanctions_router
+from app.api.v1.analytics import router as analytics_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 
@@ -35,3 +36,5 @@ api_v1_router.include_router(diligence_router, tags=["Due Diligence"])
 api_v1_router.include_router(copilot_router, tags=["AI Копілот"])
 api_v1_router.include_router(risk_router, tags=["Ризик"])
 api_v1_router.include_router(sanctions_router, tags=["Санкції"])
+api_v1_router.include_router(analytics_router, tags=["Аналітика"])
+
