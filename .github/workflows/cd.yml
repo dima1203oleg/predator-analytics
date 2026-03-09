@@ -1,0 +1,18 @@
+name: PREDATOR Analytics v55.1 CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'deploy/helm/**'
+      - 'deploy/argocd/**'
+
+jobs:
+  gitops-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Authenticate with ArgoCD
+        run: echo "Using automated sync via ArgoCD controller"
+      - name: Notify successful GitOps push
+        run: echo "Changes pushed to main. ArgoCD will sync automatically."

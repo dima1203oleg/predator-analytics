@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: predator-project
+  namespace: argocd
+spec:
+  description: Project for PREDATOR Analytics v55.1 Ironclad
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: predator
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator.fullname" . }}-graph-service
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: graph-service
+spec:
+  replicas: {{ .Values.graphService.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app: graph-service
+  template:
+    metadata:
+      labels:
+        {{- include "predator.selectorLabels" . | nindent 8 }}
+        app: graph-service
+    spec:
+      containers:
+        - name: graph-service
+          image: "{{ .Values.graphService.image.repository }}:{{ .Values.graphService.image.tag }}"
+          ports:
+            - containerPort: 8002
+          env:
+            - name: NEO4J_URI
+              value: "bolt://{{ .Release.Name }}-neo4j:7687"
+            - name: NEO4J_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-neo4j
+                  key: neo4j-password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator.fullname" . }}-ingestion-worker
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: ingestion-worker
+spec:
+  # Replicas managed by KEDA if enabled
+  {{- if not .Values.ingestionWorker.keda.enabled }}
+  replicas: 1
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app: ingestion-worker
+  template:
+    metadata:
+      labels:
+        {{- include "predator.selectorLabels" . | nindent 8 }}
+        app: ingestion-worker
+    spec:
+      containers:
+        - name: ingestion-worker
+          image: "{{ .Values.ingestionWorker.image.repository }}:{{ .Values.ingestionWorker.image.tag }}"
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka-cluster-kafka-bootstrap.kafka:9092"
