@@ -39,6 +39,12 @@ from app.api.v1.ingestion_ocr import router as ingestion_ocr_router
 from app.api.v1.infra_k8s import router as infra_k8s_router
 from app.api.v1.infra_db_postgres import router as infra_db_postgres_router
 from app.api.v1.infra_db_neo4j import router as infra_db_neo4j_router
+from app.api.v1.infra_kafka import router as infra_kafka_router
+from app.api.v1.infra_opensearch import router as infra_opensearch_router
+from app.api.v1.infra_redis import router as infra_redis_router
+from app.api.v1.infra_minio import router as infra_minio_router
+from app.api.v1.infra_qdrant import router as infra_qdrant_router
+from app.api.v1.infra_clickhouse import router as infra_clickhouse_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 
@@ -73,4 +79,11 @@ api_v1_router.include_router(ingestion_ocr_router, tags=["Data Ingestion & OCR"]
 api_v1_router.include_router(infra_k8s_router, tags=["Infrastructure & Cluster"])
 api_v1_router.include_router(infra_db_postgres_router, tags=["Infrastructure & Databases"])
 api_v1_router.include_router(infra_db_neo4j_router, tags=["Infrastructure & Databases"])
+# --- Phase 2 SM: Data Platform Infrastructure ---
+api_v1_router.include_router(infra_kafka_router, tags=["Infrastructure & Messaging"])
+api_v1_router.include_router(infra_opensearch_router, tags=["Infrastructure & Search"])
+api_v1_router.include_router(infra_redis_router, tags=["Infrastructure & Cache"])
+api_v1_router.include_router(infra_minio_router, tags=["Infrastructure & Storage"])
+api_v1_router.include_router(infra_qdrant_router, tags=["Infrastructure & Databases"])
+api_v1_router.include_router(infra_clickhouse_router, tags=["Infrastructure & Databases"])
 
