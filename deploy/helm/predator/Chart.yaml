@@ -11,5 +11,5 @@ dependencies:
     condition: postgresql.enabled
   - name: neo4j
     version: 5.21.0
-    repository: https://helm.neo4j.com/
+    repository: https://helm.neo4j.com/neo4j
     condition: neo4j.enabled

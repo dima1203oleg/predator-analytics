@@ -59,3 +59,31 @@ spec:
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: "kafka-cluster-kafka-bootstrap.kafka:9092"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator.fullname" . }}-frontend
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app: frontend
+  template:
+    metadata:
+      labels:
+        {{- include "predator.selectorLabels" . | nindent 8 }}
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: "predator-ui:latest"
+          ports:
+            - containerPort: 3030
+          env:
+            - name: VITE_API_URL
+              value: "http://{{ include "predator.fullname" . }}-core-api:8000"
