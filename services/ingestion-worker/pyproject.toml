@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "ingestion-worker"
+version = "0.1.0"
+description = "PREDATOR Analytics Ingestion Worker"
+authors = ["Dima <dima@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.28"}
+asyncpg = "^0.29.0"
+neo4j = "^5.18.0"
+aiokafka = "^0.10.0"
+pydantic-settings = "^2.2.1"
+predator-common = {path = "../../libs/predator-common", develop = true}
+structlog = "^24.1.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^8.1.1"
+pytest-asyncio = "^0.23.5"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
