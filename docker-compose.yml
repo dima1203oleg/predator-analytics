@@ -310,6 +310,49 @@ services:
     profiles: ["server"]
 
   # ═══════════════════════════════════════════════════════════════
+  # 3.5 SECURITY & IDENTITY (Keycloak, Vault)
+  # ═══════════════════════════════════════════════════════════════
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.5
+    container_name: predator_keycloak
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-predator_db}
+      KC_DB_USERNAME: ${POSTGRES_USER:-admin}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: start-dev
+    ports: ["8080:8080"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["server"]
+
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: predator_vault
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: root
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    ports: ["8200:8200"]
+    cap_add: ["IPC_LOCK"]
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["server"]
+
+  # ═══════════════════════════════════════════════════════════════
   # 4. OBSERVABILITY (Prometheus, Grafana)
   # ═══════════════════════════════════════════════════════════════
 
@@ -319,6 +362,20 @@ services:
     ports: ["9090:9090"]
     volumes:
       - prometheus_data:/prometheus
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["server"]
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: predator_alertmanager
+    ports: ["9093:9093"]
+    volumes:
+      - alertmanager_data:/alertmanager
     restart: unless-stopped
     networks: [predator-network]
     profiles: ["server"]
@@ -329,6 +386,39 @@ services:
     ports: ["3001:3000"]
     volumes:
       - grafana_data:/var/lib/grafana
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["server"]
+
+  loki:
+    image: grafana/loki:latest
+    container_name: predator_loki
+    ports: ["3100:3100"]
+    volumes:
+      - loki_data:/loki
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["server"]
+
+  dcgm-exporter:
+    image: nvcr.io/nvidia/k8s/dcgm-exporter:3.3.0-3.2.0-ubuntu22.04
+    container_name: predator_dcgm_exporter
+    ports: ["9400:9400"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     restart: unless-stopped
     networks: [predator-network]
     profiles: ["server"]
@@ -376,6 +466,8 @@ volumes:
   orchestrator_logs:
   prometheus_data:
   grafana_data:
+  loki_data:
+  alertmanager_data:
 
 networks:
   predator-network:
