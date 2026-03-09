@@ -89,5 +89,6 @@ api_v1_router.include_router(infra_qdrant_router, tags=["Infrastructure & Databa
 api_v1_router.include_router(infra_clickhouse_router, tags=["Infrastructure & Databases"])
 # --- Phase 3 SM: Auth & Security ---
 api_v1_router.include_router(auth_security_router, tags=["Auth & Security"])
-
-
+# --- Phase 4 SM: ETL & Kafka ---
+from app.api.v1.etl_kafka import router as etl_kafka_router
+api_v1_router.include_router(etl_kafka_router, tags=["ETL & Ingestion"])
