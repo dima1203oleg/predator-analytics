@@ -115,3 +115,6 @@ api_v1_router.include_router(connectors_router, tags=["UA Integrations (Registry
 # --- Phase 11 SM: Advanced AI/ML ---
 from app.api.v1.ai_advanced import router as ai_advanced_router
 api_v1_router.include_router(ai_advanced_router, tags=["Advanced AI/ML (Topic, Batch, MonteCarlo)"])
+# --- Phase 12 SM: Command Center ---
+from app.api.v1.warroom_v2 import router as warroom_router
+api_v1_router.include_router(warroom_router, tags=["Command Center & Shadow Cartography"])
