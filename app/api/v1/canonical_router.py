@@ -92,3 +92,6 @@ api_v1_router.include_router(auth_security_router, tags=["Auth & Security"])
 # --- Phase 4 SM: ETL & Kafka ---
 from app.api.v1.etl_kafka import router as etl_kafka_router
 api_v1_router.include_router(etl_kafka_router, tags=["ETL & Ingestion"])
+# --- Phase 5 SM: AI/ML Infrastructure ---
+from app.api.v1.ai_infrastructure import router as ai_infra_router
+api_v1_router.include_router(ai_infra_router, tags=["AI/ML Infrastructure"])
