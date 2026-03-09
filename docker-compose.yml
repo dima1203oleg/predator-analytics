@@ -128,7 +128,7 @@ services:
     profiles: ["local", "server"]
 
   redpanda:
-    image: docker.redpanda.com/vectorized/redpanda:v24.2.19
+    image: redpandadata/redpanda:v24.2.19
     container_name: predator_redpanda
     command:
       - redpanda
