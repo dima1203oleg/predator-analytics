@@ -1,0 +1,69 @@
+# Default values for predator.
+# This is a YAML-formatted file.
+
+global:
+  domain: internal.predator.ua
+  tenantId: default
+
+# Infrastructure
+postgresql:
+  enabled: true
+  auth:
+    database: predator
+    username: predator
+    password: predator_db_secret
+
+neo4j:
+  enabled: true
+  neo4j:
+    password: predator_graph_secret
+
+# Core Services
+coreApi:
+  replicaCount: 2
+  image:
+    repository: predator-core-api
+    tag: v55.1.0
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+graphService:
+  replicaCount: 1
+  image:
+    repository: predator-graph-service
+    tag: v55.1.0
+  service:
+    port: 8002
+
+ingestionWorker:
+  image:
+    repository: predator-ingestion-worker
+    tag: v55.1.0
+  keda:
+    enabled: true
+    minReplicaCount: 0
+    maxReplicaCount: 10
+    kafkaTopic: ingestion-triggers
+
+# Zero Trust (Cilium)
+security:
+  mTLS:
+    enabled: true
+  networkPolicy:
+    enabled: true
+
+# Monitoring
+monitoring:
+  glitchtip:
+    enabled: true
+  prometheus:
+    enabled: true
