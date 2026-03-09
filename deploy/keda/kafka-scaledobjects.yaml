@@ -1,0 +1,16 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: ingestion-worker-scaler
+spec:
+  scaleTargetRef:
+    name: ingestion-worker
+  minReplicaCount: {{ .Values.ingestionWorker.keda.minReplicaCount }}
+  maxReplicaCount: {{ .Values.ingestionWorker.keda.maxReplicaCount }}
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: kafka-cluster-kafka-bootstrap.kafka:9092
+        consumerGroup: ingestion-workers
+        topic: {{ .Values.ingestionWorker.keda.kafkaTopic }}
+        lagThreshold: "10"
