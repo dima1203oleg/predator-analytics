@@ -140,6 +140,13 @@ export const api = {
         summary: async () => (await apiClient.get('/graph/summary')).data,
         search: async (q: string, limit: number = 2) => (await apiClient.post('/graph/search', { q, limit })).data,
         execute: async (query: string) => (await apiClient.post('/graph/execute', { query })).data,
+        // Phase 4 specific API calls
+        getCartels: async () => (await apiClient.get('/graph/clusters/cartels')).data,
+        getCartelRings: async () => (await apiClient.get('/graph/clusters/cartel-rings')).data,
+        getBeneficiaries: async (ueid: string) => (await apiClient.get(`/graph/entities/ubo/${ueid}`)).data,
+        getDirectOwners: async (ueid: string) => (await apiClient.get(`/graph/entities/owners/${ueid}`)).data,
+        getCryptoFootprint: async (wallet: string) => (await apiClient.get(`/graph/entities/crypto/${wallet}`)).data,
+        getDomainFootprint: async (domain: string) => (await apiClient.get(`/graph/entities/domain/${domain}`)).data,
     },
     agents: {
         getAll: async () => {
@@ -193,8 +200,10 @@ export const api = {
         generateAttackPlan: async (targetEntity: string) => (await apiClient.post(`/warroom/attack-plan?target_entity=${targetEntity}`)).data,
     },
     shadowGraph: {
-        generateMap: async (entityId: string, depth: number = 2) => (await apiClient.get(`/graph/shadow-map?entity_id=${entityId}&depth=${depth}`)).data,
-        findInfluencePath: async (source: string, target: string) => (await apiClient.get(`/graph/influence-path?source_entity=${source}&target_entity=${target}`)).data,
+        generateMap: async (entityId: string, depth: number = 2) => (await apiClient.get(`/graph/clusters/shadow/${entityId}?depth=${depth}`)).data,
+        findHiddenCluster: async (entityId: string) => (await apiClient.get(`/graph/clusters/shadow-cluster/${entityId}`)).data,
+        findInfluencePath: async (source: string, target: string) => (await apiClient.get(`/graph/paths/influence?source_ueid=${source}&target_ueid=${target}`)).data,
+        findWeightedInfluence: async (source: string, target: string) => (await apiClient.get(`/graph/paths/weighted?source_ueid=${source}&target_ueid=${target}`)).data,
     },
     finance: {
         dcf: async (payload: any) => (await apiClient.post('/finance/valuation/dcf', payload)).data,
