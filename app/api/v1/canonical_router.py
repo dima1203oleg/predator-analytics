@@ -106,3 +106,6 @@ from app.api.v1.graph_analytics import router as graph_router
 from app.api.v1.premium_features import router as premium_router
 api_v1_router.include_router(graph_router, tags=["Graph Service & Analytics"])
 api_v1_router.include_router(premium_router, tags=["Premium Features & Reports"])
+# --- Phase 7 SM: Security & Policies ---
+from app.api.v1.security_sm import router as security_router
+api_v1_router.include_router(security_router, tags=["Platform Security & Policies"])
