@@ -8,13 +8,13 @@ from typing import Optional
 
 class UKTZEDNormalizer:
     @staticmethod
-    def normalize(code: str) -> Optional[str]:
+    def normalize(code: str) -> str:
         """Нормалізація коду УКТЗЕД."""
         if not code:
-            return None
+            return ""
             
         # Видалення всього крім цифр
-        clean_code = re.sub(r'\D', '', code)
+        clean_code = re.sub(r'\D', '', str(code))
         
         # Код має бути 10 знаків
         if len(clean_code) == 10:
