@@ -45,6 +45,7 @@ from app.api.v1.infra_redis import router as infra_redis_router
 from app.api.v1.infra_minio import router as infra_minio_router
 from app.api.v1.infra_qdrant import router as infra_qdrant_router
 from app.api.v1.infra_clickhouse import router as infra_clickhouse_router
+from app.api.v1.auth_security import router as auth_security_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 
@@ -86,4 +87,7 @@ api_v1_router.include_router(infra_redis_router, tags=["Infrastructure & Cache"]
 api_v1_router.include_router(infra_minio_router, tags=["Infrastructure & Storage"])
 api_v1_router.include_router(infra_qdrant_router, tags=["Infrastructure & Databases"])
 api_v1_router.include_router(infra_clickhouse_router, tags=["Infrastructure & Databases"])
+# --- Phase 3 SM: Auth & Security ---
+api_v1_router.include_router(auth_security_router, tags=["Auth & Security"])
+
 
