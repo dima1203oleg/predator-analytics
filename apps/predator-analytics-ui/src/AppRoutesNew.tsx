@@ -79,6 +79,7 @@ const MarketPage = lazy(() => import('./pages/MarketPage'));
 const ForecastPage = lazy(() => import('./pages/ForecastPage'));
 const OpportunitiesPage = lazy(() => import('./pages/OpportunitiesPage'));
 const DiligencePage = lazy(() => import('./pages/DiligencePage'));
+const CompanyCERSDashboard = lazy(() => import('./pages/CompanyCERSDashboard'));
 
 const DatasetsPage = lazy(() => import('./views/datasets/DatasetsPage'));
 const AutoFactoryView = lazy(() => import('./views/AutoFactoryView'));
@@ -135,6 +136,7 @@ export const AppRoutesNew = () => {
             <Route path="/forecast" element={<ForecastPage />} />
             <Route path="/diligence" element={<DiligencePage />} />
             <Route path="/opportunities" element={<OpportunitiesPage />} />
+            <Route path="/company/:id/cers" element={<CompanyCERSDashboard />} />
 
             {/* Legacy Dashboard Routes */}
             <Route path="/omni" element={<OmniscienceView />} />

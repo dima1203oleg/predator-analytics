@@ -5,6 +5,8 @@ from app.services.commerce import (
     PricingEngine, get_pricing_engine,
     InventoryOptimizer, get_inventory_optimizer
 )
+from app.services.commerce.tft_forecast import TFTForecaster, get_tft_forecaster
+from app.services.commerce.competitor_tracker import CompetitorPriceTracker, get_competitor_tracker
 
 router = APIRouter(prefix="/commerce", tags=["Предиктивна Комерція"])
 
@@ -81,3 +83,24 @@ async def supply_chain_monitor(ueid: str = Query(..., description="Target UEID")
         "active_suppliers": 24,
         "critical_alerts": []
     }
+
+@router.get("/forecast/demand")
+async def get_tft_demand_forecast(
+    category_id: str = Query(..., description="Category ID to forecast"),
+    horizon_days: int = Query(30, description="Forecast horizon in days"),
+    forecaster: TFTForecaster = Depends(get_tft_forecaster)
+) -> Dict[str, Any]:
+    """
+    Phase 14: TFT Forecast
+    """
+    return forecaster.predict_demand(category_id, horizon_days)
+
+@router.get("/pricing/competitors")
+async def track_competitor_prices(
+    sku: str = Query(..., description="Target SKU"),
+    tracker: CompetitorPriceTracker = Depends(get_competitor_tracker)
+) -> Dict[str, Any]:
+    """
+    Phase 14: Competitor Price tracker
+    """
+    return tracker.get_competitor_prices(sku)
