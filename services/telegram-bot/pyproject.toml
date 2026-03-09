@@ -1,0 +1,13 @@
+[project]
+name = "predator-telegram-bot"
+version = "0.1.0"
+description = "Telegram Bot Controller for PREDATOR Analytics"
+dependencies = [
+    "python-telegram-bot>=20.0",
+    "httpx>=0.24.0",
+    "python-dotenv>=1.0.0",
+    "predator-common",
+]
+
+[tool.poetry]
+packages = [{include = "app"}]
