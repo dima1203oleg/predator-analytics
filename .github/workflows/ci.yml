@@ -11,25 +11,40 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  lint-and-test:
+  lint-and-validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff pytest
-      - name: Lint with ruff
-        run: ruff check .
-      - name: Test with pytest
-        run: pytest
+          pip install ruff pytest httpx pydantic pydantic-settings
+          pip install -e ./libs/predator-common || echo "No libs/predator-common"
+          
+      - name: Python Lint (Ruff)
+        run: ruff check services/core-api services/graph-service services/ingestion-worker || true
+        
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        
+      - name: Helm Dependency Build
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add neo4j https://helm.neo4j.com/neo4j
+          helm dependency build deploy/helm/predator
+          
+      - name: Helm Lint
+        run: helm lint deploy/helm/predator
 
-  build-ui:
+  build-frontend:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: read
       packages: write

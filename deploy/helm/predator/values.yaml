@@ -8,15 +8,26 @@ global:
 # Infrastructure
 postgresql:
   enabled: true
-  auth:
-    database: predator
-    username: predator
-    password: predator_db_secret
+  global:
+    postgresql:
+      auth:
+        database: predator
+        username: predator
+        password: predator_db_secret
+
 
 neo4j:
   enabled: true
   neo4j:
     password: predator_graph_secret
+    name: predator-graph
+  # Neo4j subchart specific requirements
+  clusterDomain: cluster.local
+  volumes:
+    data:
+      mode: defaultStorageClass
+
+
 
 # Core Services
 coreApi:

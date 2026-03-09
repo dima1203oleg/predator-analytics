@@ -33,3 +33,22 @@ spec:
   selector:
     {{- include "predator.selectorLabels" . | nindent 4 }}
     app: graph-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator.fullname" . }}-frontend
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: frontend
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 3030
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "predator.selectorLabels" . | nindent 4 }}
+    app: frontend
+
