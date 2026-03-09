@@ -49,6 +49,8 @@ async def ping_db():
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
-# Роутери для графів (будуть додані нижче)
-# from app.routers import paths, clusters
-# app.include_router(paths.router, prefix="/api/v2/graph/paths", tags=["paths"])
+from app.routers import paths, clusters, ubo
+
+app.include_router(paths.router, prefix="/api/v2/graph/paths", tags=["paths"])
+app.include_router(clusters.router, prefix="/api/v2/graph/clusters", tags=["clusters"])
+app.include_router(ubo.router, prefix="/api/v2/graph/entities", tags=["ubo"])
