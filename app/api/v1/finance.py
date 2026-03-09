@@ -9,6 +9,8 @@ from app.services.intelligence.finance import (
     MAScanner, get_ma_scanner,
     CreditRiskModel, get_credit_risk_model
 )
+from app.services.finance.xbrl_parser import XBRLParser, get_xbrl_parser
+from app.services.finance.investment_tracker import InvestmentTracker, get_investment_tracker
 
 router = APIRouter(prefix="/finance", tags=["Finance & Risk Intel"])
 
@@ -102,3 +104,36 @@ async def get_ma_targets(
     Scans for potential acquisition targets (COMP-245).
     """
     return scanner.scan_targets(industry)
+
+@router.post("/xbrl/parse")
+async def parse_xbrl_document(
+    document_xml: str,
+    parser: XBRLParser = Depends(get_xbrl_parser)
+) -> Dict[str, Any]:
+    """
+    Phase 13: Financial Intelligence (XBRL).
+    Parses complex XBRL registry files into canonical financial structures.
+    """
+    return parser.parse_document(document_xml)
+
+@router.get("/investment/fdi")
+async def get_fdi_data(
+    country_code: str = Query(..., description="ISO Alpha-2 or Alpha-3"),
+    tracker: InvestmentTracker = Depends(get_investment_tracker)
+) -> Dict[str, Any]:
+    """
+    Phase 13: Financial Intelligence (Investment Tracker).
+    Retrieves FDI flow analysis for a given country code.
+    """
+    return tracker.analyze_fdi(country_code)
+
+@router.get("/investment/capex")
+async def get_corporate_capex(
+    edrpou: str = Query(..., description="Target EDRPOU code"),
+    tracker: InvestmentTracker = Depends(get_investment_tracker)
+) -> Dict[str, Any]:
+    """
+    Phase 13: Financial Intelligence (Investment Tracker).
+    Retrieves CAPEX estimations from company registry and tender data.
+    """
+    return tracker.track_corporate_capex(edrpou)
