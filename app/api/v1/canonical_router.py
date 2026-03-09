@@ -101,3 +101,8 @@ api_v1_router.include_router(cers_router, tags=["CERS Meta-Scoring"])
 # --- Phase 6 SM: Observability ---
 from app.api.v1.observability import router as observability_router
 api_v1_router.include_router(observability_router, tags=["Observability"])
+# --- Phase 9 SM: Graph Service & Premium API ---
+from app.api.v1.graph_analytics import router as graph_router
+from app.api.v1.premium_features import router as premium_router
+api_v1_router.include_router(graph_router, tags=["Graph Service & Analytics"])
+api_v1_router.include_router(premium_router, tags=["Premium Features & Reports"])
