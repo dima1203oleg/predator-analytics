@@ -95,3 +95,9 @@ api_v1_router.include_router(etl_kafka_router, tags=["ETL & Ingestion"])
 # --- Phase 5 SM: AI/ML Infrastructure ---
 from app.api.v1.ai_infrastructure import router as ai_infra_router
 api_v1_router.include_router(ai_infra_router, tags=["AI/ML Infrastructure"])
+# --- Phase 5B SM: CERS & LLM ---
+from app.api.v1.cers_scoring import router as cers_router
+api_v1_router.include_router(cers_router, tags=["CERS Meta-Scoring"])
+# --- Phase 6 SM: Observability ---
+from app.api.v1.observability import router as observability_router
+api_v1_router.include_router(observability_router, tags=["Observability"])
