@@ -112,3 +112,6 @@ api_v1_router.include_router(security_router, tags=["Platform Security & Policie
 # --- Phase 10 SM: UA Connectors ---
 from app.api.v1.connectors_ua import router as connectors_router
 api_v1_router.include_router(connectors_router, tags=["UA Integrations (Registry, Sanctions, Prozorro)"])
+# --- Phase 11 SM: Advanced AI/ML ---
+from app.api.v1.ai_advanced import router as ai_advanced_router
+api_v1_router.include_router(ai_advanced_router, tags=["Advanced AI/ML (Topic, Batch, MonteCarlo)"])
