@@ -16,6 +16,7 @@ WORKDIR /app
 # Копіюємо локальні ліби
 COPY libs/ /libs/
 COPY services/graph-service/pyproject.toml services/graph-service/poetry.lock* ./
+COPY services/graph-service/app/ ./app/
 
 # Встановлюємо залежності
 RUN poetry install --no-root --without dev
