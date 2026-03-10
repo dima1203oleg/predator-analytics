@@ -19,7 +19,7 @@ COPY services/graph-service/pyproject.toml services/graph-service/poetry.lock* .
 COPY services/graph-service/app/ ./app/
 
 # Встановлюємо залежності
-RUN poetry install --no-root --without dev
+RUN poetry install --no-root
 
 FROM python:3.12-slim as runtime
 

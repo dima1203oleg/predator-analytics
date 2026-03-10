@@ -15,7 +15,7 @@ COPY services/rtb-engine/pyproject.toml .
 RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH="/root/.local/bin:$PATH"
 RUN poetry config virtualenvs.create false \
-    && poetry install --only main --no-interaction --no-ansi
+    && poetry install --only main --no-interaction --no-ansi --no-root
 
 # ----------------- Runtime -----------------
 FROM python:3.12-slim-bookworm

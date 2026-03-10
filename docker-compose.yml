@@ -165,7 +165,7 @@ services:
   rtb-engine:
     build:
       context: .
-      dockerfile: services/rtb_engine/Dockerfile
+      dockerfile: services/rtb-engine/Dockerfile
     ports:
       - "9010:8000"
     environment:
@@ -192,7 +192,7 @@ services:
   mcp-router:
     build:
       context: .
-      dockerfile: services/mcp_router/Dockerfile
+      dockerfile: services/mcp-router/Dockerfile
     ports:
       - "8080:8080"
     environment:
@@ -235,6 +235,7 @@ services:
     profiles: ["local", "server"]
 
   backend:
+    image: predator-backend:latest
     build:
       context: .
       dockerfile: services/core-api/Dockerfile
@@ -276,11 +277,11 @@ services:
     profiles: ["local", "server"]
 
   celery_worker:
-    image: predator-backend:v55
+    image: predator-backend:latest
     container_name: predator_celery_worker
     command: celery -A app.core.celery_app worker --loglevel=info -Q etl,ingestion,maintenance,monitoring --prefetch-multiplier=1 --concurrency=4
     volumes:
-      - ./app:/app/app
+      - ./services/core-api/app:/app/app
       - ./libs:/app/libs
     env_file:
       - .env
@@ -301,11 +302,11 @@ services:
     profiles: ["local", "server"]
 
   celery_beat:
-    image: predator-backend:v55
+    image: predator-backend:latest
     container_name: predator_celery_beat
     command: celery -A app.core.celery_app beat --loglevel=info
     volumes:
-      - ./app:/app/app
+      - ./services/core-api/app:/app/app
       - ./libs:/app/libs
     env_file:
       - .env
@@ -324,7 +325,7 @@ services:
       context: ./apps/predator-analytics-ui
       dockerfile: Dockerfile
     container_name: predator_frontend
-    ports: ["80:80"]
+    ports: ["3030:80"]
     depends_on: [backend]
     restart: unless-stopped
     networks: [predator-network]
@@ -368,7 +369,7 @@ services:
       - OLLAMA_BASE_URL=http://ollama:11434
     volumes:
       - ./apps/self-improve-orchestrator:/app/orchestrator
-      - ./app:/app/app
+      - ./services/core-api/app:/app/app
       - ./libs:/app/libs
       - orchestrator_logs:/app/logs
     deploy:

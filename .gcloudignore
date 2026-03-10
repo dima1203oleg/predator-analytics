@@ -1,0 +1,64 @@
+.git
+.gitignore
+.dockerignore
+.gcloudignore
+
+# Node
+node_modules/
+**/node_modules/
+dist/
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+.backend_venv/
+.predator_venv/
+.shadow_env/
+.god_mode_env/
+
+# Data and large files (root-only to allow src/components/data/)
+/data/
+/uploads/
+/data_staging/
+/sample_data/
+/server-backup/
+/Predator_50/
+/app/
+/bin/
+/logs/
+/shadow_libs/
+/libs_local/
+/libs_local_v2/
+/coverage/
+/coverage_html/
+/ua-sources/
+
+# Specific large files in root
+/*.csv
+/*.xlsx
+/*.jsonl
+/*.tar.gz
+/*.zip
+/*.pdf
+/*.mp3
+/*.aiff
+/*.wav
+
+# Deployment Artifacts
+deploy_*.tar.gz
+
+# Secrets
+*.pem
+*.key
+secrets/
+keys/
+dynamic_keys.json
+working_api_keys.json
+
+# IDE
+.vscode/
+.idea/
+.DS_Store

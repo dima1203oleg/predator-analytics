@@ -22,7 +22,7 @@ WORKDIR /app
 COPY libs/ /libs/
 COPY services/ingestion-worker/pyproject.toml .
 
-RUN /opt/poetry/bin/poetry install --no-dev
+RUN /opt/poetry/bin/poetry install --no-dev --no-root
 
 FROM python:3.12-slim AS runtime
 

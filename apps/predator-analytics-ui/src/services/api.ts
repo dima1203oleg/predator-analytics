@@ -112,6 +112,7 @@ export const api = {
     getMLJobs: trainingApi.getMLJobs,
     generateDataset: datasetApi.generate,
     uploadDataset: datasetApi.upload,
+    getSources: datasetApi.list,
 
     // ─── NAS ──────────────────────────────────────────────────────────────────
     getNasTournaments: nasApi.getTournaments,
