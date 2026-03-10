@@ -125,40 +125,40 @@ export const trinityApi = {
 
 export const somApi = {
     activateEmergency: async (level: number, trigger: string, actor: string, message: string) => {
-        return (await v45Client.post('/som/emergency', { level, trigger, actor, message })).data;
+        return (await apiClient.post('/som/emergency', { level, trigger, actor, message })).data;
     },
     deactivateEmergency: async (actor: string) => {
-        return (await v45Client.post('/som/emergency/deactivate', { actor })).data;
+        return (await apiClient.post('/som/emergency/deactivate', { actor })).data;
     },
     getStatus: async () => {
-        return (await v45Client.get('/som/status')).data;
+        return (await apiClient.get('/som/status')).data;
     },
     getAnomalies: async () => {
-        return (await v45Client.get('/som/anomalies')).data;
+        return (await apiClient.get('/som/anomalies')).data;
     },
     chaosSpike: async (intensity: number = 15) => {
-        return (await v45Client.post('/som/chaos', { intensity })).data;
+        return (await apiClient.post('/som/chaos', { intensity })).data;
     },
     getShadowMetrics: async () => {
-        return (await v45Client.get('/som/shadow/metrics')).data;
+        return (await apiClient.get('/som/shadow/metrics')).data;
     },
     getProposals: async () => {
-        return (await v45Client.get('/som/proposals')).data;
+        return (await apiClient.get('/som/proposals')).data;
     },
     getAxiomViolations: async () => {
-        return (await v45Client.get('/som/violations')).data;
+        return (await apiClient.get('/som/violations')).data;
     },
     executeProposal: async (id: string, actor: string) => {
-        return (await v45Client.post(`/som/proposals/${id}/execute`, { actor })).data;
+        return (await apiClient.post(`/som/proposals/${id}/execute`, { actor })).data;
     },
     getInfluenceClusters: async (ueid: string) => {
-        return (await v45Client.get(`/api/v1/graph/clusters/influence/${ueid}`)).data;
+        return (await apiClient.get(`/graph/clusters/influence/${ueid}`)).data;
     },
     grantImmunity: async (component: string, duration: number, actor: string) => {
-        return (await v45Client.post('/som/immunity', { component, duration, actor })).data;
+        return (await apiClient.post('/som/immunity', { component, duration, actor })).data;
     },
     overruleAxiom: async (violationId: string, reason: string, actor: string) => {
-        return (await v45Client.post(`/som/violations/${violationId}/overrule`, { reason, actor })).data;
+        return (await apiClient.post(`/som/violations/${violationId}/overrule`, { reason, actor })).data;
     },
 };
 

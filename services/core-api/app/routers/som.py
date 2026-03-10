@@ -1,9 +1,12 @@
 from typing import List, Dict, Any
 from fastapi import APIRouter, Depends
-from app.dependencies import get_tenant_id
-from app.database import get_db
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.database import get_db
+from app.dependencies import get_tenant_id
 from app.services.axiom_verifier import AxiomVerifier
+from predator_common.models import Anomaly, Proposal
 
 router = APIRouter(prefix="/som", tags=["SOM"])
 
@@ -19,17 +22,25 @@ async def get_status(tenant_id: str = Depends(get_tenant_id), db: AsyncSession =
     }
 
 @router.get("/anomalies", summary="Виявлені аномалії")
-async def get_anomalies(tenant_id: str = Depends(get_tenant_id)):
+async def get_anomalies(tenant_id: str = Depends(get_tenant_id), db: AsyncSession = Depends(get_db)):
+    """Отримання реальних аномалій з бази даних."""
+    query = select(Anomaly).where(Anomaly.tenant_id == tenant_id).order_by(Anomaly.detected_at.desc()).limit(50)
+    result = await db.execute(query)
+    anomalies = result.scalars().all()
     return [
-        {"id": "A-01", "type": "DRIFT", "severity": "low", "msg": "Мінімальний дрифт у моделі RCE"},
-        {"id": "A-02", "type": "SYNC", "severity": "medium", "msg": "Затримка синхронізації Truth Ledger"}
+        {"id": a.id, "type": a.type, "severity": a.severity, "msg": a.message, "time": a.detected_at}
+        for a in anomalies
     ]
 
 @router.get("/proposals", summary="Пропозиції SOM-агентів")
-async def get_proposals(tenant_id: str = Depends(get_tenant_id)):
+async def get_proposals(tenant_id: str = Depends(get_tenant_id), db: AsyncSession = Depends(get_db)):
+    """Отримання реальних пропозицій з бази даних."""
+    query = select(Proposal).where(Proposal.tenant_id == tenant_id).order_by(Proposal.created_at.desc()).limit(50)
+    result = await db.execute(query)
+    proposals = result.scalars().all()
     return [
-        {"id": "P-101", "type": "ARCH", "confidence": 0.94, "title": "Оптимізація семантичного пошуку", "ueid": "prop-101"},
-        {"id": "P-102", "type": "SEC", "confidence": 0.88, "title": "Посилення шлюзів верифікації", "ueid": "prop-102"}
+        {"id": p.id, "type": p.type, "confidence": p.confidence, "title": p.title, "ueid": p.ueid}
+        for p in proposals
     ]
 
 @router.post("/emergency", summary="Активація екстреного протоколу")

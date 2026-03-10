@@ -48,3 +48,22 @@ class RiskScore(Base):
     flags = Column(JSON, default=list)
     calculated_at = Column(DateTime, server_default=text("now()"))
 
+class Anomaly(Base):
+    __tablename__ = "som_anomalies"
+    id = Column(String(64), primary_key=True)
+    tenant_id = Column(String(64), nullable=False, index=True)
+    type = Column(String(50))
+    severity = Column(String(20))
+    message = Column(String(1000))
+    detected_at = Column(DateTime, server_default=text("now()"))
+
+class Proposal(Base):
+    __tablename__ = "som_proposals"
+    id = Column(String(64), primary_key=True)
+    tenant_id = Column(String(64), nullable=False, index=True)
+    type = Column(String(50))
+    confidence = Column(Float)
+    title = Column(String(255))
+    ueid = Column(String(64), index=True)
+    created_at = Column(DateTime, server_default=text("now()"))
+
