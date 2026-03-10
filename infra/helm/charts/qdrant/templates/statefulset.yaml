@@ -21,6 +21,8 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /qdrant/storage
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
   volumeClaimTemplates:
     - metadata:
         name: data
