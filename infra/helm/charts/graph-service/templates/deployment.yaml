@@ -12,6 +12,10 @@ spec:
     metadata:
       labels: {{- include "graph-service.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: graph-service
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

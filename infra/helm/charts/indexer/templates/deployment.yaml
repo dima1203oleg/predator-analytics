@@ -12,6 +12,10 @@ spec:
       labels:
         app: {{ .Release.Name }}-indexer
     spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: indexer
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
