@@ -14,6 +14,8 @@ import { premiumLocales } from '../locales/uk/premium';
 import { HoloContainer } from '../components/HoloContainer';
 import { TacticalCard } from '../components/TacticalCard';
 import { CyberOrb } from '../components/CyberOrb';
+import { Cers5LayerGauge } from '../components/risk/Cers5LayerGauge';
+import { SovereignReportWidget } from '../components/intelligence/SovereignReportWidget';
 import { cn } from '../utils/cn';
 import {
   ShieldAlert,
@@ -294,7 +296,8 @@ const RiskScoringPremium: React.FC = () => {
       try {
         setLoading(true);
         // Using canonical diligenceApi
-        const entitiesData = await diligenceApi.getRiskEntities();
+        const response = await diligenceApi.searchCompanies();
+        const entitiesData = response.items || [];
 
         // Map backend companies to UI RiskEntity
         const mappedEntities: RiskEntity[] = (entitiesData as any[]).map(e => ({

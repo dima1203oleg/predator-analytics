@@ -1,7 +1,6 @@
 """
-Customs Pipeline — PREDATOR Analytics v55.1 Ironclad.
-
-ETL for customs declarations.
+Customs Pipeline — PREDATOR Analytics v55.2-SM-EXTENDED.
+Інтелектуальна обробка митних декларацій та профілювання компаній.
 """
 from typing import Any, Dict, List
 from app.pipelines.base import BasePipeline
@@ -18,26 +17,41 @@ class CustomsPipeline(BasePipeline):
         self.sink = PostgresSink()
 
     async def run(self, source_data: Any) -> Dict[str, Any]:
-        """Виконання пайплайну обробки митних даних."""
+        """
+        Процесинг митних даних: Парсинг -> Нормалізація (UEID) -> UPSERT.
+        """
         logger.info("customs_pipeline.start", tenant_id=self.tenant_id)
         
         try:
-            # Якщо дані прийшли як рядок CSV
+            # 1. Парсинг (підтримка CSV рядків або списків)
+            rows = []
             if isinstance(source_data, str):
                 rows = CSVParser.parse_string(source_data)
+            else:
+                rows = source_data
                 
-                processed_batch = []
-                for row in rows:
-                    normalized = CompanyNormalizer.normalize_data(row)
-                    normalized["tenant_id"] = self.tenant_id
-                    processed_batch.append(normalized)
+            if not rows:
+                return {"status": "skipped", "message": "No data to process"}
+
+            # 2. Нормалізація та збагачення (UEID)
+            processed_companies = []
+            for row in rows:
+                normalized = CompanyNormalizer.normalize_data(row, self.tenant_id)
+                if normalized.get("ueid"):
+                    processed_companies.append(normalized)
+            
+            # 3. Стійкий запис у БД (UPSERT)
+            if processed_companies:
+                await self.sink.upsert_companies(processed_companies)
                 
-                await self.sink.write_batch("customs_declarations", processed_batch)
-                
-                return {
-                    "status": "success",
-                    "count": len(processed_batch)
-                }
+            logger.info("customs_pipeline.completed", count=len(processed_companies))
+            
+            return {
+                "status": "success",
+                "processed_count": len(processed_companies),
+                "tenant_id": self.tenant_id
+            }
+            
         except Exception as e:
             logger.error("customs_pipeline.failed", error=str(e))
             return {"status": "error", "message": str(e)}

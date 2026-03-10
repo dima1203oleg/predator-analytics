@@ -147,7 +147,21 @@ async def process_event_logic(event: PredatorEvent):
             # 6. Implementation of Action (Bridge/Kafka emission)
             if SYSTEM_MODE == "ACTIVE":
                 logger.info(f"ACTION TRIGGERED: {rule['action']} for rule {rule['id']}")
-                # Implementation of Git PR creation or Job launch here...
+                
+                if rule['action'] == "start_improvement_cycle":
+                    # Інтеграція з Cerebro v55.2
+                    cerebro_url = os.getenv("CEREBRO_URL", "http://cerebro:8000/orchestrate/ret")
+                    try:
+                        async with httpx.AsyncClient() as client:
+                            await client.post(cerebro_url, json={
+                                "model_id": event.context.get("model_id", "unknown"),
+                                "tenant_id": event.context.get("tenant_id", "default"),
+                                "trigger_reason": "performance_degraded",
+                                "metrics": event.context
+                            })
+                            logger.info(f"Cerebro notified for model improvement cycle.")
+                    except Exception as e:
+                        logger.error(f"Failed to notify Cerebro: {e}")
 
 
 @app.post("/events")

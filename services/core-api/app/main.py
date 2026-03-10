@@ -24,6 +24,7 @@ from app.routers.graph import router as graph_router
 from app.routers.copilot import router as copilot_router
 from app.routers.warroom import router as warroom_router
 from app.routers.ingestion import router as ingestion_router
+from app.routers.intelligence import router as intelligence_router
 
 logger = get_logger("core_api.main")
 
@@ -61,8 +62,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 app = FastAPI(
     title=get_settings().APP_NAME,
-    version=get_settings().APP_VERSION,
-    description="Аналітична платформа PREDATOR Analytics (v55.1-Ironclad)",
+    version="55.2-SM-EXTENDED",
+    description="Аналітична платформа PREDATOR Analytics (v55.2-SM-EXTENDED)",
     lifespan=lifespan,
     docs_url="/api/docs",
     redoc_url="/api/redoc",
@@ -88,6 +89,7 @@ app.include_router(graph_router, prefix="/api/v1")
 app.include_router(copilot_router, prefix="/api/v1")
 app.include_router(warroom_router, prefix="/api/v1")
 app.include_router(ingestion_router, prefix="/api/v1")
+app.include_router(intelligence_router, prefix="/api/v1")
 
 @app.get("/health", tags=["system"])
 async def health_check() -> JSONResponse:
