@@ -162,6 +162,33 @@ services:
   # 2. CORE STACK (Backend, Celery, Frontend)
   # ═══════════════════════════════════════════════════════════════
 
+  rtb-engine:
+    build:
+      context: .
+      dockerfile: services/rtb_engine/Dockerfile
+    ports:
+      - "9010:8000"
+    environment:
+      - CEREBRO_URL=http://cerebro:8000/orchestrate/ret
+    depends_on:
+      - cerebro
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  cerebro:
+    build:
+      context: .
+      dockerfile: services/cerebro/Dockerfile
+    ports:
+      - "9020:8000"
+    environment:
+      - TRAINING_CONTROLLER_URL=http://training-controller:8000
+      - VALIDATION_CONTROLLER_URL=http://validation-controller:8000
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
   backend:
     image: predator-backend:v55
     build:

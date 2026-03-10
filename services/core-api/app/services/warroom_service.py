@@ -10,24 +10,23 @@ class WarRoomService:
     @staticmethod
     async def generate_attack_plan(ueid: str, context: Dict[str, Any]) -> str:
         """
-        Генерація плану дій (Attack Plan) для розслідування конкретної сутності.
+        Генерація стратегічного плану розслідування (Attack Plan) v55.2.
+        Використовує канонічні шари CERS (Behavioral, Institutional, Influence, Structural, Predictive).
         """
         prompt = f"""
-        Ти - стратегічний аналітик PREDATOR. Проаналізуй наступну сутність (UEID: {ueid}) та її контекст:
-        {context}
+        Сформулюй стратегічний ПЛАН АТАКИ (Attack Plan) для сутності UEID: {ueid}.
+        Використовуй дані 5-шарового аналізу за специфікацією v55.2-SM-EXTENDED.
         
-        Сформулюй детальний 'План атаки' (Attack Plan):
-        1. Найбільш вразливі місця (ризикові вузли).
-        2. Рекомендовані запити до реєстрів.
-        3. Гіпотези щодо прихованих бенефіціарів.
-        4. Оцінка загрози національній безпеці.
+        Контекст даних: {context}
         
-        Відповідь надай українською мовою у форматі Markdown.
+        Структура плану:
+        1. STRATEGIC OVERVIEW: Загальна оцінка небезпеки.
+        2. VULNERABILITY MATRIX: Аналіз найслабших шарів (напр. Institutional або Structural).
+        3. SHADOW DISCOVERY: План пошуку прихованих зв'язків та UBO.
+        4. OPERATIONAL STEPS: Конкретні кроки для аналітика (запити, аудит, моніторинг).
+        5. RISK PROJECTION: Прогноз негативного впливу на 30/90 днів.
+        
+        Мова: Українська. Формат: Markdown з використанням тактичної термінології.
         """
         
-        messages = [
-            {"role": "system", "content": "Ти професіонал OSINT та економічної розвідки."},
-            {"role": "user", "content": prompt}
-        ]
-        
-        return await AIService.chat_completion(messages)
+        return await AIService.generate_insight(prompt, context)

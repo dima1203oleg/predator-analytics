@@ -2168,6 +2168,45 @@ app.get('/api/v1/premium/ai-insights', (req, res) => {
   ]);
 });
 
+app.get('/api/v1/intelligence/report/:ueid', (req, res) => {
+  const { ueid } = req.params;
+  const company = COMPANIES.find(c => c.edrpou === ueid) || { name: 'Невідома Компанія', edrpou: ueid };
+
+  const mockReport = `
+# 🦅 ЕКСПЕРТНИЙ ЗВІТ SOVEREIGN ADVISOR: ${company.name}
+**Дата генерації:** ${new Date().toLocaleString()} | **UEID:** ${ueid}
+
+## 1. STRATEGIC OVERVIEW
+Об'єкт демонструє **${company.risk === 'high' ? 'КРИТИЧНО ВИСОКИЙ' : 'ПОМІРНИЙ'}** рівень системного ризику. 
+На основі аналізу 5-шарової моделі CERS, виявлено ознаки аномальної активності в сегментах міжнародної торгівлі.
+
+## 2. 5-LAYER RISK ANALYSIS (CERS v55.2)
+*   **Behavioral (Поведінковий):** ${company.risk === 'high' ? '92%' : '24%'} - Виявлено різкі стрибки обсягів операцій у нетипові періоди.
+*   **Institutional (Інституційний):** ${company.risk === 'high' ? '85%' : '15%'} - Компанія змінила 3 директорів за останні 6 місяців.
+*   **Influence (Вплив):** ${company.risk === 'high' ? '78%' : '12%'} - Прямі зв'язки з політично значущими особами (PEP).
+*   **Structural (Структурний):** ${company.risk === 'high' ? '96%' : '18%'} - Складна мережа офшорних бенефіціарів (BVI, Cyprus).
+*   **Predictive (Прогностичний):** ${company.risk === 'high' ? '88%' : '21%'} - Висока ймовірність заниження митної вартості у наступному кварталі.
+
+## 3. SHADOW DISCOVERY & CARTELS
+Виявлено приховану мережу (**Shadow Network ID: SN-102**), що об'єднує ${company.name} з 4 іншими контрагентами. 
+Ймовірний спільний центр прийняття рішень знаходиться за межами юрисдикції України.
+
+## 4. РЕКОМЕНДАЦІЇ
+1. **НЕГАЙНО:** Провести поглиблений аудит останніх 12 декларацій.
+2. **МОНІТОРИНГ:** Встановити цілодобовий нагляд за фінансовими потоками.
+3. **ЕСКАЛАЦІЯ:** Передати матеріали до відповідного підрозділу розслідувань.
+
+---
+*Звіт згенеровано автоматично системою PREDATOR Analytics v55.2-SM-EXTENDED.*
+  `;
+
+  res.json({
+    ueid,
+    report: mockReport,
+    generated_at: new Date().toISOString()
+  });
+});
+
 app.get('/api/v1/premium/predictions', (req, res) => {
   res.json([
     { id: '1', title: 'Імпорт електроніки', currentValue: 245, predictedValue: 289, timeframe: '30 днів', confidence: 87, trend: 'up' },
