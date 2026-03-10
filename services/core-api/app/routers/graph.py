@@ -97,3 +97,31 @@ async def get_influence_metrics(
         "influence_score": 78.5,
         "status": "computed"
     }
+
+@router.get("/clusters/influence/{ueid}", summary="Кластери впливу (Influence Hub)")
+async def get_influence_clusters(
+    ueid: str,
+    tenant_id: str = Depends(get_tenant_id),
+    _ = Depends(PermissionChecker([Permission.RUN_GRAPH]))
+):
+    """
+    Виявлення 'Центрів Впливу'. Пошук груп пов'язаних сутностей через 
+    спільних контролерів та приховані зв'язки.
+    """
+    query = """
+    MATCH (start {ueid: $ueid})
+    MATCH (start)-[r:OWNS|DIRECTS|HAS_ADDRESS*1..2]-(related)
+    WHERE labels(related)[0] IN ['Company', 'Person'] AND start <> related
+    RETURN 
+        related.ueid as ueid, 
+        related.name as name, 
+        labels(related)[0] as type,
+        count(r) as strength
+    ORDER BY strength DESC
+    LIMIT 20
+    """
+    try:
+        results = await graph_db.run_query(query, {"ueid": ueid, "tenant_id": tenant_id})
+        return results
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Cluster detection failed: {str(e)}")
