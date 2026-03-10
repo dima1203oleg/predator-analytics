@@ -12,6 +12,10 @@ spec:
     metadata:
       labels: {{- include "cerebro.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: cerebro
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

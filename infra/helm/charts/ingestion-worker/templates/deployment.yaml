@@ -12,6 +12,10 @@ spec:
     metadata:
       labels: {{- include "ingestion-worker.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: ingestion-worker
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
