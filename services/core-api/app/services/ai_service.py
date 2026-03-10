@@ -16,23 +16,31 @@ class AIService:
         model: Optional[str] = None
     ) -> str:
         """Виклик LiteLLM для отримання відповіді."""
-        target_model = model or settings.OLLAMA_MODEL
-        
-        async with httpx.AsyncClient() as client:
-             response = await client.post(
-                f"{settings.LITELLM_API_BASE}/chat/completions",
-                json={
-                    "model": target_model,
-                    "messages": messages,
-                    "temperature": 0.2
-                },
-                timeout=60.0
-            )
-             
-             if response.status_code == 200:
-                 result = response.json()
-                 return result["choices"][0]["message"]["content"]
-             return f"AI Error: {response.status_code} - {response.text}"
+        try:
+            async with httpx.AsyncClient() as client:
+                 target_model = model or settings.OLLAMA_MODEL
+                 response = await client.post(
+                    f"{settings.LITELLM_API_BASE}/chat/completions",
+                    json={
+                        "model": target_model,
+                        "messages": messages,
+                        "temperature": 0.2
+                    },
+                    timeout=60.0
+                )
+                 
+                 if response.status_code == 200:
+                     result = response.json()
+                     return result["choices"][0]["message"]["content"]
+                 
+                 error_msg = f"AI Error: {response.status_code} - {response.text}"
+                 print(error_msg)
+                 return error_msg
+        except Exception as e:
+            error_msg = f"AI Exception: {str(e)}"
+            print(error_msg)
+            return error_msg
+        return "AI Error: Unexpected path"
 
     @staticmethod
     async def generate_insight(prompt: str, context: Optional[Dict[str, Any]] = None) -> str:
@@ -56,22 +64,38 @@ class AIService:
                 if response.status_code == 200:
                     result = response.json()
                     return result.get("content", "Помилка: Пуста відповідь від Advisor")
-                return f"Advisor Unreachable: {response.status_code}"
+                
+                error_msg = f"Advisor Unreachable: {response.status_code}"
+                print(error_msg)
+                return error_msg
             except Exception as e:
-                return f"Advisor Exception: {str(e)}"
+                error_msg = f"Advisor Exception: {str(e)}"
+                print(error_msg)
+                return error_msg
+        
+        return "Advisor Error: Unexpected path"
 
     @staticmethod
     async def get_embeddings(text: str) -> List[float]:
         """Отримання векторних ембедінгів для тексту."""
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                f"{settings.LITELLM_API_BASE}/embeddings",
-                json={
-                    "model": "text-embedding-3-small",
-                    "input": text
-                }
-            )
-            if response.status_code == 200:
-                result = response.json()
-                return result["data"][0]["embedding"]
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{settings.LITELLM_API_BASE}/embeddings",
+                    json={
+                        "model": "text-embedding-3-small",
+                        "input": text
+                    },
+                    timeout=10.0
+                )
+                if response.status_code == 200:
+                    result = response.json()
+                    return result["data"][0]["embedding"]
+                
+                print(f"Embedding Error: {response.status_code}")
+                return [0.0] * 1536
+        except Exception as e:
+            print(f"Embedding Exception: {str(e)}")
             return [0.0] * 1536
+        
+        return [0.0] * 1536

@@ -564,6 +564,90 @@ const RiskScoringPremium: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Details Side Panel */}
+      <AnimatePresence>
+        {selectedEntity && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedEntity(null)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100]"
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 bottom-0 w-full max-w-4xl bg-[#02040a] border-l border-white/10 z-[101] shadow-3xl flex flex-col overflow-hidden"
+            >
+              {/* Panel Header */}
+              <div className="p-8 border-bottom border-white/5 flex items-center justify-between bg-slate-900/40">
+                <div className="flex items-center gap-6">
+                  <RiskScoreGauge score={selectedEntity.riskScore} size="lg" />
+                  <div>
+                    <h2 className="text-3xl font-black text-white uppercase tracking-tighter mb-1">{selectedEntity.name}</h2>
+                    <p className="text-slate-500 font-mono text-xs uppercase tracking-widest">UEID: {selectedEntity.edrpou}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedEntity(null)}
+                  className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/5"
+                >
+                  <XCircle size={24} className="text-slate-400" />
+                </button>
+              </div>
+
+              {/* Panel Content (Scrollable) */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-10 space-y-12 bg-cyber-grid bg-[length:40px_40px] bg-fixed">
+                {/* 5-Layer CERS Gauge */}
+                <section>
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="h-px flex-1 bg-rose-500/20" />
+                    <h3 className="text-xs font-black text-rose-500 uppercase tracking-[0.4em]">5-шарова модель ризику (CERS)</h3>
+                    <div className="h-px flex-1 bg-rose-500/20" />
+                  </div>
+                  <Cers5LayerGauge
+                    factors={{
+                      behavioral: selectedEntity.riskScore > 80 ? 0.92 : 0.45,
+                      institutional: selectedEntity.riskScore > 80 ? 0.85 : 0.38,
+                      influence: selectedEntity.riskScore > 80 ? 0.78 : 0.29,
+                      structural: selectedEntity.riskScore > 80 ? 0.96 : 0.12,
+                      predictive: selectedEntity.riskScore > 80 ? 0.88 : 0.54,
+                    }}
+                    totalScore={selectedEntity.riskScore / 100}
+                    className="bg-slate-900/40 rounded-[40px] p-8 border border-white/5"
+                  />
+                </section>
+
+                {/* Sovereign Report */}
+                <section>
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="h-px flex-1 bg-indigo-500/20" />
+                    <h3 className="text-xs font-black text-indigo-500 uppercase tracking-[0.4em]">Експертний висновок Sovereign Advisor</h3>
+                    <div className="h-px flex-1 bg-indigo-500/20" />
+                  </div>
+                  <SovereignReportWidget ueid={selectedEntity.edrpou} />
+                </section>
+
+                {/* Additional Stats/Connections could go here */}
+              </div>
+
+              {/* Panel Footer */}
+              <div className="p-8 bg-slate-900/60 border-t border-white/5 flex gap-4">
+                <button className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all shadow-lg hover:shadow-indigo-500/20">
+                  Сформувати повний PDF-звіт
+                </button>
+                <button className="flex-1 py-4 bg-rose-600/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500/20 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all">
+                  Ескалація розслідування
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

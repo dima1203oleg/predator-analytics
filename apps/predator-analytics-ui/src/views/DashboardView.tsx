@@ -32,6 +32,7 @@ import { TacticalCard } from '../components/TacticalCard';
 import { NeuralCore } from '../components/NeuralCore';
 import { CyberOrb } from '../components/CyberOrb';
 import { ViewHeader } from '../components/ViewHeader';
+import { Cers5LayerGauge } from '../components/risk/Cers5LayerGauge';
 import { Badge } from '../components/ui/badge';
 import { PageTransition } from '../components/layout/PageTransition';
 
@@ -263,6 +264,19 @@ const DashboardView: React.FC = () => {
                         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-6">
                             {ENGINES.map((eng, i) => <EngineMetric key={eng.id} engine={eng} index={i} />)}
                         </div>
+
+                        {/* Global CERS 5-Layer Visualization */}
+                        <Cers5LayerGauge
+                            factors={{
+                                behavioral: (ENGINES.find(e => e.id === 'behavioral')?.score || 0) / 100,
+                                institutional: (ENGINES.find(e => e.id === 'institutional')?.score || 0) / 100,
+                                influence: (ENGINES.find(e => e.id === 'influence')?.score || 0) / 100,
+                                structural: (ENGINES.find(e => e.id === 'structural')?.score || 0) / 100,
+                                predictive: (ENGINES.find(e => e.id === 'predictive')?.score || 0) / 100,
+                            }}
+                            totalScore={0.94}
+                            className="bg-slate-900/20 p-8 rounded-[40px] border border-white/5"
+                        />
 
                         {/* Central Intelligence Matrix (Chart) */}
                         <TacticalCard variant="holographic" className="p-10 h-[500px] flex flex-col relative overflow-hidden group/chart border-indigo-500/10">

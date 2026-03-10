@@ -38,5 +38,12 @@ export const diligenceApi = {
     getExpertReport: async (ueid: string): Promise<any> => {
         const response = await apiClient.get<any>(`/intelligence/report/${ueid}`);
         return response.data;
+    },
+
+    /**
+     * Аліас для отримання ризикових сутностей (для сумісності).
+     */
+    getRiskEntities: async () => {
+        return diligenceApi.searchCompanies({ risk_level: 'critical' });
     }
 };
