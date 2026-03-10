@@ -151,6 +151,9 @@ export const somApi = {
     executeProposal: async (id: string, actor: string) => {
         return (await v45Client.post(`/som/proposals/${id}/execute`, { actor })).data;
     },
+    getInfluenceClusters: async (ueid: string) => {
+        return (await v45Client.get(`/api/v1/graph/clusters/influence/${ueid}`)).data;
+    },
     grantImmunity: async (component: string, duration: number, actor: string) => {
         return (await v45Client.post('/som/immunity', { component, duration, actor })).data;
     },

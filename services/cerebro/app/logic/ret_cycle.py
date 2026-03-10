@@ -13,6 +13,7 @@ TRAINING_URL = os.getenv("TRAINING_CONTROLLER_URL", "http://training-controller:
 VALIDATION_URL = os.getenv("VALIDATION_CONTROLLER_URL", "http://validation-controller:8000")
 AUTOML_URL = os.getenv("AUTOML_CONTROLLER_URL", "http://automl-controller:8000")
 MCP_URL = os.getenv("MCP_ROUTER_URL", "http://mcp-router:8080/v1/query")
+CORE_API_URL = os.getenv("CORE_API_URL", "http://core-api:8080/api/v1")
 
 class RETEngine:
     @staticmethod
@@ -23,6 +24,20 @@ class RETEngine:
         logger.info(f"🚀 [RET_START] Модель: {model_id} | Тенант: {tenant_id}")
         
         async with httpx.AsyncClient(timeout=300.0) as client:
+            # 0. OVERSIGHT phase (SOM Feedback)
+            try:
+                logger.info("🔭 [OVERSIGHT] Перевірка системних аномалій через SOM...")
+                som_resp = await client.get(f"{CORE_API_URL}/som/anomalies")
+                if som_resp.status_code == 200:
+                    anomalies = som_resp.json()
+                    for anomaly in anomalies:
+                        if anomaly.get("type") == "DRIFT" and anomaly.get("severity") in ["medium", "high"]:
+                            logger.warning(f"🚨 [SOM_ALERT] Виявлено критичний дрифт! Примусове AUTOML. Карта: {anomaly}")
+                            context["force_automl"] = True
+                            context["som_anomaly"] = anomaly
+            except Exception as e:
+                logger.warning(f"⚠️ [OVERSIGHT_FAILED] Не вдалося зв'язатися з SOM: {str(e)}")
+
             # 1. ANALYSIS phase (Sovereign Advisor)
             try:
                 drift = context.get("drift", 0.0)
@@ -47,8 +62,10 @@ class RETEngine:
             for attempt in range(2):
                 try:
                     # EVALUATION & STRATEGY
-                    strategy = "AUTOML" if drift > 0.15 else "FINETUNE"
-                    logger.info(f"📋 [EVAL] Attempt {attempt+1}. Стратегія: {strategy}")
+                    drift = context.get("drift", 0.0)
+                    force_automl = context.get("force_automl", False)
+                    strategy = "AUTOML" if drift > 0.15 or force_automl else "FINETUNE"
+                    logger.info(f"📋 [EVAL] Attempt {attempt+1}. Стратегія: {strategy} (Force: {force_automl})")
                     
                     # TRAINING phase
                     train_endpoint = "/train" if strategy == "FINETUNE" else "/automl/run"
