@@ -17,9 +17,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
 WORKDIR /app
-COPY pyproject.toml ./
-# COPY local libs if needed
-COPY libs/predator-common /app/libs/predator-common
+
+# Копіюємо локальні ліби та файл проекту
+COPY libs/ /libs/
+COPY services/ingestion-worker/pyproject.toml .
 
 RUN /opt/poetry/bin/poetry install --no-dev
 

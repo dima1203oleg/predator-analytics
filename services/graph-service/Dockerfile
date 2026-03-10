@@ -13,8 +13,8 @@ ENV PATH="$POETRY_HOME/bin:$PATH"
 
 WORKDIR /app
 
-# Копіюємо predator-common
-COPY libs/predator-common /libs/predator-common
+# Копіюємо локальні ліби
+COPY libs/ /libs/
 COPY services/graph-service/pyproject.toml services/graph-service/poetry.lock* ./
 
 # Встановлюємо залежності
