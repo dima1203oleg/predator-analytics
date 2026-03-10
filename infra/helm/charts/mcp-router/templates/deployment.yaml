@@ -22,6 +22,11 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.port }}
+          env:
+            - name: ENV
+              value: "{{ .Values.env.ENV }}"
+            - name: REDIS_URL
+              value: "redis://{{ .Values.global.redis.host }}:{{ .Values.global.redis.port }}/0"
           readinessProbe:
             httpGet:
               path: /health

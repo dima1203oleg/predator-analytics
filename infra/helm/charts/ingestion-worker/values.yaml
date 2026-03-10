@@ -14,3 +14,7 @@ resources:
   limits:
     cpu: 5m
     memory: 32Mi
+
+env:
+  ENV: "production"
+  KAFKA_BOOTSTRAP_SERVERS: "predator-redpanda:9092"

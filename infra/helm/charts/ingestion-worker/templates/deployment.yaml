@@ -22,6 +22,15 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.port }}
+          env:
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://{{ .Values.global.postgres.user }}:{{ .Values.global.postgres.password }}@{{ .Values.global.postgres.host }}:{{ .Values.global.postgres.port }}/{{ .Values.global.postgres.db }}"
+            - name: REDIS_URL
+              value: "redis://{{ .Values.global.redis.host }}:{{ .Values.global.redis.port }}/0"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "{{ .Values.env.KAFKA_BOOTSTRAP_SERVERS }}"
+            - name: ENV
+              value: "{{ .Values.env.ENV }}"
           readinessProbe:
             httpGet:
               path: /health
