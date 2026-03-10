@@ -4,3 +4,11 @@ image:
   tag: "2.11.0"
 persistence:
   size: 20Gi
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 256Mi
+  limits:
+    cpu: 20m
+    memory: 512Mi

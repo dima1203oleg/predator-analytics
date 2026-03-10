@@ -4,3 +4,11 @@ image:
   tag: "v1.7.4"
 persistence:
   size: 10Gi
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 64Mi
+  limits:
+    cpu: 20m
+    memory: 128Mi

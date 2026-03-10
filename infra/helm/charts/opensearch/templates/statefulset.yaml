@@ -26,6 +26,8 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /usr/share/opensearch/data
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
   volumeClaimTemplates:
     - metadata:
         name: data
