@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 55.2.0
+description: PREDATOR MCP Router — LLM Orchestration Facade
+name: mcp-router
+type: application
+version: 0.2.0

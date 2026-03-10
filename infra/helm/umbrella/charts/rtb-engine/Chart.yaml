@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 55.2.0
+description: PREDATOR RTB Engine — Real-Time Behavioral Scanner
+name: rtb-engine
+type: application
+version: 0.2.0
