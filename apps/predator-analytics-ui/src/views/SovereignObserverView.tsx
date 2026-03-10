@@ -77,6 +77,7 @@ const SOMView: React.FC = () => {
   const [selectedRing, setSelectedRing] = useState<number>(3);
   const [selectedHypothesisUeid, setSelectedHypothesisUeid] = useState<string | null>(null);
   const [systemStatus, setSystemStatus] = useState<any>(null);
+  const [influenceClusters, setInfluenceClusters] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -251,11 +252,11 @@ const SOMView: React.FC = () => {
             <div className="grid grid-cols-2 gap-6">
               <div className="p-6 bg-slate-950/40 border border-white/5 rounded-[32px] panel-3d">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ЯКІСТЬ_ДАНИХ</span>
-                  <span className="text-xs font-black text-emerald-400 font-mono">99.8%</span>
+                  <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">NETWORK_PURITY</span>
+                  <span className="text-xs font-black text-rose-400 font-mono">94.2%</span>
                 </div>
                 <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} animate={{ width: '99.8%' }} className="h-full bg-emerald-500" />
+                  <motion.div initial={{ width: 0 }} animate={{ width: '94.2%' }} className="h-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]" />
                 </div>
               </div>
               <div className="p-6 bg-slate-950/40 border border-white/5 rounded-[32px] panel-3d">
@@ -424,11 +425,11 @@ const SOMView: React.FC = () => {
                 <Terminal size={14} /> Логи Командного Нагляду
               </h3>
               <div className="font-mono text-[10px] text-slate-500 space-y-3 h-[250px] overflow-y-auto custom-scrollbar pr-3">
-                <p><span className="text-slate-700">[11:04:12]</span> <span className="text-blue-400">SOM_ЯДРО:</span> Truth Ledger синхронізовано. MD5_HASH: 9e4b...d1</p>
-                <p><span className="text-slate-700">[11:04:15]</span> <span className="text-rose-500">АНОМАЛІЯ:</span> Мінімальний дрифт у часовій когерентності RCE (0.02).</p>
-                <p><span className="text-slate-700">[11:04:22]</span> <span className="text-blue-400">АРХІТЕКТОР:</span> Згенеровано гіпотезу H-504 через Recursive Scan.</p>
-                <p><span className="text-slate-700">[11:04:30]</span> <span className="text-purple-400">АРБІТР:</span> Розгляд Пропозиції #44021 (Truth Persistence).</p>
-                <p><span className="text-slate-700">[11:05:01]</span> <span className="text-emerald-400">СИСТЕМА:</span> Heartbeat підтверджено. Всі конституційні аксіоми цілі.</p>
+                <p><span className="text-slate-700">[11:04:12]</span> <span className="text-blue-400">SOM_ЯДРО:</span> Truth Ledger синхронізовано.</p>
+                <p><span className="text-slate-700">[11:12:05]</span> <span className="text-emerald-400">РЕЗОЛВЕР:</span> Вирішено сутність 'Global Holding Ltd' через Sovereign Linker (Conf: 0.94).</p>
+                <p><span className="text-slate-700">[11:12:15]</span> <span className="text-amber-500">ГРАФ_МАЙНЕР:</span> Виявлено новий Кластер Впливу #7 (3 компанії, 1 UBO).</p>
+                <p><span className="text-slate-700">[11:12:22]</span> <span className="text-blue-400">АРХІТЕКТОР:</span> Згенеровано гіпотезу H-504 через Recursive Scan.</p>
+                <p><span className="text-slate-700">[11:15:01]</span> <span className="text-emerald-400">СИСТЕМА:</span> OSINT зачистка завершена. Purity: 94.2%.</p>
                 <p className="opacity-40 animate-pulse text-[8px]">--- СКАНУВАННЯ_НОВИХ_ЛОГІВ ---</p>
               </div>
             </div>
