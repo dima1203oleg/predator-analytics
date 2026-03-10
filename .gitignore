@@ -124,3 +124,7 @@ mock-api.log
 .coverage
 coverage.xml
 htmlcov/
+
+*.venv*
+.predator_dev
+
