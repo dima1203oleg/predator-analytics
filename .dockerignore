@@ -45,9 +45,9 @@ build/
 .cache/
 server-backup/
 Predator_50/
-data/
-app/
-services/
+/data/
+/app/
+# services/ (removed to allow microservice builds)
 api-gateway/
 uploads/
 data_staging/

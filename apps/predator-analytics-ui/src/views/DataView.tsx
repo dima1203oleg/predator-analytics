@@ -4,13 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Database, CheckCircle, RefreshCw, Upload, Layers, X
 } from 'lucide-react';
-import { api } from '../services/api';
-import { useGlobalState } from '../context/GlobalContext';
+import { api } from '@/services/api';
+import { useGlobalState } from '@/context/GlobalContext';
 
 // Extracted Sub-views
-import { DataUploadWizard } from '../components/data/DataUploadWizard';
-import { DataSourcesGrid, Source } from '../components/data/DataSourcesGrid';
-import { DataPipelinesView } from '../components/data/DataPipelinesView';
+import { DataUploadWizard } from '@/components/data/DataUploadWizard';
+import { DataSourcesGrid, Source } from '@/components/data/DataSourcesGrid';
+import { DataPipelinesView } from '@/components/data/DataPipelinesView';
 
 const DataView: React.FC = () => {
   const { state: globalState, setUploadState } = useGlobalState();
@@ -77,10 +77,10 @@ const DataView: React.FC = () => {
       }
 
       setUploadState({
-          status: 'preview',
-          previewData: rows,
-          fileName: file.name,
-          fileSize: (file.size / 1024 / 1024).toFixed(2)
+        status: 'preview',
+        previewData: rows,
+        fileName: file.name,
+        fileSize: (file.size / 1024 / 1024).toFixed(2)
       });
     };
     reader.readAsText(file.slice(0, 50000));
@@ -117,62 +117,62 @@ const DataView: React.FC = () => {
 
     const formData = new FormData();
     if (selectedFile) {
-        formData.append('file', selectedFile);
+      formData.append('file', selectedFile);
     } else {
-        console.error("No file selected for upload");
-        return;
+      console.error("No file selected for upload");
+      return;
     }
 
     formData.append('dataset_type', 'customs');
 
     try {
-        await api.uploadDataset(formData, (progressEvent) => {
-            const total = progressEvent.total || progressEvent.loaded;
-            const percent = Math.round((progressEvent.loaded * 100) / total);
-            setUploadState({ progress: percent });
-        });
+      await api.uploadDataset(formData, (progressEvent) => {
+        const total = progressEvent.total || progressEvent.loaded;
+        const percent = Math.round((progressEvent.loaded * 100) / total);
+        setUploadState({ progress: percent });
+      });
 
-        setUploadState({ status: 'success', progress: 100 });
+      setUploadState({ status: 'success', progress: 100 });
 
-        setTimeout(() => {
-             setUploadState({
-                status: 'idle',
-                progress: 0,
-                fileName: null,
-                previewData: []
-            });
-            setSelectedFile(null);
-            fetchSources();
-            setActiveTab('pipelines');
-        }, 2500);
-    } catch (e: any) {
-        console.error(e);
-        const errMsg = e.response?.data?.detail || e.message || "Помилка завантаження";
-        alert(`Помилка: ${errMsg}`);
-         setUploadState({ status: 'idle', progress: 0 });
-    }
-  };
-
-  const cancelUpload = () => {
-      setSelectedFile(null);
-      setUploadState({
+      setTimeout(() => {
+        setUploadState({
           status: 'idle',
           progress: 0,
           fileName: null,
           previewData: []
-      });
+        });
+        setSelectedFile(null);
+        fetchSources();
+        setActiveTab('pipelines');
+      }, 2500);
+    } catch (e: any) {
+      console.error(e);
+      const errMsg = e.response?.data?.detail || e.message || "Помилка завантаження";
+      alert(`Помилка: ${errMsg}`);
+      setUploadState({ status: 'idle', progress: 0 });
+    }
+  };
+
+  const cancelUpload = () => {
+    setSelectedFile(null);
+    setUploadState({
+      status: 'idle',
+      progress: 0,
+      fileName: null,
+      previewData: []
+    });
   };
 
   const handleAnalyze = async (source: Source) => {
     setAnalyzingSourceId(source.id);
     try {
-        const res = await (api as any).v45.analyze(source.name);
-        alert(`✅ АНАЛІЗ ЗАВЕРШЕНО: ${res.answer.substring(0, 100)}... Кейс створено автоматично.`);
+      const res = await (api as any).v45.analyze(source.name);
+      alert(`✅ АНАЛІЗ ЗАВЕРШЕНО: ${res.answer.substring(0, 100)}... Кейс створено автоматично.`);
     } catch (e) {
-        console.error(e);
-        alert("Помилка запуску аналізу.");
+      console.error(e);
+      alert("Помилка запуску аналізу.");
     } finally {
-        setAnalyzingSourceId(null);
+      setAnalyzingSourceId(null);
     }
   };
 
@@ -187,9 +187,8 @@ const DataView: React.FC = () => {
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className={`min-h-screen pb-24 md:pb-8 animate-in fade-in duration-500 p-6 md:p-8 space-y-8 transition-all ${
-        isDragging ? 'ring-4 ring-indigo-500/50 bg-indigo-500/5' : ''
-      }`}
+      className={`min-h-screen pb-24 md:pb-8 animate-in fade-in duration-500 p-6 md:p-8 space-y-8 transition-all ${isDragging ? 'ring-4 ring-indigo-500/50 bg-indigo-500/5' : ''
+        }`}
     >
       <AnimatePresence>
         {isDragging && (
@@ -249,21 +248,21 @@ const DataView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-4">
-            <input
-                type="file"
-                ref={fileInputRef}
-                onChange={onFileChange}
-                className="hidden"
-                accept=".csv,.xlsx,.xls,.pdf"
-            />
-            <button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={wizardStep !== 'idle'}
-                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/30 disabled:opacity-50 group"
-            >
-                <Upload size={20} className="group-hover:animate-bounce" />
-                <span>ЗАВАНТАЖИТИ</span>
-            </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={onFileChange}
+            className="hidden"
+            accept=".csv,.xlsx,.xls,.pdf"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={wizardStep !== 'idle'}
+            className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/30 disabled:opacity-50 group"
+          >
+            <Upload size={20} className="group-hover:animate-bounce" />
+            <span>ЗАВАНТАЖИТИ</span>
+          </button>
         </div>
       </div>
 
