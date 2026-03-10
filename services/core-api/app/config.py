@@ -44,9 +44,13 @@ class Settings(BaseSettings):
     KAFKA_BROKERS: str = "localhost:9092"
     KAFKA_OFFLINE_DIR: str = "/tmp/predator_offline"  # Offline-first
 
-    # AI / LiteLLM
+    # AI / LiteLLM / MCP
     LITELLM_API_BASE: str = "http://localhost:4000/v1"
     OLLAMA_MODEL: str = "llama3"
+    MCP_ROUTER_URL: str = "http://localhost:8080/v1/query"
+    
+    # Modular Services
+    GRAPH_SERVICE_URL: str = "http://localhost:9030"
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -189,17 +189,61 @@ services:
     networks: [predator-network]
     profiles: ["local", "server"]
 
-  backend:
-    image: predator-backend:v55
+  mcp-router:
     build:
       context: .
-      dockerfile: apps/backend/Dockerfile
+      dockerfile: services/mcp_router/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_URL=redis://redis:6379/1
+      - OLLAMA_BASE_URL=http://ollama:11434
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  graph-service:
+    build:
+      context: .
+      dockerfile: services/graph-service/Dockerfile
+    ports:
+      - "9030:8000"
+    environment:
+      - NEO4J_URL=bolt://neo4j:7687
+      - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD}
+    depends_on:
+      - neo4j
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  ingestion-worker:
+    build:
+      context: .
+      dockerfile: services/ingestion-worker/Dockerfile
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=redpanda:9092
+      - POSTGRES_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      - redpanda
+      - postgres
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
+
+  backend:
+    build:
+      context: .
+      dockerfile: services/core-api/Dockerfile
     container_name: predator_backend
     ports:
       - "8090:8000"
     extra_hosts: ["host.docker.internal:host-gateway"]
     volumes:
-      - ./app:/app/app
+      - ./services/core-api/app:/app/app
       - ./libs:/app/libs
     env_file:
       - .env
@@ -212,11 +256,17 @@ services:
       - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD}
       - MINIO_ENDPOINT=minio:9000
       - KAFKA_BOOTSTRAP_SERVERS=redpanda:9092
+      - MCP_ROUTER_URL=http://mcp-router:8080/v1/query
+      - GRAPH_SERVICE_URL=http://graph-service:8000
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+      mcp-router:
+        condition: service_started
+      graph-service:
+        condition: service_started
     deploy:
       resources:
         limits:
