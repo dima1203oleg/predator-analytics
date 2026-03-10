@@ -25,49 +25,56 @@ core-api:
   replicaCount: 1
   image:
     repository: "europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/core-api"
-    tag: "latest" # CORE_API_TAG
+    tag: "latest"
+    pullPolicy: Always
 
 frontend:
   enabled: true
   replicaCount: 1
   image:
     repository: "europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/frontend"
-    tag: "latest" # FRONTEND_TAG
+    tag: "latest"
+    pullPolicy: Always
 
 mcp-router:
   enabled: true
   replicaCount: 1
   image:
     repository: "europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/mcp-router"
-    tag: "latest" # MCP_ROUTER_TAG
+    tag: "latest"
+    pullPolicy: Always
 
 graph-service:
   enabled: true
   replicaCount: 1
   image:
     repository: "europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/graph-service"
-    tag: "latest" # GRAPH_SERVICE_TAG
+    tag: "latest"
+    pullPolicy: Always
 
 cerebro:
   enabled: true
   replicaCount: 1
   image:
     repository: "europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/cerebro"
-    tag: "latest" # CEREBRO_TAG
+    tag: "latest"
+    pullPolicy: Always
 
 rtb-engine:
   enabled: true
   replicaCount: 1
   image:
     repository: "europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/rtb-engine"
-    tag: "latest" # RTB_ENGINE_TAG
+    tag: "latest"
+    pullPolicy: Always
 
 ingestion-worker:
   enabled: true
   replicaCount: 1
   image:
     repository: "europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/ingestion-worker"
-    tag: "latest" # INGESTION_WORKER_TAG
+    tag: "latest"
+    pullPolicy: Always
 
 # Legacy charts (keep enabled)
 backend:
