@@ -33,17 +33,17 @@ frontend:
     nodePort: 3030        # http://localhost:3030
   env:
     - name: VITE_API_URL
-      # ← Замінити на реальний IP/хост NVIDIA сервера
-      value: "http://NVIDIA_SERVER_IP:9080"
+      # Підключення до реального бекенда (GKE або NVIDIA Server)
+      value: "http://NVIDIA_SERVER_IP:8090"
     - name: VITE_ENV
       value: "mac-ui"
     - name: VITE_MOCK_API
-      value: "false"      # реальний backend на NVIDIA
+      value: "false"      # реальний backend ТІЛЬКИ
 
 # ============ Backend — ВИМКНЕНО на маку ============
 backend:
   enabled: false          # ← Виконується ТІЛЬКИ на NVIDIA Server
-  # Всі запити frontend → NVIDIA_SERVER_IP:9080
+  # Всі запити frontend → NVIDIA_SERVER_IP:8090
 
 # ============ PostgreSQL — ВИМКНЕНО на маку ============
 postgresql:
