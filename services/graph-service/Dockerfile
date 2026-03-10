@@ -32,9 +32,10 @@ RUN groupadd -g 1000 predator && \
     useradd -u 1000 -g predator -s /bin/bash -m predator && \
     chown -R predator:predator /app
 
-COPY --from=builder /app/.venv /app/.venv
-COPY services/graph-service/app /app/app
-COPY --from=builder /libs/predator-common /libs/predator-common
+WORKDIR /app
+COPY services/graph-service/app/ ./app/
+COPY services/shared/ ./services/shared/
+COPY libs/ /libs/
 
 # USER predator (HR-05) - Non-root user
 USER predator

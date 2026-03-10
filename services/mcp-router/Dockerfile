@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-COPY services/mcp_router/requirements.txt .
+COPY services/mcp-router/requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 FROM python:3.12-slim-bookworm AS runtime
@@ -28,8 +28,11 @@ RUN groupadd -g 10001 predator && \
 WORKDIR /app
 
 COPY --from=builder /root/.local /home/predator/.local
-COPY services/mcp_router/ ./services/mcp_router/
+# Копіюємо вміст app/ та інші конфіги
+COPY services/mcp-router/app/ ./app/
+COPY services/mcp-router/mcp_servers.json ./
 COPY services/shared/ ./services/shared/
+COPY libs/ /libs/
 
 RUN chown -R predator:predator /app /home/predator/.local
 
@@ -40,4 +43,4 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
-CMD ["uvicorn", "services.mcp_router.router:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

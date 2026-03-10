@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-COPY services/rtb_engine/pyproject.toml .
+COPY services/rtb-engine/pyproject.toml .
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH="/root/.local/bin:$PATH"
@@ -32,14 +32,15 @@ RUN groupadd -g 10001 predator && \
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
 WORKDIR /app
-# Копіюємо код сервісу та залежний shared
-COPY services/rtb_engine/ ./services/rtb_engine/
+# Копіюємо вміст app/ та залежний shared
+COPY services/rtb-engine/app/ ./app/
 COPY services/shared/ ./services/shared/
+COPY libs/ /libs/
 
 USER predator
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-# Запуск як модуля, щоб імпорти працювали правильно
-CMD ["uvicorn", "services.rtb_engine.engine:app", "--host", "0.0.0.0", "--port", "8000"]
+# Запуск
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
