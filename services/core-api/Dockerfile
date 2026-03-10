@@ -33,7 +33,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN groupadd -g 10001 predator && \
     useradd -u 10001 -g predator -s /bin/sh -m predator && \
     apt-get update && apt-get install -y --no-install-recommends libpq5 curl && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    pip install setuptools --break-system-packages
 
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
