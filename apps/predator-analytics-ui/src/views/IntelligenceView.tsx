@@ -37,8 +37,11 @@ import { CyberOrb } from '../components/CyberOrb';
 import { AdvancedBackground } from '../components/AdvancedBackground';
 import { CyberGrid } from '../components/CyberGrid';
 import { cn } from '../utils/cn';
+import { SovereignReportWidget } from '../components/intelligence/SovereignReportWidget';
 
 const IntelligenceView: React.FC = () => {
+    const [selectedUeid, setSelectedUeid] = React.useState<string | null>('12345678');
+
     return (
         <PageTransition>
             <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-32">
@@ -65,10 +68,11 @@ const IntelligenceView: React.FC = () => {
                                 </div>
                             </div>
                         }
+                        icon={<Brain size={22} className="text-indigo-400" />}
                         breadcrumbs={['PREDATOR', 'INTELLIGENCE', 'SYNERGY_X']}
                         stats={[
                             { label: 'НЕЙРО_НАВАНТАЖЕННЯ', value: '64%', color: 'primary', icon: <Activity size={14} /> },
-                            { label: 'ГЛИБИНА_ГРАФА', value: '12 Рівнів', color: 'indigo', icon: <Share2 size={14} /> },
+                            { label: 'ГЛИБИНА_ГРАФА', value: '12 Рівнів', color: 'purple', icon: <Share2 size={14} /> },
                             { label: 'ГЛОБАЛЬНИЙ_СКОР', value: '99.4', color: 'success', icon: <Target size={14} /> }
                         ]}
                         actions={
@@ -202,21 +206,12 @@ const IntelligenceView: React.FC = () => {
                                 </div>
                             </div>
 
-                            <TacticalCard variant="holographic" className="flex flex-col items-center justify-center p-10 bg-slate-950/60 relative overflow-hidden min-h-[350px] rounded-[48px] border-white/5">
-                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.1),transparent_70%)]" />
-                                <CyberOrb size={220} color="#6366f1" intensity={0.5} pulse={true} />
-                                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-10 text-center">
-                                    <div className="p-3 bg-indigo-600/10 rounded-full border border-indigo-500/20 mb-4 scale-75">
-                                        <RadioTower size={24} className="text-indigo-400 animate-pulse" />
-                                    </div>
-                                    <div className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.5em] mb-2">Нейронне Ядро</div>
-                                    <div className="text-2xl font-black text-white font-mono opacity-80 tracking-tighter">СИНАПСИС_v55.CORE</div>
-                                    <div className="mt-4 flex items-center justify-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                        <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">ШИФРОВАНО_ТА_ПІДПИСАНО</span>
-                                    </div>
-                                </div>
-                            </TacticalCard>
+                            {selectedUeid && (
+                                <SovereignReportWidget
+                                    ueid={selectedUeid}
+                                    className="flex-1 min-h-[500px] border-indigo-500/20"
+                                />
+                            )}
 
                             <TacticalCard variant="glass" className="p-8 bg-black/40 border border-white/5 rounded-[40px] group hover:border-indigo-500/20 transition-all">
                                 <div className="flex items-center gap-4 mb-6">

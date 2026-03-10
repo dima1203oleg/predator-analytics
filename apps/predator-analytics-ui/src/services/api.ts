@@ -197,7 +197,7 @@ export const api = {
     // ─── Phase 11-15: Advanced APIs (Wrappers) ──────────────────────────────────
     warroom: {
         getDashboardSummary: async () => (await apiClient.get('/warroom/dashboard-summary')).data,
-        generateAttackPlan: async (targetEntity: string) => (await apiClient.post(`/warroom/attack-plan?target_entity=${targetEntity}`)).data,
+        generateAttackPlan: async (targetEntity: string) => (await apiClient.post(`/warroom/${targetEntity}/attack-plan`)).data,
     },
     shadowGraph: {
         generateMap: async (entityId: string, depth: number = 2) => (await apiClient.get(`/graph/clusters/shadow/${entityId}?depth=${depth}`)).data,
