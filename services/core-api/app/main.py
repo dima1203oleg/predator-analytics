@@ -25,6 +25,7 @@ from app.routers.copilot import router as copilot_router
 from app.routers.warroom import router as warroom_router
 from app.routers.ingestion import router as ingestion_router
 from app.routers.intelligence import router as intelligence_router
+from app.routers.som import router as som_router
 
 logger = get_logger("core_api.main")
 
@@ -90,6 +91,7 @@ app.include_router(copilot_router, prefix="/api/v1")
 app.include_router(warroom_router, prefix="/api/v1")
 app.include_router(ingestion_router, prefix="/api/v1")
 app.include_router(intelligence_router, prefix="/api/v1")
+app.include_router(som_router, prefix="/api/v1")
 
 @app.get("/health", tags=["system"])
 async def health_check() -> JSONResponse:

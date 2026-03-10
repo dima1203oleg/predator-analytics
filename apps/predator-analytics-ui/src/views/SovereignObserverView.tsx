@@ -31,6 +31,7 @@ import { CyberOrb } from '../components/CyberOrb';
 import { HoloContainer } from '../components/HoloContainer';
 import { ViewHeader } from '../components/ViewHeader';
 import { CyberGrid } from '../components/CyberGrid';
+import { SovereignReportWidget } from '../components/intelligence/SovereignReportWidget';
 
 // === ДОПОМІЖНІ КОМПОНЕНТИ ===
 
@@ -74,15 +75,43 @@ const SOMView: React.FC = () => {
   const [activeHypotheses, setActiveHypotheses] = useState<any[]>([]);
   const [emergencyMode, setEmergencyMode] = useState<boolean>(false);
   const [selectedRing, setSelectedRing] = useState<number>(3);
-  const [isSimulating, setIsSimulating] = useState(false);
+  const [selectedHypothesisUeid, setSelectedHypothesisUeid] = useState<string | null>(null);
+  const [systemStatus, setSystemStatus] = useState<any>(null);
 
   useEffect(() => {
-    // Вантажимо гіпотези
-    setActiveHypotheses([
-      { id: 'H-504', type: 'ARCH', confidence: 0.96, desc: 'Оптимізація обходу графа за допомогою рекурсивних CTE (Очікувано +42% швидкості)' },
-      { id: 'H-505', type: 'SEC', confidence: 0.89, desc: 'Виявлено потенційну аномалію в дрейфі векторних ембеддінгів через IsolationForest' },
-      { id: 'H-509', type: 'DATA', confidence: 0.76, desc: 'Стиснення історичних архівів Truth Ledger за допомогою Zstandard v3' },
-    ]);
+    const fetchData = async () => {
+      try {
+        const [status, anomalies, proposals] = await Promise.all([
+          api.som.getStatus(),
+          api.som.getAnomalies(),
+          api.som.getProposals()
+        ]);
+
+        setSystemStatus(status);
+        if (status?.health) setSystemHealth(status.health);
+        if (status?.status) setConstitutionalStatus(status.status);
+
+        // Мапимо пропозиції як гіпотези
+        const mappedHypotheses = (proposals || []).map((p: any) => ({
+          id: p.id || `H-${Math.floor(Math.random() * 900) + 100}`,
+          type: p.type || 'ARCH',
+          confidence: p.confidence || 0.85,
+          desc: p.description || p.title || 'Аналіз системної когерентності',
+          ueid: p.ueid // Якщо є UEID для звіту
+        }));
+
+        setActiveHypotheses(mappedHypotheses.length > 0 ? mappedHypotheses : [
+          { id: 'H-504', type: 'ARCH', confidence: 0.96, desc: 'Оптимізація обходу графа за допомогою рекурсивних CTE (Очікувано +42% швидкості)' },
+          { id: 'H-505', type: 'SEC', confidence: 0.89, desc: 'Виявлено потенційну аномалію в дрейфі векторних ембеддінгів через IsolationForest' },
+        ]);
+      } catch (e) {
+        console.error("Failed to fetch SOM data", e);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleEmergencyProtocol = async () => {
@@ -323,11 +352,40 @@ const SOMView: React.FC = () => {
                   </p>
                   <div className="flex gap-3 h-0 overflow-hidden group-hover/h:h-10 transition-all duration-500">
                     <button className="px-6 bg-emerald-600 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all">ЗАПУСТИТИ_СИМУЛЯЦІЮ</button>
-                    <button className="px-6 bg-white/5 border border-white/10 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">ЗАПИТАТИ_ПОЯСНЕННЯ</button>
+                    <button
+                      onClick={() => setSelectedHypothesisUeid(h.id)}
+                      className="px-6 bg-white/5 border border-white/10 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+                    >
+                      ЗАПИТАТИ_ПОЯСНЕННЯ
+                    </button>
                   </div>
                 </motion.div>
               ))}
             </div>
+
+            <AnimatePresence>
+              {selectedHypothesisUeid && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-6 border-t border-white/10 pt-6"
+                >
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="text-[10px] font-black text-amber-500 uppercase tracking-widest flex items-center gap-2">
+                      <Brain size={14} /> АНАЛІЗ_Sovereign_Advisor
+                    </h4>
+                    <button
+                      onClick={() => setSelectedHypothesisUeid(null)}
+                      className="text-slate-500 hover:text-white"
+                    >
+                      <ZapOff size={14} />
+                    </button>
+                  </div>
+                  <SovereignReportWidget ueid={selectedHypothesisUeid} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </TacticalCard>
         </div>
 

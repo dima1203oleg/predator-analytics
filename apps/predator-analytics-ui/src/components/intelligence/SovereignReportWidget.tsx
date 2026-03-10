@@ -16,9 +16,10 @@ import ReactMarkdown from 'react-markdown';
 interface SovereignReportWidgetProps {
     ueid: string;
     className?: string;
+    mini?: boolean;
 }
 
-export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ueid, className }) => {
+export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ueid, className, mini }) => {
     const [report, setReport] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
