@@ -26,11 +26,14 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           ports:
             - containerPort: 5432
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
+              subPath: postgres-db-data
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
   volumeClaimTemplates:
