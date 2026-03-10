@@ -31,7 +31,9 @@ USER predator
 WORKDIR /app
 
 COPY --from=builder /app/.venv /app/.venv
-COPY services/ingestion-worker/app /app/app
+COPY services/ingestion-worker/app/ ./app/
+COPY services/shared/ ./services/shared/
+COPY libs/ /libs/
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONPATH="/app"

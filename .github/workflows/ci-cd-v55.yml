@@ -5,10 +5,10 @@ on:
     branches: [main]
     paths:
       - "services/core-api/**"
-      - "services/mcp_router/**"
+      - "services/mcp-router/**"
       - "services/graph-service/**"
       - "services/cerebro/**"
-      - "services/rtb_engine/**"
+      - "services/rtb-engine/**"
       - "services/ingestion-worker/**"
       - "apps/predator-analytics-ui/**"
       - "infra/helm/**"
@@ -39,9 +39,9 @@ jobs:
             paths: services/core-api/**
           - service: mcp-router
             context: .
-            dockerfile: services/mcp_router/Dockerfile
+            dockerfile: services/mcp-router/Dockerfile
             image: predator-mcp-router
-            paths: services/mcp_router/**
+            paths: services/mcp-router/**
           - service: graph-service
             context: .
             dockerfile: services/graph-service/Dockerfile
@@ -54,9 +54,9 @@ jobs:
             paths: services/cerebro/**
           - service: rtb-engine
             context: .
-            dockerfile: services/rtb_engine/Dockerfile
+            dockerfile: services/rtb-engine/Dockerfile
             image: predator-rtb-engine
-            paths: services/rtb_engine/**
+            paths: services/rtb-engine/**
           - service: ingestion-worker
             context: .
             dockerfile: services/ingestion-worker/Dockerfile

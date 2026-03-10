@@ -37,7 +37,9 @@ RUN groupadd -g 10001 predator && \
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
 WORKDIR /app
-COPY app/ ./app/
+COPY services/core-api/app/ ./app/
+COPY services/shared/ ./services/shared/
+COPY libs/ /libs/
 
 # Додаємо лібу спільну (якщо монтується) або встановлюємо з локального source.
 # Але оскільки ми в docker, краще мати її як submodule або install з локального wheel

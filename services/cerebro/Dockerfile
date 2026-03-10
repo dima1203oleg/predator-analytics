@@ -34,6 +34,8 @@ COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/pytho
 
 WORKDIR /app
 COPY services/cerebro/app/ ./app/
+COPY services/shared/ ./services/shared/
+COPY libs/ /libs/
 
 USER predator
 
