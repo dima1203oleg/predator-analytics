@@ -32,7 +32,10 @@ import { TacticalCard } from '../components/TacticalCard';
 import { NeuralCore } from '../components/NeuralCore';
 import { CyberOrb } from '../components/CyberOrb';
 import { ViewHeader } from '../components/ViewHeader';
+import { HoloContainer } from '../components/HoloContainer';
 import { Cers5LayerGauge } from '../components/risk/Cers5LayerGauge';
+import { SovereignReportWidget } from '../components/intelligence/SovereignReportWidget';
+import { intelligenceApi } from '../services/api/intelligence';
 import { Badge } from '../components/ui/badge';
 import { PageTransition } from '../components/layout/PageTransition';
 
@@ -41,6 +44,7 @@ import { PageTransition } from '../components/layout/PageTransition';
 const localLocales = {
     title: "Ситуаційний Командний Центр",
     subtitle: "Глобальна Суверенна Матриця",
+    situationCommandCenter: "Ситуаційний Командний Центр",
     status: "SOVEREIGN_PROTOCOL_ACTIVE",
     gridSync: "Синхронізація Глобальної Мережі: OK",
     stats: {
@@ -173,11 +177,26 @@ const RiskTile: React.FC<{ data: typeof RISK_Sectors[0] }> = ({ data }) => (
 const DashboardView: React.FC = () => {
     const { isConnected } = useOmniscienceWS();
     const systemMetrics = useSystemMetrics();
+    const [sovereignBriefingUeid, setSovereignBriefingUeid] = useState<string | null>('global-briefing-v55');
+    const [stats, setStats] = useState<any>(null);
     const [uptime, setUptime] = useState(0);
 
     useEffect(() => {
         const timer = setInterval(() => setUptime(p => p + 1), 1000);
         return () => clearInterval(timer);
+    }, []);
+
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                // Спроба отримати актуальний UEID для ранкового брифінгу
+                const news = await intelligenceApi.getMorningNewspaper();
+                if (news?.ueid) setSovereignBriefingUeid(news.ueid);
+            } catch (e) {
+                console.warn("Using default briefing UEID");
+            }
+        };
+        fetchDashboardData();
     }, []);
 
     const formatUptime = (s: number) => {
@@ -258,7 +277,7 @@ const DashboardView: React.FC = () => {
                 <div className="grid grid-cols-12 gap-10 relative z-10">
 
                     {/* Left Columns: Engines & Charts */}
-                    <div className="col-span-12 xl:col-span-8 flex flex-col gap-10">
+                    <div className="col-span-12 xl:col-span-7 flex flex-col gap-10">
 
                         {/* Analytical Engines Grid */}
                         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-6">
@@ -278,33 +297,32 @@ const DashboardView: React.FC = () => {
                             className="bg-slate-900/20 p-8 rounded-[40px] border border-white/5"
                         />
 
-                        {/* Central Intelligence Matrix (Chart) */}
-                        <TacticalCard variant="holographic" className="p-10 h-[500px] flex flex-col relative overflow-hidden group/chart border-indigo-500/10">
-                            <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
-                            <div className="flex items-center justify-between mb-8 relative z-10">
-                                <div>
-                                    <h3 className="text-2xl font-black text-white uppercase tracking-tighter">{localLocales.sections.flux}</h3>
-                                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em] mt-2">{localLocales.sections.fluxSub}</p>
+                        {/* Central Situation Map / Intelligence Hub */}
+                        <div className="col-span-12 xl:col-span-5 flex flex-col gap-10">
+                            <HoloContainer className="p-10 min-h-[500px] flex flex-col relative overflow-hidden">
+                                <div className="absolute top-10 right-10 flex items-center gap-2">
+                                    <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
+                                    <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest font-mono">SOVEREIGN_ADVISOR_LIVE</span>
                                 </div>
-                                <div className="flex items-center gap-8">
-                                    <div className="flex flex-col items-end">
-                                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">ПОТОК_БАЛ</span>
-                                        <span className="text-xl font-black text-indigo-400 font-mono">94.2</span>
-                                    </div>
-                                    <div className="flex flex-col items-end">
-                                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">РИЗИК_ОРІЄНТОВАНИЙ</span>
-                                        <span className="text-xl font-black text-rose-400 font-mono">0.084</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex-1 relative z-10">
-                                <ReactECharts option={historyOption} style={{ height: '100%', width: '100%' }} />
-                            </div>
-                            <div className="absolute bottom-10 left-10 right-10 flex gap-4 z-10">
-                                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
-                            </div>
-                        </TacticalCard>
 
+                                <h2 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
+                                    <ShieldCheck size={18} className="text-indigo-400" /> {localLocales.situationCommandCenter}
+                                </h2>
+
+                                <div className="flex-1">
+                                    <SovereignReportWidget ueid={sovereignBriefingUeid || 'v55_daily_brief'} mini={true} />
+                                </div>
+
+                                <div className="mt-8 grid grid-cols-2 gap-4">
+                                    <button className="py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] font-black uppercase tracking-widest rounded-2xl transition-all shadow-lg shadow-indigo-500/20">
+                                        ДЕТАЛЬНИЙ_АНАЛІЗ
+                                    </button>
+                                    <button className="py-4 bg-white/5 hover:bg-white/10 text-white text-[9px] font-black uppercase tracking-widest rounded-2xl border border-white/10 transition-all">
+                                        ЕКСПОРТ_BRIEF
+                                    </button>
+                                </div>
+                            </HoloContainer>
+                        </div>
                         {/* Bottom Row: Pipeline & Heatmap */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                             <TacticalCard variant="glass" className="p-8 group overflow-hidden border-rose-500/10 hover:border-rose-500/20">
@@ -359,9 +377,11 @@ const DashboardView: React.FC = () => {
                             <div className="relative h-full w-full z-10">
                                 <NeuralCore data={{
                                     categories: [
-                                        { label: 'Сутності', count: 124000, color: '#3b82f6' },
-                                        { label: 'Ризики', count: 840, color: '#f43f5e' },
-                                        { label: 'Аномалії', count: 12, color: '#f59e0b' }
+                                        { label: 'Юридичний/Репутаційний', count: 124000, color: '#3b82f6' },
+                                        { label: 'Фінансовий/Власність', count: 84200, color: '#10b981' },
+                                        { label: 'Поведінковий/Вплив', count: 450, color: '#f59e0b' },
+                                        { label: 'Операційний/Санкції', count: 12, color: '#f43f5e' },
+                                        { label: 'Стратегічний/Суверенний', count: 3, color: '#a855f7' }
                                     ]
                                 }} />
                             </div>
