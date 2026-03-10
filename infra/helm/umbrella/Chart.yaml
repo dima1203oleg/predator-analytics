@@ -1,26 +1,32 @@
 apiVersion: v2
 name: predator-umbrella
-description: Umbrella chart for Predator Analytics v45.0
+description: Umbrella chart for PREDATOR Analytics v55.2-SM-EXTENDED
 type: application
-version: 0.1.0
-appVersion: "25.0.0"
+version: 0.2.0
+appVersion: "55.2.0"
 
 dependencies:
-  - name: backend
-    version: 0.1.0
-    repository: "file://../charts/backend"
+  - name: core-api
+    version: 0.2.0
+    repository: "file://../charts/core-api"
   - name: frontend
     version: 0.1.0
     repository: "file://../charts/frontend"
-  - name: parser
-    version: 0.1.0
-    repository: "file://../charts/parser"
-  - name: processor
-    version: 0.1.0
-    repository: "file://../charts/processor"
-  - name: indexer
-    version: 0.1.0
-    repository: "file://../charts/indexer"
+  - name: mcp-router
+    version: 0.2.0
+    repository: "file://../charts/mcp-router"
+  - name: graph-service
+    version: 0.2.0
+    repository: "file://../charts/graph-service"
+  - name: cerebro
+    version: 0.2.0
+    repository: "file://../charts/cerebro"
+  - name: rtb-engine
+    version: 0.2.0
+    repository: "file://../charts/rtb-engine"
+  - name: ingestion-worker
+    version: 0.2.0
+    repository: "file://../charts/ingestion-worker"
   - name: postgres
     version: 0.1.0
     repository: "file://../charts/postgres"

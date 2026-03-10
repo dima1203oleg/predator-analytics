@@ -1,5 +1,5 @@
 global:
-  nameOverride: ""
+  imageTag: "latest"
   imagePullSecrets: []
 
   postgres:
@@ -21,22 +21,61 @@ global:
     host: "predator-qdrant"
     port: 6333
 
-backend:
+core-api:
   enabled: true
   replicaCount: 1
   image:
-    repository: "ghcr.io/dima1203oleg/predator-backend"
-    tag: "v45" # BACKEND_TAG
-  service:
-    type: ClusterIP
-    port: 8000
+    repository: "ghcr.io/dima1203oleg/predator-core-api"
+    tag: "latest" # CORE_API_TAG
 
 frontend:
   enabled: true
   replicaCount: 1
   image:
     repository: "ghcr.io/dima1203oleg/predator-frontend"
-    tag: "v45" # FRONTEND_TAG
-  service:
-    type: ClusterIP
-    port: 80
+    tag: "latest" # FRONTEND_TAG
+
+mcp-router:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: "ghcr.io/dima1203oleg/predator-mcp-router"
+    tag: "latest" # MCP_ROUTER_TAG
+
+graph-service:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: "ghcr.io/dima1203oleg/predator-graph-service"
+    tag: "latest" # GRAPH_SERVICE_TAG
+
+cerebro:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: "ghcr.io/dima1203oleg/predator-cerebro"
+    tag: "latest" # CEREBRO_TAG
+
+rtb-engine:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: "ghcr.io/dima1203oleg/predator-rtb-engine"
+    tag: "latest" # RTB_ENGINE_TAG
+
+ingestion-worker:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: "ghcr.io/dima1203oleg/predator-ingestion-worker"
+    tag: "latest" # INGESTION_WORKER_TAG
+
+# Legacy charts (keep enabled)
+backend:
+  enabled: false  # Replaced by core-api
+parser:
+  enabled: false
+processor:
+  enabled: false
+indexer:
+  enabled: false
