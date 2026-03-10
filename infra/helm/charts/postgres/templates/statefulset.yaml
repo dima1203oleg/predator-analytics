@@ -13,6 +13,8 @@ spec:
       labels:
         app: {{ .Release.Name }}-postgres
     spec:
+      securityContext:
+        fsGroup: 70
       containers:
         - name: postgres
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
