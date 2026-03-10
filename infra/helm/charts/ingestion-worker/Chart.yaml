@@ -1,0 +1,6 @@
+apiVersion: v2
+name: ingestion-worker
+version: 0.2.0
+appVersion: "55.2.0"
+type: application
+description: PREDATOR Ingestion Worker — ETL Data Pipeline

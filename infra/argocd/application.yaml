@@ -1,5 +1,5 @@
-# ArgoCD Application for Predator Analytics v45.0
-# GitOps deployment configuration (App-of-Apps pattern or single Umbrella)
+# ArgoCD Application for Predator Analytics v55.2-SM-EXTENDED
+# GitOps deployment — GKE NVIDIA Server
 
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -9,8 +9,7 @@ metadata:
   labels:
     app.kubernetes.io/name: predator-umbrella
     app.kubernetes.io/part-of: predator-system
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    app.kubernetes.io/version: "55.2.0"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -24,19 +23,10 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-        - values-prod.yaml
-
-      parameters:
-        - name: global.imageTag
-          value: "v45.0.0"
-        - name: backend.replicas
-          value: "2"
-        - name: frontend.replicas
-          value: "2"
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: predator-nvidia
+    namespace: predator
 
   syncPolicy:
     automated:
@@ -47,6 +37,7 @@ spec:
       - CreateNamespace=true
       - PruneLast=true
       - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
     retry:
       limit: 5
       backoff:
@@ -61,7 +52,3 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas
-    - group: ""
-      kind: Secret
-      jsonPointers:
-        - /data
