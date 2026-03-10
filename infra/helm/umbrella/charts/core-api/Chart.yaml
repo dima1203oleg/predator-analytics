@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 55.2.0
+description: PREDATOR Analytics Core API — FastAPI backend v55.2-SM-EXTENDED
+name: core-api
+type: application
+version: 0.2.0

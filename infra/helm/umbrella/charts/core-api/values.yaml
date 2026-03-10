@@ -1,0 +1,32 @@
+enabled: true
+replicaCount: 1
+
+image:
+  repository: "ghcr.io/dima1203oleg/predator-core-api"
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8000
+
+resources:
+  requests:
+    cpu: 5m
+    memory: 32Mi
+  limits:
+    cpu: 5m
+    memory: 32Mi
+
+env:
+  ENV: "production"
+  MCP_ROUTER_URL: "http://predator-mcp-router:8080/v1/query"
+  GRAPH_SERVICE_URL: "http://predator-graph-service:8002"
+  NEO4J_URI: "bolt://predator-neo4j:7687"
+  KAFKA_BOOTSTRAP_SERVERS: "predator-redpanda:9092"
+
+hpa:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPU: 70

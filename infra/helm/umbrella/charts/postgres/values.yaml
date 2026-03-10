@@ -1,0 +1,14 @@
+enabled: true
+image:
+  repository: "postgres"
+  tag: "15-alpine"
+persistence:
+  size: 10Gi
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 64Mi
+  limits:
+    cpu: 20m
+    memory: 128Mi

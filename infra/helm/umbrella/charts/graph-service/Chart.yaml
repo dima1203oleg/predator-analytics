@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 55.2.0
+description: PREDATOR Graph Service — Neo4j Trinity Graph Engine
+name: graph-service
+type: application
+version: 0.2.0
