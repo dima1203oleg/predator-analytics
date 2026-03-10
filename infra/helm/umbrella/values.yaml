@@ -1,6 +1,7 @@
 global:
   imageTag: "latest"
-  imagePullSecrets: []
+  imagePullSecrets:
+    - name: ghcr-creds
 
   postgres:
     host: "predator-postgres"
