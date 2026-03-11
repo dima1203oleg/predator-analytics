@@ -2,22 +2,22 @@ global:
   imageTag: "latest"
 
   postgres:
-    host: "predator-postgres"
+    host: "predator-v55-postgres"
     port: 5432
     db: "predator_db"
     user: "predator"
     password: "predator_password"
 
   redis:
-    host: "predator-redis"
+    host: "predator-v55-redis"
     port: 6379
 
   opensearch:
-    host: "predator-opensearch"
+    host: "predator-v55-opensearch"
     port: 9200
 
   qdrant:
-    host: "predator-qdrant"
+    host: "predator-v55-qdrant"
     port: 6333
 
 core-api:
@@ -27,6 +27,12 @@ core-api:
     repository: "europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/core-api"
     tag: "latest"
     pullPolicy: Always
+  env:
+    ENV: "production"
+    KAFKA_BOOTSTRAP_SERVERS: "predator-v55-redpanda:9092"
+    MCP_ROUTER_URL: "http://predator-v55-mcp-router:8080/v1/query"
+    GRAPH_SERVICE_URL: "http://predator-v55-graph-service:8002"
+    NEO4J_URI: "bolt://predator-v55-neo4j:7687"
 
 frontend:
   enabled: true
@@ -43,6 +49,8 @@ mcp-router:
     repository: "europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/mcp-router"
     tag: "latest"
     pullPolicy: Always
+  env:
+    ENV: "production"
 
 graph-service:
   enabled: true
@@ -75,6 +83,9 @@ ingestion-worker:
     repository: "europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/ingestion-worker"
     tag: "latest"
     pullPolicy: Always
+  env:
+    ENV: "production"
+    KAFKA_BOOTSTRAP_SERVERS: "predator-v55-redpanda:9092"
 
 # Legacy charts (keep enabled)
 backend:

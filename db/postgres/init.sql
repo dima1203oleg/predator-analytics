@@ -58,7 +58,7 @@ CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 CREATE TABLE IF NOT EXISTS companies (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-    ueid VARCHAR(64) NOT NULL,
+    ueid VARCHAR(64) NOT NULL UNIQUE,
     edrpou VARCHAR(10),
     name VARCHAR(500) NOT NULL,
     name_normalized VARCHAR(500),
@@ -96,7 +96,7 @@ CREATE INDEX IF NOT EXISTS idx_companies_status ON companies(status);
 CREATE TABLE IF NOT EXISTS persons (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-    ueid VARCHAR(64) NOT NULL,
+    ueid VARCHAR(64) NOT NULL UNIQUE,
     inn VARCHAR(10),
     full_name VARCHAR(500) NOT NULL,
     full_name_normalized VARCHAR(500),
@@ -126,7 +126,7 @@ CREATE INDEX IF NOT EXISTS idx_persons_sanctioned ON persons(is_sanctioned) WHER
 CREATE TABLE IF NOT EXISTS declarations (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-    declaration_number VARCHAR(50) NOT NULL,
+    declaration_number VARCHAR(50) NOT NULL UNIQUE,
     declaration_date DATE,
     direction VARCHAR(10) NOT NULL DEFAULT 'import',
     importer_ueid VARCHAR(64),
@@ -365,6 +365,69 @@ CREATE INDEX IF NOT EXISTS idx_decisions_entity ON decision_artifacts(entity_typ
 CREATE INDEX IF NOT EXISTS idx_decisions_created ON decision_artifacts(created_at);
 
 -- ============================================================
+-- Risk Scores (CERS — 5-рівнева оцінка ризику)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS risk_scores (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    entity_ueid VARCHAR(64) NOT NULL,
+    entity_type VARCHAR(50) DEFAULT 'company',
+    score_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    cers FLOAT NOT NULL,
+    cers_confidence FLOAT NOT NULL DEFAULT 0.0,
+    behavioral_score FLOAT,
+    institutional_score FLOAT,
+    influence_score FLOAT,
+    structural_score FLOAT,
+    predictive_score FLOAT,
+    flags JSONB DEFAULT '[]'::jsonb,
+    explanation JSONB,
+    calculated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_risk_scores_tenant ON risk_scores(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_risk_scores_ueid ON risk_scores(entity_ueid);
+CREATE INDEX IF NOT EXISTS idx_risk_scores_date ON risk_scores(score_date DESC);
+CREATE INDEX IF NOT EXISTS idx_risk_scores_entity_type ON risk_scores(entity_type);
+
+-- ============================================================
+-- SOM Аномалії (Self-Organizing Map)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS som_anomalies (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    type VARCHAR(50),
+    severity VARCHAR(20),
+    entity_ueid VARCHAR(64),
+    message VARCHAR(1000),
+    details JSONB,
+    detected_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_som_anomalies_tenant ON som_anomalies(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_som_anomalies_ueid ON som_anomalies(entity_ueid);
+CREATE INDEX IF NOT EXISTS idx_som_anomalies_severity ON som_anomalies(severity);
+
+-- ============================================================
+-- SOM Пропозиції
+-- ============================================================
+CREATE TABLE IF NOT EXISTS som_proposals (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    type VARCHAR(50),
+    confidence FLOAT,
+    title VARCHAR(255),
+    ueid VARCHAR(64),
+    status VARCHAR(20) DEFAULT 'pending',
+    details JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_som_proposals_tenant ON som_proposals(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_som_proposals_ueid ON som_proposals(ueid);
+CREATE INDEX IF NOT EXISTS idx_som_proposals_status ON som_proposals(status);
+
+-- ============================================================
 -- Row-Level Security
 -- ============================================================
 ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
@@ -374,6 +437,9 @@ ALTER TABLE company_person_links ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ingestion_jobs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE decision_artifacts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE risk_scores ENABLE ROW LEVEL SECURITY;
+ALTER TABLE som_anomalies ENABLE ROW LEVEL SECURITY;
+ALTER TABLE som_proposals ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS tenant_isolation_companies ON companies;
 DROP POLICY IF EXISTS tenant_isolation_persons ON persons;
@@ -382,6 +448,9 @@ DROP POLICY IF EXISTS tenant_isolation_cp_links ON company_person_links;
 DROP POLICY IF EXISTS tenant_isolation_jobs ON ingestion_jobs;
 DROP POLICY IF EXISTS tenant_isolation_audit ON audit_log;
 DROP POLICY IF EXISTS tenant_isolation_decisions ON decision_artifacts;
+DROP POLICY IF EXISTS tenant_isolation_risk_scores ON risk_scores;
+DROP POLICY IF EXISTS tenant_isolation_som_anomalies ON som_anomalies;
+DROP POLICY IF EXISTS tenant_isolation_som_proposals ON som_proposals;
 
 CREATE POLICY tenant_isolation_companies ON companies
     USING (tenant_id::text = current_setting('app.current_tenant', true));
@@ -396,6 +465,12 @@ CREATE POLICY tenant_isolation_jobs ON ingestion_jobs
 CREATE POLICY tenant_isolation_audit ON audit_log
     USING (tenant_id::text = current_setting('app.current_tenant', true));
 CREATE POLICY tenant_isolation_decisions ON decision_artifacts
+    USING (tenant_id::text = current_setting('app.current_tenant', true));
+CREATE POLICY tenant_isolation_risk_scores ON risk_scores
+    USING (tenant_id::text = current_setting('app.current_tenant', true));
+CREATE POLICY tenant_isolation_som_anomalies ON som_anomalies
+    USING (tenant_id::text = current_setting('app.current_tenant', true));
+CREATE POLICY tenant_isolation_som_proposals ON som_proposals
     USING (tenant_id::text = current_setting('app.current_tenant', true));
 
 -- ============================================================
