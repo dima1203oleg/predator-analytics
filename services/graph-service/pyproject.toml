@@ -13,6 +13,7 @@ uvicorn = {extras = ["standard"], version = "^0.30.1"}
 neo4j = "^5.21.0"
 pydantic = "^2.7.4"
 pydantic-settings = "^2.3.4"
+setuptools = "^69.2.0"
 
 # Внутрішня бібліотека (common)
 predator-common = {path = "../../libs/predator-common", develop = true}

@@ -13,6 +13,7 @@ aiokafka = "^0.10.0"
 pydantic-settings = "^2.2.1"
 predator-common = {path = "../../libs/predator-common", develop = true}
 structlog = "^24.1.0"
+setuptools = "^69.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.1.1"

@@ -6,3 +6,4 @@ redis==5.0.1
 pydantic==2.6.1
 async-timeout==4.0.3
 python-dotenv==1.0.1
+setuptools==69.2.0

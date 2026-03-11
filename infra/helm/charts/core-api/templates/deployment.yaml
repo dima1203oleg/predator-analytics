@@ -45,14 +45,16 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.service.port }}
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 10
+            failureThreshold: 5
           livenessProbe:
             httpGet:
               path: /health
               port: {{ .Values.service.port }}
-            initialDelaySeconds: 30
+            initialDelaySeconds: 45
             periodSeconds: 30
+            failureThreshold: 3
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 {{- end }}

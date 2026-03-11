@@ -2,9 +2,9 @@ enabled: true
 replicaCount: 1
 
 image:
-  repository: "ghcr.io/dima1203oleg/predator-core-api"
+  repository: "europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/core-api"
   tag: "latest"
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 service:
   type: ClusterIP
@@ -12,11 +12,11 @@ service:
 
 resources:
   requests:
-    cpu: 5m
-    memory: 32Mi
+    cpu: 100m
+    memory: 256Mi
   limits:
-    cpu: 5m
-    memory: 32Mi
+    cpu: 500m
+    memory: 512Mi
 
 env:
   ENV: "production"

@@ -15,7 +15,7 @@ class WorkerSettings(BaseSettings):
     NEO4J_USER: str = "neo4j"
     NEO4J_PASSWORD: str = "password"
     
-    KAFKA_BOOTSTRAP_SERVERS: str = "localhost:9092"
+    KAFKA_BOOTSTRAP_SERVERS: str = "predator-redpanda:9092"
     
     # OSINT Sources
     DATA_GOV_UA_API_KEY: str = ""
