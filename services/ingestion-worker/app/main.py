@@ -209,8 +209,9 @@ async def consume() -> None:
 
     # Перевірка підключення до PostgreSQL
     try:
+        from sqlalchemy import text
         async with postgres_sink.async_session() as session:
-            await session.execute("SELECT 1")
+            await session.execute(text("SELECT 1"))
         set_health_status("postgres_connected", True)
         logger.info("PostgreSQL connected")
     except Exception as e:
