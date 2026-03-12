@@ -131,7 +131,7 @@ const DataExplorerView: React.FC = () => {
                                         className="cursor-pointer group"
                                     >
                                         <TacticalCard
-                                            variant={selectedDataset?.id === pkg.id ? 'holographic' : 'matrix'}
+                                            variant={selectedDataset?.id === pkg.id ? 'holographic' : 'cyber'}
                                             className={`p-6 border-white/5 group-hover:bg-slate-900/40 transition-all h-full flex flex-col ${selectedDataset?.id === pkg.id ? 'border-blue-500/40' : ''}`}
                                         >
                                             <div className="flex justify-between items-start mb-4">

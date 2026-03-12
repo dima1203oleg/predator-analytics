@@ -8,13 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectItem } from '@/components/ui/select';
 import {
   ZoomIn,
   ZoomOut,
@@ -491,33 +485,22 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
             </div>
 
             {/* Фільтр за типом */}
-            <Select value={filterType} onValueChange={(v) => setFilterType(v as NodeType | 'all')}>
-              <SelectTrigger className="w-40 h-8">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Тип" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Всі типи</SelectItem>
-                <SelectItem value="Person">Особи</SelectItem>
-                <SelectItem value="Organization">Компанії</SelectItem>
-                <SelectItem value="Location">Локації</SelectItem>
-                <SelectItem value="Event">Події</SelectItem>
-                <SelectItem value="Asset">Активи</SelectItem>
-              </SelectContent>
+            <Select value={filterType} onChange={(e) => setFilterType(e.target.value as NodeType | 'all')} className="w-40 h-8 text-sm">
+              <SelectItem value="all">Всі типи</SelectItem>
+              <SelectItem value="Person">Особи</SelectItem>
+              <SelectItem value="Organization">Компанії</SelectItem>
+              <SelectItem value="Location">Локації</SelectItem>
+              <SelectItem value="Event">Події</SelectItem>
+              <SelectItem value="Asset">Активи</SelectItem>
             </Select>
 
             {/* Layout */}
-            <Select value={selectedLayout} onValueChange={(v) => setSelectedLayout(v as keyof typeof LAYOUTS)}>
-              <SelectTrigger className="w-36 h-8">
-                <SelectValue placeholder="Layout" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="cose">Force-directed</SelectItem>
-                <SelectItem value="circle">Коло</SelectItem>
-                <SelectItem value="grid">Сітка</SelectItem>
-                <SelectItem value="breadthfirst">Ієрархія</SelectItem>
-                <SelectItem value="concentric">Концентричний</SelectItem>
-              </SelectContent>
+            <Select value={selectedLayout} onChange={(e) => setSelectedLayout(e.target.value as keyof typeof LAYOUTS)} className="w-36 h-8 text-sm">
+              <SelectItem value="cose">Force-directed</SelectItem>
+              <SelectItem value="circle">Коло</SelectItem>
+              <SelectItem value="grid">Сітка</SelectItem>
+              <SelectItem value="breadthfirst">Ієрархія</SelectItem>
+              <SelectItem value="concentric">Концентричний</SelectItem>
             </Select>
 
             <div className="flex-1" />

@@ -44,7 +44,7 @@ export const ApiKeysConfig: React.FC = () => {
         if (!newKey.trim()) return;
         try {
             await api.llm.addKey(providerId, newKey);
-            toast.success(premiumLocales.llm.apiKeys.messages.added, premiumLocales.llm.apiKeys.messages.addedDesc.replace('{id}', providerId));
+            toast.success(premiumLocales.apiKeys.messages.added, premiumLocales.apiKeys.messages.addedDesc.replace('{id}', providerId));
             setNewKey("");
             setAddingKey(null);
             fetchProviders();
@@ -54,10 +54,10 @@ export const ApiKeysConfig: React.FC = () => {
     };
 
     const handleRemoveKey = async (providerId: string) => {
-        if (!confirm(premiumLocales.llm.apiKeys.messages.confirmDelete.replace('{id}', providerId))) return;
+        if (!confirm(premiumLocales.apiKeys.messages.confirmDelete.replace('{id}', providerId))) return;
         try {
             await api.llm.removeKey(providerId);
-            toast.info(premiumLocales.llm.apiKeys.messages.removed, premiumLocales.llm.apiKeys.messages.removedDesc.replace('{id}', providerId));
+            toast.info(premiumLocales.apiKeys.messages.removed, premiumLocales.apiKeys.messages.removedDesc.replace('{id}', providerId));
             fetchProviders();
         } catch (e) {
             toast.error(premiumLocales.common.error, premiumLocales.common.loadError);
@@ -69,28 +69,28 @@ export const ApiKeysConfig: React.FC = () => {
         try {
             const res = await api.llm.testProvider(providerId, ""); // Backend knows the key if it exists
             if (res.success) {
-                toast.success(premiumLocales.llm.apiKeys.messages.testSuccess, premiumLocales.llm.apiKeys.messages.testSuccessDesc.replace('{id}', providerId));
+                toast.success(premiumLocales.apiKeys.messages.testSuccess, premiumLocales.apiKeys.messages.testSuccessDesc.replace('{id}', providerId));
             } else {
-                toast.error(premiumLocales.llm.apiKeys.messages.testFailed, res.error || premiumLocales.common.loadError);
+                toast.error(premiumLocales.apiKeys.messages.testFailed, res.error || premiumLocales.common.loadError);
             }
         } catch (e) {
-            toast.error(premiumLocales.llm.apiKeys.messages.commError, premiumLocales.llm.apiKeys.messages.commErrorDesc);
+            toast.error(premiumLocales.apiKeys.messages.commError, premiumLocales.apiKeys.messages.commErrorDesc);
         } finally {
             setTestingId(null);
         }
     };
 
     return (
-        <TacticalCard variant="holographic" title={premiumLocales.llm.apiKeys.title} className="panel-3d bg-slate-950/40 border-slate-800/50">
+        <TacticalCard variant="holographic" title={premiumLocales.apiKeys.title} className="panel-3d bg-slate-950/40 border-slate-800/50">
             <div className="space-y-6">
                 <div className="flex items-start gap-4 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
                     <div className="p-2 bg-emerald-500/10 rounded-lg">
                         <ShieldCheck size={20} className="text-emerald-400" />
                     </div>
                     <div className="space-y-1">
-                        <p className="text-sm font-black text-white uppercase tracking-tighter">{premiumLocales.llm.apiKeys.vault.title}</p>
+                        <p className="text-sm font-black text-white uppercase tracking-tighter">{premiumLocales.apiKeys.vault.title}</p>
                         <p className="text-xs text-slate-400">
-                            {premiumLocales.llm.apiKeys.vault.description}
+                            {premiumLocales.apiKeys.vault.description}
                         </p>
                     </div>
                 </div>
@@ -121,12 +121,12 @@ export const ApiKeysConfig: React.FC = () => {
                                                 <div className="flex items-center gap-2">
                                                     <h4 className="font-black text-white uppercase tracking-tight">{provider.name}</h4>
                                                     {provider.enabled ? (
-                                                        <span className="flex items-center gap-1 text-[8px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 rounded-full font-bold uppercase tracking-widest">{premiumLocales.llm.apiKeys.status.active}</span>
+                                                        <span className="flex items-center gap-1 text-[8px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 rounded-full font-bold uppercase tracking-widest">{premiumLocales.apiKeys.status.active}</span>
                                                     ) : (
-                                                        <span className="flex items-center gap-1 text-[8px] bg-slate-800 text-slate-500 border border-white/5 px-1.5 rounded-full font-bold uppercase tracking-widest">{premiumLocales.llm.apiKeys.status.waiting}</span>
+                                                        <span className="flex items-center gap-1 text-[8px] bg-slate-800 text-slate-500 border border-white/5 px-1.5 rounded-full font-bold uppercase tracking-widest">{premiumLocales.apiKeys.status.waiting}</span>
                                                     )}
                                                 </div>
-                                                <p className="text-[10px] text-slate-500 font-mono mt-0.5">{provider.model || premiumLocales.llm.apiKeys.defaultModel}</p>
+                                                <p className="text-[10px] text-slate-500 font-mono mt-0.5">{provider.model || premiumLocales.apiKeys.defaultModel}</p>
                                             </div>
                                         </div>
 
@@ -145,7 +145,7 @@ export const ApiKeysConfig: React.FC = () => {
                                                 onClick={() => handleTest(provider.id)}
                                                 disabled={testingId === provider.id || !provider.enabled}
                                                 className="p-2.5 rounded-xl bg-slate-800 border border-white/5 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 hover:border-blue-500/30 transition-all disabled:opacity-30"
-                                                title={premiumLocales.llm.apiKeys.test}
+                                                title={premiumLocales.apiKeys.test}
                                             >
                                                 <Zap size={16} className={testingId === provider.id ? 'animate-pulse text-yellow-400' : ''} />
                                             </button>
@@ -155,14 +155,14 @@ export const ApiKeysConfig: React.FC = () => {
                                                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20"
                                             >
                                                 <Plus size={14} />
-                                                <span>{premiumLocales.llm.apiKeys.addKey}</span>
+                                                <span>{premiumLocales.apiKeys.addKey}</span>
                                             </button>
 
                                             {provider.enabled && (
                                                 <button
                                                     onClick={() => handleRemoveKey(provider.id)}
                                                     className="p-2.5 rounded-xl bg-slate-800 border border-white/5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition-all"
-                                                    title={premiumLocales.llm.apiKeys.removeAll}
+                                                    title={premiumLocales.apiKeys.removeAll}
                                                 >
                                                     <Trash2 size={16} />
                                                 </button>
@@ -185,19 +185,19 @@ export const ApiKeysConfig: React.FC = () => {
                                                             value={newKey}
                                                             onChange={(e) => setNewKey(e.target.value)}
                                                             className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-blue-100 focus:border-blue-500 focus:outline-none transition-all placeholder:text-slate-700"
-                                                            placeholder={premiumLocales.llm.apiKeys.placeholder}
+                                                            placeholder={premiumLocales.apiKeys.placeholder}
                                                         />
                                                     </div>
                                                     <button
                                                         onClick={() => handleAddKey(provider.id)}
                                                         className="px-6 rounded-xl bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-500 transition-all"
                                                     >
-                                                        {premiumLocales.llm.apiKeys.save}
+                                                        {premiumLocales.apiKeys.save}
                                                     </button>
                                                 </div>
                                                 <p className="text-[9px] text-slate-500 mt-2 flex items-center gap-1">
                                                     <Info size={10} />
-                                                    {premiumLocales.llm.apiKeys.testNotice}
+                                                    {premiumLocales.apiKeys.testNotice}
                                                 </p>
                                             </motion.div>
                                         )}
@@ -216,7 +216,7 @@ export const ApiKeysConfig: React.FC = () => {
                 <div className="p-4 bg-blue-900/10 border border-blue-500/20 rounded-2xl flex items-center gap-3">
                     <CheckCircle2 size={16} className="text-blue-400 shrink-0" />
                     <p className="text-[10px] text-blue-200/70">
-                        <span className="font-bold text-blue-300">{premiumLocales.llm.apiKeys.priority.label}:</span> {premiumLocales.llm.apiKeys.priority.description}
+                        <span className="font-bold text-blue-300">{premiumLocales.apiKeys.priority.label}:</span> {premiumLocales.apiKeys.priority.description}
                     </p>
                 </div>
             </div>

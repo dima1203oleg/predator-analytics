@@ -85,7 +85,7 @@ const EvolutionView: React.FC = () => {
                     breadcrumbs={['ЦИТАДЕЛЬ', 'ЕВОЛЮЦІЯ', 'LEDGER']}
                     stats={[
                         { label: 'Цикли AZR', value: '2,847', icon: <RefreshCw size={14} />, color: 'primary' },
-                        { label: 'Записи Ledger', value: '23K+', icon: <Shield size={14} />, color: 'indigo' },
+                        { label: 'Записи Ledger', value: '23K+', icon: <Shield size={14} />, color: 'secondary' },
                         { label: 'Здоров\'я Ядра', value: '98.7%', icon: <Activity size={14} />, color: 'success' },
                     ]}
                     actions={

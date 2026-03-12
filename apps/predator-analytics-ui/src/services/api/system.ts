@@ -24,5 +24,17 @@ export const systemApi = {
     },
     getLogs: async () => {
         return (await v45Client.get('/system/status')).data;
+    },
+    getETLStatus: async () => {
+        return (await v45Client.get('/system/etl/status')).data;
+    },
+    getDataCatalog: async () => {
+        return (await v45Client.get('/system/data-catalog')).data;
+    },
+    startEvolutionCycle: async (options?: any) => {
+        return (await v45Client.post('/system/evolution/start', options)).data;
+    },
+    syncConnector: async (id: string) => {
+        return (await v45Client.post(`/system/connectors/${id}/sync`)).data;
     }
 };

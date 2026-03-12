@@ -186,7 +186,7 @@ const ResultCard: React.FC<{
                         <div className="ml-auto">
                             <FeedbackActions
                                 resultId={result.id}
-                                onFeedback={(type) => api.search.submitFeedback(result.id, type)}
+                                onFeedback={(type) => api.search.submitFeedback(result.id, type === 'positive' ? 'up' : 'down')}
                             />
                         </div>
                     </div>
