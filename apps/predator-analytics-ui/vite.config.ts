@@ -17,7 +17,8 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:9080',
+        // Проксі до NVIDIA Сервера
+        target: 'http://194.177.1.240:8000',
         changeOrigin: true,
         ws: true,
       }
