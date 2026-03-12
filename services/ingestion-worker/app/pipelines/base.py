@@ -1,10 +1,10 @@
-"""
-Base Pipeline — PREDATOR Analytics v55.1 Ironclad.
+"""Base Pipeline — PREDATOR Analytics v55.1 Ironclad.
 
 Abstract base class for all ingestion pipelines.
 """
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+from typing import Any
+
 from predator_common.logging import get_logger
 
 logger = get_logger("ingestion_worker.pipeline")
@@ -14,7 +14,7 @@ class BasePipeline(ABC):
         self.tenant_id = tenant_id
 
     @abstractmethod
-    async def run(self, source_data: Any) -> Dict[str, Any]:
+    async def run(self, source_data: Any) -> dict[str, Any]:
         """Запуск пайплайну."""
         pass
 
@@ -26,6 +26,7 @@ class BasePipeline(ABC):
         """Нормалізація даних."""
         return data
 
-    async def save(self, data: Any):
+    @abstractmethod
+    async def save(self, data: Any) -> None:
         """Збереження результатів."""
         pass

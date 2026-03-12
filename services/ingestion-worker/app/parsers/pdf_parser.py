@@ -1,9 +1,9 @@
-"""
-PDF Parser — PREDATOR Analytics v55.1 Ironclad.
+"""PDF Parser — PREDATOR Analytics v55.1 Ironclad.
 
 Text extraction and OCR for customs documents.
 """
-from typing import List, Dict, Any
+from typing import Any
+
 
 class PDFParser:
     @staticmethod
@@ -13,7 +13,7 @@ class PDFParser:
         return "Extracted PDF content placeholder"
 
     @staticmethod
-    async def parse_to_schema(file_path: str) -> Dict[str, Any]:
+    async def parse_to_schema(file_path: str) -> dict[str, Any]:
         """Парсинг PDF в структуровану схему."""
         text = await PDFParser.extract_text(file_path)
         # TODO: Implement regex or ML extraction

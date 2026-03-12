@@ -1,4 +1,5 @@
 # PREDATOR Ingestion Worker Dockerfile - v55.1 Ironclad
+# HR-05: Multi-stage build, non-root user
 FROM python:3.12-slim AS builder
 
 ENV PYTHONUNBUFFERED=1 \
@@ -19,23 +20,37 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 WORKDIR /app
 
 # Копіюємо локальні ліби та файл проекту
-COPY libs/ /libs/
-COPY services/ingestion-worker/pyproject.toml .
+COPY libs/predator-common /libs/predator-common
+COPY services/ingestion-worker/pyproject.toml services/ingestion-worker/poetry.lock* ./
 
-RUN /opt/poetry/bin/poetry install --no-dev --no-root
+RUN /opt/poetry/bin/poetry install --only main --no-root
 
+# ============================================================
+# Runtime stage
+# ============================================================
 FROM python:3.12-slim AS runtime
 
+# Встановлюємо runtime залежності
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    && rm -rf /var/lib/apt/lists/*
+
+# HR-05: Ніколи root
 RUN useradd -ms /bin/bash predator
-USER predator
 WORKDIR /app
 
 COPY --from=builder /app/.venv /app/.venv
-COPY services/ingestion-worker/app/ ./app/
-COPY services/shared/ ./services/shared/
-COPY libs/ /libs/
+COPY --chown=predator:predator services/ingestion-worker/app/ ./app/
+COPY --chown=predator:predator libs/predator-common /libs/predator-common
+
+USER predator
 
 ENV PATH="/app/.venv/bin:$PATH" \
-    PYTHONPATH="/app"
+    PYTHONPATH="/app:/libs/predator-common" \
+    PYTHONUNBUFFERED=1
 
-CMD ["python", "app/main.py"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import sys; sys.exit(0)"
+
+CMD ["python", "-m", "app.main"]

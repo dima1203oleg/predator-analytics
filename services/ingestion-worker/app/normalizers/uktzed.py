@@ -1,10 +1,9 @@
-"""
-UKTZED Normalizer — PREDATOR Analytics v55.1 Ironclad.
+"""UKTZED Normalizer — PREDATOR Analytics v55.1 Ironclad.
 
 Standardization of customs codes (UKTZED) and hierarchical validation.
 """
 import re
-from typing import Optional
+
 
 class UKTZEDNormalizer:
     @staticmethod
@@ -12,16 +11,16 @@ class UKTZEDNormalizer:
         """Нормалізація коду УКТЗЕД."""
         if not code:
             return ""
-            
+
         # Видалення всього крім цифр
         clean_code = re.sub(r'\D', '', str(code))
-        
+
         # Код має бути 10 знаків
         if len(clean_code) == 10:
             return clean_code
         elif len(clean_code) == 8: # Іноді буває 8, доповнюємо нулями
             return clean_code + "00"
-            
+
         return clean_code[:10].ljust(10, '0')
 
     @staticmethod

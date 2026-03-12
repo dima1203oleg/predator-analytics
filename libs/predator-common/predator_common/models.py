@@ -1,16 +1,26 @@
-"""
-Shared Domain Models — PREDATOR Analytics v55.2-SM-EXTENDED.
+"""Shared Domain Models — PREDATOR Analytics v55.2-SM-EXTENDED.
 
 Канонічні ORM-моделі, вирівняні з db/postgres/init.sql.
 Ці моделі використовуються core-api, ingestion-worker та іншими сервісами.
 """
-from sqlalchemy import (
-    Column, String, Integer, SmallInteger, Float, Numeric,
-    DateTime, Date, Boolean, ForeignKey, JSON, Text, text,
-)
-from sqlalchemy.dialects.postgresql import UUID, INET, JSONB
-from sqlalchemy.orm import declarative_base, relationship
 import uuid as _uuid
+
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    Numeric,
+    SmallInteger,
+    String,
+    Text,
+    text,
+)
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
@@ -244,6 +254,7 @@ class Alert(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=_uuid.uuid4)
     tenant_id = Column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
+    name = Column(String(255))
     alert_type = Column(String(100), nullable=False)
     severity = Column(String(20), nullable=False, default="info")
     title = Column(String(500), nullable=False)
@@ -251,5 +262,91 @@ class Alert(Base):
     entity_type = Column(String(100))
     entity_id = Column(String(255))
     is_read = Column(Boolean, nullable=False, default=False)
+    enabled = Column(Boolean, nullable=False, default=True)
+    condition_config = Column(JSONB, server_default=text("'{}'::jsonb"))
+    actions = Column(JSONB, server_default=text("'[]'::jsonb"))
     metadata_ = Column("metadata", JSONB, server_default=text("'{}'::jsonb"))
     created_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
+
+
+# ============================================================
+# Alert Events (Історія спрацювань алертів)
+# ============================================================
+class AlertEvent(Base):
+    """Подія спрацювання алерту. Згідно TZ §2.3.1."""
+
+    __tablename__ = "alert_events"
+    event_id = Column(UUID(as_uuid=True), primary_key=True, default=_uuid.uuid4)
+    tenant_id = Column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
+    alert_id = Column(UUID(as_uuid=True), ForeignKey("alerts.id", ondelete="CASCADE"), nullable=False, index=True)
+    triggered_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
+    entity_ueid = Column(String(64), index=True)
+    payload = Column(JSONB, nullable=False)
+    delivery_status = Column(JSONB, server_default=text("'{}'::jsonb"))
+
+
+# ============================================================
+# Customs Declarations (Митні декларації з інгестії)
+# ============================================================
+class CustomsDeclaration(Base):
+    """Митні декларації з інгестованих файлів."""
+
+    __tablename__ = "customs_declarations"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=_uuid.uuid4)
+    tenant_id = Column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
+    declaration_number = Column(String(100))
+    declaration_date = Column(Date)
+    company_edrpou = Column(String(10), index=True)
+    ueid = Column(String(64), index=True)
+    product_description = Column(Text)
+    uktzed_code = Column(String(20), index=True)
+    customs_value = Column(Numeric(18, 2))
+    weight = Column(Numeric(18, 4))
+    country_origin = Column(String(100), index=True)
+    customs_post = Column(String(255))
+    record_hash = Column(String(64), unique=True, index=True)
+    job_id = Column(UUID(as_uuid=True), ForeignKey("ingestion_jobs.id"))
+    validation_flags = Column(JSONB, server_default=text("'[]'::jsonb"))
+    created_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
+
+
+# ============================================================
+# Ingestion Quarantine (DLQ для невалідних записів)
+# ============================================================
+class IngestionQuarantine(Base):
+    """Карантин для невалідних записів (DLQ)."""
+
+    __tablename__ = "ingestion_quarantine"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=_uuid.uuid4)
+    tenant_id = Column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
+    job_id = Column(UUID(as_uuid=True), ForeignKey("ingestion_jobs.id", ondelete="CASCADE"), nullable=False, index=True)
+    original_record = Column(JSONB, nullable=False)
+    errors = Column(JSONB, nullable=False)
+    quarantined_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
+    resolved_at = Column(DateTime(timezone=True))
+    resolution_action = Column(String(50))
+    resolution_notes = Column(Text)
+
+
+# ============================================================
+# Decision Artifacts (WORM таблиця для аудиту)
+# ============================================================
+class DecisionArtifact(Base):
+    """Артефакт рішення AI/ML. WORM таблиця згідно TZ §2.3.1 та HR-16."""
+
+    __tablename__ = "decision_artifacts"
+    decision_id = Column(UUID(as_uuid=True), primary_key=True, default=_uuid.uuid4)
+    tenant_id = Column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
+    created_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
+    trace_id = Column(String(64), nullable=False, index=True)
+    decision_type = Column(String(32), nullable=False)
+    model_id = Column(String(128))
+    input_context_hash = Column(String(64), nullable=False)
+    output_payload = Column(JSONB, nullable=False)
+    confidence_score = Column(Float, nullable=False)
+    supporting_sources = Column(JSONB, server_default=text("'[]'::jsonb"))
+    explanation = Column(JSONB)
+    reviewed_by = Column(UUID(as_uuid=True), ForeignKey("users.id"))
+    reviewed_at = Column(DateTime(timezone=True))

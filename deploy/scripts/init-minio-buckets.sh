@@ -37,6 +37,7 @@ create_bucket() {
 # ============================================================
 # Бакети для файлів
 # ============================================================
+create_bucket "raw-uploads"              # Завантажені файли для інгестії
 create_bucket "predator-uploads"         # Завантажені файли (CSV/PDF/XML)
 create_bucket "predator-processed"       # Оброблені файли
 create_bucket "predator-exports"         # Експортовані звіти
