@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: predator-analytics-ui:v55.0.0
+    container_name: predator-frontend
+    ports:
+      - "3030:3030"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3030/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    networks:
+      - predator-network
+
+networks:
+  predator-network:
+    driver: bridge
