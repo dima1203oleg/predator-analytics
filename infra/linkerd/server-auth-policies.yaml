@@ -1,0 +1,81 @@
+# ═══════════════════════════════════════════════════════════════
+# 🔗 Linkerd mTLS ServerAuthorizations 
+# Zero-Trust Security Policies для PREDATOR v56 
+# ═══════════════════════════════════════════════════════════════
+
+# 1. Дозволяємо HTTP/GRPC (8000) до Core-API ТІЛЬКИ від Frontend та MCP-Router
+---
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  namespace: predator-v55
+  name: core-api-server
+  labels:
+    app.kubernetes.io/name: core-api
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: core-api
+  port: 8000
+  proxyProtocol: HTTP/2
+---
+apiVersion: policy.linkerd.io/v1alpha1
+kind: ServerAuthorization
+metadata:
+  namespace: predator-v55
+  name: core-api-authz
+spec:
+  server:
+    name: core-api-server
+  client:
+    meshTLS:
+      identities:
+        - frontend.predator-v55.serviceaccount.identity.linkerd.cluster.local
+        - mcp-router.predator-v55.serviceaccount.identity.linkerd.cluster.local
+
+# 2. Дозволяємо доступ до PostgreSQL (5432) ТІЛЬКИ від Core-API та Ingestion-Worker
+---
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  namespace: predator-v55
+  name: postgres-server
+  labels:
+    app.kubernetes.io/name: postgres
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+  port: 5432
+  proxyProtocol: Opaque
+---
+apiVersion: policy.linkerd.io/v1alpha1
+kind: ServerAuthorization
+metadata:
+  namespace: predator-v55
+  name: postgres-authz
+spec:
+  server:
+    name: postgres-server
+  client:
+    meshTLS:
+      identities:
+        - core-api.predator-v55.serviceaccount.identity.linkerd.cluster.local
+        - ingestion-worker.predator-v55.serviceaccount.identity.linkerd.cluster.local
+
+# 3. Дозволяємо Prometheus Scrape для всіх сервісів
+---
+apiVersion: policy.linkerd.io/v1alpha1
+kind: ServerAuthorization
+metadata:
+  namespace: predator-v55
+  name: prometheus-scrape
+spec:
+  server:
+    selector:
+      matchLabels:
+        predator.io/metrics: "true"
+  client:
+    meshTLS:
+      identities:
+        - prometheus.monitoring.serviceaccount.identity.linkerd.cluster.local

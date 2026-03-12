@@ -1,0 +1,44 @@
+# ═══════════════════════════════════════════════════════════════
+# 🔗 Linkerd Service Mesh — Control Plane Values 
+# PREDATOR Analytics v56.0 (High-Availability Production)
+# ═══════════════════════════════════════════════════════════════
+
+# Збільшена відмовостійкість (3 репліки для control plane)
+ha: true
+
+# Identity (mTLS сертифікати)
+identity:
+  issuer:
+    # Сертифікат буде автоматично ротуватися через cert-manager (налаштовано в Terraform)
+    scheme: kubernetes.io/tls
+
+# Автоматичне інжектування proxy у namespace, якщо стоїть анотація
+# "linkerd.io/inject: enabled"
+proxyInit:
+  runAsRoot: false      # HR-05: Жодних root-прав
+  runAsUser: 65534      # Nobody
+
+proxy:
+  resources:
+    # Захист від занадто агресивного використання ресурсів sidecar'ом
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  
+  # Export Prometheus метрик з sidecar
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "4191"
+
+# Налаштування Network Policies між control plane та worker нодами (замінює Terraform)
+enableNetworkPolicies: true
+
+# Linkerd-Viz: Dashboard & Tap (додаткові компоненти)
+viz:
+  enabled: true
+  dashboard:
+    enforcedHostRegexp: ".*"
