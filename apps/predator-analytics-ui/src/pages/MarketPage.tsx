@@ -8,6 +8,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { dashboardApi, marketApi, competitorsApi } from '@/services/api';
+import ReactECharts from 'echarts-for-react';
 import {
     BarChart3,
     FileText,
@@ -81,30 +82,40 @@ export default function MarketPage() {
             </div>
 
             {/* Tab Navigation */}
-            <div className="flex gap-1 bg-gray-900/40 backdrop-blur-md rounded-xl p-1 border border-white/5 shadow-2xl">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.key}
-                        onClick={() => setActiveTab(tab.key)}
-                        className={`
-              flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium
-              transition-all duration-300 relative overflow-hidden
-              ${activeTab === tab.key
-                                ? 'text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.1)]'
-                                : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
-                            }
-            `}
-                    >
-                        {tab.icon}
-                        {tab.label}
-                        {activeTab === tab.key && (
-                            <motion.div
-                                layoutId="activeTab"
-                                className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500"
-                            />
-                        )}
+            <div className="flex justify-between items-center bg-gray-900/40 backdrop-blur-md rounded-xl p-1 border border-white/5 shadow-2xl">
+                <div className="flex gap-1">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.key}
+                            onClick={() => setActiveTab(tab.key)}
+                            className={`
+                flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium
+                transition-all duration-300 relative overflow-hidden
+                ${activeTab === tab.key
+                                    ? 'text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.1)]'
+                                    : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                                }
+                `}
+                        >
+                            {tab.icon}
+                            {tab.label}
+                            {activeTab === tab.key && (
+                                <motion.div
+                                    layoutId="activeTab"
+                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500"
+                                />
+                            )}
+                        </button>
+                    ))}
+                </div>
+                <div className="flex gap-2 pr-2">
+                    <button className="px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 rounded-lg text-xs font-bold transition-colors border border-cyan-500/20 flex items-center gap-2">
+                        <ArrowUpRight size={14} /> Експорт Звіту
                     </button>
-                ))}
+                    <button className="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 rounded-lg text-xs font-bold transition-colors border border-indigo-500/20 flex items-center gap-2">
+                        <Radar size={14} /> AI Аналіз
+                    </button>
+                </div>
             </div>
 
             {/* Tab Content */}
@@ -429,21 +440,141 @@ function CompetitorsTab() {
 }
 
 function CustomsTab() {
+    const chartOption = {
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'cross' },
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            borderColor: 'rgba(34, 211, 238, 0.3)',
+            textStyle: { color: '#fff', fontSize: 12 },
+            padding: [8, 12]
+        },
+        legend: {
+            data: ['Імпорт', 'Експорт'],
+            textStyle: { color: '#94a3b8', fontSize: 12 },
+            top: 20
+        },
+        grid: {
+            left: '5%',
+            right: '5%',
+            bottom: '10%',
+            top: '15%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип'],
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+            axisLabel: { color: '#64748b', fontSize: 11 },
+            splitLine: { show: false }
+        },
+        yAxis: {
+            type: 'value',
+            name: 'Млн USD',
+            nameTextStyle: { color: '#94a3b8', fontSize: 11 },
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+            axisLabel: { color: '#64748b', fontSize: 11 }
+        },
+        series: [
+            {
+                name: 'Імпорт',
+                type: 'bar',
+                itemStyle: {
+                    color: {
+                        type: 'linear',
+                        x: 0, y: 0, x2: 0, y2: 1,
+                        colorStops: [
+                            { offset: 0, color: '#06b6d4' },
+                            { offset: 1, color: 'rgba(6, 182, 212, 0.3)' }
+                        ]
+                    },
+                    borderRadius: [6, 6, 0, 0],
+                    borderColor: 'rgba(6, 182, 212, 0.5)',
+                    borderWidth: 1
+                },
+                data: [120, 132, 101, 134, 90, 230, 210],
+                smooth: false
+            },
+            {
+                name: 'Експорт',
+                type: 'line',
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 6,
+                itemStyle: { color: '#3b82f6', borderWidth: 2, borderColor: '#1e40af' },
+                lineStyle: { color: '#3b82f6', width: 2.5 },
+                areaStyle: {
+                    color: {
+                        type: 'linear',
+                        x: 0, y: 0, x2: 0, y2: 1,
+                        colorStops: [
+                            { offset: 0, color: 'rgba(59, 130, 246, 0.4)' },
+                            { offset: 1, color: 'rgba(59, 130, 246, 0.05)' }
+                        ]
+                    }
+                },
+                data: [220, 182, 191, 234, 290, 330, 310]
+            }
+        ]
+    };
+
     return (
-        <div className="relative overflow-hidden bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 p-12 text-center shadow-2xl">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50" />
-            <Globe2 size={64} className="text-cyan-500/40 mx-auto mb-6 animate-pulse" />
-            <h3 className="text-2xl font-black text-white mb-4 tracking-tight uppercase">Митний Інтелект</h3>
-            <p className="text-gray-400 max-w-lg mx-auto leading-relaxed">
-                Поглиблена аналітика митних операцій: виявлення аномальних цін, аналіз ризикових вантажів
-                та перевірка відповідності УКТЗЕД.
-            </p>
-            <div className="mt-8 flex items-center justify-center gap-4">
-                <div className="px-4 py-2 bg-white/5 rounded-full border border-white/10 text-xs font-bold text-gray-300">
-                    Sprint 4: ML детекція аномалій
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 p-6 shadow-2xl hover:border-cyan-500/20 transition-all duration-300 group">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="flex items-center justify-between mb-6 relative z-10">
+                    <div>
+                        <h3 className="text-lg font-bold text-white tracking-tight">Динаміка ЗЕД</h3>
+                        <p className="text-xs text-gray-500 mt-1">Експорт vs Імпорт (Млн USD) за останні 7 місяців</p>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs">
+                        <span className="flex items-center gap-1.5 text-gray-400">
+                            <span className="w-2 h-2 rounded-full bg-cyan-500"></span> Імпорт
+                        </span>
+                        <span className="flex items-center gap-1.5 text-gray-400">
+                            <span className="w-2 h-2 rounded-full bg-blue-500"></span> Експорт
+                        </span>
+                    </div>
                 </div>
-                <div className="px-4 py-2 bg-cyan-500/10 rounded-full border border-cyan-500/20 text-xs font-bold text-cyan-400">
-                    Integration: data.gov.ua
+                <div className="h-[320px] w-full relative">
+                    <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
+                </div>
+            </div>
+
+            <div className="space-y-6">
+                <div className="bg-gradient-to-br from-cyan-900/30 to-blue-900/20 backdrop-blur-xl rounded-2xl border border-cyan-500/20 p-6 relative overflow-hidden group shadow-lg">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-cyan-500/10 blur-3xl rounded-full group-hover:bg-cyan-500/20 transition-all duration-500" />
+                    <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/5 blur-2xl rounded-full" />
+                    
+                    <Globe2 className="text-cyan-400 mb-4 relative z-10" size={36} />
+                    <h4 className="text-xl font-bold text-white mb-2 relative z-10">Митний Інтелект</h4>
+                    <p className="text-sm text-gray-300 leading-relaxed mb-6 relative z-10">
+                        Поглиблена аналітика митних операцій: виявлення аномальних цін, аналіз ризикових вантажів та перевірка відповідності УКТЗЕД.
+                    </p>
+                    
+                    <div className="space-y-3 mb-8 relative z-10">
+                        <div className="flex items-center justify-between bg-black/40 p-3.5 rounded-xl border border-cyan-500/20 hover:border-cyan-500/40 transition-all group/stat">
+                            <span className="text-xs text-gray-400">Перевірено декларацій</span>
+                            <span className="text-sm font-black text-cyan-400 group-hover/stat:text-cyan-300">1.2M+</span>
+                        </div>
+                        <div className="flex items-center justify-between bg-black/40 p-3.5 rounded-xl border border-amber-500/20 hover:border-amber-500/40 transition-all group/stat">
+                            <span className="text-xs text-gray-400">Виявлено аномалій</span>
+                            <span className="text-sm font-black text-amber-400 group-hover/stat:text-amber-300">3,492</span>
+                        </div>
+                        <div className="flex items-center justify-between bg-black/40 p-3.5 rounded-xl border border-rose-500/20 hover:border-rose-500/40 transition-all group/stat">
+                            <span className="text-xs text-gray-400">Ризик-фактор</span>
+                            <span className="text-sm font-black text-rose-400 group-hover/stat:text-rose-300">Високий (84%)</span>
+                        </div>
+                    </div>
+                    
+                    <button className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] relative z-10 group/btn">
+                        <span className="flex items-center justify-center gap-2">
+                            Запустити ML Детекцію
+                            <ArrowUpRight size={16} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>

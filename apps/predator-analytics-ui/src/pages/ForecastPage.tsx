@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactECharts from 'echarts-for-react';
 import {
     TrendingUp,
     Brain,
@@ -7,6 +8,9 @@ import {
     Calendar,
     ArrowUpRight,
     Loader2,
+    Zap,
+    Target,
+    AlertCircle,
 } from 'lucide-react';
 import { forecastApi } from '@/features/forecast/api/forecast';
 import { ForecastResponse, ForecastModel } from '@/features/forecast/types';
@@ -114,41 +118,141 @@ function DemandForecastTab() {
 
     if (!forecast) return null;
 
+    const chartOption = {
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'cross' },
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            borderColor: 'rgba(16, 185, 129, 0.3)',
+            textStyle: { color: '#fff', fontSize: 12 },
+            padding: [8, 12]
+        },
+        legend: {
+            data: ['Прогноз', 'Нижня межа', 'Верхня межа'],
+            textStyle: { color: '#94a3b8', fontSize: 12 },
+            top: 20
+        },
+        grid: {
+            left: '5%',
+            right: '5%',
+            bottom: '10%',
+            top: '15%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: forecast.forecast.map(p => p.date),
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+            axisLabel: { color: '#64748b', fontSize: 11 },
+            splitLine: { show: false }
+        },
+        yAxis: {
+            type: 'value',
+            name: 'Обсяг (шт)',
+            nameTextStyle: { color: '#94a3b8', fontSize: 11 },
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+            axisLabel: { color: '#64748b', fontSize: 11 }
+        },
+        series: [
+            {
+                name: 'Прогноз',
+                type: 'line',
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 8,
+                itemStyle: { color: '#10b981', borderWidth: 2, borderColor: '#059669' },
+                lineStyle: { color: '#10b981', width: 3 },
+                areaStyle: {
+                    color: {
+                        type: 'linear',
+                        x: 0, y: 0, x2: 0, y2: 1,
+                        colorStops: [
+                            { offset: 0, color: 'rgba(16, 185, 129, 0.4)' },
+                            { offset: 1, color: 'rgba(16, 185, 129, 0.05)' }
+                        ]
+                    }
+                },
+                data: forecast.forecast.map(p => p.predicted_volume),
+                z: 3
+            },
+            {
+                name: 'Нижня межа',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                lineStyle: { color: 'rgba(107, 114, 128, 0.5)', width: 1, type: 'dashed' },
+                data: forecast.forecast.map(p => p.confidence_lower),
+                z: 1
+            },
+            {
+                name: 'Верхня межа',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                lineStyle: { color: 'rgba(107, 114, 128, 0.5)', width: 1, type: 'dashed' },
+                data: forecast.forecast.map(p => p.confidence_upper),
+                z: 1
+            }
+        ]
+    };
+
     return (
         <div className="space-y-6">
-            {/* Summary Card */}
-            <div className="bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-xl border border-emerald-500/20 p-6 shadow-lg shadow-emerald-500/5">
-                <div className="flex items-start justify-between">
-                    <div>
-                        <h3 className="text-lg font-bold text-white mb-1 uppercase tracking-tight">
-                            {forecast.product_name} ({forecast.product_code})
-                        </h3>
-                        <p className="text-gray-400 text-sm">Прогноз на основі нейронної мережі {forecast.model_used}</p>
-                    </div>
-                    <div className="text-right">
-                        <div className="text-3xl font-black text-emerald-400 flex items-center gap-1">
-                            <ArrowUpRight size={24} />
-                            +{(forecast.confidence_score * 15).toFixed(0)}%
-                        </div>
-                        <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-1">
-                            Впевненість: {(forecast.confidence_score * 100).toFixed(0)}%
-                        </div>
-                    </div>
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-br from-emerald-900/30 to-green-900/20 backdrop-blur-xl rounded-2xl border border-emerald-500/20 p-6 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full group-hover:bg-emerald-500/20 transition-all" />
+                    <TrendingUp className="text-emerald-400 mb-3 relative z-10" size={28} />
+                    <div className="text-3xl font-black text-emerald-400 relative z-10">+{(forecast.confidence_score * 15).toFixed(0)}%</div>
+                    <div className="text-xs text-gray-400 uppercase tracking-widest font-bold mt-2 relative z-10">Прогнозний ріст</div>
                 </div>
-                <div className="mt-6 p-4 bg-black/40 rounded-xl border border-white/5 text-sm text-gray-300 leading-relaxed italic">
-                    <span className="text-emerald-500 font-bold mr-2">AI Interpretation:</span>
-                    {forecast.interpretation_uk}
+
+                <div className="bg-gradient-to-br from-cyan-900/30 to-blue-900/20 backdrop-blur-xl rounded-2xl border border-cyan-500/20 p-6 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 blur-3xl rounded-full group-hover:bg-cyan-500/20 transition-all" />
+                    <Target className="text-cyan-400 mb-3 relative z-10" size={28} />
+                    <div className="text-3xl font-black text-cyan-400 relative z-10">{(forecast.confidence_score * 100).toFixed(0)}%</div>
+                    <div className="text-xs text-gray-400 uppercase tracking-widest font-bold mt-2 relative z-10">Впевненість</div>
+                </div>
+
+                <div className="bg-gradient-to-br from-amber-900/30 to-orange-900/20 backdrop-blur-xl rounded-2xl border border-amber-500/20 p-6 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-3xl rounded-full group-hover:bg-amber-500/20 transition-all" />
+                    <Zap className="text-amber-400 mb-3 relative z-10" size={28} />
+                    <div className="text-3xl font-black text-amber-400 relative z-10">{(forecast.mape * 100).toFixed(1)}%</div>
+                    <div className="text-xs text-gray-400 uppercase tracking-widest font-bold mt-2 relative z-10">MAPE (похибка)</div>
+                </div>
+            </div>
+
+            {/* Chart */}
+            <div className="bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 p-6 shadow-2xl hover:border-emerald-500/20 transition-all duration-300 group">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 className="text-lg font-bold text-white tracking-tight">Графік прогнозу</h3>
+                        <p className="text-xs text-gray-500 mt-1">{forecast.product_name} ({forecast.product_code})</p>
+                    </div>
+                    <div className="text-xs text-gray-500 font-mono">Модель: {forecast.model_used}</div>
+                </div>
+                <div className="h-[350px] w-full">
+                    <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
+                </div>
+            </div>
+
+            {/* AI Interpretation */}
+            <div className="bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-xl border border-emerald-500/20 p-6 shadow-lg shadow-emerald-500/5">
+                <div className="flex items-start gap-4">
+                    <AlertCircle className="text-emerald-400 mt-1 flex-shrink-0" size={24} />
+                    <div>
+                        <h4 className="text-white font-bold mb-2">AI Інтерпретація</h4>
+                        <p className="text-gray-300 text-sm leading-relaxed">{forecast.interpretation_uk}</p>
+                    </div>
                 </div>
             </div>
 
             {/* Forecast Table */}
             <div className="bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
-                <div className="px-6 py-5 border-b border-white/5 bg-white/5 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-white tracking-tight">Прогнозні точки</h3>
-                    <div className="flex items-center gap-4">
-                        <span className="text-xs text-gray-500 font-mono">Модель: {forecast.model_used}</span>
-                        <span className="text-xs text-gray-500 font-mono">MAPE: {(forecast.mape * 100).toFixed(1)}%</span>
-                    </div>
+                <div className="px-6 py-5 border-b border-white/5 bg-white/5">
+                    <h3 className="text-lg font-bold text-white tracking-tight">Детальні прогнозні точки</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full">
@@ -158,11 +262,11 @@ function DemandForecastTab() {
                                 <th className="px-6 py-4 font-bold text-right">Прогноз (шт)</th>
                                 <th className="px-6 py-4 font-bold text-right">Нижня межа</th>
                                 <th className="px-6 py-4 font-bold text-right">Верхня межа</th>
-                                <th className="px-6 py-4 font-bold text-right">Надійність</th>
+                                <th className="px-6 py-4 font-bold text-right">Довірчий інтервал</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {forecast.forecast.map((point, i) => (
+                            {forecast.forecast.map((point) => (
                                 <tr key={point.date} className="hover:bg-white/[0.02] transition-colors text-sm">
                                     <td className="px-6 py-4 text-gray-300 font-bold">{point.date}</td>
                                     <td className="px-6 py-4 text-right text-emerald-400 font-black font-mono">

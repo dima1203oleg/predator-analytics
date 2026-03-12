@@ -230,15 +230,29 @@ export const GraphView = () => {
         </div>
 
         {/* Main Graph Visualization */}
-        <div className="flex-1 mt-6">
+        <div className="flex-1 mt-6 relative">
           <TacticalCard
             variant="holographic"
             title="ІНТЕРАКТИВНА НЕЙРОННА МОДЕЛЬ"
-            className="border-white/5 bg-slate-950/40 backdrop-blur-xl hud-frame"
+            className="border-white/5 bg-slate-950/40 backdrop-blur-xl hud-frame h-full min-h-[600px] flex flex-col"
             noPadding
           >
+            {/* Action Toolbar */}
+            <div className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-slate-900/80 backdrop-blur-md p-1.5 rounded-lg border border-white/10">
+                <button className="px-3 py-1.5 rounded-md text-[10px] font-black uppercase text-cyan-400 hover:bg-cyan-500/10 transition-colors">
+                    Повний Екран
+                </button>
+                <div className="w-px h-4 bg-white/10 mx-1" />
+                <button className="px-3 py-1.5 rounded-md text-[10px] font-black uppercase text-slate-300 hover:bg-white/10 transition-colors">
+                    Експорт (CSV/GML)
+                </button>
+                <button className="px-3 py-1.5 rounded-md text-[10px] font-black uppercase text-slate-300 hover:bg-white/10 transition-colors">
+                    Налаштування
+                </button>
+            </div>
+
             {loading ? (
-              <div className="flex items-center justify-center h-[450px]">
+              <div className="flex-1 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                   <div className="glow-orb" />
                   <span className="text-cyan-400 font-mono text-sm animate-pulse tracking-widest">
@@ -247,7 +261,7 @@ export const GraphView = () => {
                 </div>
               </div>
             ) : visualData.nodes.length === 0 ? (
-               <div className="flex items-center justify-center h-[450px] relative overflow-hidden">
+               <div className="flex-1 flex items-center justify-center relative overflow-hidden">
                   <div className="text-center z-10">
                       <Database className="w-16 h-16 text-slate-700 mx-auto mb-4" />
                       <h3 className="text-xl font-bold text-slate-500">ГРАФ ПОРОЖНІЙ</h3>
@@ -259,7 +273,7 @@ export const GraphView = () => {
                   <div className="absolute inset-0 data-grid-bg opacity-10 pointer-events-none" />
                </div>
             ) : (
-              <div className="relative w-full h-[450px] overflow-hidden">
+              <div className="flex-1 relative w-full overflow-hidden flex items-center justify-center min-h-[500px]">
                 {/* Connections */}
                 {visualData.connections.map((conn, idx) => (
                   <GraphConnection
@@ -285,21 +299,22 @@ export const GraphView = () => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 1, type: 'spring' }}
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
                 >
                   <div className="relative">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-500/30 to-purple-500/30 border border-cyan-400/30 flex items-center justify-center backdrop-blur-sm">
-                      <Zap className="w-8 h-8 text-cyan-300" />
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 border border-cyan-400/40 flex items-center justify-center backdrop-blur-md shadow-[0_0_50px_rgba(6,182,212,0.3)]">
+                      <Zap className="w-10 h-10 text-cyan-300 drop-shadow-[0_0_15px_#22d3ee]" />
                     </div>
-                    <div className="absolute inset-0 rounded-full border-2 border-cyan-400/20 animate-ping" />
-                    <div className="absolute -inset-4 rounded-full border border-purple-400/10 animate-spin" style={{ animationDuration: '10s' }} />
+                    <div className="absolute inset-0 rounded-full border border-cyan-400/30 animate-ping" style={{ animationDuration: '3s' }} />
+                    <div className="absolute -inset-8 rounded-full border border-indigo-400/20 animate-spin" style={{ animationDuration: '15s' }} />
+                    <div className="absolute -inset-16 rounded-full border border-violet-400/10 animate-spin-reverse" style={{ animationDuration: '25s' }} />
                   </div>
                 </motion.div>
 
                 {/* Interactive Hint */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-                  <span className="text-[10px] text-slate-500 uppercase tracking-widest font-mono bg-slate-900/80 px-4 py-2 rounded-full border border-slate-800">
-                    ✨ Візуалізація топології категорій
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
+                  <span className="text-[10px] text-cyan-400 uppercase tracking-widest font-mono bg-cyan-950/80 px-6 py-2.5 rounded-full border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                    ✨ ІНТЕРАКТИВНИЙ РЕЖИМ (КЛІКНІТЬ ДЛЯ ДЕТАЛЕЙ)
                   </span>
                 </div>
               </div>

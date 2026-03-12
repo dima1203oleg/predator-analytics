@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactECharts from 'echarts-for-react';
 import {
     ShieldCheck,
     Search,
@@ -12,7 +13,9 @@ import {
     UserCheck,
     Globe,
     FileText,
-    History
+    History,
+    TrendingDown,
+    AlertCircle
 } from 'lucide-react';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import { CompanyProfileResponse, RiskEntity } from '@/features/diligence/types';
@@ -167,6 +170,17 @@ export default function DiligencePage() {
                                             <span className="text-white font-bold">{companyProfile.registration_date || 'N/A'}</span>
                                         </div>
                                     </div>
+                                    <div className="flex gap-3 mt-6">
+                                        <button className="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2">
+                                            <FileText size={14} /> Згенерувати Досьє
+                                        </button>
+                                        <button className="px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2">
+                                            <Globe size={14} /> Аналіз Зв'язків
+                                        </button>
+                                        <button className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2">
+                                            <Activity size={14} /> CERS Дашборд
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="bg-black/40 rounded-2xl border border-white/10 p-6 flex flex-col items-center gap-3">
@@ -189,28 +203,40 @@ export default function DiligencePage() {
                                 </div>
                             </div>
 
-                            {/* Stats Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <StatCard
-                                    icon={<Users className="text-blue-400" />}
-                                    label="Керівництво"
-                                    value={companyProfile.directors.length}
-                                    suffix="осіб"
-                                />
-                                <StatCard
-                                    icon={<AlertTriangle className="text-amber-400" />}
-                                    label="Аномалії"
-                                    value={companyProfile.anomalies.length}
-                                    suffix="виявлено"
-                                    highlight={companyProfile.anomalies.length > 0}
-                                />
-                                <StatCard
-                                    icon={<ShieldCheck className="text-red-400" />}
-                                    label="Санкції"
-                                    value={companyProfile.sanctions.length}
-                                    suffix="записів"
-                                    highlight={companyProfile.sanctions.length > 0}
-                                />
+                            {/* CERS Radar & Stats Grid */}
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                {/* CERS Radar */}
+                                <div className="lg:col-span-1 bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 p-6 shadow-2xl">
+                                    <h3 className="text-white font-black text-xs uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />
+                                        CERS Оцінка
+                                    </h3>
+                                    <CERSRadarChart companyProfile={companyProfile} />
+                                </div>
+
+                                {/* Stats Cards */}
+                                <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <StatCard
+                                        icon={<Users className="text-blue-400" />}
+                                        label="Керівництво"
+                                        value={companyProfile.directors.length}
+                                        suffix="осіб"
+                                    />
+                                    <StatCard
+                                        icon={<AlertTriangle className="text-amber-400" />}
+                                        label="Аномалії"
+                                        value={companyProfile.anomalies.length}
+                                        suffix="виявлено"
+                                        highlight={companyProfile.anomalies.length > 0}
+                                    />
+                                    <StatCard
+                                        icon={<ShieldCheck className="text-red-400" />}
+                                        label="Санкції"
+                                        value={companyProfile.sanctions.length}
+                                        suffix="записів"
+                                        highlight={companyProfile.sanctions.length > 0}
+                                    />
+                                </div>
                             </div>
 
                             {/* Section: Sanctions & Anomalies */}
@@ -353,6 +379,79 @@ function PersonCard({ person, role }: { person: any, role: string }) {
                     </div>
                 ))}
             </div>
+        </div>
+    );
+}
+
+function CERSRadarChart({ companyProfile }: { companyProfile: CompanyProfileResponse }) {
+    const radarOption = {
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'item',
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            borderColor: 'rgba(99, 102, 241, 0.3)',
+            textStyle: { color: '#fff', fontSize: 12 },
+            padding: [8, 12]
+        },
+        radar: {
+            indicator: [
+                { name: 'Інституційний', max: 100 },
+                { name: 'Структурний', max: 100 },
+                { name: 'Поведінковий', max: 100 },
+                { name: 'Впливовий', max: 100 },
+                { name: 'Предиктивний', max: 100 }
+            ],
+            shape: 'polygon',
+            splitNumber: 4,
+            name: {
+                textStyle: { color: '#94a3b8', fontSize: 10 }
+            },
+            splitLine: {
+                lineStyle: {
+                    color: ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.08)', 'rgba(255,255,255,0.06)', 'rgba(255,255,255,0.04)']
+                }
+            },
+            splitArea: {
+                areaStyle: {
+                    color: ['rgba(99, 102, 241, 0.05)', 'rgba(99, 102, 241, 0.03)']
+                }
+            },
+            axisLine: {
+                lineStyle: {
+                    color: 'rgba(255,255,255,0.1)'
+                }
+            }
+        },
+        series: [
+            {
+                name: 'CERS Оцінка',
+                value: [
+                    Math.min(100, companyProfile.risk_score + 15),
+                    Math.max(0, 100 - companyProfile.risk_score),
+                    Math.min(100, companyProfile.anomalies.length * 10),
+                    Math.min(100, companyProfile.sanctions.length * 20),
+                    Math.min(100, companyProfile.directors.length * 5)
+                ],
+                areaStyle: {
+                    color: 'rgba(99, 102, 241, 0.3)'
+                },
+                lineStyle: {
+                    color: '#6366f1',
+                    width: 2
+                },
+                itemStyle: {
+                    color: '#6366f1',
+                    borderColor: '#4f46e5',
+                    borderWidth: 2
+                },
+                symbolSize: 6
+            }
+        ]
+    };
+
+    return (
+        <div className="h-[280px] w-full">
+            <ReactECharts option={radarOption} style={{ height: '100%', width: '100%' }} />
         </div>
     );
 }

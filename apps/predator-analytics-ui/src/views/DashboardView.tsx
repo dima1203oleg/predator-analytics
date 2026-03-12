@@ -13,13 +13,13 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Activity, Globe, Database, Server, Cpu,
     Brain, Target, Network, Radio,
     RefreshCw, CheckCircle, XCircle, AlertCircle, Bot, Waves,
     Lock, ShieldCheck, Radar, Satellite,
-    Terminal, Zap, Clock
+    Terminal, Zap, Clock, ShieldAlert, Crosshair, Map, Shield
 } from 'lucide-react';
 
 import { useAppStore } from '../store/useAppStore';
@@ -428,6 +428,46 @@ const DashboardView: React.FC = () => {
                                     </div>
                                 ))}
                                 <div className="text-indigo-500 animate-pulse">_</div>
+                            </div>
+                        </TacticalCard>
+                    </div>
+
+                    {/* Full Width Live Threat Feed */}
+                    <div className="col-span-12 flex flex-col gap-10">
+                        <TacticalCard variant="glass" className="p-8 group overflow-hidden border-rose-500/20 hover:border-rose-500/30">
+                            <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
+                                <ShieldAlert size={18} className="text-rose-400 animate-pulse" /> ГЛОБАЛЬНІ ЗАГРОЗИ ТА АНОМАЛІЇ (LIVE)
+                            </h3>
+                            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                                {[
+                                    { target: 'ТОВ "ЕНЕРГО-ГРУП"', type: 'Офшорний зв\'язок', time: '2 хв тому', risk: 'CRITICAL' },
+                                    { target: 'АТ "УКР-БУД"', type: 'Аномальна транзакція', time: '14 хв тому', risk: 'HIGH' },
+                                    { target: 'ПП "ЛОГІСТИКА"', type: 'Зміна бенефіціара', time: '42 хв тому', risk: 'MEDIUM' },
+                                    { target: 'ТОВ "ІТ-РІШЕННЯ"', type: 'Санкційний ризик', time: '1 год тому', risk: 'CRITICAL' },
+                                ].map((threat, i) => (
+                                    <div key={i} className="p-5 bg-black/40 border border-white/5 rounded-2xl flex flex-col gap-3 relative overflow-hidden group/t hover:border-rose-500/30 transition-colors">
+                                        <div className={`absolute top-0 right-0 w-16 h-16 blur-2xl rounded-full ${threat.risk === 'CRITICAL' ? 'bg-rose-500/20' : threat.risk === 'HIGH' ? 'bg-amber-500/20' : 'bg-emerald-500/20'}`} />
+                                        <div className="flex items-center justify-between z-10">
+                                            <span className="text-[10px] font-mono text-slate-500">{threat.time}</span>
+                                            <span className={`text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${
+                                                threat.risk === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
+                                                threat.risk === 'HIGH' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                                                'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                            }`}>
+                                                {threat.risk}
+                                            </span>
+                                        </div>
+                                        <div className="z-10">
+                                            <h4 className="text-[12px] font-bold text-white mb-1">{threat.target}</h4>
+                                            <p className="text-[10px] text-slate-400">{threat.type}</p>
+                                        </div>
+                                        <div className="mt-2 pt-3 border-t border-white/5 flex items-center justify-between z-10">
+                                            <button className="text-[9px] text-indigo-400 hover:text-indigo-300 font-bold uppercase tracking-widest flex items-center gap-1 transition-colors">
+                                                <Crosshair size={10} /> Аналізувати
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </TacticalCard>
                     </div>
