@@ -11,7 +11,24 @@ spec:
   template:
     metadata:
       labels: {{- include "mcp-router.selectorLabels" . | nindent 8 }}
+      annotations:
+        # 🔐 Інтеграція з Vault
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "mcp-router"
+        # Секрет Redis
+        vault.hashicorp.com/agent-inject-secret-redis.env: "secret/data/predator/redis/main"
+        vault.hashicorp.com/agent-inject-template-redis.env: |
+          {{- "{{" }} with secret "secret/data/predator/redis/main" {{ "}}" }}
+          export REDIS_URL="{{- "{{" }} .Data.data.url {{ "}}" }}"
+          {{- "{{" }} end {{ "}}" }}
+        # 📊 Моніторинг
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ .Values.service.port }}"
+        prometheus.io/path: "/metrics"
+        # 🔗 Service Mesh
+        linkerd.io/inject: "enabled"
     spec:
+      serviceAccountName: mcp-router
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -20,13 +37,22 @@ spec:
         - name: mcp-router
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - source /vault/secrets/redis.env &&
+              exec python app/main.py
           ports:
             - containerPort: {{ .Values.service.port }}
           env:
             - name: ENV
               value: "{{ .Values.env.ENV }}"
-            - name: REDIS_URL
-              value: "redis://{{ .Values.global.redis.host }}:{{ .Values.global.redis.port }}/0"
+            # 📡 OpenTelemetry
+            - name: OTEL_SERVICE_NAME
+              value: "mcp-router"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector.monitoring:4317"
+            - name: OTEL_LOGS_EXPORTER
+              value: "none"
           readinessProbe:
             httpGet:
               path: /health

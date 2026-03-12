@@ -119,39 +119,41 @@ def ingest():
             print(f"⏳ Processing chunk {i+1} ({len(df_chunk)} rows)...")
 
             # 1. Process Companies (Pre-requisite for high quality)
-            companies_batch = process_companies_batch(df_chunk, TENANT_ID)
+            # Прибираємо ітерацію df.iterrows() і робимо Bulk Insert
+            comp_df = process_companies_batch(df_chunk, TENANT_ID)
             
-            # UPSERT Companies
-            with engine.connect() as conn:
+            with engine.begin() as conn: # engine.begin() автоматично робить COMMIT або ROLLBACK
                 conn.execute(text(f"SET app.current_tenant = '{TENANT_ID}';"))
-                for _, row in companies_batch.iterrows():
-                    sql = text("""
+                if not comp_df.empty:
+                    # Конвертуємо DataFrame у список словників з обробкою NaN -> None
+                    comp_records = [{k: (None if pd.isna(v) else v) for k, v in record.items()} for record in comp_df.to_dict('records')]
+                    
+                    sql_companies = text("""
                         INSERT INTO companies (name, edrpou, ueid, tenant_id, status)
                         VALUES (:name, :edrpou, :ueid, :tenant_id, :status)
                         ON CONFLICT (ueid) DO UPDATE SET
                             name = EXCLUDED.name,
                             updated_at = NOW();
                     """)
-                    conn.execute(sql, row.to_dict())
-                conn.commit()
+                    # Масове виконання (Bulk Execute) - в рази швидше
+                    conn.execute(sql_companies, comp_records)
 
             # 2. Process Declarations (Silver)
-            declarations_batch = process_declarations_batch(df_chunk, TENANT_ID)
+            declarations_df = process_declarations_batch(df_chunk, TENANT_ID)
             
-            with engine.connect() as conn:
+            with engine.begin() as conn:
                 conn.execute(text(f"SET app.current_tenant = '{TENANT_ID}';"))
-                for _, row in declarations_batch.iterrows():
-                    # Handle None values for SQL
-                    params = {k: (None if pd.isna(v) else v) for k, v in row.to_dict().items()}
+                if not declarations_df.empty:
+                    # Аналогічно, конвертуємо в список словників
+                    decl_records = [{k: (None if pd.isna(v) else v) for k, v in record.items()} for record in declarations_df.to_dict('records')]
                     
-                    sql = text("""
+                    sql_declarations = text("""
                         INSERT INTO declarations 
                         (declaration_number, declaration_date, direction, importer_ueid, importer_name, importer_edrpou, exporter_name, exporter_country, uktzed_code, goods_description, net_weight_kg, gross_weight_kg, customs_value_usd, country_origin, tenant_id)
                         VALUES (:declaration_number, :declaration_date, :direction, :importer_ueid, :importer_name, :importer_edrpou, :exporter_name, :exporter_country, :uktzed_code, :goods_description, :net_weight_kg, :gross_weight_kg, :customs_value_usd, :country_origin, :tenant_id)
                         ON CONFLICT (declaration_number) DO NOTHING;
                     """)
-                    conn.execute(sql, params)
-                conn.commit()
+                    conn.execute(sql_declarations, decl_records)
 
             # 3. Gold Schema Support (Legacy script path)
             df_chunk.to_sql('customs_declarations', engine, schema='gold', if_exists=('replace' if i==0 else 'append'), index=False)
