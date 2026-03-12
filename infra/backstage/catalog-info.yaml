@@ -1,0 +1,67 @@
+# ═══════════════════════════════════════════════════════════════
+# 🪐 Backstage System Catalog (Architecture Topology)
+# PREDATOR Analytics Components Registration
+# ═══════════════════════════════════════════════════════════════
+
+---
+# 1. Загальна система
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: predator-analytics
+  description: OSINT-платформа для митної аналітики України
+spec:
+  owner: dima1203oleg
+
+---
+# 2. Core API
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: core-api
+  description: Головний FastAPI Backend для UI та авторизації
+  links:
+    - title: Swagger Swagger UI
+      url: http://localhost:8000/docs
+    - title: Prometheus Metrics
+      url: http://localhost:8000/metrics
+  annotations:
+    github.com/project-slug: dima1203oleg/predator-analytics
+    argocd/app-name: predator-v55
+    prometheus.io/rule: http_requests_total
+spec:
+  type: service
+  lifecycle: production
+  owner: dima1203oleg
+  system: predator-analytics
+
+---
+# 3. Cerebro (LLM / ML Inference)
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: cerebro-ml
+  description: ML мікросервіс для NLP та семантичного аналізу з використанням GPU
+  annotations:
+    qdrant.io/collection: "customs_vectors"
+    gpu.nvidia.com/class: "a100"
+spec:
+  type: service
+  lifecycle: production
+  owner: dima1203oleg
+  system: predator-analytics
+
+---
+# 4. Ingestion Worker
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ingestion-worker
+  description: Kafka-base ETL Worker для обробки митних декларацій та індексів OpenSearch
+  annotations:
+    kafka.apache.org/topic: "customs-data-raw"
+spec:
+  type: worker
+  lifecycle: production
+  owner: dima1203oleg
+  system: predator-analytics

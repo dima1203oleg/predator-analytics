@@ -1,0 +1,62 @@
+# ═══════════════════════════════════════════════════════════════
+# 🪐 Backstage Developer Portal 
+# Helm Values для Kubernetes 
+# ═══════════════════════════════════════════════════════════════
+
+# Backstage Image
+image:
+  repository: ghcr.io/dima1203oleg/predator-backstage
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+# Відмовляємось від вбудованого PostgreSQL, бо маємо зовнішній Predator DB
+postgresql:
+  enabled: false
+
+# Налаштування для Backstage Backend
+backstage:
+  appConfig:
+    app:
+      baseUrl: https://backstage.predator.local
+    backend:
+      baseUrl: https://backstage.predator.local
+      database:
+        client: pg
+        connection:
+          host: ${POSTGRES_HOST}
+          port: ${POSTGRES_PORT}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+      cors:
+        origin: https://backstage.predator.local
+        methods: [GET, POST, PUT, DELETE]
+        credentials: true
+
+  # Інтеграції з іншими інструментами PREDATOR DevOps стеку
+  extraEnvVars:
+    - name: GITHUB_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: backstage-secrets
+          key: github-token
+    
+    # Інтеграція з ArgoCD для відображення статусу деплоїв прямо в UI
+    - name: ARGOCD_URL
+      value: "https://argocd.predator.local"
+    - name: ARGOCD_AUTH_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: backstage-secrets
+          key: argocd-token
+
+    # Інтеграція з Prometheus 
+    - name: PROMETHEUS_URL
+      value: "http://prometheus-kube-prometheus-prometheus.monitoring:9090"
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 2Gi
