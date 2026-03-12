@@ -1,0 +1,16 @@
+{{- if .Values.frontend.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "predator.fullname" . }}-frontend-cache
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: frontend
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.frontend.persistence.size | default "1Gi" }}
+  storageClassName: {{ .Values.frontend.persistence.storageClass | default "local-path" }}
+{{- end }}

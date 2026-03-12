@@ -126,7 +126,13 @@ spec:
             - name: nginx-run
               mountPath: /var/run
       volumes:
+        {{- if .Values.frontend.persistence.enabled }}
+        - name: nginx-cache
+          persistentVolumeClaim:
+            claimName: {{ include "predator.fullname" . }}-frontend-cache
+        {{- else }}
         - name: nginx-cache
           emptyDir: {}
+        {{- end }}
         - name: nginx-run
           emptyDir: {}
