@@ -1,0 +1,103 @@
+# ═══════════════════════════════════════════════════════════════
+# 📊 PREDATOR ETL WorkflowTemplate (Customs Data Extraction)
+# ═══════════════════════════════════════════════════════════════
+
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: predator-etl-pipeline
+  namespace: predator-v55
+spec:
+  entrypoint: main-pipeline
+  
+  # Сервісний акаунт, що має доступ до Vault та S3
+  serviceAccountName: ingestion-worker
+
+  # Default параметри
+  arguments:
+    parameters:
+      - name: source-bucket
+        value: "predator-uploads"
+      - name: threshold
+        value: "0.8"
+  
+  # Інтерфейс UI
+  labels:
+    workflows.argoproj.io/archive-strategy: "true"
+
+  templates:
+    # ── Головний DAG (спрямований граф виконання) ───────────
+    - name: main-pipeline
+      dag:
+        tasks:
+          - name: download-and-clean
+            template: download-data
+            arguments:
+              parameters:
+                - name: bucket
+                  value: "{{workflow.parameters.source-bucket}}"
+          
+          - name: parse-customs-records
+            depends: "download-and-clean.Succeeded"
+            template: parse-customs
+            
+          - name: llm-enrichment
+            depends: "parse-customs-records.Succeeded"
+            template: ml-enrich
+            
+          - name: index-opensearch
+            depends: "llm-enrichment.Succeeded"
+            template: save-to-db
+
+    # ── 1. Download & Clean ──────────────────────────────────
+    - name: download-data
+      inputs:
+        parameters:
+          - name: bucket
+      container:
+        image: ghcr.io/dima1203oleg/predator-ingestion-worker:latest
+        command: [python, scripts/download_s3.py]
+        args: ["--bucket", "{{inputs.parameters.bucket}}", "--clean"]
+        env:
+          - name: MINIO_ENDPOINT
+            value: minio.predator-v55.svc.cluster.local:9000
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+
+    # ── 2. Parsing (Distributed) ─────────────────────────────
+    - name: parse-customs
+      container:
+        image: ghcr.io/dima1203oleg/predator-ingestion-worker:latest
+        command: [python, -m, worker.parser_job]
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1"
+
+    # ── 3. ML Enrichment (вимагає GPU!) ──────────────────────
+    - name: ml-enrich
+      container:
+        image: ghcr.io/dima1203oleg/predator-cerebro:latest
+        command: [python, scripts/batch_inference.py]
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "1"
+            nvidia.com/gpu: 1
+      nodeSelector:
+        predator/gpu: "true"       # Використовує GPU NodePool від Karpenter
+      tolerations:
+        - key: "nvidia.com/gpu"
+          operator: "Exists"
+          effect: "NoSchedule"
+
+    # ── 4. Запис у базу ──────────────────────────────────────
+    - name: save-to-db
+      container:
+        image: ghcr.io/dima1203oleg/predator-core-api:latest
+        command: [python, scripts/batch_import.py]
+        env:
+          - name: OPENSEARCH_HOST
+            value: "opensearch:9200"
