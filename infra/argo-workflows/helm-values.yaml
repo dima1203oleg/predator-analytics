@@ -1,0 +1,66 @@
+# ═══════════════════════════════════════════════════════════════
+# 🤖 Argo Workflows — Control Plane
+# Helm Values для PREDATOR v56 (Server/Production)
+# ═══════════════════════════════════════════════════════════════
+
+controller:
+  # Інтеграція з Vault та OPA (забороняємо root)
+  workflowDefaults:
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 8737
+
+server:
+  # Безпечний HTTPS / мTLS через Linkerd, тому тут HTTP з авторизацією
+  extraArgs:
+    - --auth-mode=sso
+    - --auth-mode=client
+  
+  # Base href потрібен для правильної маршрутизації в UI (Traefik)
+  baseHref: /argo/
+
+executor:
+  # Ефективне використання контейнеризації через emissary (забирає залежності Docker)
+  env:
+    - name: ARGO_EXECUTOR_PLUGINS
+      value: "true"
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+useStaticCredentials: false
+
+# Retention поліса для видалення старих Workflows
+workflowControllerConfig:
+  archive: true         # Архівувати завершені WF
+  archiveLabelSelector:
+    matchLabels:
+      workflows.argoproj.io/archive-strategy: "true"
+  retentionPolicy:
+    completed: 100
+    failed:    50
+    errored:   20
+
+# Підключення до існуючого PostgreSQL замість вбудованого SQLite
+postgresql:
+  enabled: false # Ми вже маємо спільний PREDATOR Postgres
+  
+# Інтеграція з S3 (MinIO) для артефактів (запусків і результатів)
+artifactRepository:
+  archiveLogs: true
+  s3:
+    bucket: predator-ml-models
+    endpoint: minio.predator-v55.svc.cluster.local:9000
+    insecure: true
+    accessKeySecret:
+      name: my-minio-cred
+      key: accesskey
+    secretKeySecret:
+      name: my-minio-cred
+      key: secretkey
