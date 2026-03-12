@@ -11,7 +11,20 @@ spec:
   template:
     metadata:
       labels: {{- include "rtb-engine.selectorLabels" . | nindent 8 }}
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "rtb-engine"
+        vault.hashicorp.com/agent-inject-secret-redis.env: "secret/data/predator/redis/main"
+        vault.hashicorp.com/agent-inject-template-redis.env: |
+          {{- "{{" }} with secret "secret/data/predator/redis/main" {{ "}}" }}
+          export REDIS_URL="{{- "{{" }} .Data.data.url {{ "}}" }}"
+          {{- "{{" }} end {{ "}}" }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ .Values.service.port }}"
+        prometheus.io/path: "/metrics"
+        linkerd.io/inject: "enabled"
     spec:
+      serviceAccountName: rtb-engine
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -20,15 +33,23 @@ spec:
         - name: rtb-engine
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - source /vault/secrets/redis.env &&
+              exec python app/main.py
           ports:
             - containerPort: {{ .Values.service.port }}
           env:
-            - name: REDIS_URL
-              value: "redis://{{ .Values.global.redis.host }}:{{ .Values.global.redis.port }}/0"
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: "{{ .Values.env.KAFKA_BOOTSTRAP_SERVERS }}"
             - name: ENV
               value: "{{ .Values.env.ENV }}"
+            - name: OTEL_SERVICE_NAME
+              value: "rtb-engine"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector.monitoring:4317"
+            - name: OTEL_LOGS_EXPORTER
+              value: "none"
           readinessProbe:
             httpGet:
               path: /health

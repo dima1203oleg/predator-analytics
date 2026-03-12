@@ -11,7 +11,25 @@ spec:
   template:
     metadata:
       labels: {{- include "ingestion-worker.selectorLabels" . | nindent 8 }}
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "ingestion-worker"
+        vault.hashicorp.com/agent-inject-secret-database.env: "secret/data/predator/database/postgres"
+        vault.hashicorp.com/agent-inject-template-database.env: |
+          {{- "{{" }} with secret "secret/data/predator/database/postgres" {{ "}}" }}
+          export DATABASE_URL="{{- "{{" }} .Data.data.connection_string {{ "}}" }}"
+          {{- "{{" }} end {{ "}}" }}
+        vault.hashicorp.com/agent-inject-secret-redis.env: "secret/data/predator/redis/main"
+        vault.hashicorp.com/agent-inject-template-redis.env: |
+          {{- "{{" }} with secret "secret/data/predator/redis/main" {{ "}}" }}
+          export REDIS_URL="{{- "{{" }} .Data.data.url {{ "}}" }}"
+          {{- "{{" }} end {{ "}}" }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ .Values.service.port }}"
+        prometheus.io/path: "/metrics"
+        linkerd.io/inject: "enabled"
     spec:
+      serviceAccountName: ingestion-worker
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -20,17 +38,24 @@ spec:
         - name: ingestion-worker
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - source /vault/secrets/database.env &&
+              source /vault/secrets/redis.env &&
+              exec python worker/main.py
           ports:
             - containerPort: {{ .Values.service.port }}
           env:
-            - name: DATABASE_URL
-              value: "postgresql+asyncpg://{{ .Values.global.postgres.user }}:{{ .Values.global.postgres.password }}@{{ .Values.global.postgres.host }}:{{ .Values.global.postgres.port }}/{{ .Values.global.postgres.db }}"
-            - name: REDIS_URL
-              value: "redis://{{ .Values.global.redis.host }}:{{ .Values.global.redis.port }}/0"
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: "{{ .Values.env.KAFKA_BOOTSTRAP_SERVERS }}"
             - name: ENV
               value: "{{ .Values.env.ENV }}"
+            - name: OTEL_SERVICE_NAME
+              value: "ingestion-worker"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector.monitoring:4317"
+            - name: OTEL_LOGS_EXPORTER
+              value: "none"
           readinessProbe:
             httpGet:
               path: /health

@@ -11,7 +11,22 @@ spec:
   template:
     metadata:
       labels: {{- include "graph-service.selectorLabels" . | nindent 8 }}
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "graph-service"
+        vault.hashicorp.com/agent-inject-secret-neo4j.env: "secret/data/predator/neo4j/main"
+        vault.hashicorp.com/agent-inject-template-neo4j.env: |
+          {{- "{{" }} with secret "secret/data/predator/neo4j/main" {{ "}}" }}
+          export NEO4J_URI="{{- "{{" }} .Data.data.uri {{ "}}" }}"
+          export NEO4J_USER="{{- "{{" }} .Data.data.username {{ "}}" }}"
+          export NEO4J_PASSWORD="{{- "{{" }} .Data.data.password {{ "}}" }}"
+          {{- "{{" }} end {{ "}}" }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ .Values.service.port }}"
+        prometheus.io/path: "/metrics"
+        linkerd.io/inject: "enabled"
     spec:
+      serviceAccountName: graph-service
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -20,8 +35,21 @@ spec:
         - name: graph-service
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - source /vault/secrets/neo4j.env &&
+              exec python app/main.py
           ports:
             - containerPort: {{ .Values.service.port }}
+          env:
+            - name: ENV
+              value: "{{ .Values.env.ENV }}"
+            - name: OTEL_SERVICE_NAME
+              value: "graph-service"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector.monitoring:4317"
+            - name: OTEL_LOGS_EXPORTER
+              value: "none"
           readinessProbe:
             httpGet:
               path: /health
