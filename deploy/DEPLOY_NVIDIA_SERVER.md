@@ -114,6 +114,84 @@ EOF
 docker logs predator-ingestion-worker --tail 50
 ```
 
+## Крок 9: Розгортання Frontend на Kubernetes (k3s)
+
+### Передумови для Kubernetes розгортання
+
+```bash
+# Встановити k3s на NVIDIA сервері
+curl -sfL https://get.k3s.io | sh -
+
+# Перевірити встановлення
+kubectl get nodes
+```
+
+### Розгортання Frontend через Helm
+
+```bash
+# 1. Додати Helm репозиторій (якщо потрібно)
+helm repo add predator https://github.com/dima1203oleg/predator-analytics
+
+# 2. Встановити Frontend Helm chart
+helm install predator deploy/helm/predator \
+  -n predator \
+  --create-namespace \
+  --values deploy/helm/predator/values.yaml
+
+# 3. Перевірити розгортання
+kubectl get all -n predator
+kubectl get pods -n predator -l app=frontend
+```
+
+### Розгортання ArgoCD для GitOps
+
+```bash
+# 1. Встановити ArgoCD
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# 2. Чекати готовності ArgoCD
+kubectl wait --for=condition=available deployment -l app.kubernetes.io/name=argocd-server -n argocd --timeout=300s
+
+# 3. Отримати пароль ArgoCD
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+# 4. Застосувати ArgoCD Application для Frontend
+kubectl apply -f deploy/argocd/predator/frontend.yaml
+
+# 5. Перевірити синхронізацію
+kubectl get application -n argocd
+kubectl describe application -n argocd predator-frontend
+```
+
+### Доступ до Frontend
+
+```bash
+# Port forward для доступу локально
+kubectl port-forward -n predator svc/predator-frontend 3030:80
+
+# Або налаштувати Ingress для зовнішнього доступу
+# Frontend буде доступний за адресою: http://<server-ip>:3030
+```
+
+### Моніторинг Frontend на Kubernetes
+
+```bash
+# Перегляд статусу pods
+kubectl get pods -n predator -l app=frontend -w
+
+# Логи frontend
+kubectl logs -n predator -l app=frontend -f
+
+# Метрики
+kubectl top pods -n predator -l app=frontend
+
+# Статус deployment
+kubectl rollout status deployment/predator-frontend -n predator
+```
+
+---
+
 ## Troubleshooting
 
 ### Self-hosted GitHub Runner не працює
@@ -147,6 +225,46 @@ docker ps | grep redpanda
 # Перевірити health
 curl http://localhost:9644/v1/status/ready
 ```
+
+### Frontend pods не запускаються на Kubernetes
+
+```bash
+# Перевірити статус pods
+kubectl describe pod -n predator -l app=frontend
+
+# Перевірити логи
+kubectl logs -n predator -l app=frontend --previous
+
+# Перевірити image pull
+kubectl get pod -n predator -l app=frontend -o jsonpath='{.items[0].status.containerStatuses[0].imageID}'
+
+# Перезапустити deployment
+kubectl rollout restart deployment/predator-frontend -n predator
+```
+
+### ArgoCD не синхронізує
+
+```bash
+# Перевірити Application статус
+kubectl describe application -n argocd predator-frontend
+
+# Переглянути ArgoCD логи
+kubectl logs -n argocd -l app.kubernetes.io/name=argocd-server -f
+
+# Примусова синхронізація
+argocd app sync predator-frontend
+```
+
+---
+
+## 📚 Додаткові ресурси
+
+- **Локальне розгортання**: `deploy/LOCAL_FRONTEND_DEPLOYMENT.md`
+- **Довідник скриптів**: `deploy/SCRIPTS_REFERENCE.md`
+- **Helm Chart**: `deploy/helm/predator/`
+- **ArgoCD Manifests**: `deploy/argocd/predator/`
+- **Dockerfile**: `apps/predator-analytics-ui/Dockerfile`
+- **GitHub Actions**: `.github/workflows/frontend-ci-cd.yml`
 
 ---
 
