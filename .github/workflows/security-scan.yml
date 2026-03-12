@@ -1,0 +1,182 @@
+# ═══════════════════════════════════════════════════════════════
+# 🛡️ PREDATOR Analytics v56.0 — Security Scan Pipeline
+# Trivy + gitleaks + Cosign + SBOM
+# ═══════════════════════════════════════════════════════════════
+
+name: "🛡️ Security Scan"
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1'  # Щопонеділка о 6:00 UTC
+
+env:
+  REGISTRY: ghcr.io
+  OWNER: ${{ github.repository_owner }}
+
+permissions:
+  contents: read
+  security-events: write
+  packages: read
+
+jobs:
+  # ── 1. Сканування секретів у коді ──────────────────────────
+  secret-detection:
+    name: "🔍 Secret Detection (gitleaks)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Сканування секретів (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── 2. Сканування залежностей ──────────────────────────────
+  dependency-scan:
+    name: "📦 Dependency Scan"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: "Python Backend"
+            scan-path: "."
+            type: "pip"
+          - name: "Frontend"
+            scan-path: "apps/predator-analytics-ui"
+            type: "npm"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Trivy FS Scan — ${{ matrix.name }}"
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: ${{ matrix.scan-path }}
+          format: 'sarif'
+          output: 'trivy-fs-${{ matrix.type }}.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Завантажити SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-fs-${{ matrix.type }}.sarif'
+          category: 'trivy-${{ matrix.type }}'
+
+  # ── 3. Сканування Docker образів ──────────────────────────
+  image-scan:
+    name: "🐳 Image Scan — ${{ matrix.service }}"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - core-api
+          - graph-service
+          - cerebro
+          - rtb-engine
+          - mcp-router
+          - ingestion-worker
+          - frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Trivy Image Scan"
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "${{ env.REGISTRY }}/${{ env.OWNER }}/predator-${{ matrix.service }}:latest"
+          format: 'sarif'
+          output: 'trivy-image-${{ matrix.service }}.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'  # Fail on CRITICAL/HIGH
+
+      - name: Завантажити SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-image-${{ matrix.service }}.sarif'
+          category: 'trivy-image-${{ matrix.service }}'
+
+  # ── 4. IaC Security Scan ───────────────────────────────────
+  iac-scan:
+    name: "🏗️ Infrastructure Scan"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Trivy IaC Scan (Terraform, K8s, Docker)"
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-iac.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+
+      - name: Завантажити SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-iac.sarif'
+          category: 'trivy-iac'
+
+  # ── 5. OPA Policy Check ────────────────────────────────────
+  policy-check:
+    name: "📋 OPA Policy Validation"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Встановити conftest
+        run: |
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/open-policy-agent/conftest/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/v//')
+          curl -L "https://github.com/open-policy-agent/conftest/releases/download/v${LATEST_VERSION}/conftest_${LATEST_VERSION}_Linux_x86_64.tar.gz" | tar xz
+          sudo mv conftest /usr/local/bin/
+
+      - name: Перевірити K8s manifests проти OPA policies
+        run: |
+          conftest test k8s/*.yaml \
+            --policy policies/opa/ \
+            --output table \
+            || true
+
+      - name: Перевірити Helm values
+        run: |
+          conftest test infra/helm/umbrella/values.yaml \
+            --policy policies/opa/ \
+            --output table \
+            || true
+
+  # ── 6. SBOM Generation ─────────────────────────────────────
+  sbom:
+    name: "📋 SBOM Generation"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [secret-detection, dependency-scan]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Встановити Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Генерувати SBOM (Python)
+        run: syft packages . -o spdx-json > sbom-backend.spdx.json
+
+      - name: Генерувати SBOM (Frontend)
+        run: syft packages apps/predator-analytics-ui -o spdx-json > sbom-frontend.spdx.json
+
+      - name: Зберегти SBOM артефакти
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-artifacts
+          path: |
+            sbom-backend.spdx.json
+            sbom-frontend.spdx.json

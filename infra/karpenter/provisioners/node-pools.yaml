@@ -1,0 +1,63 @@
+# PREDATOR v56.0 — Karpenter Node Autoscaler (Default Provisioner)
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: predator-default
+spec:
+  template:
+    metadata:
+      labels:
+        predator.io/managed: "karpenter"
+        predator.io/pool: "default"
+    spec:
+      requirements:
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+        - key: "karpenter.sh/capacity-type"
+          operator: In
+          values: ["on-demand"]
+        - key: "kubernetes.io/os"
+          operator: In
+          values: ["linux"]
+      nodeClassRef:
+        name: default
+  limits:
+    cpu: "32"
+    memory: "64Gi"
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    consolidateAfter: 30s
+    expireAfter: 720h  # 30 днів
+---
+# GPU NodePool для ML/ETL workloads
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: predator-gpu
+spec:
+  template:
+    metadata:
+      labels:
+        predator.io/managed: "karpenter"
+        predator.io/pool: "gpu"
+        predator/gpu: "true"
+    spec:
+      requirements:
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+        - key: "karpenter.sh/capacity-type"
+          operator: In
+          values: ["on-demand"]
+      nodeClassRef:
+        name: gpu
+      taints:
+        - key: "nvidia.com/gpu"
+          effect: NoSchedule
+  limits:
+    cpu: "16"
+    memory: "32Gi"
+  disruption:
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 60s

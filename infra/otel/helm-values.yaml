@@ -1,0 +1,81 @@
+# ═══════════════════════════════════════════════════════════════
+# 📡 OpenTelemetry Collector — Helm Values
+# PREDATOR Analytics v56.0
+# ═══════════════════════════════════════════════════════════════
+
+mode: deployment  # deployment або daemonset
+
+replicaCount: 1
+
+image:
+  repository: otel/opentelemetry-collector-contrib
+  tag: "0.96.0"
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+# Порти
+ports:
+  otlp:
+    enabled: true
+    containerPort: 4317
+    servicePort: 4317
+    protocol: TCP
+  otlp-http:
+    enabled: true
+    containerPort: 4318
+    servicePort: 4318
+    protocol: TCP
+  prometheus:
+    enabled: true
+    containerPort: 8889
+    servicePort: 8889
+    protocol: TCP
+  health:
+    enabled: true
+    containerPort: 13133
+    servicePort: 13133
+    protocol: TCP
+
+# ConfigMap з collector-config.yaml
+config:
+  # Конфігурація завантажується з окремого ConfigMap
+  # Дивись collector-config.yaml
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+
+service:
+  type: ClusterIP
+
+serviceAccount:
+  create: true
+  name: otel-collector
+
+# ServiceMonitor для Prometheus
+serviceMonitor:
+  enabled: true
+  labels:
+    release: prometheus
+
+# Autoscaling
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+# Pod annotations
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8888"
