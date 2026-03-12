@@ -12,13 +12,20 @@ settings = get_settings()
 
 def get_cors_origins() -> list[str]:
     """Отримати список дозволених CORS origins."""
-    origins_str = getattr(settings, 'CORS_ORIGINS', '')
-    if not origins_str:
+    origins_value = getattr(settings, 'CORS_ORIGINS', None)
+    if not origins_value:
         return []
 
-    # Парсимо рядок з origins
-    origins = [origin.strip() for origin in origins_str.split(',')]
-    return [origin for origin in origins if origin]
+    # Якщо вже список - повертаємо як є
+    if isinstance(origins_value, list):
+        return [str(o).strip() for o in origins_value if o]
+
+    # Якщо рядок - парсимо
+    if isinstance(origins_value, str):
+        origins = [origin.strip() for origin in origins_value.split(',')]
+        return [origin for origin in origins if origin]
+
+    return []
 
 
 def add_cors_middleware(app):
