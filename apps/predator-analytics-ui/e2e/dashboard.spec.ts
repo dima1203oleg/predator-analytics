@@ -26,7 +26,7 @@ test.describe('Dashboard', () => {
 
     // Should have navigation items
     const navItems = sidebar.locator('nav a');
-    await expect(navItems).toHaveCount({ minimum: 5 });
+    expect(await navItems.count()).toBeGreaterThanOrEqual(5);
   });
 
   test('should navigate to different sections', async ({ page }) => {
@@ -84,7 +84,7 @@ test.describe('Accessibility', () => {
 
     // Should have an h1
     const h1 = page.locator('h1');
-    await expect(h1).toHaveCount({ minimum: 1 });
+    expect(await h1.count()).toBeGreaterThanOrEqual(1);
   });
 
   test('should be keyboard navigable', async ({ page }) => {

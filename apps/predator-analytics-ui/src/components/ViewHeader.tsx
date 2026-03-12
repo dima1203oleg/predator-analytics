@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 interface ViewHeaderProps {
   title: string | React.ReactNode;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   breadcrumbs: string[];
   stats?: {
     label: string;
@@ -43,13 +43,15 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
 
         {/* Title Area */}
         <div className="flex items-start gap-4">
-          <motion.div
-            whileHover={{ scale: 1.05, rotate: 5 }}
-            className="p-3 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700/50 shadow-[inset_0_0_20px_rgba(0,0,0,0.2)] text-primary-500 shrink-0 relative  group"
-          >
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            {icon}
-          </motion.div>
+          {icon && (
+            <motion.div
+              whileHover={{ scale: 1.05, rotate: 5 }}
+              className="p-3 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700/50 shadow-[inset_0_0_20px_rgba(0,0,0,0.2)] text-primary-500 shrink-0 relative  group"
+            >
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              {icon}
+            </motion.div>
+          )}
 
           <div className="min-w-0">
             {/* Breadcrumbs */}
