@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-frontend
+  namespace: argocd
+spec:
+  project: predator-project
+  source:
+    repoURL: https://github.com/dima1203oleg/predator-analytics.git
+    targetRevision: main
+    path: deploy/helm/predator
+    helm:
+      valueFiles:
+        - values.yaml
+      values: |
+        frontend:
+          enabled: true
+          replicaCount: 2
+          image:
+            repository: ghcr.io/dima1203oleg/predator-analytics-ui
+            tag: v55.0.0
+            pullPolicy: IfNotPresent
+          service:
+            type: LoadBalancer
+            port: 80
+            targetPort: 3030
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 5
+            targetCPUUtilizationPercentage: 70
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: predator
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - RespectIgnoreDifferences=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

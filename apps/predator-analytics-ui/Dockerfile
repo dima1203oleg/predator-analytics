@@ -1,24 +1,38 @@
-# /Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui/Dockerfile
+# Multi-stage Dockerfile for PREDATOR Analytics UI v55
+# Stage 1: Build
+FROM node:20-alpine AS builder
+WORKDIR /build
 
-# Step 1: Build stage
-FROM node:20-slim AS build
-WORKDIR /app
-
-# Copy dependency files for caching
 COPY package*.json ./
-RUN npm install
+RUN npm ci --only=production && npm ci
 
-# Copy all code and build the project
 COPY . .
 RUN npm run build
 
-# Step 2: Serve stage
+# Stage 2: Runtime (nginx with non-root user)
 FROM nginx:alpine
-# Configure Nginx for SPA routing support
+
+# Create non-root user 'predator' per HR-05
+RUN addgroup -g 1001 -S predator && \
+    adduser -S predator -u 1001 && \
+    chown -R predator:predator /var/cache/nginx && \
+    chown -R predator:predator /var/log/nginx && \
+    chown -R predator:predator /etc/nginx/conf.d && \
+    touch /var/run/nginx.pid && \
+    chown predator:predator /var/run/nginx.pid
+
+# Copy nginx config
 RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --chown=predator:predator nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=build /app/dist /usr/share/nginx/html
+# Copy built app from builder
+COPY --from=builder --chown=predator:predator /build/dist /usr/share/nginx/html
 
-EXPOSE 80
+# Switch to non-root user
+USER predator
+
+EXPOSE 3030
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:3030/ || exit 1
+
 CMD ["nginx", "-g", "daemon off;"]
