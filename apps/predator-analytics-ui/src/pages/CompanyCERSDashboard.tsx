@@ -5,29 +5,6 @@ import ReactECharts from 'echarts-for-react';
 import { Search, ShieldAlert, Activity, GitBranch, Target, Zap, Clock, AlertTriangle, CheckCircle2, TrendingDown, Award } from 'lucide-react';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 
-// --- Helper Functions to Generate Dummy Data for Fallback ---
-const generateDummyRadar = (score: number) => [
-    { subject: 'Інституційний', A: Math.min(100, score + 15), fullMark: 100 },
-    { subject: 'Структурний', A: Math.max(0, 100 - score), fullMark: 100 },
-    { subject: 'Поведінковий', A: Math.min(100, score + 5), fullMark: 100 },
-    { subject: 'Впливовий', A: Math.min(100, score - 10), fullMark: 100 },
-    { subject: 'Предиктивний', A: Math.min(100, score + 20), fullMark: 100 },
-];
-
-const generateDummyShap = () => [
-    { feature: 'Офшорні власники', impact: -0.25, type: 'negative' },
-    { feature: 'Податковий борг', impact: -0.15, type: 'negative' },
-    { feature: 'Кримінальні справи', impact: -0.10, type: 'negative' },
-    { feature: 'Держзакупівлі', impact: 0.05, type: 'positive' },
-    { feature: 'Стабільний дохід', impact: 0.12, type: 'positive' },
-    { feature: 'Прозорість', impact: 0.18, type: 'positive' },
-].sort((a, b) => a.impact - b.impact);
-
-const generateDummyEvents = () => [
-    { date: new Date().toISOString().split('T')[0], type: 'alert', text: 'Виявлено нові зв\'язки з ризиковими об\'єктами' },
-    { date: new Date(Date.now() - 86400000).toISOString().split('T')[0], type: 'warning', text: 'Зміна керівництва компанії' },
-];
-
 function CERSRadarECharts({ data }: { data: any[] }) {
     const radarOption = {
         backgroundColor: 'transparent',
