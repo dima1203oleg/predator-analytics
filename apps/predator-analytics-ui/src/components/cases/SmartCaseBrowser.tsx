@@ -188,15 +188,17 @@ export const SmartCaseBrowser: React.FC<{ onCaseSelect?: (caseItem: Case) => voi
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'date' | 'risk'>('date');
 
-  // Fetch cases
+  // Fetch cases from real API
   React.useEffect(() => {
     const fetchCases = async () => {
       try {
-        const res = await fetch('/api/v45/cases');
+        const res = await fetch('/api/v1/cases');
+        if (!res.ok) throw new Error('API unavailable');
         const data = await res.json();
-        setCases(data.length > 0 ? data : generateMockCases());
-      } catch {
-        setCases(generateMockCases());
+        setCases(Array.isArray(data) ? data : data.items || data.cases || []);
+      } catch (err) {
+        console.warn('[SmartCaseBrowser] API недоступний:', err);
+        setCases([]);
       } finally {
         setLoading(false);
       }
@@ -344,46 +346,5 @@ export const SmartCaseBrowser: React.FC<{ onCaseSelect?: (caseItem: Case) => voi
     </div>
   );
 };
-
-// Mock data generator
-function generateMockCases(): Case[] {
-  return [
-    {
-      id: 'case-001',
-      title: 'Аномальні транзакції імпорту',
-      situation: 'Виявлено нетипову активність у декларуванні товарів з Китаю за останні 30 днів',
-      status: 'КРИТИЧНО',
-      priority: 'critical',
-      risk_score: 92,
-      sector: 'ІМПОРТ',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      ai_insight: 'Виявлено патерн заниження вартості на 15-20% порівняно з ринковими цінами',
-    },
-    {
-      id: 'case-002',
-      title: 'Підозріла мережа контрагентів',
-      situation: 'Ідентифіковано групу з 12 компаній з ознаками взаємопов\'язаності',
-      status: 'В РОБОТІ',
-      priority: 'high',
-      risk_score: 78,
-      sector: 'AML',
-      created_at: new Date(Date.now() - 86400000).toISOString(),
-      updated_at: new Date().toISOString(),
-      ai_insight: 'Спільні бенефіціари та адреси реєстрації у 8 з 12 компаній',
-    },
-    {
-      id: 'case-003',
-      title: 'Невідповідність ваги вантажу',
-      situation: 'Систематичне розходження маси товару на 5-10% у експортних деклараціях',
-      status: 'ВІДКРИТО',
-      priority: 'medium',
-      risk_score: 56,
-      sector: 'ЕКСПОРТ',
-      created_at: new Date(Date.now() - 172800000).toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-  ];
-}
 
 export default SmartCaseBrowser;

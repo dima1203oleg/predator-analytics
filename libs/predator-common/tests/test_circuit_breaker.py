@@ -1,7 +1,9 @@
 """Тести для Circuit Breaker."""
 
 import asyncio
+
 import pytest
+
 from predator_common.circuit_breaker import CircuitBreaker, CircuitBreakerError, CircuitState
 
 

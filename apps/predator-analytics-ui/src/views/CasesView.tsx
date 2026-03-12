@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Archive, Search, Sparkles, Plus, X, AlertOctagon, CheckCircle2
+  Archive, Search, Sparkles, Plus, X, AlertOctagon, CheckCircle2, Activity
 } from 'lucide-react';
 import { api } from '../services/api';
 import { useGlobalState } from '../context/GlobalContext';

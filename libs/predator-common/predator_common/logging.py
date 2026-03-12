@@ -1,5 +1,4 @@
-"""
-Structured JSON Logging — для PREDATOR Analytics v55.1.
+"""Structured JSON Logging — для PREDATOR Analytics v55.1.
 
 Надає структуроване JSON логування через structlog.
 Кожен лог включає: timestamp, level, logger, message,
@@ -24,13 +23,13 @@ def configure_logging(
     service_name: str = "predator",
     json_logs: bool = True,
 ) -> None:
-    """
-    Налаштувати structured logging для сервісу.
+    """Налаштувати structured logging для сервісу.
 
     Args:
         log_level: Рівень логування (DEBUG, INFO, WARNING, ERROR, CRITICAL)
         service_name: Назва сервісу (додається до кожного логу)
         json_logs: True — JSON форматування, False — консольне (для розробки)
+
     """
     log_level_num = getattr(logging, log_level.upper(), logging.INFO)
 
@@ -98,13 +97,13 @@ def _add_service_name(service_name: str) -> Any:
 
 
 def get_logger(name: str) -> structlog.BoundLogger:
-    """
-    Отримати структурований logger.
+    """Отримати структурований logger.
 
     Args:
         name: Назва логера (зазвичай __name__)
 
     Returns:
         structlog.BoundLogger для використання у модулі
+
     """
     return structlog.get_logger(name)

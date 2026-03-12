@@ -1,10 +1,8 @@
-"""
-Асинхронний драйвер PostgreSQL для Core API (v55.1).
+"""Асинхронний драйвер PostgreSQL для Core API (v55.1).
 
 Підтримка Patroni HA, RLS (Row-Level Security), Multi-tenancy.
 """
-import ssl
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -65,7 +63,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """FastAPI Dependency для отримання асинхронної сесії БД."""
     if SessionLocal is None:
         raise RuntimeError("Database engine is not initialized. Call init_db() first.")
-    
+
     async with SessionLocal() as session:
         try:
             # Активація tenant_id для RLS

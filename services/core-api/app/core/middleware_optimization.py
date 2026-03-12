@@ -1,0 +1,115 @@
+"""Optimization Middleware for Predator Core API.
+
+Middleware для оптимізації продуктивності:
+- Rate limiting
+- Response compression
+- Request validation caching
+- Performance metrics
+"""
+import time
+
+from fastapi import HTTPException, Request, Response
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+
+from predator_common.logging import get_logger
+
+from .optimization import rate_limiters
+
+logger = get_logger("core_api.optimization_middleware")
+
+
+class RateLimitMiddleware(BaseHTTPMiddleware):
+    """Rate limiting middleware."""
+
+    def __init__(self, app, rate_limiter_key: str = "api"):
+        super().__init__(app)
+        self.rate_limiter = rate_limiters[rate_limiter_key]
+
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
+        # Get client identifier (IP or user ID)
+        client_id = request.client.host if request.client else "unknown"
+
+        # Check rate limit
+        if not await self.rate_limiter.is_allowed(client_id):
+            logger.warning(
+                "Rate limit exceeded",
+                extra={"client_id": client_id, "path": request.url.path}
+            )
+            raise HTTPException(
+                status_code=429,
+                detail="Rate limit exceeded. Try again later."
+            )
+
+        response = await call_next(request)
+        return response
+
+
+class PerformanceMiddleware(BaseHTTPMiddleware):
+    """Performance monitoring middleware."""
+
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
+        start_time = time.time()
+
+        response = await call_next(request)
+
+        process_time = time.time() - start_time
+
+        # Add performance headers
+        response.headers["X-Process-Time"] = str(process_time)
+
+        # Log performance metrics
+        logger.info(
+            "Request processed",
+            extra={
+                "method": request.method,
+                "path": request.url.path,
+                "status_code": response.status_code,
+                "process_time": process_time,
+            }
+        )
+
+        return response
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """Security headers middleware."""
+
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
+        response = await call_next(request)
+
+        # Add security headers
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+        return response
+
+
+class CompressionMiddleware(BaseHTTPMiddleware):
+    """Response compression middleware."""
+
+    def __init__(self, app, minimum_size: int = 1024):
+        super().__init__(app)
+        self.minimum_size = minimum_size
+
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
+        response = await call_next(request)
+
+        # Check if response should be compressed
+        if (
+            "gzip" in request.headers.get("accept-encoding", "")
+            and len(response.body) > self.minimum_size
+        ):
+            response.headers["Content-Encoding"] = "gzip"
+
+        return response

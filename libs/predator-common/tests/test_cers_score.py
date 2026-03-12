@@ -1,11 +1,9 @@
 """Тести для CERS Score алгоритму."""
 
-import pytest
 
 from predator_common.cers_score import (
     CersFactors,
     CersLevel,
-    CersResult,
     cers_level_from_score,
     compute_cers,
 )

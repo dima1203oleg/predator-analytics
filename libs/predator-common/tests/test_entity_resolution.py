@@ -1,10 +1,8 @@
 """Тести для Entity Resolution Engine (FR-002, FR-044, VR-002)."""
 
-import pytest
 
 from predator_common.entity_resolution import (
     EntityCandidate,
-    ResolutionResult,
     fuzzy_similarity,
     normalize_company_name,
     normalize_person_name,

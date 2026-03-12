@@ -1,9 +1,10 @@
-import pytest
-from typing import AsyncGenerator
-from httpx import AsyncClient, ASGITransport
+from collections.abc import AsyncGenerator
 
-from app.main import app
+from httpx import ASGITransport, AsyncClient
+import pytest
+
 from app.config import get_settings
+from app.main import app
 
 
 @pytest.fixture
@@ -20,7 +21,7 @@ async def async_client() -> AsyncGenerator[AsyncClient, None]:
 async def test_health_check(async_client: AsyncClient) -> None:
     response = await async_client.get("/health")
     assert response.status_code == 200
-    
+
     data = response.json()
     assert data["status"] == "ok"
     assert data["version"] == get_settings().APP_VERSION

@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY stix "http://stix.mitre.org/stix-2.1#" >
+    <!ENTITY predator "http://predator-analytics.ua/ontology#" >
+]>
+
+<rdf:RDF xmlns="http://predator-analytics.ua/ontology#"
+     xml:base="http://predator-analytics.ua/ontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:stix="http://stix.mitre.org/stix-2.1#"
+     xmlns:predator="http://predator-analytics.ua/ontology#">
+
+    <!-- ============================================================ -->
+    <!-- PREDATOR Analytics Ontology v1.0                              -->
+    <!-- Базується на STIX 2.1 з розширеннями для митної аналітики    -->
+    <!-- ============================================================ -->
+
+    <owl:Ontology rdf:about="http://predator-analytics.ua/ontology">
+        <rdfs:label xml:lang="uk">PREDATOR Analytics Ontology</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Онтологія для аналітичної OSINT-платформи PREDATOR Analytics.
+            Призначена для моделювання зв'язків між сутностями у сфері
+            митного контролю, фінансового моніторингу та комплаєнсу.
+            Базується на стандарті STIX 2.1.
+        </rdfs:comment>
+        <owl:versionInfo>1.0</owl:versionInfo>
+        <owl:imports rdf:resource="http://stix.mitre.org/stix-2.1"/>
+    </owl:Ontology>
+
+    <!-- ============================================================ -->
+    <!-- КЛАСИ (Classes) - Типи сутностей                              -->
+    <!-- ============================================================ -->
+
+    <!-- ==================== Базові класи STIX ==================== -->
+
+    <owl:Class rdf:about="&predator;Entity">
+        <rdfs:label xml:lang="uk">Сутність</rdfs:label>
+        <rdfs:comment xml:lang="uk">Базовий клас для всіх сутностей</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;ThreatActor">
+        <rdfs:subClassOf rdf:resource="&predator;Entity"/>
+        <rdfs:label xml:lang="uk">Загрозливий актор</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Особа або група, що становить загрозу (STIX threat-actor).
+            У контексті PREDATOR: особи, причетні до шахрайства, контрабанди.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Identity">
+        <rdfs:subClassOf rdf:resource="&predator;Entity"/>
+        <rdfs:label xml:lang="uk">Ідентичність</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Ідентифікована особа або організація (STIX identity).
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Indicator">
+        <rdfs:subClassOf rdf:resource="&predator;Entity"/>
+        <rdfs:label xml:lang="uk">Індикатор</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Індикатор компрометації (IoC): email, телефон, IP, VIN тощо.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Infrastructure">
+        <rdfs:subClassOf rdf:resource="&predator;Entity"/>
+        <rdfs:label xml:lang="uk">Інфраструктура</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Технічна інфраструктура: сервери, домени, хостинг.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Location">
+        <rdfs:subClassOf rdf:resource="&predator;Entity"/>
+        <rdfs:label xml:lang="uk">Локація</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Географічне розташування: адреса, координати, регіон.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Campaign">
+        <rdfs:subClassOf rdf:resource="&predator;Entity"/>
+        <rdfs:label xml:lang="uk">Кампанія</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Серія пов'язаних дій (STIX campaign).
+            У контексті PREDATOR: схема шахрайства, контрабандний маршрут.
+        </rdfs:comment>
+    </owl:Class>
+
+    <!-- ==================== Розширені класи PREDATOR ==================== -->
+
+    <owl:Class rdf:about="&predator;Person">
+        <rdfs:subClassOf rdf:resource="&predator;Identity"/>
+        <rdfs:label xml:lang="uk">Фізична особа</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Фізична особа з РНОКПП, ПІБ, датою народження.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Organization">
+        <rdfs:subClassOf rdf:resource="&predator;Identity"/>
+        <rdfs:label xml:lang="uk">Юридична особа</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Юридична особа з ЄДРПОУ, назвою, статусом.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;FOP">
+        <rdfs:subClassOf rdf:resource="&predator;Identity"/>
+        <rdfs:label xml:lang="uk">ФОП</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Фізична особа-підприємець.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Document">
+        <rdfs:subClassOf rdf:resource="&predator;Entity"/>
+        <rdfs:label xml:lang="uk">Документ</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Документ: судове рішення, декларація, контракт.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Event">
+        <rdfs:subClassOf rdf:resource="&predator;Entity"/>
+        <rdfs:label xml:lang="uk">Подія</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Подія: судове засідання, реєстрація, тендер.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Asset">
+        <rdfs:subClassOf rdf:resource="&predator;Entity"/>
+        <rdfs:label xml:lang="uk">Актив</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Актив: нерухомість, транспорт, земельна ділянка.
+        </rdfs:comment>
+    </owl:Class>
+
+    <!-- ==================== Спеціалізовані класи ==================== -->
+
+    <owl:Class rdf:about="&predator;CourtCase">
+        <rdfs:subClassOf rdf:resource="&predator;Event"/>
+        <rdfs:label xml:lang="uk">Судова справа</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Судова справа з номером, датою, сторонами.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Tender">
+        <rdfs:subClassOf rdf:resource="&predator;Event"/>
+        <rdfs:label xml:lang="uk">Тендер</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Публічна закупівля з Prozorro.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;CustomsDeclaration">
+        <rdfs:subClassOf rdf:resource="&predator;Document"/>
+        <rdfs:label xml:lang="uk">Митна декларація</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Митна декларація на імпорт/експорт.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;RealEstate">
+        <rdfs:subClassOf rdf:resource="&predator;Asset"/>
+        <rdfs:label xml:lang="uk">Нерухомість</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Об'єкт нерухомості з кадастровим номером.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Vehicle">
+        <rdfs:subClassOf rdf:resource="&predator;Asset"/>
+        <rdfs:label xml:lang="uk">Транспортний засіб</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Транспортний засіб з VIN, номером.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Vessel">
+        <rdfs:subClassOf rdf:resource="&predator;Asset"/>
+        <rdfs:label xml:lang="uk">Судно</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Морське або річкове судно з IMO, MMSI.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Aircraft">
+        <rdfs:subClassOf rdf:resource="&predator;Asset"/>
+        <rdfs:label xml:lang="uk">Повітряне судно</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Літак або гелікоптер з реєстраційним номером.
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;Sanction">
+        <rdfs:subClassOf rdf:resource="&predator;Entity"/>
+        <rdfs:label xml:lang="uk">Санкція</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            Запис у санкційному списку (РНБО, OFAC, EU).
+        </rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="&predator;RiskScore">
+        <rdfs:subClassOf rdf:resource="&predator;Entity"/>
+        <rdfs:label xml:lang="uk">Оцінка ризику</rdfs:label>
+        <rdfs:comment xml:lang="uk">
+            AML-скор сутності (0-100).
+        </rdfs:comment>
+    </owl:Class>
+
+    <!-- ============================================================ -->
+    <!-- ВЛАСТИВОСТІ ОБ'ЄКТІВ (Object Properties) - Зв'язки           -->
+    <!-- ============================================================ -->
+
+    <!-- ==================== Володіння та контроль ==================== -->
+
+    <owl:ObjectProperty rdf:about="&predator;owns">
+        <rdfs:label xml:lang="uk">володіє</rdfs:label>
+        <rdfs:comment xml:lang="uk">Засновник/власник компанії</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Identity"/>
+        <rdfs:range rdf:resource="&predator;Organization"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&predator;manages">
+        <rdfs:label xml:lang="uk">керує</rdfs:label>
+        <rdfs:comment xml:lang="uk">Керівник компанії</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Person"/>
+        <rdfs:range rdf:resource="&predator;Organization"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&predator;controls">
+        <rdfs:label xml:lang="uk">контролює</rdfs:label>
+        <rdfs:comment xml:lang="uk">Кінцевий бенефіціарний власник (UBO)</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Person"/>
+        <rdfs:range rdf:resource="&predator;Organization"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&predator;founded">
+        <rdfs:label xml:lang="uk">заснував</rdfs:label>
+        <rdfs:comment xml:lang="uk">Засновник компанії</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Identity"/>
+        <rdfs:range rdf:resource="&predator;Organization"/>
+    </owl:ObjectProperty>
+
+    <!-- ==================== Локація ==================== -->
+
+    <owl:ObjectProperty rdf:about="&predator;registeredAt">
+        <rdfs:label xml:lang="uk">зареєстрований за адресою</rdfs:label>
+        <rdfs:comment xml:lang="uk">Юридична адреса реєстрації</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Organization"/>
+        <rdfs:range rdf:resource="&predator;Location"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&predator;locatedAt">
+        <rdfs:label xml:lang="uk">знаходиться</rdfs:label>
+        <rdfs:comment xml:lang="uk">Фактичне розташування</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Entity"/>
+        <rdfs:range rdf:resource="&predator;Location"/>
+    </owl:ObjectProperty>
+
+    <!-- ==================== Участь у подіях ==================== -->
+
+    <owl:ObjectProperty rdf:about="&predator;involvedIn">
+        <rdfs:label xml:lang="uk">бере участь у</rdfs:label>
+        <rdfs:comment xml:lang="uk">Участь у події (справа, тендер)</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Identity"/>
+        <rdfs:range rdf:resource="&predator;Event"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&predator;participatedIn">
+        <rdfs:label xml:lang="uk">брав участь у</rdfs:label>
+        <rdfs:comment xml:lang="uk">Участь у тендері</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Organization"/>
+        <rdfs:range rdf:resource="&predator;Tender"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&predator;wonTender">
+        <rdfs:label xml:lang="uk">виграв тендер</rdfs:label>
+        <rdfs:comment xml:lang="uk">Переможець тендера</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Organization"/>
+        <rdfs:range rdf:resource="&predator;Tender"/>
+    </owl:ObjectProperty>
+
+    <!-- ==================== Зв'язки між сутностями ==================== -->
+
+    <owl:ObjectProperty rdf:about="&predator;relatedTo">
+        <rdfs:label xml:lang="uk">пов'язаний з</rdfs:label>
+        <rdfs:comment xml:lang="uk">Загальний зв'язок між сутностями</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Entity"/>
+        <rdfs:range rdf:resource="&predator;Entity"/>
+        <rdf:type rdf:resource="&owl;SymmetricProperty"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&predator;connectedWith">
+        <rdfs:label xml:lang="uk">з'єднаний з</rdfs:label>
+        <rdfs:comment xml:lang="uk">Спільна діяльність</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Person"/>
+        <rdfs:range rdf:resource="&predator;Person"/>
+        <rdf:type rdf:resource="&owl;SymmetricProperty"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&predator;worksAt">
+        <rdfs:label xml:lang="uk">працює в</rdfs:label>
+        <rdfs:comment xml:lang="uk">Місце роботи</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Person"/>
+        <rdfs:range rdf:resource="&predator;Organization"/>
+    </owl:ObjectProperty>
+
+    <!-- ==================== Індикатори ==================== -->
+
+    <owl:ObjectProperty rdf:about="&predator;hasIndicator">
+        <rdfs:label xml:lang="uk">має індикатор</rdfs:label>
+        <rdfs:comment xml:lang="uk">Використовує email, телефон, IP</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Identity"/>
+        <rdfs:range rdf:resource="&predator;Indicator"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&predator;usesInfrastructure">
+        <rdfs:label xml:lang="uk">використовує інфраструктуру</rdfs:label>
+        <rdfs:comment xml:lang="uk">Використовує сервер, домен</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Identity"/>
+        <rdfs:range rdf:resource="&predator;Infrastructure"/>
+    </owl:ObjectProperty>
+
+    <!-- ==================== Активи ==================== -->
+
+    <owl:ObjectProperty rdf:about="&predator;ownsAsset">
+        <rdfs:label xml:lang="uk">володіє активом</rdfs:label>
+        <rdfs:comment xml:lang="uk">Власник активу</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Identity"/>
+        <rdfs:range rdf:resource="&predator;Asset"/>
+    </owl:ObjectProperty>
+
+    <!-- ==================== Фінансові зв'язки ==================== -->
+
+    <owl:ObjectProperty rdf:about="&predator;debtorOf">
+        <rdfs:label xml:lang="uk">боржник</rdfs:label>
+        <rdfs:comment xml:lang="uk">Боргові зобов'язання</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Identity"/>
+        <rdfs:range rdf:resource="&predator;Identity"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&predator;creditorOf">
+        <rdfs:label xml:lang="uk">кредитор</rdfs:label>
+        <rdfs:comment xml:lang="uk">Кредитні зобов'язання</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Identity"/>
+        <rdfs:range rdf:resource="&predator;Identity"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&predator;transactedWith">
+        <rdfs:label xml:lang="uk">здійснював транзакції з</rdfs:label>
+        <rdfs:comment xml:lang="uk">Фінансові транзакції</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Identity"/>
+        <rdfs:range rdf:resource="&predator;Identity"/>
+    </owl:ObjectProperty>
+
+    <!-- ==================== Санкції ==================== -->
+
+    <owl:ObjectProperty rdf:about="&predator;sanctionedBy">
+        <rdfs:label xml:lang="uk">під санкціями</rdfs:label>
+        <rdfs:comment xml:lang="uk">Знаходиться у санкційному списку</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Identity"/>
+        <rdfs:range rdf:resource="&predator;Sanction"/>
+    </owl:ObjectProperty>
+
+    <!-- ==================== Ризики ==================== -->
+
+    <owl:ObjectProperty rdf:about="&predator;hasRiskScore">
+        <rdfs:label xml:lang="uk">має оцінку ризику</rdfs:label>
+        <rdfs:comment xml:lang="uk">AML-скор сутності</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Identity"/>
+        <rdfs:range rdf:resource="&predator;RiskScore"/>
+    </owl:ObjectProperty>
+
+    <!-- ============================================================ -->
+    <!-- ВЛАСТИВОСТІ ДАНИХ (Data Properties) - Атрибути               -->
+    <!-- ============================================================ -->
+
+    <!-- ==================== Ідентифікатори ==================== -->
+
+    <owl:DatatypeProperty rdf:about="&predator;edrpou">
+        <rdfs:label xml:lang="uk">ЄДРПОУ</rdfs:label>
+        <rdfs:comment xml:lang="uk">Код ЄДРПОУ (8 цифр)</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Organization"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;rnokpp">
+        <rdfs:label xml:lang="uk">РНОКПП</rdfs:label>
+        <rdfs:comment xml:lang="uk">Реєстраційний номер облікової картки платника податків (10 цифр)</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Person"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;name">
+        <rdfs:label xml:lang="uk">Назва/ПІБ</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Entity"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== Статуси ==================== -->
+
+    <owl:DatatypeProperty rdf:about="&predator;status">
+        <rdfs:label xml:lang="uk">Статус</rdfs:label>
+        <rdfs:comment xml:lang="uk">Статус сутності (active, liquidated, bankrupt)</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Organization"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;registrationDate">
+        <rdfs:label xml:lang="uk">Дата реєстрації</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Organization"/>
+        <rdfs:range rdf:resource="&xsd;date"/>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== Фінансові показники ==================== -->
+
+    <owl:DatatypeProperty rdf:about="&predator;authorizedCapital">
+        <rdfs:label xml:lang="uk">Статутний капітал</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Organization"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;taxDebt">
+        <rdfs:label xml:lang="uk">Податковий борг</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Organization"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;ownershipPercentage">
+        <rdfs:label xml:lang="uk">Частка володіння</rdfs:label>
+        <rdfs:comment xml:lang="uk">Відсоток володіння (0-100)</rdfs:comment>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== Ризики ==================== -->
+
+    <owl:DatatypeProperty rdf:about="&predator;riskScore">
+        <rdfs:label xml:lang="uk">Скор ризику</rdfs:label>
+        <rdfs:comment xml:lang="uk">AML-скор (0-100)</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;RiskScore"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;riskLevel">
+        <rdfs:label xml:lang="uk">Рівень ризику</rdfs:label>
+        <rdfs:comment xml:lang="uk">critical, high, medium, low, minimal</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;RiskScore"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== Географія ==================== -->
+
+    <owl:DatatypeProperty rdf:about="&predator;address">
+        <rdfs:label xml:lang="uk">Адреса</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Location"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;latitude">
+        <rdfs:label xml:lang="uk">Широта</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Location"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;longitude">
+        <rdfs:label xml:lang="uk">Довгота</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Location"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;country">
+        <rdfs:label xml:lang="uk">Країна</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Location"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== Індикатори ==================== -->
+
+    <owl:DatatypeProperty rdf:about="&predator;email">
+        <rdfs:label xml:lang="uk">Email</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Indicator"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;phone">
+        <rdfs:label xml:lang="uk">Телефон</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Indicator"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;ipAddress">
+        <rdfs:label xml:lang="uk">IP-адреса</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Indicator"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== Транспорт ==================== -->
+
+    <owl:DatatypeProperty rdf:about="&predator;vin">
+        <rdfs:label xml:lang="uk">VIN</rdfs:label>
+        <rdfs:comment xml:lang="uk">Vehicle Identification Number</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Vehicle"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;imo">
+        <rdfs:label xml:lang="uk">IMO</rdfs:label>
+        <rdfs:comment xml:lang="uk">International Maritime Organization number</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Vessel"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;mmsi">
+        <rdfs:label xml:lang="uk">MMSI</rdfs:label>
+        <rdfs:comment xml:lang="uk">Maritime Mobile Service Identity</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Vessel"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== Метадані ==================== -->
+
+    <owl:DatatypeProperty rdf:about="&predator;source">
+        <rdfs:label xml:lang="uk">Джерело</rdfs:label>
+        <rdfs:comment xml:lang="uk">Джерело даних (edr, court_registry, prozorro)</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Entity"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;createdAt">
+        <rdfs:label xml:lang="uk">Дата створення</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Entity"/>
+        <rdfs:range rdf:resource="&xsd;dateTime"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;updatedAt">
+        <rdfs:label xml:lang="uk">Дата оновлення</rdfs:label>
+        <rdfs:domain rdf:resource="&predator;Entity"/>
+        <rdfs:range rdf:resource="&xsd;dateTime"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&predator;confidence">
+        <rdfs:label xml:lang="uk">Впевненість</rdfs:label>
+        <rdfs:comment xml:lang="uk">Рівень впевненості у даних (0.0-1.0)</rdfs:comment>
+        <rdfs:domain rdf:resource="&predator;Entity"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+    </owl:DatatypeProperty>
+
+</rdf:RDF>

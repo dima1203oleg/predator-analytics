@@ -82,7 +82,7 @@ const AdaptiveDashboard: React.FC<AdaptiveDashboardProps> = ({ onNavigate }) => 
 
   const handleAIAction = async () => {
     try {
-      await api.runOptimizer();
+      await api.v45.optimizer.run();
       toast.success("ЯДРО ШІ", "Цикл самооптимізації ШІ активовано");
     } catch (e) {
       toast.error("ПОМИЛКА ШІ", "Помилка активації оптимізатора");

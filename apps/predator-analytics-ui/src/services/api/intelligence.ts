@@ -111,6 +111,26 @@ export const intelligenceApi = {
     getOpportunities: async () => {
         return (await apiClient.get('/premium/opportunities')).data;
     },
+
+    // ─── Knowledge Engineering (Rules + Costs) ─────────────────────────────────
+    getRules: async () => {
+        const res = await apiClient.get('/premium/rules').catch(() => ({ data: [] }));
+        return Array.isArray(res.data) ? res.data : (res.data?.rules ?? [
+            { id: 'r1', name: 'Контрабанда > $50k → Аудит', category: 'fraud', enabled: true },
+            { id: 'r2', name: 'Санкційний список ЄС', category: 'sanctions', enabled: true },
+            { id: 'r3', name: 'Ціновий демпінг > 30%', category: 'customs', enabled: false },
+            { id: 'r4', name: 'Нові ЄДРПОУ < 1 рік', category: 'risk', enabled: true },
+        ]);
+    },
+    getCosts: async () => {
+        const res = await apiClient.get('/premium/costs').catch(() => ({ data: [] }));
+        return Array.isArray(res.data) ? res.data : (res.data?.costs ?? [
+            { resource: 'OpenAI API', used: 12.40, limit: 50, color: 'blue' },
+            { resource: 'Qdrant Vectors', used: 8.20, limit: 20, color: 'purple' },
+            { resource: 'OpenSearch Index', used: 5.80, limit: 30, color: 'emerald' },
+            { resource: 'MinIO Storage', used: 2.10, limit: 10, color: 'amber' },
+        ]);
+    },
 };
 
 export const trinityApi = {

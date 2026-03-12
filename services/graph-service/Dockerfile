@@ -24,7 +24,8 @@ RUN poetry install --no-root
 FROM python:3.12-slim as runtime
 
 ENV PATH="/app/.venv/bin:$PATH" \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH="/app:/libs/predator-common:/app/services/shared"
 
 WORKDIR /app
 
@@ -33,6 +34,7 @@ RUN groupadd -g 1000 predator && \
     chown -R predator:predator /app
 
 WORKDIR /app
+COPY --from=builder /app/.venv /app/.venv
 COPY services/graph-service/app/ ./app/
 COPY services/shared/ ./services/shared/
 COPY libs/ /libs/
@@ -40,4 +42,4 @@ COPY libs/ /libs/
 # USER predator (HR-05) - Non-root user
 USER predator
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8002"]
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8002"]

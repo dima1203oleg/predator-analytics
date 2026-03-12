@@ -281,6 +281,23 @@ CREATE INDEX IF NOT EXISTS idx_alerts_unread ON alerts(is_read) WHERE is_read = 
 CREATE INDEX IF NOT EXISTS idx_alerts_created ON alerts(created_at);
 
 -- ============================================================
+-- Події алертів (Alert Events) — TZ §2.3.1
+-- ============================================================
+CREATE TABLE IF NOT EXISTS alert_events (
+    event_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    alert_id UUID NOT NULL REFERENCES alerts(id) ON DELETE CASCADE,
+    triggered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    entity_ueid VARCHAR(64),
+    payload JSONB NOT NULL,
+    delivery_status JSONB DEFAULT '{}'
+);
+
+CREATE INDEX IF NOT EXISTS idx_alert_events_alert ON alert_events(alert_id, triggered_at DESC);
+CREATE INDEX IF NOT EXISTS idx_alert_events_entity ON alert_events(entity_ueid, triggered_at DESC);
+CREATE INDEX IF NOT EXISTS idx_alert_events_tenant ON alert_events(tenant_id);
+
+-- ============================================================
 -- Аудит (WORM — тільки INSERT)
 -- HR-16: UPDATE/DELETE заборонені тригером
 -- ============================================================
@@ -440,6 +457,7 @@ ALTER TABLE decision_artifacts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE risk_scores ENABLE ROW LEVEL SECURITY;
 ALTER TABLE som_anomalies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE som_proposals ENABLE ROW LEVEL SECURITY;
+ALTER TABLE alert_events ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS tenant_isolation_companies ON companies;
 DROP POLICY IF EXISTS tenant_isolation_persons ON persons;
@@ -451,6 +469,7 @@ DROP POLICY IF EXISTS tenant_isolation_decisions ON decision_artifacts;
 DROP POLICY IF EXISTS tenant_isolation_risk_scores ON risk_scores;
 DROP POLICY IF EXISTS tenant_isolation_som_anomalies ON som_anomalies;
 DROP POLICY IF EXISTS tenant_isolation_som_proposals ON som_proposals;
+DROP POLICY IF EXISTS tenant_isolation_alert_events ON alert_events;
 
 CREATE POLICY tenant_isolation_companies ON companies
     USING (tenant_id::text = current_setting('app.current_tenant', true));
@@ -471,6 +490,8 @@ CREATE POLICY tenant_isolation_risk_scores ON risk_scores
 CREATE POLICY tenant_isolation_som_anomalies ON som_anomalies
     USING (tenant_id::text = current_setting('app.current_tenant', true));
 CREATE POLICY tenant_isolation_som_proposals ON som_proposals
+    USING (tenant_id::text = current_setting('app.current_tenant', true));
+CREATE POLICY tenant_isolation_alert_events ON alert_events
     USING (tenant_id::text = current_setting('app.current_tenant', true));
 
 -- ============================================================

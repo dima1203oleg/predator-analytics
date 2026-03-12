@@ -18,7 +18,8 @@ import {
   DollarSign, Package, Building2, Globe, ChevronRight, ChevronDown,
   Star, AlertTriangle, CheckCircle, Clock, Zap, Crown, BarChart3,
   PieChart, Target, Shield, Truck, Settings, Plus, Radio, Cpu,
-  Map as MapIcon, Layers, Activity, Lock, Unlock, Eye, RefreshCw
+  Map as MapIcon, Layers, Activity, Lock, Unlock, Eye, RefreshCw,
+  Brain, Sparkles, Power
 } from 'lucide-react';
 
 import { cn } from '../utils/cn';
@@ -152,7 +153,7 @@ const MobileCommandCenter: React.FC = () => {
           <div className="grid grid-cols-4 gap-4 p-4 bg-slate-900/60 border border-white/5 rounded-[32px] panel-3d">
             {[
               { icon: Search, label: 'Пошук', color: '#60a5fa' },
-              { icon: Target, label: premiumLocales.competitors.title, color: '#a78bfa' },
+              { icon: Target, label: premiumLocales.competitorIntelligence.premium.title, color: '#a78bfa' },
               { icon: Shield, label: 'Ризики', color: '#f43f5e', badge: 3 },
               { icon: BarChart3, label: 'Тренди', color: '#f59e0b' },
             ].map((item, i) => (
@@ -290,7 +291,7 @@ const MobileCommandCenter: React.FC = () => {
               <div className="space-y-4 flex-1">
                 {[
                   { icon: BarChart3, label: 'Глобальна Аналітика', color: 'blue' },
-                  { icon: Target, label: premiumLocales.competitors.title, color: 'purple', badge: '3' },
+                  { icon: Target, label: premiumLocales.competitorIntelligence.premium.title, color: 'purple', badge: '3' },
                   { icon: Shield, label: 'Цільові Ризики', color: 'rose', badge: '!' },
                   { icon: MapIcon, label: 'Логістична Навігатор', color: 'amber' },
                   { icon: Globe, label: 'Матриця Світу', color: 'indigo' },

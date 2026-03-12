@@ -1,14 +1,62 @@
-"""
-Graph Router — PREDATOR Analytics v55.2-SM-EXTENDED.
+"""Graph Router — PREDATOR Analytics v55.2-SM-EXTENDED.
 Trinity Graph Engine: Аналіз зв'язків, пошук UBO, детекція картелів та тіньових мереж.
 """
-from typing import List, Dict, Any, Optional, Annotated
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.graph import graph_db
-from app.dependencies import PermissionChecker, get_tenant_id
 from app.core.permissions import Permission
+from app.database import get_db
+from app.dependencies import PermissionChecker, get_tenant_id
+from predator_common.models import Company, RiskScore
 
 router = APIRouter(prefix="/graph", tags=["граф-аналітика"])
+
+
+@router.get("/summary", summary="Зведена статистика графу")
+async def get_graph_summary(
+    tenant_id: str = Depends(get_tenant_id),
+    db: AsyncSession = Depends(get_db),
+    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
+):
+    """Отримання зведеної інформації про граф сутностей."""
+    companies_count = await db.scalar(
+        select(func.count()).select_from(Company).where(Company.tenant_id == tenant_id)
+    ) or 0
+
+    high_risk_query = (
+        select(RiskScore)
+        .where(RiskScore.tenant_id == tenant_id, RiskScore.cers >= 70)
+        .order_by(RiskScore.cers.desc())
+        .limit(50)
+    )
+    result = await db.execute(high_risk_query)
+    high_risk = result.scalars().all()
+
+    nodes = []
+    links = []
+
+    for i, rs in enumerate(high_risk):
+        nodes.append({
+            "id": rs.entity_ueid,
+            "label": rs.entity_ueid[:20],
+            "type": rs.entity_type or "company",
+            "riskScore": int(rs.cers) if rs.cers else 0,
+            "connections": 0,
+            "cluster": i % 5,
+        })
+
+    return {
+        "nodes": nodes,
+        "links": links,
+        "stats": {
+            "total_nodes": companies_count,
+            "high_risk_count": len(high_risk),
+        },
+    }
 
 @router.get("/{ueid}/neighbors", summary="Сусідні вузли (Trinity V1)")
 async def get_entity_neighbors(
@@ -17,8 +65,7 @@ async def get_entity_neighbors(
     tenant_id: str = Depends(get_tenant_id),
     _ = Depends(PermissionChecker([Permission.RUN_GRAPH]))
 ):
-    """
-    Отримання безпосередніх зв'язків сутності.
+    """Отримання безпосередніх зв'язків сутності.
     Trinity Engine аналізує власність, управління та афілійованість.
     """
     query = """
@@ -31,7 +78,7 @@ async def get_entity_neighbors(
         results = await graph_db.run_query(query, {"ueid": ueid, "tenant_id": tenant_id})
         return results
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Graph traversal failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Graph traversal failed: {e!s}") from e
 
 @router.get("/shadow/{ueid}", summary="Тіньові зв'язки (Influence Layer)")
 async def get_shadow_map(
@@ -40,13 +87,12 @@ async def get_shadow_map(
     tenant_id: str = Depends(get_tenant_id),
     _ = Depends(PermissionChecker([Permission.RUN_GRAPH]))
 ):
-    """
-    Детекція прихованих зв'язків через непрямих бенефіціарів, спільні адреси та офшори.
+    """Детекція прихованих зв'язків через непрямих бенефіціарів, спільні адреси та офшори.
     """
     # Спрощена логіка для Trinity Core v55.2
     query = """
     MATCH (n {ueid: $ueid})-[*1..$depth]-(m)
-    WHERE n.tenant_id = $tenant_id 
+    WHERE n.tenant_id = $tenant_id
     AND (m:Offshore OR m:LayerEntity OR m:UBO)
     RETURN n, m
     LIMIT 200
@@ -59,8 +105,7 @@ async def get_cartels(
     tenant_id: str = Depends(get_tenant_id),
     _ = Depends(PermissionChecker([Permission.RUN_GRAPH]))
 ):
-    """
-    Виявлення змов та картелів на ринку через аналіз циклічних зв'язків.
+    """Виявлення змов та картелів на ринку через аналіз циклічних зв'язків.
     """
     # Виклик спеціалізованого алгоритму Louvain або Pregel через Neo4j GDS (за наявності)
     return {"status": "analysis_pending", "algorithm": "louvain-sm-v55"}
@@ -71,8 +116,7 @@ async def get_beneficiaries(
     tenant_id: str = Depends(get_tenant_id),
     _ = Depends(PermissionChecker([Permission.RUN_GRAPH]))
 ):
-    """
-    Пошук кінцевих бенефіціарів (контролерів) через ланцюжки володіння.
+    """Пошук кінцевих бенефіціарів (контролерів) через ланцюжки володіння.
     """
     query = """
     MATCH (c {ueid: $ueid})<-[:OWNS*1..10]-(u:Person)
@@ -87,8 +131,7 @@ async def get_influence_metrics(
     tenant_id: str = Depends(get_tenant_id),
     _ = Depends(PermissionChecker([Permission.RUN_GRAPH]))
 ):
-    """
-    Розрахунок компоненту Influence для CERS.
+    """Розрахунок компоненту Influence для CERS.
     Базується на PageRank та Betweenness Centrality.
     """
     return {
@@ -104,17 +147,16 @@ async def get_influence_clusters(
     tenant_id: str = Depends(get_tenant_id),
     _ = Depends(PermissionChecker([Permission.RUN_GRAPH]))
 ):
-    """
-    Виявлення 'Центрів Впливу'. Пошук груп пов'язаних сутностей через 
+    """Виявлення 'Центрів Впливу'. Пошук груп пов'язаних сутностей через
     спільних контролерів та приховані зв'язки.
     """
     query = """
     MATCH (start {ueid: $ueid})
     MATCH (start)-[r:OWNS|DIRECTS|HAS_ADDRESS*1..2]-(related)
     WHERE labels(related)[0] IN ['Company', 'Person'] AND start <> related
-    RETURN 
-        related.ueid as ueid, 
-        related.name as name, 
+    RETURN
+        related.ueid as ueid,
+        related.name as name,
         labels(related)[0] as type,
         count(r) as strength
     ORDER BY strength DESC
@@ -124,4 +166,4 @@ async def get_influence_clusters(
         results = await graph_db.run_query(query, {"ueid": ueid, "tenant_id": tenant_id})
         return results
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Cluster detection failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Cluster detection failed: {e!s}") from e

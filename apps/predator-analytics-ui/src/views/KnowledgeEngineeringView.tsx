@@ -19,7 +19,7 @@ import { api } from '../services/api';
 import {
   Workflow, Shield, Users, GitBranch, Activity,
   Scale, FileText, UserCheck, DollarSign,
-  Settings, Zap, RefreshCw
+  Settings, Zap, RefreshCw, Database, Globe
 } from 'lucide-react';
 
 // Import sub-components

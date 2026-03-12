@@ -1,21 +1,22 @@
-"""
-Search Service — PREDATOR Analytics v55.1 Ironclad.
+"""Search Service — PREDATOR Analytics v55.1 Ironclad.
 
 Vector search (LanceDB) and full-text search (PostgreSQL/OpenSearch).
 """
-from typing import List, Any
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from typing import Any
 
-from app.models.orm import Company, Person
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.orm import Company
+
 
 class SearchService:
     @staticmethod
     async def hybrid_search_companies(
-        query: str, 
-        db: AsyncSession, 
+        query: str,
+        db: AsyncSession,
         limit: int = 20
-    ) -> List[Company]:
+    ) -> list[Company]:
         """Гібридний пошук компаній (текст + вектор)."""
         # TODO: Інтеграція з LanceDB для векторного пошуку
         # Наразі простий ILIKE пошук для стабільності
@@ -28,9 +29,9 @@ class SearchService:
 
     @staticmethod
     async def recommend_similar_entities(
-        ueid: str, 
+        ueid: str,
         limit: int = 5
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Пошук схожих сутностей на основі векторних ембедінгів."""
         # TODO: Vector similarity query via LanceDB
         return []

@@ -8,12 +8,12 @@ persistence:
 resources:
   requests:
     cpu: 100m
-    memory: 512Mi
+    memory: 2Gi
   limits:
     cpu: 500m
-    memory: 1Gi
+    memory: 2Gi
 
 env:
   DISABLE_SECURITY_PLUGIN: "true"
-  OPENSEARCH_JAVA_OPTS: "-Xms256m -Xmx256m"
+  OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
   discovery.type: "single-node"

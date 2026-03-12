@@ -1,5 +1,7 @@
-from typing import List, Dict, Any
+from typing import Any
+
 from fastapi import APIRouter, Depends
+import psutil
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +12,15 @@ from predator_common.models import Anomaly, Proposal
 
 router = APIRouter(prefix="/som", tags=["SOM"])
 
+
+async def _get_system_metrics() -> dict[str, float]:
+    """Отримання реальних системних метрик."""
+    return {
+        "cpu": psutil.cpu_percent(interval=0.1),
+        "memory": psutil.virtual_memory().percent,
+        "io": psutil.disk_usage("/").percent,
+    }
+
 @router.get("/status", summary="Загальний статус SOM")
 async def get_status(tenant_id: str = Depends(get_tenant_id), db: AsyncSession = Depends(get_db)):
     audit = await AxiomVerifier.verify_data_consistency(db)
@@ -17,7 +28,7 @@ async def get_status(tenant_id: str = Depends(get_tenant_id), db: AsyncSession =
         "health": audit.get("purity", 100),
         "status": "SECURE" if audit.get("status") == "PASS" else "WARNING",
         "axioms_verified": True,
-        "metrics": {"cpu": 12, "memory": 45, "io": 8},
+        "metrics": await _get_system_metrics(),
         "audit": audit
     }
 
@@ -44,7 +55,7 @@ async def get_proposals(tenant_id: str = Depends(get_tenant_id), db: AsyncSessio
     ]
 
 @router.post("/emergency", summary="Активація екстреного протоколу")
-async def activate_emergency(data: Dict[str, Any], tenant_id: str = Depends(get_tenant_id)):
+async def activate_emergency(data: dict[str, Any], tenant_id: str = Depends(get_tenant_id)):
     return {"status": "activated", "level": data.get("level"), "actor": data.get("actor")}
 
 @router.get("/axioms/verify", summary="Повна верифікація аксіом")

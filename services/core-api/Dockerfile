@@ -7,50 +7,54 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
-# Копіюємо локальні ліби та файл проекту
-COPY libs/ /libs/
-COPY services/core-api/pyproject.toml .
-# Встановлення Poetry
-RUN curl -sSL https://install.python-poetry.org | python3 -
-RUN poetry config virtualenvs.create false \
-    && poetry install --only main --no-interaction --no-ansi --no-root \
-    && pip install setuptools
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # ----------------- Runtime -----------------
-FROM python:3.12-slim-bookworm
+FROM python:3.12-slim-bookworm as production
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+# Create non-root user (HR-05)
 RUN groupadd -g 10001 predator && \
     useradd -u 10001 -g predator -s /bin/sh -m predator && \
     apt-get update && apt-get install -y --no-install-recommends libpq5 curl && \
     rm -rf /var/lib/apt/lists/*
 
+# Copy Python packages
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
-
-# Встановити setuptools після копіювання, щоб гарантовано мати pkg_resources
-RUN pip install setuptools --break-system-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 
 WORKDIR /app
-COPY services/core-api/app/ ./app/
-COPY services/shared/ ./services/shared/
+
+# Copy application code
+COPY app/ ./app/
 COPY libs/ /libs/
+COPY services/shared/ /services/shared/
 
-# Додаємо лібу спільну (якщо монтується) або встановлюємо з локального source.
-# Але оскільки ми в docker, краще мати її як submodule або install з локального wheel
+# Create logs directory
+RUN mkdir -p /app/logs && chown -R predator:predator /app
 
+# Set permissions
 USER predator
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+# Ensure all dependencies are in Python path
+ENV PYTHONPATH="/app:/libs/predator-common:/app/services/shared:$PYTHONPATH"
 
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/health/live || exit 1
+
+EXPOSE 8000
+
+# Run with uvicorn
 CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--loop", "uvloop"]
