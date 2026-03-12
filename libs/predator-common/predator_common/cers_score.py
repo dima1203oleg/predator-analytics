@@ -1,13 +1,14 @@
-"""
-CERS v55.2-SM-EXTENDED — Composite Economic Risk Score.
+"""CERS v55.2-SM-EXTENDED — Composite Economic Risk Score.
 5-шарова модель аналізу економічної безпеки.
 """
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Dict, List, Optional, Any
+from enum import StrEnum
+from typing import Any
 
-class CersLevel(str, Enum):
+
+class CersLevel(StrEnum):
     """Канонічні рівні ризику v55.2."""
+
     STABLE = "stable"        # 0..20
     WATCHLIST = "watchlist"  # 21..40
     ELEVATED = "elevated"    # 41..60
@@ -17,6 +18,7 @@ class CersLevel(str, Enum):
 @dataclass(frozen=True)
 class Cers5LayerFactors:
     """Вхідні дані для 5-шарового CERS."""
+
     # L1: Behavioral (Activity, Anomalies)
     behavioral_raw: float = 0.0
     # L2: Institutional (Sanctions, Court, Tax)
@@ -31,15 +33,15 @@ class Cers5LayerFactors:
 @dataclass(frozen=True)
 class CersResultV55:
     """Розширений результат CERS v55.2."""
+
     score: float
     level: CersLevel
     confidence: float
-    components: Dict[str, float]
-    flags: List[Dict[str, Any]] = field(default_factory=list)
+    components: dict[str, float]
+    flags: list[dict[str, Any]] = field(default_factory=list)
 
 def compute_cers_v55(factors: Cers5LayerFactors, confidence: float = 0.95) -> CersResultV55:
-    """
-    Канонічний розрахунок CERS v55.2.
+    """Канонічний розрахунок CERS v55.2.
     Ваги:
     - Behavioral: 25%
     - Institutional: 20%
@@ -54,7 +56,7 @@ def compute_cers_v55(factors: Cers5LayerFactors, confidence: float = 0.95) -> Ce
         "structural": 0.15,
         "predictive": 0.20
     }
-    
+
     components = {
         "behavioral": min(100.0, max(0.0, factors.behavioral_raw)),
         "institutional": min(100.0, max(0.0, factors.institutional_raw)),
@@ -62,16 +64,21 @@ def compute_cers_v55(factors: Cers5LayerFactors, confidence: float = 0.95) -> Ce
         "structural": min(100.0, max(0.0, factors.structural_raw)),
         "predictive": min(100.0, max(0.0, factors.predictive_raw))
     }
-    
+
     total_score = sum(components[layer] * weights[layer] for layer in weights)
-    
+
     # Визначення рівня
-    if total_score < 20: level = CersLevel.STABLE
-    elif total_score < 40: level = CersLevel.WATCHLIST
-    elif total_score < 60: level = CersLevel.ELEVATED
-    elif total_score < 80: level = CersLevel.HIGH_ALERT
-    else: level = CersLevel.CRITICAL
-    
+    if total_score < 20:
+        level = CersLevel.STABLE
+    elif total_score < 40:
+        level = CersLevel.WATCHLIST
+    elif total_score < 60:
+        level = CersLevel.ELEVATED
+    elif total_score < 80:
+        level = CersLevel.HIGH_ALERT
+    else:
+        level = CersLevel.CRITICAL
+
     return CersResultV55(
         score=total_score,
         level=level,

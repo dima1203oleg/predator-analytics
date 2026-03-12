@@ -1,13 +1,12 @@
-"""
-Search Router — PREDATOR Analytics v55.1 Ironclad.
+"""Search Router — PREDATOR Analytics v55.1 Ironclad.
 
 Hybrid search (Full-text + Vector) for entities and documents.
 """
-from typing import List, Dict, Any
 from fastapi import APIRouter, Depends, Query
-from app.services.search_service import SearchService
-from app.dependencies import PermissionChecker
+
 from app.core.permissions import Permission
+from app.dependencies import PermissionChecker
+from app.services.search_service import SearchService
 
 router = APIRouter(prefix="/search", tags=["search"])
 

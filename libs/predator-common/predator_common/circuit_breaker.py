@@ -1,5 +1,4 @@
-"""
-Circuit Breaker — захист від каскадних збоїв.
+"""Circuit Breaker — захист від каскадних збоїв.
 
 Реалізує патерн Circuit Breaker з 3 станами:
 - CLOSED:    Нормальна робота. Запити проходять.
@@ -19,9 +18,9 @@ Circuit Breaker — захист від каскадних збоїв.
 """
 
 import asyncio
-import time
 from collections.abc import Awaitable, Callable
 from enum import Enum
+import time
 from typing import Any, TypeVar
 
 T = TypeVar("T")
@@ -29,6 +28,7 @@ T = TypeVar("T")
 
 class CircuitState(Enum):
     """Стани Circuit Breaker."""
+
     CLOSED = "closed"      # Нормальна робота
     OPEN = "open"          # Відхиляє запити
     HALF_OPEN = "half_open"  # Пробний запит
@@ -48,14 +48,14 @@ class CircuitBreakerError(Exception):
 
 
 class CircuitBreaker:
-    """
-    Circuit Breaker з трьома станами.
+    """Circuit Breaker з трьома станами.
 
     Args:
         name: Назва сервісу (для логування)
         failure_threshold: Кількість збоїв до переходу у OPEN
         timeout: Час (сек) у стані OPEN перед HALF_OPEN
         success_threshold: Кількість успіхів у HALF_OPEN для CLOSED
+
     """
 
     def __init__(
@@ -93,8 +93,7 @@ class CircuitBreaker:
         *args: Any,
         **kwargs: Any,
     ) -> T:
-        """
-        Виклик функції під захистом Circuit Breaker.
+        """Виклик функції під захистом Circuit Breaker.
 
         Args:
             func: Async функція для виклику
@@ -107,6 +106,7 @@ class CircuitBreaker:
         Raises:
             CircuitBreakerError: Якщо стан OPEN
             Exception: Помилка з func (прокидається далі)
+
         """
         async with self._lock:
             current_state = self.state

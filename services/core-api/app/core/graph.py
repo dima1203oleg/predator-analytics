@@ -1,18 +1,20 @@
-"""
-Neo4j Driver Wrapper — PREDATOR Analytics v55.1 Ironclad.
+"""Neo4j Driver Wrapper — PREDATOR Analytics v55.1 Ironclad.
 
 Graph persistence and relationship queries.
 """
-from typing import List, Dict, Any, Optional
-from neo4j import AsyncGraphDatabase, AsyncDriver
+from typing import Any
+
+from neo4j import AsyncDriver, AsyncGraphDatabase
+
 from app.config import get_settings
 
 settings = get_settings()
 
 class GraphDB:
     """Керування з'єднанням з Neo4j."""
-    def __init__(self):
-        self.driver: Optional[AsyncDriver] = None
+
+    def __init__(self) -> None:
+        self.driver: AsyncDriver | None = None
 
     def init_driver(self):
         """Ініціалізація драйвера."""
@@ -26,11 +28,11 @@ class GraphDB:
         if self.driver:
             await self.driver.close()
 
-    async def run_query(self, query: str, parameters: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    async def run_query(self, query: str, parameters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """Виконання Cypher запиту."""
         if not self.driver:
             raise RuntimeError("Neo4j driver not initialized")
-            
+
         params = parameters or {}
         async with self.driver.session() as session:
             result = await session.run(query, params)

@@ -65,149 +65,23 @@ const CATEGORY_CONFIG: Record<AlertCategory, { icon: any; label: string }> = {
   opportunity: { icon: Star, label: premiumLocales.intelligenceAlerts.categories.opportunity },
 };
 
-// Generate mock alerts based on persona
-const generateMockAlerts = (persona: string): IntelligenceAlert[] => {
-  const now = new Date();
-  const baseAlerts: IntelligenceAlert[] = [];
-  const mock = premiumLocales.intelligenceAlerts.mockData;
-
-  if (persona === 'TITAN' || persona === 'ALL') {
-    baseAlerts.push(
-      {
-        id: 'titan-1',
-        title: mock.titan.alphaTrade.title,
-        description: mock.titan.alphaTrade.desc,
-        severity: 'critical',
-        category: 'competitor',
-        persona: 'TITAN',
-        timestamp: new Date(now.getTime() - 5 * 60000),
-        source: 'Митний Реєстр',
-        actionUrl: '/customs-intel?company=alfatrade',
-        metadata: { company: 'АльфаТрейд', hsCode: '8471.30', value: 2450000, change: 340 },
-        isRead: false,
-        isPinned: true,
-      },
-      {
-        id: 'titan-2',
-        title: mock.titan.turkeySupplier.title,
-        description: mock.titan.turkeySupplier.desc,
-        severity: 'high',
-        category: 'opportunity',
-        persona: 'TITAN',
-        timestamp: new Date(now.getTime() - 15 * 60000),
-        source: 'AI Аналітика',
-        metadata: { company: 'Kardemir Steel', value: 890000, change: -23 },
-        isRead: false,
-        isPinned: false,
-      },
-      {
-        id: 'titan-3',
-        title: mock.titan.steelForecast.title,
-        description: mock.titan.steelForecast.desc,
-        severity: 'medium',
-        category: 'trend',
-        persona: 'TITAN',
-        timestamp: new Date(now.getTime() - 45 * 60000),
-        source: 'Predictive Model v3',
-        metadata: { confidence: 87, change: 15 },
-        isRead: true,
-        isPinned: false,
-      }
-    );
+// Завантаження алертів з реального API
+const fetchAlertsFromAPI = async (persona: string): Promise<IntelligenceAlert[]> => {
+  try {
+    const response = await fetch(`/api/v1/alerts?persona=${persona}&limit=50`);
+    if (!response.ok) throw new Error('API unavailable');
+    const data = await response.json();
+    const items = Array.isArray(data) ? data : data.items || data.alerts || [];
+    return items.map((item: any) => ({
+      ...item,
+      timestamp: new Date(item.timestamp || item.created_at),
+      isRead: item.isRead ?? item.is_read ?? false,
+      isPinned: item.isPinned ?? item.is_pinned ?? false,
+    }));
+  } catch (err) {
+    console.warn('[LiveIntelligenceAlerts] API недоступний:', err);
+    return [];
   }
-
-  if (persona === 'INQUISITOR' || persona === 'ALL') {
-    baseAlerts.push(
-      {
-        id: 'inq-1',
-        title: mock.inquisitor.scheme17.title,
-        description: mock.inquisitor.scheme17.desc,
-        severity: 'critical',
-        category: 'scheme',
-        persona: 'INQUISITOR',
-        timestamp: new Date(now.getTime() - 3 * 60000),
-        source: 'Pattern Detection AI',
-        actionUrl: '/entity-graph?scheme=alpha-17',
-        metadata: { value: 12400000, confidence: 94 },
-        isRead: false,
-        isPinned: true,
-      },
-      {
-        id: 'inq-2',
-        title: mock.inquisitor.hs8471Anomaly.title,
-        description: mock.inquisitor.hs8471Anomaly.desc,
-        severity: 'high',
-        category: 'anomaly',
-        persona: 'INQUISITOR',
-        timestamp: new Date(now.getTime() - 12 * 60000),
-        source: 'Anomaly Detector',
-        metadata: { hsCode: '8471', value: 2400000, change: -67 },
-        isRead: false,
-        isPinned: false,
-      },
-      {
-        id: 'inq-3',
-        title: mock.inquisitor.tovAlphaRisk.title,
-        description: mock.inquisitor.tovAlphaRisk.desc,
-        severity: 'high',
-        category: 'risk',
-        persona: 'INQUISITOR',
-        timestamp: new Date(now.getTime() - 30 * 60000),
-        source: 'Risk Scoring Model',
-        actionUrl: '/entity-graph?entity=tov-alpha',
-        metadata: { company: 'ТОВ Альфа', confidence: 89 },
-        isRead: true,
-        isPinned: false,
-      }
-    );
-  }
-
-  if (persona === 'SOVEREIGN' || persona === 'ALL') {
-    baseAlerts.push(
-      {
-        id: 'sov-1',
-        title: mock.sovereign.chipRisk.title,
-        description: mock.sovereign.chipRisk.desc,
-        severity: 'critical',
-        category: 'risk',
-        persona: 'SOVEREIGN',
-        timestamp: new Date(now.getTime() - 8 * 60000),
-        source: 'Supply Chain Analyzer',
-        actionUrl: '/analytics?view=supply-chain',
-        metadata: { confidence: 92 },
-        isRead: false,
-        isPinned: true,
-      },
-      {
-        id: 'sov-2',
-        title: mock.sovereign.euTradeForecast.title,
-        description: mock.sovereign.euTradeForecast.desc,
-        severity: 'medium',
-        category: 'trend',
-        persona: 'SOVEREIGN',
-        timestamp: new Date(now.getTime() - 60 * 60000),
-        source: 'Macro Forecaster',
-        metadata: { change: 12, confidence: 78 },
-        isRead: false,
-        isPinned: false,
-      },
-      {
-        id: 'sov-3',
-        title: mock.sovereign.steelCorrelation.title,
-        description: mock.sovereign.steelCorrelation.desc,
-        severity: 'low',
-        category: 'trend',
-        persona: 'SOVEREIGN',
-        timestamp: new Date(now.getTime() - 120 * 60000),
-        source: 'Correlation Engine',
-        metadata: { confidence: 87 },
-        isRead: true,
-        isPinned: false,
-      }
-    );
-  }
-
-  return baseAlerts.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 };
 
 // Single Alert Item
@@ -368,29 +242,21 @@ export const LiveIntelligenceAlerts: React.FC<{
   const [isExpanded, setIsExpanded] = useState(!compact);
 
   useEffect(() => {
-    // Initial load
-    setAlerts(generateMockAlerts(persona));
+    // Початкове завантаження з реального API
+    const loadAlerts = async () => {
+      const data = await fetchAlertsFromAPI(persona);
+      setAlerts(data);
+    };
+    loadAlerts();
 
-    // Simulate real-time updates
-    const interval = setInterval(() => {
-      const newAlerts = generateMockAlerts(persona);
-      setAlerts(prev => {
-        // Add some randomness to simulate new alerts
-        if (Math.random() > 0.7) {
-          const randomAlert = newAlerts[Math.floor(Math.random() * newAlerts.length)];
-          if (randomAlert) {
-            return [
-              { ...randomAlert, id: `new-${Date.now()}`, timestamp: new Date(), isRead: false },
-              ...prev.slice(0, maxAlerts - 1)
-            ];
-          }
-        }
-        return prev;
-      });
-    }, 30000); // Every 30 seconds
+    // Полінг кожні 30 секунд для оновлення
+    const interval = setInterval(async () => {
+      const newAlerts = await fetchAlertsFromAPI(persona);
+      setAlerts(newAlerts);
+    }, 30000);
 
     return () => clearInterval(interval);
-  }, [persona, maxAlerts]);
+  }, [persona]);
 
   const handleMarkRead = useCallback((id: string) => {
     setAlerts(prev => prev.map(a => a.id === id ? { ...a, isRead: true } : a));

@@ -1,5 +1,4 @@
-"""
-Entity Resolution Engine — PREDATOR Analytics v55.1 Ironclad.
+"""Entity Resolution Engine — PREDATOR Analytics v55.1 Ironclad.
 
 Об'єднує різні написання однієї компанії/особи в єдиний UEID.
 Використовує: нормалізацію → векторний пошук → fuzzy matching.
@@ -13,13 +12,11 @@ Entity Resolution Engine — PREDATOR Analytics v55.1 Ironclad.
 Precision мета: F1 > 0.95 (VR-002)
 """
 
+from dataclasses import dataclass, field
 import re
 import unicodedata
-from dataclasses import dataclass, field
-from typing import Optional
 
 from predator_common.ueid import generate_company_ueid, generate_person_ueid
-
 
 # Організаційно-правові форми та їх скорочення
 _LEGAL_FORM_MAP: dict[str, str] = {
@@ -59,9 +56,9 @@ class EntityCandidate:
     ueid: str
     name: str
     name_normalized: str
-    edrpou: Optional[str] = None
-    inn: Optional[str] = None
-    address: Optional[str] = None
+    edrpou: str | None = None
+    inn: str | None = None
+    address: str | None = None
     score: float = 0.0
     match_type: str = "unknown"  # exact_id | fuzzy_name | new
 
@@ -78,8 +75,7 @@ class ResolutionResult:
 
 
 def normalize_company_name(name: str) -> str:
-    """
-    Нормалізація назви компанії для порівняння.
+    """Нормалізація назви компанії для порівняння.
 
     Кроки:
     1. Unicode NFC
@@ -126,8 +122,7 @@ def normalize_company_name(name: str) -> str:
 
 
 def normalize_person_name(full_name: str) -> str:
-    """
-    Нормалізація ПІБ.
+    """Нормалізація ПІБ.
 
     Приклад:
         >>> normalize_person_name("ІВАНОВ Іван Іванович")
@@ -145,8 +140,7 @@ def normalize_person_name(full_name: str) -> str:
 
 
 def fuzzy_similarity(s1: str, s2: str) -> float:
-    """
-    Нечітке порівняння рядків.
+    """Нечітке порівняння рядків.
 
     Використовує token_sort_ratio для кращого порівняння слів у різному порядку.
 
@@ -173,13 +167,12 @@ def fuzzy_similarity(s1: str, s2: str) -> float:
 
 def resolve_company(
     name: str,
-    edrpou: Optional[str] = None,
-    address: Optional[str] = None,
-    candidates: Optional[list[EntityCandidate]] = None,
+    edrpou: str | None = None,
+    address: str | None = None,
+    candidates: list[EntityCandidate] | None = None,
     similarity_threshold: float = 0.85,
 ) -> ResolutionResult:
-    """
-    Визначити UEID для компанії.
+    """Визначити UEID для компанії.
 
     Priority:
     1. Точний збіг за ЄДРПОУ → match_type='exact_id'
@@ -195,6 +188,7 @@ def resolve_company(
 
     Returns:
         ResolutionResult з UEID та метаданими
+
     """
     normalized = normalize_company_name(name)
     candidates = candidates or []
@@ -213,7 +207,7 @@ def resolve_company(
                 )
 
     # 2. Fuzzy збіг за нормалізованою назвою
-    best_candidate: Optional[EntityCandidate] = None
+    best_candidate: EntityCandidate | None = None
     best_score = 0.0
 
     for candidate in candidates:
@@ -244,13 +238,12 @@ def resolve_company(
 
 def resolve_person(
     full_name: str,
-    inn: Optional[str] = None,
-    date_of_birth: Optional[str] = None,
-    candidates: Optional[list[EntityCandidate]] = None,
+    inn: str | None = None,
+    date_of_birth: str | None = None,
+    candidates: list[EntityCandidate] | None = None,
     similarity_threshold: float = 0.90,
 ) -> ResolutionResult:
-    """
-    Визначити UEID для фізичної особи.
+    """Визначити UEID для фізичної особи.
 
     Args:
         full_name: Повне ім'я
@@ -261,6 +254,7 @@ def resolve_person(
 
     Returns:
         ResolutionResult з UEID
+
     """
     normalized = normalize_person_name(full_name)
     candidates = candidates or []

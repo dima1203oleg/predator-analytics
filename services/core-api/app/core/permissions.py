@@ -1,5 +1,4 @@
-"""
-RBAC (Role-Based Access Control) — Матриця прав доступу PREDATOR Analytics.
+"""RBAC (Role-Based Access Control) — Матриця прав доступу PREDATOR Analytics.
 
 Ролі (COMP-301..COMP-420):
 - admin
@@ -10,14 +9,16 @@ RBAC (Role-Based Access Control) — Матриця прав доступу PRED
 - gov (law enforcement / regulations)
 - journalist (OSINT)
 """
-from enum import Enum
-from typing import List
+from enum import StrEnum
+
 from fastapi import Depends, HTTPException, status
+
 from app.core.security import get_current_user_payload
 
 
-class Role(str, Enum):
+class Role(StrEnum):
     """Типи ролей у системі."""
+
     ADMIN = "admin"
     ANALYST = "analyst"
     GUEST = "guest"
@@ -27,11 +28,15 @@ class Role(str, Enum):
     JOURNALIST = "journalist"
 
 
-class Permission(str, Enum):
+class Permission(StrEnum):
     """Можливі дії (прав доступу) в системі."""
+
     READ_CORP_DATA = "read:corp_data"
     WRITE_CORP_DATA = "write:corp_data"
+    READ_COMPANIES = "read:companies"
     READ_CUSTOMS = "read:customs"
+    READ_INTEL = "read:intel"
+    RUN_ANALYTICS = "run:analytics"
     RUN_GRAPH = "run:graph"
     VIEW_WARROOM = "view:warroom"
     EDIT_TENANT = "edit:tenant"
@@ -39,26 +44,34 @@ class Permission(str, Enum):
 
 
 # Матриця дозвілів: Роль -> Список прав
-ROLE_PERMISSIONS: dict[Role, List[Permission]] = {
-    Role.ADMIN: [p for p in Permission],  # Всі права
+ROLE_PERMISSIONS: dict[Role, list[Permission]] = {
+    Role.ADMIN: list(Permission),  # Всі права
     Role.ANALYST: [
         Permission.READ_CORP_DATA,
+        Permission.READ_COMPANIES,
         Permission.READ_CUSTOMS,
+        Permission.READ_INTEL,
+        Permission.RUN_ANALYTICS,
         Permission.RUN_GRAPH,
         Permission.VIEW_WARROOM,
     ],
     Role.BUSINESS: [
         Permission.READ_CORP_DATA,
+        Permission.RUN_ANALYTICS,
         Permission.RUN_GRAPH,
     ],
     Role.BANK: [
         Permission.READ_CORP_DATA,
+        Permission.READ_COMPANIES,
         Permission.READ_CUSTOMS,
+        Permission.RUN_ANALYTICS,
         Permission.RUN_GRAPH,
     ],
     Role.GOV: [
         Permission.READ_CORP_DATA,
+        Permission.READ_COMPANIES,
         Permission.READ_CUSTOMS,
+        Permission.RUN_ANALYTICS,
         Permission.RUN_GRAPH,
         Permission.VIEW_WARROOM,
     ],
@@ -72,35 +85,34 @@ ROLE_PERMISSIONS: dict[Role, List[Permission]] = {
 }
 
 
-def require_permissions(required_permissions: List[Permission]):
-    """
-    Dependency, що перевіряє наявність усіх необхідних прав у токені користувача.
+def require_permissions(required_permissions: list[Permission]):
+    """Dependency, що перевіряє наявність усіх необхідних прав у токені користувача.
     """
     def permission_checker(payload: dict = Depends(get_current_user_payload)) -> dict:
         user_role_str = payload.get("role")
         if not user_role_str:
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN, 
+                status_code=status.HTTP_403_FORBIDDEN,
                 detail="Відсутня роль у токені"
             )
-            
+
         try:
             user_role = Role(user_role_str)
-        except ValueError:
+        except ValueError as e:
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN, 
+                status_code=status.HTTP_403_FORBIDDEN,
                 detail="Некоректна роль у токені"
-            )
-            
+            ) from e
+
         user_perms = ROLE_PERMISSIONS.get(user_role, [])
-        
+
         for required in required_permissions:
             if required not in user_perms:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail=f"Недостатньо прав. Потрібно: {required.value}"
                 )
-                
+
         return payload
-        
+
     return permission_checker

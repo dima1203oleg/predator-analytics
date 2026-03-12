@@ -1,21 +1,17 @@
-"""
-Dependencies Module — PREDATOR Analytics v55.1 Ironclad.
+"""Dependencies Module — PREDATOR Analytics v55.1 Ironclad.
 
 Common dependencies for FastAPI routes.
 """
-from typing import AsyncGenerator, Dict
 
 from fastapi import Depends, HTTPException, Request, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_db
+from app.core.permissions import ROLE_PERMISSIONS, Permission, Role
 from app.core.security import get_current_user_payload
-from app.core.permissions import Role, ROLE_PERMISSIONS, Permission
 
 
 async def get_current_active_user(
-    payload: Dict = Depends(get_current_user_payload)
-) -> Dict:
+    payload: dict = Depends(get_current_user_payload)
+) -> dict:
     """Перевірка, чи користувач активний (payload-based)."""
     # У повному продакшені ми б звіряли з БД, але для Ironclad stateless JWT:
     if not payload.get("is_active", True):
@@ -32,13 +28,13 @@ async def get_tenant_id(request: Request) -> str:
 
 
 class PermissionChecker:
+    """Клас-залежність для перевірки прав доступу.
     """
-    Клас-залежність для перевірки прав доступу.
-    """
+
     def __init__(self, required_permissions: list[Permission]):
         self.required_permissions = required_permissions
 
-    def __call__(self, payload: Dict = Depends(get_current_user_payload)):
+    def __call__(self, payload: dict = Depends(get_current_user_payload)):
         user_role_str = payload.get("role")
         if not user_role_str:
             raise HTTPException(
@@ -47,11 +43,11 @@ class PermissionChecker:
             )
         try:
             user_role = Role(user_role_str)
-        except ValueError:
+        except ValueError as e:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Некоректна роль у токені"
-            )
+            ) from e
 
         user_perms = ROLE_PERMISSIONS.get(user_role, [])
         for perm in self.required_permissions:

@@ -21,7 +21,7 @@ DB_URL = os.environ.get("DATABASE_URL", DEFAULT_DB_URL)
 if "postgresql+asyncpg" in DB_URL:
     DB_URL = DB_URL.replace("postgresql+asyncpg", "postgresql")
 
-CSV_FILE = "Березень_2024.csv"
+CSV_FILE = "/Users/dima-mac/Documents/Predator_21/Березень_2024.csv"
 TENANT_ID = "a0000000-0000-0000-0000-000000000001"
 
 def get_engine():
@@ -58,6 +58,16 @@ def process_declarations_batch(df_batch, tenant_id):
     silver_df['uktzed_code'] = df_batch['Код товару'].fillna(0).astype(str)
     silver_df['goods_description'] = df_batch['Опис товару']
     
+    # Weights and Value
+    silver_df['net_weight_kg'] = pd.to_numeric(df_batch['Маса, нетто, кг'].replace('#N/A', 0), errors='coerce').fillna(0)
+    silver_df['gross_weight_kg'] = pd.to_numeric(df_batch['Маса, брутто, кг'].replace('#N/A', 0), errors='coerce').fillna(0)
+    
+    # Calculate Customs Value: Price per kg * Net Weight
+    price_per_kg = pd.to_numeric(df_batch['Розрахункова митна вартість, нетто дол. США / кг'].replace('#N/A', 0), errors='coerce').fillna(0)
+    silver_df['customs_value_usd'] = price_per_kg * silver_df['net_weight_kg']
+    
+    silver_df['country_origin'] = df_batch['Країна походження']
+
     # Meta
     silver_df['tenant_id'] = tenant_id
 
@@ -89,6 +99,9 @@ def ingest():
     # Ensure gold schema exists (if not done by init.sql)
     with engine.connect() as conn:
         conn.execute(text("CREATE SCHEMA IF NOT EXISTS gold;"))
+        # Set tenant for RLS
+        conn.execute(text(f"SET app.current_tenant = '{TENANT_ID}';"))
+        conn.execute(text("SET search_path TO public, gold;"))
         conn.commit()
 
     chunk_size = 5000
@@ -110,11 +123,14 @@ def ingest():
             
             # UPSERT Companies
             with engine.connect() as conn:
+                conn.execute(text(f"SET app.current_tenant = '{TENANT_ID}';"))
                 for _, row in companies_batch.iterrows():
                     sql = text("""
                         INSERT INTO companies (name, edrpou, ueid, tenant_id, status)
                         VALUES (:name, :edrpou, :ueid, :tenant_id, :status)
-                        ON CONFLICT (ueid) DO NOTHING;
+                        ON CONFLICT (ueid) DO UPDATE SET
+                            name = EXCLUDED.name,
+                            updated_at = NOW();
                     """)
                     conn.execute(sql, row.to_dict())
                 conn.commit()
@@ -122,16 +138,16 @@ def ingest():
             # 2. Process Declarations (Silver)
             declarations_batch = process_declarations_batch(df_chunk, TENANT_ID)
             
-            # UPSERT Declarations
             with engine.connect() as conn:
+                conn.execute(text(f"SET app.current_tenant = '{TENANT_ID}';"))
                 for _, row in declarations_batch.iterrows():
                     # Handle None values for SQL
                     params = {k: (None if pd.isna(v) else v) for k, v in row.to_dict().items()}
                     
                     sql = text("""
                         INSERT INTO declarations 
-                        (declaration_number, declaration_date, direction, importer_ueid, importer_name, importer_edrpou, exporter_name, exporter_country, uktzed_code, goods_description, tenant_id)
-                        VALUES (:declaration_number, :declaration_date, :direction, :importer_ueid, :importer_name, :importer_edrpou, :exporter_name, :exporter_country, :uktzed_code, :goods_description, :tenant_id)
+                        (declaration_number, declaration_date, direction, importer_ueid, importer_name, importer_edrpou, exporter_name, exporter_country, uktzed_code, goods_description, net_weight_kg, gross_weight_kg, customs_value_usd, country_origin, tenant_id)
+                        VALUES (:declaration_number, :declaration_date, :direction, :importer_ueid, :importer_name, :importer_edrpou, :exporter_name, :exporter_country, :uktzed_code, :goods_description, :net_weight_kg, :gross_weight_kg, :customs_value_usd, :country_origin, :tenant_id)
                         ON CONFLICT (declaration_number) DO NOTHING;
                     """)
                     conn.execute(sql, params)

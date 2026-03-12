@@ -32,66 +32,6 @@ interface DashboardBuilderProps {
 // Generate unique ID
 const generateId = () => `widget_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-// Mock data generator for widgets with LOCALIZED DATA
-const generateMockData = (type: WidgetType): any => {
-  switch (type) {
-    case 'kpi_card':
-      return { value: '$1.2M', trend: 12, subValue: premiumLocales.dashboardBuilder.mockData.vsLastMonth };
-    case 'gauge':
-      return { value: 78, max: 100 };
-    case 'area_chart':
-    case 'line_chart':
-      return {
-        series: [
-          { name: 'Січ', value: 4000 },
-          { name: 'Лют', value: 3000 },
-          { name: 'Бер', value: 5000 },
-          { name: 'Кві', value: 4500 },
-          { name: 'Тра', value: 6000 },
-          { name: 'Чер', value: 5500 }
-        ]
-      };
-    case 'bar_chart':
-      return {
-        series: [
-          { name: premiumLocales.dashboardBuilder.mockData.categories.electronics, value: 4000 },
-          { name: premiumLocales.dashboardBuilder.mockData.categories.transport, value: 3000 },
-          { name: premiumLocales.dashboardBuilder.mockData.categories.products, value: 2000 },
-          { name: premiumLocales.dashboardBuilder.mockData.categories.chemistry, value: 2780 }
-        ]
-      };
-    case 'pie_chart':
-      return {
-        series: [
-          { name: premiumLocales.dashboardBuilder.mockData.operations.import, value: 400 },
-          { name: premiumLocales.dashboardBuilder.mockData.operations.export, value: 300 },
-          { name: premiumLocales.dashboardBuilder.mockData.operations.transit, value: 200 },
-          { name: premiumLocales.dashboardBuilder.mockData.operations.reexport, value: 100 }
-        ]
-      };
-    case 'radar_chart':
-      return {
-        series: [
-          { subject: premiumLocales.dashboardBuilder.mockData.subjects.risk, value: 80 },
-          { subject: premiumLocales.dashboardBuilder.mockData.subjects.volume, value: 65 },
-          { subject: premiumLocales.dashboardBuilder.mockData.subjects.value, value: 90 },
-          { subject: premiumLocales.dashboardBuilder.mockData.subjects.frequency, value: 70 },
-          { subject: premiumLocales.dashboardBuilder.mockData.subjects.compliance, value: 85 }
-        ]
-      };
-    case 'table':
-      return {
-        columns: ['ID', premiumLocales.dashboardBuilder.mockData.table.company, premiumLocales.dashboardBuilder.mockData.subjects.value, premiumLocales.dashboardBuilder.mockData.table.status],
-        rows: [
-          { ID: '001', [premiumLocales.dashboardBuilder.mockData.table.company]: 'Альфа Корп', [premiumLocales.dashboardBuilder.mockData.subjects.value]: '$120K', [premiumLocales.dashboardBuilder.mockData.table.status]: premiumLocales.dashboardBuilder.mockData.table.active },
-          { ID: '002', [premiumLocales.dashboardBuilder.mockData.table.company]: 'Бета ТОВ', [premiumLocales.dashboardBuilder.mockData.subjects.value]: '$85K', [premiumLocales.dashboardBuilder.mockData.table.status]: premiumLocales.dashboardBuilder.mockData.table.pending },
-          { ID: '003', [premiumLocales.dashboardBuilder.mockData.table.company]: 'Гамма Інк', [premiumLocales.dashboardBuilder.mockData.subjects.value]: '$200K', [premiumLocales.dashboardBuilder.mockData.table.status]: premiumLocales.dashboardBuilder.mockData.table.active }
-        ]
-      };
-    default:
-      return { series: [] };
-  }
-};
 
 export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
   initialDashboard,
@@ -153,7 +93,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
       const res = await apiClient.get(
         `/premium/widget-data?type=${config.type}&source=${config.dataSource || 'customs_registry'}`
       );
-      const data = res.data ?? generateMockData(config.type);
+      const data = res.data ?? null;
 
       setWidgetData(prev => ({
         ...prev,

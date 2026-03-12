@@ -1,10 +1,11 @@
-"""
-AI Service — PREDATOR Analytics v55.1 Ironclad.
+"""AI Service — PREDATOR Analytics v55.1 Ironclad.
 
 LiteLLM wrapper for Copilot, RAG, and automated insights.
 """
+from typing import Any
+
 import httpx
-from typing import Optional, Dict, Any, List
+
 from app.config import get_settings
 
 settings = get_settings()
@@ -12,8 +13,8 @@ settings = get_settings()
 class AIService:
     @staticmethod
     async def chat_completion(
-        messages: List[Dict[str, str]], 
-        model: Optional[str] = None
+        messages: list[dict[str, str]],
+        model: str | None = None
     ) -> str:
         """Виклик LiteLLM для отримання відповіді."""
         try:
@@ -28,28 +29,25 @@ class AIService:
                     },
                     timeout=60.0
                 )
-                 
+
                  if response.status_code == 200:
                      result = response.json()
                      return result["choices"][0]["message"]["content"]
-                 
+
                  error_msg = f"AI Error: {response.status_code} - {response.text}"
-                 print(error_msg)
                  return error_msg
         except Exception as e:
-            error_msg = f"AI Exception: {str(e)}"
-            print(error_msg)
+            error_msg = f"AI Exception: {e!s}"
             return error_msg
         return "AI Error: Unexpected path"
 
     @staticmethod
-    async def generate_insight(prompt: str, context: Optional[Dict[str, Any]] = None) -> str:
-        """
-        Виклик Sovereign Advisor через MCP Router (v55.2).
+    async def generate_insight(prompt: str, context: dict[str, Any] | None = None) -> str:
+        """Виклик Sovereign Advisor через MCP Router (v55.2).
         Використовується для складної аналітики та інтерпретації ризиків.
         """
         mcp_url = settings.MCP_ROUTER_URL or "http://mcp-router:8080/v1/query"
-        
+
         async with httpx.AsyncClient() as client:
             try:
                 response = await client.post(
@@ -64,19 +62,17 @@ class AIService:
                 if response.status_code == 200:
                     result = response.json()
                     return result.get("content", "Помилка: Пуста відповідь від Advisor")
-                
+
                 error_msg = f"Advisor Unreachable: {response.status_code}"
-                print(error_msg)
                 return error_msg
             except Exception as e:
-                error_msg = f"Advisor Exception: {str(e)}"
-                print(error_msg)
+                error_msg = f"Advisor Exception: {e!s}"
                 return error_msg
-        
+
         return "Advisor Error: Unexpected path"
 
     @staticmethod
-    async def get_embeddings(text: str) -> List[float]:
+    async def get_embeddings(text: str) -> list[float]:
         """Отримання векторних ембедінгів для тексту."""
         try:
             async with httpx.AsyncClient() as client:
@@ -91,11 +87,9 @@ class AIService:
                 if response.status_code == 200:
                     result = response.json()
                     return result["data"][0]["embedding"]
-                
-                print(f"Embedding Error: {response.status_code}")
+
                 return [0.0] * 1536
-        except Exception as e:
-            print(f"Embedding Exception: {str(e)}")
+        except Exception:
             return [0.0] * 1536
-        
+
         return [0.0] * 1536

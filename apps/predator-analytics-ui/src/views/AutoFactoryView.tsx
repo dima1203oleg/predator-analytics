@@ -19,8 +19,10 @@ import {
     GitMerge,
     HardDrive,
     Layers,
+    Lock,
     Play,
     RefreshCw,
+    Scale,
     Shield,
     Sparkles,
     Terminal,
@@ -232,7 +234,7 @@ const AutoFactoryView: React.FC = () => {
                     stats={[
                         { label: 'Статус', value: isRunning ? 'АКТИВНИЙ' : 'ПАУЗА', icon: <Activity size={14} />, color: isRunning ? 'success' : 'warning', animate: isRunning },
                         { label: 'Покоління', value: `v${generation}.0`, icon: <GitMerge size={14} />, color: 'primary' },
-                        { label: 'Цикл', value: `#${cycle}`, icon: <RefreshCw size={14} />, color: 'indigo' },
+                        { label: 'Цикл', value: `#${cycle}`, icon: <RefreshCw size={14} />, color: 'primary' },
                     ]}
                     actions={
                         <div className="flex gap-4">

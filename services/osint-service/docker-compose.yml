@@ -1,0 +1,57 @@
+# PREDATOR OSINT Service — Docker Compose
+# Локальна розробка та тестування
+
+version: "3.8"
+
+services:
+  osint-service:
+    build:
+      context: ../..
+      dockerfile: services/osint-service/Dockerfile
+    container_name: predator-osint-service
+    ports:
+      - "8002:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://predator:predator@postgres:5432/predator
+      - REDIS_URL=redis://redis:6379/2
+      - KAFKA_BOOTSTRAP_SERVERS=redpanda:9092
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-predator}
+      - DEBUG=false
+    depends_on:
+      - redis
+    networks:
+      - predator-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "2"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    container_name: predator-osint-redis
+    ports:
+      - "6381:6379"
+    volumes:
+      - osint_redis_data:/data
+    networks:
+      - predator-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+networks:
+  predator-network:
+    external: true
+
+volumes:
+  osint_redis_data:

@@ -23,11 +23,11 @@ const DocumentsView: React.FC = () => {
     const fetchDocuments = async () => {
         setLoading(true);
         try {
-            const response = await api.documents.list({
+            const response = await (api.documents as any).list({
                 limit: 100,
                 category: categoryFilter === 'all' ? undefined : categoryFilter
             });
-            setDocuments(response.documents || []);
+            setDocuments(response?.documents || []);
         } catch (e) {
             console.error(e);
             toast.error("Помилка", "Не вдалося завантажити базу знань.");

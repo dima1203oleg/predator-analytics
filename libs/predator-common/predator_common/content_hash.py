@@ -1,5 +1,4 @@
-"""
-Content Hash — Хешування вмісту для дедуплікації.
+"""Content Hash — Хешування вмісту для дедуплікації.
 
 Обчислює SHA-256 хеш від відсортованого JSON ключових полів.
 Якщо content_hash вже існує в БД → запис пропускається (не дублюється).
@@ -16,8 +15,7 @@ from typing import Any
 
 
 def compute_content_hash(data: dict[str, Any]) -> str:
-    """
-    Обчислює SHA-256 хеш від словника даних.
+    """Обчислює SHA-256 хеш від словника даних.
 
     Алгоритм:
     1. Видалити None значення
@@ -34,6 +32,7 @@ def compute_content_hash(data: dict[str, Any]) -> str:
     Приклад:
         >>> compute_content_hash({"edrpou": "12345678", "name": "ТОВ Ромашка"})
         'a1b2c3...'
+
     """
     # Видалити None та порожні значення
     filtered = {
@@ -72,8 +71,7 @@ def compute_declaration_hash(
     importer_edrpou: str | None,
     invoice_value_usd: float | None,
 ) -> str:
-    """
-    Хеш для митної декларації.
+    """Хеш для митної декларації.
 
     Args:
         declaration_number: Номер декларації
@@ -84,6 +82,7 @@ def compute_declaration_hash(
 
     Returns:
         SHA-256 hex рядок
+
     """
     return compute_content_hash({
         "declaration_number": declaration_number,

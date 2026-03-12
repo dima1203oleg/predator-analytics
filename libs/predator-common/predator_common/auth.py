@@ -1,12 +1,13 @@
+"""Shared Authentication & Authorization logic — PREDATOR Analytics v55.2.
 """
-Shared Authentication & Authorization logic — PREDATOR Analytics v55.2.
-"""
-from fastapi import Request, HTTPException, status
-from typing import Optional, List
+
+from fastapi import Request
+
 
 class User:
     """Уніфікована модель користувача для всіх сервісів."""
-    def __init__(self, id: str, email: str, role: str, tenant_id: str, permissions: List[str]):
+
+    def __init__(self, id: str, email: str, role: str, tenant_id: str, permissions: list[str]):
         self.id = id
         self.email = email
         self.role = role
@@ -14,8 +15,7 @@ class User:
         self.permissions = permissions
 
 async def get_current_user(request: Request) -> User:
-    """
-    Отримати поточного користувача з JWT токена.
+    """Отримати поточного користувача з JWT токена.
     Ця функція буде спільною для API та Worker-ів.
     """
     # У реальній реалізації тут буде декодування JWT

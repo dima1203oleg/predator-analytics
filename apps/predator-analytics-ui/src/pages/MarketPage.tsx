@@ -29,21 +29,6 @@ const tabs: { key: MarketTab; label: string; icon: React.ReactNode }[] = [
     { key: 'customs', label: 'Митниця', icon: <Globe2 size={18} /> },
 ];
 
-// Mock data for overview cards
-const overviewCards = [
-    { title: 'Декларації', value: '12,450', change: '+8.3%', positive: true, icon: FileText },
-    { title: 'Обсяг (USD)', value: '$850M', change: '+12.5%', positive: true, icon: TrendingUp },
-    { title: 'Компанії', value: '2,340', change: '+3.1%', positive: true, icon: Building2 },
-    { title: 'Товари ТОП', value: '847', change: '-1.2%', positive: false, icon: Package },
-];
-
-const topProducts = [
-    { code: '84713000', name: 'Портативні ЕОМ (ноутбуки)', value: '$45M', change: 12.5 },
-    { code: '85171200', name: 'Телефони стільникові', value: '$38M', change: -3.2 },
-    { code: '87032310', name: 'Автомобілі легкові', value: '$95M', change: 7.8 },
-    { code: '61091000', name: 'Футболки бавовняні', value: '$12M', change: 15.4 },
-    { code: '90213900', name: 'Медичні прилади', value: '$28M', change: 22.1 },
-];
 
 export default function MarketPage() {
     const [activeTab, setActiveTab] = useState<MarketTab>('overview');
@@ -148,20 +133,20 @@ interface MarketOverviewProps {
 }
 
 function MarketOverview({ data, loading }: MarketOverviewProps) {
-    // Fallback to mock data if no data yet
+    // Відображаємо реальні дані або порожній стан
     const displayCards = data?.overview?.stats ? [
-        { title: 'Митні декларації', value: data.overview.stats.total_declarations.toLocaleString(), change: '+8.3%', positive: true, icon: FileText },
-        { title: 'Обсяг ринку (USD)', value: `$${(data.overview.stats.total_value_usd / 1000000).toFixed(1)}M`, change: '+12.5%', positive: true, icon: TrendingUp },
-        { title: 'Активні компанії', value: data.overview.stats.active_companies.toLocaleString(), change: '+3.1%', positive: true, icon: Building2 },
-        { title: 'Номенклатура (SKU)', value: data.overview.stats.total_products.toLocaleString(), change: '-1.2%', positive: false, icon: Package },
-    ] : overviewCards;
+        { title: 'Митні декларації', value: data.overview.stats.total_declarations?.toLocaleString() || '0', change: `${data.overview.stats.declarations_change >= 0 ? '+' : ''}${data.overview.stats.declarations_change || 0}%`, positive: (data.overview.stats.declarations_change || 0) >= 0, icon: FileText },
+        { title: 'Обсяг ринку (USD)', value: data.overview.stats.total_value_usd ? `$${(data.overview.stats.total_value_usd / 1000000).toFixed(1)}M` : '$0', change: `${data.overview.stats.value_change >= 0 ? '+' : ''}${data.overview.stats.value_change || 0}%`, positive: (data.overview.stats.value_change || 0) >= 0, icon: TrendingUp },
+        { title: 'Активні компанії', value: data.overview.stats.active_companies?.toLocaleString() || '0', change: `${data.overview.stats.companies_change >= 0 ? '+' : ''}${data.overview.stats.companies_change || 0}%`, positive: (data.overview.stats.companies_change || 0) >= 0, icon: Building2 },
+        { title: 'Номенклатура (SKU)', value: data.overview.stats.total_products?.toLocaleString() || '0', change: `${data.overview.stats.products_change >= 0 ? '+' : ''}${data.overview.stats.products_change || 0}%`, positive: (data.overview.stats.products_change || 0) >= 0, icon: Package },
+    ] : [];
 
     const displayProducts = data?.overview?.top_products?.map((p: any) => ({
         code: p.product_code,
         name: p.product_name,
-        value: `$${(p.total_value_usd / 1000000).toFixed(1)}M`,
+        value: p.total_value_usd ? `$${(p.total_value_usd / 1000000).toFixed(1)}M` : '$0',
         change: p.growth_rate || 0
-    })) || topProducts;
+    })) || [];
 
     return (
         <div className="space-y-6">

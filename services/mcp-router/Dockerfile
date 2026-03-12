@@ -18,7 +18,7 @@ FROM python:3.12-slim-bookworm AS runtime
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH="/home/predator/.local/bin:$PATH" \
-    PYTHONPATH="/app"
+    PYTHONPATH="/app:/libs/predator-common:/app/services/shared"
 
 RUN groupadd -g 10001 predator && \
     useradd -u 10001 -g predator -s /bin/sh -m predator && \

@@ -1,5 +1,4 @@
-"""
-UEID — Universal Entity ID Generator.
+"""UEID — Universal Entity ID Generator.
 
 Генерує детермінований, глобально унікальний ідентифікатор
 для компаній та фізичних осіб на основі SHA-256 хешу
@@ -14,7 +13,6 @@ UEID — Universal Entity ID Generator.
 import hashlib
 import re
 import unicodedata
-from typing import Optional
 
 
 def _normalize_text(text: str) -> str:
@@ -31,8 +29,7 @@ def _normalize_text(text: str) -> str:
 
 
 def _normalize_company_name(name: str) -> str:
-    """
-    Нормалізація назви компанії.
+    """Нормалізація назви компанії.
 
     Приклад:
         'Товариство з обмеженою відповідальністю "Ромашка-Трейд"'
@@ -56,25 +53,24 @@ def _normalize_company_name(name: str) -> str:
 
 
 def generate_ueid(canonical_string: str) -> str:
-    """
-    Генерує UEID з канонічного рядка через SHA-256.
+    """Генерує UEID з канонічного рядка через SHA-256.
 
     Args:
         canonical_string: Рядок у форматі 'entity_type:field1:field2:...'
 
     Returns:
         64-символьний hex рядок SHA-256 хешу
+
     """
     return hashlib.sha256(canonical_string.encode("utf-8")).hexdigest()
 
 
 def generate_company_ueid(
     name: str,
-    edrpou: Optional[str] = None,
-    address: Optional[str] = None,
+    edrpou: str | None = None,
+    address: str | None = None,
 ) -> str:
-    """
-    Генерує UEID для компанії.
+    """Генерує UEID для компанії.
 
     Якщо є ЄДРПОУ — використовує його як основний ідентифікатор.
     Якщо немає — fallback на нормалізовану назву + адрес.
@@ -90,6 +86,7 @@ def generate_company_ueid(
     Приклад:
         >>> generate_company_ueid("ТОВ Ромашка", "12345678")
         'a1b2c3...'
+
     """
     normalized_name = _normalize_company_name(name)
 
@@ -107,11 +104,10 @@ def generate_company_ueid(
 
 def generate_person_ueid(
     full_name: str,
-    inn: Optional[str] = None,
-    date_of_birth: Optional[str] = None,
+    inn: str | None = None,
+    date_of_birth: str | None = None,
 ) -> str:
-    """
-    Генерує UEID для фізичної особи.
+    """Генерує UEID для фізичної особи.
 
     Args:
         full_name: Повне ім'я (буде нормалізоване)
@@ -124,6 +120,7 @@ def generate_person_ueid(
     Приклад:
         >>> generate_person_ueid("Іванов Іван Іванович", "1234567890", "1980-05-15")
         'd4e5f6...'
+
     """
     normalized_name = _normalize_text(full_name)
 

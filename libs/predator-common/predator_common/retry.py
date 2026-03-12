@@ -1,5 +1,4 @@
-"""
-Retry — повторні спроби з exponential backoff.
+"""Retry — повторні спроби з exponential backoff.
 
 Використання:
     @retry_async(max_attempts=3, base_delay=1.0)
@@ -11,10 +10,10 @@ Retry — повторні спроби з exponential backoff.
 """
 
 import asyncio
+from collections.abc import Awaitable, Callable
 import functools
 import random
 import time
-from collections.abc import Awaitable, Callable
 from typing import Any, TypeVar
 
 T = TypeVar("T")
@@ -28,8 +27,7 @@ def retry_async(
     jitter: bool = True,
     retry_on: tuple[type[Exception], ...] = (Exception,),
 ) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[T]]]:
-    """
-    Декоратор для async функцій: exponential backoff retry.
+    """Декоратор для async функцій: exponential backoff retry.
 
     Args:
         max_attempts: Максимальна кількість спроб (включно з першою)
@@ -46,6 +44,7 @@ def retry_async(
         @retry_async(max_attempts=3, retry_on=(ConnectionError, TimeoutError))
         async def fetch_data() -> dict:
             ...
+
     """
     def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
         @functools.wraps(func)
@@ -85,8 +84,7 @@ def retry_sync(
     jitter: bool = True,
     retry_on: tuple[type[Exception], ...] = (Exception,),
 ) -> Callable[[Callable[..., T]], Callable[..., T]]:
-    """
-    Декоратор для sync функцій: exponential backoff retry.
+    """Декоратор для sync функцій: exponential backoff retry.
 
     Аргументи аналогічні до retry_async.
     """

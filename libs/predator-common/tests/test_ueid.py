@@ -1,6 +1,5 @@
 """Тести для генератора UEID."""
 
-import pytest
 from predator_common.ueid import (
     generate_company_ueid,
     generate_person_ueid,

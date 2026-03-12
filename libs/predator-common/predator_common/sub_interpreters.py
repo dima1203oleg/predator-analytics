@@ -1,5 +1,4 @@
-"""
-Sub-Interpreter Agent Orchestrator — PREDATOR Analytics v55.1 Ironclad.
+"""Sub-Interpreter Agent Orchestrator — PREDATOR Analytics v55.1 Ironclad.
 
 Реалізує AOIES (Agent Orchestrator with Isolated Execution Spaces),
 де кожен агент виконується в ізольованому суб-інтерпретаторі Python 3.12.
@@ -13,20 +12,20 @@ FR-009, FR-203: 20 агентів паралельно, CPU utilization > 80%
   - Дані передаються через channel / shared memory
 """
 
-import asyncio
-import json
-import logging
 from abc import ABC, abstractmethod
-from concurrent.futures import ProcessPoolExecutor, as_completed
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any, Optional
+import asyncio
+from concurrent.futures import ProcessPoolExecutor
+from dataclasses import dataclass
+from enum import StrEnum
+import logging
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-class AgentType(str, Enum):
+class AgentType(StrEnum):
     """Типи агентів AOIES."""
+
     RISK_SCORER = "risk_scorer"            # Обчислення CERS
     ENTITY_RESOLVER = "entity_resolver"    # Entity Resolution
     GRAPH_ANALYZER = "graph_analyzer"     # Аналіз графу Neo4j
@@ -40,6 +39,7 @@ class AgentType(str, Enum):
 @dataclass
 class AgentTask:
     """Задача для агента."""
+
     task_id: str
     agent_type: AgentType
     payload: dict[str, Any]
@@ -49,13 +49,14 @@ class AgentTask:
 @dataclass
 class AgentResult:
     """Результат виконання агента."""
+
     task_id: str
     agent_type: AgentType
     result: dict[str, Any]
     success: bool
-    error: Optional[str] = None
+    error: str | None = None
     duration_ms: float = 0.0
-    worker_pid: Optional[int] = None
+    worker_pid: int | None = None
 
 
 class BaseAgent(ABC):
@@ -74,8 +75,7 @@ class BaseAgent(ABC):
 
 
 def _agent_worker(task_data: dict[str, Any]) -> dict[str, Any]:
-    """
-    Функція-воркер, що виконується в окремому процесі.
+    """Функція-воркер, що виконується в окремому процесі.
 
     Отримує серіалізований AgentTask, виконує відповідний агент.
     Повертає серіалізований AgentResult.
@@ -84,8 +84,8 @@ def _agent_worker(task_data: dict[str, Any]) -> dict[str, Any]:
     максимальної сумісності. Для Python 3.12 interpreters API
     підключається через _try_subinterpreter().
     """
-    import time
     import os
+    import time
 
     start = time.monotonic()
     task_id = task_data["task_id"]
@@ -119,8 +119,7 @@ def _agent_worker(task_data: dict[str, Any]) -> dict[str, Any]:
 
 
 def _dispatch_agent(agent_type: str, payload: dict[str, Any]) -> dict[str, Any]:
-    """
-    Маршрутизатор задач по агентах.
+    """Маршрутизатор задач по агентах.
 
     Кожен агент ізольований у власному процесі.
     """
@@ -202,8 +201,7 @@ def _agent_anomaly_detector(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 class AgentOrchestrator:
-    """
-    Оркестратор агентів AOIES.
+    """Оркестратор агентів AOIES.
 
     Розподіляє задачі між воркерами (ProcessPoolExecutor).
     Максимальна паралельність = кількість CPU ядер.
@@ -225,7 +223,7 @@ class AgentOrchestrator:
 
     def __init__(self, max_workers: int = 8):
         self.max_workers = max_workers
-        self._executor: Optional[ProcessPoolExecutor] = None
+        self._executor: ProcessPoolExecutor | None = None
         logger.info(
             "Ініціалізація оркестратора",
             extra={"max_workers": max_workers},
@@ -244,14 +242,14 @@ class AgentOrchestrator:
         logger.info("Пул воркерів зупинено")
 
     async def dispatch(self, task: AgentTask) -> AgentResult:
-        """
-        Відправити задачу на обробку (async).
+        """Відправити задачу на обробку (async).
 
         Args:
             task: AgentTask з описом задачі
 
         Returns:
             AgentResult з результатом виконання
+
         """
         if not self._executor:
             self.start()
@@ -284,8 +282,7 @@ class AgentOrchestrator:
         tasks: list[AgentTask],
         max_concurrency: int = 20,
     ) -> list[AgentResult]:
-        """
-        Відправити пакет задач паралельно.
+        """Відправити пакет задач паралельно.
 
         Args:
             tasks: Список задач (FR-203: до 20 агентів паралельно)
@@ -293,6 +290,7 @@ class AgentOrchestrator:
 
         Returns:
             Список результатів у тому ж порядку, що й задачі
+
         """
         semaphore = asyncio.Semaphore(max_concurrency)
 

@@ -1,18 +1,18 @@
-from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional, List, Dict, Any
-from datetime import datetime, date
-from enum import Enum
+from datetime import date, datetime
+from enum import StrEnum
+
+from pydantic import BaseModel, ConfigDict, Field
 
 # --- Enums (v55.2 SM-EXTENDED) ---
 
-class RiskLevel(str, Enum):
+class RiskLevel(StrEnum):
     STABLE = "stable"        # 0..20
     WATCHLIST = "watchlist"  # 21..40
     ELEVATED = "elevated"    # 41..60
     HIGH_ALERT = "high"      # 61..80
     CRITICAL = "critical"    # 81..100
 
-class EntityStatus(str, Enum):
+class EntityStatus(StrEnum):
     ACTIVE = "active"
     SUSPENDED = "suspended"
     LIQUIDATED = "liquidated"
@@ -40,17 +40,17 @@ class Uncertainty(BaseModel):
 class CompanyResponse(BaseModel):
     ueid: str = Field(..., description="Унікальний ідентифікатор компанії")
     name: str = Field(..., description="Назва компанії")
-    edrpou: Optional[str] = Field(None, description="ЄДРПОУ")
+    edrpou: str | None = Field(None, description="ЄДРПОУ")
     status: EntityStatus
-    sector: Optional[str] = None
+    sector: str | None = None
     risk_level: RiskLevel
     risk_score: float = Field(..., description="Композитний балл CERS")
     cers_confidence: float = Field(..., description="Впевненість у розрахунку (0-1)")
-    
+
     # Деталізація ризику (опціонально для списків, обов'язково для профілю)
-    risk_details: Optional[CersComponents] = None
-    interpretation: Optional[str] = None
-    
+    risk_details: CersComponents | None = None
+    interpretation: str | None = None
+
     created_at: datetime
     updated_at: datetime
 
@@ -59,7 +59,7 @@ class CompanyResponse(BaseModel):
 class PersonResponse(BaseModel):
     ueid: str
     full_name: str
-    inn: Optional[str] = None
+    inn: str | None = None
     status: EntityStatus
     risk_level: RiskLevel
     risk_score: float
@@ -78,7 +78,7 @@ class SearchMeta(BaseModel):
     execution_time_ms: int
 
 class PaginatedCompanyResponse(BaseModel):
-    data: List[CompanyResponse]
+    data: list[CompanyResponse]
     meta: SearchMeta
 
 # --- Customs (aligned with declarations.py) ---
@@ -87,12 +87,12 @@ class DeclarationResponse(BaseModel):
     declaration_id: str
     declaration_number: str
     declaration_date: date
-    importer_ueid: Optional[str]
-    importer_name: Optional[str]
+    importer_ueid: str | None
+    importer_name: str | None
     hs_code: str
-    product_name_uk: Optional[str]
+    product_name_uk: str | None
     customs_value_usd: float
-    origin_country: Optional[str]
+    origin_country: str | None
     risk_score: float
 
     model_config = ConfigDict(from_attributes=True)

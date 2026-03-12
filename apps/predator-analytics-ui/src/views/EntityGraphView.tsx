@@ -29,58 +29,35 @@ interface Link {
   type: 'owner' | 'partner' | 'mention' | 'risk' | 'standard';
 }
 
-// === DATA GENERATOR (MOCK) FOR V55 ===
-const generateGraphData = (count = 100) => {
-  const nodes: Node[] = [];
-  const links: Link[] = [];
-  const types = ['company', 'person', 'document', 'alert', 'server', 'wallet'] as const;
-
-  // Central Hub Node
-  nodes.push({
-    id: 'predator_core',
-    label: 'PREDATOR AI CORE',
-    type: 'system',
-    riskScore: 0,
-    connections: count,
-    details: 'Головний аналітичний вузол системи. Збирає та обробляє всі графові зв\'язки.',
-    cluster: 0
-  });
-
-  // Target Node
-  nodes.push({
-    id: 'target_omega',
-    label: 'SYNDICATE OMEGA',
-    type: 'company',
-    riskScore: 98,
-    connections: 15,
-    details: 'Ціль #1. Високий ризик відмивання коштів через криптовалютні транзакції.',
-    cluster: 1
-  });
-
-  for (let i = 0; i < count; i++) {
-    const type = types[Math.floor(Math.random() * types.length)];
-    const risk = Math.floor(Math.random() * 100);
-    const id = `node_${i}`;
-
-    nodes.push({
-      id,
-      label: type === 'company' ? `LLC Ghost ${i}` : type === 'person' ? `Agent ${i}` : type === 'wallet' ? `0x${Math.random().toString(16).slice(2, 10)}...` : `${type.toUpperCase()} #${i}`,
-      type,
-      riskScore: risk,
-      connections: Math.floor(Math.random() * 8),
-      cluster: Math.floor(Math.random() * 6)
-    });
-
-    const targetId = Math.random() > 0.8 ? 'predator_core' : Math.random() > 0.6 ? 'target_omega' : `node_${Math.floor(Math.random() * i)}`;
-    links.push({
-      source: id,
-      target: targetId,
-      value: Math.random(),
-      type: risk > 80 ? 'risk' : 'standard'
-    });
+// === Завантаження графу з реального API ===
+const fetchGraphData = async (): Promise<{ nodes: Node[], links: Link[] }> => {
+  try {
+    const response = await fetch('/api/v1/graph/summary');
+    if (!response.ok) throw new Error('API unavailable');
+    const data = await response.json();
+    
+    const nodes: Node[] = (data.nodes || []).map((n: any) => ({
+      id: n.id || n.ueid,
+      label: n.label || n.name,
+      type: n.type || 'company',
+      riskScore: n.riskScore ?? n.risk_score ?? n.cers ?? 0,
+      connections: n.connections ?? n.degree ?? 0,
+      details: n.details || n.description,
+      cluster: n.cluster ?? 0,
+    }));
+    
+    const links: Link[] = (data.links || data.edges || []).map((l: any) => ({
+      source: l.source || l.from,
+      target: l.target || l.to,
+      value: l.value ?? l.weight ?? 1,
+      type: l.type || 'standard',
+    }));
+    
+    return { nodes, links };
+  } catch (err) {
+    console.warn('[EntityGraphView] API недоступний:', err);
+    return { nodes: [], links: [] };
   }
-
-  return { nodes, links };
 };
 
 // === 3D COMPONENTS ===
@@ -392,11 +369,12 @@ const EntityGraphView = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulated load for dramatic effect
-    setTimeout(() => {
-      setData(generateGraphData(120));
+    const loadGraph = async () => {
+      const graphData = await fetchGraphData();
+      setData(graphData);
       setLoading(false);
-    }, 1500);
+    };
+    loadGraph();
   }, []);
 
   const filteredData = useMemo(() => {

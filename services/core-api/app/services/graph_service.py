@@ -1,14 +1,15 @@
-"""
-Graph Service — PREDATOR Analytics v55.1 Ironclad.
+"""Graph Service — PREDATOR Analytics v55.1 Ironclad.
 
 Logic for graph analysis, carousels of influence, and relationship discovery.
 """
-from typing import List, Dict, Any
+from typing import Any
+
 from app.core.graph import graph_db
+
 
 class GraphService:
     @staticmethod
-    async def find_ultimate_beneficiaries(ueid: str, tenant_id: str) -> List[Dict[str, Any]]:
+    async def find_ultimate_beneficiaries(ueid: str, tenant_id: str) -> list[dict[str, Any]]:
         """Пошук кінцевих бенефіціарів (UBO) через ланцюжки власності."""
         query = """
         MATCH (c:Company {ueid: $ueid, tenant_id: $tenant_id})
@@ -19,7 +20,7 @@ class GraphService:
         return await graph_db.run_query(query, {"ueid": ueid, "tenant_id": tenant_id})
 
     @staticmethod
-    async def find_circular_ownership(tenant_id: str) -> List[Dict[str, Any]]:
+    async def find_circular_ownership(tenant_id: str) -> list[dict[str, Any]]:
         """Виявлення циклічного володіння (схема 'змійка')."""
         query = """
         MATCH (n:Company {tenant_id: $tenant_id})
@@ -29,7 +30,7 @@ class GraphService:
         return await graph_db.run_query(query, {"tenant_id": tenant_id})
 
     @staticmethod
-    async def find_risk_paths(start_ueid: str, end_ueid: str, tenant_id: str) -> List[Dict[str, Any]]:
+    async def find_risk_paths(start_ueid: str, end_ueid: str, tenant_id: str) -> list[dict[str, Any]]:
         """Пошук найкоротших шляхів між сутностями через ризикові вузли."""
         query = """
         MATCH (start {ueid: $start_ueid, tenant_id: $tenant_id}), (end {ueid: $end_ueid, tenant_id: $tenant_id})
@@ -39,7 +40,7 @@ class GraphService:
         return await graph_db.run_query(query, {"start_ueid": start_ueid, "end_ueid": end_ueid, "tenant_id": tenant_id})
 
     @staticmethod
-    async def get_influence_cluster(ueid: str, tenant_id: str) -> Dict[str, Any]:
+    async def get_influence_cluster(ueid: str, tenant_id: str) -> dict[str, Any]:
         """Отримання кластера впливу навколо сутності (2 кроки)."""
         query = """
         MATCH (n {ueid: $ueid, tenant_id: $tenant_id})

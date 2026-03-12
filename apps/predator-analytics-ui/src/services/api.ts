@@ -45,6 +45,7 @@ const fullSearchApi = {
 const fullV45Api = {
     ...monitoringApi,
     training: trainingApi,
+    /** DSPy Optimizer (namespace) */
     optimizer: optimizerApi,
     /** AI analysis / summarization for a query */
     analyze: async (query: string) => {
@@ -56,7 +57,18 @@ const fullV45Api = {
     getInsights: async () => {
         return (await v45Client.get('/analysis/insights')).data;
     },
-    trinity: trinityApi,
+    /** System status */
+    getSystemStatus: async () => {
+        return (await v45Client.get('/system/status')).data;
+    },
+    /** Notifications */
+    getNotifications: monitoringApi.getNotifications,
+    trinity: {
+        ...trinityApi,
+        getAuditLogs: async (limit: number = 50) => {
+            return (await v45Client.get(`/trinity/audit?limit=${limit}`)).data;
+        },
+    },
     azr: azrApi,
 };
 
@@ -71,8 +83,13 @@ export const api = {
     // ─── v45 namespace (monitoring + training + optimizer + analyze) ────────────
     v45: fullV45Api,
     azr: azrApi,
-    autonomy: autonomyApi,
+    autonomy: {
+        ...autonomyApi,
+        getHypotheses: async () => (await apiClient.get('/autonomy/hypotheses')).data,
+        getMetrics: async () => (await apiClient.get('/autonomy/metrics')).data,
+    },
     som: somApi,
+    competitors: competitorsApi,
     ingestion: ingestionApi,
 
     // ─── Intelligence / Premium ────────────────────────────────────────────────
@@ -194,6 +211,25 @@ export const api = {
 
     // ─── Connectors ────────────────────────────────────────────────────────────
     getConnectors: async () => (await apiClient.get('/connectors')).data,
+    deleteConnector: async (id: string) => (await apiClient.delete(`/connectors/${id}`)).data,
+
+    // ─── Documents ───────────────────────────────────────────────────────────────
+    documents: {
+        list: async () => (await apiClient.get('/documents')).data,
+        get: async (id: string) => (await apiClient.get(`/documents/${id}`)).data,
+        delete: async (id: string) => (await apiClient.delete(`/documents/${id}`)).data,
+        upload: async (file: File) => {
+            const formData = new FormData();
+            formData.append('file', file);
+            return (await apiClient.post('/documents/upload', formData)).data;
+        },
+    },
+
+    // ─── Deployment ──────────────────────────────────────────────────────────────
+    getEnvironments: async () => (await apiClient.get('/deployment/environments')).data,
+    getPipelines: async () => (await apiClient.get('/deployment/pipelines')).data,
+    syncEnvironment: async (envId: string) => (await apiClient.post(`/deployment/environments/${envId}/sync`)).data,
+    triggerPipeline: async (pipelineId: string) => (await apiClient.post(`/deployment/pipelines/${pipelineId}/trigger`)).data,
 
     // ─── Phase 11-15: Advanced APIs (Wrappers) ──────────────────────────────────
     warroom: {

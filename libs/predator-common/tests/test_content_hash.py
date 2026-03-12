@@ -1,6 +1,5 @@
 """Тести для content hash (дедуплікація)."""
 
-import pytest
 from predator_common.content_hash import compute_content_hash, compute_declaration_hash
 
 

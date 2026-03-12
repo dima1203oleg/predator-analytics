@@ -378,7 +378,7 @@ export const AutonomyDashboard: React.FC = () => {
           breadcrumbs={['СИНАПСИС', 'АВТОНОМІЯ', 'ЕВОЛЮЦІЯ']}
           stats={[
             { label: 'Статус', value: status?.phase_name || 'ОПТИМІЗАЦІЯ', icon: <Activity size={14} />, color: 'primary', animate: true },
-            { label: 'Покоління', value: `G${status?.generation || 0}`, icon: <GitBranch size={14} />, color: 'indigo' },
+            { label: 'Покоління', value: `G${status?.generation || 0}`, icon: <GitBranch size={14} />, color: 'primary' },
             { label: 'Цілісність', value: `${((status?.constitutional_compliance || 0) * 100).toFixed(0)}%`, icon: <Shield size={14} />, color: 'success' },
           ]}
           actions={
@@ -759,7 +759,7 @@ export const AutonomyDashboard: React.FC = () => {
 
                 <TacticalCard variant="holographic" title="СТАТИСТИЧНИЙ АГРЕГАТОР" className="panel-3d">
                   <div className="h-full flex items-center justify-center p-10">
-                    <ResponsiveCircle progress={successRate} />
+                    <ResponsiveCircle progress={(status?.success_rate ?? 0.92) * 100} />
                   </div>
                 </TacticalCard>
               </div>

@@ -1,6 +1,6 @@
 """AI/ML Services Package."""
-from .gpu_manager import GPUMemoryManager
-from .confidence_scorer import ConfidenceScoreCalculator
+from .gpu_memory_manager import GPUMemoryManager
+from .confidence_score import ConfidenceScoreCalculator
 from .decision_ledger import DecisionLedger
 from .cers_calculator import CERSCalculator
 from .litellm_config import LiteLLMConfig

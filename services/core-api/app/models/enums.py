@@ -1,28 +1,33 @@
-from enum import Enum
+from enum import StrEnum
 
-class EntityStatus(str, Enum):
+
+class EntityStatus(StrEnum):
     """Статуси компанії/особи."""
+
     ACTIVE = "active"
     TERMINATED = "terminated"
     BANKRUPT = "bankrupt"
     INACTIVE = "inactive"
 
-class RiskLevel(str, Enum):
+class RiskLevel(StrEnum):
     """Канонічний CERS Risk Level."""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
 
-class DeclarationType(str, Enum):
+class DeclarationType(StrEnum):
     """Типи митних декларацій."""
+
     IMPORT = "import"
     EXPORT = "export"
     TRANSIT = "transit"
     TEMPORARY = "temporary"
 
-class EventType(str, Enum):
+class EventType(StrEnum):
     """Типи подій (Neo4j relationships)."""
+
     FOUNDED = "founded"
     DIRECTOR = "director"
     OWNER = "owner"
