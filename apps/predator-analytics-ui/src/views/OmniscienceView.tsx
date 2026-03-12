@@ -34,6 +34,7 @@ import { cn } from '../utils/cn';
 import { premiumLocales } from '../locales/uk/premium';
 import { TacticalCard } from '../components/TacticalCard';
 import { CyberOrb } from '../components/CyberOrb';
+import { CyberGrid } from '../components/CyberGrid';
 import { HoloContainer } from '../components/HoloContainer';
 import { ViewHeader } from '../components/ViewHeader';
 import { TelegramIntelligencePanel } from '../components/premium/TelegramIntelligencePanel';

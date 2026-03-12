@@ -165,9 +165,9 @@ export function CompanyCERSDashboard() {
                             type: s.shap_value > 0 ? 'positive' : 'negative'
                         })).sort((a: any, b: any) => a.impact - b.impact),
                         score: profile.risk_score || 0,
-                        grade: profile.risk_level === 'critical' ? 'D' : profile.risk_level === 'high' ? 'C' : profile.risk_level === 'medium' ? 'B' : 'A',
-                        color: profile.risk_level === 'critical' ? 'text-rose-500' : profile.risk_level === 'high' ? 'text-amber-500' : profile.risk_level === 'medium' ? 'text-yellow-500' : 'text-emerald-500',
-                        ringColor: profile.risk_level === 'critical' ? 'stroke-rose-500' : profile.risk_level === 'high' ? 'stroke-amber-500' : profile.risk_level === 'medium' ? 'stroke-yellow-500' : 'stroke-emerald-500'
+                        grade: (profile as any).risk_level === 'critical' ? 'D' : (profile as any).risk_level === 'high' ? 'C' : (profile as any).risk_level === 'medium' ? 'B' : 'A',
+                        color: (profile as any).risk_level === 'critical' ? 'text-rose-500' : (profile as any).risk_level === 'high' ? 'text-amber-500' : (profile as any).risk_level === 'medium' ? 'text-yellow-500' : 'text-emerald-500',
+                        ringColor: (profile as any).risk_level === 'critical' ? 'stroke-rose-500' : (profile as any).risk_level === 'high' ? 'stroke-amber-500' : (profile as any).risk_level === 'medium' ? 'stroke-yellow-500' : 'stroke-emerald-500'
                     });
                 }
             } catch (error) {
@@ -191,9 +191,26 @@ export function CompanyCERSDashboard() {
         }, 1200);
     };
 
-    const displayRadar = companyData?.radar || generateDummyRadar(68);
-    const displayShap = companyData?.shap?.length > 0 ? companyData.shap : generateDummyShap();
-    const displayEvents = generateDummyEvents(); // Keep dummy for timeline as API might not have it yet
+    const displayRadar = companyData?.radar || [
+        { subject: 'Інституційний', A: 85, fullMark: 100 },
+        { subject: 'Структурний', A: 45, fullMark: 100 },
+        { subject: 'Поведінковий', A: 75, fullMark: 100 },
+        { subject: 'Впливовий', A: 60, fullMark: 100 },
+        { subject: 'Предиктивний', A: 65, fullMark: 100 },
+    ];
+    const displayShap = companyData?.shap?.length > 0 ? companyData.shap : [
+        { feature: 'Офшорні бенефіціари', impact: -0.15, type: 'negative' },
+        { feature: 'Судові справи', impact: -0.08, type: 'negative' },
+        { feature: 'Податковий борг', impact: -0.05, type: 'negative' },
+        { feature: 'Стабільний дохід', impact: 0.12, type: 'positive' },
+        { feature: 'Держзакупівлі', impact: 0.18, type: 'positive' },
+    ];
+    const displayEvents = [
+        { date: '2024-03-12', text: 'Виявлено зв\'язок з офшорною юрисдикцією (Кіпр)', type: 'alert' },
+        { date: '2024-02-28', text: 'Відкрито нове судове провадження (господарський суд)', type: 'warning' },
+        { date: '2024-01-15', text: 'Успішне виконання контракту з Міноборони', type: 'success' },
+        { date: '2023-11-05', text: 'Зміна керівника компанії', type: 'info' },
+    ];
     
     const cersGradeColor = companyData?.color || "text-amber-400";
     const cersRingColor = companyData?.ringColor || "stroke-amber-400";
@@ -361,7 +378,7 @@ export function CompanyCERSDashboard() {
                                 <h3 className="text-sm font-mono text-slate-400 mb-6 flex items-center gap-2">
                                     <GitBranch className="w-4 h-4" /> 5-ШАРОВА ОЦІНКА CERS
                                 </h3>
-                                <CERSRadarECharts data={CERS_RADAR_DATA} />
+                                <CERSRadarECharts data={displayRadar} />
                             </motion.div>
 
                             {/* SHAP Values Chart */}
@@ -369,7 +386,7 @@ export function CompanyCERSDashboard() {
                                 <h3 className="text-sm font-mono text-slate-400 mb-6 flex items-center gap-2">
                                     <Activity className="w-4 h-4" /> SHAP ДЕКОМПОЗИЦІЯ РИЗИКУ (ДРАЙВЕРИ)
                                 </h3>
-                                <SHAPChart data={SHAP_DATA} />
+                                <SHAPChart data={displayShap} />
                             </motion.div>
                         </div>
 
@@ -379,7 +396,7 @@ export function CompanyCERSDashboard() {
                                 <Clock className="w-4 h-4" /> ХРОНОЛОГІЯ ТА СИГНАЛИ
                             </h3>
                             <div className="flex flex-col gap-0 border-l px-4 border-slate-700/50 py-2 ml-4">
-                                {TIMELINE_EVENTS.map((event, i) => (
+                                {displayEvents.map((event: any, i: number) => (
                                     <div key={i} className="relative pb-6 last:pb-0">
                                         <div className={`absolute -left-[23px] top-1 w-3 h-3 rounded-full border-2 border-slate-900 ${event.type === 'alert' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]' :
                                             event.type === 'warning' ? 'bg-amber-500' :

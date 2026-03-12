@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     TrendingUp, TrendingDown, RefreshCw, Save,
     Play, Activity, Shield, Zap, Target, Layers,
-    Globe, Crosshair, BarChart3, ArrowUpRight, Flame
+    Globe, Crosshair, BarChart3, ArrowUpRight, Flame, Brain
 } from 'lucide-react';
 import ReactECharts from 'echarts-for-react';
 import { cn } from '../utils/cn';
