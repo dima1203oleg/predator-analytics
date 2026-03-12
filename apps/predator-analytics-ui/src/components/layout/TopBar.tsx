@@ -67,17 +67,20 @@ export const TopBar = () => {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const [sysMetrics, dbStats] = await Promise.allSettled([
+        const [sysMetrics, dbStats, alertsRes] = await Promise.allSettled([
           fetch('/api/v1/system/metrics').then(r => r.json()),
           fetch('/api/v1/database/stats').then(r => r.json()),
+          fetch('/api/v1/alerts?status=new').then(r => r.json())
         ]);
         const cpu = sysMetrics.status === 'fulfilled' ? Math.round(sysMetrics.value.cpu ?? 0) : 0;
         const memory = sysMetrics.status === 'fulfilled' ? Math.round(sysMetrics.value.memory ?? 0) : 0;
         const records = dbStats.status === 'fulfilled' ? (dbStats.value.postgresql?.records ?? 0) : 0;
+        const signals = sysMetrics.status === 'fulfilled' ? Math.round(sysMetrics.value.events_per_second * 3600 || 0) : 0;
+        const alerts = alertsRes.status === 'fulfilled' ? (alertsRes.value?.items?.length || 0) : 0;
 
         setCpuHistory(prev => [...prev.slice(1), cpu]);
-        setLiveMetrics({ cpu, memory, records, signals: Math.floor(Math.random() * 100) + 50 });
-        setAlertCount(Math.floor(Math.random() * 5));
+        setLiveMetrics({ cpu, memory, records, signals });
+        setAlertCount(alerts);
       } catch { }
     };
     fetchMetrics();

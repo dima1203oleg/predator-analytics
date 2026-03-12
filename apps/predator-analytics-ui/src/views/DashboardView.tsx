@@ -178,7 +178,10 @@ const DashboardView: React.FC = () => {
     const { isConnected } = useOmniscienceWS();
     const systemMetrics = useSystemMetrics();
     const [sovereignBriefingUeid, setSovereignBriefingUeid] = useState<string | null>('global-briefing-v55');
-    const [stats, setStats] = useState<any>(null);
+    const [engines, setEngines] = useState(ENGINES);
+    const [riskSectors, setRiskSectors] = useState(RISK_Sectors);
+    const [systemLogs, setSystemLogs] = useState(SYSTEM_LOGS);
+    const [alerts, setAlerts] = useState<any[]>([]);
     const [uptime, setUptime] = useState(0);
 
     useEffect(() => {
@@ -189,14 +192,48 @@ const DashboardView: React.FC = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                // Спроба отримати актуальний UEID для ранкового брифінгу
-                const news = await intelligenceApi.getMorningNewspaper();
-                if (news?.ueid) setSovereignBriefingUeid(news.ueid);
+                // Fetch actual data
+                const [newsRes, enginesRes, riskRes, alertsRes] = await Promise.allSettled([
+                    intelligenceApi.getMorningNewspaper(),
+                    fetch('/api/v1/system/engines').then(r => r.json()),
+                    fetch('/api/v1/risk/sectors').then(r => r.json()),
+                    fetch('/api/v1/alerts?status=new&limit=4').then(r => r.json())
+                ]);
+
+                if (newsRes.status === 'fulfilled' && newsRes.value?.ueid) {
+                    setSovereignBriefingUeid(newsRes.value.ueid);
+                }
+
+                if (enginesRes.status === 'fulfilled' && enginesRes.value?.items) {
+                     // update ENGINES
+                     const fetchedEngines = enginesRes.value.items;
+                     setEngines(prev => prev.map(e => {
+                         const match = fetchedEngines.find((fe: any) => fe.id === e.id);
+                         if (match) return { ...e, score: match.score, trend: match.trend, status: match.status };
+                         return e;
+                     }));
+                }
+
+                if (riskRes.status === 'fulfilled' && riskRes.value?.items) {
+                    setRiskSectors(riskRes.value.items.map((r: any) => ({
+                        label: localLocales.riskSectors[r.id as keyof typeof localLocales.riskSectors] || r.name,
+                        risk: r.score,
+                        level: r.score > 70 ? 'CRITICAL' : r.score > 40 ? 'WARNING' : 'STABLE'
+                    })));
+                }
+
+                if (alertsRes.status === 'fulfilled' && alertsRes.value?.items) {
+                    setAlerts(alertsRes.value.items.slice(0, 4));
+                }
+
             } catch (e) {
-                console.warn("Using default briefing UEID");
+                console.warn("Failed to fetch some dashboard data, using fallbacks", e);
             }
         };
+        
         fetchDashboardData();
+        const interval = setInterval(fetchDashboardData, 30000); // refresh every 30s
+        return () => clearInterval(interval);
     }, []);
 
     const formatUptime = (s: number) => {
@@ -281,17 +318,17 @@ const DashboardView: React.FC = () => {
 
                         {/* Analytical Engines Grid */}
                         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-6">
-                            {ENGINES.map((eng, i) => <EngineMetric key={eng.id} engine={eng} index={i} />)}
+                            {engines.map((eng, i) => <EngineMetric key={eng.id} engine={eng} index={i} />)}
                         </div>
 
                         {/* Global CERS 5-Layer Visualization */}
                         <Cers5LayerGauge
                             factors={{
-                                behavioral: (ENGINES.find(e => e.id === 'behavioral')?.score || 0) / 100,
-                                institutional: (ENGINES.find(e => e.id === 'institutional')?.score || 0) / 100,
-                                influence: (ENGINES.find(e => e.id === 'influence')?.score || 0) / 100,
-                                structural: (ENGINES.find(e => e.id === 'structural')?.score || 0) / 100,
-                                predictive: (ENGINES.find(e => e.id === 'predictive')?.score || 0) / 100,
+                                behavioral: (engines.find(e => e.id === 'behavioral')?.score || 0) / 100,
+                                institutional: (engines.find(e => e.id === 'institutional')?.score || 0) / 100,
+                                influence: (engines.find(e => e.id === 'influence')?.score || 0) / 100,
+                                structural: (engines.find(e => e.id === 'structural')?.score || 0) / 100,
+                                predictive: (engines.find(e => e.id === 'predictive')?.score || 0) / 100,
                             }}
                             totalScore={0.94}
                             className="bg-slate-900/20 p-8 rounded-[40px] border border-white/5"
@@ -330,7 +367,7 @@ const DashboardView: React.FC = () => {
                                     <Radar size={18} className="text-rose-400 animate-spin-slow" /> {localLocales.sections.riskMap}
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    {RISK_Sectors.map((sector, i) => <RiskTile key={i} data={sector} />)}
+                                    {riskSectors.map((sector, i) => <RiskTile key={i} data={sector} />)}
                                 </div>
                             </TacticalCard>
 
