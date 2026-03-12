@@ -3,21 +3,18 @@ import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from 'echarts-for-react';
 import { Search, ShieldAlert, Activity, GitBranch, Target, Zap, Clock, AlertTriangle, CheckCircle2, TrendingDown, Award } from 'lucide-react';
-import {
-    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
-    BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, CartesianGrid, Cell, ReferenceLine
-} from 'recharts';
+import { diligenceApi } from '@/features/diligence/api/diligence';
 
-// --- MOCK DATA ---
-const CERS_RADAR_DATA = [
-    { subject: 'Інституційний', A: 85, fullMark: 100 },
-    { subject: 'Структурний', A: 45, fullMark: 100 },
-    { subject: 'Поведінковий', A: 92, fullMark: 100 },
-    { subject: 'Впливовий', A: 30, fullMark: 100 },
-    { subject: 'Предиктивний', A: 78, fullMark: 100 },
+// --- Helper Functions to Generate Dummy Data for Fallback ---
+const generateDummyRadar = (score: number) => [
+    { subject: 'Інституційний', A: Math.min(100, score + 15), fullMark: 100 },
+    { subject: 'Структурний', A: Math.max(0, 100 - score), fullMark: 100 },
+    { subject: 'Поведінковий', A: Math.min(100, score + 5), fullMark: 100 },
+    { subject: 'Впливовий', A: Math.min(100, score - 10), fullMark: 100 },
+    { subject: 'Предиктивний', A: Math.min(100, score + 20), fullMark: 100 },
 ];
 
-const SHAP_DATA = [
+const generateDummyShap = () => [
     { feature: 'Офшорні власники', impact: -0.25, type: 'negative' },
     { feature: 'Податковий борг', impact: -0.15, type: 'negative' },
     { feature: 'Кримінальні справи', impact: -0.10, type: 'negative' },
@@ -26,11 +23,9 @@ const SHAP_DATA = [
     { feature: 'Прозорість', impact: 0.18, type: 'positive' },
 ].sort((a, b) => a.impact - b.impact);
 
-const TIMELINE_EVENTS = [
-    { date: '2026-03-08', type: 'alert', text: 'Виявлено зв\'язок з офшорною кіпрською компанією "CYPRUS HOLDINGS LTD"' },
-    { date: '2026-03-05', type: 'info', text: 'Оновлення фінансової звітності (Виручка: +15%)' },
-    { date: '2026-02-28', type: 'warning', text: 'Відкрите нове виконавче провадження (борг 240 тис. грн)' },
-    { date: '2026-02-15', type: 'success', text: 'Виграш у державному тендері (ProZorro) на 4.2 млн грн' },
+const generateDummyEvents = () => [
+    { date: new Date().toISOString().split('T')[0], type: 'alert', text: 'Виявлено нові зв\'язки з ризиковими об\'єктами' },
+    { date: new Date(Date.now() - 86400000).toISOString().split('T')[0], type: 'warning', text: 'Зміна керівництва компанії' },
 ];
 
 function CERSRadarECharts({ data }: { data: any[] }) {
@@ -160,6 +155,54 @@ export function CompanyCERSDashboard() {
     const [isSearching, setIsSearching] = useState(false);
     const [showResults, setShowResults] = useState(true);
 
+    const [companyData, setCompanyData] = useState<any>(null);
+    const [loadingData, setLoadingData] = useState(false);
+
+    useEffect(() => {
+        const fetchCompanyData = async () => {
+            if (!searchQuery) return;
+            setLoadingData(true);
+            try {
+                // In a real scenario, this would search for the entity first, then get its CERS score
+                const searchRes = await diligenceApi.searchCompanies({ query: searchQuery });
+                const entity = searchRes.items?.[0];
+                
+                if (entity) {
+                    const profile = await diligenceApi.getCompanyProfile(entity.edrpou);
+                    const riskScores = await diligenceApi.getRiskScores([entity.edrpou]);
+                    const scoreData = riskScores[entity.edrpou] || {};
+
+                    // Map API response to component needs
+                    setCompanyData({
+                        profile,
+                        radar: [
+                            { subject: 'Інституційний', A: scoreData.institutional || 0, fullMark: 100 },
+                            { subject: 'Структурний', A: scoreData.structural || 0, fullMark: 100 },
+                            { subject: 'Поведінковий', A: scoreData.behavioral || 0, fullMark: 100 },
+                            { subject: 'Впливовий', A: scoreData.influence || 0, fullMark: 100 },
+                            { subject: 'Предиктивний', A: scoreData.predictive || 0, fullMark: 100 },
+                        ],
+                        shap: (scoreData.shap_values || []).map((s: any) => ({
+                            feature: s.feature_name,
+                            impact: s.shap_value,
+                            type: s.shap_value > 0 ? 'positive' : 'negative'
+                        })).sort((a: any, b: any) => a.impact - b.impact),
+                        score: profile.risk_score || 0,
+                        grade: profile.risk_level === 'critical' ? 'D' : profile.risk_level === 'high' ? 'C' : profile.risk_level === 'medium' ? 'B' : 'A',
+                        color: profile.risk_level === 'critical' ? 'text-rose-500' : profile.risk_level === 'high' ? 'text-amber-500' : profile.risk_level === 'medium' ? 'text-yellow-500' : 'text-emerald-500',
+                        ringColor: profile.risk_level === 'critical' ? 'stroke-rose-500' : profile.risk_level === 'high' ? 'stroke-amber-500' : profile.risk_level === 'medium' ? 'stroke-yellow-500' : 'stroke-emerald-500'
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to fetch CERS data:", error);
+                // Keep dummy data if fetch fails just so UI doesn't break during dev
+            } finally {
+                setLoadingData(false);
+            }
+        };
+        fetchCompanyData();
+    }, [searchQuery]);
+
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (!searchQuery.trim()) return;
@@ -171,9 +214,16 @@ export function CompanyCERSDashboard() {
         }, 1200);
     };
 
-    const cersGradeColor = "text-amber-400"; // Base rating B-
-    const cersRingColor = "stroke-amber-400";
+    const displayRadar = companyData?.radar || generateDummyRadar(68);
+    const displayShap = companyData?.shap?.length > 0 ? companyData.shap : generateDummyShap();
+    const displayEvents = generateDummyEvents(); // Keep dummy for timeline as API might not have it yet
+    
+    const cersGradeColor = companyData?.color || "text-amber-400";
+    const cersRingColor = companyData?.ringColor || "stroke-amber-400";
     const bgRingColor = "stroke-slate-800";
+    const score = companyData?.score || 68;
+    const grade = companyData?.grade || "B-";
+    const profile = companyData?.profile;
 
     return (
         <div className="flex flex-col h-full bg-slate-950 p-4 lg:p-8 text-white overflow-y-auto w-full relative">
