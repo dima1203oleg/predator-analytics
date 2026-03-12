@@ -1,23 +1,24 @@
-"""
-XML Parser — PREDATOR Analytics v55.1 Ironclad.
+"""XML Parser — PREDATOR Analytics v55.1 Ironclad.
 
 Fast XML parsing for structured OSINT data using lxml or ElementTree.
 """
-import xml.etree.ElementTree as ET
-from typing import List, Dict, Any, Optional
+from typing import Any
+
+from defusedxml import ElementTree
+
 
 class XMLParser:
     @staticmethod
-    def parse_string(xml_data: str) -> Optional[Dict[str, Any]]:
+    def parse(xml_data: str) -> dict[str, Any]:
         """Парсинг XML рядка в словник (спрощено)."""
         try:
-            root = ET.fromstring(xml_data)
+            root = ElementTree.fromstring(xml_data)
             return XMLParser._element_to_dict(root)
-        except ET.ParseError:
-            return None
+        except ElementTree.ParseError:
+            return {}
 
     @staticmethod
-    def _element_to_dict(element: ET.Element) -> Dict[str, Any]:
+    def _element_to_dict(element: ElementTree.Element) -> dict[str, Any]:
         """Рекурсивне перетворення XML елемента в словник."""
         result = {}
         for child in element:

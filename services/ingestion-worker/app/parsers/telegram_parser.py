@@ -1,16 +1,15 @@
-"""
-Telegram Parser — PREDATOR Analytics v55.1 Ironclad.
+"""Telegram Parser — PREDATOR Analytics v55.1 Ironclad.
 
 Extracting intelligence from Telegram channels and groups.
 """
 import re
-from typing import List, Dict, Any, Optional
+from typing import Any
+
 
 class TelegramParser:
     @staticmethod
-    def parse_message(text: str) -> Dict[str, Any]:
-        """
-        Вилучення сутностей з тексту повідомлення Telegram.
+    def parse_message(text: str) -> dict[str, Any]:
+        """Вилучення сутностей з тексту повідомлення Telegram.
         Шукає ЄДРПОУ, назви компаній, суми, дати.
         """
         entities = {
