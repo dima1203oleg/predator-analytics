@@ -5,12 +5,17 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEPLOY_DIR="$(dirname "$SCRIPT_DIR")"
 
 echo "🚀 [1/6] Starting local k3d cluster..."
-k3d cluster create predator-local \
-  -p "80:80@loadbalancer" \
-  -p "443:443@loadbalancer" \
-  -p "3030:3030@loadbalancer" \
-  --k3s-arg "--disable=traefik@server:0" \
-  2>/dev/null || k3d cluster start predator-local
+if k3d cluster list | grep -q "predator-local"; then
+  echo "Cluster already exists, starting it..."
+  k3d cluster start predator-local
+else
+  echo "Creating new cluster..."
+  k3d cluster create predator-local \
+    -p "80:80@loadbalancer" \
+    -p "443:443@loadbalancer" \
+    -p "3030:3030@loadbalancer" \
+    --k3s-arg "--disable=traefik@server:0"
+fi
 
 echo "🔄 [2/6] Switching kubectl context..."
 kubectl config use-context k3d-predator-local
