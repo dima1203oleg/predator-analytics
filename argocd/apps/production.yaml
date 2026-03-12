@@ -1,0 +1,37 @@
+# ArgoCD Application — Production Environment
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-production
+  namespace: argocd
+  labels:
+    predator.io/environment: production
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/dima1203oleg/predator-analytics"
+    targetRevision: main
+    path: infra/helm/umbrella
+    helm:
+      valueFiles:
+        - values.yaml
+        - values-prod.yaml
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: predator-v55
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 5m

@@ -1,0 +1,36 @@
+# ArgoCD Application — Dev Environment
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-dev
+  namespace: argocd
+  labels:
+    predator.io/environment: dev
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/dima1203oleg/predator-analytics"
+    targetRevision: develop
+    path: infra/helm/umbrella
+    helm:
+      valueFiles:
+        - values.yaml
+        - values-dev.yaml
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: predator-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

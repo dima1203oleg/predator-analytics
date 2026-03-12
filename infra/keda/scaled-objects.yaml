@@ -1,0 +1,86 @@
+# PREDATOR v56.0 — Enhanced KEDA ScaledObjects
+# Core API — HTTP-based autoscaling
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: core-api-scaler
+  namespace: predator-v55
+spec:
+  scaleTargetRef:
+    name: core-api
+  minReplicaCount: 2
+  maxReplicaCount: 10
+  cooldownPeriod: 60
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus-kube-prometheus-prometheus.monitoring:9090
+        metricName: http_requests_per_second
+        query: sum(rate(http_requests_total{job="predator-core-api"}[2m]))
+        threshold: "50"
+---
+# Graph Service — query queue depth
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: graph-service-scaler
+  namespace: predator-v55
+spec:
+  scaleTargetRef:
+    name: graph-service
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  cooldownPeriod: 120
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus-kube-prometheus-prometheus.monitoring:9090
+        metricName: neo4j_active_queries
+        query: sum(neo4j_bolt_connections_running{job="predator-graph-service"})
+        threshold: "10"
+---
+# Cerebro — LLM inference queue
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: cerebro-scaler
+  namespace: predator-v55
+spec:
+  scaleTargetRef:
+    name: cerebro
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  cooldownPeriod: 60
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus-kube-prometheus-prometheus.monitoring:9090
+        metricName: llm_inference_queue_depth
+        query: sum(ml_inference_queue_size{service="cerebro"})
+        threshold: "5"
+---
+# Ingestion Worker — Kafka lag (розширена версія)
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: ingestion-worker-scaler
+  namespace: predator-v55
+spec:
+  scaleTargetRef:
+    name: ingestion-worker
+  minReplicaCount: 0
+  maxReplicaCount: 20
+  cooldownPeriod: 300
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: predator-v55-redpanda:9092
+        consumerGroup: ingestion-workers
+        topic: ingestion-triggers
+        lagThreshold: "10"
+    - type: kafka
+      metadata:
+        bootstrapServers: predator-v55-redpanda:9092
+        consumerGroup: ingestion-workers
+        topic: customs-data-raw
+        lagThreshold: "100"

@@ -1,0 +1,25 @@
+# PREDATOR v56.0 — ArgoCD App of Apps Pattern
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-app-of-apps
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/dima1203oleg/predator-analytics"
+    targetRevision: main
+    path: argocd/apps
+    directory:
+      recurse: false
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

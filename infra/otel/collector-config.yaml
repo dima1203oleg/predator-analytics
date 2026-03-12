@@ -1,0 +1,157 @@
+# ═══════════════════════════════════════════════════════════════
+# 📡 OpenTelemetry Collector — PREDATOR Analytics v56.0
+# Збирає traces, metrics, logs з усіх мікросервісів
+# ═══════════════════════════════════════════════════════════════
+
+receivers:
+  # OTLP receiver — приймає дані від SDK
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  # Prometheus receiver — scrape metrics
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'otel-collector'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['localhost:8888']
+
+  # Kubernetes attributes processor
+  k8s_events:
+    auth_type: serviceAccount
+
+processors:
+  # Batch processor — збирає дані в пакети
+  batch:
+    timeout: 5s
+    send_batch_size: 1024
+    send_batch_max_size: 2048
+
+  # Memory limiter — захист від OOM
+  memory_limiter:
+    check_interval: 5s
+    limit_mib: 512
+    spike_limit_mib: 128
+
+  # Resource processor — додає метадані
+  resource:
+    attributes:
+      - key: deployment.environment
+        value: "${ENVIRONMENT:-development}"
+        action: upsert
+      - key: service.namespace
+        value: "predator-analytics"
+        action: upsert
+      - key: service.version
+        value: "${SERVICE_VERSION:-v56.0}"
+        action: upsert
+
+  # Attributes processor — збагачення даних
+  attributes:
+    actions:
+      - key: predator.tenant_id
+        from_attribute: tenant_id
+        action: upsert
+
+  # Resource detection — автоматичне визначення середовища
+  resourcedetection:
+    detectors: [env, system]
+    system:
+      hostname_sources: ["os"]
+
+  # Tail sampling — зменшення обсягу traces
+  tail_sampling:
+    decision_wait: 10s
+    num_traces: 100
+    expected_new_traces_per_sec: 10
+    policies:
+      # Завжди зберігати traces з помилками
+      - name: errors-policy
+        type: status_code
+        status_code:
+          status_codes: [ERROR]
+      # Завжди зберігати повільні traces (>2s)
+      - name: latency-policy
+        type: latency
+        latency:
+          threshold_ms: 2000
+      # Sampling для інших traces (10%)
+      - name: probabilistic-policy
+        type: probabilistic
+        probabilistic:
+          sampling_percentage: 10
+
+exporters:
+  # Prometheus exporter — для Grafana
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    namespace: predator
+    resource_to_telemetry_conversion:
+      enabled: true
+
+  # OTLP exporter до Grafana Tempo (traces)
+  otlp/tempo:
+    endpoint: "tempo:4317"
+    tls:
+      insecure: true
+
+  # Loki exporter (logs)
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"
+    default_labels_enabled:
+      exporter: true
+      job: true
+      instance: true
+      level: true
+
+  # Debug exporter (для розробки)
+  debug:
+    verbosity: basic
+    sampling_initial: 5
+    sampling_thereafter: 200
+
+extensions:
+  # Health check
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+  # Performance profiling
+  pprof:
+    endpoint: 0.0.0.0:1888
+
+  # zPages для діагностики
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+service:
+  extensions: [health_check, pprof, zpages]
+
+  pipelines:
+    # Traces pipeline
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, resourcedetection, tail_sampling, batch]
+      exporters: [otlp/tempo, debug]
+
+    # Metrics pipeline
+    metrics:
+      receivers: [otlp, prometheus]
+      processors: [memory_limiter, resource, resourcedetection, batch]
+      exporters: [prometheus, debug]
+
+    # Logs pipeline
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, resourcedetection, batch]
+      exporters: [loki, debug]
+
+  telemetry:
+    logs:
+      level: info
+    metrics:
+      address: 0.0.0.0:8888
