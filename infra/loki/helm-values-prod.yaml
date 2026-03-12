@@ -1,0 +1,120 @@
+# ═══════════════════════════════════════════════════════════════
+# 🪵 Loki Production Configuration — PREDATOR Analytics v56.0
+# Simple Scalable Deployment pattern (S3/MinIO backend)
+# ═══════════════════════════════════════════════════════════════
+
+# Використовуємо Simple Scalable Mode (read, write, backend components)
+deploymentMode: SimpleScalable
+
+loki:
+  auth_enabled: false
+
+  # Конфігурація схеми збереження з використанням TSDB (Time Series Database)
+  schemaConfig:
+    configs:
+      - from: "2024-01-01"
+        store: tsdb
+        object_store: s3
+        schema: v13
+        index:
+          prefix: index_
+          period: 24h
+
+  # Налаштування storage на MinIO
+  storage:
+    type: s3
+    bucketNames:
+      chunks: predator-loki-logs
+      ruler: predator-loki-ruler
+      admin: predator-loki-admin
+    s3:
+      endpoint: "minio.predator-v55.svc.cluster.local:9000"
+      accessKeyId: "${MINIO_ACCESS_KEY}"
+      secretAccessKey: "${MINIO_SECRET_KEY}"
+      s3ForcePathStyle: true
+      insecure: true
+
+  # Захист та оптимізація ingest-потоку
+  limits_config:
+    reject_old_samples: true
+    reject_old_samples_max_age: 168h # 7 днів
+    ingestion_rate_mb: 10
+    ingestion_burst_size_mb: 20
+    max_streams_per_user: 100000
+    retention_period: 720h # 30 днів (вимоги до production)
+
+  # Compactor для агрегації логів та зачистки старих даних
+  compactor:
+    working_directory: /var/loki/compactor
+    shared_store: s3
+    compaction_interval: 10m
+    retention_enabled: true
+    retention_delete_delay: 2h
+    retention_delete_worker_count: 150
+
+# Розподіл ресурсів для компонентів Loki:
+
+# 1. Write компоненти (приймають логи від Promtail/OTel)
+write:
+  replicas: 3
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2
+      memory: 4Gi
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: write
+          topologyKey: kubernetes.io/hostname
+
+# 2. Read компоненти (обробляють запити від Grafana)
+read:
+  replicas: 3
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 4
+      memory: 8Gi
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: read
+          topologyKey: kubernetes.io/hostname
+
+# 3. Backend компоненти (compactor, ruler)
+backend:
+  replicas: 2
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2
+      memory: 4Gi
+
+# Gateway (Nginx для роутингу запитів між read/write)
+gateway:
+  replicas: 2
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# ServiceMonitor для збору метрик самого Loki
+monitoring:
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: prometheus
