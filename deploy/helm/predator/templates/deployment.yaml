@@ -68,7 +68,9 @@ metadata:
     {{- include "predator.labels" . | nindent 4 }}
     app: frontend
 spec:
-  replicas: 1
+  {{- if not .Values.frontend.autoscaling.enabled }}
+  replicas: {{ .Values.frontend.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "predator.selectorLabels" . | nindent 6 }}
@@ -79,11 +81,52 @@ spec:
         {{- include "predator.selectorLabels" . | nindent 8 }}
         app: frontend
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
       containers:
         - name: frontend
-          image: "predator-ui:latest"
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
           ports:
-            - containerPort: 3030
+            - name: http
+              containerPort: 3030
+              protocol: TCP
           env:
             - name: VITE_API_URL
-              value: "http://{{ include "predator.fullname" . }}-core-api:8000"
+              value: "http://{{ include "predator.fullname" . }}-core-api:{{ .Values.coreApi.service.port }}"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 2
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /var/run
+      volumes:
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}

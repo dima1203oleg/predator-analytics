@@ -4,6 +4,7 @@
 global:
   domain: internal.predator.ua
   tenantId: default
+  imagePullPolicy: IfNotPresent
 
 # Infrastructure
 postgresql:
@@ -15,25 +16,56 @@ postgresql:
         username: predator
         password: predator_db_secret
 
-
 neo4j:
   enabled: true
   neo4j:
     password: predator_graph_secret
     name: predator-graph
-  # Neo4j subchart specific requirements
   clusterDomain: cluster.local
   volumes:
     data:
       mode: defaultStorageClass
 
+# Frontend (predator-analytics-ui)
+frontend:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/dima1203oleg/predator-analytics-ui
+    tag: v55.0.0
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 80
+    targetPort: 3030
+  ingress:
+    enabled: true
+    className: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    hosts:
+      - host: "{{ .Values.global.domain }}"
+        paths:
+          - path: /
+            pathType: Prefix
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
 
-
-# Core Services
+# Core API Service
 coreApi:
   replicaCount: 2
   image:
-    repository: predator-core-api
+    repository: ghcr.io/dima1203oleg/predator-core-api
     tag: v55.1.0
     pullPolicy: IfNotPresent
   service:
@@ -47,34 +79,50 @@ coreApi:
       cpu: 100m
       memory: 256Mi
 
+# Graph Service
 graphService:
   replicaCount: 1
   image:
-    repository: predator-graph-service
+    repository: ghcr.io/dima1203oleg/predator-graph-service
     tag: v55.1.0
   service:
     port: 8002
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
 
+# Ingestion Worker
 ingestionWorker:
   image:
-    repository: predator-ingestion-worker
+    repository: ghcr.io/dima1203oleg/predator-ingestion-worker
     tag: v55.1.0
   keda:
     enabled: true
     minReplicaCount: 0
     maxReplicaCount: 10
     kafkaTopic: ingestion-triggers
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 256Mi
 
-# Zero Trust (Cilium)
+# Security
 security:
   mTLS:
-    enabled: true
+    enabled: false
   networkPolicy:
-    enabled: true
+    enabled: false
 
 # Monitoring
 monitoring:
-  glitchtip:
-    enabled: true
   prometheus:
+    enabled: true
+  grafana:
     enabled: true
