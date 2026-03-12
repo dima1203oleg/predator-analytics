@@ -74,109 +74,63 @@ export const Sidebar = () => {
 
   const navGroups: NavGroup[] = [
     {
-      title: 'ОСНОВНІ РЕЖИМИ (v4.2.0)',
-      items: [
-        { name: 'Огляд', path: '/overview', icon: LayoutDashboard },
-        { name: 'Ринок', path: '/market', icon: Globe },
-        { name: 'Прогноз', path: '/forecast', icon: TrendingUp },
-        { name: 'Можливості', path: '/opportunities', icon: Zap },
-      ]
-    },
-    {
-      title: 'LEGACY РЕЖИМИ (v45/v55)',
+      title: 'ОПЕРАЦІЙНИЙ ЦЕНТР',
       items: [
         { name: 'Головна Панель', path: '/overview', icon: LayoutDashboard },
-        { name: 'Паноптикон (Omni)', path: '/omni', icon: Globe, premium: true },
-        { name: 'Стрічка Подій', path: '/news', icon: Radio },
-        { name: 'Ранковий Бриф', path: '/morning-brief', icon: Coffee, premium: true },
-        { name: 'Тренди Системи', path: '/trends', icon: TrendingUp },
-      ]
-    },
-    {
-      title: 'КОМЕРЦІЙНА РОЗВІДКА',
-      items: [
-        { name: 'Ринкова Аналітика', path: '/market-analytics', icon: DollarSign, premium: true },
-        { name: 'Ризик-Скоринг', path: '/risk-scoring', icon: AlertCircle, premium: true },
-        { name: 'Центр Сповіщень', path: '/alerts', icon: ShieldAlert, premium: true },
-        { name: 'Пошук Постачальників', path: '/suppliers', icon: ShoppingBag, premium: true },
-        { name: 'Торгові Потоки', path: '/trade-map', icon: Map, premium: true },
-        { name: 'Аналіз Конкурентів', path: '/competitor-intel', icon: Target, premium: true },
-        { name: 'Радар Конкурентів', path: '/competitor-radar', icon: Radar, premium: true },
-        { name: 'Детектор Санкцій', path: '/sanctions', icon: Shield, premium: true },
-
-        { name: 'Моделювання Сценаріїв', path: '/modeling', icon: Repeat, premium: true },
-        { name: 'Порівняння Цін', path: '/price-compare', icon: BarChart, premium: true },
+        { name: 'Ринкова Аналітика', path: '/market', icon: Globe },
+        { name: 'Прогнозування', path: '/forecast', icon: TrendingUp },
+        { name: 'Можливості', path: '/opportunities', icon: Zap },
+        { name: 'Моніторинг Подій', path: '/news', icon: Radio },
       ]
     },
     {
       title: 'РОЗВІДКА ТА OSINT',
       items: [
         { name: 'Глобальний Пошук', path: '/search-v2', icon: FileSearch },
-        { name: 'Веб-Консоль', path: '/search', icon: Globe },
-        { name: 'Радар Зв\'язків', path: '/analytics', icon: Network },
-        { name: 'Граф Сутностей', path: '/entity-graph', icon: Share2Icon, premium: true },
-        { name: 'Мережевий Граф (V2)', path: '/graph', icon: Network },
-        { name: 'Архіви Та Справи', path: '/cases', icon: ShieldAlert },
-        { name: 'Бібліотека Документів', path: '/documents', icon: Archive },
+        { name: 'Аналіз Сутностей', path: '/entity-graph', icon: Network, premium: true },
+        { name: 'Радар Конкурентів', path: '/competitor-radar', icon: Radar, premium: true },
+        { name: 'Детектор Санкцій', path: '/sanctions', icon: Shield, premium: true },
+        { name: 'Архіви та Справи', path: '/cases', icon: ShieldAlert },
         { name: 'Державні Тендери', path: '/tenders', icon: Landmark, premium: true },
       ]
     },
     {
-      title: 'ДАНІ ТА МИТНИЦЯ',
+      title: 'ДАНІ ТА ІНТЕГРАЦІЇ',
       items: [
         { name: 'Нейронний Інджестинг', path: '/data-hub', icon: Zap },
-        { name: 'Оркестратор (Pipeline)', path: '/pipeline', icon: Activity },
+        { name: 'Оркестратор Даних', path: '/pipeline', icon: Activity },
         { name: 'Студія Датасетів', path: '/datasets', icon: Boxes },
-        { name: 'Бази Даних', path: '/databases', icon: Database },
-        { name: 'Парсери Та ETL', path: '/parsers', icon: Layers },
-        { name: 'Митна Розвідка (PRO)', path: '/customs-intel', icon: Ship, premium: true },
-        { name: 'Центр Експорту', path: '/export', icon: Repeat, premium: true },
+        { name: 'Митна Розвідка', path: '/customs-intel', icon: Ship, premium: true },
+        { name: 'Бібліотека Документів', path: '/documents', icon: Archive },
       ]
     },
     {
-      title: 'ОПЕРАЦІЇ ТА ЯДРО ШІ',
+      title: 'ШІ ТА АВТОНОМНІСТЬ',
       items: [
+        { name: 'Інтелект-Система', path: '/intelligence', icon: ZapOff },
         { name: 'Флот AI Агентів', path: '/agents', icon: Bot },
-        { name: 'Центр Двигунів v55', path: '/engines', icon: Waves },
-        { name: 'Оркестратор (NAS)', path: '/llm/nas', icon: Cpu },
-        { name: 'Навчання Моделей', path: '/training', icon: BrainCircuit, premium: true },
-        { name: 'Інтелект-система', path: '/intelligence', icon: ZapOff },
+        { name: 'Аналітика Двигунів', path: '/engines', icon: Waves },
         { name: 'Мовна Модель (LLM)', path: '/llm', icon: MessageSquare, premium: true },
-        { name: 'Суперінтелект', path: '/super', icon: Zap, role: 'admin' },
-        { name: 'Лабораторія Інсайтів', path: '/ai-insights', icon: Eye, premium: true },
+        { name: 'Навчання Моделей', path: '/training', icon: BrainCircuit, premium: true },
       ]
     },
     {
-      title: 'АВТОНОМНІСТЬ (v55)',
-      items: [
-        { name: 'Завод Компонентів', path: '/factory', icon: Factory, premium: true },
-        { name: 'Протокол Еволюції', path: '/autonomy', icon: TrendingUp, premium: true },
-        { name: 'Діаграма Еволюції', path: '/evolution', icon: Activity, premium: true },
-        { name: 'Інженерія Знань', path: '/knowledge', icon: Library, premium: true },
-        { name: 'Конструктор Систем', path: '/builder', icon: Layers, premium: true },
-      ]
-    },
-    {
-      title: 'БІЗНЕС ТА ІНСТРУМЕНТИ',
+      title: 'АНАЛІТИКА ТА ЗВІТИ',
       items: [
         { name: 'Генератор Звітів', path: '/reports', icon: FileText, premium: true },
-        { name: 'Центр Інтеграцій', path: '/integrations', icon: Network, premium: true },
-        { name: 'Real-time Дашборд', path: '/realtime', icon: Activity, premium: true },
-        { name: 'Бібліотека Віджетів', path: '/widgets', icon: Layout, premium: true },
-        { name: 'API Документація', path: '/api-docs', icon: BookOpen },
-        { name: 'Мобільний Центр', path: '/mobile', icon: Smartphone },
-        { name: 'Преміум Хаб', path: '/premium', icon: Trophy },
+        { name: 'Ризик-Скоринг', path: '/risk-scoring', icon: AlertCircle, premium: true },
+        { name: 'Конструктор Дашбордів', path: '/builder', icon: Layers, premium: true },
+        { name: 'Центр Сповіщень', path: '/alerts', icon: ShieldAlert, premium: true },
+        { name: 'Експорт Даних', path: '/export', icon: Repeat, premium: true },
       ]
     },
     {
-      title: 'СИСТЕМА ТА БЕЗПЕКА',
+      title: 'СИСТЕМА (АДМІН)',
       items: [
         { name: 'Моніторинг Нод', path: '/monitoring', icon: Activity, role: 'admin' },
-        { name: 'Комплаєнс Аудит', path: '/compliance', icon: FileCheck },
         { name: 'Ядро Безпеки', path: '/security', icon: Lock, role: 'admin' },
-        { name: 'Верифікація', path: '/verify-system', icon: ShieldCheck, role: 'admin' },
+        { name: 'Комплаєнс Аудит', path: '/compliance', icon: FileCheck },
         { name: 'Управління (Gov)', path: '/governance', icon: Shield, role: 'admin' },
-        { name: 'Розгортання (Dev)', path: '/deployment', icon: Cpu, role: 'admin' },
         { name: 'Налаштування', path: '/settings', icon: Settings },
       ]
     }

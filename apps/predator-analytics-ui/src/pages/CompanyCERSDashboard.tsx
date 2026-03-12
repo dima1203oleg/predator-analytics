@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ShieldAlert, Activity, GitBranch, Target, Zap, Clock, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import ReactECharts from 'echarts-for-react';
+import { Search, ShieldAlert, Activity, GitBranch, Target, Zap, Clock, AlertTriangle, CheckCircle2, TrendingDown, Award } from 'lucide-react';
 import {
     Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
     BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, CartesianGrid, Cell, ReferenceLine
@@ -31,6 +32,127 @@ const TIMELINE_EVENTS = [
     { date: '2026-02-28', type: 'warning', text: 'Відкрите нове виконавче провадження (борг 240 тис. грн)' },
     { date: '2026-02-15', type: 'success', text: 'Виграш у державному тендері (ProZorro) на 4.2 млн грн' },
 ];
+
+function CERSRadarECharts({ data }: { data: any[] }) {
+    const radarOption = {
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'item',
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            borderColor: 'rgba(16, 185, 129, 0.3)',
+            textStyle: { color: '#fff', fontSize: 12 },
+            padding: [8, 12]
+        },
+        radar: {
+            indicator: data.map(d => ({ name: d.subject, max: d.fullMark })),
+            shape: 'polygon',
+            splitNumber: 4,
+            name: {
+                textStyle: { color: '#94a3b8', fontSize: 11 }
+            },
+            splitLine: {
+                lineStyle: {
+                    color: ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.08)', 'rgba(255,255,255,0.06)', 'rgba(255,255,255,0.04)']
+                }
+            },
+            splitArea: {
+                areaStyle: {
+                    color: ['rgba(16, 185, 129, 0.05)', 'rgba(16, 185, 129, 0.03)']
+                }
+            },
+            axisLine: {
+                lineStyle: {
+                    color: 'rgba(255,255,255,0.1)'
+                }
+            }
+        },
+        series: [
+            {
+                name: 'CERS Оцінка',
+                value: data.map(d => d.A),
+                areaStyle: {
+                    color: 'rgba(16, 185, 129, 0.3)'
+                },
+                lineStyle: {
+                    color: '#10b981',
+                    width: 2.5
+                },
+                itemStyle: {
+                    color: '#10b981',
+                    borderColor: '#059669',
+                    borderWidth: 2
+                },
+                symbolSize: 7
+            }
+        ]
+    };
+
+    return (
+        <div className="h-72 w-full">
+            <ReactECharts option={radarOption} style={{ height: '100%', width: '100%' }} />
+        </div>
+    );
+}
+
+function SHAPChart({ data }: { data: any[] }) {
+    const shapOption = {
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'shadow' },
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            borderColor: 'rgba(244, 63, 94, 0.3)',
+            textStyle: { color: '#fff', fontSize: 12 },
+            padding: [8, 12],
+            formatter: (params: any) => {
+                if (Array.isArray(params) && params.length > 0) {
+                    const p = params[0];
+                    return `${p.name}<br/>${p.seriesName}: ${(p.value > 0 ? '+' : '')}${(p.value * 100).toFixed(1)}%`;
+                }
+                return '';
+            }
+        },
+        grid: {
+            left: '15%',
+            right: '5%',
+            bottom: '10%',
+            top: '5%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'value',
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+            axisLabel: { color: '#64748b', fontSize: 11 }
+        },
+        yAxis: {
+            type: 'category',
+            data: data.map(d => d.feature),
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+            axisLabel: { color: '#94a3b8', fontSize: 11 }
+        },
+        series: [
+            {
+                name: 'Вплив на ризик',
+                type: 'bar',
+                data: data.map(d => d.impact),
+                itemStyle: {
+                    color: (params: any) => {
+                        return data[params.dataIndex].impact < 0 ? '#f43f5e' : '#10b981';
+                    },
+                    borderRadius: [0, 4, 4, 0]
+                },
+                barWidth: '60%'
+            }
+        ]
+    };
+
+    return (
+        <div className="h-72 w-full">
+            <ReactECharts option={shapOption} style={{ height: '100%', width: '100%' }} />
+        </div>
+    );
+}
 
 export function CompanyCERSDashboard() {
     const { id } = useParams();
@@ -208,62 +330,19 @@ export function CompanyCERSDashboard() {
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 min-h-[400px]">
 
                             {/* 5-Layer Radar Chart */}
-                            <motion.div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 shadow-2xl relative">
+                            <motion.div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 shadow-2xl relative hover:border-emerald-500/20 transition-colors">
                                 <h3 className="text-sm font-mono text-slate-400 mb-6 flex items-center gap-2">
                                     <GitBranch className="w-4 h-4" /> 5-ШАРОВА ОЦІНКА CERS
                                 </h3>
-                                <div className="w-full h-72">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <RadarChart cx="50%" cy="50%" outerRadius="75%" data={CERS_RADAR_DATA}>
-                                            <PolarGrid stroke="#334155" />
-                                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 12, fontFamily: 'monospace' }} />
-                                            <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                                            <Radar
-                                                name="CERS Profile"
-                                                dataKey="A"
-                                                stroke="#10b981"
-                                                fill="#10b981"
-                                                fillOpacity={0.2}
-                                                strokeWidth={2}
-                                            />
-                                            <RechartsTooltip
-                                                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#fff' }}
-                                                itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
-                                            />
-                                        </RadarChart>
-                                    </ResponsiveContainer>
-                                </div>
+                                <CERSRadarECharts data={CERS_RADAR_DATA} />
                             </motion.div>
 
                             {/* SHAP Values Chart */}
-                            <motion.div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 shadow-2xl relative">
+                            <motion.div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 shadow-2xl relative hover:border-rose-500/20 transition-colors">
                                 <h3 className="text-sm font-mono text-slate-400 mb-6 flex items-center gap-2">
                                     <Activity className="w-4 h-4" /> SHAP ДЕКОМПОЗИЦІЯ РИЗИКУ (ДРАЙВЕРИ)
                                 </h3>
-                                <div className="w-full h-72">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart
-                                            layout="vertical"
-                                            data={SHAP_DATA}
-                                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                                        >
-                                            <CartesianGrid strokeDasharray="3 3" stroke="#334155" horizontal={true} vertical={false} />
-                                            <XAxis type="number" hide domain={[-0.3, 0.3]} />
-                                            <YAxis dataKey="feature" type="category" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} width={140} />
-                                            <RechartsTooltip
-                                                cursor={{ fill: '#1e293b' }}
-                                                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#fff', borderRadius: '8px' }}
-                                                formatter={(value: number) => [`${value > 0 ? '+' : ''}${value}`, 'Вплив на ризик']}
-                                            />
-                                            <ReferenceLine x={0} stroke="#475569" />
-                                            <Bar dataKey="impact" radius={[0, 4, 4, 0]} barSize={20}>
-                                                {SHAP_DATA.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={entry.impact < 0 ? '#f43f5e' : '#10b981'} />
-                                                ))}
-                                            </Bar>
-                                        </BarChart>
-                                    </ResponsiveContainer>
-                                </div>
+                                <SHAPChart data={SHAP_DATA} />
                             </motion.div>
                         </div>
 

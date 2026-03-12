@@ -133,79 +133,90 @@ function InsightsTab({ insights, isLoading }: { insights: any[], isLoading: bool
         );
     }
 
+    // Calculate statistics for insights
+    const typeStats = insights.reduce((acc: any, insight: any) => {
+        acc[insight.type] = (acc[insight.type] || 0) + 1;
+        return acc;
+    }, {});
+
+    const priorityStats = insights.reduce((acc: any, insight: any) => {
+        acc[insight.priority] = (acc[insight.priority] || 0) + 1;
+        return acc;
+    }, {});
+
     return (
         <div className="space-y-4">
-            {insights.map((insight: any, i: number) => {
-                const config = typeConfig[insight.type] || typeConfig.opportunity;
-                const impact = impactConfig[insight.priority] || impactConfig.medium;
-                const Icon = config.icon;
+                {insights.map((insight: any, i: number) => {
+                    const config = typeConfig[insight.type] || typeConfig.opportunity;
+                    const impact = impactConfig[insight.priority] || impactConfig.medium;
+                    const Icon = config.icon;
 
-                return (
-                    <motion.div
-                        key={insight.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700/50 p-5
-                       hover:border-amber-500/30 transition-all duration-300 cursor-pointer group"
-                    >
-                        <div className="flex items-start gap-4">
-                            <div className={`p-2 rounded-lg bg-${config.color}-500/10 mt-0.5`}>
-                                <Icon size={20} className={`text-${config.color}-400`} />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-3 mb-1">
-                                    <span className={`px-2 py-0.5 rounded text-xs font-medium bg-${config.color}-500/10 text-${config.color}-400`}>
-                                        {config.label}
-                                    </span>
-                                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${impact.bg} ${impact.text}`}>
-                                        {premiumLocales.opportunities.insights.priority}: {impact.label}
-                                    </span>
-                                    <span className="text-xs text-gray-500 flex items-center gap-1">
-                                        <Clock size={12} />
-                                        {new Date(insight.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
-                                    </span>
+                    return (
+                        <motion.div
+                            key={insight.id}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.1 }}
+                            className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700/50 p-5 hover:border-amber-500/30 transition-all duration-300 cursor-pointer group"
+                        >
+                            <div className="flex items-start gap-4">
+                                <div className={`p-2 rounded-lg bg-${config.color}-500/10 mt-0.5`}>
+                                    <Icon size={20} className={`text-${config.color}-400`} />
                                 </div>
-                                <h4 className="text-white font-semibold group-hover:text-amber-400 transition-colors">
-                                    {insight.title}
-                                </h4>
-                                <p className="text-gray-400 text-sm mt-1 leading-relaxed">
-                                    {insight.description}
-                                </p>
-                                <div className="mt-2 text-xs font-medium text-cyan-400/90 italic">
-                                    {premiumLocales.opportunities.insights.impact}: {insight.impact}
-                                </div>
-                                <div className="flex items-center justify-between mt-3">
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xs text-gray-500">{premiumLocales.opportunities.insights.confidence}:</span>
-                                            <div className="w-16 h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                                                <div
-                                                    className="h-full bg-amber-400 rounded-full"
-                                                    style={{ width: `${insight.confidence}%` }}
-                                                />
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-3 mb-1">
+                                        <span className={`px-2 py-0.5 rounded text-xs font-medium bg-${config.color}-500/10 text-${config.color}-400`}>
+                                            {config.label}
+                                        </span>
+                                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${impact.bg} ${impact.text}`}>
+                                            {premiumLocales.opportunities.insights.priority}: {impact.label}
+                                        </span>
+                                        <span className="text-xs text-gray-500 flex items-center gap-1">
+                                            <Clock size={12} />
+                                            {new Date(insight.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+                                        </span>
+                                    </div>
+                                    <h4 className="text-white font-semibold group-hover:text-amber-400 transition-colors">
+                                        {insight.title}
+                                    </h4>
+                                    <p className="text-gray-400 text-sm mt-1 leading-relaxed">
+                                        {insight.description}
+                                    </p>
+                                    <div className="mt-2 text-xs font-medium text-cyan-400/90 italic">
+                                        {premiumLocales.opportunities.insights.impact}: {insight.impact}
+                                    </div>
+                                    <div className="flex items-center justify-between mt-3">
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs text-gray-500">{premiumLocales.opportunities.insights.confidence}:</span>
+                                                <div className="w-16 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                                    <div
+                                                        className="h-full bg-amber-400 rounded-full"
+                                                        style={{ width: `${insight.confidence}%` }}
+                                                    />
+                                                </div>
+                                                <span className="text-xs font-mono text-gray-400">
+                                                    {insight.confidence.toFixed(1)}%
+                                                </span>
                                             </div>
-                                            <span className="text-xs font-mono text-gray-400">
-                                                {insight.confidence.toFixed(1)}%
-                                            </span>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            {insight.actions?.map((action: any, idx: number) => (
+                                                <button
+                                                    key={idx}
+                                                    className="text-xs px-3 py-1 rounded-lg border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-colors flex items-center gap-1"
+                                                >
+                                                    {action.label} <ExternalLink size={12} />
+                                                </button>
+                                            ))}
                                         </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                        {insight.actions?.map((action: any, idx: number) => (
-                                            <button
-                                                key={idx}
-                                                className={`text-xs px-3 py-1 rounded-lg border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-colors flex items-center gap-1`}
-                                            >
-                                                {action.label} <ExternalLink size={12} />
-                                            </button>
-                                        ))}
-                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </motion.div>
-                );
-            })}
+                        </motion.div>
+                    );
+                })}
+            </div>
         </div>
     );
 }
@@ -311,3 +322,4 @@ function ExecutiveTab() {
         </div>
     );
 }
+
