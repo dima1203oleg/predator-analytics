@@ -18,24 +18,24 @@ import {
 type OpportunityTab = 'insights' | 'executive' | 'recommendations';
 
 const tabs: { key: OpportunityTab; label: string; icon: React.ReactNode }[] = [
-    { key: 'insights', label: premiumLocales.opportunities.tabs.insights, icon: <Sparkles size={18} /> },
-    { key: 'recommendations', label: premiumLocales.opportunities.tabs.recommendations, icon: <Star size={18} /> },
-    { key: 'executive', label: premiumLocales.opportunities.tabs.executive, icon: <FileBarChart size={18} /> },
+    { key: 'insights', label: 'Insights', icon: <Sparkles size={18} /> },
+    { key: 'recommendations', label: 'Recommendations', icon: <Star size={18} /> },
+    { key: 'executive', label: 'Executive', icon: <FileBarChart size={18} /> },
 ];
 
-const typeConfig: any = {
-    opportunity: { label: premiumLocales.opportunities.insights.types.opportunity, color: 'emerald', icon: Lightbulb },
-    risk: { label: premiumLocales.opportunities.insights.types.risk, color: 'red', icon: Zap },
-    trend: { label: premiumLocales.opportunities.insights.types.trend, color: 'cyan', icon: ArrowUpRight },
-    anomaly: { label: premiumLocales.opportunities.insights.types.anomaly, color: 'amber', icon: Zap },
-    prediction: { label: premiumLocales.opportunities.insights.types.prediction, color: 'blue', icon: ArrowUpRight },
+const typeConfig: Record<string, any> = {
+    opportunity: { label: 'Opportunity', color: 'emerald', icon: Lightbulb },
+    risk: { label: 'Risk', color: 'red', icon: Zap },
+    trend: { label: 'Trend', color: 'cyan', icon: ArrowUpRight },
+    anomaly: { label: 'Anomaly', color: 'amber', icon: Zap },
+    prediction: { label: 'Prediction', color: 'blue', icon: ArrowUpRight },
 };
 
-const impactConfig: any = {
-    critical: { label: premiumLocales.opportunities.insights.levels.critical, bg: 'bg-red-500/10', text: 'text-red-400' },
-    high: { label: premiumLocales.opportunities.insights.levels.high, bg: 'bg-orange-500/10', text: 'text-orange-400' },
-    medium: { label: premiumLocales.opportunities.insights.levels.medium, bg: 'bg-amber-500/10', text: 'text-amber-400' },
-    low: { label: premiumLocales.opportunities.insights.levels.low, bg: 'bg-gray-500/10', text: 'text-gray-400' },
+const impactConfig: Record<string, any> = {
+    critical: { label: 'Critical', bg: 'bg-red-500/10', text: 'text-red-400' },
+    high: { label: 'High', bg: 'bg-orange-500/10', text: 'text-orange-400' },
+    medium: { label: 'Medium', bg: 'bg-amber-500/10', text: 'text-amber-400' },
+    low: { label: 'Low', bg: 'bg-gray-500/10', text: 'text-gray-400' },
 };
 
 export default function OpportunitiesPage() {
@@ -79,14 +79,11 @@ export default function OpportunitiesPage() {
                     <button
                         key={tab.key}
                         onClick={() => setActiveTab(tab.key)}
-                        className={`
-              flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium
-              transition-all duration-200
-              ${activeTab === tab.key
-                                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700/50'
-                            }
-            `}
+                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          activeTab === tab.key
+                            ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                            : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700/50'
+                        }`}
                     >
                         {tab.icon}
                         {tab.label}
@@ -146,77 +143,76 @@ function InsightsTab({ insights, isLoading }: { insights: any[], isLoading: bool
 
     return (
         <div className="space-y-4">
-                {insights.map((insight: any, i: number) => {
-                    const config = typeConfig[insight.type] || typeConfig.opportunity;
-                    const impact = impactConfig[insight.priority] || impactConfig.medium;
-                    const Icon = config.icon;
+            {insights.map((insight: any, i: number) => {
+                const config = typeConfig[insight.type] || typeConfig.opportunity;
+                const impact = impactConfig[insight.priority] || impactConfig.medium;
+                const Icon = config.icon;
 
-                    return (
-                        <motion.div
-                            key={insight.id}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.1 }}
-                            className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700/50 p-5 hover:border-amber-500/30 transition-all duration-300 cursor-pointer group"
-                        >
-                            <div className="flex items-start gap-4">
-                                <div className={`p-2 rounded-lg bg-${config.color}-500/10 mt-0.5`}>
-                                    <Icon size={20} className={`text-${config.color}-400`} />
+                return (
+                    <motion.div
+                        key={insight.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700/50 p-5 hover:border-amber-500/30 transition-all duration-300 cursor-pointer group"
+                    >
+                        <div className="flex items-start gap-4">
+                            <div className="p-2 rounded-lg bg-gray-700/50 mt-0.5">
+                                <Icon size={20} className="text-amber-400" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-3 mb-1">
+                                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-amber-500/10 text-amber-400">
+                                        {config.label}
+                                    </span>
+                                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${impact.bg} ${impact.text}`}>
+                                        Priority: {impact.label}
+                                    </span>
+                                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                                        <Clock size={12} />
+                                        {new Date(insight.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-3 mb-1">
-                                        <span className={`px-2 py-0.5 rounded text-xs font-medium bg-${config.color}-500/10 text-${config.color}-400`}>
-                                            {config.label}
-                                        </span>
-                                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${impact.bg} ${impact.text}`}>
-                                            {premiumLocales.opportunities.insights.priority}: {impact.label}
-                                        </span>
-                                        <span className="text-xs text-gray-500 flex items-center gap-1">
-                                            <Clock size={12} />
-                                            {new Date(insight.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
-                                        </span>
-                                    </div>
-                                    <h4 className="text-white font-semibold group-hover:text-amber-400 transition-colors">
-                                        {insight.title}
-                                    </h4>
-                                    <p className="text-gray-400 text-sm mt-1 leading-relaxed">
-                                        {insight.description}
-                                    </p>
-                                    <div className="mt-2 text-xs font-medium text-cyan-400/90 italic">
-                                        {premiumLocales.opportunities.insights.impact}: {insight.impact}
-                                    </div>
-                                    <div className="flex items-center justify-between mt-3">
-                                        <div className="flex items-center gap-4">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-xs text-gray-500">{premiumLocales.opportunities.insights.confidence}:</span>
-                                                <div className="w-16 h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                                                    <div
-                                                        className="h-full bg-amber-400 rounded-full"
-                                                        style={{ width: `${insight.confidence}%` }}
-                                                    />
-                                                </div>
-                                                <span className="text-xs font-mono text-gray-400">
-                                                    {insight.confidence.toFixed(1)}%
-                                                </span>
+                                <h4 className="text-white font-semibold group-hover:text-amber-400 transition-colors">
+                                    {insight.title}
+                                </h4>
+                                <p className="text-gray-400 text-sm mt-1 leading-relaxed">
+                                    {insight.description}
+                                </p>
+                                <div className="mt-2 text-xs font-medium text-cyan-400/90 italic">
+                                    Impact: {insight.impact}
+                                </div>
+                                <div className="flex items-center justify-between mt-3">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs text-gray-500">Confidence:</span>
+                                            <div className="w-16 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                                <div
+                                                    className="h-full bg-amber-400 rounded-full"
+                                                    style={{ width: `${insight.confidence}%` }}
+                                                />
                                             </div>
+                                            <span className="text-xs font-mono text-gray-400">
+                                                {insight.confidence.toFixed(1)}%
+                                            </span>
                                         </div>
-                                        <div className="flex gap-2">
-                                            {insight.actions?.map((action: any, idx: number) => (
-                                                <button
-                                                    key={idx}
-                                                    className="text-xs px-3 py-1 rounded-lg border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-colors flex items-center gap-1"
-                                                >
-                                                    {action.label} <ExternalLink size={12} />
-                                                </button>
-                                            ))}
-                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        {insight.actions?.map((action: any, idx: number) => (
+                                            <button
+                                                key={idx}
+                                                className="text-xs px-3 py-1 rounded-lg border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-colors flex items-center gap-1"
+                                            >
+                                                {action.label} <ExternalLink size={12} />
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                    );
-                })}
-            </div>
+                        </div>
+                    </motion.div>
+                );
+            })}
         </div>
     );
 }
