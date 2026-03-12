@@ -288,7 +288,7 @@ const ParsersView = () => {
             if (type === 'file' && file) {
                 // 1. Upload File
                 const uploadRes = await api.ingestion.uploadFile(file);
-                fileId = uploadRes.file_id;
+                fileId = (uploadRes as any).file_id || uploadRes.job_id;
             }
 
             // 2. Start Pipeline Job

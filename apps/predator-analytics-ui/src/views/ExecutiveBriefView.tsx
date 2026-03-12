@@ -325,7 +325,7 @@ const ExecutiveBriefView: React.FC = () => {
                   <span className="text-4xl font-black text-white font-display tracking-tighter group-hover:scale-105 transition-transform origin-left duration-500">{metric.value}</span>
                   {metric.sparkline && (
                     <div className="flex items-end gap-1.5 h-10 pr-2">
-                      {metric.sparkline.map((v, j) => (
+                      {metric.sparkline.map((v: number, j: number) => (
                         <motion.div
                           key={j}
                           initial={{ height: 0 }}
@@ -491,7 +491,7 @@ const ExecutiveBriefView: React.FC = () => {
                           className="overflow-hidden"
                         >
                           <div className="px-10 pb-10 space-y-6">
-                            {section.items.map((item) => (
+                            {section.items.map((item: BriefItem) => (
                               <motion.div
                                 key={item.id}
                                 layout
@@ -527,7 +527,7 @@ const ExecutiveBriefView: React.FC = () => {
                                     </div>
                                     <p className="text-sm text-slate-400 leading-relaxed font-medium mb-4 max-w-3xl">{item.summary}</p>
                                     <div className="flex flex-wrap items-center gap-3">
-                                      {item.tags?.map(tag => (
+                                      {item.tags?.map((tag: string) => (
                                         <div key={tag} className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/5 text-[9px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors">
                                           <Hexagon size={10} className="text-slate-600" />
                                           {tag}

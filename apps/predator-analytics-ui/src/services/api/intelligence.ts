@@ -22,8 +22,8 @@ export const intelligenceApi = {
     getAiInsights: async () => {
         return (await apiClient.get('/premium/ai-insights')).data;
     },
-    query: async (query: string) => {
-        return (await v45Client.post('/intelligence/query', { query })).data;
+    query: async (query: string, mode?: string) => {
+        return (await v45Client.post('/intelligence/query', { query, mode })).data;
     },
     getCompetitorRadar: async () => {
         return (await apiClient.get('/premium/competitor-radar')).data;
@@ -130,6 +130,19 @@ export const intelligenceApi = {
             { resource: 'OpenSearch Index', used: 5.80, limit: 30, color: 'emerald' },
             { resource: 'MinIO Storage', used: 2.10, limit: 10, color: 'amber' },
         ]);
+    },
+    healing: {
+        getMetrics: async () => (await v45Client.get('/intelligence/healing/metrics')).data,
+        getStatus: async () => (await v45Client.get('/intelligence/healing/status')).data,
+    },
+    workflow: {
+        getDAG: async () => (await v45Client.get('/intelligence/workflow/dag')).data,
+        startSelfImprovement: async (reason: string) => (await v45Client.post('/intelligence/workflow/improve', { reason })).data,
+        startSelfHealing: async (component: string) => (await v45Client.post('/intelligence/workflow/heal', { component })).data,
+        getStatus: async (id: string) => (await v45Client.get(`/intelligence/workflow/status/${id}`)).data,
+    },
+    getPriceComparison: async () => {
+        return (await apiClient.get('/premium/price-comparison')).data;
     },
 };
 

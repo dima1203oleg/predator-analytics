@@ -181,7 +181,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
                         if (!desc) return;
 
                         try {
-                            const res = await api.v45.azr.governance.propose(title, desc);
+                            const res = await api.v45.azr.governance.propose({ title, description: desc });
                             alert(`Proposal Status: ${res.status}\nVotes For: ${res.votes_for}\nVotes Against: ${res.votes_against}`);
                         } catch (e) {
                             alert("Failed to submit proposal: " + e);

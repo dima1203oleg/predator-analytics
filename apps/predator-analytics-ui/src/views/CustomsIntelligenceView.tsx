@@ -143,7 +143,7 @@ const CustomsIntelligenceView = () => {
                 icon={<Shield size={20} className="icon-3d-green" />}
                 breadcrumbs={['РОЗВІДКА', 'ДЖЕРЕЛА', 'TELEGRAM']}
                 stats={[
-                    { label: 'Каналів', value: channels.length, icon: <Database size={12} />, color: 'primary' },
+                    { label: 'Каналів', value: channels.length.toString(), icon: <Database size={12} />, color: 'primary' },
                     { label: 'Статус', value: 'ACTIVE', icon: <Activity size={12} />, color: 'success' },
                 ]}
             />

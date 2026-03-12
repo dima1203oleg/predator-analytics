@@ -163,7 +163,7 @@ const ReportRow: React.FC<{ report: GeneratedReport }> = ({ report }) => {
       <div className={`flex items-center gap-1 px-2 py-1 rounded-lg bg-${status.color}-500/20`}>
         <StatusIcon
           size={14}
-          className={`text-${status.color}-400 ${status.animate ? 'animate-spin' : ''}`}
+          className={`text-${status.color}-400 ${'animate' in status && status.animate ? 'animate-spin' : ''}`}
         />
         <span className={`text-xs font-bold text-${status.color}-400`}>{status.label}</span>
       </div>

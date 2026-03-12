@@ -46,7 +46,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             tier: tier,
             tenant_id: 'demo-tenant',
             tenant_name: 'PREDATOR_CORP',
-            last_login: new Date().toISOString()
+            last_login: new Date().toISOString(),
+            data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
         });
 
         onLogin();

@@ -152,7 +152,7 @@ const TendersView: React.FC = () => {
                                         transition={{ delay: i * 0.05 }}
                                         className="group"
                                     >
-                                        <TacticalCard variant="matrix" className="p-8 bg-slate-950/40 border-white/5 hover:bg-slate-900/60 transition-all h-full flex flex-col relative overflow-hidden group">
+                                        <TacticalCard variant="cyber" className="p-8 bg-slate-950/40 border-white/5 hover:bg-slate-900/60 transition-all h-full flex flex-col relative overflow-hidden group">
                                             <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-150 transition-transform duration-1000">
                                                 <Target size={120} />
                                             </div>

@@ -49,7 +49,7 @@ const Sparkline: React.FC<{ data: number[]; color: string; height?: number }> = 
   );
 };
 
-export const TopBar = () => {
+export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [liveMetrics, setLiveMetrics] = useState<{ cpu: number; records: number; memory: number; signals: number } | null>(null);
   const [cpuHistory, setCpuHistory] = useState<number[]>(Array(12).fill(0));
@@ -96,7 +96,7 @@ export const TopBar = () => {
       {/* ── LEFT: Logo & Toggle ── */}
       <div className="flex items-center gap-4">
         <button
-          onClick={toggleSidebar}
+          onClick={onMenuClick || toggleSidebar}
           className="p-2 hover:bg-white/5 rounded-xl transition-all border border-transparent hover:border-white/10 group"
           aria-label="Перемикач бічної панелі"
         >

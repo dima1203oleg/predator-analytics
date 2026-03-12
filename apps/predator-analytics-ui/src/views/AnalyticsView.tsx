@@ -20,7 +20,7 @@ import {
     Share2, Info, FileText, Filter, ZoomIn, ZoomOut, Maximize,
     Zap, Eye, Target, TrendingUp, ShieldAlert, Cpu, Network, Globe,
     Hexagon, Layers, Box, Boxes, Terminal, ShieldCheck,
-    ChevronRight, ArrowUpRight, ZapOff, Radio, Sparkles, Brain
+    ChevronRight, ArrowUpRight, ZapOff, Radio, Sparkles, Brain, BarChart3
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { api } from '../services/api';
@@ -30,6 +30,7 @@ import { TacticalCard } from '../components/TacticalCard';
 import { CyberOrb } from '../components/CyberOrb';
 import { HoloContainer } from '../components/HoloContainer';
 import { VisualAnalytics } from '../components/premium/VisualAnalytics';
+import { AdvancedBackground } from '../components/AdvancedBackground';
 
 // === ТИПИ ТА КОНФІГУРАЦІЯ ===
 interface GraphNode {
