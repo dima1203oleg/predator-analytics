@@ -351,7 +351,7 @@ services:
       context: ./apps/predator-analytics-ui
       dockerfile: Dockerfile
     container_name: predator_frontend
-    ports: ["3030:80"]
+    ports: ["3030:3030"]
     depends_on: [backend]
     restart: unless-stopped
     networks: [predator-network]

@@ -1,28 +1,44 @@
 """
-🚀 PREDATOR Analytics v55.2 — Канонічний скрипт інгестії реальних митних даних.
+🚀 PREDATOR Analytics v56.0 — Канонічний скрипт інгестії реальних митних даних.
 
 Підтримка:
 1. Silver Schema (public.declarations, public.companies)
 2. Gold Schema (gold.customs_declarations)
 3. Multi-tenancy (tenant_id)
 4. UPSERT логіка для уникнення дублікатів.
+5. Автоматичне завантаження .env.
 """
 import os
 import sys
 import uuid
 import datetime
 import json
+import logging
 import pandas as pd
 from sqlalchemy import create_engine, text
+from dotenv import load_dotenv
+
+# Налаштування логування
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler()]
+)
+logger = logging.getLogger("ingestion")
+
+# Завантажуємо змінні оточення
+load_dotenv()
 
 # Database connection
-DEFAULT_DB_URL = "postgresql://predator:predator_password@localhost:5432/predator_db"
+DEFAULT_DB_URL = "postgresql://admin:predator_password@localhost:5432/predator_db"
 DB_URL = os.environ.get("DATABASE_URL", DEFAULT_DB_URL)
+
+# Для підтримки SQLAlchemy sync engine, якщо URL має asyncpg
 if "postgresql+asyncpg" in DB_URL:
     DB_URL = DB_URL.replace("postgresql+asyncpg", "postgresql")
 
-CSV_FILE = "/Users/dima-mac/Documents/Predator_21/Березень_2024.csv"
-TENANT_ID = "a0000000-0000-0000-0000-000000000001"
+CSV_FILE = os.environ.get("CUSTOMS_CSV_PATH", "/Users/dima-mac/Documents/Predator_21/Березень_2024.csv")
+TENANT_ID = os.environ.get("TENANT_ID", "a0000000-0000-0000-0000-000000000001")
 
 def get_engine():
     return create_engine(DB_URL)
@@ -50,12 +66,11 @@ def process_declarations_batch(df_batch, tenant_id):
     
     # Exporter
     silver_df['exporter_name'] = df_batch['Відправник']
-    # If possible, get exporter country from origin or dispatch
-    # Note: 'Країна походження' and 'Країна відправлення' exist in CSV
-    silver_df['exporter_country'] = df_batch['Країна походження']
+    # Використовуємо 'Країна відправлення' для експортера, а 'Країна походження' для товару
+    silver_df['exporter_country'] = df_batch['Країна відправлення'].fillna(df_batch['Країна походження'])
     
     # Goods
-    silver_df['uktzed_code'] = df_batch['Код товару'].fillna(0).astype(str)
+    silver_df['uktzed_code'] = df_batch['Код товару'].fillna(0).astype(str).str.replace('.0', '', regex=False)
     silver_df['goods_description'] = df_batch['Опис товару']
     
     # Weights and Value
@@ -88,10 +103,10 @@ def process_companies_batch(df_batch, tenant_id):
     return comp_df
 
 def ingest():
-    print(f"🚀 Starting Real CSV Ingestion: {CSV_FILE}")
+    logger.info(f"🚀 Запуск інгестії реальних CSV даних: {CSV_FILE}")
     
     if not os.path.exists(CSV_FILE):
-        print(f"❌ File {CSV_FILE} not found.")
+        logger.error(f"❌ Файл {CSV_FILE} не знайдено.")
         return
 
     engine = get_engine()
@@ -113,12 +128,12 @@ def ingest():
         
         for i, df_chunk in enumerate(iterator):
             if total_processed >= max_rows:
-                print(f"🛑 Limit {max_rows} reached. Stopping.")
+                logger.warning(f"🛑 Ліміт {max_rows} досягнуто. Зупинка.")
                 break
                 
-            print(f"⏳ Processing chunk {i+1} ({len(df_chunk)} rows)...")
+            logger.info(f"⏳ Обробка чанку {i+1} ({len(df_chunk)} рядків)...")
 
-            # 1. Process Companies (Pre-requisite for high quality)
+            # 1. Process Companies
             # Прибираємо ітерацію df.iterrows() і робимо Bulk Insert
             comp_df = process_companies_batch(df_chunk, TENANT_ID)
             
@@ -159,9 +174,9 @@ def ingest():
             df_chunk.to_sql('customs_declarations', engine, schema='gold', if_exists=('replace' if i==0 else 'append'), index=False)
 
             total_processed += len(df_chunk)
-            print(f"📦 Progress: {total_processed} rows.")
+            logger.info(f"📦 Прогрес: {total_processed} рядків.")
 
-        print("✅ Success! Data ingested into public.declarations, public.companies and gold.customs_declarations.")
+        logger.info("✅ Успіх! Дані завантажені в public.declarations, public.companies та gold.customs_declarations.")
 
         # Updated data_sources registration
         with engine.connect() as conn:

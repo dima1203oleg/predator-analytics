@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   frontend:
-    image: predator-analytics-ui:v55.0.1
+    image: predator-analytics-ui:v55.1.0-production
     container_name: predator-frontend
     ports:
       - "3030:3030"
@@ -17,6 +17,10 @@ services:
       start_period: 5s
     networks:
       - predator-network
+    labels:
+      - "com.predator.version=v55.1.0"
+      - "com.predator.component=frontend"
+      - "com.predator.environment=production"
 
 networks:
   predator-network:
