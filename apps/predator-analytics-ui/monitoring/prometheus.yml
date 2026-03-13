@@ -1,0 +1,101 @@
+# 📊 PREDATOR Analytics UI - Prometheus Monitoring Configuration
+# Version: v55.1.0
+# Purpose: Comprehensive monitoring for frontend service
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alert_rules.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # Frontend Service Monitoring
+  - job_name: 'predator-frontend'
+    static_configs:
+      - targets: ['predator-frontend:3030']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Nginx Monitoring
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx:9113']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # Docker Container Monitoring
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['docker-exporter:9323']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # Node Exporter (System Metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # Blackbox Exporter (Health Checks)
+  - job_name: 'blackbox-http'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - http://predator-frontend:3030/health
+        - http://predator-frontend:3030/
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # Custom Frontend Metrics (if implemented)
+  - job_name: 'frontend-metrics'
+    static_configs:
+      - targets: ['predator-frontend:3030']
+    metrics_path: '/api/metrics'
+    scrape_interval: 60s
+    scrape_timeout: 10s
+
+# Recording Rules
+recording_rules:
+  - name: predator_frontend.rules
+    rules:
+      # Request rate
+      - record: predator_frontend:request_rate:5m
+        expr: rate(http_requests_total[5m])
+      
+      # Error rate
+      - record: predator_frontend:error_rate:5m
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
+      
+      # Response time
+      - record: predator_frontend:response_time:5m
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+      
+      # Container metrics
+      - record: predator_frontend:container_cpu_usage:5m
+        expr: rate(container_cpu_usage_seconds_total{name="predator-frontend"}[5m])
+      
+      - record: predator_frontend:container_memory_usage
+        expr: container_memory_usage_bytes{name="predator-frontend"}
+      
+      # Nginx metrics
+      - record: predator_frontend:nginx_request_rate:5m
+        expr: rate(nginx_http_requests_total[5m])
+      
+      - record: predator_frontend:nginx_response_time:5m
+        expr: histogram_quantile(0.95, rate(nginx_http_request_duration_seconds_bucket[5m]))
