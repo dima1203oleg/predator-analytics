@@ -26,7 +26,7 @@ export default defineConfig({
   },
 
   build: {
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 1500,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -55,6 +55,14 @@ export default defineConfig({
           // Icons
           'vendor-lucide': ['lucide-react'],
         }
+      }
+    },
+    sourcemap: false,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
       }
     }
   }
