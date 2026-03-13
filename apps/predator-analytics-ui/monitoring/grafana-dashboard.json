@@ -1,0 +1,480 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "🦅 PREDATOR Analytics UI - Monitoring Dashboard",
+    "tags": ["predator", "frontend", "monitoring"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "🚦 Service Status",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 0,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "up{job=\"predator-frontend\"}",
+            "legendFormat": "{{instance}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {
+                "options": {
+                  "0": {
+                    "text": "DOWN",
+                    "color": "red"
+                  },
+                  "1": {
+                    "text": "UP",
+                    "color": "green"
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "green",
+                  "value": 1
+                }
+              ]
+            }
+          }
+        },
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "justifyMode": "center"
+        }
+      },
+      {
+        "id": 2,
+        "title": "📊 Request Rate",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 6,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{job=\"predator-frontend\"}[5m])",
+            "legendFormat": "{{method}} {{status}}"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Requests/sec"
+          }
+        ],
+        "lines": true,
+        "fill": 1,
+        "linewidth": 2
+      },
+      {
+        "id": 3,
+        "title": "⚡ Response Time",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 18,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket{job=\"predator-frontend\"}[5m]))",
+            "legendFormat": "50th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"predator-frontend\"}[5m]))",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{job=\"predator-frontend\"}[5m]))",
+            "legendFormat": "99th percentile"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Seconds"
+          }
+        ],
+        "lines": true,
+        "fill": 1,
+        "linewidth": 2
+      },
+      {
+        "id": 4,
+        "title": "🔥 Error Rate",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{job=\"predator-frontend\",status=~\"5..\"}[5m]) / rate(http_requests_total{job=\"predator-frontend\"}[5m])",
+            "legendFormat": "5xx Error Rate"
+          },
+          {
+            "expr": "rate(http_requests_total{job=\"predator-frontend\",status=~\"4..\"}[5m]) / rate(http_requests_total{job=\"predator-frontend\"}[5m])",
+            "legendFormat": "4xx Error Rate"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Error Rate",
+            "max": 1,
+            "min": 0
+          }
+        ],
+        "lines": true,
+        "fill": 1,
+        "linewidth": 2
+      },
+      {
+        "id": 5,
+        "title": "💾 Memory Usage",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 12,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "container_memory_usage_bytes{name=\"predator-frontend\"} / 1024 / 1024",
+            "legendFormat": "Memory Usage (MB)"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "MB"
+          }
+        ],
+        "lines": true,
+        "fill": 1,
+        "linewidth": 2
+      },
+      {
+        "id": 6,
+        "title": "🖥️ CPU Usage",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 18,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "rate(container_cpu_usage_seconds_total{name=\"predator-frontend\"}[5m]) * 100",
+            "legendFormat": "CPU Usage (%)"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "CPU %",
+            "max": 100,
+            "min": 0
+          }
+        ],
+        "lines": true,
+        "fill": 1,
+        "linewidth": 2
+      },
+      {
+        "id": 7,
+        "title": "🌐 HTTP Status Codes",
+        "type": "piechart",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 0,
+          "y": 16
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(http_requests_total{job=\"predator-frontend\"}[5m])) by (status)",
+            "legendFormat": "{{status}}"
+          }
+        ],
+        "options": {
+          "pieType": "pie",
+          "displayLabels": ["name", "value", "percent"]
+        }
+      },
+      {
+        "id": 8,
+        "title": "📈 Top Endpoints",
+        "type": "table",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 8,
+          "y": 16
+        },
+        "targets": [
+          {
+            "expr": "topk(10, sum(rate(http_requests_total{job=\"predator-frontend\"}[5m])) by (path))",
+            "legendFormat": "{{path}}"
+          }
+        ],
+        "transformations": [
+          {
+            "id": "sortBy",
+            "options": {
+              "fields": {},
+              "sort": [
+                {
+                  "field": "Value"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "🔍 Health Check Status",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 16,
+          "y": 16
+        },
+        "targets": [
+          {
+            "expr": "probe_success{job=\"blackbox-http\",instance=\"http://predator-frontend:3030/health\"}",
+            "legendFormat": "Health Check"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {
+                "options": {
+                  "0": {
+                    "text": "FAILED",
+                    "color": "red"
+                  },
+                  "1": {
+                    "text": "PASSED",
+                    "color": "green"
+                  }
+                },
+                "type": "value"
+              }
+            ]
+          }
+        },
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "justifyMode": "center"
+        }
+      },
+      {
+        "id": 10,
+        "title": "🐳 Container Restarts",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 0,
+          "y": 24
+        },
+        "targets": [
+          {
+            "expr": "container_start_time_seconds{name=\"predator-frontend\"}",
+            "legendFormat": "Start Time"
+          }
+        ],
+        "options": {
+          "colorMode": "none",
+          "graphMode": "none",
+          "justifyMode": "auto"
+        }
+      },
+      {
+        "id": 11,
+        "title": "📊 Disk Usage",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 6,
+          "y": 24
+        },
+        "targets": [
+          {
+            "expr": "(node_filesystem_size_bytes{mountpoint=\"/\"} - node_filesystem_avail_bytes{mountpoint=\"/\"}) / node_filesystem_size_bytes{mountpoint=\"/\"} * 100",
+            "legendFormat": "Disk Usage %"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Disk Usage %",
+            "max": 100,
+            "min": 0
+          }
+        ],
+        "lines": true,
+        "fill": 1,
+        "linewidth": 2
+      },
+      {
+        "id": 12,
+        "title": "🔗 SSL Certificate Expiry",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 12,
+          "y": 24
+        },
+        "targets": [
+          {
+            "expr": "probe_ssl_earliest_cert_expiry{job=\"blackbox-http\"} - time()",
+            "legendFormat": "Days Until Expiry"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "d",
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 7
+                },
+                {
+                  "color": "yellow",
+                  "value": 30
+                },
+                {
+                  "color": "green",
+                  "value": 90
+                }
+              ]
+            }
+          }
+        },
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto"
+        }
+      },
+      {
+        "id": 13,
+        "title": "📋 Recent Alerts",
+        "type": "table",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 18,
+          "y": 24
+        },
+        "targets": [
+          {
+            "expr": "ALERTS{service=\"predator-frontend\"}",
+            "legendFormat": "{{alertname}}"
+          }
+        ],
+        "transformations": [
+          {
+            "id": "sortBy",
+            "options": {
+              "fields": {},
+              "sort": [
+                {
+                  "field": "Time"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "name": "Deployments",
+          "datasource": "Prometheus",
+          "enable": true,
+          "expr": "container_start_time_seconds{name=\"predator-frontend\"}",
+          "iconColor": "blue",
+          "tags": ["deployment"],
+          "type": "tags"
+        }
+      ]
+    },
+    "templating": {
+      "list": [
+        {
+          "name": "instance",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(up{job=\"predator-frontend\"}, instance)",
+          "refresh": 1,
+          "includeAll": true,
+          "allValue": ".*"
+        },
+        {
+          "name": "interval",
+          "type": "interval",
+          "query": "30s",
+          "refresh": 0,
+          "options": [
+            {
+              "value": "30s",
+              "text": "30s"
+            },
+            {
+              "value": "1m",
+              "text": "1m"
+            },
+            {
+              "value": "5m",
+              "text": "5m"
+            },
+            {
+              "value": "15m",
+              "text": "15m"
+            }
+          ]
+        }
+      ]
+    },
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "30s"
+  }
+}
