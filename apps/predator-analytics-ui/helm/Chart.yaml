@@ -1,0 +1,47 @@
+# 🦅 PREDATOR Analytics UI - Helm Chart
+# Version: v55.1.0
+
+apiVersion: v2
+name: predator-frontend
+description: PREDATOR Analytics Frontend - OSINT платформа для митної аналітики України
+type: application
+version: 55.1.0
+appVersion: "55.1.0"
+
+home: https://github.com/dima1203oleg/predator-analytics
+sources:
+  - https://github.com/dima1203oleg/predator-analytics
+  - https://docs.predator-analytics.ua
+
+maintainers:
+  - name: PREDATOR Analytics Team
+    email: support@predator-analytics.ua
+    url: https://predator-analytics.ua
+
+keywords:
+  - osint
+  - analytics
+  - ukraine
+  - customs
+  - security
+  - frontend
+  - react
+  - typescript
+
+annotations:
+  category: Analytics
+  licenses: MIT
+  dependencies: []
+  predatorengine: "v55.1.0"
+  compliance: "AGENTS.md v55"
+
+# Chart dependencies
+dependencies:
+  - name: nginx
+    version: "15.0.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: nginx.enabled
+  - name: prometheus
+    version: "25.0.0"
+    repository: "https://prometheus-community.github.io/helm-charts"
+    condition: monitoring.enabled
