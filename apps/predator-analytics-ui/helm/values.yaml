@@ -1,0 +1,482 @@
+# 🦅 PREDATOR Analytics UI - Helm Values
+# Version: v55.1.0
+# Environment: Production
+
+# Global configuration
+global:
+  imageRegistry: ghcr.io
+  imagePullSecrets:
+    - name: ghcr-secret
+  storageClass: "standard"
+
+# Frontend application configuration
+frontend:
+  # Image configuration
+  image:
+    registry: ghcr.io
+    repository: dima1203oleg/predator-analytics-ui
+    tag: "v55.1.0-production"
+    pullPolicy: Always
+  
+  # Replica configuration
+  replicaCount: 2
+  
+  # Resource configuration
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  
+  # Autoscaling
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  
+  # Environment variables
+  env:
+    - name: NODE_ENV
+      value: "production"
+    - name: VITE_API_URL
+      value: "http://predator-core-api.predator.svc.cluster.local:8000"
+  
+  # Secret environment variables
+  secretEnv: []
+  
+  # Service configuration
+  service:
+    type: ClusterIP
+    port: 3030
+    targetPort: 3030
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "3030"
+      prometheus.io/path: "/metrics"
+  
+  # Ingress configuration
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      nginx.ingress.kubernetes.io/rate-limit: "100"
+      nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    hosts:
+      - host: predator-analytics.ua
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: predator-frontend-tls
+        hosts:
+          - predator-analytics.ua
+  
+  # Health checks
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+  
+  startupProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 6
+  
+  # Security configuration
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
+  
+  # Node selector
+  nodeSelector:
+    kubernetes.io/os: linux
+  
+  # Tolerations
+  tolerations: []
+  
+  # Affinity
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - predator-frontend
+            topologyKey: kubernetes.io/hostname
+  
+  # Volumes
+  volumes:
+    - name: nginx-cache
+      emptyDir: {}
+    - name: nginx-logs
+      emptyDir: {}
+  
+  # Volume mounts
+  volumeMounts:
+    - name: nginx-cache
+      mountPath: /var/cache/nginx
+    - name: nginx-logs
+      mountPath: /var/log/nginx
+  
+  # Pod annotations
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "3030"
+    prometheus.io/path: "/metrics"
+    app.kubernetes.io/version: "55.1.0"
+    app.kubernetes.io/component: "frontend"
+    app.kubernetes.io/environment: "production"
+
+# Service account configuration
+serviceAccount:
+  create: true
+  annotations: {}
+  name: "predator-frontend"
+
+# Pod disruption budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# Network policy
+networkPolicy:
+  enabled: true
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: predator-frontend
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: predator-core-api
+      ports:
+        - protocol: TCP
+          port: 8000
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 53
+          port: 443
+        - protocol: UDP
+          port: 53
+
+# ConfigMap configuration
+configMap:
+  enabled: true
+  name: "predator-frontend-config"
+  data:
+    nginx.conf: |
+      # Production Nginx Configuration
+      worker_processes auto;
+      error_log /var/log/nginx/error.log warn;
+      pid /var/run/nginx.pid;
+      
+      events {
+          worker_connections 1024;
+          use epoll;
+          multi_accept on;
+      }
+      
+      http {
+          include /etc/nginx/mime.types;
+          default_type application/octet-stream;
+          
+          # Logging
+          log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+          
+          access_log /var/log/nginx/access.log main;
+          
+          # Performance
+          sendfile on;
+          tcp_nopush on;
+          tcp_nodelay on;
+          keepalive_timeout 65;
+          types_hash_max_size 2048;
+          client_max_body_size 100M;
+          
+          # Gzip compression
+          gzip on;
+          gzip_vary on;
+          gzip_min_length 1000;
+          gzip_comp_level 6;
+          gzip_types
+              text/plain
+              text/css
+              text/xml
+              text/javascript
+              application/javascript
+              application/xml+rss
+              application/json;
+          
+          # Security headers
+          add_header X-Frame-Options "SAMEORIGIN" always;
+          add_header X-Content-Type-Options "nosniff" always;
+          add_header X-XSS-Protection "1; mode=block" always;
+          add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+          
+          # Rate limiting
+          limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+          limit_req_zone $binary_remote_addr zone=static:10m rate=50r/s;
+          
+          server {
+              listen 3030;
+              server_name _;
+              root /usr/share/nginx/html;
+              index index.html;
+              
+              # Health check
+              location /health {
+                  access_log off;
+                  return 200 "healthy\n";
+                  add_header Content-Type text/plain;
+              }
+              
+              # Static assets with caching
+              location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+                  expires 30d;
+                  add_header Cache-Control "public, immutable";
+                  add_header Vary "Accept-Encoding";
+                  limit_req zone=static burst=20 nodelay;
+                  access_log off;
+              }
+              
+              # API proxy with rate limiting
+              location /api/ {
+                  limit_req zone=api burst=5 nodelay;
+                  proxy_pass http://predator-core-api.predator.svc.cluster.local:8000;
+                  proxy_http_version 1.1;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection "upgrade";
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+                  proxy_connect_timeout 60s;
+                  proxy_send_timeout 60s;
+                  proxy_read_timeout 60s;
+                  proxy_buffering on;
+                  proxy_buffer_size 4k;
+                  proxy_buffers 8 4k;
+                  proxy_busy_buffers_size 8k;
+              }
+              
+              # SPA routing
+              location / {
+                  try_files $uri $uri/ /index.html;
+                  add_header Cache-Control "no-cache, no-store, must-revalidate";
+                  add_header Pragma "no-cache";
+                  add_header Expires "0";
+              }
+              
+              # Deny access to sensitive files
+              location ~ /\. {
+                  deny all;
+                  access_log off;
+                  log_not_found off;
+              }
+              
+              # Custom error pages
+              error_page 404 /404.html;
+              error_page 500 502 503 504 /50x.html;
+              
+              location = /50x.html {
+                  root /usr/share/nginx/html;
+              }
+          }
+      }
+
+# Secret configuration
+secret:
+  enabled: true
+  name: "predator-frontend-secrets"
+  data: {}
+
+# Monitoring configuration
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    namespace: predator
+    labels:
+      release: prometheus
+    interval: 30s
+    scrapeTimeout: 10s
+  
+  prometheusRule:
+    enabled: true
+    namespace: predator
+    labels:
+      release: prometheus
+    rules:
+      - alert: PredatorFrontendDown
+        expr: up{job="predator-frontend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: predator-frontend
+        annotations:
+          summary: "PREDATOR Frontend service is down"
+          description: "Frontend service has been down for more than 1 minute."
+      
+      - alert: PredatorFrontendHighErrorRate
+        expr: rate(http_requests_total{job="predator-frontend",status=~"5.."}[5m]) / rate(http_requests_total{job="predator-frontend"}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          service: predator-frontend
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes."
+      
+      - alert: PredatorFrontendHighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="predator-frontend"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: predator-frontend
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }}s for the last 5 minutes."
+  
+  grafanaDashboard:
+    enabled: true
+      namespace: predator
+      labels:
+        grafana_dashboard: "1"
+
+# Backup configuration
+backup:
+  enabled: true
+  schedule: "0 2 * * *"
+  retention: 7
+  storageClass: "standard"
+  size: "1Gi"
+
+# RBAC configuration
+rbac:
+  create: true
+  rules:
+    - apiGroups: [""]
+      resources: ["pods", "services", "endpoints"]
+      verbs: ["get", "list", "watch"]
+    - apiGroups: ["apps"]
+      resources: ["deployments", "replicasets"]
+      verbs: ["get", "list", "watch"]
+
+# Pod security policy
+podSecurityPolicy:
+  enabled: false
+
+# Horizontal Pod Autoscaler
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# Vertical Pod Autoscaler
+vpa:
+  enabled: false
+
+# Priority class
+priorityClass:
+  enabled: false
+  name: ""
+
+# Pod topology spread constraints
+topologySpreadConstraints:
+  enabled: false
+
+# Additional labels
+commonLabels:
+  app.kubernetes.io/name: predator-frontend
+  app.kubernetes.io/instance: predator-frontend
+  app.kubernetes.io/version: "55.1.0"
+  app.kubernetes.io/component: frontend
+  app.kubernetes.io/environment: production
+
+# Additional annotations
+commonAnnotations:
+  predatorengine: "v55.1.0"
+  compliance: "AGENTS.md v55"
+  documentation: "https://docs.predator-analytics.ua"
+
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+# Tests
+tests:
+  enabled: true
+
+# Init containers
+initContainers: []
+
+# Sidecars
+sidecars: []
+
+# Extra containers
+extraContainers: []
+
+# Extra manifests
+extraManifests: []
+
+# Post-install hooks
+postInstall: {}
+
+# Post-delete hooks
+postDelete: {}
+
+# Pre-install hooks
+preInstall: {}
+
+# Pre-delete hooks
+preDelete: {}

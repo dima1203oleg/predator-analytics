@@ -1,0 +1,331 @@
+name: 🚀 Production Deploy
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: predator-analytics-ui
+
+jobs:
+  # TypeScript Check & Build
+  build-and-test:
+    name: 🔨 Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: apps/predator-analytics-ui/package-lock.json
+        
+    - name: 📦 Install dependencies
+      working-directory: apps/predator-analytics-ui
+      run: npm ci
+      
+    - name: 🔍 TypeScript check
+      working-directory: apps/predator-analytics-ui
+      run: npx tsc --noEmit
+      
+    - name: 🔨 Build production
+      working-directory: apps/predator-analytics-ui
+      run: npm run build
+      
+    - name: 🧪 Run verification script
+      working-directory: apps/predator-analytics-ui
+      run: ./scripts/production-verification.sh
+      
+    - name: 📊 Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: apps/predator-analytics-ui/dist/
+        retention-days: 7
+
+  # Security Scan
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔍 Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        
+    - name: 📊 Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  # Docker Build & Push
+  docker-build:
+    name: 🐳 Docker Build & Push
+    runs-on: ubuntu-latest
+    needs: [build-and-test, security-scan]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+    
+    permissions:
+      contents: read
+      packages: write
+      
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔐 Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 🏷️ Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=tag
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=raw,value=v55.1.0-production,enable={{is_default_branch}}
+          
+    - name: 🐳 Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: apps/predator-analytics-ui
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64,linux/arm64
+        
+    - name: 🧪 Test Docker image
+      run: |
+        docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }} \
+        curl -f http://localhost:3030/health
+
+  # E2E Tests
+  e2e-tests:
+    name: 🧪 E2E Tests
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🐳 Start services
+      run: |
+        docker-compose -f docker-compose.frontend.yml up -d
+        sleep 30
+        
+    - name: 🧪 Install Playwright
+      run: |
+        cd apps/predator-analytics-ui
+        npm ci
+        npx playwright install --with-deps
+        
+    - name: 🧪 Run E2E tests
+      run: |
+        cd apps/predator-analytics-ui
+        npx playwright test --reporter=html
+        
+    - name: 📊 Upload E2E test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-test-results
+        path: apps/predator-analytics-ui/playwright-report/
+        retention-days: 7
+        
+    - name: 🧹 Cleanup
+      run: docker-compose -f docker-compose.frontend.yml down
+
+  # Deploy to Production
+  deploy-production:
+    name: 🚀 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [docker-build, e2e-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🚀 Deploy to production
+      run: |
+        echo "🚀 Deploying to production..."
+        # Add actual deployment commands here
+        # For example: kubectl apply -f deploy/k8s/
+        # Or: ansible-playbook deploy.yml
+        
+    - name: ✅ Health check
+      run: |
+        echo "✅ Checking production health..."
+        # Add health check commands here
+        
+    - name: 📊 Notify deployment
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      if: always()
+
+  # Performance Tests
+  performance-tests:
+    name: 📊 Performance Tests
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🧪 Install k6
+      run: |
+        sudo gpg -k
+        sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+        echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt-get update
+        sudo apt-get install k6
+        
+    - name: 🧪 Run performance tests
+      run: |
+        cd apps/predator-analytics-ui
+        k6 run --out json=performance-results.json tests/performance/load-test.js
+        
+    - name: 📊 Upload performance results
+      uses: actions/upload-artifact@v4
+      with:
+        name: performance-results
+        path: apps/predator-analytics-ui/performance-results.json
+        retention-days: 7
+
+  # Security Audit
+  security-audit:
+    name: 🔒 Security Audit
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: apps/predator-analytics-ui/package-lock.json
+        
+    - name: 📦 Install dependencies
+      working-directory: apps/predator-analytics-ui
+      run: npm ci
+      
+    - name: 🔍 Run npm audit
+      working-directory: apps/predator-analytics-ui
+      run: npm audit --audit-level=high
+      
+    - name: 🔍 Run Snyk security scan
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+        command: monitor
+        project: apps/predator-analytics-ui/package.json
+
+  # Documentation Build
+  docs-build:
+    name: 📚 Documentation Build
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📚 Build documentation
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: apps/predator-analytics-ui/docs
+        destination_dir: docs
+        
+    - name: 📊 Generate API docs
+      run: |
+        cd apps/predator-analytics-ui
+        npm run docs:generate || echo "API docs generation skipped"
+
+  # Release
+  release:
+    name: 🎉 Release
+    runs-on: ubuntu-latest
+    needs: [docker-build, e2e-tests, security-audit]
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🎉 Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          ## 🚀 PREDATOR Analytics UI Release ${{ github.ref }}
+          
+          ### ✅ What's included
+          - TypeScript compilation with 0 errors
+          - Production build optimization
+          - Docker multi-stage build
+          - Comprehensive monitoring
+          - Automated backup & rollback
+          - Full documentation
+          
+          ### 📦 Installation
+          ```bash
+          docker pull ghcr.io/dima1203oleg/predator-analytics-ui:${{ github.ref }}
+          docker run -p 3030:3030 ghcr.io/dima1203oleg/predator-analytics-ui:${{ github.ref }}
+          ```
+          
+          ### 📋 Verification
+          ```bash
+          curl http://localhost:3030/health
+          ```
+          
+          ### 📚 Documentation
+          - [Installation Guide](https://docs.predator-analytics.ua)
+          - [API Documentation](https://api.predator-analytics.ua/docs)
+          - [Monitoring Setup](https://monitoring.predator-analytics.ua)
+          
+          ---
+          
+          🦅 **PREDATOR Analytics** — Український OSINT-інструмент для митної аналітики
+        draft: false
+        prerelease: false
