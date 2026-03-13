@@ -82,6 +82,9 @@ export const intelligenceApi = {
     getHealth: async () => {
         return (await v45Client.get('/monitoring/health')).data;
     },
+    getMetrics: async () => {
+        return (await v45Client.get('/intelligence/metrics')).data;
+    },
     getMarketTrends: async () => {
         return (await apiClient.get('/premium/market-trends')).data;
     },
@@ -134,6 +137,8 @@ export const intelligenceApi = {
     healing: {
         getMetrics: async () => (await v45Client.get('/intelligence/healing/metrics')).data,
         getStatus: async () => (await v45Client.get('/intelligence/healing/status')).data,
+        getHistory: async () => (await v45Client.get('/intelligence/healing/history')).data,
+        trigger: async (component: string) => (await v45Client.post('/intelligence/healing/trigger', { component })).data,
     },
     workflow: {
         getDAG: async () => (await v45Client.get('/intelligence/workflow/dag')).data,
