@@ -1308,282 +1308,88 @@ app.get(['/api/v1/system/metrics', '/v1/system/metrics', '/api/v45/system/status
     opensearch: { opensearch_docs: DB_SEARCH_INDEX.length },
     qdrant: { qdrant_vectors: DB_VECTORS.length },
     cpu: 24 + Math.random() * 15,
-    cpu_percent: 24 + Math.random() * 15, // used by v1 omniscience metrics
+    cpu_percent: 24 + Math.random() * 15,
     memory: 45 + Math.random() * 20,
-    memory_percent: 45 + Math.random() * 20, // used by v1 omniscience metrics
-    disk: 32,
-    network: { in: Math.random() * 1000, out: Math.random() * 500 },
-    active_containers: 12,
+    memory_percent: 45 + Math.random() * 20,
     timestamp: new Date().toISOString()
-  });
-});
-
-app.get(['/api/v1/metrics/realtime', '/v1/metrics/realtime', '/api/v45/metrics/realtime'], (req, res) => {
-  res.json({
-    activeUsers: 3,
-    requestsPerSecond: Math.floor(Math.random() * 50),
-    avgResponseTime: Math.floor(Math.random() * 30),
-    errorRate: Math.random() * 0.5,
-    // V45 Realtime metrics structure 
-    throughput: { value: 1400 + Math.random() * 200, unit: 'req/s' },
-    latency: { value: 45 + Math.random() * 10, unit: 'ms' },
-    error_rate: { value: 0.01 + Math.random() * 0.02, unit: '%' },
-    ndcg: { value: 0.94, unit: 'score' },
-    timestamp: new Date().toISOString()
-  });
-});
-
-app.get(['/api/v1/monitoring/health', '/api/v45/monitoring/health'], (req, res) => {
-  res.json({
-    status: 'UP',
-    health_score: 99,
-    services: { database: { status: 'UP' }, cache: { status: 'UP' }, llm: { status: 'UP' } }
-  });
-});
-
-app.get('/api/v45/training/status', (req, res) => {
-  res.json({
-    timestamp: new Date().toISOString(),
-    stage: 'OPTIMIZATION',
-    message: 'Training module is idle.',
-    status: 'IDLE',
-    progress: 100
-  });
-});
-
-// =============================================
-// 🌍 OSINT UA - DataGov & Prozorro
-// =============================================
-
-app.get(['/api/v1/osint_ua/datagov/search', '/v1/osint_ua/datagov/search'], (req, res) => {
-  const q = req.query.q || '';
-  const mocks = [
-    {
-      id: 'dataset-001',
-      name: 'edrpou-registry',
-      title: 'Єдиний державний реєстр юридичних осіб та фізичних осіб-підприємців (ЄДРПОУ)',
-      notes: 'Повний перелік зареєстрованих суб’єктів господарювання в Україні. Дані включають назву, код, адресу та статус.',
-      organization: { title: 'Міністерство юстиції України' },
-      metadata_modified: new Date().toISOString(),
-      resources: [
-        { id: 'res-1', name: 'Повний витяг (CSV)', format: 'CSV', url: '#', size: 1024 * 1024 * 450, last_modified: new Date().toISOString() },
-        { id: 'res-2', name: 'API Docs', format: 'JSON', url: '#', size: null, last_modified: new Date().toISOString() }
-      ]
-    },
-    {
-      id: 'dataset-002',
-      name: 'customs-rates-2024',
-      title: 'Митні ставки та тарифи на 2024 рік',
-      notes: 'Актуальні ставки ввізного мита згідно з чинним законодавством України.',
-      organization: { title: 'Державна митна служба України' },
-      metadata_modified: new Date(Date.now() - 86400000).toISOString(),
-      resources: [
-        { id: 'res-3', name: 'Тарифна сітка (XLSX)', format: 'XLSX', url: '#', size: 1024 * 1024 * 12, last_modified: new Date().toISOString() }
-      ]
-    },
-    {
-      id: 'dataset-003',
-      name: 'sanctions-list-ua',
-      title: 'Державний реєстр санкцій України',
-      notes: 'Перелік осіб та компаній, до яких застосовано спеціальні економічні та інші обмежувальні заходи (санкції).',
-      organization: { title: 'РНБО' },
-      metadata_modified: new Date().toISOString(),
-      resources: [
-        { id: 'res-4', name: 'База даних санкцій', format: 'JSON', url: '#', size: 1024 * 256, last_modified: new Date().toISOString() }
-      ]
-    }
-  ].filter(d => d.title.toLowerCase().includes(q.toLowerCase()) || d.notes.toLowerCase().includes(q.toLowerCase()));
-
-  res.json({
-    count: mocks.length,
-    results: mocks
   });
 });
 
 app.get(['/api/v1/osint_ua/prozorro/tenders', '/v1/osint_ua/prozorro/tenders'], (req, res) => {
   const tenders = [
     {
-      id: 'UA-2024-03-01-0001',
-      title: 'Закупівля серверного обладнання для дата-центру',
-      value: 1450000, currency: 'UAH', status: 'active.tendering',
-      procuringEntity: 'Національний Банк України',
-      date: new Date().toISOString(),
-      category: 'IT обладнання', region: 'Київ', bids_count: 7,
-      expectedValue: 1600000, risk_score: 12
-    },
-    {
-      id: 'UA-2024-03-02-0045',
-      title: 'Модернізація мережевої інфраструктури (Cisco Core Switches)',
-      value: 890000, currency: 'UAH', status: 'active.awarding',
-      procuringEntity: 'МВС України',
-      date: new Date(Date.now() - 3600000).toISOString(),
-      category: 'Телекомунікації', region: 'Київ', bids_count: 4,
-      expectedValue: 950000, risk_score: 8
-    },
-    {
       id: 'UA-2024-03-05-1234',
       title: 'Послуги з підтримки програмного забезпечення Oracle',
       value: 3200000, currency: 'UAH', status: 'complete',
-      procuringEntity: 'НАК "Нафтогаз України"',
+      procuring_entity: 'НАК "Нафтогаз України"',
       date: new Date(Date.now() - 86400000 * 2).toISOString(),
       category: 'IT послуги', region: 'Київ', bids_count: 2,
-      expectedValue: 3500000, risk_score: 45
+      expected_value: 3500000, risk_score: 45
     },
     {
       id: 'UA-2024-03-06-0078',
       title: 'Будівництво мосту через р. Дніпро (ділянка Запоріжжя)',
       value: 15200000, currency: 'UAH', status: 'active.tendering',
-      procuringEntity: 'Запорізька ОДА',
+      procuring_entity: 'Запорізька ОДА',
       date: new Date(Date.now() - 86400000 * 1).toISOString(),
       category: 'Будівництво', region: 'Запоріжжя', bids_count: 3,
-      expectedValue: 18000000, risk_score: 67
+      expected_value: 18000000, risk_score: 67
     },
     {
       id: 'UA-2024-03-07-0156',
       title: 'Медичне обладнання для обласної лікарні (КТ-сканер)',
       value: 8750000, currency: 'UAH', status: 'active.qualification',
-      procuringEntity: 'КНП "Обласна клінічна лікарня" Львів',
+      procuring_entity: 'КНП "Обласна клінічна лікарня" Львів',
       date: new Date(Date.now() - 86400000 * 3).toISOString(),
       category: 'Медицина', region: 'Львів', bids_count: 5,
-      expectedValue: 9200000, risk_score: 23
-    },
-    {
-      id: 'UA-2024-03-08-0234',
-      title: 'Паливо дизельне ЄВРО-5 (річний контракт)',
-      value: 4560000, currency: 'UAH', status: 'active.tendering',
-      procuringEntity: 'Міноборони України',
-      date: new Date(Date.now() - 86400000 * 4).toISOString(),
-      category: 'Паливо та ПММ', region: 'Київ', bids_count: 12,
-      expectedValue: 5000000, risk_score: 18
-    },
-    {
-      id: 'UA-2024-03-09-0312',
-      title: 'Послуги з охорони та моніторингу (24/7)',
-      value: 720000, currency: 'UAH', status: 'unsuccessful',
-      procuringEntity: 'Укрзалізниця',
-      date: new Date(Date.now() - 86400000 * 5).toISOString(),
-      category: 'Безпека', region: 'Харків', bids_count: 1,
-      expectedValue: 800000, risk_score: 82
+      expected_value: 9200000, risk_score: 23
     },
     {
       id: 'UA-2024-03-10-0456',
       title: 'Капітальний ремонт дороги М-06 Київ-Чоп (км 245-280)',
       value: 12800000, currency: 'UAH', status: 'active.tendering',
-      procuringEntity: 'Укравтодор',
+      procuring_entity: 'Укравтодор',
       date: new Date(Date.now() - 86400000 * 6).toISOString(),
-      category: 'Дорожнє будівництво', region: 'Закарпаття', bidsCount: 6,
-      expectedValue: 14500000, riskScore: 55
+      category: 'Дорожнє будівництво', region: 'Закарпаття', bids_count: 6,
+      expected_value: 14500000, risk_score: 55
     },
     {
       id: 'UA-2024-03-11-0523',
       title: 'Шкільні автобуси (10 одиниць) для сільських громад',
       value: 6200000, currency: 'UAH', status: 'active.awarding',
-      procuringEntity: 'Рівненська ОВА',
+      procuring_entity: 'Рівненська ОВА',
       date: new Date(Date.now() - 86400000 * 7).toISOString(),
-      category: 'Транспорт', region: 'Рівне', bidsCount: 3,
-      expectedValue: 6800000, riskScore: 14
+      category: 'Транспорт', region: 'Рівне', bids_count: 3,
+      expected_value: 6800000, risk_score: 14
     },
     {
       id: 'UA-2024-03-12-0601',
       title: 'Ліцензії Microsoft 365 для державних установ (5000 ліц.)',
       value: 2340000, currency: 'UAH', status: 'complete',
-      procuringEntity: 'Міністерство цифрової трансформації',
+      procuring_entity: 'Міністерство цифрової трансформації',
       date: new Date(Date.now() - 86400000 * 8).toISOString(),
-      category: 'Програмне забезпечення', region: 'Київ', bidsCount: 2,
-      expectedValue: 2500000, riskScore: 31
+      category: 'Програмне забезпечення', region: 'Київ', bids_count: 2,
+      expected_value: 2500000, risk_score: 31
     },
     {
       id: 'UA-2024-03-13-0678',
       title: 'Харчування для закладів освіти (нав. рік 2024-2025)',
       value: 3890000, currency: 'UAH', status: 'active.tendering',
-      procuringEntity: 'Одеська міська рада',
+      procuring_entity: 'Одеська міська рада',
       date: new Date(Date.now() - 86400000 * 9).toISOString(),
-      category: 'Харчування', region: 'Одеса', bidsCount: 8,
-      expectedValue: 4200000, riskScore: 41
-    },
-    {
-      id: 'UA-2024-03-14-0712',
-      title: 'Генератори дизельні 100 кВт (15 од.) для критичної інфраструктури',
-      value: 5670000, currency: 'UAH', status: 'active.qualification',
-      procuringEntity: 'ДСНС України',
-      date: new Date(Date.now() - 86400000 * 10).toISOString(),
-      category: 'Енергетичне обладнання', region: 'Дніпро', bidsCount: 9,
-      expectedValue: 6100000, riskScore: 20
-    },
-    {
-      id: 'UA-2024-03-15-0834',
-      title: 'Системи відеоспостереження для 48 шкіл',
-      value: 1120000, currency: 'UAH', status: 'active.tendering',
-      procuringEntity: 'Вінницька міська рада',
-      date: new Date(Date.now() - 86400000 * 11).toISOString(),
-      category: 'Безпека', region: 'Вінниця', bidsCount: 5,
-      expectedValue: 1300000, riskScore: 16
-    },
-    {
-      id: 'UA-2024-03-16-0901',
-      title: 'Протезування кінцівок для ветеранів (200 комплектів)',
-      value: 9800000, currency: 'UAH', status: 'active.awarding',
-      procuringEntity: 'Міністерство у справах ветеранів',
-      date: new Date(Date.now() - 86400000 * 12).toISOString(),
-      category: 'Медицина', region: 'Київ', bidsCount: 4,
-      expectedValue: 10500000, riskScore: 9
-    },
-    {
-      id: 'UA-2024-03-17-0956',
-      title: 'CloudFlare Enterprise + WAF для e-Gov порталів',
-      value: 780000, currency: 'UAH', status: 'complete',
-      procuringEntity: 'ДІА',
-      date: new Date(Date.now() - 86400000 * 13).toISOString(),
-      category: 'Кібербезпека', region: 'Київ', bidsCount: 1,
-      expectedValue: 800000, riskScore: 72
-    },
-    {
-      id: 'UA-2024-03-18-1023',
-      title: 'Реконструкція водопровідної мережі (12 км трубопроводу)',
-      value: 7450000, currency: 'UAH', status: 'active.tendering',
-      procuringEntity: 'КП "Миколаївводоканал"',
-      date: new Date(Date.now() - 86400000 * 14).toISOString(),
-      category: 'Комунальні послуги', region: 'Миколаїв', bidsCount: 4,
-      expectedValue: 8200000, riskScore: 38
-    },
-    {
-      id: 'UA-2024-03-19-1089',
-      title: 'Спецодяг та засоби захисту для рятувальників (5000 ком.)',
-      value: 3100000, currency: 'UAH', status: 'active.tendering',
-      procuringEntity: 'ДСНС України',
-      date: new Date(Date.now() - 86400000 * 15).toISOString(),
-      category: 'Засоби захисту', region: 'Київ', bidsCount: 11,
-      expectedValue: 3500000, riskScore: 15
-    },
-    {
-      id: 'UA-2024-03-20-1145',
-      title: 'Електробуси (20 од.) для міського транспорту',
-      value: 14200000, currency: 'UAH', status: 'active.qualification',
-      procuringEntity: 'КП "Черкасиелектротранс"',
-      date: new Date(Date.now() - 86400000 * 16).toISOString(),
-      category: 'Транспорт', region: 'Черкаси', bidsCount: 3,
-      expectedValue: 16000000, riskScore: 28
-    },
-    {
-      id: 'UA-2024-03-21-1201',
-      title: 'Підручники для 1-4 класів НУШ (500 000 примірників)',
-      value: 2890000, currency: 'UAH', status: 'active.tendering',
-      procuringEntity: 'МОН України',
-      date: new Date(Date.now() - 86400000 * 17).toISOString(),
-      category: 'Освіта', region: 'Київ', bidsCount: 6,
-      expectedValue: 3200000, riskScore: 22
+      category: 'Харчування', region: 'Одеса', bids_count: 8,
+      expected_value: 4200000, risk_score: 41
     },
     {
       id: 'UA-2024-03-22-1267',
       title: 'Утилізація медичних відходів (річний контракт)',
       value: 520000, currency: 'UAH', status: 'unsuccessful',
-      procuringEntity: 'КНП "Міська лікарня №2" Тернопіль',
+      procuring_entity: 'КНП "Міська лікарня №2" Тернопіль',
       date: new Date(Date.now() - 86400000 * 18).toISOString(),
-      category: 'Екологія', region: 'Тернопіль', bidsCount: 0,
-      expectedValue: 600000, riskScore: 91
+      category: 'Екологія', region: 'Тернопіль', bids_count: 0,
+      expected_value: 600000, risk_score: 91
     }
   ];
-
   res.json({ tenders });
 });
 
@@ -1613,14 +1419,14 @@ app.get('/api/v1/osint_ua/prozorro/stats', (req, res) => {
 
 app.get('/api/v1/osint_ua/prozorro/analytics', (req, res) => {
   res.json({
-    topProcuringEntities: [
-      { name: 'Міноборони України', tendersCount: 3, totalValue: 14560000 },
-      { name: 'ДСНС України', tendersCount: 2, totalValue: 8770000 },
-      { name: 'МОН України', tendersCount: 2, totalValue: 5690000 },
-      { name: 'Укравтодор', tendersCount: 1, totalValue: 12800000 },
-      { name: 'НАК "Нафтогаз"', tendersCount: 1, totalValue: 3200000 }
+    top_procuring_entities: [
+      { name: 'Міноборони України', tenders_count: 3, total_value: 14560000 },
+      { name: 'ДСНС України', tenders_count: 2, total_value: 8770000 },
+      { name: 'МОН України', tenders_count: 2, total_value: 5690000 },
+      { name: 'Укравтодор', tenders_count: 1, total_value: 12800000 },
+      { name: 'НАК "Нафтогаз"', tenders_count: 1, total_value: 3200000 }
     ],
-    monthlyTrend: [
+    monthly_trend: [
       { month: 'Вер 2023', count: 145, value: 890000000 },
       { month: 'Жов 2023', count: 167, value: 1020000000 },
       { month: 'Лис 2023', count: 134, value: 780000000 },
@@ -1629,11 +1435,11 @@ app.get('/api/v1/osint_ua/prozorro/analytics', (req, res) => {
       { month: 'Лют 2024', count: 156, value: 980000000 },
       { month: 'Бер 2024', count: 189, value: 1340000000 }
     ],
-    savingsAnalysis: {
-      expectedTotal: 118600000,
-      actualTotal: 105530000,
+    savings_analysis: {
+      expected_total: 118600000,
+      actual_total: 105530000,
       savings: 13070000,
-      savingsPercent: 11.02
+      savings_percent: 11.02
     }
   });
 });
@@ -2303,7 +2109,7 @@ app.post('/api/v1/search/declarations', (req, res) => {
     date: d.date,
     goodsDescription: d.goods_description,
     country: d.country_origin,
-    riskScore: d.risk_score
+    risk_score: d.risk_score
   }));
   res.json({ results, total: DB_FACTS.length, page: 1, pageSize: 20 });
 });
@@ -2557,7 +2363,7 @@ app.get('/api/v1/premium/ai-insights', (req, res) => {
       confidence: 94,
       impact: 'Економія до $45,000',
       category: 'Закупівлі',
-      createdAt: new Date().toISOString(),
+      created_at: new Date().toISOString(),
       actionable: true,
       actions: [{ label: 'Знайти постачальників', type: 'primary' }],
       saved: false
@@ -2571,7 +2377,7 @@ app.get('/api/v1/premium/ai-insights', (req, res) => {
       confidence: 87,
       impact: 'Ризик: $120,000',
       category: 'Ризики',
-      createdAt: new Date().toISOString(),
+      created_at: new Date().toISOString(),
       actionable: true,
       actions: [{ label: 'Розпочати розслідування', type: 'primary' }],
       saved: true
@@ -2584,31 +2390,42 @@ app.get('/api/v1/intelligence/report/:ueid', (req, res) => {
   const company = COMPANIES.find(c => c.edrpou === ueid) || { name: 'Невідома Компанія', edrpou: ueid };
 
   const mockReport = `
-# 🦅 ЕКСПЕРТНИЙ ЗВІТ SOVEREIGN ADVISOR: ${company.name}
-**Дата генерації:** ${new Date().toLocaleString()} | **UEID:** ${ueid}
+# 🦅 ЕКСПЕРТНИЙ ЗВІТ SOVEREIGN ADVISOR (v55.5): ${company.name}
+**Дата генерації:** ${new Date().toLocaleString()} | **UEID:** ${ueid} | **Статус:** КРИТИЧНИЙ МОНІТОРИНГ
 
-## 1. STRATEGIC OVERVIEW
-Об'єкт демонструє **${company.risk === 'high' ? 'КРИТИЧНО ВИСОКИЙ' : 'ПОМІРНИЙ'}** рівень системного ризику. 
-На основі аналізу 5-шарової моделі CERS, виявлено ознаки аномальної активності в сегментах міжнародної торгівлі.
+## 1. STRATEGIC EXECUTIVE SUMMARY
+Об'єкт ${company.name} ідентифіковано як вузловий елемент у мережі аномальної торгівельної активності. 
+Рівень ризику: **${company.risk === 'high' ? 'КРИТИЧНО ВИСОКИЙ (94%)' : 'ПОМІРНИЙ (32%)'}**.
+Виявлено ознаки "Sovereign Blind Spots" — зон, де державний контроль штучно послаблений через складні юридичні структури.
 
-## 2. 5-LAYER RISK ANALYSIS (CERS v55.2)
-*   **Behavioral (Поведінковий):** ${company.risk === 'high' ? '92%' : '24%'} - Виявлено різкі стрибки обсягів операцій у нетипові періоди.
-*   **Institutional (Інституційний):** ${company.risk === 'high' ? '85%' : '15%'} - Компанія змінила 3 директорів за останні 6 місяців.
-*   **Influence (Вплив):** ${company.risk === 'high' ? '78%' : '12%'} - Прямі зв'язки з політично значущими особами (PEP).
-*   **Structural (Структурний):** ${company.risk === 'high' ? '96%' : '18%'} - Складна мережа офшорних бенефіціарів (BVI, Cyprus).
-*   **Predictive (Прогностичний):** ${company.risk === 'high' ? '88%' : '21%'} - Висока ймовірність заниження митної вартості у наступному кварталі.
+## 2. 5-LAYER RISK ARCHITECTURE (CERS MODEL)
+*   **Layer 1: Behavioral (Поведінковий) — ${company.risk === 'high' ? '92%' : '24%'}**
+    *   Аномальні сплески транзакцій за 48 годин до зміни митних тарифів.
+    *   Використання "транзитних" рахунків у країнах з низьким податковим тиском.
+*   **Layer 2: Institutional (Інституційний) — ${company.risk === 'high' ? '85%' : '15%'}**
+    *   Синхронна зміна менеджменту в 3-х пов'язаних компаніях.
+    *   Адреса реєстрації збігається з 150+ іншими суб'єктами (Mass Registration Hub).
+*   **Layer 3: Influence (Вплив) — ${company.risk === 'high' ? '78%' : '12%'}**
+    *   Непрямий зв'язок з PEP через благодійні фонди.
+    *   Лобістська активність у галузевих асоціаціях.
+*   **Layer 4: Structural (Структурний) — ${company.risk === 'high' ? '96%' : '18%'}**
+    *   Кінцевий бенефіціар прихований через шість рівнів номінальних утримувачів.
+    *   Юрисдикції: BVI -> Cyprus -> Seychelles -> UA.
+*   **Layer 5: Predictive (Прогностичний) — ${company.risk === 'high' ? '88%' : '21%'}**
+    *   AI МОДЕЛЬ: Ймовірність дефолту або "зникнення" суб'єкта протягом 60 днів складає 74%.
+    *   Прогнозний збиток держави: ~12.5 млн грн/міс.
 
-## 3. SHADOW DISCOVERY & CARTELS
-Виявлено приховану мережу (**Shadow Network ID: SN-102**), що об'єднує ${company.name} з 4 іншими контрагентами. 
-Ймовірний спільний центр прийняття рішень знаходиться за межами юрисдикції України.
+## 3. SHADOW ECONOMY CONNECTIVITY
+Виявлено активний зв'язок із **Shadow Network "Onyx-Bravo"**.
+Зафіксовано операції з контрагентами, що мають ознаки фіктивності (відсутність персоналу, мінімальний статутний капітал).
 
-## 4. РЕКОМЕНДАЦІЇ
-1. **НЕГАЙНО:** Провести поглиблений аудит останніх 12 декларацій.
-2. **МОНІТОРИНГ:** Встановити цілодобовий нагляд за фінансовими потоками.
-3. **ЕСКАЛАЦІЯ:** Передати матеріали до відповідного підрозділу розслідувань.
+## 4. СТРАТЕГІЧНІ РЕКОМЕНДАЦІЇ (SWOT-BASED)
+1.  **БЛОКУВАННЯ:** Тимчасове призупинення автоматичного митного оформлення для даного суб'єкта.
+2.  **АУДИТ:** Ревізія ланцюга постачання (Supply Chain Audit) від виробника до кінцевого споживача.
+3.  **ВЗАЄМОДІЯ:** Направлення запиту до підрозділів фінансового моніторингу для відстеження руху валюти.
 
 ---
-*Звіт згенеровано автоматично системою PREDATOR Analytics v55.2-SM-EXTENDED.*
+*Цей документ є інтелектуальною власністю системи PREDATOR Analytics. Рівень доступу: TOP SECRET / SOVEREIGN.*
   `;
 
   res.json({
@@ -2620,8 +2437,8 @@ app.get('/api/v1/intelligence/report/:ueid', (req, res) => {
 
 app.get('/api/v1/premium/predictions', (req, res) => {
   res.json([
-    { id: '1', title: 'Імпорт електроніки', currentValue: 245, predictedValue: 289, timeframe: '30 днів', confidence: 87, trend: 'up' },
-    { id: '2', title: 'Ціни на добрива', currentValue: 420, predictedValue: 385, timeframe: '14 днів', confidence: 82, trend: 'down' }
+    { id: '1', title: 'Імпорт електроніки', current_value: 245, predicted_value: 289, timeframe: '30 днів', confidence: 87, trend: 'up' },
+    { id: '2', title: 'Ціни на добрива', current_value: 420, predicted_value: 385, timeframe: '14 днів', confidence: 82, trend: 'down' }
   ]);
 });
 
@@ -2631,27 +2448,27 @@ app.get('/api/v1/premium/risk-entities', (req, res) => {
       id: '1',
       name: 'ТОВ "ТрансСхема"',
       edrpou: '12345678',
-      riskScore: 94,
-      riskLevel: 'critical',
+      risk_score: 94,
+      risk_level: 'critical',
       flags: ['Заниження вартості', 'Офшорні зв\'язки', 'Карусельна схема'],
-      lastActivity: '2026-02-01',
-      totalOperations: 156,
-      suspiciousAmount: 8900000,
-      linkedEntities: 12,
-      investigations: 2
+      last_activity: '2026-02-01',
+      total_operations: 156,
+      suspicious_amount: 8900000,
+      linked_entities: 12,
+      investigations_count: 2
     },
     {
       id: '2',
       name: 'ПрАТ "ІмпортОптима"',
       edrpou: '23456789',
-      riskScore: 87,
-      riskLevel: 'high',
+      risk_score: 87,
+      risk_level: 'high',
       flags: ['Зміна кодів УКТЗЕД', 'Нетипові обсяги'],
-      lastActivity: '2026-01-30',
-      totalOperations: 89,
-      suspiciousAmount: 4500000,
-      linkedEntities: 5,
-      investigations: 1
+      last_activity: '2026-01-30',
+      total_operations: 89,
+      suspicious_amount: 4500000,
+      linked_entities: 5,
+      investigations_count: 1
     }
   ]);
 });
@@ -2660,23 +2477,23 @@ app.get('/api/v1/premium/investigations', (req, res) => {
   res.json([
     {
       id: '1',
-      entityName: 'ТОВ "ТрансСхема"',
+      entity_name: 'ТОВ "ТрансСхема"',
       status: 'in_progress',
       priority: 'critical',
-      assignedTo: 'Слідчий Коваленко О.І.',
-      createdAt: '2026-01-15',
-      findings: 8,
-      potentialRecovery: 4500000
+      assigned_to: 'Слідчий Коваленко О.І.',
+      created_at: '2026-01-15',
+      findings_count: 8,
+      potential_recovery: 4500000
     },
     {
       id: '2',
-      entityName: 'ПрАТ "ІмпортОптима"',
+      entity_name: 'ПрАТ "ІмпортОптима"',
       status: 'escalated',
       priority: 'high',
-      assignedTo: 'Прокурор Бондаренко Г.В.',
-      createdAt: '2026-01-10',
-      findings: 12,
-      potentialRecovery: 7800000
+      assigned_to: 'Прокурор Бондаренко Г.В.',
+      created_at: '2026-01-10',
+      findings_count: 12,
+      potential_recovery: 7800000
     }
   ]);
 });
@@ -2685,23 +2502,23 @@ app.get('/api/v1/premium/sanctions-results', (req, res) => {
   res.json([
     {
       id: '1',
-      entityName: 'TransGlobal Logistics Ltd',
-      entityType: 'company',
+      entity_name: 'TransGlobal Logistics Ltd',
+      entity_type: 'company',
       status: 'clean',
       timestamp: new Date().toISOString(),
       matches: [],
-      searchId: 'SCR-2026-001'
+      search_id: 'SCR-2026-001'
     },
     {
       id: '2',
-      entityName: 'Nord Stream Enterprizes',
-      entityType: 'company',
+      entity_name: 'Nord Stream Enterprizes',
+      entity_type: 'company',
       status: 'blocked',
       timestamp: new Date().toISOString(),
       matches: [
-        { id: 'm1', list: 'OFAC', program: 'SDN', target: 'Nord Stream Enterprizes', details: 'Blocked Entity', severity: 'high', dateMismatch: false, score: 100 }
+        { id: 'm1', list: 'OFAC', program: 'SDN', target: 'Nord Stream Enterprizes', details: 'Blocked Entity', severity: 'high', date_mismatch: false, score: 100 }
       ],
-      searchId: 'SCR-2026-002'
+      search_id: 'SCR-2026-002'
     }
   ]);
 });
@@ -2773,33 +2590,33 @@ app.get('/api/v1/premium/suppliers', (req, res) => {
         id: `sup-${Object.keys(suppliersMap).length}`,
         name: `${d.country_origin} ${d.goods_category} Supplier`,
         country: d.country_origin,
-        countryCode: d.country_origin.substring(0, 2).toUpperCase(),
+        country_code: d.country_origin.substring(0, 2).toUpperCase(),
         city: 'Capital City',
         products: [d.goods_description],
-        totalExportVolume: d.customs_value_usd * 10,
-        avgPrice: d.customs_value_usd / (d.weight_kg || 1),
-        priceCompetitiveness: 70 + Math.floor(Math.random() * 25),
-        ukraineClients: 1 + Math.floor(Math.random() * 50),
+        total_export_volume: d.customs_value_usd * 10,
+        avg_price: d.customs_value_usd / (d.weight_kg || 1),
+        price_competitiveness: 70 + Math.floor(Math.random() * 25),
+        ukraine_clients: 1 + Math.floor(Math.random() * 50),
         reliability: 80 + Math.floor(Math.random() * 19),
-        leadTime: 5 + Math.floor(Math.random() * 20),
-        lastShipment: d.date,
+        lead_time: 5 + Math.floor(Math.random() * 20),
+        last_shipment: d.date,
         certifications: ['ISO 9001', 'CE'],
         verified: true,
-        isFavorite: false
+        is_favorite: false
       };
     } else {
       if (!suppliersMap[key].products.includes(d.goods_description)) {
         suppliersMap[key].products.push(d.goods_description);
       }
-      suppliersMap[key].totalExportVolume += d.customs_value_usd;
+      suppliersMap[key].total_export_volume += d.customs_value_usd;
     }
   });
 
-  let suppliers = Object.values(suppliersMap).sort((a, b) => b.totalExportVolume - a.totalExportVolume).slice(0, 10);
+  let suppliers = Object.values(suppliersMap).sort((a, b) => b.total_export_volume - a.total_export_volume).slice(0, 10);
 
   if (suppliers.length === 0) {
     suppliers = [{
-      id: '1', name: 'Shenzhen Technology Co., Ltd', country: 'Китай', countryCode: 'CN', city: 'Shenzhen', products: ['LED панелі', 'Електроніка', 'Компоненти'], totalExportVolume: 45000000, avgPrice: 12.5, priceCompetitiveness: 92, ukraineClients: 28, reliability: 94, leadTime: 14, lastShipment: '2026-01-28', certifications: ['ISO 9001', 'CE', 'RoHS'], verified: true, isFavorite: false
+      id: '1', name: 'Shenzhen Technology Co., Ltd', country: 'Китай', country_code: 'CN', city: 'Shenzhen', products: ['LED панелі', 'Електроніка', 'Компоненти'], total_export_volume: 45000000, avg_price: 12.5, price_competitiveness: 92, ukraine_clients: 28, reliability: 94, lead_time: 14, last_shipment: '2026-01-28', certifications: ['ISO 9001', 'CE', 'RoHS'], verified: true, is_favorite: false
     }];
   }
 
@@ -2814,7 +2631,7 @@ app.get('/api/v1/premium/price-comparison', (req, res) => {
         id: `prod-${Object.keys(categoryStats).length}`,
         name: `${d.goods_category} (Середній кошик)`,
         category: d.goods_category,
-        hsCode: d.hs_code,
+        hs_code: d.hs_code,
         unit: 'кг',
         prices: [],
         offers: []
@@ -2826,38 +2643,38 @@ app.get('/api/v1/premium/price-comparison', (req, res) => {
     if (categoryStats[d.goods_category].offers.length < 4) {
       categoryStats[d.goods_category].offers.push({
         id: `off-${d.id}`,
-        supplierName: d.company_name,
+        supplier_name: d.company_name,
         country: d.country_origin,
-        countryCode: d.country_origin.substring(0, 2).toUpperCase(),
+        country_code: d.country_origin.substring(0, 2).toUpperCase(),
         price: Number(price.toFixed(2)),
         currency: 'USD',
-        minQuantity: Math.floor(Math.random() * 100) + 10,
-        leadTime: 5 + Math.floor(Math.random() * 15),
+        min_quantity: Math.floor(Math.random() * 100) + 10,
+        lead_time: 5 + Math.floor(Math.random() * 15),
         reliability: 85 + Math.floor(Math.random() * 14),
-        lastUpdated: d.date,
-        priceHistory: [],
-        isVerified: true,
-        isBestPrice: false
+        last_updated: d.date,
+        price_history: [],
+        is_verified: true,
+        is_best_price: false
       });
     }
   });
 
   const products = Object.values(categoryStats).map(p => {
-    p.avgPrice = Number((p.prices.reduce((a, b) => a + b, 0) / p.prices.length).toFixed(2));
+    p.avg_price = Number((p.prices.reduce((a, b) => a + b, 0) / p.prices.length).toFixed(2));
     delete p.prices;
     if (p.offers.length > 0) {
       const minPrice = Math.min(...p.offers.map(o => o.price));
-      p.offers.forEach(o => o.isBestPrice = o.price === minPrice);
+      p.offers.forEach(o => o.is_best_price = o.price === minPrice);
     }
     return p;
   });
 
   if (products.length === 0) {
     products.push({
-      id: '1', name: 'LED панелі 55" (4K, IPS)', category: 'Електроніка', hsCode: '8528.72', unit: 'шт', avgPrice: 145,
+      id: '1', name: 'LED панелі 55" (4K, IPS)', category: 'Електроніка', hs_code: '8528.72', unit: 'шт', avg_price: 145,
       offers: [
-        { id: '1a', supplierName: 'Shenzhen Display Co.', country: 'Китай', countryCode: 'CN', price: 125, currency: 'USD', minQuantity: 100, leadTime: 14, reliability: 94, lastUpdated: '2026-02-03', priceHistory: [], isVerified: true, isBestPrice: true },
-        { id: '1b', supplierName: 'Vietnam Panels Ltd', country: "В'єтнам", countryCode: 'VN', price: 132, currency: 'USD', minQuantity: 50, leadTime: 18, reliability: 88, lastUpdated: '2026-02-02', priceHistory: [], isVerified: true, isBestPrice: false }
+        { id: '1a', supplier_name: 'Shenzhen Display Co.', country: 'Китай', country_code: 'CN', price: 125, currency: 'USD', min_quantity: 100, lead_time: 14, reliability: 94, last_updated: '2026-02-03', price_history: [], is_verified: true, is_best_price: true },
+        { id: '1b', supplier_name: 'Vietnam Panels Ltd', country: "В'єтнам", country_code: 'VN', price: 132, currency: 'USD', min_quantity: 50, lead_time: 18, reliability: 88, last_updated: '2026-02-02', price_history: [], is_verified: true, is_best_price: false }
       ]
     });
   }
@@ -3326,19 +3143,19 @@ app.get('/api/v1/premium/price-anomalies', (req, res) => {
     if (d.risk_score > 60) {
       anomalies.push({
         id: d.id,
-        hsCode: d.hs_code,
+        hs_code: d.hs_code,
         description: d.goods_description,
         declared: d.customs_value_usd,
         market: Math.round(d.customs_value_usd * (1 + (Math.random() * 0.5 + 0.2))),
         deviation: -1 * Math.round(Math.random() * 40 + 20),
-        companies: Math.floor(Math.random() * 10) + 1
+        companies_count: Math.floor(Math.random() * 10) + 1
       });
     }
   });
   let results = anomalies.sort((a, b) => a.deviation - b.deviation).slice(0, 10);
   if (results.length === 0) {
     results = [
-      { id: 1, hsCode: '8471.30', description: 'Ноутбуки', declared: 150, market: 450, deviation: -66.7, companies: 12 }
+      { id: 1, hs_code: '8471.30', description: 'Ноутбуки', declared: 150, market: 450, deviation: -66.7, companies_count: 12 }
     ];
   }
   res.json(results);
