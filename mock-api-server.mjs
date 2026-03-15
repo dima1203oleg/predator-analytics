@@ -11,6 +11,7 @@
 
 import express from 'express';
 import cors from 'cors';
+import http from 'http';
 import { WebSocketServer } from 'ws';
 import fs from 'fs';
 import path from 'path';
@@ -23,6 +24,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
 const PORT = 9080;
 
 app.use(cors());
@@ -1349,6 +1351,377 @@ app.get('/api/v45/training/status', (req, res) => {
   });
 });
 
+// =============================================
+// 🌍 OSINT UA - DataGov & Prozorro
+// =============================================
+
+app.get(['/api/v1/osint_ua/datagov/search', '/v1/osint_ua/datagov/search'], (req, res) => {
+  const q = req.query.q || '';
+  const mocks = [
+    {
+      id: 'dataset-001',
+      name: 'edrpou-registry',
+      title: 'Єдиний державний реєстр юридичних осіб та фізичних осіб-підприємців (ЄДРПОУ)',
+      notes: 'Повний перелік зареєстрованих суб’єктів господарювання в Україні. Дані включають назву, код, адресу та статус.',
+      organization: { title: 'Міністерство юстиції України' },
+      metadata_modified: new Date().toISOString(),
+      resources: [
+        { id: 'res-1', name: 'Повний витяг (CSV)', format: 'CSV', url: '#', size: 1024 * 1024 * 450, last_modified: new Date().toISOString() },
+        { id: 'res-2', name: 'API Docs', format: 'JSON', url: '#', size: null, last_modified: new Date().toISOString() }
+      ]
+    },
+    {
+      id: 'dataset-002',
+      name: 'customs-rates-2024',
+      title: 'Митні ставки та тарифи на 2024 рік',
+      notes: 'Актуальні ставки ввізного мита згідно з чинним законодавством України.',
+      organization: { title: 'Державна митна служба України' },
+      metadata_modified: new Date(Date.now() - 86400000).toISOString(),
+      resources: [
+        { id: 'res-3', name: 'Тарифна сітка (XLSX)', format: 'XLSX', url: '#', size: 1024 * 1024 * 12, last_modified: new Date().toISOString() }
+      ]
+    },
+    {
+      id: 'dataset-003',
+      name: 'sanctions-list-ua',
+      title: 'Державний реєстр санкцій України',
+      notes: 'Перелік осіб та компаній, до яких застосовано спеціальні економічні та інші обмежувальні заходи (санкції).',
+      organization: { title: 'РНБО' },
+      metadata_modified: new Date().toISOString(),
+      resources: [
+        { id: 'res-4', name: 'База даних санкцій', format: 'JSON', url: '#', size: 1024 * 256, last_modified: new Date().toISOString() }
+      ]
+    }
+  ].filter(d => d.title.toLowerCase().includes(q.toLowerCase()) || d.notes.toLowerCase().includes(q.toLowerCase()));
+
+  res.json({
+    count: mocks.length,
+    results: mocks
+  });
+});
+
+app.get(['/api/v1/osint_ua/prozorro/tenders', '/v1/osint_ua/prozorro/tenders'], (req, res) => {
+  const tenders = [
+    {
+      id: 'UA-2024-03-01-0001',
+      title: 'Закупівля серверного обладнання для дата-центру',
+      value: 1450000, currency: 'UAH', status: 'active.tendering',
+      procuringEntity: 'Національний Банк України',
+      date: new Date().toISOString(),
+      category: 'IT обладнання', region: 'Київ', bidsCount: 7,
+      expectedValue: 1600000, riskScore: 12
+    },
+    {
+      id: 'UA-2024-03-02-0045',
+      title: 'Модернізація мережевої інфраструктури (Cisco Core Switches)',
+      value: 890000, currency: 'UAH', status: 'active.awarding',
+      procuringEntity: 'МВС України',
+      date: new Date(Date.now() - 3600000).toISOString(),
+      category: 'Телекомунікації', region: 'Київ', bidsCount: 4,
+      expectedValue: 950000, riskScore: 8
+    },
+    {
+      id: 'UA-2024-03-05-1234',
+      title: 'Послуги з підтримки програмного забезпечення Oracle',
+      value: 3200000, currency: 'UAH', status: 'complete',
+      procuringEntity: 'НАК "Нафтогаз України"',
+      date: new Date(Date.now() - 86400000 * 2).toISOString(),
+      category: 'IT послуги', region: 'Київ', bidsCount: 2,
+      expectedValue: 3500000, riskScore: 45
+    },
+    {
+      id: 'UA-2024-03-06-0078',
+      title: 'Будівництво мосту через р. Дніпро (ділянка Запоріжжя)',
+      value: 15200000, currency: 'UAH', status: 'active.tendering',
+      procuringEntity: 'Запорізька ОДА',
+      date: new Date(Date.now() - 86400000 * 1).toISOString(),
+      category: 'Будівництво', region: 'Запоріжжя', bidsCount: 3,
+      expectedValue: 18000000, riskScore: 67
+    },
+    {
+      id: 'UA-2024-03-07-0156',
+      title: 'Медичне обладнання для обласної лікарні (КТ-сканер)',
+      value: 8750000, currency: 'UAH', status: 'active.qualification',
+      procuringEntity: 'КНП "Обласна клінічна лікарня" Львів',
+      date: new Date(Date.now() - 86400000 * 3).toISOString(),
+      category: 'Медицина', region: 'Львів', bidsCount: 5,
+      expectedValue: 9200000, riskScore: 23
+    },
+    {
+      id: 'UA-2024-03-08-0234',
+      title: 'Паливо дизельне ЄВРО-5 (річний контракт)',
+      value: 4560000, currency: 'UAH', status: 'active.tendering',
+      procuringEntity: 'Міноборони України',
+      date: new Date(Date.now() - 86400000 * 4).toISOString(),
+      category: 'Паливо та ПММ', region: 'Київ', bidsCount: 12,
+      expectedValue: 5000000, riskScore: 18
+    },
+    {
+      id: 'UA-2024-03-09-0312',
+      title: 'Послуги з охорони та моніторингу (24/7)',
+      value: 720000, currency: 'UAH', status: 'unsuccessful',
+      procuringEntity: 'Укрзалізниця',
+      date: new Date(Date.now() - 86400000 * 5).toISOString(),
+      category: 'Безпека', region: 'Харків', bidsCount: 1,
+      expectedValue: 800000, riskScore: 82
+    },
+    {
+      id: 'UA-2024-03-10-0456',
+      title: 'Капітальний ремонт дороги М-06 Київ-Чоп (км 245-280)',
+      value: 12800000, currency: 'UAH', status: 'active.tendering',
+      procuringEntity: 'Укравтодор',
+      date: new Date(Date.now() - 86400000 * 6).toISOString(),
+      category: 'Дорожнє будівництво', region: 'Закарпаття', bidsCount: 6,
+      expectedValue: 14500000, riskScore: 55
+    },
+    {
+      id: 'UA-2024-03-11-0523',
+      title: 'Шкільні автобуси (10 одиниць) для сільських громад',
+      value: 6200000, currency: 'UAH', status: 'active.awarding',
+      procuringEntity: 'Рівненська ОВА',
+      date: new Date(Date.now() - 86400000 * 7).toISOString(),
+      category: 'Транспорт', region: 'Рівне', bidsCount: 3,
+      expectedValue: 6800000, riskScore: 14
+    },
+    {
+      id: 'UA-2024-03-12-0601',
+      title: 'Ліцензії Microsoft 365 для державних установ (5000 ліц.)',
+      value: 2340000, currency: 'UAH', status: 'complete',
+      procuringEntity: 'Міністерство цифрової трансформації',
+      date: new Date(Date.now() - 86400000 * 8).toISOString(),
+      category: 'Програмне забезпечення', region: 'Київ', bidsCount: 2,
+      expectedValue: 2500000, riskScore: 31
+    },
+    {
+      id: 'UA-2024-03-13-0678',
+      title: 'Харчування для закладів освіти (нав. рік 2024-2025)',
+      value: 3890000, currency: 'UAH', status: 'active.tendering',
+      procuringEntity: 'Одеська міська рада',
+      date: new Date(Date.now() - 86400000 * 9).toISOString(),
+      category: 'Харчування', region: 'Одеса', bidsCount: 8,
+      expectedValue: 4200000, riskScore: 41
+    },
+    {
+      id: 'UA-2024-03-14-0712',
+      title: 'Генератори дизельні 100 кВт (15 од.) для критичної інфраструктури',
+      value: 5670000, currency: 'UAH', status: 'active.qualification',
+      procuringEntity: 'ДСНС України',
+      date: new Date(Date.now() - 86400000 * 10).toISOString(),
+      category: 'Енергетичне обладнання', region: 'Дніпро', bidsCount: 9,
+      expectedValue: 6100000, riskScore: 20
+    },
+    {
+      id: 'UA-2024-03-15-0834',
+      title: 'Системи відеоспостереження для 48 шкіл',
+      value: 1120000, currency: 'UAH', status: 'active.tendering',
+      procuringEntity: 'Вінницька міська рада',
+      date: new Date(Date.now() - 86400000 * 11).toISOString(),
+      category: 'Безпека', region: 'Вінниця', bidsCount: 5,
+      expectedValue: 1300000, riskScore: 16
+    },
+    {
+      id: 'UA-2024-03-16-0901',
+      title: 'Протезування кінцівок для ветеранів (200 комплектів)',
+      value: 9800000, currency: 'UAH', status: 'active.awarding',
+      procuringEntity: 'Міністерство у справах ветеранів',
+      date: new Date(Date.now() - 86400000 * 12).toISOString(),
+      category: 'Медицина', region: 'Київ', bidsCount: 4,
+      expectedValue: 10500000, riskScore: 9
+    },
+    {
+      id: 'UA-2024-03-17-0956',
+      title: 'CloudFlare Enterprise + WAF для e-Gov порталів',
+      value: 780000, currency: 'UAH', status: 'complete',
+      procuringEntity: 'ДІА',
+      date: new Date(Date.now() - 86400000 * 13).toISOString(),
+      category: 'Кібербезпека', region: 'Київ', bidsCount: 1,
+      expectedValue: 800000, riskScore: 72
+    },
+    {
+      id: 'UA-2024-03-18-1023',
+      title: 'Реконструкція водопровідної мережі (12 км трубопроводу)',
+      value: 7450000, currency: 'UAH', status: 'active.tendering',
+      procuringEntity: 'КП "Миколаївводоканал"',
+      date: new Date(Date.now() - 86400000 * 14).toISOString(),
+      category: 'Комунальні послуги', region: 'Миколаїв', bidsCount: 4,
+      expectedValue: 8200000, riskScore: 38
+    },
+    {
+      id: 'UA-2024-03-19-1089',
+      title: 'Спецодяг та засоби захисту для рятувальників (5000 ком.)',
+      value: 3100000, currency: 'UAH', status: 'active.tendering',
+      procuringEntity: 'ДСНС України',
+      date: new Date(Date.now() - 86400000 * 15).toISOString(),
+      category: 'Засоби захисту', region: 'Київ', bidsCount: 11,
+      expectedValue: 3500000, riskScore: 15
+    },
+    {
+      id: 'UA-2024-03-20-1145',
+      title: 'Електробуси (20 од.) для міського транспорту',
+      value: 14200000, currency: 'UAH', status: 'active.qualification',
+      procuringEntity: 'КП "Черкасиелектротранс"',
+      date: new Date(Date.now() - 86400000 * 16).toISOString(),
+      category: 'Транспорт', region: 'Черкаси', bidsCount: 3,
+      expectedValue: 16000000, riskScore: 28
+    },
+    {
+      id: 'UA-2024-03-21-1201',
+      title: 'Підручники для 1-4 класів НУШ (500 000 примірників)',
+      value: 2890000, currency: 'UAH', status: 'active.tendering',
+      procuringEntity: 'МОН України',
+      date: new Date(Date.now() - 86400000 * 17).toISOString(),
+      category: 'Освіта', region: 'Київ', bidsCount: 6,
+      expectedValue: 3200000, riskScore: 22
+    },
+    {
+      id: 'UA-2024-03-22-1267',
+      title: 'Утилізація медичних відходів (річний контракт)',
+      value: 520000, currency: 'UAH', status: 'unsuccessful',
+      procuringEntity: 'КНП "Міська лікарня №2" Тернопіль',
+      date: new Date(Date.now() - 86400000 * 18).toISOString(),
+      category: 'Екологія', region: 'Тернопіль', bidsCount: 0,
+      expectedValue: 600000, riskScore: 91
+    }
+  ];
+
+  res.json({ tenders });
+});
+
+// 📊 Prozorro Analytics Endpoints
+app.get('/api/v1/osint_ua/prozorro/stats', (req, res) => {
+  res.json({
+    totalTenders: 20,
+    totalValue: 105530000,
+    avgBidsCount: 4.8,
+    byStatus: {
+      'active.tendering': 9,
+      'active.awarding': 3,
+      'active.qualification': 3,
+      'complete': 3,
+      'unsuccessful': 2
+    },
+    byCategory: [
+      { name: 'IT обладнання', count: 3, value: 4570000 },
+      { name: 'Будівництво', count: 2, value: 28000000 },
+      { name: 'Медицина', count: 2, value: 18550000 },
+      { name: 'Транспорт', count: 2, value: 20400000 },
+      { name: 'Безпека', count: 2, value: 1840000 },
+      { name: 'Паливо та ПММ', count: 1, value: 4560000 },
+      { name: 'Харчування', count: 1, value: 3890000 },
+      { name: 'Комунальні послуги', count: 1, value: 7450000 }
+    ],
+    byRegion: [
+      { name: 'Київ', count: 8, value: 31060000 },
+      { name: 'Запоріжжя', count: 1, value: 15200000 },
+      { name: 'Львів', count: 1, value: 8750000 },
+      { name: 'Одеса', count: 1, value: 3890000 },
+      { name: 'Дніпро', count: 1, value: 5670000 },
+      { name: 'Харків', count: 1, value: 720000 },
+      { name: 'Рівне', count: 1, value: 6200000 }
+    ],
+    riskDistribution: {
+      low: 12,
+      medium: 4,
+      high: 2,
+      critical: 2
+    }
+  });
+});
+
+app.get('/api/v1/osint_ua/prozorro/analytics', (req, res) => {
+  res.json({
+    topProcuringEntities: [
+      { name: 'Міноборони України', tendersCount: 3, totalValue: 14560000 },
+      { name: 'ДСНС України', tendersCount: 2, totalValue: 8770000 },
+      { name: 'МОН України', tendersCount: 2, totalValue: 5690000 },
+      { name: 'Укравтодор', tendersCount: 1, totalValue: 12800000 },
+      { name: 'НАК "Нафтогаз"', tendersCount: 1, totalValue: 3200000 }
+    ],
+    monthlyTrend: [
+      { month: 'Вер 2023', count: 145, value: 890000000 },
+      { month: 'Жов 2023', count: 167, value: 1020000000 },
+      { month: 'Лис 2023', count: 134, value: 780000000 },
+      { month: 'Гру 2023', count: 198, value: 1450000000 },
+      { month: 'Січ 2024', count: 112, value: 670000000 },
+      { month: 'Лют 2024', count: 156, value: 980000000 },
+      { month: 'Бер 2024', count: 189, value: 1340000000 }
+    ],
+    savingsAnalysis: {
+      expectedTotal: 118600000,
+      actualTotal: 105530000,
+      savings: 13070000,
+      savingsPercent: 11.02
+    }
+  });
+});
+
+// ⛴️ MARITIME INTELLIGENCE MOCKS
+app.get('/api/v1/maritime/vessels', (req, res) => {
+  res.json([
+    { id: 'v-1', name: 'OCEAN TITAN', flag: 'Panama', type: 'Container Ship', location: { lat: 46.48, lon: 30.72 }, status: 'moored', speed: 0, destination: 'Odessa, UA', eta: '2024-03-20T10:00:00Z', risk_score: 12 },
+    { id: 'v-2', name: 'CRIMEA EXPRESS', flag: 'Russia', type: 'Oil Tanker', location: { lat: 44.61, lon: 33.52 }, status: 'underway', speed: 14.5, destination: 'Novorossiysk, RU', eta: '2024-03-18T14:30:00Z', risk_score: 88 },
+    { id: 'v-3', name: 'BLACK SEA STAR', flag: 'Turkey', type: 'Bulk Carrier', location: { lat: 41.01, lon: 28.97 }, status: 'underway', speed: 11.2, destination: 'Chornomorsk, UA', eta: '2024-03-21T08:00:00Z', risk_score: 15 },
+    { id: 'v-4', name: 'NORDIC SPIRIT', flag: 'Norway', type: 'Ro-Ro Cargo', location: { lat: 43.84, lon: 28.58 }, status: 'anchored', speed: 0.2, destination: 'Constanta, RO', eta: '2024-03-19T18:00:00Z', risk_score: 5 },
+    { id: 'v-5', name: 'PHOENIX 1', flag: 'Malta', type: 'General Cargo', location: { lat: 45.21, lon: 29.73 }, status: 'underway', speed: 9.8, destination: 'Izmail, UA', eta: '2024-03-20T22:00:00Z', risk_score: 42 }
+  ]);
+});
+
+app.get('/api/v1/maritime/ports', (req, res) => {
+  res.json([
+    { id: 'p-1', name: 'Одеський морський порт', country: 'Україна', location: { lat: 46.49, lon: 30.74 }, vessel_count: 12, capacity: 85, risk_level: 'medium' },
+    { id: 'p-2', name: 'Порт Чорноморськ', country: 'Україна', location: { lat: 46.33, lon: 30.65 }, vessel_count: 8, capacity: 60, risk_level: 'low' },
+    { id: 'p-3', name: 'Порт Південний', country: 'Україна', location: { lat: 46.61, lon: 31.01 }, vessel_count: 15, capacity: 92, risk_level: 'low' },
+    { id: 'p-4', name: 'Порт Ізмаїл', country: 'Україна', location: { lat: 45.34, lon: 28.84 }, vessel_count: 24, capacity: 95, risk_level: 'medium' },
+    { id: 'p-5', name: 'Констанца', country: 'Румунія', location: { lat: 44.17, lon: 28.66 }, vessel_count: 45, capacity: 78, risk_level: 'low' }
+  ]);
+});
+
+// 🏢 REGISTRIES INTELLIGENCE MOCKS
+app.get('/api/v1/registries/search', (req, res) => {
+  const query = (req.query.q || '').toLowerCase();
+  const results = [
+    { edrpou: '39448822', name: 'ТОВ "МЕГА-ЛОГІСТИК ПЛЮС"', status: 'active', region: 'м. Київ', cers_score: 88.4 },
+    { edrpou: '22334455', name: 'ПрАТ "УКР-ІМПОРТ-СИСТЕМА"', status: 'active', region: 'м. Львів', cers_score: 54.2 },
+    { edrpou: '44556677', name: 'ТОВ "ВЕСТ-ГРУП КОРП"', status: 'active', region: 'м. Одеса', cers_score: 22.8 },
+    { edrpou: '55667788', name: 'ТОВ "ЕНЕРГО-ТРЕЙДІНГ"', status: 'active', region: 'м. Дніпро', cers_score: 72.5 },
+    { edrpou: '12345678', name: 'ТОВ "АЛЬФА ТРЕЙД"', status: 'terminated', region: 'м. Харків', cers_score: 95.0 }
+  ].filter(c => c.name.toLowerCase().includes(query) || c.edrpou.includes(query));
+  
+  res.json({ results });
+});
+
+app.get('/api/v1/registries/company/:edrpou', (req, res) => {
+  const { edrpou } = req.params;
+  const company = {
+    edrpou,
+    name: edrpou === '39448822' ? 'ТОВ "МЕГА-ЛОГІСТИК ПЛЮС"' : 'Компанія з Реєстру',
+    fullName: edrpou === '39448822' ? 'ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ "МЕГА-ЛОГІСТИК ПЛЮС"' : 'ПОВНА НАЗВА КОМПАНІЇ',
+    status: 'Зареєстровано',
+    registrationDate: '2014-10-15',
+    address: 'м. Київ, вул. Велика Васильківська, буд. 100',
+    authorizedCapital: 1500000,
+    directors: [
+      { name: 'Іваненко Петро Сергійович', role: 'Керівник', since: '2020-05-12' }
+    ],
+    beneficiaries: [
+      { name: 'Сидоренко Олександр Миколайович', share: '100%', country: 'Україна' }
+    ],
+    activities: [
+      { code: '46.90', name: 'Неспеціалізована оптова торгівля', primary: true },
+      { code: '52.29', name: 'Інша допоміжна діяльність у сфері транспорту', primary: false }
+    ],
+    riskFactors: [
+      { title: 'Офшорні зв\'язки', severity: 'high', description: 'Засновник має зв\'язки з юрисдикціями BVI' },
+      { title: 'Часта зміна керівництва', severity: 'medium', description: 'Зміна директора 3 рази за 2 роки' }
+    ],
+    cers_data: {
+      total_score: 88.4,
+      layers: { behavioral: 92, institutional: 85, influence: 78, structural: 96, predictive: 88 }
+    }
+  };
+  res.json(company);
+});
+
 // AI Agents
 app.get('/api/v1/ai/agents', (req, res) => {
   res.json([
@@ -1434,6 +1807,61 @@ app.post(['/api/v1/ai/query', '/api/v1/nexus/chat'], (req, res) => {
       }
     });
   }, 800);
+});
+
+// --- NEW: COPILOT API ---
+app.post('/api/v1/copilot/chat', (req, res) => {
+  const { message } = req.body;
+  const qLower = (message || '').toLowerCase();
+  
+  const matchingRecords = DB_FACTS.filter(d => {
+    const text = `${d.goods_description} ${d.company_name} ${d.country_origin} ${d.customs_office} ${d.hs_code} ${d.date} ${d.goods_category}`.toLowerCase();
+    return qLower.split(/\s+/).some(word => word.length > 2 && text.includes(word));
+  });
+
+  const sources = matchingRecords.slice(0, 5).map(d => ({
+    id: d.id,
+    type: 'declaration',
+    title: `Декларація ${d.declaration_number}`,
+    snippet: `${d.company_name} — ${d.goods_description} (${d.country_origin})`,
+    relevance: 0.9 + Math.random() * 0.1
+  }));
+
+  let reply = `Вітаю! Я AI Copilot системи Predator. Обробив ваш запит: "${message}".\n\n`;
+  if (matchingRecords.length > 0) {
+    reply += `Аналіз бази виявив **${matchingRecords.length}** відповідних операцій. Найбільша активність спостерігається у компанії **${matchingRecords[0].company_name}**.`;
+  } else {
+    reply += `Я не знайшов специфічних даних для цього запиту в поточній вибірці, але можу допомогти з налаштуванням параметрів звіту.`;
+  }
+
+  res.json({
+    message_id: `msg-${Date.now()}`,
+    reply: reply,
+    sources: sources,
+    tokens_used: 124
+  });
+});
+
+app.post('/api/v1/copilot/chat/stream', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const { message } = req.body;
+  const responseText = `Аналізую ваш запит щодо "${message}"... Система Predator підключає LLM-агента для обробки OSINT-даних. Знайдено відповідності в реєстрах.`;
+  const chunks = responseText.split(' ');
+  
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i < chunks.length) {
+      res.write(`data: ${JSON.stringify({ type: 'chunk', data: { content: chunks[i] + ' ' } })}\n\n`);
+      i++;
+    } else {
+      res.write(`data: ${JSON.stringify({ type: 'complete', data: { message_id: Date.now() } })}\n\n`);
+      clearInterval(interval);
+      res.end();
+    }
+  }, 50);
 });
 
 // =============================================
@@ -2791,25 +3219,13 @@ app.post('/api/v1/ai/tts', async (req, res) => {
 // Seed initial data
 console.log('🌱 Seeding initial database facts...');
 const initialData = generateDeclarations(100, 'initial_seed.xlsx');
-DB_FACTS.push(...initialData);
-initialData.forEach(d => {
-  DB_SEARCH_INDEX.push({ ...d, _id: d.id });
-});
-
-const server = app.listen(PORT, () => {
-  console.log(`🚀 PREDATOR Mock API Server running on port ${PORT}`);
-  console.log(`🔗 http://localhost:${PORT}/api/v1/...`);
-  console.log(`🎙️ Voice Engine: Google Cloud STT/TTS Active`);
-  console.log(`🤖 AI Copilot: Llama3 -> GhCopilot -> Gemini Fallback Active`);
-});
-
 // WebSocket for real-time updates
 const wss = new WebSocketServer({ noServer: true });
 
 server.on('upgrade', (request, socket, head) => {
   const pathname = new URL(request.url, `http://${request.headers.host}`).pathname;
 
-  if (pathname === '/api/v45/ws/omniscience') {
+  if (pathname === '/api/v45/ws/omniscience' || pathname === '/api/v1/ws/system/events') {
     wss.handleUpgrade(request, socket, head, (ws) => {
       wss.emit('connection', ws, request);
     });
@@ -3250,6 +3666,97 @@ app.get('/api/v2/decisions/', (req, res) => {
   res.json({ decisions: [], total: 0 });
 });
 
+// --- System & Dashboard ---
+app.get('/api/v1/system/engines', (req, res) => {
+    res.json({
+        'neural_behavioral': { id: 'behavioral', score: 89, trend: '+2.1%', status: 'optimal', throughput: 42400, latency: 12, load: 45 },
+        'institutional_core': { id: 'institutional', score: 94, trend: '+0.5%', status: 'optimal', throughput: 38200, latency: 8, load: 22 },
+        'influence_mapping': { id: 'influence', score: 68, trend: '-3.2%', status: 'calibrating', throughput: 12500, latency: 45, load: 88 },
+        'structural_vault': { id: 'structural', score: 97, trend: '+1.4%', status: 'optimal', throughput: 28900, latency: 5, load: 12 },
+        'predictive_matrix': { id: 'predictive', score: 85, trend: '+4.7%', status: 'optimal', throughput: 15400, latency: 18, load: 35 }
+    });
+});
+
+app.get('/api/v1/risk/sectors', (req, res) => {
+    res.json({
+        items: [
+            { id: 'finance', score: 72 },
+            { id: 'logistics', score: 48 },
+            { id: 'realEstate', score: 65 },
+            { id: 'energy', score: 28 },
+            { id: 'it', score: 12 },
+            { id: 'construction', score: 89 }
+        ]
+    });
+});
+
+app.get('/api/v1/alerts', (req, res) => {
+    res.json({
+        items: [
+            { id: 'alt-1', title: 'Аномальний імпорт електроніки', target: 'ТОВ "МЕГА-ТРЕЙД"', risk: 'CRITICAL', time: '10 хв тому', status: 'new' },
+            { id: 'alt-2', title: 'Зміна UBO у санкційному списку', target: 'ПрАТ "ЗАХІД-ЕНЕРГО"', risk: 'HIGH', time: '45 хв тому', status: 'new' },
+            { id: 'alt-3', title: 'Виявлено новий картель ТОВ/АТ', target: 'Сектор будівництва', risk: 'MEDIUM', time: '2 год тому', status: 'new' },
+            { id: 'alt-4', title: 'Ризик зникнення компанії-імпортера', target: 'ТОВ "ВЕКТОР"', risk: 'HIGH', time: '5 год тому', status: 'new' }
+        ]
+    });
+});
+
+app.get('/api/v1/intelligence/report/:ueid', (req, res) => {
+    const reports = {
+        'v55_daily_brief': `
+# 🕶️ Суверенна Довідка: Стан Ринку v55
+
+## 📊 Глобальний Аналіз
+За останні 24 години система зафіксувала **аномальне зростання** активності у секторі паливно-енергетичного комплексу. 
+Коефіцієнт структурного ризику зріс на **4.2%**.
+
+## 🚨 Ключові Аномалії
+1. **ТОВ "ЕНЕРГО-ГРУП"**: Виявлено приховані зв'язки з офшорними юрисдикціями через ланцюжок номінальних власників.
+2. **АТ "УКР-БУД"**: Серія транзакцій з контрагентами з "сірого" списку.
+
+## ⚖️ Рекомендації Sovereign
+- Посилити моніторинг митних декларацій по коду HS **8471**.
+- Провести поглиблений аудит бенефіціарів у логістичному секторі Одеської обл.
+        `,
+        'global-briefing-v55': `
+# 🛰️ Оперативне Зведення: Ситуаційний Центр
+
+## 🧠 Нейронна Оцінка
+Система PREDATOR оцінює загальний рівень загрози як **MODERATE (СЕРЕДНІЙ)**. 
+Проте, у секторі **електроніки** спостерігається перехід до **КРИТИЧНОГО** стану.
+
+## 📉 Тренди
+- Зменшення середньої митної вартості на 12% для критичного імпорту.
+- Синхронізація 42 нових нод у графу впливу.
+
+**Sovereign Decision Support**: Рекомендується запуск превентивного розслідування щодо групи компаній "ВЕСТ-ЛОГІСТИК".
+        `
+    };
+    res.json({ report: reports[req.params.ueid] || reports['v55_daily_brief'] });
+});
+
+// --- Maritime Sovereignty ---
+app.get('/api/v1/maritime/vessels', (req, res) => {
+    res.json({
+        items: [
+            { id: 'v-1', name: 'OCEAN_TITAN', flag: 'PANAMA', type: 'Container Ship', location: { lat: 46.48, lon: 30.72 }, status: 'at_anchor', destination: 'Odesa Port', risk_score: 12, imo: '9234567', mmsi: '235078000', speed: 0.1, last_seen: '2 хв тому' },
+            { id: 'v-2', name: 'GHOST_RUNNER', flag: 'UNKNOWN', type: 'General Cargo', location: { lat: 45.12, lon: 32.45 }, status: 'underway', destination: 'Sevastopol', risk_score: 94, mmsi: '999999999', speed: 18.5, heading: 145, last_seen: '10 сек тому' },
+            { id: 'v-3', name: 'NEBULOUS_PRIDE', flag: 'LIBERIA', type: 'Oil Tanker', location: { lat: 44.85, lon: 33.10 }, status: 'underway', destination: 'Novorossiysk', risk_score: 72, imo: '9876543', speed: 12.2, heading: 90, last_seen: '5 хв тому' },
+            { id: 'v-4', name: 'SOVEREIGN_VOYAGER', flag: 'UKRAINE', type: 'Bulk Carrier', location: { lat: 46.60, lon: 31.05 }, status: 'loading', destination: 'Chornomorsk', risk_score: 5, imo: '9112233', status: 'optimal' }
+        ]
+    });
+});
+
+app.get('/api/v1/maritime/ports', (req, res) => {
+    res.json({
+        items: [
+            { id: 'p-1', name: 'Одеський Морський Порт', country: 'Ukraine', location: { lat: 46.48, lon: 30.72 }, vessel_count: 42, capacity: 85, risk_level: 'LOW', status: 'operational' },
+            { id: 'p-2', name: 'Порт Южний', country: 'Ukraine', location: { lat: 46.62, lon: 31.01 }, vessel_count: 18, capacity: 60, risk_level: 'LOW', status: 'operational' },
+            { id: 'p-3', name: 'Севастопольський Порт', country: 'Occupied', location: { lat: 44.61, lon: 33.52 }, vessel_count: 64, capacity: 95, risk_level: 'CRITICAL', status: 'restricted' }
+        ]
+    });
+});
+
 // Catch-all for any missing endpoints (must be last)
 app.use('/api', (req, res) => {
   console.log(`[MOCK] Unhandled ${req.method} ${req.path}`);
@@ -3259,4 +3766,8 @@ app.use('/api', (req, res) => {
     return res.json({});
   }
   res.json({ success: true, message: 'Mock accepted' });
+});
+
+server.listen(PORT, () => {
+    console.log(`🚀 Mock API Server running on http://localhost:${PORT}`);
 });

@@ -75,7 +75,7 @@ export const copilotApi = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('access_token') || ''}`,
+                'Authorization': `Bearer ${sessionStorage.getItem('predator_auth_token') || ''}`,
             },
             body: JSON.stringify(request),
         });
