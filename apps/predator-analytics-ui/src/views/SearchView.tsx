@@ -1,6 +1,10 @@
 /**
- * Predator v55 | Neural Discovery Matrix — Когнітивний Пошук
+ * PREDATOR v55.5 | Neural Discovery Matrix — Когнітивна Матриця Пошуку
+ *
  * Командний центр для глибокого аналізу сутностей, реєстрів та тіньових зв'язків.
+ * Прямий доступ до 2.5M+ об'єктів ЄДРПОУ, НАБУ, РНБО через когнітивні V55 фільтри.
+ *
+ * © 2026 PREDATOR Analytics | Maximum Value Extraction
  */
 
 import React, { useState } from 'react';
@@ -69,8 +73,8 @@ const localLocales = {
     subtitle: 'Прямий доступ до 2.5 млн+ об\'єктів через когнітивні фільтри V55',
     stats: {
         indexed: 'Індексовано об\'єктів',
-        sources: 'Активних джерел',
-        reliability: 'Точність ШШ',
+        sources: 'Активних реєстрів',
+        reliability: 'Точність ШІ',
     },
     modes: {
         neural: 'НЕЙРОННИЙ',
@@ -79,17 +83,17 @@ const localLocales = {
     },
     hackerMode: {
         active: 'TERMINAL_LINK_ACTIVE // PORT: 8443 // S_KEY: AX-42',
-        prompt: 'ENTER_QUERY_OR_EDRPOU...',
+        prompt: 'ВВЕДІТЬ_ЄДРПОУ_АБО_ЗАПИТ...',
     },
     aiAnalysis: {
         title: 'Когнітивний Синтез Pulse',
         analyzing: 'ШІ Аналіз Запиту...',
-        noData: 'Система проводить перехресний аналіз знайдених сутностей. Виявлено зв\'язки з публічними реєстрами.',
+        noData: 'Система проводить перехресний аналіз знайдених сутностей. Виявлено зв\'язки з публічними реєстрами. Активовано сценарій OSINT-глибинного сканування.',
     },
     results: {
         found: 'ВИЯВЛЕНО ПРЯМИХ СПІВПАДІНЬ',
         noResults: 'Нуль результатів у базі PREDATOR. Активуйте DEEP SCAN.',
-        restricted: 'RESTRICTED_FEED',
+        restricted: 'ДОСТУП_ОБМЕЖЕНО',
     },
     company: {
         active: 'ДІЮЧА',
@@ -98,7 +102,7 @@ const localLocales = {
         explain: 'ПОЯСНИТИ РІШЕННЯ',
         hide: 'ПРИХОВАТИ ПОЯСНЕННЯ',
         riskProfile: 'Профіль Ризику',
-        alphaScore: 'Alpha Score',
+        alphaScore: 'Альфа Індекс',
     }
 };
 
@@ -459,22 +463,33 @@ export const SearchView = () => {
 
     return (
         <div className={cn(
-            "max-w-7xl mx-auto min-h-screen pb-20 px-6 transition-all duration-700",
+            "max-w-7xl mx-auto min-h-screen pb-20 px-4 sm:px-6 lg:px-10 transition-all duration-700",
             isHackerMode && "bg-black text-emerald-500"
         )}>
-            {/* HUD Header */}
-            <ViewHeader
-                title={isHackerMode ? "> PREDATOR_QUERY_HUB" : localLocales.title}
-                icon={isHackerMode ? <SearchCode className="text-emerald-500 animate-pulse" /> : <Radar className="text-primary-500" />}
-                breadcrumbs={['СИНАПСИС', 'РОЗВІДКА', 'МАТРИЦЯ ГРАФУ']}
-                stats={[
-                    { label: localLocales.stats.indexed, value: '2.5M+', icon: <Database />, color: 'primary' },
-                    { label: localLocales.stats.sources, value: '42', icon: <Globe />, color: 'cyan' },
-                    { label: localLocales.stats.reliability, value: '99.8%', icon: <Sparkles />, color: 'success', animate: true }
-                ]}
-            />
+            {/* HUD Header — v55.5 */}
+            <div className="relative mb-14">
+                <ViewHeader
+                    title={isHackerMode ? "> PREDATOR_QUERY_HUB" : localLocales.title}
+                    icon={isHackerMode ? <SearchCode className="text-emerald-500 animate-pulse" /> : <Radar className="text-primary-500" />}
+                    breadcrumbs={['СИНАПСИС', 'ОСІНТ-РОЗВІДКА', 'МАТРИЦЯ ПОШУКУ']}
+                    stats={[
+                        { label: localLocales.stats.indexed, value: '2.5M+', icon: <Database />, color: 'primary' },
+                        { label: localLocales.stats.sources, value: '42', icon: <Globe />, color: 'cyan' },
+                        { label: localLocales.stats.reliability, value: '99.8%', icon: <Sparkles />, color: 'success', animate: true }
+                    ]}
+                />
+                {/* Live sync bar */}
+                <div className="mt-4 flex items-center gap-4 px-2">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-full border border-slate-800">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">
+                            {isHackerMode ? localLocales.hackerMode.active : 'PREDATOR_CORE_ONLINE // ЄДРПОУ + РНБО + НАБУ + НАЗК'}
+                        </span>
+                    </div>
+                </div>
+            </div>
 
-            <div className="mt-12 mb-16 relative">
+            <div className="mt-8 mb-16 relative">
                 {/* Background FX */}
                 <div className="absolute inset-0 -z-10 overflow-hidden">
                     {!isHackerMode && <CyberOrb color="emerald" size="lg" intensity="low" className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20" />}
@@ -560,15 +575,23 @@ export const SearchView = () => {
                         </div>
                     </TacticalCard>
 
-                    {/* Trending / Fast Tags */}
+                    {/* Trending / Fast Tags — v55.5 */}
                     <div className="mt-8 flex flex-wrap justify-center gap-3">
-                        {['ТОВ "НАВІГАТОР"', '42883391', 'Тендери Паливо', 'Санкції РНБО'].map(tag => (
+                        <span className="text-[8px] font-black text-slate-700 uppercase tracking-[0.4em] py-2">ТРЕНДОВІ:</span>
+                        {[
+                            { tag: 'ТОВ НАВІГАТОР', label: '🚢 ТОВ НАВІГАТОР' },
+                            { tag: '42883391', label: '🔍 42883391' },
+                            { tag: 'Тендери Паливо', label: '⛽ Тендери Паливо' },
+                            { tag: 'Санкції РНБО', label: '🛑 Санкції РНБО' },
+                            { tag: 'Офшорні схеми', label: '🏝 Офшорні схеми' },
+                            { tag: 'ФОП скрутки', label: '⚠ ФОП скрутки' },
+                        ].map(({ tag, label }) => (
                             <button
                                 key={tag}
-                                onClick={() => { setQuery(tag.replace('"', '')); handleSearch(); }}
-                                className="px-4 py-2 rounded-xl bg-slate-900/40 border border-slate-800/60 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-primary-400 hover:border-primary-500/40 hover:bg-primary-500/5 transition-all"
+                                onClick={() => { setQuery(tag); }}
+                                className="px-4 py-2 rounded-xl bg-slate-900/40 border border-slate-800/60 text-[10px] font-bold text-slate-500 hover:text-primary-400 hover:border-primary-500/40 hover:bg-primary-500/5 transition-all"
                             >
-                                # {tag}
+                                {label}
                             </button>
                         ))}
                     </div>
