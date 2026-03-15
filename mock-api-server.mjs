@@ -1408,8 +1408,8 @@ app.get(['/api/v1/osint_ua/prozorro/tenders', '/v1/osint_ua/prozorro/tenders'], 
       value: 1450000, currency: 'UAH', status: 'active.tendering',
       procuringEntity: 'Національний Банк України',
       date: new Date().toISOString(),
-      category: 'IT обладнання', region: 'Київ', bidsCount: 7,
-      expectedValue: 1600000, riskScore: 12
+      category: 'IT обладнання', region: 'Київ', bids_count: 7,
+      expectedValue: 1600000, risk_score: 12
     },
     {
       id: 'UA-2024-03-02-0045',
@@ -1417,8 +1417,8 @@ app.get(['/api/v1/osint_ua/prozorro/tenders', '/v1/osint_ua/prozorro/tenders'], 
       value: 890000, currency: 'UAH', status: 'active.awarding',
       procuringEntity: 'МВС України',
       date: new Date(Date.now() - 3600000).toISOString(),
-      category: 'Телекомунікації', region: 'Київ', bidsCount: 4,
-      expectedValue: 950000, riskScore: 8
+      category: 'Телекомунікації', region: 'Київ', bids_count: 4,
+      expectedValue: 950000, risk_score: 8
     },
     {
       id: 'UA-2024-03-05-1234',
@@ -1426,8 +1426,8 @@ app.get(['/api/v1/osint_ua/prozorro/tenders', '/v1/osint_ua/prozorro/tenders'], 
       value: 3200000, currency: 'UAH', status: 'complete',
       procuringEntity: 'НАК "Нафтогаз України"',
       date: new Date(Date.now() - 86400000 * 2).toISOString(),
-      category: 'IT послуги', region: 'Київ', bidsCount: 2,
-      expectedValue: 3500000, riskScore: 45
+      category: 'IT послуги', region: 'Київ', bids_count: 2,
+      expectedValue: 3500000, risk_score: 45
     },
     {
       id: 'UA-2024-03-06-0078',
@@ -1435,8 +1435,8 @@ app.get(['/api/v1/osint_ua/prozorro/tenders', '/v1/osint_ua/prozorro/tenders'], 
       value: 15200000, currency: 'UAH', status: 'active.tendering',
       procuringEntity: 'Запорізька ОДА',
       date: new Date(Date.now() - 86400000 * 1).toISOString(),
-      category: 'Будівництво', region: 'Запоріжжя', bidsCount: 3,
-      expectedValue: 18000000, riskScore: 67
+      category: 'Будівництво', region: 'Запоріжжя', bids_count: 3,
+      expectedValue: 18000000, risk_score: 67
     },
     {
       id: 'UA-2024-03-07-0156',
@@ -1444,8 +1444,8 @@ app.get(['/api/v1/osint_ua/prozorro/tenders', '/v1/osint_ua/prozorro/tenders'], 
       value: 8750000, currency: 'UAH', status: 'active.qualification',
       procuringEntity: 'КНП "Обласна клінічна лікарня" Львів',
       date: new Date(Date.now() - 86400000 * 3).toISOString(),
-      category: 'Медицина', region: 'Львів', bidsCount: 5,
-      expectedValue: 9200000, riskScore: 23
+      category: 'Медицина', region: 'Львів', bids_count: 5,
+      expectedValue: 9200000, risk_score: 23
     },
     {
       id: 'UA-2024-03-08-0234',
@@ -1453,8 +1453,8 @@ app.get(['/api/v1/osint_ua/prozorro/tenders', '/v1/osint_ua/prozorro/tenders'], 
       value: 4560000, currency: 'UAH', status: 'active.tendering',
       procuringEntity: 'Міноборони України',
       date: new Date(Date.now() - 86400000 * 4).toISOString(),
-      category: 'Паливо та ПММ', region: 'Київ', bidsCount: 12,
-      expectedValue: 5000000, riskScore: 18
+      category: 'Паливо та ПММ', region: 'Київ', bids_count: 12,
+      expectedValue: 5000000, risk_score: 18
     },
     {
       id: 'UA-2024-03-09-0312',
@@ -1462,8 +1462,8 @@ app.get(['/api/v1/osint_ua/prozorro/tenders', '/v1/osint_ua/prozorro/tenders'], 
       value: 720000, currency: 'UAH', status: 'unsuccessful',
       procuringEntity: 'Укрзалізниця',
       date: new Date(Date.now() - 86400000 * 5).toISOString(),
-      category: 'Безпека', region: 'Харків', bidsCount: 1,
-      expectedValue: 800000, riskScore: 82
+      category: 'Безпека', region: 'Харків', bids_count: 1,
+      expectedValue: 800000, risk_score: 82
     },
     {
       id: 'UA-2024-03-10-0456',
@@ -1590,40 +1590,23 @@ app.get(['/api/v1/osint_ua/prozorro/tenders', '/v1/osint_ua/prozorro/tenders'], 
 // 📊 Prozorro Analytics Endpoints
 app.get('/api/v1/osint_ua/prozorro/stats', (req, res) => {
   res.json({
-    totalTenders: 20,
-    totalValue: 105530000,
-    avgBidsCount: 4.8,
-    byStatus: {
-      'active.tendering': 9,
-      'active.awarding': 3,
-      'active.qualification': 3,
-      'complete': 3,
-      'unsuccessful': 2
-    },
-    byCategory: [
-      { name: 'IT обладнання', count: 3, value: 4570000 },
-      { name: 'Будівництво', count: 2, value: 28000000 },
-      { name: 'Медицина', count: 2, value: 18550000 },
-      { name: 'Транспорт', count: 2, value: 20400000 },
-      { name: 'Безпека', count: 2, value: 1840000 },
-      { name: 'Паливо та ПММ', count: 1, value: 4560000 },
-      { name: 'Харчування', count: 1, value: 3890000 },
-      { name: 'Комунальні послуги', count: 1, value: 7450000 }
-    ],
-    byRegion: [
-      { name: 'Київ', count: 8, value: 31060000 },
-      { name: 'Запоріжжя', count: 1, value: 15200000 },
-      { name: 'Львів', count: 1, value: 8750000 },
-      { name: 'Одеса', count: 1, value: 3890000 },
-      { name: 'Дніпро', count: 1, value: 5670000 },
-      { name: 'Харків', count: 1, value: 720000 },
-      { name: 'Рівне', count: 1, value: 6200000 }
-    ],
-    riskDistribution: {
-      low: 12,
-      medium: 4,
-      high: 2,
-      critical: 2
+    analytics: {
+      total_value: 2870000000,
+      avg_risk: 61,
+      critical_tenders: 147,
+      categories: [
+        { name: 'Будівництво', value: 1200000000, color: '#f59e0b' },
+        { name: 'ПММ', value: 680000000, color: '#10b981' },
+        { name: 'Медицина', value: 420000000, color: '#6366f1' },
+        { name: 'ІТ', value: 320000000, color: '#0ea5e9' },
+        { name: 'Дороги', value: 250000000, color: '#ec4899' },
+      ],
+      trends: [
+        { date: '01.03', value: 82000000 }, { date: '05.03', value: 145000000 },
+        { date: '10.03', value: 98000000 },  { date: '15.03', value: 220000000 },
+        { date: '20.03', value: 170000000 }, { date: '25.03', value: 310000000 },
+        { date: '30.03', value: 260000000 },
+      ]
     }
   });
 });
