@@ -1921,7 +1921,7 @@ app.post('/api/v1/ingest/upload/complete', (req, res) => {
   res.json({ success: true, id: job_id, job_id, source_id: job_id, message: "Pipeline initiated" });
 });
 
-app.post(['/api/v1/data-hub/upload', '/api/v1/ingest/upload'], (req, res) => {
+app.post(['/api/v1/data-hub/upload', '/api/v1/ingest/upload', '/api/v1/ingestion/upload'], (req, res) => {
   const job_id = `etl-${Date.now()}`;
   // Detect source type from request body or filename
   const contentType = req.headers['content-type'] || '';
@@ -2358,7 +2358,7 @@ app.get('/api/v1/graph/search', (req, res) => {
 });
 
 // Connectors / Sources — тепер повертає ВСІ типи джерел
-app.get('/api/v1/sources/connectors', (req, res) => {
+app.get(['/api/v1/sources/connectors', '/api/v1/ingest/connectors'], (req, res) => {
   // Map all etlJobs to connectors
   const jobConnectors = etlJobs.map(j => {
     const pipeType = j.pipeline_type || 'customs';
@@ -3219,6 +3219,27 @@ app.post('/api/v1/ai/tts', async (req, res) => {
 // Seed initial data
 console.log('🌱 Seeding initial database facts...');
 const initialData = generateDeclarations(100, 'initial_seed.xlsx');
+DB_FACTS.push(...initialData);
+
+// Додаємо демонстраційні завдання ETL
+etlJobs.push(
+  { 
+    job_id: 'job-1710528000000', 
+    source_file: 'МИТНИЙ_РЕЄСТР_2024.xlsx', 
+    pipeline_type: 'customs', 
+    state: 'READY',
+    progress: { records_processed: 125000, records_indexed: 124982, percent: 100, details: 'Обробка завершена успішно' },
+    timestamps: { created_at: '2024-03-15T10:00:00Z', updated_at: '2024-03-15T10:15:00Z' }
+  },
+  { 
+    job_id: 'job-1710531600000', 
+    source_file: 'tax_report_q1.pdf', 
+    pipeline_type: 'pdf', 
+    state: 'PROCESSING',
+    progress: { records_processed: 4500, records_indexed: 4400, percent: 65, details: 'Видобування таблиць з PDF...' },
+    timestamps: { created_at: '2024-03-15T11:00:00Z', updated_at: '2024-03-15T11:05:00Z' }
+  }
+);
 // WebSocket for real-time updates
 const wss = new WebSocketServer({ noServer: true });
 

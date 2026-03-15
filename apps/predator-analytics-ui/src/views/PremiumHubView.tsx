@@ -1,15 +1,15 @@
 /**
- * PREDATOR Premium Hub - Центр Комерційної Розвідки
- *
- * Персоналізований хаб для максимальної монетизації:
- * - TITAN (Бізнесмен): Конкуренти, ринкові прогнози, інсайди
- * - INQUISITOR (Контролер): Аномалії, схеми, компромат
- * - SOVEREIGN (Аналітик): Тренди, кореляції, макро-прогнози
- *
- * © 2026 PREDATOR Analytics - Maximum Value Extraction
+ * PREDATOR v55.5 | Premium Intelligence Sanctum — Хаб Комерційної Розвідки
+ * 
+ * Персоналізований хаб для VIP-аналітики та стратегічного домінування:
+ * - TITAN (Market Dominance): Конкуренти, ринкові прогнози, інсайди
+ * - INQUISITOR (Risk Sovereignty): Аномалії, схеми, компромат
+ * - SOVEREIGN (Macro Architect): Тренди, кореляції, макро-прогнози
+ * 
+ * © 2026 PREDATOR Analytics | Maximum Value Extraction
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';
@@ -20,7 +20,8 @@ import {
   FileSearch, ShieldAlert, Eye, FileText, BrainCircuit, Network,
   Layout, Search, Filter, Layers, Star, Sparkles, ExternalLink,
   Ship, Truck, Plane, Building2, Landmark, Gem, ChevronRight,
-  ArrowUpRight, ArrowRight, Play, Settings, Maximize2, Database, Clock, Radio
+  ArrowUpRight, ArrowRight, Play, Settings, Maximize2, Database, Clock, Radio,
+  Cpu, Atom, Dna, Share2, MousePointer2, Terminal
 } from 'lucide-react';
 import { useAppStore, InterlinkPersona } from '../store/useAppStore';
 import { cn } from '../utils/cn';
@@ -63,280 +64,159 @@ import { CommodityPricePredictor } from '../components/premium/CommodityPricePre
 import { SupplyChainRadarWidget } from '../components/premium/SupplyChainRadarWidget';
 import { CompetitorWarBoardWidget } from '../components/premium/CompetitorWarBoardWidget';
 import { TacticalVoiceCommWidget } from '../components/premium/TacticalVoiceCommWidget';
+import { PageTransition } from '../components/layout/PageTransition';
+import { AdvancedBackground } from '../components/AdvancedBackground';
+import { CyberGrid } from '../components/CyberGrid';
+import { Badge } from '../components/ui/badge';
 
-// Конфігурація персон для комерційного використання
+// ========================
+// Types & Config
+// ========================
+
 const PERSONA_CONFIG = {
   TITAN: {
     name: 'TITAN',
-    title: premiumLocales.hub.persona.titan.title,
-    subtitle: premiumLocales.hub.persona.titan.subtitle,
+    title: 'РИНКОВИЙ ТИТАН',
+    subtitle: 'Агресивне домінування та конкурентна розвідка',
     icon: Target,
     color: 'amber',
-    gradient: 'from-amber-500 to-orange-600',
-    bgGlow: 'rgba(245, 158, 11, 0.15)',
+    gradient: 'from-amber-400 via-orange-500 to-amber-600',
+    glow: 'rgba(245, 158, 11, 0.4)',
     features: [
-      { icon: Eye, label: premiumLocales.hub.persona.titan.features.compAnalysis, desc: premiumLocales.hub.persona.titan.features.compAnalysisDesc },
-      { icon: TrendingUp, label: premiumLocales.hub.persona.titan.features.marketForecast, desc: premiumLocales.hub.persona.titan.features.marketForecastDesc },
-      { icon: Briefcase, label: premiumLocales.hub.persona.titan.features.supplierInsights, desc: premiumLocales.hub.persona.titan.features.supplierInsightsDesc },
-      { icon: DollarSign, label: premiumLocales.hub.persona.titan.features.priceIntel, desc: premiumLocales.hub.persona.titan.features.priceIntelDesc },
-    ],
-    dashboards: [
-      { id: 'competitor-imports', name: 'Імпорт Конкурентів', type: 'bar' },
-      { id: 'price-trends', name: 'Динаміка Цін', type: 'line' },
-      { id: 'supplier-map', name: 'Карта Постачальників', type: 'geo' },
-      { id: 'market-share', name: 'Частка Ринку', type: 'pie' },
+      { icon: Eye, label: 'АНАЛІЗ КОНКУРЕНТІВ', desc: 'Глибоке сканування кожної декларації опонентів у реальному часі' },
+      { icon: TrendingUp, label: 'РИНКОВІ ПРОГНОЗИ', desc: 'Прогнозування цінових хвиль та дефіциту товарних груп' },
+      { icon: Briefcase, label: 'ІНСАЙДИ ПОСТАЧАЛЬНИКІВ', desc: 'Виявлення прямих заводів та прихованих ланцюгів' },
+      { icon: DollarSign, label: 'ЦІНОВА ОПТИМІЗАЦІЯ', desc: 'Benchmark кожної транзакції проти ринкового медіанного значення' },
     ],
     insights: [
-      'Конкурент X збільшив імпорт на 340% за останній місяць',
-      'Виявлено нового постачальника з Туреччини з ціною -23%',
-      'Прогноз: ціни на сталь зростуть на 15% до березня',
+      'Конкурент "МЕГА-ЛОГІСТИК" збільшив закупки титану на 400%',
+      'Виявлено новий прямий канал постачання з В\'єтнаму (-15% ціни)',
+      'Ймовірність дефіциту HS-8471 у наступному кварталі: 82%',
     ]
   },
   INQUISITOR: {
     name: 'INQUISITOR',
-    title: premiumLocales.hub.persona.inquisitor.title,
-    subtitle: premiumLocales.hub.persona.inquisitor.subtitle,
+    title: 'ВЕЛИКИЙ ІНКВІЗИТОР',
+    subtitle: 'Контроль ризиків та виявлення прихованих схем',
     icon: Shield,
     color: 'rose',
-    gradient: 'from-rose-500 to-pink-600',
-    bgGlow: 'rgba(244, 63, 94, 0.15)',
+    gradient: 'from-rose-500 via-pink-600 to-rose-700',
+    glow: 'rgba(244, 63, 94, 0.4)',
     features: [
-      { icon: AlertTriangle, label: premiumLocales.hub.persona.inquisitor.features.anomalyDetection, desc: premiumLocales.hub.persona.inquisitor.features.anomalyDetectionDesc },
-      { icon: ShieldAlert, label: premiumLocales.hub.persona.inquisitor.features.evasionSchemes, desc: premiumLocales.hub.persona.inquisitor.features.evasionSchemesDesc },
-      { icon: Fingerprint, label: premiumLocales.hub.persona.inquisitor.features.profiling, desc: premiumLocales.hub.persona.inquisitor.features.profilingDesc },
-      { icon: Scale, label: premiumLocales.hub.persona.inquisitor.features.riskScoring, desc: premiumLocales.hub.persona.inquisitor.features.riskScoringDesc },
-    ],
-    dashboards: [
-      { id: 'anomaly-detection', name: 'Виявлені Аномалії', type: 'scatter' },
-      { id: 'risk-heatmap', name: 'Теплова Карта Ризику', type: 'heatmap' },
-      { id: 'evasion-patterns', name: 'Схеми Ухилення', type: 'sankey' },
-      { id: 'entity-network', name: 'Мережа Зв\'язків', type: 'graph' },
+      { icon: AlertTriangle, label: 'ДЕТЕКЦІЯ АНОМАЛІЙ', desc: 'AI-сканування на предмет заниження вартості та пересортиці' },
+      { icon: ShieldAlert, label: 'МЕРЕЖІ УХИЛЕННЯ', desc: 'Автоматичне картування пов\'язаних фірм-прокладок та офшорів' },
+      { icon: Fingerprint, label: 'ПРОФІЛЮВАННЯ СУБ\'ЄКТІВ', desc: 'Повний 360° досьє на будь-якого директора чи засновника' },
+      { icon: Scale, label: 'РИЗИК-СКОРИНГ СERS', desc: 'Нейронний рейтинг кожної декларації перед подачею в митницю' },
     ],
     insights: [
-      'Виявлено схему заниження вартості через 17 пов\'язаних компаній',
-      'Аномальна активність: HS код 8471 занижено на $2.4M',
-      'Суб\'єкт "ТОВ Альфа" має 89% ймовірність порушення',
+      'Виявлено кластер із 12 компаній, що використовують спільний IP',
+      'Аномалія ціни на HS-7304: відхилення від ринку на 68%',
+      'Суб\'єкт "ВЕКТОР-ПЛЮС" потрапив у сіру зону санкційного списку',
     ]
   },
   SOVEREIGN: {
     name: 'SOVEREIGN',
-    title: premiumLocales.hub.persona.sovereign.title,
-    subtitle: premiumLocales.hub.persona.sovereign.subtitle,
+    title: 'МАКРО-СУВЕРЕН',
+    subtitle: 'Архітектор торгових стратегій та геополітики',
     icon: Crown,
     color: 'indigo',
-    gradient: 'from-indigo-500 to-purple-600',
-    bgGlow: 'rgba(99, 102, 241, 0.15)',
+    gradient: 'from-indigo-400 via-purple-500 to-indigo-600',
+    glow: 'rgba(99, 102, 241, 0.4)',
     features: [
-      { icon: Globe, label: premiumLocales.hub.persona.sovereign.features.geopolitics, desc: premiumLocales.hub.persona.sovereign.features.geopoliticsDesc },
-      { icon: Landmark, label: premiumLocales.hub.persona.sovereign.features.sectorAnalysis, desc: premiumLocales.hub.persona.sovereign.features.sectorAnalysisDesc },
-      { icon: BrainCircuit, label: premiumLocales.hub.persona.sovereign.features.aiForecasts, desc: premiumLocales.hub.persona.sovereign.features.aiForecastsDesc },
-      { icon: Network, label: premiumLocales.hub.persona.sovereign.features.systemRisks, desc: premiumLocales.hub.persona.sovereign.features.systemRisksDesc },
-    ],
-    dashboards: [
-      { id: 'trade-flow', name: 'Потоки Торгівлі', type: 'chord' },
-      { id: 'sector-analysis', name: 'Галузева Аналітика', type: 'treemap' },
-      { id: 'forecast-model', name: 'Прогнозна Модель', type: 'line' },
-      { id: 'correlation-matrix', name: 'Матриця Кореляцій', type: 'heatmap' },
+      { icon: Globe, label: 'ГЕОПОЛІТИЧНИЙ МОНІТОР', desc: 'Вплив санкцій та ембарго на глобальні торгові потоки' },
+      { icon: Landmark, label: 'СЕКТОРНИЙ АРХІТЕКТОР', desc: 'Картування цілих галузей економіки через митні дані' },
+      { icon: BrainCircuit, label: 'NEXUS-ПРОГНОЗУВАННЯ', desc: 'Мультимодальні моделі майбутнього стану ринку України' },
+      { icon: Network, label: 'СИСТЕМНІ КОРЕЛЯЦІЇ', desc: 'Приховані зв\'язки між курсом валют та обсягами критичного імпорту' },
     ],
     insights: [
-      'Кореляція 0.87 між імпортом сталі та будівельною активністю',
-      'Прогноз: обсяг торгівлі з ЄС +12% у Q2 2026',
-      'Системний ризик: залежність від 3 постачальників чіпів',
+      'Кореляція 0.94 між ціною на енергоносії та імпортом добрив',
+      'Прогноз росту товарообігу з ОАЕ на 45% у річному обчисленні',
+      'Системний ризик: критична залежність ВПК від 2 хабів у КНР',
     ]
   }
 };
 
-// OpenSearch Dashboard Integration Component
-const OpenSearchPanel: React.FC<{ persona: string }> = ({ persona }) => {
-  const config = PERSONA_CONFIG[persona as keyof typeof PERSONA_CONFIG];
+// ========================
+// Sub-Components
+// ========================
 
+/**
+ * Stunning Access Gate for non-premium
+ */
+const HolographicAccessGate: React.FC = () => {
   return (
-    <div className="bg-slate-950/80 border border-white/10 rounded-[32px] overflow-hidden backdrop-blur-xl">
-      <div className="p-6 border-b border-white/5 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className={cn("p-3 rounded-2xl", `bg-${config.color}-500/20`)}>
-            <Database className={`text-${config.color}-400`} size={20} />
+    <div className="min-h-screen bg-[#02040a] flex items-center justify-center p-8 relative overflow-hidden">
+      <AdvancedBackground />
+      <CyberGrid color="rgba(245, 158, 11, 0.05)" />
+      
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-amber-500/5 blur-[200px] rounded-full animate-pulse" />
+      
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="relative z-10 max-w-5xl w-full"
+      >
+        <div className="bg-[#0b0f1a]/80 backdrop-blur-3xl border border-amber-500/20 rounded-[80px] p-16 sm:p-24 shadow-[0_0_150px_rgba(245,158,11,0.1)] relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-12 opacity-5">
+            <Crown size={300} className="text-amber-500" />
           </div>
-          <div>
-            <h3 className="text-sm font-black text-white uppercase tracking-wider">OpenSearch Analytics</h3>
-            <p className="text-[9px] text-slate-500 font-mono">Інтерактивні графіки реального часу</p>
+
+          <div className="flex flex-col items-center text-center space-y-12">
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="relative p-1 rounded-full bg-gradient-to-r from-amber-500 to-rose-500"
+            >
+              <div className="w-40 h-40 bg-[#02040a] rounded-full flex items-center justify-center border border-amber-400/20">
+                <Crown className="w-20 h-20 text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.8)]" />
+              </div>
+            </motion.div>
+
+            <div className="space-y-6">
+              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-6deg]">
+                ACCESS <span className="text-amber-500">RESTRICTED</span>
+              </h1>
+              <p className="text-xl text-slate-400 font-medium max-w-2xl mx-auto italic">
+                Вхід у Комерційний Хаб потребує авторизації рівня "SOVEREIGN". 
+                Виявлено обмежений доступ. Активуйте статус PREMIUM для розблокування протоколів.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+              {Object.entries(PERSONA_CONFIG).map(([key, config]) => (
+                <div key={key} className="p-8 bg-white/5 border border-white/5 rounded-[40px] group hover:border-amber-500/30 transition-all hover:-translate-y-2">
+                  <config.icon className={cn("w-12 h-12 mx-auto mb-6", `text-${config.color}-500 group-hover:scale-125 transition-transform`)} />
+                  <h3 className="text-xs font-black text-white uppercase tracking-widest mb-2">{config.title}</h3>
+                  <p className="text-[10px] text-slate-500 font-medium px-4">{config.subtitle}</p>
+                </div>
+              ))}
+            </div>
+
+            <button className="px-20 py-8 bg-amber-600 hover:bg-amber-500 text-white text-lg font-black tracking-[0.3em] uppercase rounded-[40px] shadow-2xl shadow-amber-500/40 border border-amber-400/30 transition-all hover:scale-105 active:scale-95 group">
+              <span className="flex items-center gap-4">
+                АКТИВУВАТИ ПОВНИЙ ДОСТУП <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+              </span>
+            </button>
+            <p className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em]">ENCRYPTED_AUTH_v55.5 | PREDATOR_NET</p>
           </div>
         </div>
-        <a
-          href="http://localhost:5601/app/dashboards"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all",
-            `bg-${config.color}-500/20 border border-${config.color}-500/30 text-${config.color}-400 hover:bg-${config.color}-500 hover:text-white`
-          )}
-        >
-          <Maximize2 size={12} />
-          Повний Екран
-        </a>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 p-6">
-        {config.dashboards.map((dash, i) => (
-          <motion.button
-            key={dash.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="p-5 bg-black/40 border border-white/5 rounded-2xl hover:border-white/20 transition-all group text-left"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <span className={cn("text-[8px] font-black uppercase tracking-widest", `text-${config.color}-500`)}>
-                {dash.type.toUpperCase()}
-              </span>
-              <ExternalLink size={12} className="text-slate-600 group-hover:text-white" />
-            </div>
-            <div className="text-xs font-black text-white">{dash.name}</div>
-          </motion.button>
-        ))}
-      </div>
-
-      {/* Mini Preview Chart */}
-      <div className="h-[200px] p-4 border-t border-white/5">
-        <ResponsiveChart persona={persona} />
-      </div>
+      </motion.div>
     </div>
   );
 };
 
-// Responsive Chart Component
-const ResponsiveChart: React.FC<{ persona: string }> = ({ persona }) => {
-  const config = PERSONA_CONFIG[persona as keyof typeof PERSONA_CONFIG];
-  const colors = {
-    TITAN: '#f59e0b',
-    INQUISITOR: '#f43f5e',
-    SOVEREIGN: '#6366f1'
-  };
+// ========================
+// Main View
+// ========================
 
-  const [data, setData] = useState<{ name: string; value: number; risk: number }[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/v1/stats/category');
-        if (response.ok) {
-          const result = await response.json();
-          // Transform API data to chart format
-          const chartData = (result.categories || result.data || [])
-            .slice(0, 12)
-            .map((item: any, idx: number) => ({
-              name: item.name || item.label || `${idx + 1} Груд`,
-              value: item.count || item.value || 0,
-              risk: item.risk || item.risk_score || 0
-            }));
-
-          if (chartData.length > 0) {
-            setData(chartData);
-          } else {
-            // Fallback to static placeholder data
-            setData(Array.from({ length: 12 }, (_, i) => ({
-              name: `${i + 1} Груд`,
-              value: 0,
-              risk: 0
-            })));
-          }
-        }
-      } catch (err) {
-        console.warn('Failed to fetch category stats:', err);
-        // Keep empty data instead of random
-      }
-    };
-
-    fetchData();
-  }, [persona]);
-
-  const option = {
-    backgroundColor: 'transparent',
-    tooltip: {
-      trigger: 'axis',
-      backgroundColor: 'rgba(2, 6, 23, 0.95)',
-      borderColor: colors[persona as keyof typeof colors],
-      textStyle: { color: '#e2e8f0', fontSize: 10 }
-    },
-    grid: { left: 40, right: 20, top: 20, bottom: 30 },
-    xAxis: {
-      type: 'category',
-      data: data.map(d => d.name),
-      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
-      axisLabel: { color: '#64748b', fontSize: 9 }
-    },
-    yAxis: {
-      type: 'value',
-      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.03)' } },
-      axisLabel: { color: '#64748b', fontSize: 9 }
-    },
-    series: [{
-      data: data.map(d => d.value),
-      type: 'line',
-      smooth: true,
-      showSymbol: false,
-      lineStyle: { color: colors[persona as keyof typeof colors], width: 2 },
-      areaStyle: {
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: `${colors[persona as keyof typeof colors]}40` },
-          { offset: 1, color: `${colors[persona as keyof typeof colors]}00` }
-        ])
-      }
-    }]
-  };
-
-  return <ReactECharts option={option} className="w-full h-full" theme="dark" />;
-};
-
-// Premium Feature Card
-const FeatureCard: React.FC<{
-  feature: { icon: any; label: string; desc: string };
-  color: string;
-  delay: number;
-}> = ({ feature, color, delay }) => (
-  <motion.div
-    initial={{ opacity: 0, x: -20 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ delay }}
-    className={cn(
-      "p-5 bg-black/40 border border-white/5 rounded-2xl hover:border-white/20 transition-all group cursor-pointer",
-      `hover:bg-${color}-500/5`
-    )}
-  >
-    <div className="flex items-start gap-4">
-      <div className={cn("p-2.5 rounded-xl", `bg-${color}-500/20`)}>
-        <feature.icon className={`text-${color}-400`} size={18} />
-      </div>
-      <div>
-        <div className="text-xs font-black text-white uppercase tracking-wider mb-1">{feature.label}</div>
-        <div className="text-[10px] text-slate-500">{feature.desc}</div>
-      </div>
-    </div>
-  </motion.div>
-);
-
-// Insight Alert Component
-const InsightAlert: React.FC<{ insight: string; color: string; index: number }> = ({ insight, color, index }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: index * 0.2 }}
-    className="flex items-start gap-3 p-4 bg-black/40 border border-white/5 rounded-xl"
-  >
-    <div className={cn("w-1.5 h-1.5 rounded-full mt-2 animate-pulse", `bg-${color}-500`)} />
-    <p className="text-[11px] text-slate-300 leading-relaxed">{insight}</p>
-  </motion.div>
-);
-
-// Main Component
 const PremiumHubView: React.FC = () => {
   const { userRole, persona, setPersona } = useAppStore();
-  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'modeling' | 'builder' | 'logistics' | 'sourcing' | 'reports' | 'tactical'>('overview');
-  const [customsData, setCustomsData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'overview' | 'tactical' | 'analytics' | 'modeling' | 'builder' | 'reports'>('overview');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDossierOpen, setIsDossierOpen] = useState(false);
-  const [selectedEntity, setSelectedEntity] = useState<string>('ТОВ Мега-Імпорт');
+  const [selectedEntity, setSelectedEntity] = useState<string>('ТОВ "УКР-ПОСТАЧ"');
+
+  const currentConfig = useMemo(() => PERSONA_CONFIG[persona as keyof typeof PERSONA_CONFIG] || PERSONA_CONFIG.TITAN, [persona]);
 
   // Global Search Hotkey
   useEffect(() => {
@@ -350,485 +230,287 @@ const PremiumHubView: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const currentConfig = PERSONA_CONFIG[persona as keyof typeof PERSONA_CONFIG] || PERSONA_CONFIG.TITAN;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await api.customs.getRegistry('');
-        setCustomsData(res.data || []);
-      } catch (e) {
-        console.error('Failed to fetch customs data');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  // Paywall for non-premium users
   if (userRole === 'client') {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-8 bg-slate-950 relative overflow-hidden">
-        <div className="absolute inset-0 bg-cyber-grid opacity-10" />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-gradient-to-r from-amber-500/20 to-rose-500/20 blur-[150px] rounded-full" />
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="relative z-10 text-center space-y-8 max-w-3xl bg-black/80 p-16 rounded-[64px] border border-white/10 backdrop-blur-3xl shadow-2xl"
-        >
-          <div className="flex justify-center">
-            <div className="w-28 h-28 bg-gradient-to-br from-amber-500/30 to-rose-500/30 rounded-full flex items-center justify-center border border-white/10 shadow-[0_0_60px_rgba(245,158,11,0.2)]">
-              <Crown className="w-14 h-14 text-amber-400 animate-pulse" />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h1 className="text-4xl font-black text-white tracking-tighter uppercase">
-              {premiumLocales.hub.paywall.title}
-            </h1>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-xl mx-auto">
-              {premiumLocales.hub.paywall.description}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-6 pt-4">
-            {Object.entries(PERSONA_CONFIG).map(([key, config]) => (
-              <div key={key} className="p-6 bg-white/5 border border-white/10 rounded-3xl">
-                <config.icon className={`w-8 h-8 text-${config.color}-400 mx-auto mb-3`} />
-                <div className="text-xs font-black text-white uppercase mb-1">{config.title}</div>
-                <div className="text-[9px] text-slate-500">{config.subtitle}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="pt-4 space-y-4">
-            <button className="w-full py-5 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-black rounded-3xl uppercase tracking-[0.2em] shadow-xl hover:shadow-amber-500/30 hover:scale-[1.02] transition-all">
-              <Sparkles className="inline-block mr-3" size={18} />
-              {premiumLocales.hub.paywall.cta}
-            </button>
-            <p className="text-[9px] text-slate-600 uppercase tracking-widest">
-              {premiumLocales.hub.paywall.trail}
-            </p>
-          </div>
-        </motion.div>
-      </div>
-    );
+    return <HolographicAccessGate />;
   }
 
   return (
-    <div className="min-h-screen flex flex-col p-6 gap-6 relative z-10 pb-24 w-full max-w-[1800px] mx-auto">
-      {/* Dynamic Background Glow */}
-      <div
-        className={cn(
-          "fixed inset-0 pointer-events-none transition-all duration-1000",
-          persona === 'TITAN' ? "bg-[radial-gradient(ellipse_at_80%_20%,_rgba(245,158,11,0.15),_transparent_60%)]" :
-            persona === 'INQUISITOR' ? "bg-[radial-gradient(ellipse_at_80%_20%,_rgba(244,63,94,0.15),_transparent_60%)]" :
-              "bg-[radial-gradient(ellipse_at_80%_20%,_rgba(99,102,241,0.15),_transparent_60%)]"
-        )}
-      />
-
-      <IntelligenceTicker />
-      <GlobalSearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
-      <Dossier360Explorer
-        isOpen={isDossierOpen}
-        onClose={() => setIsDossierOpen(false)}
-        entityName={selectedEntity}
-        riskScore={selectedEntity.includes('Мега-Імпорт') ? 85 : 42}
-      />
-      <PredatorChatWidget />
-
-      <ViewHeader
-        title={premiumLocales.hub.title}
-        icon={<Crown size={20} className={`text-${currentConfig.color}-400`} />}
-        breadcrumbs={[premiumLocales.hub.breadcrumbs.predator, premiumLocales.hub.breadcrumbs.premium, currentConfig.name]}
-        stats={[
-          { label: premiumLocales.hub.stats.declarations, value: '142,504', icon: <FileText size={14} />, color: 'primary' },
-          { label: premiumLocales.hub.stats.insights, value: '1,247', icon: <Sparkles size={14} />, color: 'success' },
-          { label: premiumLocales.hub.stats.activeAlerts, value: '23', icon: <AlertTriangle size={14} />, color: 'warning' },
-        ]}
-      />
-
-      {/* Persona Selector & Navigation */}
-      <div className="flex flex-wrap items-center justify-between gap-6">
-        {/* Navigation Tabs */}
-        <div className="flex items-center gap-2 p-1.5 bg-black/40 border border-white/5 rounded-2xl backdrop-blur-3xl">
-          {[
-            { id: 'overview', label: premiumLocales.hub.tabs.overview, icon: Layout },
-            { id: 'tactical', label: premiumLocales.hub.tabs.tactical, icon: Radio },
-            { id: 'analytics', label: premiumLocales.hub.tabs.analytics, icon: BarChart3 },
-            { id: 'sourcing', label: premiumLocales.hub.tabs.sourcing, icon: Globe },
-            { id: 'modeling', label: premiumLocales.hub.tabs.modeling, icon: Activity },
-            { id: 'logistics', label: premiumLocales.hub.tabs.logistics, icon: Truck },
-            { id: 'reports', label: premiumLocales.hub.tabs.reports, icon: FileText },
-            { id: 'builder', label: premiumLocales.hub.tabs.builder, icon: Settings },
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={cn(
-                "px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3 transition-all",
-                activeTab === tab.id
-                  ? `bg-${currentConfig.color}-500/10 text-${currentConfig.color}-400 border border-${currentConfig.color}-500/20`
-                  : "text-slate-500 hover:text-white hover:bg-white/5"
-              )}
-            >
-              <tab.icon size={14} />
-              {tab.label}
-            </button>
-          ))}
-          {/* Search Trigger */}
-          <button
-            onClick={() => setIsSearchOpen(true)}
-            className="px-4 py-2.5 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all border border-transparent hover:border-white/10"
-            title={premiumLocales.hub.search.placeholder}
-          >
-            <Search size={14} />
-          </button>
-        </div>
-
-        {/* Persona Switcher */}
-        <div className="flex items-center gap-2 p-1.5 bg-slate-900/60 border border-white/5 rounded-2xl backdrop-blur-3xl">
-          {Object.entries(PERSONA_CONFIG).map(([key, config]) => (
-            <button
-              key={key}
-              onClick={() => setPersona(key as InterlinkPersona)}
-              className={cn(
-                "px-5 py-2.5 rounded-xl text-[9px] font-black tracking-wider uppercase transition-all flex items-center gap-2",
-                persona === key
-                  ? `bg-gradient-to-r ${config.gradient} text-white shadow-lg`
-                  : "text-slate-500 hover:text-white hover:bg-white/5"
-              )}
-            >
-              <config.icon size={14} />
-              {config.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <AnimatePresence mode="wait">
-        {activeTab === 'overview' && (
+    <PageTransition>
+      <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-40">
+        <AdvancedBackground />
+        <CyberGrid color={currentConfig.glow} />
+        
+        {/* Dynamic Background Glow */}
+        <AnimatePresence mode="wait">
           <motion.div
-            key="overview"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-6"
-          >
-            {/* Left Column - Features & Insights */}
-            <div className="lg:col-span-5 space-y-6">
-              {/* Persona Header */}
-              <div className={cn(
-                "p-8 rounded-[32px] border border-white/10 backdrop-blur-xl relative overflow-hidden",
-                `bg-gradient-to-br from-${currentConfig.color}-500/10 to-slate-950/80`
-              )}>
-                <div className="absolute top-0 right-0 w-40 h-40 opacity-10">
-                  <currentConfig.icon size={160} />
+            key={persona}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={cn(
+              "fixed inset-0 pointer-events-none transition-all duration-1000",
+              `bg-[radial-gradient(ellipse_at_80%_20%,_${currentConfig.glow},_transparent_70%)]`
+            )}
+          />
+        </AnimatePresence>
+
+        <IntelligenceTicker />
+        <GlobalSearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+        <Dossier360Explorer
+          isOpen={isDossierOpen}
+          onClose={() => setIsDossierOpen(false)}
+          entityName={selectedEntity}
+          riskScore={78}
+        />
+        <PredatorChatWidget />
+
+        <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-12">
+            
+            {/* View Header v55.5 */}
+            <ViewHeader
+                title={
+                    <div className="flex items-center gap-8">
+                        <div className="relative group">
+                            <div className={cn("absolute inset-0 blur-[50px] rounded-full scale-150 animate-pulse", `bg-${currentConfig.color}-500/20`)} />
+                            <div className="relative w-16 h-16 bg-slate-900 border border-white/10 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
+                                <currentConfig.icon size={32} className={cn(`text-${currentConfig.color}-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.8)]`)} />
+                            </div>
+                        </div>
+                        <div>
+                            <h1 className="text-4xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
+                                PREMIUM <span className={cn(`text-${currentConfig.color}-500`)}>{persona}</span> HUB
+                            </h1>
+                            <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
+                                <Gem size={12} className="text-amber-500" /> 
+                                COMMERCIAL_INTELLIGENCE_LEVEL_5
+                            </p>
+                        </div>
+                    </div>
+                }
+                icon={<Crown size={22} className="text-amber-400" />}
+                breadcrumbs={['PREDATOR', 'PREMIUM', persona]}
+                stats={[
+                    { label: 'ДАНІ_В_ОБРОБЦІ', value: '1.2M', color: 'primary', icon: <Database size={14} />, animate: true },
+                    { label: 'ІНСАЙДИ_СЬОГОДНІ', value: '42', color: 'success', icon: <Sparkles size={14} /> },
+                    { label: 'АКТИВНІ_АНОМАЛІЇ', value: '12', color: 'warning', icon: <AlertTriangle size={14} /> }
+                ]}
+            />
+
+            {/* Persona Switcher & Tactical Nav (v55.5) */}
+            <div className="flex flex-wrap items-center justify-between gap-8 bg-[#0b0f1a]/60 backdrop-blur-3xl p-4 rounded-[40px] border border-white/5">
+                <div className="flex items-center gap-3 p-1.5 bg-black/40 rounded-[28px]">
+                    {Object.entries(PERSONA_CONFIG).map(([key, config]) => (
+                        <button
+                            key={key}
+                            onClick={() => setPersona(key as InterlinkPersona)}
+                            className={cn(
+                                "px-10 py-4 rounded-[24px] text-xs font-black uppercase tracking-widest transition-all flex items-center gap-3 relative overflow-hidden",
+                                persona === key 
+                                    ? `bg-gradient-to-r ${config.gradient} text-white shadow-xl shadow-amber-900/20`
+                                    : "text-slate-500 hover:text-white hover:bg-white/5"
+                            )}
+                        >
+                            <config.icon size={18} />
+                            <span>{key}</span>
+                            {persona === key && (
+                                <motion.div 
+                                    layoutId="active-pill" 
+                                    className="absolute inset-x-0 bottom-0 h-1 bg-white/40" 
+                                />
+                            )}
+                        </button>
+                    ))}
                 </div>
 
-                <div className="relative z-10">
-                  <div className={cn("text-[10px] font-black uppercase tracking-[0.3em] mb-2", `text-${currentConfig.color}-400`)}>
-                    {currentConfig.name} {premiumLocales.hub.persona.mode}
-                  </div>
-                  <h2 className="text-3xl font-black text-white tracking-tight mb-2">
-                    {currentConfig.title}
-                  </h2>
-                  <p className="text-sm text-slate-400">{currentConfig.subtitle}</p>
+                <div className="flex items-center gap-2 p-1.5 bg-black/40 rounded-[28px] overflow-x-auto no-scrollbar max-w-[800px]">
+                    {[
+                        { id: 'overview', label: 'ОГЛЯД', icon: Layout },
+                        { id: 'tactical', label: 'ТАКТИКА', icon: Radio },
+                        { id: 'analytics', label: 'АНАЛІТИКА', icon: BarChart3 },
+                        { id: 'modeling', label: 'МОДЕЛЮВАННЯ', icon: Activity },
+                        { id: 'reports', label: 'ЗВІТИ', icon: FileText },
+                        { id: 'builder', label: 'КОНСТРУКТОР', icon: Settings },
+                    ].map(tab => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id as any)}
+                            className={cn(
+                                "px-8 py-3.5 rounded-[22px] text-[10px] font-black uppercase tracking-widest flex items-center gap-3 transition-all",
+                                activeTab === tab.id
+                                    ? `bg-${currentConfig.color}-500/10 text-${currentConfig.color}-400 border border-${currentConfig.color}-500/30`
+                                    : "text-slate-500 hover:text-white hover:bg-white/5"
+                            )}
+                        >
+                            <tab.icon size={14} />
+                            {tab.label}
+                        </button>
+                    ))}
+                    <button 
+                        onClick={() => setIsSearchOpen(true)}
+                        className="p-3.5 rounded-[22px] bg-white/5 text-slate-500 hover:text-white transition-all border border-transparent hover:border-white/10"
+                    >
+                        <Search size={16} />
+                    </button>
                 </div>
-              </div>
-
-              {/* Features Grid */}
-              <div className="space-y-3">
-                <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-2">
-                  {premiumLocales.hub.insights.capabilities}
-                </h3>
-                {currentConfig.features.map((feature, i) => (
-                  <FeatureCard key={i} feature={feature} color={currentConfig.color} delay={i * 0.1} />
-                ))}
-              </div>
-
-              {/* Real-time Insights */}
-              <div className="space-y-3">
-                <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-2 flex items-center gap-2">
-                  <Zap size={12} className={`text-${currentConfig.color}-400`} />
-                  {premiumLocales.hub.insights.title}
-                </h3>
-                {currentConfig.insights.map((insight, i) => (
-                  <InsightAlert key={i} insight={insight} color={currentConfig.color} index={i} />
-                ))}
-              </div>
             </div>
 
-            {/* Right Column - Analytics Widgets */}
-            <div className="lg:col-span-7 space-y-6">
-              {/* Live Intelligence Alerts */}
-              <LiveIntelligenceAlerts persona={persona as string} maxAlerts={5} />
-
-              {/* Persona-specific widgets */}
-              {persona === 'TITAN' && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                  <div className="lg:col-span-2 space-y-4">
-                    <div className="h-[400px]">
-                      <ExecutiveBriefingWidget
-                        persona={persona as string}
-                        onOpenDossier={(name) => {
-                          setSelectedEntity(name);
-                          setIsDossierOpen(true);
-                        }}
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <SmartCalculatorWidget persona={persona as string} />
-                      <CompetitorRadarWidget persona={persona as string} />
-                    </div>
-                  </div>
-                  <div className="h-full min-h-[400px]">
-                    <SignalsFeedWidget persona={persona as string} />
-                  </div>
-                </div>
-              )}
-              {persona === 'INQUISITOR' && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  <div className="lg:col-span-2 space-y-6">
-                    <InvestigationCanvasWidget
-                      persona={persona as string}
-                      onOpenDossier={(name) => {
-                        setSelectedEntity(name);
-                        setIsDossierOpen(true);
-                      }}
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <SanctionsIntelligenceWidget persona={persona as string} />
-                      <div className="space-y-4">
-                        <RiskScoreWidget entityName="ТОВ Альфа-Трейд" persona={persona as string} />
-                        <SchemesWidget persona={persona as string} />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    <SignalsFeedWidget persona={persona as string} />
-                  </div>
-                </div>
-              )}
-
-              {persona === 'SOVEREIGN' && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  <div className="lg:col-span-2 space-y-6">
-                    <div className="h-[400px]">
-                      <ExecutiveBriefingWidget
-                        persona="TITAN"
-                        onOpenDossier={(name) => {
-                          setSelectedEntity(name);
-                          setIsDossierOpen(true);
-                        }}
-                      />
-                    </div>
-                    <NeuralAutomationWidget persona={persona as string} />
-                  </div>
-                  <div className="space-y-6">
-                    <MacroIndicatorsWidget persona={persona as string} />
-                    <HSCodeAnalyticsWidget persona={persona as string} />
-                    <TradeSankeyWidget persona={persona as string} />
-                  </div>
-                </div>
-              )}
-
-              {/* OpenSearch Panel */}
-              <OpenSearchPanel persona={persona as string} />
-            </div>
-          </motion.div>
-        )}
-
-        {activeTab === 'analytics' && (
-          <motion.div
-            key="analytics"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="space-y-6"
-          >
-            {/* AI Insights Section */}
-            <AIInsightsPanel persona={persona as string} />
-
-            {/* OpenSearch Section */}
-            <div className="p-8 bg-slate-950/80 border border-white/10 rounded-[32px] backdrop-blur-xl">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-black text-white uppercase tracking-wider">
-                  OpenSearch Dashboards — {currentConfig.title}
-                </h3>
-                <a
-                  href="http://localhost:5601/app/dashboards"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    "flex items-center gap-2 px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all",
-                    `bg-${currentConfig.color}-500 text-white hover:scale-105`
-                  )}
+            {/* Deep Workspace Content */}
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={activeTab + persona}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -30 }}
+                    className="space-y-12"
                 >
-                  <ExternalLink size={14} />
-                  Відкрити Повний Інтерфейс
-                </a>
-              </div>
+                    {activeTab === 'overview' && (
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            {/* Left Pane - Strategic Intelligence */}
+                            <div className="lg:col-span-5 space-y-8">
+                                <div className={cn(
+                                    "p-10 rounded-[48px] border border-white/5 relative overflow-hidden panel-3d",
+                                    `bg-gradient-to-br from-${currentConfig.color}-500/10 via-slate-900/40 to-black`
+                                )}>
+                                    <div className="absolute -top-10 -right-10 opacity-5">
+                                        <currentConfig.icon size={280} />
+                                    </div>
+                                    <div className="relative z-10 space-y-6">
+                                        <div className={cn("text-xs font-mono font-black uppercase tracking-[0.4em]", `text-${currentConfig.color}-500`)}>
+                                            {currentConfig.title}
+                                        </div>
+                                        <h2 className="text-4xl font-black text-white tracking-tight uppercase leading-tight italic">
+                                            {currentConfig.subtitle}
+                                        </h2>
+                                        <div className="flex items-center gap-6">
+                                            <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 py-1.5 px-4 font-black">ACTIVE_PROTOCOLS</Badge>
+                                            <span className="text-xs text-slate-500 font-mono">v55.5.9-stable</span>
+                                        </div>
+                                    </div>
+                                </div>
 
-              <div className="h-[500px] bg-black/40 rounded-2xl border border-white/5 overflow-hidden">
-                <iframe
-                  src="http://localhost:5601/app/dashboards?embed=true"
-                  className="w-full h-full border-none"
-                  title="OpenSearch Dashboards"
-                  sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
-                />
-              </div>
-            </div>
-          </motion.div>
-        )}
+                                {/* Feature Synergy Matrix */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {currentConfig.features.map((feature, i) => (
+                                        <motion.div
+                                            key={i}
+                                            whileHover={{ scale: 1.02 }}
+                                            className="p-6 bg-slate-900/40 border border-white/5 rounded-[32px] group hover:border-white/20 transition-all cursor-pointer"
+                                        >
+                                            <div className={cn("p-4 rounded-2xl mb-4 w-fit", `bg-${currentConfig.color}-500/10`)}>
+                                                <feature.icon className={cn(`text-${currentConfig.color}-400 group-hover:scale-110 transition-transform`)} size={24} />
+                                            </div>
+                                            <h4 className="text-[10px] font-black text-white uppercase tracking-widest mb-2">{feature.label}</h4>
+                                            <p className="text-[10px] text-slate-500 italic leading-relaxed">{feature.desc}</p>
+                                        </motion.div>
+                                    ))}
+                                </div>
 
-        {activeTab === 'sourcing' && (
-          <motion.div
-            key="sourcing"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-          >
-            <SupplierScoutWidget persona="TITAN" />
-            <div className="space-y-6">
-              <TenderIntelligenceWidget persona="TITAN" />
-              <div className="p-6 bg-amber-500/10 border border-amber-500/20 rounded-2xl backdrop-blur-xl">
-                <h3 className="text-sm font-black text-amber-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                  <Zap size={16} /> Прогноз Дефіциту
-                </h3>
-                <p className="text-xs text-slate-300 leading-relaxed mb-4">
-                  AI прогнозує дефіцит на ринку <b>Літієвих батарей (8507)</b> через 3 тижні.
-                  Рекомендовано збільшити закупівлі з Туреччини.
-                </p>
-                <button className="w-full py-3 bg-amber-500 text-white font-bold rounded-xl text-xs uppercase hover:bg-amber-600 transition-colors shadow-lg shadow-amber-500/20">
-                  Створити замовлення
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
+                                {/* Neural Insights Feed */}
+                                <div className="p-8 bg-black/40 border border-white/5 rounded-[40px] space-y-6">
+                                    <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-4">
+                                        <div className={cn("w-2 h-2 rounded-full", `bg-${currentConfig.color}-500 animate-pulse`)} />
+                                        НЕЙРОННІ ІНСАЙДИ (24h)
+                                    </h3>
+                                    <div className="space-y-4">
+                                        {currentConfig.insights.map((insight, i) => (
+                                            <div key={i} className="flex gap-4 p-5 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-all">
+                                                <div className="shrink-0 p-2 bg-indigo-500/20 rounded-lg text-indigo-400 h-fit"><Sparkles size={14} /></div>
+                                                <p className="text-xs text-slate-300 font-medium italic">"{insight}"</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
 
-        {activeTab === 'tactical' && (
-          <motion.div
-            key="tactical"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="space-y-6 h-full pb-12"
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 flex flex-col gap-6">
-                <div className="h-[600px]">
-                  <SupplyChainRadarWidget persona={persona as string} />
-                </div>
-                <div className="h-[500px]">
-                  <CompetitorWarBoardWidget persona={persona as string} />
-                </div>
-              </div>
-              <div className="space-y-6">
-                <TacticalVoiceCommWidget persona={persona as string} />
-                <NeuralAutomationWidget persona={persona as string} />
-                <div className="p-8 bg-slate-950/80 border border-emerald-500/20 rounded-[40px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
-                    <Zap size={64} className="text-emerald-500" />
-                  </div>
-                  <h4 className="text-sm font-black text-emerald-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                    <Activity size={16} className="animate-pulse" /> Live Tactical Actions
-                  </h4>
-                  <div className="space-y-4">
-                    <button className="w-full py-5 bg-emerald-500 text-black font-black rounded-3xl text-xs uppercase tracking-widest hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-3">
-                      Deploy Counter-Risk Saga <ArrowRight size={16} />
-                    </button>
-                    <button className="w-full py-5 bg-white/5 border border-white/10 text-white font-black rounded-3xl text-xs uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-3">
-                      Intercept Competitor Logistics
-                    </button>
-                    <button className="w-full py-5 bg-black text-slate-400 border border-slate-800 rounded-3xl text-xs uppercase tracking-widest hover:border-slate-600 transition-all text-center">
-                      Download Tactical HUD Config
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
+                            {/* Right Pane - Visual Analytics Dashboard */}
+                            <div className="lg:col-span-7 space-y-8">
+                                <LiveIntelligenceAlerts persona={persona as string} maxAlerts={6} />
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="h-[450px]">
+                                        <ExecutiveBriefingWidget 
+                                            persona={persona as string}
+                                            onOpenDossier={(name) => {
+                                                setSelectedEntity(name);
+                                                setIsDossierOpen(true);
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-6">
+                                        <SmartCalculatorWidget persona={persona as string} />
+                                        <HSCodeAnalyticsWidget persona={persona as string} />
+                                    </div>
+                                </div>
 
-        {activeTab === 'modeling' && (
-          <motion.div
-            key="modeling"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-280px)]"
-          >
-            <PredictiveModelingWidget persona={persona as string} />
-            <CommodityPricePredictor persona={persona as string} />
-          </motion.div>
-        )}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <CompetitorRadarWidget persona={persona as string} />
+                                    <RiskScoreWidget entityName={selectedEntity} persona={persona as string} />
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
-        {activeTab === 'logistics' && (
-          <motion.div
-            key="logistics"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-          >
-            <LogisticsTrackerWidget persona="TITAN" />
-            <div className="space-y-4">
-              <TradeFlowWidget persona="TITAN" />
-              <TradeCorridorWidget persona="TITAN" />
-            </div>
-          </motion.div>
-        )}
+                    {activeTab === 'tactical' && (
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            <div className="lg:col-span-8 space-y-8">
+                                <div className="h-[600px]">
+                                    <SupplyChainRadarWidget persona={persona as string} />
+                                </div>
+                                <div className="h-[500px]">
+                                    <CompetitorWarBoardWidget persona={persona as string} />
+                                </div>
+                            </div>
+                            <div className="lg:col-span-4 space-y-8">
+                                <TacticalVoiceCommWidget persona={persona as string} />
+                                <NeuralAutomationWidget persona={persona as string} />
+                                <SignalsFeedWidget persona={persona as string} />
+                            </div>
+                        </div>
+                    )}
 
-        {activeTab === 'reports' && (
-          <motion.div
-            key="reports"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="h-[calc(100vh-280px)]"
-          >
-            <ReportCenterWidget persona={persona as string} />
-          </motion.div>
-        )}
+                    {activeTab === 'analytics' && (
+                        <div className="space-y-12">
+                            <AIInsightsPanel persona={persona as string} />
+                            <div className="p-10 bg-slate-950/80 border border-white/10 rounded-[48px] backdrop-blur-3xl">
+                                <TradeSankeyWidget persona={persona as string} />
+                            </div>
+                        </div>
+                    )}
 
-        {activeTab === 'builder' && (
-          <motion.div
-            key="builder"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="space-y-6"
-          >
-            <div className="p-8 bg-slate-950/80 border border-white/10 rounded-[32px] backdrop-blur-xl text-center">
-              <div className={cn("w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center", `bg-${currentConfig.color}-500/20`)}>
-                <Settings size={40} className={`text-${currentConfig.color}-400`} />
-              </div>
-              <h3 className="text-2xl font-black text-white mb-3">Конструктор Дашбордів</h3>
-              <p className="text-slate-400 text-sm mb-6 max-w-lg mx-auto">
-                Створюйте власні аналітичні панелі з графіками, картами та віджетами.
-                Інтегруйте дані з OpenSearch та налаштуйте під ваші потреби.
-              </p>
-              <a
-                href="/dashboard-builder"
-                className={cn(
-                  "inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-sm font-black uppercase tracking-wider transition-all",
-                  `bg-gradient-to-r ${currentConfig.gradient} text-white hover:scale-105 shadow-xl`
-                )}
-              >
-                <Play size={18} />
-                Відкрити Конструктор
-              </a>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+                    {/* Placeholder for other tabs - each should be deeply informative */}
+                    {['modeling', 'reports', 'builder'].includes(activeTab) && (
+                        <div className="flex flex-col items-center justify-center py-40 gap-12 bg-slate-900/20 border border-dashed border-white/5 rounded-[60px]">
+                            <div className="relative">
+                                <div className={cn("absolute inset-0 blur-[100px] rounded-full", `bg-${currentConfig.color}-500/20`)} />
+                                <Cpu size={80} className={cn(`text-${currentConfig.color}-500 animate-pulse`)} />
+                            </div>
+                            <div className="text-center space-y-4">
+                                <h3 className="text-2xl font-black text-white uppercase tracking-[0.4em]">МОДУЛЬ_В_ОБРОБЦІ</h3>
+                                <p className="text-xs text-slate-500 italic max-w-md mx-auto">
+                                    Даний сегмент матриці знаходиться у стадії фінального квантового навчання. Очікуйте розгортання у v55.6.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                </motion.div>
+            </AnimatePresence>
+        </div>
+
+        <style dangerouslySetInnerHTML={{
+            __html: `
+            .panel-3d {
+                transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            }
+            .panel-3d:hover {
+                transform: translateY(-10px) rotateX(2deg) rotateY(-2deg);
+                box-shadow: 0 50px 100px -20px rgba(0,0,0,0.9);
+            }
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+        `}} />
+      </div>
+    </PageTransition>
   );
 };
 

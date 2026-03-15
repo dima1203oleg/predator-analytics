@@ -46,7 +46,8 @@ import {
   Target,
   Layout,
   Waves,
-  Landmark
+  Landmark,
+  Building2
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useSystemMetrics } from '../../hooks/useSystemMetrics';
@@ -91,7 +92,10 @@ export const Sidebar = () => {
         { name: 'Радар Конкурентів', path: '/competitor-radar', icon: Radar, premium: true },
         { name: 'Детектор Санкцій', path: '/sanctions', icon: Shield, premium: true },
         { name: 'Архіви та Справи', path: '/cases', icon: ShieldAlert },
-        { name: 'Державні Тендери', path: '/tenders', icon: Landmark, premium: true },
+        { name: 'OSINT UA (Prozorro)', path: '/tenders', icon: Landmark },
+        { name: 'DataGov API', path: '/datagov', icon: Library },
+        { name: 'Морська Розвідка', path: '/maritime', icon: Ship },
+        { name: 'Реєстри Бізнесу', path: '/registries', icon: Building2 },
       ]
     },
     {
@@ -119,6 +123,7 @@ export const Sidebar = () => {
       items: [
         { name: 'Генератор Звітів', path: '/reports', icon: FileText, premium: true },
         { name: 'Ризик-Скоринг', path: '/risk-scoring', icon: AlertCircle, premium: true },
+        { name: 'AML Аналізатор', path: '/aml', icon: ShieldAlert },
         { name: 'Конструктор Дашбордів', path: '/builder', icon: Layers, premium: true },
         { name: 'Центр Сповіщень', path: '/alerts', icon: ShieldAlert, premium: true },
         { name: 'Експорт Даних', path: '/export', icon: Repeat, premium: true },
