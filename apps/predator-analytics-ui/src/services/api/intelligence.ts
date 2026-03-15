@@ -25,6 +25,9 @@ export const intelligenceApi = {
     query: async (query: string, mode?: string) => {
         return (await v45Client.post('/intelligence/query', { query, mode })).data;
     },
+    generateReport: async (ueid: string) => {
+        return (await apiClient.get(`/intelligence/report/${ueid}`)).data;
+    },
     getCompetitorRadar: async () => {
         return (await apiClient.get('/premium/competitor-radar')).data;
     },

@@ -45,6 +45,12 @@ const ComponentsRegistryView = lazy(() => import('./views/ComponentsRegistryView
 const PipelineManagerView = lazy(() => import('./views/PipelineManagerView'));
 const EntityRadarView = lazy(() => import('./views/EntityRadarView'));
 const TendersView = lazy(() => import('./views/TendersView'));
+const DataGovView = lazy(() => import('./views/DataGovView'));
+const MaritimeView = lazy(() => import('./views/MaritimeView'));
+const RegistriesView = lazy(() => import('./views/RegistriesView'));
+const GraphAnalyticsPage = lazy(() => import('./views/GraphAnalyticsPage'));
+const ReportBuilderPage = lazy(() => import('./views/ReportBuilderPage'));
+const AMLScoringView = lazy(() => import('./views/AMLScoringView'));
 
 
 // Premium Commercial Views
@@ -148,8 +154,11 @@ export const AppRoutesNew = () => {
             <Route path="/search-v2" element={<SearchConsole />} />
             <Route path="/documents" element={<DocumentsView />} />
             <Route path="/cases" element={<CasesView />} />
-            <Route path="/graph" element={<GraphView />} />
+            <Route path="/graph" element={<GraphAnalyticsPage />} />
             <Route path="/tenders" element={<TendersView />} />
+            <Route path="/datagov" element={<DataGovView />} />
+            <Route path="/maritime" element={<MaritimeView />} />
+            <Route path="/registries" element={<RegistriesView />} />
 
             {/* Data Management */}
             <Route path="/parsers" element={<ParsersView />} />
@@ -168,6 +177,7 @@ export const AppRoutesNew = () => {
             <Route path="/intelligence" element={<IntelligenceView />} />
             <Route path="/customs-intel" element={<CustomsIntelligenceView />} />
             <Route path="/forecast" element={<ForecastView />} />
+            <Route path="/aml" element={<AMLScoringView />} />
             <Route path="/llm" element={<LLMView />} />
             <Route path="/llm/nas" element={<NasView />} />
             <Route path="/agents" element={<AgentsView />} />
@@ -185,7 +195,7 @@ export const AppRoutesNew = () => {
             <Route path="/competitor-radar" element={<EntityRadarView />} />
             <Route path="/morning-brief" element={<ExecutiveBriefView />} />
 
-            <Route path="/entity-graph" element={<EntityGraphView />} />
+            <Route path="/entity-graph" element={<GraphAnalyticsPage />} />
             <Route path="/knowledge" element={<KnowledgeEngineeringView />} />
             <Route path="/autonomy" element={<AutonomyDashboard />} />
             <Route path="/factory" element={<AutoFactoryView />} />
@@ -207,7 +217,7 @@ export const AppRoutesNew = () => {
             <Route path="/widgets" element={<WidgetLibrary />} />
             <Route path="/sanctions" element={<SanctionsScreening />} />
             <Route path="/ai-insights" element={<AIInsightsHub />} />
-            <Route path="/reports" element={<ReportGenerator />} />
+            <Route path="/reports" element={<ReportBuilderPage />} />
             <Route path="/subscription" element={<SubscriptionManagement />} />
             <Route path="/integrations" element={<IntegrationHub />} />
             <Route path="/export" element={<DataExportCenter />} />

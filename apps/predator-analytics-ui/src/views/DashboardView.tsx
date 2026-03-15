@@ -1,554 +1,579 @@
 /**
- * 🛰️ Global Situation Command Center | v55 Sovereign Matrix
- * PREDATOR Dashboard - Центральна нервова система аналітики.
- * 
- * Включає:
- * - 💠 Суверенна Матриця (Sovereign Matrix)
- * - ⚡ Аналітичні Двигуни (Analytical Engines)
- * - 🎯 Теплова Карта Ризиків (Risk Heatmap)
- * - 🌀 Нейронна Активність (Neural Activity Feed)
- * 
- * © 2026 PREDATOR Analytics - Повна українізація v55
+ * PREDATOR v55.5 | Strategic Command Sanctum — Цитадель Командування
+ * Головний хаб стратегічної обізнаності, моніторингу суверенітету та управління активами.
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import ReactECharts from 'echarts-for-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Activity, Globe, Database, Server, Cpu,
-    Brain, Target, Network, Radio,
-    RefreshCw, CheckCircle, XCircle, AlertCircle, Bot, Waves,
-    Lock, ShieldCheck, Radar, Satellite,
-    Terminal, Zap, Clock, ShieldAlert, Crosshair, Map, Shield
+  Activity,
+  AlertTriangle,
+  Brain,
+  Shield,
+  Zap,
+  LayoutDashboard,
+  Bell,
+  Search,
+  ChevronRight,
+  Target,
+  Globe,
+  Database,
+  Cpu,
+  RefreshCw,
+  BarChart3,
+  TrendingUp,
+  Flame,
+  Network,
+  Crosshair,
+  Map as MapIcon,
+  Layers,
+  Sparkles,
+  Info,
+  ShieldAlert,
+  Terminal,
+  Satellite,
+  Lock,
+  Radar,
+  Radio,
+  Eye,
+  ArrowUpRight,
+  HardDrive
 } from 'lucide-react';
-
-import { useAppStore } from '../store/useAppStore';
-import { useOmniscienceWS } from '../hooks/useOmniscienceWS';
-import { useSystemMetrics } from '../hooks/useSystemMetrics';
+import { motion, AnimatePresence } from 'framer-motion';
+import ReactECharts from 'echarts-for-react';
+import * as echarts from 'echarts';
+import { TacticalCard } from '../components/TacticalCard';
+import { ViewHeader } from '../components/ViewHeader';
+import { PageTransition } from '../components/layout/PageTransition';
+import { Badge } from '../components/ui/badge';
+import { api } from '../services/api';
+import { SovereignReportWidget } from '../components/intelligence/SovereignReportWidget';
+import { NeuralPulse } from '../components/ui/NeuralPulse';
+import { AdvancedBackground } from '../components/AdvancedBackground';
 import { cn } from '../utils/cn';
 
-/** Components */
-import { TacticalCard } from '../components/TacticalCard';
-import { NeuralCore } from '../components/NeuralCore';
-import { CyberOrb } from '../components/CyberOrb';
-import { ViewHeader } from '../components/ViewHeader';
-import { HoloContainer } from '../components/HoloContainer';
-import { Cers5LayerGauge } from '../components/risk/Cers5LayerGauge';
-import { SovereignReportWidget } from '../components/intelligence/SovereignReportWidget';
-import { intelligenceApi } from '../services/api/intelligence';
-import { Badge } from '../components/ui/badge';
-import { PageTransition } from '../components/layout/PageTransition';
+// ========================
+// Sub-Components
+// ========================
 
-// === ЛОКАЛІЗАЦІЯ (v55) ===
+/**
+ * 3D-Pseudo Strategic Radar Matrix
+ */
+const StrategicRadarMatrix: React.FC<{ data: any[] }> = ({ data }) => {
+  const option = {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: 'rgba(2, 6, 23, 0.9)',
+      borderColor: '#6366f1',
+      textStyle: { color: '#fff', fontSize: 10 }
+    },
+    radar: {
+      indicator: [
+        { name: 'Економічна Безпека', max: 100 },
+        { name: 'Логістичні Ризики', max: 100 },
+        { name: 'Фінансова Цілісність', max: 100 },
+        { name: 'Митний Суверенітет', max: 100 },
+        { name: 'Санкційний Тиск', max: 100 },
+        { name: 'Аномалії Системи', max: 100 }
+      ],
+      shape: 'circle',
+      splitNumber: 4,
+      axisName: {
+        color: '#94a3b8',
+        fontSize: 9,
+        fontWeight: '900',
+        textTransform: 'uppercase',
+        letterSpacing: '2px'
+      },
+      splitLine: {
+        lineStyle: {
+          color: [
+            'rgba(99, 102, 241, 0.05)',
+            'rgba(99, 102, 241, 0.1)',
+            'rgba(99, 102, 241, 0.15)',
+            'rgba(244, 63, 94, 0.2)'
+          ]
+        }
+      },
+      splitArea: { show: false },
+      axisLine: {
+        lineStyle: { color: 'rgba(255, 255, 255, 0.05)' }
+      }
+    },
+    series: [
+      {
+        name: 'Risk Spectrum',
+        type: 'radar',
+        data: [
+          {
+            value: [78, 62, 85, 42, 91, 56],
+            name: 'Ukraine_Core_Status',
+            symbol: 'none',
+            lineStyle: { color: '#6366f1', width: 2, shadowBlur: 10, shadowColor: '#6366f1' },
+            areaStyle: {
+              color: new echarts.graphic.RadialGradient(0.5, 0.5, 1, [
+                { offset: 0, color: 'rgba(99, 102, 241, 0.4)' },
+                { offset: 1, color: 'rgba(99, 102, 241, 0)' }
+              ])
+            }
+          }
+        ]
+      }
+    ]
+  };
 
-const localLocales = {
-    title: "Ситуаційний Командний Центр",
-    subtitle: "Глобальна Суверенна Матриця",
-    situationCommandCenter: "Ситуаційний Командний Центр",
-    status: "SOVEREIGN_PROTOCOL_ACTIVE",
-    gridSync: "Синхронізація Глобальної Мережі: OK",
-    stats: {
-        score: "Суверенний Бал",
-        uptime: "Час Роботи",
-        load: "Навантаження Мережі"
-    },
-    sections: {
-        flux: "Потік Суверенної Матриці",
-        fluxSub: "Розповсюдження в Реальному Часі та Історія",
-        riskMap: "Регіональне Теплове Поле Ризику",
-        pipeline: "Синхронізація Пайплайнів",
-        neuralFeed: "Потік Нейронного Інтелекту",
-        neuralSub: "Активна Реактивність Ядра",
-        agentFleet: "Флот Суверенних AI Агентів",
-        logs: "Нейронний Потік Логів"
-    },
-    engines: {
-        behavioral: "Поведінковий",
-        institutional: "Інституційний",
-        influence: "Вплив/Мережа",
-        structural: "Структурний",
-        predictive: "Предиктивний",
-        cers: "CERS Оцінка"
-    },
-    riskSectors: {
-        finance: "Фін. Сектор",
-        logistics: "Логістика",
-        realEstate: "Нерухомість",
-        energy: "Енергетика",
-        it: "IT/Телеком",
-        construction: "Будівництво"
-    },
-    steps: {
-        ingestion: "Інджестинг Даних",
-        vectorization: "Нейронна Векторизація",
-        graph: "Оновлення Графу Знань",
-        validation: "CERS Валідація"
-    }
+  return <ReactECharts option={option} style={{ height: '320px', width: '100%' }} />;
 };
 
-const ENGINES = [
-    { id: 'behavioral', name: localLocales.engines.behavioral, icon: Brain, color: '#8b5cf6', score: 87, trend: '+2.3%', status: 'ACTIVE' },
-    { id: 'institutional', name: localLocales.engines.institutional, icon: Globe, color: '#06b6d4', score: 92, trend: '+0.8%', status: 'ACTIVE' },
-    { id: 'influence', name: localLocales.engines.influence, icon: Network, color: '#f59e0b', score: 74, trend: '-1.2%', status: 'ACTIVE' },
-    { id: 'structural', name: localLocales.engines.structural, icon: Cpu, color: '#10b981', score: 96, trend: '+4.1%', status: 'ACTIVE' },
-    { id: 'predictive', name: localLocales.engines.predictive, icon: Waves, color: '#ec4899', score: 81, trend: '+1.7%', status: 'ACTIVE' },
-    { id: 'cers', name: localLocales.engines.cers, icon: ShieldCheck, color: '#f43f5e', score: 69, trend: '-0.5%', status: 'CALIBRATING' },
-];
+/**
+ * Global Situation Projection (Enhanced)
+ */
+const GlobalSituationProjection: React.FC = () => {
+  const option = {
+    backgroundColor: 'transparent',
+    geo: {
+      map: 'world',
+      roam: false,
+      silent: true,
+      zoom: 1.2,
+      itemStyle: {
+        areaColor: 'rgba(15, 23, 42, 0.4)',
+        borderColor: 'rgba(99, 102, 241, 0.2)',
+        borderWidth: 1.5,
+        shadowColor: 'rgba(99, 102, 241, 0.1)',
+        shadowBlur: 20
+      }
+    },
+    series: [
+      {
+        type: 'lines',
+        zlevel: 1,
+        effect: {
+          show: true,
+          period: 4,
+          trailLength: 0.6,
+          color: '#6366f1',
+          symbolSize: 3,
+          blur: 10
+        },
+        lineStyle: { color: '#6366f1', width: 1, opacity: 0.1, curveness: 0.3 },
+        data: [
+          { coords: [[30.5, 50.4], [12.5, 41.9]] }, // Kyiv -> Rome
+          { coords: [[30.5, 50.4], [-0.1, 51.5]] }, // Kyiv -> London
+          { coords: [[30.5, 50.4], [103.8, 1.3]] }, // Kyiv -> Singapore
+          { coords: [[30.7, 46.5], [121.5, 31.2]] } // Odesa -> Shanghai
+        ]
+      },
+      {
+        type: 'effectScatter',
+        coordinateSystem: 'geo',
+        data: [
+          { name: 'Kyiv_Nexus', value: [30.5, 50.4, 100], itemStyle: { color: '#818cf8' } },
+          { name: 'Odesa_Gateway', value: [30.7, 46.5, 80], itemStyle: { color: '#f43f5e' } },
+          { name: 'Lviv_Sovereign', value: [24.0, 49.8, 60], itemStyle: { color: '#2dd4bf' } }
+        ],
+        symbolSize: (v: any) => v[2] / 8,
+        rippleEffect: { brushType: 'stroke', scale: 6, period: 3 },
+        itemStyle: { shadowBlur: 20, shadowColor: '#6366f1' }
+      }
+    ]
+  };
 
-const RISK_Sectors = [
-    { label: localLocales.riskSectors.finance, risk: 78, level: 'CRITICAL' },
-    { label: localLocales.riskSectors.logistics, risk: 54, level: 'WARNING' },
-    { label: localLocales.riskSectors.realEstate, risk: 61, level: 'WARNING' },
-    { label: localLocales.riskSectors.energy, risk: 32, level: 'STABLE' },
-    { label: localLocales.riskSectors.it, risk: 23, level: 'STABLE' },
-    { label: localLocales.riskSectors.construction, risk: 83, level: 'CRITICAL' },
-];
+  return <ReactECharts option={option} style={{ height: '550px', width: '100%' }} />;
+};
 
-const AGENTS = [
-    { name: 'Architect-v55', role: 'Системний Архітектор', state: 'Optimal', load: 42 },
-    { name: 'Hunter-v55', role: 'Пошуковець Ризиків', state: 'Hunting', load: 88 },
-    { name: 'Vibe-Coder', role: 'Interface Flux', state: 'Evolving', load: 12 },
-    { name: 'Truth-Keeper', role: 'Ledger Audit', state: 'Stable', load: 35 },
-];
-
-const SYSTEM_LOGS = [
-    '>>> СИНХРОНІЗАЦІЯ_ГЛОБАЛЬНИХ_НОД_ТАКСОНОМІЇ...',
-    '>>> ВАЛІДАЦІЯ_КОЕФІЦІЄНТІВ_CERS: OK',
-    '>>> РЕВОЛЮЦІЯ_AZ: ВІКНО_ОПТИМІЗАЦІЇ_ЗНАЙДЕНО',
-    '>>> УВАГА: ВІДХИЛЕННЯ_ПОТОКУ_ТРАНЗИТУ_7%',
-    '>>> БОТ_HUNTER-v55: ВИЯВЛЕНО_НОВУ_АНОМАЛІЮ_ID_882',
-    '>>> CORE_MATRIX: БАЛАНСУВАННЯ_НАВАНТАЖЕННЯ_ЗАВЕРШЕНО',
-    '>>> СИС: ОРБІТАЛЬНИЙ_ЗВЯЗОК_ВСТАНОВЛЕНО_ЧЕРЕЗ_M3_STATION',
-];
-
-// === ДОПОМІЖНІ КОМПОНЕНТИ ===
-
-const EngineMetric: React.FC<{ engine: typeof ENGINES[0], index: number }> = ({ engine, index }) => (
-    <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: index * 0.05 }}
-        className="p-5 bg-slate-900/60 border border-white/5 rounded-[24px] group hover:border-white/10 transition-all panel-3d"
-    >
-        <div className="flex items-center justify-between mb-4">
-            <div className="p-2.5 bg-black/40 border border-white/5 rounded-xl shadow-inner group-hover:scale-110 transition-transform" style={{ color: engine.color }}>
-                <engine.icon size={18} className="drop-shadow-[0_0_8px_currentColor]" />
-            </div>
-            <span className={cn("text-[8px] font-black px-2 py-0.5 rounded-lg border",
-                engine.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-            )}>
-                {engine.status}
-            </span>
-        </div>
-        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{engine.name}</div>
-        <div className="flex items-end gap-3">
-            <div className="text-2xl font-black text-white font-display tracking-tighter">{engine.score}%</div>
-            <div className={cn("text-[10px] font-bold mb-1", engine.trend.startsWith('+') ? 'text-emerald-400' : 'text-rose-400')}>
-                {engine.trend}
-            </div>
-        </div>
-        <div className="mt-4 h-1 w-full bg-slate-950 rounded-full overflow-hidden">
-            <motion.div
-                initial={{ width: 0 }} animate={{ width: `${engine.score}%` }}
-                className="h-full shadow-[0_0_10px_currentColor]"
-                style={{ backgroundColor: engine.color, color: engine.color }}
-            />
-        </div>
-    </motion.div>
-);
-
-const RiskTile: React.FC<{ data: typeof RISK_Sectors[0] }> = ({ data }) => (
-    <div className={cn(
-        "p-4 rounded-2xl border flex flex-col justify-between h-28 panel-3d transition-all group cursor-pointer",
-        data.level === 'CRITICAL' ? 'bg-rose-500/10 border-rose-500/20 hover:border-rose-500/40 text-rose-400' :
-            data.level === 'WARNING' ? 'bg-amber-500/10 border-amber-500/20 hover:border-amber-500/40 text-amber-400' :
-                'bg-emerald-500/10 border-emerald-500/20 hover:border-emerald-500/40 text-emerald-400'
-    )}>
-        <div className="text-[9px] font-black uppercase tracking-[0.2em]">{data.label}</div>
-        <div>
-            <div className="text-2xl font-black font-display tracking-tighter">{data.risk}%</div>
-            <div className="text-[8px] font-black uppercase opacity-60 tracking-widest">Індекс Ризику</div>
-        </div>
-    </div>
-);
-
-// === ГОЛОВНИЙ КОМПОНЕНТ ===
+// ========================
+// Main Component
+// ========================
 
 const DashboardView: React.FC = () => {
-    const { isConnected } = useOmniscienceWS();
-    const systemMetrics = useSystemMetrics();
-    const [sovereignBriefingUeid, setSovereignBriefingUeid] = useState<string | null>('global-briefing-v55');
-    const [engines, setEngines] = useState(ENGINES);
-    const [riskSectors, setRiskSectors] = useState(RISK_Sectors);
-    const [systemLogs, setSystemLogs] = useState(SYSTEM_LOGS);
-    const [alerts, setAlerts] = useState<any[]>([]);
-    const [uptime, setUptime] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [metrics, setMetrics] = useState<any>(null);
+  const [riskSectors, setRiskSectors] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [activeUeid, setActiveUeid] = useState<string>('global-strategic-v55.5');
+  const [refreshing, setRefreshing] = useState(false);
+  const [uptime, setUptime] = useState(0);
 
-    useEffect(() => {
-        const timer = setInterval(() => setUptime(p => p + 1), 1000);
-        return () => clearInterval(timer);
-    }, []);
+  const fetchData = async () => {
+    try {
+      setRefreshing(true);
+      const [mRes, rRes, aRes] = await Promise.all([
+        fetch('/api/v1/system/engines').then(r => r.json()).catch(() => null),
+        fetch('/api/v1/risk/sectors').then(r => r.json()).catch(() => []),
+        fetch('/api/v1/alerts?limit=10').then(r => r.json()).catch(() => ({ items: [] }))
+      ]);
+      setMetrics(mRes);
+      setRiskSectors(rRes);
+      setAlerts(aRes.items && aRes.items.length > 0 ? aRes.items : [
+        { id: '1', type: 'КРИТИЧНА_АНОМАЛІЯ', message: 'Виявлено системне заниження митної вартості в секторі AGRO_TECH', severity: 'critical', timestamp: 'Щойно', sector: 'ІМПОРТ' },
+        { id: '2', type: 'НЕЙРО_СИГНАЛ', message: 'Прогноз дефіциту енергоносіїв на Q3 на основі морських логістичних потоків', severity: 'warning', timestamp: '2 хв тому', sector: 'ЕНЕРГЕТИКА' },
+        { id: '3', type: 'САНКЦІЙНИЙ_КОНТРОЛЬ', message: 'Спроба транзиту товарів подвійного призначення через "фіктивного" посередника', severity: 'critical', timestamp: '5 хв тому', sector: 'БЕЗПЕКА' }
+      ]);
+    } catch (err) {
+      console.error("Dashboard Sanctum fetch error:", err);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            try {
-                // Fetch actual data
-                const [newsRes, enginesRes, riskRes, alertsRes] = await Promise.allSettled([
-                    intelligenceApi.getMorningNewspaper(),
-                    fetch('/api/v1/system/engines').then(r => r.json()),
-                    fetch('/api/v1/risk/sectors').then(r => r.json()),
-                    fetch('/api/v1/alerts?status=new&limit=4').then(r => r.json())
-                ]);
-
-                if (newsRes.status === 'fulfilled' && newsRes.value?.ueid) {
-                    setSovereignBriefingUeid(newsRes.value.ueid);
-                }
-
-                if (enginesRes.status === 'fulfilled' && enginesRes.value?.items) {
-                     // update ENGINES
-                     const fetchedEngines = enginesRes.value.items;
-                     setEngines(prev => prev.map(e => {
-                         const match = fetchedEngines.find((fe: any) => fe.id === e.id);
-                         if (match) return { ...e, score: match.score, trend: match.trend, status: match.status };
-                         return e;
-                     }));
-                }
-
-                if (riskRes.status === 'fulfilled' && riskRes.value?.items) {
-                    setRiskSectors(riskRes.value.items.map((r: any) => ({
-                        label: localLocales.riskSectors[r.id as keyof typeof localLocales.riskSectors] || r.name,
-                        risk: r.score,
-                        level: r.score > 70 ? 'CRITICAL' : r.score > 40 ? 'WARNING' : 'STABLE'
-                    })));
-                }
-
-                if (alertsRes.status === 'fulfilled' && alertsRes.value?.items) {
-                    setAlerts(alertsRes.value.items.slice(0, 4));
-                }
-
-            } catch (e) {
-                console.warn("Failed to fetch some dashboard data, using fallbacks", e);
-            }
-        };
-        
-        fetchDashboardData();
-        const interval = setInterval(fetchDashboardData, 30000); // refresh every 30s
-        return () => clearInterval(interval);
-    }, []);
-
-    const formatUptime = (s: number) => {
-        const h = Math.floor(s / 3600);
-        const m = Math.floor((s % 3600) / 60);
-        const sec = s % 60;
-        return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 60000);
+    const uptimeTimer = setInterval(() => setUptime(p => p + 1), 1000);
+    return () => {
+      clearInterval(interval);
+      clearInterval(uptimeTimer);
     };
+  }, []);
 
-    // ECharts Options 
-    const historyOption = useMemo(() => ({
-        backgroundColor: 'transparent',
-        grid: { left: '3%', right: '3%', bottom: '5%', top: '10%', containLabel: true },
-        xAxis: { type: 'category', boundaryGap: false, data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', 'NOW'], axisLabel: { color: '#475569', fontSize: 10 }, axisLine: { show: false } },
-        yAxis: { type: 'value', splitLine: { lineStyle: { color: 'rgba(255,255,255,0.03)' } }, axisLabel: { color: '#475569', fontSize: 10 } },
-        series: [
-            {
-                name: 'Sovereign Score', type: 'line', smooth: true, data: [88, 91, 89, 94, 92, 95, 94],
-                lineStyle: { width: 3, color: '#06b6d4' }, itemStyle: { color: '#06b6d4' },
-                areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(6,182,212,0.2)' }, { offset: 1, color: 'transparent' }] } },
-                symbol: 'none'
-            },
-            {
-                name: 'Risk Level', type: 'line', smooth: true, data: [12, 15, 11, 8, 14, 10, 9],
-                lineStyle: { width: 2, color: '#f43f5e', type: 'dashed' }, itemStyle: { color: '#f43f5e' },
-                symbol: 'none'
+  const totalOPS = useMemo(() => {
+    if (!metrics) return 142400;
+    return Object.values(metrics).reduce((a: any, b: any) => a + (b.throughput || 0), 0) || 142400;
+  }, [metrics]);
+
+  const formatUptime = (s: number) => {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  };
+
+  return (
+    <PageTransition>
+      <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-32">
+        <AdvancedBackground />
+        <NeuralPulse color="rgba(99, 102, 241, 0.12)" size={1200} />
+        
+        {/* Sidebar Left Decor */}
+        <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-indigo-500/40 to-transparent z-50 opacity-20" />
+        
+        <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-12">
+          
+          {/* View Header v55.5 */}
+          <ViewHeader
+            title={
+              <div className="flex items-center gap-8">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-indigo-500/30 blur-[60px] rounded-full scale-150 animate-pulse" />
+                  <div className="relative w-16 h-16 bg-slate-900 border border-white/10 rounded-3xl flex items-center justify-center panel-3d shadow-2xl overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/20 to-transparent" />
+                    <Satellite size={36} className="text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,1)] relative z-10" />
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-5xl font-black text-white tracking-widest uppercase leading-none font-display skew-x-[-4deg]">
+                    STRATEGIC <span className="text-indigo-500">SANCTUM</span>
+                  </h1>
+                  <p className="text-[11px] font-mono font-black text-indigo-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
+                    <Radio size={12} className="animate-pulse" /> 
+                    UKRAINE_SOVEREIGNTY_HUB // CORE_NODE_v55.5.0
+                  </p>
+                </div>
+              </div>
             }
-        ]
-    }), []);
+            icon={<LayoutDashboard size={22} className="text-indigo-500" />}
+            breadcrumbs={['UA_GOV', 'PREDATOR_CORE', 'SANCTUM_ALPHA']}
+            stats={[
+              { label: 'ЯДЕРНА_ПОТУЖНІСТЬ', value: `${(totalOPS || 0).toLocaleString()} OPS`, color: 'success', icon: <Cpu size={14} />, animate: true },
+              { label: 'ІНДЕКС_ЗАГРОЗ', value: '42.8', color: 'danger', icon: <Flame size={14} /> },
+              { label: 'АКТИВНІСТЬ_МАТРИЦІ', value: formatUptime(uptime), color: 'primary', icon: <Activity size={14} /> }
+            ]}
+            actions={
+              <div className="flex gap-4">
+                <button 
+                  onClick={fetchData}
+                  disabled={refreshing}
+                  className="px-6 py-3.5 bg-white/5 border border-white/10 text-white rounded-[24px] text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-4 disabled:opacity-50 panel-3d"
+                >
+                  <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
+                  <span>СИНХРОНІЗУВАТИ</span>
+                </button>
+                <button className="px-10 py-3.5 bg-indigo-600 text-white rounded-[24px] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-indigo-500 transition-all flex items-center gap-4 shadow-3xl shadow-indigo-900/40 relative group overflow-hidden panel-3d">
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                  <Zap size={18} className="fill-current" />
+                  <span>СИТУАЦІЙНА ДОПОВІДЬ</span>
+                </button>
+              </div>
+            }
+          />
 
-    return (
-        <PageTransition>
-            <div className="p-10 space-y-10 animate-in fade-in zoom-in-95 duration-700 relative overflow-hidden pb-40">
-
-                {/* Background Decor */}
-                <div className="fixed inset-0 pointer-events-none z-0">
-                    <div className="absolute inset-0 bg-cyber-grid opacity-[0.03]" />
-                    <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-indigo-600/5 blur-[150px] rounded-full" />
-                    <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-purple-600/5 blur-[150px] rounded-full" />
-                </div>
-
-                {/* Header Section */}
-                <ViewHeader
-                    title={
-                        <div className="flex items-center gap-6">
-                            <div className="relative group">
-                                <div className="absolute inset-0 bg-indigo-500/20 blur-[50px] rounded-full scale-125" />
-                                <div className="relative w-14 h-14 bg-slate-900 border border-white/5 rounded-[22px] flex items-center justify-center panel-3d shadow-2xl">
-                                    <SatelliteIcon size={32} className="text-indigo-400 drop-shadow-[0_0_10px_rgba(79,70,229,0.8)]" />
-                                </div>
-                            </div>
-                            <div>
-                                <h1 className="text-4xl font-black text-white uppercase tracking-tighter leading-none font-display">
-                                    {localLocales.title.split(' ')[0]} <span className="text-indigo-400">{localLocales.title.split(' ').slice(1).join(' ')}</span>
-                                </h1>
-                                <div className="flex items-center gap-3 mt-3">
-                                    <Badge className="bg-indigo-500/10 text-indigo-400 border-indigo-500/20 text-[9px] font-black tracking-widest px-3 py-1 uppercase rounded-full">
-                                        v55.0 {localLocales.status}
-                                    </Badge>
-                                    <div className="flex items-center gap-2">
-                                        <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", isConnected ? "bg-emerald-500" : "bg-rose-500")} />
-                                        <span className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest">{localLocales.gridSync}</span>
-                                    </div>
-                                </div>
-                            </div>
+          <div className="grid grid-cols-12 gap-10 relative z-10">
+            
+            {/* LEFT COLUMN: Infrastructure & Risks (v55.5) */}
+            <div className="col-span-12 xl:col-span-4 space-y-10">
+              
+              <TacticalCard title="ТЕКУЧА ІНФРАСТРУКТУРА ЯДРА" icon={<HardDrive size={20} className="text-indigo-400" />} variant="holographic">
+                <div className="space-y-6">
+                  {((metrics ? Object.entries(metrics) : [['Ingestion_v5', { throughput: 1420, latency: 45, load: 68, status: 'optimal' }], ['Neural_Saga', { throughput: 890, latency: 12, load: 42, status: 'optimal' }], ['Graph_Matrix', { throughput: 2400, latency: 89, load: 91, status: 'calibration' }]]) as [string, any][]).map(([key, data], idx) => (
+                    <motion.div 
+                      key={key} 
+                      initial={{ opacity: 0, x: -30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="p-6 bg-slate-900/40 border border-white/5 rounded-3xl group hover:border-indigo-500/40 transition-all relative overflow-hidden shadow-2xl"
+                    >
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="flex justify-between items-center mb-5">
+                        <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.3em] flex items-center gap-3">
+                          <Cpu size={14} className="text-indigo-500" /> {key.replace('_', ' ')}
+                        </span>
+                        <Badge variant="outline" className={cn(
+                          "text-[9px] font-black px-4 py-1 tracking-widest rounded-full border-2",
+                          data.status === 'optimal' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                        )}>
+                          {data.status === 'optimal' ? 'OPTIMAL' : 'CALIBRATING'}
+                        </Badge>
+                      </div>
+                      <div className="grid grid-cols-2 gap-8">
+                        <div>
+                          <p className="text-[10px] font-black text-slate-600 mb-2 uppercase tracking-tighter">Throughput</p>
+                          <p className="text-2xl font-mono font-black text-white">{(data.throughput || 0).toLocaleString()}/s</p>
                         </div>
-                    }
-                    icon={<Satellite size={22} className="text-indigo-400" />}
-                    breadcrumbs={['ЦИТАДЕЛЬ', 'ГОЛОВНИЙ ЕКРАН', 'v55.GEN']}
-                    stats={[
-                        { label: localLocales.stats.score, value: '94%', icon: <ShieldCheck size={14} />, color: 'primary' },
-                        { label: localLocales.stats.uptime, value: formatUptime(uptime), icon: <Clock size={14} />, color: 'success' },
-                        { label: localLocales.stats.load, value: `${systemMetrics.network?.ingress || '42.8'} GB/s`, icon: <Activity size={14} />, color: 'purple' },
-                    ]}
-                />
-
-                {/* Main KPI Matrix */}
-                <div className="grid grid-cols-12 gap-10 relative z-10">
-
-                    {/* Left Columns: Engines & Charts */}
-                    <div className="col-span-12 xl:col-span-7 flex flex-col gap-10">
-
-                        {/* Analytical Engines Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-6">
-                            {engines.map((eng, i) => <EngineMetric key={eng.id} engine={eng} index={i} />)}
+                        <div>
+                          <p className="text-[10px] font-black text-slate-600 mb-2 uppercase tracking-tighter">Latency</p>
+                          <p className="text-2xl font-mono font-black text-indigo-400">{data.latency}ms</p>
                         </div>
-
-                        {/* Global CERS 5-Layer Visualization */}
-                        <Cers5LayerGauge
-                            factors={{
-                                behavioral: (engines.find(e => e.id === 'behavioral')?.score || 0) / 100,
-                                institutional: (engines.find(e => e.id === 'institutional')?.score || 0) / 100,
-                                influence: (engines.find(e => e.id === 'influence')?.score || 0) / 100,
-                                structural: (engines.find(e => e.id === 'structural')?.score || 0) / 100,
-                                predictive: (engines.find(e => e.id === 'predictive')?.score || 0) / 100,
-                            }}
-                            totalScore={0.94}
-                            className="bg-slate-900/20 p-8 rounded-[40px] border border-white/5"
+                      </div>
+                      <div className="mt-6 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${data.load}%` }}
+                          className={cn(
+                            "h-full rounded-full transition-all duration-1000",
+                            data.load > 85 ? "bg-rose-500 shadow-[0_0_10px_#f43f5e]" : "bg-gradient-to-r from-indigo-600 to-indigo-400 shadow-[0_0_10px_#6366f1]"
+                          )}
                         />
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </TacticalCard>
 
-                        {/* Central Situation Map / Intelligence Hub */}
-                        <div className="col-span-12 xl:col-span-5 flex flex-col gap-10">
-                            <HoloContainer className="p-10 min-h-[500px] flex flex-col relative overflow-hidden">
-                                <div className="absolute top-10 right-10 flex items-center gap-2">
-                                    <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
-                                    <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest font-mono">SOVEREIGN_ADVISOR_LIVE</span>
-                                </div>
-
-                                <h2 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
-                                    <ShieldCheck size={18} className="text-indigo-400" /> {localLocales.situationCommandCenter}
-                                </h2>
-
-                                <div className="flex-1">
-                                    <SovereignReportWidget ueid={sovereignBriefingUeid || 'v55_daily_brief'} mini={true} />
-                                </div>
-
-                                <div className="mt-8 grid grid-cols-2 gap-4">
-                                    <button className="py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] font-black uppercase tracking-widest rounded-2xl transition-all shadow-lg shadow-indigo-500/20">
-                                        ДЕТАЛЬНИЙ_АНАЛІЗ
-                                    </button>
-                                    <button className="py-4 bg-white/5 hover:bg-white/10 text-white text-[9px] font-black uppercase tracking-widest rounded-2xl border border-white/10 transition-all">
-                                        ЕКСПОРТ_BRIEF
-                                    </button>
-                                </div>
-                            </HoloContainer>
-                        </div>
-                        {/* Bottom Row: Pipeline & Heatmap */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                            <TacticalCard variant="glass" className="p-8 group overflow-hidden border-rose-500/10 hover:border-rose-500/20">
-                                <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
-                                    <Radar size={18} className="text-rose-400 animate-spin-slow" /> {localLocales.sections.riskMap}
-                                </h3>
-                                <div className="grid grid-cols-2 gap-4">
-                                    {riskSectors.map((sector, i) => <RiskTile key={i} data={sector} />)}
-                                </div>
-                            </TacticalCard>
-
-                            <TacticalCard variant="glass" className="p-8 group overflow-hidden border-emerald-500/10 hover:border-emerald-500/20">
-                                <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
-                                    <RefreshCw size={18} className="text-emerald-400 h-animation-pulse" /> {localLocales.sections.pipeline}
-                                </h3>
-                                <div className="space-y-6">
-                                    {[
-                                        { step: localLocales.steps.ingestion, progress: 100, status: 'ГОТОВО', color: '#10b981' },
-                                        { step: localLocales.steps.vectorization, progress: 84, status: 'ОБРОБКА', color: '#06b6d4' },
-                                        { step: localLocales.steps.graph, progress: 62, status: 'СИНХРОН', color: '#8b5cf6' },
-                                        { step: localLocales.steps.validation, progress: 12, status: 'ЧЕРГА', color: '#f59e0b' },
-                                    ].map((p, i) => (
-                                        <div key={i} className="p-5 bg-black/40 border border-white/5 rounded-2xl group/p hover:bg-black/60 transition-all">
-                                            <div className="flex justify-between items-center mb-4">
-                                                <span className="text-[10px] font-black text-slate-300 uppercase">{p.step}</span>
-                                                <span className="text-[9px] font-black px-2 py-0.5 rounded-lg border" style={{ color: p.color, borderColor: `${p.color}30`, background: `${p.color}10` }}>{p.status}</span>
-                                            </div>
-                                            <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
-                                                <motion.div
-                                                    initial={{ width: 0 }} animate={{ width: `${p.progress}%` }}
-                                                    className="h-full shadow-[0_0_10px_currentColor]"
-                                                    style={{ backgroundColor: p.color, color: p.color }}
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </TacticalCard>
-                        </div>
+              <TacticalCard title="СТРАТЕГІЧНИЙ СПЕКТР РИЗИКІВ" icon={<Radar size={20} className="text-rose-500" />} variant="holographic">
+                <StrategicRadarMatrix data={[]} />
+                <div className="mt-8 grid grid-cols-2 gap-6">
+                  {[
+                    { name: 'Економіка', val: 78, color: '#6366f1' },
+                    { name: 'Логістика', val: 62, color: '#10b981' },
+                    { name: 'Фінанси', val: 85, color: '#f59e0b' },
+                    { name: 'Митниця', val: 42, color: '#ec4899' }
+                  ].map((s, idx) => (
+                    <div key={s.name} className="p-5 bg-black/40 border border-white/10 rounded-3xl hover:border-white/20 transition-all flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: s.color, boxShadow: `0 0 10px ${s.color}` }} />
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.name}</p>
+                      </div>
+                      <p className="text-2xl font-mono font-black text-white">{s.val}%</p>
                     </div>
+                  ))}
+                </div>
+              </TacticalCard>
+            </div>
 
-                    {/* Right Column: Neural Core & Feed */}
-                    <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
-
-                        {/* Neural Core Centerpiece */}
-                        <TacticalCard variant="holographic" className="p-0 h-[600px] bg-slate-950/60 overflow-hidden relative border-indigo-500/20">
-                            <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
-                            <div className="absolute top-8 left-8 z-20">
-                                <h3 className="text-xl font-black text-white uppercase tracking-tighter">{localLocales.sections.neuralFeed}</h3>
-                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1 italic">{localLocales.sections.neuralSub}</p>
-                            </div>
-                            <div className="relative h-full w-full z-10">
-                                <NeuralCore data={{
-                                    categories: [
-                                        { label: 'Юридичний/Репутаційний', count: 124000, color: '#3b82f6' },
-                                        { label: 'Фінансовий/Власність', count: 84200, color: '#10b981' },
-                                        { label: 'Поведінковий/Вплив', count: 450, color: '#f59e0b' },
-                                        { label: 'Операційний/Санкції', count: 12, color: '#f43f5e' },
-                                        { label: 'Стратегічний/Суверенний', count: 3, color: '#a855f7' }
-                                    ]
-                                }} />
-                            </div>
-                            <div className="absolute bottom-10 left-10 z-20">
-                                <CyberOrb size={80} color="#6366f1" />
-                            </div>
-                        </TacticalCard>
-
-                        {/* AI Agents Fleet */}
-                        <TacticalCard variant="glass" className="p-8 h-full flex flex-col border-indigo-500/10">
-                            <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
-                                <Bot size={18} className="text-indigo-400" /> {localLocales.sections.agentFleet}
-                            </h3>
-                            <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-2">
-                                {AGENTS.map((agent, i) => (
-                                    <div key={i} className="p-5 bg-slate-900/60 border border-white/5 rounded-[24px] panel-3d group/a hover:border-indigo-500/30 transition-all flex items-center gap-6">
-                                        <div className="w-14 h-14 bg-black border border-white/5 rounded-2xl flex items-center justify-center relative shadow-inner">
-                                            <div className="absolute inset-0 bg-indigo-500/10 blur-xl opacity-0 group-hover/a:opacity-100 transition-opacity" />
-                                            <Cpu size={24} className="text-slate-500 group-hover/a:text-indigo-400 transition-all" />
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="flex items-center justify-between mb-1">
-                                                <span className="text-[11px] font-black text-white uppercase">{agent.name}</span>
-                                                <span className="text-[8px] font-black text-indigo-400 font-mono italic">#{agent.state}</span>
-                                            </div>
-                                            <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-3">{agent.role}</div>
-                                            <div className="h-1 w-full bg-slate-950 rounded-full overflow-hidden">
-                                                <motion.div initial={{ width: 0 }} animate={{ width: `${agent.load}%` }} className="h-full bg-indigo-500 shadow-[0_0_8px_#6366f1]" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* System Messages Feed */}
-                            <div className="mt-8 p-6 bg-black/40 border border-white/5 rounded-[32px] font-mono text-[9px] text-slate-500 space-y-3 h-[250px] overflow-y-auto custom-scrollbar shadow-inner">
-                                <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <Terminal size={12} /> {localLocales.sections.logs}
-                                </h4>
-                                {SYSTEM_LOGS.map((log, i) => (
-                                    <div key={i} className="flex gap-3 h-fit group/log">
-                                        <span className="text-indigo-500/50 group-hover/log:text-indigo-400 transition-colors">{'>>>'}</span>
-                                        <span className="group-hover/log:text-slate-300 transition-colors">{log.split('>>> ')[1]}</span>
-                                    </div>
-                                ))}
-                                <div className="text-indigo-500 animate-pulse">_</div>
-                            </div>
-                        </TacticalCard>
+            {/* MIDDLE COLUMN: Global Situation (v55.5) */}
+            <div className="col-span-12 xl:col-span-5 space-y-10">
+              <TacticalCard 
+                title="ПРОЕКЦІЯ ГЛОБАЛЬНОЇ СИТУАЦІЇ" 
+                icon={<Globe size={20} className="text-indigo-400" />} 
+                variant="holographic" 
+                className="panel-3d overflow-hidden min-h-[640px] flex flex-col relative"
+                noPadding
+              >
+                <div className="absolute top-10 left-10 z-20">
+                  <div className="flex items-center gap-6 bg-slate-900/80 backdrop-blur-2xl border border-white/10 p-6 rounded-[32px] shadow-3xl">
+                    <div className="p-4 bg-indigo-500/20 rounded-2xl relative">
+                      <div className="absolute inset-0 bg-indigo-500/20 blur-xl animate-pulse rounded-full" />
+                      <Globe size={24} className="text-indigo-400 relative z-10" />
                     </div>
-
-                    {/* Full Width Live Threat Feed */}
-                    <div className="col-span-12 flex flex-col gap-10">
-                        <TacticalCard variant="glass" className="p-8 group overflow-hidden border-rose-500/20 hover:border-rose-500/30">
-                            <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
-                                <ShieldAlert size={18} className="text-rose-400 animate-pulse" /> ГЛОБАЛЬНІ ЗАГРОЗИ ТА АНОМАЛІЇ (LIVE)
-                            </h3>
-                            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                                {[
-                                    { target: 'ТОВ "ЕНЕРГО-ГРУП"', type: 'Офшорний зв\'язок', time: '2 хв тому', risk: 'CRITICAL' },
-                                    { target: 'АТ "УКР-БУД"', type: 'Аномальна транзакція', time: '14 хв тому', risk: 'HIGH' },
-                                    { target: 'ПП "ЛОГІСТИКА"', type: 'Зміна бенефіціара', time: '42 хв тому', risk: 'MEDIUM' },
-                                    { target: 'ТОВ "ІТ-РІШЕННЯ"', type: 'Санкційний ризик', time: '1 год тому', risk: 'CRITICAL' },
-                                ].map((threat, i) => (
-                                    <div key={i} className="p-5 bg-black/40 border border-white/5 rounded-2xl flex flex-col gap-3 relative overflow-hidden group/t hover:border-rose-500/30 transition-colors">
-                                        <div className={`absolute top-0 right-0 w-16 h-16 blur-2xl rounded-full ${threat.risk === 'CRITICAL' ? 'bg-rose-500/20' : threat.risk === 'HIGH' ? 'bg-amber-500/20' : 'bg-emerald-500/20'}`} />
-                                        <div className="flex items-center justify-between z-10">
-                                            <span className="text-[10px] font-mono text-slate-500">{threat.time}</span>
-                                            <span className={`text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${
-                                                threat.risk === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
-                                                threat.risk === 'HIGH' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-                                                'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                                            }`}>
-                                                {threat.risk}
-                                            </span>
-                                        </div>
-                                        <div className="z-10">
-                                            <h4 className="text-[12px] font-bold text-white mb-1">{threat.target}</h4>
-                                            <p className="text-[10px] text-slate-400">{threat.type}</p>
-                                        </div>
-                                        <div className="mt-2 pt-3 border-t border-white/5 flex items-center justify-between z-10">
-                                            <button className="text-[9px] text-indigo-400 hover:text-indigo-300 font-bold uppercase tracking-widest flex items-center gap-1 transition-colors">
-                                                <Crosshair size={10} /> Аналізувати
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </TacticalCard>
+                    <div>
+                      <h4 className="text-sm font-black text-white uppercase tracking-[0.4em]">NEXUS_COMMAND_IV</h4>
+                      <p className="text-[10px] font-mono text-indigo-400 font-black uppercase tracking-tighter mt-1">Оцифровка 14.5M гео-потоків</p>
                     </div>
+                  </div>
                 </div>
 
-                <style dangerouslySetInnerHTML={{
-                    __html: `
-                    .panel-3d {
-                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                    }
-                    .panel-3d:hover {
-                        transform: translateY(-5px);
-                        box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.7);
-                    }
-                    .h-animation-pulse {
-                        animation: h-pulse 2s infinite ease-in-out;
-                    }
-                    @keyframes h-pulse {
-                        0%, 100% { opacity: 1; transform: scale(1); }
-                        50% { opacity: 0.6; transform: scale(0.95); }
-                    }
-                    .animate-spin-slow {
-                        animation: spin 8s linear infinite;
-                    }
-                    @keyframes spin {
-                        from { transform: rotate(0deg); }
-                        to { transform: rotate(360deg); }
-                    }
-                `}} />
-            </div>
-        </PageTransition>
-    );
-};
+                <div className="flex-1 relative cursor-crosshair">
+                   <GlobalSituationProjection />
+                </div>
 
-// Internal icons
-const SatelliteIcon = (props: any) => (
-    <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M13 7 9 3 5 7l4 4Z" />
-        <path d="m17 11 4 4-4 4-4-4Z" />
-        <path d="m4.5 15.5 2 2" />
-        <path d="m8.5 19.5 2 2" />
-        <path d="M2 8A7.4 7.4 0 0 1 9 1" />
-        <path d="M11 23a7.4 7.4 0 0 1 7-7" />
-    </svg>
-);
+                <div className="absolute bottom-10 right-10 z-20 flex flex-col gap-4">
+                   <button className="p-5 bg-slate-900/90 hover:bg-slate-800 border border-white/10 rounded-2xl text-white transition-all shadow-xl group">
+                      <Search size={24} className="group-hover:scale-110 transition-transform" />
+                   </button>
+                   <button className="p-5 bg-slate-900/90 hover:bg-slate-800 border border-white/10 rounded-2xl text-white transition-all shadow-xl group">
+                      <Layers size={24} className="group-hover:scale-110 transition-transform" />
+                   </button>
+                   <button className="p-5 bg-indigo-600 hover:bg-indigo-500 border border-indigo-400/30 rounded-2xl text-white transition-all shadow-xl group shadow-indigo-500/20">
+                      <Target size={24} className="group-hover:rotate-45 transition-transform" />
+                   </button>
+                </div>
+              </TacticalCard>
+
+              {/* Live Intelligence Feed (Premium) */}
+              <TacticalCard title="ПОТІК ТАКТИЧНОЇ РОЗВІДКИ" icon={<Radio size={20} className="text-rose-500" />} variant="holographic">
+                <div className="space-y-6 max-h-[420px] overflow-y-auto custom-scrollbar pr-3">
+                  <AnimatePresence mode="popLayout">
+                  {alerts.map((alert, idx) => (
+                    <motion.div 
+                      key={alert.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className={cn(
+                        "p-6 rounded-3xl relative group overflow-hidden transition-all hover:bg-white/5 border-2",
+                        alert.severity === 'critical' ? "bg-rose-500/5 border-rose-500/20" : "bg-slate-900/40 border-white/5"
+                      )}
+                    >
+                      <div className="flex justify-between items-start mb-4 relative z-10">
+                        <div className="flex items-center gap-4">
+                          <div className={cn(
+                            "w-10 h-10 rounded-2xl flex items-center justify-center",
+                            alert.severity === 'critical' ? "bg-rose-500/20 text-rose-500" : "bg-indigo-500/20 text-indigo-400"
+                          )}>
+                             {alert.severity === 'critical' ? <ShieldAlert size={20} className="animate-pulse" /> : <Eye size={20} />}
+                          </div>
+                          <div>
+                            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white/90">{alert.type}</span>
+                            <p className="text-[9px] font-mono text-slate-500 mt-0.5">{alert.timestamp} | {alert.sector}</p>
+                          </div>
+                        </div>
+                        <Badge className="bg-white/5 text-slate-400 border-white/10 text-[8px] tracking-[0.2em]">INTEL_v55.2</Badge>
+                      </div>
+                      <h5 className="text-sm font-black text-white leading-relaxed mb-4 relative z-10">{alert.message}</h5>
+                      <div className="flex items-center justify-end relative z-10">
+                        <button className="px-5 py-2 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 group/btn">
+                          АНАЛІЗУВАТИ ДЕТАЛЬНО <ArrowUpRight size={14} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+                        </button>
+                      </div>
+                      {alert.severity === 'critical' && <div className="absolute top-0 left-0 w-1.5 h-full bg-rose-500 shadow-[0_0_20px_#f43f5e]" />}
+                    </motion.div>
+                  ))}
+                  </AnimatePresence>
+                </div>
+              </TacticalCard>
+            </div>
+
+            {/* RIGHT COLUMN: Reports & Sovereign Intel (v55.5) */}
+            <div className="col-span-12 xl:col-span-3 space-y-10">
+               <SovereignReportWidget ueid={activeUeid} className="h-full border-indigo-500/20 shadow-3xl" />
+               
+               <TacticalCard variant="glass" className="p-10 bg-gradient-to-br from-indigo-900/10 to-indigo-500/5 border border-indigo-500/30 rounded-[48px] overflow-hidden relative group shadow-3xl">
+                  <div className="absolute -top-12 -right-12 w-48 h-48 bg-indigo-500/30 blur-[80px] group-hover:bg-indigo-500/50 transition-all rounded-full" />
+                  <div className="flex items-center gap-5 mb-8">
+                    <div className="p-4 bg-indigo-500 rounded-2xl shadow-lg shadow-indigo-500/40">
+                      <Brain size={24} className="text-white" />
+                    </div>
+                    <div>
+                      <h4 className="text-[13px] font-black text-white uppercase tracking-[0.4em]">NEURAL HYPERCORE</h4>
+                      <p className="text-[9px] font-bold text-indigo-400 uppercase">SuperIntelligence Active</p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-6 relative z-10">
+                    <p className="text-sm text-slate-300 leading-relaxed font-bold">
+                       "Виявлено латентний патерн <span className="text-emerald-400">оптимізації митних потоків</span> в секторі металургії. Потенційне зростання надходжень до бюджету: <span className="text-indigo-400">+12.4%</span> при калібруванні фільтрів."
+                    </p>
+                    
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center text-[10px] font-black text-slate-500">
+                        <span>СИНТЕТИЧНА ВПЕВНЕНІСТЬ</span>
+                        <span className="text-white">99.8%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: '99.8%' }}
+                          className="h-full bg-gradient-to-r from-indigo-600 to-indigo-400" 
+                        />
+                      </div>
+                    </div>
+                    
+                    <button className="w-full py-4 bg-indigo-600 text-white rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl hover:bg-indigo-500 transition-all active:scale-95">
+                      ЗАСТОСУВАТИ ОПТИМІЗАЦІЮ
+                    </button>
+                  </div>
+               </TacticalCard>
+
+               <div className="flex items-center justify-between p-8 bg-emerald-500/5 border border-emerald-500/30 rounded-[36px] group cursor-pointer hover:bg-emerald-500/10 transition-all shadow-xl">
+                  <div className="flex items-center gap-6">
+                    <div className="p-4 bg-emerald-500/20 rounded-2xl group-hover:scale-110 transition-transform">
+                      <Network size={24} className="text-emerald-400" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-black text-emerald-500 uppercase tracking-widest">NEURAL_SYNC_LINK</p>
+                      <p className="text-sm font-black text-white uppercase mt-1">SESS_ACTIVE_v55.5</p>
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center border border-white/10 group-hover:bg-emerald-500/20 group-hover:border-emerald-500 transition-all">
+                    <ChevronRight size={20} className="text-emerald-500 group-hover:translate-x-1 transition-all" />
+                  </div>
+               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Global Strategic News Ticker v55.5 */}
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#02040a]/95 backdrop-blur-3xl border-t border-white/10 h-12 flex items-center overflow-hidden">
+          <div className="px-10 bg-indigo-600 h-full flex items-center shrink-0 border-r border-white/20 shadow-[10px_0_30px_rgba(79,70,229,0.5)] relative z-10">
+            <span className="text-[11px] font-black text-white uppercase tracking-[0.3em] whitespace-nowrap">STRATEGIC_LOG_PROTOCOL</span>
+          </div>
+          <div className="flex-1 flex items-center">
+            <motion.div 
+              animate={{ x: [2000, -2000] }}
+              transition={{ duration: 50, repeat: Infinity, ease: 'linear' }}
+              className="flex items-center gap-20 whitespace-nowrap"
+            >
+              {[
+                "ПОВНЕ СИНХРОННЕ СКАНУВАННЯ МАТРИЦІ ЗАКІНЧЕНО: 100% БЕЗПЕКИ",
+                "АНАЛІЗ CERS ДЛЯ ЕНЕРГЕТИКИ: ВИЯВЛЕНО ПРИХОВАНІ РЕЗЕРВИ +14%",
+                "УВАГА: ПОЗАМЕЖНИЙ ТРАНЗИТ В ПОРТУ ОДЕСА ПЕРЕВЕДЕНО В ЖОВТИЙ РЕЖИМ",
+                "БЕЗПЕКА ЯДРА: ВСІ НОДИ В СТАНІ СТІЙКОЇ РІВНОВАГИ [HASH_3349_XA]",
+                "БОТ 'СПАРТАНЕЦЬ': ЗАБЛОКОВАНО 142 СПРОБИ НЕЗАНКЦІОНОВАНОГО ДОСТУПУ",
+                "ГЛОБАЛЬНІ ПОТОКИ: КОРЕЛЯЦІЯ КИТАЙ-УКРАЇНА ЗРОСЛА НА 4.2% В Q1",
+                "ЧАС ДО НАСТУПНОЇ ЕВОЛЮЦІЙНОЇ МОДЕЛІ: 48:12:05"
+              ].map((log, i) => (
+                <div key={i} className="flex items-center gap-6">
+                  <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_10px_#6366f1]" />
+                  <span className="text-[11px] font-mono text-slate-400 font-black uppercase tracking-widest">
+                    {log}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+
+        <style dangerouslySetInnerHTML={{
+          __html: `
+          .panel-3d {
+            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+          }
+          .panel-3d:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.9), 0 0 40px rgba(99, 102, 241, 0.15);
+          }
+          .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 20px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.4);
+          }
+          .skew-text {
+            transform: skewX(-4deg);
+          }
+        `}} />
+      </div>
+    </PageTransition>
+  );
+};
 
 export default DashboardView;

@@ -44,6 +44,7 @@ from app.routers import (
     search_router,
     som_router,
     warroom_router,
+    osint_ua_router,
 )
 from app.services.kafka_service import close_kafka, init_kafka
 from app.services.minio_service import close_minio, init_minio
@@ -153,6 +154,7 @@ ROUTERS = [
     ("/api/v1", search_router),
     ("/api/v1", som_router),
     ("/api/v1", warroom_router),
+    ("/api/v1", osint_ua_router),
 ]
 
 for prefix, router in ROUTERS:
