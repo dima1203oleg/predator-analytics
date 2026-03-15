@@ -1,15 +1,15 @@
 /**
- * 🛰️ Semantic Radar Matrix | v55 Premium Matrix
- * PREDATOR Семантичний Аналітичний Радар
- * 
+ * 🛰️ Semantic Radar Matrix | v55.5 Sovereign Matrix
+ * PREDATOR Семантичний Аналітичний Радар — Когнітивний Граф Зв'язків
+ *
  * Візуалізація зв'язків між сутностями (Граф) та глибока аналітика.
  * Включає:
  * - Physics-based Entity Graph (Семантичний Радар)
  * - Нейронний HUD сутності
  * - AI Інсайти та аналіз ризиків
  * - Розширена візуальна аналітика
- * 
- * © 2026 PREDATOR Analytics - Повна українізація v55
+ *
+ * © 2026 PREDATOR Analytics — Повна українізація v55.5
  */
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -17,10 +17,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search, Activity, BrainCircuit, AlertTriangle, AlertOctagon,
     Briefcase, Stethoscope, Leaf, Building2, Crosshair,
-    Share2, Info, FileText, Filter, ZoomIn, ZoomOut, Maximize,
+    Share2, Info, FileText, Filter,
     Zap, Eye, Target, TrendingUp, ShieldAlert, Cpu, Network, Globe,
     Hexagon, Layers, Box, Boxes, Terminal, ShieldCheck,
-    ChevronRight, ArrowUpRight, ZapOff, Radio, Sparkles, Brain, BarChart3
+    ChevronRight, ArrowUpRight, Radio, Sparkles, Brain, BarChart3
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { api } from '../services/api';
@@ -31,6 +31,7 @@ import { CyberOrb } from '../components/CyberOrb';
 import { HoloContainer } from '../components/HoloContainer';
 import { VisualAnalytics } from '../components/premium/VisualAnalytics';
 import { AdvancedBackground } from '../components/AdvancedBackground';
+import { ViewHeader } from '../components/ViewHeader';
 
 // === ТИПИ ТА КОНФІГУРАЦІЯ ===
 interface GraphNode {
@@ -92,10 +93,10 @@ const RadarOverlay: React.FC = () => (
 
         {/* Tactical Indicators */}
         <div className="absolute top-10 left-10 text-[8px] font-black text-blue-500/40 uppercase tracking-[0.4em] font-mono">
-            RADAR_SYS_ACTIVE // SCAN_DEPTH: 4
+            РАДАР_АКТИВНИЙ // ГЛИБИНА: 4
         </div>
         <div className="absolute bottom-10 right-10 text-[8px] font-black text-blue-500/40 uppercase tracking-[0.4em] font-mono">
-            POS: 50.4501° N, 30.5234° E
+            КООРДИНАТИ: 50.4501° N, 30.5234° E
         </div>
     </div>
 );
@@ -374,50 +375,17 @@ const AnalyticsView: React.FC = () => {
                 <div className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] bg-indigo-500/5 blur-[150px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
             </div>
 
-            {/* Sovereign Header */}
-            <div className="flex flex-col xl:flex-row items-center justify-between gap-10 p-10 bg-slate-950/40 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
-                <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
-                <div className="flex items-center gap-8 relative z-10 w-full xl:w-auto">
-                    <div className="relative group">
-                        <div className="absolute inset-0 bg-blue-500/20 blur-[80px] rounded-full scale-150 opacity-20" />
-                        <div className="relative p-6 bg-slate-900 border border-white/5 rounded-[32px] shadow-2xl panel-3d">
-                            <Network size={40} className="text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
-                        </div>
-                    </div>
-                    <div className="flex-1">
-                        <div className="flex flex-wrap items-center gap-4 mb-2">
-                            <h2 className="text-4xl font-black tracking-tighter uppercase leading-none font-display text-white">
-                                {premiumLocales.semanticRadar.title}
-                            </h2>
-                            <div className="px-4 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-[10px] font-black text-blue-400 uppercase tracking-widest backdrop-blur-xl">
-                                V55_SYSTEM_ACTIVE
-                            </div>
-                        </div>
-                        <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.2em]">
-                            {premiumLocales.semanticRadar.breadcrumbs.join(' / ')}
-                        </p>
-                    </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-6 relative z-10 w-full xl:w-auto">
-                    <div className="flex items-center gap-8 px-8 py-4 bg-slate-900/60 border border-white/5 rounded-[24px] backdrop-blur-xl">
-                        <div className="flex flex-col">
-                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">{premiumLocales.semanticRadar.stats.nodes}</span>
-                            <span className="text-xl font-black text-white font-mono">{summary?.total_nodes || '...'}</span>
-                        </div>
-                        <div className="w-px h-8 bg-white/5" />
-                        <div className="flex flex-col">
-                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">{premiumLocales.semanticRadar.stats.edges}</span>
-                            <span className="text-xl font-black text-blue-400 font-mono">{summary?.total_edges || '...'}</span>
-                        </div>
-                        <div className="w-px h-8 bg-white/5" />
-                        <div className="flex flex-col">
-                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">ACCURACY</span>
-                            <span className="text-xl font-black text-emerald-400 font-mono">98.2%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {/* ViewHeader v55.5 */}
+            <ViewHeader
+                title="СЕМАНТИЧНИЙ РАДАР"
+                icon={<Network className="text-blue-400" />}
+                breadcrumbs={['ОСІНТ', 'АНАЛІТИКА', 'ГРАФ ЗВ\'ЯЗКІВ']}
+                stats={[
+                    { label: 'Вузлів у графі', value: summary?.total_nodes ? String(summary.total_nodes) : '...', icon: <Network />, color: 'primary' },
+                    { label: 'Зв\'язків', value: summary?.total_edges ? String(summary.total_edges) : '...', icon: <Share2 />, color: 'warning' },
+                    { label: 'Точність', value: '98.2%', icon: <ShieldCheck />, color: 'success' },
+                ]}
+            />
 
             {/* Tactical Search & View Toggle */}
             <div className="flex flex-col xl:flex-row gap-6 items-center z-20">
@@ -487,7 +455,7 @@ const AnalyticsView: React.FC = () => {
                                             </div>
                                         </div>
                                         <h3 className="text-xl font-black text-white uppercase tracking-[0.4em] font-display animate-pulse">{premiumLocales.semanticRadar.search.scanning}</h3>
-                                        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-4">TRAPPING_NEURAL_SIGNALS_..._92%</p>
+                                        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-4">ЗАХОПЛЕННЯ НЕЙРОННИХ СИГНАЛІВ...92%</p>
                                     </div>
                                 )}
                                 <AnalysisGraph
@@ -610,7 +578,7 @@ const AnalyticsView: React.FC = () => {
                 </AnimatePresence>
             </div>
 
-            {/* Global Intelligence Ribbon */}
+            {/* Стрічка Глобального Інтелекту */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -623,15 +591,15 @@ const AnalyticsView: React.FC = () => {
                             <Globe size={48} className="text-blue-400 relative z-10 animate-spin-slow" />
                         </div>
                         <div>
-                            <h4 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Global Semantic Network</h4>
+                            <h4 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Глобальна Семантична Мережа</h4>
                             <p className="text-xs text-slate-500 font-medium">Моніторинг зв'язків у реальному часі за межами локальної мережі знань.</p>
                         </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-10">
                         {[
-                            { label: 'GLOBAL_REACH', value: '142 COUNTRIES', icon: Globe },
-                            { label: 'CROSS_DOMAIN', value: 'ENABLED', icon: Share2 },
-                            { label: 'NEURAL_BRIDGE', value: 'V55_GEN3', icon: BrainCircuit },
+                            { label: 'ОХОПЛЕННЯ', value: '142 КРАЇНИ', icon: Globe },
+                            { label: 'КРОС-ДОМЕН', value: 'АКТИВНО', icon: Share2 },
+                            { label: 'НЕЙРО-МІСТ', value: 'V55_GEN3', icon: BrainCircuit },
                         ].map((item, i) => (
                             <div key={i} className="flex flex-col">
                                 <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 flex items-center gap-2">
@@ -642,7 +610,7 @@ const AnalyticsView: React.FC = () => {
                         ))}
                     </div>
                     <button className="px-10 py-5 bg-white/5 border border-white/10 rounded-[24px] text-[10px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-3">
-                        EXPAND_HORIZON <ArrowUpRight size={18} />
+                        РОЗШИРИТИ ГОРИЗОНТ <ArrowUpRight size={18} />
                     </button>
                 </div>
             </motion.div>
