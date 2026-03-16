@@ -88,7 +88,10 @@ const AzrHyperWidget: React.FC = () => {
                     />
 
                     {/* Icon Container */}
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center bg-black/50 backdrop-blur-md border ${borderColor} shadow-[0_0_15px_${pulseColor}]`}>
+                    <div 
+                        className={`w-12 h-12 rounded-full flex items-center justify-center bg-black/50 backdrop-blur-md border ${borderColor}`}
+                        style={{ boxShadow: `0 0 15px ${pulseColor}` }}
+                    >
                         {isFrozen ? (
                             <Lock className="w-6 h-6 text-red-500" />
                         ) : (

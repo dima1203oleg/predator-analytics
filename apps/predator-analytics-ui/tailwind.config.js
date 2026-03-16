@@ -13,10 +13,22 @@ export default {
         display: ['Orbitron', 'sans-serif'],
       },
       colors: {
+        background: '#020617',
+        foreground: '#f8fafc',
+        border: 'rgba(255, 255, 255, 0.1)',
+        input: 'rgba(255, 255, 255, 0.05)',
+        ring: '#3b82f6',
         slate: {
           850: '#151f32',
           925: '#0a0f1c',
           950: '#020617',
+        },
+        foundry: {
+          slate: '#1c2127',
+          blue: '#137cbd',
+          green: '#0f9960',
+          orange: '#d9822b',
+          red: '#db3737',
         },
         primary: {
           50: '#ecfeff',
@@ -32,6 +44,7 @@ export default {
           950: '#083344',
           glow: 'rgba(34, 211, 238, 0.5)',
         },
+
         success: {
           DEFAULT: '#22c55e',
           50: '#f0fdf4',
