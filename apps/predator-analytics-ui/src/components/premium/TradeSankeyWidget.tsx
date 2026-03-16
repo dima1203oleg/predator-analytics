@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import { motion } from 'framer-motion';
 import { Globe, ArrowRightLeft } from 'lucide-react';
 import { cn } from '../../utils/cn';

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, DollarSign, Activity, AlertCircle, Info } from 'lucide-react';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import * as echarts from 'echarts';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';

@@ -3,7 +3,7 @@ import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { MainLayout } from './components/layout/MainLayout';
 
-// Core Views - Immediate imports for main pages
+import { LoadingSkeleton } from './components/LoadingSkeleton';
 import ActivityView from './features/dashboard/ActivityView';
 import DashboardView from './features/dashboard/DashboardView';
 import IntelligenceView from './features/intelligence/IntelligenceView';
@@ -132,7 +132,7 @@ export const AppRoutesNew = () => {
 
   return (
     <MainLayout>
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<LoadingSkeleton />}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             {/* 🎯 CANONICAL v4.2.0 MODES */}

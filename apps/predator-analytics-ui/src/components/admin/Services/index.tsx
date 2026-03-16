@@ -18,7 +18,7 @@ export const Services: React.FC = () => {
 
       <div className="bg-slate-900 border border-slate-700 rounded-xl ">
         <table className="w-full text-left">
-           <thead className="bg-slate-950 text-slate-500 text-xs uppercase font-bold">
+           <thead className="bg-slate-950 text-slate-300 text-xs uppercase font-bold">
               <tr>
                  <th className="p-4">Service Name</th>
                  <th className="p-4">Port</th>
@@ -31,10 +31,10 @@ export const Services: React.FC = () => {
               {services.map(svc => (
                  <tr key={svc.name} className="hover:bg-slate-800/30">
                     <td className="p-4 font-mono font-bold text-blue-300 flex items-center gap-2">
-                       <Box size={16} className="text-slate-500" /> {svc.name}
+                       <Box size={16} className="text-slate-300" /> {svc.name}
                     </td>
-                    <td className="p-4 text-slate-400 font-mono text-sm">{svc.port}</td>
-                    <td className="p-4 text-slate-400 text-sm">{svc.version}</td>
+                    <td className="p-4 text-slate-300 font-mono text-sm">{svc.port}</td>
+                    <td className="p-4 text-slate-300 text-sm">{svc.version}</td>
                     <td className="p-4">
                        <span className={`px-2 py-1 rounded text-xs uppercase font-bold ${svc.status === 'running' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
                           {svc.status}

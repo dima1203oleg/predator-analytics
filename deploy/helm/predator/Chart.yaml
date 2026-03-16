@@ -4,7 +4,9 @@ description: PREDATOR Analytics v55.1 Ironclad Full Stack Chart
 type: application
 version: 55.1.0
 appVersion: "55.1.0"
-dependencies:
+  - name: ingestion-worker
+    version: 0.1.0
+    repository: file://../services/ingestion-worker
   - name: postgresql
     version: 15.5.0
     repository: https://charts.bitnami.com/bitnami

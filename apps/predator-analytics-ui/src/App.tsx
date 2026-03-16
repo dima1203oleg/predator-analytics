@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
 // Contexts
@@ -7,8 +7,6 @@ import { AgentProvider } from './context/AgentContext';
 import { DisplayModeProvider } from './context/DisplayModeContext';
 import { GlobalProvider } from './context/GlobalContext';
 // Stores
-import { useUserStore } from './store/useUserStore';
-import { useRoleStore } from './store/useRoleStore';
 import { useAppStore } from './store/useAppStore';
 
 // Remaining Providers
@@ -24,7 +22,6 @@ import BootScreen from './components/BootScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import LoginScreen from './components/LoginScreen';
 import { Predator } from './components/premium/AICopilot';
-import CommandPalette from './components/premium/CommandPalette';
 import OnboardingWizard from './components/premium/OnboardingWizard';
 import QuickActionsBar from './components/premium/QuickActionsBar';
 import { ToasterProvider } from './components/premium/ToasterProvider';
@@ -44,9 +41,14 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  console.log('--- PREDATOR SOVEREIGN MODE: BYPASSING AUTH ---');
-  // AUTH BYPASS: Always READY
-  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>('READY');
+  // Звичайний життєвий цикл: boot → login → ready
+  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>('BOOTING');
+  const highVisibility = useAppStore((state) => state.highVisibility);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.documentElement.classList.toggle('high-visibility', highVisibility);
+  }, [highVisibility]);
 
   const handleBootComplete = () => {
     setAppState('LOGIN');

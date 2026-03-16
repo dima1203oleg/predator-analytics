@@ -11,61 +11,32 @@ export interface NavItem {
 }
 
 export const NAVIGATION_CONFIG: Record<string, NavItem[]> = {
-  // CLIENT SECTION (Basic + Premium)
-  client: [
+  // Дашборд – базовий огляд системи
+  dashboard: [
     {
       id: 'overview',
       label: 'Огляд',
       icon: 'Home',
       path: '/overview',
-      roles: [UserRole.CLIENT_BASIC, UserRole.CLIENT_PREMIUM]
-    },
-    {
-      id: 'search',
-      label: 'Пошук',
-      icon: 'Search',
-      path: '/search',
-      roles: [UserRole.CLIENT_BASIC, UserRole.CLIENT_PREMIUM]
-    },
-    {
-      id: 'trends',
-      label: 'Тренди',
-      icon: 'TrendingUp',
-      path: '/trends',
-      roles: [UserRole.CLIENT_BASIC, UserRole.CLIENT_PREMIUM]
-    },
-    {
-      id: 'newspaper',
-      label: 'Ранкова Газета',
-      icon: 'Newspaper',
-      path: '/newspaper',
-      roles: [UserRole.CLIENT_BASIC, UserRole.CLIENT_PREMIUM]
-    },
-    {
-      id: 'reports',
-      label: 'Звіти',
-      icon: 'FileText',
-      path: '/reports',
-      roles: [UserRole.CLIENT_BASIC, UserRole.CLIENT_PREMIUM]
+      roles: [UserRole.CLIENT_BASIC, UserRole.CLIENT_PREMIUM],
     },
     {
       id: 'profile',
       label: 'Профіль',
       icon: 'User',
       path: '/profile',
-      roles: [UserRole.CLIENT_BASIC, UserRole.CLIENT_PREMIUM]
+      roles: [UserRole.CLIENT_BASIC, UserRole.CLIENT_PREMIUM],
     },
   ],
-
-  // PREMIUM ONLY (Visual Analytics)
-  premium: [
+  // Аналітика – преміум‑фічі
+  analytics: [
     {
       id: 'dashboards',
       label: 'Дашборди',
       icon: 'LayoutDashboard',
       path: '/dashboards',
       roles: [UserRole.CLIENT_PREMIUM],
-      premiumOnly: true
+      premiumOnly: true,
     },
     {
       id: 'visualAnalytics',
@@ -73,7 +44,7 @@ export const NAVIGATION_CONFIG: Record<string, NavItem[]> = {
       icon: 'BarChart3',
       path: '/analytics',
       roles: [UserRole.CLIENT_PREMIUM],
-      premiumOnly: true
+      premiumOnly: true,
     },
     {
       id: 'relations',
@@ -81,7 +52,7 @@ export const NAVIGATION_CONFIG: Record<string, NavItem[]> = {
       icon: 'Network',
       path: '/relations',
       roles: [UserRole.CLIENT_PREMIUM],
-      premiumOnly: true
+      premiumOnly: true,
     },
     {
       id: 'timelines',
@@ -89,7 +60,7 @@ export const NAVIGATION_CONFIG: Record<string, NavItem[]> = {
       icon: 'Clock',
       path: '/timelines',
       roles: [UserRole.CLIENT_PREMIUM],
-      premiumOnly: true
+      premiumOnly: true,
     },
     {
       id: 'opensearch',
@@ -97,43 +68,59 @@ export const NAVIGATION_CONFIG: Record<string, NavItem[]> = {
       icon: 'Database',
       path: '/opensearch',
       roles: [UserRole.CLIENT_PREMIUM],
-      premiumOnly: true
+      premiumOnly: true,
     },
   ],
-
-  // ADMIN ONLY (System Core)
-  admin: [
+  // Джерела даних – доступ до сховищ та інжесту
+  dataSources: [
     {
-      id: 'e3',
-      label: 'Еволюція Системи (E3)',
-      icon: 'Rocket',
-      path: '/admin/e3',
-      roles: [UserRole.ADMIN],
-      adminOnly: true
+      id: 'search',
+      label: 'Пошук',
+      icon: 'Search',
+      path: '/search',
+      roles: [UserRole.CLIENT_BASIC, UserRole.CLIENT_PREMIUM],
     },
     {
-      id: 'evolution',
-      label: 'AI Evolution (v45)',
-      icon: 'Sparkles',
-      path: '/admin/evolution',
-      roles: [UserRole.ADMIN],
-      adminOnly: true
+      id: 'newspaper',
+      label: 'Ранкова Газета',
+      icon: 'Newspaper',
+      path: '/newspaper',
+      roles: [UserRole.CLIENT_BASIC, UserRole.CLIENT_PREMIUM],
     },
+  ],
+  // Конвеєри – статуси ETL / Kafka
+  pipelines: [
     {
-      id: 'som',
-      label: 'Контроль Суверенності (SOM)',
-      icon: 'ShieldAlert',
-      path: '/admin/som',
-      roles: [UserRole.ADMIN],
-      adminOnly: true
+      id: 'trends',
+      label: 'Тренди',
+      icon: 'TrendingUp',
+      path: '/trends',
+      roles: [UserRole.CLIENT_BASIC, UserRole.CLIENT_PREMIUM],
     },
+  ],
+  // Моделі – ML‑моделі та їх моніторинг
+  models: [],
+  // Аномалії – виявлення та індикатори
+  anomalies: [],
+  // Звіти – готові PDF/CSV звіти
+  reports: [
+    {
+      id: 'reports',
+      label: 'Звіти',
+      icon: 'FileText',
+      path: '/reports',
+      roles: [UserRole.CLIENT_BASIC, UserRole.CLIENT_PREMIUM],
+    },
+  ],
+  // Система моніторингу – адміністрування та статуси
+  systemMonitoring: [
     {
       id: 'systemStatus',
       label: 'Стан Системи',
       icon: 'Activity',
       path: '/admin/status',
       roles: [UserRole.ADMIN],
-      adminOnly: true
+      adminOnly: true,
     },
     {
       id: 'infrastructure',
@@ -141,7 +128,7 @@ export const NAVIGATION_CONFIG: Record<string, NavItem[]> = {
       icon: 'Server',
       path: '/admin/infra',
       roles: [UserRole.ADMIN],
-      adminOnly: true
+      adminOnly: true,
     },
     {
       id: 'services',
@@ -149,15 +136,15 @@ export const NAVIGATION_CONFIG: Record<string, NavItem[]> = {
       icon: 'Boxes',
       path: '/admin/services',
       roles: [UserRole.ADMIN],
-      adminOnly: true
+      adminOnly: true,
     },
     {
-      id: 'models',
+      id: 'modelsAdmin',
       label: 'Моделі',
       icon: 'Brain',
       path: '/admin/models',
       roles: [UserRole.ADMIN],
-      adminOnly: true
+      adminOnly: true,
     },
     {
       id: 'users',
@@ -165,15 +152,7 @@ export const NAVIGATION_CONFIG: Record<string, NavItem[]> = {
       icon: 'Users',
       path: '/admin/users',
       roles: [UserRole.ADMIN],
-      adminOnly: true
-    },
-    {
-      id: 'jurisdictions',
-      label: 'Юрисдикції',
-      icon: 'Globe',
-      path: '/admin/jurisdictions',
-      roles: [UserRole.ADMIN],
-      adminOnly: true
+      adminOnly: true,
     },
     {
       id: 'audit',
@@ -181,7 +160,9 @@ export const NAVIGATION_CONFIG: Record<string, NavItem[]> = {
       icon: 'ScrollText',
       path: '/admin/audit',
       roles: [UserRole.ADMIN],
-      adminOnly: true
+      adminOnly: true,
     },
   ],
+  // Налаштування – користувацькі та системні налаштування
+  settings: [],
 };

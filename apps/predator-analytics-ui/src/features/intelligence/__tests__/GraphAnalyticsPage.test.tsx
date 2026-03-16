@@ -24,7 +24,7 @@ vi.mock('lucide-react', async (importOriginal) => {
     });
 })
 
-vi.mock('echarts-for-react', () => ({
+vi.mock('@/components/ECharts', () => ({
     default: ({ option }: any) => <div data-testid="echarts-mock">{JSON.stringify(option.series[0].data.length)} nodes</div>
 }))
 

@@ -16,6 +16,7 @@ interface AppState {
   isSidebarOpen: boolean;
   language: ApiLanguage;
   isTerminalOpen: boolean;
+  highVisibility: boolean;
   
   // AZR Status
   azrStatus: {
@@ -32,6 +33,7 @@ interface AppState {
   setSidebarOpen: (open: boolean) => void;
   setLanguage: (lang: ApiLanguage) => void;
   setTerminalOpen: (open: boolean) => void;
+  setHighVisibility: (enabled: boolean) => void;
   updateAzrStatus: (status: Partial<AppState['azrStatus']>) => void;
 }
 
@@ -44,10 +46,11 @@ export const useAppStore = create<AppState>()(
       isSidebarOpen: true,
       language: 'ua',
       isTerminalOpen: false,
+      highVisibility: false,
       azrStatus: {
         status: 'stable',
         progress: 100,
-        message: 'System optimal'
+        message: 'Стан оптимальний'
       },
 
       setRole: (userRole) => set({ userRole }),
@@ -57,6 +60,7 @@ export const useAppStore = create<AppState>()(
       setSidebarOpen: (isSidebarOpen) => set({ isSidebarOpen }),
       setLanguage: (language) => set({ language }),
       setTerminalOpen: (isTerminalOpen) => set({ isTerminalOpen }),
+      setHighVisibility: (highVisibility) => set({ highVisibility }),
       updateAzrStatus: (status) => set((state) => ({ 
         azrStatus: { ...state.azrStatus, ...status } 
       })),
@@ -67,6 +71,7 @@ export const useAppStore = create<AppState>()(
         userRole: state.userRole,
         persona: state.persona,
         language: state.language,
+        highVisibility: state.highVisibility,
       }),
     }
   )

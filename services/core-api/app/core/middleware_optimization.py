@@ -10,6 +10,7 @@ import time
 
 from fastapi import HTTPException, Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.responses import StreamingResponse
 
 from predator_common.logging import get_logger
 
@@ -105,10 +106,16 @@ class CompressionMiddleware(BaseHTTPMiddleware):
     ) -> Response:
         response = await call_next(request)
 
+        # Пропускаємо стрімінгові відповіді — у них відсутнє поле body
+        if isinstance(response, StreamingResponse):
+            return response
+
         # Check if response should be compressed
+        body = getattr(response, "body", b"") or b""
         if (
             "gzip" in request.headers.get("accept-encoding", "")
-            and len(response.body) > self.minimum_size
+            and isinstance(body, (bytes, bytearray))
+            and len(body) > self.minimum_size
         ):
             response.headers["Content-Encoding"] = "gzip"
 

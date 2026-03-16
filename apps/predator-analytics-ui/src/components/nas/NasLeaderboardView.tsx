@@ -26,7 +26,7 @@ export const NasLeaderboardView: React.FC<NasLeaderboardViewProps> = ({ models }
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-separate border-spacing-y-3">
                         <thead>
-                            <tr className="text-[10px] text-slate-500 uppercase font-black tracking-[0.2em]">
+                            <tr className="text-[10px] text-slate-300 uppercase font-black tracking-[0.2em]">
                                 <th className="px-6 py-2">Ранг</th>
                                 <th className="px-6 py-2">Архітектура</th>
                                 <th className="px-6 py-2">Точність</th>
@@ -49,12 +49,12 @@ export const NasLeaderboardView: React.FC<NasLeaderboardViewProps> = ({ models }
                                         </td>
                                         <td className="px-6 py-4 border-t border-b border-white/5">
                                             <div className="text-xs font-black text-white uppercase tracking-wider">{m.architecture}</div>
-                                            <div className="text-[9px] text-slate-600 mt-1 uppercase font-bold tracking-tighter">Перевірено на {m.provider}</div>
+                                            <div className="text-[9px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Перевірено на {m.provider}</div>
                                         </td>
                                         <td className="px-6 py-4 border-t border-b border-white/5">
                                             <span className="text-sm font-black text-emerald-400 font-mono">{(m.metrics.accuracy * 100).toFixed(1)}%</span>
                                         </td>
-                                        <td className="px-6 py-4 border-t border-b border-white/5 text-slate-400 font-mono text-xs">
+                                        <td className="px-6 py-4 border-t border-b border-white/5 text-slate-300 font-mono text-xs">
                                             {m.metrics.latency.toFixed(0)}ms
                                         </td>
                                         <td className="px-6 py-4 border-t border-b border-white/5">
@@ -70,7 +70,7 @@ export const NasLeaderboardView: React.FC<NasLeaderboardViewProps> = ({ models }
                                 ))}
                             {models.length === 0 && (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-slate-500 text-xs font-mono">
+                                    <td colSpan={6} className="px-6 py-8 text-center text-slate-300 text-xs font-mono">
                                         Реєстр порожній. Розпочніть турнір для генерації SOTA кандидатів.
                                     </td>
                                 </tr>

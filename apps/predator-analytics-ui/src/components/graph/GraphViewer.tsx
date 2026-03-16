@@ -21,6 +21,7 @@ import {
   EyeOff,
   Layers,
 } from 'lucide-react';
+import { useAppStore } from '@/store/useAppStore';
 
 // Типи вузлів
 export type NodeType = 'Person' | 'Organization' | 'Location' | 'Event' | 'Asset' | 'Indicator';
@@ -85,7 +86,14 @@ const RISK_COLORS: Record<RiskLevel, string> = {
 };
 
 // Стилі Cytoscape
-const getCytoscapeStyle = () => [
+const getCytoscapeStyle = (highVisibility: boolean) => {
+  const labelColor = highVisibility ? '#f8fafc' : '#e2e8f0';
+  const outlineColor = highVisibility ? '#020617' : '#0f172a';
+  const edgeColor = highVisibility ? '#cbd5f5' : '#94a3b8';
+  const edgeLabelColor = highVisibility ? '#f1f5f9' : '#cbd5f5';
+  const labelBg = highVisibility ? 'rgba(2, 6, 23, 0.85)' : 'rgba(15, 23, 42, 0.7)';
+
+  return [
   // Базовий стиль вузлів
   {
     selector: 'node',
@@ -94,13 +102,21 @@ const getCytoscapeStyle = () => [
       'label': 'data(label)',
       'text-valign': 'bottom',
       'text-halign': 'center',
-      'font-size': '10px',
-      'color': '#374151',
+      'font-size': highVisibility ? '12px' : '11px',
+      'color': labelColor,
+      'text-outline-color': outlineColor,
+      'text-outline-width': 2,
+      'text-background-color': labelBg,
+      'text-background-opacity': highVisibility ? 0.85 : 0.75,
+      'text-background-padding': 3,
       'text-margin-y': 5,
-      'width': 40,
-      'height': 40,
-      'border-width': 2,
-      'border-color': '#ffffff',
+      'width': highVisibility ? 46 : 44,
+      'height': highVisibility ? 46 : 44,
+      'border-width': 2.5,
+      'border-color': '#f8fafc',
+      'shadow-blur': 10,
+      'shadow-color': 'rgba(15, 23, 42, 0.6)',
+      'shadow-opacity': 0.6,
     },
   },
   // Стилі для типів вузлів
@@ -123,30 +139,39 @@ const getCytoscapeStyle = () => [
     selector: 'node:selected',
     style: {
       'border-width': 6,
-      'border-color': '#1d4ed8',
+      'border-color': '#38bdf8',
       'background-opacity': 1,
+      'shadow-blur': 20,
+      'shadow-color': 'rgba(56, 189, 248, 0.45)',
+      'shadow-opacity': 0.9,
     },
   },
   // Hover ефект
   {
     selector: 'node:active',
     style: {
-      'overlay-opacity': 0.2,
-      'overlay-color': '#1d4ed8',
+      'overlay-opacity': 0.18,
+      'overlay-color': '#38bdf8',
     },
   },
   // Базовий стиль зв'язків
   {
     selector: 'edge',
     style: {
-      'width': 2,
-      'line-color': '#9ca3af',
-      'target-arrow-color': '#9ca3af',
+      'width': highVisibility ? 2.6 : 2.2,
+      'line-color': edgeColor,
+      'target-arrow-color': edgeColor,
       'target-arrow-shape': 'triangle',
+      'arrow-scale': 1.1,
       'curve-style': 'bezier',
       'label': 'data(label)',
-      'font-size': '8px',
-      'color': '#6b7280',
+      'font-size': highVisibility ? '10px' : '9px',
+      'color': edgeLabelColor,
+      'text-outline-color': outlineColor,
+      'text-outline-width': 2,
+      'text-background-color': labelBg,
+      'text-background-opacity': highVisibility ? 0.8 : 0.7,
+      'text-background-padding': 2,
       'text-rotation': 'autorotate',
       'text-margin-y': -10,
     },
@@ -156,8 +181,9 @@ const getCytoscapeStyle = () => [
     selector: 'edge:selected',
     style: {
       'width': 4,
-      'line-color': '#1d4ed8',
-      'target-arrow-color': '#1d4ed8',
+      'line-color': '#38bdf8',
+      'target-arrow-color': '#38bdf8',
+      'arrow-scale': 1.2,
     },
   },
   // Стилі для типів зв'язків
@@ -183,7 +209,8 @@ const getCytoscapeStyle = () => [
       'line-style': 'dashed',
     },
   },
-];
+  ];
+};
 
 // Layouts
 const LAYOUTS = {
@@ -238,6 +265,7 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
   const [filterType, setFilterType] = useState<NodeType | 'all'>('all');
   const [showLabels, setShowLabels] = useState(true);
   const [stats, setStats] = useState({ nodes: 0, edges: 0 });
+  const highVisibility = useAppStore((state) => state.highVisibility);
 
   // Ініціалізація Cytoscape
   useEffect(() => {
@@ -245,7 +273,7 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
 
     const cy = cytoscape({
       container: containerRef.current,
-      style: getCytoscapeStyle() as cytoscape.Stylesheet[],
+      style: getCytoscapeStyle(highVisibility) as cytoscape.Stylesheet[],
       layout: LAYOUTS[selectedLayout],
       minZoom: 0.1,
       maxZoom: 5,
@@ -298,6 +326,12 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
       cy.destroy();
     };
   }, []);
+
+  // Оновлення стилів для режиму видимості
+  useEffect(() => {
+    if (!cyRef.current) return;
+    cyRef.current.style(getCytoscapeStyle(highVisibility) as cytoscape.Stylesheet[]).update();
+  }, [highVisibility]);
 
   // Оновлення даних графа
   useEffect(() => {
@@ -453,23 +487,23 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full border-slate-800/70 bg-slate-950/60 text-slate-100">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Layers className="h-5 w-5" />
             Граф зв'язків
           </CardTitle>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Badge variant="outline">{stats.nodes} вузлів</Badge>
-            <Badge variant="outline">{stats.edges} зв'язків</Badge>
+          <div className="flex items-center gap-2 text-sm text-slate-300">
+            <Badge variant="outline" className="border-slate-700/80 text-slate-200">{stats.nodes} вузлів</Badge>
+            <Badge variant="outline" className="border-slate-700/80 text-slate-200">{stats.edges} зв'язків</Badge>
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="p-0">
         {showControls && (
-          <div className="flex flex-wrap items-center gap-2 p-4 border-b bg-muted/30">
+          <div className="flex flex-wrap items-center gap-2 p-4 border-b border-slate-800/60 bg-slate-950/60">
             {/* Пошук */}
             <div className="flex items-center gap-1">
               <Input
@@ -477,9 +511,9 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="w-48 h-8"
+                className="w-52 h-8 bg-slate-950/70 border-slate-700/70 placeholder:text-slate-500"
               />
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleSearch}>
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-200 hover:text-white hover:bg-white/10" onClick={handleSearch}>
                 <Search className="h-4 w-4" />
               </Button>
             </div>
@@ -495,8 +529,8 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
             </Select>
 
             {/* Layout */}
-            <Select value={selectedLayout} onChange={(e) => setSelectedLayout(e.target.value as keyof typeof LAYOUTS)} className="w-36 h-8 text-sm">
-              <SelectItem value="cose">Force-directed</SelectItem>
+            <Select value={selectedLayout} onChange={(e) => setSelectedLayout(e.target.value as keyof typeof LAYOUTS)} className="w-40 h-8 text-sm">
+              <SelectItem value="cose">Силова модель</SelectItem>
               <SelectItem value="circle">Коло</SelectItem>
               <SelectItem value="grid">Сітка</SelectItem>
               <SelectItem value="breadthfirst">Ієрархія</SelectItem>
@@ -506,22 +540,22 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
             <div className="flex-1" />
 
             {/* Контроли */}
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowLabels(!showLabels)}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-200 hover:text-white hover:bg-white/10" onClick={() => setShowLabels(!showLabels)}>
               {showLabels ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleZoomIn}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-200 hover:text-white hover:bg-white/10" onClick={handleZoomIn}>
               <ZoomIn className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleZoomOut}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-200 hover:text-white hover:bg-white/10" onClick={handleZoomOut}>
               <ZoomOut className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleFit}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-200 hover:text-white hover:bg-white/10" onClick={handleFit}>
               <Maximize2 className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleRefresh}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-200 hover:text-white hover:bg-white/10" onClick={handleRefresh}>
               <RefreshCw className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleExport}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-200 hover:text-white hover:bg-white/10" onClick={handleExport}>
               <Download className="h-4 w-4" />
             </Button>
           </div>
@@ -531,12 +565,12 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
         <div
           ref={containerRef}
           style={{ height, width: '100%' }}
-          className="bg-gray-50 dark:bg-gray-900"
+          className="graph-canvas bg-slate-950"
         />
 
         {/* Легенда */}
         {showLegend && (
-          <div className="flex flex-wrap items-center gap-4 p-4 border-t bg-muted/30 text-sm">
+          <div className="flex flex-wrap items-center gap-4 p-4 border-t border-slate-800/60 bg-slate-950/60 text-sm text-slate-200">
             <span className="font-medium">Типи:</span>
             {Object.entries(NODE_COLORS).map(([type, color]) => (
               <div key={type} className="flex items-center gap-1">

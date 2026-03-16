@@ -76,32 +76,36 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         if settings.ENV == "production":
             raise
 
-    # 1. Init DB connections
-    init_db()
+    if settings.TESTING:
+        logger.info("TESTING режим: пропускаємо підключення зовнішніх сервісів")
+    else:
+        # 1. Init DB connections
+        init_db()
 
-    # 2. Init Graph Driver
-    graph_db.init_driver()
+        # 2. Init Graph Driver
+        graph_db.init_driver()
 
-    # 3. Init Kafka Producer (§2.4)
-    await init_kafka()
+        # 3. Init Kafka Producer (§2.4)
+        await init_kafka()
 
-    # 4. Init MinIO/S3 (§2.5)
-    await init_minio()
+        # 4. Init MinIO/S3 (§2.5)
+        await init_minio()
 
-    # 5. Init Redis (§2.6)
-    await init_redis()
+        # 5. Init Redis (§2.6)
+        await init_redis()
 
-    logger.info("Core API успішно ініціалізовано")
+        logger.info("Core API успішно ініціалізовано")
 
     yield
 
     logger.info("Зупинка Core API...")
     # Graceful shutdown
-    await close_redis()
-    await close_kafka()
-    await close_minio()
-    await close_db()
-    await graph_db.close()
+    if not settings.TESTING:
+        await close_redis()
+        await close_kafka()
+        await close_minio()
+        await close_db()
+        await graph_db.close()
 
     logger.info("Core API зупинено.")
 
@@ -167,6 +171,14 @@ async def health_check() -> JSONResponse:
     from app.core.health import health_service
 
     try:
+        settings = get_settings()
+        if settings.TESTING:
+            return JSONResponse({
+                "status": "ok",
+                "timestamp": datetime.now(UTC).isoformat(),
+                "version": settings.APP_VERSION,
+                "mode": "testing"
+            })
         health_status = await health_service.comprehensive_health_check()
         return JSONResponse(health_status)
     except Exception as e:

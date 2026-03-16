@@ -20,7 +20,7 @@ import {
     Database, Info, AlertTriangle, CheckCircle2,
     Eye, TrendingUp, GitMerge, Layout
 } from 'lucide-react';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import { api } from '@/services/api';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';

@@ -11,7 +11,7 @@ import {
     Play, Activity, Shield, Zap, Target, Layers,
     Globe, Crosshair, BarChart3, ArrowUpRight, Flame, Brain
 } from 'lucide-react';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import { cn } from '@/utils/cn';
 import { useAppStore } from '@/store/useAppStore';
 

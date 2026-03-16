@@ -5,7 +5,7 @@ import {
   MapPin, Globe, Calendar, FileText, ExternalLink,
   ChevronRight, BadgeCheck, AlertTriangle, Briefcase
 } from 'lucide-react';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import * as echarts from 'echarts';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';

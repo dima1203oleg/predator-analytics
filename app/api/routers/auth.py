@@ -38,6 +38,11 @@ class UserLogin(BaseModel):
     password: str
 
 
+class MfaVerify(BaseModel):
+    email: EmailStr | None = None
+    code: str
+
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
@@ -64,6 +69,7 @@ class UserProfile(BaseModel):
 JWT_SECRET = os.getenv("JWT_SECRET", "predator-secret-key-change-in-production")
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24
+MFA_MASTER_CODE = os.getenv("MFA_MASTER_CODE", "111111")
 
 DB_URL = os.getenv("DATABASE_URL", "postgresql://admin:666666@localhost:5432/predator_db")
 
@@ -177,6 +183,34 @@ async def register(user_data: UserRegister):
         )
     finally:
         await conn.close()
+
+
+@router.post("/verify-mfa", status_code=status.HTTP_200_OK)
+async def verify_mfa(payload: MfaVerify):
+    """Перевірка MFA-коду.
+
+    - Приймає email (необов'язково) та код MFA
+    - Для мінімальної реалізації порівнює з MFA_MASTER_CODE
+    - Логує успіх/помилку; не видає токенів
+    """
+
+    code = payload.code.strip()
+    if not code or len(code) < 4:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Некоректний код MFA")
+
+    is_valid = code == MFA_MASTER_CODE
+    event = "mfa_verified" if is_valid else "mfa_rejected"
+    log_security_event(
+        logger,
+        event,
+        email=payload.email or "unknown",
+        method="code",
+    )
+
+    if not is_valid:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Невірний код MFA")
+
+    return {"status": "ok", "message": "MFA підтверджено"}
 
 
 @router.post("/login", response_model=TokenResponse)

@@ -188,7 +188,7 @@ export const Sidebar = () => {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.05 * idx }}
-                className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] px-4 mb-3"
+                className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] px-4 mb-3"
               >
                 {group.title}
               </motion.h3>
@@ -202,15 +202,15 @@ export const Sidebar = () => {
                   className={({ isActive }) => cn(
                     "relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group overflow-hidden border border-transparent",
                     isActive
-                      ? "bg-indigo-500/10 text-white shadow-[0_0_20px_rgba(79,70,229,0.1)] border-white/10"
-                      : "text-slate-400 hover:text-slate-100 hover:bg-white/5"
+                      ? "bg-indigo-500/10 text-white shadow-[0_0_20px_rgba(79,70,229,0.1)] border-white/10 sidebar-active"
+                      : "text-slate-300 hover:text-white hover:bg-white/5"
                   )}
                 >
                   {({ isActive }) => (
                     <>
                       <div className={cn(
                         "relative z-10 transition-all duration-300 group-hover:scale-110 shrink-0",
-                        isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.6)]" : "text-slate-500 group-hover:text-slate-300"
+                        isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.6)]" : "text-slate-400 group-hover:text-slate-200"
                       )}>
                         <item.icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
                       </div>

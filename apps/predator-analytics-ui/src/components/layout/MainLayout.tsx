@@ -114,7 +114,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-emerald-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500/30 overflow-x-hidden">
       <MatrixBackground />
       <DynamicSystemAura />
       <OrbitMenu />
@@ -140,7 +140,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           )}
         </AnimatePresence>
 
-        <div className="flex-1 p-4 md:p-6 lg:p-8 relative">
+        <div className="grid grid-cols-12 gap-4 p-4 md:p-6 lg:p-8 relative">
           {/* Background Grid Pattern */}
           <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-dot-grid" />
 
@@ -179,7 +179,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <motion.div
             animate={{ x: [0, -1200] }}
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="whitespace-nowrap text-[9px] font-mono text-slate-600 tracking-tight"
+            className="whitespace-nowrap text-[9px] font-mono text-slate-400 tracking-tight"
           >
             {` >> SYSTEM_V55_SOVEREIGN >> OODA_CYCLE: ${liveStats.ooda} >> STAGE: ${liveStats.stage} >> CPU: ${liveStats.cpu}% >> MEM: ${liveStats.memory}% >> DB_RECORDS: ${liveStats.records.toLocaleString()} >> TRUST_COEFFICIENT: 0.9982 >> ANOMALY_INDEX: 0.002 >> ENFORCEMENT_READY >> SYSTEM_V55_SOVEREIGN >> OODA_CYCLE: ${liveStats.ooda} >> STAGE: ${liveStats.stage} `}
           </motion.div>

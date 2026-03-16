@@ -311,7 +311,7 @@ export const PremiumPricing: React.FC<{
               <thead>
                 <tr className="border-b border-white/10">
                   <th className="text-left py-4 px-4 text-sm font-black text-white">{premiumLocales.pricing.comparison.header}</th>
-                  <th className="text-center py-4 px-4 text-sm font-black text-slate-400">STARTER</th>
+                  <th className="text-center py-4 px-4 text-sm font-black text-slate-300">STARTER</th>
                   <th className="text-center py-4 px-4 text-sm font-black text-amber-400">PROFESSIONAL</th>
                   <th className="text-center py-4 px-4 text-sm font-black text-indigo-400">ENTERPRISE</th>
                 </tr>
@@ -320,14 +320,14 @@ export const PremiumPricing: React.FC<{
                 {COMPARISON_FEATURES.map((category) => (
                   <React.Fragment key={category.category}>
                     <tr className="bg-white/5">
-                      <td colSpan={4} className="py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-wider">
+                      <td colSpan={4} className="py-3 px-4 text-xs font-black text-slate-300 uppercase tracking-wider">
                         {category.category}
                       </td>
                     </tr>
                     {category.features.map((feature, i) => (
                       <tr key={i} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="py-3 px-4 text-sm text-slate-300">{feature.name}</td>
-                        <td className="py-3 px-4 text-center text-sm text-slate-400">{feature.starter}</td>
+                        <td className="py-3 px-4 text-center text-sm text-slate-300">{feature.starter}</td>
                         <td className="py-3 px-4 text-center text-sm text-amber-400">{feature.pro}</td>
                         <td className="py-3 px-4 text-center text-sm text-indigo-400">{feature.enterprise}</td>
                       </tr>
@@ -342,19 +342,19 @@ export const PremiumPricing: React.FC<{
 
       {/* Trust Badges */}
       <div className="flex flex-wrap items-center justify-center gap-8 py-8 border-t border-white/5">
-        <div className="flex items-center gap-2 text-slate-500">
+        <div className="flex items-center gap-2 text-slate-300">
           <Lock size={16} />
           <span className="text-xs">256-bit SSL</span>
         </div>
-        <div className="flex items-center gap-2 text-slate-500">
+        <div className="flex items-center gap-2 text-slate-300">
           <Shield size={16} />
           <span className="text-xs">GDPR Compliant</span>
         </div>
-        <div className="flex items-center gap-2 text-slate-500">
+        <div className="flex items-center gap-2 text-slate-300">
           <Clock size={16} />
           <span className="text-xs">14 днів гарантії</span>
         </div>
-        <div className="flex items-center gap-2 text-slate-500">
+        <div className="flex items-center gap-2 text-slate-300">
           <Users size={16} />
           <span className="text-xs">1000+ клієнтів</span>
         </div>

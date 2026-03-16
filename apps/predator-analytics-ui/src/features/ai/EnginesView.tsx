@@ -11,7 +11,7 @@
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Brain, Globe, Network, Layers, Waves, ShieldCheck,

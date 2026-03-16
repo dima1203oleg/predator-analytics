@@ -8,7 +8,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { dashboardApi, marketApi, competitorsApi } from '@/services/api';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import {
     BarChart3,
     FileText,

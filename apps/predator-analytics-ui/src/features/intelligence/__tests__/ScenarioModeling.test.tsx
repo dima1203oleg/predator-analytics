@@ -26,7 +26,7 @@ vi.mock('lucide-react', async (importOriginal) => {
     });
 })
 
-vi.mock('echarts-for-react', () => ({
+vi.mock('@/components/ECharts', () => ({
     default: () => <div data-testid="echarts-mock">ECharts Chart</div>
 }))
 

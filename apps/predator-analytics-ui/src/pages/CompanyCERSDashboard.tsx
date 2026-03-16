@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import { Search, ShieldAlert, Activity, GitBranch, Target, Zap, Clock, AlertTriangle, CheckCircle2, TrendingDown, Award } from 'lucide-react';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 

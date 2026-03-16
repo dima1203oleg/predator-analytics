@@ -4,6 +4,8 @@ import { useToast } from "@/context/ToastContext";
 import { api } from "@/services/api";
 import { ViewHeader } from "@/components/ViewHeader";
 import { TacticalCard } from "@/components/TacticalCard";
+import { Switch } from "@/components/ui/switch";
+import { useAppStore } from "@/store/useAppStore";
 import {
   Settings as SettingsIcon, Server, Globe, Database, Save, Copy, Terminal
 } from "lucide-react";
@@ -140,6 +142,8 @@ const SettingsView: React.FC = () => {
   const [envConfig, setEnvConfig] = useState<EnvConfigState>(
     INITIAL_ENV_CONFIG
   );
+  const highVisibility = useAppStore((state) => state.highVisibility);
+  const setHighVisibility = useAppStore((state) => state.setHighVisibility);
   const toast = useToast();
 
   React.useEffect(() => {
@@ -295,6 +299,31 @@ const SettingsView: React.FC = () => {
                                 </button>
                             </div>
                         </div>
+
+                        <TacticalCard
+                            variant="glass"
+                            title="Видимість інтерфейсу"
+                            subtitle="Підсилений контраст, чіткі фокуси та краща читабельність"
+                        >
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div className="space-y-1">
+                                    <p className="text-sm font-semibold text-slate-100">Висока видимість</p>
+                                    <p className="text-[11px] text-slate-400">
+                                        Рекомендовано для яскравих екранів, проєкторів та тривалої роботи.
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-[10px] font-mono text-slate-400">
+                                        {highVisibility ? "УВІМКНЕНО" : "ВИМКНЕНО"}
+                                    </span>
+                                    <Switch
+                                        checked={highVisibility}
+                                        onCheckedChange={setHighVisibility}
+                                        aria-label="Висока видимість"
+                                    />
+                                </div>
+                            </div>
+                        </TacticalCard>
 
                         <FeatureTogglesGrid
                             currentEnv={currentEnv}
