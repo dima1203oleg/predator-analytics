@@ -12,10 +12,8 @@ import uuid
 
 import asyncpg
 import redis.asyncio as redis
-
 from services.shared.events import PredatorEvent
 from services.shared.logging_config import setup_logging
-
 
 setup_logging("audit-worker")
 logger = logging.getLogger(__name__)

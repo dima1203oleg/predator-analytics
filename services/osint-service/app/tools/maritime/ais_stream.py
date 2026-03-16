@@ -1,8 +1,6 @@
 """AIS Stream Tool — реальний час відстеження суден через AIS."""
-import asyncio
-import json
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
 
 import httpx

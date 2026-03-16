@@ -4,7 +4,7 @@
 Формат: XML, відкриті дані
 """
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from .base import BaseRegistryClient, RegistryResult, RegistryStatus
 
@@ -13,19 +13,19 @@ logger = logging.getLogger(__name__)
 
 class DrugPricesRegistryClient(BaseRegistryClient):
     """Реєстр оптово-відпускних цін на ліки."""
-    
+
     name = "drug_prices"
     description = "Реєстр оптово-відпускних цін на лікарські засоби"
     holder = "Міністерство охорони здоров'я України"
     data_format = "XML"
     status = RegistryStatus.ACTIVE
     update_frequency = "weekly"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук виробників/дистриб'юторів ліків."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         data = {
             "edrpou": edrpou,
             "is_pharma_company": True,
@@ -45,18 +45,18 @@ class DrugPricesRegistryClient(BaseRegistryClient):
             ],
             "total_drugs": 150,
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою препарату."""
         start_time = datetime.now(UTC)
-        
+
         drugs = [
             {
                 "name": name,
@@ -66,7 +66,7 @@ class DrugPricesRegistryClient(BaseRegistryClient):
                 "retail_price_max": 35.00,
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -77,19 +77,19 @@ class DrugPricesRegistryClient(BaseRegistryClient):
 
 class FoodOperatorsRegistryClient(BaseRegistryClient):
     """Реєстр потужностей операторів ринку харчових продуктів."""
-    
+
     name = "food_operators"
     description = "Реєстр потужностей операторів ринку харчових продуктів"
     holder = "Держпродспоживслужба"
     data_format = "XML"
     status = RegistryStatus.ACTIVE
     update_frequency = "weekly"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук операторів харчового ринку."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         data = {
             "edrpou": edrpou,
             "is_food_operator": True,
@@ -111,14 +111,14 @@ class FoodOperatorsRegistryClient(BaseRegistryClient):
             "export_approved": True,
             "export_countries": ["ЄС", "Молдова", "Грузія"],
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         start_time = datetime.now(UTC)
@@ -132,19 +132,19 @@ class FoodOperatorsRegistryClient(BaseRegistryClient):
 
 class StorageFacilitiesRegistryClient(BaseRegistryClient):
     """Реєстр місць зберігання підакцизних товарів."""
-    
+
     name = "storage_facilities"
     description = "Реєстр місць зберігання підакцизних товарів"
     holder = "ДПС України"
     data_format = "XML"
     status = RegistryStatus.ACTIVE
     update_frequency = "weekly"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук місць зберігання за ЄДРПОУ."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         facilities = [
             {
                 "registration_number": f"МЗ-{edrpou[:6]}-001",
@@ -155,14 +155,14 @@ class StorageFacilitiesRegistryClient(BaseRegistryClient):
                 "status": "active",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data={"edrpou": edrpou, "facilities": facilities, "total": len(facilities)},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         start_time = datetime.now(UTC)
@@ -176,19 +176,19 @@ class StorageFacilitiesRegistryClient(BaseRegistryClient):
 
 class EnvironmentalImpactRegistryClient(BaseRegistryClient):
     """Єдиний реєстр оцінки впливу на довкілля."""
-    
+
     name = "environmental_impact"
     description = "Єдиний реєстр оцінки впливу на довкілля (ОВД)"
     holder = "Міністерство захисту довкілля та природних ресурсів"
     data_format = "XML"
     status = RegistryStatus.ACTIVE
     update_frequency = "daily"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук ОВД за ЄДРПОУ замовника."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         assessments = [
             {
                 "registration_number": f"ОВД-{edrpou[:6]}-2024-001",
@@ -201,14 +201,14 @@ class EnvironmentalImpactRegistryClient(BaseRegistryClient):
                 "valid_until": "2029-03-15",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data={"edrpou": edrpou, "assessments": assessments, "total": len(assessments)},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою проєкту."""
         start_time = datetime.now(UTC)
@@ -222,19 +222,19 @@ class EnvironmentalImpactRegistryClient(BaseRegistryClient):
 
 class VeterinaryRegistryClient(BaseRegistryClient):
     """Реєстри ветеринарних та кормових препаратів."""
-    
+
     name = "veterinary_registry"
     description = "Реєстри ветеринарних препаратів та кормових добавок"
     holder = "Держпродспоживслужба"
     data_format = "XML"
     status = RegistryStatus.ACTIVE
     update_frequency = "weekly"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук виробників ветпрепаратів."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         data = {
             "edrpou": edrpou,
             "is_vet_producer": True,
@@ -254,14 +254,14 @@ class VeterinaryRegistryClient(BaseRegistryClient):
             ],
             "total_products": 25,
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою препарату."""
         start_time = datetime.now(UTC)
@@ -275,19 +275,19 @@ class VeterinaryRegistryClient(BaseRegistryClient):
 
 class PharmLicensesClient(BaseRegistryClient):
     """Реєстр ліцензій МОЗ (фармліцензії)."""
-    
+
     name = "pharm_licenses"
     description = "Реєстр ліцензій на провадження господарської діяльності з виробництва лікарських засобів"
     holder = "Міністерство охорони здоров'я України"
     data_format = "XML"
     status = RegistryStatus.ACTIVE
     update_frequency = "weekly"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук фармліцензій за ЄДРПОУ."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         licenses = [
             {
                 "number": f"ФЛ-{edrpou[:6]}-001",
@@ -300,14 +300,14 @@ class PharmLicensesClient(BaseRegistryClient):
                 "gmp_valid_until": "2026-06-15",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data={"edrpou": edrpou, "licenses": licenses, "total": len(licenses)},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         start_time = datetime.now(UTC)
@@ -321,16 +321,16 @@ class PharmLicensesClient(BaseRegistryClient):
 
 class DataGovUAClient(BaseRegistryClient):
     """Портал відкритих даних data.gov.ua."""
-    
+
     name = "data_gov_ua"
     description = "Єдиний державний веб-портал відкритих даних"
     holder = "Міністерство цифрової трансформації"
     data_format = "API/CKAN"
     status = RegistryStatus.ACTIVE
     update_frequency = "realtime"
-    
+
     API_URL = "https://data.gov.ua/api/3"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук наборів даних за ЄДРПОУ."""
         start_time = datetime.now(UTC)
@@ -340,11 +340,11 @@ class DataGovUAClient(BaseRegistryClient):
             data={"edrpou": edrpou, "datasets": [], "total": 0},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук наборів даних за ключовим словом."""
         start_time = datetime.now(UTC)
-        
+
         datasets = [
             {
                 "id": "dataset-001",
@@ -355,18 +355,18 @@ class DataGovUAClient(BaseRegistryClient):
                 "url": f"{self.API_URL}/package_show?id=dataset-001",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data={"query": name, "datasets": datasets, "total": len(datasets)},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_dataset(self, dataset_id: str) -> RegistryResult:
         """Отримати метадані набору даних."""
         start_time = datetime.now(UTC)
-        
+
         dataset = {
             "id": dataset_id,
             "title": "Єдиний державний реєстр юридичних осіб",
@@ -378,7 +378,7 @@ class DataGovUAClient(BaseRegistryClient):
             ],
             "tags": ["ЄДР", "юридичні особи", "ФОП"],
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,

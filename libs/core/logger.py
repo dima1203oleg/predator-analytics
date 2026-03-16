@@ -1,6 +1,5 @@
 import logging
 import sys
-from typing import Optional
 
 
 def setup_logger(name: str, level: str = "INFO", log_file: str | None = None) -> logging.Logger:
@@ -13,6 +12,7 @@ def setup_logger(name: str, level: str = "INFO", log_file: str | None = None) ->
 
     Returns:
         Configured logging.Logger instance
+
     """
     logger = logging.getLogger(name)
 

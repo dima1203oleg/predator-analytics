@@ -1,15 +1,15 @@
-"""
-Shadow Map Service — PREDATOR Analytics v55.2-SM-EXTENDED.
+"""Shadow Map Service — PREDATOR Analytics v55.2-SM-EXTENDED.
 Trinity Engine: Детекція прихованих мереж впливу та непрямого контролю.
 """
-from typing import List, Dict, Any
+from typing import Any
+
 from app.graph_db import graph_db
+
 
 class ShadowMapService:
     @staticmethod
-    async def get_shadow_connections(ueid: str, tenant_id: str, max_depth: int = 3) -> List[Dict[str, Any]]:
-        """
-        Виявлення тіньових зв'язків v55.2.
+    async def get_shadow_connections(ueid: str, tenant_id: str, max_depth: int = 3) -> list[dict[str, Any]]:
+        """Виявлення тіньових зв'язків v55.2.
         Аналізує спільні активи, адреси та зв'язки через офшори.
         """
         query = """
@@ -25,15 +25,14 @@ class ShadowMapService:
         LIMIT 100
         """
         return await graph_db.run_query(query, {
-            "ueid": ueid, 
-            "tenant_id": tenant_id, 
+            "ueid": ueid,
+            "tenant_id": tenant_id,
             "depth": max_depth
         })
 
     @staticmethod
-    async def find_hidden_cluster(ueid: str, tenant_id: str) -> Dict[str, Any]:
-        """
-        Знаходження повної тіньової екосистеми сутності.
+    async def find_hidden_cluster(ueid: str, tenant_id: str) -> dict[str, Any]:
+        """Знаходження повної тіньової екосистеми сутності.
         Використовує APOC для глибокого обходу графа.
         """
         query = """

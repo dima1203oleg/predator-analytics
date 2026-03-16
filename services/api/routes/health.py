@@ -7,7 +7,6 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 import httpx
 
-
 router = APIRouter()
 
 

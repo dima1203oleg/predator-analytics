@@ -2,13 +2,12 @@
 
 Тестування валідації, дедуплікації та обробки файлів.
 """
+
 import pytest
-from datetime import UTC, datetime
 
 from app.validators.declaration import (
     DeclarationValidator,
     Severity,
-    ValidationResult,
 )
 
 

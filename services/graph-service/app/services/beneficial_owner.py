@@ -1,14 +1,15 @@
-"""
-Ultimate Beneficial Owner (UBO) Service — PREDATOR Analytics v55.1 Ironclad.
+"""Ultimate Beneficial Owner (UBO) Service — PREDATOR Analytics v55.1 Ironclad.
 
 Calculates exact ownership shares across complex multilayer nested structures.
 """
-from typing import List, Dict, Any
+from typing import Any
+
 from app.graph_db import graph_db
+
 
 class BeneficialOwnerService:
     @staticmethod
-    async def get_direct_owners(ueid: str, tenant_id: str) -> List[Dict[str, Any]]:
+    async def get_direct_owners(ueid: str, tenant_id: str) -> list[dict[str, Any]]:
         """Прямі власники компанії."""
         query = """
         MATCH (c:Company {ueid: $ueid, tenant_id: $tenant_id})<-[r:OWNER]-(owner)
@@ -17,9 +18,8 @@ class BeneficialOwnerService:
         return await graph_db.run_query(query, {"ueid": ueid, "tenant_id": tenant_id})
 
     @staticmethod
-    async def get_ultimate_beneficiaries(ueid: str, tenant_id: str) -> List[Dict[str, Any]]:
-        """
-        Кінцеві бенефіціари (тільки фізичні особи) з рекурсивним розрахунком 
+    async def get_ultimate_beneficiaries(ueid: str, tenant_id: str) -> list[dict[str, Any]]:
+        """Кінцеві бенефіціари (тільки фізичні особи) з рекурсивним розрахунком
         відсотка впливу через множення долей.
         """
         # Тимчасово: просте множення для лінійних зв'язків

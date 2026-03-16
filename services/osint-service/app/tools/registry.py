@@ -2,62 +2,62 @@
 from functools import lru_cache
 from typing import Any
 
-from .base import BaseTool
 from .amass import AmassTool
-from .sherlock import SherlockTool
-from .harvester import TheHarvesterTool
-from .exiftool import ExifToolTool
-from .photon import PhotonTool
-from .subfinder import SubfinderTool
-from .maigret import MaigretTool
-
-# Maritime Tools
-from .maritime.ais_stream import AISStreamTool
-from .maritime.vessel_tracker import VesselTrackerTool
-from .maritime.container_tracker import ContainerTrackerTool
-from .maritime.port_intel import PortIntelTool
-
-# Trade Intelligence Tools
-from .trade.sanctions_checker import SanctionsCheckerTool
-from .trade.trade_flow_analyzer import TradeFlowAnalyzerTool
-from .trade.offshore_detector import OffshoreDetectorTool
-from .trade.customs_intel import CustomsIntelTool
-
-# Financial Intelligence Tools
-from .financial.aleph_client import AlephTool
-from .financial.open_ownership import OpenOwnershipTool
-from .financial.follow_the_money import FollowTheMoneyTool
-from .financial.open_corporates import OpenCorporatesTool
-from .financial.leak_search import LeakSearchTool
-
-# Ukraine Registry Tools
-from .ukraine.edr_client import EDRTool
-from .ukraine.nask_client import NASKTool
-from .ukraine.court_registry import CourtRegistryTool
-from .ukraine.customs_ua import CustomsUATool
-
-# Document Analysis Tools
-from .documents.tika_client import TikaTool
-from .documents.lexnlp_client import LexNLPTool
-from .documents.openrefine_client import OpenRefineTool
-
-# Social Media Tools
-from .social.twint_client import TwintTool
-from .social.instaloader_client import InstaloaderTool
-from .social.social_analyzer import SocialAnalyzerTool
-
-# OSINT Frameworks
-from .frameworks.spiderfoot_client import SpiderFootTool
-from .frameworks.recon_ng_client import ReconNGTool
-from .frameworks.osmedeus_client import OsmedeusTool
+from .base import BaseTool
 
 # Dark Web Tools
 from .darkweb.onionscan_client import OnionScanTool
 from .darkweb.torbot_client import TorBotTool
+from .documents.lexnlp_client import LexNLPTool
+from .documents.openrefine_client import OpenRefineTool
+
+# Document Analysis Tools
+from .documents.tika_client import TikaTool
+from .exiftool import ExifToolTool
+
+# Financial Intelligence Tools
+from .financial.aleph_client import AlephTool
+from .financial.follow_the_money import FollowTheMoneyTool
+from .financial.leak_search import LeakSearchTool
+from .financial.open_corporates import OpenCorporatesTool
+from .financial.open_ownership import OpenOwnershipTool
+from .frameworks.osmedeus_client import OsmedeusTool
+from .frameworks.recon_ng_client import ReconNGTool
+
+# OSINT Frameworks
+from .frameworks.spiderfoot_client import SpiderFootTool
+from .geolocation.creepy_client import CreepyTool
 
 # Geolocation Tools
 from .geolocation.geoip_client import GeoIPTool
-from .geolocation.creepy_client import CreepyTool
+from .harvester import TheHarvesterTool
+from .maigret import MaigretTool
+
+# Maritime Tools
+from .maritime.ais_stream import AISStreamTool
+from .maritime.container_tracker import ContainerTrackerTool
+from .maritime.port_intel import PortIntelTool
+from .maritime.vessel_tracker import VesselTrackerTool
+from .photon import PhotonTool
+from .sherlock import SherlockTool
+from .social.instaloader_client import InstaloaderTool
+from .social.social_analyzer import SocialAnalyzerTool
+
+# Social Media Tools
+from .social.twint_client import TwintTool
+from .subfinder import SubfinderTool
+from .trade.customs_intel import CustomsIntelTool
+from .trade.offshore_detector import OffshoreDetectorTool
+
+# Trade Intelligence Tools
+from .trade.sanctions_checker import SanctionsCheckerTool
+from .trade.trade_flow_analyzer import TradeFlowAnalyzerTool
+from .ukraine.court_registry import CourtRegistryTool
+from .ukraine.customs_ua import CustomsUATool
+
+# Ukraine Registry Tools
+from .ukraine.edr_client import EDRTool
+from .ukraine.nask_client import NASKTool
 
 
 class ToolRegistry:

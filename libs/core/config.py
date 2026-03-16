@@ -3,9 +3,7 @@ Shared settings for all Predator services.
 """
 
 from functools import lru_cache
-import json
 import os
-from typing import Any, Dict, List, Optional, Union
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 

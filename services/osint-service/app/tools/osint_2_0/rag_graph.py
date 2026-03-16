@@ -6,7 +6,7 @@
 """
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ class RAGGraphEngine:
     - TypeDB (TypeQL)
     - LangChain інтеграція
     """
-    
+
     def __init__(
         self,
         llm_provider: str = "claude",
@@ -46,7 +46,7 @@ class RAGGraphEngine:
     ):
         self.llm_provider = llm_provider
         self.graph_db = graph_db
-    
+
     async def query(
         self,
         question: str,
@@ -54,19 +54,19 @@ class RAGGraphEngine:
     ) -> RAGResult:
         """Виконати RAG запит."""
         start_time = datetime.now(UTC)
-        
+
         # 1. Аналіз питання та генерація запиту до графа
         graph_query = await self._generate_graph_query(question)
-        
+
         # 2. Виконання запиту до графової БД
         graph_results = await self._execute_graph_query(graph_query)
-        
+
         # 3. Формування контексту для LLM
         llm_context = self._build_llm_context(question, graph_results, context)
-        
+
         # 4. Генерація відповіді LLM
         answer = await self._generate_answer(llm_context)
-        
+
         return RAGResult(
             success=True,
             query=question,
@@ -80,11 +80,11 @@ class RAGGraphEngine:
             confidence=0.85,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def _generate_graph_query(self, question: str) -> str:
         """Генерація запиту до графової БД з природної мови."""
         # Симуляція — в реальності використовується LLM
-        
+
         # Приклади перетворень:
         query_templates = {
             "пов'язані компанії": """
@@ -109,10 +109,10 @@ class RAGGraphEngine:
                 ORDER BY t.date DESC
             """,
         }
-        
+
         # Визначення типу запиту
         question_lower = question.lower()
-        
+
         if "пов'язан" in question_lower:
             return query_templates["пов'язані компанії"]
         elif "борг" in question_lower:
@@ -123,7 +123,7 @@ class RAGGraphEngine:
             return query_templates["тендери"]
         else:
             return f"// Generated query for: {question}\nMATCH (n) WHERE n.name CONTAINS $search_term RETURN n LIMIT 10"
-    
+
     async def _execute_graph_query(self, query: str) -> dict[str, Any]:
         """Виконання запиту до графової БД."""
         # Симуляція результатів
@@ -144,7 +144,7 @@ class RAGGraphEngine:
                 {"registry": "Prozorro", "date": "2024-06-10"},
             ],
         }
-    
+
     def _build_llm_context(
         self,
         question: str,
@@ -157,30 +157,30 @@ class RAGGraphEngine:
             "",
             "Дані з Knowledge Graph:",
         ]
-        
+
         # Додаємо вузли
         for node in graph_results.get("nodes", []):
             context_parts.append(f"- {node.get('type', 'Entity')}: {node.get('name', 'Unknown')}")
-        
+
         # Додаємо зв'язки
         context_parts.append("")
         context_parts.append("Зв'язки:")
         for rel in graph_results.get("relations", []):
             context_parts.append(f"- {rel.get('source')} --[{rel.get('type')}]--> {rel.get('target')}")
-        
+
         # Додаємо джерела
         context_parts.append("")
         context_parts.append("Джерела даних:")
         for source in graph_results.get("sources", []):
             context_parts.append(f"- {source.get('registry')}: {source.get('date')}")
-        
+
         if additional_context:
             context_parts.append("")
             context_parts.append("Додатковий контекст:")
             context_parts.append(str(additional_context))
-        
+
         return "\n".join(context_parts)
-    
+
     async def _generate_answer(self, context: str) -> str:
         """Генерація відповіді LLM."""
         # Симуляція відповіді LLM
@@ -209,11 +209,11 @@ class PromptGuidedExplorer:
     - "Хто є кінцевим бенефіціаром ТОВ «Компанія»?"
     - "Покажи ланцюг володіння до офшору"
     """
-    
+
     def __init__(self):
         self.rag_engine = RAGGraphEngine()
         self.query_history: list[dict] = []
-    
+
     async def explore(
         self,
         question: str,
@@ -221,7 +221,7 @@ class PromptGuidedExplorer:
     ) -> RAGResult:
         """Дослідження графа за питанням."""
         start_time = datetime.now(UTC)
-        
+
         # Якщо це follow-up, додаємо контекст попередніх запитів
         context = None
         if follow_up and self.query_history:
@@ -229,24 +229,24 @@ class PromptGuidedExplorer:
                 "previous_queries": [q["question"] for q in self.query_history[-3:]],
                 "previous_entities": self._extract_entities_from_history(),
             }
-        
+
         # Виконуємо RAG запит
         result = await self.rag_engine.query(question, context)
-        
+
         # Зберігаємо в історію
         self.query_history.append({
             "question": question,
             "timestamp": datetime.now(UTC).isoformat(),
             "entities_found": result.graph_context.get("nodes_retrieved", 0),
         })
-        
+
         return result
-    
+
     def _extract_entities_from_history(self) -> list[str]:
         """Витягування сутностей з історії запитів."""
         # Спрощена реалізація
         return []
-    
+
     async def suggest_queries(self, current_context: dict[str, Any]) -> list[str]:
         """Пропозиція наступних запитів на основі контексту."""
         suggestions = [
@@ -256,9 +256,9 @@ class PromptGuidedExplorer:
             "Перевір наявність боргів",
             "Покажи історію змін власників",
         ]
-        
+
         return suggestions
-    
+
     async def explain_connection(
         self,
         entity1: str,
@@ -267,17 +267,17 @@ class PromptGuidedExplorer:
         """Пояснення зв'язку між двома сутностями."""
         question = f"Поясни зв'язок між {entity1} та {entity2}"
         return await self.explore(question)
-    
+
     async def find_risk_factors(self, entity: str) -> RAGResult:
         """Пошук факторів ризику для сутності."""
         question = f"Знайди всі фактори ризику для {entity}: борги, судові справи, санкції, пов'язані особи"
         return await self.explore(question)
-    
+
     async def trace_ownership(self, company: str) -> RAGResult:
         """Відстеження ланцюга володіння."""
         question = f"Покажи повний ланцюг володіння для {company} до кінцевого бенефіціара"
         return await self.explore(question)
-    
+
     async def analyze_network(
         self,
         center_entity: str,
@@ -285,9 +285,9 @@ class PromptGuidedExplorer:
     ) -> RAGResult:
         """Аналіз мережі зв'язків."""
         question = f"Проаналізуй мережу зв'язків {center_entity} на глибину {depth} рівнів"
-        
+
         result = await self.explore(question)
-        
+
         # Додаємо мережевий аналіз
         result.graph_context["network_analysis"] = {
             "center_entity": center_entity,
@@ -298,7 +298,7 @@ class PromptGuidedExplorer:
             "key_connectors": [],  # Ключові з'єднувачі (hub nodes)
             "anomalies": [],  # Аномальні патерни
         }
-        
+
         return result
 
 
@@ -308,10 +308,10 @@ class TypeDBMCPClient:
     Model Context Protocol для роботи з TypeDB.
     Дозволяє LLM безпосередньо взаємодіяти з графовою БД.
     """
-    
+
     def __init__(self, mcp_server_url: str = "http://localhost:8080"):
         self.mcp_server_url = mcp_server_url
-    
+
     async def define_schema(self, schema: str) -> dict[str, Any]:
         """Визначення схеми TypeDB."""
         # Симуляція
@@ -320,14 +320,14 @@ class TypeDBMCPClient:
             "schema_defined": True,
             "types_created": ["company", "person", "owns", "controls"],
         }
-    
+
     async def insert_data(self, data: list[dict]) -> dict[str, Any]:
         """Вставка даних у TypeDB."""
         return {
             "success": True,
             "inserted_count": len(data),
         }
-    
+
     async def query(self, typeql: str) -> dict[str, Any]:
         """Виконання TypeQL запиту."""
         return {
@@ -335,16 +335,16 @@ class TypeDBMCPClient:
             "results": [],
             "execution_time_ms": 50,
         }
-    
+
     async def natural_language_query(self, question: str) -> RAGResult:
         """Запит природною мовою через MCP."""
         # MCP дозволяє LLM генерувати TypeQL запити
-        
+
         # 1. LLM аналізує питання
         # 2. Генерує TypeQL
         # 3. Виконує запит
         # 4. Форматує відповідь
-        
+
         return RAGResult(
             success=True,
             query=question,

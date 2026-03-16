@@ -8,11 +8,9 @@ from typing import Any
 import uuid
 
 from fastapi import BackgroundTasks, FastAPI
-
 from kubernetes import client, config
 from services.shared.events import PredatorEvent
 from services.shared.logging_config import setup_logging
-
 
 setup_logging("training-controller")
 logger = logging.getLogger(__name__)

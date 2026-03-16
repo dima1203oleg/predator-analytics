@@ -9,73 +9,73 @@
 - Закупівлі (Prozorro, E-data)
 - Ліцензії та дозволи (НКРЕКП, НБУ, МОЗ)
 """
-from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel, Field
 from typing import Any
 
+from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel, Field
+
 from app.tools.ukraine_registries import (
-    # Базові
-    EDRFullClient,
-    PDVRegistryClient,
-    SingleTaxRegistryClient,
-    # ДПС
-    LargeTaxpayersClient,
-    InsurersRegistryClient,
     AlcoholLicensesClient,
-    FuelLicensesClient,
-    # Фінансові
-    StateDebtRegistryClient,
-    StateGuaranteesClient,
-    SNIDAClient,
-    # Політичні
-    PoliticalPartiesClient,
-    LustrationRegistryClient,
-    # Фінансовий моніторинг
-    DebtorsRegistryClient,
-    EnforcementRegistryClient,
+    AlienationBanRegistryClient,
+    BiomethaneRegistryClient,
+    CadastreClient,
+    CarriersLicensesClient,
     CorruptionersRegistryClient,
+    CourtCasesClient,
     # Судова аналітика
     CourtDecisionsClient,
-    CourtCasesClient,
-    # Майно
-    RealEstateRegistryClient,
-    CadastreClient,
-    VehiclesRegistryClient,
-    MortgageRegistryClient,
-    AlienationBanRegistryClient,
-    ELandClient,
-    # Транспорт
-    MTSBUClient,
-    CarriersLicensesClient,
-    DriverCabinetClient,
     # Митниця
     CustomsBrokersClient,
     CustomsWarehousesClient,
-    ExciseRegistryClient,
-    # Закупівлі
-    ProzorroClient,
-    EdataClient,
-    # Ліцензії
-    EnergyLicensesClient,
-    NBULicensesClient,
-    # Професійні
-    LawyersRegistryClient,
-    NotariesRegistryClient,
+    DataGovUAClient,
+    # Фінансовий моніторинг
+    DebtorsRegistryClient,
     DoctorsRegistryClient,
-    ForensicExpertsClient,
-    # Енергетичні
-    NaturalMonopoliesClient,
-    GasMarketOperatorsClient,
-    BiomethaneRegistryClient,
-    OilGasWellsClient,
+    DriverCabinetClient,
     # Спеціалізовані
     DrugPricesRegistryClient,
-    FoodOperatorsRegistryClient,
-    StorageFacilitiesRegistryClient,
+    EdataClient,
+    # Базові
+    EDRFullClient,
+    ELandClient,
+    # Ліцензії
+    EnergyLicensesClient,
+    EnforcementRegistryClient,
     EnvironmentalImpactRegistryClient,
-    VeterinaryRegistryClient,
+    ExciseRegistryClient,
+    FoodOperatorsRegistryClient,
+    ForensicExpertsClient,
+    FuelLicensesClient,
+    GasMarketOperatorsClient,
+    InsurersRegistryClient,
+    # ДПС
+    LargeTaxpayersClient,
+    # Професійні
+    LawyersRegistryClient,
+    LustrationRegistryClient,
+    MortgageRegistryClient,
+    # Транспорт
+    MTSBUClient,
+    # Енергетичні
+    NaturalMonopoliesClient,
+    NBULicensesClient,
+    NotariesRegistryClient,
+    OilGasWellsClient,
+    PDVRegistryClient,
     PharmLicensesClient,
-    DataGovUAClient,
+    # Політичні
+    PoliticalPartiesClient,
+    # Закупівлі
+    ProzorroClient,
+    # Майно
+    RealEstateRegistryClient,
+    SingleTaxRegistryClient,
+    SNIDAClient,
+    # Фінансові
+    StateGuaranteesClient,
+    StorageFacilitiesRegistryClient,
+    VehiclesRegistryClient,
+    VeterinaryRegistryClient,
 )
 
 router = APIRouter(prefix="/ukraine-registries", tags=["Українські державні реєстри"])
@@ -129,10 +129,10 @@ async def search_edr(request: CompanySearchRequest):
     """
     client = EDRFullClient()
     result = await client.search_by_edrpou(request.edrpou)
-    
+
     if not result.success:
         raise HTTPException(status_code=400, detail=result.errors)
-    
+
     return result.data
 
 
@@ -697,22 +697,22 @@ async def full_investigation(request: FullInvestigationRequest):
     results: dict[str, Any] = {"edrpou": edrpou}
     risk_score = 0.0
     risk_factors = []
-    
+
     # 1. Базова інформація (ЄДР)
     edr_client = EDRFullClient()
     edr_result = await edr_client.search_by_edrpou(edrpou)
     results["company"] = edr_result.data
-    
+
     # 2. Податковий статус
     pdv_client = PDVRegistryClient()
     pdv_result = await pdv_client.search_by_edrpou(edrpou)
     results["pdv"] = pdv_result.data
-    
+
     # 3. Боржники
     debtors_client = DebtorsRegistryClient()
     debtors_result = await debtors_client.search_by_edrpou(edrpou)
     results["debtors"] = debtors_result.data
-    
+
     if debtors_result.data.get("is_debtor"):
         risk_score += 30
         risk_factors.append({
@@ -720,12 +720,12 @@ async def full_investigation(request: FullInvestigationRequest):
             "severity": "high",
             "description": f"Наявні борги: {debtors_result.data.get('total_debt', 0)} грн",
         })
-    
+
     # 4. Виконавчі провадження
     enforcement_client = EnforcementRegistryClient()
     enforcement_result = await enforcement_client.search_by_edrpou(edrpou)
     results["enforcement"] = enforcement_result.data
-    
+
     if enforcement_result.data.get("has_proceedings"):
         risk_score += 25
         risk_factors.append({
@@ -733,13 +733,13 @@ async def full_investigation(request: FullInvestigationRequest):
             "severity": "high",
             "description": f"Виконавчі провадження: {enforcement_result.data.get('active_count', 0)}",
         })
-    
+
     # 5. Судові справи (опціонально)
     if request.include_court:
         court_client = CourtDecisionsClient()
         court_result = await court_client.search_by_edrpou(edrpou)
         results["court"] = court_result.data
-        
+
         if court_result.data.get("as_defendant", 0) > 5:
             risk_score += 15
             risk_factors.append({
@@ -747,29 +747,29 @@ async def full_investigation(request: FullInvestigationRequest):
                 "severity": "medium",
                 "description": f"Відповідач у {court_result.data['as_defendant']} справах",
             })
-    
+
     # 6. Майно (опціонально)
     if request.include_assets:
         real_estate_client = RealEstateRegistryClient()
         real_estate_result = await real_estate_client.search_by_edrpou(edrpou)
         results["real_estate"] = real_estate_result.data
-        
+
         vehicles_client = VehiclesRegistryClient()
         vehicles_result = await vehicles_client.search_by_edrpou(edrpou)
         results["vehicles"] = vehicles_result.data
-    
+
     # 7. Закупівлі (опціонально)
     if request.include_tenders:
         prozorro_client = ProzorroClient()
         prozorro_result = await prozorro_client.search_by_edrpou(edrpou)
         results["prozorro"] = prozorro_result.data
-    
+
     # 8. Транзакції E-data (опціонально)
     if request.include_transactions:
         edata_client = EdataClient()
         edata_result = await edata_client.search_by_edrpou(edrpou)
         results["edata"] = edata_result.data
-    
+
     # Визначення рівня ризику
     risk_level = (
         "critical" if risk_score >= 70 else
@@ -777,7 +777,7 @@ async def full_investigation(request: FullInvestigationRequest):
         "medium" if risk_score >= 30 else
         "low"
     )
-    
+
     return {
         "edrpou": edrpou,
         "company_name": results.get("company", {}).get("name"),

@@ -1,9 +1,7 @@
 """GeoIP Tool — геолокація за IP адресою."""
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
-
-import httpx
 
 from app.tools.base import BaseTool, ToolResult, ToolStatus
 

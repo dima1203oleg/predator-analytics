@@ -1,11 +1,11 @@
 """File OSINT Router — аналіз метаданих файлів."""
-import uuid
-import tempfile
 import os
+import tempfile
+import uuid
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException, UploadFile, File
+from fastapi import APIRouter, File, HTTPException, UploadFile
 
-from app.models import FileAnalysisResult, ScanProgress
+from app.models import FileAnalysisResult
 from app.services.scan_service import ScanService
 
 router = APIRouter(prefix="/file", tags=["File OSINT"])

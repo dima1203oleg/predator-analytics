@@ -1,5 +1,5 @@
 """Document Analysis Router — аналіз документів, витягування тексту та сутностей."""
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from app.tools import get_tool_registry

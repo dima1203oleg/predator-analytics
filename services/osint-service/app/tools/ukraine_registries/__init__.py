@@ -18,96 +18,96 @@
 """
 
 # Базові реєстри
-from .edr_full import EDRFullClient
-from .pdv_registry import PDVRegistryClient
-from .single_tax import SingleTaxRegistryClient
-
-# Реєстри ДПС
-from .dps_registries import (
-    LargeTaxpayersClient,
-    InsurersRegistryClient,
-    AlcoholLicensesClient,
-    FuelLicensesClient,
-)
-
-# Фінансові реєстри
-from .finance_registries import (
-    StateDebtRegistryClient,
-    StateGuaranteesClient,
-    SNIDAClient,
-)
-
-# Політичні реєстри
-from .political_registries import (
-    PoliticalPartiesClient,
-    LustrationRegistryClient,
-)
-
-# Фінансовий моніторинг
-from .debtors import DebtorsRegistryClient
-from .enforcement import EnforcementRegistryClient
+from .cadastre import CadastreClient
 from .corruptioners import CorruptionersRegistryClient
+from .court_cases import CourtCasesClient
 
 # Судова аналітика
 from .court_decisions import CourtDecisionsClient
-from .court_cases import CourtCasesClient
-
-# Майно та активи
-from .real_estate import RealEstateRegistryClient
-from .cadastre import CadastreClient
-from .vehicles import VehiclesRegistryClient
-from .property_registries import (
-    MortgageRegistryClient,
-    AlienationBanRegistryClient,
-    ELandClient,
-)
-
-# Транспортні реєстри
-from .transport_registries import (
-    MTSBUClient,
-    CarriersLicensesClient,
-    DriverCabinetClient,
-)
 
 # Митниця та ЗЕД
 from .customs_brokers import CustomsBrokersClient
 from .customs_warehouses import CustomsWarehousesClient
+
+# Фінансовий моніторинг
+from .debtors import DebtorsRegistryClient
+
+# Реєстри ДПС
+from .dps_registries import (
+    AlcoholLicensesClient,
+    FuelLicensesClient,
+    InsurersRegistryClient,
+    LargeTaxpayersClient,
+)
+from .edata import EdataClient
+from .edr_full import EDRFullClient
+
+# Енергетичні реєстри
+from .energy_registries import (
+    BiomethaneRegistryClient,
+    GasMarketOperatorsClient,
+    NaturalMonopoliesClient,
+    OilGasWellsClient,
+)
+from .enforcement import EnforcementRegistryClient
 from .excise import ExciseRegistryClient
 
-# Закупівлі
-from .prozorro import ProzorroClient
-from .edata import EdataClient
+# Фінансові реєстри
+from .finance_registries import (
+    SNIDAClient,
+    StateDebtRegistryClient,
+    StateGuaranteesClient,
+)
 
 # Ліцензії
 from .licenses_energy import EnergyLicensesClient
 from .licenses_nbu import NBULicensesClient
+from .pdv_registry import PDVRegistryClient
+
+# Політичні реєстри
+from .political_registries import (
+    LustrationRegistryClient,
+    PoliticalPartiesClient,
+)
 
 # Професійні реєстри
 from .professional_registries import (
-    LawyersRegistryClient,
-    NotariesRegistryClient,
     DoctorsRegistryClient,
     ForensicExpertsClient,
+    LawyersRegistryClient,
+    NotariesRegistryClient,
+)
+from .property_registries import (
+    AlienationBanRegistryClient,
+    ELandClient,
+    MortgageRegistryClient,
 )
 
-# Енергетичні реєстри
-from .energy_registries import (
-    NaturalMonopoliesClient,
-    GasMarketOperatorsClient,
-    BiomethaneRegistryClient,
-    OilGasWellsClient,
-)
+# Закупівлі
+from .prozorro import ProzorroClient
+
+# Майно та активи
+from .real_estate import RealEstateRegistryClient
+from .single_tax import SingleTaxRegistryClient
 
 # Спеціалізовані реєстри
 from .specialized_registries import (
-    DrugPricesRegistryClient,
-    FoodOperatorsRegistryClient,
-    StorageFacilitiesRegistryClient,
-    EnvironmentalImpactRegistryClient,
-    VeterinaryRegistryClient,
-    PharmLicensesClient,
     DataGovUAClient,
+    DrugPricesRegistryClient,
+    EnvironmentalImpactRegistryClient,
+    FoodOperatorsRegistryClient,
+    PharmLicensesClient,
+    StorageFacilitiesRegistryClient,
+    VeterinaryRegistryClient,
 )
+
+# Транспортні реєстри
+from .transport_registries import (
+    CarriersLicensesClient,
+    DriverCabinetClient,
+    MTSBUClient,
+)
+from .vehicles import VehiclesRegistryClient
 
 __all__ = [
     # Базові

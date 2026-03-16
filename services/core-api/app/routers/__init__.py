@@ -38,6 +38,7 @@ from .ingestion import router as ingestion_router
 from .intelligence import router as intelligence_router
 from .maritime import router as maritime_router
 from .optimizer import router as optimizer_router
+from .osint_ua import router as osint_ua_router
 from .persons import router as persons_router
 from .public_api import router as public_api_router
 from .registries import router as registries_router
@@ -45,7 +46,6 @@ from .risk import router as risk_router
 from .search import router as search_router
 from .som import router as som_router
 from .warroom import router as warroom_router
-from .osint_ua import router as osint_ua_router
 
 __all__ = [
     "alerts_router",
@@ -61,6 +61,7 @@ __all__ = [
     "intelligence_router",
     "maritime_router",
     "optimizer_router",
+    "osint_ua_router",
     "persons_router",
     "public_api_router",
     "registries_router",
@@ -68,5 +69,4 @@ __all__ = [
     "search_router",
     "som_router",
     "warroom_router",
-    "osint_ua_router",
 ]

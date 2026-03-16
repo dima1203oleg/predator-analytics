@@ -4,7 +4,7 @@
 Формат: API, JSON
 """
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from .base import BaseRegistryClient, RegistryResult, RegistryStatus
 
@@ -13,19 +13,19 @@ logger = logging.getLogger(__name__)
 
 class NBULicensesClient(BaseRegistryClient):
     """Клієнт для Реєстру ліцензій НБУ."""
-    
+
     name = "nbu_licenses"
     description = "Реєстр ліцензій НБУ (банки, фінкомпанії)"
     holder = "Національний банк України"
     data_format = "API/JSON"
     status = RegistryStatus.ACTIVE
     update_frequency = "daily"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук ліцензій за ЄДРПОУ."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         licenses = [
             {
                 "number": f"БЛ-{edrpou[:4]}",
@@ -42,14 +42,14 @@ class NBULicensesClient(BaseRegistryClient):
                 ],
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data={"edrpou": edrpou, "licenses": licenses, "total": len(licenses)},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         start_time = datetime.now(UTC)
@@ -59,12 +59,12 @@ class NBULicensesClient(BaseRegistryClient):
             data={"query": name, "licenses": [], "total": 0},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_bank_info(self, edrpou: str) -> RegistryResult:
         """Отримати інформацію про банк."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         bank = {
             "edrpou": edrpou,
             "name": f"ПАТ «Банк {edrpou}»",
@@ -80,7 +80,7 @@ class NBULicensesClient(BaseRegistryClient):
             "capital": 500000000.0,
             "assets": 15000000000.0,
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,

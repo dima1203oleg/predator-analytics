@@ -7,9 +7,9 @@
 """
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, UTC
-from typing import Any
+from datetime import UTC, datetime
 from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -45,14 +45,14 @@ class OpenCorporatesClient:
     
     API: https://api.opencorporates.com
     """
-    
+
     name = "opencorporates"
     description = "База даних 200+ млн компаній світу"
     API_URL = "https://api.opencorporates.com/v0.4"
-    
+
     def __init__(self, api_key: str | None = None):
         self.api_key = api_key
-    
+
     async def search_company(
         self,
         name: str,
@@ -61,7 +61,7 @@ class OpenCorporatesClient:
     ) -> InternationalResult:
         """Пошук компанії за назвою."""
         start_time = datetime.now(UTC)
-        
+
         # Симуляція результатів
         companies = [
             {
@@ -85,10 +85,10 @@ class OpenCorporatesClient:
                     {"title": "Accounts", "date": "2024-01-15"},
                 ],
                 "branch_status": None,
-                "opencorporates_url": f"https://opencorporates.com/companies/gb/12345678",
+                "opencorporates_url": "https://opencorporates.com/companies/gb/12345678",
             },
         ]
-        
+
         return InternationalResult(
             source=self.name,
             success=True,
@@ -100,7 +100,7 @@ class OpenCorporatesClient:
             },
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_company(
         self,
         jurisdiction: str,
@@ -108,7 +108,7 @@ class OpenCorporatesClient:
     ) -> InternationalResult:
         """Отримати детальну інформацію про компанію."""
         start_time = datetime.now(UTC)
-        
+
         company = {
             "company_number": company_number,
             "name": "Example Company Ltd",
@@ -149,18 +149,18 @@ class OpenCorporatesClient:
                 "retrieved_at": datetime.now(UTC).isoformat(),
             },
         }
-        
+
         return InternationalResult(
             source=self.name,
             success=True,
             data=company,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_officer(self, name: str) -> InternationalResult:
         """Пошук директора/посадової особи."""
         start_time = datetime.now(UTC)
-        
+
         officers = [
             {
                 "name": name,
@@ -186,7 +186,7 @@ class OpenCorporatesClient:
                 "active_positions": 2,
             },
         ]
-        
+
         return InternationalResult(
             source=self.name,
             success=True,
@@ -197,7 +197,7 @@ class OpenCorporatesClient:
             },
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_corporate_network(
         self,
         company_number: str,
@@ -206,7 +206,7 @@ class OpenCorporatesClient:
     ) -> InternationalResult:
         """Отримати корпоративну мережу (материнські/дочірні компанії)."""
         start_time = datetime.now(UTC)
-        
+
         network = {
             "root_company": {
                 "name": "Example Company Ltd",
@@ -243,7 +243,7 @@ class OpenCorporatesClient:
                 },
             ],
         }
-        
+
         return InternationalResult(
             source=self.name,
             success=True,
@@ -262,18 +262,18 @@ class CrunchBaseClient:
     - Ключові особи
     - Придбання та злиття
     """
-    
+
     name = "crunchbase"
     description = "База даних стартапів та інвестицій"
     API_URL = "https://api.crunchbase.com/api/v4"
-    
+
     def __init__(self, api_key: str | None = None):
         self.api_key = api_key
-    
+
     async def search_organization(self, name: str) -> InternationalResult:
         """Пошук організації."""
         start_time = datetime.now(UTC)
-        
+
         organizations = [
             {
                 "uuid": "org_123456",
@@ -295,7 +295,7 @@ class CrunchBaseClient:
                 "linkedin": f"https://linkedin.com/company/{name.lower().replace(' ', '-')}",
             },
         ]
-        
+
         return InternationalResult(
             source=self.name,
             success=True,
@@ -306,11 +306,11 @@ class CrunchBaseClient:
             },
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_funding_rounds(self, organization_uuid: str) -> InternationalResult:
         """Отримати раунди фінансування."""
         start_time = datetime.now(UTC)
-        
+
         funding_rounds = [
             {
                 "uuid": "fr_001",
@@ -343,7 +343,7 @@ class CrunchBaseClient:
                 "num_investors": 8,
             },
         ]
-        
+
         return InternationalResult(
             source=self.name,
             success=True,
@@ -354,11 +354,11 @@ class CrunchBaseClient:
             },
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_investors(self, organization_uuid: str) -> InternationalResult:
         """Отримати інвесторів компанії."""
         start_time = datetime.now(UTC)
-        
+
         investors = [
             {
                 "uuid": "inv_001",
@@ -379,7 +379,7 @@ class CrunchBaseClient:
                 "investment_round": "series_b",
             },
         ]
-        
+
         return InternationalResult(
             source=self.name,
             success=True,
@@ -390,11 +390,11 @@ class CrunchBaseClient:
             },
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_person(self, name: str) -> InternationalResult:
         """Пошук особи (засновники, інвестори)."""
         start_time = datetime.now(UTC)
-        
+
         people = [
             {
                 "uuid": "person_001",
@@ -409,7 +409,7 @@ class CrunchBaseClient:
                 "num_investments": 5,
             },
         ]
-        
+
         return InternationalResult(
             source=self.name,
             success=True,
@@ -427,10 +427,10 @@ class OFACClient:
     
     Specially Designated Nationals and Blocked Persons List.
     """
-    
+
     name = "ofac_sdn"
     description = "OFAC SDN List (США)"
-    
+
     async def search(
         self,
         name: str,
@@ -438,10 +438,10 @@ class OFACClient:
     ) -> InternationalResult:
         """Пошук у списку OFAC SDN."""
         start_time = datetime.now(UTC)
-        
+
         # Симуляція — зазвичай порожній результат для легітимних компаній
         matches = []
-        
+
         return InternationalResult(
             source=self.name,
             success=True,
@@ -459,10 +459,10 @@ class OFACClient:
 
 class EUSanctionsClient:
     """EU Sanctions — Санкційний список ЄС."""
-    
+
     name = "eu_sanctions"
     description = "EU Consolidated Sanctions List"
-    
+
     async def search(
         self,
         name: str,
@@ -470,9 +470,9 @@ class EUSanctionsClient:
     ) -> InternationalResult:
         """Пошук у списку санкцій ЄС."""
         start_time = datetime.now(UTC)
-        
+
         matches = []
-        
+
         return InternationalResult(
             source=self.name,
             success=True,
@@ -490,10 +490,10 @@ class EUSanctionsClient:
 
 class UKSanctionsClient:
     """UK Sanctions — Санкційний список Великої Британії."""
-    
+
     name = "uk_sanctions"
     description = "UK Sanctions List"
-    
+
     async def search(
         self,
         name: str,
@@ -501,9 +501,9 @@ class UKSanctionsClient:
     ) -> InternationalResult:
         """Пошук у списку санкцій UK."""
         start_time = datetime.now(UTC)
-        
+
         matches = []
-        
+
         return InternationalResult(
             source=self.name,
             success=True,
@@ -530,15 +530,15 @@ class SanctionsAggregator:
     - FATF
     - Україна (РНБО)
     """
-    
+
     name = "sanctions_aggregator"
     description = "Агрегатор міжнародних санкційних списків"
-    
+
     def __init__(self):
         self.ofac = OFACClient()
         self.eu = EUSanctionsClient()
         self.uk = UKSanctionsClient()
-    
+
     async def check_all(
         self,
         name: str,
@@ -547,16 +547,16 @@ class SanctionsAggregator:
     ) -> InternationalResult:
         """Перевірка у всіх санкційних списках."""
         start_time = datetime.now(UTC)
-        
+
         # Паралельна перевірка
         ofac_result = await self.ofac.search(name, entity_type)
         eu_result = await self.eu.search(name, entity_type)
         uk_result = await self.uk.search(name, entity_type)
-        
+
         # Агрегація результатів
         all_matches = []
         is_sanctioned = False
-        
+
         for result, source in [
             (ofac_result, "OFAC SDN"),
             (eu_result, "EU"),
@@ -567,7 +567,7 @@ class SanctionsAggregator:
                 for match in result.data.get("matches", []):
                     match["source"] = source
                     all_matches.append(match)
-        
+
         # PEP перевірка (симуляція)
         pep_status = None
         if include_pep:
@@ -577,7 +577,7 @@ class SanctionsAggregator:
                 "position": None,
                 "country": None,
             }
-        
+
         data = {
             "query": name,
             "entity_type": entity_type,
@@ -590,14 +590,14 @@ class SanctionsAggregator:
             "risk_level": "critical" if is_sanctioned else ("high" if pep_status and pep_status.get("is_pep") else "low"),
             "checked_at": datetime.now(UTC).isoformat(),
         }
-        
+
         return InternationalResult(
             source=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def batch_check(
         self,
         names: list[str],
@@ -605,7 +605,7 @@ class SanctionsAggregator:
     ) -> InternationalResult:
         """Пакетна перевірка списку імен."""
         start_time = datetime.now(UTC)
-        
+
         results = []
         for name in names:
             result = await self.check_all(name, entity_type, include_pep=False)
@@ -614,9 +614,9 @@ class SanctionsAggregator:
                 "is_sanctioned": result.data.get("is_sanctioned"),
                 "risk_level": result.data.get("risk_level"),
             })
-        
+
         sanctioned_count = len([r for r in results if r["is_sanctioned"]])
-        
+
         return InternationalResult(
             source=self.name,
             success=True,

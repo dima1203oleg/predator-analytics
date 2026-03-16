@@ -11,14 +11,12 @@ from typing import Any
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 import httpx
-
 from services.shared.decision import DecisionArtifact
 from services.shared.events import PredatorEvent
 from services.shared.logging_config import setup_logging
 
 from .audit.store import AuditStore
 from .rules.loader import RuleLoader
-
 
 setup_logging("rtb-engine")
 logger = logging.getLogger(__name__)
@@ -147,7 +145,7 @@ async def process_event_logic(event: PredatorEvent):
             # 6. Implementation of Action (Bridge/Kafka emission)
             if SYSTEM_MODE == "ACTIVE":
                 logger.info(f"ACTION TRIGGERED: {rule['action']} for rule {rule['id']}")
-                
+
                 if rule['action'] == "start_improvement_cycle":
                     # Інтеграція з Cerebro v55.2
                     cerebro_url = os.getenv("CEREBRO_URL", "http://cerebro:8000/orchestrate/ret")
@@ -159,7 +157,7 @@ async def process_event_logic(event: PredatorEvent):
                                 "trigger_reason": "performance_degraded",
                                 "metrics": event.context
                             })
-                            logger.info(f"Cerebro notified for model improvement cycle.")
+                            logger.info("Cerebro notified for model improvement cycle.")
                     except Exception as e:
                         logger.error(f"Failed to notify Cerebro: {e}")
 

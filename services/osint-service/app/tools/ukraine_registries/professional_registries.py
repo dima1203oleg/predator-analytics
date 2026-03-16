@@ -4,7 +4,7 @@
 Формат: API, XML, HTML
 """
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from .base import BaseRegistryClient, RegistryResult, RegistryStatus
 
@@ -13,19 +13,19 @@ logger = logging.getLogger(__name__)
 
 class LawyersRegistryClient(BaseRegistryClient):
     """Реєстр адвокатів України."""
-    
+
     name = "lawyers_registry"
     description = "Єдиний реєстр адвокатів України"
     holder = "Національна асоціація адвокатів України (НААУ)"
     data_format = "API/HTML"
     status = RegistryStatus.ACTIVE
     update_frequency = "daily"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук адвокатських об'єднань за ЄДРПОУ."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         data = {
             "edrpou": edrpou,
             "is_law_firm": True,
@@ -46,18 +46,18 @@ class LawyersRegistryClient(BaseRegistryClient):
                 },
             ],
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук адвоката за ПІБ."""
         start_time = datetime.now(UTC)
-        
+
         lawyers = [
             {
                 "certificate_number": "1234",
@@ -68,18 +68,18 @@ class LawyersRegistryClient(BaseRegistryClient):
                 "registration_date": "2015-03-20",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data={"query": name, "lawyers": lawyers, "total": len(lawyers)},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def check_lawyer(self, certificate_number: str) -> RegistryResult:
         """Перевірка адвоката за номером свідоцтва."""
         start_time = datetime.now(UTC)
-        
+
         lawyer = {
             "certificate_number": certificate_number,
             "name": "Іванов Іван Іванович",
@@ -88,7 +88,7 @@ class LawyersRegistryClient(BaseRegistryClient):
             "registration_date": "2015-03-20",
             "disciplinary_actions": [],
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -99,14 +99,14 @@ class LawyersRegistryClient(BaseRegistryClient):
 
 class NotariesRegistryClient(BaseRegistryClient):
     """Реєстр нотаріусів України."""
-    
+
     name = "notaries_registry"
     description = "Єдиний реєстр нотаріусів України"
     holder = "Міністерство юстиції України"
     data_format = "XML"
     status = RegistryStatus.ACTIVE
     update_frequency = "weekly"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук нотаріальних контор за ЄДРПОУ."""
         start_time = datetime.now(UTC)
@@ -116,11 +116,11 @@ class NotariesRegistryClient(BaseRegistryClient):
             data={"edrpou": edrpou, "notaries": [], "total": 0},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук нотаріуса за ПІБ."""
         start_time = datetime.now(UTC)
-        
+
         notaries = [
             {
                 "certificate_number": "5678",
@@ -132,7 +132,7 @@ class NotariesRegistryClient(BaseRegistryClient):
                 "status": "active",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -143,19 +143,19 @@ class NotariesRegistryClient(BaseRegistryClient):
 
 class DoctorsRegistryClient(BaseRegistryClient):
     """Реєстр лікарів України."""
-    
+
     name = "doctors_registry"
     description = "Реєстр медичних працівників України"
     holder = "Міністерство охорони здоров'я України"
     data_format = "XML"
     status = RegistryStatus.ACTIVE
     update_frequency = "weekly"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук медичних закладів за ЄДРПОУ."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         data = {
             "edrpou": edrpou,
             "is_medical_facility": True,
@@ -168,18 +168,18 @@ class DoctorsRegistryClient(BaseRegistryClient):
             },
             "doctors_count": 50,
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук лікаря за ПІБ."""
         start_time = datetime.now(UTC)
-        
+
         doctors = [
             {
                 "name": name,
@@ -189,7 +189,7 @@ class DoctorsRegistryClient(BaseRegistryClient):
                 "license_status": "active",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -200,14 +200,14 @@ class DoctorsRegistryClient(BaseRegistryClient):
 
 class ForensicExpertsClient(BaseRegistryClient):
     """Реєстр судових експертів."""
-    
+
     name = "forensic_experts"
     description = "Реєстр атестованих судових експертів"
     holder = "Міністерство юстиції України"
     data_format = "XML"
     status = RegistryStatus.ACTIVE
     update_frequency = "weekly"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук експертних установ за ЄДРПОУ."""
         start_time = datetime.now(UTC)
@@ -217,11 +217,11 @@ class ForensicExpertsClient(BaseRegistryClient):
             data={"edrpou": edrpou, "experts": [], "total": 0},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук експерта за ПІБ."""
         start_time = datetime.now(UTC)
-        
+
         experts = [
             {
                 "certificate_number": "9012",
@@ -232,7 +232,7 @@ class ForensicExpertsClient(BaseRegistryClient):
                 "attestation_date": "2022-06-15",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,

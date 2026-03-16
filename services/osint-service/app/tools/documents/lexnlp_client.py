@@ -1,7 +1,7 @@
 """LexNLP Tool — витягування юридичних сутностей з тексту."""
 import logging
 import re
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
 
 from app.tools.base import BaseTool, ToolResult, ToolStatus

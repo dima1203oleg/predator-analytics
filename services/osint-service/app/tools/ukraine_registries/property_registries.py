@@ -4,7 +4,7 @@
 Формат: API
 """
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from .base import BaseRegistryClient, RegistryResult, RegistryStatus
 
@@ -13,19 +13,19 @@ logger = logging.getLogger(__name__)
 
 class MortgageRegistryClient(BaseRegistryClient):
     """Державний реєстр іпотек."""
-    
+
     name = "mortgage_registry"
     description = "Державний реєстр іпотек"
     holder = "Міністерство юстиції України"
     data_format = "API"
     status = RegistryStatus.ACTIVE
     update_frequency = "daily"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук іпотек за ЄДРПОУ іпотекодавця/іпотекодержателя."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         mortgages = [
             {
                 "registration_number": f"ІП-{edrpou[:6]}-001",
@@ -52,7 +52,7 @@ class MortgageRegistryClient(BaseRegistryClient):
                 "status": "active",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -65,7 +65,7 @@ class MortgageRegistryClient(BaseRegistryClient):
             },
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         start_time = datetime.now(UTC)
@@ -79,19 +79,19 @@ class MortgageRegistryClient(BaseRegistryClient):
 
 class AlienationBanRegistryClient(BaseRegistryClient):
     """Єдиний реєстр заборон відчуження об'єктів нерухомого майна."""
-    
+
     name = "alienation_ban_registry"
     description = "Єдиний реєстр заборон відчуження об'єктів нерухомого майна"
     holder = "Міністерство юстиції України"
     data_format = "API"
     status = RegistryStatus.ACTIVE
     update_frequency = "daily"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук заборон за ЄДРПОУ."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         bans = [
             {
                 "registration_number": f"ЗВ-{edrpou[:6]}-001",
@@ -107,7 +107,7 @@ class AlienationBanRegistryClient(BaseRegistryClient):
                 "status": "active",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -119,7 +119,7 @@ class AlienationBanRegistryClient(BaseRegistryClient):
             },
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         start_time = datetime.now(UTC)
@@ -133,19 +133,19 @@ class AlienationBanRegistryClient(BaseRegistryClient):
 
 class ELandClient(BaseRegistryClient):
     """E.land — електронні послуги Держгеокадастру."""
-    
+
     name = "eland"
     description = "E.land — електронні послуги Держгеокадастру"
     holder = "Держгеокадастр"
     data_format = "API/XML"
     status = RegistryStatus.LIMITED  # Обмежений під час війни
     update_frequency = "daily"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук земельних ділянок за ЄДРПОУ."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         parcels = [
             {
                 "cadastral_number": "3220810100:01:001:0001",
@@ -157,7 +157,7 @@ class ELandClient(BaseRegistryClient):
                 "restrictions": [],
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -165,7 +165,7 @@ class ELandClient(BaseRegistryClient):
             warnings=["Сервіс працює з обмеженнями під час воєнного стану"],
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         start_time = datetime.now(UTC)

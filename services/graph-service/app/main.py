@@ -1,11 +1,12 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends, Request
-from fastapi.responses import JSONResponse
 import logging
 
-from predator_common.logging import configure_logging
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+
 from app.config import get_settings
 from app.graph_db import graph_db
+from predator_common.logging import configure_logging
 
 settings = get_settings()
 configure_logging(level="INFO")
@@ -16,9 +17,9 @@ async def lifespan(app: FastAPI):
     """Життєвий цикл додатку. Ініціалізація та завершення."""
     logger.info("Initializing Graph Service...")
     await graph_db.connect()
-    
+
     yield
-    
+
     logger.info("Shutting down Graph Service...")
     await graph_db.disconnect()
 
@@ -49,7 +50,7 @@ async def ping_db():
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
 
-from app.routers import paths, clusters, ubo
+from app.routers import clusters, paths, ubo
 
 app.include_router(paths.router, prefix="/api/v2/graph/paths", tags=["paths"])
 app.include_router(clusters.router, prefix="/api/v2/graph/clusters", tags=["clusters"])

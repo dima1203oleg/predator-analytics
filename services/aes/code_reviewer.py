@@ -6,9 +6,7 @@ Predator Analytics v45.1.
 import logging
 
 import httpx
-
 from services.shared.logging_config import setup_logging
-
 
 setup_logging("aes-reviewer")
 logger = logging.getLogger(__name__)

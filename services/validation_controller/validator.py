@@ -7,12 +7,10 @@ import logging
 import random
 from typing import TYPE_CHECKING
 
-
 if TYPE_CHECKING:
     from services.shared.events import PredatorEvent
 
 from services.training_controller.reqistry import ModelRegistry
-
 
 logger = logging.getLogger(__name__)
 

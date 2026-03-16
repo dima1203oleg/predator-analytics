@@ -2,11 +2,9 @@
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
-
-import httpx
 
 logger = logging.getLogger(__name__)
 
@@ -41,14 +39,14 @@ class BaseRegistryClient(ABC):
     - Можливі обмеження воєнного часу
     - Кешування результатів
     """
-    
+
     name: str = "base_registry"
     description: str = ""
     holder: str = ""  # Держатель реєстру
     data_format: str = "XML"
     status: RegistryStatus = RegistryStatus.ACTIVE
     update_frequency: str = "daily"
-    
+
     def __init__(self, timeout: int = 30, cache_ttl: int = 3600):
         """Ініціалізація.
         
@@ -59,7 +57,7 @@ class BaseRegistryClient(ABC):
         self.timeout = timeout
         self.cache_ttl = cache_ttl
         self._cache: dict[str, tuple[datetime, Any]] = {}
-    
+
     def _get_cached(self, key: str) -> Any | None:
         """Отримати з кешу."""
         if key in self._cache:
@@ -69,33 +67,33 @@ class BaseRegistryClient(ABC):
                 return data
             del self._cache[key]
         return None
-    
+
     def _set_cached(self, key: str, data: Any) -> None:
         """Зберегти в кеш."""
         self._cache[key] = (datetime.now(UTC), data)
-    
+
     @abstractmethod
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук за кодом ЄДРПОУ."""
         pass
-    
+
     @abstractmethod
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         pass
-    
+
     async def is_available(self) -> bool:
         """Перевірка доступності реєстру."""
         return self.status in [RegistryStatus.ACTIVE, RegistryStatus.LIMITED]
-    
+
     def validate_edrpou(self, edrpou: str) -> bool:
         """Валідація коду ЄДРПОУ (8 цифр)."""
         return edrpou.isdigit() and len(edrpou) == 8
-    
+
     def validate_rnokpp(self, rnokpp: str) -> bool:
         """Валідація РНОКПП (10 цифр)."""
         return rnokpp.isdigit() and len(rnokpp) == 10
-    
+
     def normalize_edrpou(self, edrpou: str) -> str:
         """Нормалізація ЄДРПОУ (додати нулі зліва)."""
         return edrpou.zfill(8)

@@ -1,14 +1,15 @@
-"""
-Influence Path Analysis — PREDATOR Analytics v55.1 Ironclad.
+"""Influence Path Analysis — PREDATOR Analytics v55.1 Ironclad.
 
 Uses Dijkstra and shortest paths to find influence between entities.
 """
-from typing import List, Dict, Any
+from typing import Any
+
 from app.graph_db import graph_db
+
 
 class InfluencePathService:
     @staticmethod
-    async def find_shortest_influence(source_ueid: str, target_ueid: str, tenant_id: str) -> List[Dict[str, Any]]:
+    async def find_shortest_influence(source_ueid: str, target_ueid: str, tenant_id: str) -> list[dict[str, Any]]:
         """Знаходить найкоротший шлях впливу між двома сутностями."""
         query = """
         MATCH (source:Company {ueid: $source_ueid, tenant_id: $tenant_id})
@@ -23,9 +24,8 @@ class InfluencePathService:
         })
 
     @staticmethod
-    async def find_influence_clusters(ueid: str, tenant_id: str) -> List[Dict[str, Any]]:
-        """
-        Виявлення 'Островів Впливу' навколо сутності (Influence Clusters).
+    async def find_influence_clusters(ueid: str, tenant_id: str) -> list[dict[str, Any]]:
+        """Виявлення 'Островів Впливу' навколо сутності (Influence Clusters).
         Шукає компанії, пов'язані не тільки власністю, а й спільними директорами, 
         адресами та спільними бенефіціарами (Ultimate Beneficial Owners).
         """
@@ -46,9 +46,8 @@ class InfluencePathService:
         return await graph_db.run_query(query, {"ueid": ueid, "tenant_id": tenant_id})
 
     @staticmethod
-    async def find_weighted_influence(source_ueid: str, target_ueid: str, tenant_id: str) -> List[Dict[str, Any]]:
-        """
-        Знаходить шлях впливу з найбільшою вагою (відсоток власності) через GDS Dijkstra.
+    async def find_weighted_influence(source_ueid: str, target_ueid: str, tenant_id: str) -> list[dict[str, Any]]:
+        """Знаходить шлях впливу з найбільшою вагою (відсоток власності) через GDS Dijkstra.
         Канонічна реалізація v55.2 Ironclad.
         """
         # Спершу перевіримо, чи є прямі зв'язки

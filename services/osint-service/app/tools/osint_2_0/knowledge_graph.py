@@ -6,11 +6,11 @@
 - GraphQueryEngine: Cypher/TypeDB запити
 """
 import logging
-from dataclasses import dataclass, field
-from datetime import datetime, UTC
-from typing import Any
-from enum import Enum
 import uuid
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -93,15 +93,15 @@ class STIXGraphBuilder:
     - Встановлення зв'язків між сутностями
     - Аналізу патернів та аномалій
     """
-    
+
     def __init__(self):
         self.nodes: dict[str, STIXNode] = {}
         self.relations: list[STIXRelation] = []
-    
+
     def _generate_id(self, node_type: STIXNodeType) -> str:
         """Генерація STIX ID."""
         return f"{node_type.value}--{uuid.uuid4()}"
-    
+
     def add_threat_actor(
         self,
         name: str,
@@ -115,7 +115,7 @@ class STIXGraphBuilder:
     ) -> STIXNode:
         """Додати Threat Actor (особа, група, компанія)."""
         node_id = self._generate_id(STIXNodeType.THREAT_ACTOR)
-        
+
         node = STIXNode(
             id=node_id,
             type=STIXNodeType.THREAT_ACTOR,
@@ -130,10 +130,10 @@ class STIXGraphBuilder:
                 **properties,
             },
         )
-        
+
         self.nodes[node_id] = node
         return node
-    
+
     def add_identity(
         self,
         name: str,
@@ -145,7 +145,7 @@ class STIXGraphBuilder:
     ) -> STIXNode:
         """Додати Identity (компанія, особа)."""
         node_id = self._generate_id(STIXNodeType.IDENTITY)
-        
+
         node = STIXNode(
             id=node_id,
             type=STIXNodeType.IDENTITY,
@@ -158,10 +158,10 @@ class STIXGraphBuilder:
                 **properties,
             },
         )
-        
+
         self.nodes[node_id] = node
         return node
-    
+
     def add_campaign(
         self,
         name: str,
@@ -173,7 +173,7 @@ class STIXGraphBuilder:
     ) -> STIXNode:
         """Додати Campaign (серія пов'язаних дій)."""
         node_id = self._generate_id(STIXNodeType.CAMPAIGN)
-        
+
         node = STIXNode(
             id=node_id,
             type=STIXNodeType.CAMPAIGN,
@@ -186,10 +186,10 @@ class STIXGraphBuilder:
                 **properties,
             },
         )
-        
+
         self.nodes[node_id] = node
         return node
-    
+
     def add_indicator(
         self,
         name: str,
@@ -201,7 +201,7 @@ class STIXGraphBuilder:
     ) -> STIXNode:
         """Додати Indicator (IoC)."""
         node_id = self._generate_id(STIXNodeType.INDICATOR)
-        
+
         node = STIXNode(
             id=node_id,
             type=STIXNodeType.INDICATOR,
@@ -215,10 +215,10 @@ class STIXGraphBuilder:
                 **properties,
             },
         )
-        
+
         self.nodes[node_id] = node
         return node
-    
+
     def add_infrastructure(
         self,
         name: str,
@@ -228,7 +228,7 @@ class STIXGraphBuilder:
     ) -> STIXNode:
         """Додати Infrastructure (сервери, хостинг)."""
         node_id = self._generate_id(STIXNodeType.INFRASTRUCTURE)
-        
+
         node = STIXNode(
             id=node_id,
             type=STIXNodeType.INFRASTRUCTURE,
@@ -239,10 +239,10 @@ class STIXGraphBuilder:
                 **properties,
             },
         )
-        
+
         self.nodes[node_id] = node
         return node
-    
+
     def add_location(
         self,
         name: str,
@@ -254,7 +254,7 @@ class STIXGraphBuilder:
     ) -> STIXNode:
         """Додати Location (геолокація)."""
         node_id = self._generate_id(STIXNodeType.LOCATION)
-        
+
         node = STIXNode(
             id=node_id,
             type=STIXNodeType.LOCATION,
@@ -267,10 +267,10 @@ class STIXGraphBuilder:
                 **properties,
             },
         )
-        
+
         self.nodes[node_id] = node
         return node
-    
+
     def add_relation(
         self,
         source_id: str,
@@ -281,7 +281,7 @@ class STIXGraphBuilder:
     ) -> STIXRelation:
         """Додати зв'язок між вузлами."""
         relation_id = f"relationship--{uuid.uuid4()}"
-        
+
         relation = STIXRelation(
             id=relation_id,
             type=relation_type,
@@ -290,10 +290,10 @@ class STIXGraphBuilder:
             confidence=confidence,
             properties=properties,
         )
-        
+
         self.relations.append(relation)
         return relation
-    
+
     def get_subgraph(
         self,
         center_node_id: str,
@@ -303,16 +303,16 @@ class STIXGraphBuilder:
         visited_nodes = set()
         result_nodes = []
         result_relations = []
-        
+
         def traverse(node_id: str, current_depth: int):
             if current_depth > depth or node_id in visited_nodes:
                 return
-            
+
             visited_nodes.add(node_id)
-            
+
             if node_id in self.nodes:
                 result_nodes.append(self.nodes[node_id])
-            
+
             for relation in self.relations:
                 if relation.source_id == node_id:
                     result_relations.append(relation)
@@ -320,9 +320,9 @@ class STIXGraphBuilder:
                 elif relation.target_id == node_id:
                     result_relations.append(relation)
                     traverse(relation.source_id, current_depth + 1)
-        
+
         traverse(center_node_id, 0)
-        
+
         return GraphResult(
             success=True,
             nodes=result_nodes,
@@ -334,26 +334,26 @@ class STIXGraphBuilder:
                 "relations_count": len(result_relations),
             },
         )
-    
+
     def export_to_neo4j_cypher(self) -> str:
         """Експорт графа у Cypher для Neo4j."""
         cypher_statements = []
-        
+
         # Створення вузлів
         for node in self.nodes.values():
             props = {**node.properties, "name": node.name, "stix_id": node.id}
-            props_str = ", ".join(f"{k}: ${k}" for k in props.keys())
+            props_str = ", ".join(f"{k}: ${k}" for k in props)
             cypher_statements.append(
                 f"CREATE (n:{node.type.value.replace('-', '_')} {{{props_str}}})"
             )
-        
+
         # Створення зв'язків
         for relation in self.relations:
             cypher_statements.append(
                 f"MATCH (a {{stix_id: '{relation.source_id}'}}), (b {{stix_id: '{relation.target_id}'}}) "
                 f"CREATE (a)-[:{relation.type.value.upper().replace('-', '_')}]->(b)"
             )
-        
+
         return "\n".join(cypher_statements)
 
 
@@ -365,7 +365,7 @@ class NLPEntityExtractor:
     - Coreference Resolution: "Петров", "він", "директор" = одна сутність
     - Relationship Extraction: "Компанія А подала позов до Компанії Б"
     """
-    
+
     # Типи сутностей для NER
     ENTITY_TYPES = {
         "PERSON": STIXNodeType.IDENTITY,
@@ -378,7 +378,7 @@ class NLPEntityExtractor:
         "PHONE": STIXNodeType.INDICATOR,
         "EDRPOU": STIXNodeType.INDICATOR,
     }
-    
+
     # Патерни для relationship extraction
     RELATION_PATTERNS = [
         {"pattern": "подав позов до", "relation": STIXRelationType.TARGETS},
@@ -390,7 +390,7 @@ class NLPEntityExtractor:
         {"pattern": "володіє", "relation": STIXRelationType.OWNS},
         {"pattern": "контролює", "relation": STIXRelationType.CONTROLS},
     ]
-    
+
     async def extract_entities(self, text: str) -> GraphResult:
         """Витягування сутностей з тексту."""
         # Симуляція NER
@@ -401,7 +401,7 @@ class NLPEntityExtractor:
             {"text": "м. Київ", "type": "GPE", "start": 60, "end": 67},
             {"text": "1 000 000 грн", "type": "MONEY", "start": 70, "end": 83},
         ]
-        
+
         nodes = []
         for entity in entities:
             node_type = self.ENTITY_TYPES.get(entity["type"], STIXNodeType.OBSERVED_DATA)
@@ -414,7 +414,7 @@ class NLPEntityExtractor:
                     "source_text_position": {"start": entity["start"], "end": entity["end"]},
                 },
             ))
-        
+
         return GraphResult(
             success=True,
             nodes=nodes,
@@ -424,7 +424,7 @@ class NLPEntityExtractor:
                 "entity_types": list(set(e["type"] for e in entities)),
             },
         )
-    
+
     async def extract_relations(self, text: str) -> GraphResult:
         """Витягування зв'язків з тексту."""
         # Симуляція relationship extraction
@@ -442,7 +442,7 @@ class NLPEntityExtractor:
                 "relation_type": STIXRelationType.CONTROLS,
             },
         ]
-        
+
         stix_relations = []
         for rel in relations:
             stix_relations.append(STIXRelation(
@@ -454,7 +454,7 @@ class NLPEntityExtractor:
                     "predicate_text": rel["predicate"],
                 },
             ))
-        
+
         return GraphResult(
             success=True,
             relations=stix_relations,
@@ -463,12 +463,12 @@ class NLPEntityExtractor:
                 "relation_types": list(set(r["relation_type"].value for r in relations)),
             },
         )
-    
+
     async def process_document(self, text: str) -> GraphResult:
         """Повна обробка документа."""
         entities_result = await self.extract_entities(text)
         relations_result = await self.extract_relations(text)
-        
+
         return GraphResult(
             success=True,
             nodes=entities_result.nodes,
@@ -488,10 +488,10 @@ class GraphQueryEngine:
     - TypeQL (TypeDB)
     - Natural Language (через LLM)
     """
-    
+
     def __init__(self, graph_builder: STIXGraphBuilder | None = None):
         self.graph = graph_builder or STIXGraphBuilder()
-    
+
     async def query_cypher(self, query: str) -> GraphResult:
         """Виконання Cypher запиту."""
         # Симуляція виконання запиту
@@ -503,7 +503,7 @@ class GraphQueryEngine:
                 "rows_affected": 0,
             },
         )
-    
+
     async def find_connections(
         self,
         entity1_name: str,
@@ -519,7 +519,7 @@ class GraphQueryEngine:
                 "depth": 2,
             },
         ]
-        
+
         return GraphResult(
             success=True,
             data={
@@ -530,7 +530,7 @@ class GraphQueryEngine:
                 "shortest_path_length": min(p["depth"] for p in paths) if paths else None,
             },
         )
-    
+
     async def find_anomalies(self) -> GraphResult:
         """Пошук аномалій у графі."""
         anomalies = [
@@ -547,7 +547,7 @@ class GraphQueryEngine:
                 "severity": "medium",
             },
         ]
-        
+
         return GraphResult(
             success=True,
             data={

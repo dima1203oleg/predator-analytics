@@ -4,7 +4,7 @@
 Формат: XML/JSON, API
 """
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from .base import BaseRegistryClient, RegistryResult, RegistryStatus
 
@@ -13,19 +13,19 @@ logger = logging.getLogger(__name__)
 
 class StateDebtRegistryClient(BaseRegistryClient):
     """Реєстр державного боргу."""
-    
+
     name = "state_debt"
     description = "Реєстр державного боргу України"
     holder = "Міністерство фінансів України"
     data_format = "XML"
     status = RegistryStatus.ACTIVE
     update_frequency = "monthly"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук боргових зобов'язань за ЄДРПОУ."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         # Для держорганів — перевірка боргових зобов'язань
         data = {
             "edrpou": edrpou,
@@ -33,14 +33,14 @@ class StateDebtRegistryClient(BaseRegistryClient):
             "guarantees": [],
             "bonds_issued": [],
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         start_time = datetime.now(UTC)
@@ -54,33 +54,33 @@ class StateDebtRegistryClient(BaseRegistryClient):
 
 class StateGuaranteesClient(BaseRegistryClient):
     """Реєстр державних гарантій."""
-    
+
     name = "state_guarantees"
     description = "Реєстр державних гарантій"
     holder = "Міністерство фінансів України"
     data_format = "XML"
     status = RegistryStatus.ACTIVE
     update_frequency = "monthly"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук держгарантій за ЄДРПОУ."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         data = {
             "edrpou": edrpou,
             "has_guarantees": False,
             "guarantees": [],
             "total_amount": 0.0,
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         start_time = datetime.now(UTC)
@@ -98,19 +98,19 @@ class SNIDAClient(BaseRegistryClient):
     Держатель: НКЦПФР
     Дані про власників акцій, емісії, звітність.
     """
-    
+
     name = "snida"
     description = "Реєстр емітентів цінних паперів (SNIDA)"
     holder = "НКЦПФР"
     data_format = "API/JSON"
     status = RegistryStatus.ACTIVE
     update_frequency = "daily"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук емітента за ЄДРПОУ."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         data = {
             "edrpou": edrpou,
             "is_issuer": True,
@@ -151,18 +151,18 @@ class SNIDAClient(BaseRegistryClient):
                 {"year": 2022, "type": "Річний звіт", "submitted": True},
             ],
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук емітентів за назвою."""
         start_time = datetime.now(UTC)
-        
+
         results = [
             {
                 "edrpou": "12345678",
@@ -171,14 +171,14 @@ class SNIDAClient(BaseRegistryClient):
                 "authorized_capital": 50000000.0,
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data={"query": name, "results": results, "total": len(results)},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_shareholders(self, edrpou: str) -> RegistryResult:
         """Отримати список акціонерів."""
         result = await self.search_by_edrpou(edrpou)

@@ -7,9 +7,9 @@
 """
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, UTC
-from typing import Any
+from datetime import UTC, datetime
 from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -44,10 +44,10 @@ class SpiderFootClient:
     
     GitHub: smicallef/spiderfoot
     """
-    
+
     name = "spiderfoot"
     description = "Модульний OSINT-фреймворк (200+ джерел)"
-    
+
     # Категорії модулів
     MODULES = {
         "dns": [
@@ -76,10 +76,10 @@ class SpiderFootClient:
             "sfp_spamhaus", "sfp_barracuda", "sfp_sorbs",
         ],
     }
-    
+
     def __init__(self, api_url: str = "http://localhost:5001"):
         self.api_url = api_url
-    
+
     async def scan_domain(
         self,
         domain: str,
@@ -88,7 +88,7 @@ class SpiderFootClient:
     ) -> ForensicsResult:
         """Сканування домену."""
         start_time = datetime.now(UTC)
-        
+
         # Симуляція результатів SpiderFoot
         data = {
             "target": domain,
@@ -150,18 +150,18 @@ class SpiderFootClient:
                 "duration_seconds": 120,
             },
         }
-        
+
         return ForensicsResult(
             tool_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def scan_email(self, email: str) -> ForensicsResult:
         """Сканування email."""
         start_time = datetime.now(UTC)
-        
+
         data = {
             "target": email,
             "target_type": "email",
@@ -187,18 +187,18 @@ class SpiderFootClient:
                 },
             },
         }
-        
+
         return ForensicsResult(
             tool_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def scan_ip(self, ip: str) -> ForensicsResult:
         """Сканування IP-адреси."""
         start_time = datetime.now(UTC)
-        
+
         data = {
             "target": ip,
             "target_type": "ip",
@@ -227,7 +227,7 @@ class SpiderFootClient:
                 ],
             },
         }
-        
+
         return ForensicsResult(
             tool_name=self.name,
             success=True,
@@ -247,14 +247,14 @@ class HunchlyClient:
     
     Критично важливо для юристів та комплаєнсу.
     """
-    
+
     name = "hunchly"
     description = "Система документування OSINT-розслідувань"
-    
+
     def __init__(self, case_id: str | None = None):
         self.case_id = case_id or f"case_{int(datetime.now(UTC).timestamp())}"
         self.artifacts: list[dict] = []
-    
+
     async def capture_page(
         self,
         url: str,
@@ -263,7 +263,7 @@ class HunchlyClient:
     ) -> ForensicsResult:
         """Захоплення веб-сторінки."""
         start_time = datetime.now(UTC)
-        
+
         artifact = {
             "artifact_id": f"art_{len(self.artifacts) + 1}",
             "type": "webpage",
@@ -287,9 +287,9 @@ class HunchlyClient:
                 "md5": "xyz789...",
             },
         }
-        
+
         self.artifacts.append(artifact)
-        
+
         return ForensicsResult(
             tool_name=self.name,
             success=True,
@@ -297,11 +297,11 @@ class HunchlyClient:
             artifacts=[artifact],
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def export_case(self, format: str = "pdf") -> ForensicsResult:
         """Експорт справи."""
         start_time = datetime.now(UTC)
-        
+
         data = {
             "case_id": self.case_id,
             "export_format": format,
@@ -314,20 +314,20 @@ class HunchlyClient:
                 "unique_domains": len(set(a.get("url", "").split("/")[2] for a in self.artifacts if a.get("url"))),
             },
         }
-        
+
         return ForensicsResult(
             tool_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def create_timeline(self) -> ForensicsResult:
         """Створення таймлайну розслідування."""
         start_time = datetime.now(UTC)
-        
+
         timeline = sorted(self.artifacts, key=lambda x: x.get("captured_at", ""))
-        
+
         data = {
             "case_id": self.case_id,
             "timeline": [
@@ -344,7 +344,7 @@ class HunchlyClient:
                 "end": timeline[-1].get("captured_at") if timeline else None,
             },
         }
-        
+
         return ForensicsResult(
             tool_name=self.name,
             success=True,
@@ -364,12 +364,12 @@ class MetagoofilTool:
     - Email-адреси
     - Дати створення/модифікації
     """
-    
+
     name = "metagoofil"
     description = "Видобування метаданих з документів"
-    
+
     SUPPORTED_FORMATS = ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "odt", "ods"]
-    
+
     async def analyze_domain(
         self,
         domain: str,
@@ -378,9 +378,9 @@ class MetagoofilTool:
     ) -> ForensicsResult:
         """Пошук та аналіз документів домену."""
         start_time = datetime.now(UTC)
-        
+
         file_types = file_types or ["pdf", "doc", "docx", "xls", "xlsx"]
-        
+
         # Симуляція знайдених документів
         documents = [
             {
@@ -421,12 +421,12 @@ class MetagoofilTool:
                 },
             },
         ]
-        
+
         # Аналіз знайдених даних
         authors = list(set(d["metadata"].get("author", "") for d in documents if d["metadata"].get("author")))
         software = list(set(d["metadata"].get("creator", "") for d in documents if d["metadata"].get("creator")))
         internal_paths = [d["metadata"].get("internal_path") for d in documents if d["metadata"].get("internal_path")]
-        
+
         data = {
             "domain": domain,
             "file_types_searched": file_types,
@@ -449,7 +449,7 @@ class MetagoofilTool:
                 },
             },
         }
-        
+
         return ForensicsResult(
             tool_name=self.name,
             success=True,
@@ -457,11 +457,11 @@ class MetagoofilTool:
             artifacts=documents,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def analyze_file(self, file_path: str) -> ForensicsResult:
         """Аналіз конкретного файлу."""
         start_time = datetime.now(UTC)
-        
+
         # Симуляція аналізу
         data = {
             "file_path": file_path,
@@ -477,7 +477,7 @@ class MetagoofilTool:
             "links": [],
             "comments": [],
         }
-        
+
         return ForensicsResult(
             tool_name=self.name,
             success=True,

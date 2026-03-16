@@ -6,12 +6,10 @@ This service acts as an entry point for model validation requests.
 import logging
 
 from fastapi import BackgroundTasks, FastAPI
-
 from services.shared.events import PredatorEvent
 from services.shared.logging_config import setup_logging
 
 from .validator import ModelValidator
-
 
 setup_logging("validation-controller")
 logger = logging.getLogger(__name__)

@@ -1,15 +1,16 @@
-"""
-Digital Footprint Service — PREDATOR Analytics v55.1 Ironclad.
+"""Digital Footprint Service — PREDATOR Analytics v55.1 Ironclad.
 
 Tracks digital presence matching (emails, crypto wallets, domains) across 
 business entities and Telegram monitors.
 """
-from typing import List, Dict, Any
+from typing import Any
+
 from app.graph_db import graph_db
+
 
 class DigitalFootprintService:
     @staticmethod
-    async def track_crypto(wallet_address: str, tenant_id: str) -> List[Dict[str, Any]]:
+    async def track_crypto(wallet_address: str, tenant_id: str) -> list[dict[str, Any]]:
         """Знайти всі операції та компанії пов'язані з гаманцем."""
         query = """
         MATCH (w:CryptoWallet {address: $address})
@@ -19,7 +20,7 @@ class DigitalFootprintService:
         return await graph_db.run_query(query, {"address": wallet_address})
 
     @staticmethod
-    async def match_domain_to_entities(domain: str, tenant_id: str) -> List[Dict[str, Any]]:
+    async def match_domain_to_entities(domain: str, tenant_id: str) -> list[dict[str, Any]]:
         """Знайти всі компанії та людей, що використовують певний домен в пошті/сайтах."""
         query = """
         MATCH (e:Email) WHERE e.address ENDS WITH $domain

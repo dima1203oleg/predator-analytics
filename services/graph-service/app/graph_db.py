@@ -1,19 +1,20 @@
-"""
-Graph Database Connection — PREDATOR Analytics v55.1 Ironclad.
+"""Graph Database Connection — PREDATOR Analytics v55.1 Ironclad.
 
 Neo4j connection singleton.
 """
-from typing import Optional, Dict, Any, List
-from neo4j import AsyncGraphDatabase, AsyncDriver
-from app.config import get_settings
 import logging
+from typing import Any
+
+from neo4j import AsyncDriver, AsyncGraphDatabase
+
+from app.config import get_settings
 
 logger = logging.getLogger("graph_service.db")
 settings = get_settings()
 
 class GraphDatabase:
     def __init__(self):
-        self._driver: Optional[AsyncDriver] = None
+        self._driver: AsyncDriver | None = None
 
     async def connect(self):
         """Ініціалізація з'єднання з Neo4j."""
@@ -39,11 +40,11 @@ class GraphDatabase:
             await self._driver.close()
             logger.info("З'єднання з Neo4j закрито")
 
-    async def run_query(self, query: str, parameters: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    async def run_query(self, query: str, parameters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """Виконання Cypher запиту та повернення результатів."""
         if not self._driver:
             raise RuntimeError("Драйвер Neo4j не ініціалізовано. Викличте connect() спочатку.")
-            
+
         async with self._driver.session() as session:
             result = await session.run(query, parameters or {})
             records = await result.data()

@@ -8,7 +8,6 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 import uuid
 
-
 if TYPE_CHECKING:
     from .events import PredatorEvent
 

@@ -1,31 +1,31 @@
 """PREDATOR OSINT Service — головний модуль FastAPI."""
 import logging
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from starlette.responses import Response
 
 from app.config import get_settings
 from app.routers import (
-    domain_router,
-    person_router,
     company_router,
-    file_router,
-    tools_router,
-    maritime_router,
-    trade_router,
-    financial_router,
-    ukraine_router,
-    documents_router,
-    social_router,
-    frameworks_router,
     darkweb_router,
+    documents_router,
+    domain_router,
+    file_router,
+    financial_router,
+    frameworks_router,
     geolocation_router,
-    ukraine_registries_router,
+    maritime_router,
     osint_2_0_router,
+    person_router,
+    social_router,
+    tools_router,
+    trade_router,
+    ukraine_registries_router,
+    ukraine_router,
 )
 
 # Налаштування логування

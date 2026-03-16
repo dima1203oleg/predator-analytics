@@ -1,6 +1,6 @@
 """Recon-ng Tool — модульний фреймворк для веб-розвідки."""
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
 
 from app.tools.base import BaseTool, ToolResult, ToolStatus
