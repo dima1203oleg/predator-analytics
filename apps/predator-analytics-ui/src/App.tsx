@@ -6,13 +6,17 @@ import { BrowserRouter } from 'react-router-dom';
 import { AgentProvider } from './context/AgentContext';
 import { DisplayModeProvider } from './context/DisplayModeContext';
 import { GlobalProvider } from './context/GlobalContext';
-import { RoleProvider } from './context/RoleContext';
+// Stores
+import { useUserStore } from './store/useUserStore';
+import { useRoleStore } from './store/useRoleStore';
+import { useAppStore } from './store/useAppStore';
+
+// Remaining Providers
 import { SensitiveDataProvider } from './context/SensitiveDataContext';
 import { ShellProvider } from './context/ShellContext';
 import { SuperIntelligenceProvider } from './context/SuperIntelligenceContext';
 import { ToastProvider } from './context/ToastContext';
-import { UserProvider } from './context/UserContext';
-import { AppProvider } from './store/useAppStore';
+
 
 // Components
 import { AppRoutesNew as AppRoutes } from './AppRoutesNew';
@@ -60,46 +64,40 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <AppProvider>
-            <UserProvider>
-              <RoleProvider>
-                <ShellProvider>
-                  <AgentProvider>
-                    <DisplayModeProvider>
-                      <SensitiveDataProvider>
-                        <ToastProvider>
-                          <GlobalProvider>
-                            <SuperIntelligenceProvider>
-                              {appState === 'BOOTING' && (
-                                <BootScreen onComplete={handleBootComplete} />
-                              )}
+          <ShellProvider>
+            <AgentProvider>
+              <DisplayModeProvider>
+                <SensitiveDataProvider>
+                  <ToastProvider>
+                    <GlobalProvider>
+                      <SuperIntelligenceProvider>
+                        {appState === 'BOOTING' && (
+                          <BootScreen onComplete={handleBootComplete} />
+                        )}
 
-                              {appState === 'LOGIN' && (
-                                <LoginScreen onLogin={handleLogin} />
-                              )}
+                        {appState === 'LOGIN' && (
+                          <LoginScreen onLogin={handleLogin} />
+                        )}
 
-                              {appState === 'READY' && (
-                                <>
-                                  <AppRoutes />
-                                  {/* Global UI Components */}
-                                  <QuickActionsBar />
-                                  <ToasterProvider />
-                                  <OnboardingWizard />
-                                  <OfflineBanner />
-                                  <Predator />
-                                  <CyberTerminal />
-                                </>
-                              )}
-                            </SuperIntelligenceProvider>
-                          </GlobalProvider>
-                        </ToastProvider>
-                      </SensitiveDataProvider>
-                    </DisplayModeProvider>
-                  </AgentProvider>
-                </ShellProvider>
-              </RoleProvider>
-            </UserProvider>
-          </AppProvider>
+                        {appState === 'READY' && (
+                          <>
+                            <AppRoutes />
+                            {/* Global UI Components */}
+                            <QuickActionsBar />
+                            <ToasterProvider />
+                            <OnboardingWizard />
+                            <OfflineBanner />
+                            <Predator />
+                            <CyberTerminal />
+                          </>
+                        )}
+                      </SuperIntelligenceProvider>
+                    </GlobalProvider>
+                  </ToastProvider>
+                </SensitiveDataProvider>
+              </DisplayModeProvider>
+            </AgentProvider>
+          </ShellProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </ErrorBoundary>
