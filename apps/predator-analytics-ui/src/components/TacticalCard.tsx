@@ -57,7 +57,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
     warning: 'text-amber-400',
     error: 'text-red-400',
     info: 'text-blue-400',
-    neutral: 'text-slate-400'
+    neutral: 'text-slate-300'
   };
 
   const getStatusIcon = () => {
@@ -176,7 +176,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
         )}
 
         <div className="flex items-center gap-3">
-          {icon && <div className="text-slate-500 group-hover:text-cyan-400 transition-colors">{icon}</div>}
+          {icon && <div className="text-slate-400 group-hover:text-cyan-300 transition-colors">{icon}</div>}
           <div className="flex flex-col">
             <h3 className={`text-sm font-bold uppercase tracking-wider font-display transition-colors flex items-center gap-2 ${variant === 'minimal' ? 'text-slate-400 group-hover:text-slate-200' : 'text-slate-100 group-hover:text-cyan-50'
               }`}>
@@ -191,7 +191,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
                 </span>
               )}
             </h3>
-            {subtitle && <p className="text-[10px] text-slate-500 font-mono tracking-tight mt-0.5">{subtitle}</p>}
+            {subtitle && <p className="text-[10px] text-slate-400 font-mono tracking-tight mt-0.5">{subtitle}</p>}
           </div>
         </div>
 
@@ -200,7 +200,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
           {status && getStatusIcon()}
           {expandable && (
             <motion.div animate={{ rotate: isExpanded ? 180 : 0 }}>
-              <ChevronDown size={16} className="text-slate-500" />
+              <ChevronDown size={16} className="text-slate-300" />
             </motion.div>
           )}
         </div>
@@ -223,7 +223,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-800/50">
                   {metrics.map((metric, idx) => (
                     <div key={idx} className="bg-slate-900/30 rounded p-2 border border-slate-800/30">
-                      <p className="text-[10px] text-slate-500 uppercase tracking-widest">{metric.label}</p>
+                      <p className="text-[10px] text-slate-400 uppercase tracking-widest">{metric.label}</p>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-slate-200">{metric.value}</span>
                         {metric.trend && (

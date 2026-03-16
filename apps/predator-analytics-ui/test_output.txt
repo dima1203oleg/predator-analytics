@@ -1,0 +1,24 @@
+
+ RUN  v1.6.1 /Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui
+
+ ❯ src/pages/__tests__/NetworkMapPage.test.tsx  (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/__tests__/NetworkMapPage.test.tsx [ src/pages/__tests__/NetworkMapPage.test.tsx ]
+Error: Failed to resolve import "../NetworkMapPage" from "src/pages/__tests__/NetworkMapPage.test.tsx". Does the file exist?
+ ❯ TransformPluginContext._formatError node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49258:41
+ ❯ TransformPluginContext.error node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49253:16
+ ❯ normalizeUrl node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64307:23
+ ❯ async file:/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64439:39
+ ❯ TransformPluginContext.transform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64366:7
+ ❯ PluginContainer.transform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49099:18
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  21:46:32
+   Duration  6.14s (transform 918ms, setup 1.88s, collect 0ms, tests 0ms, environment 3.24s, prepare 321ms)
+

@@ -11,7 +11,7 @@ vi.mock('@/services/api/config', () => ({
     },
 }));
 
-vi.mock('echarts-for-react', () => ({
+vi.mock('@/components/ECharts', () => ({
     default: () => <div data-testid="echarts-mock" />,
 }));
 

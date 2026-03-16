@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import {
     ShieldCheck,
     Search,

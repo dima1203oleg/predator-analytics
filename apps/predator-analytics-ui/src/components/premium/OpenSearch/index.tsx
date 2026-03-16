@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import * as echarts from 'echarts';
 import {
   Database, ExternalLink, RefreshCw, Maximize2, Minimize2,

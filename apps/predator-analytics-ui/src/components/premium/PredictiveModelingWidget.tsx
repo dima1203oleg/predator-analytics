@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import { TrendingUp, Play, RefreshCw, Settings, Zap } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';

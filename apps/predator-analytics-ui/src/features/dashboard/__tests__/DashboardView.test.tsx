@@ -5,7 +5,7 @@ import React from 'react'
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
 // Mock ECharts
-vi.mock('echarts-for-react', () => ({
+vi.mock('@/components/ECharts', () => ({
     default: () => <div data-testid="mock-echart">EChart Placeholder</div>
 }))
 

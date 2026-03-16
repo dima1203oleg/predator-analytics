@@ -19,7 +19,7 @@ import {
     Layers, Zap, ShieldAlert, Binary, Server, Cloud, Globe,
     ChevronRight, ZapOff, Info, Settings, Share2, Eye
 } from 'lucide-react';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import { api } from '@/services/api';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';

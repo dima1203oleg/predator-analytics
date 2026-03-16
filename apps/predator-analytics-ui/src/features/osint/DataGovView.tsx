@@ -223,6 +223,22 @@ const DataGovView: React.FC = () => {
                     {/* Main Results Workspace */}
                     <div className="grid grid-cols-12 gap-12">
                         
+                        {error && (
+                            <motion.div 
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="col-span-12 p-8 bg-rose-500/10 border border-rose-500/20 rounded-[32px] flex items-center gap-6"
+                            >
+                                <div className="p-4 bg-rose-500/20 rounded-2xl text-rose-400">
+                                    <AlertCircle size={24} />
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-sm font-black text-rose-400 uppercase tracking-widest">ПОМИЛКА_СИСТЕМИ</p>
+                                    <p className="text-slate-400 font-medium italic">{error}</p>
+                                </div>
+                            </motion.div>
+                        )}
+                        
                         <div className={cn(
                             "transition-all duration-700 ease-in-out",
                             selectedDataset ? 'col-span-12 lg:col-span-7' : 'col-span-12'

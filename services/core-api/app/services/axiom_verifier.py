@@ -25,7 +25,7 @@ class AxiomVerifier:
             graph_res = await graph_db.run_query(graph_count_query)
             graph_count = graph_res[0].get("count", 0)
 
-            purity = (graph_count / sql_count * 100) if sql_count > 0 else 100
+            purity: float = (graph_count / sql_count * 100) if sql_count > 0 else 100.0
 
             return {
                 "axiom": "SQL_GRAPH_SYNC",

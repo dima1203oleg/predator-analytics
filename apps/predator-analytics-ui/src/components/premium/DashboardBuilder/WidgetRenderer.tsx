@@ -106,7 +106,7 @@ const DataTableWidget: React.FC<{ config: WidgetConfig; data: any }> = ({ config
 
   return (
     <div className="h-full flex flex-col">
-      <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3 px-4 pt-4">
+      <div className="text-[10px] font-black uppercase tracking-widest text-slate-300 mb-3 px-4 pt-4">
         {config.title}
       </div>
       <div className="flex-1 overflow-auto custom-scrollbar">
@@ -114,7 +114,7 @@ const DataTableWidget: React.FC<{ config: WidgetConfig; data: any }> = ({ config
           <thead className="sticky top-0 bg-slate-950">
             <tr>
               {columns.map((col: string, i: number) => (
-                <th key={i} className="text-left px-4 py-2 font-black text-slate-400 uppercase tracking-widest border-b border-white/5">
+                <th key={i} className="text-left px-4 py-2 font-black text-slate-300 uppercase tracking-widest border-b border-white/5">
                   {col}
                 </th>
               ))}
@@ -124,7 +124,7 @@ const DataTableWidget: React.FC<{ config: WidgetConfig; data: any }> = ({ config
             {rows.map((row: any, i: number) => (
               <tr key={i} className="border-b border-white/5 hover:bg-white/5 transition-colors group/row">
                 {columns.map((col: string, j: number) => (
-                  <td key={j} className="px-4 py-3 text-slate-300 font-mono group-hover/row:text-white transition-colors">
+                  <td key={j} className="px-4 py-3 text-slate-200 font-mono group-hover/row:text-white transition-colors">
                     {row[col]}
                   </td>
                 ))}
@@ -140,7 +140,7 @@ const DataTableWidget: React.FC<{ config: WidgetConfig; data: any }> = ({ config
 // Chart Wrapper with common styling
 const ChartWrapper: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <div className="h-full flex flex-col p-4">
-    <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">
+    <div className="text-[10px] font-black uppercase tracking-widest text-slate-300 mb-3">
       {title}
     </div>
     <div className="flex-1 min-h-0">

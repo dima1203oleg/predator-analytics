@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import { premiumLocales } from '../../locales/uk/premium';
 
 interface RadarProps {

@@ -6,9 +6,13 @@ Request/Response models for API endpoints.
 """
 from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any
+from typing import TypeAlias
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from typing import Any, TypeAlias
+
+JsonValue: TypeAlias = Any
 
 
 # === Enums ===
@@ -62,14 +66,16 @@ class CompanyResponse(CompanyBase):
 
 class SearchQuery(BaseModel):
     query: str = Field(..., min_length=1, max_length=500)
-    sources: list[DataSourceType] = Field(default=[DataSourceType.EDR])
+    sources: list[DataSourceType] = Field(
+        default_factory=lambda: [DataSourceType.EDR]
+    )
     limit: int = Field(default=20, le=100)
 
 
 class SearchResult(BaseModel):
     source: DataSourceType
     count: int
-    data: list[dict[str, Any]]
+    data: list[dict[str, JsonValue]]
     search_time_ms: float
 
 
@@ -151,7 +157,7 @@ class ExchangeRatesResponse(BaseModel):
 
 class AnalysisRequest(BaseModel):
     query: str
-    sectors: list[str] = Field(default=["GOV", "BIZ"])
+    sectors: list[str] = Field(default_factory=lambda: ["GOV", "BIZ"])
     depth: str = Field(default="standard", pattern="^(quick|standard|deep)$")
 
 
@@ -159,7 +165,7 @@ class AnalysisSource(BaseModel):
     name: str
     type: str
     count: int
-    data: list[dict[str, Any]] = []
+    data: list[dict[str, JsonValue]] = Field(default_factory=list)
 
 
 class AnalysisResponse(BaseModel):

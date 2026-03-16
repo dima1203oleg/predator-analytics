@@ -39,7 +39,7 @@ import {
   HardDrive
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import * as echarts from 'echarts';
 import { TacticalCard } from '@/components/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';

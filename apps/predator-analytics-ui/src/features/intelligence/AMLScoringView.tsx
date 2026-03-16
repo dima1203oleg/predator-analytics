@@ -26,7 +26,7 @@ import {
     ChevronRight, BarChart3, Clock, X, Plus, Eye,
     ShieldCheck, Flame, Info, Crosshair, Network
 } from 'lucide-react';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import { motion as m } from 'framer-motion';
 import { apiClient as api } from '@/services/api';
 import { PageTransition } from '@/components/layout/PageTransition';

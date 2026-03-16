@@ -22,7 +22,7 @@ import {
     ArrowUpRight, ListFilter, HelpCircle
 } from 'lucide-react';
 import { api } from '@/services/api';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import * as echarts from 'echarts';
 import { useVoiceControl, InteractionStatus } from '@/hooks/useVoiceControl';
 import { HoloContainer } from '@/components/HoloContainer';

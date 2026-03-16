@@ -17,14 +17,14 @@
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted-foreground: 215 20% 72%;
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 217.2 28% 24%;
+    --input: 217.2 28% 24%;
+    --ring: 198 88% 56%;
     --radius: 0.5rem;
 
     --sat: env(safe-area-inset-top);
@@ -60,6 +60,15 @@
     
     --glow-neon-cyan: rgba(0, 243, 255, 0.5);
     --glow-neon-magenta: rgba(255, 0, 255, 0.5);
+}
+
+:root.high-visibility {
+    --background: 220 40% 8%;
+    --foreground: 210 40% 98%;
+    --muted-foreground: 215 24% 78%;
+    --border: 217 24% 32%;
+    --input: 217 24% 30%;
+    --ring: 196 90% 60%;
 }
 
 .pt-safe {
@@ -100,6 +109,7 @@
 }
 
 body {
+    color-scheme: dark;
     background-color: #000000;
     color: #e2e8f0;
     background-image:
@@ -113,6 +123,10 @@ body {
     -webkit-tap-highlight-color: transparent;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
     position: relative;
 }
 
@@ -123,6 +137,78 @@ body {
     display: flex;
     flex-direction: column;
     overflow: visible !important;
+}
+
+/* Режим високої видимості */
+.high-visibility body {
+    background-color: #02050f;
+    color: #f8fafc;
+}
+
+.high-visibility .glass-ultra {
+    background: rgba(2, 6, 23, 0.85);
+    border-color: rgba(148, 163, 184, 0.35);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.65);
+}
+
+.high-visibility :where(input, textarea, select) {
+    background-color: rgba(2, 6, 23, 0.85);
+    color: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.45);
+}
+
+.high-visibility :where(input, textarea, select):focus {
+    border-color: rgba(56, 189, 248, 0.7);
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+}
+
+.high-visibility ::placeholder {
+    color: #cbd5f5;
+    opacity: 0.9;
+}
+
+.high-visibility .text-slate-400 {
+    color: #e2e8f0 !important;
+}
+
+.high-visibility .text-slate-500 {
+    color: #cbd5f5 !important;
+}
+
+.high-visibility .text-slate-600 {
+    color: #b7c2d9 !important;
+}
+
+.high-visibility .border-white\/10 {
+    border-color: rgba(148, 163, 184, 0.35) !important;
+}
+
+.high-visibility .border-slate-800\/50,
+.high-visibility .border-slate-800\/60,
+.high-visibility .border-slate-800\/80 {
+    border-color: rgba(148, 163, 184, 0.35) !important;
+}
+
+/* Покращена видимість фокусу */
+:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    box-shadow:
+        0 0 0 2px hsl(var(--ring)),
+        0 0 0 6px rgba(2, 6, 23, 0.8);
+}
+
+::selection {
+    background: rgba(34, 211, 238, 0.35);
+    color: #ffffff;
 }
 
 /* ============================================================================
@@ -244,6 +330,89 @@ body {
     letter-spacing: 2px;
     background: #000000;
     animation: pulse 1.5s infinite;
+}
+
+/* Контраст для таблиць та графіків */
+table {
+    color: #e2e8f0;
+}
+
+thead th {
+    color: #f1f5f9;
+    background: rgba(15, 23, 42, 0.65);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+tbody td {
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+tbody tr:hover {
+    background: rgba(148, 163, 184, 0.08);
+}
+
+.recharts-text,
+.recharts-cartesian-axis-tick text,
+.recharts-legend-item-text {
+    fill: #f1f5f9 !important;
+}
+
+.recharts-default-tooltip {
+    background: rgba(2, 6, 23, 0.95) !important;
+    border: 1px solid rgba(148, 163, 184, 0.3) !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+.recharts-cartesian-axis line,
+.recharts-cartesian-axis-tick-line {
+    stroke: #64748b;
+}
+
+.recharts-cartesian-grid line {
+    stroke: #1f2937;
+}
+
+.recharts-tooltip-label,
+.recharts-tooltip-item {
+    color: #e2e8f0 !important;
+}
+
+.recharts-layer text {
+    paint-order: stroke;
+    stroke: #0f172a;
+    stroke-width: 2px;
+    stroke-linejoin: round;
+}
+
+.high-visibility .recharts-cartesian-axis line,
+.high-visibility .recharts-cartesian-axis-tick-line {
+    stroke: #cbd5f5;
+}
+
+.high-visibility .recharts-cartesian-grid line {
+    stroke: #334155;
+}
+
+.high-visibility .recharts-text,
+.high-visibility .recharts-cartesian-axis-tick text,
+.high-visibility .recharts-legend-item-text {
+    fill: #f8fafc !important;
+}
+
+/* Полотно графа (Cytoscape) */
+.graph-canvas {
+    background-image:
+        radial-gradient(circle at 20% 10%, rgba(56, 189, 248, 0.08), transparent 45%),
+        radial-gradient(circle at 80% 20%, rgba(94, 234, 212, 0.05), transparent 40%),
+        linear-gradient(180deg, rgba(2, 6, 23, 0.9), rgba(2, 6, 23, 1));
+}
+
+.high-visibility .graph-canvas {
+    background-image:
+        radial-gradient(circle at 20% 10%, rgba(56, 189, 248, 0.14), transparent 45%),
+        radial-gradient(circle at 80% 20%, rgba(94, 234, 212, 0.1), transparent 40%),
+        linear-gradient(180deg, rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 1));
 }
 
 /* Cybercore Simulator Utilities */
@@ -552,6 +721,18 @@ kbd {
 
 *::-webkit-scrollbar-thumb:hover {
     background: rgba(99, 102, 241, 0.45);
+}
+
+.high-visibility * {
+    scrollbar-color: rgba(148, 163, 184, 0.7) transparent;
+}
+
+.high-visibility *::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.55);
+}
+
+.high-visibility *::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.8);
 }
 
 /* AZR status badge pulse */

@@ -62,23 +62,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUserState] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // DEVELOPMENT BYPASS: Always log in as Admin
-    setUserState({
-      id: 'dev-admin',
-      name: 'System Administrator (DEV)',
-      email: 'admin@predator.ai',
-      role: UserRole.ADMIN,
-      tier: SubscriptionTier.ENTERPRISE,
-      tenant_id: 'system',
-      tenant_name: 'System Root',
-      last_login: new Date().toISOString(),
-      data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
-    });
-    setIsLoading(false);
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
 
   const setUser = (newUser: UserProfile) => {
     setUserState(newUser);

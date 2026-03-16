@@ -67,13 +67,13 @@ export const TruthLedgerSection: React.FC = () => {
           <Fingerprint size={16} className="text-cyan-400" />
           Truth Ledger (Immutable Audit)
         </h3>
-        <span className="text-[10px] text-slate-500 font-mono">Blockchain-Stabilized</span>
+        <span className="text-[10px] text-slate-300 font-mono">Blockchain-Stabilized</span>
       </div>
 
       <div className="bg-slate-900/50 rounded-2xl border border-white/5 ">
         <table className="w-full text-left text-[11px]">
           <thead>
-            <tr className="bg-white/5 text-slate-400 font-mono">
+            <tr className="bg-white/5 text-slate-300 font-mono">
               <th className="p-3 font-medium">ID</th>
               <th className="p-3 font-medium">TIMESTAMP</th>
               <th className="p-3 font-medium">ENTITY</th>
@@ -85,11 +85,11 @@ export const TruthLedgerSection: React.FC = () => {
           <tbody className="divide-y divide-white/5">
             {entries.length === 0 && !loading ? (
               <tr>
-                <td colSpan={6} className="p-10 text-center text-slate-600">No records in the Truth Ledger.</td>
+                <td colSpan={6} className="p-10 text-center text-slate-300">No records in the Truth Ledger.</td>
               </tr>
             ) : entries.map(entry => (
               <tr key={entry.id} className="hover:bg-white/5 transition-colors group">
-                <td className="p-3 font-mono text-slate-500">#{entry.id}</td>
+                <td className="p-3 font-mono text-slate-300">#{entry.id}</td>
                 <td className="p-3 text-slate-300">
                   {new Date(entry.timestamp).toLocaleTimeString()}
                 </td>
@@ -105,7 +105,7 @@ export const TruthLedgerSection: React.FC = () => {
                     {entry.action}
                   </span>
                 </td>
-                <td className="p-3 font-mono text-slate-500">
+                <td className="p-3 font-mono text-slate-300">
                   {entry.hash.substring(0, 12)}...
                 </td>
                 <td className="p-3">

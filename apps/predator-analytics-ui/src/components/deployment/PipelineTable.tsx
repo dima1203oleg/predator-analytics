@@ -14,7 +14,7 @@ export const PipelineTable: React.FC<PipelineTableProps> = ({ pipelines, onRollb
         <div className="overflow-x-auto bg-slate-900 border border-slate-800 rounded-lg shadow-lg panel-3d">
             <table className="w-full text-left border-collapse">
                 <thead>
-                    <tr className="border-b border-slate-800 bg-slate-950/50 text-[10px] uppercase text-slate-500 font-bold tracking-wider">
+                    <tr className="border-b border-slate-800 bg-slate-950/50 text-[10px] uppercase text-slate-300 font-bold tracking-wider">
                         <th className="p-4">Статус</th>
                         <th className="p-4">Коміт / Гілка</th>
                         <th className="p-4">Середовища</th>
@@ -45,13 +45,13 @@ export const PipelineTable: React.FC<PipelineTableProps> = ({ pipelines, onRollb
                                             run.status === 'SUCCESS' ? 'text-green-400' :
                                             run.status === 'FAILED' ? 'text-red-400' : 'text-blue-400'
                                         }`}>{run.status}</span>
-                                        <span className="text-[10px] text-slate-500 font-mono">#{run.id.split('-')[1]}</span>
+                                        <span className="text-[10px] text-slate-300 font-mono">#{run.id.split('-')[1]}</span>
                                     </div>
                                 </div>
                             </td>
                             <td className="p-4">
                                 <div className="text-sm font-medium text-slate-200 group-hover:text-primary-400 transition-colors">{run.commitMessage}</div>
-                                <div className="flex items-center gap-3 mt-1 text-[10px] text-slate-500 font-mono">
+                                <div className="flex items-center gap-3 mt-1 text-[10px] text-slate-300 font-mono">
                                     <span className="flex items-center gap-1 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"><GitCommit size={10}/> {run.branch}</span>
                                     <span>@{run.author}</span>
                                 </div>
@@ -83,7 +83,7 @@ export const PipelineTable: React.FC<PipelineTableProps> = ({ pipelines, onRollb
                             <td className="p-4 text-right">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onRollback(run.id); }}
-                                    className="p-2 hover:bg-slate-800 rounded text-slate-500 hover:text-white transition-colors btn-3d border border-transparent hover:border-slate-700"
+                                    className="p-2 hover:bg-slate-800 rounded text-slate-300 hover:text-white transition-colors btn-3d border border-transparent hover:border-slate-700"
                                     title="Відкотити до цієї версії"
                                 >
                                     <RotateCcw size={14} />

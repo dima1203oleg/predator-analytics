@@ -73,7 +73,7 @@ async def пошук_декларацій(
     query = select(
         CustomsDeclaration,
         Company.name.label("importer_name"),
-        Company.risk_score.label("company_risk")
+        Company.cers_score.label("company_risk")
     ).join(
         Company, CustomsDeclaration.importer_ueid == Company.ueid, isouter=True
     ).where(

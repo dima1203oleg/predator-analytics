@@ -8,9 +8,10 @@ class Settings(BaseSettings):
 
     # Основні
     APP_NAME: str = "PREDATOR Analytics Core API"
-    APP_VERSION: str = "55.1.0"
+    APP_VERSION: str = "55.2-SM-EXTENDED"
     DEBUG: bool = False
     ENV: str = "development"
+    TESTING: bool = False
 
     # Безпека (HR-06: Secrets from ENV)
     SECRET_KEY: str = "REQUIRED_IN_PRODUCTION"  # noqa: S105

@@ -55,13 +55,13 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
 
           <div className="min-w-0">
             {/* Breadcrumbs */}
-            <div className="flex items-center gap-1.5 text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-1.5 flex-wrap">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-slate-300 uppercase tracking-widest mb-1.5 flex-wrap">
               {breadcrumbs.map((crumb, idx) => (
                 <React.Fragment key={idx}>
-                  <span className={`transition-colors duration-200 ${idx === breadcrumbs.length - 1 ? 'text-primary-400 font-bold' : 'text-slate-600 hover:text-slate-400 cursor-default'}`}>
+                  <span className={`transition-colors duration-200 ${idx === breadcrumbs.length - 1 ? 'text-primary-300 font-bold' : 'text-slate-400 hover:text-slate-300 cursor-default'}`}>
                     {crumb}
                   </span>
-                  {idx < breadcrumbs.length - 1 && <ChevronRight size={10} className="text-slate-700 shrink-0" />}
+                  {idx < breadcrumbs.length - 1 && <ChevronRight size={10} className="text-slate-500 shrink-0" />}
                 </React.Fragment>
               ))}
             </div>
@@ -77,7 +77,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 * idx }}
-              className="flex items-center gap-3 bg-slate-950/40 px-4 py-2 rounded-lg border border-slate-800/50 hover:border-slate-700/80 transition-colors shadow-sm grow sm:grow-0 group"
+              className="flex items-center gap-3 bg-slate-950/40 px-4 py-2 rounded-lg border border-slate-700/60 hover:border-slate-600/80 transition-colors shadow-sm grow sm:grow-0 group"
             >
               {stat.icon && (
                 <span className={`p-1 rounded-md bg-slate-900/50 border border-slate-800 group-hover:scale-110 transition-transform ${
@@ -95,7 +95,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
                 </span>
               )}
               <div className="flex flex-col items-end leading-tight ml-auto sm:ml-0">
-                <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">{stat.label}</span>
+                <span className="text-[9px] text-slate-300 uppercase font-bold tracking-wider">{stat.label}</span>
                 <span className={`text-sm font-mono font-bold ${
                     stat.color === 'success' ? 'text-success-400' :
                    stat.color === 'warning' ? 'text-yellow-400' :

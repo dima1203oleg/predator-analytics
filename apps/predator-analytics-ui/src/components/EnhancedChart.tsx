@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import { EChartsOption } from 'echarts';
 
 export interface EnhancedChartProps {

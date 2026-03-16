@@ -20,7 +20,7 @@ import {
     TrendingUp, Clock, ChevronRight, Filter, X,
     Signal, Satellite, Map
 } from 'lucide-react';
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from '@/components/ECharts';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';

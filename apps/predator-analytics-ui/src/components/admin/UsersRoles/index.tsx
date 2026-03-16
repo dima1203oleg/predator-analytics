@@ -19,7 +19,7 @@ export const UsersRoles: React.FC = () => {
 
       <div className="bg-slate-900 border border-slate-700 rounded-xl ">
         <table className="w-full text-left">
-           <thead className="bg-slate-950 text-slate-500 text-xs uppercase font-bold">
+           <thead className="bg-slate-950 text-slate-300 text-xs uppercase font-bold">
               <tr>
                  <th className="p-4">User</th>
                  <th className="p-4">Role</th>
@@ -32,7 +32,7 @@ export const UsersRoles: React.FC = () => {
                  <tr key={u.id} className="hover:bg-slate-800/30">
                     <td className="p-4">
                        <div className="font-bold text-white">{u.name}</div>
-                       <div className="text-xs text-slate-500">{u.email}</div>
+                       <div className="text-xs text-slate-300">{u.email}</div>
                     </td>
                     <td className="p-4">
                        <span className={`px-2 py-1 rounded text-xs font-bold uppercase flex items-center gap-1 w-fit ${
@@ -43,9 +43,9 @@ export const UsersRoles: React.FC = () => {
                           <Shield size={12} /> {u.role}
                        </span>
                     </td>
-                    <td className="p-4 text-slate-400 text-sm">{u.lastLogin}</td>
+                    <td className="p-4 text-slate-300 text-sm">{u.lastLogin}</td>
                     <td className="p-4 text-right">
-                       <button className="p-2 text-slate-400 hover:text-white"><MoreHorizontal size={18} /></button>
+                       <button className="p-2 text-slate-300 hover:text-white"><MoreHorizontal size={18} /></button>
                     </td>
                  </tr>
               ))}

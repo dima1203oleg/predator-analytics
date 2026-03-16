@@ -100,7 +100,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
           className="p-2 hover:bg-white/5 rounded-xl transition-all border border-transparent hover:border-white/10 group"
           aria-label="Перемикач бічної панелі"
         >
-          <Menu className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+          <Menu className="w-5 h-5 text-slate-200 group-hover:text-white transition-colors" />
         </button>
 
         <div className="flex items-center gap-3">
@@ -139,8 +139,8 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             <ShieldAlert size={12} className={alertCount > 0 ? 'animate-pulse' : ''} />
           </div>
           <div>
-            <div className="text-[8px] text-slate-500 font-black uppercase tracking-widest leading-none">ЗАГРОЗИ</div>
-            <div className={cn("text-[11px] font-mono font-black leading-tight", alertCount > 0 ? 'text-red-400' : 'text-slate-500')}>
+            <div className="text-[8px] text-slate-300 font-black uppercase tracking-widest leading-none">ЗАГРОЗИ</div>
+            <div className={cn("text-[11px] font-mono font-black leading-tight", alertCount > 0 ? 'text-red-400' : 'text-slate-300')}>
               {alertCount > 0 ? `${alertCount} ACTIVE` : 'DEFCON 5'}
             </div>
           </div>
@@ -154,7 +154,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             <Cpu size={12} />
           </div>
           <div>
-            <div className="text-[8px] text-slate-500 font-black uppercase tracking-widest leading-none">ЦП</div>
+            <div className="text-[8px] text-slate-300 font-black uppercase tracking-widest leading-none">ЦП</div>
             <div className="text-[11px] font-mono font-black text-cyan-400 leading-tight">{cpuDisplay}%</div>
           </div>
           <Sparkline data={cpuHistory} color="#06b6d4" />
@@ -168,7 +168,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             <Activity size={12} />
           </div>
           <div>
-            <div className="text-[8px] text-slate-500 font-black uppercase tracking-widest leading-none">ОЗП</div>
+            <div className="text-[8px] text-slate-300 font-black uppercase tracking-widest leading-none">ОЗП</div>
             <div className="text-[11px] font-mono font-black text-violet-400 leading-tight">{liveMetrics?.memory ?? 0}%</div>
           </div>
         </div>
@@ -181,7 +181,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             <Database size={12} />
           </div>
           <div>
-            <div className="text-[8px] text-slate-500 font-black uppercase tracking-widest leading-none">БД</div>
+            <div className="text-[8px] text-slate-300 font-black uppercase tracking-widest leading-none">БД</div>
             <div className="text-[11px] font-mono font-black text-blue-400 leading-tight">
               {recDisplay > 1000 ? `${(recDisplay / 1000).toFixed(1)}K` : recDisplay}
             </div>
@@ -196,7 +196,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             <Radio size={12} className="animate-pulse" />
           </div>
           <div>
-            <div className="text-[8px] text-slate-500 font-black uppercase tracking-widest leading-none">СИГНАЛИ</div>
+            <div className="text-[8px] text-slate-300 font-black uppercase tracking-widest leading-none">СИГНАЛИ</div>
             <div className="text-[11px] font-mono font-black text-emerald-400 leading-tight">{liveMetrics?.signals ?? 0}/г</div>
           </div>
         </div>
@@ -214,11 +214,11 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             const event = new KeyboardEvent('keydown', { key: 'k', metaKey: true });
             window.dispatchEvent(event);
           }}
-          className="hidden lg:flex items-center gap-2 bg-slate-900/40 hover:bg-slate-800/60 border border-white/5 hover:border-cyan-500/30 text-slate-400 px-3 py-2 rounded-xl transition-all group"
+          className="hidden lg:flex items-center gap-2 bg-slate-900/40 hover:bg-slate-800/60 border border-white/5 hover:border-cyan-500/30 text-slate-200 px-3 py-2 rounded-xl transition-all group"
         >
           <Search className="w-3.5 h-3.5 group-hover:text-cyan-400 transition-colors" />
           <span className="text-[10px] font-bold uppercase tracking-wider hidden xl:inline">Пошук...</span>
-          <kbd className="hidden 2xl:inline-block bg-slate-950 rounded px-1.5 py-0.5 text-[8px] text-slate-500 border border-slate-800 font-mono">⌘K</kbd>
+          <kbd className="hidden 2xl:inline-block bg-slate-950 rounded px-1.5 py-0.5 text-[8px] text-slate-300 border border-slate-800 font-mono">⌘K</kbd>
         </button>
 
         <div className="h-7 w-px bg-white/5 hidden md:block" />

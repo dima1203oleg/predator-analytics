@@ -122,7 +122,7 @@ MODEL_TOKENS_USED = _get_or_create_metric(
     Counter,
     "model_tokens_used_total",
     "Total tokens used",
-    ["model_name", "type"],  # type: prompt, completion
+    ["model_name", "type"],
 )
 
 # ============================================================================

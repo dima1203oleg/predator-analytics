@@ -31,4 +31,5 @@ async def test_health_check(async_client: AsyncClient) -> None:
 async def test_metrics_endpoint(async_client: AsyncClient) -> None:
     response = await async_client.get("/metrics")
     assert response.status_code == 200
-    assert "HELP request_count" in response.text
+    # Перевіряємо наявність експозиції основного лічильника API
+    assert "HELP api_requests_total" in response.text
