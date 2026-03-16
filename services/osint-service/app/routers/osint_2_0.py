@@ -7,30 +7,26 @@
 - Міжнародні джерела (OpenCorporates, CrunchBase, Sanctions)
 - RAG + Graph інтеграція
 """
-from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel, Field, EmailStr
 from typing import Any
 
+from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel, EmailStr, Field
+
 from app.tools.osint_2_0 import (
+    CrunchBaseClient,
     # People Search
     EpieosClient,
     HoleheTool,
+    MetagoofilTool,
+    NLPEntityExtractor,
+    # International
+    OpenCorporatesClient,
+    PromptGuidedExplorer,
+    # RAG
+    SanctionsAggregator,
     SherlockTool,
     # Digital Forensics
     SpiderFootClient,
-    HunchlyClient,
-    MetagoofilTool,
-    # Knowledge Graph
-    STIXGraphBuilder,
-    NLPEntityExtractor,
-    GraphQueryEngine,
-    # International
-    OpenCorporatesClient,
-    CrunchBaseClient,
-    SanctionsAggregator,
-    # RAG
-    RAGGraphEngine,
-    PromptGuidedExplorer,
 )
 
 router = APIRouter(prefix="/osint-2", tags=["OSINT 2.0 — Поглиблений інструментарій"])
@@ -164,7 +160,7 @@ async def comprehensive_person_search(request: ComprehensiveSearchRequest):
             status_code=400,
             detail="Потрібно вказати хоча б один ідентифікатор: username, email або phone",
         )
-    
+
     tool = SherlockTool()
     result = await tool.comprehensive_search(
         username=request.username,
@@ -236,7 +232,7 @@ async def nlp_extract_entities(request: NLPAnalysisRequest):
     """
     extractor = NLPEntityExtractor()
     result = await extractor.process_document(request.text)
-    
+
     return {
         "entities": [
             {
@@ -271,7 +267,7 @@ async def graph_natural_query(request: GraphQueryRequest):
     """
     explorer = PromptGuidedExplorer()
     result = await explorer.explore(request.question, follow_up=request.follow_up)
-    
+
     return {
         "question": result.query,
         "answer": result.answer,
@@ -287,7 +283,7 @@ async def analyze_network(request: NetworkAnalysisRequest):
     """Аналіз мережі зв'язків сутності."""
     explorer = PromptGuidedExplorer()
     result = await explorer.analyze_network(request.entity, depth=request.depth)
-    
+
     return {
         "entity": request.entity,
         "depth": request.depth,
@@ -302,7 +298,7 @@ async def trace_ownership(company: str = Query(..., description="Назва ко
     """Відстеження ланцюга володіння до кінцевого бенефіціара."""
     explorer = PromptGuidedExplorer()
     result = await explorer.trace_ownership(company)
-    
+
     return {
         "company": company,
         "answer": result.answer,
@@ -316,7 +312,7 @@ async def find_risk_factors(entity: str = Query(..., description="Назва с�
     """Пошук факторів ризику для сутності."""
     explorer = PromptGuidedExplorer()
     result = await explorer.find_risk_factors(entity)
-    
+
     return {
         "entity": entity,
         "answer": result.answer,
@@ -434,7 +430,7 @@ async def sanctions_batch_check(names: list[str]):
             status_code=400,
             detail="Максимум 100 імен за один запит",
         )
-    
+
     aggregator = SanctionsAggregator()
     result = await aggregator.batch_check(names)
     return result.data
@@ -453,7 +449,7 @@ async def investigate_person(request: ComprehensiveSearchRequest):
     - Міжнародні бази
     """
     results: dict[str, Any] = {}
-    
+
     # 1. People Search
     if request.username or request.email or request.phone:
         sherlock = SherlockTool()
@@ -463,36 +459,36 @@ async def investigate_person(request: ComprehensiveSearchRequest):
             phone=request.phone,
         )
         results["people_search"] = people_result.data
-    
+
     # 2. Sanctions check
     name_to_check = request.username or (request.email.split("@")[0] if request.email else None)
     if name_to_check:
         sanctions = SanctionsAggregator()
         sanctions_result = await sanctions.check_all(name_to_check, "individual")
         results["sanctions"] = sanctions_result.data
-    
+
     # 3. Risk assessment
     risk_score = 0
     risk_factors = []
-    
+
     if results.get("people_search", {}).get("summary", {}).get("digital_footprint") == "high":
         risk_score += 20
         risk_factors.append("Високий цифровий слід")
-    
+
     if results.get("sanctions", {}).get("is_sanctioned"):
         risk_score += 100
         risk_factors.append("Знайдено у санкційних списках")
-    
+
     if results.get("sanctions", {}).get("pep_status", {}).get("is_pep"):
         risk_score += 50
         risk_factors.append("Політично значуща особа (PEP)")
-    
+
     results["risk_assessment"] = {
         "risk_score": min(100, risk_score),
         "risk_level": "critical" if risk_score >= 100 else "high" if risk_score >= 50 else "medium" if risk_score >= 20 else "low",
         "risk_factors": risk_factors,
     }
-    
+
     return results
 
 
@@ -507,7 +503,7 @@ async def investigate_company(request: CompanySearchRequest):
     - Knowledge Graph
     """
     results: dict[str, Any] = {"company_name": request.name}
-    
+
     # 1. OpenCorporates
     oc_client = OpenCorporatesClient()
     oc_result = await oc_client.search_company(
@@ -515,36 +511,36 @@ async def investigate_company(request: CompanySearchRequest):
         jurisdiction=request.jurisdiction,
     )
     results["opencorporates"] = oc_result.data
-    
+
     # 2. CrunchBase
     cb_client = CrunchBaseClient()
     cb_result = await cb_client.search_organization(request.name)
     results["crunchbase"] = cb_result.data
-    
+
     # 3. Sanctions
     sanctions = SanctionsAggregator()
     sanctions_result = await sanctions.check_all(request.name, "organization")
     results["sanctions"] = sanctions_result.data
-    
+
     # 4. Risk assessment
     risk_score = 0
     risk_factors = []
-    
+
     if results.get("sanctions", {}).get("is_sanctioned"):
         risk_score += 100
         risk_factors.append("Знайдено у санкційних списках")
-    
+
     # Перевірка офшорних зв'язків
     if request.jurisdiction in ["cy", "bvi", "ky", "pa"]:
         risk_score += 30
         risk_factors.append(f"Офшорна юрисдикція: {request.jurisdiction}")
-    
+
     results["risk_assessment"] = {
         "risk_score": min(100, risk_score),
         "risk_level": "critical" if risk_score >= 100 else "high" if risk_score >= 50 else "medium" if risk_score >= 20 else "low",
         "risk_factors": risk_factors,
     }
-    
+
     return results
 
 

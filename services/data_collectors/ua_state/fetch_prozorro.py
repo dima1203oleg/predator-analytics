@@ -1,6 +1,6 @@
-import requests
 import logging
-from typing import Dict, Any, List
+
+import requests
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("prozorro-full")
@@ -13,7 +13,7 @@ def fetch_top_tenders(limit: int = 20):
     response = requests.get(url, params=params)
     response.raise_for_status()
     tenders_list = response.json().get("data", [])
-    
+
     results = []
     for t_summary in tenders_list:
         tid = t_summary['id']
@@ -31,7 +31,7 @@ def fetch_top_tenders(limit: int = 20):
             })
         except Exception as e:
             logger.error(f"Error detail {tid}: {e}")
-            
+
     return results
 
 if __name__ == "__main__":

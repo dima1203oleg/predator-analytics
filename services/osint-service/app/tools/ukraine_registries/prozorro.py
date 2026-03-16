@@ -4,7 +4,7 @@
 Формат: API, JSON
 """
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from .base import BaseRegistryClient, RegistryResult, RegistryStatus
 
@@ -13,21 +13,21 @@ logger = logging.getLogger(__name__)
 
 class ProzorroClient(BaseRegistryClient):
     """Клієнт для Prozorro API."""
-    
+
     name = "prozorro"
     description = "Prozorro — система публічних закупівель"
     holder = "Міністерство економіки України"
     data_format = "API/JSON"
     status = RegistryStatus.ACTIVE
     update_frequency = "realtime"
-    
+
     API_URL = "https://public.api.openprocurement.org/api/2.5"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук тендерів за ЄДРПОУ учасника."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         tenders = [
             {
                 "id": "UA-2024-01-15-000001-a",
@@ -55,7 +55,7 @@ class ProzorroClient(BaseRegistryClient):
                 "bid_amount": 1150000.0,
             },
         ]
-        
+
         # Статистика
         stats = {
             "total_participations": len(tenders),
@@ -63,7 +63,7 @@ class ProzorroClient(BaseRegistryClient):
             "total_won_amount": sum(t.get("award_amount", 0) for t in tenders if t["participant_role"] == "winner"),
             "active_bids": len([t for t in tenders if t["status"].startswith("active")]),
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -76,7 +76,7 @@ class ProzorroClient(BaseRegistryClient):
             source_url=f"{self.API_URL}/tenders",
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою учасника."""
         start_time = datetime.now(UTC)
@@ -86,11 +86,11 @@ class ProzorroClient(BaseRegistryClient):
             data={"query": name, "tenders": [], "total": 0},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_tender(self, tender_id: str) -> RegistryResult:
         """Отримати деталі тендера."""
         start_time = datetime.now(UTC)
-        
+
         tender = {
             "id": tender_id,
             "title": "Закупівля комп'ютерного обладнання",
@@ -121,19 +121,19 @@ class ProzorroClient(BaseRegistryClient):
                 {"title": "Тендерна документація", "url": "https://..."},
             ],
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data=tender,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_supplier_statistics(self, edrpou: str) -> RegistryResult:
         """Отримати статистику постачальника."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         stats = {
             "edrpou": edrpou,
             "total_participations": 45,
@@ -155,7 +155,7 @@ class ProzorroClient(BaseRegistryClient):
                 "2022": {"participations": 13, "wins": 8, "amount": 3000000.0},
             },
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,

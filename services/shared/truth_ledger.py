@@ -11,9 +11,7 @@ import os
 from typing import TYPE_CHECKING, Any
 
 import clickhouse_connect
-
 from services.shared.logging_config import get_logger
-
 
 if TYPE_CHECKING:
     from services.shared.events import PredatorEvent

@@ -1,6 +1,6 @@
 """Leak Search Tool — пошук у витоках даних (h8mail, LeakLooker)."""
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
 
 from app.tools.base import BaseTool, ToolResult, ToolStatus
@@ -189,7 +189,7 @@ class LeakSearchTool(BaseTool):
             # Перевіряємо чи домен є у відомих витоках
             if any(domain in ["linkedin.com", "facebook.com", "adobe.com"]):
                 breaches.append({
-                    "name": f"Domain found in breach",
+                    "name": "Domain found in breach",
                     "date": "2021-01-01",
                     "records": 1000,
                     "source": "local_db",

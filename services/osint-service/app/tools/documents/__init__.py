@@ -1,7 +1,7 @@
 """Document Analysis Tools — аналіз документів та метаданих."""
-from .tika_client import TikaTool
 from .lexnlp_client import LexNLPTool
 from .openrefine_client import OpenRefineTool
+from .tika_client import TikaTool
 
 __all__ = [
     "TikaTool",

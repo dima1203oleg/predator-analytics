@@ -6,7 +6,6 @@ Section 3.5 of Spec.
 
 from prometheus_client import Counter, Gauge, Histogram
 
-
 # LLM Metrics
 llm_requests_total = Counter(
     "predator_llm_requests_total",

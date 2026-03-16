@@ -1,17 +1,12 @@
-import asyncio
 from dataclasses import dataclass
 from enum import Enum
-import json
-import logging
-import os
 import random
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import httpx
 
 from libs.core.config import settings
 from libs.core.logger import setup_logger
-
 
 logger = setup_logger("predator.core.llm")
 

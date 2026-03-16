@@ -2,23 +2,19 @@
 The "Brain" that processes behavioral, institutional, and influence layers.
 """
 
-import asyncio
 from datetime import datetime, timedelta
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 from uuid import UUID
 
-from sqlalchemy import func, select, text
+from sqlalchemy import select
 
 from libs.core.database import get_db_ctx
 from libs.core.models.analytics import (
     BehavioralProfile,
-    InfluenceGraph,
     InstitutionalBias,
     PredictiveAlert,
 )
-from libs.core.models.entities import Company
-
 
 logger = logging.getLogger("predator.analytics_engine")
 
@@ -353,6 +349,7 @@ class AnalyticalEngine:
 
         # WORM Write: Ledger the output
         from libs.core.ledger_service import LedgerService
+
         from libs.core.models.analytics import DecisionArtifact
 
         input_ctx = {"entity_id": entity_id, "weights": "v45_standard"}

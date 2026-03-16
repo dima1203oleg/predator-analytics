@@ -1,5 +1,4 @@
 """Photon Tool Adapter — веб-краулер для OSINT."""
-import json
 import os
 import tempfile
 from datetime import datetime

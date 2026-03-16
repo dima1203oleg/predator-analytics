@@ -7,7 +7,7 @@
 """
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -34,17 +34,17 @@ class EpieosClient:
     - Gravatar
     - Have I Been Pwned
     """
-    
+
     name = "epieos"
     description = "Глибинний пошук за email/телефоном"
-    
+
     def __init__(self, api_key: str | None = None):
         self.api_key = api_key
-    
+
     async def search_email(self, email: str) -> SearchResult:
         """Пошук за email."""
         start_time = datetime.now(UTC)
-        
+
         # Симуляція результатів Epieos
         data = {
             "email": email,
@@ -91,21 +91,21 @@ class EpieosClient:
                 {"platform": "GitHub", "url": "https://github.com/ivanivanov"},
             ],
         }
-        
+
         return SearchResult(
             tool_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_phone(self, phone: str) -> SearchResult:
         """Пошук за номером телефону."""
         start_time = datetime.now(UTC)
-        
+
         # Нормалізація номера
         phone_clean = phone.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
-        
+
         data = {
             "phone": phone_clean,
             "carrier": "Київстар",
@@ -128,7 +128,7 @@ class EpieosClient:
                 "spam_score": 0,
             },
         }
-        
+
         return SearchResult(
             tool_name=self.name,
             success=True,
@@ -145,10 +145,10 @@ class HoleheTool:
     - Перевіряє реєстрацію на популярних сервісах
     - Швидкий асинхронний пошук
     """
-    
+
     name = "holehe"
     description = "Перевірка реєстрації email на 120+ сервісах"
-    
+
     # Список сервісів для перевірки
     SERVICES = [
         "twitter", "instagram", "facebook", "linkedin", "github",
@@ -162,15 +162,15 @@ class HoleheTool:
         "airbnb", "booking", "uber", "lyft", "bolt",
         "paypal", "stripe", "wise", "revolut", "monobank",
     ]
-    
+
     async def check_email(self, email: str) -> SearchResult:
         """Перевірка email на всіх сервісах."""
         start_time = datetime.now(UTC)
-        
+
         # Симуляція результатів
         registered_services = []
         not_registered = []
-        
+
         # Для демо — частина сервісів "знайдена"
         for i, service in enumerate(self.SERVICES):
             if i % 3 == 0:  # Кожен третій сервіс
@@ -182,7 +182,7 @@ class HoleheTool:
                 })
             else:
                 not_registered.append(service)
-        
+
         data = {
             "email": email,
             "total_checked": len(self.SERVICES),
@@ -191,7 +191,7 @@ class HoleheTool:
             "not_registered": not_registered,
             "risk_score": min(100, len(registered_services) * 5),  # Більше акаунтів = більший ризик витоку
         }
-        
+
         return SearchResult(
             tool_name=self.name,
             success=True,
@@ -206,10 +206,10 @@ class SherlockTool:
     GitHub: sherlock-project/sherlock
     Основа для створення цифрового профілю особи.
     """
-    
+
     name = "sherlock"
     description = "Пошук username у 340+ соцмережах"
-    
+
     # Категорії платформ
     PLATFORMS = {
         "social": [
@@ -238,13 +238,13 @@ class SherlockTool:
             "Bitcointalk", "CryptoCompare", "TradingView", "Binance",
         ],
     }
-    
+
     async def search_username(self, username: str) -> SearchResult:
         """Пошук username на всіх платформах."""
         start_time = datetime.now(UTC)
-        
+
         found_profiles = []
-        
+
         # Симуляція пошуку
         for category, platforms in self.PLATFORMS.items():
             for i, platform in enumerate(platforms):
@@ -256,10 +256,10 @@ class SherlockTool:
                         "exists": True,
                         "response_time_ms": 50 + (i * 10),
                     })
-        
+
         # Аналіз патернів
         categories_found = list(set(p["category"] for p in found_profiles))
-        
+
         data = {
             "username": username,
             "total_platforms_checked": sum(len(p) for p in self.PLATFORMS.values()),
@@ -272,19 +272,19 @@ class SherlockTool:
                 "potential_interests": self._analyze_interests(found_profiles),
             },
         }
-        
+
         return SearchResult(
             tool_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     def _analyze_interests(self, profiles: list[dict]) -> list[str]:
         """Аналіз інтересів на основі знайдених профілів."""
         interests = []
         categories = [p["category"] for p in profiles]
-        
+
         if "gaming" in categories:
             interests.append("Відеоігри")
         if "tech" in categories:
@@ -293,9 +293,9 @@ class SherlockTool:
             interests.append("Криптовалюти")
         if "media" in categories:
             interests.append("Медіа/Контент")
-        
+
         return interests
-    
+
     async def comprehensive_search(
         self,
         username: str | None = None,
@@ -304,41 +304,41 @@ class SherlockTool:
     ) -> SearchResult:
         """Комплексний пошук за всіма ідентифікаторами."""
         start_time = datetime.now(UTC)
-        
+
         results = {
             "username_results": None,
             "email_results": None,
             "phone_results": None,
         }
-        
+
         if username:
             username_result = await self.search_username(username)
             results["username_results"] = username_result.data
-        
+
         if email:
             epieos = EpieosClient()
             holehe = HoleheTool()
-            
+
             epieos_result = await epieos.search_email(email)
             holehe_result = await holehe.check_email(email)
-            
+
             results["email_results"] = {
                 "epieos": epieos_result.data,
                 "holehe": holehe_result.data,
             }
-        
+
         if phone:
             epieos = EpieosClient()
             phone_result = await epieos.search_phone(phone)
             results["phone_results"] = phone_result.data
-        
+
         # Об'єднання та аналіз
         total_profiles = 0
         if results["username_results"]:
             total_profiles += results["username_results"].get("found_count", 0)
         if results["email_results"] and "holehe" in results["email_results"]:
             total_profiles += results["email_results"]["holehe"].get("registered_count", 0)
-        
+
         data = {
             **results,
             "summary": {
@@ -347,7 +347,7 @@ class SherlockTool:
                 "risk_level": "high" if total_profiles > 30 else "medium" if total_profiles > 15 else "low",
             },
         }
-        
+
         return SearchResult(
             tool_name="comprehensive_search",
             success=True,

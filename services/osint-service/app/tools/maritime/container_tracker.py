@@ -1,9 +1,7 @@
 """Container Tracker Tool — відстеження контейнерів та вантажів."""
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
-
-import httpx
 
 from app.tools.base import BaseTool, ToolResult, ToolStatus
 

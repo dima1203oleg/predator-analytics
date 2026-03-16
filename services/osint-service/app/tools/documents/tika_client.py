@@ -1,8 +1,8 @@
 """Apache Tika Tool — витягування тексту та метаданих з документів."""
-import logging
-from datetime import datetime, UTC
-from typing import Any
 import base64
+import logging
+from datetime import UTC, datetime
+from typing import Any
 
 import httpx
 

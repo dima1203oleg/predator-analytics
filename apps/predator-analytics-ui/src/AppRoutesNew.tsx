@@ -176,7 +176,7 @@ export const AppRoutesNew = () => {
             <Route path="/dashboards" element={<MonitoringView />} />
             <Route path="/intelligence" element={<IntelligenceView />} />
             <Route path="/customs-intel" element={<CustomsIntelligenceView />} />
-            <Route path="/forecast" element={<ForecastView />} />
+            <Route path="/forecast-view" element={<ForecastView />} />
             <Route path="/aml" element={<AMLScoringView />} />
             <Route path="/llm" element={<LLMView />} />
             <Route path="/llm/nas" element={<NasView />} />

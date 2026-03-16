@@ -4,7 +4,7 @@
 Формат: API, JSON
 """
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from .base import BaseRegistryClient, RegistryResult, RegistryStatus
 
@@ -13,21 +13,21 @@ logger = logging.getLogger(__name__)
 
 class EdataClient(BaseRegistryClient):
     """Клієнт для E-data (Spending.gov.ua)."""
-    
+
     name = "edata"
     description = "E-data — портал державних видатків"
     holder = "Міністерство фінансів України"
     data_format = "API/JSON"
     status = RegistryStatus.ACTIVE
     update_frequency = "daily"
-    
+
     API_URL = "https://spending.gov.ua/api"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук транзакцій за ЄДРПОУ отримувача."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         transactions = [
             {
                 "id": "tx_001",
@@ -62,13 +62,13 @@ class EdataClient(BaseRegistryClient):
                 "budget_program": "0801010",
             },
         ]
-        
+
         stats = {
             "total_received": sum(t["amount"] for t in transactions),
             "transaction_count": len(transactions),
             "unique_payers": len(set(t["payer"]["edrpou"] for t in transactions)),
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -81,7 +81,7 @@ class EdataClient(BaseRegistryClient):
             source_url=self.API_URL,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         start_time = datetime.now(UTC)
@@ -91,12 +91,12 @@ class EdataClient(BaseRegistryClient):
             data={"query": name, "transactions": [], "total": 0},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_payer_statistics(self, edrpou: str) -> RegistryResult:
         """Статистика платника (держоргану)."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         stats = {
             "edrpou": edrpou,
             "name": "Міністерство цифрової трансформації",
@@ -112,7 +112,7 @@ class EdataClient(BaseRegistryClient):
                 "2024-04": 18000000.0,
             },
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,

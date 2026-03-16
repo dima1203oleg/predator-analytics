@@ -5,13 +5,11 @@ Core module for system diagnostics, auto-recovery and schema integrity.
 import asyncio
 import logging
 import socket
-from typing import Any, Dict, List
+from typing import Any
 
 from libs.core.config import settings
 from libs.core.database import get_db_ctx, init_db
-from libs.core.mq import broker
 from libs.core.redis import redis_client
-
 
 logger = logging.getLogger("predator.guardian")
 

@@ -3,12 +3,9 @@ Background service that pulses the Nervous System and detects anomalies.
 """
 
 import asyncio
-from datetime import datetime
 import logging
-from typing import Optional
 
 from libs.core.analytics_engine import analytics_engine
-
 
 logger = logging.getLogger("predator.nerve_monitor")
 

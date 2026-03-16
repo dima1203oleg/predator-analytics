@@ -9,40 +9,39 @@
 """
 
 # People Search 2.0
+# Digital Forensics
+from .digital_forensics import (
+    HunchlyClient,
+    MetagoofilTool,
+    SpiderFootClient,
+)
+
+# Міжнародні джерела
+from .international import (
+    CrunchBaseClient,
+    EUSanctionsClient,
+    OFACClient,
+    OpenCorporatesClient,
+    SanctionsAggregator,
+    UKSanctionsClient,
+)
+
+# Knowledge Graph
+from .knowledge_graph import (
+    GraphQueryEngine,
+    NLPEntityExtractor,
+    STIXGraphBuilder,
+)
 from .people_search import (
     EpieosClient,
     HoleheTool,
     SherlockTool,
 )
 
-# Digital Forensics
-from .digital_forensics import (
-    SpiderFootClient,
-    HunchlyClient,
-    MetagoofilTool,
-)
-
-# Knowledge Graph
-from .knowledge_graph import (
-    STIXGraphBuilder,
-    NLPEntityExtractor,
-    GraphQueryEngine,
-)
-
-# Міжнародні джерела
-from .international import (
-    OpenCorporatesClient,
-    CrunchBaseClient,
-    SanctionsAggregator,
-    OFACClient,
-    EUSanctionsClient,
-    UKSanctionsClient,
-)
-
 # RAG + Graph
 from .rag_graph import (
-    RAGGraphEngine,
     PromptGuidedExplorer,
+    RAGGraphEngine,
 )
 
 __all__ = [

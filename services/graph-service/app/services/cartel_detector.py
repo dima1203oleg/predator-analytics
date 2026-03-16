@@ -1,13 +1,14 @@
-"""
-Cartel Detector — PREDATOR Analytics v55.2-SM-EXTENDED.
+"""Cartel Detector — PREDATOR Analytics v55.2-SM-EXTENDED.
 Trinity Engine:Louvain Community Detection & Bid Rigging Patterns.
 """
-from typing import List, Dict, Any
+from typing import Any
+
 from app.graph_db import graph_db
+
 
 class CartelDetectorService:
     @staticmethod
-    async def detect_communities(tenant_id: str) -> List[Dict[str, Any]]:
+    async def detect_communities(tenant_id: str) -> list[dict[str, Any]]:
         """Використання Louvain для виявлення щільних кластерів (ком'юніті) v55.2."""
         query = """
         CALL gds.louvain.stream({
@@ -36,9 +37,8 @@ class CartelDetectorService:
             return await graph_db.run_query(fallback_query, {"tenant_id": tenant_id})
 
     @staticmethod
-    async def find_cartel_rings(tenant_id: str) -> List[Dict[str, Any]]:
-        """
-        Виявлення Bid Rigging (змов на тендерах).
+    async def find_cartel_rings(tenant_id: str) -> list[dict[str, Any]]:
+        """Виявлення Bid Rigging (змов на тендерах).
         Шукає компанії, які разом беруть участь у тендерах ТА мають спільних бенефіціарів.
         """
         query = """

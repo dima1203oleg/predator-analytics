@@ -37,6 +37,7 @@ from app.routers import (
     intelligence_router,
     maritime_router,
     optimizer_router,
+    osint_ua_router,
     persons_router,
     public_api_router,
     registries_router,
@@ -44,7 +45,6 @@ from app.routers import (
     search_router,
     som_router,
     warroom_router,
-    osint_ua_router,
 )
 from app.services.kafka_service import close_kafka, init_kafka
 from app.services.minio_service import close_minio, init_minio

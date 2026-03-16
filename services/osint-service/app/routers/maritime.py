@@ -1,9 +1,7 @@
 """Maritime OSINT Router — відстеження суден, контейнерів, портів."""
-import uuid
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from typing import Any
 
 from app.tools import get_tool_registry
 

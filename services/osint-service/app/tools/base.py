@@ -112,7 +112,7 @@ class BaseTool(ABC):
             )
             return result
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             duration = (datetime.utcnow() - start_time).total_seconds()
             self.logger.warning(f"Tool {self.name} timed out after {duration}s for target: {target}")
             return ToolResult(

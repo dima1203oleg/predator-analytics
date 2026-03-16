@@ -4,7 +4,7 @@
 Формат: API (платний доступ)
 """
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from .base import BaseRegistryClient, RegistryResult, RegistryStatus
 
@@ -13,19 +13,19 @@ logger = logging.getLogger(__name__)
 
 class RealEstateRegistryClient(BaseRegistryClient):
     """Клієнт для Реєстру прав на нерухоме майно."""
-    
+
     name = "real_estate_registry"
     description = "Державний реєстр речових прав на нерухоме майно"
     holder = "Міністерство юстиції України"
     data_format = "API"
     status = RegistryStatus.ACTIVE
     update_frequency = "daily"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук нерухомості за ЄДРПОУ власника."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         properties = [
             {
                 "registration_number": "12345678",
@@ -52,7 +52,7 @@ class RealEstateRegistryClient(BaseRegistryClient):
                 ],
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -64,7 +64,7 @@ class RealEstateRegistryClient(BaseRegistryClient):
             },
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою власника."""
         start_time = datetime.now(UTC)
@@ -74,11 +74,11 @@ class RealEstateRegistryClient(BaseRegistryClient):
             data={"query": name, "properties": [], "total": 0},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_address(self, address: str) -> RegistryResult:
         """Пошук за адресою."""
         start_time = datetime.now(UTC)
-        
+
         property_data = {
             "registration_number": "99999999",
             "type": "Квартира",
@@ -92,18 +92,18 @@ class RealEstateRegistryClient(BaseRegistryClient):
             "registration_date": "2019-08-10",
             "encumbrances": [],
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data=property_data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def check_encumbrances(self, registration_number: str) -> RegistryResult:
         """Перевірка обтяжень."""
         start_time = datetime.now(UTC)
-        
+
         encumbrances = [
             {
                 "type": "Іпотека",
@@ -113,7 +113,7 @@ class RealEstateRegistryClient(BaseRegistryClient):
                 "end_date": "2030-01-15",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,

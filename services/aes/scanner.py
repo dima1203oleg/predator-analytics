@@ -8,7 +8,6 @@ import logging
 
 from services.shared.logging_config import setup_logging
 
-
 setup_logging("aes-scanner")
 logger = logging.getLogger(__name__)
 

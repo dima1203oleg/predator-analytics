@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING
 
 import asyncpg
 
-
 if TYPE_CHECKING:
     from services.shared.decision import DecisionArtifact
 

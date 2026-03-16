@@ -1,6 +1,6 @@
 """OpenCorporates Tool — найбільша база компаній світу (200M+)."""
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
 
 import httpx

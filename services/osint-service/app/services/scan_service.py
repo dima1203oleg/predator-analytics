@@ -1,7 +1,6 @@
 """Scan Service — координація OSINT сканувань."""
-import asyncio
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID
 
@@ -9,15 +8,15 @@ import redis.asyncio as redis
 
 from app.config import get_settings
 from app.models import (
-    ScanStatus,
-    ScanProgress,
-    DomainScanResult,
-    PersonSearchResult,
     CompanyInvestigationResult,
+    DomainScanResult,
     FileAnalysisResult,
     OSINTFinding,
+    PersonSearchResult,
+    ScanProgress,
+    ScanStatus,
 )
-from app.tools import get_tool_registry, ToolStatus
+from app.tools import ToolStatus, get_tool_registry
 
 logger = logging.getLogger(__name__)
 

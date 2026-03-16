@@ -11,7 +11,6 @@ from typing import Any
 
 import redis.asyncio as redis
 
-
 logger = logging.getLogger(__name__)
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://predator-analytics-redis:6379")

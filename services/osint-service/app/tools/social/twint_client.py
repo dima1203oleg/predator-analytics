@@ -1,6 +1,6 @@
 """Twint Tool — Twitter/X OSINT без API."""
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
 
 from app.tools.base import BaseTool, ToolResult, ToolStatus

@@ -17,10 +17,8 @@
 - Статутний капітал
 """
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
-
-import httpx
 
 from .base import BaseRegistryClient, RegistryResult, RegistryStatus
 
@@ -29,18 +27,18 @@ logger = logging.getLogger(__name__)
 
 class EDRFullClient(BaseRegistryClient):
     """Клієнт для Єдиного державного реєстру."""
-    
+
     name = "edr"
     description = "Єдиний державний реєстр юридичних осіб, ФОП та громадських формувань"
     holder = "Міністерство юстиції України"
     data_format = "XML/JSON"
     status = RegistryStatus.ACTIVE
     update_frequency = "daily"
-    
+
     # API endpoints
     DATA_GOV_UA = "https://data.gov.ua/api/3/action/package_show?id=1c7f3815-3259-45e0-bdf1-64dca07ddc10"
     USR_API = "https://usr.minjust.gov.ua/api"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук компанії за кодом ЄДРПОУ.
         
@@ -52,14 +50,14 @@ class EDRFullClient(BaseRegistryClient):
         """
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         if not self.validate_edrpou(edrpou):
             return RegistryResult(
                 registry_name=self.name,
                 success=False,
                 errors=["Невалідний код ЄДРПОУ: має бути 8 цифр"],
             )
-        
+
         # Перевірка кешу
         cache_key = f"edr:{edrpou}"
         cached = self._get_cached(cache_key)
@@ -70,15 +68,15 @@ class EDRFullClient(BaseRegistryClient):
                 data=cached,
                 cache_hit=True,
             )
-        
+
         # Симуляція даних ЄДР
         # В реальності — запит до API Мін'юсту або data.gov.ua
         company_data = self._simulate_edr_data(edrpou)
-        
+
         response_time = (datetime.now(UTC) - start_time).total_seconds() * 1000
-        
+
         self._set_cached(cache_key, company_data)
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -86,7 +84,7 @@ class EDRFullClient(BaseRegistryClient):
             source_url=f"{self.USR_API}/companies/{edrpou}",
             response_time_ms=response_time,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук компаній за назвою.
         
@@ -97,65 +95,65 @@ class EDRFullClient(BaseRegistryClient):
             RegistryResult зі списком компаній
         """
         start_time = datetime.now(UTC)
-        
+
         if len(name) < 3:
             return RegistryResult(
                 registry_name=self.name,
                 success=False,
                 errors=["Назва має містити мінімум 3 символи"],
             )
-        
+
         # Симуляція пошуку
         results = [
             self._simulate_edr_data("12345678", name=f"{name} ТОВ"),
             self._simulate_edr_data("87654321", name=f"ПП {name}"),
         ]
-        
+
         response_time = (datetime.now(UTC) - start_time).total_seconds() * 1000
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data={"results": results, "total": len(results)},
             response_time_ms=response_time,
         )
-    
+
     async def search_by_director(self, director_name: str) -> RegistryResult:
         """Пошук компаній за ПІБ керівника."""
         start_time = datetime.now(UTC)
-        
+
         # Симуляція
         results = [
             self._simulate_edr_data("11111111", director_name=director_name),
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data={"results": results, "total": len(results)},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_founder(self, founder_name: str) -> RegistryResult:
         """Пошук компаній за засновником."""
         start_time = datetime.now(UTC)
-        
+
         results = [
             self._simulate_edr_data("22222222", founder_name=founder_name),
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data={"results": results, "total": len(results)},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_beneficiaries(self, edrpou: str) -> RegistryResult:
         """Отримати кінцевих бенефіціарних власників."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         beneficiaries = [
             {
                 "name": "Іванов Іван Іванович",
@@ -174,7 +172,7 @@ class EDRFullClient(BaseRegistryClient):
                 "registration_date": "2020-01-15",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -185,12 +183,12 @@ class EDRFullClient(BaseRegistryClient):
             },
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_history(self, edrpou: str) -> RegistryResult:
         """Отримати історію змін компанії."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         history = [
             {
                 "date": "2024-06-15",
@@ -211,7 +209,7 @@ class EDRFullClient(BaseRegistryClient):
                 "new_value": "Зареєстровано",
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -222,7 +220,7 @@ class EDRFullClient(BaseRegistryClient):
             },
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     def _simulate_edr_data(
         self,
         edrpou: str,

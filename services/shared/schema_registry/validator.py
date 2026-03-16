@@ -10,7 +10,6 @@ from typing import Any, ClassVar
 
 import jsonschema
 
-
 logger = logging.getLogger(__name__)
 
 SCHEMAS_DIR = Path(__file__).parent.parent.parent / "schemas"

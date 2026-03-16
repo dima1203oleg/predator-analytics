@@ -7,10 +7,8 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from services.api.routes import analytics, health, insights, osint_ua
 from services.shared.logging_config import setup_logging
-
 
 setup_logging("predator-api")
 logger = logging.getLogger(__name__)

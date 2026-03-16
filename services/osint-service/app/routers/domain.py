@@ -1,13 +1,11 @@
 """Domain OSINT Router — сканування доменів."""
 import uuid
-from datetime import datetime, UTC
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 
 from app.models import (
     DomainScanRequest,
     DomainScanResult,
-    ScanStatus,
     ScanProgress,
 )
 from app.services.scan_service import ScanService

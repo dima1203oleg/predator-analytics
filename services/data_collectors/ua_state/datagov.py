@@ -1,13 +1,14 @@
-import requests
 import logging
+
+import requests
 
 logger = logging.getLogger(__name__)
 
 class DataGovUACollector:
-    """
-    Collector for the official Ukrainian Open Data Portal (data.gov.ua)
+    """Collector for the official Ukrainian Open Data Portal (data.gov.ua)
     Uses CKAN API v3.
     """
+
     BASE_URL = "https://data.gov.ua/api/3/action"
 
     def __init__(self):
@@ -17,8 +18,7 @@ class DataGovUACollector:
         })
 
     def search_datasets(self, query: str = "", rows: int = 10, start: int = 0):
-        """
-        Search for packages (datasets) matching a query.
+        """Search for packages (datasets) matching a query.
         """
         params = {
             "q": query,
@@ -34,8 +34,7 @@ class DataGovUACollector:
             return {"success": False, "error": str(e)}
 
     def get_dataset_details(self, dataset_id: str):
-        """
-        Get info about a specific dataset (package_show).
+        """Get info about a specific dataset (package_show).
         """
         params = {"id": dataset_id}
         try:
@@ -47,8 +46,7 @@ class DataGovUACollector:
             return {"success": False, "error": str(e)}
 
     def list_recent_datasets(self, limit: int = 10):
-        """
-        List recently modified datasets.
+        """List recently modified datasets.
         """
         # We can use package_search with sort metadata_modified desc
         params = {

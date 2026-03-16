@@ -9,7 +9,6 @@ import uuid
 
 from services.shared.logging_config import setup_logging
 
-
 setup_logging("automl-controller")
 logger = logging.getLogger(__name__)
 

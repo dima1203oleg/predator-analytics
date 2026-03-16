@@ -1,6 +1,6 @@
 """EDR Tool — Єдиний державний реєстр юридичних осіб України."""
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
 
 import httpx

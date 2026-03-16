@@ -1,9 +1,7 @@
 """Court Registry Tool — Єдиний державний реєстр судових рішень України."""
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
-
-import httpx
 
 from app.tools.base import BaseTool, ToolResult, ToolStatus
 

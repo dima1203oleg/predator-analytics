@@ -1,19 +1,18 @@
-import httpx
 import logging
-from typing import Dict, Any, Optional
+from typing import Any
+
+import httpx
 
 logger = logging.getLogger("core-api.osint.prozorro")
 
 class ProzorroCollector:
+    """Асинхронний колектор даних Prozorro (api.prozorro.gov.ua).
     """
-    Асинхронний колектор даних Prozorro (api.prozorro.gov.ua).
-    """
-    
+
     BASE_URL = "https://public.api.openprocurement.org/api/2.5"
-    
-    async def fetch_tenders(self, offset: str = "", limit: int = 10) -> Dict[str, Any]:
-        """
-        Завантажує список тендерів.
+
+    async def fetch_tenders(self, offset: str = "", limit: int = 10) -> dict[str, Any]:
+        """Завантажує список тендерів.
         """
         url = f"{self.BASE_URL}/tenders"
         params = {
@@ -21,7 +20,7 @@ class ProzorroCollector:
             "limit": limit,
             "descending": 1
         }
-        
+
         try:
             async with httpx.AsyncClient(timeout=30.0) as client:
                 logger.info(f"Fetching Prozorro tenders: offset={offset}")
@@ -29,15 +28,14 @@ class ProzorroCollector:
                 response.raise_for_status()
                 return response.json()
         except Exception as e:
-            logger.error(f"Prozorro fetch error: {str(e)}")
+            logger.error(f"Prozorro fetch error: {e!s}")
             return {"data": [], "next_page": {"offset": offset}, "error": str(e)}
 
-    async def get_tender_details(self, tender_id: str) -> Optional[Dict[str, Any]]:
-        """
-        Отримує деталі тендера.
+    async def get_tender_details(self, tender_id: str) -> dict[str, Any] | None:
+        """Отримує деталі тендера.
         """
         url = f"{self.BASE_URL}/tenders/{tender_id}"
-        
+
         try:
             async with httpx.AsyncClient(timeout=30.0) as client:
                 logger.info(f"Fetching Prozorro detail: {tender_id}")
@@ -45,5 +43,5 @@ class ProzorroCollector:
                 response.raise_for_status()
                 return response.json().get("data")
         except Exception as e:
-            logger.error(f"Prozorro detail error: {str(e)}")
+            logger.error(f"Prozorro detail error: {e!s}")
             return None

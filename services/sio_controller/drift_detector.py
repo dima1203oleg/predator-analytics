@@ -9,7 +9,6 @@ from typing import Any
 from services.shared.events import PredatorEvent
 from services.shared.logging_config import get_logger
 
-
 logger = get_logger(__name__, component="sio-controller")
 
 

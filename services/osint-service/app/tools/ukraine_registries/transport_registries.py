@@ -4,7 +4,7 @@
 Формат: API, XML
 """
 import logging
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from .base import BaseRegistryClient, RegistryResult, RegistryStatus
 
@@ -13,19 +13,19 @@ logger = logging.getLogger(__name__)
 
 class MTSBUClient(BaseRegistryClient):
     """Централізована база даних МТСБУ (страхова історія)."""
-    
+
     name = "mtsbu"
     description = "Централізована база даних МТСБУ"
     holder = "Моторне (транспортне) страхове бюро України"
     data_format = "API"
     status = RegistryStatus.ACTIVE
     update_frequency = "daily"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук страхової історії за ЄДРПОУ."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         data = {
             "edrpou": edrpou,
             "vehicles": [
@@ -49,14 +49,14 @@ class MTSBUClient(BaseRegistryClient):
             "total_vehicles": 1,
             "active_policies": 1,
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data=data,
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         start_time = datetime.now(UTC)
@@ -66,11 +66,11 @@ class MTSBUClient(BaseRegistryClient):
             data={"query": name, "results": [], "total": 0},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def check_policy(self, plate_number: str) -> RegistryResult:
         """Перевірка полісу ОСЦПВ за номерним знаком."""
         start_time = datetime.now(UTC)
-        
+
         data = {
             "plate_number": plate_number.upper(),
             "has_valid_policy": True,
@@ -82,7 +82,7 @@ class MTSBUClient(BaseRegistryClient):
                 "status": "active",
             },
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
@@ -93,19 +93,19 @@ class MTSBUClient(BaseRegistryClient):
 
 class CarriersLicensesClient(BaseRegistryClient):
     """Реєстр ліцензій перевізників."""
-    
+
     name = "carriers_licenses"
     description = "Реєстр ліцензій на перевезення пасажирів та вантажів"
     holder = "Укртрансбезпека"
     data_format = "XML"
     status = RegistryStatus.ACTIVE
     update_frequency = "weekly"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук ліцензій перевізника."""
         start_time = datetime.now(UTC)
         edrpou = self.normalize_edrpou(edrpou)
-        
+
         licenses = [
             {
                 "number": f"ЛП-{edrpou[:6]}-001",
@@ -125,14 +125,14 @@ class CarriersLicensesClient(BaseRegistryClient):
                 "vehicles_count": 25,
             },
         ]
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,
             data={"edrpou": edrpou, "licenses": licenses, "total": len(licenses)},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за назвою."""
         start_time = datetime.now(UTC)
@@ -146,14 +146,14 @@ class CarriersLicensesClient(BaseRegistryClient):
 
 class DriverCabinetClient(BaseRegistryClient):
     """Електронний кабінет водія."""
-    
+
     name = "driver_cabinet"
     description = "Електронний кабінет водія (історія авто за VIN)"
     holder = "МВС України"
     data_format = "API"
     status = RegistryStatus.ACTIVE
     update_frequency = "daily"
-    
+
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук за ЄДРПОУ (для юросіб)."""
         start_time = datetime.now(UTC)
@@ -163,7 +163,7 @@ class DriverCabinetClient(BaseRegistryClient):
             data={"edrpou": edrpou, "vehicles": [], "total": 0},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук за ПІБ."""
         start_time = datetime.now(UTC)
@@ -173,11 +173,11 @@ class DriverCabinetClient(BaseRegistryClient):
             data={"query": name, "vehicles": [], "total": 0},
             response_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
         )
-    
+
     async def get_vehicle_history(self, vin: str) -> RegistryResult:
         """Отримати історію авто за VIN."""
         start_time = datetime.now(UTC)
-        
+
         history = {
             "vin": vin,
             "brand": "Volkswagen",
@@ -200,7 +200,7 @@ class DriverCabinetClient(BaseRegistryClient):
                 {"date": "2024-01-15", "mileage_km": 45000},
             ],
         }
-        
+
         return RegistryResult(
             registry_name=self.name,
             success=True,

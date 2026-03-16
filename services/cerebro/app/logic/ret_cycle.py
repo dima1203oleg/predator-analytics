@@ -1,11 +1,11 @@
-"""
-RET Cycle Engine — Cerebro v55.2.
+"""RET Cycle Engine — Cerebro v55.2.
 Логіка перенавчання та оцінки моделей.
 """
-from typing import Dict, Any
-import httpx
-import os
 import logging
+import os
+from typing import Any
+
+import httpx
 
 logger = logging.getLogger("cerebro.ret_logic")
 
@@ -17,12 +17,11 @@ CORE_API_URL = os.getenv("CORE_API_URL", "http://core-api:8080/api/v1")
 
 class RETEngine:
     @staticmethod
-    async def execute(model_id: str, tenant_id: str, context: Dict[str, Any]):
-        """
-        Повний цикл RET (Retry-Eval-Train) v55.2 з Sovereign Analysis.
+    async def execute(model_id: str, tenant_id: str, context: dict[str, Any]):
+        """Повний цикл RET (Retry-Eval-Train) v55.2 з Sovereign Analysis.
         """
         logger.info(f"🚀 [RET_START] Модель: {model_id} | Тенант: {tenant_id}")
-        
+
         async with httpx.AsyncClient(timeout=300.0) as client:
             # 0. OVERSIGHT phase (SOM Feedback)
             try:
@@ -36,13 +35,13 @@ class RETEngine:
                             context["force_automl"] = True
                             context["som_anomaly"] = anomaly
             except Exception as e:
-                logger.warning(f"⚠️ [OVERSIGHT_FAILED] Не вдалося зв'язатися з SOM: {str(e)}")
+                logger.warning(f"⚠️ [OVERSIGHT_FAILED] Не вдалося зв'язатися з SOM: {e!s}")
 
             # 1. ANALYSIS phase (Sovereign Advisor)
             try:
                 drift = context.get("drift", 0.0)
                 logger.info(f"🧠 [ANALYSIS] Запит до Sovereign Advisor для пояснення дрифту {drift}...")
-                
+
                 analysis_resp = await client.post(
                     MCP_URL,
                     json={
@@ -56,7 +55,7 @@ class RETEngine:
                     logger.info(f"💡 [INSIGHT] Advisor: {insight[:100]}...")
                     context["advisor_insight"] = insight
             except Exception as e:
-                logger.warning(f"⚠️ [ANALYSIS_FAILED] Sovereign Advisor недоступний: {str(e)}")
+                logger.warning(f"⚠️ [ANALYSIS_FAILED] Sovereign Advisor недоступний: {e!s}")
 
             # 2. RETRY / EXECUTION loop
             for attempt in range(2):
@@ -66,18 +65,18 @@ class RETEngine:
                     force_automl = context.get("force_automl", False)
                     strategy = "AUTOML" if drift > 0.15 or force_automl else "FINETUNE"
                     logger.info(f"📋 [EVAL] Attempt {attempt+1}. Стратегія: {strategy} (Force: {force_automl})")
-                    
+
                     # TRAINING phase
                     train_endpoint = "/train" if strategy == "FINETUNE" else "/automl/run"
                     target_url = TRAINING_URL if strategy == "FINETUNE" else AUTOML_URL
-                    
+
                     train_resp = await client.post(
                         f"{target_url}{train_endpoint}",
                         json={"model_id": model_id, "context": context, "tenant_id": tenant_id}
                     )
                     train_resp.raise_for_status()
                     train_data = train_resp.json()
-                    
+
                     # VALIDATION phase
                     logger.info("🔍 [VALIDATE] Верифікація нового кандидата...")
                     val_resp = await client.post(
@@ -89,12 +88,12 @@ class RETEngine:
                         }
                     )
                     val_resp.raise_for_status()
-                    
+
                     logger.info(f"✅ [RET_SUCCESS] Модель {model_id} оновлена на спробі {attempt+1}.")
                     return True
-                    
+
                 except Exception as e:
-                    logger.error(f"❌ [RET_ATTEMPT_FAILED] Спроба {attempt+1} невдала: {str(e)}")
+                    logger.error(f"❌ [RET_ATTEMPT_FAILED] Спроба {attempt+1} невдала: {e!s}")
                     if attempt == 1: break # Final attempt failed
-            
+
             return False
