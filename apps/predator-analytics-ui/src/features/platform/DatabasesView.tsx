@@ -93,7 +93,7 @@ const DatabasesView: React.FC = () => {
     }, [activeTab]);
 
     const handleOpenQuery = (tableName: string) => {
-        setSqlQuery(`SELECT * FROM ${tableName} \nWHERE updated_at > NOW() - INTERVAL '24 hours' \nAND status = 'ACTIVE' \nLIMIT 10;`);
+        setSqlQuery(`SELECT id, status, updated_at FROM ${tableName} \nWHERE updated_at > NOW() - INTERVAL '24 hours' \nAND status = 'ACTIVE' \nLIMIT 10;`);
         setQueryModal({ isOpen: true, table: tableName });
         setQueryResult(null);
     };
@@ -139,7 +139,7 @@ const DatabasesView: React.FC = () => {
                 <div className="p-4 h-[550px] flex flex-col glass-morphism rounded-2xl border border-white/10 bg-black/60">
                     <div className="mb-4 flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Connection: POSTGRES_MASTER</span>
+                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Active Connection: POSTGRES_MASTER</span>
                     </div>
                     <textarea
                         value={sqlQuery}
@@ -150,8 +150,8 @@ const DatabasesView: React.FC = () => {
                     />
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex gap-4">
-                            <span className="text-[10px] font-mono text-slate-500">Rows: {queryResult?.length || 0}</span>
-                            <span className="text-[10px] font-mono text-slate-500">Execution time: 14ms</span>
+                            <span className="text-[10px] font-mono text-slate-300">Rows: {queryResult?.length || 0}</span>
+                            <span className="text-[10px] font-mono text-slate-300">Execution time: 14ms</span>
                         </div>
                         <button onClick={handleExecute} disabled={isExecuting} className="px-8 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-black uppercase tracking-widest text-xs rounded-xl flex items-center gap-2 shadow-lg shadow-cyan-600/20 transition-all active:scale-95 disabled:opacity-50">
                             {isExecuting ? <RefreshCw size={14} className="animate-spin" /> : <Play size={14} />} Execute Query
@@ -162,7 +162,7 @@ const DatabasesView: React.FC = () => {
                             <table className="w-full text-left text-[11px] font-mono">
                                 <thead className="bg-slate-900/80 sticky top-0 z-10">
                                     <tr className="border-b border-white/10">
-                                        {Object.keys(queryResult[0] || {}).map(key => <th key={key} className="p-4 text-slate-500 uppercase font-black tracking-tighter">{key}</th>)}
+                                        {Object.keys(queryResult[0] || {}).map(key => <th key={key} className="p-4 text-slate-300 uppercase font-black tracking-tighter">{key}</th>)}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -175,8 +175,8 @@ const DatabasesView: React.FC = () => {
                             </table>
                         ) : (
                             <div className="h-full flex flex-col items-center justify-center opacity-20 transform scale-150">
-                                <Terminal size={48} className="text-slate-500 mb-4" />
-                                <span className="font-mono text-xs text-slate-500">TERMINAL_IDLE</span>
+                                <Terminal size={48} className="text-slate-300 mb-4" />
+                                <span className="font-mono text-xs text-slate-300">TERMINAL_IDLE</span>
                             </div>
                         )}
                     </div>
@@ -218,7 +218,7 @@ const DatabasesView: React.FC = () => {
                     ].map((s, idx) => (
                         <div key={idx} className="flex-1 lg:w-32 bg-white/5 border border-white/10 rounded-3xl p-6 text-center shadow-lg backdrop-blur-xl transition-all hover:border-cyan-500/30">
                             <s.icon size={16} className={cn("mx-auto mb-3", s.color)} />
-                            <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">{s.label}</p>
+                            <p className="text-[10px] text-slate-300 font-black uppercase tracking-widest mb-1">{s.label}</p>
                             <p className={cn("text-xl font-black font-mono", s.color)}>{s.val}</p>
                         </div>
                     ))}
@@ -251,7 +251,7 @@ const DatabasesView: React.FC = () => {
                                 </span>
                                 <span className={cn(
                                     "text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 whitespace-nowrap",
-                                    isActive ? "text-white" : "text-slate-500"
+                                    isActive ? "text-white" : "text-slate-300"
                                 )}>
                                     {tab.label}
                                 </span>

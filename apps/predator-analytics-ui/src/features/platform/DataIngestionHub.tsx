@@ -85,7 +85,7 @@ const NodeStatus = ({ node }: any) => {
       <div className="space-y-3 relative z-10">
         <div className="flex flex-col">
             <div className="flex justify-between mb-1">
-                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">LOAD_FACTOR</span>
+                <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">LOAD_FACTOR</span>
                 <span className="text-[8px] font-mono text-white">{node.load}%</span>
             </div>
             <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
@@ -93,7 +93,7 @@ const NodeStatus = ({ node }: any) => {
             </div>
         </div>
         <div className="flex justify-between items-center bg-black/20 p-2 rounded-lg">
-           <span className="text-[8px] font-black text-slate-500 uppercase">IOPS_TELEMETRY</span>
+           <span className="text-[8px] font-black text-slate-300 uppercase">IOPS_TELEMETRY</span>
            <span className="text-xs font-black text-white font-mono">{node.iops}</span>
         </div>
       </div>
@@ -113,11 +113,11 @@ const FileItem = ({ file, onRemove }: any) => (
     <div className="flex-1 min-w-0">
       <p className="text-xs font-black text-white truncate uppercase tracking-tighter italic">{file.file.name}</p>
       <div className="flex items-center gap-3 mt-1">
-        <span className="text-[9px] font-mono text-slate-500">{(file.file.size / 1024 / 1024).toFixed(2)} MB</span>
+        <span className="text-[9px] font-mono text-slate-300">{(file.file.size / 1024 / 1024).toFixed(2)} MB</span>
         <Badge className="bg-emerald-500/10 text-emerald-400 text-[8px] uppercase font-black px-2 py-0.5 border-emerald-500/20">READY_FOR_FUSION</Badge>
       </div>
     </div>
-    <button onClick={onRemove} className="p-2 text-slate-600 hover:text-rose-400 hover:bg-rose-500/10 transition-all rounded-lg relative z-10">
+    <button onClick={onRemove} className="p-2 text-slate-300 hover:text-rose-400 hover:bg-rose-500/10 transition-all rounded-lg relative z-10">
       <Trash2 size={16} />
     </button>
   </motion.div>
@@ -201,7 +201,7 @@ const DataIngestionHub: React.FC = () => {
 
            <div className="flex items-center gap-8">
                 <div className="flex flex-col text-right">
-                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1">СИНХРОНІЗАЦІЯ_ОЗЕРА</span>
+                    <span className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] mb-1">СИНХРОНІЗАЦІЯ_ОЗЕРА</span>
                     <span className="text-lg font-black text-emerald-400 font-mono italic">{lastUpdate}</span>
                 </div>
                 <button 
@@ -237,10 +237,10 @@ const DataIngestionHub: React.FC = () => {
                         <table className="w-full text-left border-separate border-spacing-y-4">
                             <thead>
                                 <tr>
-                                    <th className="px-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">ID_КОНЕКТОРА</th>
-                                    <th className="px-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">ТИП_ІНФО</th>
-                                    <th className="px-6 text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">СТАТУС_КАНАЛУ</th>
-                                    <th className="px-6 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">ОБ'ЄМ_ЗНАНЬ</th>
+                                    <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest">ID_КОНЕКТОРА</th>
+                                    <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest">ТИП_ІНФО</th>
+                                    <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest text-center">СТАТУС_КАНАЛУ</th>
+                                    <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest text-right">ОБ'ЄМ_ЗНАНЬ</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -254,11 +254,11 @@ const DataIngestionHub: React.FC = () => {
                                         <td className="bg-slate-900/40 border border-white/5 border-r-0 rounded-l-[1.5rem] px-6 py-5">
                                             <div className="flex items-center gap-4">
                                                 <div className="p-3 bg-slate-950 rounded-xl border border-white/5 group-hover:border-blue-500/30 transition-all">
-                                                    <Database size={16} className="text-slate-500 group-hover:text-blue-400" />
+                                                    <Database size={16} className="text-slate-300 group-hover:text-blue-300" />
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <span className="text-[12px] font-black text-white uppercase italic">{source.name}</span>
-                                                    <span className="text-[9px] font-mono text-slate-600 uppercase tracking-tighter">UID: {source.id}</span>
+                                                    <span className="text-[9px] font-mono text-slate-400 uppercase tracking-tighter">UID: {source.id}</span>
                                                 </div>
                                             </div>
                                         </td>
@@ -269,14 +269,14 @@ const DataIngestionHub: React.FC = () => {
                                         </td>
                                         <td className="bg-slate-900/40 border-y border-white/5 px-6 py-5 text-center">
                                             <div className={cn("inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em]", 
-                                                source.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-500/10 text-slate-500')}>
-                                                <div className={cn("w-1.5 h-1.5 rounded-full", source.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-600')} />
+                                                source.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-500/10 text-slate-300')}>
+                                                <div className={cn("w-1.5 h-1.5 rounded-full", source.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400')} />
                                                 {source.status === 'active' ? 'АКТИВНИЙ' : 'ОЧІКУВАННЯ'}
                                             </div>
                                         </td>
                                         <td className="bg-slate-900/40 border border-white/5 border-l-0 rounded-r-[1.5rem] px-6 py-5 text-right font-mono italic">
                                             <span className="text-lg font-black text-white">{source.itemsCount.toLocaleString()}</span>
-                                            <span className="text-[9px] text-slate-600 ml-2 uppercase font-black">ENTITIES</span>
+                                            <span className="text-[9px] text-slate-400 ml-2 uppercase font-black">ENTITIES</span>
                                         </td>
                                     </motion.tr>
                                 ))}
@@ -334,11 +334,11 @@ const DataIngestionHub: React.FC = () => {
                     </button>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="p-4 bg-black/40 rounded-xl border border-white/5 flex flex-col items-center gap-2">
-                            <span className="text-[9px] font-black text-slate-500 uppercase">CHANNEL_UP</span>
+                            <span className="text-[9px] font-black text-slate-300 uppercase">CHANNEL_UP</span>
                             <span className="text-xl font-black text-white font-mono">1,402</span>
                         </div>
                         <div className="p-4 bg-black/40 rounded-xl border border-white/5 flex flex-col items-center gap-2">
-                            <span className="text-[9px] font-black text-slate-500 uppercase">THREAT_LEVEL</span>
+                            <span className="text-[9px] font-black text-slate-300 uppercase">THREAT_LEVEL</span>
                             <span className="text-xl font-black text-rose-400 font-mono italic">MID</span>
                         </div>
                     </div>
@@ -357,7 +357,7 @@ const DataIngestionHub: React.FC = () => {
                             { label: 'DATA_MASKING', status: 'ENABLED' }
                         ].map(p => (
                             <div key={p.label} className="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 group hover:border-emerald-500/20 transition-all">
-                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{p.label}</span>
+                                <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">{p.label}</span>
                                 <span className="text-[9px] font-black text-emerald-400 font-mono">{p.status}</span>
                             </div>
                         ))}
@@ -384,10 +384,10 @@ const DataIngestionHub: React.FC = () => {
                                 </div>
                                 <div>
                                     <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase mb-2 font-display">ІНІЦІАЛІЗАЦІЯ_КОНВЕЄРА</h2>
-                                    <p className="text-slate-500 font-medium tracking-wide uppercase text-sm border-l-2 border-emerald-500/30 pl-4">Створення нового каналу поглинання знань</p>
+                                    <p className="text-slate-300 font-medium tracking-wide uppercase text-sm border-l-2 border-emerald-500/30 pl-4">Створення нового каналу поглинання знань</p>
                                 </div>
                             </div>
-                            <button onClick={() => setIsModalOpen(false)} className="p-5 bg-white/5 border border-white/10 rounded-3xl text-slate-500 hover:text-white transition-all active:scale-90">
+                            <button onClick={() => setIsModalOpen(false)} className="p-5 bg-white/5 border border-white/10 rounded-3xl text-slate-300 hover:text-white transition-all active:scale-90">
                                 <X size={32} />
                             </button>
                         </div>
@@ -408,10 +408,10 @@ const DataIngestionHub: React.FC = () => {
                                                     ${selectedType === type.id ? 'bg-emerald-500/10 border-emerald-500/40 shadow-xl scale-[1.02]' : 'bg-black/40 border-white/5 opacity-50 hover:opacity-100 hover:bg-black/60'}
                                                 `}
                                             >
-                                                <div className={`p-4 rounded-2xl ${selectedType === type.id ? 'bg-emerald-500 text-black' : 'bg-slate-900 text-slate-500'} transition-all`}>
+                                                <div className={`p-4 rounded-2xl ${selectedType === type.id ? 'bg-emerald-500 text-black' : 'bg-slate-900 text-slate-300'} transition-all`}>
                                                     <type.icon size={28} />
                                                 </div>
-                                                <span className={`text-[10px] font-black uppercase tracking-widest text-center ${selectedType === type.id ? 'text-white' : 'text-slate-500'}`}>{type.label}</span>
+                                                <span className={`text-[10px] font-black uppercase tracking-widest text-center ${selectedType === type.id ? 'text-white' : 'text-slate-300'}`}>{type.label}</span>
                                                 {selectedType === type.id && <motion.div layoutId="modal-sel" className="absolute inset-0 bg-emerald-500/[0.03] pointer-events-none" />}
                                             </button>
                                         ))}
@@ -436,14 +436,14 @@ const DataIngestionHub: React.FC = () => {
                                             <Upload size={64} className="text-emerald-400 animate-bounce" />
                                         </div>
                                         <h4 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2">ПЕРЕТЯГНІТЬ ФАЙЛИ ДЛЯ АНАЛІЗУ</h4>
-                                        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.4em]">MAX_LIMIT: 2.0GB_PER_PART // AI_VALIDATION_ENABLED</p>
+                                        <p className="text-[10px] font-mono text-slate-300 uppercase tracking-[0.4em]">MAX_LIMIT: 2.0GB_PER_PART // AI_VALIDATION_ENABLED</p>
                                     </div>
                                 </div>
 
                                 {files.length > 0 && (
                                     <div className="col-span-12 space-y-4">
                                         <div className="flex items-center justify-between mb-4">
-                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">ОЧЕРЕДЬ_ЗАВАНТАЖЕННЯ: {files.length} ОБ'ЄКТІВ</span>
+                                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">ОЧЕРЕДЬ_ЗАВАНТАЖЕННЯ: {files.length} ОБ'ЄКТІВ</span>
                                             <button onClick={() => setFiles([])} className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:text-rose-400 transition-colors">ОЧИСТИТИ ВСЕ</button>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -457,11 +457,11 @@ const DataIngestionHub: React.FC = () => {
                         </div>
 
                         <div className="p-12 border-t border-white/5 bg-slate-900/40 flex items-center justify-between">
-                            <div className="flex items-center gap-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
+                            <div className="flex items-center gap-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
                                 <ShieldCheck size={16} className="text-emerald-500" /> СЕАНС_ЗАХИЩЕНО_v55
                             </div>
                             <div className="flex gap-6">
-                                <button onClick={() => setIsModalOpen(false)} className="px-12 py-6 bg-white/5 border border-white/10 rounded-[2rem] text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] hover:text-white transition-all">
+                                <button onClick={() => setIsModalOpen(false)} className="px-12 py-6 bg-white/5 border border-white/10 rounded-[2rem] text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] hover:text-white transition-all">
                                     СКАСУВАТИ_ВХІД
                                 </button>
                                 <button 

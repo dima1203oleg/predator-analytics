@@ -35,11 +35,11 @@ export default function ForecastPage() {
                         <TrendingUp className="text-emerald-400" size={28} />
                         Прогнозування
                     </h1>
-                    <p className="text-gray-400 mt-1">
+                    <p className="text-gray-300 mt-1">
                         ML-прогнози попиту, цін та обсягів імпорту
                     </p>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500">
+                <div className="flex items-center gap-2 text-sm text-gray-300">
                     <Calendar size={16} />
                     Горизонт: <span className="text-emerald-400 font-medium">6 місяців</span>
                 </div>
@@ -56,7 +56,7 @@ export default function ForecastPage() {
               transition-all duration-200
               ${activeTab === tab.key
                                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700/50'
+                                : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
                             }
             `}
                     >
@@ -109,7 +109,7 @@ function DemandForecastTab() {
 
     if (loading) {
         return (
-            <div className="h-64 flex flex-col items-center justify-center text-gray-500 gap-4">
+            <div className="h-64 flex flex-col items-center justify-center text-gray-300 gap-4">
                 <Loader2 className="animate-spin text-emerald-500" size={32} />
                 <p className="animate-pulse">Розрахунок ML прогнозу...</p>
             </div>
@@ -130,7 +130,7 @@ function DemandForecastTab() {
         },
         legend: {
             data: ['Прогноз', 'Нижня межа', 'Верхня межа'],
-            textStyle: { color: '#94a3b8', fontSize: 12 },
+            textStyle: { color: '#cbd5e1', fontSize: 12 },
             top: 20
         },
         grid: {
@@ -144,16 +144,16 @@ function DemandForecastTab() {
             type: 'category',
             data: forecast.forecast.map(p => p.date),
             axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-            axisLabel: { color: '#64748b', fontSize: 11 },
+            axisLabel: { color: '#cbd5e1', fontSize: 11 },
             splitLine: { show: false }
         },
         yAxis: {
             type: 'value',
             name: 'Обсяг (шт)',
-            nameTextStyle: { color: '#94a3b8', fontSize: 11 },
+            nameTextStyle: { color: '#cbd5e1', fontSize: 11 },
             axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
             splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
-            axisLabel: { color: '#64748b', fontSize: 11 }
+            axisLabel: { color: '#cbd5e1', fontSize: 11 }
         },
         series: [
             {
@@ -206,21 +206,21 @@ function DemandForecastTab() {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full group-hover:bg-emerald-500/20 transition-all" />
                     <TrendingUp className="text-emerald-400 mb-3 relative z-10" size={28} />
                     <div className="text-3xl font-black text-emerald-400 relative z-10">+{(forecast.confidence_score * 15).toFixed(0)}%</div>
-                    <div className="text-xs text-gray-400 uppercase tracking-widest font-bold mt-2 relative z-10">Прогнозний ріст</div>
+                    <div className="text-xs text-gray-300 uppercase tracking-widest font-bold mt-2 relative z-10">Прогнозний ріст</div>
                 </div>
 
                 <div className="bg-gradient-to-br from-cyan-900/30 to-blue-900/20 backdrop-blur-xl rounded-2xl border border-cyan-500/20 p-6 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 blur-3xl rounded-full group-hover:bg-cyan-500/20 transition-all" />
                     <Target className="text-cyan-400 mb-3 relative z-10" size={28} />
                     <div className="text-3xl font-black text-cyan-400 relative z-10">{(forecast.confidence_score * 100).toFixed(0)}%</div>
-                    <div className="text-xs text-gray-400 uppercase tracking-widest font-bold mt-2 relative z-10">Впевненість</div>
+                    <div className="text-xs text-gray-300 uppercase tracking-widest font-bold mt-2 relative z-10">Впевненість</div>
                 </div>
 
                 <div className="bg-gradient-to-br from-amber-900/30 to-orange-900/20 backdrop-blur-xl rounded-2xl border border-amber-500/20 p-6 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-3xl rounded-full group-hover:bg-amber-500/20 transition-all" />
                     <Zap className="text-amber-400 mb-3 relative z-10" size={28} />
                     <div className="text-3xl font-black text-amber-400 relative z-10">{(forecast.mape * 100).toFixed(1)}%</div>
-                    <div className="text-xs text-gray-400 uppercase tracking-widest font-bold mt-2 relative z-10">MAPE (похибка)</div>
+                    <div className="text-xs text-gray-300 uppercase tracking-widest font-bold mt-2 relative z-10">MAPE (похибка)</div>
                 </div>
             </div>
 
@@ -229,9 +229,9 @@ function DemandForecastTab() {
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h3 className="text-lg font-bold text-white tracking-tight">Графік прогнозу</h3>
-                        <p className="text-xs text-gray-500 mt-1">{forecast.product_name} ({forecast.product_code})</p>
+                        <p className="text-xs text-gray-300 mt-1">{forecast.product_name} ({forecast.product_code})</p>
                     </div>
-                    <div className="text-xs text-gray-500 font-mono">Модель: {forecast.model_used}</div>
+                    <div className="text-xs text-gray-300 font-mono">Модель: {forecast.model_used}</div>
                 </div>
                 <div className="h-[350px] w-full">
                     <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
@@ -257,7 +257,7 @@ function DemandForecastTab() {
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="text-left text-[10px] uppercase tracking-[0.2em] text-gray-500 bg-black/20">
+                            <tr className="text-left text-[10px] uppercase tracking-[0.2em] text-gray-300 bg-black/20">
                                 <th className="px-6 py-4 font-bold">Місяць</th>
                                 <th className="px-6 py-4 font-bold text-right">Прогноз (шт)</th>
                                 <th className="px-6 py-4 font-bold text-right">Нижня межа</th>
@@ -272,10 +272,10 @@ function DemandForecastTab() {
                                     <td className="px-6 py-4 text-right text-emerald-400 font-black font-mono">
                                         {point.predicted_volume.toLocaleString()}
                                     </td>
-                                    <td className="px-6 py-4 text-right text-gray-500 font-mono">
+                                    <td className="px-6 py-4 text-right text-gray-300 font-mono">
                                         {point.confidence_lower.toLocaleString()}
                                     </td>
-                                    <td className="px-6 py-4 text-right text-gray-500 font-mono">
+                                    <td className="px-6 py-4 text-right text-gray-300 font-mono">
                                         {point.confidence_upper.toLocaleString()}
                                     </td>
                                     <td className="px-6 py-4 text-right">
@@ -345,10 +345,10 @@ function ModelsTab() {
                             </span>
                         </div>
                         <h4 className="text-white font-black text-lg mb-2">{model.name_uk}</h4>
-                        <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{model.description_uk}</p>
+                        <p className="text-xs text-gray-300 leading-relaxed line-clamp-2">{model.description_uk}</p>
 
                         <div className="mt-6 flex items-center justify-between">
-                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Precision</span>
+                            <span className="text-[10px] text-gray-300 font-bold uppercase tracking-wider">Precision</span>
                             <span className="text-emerald-400 font-mono font-bold">0.{(85 + i * 4).toFixed(0)}+</span>
                         </div>
                     </motion.div>
@@ -364,7 +364,7 @@ function ScenariosTab() {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
             <Settings2 size={64} className="text-emerald-500/30 mx-auto mb-6 animate-pulse" />
             <h3 className="text-2xl font-black text-white mb-4 tracking-tight uppercase">What-If Симулятор</h3>
-            <p className="text-gray-400 max-w-lg mx-auto leading-relaxed">
+            <p className="text-gray-300 max-w-lg mx-auto leading-relaxed">
                 Моделювання впливу зовнішніх факторів: зміна курсу валют, санкції,
                 нові торгові угоди. Інтерактивна пісочниця для стратегічного планування.
             </p>
