@@ -12,93 +12,134 @@ vi.mock('echarts-for-react', () => ({
 // Mock Framer Motion
 vi.mock('framer-motion', () => ({
     motion: {
-        div: ({ children, whileHover, whileTap, initial, animate, exit, transition, ...props }: any) => <div {...props}>{children}</div>,
-        h1: ({ children, whileHover, whileTap, initial, animate, exit, transition, ...props }: any) => <h1 {...props}>{children}</h1>,
-        h3: ({ children, whileHover, whileTap, initial, animate, exit, transition, ...props }: any) => <h3 {...props}>{children}</h3>,
-        p: ({ children, whileHover, whileTap, initial, animate, exit, transition, ...props }: any) => <p {...props}>{children}</p>,
-        header: ({ children, whileHover, whileTap, initial, animate, exit, transition, ...props }: any) => <header {...props}>{children}</header>,
+        div: ({ children, whileHover, ...props }: any) => <div {...props}>{children}</div>,
+        h1: ({ children, ...props }: any) => <h1 {...props}>{children}</h1>,
+        h3: ({ children, ...props }: any) => <h3 {...props}>{children}</h3>,
+        p: ({ children, ...props }: any) => <p {...props}>{children}</p>,
+        header: ({ children, ...props }: any) => <header {...props}>{children}</header>,
+        button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
     },
     AnimatePresence: ({ children }: any) => <>{children}</>,
 }))
 
+// Mock Lucide icons with a Proxy to handle any icon component automatically
+vi.mock('lucide-react', async (importOriginal) => {
+    const actual = await importOriginal() as any;
+    return new Proxy(actual, {
+        get: (target, prop) => {
+            if (typeof prop === 'string' && /^[A-Z]/.test(prop)) {
+                return (props: any) => <span data-testid={`icon-${prop.toLowerCase()}`} {...props} />;
+            }
+            return target[prop];
+        }
+    });
+})
+
+// Mock SovereignReportWidget to avoid internal rendering/react-markdown issues
+vi.mock('@/components/intelligence/SovereignReportWidget', () => ({
+    SovereignReportWidget: () => <div data-testid="sovereign-report-widget">Mock Sovereign Report</div>
+}))
+
+// Mock AdvancedBackground and NeuralPulse
+vi.mock('@/components/AdvancedBackground', () => ({
+    AdvancedBackground: () => <div data-testid="advanced-bg" />
+}))
+
+vi.mock('@/components/ui/NeuralPulse', () => ({
+    NeuralPulse: () => <div data-testid="neural-pulse" />
+}))
+
 const mockWSData = { system: { cpu_percent: 45, memory_percent: 60 } };
-vi.mock('../../hooks/useOmniscienceWS', () => ({
+vi.mock('@/hooks/useOmniscienceWS', () => ({
     useOmniscienceWS: () => ({
         isConnected: true,
         data: mockWSData
     })
 }))
 
-const mockAppStoreData = { persona: 'TITAN' };
-vi.mock('../../store/useAppStore', () => ({
-    useAppStore: () => mockAppStoreData
-}))
-
-// Mock API
-vi.mock('../../services/api', () => ({
-    api: {
-        premium: {
-            getDashboardStats: vi.fn().mockResolvedValue({
-                profit: [
-                    { id: '1', label: 'Дохід', value: '$100k', trend: '+10%', color: 'emerald' }
-                ],
-                feeds: { profit: [] }
-            })
-        },
-        getETLJobs: vi.fn().mockResolvedValue([])
-    }
-}))
-
 // Import component AFTER mocks
-import SmartDashboard from '../DashboardView'
+import DashboardView from '../DashboardView'
 
 // ─── TESTS ───────────────────────────────────────────────────────────────────
 
-describe('SmartDashboard View', () => {
+describe('DashboardView', () => {
     beforeEach(() => {
         vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
             ok: true,
-            json: () => Promise.resolve({})
+            json: () => Promise.resolve({
+                engines: {},
+                items: []
+            })
         }))
     })
 
     test('повинен відмальовувати головний заголовок та індикатори', async () => {
-        render(<SmartDashboard />)
+        render(<DashboardView />)
 
-        // Перевіряємо головний заголовок
-        expect(screen.getByText(/Global_/i)).toBeInTheDocument()
-        expect(screen.getByText(/Situation/i)).toBeInTheDocument()
+        // Перевіряємо головний заголовок (використовуємо getAllByText, бо SANCTUM і STRATEGIC зустрічаються в хлібних крихтах)
+        const sanctumTexts = screen.getAllByText(/SANCTUM/i)
+        expect(sanctumTexts.length).toBeGreaterThan(0)
+        
+        const strategicTexts = screen.getAllByText(/STRATEGIC/i)
+        expect(strategicTexts.length).toBeGreaterThan(0)
 
-        // Перевіряємо статус підключення
-        expect(screen.getByText(/SYSTEM_ONLINE/i)).toBeInTheDocument()
+        // Перевіряємо статус хаба (підзаголовок)
+        expect(screen.getByText(/UKRAINE_SOVEREIGNTY_HUB/i)).toBeInTheDocument()
     })
 
-    test('повинен перемикати режими Бізнес / Контроль', async () => {
-        render(<SmartDashboard />)
+    test('повинен відображати кнопки управління', async () => {
+        render(<DashboardView />)
 
-        const controlButton = screen.getByText(/Контроль/i)
-        const businessButton = screen.getByText(/Бізнес/i)
+        expect(screen.getByText(/СИНХРОНІЗУВАТИ/i)).toBeInTheDocument()
+        expect(screen.getByText(/СИТУАЦІЙНА ДОПОВІДЬ/i)).toBeInTheDocument()
+    })
 
-        fireEvent.click(controlButton)
-        await waitFor(() => {
-            expect(screen.getByText(/Аномалії та ризики/i)).toBeInTheDocument()
-        })
+    test('повинен відображати KPI метрики в шапці', async () => {
+        render(<DashboardView />)
 
-        fireEvent.click(businessButton)
-        await waitFor(() => {
-            expect(screen.getByText(/Динаміка ринку/i)).toBeInTheDocument()
+        // Метрики в ViewHeader
+        expect(screen.getByText(/ЯДЕРНА_ПОТУЖНІСТЬ/i)).toBeInTheDocument()
+        expect(screen.getByText(/ІНДЕКС_ЗАГРОЗ/i)).toBeInTheDocument()
+    })
+})
+
+import { renderHook, act } from '@testing-library/react'
+import { useRole } from '@/store/useRoleStore'
+import { useUserStore } from '@/store/useUserStore'
+import { UserRole } from '@/config/roles'
+
+describe('useRole hook', () => {
+    beforeEach(() => {
+        useUserStore.setState({
+            user: null,
+            isAuthenticated: false,
+            isAdmin: false,
+            isClient: false
         })
     })
 
-    test('повинен відображати KPI метрики', async () => {
-        render(<SmartDashboard />)
+    test('повинен відображати роль basic_client за замовчуванням', () => {
+        const { result } = renderHook(() => useRole())
+        expect(result.current.role).toBe(UserRole.CLIENT_BASIC)
+    })
 
-        // Чекаємо на завантаження даних та рендеринг карток
-        // findByText чекає автоматично
-        const metricTitle = await screen.findByText(/Дохід/i)
-        expect(metricTitle).toBeInTheDocument()
+    test('повинен оновлюватися при зміні користувача в useUserStore', () => {
+        const { result } = renderHook(() => useRole())
+        
+        act(() => {
+            useUserStore.getState().setUser({
+                id: 'admin-1',
+                name: 'Admin',
+                email: 'admin@predator.ua',
+                role: UserRole.ADMIN,
+                tier: 'enterprise' as any,
+                tenant_id: '1',
+                tenant_name: 'test',
+                last_login: '',
+                data_sectors: []
+            })
+        })
 
-        const activeSegments = await screen.findByText(/Активні/i)
-        expect(activeSegments).toBeInTheDocument()
+        expect(result.current.role).toBe(UserRole.ADMIN)
     })
 })

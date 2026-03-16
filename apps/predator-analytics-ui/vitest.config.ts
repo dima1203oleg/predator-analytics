@@ -23,7 +23,7 @@ export default defineConfig({
     // Патерни для тестових файлів
     include: [
       'src/**/*.{test,spec}.{ts,tsx}',
-      'src/__tests__/**/*.{ts,tsx}'
+      'src/__tests__/**/*.{test,spec}.{ts,tsx}'
     ],
 
     // Виключення
