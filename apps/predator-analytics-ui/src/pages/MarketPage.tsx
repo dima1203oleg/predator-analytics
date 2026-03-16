@@ -63,12 +63,12 @@ export default function MarketPage() {
                         <BarChart3 className="text-cyan-400" size={28} />
                         Ринок
                     </h1>
-                    <p className="text-gray-400 mt-1">
+                    <p className="text-gray-300 mt-1">
                         Аналітика зовнішньоекономічної діяльності України
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-300">
                         Період: <span className="text-cyan-400 font-medium">2026-Q1</span>
                     </div>
                     {loading && (
@@ -93,7 +93,7 @@ export default function MarketPage() {
                 transition-all duration-300 relative overflow-hidden
                 ${activeTab === tab.key
                                     ? 'text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.1)]'
-                                    : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                                    : 'text-gray-300 hover:text-white hover:bg-white/5'
                                 }
                 `}
                         >
@@ -177,7 +177,7 @@ function MarketOverview({ data, loading }: MarketOverviewProps) {
                         </div>
                         <div className="flex items-center justify-between mb-4 relative z-10">
                             <div className="p-2 bg-gray-800/80 rounded-lg group-hover:bg-cyan-500/10 transition-colors">
-                                <card.icon size={20} className="text-gray-400 group-hover:text-cyan-400" />
+                                <card.icon size={20} className="text-gray-300 group-hover:text-cyan-400" />
                             </div>
                             <span className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full
                                 ${card.positive ? 'text-emerald-400 bg-emerald-400/10' : 'text-red-400 bg-red-400/10'}`}>
@@ -191,7 +191,7 @@ function MarketOverview({ data, loading }: MarketOverviewProps) {
                                     <div className="h-8 w-24 bg-gray-800 animate-pulse rounded" />
                                 ) : card.value}
                             </div>
-                            <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest mt-2 group-hover:text-gray-300 transition-colors">
+                            <div className="text-xs font-semibold text-gray-300 uppercase tracking-widest mt-2 group-hover:text-gray-200 transition-colors">
                                 {card.title}
                             </div>
                         </div>
@@ -204,7 +204,7 @@ function MarketOverview({ data, loading }: MarketOverviewProps) {
                 <div className="px-6 py-5 border-b border-white/5 bg-white/5 flex items-center justify-between">
                     <div>
                         <h3 className="text-lg font-bold text-white tracking-tight">ТОП-5 товарних категорій</h3>
-                        <p className="text-xs text-gray-500 mt-0.5">Аналіз за обсягом імпорту (USD)</p>
+                        <p className="text-xs text-gray-300 mt-0.5">Аналіз за обсягом імпорту (USD)</p>
                     </div>
                     <button className="text-xs font-bold text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-widest flex items-center gap-1">
                         Повний звіт <ArrowUpRight size={14} />
@@ -213,7 +213,7 @@ function MarketOverview({ data, loading }: MarketOverviewProps) {
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="text-left text-[10px] uppercase tracking-[0.2em] text-gray-500 bg-black/20">
+                            <tr className="text-left text-[10px] uppercase tracking-[0.2em] text-gray-300 bg-black/20">
                                 <th className="px-6 py-4 font-bold">Код УКТЗЕД</th>
                                 <th className="px-6 py-4 font-bold">Опис категорії</th>
                                 <th className="px-6 py-4 font-bold text-right">Обсяг транзакцій</th>
@@ -294,7 +294,7 @@ function DeclarationsTab() {
             <div className="px-6 py-5 border-b border-white/5 bg-white/5 flex items-center justify-between">
                 <div>
                     <h3 className="text-lg font-bold text-white tracking-tight">Реєстр митних декларацій</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">Останні транзакції в режимі реального часу</p>
+                    <p className="text-xs text-gray-300 mt-0.5">Останні транзакції в режимі реального часу</p>
                 </div>
                 <div className="flex gap-2">
                     <button className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs font-bold text-gray-300 transition-colors border border-white/5">
@@ -308,7 +308,7 @@ function DeclarationsTab() {
             <div className="overflow-x-auto">
                 <table className="w-full">
                     <thead>
-                        <tr className="text-left text-[10px] uppercase tracking-[0.2em] text-gray-500 bg-black/20">
+                        <tr className="text-left text-[10px] uppercase tracking-[0.2em] text-gray-300 bg-black/20">
                             <th className="px-6 py-4 font-bold">Дата / Номер</th>
                             <th className="px-6 py-4 font-bold">Компанія</th>
                             <th className="px-6 py-4 font-bold">Товар (УКТЗЕД)</th>
@@ -331,19 +331,19 @@ function DeclarationsTab() {
                             <tr key={decl.id} className="hover:bg-white/[0.02] transition-colors cursor-pointer text-sm">
                                 <td className="px-6 py-4">
                                     <div className="text-gray-200 font-medium">{decl.declaration_date?.split('T')[0]}</div>
-                                    <div className="text-[10px] text-gray-500 font-mono mt-0.5">{decl.declaration_number}</div>
+                                    <div className="text-[10px] text-gray-300 font-mono mt-0.5">{decl.declaration_number}</div>
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="text-gray-300 font-semibold">{decl.company_name}</div>
-                                    <div className="text-[10px] text-gray-500 mt-0.5">{decl.company_edrpou || '—'}</div>
+                                    <div className="text-[10px] text-gray-300 mt-0.5">{decl.company_edrpou || '—'}</div>
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="text-cyan-400 font-mono font-bold">{decl.product_code}</div>
-                                    <div className="text-[10px] text-gray-500 mt-0.5 line-clamp-1">{decl.product_name || decl.description}</div>
+                                    <div className="text-[10px] text-gray-300 mt-0.5 line-clamp-1">{decl.product_name || decl.description}</div>
                                 </td>
                                 <td className="px-6 py-4 text-right">
                                     <div className="text-white font-black">${decl.value_usd?.toLocaleString()}</div>
-                                    <div className="text-[10px] text-gray-500 mt-0.5">{decl.weight_kg} кг</div>
+                                    <div className="text-[10px] text-gray-300 mt-0.5">{decl.weight_kg} кг</div>
                                 </td>
                                 <td className="px-6 py-4 text-center">
                                     <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold rounded uppercase border border-emerald-500/20">
@@ -358,7 +358,7 @@ function DeclarationsTab() {
             {!loading && declarations.length === 0 && (
                 <div className="py-20 text-center">
                     <FileText size={48} className="text-gray-700 mx-auto mb-4" />
-                    <p className="text-gray-500">Декларацій не знайдено</p>
+                    <p className="text-gray-300">Декларацій не знайдено</p>
                 </div>
             )}
         </div>
@@ -389,7 +389,7 @@ function CompetitorsTab() {
             <div className="lg:col-span-2 bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
                 <div className="px-6 py-5 border-b border-white/5 bg-white/5">
                     <h3 className="text-lg font-bold text-white tracking-tight">Топ конкурентів на ринку</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">Рейтинг за обсягом операцій та частотою поставок</p>
+                    <p className="text-xs text-gray-300 mt-0.5">Рейтинг за обсягом операцій та частотою поставок</p>
                 </div>
                 <div className="divide-y divide-white/5">
                     {loading ? (
@@ -410,12 +410,12 @@ function CompetitorsTab() {
                                 </div>
                                 <div>
                                     <div className="text-gray-200 font-bold group-hover:text-white transition-colors">{comp.name}</div>
-                                    <div className="text-xs text-gray-500 mt-1">ЄДРПОУ: {comp.edrpou} • Декларацій: {comp.declaration_count}</div>
+                                    <div className="text-xs text-gray-300 mt-1">ЄДРПОУ: {comp.edrpou} • Декларацій: {comp.declaration_count}</div>
                                 </div>
                             </div>
                             <div className="text-right">
                                 <div className="text-white font-black text-lg">${(comp.total_value_usd / 1000000).toFixed(1)}M</div>
-                                <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold mt-0.5">Сумарний обсяг</div>
+                                <div className="text-[10px] text-gray-300 uppercase tracking-wider font-bold mt-0.5">Сумарний обсяг</div>
                             </div>
                         </div>
                     ))}
@@ -426,7 +426,7 @@ function CompetitorsTab() {
                 <div className="bg-gradient-to-br from-cyan-600/20 to-blue-600/20 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
                     <Radar className="text-cyan-400 mb-4" size={32} />
                     <h4 className="text-white font-bold mb-2">CERS Intelligence</h4>
-                    <p className="text-sm text-gray-400 leading-relaxed">
+                    <p className="text-sm text-gray-300 leading-relaxed">
                         Автоматизований аналіз конкурентів на основі алгоритмів штучного інтелекту.
                         Визначення стратегій закупівлі та цінового демпінгу.
                     </p>
@@ -527,13 +527,13 @@ function CustomsTab() {
                 <div className="flex items-center justify-between mb-6 relative z-10">
                     <div>
                         <h3 className="text-lg font-bold text-white tracking-tight">Динаміка ЗЕД</h3>
-                        <p className="text-xs text-gray-500 mt-1">Експорт vs Імпорт (Млн USD) за останні 7 місяців</p>
+                        <p className="text-xs text-gray-300 mt-1">Експорт vs Імпорт (Млн USD) за останні 7 місяців</p>
                     </div>
                     <div className="flex items-center gap-4 text-xs">
-                        <span className="flex items-center gap-1.5 text-gray-400">
+                        <span className="flex items-center gap-1.5 text-gray-300">
                             <span className="w-2 h-2 rounded-full bg-cyan-500"></span> Імпорт
                         </span>
-                        <span className="flex items-center gap-1.5 text-gray-400">
+                        <span className="flex items-center gap-1.5 text-gray-300">
                             <span className="w-2 h-2 rounded-full bg-blue-500"></span> Експорт
                         </span>
                     </div>
@@ -556,15 +556,15 @@ function CustomsTab() {
                     
                     <div className="space-y-3 mb-8 relative z-10">
                         <div className="flex items-center justify-between bg-black/40 p-3.5 rounded-xl border border-cyan-500/20 hover:border-cyan-500/40 transition-all group/stat">
-                            <span className="text-xs text-gray-400">Перевірено декларацій</span>
+                            <span className="text-xs text-gray-300">Перевірено декларацій</span>
                             <span className="text-sm font-black text-cyan-400 group-hover/stat:text-cyan-300">1.2M+</span>
                         </div>
                         <div className="flex items-center justify-between bg-black/40 p-3.5 rounded-xl border border-amber-500/20 hover:border-amber-500/40 transition-all group/stat">
-                            <span className="text-xs text-gray-400">Виявлено аномалій</span>
+                            <span className="text-xs text-gray-300">Виявлено аномалій</span>
                             <span className="text-sm font-black text-amber-400 group-hover/stat:text-amber-300">3,492</span>
                         </div>
                         <div className="flex items-center justify-between bg-black/40 p-3.5 rounded-xl border border-rose-500/20 hover:border-rose-500/40 transition-all group/stat">
-                            <span className="text-xs text-gray-400">Ризик-фактор</span>
+                            <span className="text-xs text-gray-300">Ризик-фактор</span>
                             <span className="text-sm font-black text-rose-400 group-hover/stat:text-rose-300">Високий (84%)</span>
                         </div>
                     </div>

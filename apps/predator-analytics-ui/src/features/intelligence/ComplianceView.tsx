@@ -86,19 +86,19 @@ export const ComplianceView = () => {
                                 </motion.div>
                                 <h3 className="text-white font-black text-lg uppercase tracking-wider mb-1">СИСТЕМА ЗАХИЩЕНА</h3>
                                 <p className="text-emerald-400/80 text-xs font-mono">Blockchain Merkle Root Checked</p>
-                                <p className="text-slate-500 text-[10px] mt-4 uppercase tracking-widest">Остання верифікація: {lastVerify.toLocaleTimeString()}</p>
+                                <p className="text-slate-300 text-[10px] mt-4 uppercase tracking-widest">Остання верифікація: {lastVerify.toLocaleTimeString()}</p>
                             </div>
 
                             <div className="space-y-2">
-                                <div className="flex justify-between text-xs text-slate-400 uppercase font-bold tracking-wider">
+                                <div className="flex justify-between text-xs text-slate-300 uppercase font-bold tracking-wider">
                                     <span>Immutable Logs</span>
                                     <span className="text-emerald-400">ACTIVE</span>
                                 </div>
-                                <div className="flex justify-between text-xs text-slate-400 uppercase font-bold tracking-wider">
+                                <div className="flex justify-between text-xs text-slate-300 uppercase font-bold tracking-wider">
                                     <span>Access Control (RBAC)</span>
                                     <span className="text-emerald-400">ENFORCED</span>
                                 </div>
-                                <div className="flex justify-between text-xs text-slate-400 uppercase font-bold tracking-wider">
+                                <div className="flex justify-between text-xs text-slate-300 uppercase font-bold tracking-wider">
                                     <span>Data Encryption (AES-256)</span>
                                     <span className="text-emerald-400">ENABLED</span>
                                 </div>
@@ -127,7 +127,7 @@ export const ComplianceView = () => {
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="border-b border-white/10 text-[10px] text-slate-500 uppercase tracking-widest font-black">
+                                    <tr className="border-b border-white/10 text-[10px] text-slate-300 uppercase tracking-widest font-black">
                                         <th className="p-4">Час</th>
                                         <th className="p-4">Користувач</th>
                                         <th className="p-4">Дія</th>
@@ -136,10 +136,10 @@ export const ComplianceView = () => {
                                         <th className="p-4 text-right">Результат</th>
                                     </tr>
                                 </thead>
-                                <tbody className="text-xs font-mono text-slate-300">
+                                <tbody className="text-xs font-mono text-slate-200">
                                     {auditLogs.map((log) => (
                                         <tr key={log.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                            <td className="p-4 text-slate-500">{log.time}</td>
+                                            <td className="p-4 text-slate-300">{log.time}</td>
                                             <td className="p-4 font-bold text-white">{log.user}</td>
                                             <td className="p-4">
                                                 <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider ${
@@ -150,8 +150,8 @@ export const ComplianceView = () => {
                                                     {log.action}
                                                 </span>
                                             </td>
-                                            <td className="p-4 text-slate-400">{log.resource}</td>
-                                            <td className="p-4 text-slate-500">{log.ip}</td>
+                                            <td className="p-4 text-slate-300">{log.resource}</td>
+                                            <td className="p-4 text-slate-300">{log.ip}</td>
                                             <td className="p-4 text-right">
                                                 <span className="text-emerald-400 font-bold">{log.result}</span>
                                             </td>
@@ -186,7 +186,7 @@ const TacicalReportsSection = () => (
                                 {report.status === 'ready' ? 'ГОТОВИЙ' : 'ОЧІКУВАННЯ'}
                             </span>
                         </div>
-                        <p className="text-[10px] text-slate-500 font-mono mt-1 mb-3">{report.standard} • {report.date}</p>
+                        <p className="text-[10px] text-slate-300 font-mono mt-1 mb-3">{report.standard} • {report.date}</p>
 
                         <div className="flex items-center gap-2">
                            <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-indigo-600 rounded-lg text-[10px] font-bold text-slate-300 hover:text-white transition-all uppercase tracking-wider">

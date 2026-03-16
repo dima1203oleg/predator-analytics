@@ -67,7 +67,7 @@ const endpoints: ApiEndpoint[] = [
     path: '/api/v1/imports',
     title: 'Отримати список імпортних декларацій',
     description: 'Повертає пагіновану колекцію імпортних декларацій з фільтрацією.',
-    category: 'Imports',
+    category: 'Імпорт',
     auth: 'api_key',
     rateLimit: '100/хв',
     params: [
@@ -90,7 +90,7 @@ const endpoints: ApiEndpoint[] = [
     path: '/api/v1/companies/{edrpou}',
     title: 'Отримати дані компанії',
     description: 'Детальна інформація про компанію за ЄДРПОУ.',
-    category: 'Companies',
+    category: 'Компанії',
     auth: 'api_key',
     rateLimit: '60/хв',
     params: [
@@ -109,7 +109,7 @@ const endpoints: ApiEndpoint[] = [
     path: '/api/v1/competitors/analyze',
     title: 'Аналіз конкурентів',
     description: 'Повертає аналітику конкурентів у вказаному сегменті.',
-    category: 'Competitors',
+    category: 'Конкуренти',
     auth: 'token',
     rateLimit: '30/хв',
     params: [
@@ -129,7 +129,7 @@ const endpoints: ApiEndpoint[] = [
     path: '/api/v1/alerts',
     title: 'Створити алерт',
     description: 'Створює новий алерт для моніторингу.',
-    category: 'Alerts',
+    category: 'Алерти',
     auth: 'token',
     rateLimit: '20/хв',
     params: [
@@ -151,7 +151,7 @@ const endpoints: ApiEndpoint[] = [
     path: '/api/v1/prices/compare',
     title: 'Порівняння цін',
     description: 'Порівняння цін від різних постачальників.',
-    category: 'Prices',
+    category: 'Ціни',
     auth: 'api_key',
     rateLimit: '50/хв',
     params: [
@@ -170,7 +170,7 @@ const endpoints: ApiEndpoint[] = [
     path: '/api/v1/risk/score',
     title: 'Отримати ризик-скор',
     description: 'Розрахунок ризик-скору для компанії.',
-    category: 'Risk',
+    category: 'Ризики',
     auth: 'token',
     rateLimit: '30/хв',
     params: [
@@ -210,10 +210,10 @@ const CopyButton: React.FC<{ text: string }> = ({ text }) => {
   return (
     <button
       onClick={handleCopy}
-      className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+      className="p-1.5 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white transition-colors"
       title="Копіювати"
     >
-      {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-slate-400" />}
+      {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-slate-300" />}
     </button>
   );
 };
@@ -244,16 +244,16 @@ const EndpointCard: React.FC<EndpointCardProps> = ({ endpoint, isExpanded, onTog
           <code className="text-sm text-white font-mono flex-1">{endpoint.path}</code>
           <div className="flex items-center gap-2">
             {endpoint.auth === 'public' ? (
-              <Unlock className="text-slate-500" size={14} />
+              <Unlock className="text-slate-300" size={14} />
             ) : (
               <Lock className="text-amber-400" size={14} />
             )}
             <motion.div animate={{ rotate: isExpanded ? 180 : 0 }}>
-              <ChevronDown className="text-slate-500" size={18} />
+              <ChevronDown className="text-slate-300" size={18} />
             </motion.div>
           </div>
         </div>
-        <p className="text-sm text-slate-400 mt-2">{endpoint.title}</p>
+        <p className="text-sm text-slate-300 mt-2">{endpoint.title}</p>
       </div>
 
       {/* Expanded Content */}
@@ -271,9 +271,9 @@ const EndpointCard: React.FC<EndpointCardProps> = ({ endpoint, isExpanded, onTog
 
               {/* Meta */}
               <div className="flex items-center gap-4 text-xs">
-                <span className="flex items-center gap-1 px-2 py-1 bg-slate-800 rounded-lg">
-                  <Clock size={12} className="text-slate-500" />
-                  <span className="text-slate-400">Rate limit: {endpoint.rateLimit}</span>
+                <span className="flex items-center gap-1 px-2 py-1 bg-slate-900/60 border border-white/10 rounded-lg text-slate-300">
+                  <Clock size={12} className="text-slate-300" />
+                  <span className="text-slate-300">Ліміт запитів: {endpoint.rateLimit}</span>
                 </span>
                 <span className={`flex items-center gap-1 px-2 py-1 rounded-lg ${
                   endpoint.auth === 'public' ? 'bg-emerald-500/20 text-emerald-400' :
@@ -281,7 +281,7 @@ const EndpointCard: React.FC<EndpointCardProps> = ({ endpoint, isExpanded, onTog
                   'bg-purple-500/20 text-purple-400'
                 }`}>
                   <Key size={12} />
-                  {endpoint.auth === 'public' ? 'Public' : endpoint.auth === 'api_key' ? 'API Key' : 'Token'}
+                  {endpoint.auth === 'public' ? 'Публічний' : endpoint.auth === 'api_key' ? 'API ключ' : 'Токен'}
                 </span>
               </div>
 
@@ -292,7 +292,7 @@ const EndpointCard: React.FC<EndpointCardProps> = ({ endpoint, isExpanded, onTog
                   <div className="bg-slate-950 rounded-xl overflow-hidden">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-left text-xs text-slate-500 border-b border-white/5">
+                        <tr className="text-left text-xs text-slate-300 border-b border-white/10 bg-slate-900/60">
                           <th className="p-3">Назва</th>
                           <th className="p-3">Тип</th>
                           <th className="p-3">Обов'язковий</th>
@@ -301,17 +301,17 @@ const EndpointCard: React.FC<EndpointCardProps> = ({ endpoint, isExpanded, onTog
                       </thead>
                       <tbody>
                         {endpoint.params.map((param, i) => (
-                          <tr key={i} className="border-b border-white/5 last:border-0">
+                          <tr key={i} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
                             <td className="p-3 font-mono text-cyan-400">{param.name}</td>
                             <td className="p-3 text-purple-400 font-mono">{param.type}</td>
                             <td className="p-3">
                               {param.required ? (
                                 <CheckCircle size={14} className="text-emerald-400" />
                               ) : (
-                                <AlertCircle size={14} className="text-slate-500" />
+                                <AlertCircle size={14} className="text-slate-300" />
                               )}
                             </td>
-                            <td className="p-3 text-slate-400">{param.description}</td>
+                            <td className="p-3 text-slate-300">{param.description}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -403,7 +403,7 @@ const ApiDocumentationView: React.FC = () => {
                 v1.0
               </span>
             </h1>
-            <p className="text-slate-500 mt-1">
+            <p className="text-slate-300 mt-1">
               REST API для інтеграції з PREDATOR
             </p>
           </div>
@@ -411,7 +411,7 @@ const ApiDocumentationView: React.FC = () => {
           <div className="flex items-center gap-3">
             <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-bold text-sm">
               <Key size={16} />
-              Отримати API Key
+              Отримати API ключ
             </button>
           </div>
         </div>
@@ -425,21 +425,21 @@ const ApiDocumentationView: React.FC = () => {
                 <div className="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-sm font-bold">1</div>
                 <span className="font-bold text-white">Отримайте ключ</span>
               </div>
-              <p className="text-sm text-slate-400">Зареєструйтесь та отримайте API ключ</p>
+              <p className="text-sm text-slate-300">Зареєструйтесь та отримайте API ключ</p>
             </div>
             <div className="p-4 bg-slate-800/50 rounded-xl">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-sm font-bold">2</div>
                 <span className="font-bold text-white">Авторизуйтесь</span>
               </div>
-              <p className="text-sm text-slate-400">Передайте ключ в заголовку Authorization</p>
+              <p className="text-sm text-slate-300">Передайте ключ в заголовку Authorization</p>
             </div>
             <div className="p-4 bg-slate-800/50 rounded-xl">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-sm font-bold">3</div>
                 <span className="font-bold text-white">Робіть запити</span>
               </div>
-              <p className="text-sm text-slate-400">Використовуйте endpoints нижче</p>
+              <p className="text-sm text-slate-300">Використовуйте ендпоїнти нижче</p>
             </div>
           </div>
         </div>
@@ -447,13 +447,13 @@ const ApiDocumentationView: React.FC = () => {
         {/* Search & Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
             <input
               type="text"
-              placeholder="Пошук endpoint..."
+              placeholder="Пошук ендпоїнту..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-slate-900/60 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
+              className="w-full pl-12 pr-4 py-3 bg-slate-900/60 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-cyan-500/50"
             />
           </div>
 
@@ -461,7 +461,7 @@ const ApiDocumentationView: React.FC = () => {
             <button
               onClick={() => setSelectedCategory('all')}
               className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-                selectedCategory === 'all' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-500 hover:text-white'
+                selectedCategory === 'all' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-300 border border-white/5 hover:text-white hover:border-white/10'
               }`}
             >
               Всі
@@ -471,7 +471,7 @@ const ApiDocumentationView: React.FC = () => {
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-                  selectedCategory === cat ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-500 hover:text-white'
+                  selectedCategory === cat ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-300 border border-white/5 hover:text-white hover:border-white/10'
                 }`}
               >
                 {cat}
