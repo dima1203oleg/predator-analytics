@@ -244,7 +244,3 @@ if FastAPI:
             "python": os.getenv("PYTHON_VERSION", "3.12"),
         }
 
-    if __name__ == "__main__":
-        import uvicorn
-        uvicorn.run(app, host="0.0.0.0", port=8000)
-    uvicorn.run(app, host="0.0.0.0", port=8000)

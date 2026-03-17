@@ -17,5 +17,5 @@ RUN useradd -m predator && chown -R predator:predator /app
 USER predator
 # Expose web server port for health probes
 EXPOSE 8000
-ENTRYPOINT ["python", "-m", "mcp.cli"]
-CMD ["--help"]
+ENTRYPOINT ["uvicorn"]
+CMD ["mcp.web:app", "--host", "0.0.0.0", "--port", "8000"]

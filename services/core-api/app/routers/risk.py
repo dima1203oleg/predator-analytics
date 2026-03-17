@@ -21,6 +21,13 @@ from predator_common.models import Company, RiskScore
 
 router = APIRouter(prefix="/risk", tags=["risk"])
 
+# Сумісність зі старими збірками, де enum міг бути в singular-формі.
+READ_COMPANIES_PERMISSION = getattr(
+    Permission,
+    "READ_COMPANIES",
+    getattr(Permission, "READ_COMPANY", Permission.READ_CORP_DATA),
+)
+
 
 # Для сумісності з risk.py, якщо потрібна специфічна модель для масового запиту
 class KeyDriver(BaseModel):
@@ -63,7 +70,7 @@ async def get_risk_scores(
     entities: str = Query(..., description="Кома-сепаровані списки UEID (напр., uuid1,uuid2)"),
     db: AsyncSession = Depends(get_db),
     tenant_id: str = Depends(get_tenant_id),
-    _ = Depends(PermissionChecker([Permission.READ_COMPANIES]))
+    _ = Depends(PermissionChecker([READ_COMPANIES_PERMISSION]))
 ):
     """Отримати 5-рівневий CERS базис для компанії згідно v55.2-SM-EXTENDED.
     """
@@ -138,4 +145,3 @@ async def get_risk_scores(
         cached=True,
         calculation_time_ms=calc_time
     )
-
