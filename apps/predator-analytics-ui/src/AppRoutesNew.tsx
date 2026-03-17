@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { MainLayout } from './components/layout/MainLayout';
+import { useAppStore } from './store/useAppStore';
 
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import ActivityView from './features/dashboard/ActivityView';
@@ -25,6 +26,9 @@ const DataView = lazy(() => import('./features/platform/DataView'));
 const AgentsView = lazy(() => import('./features/platform/AgentsView'));
 const DeploymentView = lazy(() => import('./features/platform/DeploymentView'));
 const SettingsView = lazy(() => import('./features/platform/SettingsView'));
+const SRView = lazy(() => import('./features/platform/SRView'));
+const ClientSegmentView = lazy(() => import('./features/clients/ClientSegmentView'));
+const ClientsHubView = lazy(() => import('./features/clients/ClientsHubView'));
 const SovereignGovernanceDashboard = lazy(() => import('./components/super/SovereignGovernanceDashboard'));
 const DatasetStudio = lazy(() => import('./features/platform/DatasetStudio'));
 const SuperIntelligenceView = lazy(() => import('./features/ai/SuperIntelligenceView'));
@@ -129,6 +133,7 @@ const LoadingFallback = () => (
 
 export const AppRoutesNew = () => {
   const location = useLocation();
+  const { userRole } = useAppStore();
 
   return (
     <MainLayout>
@@ -143,6 +148,8 @@ export const AppRoutesNew = () => {
             <Route path="/diligence" element={<DiligencePage />} />
             <Route path="/opportunities" element={<OpportunitiesPage />} />
             <Route path="/company/:id/cers" element={<CompanyCERSDashboard />} />
+            <Route path="/clients" element={<ClientsHubView />} />
+            <Route path="/clients/:segment" element={<ClientSegmentView />} />
 
             {/* Legacy Dashboard Routes */}
             <Route path="/omni" element={<OmniscienceView />} />
@@ -167,6 +174,7 @@ export const AppRoutesNew = () => {
             <Route path="/data" element={<DataView />} />
             <Route path="/databases" element={<DatabasesView />} />
             <Route path="/datasets" element={<DatasetStudio />} />
+            <Route path="/sr" element={<SRView />} />
 
             <Route path="/datasets-manager" element={<DatasetsPage />} />
 
@@ -197,8 +205,8 @@ export const AppRoutesNew = () => {
 
             <Route path="/entity-graph" element={<GraphAnalyticsPage />} />
             <Route path="/knowledge" element={<KnowledgeEngineeringView />} />
-            <Route path="/autonomy" element={<AutonomyDashboard />} />
-            <Route path="/factory" element={<AutoFactoryView />} />
+            <Route path="/autonomy" element={userRole === 'admin' ? <AutonomyDashboard /> : <Navigate to="/overview" replace />} />
+            <Route path="/factory" element={userRole === 'admin' ? <AutoFactoryView /> : <Navigate to="/overview" replace />} />
             <Route path="/components" element={<ComponentsRegistryView />} />
 
             {/* Premium Commercial Intelligence */}

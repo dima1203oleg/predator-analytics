@@ -150,7 +150,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="relative z-10 w-full"
+              className="relative z-10 w-full col-span-12 min-w-0"
             >
               {renderContent()}
             </motion.div>

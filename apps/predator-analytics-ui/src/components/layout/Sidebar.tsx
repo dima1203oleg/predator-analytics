@@ -47,7 +47,8 @@ import {
   Layout,
   Waves,
   Landmark,
-  Building2
+  Building2,
+  Scale
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useSystemMetrics } from '../../hooks/useSystemMetrics';
@@ -74,6 +75,18 @@ export const Sidebar = () => {
   }
 
   const navGroups: NavGroup[] = [
+    {
+      title: 'КЛІЄНТИ',
+      items: [
+        { name: 'Огляд Сегментів', path: '/clients', icon: Layout },
+        { name: 'Бізнес та Корпорації', path: '/clients/business', icon: Building2 },
+        { name: 'Банки та Фінанси', path: '/clients/banking', icon: DollarSign },
+        { name: 'Державні Органи', path: '/clients/government', icon: Landmark },
+        { name: 'Правоохоронні Органи', path: '/clients/law', icon: ShieldAlert },
+        { name: 'Регулятори та Контроль', path: '/clients/regulators', icon: FileCheck },
+        { name: 'Юридичні Компанії', path: '/clients/legal', icon: Scale },
+      ]
+    },
     {
       title: 'ОПЕРАЦІЙНИЙ ЦЕНТР',
       items: [
@@ -104,6 +117,7 @@ export const Sidebar = () => {
         { name: 'Нейронний Інджестинг', path: '/data-hub', icon: Zap },
         { name: 'Оркестратор Даних', path: '/pipeline', icon: Activity },
         { name: 'Студія Датасетів', path: '/datasets', icon: Boxes },
+        { name: 'SR — Реєстр Продавців', path: '/sr', icon: DollarSign, role: 'admin' },
         { name: 'Митна Розвідка', path: '/customs-intel', icon: Ship, premium: true },
         { name: 'Бібліотека Документів', path: '/documents', icon: Archive },
       ]
@@ -113,6 +127,8 @@ export const Sidebar = () => {
       items: [
         { name: 'Інтелект-Система', path: '/intelligence', icon: ZapOff },
         { name: 'Флот AI Агентів', path: '/agents', icon: Bot },
+        { name: 'Центр AZR (Завод)', path: '/factory', icon: Factory, role: 'admin' },
+        { name: 'Контроль Самовдосконалення', path: '/autonomy', icon: ShieldCheck, role: 'admin' },
         { name: 'Аналітика Двигунів', path: '/engines', icon: Waves },
         { name: 'Мовна Модель (LLM)', path: '/llm', icon: MessageSquare, premium: true },
         { name: 'Навчання Моделей', path: '/training', icon: BrainCircuit, premium: true },
@@ -172,7 +188,7 @@ export const Sidebar = () => {
                 PREDATOR v55
               </span>
               <span className="text-[9px] font-bold text-indigo-400 tracking-[0.2em] uppercase mt-1">
-                Sovereign AI
+                Суверенний ШІ
               </span>
             </div>
           </div>
@@ -199,6 +215,7 @@ export const Sidebar = () => {
                 <NavLink
                   key={item.path}
                   to={item.path}
+                  title={!isSidebarOpen ? item.name : undefined}
                   className={({ isActive }) => cn(
                     "relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group overflow-hidden border border-transparent",
                     isActive
