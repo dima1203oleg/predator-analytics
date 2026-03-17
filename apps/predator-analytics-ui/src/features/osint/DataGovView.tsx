@@ -158,11 +158,11 @@ const DataGovView: React.FC = () => {
                                     {totalCount.toLocaleString()}
                                 </span>
                             </TacticalCard>
-                            <div className="flex items-center gap-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                            <div className="flex items-center gap-4 text-[9px] font-black text-slate-300 uppercase tracking-widest">
                                 <div className="flex -space-x-3">
                                     {[...Array(5)].map((_, i) => (
                                         <div key={i} className="w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-900 flex items-center justify-center">
-                                            <Users size={12} className="text-slate-600" />
+                                            <Users size={12} className="text-slate-400" />
                                         </div>
                                     ))}
                                 </div>
@@ -175,7 +175,7 @@ const DataGovView: React.FC = () => {
                     <div className="relative group max-w-5xl mx-auto w-full">
                         <div className="absolute inset-0 bg-blue-500/20 blur-[100px] opacity-0 group-focus-within:opacity-100 transition-opacity duration-700" />
                         <div className="relative bg-slate-950/40 border border-white/5 p-3 rounded-[40px] backdrop-blur-3xl shadow-2xl flex items-center gap-6 group focus-within:border-blue-500/40 transition-all duration-500 ring-1 ring-white/5 ring-inset">
-                            <div className="pl-8 text-slate-500 group-focus-within:text-blue-400 transition-colors duration-500">
+                            <div className="pl-8 text-slate-300 group-focus-within:text-blue-400 transition-colors duration-500">
                                 <Search size={28} />
                             </div>
                             <form onSubmit={handleSearch} className="flex-1">
@@ -211,7 +211,7 @@ const DataGovView: React.FC = () => {
                                         "px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all border",
                                         activeCategory === cat 
                                             ? "bg-blue-500/20 border-blue-500 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.3)]" 
-                                            : "bg-white/5 border-white/5 text-slate-500 hover:text-white hover:bg-white/10"
+                                            : "bg-white/5 border-white/5 text-slate-300 hover:text-white hover:bg-white/10"
                                     )}
                                 >
                                     {cat}
@@ -267,10 +267,10 @@ const DataGovView: React.FC = () => {
                                                             <DataBadge key={idx} format={res.format} />
                                                         ))}
                                                         {pkg.resources?.length > 3 && (
-                                                            <span className="text-[9px] font-bold text-slate-600">+{pkg.resources.length - 3}</span>
+                                                            <span className="text-[9px] font-bold text-slate-400">+{pkg.resources.length - 3}</span>
                                                         )}
                                                     </div>
-                                                    <div className="p-3 bg-white/5 rounded-xl text-[10px] font-mono font-bold text-slate-500 group-hover:text-blue-400 transition-colors">
+                                                    <div className="p-3 bg-white/5 rounded-xl text-[10px] font-mono font-bold text-slate-300 group-hover:text-blue-400 transition-colors">
                                                         {new Date(pkg.metadata_modified).toLocaleDateString()}
                                                     </div>
                                                 </div>
@@ -286,7 +286,7 @@ const DataGovView: React.FC = () => {
                                                             <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center border border-white/5 opacity-60 group-hover/org:opacity-100 transition-opacity">
                                                                 <Users size={16} className="text-slate-400 group-hover/org:text-blue-400" />
                                                             </div>
-                                                            <span className="text-[10px] font-black text-slate-500 uppercase truncate max-w-[200px] group-hover:text-slate-300 transition-colors">
+                                                            <span className="text-[10px] font-black text-slate-300 uppercase truncate max-w-[200px] group-hover:text-white transition-colors">
                                                                 {pkg.organization?.title}
                                                             </span>
                                                         </div>
@@ -327,7 +327,7 @@ const DataGovView: React.FC = () => {
                                                     АНАЛІТИКА <span className="text-blue-400">РЕЄСТРУ</span>
                                                 </h2>
                                             </div>
-                                            <button onClick={() => setSelectedDataset(null)} className="p-4 text-slate-500 hover:text-white transition-all bg-white/5 rounded-2xl hover:bg-rose-500 shadow-xl">
+                                            <button onClick={() => setSelectedDataset(null)} className="p-4 text-slate-300 hover:text-white transition-all bg-white/5 rounded-2xl hover:bg-rose-500 shadow-xl">
                                                 <X size={24} />
                                             </button>
                                         </div>
@@ -342,11 +342,11 @@ const DataGovView: React.FC = () => {
 
                                             <div className="grid grid-cols-2 gap-6">
                                                 <div className="p-8 bg-slate-950/80 rounded-[32px] border border-white/5 space-y-2 panel-3d">
-                                                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest block">ДЖЕРЕЛО_ORGANIZATION</span>
+                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">ДЖЕРЕЛО_ORGANIZATION</span>
                                                     <span className="text-sm font-black text-white uppercase leading-tight">{selectedDataset.organization?.title}</span>
                                                 </div>
                                                 <div className="p-8 bg-slate-950/80 rounded-[32px] border border-white/5 space-y-2 panel-3d">
-                                                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest block">ОСТАННЯ_МОДИФІКАЦІЯ</span>
+                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">ОСТАННЯ_МОДИФІКАЦІЯ</span>
                                                     <span className="text-sm font-mono text-blue-400 italic">{new Date(selectedDataset.metadata_modified).toLocaleString()}</span>
                                                 </div>
                                             </div>
@@ -370,7 +370,7 @@ const DataGovView: React.FC = () => {
                                                                     <span className="text-xs font-black text-white uppercase truncate max-w-[200px] italic">{res.name || 'DATA_SLICE'}</span>
                                                                     <div className="flex items-center gap-4">
                                                                         <DataBadge format={res.format} />
-                                                                        <span className="text-[9px] font-mono text-slate-600">
+                                                                        <span className="text-[9px] font-mono text-slate-400">
                                                                             {res.size ? `${(res.size / 1024 / 1024).toFixed(2)} MB` : 'SIZE_NA'}
                                                                         </span>
                                                                     </div>
