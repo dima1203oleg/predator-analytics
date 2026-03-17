@@ -18,8 +18,8 @@ spec:
           replicaCount: 2
           image:
             repository: ghcr.io/dima1203oleg/predator-analytics-ui
-            tag: v55.0.0
-            pullPolicy: IfNotPresent
+            tag: sha-c29c050
+            pullPolicy: Always
           service:
             type: LoadBalancer
             port: 80
