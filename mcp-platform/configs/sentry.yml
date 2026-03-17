@@ -1,0 +1,3 @@
+dsn: ${SENTRY_DSN}
+environment: ${SENTRY_ENV:-dev}
+release: ${SENTRY_RELEASE:-mcp-platform@0.1.0}

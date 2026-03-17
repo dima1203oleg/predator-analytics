@@ -36,7 +36,7 @@ export const AZRStatusHUD = () => {
                         <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest">AZR_EVO_CORE</span>
                         <div className="flex items-center gap-0.5">
                             <Zap size={8} className="text-amber-400 fill-amber-400 animate-pulse" />
-                            <span className="text-[8px] text-amber-400/80 font-mono">ACTIVE</span>
+                            <span className="text-[8px] text-amber-400/80 font-mono">АКТИВНО</span>
                         </div>
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">

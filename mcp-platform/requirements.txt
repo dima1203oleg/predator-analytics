@@ -1,0 +1,9 @@
+typer==0.12.5
+click==8.1.7
+rich==13.7.1
+nats-py==2.7.2
+neo4j==5.25.0
+qdrant-client==1.8.2
+pydantic==2.9.0
+fastapi==0.115.6
+uvicorn[standard]==0.32.1

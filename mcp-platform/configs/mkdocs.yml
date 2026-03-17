@@ -1,0 +1,8 @@
+site_name: MCP-платформа
+nav:
+  - Головна: index.md
+  - CLI: cli.md
+  - Мета-контролер: controller.md
+theme:
+  name: material
+  language: uk

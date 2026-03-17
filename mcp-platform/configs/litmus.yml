@@ -1,0 +1,2 @@
+api_server: http://localhost:8080
+access_key: ${LITMUS_ACCESS_KEY}

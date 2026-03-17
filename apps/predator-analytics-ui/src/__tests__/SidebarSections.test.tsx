@@ -39,8 +39,8 @@ describe('Sidebar', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Центр AZR (Завод)')).toBeInTheDocument();
-    expect(screen.getByText('SR — Реєстр Продавців')).toBeInTheDocument();
+    expect(screen.getByText('Центр АЗР (Фабрика)')).toBeInTheDocument();
+    expect(screen.getByText('АЗР — Реєстр продавців')).toBeInTheDocument();
     expect(screen.getByText('Огляд Сегментів')).toBeInTheDocument();
     expect(screen.getByText('Бізнес та Корпорації')).toBeInTheDocument();
   });
@@ -53,6 +53,6 @@ describe('Sidebar', () => {
       </MemoryRouter>
     );
 
-    expect(screen.queryByText('Центр AZR (Завод)')).toBeNull();
+    expect(screen.queryByText('Центр АЗР (Фабрика)')).toBeNull();
   });
 });

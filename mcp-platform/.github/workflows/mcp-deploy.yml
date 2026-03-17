@@ -1,0 +1,60 @@
+name: MCP Deploy
+
+on:
+  push:
+    branches: [main]
+    paths: ['mcp-platform/**']
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      - name: Log in to Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/mcp-platform
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./mcp-platform
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.15.0
+      - name: Deploy via Helm
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm upgrade --install mcp-platform ./mcp-platform/helm/mcp \
+            --namespace mcp-platform --create-namespace \
+            --set image.repository=ghcr.io/${{ github.repository }}/mcp-platform \
+            --set image.tag=${{ github.sha }} \
+            --set env.QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }} \
+            --set env.NEO4J_PASSWORD=${{ secrets.NEO4J_PASSWORD }} \
+            --wait --timeout=10m

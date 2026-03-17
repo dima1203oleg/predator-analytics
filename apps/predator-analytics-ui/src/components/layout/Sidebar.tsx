@@ -76,6 +76,12 @@ export const Sidebar = () => {
 
   const navGroups: NavGroup[] = [
     {
+      title: 'ШВИДКИЙ ДОСТУП',
+      items: [
+        { name: 'АЗР — Аналітичні Дані', path: '/sr', icon: Layers }
+      ]
+    },
+    {
       title: 'КЛІЄНТИ',
       items: [
         { name: 'Огляд Сегментів', path: '/clients', icon: Layout },
@@ -117,7 +123,7 @@ export const Sidebar = () => {
         { name: 'Нейронний Інджестинг', path: '/data-hub', icon: Zap },
         { name: 'Оркестратор Даних', path: '/pipeline', icon: Activity },
         { name: 'Студія Датасетів', path: '/datasets', icon: Boxes },
-        { name: 'SR — Реєстр Продавців', path: '/sr', icon: DollarSign, role: 'admin' },
+        { name: 'АЗР — Реєстр продавців', path: '/sr', icon: DollarSign, role: 'admin' },
         { name: 'Митна Розвідка', path: '/customs-intel', icon: Ship, premium: true },
         { name: 'Бібліотека Документів', path: '/documents', icon: Archive },
       ]
@@ -127,7 +133,7 @@ export const Sidebar = () => {
       items: [
         { name: 'Інтелект-Система', path: '/intelligence', icon: ZapOff },
         { name: 'Флот AI Агентів', path: '/agents', icon: Bot },
-        { name: 'Центр AZR (Завод)', path: '/factory', icon: Factory, role: 'admin' },
+        { name: 'Центр АЗР (Фабрика)', path: '/factory', icon: Factory, role: 'admin' },
         { name: 'Контроль Самовдосконалення', path: '/autonomy', icon: ShieldCheck, role: 'admin' },
         { name: 'Аналітика Двигунів', path: '/engines', icon: Waves },
         { name: 'Мовна Модель (LLM)', path: '/llm', icon: MessageSquare, premium: true },

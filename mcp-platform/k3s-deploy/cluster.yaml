@@ -1,0 +1,7 @@
+apiVersion: k3s.cattle.io/v1
+kind: Cluster
+metadata:
+  name: mcp-cluster
+spec:
+  servers: 1
+  agents: 2

@@ -37,9 +37,10 @@ echo "🔧 Updating Helm values for local image..."
 TEMP_VALUES=$(mktemp)
 cp "$DEPLOY_DIR/helm/predator/values.yaml" "$TEMP_VALUES"
 
-# Update frontend image tag to 'local'
-sed -i.bak 's/tag: v55.0.0/tag: local/' "$TEMP_VALUES"
-sed -i.bak 's|repository: ghcr.io/dima1203oleg/predator-analytics-ui|repository: predator-analytics-ui|' "$TEMP_VALUES"
+# Оновити фронтенд-образ на локальний незалежно від поточного значення
+sed -i.bak -E '/^frontend:/,/^[^ ]/ s|^([[:space:]]+repository:).*|\\1 predator-analytics-ui|' "$TEMP_VALUES"
+sed -i.bak -E '/^frontend:/,/^[^ ]/ s|^([[:space:]]+tag:).*|\\1 local|' "$TEMP_VALUES"
+sed -i.bak -E '/^frontend:/,/^[^ ]/ s|^([[:space:]]+pullPolicy:).*|\\1 IfNotPresent|' "$TEMP_VALUES"
 
 # Apply Helm chart with updated values
 echo "🚀 Deploying frontend with Helm..."

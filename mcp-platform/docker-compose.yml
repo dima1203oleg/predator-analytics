@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  nats:
+    image: nats:2.10.8
+    command: -js
+    ports: ["4222:4222", "8222:8222"]
+  qdrant:
+    image: qdrant/qdrant:v1.8.2
+    ports: ["6333:6333"]
+  neo4j:
+    image: neo4j:5
+    environment:
+      NEO4J_AUTH: "neo4j/test"
+    ports: ["7687:7687", "7474:7474"]

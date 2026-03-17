@@ -1,0 +1,24 @@
+name: MCP CI
+on:
+  push:
+    paths:
+      - 'mcp-platform/**'
+  pull_request:
+    paths:
+      - 'mcp-platform/**'
+jobs:
+  test-analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m venv .venv
+      - run: source .venv/bin/activate && pip install -r mcp-platform/requirements.txt
+      - run: source .venv/bin/activate && python -m mcp.cli analyze scan mcp-platform
+      - run: source .venv/bin/activate && python -m mcp.cli test run
+      - name: Build Docker image (lint)
+        run: docker build -t mcp-platform:ci mcp-platform

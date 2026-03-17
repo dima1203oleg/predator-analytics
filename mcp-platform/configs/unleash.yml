@@ -1,0 +1,2 @@
+url: http://localhost:4242
+api_key: ${UNLEASH_API_KEY}

@@ -1,0 +1,17 @@
+apiVersion: v2
+name: mcp-platform
+description: "MCP-платформа: автономний мультиагентний оркестратор"
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+dependencies: []
+keywords:
+  - mcp
+  - orchestration
+  - ai
+  - neo4j
+  - qdrant
+  - nats
+maintainers:
+  - name: Predator Analytics
+    email: dev@predator.local

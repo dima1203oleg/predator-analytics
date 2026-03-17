@@ -1,0 +1,3 @@
+uri: bolt://localhost:7687
+user: ${NEO4J_USER}
+password: ${NEO4J_PASSWORD}

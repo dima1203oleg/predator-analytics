@@ -24,6 +24,9 @@ dev = [
     "ruff>=0.1.0",
 ]
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/mcp"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true

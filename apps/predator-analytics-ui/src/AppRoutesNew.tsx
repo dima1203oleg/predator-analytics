@@ -174,7 +174,8 @@ export const AppRoutesNew = () => {
             <Route path="/data" element={<DataView />} />
             <Route path="/databases" element={<DatabasesView />} />
             <Route path="/datasets" element={<DatasetStudio />} />
-            <Route path="/sr" element={<SRView />} />
+            <Route path="/sr" element={userRole === 'admin' ? <SRView /> : <Navigate to="/overview" replace />} />
+            <Route path="/azr" element={userRole === 'admin' ? <SRView /> : <Navigate to="/overview" replace />} />
 
             <Route path="/datasets-manager" element={<DatasetsPage />} />
 
