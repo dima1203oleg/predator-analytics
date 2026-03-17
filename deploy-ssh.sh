@@ -1,36 +1,41 @@
 #!/bin/bash
 
 ###############################################################################
-# MCP Platform - Деплой на сервер 34.185.226.240 через SSH
+# MCP Platform - Деплой на сервер 34.185.226.240 через SSH (port 6666)
 ###############################################################################
 
 set -e
 
 SERVER_IP="34.185.226.240"
-SERVER_USER="ubuntu"  # або "root" залежно від налаштування
-SERVER_PORT="22"
-REMOTE_DIR="/opt/mcp-platform"
+SERVER_USER="dima"
+SERVER_PORT="6666"
+SERVER_PASSWORD="Dima@1203"
+REMOTE_DIR="/home/dima/mcp-platform"
 IMAGE_NAME="ghcr.io/dima1203oleg/mcp-platform:latest"
 CONTAINER_NAME="mcp-platform"
 LOCAL_DIR="/Users/dima-mac/Documents/Predator_21/mcp-platform"
+BACKEND_PORT="8090"
 
 echo "╔════════════════════════════════════════════════════════════╗"
 echo "║  MCP Platform - SSH Деплой на сервер                      ║"
-echo "║  Server: $SERVER_IP                                 ║"
+echo "║  Server: $SERVER_IP:$SERVER_PORT                   ║"
+echo "║  User: $SERVER_USER                               ║"
+echo "║  Backend Port: $BACKEND_PORT                      ║"
 echo "╚════════════════════════════════════════════════════════════╝"
 
 # Перевірка SSH
 echo ""
 echo "📋 Перевірка SSH доступу..."
-if ! ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_IP" "echo 'SSH OK'"; then
+if ! sshpass -p "$SERVER_PASSWORD" ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" "echo 'SSH OK'" 2>/dev/null; then
   echo "❌ SSH доступ відсутній"
-  echo "   Спробуйте налаштувати SSH ключі:"
-  echo "   ssh-copy-id -i ~/.ssh/id_rsa $SERVER_USER@$SERVER_IP"
+  echo "   Параметри:"
+  echo "   - IP: $SERVER_IP"
+  echo "   - PORT: $SERVER_PORT"
+  echo "   - USER: $SERVER_USER"
+  echo "   - PASSWORD: ****"
   exit 1
 fi
-echo "✅ SSH доступ налаштований"
-
-# Побудування образу локально
+echo "✅ SSH доступ налаштований на $SERVER_IP:$SERVER_PORT"
 echo ""
 echo "📋 Побудування Docker образу локально..."
 cd "$LOCAL_DIR"
@@ -41,88 +46,75 @@ else
   exit 1
 fi
 
-# Копіювання Dockerfile на сервер
+# Копіювання файлів на сервер
 echo ""
 echo "📋 Копіювання файлів на сервер..."
-ssh -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_IP" "mkdir -p $REMOTE_DIR"
-scp -r -o StrictHostKeyChecking=no "$LOCAL_DIR/Dockerfile" "$SERVER_USER@$SERVER_IP:$REMOTE_DIR/"
-scp -r -o StrictHostKeyChecking=no "$LOCAL_DIR/mcp" "$SERVER_USER@$SERVER_IP:$REMOTE_DIR/"
-scp -r -o StrictHostKeyChecking=no "$LOCAL_DIR/requirements.txt" "$SERVER_USER@$SERVER_IP:$REMOTE_DIR/"
-scp -r -o StrictHostKeyChecking=no "$LOCAL_DIR/README.md" "$SERVER_USER@$SERVER_IP:$REMOTE_DIR/"
-echo "✅ Файли скопійовані"
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" "mkdir -p $REMOTE_DIR" 2>/dev/null
+echo "   - Копіюю Dockerfile..."
+sshpass -p "$SERVER_PASSWORD" scp -r -o StrictHostKeyChecking=no -P "$SERVER_PORT" "$LOCAL_DIR/Dockerfile" "$SERVER_USER@$SERVER_IP:$REMOTE_DIR/" 2>/dev/null
+echo "   - Копіюю mcp модулі..."
+sshpass -p "$SERVER_PASSWORD" scp -r -o StrictHostKeyChecking=no -P "$SERVER_PORT" "$LOCAL_DIR/mcp" "$SERVER_USER@$SERVER_IP:$REMOTE_DIR/" 2>/dev/null
+echo "   - Копіюю requirements.txt..."
+sshpass -p "$SERVER_PASSWORD" scp -r -o StrictHostKeyChecking=no -P "$SERVER_PORT" "$LOCAL_DIR/requirements.txt" "$SERVER_USER@$SERVER_IP:$REMOTE_DIR/" 2>/dev/null
+echo "✅ Файли скопійовані на сервер: $REMOTE_DIR"
 
-# Запуск деплою на сервері
+# Побудування образу на сервері
 echo ""
-echo "📋 Запуск Docker контейнера на сервері..."
-ssh -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_IP" << 'SSHCOMMANDS'
-cd /opt/mcp-platform
+echo "📋 Побудування Docker образу на сервері..."
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" "cd $REMOTE_DIR && docker build -t $IMAGE_NAME ." 2>/dev/null
+echo "✅ Образ побудований на сервері"
 
-# Перевірка Docker
-if ! command -v docker &> /dev/null; then
-  echo "❌ Docker не встановлено на сервері"
-  echo "   Встановіть: curl -fsSL https://get.docker.com | sh"
-  exit 1
-fi
-
-# Побудування на сервері
-echo "Побудування Docker образу на сервері..."
-docker build -t mcp-platform:latest .
-
-# Зупинка старого контейнера
-echo "Зупинка старого контейнера..."
-docker stop mcp-platform 2>/dev/null || true
-docker rm mcp-platform 2>/dev/null || true
-
-# Запуск контейнера
-echo "Запуск контейнера..."
-docker run -d \
-  --name mcp-platform \
-  -p 8000:8000 \
-  -e PYTHONUNBUFFERED=1 \
-  -e LOG_LEVEL=INFO \
-  --restart unless-stopped \
-  mcp-platform:latest
-
-echo "✅ Контейнер запущений на сервері"
-SSHCOMMANDS
-
-if [ $? -eq 0 ]; then
-  echo "✅ Деплой успішний"
-else
-  echo "❌ Помилка при деплою"
-  exit 1
-fi
-
-# Тестування
+# Зупинення старого контейнера (якщо запущений)
 echo ""
-echo "📋 Тестування API..."
+echo "📋 Зупинення старого контейнера (якщо запущений)..."
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" "docker stop $CONTAINER_NAME 2>/dev/null || true" 2>/dev/null
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" "docker rm $CONTAINER_NAME 2>/dev/null || true" 2>/dev/null
+echo "✅ Старий контейнер видалений"
+
+# Запуск нового контейнера
+echo ""
+echo "📋 Запуск нового контейнера на порту $BACKEND_PORT..."
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" \
+  "docker run -d --name $CONTAINER_NAME -p $BACKEND_PORT:8000 -e PYTHON_VERSION=3.12.13 $IMAGE_NAME" 2>/dev/null
+echo "✅ Контейнер запущено"
+
+# Очікування на запуск
+echo ""
+echo "⏳ Очікування запуску контейнера (5 сек)..."
 sleep 5
 
-echo "🧪 GET /healthz:"
-curl -s "http://$SERVER_IP:8000/healthz" || echo "⚠️  Недоступно"
-
+# Тестування API
 echo ""
-echo "🧪 GET /readyz:"
-curl -s "http://$SERVER_IP:8000/readyz" || echo "⚠️  Недоступно"
+echo "📋 Тестування API ендпоїнтів..."
+for endpoint in healthz readyz info; do
+  response=$(sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" \
+    "curl -s http://localhost:$BACKEND_PORT/$endpoint 2>/dev/null || echo 'ERROR'" 2>/dev/null)
+  if [[ "$response" != "ERROR" ]]; then
+    echo "   ✅ GET /$endpoint → $response"
+  else
+    echo "   ⚠️  GET /$endpoint → Connection failed"
+  fi
+done
 
+# Показ статусу контейнера
 echo ""
-echo "🧪 GET /info:"
-curl -s "http://$SERVER_IP:8000/info" | head -10 || echo "⚠️  Недоступно"
+echo "📋 Статус контейнера..."
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" \
+  "docker ps --filter 'name=$CONTAINER_NAME' --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'" 2>/dev/null
 
-# Підсумок
 echo ""
 echo "╔════════════════════════════════════════════════════════════╗"
-echo "║                  ДЕПЛОЙ ЗАВЕРШЕНО                          ║"
-echo "╠════════════════════════════════════════════════════════════╣"
-echo "║ Сервер:           $SERVER_IP"
-echo "║ API URL:          http://$SERVER_IP:8000"
-echo "║ Container:        mcp-platform"
-echo "║                                                            ║"
-echo "║ SSH Команди:                                              ║"
-echo "║  • Логи:                                                  ║"
-echo "║    ssh $SERVER_USER@$SERVER_IP docker logs -f mcp-platform ║"
-echo "║  • Статус:                                                ║"
-echo "║    ssh $SERVER_USER@$SERVER_IP docker ps                  ║"
-echo "║  • Перезапуск:                                            ║"
-echo "║    ssh $SERVER_USER@$SERVER_IP docker restart mcp-platform ║"
+echo "║  ✅ ДЕПЛОЙ УСПІШНИЙ!                                       ║"
 echo "╚════════════════════════════════════════════════════════════╝"
+echo ""
+echo "📌 Інформація про розгортання:"
+echo "   Server: ssh -p $SERVER_PORT dima@34.185.226.240"
+echo "   Backend URL: http://34.185.226.240:$BACKEND_PORT"
+echo "   API Endpoints:"
+echo "   - GET http://34.185.226.240:$BACKEND_PORT/healthz"
+echo "   - GET http://34.185.226.240:$BACKEND_PORT/readyz"
+echo "   - GET http://34.185.226.240:$BACKEND_PORT/info"
+echo ""
+echo "🔍 Перевірка логів:"
+echo "   sshpass -p 'Dima@1203' ssh -p 6666 dima@34.185.226.240 'docker logs $CONTAINER_NAME'"
+echo ""
