@@ -16,13 +16,10 @@ vi.mock('framer-motion', async () => {
 
 describe('LLMHealthMonitor', () => {
     beforeEach(() => {
-        vi.useFakeTimers();
         global.fetch = vi.fn().mockRejectedValue(new Error('network')) as any;
     });
 
     afterEach(() => {
-        vi.clearAllTimers();
-        vi.useRealTimers();
         vi.restoreAllMocks();
     });
 

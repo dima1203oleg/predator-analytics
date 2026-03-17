@@ -24,7 +24,6 @@ class MockWebSocket {
 
 describe('RealTimeSystemMetrics', () => {
     beforeEach(() => {
-        vi.useFakeTimers();
         global.fetch = vi.fn().mockResolvedValue({
             ok: true,
             json: async () => ({
@@ -43,8 +42,6 @@ describe('RealTimeSystemMetrics', () => {
     });
 
     afterEach(() => {
-        vi.clearAllTimers();
-        vi.useRealTimers();
         vi.restoreAllMocks();
     });
 
