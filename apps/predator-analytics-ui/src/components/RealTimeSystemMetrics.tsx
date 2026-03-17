@@ -81,7 +81,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
             "flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-lg transition-all",
             trend === 'up' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
               trend === 'down' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' :
-                'bg-slate-500/10 text-slate-400 border-slate-500/20'
+                'bg-slate-500/10 text-slate-300 border-slate-400/30'
           )}>
             {trend === 'up' ? <ArrowUpRight size={10} /> : trend === 'down' ? <ArrowDownRight size={10} /> : <Circle size={8} />}
             {trendValue}
@@ -92,9 +92,9 @@ const MetricCard: React.FC<MetricCardProps> = ({
       <div className="space-y-2 relative z-10">
         <div className="flex items-baseline gap-2">
           <span className="text-3xl font-black text-white tracking-tighter font-display">{value}</span>
-          {unit && <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest font-mono">{unit}</span>}
+          {unit && <span className="text-[10px] text-slate-300 font-black uppercase tracking-widest font-mono">{unit}</span>}
         </div>
-        <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] font-mono group-hover:text-white transition-colors">{label}</div>
+        <div className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] font-mono group-hover:text-white transition-colors">{label}</div>
       </div>
 
       {typeof value === 'number' && unit === '%' && (
@@ -228,7 +228,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
           </div>
           <div>
             <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none mb-2 font-display">OMNISCIENCE_<span className="text-blue-400">MATRIX</span>_MONITOR</h3>
-            <div className="flex items-center gap-4 text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">
+            <div className="flex items-center gap-4 text-[10px] text-slate-300 font-black uppercase tracking-[0.2em]">
               <div className="flex items-center gap-2">
                 <div className={cn("w-2 h-2 rounded-full", isConnected ? 'bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse' : 'bg-rose-500')} />
                 <span>{isConnected ? 'СИСТЕМА_В_МЕРЕЖІ' : 'КРИТИЧНО_ОФЛАЙН'}</span>
@@ -246,7 +246,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
           whileHover={{ scale: 1.05, rotate: 180 }}
           whileTap={{ scale: 0.95 }}
           onClick={fetchMetrics}
-          className="p-4 rounded-2xl bg-slate-900 border border-white/5 text-slate-400 hover:text-blue-400 hover:border-blue-500/30 transition-all shadow-xl"
+          className="p-4 rounded-2xl bg-slate-900 border border-white/5 text-slate-200 hover:text-blue-300 hover:border-blue-500/30 transition-all shadow-xl"
         >
           <RefreshCw size={20} />
         </motion.button>
@@ -275,8 +275,8 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
               </div>
             </div>
             <div className="text-center">
-              <span className="text-[11px] font-black text-slate-500 uppercase tracking-[0.5em] mb-4 block">Коефіцієнт Живучості</span>
-              <p className="text-[9px] text-slate-600 font-mono uppercase tracking-widest max-w-[200px] leading-relaxed mx-auto">
+              <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] mb-4 block">Коефіцієнт Живучості</span>
+              <p className="text-[9px] text-slate-400 font-mono uppercase tracking-widest max-w-[200px] leading-relaxed mx-auto">
                 Агрегований індекс стабільності вузлів обробки v55.9
               </p>
             </div>
@@ -285,7 +285,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
           <div className="grid grid-cols-2 gap-8">
             <div className="p-8 rounded-[36px] bg-slate-950/40 border border-white/5 shadow-xl flex flex-col gap-4 group hover:bg-slate-900/60 transition-all duration-500">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Error Rate</span>
+                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Error Rate</span>
                 <AlertTriangle size={16} className={metrics.errorRate < 1 ? 'text-emerald-500' : 'text-rose-500'} />
               </div>
               <div className={cn("text-3xl font-black font-display tracking-tighter", metrics.errorRate < 1 ? 'text-emerald-400' : 'text-rose-400')}>
@@ -294,7 +294,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
             </div>
             <div className="p-8 rounded-[36px] bg-slate-950/40 border border-white/5 shadow-xl flex flex-col gap-4 group hover:bg-slate-900/60 transition-all duration-500">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Uptime</span>
+                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Uptime</span>
                 <Shield size={16} className="text-emerald-500" />
               </div>
               <div className="text-3xl font-black text-emerald-400 font-display tracking-tighter">
@@ -369,11 +369,11 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
                     "text-5xl font-black font-display tracking-tighter drop-shadow-2xl transition-all duration-500",
                     `text-${color}-400 group-hover/item:scale-110`
                   )}>
-                    {value}<span className="text-sm font-black text-slate-600 ml-2">ms</span>
+                    {value}<span className="text-sm font-black text-slate-400 ml-2">ms</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[10px] font-black text-white uppercase tracking-widest mb-1">{label}</span>
-                    <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest">{desc}</span>
+                    <span className="text-[8px] text-slate-400 font-black uppercase tracking-widest">{desc}</span>
                   </div>
                   <div className="mt-4 h-1 bg-slate-900 rounded-full overflow-hidden">
                     <motion.div

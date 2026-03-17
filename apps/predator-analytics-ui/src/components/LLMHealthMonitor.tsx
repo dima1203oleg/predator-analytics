@@ -79,20 +79,20 @@ const ProviderCard: React.FC<{ provider: LLMProvider; onRefresh: () => void }> =
             "p-4 rounded-2xl transition-all duration-700 shadow-xl border relative group-hover:scale-110",
             provider.status === 'online' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
               provider.status === 'degraded' ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' :
-                'bg-slate-950 border-white/5 text-slate-500'
+                'bg-slate-950 border-white/5 text-slate-300'
           )}>
             <Cpu size={24} />
           </div>
           <div>
             <h4 className="text-sm font-black text-white uppercase tracking-tighter mb-1 font-display">{provider.name}</h4>
-            <div className="text-[10px] text-slate-500 font-mono tracking-wider italic">{provider.model}</div>
+            <div className="text-[10px] text-slate-300 font-mono tracking-wider italic">{provider.model}</div>
           </div>
         </div>
         <div className={cn(
           "flex items-center gap-3 px-4 py-1 rounded-full border shadow-inner",
           provider.status === 'online' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
             provider.status === 'degraded' ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' :
-              'bg-slate-950 border-white/5 text-slate-500'
+              'bg-slate-950 border-white/5 text-slate-300'
         )}>
           <motion.div
             animate={provider.status === 'online' ? { scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] } : {}}
@@ -108,7 +108,7 @@ const ProviderCard: React.FC<{ provider: LLMProvider; onRefresh: () => void }> =
       <div className="grid grid-cols-2 gap-4 mb-8">
         <div className="p-5 rounded-[24px] bg-slate-950/60 border border-white/5 relative group/metric overflow-hidden">
           <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover/metric:opacity-100 transition-opacity" />
-          <div className="flex items-center gap-2 text-slate-500 mb-2 relative z-10">
+          <div className="flex items-center gap-2 text-slate-300 mb-2 relative z-10">
             <Clock size={14} />
             <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Latency</span>
           </div>
@@ -121,7 +121,7 @@ const ProviderCard: React.FC<{ provider: LLMProvider; onRefresh: () => void }> =
         </div>
         <div className="p-5 rounded-[24px] bg-slate-950/60 border border-white/5 relative group/metric overflow-hidden">
           <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover/metric:opacity-100 transition-opacity" />
-          <div className="flex items-center gap-2 text-slate-500 mb-2 relative z-10">
+          <div className="flex items-center gap-2 text-slate-300 mb-2 relative z-10">
             <Activity size={14} />
             <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Availability</span>
           </div>
@@ -137,7 +137,7 @@ const ProviderCard: React.FC<{ provider: LLMProvider; onRefresh: () => void }> =
       {/* Token Usage */}
       <div className="mb-8 p-6 bg-slate-950/40 rounded-[24px] border border-white/5">
         <div className="flex items-center justify-between text-[11px] mb-4">
-          <span className="font-black text-slate-500 uppercase tracking-widest opacity-60">Token_Pressure</span>
+          <span className="font-black text-slate-300 uppercase tracking-widest opacity-60">Token_Pressure</span>
           <span className="font-mono font-black text-white italic">{((provider.tokensUsed / provider.tokensLimit) * 100).toFixed(1)}%</span>
         </div>
         <div className="h-2 bg-slate-900 rounded-full overflow-hidden border border-white/5 p-px">
@@ -152,7 +152,7 @@ const ProviderCard: React.FC<{ provider: LLMProvider; onRefresh: () => void }> =
             )}
           />
         </div>
-        <div className="flex justify-between items-center mt-3 text-[9px] font-black text-slate-600 uppercase tracking-widest font-mono">
+        <div className="flex justify-between items-center mt-3 text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">
           <span>0_BASE</span>
           <span>{provider.tokensUsed.toLocaleString()} USED</span>
           <span>MAX_{provider.tokensLimit.toLocaleString()}</span>
@@ -166,13 +166,13 @@ const ProviderCard: React.FC<{ provider: LLMProvider; onRefresh: () => void }> =
             <DollarSign size={16} />
           </div>
           <div>
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none block mb-1 opacity-60">Cost_Cycle</span>
+            <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none block mb-1 opacity-60">Cost_Cycle</span>
             <span className="text-lg font-black text-white font-mono tracking-tighter leading-none">${provider.costToday.toFixed(3)}</span>
           </div>
         </div>
         <div className="text-right">
-          <div className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] mb-1">Stream_Sync</div>
-          <div className="text-[10px] font-mono text-slate-500 uppercase italic">OK: {provider.lastCheck}</div>
+          <div className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Stream_Sync</div>
+          <div className="text-[10px] font-mono text-slate-300 uppercase italic">OK: {provider.lastCheck}</div>
         </div>
       </div>
     </motion.div>
@@ -192,7 +192,7 @@ const FallbackChainVisualization: React.FC<{ chain: FallbackChainStep[] }> = ({ 
           </div>
           <div>
             <h4 className="text-lg font-black text-white uppercase tracking-tighter font-display mb-1">Stability_Core_Network</h4>
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] opacity-60 italic">Resilience Fallback Protocols</span>
+            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] opacity-60 italic">Resilience Fallback Protocols</span>
           </div>
         </div>
         <div className="flex items-center gap-3 px-6 py-2 bg-slate-900 rounded-full border border-white/5">
@@ -214,25 +214,25 @@ const FallbackChainVisualization: React.FC<{ chain: FallbackChainStep[] }> = ({ 
                   ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-2xl shadow-emerald-500/10 scale-110'
                   : step.status === 'failed'
                     ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
-                    : 'bg-slate-900 border-white/5 text-slate-500 hover:border-white/20'
+                    : 'bg-slate-900 border-white/5 text-slate-300 hover:border-white/20'
               )}
             >
               <div className="flex items-center gap-3 relative z-10">
                 <div className={cn(
                   "w-2.5 h-2.5 rounded-full",
                   step.status === 'active' ? 'bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]' :
-                    step.status === 'failed' ? 'bg-rose-500' : 'bg-slate-700'
+                    step.status === 'failed' ? 'bg-rose-500' : 'bg-slate-500'
                 )} />
                 <span className="text-[11px] font-black uppercase tracking-[0.3em] font-display">{step.provider}</span>
               </div>
-              <span className="text-[9px] font-black uppercase tracking-widest opacity-40 italic">Priority: {step.order}</span>
+              <span className="text-[9px] font-black uppercase tracking-widest opacity-50 italic">Priority: {step.order}</span>
             </motion.div>
 
             {index < chain.length - 1 && (
               <div className="flex flex-col items-center gap-2">
                 <ArrowRight size={24} className={cn(
                   "transition-colors duration-700",
-                  step.status === 'active' ? 'text-emerald-500' : 'text-slate-800'
+                  step.status === 'active' ? 'text-emerald-500' : 'text-slate-500'
                 )} />
               </div>
             )}
@@ -240,7 +240,7 @@ const FallbackChainVisualization: React.FC<{ chain: FallbackChainStep[] }> = ({ 
         ))}
       </div>
 
-      <div className="mt-12 text-center text-[11px] font-black text-slate-600 uppercase tracking-[0.5em] italic">
+      <div className="mt-12 text-center text-[11px] font-black text-slate-400 uppercase tracking-[0.5em] italic">
         AUTOMATED_DYNAMIC_ROUTING_ACTIVE // AUTO_FAILOVER_SECURED
       </div>
     </div>
@@ -333,7 +333,7 @@ export const LLMHealthMonitor: React.FC<{ compact?: boolean }> = ({ compact = fa
                 <Activity size={16} className="text-emerald-500 group-hover:rotate-90 transition-all" />
                 <span className="text-[11px] font-black text-emerald-400 uppercase tracking-widest">{onlineCount} ACTIVE_NODES</span>
               </div>
-              <span className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic">{degradedCount} DEGRADED_SIGNALS</span>
+              <span className="text-[11px] text-slate-300 font-black uppercase tracking-[0.4em] italic">{degradedCount} DEGRADED_SIGNALS</span>
             </div>
           </div>
         </div>
@@ -342,7 +342,7 @@ export const LLMHealthMonitor: React.FC<{ compact?: boolean }> = ({ compact = fa
             whileHover={{ scale: 1.05, rotate: 180 }}
             whileTap={{ scale: 0.95 }}
             onClick={fetchData}
-            className="p-6 rounded-[32px] bg-slate-900 border border-white/10 text-slate-400 hover:bg-slate-800 hover:text-white transition-all shadow-2xl"
+            className="p-6 rounded-[32px] bg-slate-900 border border-white/10 text-slate-200 hover:bg-slate-800 hover:text-white transition-all shadow-2xl"
           >
             <RefreshCw size={24} className={isLoading ? 'animate-spin' : ''} />
           </motion.button>
@@ -372,7 +372,7 @@ export const LLMHealthMonitor: React.FC<{ compact?: boolean }> = ({ compact = fa
             </div>
             <div className="mt-8">
               <div className="text-6xl font-black text-white font-display tracking-tighter mb-2 group-hover:scale-110 transition-transform origin-left">{stat.value}</div>
-              <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic opacity-60">{stat.sub}</div>
+              <div className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] italic opacity-60">{stat.sub}</div>
             </div>
             {/* Visual Gauge */}
             <div className="mt-8 h-1 bg-slate-900 rounded-full overflow-hidden">
@@ -399,7 +399,7 @@ export const LLMHealthMonitor: React.FC<{ compact?: boolean }> = ({ compact = fa
       <div className="pt-8">
         <div className="flex items-center gap-4 mb-10">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-          <div className="text-[11px] font-black text-slate-500 uppercase tracking-[0.8em]">ACTIVE_TOPOLOGY_MAP</div>
+          <div className="text-[11px] font-black text-slate-300 uppercase tracking-[0.8em]">ACTIVE_TOPOLOGY_MAP</div>
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -416,18 +416,18 @@ export const LLMHealthMonitor: React.FC<{ compact?: boolean }> = ({ compact = fa
       {/* Maintenance Insight Footer */}
       <div className="p-10 rounded-[48px] border border-dashed border-white/10 bg-slate-950/20 flex flex-col md:flex-row items-center justify-between gap-8 group">
         <div className="flex items-center gap-6">
-          <div className="p-4 bg-slate-800/40 rounded-2xl text-slate-500 border border-white/5 group-hover:text-blue-400 transition-colors">
+          <div className="p-4 bg-slate-800/40 rounded-2xl text-slate-300 border border-white/5 group-hover:text-blue-400 transition-colors">
             <Server size={24} />
           </div>
           <div>
             <div className="text-sm font-black text-white uppercase tracking-widest font-display mb-1">Global_Protocol_Status</div>
-            <div className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">Awaiting command stream for deep optimization...</div>
+            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Awaiting command stream for deep optimization...</div>
           </div>
         </div>
         <motion.div
           animate={{ x: [0, 5, 0] }}
           transition={{ repeat: Infinity, duration: 3 }}
-          className="px-8 py-3 bg-slate-900 rounded-full border border-white/5 text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]"
+          className="px-8 py-3 bg-slate-900 rounded-full border border-white/5 text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]"
         >
           AUTO_REPAIR_ENABLED
         </motion.div>
