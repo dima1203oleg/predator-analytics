@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AgentProvider } from './context/AgentContext';
 import { DisplayModeProvider } from './context/DisplayModeContext';
 import { GlobalProvider } from './context/GlobalContext';
+import { UserProvider } from './context/UserContext';
 // Stores
 import { useAppStore } from './store/useAppStore';
 
@@ -66,40 +67,42 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <ShellProvider>
-            <AgentProvider>
-              <DisplayModeProvider>
-                <SensitiveDataProvider>
-                  <ToastProvider>
-                    <GlobalProvider>
-                      <SuperIntelligenceProvider>
-                        {appState === 'BOOTING' && (
-                          <BootScreen onComplete={handleBootComplete} />
-                        )}
+          <UserProvider>
+            <ShellProvider>
+              <AgentProvider>
+                <DisplayModeProvider>
+                  <SensitiveDataProvider>
+                    <ToastProvider>
+                      <GlobalProvider>
+                        <SuperIntelligenceProvider>
+                          {appState === 'BOOTING' && (
+                            <BootScreen onComplete={handleBootComplete} />
+                          )}
 
-                        {appState === 'LOGIN' && (
-                          <LoginScreen onLogin={handleLogin} />
-                        )}
+                          {appState === 'LOGIN' && (
+                            <LoginScreen onLogin={handleLogin} />
+                          )}
 
-                        {appState === 'READY' && (
-                          <>
-                            <AppRoutes />
-                            {/* Global UI Components */}
-                            <QuickActionsBar />
-                            <ToasterProvider />
-                            <OnboardingWizard />
-                            <OfflineBanner />
-                            <Predator />
-                            <CyberTerminal />
-                          </>
-                        )}
-                      </SuperIntelligenceProvider>
-                    </GlobalProvider>
-                  </ToastProvider>
-                </SensitiveDataProvider>
-              </DisplayModeProvider>
-            </AgentProvider>
-          </ShellProvider>
+                          {appState === 'READY' && (
+                            <>
+                              <AppRoutes />
+                              {/* Global UI Components */}
+                              <QuickActionsBar />
+                              <ToasterProvider />
+                              <OnboardingWizard />
+                              <OfflineBanner />
+                              <Predator />
+                              <CyberTerminal />
+                            </>
+                          )}
+                        </SuperIntelligenceProvider>
+                      </GlobalProvider>
+                    </ToastProvider>
+                  </SensitiveDataProvider>
+                </DisplayModeProvider>
+              </AgentProvider>
+            </ShellProvider>
+          </UserProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </ErrorBoundary>

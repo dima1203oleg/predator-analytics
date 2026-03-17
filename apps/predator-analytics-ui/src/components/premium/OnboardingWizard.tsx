@@ -72,8 +72,13 @@ export const OnboardingWizard: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user has completed onboarding
-    const completed = localStorage.getItem('predator_onboarding_completed');
+    // Перевіряємо, чи користувач уже пройшов онбординг (storage може бути заблокований у деяких режимах браузера)
+    let completed: string | null = null;
+    try {
+      completed = localStorage.getItem('predator_onboarding_completed');
+    } catch {
+      completed = 'true';
+    }
     if (!completed) {
       // Show onboarding after a short delay
       const timer = setTimeout(() => setIsVisible(true), 2000);
@@ -96,7 +101,11 @@ export const OnboardingWizard: React.FC = () => {
   };
 
   const handleComplete = () => {
-    localStorage.setItem('predator_onboarding_completed', 'true');
+    try {
+      localStorage.setItem('predator_onboarding_completed', 'true');
+    } catch {
+      // no-op
+    }
     setIsVisible(false);
   };
 

@@ -46,11 +46,17 @@ export const CommandPalette: React.FC = () => {
 
   // Load recent actions from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem('predator_recent_actions');
+    // Storage може бути заблокований у деяких режимах браузера
+    let stored: string | null = null;
+    try {
+      stored = localStorage.getItem('predator_recent_actions');
+    } catch {
+      stored = null;
+    }
     if (stored) {
       try {
         setRecentActions(JSON.parse(stored));
-      } catch (e) {}
+      } catch { }
     }
   }, []);
 
@@ -90,7 +96,11 @@ export const CommandPalette: React.FC = () => {
   const executeAction = useCallback((action: QuickAction) => {
     const newRecent = [action.id, ...recentActions.filter(id => id !== action.id)].slice(0, 5);
     setRecentActions(newRecent);
-    localStorage.setItem('predator_recent_actions', JSON.stringify(newRecent));
+    try {
+      localStorage.setItem('predator_recent_actions', JSON.stringify(newRecent));
+    } catch {
+      // no-op
+    }
 
     if (action.path) {
       navigate(action.path);

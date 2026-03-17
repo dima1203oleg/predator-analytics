@@ -66,13 +66,21 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const setUser = (newUser: UserProfile) => {
     setUserState(newUser);
-    // Simple mock token
-    sessionStorage.setItem('predator_auth_token', newUser.role === UserRole.ADMIN ? 'admin-token' : 'user-token');
+    // Simple mock token (safe: storage може бути заблокований у деяких режимах браузера)
+    try {
+      sessionStorage.setItem('predator_auth_token', newUser.role === UserRole.ADMIN ? 'admin-token' : 'user-token');
+    } catch {
+      // no-op
+    }
   };
 
   const logout = () => {
     setUserState(null);
-    sessionStorage.removeItem('predator_auth_token');
+    try {
+      sessionStorage.removeItem('predator_auth_token');
+    } catch {
+      // no-op
+    }
     window.location.href = '/'; // Hard reload to clear states
   };
 

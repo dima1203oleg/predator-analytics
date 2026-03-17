@@ -26,7 +26,13 @@ export const UserOnboarding: React.FC = () => {
     const [currentStep, setCurrentStep] = useState(0);
 
     useEffect(() => {
-        const completed = localStorage.getItem('predator_onboarding_v45');
+        // Storage може бути заблокований у деяких режимах браузера
+        let completed: string | null = null;
+        try {
+            completed = localStorage.getItem('predator_onboarding_v45');
+        } catch {
+            completed = 'true';
+        }
         if (!completed) {
             // Delay showing to allow app to load
             const timer = setTimeout(() => setIsVisible(true), 1500);
@@ -44,7 +50,11 @@ export const UserOnboarding: React.FC = () => {
 
     const handleClose = () => {
         setIsVisible(false);
-        localStorage.setItem('predator_onboarding_v45', 'true');
+        try {
+            localStorage.setItem('predator_onboarding_v45', 'true');
+        } catch {
+            // no-op
+        }
     };
 
     if (!isVisible) return null;
