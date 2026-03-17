@@ -12,7 +12,12 @@ export const OfflineBanner = () => {
     useEffect(() => {
         const handleOffline = () => {
             // Перевірка чи користувач не приховав банер на цю сесію
-            if (sessionStorage.getItem('predator-offline-dismissed') === 'true') {
+            try {
+                if (sessionStorage.getItem('predator-offline-dismissed') === 'true') {
+                    return;
+                }
+            } catch {
+                // Якщо storage заблокований — не показуємо банер, щоб не ламати UI
                 return;
             }
             setVisible(true);
@@ -28,8 +33,12 @@ export const OfflineBanner = () => {
 
         // Перевірка поточного стану
         if ((window as any).__BACKEND_OFFLINE_MODE__) {
-            if (sessionStorage.getItem('predator-offline-dismissed') !== 'true') {
-                setVisible(true);
+            try {
+                if (sessionStorage.getItem('predator-offline-dismissed') !== 'true') {
+                    setVisible(true);
+                }
+            } catch {
+                // no-op
             }
         }
 
@@ -41,7 +50,11 @@ export const OfflineBanner = () => {
 
     const handleDismiss = () => {
         setVisible(false);
-        sessionStorage.setItem('predator-offline-dismissed', 'true');
+        try {
+            sessionStorage.setItem('predator-offline-dismissed', 'true');
+        } catch {
+            // no-op
+        }
     };
 
     const handleMinimize = () => {

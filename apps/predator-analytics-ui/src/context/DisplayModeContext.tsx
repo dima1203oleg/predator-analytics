@@ -50,13 +50,21 @@ const STORAGE_KEY = 'predator_display_mode';
 
 export const DisplayModeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setModeState] = useState<DisplayMode>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return (saved as DisplayMode) || DisplayMode.DESKTOP;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return (saved as DisplayMode) || DisplayMode.DESKTOP;
+    } catch {
+      return DisplayMode.DESKTOP;
+    }
   });
 
   const setMode = (newMode: DisplayMode) => {
     setModeState(newMode);
-    localStorage.setItem(STORAGE_KEY, newMode);
+    try {
+      localStorage.setItem(STORAGE_KEY, newMode);
+    } catch {
+      // no-op
+    }
   };
 
   const value = {

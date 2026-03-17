@@ -49,12 +49,12 @@ interface UserState {
 export const useUserStore = create<UserState>((set, get) => ({
   user: {
     id: 'dev-admin',
-    name: 'System Administrator (DEV)',
-    email: 'admin@predator.ai',
+    name: 'Системний адміністратор (DEV)',
+    email: 'admin@predator.ua',
     role: UserRole.ADMIN,
     tier: SubscriptionTier.ENTERPRISE,
     tenant_id: 'system',
-    tenant_name: 'System Root',
+    tenant_name: 'Системний контур',
     last_login: new Date().toISOString(),
     data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
   },
@@ -71,15 +71,27 @@ export const useUserStore = create<UserState>((set, get) => ({
       isClient: user?.role === UserRole.CLIENT_BASIC || user?.role === UserRole.CLIENT_PREMIUM
     });
     if (user) {
-      sessionStorage.setItem('predator_auth_token', user.role === UserRole.ADMIN ? 'admin-token' : 'user-token');
+      try {
+        sessionStorage.setItem('predator_auth_token', user.role === UserRole.ADMIN ? 'admin-token' : 'user-token');
+      } catch {
+        // no-op
+      }
     } else {
-      sessionStorage.removeItem('predator_auth_token');
+      try {
+        sessionStorage.removeItem('predator_auth_token');
+      } catch {
+        // no-op
+      }
     }
   },
 
   logout: () => {
     set({ user: null, isAuthenticated: false, isAdmin: false, isClient: false });
-    sessionStorage.removeItem('predator_auth_token');
+    try {
+      sessionStorage.removeItem('predator_auth_token');
+    } catch {
+      // no-op
+    }
     window.location.href = '/'; 
   },
 
