@@ -1,6 +1,6 @@
 import pytest
 
-from app.fusion_engine import ДвигунЗлиттяДаних
+from ..app.fusion_engine import ДвигунЗлиттяДаних
 from app.registries.ua_registries import УкраїнськийРеєстр
 
 

@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import { apiClient } from '../services/api/config';
 
 export interface SystemMetrics {
     cpu: number;
@@ -51,7 +51,7 @@ export const useSystemMetrics = () => {
             try {
                 isFetching.current = true;
                 // TRUTH-ONLY: Attempt to fetch real metrics from Prometheus/NodeExporter via Backend Gateway
-                const response = await axios.get('/api/v1/system/metrics', { timeout: 1500 });
+                const response = await apiClient.get('/system/metrics', { timeout: 1500 });
 
                 if (isMounted.current && response.data) {
                     setMetrics(prev => ({

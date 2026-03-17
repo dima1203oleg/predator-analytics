@@ -17,7 +17,8 @@ export const API_V45_URL = metaEnv.VITE_V45_API_URL || '/api/v45';
  * TRUTH-ONLY MODE — no mock fallbacks.
  * All API errors propagate to the component for proper error display.
  */
-export const IS_TRUTH_ONLY_MODE = true;
+// TRUTH-ONLY MODE — configurable via env variable
+export const IS_TRUTH_ONLY_MODE = metaEnv.VITE_TRUTH_ONLY === 'true';
 
 // Default timeout: 15 seconds
 const DEFAULT_TIMEOUT = 15_000;

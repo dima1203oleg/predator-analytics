@@ -1,22 +1,26 @@
 from __future__ import annotations
 
 import asyncio
+import sys
+sys.path.append('/Users/dima-mac/Documents/Predator_21')
 from datetime import datetime, timedelta
 import os
-import sys
 from typing import Any, Dict
 import unittest
+import sys
+sys.path.append('/Users/dima-mac/Documents/Predator_21')
+sys.path.append('/Users/dima-mac/Documents/Predator_21')
+sys.path.append('/Users/dima-mac/Documents/Predator_21')
+sys.path.append('/Users/dima-mac/Documents/Predator_21')
+sys.path.append('/Users/dima-mac/Documents/Predator_21')
 
-
-# Add project root
-sys.path.append(os.getcwd())
 # Add api-gateway root to find 'app'
 sys.path.append(os.path.join(os.getcwd(), "services/api_gateway"))
 
 import pytest
 
-from app.services.etl_arbiter import ETLArbiter  # Now valid because 'app' is in path
-from app.libs.core.etl_state_machine import ETLState, ETLStateMachine
+from services.etl_arbiter import ETLArbiter  
+from libs.core.etl_state_machine import ETLState, ETLStateMachine
 
 
 class TestETLTruthfulness(unittest.TestCase):

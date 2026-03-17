@@ -7,24 +7,8 @@ from __future__ import annotations
 import asyncio
 from datetime import datetime
 from pathlib import Path
-import sys
 
 import pytest
-
-
-# Додати шлях до проекту
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root / "services" / "api-gateway"))
-
-from app.services.autonomous_intelligence_v2 import (
-    AutonomousDecisionMaker,
-    DynamicResourceAllocator,
-    LearningRecord,
-    PredictiveAnalyzer,
-    PredictiveMetrics,
-    SelfLearningEngine,
-    autonomous_intelligence_v2,
-)
 
 
 class TestPredictiveAnalyzer:
@@ -308,7 +292,7 @@ class TestAutonomousIntelligenceIntegration:
     async def test_full_system_startup(self):
         """Тест запуску повної системи."""
         # Створюємо нову інстанцію для тесту
-        from app.services.autonomous_intelligence_v2 import AutonomousIntelligenceV2
+        from services.autonomous_intelligence_v2 import AutonomousIntelligenceV2
 
         ai = AutonomousIntelligenceV2()
 
@@ -337,7 +321,7 @@ class TestAutonomousIntelligenceIntegration:
     @pytest.mark.asyncio
     async def test_end_to_end_cycle(self):
         """Тест повного циклу: метрики -> передбачення -> рішення -> навчання."""
-        from app.services.autonomous_intelligence_v2 import AutonomousIntelligenceV2
+        from services.autonomous_intelligence_v2 import AutonomousIntelligenceV2
 
         ai = AutonomousIntelligenceV2()
 

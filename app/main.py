@@ -13,7 +13,7 @@ from app.libs.core.structured_logger import get_logger
 
 # Autonomous AI Orchestration (v4.1)
 from libs.core.autonomy.orchestrator import orchestrator
-from libs.core.autonomy.pulse_agent import SystemPulseAgent
+from app.libs.core.autonomy.pulse_agent import SystemPulseAgent
 
 settings = get_settings()
 logger = get_logger("predator.api.main")
@@ -65,7 +65,7 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.exception(f"Sovereign Agents failed to start: {e}")
 
-    yield  # 🚀 Застосунок запущено
+    yield  # Застосунок запущено
 
     # ── SHUTDOWN ──
     logger.info("PREDATOR_SHUTDOWN_INIT")

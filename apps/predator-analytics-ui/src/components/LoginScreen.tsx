@@ -15,8 +15,33 @@ interface LoginScreenProps {
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const { setUser } = useUser();
     const setRole = useAppStore((s) => s.setRole);
-    const [step, setStep] = useState<'initial' | 'scanning' | 'roles'>('initial');
+    const initialStep = (import.meta.env.DEV && import.meta.env.VITE_MOCK_API === 'true') ? 'roles' : 'initial';
+    const [step, setStep] = useState<'initial' | 'scanning' | 'roles'>(initialStep);
     const [scanProgress, setScanProgress] = useState(0);
+
+    const handleDemoLogin = (role: UserRole) => {
+        let tier = SubscriptionTier.FREE;
+        if (role === UserRole.CLIENT_PREMIUM) tier = SubscriptionTier.PRO;
+        if (role === UserRole.ADMIN) tier = SubscriptionTier.ENTERPRISE;
+
+        setRole(role === UserRole.ADMIN ? 'admin' : role === UserRole.CLIENT_PREMIUM ? 'premium' : 'client');
+
+        setUser({
+            id: role === UserRole.ADMIN ? 'admin-1' : 'client-1',
+            name: role === UserRole.ADMIN ? 'Адміністратор' : role === UserRole.CLIENT_PREMIUM ? 'Аналітик' : 'Оператор',
+            email: role === UserRole.ADMIN ? 'admin@predator.ua' : 'user@client.ua',
+            role: role,
+            tier: tier,
+            tenant_id: 'demo-tenant',
+            tenant_name: 'PREDATOR_CORP',
+            last_login: new Date().toISOString(),
+            data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
+        });
+
+        localStorage.setItem('token', 'eyJhbGciOiJub25lIn0=.eyJzdWIiOiJkZW1vIiwiZW1haWwiOiJkZW1vQHByZWRhdG9yLnVhIiwicm9sZSI6ImNsaWVudF9iYXNpYyIsImZ1bGxfbmFtZSI6IkRlbW8gVXNlciJ9.');
+        sessionStorage.setItem('predator_auth_token', role === UserRole.ADMIN ? 'admin-token' : 'user-token');
+        onLogin();
+    };
 
     useEffect(() => {
         if (step === 'scanning') {
@@ -34,29 +59,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             return () => clearInterval(interval);
         }
     }, [step]);
-
-    const handleDemoLogin = (role: UserRole) => {
-        let tier = SubscriptionTier.FREE;
-        if (role === UserRole.CLIENT_PREMIUM) tier = SubscriptionTier.PRO;
-        if (role === UserRole.ADMIN) tier = SubscriptionTier.ENTERPRISE;
-
-        // Синхронізуємо роль у Zustand (використовується Sidebar/TopBar для RBAC у UI).
-        setRole(role === UserRole.ADMIN ? 'admin' : role === UserRole.CLIENT_PREMIUM ? 'premium' : 'client');
-
-        setUser({
-            id: role === UserRole.ADMIN ? 'admin-1' : 'client-1',
-            name: role === UserRole.ADMIN ? 'Адміністратор' : role === UserRole.CLIENT_PREMIUM ? 'Аналітик' : 'Оператор',
-            email: role === UserRole.ADMIN ? 'admin@predator.ua' : 'user@client.ua',
-            role: role,
-            tier: tier,
-            tenant_id: 'demo-tenant',
-            tenant_name: 'PREDATOR_CORP',
-            last_login: new Date().toISOString(),
-            data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
-        });
-
-        onLogin();
-    };
 
     return (
         <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center p-6 relative overflow-hidden font-mono text-slate-200">

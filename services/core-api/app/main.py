@@ -6,7 +6,7 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from app.config import get_settings
+from core.config import get_settings
 
 # Services
 from app.core.cors import add_cors_middleware

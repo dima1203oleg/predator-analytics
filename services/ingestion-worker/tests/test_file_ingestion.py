@@ -5,9 +5,11 @@
 
 import pytest
 
-from app.validators.declaration import (
+from services.ingestion_worker.app.validators.declaration import (
     DeclarationValidator,
     Severity,
+    ValidationError,
+    ValidationResult
 )
 
 

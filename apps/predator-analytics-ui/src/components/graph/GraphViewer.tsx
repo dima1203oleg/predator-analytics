@@ -273,7 +273,7 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
 
     const cy = cytoscape({
       container: containerRef.current,
-      style: getCytoscapeStyle(highVisibility) as cytoscape.Stylesheet[],
+      style: getCytoscapeStyle(highVisibility) as unknown as cytoscape.Stylesheet[],
       layout: LAYOUTS[selectedLayout],
       minZoom: 0.1,
       maxZoom: 5,

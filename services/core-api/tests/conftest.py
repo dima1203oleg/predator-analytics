@@ -18,6 +18,6 @@ for path in (PREDATOR_COMMON, LIBS_DIR, REPO_ROOT, ROOT_DIR):
     sys.path.insert(0, path_str)
 
 # Тестовий режим: вимикаємо зовнішні підключення у lifespan/health
-from app.config import get_settings
+from libs.core.config import get_settings
 os.environ["TESTING"] = "1"
 get_settings.cache_clear()

@@ -1,5 +1,6 @@
 import pytest
 import sys
+sys.path.append('/Users/dima-mac/Documents/Predator_21')
 from unittest.mock import patch
 from pathlib import Path
 
@@ -15,12 +16,12 @@ def test_import_side_effects_under_readonly_fs():
         
         try:
             # Attempt to import core services that previously failed
-            import app.services.azr_engine_v32
-            import app.services.sovereign_memory
-            import app.libs.core.merkle_ledger
-            import app.services.evolution_service
+            from services.azr_engine_v32 import AzrEngine  # Replace with specific classes if known
+            from services.sovereign_memory import SovereignMemory  # Replace with specific classes if known
+            import libs.core.merkle_ledger
+            import services.evolution_service
             
-            # If we reach here without OSError at the module level, we won!
+            # If we reach here without OSError at the module level, we win!
             print("Import successful under simulated read-only FS")
         except OSError as e:
             pytest.fail(f"Module import failed with OSError on read-only FS: {e}")
@@ -31,7 +32,7 @@ def test_lazy_initialization_fails_only_on_write():
     """
     Ensure that we only try to create directories when writing, not when initializing.
     """
-    from app.libs.core.storage import FileStorageProvider
+    from libs.core.storage import FileStorageProvider
     import tempfile
     
     with tempfile.TemporaryDirectory() as tmpdir:

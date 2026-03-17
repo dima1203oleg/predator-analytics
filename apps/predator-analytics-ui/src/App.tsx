@@ -1,106 +1,143 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import React, { Component, useCallback, useEffect, useState, type ReactNode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
 // Contexts
 import { AgentProvider } from './context/AgentContext';
 import { DisplayModeProvider } from './context/DisplayModeContext';
 import { GlobalProvider } from './context/GlobalContext';
-import { UserProvider } from './context/UserContext';
+import { UserProvider, useUser, UserRole, SubscriptionTier } from './context/UserContext';
 // Stores
 import { useAppStore } from './store/useAppStore';
 
 // Remaining Providers
 import { SensitiveDataProvider } from './context/SensitiveDataContext';
+import { RoleProvider } from './context/RoleContext';
 import { ShellProvider } from './context/ShellContext';
 import { SuperIntelligenceProvider } from './context/SuperIntelligenceContext';
 import { ToastProvider } from './context/ToastContext';
 
-
 // Components
 import { AppRoutesNew as AppRoutes } from './AppRoutesNew';
-import BootScreen from './components/BootScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import LoginScreen from './components/LoginScreen';
-import { Predator } from './components/premium/AICopilot';
-import OnboardingWizard from './components/premium/OnboardingWizard';
-import QuickActionsBar from './components/premium/QuickActionsBar';
-import { ToasterProvider } from './components/premium/ToasterProvider';
-import { OfflineBanner } from './components/shared/OfflineBanner';
-import { CyberTerminal } from './components/ui/CyberTerminal';
+import StartupSequence, { type StartupRole } from './components/StartupSequence';
 
-// Setup Query Client with optimized settings
+/** Ізольований wrapper — якщо дочірній компонент падає, решта UI продовжує працювати */
+class SafeComponent extends Component<{ name: string; children: ReactNode }, { error: Error | null }> {
+  state = { error: null as Error | null };
+  static getDerivedStateFromError(error: Error) { return { error }; }
+  componentDidCatch(error: Error) { console.error(`[SafeComponent:${this.props.name}]`, error.message, error.stack); }
+  render() {
+    if (this.state.error) return <div className="text-red-500 p-4 z-50 fixed top-0 bg-black w-full h-full overflow-auto">Помилка в {this.props.name}: {this.state.error.message}<br/><pre>{this.state.error.stack}</pre></div>;
+    return this.props.children;
+  }
+}
+
+// Lazy-loaded overlay компоненти
+const QuickActionsBar = React.lazy(() => import('./components/premium/QuickActionsBar'));
+const ToasterProvider = React.lazy(() => import('./components/premium/ToasterProvider').then(m => ({ default: m.ToasterProvider })));
+const OfflineBanner = React.lazy(() => import('./components/shared/OfflineBanner').then(m => ({ default: m.OfflineBanner })));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
     },
   },
 });
 
-function App() {
-  // Звичайний життєвий цикл: boot → login → ready
-  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>('BOOTING');
-  const highVisibility = useAppStore((state) => state.highVisibility);
+/** Внутрішній компонент — живе всередині UserProvider, тому може безпечно викликати useUser */
+function AppShell() {
+  const { setUser } = useUser();
+  const setRole = useAppStore((s) => s.setRole);
+  const highVisibility = useAppStore((s) => s.highVisibility);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
     document.documentElement.classList.toggle('high-visibility', highVisibility);
   }, [highVisibility]);
 
-  const handleBootComplete = () => {
-    setAppState('LOGIN');
-  };
+  const handleStartupComplete = useCallback((role: string) => {
+    console.log('[App] handleStartupComplete triggered with role:', role);
+    const roleMap: Record<string, { userRole: UserRole; storeRole: 'client' | 'premium' | 'admin'; tier: SubscriptionTier; name: string }> = {
+      operator: { userRole: UserRole.CLIENT_BASIC, storeRole: 'client', tier: SubscriptionTier.FREE, name: 'Оператор' },
+      analyst:  { userRole: UserRole.CLIENT_PREMIUM, storeRole: 'premium', tier: SubscriptionTier.PRO, name: 'Аналітик' },
+      admin:    { userRole: UserRole.ADMIN, storeRole: 'admin', tier: SubscriptionTier.ENTERPRISE, name: 'Адміністратор' },
+    };
+    const cfg = roleMap[role];
 
-  const handleLogin = () => {
-    setAppState('READY');
-  };
+    if (!cfg) {
+      console.error('[App] Unknown role:', role);
+      return;
+    }
 
-  const handleLogout = () => {
-    setAppState('LOGIN');
-  };
+    try {
+      setRole(cfg.storeRole);
+      setUser({
+        id: `${role}-1`,
+        name: cfg.name,
+        email: `${role}@predator.ua`,
+        role: cfg.userRole,
+        tier: cfg.tier,
+        tenant_id: 'demo-tenant',
+        tenant_name: 'PREDATOR_CORP',
+        last_login: new Date().toISOString(),
+        data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9'],
+      });
+      localStorage.setItem('token', 'demo-token');
+      sessionStorage.setItem('predator_auth_token', `${role}-token`);
+      console.log('[App] Auth state updated successfully');
+    } catch (e) {
+      console.error('[App] Failed to set user/role:', e);
+    }
 
+    setReady(true);
+  }, [setUser, setRole]);
+
+  if (!ready) {
+    return <StartupSequence onComplete={handleStartupComplete} />;
+  }
+
+  console.log('[App] AppShell is ready, rendering AppRoutes');
+
+  return (
+    <>
+      <AppRoutes />
+      <React.Suspense fallback={null}>
+        <SafeComponent name="QuickActionsBar"><QuickActionsBar /></SafeComponent>
+        <SafeComponent name="ToasterProvider"><ToasterProvider /></SafeComponent>
+        <SafeComponent name="OfflineBanner"><OfflineBanner /></SafeComponent>
+      </React.Suspense>
+    </>
+  );
+}
+
+function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <UserProvider>
             <ShellProvider>
-              <AgentProvider>
-                <DisplayModeProvider>
-                  <SensitiveDataProvider>
-                    <ToastProvider>
-                      <GlobalProvider>
-                        <SuperIntelligenceProvider>
-                          {appState === 'BOOTING' && (
-                            <BootScreen onComplete={handleBootComplete} />
-                          )}
-
-                          {appState === 'LOGIN' && (
-                            <LoginScreen onLogin={handleLogin} />
-                          )}
-
-                          {appState === 'READY' && (
-                            <>
-                              <AppRoutes />
-                              {/* Global UI Components */}
-                              <QuickActionsBar />
-                              <ToasterProvider />
-                              <OnboardingWizard />
-                              <OfflineBanner />
-                              <Predator />
-                              <CyberTerminal />
-                            </>
-                          )}
-                        </SuperIntelligenceProvider>
-                      </GlobalProvider>
-                    </ToastProvider>
-                  </SensitiveDataProvider>
-                </DisplayModeProvider>
-              </AgentProvider>
+              <RoleProvider>
+                <AgentProvider>
+                  <DisplayModeProvider>
+                    <SensitiveDataProvider>
+                      <ToastProvider>
+                        <GlobalProvider>
+                          <SuperIntelligenceProvider>
+                            <AppShell />
+                          </SuperIntelligenceProvider>
+                        </GlobalProvider>
+                      </ToastProvider>
+                    </SensitiveDataProvider>
+                  </DisplayModeProvider>
+                </AgentProvider>
+              </RoleProvider>
             </ShellProvider>
           </UserProvider>
         </BrowserRouter>

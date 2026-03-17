@@ -1,6 +1,6 @@
 {
   "name": "predator-analytics-ui",
-  "version": "55.0.0",
+  "version": "30.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -36,7 +36,7 @@
     "clsx": "^2.1.1",
     "cytoscape": "^3.33.1",
     "echarts": "^5.5.0",
-    "echarts-for-react": "^3.0.2",
+    "echarts-for-react": "^3.0.6",
     "framer-motion": "^11.0.0",
     "idb": "^8.0.0",
     "lucide-react": "^0.294.0",

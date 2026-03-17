@@ -3,8 +3,8 @@ from collections.abc import AsyncGenerator
 from httpx import ASGITransport, AsyncClient
 import pytest
 
-from app.config import get_settings
-from app.main import app
+from libs.core.config import get_settings
+from services.core_api.app.main import app
 
 
 @pytest.fixture
