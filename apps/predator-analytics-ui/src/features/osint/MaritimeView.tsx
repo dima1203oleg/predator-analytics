@@ -73,7 +73,7 @@ const RiskMeter: React.FC<{ score: number; size?: 'sm' | 'md' }> = ({ score, siz
     return (
         <div className={cn("flex flex-col gap-1.5", size === 'sm' ? 'w-full' : 'w-full')}>
             <div className="flex items-center justify-between">
-                <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">РИЗИК_ІНДЕКС</span>
+                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">РИЗИК_ІНДЕКС</span>
                 <span className="text-[9px] font-black uppercase tracking-widest" style={{ color }}>{label}</span>
             </div>
             <div className="h-1.5 bg-slate-900/80 rounded-full overflow-hidden border border-white/5">
@@ -135,14 +135,14 @@ const VesselCard: React.FC<{ vessel: Vessel; isSelected: boolean; onClick: () =>
                             {vessel.name}
                         </h4>
                         <div className="flex items-center gap-2">
-                            <span className="text-[9px] font-mono text-slate-600 uppercase">{vessel.flag}</span>
+                            <span className="text-[9px] font-mono text-slate-400 uppercase">{vessel.flag}</span>
                             <span className="text-slate-700">·</span>
-                            <span className="text-[9px] text-slate-600 uppercase font-bold">{vessel.type}</span>
+                            <span className="text-[9px] text-slate-400 uppercase font-bold">{vessel.type}</span>
                         </div>
                     </div>
                 </div>
                 <div className="text-right shrink-0">
-                    <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest block mb-1">CERS</span>
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">CERS</span>
                     <span className={cn(
                         "text-2xl font-black font-mono drop-shadow-[0_0_8px_currentColor]",
                         vessel.risk_score > 80 ? "text-rose-400" : vessel.risk_score > 60 ? "text-amber-400" : "text-emerald-400"
@@ -156,8 +156,8 @@ const VesselCard: React.FC<{ vessel: Vessel; isSelected: boolean; onClick: () =>
                 <RiskMeter score={vessel.risk_score} size="sm" />
                 <div className="flex items-center justify-between pt-2 border-t border-white/5">
                     <div className="flex items-center gap-2">
-                        <Navigation size={10} className="text-slate-600" />
-                        <span className="text-[9px] font-bold text-slate-500 uppercase italic truncate max-w-[120px]">
+                        <Navigation size={10} className="text-slate-400" />
+                        <span className="text-[9px] font-bold text-slate-300 uppercase italic truncate max-w-[120px]">
                             {vessel.destination || 'НЕВИЗНАЧЕНО'}
                         </span>
                     </div>
@@ -385,7 +385,7 @@ const MaritimeView: React.FC = () => {
                                     <h1 className="text-5xl font-black text-white italic tracking-tighter uppercase leading-none skew-x-[-3deg]">
                                         МОРСЬКИЙ <span className="text-blue-400 drop-shadow-[0_0_20px_rgba(14,165,233,0.5)]">СУВЕРЕН</span>
                                     </h1>
-                                    <p className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.3em]">
+                                    <p className="text-[10px] font-mono text-slate-300 uppercase tracking-[0.3em]">
                                         MARITIME_SOVEREIGNTY_NEXUS · PRED-NAV-v55.5
                                     </p>
                                 </div>
@@ -394,14 +394,14 @@ const MaritimeView: React.FC = () => {
                             <div className="flex items-center gap-6">
                                 {/* Clock */}
                                 <div className="text-right space-y-1">
-                                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">ОПЕРАТИВНИЙ_ЧАС</p>
+                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">ОПЕРАТИВНИЙ_ЧАС</p>
                                     <p className="text-2xl font-black font-mono text-blue-400 tracking-tight">{time.toLocaleTimeString('uk-UA')}</p>
-                                    <p className="text-[9px] font-mono text-slate-600">{time.toLocaleDateString('uk-UA', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                                    <p className="text-[9px] font-mono text-slate-400">{time.toLocaleDateString('uk-UA', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
                                 </div>
                                 <div className="w-px h-16 bg-white/10" />
                                 {/* Sync stat */}
                                 <div className="text-right space-y-1">
-                                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">CИНХРОНІЗАЦІЯ</p>
+                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">CИНХРОНІЗАЦІЯ</p>
                                     <div className="flex items-center gap-2 justify-end">
                                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                                         <span className="text-sm font-black text-emerald-400 font-mono">{lastUpdate || '—'}</span>
@@ -441,11 +441,11 @@ const MaritimeView: React.FC = () => {
                                     + ` bg-${stat.color}-500/10 border-${stat.color}-500/20`}>
                                     <stat.icon size={26} className={`text-${stat.color}-400`} />
                                 </div>
-                                <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">{stat.label}</p>
+                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">{stat.label}</p>
                                 <p className={`text-4xl font-black font-mono tracking-tighter text-${stat.color}-400 drop-shadow-[0_0_10px_currentColor]`}>
                                     {stat.value}
                                 </p>
-                                <p className="text-[9px] text-slate-600 font-mono italic mt-1">{stat.sub}</p>
+                                <p className="text-[9px] text-slate-400 font-mono italic mt-1">{stat.sub}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -469,7 +469,7 @@ const MaritimeView: React.FC = () => {
                                                     ? mode === 'high_risk' ? 'bg-rose-500/20 border-rose-500/50 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.2)]'
                                                         : mode === 'phantom' ? 'bg-amber-500/20 border-amber-500/50 text-amber-400'
                                                             : 'bg-blue-500/20 border-blue-500/50 text-blue-400'
-                                                    : 'bg-white/5 border-white/5 text-slate-600 hover:text-slate-400'
+                                                    : 'bg-white/5 border-white/5 text-slate-400 hover:text-slate-200'
                                             )}
                                         >
                                             {mode === 'all' ? 'ВСІ' : mode === 'high_risk' ? 'РИЗИК' : 'ФАНТОМИ'}
@@ -477,7 +477,7 @@ const MaritimeView: React.FC = () => {
                                     ))}
                                 </div>
                                 <div className="relative">
-                                    <Search size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" />
+                                    <Search size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" />
                                     <input
                                         type="text"
                                         value={searchQuery}
@@ -498,7 +498,7 @@ const MaritimeView: React.FC = () => {
                                     ) : filteredVessels.length === 0 ? (
                                         <div className="py-20 text-center">
                                             <Ship size={40} className="text-slate-800 mx-auto mb-4" />
-                                            <p className="text-slate-600 font-black uppercase text-sm tracking-widest">СУДЕН НЕ ВИЯВЛЕНО</p>
+                                            <p className="text-slate-400 font-black uppercase text-sm tracking-widest">СУДЕН НЕ ВИЯВЛЕНО</p>
                                         </div>
                                     ) : (
                                         filteredVessels.map(vessel => (
@@ -550,7 +550,7 @@ const MaritimeView: React.FC = () => {
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <div className="bg-black/60 backdrop-blur-xl border border-white/5 rounded-2xl px-5 py-2.5 flex items-center gap-3">
-                                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ЗАТРИМКА</span>
+                                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">ЗАТРИМКА</span>
                                             <span className="text-[10px] font-mono text-blue-400 font-black">12ms</span>
                                         </div>
                                     </div>
@@ -620,7 +620,7 @@ const MaritimeView: React.FC = () => {
                                                 <div key={i} className="p-5 bg-black/40 rounded-[24px] border border-white/5 space-y-2 panel-3d">
                                                     <div className="flex items-center gap-2">
                                                         <Icon size={12} className="text-blue-400/60" />
-                                                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">{label}</span>
+                                                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{label}</span>
                                                     </div>
                                                     <p className={cn(
                                                         "text-sm font-black uppercase tracking-tight",
@@ -666,13 +666,13 @@ const MaritimeView: React.FC = () => {
                                                     <div>
                                                         <h4 className="text-base font-black text-white uppercase tracking-tight">{port.name}</h4>
                                                         <div className="flex items-center gap-2 mt-1">
-                                                            <Map size={10} className="text-slate-600" />
-                                                            <span className="text-[9px] font-mono text-slate-500 uppercase">{port.country}</span>
+                                                            <Map size={10} className="text-slate-400" />
+                                                            <span className="text-[9px] font-mono text-slate-300 uppercase">{port.country}</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
-                                                    <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest block mb-1">ЗАВАНТАЖЕНІСТЬ</span>
+                                                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">ЗАВАНТАЖЕНІСТЬ</span>
                                                     <span className="text-xl font-black font-mono text-indigo-400">{port.vessel_count}/{port.capacity}</span>
                                                 </div>
                                             </div>
@@ -702,7 +702,7 @@ const MaritimeView: React.FC = () => {
                                         <div key={label} className="flex items-center gap-4 p-5 bg-black/30 rounded-[24px] border border-white/5 group/m hover:border-white/10 transition-all">
                                             <Icon size={18} className={cn(color, "opacity-60 group-hover/m:opacity-100 transition-opacity")} />
                                             <div>
-                                                <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest block">{label}</span>
+                                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block">{label}</span>
                                                 <span className={cn("text-lg font-black font-mono", color)}>{value}</span>
                                             </div>
                                         </div>

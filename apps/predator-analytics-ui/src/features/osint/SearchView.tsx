@@ -268,7 +268,7 @@ const CompanyCard = ({
                                         <User className="w-4 h-4 text-slate-400" />
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Керівник</span>
+                                        <span className="text-[10px] text-slate-300 font-black uppercase tracking-widest">Керівник</span>
                                         <span className="text-slate-100 font-bold group-hover/item:text-primary-400 transition-colors">{company.director || "---"}</span>
                                     </div>
                                 </div>
@@ -277,7 +277,7 @@ const CompanyCard = ({
                                         <MapPin className="w-4 h-4 text-slate-400" />
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Локація</span>
+                                        <span className="text-[10px] text-slate-300 font-black uppercase tracking-widest">Локація</span>
                                         <span className="text-slate-300 text-sm truncate max-w-[200px]">{company.address || "---"}</span>
                                     </div>
                                 </div>
@@ -288,12 +288,12 @@ const CompanyCard = ({
                                         <Briefcase className="w-4 h-4 text-slate-400" />
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Капітал</span>
+                                        <span className="text-[10px] text-slate-300 font-black uppercase tracking-widest">Капітал</span>
                                         <span className="text-slate-100 font-bold font-mono">{company.capital}</span>
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-2">
-                                    <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest px-1">Кластери</span>
+                                    <span className="text-[10px] text-slate-300 font-black uppercase tracking-widest px-1">Кластери</span>
                                     <div className="flex gap-2 flex-wrap">
                                         {company.tags.map(tag => (
                                             <span key={tag} className="px-2.5 py-1 bg-indigo-500/5 text-indigo-400 text-[10px] rounded-lg border border-indigo-500/20 font-bold uppercase tracking-tight">
@@ -317,7 +317,7 @@ const CompanyCard = ({
                                                         <div className="w-1.5 h-1.5 bg-amber-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
                                                         {b}
                                                     </div>
-                                                )) : <span className="text-slate-600 text-xs italic">Дані запечатані</span>}
+                                                )) : <span className="text-slate-400 text-xs italic">Дані запечатані</span>}
                                             </div>
                                         ) : <RedactedField />}
                                     </div>
@@ -340,14 +340,14 @@ const CompanyCard = ({
                     {isPremium && !isHackerMode && (
                         <div className="lg:w-64 xl:w-72 shrink-0">
                             <HoloContainer className="p-4 h-full flex flex-col items-center justify-center min-h-[220px]">
-                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{localLocales.company.riskProfile}</span>
+                                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-4">{localLocales.company.riskProfile}</span>
                                 <div className="w-full h-44">
                                     <SearchResultRadar {...radarData} />
                                 </div>
                                 <div className="mt-4 flex flex-col items-center">
                                     <div className="text-2xl font-mono font-black text-iridescent">
                                         {Math.round((radarData.reputation + radarData.transparency) / 2)}
-                                        <span className="text-xs text-slate-600 font-normal ml-1">/100</span>
+                                        <span className="text-xs text-slate-400 font-normal ml-1">/100</span>
                                     </div>
                                     <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em]">{localLocales.company.alphaScore}</span>
                                 </div>
@@ -482,7 +482,7 @@ export const SearchView = () => {
                 <div className="mt-4 flex items-center gap-4 px-2">
                     <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-full border border-slate-800">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">
+                        <span className="text-[9px] font-mono text-slate-300 uppercase tracking-widest">
                             {isHackerMode ? localLocales.hackerMode.active : 'PREDATOR_CORE_ONLINE // ЄДРПОУ + РНБО + НАБУ + НАЗК'}
                         </span>
                     </div>
@@ -510,7 +510,7 @@ export const SearchView = () => {
                                     "px-6 py-2.5 rounded-t-2xl text-[10px] font-black uppercase tracking-[0.25em] transition-all flex items-center gap-2 border-t border-x",
                                     searchMode === mode.id
                                         ? "bg-slate-900 text-primary-400 border-slate-800 shadow-[0_-10px_15px_rgba(6,182,212,0.1)]"
-                                        : "bg-slate-950/20 text-slate-600 border-transparent hover:text-slate-400"
+                                        : "bg-slate-950/20 text-slate-400 border-transparent hover:text-slate-200"
                                 )}
                             >
                                 <mode.icon size={12} className={searchMode === mode.id ? 'animate-pulse' : ''} />
@@ -530,7 +530,7 @@ export const SearchView = () => {
                     >
                         <div className="relative flex items-center p-2">
                             <div className="pl-6 pr-4 py-4 flex items-center justify-center border-r border-slate-800/50">
-                                {loading ? <RefreshCw className="w-7 h-7 text-primary-500 animate-spin" /> : <SearchIcon className="w-7 h-7 text-slate-500" />}
+                                {loading ? <RefreshCw className="w-7 h-7 text-primary-500 animate-spin" /> : <SearchIcon className="w-7 h-7 text-slate-300" />}
                             </div>
                             <input
                                 type="text"
@@ -551,7 +551,7 @@ export const SearchView = () => {
                                         "p-4 rounded-xl transition-all border group relative",
                                         isHackerMode
                                             ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-400 shadow-[0_0_15px_emerald-500/20]"
-                                            : "bg-slate-900 border-slate-800 text-slate-500 hover:text-white"
+                                            : "bg-slate-900 border-slate-800 text-slate-300 hover:text-white"
                                     )}
                                     title="Hacker Mode"
                                 >
@@ -589,7 +589,7 @@ export const SearchView = () => {
                             <button
                                 key={tag}
                                 onClick={() => { setQuery(tag); }}
-                                className="px-4 py-2 rounded-xl bg-slate-900/40 border border-slate-800/60 text-[10px] font-bold text-slate-500 hover:text-primary-400 hover:border-primary-500/40 hover:bg-primary-500/5 transition-all"
+                                className="px-4 py-2 rounded-xl bg-slate-900/40 border border-slate-800/60 text-[10px] font-bold text-slate-300 hover:text-primary-300 hover:border-primary-500/40 hover:bg-primary-500/5 transition-all"
                             >
                                 {label}
                             </button>
@@ -612,7 +612,7 @@ export const SearchView = () => {
                     >
                         <div className="flex items-center gap-3">
                             <Activity size={16} className="text-primary-500 animate-pulse" />
-                            <span className="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em]">
+                            <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.3em]">
                                 {localLocales.results.found}: <span className="text-white text-sm ml-2 font-mono">{results.length}</span>
                             </span>
                         </div>
