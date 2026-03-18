@@ -104,6 +104,14 @@ export const Sidebar = () => {
       ]
     },
     {
+      title: 'ФАКТОРИ',
+      items: [
+        { name: 'Фабрика Факторів', path: '/factory', icon: Factory, role: 'admin' },
+        { name: 'Ризик-Скоринг', path: '/risk-scoring', icon: AlertCircle, premium: true },
+        { name: 'AML Аналізатор', path: '/aml', icon: ShieldAlert },
+      ]
+    },
+    {
       title: 'РОЗВІДКА ТА OSINT',
       items: [
         { name: 'Глобальний Пошук', path: '/search-v2', icon: FileSearch },
@@ -133,7 +141,6 @@ export const Sidebar = () => {
       items: [
         { name: 'Інтелект-Система', path: '/intelligence', icon: ZapOff },
         { name: 'Флот AI Агентів', path: '/agents', icon: Bot },
-        { name: 'Центр АЗР (Фабрика)', path: '/factory', icon: Factory, role: 'admin' },
         { name: 'Контроль Самовдосконалення', path: '/autonomy', icon: ShieldCheck, role: 'admin' },
         { name: 'Аналітика Двигунів', path: '/engines', icon: Waves },
         { name: 'Мовна Модель (LLM)', path: '/llm', icon: MessageSquare, premium: true },
@@ -144,8 +151,6 @@ export const Sidebar = () => {
       title: 'АНАЛІТИКА ТА ЗВІТИ',
       items: [
         { name: 'Генератор Звітів', path: '/reports', icon: FileText, premium: true },
-        { name: 'Ризик-Скоринг', path: '/risk-scoring', icon: AlertCircle, premium: true },
-        { name: 'AML Аналізатор', path: '/aml', icon: ShieldAlert },
         { name: 'Конструктор Дашбордів', path: '/builder', icon: Layers, premium: true },
         { name: 'Центр Сповіщень', path: '/alerts', icon: ShieldAlert, premium: true },
         { name: 'Експорт Даних', path: '/export', icon: Repeat, premium: true },
