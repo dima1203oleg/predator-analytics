@@ -95,6 +95,7 @@ const DatasetsPage = lazy(() => import('./features/platform/datasets/DatasetsPag
 const AutoFactoryView = lazy(() => import('./features/ai/AutoFactoryView'));
 const ModelTrainingView = lazy(() => import('./features/ai/ModelTrainingView'));
 const EnginesView = lazy(() => import('./features/ai/EnginesView'));
+const FactorsView = lazy(() => import('./features/factors/FactorsView'));
 
 
 
@@ -207,7 +208,7 @@ export const AppRoutesNew = () => {
             <Route path="/entity-graph" element={<GraphAnalyticsPage />} />
             <Route path="/knowledge" element={<KnowledgeEngineeringView />} />
             <Route path="/autonomy" element={userRole === 'admin' ? <AutonomyDashboard /> : <Navigate to="/overview" replace />} />
-            <Route path="/factory" element={userRole === 'admin' ? <AutoFactoryView /> : <Navigate to="/overview" replace />} />
+            <Route path="/factory" element={<FactorsView />} />
             <Route path="/components" element={<ComponentsRegistryView />} />
 
             {/* Premium Commercial Intelligence */}
