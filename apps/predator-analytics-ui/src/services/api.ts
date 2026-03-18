@@ -9,6 +9,8 @@ import { forecastApi } from '@/features/forecast/api/forecast';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import { competitorsApi } from '@/features/competitors/api/competitors';
 import { dashboardApi } from './api/dashboard';
+import { factoryApi } from './api/factory';
+import { infraApi } from './api/infra';
 
 // Re-export config constants and clients for direct use in components
 export { apiClient, v45Client, API_BASE_URL, API_V45_URL, IS_TRUTH_ONLY_MODE };
@@ -18,7 +20,8 @@ export {
     systemApi, monitoringApi, etlApi, azrApi, trainingApi, datasetApi,
     nasApi, dataCatalogApi, optimizerApi, intelligenceApi, searchApi,
     trinityApi, somApi, autonomyApi, ingestionApi, mlApi,
-    marketApi, forecastApi, diligenceApi, dashboardApi, competitorsApi
+    marketApi, forecastApi, diligenceApi, dashboardApi, competitorsApi,
+    factoryApi, infraApi
 };
 
 // ─── Search API (used by SearchView, SearchConsole, SystemVerificationSuite) ──
