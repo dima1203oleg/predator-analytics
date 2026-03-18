@@ -84,13 +84,13 @@ export function PremiumDashboard({ userId, isPremium = true }: PremiumDashboardP
                 <Lock className="text-white h-8 w-8" />
             </div>
           <h3 className="text-2xl font-black font-display tracking-tight text-white uppercase">
-            RESTRICTED ACCESS
+            ОБМЕЖЕНИЙ ДОСТУП
           </h3>
           <p className="text-slate-400 text-sm font-mono leading-relaxed">
-            Advanced analytics modules (Sankey Flows, Entity Resolution Graph, Geo-Spatial Intelligence) require <span className="text-amber-400">COMMANDER</span> clearance level.
+            Розширені модулі аналітики (Sankey потоки, граф розпізнавання сутностей, геопросторова інтелектика) вимагають рівня доступу <span className="text-amber-400">КОМАНДИРА</span>.
           </p>
           <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all hover:scale-105">
-            Upgrade Clearance
+            Оновити Рівень Доступу
           </Button>
         </div>
       </div>
