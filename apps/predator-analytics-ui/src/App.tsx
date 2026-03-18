@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AgentProvider } from './context/AgentContext';
 import { DisplayModeProvider } from './context/DisplayModeContext';
 import { GlobalProvider } from './context/GlobalContext';
+import { UserProvider } from './context/UserContext';
 // Stores
 import { useAppStore } from './store/useAppStore';
 
@@ -72,7 +73,8 @@ function App() {
                 <SensitiveDataProvider>
                   <ToastProvider>
                     <GlobalProvider>
-                      <SuperIntelligenceProvider>
+                      <UserProvider>
+                        <SuperIntelligenceProvider>
                         {appState === 'BOOTING' && (
                           <BootScreen onComplete={handleBootComplete} />
                         )}
@@ -93,7 +95,8 @@ function App() {
                             <CyberTerminal />
                           </>
                         )}
-                      </SuperIntelligenceProvider>
+                        </SuperIntelligenceProvider>
+                      </UserProvider>
                     </GlobalProvider>
                   </ToastProvider>
                 </SensitiveDataProvider>

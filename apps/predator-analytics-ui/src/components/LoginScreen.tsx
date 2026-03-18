@@ -40,7 +40,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
         setUser({
             id:  role === UserRole.ADMIN ? 'admin-1' : 'client-1',
-            name: role === UserRole.ADMIN ? 'Commander' : role === UserRole.CLIENT_PREMIUM ? 'Senior Analyst' : 'Operator',
+            name: role === UserRole.ADMIN ? 'Командир' : role === UserRole.CLIENT_PREMIUM ? 'Старший Аналітик' : 'Оператор',
             email: role === UserRole.ADMIN ? 'admin@predator.ai' : 'user@client.com',
             role: role,
             tier: tier,
@@ -89,7 +89,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             </button>
                         </div>
                         <h1 className="text-4xl font-black tracking-[0.2em] text-white/80 mb-2">PREDATOR</h1>
-                        <p className="text-slate-500 text-xs tracking-[0.3em] uppercase">Secure Access Terminal v45.1</p>
+                        <p className="text-slate-500 text-xs tracking-[0.3em] uppercase">Захищений Термінал Доступу v45.1</p>
                     </motion.div>
                 )}
 
@@ -114,7 +114,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             </div>
                             <div className="w-full space-y-2">
                                 <div className="flex justify-between text-xs text-blue-400 font-mono">
-                                    <span>BIOMETRIC_VERIFICATION</span>
+                                    <span>БІОМЕТРИЧНА_ПЕРЕВІРКА</span>
                                     <span>{scanProgress}%</span>
                                 </div>
                                 <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
@@ -125,13 +125,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     />
                                 </div>
                             </div>
-                             <div className="text-[10px] text-slate-500 font-mono text-center">
-                                Establishing secure handshake: {
-                                    scanProgress < 20 ? 'SYSCALL_INIT' :
-                                    scanProgress < 40 ? 'NEURAL_LINK_ESTABLISHED' :
-                                    scanProgress < 60 ? 'VECTOR_SPACE_VALIDATION' :
-                                    scanProgress < 80 ? 'IDENTITY_RESOLUTION_ACTIVE' :
-                                    'SOVEREIGN_ACCESS_GRANTED'
+                            <div className="text-[10px] text-slate-500 font-mono text-center">
+                                Встановлення безпечного рукостиску: {
+                                    scanProgress < 20 ? 'ІНІЦІАЛІЗАЦІЯ_СИСТЕМИ' :
+                                    scanProgress < 40 ? 'НЕЙРОМЕРЕЖА_ВСТАНОВЛЕНА' :
+                                    scanProgress < 60 ? 'ВАЛІДАЦІЯ_ВЕКТОРНОГО_ПРОСТОРУ' :
+                                    scanProgress < 80 ? 'АКТИВНА_РОЗПІЗНАВАННЯ' :
+                                    'СУВЕРЕННИЙ_ДОСТУП_ДОЗВОЛЕНО'
                                 }
                             </div>
                         </div>
@@ -148,11 +148,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     >
                         <div className="flex items-center justify-center gap-2 mb-12 text-blue-400/50">
                             <Terminal size={14} />
-                            <span className="text-xs tracking-widest uppercase">Select Clearance Level</span>
+                            <span className="text-xs tracking-widest uppercase">Оберіть Рівень Доступу</span>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {/* Operator */}
+                            {/* Оператор */}
                             <motion.div
                                 whileHover={{ y: -5 }}
                                 className="group relative"
@@ -162,18 +162,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-slate-600">
                                         <User className="text-slate-400 group-hover:text-white" size={28} />
                                     </div>
-                                    <h3 className="text-lg font-bold text-white mb-2">OPERATOR</h3>
-                                    <p className="text-slate-400 text-xs mb-6 flex-1">Standard clearance. View public datasets and system status.</p>
+                                    <h3 className="text-lg font-bold text-white mb-2">ОПЕРАТОР</h3>
+                                    <p className="text-slate-400 text-xs mb-6 flex-1">Стандартний доступ. Перегляд відкритих наборів даних та статусу системи.</p>
                                     <button
                                         onClick={() => handleDemoLogin(UserRole.CLIENT_BASIC)}
                                         className="w-full py-3 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white transition-all text-xs font-bold uppercase tracking-wider"
                                     >
-                                        Connect
+                                        Підключитися
                                     </button>
                                 </div>
                             </motion.div>
 
-                            {/* Analyst */}
+                            {/* Аналітик */}
                             <motion.div
                                 whileHover={{ y: -5 }}
                                 className="group relative"
@@ -186,18 +186,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     <div className="w-16 h-16 bg-blue-950 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-blue-500/30 group-hover:border-blue-400 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]">
                                         <Crown className="text-blue-400 group-hover:text-white" size={28} />
                                     </div>
-                                    <h3 className="text-lg font-bold text-white mb-2">ANALYST</h3>
-                                    <p className="text-slate-400 text-xs mb-6 flex-1">Level 2 clearance. Access to predictive models, graphs, and sensitive intelligence.</p>
+                                    <h3 className="text-lg font-bold text-white mb-2">АНАЛІТИК</h3>
+                                    <p className="text-slate-400 text-xs mb-6 flex-1">Доступ рівня 2. Доступ до прогностичних моделей, графіків та чутливої інформації.</p>
                                     <button
                                         onClick={() => handleDemoLogin(UserRole.CLIENT_PREMIUM)}
                                         className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-all text-xs font-bold uppercase tracking-wider shadow-lg shadow-blue-900/50"
                                     >
-                                        Authenticate
+                                        Авторизуватися
                                     </button>
                                 </div>
                             </motion.div>
 
-                            {/* Commander */}
+                            {/* Командир */}
                             <motion.div
                                 whileHover={{ y: -5 }}
                                 className="group relative"
@@ -207,13 +207,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     <div className="w-16 h-16 bg-amber-950/40 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-amber-500/30 group-hover:border-amber-400 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]">
                                         <ShieldAlert className="text-amber-500 group-hover:text-white" size={28} />
                                     </div>
-                                    <h3 className="text-lg font-bold text-white mb-2">COMMANDER</h3>
-                                    <p className="text-slate-400 text-xs mb-6 flex-1">Root access. System configuration, user management, and global override.</p>
+                                    <h3 className="text-lg font-bold text-white mb-2">КОМАНДИР</h3>
+                                    <p className="text-slate-400 text-xs mb-6 flex-1">Кореневий доступ. Конфігурація системи, управління користувачами та глобальне вирішення.</p>
                                     <button
                                         onClick={() => handleDemoLogin(UserRole.ADMIN)}
                                         className="w-full py-3 rounded-lg border border-amber-500/50 text-amber-500 hover:bg-amber-500 hover:text-black transition-all text-xs font-bold uppercase tracking-wider"
                                     >
-                                        Override Protocol
+                                        Протокол Перевизначення
                                     </button>
                                 </div>
                             </motion.div>
