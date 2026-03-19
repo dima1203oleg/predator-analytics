@@ -33,9 +33,10 @@ import { cn } from '@/utils/cn';
 import { factoryApi } from '@/services/api/factory';
 import { PipelineTable } from './components/PipelineTable';
 import { TrainingChart } from './components/TrainingChart';
+import { KnowledgeMapGraph } from './components/KnowledgeMapGraph';
 
 export default function FactoryStudio() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'patterns' | 'training' | 'test'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'knowledge-map' | 'patterns' | 'training' | 'test'>('overview');
   const queryClient = useQueryClient();
 
   // ─── Queries ────────────────────────────────────────────────────────────────
@@ -54,15 +55,15 @@ export default function FactoryStudio() {
   const { data: trainingStatus, refetch: refetchTrainingStatus } = useQuery({
     queryKey: ['factory', 'training', 'status'],
     queryFn: factoryApi.getTrainingStatus,
-    refetchInterval: (data) => (data?.status === 'TRAINING' ? 5000 : false),
+    refetchInterval: (query) => ((query.state.data as any)?.status === 'TRAINING' ? 5000 : false),
   });
 
-  const { data: trainingStats = [] } = useQuery({
+  const { data: trainingStats = [] as any[] } = useQuery({
     queryKey: ['factory', 'training', 'stats'],
     queryFn: factoryApi.getTrainingStats,
-    refetchInterval: (data: any, query: any) => {
+    refetchInterval: (query) => {
       const state = queryClient.getQueryState(['factory', 'training', 'status']);
-      return state?.data?.status === 'TRAINING' ? 5000 : false;
+      return (state?.data as any)?.status === 'TRAINING' ? 5000 : false;
     },
   });
 
@@ -151,13 +152,13 @@ export default function FactoryStudio() {
 
           {/* Tabs */}
           <div className="px-6 pt-4 border-b border-white/5 bg-black/20 backdrop-blur-lg">
-            <div className="flex items-center gap-4 pb-4">
-              {(['overview', 'patterns', 'training', 'test'] as const).map((tab) => (
+            <div className="flex items-center gap-4 pb-4 overflow-x-auto no-scrollbar">
+              {(['overview', 'knowledge-map', 'patterns', 'training', 'test'] as const).map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => setActiveTab(tab as any)}
                   className={cn(
-                    'px-4 py-2 rounded-lg font-bold text-sm transition-all',
+                    'px-4 py-2 rounded-lg font-bold text-sm transition-all whitespace-nowrap',
                     activeTab === tab
                       ? 'bg-indigo-600 text-white shadow-lg'
                       : 'bg-white/5 text-slate-300 hover:bg-white/10'
@@ -165,6 +166,8 @@ export default function FactoryStudio() {
                 >
                   {tab === 'overview'
                     ? '📊 Огляд'
+                    : tab === 'knowledge-map'
+                    ? '🕸️ Knowledge Map'
                     : tab === 'patterns'
                     ? '⭐ Золоті Патерни'
                     : tab === 'training'
@@ -240,6 +243,8 @@ export default function FactoryStudio() {
                   </motion.div>
                 ))}
               </div>
+            ) : activeTab === 'knowledge-map' ? (
+              <KnowledgeMapGraph patterns={patterns} />
             ) : activeTab === 'patterns' ? (
               <PipelineTable data={patterns} />
             ) : activeTab === 'training' ? (
