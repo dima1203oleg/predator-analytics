@@ -20,6 +20,7 @@ import { api } from '@/services/api';
 import { premiumLocales } from '@/locales/uk/premium';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { TacticalCard } from '@/components/TacticalCard';
+import { ViewHeader } from '@/components/ViewHeader';
 import { DatabasePipelineMonitor } from '@/components/pipeline/DatabasePipelineMonitor';
 import { UserDatasetsPanel } from '@/components/datasets/UserDatasetsPanel';
 
@@ -59,51 +60,18 @@ const DatasetStudio: React.FC = () => {
         <div className="min-h-screen animate-in fade-in duration-700 pb-20">
             <AdvancedBackground />
 
+            <ViewHeader
+                title={premiumLocales.datasetStudio.title}
+                subtitle={premiumLocales.datasetStudio.subtitle}
+                icon={<HammerIcon size={20} className="text-indigo-400" />}
+                breadcrumbs={['СИНАПСИС', 'ПРЕМІУМ', 'ДАТАСЕТ СТУДІО']}
+                stats={[
+                    { label: premiumLocales.datasetStudio.forge.totalRows, value: '1.2M', icon: <Database size={14} />, color: 'primary' },
+                    { label: premiumLocales.datasetStudio.forge.syncLatency, value: '1.2ms', icon: <Activity size={14} />, color: 'success' },
+                    { label: premiumLocales.datasetStudio.header.gpuLoad, value: '65%', icon: <Cpu size={14} />, color: 'purple' },
+                ]}
+            />
             <div className="max-w-7xl mx-auto px-6 pt-12 space-y-12">
-                {/* Header Section */}
-                <div className="flex items-center justify-between relative z-10">
-                    <div className="flex items-center gap-6">
-                        <div className="relative group">
-                            <motion.div
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                                className="absolute -inset-4 bg-gradient-to-r from-indigo-500/20 to-purple-600/20 rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition-opacity"
-                            />
-                            <div className="relative p-6 bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-700 rounded-[32px] shadow-2xl shadow-indigo-500/30 border border-white/20">
-                                <HammerIcon size={32} className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
-                            </div>
-                        </div>
-                        <div>
-                            <div className="flex items-center gap-2 mb-1">
-                                <Sparkles size={14} className="text-amber-400" />
-                                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em]">Advanced Data Synthesis</span>
-                            </div>
-                            <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">
-                                НЕЙРОННА_<span className="text-indigo-400">КУЗНЯ</span>
-                            </h1>
-                            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] mt-1">Dataset Engineering & Latent Space Augmentation</p>
-                        </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                        <div className="px-6 py-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-3xl flex items-center gap-6 shadow-2xl">
-                            <div className="flex flex-col">
-                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Forge Hub</span>
-                                <span className="text-xl font-mono font-black text-white">1.2M <span className="text-indigo-500 text-xs">rows</span></span>
-                            </div>
-                            <div className="h-10 w-[1px] bg-white/5" />
-                            <div className="flex flex-col">
-                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Sync Latency</span>
-                                <span className="text-xl font-mono font-black text-emerald-400">1.2ms</span>
-                            </div>
-                            <div className="h-10 w-[1px] bg-white/5" />
-                            <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-400">
-                                <Activity size={20} className="animate-pulse" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Main Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
 
@@ -173,7 +141,7 @@ const DatasetStudio: React.FC = () => {
 
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-end">
-                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Кількість рядків</label>
+                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{premiumLocales.datasetStudio.panels.generation.rowCount}</label>
                                         <span className="text-xs font-mono font-bold text-purple-400">{rowCount.toLocaleString()}</span>
                                     </div>
                                     <div className="grid grid-cols-4 gap-2">

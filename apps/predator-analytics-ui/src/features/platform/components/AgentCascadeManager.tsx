@@ -30,7 +30,7 @@ const AgentCascadeManager: React.FC = () => {
     const nodes = agents.map(a => ({
         id: a.id,
         name: a.name,
-        role: a.type.toUpperCase(),
+        role: a.type ? a.type.toUpperCase() : 'UNKNOWN',
         status: a.status
     })).slice(0, 3); // Limit to top 3 for diagram
 

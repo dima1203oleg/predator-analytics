@@ -2797,6 +2797,7 @@ export const premiumLocales = {
           fast: 'FAST',
           deep: 'DEEP NEURAL'
         },
+        rowCount: 'Кількість рядків',
         action: 'Запустити Генерацію',
         activeModels: 'Активні Моделі',
         ready: 'Ready',
