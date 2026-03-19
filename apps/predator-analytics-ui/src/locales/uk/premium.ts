@@ -53,6 +53,29 @@ export const premiumLocales = {
     }
   },
 
+  agentsView: {
+    title: 'МЕНЕДЖЕР ФЛОТУ АГЕНТІВ',
+    cascadeTitle: 'УПРАВЛІННЯ КАСКАДАМИ',
+    workflowTitle: 'КОНТРОЛЬ ВОРКФЛОУ',
+    tabs: {
+      telemetry: 'Телеметрія',
+      cascades: 'Каскади',
+      workflow: 'Воркфлоу'
+    },
+    actions: {
+      triggerImprovement: 'Запустити самовдосконалення',
+      stopAgent: 'Зупинити агента',
+      restartAgent: 'Перезапустити',
+      viewLogs: 'Логи'
+    },
+    panels: {
+      resourceUsage: 'ВИКОРИСТАННЯ РЕСУРСІВ',
+      fleetAlerts: 'СПОВІЩЕННЯ ФЛОТУ',
+      healthIndex: 'ІНДЕКС ЗДОРОВ\'Я',
+      uptime: 'Аптайм'
+    }
+  },
+
   // ============================================
   // Dashboard Builder
   // ============================================

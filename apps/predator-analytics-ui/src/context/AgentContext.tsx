@@ -3,8 +3,17 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { Agent, CyclePhase } from '../types';
 import { api } from '../services/api';
 
+export interface AgentCascade {
+    id: string;
+    name: string;
+    status: 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'FAILED';
+    current_step: string;
+    steps: string[];
+}
+
 interface AgentContextType {
     agents: Agent[];
+    cascades: AgentCascade[];
     cyclePhase: CyclePhase;
     logs: string[];
     activePR: { id: number, title: string } | null;
@@ -13,29 +22,34 @@ interface AgentContextType {
     approvePR: () => void;
     rejectPR: () => void;
     addLog: (msg: string) => void;
+    refreshData: () => Promise<void>;
 }
 
 const AgentContext = createContext<AgentContextType | undefined>(undefined);
 
 export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [agents, setAgents] = useState<Agent[]>([]);
+    const [cascades, setCascades] = useState<AgentCascade[]>([]);
     const [cyclePhase, setCyclePhase] = useState<CyclePhase>('IDLE');
     const [activePR, setActivePR] = useState<{ id: number, title: string } | null>(null);
     const [logs, setLogs] = useState<string[]>([]);
 
-    // 1. Fetch Real Agents from Backend
-    const fetchAgents = useCallback(async () => {
+    // Unified fetch for Agents, Cascades and Logs
+    const fetchData = useCallback(async () => {
         try {
-            // Try fetching from AI endpoint first
+            // 1. Fetch Agents & Cascades from AI endpoint
             let realAgents = [];
+            let realCascades = [];
             try {
                 const response = await api.ai.getAgents();
                 if (Array.isArray(response)) {
                     realAgents = response;
                 } else if (response && response.agents) {
                     realAgents = response.agents;
+                    realCascades = response.cascades || [];
                 }
-                // Normalize status field: 'active' → 'WORKING', 'idle' → 'IDLE', anything else → 'IDLE'
+                
+                // Normalize agents
                 realAgents = realAgents.map((a: any) => ({
                     ...a,
                     status: (a.status === 'active' || a.status === 'WORKING') ? 'WORKING'
@@ -44,6 +58,19 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                     efficiency: a.accuracy ? Math.round(a.accuracy * 100) : (a.efficiency ?? 85),
                     lastAction: a.lastAction || `Оброблено ${a.tasksCompleted ?? 0} завдань`,
                 }));
+
+                // Normalize cascades
+                const normalizedCascades: AgentCascade[] = realCascades.map((c: any) => ({
+                    id: c.id,
+                    name: c.name,
+                    status: (String(c.status).toUpperCase() === 'ACTIVE' ? 'ACTIVE' : 
+                             String(c.status).toUpperCase() === 'PAUSED' ? 'PAUSED' :
+                             String(c.status).toUpperCase() === 'COMPLETED' ? 'COMPLETED' : 'FAILED'),
+                    current_step: c.current_step || '',
+                    steps: c.steps || []
+                }));
+                setCascades(normalizedCascades);
+
             } catch (e) {
                 // Check if system health endpoint has agent info
                 const health = await api.ai.getHealth();
@@ -62,38 +89,29 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
             if (realAgents.length > 0) {
                 setAgents(realAgents);
-            } else {
-                // If API returns nothing, list is empty. No mocks.
-                setAgents([]);
+            }
+
+            // 2. Fetch Logs
+            try {
+                const systemLogs = await api.streamSystemLogs();
+                if (systemLogs && systemLogs.length > 0) {
+                    setLogs(systemLogs.map((l: any) => `[${l.ts}] [${l.service}] ${l.msg}`));
+                }
+            } catch (e) {
+                // Logs failed, non-critical
             }
 
         } catch (e) {
-            console.error("Failed to fetch agents:", e);
-        }
-    }, []);
-
-    // 2. Fetch Logs
-    const fetchLogs = useCallback(async () => {
-        try {
-            const systemLogs = await api.streamSystemLogs();
-            if (systemLogs && systemLogs.length > 0) {
-                setLogs(systemLogs.map((l: any) => `[${l.ts}] [${l.service}] ${l.msg}`));
-            }
-        } catch (e) {
-            console.warn("Log stream unavailable");
+            console.error("Failed to fetch data:", e);
         }
     }, []);
 
     // Initial Load & Polling
     useEffect(() => {
-        fetchAgents();
-        fetchLogs();
-        const interval = setInterval(() => {
-            fetchAgents();
-            fetchLogs();
-        }, 5000);
+        fetchData();
+        const interval = setInterval(fetchData, 5000);
         return () => clearInterval(interval);
-    }, [fetchAgents, fetchLogs]);
+    }, [fetchData]);
 
     const addLog = useCallback((msg: string) => {
         setLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
@@ -117,6 +135,7 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return (
         <AgentContext.Provider value={{
             agents,
+            cascades,
             cyclePhase,
             logs,
             activePR,
@@ -124,7 +143,8 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             advanceCycle,
             approvePR,
             rejectPR,
-            addLog
+            addLog,
+            refreshData: fetchData
         }}>
             {children}
         </AgentContext.Provider>
@@ -138,6 +158,7 @@ export const useAgents = () => {
         console.warn('useAgents used outside of AgentProvider - returning defaults');
         return {
             agents: [],
+            cascades: [],
             cyclePhase: 'IDLE' as CyclePhase,
             logs: [],
             activePR: null,
@@ -145,7 +166,8 @@ export const useAgents = () => {
             advanceCycle: () => { },
             approvePR: () => { },
             rejectPR: () => { },
-            addLog: () => { }
+            addLog: () => { },
+            refreshData: async () => { }
         };
     }
     return context;

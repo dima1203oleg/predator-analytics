@@ -12,6 +12,9 @@ import { useUser, UserRole } from '@/context/UserContext';
 import { useShell, UIShell } from '@/context/ShellContext';
 import { NeutralizedContent } from '@/components/NeutralizedContent';
 import { api } from '@/services/api';
+import AgentCascadeManager from './components/AgentCascadeManager';
+import WorkflowControlPanel from '@/components/ai/WorkflowControlPanel';
+import { premiumLocales } from '@/locales/uk/premium';
 
 const AgentsView: React.FC = () => {
     const { user } = useUser();
@@ -24,6 +27,8 @@ const AgentsView: React.FC = () => {
 
     const themeColor = isCommanderShell ? 'text-amber-400' : isOperatorShell ? 'text-emerald-400' : 'text-blue-400';
     const accentBg = isCommanderShell ? 'bg-amber-500/10' : isOperatorShell ? 'bg-emerald-500/10' : 'bg-blue-500/10';
+    
+    const [activeTab, setActiveTab] = useState<'telemetry' | 'cascades' | 'workflow'>('telemetry');
     const [selectedAgentId, setSelectedAgentId] = useState<string | null>(agents[0]?.id || null);
     const [resourceData, setResourceData] = useState<any[]>([]);
     const [realAlerts, setRealAlerts] = useState<any[]>([]);
@@ -83,7 +88,7 @@ const AgentsView: React.FC = () => {
         <div className="space-y-6 animate-in fade-in duration-500 pb-20 w-full max-w-[1600px] mx-auto relative z-10 min-h-screen">
             <AdvancedBackground />
             <ViewHeader
-                title={isCommanderShell ? 'РІЙ УПРАВЛІННЯ' : isOperatorShell ? 'КОМАНДНИЙ ЦЕНТР ФЛОТУ' : 'ВАШІ AI-ПОМІЧНИКИ'}
+                title={premiumLocales.agentsView.title}
                 icon={<Bot size={20} className={isCommanderShell ? 'text-amber-400' : isOperatorShell ? 'text-emerald-400' : 'text-blue-400'} />}
                 breadcrumbs={['СИНАПСИС', 'УПРАВЛІННЯ', 'МЕНЕДЖЕР ФЛОТУ']}
                 stats={[
@@ -93,86 +98,141 @@ const AgentsView: React.FC = () => {
                 ]}
             />
 
+            {/* Sub-navigation Tabs */}
+            <div className="flex gap-4 p-1 bg-slate-900/60 rounded-2xl border border-white/5 w-fit">
+                {[
+                    { id: 'telemetry', label: premiumLocales.agentsView.tabs.telemetry, icon: <Activity size={14} /> },
+                    { id: 'cascades', label: premiumLocales.agentsView.tabs.cascades, icon: <Network size={14} /> },
+                    { id: 'workflow', label: premiumLocales.agentsView.tabs.workflow, icon: <Zap size={14} /> },
+                ].map((tab) => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id as any)}
+                        className={`
+                            flex items-center gap-2 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
+                            ${activeTab === tab.id 
+                                ? 'bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' 
+                                : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}
+                        `}
+                    >
+                        {tab.icon}
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                {/* Left: Agent List */}
+                {/* Left Content Area (Changes based on activeTab) */}
                 <div className="lg:col-span-2 space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <AnimatePresence mode="popLayout" initial={false}>
-                            {agents.map((agent, idx) => (
-                                <motion.div
-                                    key={agent.id}
-                                    layout
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: idx * 0.05 }}
-                                    whileHover={{ y: -4 }}
-                                    onClick={() => setSelectedAgentId(agent.id)}
-                                    className={`
-                                    p-6 rounded-[32px] border cursor-pointer transition-all relative overflow-hidden glass-morphism panel-3d
-                                    ${selectedAgentId === agent.id
-                                            ? 'bg-blue-600/10 border-blue-500 shadow-[0_0_25px_rgba(59,130,246,0.15)]'
-                                            : 'bg-slate-900/40 border-white/5 hover:border-white/20'
-                                        }
-                                `}
-                                >
-                                    <div className="flex justify-between items-start mb-5">
-                                        <div className="flex items-center gap-4">
-                                            <div className={`p-3.5 rounded-2xl transition-all duration-500 ${agent.status === 'WORKING' ? (isCommanderShell ? 'bg-amber-500/10 text-amber-500' : isOperatorShell ? 'bg-emerald-500/10 text-emerald-500' : 'bg-blue-500/10 text-blue-500') :
-                                                    'bg-slate-950 text-slate-700'
-                                                }`}>
-                                                <Bot size={24} className={agent.status === 'WORKING' ? 'animate-pulse' : ''} />
-                                            </div>
-                                            <div>
-                                                <div className="font-black text-[11px] text-white uppercase tracking-widest">
-                                                    <NeutralizedContent content={agent.name} requiredRole={UserRole.ADMIN} />
-                                                </div>
-                                                <div className="text-[9px] text-slate-500 font-mono mt-1 uppercase tracking-widest">
-                                                    <NeutralizedContent content={agent.id} mode="hash" requiredRole={UserRole.ADMIN} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest ${agent.status === 'WORKING' ? 'bg-amber-500/10 text-amber-400' :
-                                                agent.status === 'IDLE' ? 'bg-slate-800 text-slate-500' : 'bg-rose-500/10 text-rose-400'
-                                            }`}>
-                                            {agent.status === 'WORKING' ? 'АНАЛІЗ' : (agent.status === 'IDLE' ? 'ОЧІКУВАННЯ' : 'ПОМИЛКА')}
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div className="flex justify-between text-[9px] font-black uppercase tracking-widest">
-                                            <span className="text-slate-500">Ефективність Ядра</span>
-                                            <span className="text-blue-400 font-mono">{agent.efficiency}%</span>
-                                        </div>
-                                        <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden border border-white/5">
-                                            <motion.div
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${agent.efficiency}%` }}
-                                                transition={{ duration: 1, ease: 'easeOut' }}
-                                                className="h-full bg-gradient-to-r from-blue-600 to-indigo-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
-                                            />
-                                        </div>
-                                        <div className="text-[10px] text-slate-400 truncate font-mono border-t border-white/5 pt-4 mt-2 flex items-center gap-3">
-                                            <Zap size={12} className={isCommanderShell ? 'text-amber-500' : isOperatorShell ? 'text-emerald-500' : 'text-blue-500'} />
-                                            <NeutralizedContent content={agent.lastAction} mode="blur" requiredRole={UserRole.ADMIN} />
-                                        </div>
-                                    </div>
-
-                                    {selectedAgentId === agent.id && (
+                    <AnimatePresence mode="wait">
+                        {activeTab === 'telemetry' && (
+                            <motion.div
+                                key="telemetry-view"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                            >
+                                <AnimatePresence mode="popLayout" initial={false}>
+                                    {agents.map((agent, idx) => (
                                         <motion.div
-                                            layoutId="agentSelectionGlow"
-                                            className="absolute -inset-1 bg-blue-500/5 blur-2xl pointer-events-none"
-                                        />
-                                    )}
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
-                    </div>
+                                            key={agent.id}
+                                            layout
+                                            initial={{ opacity: 0, scale: 0.9 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ delay: idx * 0.05 }}
+                                            whileHover={{ y: -4 }}
+                                            onClick={() => setSelectedAgentId(agent.id)}
+                                            className={`
+                                            p-6 rounded-[32px] border cursor-pointer transition-all relative overflow-hidden glass-morphism panel-3d
+                                            ${selectedAgentId === agent.id
+                                                    ? 'bg-blue-600/10 border-blue-500 shadow-[0_0_25px_rgba(59,130,246,0.15)]'
+                                                    : 'bg-slate-900/40 border-white/5 hover:border-white/20'
+                                                }
+                                        `}
+                                        >
+                                            <div className="flex justify-between items-start mb-5">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`p-3.5 rounded-2xl transition-all duration-500 ${agent.status === 'WORKING' ? (isCommanderShell ? 'bg-amber-500/10 text-amber-500' : isOperatorShell ? 'bg-emerald-500/10 text-emerald-500' : 'bg-blue-500/10 text-blue-500') :
+                                                            'bg-slate-950 text-slate-700'
+                                                        }`}>
+                                                        <Bot size={24} className={agent.status === 'WORKING' ? 'animate-pulse' : ''} />
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-black text-[11px] text-white uppercase tracking-widest">
+                                                            <NeutralizedContent content={agent.name} requiredRole={UserRole.ADMIN} />
+                                                        </div>
+                                                        <div className="text-[9px] text-slate-500 font-mono mt-1 uppercase tracking-widest">
+                                                            <NeutralizedContent content={agent.id} mode="hash" requiredRole={UserRole.ADMIN} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest ${agent.status === 'WORKING' ? 'bg-amber-500/10 text-amber-400' :
+                                                        agent.status === 'IDLE' ? 'bg-slate-800 text-slate-500' : 'bg-rose-500/10 text-rose-400'
+                                                    }`}>
+                                                    {agent.status === 'WORKING' ? 'АНАЛІЗ' : (agent.status === 'IDLE' ? 'ОЧІКУВАННЯ' : 'ПОМИЛКА')}
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                <div className="flex justify-between text-[9px] font-black uppercase tracking-widest">
+                                                    <span className="text-slate-500">{premiumLocales.agentsView.panels.healthIndex}</span>
+                                                    <span className="text-blue-400 font-mono">{agent.efficiency}%</span>
+                                                </div>
+                                                <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden border border-white/5">
+                                                    <motion.div
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${agent.efficiency}%` }}
+                                                        transition={{ duration: 1, ease: 'easeOut' }}
+                                                        className="h-full bg-gradient-to-r from-blue-600 to-indigo-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                                                    />
+                                                </div>
+                                                <div className="text-[10px] text-slate-400 truncate font-mono border-t border-white/5 pt-4 mt-2 flex items-center gap-3">
+                                                    <Zap size={12} className={isCommanderShell ? 'text-amber-500' : isOperatorShell ? 'text-emerald-500' : 'text-blue-500'} />
+                                                    <NeutralizedContent content={agent.lastAction} mode="blur" requiredRole={UserRole.ADMIN} />
+                                                </div>
+                                            </div>
+
+                                            {selectedAgentId === agent.id && (
+                                                <motion.div
+                                                    layoutId="agentSelectionGlow"
+                                                    className="absolute -inset-1 bg-blue-500/5 blur-2xl pointer-events-none"
+                                                />
+                                            )}
+                                        </motion.div>
+                                    ))}
+                                </AnimatePresence>
+                            </motion.div>
+                        )}
+
+                        {activeTab === 'cascades' && (
+                            <motion.div
+                                key="cascades-view"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                            >
+                                <AgentCascadeManager />
+                            </motion.div>
+                        )}
+
+                        {activeTab === 'workflow' && (
+                            <motion.div
+                                key="workflow-view"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                            >
+                                <WorkflowControlPanel />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {/* Right: Details & Metrics */}
                 <div className="space-y-6">
-                    <TacticalCard variant="holographic" title="Телеметрія в Режимі Реального Часу" className="panel-3d glass-morphism">
+                    <TacticalCard variant="holographic" title={premiumLocales.agentsView.tabs.telemetry} className="panel-3d glass-morphism">
                         <AnimatePresence mode="wait">
                             {selectedAgent ? (
                                 <motion.div
@@ -188,8 +248,8 @@ const AgentsView: React.FC = () => {
                                                 <Activity size={20} className="animate-pulse" />
                                             </div>
                                             <div>
-                                                <div className="text-xs font-bold text-slate-200 uppercase tracking-widest">Індекс Здоров'я</div>
-                                                <div className="text-[10px] text-slate-500 font-mono">Аптайм: 14д 02г 45хв</div>
+                                                <div className="text-xs font-bold text-slate-200 uppercase tracking-widest">{premiumLocales.agentsView.panels.healthIndex}</div>
+                                                <div className="text-[10px] text-slate-500 font-mono">{premiumLocales.agentsView.panels.uptime}: 14д 02г 45хв</div>
                                             </div>
                                         </div>
                                         <div className="text-emerald-500 font-mono font-bold text-lg">100%</div>
@@ -197,7 +257,7 @@ const AgentsView: React.FC = () => {
 
                                     <div className="h-[220px] w-full bg-slate-950/30 rounded-2xl p-4 border border-white/5">
                                         <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 flex justify-between">
-                                            Використання Ресурсів <span>ЦП & ПАМ'ЯТЬ</span>
+                                            {premiumLocales.agentsView.panels.resourceUsage} <span>ЦП & ПАМ'ЯТЬ</span>
                                         </h4>
                                         <ResponsiveContainer width="100%" height="100%">
                                             <AreaChart data={resourceData}>
@@ -252,7 +312,7 @@ const AgentsView: React.FC = () => {
                         </AnimatePresence>
                     </TacticalCard>
 
-                    <TacticalCard variant="holographic" title="СПОВІЩЕННЯ ФЛОТУ" className="border-white/5 bg-slate-950/40">
+                    <TacticalCard variant="holographic" title={premiumLocales.agentsView.panels.fleetAlerts} className="border-white/5 bg-slate-950/40">
                         <div className="space-y-4">
                             {realAlerts.length > 0 ? (
                                 realAlerts.map((alert: any, idx: number) => (

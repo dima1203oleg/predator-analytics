@@ -86,6 +86,53 @@ const DB_FILES = [];
 // Redis (стан пайплайнів)
 const DB_PIPELINE_STATE = {};
 
+// --- Factory & Knowledge Map ---
+const DB_FACTORY_PATTERNS = [
+  {
+    id: 'pat-101',
+    component: 'backend',
+    pattern_type: 'performance',
+    pattern_description: 'Оптимізований запит до Neo4j для розрахунку CERS score',
+    score: 96,
+    gold: true,
+    timestamp: new Date(Date.now() - 86400000 * 2).toISOString()
+  },
+  {
+    id: 'pat-102',
+    component: 'web_ui',
+    pattern_type: 'ux',
+    pattern_description: 'Реалізація CyberGrid для фонових ефектів',
+    score: 94,
+    gold: true,
+    timestamp: new Date(Date.now() - 86400000 * 5).toISOString()
+  },
+  {
+    id: 'pat-103',
+    component: 'ingestion',
+    pattern_type: 'resilience',
+    pattern_description: 'Retry policy для Kafka consumer в разі деградації мережі',
+    score: 89,
+    gold: false,
+    timestamp: new Date(Date.now() - 86400000 * 1).toISOString()
+  },
+  {
+    id: 'pat-104',
+    component: 'core',
+    pattern_type: 'security',
+    pattern_description: 'WORM (Write Once Read Many) імплементація для аудит-логу',
+    score: 97,
+    gold: true,
+    timestamp: new Date(Date.now() - 86400000 * 10).toISOString()
+  }
+];
+
+let FACTORY_STATS = {
+  total_patterns: DB_FACTORY_PATTERNS.length,
+  gold_patterns: DB_FACTORY_PATTERNS.filter(p => p.gold).length,
+  avg_score: DB_FACTORY_PATTERNS.reduce((acc, p) => acc + p.score, 0) / DB_FACTORY_PATTERNS.length,
+  total_runs: 142
+};
+
 // Telegram PostgreSQL (Факти)
 const DB_TELEGRAM_EVENTS = [];
 const DB_TELEGRAM_ENTITIES = [];
@@ -1275,6 +1322,25 @@ app.get(['/api/v1/health', '/api/v1/monitoring/health', '/v1/monitoring/health']
   });
 });
 
+app.get(['/api/v45/monitoring/health', '/api/v55/monitoring/health'], (req, res) => {
+  res.json({
+    cpu: { percent: 24 + Math.random() * 15 },
+    memory: { percent: 45 + Math.random() * 20 },
+    disk: { percent: 52 + Math.random() * 12 },
+    connections: 96 + Math.floor(Math.random() * 64),
+    rps: 420 + Math.floor(Math.random() * 180),
+    latency: {
+      p50: 11 + Math.floor(Math.random() * 6),
+      p95: 42 + Math.floor(Math.random() * 12),
+      p99: 110 + Math.floor(Math.random() * 30)
+    },
+    errorRate: Number((Math.random() * 0.8).toFixed(2)),
+    uptime: 99.97,
+    healthScore: 95 + Math.floor(Math.random() * 5),
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Autonomy
 app.get(['/api/v1/autonomy/status', '/v1/autonomy/status'], (req, res) => {
   res.json({ state: 'SOVEREIGN', active_strategies: 4, neural_load: 12 + Math.random() * 5, uptime: '7d 14h' });
@@ -1945,13 +2011,40 @@ app.get('/api/v1/neural/training/stats', (req, res) => {
 });
 
 // Ingestion status
+// AI Agents & Intelligence
 app.get(['/api/v1/agents', '/api/v1/ai/agents'], (req, res) => {
   res.json({
     agents: [
-      { id: 'agent-1', name: 'Web Crawler', status: 'online' },
-      { id: 'agent-2', name: 'Document Analysis', status: 'idle' }
+      { id: 'agent-1', name: 'PREDATOR-SCAN-01', clan: 'SYNERGY', type: 'scanner', status: 'WORKING', efficiency: 94, lastAction: 'Сканування митних декларацій (грудень 2023)' },
+      { id: 'agent-2', name: 'PREDATOR-EXEC-01', clan: 'SYNERGY', type: 'executor', status: 'IDLE', efficiency: 88, lastAction: 'Очікування нових завдань' },
+      { id: 'agent-3', name: 'PREDATOR-TEST-01', clan: 'SYNERGY', type: 'tester', status: 'IDLE', efficiency: 97, lastAction: 'Верифікація останніх патернів ризику' },
+      { id: 'agent-4', name: 'PREDATOR-MON-01', clan: 'GUARDIAN', type: 'monitor', status: 'WORKING', efficiency: 99, lastAction: 'Моніторинг стабільності API-шлюзу' }
+    ],
+    cascades: [
+      {
+        id: 'cas-101',
+        name: 'AUTONOMOUS_RECOVERY_V2',
+        status: 'active',
+        steps: ['DISCOVERY', 'MAPPING', 'GENERATION'],
+        current_step: 'MAPPING'
+      }
     ]
   });
+});
+
+app.get('/api/v1/system/logs/stream', (req, res) => {
+  const limit = Number.parseInt(String(req.query.limit || '50'), 10);
+  const logs = Array.from({ length: Number.isFinite(limit) ? Math.min(limit, 50) : 50 }, (_, index) => ({
+    id: `log-${index + 1}`,
+    timestamp: new Date(Date.now() - index * 30_000).toISOString(),
+    service: index % 3 === 0 ? 'core-api' : index % 3 === 1 ? 'graph-service' : 'ingestion-worker',
+    level: index % 7 === 0 ? 'WARN' : 'INFO',
+    message: index % 7 === 0
+      ? 'Виявлено короткочасне зростання затримки відповіді.'
+      : 'Поточний цикл моніторингу завершено без критичних відхилень.'
+  }));
+
+  res.json(logs);
 });
 
 app.get(['/api/v1/ingest/jobs', '/api/v1/ingestion/jobs'], (req, res) => {
@@ -3508,6 +3601,57 @@ app.get('/api/v1/risk/sectors', (req, res) => {
             { id: 'it', score: 12 },
             { id: 'construction', score: 89 }
         ]
+    });
+});
+
+app.get('/api/v1/factory/stats', (req, res) => {
+    res.json(FACTORY_STATS);
+});
+
+app.get('/api/v1/factory/patterns', (req, res) => {
+    res.json(DB_FACTORY_PATTERNS);
+});
+
+app.get('/api/v1/factory/patterns/gold', (req, res) => {
+    res.json(DB_FACTORY_PATTERNS.filter(p => p.gold));
+});
+
+app.post('/api/v1/factory/ingest', (req, res) => {
+    const { run_id, component, metrics, changes, timestamp } = req.body;
+    
+    // Calculate a score based on metrics
+    const score = Math.floor(
+        (metrics.coverage * 0.2) + 
+        (metrics.pass_rate * 0.3) + 
+        (metrics.performance * 0.2) + 
+        (metrics.chaos_resilience * 0.15) + 
+        (metrics.business_kpi * 0.15)
+    );
+
+    const isGold = score >= 92;
+    const newPattern = {
+        id: `pat-${Date.now().toString().slice(-6)}`,
+        component,
+        pattern_type: metrics.performance > 90 ? 'performance' : 'logic',
+        pattern_description: `Автоматично згенерований патерн для ${component} (Run: ${run_id})`,
+        score,
+        gold: isGold,
+        timestamp: timestamp || new Date().toISOString()
+    };
+
+    DB_FACTORY_PATTERNS.unshift(newPattern);
+    
+    // Update stats
+    FACTORY_STATS.total_patterns = DB_FACTORY_PATTERNS.length;
+    FACTORY_STATS.gold_patterns = DB_FACTORY_PATTERNS.filter(p => p.gold).length;
+    FACTORY_STATS.avg_score = Math.floor(DB_FACTORY_PATTERNS.reduce((acc, p) => acc + p.score, 0) / DB_FACTORY_PATTERNS.length);
+    FACTORY_STATS.total_runs += 1;
+
+    res.status(201).json({
+        status: 'created',
+        score,
+        is_gold: isGold,
+        correlation_id: `corr-${Math.random().toString(36).slice(2, 11)}`
     });
 });
 
