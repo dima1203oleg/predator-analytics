@@ -30,6 +30,10 @@ import {
 } from 'lucide-react';
 import { api } from '../../services/api';
 
+import { useAppStore } from '../../store/useAppStore';
+
+import { factoryApi } from '../../services/api/factory';
+
 interface Suggestion {
   id: string;
   type: 'insight' | 'warning' | 'opportunity' | 'action';
@@ -40,7 +44,7 @@ interface Suggestion {
 }
 
 export const Predator: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isCopilotOpen: isOpen, setCopilotOpen: setIsOpen } = useAppStore();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [message, setMessage] = useState('');
@@ -55,26 +59,78 @@ export const Predator: React.FC = () => {
   const speakIdRef = useRef<number>(0);
 
   useEffect(() => {
-    // Simulate AI generating suggestions
-    const interval = setInterval(() => {
-      const newSuggestion: Suggestion = {
-        id: `sug-${Date.now()}`,
-        type: ['insight', 'warning', 'opportunity', 'action'][Math.floor(Math.random() * 4)] as any,
-        title: [
-          'Виявлено аномалію в декларації',
-          'Нова можливість для оптимізації',
-          'Рекомендація щодо постачальника',
-          'Попередження про ризик'
-        ][Math.floor(Math.random() * 4)],
-        description: 'AI виявив важливу інформацію, яка потребує вашої уваги',
-        confidence: 0.7 + Math.random() * 0.3,
-        impact: ['high', 'medium', 'low'][Math.floor(Math.random() * 3)] as any
-      };
+    let mounted = true;
 
-      setSuggestions(prev => [newSuggestion, ...prev].slice(0, 5));
-    }, 15000);
+    const fetchInsights = async () => {
+      try {
+        const [stats, goldPatterns] = await Promise.all([
+          factoryApi.getStats(),
+          factoryApi.getGoldPatterns()
+        ]);
 
-    return () => clearInterval(interval);
+        if (!mounted) return;
+
+        const dynamicSuggestions: Suggestion[] = [];
+
+        // Статистика фабрики
+        if (stats && stats.total_patterns !== undefined) {
+          dynamicSuggestions.push({
+            id: `stat-${Date.now()}`,
+            type: 'insight',
+            title: 'Аналітика Фабрики оновлена',
+            description: `У базі ${stats.total_patterns} патернів, ${stats.gold_patterns} золотих. Середній бал: ${stats.avg_score?.toFixed(1) || 0}%.`,
+            confidence: 0.95,
+            impact: 'medium'
+          });
+        }
+
+        // Останній золотий патерн
+        if (goldPatterns && goldPatterns.length > 0) {
+          const topPattern = goldPatterns[0];
+          dynamicSuggestions.push({
+            id: `gold-${Date.now()}`,
+            type: 'action',
+            title: 'Виявлено критичний патерн',
+            description: `Патерн "${topPattern.name}" має score ${topPattern.score}. Рекомендується аналіз у Knowledge Map.`,
+            confidence: topPattern.score / 100,
+            impact: 'high'
+          });
+        }
+
+        if (dynamicSuggestions.length === 0) {
+          dynamicSuggestions.push({
+            id: `default-${Date.now()}`,
+            type: 'opportunity',
+            title: 'Система готова до роботи',
+            description: 'AI Copilot підключено до Neural Core. Очікую нових даних з Фабрики.',
+            confidence: 0.99,
+            impact: 'low'
+          });
+        }
+
+        setSuggestions(dynamicSuggestions);
+      } catch (error) {
+         console.warn("Failed to fetch Factory insights for Copilot:", error);
+         if (mounted) {
+           setSuggestions([{
+              id: `error-${Date.now()}`,
+              type: 'warning',
+              title: 'Фабрика недоступна',
+              description: 'Спроба підключення до Knowledge Map завершилась помилкою.',
+              confidence: 0.5,
+              impact: 'medium'
+           }]);
+         }
+      }
+    };
+
+    fetchInsights();
+    const interval = setInterval(fetchInsights, 15000); // Опитуємо кожні 15 секунд
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   const speak = async (text: string) => {
