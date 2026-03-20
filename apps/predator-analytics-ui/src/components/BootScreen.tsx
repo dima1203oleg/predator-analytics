@@ -1,813 +1,274 @@
 /**
- * BootScreen — "PREDATOR Neural Awakening"
- * Кінематографічна 5-фазна анімація пробудження системи.
- *
- * Фази:
- *  0 — ТЕМРЯВА: Глітч-мерехтіння, один курсор блимає
- *  1 — НЕЙРОСІТКА: Canvas частинки формують нейронну мережу
- *  2 — HUD АКТИВАЦІЯ: SVG кільця, дуги, статуси модулів
- *  3 — ЛОГОТИП: "PREDATOR" формується з частинок + морфінг тексту
- *  4 — ПЕРЕХІД: Burst-спалах → onComplete
+ * BootScreen — "ОКО ХИЖАКА" (OMNISCIENT PREDATOR EYE)
+ * Система масового стеження, перехоплення даних і виявлення загроз.
+ * Страх, могуть, військовий / спецслужбовий контроль.
  */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-/* ─── Типи ─── */
-type Phase = 0 | 1 | 2 | 3 | 4;
+type Phase = 0 | 1 | 2 | 3;
+// 0: ПОТОКОВИЙ ПЕРЕХОПЛЕННЯ (Мережа камер)
+// 1: ФОРМУВАННЯ ОКА
+// 2: СКАНУВАННЯ (Зіниця шукає, червоні спалахи)
+// 3: PREDATOR ONLINE (Кривавий лог-аут, підготовка до входу)
 
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  /** Цільова X для фази логотипу */
-  tx: number;
-  ty: number;
-  radius: number;
-  alpha: number;
-  /** Колір у форматі hsl */
-  hue: number;
-  /** Час життя (для sparkle) */
-  life: number;
-  maxLife: number;
-}
-
-interface BootScreenProps {
-  onComplete: () => void;
-}
-
-/* ─── Допоміжні константи ─── */
-const PARTICLE_COUNT = 220;
-const CONNECTION_DIST = 120;
-const PHASE_DURATIONS: Record<Phase, number> = {
-  0: 1200,   // Темрява
-  1: 2800,   // Нейросітка
-  2: 2500,   // HUD
-  3: 2000,   // Логотип
-  4: 1000,   // Перехід
-};
-
-/** Кольорова палітра PREDATOR (HSL hue значення) */
-const HUES = [187, 210, 260, 36]; // cyan, blue, purple, amber
-
-/** Модулі системи для HUD */
-const MODULES = [
-  { label: 'ЯДРО', angle: -90, color: '#06b6d4' },
-  { label: 'НЕЙРО', angle: 0, color: '#8b5cf6' },
-  { label: 'КРИПТО', angle: 90, color: '#f59e0b' },
-  { label: 'OSINT', angle: 180, color: '#10b981' },
-] as const;
-
-/** Символи для "цифрового дощу" */
-const MATRIX_CHARS = 'PREDATORΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ01アイウエオカキクケコ';
-
-/* ═══════════════════════════════════════════════════════════════════════════ */
-
-const BootScreen: React.FC<BootScreenProps> = ({ onComplete }) => {
+const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const animFrameRef = useRef<number>(0);
-  const particlesRef = useRef<Particle[]>([]);
-  const phaseStartRef = useRef(Date.now());
-  const skipRef = useRef(false);
-  const completedRef = useRef(false);
-
+  
   const [phase, setPhase] = useState<Phase>(0);
-  const [glitchActive, setGlitchActive] = useState(false);
-  const [moduleStatuses, setModuleStatuses] = useState<boolean[]>([false, false, false, false]);
-  const [masterAlpha, setMasterAlpha] = useState(1);
-  const [showSkipHint, setShowSkipHint] = useState(false);
+  const phaseStartTimeMs = useRef(Date.now());
+  const skipRef = useRef(false);
+  
+  // HUD Data Generators
+  const [threatCount, setThreatCount] = useState(0);
+  const [interceptCount, setInterceptCount] = useState(0);
 
-  /* ─── Ініціалізація частинок ─── */
-  const initParticles = useCallback((w: number, h: number) => {
-    const particles: Particle[] = [];
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const hue = HUES[Math.floor(Math.random() * HUES.length)];
-      particles.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 1.2,
-        vy: (Math.random() - 0.5) * 1.2,
-        tx: w / 2 + (Math.random() - 0.5) * 300,
-        ty: h / 2 + (Math.random() - 0.5) * 100,
-        radius: Math.random() * 2 + 0.5,
-        alpha: Math.random() * 0.3 + 0.1,
-        hue,
-        life: Math.random() * 100,
-        maxLife: 100 + Math.random() * 200,
-      });
-    }
-    particlesRef.current = particles;
-  }, []);
+  // Constants
+  const PHASE_DURATIONS: Record<Phase, number> = {
+    0: 2500, // Грід камер та чисел
+    1: 1500, // Стягування ока
+    2: 3000, // Сканування
+    3: 1500, // PREDATOR RED ONLINE
+  };
 
-  /* ─── Позиції літер PREDATOR для морфінгу ─── */
-  const letterPositions = useMemo(() => {
-    // Генеруємо точки для кожної літери "PREDATOR"
-    const text = 'PREDATOR';
-    const positions: Array<{ x: number; y: number }> = [];
-
-    // Створюємо прихований canvas для тексту
-    if (typeof document === 'undefined') return positions;
-
-    const tmpCanvas = document.createElement('canvas');
-    tmpCanvas.width = 600;
-    tmpCanvas.height = 120;
-    const tmpCtx = tmpCanvas.getContext('2d');
-    if (!tmpCtx) return positions;
-
-    tmpCtx.fillStyle = '#fff';
-    tmpCtx.font = '900 80px Inter, sans-serif';
-    tmpCtx.textAlign = 'center';
-    tmpCtx.textBaseline = 'middle';
-    tmpCtx.fillText(text, 300, 60);
-
-    // Збираємо позиції пікселів
-    const imageData = tmpCtx.getImageData(0, 0, 600, 120);
-    const step = 4; // Щільність точок
-    for (let py = 0; py < 120; py += step) {
-      for (let px = 0; px < 600; px += step) {
-        const i = (py * 600 + px) * 4;
-        if (imageData.data[i + 3] > 128) {
-          positions.push({ x: px - 300, y: py - 60 });
-        }
+  /* ─ HUD Лічильники ─ */
+  useEffect(() => {
+    const tInterval = setInterval(() => {
+      if (phase >= 1) {
+        setThreatCount((p) => p + Math.floor(Math.random() * 85));
       }
-    }
-    return positions;
-  }, []);
+    }, 40);
+    const iInterval = setInterval(() => {
+        setInterceptCount((p) => p + Math.floor(Math.random() * 1420));
+    }, 30);
+    return () => { clearInterval(tInterval); clearInterval(iInterval); };
+  }, [phase]);
 
-  /* ─── Присвоєння цільових позицій (для фази ЛОГОТИП) ─── */
-  const assignLetterTargets = useCallback(
-    (w: number, h: number) => {
-      const particles = particlesRef.current;
-      const lp = letterPositions;
-      if (!lp.length) return;
-
-      const centerX = w / 2;
-      const centerY = h / 2 - 40;
-      const scale = Math.min(w / 800, 1.2);
-
-      for (let i = 0; i < particles.length; i++) {
-        if (i < lp.length) {
-          particles[i].tx = centerX + lp[i].x * scale;
-          particles[i].ty = centerY + lp[i].y * scale;
-        } else {
-          // Зайві частинки — розсіяти навколо
-          const angle = Math.random() * Math.PI * 2;
-          const dist = 200 + Math.random() * 300;
-          particles[i].tx = centerX + Math.cos(angle) * dist;
-          particles[i].ty = centerY + Math.sin(angle) * dist;
-        }
-      }
-    },
-    [letterPositions],
-  );
-
-  /* ─── Матричний дощ (overlay canvas) ─── */
-  const drawMatrixRain = useCallback(
-    (ctx: CanvasRenderingContext2D, w: number, h: number, intensity: number) => {
-      ctx.clearRect(0, 0, w, h);
-      if (intensity <= 0) return;
-
-      ctx.font = '12px JetBrains Mono, monospace';
-      const cols = Math.floor(w / 14);
-      const rows = Math.floor(h / 16);
-
-      for (let c = 0; c < cols; c++) {
-        if (Math.random() > intensity * 0.3) continue;
-        const rowCount = Math.floor(Math.random() * rows * 0.3);
-        for (let r = 0; r < rowCount; r++) {
-          const ch = MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)];
-          const alpha = (1 - r / rowCount) * intensity * 0.15;
-          ctx.fillStyle = `rgba(6, 182, 212, ${alpha})`;
-          ctx.fillText(ch, c * 14, (Math.floor(Math.random() * rows)) * 16);
-        }
-      }
-    },
-    [],
-  );
-
-  /* ─── Головний рендер-цикл ─── */
+  /* ─ Рендер ВСЕБАЧНОГО ОКА ─ */
   const render = useCallback(() => {
     const canvas = canvasRef.current;
-    const overlay = overlayCanvasRef.current;
-    if (!canvas || !overlay) return;
-
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const octx = overlay.getContext('2d');
-    if (!ctx || !octx) return;
+    if (!ctx) return;
 
     const w = canvas.width;
     const h = canvas.height;
     const now = Date.now();
-    const elapsed = now - phaseStartRef.current;
-    const particles = particlesRef.current;
-    const currentPhase = skipRef.current ? 4 : phase;
-
-    // Фон з trail-ефектом
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+    const elapsed = now - phaseStartTimeMs.current;
+    
+    // Pure Black Background (+ residual trails for chaotic effect)
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
     ctx.fillRect(0, 0, w, h);
 
-    /* ─ Фаза 0: Темрява ─ */
+    const cx = w / 2;
+    const cy = h / 2;
+    const currentPhase = skipRef.current ? 3 : phase;
+
+    /* ФАЗА 0: SURVEILLANCE GRID */
     if (currentPhase === 0) {
-      // Мерехтіння
-      if (Math.random() < 0.05) {
-        ctx.fillStyle = `rgba(6, 182, 212, ${Math.random() * 0.03})`;
-        ctx.fillRect(0, 0, w, h);
-      }
-      // Курсор
-      if (Math.sin(now * 0.005) > 0) {
-        ctx.fillStyle = '#06b6d4';
-        ctx.fillRect(w / 2 - 5, h / 2 - 8, 10, 16);
-      }
-      // Рідкісні глітч лінії
-      if (Math.random() < 0.03) {
-        const y = Math.random() * h;
-        ctx.fillStyle = `rgba(6, 182, 212, ${Math.random() * 0.1})`;
-        ctx.fillRect(0, y, w, 1 + Math.random() * 3);
-      }
-    }
-
-    /* ─ Фаза 1: Нейросітка ─ */
-    if (currentPhase >= 1 && currentPhase <= 3) {
-      const fadeIn = currentPhase === 1 ? Math.min(1, elapsed / 800) : 1;
-
-      // Оновлення позицій
-      for (const p of particles) {
-        if (currentPhase === 3) {
-          // Притягування до цілі
-          const dx = p.tx - p.x;
-          const dy = p.ty - p.y;
-          p.vx += dx * 0.02;
-          p.vy += dy * 0.02;
-          p.vx *= 0.92;
-          p.vy *= 0.92;
-        } else {
-          // Вільний рух + м'яке притягування до центру
-          const dx = w / 2 - p.x;
-          const dy = h / 2 - p.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist > 350) {
-            p.vx += (dx / dist) * 0.05;
-            p.vy += (dy / dist) * 0.05;
-          }
-        }
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Границі
-        if (p.x < 0 || p.x > w) p.vx *= -1;
-        if (p.y < 0 || p.y > h) p.vy *= -1;
-
-        p.life += 1;
-        if (p.life > p.maxLife) p.life = 0;
-      }
-
-      // З'єднання між частинками
-      if (currentPhase <= 2) {
-        const maxConns = Math.min(particles.length, 160);
-        for (let i = 0; i < maxConns; i++) {
-          for (let j = i + 1; j < maxConns; j++) {
-            const dx = particles[i].x - particles[j].x;
-            const dy = particles[i].y - particles[j].y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < CONNECTION_DIST) {
-              const alpha = (1 - dist / CONNECTION_DIST) * 0.2 * fadeIn;
-              ctx.beginPath();
-              ctx.strokeStyle = `hsla(${particles[i].hue}, 80%, 60%, ${alpha})`;
-              ctx.lineWidth = 0.5;
-              ctx.moveTo(particles[i].x, particles[i].y);
-              ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.stroke();
-            }
-          }
-        }
-      }
-
-      // Малюємо частинки
-      for (const p of particles) {
-        const pulse = 0.5 + 0.5 * Math.sin(p.life * 0.05);
-        const r = p.radius * (currentPhase === 3 ? 1.5 : 1);
-        const a = p.alpha * fadeIn * (0.6 + pulse * 0.4);
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${p.hue}, 85%, 65%, ${a})`;
-        ctx.fill();
-
-        // Glow
-        if (r > 1) {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, r * 3, 0, Math.PI * 2);
-          ctx.fillStyle = `hsla(${p.hue}, 85%, 65%, ${a * 0.15})`;
-          ctx.fill();
-        }
-      }
-    }
-
-    /* ─ Фаза 2: HUD пульс (центральні кільця на canvas) ─ */
-    if (currentPhase === 2) {
-      const cx = w / 2;
-      const cy = h / 2;
-      const t = elapsed / 1000;
-
-      // Зовнішнє кільце (обертається)
-      ctx.beginPath();
-      ctx.arc(cx, cy, 160, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(6, 182, 212, 0.15)';
+      ctx.strokeStyle = `rgba(16, 185, 129, 0.15)`; // toxic green
       ctx.lineWidth = 1;
-      ctx.stroke();
+      const gridSize = 80;
+      for (let x = 0; x < w; x += gridSize) {
+        for (let y = 0; y < h; y += gridSize) {
+          if (Math.random() > 0.05) {
+             ctx.strokeRect(x, y, gridSize - 4, gridSize - 4);
+             // Рандомний шум камери
+             if (Math.random() > 0.8) {
+               ctx.fillStyle = `rgba(34, 197, 94, ${Math.random() * 0.3})`;
+               ctx.fillRect(x + 2, y + 2, gridSize - 8, gridSize - 8);
+             }
+             // Координати
+             ctx.fillStyle = 'rgba(16, 185, 129, 0.4)';
+             ctx.font = '8px monospace';
+             ctx.fillText(`GEO:${Math.floor(Math.random()*99)}.${Math.floor(Math.random()*99)}`, x + 5, y + gridSize - 10);
+          }
+        }
+      }
+      
+      // Гігантський скануючий промінь
+      const scanY = (elapsed / PHASE_DURATIONS[0]) * h;
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.2)'; // blood red scan
+      ctx.fillRect(0, scanY, w, 4);
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.05)';
+      ctx.fillRect(0, scanY - 40, w, 40);
+    }
 
-      // Внутрішнє кільце (пульсує)
-      const innerR = 100 + Math.sin(t * 3) * 10;
-      ctx.beginPath();
-      ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(139, 92, 246, 0.2)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+    /* ФАЗА 1: ФОРМУВАННЯ ОКА */
+    if (currentPhase === 1 || currentPhase === 2 || currentPhase === 3) {
+      let eyeRadius = 0;
+      let openRatio = 0; // 0 (закрите) -> 1 (відкрите)
 
-      // Радарний sweep
-      const sweepAngle = t * 2;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.arc(cx, cy, 160, sweepAngle, sweepAngle + 0.5);
-      ctx.closePath();
-      ctx.fillStyle = 'rgba(6, 182, 212, 0.08)';
-      ctx.fill();
-
-      // Дуги сегментів
-      for (let i = 0; i < 4; i++) {
-        const startAngle = (Math.PI / 2) * i + t * 0.5;
-        ctx.beginPath();
-        ctx.arc(cx, cy, 130, startAngle, startAngle + 0.8);
-        ctx.strokeStyle = `rgba(6, 182, 212, ${0.1 + 0.1 * Math.sin(t * 2 + i)})`;
-        ctx.lineWidth = 2;
-        ctx.stroke();
+      if (currentPhase === 1) {
+        const p = Math.min(1, elapsed / PHASE_DURATIONS[1]);
+        const ease = 1 - Math.pow(1 - p, 3);
+        openRatio = ease;
+        eyeRadius = 150 * ease;
+      } else {
+        openRatio = 1;
+        eyeRadius = 150 + Math.sin(now * 0.002) * 5; // пульсування
       }
 
-      // Центральна точка
-      ctx.beginPath();
-      ctx.arc(cx, cy, 4 + Math.sin(t * 5) * 2, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(6, 182, 212, 0.8)';
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(cx, cy, 12, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(6, 182, 212, 0.1)';
-      ctx.fill();
+      // Малюємо зіницю та райдужку, якщо око "відкривається"
+      if (openRatio > 0.1) {
+        const pupilX = currentPhase === 2 ? cx + Math.sin(now * 0.003) * 30 * Math.cos(now * 0.001) : cx;
+        const pupilY = currentPhase === 2 ? cy + Math.cos(now * 0.0025) * 15 : cy;
+
+        const eyeGradient = ctx.createRadialGradient(pupilX, pupilY, eyeRadius * 0.1, pupilX, pupilY, eyeRadius);
+        eyeGradient.addColorStop(0, '#000000'); // чорна зіниця
+        // Криваво-помаранчева або токсично-зелена райдужка
+        eyeGradient.addColorStop(0.3, currentPhase === 3 ? '#ef4444' : '#f59e0b'); 
+        eyeGradient.addColorStop(0.7, currentPhase === 3 ? '#991b1b' : '#1e3a8a');
+        eyeGradient.addColorStop(1, '#000000');
+
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, eyeRadius * 1.5, eyeRadius * openRatio, 0, 0, Math.PI * 2);
+        ctx.fillStyle = eyeGradient;
+        ctx.fill();
+        
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = currentPhase === 3 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(16, 185, 129, 0.5)';
+        ctx.stroke();
+
+        // Світлові спалахи від зіниці (шукає жертву)
+        if (currentPhase === 2 && Math.random() > 0.9) {
+           ctx.beginPath();
+           ctx.arc(pupilX, pupilY, eyeRadius * 1.8, 0, Math.PI * 2);
+           ctx.fillStyle = 'rgba(220, 38, 38, 0.15)';
+           ctx.fill();
+        }
+
+        // Кровоносні/Нейронні судини навколо ока
+        ctx.strokeStyle = currentPhase === 3 ? 'rgba(239, 68, 68, 0.3)' : 'rgba(245, 158, 11, 0.2)';
+        ctx.lineWidth = 1;
+        for(let i=0; i<30; i++) {
+           const angle = (Math.PI * 2 / 30) * i + now * 0.0001;
+           const startR = eyeRadius * 1.1;
+           const len = 50 + Math.random() * 150;
+           ctx.beginPath();
+           ctx.moveTo(cx + Math.cos(angle)*startR, cy + Math.sin(angle)*startR);
+           // zigzag
+           ctx.lineTo(cx + Math.cos(angle+0.1)*(startR+len/2), cy + Math.sin(angle+0.1)*(startR+len/2));
+           ctx.lineTo(cx + Math.cos(angle)*(startR+len), cy + Math.sin(angle)*(startR+len));
+           ctx.stroke();
+        }
+      }
     }
 
-    /* ─ Фаза 3: Логотип + фінал ─ */
-    if (currentPhase === 3 && elapsed > 1200) {
-      // Підзаголовок з'явиться після морфінгу
-      const subAlpha = Math.min(1, (elapsed - 1200) / 600);
-      ctx.font = '600 13px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillStyle = `rgba(148, 163, 184, ${subAlpha * 0.7})`;
-      ctx.letterSpacing = '8px';
-      ctx.fillText('Н Е Й Р О Н Н А   А Н А Л І Т И К А', w / 2, h / 2 + 35);
-    }
-
-    /* ─ Фаза 4: Burst + fadeout ─ */
-    if (currentPhase === 4) {
-      const burstProgress = Math.min(1, elapsed / 600);
-      // Розширюючий білий спалах
-      const radius = burstProgress * Math.max(w, h);
-      const gradient = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, radius);
-      gradient.addColorStop(0, `rgba(6, 182, 212, ${0.3 * (1 - burstProgress)})`);
-      gradient.addColorStop(0.5, `rgba(139, 92, 246, ${0.15 * (1 - burstProgress)})`);
-      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = gradient;
+    /* ФАЗА 3: PREDATOR ONLINE (Кривава заливка) */
+    if (currentPhase === 3) {
+      const p = Math.min(1, elapsed / PHASE_DURATIONS[3]);
+      ctx.fillStyle = `rgba(220, 38, 38, ${p * 0.3})`;
       ctx.fillRect(0, 0, w, h);
     }
 
-    // Матричний дощ (фонова текстура)
-    const matrixIntensity =
-      currentPhase === 0 ? 0.2 :
-      currentPhase === 1 ? 0.6 :
-      currentPhase === 2 ? 0.4 :
-      currentPhase === 3 ? 0.2 : 0;
-    drawMatrixRain(octx, w, h, matrixIntensity);
-
     animFrameRef.current = requestAnimationFrame(render);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, drawMatrixRain]);
+  }, [phase]);
 
-  /* ─── Управління фазами ─── */
+  /* ─ Фазовий контролер ─ */
   useEffect(() => {
-    if (completedRef.current) return;
+    if (skipRef.current) return;
+    const dur = PHASE_DURATIONS[phase];
+    if (!dur) return;
 
-    const duration = PHASE_DURATIONS[phase];
     const timer = setTimeout(() => {
-      if (completedRef.current) return;
-
-      if (phase < 4) {
-        const next = (phase + 1) as Phase;
-        setPhase(next);
-        phaseStartRef.current = Date.now();
-
-        // При переході на фазу 3 — присвоїти цільові позиції
-        if (next === 3 && canvasRef.current) {
-          assignLetterTargets(canvasRef.current.width, canvasRef.current.height);
-        }
+      if (phase < 3) {
+        setPhase((p) => (p + 1) as Phase);
+        phaseStartTimeMs.current = Date.now();
       } else {
-        // Фінал
-        completedRef.current = true;
-        setMasterAlpha(0);
-        setTimeout(() => onComplete(), 500);
+        onComplete();
       }
-    }, duration);
+    }, dur);
 
     return () => clearTimeout(timer);
-  }, [phase, assignLetterTargets, onComplete]);
+  }, [phase, onComplete, PHASE_DURATIONS]);
 
-  /* ─── Глітч-ефект (рандомні спалахи) ─── */
-  useEffect(() => {
-    if (phase > 2) return;
-    const interval = setInterval(() => {
-      setGlitchActive(true);
-      setTimeout(() => setGlitchActive(false), 50 + Math.random() * 100);
-    }, 2000 + Math.random() * 3000);
-    return () => clearInterval(interval);
-  }, [phase]);
-
-  /* ─── Активація модулів (фаза 2) ─── */
-  useEffect(() => {
-    if (phase !== 2) return;
-    MODULES.forEach((_, i) => {
-      setTimeout(() => {
-        setModuleStatuses((prev) => {
-          const next = [...prev];
-          next[i] = true;
-          return next;
-        });
-      }, 400 + i * 500);
-    });
-  }, [phase]);
-
-  /* ─── Підказка пропуску ─── */
-  useEffect(() => {
-    const timer = setTimeout(() => setShowSkipHint(true), 3000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  /* ─── Пропуск анімації ─── */
-  const handleSkip = useCallback(() => {
-    if (completedRef.current) return;
-    completedRef.current = true;
-    skipRef.current = true;
-    setMasterAlpha(0);
-    setTimeout(() => onComplete(), 300);
-  }, [onComplete]);
-
-  /* ─── Setup Canvas ─── */
+  /* ─ Canvas Init ─ */
   useEffect(() => {
     const canvas = canvasRef.current;
-    const overlay = overlayCanvasRef.current;
-    if (!canvas || !overlay) return;
-
+    if (!canvas) return;
     const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
-
-      overlay.width = w * dpr;
-      overlay.height = h * dpr;
-      overlay.style.width = `${w}px`;
-      overlay.style.height = `${h}px`;
-
-      const ctx = canvas.getContext('2d');
-      const octx = overlay.getContext('2d');
-      if (ctx) ctx.scale(dpr, dpr);
-      if (octx) octx.scale(dpr, dpr);
-
-      initParticles(w, h);
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     };
-
     resize();
     window.addEventListener('resize', resize);
-
-    // Запуск рендер-циклу
     animFrameRef.current = requestAnimationFrame(render);
-
     return () => {
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animFrameRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /* ─── Перезапуск рендер-циклу при зміні фази ─── */
-  useEffect(() => {
-    cancelAnimationFrame(animFrameRef.current);
-    animFrameRef.current = requestAnimationFrame(render);
-    return () => cancelAnimationFrame(animFrameRef.current);
   }, [render]);
 
-  /* ─── Прогрес (загальний) ─── */
-  const totalDuration = Object.values(PHASE_DURATIONS).reduce((a, b) => a + b, 0);
-  const elapsedTotal =
-    Object.entries(PHASE_DURATIONS)
-      .filter(([k]) => Number(k) < phase)
-      .reduce((a, [, v]) => a + v, 0) +
-    Math.min(PHASE_DURATIONS[phase], Date.now() - phaseStartRef.current);
-  const progress = Math.min(100, (elapsedTotal / totalDuration) * 100);
+  const handleSkip = () => {
+    skipRef.current = true;
+    onComplete();
+  };
 
   return (
-    <div
-      ref={containerRef}
-      className="fixed inset-0 z-[100] overflow-hidden select-none cursor-wait"
-      style={{
-        opacity: masterAlpha,
-        transition: 'opacity 0.5s ease-out',
-        background: '#000',
-      }}
-      onClick={handleSkip}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleSkip(); }}
-      role="button"
-      tabIndex={0}
-      aria-label="Натисніть для пропуску завантаження"
+    <div 
+       ref={containerRef}
+       className="fixed inset-0 z-[999] bg-black overflow-hidden font-mono select-none"
+       onClick={handleSkip}
     >
-      {/* Canvas: Частинки + нейросітка */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 z-10"
-        style={{ width: '100%', height: '100%' }}
-      />
+      <canvas ref={canvasRef} className="absolute inset-0" />
 
-      {/* Canvas: Матричний дощ */}
-      <canvas
-        ref={overlayCanvasRef}
-        className="absolute inset-0 z-5 pointer-events-none opacity-60"
-        style={{ width: '100%', height: '100%', mixBlendMode: 'screen' }}
-      />
+      {/* ШУМ CRT */}
+      <div className="absolute inset-0 pointer-events-none opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
+      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-30" />
 
-      {/* Глітч-оверлей */}
-      {glitchActive && (
-        <div
-          className="absolute inset-0 z-40 pointer-events-none"
-          style={{
-            background: `linear-gradient(${Math.random() * 360}deg, rgba(6,182,212,0.03) 0%, transparent 100%)`,
-            transform: `translateX(${Math.random() * 4 - 2}px)`,
-          }}
-        />
-      )}
-
-      {/* Сканлайн */}
-      <div
-        className="absolute left-0 right-0 z-30 pointer-events-none"
-        style={{
-          height: '2px',
-          background: 'linear-gradient(90deg, transparent, rgba(6,182,212,0.3), transparent)',
-          boxShadow: '0 0 20px rgba(6,182,212,0.5)',
-          animation: 'boot-scanline 3s linear infinite',
-          top: '0',
-        }}
-      />
-
-      {/* SVG HUD (фаза 2+) */}
-      {phase >= 2 && !skipRef.current && (
-        <svg
-          className="absolute inset-0 z-20 pointer-events-none"
-          viewBox={`0 0 ${typeof window !== 'undefined' ? window.innerWidth : 1920} ${typeof window !== 'undefined' ? window.innerHeight : 1080}`}
-          style={{
-            opacity: phase === 4 ? 0 : 1,
-            transition: 'opacity 0.5s',
-          }}
-        >
-          <defs>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
-
-          {/* Зовнішнє кільце */}
-          <circle
-            cx="50%"
-            cy="50%"
-            r="180"
-            fill="none"
-            stroke="rgba(6,182,212,0.15)"
-            strokeWidth="1"
-            strokeDasharray="8 4"
-            style={{
-              animation: 'boot-ring-spin 20s linear infinite',
-              transformOrigin: '50% 50%',
-            }}
-          />
-
-          {/* Середнє кільце */}
-          <circle
-            cx="50%"
-            cy="50%"
-            r="140"
-            fill="none"
-            stroke="rgba(139,92,246,0.12)"
-            strokeWidth="1.5"
-            strokeDasharray="20 10 5 10"
-            style={{
-              animation: 'boot-ring-spin-reverse 15s linear infinite',
-              transformOrigin: '50% 50%',
-            }}
-          />
-
-          {/* Внутрішнє кільце */}
-          <circle
-            cx="50%"
-            cy="50%"
-            r="100"
-            fill="none"
-            stroke="rgba(6,182,212,0.1)"
-            strokeWidth="0.5"
-            style={{
-              animation: 'boot-ring-pulse 2s ease-in-out infinite',
-              transformOrigin: '50% 50%',
-            }}
-          />
-        </svg>
-      )}
-
-      {/* Текстовий HUD: мітки модулів (фаза 2+) */}
-      {phase >= 2 && !skipRef.current && (
-        <div className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center">
-          {MODULES.map((mod, i) => {
-            const rad = (mod.angle * Math.PI) / 180;
-            const dist = 220;
-            const x = Math.cos(rad) * dist;
-            const y = Math.sin(rad) * dist;
-            return (
-              <div
-                key={mod.label}
-                className="absolute flex items-center gap-2 transition-all duration-700"
-                style={{
-                  transform: `translate(${x}px, ${y}px)`,
-                  opacity: moduleStatuses[i] ? 1 : 0,
-                }}
-              >
-                <div
-                  className="w-2 h-2 rounded-full"
-                  style={{
-                    backgroundColor: moduleStatuses[i] ? mod.color : '#334155',
-                    boxShadow: moduleStatuses[i] ? `0 0 12px ${mod.color}` : 'none',
-                    transition: 'all 0.5s',
-                  }}
-                />
-                <span
-                  className="text-[10px] font-mono font-bold tracking-[0.3em] uppercase"
-                  style={{ color: mod.color, opacity: 0.8 }}
-                >
-                  {mod.label}
-                </span>
-                <span className="text-[9px] font-mono text-emerald-500 opacity-70">
-                  {moduleStatuses[i] ? 'ACTIVE' : ''}
-                </span>
-              </div>
-            );
-          })}
+      {/* HUD (З'являється зФази 1) */}
+      <div className={`absolute inset-0 pointer-events-none transition-opacity duration-1000 ${phase >= 1 ? 'opacity-100' : 'opacity-0'}`}>
+        {/* Верхній лівий: Статуси */}
+        <div className="absolute top-8 left-8 text-red-500 space-y-1">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-red-600 animate-pulse" />
+            <span className="text-xs font-bold tracking-widest uppercase">RESTRICTED PREDATOR CORE</span>
+          </div>
+          <p className="text-[10px] text-red-400/70">AUTORIZATION LEVEL: BLACK</p>
+          <p className="text-[10px] text-red-400/70 mt-4">ОПЕРАТИВНЕ ПЕРЕХОПЛЕННЯ УПРАВЛІННЯ</p>
+          <div className="font-mono text-xl text-red-500 font-bold mt-2">
+            Z-[{Math.floor(Math.random() * 9999).toString().padStart(4, '0')}] A-SEC
+          </div>
         </div>
-      )}
 
-      {/* Центральна інформація */}
-      <div className="absolute inset-0 z-40 flex flex-col items-center justify-center pointer-events-none">
-        {/* Логотип "PREDATOR" (фаза 0–1: мерехтіння, фаза 3: яскравий) */}
-        {phase >= 1 && (
-          <div
-            className="transition-all duration-1000"
-            style={{
-              opacity: phase === 1 ? 0.15 : phase >= 3 ? 1 : 0.3,
-              transform: phase >= 3 ? 'scale(1)' : 'scale(0.9)',
-              filter: phase < 3 ? 'blur(2px)' : 'none',
-            }}
-          >
-            <h1
-              className="text-6xl sm:text-7xl md:text-8xl font-black tracking-[-0.05em] text-transparent bg-clip-text select-none"
-              style={{
-                backgroundImage:
-                  'linear-gradient(135deg, #06b6d4 0%, #3b82f6 30%, #8b5cf6 60%, #d946ef 100%)',
-                textShadow: phase >= 3
-                  ? '0 0 60px rgba(6,182,212,0.4), 0 0 120px rgba(139,92,246,0.2)'
-                  : 'none',
-                WebkitTextStroke: phase >= 3 ? 'none' : '1px rgba(6,182,212,0.2)',
-              }}
-            >
-              PREDATOR
-            </h1>
+        {/* Верхній правий: Загрози */}
+        <div className="absolute top-8 right-8 text-right space-y-2">
+          <div className="text-[10px] text-emerald-500 tracking-widest uppercase mb-1 border-b border-emerald-900/50 pb-1">
+            Моніторинг Глобальної Мережі
           </div>
-        )}
-
-        {/* Підзаголовок */}
-        {phase >= 3 && (
-          <div
-            className="mt-4 flex items-center gap-3 transition-opacity duration-1000"
-            style={{ opacity: phase >= 3 ? 0.7 : 0 }}
-          >
-            <div className="h-px w-12 bg-gradient-to-r from-transparent to-cyan-500/50" />
-            <span className="text-[11px] font-mono text-slate-400 tracking-[0.4em] uppercase">
-              Нейронна Аналітика
-            </span>
-            <div className="h-px w-12 bg-gradient-to-l from-transparent to-cyan-500/50" />
+          <div className="text-xs text-slate-400 uppercase">Дані перехоплено:</div>
+          <div className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">
+            {interceptCount.toLocaleString()} TB
           </div>
-        )}
-
-        {/* Версія */}
-        {phase >= 2 && (
-          <div
-            className="mt-6 px-3 py-1 rounded-full border border-cyan-500/20 bg-cyan-950/30 transition-opacity duration-700"
-            style={{ opacity: phase >= 2 ? 0.6 : 0 }}
-          >
-            <span className="text-[9px] font-mono text-cyan-400 tracking-widest">
-              v55.1 • CLASSIFIED • LEVEL-5
-            </span>
+          <div className="text-xs text-slate-400 uppercase mt-2">Загроз виявлено:</div>
+          <div className="text-3xl font-black text-red-500 font-mono tracking-tighter">
+            {threatCount.toLocaleString()}
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Прогрес-бар внизу */}
-      <div className="absolute bottom-0 left-0 right-0 z-50 px-8 pb-8">
-        {/* Кроки */}
-        <div className="flex justify-between mb-3 px-1">
-          {['ІНІЦІАЛІЗАЦІЯ', 'НЕЙРОСІТКА', 'МОДУЛІ', 'АКТИВАЦІЯ'].map((label, i) => (
-            <div
-              key={label}
-              className="flex items-center gap-1.5 transition-all duration-500"
-              style={{ opacity: phase >= i ? 1 : 0.3 }}
-            >
-              <div
-                className="w-1.5 h-1.5 rounded-full transition-all duration-500"
-                style={{
-                  backgroundColor: phase > i ? '#10b981' : phase === i ? '#06b6d4' : '#1e293b',
-                  boxShadow:
-                    phase > i
-                      ? '0 0 8px rgba(16,185,129,0.6)'
-                      : phase === i
-                        ? '0 0 8px rgba(6,182,212,0.6)'
-                        : 'none',
-                }}
-              />
-              <span className="text-[9px] font-mono text-slate-500 tracking-wider">{label}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Бар */}
-        <div className="relative h-1 bg-slate-900/80 rounded-full overflow-hidden">
-          <div
-            className="absolute inset-y-0 left-0 rounded-full transition-all duration-300 ease-out"
-            style={{
-              width: `${progress}%`,
-              background: 'linear-gradient(90deg, #06b6d4, #3b82f6, #8b5cf6)',
-              boxShadow: '0 0 20px rgba(6,182,212,0.6), 0 0 40px rgba(139,92,246,0.3)',
-            }}
-          />
-          {/* Ковзний блік на прогрес-барі */}
-          <div
-            className="absolute inset-y-0 w-20 rounded-full pointer-events-none"
-            style={{
-              left: `${Math.max(0, progress - 8)}%`,
-              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
-              animation: 'boot-shimmer 1.5s ease-in-out infinite',
-            }}
-          />
-        </div>
-
-        {/* Підказка пропуску */}
-        {showSkipHint && !skipRef.current && (
-          <div className="mt-4 text-center pointer-events-auto">
-            <span className="text-[10px] font-mono text-slate-600 tracking-wider animate-pulse">
-              натисніть будь-де для швидкого старту
-            </span>
-          </div>
-        )}
+      {/* PREDATOR TEXT (Фаза 3) */}
+      <div className={`absolute inset-0 pointer-events-none flex flex-col items-center justify-center transition-opacity duration-500 ${phase === 3 ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}>
+         <h1 className="text-7xl md:text-9xl font-black tracking-[0.2em] text-transparent bg-clip-text"
+             style={{
+               backgroundImage: 'linear-gradient(to bottom, #ef4444, #7f1d1d)',
+               WebkitTextStroke: '2px #dc2626',
+               filter: 'drop-shadow(0 0 30px rgba(220, 38, 38, 0.8))'
+             }}>
+           PREDATOR
+         </h1>
+         <p className="mt-4 text-sm md:text-lg text-red-500 font-bold tracking-[0.5em] uppercase"
+            style={{ textShadow: '0 0 10px rgba(239, 68, 68, 0.5)' }}>
+           Всебачне Око. Ніхто не сховається.
+         </p>
       </div>
-
-      {/* CSS анімації */}
-      <style>{`
-        @keyframes boot-scanline {
-          0% { top: -2px; }
-          100% { top: 100%; }
-        }
-        @keyframes boot-ring-spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes boot-ring-spin-reverse {
-          from { transform: rotate(360deg); }
-          to { transform: rotate(0deg); }
-        }
-        @keyframes boot-ring-pulse {
-          0%, 100% { r: 100; opacity: 0.1; }
-          50% { r: 105; opacity: 0.2; }
-        }
-        @keyframes boot-shimmer {
-          0%, 100% { opacity: 0; }
-          50% { opacity: 1; }
-        }
-      `}</style>
+      
+      {/* Підказка (клік) */}
+      <div className="absolute bottom-6 w-full text-center text-[10px] text-slate-600 tracking-widest animate-pulse">
+         AUTH OVERRIDE: CLICK TO BYPASS
+      </div>
     </div>
   );
 };
