@@ -3826,6 +3826,30 @@ app.get('/api/v1/osint/scan/:id/status', (req, res) => {
 });
 
 // =============================================
+// 🔭 Neo4j Graph Investigations Mock
+// =============================================
+app.get('/api/v1/graph/investigation/:edrpou', (req, res) => {
+    const isDefault = req.params.edrpou === 'default';
+    res.json({
+        nodes: [
+            { id: '1', type: 'company', label: isDefault ? 'ТОВ "Мега Імпорт"' : `Компанія ${req.params.edrpou}`, x: 50, y: 50, risk: 85 },
+            { id: '2', type: 'person', label: 'Іванов І.І.', x: 30, y: 70, risk: 40 },
+            { id: '3', type: 'company', label: 'Offshore Ltd. (Cyprus)', x: 70, y: 30, risk: 95 },
+            { id: '4', type: 'person', label: 'Петров П.П.', x: 60, y: 80, risk: 20 },
+            { id: '5', type: 'risk', label: 'Схема: Офшорні транзакції', x: 20, y: 20, risk: 100 },
+            { id: '6', type: 'osint', label: 'DarkWeb: Leaked Db', x: 80, y: 60, risk: 100 }
+        ],
+        links: [
+            { source: '1', target: '2', type: 'Director' },
+            { source: '1', target: '3', type: 'Beneficiary' },
+            { source: '1', target: '5', type: 'Flagged' },
+            { source: '2', target: '4', type: 'Partner' },
+            { source: '3', target: '6', type: 'Source' }
+        ]
+    });
+});
+
+// =============================================
 // 🏛️ Registries Mock
 // =============================================
 app.get('/api/v1/registries/search', (req, res) => {

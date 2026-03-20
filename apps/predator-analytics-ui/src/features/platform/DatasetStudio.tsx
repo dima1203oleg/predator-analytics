@@ -10,18 +10,19 @@ import {
     Database, Play, Pause, RefreshCw,
     ChevronRight, Filter, Settings, Zap, BarChart3,
     Clock, Cpu, HardDrive, Activity, Shield, Target, Binary, Microscope,
-    ScanLine, BrainCircuit, Globe, GitBranch, Layers
+    ScanLine, BrainCircuit, Globe, GitBranch, Layers, Network
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { api } from '@/services/api';
-import { premiumLocales } from '@/locales/uk/premium';
+import { premiumLocales } from '../../locales/uk/premium';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { TacticalCard } from '@/components/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { DatabasePipelineMonitor } from '@/components/pipeline/DatabasePipelineMonitor';
-import { UserDatasetsPanel } from '@/components/datasets/UserDatasetsPanel';
+import { UserDatasetsPanel, UserDataset } from '@/components/datasets/UserDatasetsPanel';
 import { OSINTTool } from '@/types';
-import { CERSScoreCard } from '@/components/premium/CERSScoreCard';
+import { CERSScoreCard } from '../../components/premium/CERSScoreCard';
+import { InvestigationCanvasWidget } from '../../components/premium/InvestigationCanvasWidget';
 
 const DatasetStudio: React.FC = () => {
     const [isGenerating, setIsGenerating] = useState(false);
@@ -96,7 +97,7 @@ const DatasetStudio: React.FC = () => {
 
                         <UserDatasetsPanel
                             className="shadow-2xl shadow-black/40"
-                            onDatasetSelect={(ds) => setActivePrototypeId(ds.id)}
+                            onDatasetSelect={(ds: UserDataset) => setActivePrototypeId(ds.id)}
                         />
 
                         {/* OSINT PIPELINE MONITOR */}
@@ -144,13 +145,25 @@ const DatasetStudio: React.FC = () => {
                         </div>
 
                         {/* CERS Score Card */}
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <Activity size={16} className="text-indigo-400" /> CERS Entity Resolution Insights
-                                </h3>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                        <Activity size={16} className="text-indigo-400" /> CERS Entity Resolution Insights
+                                    </h3>
+                                </div>
+                                <div className="h-[500px]">
+                                    <CERSScoreCard edrpou="39485746" className="h-full" />
+                                </div>
                             </div>
-                            <CERSScoreCard edrpou="39485746" />
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-sm font-black text-rose-400 uppercase tracking-widest flex items-center gap-2">
+                                        <Network size={16} className="text-rose-400" /> Neo4j: Граф Зв'язків OSINT
+                                    </h3>
+                                </div>
+                                <InvestigationCanvasWidget edrpou="39485746" />
+                            </div>
                         </div>
 
                         {/* Database Pipeline Monitor */}

@@ -17,7 +17,7 @@ import { cn } from '../../utils/cn';
 import { api } from '../../services/api';
 import { premiumLocales } from '../../locales/uk/premium';
 
-interface UserDataset {
+export interface UserDataset {
     id: string;
     name: string;
     filename: string;

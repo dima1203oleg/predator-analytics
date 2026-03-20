@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Search, ShieldAlert, Share2, Maximize2, X, Plus, Building2, User } from 'lucide-react';
+import { Activity, Search, ShieldAlert, Share2, Maximize2, X, Plus, Building2, User, Globe, AlertTriangle } from 'lucide-react';
 import { premiumLocales } from '../../locales/uk/premium';
+import { api } from '@/services/api';
+import { CERSScoreCard } from './CERSScoreCard';
 
 interface Node {
   id: string;
-  type: 'company' | 'person' | 'risk';
+  type: 'company' | 'person' | 'risk' | 'osint';
   label: string;
   x: number;
   y: number;
@@ -19,27 +21,38 @@ interface Link {
 }
 
 export const InvestigationCanvasWidget: React.FC<{
-  persona: string;
+  edrpou?: string;
+  persona?: string;
   onOpenDossier?: (name: string) => void;
-}> = ({ persona, onOpenDossier }) => {
-  if (persona !== 'INQUISITOR') return null;
-
-  const [nodes, setNodes] = useState<Node[]>([
-    { id: '1', type: 'company', label: 'ТОВ "Мега Імпорт"', x: 50, y: 50, risk: 85 },
-    { id: '2', type: 'person', label: 'Іванов І.І.', x: 30, y: 70, risk: 40 },
-    { id: '3', type: 'company', label: 'Offshore Ltd.', x: 70, y: 30, risk: 95 },
-    { id: '4', type: 'person', label: 'Петров П.П.', x: 60, y: 80, risk: 20 },
-    { id: '5', type: 'risk', label: 'Схема: Заниження', x: 20, y: 20, risk: 100 },
-  ]);
+}> = ({ edrpou, persona, onOpenDossier }) => {
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [links, setLinks] = useState<Link[]>([]);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Simple mock links
-  const links: Link[] = [
-    { source: '1', target: '2', type: 'Director' },
-    { source: '1', target: '3', type: 'Founder' },
-    { source: '1', target: '5', type: 'Flagged' },
-    { source: '2', target: '4', type: 'Partner' },
-  ];
+  useEffect(() => {
+     let isMounted = true;
+     const loadGraph = async () => {
+         setIsLoading(true);
+         try {
+             // Fetch from mock Neo4j API
+             const data = await api.ai.getInvestigationGraph(edrpou);
+             if (isMounted) {
+                 setNodes(data.nodes || []);
+                 setLinks(data.links || []);
+             }
+         } catch (e) {
+             console.error("Failed to load investigation graph", e);
+             // fallback mock if API fails
+         } finally {
+             if (isMounted) setIsLoading(false);
+         }
+     };
+     loadGraph();
+     return () => { isMounted = false; };
+  }, [edrpou]);
+
+
 
   return (
     <div className="bg-slate-950/80 border border-slate-800 rounded-[24px] backdrop-blur-xl overflow-hidden h-[500px] flex flex-col relative group">
@@ -71,7 +84,14 @@ export const InvestigationCanvasWidget: React.FC<{
         </div>
       </div>
 
-      {/* Canvas Area */}
+      {isLoading ? (
+          <div className="flex-1 flex flex-col items-center justify-center gap-4 text-emerald-500/50">
+             <Activity className="animate-spin" size={32} />
+             <div className="text-[10px] uppercase font-black tracking-widest animate-pulse">
+                Синхронізація з Neo4j...
+             </div>
+          </div>
+      ) : (
       <div className="flex-1 relative overflow-hidden cursor-crosshair bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-90">
         {/* Render Links (Lines) */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
@@ -111,14 +131,26 @@ export const InvestigationCanvasWidget: React.FC<{
                 onClick={() => setSelectedNode(node.id)}
             >
                 <div className={`
-                    w-12 h-12 rounded-full border-2 flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-slate-900
+                    w-12 h-12 rounded-full border-2 flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-slate-900 transition-colors
                     ${node.type === 'risk' ? 'border-rose-500 text-rose-500 shadow-rose-900/40' :
-                      node.risk > 80 ? 'border-amber-500 text-amber-500' : 'border-slate-500 text-slate-400'}
+                      node.type === 'osint' ? 'border-purple-500 text-purple-500 shadow-purple-900/40' :
+                      node.risk > 80 ? 'border-amber-500 text-amber-500 shadow-amber-900/40' : 'border-emerald-500 text-emerald-400'}
                 `}>
                     {node.type === 'company' && <Building2 size={20} />}
                     {node.type === 'person' && <User size={20} />}
                     {node.type === 'risk' && <ShieldAlert size={20} />}
+                    {node.type === 'osint' && <Globe size={20} />}
                 </div>
+                {/* OSINT / Risk Indicators */}
+                {(node.type === 'company' && node.risk > 80) && (
+                    <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 animate-pulse border-2 border-slate-900" />
+                )}
+                {/* OSINT Link Badge */}
+                {node.type === 'osint' && (
+                    <div className="absolute -bottom-1 -right-1 p-0.5 rounded-full bg-purple-500 border border-slate-900 flex items-center justify-center">
+                        <Activity size={8} className="text-white animate-pulse" />
+                    </div>
+                )}
                 {/* Label */}
                 <div className="absolute top-14 left-1/2 -translate-x-1/2 text-[10px] font-bold text-slate-300 bg-black/50 px-2 py-0.5 rounded whitespace-nowrap backdrop-blur-sm">
                     {node.label}
@@ -143,33 +175,46 @@ export const InvestigationCanvasWidget: React.FC<{
                             <X size={14} className="text-slate-500 hover:text-white" />
                         </button>
                     </div>
-                    <div className="space-y-2 text-xs text-slate-400">
-                        <div className="flex justify-between">
-                            <span>{premiumLocales.investigationCanvas.type}:</span>
-                            <span className="text-white">
-                                {premiumLocales.investigationCanvas.nodeTypes[nodes.find(n => n.id === selectedNode)?.type as keyof typeof premiumLocales.investigationCanvas.nodeTypes] || nodes.find(n => n.id === selectedNode)?.type}
-                            </span>
+                    {nodes.find(n => n.id === selectedNode)?.type === 'company' ? (
+                        <div className="mt-4 border-t border-slate-700/50 pt-4">
+                            {/* Якщо це компанія, малюємо реальну CERSScoreCard (без фону для інтеграції в панель) */}
+                            <CERSScoreCard edrpou="39485746" className="bg-transparent border-none p-0 shadow-none min-h-0" />
                         </div>
-                        <div className="flex justify-between">
-                            <span>{premiumLocales.investigationCanvas.risk}:</span>
-                            <span className="text-rose-400 font-bold">{nodes.find(n => n.id === selectedNode)?.risk}%</span>
+                    ) : (
+                        <div className="space-y-2 text-xs text-slate-400 mt-2">
+                            <div className="flex justify-between">
+                                <span>{premiumLocales.investigationCanvas.type}:</span>
+                                <span className={nodes.find(n => n.id === selectedNode)?.type === 'osint' ? "text-purple-400 font-bold" : "text-white"}>
+                                    {premiumLocales.investigationCanvas.nodeTypes?.[nodes.find(n => n.id === selectedNode)?.type as keyof typeof premiumLocales.investigationCanvas.nodeTypes] || nodes.find(n => n.id === selectedNode)?.type.toUpperCase()}
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>{premiumLocales.investigationCanvas.risk}:</span>
+                                <span className="text-rose-400 font-bold">{nodes.find(n => n.id === selectedNode)?.risk}%</span>
+                            </div>
+                            {nodes.find(n => n.id === selectedNode)?.type === 'osint' && (
+                                <div className="p-2 mt-2 bg-purple-500/10 border border-purple-500/30 rounded-lg text-purple-300 text-[10px]">
+                                    <AlertTriangle size={12} className="inline mr-1" /> Дані отримані з відкритих джерел (DarkWeb Leaks)
+                                </div>
+                            )}
+                            <div className="pt-2 mt-2 border-t border-white/5">
+                                <button
+                                  onClick={() => {
+                                    const node = nodes.find(n => n.id === selectedNode);
+                                    if (node) onOpenDossier?.(node.label);
+                                  }}
+                                  className="w-full py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition-colors border border-rose-500/20 font-black tracking-widest text-[9px] uppercase"
+                                >
+                                    {premiumLocales.investigationCanvas.openFullDossier || "РОЗШИРЕНЕ ДОСЬЄ"}
+                                </button>
+                            </div>
                         </div>
-                        <div className="pt-2 border-t border-white/5">
-                            <button
-                              onClick={() => {
-                                const node = nodes.find(n => n.id === selectedNode);
-                                if (node) onOpenDossier?.(node.label);
-                              }}
-                              className="w-full py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition-colors border border-rose-500/20"
-                            >
-                                {premiumLocales.investigationCanvas.openFullDossier}
-                            </button>
-                        </div>
-                    </div>
+                    )}
                 </motion.div>
             )}
         </AnimatePresence>
       </div>
+      )}
 
       <div className="px-6 py-2 border-t border-white/5 bg-black/20 text-[10px] text-slate-500 font-mono flex justify-between">
           <span>{premiumLocales.investigationCanvas.metrics.nodes}: {nodes.length}</span>

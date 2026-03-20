@@ -117,6 +117,10 @@ export const intelligenceApi = {
     getOpportunities: async () => {
         return (await apiClient.get('/premium/opportunities')).data;
     },
+    getInvestigationGraph: async (edrpou?: string) => {
+        const endpoint = edrpou ? `/graph/investigation/${edrpou}` : '/graph/investigation/default';
+        return (await apiClient.get(endpoint)).data;
+    },
 
     // ─── Knowledge Engineering (Rules + Costs) ─────────────────────────────────
     getRules: async () => {
