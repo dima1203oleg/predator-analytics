@@ -1,14 +1,15 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type UserRole = 'client' | 'premium' | 'admin';
+import { UserRole } from '../config/roles';
+
 export type InterlinkPersona = 'TITAN' | 'INQUISITOR' | 'SOVEREIGN' | 'BUSINESS' | 'GOVERNMENT' | 'INTELLIGENCE' | 'BANKING' | 'MEDIA';
 export type DeviceMode = 'desktop' | 'tablet' | 'mobile';
 export type ApiLanguage = 'ua' | 'en';
 
 interface AppState {
   // User & Access
-  userRole: UserRole;
+  userRole: UserRole | string;
   persona: InterlinkPersona;
   
   // UI State
@@ -25,8 +26,13 @@ interface AppState {
     message: string;
   };
 
+  // V55.1 New Scaffold State
+  tenant: string;
+  isPlanMode: boolean;
+  isCopilotOpen: boolean;
+  
   // Actions
-  setRole: (role: UserRole) => void;
+  setRole: (role: UserRole | string) => void;
   setPersona: (persona: InterlinkPersona) => void;
   setDeviceMode: (mode: DeviceMode) => void;
   toggleSidebar: () => void;
@@ -35,12 +41,15 @@ interface AppState {
   setTerminalOpen: (open: boolean) => void;
   setHighVisibility: (enabled: boolean) => void;
   updateAzrStatus: (status: Partial<AppState['azrStatus']>) => void;
+  setTenant: (tenant: string) => void;
+  setPlanMode: (isPlanMode: boolean) => void;
+  setCopilotOpen: (isCopilotOpen: boolean) => void;
 }
 
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
-      userRole: 'admin',
+      userRole: UserRole.CLIENT_BASIC,
       persona: 'TITAN',
       deviceMode: 'desktop',
       isSidebarOpen: true,
@@ -52,6 +61,9 @@ export const useAppStore = create<AppState>()(
         progress: 100,
         message: 'Стан оптимальний'
       },
+      tenant: 'Держмитслужба',
+      isPlanMode: true,
+      isCopilotOpen: false,
 
       setRole: (userRole) => set({ userRole }),
       setPersona: (persona) => set({ persona }),
@@ -64,6 +76,9 @@ export const useAppStore = create<AppState>()(
       updateAzrStatus: (status) => set((state) => ({ 
         azrStatus: { ...state.azrStatus, ...status } 
       })),
+      setTenant: (tenant) => set({ tenant }),
+      setPlanMode: (isPlanMode) => set({ isPlanMode }),
+      setCopilotOpen: (isCopilotOpen) => set({ isCopilotOpen }),
     }),
     {
       name: 'predator-app-storage',
@@ -72,6 +87,8 @@ export const useAppStore = create<AppState>()(
         persona: state.persona,
         language: state.language,
         highVisibility: state.highVisibility,
+        tenant: state.tenant,
+        isPlanMode: state.isPlanMode,
       }),
     }
   )

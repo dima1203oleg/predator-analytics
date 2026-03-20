@@ -220,7 +220,7 @@ docker build -t predator-analytics-ui:v55.1.0-production .
 docker run -d \
   --name predator-frontend \
   -p 3030:3030 \
-  -e VITE_API_URL=http://your-api-server:8000 \
+  -e API_UPSTREAM=http://your-api-server:8000 \
   predator-analytics-ui:v55.1.0-production
 ```
 
@@ -239,8 +239,8 @@ kubectl apply -f deploy/argocd/predator/frontend.yaml
 ### Environment Variables
 
 ```bash
-# API Backend URL
-VITE_API_URL=http://localhost:8000
+# Runtime upstream для nginx усередині контейнера
+API_UPSTREAM=http://host.docker.internal:9080
 
 # Feature Flags (опціонально)
 VITE_ENABLE_AI_COPILOT=true

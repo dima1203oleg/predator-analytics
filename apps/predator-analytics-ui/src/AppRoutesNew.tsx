@@ -1,8 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { MainLayout } from './components/layout/MainLayout';
 import { useAppStore } from './store/useAppStore';
+import { useUser } from './context/UserContext';
+import { UserRole } from './config/roles';
 
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import ActivityView from './features/dashboard/ActivityView';
@@ -96,6 +98,7 @@ const AutoFactoryView = lazy(() => import('./features/ai/AutoFactoryView'));
 const ModelTrainingView = lazy(() => import('./features/ai/ModelTrainingView'));
 const EnginesView = lazy(() => import('./features/ai/EnginesView'));
 const FactorsView = lazy(() => import('./features/factors/FactorsView'));
+const FactoryStudio = lazy(() => import('./features/factory/FactoryStudio'));
 
 
 
@@ -134,7 +137,15 @@ const LoadingFallback = () => (
 
 export const AppRoutesNew = () => {
   const location = useLocation();
-  const { userRole } = useAppStore();
+  const { userRole, setRole } = useAppStore();
+  const { user } = useUser();
+
+  // Sync role from context to store
+  useEffect(() => {
+    if (user?.role && user.role !== userRole) {
+      setRole(user.role);
+    }
+  }, [user?.role, userRole, setRole]);
 
   return (
     <MainLayout>
@@ -175,8 +186,8 @@ export const AppRoutesNew = () => {
             <Route path="/data" element={<DataView />} />
             <Route path="/databases" element={<DatabasesView />} />
             <Route path="/datasets" element={<DatasetStudio />} />
-            <Route path="/sr" element={userRole === 'admin' ? <SRView /> : <Navigate to="/overview" replace />} />
-            <Route path="/azr" element={userRole === 'admin' ? <SRView /> : <Navigate to="/overview" replace />} />
+            <Route path="/sr" element={userRole === UserRole.ADMIN ? <SRView /> : <Navigate to="/overview" replace />} />
+            <Route path="/azr" element={userRole === UserRole.ADMIN ? <SRView /> : <Navigate to="/overview" replace />} />
 
             <Route path="/datasets-manager" element={<DatasetsPage />} />
 
@@ -207,8 +218,9 @@ export const AppRoutesNew = () => {
 
             <Route path="/entity-graph" element={<GraphAnalyticsPage />} />
             <Route path="/knowledge" element={<KnowledgeEngineeringView />} />
-            <Route path="/autonomy" element={userRole === 'admin' ? <AutonomyDashboard /> : <Navigate to="/overview" replace />} />
+            <Route path="/autonomy" element={userRole === UserRole.ADMIN ? <AutonomyDashboard /> : <Navigate to="/overview" replace />} />
             <Route path="/factory" element={<FactorsView />} />
+            <Route path="/factory-studio" element={<FactoryStudio />} />
             <Route path="/components" element={<ComponentsRegistryView />} />
 
             {/* Premium Commercial Intelligence */}

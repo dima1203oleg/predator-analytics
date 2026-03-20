@@ -54,6 +54,7 @@ import { NavLink } from 'react-router-dom';
 import { useSystemMetrics } from '../../hooks/useSystemMetrics';
 import { premiumLocales } from '../../locales/uk/premium';
 import { useAppStore } from '../../store/useAppStore';
+import { UserRole } from '../../config/roles';
 import { cn } from '../../utils/cn';
 
 export const Sidebar = () => {
@@ -76,101 +77,62 @@ export const Sidebar = () => {
 
   const navGroups: NavGroup[] = [
     {
-      title: 'ШВИДКИЙ ДОСТУП',
+      title: 'МЕНЕДЖЕР АГЕНТІВ',
       items: [
-        { name: 'АЗР — Аналітичні Дані', path: '/sr', icon: Layers }
+        { name: 'Флот AI Агентів', path: '/agents', icon: Bot },
+        { name: 'Оркестратор (Pipeline)', path: '/pipeline', icon: Activity },
+        { name: 'Контроль Автономності', path: '/autonomy', icon: ShieldCheck, role: 'admin' },
+        { name: 'Мовна Модель (LLM)', path: '/llm', icon: MessageSquare, premium: true },
+      ]
+    },
+    {
+      title: 'СТУДІЯ ФАБРИКИ',
+      items: [
+        { name: 'Студія Факторів', path: '/factory-studio', icon: Factory, role: 'admin' },
+        { name: 'Мапа Знань (Knowledge)', path: '/factory', icon: BrainCircuit },
+        { name: 'Студія Датасетів', path: '/datasets', icon: Boxes },
+        { name: 'Аналітика Двигунів', path: '/engines', icon: Waves },
+      ]
+    },
+    {
+      title: 'ІНФРА ТА МОНІТОРИНГ',
+      items: [
+        { name: 'Моніторинг Нод', path: '/monitoring', icon: Activity, role: 'admin' },
+        { name: 'Деплоймент (K8s)', path: '/deployment', icon: Layers, role: 'admin' },
+        { name: 'Бази Даних', path: '/databases', icon: Database, role: 'admin' },
+        { name: 'Інджестинг Даних', path: '/ingestion', icon: Zap },
+      ]
+    },
+    {
+      title: 'ДОКУМЕНТИ ТА OSINT',
+      items: [
+        { name: 'Глобальний Пошук', path: '/search-v2', icon: FileSearch },
+        { name: 'OSINT UA (Prozorro)', path: '/tenders', icon: Landmark },
+        { name: 'ДержДані API', path: '/datagov', icon: Library },
+        { name: 'Архів Документів', path: '/documents', icon: Archive },
+        { name: 'Морська Розвідка', path: '/maritime', icon: Ship },
       ]
     },
     {
       title: 'КЛІЄНТИ',
       items: [
         { name: 'Огляд Сегментів', path: '/clients', icon: Layout },
-        { name: 'Бізнес та Корпорації', path: '/clients/business', icon: Building2 },
-        { name: 'Банки та Фінанси', path: '/clients/banking', icon: DollarSign },
-        { name: 'Державні Органи', path: '/clients/government', icon: Landmark },
-        { name: 'Правоохоронні Органи', path: '/clients/law', icon: ShieldAlert },
-        { name: 'Регулятори та Контроль', path: '/clients/regulators', icon: FileCheck },
-        { name: 'Юридичні Компанії', path: '/clients/legal', icon: Scale },
+        { name: 'Бізнес-Корпорації', path: '/clients/business', icon: Building2 },
       ]
     },
     {
-      title: 'ОПЕРАЦІЙНИЙ ЦЕНТР',
+      title: 'АНАЛІТИКА',
       items: [
-        { name: 'Головна Панель', path: '/overview', icon: LayoutDashboard },
-        { name: 'Ринкова Аналітика', path: '/market', icon: Globe },
-        { name: 'Прогнозування', path: '/forecast', icon: TrendingUp },
-        { name: 'Можливості', path: '/opportunities', icon: Zap },
-        { name: 'Моніторинг Подій', path: '/news', icon: Radio },
-      ]
-    },
-    {
-      title: 'ФАКТОРИ',
-      items: [
-        { name: 'Фабрика Факторів', path: '/factory', icon: Factory, role: 'admin' },
         { name: 'Ризик-Скоринг', path: '/risk-scoring', icon: AlertCircle, premium: true },
         { name: 'AML Аналізатор', path: '/aml', icon: ShieldAlert },
-      ]
-    },
-    {
-      title: 'РОЗВІДКА ТА OSINT',
-      items: [
-        { name: 'Глобальний Пошук', path: '/search-v2', icon: FileSearch },
-        { name: 'Аналіз Сутностей', path: '/entity-graph', icon: Network, premium: true },
-        { name: 'Радар Конкурентів', path: '/competitor-radar', icon: Radar, premium: true },
-        { name: 'Детектор Санкцій', path: '/sanctions', icon: Shield, premium: true },
-        { name: 'Архіви та Справи', path: '/cases', icon: ShieldAlert },
-        { name: 'OSINT UA (Prozorro)', path: '/tenders', icon: Landmark },
-        { name: 'DataGov API', path: '/datagov', icon: Library },
-        { name: 'Морська Розвідка', path: '/maritime', icon: Ship },
-        { name: 'Реєстри Бізнесу', path: '/registries', icon: Building2 },
-      ]
-    },
-    {
-      title: 'ДАНІ ТА ІНТЕГРАЦІЇ',
-      items: [
-        { name: 'Нейронний Інджестинг', path: '/data-hub', icon: Zap },
-        { name: 'Оркестратор Даних', path: '/pipeline', icon: Activity },
-        { name: 'Студія Датасетів', path: '/datasets', icon: Boxes },
-        { name: 'АЗР — Реєстр продавців', path: '/sr', icon: DollarSign, role: 'admin' },
-        { name: 'Митна Розвідка', path: '/customs-intel', icon: Ship, premium: true },
-        { name: 'Бібліотека Документів', path: '/documents', icon: Archive },
-      ]
-    },
-    {
-      title: 'ШІ ТА АВТОНОМНІСТЬ',
-      items: [
-        { name: 'Інтелект-Система', path: '/intelligence', icon: ZapOff },
-        { name: 'Флот AI Агентів', path: '/agents', icon: Bot },
-        { name: 'Контроль Самовдосконалення', path: '/autonomy', icon: ShieldCheck, role: 'admin' },
-        { name: 'Аналітика Двигунів', path: '/engines', icon: Waves },
-        { name: 'Мовна Модель (LLM)', path: '/llm', icon: MessageSquare, premium: true },
-        { name: 'Навчання Моделей', path: '/training', icon: BrainCircuit, premium: true },
-      ]
-    },
-    {
-      title: 'АНАЛІТИКА ТА ЗВІТИ',
-      items: [
-        { name: 'Генератор Звітів', path: '/reports', icon: FileText, premium: true },
-        { name: 'Конструктор Дашбордів', path: '/builder', icon: Layers, premium: true },
-        { name: 'Центр Сповіщень', path: '/alerts', icon: ShieldAlert, premium: true },
-        { name: 'Експорт Даних', path: '/export', icon: Repeat, premium: true },
-      ]
-    },
-    {
-      title: 'СИСТЕМА (АДМІН)',
-      items: [
-        { name: 'Моніторинг Нод', path: '/monitoring', icon: Activity, role: 'admin' },
-        { name: 'Ядро Безпеки', path: '/security', icon: Lock, role: 'admin' },
-        { name: 'Комплаєнс Аудит', path: '/compliance', icon: FileCheck },
-        { name: 'Управління (Gov)', path: '/governance', icon: Shield, role: 'admin' },
         { name: 'Налаштування', path: '/settings', icon: Settings },
       ]
     }
   ];
 
   const hasAccess = (item: any) => {
-    if (item.role === 'admin' && userRole !== 'admin') return false;
-    if (item.premium && userRole === 'client') return false;
+    if (item.role === 'admin' && userRole !== UserRole.ADMIN) return false;
+    if (item.premium && userRole === UserRole.CLIENT_BASIC) return false;
     return true;
   };
 

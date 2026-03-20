@@ -1074,28 +1074,28 @@ const ClientSegmentView: React.FC = () => {
                   <div className="text-sm font-bold text-slate-200">Стрибок імпорту</div>
                   <Switch
                     checked={businessRadar.signals.importSpike}
-                    onCheckedChange={(v) => updateBusinessRadar({ signals: { importSpike: v } })}
+                    onCheckedChange={(v) => updateBusinessRadar({ signals: { ...businessRadar.signals, importSpike: v } })}
                   />
                 </div>
                 <div className="md:col-span-6 flex items-center justify-between gap-3">
                   <div className="text-sm font-bold text-slate-200">Ціновий шок</div>
                   <Switch
                     checked={businessRadar.signals.priceShock}
-                    onCheckedChange={(v) => updateBusinessRadar({ signals: { priceShock: v } })}
+                    onCheckedChange={(v) => updateBusinessRadar({ signals: { ...businessRadar.signals, priceShock: v } })}
                   />
                 </div>
                 <div className="md:col-span-6 flex items-center justify-between gap-3">
                   <div className="text-sm font-bold text-slate-200">Нові гравці</div>
                   <Switch
                     checked={businessRadar.signals.newPlayers}
-                    onCheckedChange={(v) => updateBusinessRadar({ signals: { newPlayers: v } })}
+                    onCheckedChange={(v) => updateBusinessRadar({ signals: { ...businessRadar.signals, newPlayers: v } })}
                   />
                 </div>
                 <div className="md:col-span-6 flex items-center justify-between gap-3">
                   <div className="text-sm font-bold text-slate-200">Санкційний ризик</div>
                   <Switch
                     checked={businessRadar.signals.sanctionsRisk}
-                    onCheckedChange={(v) => updateBusinessRadar({ signals: { sanctionsRisk: v } })}
+                    onCheckedChange={(v) => updateBusinessRadar({ signals: { ...businessRadar.signals, sanctionsRisk: v } })}
                   />
                 </div>
 
@@ -1105,7 +1105,7 @@ const ClientSegmentView: React.FC = () => {
                     id="th-import"
                     type="number"
                     value={businessRadar.thresholds.importSpikePct}
-                    onChange={(e) => updateBusinessRadar({ thresholds: { importSpikePct: Number(e.target.value) } })}
+                    onChange={(e) => updateBusinessRadar({ thresholds: { ...businessRadar.thresholds, importSpikePct: Number(e.target.value) } })}
                     className="bg-slate-950/40 border-slate-700/60"
                   />
                 </div>
@@ -1115,7 +1115,7 @@ const ClientSegmentView: React.FC = () => {
                     id="th-price"
                     type="number"
                     value={businessRadar.thresholds.priceShockPct}
-                    onChange={(e) => updateBusinessRadar({ thresholds: { priceShockPct: Number(e.target.value) } })}
+                    onChange={(e) => updateBusinessRadar({ thresholds: { ...businessRadar.thresholds, priceShockPct: Number(e.target.value) } })}
                     className="bg-slate-950/40 border-slate-700/60"
                   />
                 </div>
@@ -1125,7 +1125,7 @@ const ClientSegmentView: React.FC = () => {
                     id="th-new"
                     type="number"
                     value={businessRadar.thresholds.newPlayersCount}
-                    onChange={(e) => updateBusinessRadar({ thresholds: { newPlayersCount: Number(e.target.value) } })}
+                    onChange={(e) => updateBusinessRadar({ thresholds: { ...businessRadar.thresholds, newPlayersCount: Number(e.target.value) } })}
                     className="bg-slate-950/40 border-slate-700/60"
                   />
                 </div>

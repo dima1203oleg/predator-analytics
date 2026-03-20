@@ -12,18 +12,22 @@ RUN npm run build
 # Stage 2: Runtime (nginx with non-root user)
 FROM nginx:alpine
 
+ENV API_UPSTREAM=http://host.docker.internal:9080
+
 # Create non-root user 'predator' per HR-05
 RUN addgroup -g 1001 -S predator && \
     adduser -S predator -u 1001 && \
     chown -R predator:predator /var/cache/nginx && \
     chown -R predator:predator /var/log/nginx && \
     chown -R predator:predator /etc/nginx/conf.d && \
+    mkdir -p /etc/nginx/templates && \
+    chown -R predator:predator /etc/nginx/templates && \
     touch /var/run/nginx.pid && \
     chown predator:predator /var/run/nginx.pid
 
 # Copy nginx config
 RUN rm /etc/nginx/conf.d/default.conf
-COPY --chown=predator:predator nginx.conf /etc/nginx/conf.d/default.conf
+COPY --chown=predator:predator nginx.conf /etc/nginx/templates/default.conf.template
 
 # Copy built app from builder
 COPY --from=builder --chown=predator:predator /build/dist /usr/share/nginx/html

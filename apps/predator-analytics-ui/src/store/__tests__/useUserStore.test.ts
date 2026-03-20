@@ -55,15 +55,15 @@ describe('useUserStore', () => {
     // Потім логаут. Мокаємо window.location.href, так як logout робить redirect
     const originalLocation = window.location;
     delete (window as any).location;
-    window.location = { ...originalLocation, href: '' } as unknown as Location;
+    (window as any).location = { ...originalLocation, href: '' };
 
     useUserStore.getState().logout()
     
     const state = useUserStore.getState()
     expect(state.user).toBeNull()
     expect(state.isAuthenticated).toBe(false)
-    expect(state.isAdmin).toBe(false)
+    expect(state.isAdmin).toBe(false);
     
-    window.location = originalLocation;
+    (window as any).location = originalLocation;
   })
 })

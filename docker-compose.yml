@@ -352,6 +352,8 @@ services:
       dockerfile: Dockerfile
     container_name: predator_frontend
     ports: ["3030:3030"]
+    environment:
+      - API_UPSTREAM=http://predator_backend:8000
     depends_on: [backend]
     restart: unless-stopped
     networks: [predator-network]

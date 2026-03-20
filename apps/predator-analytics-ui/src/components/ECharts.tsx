@@ -1,5 +1,5 @@
 import React from "react";
-import ReactECharts from "@/components/ECharts";
+import ReactECharts from "echarts-for-react";
 import { useEchartsTheme } from "@/hooks/useEchartsTheme";
 
 type ReactEChartsProps = React.ComponentProps<typeof ReactECharts>;

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Crown, Lock, Power, Scan, ShieldAlert, Terminal, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { UserRole } from '../config/roles';
 import { SubscriptionTier, useUser } from '../context/UserContext';
 import { MatrixBackground } from './ui/MatrixBackground';
@@ -38,7 +39,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
         if (role === UserRole.CLIENT_PREMIUM) tier = SubscriptionTier.PRO;
         if (role === UserRole.ADMIN) tier = SubscriptionTier.ENTERPRISE;
 
-        setUser({
+                // Apply user update synchronously to avoid race conditions
+                // where other components mount and read `user` before it's populated.
+                flushSync(() => {
+                    setUser({
             id:  role === UserRole.ADMIN ? 'admin-1' : 'client-1',
             name: role === UserRole.ADMIN ? 'Командир' : role === UserRole.CLIENT_PREMIUM ? 'Старший Аналітик' : 'Оператор',
             email: role === UserRole.ADMIN ? 'admin@predator.ai' : 'user@client.com',
@@ -48,9 +52,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             tenant_name: 'PREDATOR_CORP',
             last_login: new Date().toISOString(),
             data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
-        });
+                    });
+                });
 
-        onLogin();
+                // Now it's safe to navigate — user state was flushed synchronously.
+                onLogin();
     };
 
     return (

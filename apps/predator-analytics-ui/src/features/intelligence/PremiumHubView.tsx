@@ -24,6 +24,7 @@ import {
   Cpu, Atom, Dna, Share2, MousePointer2, Terminal
 } from 'lucide-react';
 import { useAppStore, InterlinkPersona } from '@/store/useAppStore';
+import { UserRole } from '@/config/roles';
 import { cn } from '@/utils/cn';
 import { ViewHeader } from '@/components/ViewHeader';
 import { premiumLocales } from '@/locales/uk/premium';
@@ -230,7 +231,7 @@ const PremiumHubView: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  if (userRole === 'client') {
+  if (userRole === UserRole.CLIENT_BASIC) {
     return <HolographicAccessGate />;
   }
 

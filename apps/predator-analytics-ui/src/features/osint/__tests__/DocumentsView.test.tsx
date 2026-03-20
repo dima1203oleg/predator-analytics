@@ -81,7 +81,7 @@ vi.mock('@/components/NeutralizedContent', () => ({
 }));
 
 // Mock window.scrollTo
-window.scrollTo = vi.fn();
+window.scrollTo = vi.fn() as any;
 
 describe('DocumentsView', () => {
     const mockDocs = [

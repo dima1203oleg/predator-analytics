@@ -36,11 +36,9 @@ import {
   AlertCircle
 } from 'lucide-react';
 
-// ========================
-// Types
-// ========================
+import { UserRole } from '../../config/roles';
 
-type PlanId = 'free' | 'business' | 'government' | 'premium' | 'enterprise';
+type PlanId = UserRole | 'government' | 'enterprise'; // Maintain alignment with existing mock logic while using enum values
 
 interface Plan {
   id: PlanId;
@@ -77,7 +75,7 @@ interface UsageMetric {
 
 const plans: Plan[] = [
   {
-    id: 'free',
+    id: UserRole.CLIENT_BASIC,
     name: 'Free',
     price: 0,
     currency: 'USD',
@@ -97,7 +95,7 @@ const plans: Plan[] = [
     ]
   },
   {
-    id: 'business',
+    id: 'business' as PlanId, // Specific mock category, not directly a base role
     name: 'Business',
     price: 299,
     currency: 'USD',
@@ -138,7 +136,7 @@ const plans: Plan[] = [
     ]
   },
   {
-    id: 'premium',
+    id: UserRole.CLIENT_PREMIUM,
     name: 'Premium',
     price: 999,
     currency: 'USD',

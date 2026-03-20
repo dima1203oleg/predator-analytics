@@ -205,7 +205,7 @@ const DashboardView: React.FC = () => {
       ]);
       setMetrics(mRes);
       setRiskSectors(rRes);
-      setAlerts(aRes.items && aRes.items.length > 0 ? aRes.items : [
+      setAlerts(Array.isArray(aRes.items) && aRes.items.length > 0 ? aRes.items : [
         { id: '1', type: 'КРИТИЧНА_АНОМАЛІЯ', message: 'Виявлено системне заниження митної вартості в секторі AGRO_TECH', severity: 'critical', timestamp: 'Щойно', sector: 'ІМПОРТ' },
         { id: '2', type: 'НЕЙРО_СИГНАЛ', message: 'Прогноз дефіциту енергоносіїв на Q3 на основі морських логістичних потоків', severity: 'warning', timestamp: '2 хв тому', sector: 'ЕНЕРГЕТИКА' },
         { id: '3', type: 'САНКЦІЙНИЙ_КОНТРОЛЬ', message: 'Спроба транзиту товарів подвійного призначення через "фіктивного" посередника', severity: 'critical', timestamp: '5 хв тому', sector: 'БЕЗПЕКА' }

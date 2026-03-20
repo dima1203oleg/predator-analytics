@@ -89,7 +89,7 @@ vi.mock('@/components/ui/badge', () => ({
 }));
 
 // Mock window.scrollTo to prevent errors
-window.scrollTo = vi.fn();
+window.scrollTo = vi.fn() as any;
 
 describe('DataGovView', () => {
     const mockDatasets = [

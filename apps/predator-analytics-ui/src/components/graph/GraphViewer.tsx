@@ -273,7 +273,7 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
 
     const cy = cytoscape({
       container: containerRef.current,
-      style: getCytoscapeStyle(highVisibility) as cytoscape.Stylesheet[],
+      style: getCytoscapeStyle(highVisibility) as cytoscape.StylesheetStyle[],
       layout: LAYOUTS[selectedLayout],
       minZoom: 0.1,
       maxZoom: 5,
@@ -330,7 +330,7 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
   // Оновлення стилів для режиму видимості
   useEffect(() => {
     if (!cyRef.current) return;
-    cyRef.current.style(getCytoscapeStyle(highVisibility) as cytoscape.Stylesheet[]).update();
+    cyRef.current.style(getCytoscapeStyle(highVisibility) as cytoscape.StylesheetStyle[]).update();
   }, [highVisibility]);
 
   // Оновлення даних графа

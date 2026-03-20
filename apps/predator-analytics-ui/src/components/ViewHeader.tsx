@@ -1,12 +1,13 @@
 
 import React from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, LucideIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ViewHeaderProps {
   title: string | React.ReactNode;
-  icon?: React.ReactNode;
-  breadcrumbs: string[];
+  subtitle?: string;
+  icon?: React.ReactNode | LucideIcon | React.ElementType;
+  breadcrumbs?: string[];
   stats?: {
     label: string;
     value: string;
@@ -20,8 +21,9 @@ interface ViewHeaderProps {
 
 export const ViewHeader: React.FC<ViewHeaderProps> = ({
   title,
+  subtitle,
   icon,
-  breadcrumbs,
+  breadcrumbs = [],
   stats,
   actions,
   className = ''
@@ -49,14 +51,17 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
               className="p-3 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700/50 shadow-[inset_0_0_20px_rgba(0,0,0,0.2)] text-primary-500 shrink-0 relative  group"
             >
               <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              {icon}
+              {typeof icon === 'function' || (typeof icon === 'object' && 'render' in (icon as any))
+                ? React.createElement(icon as any, { className: 'w-6 h-6' })
+                : icon as React.ReactNode}
             </motion.div>
           )}
 
           <div className="min-w-0">
             {/* Breadcrumbs */}
-            <div className="flex items-center gap-1.5 text-[10px] font-mono text-slate-300 uppercase tracking-widest mb-1.5 flex-wrap">
-              {breadcrumbs.map((crumb, idx) => (
+            {breadcrumbs.length > 0 && (
+              <div className="flex items-center gap-1.5 text-[10px] font-mono text-slate-300 uppercase tracking-widest mb-1.5 flex-wrap">
+                {breadcrumbs.map((crumb, idx) => (
                 <React.Fragment key={idx}>
                   <span className={`transition-colors duration-200 ${idx === breadcrumbs.length - 1 ? 'text-primary-300 font-bold' : 'text-slate-400 hover:text-slate-300 cursor-default'}`}>
                     {crumb}
@@ -64,8 +69,10 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
                   {idx < breadcrumbs.length - 1 && <ChevronRight size={10} className="text-slate-500 shrink-0" />}
                 </React.Fragment>
               ))}
-            </div>
+              </div>
+            )}
             <h2 className="text-2xl font-bold text-iridescent leading-none truncate tracking-tight font-display drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">{title}</h2>
+            {subtitle && <p className="text-sm mt-1.5 text-slate-400">{subtitle}</p>}
           </div>
         </div>
 

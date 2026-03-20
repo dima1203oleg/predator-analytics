@@ -94,7 +94,7 @@ spec:
               containerPort: 3030
               protocol: TCP
           env:
-            - name: VITE_API_URL
+            - name: API_UPSTREAM
               value: "http://{{ include "predator.fullname" . }}-core-api:{{ .Values.coreApi.service.port }}"
           livenessProbe:
             httpGet:

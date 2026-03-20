@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, Database, Menu, Monitor, Search, Shield, ShieldAlert, Smartphone, Tablet, Activity, Zap, Brain, Radio } from 'lucide-react';
+import { Cpu, Database, Menu, Monitor, Search, Shield, ShieldAlert, Smartphone, Tablet, Activity, Zap, Brain, Radio, Building2, ChevronDown, MessageSquare, Sparkles } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
@@ -55,10 +55,12 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   const [cpuHistory, setCpuHistory] = useState<number[]>(Array(12).fill(0));
   const [alertCount, setAlertCount] = useState(0);
   const {
-    userRole, setRole,
     persona, setPersona,
     deviceMode, setDeviceMode,
-    toggleSidebar
+    toggleSidebar,
+    tenant, setTenant,
+    isPlanMode, setPlanMode,
+    isCopilotOpen, setCopilotOpen
   } = useAppStore();
 
   const cpuDisplay = useAnimatedCounter(liveMetrics?.cpu ?? 0);
@@ -130,9 +132,49 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
         </div>
       </div>
 
-      {/* ── CENTER: Live HUD ── */}
-      <div className="hidden xl:flex items-center gap-0.5 bg-black/30 border border-white/5 px-3 py-1.5 rounded-2xl backdrop-blur-sm">
+      {/* ── CENTER: Context & Mode ── */}
+      <div className="flex items-center gap-6">
+        {/* Tenant Selector */}
+        <div className="hidden lg:flex items-center gap-3 px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all cursor-pointer group">
+          <div className="p-1.5 bg-indigo-500/10 rounded-lg text-indigo-400 group-hover:text-indigo-300">
+            <Building2 size={14} />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[8px] text-slate-400 font-black uppercase tracking-widest leading-none">Департамент</span>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-[12px] font-bold text-white">{tenant}</span>
+              <ChevronDown size={12} className="text-slate-500 group-hover:text-white transition-colors" />
+            </div>
+          </div>
+        </div>
 
+        {/* Mode Switcher (Plan / Fast) */}
+        <div className="hidden md:flex items-center p-1 bg-black/40 rounded-xl border border-white/5">
+          <button
+            onClick={() => setPlanMode(true)}
+            className={cn(
+              "flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all",
+              isPlanMode ? "bg-indigo-600 text-white shadow-lg" : "text-slate-500 hover:text-slate-300"
+            )}
+          >
+            <Brain size={14} className={isPlanMode ? "animate-pulse" : ""} />
+            <span className="text-[10px] font-black uppercase tracking-widest">План</span>
+          </button>
+          <button
+            onClick={() => setPlanMode(false)}
+            className={cn(
+              "flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all",
+              !isPlanMode ? "bg-emerald-600 text-white shadow-lg" : "text-slate-500 hover:text-slate-300"
+            )}
+          >
+            <Zap size={14} className={!isPlanMode ? "animate-pulse" : ""} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Швидкий</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ── STATUS: Metrics ── */}
+      <div className="hidden 2xl:flex items-center gap-3">
         {/* Alert count */}
         <div className={cn("flex items-center gap-2 px-3 py-1.5 rounded-xl", alertCount > 0 ? 'bg-red-500/10' : 'bg-slate-900/50')}>
           <div className={cn("p-1 rounded-lg", alertCount > 0 ? 'bg-red-500/20 text-red-400' : 'bg-slate-800 text-slate-500')}>
@@ -294,6 +336,27 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             </div>
           </button>
         </div>
+
+        <div className="h-7 w-px bg-white/5 hidden md:block" />
+
+        {/* AI Copilot Toggle */}
+        <button
+          onClick={() => setCopilotOpen(!isCopilotOpen)}
+          className={cn(
+            "p-2 rounded-xl transition-all border group relative",
+            isCopilotOpen 
+              ? "bg-cyan-500/20 border-cyan-500/50 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)]" 
+              : "bg-white/5 border-white/10 text-slate-400 hover:border-cyan-500/30 hover:text-slate-200"
+          )}
+          title="AI Copilot"
+        >
+          <Sparkles size={18} className={cn(isCopilotOpen && "animate-pulse")} />
+          {isCopilotOpen && (
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-cyan-400 rounded-full border-2 border-slate-950 animate-ping" />
+          )}
+        </button>
+
+        <div className="h-7 w-px bg-white/5 hidden md:block" />
 
         <OperatorIdentity />
       </div>

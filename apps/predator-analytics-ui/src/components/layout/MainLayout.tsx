@@ -12,6 +12,7 @@ import { CommandPalette } from '../ui/CommandPalette';
 import { CyberTerminal } from '../ui/CyberTerminal';
 import { MatrixBackground } from '../ui/MatrixBackground';
 import DynamicSystemAura from './DynamicSystemAura';
+import { Predator as AICopilot } from '../premium/AICopilot';
 
 
 interface MainLayoutProps {
@@ -121,11 +122,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <CommandPalette />
       <TopBar />
       <Sidebar />
+      <AICopilot />
 
       <main
         className={cn(
           "pt-16 transition-all duration-300 min-h-screen flex flex-col relative",
-          isSidebarOpen ? "md:ml-[240px]" : "md:ml-[80px]"
+          isSidebarOpen ? "md:ml-[260px]" : "md:ml-[80px]"
         )}
       >
         {/* Transitional Noise Overlay */}

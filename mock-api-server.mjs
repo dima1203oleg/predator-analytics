@@ -3655,6 +3655,47 @@ app.post('/api/v1/factory/ingest', (req, res) => {
     });
 });
 
+
+// --- Analytics Endpoints ---
+app.get('/api/v1/analytics/forecast', (req, res) => {
+  res.json([
+    { name: 'Jan', value: 4000, prediction: 4200 },
+    { name: 'Feb', value: 3000, prediction: 3100 },
+    { name: 'Mar', value: 2000, prediction: 2200 },
+    { name: 'Apr', value: 2780, prediction: 2900 },
+    { name: 'May', value: 1890, prediction: 2100 },
+    { name: 'Jun', value: 2390, prediction: 2500 },
+    { name: 'Jul', value: 3490, prediction: 3600 },
+  ]);
+});
+
+app.get('/api/v1/analytics/market-structure', (req, res) => {
+  res.json([
+    { name: 'Електроніка', value: 400, color: '#10b981' },
+    { name: 'Паливо', value: 300, color: '#3b82f6' },
+    { name: 'Метал', value: 300, color: '#8b5cf6' },
+    { name: 'Фармацевтика', value: 200, color: '#f59e0b' },
+  ]);
+});
+
+app.get('/api/v1/analytics/regional-activity', (req, res) => {
+  res.json([
+    { name: 'Київська', imports: 4000, exports: 2400 },
+    { name: 'Одеська', imports: 3000, exports: 1398 },
+    { name: 'Львівська', imports: 2000, exports: 9800 },
+    { name: 'Харківська', imports: 2780, exports: 3908 },
+  ]);
+});
+
+app.get('/api/v1/analytics/dashboard-metrics', (req, res) => {
+  res.json([
+    { label: 'Загальний обсяг', value: '1.2B ₴', change: 12, trend: 'up' },
+    { label: 'Активні декларації', value: '45.2k', change: -5, trend: 'down' },
+    { label: 'Рівень ризику', value: 'Low', change: 0, trend: 'neutral' },
+    { label: 'Neural Accuracy', value: '98.4%', change: 2, trend: 'up' },
+  ]);
+});
+
 app.get('/api/v1/alerts', (req, res) => {
     res.json({
         items: [

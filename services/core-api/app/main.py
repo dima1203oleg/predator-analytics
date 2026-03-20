@@ -32,6 +32,7 @@ from app.routers import (
     competitors_router,
     copilot_router,
     declarations_router,
+    factory_router,
     graph_router,
     ingestion_router,
     intelligence_router,
@@ -46,6 +47,7 @@ from app.routers import (
     som_router,
     warroom_router,
 )
+from app.services.factory_repository import FactoryRepository
 from app.services.kafka_service import close_kafka, init_kafka
 from app.services.minio_service import close_minio, init_minio
 from app.services.redis_service import close_redis, init_redis
@@ -93,6 +95,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
         # 5. Init Redis (§2.6)
         await init_redis()
+
+        # 6. Init Factory Repository
+        app.state.factory_repo = FactoryRepository(graph_db.driver)
+        logger.info("Factory Repository initialized")
 
         logger.info("Core API успішно ініціалізовано")
 
@@ -146,6 +152,7 @@ ROUTERS = [
     ("/api/v1", competitors_router),
     ("/api/v1", copilot_router),
     ("/api/v1", declarations_router),
+    ("/api/v1", factory_router),
     ("/api/v1", graph_router),
     ("/api/v1", ingestion_router),
     ("/api/v1", intelligence_router),

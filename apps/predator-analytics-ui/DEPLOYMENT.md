@@ -121,7 +121,8 @@ docker-compose -f ../../docker-compose.frontend.yml up -d
 docker run -d \
   --name predator-frontend \
   -p 3030:3030 \
-  -e VITE_API_URL=http://localhost:8000 \
+  -e API_UPSTREAM=http://host.docker.internal:9080 \
+  --add-host=host.docker.internal:host-gateway \
   --restart unless-stopped \
   predator-analytics-ui:v55.1.0-production
 ```
