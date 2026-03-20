@@ -25,8 +25,9 @@ import { OSINTTool } from '@/types';
 import { CERSScoreCard } from '../../components/premium/CERSScoreCard';
 import { InvestigationCanvasWidget } from '../../components/premium/InvestigationCanvasWidget';
 import { OsintCommandCenter } from '../../components/osint/OsintCommandCenter';
+import { OsintGraphExplorer } from '../../components/osint/OsintGraphExplorer';
 
-type StudioTab = 'osint' | 'datasets' | 'graph';
+type StudioTab = 'osint' | 'osint-graph' | 'datasets' | 'graph';
 
 const DatasetStudio: React.FC = () => {
     const [isGenerating, setIsGenerating] = useState(false);
@@ -54,8 +55,9 @@ const DatasetStudio: React.FC = () => {
 
     const TABS: { id: StudioTab; label: string; icon: React.ReactNode }[] = [
         { id: 'osint', label: 'OSINT КОМАНДНИЙ ЦЕНТР', icon: <Radar size={16} /> },
+        { id: 'osint-graph', label: 'OSINT ГРАФ', icon: <Network size={16} className="text-cyan-400" /> },
         { id: 'datasets', label: 'ДАТАСЕТИ & МОДЕЛІ', icon: <Database size={16} /> },
-        { id: 'graph', label: 'ГРАФ ЗВ\'ЯЗКІВ', icon: <Network size={16} /> },
+        { id: 'graph', label: 'CERS ПРОФІЛЬ', icon: <Activity size={16} className="text-indigo-400" /> },
     ];
 
     return (
@@ -106,6 +108,19 @@ const DatasetStudio: React.FC = () => {
                             className="relative z-10"
                         >
                             <OsintCommandCenter />
+                        </motion.div>
+                    )}
+
+                    {/* ─── OSINT GRAPH EXPLORER ─── */}
+                    {activeTab === 'osint-graph' && (
+                        <motion.div
+                            key="osint-graph"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className="relative z-10 h-[800px] w-full bg-[#020617] rounded-3xl overflow-hidden border border-slate-800 shadow-2xl"
+                        >
+                            <OsintGraphExplorer />
                         </motion.div>
                     )}
 
