@@ -3806,15 +3806,197 @@ app.get('/api/v1/cers/company/:edrpou/artifacts', (req, res) => {
 });
 
 // =============================================
-// 🔭 OSINT Tools Mock
+// 🔭 OSINT Tools Mock — повний перелік з ТЗ
 // =============================================
 app.get('/api/v1/osint/tools', (req, res) => {
     res.json([
-        { id: 'sherlock', name: 'Sherlock', category: 'СОЦМЕРЕЖІ', status: 'СКАНУЄ', findings: 142, lastScan: 'Зараз', color: '#a855f7' },
-        { id: 'amass', name: 'Amass', category: 'МЕРЕЖА', status: 'ОНЛАЙН', findings: 87, lastScan: '2хв тому', color: '#3b82f6' },
-        { id: 'spiderfoot', name: 'SpiderFoot', category: 'РОЗВІДКА', status: 'СКАНУЄ', findings: 450, lastScan: 'Зараз', color: '#10b981' },
-        { id: 'theHarvester', name: 'theHarvester', category: 'EMAIL/DOMAINS', status: 'ОФЛАЙН', findings: 12, lastScan: '1г тому', color: '#64748b' }
+        { id: 'sherlock', name: 'Sherlock', category: 'СОЦМЕРЕЖІ', status: 'СКАНУЄ', findings: 1420, lastScan: 'Зараз', color: '#a855f7', description: 'Пошук профілів за username у 400+ соцмережах', accuracy: 94 },
+        { id: 'amass', name: 'Amass (OWASP)', category: 'МЕРЕЖА', status: 'ОНЛАЙН', findings: 872, lastScan: '2хв тому', color: '#3b82f6', description: 'DNS enumeration, subdomain discovery', accuracy: 97 },
+        { id: 'spiderfoot', name: 'SpiderFoot HX', category: 'РОЗВІДКА', status: 'СКАНУЄ', findings: 4501, lastScan: 'Зараз', color: '#10b981', description: 'Автоматизований OSINT з 200+ модулів', accuracy: 91 },
+        { id: 'theHarvester', name: 'theHarvester', category: 'EMAIL/DOMAINS', status: 'ОНЛАЙН', findings: 312, lastScan: '15хв тому', color: '#f59e0b', description: 'Збір email, піддоменів, хостів', accuracy: 88 },
+        { id: 'maigret', name: 'Maigret', category: 'СОЦМЕРЕЖІ', status: 'ОНЛАЙН', findings: 639, lastScan: '5хв тому', color: '#ef4444', description: 'Глибокий пошук у 2500+ сервісах', accuracy: 92 },
+        { id: 'maltego', name: 'Maltego CE', category: 'ГРАФ-АНАЛІЗ', status: 'ОНЛАЙН', findings: 3150, lastScan: '3хв тому', color: '#06b6d4', description: 'Візуальний граф-аналіз зв\'язків', accuracy: 96 },
+        { id: 'holehe', name: 'Holehe', category: 'EMAIL/BREACH', status: 'СКАНУЄ', findings: 187, lastScan: 'Зараз', color: '#8b5cf6', description: 'Перевірка email у зламаних базах', accuracy: 85 },
+        { id: 'ghunt', name: 'GHunt v2', category: 'GOOGLE OSINT', status: 'ОФЛАЙН', findings: 56, lastScan: '1г тому', color: '#64748b', description: 'Розвідка Google акаунтів', accuracy: 78 },
+        { id: 'osrframework', name: 'OSRFramework', category: 'МУЛЬТИ-OSINT', status: 'ОНЛАЙН', findings: 945, lastScan: '8хв тому', color: '#ec4899', description: 'Пакет з 6 OSINT-інструментів', accuracy: 87 },
+        { id: 'recon-ng', name: 'Recon-ng', category: 'РОЗВІДКА', status: 'ОНЛАЙН', findings: 1230, lastScan: '1хв тому', color: '#14b8a6', description: 'Web-reconnaissance фреймворк', accuracy: 93 },
+        { id: 'photon', name: 'Photon', category: 'WEB CRAWL', status: 'ОНЛАЙН', findings: 2780, lastScan: '4хв тому', color: '#f97316', description: 'Швидкий краулер для збору URL, email, JS-файлів', accuracy: 90 },
+        { id: 'twint', name: 'Twint/Nitter', category: 'СОЦМЕРЕЖІ', status: 'ОФЛАЙН', findings: 423, lastScan: '2г тому', color: '#6366f1', description: 'Аналіз Twitter/X без API', accuracy: 82 }
     ]);
+});
+
+// 🏛️ Державні реєстри України — повний каталог з ТЗ (250+)
+app.get('/api/v1/osint/registries', (req, res) => {
+    res.json({
+        totalRegistries: 267,
+        connected: 184,
+        categories: [
+            {
+                id: 'EDR', name: 'Реєстрація юросіб', icon: 'Building2', color: '#3b82f6', count: 12,
+                registries: [
+                    { id: 'edr', name: 'ЄДР — Єдиний державний реєстр', status: 'ACTIVE', records: 2841000, lastSync: '2хв тому', api: 'REST' },
+                    { id: 'fop', name: 'Реєстр ФОП', status: 'ACTIVE', records: 1920000, lastSync: '5хв тому', api: 'REST' },
+                    { id: 'bo', name: 'Реєстр бенефіціарних власників', status: 'ACTIVE', records: 890000, lastSync: '10хв тому', api: 'REST' },
+                    { id: 'uo', name: 'Реєстр громадських об\'єднань', status: 'ACTIVE', records: 125000, lastSync: '15хв тому', api: 'CSV' },
+                ]
+            },
+            {
+                id: 'TAX', name: 'Податкова система', icon: 'Receipt', color: '#ef4444', count: 18,
+                registries: [
+                    { id: 'erpn', name: 'ЄРПН — Реєстр платників ПДВ', status: 'ACTIVE', records: 520000, lastSync: '3хв тому', api: 'REST' },
+                    { id: 'tax-debt', name: 'Реєстр податкового боргу', status: 'ACTIVE', records: 412000, lastSync: '8хв тому', api: 'REST' },
+                    { id: 'single-tax', name: 'Реєстр платників єдиного податку', status: 'ACTIVE', records: 1720000, lastSync: '12хв тому', api: 'CSV' },
+                    { id: 'tax-invoices', name: 'Реєстр накладних (ЄРПН)', status: 'ACTIVE', records: 48000000, lastSync: '1хв тому', api: 'REST' },
+                ]
+            },
+            {
+                id: 'CUSTOMS', name: 'Митна система ДМСУ', icon: 'Shield', color: '#f59e0b', count: 22,
+                registries: [
+                    { id: 'customs-decl', name: 'Митні декларації (МД)', status: 'ACTIVE', records: 12400000, lastSync: '30с тому', api: 'REST' },
+                    { id: 'customs-risk', name: 'Профілі ризику ДМСУ', status: 'ACTIVE', records: 84000, lastSync: '5хв тому', api: 'REST' },
+                    { id: 'uktzed', name: 'УКТЗЕД — Товарна номенклатура', status: 'ACTIVE', records: 21000, lastSync: '1г тому', api: 'REST' },
+                    { id: 'customs-violations', name: 'Реєстр порушень ПМП', status: 'ACTIVE', records: 340000, lastSync: '15хв тому', api: 'REST' },
+                    { id: 'customs-aeo', name: 'Реєстр AEO (Уповноважених)', status: 'ACTIVE', records: 450, lastSync: '1г тому', api: 'CSV' },
+                ]
+            },
+            {
+                id: 'COURT', name: 'Судова система', icon: 'Gavel', color: '#8b5cf6', count: 15,
+                registries: [
+                    { id: 'court-register', name: 'Єдиний реєстр судових рішень', status: 'ACTIVE', records: 106000000, lastSync: '1хв тому', api: 'REST' },
+                    { id: 'enforcement', name: 'Реєстр виконавчих проваджень', status: 'ACTIVE', records: 8700000, lastSync: '10хв тому', api: 'REST' },
+                    { id: 'debtors', name: 'Реєстр боржників', status: 'ACTIVE', records: 2100000, lastSync: '20хв тому', api: 'REST' },
+                    { id: 'bankruptcy', name: 'Реєстр банкрутів', status: 'ACTIVE', records: 78000, lastSync: '30хв тому', api: 'CSV' },
+                ]
+            },
+            {
+                id: 'SANCTIONS', name: 'Санкційні списки', icon: 'Ban', color: '#dc2626', count: 8,
+                registries: [
+                    { id: 'rnbo', name: 'Санкції РНБО України', status: 'ACTIVE', records: 14200, lastSync: '5хв тому', api: 'REST' },
+                    { id: 'eu-sanctions', name: 'Санкції ЄС (Consolidated)', status: 'ACTIVE', records: 32000, lastSync: '1г тому', api: 'REST' },
+                    { id: 'ofac', name: 'OFAC SDN List (USA)', status: 'ACTIVE', records: 12500, lastSync: '2г тому', api: 'REST' },
+                    { id: 'un-sanctions', name: 'Санкції ООН', status: 'ACTIVE', records: 8900, lastSync: '4г тому', api: 'XML' },
+                    { id: 'uk-sanctions', name: 'UK Sanctions List', status: 'ACTIVE', records: 5600, lastSync: '6г тому', api: 'CSV' },
+                ]
+            },
+            {
+                id: 'PROCUREMENT', name: 'Публічні закупівлі', icon: 'ShoppingCart', color: '#06b6d4', count: 10,
+                registries: [
+                    { id: 'prozorro', name: 'Prozorro — Публічні закупівлі', status: 'ACTIVE', records: 28000000, lastSync: '2хв тому', api: 'REST' },
+                    { id: 'prozorro-sale', name: 'Prozorro.Sale (Аренда/Продаж)', status: 'ACTIVE', records: 450000, lastSync: '15хв тому', api: 'REST' },
+                    { id: 'dozorro', name: 'Dozorro — Моніторинг', status: 'ACTIVE', records: 320000, lastSync: '30хв тому', api: 'REST' },
+                    { id: 'ring', name: 'RING — Інвестиційний портал', status: 'ACTIVE', records: 12000, lastSync: '1г тому', api: 'REST' },
+                ]
+            },
+            {
+                id: 'PROPERTY', name: 'Реєстри нерухомості', icon: 'Home', color: '#10b981', count: 14,
+                registries: [
+                    { id: 'land-cadastre', name: 'Державний земельний кадастр', status: 'ACTIVE', records: 15800000, lastSync: '10хв тому', api: 'REST' },
+                    { id: 'property', name: 'Реєстр речових прав', status: 'ACTIVE', records: 42000000, lastSync: '5хв тому', api: 'REST' },
+                    { id: 'drorm', name: 'ДРОРМ — Обтяження рухомого майна', status: 'ACTIVE', records: 3200000, lastSync: '15хв тому', api: 'REST' },
+                ]
+            },
+            {
+                id: 'FINANCIAL', name: 'Фінансова розвідка', icon: 'Banknote', color: '#eab308', count: 16,
+                registries: [
+                    { id: 'nbu-register', name: 'Реєстр НБУ (Банки/НКО)', status: 'ACTIVE', records: 840, lastSync: '1г тому', api: 'REST' },
+                    { id: 'stock-market', name: 'Реєстр НКЦПФР', status: 'ACTIVE', records: 12300, lastSync: '2г тому', api: 'REST' },
+                    { id: 'pep', name: 'Реєстр PEP (Публічні діячі)', status: 'ACTIVE', records: 52000, lastSync: '30хв тому', api: 'REST' },
+                    { id: 'financial-monitoring', name: 'ДСФМУ — Фінансовий моніторинг', status: 'ACTIVE', records: 18000, lastSync: '4г тому', api: 'REST' },
+                ]
+            },
+            {
+                id: 'DARKWEB', name: 'DarkWeb / Витоки', icon: 'Skull', color: '#f43f5e', count: 6,
+                registries: [
+                    { id: 'hibp', name: 'Have I Been Pwned', status: 'ACTIVE', records: 14000000000, lastSync: '1г тому', api: 'REST' },
+                    { id: 'dehashed', name: 'DeHashed Breach DB', status: 'ACTIVE', records: 26000000000, lastSync: '3г тому', api: 'REST' },
+                    { id: 'leak-check', name: 'LeakCheck Intelligence', status: 'ACTIVE', records: 8000000000, lastSync: '2г тому', api: 'REST' },
+                ]
+            },
+            {
+                id: 'OPENDATABOT', name: 'OpenDataBot API', icon: 'Bot', color: '#22d3ee', count: 45,
+                registries: [
+                    { id: 'odb-company', name: 'Картка компанії', status: 'ACTIVE', records: 2800000, lastSync: '1хв тому', api: 'REST' },
+                    { id: 'odb-court', name: 'Судові справи компанії', status: 'ACTIVE', records: 15000000, lastSync: '5хв тому', api: 'REST' },
+                    { id: 'odb-enforcement', name: 'Виконавчі провадження', status: 'ACTIVE', records: 4800000, lastSync: '8хв тому', api: 'REST' },
+                    { id: 'odb-sanctions', name: 'Санкції / PEP', status: 'ACTIVE', records: 78000, lastSync: '10хв тому', api: 'REST' },
+                ]
+            }
+        ],
+        coverageStats: {
+            totalSources: 267,
+            active: 184,
+            syncing: 23,
+            offline: 12,
+            pending: 48,
+            totalRecords: '312B+',
+            lastFullSync: '2025-03-20T14:30:00Z',
+            dataFreshness: '98.7%'
+        }
+    });
+});
+
+// 📡 OSINT Live Feed — стрічка знахідок у реальному часі
+app.get('/api/v1/osint/feed', (req, res) => {
+    const now = Date.now();
+    res.json([
+        { id: 'f1', source: 'SpiderFoot HX', type: 'BREACH', severity: 'CRITICAL', target: 'ТОВ "МЕГА ІМПОРТ"', finding: 'Email менеджера виявлено у витоку Leak-2024-UA', timestamp: new Date(now - 15000).toISOString(), category: 'EMAIL/BREACH' },
+        { id: 'f2', source: 'Sherlock', type: 'SOCIAL', severity: 'MEDIUM', target: 'Іванов І.І.', finding: 'Знайдено 14 профілів у соціальних мережах', timestamp: new Date(now - 45000).toISOString(), category: 'СОЦМЕРЕЖІ' },
+        { id: 'f3', source: 'РНБО', type: 'SANCTION', severity: 'CRITICAL', target: 'Offshore Ltd. (Cyprus)', finding: 'Компанія внесена до санкційного списку РНБО #981', timestamp: new Date(now - 120000).toISOString(), category: 'САНКЦІЇ' },
+        { id: 'f4', source: 'Prozorro', type: 'PROCUREMENT', severity: 'HIGH', target: 'ТОВ "МЕГА ІМПОРТ"', finding: 'Виявлено 3 тендери з ознаками змови (антимонопольний критерій)', timestamp: new Date(now - 180000).toISOString(), category: 'ЗАКУПІВЛІ' },
+        { id: 'f5', source: 'Maltego CE', type: 'GRAPH', severity: 'HIGH', target: 'Петров П.П.', finding: 'Граф-аналіз: зв\'язок з 4 офшорними структурами (Кіпр, BVI)', timestamp: new Date(now - 300000).toISOString(), category: 'ГРАФ-АНАЛІЗ' },
+        { id: 'f6', source: 'Реєстр боржників', type: 'DEBT', severity: 'MEDIUM', target: 'ТОВ "ТЕХНО-АЛЬЯНС"', finding: 'Виконавче провадження №4891234 на суму 2.4М грн', timestamp: new Date(now - 420000).toISOString(), category: 'СУДОВА СИСТЕМА' },
+        { id: 'f7', source: 'ДМСУ', type: 'CUSTOMS', severity: 'HIGH', target: 'ТОВ "МЕГА ІМПОРТ"', finding: 'Виявлено 7 декларацій з заниженою митною вартістю (товарна група 8471)', timestamp: new Date(now - 600000).toISOString(), category: 'МИТНИЦЯ' },
+        { id: 'f8', source: 'ЄДРСР', type: 'COURT', severity: 'LOW', target: 'ТОВ "ТЕХНО-АЛЬЯНС"', finding: 'Нове судове рішення у справі №904/123/25', timestamp: new Date(now - 900000).toISOString(), category: 'СУДОВА СИСТЕМА' },
+        { id: 'f9', source: 'Amass (OWASP)', type: 'INFRA', severity: 'MEDIUM', target: 'mega-import.com.ua', finding: 'Виявлено 23 піддомени, 3 з яких мають вразливості SSL', timestamp: new Date(now - 1200000).toISOString(), category: 'МЕРЕЖА' },
+        { id: 'f10', source: 'OFAC', type: 'SANCTION', severity: 'CRITICAL', target: 'BVI Holdings Ltd.', finding: 'Пов\'язана особа у SDN List (ID: OFAC-39182)', timestamp: new Date(now - 1500000).toISOString(), category: 'САНКЦІЇ' },
+        { id: 'f11', source: 'ЄДР', type: 'REGISTRATION', severity: 'LOW', target: 'ФОП Коваленко І.В.', finding: 'Зміна виду діяльності (КВЕД 46.52)', timestamp: new Date(now - 1800000).toISOString(), category: 'РЕЄСТРАЦІЯ' },
+        { id: 'f12', source: 'DeHashed', type: 'BREACH', severity: 'CRITICAL', target: 'admin@mega-import.com.ua', finding: 'Email+Password виявлено у 3 базах витоків', timestamp: new Date(now - 2100000).toISOString(), category: 'DARKWEB' },
+    ]);
+});
+
+// 📊 OSINT Statistics — агреговані метрики
+app.get('/api/v1/osint/stats', (req, res) => {
+    res.json({
+        totalFindings: 48923,
+        criticalAlerts: 127,
+        activeScans: 4,
+        toolsOnline: 9,
+        toolsTotal: 12,
+        registriesConnected: 184,
+        registriesTotal: 267,
+        findingsByCategory: [
+            { category: 'СОЦМЕРЕЖІ', count: 8420, pct: 17.2, color: '#a855f7' },
+            { category: 'МЕРЕЖА', count: 6102, pct: 12.5, color: '#3b82f6' },
+            { category: 'РОЗВІДКА', count: 11731, pct: 24.0, color: '#10b981' },
+            { category: 'EMAIL/BREACH', count: 4499, pct: 9.2, color: '#8b5cf6' },
+            { category: 'ГРАФ-АНАЛІЗ', count: 7150, pct: 14.6, color: '#06b6d4' },
+            { category: 'САНКЦІЇ', count: 2890, pct: 5.9, color: '#dc2626' },
+            { category: 'МИТНИЦЯ', count: 3470, pct: 7.1, color: '#f59e0b' },
+            { category: 'СУДОВА СИСТЕМА', count: 2891, pct: 5.9, color: '#8b5cf6' },
+            { category: 'ЗАКУПІВЛІ', count: 1770, pct: 3.6, color: '#06b6d4' },
+        ],
+        riskHeatmap: [
+            { source: 'DarkWeb Витоки', risk: 98, count: 4499 },
+            { source: 'Санкційні списки', risk: 95, count: 2890 },
+            { source: 'Митні порушення', risk: 88, count: 3470 },
+            { source: 'Судові справи', risk: 72, count: 2891 },
+            { source: 'Тендерні відхилення', risk: 68, count: 1770 },
+            { source: 'Офшорні зв\'язки', risk: 92, count: 7150 },
+            { source: 'Соцмережі / Username', risk: 35, count: 8420 },
+            { source: 'DNS / Інфраструктура', risk: 45, count: 6102 },
+        ],
+        timeline: [
+            { hour: '00:00', findings: 120, critical: 3 },
+            { hour: '04:00', findings: 85, critical: 1 },
+            { hour: '08:00', findings: 340, critical: 12 },
+            { hour: '12:00', findings: 890, critical: 28 },
+            { hour: '14:00', findings: 1120, critical: 35 },
+            { hour: '16:00', findings: 980, critical: 22 },
+            { hour: '18:00', findings: 620, critical: 15 },
+            { hour: '20:00', findings: 410, critical: 8 },
+            { hour: '22:00', findings: 280, critical: 5 },
+        ]
+    });
 });
 
 app.post('/api/v1/osint/scan/start', (req, res) => {
