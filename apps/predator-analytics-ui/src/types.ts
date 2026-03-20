@@ -290,3 +290,39 @@ export interface RAGArtifact { id: string; type: 'DOC' | 'LOG' | 'VECTOR' | 'COD
 export interface AgentGenome { agentId: string; version: string; generation: number; capabilities: string[]; evolutionStatus: 'STABLE' | 'EVOLVING' | 'PROMOTED'; }
 export type DataSector = 'GOV' | 'BIZ' | 'MED' | 'SCI' | 'OSINT' | 'GENERAL';
 export type SourceType = 'FILE' | 'WEB' | 'API' | 'REGISTRY';
+
+// --- NEW OSINT & CERS TYPES ---
+export type JobStatus = 'IDLE' | 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'STOPPED';
+
+export interface OSINTTool {
+    id: string;
+    name: string;
+    category: 'РОЗВІДКА' | 'МЕРЕЖА' | 'ДОКУМЕНТИ' | 'СОЦМЕРЕЖІ' | string;
+    status: 'ОНЛАЙН' | 'СКАНУЄ' | 'ОФЛАЙН' | string;
+    findings: number;
+    lastScan: string;
+    color?: string;
+    icon?: any;
+}
+
+export interface CERSScoreSegment {
+    name: string;
+    score: number;
+    weight: number;
+    description: string;
+    status: 'OK' | 'WARNING' | 'CRITICAL';
+}
+
+export interface CERSCompany {
+    edrpou: string;
+    name: string;
+    type: string;
+    status: string;
+    registrationDate: string;
+    address: string;
+    director: string;
+    beneficiaries: string[];
+    riskScore: number;
+    tags: string[];
+    flags: ('SANCTIONED' | 'BANKRUPT' | 'TAX_DEBT' | 'COURT_CASES')[];
+}

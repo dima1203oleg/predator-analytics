@@ -12,6 +12,11 @@ import { dashboardApi } from './api/dashboard';
 import { factoryApi } from './api/factory';
 import { infraApi } from './api/infra';
 
+// ─── OSINT & Registries Services ────────────────────────────────────────────────────────
+import { osintService } from './unified/osint.service';
+import { cersService } from './unified/cers.service';
+import { registriesService } from './unified/registries.service';
+
 // Re-export config constants and clients for direct use in components
 export { apiClient, v45Client, API_BASE_URL, API_V45_URL, IS_TRUTH_ONLY_MODE };
 
@@ -21,7 +26,8 @@ export {
     nasApi, dataCatalogApi, optimizerApi, intelligenceApi, searchApi,
     trinityApi, somApi, autonomyApi, ingestionApi, mlApi,
     marketApi, forecastApi, diligenceApi, dashboardApi, competitorsApi,
-    factoryApi, infraApi
+    factoryApi, infraApi,
+    osintService, cersService, registriesService
 };
 
 // ─── Search API (used by SearchView, SearchConsole, SystemVerificationSuite) ──
@@ -103,6 +109,14 @@ export const api = {
     market: marketApi,
     forecast: forecastApi,
     diligence: diligenceApi,
+    dashboard: dashboardApi,
+    factory: factoryApi,
+    infra: infraApi,
+
+    // ─── OSINT & Public Records ────────────────────────────────────────────────
+    osint: osintService,
+    cers: cersService,
+    registries: registriesService,
 
     // ─── Datasets ──────────────────────────────────────────────────────────────
     datasets: datasetApi,

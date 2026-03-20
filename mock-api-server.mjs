@@ -3763,6 +3763,81 @@ app.get('/api/v1/maritime/ports', (req, res) => {
     });
 });
 
+// =============================================
+// 🧠 CERS (Central Entity Resolution Scoring) Mock
+// =============================================
+app.get('/api/v1/cers/company/:edrpou', (req, res) => {
+    res.json({
+        edrpou: req.params.edrpou,
+        name: 'ТОВ "ТЕХНО-АЛЬЯНС УКРАЇНА"',
+        type: 'Юридична особа',
+        status: 'АКТИВНИЙ',
+        registrationDate: '2015-08-12',
+        address: 'м. Київ, вул. Технічна, 14',
+        director: 'Шевченко О. М.',
+        beneficiaries: ['Коваленко І. В.', 'ТОВ "КІПР ІНВЕСТ"'],
+        riskScore: 78,
+        tags: ['Імпортер електроніки', 'Держзакупівлі'],
+        flags: ['COURT_CASES']
+    });
+});
+
+app.get('/api/v1/cers/company/:edrpou/score-details', (req, res) => {
+    res.json({
+        totalScore: 78,
+        segments: [
+            { name: 'Податкова дисципліна', score: 95, weight: 30, description: 'Відсутні борги перед бюджетом', status: 'OK' },
+            { name: 'Судові реєстри', score: 45, weight: 25, description: 'Наявні 3 господарські спори за рік', status: 'WARNING' },
+            { name: 'Митна історія', score: 88, weight: 25, description: 'Регулярні поставки, 2 незначні порушення ПМП', status: 'OK' },
+            { name: 'Зв\'язки (OSINT)', score: 70, weight: 20, description: 'Виявлено непрямий зв\'язок з PEP', status: 'WARNING' }
+        ]
+    });
+});
+
+app.post('/api/v1/cers/company/:edrpou/recalculate', (req, res) => {
+    res.json({ success: true, newScore: 75 });
+});
+
+app.get('/api/v1/cers/company/:edrpou/artifacts', (req, res) => {
+    res.json([
+        { id: '1', title: 'Судове рішення №451/22', date: '2023-11-20', type: 'COURT' },
+        { id: '2', title: 'Декларація UA100200/2023', date: '2023-10-15', type: 'CUSTOMS' }
+    ]);
+});
+
+// =============================================
+// 🔭 OSINT Tools Mock
+// =============================================
+app.get('/api/v1/osint/tools', (req, res) => {
+    res.json([
+        { id: 'sherlock', name: 'Sherlock', category: 'СОЦМЕРЕЖІ', status: 'СКАНУЄ', findings: 142, lastScan: 'Зараз', color: '#a855f7' },
+        { id: 'amass', name: 'Amass', category: 'МЕРЕЖА', status: 'ОНЛАЙН', findings: 87, lastScan: '2хв тому', color: '#3b82f6' },
+        { id: 'spiderfoot', name: 'SpiderFoot', category: 'РОЗВІДКА', status: 'СКАНУЄ', findings: 450, lastScan: 'Зараз', color: '#10b981' },
+        { id: 'theHarvester', name: 'theHarvester', category: 'EMAIL/DOMAINS', status: 'ОФЛАЙН', findings: 12, lastScan: '1г тому', color: '#64748b' }
+    ]);
+});
+
+app.post('/api/v1/osint/scan/start', (req, res) => {
+    res.json({ jobId: 'job-osint-' + Math.floor(Math.random() * 1000) });
+});
+
+app.get('/api/v1/osint/scan/:id/status', (req, res) => {
+    res.json({ status: 'RUNNING', progress: 65, message: 'Сканування соціальних мереж...' });
+});
+
+// =============================================
+// 🏛️ Registries Mock
+// =============================================
+app.get('/api/v1/registries/search', (req, res) => {
+    res.json({
+        query: req.query.q,
+        results: [
+            { source: 'ЄДР', matches: 1 },
+            { source: 'Prozorro', matches: 3 }
+        ]
+    });
+});
+
 // Catch-all for any missing endpoints (must be last)
 app.use('/api', (req, res) => {
   console.log(`[MOCK] Unhandled ${req.method} ${req.path}`);
