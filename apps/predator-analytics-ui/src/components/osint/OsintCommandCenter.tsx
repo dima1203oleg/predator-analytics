@@ -354,6 +354,34 @@ export const OsintCommandCenter: React.FC = () => {
     const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'tools' | 'registries' | 'feed' | 'analytics'>('tools');
+    const [selectedTool, setSelectedTool] = useState<OsintTool | null>(null);
+    const [registrySearch, setRegistrySearch] = useState('');
+    const [feedFilter, setFeedFilter] = useState<string>('ALL');
+    const [scanningToolId, setScanningToolId] = useState<string | null>(null);
+
+    // Запуск сканування інструментом
+    const handleStartScan = async (toolId: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setScanningToolId(toolId);
+        try {
+            await apiClient.post('/osint/scan/start', { tool_id: toolId, target: 'auto' });
+            // Оновлюємо статус інструменту локально
+            setTools(prev => prev.map(t => t.id === toolId ? { ...t, status: 'СКАНУЄ' as const, lastScan: 'Зараз' } : t));
+        } catch (e) {
+            console.error('Помилка запуску сканування:', e);
+        } finally {
+            setScanningToolId(null);
+        }
+    };
+
+    // Фільтровані дані
+    const filteredFeed = feedFilter === 'ALL' ? feed : feed.filter(f => f.severity === feedFilter);
+    const filteredCategories = registrySearch
+        ? registryCategories.filter(c =>
+            c.name.toLowerCase().includes(registrySearch.toLowerCase()) ||
+            c.registries.some(r => r.name.toLowerCase().includes(registrySearch.toLowerCase()))
+          )
+        : registryCategories;
 
     // Завантаження даних
     useEffect(() => {
@@ -480,100 +508,179 @@ export const OsintCommandCenter: React.FC = () => {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
-                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                            className="space-y-4"
                         >
-                            {tools.map((tool, i) => (
-                                <motion.div
-                                    key={tool.id}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: i * 0.04 }}
-                                    className={cn(
-                                        'p-4 rounded-2xl border backdrop-blur-sm relative overflow-hidden group transition-all hover:scale-[1.02]',
-                                        tool.status === 'СКАНУЄ'
-                                            ? 'bg-slate-900/70 border-amber-500/30 shadow-lg shadow-amber-500/5'
-                                            : tool.status === 'ОНЛАЙН'
-                                                ? 'bg-slate-900/50 border-emerald-500/20'
-                                                : 'bg-slate-900/30 border-slate-700/30'
-                                    )}
-                                >
-                                    {/* Glow effect при скануванні */}
-                                    {tool.status === 'СКАНУЄ' && (
-                                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.08),transparent_70%)]" />
-                                    )}
-
-                                    <div className="relative z-10">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: tool.color + '20' }}>
-                                                    <CircleDot size={16} style={{ color: tool.color }} />
-                                                </div>
-                                                <div>
-                                                    <div className="text-[11px] font-black text-white uppercase tracking-wide">{tool.name}</div>
-                                                    <div className="text-[8px] font-bold text-slate-500 uppercase tracking-wider">{tool.category}</div>
-                                                </div>
-                                            </div>
-                                            <div className={cn(
-                                                'text-[7px] font-black px-1.5 py-0.5 rounded border flex items-center gap-1',
-                                                tool.status === 'СКАНУЄ' ? 'bg-amber-500/15 border-amber-500/30 text-amber-400' :
-                                                tool.status === 'ОНЛАЙН' ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' :
-                                                'bg-slate-500/15 border-slate-500/30 text-slate-500'
-                                            )}>
-                                                {tool.status === 'СКАНУЄ' && <RefreshCw size={8} className="animate-spin" />}
-                                                {tool.status === 'ОНЛАЙН' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />}
-                                                {tool.status === 'ОФЛАЙН' && <WifiOff size={8} />}
-                                                {tool.status}
-                                            </div>
-                                        </div>
-
-                                        {tool.description && (
-                                            <p className="text-[9px] text-slate-500 mb-3 line-clamp-1">{tool.description}</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                {tools.map((tool, i) => (
+                                    <motion.div
+                                        key={tool.id}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: i * 0.04 }}
+                                        onClick={() => setSelectedTool(selectedTool?.id === tool.id ? null : tool)}
+                                        className={cn(
+                                            'p-4 rounded-2xl border backdrop-blur-sm relative overflow-hidden group transition-all hover:scale-[1.02] cursor-pointer',
+                                            selectedTool?.id === tool.id
+                                                ? 'bg-slate-800/80 border-white/20 ring-1 ring-white/10'
+                                                : tool.status === 'СКАНУЄ'
+                                                    ? 'bg-slate-900/70 border-amber-500/30 shadow-lg shadow-amber-500/5'
+                                                    : tool.status === 'ОНЛАЙН'
+                                                        ? 'bg-slate-900/50 border-emerald-500/20'
+                                                        : 'bg-slate-900/30 border-slate-700/30'
+                                        )}
+                                    >
+                                        {tool.status === 'СКАНУЄ' && (
+                                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.08),transparent_70%)]" />
                                         )}
 
-                                        <div className="flex items-end justify-between">
-                                            <div>
-                                                <div className="text-[8px] text-slate-600 font-mono uppercase">ЗНАХІДКИ</div>
-                                                <div className="text-lg font-black font-mono" style={{ color: tool.color }}>{tool.findings.toLocaleString()}</div>
+                                        <div className="relative z-10">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: tool.color + '20' }}>
+                                                        <CircleDot size={16} style={{ color: tool.color }} />
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-[11px] font-black text-white uppercase tracking-wide">{tool.name}</div>
+                                                        <div className="text-[8px] font-bold text-slate-500 uppercase tracking-wider">{tool.category}</div>
+                                                    </div>
+                                                </div>
+                                                <div className={cn(
+                                                    'text-[7px] font-black px-1.5 py-0.5 rounded border flex items-center gap-1',
+                                                    tool.status === 'СКАНУЄ' ? 'bg-amber-500/15 border-amber-500/30 text-amber-400' :
+                                                    tool.status === 'ОНЛАЙН' ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' :
+                                                    'bg-slate-500/15 border-slate-500/30 text-slate-500'
+                                                )}>
+                                                    {tool.status === 'СКАНУЄ' && <RefreshCw size={8} className="animate-spin" />}
+                                                    {tool.status === 'ОНЛАЙН' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />}
+                                                    {tool.status === 'ОФЛАЙН' && <WifiOff size={8} />}
+                                                    {tool.status}
+                                                </div>
                                             </div>
+
+                                            {tool.description && (
+                                                <p className="text-[9px] text-slate-500 mb-3 line-clamp-1">{tool.description}</p>
+                                            )}
+
+                                            <div className="flex items-end justify-between">
+                                                <div>
+                                                    <div className="text-[8px] text-slate-600 font-mono uppercase">ЗНАХІДКИ</div>
+                                                    <div className="text-lg font-black font-mono" style={{ color: tool.color }}>{tool.findings.toLocaleString()}</div>
+                                                </div>
+                                                {tool.accuracy && (
+                                                    <div className="text-right">
+                                                        <div className="text-[8px] text-slate-600 font-mono uppercase">ТОЧНІСТЬ</div>
+                                                        <div className="text-sm font-black font-mono text-slate-300">{tool.accuracy}%</div>
+                                                    </div>
+                                                )}
+                                            </div>
+
                                             {tool.accuracy && (
-                                                <div className="text-right">
-                                                    <div className="text-[8px] text-slate-600 font-mono uppercase">ТОЧНІСТЬ</div>
-                                                    <div className="text-sm font-black font-mono text-slate-300">{tool.accuracy}%</div>
+                                                <div className="mt-2 h-1 bg-slate-950 rounded-full overflow-hidden">
+                                                    <motion.div
+                                                        className="h-full rounded-full"
+                                                        style={{ backgroundColor: tool.color }}
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${tool.accuracy}%` }}
+                                                        transition={{ duration: 1.5, delay: i * 0.05 }}
+                                                    />
                                                 </div>
                                             )}
-                                        </div>
 
-                                        {/* Accuracy bar */}
-                                        {tool.accuracy && (
-                                            <div className="mt-2 h-1 bg-slate-950 rounded-full overflow-hidden">
-                                                <motion.div
-                                                    className="h-full rounded-full"
-                                                    style={{ backgroundColor: tool.color }}
-                                                    initial={{ width: 0 }}
-                                                    animate={{ width: `${tool.accuracy}%` }}
-                                                    transition={{ duration: 1.5, delay: i * 0.05 }}
-                                                />
+                                            {tool.status === 'СКАНУЄ' && (
+                                                <div className="mt-2 h-0.5 bg-slate-950 rounded-full overflow-hidden">
+                                                    <motion.div
+                                                        className="h-full bg-amber-500"
+                                                        initial={{ width: '0%' }}
+                                                        animate={{ width: '100%' }}
+                                                        transition={{ duration: 3, repeat: Infinity }}
+                                                    />
+                                                </div>
+                                            )}
+
+                                            <div className="flex items-center justify-between mt-2">
+                                                <div className="text-[8px] text-slate-600 font-mono">
+                                                    Останнє: {tool.lastScan}
+                                                </div>
+                                                {tool.status === 'ОНЛАЙН' && (
+                                                    <button
+                                                        onClick={(e) => handleStartScan(tool.id, e)}
+                                                        disabled={scanningToolId === tool.id}
+                                                        className="text-[7px] font-black uppercase tracking-wider px-2 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25 transition-all flex items-center gap-1"
+                                                    >
+                                                        {scanningToolId === tool.id ? <RefreshCw size={8} className="animate-spin" /> : <Zap size={8} />}
+                                                        СКАН
+                                                    </button>
+                                                )}
                                             </div>
-                                        )}
-
-                                        {/* Scan progress */}
-                                        {tool.status === 'СКАНУЄ' && (
-                                            <div className="mt-2 h-0.5 bg-slate-950 rounded-full overflow-hidden">
-                                                <motion.div
-                                                    className="h-full bg-amber-500"
-                                                    initial={{ width: '0%' }}
-                                                    animate={{ width: '100%' }}
-                                                    transition={{ duration: 3, repeat: Infinity }}
-                                                />
-                                            </div>
-                                        )}
-
-                                        <div className="text-[8px] text-slate-600 font-mono mt-2">
-                                            Останнє: {tool.lastScan}
                                         </div>
-                                    </div>
-                                </motion.div>
-                            ))}
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            {/* ─── Детальна панель інструменту ─── */}
+                            <AnimatePresence>
+                                {selectedTool && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        className="overflow-hidden"
+                                    >
+                                        <div className="p-6 rounded-2xl bg-slate-900/70 border border-white/10 backdrop-blur-xl">
+                                            <div className="flex items-start justify-between mb-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: selectedTool.color + '25' }}>
+                                                        <CircleDot size={24} style={{ color: selectedTool.color }} />
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-sm font-black text-white uppercase tracking-wider">{selectedTool.name}</div>
+                                                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">{selectedTool.category}</div>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => setSelectedTool(null)}
+                                                    className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-500 hover:text-white transition-colors"
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            </div>
+                                            {selectedTool.description && (
+                                                <p className="text-xs text-slate-400 mb-4 leading-relaxed">{selectedTool.description}</p>
+                                            )}
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                                {[
+                                                    { label: 'ЗАГАЛЬНІ ЗНАХІДКИ', value: selectedTool.findings.toLocaleString(), color: selectedTool.color },
+                                                    { label: 'ТОЧНІСТЬ', value: selectedTool.accuracy ? `${selectedTool.accuracy}%` : '—', color: '#94a3b8' },
+                                                    { label: 'СТАТУС', value: selectedTool.status, color: selectedTool.status === 'ОНЛАЙН' ? '#10b981' : selectedTool.status === 'СКАНУЄ' ? '#f59e0b' : '#64748b' },
+                                                    { label: 'ОСТАННЄ СКАНУВАННЯ', value: selectedTool.lastScan, color: '#818cf8' },
+                                                ].map(m => (
+                                                    <div key={m.label} className="p-3 rounded-xl bg-slate-950/50 border border-white/5">
+                                                        <div className="text-[8px] font-black text-slate-600 uppercase tracking-wider mb-1">{m.label}</div>
+                                                        <div className="text-sm font-black font-mono" style={{ color: m.color }}>{m.value}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div className="flex gap-2 mt-4">
+                                                {selectedTool.status !== 'ОФЛАЙН' && (
+                                                    <button
+                                                        onClick={(e) => handleStartScan(selectedTool.id, e)}
+                                                        disabled={scanningToolId === selectedTool.id || selectedTool.status === 'СКАНУЄ'}
+                                                        className={cn(
+                                                            'px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-2 transition-all',
+                                                            selectedTool.status === 'СКАНУЄ'
+                                                                ? 'bg-amber-500/15 border border-amber-500/30 text-amber-400 cursor-not-allowed'
+                                                                : 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30'
+                                                        )}
+                                                    >
+                                                        {selectedTool.status === 'СКАНУЄ' ? <RefreshCw size={12} className="animate-spin" /> : <Zap size={12} />}
+                                                        {selectedTool.status === 'СКАНУЄ' ? 'СКАНУВАННЯ АКТИВНЕ...' : 'ЗАПУСТИТИ СКАНУВАННЯ'}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </motion.div>
                     )}
 
@@ -586,13 +693,40 @@ export const OsintCommandCenter: React.FC = () => {
                             exit={{ opacity: 0, y: -10 }}
                             className="space-y-6"
                         >
-                            {/* Coverage Stats Band */}
+                            {/* Пошук + Покриття */}
+                            <div className="flex items-center gap-4">
+                                <div className="flex-1 relative">
+                                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                                    <input
+                                        type="text"
+                                        placeholder="Пошук реєстрів..."
+                                        value={registrySearch}
+                                        onChange={(e) => setRegistrySearch(e.target.value)}
+                                        className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-900/60 border border-white/5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500/30 transition-colors"
+                                    />
+                                    {registrySearch && (
+                                        <button
+                                            onClick={() => setRegistrySearch('')}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-white"
+                                        >
+                                            <X size={12} />
+                                        </button>
+                                    )}
+                                </div>
+                                {coverageStats && (
+                                    <div className="flex items-center gap-2 shrink-0">
+                                        <Server size={14} className="text-cyan-400" />
+                                        <span className="text-[10px] font-black text-white uppercase tracking-widest">ПОКРИТТЯ:</span>
+                                        <span className="text-sm font-black font-mono text-emerald-400">
+                                            {Math.round((coverageStats.active / coverageStats.totalSources) * 100)}%
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Статус покриття */}
                             {coverageStats && (
                                 <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-white/5">
-                                    <div className="flex items-center gap-2">
-                                        <Server size={16} className="text-cyan-400" />
-                                        <span className="text-[10px] font-black text-white uppercase tracking-widest">ПОКРИТТЯ ДЖЕРЕЛ</span>
-                                    </div>
                                     <div className="flex-1 h-3 bg-slate-950 rounded-full overflow-hidden relative">
                                         <motion.div
                                             className="h-full rounded-full bg-gradient-to-r from-emerald-600 to-cyan-500"
@@ -601,9 +735,6 @@ export const OsintCommandCenter: React.FC = () => {
                                             transition={{ duration: 2 }}
                                         />
                                     </div>
-                                    <span className="text-sm font-black font-mono text-emerald-400">
-                                        {Math.round((coverageStats.active / coverageStats.totalSources) * 100)}%
-                                    </span>
                                     <div className="flex gap-3 text-[9px] font-mono">
                                         <span className="text-emerald-400">● {coverageStats.active} активних</span>
                                         <span className="text-amber-400">● {coverageStats.syncing} синхронізація</span>
@@ -615,7 +746,7 @@ export const OsintCommandCenter: React.FC = () => {
 
                             {/* Категорії реєстрів */}
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                                {registryCategories.map((cat) => (
+                                {filteredCategories.map((cat) => (
                                     <RegistryCategoryCard
                                         key={cat.id}
                                         cat={cat}
@@ -624,6 +755,11 @@ export const OsintCommandCenter: React.FC = () => {
                                     />
                                 ))}
                             </div>
+                            {filteredCategories.length === 0 && (
+                                <div className="text-center py-8 text-slate-500 text-xs">
+                                    Нічого не знайдено за запитом "{registrySearch}"
+                                </div>
+                            )}
 
                             {/* Загальна кількість записів */}
                             {coverageStats && (
@@ -640,7 +776,7 @@ export const OsintCommandCenter: React.FC = () => {
                         </motion.div>
                     )}
 
-                    {/* ─── TAB: LIVE FEED ─── */}
+                    {/* ─── TAB: СТРІЧКА ПОДІЙ ─── */}
                     {activeTab === 'feed' && (
                         <motion.div
                             key="feed"
@@ -654,12 +790,38 @@ export const OsintCommandCenter: React.FC = () => {
                                     <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                                     <span className="text-[10px] font-black text-red-400 uppercase tracking-widest">СТРІЧКА ПОДІЙ У РЕАЛЬНОМУ ЧАСІ</span>
                                 </div>
-                                <span className="text-[9px] font-mono text-slate-500">{feed.length} подій</span>
+                                <div className="flex items-center gap-2">
+                                    {/* Фільтр за критичністю */}
+                                    {['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'].map(sev => (
+                                        <button
+                                            key={sev}
+                                            onClick={() => setFeedFilter(sev)}
+                                            className={cn(
+                                                'text-[8px] font-black px-2 py-1 rounded-lg border transition-all uppercase',
+                                                feedFilter === sev
+                                                    ? sev === 'ALL' ? 'bg-white/10 border-white/20 text-white'
+                                                      : sev === 'CRITICAL' ? 'bg-red-500/20 border-red-500/30 text-red-400'
+                                                      : sev === 'HIGH' ? 'bg-amber-500/20 border-amber-500/30 text-amber-400'
+                                                      : sev === 'MEDIUM' ? 'bg-blue-500/20 border-blue-500/30 text-blue-400'
+                                                      : 'bg-slate-500/20 border-slate-500/30 text-slate-400'
+                                                    : 'text-slate-600 border-transparent hover:text-white'
+                                            )}
+                                        >
+                                            {sev === 'ALL' ? 'ВСІ' : sev}
+                                        </button>
+                                    ))}
+                                    <span className="text-[9px] font-mono text-slate-500 ml-2">{filteredFeed.length} подій</span>
+                                </div>
                             </div>
                             <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1 scrollbar-thin">
-                                {feed.map((item, i) => (
+                                {filteredFeed.map((item, i) => (
                                     <FeedItemRow key={item.id} item={item} index={i} />
                                 ))}
+                                {filteredFeed.length === 0 && (
+                                    <div className="text-center py-8 text-slate-500 text-xs">
+                                        Немає подій з рівнем «{feedFilter}»
+                                    </div>
+                                )}
                             </div>
                         </motion.div>
                     )}

@@ -3806,6 +3806,21 @@ app.get('/api/v1/cers/company/:edrpou/artifacts', (req, res) => {
 });
 
 // =============================================
+// 🔭 OSINT — запуск сканування (mock)
+// =============================================
+app.post('/api/v1/osint/scan/start', (req, res) => {
+    const { tool_id, target } = req.body || {};
+    res.json({
+        status: 'started',
+        scan_id: `scan-${tool_id}-${Date.now()}`,
+        tool_id: tool_id || 'unknown',
+        target: target || 'auto',
+        started_at: new Date().toISOString(),
+        estimated_duration: '2-5 хвилин',
+    });
+});
+
+// =============================================
 // 🔭 OSINT Tools Mock — повний перелік з ТЗ
 // =============================================
 app.get('/api/v1/osint/tools', (req, res) => {
