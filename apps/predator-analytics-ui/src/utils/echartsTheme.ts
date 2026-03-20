@@ -170,9 +170,17 @@ const highVisibilityTheme = {
   },
 };
 
+import worldMap from "../assets/maps/world.json";
+
 export const registerEchartsThemes = () => {
   if (themesRegistered) return;
+  
+  // Register Maps
+  echarts.registerMap('world', worldMap as any);
+  
+  // Register Themes
   echarts.registerTheme("predator-contrast", baseTheme);
   echarts.registerTheme("predator-contrast-hi", highVisibilityTheme);
+  
   themesRegistered = true;
 };
