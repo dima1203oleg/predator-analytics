@@ -101,6 +101,7 @@ class Settings(BaseSettings):
     MCP_ROUTER_URL: str = "http://localhost:8080/v1/query"
     LITELLM_MODEL: str = "ollama/llama3"
     AI_ENGINE_URL: str = "http://localhost:9050"
+    OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
     COPILOT_STREAM_BUFFER: int = 100
 
     # Modular Services

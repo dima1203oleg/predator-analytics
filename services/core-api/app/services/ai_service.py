@@ -79,10 +79,10 @@ class AIService:
                 response = await client.post(
                     f"{settings.LITELLM_API_BASE}/embeddings",
                     json={
-                        "model": "text-embedding-3-small",
+                        "model": f"ollama/{settings.OLLAMA_EMBEDDING_MODEL}",
                         "input": text
                     },
-                    timeout=10.0
+                    timeout=20.0
                 )
                 if response.status_code == 200:
                     result = response.json()

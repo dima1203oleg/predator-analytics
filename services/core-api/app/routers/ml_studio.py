@@ -49,6 +49,12 @@ async def get_ml_status(
             "version": "2.12.1",
             "tracking_uri": "http://mlflow-internal.predator.svc:5000"
         },
+        "ollama": {
+            "status": "online",
+            "version": "0.1.32",
+            "models": ["llama3", "nomic-embed-text", "mxbai-embed-large"],
+            "embedding_engine": "nomic-embed-text"
+        },
         "gpu_cluster": {
             "nodes": 4,
             "total_vram_gb": 320,  # 4x A100 80GB
@@ -74,14 +80,14 @@ async def get_mlflow_runs(
     # Імітація відповіді MLflow API
     now = datetime.now(UTC)
     return [
-        MLRunInfo(
-            run_id=f"run_{i}ab89c",
-            experiment_name="Customs_Classification_v2",
-            status="FINISHED" if i > 0 else "RUNNING",
-            start_time=now,
-            metrics={"accuracy": 0.942 + (i * 0.001), "f1": 0.921},
-            params={"lr": "2e-5", "optimizer": "adamw"}
-        ) for i in range(limit)
+        MLRunInfo(**{
+            "run_id": f"run_{i}ab89c",
+            "experiment_name": "Customs_Classification_v2",
+            "status": "FINISHED" if i > 0 else "RUNNING",
+            "start_time": now,
+            "metrics": {"accuracy": 0.942 + (i * 0.001), "f1": 0.921},
+            "params": {"lr": "2e-5", "optimizer": "adamw"}
+        }) for i in range(limit)
     ]
 
 @router.post("/train/lora", summary="Запуск LoRA Fine-tuning")
@@ -101,6 +107,20 @@ async def start_lora_training(
         "job_id": job_id,
         "mlflow_run_url": f"http://mlflow.predator.analytics/runs/{job_id}",
         "message": f"Процес Fine-tuning для {config.model_name} успішно додано в чергу."
+    }
+
+@router.post("/embeddings/config", summary="Налаштування Ollama Embeddings")
+async def update_embeddings_config(
+    model_name: str = Body(..., embed=True),
+    tenant_id: str = Depends(get_tenant_id),
+):
+    """Змінити поточну модель для генерації векторних ембедінгів."""
+    logger.info(f"Updating embedding model to {model_name}")
+    # В реальному коді тут буде збереження в базу або оновлення конфігу
+    return {
+        "status": "success",
+        "current_model": model_name,
+        "message": f"Модель ембедінгів змінена на {model_name}"
     }
 
 @router.get("/models/registry", summary="Реєстр готових моделей")

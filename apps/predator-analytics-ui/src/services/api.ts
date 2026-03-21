@@ -1,7 +1,7 @@
 import { apiClient, v45Client, API_BASE_URL, API_V45_URL, IS_TRUTH_ONLY_MODE } from './api/config';
 import { systemApi } from './api/system';
 import { monitoringApi, etlApi, azrApi } from './api/monitoring';
-import { trainingApi, datasetApi, nasApi, dataCatalogApi, mlApi } from './api/ml';
+import { trainingApi, datasetApi, nasApi, dataCatalogApi, mlApi, mlStudioApi } from './api/ml';
 import { optimizerApi, intelligenceApi, searchApi, trinityApi, somApi, autonomyApi } from './api/intelligence';
 import { ingestionApi } from './api/ingestion';
 import { marketApi } from '@/features/market/api/market';
@@ -24,7 +24,7 @@ export { apiClient, v45Client, API_BASE_URL, API_V45_URL, IS_TRUTH_ONLY_MODE };
 export {
     systemApi, monitoringApi, etlApi, azrApi, trainingApi, datasetApi,
     nasApi, dataCatalogApi, optimizerApi, intelligenceApi, searchApi,
-    trinityApi, somApi, autonomyApi, ingestionApi, mlApi,
+    trinityApi, somApi, autonomyApi, ingestionApi, mlApi, mlStudioApi,
     marketApi, forecastApi, diligenceApi, dashboardApi, competitorsApi,
     factoryApi, infraApi,
     osintService, cersService, registriesService
@@ -112,6 +112,7 @@ export const api = {
     dashboard: dashboardApi,
     factory: factoryApi,
     infra: infraApi,
+    mlStudio: mlStudioApi,
 
     // ─── OSINT & Public Records ────────────────────────────────────────────────
     osint: osintService,

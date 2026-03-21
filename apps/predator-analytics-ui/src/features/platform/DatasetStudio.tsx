@@ -311,7 +311,7 @@ const DatasetStudio: React.FC = () => {
                         >
                             {/* Left: ML Infrastructure Status */}
                             <div className="lg:col-span-1 space-y-6">
-                                <TacticalCard title="ІНФРАСТРУКТУРА ML" variant="dark">
+                                <TacticalCard title="ІНФРАСТРУКТУРА ML" variant="cyber">
                                     <div className="p-6 space-y-6">
                                         <div className="flex items-center justify-between">
                                             <span className="text-[10px] font-black text-slate-500 uppercase">MLflow Tracking</span>
@@ -319,8 +319,44 @@ const DatasetStudio: React.FC = () => {
                                                 "px-2 py-0.5 rounded text-[9px] font-bold border",
                                                 mlStatus?.mlflow?.status === 'online' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" : "bg-red-500/10 border-red-500/30 text-red-400"
                                             )}>
-                                                {mlStatus?.mlflow?.status?.toUpperCase() || 'OFFLINE'}
                                             </span>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-white/5 space-y-4">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Ollama Embedding Engine</span>
+                                                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                                                    <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                                                    <span className="text-[8px] font-bold text-emerald-400 uppercase tracking-tighter">Live</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <div className="flex items-center justify-between p-2 rounded bg-slate-950/50 border border-slate-800/50">
+                                                    <div className="flex items-center gap-2">
+                                                        <Cpu className="w-3 h-3 text-indigo-400" />
+                                                        <span className="text-[10px] font-bold text-slate-300">{mlStatus?.ollama?.embedding_engine || 'nomic-embed-text'}</span>
+                                                    </div>
+                                                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-black border border-indigo-500/30">DEFAULT</span>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <button 
+                                                        onClick={() => mlStudioApi.updateEmbeddingsConfig('nomic-embed-text')}
+                                                        className="flex flex-col items-center justify-center p-2 rounded bg-slate-950/40 border border-slate-800/50 hover:border-indigo-500/50 transition-all group"
+                                                    >
+                                                        <span className="text-[8px] font-black text-slate-500 group-hover:text-indigo-400 mb-1 uppercase tracking-tighter">STRENGTH</span>
+                                                        <span className="text-[10px] font-bold text-slate-300">Vector Search</span>
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => mlStudioApi.updateEmbeddingsConfig('mxbai-embed-large')}
+                                                        className="flex flex-col items-center justify-center p-2 rounded bg-slate-950/40 border border-slate-800/50 hover:border-amber-500/50 transition-all group"
+                                                    >
+                                                        <span className="text-[8px] font-black text-slate-500 group-hover:text-amber-400 mb-1 uppercase tracking-tighter">PRECISION</span>
+                                                        <span className="text-[10px] font-bold text-slate-300">RAG Context</span>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                         
                                         <div className="space-y-3">
@@ -401,7 +437,7 @@ const DatasetStudio: React.FC = () => {
                                         </div>
                                     </TacticalCard>
 
-                                    <TacticalCard title="MLflow ЕКСПЕРИМЕНТИ" variant="dark">
+                                    <TacticalCard title="MLflow ЕКСПЕРИМЕНТИ" variant="cyber">
                                         <div className="p-0">
                                             <div className="overflow-x-auto">
                                                 <table className="w-full">

@@ -112,5 +112,8 @@ export const mlStudioApi = {
     },
     getModelRegistry: async () => {
         return (await apiClient.get('/ml-studio/models/registry')).data;
+    },
+    updateEmbeddingsConfig: async (modelName: string) => {
+        return (await apiClient.post('/ml-studio/embeddings/config', { model_name: modelName })).data;
     }
 };
