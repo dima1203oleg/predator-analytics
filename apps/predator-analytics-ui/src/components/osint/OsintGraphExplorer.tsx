@@ -11,9 +11,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Search, Target, User, Building2, MapPin, AlertOctagon, 
     ShieldAlert, Network, Download, RefreshCw, X, Link as LinkIcon, 
-    History, Bookmark, FileText, Activity, ChevronDown, ServerCrash
+    History, Bookmark, FileText, Activity, ChevronDown, ServerCrash,
+    Bot, Database, Zap
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
 
 // Власні компоненти та сервіси
 import GraphViewer, { GraphNode, GraphEdge, NodeType } from '../graph/GraphViewer';
@@ -332,7 +334,11 @@ export function OsintGraphExplorer() {
                         </button>
                     ))}
                 </div>
-                <div className="p-4 border-t border-slate-800 bg-slate-900/50">
+                <div className="p-4 border-t border-slate-800 bg-slate-900/50 space-y-3">
+                    <div className="flex items-center justify-between text-[10px] font-black uppercase text-emerald-400 bg-emerald-500/10 px-3 py-2 border border-emerald-500/20 rounded-lg">
+                        <span className="flex items-center gap-1.5"><Database size={14} /> NEO4J GRAPH DB</span>
+                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"/> LIVE</span>
+                    </div>
                     <button className="w-full py-2.5 rounded-lg border border-dashed border-slate-700 text-slate-400 text-xs font-bold uppercase tracking-widest hover:text-white hover:border-slate-500 transition-colors flex items-center justify-center gap-2">
                         <Bookmark className="w-4 h-4" />
                         Зберегти Поточний Граф
@@ -341,7 +347,10 @@ export function OsintGraphExplorer() {
             </div>
 
             {/* ─── ЦЕНТРАЛЬНА ЗОНА: ГРАФ & ПОШУК ───────────────────── */}
-            <div className="flex-1 flex flex-col relative bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.5),transparent_100%)]">
+            <div className="flex-1 flex flex-col relative bg-slate-950 overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                   <AdvancedBackground />
+                </div>
                 
                 {/* Advanced Search Bar (Повнофункціональний) */}
                 <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 w-[600px]">
@@ -404,17 +413,26 @@ export function OsintGraphExplorer() {
 
                 {/* Toolbar */}
                 <div className="absolute top-6 right-6 z-30 flex gap-2">
+                    <button className="p-3 bg-indigo-600/20 hover:bg-indigo-500/30 text-indigo-400 rounded-xl border border-indigo-500/50 shadow-[0_0_20px_rgba(79,70,229,0.3)] backdrop-blur-md transition-colors tooltip group relative">
+                        <Bot className="h-5 w-5" />
+                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">AI Copilot Аналіз</span>
+                    </button>
+                    <button className="p-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 rounded-xl border border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.3)] backdrop-blur-md transition-colors tooltip group relative">
+                        <Zap className="h-5 w-5" />
+                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Моніторинг Транзакцій</span>
+                    </button>
+                    <div className="w-px h-8 bg-white/10 mx-1 self-center" />
                     <button 
                         onClick={resetGraph}
                         disabled={isSearching || isExpanding}
                         className="p-3 bg-slate-900/80 hover:bg-slate-800 disabled:opacity-50 text-slate-300 rounded-xl border border-slate-700 shadow-2xl backdrop-blur-md transition-colors tooltip group relative"
                     >
                         <RefreshCw className={cn("h-5 w-5", (isExpanding || isSearching) && "animate-spin text-cyan-400")} />
-                        <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Скинути Граф</span>
+                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Скинути Граф</span>
                     </button>
                     <button className="p-3 bg-slate-900/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-700 shadow-2xl backdrop-blur-md transition-colors group relative">
                         <Download className="h-5 w-5" />
-                        <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Експорт PDF</span>
+                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Експорт PDF</span>
                     </button>
                 </div>
 
