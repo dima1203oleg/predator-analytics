@@ -42,7 +42,8 @@ interface Props {
     onClose: () => void;
 }
 
-// Highlight matching terms in text
+import { mlApi } from '../services/api';
+
 const highlightMatches = (text: string, query?: string): string => {
     if (!query) return text;
 
@@ -69,16 +70,15 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
         if (isSummarizing || !document) return;
 
         setIsSummarizing(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        setSummary(
-            `Цей документ являє собою всебічний аналіз ${document.title.toLowerCase()}. ` +
-            `Основні тези включають розгляд сучасних підходів до обробки даних, ` +
-            `семантичного пошуку та машинного навчання. Автор наголошує на важливості ` +
-            `гібридних методів, що поєднують keyword та vector search.`
-        );
-        setIsSummarizing(false);
+        try {
+            const data = await mlApi.getDocumentSummary(document.id);
+            setSummary(data?.summary || data?.result || data?.text || 'Не вдалося згенерувати саммарі.');
+        } catch (err) {
+            console.error("Summary generation failed:", err);
+            setSummary("Помилка генерації саммарі через AI-сервіс.");
+        } finally {
+            setIsSummarizing(false);
+        }
     };
 
     // Load similar documents

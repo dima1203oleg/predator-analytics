@@ -253,199 +253,45 @@ export const AIInsightsPanel: React.FC<{
 
   const personaColor = persona === 'TITAN' ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
 
-  useEffect(() => {
-    // Generate mock insights based on persona
-    const generateInsights = () => {
-      const baseInsights: AIInsight[] = [];
-
-      if (persona === 'TITAN') {
-        baseInsights.push(
-          {
-            id: 'titan-pred-1',
-            type: 'prediction',
-            title: premiumLocales.aiInsights.items.titan.electronicsGrowth.title,
-            summary: premiumLocales.aiInsights.items.titan.electronicsGrowth.summary,
-            confidence: 87,
-            impact: 'high',
-            timeframe: premiumLocales.aiInsights.items.titan.electronicsGrowth.timeframe,
-            details: {
-              currentValue: 45000000,
-              predictedValue: 55350000,
-              change: 23,
-              factors: premiumLocales.aiInsights.items.titan.electronicsGrowth.factors
-            },
-            chartData: [
-              { name: 'Січ', value: 38 },
-              { name: 'Лют', value: 42 },
-              { name: 'Бер', value: 45 },
-              { name: 'Кві', value: 52 },
-              { name: 'Тра', value: 58 }
-            ],
-            actions: [
-              { label: 'Деталі', action: 'view-details' },
-              { label: 'Експорт', action: 'export' }
-            ],
-            createdAt: new Date()
-          },
-          {
-            id: 'titan-opp-1',
-            type: 'opportunity',
-            title: premiumLocales.aiInsights.items.titan.newSupplier.title,
-            summary: premiumLocales.aiInsights.items.titan.newSupplier.summary,
-            confidence: 92,
-            impact: 'high',
-            timeframe: premiumLocales.aiInsights.items.titan.newSupplier.timeframe,
-            details: {
-              currentValue: 450,
-              predictedValue: 297,
-              change: -34,
-              factors: premiumLocales.aiInsights.items.titan.newSupplier.factors
-            },
-            actions: [
-              { label: 'Переглянути', action: 'view-supplier' },
-              { label: 'Порівняти', action: 'compare' }
-            ],
-            createdAt: new Date()
-          },
-          {
-            id: 'titan-rec-1',
-            type: 'recommendation',
-            title: premiumLocales.aiInsights.items.titan.diversifyChips.title,
-            summary: premiumLocales.aiInsights.items.titan.diversifyChips.summary,
-            confidence: 95,
-            impact: 'medium',
-            timeframe: premiumLocales.aiInsights.items.titan.diversifyChips.timeframe,
-            details: {
-              factors: premiumLocales.aiInsights.items.titan.diversifyChips.factors
-            },
-            actions: [
-              { label: 'Показати альтернативи', action: 'show-alternatives' }
-            ],
-            createdAt: new Date()
-          }
-        );
+    const fetchInsights = async () => {
+      setLoading(true);
+      try {
+        const data = await intelligenceApi.getAiInsights();
+        // Fallback to persona-specific recommendations if main insights are empty
+        const recommendations = await intelligenceApi.getDashboardRecommendations(persona);
+        
+        const combined = [
+          ...(Array.isArray(data) ? data : (data?.insights || [])),
+          ...(Array.isArray(recommendations) ? recommendations : (recommendations?.recommendations || []))
+        ].map((item: any) => ({
+          ...item,
+          id: item.id || Math.random().toString(),
+          createdAt: item.createdAt ? new Date(item.createdAt) : new Date()
+        }));
+        
+        setInsights(combined);
+      } catch (err) {
+        console.error("Failed to fetch insights:", err);
+      } finally {
+        setLoading(false);
       }
-
-      if (persona === 'INQUISITOR') {
-        baseInsights.push(
-          {
-            id: 'inq-risk-1',
-            type: 'risk',
-            title: premiumLocales.aiInsights.items.inquisitor.underpricingScheme.title,
-            summary: premiumLocales.aiInsights.items.inquisitor.underpricingScheme.summary,
-            confidence: 94,
-            impact: 'high',
-            timeframe: premiumLocales.aiInsights.items.inquisitor.underpricingScheme.timeframe,
-            details: {
-              currentValue: 8500000,
-              predictedValue: 2100000,
-              change: -75,
-              factors: premiumLocales.aiInsights.items.inquisitor.underpricingScheme.factors
-            },
-            chartData: [
-              { name: 'Реальна', value: 85 },
-              { name: 'Декл.', value: 21 }
-            ],
-            actions: [
-              { label: "Мережа зв'язків", action: 'view-network' },
-              { label: 'Створити кейс', action: 'create-case' }
-            ],
-            createdAt: new Date()
-          },
-          {
-            id: 'inq-pred-1',
-            type: 'prediction',
-            title: premiumLocales.aiInsights.items.inquisitor.anomalySpike.title,
-            summary: premiumLocales.aiInsights.items.inquisitor.anomalySpike.summary,
-            confidence: 82,
-            impact: 'medium',
-            timeframe: premiumLocales.aiInsights.items.inquisitor.anomalySpike.timeframe,
-            details: {
-              factors: premiumLocales.aiInsights.items.inquisitor.anomalySpike.factors
-            },
-            actions: [
-              { label: 'Налаштувати моніторинг', action: 'setup-monitoring' }
-            ],
-            createdAt: new Date()
-          }
-        );
-      }
-
-      if (persona === 'SOVEREIGN') {
-        baseInsights.push(
-          {
-            id: 'sov-pred-1',
-            type: 'prediction',
-            title: premiumLocales.aiInsights.items.sovereign.tradeFlowShift.title,
-            summary: premiumLocales.aiInsights.items.sovereign.tradeFlowShift.summary,
-            confidence: 78,
-            impact: 'high',
-            timeframe: premiumLocales.aiInsights.items.sovereign.tradeFlowShift.timeframe,
-            details: {
-              change: -15,
-              factors: premiumLocales.aiInsights.items.sovereign.tradeFlowShift.factors
-            },
-            chartData: [
-              { name: 'Азія', value: 65 },
-              { name: '', value: 55 },
-              { name: '', value: 48 },
-              { name: 'ЄС', value: 52 }
-            ],
-            actions: [
-              { label: 'Повний звіт', action: 'full-report' }
-            ],
-            createdAt: new Date()
-          },
-          {
-            id: 'sov-risk-1',
-            type: 'risk',
-            title: premiumLocales.aiInsights.items.sovereign.microchipConcentration.title,
-            summary: premiumLocales.aiInsights.items.sovereign.microchipConcentration.summary,
-            confidence: 96,
-            impact: 'high',
-            timeframe: premiumLocales.aiInsights.items.sovereign.microchipConcentration.timeframe,
-            details: {
-              factors: premiumLocales.aiInsights.items.sovereign.microchipConcentration.factors
-            },
-            actions: [
-              { label: 'Аналіз залежностей', action: 'dependency-analysis' }
-            ],
-            createdAt: new Date()
-          },
-          {
-            id: 'sov-rec-1',
-            type: 'recommendation',
-            title: premiumLocales.aiInsights.items.sovereign.strategicReserve.title,
-            summary: premiumLocales.aiInsights.items.sovereign.strategicReserve.summary,
-            confidence: 88,
-            impact: 'medium',
-            timeframe: premiumLocales.aiInsights.items.sovereign.strategicReserve.timeframe,
-            details: {
-              factors: premiumLocales.aiInsights.items.sovereign.strategicReserve.factors
-            },
-            actions: [
-              { label: 'Розрахувати бюджет', action: 'calculate-budget' }
-            ],
-            createdAt: new Date()
-          }
-        );
-      }
-
-      return baseInsights;
     };
 
-    setTimeout(() => {
-      setInsights(generateInsights());
-      setLoading(false);
-    }, 1000);
+    fetchInsights();
   }, [persona]);
 
-  const handleGenerateNew = () => {
+  const handleGenerateNew = async () => {
     setIsGenerating(true);
-    setTimeout(() => {
+    try {
+      await intelligenceApi.triggerSelfImprovement('insights');
+      // Re-fetch after trigger
+      const data = await intelligenceApi.getAiInsights();
+      setInsights(Array.isArray(data) ? data : (data?.insights || []));
+    } catch (err) {
+      console.error("Failed to generate new insights:", err);
+    } finally {
       setIsGenerating(false);
-      // In real implementation, this would trigger new AI analysis
-    }, 3000);
+    }
   };
 
   const handleAction = (action: string) => {

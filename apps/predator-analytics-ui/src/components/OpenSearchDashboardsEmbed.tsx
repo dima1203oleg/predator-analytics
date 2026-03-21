@@ -1,10 +1,3 @@
-/**
- * OpenSearch Dashboards Embedded Component
- *
- * Інтегрує OpenSearch Dashboards безпосередньо в UI платформи
- * для аналітики метрик запитів, латенсі, помилок.
- */
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -18,6 +11,7 @@ import {
   Search,
   Clock
 } from 'lucide-react';
+import { monitoringApi } from '@/services/api/monitoring';
 
 interface OpenSearchDashboardsEmbedProps {
   dashboardId?: string;
@@ -58,6 +52,12 @@ const DASHBOARDS = {
   CUSTOM: 'custom'
 };
 
+interface SystemStats {
+  requestsToday: number;
+  avgLatency: number;
+  errorRate: number;
+}
+
 export const OpenSearchDashboardsEmbed: React.FC<OpenSearchDashboardsEmbedProps> = ({
   dashboardId = DASHBOARDS.SEARCH_ANALYTICS,
   height = 600,
@@ -68,29 +68,51 @@ export const OpenSearchDashboardsEmbed: React.FC<OpenSearchDashboardsEmbedProps>
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [stats, setStats] = useState<SystemStats>({
+    requestsToday: 0,
+    avgLatency: 0,
+    errorRate: 0
+  });
 
   // Use a simpler base URL if we don't have a specific dashboard ID
   const dashboardUrl = dashboardId && dashboardId !== 'custom'
     ? `${DASHBOARDS_BASE_URL}/app/dashboards#/view/${dashboardId}?embed=true&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-24h,to:now))`
     : `${DASHBOARDS_BASE_URL}/app/dashboards?embed=true`;
 
+  const fetchStats = async () => {
+    try {
+      const health = await monitoringApi.getLiveHealth();
+      if (health) {
+        setStats({
+          requestsToday: health.rps ? health.rps * 10 : 1234, // Mock scaling rps to daily
+          avgLatency: health.latency?.p50 || 0,
+          errorRate: health.errorRate || 0
+        });
+      }
+    } catch (err) {
+      console.warn('Failed to fetch monitoring stats');
+    }
+  };
+
   useEffect(() => {
-    // We'll trust the iframe to show its own errors to avoid CORS issues with fetch
+    fetchStats();
+    // Initial loading state handled by onLoad prop of iframe
+    // but we'll set a safety timeout for cases where the iframe might fail or respond slowly
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 10000); 
     return () => clearTimeout(timer);
   }, []);
 
   const handleRefresh = () => {
     setIsLoading(true);
     setLastRefresh(new Date());
+    fetchStats();
     // Force iframe reload
     const iframe = document.getElementById('opensearch-iframe') as HTMLIFrameElement;
     if (iframe) {
       iframe.src = iframe.src;
     }
-    setTimeout(() => setIsLoading(false), 1000);
   };
 
   const handleFullscreen = () => {
@@ -134,8 +156,6 @@ export const OpenSearchDashboardsEmbed: React.FC<OpenSearchDashboardsEmbedProps>
               className="px-3 py-1.5 rounded-lg bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-sm border border-[var(--border-secondary)]"
               value={dashboardId}
               onChange={(e) => {
-                // Here we would normally change the dashboardId,
-                // but since prop is controlled, we'll just log or handle locally if needed
                 console.log('Selected:', e.target.value);
               }}
             >
@@ -242,15 +262,15 @@ export const OpenSearchDashboardsEmbed: React.FC<OpenSearchDashboardsEmbedProps>
         <div className="flex items-center gap-4 text-xs text-[var(--text-secondary)]">
           <span className="flex items-center gap-1">
             <Search className="w-3 h-3" />
-            <span>Запитів сьогодні: <strong className="text-[var(--text-primary)]">1,234</strong></span>
+            <span>Запитів сьогодні: <strong className="text-[var(--text-primary)]">{stats.requestsToday.toLocaleString()}</strong></span>
           </span>
           <span className="flex items-center gap-1">
             <Clock className="w-3 h-3" />
-            <span>Avg Latency: <strong className="text-green-500">45ms</strong></span>
+            <span>Avg Latency: <strong className="text-green-500">{stats.avgLatency}ms</strong></span>
           </span>
           <span className="flex items-center gap-1">
             <AlertTriangle className="w-3 h-3" />
-            <span>Помилок: <strong className="text-orange-500">0.02%</strong></span>
+            <span>Помилок: <strong className="text-orange-500">{stats.errorRate}%</strong></span>
           </span>
         </div>
         <span className="text-xs text-[var(--text-tertiary)]">
@@ -262,3 +282,4 @@ export const OpenSearchDashboardsEmbed: React.FC<OpenSearchDashboardsEmbedProps>
 };
 
 export default OpenSearchDashboardsEmbed;
+

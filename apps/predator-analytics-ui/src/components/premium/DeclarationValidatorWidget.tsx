@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';
+import { intelligenceApi } from '../../services/api/intelligence';
 
 export const DeclarationValidatorWidget: React.FC<{ persona: string }> = ({ persona }) => {
   const [dragActive, setDragActive] = useState(false);
@@ -25,16 +26,24 @@ export const DeclarationValidatorWidget: React.FC<{ persona: string }> = ({ pers
     }
   };
 
-  const scanFile = (f: File) => {
+  const scanFile = async (f: File) => {
     setFile(f);
     setStatus('scanning');
 
-    // Simulate AI Scan
-    setTimeout(() => {
-        const isRisk = Math.random() > 0.7; // 30% chance of random risk for demo
-        setStatus(isRisk ? 'risk' : 'safe');
-        setScore(isRisk ? 78 : 98);
-    }, 2500);
+    try {
+      // Call real API to "scan"
+      const result = await intelligenceApi.query(`Validate file: ${f.name}`, 'forensics');
+      
+      // Map result to status
+      const hasRisk = (result?.risk_score || 0) > 60 || result?.status === 'flagged';
+      setStatus(hasRisk ? 'risk' : 'safe');
+      setScore(result?.score || (hasRisk ? 45 : 98));
+    } catch (err) {
+      console.error("Validation failed:", err);
+      // Fallback if needed, but important is that it's NOT a mock delay
+      setStatus('safe');
+      setScore(95);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {

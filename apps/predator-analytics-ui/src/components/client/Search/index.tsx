@@ -1,95 +1,142 @@
 import React, { useState } from 'react';
-import { Search as SearchIcon, Filter, Clock } from 'lucide-react';
+import { Search as SearchIcon, Filter, Clock, Building, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { diligenceApi } from '@/features/diligence/api/diligence';
 
 export const Search: React.FC = () => {
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [results, setResults] = useState<any[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock results for demo
-  const mockResults = [
-    { id: 1, title: 'Звіт про експорт зернових Q3 2025', type: 'document', date: '2025-10-15', snippet: 'Аналіз обсягів експорту... зростання на 15%...' },
-    { id: 2, title: 'Тенденції енергетичного ринку', type: 'analytics', date: '2025-11-02', snippet: 'Ключові гравці ринку... прогноз цін...' },
-    { id: 3, title: 'Огляд логістичних маршрутів', type: 'report', date: '2025-09-20', snippet: 'Нові митні правила... затримки на кордоні...' },
-  ];
-
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!query.trim()) return;
+
     setIsSearching(true);
-    // Simulate API call
-    setTimeout(() => setIsSearching(false), 1000);
+    setHasSearched(true);
+    setError(null);
+    setResults([]);
+
+    try {
+      const response = await diligenceApi.searchCompanies(query);
+      if (response && response.results) {
+        setResults(response.results);
+      } else if (Array.isArray(response)) {
+        setResults(response);
+      }
+    } catch (err: any) {
+      console.error('Search failed:', err);
+      setError('Не вдалося виконати пошук. Перевірте з\'єднання з сервером.');
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 max-w-5xl mx-auto pb-12">
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-bold text-white">Пошук інформації</h1>
+        <h1 className="text-2xl font-bold text-white uppercase tracking-wider">Глобальний пошук OSINT</h1>
 
-        <form onSubmit={handleSearch} className="relative">
+        <form onSubmit={handleSearch} className="relative group">
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Введіть ключові слова, назви компаній або події..."
-            className="w-full bg-slate-900 border border-slate-700/50 rounded-xl px-6 py-4 pl-14 text-white placeholder:text-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none shadow-lg transition-all"
+            placeholder="Введіть код ЄДРПОУ, назву компанії або об'єкта..."
+            className="w-full bg-black/40 border border-white/5 rounded-2xl px-6 py-5 pl-14 text-white placeholder:text-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 outline-none shadow-2xl backdrop-blur-xl transition-all"
           />
-          <SearchIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={24} />
+          <SearchIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-400 transition-colors" size={24} />
           <button
             type="submit"
-            className="absolute right-3 top-1/2 -translate-y-1/2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors"
+            disabled={isSearching || !query.trim()}
+            className="absolute right-3 top-1/2 -translate-y-1/2 px-6 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-bold rounded-xl transition-all uppercase text-xs tracking-widest shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] active:scale-95"
           >
-            Знайти
+            {isSearching ? 'Обробка...' : 'Знайти'}
           </button>
         </form>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 text-sm transition-colors whitespace-nowrap">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none opacity-60">
+          <button className="flex items-center gap-2 px-3 py-1.5 bg-black/40 hover:bg-white/5 border border-white/5 rounded-lg text-slate-300 text-[10px] uppercase font-bold tracking-widest transition-colors whitespace-nowrap">
             <Filter size={14} /> Всі фільтри
           </button>
-          <button className="px-3 py-1.5 bg-slate-800/50 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 text-sm transition-colors whitespace-nowrap">
-            Останні 24 години
+          <button className="px-3 py-1.5 bg-black/40 hover:bg-white/5 border border-white/5 rounded-lg text-slate-300 text-[10px] uppercase font-bold tracking-widest transition-colors whitespace-nowrap">
+            Юридичні особи
           </button>
-          <button className="px-3 py-1.5 bg-slate-800/50 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 text-sm transition-colors whitespace-nowrap">
-            Документи PDF
+          <button className="px-3 py-1.5 bg-black/40 hover:bg-white/5 border border-white/5 rounded-lg text-slate-300 text-[10px] uppercase font-bold tracking-widest transition-colors whitespace-nowrap">
+            Фізичні особи
           </button>
         </div>
       </div>
 
       <div className="space-y-4">
         {isSearching ? (
-          <div className="text-center py-12">
-            <div className="inline-block w-8 h-8 check-blue-500 border-t-transparent rounded-full animate-spin border-4 border-blue-500"></div>
-            <p className="mt-4 text-slate-500">Пошук у базі даних...</p>
+          <div className="text-center py-20 bg-black/20 rounded-3xl border border-white/5 backdrop-blur-xl">
+            <div className="inline-block w-10 h-10 border-t-blue-500 border-r-transparent border-b-blue-600 border-l-transparent rounded-full animate-spin border-2"></div>
+            <p className="mt-6 text-sm font-bold text-slate-400 uppercase tracking-widest">Виконується запит до бази даних...</p>
           </div>
-        ) : query.length > 0 ? (
+        ) : error ? (
+          <div className="text-center py-20 bg-red-500/5 rounded-3xl border border-red-500/20">
+            <p className="text-red-400 font-medium">{error}</p>
+          </div>
+        ) : hasSearched && results.length > 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="space-y-4"
           >
-            <p className="text-sm text-slate-500">Знайдено результатів: {mockResults.length}</p>
-            {mockResults.map((result) => (
-              <div key={result.id} className="bg-slate-900/40 border border-slate-800 p-5 rounded-xl hover:bg-slate-900/60 transition-colors group cursor-pointer">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-medium text-blue-400 group-hover:text-blue-300">{result.title}</h3>
-                  <span className="text-xs text-slate-500 bg-slate-800 px-2 py-1 rounded flex items-center gap-1">
-                    <Clock size={12} /> {result.date}
-                  </span>
+            <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 px-2">Знайдено об'єктів: {results.length}</p>
+            {results.map((result: any, index: number) => (
+              <div key={result.id || index} className="bg-black/40 border border-white/5 p-6 rounded-2xl hover:border-white/10 hover:bg-black/60 transition-all group backdrop-blur-xl">
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-500/10 rounded-lg">
+                      <Building size={18} className="text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{result.name}</h3>
+                      <div className="flex items-center gap-3 mt-1 text-xs">
+                         <span className="text-slate-400 font-mono">ЄДРПОУ: {result.edrpou || result.id || 'N/A'}</span>
+                         <span className="w-1 h-1 rounded-full bg-slate-700" />
+                         <span className="text-amber-500 font-bold uppercase tracking-widest text-[10px]">CERS-Оцінка: {result.risk_score ? Math.round(result.risk_score) : 'ОБЧИСЛЮЄТЬСЯ'}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button className="opacity-0 group-hover:opacity-100 p-2 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all">
+                    <ArrowRight size={18} />
+                  </button>
                 </div>
-                <p className="text-slate-400 text-sm">{result.snippet}</p>
-                <div className="mt-3 flex gap-2">
-                  <span className="text-[10px] uppercase font-bold text-slate-600 bg-slate-800/50 px-2 py-0.5 rounded">{result.type}</span>
+                
+                <div className="mt-4 pt-4 border-t border-white/5 flex gap-2 overflow-x-auto scrollbar-none">
+                  {result.tags?.map((tag: string, i: number) => (
+                     <span key={i} className="text-[9px] uppercase font-black text-slate-400 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5 tracking-widest">
+                       {tag}
+                     </span>
+                  ))}
+                  {(!result.tags || result.tags.length === 0) && (
+                     <span className="text-[9px] uppercase font-black text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20 tracking-widest">
+                       ДІЮЧЕ ПІДПРИЄМСТВО
+                     </span>
+                  )}
                 </div>
               </div>
             ))}
           </motion.div>
+        ) : hasSearched && results.length === 0 ? (
+          <div className="text-center py-20 bg-black/20 rounded-3xl border border-white/5 backdrop-blur-xl">
+            <SearchIcon size={48} className="mx-auto text-slate-600 mb-6" />
+            <p className="text-slate-400 font-medium">За вашим запитом об'єктів не знайдено</p>
+            <p className="text-slate-500 text-sm mt-2">Спробуйте змінити ключові слова або перевірте правильність введеного ЄДРПОУ.</p>
+          </div>
         ) : (
-          <div className="text-center py-20 opacity-50">
-            <SearchIcon size={64} className="mx-auto text-slate-700 mb-4" />
-            <p className="text-slate-500">Введіть запит, щоб розпочати пошук</p>
+          <div className="text-center py-32 opacity-50">
+            <SearchIcon size={64} className="mx-auto text-slate-700 mb-6" />
+            <p className="text-slate-500 font-medium tracking-wide">Введіть пошуковий запит для роботи з даними</p>
           </div>
         )}
       </div>
     </div>
   );
 };
+

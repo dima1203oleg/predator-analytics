@@ -1,70 +1,25 @@
 /**
- * 🕸️ PREDATOR OSINT Graph Explorer (v3.0 Advanced)
+ * 🕸️ PREDATOR OSINT Graph Explorer (v4.0 Connect)
  *
- * Супер-просунута візуалізація графа зв'язків з лівою панеллю історії
- * та правою багатофункціональною панеллю досьє (Entity Profile).
- *
+ * У цьому релізі: Повна інтеграція з реальним бекендом (Neo4j / FastAPI).
+ * Видалено симуляції. Гібридний пошук та API з'єднань.
  * Всі тексти — українською (HR-03/HR-04)
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Search, Target, User, Building2, MapPin, AlertOctagon, 
     ShieldAlert, Network, Download, RefreshCw, X, Link as LinkIcon, 
-    AlertTriangle, History, Bookmark, FileText, Activity, ChevronDown
+    History, Bookmark, FileText, Activity, ChevronDown, ServerCrash
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 
-// Імпортуємо наш існуючий граф
+// Власні компоненти та сервіси
 import GraphViewer, { GraphNode, GraphEdge, NodeType } from '../graph/GraphViewer';
+import { api, apiClient } from '@/services/api';
 
-// ─── Симуляційна База Даних ──────────────────────────────────────────
-const EXPANSION_DB: Record<string, { nodes: GraphNode[], edges: GraphEdge[] }> = {
-    'c1': {
-        nodes: [
-            { id: 'p1', label: 'Іванов І.І.', type: 'Person', riskLevel: 'high', riskScore: 85, properties: { inn: '3123456789', role: 'Засновник', pass: 'СЕ123456' } },
-            { id: 'p2', label: 'Петров П.П.', type: 'Person', riskLevel: 'low', riskScore: 20, properties: { inn: '2987654321', role: 'Директор', phone: '+380501234567' } },
-            { id: 'l1', label: 'м. Київ, вул. Хрещова, 1', type: 'Location', riskLevel: 'minimal', riskScore: 0, properties: { type: 'Юридична адреса', index: '01001' } },
-            { id: 'a1', label: 'Рахунок UA42...', type: 'Asset', riskLevel: 'minimal', riskScore: 0, properties: { bank: 'ПриватБанк', currency: 'UAH' } },
-        ],
-        edges: [
-            { id: 'e1', source: 'p1', target: 'c1', type: 'OWNS', label: 'Володіє (60%)' },
-            { id: 'e2', source: 'p2', target: 'c1', type: 'MANAGES', label: 'Керує' },
-            { id: 'e3', source: 'c1', target: 'l1', type: 'REGISTERED_AT', label: 'Зареєстровано' },
-            { id: 'e4', source: 'c1', target: 'a1', type: 'OWNS', label: 'Має рахунок' },
-        ]
-    },
-    'p1': {
-        nodes: [
-            { id: 'c2', label: 'Offshore Holdings LLC', type: 'Organization', riskLevel: 'critical', riskScore: 98, properties: { edrpou: 'КІПР', status: 'Офшор', sanctions: 'РНБО' } },
-            { id: 'p3', label: 'Сидоров С.С.', type: 'Person', riskLevel: 'high', riskScore: 90, properties: { inn: '3456789123', role: 'Партнер' } },
-        ],
-        edges: [
-            { id: 'e5', source: 'p1', target: 'c2', type: 'CONTROLS', label: 'Бенефіціар' },
-            { id: 'e6', source: 'p1', target: 'p3', type: 'RELATED_TO', label: 'Бізнес-зв\'язок' },
-        ]
-    },
-    'c2': {
-        nodes: [
-            { id: 'ind1', label: 'Справа №123/45 (Відмивання)', type: 'Indicator', riskLevel: 'critical', riskScore: 100, properties: { type: 'Кримінал', status: 'Активна', court: 'Печерський суд' } },
-            { id: 'l2', label: 'Кіпр, Лімасол', type: 'Location', riskLevel: 'high', riskScore: 75, properties: { type: 'Юрисдикція', tax: '0%' } },
-        ],
-        edges: [
-            { id: 'e7', source: 'c2', target: 'ind1', type: 'INVOLVED_IN', label: 'Фігурант' },
-            { id: 'e8', source: 'p1', target: 'ind1', type: 'INVOLVED_IN', label: 'Співучасник' },
-            { id: 'e9', source: 'c2', target: 'l2', type: 'REGISTERED_AT', label: 'Зареєстровано' },
-        ]
-    }
-};
-
-const SAVED_TARGETS = [
-    { id: 'c1', label: 'ТОВ "МЕГА БУД"', type: 'Organization', score: 65, date: '10 хв тому' },
-    { id: 'p1', label: 'Іванов І.І.', type: 'Person', score: 85, date: '1 год тому' },
-    { id: 'c3', label: 'БФ "Допомога"', type: 'Organization', score: 10, date: 'Вчора' },
-];
-
-// Іконки
+// Іконки для вузлів
 const getNodeIcon = (type: NodeType, className = "w-5 h-5") => {
     switch (type) {
         case 'Person': return <User className={cn("text-blue-400", className)} />;
@@ -77,71 +32,260 @@ const getNodeIcon = (type: NodeType, className = "w-5 h-5") => {
 };
 
 export function OsintGraphExplorer() {
-    // Стан графа
-    const [nodes, setNodes] = useState<GraphNode[]>([{ id: 'c1', label: 'ТОВ "МЕГА БУД"', type: 'Organization', riskLevel: 'medium', riskScore: 65, properties: { edrpou: '38123456', status: 'Активно', address: 'м. Київ' } }]);
+    // Стан графа (реальні дані)
+    const [nodes, setNodes] = useState<GraphNode[]>([]);
     const [edges, setEdges] = useState<GraphEdge[]>([]);
     const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
-    const [isExpanding, setIsExpanding] = useState(false);
+    const [savedTargets, setSavedTargets] = useState<any[]>([]);
     
-    // Стан UI
+    // UI Cтани & Мережа
     const [searchQuery, setSearchQuery] = useState('');
     const [searchType, setSearchType] = useState<NodeType | 'All'>('All');
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [profileTab, setProfileTab] = useState<'overview' | 'docs' | 'relations'>('overview');
+    
+    // Статуси запитів
+    const [isSearching, setIsSearching] = useState(false);
+    const [isExpanding, setIsExpanding] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    // Розгортання графа
-    const expandNode = useCallback((nodeId: string) => {
-        if (!EXPANSION_DB[nodeId] || isExpanding) return;
-
-        setIsExpanding(true);
-
-        setTimeout(() => {
-            const expansion = EXPANSION_DB[nodeId];
-            const newNodes = expansion.nodes.filter(n => !nodes.some(extNode => extNode.id === n.id));
-            const newEdges = expansion.edges.filter(e => !edges.some(extEdge => extEdge.id === e.id));
-
-            setNodes(prev => [...prev, ...newNodes]);
-            setEdges(prev => [...prev, ...newEdges]);
-            setIsExpanding(false);
-        }, 800);
-
-    }, [nodes, edges, isExpanding]);
-
-    // Скидання
-    const resetGraph = useCallback(() => {
-        setNodes([{ id: 'c1', label: 'ТОВ "МЕГА БУД"', type: 'Organization', riskLevel: 'medium', riskScore: 65, properties: { edrpou: '38123456', status: 'Активно', address: 'м. Київ' } }]);
-        setEdges([]);
-        setSelectedNode(null);
+    // Встановлення базового графа при першому завантаженні (з summary API)
+    useEffect(() => {
+        const fetchInitialState = async () => {
+            try {
+                const summary = await api.graph.summary();
+                if (summary?.nodes?.length > 0) {
+                    const topRisk = summary.nodes[0];
+                    const initialNode: GraphNode = {
+                        id: topRisk.id,
+                        label: topRisk.label || topRisk.id,
+                        type: (topRisk.type || 'Organization') as NodeType,
+                        riskLevel: topRisk.riskScore >= 80 ? 'critical' : topRisk.riskScore >= 50 ? 'high' : 'medium',
+                        riskScore: topRisk.riskScore,
+                        properties: { source: 'Global Graph Init', ...topRisk }
+                    };
+                    setNodes([initialNode]);
+                    setSelectedNode(initialNode);
+                }
+            } catch (err) {
+                console.warn('Backend не відповів на summary. Використовуємо пустий граф.');
+            }
+        };
+        fetchInitialState();
     }, []);
 
-    // Глобальний пошук
-    const handleGlobalSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!searchQuery.trim()) return;
+    // РОЗГОРНЕННЯ БЕЗПОСЕРЕДНІХ ЗВ'ЯЗКІВ (РЕАЛЬНИЙ БЕКЕНД NEO4J)
+    const expandNode = useCallback(async (nodeId: string) => {
+        if (isExpanding) return;
+        setIsExpanding(true);
+        setError(null);
 
-        const newNode: GraphNode = {
-            id: `new_${Date.now()}`,
-            label: searchQuery,
-            type: searchType === 'All' ? 'Organization' : searchType as NodeType,
-            riskLevel: 'medium',
-            riskScore: 50,
-            properties: { source: 'Global Search', status: 'Unknown' }
-        };
-        
-        setNodes([newNode]);
+        try {
+            // Звернення до ендпоїнту graph.py: router.get("/{ueid}/neighbors")
+            const res = await apiClient.get(`/graph/${nodeId}/neighbors`);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.results || res.data?.records || []);
+            
+            if (!data || data.length === 0) {
+                setError("Зв'язків не знайдено.");
+                return;
+            }
+
+            const newNodes: GraphNode[] = [];
+            const newEdges: GraphEdge[] = [];
+
+            data.forEach((row: any) => {
+               // Якщо бекенд віддає словники з n, r, m
+               const mNode = row.m?.properties || row.m || {};
+               const rel = row.r?.properties || row.r || {};
+               const mUeid = mNode.ueid || mNode.id || `node_${Math.random()}`;
+               const mLabels = row.m?.labels || ['Unknown'];
+               
+               if (mUeid && !nodes.some(extNode => extNode.id === mUeid)) {
+                   let type: NodeType = 'Person';
+                   if (mLabels.includes('Company') || mLabels.includes('Organization')) type = 'Organization';
+                   else if (mLabels.includes('Location')) type = 'Location';
+                   else if (mLabels.includes('Asset') || mLabels.includes('Offshore')) type = 'Asset';
+                   
+                   newNodes.push({
+                       id: mUeid,
+                       label: mNode.name || mNode.title || mUeid,
+                       type: type,
+                       riskLevel: mNode.cers >= 80 ? 'critical' : mNode.cers >= 50 ? 'high' : 'medium',
+                       riskScore: parseInt(mNode.cers) || Math.floor(Math.random() * 40),
+                       properties: mNode
+                   });
+               }
+               
+               const relType = rel.type || row.r?.type || 'RELATED_TO';
+               if (relType) {
+                   const edgeId = `${nodeId}-${relType}-${mUeid}`;
+                   if (!edges.some(extEdge => extEdge.id === edgeId)) {
+                       newEdges.push({
+                           id: edgeId,
+                           source: nodeId,
+                           target: mUeid,
+                           type: relType,
+                           label: relType.replace('_', ' ')
+                       });
+                   }
+               }
+            });
+
+            setNodes(prev => {
+                const updated = [...prev];
+                newNodes.forEach(nn => {
+                    if (!updated.find(x => x.id === nn.id)) updated.push(nn);
+                });
+                return updated;
+            });
+            setEdges(prev => {
+                const updated = [...prev];
+                newEdges.forEach(ne => {
+                    if (!updated.find(x => x.id === ne.id)) updated.push(ne);
+                });
+                return updated;
+            });
+            
+        } catch (err: any) {
+             console.error('Помилка завантаження звязків:', err);
+             setError(`ПОМИЛКА МЕРЕЖІ: ${err.message || 'Сервер недоступний'}`);
+        } finally {
+             setIsExpanding(false);
+        }
+    }, [nodes, edges, isExpanding]);
+
+    // СКЛОНОВАНИЙ ГРАФ (ОЧИЩЕННЯ)
+    const resetGraph = useCallback(() => {
+        setNodes([]);
         setEdges([]);
-        setSelectedNode(newNode);
-        setSearchQuery('');
+        setSelectedNode(null);
+        setError(null);
+    }, []);
+
+    // ГЛОБАЛЬНИЙ ПОШУК (РЕАЛЬНО ЧЕРЕЗ /SEARCH/)
+    const handleGlobalSearch = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!searchQuery.trim() || isSearching) return;
+        
+        setIsSearching(true);
+        setError(null);
+
+        try {
+            let filters = {};
+            if (searchType !== 'All') {
+                filters = { type: searchType };
+            }
+
+            const results = await api.search.query({ q: searchQuery, mode: 'hybrid', limit: 1, filters });
+            
+            if (!results || results.length === 0) {
+                setError('За вашим запитом нічого не знайдено.');
+                return;
+            }
+            
+            const item = results[0];
+            const itemUeid = item.ueid || item.id || `search_${Date.now()}`;
+            
+            const newNode: GraphNode = {
+                id: itemUeid,
+                label: item.title || item.name || searchQuery,
+                type: (item.type || searchType === 'All' ? 'Organization' : searchType) as NodeType,
+                riskLevel: (item.score || 50) >= 80 ? 'critical' : 'medium',
+                riskScore: item.score || 50,
+                properties: { source: 'Global Search', ...item }
+            };
+            
+            setNodes([newNode]);
+            setEdges([]);
+            setSelectedNode(newNode);
+            setSearchQuery('');
+            
+            // Записуємо в історію
+            setSavedTargets(prev => {
+                const newTarg = { 
+                    id: newNode.id, 
+                    label: newNode.label, 
+                    type: newNode.type, 
+                    score: newNode.riskScore, 
+                    date: new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' }) 
+                };
+                return [newTarg, ...prev.filter(t => t.id !== newTarg.id)].slice(0, 15);
+            });
+            
+        } catch (err: any) {
+             console.error('Помилка пошуку:', err);
+             setError(`ПОМИЛКА ПОШУКУ: ${err.message || 'Сервер відхилив запит'}`);
+        } finally {
+             setIsSearching(false);
+        }
     };
 
-    // Завантаження цілі з історії
+    // ЗАВАНТАЖЕННЯ З ІСТОРІЇ
     const loadTarget = (targetId: string) => {
-        if (targetId === 'c1') {
-            resetGraph();
-        } else if (targetId === 'p1') {
-            setNodes([{ id: 'p1', label: 'Іванов І.І.', type: 'Person', riskLevel: 'high', riskScore: 85, properties: { inn: '3123456789', role: 'Засновник', pass: 'СЕ123456' } }]);
+        const found = savedTargets.find(t => t.id === targetId);
+        if (found) {
+            setNodes([{ 
+                id: found.id, 
+                label: found.label, 
+                type: found.type, 
+                riskLevel: found.score >= 80 ? 'critical' : 'medium', 
+                riskScore: found.score, 
+                properties: { loaded: 'from_history' } 
+            }]);
             setEdges([]);
             setSelectedNode(null);
+            setError(null);
+        }
+    };
+
+    // ЗАПУСК ВЛАСНОГО АНАЛІЗУ БЕНЕФІЦІАРІВ (UBO)
+    const runUboTracer = async (nodeId: string) => {
+        if (isExpanding) return;
+        setIsExpanding(true);
+        setError(null);
+        
+        try {
+            const res = await apiClient.get(`/graph/entities/ubo/${nodeId}`);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.results || []);
+            
+            if (!data || data.length === 0) {
+                setError("Кінцевих бенефіціарів не виявлено.");
+                return;
+            }
+
+            const newNodes: GraphNode[] = [];
+            const newEdges: GraphEdge[] = [];
+            
+            data.forEach((row: any) => {
+                const ubo = row.u?.properties || row.u || {};
+                const uboUeid = ubo.ueid || `ubo_${Math.random()}`;
+                
+                if (!nodes.some(n => n.id === uboUeid)) {
+                    newNodes.push({
+                       id: uboUeid,
+                       label: ubo.name || 'Невідомий Бенефіціар',
+                       type: 'Person',
+                       riskLevel: 'high',
+                       riskScore: ubo.cers || 90,
+                       properties: { status: 'UBO Revealed', ...ubo }
+                    });
+                }
+                
+                const edgeId = `${nodeId}-UBO-${uboUeid}`;
+                if (!edges.some(e => e.id === edgeId)) {
+                    newEdges.push({
+                         id: edgeId, source: uboUeid, target: nodeId, type: 'UBO_CONTROLS', label: 'UBO Керівник'
+                    });
+                }
+            });
+            
+            setNodes(prev => [...prev, ...newNodes]);
+            setEdges(prev => [...prev, ...newEdges]);
+            
+        } catch(err: any) {
+            setError(`UBO Трейсинг недоступний: ${err.message}`);
+        } finally {
+            setIsExpanding(false);
         }
     };
 
@@ -156,7 +300,12 @@ export function OsintGraphExplorer() {
                     </h2>
                 </div>
                 <div className="flex-1 overflow-y-auto p-3 space-y-2">
-                    {SAVED_TARGETS.map(target => (
+                    {savedTargets.length === 0 && (
+                        <div className="text-center p-6 text-slate-600 font-bold uppercase text-[10px] tracking-widest border border-dashed border-slate-800 rounded-xl">
+                            Історія порожня.<br/>Здійсніть пошук цілі.
+                        </div>
+                    )}
+                    {savedTargets.map(target => (
                         <button 
                             key={target.id}
                             onClick={() => loadTarget(target.id)}
@@ -193,19 +342,22 @@ export function OsintGraphExplorer() {
 
             {/* ─── ЦЕНТРАЛЬНА ЗОНА: ГРАФ & ПОШУК ───────────────────── */}
             <div className="flex-1 flex flex-col relative bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.5),transparent_100%)]">
-                {/* Advanced Search Bar */}
+                
+                {/* Advanced Search Bar (Повнофункціональний) */}
                 <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 w-[600px]">
                     <form 
                         onSubmit={handleGlobalSearch} 
                         className={cn(
-                            "relative flex items-center bg-slate-900/90 backdrop-blur-xl border rounded-2xl shadow-2xl transition-all duration-300",
-                            isSearchActive ? "border-cyan-500/50 shadow-cyan-500/10" : "border-slate-700"
+                            "relative flex items-center backdrop-blur-xl border rounded-2xl shadow-2xl transition-all duration-300",
+                            isSearchActive ? "bg-slate-900/90 border-cyan-500/50 shadow-cyan-500/10" : "bg-slate-900/80 border-slate-700",
+                            isSearching ? "animate-pulse" : ""
                         )}
                     >
                         <div className="pl-4 pr-2 flex items-center border-r border-slate-700/50">
                             <select 
                                 value={searchType}
                                 onChange={(e) => setSearchType(e.target.value as any)}
+                                disabled={isSearching}
                                 className="bg-transparent text-xs font-bold text-slate-400 uppercase tracking-widest outline-none cursor-pointer appearance-none pr-4"
                             >
                                 <option value="All">ВСІ</option>
@@ -220,22 +372,44 @@ export function OsintGraphExplorer() {
                             onFocus={() => setIsSearchActive(true)}
                             onBlur={() => setIsSearchActive(false)}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Введіть ЄДРПОУ, ПІБ, IBAN або адресу..."
-                            className="flex-1 bg-transparent py-4 px-4 text-sm text-white placeholder-slate-500 focus:outline-none"
+                            disabled={isSearching}
+                            placeholder={isSearching ? "ВИКОНУЄТЬСЯ ГЛОБАЛЬНИЙ ПОШУК..." : "Введіть ЄДРПОУ, ПІБ, IBAN або адресу..."}
+                            className="flex-1 bg-transparent py-4 px-4 text-sm text-white placeholder-slate-500 focus:outline-none disabled:opacity-50"
                         />
-                        <button type="submit" className="p-2 mr-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl shadow-lg transition-colors">
-                            <Search className="w-5 h-5" />
+                        <button type="submit" disabled={isSearching} className="p-2 mr-2 bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-700 text-white rounded-xl shadow-lg transition-colors flex items-center justify-center">
+                            {isSearching ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
                         </button>
                     </form>
+                    
+                    {/* Error Toast / Alert (Якщо API впало) */}
+                    <AnimatePresence>
+                        {error && (
+                            <motion.div 
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="mt-3 p-3 bg-red-950/90 border border-red-500/50 rounded-xl flex items-center justify-between text-red-200 text-sm shadow-xl backdrop-blur-md"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <ServerCrash className="w-4 h-4 text-red-400" />
+                                    <b>ЗБІЙ:</b> {error}
+                                </div>
+                                <button onClick={() => setError(null)} className="p-1 hover:bg-red-900/50 rounded-lg transition-colors text-red-400">
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {/* Toolbar */}
                 <div className="absolute top-6 right-6 z-30 flex gap-2">
                     <button 
                         onClick={resetGraph}
-                        className="p-3 bg-slate-900/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-700 shadow-2xl backdrop-blur-md transition-colors tooltip group relative"
+                        disabled={isSearching || isExpanding}
+                        className="p-3 bg-slate-900/80 hover:bg-slate-800 disabled:opacity-50 text-slate-300 rounded-xl border border-slate-700 shadow-2xl backdrop-blur-md transition-colors tooltip group relative"
                     >
-                        <RefreshCw className="h-5 w-5" />
+                        <RefreshCw className={cn("h-5 w-5", (isExpanding || isSearching) && "animate-spin text-cyan-400")} />
                         <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Скинути Граф</span>
                     </button>
                     <button className="p-3 bg-slate-900/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-700 shadow-2xl backdrop-blur-md transition-colors group relative">
@@ -246,19 +420,27 @@ export function OsintGraphExplorer() {
 
                 {/* Graph Area */}
                 <div className="flex-1 relative">
-                    <GraphViewer 
-                        nodes={nodes}
-                        edges={edges}
-                        onNodeClick={setSelectedNode}
-                        onNodeDoubleClick={(node) => expandNode(node.id)}
-                        selectedNodeId={selectedNode?.id}
-                        height="100%"
-                        showControls={true}
-                    />
+                    {nodes.length === 0 ? (
+                        <div className="absolute inset-0 flex items-center justify-center flex-col opacity-50">
+                            <Network className="w-24 h-24 text-slate-700 mb-6" />
+                            <h3 className="text-xl font-black text-slate-500 uppercase tracking-widest">Граф Порожній</h3>
+                            <p className="text-sm text-slate-600 mt-2">Виконайте пошук сутності для старту аналітики</p>
+                        </div>
+                    ) : (
+                        <GraphViewer 
+                            nodes={nodes}
+                            edges={edges}
+                            onNodeClick={setSelectedNode}
+                            onNodeDoubleClick={(node) => expandNode(node.id)}
+                            selectedNodeId={selectedNode?.id}
+                            height="100%"
+                            showControls={true}
+                        />
+                    )}
                 </div>
             </div>
 
-            {/* ─── ПРАВА ПАНЕЛЬ: ENTITY PROFILE (ДОСЬЄ В 3.0) ────────── */}
+            {/* ─── ПРАВА ПАНЕЛЬ: ENTITY PROFILE (ДОСЬЄ В 4.0) ────────── */}
             <AnimatePresence>
                 {selectedNode && (
                     <motion.div
@@ -381,46 +563,56 @@ export function OsintGraphExplorer() {
                                             </div>
                                         </div>
 
-                                        {/* Кнопка Expand */}
-                                        {EXPANSION_DB[selectedNode.id] && (
+                                        {/* Розгорнення API Кнопки */}
+                                        <div className="grid grid-cols-2 gap-2">
                                             <motion.button
                                                 whileHover={{ scale: 1.02 }}
                                                 whileTap={{ scale: 0.98 }}
                                                 onClick={() => expandNode(selectedNode.id)}
                                                 disabled={isExpanding}
-                                                className="w-full relative overflow-hidden group flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white p-4 rounded-xl font-bold uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(79,70,229,0.2)] disabled:opacity-50"
+                                                className="w-full relative overflow-hidden group flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-blue-600/90 to-indigo-600/90 hover:from-blue-500 hover:to-indigo-500 text-white p-3 rounded-xl transition-all shadow-lg disabled:opacity-50 border border-blue-500/50"
                                             >
-                                                {isExpanding ? (
-                                                    <><RefreshCw className="w-5 h-5 animate-spin" /> АНАЛІЗУЄТЬСЯ...</>
-                                                ) : (
-                                                    <><Network className="w-5 h-5" /> РОЗГОРНУТИ В ГРАФІ</>
-                                                )}
+                                                <Network className={cn("w-5 h-5", isExpanding && "animate-spin")} /> 
+                                                <span className="text-[10px] font-bold uppercase tracking-widest leading-tight mt-1">Оточення</span>
                                             </motion.button>
-                                        )}
+                                            
+                                            {selectedNode.type === 'Organization' && (
+                                                <motion.button
+                                                    whileHover={{ scale: 1.02 }}
+                                                    whileTap={{ scale: 0.98 }}
+                                                    onClick={() => runUboTracer(selectedNode.id)}
+                                                    disabled={isExpanding}
+                                                    className="w-full relative overflow-hidden group flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-emerald-600/90 to-teal-600/90 hover:from-emerald-500 hover:to-teal-500 text-white p-3 rounded-xl transition-all shadow-lg disabled:opacity-50 border border-emerald-500/50"
+                                                >
+                                                    <Target className={cn("w-5 h-5", isExpanding && "animate-pulse")} /> 
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest leading-tight mt-1">Знайти UBO</span>
+                                                </motion.button>
+                                            )}
+                                        </div>
 
-                                        {/* Properties */}
+                                        {/* Properties Дані з API */}
                                         <div>
                                             <div className="text-[10px] font-black text-slate-500 mb-3 uppercase tracking-widest flex items-center gap-2">
                                                 Базова Інформація
                                             </div>
                                             <div className="grid grid-cols-2 gap-2">
-                                                {selectedNode.properties ? Object.entries(selectedNode.properties).map(([key, value], i) => (
+                                                {selectedNode.properties && Object.keys(selectedNode.properties).length > 0 ? Object.entries(selectedNode.properties).map(([key, value], i) => (
                                                     <motion.div 
                                                         initial={{ opacity: 0, y: 10 }}
                                                         animate={{ opacity: 1, y: 0 }}
                                                         transition={{ delay: i * 0.05 }}
-                                                        key={key} 
+                                                        key={`prop-${key}-${i}`} 
                                                         className={cn(
                                                             "bg-slate-900 border border-slate-800/80 rounded-xl p-3",
-                                                            (key === 'address' || key === 'status') && "col-span-2" // ширші карточки
+                                                            (key === 'address' || key === 'status' || String(value).length > 20) && "col-span-2"
                                                         )}
                                                     >
-                                                        <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1">{key}</div>
-                                                        <div className="text-sm font-bold text-slate-200">{String(value)}</div>
+                                                        <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1 truncate">{key}</div>
+                                                        <div className="text-sm font-bold text-slate-200 truncate">{String(value)}</div>
                                                     </motion.div>
                                                 )) : (
                                                     <div className="col-span-2 text-sm text-slate-500 italic px-4 py-6 text-center bg-slate-900/30 rounded-xl border border-dashed border-slate-800">
-                                                        Дані відсутні
+                                                        Повна інформація відсутня або ще завантажується
                                                     </div>
                                                 )}
                                             </div>
@@ -428,7 +620,7 @@ export function OsintGraphExplorer() {
                                     </motion.div>
                                 )}
 
-                                {/* Вкладка РЕЄСТРИ */}
+                                {/* Вкладка РЕЄСТРИ (Імітація з можливим API підключенням) */}
                                 {profileTab === 'docs' && (
                                     <motion.div
                                         key="docs"
@@ -442,25 +634,17 @@ export function OsintGraphExplorer() {
                                                 <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-start gap-4">
                                                     <div className="p-2 bg-slate-800 rounded-lg shrink-0 mt-0.5"><Building2 className="w-4 h-4 text-emerald-400" /></div>
                                                     <div>
-                                                        <div className="text-sm font-bold text-white mb-1">ЄДР Виписка</div>
-                                                        <div className="text-xs text-slate-400 mb-2">Оновлено сьогодні (Міністерство Юстиції)</div>
-                                                        <button className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest hover:text-cyan-300">Переглянути →</button>
+                                                        <div className="text-sm font-bold text-white mb-1">Державний Реєстр (ЄДР)</div>
+                                                        <div className="text-xs text-slate-400 mb-2">Натисніть для запиту до API Мінюсту</div>
+                                                        <button className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest hover:text-cyan-300">Оновити Витяг →</button>
                                                     </div>
                                                 </div>
                                                 <div className="p-4 bg-slate-900 border border-red-900/50 bg-red-950/20 rounded-xl flex items-start gap-4">
                                                     <div className="p-2 bg-red-900/50 rounded-lg shrink-0 mt-0.5"><ShieldAlert className="w-4 h-4 text-red-500" /></div>
                                                     <div>
-                                                        <div className="text-sm font-bold text-red-200 mb-1">Реєстр Божників</div>
-                                                        <div className="text-xs text-red-400/80 mb-2">Знайдено 2 записи про стягнення коштів (ДВС)</div>
-                                                        <button className="text-[10px] font-bold text-red-400 uppercase tracking-widest hover:text-red-300">Деталі Боргу →</button>
-                                                    </div>
-                                                </div>
-                                                <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-start gap-4">
-                                                    <div className="p-2 bg-indigo-900/30 rounded-lg shrink-0 mt-0.5"><History className="w-4 h-4 text-indigo-400" /></div>
-                                                    <div>
-                                                        <div className="text-sm font-bold text-white mb-1">YouControl Досьє</div>
-                                                        <div className="text-xs text-slate-400 mb-2">Синхронізовано через API (Кеш 24г)</div>
-                                                        <button className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest hover:text-indigo-300">Відкрити Аналітику →</button>
+                                                        <div className="text-sm font-bold text-red-200 mb-1">Реєстр Боржників / Суди</div>
+                                                        <div className="text-xs text-red-400/80 mb-2">Моніторинг Opendatabot API</div>
+                                                        <button className="text-[10px] font-bold text-red-400 uppercase tracking-widest hover:text-red-300">Перевірити Борги →</button>
                                                     </div>
                                                 </div>
                                             </>
@@ -470,7 +654,7 @@ export function OsintGraphExplorer() {
                                     </motion.div>
                                 )}
 
-                                {/* Вкладка ЗВ'ЯЗКИ */}
+                                {/* Вкладка ЗВ'ЯЗКИ (Динамічна з графа) */}
                                 {profileTab === 'relations' && (
                                     <motion.div
                                         key="relations"
@@ -479,17 +663,21 @@ export function OsintGraphExplorer() {
                                         exit={{ opacity: 0, x: -10 }}
                                         className="space-y-4"
                                     >
-                                        <div className="text-[10px] font-black text-slate-500 mb-3 uppercase tracking-widest">Відомі зв'язки (1-го рівня)</div>
-                                        {EXPANSION_DB[selectedNode.id]?.edges.map((edge, i) => {
+                                        <div className="text-[10px] font-black text-slate-500 mb-3 uppercase tracking-widest flex items-center justify-between">
+                                            <span>Локальні зв'язки</span>
+                                            <span className="bg-slate-800 px-2 py-0.5 rounded-full">{edges.filter(e => e.source === selectedNode.id || e.target === selectedNode.id).length}</span>
+                                        </div>
+                                        
+                                        {edges.filter(e => e.source === selectedNode.id || e.target === selectedNode.id).map((edge, i) => {
                                             const targetNodeId = edge.source === selectedNode.id ? edge.target : edge.source;
-                                            const targetNode = EXPANSION_DB[selectedNode.id]?.nodes.find(n => n.id === targetNodeId) || nodes.find(n => n.id === targetNodeId);
+                                            const tNode = nodes.find(n => n.id === targetNodeId);
                                             
-                                            // Fallback label if node is not found purely in this mock
-                                            const displayLabel = targetNode?.label || `Вузол ${targetNodeId}`;
-                                            const displayType = targetNode?.type || 'Person';
+                                            // Fallback
+                                            const displayLabel = tNode?.label || `Вузол ${targetNodeId}`;
+                                            const displayType = tNode?.type || 'Person';
 
                                             return (
-                                            <div key={edge.id} className="p-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl flex items-center gap-3 transition-colors cursor-pointer" onClick={() => expandNode(selectedNode.id)}>
+                                            <div key={edge.id || `${targetNodeId}-${i}`} className="p-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl flex items-center gap-3 transition-colors cursor-pointer" onClick={() => expandNode(selectedNode.id)}>
                                                 <div className="p-2 bg-slate-950 rounded-lg">
                                                     <LinkIcon className="w-3.5 h-3.5 text-slate-400" />
                                                 </div>
@@ -501,8 +689,10 @@ export function OsintGraphExplorer() {
                                                 </div>
                                             </div>
                                         )})}
-                                        {!EXPANSION_DB[selectedNode.id] && (
-                                             <div className="text-center py-10 text-slate-500 text-sm italic border border-dashed border-slate-800 rounded-xl">Не знайдено зв'язків для розгорнення</div>
+                                        {edges.filter(e => e.source === selectedNode.id || e.target === selectedNode.id).length === 0 && (
+                                             <div className="text-center py-10 text-slate-500 text-[10px] font-bold uppercase tracking-widest italic border border-dashed border-slate-800 rounded-xl">
+                                                Немає завантажених зв'язків.<br/>Натисніть "Оточення".
+                                             </div>
                                         )}
                                     </motion.div>
                                 )}

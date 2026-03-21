@@ -6,23 +6,35 @@ import {
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';
+import { intelligenceApi } from '../../services/api/intelligence';
 
 export const SanctionsIntelligenceWidget: React.FC<{ persona: string }> = ({ persona }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const [results, setResults] = useState<any[]>([]);
 
-  const handleScan = () => {
+  const handleScan = async () => {
+    if (!searchTerm.trim()) return;
     setIsScanning(true);
-    setTimeout(() => {
-      setResults([
-        { list: 'OFAC (USA)', status: 'Clear', label: premiumLocales.sanctionsIntelligence.statusClear, date: premiumLocales.sanctionsIntelligence.today },
-        { list: 'EU Sanctions', status: 'Clear', label: premiumLocales.sanctionsIntelligence.statusClear, date: premiumLocales.sanctionsIntelligence.today },
-        { list: 'РНБО (Україна)', status: 'Увага', label: premiumLocales.sanctionsIntelligence.statusMatch, date: premiumLocales.sanctionsIntelligence.yesterday, alert: premiumLocales.sanctionsIntelligence.matchFound },
-        { list: 'UN Security Council', status: 'Clear', label: premiumLocales.sanctionsIntelligence.statusClear, date: premiumLocales.sanctionsIntelligence.today },
-      ]);
+    setResults([]);
+    
+    try {
+      const data = await intelligenceApi.screenSanctions(searchTerm);
+      // Приводимо до формату UI якщо бекенд повертає інший
+      const formatted = (Array.isArray(data) ? data : (data?.results || [])).map((res: any) => ({
+        list: res.list || 'Unknown List',
+        status: res.status || (res.match ? 'Увага' : 'Clear'),
+        label: res.label || (res.match ? premiumLocales.sanctionsIntelligence.statusMatch : premiumLocales.sanctionsIntelligence.statusClear),
+        date: res.date || premiumLocales.sanctionsIntelligence.today,
+        alert: res.alert || (res.match ? premiumLocales.sanctionsIntelligence.matchFound : null)
+      }));
+      setResults(formatted);
+    } catch (err) {
+      console.error("Sanctions scan failed:", err);
+      // Fallback на пустий результат або помилку
+    } finally {
       setIsScanning(false);
-    }, 2000);
+    }
   };
 
   return (

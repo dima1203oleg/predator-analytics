@@ -8,6 +8,8 @@ import {
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';
 
+import { intelligenceApi } from '../../services/api/intelligence';
+
 interface ReportTemplate {
   id: string;
   name: string;
@@ -26,11 +28,17 @@ export const ReportCenterWidget: React.FC<{ persona: string }> = ({ persona }) =
 
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
 
-  const handleGenerate = (id: string) => {
+  const handleGenerate = async (id: string) => {
     setIsGenerating(id);
-    setTimeout(() => {
+    try {
+      // Call real API
+      await intelligenceApi.generateReport(id);
+      // Wait for response, the file will be generated on backend
+    } catch (err) {
+      console.error("Report generation failed:", err);
+    } finally {
       setIsGenerating(null);
-    }, 3000);
+    }
   };
 
   return (

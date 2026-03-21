@@ -4,6 +4,8 @@ import { Truck, Ship, CheckCircle2, Clock, MapPin, Search, Package } from 'lucid
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';
 
+import { intelligenceApi } from '../../services/api/intelligence';
+
 interface TrackingStep {
   id: string;
   label: string;
@@ -20,22 +22,24 @@ export const LogisticsTrackerWidget: React.FC<{ persona: string }> = ({ persona 
 
   if (persona !== 'TITAN') return null;
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!trackingId) return;
     setIsSearching(true);
     setResult(null);
 
-    // Mock Search
-    setTimeout(() => {
-      setResult([
-        { id: '1', label: premiumLocales.logisticsTracker.steps.sent, date: '28.01.2026', status: 'completed', location: 'Шанхай, КНР', icon: Package },
-        { id: '2', label: premiumLocales.logisticsTracker.steps.inPortOrigin, date: '30.01.2026', status: 'completed', location: 'Порт Шанхай', icon: Ship },
-        { id: '3', label: premiumLocales.logisticsTracker.steps.inTransitSea, date: '02.02.2026', status: 'current', location: 'Індійський Океан', icon: Ship },
-        { id: '4', label: premiumLocales.logisticsTracker.steps.arrivalPort, date: 'Очікувано 14.02.2026', status: 'pending', location: 'Одеса / Констанца', icon: MapPin },
-        { id: '5', label: premiumLocales.logisticsTracker.steps.customsClearance, date: 'Очікувано 16.02.2026', status: 'pending', location: 'Київська Митниця', icon: CheckCircle2 },
-      ]);
+    try {
+      const data = await intelligenceApi.getWidgetData('logistics', trackingId);
+      // Map icons back if labels match or use generic mapping
+      const steps = (Array.isArray(data) ? data : (data?.steps || [])).map((s: any) => ({
+        ...s,
+        icon: s.type === 'ship' ? Ship : s.type === 'truck' ? Truck : s.type === 'map' ? MapPin : Package
+      }));
+      setResult(steps.length > 0 ? steps : null);
+    } catch (err) {
+      console.error("Logistics tracking failed:", err);
+    } finally {
       setIsSearching(false);
-    }, 1500);
+    }
   };
 
   return (

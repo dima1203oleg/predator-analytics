@@ -71,7 +71,7 @@ export const VisualAnalytics: React.FC = () => {
     } catch (error) {
       console.error("Failed to load analytics", error);
     } finally {
-      setTimeout(() => setIsLoading(false), 800);
+      setIsLoading(false);
     }
   };
 

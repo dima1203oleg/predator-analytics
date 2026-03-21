@@ -41,8 +41,9 @@ export const AutonomousLearningStack: React.FC = () => {
         setIsThinking(true);
         try {
             await v45Client.post('/training/trigger');
+            await fetchTrainingData(); // Refresh immediately after trigger
         } finally {
-            setTimeout(() => setIsThinking(false), 2000);
+            setIsThinking(false);
         }
     };
 

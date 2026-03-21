@@ -50,27 +50,34 @@ export const PredatorChatWidget: React.FC = () => {
     setInput('');
     setIsTyping(true);
 
-    // AI Simulation
-    setTimeout(() => {
-      let responseText = premiumLocales.predatorChat.processingMessage;
-      const query = userMsg.text.toLowerCase();
+    // Real AI Query
+    const fetchResponse = async () => {
+      try {
+        const response = await intelligenceApi.query(input, 'general');
+        
+        const botMsg: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'bot',
+          text: response.answer || response.analysis || premiumLocales.predatorChat.defaultResponse.replace('{query}', userMsg.text),
+          timestamp: new Date().toLocaleTimeString().slice(0, 5)
+        };
 
-      if (query.includes('звіт')) responseText = premiumLocales.predatorChat.reportResponse;
-      else if (query.includes('ризик')) responseText = premiumLocales.predatorChat.riskResponse;
-      else if (query.includes('мит')) responseText = premiumLocales.predatorChat.customsResponse;
-      else if (query.includes('привіт')) responseText = premiumLocales.predatorChat.greetingResponse;
-      else responseText = premiumLocales.predatorChat.defaultResponse.replace('{query}', userMsg.text);
+        setMessages(prev => [...prev, botMsg]);
+      } catch (err) {
+        console.error("Failed to fetch AI response:", err);
+        const errorMsg: Message = {
+          id: Date.now().toString(),
+          role: 'bot',
+          text: "Помилка зв'язку з сервером AI.",
+          timestamp: new Date().toLocaleTimeString().slice(0, 5)
+        };
+        setMessages(prev => [...prev, errorMsg]);
+      } finally {
+        setIsTyping(false);
+      }
+    };
 
-      const botMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'bot',
-        text: responseText,
-        timestamp: new Date().toLocaleTimeString().slice(0, 5)
-      };
-
-      setMessages(prev => [...prev, botMsg]);
-      setIsTyping(false);
-    }, 1500);
+    fetchResponse();
   };
 
   return (

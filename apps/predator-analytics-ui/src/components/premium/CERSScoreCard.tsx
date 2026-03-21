@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, ShieldAlert, ShieldCheck, Activity, Target, RefreshCw, Layers, AlertTriangle } from 'lucide-react';
 import { TacticalCard } from '@/components/TacticalCard';
-import { api } from '@/services/api';
+import { diligenceApi } from '@/features/diligence/api/diligence';
 import { CERSCompany, CERSScoreSegment } from '@/types';
 import { cn } from '@/utils/cn';
 
@@ -16,51 +16,64 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
     const [scoreData, setScoreData] = useState<{ totalScore: number; segments: CERSScoreSegment[] } | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isRecalculating, setIsRecalculating] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchCERSData = async () => {
+        if (!edrpou) return;
+        setIsLoading(true);
+        setError(null);
+        try {
+            const companyProfile = await diligenceApi.getCompanyProfile(edrpou);
+            const riskScores = await diligenceApi.getRiskScores([edrpou]);
+            
+            // Map CompanyProfileResponse to CERSCompany
+            // Note: address and director might not be directly on CompanyProfileResponse 
+            // from the types, so we handle them safely.
+            const mappedCompany: CERSCompany = {
+                edrpou: companyProfile.edrpou || edrpou,
+                name: companyProfile.name || 'Компанія не знайдена',
+                type: 'Юридична особа',
+                status: companyProfile.status || 'НЕВИЗНАЧЕНО',
+                registrationDate: companyProfile.registration_date || '',
+                address: (companyProfile as any).address || 'Дані про адресу відсутні',
+                director: companyProfile.directors?.[0]?.label || 'Дані про керівника відсутні',
+                beneficiaries: companyProfile.ultimate_beneficiaries?.map(b => b.label) || [],
+                riskScore: companyProfile.risk_score || 0,
+                tags: (companyProfile as any).tags || [],
+                flags: (companyProfile as any).flags || []
+            };
+
+            // Map riskScores to segments
+            const entityScore = riskScores[edrpou] || { score: 0, risk_vectors: [] };
+            const mappedScoreDetails = {
+                totalScore: entityScore.score,
+                segments: (entityScore.risk_vectors || []).map((v: any) => ({
+                    name: v.name,
+                    score: v.score,
+                    weight: v.weight,
+                    description: v.description || 'Аналіз компонента завершено',
+                    status: (v.status || (v.score > 80 ? 'OK' : v.score > 50 ? 'WARNING' : 'CRITICAL')) as 'OK' | 'WARNING' | 'CRITICAL'
+                }))
+            };
+
+            // Fallback if no vectors found
+            if (mappedScoreDetails.segments.length === 0) {
+              mappedScoreDetails.segments = [
+                { name: 'Behavioral', score: entityScore.score, weight: 100, description: 'Загальний поведінковий аналіз', status: entityScore.score > 70 ? 'OK' : 'WARNING' }
+              ];
+            }
+
+            setCompany(mappedCompany);
+            setScoreData(mappedScoreDetails);
+        } catch (err) {
+            console.error('Помилка завантаження CERS:', err);
+            setError('Не вдалося завантажити дані скорингу');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchCERSData = async () => {
-            setIsLoading(true);
-            try {
-                // В реальному проекті тут буде API-дзвінок:
-                // const comp = await api.cers.getCompanyProfile(edrpou);
-                // const score = await api.cers.getScoreDetails(edrpou);
-                
-                // Мокаємо дані для UI
-                await new Promise(r => setTimeout(r, 800));
-                
-                const mockCompany: CERSCompany = {
-                    edrpou,
-                    name: 'ТОВ "ТЕХНО-АЛЬЯНС УКРАЇНА"',
-                    type: 'Юридична особа',
-                    status: 'АКТИВНИЙ',
-                    registrationDate: '2015-08-12',
-                    address: 'м. Київ, вул. Технічна, 14',
-                    director: 'Шевченко О. М.',
-                    beneficiaries: ['Коваленко І. В.', 'ТОВ "КІПР ІНВЕСТ"'],
-                    riskScore: 78,
-                    tags: ['Імпортер електроніки', 'Держзакупівлі'],
-                    flags: ['COURT_CASES']
-                };
-                
-                const mockScoreDetails = {
-                    totalScore: 78,
-                    segments: [
-                        { name: 'Податкова дисципліна', score: 95, weight: 30, description: 'Відсутні борги перед бюджетом', status: 'OK' as const },
-                        { name: 'Судові реєстри', score: 45, weight: 25, description: 'Наявні 3 господарські спори за рік', status: 'WARNING' as const },
-                        { name: 'Митна історія', score: 88, weight: 25, description: 'Регулярні поставки, 2 незначні порушення ПМП', status: 'OK' as const },
-                        { name: 'Зв\'язки (OSINT)', score: 70, weight: 20, description: 'Виявлено непрямий зв\'язок з PEP', status: 'WARNING' as const }
-                    ]
-                };
-
-                setCompany(mockCompany);
-                setScoreData(mockScoreDetails);
-            } catch (error) {
-                console.error('Помилка завантаження CERS:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
         if (edrpou) {
             fetchCERSData();
         }
@@ -69,19 +82,7 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
     const handleRecalculate = async () => {
         setIsRecalculating(true);
         try {
-            await new Promise(r => setTimeout(r, 1500));
-            // Симулюємо зміну скору
-            if (scoreData) {
-                setScoreData({
-                    ...scoreData,
-                    totalScore: scoreData.totalScore - 3,
-                    segments: scoreData.segments.map(s => 
-                        s.name === 'Зв\'язки (OSINT)' 
-                            ? { ...s, score: s.score - 15, status: 'CRITICAL', description: 'Оновлено: Прямий зв\'язок з санкційною особою' } 
-                            : s
-                    )
-                });
-            }
+            await fetchCERSData();
         } finally {
             setIsRecalculating(false);
         }
@@ -93,6 +94,17 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
                 <div className="flex flex-col items-center gap-4 text-emerald-500/50">
                     <Activity size={32} className="animate-spin" />
                     <span className="text-[10px] uppercase font-black tracking-widest">Агрегація CERS-Реєстрів...</span>
+                </div>
+            </TacticalCard>
+        );
+    }
+
+    if (error) {
+        return (
+            <TacticalCard variant="holographic" className={cn("min-h-[300px] flex items-center justify-center", className)}>
+                <div className="flex flex-col items-center gap-4 text-red-500/50">
+                    <AlertTriangle size={32} />
+                    <span className="text-[10px] uppercase font-black tracking-widest">{error}</span>
                 </div>
             </TacticalCard>
         );
@@ -190,7 +202,7 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
 
                     <div className="grid grid-cols-1 gap-2">
                         <AnimatePresence>
-                            {scoreData.segments.map((segment, idx) => (
+                            {(scoreData.segments || []).map((segment, idx) => (
                                 <motion.div 
                                     key={segment.name}
                                     initial={{ opacity: 0, x: -10 }}
@@ -230,3 +242,5 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
         </TacticalCard>
     );
 };
+
+export default CERSScoreCard;

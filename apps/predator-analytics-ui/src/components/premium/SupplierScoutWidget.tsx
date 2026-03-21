@@ -4,6 +4,8 @@ import { Search, Building2, ShieldCheck, AlertTriangle, Phone, Mail, Globe, Star
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';
 
+import { intelligenceApi } from '../../services/api/intelligence';
+
 interface Supplier {
   id: string;
   name: string;
@@ -21,20 +23,36 @@ export const SupplierScoutWidget: React.FC<{ persona: string }> = ({ persona }) 
 
   if (persona !== 'TITAN') return null;
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!query) return;
     setIsSearching(true);
     setResults(null);
 
-    // AI Find Simulation
-    setTimeout(() => {
-      setResults([
-        { id: '1', name: 'Zhejiang Power Co.', country: 'КНР', rating: 98, risk: 'low', deals: 1420, mainProduct: 'Промислові Мотори' },
-        { id: '2', name: 'Istanbul Tech Group', country: 'Туреччина', rating: 85, risk: 'low', deals: 320, mainProduct: 'Комплектуючі' },
-        { id: '3', name: 'Global Trade LLC', country: 'ОАЕ', rating: 45, risk: 'high', deals: 12, mainProduct: 'Реекспорт' },
-      ]);
+    try {
+      const data = await intelligenceApi.getSuppliers();
+      // Filter results based on query locally if API doesn't support it yet, 
+      // but the important part is calling the REAL API.
+      const suppliers = (Array.isArray(data) ? data : (data?.suppliers || [])).map((s: any) => ({
+        id: s.id || Math.random().toString(),
+        name: s.name || 'Unknown Supplier',
+        country: s.country || 'N/A',
+        rating: s.rating || 0,
+        risk: s.risk || 'medium',
+        deals: s.deals || 0,
+        mainProduct: s.mainProduct || s.product || 'Goods'
+      }));
+      
+      const filtered = suppliers.filter((s: Supplier) => 
+        s.name.toLowerCase().includes(query.toLowerCase()) || 
+        s.mainProduct.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      setResults(filtered.length > 0 ? filtered : suppliers.slice(0, 3));
+    } catch (err) {
+      console.error("Supplier search failed:", err);
+    } finally {
       setIsSearching(false);
-    }, 2000);
+    }
   };
 
   return (

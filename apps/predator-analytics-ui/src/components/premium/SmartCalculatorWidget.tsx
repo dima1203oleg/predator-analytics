@@ -19,23 +19,35 @@ export const SmartCalculatorWidget: React.FC<{ persona: string }> = ({ persona }
     setCalculating(true);
     setResult(null);
 
-    // Simulate Calculation & Risk Check
-    setTimeout(() => {
-      const val = parseFloat(value);
-      const isRisk = hsCode.startsWith('85') || val < 1000; // Mock risk logic
+    // Real AI Check
+    const fetchRiskCheck = async () => {
+      try {
+        const query = `Розрахуй мито для коду УКТ ЗЕД ${hsCode} при вартості ${value} ${currency}. Вкажи чи є ризики.`;
+        const response = await intelligenceApi.query(query, 'forensics');
+        
+        const val = parseFloat(value);
+        // If API provides specific numbers, we could use them, but for now we refine the risk logic
+        const isRisk = response.risk_score > 70 || response.analysis?.toLowerCase().includes('ризик');
 
-      const dutyRate = isRisk ? 0.12 : 0.05; // 12% or 5%
-      const duty = val * dutyRate;
-      const vat = (val + duty) * 0.20; // 20% on (Value + Duty)
+        const dutyRate = isRisk ? 0.12 : 0.05;
+        const duty = val * dutyRate;
+        const vat = (val + duty) * 0.20;
 
-      setResult({
-        duty,
-        vat,
-        total: val + duty + vat,
-        risk: isRisk
-      });
-      setCalculating(false);
-    }, 1500);
+        setResult({
+          duty,
+          vat,
+          total: val + duty + vat,
+          risk: isRisk
+        });
+      } catch (err) {
+        console.error("Failed to fetch calculation risk:", err);
+        // Fallback or show error
+      } finally {
+        setCalculating(false);
+      }
+    };
+
+    fetchRiskCheck();
   };
 
   return (

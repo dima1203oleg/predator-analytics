@@ -382,15 +382,25 @@ export const PriceAnomalyWidget: React.FC<{
 export const TradeFlowWidget: React.FC<{
   persona: string;
 }> = ({ persona }) => {
-  const countries = [
-    { code: 'CN', name: 'Китай', volume: 45, change: 12.5 },
-    { code: 'DE', name: 'Німеччина', volume: 18, change: -3.2 },
-    { code: 'PL', name: 'Польща', volume: 12, change: 8.7 },
-    { code: 'TR', name: 'Туреччина', volume: 9, change: 23.4 },
-    { code: 'US', name: 'США', volume: 8, change: 5.1 },
-    { code: 'IT', name: 'Італія', volume: 5, change: -1.8 },
-    { code: 'OTHER', name: 'Інші', volume: 3, change: 0 },
-  ];
+  const [countries, setCountries] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTradeFlow = async () => {
+      setLoading(true);
+      try {
+        const result = await api.premium.getWidgetData('trade-flow', 'global');
+        if (result && Array.isArray(result.countries)) {
+          setCountries(result.countries);
+        }
+      } catch (err) {
+        console.error("Failed to fetch trade flow geography", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTradeFlow();
+  }, []);
 
   const personaColor = persona === 'TITAN' ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
 
@@ -407,7 +417,11 @@ export const TradeFlowWidget: React.FC<{
       </div>
 
       <div className="p-4 space-y-3">
-        {countries.map((country, i) => (
+        {loading ? (
+             <div className="flex items-center justify-center py-12">
+                <RefreshCw className={`text-${personaColor}-400 animate-spin`} size={24} />
+             </div>
+        ) : countries.map((country: any, i) => (
           <motion.div
             key={country.code}
             initial={{ opacity: 0, width: 0 }}
@@ -556,20 +570,26 @@ export const RiskScoreWidget: React.FC<{
   persona: string;
 }> = ({ entityName, persona }) => {
   const [score, setScore] = useState(0);
-  const targetScore = 73; // Mock score
+  const [loading, setLoading] = useState(true);
+  const [factors, setFactors] = useState<any[]>([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setScore(targetScore), 500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const factors = [
-    { name: premiumLocales.customsAnalytics.riskScore.factors.history, score: 65, weight: 25 },
-    { name: premiumLocales.customsAnalytics.riskScore.factors.price, score: 82, weight: 30 },
-    { name: premiumLocales.customsAnalytics.riskScore.factors.network, score: 45, weight: 20 },
-    { name: premiumLocales.customsAnalytics.riskScore.factors.age, score: 88, weight: 15 },
-    { name: premiumLocales.customsAnalytics.riskScore.factors.reputation, score: 72, weight: 10 },
-  ];
+    const fetchRiskScore = async () => {
+      setLoading(true);
+      try {
+        const result = await api.premium.getWidgetData('risk', entityName);
+        if (result) {
+          setScore(result.score || 0);
+          setFactors(result.factors || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch risk score", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRiskScore();
+  }, [entityName]);
 
   const getRiskLevel = (s: number) => {
     if (s >= 75) return { label: premiumLocales.customsAnalytics.riskScore.levels.critical, color: 'rose' };

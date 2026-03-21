@@ -62,16 +62,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
 
         try {
             setPhase('GENERATING');
-            const councilPromise = apiClient.post('/intelligence/council', { query, models: selectedModels }).then(res => res.data);
-
-            // Емуляція фаз для візуальної глибини
-            const phaseTimer1 = setTimeout(() => setPhase('REVIEWING'), 3000);
-            const phaseTimer2 = setTimeout(() => setPhase('SYNTHESIZING'), 7000);
-
-            const data = await councilPromise;
-
-            clearTimeout(phaseTimer1);
-            clearTimeout(phaseTimer2);
+            const data = await apiClient.post('/intelligence/council', { query, models: selectedModels }).then(res => res.data);
 
             setResult(data);
             setPhase('COMPLETED');

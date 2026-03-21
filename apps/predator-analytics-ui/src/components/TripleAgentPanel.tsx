@@ -73,10 +73,10 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
         setSteps(prev => prev.map(s => ({ ...s, status: 'pending', details: undefined })));
 
         try {
-            // Step 0: WinSURF
+            // Step 0: WinSURF Governance
             setSteps(prev => prev.map((s, i) => i === 0 ? { ...s, status: 'running' } : s));
-            await new Promise(r => setTimeout(r, 1200));
-
+            
+            // Step 1: Gemini Strategic Engine
             setSteps(prev => prev.map((s, i) =>
                 i === 0 ? { ...s, status: 'completed' } :
                     i === 1 ? { ...s, status: 'running' } : s
@@ -86,35 +86,30 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
             // Call Backend API
             const res = await api.v45.trinity.process(command);
 
-            // Step 1 Check
-            await new Promise(r => setTimeout(r, 800));
+            // Step 2 & 3: Mistral & Copilot (Synthesis & Audit)
+            // Based on the real response, we mark these steps
             setSteps(prev => prev.map((s, i) =>
                 i === 1 ? { ...s, status: 'completed' } :
                     i === 2 ? { ...s, status: 'running' } : s
             ));
             setActiveStep(2);
 
-            // Step 2 & 3 Evolution
-            if (res.code) {
-                await new Promise(r => setTimeout(r, 1500));
-                setSteps(prev => prev.map((s, i) =>
-                    i === 2 ? { ...s, status: 'completed' } :
-                        i === 3 ? { ...s, status: 'running' } : s
-                ));
-                setActiveStep(3);
-            }
-
-            await new Promise(r => setTimeout(r, 1000));
             setResult(res);
 
-            const isSuccess = res.success && !res.error;
+            const isSuccess = res.success !== false && !res.error;
+            
             setSteps(prev => {
                 const s = [...prev];
-
-                if (res.code) {
+                
+                // Finalize Synthesis (Step 2)
+                s[2].status = isSuccess ? 'completed' : 'failed';
+                
+                // Handle optional Code/Audit Step (Step 3)
+                if (res.code || res.audit_report) {
                     s[3].status = isSuccess ? 'completed' : 'failed';
+                    setActiveStep(3);
                 } else {
-                    s[2].status = isSuccess ? 'completed' : 'failed';
+                    setActiveStep(isSuccess ? 4 : -1);
                 }
 
                 if (!isSuccess) {
@@ -123,7 +118,6 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                 }
                 return s;
             });
-            setActiveStep(isSuccess ? 4 : -1);
 
         } catch (error) {
             console.error("Trident Chain Error:", error);
