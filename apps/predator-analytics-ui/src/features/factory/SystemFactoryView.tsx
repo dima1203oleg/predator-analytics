@@ -9,6 +9,13 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { TacticalCard } from '@/components/TacticalCard';
 import { cn } from '@/utils/cn';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { 
+  Cloud, Globe, Share2, FileText, BarChart3, Binary, BrainCircuit, 
+  CircleDot, Fingerprint, Microscope, Scan, ShieldCheck, History
+} from 'lucide-react';
 
 const SearchIcon = (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>;
 const ArrowUpIcon = (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>;
@@ -57,6 +64,16 @@ export default function SystemFactoryView() {
   const [googleIntegrality, setGoogleIntegrality] = useState(false);
   const [improvementStatus, setImprovementStatus] = useState<'idle' | 'running' | 'done'>('idle');
   const [improvementProgress, setImprovementProgress] = useState(0);
+
+  // Google Ecosystem State
+  const [googleStatus, setGoogleStatus] = useState({
+    drive: 'connected',
+    gemini: 'active',
+    analytics: 'syncing',
+    workspace: 'ready'
+  });
+
+  const [activeCycle, setActiveCycle] = useState<'testing' | 'building' | 'deploying' | 'idle'>('idle');
 
   const techOptions = [
     { id: 'frontend', label: 'Фронтенд (веб-інтерфейс, візуальність)' },
@@ -352,178 +369,314 @@ export default function SystemFactoryView() {
           
           {/* Custom Tabs */}
           <div className="flex gap-4 border-b border-white/10 pb-4 overflow-x-auto custom-scrollbar">
-             <button 
+             <Button 
                onClick={() => setActiveTab('improve')}
-               className={cn("flex whitespace-nowrap items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'improve' ? "bg-fuchsia-600/20 text-fuchsia-400 border border-fuchsia-500/50 shadow-[0_0_20px_rgba(217,70,239,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
+               variant={activeTab === 'improve' ? "neon" : "ghost"}
+               className={cn("px-6 py-6 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'improve' && "bg-fuchsia-600/20 text-fuchsia-400 border-fuchsia-500/50 shadow-[0_0_20px_rgba(217,70,239,0.3)]")}
              >
-                <Sparkles size={16} /> УПРАВЛІННЯ ВДОСКОНАЛЕННЯМИ
-             </button>
-             <button 
+                <Sparkles size={16} className="mr-2" /> СОВЕРЕННИЙ ЗАВОД (IMPROVE)
+             </Button>
+             <Button 
                onClick={() => setActiveTab('k8s')}
-               className={cn("flex whitespace-nowrap items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'k8s' ? "bg-indigo-600/20 text-indigo-400 border border-indigo-500/50 shadow-[0_0_20px_rgba(79,70,229,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
+               variant={activeTab === 'k8s' ? "neon" : "ghost"}
+               className={cn("px-6 py-6 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'k8s' && "bg-indigo-600/20 text-indigo-400 border-indigo-500/50 shadow-[0_0_20px_rgba(79,70,229,0.3)]")}
              >
-                <Layers size={16} /> KUBERNETES КЛАСТЕР 
-             </button>
-             <button 
+                <Layers size={16} className="mr-2" /> KUBERNETES КЛАСТЕР 
+             </Button>
+             <Button 
                onClick={() => setActiveTab('network')}
-               className={cn("flex whitespace-nowrap items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'network' ? "bg-cyan-600/20 text-cyan-400 border border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
+               variant={activeTab === 'network' ? "neon" : "ghost"}
+               className={cn("px-6 py-6 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'network' && "bg-cyan-600/20 text-cyan-400 border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.3)]")}
              >
-                <Wifi size={16} /> МЕРЕЖА / ТОПОЛОГІЯ
-             </button>
-             <button 
+                <Wifi size={16} className="mr-2" /> МЕРЕЖА / ТОПОЛОГІЯ
+             </Button>
+             <Button 
                onClick={() => setActiveTab('cicd')}
-               className={cn("flex whitespace-nowrap items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'cicd' ? "bg-emerald-600/20 text-emerald-400 border border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
+               variant={activeTab === 'cicd' ? "neon" : "ghost"}
+               className={cn("px-6 py-6 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'cicd' && "bg-emerald-600/20 text-emerald-400 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]")}
              >
-                <GitBranch size={16} /> CI/CD КОНВЕЄР
-             </button>
+                <GitBranch size={16} className="mr-2" /> CI/CD КОНВЕЄР
+             </Button>
           </div>
 
           <AnimatePresence mode="wait">
              {activeTab === 'improve' && (
-               <motion.div key="improve" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
-                 
-                 {/* Mode Selection */}
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <button 
-                      onClick={() => setImprovementMode('tech')}
-                      className={cn("p-4 rounded-xl border flex flex-col items-center gap-2 transition-all", improvementMode === 'tech' ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-400 shadow-[0_0_15px_rgba(79,70,229,0.2)]' : 'bg-slate-900/50 border-white/5 text-slate-400 hover:bg-slate-800')}
-                    >
-                      <Cog size={24} />
-                      <span className="text-[11px] font-black uppercase tracking-widest">Технологічна Вертикаль</span>
-                    </button>
-                    <button 
-                      onClick={() => setImprovementMode('analytic')}
-                      className={cn("p-4 rounded-xl border flex flex-col items-center gap-2 transition-all", improvementMode === 'analytic' ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'bg-slate-900/50 border-white/5 text-slate-400 hover:bg-slate-800')}
-                    >
-                      <BarChart size={24} />
-                      <span className="text-[11px] font-black uppercase tracking-widest">Аналітична Вертикаль</span>
-                    </button>
-                    <button 
-                      onClick={() => setImprovementMode('complex')}
-                      className={cn("p-4 rounded-xl border flex flex-col items-center gap-2 transition-all", improvementMode === 'complex' ? 'bg-fuchsia-500/20 border-fuchsia-500/50 text-fuchsia-400 shadow-[0_0_15px_rgba(217,70,239,0.2)]' : 'bg-slate-900/50 border-white/5 text-slate-400 hover:bg-slate-800')}
-                    >
-                      <Sparkles size={24} />
-                      <span className="text-[11px] font-black uppercase tracking-widest">Комплексне Вдосконалення</span>
-                    </button>
-                 </div>
+                <motion.div key="improve" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+                  
+                  {/* Sovereign Control Center Header */}
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4 bg-slate-900/40 border border-white/10 rounded-2xl backdrop-blur-md">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/30 flex items-center justify-center text-fuchsia-400 shadow-[0_0_15px_rgba(217,70,239,0.2)]">
+                        <Factory size={24} />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-white">ГОЛОВНИЙ ПУЛЬТ УПРАВЛІННЯ ЦИКЛОМ</h3>
+                        <p className="text-[10px] text-slate-500 font-mono text-fuchsia-500 uppercase">STATUS: {improvementStatus.toUpperCase()} | CYCLE: {activeCycle.toUpperCase()}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                       <Button 
+                         variant="neon" 
+                         size="sm" 
+                         className="bg-emerald-600/20 text-emerald-400 border-emerald-500/50 text-[9px] uppercase font-black"
+                         onClick={() => { setImprovementStatus('running'); setActiveCycle('building'); handleStartImprovement(); }}
+                       >
+                         <Play size={12} className="mr-1" /> Запустити Повний Цикл
+                       </Button>
+                       <Button 
+                         variant="cyber" 
+                         size="sm" 
+                         className="bg-rose-600/20 text-rose-400 border-rose-500/50 text-[9px] uppercase font-black"
+                         onClick={() => { setImprovementStatus('idle'); setImprovementProgress(0); setActiveCycle('idle'); }}
+                       >
+                         <AlertTriangle size={12} className="mr-1" /> Аварійна Зупинка
+                       </Button>
+                    </div>
+                  </div>
 
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   {/* Technical Column */}
-                   {(improvementMode === 'tech' || improvementMode === 'complex') && (
-                     <TacticalCard title="ТЕХНОЛОГІЧНІ КОМПОНЕНТИ" variant="cyber" className="border-indigo-500/30">
+                  {/* Mode Selection Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Button 
+                        onClick={() => setImprovementMode('tech')}
+                        variant={improvementMode === 'tech' ? 'neon' : 'cyber'}
+                        className={cn("h-auto py-8 rounded-xl flex flex-col items-center gap-4 transition-all relative overflow-hidden", 
+                          improvementMode === 'tech' ? 'border-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.3)] bg-indigo-500/10' : 'border-white/5 text-slate-400 opacity-60')}
+                      >
+                        {improvementMode === 'tech' && <div className="absolute inset-0 bg-indigo-500/5 animate-pulse" />}
+                        <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
+                          <Binary size={24} className="text-indigo-400" />
+                        </div>
+                        <div className="text-center">
+                          <span className="text-[11px] font-black uppercase tracking-widest block">Технологічна Вертикаль</span>
+                          <span className="text-[8px] text-indigo-400/70 font-mono mt-1 uppercase">Infrastructure & Core API</span>
+                        </div>
+                      </Button>
+                      <Button 
+                        onClick={() => setImprovementMode('analytic')}
+                        variant={improvementMode === 'analytic' ? 'neon' : 'cyber'}
+                        className={cn("h-auto py-8 rounded-xl flex flex-col items-center gap-4 transition-all relative overflow-hidden", 
+                          improvementMode === 'analytic' ? 'border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.3)] bg-amber-500/10' : 'border-white/5 text-slate-400 opacity-60')}
+                      >
+                        {improvementMode === 'analytic' && <div className="absolute inset-0 bg-amber-500/5 animate-pulse" />}
+                        <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/30">
+                          <BrainCircuit size={24} className="text-amber-400" />
+                        </div>
+                        <div className="text-center">
+                          <span className="text-[11px] font-black uppercase tracking-widest block text-amber-100">Аналітична Вертикаль</span>
+                          <span className="text-[8px] text-amber-400/70 font-mono mt-1 uppercase">Knowledge Maps & Patterns</span>
+                        </div>
+                      </Button>
+                      <Button 
+                        onClick={() => setImprovementMode('complex')}
+                        variant={improvementMode === 'complex' ? 'neon' : 'cyber'}
+                        className={cn("h-auto py-8 rounded-xl flex flex-col items-center gap-4 transition-all relative overflow-hidden", 
+                          improvementMode === 'complex' ? 'border-fuchsia-500 shadow-[0_0_20px_rgba(217,70,239,0.3)] bg-fuchsia-500/10' : 'border-white/5 text-slate-400 opacity-60')}
+                      >
+                        {improvementMode === 'complex' && <div className="absolute inset-0 bg-fuchsia-500/5 animate-pulse" />}
+                        <div className="w-12 h-12 rounded-full bg-fuchsia-500/20 flex items-center justify-center border border-fuchsia-500/30">
+                          <Sparkles size={24} className="text-fuchsia-400" />
+                        </div>
+                        <div className="text-center">
+                          <span className="text-[11px] font-black uppercase tracking-widest block text-white">Комплексний Нагляд</span>
+                          <span className="text-[8px] text-fuchsia-400/70 font-mono mt-1 uppercase">Sovereign Deployment</span>
+                        </div>
+                      </Button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Technical Column */}
+                    {(improvementMode === 'tech' || improvementMode === 'complex') && (
+                      <TacticalCard title="ТЕХНОЛОГІЧНИЙ СТЕК" variant="cyber" className="border-indigo-500/30">
                         <div className="p-4 space-y-4">
-                          <label className="flex items-center gap-3 p-3 rounded-lg bg-indigo-500/5 border border-indigo-500/20 cursor-pointer hover:bg-indigo-500/10 transition-colors">
-                            <input type="checkbox" checked={techComponents.length === techOptions.length} onChange={() => setTechComponents(techComponents.length === techOptions.length ? [] : techOptions.map(o => o.id))} className="accent-indigo-500 w-4 h-4" />
-                            <span className="text-[11px] font-black uppercase tracking-widest text-indigo-400">Вибрати все (Масове вдосконалення)</span>
-                          </label>
-                          <div className="space-y-2">
+                          <div className="grid grid-cols-1 gap-2">
                              {techOptions.map(opt => (
-                               <label key={opt.id} className="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-white/5 transition-colors">
-                                  <input type="checkbox" checked={techComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, techComponents, setTechComponents)} className="accent-indigo-500 w-4 h-4 bg-slate-900 border-white/20 rounded" />
-                                  <span className="text-[11px] font-bold text-slate-300">{opt.label}</span>
+                               <label key={opt.id} className={cn("flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer", 
+                                 techComponents.includes(opt.id) ? "bg-indigo-500/10 border-indigo-500/40" : "bg-black/20 border-white/5 hover:border-white/10")}>
+                                  <input type="checkbox" checked={techComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, techComponents, setTechComponents)} className="accent-indigo-500 w-4 h-4" />
+                                  <div className="flex flex-col">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
+                                    {techComponents.includes(opt.id) && <span className="text-[8px] text-indigo-400 animate-pulse uppercase tracking-[0.2em]">Targeted for optimization</span>}
+                                  </div>
                                </label>
                              ))}
                           </div>
-                          <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-1 gap-2">
-                             <button onClick={handleStartImprovement} className="p-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors shadow-lg flex justify-center gap-2"><Wrench size={14}/> Вдосконалити вибране</button>
-                             <button onClick={handleCheckReliability} className="p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors border border-white/5 flex gap-2 justify-center"><CheckCircle2 size={14}/> Перевірити на надійність</button>
+                          <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
+                             <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-indigo-600/20 text-indigo-400 border-indigo-500/50 font-black uppercase tracking-widest text-[10px] h-11"><Wrench size={14} className="mr-2"/> Оптимізувати Ядро</Button>
+                             <div className="grid grid-cols-2 gap-2">
+                               <Button variant="cyber" className="text-[9px] h-9"><History size={12} className="mr-1"/> Rollback</Button>
+                               <Button variant="cyber" className="text-[9px] h-9 text-emerald-400 border-emerald-500/20"><Scan size={12} className="mr-1"/> Security Scan</Button>
+                             </div>
                           </div>
                         </div>
-                     </TacticalCard>
-                   )}
+                      </TacticalCard>
+                    )}
 
-                   {/* Analytical Column */}
-                   {(improvementMode === 'analytic' || improvementMode === 'complex') && (
-                     <TacticalCard title="АНАЛІТИЧНІ СИСТЕМИ" variant="cyber" className="border-amber-500/30">
+                    {/* Analytical Column */}
+                    {(improvementMode === 'analytic' || improvementMode === 'complex') && (
+                      <TacticalCard title="АНАЛІТИЧНИЙ ІНТЕЛЕКТ" variant="cyber" className="border-amber-500/30">
                         <div className="p-4 space-y-4">
-                          <label className="flex items-center gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20 cursor-pointer hover:bg-amber-500/10 transition-colors">
-                            <input type="checkbox" checked={analyticComponents.length === analyticOptions.length} onChange={() => setAnalyticComponents(analyticComponents.length === analyticOptions.length ? [] : analyticOptions.map(o => o.id))} className="accent-amber-500 w-4 h-4" />
-                            <span className="text-[11px] font-black uppercase tracking-widest text-amber-400">Вибрати все (Масове вдосконалення)</span>
-                          </label>
-                          <div className="space-y-2">
+                          <div className="grid grid-cols-1 gap-2">
                              {analyticOptions.map(opt => (
-                               <label key={opt.id} className="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-white/5 transition-colors">
-                                  <input type="checkbox" checked={analyticComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, analyticComponents, setAnalyticComponents)} className="accent-amber-500 w-4 h-4 bg-slate-900 border-white/20 rounded" />
-                                  <span className="text-[11px] font-bold text-slate-300">{opt.label}</span>
+                               <label key={opt.id} className={cn("flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer", 
+                                 analyticComponents.includes(opt.id) ? "bg-amber-500/10 border-amber-500/40" : "bg-black/20 border-white/5 hover:border-white/10")}>
+                                  <input type="checkbox" checked={analyticComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, analyticComponents, setAnalyticComponents)} className="accent-amber-500 w-4 h-4" />
+                                  <div className="flex flex-col">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
+                                    {analyticComponents.includes(opt.id) && <span className="text-[8px] text-amber-400 animate-pulse uppercase tracking-[0.2em]">Pattern upgrade active</span>}
+                                  </div>
                                </label>
                              ))}
-                             <label className="flex items-center gap-3 p-3 mt-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 cursor-pointer hover:bg-emerald-500/20 transition-colors">
-                                <input type="checkbox" checked={googleIntegrality} onChange={() => setGoogleIntegrality(!googleIntegrality)} className="accent-emerald-500 w-4 h-4" />
-                                <div className="flex flex-col">
-                                  <span className="text-[11px] font-black uppercase tracking-widest text-emerald-400">Інтеграція Google Integrality</span>
-                                  <span className="text-[9px] text-emerald-500/70 font-mono mt-1">GCP Data Sync, Gemini NLP, Analytics</span>
-                                </div>
-                             </label>
                           </div>
-                          <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-1 gap-2">
-                             <button onClick={handleStartImprovement} className="p-3 bg-amber-600 hover:bg-amber-500 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors shadow-lg flex justify-center gap-2"><Sparkles size={14}/> Вдосконалити аналітику</button>
-                             <button onClick={handleUpdateKnowledgeMap} className="p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors border border-white/5 flex gap-2 justify-center"><RotateCcw size={14}/> Оновити Knowledge Map</button>
+                          <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
+                             <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-amber-600/20 text-amber-400 border-amber-500/50 font-black uppercase tracking-widest text-[10px] h-11"><Sparkles size={14} className="mr-2"/> Оновити Знання</Button>
+                             <Button onClick={handleUpdateKnowledgeMap} variant="cyber" className="w-full text-[10px] h-11"><RotateCcw size={14} className="mr-2"/> Синхронізувати Гравітацію Фактів</Button>
                           </div>
                         </div>
-                     </TacticalCard>
-                   )}
-                 </div>
+                      </TacticalCard>
+                    )}
 
-                 {/* Realtime Progress & Results */}
-                 {(improvementStatus === 'running' || improvementStatus === 'done') && (
-                   <TacticalCard title="СТАТУС ВИКОНАННЯ (NATS EVENTS)" variant="holographic">
-                     <div className="p-6">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-[10px] font-black uppercase tracking-widest text-fuchsia-400">ПРОГРЕС ВДОСКОНАЛЕННЯ</span>
-                          <span className="font-mono font-bold text-white">{improvementProgress}%</span>
+                    {/* Google Integrality Vertical */}
+                    <TacticalCard title="GOOGLE INTEGRALITY" variant="holographic" className="border-emerald-500/30 bg-emerald-500/5">
+                      <div className="p-4 space-y-4">
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-emerald-500/20">
+                           <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                             <Cloud size={20} />
+                           </div>
+                           <div className="flex-1">
+                             <div className="text-[11px] font-black uppercase text-white">Google Workspace</div>
+                             <div className="text-[8px] text-emerald-500 font-mono">Syncing: Drive, Docs, Sheets</div>
+                           </div>
+                           <Badge variant="cyber" className="bg-emerald-500/20 text-emerald-400 text-[8px]">{googleStatus.drive.toUpperCase()}</Badge>
                         </div>
-                        <div className="w-full h-2 bg-slate-900 rounded-full overflow-hidden mb-6">
-                           <motion.div initial={{ width: 0 }} animate={{ width: `${improvementProgress}%` }} className="h-full bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-amber-500 shadow-[0_0_10px_rgba(217,70,239,0.5)]" />
+
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-indigo-500/20">
+                           <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                             <Scan size={20} />
+                           </div>
+                           <div className="flex-1">
+                             <div className="text-[11px] font-black uppercase text-white">Gemini OSINT Agent</div>
+                             <div className="text-[8px] text-indigo-400 font-mono">Pro v1.5 API Layer</div>
+                           </div>
+                           <Badge variant="cyber" className="bg-indigo-500/20 text-indigo-400 text-[8px]">{googleStatus.gemini.toUpperCase()}</Badge>
                         </div>
-                        
+
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-amber-500/20">
+                           <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400">
+                             <BarChart3 size={20} />
+                           </div>
+                           <div className="flex-1">
+                             <div className="text-[11px] font-black uppercase text-white">Google Analytics</div>
+                             <div className="text-[8px] text-amber-400 font-mono">Traffic & Conversion Insight</div>
+                           </div>
+                           <Badge variant="neon" className="bg-amber-500/20 text-amber-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase()}</Badge>
+                        </div>
+
+                        <div className="pt-4 border-t border-white/10">
+                           <Button 
+                             onClick={() => setGoogleIntegrality(!googleIntegrality)}
+                             variant={googleIntegrality ? "neon" : "cyber"}
+                             className={cn("w-full h-11 text-[10px] font-black uppercase tracking-widest transition-all", 
+                               googleIntegrality ? "bg-emerald-600 text-white" : "text-emerald-400")}
+                           >
+                             <Globe size={14} className="mr-2" /> {googleIntegrality ? "ВІДКЛЮЧИТИ ЕКОСИСТЕМУ" : "АКТИВУВАТИ GOOGLE CLOUD"}
+                           </Button>
+                        </div>
+                      </div>
+                    </TacticalCard>
+                  </div>
+
+                  {/* Realtime Progress & Results UI */}
+                  {(improvementStatus === 'running' || improvementStatus === 'done') && (
+                    <TacticalCard title="КАНАЛ ПОДІЙ ЗАВОДУ (EVENTS)" variant="cyber" className="border-fuchsia-500/20">
+                      <div className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                          <div>
+                             <div className="flex items-center justify-between mb-3">
+                               <span className="text-[11px] font-black uppercase tracking-wider text-fuchsia-400">ПОТОЧНИЙ ПРОГРЕС ЦИКЛУ</span>
+                               <span className="font-mono text-xl font-black text-white">{improvementProgress}%</span>
+                             </div>
+                             <Progress value={improvementProgress} variant="holographic" className="h-4 shadow-[0_0_15px_rgba(217,70,239,0.2)]" />
+                             
+                             <div className="mt-8 grid grid-cols-2 gap-4">
+                               <div className="bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center">
+                                 <Microscope size={24} className="text-cyan-400 mb-2" />
+                                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Аналіз</span>
+                                 <Badge variant="cyber" className="mt-1">COMPLETED</Badge>
+                               </div>
+                               <div className="bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center">
+                                 <Fingerprint size={24} className="text-indigo-400 mb-2" />
+                                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Автентичність</span>
+                                 <Badge variant="cyber" className="mt-1">VERIFIED</Badge>
+                               </div>
+                             </div>
+                          </div>
+
+                          <div className="bg-slate-950/80 rounded-2xl p-4 border border-fuchsia-500/10 font-mono text-[10px] h-[200px] overflow-y-auto custom-scrollbar shadow-inner">
+                             <div className="text-fuchsia-400/60 mb-2 uppercase font-black tracking-widest">[ IMPROVEMENT_DAEMON_LOG ]</div>
+                             <div className="space-y-1">
+                                <div className="text-slate-500">SYNC: Starting vertical distribution...</div>
+                                <div className="text-indigo-400 animate-pulse">TECH: Optimizing Core API clusters...</div>
+                                {improvementProgress > 30 && <div className="text-amber-400">ANALYTIC: Ingesting Knowledge Map delta...</div>}
+                                {improvementProgress > 60 && <div className="text-emerald-400">GOOGLE: Linking Workspace documents...</div>}
+                                {improvementProgress > 80 && <div className="text-fuchsia-400">DONE: All modules synthesized.</div>}
+                                {improvementStatus === 'running' && <div className="text-white flex items-center gap-2 mt-2"><RotateCcw size={10} className="animate-spin" /> Processing artifacts...</div>}
+                             </div>
+                          </div>
+                        </div>
+
                         {improvementStatus === 'done' && (
-                          <div className="space-y-4">
-                            <table className="w-full text-left">
-                               <thead>
-                                 <tr className="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-white/10">
-                                   <th className="pb-2">Компонент</th>
-                                   <th className="pb-2">Дія</th>
-                                   <th className="pb-2">Score До</th>
-                                   <th className="pb-2">Score Після</th>
-                                 </tr>
-                               </thead>
-                               <tbody className="text-[11px] font-mono text-slate-300 divide-y divide-white/5">
-                                 {techComponents.map((c, i) => (
-                                   <tr key={c} className="hover:bg-white/5">
-                                     <td className="py-3 text-indigo-400 font-bold">{techOptions.find(o=>o.id===c)?.label || c}</td>
-                                     <td className="py-3">Оптимізація Factory</td>
-                                     <td className="py-3 text-slate-500">{90 + i}</td>
-                                     <td className="py-3 text-success font-bold flex items-center gap-1"><ArrowUpIcon className="w-3 h-3 text-emerald-500"/>{95 + i}</td>
+                          <div className="mt-8 pt-8 border-t border-white/10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                             <div className="flex items-center gap-3 mb-6">
+                               <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                                 <ShieldCheck size={20} />
+                               </div>
+                               <div>
+                                 <h4 className="text-sm font-black uppercase tracking-widest text-white">ФІНАЛЬНИЙ ЗВІТ ПО ВЕРТИКАЛЯХ</h4>
+                                 <p className="text-[9px] text-emerald-500/70 font-mono uppercase">System Integrity: 100% | Quantum Consistency: Achieved</p>
+                               </div>
+                             </div>
+
+                             <div className="overflow-x-auto">
+                               <table className="w-full text-[11px] font-mono border-separate border-spacing-y-2">
+                                 <thead>
+                                   <tr className="text-slate-500 text-[9px] uppercase tracking-widest text-left">
+                                     <th className="pb-2 font-black pl-3">Вертикаль</th>
+                                     <th className="pb-2 font-black">Впроваджено</th>
+                                     <th className="pb-2 font-black">Статус</th>
                                    </tr>
-                                 ))}
-                                 {analyticComponents.map((c, i) => (
-                                   <tr key={c} className="hover:bg-white/5">
-                                     <td className="py-3 text-amber-400 font-bold">{analyticOptions.find(o=>o.id===c)?.label || c}</td>
-                                     <td className="py-3">Оновлення патернів</td>
-                                     <td className="py-3 text-slate-500">{85 + i}</td>
-                                     <td className="py-3 text-success font-bold flex items-center gap-1"><ArrowUpIcon className="w-3 h-3 text-emerald-500"/>{95 + i}</td>
+                                 </thead>
+                                 <tbody>
+                                   <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
+                                     <td className="p-3 text-indigo-400 font-bold border-l-2 border-indigo-500">Технологічна</td>
+                                     <td className="p-3 text-slate-200">Refactoring API</td>
+                                     <td className="p-3 text-emerald-400 font-bold">STABLE</td>
                                    </tr>
-                                 ))}
-                                 {googleIntegrality && (
-                                   <tr className="bg-emerald-500/5">
-                                     <td className="py-3 text-emerald-400 font-bold">Google Integrality</td>
-                                     <td className="py-3">Імпорт GCP / Gemini API</td>
-                                     <td className="py-3 text-slate-500">-</td>
-                                     <td className="py-3 text-emerald-400 font-bold flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> INTEGRATED</td>
+                                   <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
+                                     <td className="p-3 text-amber-400 font-bold border-l-2 border-amber-500">Аналітична</td>
+                                     <td className="p-3 text-slate-200">Pattern upgrade</td>
+                                     <td className="p-3 text-emerald-400 font-bold">DONE</td>
                                    </tr>
-                                 )}
-                               </tbody>
-                            </table>
-                            <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-white/10">
-                               <button className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest text-slate-300 transition-colors">ЕКСПОРТ (JSON)</button>
-                               <button className="px-4 py-2 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-[10px] font-black uppercase tracking-widest text-indigo-400 border border-indigo-500/30 transition-colors">Звіт (PDF)</button>
-                            </div>
+                                   {googleIntegrality && (
+                                     <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
+                                       <td className="p-3 text-emerald-400 font-bold border-l-2 border-emerald-500">Google Integrality</td>
+                                       <td className="p-3 text-slate-200">GCP Cloud, Gemini v1.5 Pro, OSINT Layers</td>
+                                       <td className="p-3 text-emerald-400 font-bold">INTEGRATED</td>
+                                     </tr>
+                                   )}
+                                 </tbody>
+                               </table>
+                             </div>
+
+                             <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-white/5">
+                               <Button variant="ghost" className="bg-white/5 text-slate-400 text-[9px] font-black uppercase tracking-widest hover:text-white">ЕКСПОРТ (JSON)</Button>
+                               <Button variant="cyber" className="bg-indigo-500/20 text-indigo-400 border-indigo-500/30 text-[9px] font-black uppercase tracking-widest hover:bg-indigo-500/30">Звіт (PDF)</Button>
+                             </div>
                           </div>
                         )}
-                     </div>
-                   </TacticalCard>
-                 )}
-               </motion.div>
+                      </div>
+                    </TacticalCard>
+                  )}
+                </motion.div>
              )}
 
              {activeTab === 'k8s' && (
@@ -551,56 +704,61 @@ export default function SystemFactoryView() {
                                               {pod.name} 
                                               <span className="text-[9px] font-black tracking-widest bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-indigo-400">×{pod.replicas}</span>
                                            </div>
-                                           <div className="text-[9px] font-mono text-slate-500 mt-1">ID: {pod.id} • Уптайм: {pod.uptime}</div>
+                                           <div className="text-[10px] text-slate-500 font-mono mt-1">ID: {pod.id} | Uptime: {pod.uptime}</div>
                                         </div>
                                      </div>
                                   </td>
                                   <td className="p-4">
-                                     <span className={cn(
-                                       "px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest border",
-                                       pod.status === 'Running' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                                     )}>
+                                     <Badge variant={pod.status === 'Running' ? "cyber" : "neon"}>
                                         {pod.status === 'Restarting' ? <RefreshCw size={10} className="inline mr-1 animate-spin" /> : null}
                                         {pod.status}
-                                     </span>
-                                     {pod.restarts > 0 && <div className="text-[9px] text-slate-500 mt-1 ml-1 cursor-help" title={`Restarts: ${pod.restarts}`}>↻ {pod.restarts}</div>}
+                                     </Badge>
+                                     {pod.restarts > 0 && <div className="text-[9px] text-slate-500 mt-2 ml-1 cursor-help" title={`Restarts: ${pod.restarts}`}>↻ {pod.restarts}</div>}
                                   </td>
-                                  <td className="p-4">
-                                     <div className="flex flex-col gap-1">
-                                        <div className="text-[10px] font-mono"><span className="text-indigo-400">CPU:</span> {pod.cpu}</div>
-                                        <div className="text-[10px] font-mono"><span className="text-violet-400">MEM:</span> {pod.mem}</div>
+                                  <td className="p-4 text-[11px] font-mono text-slate-300">
+                                     <div className="flex items-center gap-2">
+                                        <Cpu size={12} className="text-blue-400" /> {pod.cpu}%
+                                        <HardDrive size={12} className="text-purple-400 ml-2" /> {pod.mem}
                                      </div>
                                   </td>
-                                  <td className="p-4">
+                                   <td className="p-4">
                                      <div className="flex items-center gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                                        <button 
+                                        <Button 
                                           onClick={() => handlePodRestart(pod.id)}
                                           disabled={pod.status !== 'Running'}
-                                          className="p-2 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 flex flex-col items-center justify-center hover:border-rose-500/50 rounded-lg border border-transparent transition-all disabled:opacity-50" title="Надіслати SIGTERM (Перезапуск)"
+                                          variant="ghost"
+                                          size="icon"
+                                          className="p-2 h-10 w-10 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 flex flex-col items-center justify-center hover:border-rose-500/50 rounded-lg border border-transparent transition-all disabled:opacity-50" title="Надіслати SIGTERM (Перезапуск)"
                                         >
                                            <Power size={14} />
-                                        </button>
+                                        </Button>
                                         <div className="flex bg-slate-800 rounded-lg overflow-hidden border border-transparent">
-                                          <button 
+                                          <Button 
                                             onClick={() => handleScalePod(pod.id)}
-                                            className="p-2 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all border-r border-white/5" title="Масштабувати (Scale Up)"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="p-2 h-10 w-10 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all border-r border-white/5" title="Масштабувати (Scale Up)"
                                           >
                                              <Plus size={14} />
-                                          </button>
-                                          <button 
+                                          </Button>
+                                          <Button 
                                             onClick={() => handleScaleDownPod(pod.id)}
                                             disabled={pod.replicas <= 1}
-                                            className="p-2 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-inherit" title="Зменшити (Scale Down)"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="p-2 h-10 w-10 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-inherit" title="Зменшити (Scale Down)"
                                           >
                                              <Minus size={14} />
-                                          </button>
+                                          </Button>
                                         </div>
-                                        <button 
+                                        <Button 
                                           onClick={() => handleShowLogs(pod.id)}
-                                          className="p-2 bg-slate-800 hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/50 rounded-lg border border-transparent transition-all" title="Live Логи"
+                                          variant="ghost"
+                                          size="icon"
+                                          className="p-2 h-10 w-10 bg-slate-800 hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/50 rounded-lg border border-transparent transition-all" title="Live Логи"
                                         >
                                            <AlignLeft size={14} />
-                                        </button>
+                                        </Button>
                                      </div>
                                   </td>
                                </tr>
@@ -624,9 +782,9 @@ export default function SystemFactoryView() {
                                  <Terminal size={14} /> 
                                  STDOUT & STDERR &gt; {pods.find(p => p.id === logsPodId)?.name}
                               </div>
-                              <button onClick={() => setLogsPodId(null)} className="text-slate-500 hover:text-white transition-colors">
+                              <Button onClick={() => setLogsPodId(null)} variant="ghost" size="icon" className="text-slate-500 hover:text-white transition-colors h-8 w-8">
                                  <X size={16} />
-                              </button>
+                              </Button>
                            </div>
                            <div className="flex-1 p-4 font-mono text-[11px] text-emerald-400/80 overflow-y-auto custom-scrollbar">
                               {liveLogs.map((log, index) => (
