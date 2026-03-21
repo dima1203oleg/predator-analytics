@@ -1,17 +1,12 @@
 name: Frontend CI/CD
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'apps/predator-analytics-ui/**'
-      - '.github/workflows/frontend-ci-cd.yml'
   pull_request:
     branches:
       - main
     paths:
       - 'apps/predator-analytics-ui/**'
+      - '.github/workflows/frontend-ci-cd.yml'
 
 env:
   REGISTRY: ghcr.io
@@ -49,7 +44,7 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha
-            type=raw,value=v55.0.0,enable={{is_default_branch}}
+            type=raw,value=v55.1.0,enable={{is_default_branch}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5

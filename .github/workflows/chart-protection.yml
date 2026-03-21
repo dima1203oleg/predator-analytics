@@ -3,10 +3,17 @@ name: Chart Protection
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - 'deploy/helm/**'
+      - 'infra/helm/**'
+      - 'environments/**'
   push:
     branches:
       - main
-      - autofix/staging
+    paths:
+      - 'deploy/helm/**'
+      - 'infra/helm/**'
+      - 'environments/**'
 
 permissions:
   contents: read

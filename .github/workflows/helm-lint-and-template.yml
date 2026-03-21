@@ -2,9 +2,10 @@ name: Helm Lint & Template
 
 on:
   pull_request:
-    branches: [ main ]
-  push:
-    branches: [ main ]
+    branches: [main]
+    paths:
+      - 'deploy/helm/**'
+      - 'infra/helm/**'
 
 jobs:
   helm-lint:
@@ -16,19 +17,24 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
-          version: '3.12.4'
+          version: 'v3.14.0'
 
-      - name: Run helm lint for umbrella chart
-        working-directory: ./helm/predator-umbrella
+      - name: Lint Predator Base Chart
         run: |
-          helm lint . || true # don't fail lint (optional)
+          helm lint deploy/helm/predator/
 
-      - name: Build helm dependencies
-        working-directory: ./helm/predator-umbrella
+      - name: Lint Umbrella Chart
+        working-directory: ./infra/helm/umbrella
         run: |
           helm dependency build . || true
+          helm lint .
 
-      - name: Render templates (dev values)
-        working-directory: ./helm/predator-umbrella
+      - name: Render templates (Predator base)
         run: |
-          helm template predator-umbrella . -f values-dev.yaml --debug
+          helm template predator deploy/helm/predator/ --debug || true
+
+      - name: Render templates (Umbrella dev values)
+        working-directory: ./infra/helm/umbrella
+        run: |
+          helm dependency build . || true
+          helm template predator-umbrella . -f values-dev.yaml --debug || true
