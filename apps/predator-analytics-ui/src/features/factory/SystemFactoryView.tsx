@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Factory, Zap, GitBranch, Cpu, Activity, Database, CheckCircle2,
   Terminal, Play, RotateCcw, Box, Network, Send, Loader2, Bot, Sliders,
-  Server, Shield, Power, ActivitySquare, AlertTriangle, Layers, RefreshCw
+  Server, Shield, Power, ActivitySquare, AlertTriangle, Layers, RefreshCw, AlignLeft, X, Plus
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -21,8 +21,8 @@ interface FactoryMessage {
 interface K8sPod {
   id: string;
   name: string;
-  status: 'Running' | 'Pending' | 'Terminating' | 'Restarting';
   restarts: number;
+  replicas: number;
   cpu: string;
   mem: string;
   uptime: string;
@@ -48,11 +48,15 @@ export default function SystemFactoryView() {
 
   // K8s Pods State
   const [pods, setPods] = useState<K8sPod[]>([
-    { id: 'core-api-8f4b', name: 'predator-core-api', status: 'Running', restarts: 0, cpu: '112m', mem: '450Mi', uptime: '4d 12h' },
-    { id: 'graph-worker-2d1', name: 'predator-graph-worker', status: 'Running', restarts: 1, cpu: '8m', mem: '210Mi', uptime: '1d 4h' },
-    { id: 'ingest-5c9a', name: 'predator-ingestion', status: 'Running', restarts: 0, cpu: '340m', mem: '1.2Gi', uptime: '4d 12h' },
-    { id: 'ui-front-v55', name: 'predator-ui-frontend', status: 'Running', restarts: 0, cpu: '12m', mem: '80Mi', uptime: '8h' },
+    { id: 'core-api-8f4b', name: 'predator-core-api', status: 'Running', restarts: 0, replicas: 2, cpu: '112m', mem: '450Mi', uptime: '4d 12h' },
+    { id: 'graph-worker-2d1', name: 'predator-graph-worker', status: 'Running', restarts: 1, replicas: 1, cpu: '8m', mem: '210Mi', uptime: '1d 4h' },
+    { id: 'ingest-5c9a', name: 'predator-ingestion', status: 'Running', restarts: 0, replicas: 3, cpu: '340m', mem: '1.2Gi', uptime: '4d 12h' },
+    { id: 'ui-front-v55', name: 'predator-ui-frontend', status: 'Running', restarts: 0, replicas: 1, cpu: '12m', mem: '80Mi', uptime: '8h' },
   ]);
+
+  const [logsPodId, setLogsPodId] = useState<string | null>(null);
+  const [liveLogs, setLiveLogs] = useState<string[]>([]);
+  const logsEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -61,6 +65,45 @@ export default function SystemFactoryView() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    if (logsEndRef.current) logsEndRef.current.scrollIntoView();
+  }, [liveLogs]);
+
+  useEffect(() => {
+    if (!logsPodId) return;
+    const pod = pods.find(p => p.id === logsPodId);
+    
+    setLiveLogs([
+      `[PREDATOR K8S] Initiating tail for pod ${pod?.name} (${pod?.id})`,
+      `[PREDATOR K8S] Connecting to container runtime... OK`,
+    ]);
+
+    const interval = setInterval(() => {
+      setLiveLogs(prev => {
+        const newLog = `[${new Date().toISOString().split('T')[1].slice(0, -1)}] INFO: Streaming live metrics and trace logs [TraceID: ${Math.random().toString(36).substr(2, 6)}]`;
+        return [...prev, newLog].slice(-50); // Keep last 50
+      });
+    }, 800);
+
+    return () => clearInterval(interval);
+  }, [logsPodId]);
+
+  const handleScalePod = (podId: string) => {
+    setPods(pds => pds.map(p => p.id === podId ? { ...p, replicas: p.replicas + 1 } : p));
+    const sysMsg: FactoryMessage = {
+      id: `sys-pod-scale-${Date.now()}`,
+      sender: 'system',
+      text: `Збільшую кількість реплік (Scale Up) для поду [${podId}]. HPA контролер оновлено.`,
+      timestamp: new Date(),
+      action: 'kubectl'
+    };
+    setMessages(prev => [...prev, sysMsg]);
+  };
+
+  const handleShowLogs = (podId: string) => {
+    setLogsPodId(podId);
+  };
 
   const handlePodRestart = (podId: string) => {
     setPods(pds => pds.map(p => p.id === podId ? { ...p, status: 'Restarting' } : p));
@@ -106,7 +149,14 @@ export default function SystemFactoryView() {
     }
 
     if (lower.includes('масштабуй') || lower.includes('скейл') || lower.includes('scale')) {
-       return 'Збільшую кількість реплік (scale) через HPA контролер до цільового рівня...';
+       if (lower.includes('api') || lower.includes('core')) { handleScalePod('core-api-8f4b'); return; }
+       if (lower.includes('ingest') || lower.includes('дані')) { handleScalePod('ingest-5c9a'); return; }
+       return 'Збільшую кількість реплік (scale) загально через HPA контролер до цільового рівня...';
+    }
+
+    if (lower.includes('лог') || lower.includes('logs')) {
+       if (lower.includes('api') || lower.includes('core')) { handleShowLogs('core-api-8f4b'); return 'Підключаю WebSocket до stdout поду API...'; }
+       return 'Вкажіть підсистему для перегляду логів (напр. "покажи логи API").';
     }
 
     // Pipeline commands
@@ -243,7 +293,10 @@ export default function SystemFactoryView() {
                                      <div className="flex items-center gap-3">
                                         <div className={cn("w-2 h-2 rounded-full", pod.status === 'Running' ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" : "bg-amber-500 animate-pulse")} />
                                         <div>
-                                           <div className="text-xs font-bold text-white">{pod.name}</div>
+                                           <div className="text-[13px] font-bold text-white flex items-center gap-2">
+                                              {pod.name} 
+                                              <span className="text-[9px] font-black tracking-widest bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-indigo-400">×{pod.replicas}</span>
+                                           </div>
                                            <div className="text-[9px] font-mono text-slate-500 mt-1">ID: {pod.id} • Уптайм: {pod.uptime}</div>
                                         </div>
                                      </div>
@@ -265,7 +318,7 @@ export default function SystemFactoryView() {
                                      </div>
                                   </td>
                                   <td className="p-4">
-                                     <div className="flex items-center gap-2 opacity-30 group-hover:opacity-100 transition-opacity">
+                                     <div className="flex items-center gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
                                         <button 
                                           onClick={() => handlePodRestart(pod.id)}
                                           disabled={pod.status !== 'Running'}
@@ -273,8 +326,17 @@ export default function SystemFactoryView() {
                                         >
                                            <Power size={14} />
                                         </button>
-                                        <button className="p-2 bg-slate-800 hover:bg-white/20 rounded-lg transition-all" title="Масштабувати (Scale)">
-                                           <ActivitySquare size={14} />
+                                        <button 
+                                          onClick={() => handleScalePod(pod.id)}
+                                          className="p-2 bg-slate-800 hover:bg-indigo-500/20 hover:text-indigo-400 hover:border-indigo-500/50 rounded-lg border border-transparent transition-all" title="Масштабувати (Scale Up)"
+                                        >
+                                           <Plus size={14} />
+                                        </button>
+                                        <button 
+                                          onClick={() => handleShowLogs(pod.id)}
+                                          className="p-2 bg-slate-800 hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/50 rounded-lg border border-transparent transition-all" title="Live Логи"
+                                        >
+                                           <AlignLeft size={14} />
                                         </button>
                                      </div>
                                   </td>
@@ -284,6 +346,37 @@ export default function SystemFactoryView() {
                         </table>
                      </div>
                   </TacticalCard>
+
+                  {/* LIVE LOGS OVERLAY PANEL */}
+                  <AnimatePresence>
+                     {logsPodId && (
+                        <motion.div 
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 300 }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="w-full bg-slate-950/90 border border-emerald-500/30 rounded-xl overflow-hidden flex flex-col shadow-[0_0_30px_rgba(16,185,129,0.1)] relative"
+                        >
+                           <div className="px-4 py-2 border-b border-emerald-500/20 bg-emerald-500/5 flex items-center justify-between">
+                              <div className="flex items-center gap-2 text-emerald-400 font-mono text-[10px] uppercase font-black tracking-widest">
+                                 <Terminal size={14} /> 
+                                 STDOUT & STDERR &gt; {pods.find(p => p.id === logsPodId)?.name}
+                              </div>
+                              <button onClick={() => setLogsPodId(null)} className="text-slate-500 hover:text-white transition-colors">
+                                 <X size={16} />
+                              </button>
+                           </div>
+                           <div className="flex-1 p-4 font-mono text-[11px] text-emerald-400/80 overflow-y-auto custom-scrollbar">
+                              {liveLogs.map((log, index) => (
+                                 <div key={index} className="mb-0.5 break-all">
+                                    {log.includes('INFO') ? <span className="text-blue-400">{log.substring(0, 15)}</span> : <span className="text-slate-500">{log.substring(0, 15)}</span>}
+                                    {log.substring(15)}
+                                 </div>
+                              ))}
+                              <div ref={logsEndRef} />
+                           </div>
+                        </motion.div>
+                     )}
+                  </AnimatePresence>
                </motion.div>
              )}
 
