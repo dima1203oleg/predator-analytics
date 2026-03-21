@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Factory, Zap, GitBranch, Cpu, Activity, Database, CheckCircle2,
-  Terminal, Play, RotateCcw, Box, Network, Send, Loader2, Bot, Sliders
+  Terminal, Play, RotateCcw, Box, Network, Send, Loader2, Bot, Sliders,
+  Server, Shield, Power, ActivitySquare, AlertTriangle, Layers, RefreshCw
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -14,7 +15,17 @@ interface FactoryMessage {
   sender: 'user' | 'system';
   text: string;
   timestamp: Date;
-  action?: 'build' | 'test' | 'deploy' | 'analyze';
+  action?: 'build' | 'test' | 'deploy' | 'analyze' | 'kubectl';
+}
+
+interface K8sPod {
+  id: string;
+  name: string;
+  status: 'Running' | 'Pending' | 'Terminating' | 'Restarting';
+  restarts: number;
+  cpu: string;
+  mem: string;
+  uptime: string;
 }
 
 export default function SystemFactoryView() {
@@ -22,7 +33,7 @@ export default function SystemFactoryView() {
     {
       id: 'msg-0',
       sender: 'system',
-      text: 'ЗАВОД PREDATOR v55.1 ІНІЦІАЛІЗОВАНО. Очікую команд для вдосконалення архітектури, запуску CI/CD або розгортання оновлень.',
+      text: 'ЗАВОД PREDATOR v55.1 ІНІЦІАЛІЗОВАНО. Очікую команд для управління K8s кластером, архітектурою або CI/CD.',
       timestamp: new Date()
     }
   ]);
@@ -30,9 +41,18 @@ export default function SystemFactoryView() {
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // CI/CD Live Mock Stats
+  // Stats
   const [pipelineProgress, setPipelineProgress] = useState(100);
   const [systemScore, setSystemScore] = useState({ quality: 98, coverage: 94, security: 100 });
+  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s'>('k8s');
+
+  // K8s Pods State
+  const [pods, setPods] = useState<K8sPod[]>([
+    { id: 'core-api-8f4b', name: 'predator-core-api', status: 'Running', restarts: 0, cpu: '112m', mem: '450Mi', uptime: '4d 12h' },
+    { id: 'graph-worker-2d1', name: 'predator-graph-worker', status: 'Running', restarts: 1, cpu: '8m', mem: '210Mi', uptime: '1d 4h' },
+    { id: 'ingest-5c9a', name: 'predator-ingestion', status: 'Running', restarts: 0, cpu: '340m', mem: '1.2Gi', uptime: '4d 12h' },
+    { id: 'ui-front-v55', name: 'predator-ui-frontend', status: 'Running', restarts: 0, cpu: '12m', mem: '80Mi', uptime: '8h' },
+  ]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -41,6 +61,70 @@ export default function SystemFactoryView() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const handlePodRestart = (podId: string) => {
+    setPods(pds => pds.map(p => p.id === podId ? { ...p, status: 'Restarting' } : p));
+    
+    const sysMsg: FactoryMessage = {
+      id: `sys-pod-${Date.now()}`,
+      sender: 'system',
+      text: `Ініційовано перезапуск поду [${podId}]. Відправляю SIGTERM...`,
+      timestamp: new Date(),
+      action: 'kubectl'
+    };
+    setMessages(prev => [...prev, sysMsg]);
+
+    setTimeout(() => {
+      setPods(pds => pds.map(p => p.id === podId ? { ...p, status: 'Running', restarts: p.restarts + 1, uptime: '0m' } : p));
+      setMessages(prev => [...prev, {
+        id: `sys-pod-done-${Date.now()}`,
+        sender: 'system',
+        text: `Под [${podId}] успішно перезапущено (Running). Ресурси перерозподілено.`,
+        timestamp: new Date()
+      }]);
+    }, 4000);
+  };
+
+  const parseNaturalCommand = (text: string) => {
+    const lower = text.toLowerCase();
+    
+    // Pod specific commands
+    if (lower.includes('перезапусти') || lower.includes('рестарт')) {
+      if (lower.includes('api') || lower.includes('core')) {
+        handlePodRestart('core-api-8f4b');
+        return;
+      }
+      if (lower.includes('graph') || lower.includes('граф')) {
+        handlePodRestart('graph-worker-2d1');
+        return;
+      }
+      if (lower.includes('всі') || lower.includes('all')) {
+         pods.forEach(p => handlePodRestart(p.id));
+         return;
+      }
+      return 'Не вказано конкретний сервіс. Уточніть (напр: "Перезапусти API").';
+    }
+
+    if (lower.includes('масштабуй') || lower.includes('скейл') || lower.includes('scale')) {
+       return 'Збільшую кількість реплік (scale) через HPA контролер до цільового рівня...';
+    }
+
+    // Pipeline commands
+    if (lower.includes('тест') || lower.includes('перевір')) {
+      return { action: 'test', reply: 'Запускаю матрицю інтеграційних тестів та E2E перевірок.' };
+    } 
+    if (lower.includes('білд') || lower.includes('збір')) {
+      setPipelineProgress(0);
+      return { action: 'build', reply: 'Ініційовано процес збірки Docker образів та CI. Контекст оновлено.' };
+    } 
+    if (lower.includes('деплой') || lower.includes('запусти')) {
+      return { action: 'deploy', reply: 'Синхронізація з ArgoCD. GitOps update активовано.' };
+    }
+    
+    // Generic chat response
+    setSystemScore(prev => ({ ...prev, quality: Math.min(100, prev.quality + 1) }));
+    return { action: 'analyze', reply: 'Команда прийнята. Аналізую топологію кластера та конфігурації для оптимізації.' };
+  };
 
   const handleCommand = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,60 +138,50 @@ export default function SystemFactoryView() {
     };
 
     setMessages(prev => [...prev, newMsg]);
+    const cmdText = inputText;
     setInputText('');
     setIsProcessing(true);
 
-    // Simulate system refinement interpretation
     setTimeout(() => {
-      let action: any = null;
-      let reply = 'Рефлексивний парсинг... ';
-      const lower = newMsg.text.toLowerCase();
-
-      if (lower.includes('тест') || lower.includes('перевір')) {
-        action = 'test';
-        reply += 'Запускаю матрицю інтеграційних тестів та E2E перевірок.';
-      } else if (lower.includes('білд') || lower.includes('збір')) {
-        action = 'build';
-        reply += 'Ініційовано процес збірки (build-images). Контекст оновлено.';
-        setPipelineProgress(0);
-      } else if (lower.includes('деплой') || lower.includes('запусти')) {
-        action = 'deploy';
-        reply += 'Синхронізація з ArgoCD. GitOps update активовано.';
-      } else {
-        action = 'analyze';
-        reply += 'Аналізую архітектуру для вдосконалення. Формую пропозиції рефакторингу логіки.';
-        setSystemScore(prev => ({ ...prev, quality: Math.min(100, prev.quality + 1) }));
-      }
-
-      setMessages(prev => [...prev, {
-        id: `sys-${Date.now()}`,
-        sender: 'system',
-        text: reply,
-        timestamp: new Date(),
-        action
-      }]);
+      const result = parseNaturalCommand(cmdText);
       
-      setIsProcessing(false);
+      if (typeof result === 'string') {
+        const sysMsg: FactoryMessage = {
+          id: `sys-${Date.now()}`,
+          sender: 'system',
+          text: result,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, sysMsg]);
+      } else if (result) {
+        setMessages(prev => [...prev, {
+          id: `sys-${Date.now()}`,
+          sender: 'system',
+          text: result.reply,
+          timestamp: new Date(),
+          action: result.action as any
+        }]);
 
-      if (action === 'build') {
-        const iv = setInterval(() => {
-          setPipelineProgress(p => {
-            if (p >= 100) {
-              clearInterval(iv);
-              setMessages(prev => [...prev, {
-                id: `sys-${Date.now()}-done`,
-                sender: 'system',
-                text: 'ЗБІРКА УСПІШНО ЗАВЕРШЕНА. Всі тести пройдено.',
-                timestamp: new Date()
-              }]);
-              return 100;
-            }
-            return p + 10;
-          });
-        }, 500);
+        if (result.action === 'build') {
+          const iv = setInterval(() => {
+            setPipelineProgress(p => {
+              if (p >= 100) {
+                clearInterval(iv);
+                setMessages(prev => [...prev, {
+                  id: `sys-${Date.now()}-done`,
+                  sender: 'system',
+                  text: 'ЗБІРКА УСПІШНО ЗАВЕРШЕНА. Всі тести пройдено.',
+                  timestamp: new Date()
+                }]);
+                return 100;
+              }
+              return p + 10;
+            });
+          }, 400);
+        }
       }
-
-    }, 1500);
+      setIsProcessing(false);
+    }, 1200);
   };
 
   return (
@@ -116,103 +190,166 @@ export default function SystemFactoryView() {
       
       <ViewHeader 
         title="СУВЕРЕННИЙ ЗАВОД (FACTORY)"
-        subtitle="Центр збірки, вдосконалення архітектури та CI/CD."
+        subtitle="Інтерактивне управління Kubernetes кластером, CI/CD конвеєром та AI Координатор."
         icon={<Factory size={24} className="text-indigo-400" />}
         breadcrumbs={['ПРЕДАТОР', 'АДМІНІСТРУВАННЯ', 'ЗАВОД']}
         stats={[
-          { label: 'Стан пайплайну', value: pipelineProgress === 100 ? 'ГОТОВО' : 'АКТИВНИЙ', icon: <Activity />, color: pipelineProgress === 100 ? 'success' : 'warning' },
-          { label: 'Quality Shore', value: `${systemScore.quality}%`, icon: <CheckCircle2 />, color: 'primary' },
-          { label: 'Рівень Безпеки', value: `HR-00`, icon: <Box />, color: 'danger' }
+          { label: 'Стан кластера', value: pods.some(p => p.status !== 'Running') ? 'СИНХРОНІЗАЦІЯ' : 'ЗДОРОВИЙ', icon: <Server size={14} />, color: pods.some(p => p.status !== 'Running') ? 'warning' : 'success' },
+          { label: 'Quality Shore', value: `${systemScore.quality}%`, icon: <CheckCircle2 size={14}/>, color: 'primary' },
+          { label: 'Рівень Безпеки', value: `HR-00`, icon: <Shield size={14}/>, color: 'danger' }
         ]}
       />
 
       <div className="max-w-7xl mx-auto px-6 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
         
-        {/* Left Column: Visual Factory Overview */}
-        <div className="lg:col-span-8 space-y-8">
+        {/* Left Column: Factory Dashboards */}
+        <div className="lg:col-span-8 space-y-6">
           
-          <TacticalCard title="КОНВЕЄР ВДОСКОНАЛЕННЯ СИСТЕМИ" variant="cyber">
-            <div className="p-6 relative overflow-hidden">
-               <div className="absolute inset-0 bg-cyber-grid opacity-10 pointer-events-none" />
-               <div className="relative z-10 grid grid-cols-4 gap-4 items-center">
-                  {[
-                    { name: 'Аналіз & Лінтер', state: pipelineProgress >= 20, icon: SearchIcon },
-                    { name: 'Збірка Образів', state: pipelineProgress >= 50, icon: Box },
-                    { name: 'GitOps Оновлення', state: pipelineProgress >= 80, icon: GitBranch },
-                    { name: 'ArgoCD Синхр.', state: pipelineProgress === 100, icon: RotateCcw }
-                  ].map((step, idx) => (
-                    <div key={idx} className="flex flex-col items-center gap-3 relative">
-                      <div className={cn(
-                        "w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all duration-500 z-10",
-                        step.state ? "bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]" : "bg-slate-900 border-slate-700 text-slate-500"
-                      )}>
-                        <step.icon size={20} />
-                      </div>
-                      <div className="text-[10px] font-black uppercase text-center text-slate-400">{step.name}</div>
-                      {idx !== 3 && (
-                        <div className="absolute top-6 left-[60%] w-[80%] h-0.5 bg-slate-800 -z-10">
-                           <motion.div 
-                             initial={{ width: 0 }} 
-                             animate={{ width: step.state ? '100%' : '0%' }} 
-                             className="h-full bg-emerald-500 shadow-[0_0_10px_#10b981]" 
-                           />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-               </div>
-               
-               <div className="mt-8 grid grid-cols-3 gap-4">
-                  <div className="bg-slate-900/50 p-4 border border-indigo-500/20 rounded-xl relative overflow-hidden group">
-                     <div className="absolute bottom-0 left-0 h-1 bg-indigo-500 transition-all duration-1000" style={{ width: `${systemScore.quality}%` }} />
-                     <div className="text-[10px] text-slate-500 uppercase font-black">Якість Коду (Sonar)</div>
-                     <div className="text-2xl font-black text-indigo-400 mt-1">{systemScore.quality}%</div>
-                  </div>
-                  <div className="bg-slate-900/50 p-4 border border-violet-500/20 rounded-xl relative overflow-hidden group">
-                     <div className="absolute bottom-0 left-0 h-1 bg-violet-500 transition-all duration-1000" style={{ width: `${systemScore.coverage}%` }} />
-                     <div className="text-[10px] text-slate-500 uppercase font-black">Тестове Покриття</div>
-                     <div className="text-2xl font-black text-violet-400 mt-1">{systemScore.coverage}%</div>
-                  </div>
-                  <div className="bg-slate-900/50 p-4 border border-rose-500/20 rounded-xl relative overflow-hidden group">
-                     <div className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-1000" style={{ width: `${systemScore.security}%` }} />
-                     <div className="text-[10px] text-slate-500 uppercase font-black">Security (Trivy + OPA)</div>
-                     <div className="text-2xl font-black text-rose-400 mt-1">{systemScore.security}%</div>
-                  </div>
-               </div>
-            </div>
-          </TacticalCard>
+          {/* Custom Tabs */}
+          <div className="flex gap-4 border-b border-white/10 pb-4">
+             <button 
+               onClick={() => setActiveTab('k8s')}
+               className={cn("flex items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'k8s' ? "bg-indigo-600/20 text-indigo-400 border border-indigo-500/50 shadow-[0_0_20px_rgba(79,70,229,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
+             >
+                <Layers size={16} /> KUBERNETES КЛАСТЕР 
+             </button>
+             <button 
+               onClick={() => setActiveTab('cicd')}
+               className={cn("flex items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'cicd' ? "bg-emerald-600/20 text-emerald-400 border border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
+             >
+                <GitBranch size={16} /> CI/CD КОНВЕЄР
+             </button>
+          </div>
 
-          <TacticalCard title="АРХІТЕКТУРА МІКРОСЕРВІСІВ" variant="holographic">
-            <div className="p-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
-               {[
-                 { id: 'core-api', ext: 'FastAPI', status: 'Running', load: '12%' },
-                 { id: 'frontend', ext: 'React/Vite', status: 'Running', load: '4%' },
-                 { id: 'graph-worker', ext: 'Neo4j Gen', status: 'Standby', load: '0%' },
-                 { id: 'ingestion', ext: 'Kafka Con', status: 'Running', load: '45%' },
-               ].map(svc => (
-                 <div key={svc.id} className="p-4 bg-slate-950/80 border border-white/5 opacity-80 hover:opacity-100 hover:border-indigo-500/30 transition-all rounded-xl">
-                    <div className="flex justify-between items-center mb-3">
-                       <Network size={16} className="text-slate-400" />
-                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <AnimatePresence mode="wait">
+             {activeTab === 'k8s' && (
+               <motion.div key="k8s" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+                  
+                  <TacticalCard title="ІНТЕРАКТИВНА ТОПОЛОГІЯ ПОДІВ (PODS)" variant="cyber">
+                     <div className="p-0">
+                        <table className="w-full text-left border-collapse">
+                           <thead>
+                             <tr className="border-b border-white/5 bg-black/40 text-[9px] uppercase tracking-widest text-slate-500">
+                               <th className="p-4 font-black">Підсистема (Pod)</th>
+                               <th className="p-4 font-black">Статус</th>
+                               <th className="p-4 font-black">Ресурси</th>
+                               <th className="p-4 font-black">Дії (Actions)</th>
+                             </tr>
+                           </thead>
+                           <tbody className="divide-y divide-white/5">
+                             {pods.map(pod => (
+                               <tr key={pod.id} className="hover:bg-white/5 transition-colors group">
+                                  <td className="p-4">
+                                     <div className="flex items-center gap-3">
+                                        <div className={cn("w-2 h-2 rounded-full", pod.status === 'Running' ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" : "bg-amber-500 animate-pulse")} />
+                                        <div>
+                                           <div className="text-xs font-bold text-white">{pod.name}</div>
+                                           <div className="text-[9px] font-mono text-slate-500 mt-1">ID: {pod.id} • Уптайм: {pod.uptime}</div>
+                                        </div>
+                                     </div>
+                                  </td>
+                                  <td className="p-4">
+                                     <span className={cn(
+                                       "px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-widest border",
+                                       pod.status === 'Running' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                                     )}>
+                                        {pod.status === 'Restarting' ? <RefreshCw size={10} className="inline mr-1 animate-spin" /> : null}
+                                        {pod.status}
+                                     </span>
+                                     {pod.restarts > 0 && <div className="text-[9px] text-slate-500 mt-1 ml-1 cursor-help" title={`Restarts: ${pod.restarts}`}>↻ {pod.restarts}</div>}
+                                  </td>
+                                  <td className="p-4">
+                                     <div className="flex flex-col gap-1">
+                                        <div className="text-[10px] font-mono"><span className="text-indigo-400">CPU:</span> {pod.cpu}</div>
+                                        <div className="text-[10px] font-mono"><span className="text-violet-400">MEM:</span> {pod.mem}</div>
+                                     </div>
+                                  </td>
+                                  <td className="p-4">
+                                     <div className="flex items-center gap-2 opacity-30 group-hover:opacity-100 transition-opacity">
+                                        <button 
+                                          onClick={() => handlePodRestart(pod.id)}
+                                          disabled={pod.status !== 'Running'}
+                                          className="p-2 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 hover:border-rose-500/50 rounded-lg border border-transparent transition-all disabled:opacity-50" title="Надіслати SIGTERM (Перезапуск)"
+                                        >
+                                           <Power size={14} />
+                                        </button>
+                                        <button className="p-2 bg-slate-800 hover:bg-white/20 rounded-lg transition-all" title="Масштабувати (Scale)">
+                                           <ActivitySquare size={14} />
+                                        </button>
+                                     </div>
+                                  </td>
+                               </tr>
+                             ))}
+                           </tbody>
+                        </table>
+                     </div>
+                  </TacticalCard>
+               </motion.div>
+             )}
+
+             {activeTab === 'cicd' && (
+               <motion.div key="cicd" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+                  <TacticalCard title="КОНВЕЄР ВДОСКОНАЛЕННЯ СИСТЕМИ" variant="cyber">
+                    <div className="p-6 relative overflow-hidden">
+                       <div className="absolute inset-0 bg-cyber-grid opacity-10 pointer-events-none" />
+                       <div className="relative z-10 grid grid-cols-4 gap-4 items-center">
+                          {[
+                            { name: 'Аналіз & Лінтер', state: pipelineProgress >= 20, icon: SearchIcon },
+                            { name: 'Збірка Образів', state: pipelineProgress >= 50, icon: Box },
+                            { name: 'GitOps Оновлення', state: pipelineProgress >= 80, icon: GitBranch },
+                            { name: 'ArgoCD Синхр.', state: pipelineProgress === 100, icon: RotateCcw }
+                          ].map((step, idx) => (
+                            <div key={idx} className="flex flex-col items-center gap-3 relative">
+                              <div className={cn(
+                                "w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all duration-500 z-10",
+                                step.state ? "bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]" : "bg-slate-900 border-slate-700 text-slate-500"
+                              )}>
+                                <step.icon size={20} />
+                              </div>
+                              <div className="text-[10px] font-black uppercase text-center text-slate-400">{step.name}</div>
+                              {idx !== 3 && (
+                                <div className="absolute top-6 left-[60%] w-[80%] h-0.5 bg-slate-800 -z-10">
+                                   <motion.div 
+                                     initial={{ width: 0 }} 
+                                     animate={{ width: step.state ? '100%' : '0%' }} 
+                                     className="h-full bg-emerald-500 shadow-[0_0_10px_#10b981]" 
+                                   />
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                       </div>
+                       
+                       <div className="mt-8 grid grid-cols-3 gap-4">
+                          <div className="bg-slate-900/50 p-4 border border-indigo-500/20 rounded-xl relative overflow-hidden group">
+                             <div className="absolute bottom-0 left-0 h-1 bg-indigo-500 transition-all duration-1000" style={{ width: `${systemScore.quality}%` }} />
+                             <div className="text-[10px] text-slate-500 uppercase font-black">Якість Коду (Sonar)</div>
+                             <div className="text-2xl font-black text-indigo-400 mt-1">{systemScore.quality}%</div>
+                          </div>
+                          <div className="bg-slate-900/50 p-4 border border-violet-500/20 rounded-xl relative overflow-hidden group">
+                             <div className="absolute bottom-0 left-0 h-1 bg-violet-500 transition-all duration-1000" style={{ width: `${systemScore.coverage}%` }} />
+                             <div className="text-[10px] text-slate-500 uppercase font-black">Тестове Покриття</div>
+                             <div className="text-2xl font-black text-violet-400 mt-1">{systemScore.coverage}%</div>
+                          </div>
+                          <div className="bg-slate-900/50 p-4 border border-rose-500/20 rounded-xl relative overflow-hidden group">
+                             <div className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-1000" style={{ width: `${systemScore.security}%` }} />
+                             <div className="text-[10px] text-slate-500 uppercase font-black">Security (Trivy + OPA)</div>
+                             <div className="text-2xl font-black text-rose-400 mt-1">{systemScore.security}%</div>
+                          </div>
+                       </div>
                     </div>
-                    <div className="text-xs font-black text-white uppercase truncate">{svc.id}</div>
-                    <div className="text-[10px] font-mono text-slate-500 mt-1">{svc.ext}</div>
-                    <div className="mt-3 pt-3 border-t border-white/5 flex justify-between">
-                       <span className="text-[9px] text-emerald-400 font-bold">{svc.status}</span>
-                       <span className="text-[9px] text-slate-400 font-mono">Ld: {svc.load}</span>
-                    </div>
-                 </div>
-               ))}
-            </div>
-          </TacticalCard>
+                  </TacticalCard>
+               </motion.div>
+             )}
+          </AnimatePresence>
 
         </div>
 
         {/* Right Column: AI Natural Language Factory Controller */}
         <div className="lg:col-span-4 flex flex-col h-[700px]">
-           <TacticalCard title="УПРАВЛІННЯ ПРИРОДНОЮ МОВОЮ" variant="cyber" className="flex-1 flex flex-col h-full relative border border-indigo-500/30 shadow-[0_0_20px_rgba(79,70,229,0.15)]">
+           <TacticalCard title="АВТОНОМНИЙ ЧАТ-КООРДИНАТОР" variant="holographic" className="flex-1 flex flex-col h-full relative border-indigo-500/50 shadow-[0_0_30px_rgba(79,70,229,0.2)]">
              {/* Chat History */}
-             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+             <div className="flex-1 overflow-y-auto p-4 space-y-5 custom-scrollbar bg-black/40">
                 <AnimatePresence>
                   {messages.map((msg) => (
                     <motion.div 
@@ -220,19 +357,22 @@ export default function SystemFactoryView() {
                       initial={{ opacity: 0, scale: 0.95, y: 10 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       className={cn(
-                        "p-4 rounded-xl text-sm relative",
+                        "p-4 rounded-xl relative",
                         msg.sender === 'user' 
-                          ? "bg-indigo-600/20 border border-indigo-500/30 text-indigo-100 ml-8 rounded-tr-none" 
-                          : "bg-slate-900 border border-slate-700 text-slate-300 mr-8 rounded-tl-none font-mono text-xs"
+                          ? "bg-gradient-to-br from-indigo-600 to-indigo-800 border-indigo-400/30 text-indigo-50 ml-6 rounded-tr-none shadow-lg" 
+                          : "bg-slate-900 border border-emerald-500/20 text-emerald-100 mr-6 rounded-tl-none font-mono text-[13px] shadow-[0_0_15px_rgba(16,185,129,0.05)]"
                       )}
                     >
                        {msg.sender === 'system' && (
-                         <Bot size={14} className="absolute -left-2 -top-2 text-emerald-400 bg-slate-900 rounded-full" />
+                         <div className="absolute -left-3 -top-3 w-8 h-8 rounded-full bg-slate-950 border border-emerald-500/50 flex items-center justify-center shadow-[0_0_10px_rgba(16,185,129,0.5)]">
+                            <Bot size={16} className="text-emerald-400" />
+                         </div>
                        )}
-                       {msg.text}
+                       <span className="leading-relaxed">{msg.text}</span>
                        {msg.action && (
-                         <div className="mt-3 inline-flex items-center gap-2 px-2 py-1 rounded bg-black/40 border border-white/10 text-[9px] text-emerald-400 font-black">
-                           <Terminal size={10} /> DICTATE_MODE: {msg.action.toUpperCase()}
+                         <div className="mt-4 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/50 border border-white/10 text-[10px] text-white font-black tracking-widest w-fit animate-pulse">
+                           <Terminal size={12} className={msg.action === 'kubectl' ? "text-rose-400" : "text-emerald-400"} /> 
+                           DIAGNOSTIC_ACTION: {msg.action.toUpperCase()}
                          </div>
                        )}
                     </motion.div>
@@ -240,9 +380,10 @@ export default function SystemFactoryView() {
                   {isProcessing && (
                      <motion.div 
                       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                      className="bg-slate-900 border border-slate-700 text-slate-400 p-3 rounded-xl mr-8 font-mono text-xs flex items-center gap-3 w-fit"
+                      className="bg-slate-900 border border-slate-700 text-slate-400 p-4 rounded-xl mr-8 font-mono text-[11px] flex items-center gap-3 w-fit"
                      >
-                        <Loader2 size={14} className="animate-spin text-indigo-500" /> СИНТЕЗ ВІДПОВІДІ ТА АКТИВАЦІЯ ФАБРИКИ...
+                        <Loader2 size={16} className="animate-spin text-indigo-500" /> 
+                        <span className="tracking-widest uppercase">Аналіз Нейролінком...</span>
                      </motion.div>
                   )}
                 </AnimatePresence>
@@ -250,22 +391,22 @@ export default function SystemFactoryView() {
              </div>
 
              {/* Input Form */}
-             <div className="p-4 bg-slate-950/80 border-t border-indigo-500/20 mt-auto">
-                <form onSubmit={handleCommand} className="relative">
+             <div className="p-4 bg-slate-950/90 border-t border-indigo-500/20 mt-auto">
+                <form onSubmit={handleCommand} className="relative group">
                   <input
                     type="text"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Направити курс вдосконалення (напр: 'Запусти рефакторинг API' або 'Зроби тестову збірку')..."
-                    className="w-full bg-black/50 border border-indigo-500/30 rounded-xl py-4 pl-4 pr-12 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all font-mono"
+                    placeholder="Направити координатора (напр: 'Перезапусти API', 'Масштабуй воркер')..."
+                    className="w-full bg-black/60 border border-indigo-500/30 group-focus-within:border-indigo-400 rounded-2xl py-5 pl-5 pr-14 text-[13px] text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-mono shadow-inner"
                     spellCheck="false"
                   />
                   <button 
                     type="submit" 
                     disabled={!inputText.trim() || isProcessing}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white disabled:bg-slate-800 disabled:text-slate-600 transition-all"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-500/30 text-white disabled:bg-slate-800 disabled:shadow-none disabled:text-slate-600 transition-all"
                   >
-                     <Send size={16} className={cn(inputText.trim() && !isProcessing && "translate-x-0.5")} />
+                     <Send size={18} className={cn(inputText.trim() && !isProcessing && "translate-x-0.5")} />
                   </button>
                 </form>
              </div>
