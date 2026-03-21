@@ -12,6 +12,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 import asyncpg
+import httpx
 from neo4j import AsyncGraphDatabase
 import redis.asyncio as redis
 
@@ -241,6 +242,54 @@ class HealthCheckService:
                 }
             }
 
+    async def check_ollama(self) -> dict[str, Any]:
+        \"\"\"Перевірити доступність Ollama Engine (liteLLM).\"\"\"
+        start_time = datetime.now(UTC)
+        try:
+            async with httpx.AsyncClient() as client:
+                # LiteLLM v1.x health endpoint
+                response = await client.get(f\"{self.settings.LITELLM_API_BASE}/health/readiness\", timeout=3.0)
+                status = \"ok\" if response.status_code == 200 else \"degraded\"
+                
+                return {
+                    \"status\": status,
+                    \"duration_seconds\": (datetime.now(UTC) - start_time).total_seconds(),
+                    \"timestamp\": datetime.now(UTC).isoformat(),
+                    \"details\": {
+                        \"endpoint\": self.settings.LITELLM_API_BASE,
+                        \"model\": self.settings.OLLAMA_EMBEDDING_MODEL
+                    }
+                }
+        except Exception as e:
+            return {
+                \"status\": \"error\",
+                \"error\": str(e),
+                \"duration_seconds\": (datetime.now(UTC) - start_time).total_seconds(),
+                \"timestamp\": datetime.now(UTC).isoformat(),
+            }
+
+    async def check_mlflow(self) -> dict[str, Any]:
+        \"\"\"Перевірити доступність MLflow Tracking Server.\"\"\"
+        start_time = datetime.now(UTC)
+        try:
+            # Спроба отримати версію або список експериментів
+            async with httpx.AsyncClient() as client:
+                # MLflow healthcheck
+                response = await client.get(\"http://mlflow-internal.predator.svc:5000/health\", timeout=3.0)
+                return {
+                    \"status\": \"ok\" if response.status_code == 200 else \"degraded\",
+                    \"duration_seconds\": (datetime.now(UTC) - start_time).total_seconds(),
+                    \"timestamp\": datetime.now(UTC).isoformat(),
+                }
+        except Exception:
+            return {
+                \"status\": \"offline\", 
+                \"error\": \"MLflow unreachable\",
+                \"duration_seconds\": (datetime.now(UTC) - start_time).total_seconds(),
+                \"timestamp\": datetime.now(UTC).isoformat(),
+            }
+
+
     async def comprehensive_health_check(self) -> dict[str, Any]:
         """Комплексна перевірка здоров'я всіх сервісів."""
         logger.info("Starting comprehensive health check")
@@ -252,6 +301,8 @@ class HealthCheckService:
             "neo4j": self.check_neo4j(),
             "kafka": self.check_kafka(),
             "minio": self.check_minio(),
+            "ollama": self.check_ollama(),
+            "mlflow": self.check_mlflow(),
         }
 
         await asyncio.gather(

@@ -318,7 +318,7 @@ const DatasetStudio: React.FC = () => {
                                             <span className={cn(
                                                 "px-2 py-0.5 rounded text-[9px] font-bold border",
                                                 mlStatus?.mlflow?.status === 'online' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" : "bg-red-500/10 border-red-500/30 text-red-400"
-                                            )}>
+                                                {mlStatus?.mlflow?.status?.toUpperCase() || 'OFFLINE'}
                                             </span>
                                         </div>
 

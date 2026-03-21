@@ -8,8 +8,10 @@
 from datetime import UTC, datetime
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends, Query
+from fastapi import APIRouter, Body, Depends, Query, Request
 from pydantic import BaseModel, Field
+
+from app.core.cache import cache_response
 
 from app.core.permissions import Permission
 from app.dependencies import PermissionChecker, get_tenant_id
@@ -159,7 +161,8 @@ async def batch_calculate_aml_scores(
 
 
 @router.get("/aml/risk-levels", summary="Рівні ризику")
-async def get_risk_levels():
+@cache_response(ttl=3600)
+async def get_risk_levels(request: Request):
     """Отримати опис рівнів ризику."""
     return {
         "levels": [
@@ -354,7 +357,8 @@ async def analyze_price_anomalies(
 
 
 @router.get("/anomaly/patterns-catalog", summary="Каталог паттернів шахрайства")
-async def get_patterns_catalog():
+@cache_response(ttl=3600)
+async def get_patterns_catalog(request: Request):
     """Отримати каталог відомих паттернів шахрайства."""
     service = AnomalyDetectionService()
 
