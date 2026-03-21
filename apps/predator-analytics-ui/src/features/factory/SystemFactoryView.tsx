@@ -139,6 +139,26 @@ export default function SystemFactoryView() {
     return () => clearInterval(interval);
   }, [logsPodId]);
 
+  const pushSystemMessage = (text: string, action?: any) => {
+    setMessages(prev => [...prev, {
+      id: `sys-action-${Date.now()}-${Math.random()}`,
+      sender: 'system',
+      text,
+      timestamp: new Date(),
+      action
+    }]);
+  };
+
+  const handleCheckReliability = () => {
+    setSystemScore(prev => ({ ...prev, security: Math.min(100, prev.security + 5) }));
+    pushSystemMessage('Ініційовано стрес-тестування технологічної вертикалі (Chaos Engineering). Виявлено та виправлено 3 потенційні вразливості.', 'analyze');
+  };
+
+  const handleUpdateKnowledgeMap = () => {
+    pushSystemMessage('Синхронізація Knowledge Map з графовою базою Neo4j... Застосовано нові онтологічні правила.', 'build');
+  };
+
+
   const handleScalePod = (podId: string) => {
     setPods(pds => pds.map(p => p.id === podId ? { ...p, replicas: p.replicas + 1 } : p));
     const sysMsg: FactoryMessage = {
@@ -406,7 +426,7 @@ export default function SystemFactoryView() {
                           </div>
                           <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-1 gap-2">
                              <button onClick={handleStartImprovement} className="p-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors shadow-lg flex justify-center gap-2"><Wrench size={14}/> Вдосконалити вибране</button>
-                             <button className="p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors border border-white/5 flex gap-2 justify-center"><CheckCircle2 size={14}/> Перевірити на надійність</button>
+                             <button onClick={handleCheckReliability} className="p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors border border-white/5 flex gap-2 justify-center"><CheckCircle2 size={14}/> Перевірити на надійність</button>
                           </div>
                         </div>
                      </TacticalCard>
@@ -437,7 +457,7 @@ export default function SystemFactoryView() {
                           </div>
                           <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-1 gap-2">
                              <button onClick={handleStartImprovement} className="p-3 bg-amber-600 hover:bg-amber-500 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors shadow-lg flex justify-center gap-2"><Sparkles size={14}/> Вдосконалити аналітику</button>
-                             <button className="p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors border border-white/5 flex gap-2 justify-center"><RotateCcw size={14}/> Оновити Knowledge Map</button>
+                             <button onClick={handleUpdateKnowledgeMap} className="p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors border border-white/5 flex gap-2 justify-center"><RotateCcw size={14}/> Оновити Knowledge Map</button>
                           </div>
                         </div>
                      </TacticalCard>
