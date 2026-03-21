@@ -22,11 +22,26 @@ spec:
       labels:
         app: core-api
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
       containers:
         - name: core-api
           image: "{{ .Values.coreApi.image.repository }}:{{ .Values.coreApi.image.tag }}"
           ports:
             - containerPort: 8000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
           resources:
             {{- toYaml .Values.coreApi.resources | nindent 12 }}
           env:
@@ -35,3 +50,9 @@ spec:
                 secretKeyRef:
                   name: db-secrets
                   key: url
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL

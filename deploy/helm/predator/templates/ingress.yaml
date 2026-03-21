@@ -9,7 +9,7 @@ metadata:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   rules:
-    - host: {{ .Values.global.domain }}
+    - host: {{ .Values.global.domain | quote }}
       http:
         paths:
           - path: /api

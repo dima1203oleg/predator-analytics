@@ -148,18 +148,41 @@ const GraphAnalyticsPage: React.FC = () => {
                             </div>
                             <div class="space-y-2">
                                 <div class="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-500">
-                                    <span>TYPE</span>
-                                    <span class="text-indigo-400">${data.category || 'NODE'}</span>
+                                    <span>ТИП</span>
+                                    <span class="text-indigo-400">${data.category || 'ВУЗОЛ'}</span>
                                 </div>
                                 <div class="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-500">
-                                    <span>RISK_SCORE</span>
+                                    <span>РИЗИК</span>
                                     <span class="${data.risk > 70 ? 'text-rose-500' : 'text-emerald-500'}">${data.risk || 0}%</span>
                                 </div>
                             </div>
                         </div>
                     `;
                 }
-                return `CONNECTION: ${params.data.source} → ${params.data.target}`;
+                if (params.dataType === 'edge') {
+                    const data = params.data;
+                    return `
+                        <div class="p-4 min-w-[180px] bg-slate-950/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl">
+                            <div class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400/60 mb-2">ЗВ'ЯЗОК</div>
+                            <div class="flex flex-col gap-2">
+                                <div class="text-xs font-bold text-white flex items-center justify-between">
+                                    <span class="text-slate-500 text-[9px]">ВІД:</span>
+                                    <span>${data.source}</span>
+                                </div>
+                                <div class="text-xs font-bold text-white flex items-center justify-between">
+                                    <span class="text-slate-500 text-[9px]">ДО:</span>
+                                    <span>${data.target}</span>
+                                </div>
+                                ${data.strength ? `
+                                <div class="mt-2 pt-2 border-t border-white/5 flex justify-between items-center">
+                                    <span class="text-[9px] font-black text-slate-500">СИЛА:</span>
+                                    <span class="text-indigo-400 font-mono text-[10px]">${data.strength}</span>
+                                </div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+                return '';
             }
         },
         series: [

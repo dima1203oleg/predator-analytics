@@ -1,14 +1,17 @@
+{{- if .Values.security.networkPolicy.enabled }}
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: core-api-zero-trust
+  name: {{ include "predator.fullname" . }}-zero-trust
 spec:
   endpointSelector:
     matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
       app: core-api
   ingress:
     - fromEndpoints:
         - matchLabels:
+            {{- include "predator.selectorLabels" . | nindent 12 }}
             app: frontend
       toPorts:
         - ports:
@@ -28,4 +31,6 @@ spec:
             app: postgresql
     - toEndpoints:
         - matchLabels:
+            {{- include "predator.selectorLabels" . | nindent 12 }}
             app: graph-service
+{{- end }}

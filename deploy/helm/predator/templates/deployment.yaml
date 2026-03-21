@@ -17,6 +17,9 @@ spec:
         {{- include "predator.selectorLabels" . | nindent 8 }}
         app: graph-service
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
       containers:
         - name: graph-service
           image: "{{ .Values.graphService.image.repository }}:{{ .Values.graphService.image.tag }}"
@@ -30,6 +33,26 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-neo4j
                   key: neo4j-password
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8002
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8002
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.graphService.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -53,12 +76,23 @@ spec:
         {{- include "predator.selectorLabels" . | nindent 8 }}
         app: ingestion-worker
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
       containers:
         - name: ingestion-worker
           image: "{{ .Values.ingestionWorker.image.repository }}:{{ .Values.ingestionWorker.image.tag }}"
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: "kafka-cluster-kafka-bootstrap.kafka:9092"
+          resources:
+            {{- toYaml .Values.ingestionWorker.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
 ---
 apiVersion: apps/v1
 kind: Deployment
