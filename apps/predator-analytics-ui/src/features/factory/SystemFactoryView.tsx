@@ -3,12 +3,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Factory, Zap, GitBranch, Cpu, Activity, Database, CheckCircle2,
   Terminal, Play, RotateCcw, Box, Network, Send, Loader2, Bot, Sliders,
-  Server, Shield, Power, ActivitySquare, AlertTriangle, Layers, RefreshCw, AlignLeft, X, Plus, Minus, Key, HardDrive, Wifi
+  Server, Shield, Power, ActivitySquare, AlertTriangle, Layers, RefreshCw, AlignLeft, X, Plus, Minus, Key, HardDrive, Wifi, Sparkles, BarChart, Cog, Wrench, ChevronRight
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { TacticalCard } from '@/components/TacticalCard';
 import { cn } from '@/utils/cn';
+
+const SearchIcon = (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>;
+const ArrowUpIcon = (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>;
 
 interface FactoryMessage {
   id: string;
@@ -45,7 +48,53 @@ export default function SystemFactoryView() {
   // Stats
   const [pipelineProgress, setPipelineProgress] = useState(100);
   const [systemScore, setSystemScore] = useState({ quality: 98, coverage: 94, security: 100 });
-  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s' | 'network'>('k8s');
+  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s' | 'network' | 'improve'>('improve');
+
+  // Improvements State
+  const [improvementMode, setImprovementMode] = useState<'tech' | 'analytic' | 'complex' | null>('complex');
+  const [techComponents, setTechComponents] = useState<string[]>([]);
+  const [analyticComponents, setAnalyticComponents] = useState<string[]>([]);
+  const [googleIntegrality, setGoogleIntegrality] = useState(false);
+  const [improvementStatus, setImprovementStatus] = useState<'idle' | 'running' | 'done'>('idle');
+  const [improvementProgress, setImprovementProgress] = useState(0);
+
+  const techOptions = [
+    { id: 'frontend', label: 'Фронтенд (веб-інтерфейс, візуальність)' },
+    { id: 'backend', label: 'Бекенд (Core API, Meta-Controller, логіка)' },
+    { id: 'infra', label: 'Інфраструктура (K8s Pods, мережа)' },
+    { id: 'db', label: 'База даних та Memory Layer' },
+    { id: 'perf', label: 'Загальна продуктивність і стабільність' }
+  ];
+
+  const analyticOptions = [
+    { id: 'knowledge', label: 'Мапа Знань (Knowledge Map + патерни)' },
+    { id: 'datasets', label: 'Студія Датасетів' },
+    { id: 'facts', label: 'Студія Фактів' },
+    { id: 'activity', label: 'Аналітика Діяльності' },
+    { id: 'data', label: 'Аналітика Даних' }
+  ];
+
+  const toggleSelection = (id: string, list: string[], setList: (v: string[]) => void) => {
+    if (list.includes(id)) setList(list.filter(x => x !== id));
+    else setList([...list, id]);
+  };
+
+  const handleStartImprovement = () => {
+    setImprovementStatus('running');
+    setImprovementProgress(0);
+    const id = setInterval(() => {
+      setImprovementProgress(p => {
+        if (p >= 100) {
+          clearInterval(id);
+          setImprovementStatus('done');
+          setSystemScore({ quality: 99, coverage: 96, security: 100 });
+          return 100;
+        }
+        return p + 5;
+      });
+    }, 400);
+  };
+
 
   // K8s Pods State
   const [pods, setPods] = useState<K8sPod[]>([
@@ -284,6 +333,12 @@ export default function SystemFactoryView() {
           {/* Custom Tabs */}
           <div className="flex gap-4 border-b border-white/10 pb-4 overflow-x-auto custom-scrollbar">
              <button 
+               onClick={() => setActiveTab('improve')}
+               className={cn("flex whitespace-nowrap items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'improve' ? "bg-fuchsia-600/20 text-fuchsia-400 border border-fuchsia-500/50 shadow-[0_0_20px_rgba(217,70,239,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
+             >
+                <Sparkles size={16} /> УПРАВЛІННЯ ВДОСКОНАЛЕННЯМИ
+             </button>
+             <button 
                onClick={() => setActiveTab('k8s')}
                className={cn("flex whitespace-nowrap items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'k8s' ? "bg-indigo-600/20 text-indigo-400 border border-indigo-500/50 shadow-[0_0_20px_rgba(79,70,229,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
              >
@@ -304,6 +359,153 @@ export default function SystemFactoryView() {
           </div>
 
           <AnimatePresence mode="wait">
+             {activeTab === 'improve' && (
+               <motion.div key="improve" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+                 
+                 {/* Mode Selection */}
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button 
+                      onClick={() => setImprovementMode('tech')}
+                      className={cn("p-4 rounded-xl border flex flex-col items-center gap-2 transition-all", improvementMode === 'tech' ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-400 shadow-[0_0_15px_rgba(79,70,229,0.2)]' : 'bg-slate-900/50 border-white/5 text-slate-400 hover:bg-slate-800')}
+                    >
+                      <Cog size={24} />
+                      <span className="text-[11px] font-black uppercase tracking-widest">Технологічна Вертикаль</span>
+                    </button>
+                    <button 
+                      onClick={() => setImprovementMode('analytic')}
+                      className={cn("p-4 rounded-xl border flex flex-col items-center gap-2 transition-all", improvementMode === 'analytic' ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'bg-slate-900/50 border-white/5 text-slate-400 hover:bg-slate-800')}
+                    >
+                      <BarChart size={24} />
+                      <span className="text-[11px] font-black uppercase tracking-widest">Аналітична Вертикаль</span>
+                    </button>
+                    <button 
+                      onClick={() => setImprovementMode('complex')}
+                      className={cn("p-4 rounded-xl border flex flex-col items-center gap-2 transition-all", improvementMode === 'complex' ? 'bg-fuchsia-500/20 border-fuchsia-500/50 text-fuchsia-400 shadow-[0_0_15px_rgba(217,70,239,0.2)]' : 'bg-slate-900/50 border-white/5 text-slate-400 hover:bg-slate-800')}
+                    >
+                      <Sparkles size={24} />
+                      <span className="text-[11px] font-black uppercase tracking-widest">Комплексне Вдосконалення</span>
+                    </button>
+                 </div>
+
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   {/* Technical Column */}
+                   {(improvementMode === 'tech' || improvementMode === 'complex') && (
+                     <TacticalCard title="ТЕХНОЛОГІЧНІ КОМПОНЕНТИ" variant="cyber" className="border-indigo-500/30">
+                        <div className="p-4 space-y-4">
+                          <label className="flex items-center gap-3 p-3 rounded-lg bg-indigo-500/5 border border-indigo-500/20 cursor-pointer hover:bg-indigo-500/10 transition-colors">
+                            <input type="checkbox" checked={techComponents.length === techOptions.length} onChange={() => setTechComponents(techComponents.length === techOptions.length ? [] : techOptions.map(o => o.id))} className="accent-indigo-500 w-4 h-4" />
+                            <span className="text-[11px] font-black uppercase tracking-widest text-indigo-400">Вибрати все (Масове вдосконалення)</span>
+                          </label>
+                          <div className="space-y-2">
+                             {techOptions.map(opt => (
+                               <label key={opt.id} className="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-white/5 transition-colors">
+                                  <input type="checkbox" checked={techComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, techComponents, setTechComponents)} className="accent-indigo-500 w-4 h-4 bg-slate-900 border-white/20 rounded" />
+                                  <span className="text-[11px] font-bold text-slate-300">{opt.label}</span>
+                               </label>
+                             ))}
+                          </div>
+                          <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-1 gap-2">
+                             <button onClick={handleStartImprovement} className="p-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors shadow-lg flex justify-center gap-2"><Wrench size={14}/> Вдосконалити вибране</button>
+                             <button className="p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors border border-white/5 flex gap-2 justify-center"><CheckCircle2 size={14}/> Перевірити на надійність</button>
+                          </div>
+                        </div>
+                     </TacticalCard>
+                   )}
+
+                   {/* Analytical Column */}
+                   {(improvementMode === 'analytic' || improvementMode === 'complex') && (
+                     <TacticalCard title="АНАЛІТИЧНІ СИСТЕМИ" variant="cyber" className="border-amber-500/30">
+                        <div className="p-4 space-y-4">
+                          <label className="flex items-center gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20 cursor-pointer hover:bg-amber-500/10 transition-colors">
+                            <input type="checkbox" checked={analyticComponents.length === analyticOptions.length} onChange={() => setAnalyticComponents(analyticComponents.length === analyticOptions.length ? [] : analyticOptions.map(o => o.id))} className="accent-amber-500 w-4 h-4" />
+                            <span className="text-[11px] font-black uppercase tracking-widest text-amber-400">Вибрати все (Масове вдосконалення)</span>
+                          </label>
+                          <div className="space-y-2">
+                             {analyticOptions.map(opt => (
+                               <label key={opt.id} className="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-white/5 transition-colors">
+                                  <input type="checkbox" checked={analyticComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, analyticComponents, setAnalyticComponents)} className="accent-amber-500 w-4 h-4 bg-slate-900 border-white/20 rounded" />
+                                  <span className="text-[11px] font-bold text-slate-300">{opt.label}</span>
+                               </label>
+                             ))}
+                             <label className="flex items-center gap-3 p-3 mt-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 cursor-pointer hover:bg-emerald-500/20 transition-colors">
+                                <input type="checkbox" checked={googleIntegrality} onChange={() => setGoogleIntegrality(!googleIntegrality)} className="accent-emerald-500 w-4 h-4" />
+                                <div className="flex flex-col">
+                                  <span className="text-[11px] font-black uppercase tracking-widest text-emerald-400">Інтеграція Google Integrality</span>
+                                  <span className="text-[9px] text-emerald-500/70 font-mono mt-1">GCP Data Sync, Gemini NLP, Analytics</span>
+                                </div>
+                             </label>
+                          </div>
+                          <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-1 gap-2">
+                             <button onClick={handleStartImprovement} className="p-3 bg-amber-600 hover:bg-amber-500 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors shadow-lg flex justify-center gap-2"><Sparkles size={14}/> Вдосконалити аналітику</button>
+                             <button className="p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-[10px] uppercase tracking-widest rounded-xl transition-colors border border-white/5 flex gap-2 justify-center"><RotateCcw size={14}/> Оновити Knowledge Map</button>
+                          </div>
+                        </div>
+                     </TacticalCard>
+                   )}
+                 </div>
+
+                 {/* Realtime Progress & Results */}
+                 {(improvementStatus === 'running' || improvementStatus === 'done') && (
+                   <TacticalCard title="СТАТУС ВИКОНАННЯ (NATS EVENTS)" variant="holographic">
+                     <div className="p-6">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-fuchsia-400">ПРОГРЕС ВДОСКОНАЛЕННЯ</span>
+                          <span className="font-mono font-bold text-white">{improvementProgress}%</span>
+                        </div>
+                        <div className="w-full h-2 bg-slate-900 rounded-full overflow-hidden mb-6">
+                           <motion.div initial={{ width: 0 }} animate={{ width: `${improvementProgress}%` }} className="h-full bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-amber-500 shadow-[0_0_10px_rgba(217,70,239,0.5)]" />
+                        </div>
+                        
+                        {improvementStatus === 'done' && (
+                          <div className="space-y-4">
+                            <table className="w-full text-left">
+                               <thead>
+                                 <tr className="text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-white/10">
+                                   <th className="pb-2">Компонент</th>
+                                   <th className="pb-2">Дія</th>
+                                   <th className="pb-2">Score До</th>
+                                   <th className="pb-2">Score Після</th>
+                                 </tr>
+                               </thead>
+                               <tbody className="text-[11px] font-mono text-slate-300 divide-y divide-white/5">
+                                 {techComponents.map((c, i) => (
+                                   <tr key={c} className="hover:bg-white/5">
+                                     <td className="py-3 text-indigo-400 font-bold">{techOptions.find(o=>o.id===c)?.label || c}</td>
+                                     <td className="py-3">Оптимізація Factory</td>
+                                     <td className="py-3 text-slate-500">{90 + i}</td>
+                                     <td className="py-3 text-success font-bold flex items-center gap-1"><ArrowUpIcon className="w-3 h-3 text-emerald-500"/>{95 + i}</td>
+                                   </tr>
+                                 ))}
+                                 {analyticComponents.map((c, i) => (
+                                   <tr key={c} className="hover:bg-white/5">
+                                     <td className="py-3 text-amber-400 font-bold">{analyticOptions.find(o=>o.id===c)?.label || c}</td>
+                                     <td className="py-3">Оновлення патернів</td>
+                                     <td className="py-3 text-slate-500">{85 + i}</td>
+                                     <td className="py-3 text-success font-bold flex items-center gap-1"><ArrowUpIcon className="w-3 h-3 text-emerald-500"/>{95 + i}</td>
+                                   </tr>
+                                 ))}
+                                 {googleIntegrality && (
+                                   <tr className="bg-emerald-500/5">
+                                     <td className="py-3 text-emerald-400 font-bold">Google Integrality</td>
+                                     <td className="py-3">Імпорт GCP / Gemini API</td>
+                                     <td className="py-3 text-slate-500">-</td>
+                                     <td className="py-3 text-emerald-400 font-bold flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> INTEGRATED</td>
+                                   </tr>
+                                 )}
+                               </tbody>
+                            </table>
+                            <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-white/10">
+                               <button className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest text-slate-300 transition-colors">ЕКСПОРТ (JSON)</button>
+                               <button className="px-4 py-2 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-[10px] font-black uppercase tracking-widest text-indigo-400 border border-indigo-500/30 transition-colors">Звіт (PDF)</button>
+                            </div>
+                          </div>
+                        )}
+                     </div>
+                   </TacticalCard>
+                 )}
+               </motion.div>
+             )}
+
              {activeTab === 'k8s' && (
                <motion.div key="k8s" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
                   
@@ -624,10 +826,7 @@ export default function SystemFactoryView() {
              </div>
            </TacticalCard>
         </div>
-
       </div>
     </div>
   );
 }
-
-const SearchIcon = (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>;

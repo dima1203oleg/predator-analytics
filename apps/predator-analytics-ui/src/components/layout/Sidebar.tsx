@@ -68,6 +68,7 @@ export const Sidebar = () => {
     icon: any;
     premium?: boolean;
     role?: 'admin' | 'client' | 'premium';
+    subItems?: Omit<NavItem, 'subItems' | 'icon'>[];
   }
 
   interface NavGroup {
@@ -88,11 +89,18 @@ export const Sidebar = () => {
     {
       title: 'ЗАВОД (СИСТЕМНА ФАБРИКА)',
       items: [
-        { name: 'Управління Заводом', path: '/system-factory', icon: Factory },
-        { name: 'Мапа Знань (Knowledge)', path: '/factory', icon: BrainCircuit },
-        { name: 'Студія Датасетів', path: '/datasets', icon: Boxes },
-        { name: 'Студія Факторів', path: '/factory-studio', icon: Factory, role: 'admin' },
-        { name: 'Аналітика Двигунів', path: '/engines', icon: Waves },
+        { 
+          name: 'Управління Заводом', 
+          path: '/system-factory', 
+          icon: Factory,
+          subItems: [
+            { name: 'Мапа Знань (Knowledge Map)', path: '/factory' },
+            { name: 'Студія Датасетів', path: '/datasets' },
+            { name: 'Студія Факторів', path: '/factory-studio', role: 'admin' },
+            { name: 'Аналітика Діяльності', path: '/monitoring' },
+            { name: 'Аналітика Даних', path: '/data' }
+          ]
+        },
       ]
     },
     {
@@ -186,60 +194,96 @@ export const Sidebar = () => {
 
             <div className="space-y-1">
               {group.items.filter(hasAccess).map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  title={!isSidebarOpen ? item.name : undefined}
-                  className={({ isActive }) => cn(
-                    "relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group overflow-hidden border border-transparent",
-                    isActive
-                      ? "bg-indigo-500/10 text-white shadow-[0_0_20px_rgba(79,70,229,0.1)] border-white/10 sidebar-active"
-                      : "text-slate-300 hover:text-white hover:bg-white/5"
-                  )}
-                >
-                  {({ isActive }) => (
-                    <>
-                      <div className={cn(
-                        "relative z-10 transition-all duration-300 group-hover:scale-110 shrink-0",
-                        isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.6)]" : "text-slate-400 group-hover:text-slate-200"
-                      )}>
-                        <item.icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
-                      </div>
+                <div key={item.path} className="flex flex-col">
+                  <NavLink
+                    to={item.path}
+                    title={!isSidebarOpen ? item.name : undefined}
+                    className={({ isActive }) => cn(
+                      "relative flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all duration-300 group overflow-hidden border border-transparent",
+                      isActive || (item.subItems && window.location.pathname.startsWith(item.path))
+                        ? "bg-indigo-500/10 text-white shadow-[0_0_20px_rgba(79,70,229,0.1)] border-white/10 sidebar-active"
+                        : "text-slate-300 hover:text-white hover:bg-white/5"
+                    )}
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <div className="flex items-center gap-3">
+                          <div className={cn(
+                            "relative z-10 transition-all duration-300 group-hover:scale-110 shrink-0",
+                            isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.6)]" : "text-slate-400 group-hover:text-slate-200"
+                          )}>
+                            <item.icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
+                          </div>
 
-                      <span className={cn(
-                        "whitespace-nowrap font-bold text-[13px] transition-all duration-300 origin-left relative z-10",
-                        isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 w-0 overflow-hidden"
-                      )}>
-                        {item.name}
-                      </span>
-
-                      {/* Active Indicator & Hover Glow */}
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeIndicator"
-                          className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-indigo-500 rounded-full"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                        />
-                      )}
-
-                      {/* Badges */}
-                      {item.premium && isSidebarOpen && (
-                        <div className="ml-auto flex items-center gap-1 px-1.5 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-md shrink-0">
-                          <Trophy className="w-2.5 h-2.5 text-amber-500" />
-                          <span className="text-[8px] font-black text-amber-500 uppercase">PRO</span>
+                          <span className={cn(
+                            "whitespace-nowrap font-bold text-[13px] transition-all duration-300 origin-left relative z-10",
+                            isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 w-0 overflow-hidden"
+                          )}>
+                            {item.name}
+                          </span>
                         </div>
-                      )}
 
-                      {item.role === 'admin' && isSidebarOpen && (
-                        <div className="ml-auto flex items-center gap-1 px-1.5 py-0.5 bg-rose-500/10 border border-rose-500/20 rounded-md shrink-0">
-                          <Lock className="w-2.5 h-2.5 text-rose-500" />
-                          <span className="text-[8px] font-black text-rose-500 uppercase">МАС</span>
+                        {/* Active Indicator & Hover Glow */}
+                        {isActive && (
+                          <motion.div
+                            layoutId="activeIndicator"
+                            className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-indigo-500 rounded-full"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                          />
+                        )}
+
+                        {/* Badges */}
+                        <div className="flex items-center gap-2">
+                          {item.premium && isSidebarOpen && (
+                            <div className="ml-auto flex items-center gap-1 px-1.5 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-md shrink-0">
+                              <Trophy className="w-2.5 h-2.5 text-amber-500" />
+                              <span className="text-[8px] font-black text-amber-500 uppercase">PRO</span>
+                            </div>
+                          )}
+
+                          {item.role === 'admin' && isSidebarOpen && (
+                            <div className="ml-auto flex items-center gap-1 px-1.5 py-0.5 bg-rose-500/10 border border-rose-500/20 rounded-md shrink-0">
+                              <Lock className="w-2.5 h-2.5 text-rose-500" />
+                              <span className="text-[8px] font-black text-rose-500 uppercase">МАС</span>
+                            </div>
+                          )}
+                          
+                          {item.subItems && isSidebarOpen && (
+                            <svg className={cn("transition-transform duration-300 w-4 h-4 text-slate-500", window.location.pathname.startsWith(item.path) || window.location.pathname === item.path ? 'rotate-180' : '')} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                          )}
                         </div>
-                      )}
-                    </>
+                      </>
+                    )}
+                  </NavLink>
+                  {/* SubItems */}
+                  {item.subItems && isSidebarOpen && (window.location.pathname.startsWith(item.path) || window.location.pathname === item.path) && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }} 
+                      animate={{ height: 'auto', opacity: 1 }} 
+                      className="flex flex-col ml-9 mt-1 space-y-1 relative"
+                    >
+                      <div className="absolute left-[3px] top-0 bottom-4 w-px bg-white/5" />
+                      {item.subItems.filter(hasAccess).map(subItem => (
+                        <NavLink
+                          key={subItem.path}
+                          to={subItem.path}
+                          className={({ isActive }) => cn(
+                            "relative flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300 text-[11px] font-bold",
+                            isActive ? "text-indigo-400 bg-white/5 shadow-inner" : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
+                          )}
+                        >
+                          {({ isActive }) => (
+                            <>
+                              <div className={cn("absolute left-[-26px] top-1/2 w-3 h-px", isActive ? "bg-indigo-500" : "bg-white/10")} />
+                              {subItem.name}
+                            </>
+                          )}
+                        </NavLink>
+                      ))}
+                    </motion.div>
                   )}
-                </NavLink>
+                </div>
               ))}
             </div>
           </div>
