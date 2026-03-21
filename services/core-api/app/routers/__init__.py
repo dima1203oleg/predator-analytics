@@ -22,6 +22,7 @@
 - som.py — SOM аналіз
 - warroom.py — War Room
 - osint_ua.py — OSINT Ukraine (DataGov, Prozorro)
+- ml_studio.py — ML Studio & Training Center
 """
 
 # Експортуємо всі роутери для зручності імпорту
@@ -47,6 +48,7 @@ from .risk import router as risk_router
 from .search import router as search_router
 from .som import router as som_router
 from .warroom import router as warroom_router
+from .ml_studio import router as ml_studio_router
 
 __all__ = [
     "alerts_router",
@@ -71,4 +73,5 @@ __all__ = [
     "search_router",
     "som_router",
     "warroom_router",
+    "ml_studio_router",
 ]

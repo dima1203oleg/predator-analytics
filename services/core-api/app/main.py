@@ -46,6 +46,7 @@ from app.routers import (
     search_router,
     som_router,
     warroom_router,
+    ml_studio_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.kafka_service import close_kafka, init_kafka
@@ -166,6 +167,7 @@ ROUTERS = [
     ("/api/v1", som_router),
     ("/api/v1", warroom_router),
     ("/api/v1", osint_ua_router),
+    ("/api/v1", ml_studio_router),
 ]
 
 for prefix, router in ROUTERS:

@@ -14,7 +14,7 @@ import {
     ScanLine, BrainCircuit, Globe, GitBranch, Layers, Network, Radar, Radio
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
-import { api } from '@/services/api';
+import { api, mlStudioApi } from '@/services/api';
 import { premiumLocales } from '../../locales/uk/premium';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { TacticalCard } from '@/components/TacticalCard';
@@ -27,7 +27,7 @@ import { InvestigationCanvasWidget } from '../../components/premium/Investigatio
 import { OsintCommandCenter } from '../../components/osint/OsintCommandCenter';
 import { OsintGraphExplorer } from '../../components/osint/OsintGraphExplorer';
 
-type StudioTab = 'osint' | 'osint-graph' | 'datasets' | 'graph';
+type StudioTab = 'osint' | 'osint-graph' | 'datasets' | 'ml-studio' | 'graph';
 
 const DatasetStudio: React.FC = () => {
     const [isGenerating, setIsGenerating] = useState(false);
@@ -35,6 +35,44 @@ const DatasetStudio: React.FC = () => {
     const [augmentationLevel, setAugmentationLevel] = useState(50);
     const [rowCount, setRowCount] = useState(1000);
     const [activeTab, setActiveTab] = useState<StudioTab>('osint');
+    const [mlStatus, setMlStatus] = useState<any>(null);
+    const [mlRuns, setMlRuns] = useState<any[]>([]);
+    const [isLoraTraining, setIsLoraTraining] = useState(false);
+
+    useEffect(() => {
+        const fetchMlData = async () => {
+            try {
+                const [status, runs] = await Promise.all([
+                    mlStudioApi.getStatus(),
+                    mlStudioApi.getRuns(5)
+                ]);
+                setMlStatus(status);
+                setMlRuns(runs);
+            } catch (err) {
+                console.error('Failed to fetch ML Studio data', err);
+            }
+        };
+        fetchMlData();
+        const interval = setInterval(fetchMlData, 30000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const handleLoraTrain = async () => {
+        setIsLoraTraining(true);
+        try {
+            await mlStudioApi.startLoraTraining({
+                model_name: "Llama-3-8B-OSINT",
+                dataset_id: activePrototypeId || "ds_auto_gen_01",
+                rank: 8,
+                alpha: 16
+            });
+            alert("Процес LoRA тюнінгу успішно ініційовано. Відстежуйте прогрес у MLflow.");
+        } catch (err) {
+            console.error('LoRA Training failed', err);
+        } finally {
+            setIsLoraTraining(false);
+        }
+    };
 
     const handleGenerate = async () => {
         if (!activePrototypeId) return;
@@ -57,6 +95,7 @@ const DatasetStudio: React.FC = () => {
         { id: 'osint', label: 'OSINT КОМАНДНИЙ ЦЕНТР', icon: <Radar size={16} /> },
         { id: 'osint-graph', label: 'OSINT ГРАФ', icon: <Network size={16} className="text-cyan-400" /> },
         { id: 'datasets', label: 'ДАТАСЕТИ & МОДЕЛІ', icon: <Database size={16} /> },
+        { id: 'ml-studio', label: 'ML STUDIO', icon: <BrainCircuit size={16} className="text-purple-400" /> },
         { id: 'graph', label: 'CERS ПРОФІЛЬ', icon: <Activity size={16} className="text-indigo-400" /> },
     ];
 
@@ -256,6 +295,166 @@ const DatasetStudio: React.FC = () => {
                                             </li>
                                         ))}
                                     </ul>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* ─── ML STUDIO & MONITORING ─── */}
+                    {activeTab === 'ml-studio' && (
+                        <motion.div
+                            key="ml-studio"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className="grid grid-cols-1 lg:grid-cols-4 gap-8 relative z-10"
+                        >
+                            {/* Left: ML Infrastructure Status */}
+                            <div className="lg:col-span-1 space-y-6">
+                                <TacticalCard title="ІНФРАСТРУКТУРА ML" variant="dark">
+                                    <div className="p-6 space-y-6">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[10px] font-black text-slate-500 uppercase">MLflow Tracking</span>
+                                            <span className={cn(
+                                                "px-2 py-0.5 rounded text-[9px] font-bold border",
+                                                mlStatus?.mlflow?.status === 'online' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" : "bg-red-500/10 border-red-500/30 text-red-400"
+                                            )}>
+                                                {mlStatus?.mlflow?.status?.toUpperCase() || 'OFFLINE'}
+                                            </span>
+                                        </div>
+                                        
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase">GPU CLUSTER UTIL</label>
+                                            <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                                <motion.div 
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${mlStatus?.gpu_cluster?.utilization || 0}%` }}
+                                                    className="h-full bg-gradient-to-r from-purple-500 to-indigo-500"
+                                                />
+                                            </div>
+                                            <div className="flex justify-between text-[10px] font-mono text-slate-400">
+                                                <span>{mlStatus?.gpu_cluster?.total_vram_gb}GB VRAM</span>
+                                                <span>{mlStatus?.gpu_cluster?.utilization}% UC</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-white/5 space-y-2">
+                                            <div className="text-[10px] text-slate-500 font-bold uppercase">Активні задачі:</div>
+                                            {mlStatus?.active_training?.map((job: any) => (
+                                                <div key={job.job_id} className="p-3 rounded-xl bg-slate-950/50 border border-indigo-500/20">
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <span className="text-[10px] font-bold text-white">{job.model}</span>
+                                                        <span className="text-[9px] font-mono text-indigo-400">{job.progress}%</span>
+                                                    </div>
+                                                    <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-indigo-500" style={{ width: `${job.progress}%` }} />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </TacticalCard>
+                            </div>
+
+                            {/* Center-Right: LoRA fine-tuning & MLflow Runs */}
+                            <div className="lg:col-span-3 space-y-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <TacticalCard title="LoRA FINE-TUNING" variant="holographic">
+                                        <div className="p-6 space-y-6">
+                                            <div className="space-y-4">
+                                                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                                                    <p className="text-[10px] text-slate-400 leading-relaxed italic">
+                                                        "Low-Rank Adaptation дозволяє донавчати гігантські моделі на специфічних даних митниці, 
+                                                        заморожуючи основні ваги та додаючи лише невеликі адаптивні матриці."
+                                                    </p>
+                                                </div>
+                                                
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <label className="text-[9px] font-black text-slate-500 uppercase">Rank (r)</label>
+                                                        <select className="w-full bg-slate-900 border border-white/10 rounded-lg p-2 text-xs text-white">
+                                                            <option>8</option>
+                                                            <option>16</option>
+                                                            <option>32</option>
+                                                            <option>64</option>
+                                                        </select>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <label className="text-[9px] font-black text-slate-500 uppercase">Alpha</label>
+                                                        <select className="w-full bg-slate-900 border border-white/10 rounded-lg p-2 text-xs text-white">
+                                                            <option>16</option>
+                                                            <option>32</option>
+                                                            <option>64</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <button
+                                                    onClick={handleLoraTrain}
+                                                    disabled={isLoraTraining}
+                                                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black text-[10px] tracking-widest uppercase hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-purple-600/20 flex items-center justify-center gap-3"
+                                                >
+                                                    {isLoraTraining ? <RefreshCw className="animate-spin" size={14} /> : <Zap size={14} />}
+                                                    ЗАПУСТИТИ LoRA АДАПТАЦІЮ
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </TacticalCard>
+
+                                    <TacticalCard title="MLflow ЕКСПЕРИМЕНТИ" variant="dark">
+                                        <div className="p-0">
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full">
+                                                    <thead>
+                                                        <tr className="border-b border-white/5 bg-slate-950/40">
+                                                            <th className="px-4 py-3 text-left text-[9px] font-black text-slate-500 uppercase tracking-widest">Run ID</th>
+                                                            <th className="px-4 py-3 text-left text-[9px] font-black text-slate-500 uppercase tracking-widest">Model/Exp</th>
+                                                            <th className="px-4 py-3 text-right text-[9px] font-black text-slate-500 uppercase tracking-widest">Metrics</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-white/5">
+                                                        {mlRuns.map((run: any) => (
+                                                            <tr key={run.run_id} className="hover:bg-white/5 transition-colors">
+                                                                <td className="px-4 py-3 text-[10px] font-mono text-slate-400">#{run.run_id.slice(0, 8)}</td>
+                                                                <td className="px-4 py-3">
+                                                                    <div className="text-[10px] font-bold text-white">{run.experiment_name}</div>
+                                                                    <div className="text-[8px] text-slate-500 flex items-center gap-1.5 mt-0.5">
+                                                                        <Clock size={8} /> {new Date(run.start_time).toLocaleTimeString()}
+                                                                        <span className="w-1 h-1 rounded-full bg-slate-600" />
+                                                                        <span className="text-emerald-400 uppercase font-black tracking-tighter">{run.status}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-4 py-3 text-right">
+                                                                    <div className="text-[10px] font-mono text-indigo-400">acc: {(run.metrics.accuracy * 100).toFixed(1)}%</div>
+                                                                    <div className="text-[9px] font-mono text-slate-500">f1: {run.metrics.f1.toFixed(3)}</div>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </TacticalCard>
+                                </div>
+
+                                {/* Active Learning Feedback Loop */}
+                                <div className="p-8 rounded-[2rem] bg-gradient-to-br from-indigo-950/30 to-slate-950 border border-indigo-500/10 flex items-center justify-between group overflow-hidden relative">
+                                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
+                                    <div className="relative z-10 flex items-center gap-6">
+                                        <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-500">
+                                            <RefreshCw size={32} />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-black text-white uppercase tracking-widest mb-1">ACTIVE LEARNING LOOP</h4>
+                                            <p className="text-xs text-slate-500 max-w-md">
+                                                Система автоматично виявляє аномалії, які неможливо класифікувати з високою впевненістю, та додає їх у чергу для донавчання моделі.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="relative z-10 text-right">
+                                        <div className="text-2xl font-mono font-bold text-indigo-400 mb-1">428</div>
+                                        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Samples in Queue</div>
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>

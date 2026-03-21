@@ -99,3 +99,18 @@ export const mlApi = {
         return (await v45Client.get(`/ml/documents/${id}/summary`)).data;
     }
 };
+
+export const mlStudioApi = {
+    getStatus: async () => {
+        return (await apiClient.get('/ml-studio/status')).data;
+    },
+    getRuns: async (limit: number = 10) => {
+        return (await apiClient.get(`/ml-studio/runs?limit=${limit}`)).data;
+    },
+    startLoraTraining: async (config: any) => {
+        return (await apiClient.post('/ml-studio/train/lora', config)).data;
+    },
+    getModelRegistry: async () => {
+        return (await apiClient.get('/ml-studio/models/registry')).data;
+    }
+};
