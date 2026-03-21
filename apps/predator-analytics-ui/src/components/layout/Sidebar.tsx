@@ -86,11 +86,12 @@ export const Sidebar = () => {
       ]
     },
     {
-      title: 'СТУДІЯ ФАБРИКИ',
+      title: 'ЗАВОД (СИСТЕМНА ФАБРИКА)',
       items: [
-        { name: 'Студія Факторів', path: '/factory-studio', icon: Factory, role: 'admin' },
+        { name: 'Управління Заводом', path: '/system-factory', icon: Factory },
         { name: 'Мапа Знань (Knowledge)', path: '/factory', icon: BrainCircuit },
         { name: 'Студія Датасетів', path: '/datasets', icon: Boxes },
+        { name: 'Студія Факторів', path: '/factory-studio', icon: Factory, role: 'admin' },
         { name: 'Аналітика Двигунів', path: '/engines', icon: Waves },
       ]
     },

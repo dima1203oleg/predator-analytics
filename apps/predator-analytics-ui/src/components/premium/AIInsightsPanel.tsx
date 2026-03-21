@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';
+import { intelligenceApi } from '../../services/api';
 
 // ============================================
 // Types
@@ -253,6 +254,7 @@ export const AIInsightsPanel: React.FC<{
 
   const personaColor = persona === 'TITAN' ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
 
+  useEffect(() => {
     const fetchInsights = async () => {
       setLoading(true);
       try {

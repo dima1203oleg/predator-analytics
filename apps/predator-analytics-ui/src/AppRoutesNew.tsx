@@ -99,6 +99,7 @@ const ModelTrainingView = lazy(() => import('./features/ai/ModelTrainingView'));
 const EnginesView = lazy(() => import('./features/ai/EnginesView'));
 const FactorsView = lazy(() => import('./features/factors/FactorsView'));
 const FactoryStudio = lazy(() => import('./features/factory/FactoryStudio'));
+const SystemFactoryView = lazy(() => import('./features/factory/SystemFactoryView'));
 
 
 
@@ -221,6 +222,7 @@ export const AppRoutesNew = () => {
             <Route path="/autonomy" element={userRole === UserRole.ADMIN ? <AutonomyDashboard /> : <Navigate to="/overview" replace />} />
             <Route path="/factory" element={<FactorsView />} />
             <Route path="/factory-studio" element={<FactoryStudio />} />
+            <Route path="/system-factory" element={<SystemFactoryView />} />
             <Route path="/components" element={<ComponentsRegistryView />} />
 
             {/* Premium Commercial Intelligence */}
