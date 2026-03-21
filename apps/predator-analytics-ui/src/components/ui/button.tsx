@@ -10,14 +10,14 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        neon: "bg-indigo-600/20 text-indigo-400 border border-indigo-500/50 hover:bg-indigo-500/30 hover:shadow-[0_0_20px_rgba(79,70,229,0.3)] shadow-[0_0_10px_rgba(79,70,229,0.1)] hover:-translate-y-0.5 transition-all duration-300",
+        cyber: "bg-slate-900 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500 shadow-[inset_0_0_15px_rgba(16,185,129,0.05)] shadow-[0_0_15px_rgba(16,185,129,0.1)] uppercase tracking-[0.2em] text-[10px] hover:text-emerald-300 font-black",
+        holographic: "bg-cyan-500/10 border border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/20 hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] backdrop-blur-md relative overflow-hidden group",
       },
       size: {
         default: "h-10 px-4 py-2",
