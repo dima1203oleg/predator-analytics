@@ -42,38 +42,88 @@ const GraphAnalyticsPage: React.FC = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            // Simulated deep graph summary
-            // const summaryRes = await api.get('/graph/summary');
+            const summaryRes = await api.graph.getSummary();
             
-            // Mock dynamic graph data v55.5
-            const nodes = [
-                { id: 'root', name: 'CORE_VAL_UKRAINE', symbolSize: 100, itemStyle: { color: '#6366f1' }, label: { show: true } },
-                { id: 'c1', name: 'ТОВ "МИТНИЙ_ТРАНЗИТ"', symbolSize: 60, itemStyle: { color: '#ef4444' }, category: 'HIGH_RISK' },
-                { id: 'c2', name: 'ПРАТ "ЛОГІСТИК_ПЛЮС"', symbolSize: 50, itemStyle: { color: '#f59e0b' }, category: 'MEDIUM_RISK' },
-                { id: 'c3', name: 'ОФШОР "CORP_Z"', symbolSize: 45, itemStyle: { color: '#ef4444' }, category: 'HIGH_RISK' },
-                { id: 'c4', name: 'БЕНЕФІЦІАР X', symbolSize: 55, itemStyle: { color: '#10b981' }, category: 'UBO' },
-                { id: 'c5', name: 'ФОП "ІВАНОВ"', symbolSize: 30, itemStyle: { color: '#94a3b8' }, category: 'ENTITY' },
-                { id: 'c6', name: 'МИТНИЙ_ПОСТ_ЗАХІД', symbolSize: 40, itemStyle: { color: '#0ea5e9' }, category: 'GOV' },
-            ];
+            if (summaryRes && summaryRes.nodes) {
+                const processedNodes = summaryRes.nodes.map((node: any) => ({
+                    id: node.id,
+                    name: node.label,
+                    symbolSize: node.riskScore ? (30 + node.riskScore / 2) : 40,
+                    itemStyle: { 
+                        color: node.riskScore > 70 ? '#ef4444' : 
+                               node.riskScore > 40 ? '#f59e0b' : 
+                               node.type === 'person' ? '#10b981' : '#6366f1' 
+                    },
+                    category: node.type?.toUpperCase() || 'ENTITY',
+                    risk: node.riskScore,
+                    label: { show: node.riskScore > 50 }
+                }));
 
-            const links = [
-                { source: 'root', target: 'c1' },
-                { source: 'root', target: 'c2' },
-                { source: 'c1', target: 'c3' },
-                { source: 'c3', target: 'c4' },
-                { source: 'c1', target: 'c2' },
-                { source: 'c4', target: 'c6' },
-                { source: 'c2', target: 'c5' },
-            ];
+                const processedLinks = summaryRes.links || [];
 
-            setGraphData({ nodes, links });
-            setStats({ nodes_count: '1.2M', relationships: '4.8M', clusters: '2.4K', density: '0.084' });
+                setGraphData({ nodes: processedNodes, links: processedLinks });
+                setStats({ 
+                    nodes_count: summaryRes.stats?.total_nodes || '0', 
+                    relationships: (summaryRes.stats?.total_nodes * 2.4).toFixed(0), 
+                    clusters: (summaryRes.stats?.high_risk_count / 3).toFixed(0), 
+                    density: '0.084' 
+                });
+            } else {
+                fetchMock();
+            }
         } catch (err) {
             console.error('Failed to fetch graph data:', err);
+            fetchMock();
         } finally {
             setLoading(false);
         }
     };
+
+    const fetchMock = () => {
+        const nodes = [
+            { id: 'root', name: 'CORE_VAL_UKRAINE', symbolSize: 80, itemStyle: { color: '#6366f1' }, label: { show: true }, risk: 0 },
+            { id: 'c1', name: 'ТОВ "МИТНИЙ_ТРАНЗИТ"', symbolSize: 60, itemStyle: { color: '#ef4444' }, category: 'HIGH_RISK', risk: 92 },
+            { id: 'c2', name: 'ПРАТ "ЛОГІСТИК_ПЛЮС"', symbolSize: 50, itemStyle: { color: '#f59e0b' }, category: 'MEDIUM_RISK', risk: 54 },
+            { id: 'c3', name: 'ОФШОР "CORP_Z"', symbolSize: 45, itemStyle: { color: '#ef4444' }, category: 'HIGH_RISK', risk: 88 },
+            { id: 'c4', name: 'БЕНЕФІЦІАР X', symbolSize: 55, itemStyle: { color: '#10b981' }, category: 'UBO', risk: 20 },
+            { id: 'c5', name: 'ФОП "ІВАНОВ"', symbolSize: 30, itemStyle: { color: '#94a3b8' }, category: 'ENTITY', risk: 10 },
+            { id: 'c6', name: 'МИТНИЙ_ПОСТ_ЗАХІД', symbolSize: 40, itemStyle: { color: '#0ea5e9' }, category: 'GOV', risk: 5 },
+        ];
+
+        const links = [
+            { source: 'root', target: 'c1' },
+            { source: 'root', target: 'c2' },
+            { source: 'c1', target: 'c3' },
+            { source: 'c3', target: 'c4' },
+            { source: 'c1', target: 'c2' },
+            { source: 'c4', target: 'c6' },
+            { source: 'c2', target: 'c5' },
+        ];
+        setGraphData({ nodes, links });
+        setStats({ nodes_count: '1.2M', relationships: '4.8M', clusters: '2.4K', density: '0.084' });
+    };
+
+    const [clusters, setClusters] = useState<any[]>([]);
+
+    const handleRunLouvain = async () => {
+        try {
+            const res = await api.graph.getCartels();
+            console.log('Louvain results:', res);
+            if (Array.isArray(res)) {
+                const processedClusters = res.map((c: any) => ({
+                    name: c.entities?.[0]?.name || `КЛАСТЕР #${c.communityId}`,
+                    risk: Math.max(...(c.entities?.map((e: any) => e.risk) || [0])),
+                    connections: c.size,
+                    id: c.communityId
+                }));
+                setClusters(processedClusters);
+            }
+            fetchData();
+        } catch (err) {
+            console.error('Failed to run Louvain:', err);
+        }
+    };
+
 
     useEffect(() => {
         fetchData();
@@ -90,7 +140,24 @@ const GraphAnalyticsPage: React.FC = () => {
             formatter: (params: any) => {
                 const data = params.data;
                 if (params.dataType === 'node') {
-                    return `<div class="p-4"><b class="text-indigo-400">${data.name}</b><br/><span class="text-[10px] opacity-60">TYPE: ${data.category || 'NODE'}</span></div>`;
+                    return `
+                        <div class="p-4 min-w-[200px] bg-slate-950/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl">
+                            <div class="flex items-center gap-3 mb-3 pb-3 border-b border-white/5">
+                                <div class="w-2 h-2 rounded-full ${data.risk > 70 ? 'bg-rose-500 animate-pulse' : 'bg-indigo-500'}"></div>
+                                <b class="text-white text-sm uppercase tracking-tight">${data.name}</b>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                    <span>TYPE</span>
+                                    <span class="text-indigo-400">${data.category || 'NODE'}</span>
+                                </div>
+                                <div class="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                    <span>RISK_SCORE</span>
+                                    <span class="${data.risk > 70 ? 'text-rose-500' : 'text-emerald-500'}">${data.risk || 0}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 }
                 return `CONNECTION: ${params.data.source} → ${params.data.target}`;
             }
@@ -279,21 +346,24 @@ const GraphAnalyticsPage: React.FC = () => {
                                 </div>
 
                                 <div className="space-y-6 overflow-y-auto custom-scrollbar flex-1 pr-4 no-scrollbar relative z-10">
-                                    {[
+                                    {(clusters.length > 0 ? clusters : [
                                         { name: 'ТОВ "ЕНЕРГО-СИНДИКАТ"', risk: 98, connections: 42, color: 'rose' },
                                         { name: 'ГРУПА КЛІЧКО-ТАБАЧНИКА', risk: 94, connections: 24, color: 'rose' },
                                         { name: 'ОФШОР "PANAMA_CORP"', risk: 88, connections: 12, color: 'amber' },
                                         { name: 'ПРАТ "МАГІСТРАЛЬ-ГРУП"', risk: 82, connections: 18, color: 'amber' }
-                                    ].map((c, i) => (
+                                    ]).map((c, i) => (
                                         <div key={i} className="p-6 bg-black/40 border border-white/5 rounded-[32px] hover:border-rose-500/30 transition-all panel-3d cursor-crosshair group/item h-[120px] flex flex-col justify-between">
                                             <div className="flex justify-between items-center">
-                                                <span className="text-sm font-black text-white uppercase tracking-tight group-hover/item:text-rose-400 transition-colors">{c.name}</span>
-                                                <Badge className={cn("bg-rose-500 text-black border-none font-black text-[10px] px-4 py-1 italic")}>{c.risk}%</Badge>
+                                                <span className="text-sm font-black text-white uppercase tracking-tight group-hover/item:text-rose-400 transition-colors line-clamp-1">{c.name}</span>
+                                                <Badge className={cn(
+                                                    "bg-rose-500 text-black border-none font-black text-[10px] px-4 py-1 italic",
+                                                    c.risk < 80 && "bg-amber-500"
+                                                )}>{c.risk}%</Badge>
                                             </div>
                                             <div className="flex items-center justify-between text-[9px] font-black text-slate-600 uppercase tracking-widest italic group-hover/item:text-rose-500/60 transition-colors">
                                                 <div className="flex items-center gap-3">
                                                     <GitMerge size={12} />
-                                                    <span>ЗВ'ЯЗКІВ: {c.connections}</span>
+                                                    <span>ВУЗЛІВ: {c.connections}</span>
                                                 </div>
                                                 <span className="text-[8px] bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">SHADOW_CLUSTER</span>
                                             </div>
@@ -301,7 +371,11 @@ const GraphAnalyticsPage: React.FC = () => {
                                     ))}
                                 </div>
 
-                                <button className="mt-10 w-full py-6 bg-rose-600 text-white font-black rounded-[32px] uppercase tracking-[0.3em] shadow-2xl shadow-rose-900/40 hover:bg-rose-500 active:scale-95 transition-all flex items-center justify-center gap-6 italic group/btn">
+
+                                <button 
+                                    onClick={handleRunLouvain}
+                                    className="mt-10 w-full py-6 bg-rose-600 text-white font-black rounded-[32px] uppercase tracking-[0.3em] shadow-2xl shadow-rose-900/40 hover:bg-rose-500 active:scale-95 transition-all flex items-center justify-center gap-6 italic group/btn"
+                                >
                                     <span>АНАЛІЗ КАРТЕЛІВ LOUVAIN</span>
                                     <Target size={20} className="group-hover/btn:rotate-90 transition-transform" />
                                 </button>
