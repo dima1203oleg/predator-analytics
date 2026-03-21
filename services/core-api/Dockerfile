@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
+COPY services/core-api/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ----------------- Runtime -----------------
@@ -37,7 +37,7 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 WORKDIR /app
 
 # Copy application code
-COPY app/ ./app/
+COPY services/core-api/app/ ./app/
 COPY libs/ /libs/
 COPY services/shared/ /services/shared/
 
