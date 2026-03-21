@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Factory, Zap, GitBranch, Cpu, Activity, Database, CheckCircle2,
   Terminal, Play, RotateCcw, Box, Network, Send, Loader2, Bot, Sliders,
-  Server, Shield, Power, ActivitySquare, AlertTriangle, Layers, RefreshCw, AlignLeft, X, Plus
+  Server, Shield, Power, ActivitySquare, AlertTriangle, Layers, RefreshCw, AlignLeft, X, Plus, Minus, Key, HardDrive, Wifi
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -21,6 +21,7 @@ interface FactoryMessage {
 interface K8sPod {
   id: string;
   name: string;
+  status: 'Running' | 'Pending' | 'Terminating' | 'Restarting';
   restarts: number;
   replicas: number;
   cpu: string;
@@ -44,7 +45,7 @@ export default function SystemFactoryView() {
   // Stats
   const [pipelineProgress, setPipelineProgress] = useState(100);
   const [systemScore, setSystemScore] = useState({ quality: 98, coverage: 94, security: 100 });
-  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s'>('k8s');
+  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s' | 'network'>('k8s');
 
   // K8s Pods State
   const [pods, setPods] = useState<K8sPod[]>([
@@ -95,6 +96,18 @@ export default function SystemFactoryView() {
       id: `sys-pod-scale-${Date.now()}`,
       sender: 'system',
       text: `Збільшую кількість реплік (Scale Up) для поду [${podId}]. HPA контролер оновлено.`,
+      timestamp: new Date(),
+      action: 'kubectl'
+    };
+    setMessages(prev => [...prev, sysMsg]);
+  };
+
+  const handleScaleDownPod = (podId: string) => {
+    setPods(pds => pds.map(p => p.id === podId && p.replicas > 0 ? { ...p, replicas: p.replicas - 1 } : p));
+    const sysMsg: FactoryMessage = {
+      id: `sys-pod-scaledown-${Date.now()}`,
+      sender: 'system',
+      text: `Зменшую кількість реплік (Scale Down) для поду [${podId}]. HPA контролер оновлено.`,
       timestamp: new Date(),
       action: 'kubectl'
     };
@@ -154,9 +167,22 @@ export default function SystemFactoryView() {
        return 'Збільшую кількість реплік (scale) загально через HPA контролер до цільового рівня...';
     }
 
+    if (lower.includes('менше') || lower.includes('даун') || lower.includes('зменш')) {
+       if (lower.includes('api') || lower.includes('core')) { handleScaleDownPod('core-api-8f4b'); return; }
+       if (lower.includes('ingest') || lower.includes('дані')) { handleScaleDownPod('ingest-5c9a'); return; }
+    }
+
     if (lower.includes('лог') || lower.includes('logs')) {
        if (lower.includes('api') || lower.includes('core')) { handleShowLogs('core-api-8f4b'); return 'Підключаю WebSocket до stdout поду API...'; }
        return 'Вкажіть підсистему для перегляду логів (напр. "покажи логи API").';
+    }
+
+    if (lower.includes('кеш') || lower.includes('cache')) {
+       return { action: 'deploy', reply: 'ВІДПРАВЛЕНО КОМАНДУ `FLUSHALL` НА REDIS КЛАСТЕР. Кеш очищено.' };
+    }
+    
+    if (lower.includes('секрет') || lower.includes('secret')) {
+       return { action: 'analyze', reply: 'Ініційовано ротацію Kubernetes Secrets. Застосовано новий TLS сертифікат.' };
     }
 
     // Pipeline commands
@@ -256,16 +282,22 @@ export default function SystemFactoryView() {
         <div className="lg:col-span-8 space-y-6">
           
           {/* Custom Tabs */}
-          <div className="flex gap-4 border-b border-white/10 pb-4">
+          <div className="flex gap-4 border-b border-white/10 pb-4 overflow-x-auto custom-scrollbar">
              <button 
                onClick={() => setActiveTab('k8s')}
-               className={cn("flex items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'k8s' ? "bg-indigo-600/20 text-indigo-400 border border-indigo-500/50 shadow-[0_0_20px_rgba(79,70,229,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
+               className={cn("flex whitespace-nowrap items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'k8s' ? "bg-indigo-600/20 text-indigo-400 border border-indigo-500/50 shadow-[0_0_20px_rgba(79,70,229,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
              >
                 <Layers size={16} /> KUBERNETES КЛАСТЕР 
              </button>
              <button 
+               onClick={() => setActiveTab('network')}
+               className={cn("flex whitespace-nowrap items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'network' ? "bg-cyan-600/20 text-cyan-400 border border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
+             >
+                <Wifi size={16} /> МЕРЕЖА / ТОПОЛОГІЯ
+             </button>
+             <button 
                onClick={() => setActiveTab('cicd')}
-               className={cn("flex items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'cicd' ? "bg-emerald-600/20 text-emerald-400 border border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
+               className={cn("flex whitespace-nowrap items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'cicd' ? "bg-emerald-600/20 text-emerald-400 border border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]" : "bg-white/5 text-slate-400 hover:bg-white/10")}
              >
                 <GitBranch size={16} /> CI/CD КОНВЕЄР
              </button>
@@ -322,16 +354,25 @@ export default function SystemFactoryView() {
                                         <button 
                                           onClick={() => handlePodRestart(pod.id)}
                                           disabled={pod.status !== 'Running'}
-                                          className="p-2 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 hover:border-rose-500/50 rounded-lg border border-transparent transition-all disabled:opacity-50" title="Надіслати SIGTERM (Перезапуск)"
+                                          className="p-2 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 flex flex-col items-center justify-center hover:border-rose-500/50 rounded-lg border border-transparent transition-all disabled:opacity-50" title="Надіслати SIGTERM (Перезапуск)"
                                         >
                                            <Power size={14} />
                                         </button>
-                                        <button 
-                                          onClick={() => handleScalePod(pod.id)}
-                                          className="p-2 bg-slate-800 hover:bg-indigo-500/20 hover:text-indigo-400 hover:border-indigo-500/50 rounded-lg border border-transparent transition-all" title="Масштабувати (Scale Up)"
-                                        >
-                                           <Plus size={14} />
-                                        </button>
+                                        <div className="flex bg-slate-800 rounded-lg overflow-hidden border border-transparent">
+                                          <button 
+                                            onClick={() => handleScalePod(pod.id)}
+                                            className="p-2 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all border-r border-white/5" title="Масштабувати (Scale Up)"
+                                          >
+                                             <Plus size={14} />
+                                          </button>
+                                          <button 
+                                            onClick={() => handleScaleDownPod(pod.id)}
+                                            disabled={pod.replicas <= 1}
+                                            className="p-2 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-inherit" title="Зменшити (Scale Down)"
+                                          >
+                                             <Minus size={14} />
+                                          </button>
+                                        </div>
                                         <button 
                                           onClick={() => handleShowLogs(pod.id)}
                                           className="p-2 bg-slate-800 hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/50 rounded-lg border border-transparent transition-all" title="Live Логи"
@@ -377,6 +418,84 @@ export default function SystemFactoryView() {
                         </motion.div>
                      )}
                   </AnimatePresence>
+               </motion.div>
+             )}
+
+             {activeTab === 'network' && (
+               <motion.div key="network" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+                  <TacticalCard title="ТОПОЛОГІЯ МЕРЕЖІ ТА ІНФРАСТРУКТУРА" variant="cyber">
+                     <div className="p-8 relative min-h-[300px] flex items-center justify-center">
+                        <div className="absolute inset-0 bg-cyber-grid opacity-20 pointer-events-none" />
+                        
+                        <div className="relative w-full max-w-3xl flex justify-between items-center z-10">
+                           {/* Frontend Section */}
+                           <div className="flex flex-col items-center gap-2">
+                              <div className="w-16 h-16 rounded-xl bg-cyan-500/10 border-2 border-cyan-500 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+                                 <Network size={24} />
+                              </div>
+                              <span className="text-[10px] font-black uppercase text-cyan-400 tracking-widest mt-2">Nginx / UI</span>
+                           </div>
+
+                           <div className="h-1 flex-1 bg-gradient-to-r from-cyan-500 to-indigo-500 mx-4 opacity-50 relative">
+                              <span className="absolute -top-4 w-full text-center text-[9px] text-slate-400 font-mono tracking-widest">TLS / WAF</span>
+                           </div>
+
+                           {/* Core API */}
+                           <div className="flex flex-col items-center gap-2">
+                              <div className="w-20 h-20 rounded-2xl bg-indigo-500/20 border-2 border-indigo-500 flex flex-col items-center justify-center text-indigo-400 relative shadow-[0_0_30px_rgba(79,70,229,0.4)]">
+                                 <span className="absolute -top-2 -right-2 w-4 h-4 bg-emerald-500 rounded-full animate-pulse border border-black shadow-[0_0_5px_#10b981]" />
+                                 <Server size={32} />
+                                 <span className="text-[8px] mt-1 font-black leading-none uppercase">API Gateway</span>
+                              </div>
+                              <span className="text-[10px] font-black uppercase text-indigo-400 tracking-widest mt-2">Core API</span>
+                           </div>
+
+                           <div className="h-1 flex-1 bg-gradient-to-r from-indigo-500 to-rose-500 mx-4 opacity-50 relative flex flex-col items-center">
+                              <span className="absolute -top-4 w-full text-center text-[9px] text-slate-400 font-mono tracking-widest">gRPC / NAT</span>
+                           </div>
+
+                           {/* Databases */}
+                           <div className="flex flex-col gap-6">
+                              <div className="flex items-center gap-4">
+                                 <div className="w-12 h-12 rounded-lg bg-orange-500/10 border border-orange-500/50 flex items-center justify-center text-orange-400">
+                                    <Database size={20} />
+                                 </div>
+                                 <span className="text-[10px] font-black uppercase text-orange-400 tracking-widest">PostgreSQL</span>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                 <div className="w-12 h-12 rounded-lg bg-rose-500/10 border border-rose-500/50 flex items-center justify-center text-rose-400">
+                                    <ActivitySquare size={20} />
+                                 </div>
+                                 <span className="text-[10px] font-black uppercase text-rose-400 tracking-widest">Neo4j</span>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                 <div className="w-12 h-12 rounded-lg bg-emerald-500/10 border border-emerald-500/50 flex items-center justify-center text-emerald-400">
+                                    <Zap size={20} />
+                                 </div>
+                                 <span className="text-[10px] font-black uppercase text-emerald-400 tracking-widest">Redis Cache</span>
+                              </div>
+                           </div>
+                        </div>
+
+                     </div>
+                     <div className="grid grid-cols-3 border-t border-white/5 bg-black/40 p-4">
+                        <div className="flex flex-col gap-1 items-center border-r border-white/5">
+                           <Key size={14} className="text-amber-400 mb-1" />
+                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">K8s Secrets</span>
+                           <span className="text-xs font-mono text-white">ACTIVE (Synced)</span>
+                        </div>
+                        <div className="flex flex-col gap-1 items-center border-r border-white/5">
+                           <HardDrive size={14} className="text-violet-400 mb-1" />
+                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Persistent Vol</span>
+                           <span className="text-xs font-mono text-white">4 / 4 Mounted</span>
+                        </div>
+                        <div className="flex flex-col gap-1 items-center">
+                           <Shield size={14} className="text-emerald-400 mb-1" />
+                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Network Policies</span>
+                           <span className="text-xs font-mono text-white">Strict (Default Deny)</span>
+                        </div>
+                     </div>
+                  </TacticalCard>
                </motion.div>
              )}
 
