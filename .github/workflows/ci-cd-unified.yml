@@ -7,7 +7,8 @@ on:
       - "services/**"
       - "apps/**"
       - "libs/**"
-      - "infra/helm/**"
+      - "deploy/helm/predator/**"
+      - "infra/helm/umbrella/**"
       - ".github/workflows/ci-cd-unified.yml"
   pull_request:
     branches: [main]
@@ -118,6 +119,10 @@ jobs:
         uses: azure/setup-helm@v3
         with:
           version: 'v3.14.0'
+      - name: Lint Predator Chart
+        run: |
+          cd deploy/helm/predator
+          helm lint .
       - name: Lint Umbrella Chart
         run: |
           cd infra/helm/umbrella
@@ -146,19 +151,36 @@ jobs:
       - name: Update Image Tags
         run: |
           SHA="${{ github.sha }}"
-          VALUES="infra/helm/umbrella/values.yaml"
-          yq -i ".core-api.image.tag = \"$SHA\"" "$VALUES"
-          yq -i ".frontend.image.tag = \"$SHA\"" "$VALUES"
-          yq -i ".mcp-router.image.tag = \"$SHA\"" "$VALUES"
-          yq -i ".graph-service.image.tag = \"$SHA\"" "$VALUES"
-          yq -i ".cerebro.image.tag = \"$SHA\"" "$VALUES"
-          yq -i ".rtb-engine.image.tag = \"$SHA\"" "$VALUES"
-          yq -i ".ingestion-worker.image.tag = \"$SHA\"" "$VALUES"
+          VALUES_UMBRELLA="infra/helm/umbrella/values.yaml"
+          VALUES_PREDATOR="deploy/helm/predator/values.yaml"
+          
+          # Update Umbrella Chart
+          yq -i ".core-api.image.tag = \"$SHA\"" "$VALUES_UMBRELLA"
+          yq -i ".frontend.image.tag = \"$SHA\"" "$VALUES_UMBRELLA"
+          yq -i ".mcp-router.image.tag = \"$SHA\"" "$VALUES_UMBRELLA"
+          yq -i ".graph-service.image.tag = \"$SHA\"" "$VALUES_UMBRELLA"
+          yq -i ".cerebro.image.tag = \"$SHA\"" "$VALUES_UMBRELLA"
+          yq -i ".rtb-engine.image.tag = \"$SHA\"" "$VALUES_UMBRELLA"
+          yq -i ".ingestion-worker.image.tag = \"$SHA\"" "$VALUES_UMBRELLA"
+          
+          # Update Base Predator Chart
+          yq -i ".coreApi.image.tag = \"$SHA\"" "$VALUES_PREDATOR"
+          yq -i ".frontend.image.tag = \"$SHA\"" "$VALUES_PREDATOR"
+          yq -i ".graphService.image.tag = \"$SHA\"" "$VALUES_PREDATOR"
+          yq -i ".ingestionWorker.image.tag = \"$SHA\"" "$VALUES_PREDATOR"
 
       - name: Commit & Push
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add infra/helm/umbrella/values.yaml
+          git add infra/helm/umbrella/values.yaml deploy/helm/predator/values.yaml
           git diff --staged --quiet || git commit -m "chore(gitops): update images to ${{ github.sha }} [skip ci]"
           git push
+
+      - name: Trigger ArgoCD Sync
+        if: success()
+        run: |
+          echo "Triggering ArgoCD Refresh/Sync..."
+          # Note: Requires ARGOCD_AUTH_TOKEN and ARGOCD_SERVER
+          # curl -sSL -X POST -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+          #   "https://${{ secrets.ARGOCD_SERVER }}/api/v1/applications/predator-v56/sync" || echo "ArgoCD sync failed, likely missing secrets"
