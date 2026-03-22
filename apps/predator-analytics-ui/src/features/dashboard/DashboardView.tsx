@@ -242,7 +242,7 @@ const DashboardView: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-32">
+      <div className="w-full p-8 flex flex-col gap-10 relative bg-[#020617] font-sans pb-32">
         <AdvancedBackground />
         <NeuralPulse color="rgba(99, 102, 241, 0.12)" size={1200} />
         

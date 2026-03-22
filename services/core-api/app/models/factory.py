@@ -108,3 +108,46 @@ class FactoryStats(BaseModel):
     avg_score: float = 0.0
     components_analyzed: Dict[str, int] = Field(default_factory=dict)
     last_run: Optional[datetime] = None
+
+
+class BugSeverity(str, Enum):
+    CRITICAL = "critical"
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
+class BugStatus(str, Enum):
+    DETECTED = "detected"
+    FIXING = "fixing"
+    FIXED = "fixed"
+
+
+class Bug(BaseModel):
+    """Модель дефекту в системі"""
+    id: str
+    description: str
+    severity: BugSeverity
+    component: ComponentType
+    file: str
+    status: BugStatus = BugStatus.DETECTED
+    fix_progress: int = 0
+    detected_at: datetime = Field(default_factory=datetime.utcnow)
+    fixed_at: Optional[datetime] = None
+
+
+class ImprovementPhase(str, Enum):
+    OBSERVE = "observe"
+    ORIENT = "orient"
+    DECIDE = "decide"
+    ACT = "act"
+
+
+class SystemImprovement(BaseModel):
+    """Модель автономного вдосконалення"""
+    is_running: bool = False
+    current_phase: ImprovementPhase = ImprovementPhase.OBSERVE
+    cycles_completed: int = 0
+    improvements_made: int = 0
+    logs: List[str] = Field(default_factory=list)
+    last_update: datetime = Field(default_factory=datetime.utcnow)

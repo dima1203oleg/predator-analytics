@@ -40,6 +40,7 @@ from .ingestion import router as ingestion_router
 from .intelligence import router as intelligence_router
 from .maritime import router as maritime_router
 from .optimizer import router as optimizer_router
+from .osint import router as osint_router
 from .osint_ua import router as osint_ua_router
 from .persons import router as persons_router
 from .public_api import router as public_api_router
@@ -65,6 +66,7 @@ __all__ = [
     "intelligence_router",
     "maritime_router",
     "optimizer_router",
+    "osint_router",
     "osint_ua_router",
     "persons_router",
     "public_api_router",

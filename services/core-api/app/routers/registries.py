@@ -27,6 +27,18 @@ from app.services.ukraine_registries import (
 router = APIRouter(prefix="/ukraine-registries", tags=["державні реєстри України"])
 
 
+# ======================== STATUS ========================
+
+
+@router.get("/status", summary="Статус підключення до реєстрів")
+async def get_registries_status(
+    service: Annotated[UkraineRegistriesService, Depends()],
+    tenant_id: Annotated[str, Depends(get_tenant_id)],
+):
+    """Отримати статус усіх підключених реєстрів."""
+    return await service.get_registries_status()
+
+
 # ======================== REQUEST MODELS ========================
 
 

@@ -59,4 +59,32 @@ export const factoryApi = {
   stopTraining: async () => {
     return (await apiClient.post('/neural/training/stop')).data;
   },
+
+  // ─── Autonomous Improvement & Bug Fixing ──────────────────────────────────
+
+  /** Отримати список виявлених багів */
+  getBugs: async () => {
+    const res = await apiClient.get('/factory/bugs');
+    return Array.isArray(res.data) ? res.data : [];
+  },
+
+  /** Запустити виправлення бага */
+  fixBug: async (bugId: string) => {
+    return (await apiClient.post(`/factory/bugs/${bugId}/fix`)).data;
+  },
+
+  /** Отримати статус циклу вдосконалення */
+  getInfiniteStatus: async () => {
+    return (await apiClient.get('/factory/infinite/status')).data;
+  },
+
+  /** Запустити цикл вдосконалення на бекенді */
+  startInfinite: async () => {
+    return (await apiClient.post('/factory/infinite/start')).data;
+  },
+
+  /** Зупинити цикл вдосконалення на бекенді */
+  stopInfinite: async () => {
+    return (await apiClient.post('/factory/infinite/stop')).data;
+  },
 };

@@ -383,7 +383,7 @@ export function CompanyCERSDashboard() {
                                 <h3 className="text-sm font-mono text-slate-400 mb-6 flex items-center gap-2">
                                     <GitBranch className="w-4 h-4" /> 5-ШАРОВА ОЦІНКА CERS
                                 </h3>
-                                {displayRadar.every(r => r.A === 0) ? (
+                                {displayRadar.every((r: any) => r.A === 0) ? (
                                     <div className="h-72 w-full flex items-center justify-center text-slate-500 border border-dashed border-slate-700 rounded-lg">
                                         Детальна інформація відсутня
                                     </div>

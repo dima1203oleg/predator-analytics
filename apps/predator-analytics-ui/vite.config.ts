@@ -17,7 +17,7 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': {
-        // Локальний Mock API Сервер (порт 9080)
+        // Mock PREDATOR API Сервер (порт 9080)
         target: 'http://localhost:9080',
         changeOrigin: true,
         ws: true,

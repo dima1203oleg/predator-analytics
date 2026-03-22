@@ -112,6 +112,12 @@ class Settings(BaseSettings):
     WORKER_GPU_URL: str = "http://localhost:9400"
     JOB_SCHEDULER_URL: str = "http://localhost:9500"
     API_GATEWAY_URL: str = "https://predator.local"
+    
+    # Реєстри UA (OSINT)
+    EDR_API_KEY: str = "mock"
+    COURT_API_KEY: str = "mock"
+    DPS_API_KEY: str = "mock"
+    PROZORRO_API_URL: str = "https://public.api.openprocurement.org/api/2.5"
 
     # Моніторинг та спостереження
     PROMETHEUS_ENABLED: bool = True

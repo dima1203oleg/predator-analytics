@@ -206,6 +206,13 @@ const FeedItemRow: React.FC<{ item: FeedItem; index: number }> = ({ item, index 
     );
 };
 
+const getFreshnessColor = (syncStr: string) => {
+    if (!syncStr) return 'bg-slate-500';
+    if (syncStr.includes('хв') || syncStr.includes('год') || syncStr.includes('вчора') || syncStr.includes('сьогодні') || syncStr.includes('Live')) return 'bg-emerald-500 shadow-[0_0_8px_#10b981]';
+    if (syncStr.includes('дн') || syncStr.includes('тижд') || syncStr.includes('міс')) return 'bg-amber-500 shadow-[0_0_8px_#f59e0b]';
+    return 'bg-red-500 shadow-[0_0_8px_#ef4444]';
+};
+
 // ─── Category Card (Реєстри) ────────────────────────
 const RegistryCategoryCard: React.FC<{ cat: RegistryCategory; onClick: () => void; isExpanded: boolean }> = ({ cat, onClick, isExpanded }) => {
     const totalRecords = cat.registries.reduce((a, r) => a + r.records, 0);
@@ -261,8 +268,9 @@ const RegistryCategoryCard: React.FC<{ cat: RegistryCategory; onClick: () => voi
                                 <div key={reg.id} className="flex items-center justify-between p-2 rounded-lg bg-slate-950/50 border border-white/5">
                                     <div className="flex-1 min-w-0">
                                         <div className="text-[10px] font-bold text-slate-200 truncate">{reg.name}</div>
-                                        <div className="text-[8px] text-slate-500 font-mono mt-0.5">
-                                            {reg.records >= 1e9 ? `${(reg.records / 1e9).toFixed(1)}B` : reg.records >= 1e6 ? `${(reg.records / 1e6).toFixed(1)}M` : reg.records >= 1e3 ? `${(reg.records / 1e3).toFixed(0)}K` : reg.records} • {reg.api} • {reg.lastSync}
+                                        <div className="flex items-center gap-1.5 text-[8px] text-slate-500 font-mono mt-0.5">
+                                            <span>{reg.records >= 1e9 ? `${(reg.records / 1e9).toFixed(1)}B` : reg.records >= 1e6 ? `${(reg.records / 1e6).toFixed(1)}M` : reg.records >= 1e3 ? `${(reg.records / 1e3).toFixed(0)}K` : reg.records} • {reg.api} • {reg.lastSync}</span>
+                                            <div title="Data Freshness Score" className={cn("w-1.5 h-1.5 rounded-full shrink-0", getFreshnessColor(reg.lastSync))} />
                                         </div>
                                     </div>
                                     <div className={cn(
@@ -743,6 +751,101 @@ export const OsintCommandCenter: React.FC = () => {
                                     </div>
                                 </div>
                             )}
+
+                            {/* Health Check & Connection Graph Grid */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
+                                {/* Health Status Board */}
+                                <div className="p-4 rounded-xl bg-slate-900/60 border border-white/5 shadow-inner">
+                                    <div className="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
+                                        <span className="text-[10px] font-black uppercase text-slate-300 tracking-widest flex items-center gap-2">
+                                            <Activity size={12} className="text-emerald-400 animate-pulse" />
+                                            HEALTH CHECK BOARD
+                                        </span>
+                                        <div className="flex gap-3 text-[8px] font-mono">
+                                            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Діє</span>
+                                            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-600" /> Тимчасово закрито</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1">
+                                        {categories.flatMap(c => c.registries).map((r, i) => (
+                                            <div key={i} title={r.name} className={cn(
+                                                "w-3 h-3 rounded-full border border-black/50 transition-all",
+                                                r.status === 'ACTIVE' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-700'
+                                            )} />
+                                        ))}
+                                    </div>
+                                    <div className="mt-2 text-[8px] text-slate-500 uppercase">Оновлено: LIVE</div>
+                                </div>
+
+                                {/* Registry Graph Map Placeholder */}
+                                <div className="p-4 rounded-xl bg-slate-900/60 border border-white/5 relative overflow-hidden shadow-inner flex flex-col justify-center">
+                                    <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
+                                    <div className="flex items-center justify-between mb-4 relative z-10 border-b border-white/5 pb-2">
+                                        <span className="text-[10px] font-black uppercase text-slate-300 tracking-widest flex items-center gap-2">
+                                            <Share2 size={12} className="text-cyan-400" />
+                                            РЕГІСТРИ: ПОТІК ЗБАГАЧЕННЯ ДАНИХ (ENTITY RESOLUTION)
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between px-6 py-2 relative z-10 overflow-hidden">
+                                        <div className="flex flex-col items-center gap-1 z-20">
+                                            <div className="w-10 h-10 rounded-full bg-slate-900 border-2 border-orange-500/80 flex items-center justify-center text-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.4)] relative">
+                                                <Database size={16} />
+                                                <motion.div 
+                                                    className="absolute inset-0 rounded-full border border-orange-400"
+                                                    animate={{ scale: [1, 1.4, 1], opacity: [0.8, 0, 0.8] }}
+                                                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                                />
+                                            </div>
+                                            <span className="text-[9px] font-black text-slate-300 uppercase mt-1">ЄДР</span>
+                                            <span className="text-[7px] text-orange-400 font-mono">EDR-CORE-01</span>
+                                        </div>
+                                        
+                                        <div className="flex-1 h-0.5 bg-slate-800 mx-1 relative z-10 overflow-hidden rounded-full min-w-[30px]">
+                                            <motion.div 
+                                              className="absolute top-0 left-0 h-full w-4 bg-gradient-to-r from-transparent via-orange-400 to-transparent shadow-[0_0_8px_#f97316]"
+                                              animate={{ left: ['-20%', '120%'] }}
+                                              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-indigo-500/20" />
+                                        </div>
+
+                                        <div className="flex flex-col items-center gap-1 z-20">
+                                            <div className="w-10 h-10 rounded-full bg-slate-900 border-2 border-indigo-500/80 flex items-center justify-center text-indigo-400 shadow-[0_0_15px_rgba(79,70,229,0.4)] relative">
+                                                <AlertTriangle size={16} />
+                                                <motion.div 
+                                                    className="absolute inset-0 rounded-full border border-indigo-400"
+                                                    animate={{ scale: [1, 1.4, 1], opacity: [0.8, 0, 0.8] }}
+                                                    transition={{ duration: 2, repeat: Infinity, ease: "linear", delay: 0.5 }}
+                                                />
+                                            </div>
+                                            <span className="text-[9px] font-black text-slate-300 uppercase mt-1">СУД</span>
+                                            <span className="text-[7px] text-indigo-400 font-mono">COURT-API-03</span>
+                                        </div>
+
+                                        <div className="flex-1 h-0.5 bg-slate-800 mx-1 relative z-10 overflow-hidden rounded-full min-w-[30px]">
+                                            <motion.div 
+                                              className="absolute top-0 left-0 h-full w-4 bg-gradient-to-r from-transparent via-indigo-400 to-transparent shadow-[0_0_8px_#6366f1]"
+                                              animate={{ left: ['-20%', '120%'] }}
+                                              transition={{ duration: 1.5, repeat: Infinity, ease: "linear", delay: 0.7 }}
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-emerald-500/20" />
+                                        </div>
+
+                                        <div className="flex flex-col items-center gap-1 z-20">
+                                            <div className="w-10 h-10 rounded-full bg-slate-900 border-2 border-emerald-500/80 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.4)] relative">
+                                                <Globe size={16} />
+                                                <motion.div 
+                                                    className="absolute inset-0 rounded-full border border-emerald-400"
+                                                    animate={{ scale: [1, 1.4, 1], opacity: [0.8, 0, 0.8] }}
+                                                    transition={{ duration: 2, repeat: Infinity, ease: "linear", delay: 1 }}
+                                                />
+                                            </div>
+                                            <span className="text-[9px] font-black text-slate-300 uppercase mt-1">МИТНИЦЯ</span>
+                                            <span className="text-[7px] text-emerald-400 font-mono">CUST-NET-09</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             {/* Категорії реєстрів */}
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">

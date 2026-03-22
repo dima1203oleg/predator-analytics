@@ -119,10 +119,57 @@ const RegistriesView: React.FC = () => {
     const [liveTime, setLiveTime] = useState(new Date().toLocaleTimeString('uk-UA'));
     const [registryStats, setRegistryStats] = useState({ objects: '4.2M', last_update: '--' });
 
+    const [registries, setRegistries] = useState<any[]>([]);
+
     // Живий годинник
     useEffect(() => {
         const timer = setInterval(() => setLiveTime(new Date().toLocaleTimeString('uk-UA')), 1000);
         return () => clearInterval(timer);
+    }, []);
+
+    // Завантаження реєстрів
+    useEffect(() => {
+        const fetchRegistries = async () => {
+            try {
+                const res = await api.get('/osint/registries');
+                // Backend returns { categories: [...], totalRegistries: X, connected: Y }
+                const { categories, totalRegistries } = res.data;
+                
+                if (categories && Array.isArray(categories)) {
+                    // Flatten for the main list if needed, but we'll use categories in the UI now
+                    setRegistries(categories);
+                    
+                    const totalRecords = categories.reduce((acc: number, cat: any) => {
+                        return acc + cat.registries.reduce((cAcc: number, r: any) => {
+                            const num = parseFloat(r.records.replace(/[MK]/, ''));
+                            const mult = r.records.includes('M') ? 1000000 : (r.records.includes('K') ? 1000 : 1);
+                            return cAcc + (num * mult);
+                        }, 0);
+                    }, 0);
+
+                    setRegistryStats(prev => ({ 
+                        ...prev, 
+                        objects: totalRecords > 1000000 ? (totalRecords / 1000000).toFixed(1) + 'M' : (totalRecords / 1000).toFixed(0) + 'K' 
+                    }));
+                }
+            } catch (e) {
+                console.warn("Using mock registries list", e);
+                setRegistries([
+                    {
+                        id: 'MOCK_CAT',
+                        name: 'Демо Реєстри',
+                        icon: 'Database',
+                        color: '#3b82f6',
+                        registries: [
+                            { id: 'edr', name: 'ЄДР (Юридичні особи)', status: 'online', records: '1.4M', latency: '45ms' },
+                            { id: 'tax', name: 'Державна Податкова Служба', status: 'online', records: '4.2M' },
+                            { id: 'customs', name: 'Митна база', status: 'online', records: '115M' }
+                        ]
+                    }
+                ]);
+            }
+        };
+        fetchRegistries();
     }, []);
 
     const handleSearch = async () => {
@@ -170,7 +217,7 @@ const RegistriesView: React.FC = () => {
 
     return (
         <PageTransition>
-            <div className="min-h-screen p-8 flex flex-col gap-10 relative overflow-hidden bg-[#020617]">
+            <div className="w-full p-8 flex flex-col gap-10 relative bg-[#020617] pb-32">
                 <AdvancedBackground />
 
                 {/* ViewHeader v55.5 */}
@@ -191,6 +238,59 @@ const RegistriesView: React.FC = () => {
                     <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] font-mono">
                         РЕЄСТР_ОНЛАЙН // ЄДРПОУ + НКРЕКП + ФОП // {liveTime}
                     </span>
+                </div>
+
+                {/* Registry Connectivity Status Section */}
+                <div className="z-10 bg-slate-900/40 backdrop-blur-3xl p-8 rounded-[3rem] border border-white/5 relative group overflow-hidden">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 className="text-2xl font-black text-white/90 uppercase tracking-tighter mb-1">Підключені Реєстри</h3>
+                            <p className="text-slate-500 text-sm font-medium">Моніторинг з'єднання з державними базами даних в реальному часі</p>
+                        </div>
+                        <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2">
+                             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                             <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest font-mono">Система Стабільна</span>
+                        </div>
+                    </div>
+                    
+                    <div className="flex flex-col gap-10">
+                        {registries.map((category) => (
+                            <div key={category.id} className="space-y-4">
+                                <div className="flex items-center gap-3">
+                                    <h4 className="text-xs font-black text-slate-500 uppercase tracking-[0.4em]">{category.name}</h4>
+                                    <div className="flex-1 h-px bg-white/5" />
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-x-auto pb-2 scrollbar-hide">
+                                    {category.registries.map((reg: any) => (
+                                        <div key={reg.id} className="p-5 bg-black/40 border border-white/5 rounded-2xl hover:border-emerald-500/30 transition-all group/reg relative overflow-hidden cursor-default min-w-[240px]">
+                                            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 blur-3xl -z-10 opacity-0 group-hover/reg:opacity-100 transition-opacity" />
+                                            <div className="flex justify-between items-start mb-4">
+                                                <div className="p-2 bg-slate-800/50 rounded-lg border border-white/10 group-hover/reg:border-emerald-500/30 transition-colors">
+                                                    <Database size={16} className="text-slate-400 group-hover/reg:text-emerald-400" />
+                                                </div>
+                                                <span className={`px-2 py-1 rounded text-[8px] font-black uppercase tracking-tighter border ${
+                                                    reg.status === 'online' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                                                }`}>
+                                                    {reg.status === 'online' ? 'ОНЛАЙН' : reg.status === 'mock' ? 'ДЕМО' : 'ОФЛАЙН'}
+                                                </span>
+                                            </div>
+                                            <h4 className="text-sm font-bold text-white/80 group-hover/reg:text-white transition-colors mb-2 line-clamp-1">{reg.name}</h4>
+                                            <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                                                <div className="flex flex-col">
+                                                    <span className="text-[9px] text-slate-500 uppercase font-black tracking-widest leading-none mb-1">Записів</span>
+                                                    <span className="text-xs font-mono font-bold text-emerald-400/80">{reg.records}</span>
+                                                </div>
+                                                <div className="flex flex-col items-end">
+                                                    <span className="text-[9px] text-slate-500 uppercase font-black tracking-widest leading-none mb-1">Пінг</span>
+                                                    <span className="text-xs font-mono font-bold text-cyan-400/80">{reg.latency || '24ms'}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Search Interaction Zone */}

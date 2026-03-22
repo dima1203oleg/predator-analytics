@@ -1,0 +1,73 @@
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { TacticalCard } from '@/components/TacticalCard';
+import { cn } from '@/utils/cn';
+import { Cloud, Scan, BarChart3, Globe } from 'lucide-react';
+
+interface GoogleIntegralityCardProps {
+  googleStatus: {
+    drive: string;
+    gemini: string;
+    analytics: string;
+    workspace: string;
+  };
+  googleIntegrality: boolean;
+  setGoogleIntegrality: (v: boolean) => void;
+}
+
+export function GoogleIntegralityCard({
+  googleStatus,
+  googleIntegrality,
+  setGoogleIntegrality
+}: GoogleIntegralityCardProps) {
+  return (
+    <TacticalCard title="GOOGLE INTEGRALITY" variant="holographic" className="border-emerald-500/30 bg-emerald-500/5">
+      <div className="p-4 space-y-4">
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-emerald-500/20">
+           <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+             <Cloud size={20} />
+           </div>
+           <div className="flex-1">
+             <div className="text-[11px] font-black uppercase text-white">Google Workspace</div>
+             <div className="text-[8px] text-emerald-500 font-mono">Syncing: Drive, Docs, Sheets</div>
+           </div>
+           <Badge variant="cyber" className="bg-emerald-500/20 text-emerald-400 text-[8px]">{googleStatus.drive.toUpperCase()}</Badge>
+        </div>
+
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-indigo-500/20">
+           <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+             <Scan size={20} />
+           </div>
+           <div className="flex-1">
+             <div className="text-[11px] font-black uppercase text-white">Gemini OSINT Agent</div>
+             <div className="text-[8px] text-indigo-400 font-mono">Pro v1.5 API Layer</div>
+           </div>
+           <Badge variant="cyber" className="bg-indigo-500/20 text-indigo-400 text-[8px]">{googleStatus.gemini.toUpperCase()}</Badge>
+        </div>
+
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-amber-500/20">
+           <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400">
+             <BarChart3 size={20} />
+           </div>
+           <div className="flex-1">
+             <div className="text-[11px] font-black uppercase text-white">Google Analytics</div>
+             <div className="text-[8px] text-amber-400 font-mono">Traffic & Conversion Insight</div>
+           </div>
+           <Badge variant="neon" className="bg-amber-500/20 text-amber-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase()}</Badge>
+        </div>
+
+        <div className="pt-4 border-t border-white/10">
+           <Button 
+             onClick={() => setGoogleIntegrality(!googleIntegrality)}
+             variant={googleIntegrality ? "neon" : "cyber"}
+             className={cn("w-full h-11 text-[10px] font-black uppercase tracking-widest transition-all", 
+               googleIntegrality ? "bg-emerald-600 text-white" : "text-emerald-400")}
+           >
+             <Globe size={14} className="mr-2" /> {googleIntegrality ? "ВІДКЛЮЧИТИ ЕКОСИСТЕМУ" : "АКТИВУВАТИ GOOGLE CLOUD"}
+           </Button>
+        </div>
+      </div>
+    </TacticalCard>
+  );
+}

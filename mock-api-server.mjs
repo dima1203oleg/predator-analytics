@@ -133,6 +133,44 @@ let FACTORY_STATS = {
   total_runs: 142
 };
 
+// --- Bug Fixing & Improvements ---
+let DB_BUGS = [
+  {
+    id: 'bug-1',
+    description: 'Виявлено неоптимальний запит до Neo4j у сервісі графів',
+    component: 'GraphService',
+    severity: 'high',
+    status: 'detected',
+    detected_at: new Date().toISOString()
+  },
+  {
+    id: 'bug-2',
+    description: 'Витік пам\'яті у Kafka Ingestion Worker при обробці великих PDF',
+    component: 'IngestionWorker',
+    severity: 'medium',
+    status: 'detected',
+    detected_at: new Date().toISOString()
+  },
+  {
+    id: 'bug-3',
+    description: 'Неправильне відображення HSL кольорів у Glassmorphism UI',
+    component: 'WebUI',
+    severity: 'low',
+    status: 'detected',
+    detected_at: new Date().toISOString()
+  }
+];
+
+let SYSTEM_IMPROVEMENT_STATE = {
+  is_running: false,
+  current_phase: 'observe',
+  improvements_made: 12,
+  cycles_completed: 45,
+  logs: [
+    'System standby. Awaiting OODA loop activation...'
+  ]
+};
+
 // Telegram PostgreSQL (Факти)
 const DB_TELEGRAM_EVENTS = [];
 const DB_TELEGRAM_ENTITIES = [];
@@ -3580,6 +3618,17 @@ app.get('/api/v2/decisions/', (req, res) => {
   res.json({ decisions: [], total: 0 });
 });
 
+// --- System Cluster Management ---
+app.get('/api/v1/system/cluster', (req, res) => {
+    res.json([
+        { id: 'pod-1', name: 'core-api-v55-7fb5', status: 'Running', cpu: '120m', memory: '256Mi', age: '14h', restarts: 0 },
+        { id: 'pod-2', name: 'graph-service-v55-9a21', status: 'Running', cpu: '450m', memory: '2Gi', age: '14h', restarts: 0 },
+        { id: 'pod-3', name: 'ingestion-worker-v55-01bc', status: 'Running', cpu: '85m', memory: '128Mi', age: '14h', restarts: 0 },
+        { id: 'pod-4', name: 'search-engine-v55-e4d2', status: 'Running', cpu: '210m', memory: '512Mi', age: '14h', restarts: 0 },
+        { id: 'pod-5', name: 'gateway-ingress-v55-f8a3', status: 'Running', cpu: '45m', memory: '64Mi', age: '14h', restarts: 0 }
+    ]);
+});
+
 // --- System & Dashboard ---
 app.get('/api/v1/system/engines', (req, res) => {
     res.json({
@@ -3653,6 +3702,67 @@ app.post('/api/v1/factory/ingest', (req, res) => {
         is_gold: isGold,
         correlation_id: `corr-${Math.random().toString(36).slice(2, 11)}`
     });
+});
+
+// --- Bug Fixing Endpoints ---
+app.get('/api/v1/factory/bugs', (req, res) => {
+    res.json(DB_BUGS);
+});
+
+app.post('/api/v1/factory/bugs/:bugId/fix', (req, res) => {
+    const { bugId } = req.params;
+    const bug = DB_BUGS.find(b => b.id === bugId);
+    if (bug) {
+        bug.status = 'fixed';
+        bug.fixed_at = new Date().toISOString();
+        res.json({ status: 'success', message: `Bug ${bugId} fixed.`, bug });
+    } else {
+        res.status(404).json({ error: 'Bug not found' });
+    }
+});
+
+// --- Infinite Improvement (OODA Loop) Endpoints ---
+app.get('/api/v1/factory/infinite/status', (req, res) => {
+    if (SYSTEM_IMPROVEMENT_STATE.is_running) {
+        // Simulate phase transitions and logs
+        const phases = ['observe', 'orient', 'decide', 'act'];
+        const currentIdx = phases.indexOf(SYSTEM_IMPROVEMENT_STATE.current_phase);
+        
+        // Randomly advance phase (1 in 3 calls)
+        if (Math.random() > 0.6) {
+            const nextIdx = (currentIdx + 1) % phases.length;
+            SYSTEM_IMPROVEMENT_STATE.current_phase = phases[nextIdx];
+            
+            if (nextIdx === 0) {
+                SYSTEM_IMPROVEMENT_STATE.cycles_completed += 1;
+                SYSTEM_IMPROVEMENT_STATE.improvements_made += Math.floor(Math.random() * 3);
+            }
+            
+            const logMsg = {
+                observe: `[${new Date().toLocaleTimeString()}] Phase: OBSERVE. Scanning system metrics and logs...`,
+                orient: `[${new Date().toLocaleTimeString()}] Phase: ORIENT. Analyzing correlations and anomalies...`,
+                decide: `[${new Date().toLocaleTimeString()}] Phase: DECIDE. Planning optimization strategies...`,
+                act: `[${new Date().toLocaleTimeString()}] Phase: ACT. Applying autonomous improvements to core modules...`
+            }[phases[nextIdx]];
+            
+            SYSTEM_IMPROVEMENT_STATE.logs.push(logMsg);
+            if (SYSTEM_IMPROVEMENT_STATE.logs.length > 20) SYSTEM_IMPROVEMENT_STATE.logs.shift();
+        }
+    }
+    res.json(SYSTEM_IMPROVEMENT_STATE);
+});
+
+app.post('/api/v1/factory/infinite/start', (req, res) => {
+    SYSTEM_IMPROVEMENT_STATE.is_running = true;
+    SYSTEM_IMPROVEMENT_STATE.current_phase = 'observe';
+    SYSTEM_IMPROVEMENT_STATE.logs.push(`[${new Date().toLocaleTimeString()}] 🚀 OODA loop started. System entering autonomous improvement mode.`);
+    res.json({ status: 'started', state: SYSTEM_IMPROVEMENT_STATE });
+});
+
+app.post('/api/v1/factory/infinite/stop', (req, res) => {
+    SYSTEM_IMPROVEMENT_STATE.is_running = false;
+    SYSTEM_IMPROVEMENT_STATE.logs.push(`[${new Date().toLocaleTimeString()}] 🛑 OODA loop stopped. Returning to standby.`);
+    res.json({ status: 'stopped', state: SYSTEM_IMPROVEMENT_STATE });
 });
 
 
