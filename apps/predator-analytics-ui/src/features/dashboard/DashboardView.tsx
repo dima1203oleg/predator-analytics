@@ -264,11 +264,11 @@ const DashboardView: React.FC = () => {
                 </div>
                 <div>
                   <h1 className="text-5xl font-black text-white tracking-widest uppercase leading-none font-display skew-x-[-4deg]">
-                    STRATEGIC <span className="text-indigo-500">SANCTUM</span>
+                    МІЙ <span className="text-rose-500">РАДАР</span>
                   </h1>
-                  <p className="text-[11px] font-mono font-black text-indigo-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
+                  <p className="text-[11px] font-mono font-black text-rose-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                     <Radio size={12} className="animate-pulse" /> 
-                    UKRAINE_SOVEREIGNTY_HUB // CORE_NODE_v55.5.0
+                    PERSONAL_THREAT_MONITOR // VIGILANCE_v55.5
                   </p>
                 </div>
               </div>
@@ -276,9 +276,9 @@ const DashboardView: React.FC = () => {
             icon={<LayoutDashboard size={22} className="text-indigo-500" />}
             breadcrumbs={['UA_GOV', 'PREDATOR_CORE', 'SANCTUM_ALPHA']}
             stats={[
-              { label: 'ЯДЕРНА_ПОТУЖНІСТЬ', value: `${(totalOPS || 0).toLocaleString()} OPS`, color: 'success', icon: <Cpu size={14} />, animate: true },
-              { label: 'ІНДЕКС_ЗАГРОЗ', value: '42.8', color: 'danger', icon: <Flame size={14} /> },
-              { label: 'АКТИВНІСТЬ_МАТРИЦІ', value: formatUptime(uptime), color: 'primary', icon: <Activity size={14} /> }
+              { label: 'ПОТУЖНІСТЬ_ПОШУКУ', value: `${(totalOPS || 0).toLocaleString()} OPS`, color: 'success', icon: <Cpu size={14} />, animate: true },
+              { label: 'ТОП_РИЗИК_СЬОГОДНІ', value: '42.8', color: 'danger', icon: <Flame size={14} /> },
+              { label: 'ГОТОВНІСТЬ_СИСТЕМИ', value: '100% ONLINE', color: 'primary', icon: <Activity size={14} /> }
             ]}
             actions={
               <div className="flex gap-4">
@@ -293,7 +293,7 @@ const DashboardView: React.FC = () => {
                 <button className="px-10 py-3.5 bg-indigo-600 text-white rounded-[24px] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-indigo-500 transition-all flex items-center gap-4 shadow-3xl shadow-indigo-900/40 relative group overflow-hidden panel-3d">
                   <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                   <Zap size={18} className="fill-current" />
-                  <span>СИТУАЦІЙНА ДОПОВІДЬ</span>
+                  <span>ТЕРМІНОВИЙ ЗВІТ</span>
                 </button>
               </div>
             }
@@ -301,10 +301,10 @@ const DashboardView: React.FC = () => {
 
           <div className="grid grid-cols-12 gap-10 relative z-10">
             
-            {/* LEFT COLUMN: Infrastructure & Risks (v55.5) */}
+            {/* LEFT COLUMN: Intelligence & Threats (v55.5) */}
             <div className="col-span-12 xl:col-span-4 space-y-10">
               
-              <TacticalCard title="ТЕКУЧА ІНФРАСТРУКТУРА ЯДРА" icon={<HardDrive size={20} className="text-indigo-400" />} variant="holographic">
+              <TacticalCard title="АКТИВНІСТЬ КОНТРАГЕНТІВ" icon={<HardDrive size={20} className="text-indigo-400" />} variant="holographic">
                 <div className="space-y-6">
                   {((metrics ? Object.entries(metrics) : [['Ingestion_v5', { throughput: 1420, latency: 45, load: 68, status: 'optimal' }], ['Neural_Saga', { throughput: 890, latency: 12, load: 42, status: 'optimal' }], ['Graph_Matrix', { throughput: 2400, latency: 89, load: 91, status: 'calibration' }]]) as [string, any][]).map(([key, data], idx) => (
                     <motion.div 

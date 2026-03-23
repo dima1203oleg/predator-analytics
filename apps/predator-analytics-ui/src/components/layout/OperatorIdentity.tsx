@@ -10,7 +10,7 @@ export const OperatorIdentity: React.FC = () => {
     <div className="flex items-center gap-4 px-4 py-2 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl group hover:border-blue-500/30 transition-all cursor-pointer">
       <div className="text-right hidden sm:block">
         <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Авторизований Оператор</div>
-        <div className="text-sm font-black text-white tracking-widest uppercase italic">Predator_User_01</div>
+        <div className="text-sm font-black text-white tracking-widest uppercase italic group-hover:text-blue-400 transition-colors">Оператор_Омега</div>
       </div>
 
       <div className="relative">

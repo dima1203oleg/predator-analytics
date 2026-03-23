@@ -91,6 +91,7 @@ const NewspaperView = lazy(() => import('./features/newspaper/NewspaperView'));
 const ComprompatPersonView = lazy(() => import('./features/newspaper/ComprompatPersonView'));
 const FirmDossierView = lazy(() => import('./features/newspaper/FirmDossierView'));
 const PowerStructureView = lazy(() => import('./features/newspaper/PowerStructureView'));
+const SupplyChainAnalyticsView = lazy(() => import('./features/supply-chain/SupplyChainAnalyticsView'));
 
 // Canonical v4.2.0 Pages
 const MarketPage = lazy(() => import('./pages/MarketPage'));
@@ -106,6 +107,7 @@ const EnginesView = lazy(() => import('./features/ai/EnginesView'));
 const FactorsView = lazy(() => import('./features/factors/FactorsView'));
 const FactoryStudio = lazy(() => import('./features/factory/FactoryStudio'));
 const SystemFactoryView = lazy(() => import('./features/factory/SystemFactoryView'));
+const SystemPromptsView = lazy(() => import('./features/ai/SystemPromptsView'));
 
 
 
@@ -212,6 +214,7 @@ export const AppRoutesNew = () => {
             <Route path="/pipeline" element={<PipelineManagerView />} />
             <Route path="/training" element={<ModelTrainingView />} />
             <Route path="/engines" element={<EnginesView />} />
+            <Route path="/llm/prompts" element={<SystemPromptsView />} />
             <Route path="/super" element={<SuperIntelligenceView />} />
             <Route path="/evolution" element={<EvolutionView />} />
 
@@ -270,6 +273,7 @@ export const AppRoutesNew = () => {
             <Route path="/compromat-person" element={<ComprompatPersonView />} />
             <Route path="/compromat-firm" element={<FirmDossierView />} />
             <Route path="/power-structure" element={<PowerStructureView />} />
+            <Route path="/supply-chain" element={<SupplyChainAnalyticsView />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />

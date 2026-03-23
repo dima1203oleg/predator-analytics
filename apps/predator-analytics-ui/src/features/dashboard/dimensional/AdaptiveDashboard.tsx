@@ -219,7 +219,7 @@ function getDimensionBreadcrumbs(dimension: string): string[] {
     case 'NEBULA': return ['ГОЛОВНА', 'ОГЛЯД'];
     case 'CORTEX': return ['МОНІТОРИНГ', 'ТАКТИЧНИЙ ВИД'];
     case 'NEXUS': return ['КОМАНДНИЙ ЦЕНТР', 'ПОВНИЙ КОНТРОЛЬ'];
-    default: return ['HOME'];
+    default: return ['ГОЛОВНА'];
   }
 }
 

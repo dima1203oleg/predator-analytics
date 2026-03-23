@@ -314,21 +314,21 @@ const DatasetStudio: React.FC = () => {
                                 <TacticalCard title="ІНФРАСТРУКТУРА ML" variant="cyber">
                                     <div className="p-6 space-y-6">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-[10px] font-black text-slate-500 uppercase">MLflow Tracking</span>
+                                            <span className="text-[10px] font-black text-slate-500 uppercase">Трекінг MLflow</span>
                                             <span className={cn(
                                                 "px-2 py-0.5 rounded text-[9px] font-bold border",
                                                 mlStatus?.mlflow?.status === 'online' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" : "bg-red-500/10 border-red-500/30 text-red-400"
                                             )}>
-                                                {mlStatus?.mlflow?.status?.toUpperCase() || 'OFFLINE'}
+                                                {mlStatus?.mlflow?.status === 'online' ? 'ОНЛАЙН' : 'ОФЛАЙН'}
                                             </span>
                                         </div>
 
                                         <div className="pt-4 border-t border-white/5 space-y-4">
                                             <div className="flex items-center justify-between mb-2">
-                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Ollama Embedding Engine</span>
-                                                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Двигун Ембедингів Ollama</span>
+                                                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
                                                     <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                                    <span className="text-[8px] font-bold text-emerald-400 uppercase tracking-tighter">Live</span>
+                                                    <span className="text-[8px] font-bold text-emerald-400 uppercase tracking-tighter">АКТ</span>
                                                 </div>
                                             </div>
 
@@ -338,7 +338,7 @@ const DatasetStudio: React.FC = () => {
                                                         <Cpu className="w-3 h-3 text-indigo-400" />
                                                         <span className="text-[10px] font-bold text-slate-300">{mlStatus?.ollama?.embedding_engine || 'nomic-embed-text'}</span>
                                                     </div>
-                                                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-black border border-indigo-500/30">DEFAULT</span>
+                                                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-black border border-indigo-500/30">БАЗОВИЙ</span>
                                                 </div>
 
                                                 <div className="grid grid-cols-2 gap-2">
@@ -346,22 +346,22 @@ const DatasetStudio: React.FC = () => {
                                                         onClick={() => mlStudioApi.updateEmbeddingsConfig('nomic-embed-text')}
                                                         className="flex flex-col items-center justify-center p-2 rounded bg-slate-950/40 border border-slate-800/50 hover:border-indigo-500/50 transition-all group"
                                                     >
-                                                        <span className="text-[8px] font-black text-slate-500 group-hover:text-indigo-400 mb-1 uppercase tracking-tighter">STRENGTH</span>
-                                                        <span className="text-[10px] font-bold text-slate-300">Vector Search</span>
+                                                        <span className="text-[8px] font-black text-slate-500 group-hover:text-indigo-400 mb-1 uppercase tracking-tighter">ПОТУЖНІСТЬ</span>
+                                                        <span className="text-[10px] font-bold text-slate-300">Векторний Пошук</span>
                                                     </button>
                                                     <button 
                                                         onClick={() => mlStudioApi.updateEmbeddingsConfig('mxbai-embed-large')}
                                                         className="flex flex-col items-center justify-center p-2 rounded bg-slate-950/40 border border-slate-800/50 hover:border-amber-500/50 transition-all group"
                                                     >
-                                                        <span className="text-[8px] font-black text-slate-500 group-hover:text-amber-400 mb-1 uppercase tracking-tighter">PRECISION</span>
-                                                        <span className="text-[10px] font-bold text-slate-300">RAG Context</span>
+                                                        <span className="text-[8px] font-black text-slate-500 group-hover:text-amber-400 mb-1 uppercase tracking-tighter">ТОЧНІСТЬ</span>
+                                                        <span className="text-[10px] font-bold text-slate-300">RAG Контекст</span>
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
                                         
                                         <div className="space-y-3">
-                                            <label className="text-[10px] font-black text-slate-500 uppercase">GPU CLUSTER UTIL</label>
+                                            <label className="text-[10px] font-black text-slate-500 uppercase">НАВАНТАЖЕННЯ GPU КЛАСТЕРА</label>
                                             <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
                                                 <motion.div 
                                                     initial={{ width: 0 }}
@@ -370,8 +370,8 @@ const DatasetStudio: React.FC = () => {
                                                 />
                                             </div>
                                             <div className="flex justify-between text-[10px] font-mono text-slate-400">
-                                                <span>{mlStatus?.gpu_cluster?.total_vram_gb}GB VRAM</span>
-                                                <span>{mlStatus?.gpu_cluster?.utilization}% UC</span>
+                                                <span>{mlStatus?.gpu_cluster?.total_vram_gb}ГБ ВІДЕОПАМ'ЯТЬ</span>
+                                                <span>{mlStatus?.gpu_cluster?.utilization}% ВИК</span>
                                             </div>
                                         </div>
 
@@ -396,7 +396,7 @@ const DatasetStudio: React.FC = () => {
                             {/* Center-Right: LoRA fine-tuning & MLflow Runs */}
                             <div className="lg:col-span-3 space-y-8">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <TacticalCard title="LoRA FINE-TUNING" variant="holographic">
+                                    <TacticalCard title="LoRA ДОНАВЧАННЯ" variant="holographic">
                                         <div className="p-6 space-y-6">
                                             <div className="space-y-4">
                                                 <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
@@ -438,15 +438,15 @@ const DatasetStudio: React.FC = () => {
                                         </div>
                                     </TacticalCard>
 
-                                    <TacticalCard title="MLflow ЕКСПЕРИМЕНТИ" variant="cyber">
+                                    <TacticalCard title="ЕКСПЕРИМЕНТИ MLflow" variant="cyber">
                                         <div className="p-0">
                                             <div className="overflow-x-auto">
                                                 <table className="w-full">
                                                     <thead>
                                                         <tr className="border-b border-white/5 bg-slate-950/40">
-                                                            <th className="px-4 py-3 text-left text-[9px] font-black text-slate-500 uppercase tracking-widest">Run ID</th>
-                                                            <th className="px-4 py-3 text-left text-[9px] font-black text-slate-500 uppercase tracking-widest">Model/Exp</th>
-                                                            <th className="px-4 py-3 text-right text-[9px] font-black text-slate-500 uppercase tracking-widest">Metrics</th>
+                                                            <th className="px-4 py-3 text-left text-[9px] font-black text-slate-500 uppercase tracking-widest">ID Запуску</th>
+                                                            <th className="px-4 py-3 text-left text-[9px] font-black text-slate-500 uppercase tracking-widest">Модель/Експ</th>
+                                                            <th className="px-4 py-3 text-right text-[9px] font-black text-slate-500 uppercase tracking-widest">Метрики</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody className="divide-y divide-white/5">
@@ -478,11 +478,11 @@ const DatasetStudio: React.FC = () => {
                                 <div className="p-8 rounded-[2rem] bg-gradient-to-br from-indigo-950/30 to-slate-950 border border-indigo-500/10 flex items-center justify-between group overflow-hidden relative">
                                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
                                     <div className="relative z-10 flex items-center gap-6">
-                                        <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-500">
+                                        <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-500 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
                                             <RefreshCw size={32} />
                                         </div>
                                         <div>
-                                            <h4 className="text-sm font-black text-white uppercase tracking-widest mb-1">ACTIVE LEARNING LOOP</h4>
+                                            <h4 className="text-sm font-black text-white uppercase tracking-widest mb-1">ЦИКЛ АКТИВНОГО НАВЧАННЯ</h4>
                                             <p className="text-xs text-slate-500 max-w-md">
                                                 Система автоматично виявляє аномалії, які неможливо класифікувати з високою впевненістю, та додає їх у чергу для донавчання моделі.
                                             </p>
@@ -490,7 +490,7 @@ const DatasetStudio: React.FC = () => {
                                     </div>
                                     <div className="relative z-10 text-right">
                                         <div className="text-2xl font-mono font-bold text-indigo-400 mb-1">428</div>
-                                        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Samples in Queue</div>
+                                        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Зразків у Черзі</div>
                                     </div>
                                 </div>
                             </div>

@@ -183,7 +183,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
           <div>
             <div className="text-[8px] text-slate-300 font-black uppercase tracking-widest leading-none">ЗАГРОЗИ</div>
             <div className={cn("text-[11px] font-mono font-black leading-tight", alertCount > 0 ? 'text-red-400' : 'text-slate-300')}>
-              {alertCount > 0 ? `${alertCount} ACTIVE` : 'DEFCON 5'}
+              {alertCount > 0 ? `${alertCount} АКТИВНІ` : 'БЕЗ ЗАГРОЗ'}
             </div>
           </div>
         </div>

@@ -71,6 +71,7 @@ import {
   FileLock2,
   Share2,
   PieChart,
+  Navigation,
 } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAppStore } from '../../store/useAppStore';
@@ -216,10 +217,10 @@ const buildNavGroups = (): NavGroup[] => [
     accent: 'orange',
     items: [
       {
-        name: 'Omni-Пошук',
+        name: 'Омні-Пошук',
         path: '/search-v2',
         icon: Search,
-        hook: 'ПІБ / ЄДР / Телефон / Email / HS-код',
+        hook: 'ПІБ / ЄДРПОУ / Телефон / Email / УКТ ЗЕД',
       },
       {
         name: 'Досьє на Особу',
@@ -276,7 +277,7 @@ const buildNavGroups = (): NavGroup[] => [
         hook: 'Побач приховані ниточки між об’єктами',
       },
       {
-        name: 'Structure of Power',
+        name: 'Мапа Впливу та Влади',
         path: '/power-structure',
         icon: Landmark,
         premium: true,
@@ -303,7 +304,7 @@ const buildNavGroups = (): NavGroup[] => [
      ───────────────────────────────────────────────────────── */
   {
     title: 'РИНОК ТА МИТНИЦЯ',
-    subtitle: 'Ціни · Конкуренти · Маржа · AIS',
+    subtitle: 'Ціни · Конкуренти · Маржа · АІС',
     icon: Crosshair,
     accent: 'indigo',
     items: [
@@ -334,7 +335,7 @@ const buildNavGroups = (): NavGroup[] => [
         hook: 'Географія постачання: порти, хаби, транзит',
       },
       {
-        name: 'Морська Розвідка (AIS)',
+        name: 'Морська Розвідка (АІС)',
         path: '/maritime',
         icon: Ship,
         premium: true,
@@ -378,7 +379,7 @@ const buildNavGroups = (): NavGroup[] => [
         path: '/analytics',
         icon: TrendingUp,
         premium: true,
-        hook: 'Які HS-коди будуть у топі наступного місяця?',
+        hook: 'Які коди УКТ ЗЕД будуть у топі наступного місяця?',
       },
       {
         name: 'Моделювання Сценаріїв',
@@ -386,6 +387,58 @@ const buildNavGroups = (): NavGroup[] => [
         icon: Workflow,
         premium: true,
         hook: 'Що буде з ціною, якщо курс зросте на 10%?',
+      },
+    ],
+  },
+
+  /* ─────────────────────────────────────────────────────────
+     ⑦ АНАЛІТИКА ТА ЛАНЦЮГИ — Logistics Command Center
+     ───────────────────────────────────────────────────────── */
+  {
+    title: 'АНАЛІТИКА ТА ЛАНЦЮГИ',
+    subtitle: 'Маршрути · Кораблі · Відстеження · Ризики',
+    icon: Truck,
+    accent: 'cyan',
+    items: [
+      {
+        name: 'Мій Радар Ланцюгів',
+        path: '/supply-chain',
+        icon: Globe,
+        hook: 'Реал-тайм карта світу та твоїх об\'єктів',
+      },
+      {
+        name: 'Відстежування Товару',
+        path: '/supply-chain/tracking',
+        icon: Target,
+        hook: 'Живе відстеження контейнера за УКТ ЗЕД',
+      },
+      {
+        name: 'Побудова Маршрутів',
+        path: '/supply-chain/routing',
+        icon: Navigation,
+        premium: true,
+        hook: 'AI-оптимізатор: ціна, час, ризики митниці',
+      },
+      {
+        name: 'Кораблі Наживо',
+        path: '/supply-chain/ships',
+        icon: Ship,
+        premium: true,
+        hook: 'AIS-дані: курс, швидкість, власник, санкції',
+      },
+      {
+        name: 'Ризики та Компромат',
+        path: '/supply-chain/risks',
+        icon: ShieldAlert,
+        premium: true,
+        hook: 'Хто власник судна? Чи є ризик підкупу митника?',
+      },
+      {
+        name: 'Прогнози Тренди',
+        path: '/supply-chain/forecasts',
+        icon: TrendingUp,
+        premium: true,
+        hook: 'Майбутні ціни та логістичні аномалії',
       },
     ],
   },
@@ -428,7 +481,7 @@ const buildNavGroups = (): NavGroup[] => [
      ───────────────────────────────────────────────────────── */
   {
     title: 'УДАР ТА АРТЕФАКТИ',
-    subtitle: 'PDF Досьє · Суд · Докази · VIP',
+    subtitle: 'Досьє у PDF · Суд · Докази · Ексклюзив',
     icon: FileLock2,
     accent: 'violet',
     items: [
@@ -505,7 +558,7 @@ const buildNavGroups = (): NavGroup[] => [
         path: '/integrations',
         icon: Plug,
         premium: true,
-        hook: 'Підключити CRM, Telegram-бот, API',
+        hook: 'Підключити CRM-систему, Telegram-бот, API',
       },
     ],
   },
@@ -550,9 +603,10 @@ const buildNavGroups = (): NavGroup[] => [
         role: 'admin',
         subItems: [
           { name: 'LLM Консоль', path: '/llm' },
-          { name: 'NAS Arena', path: '/llm/nas' },
+          { name: 'NAS Арена', path: '/llm/nas' },
+          { name: 'Системні Промпти', path: '/llm/prompts', role: 'admin' },
           { name: 'Тренування Моделей', path: '/training', role: 'admin' },
-          { name: 'Движки (Engines)', path: '/engines', role: 'admin' },
+          { name: 'Двигуни (Engines)', path: '/engines', role: 'admin' },
         ],
       },
       {

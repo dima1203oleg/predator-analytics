@@ -831,7 +831,7 @@ export default function SystemFactoryView() {
                         </div>
                         <div className="text-center">
                           <span className="text-[11px] font-black uppercase tracking-widest block">Технологічна Вертикаль</span>
-                          <span className="text-[8px] text-indigo-400/70 font-mono mt-1 uppercase">Infrastructure & Core API</span>
+                          <span className="text-[8px] text-indigo-400/70 font-mono mt-1 uppercase">Інфраструктура та Core API</span>
                         </div>
                       </Button>
                       <Button 
@@ -846,7 +846,7 @@ export default function SystemFactoryView() {
                         </div>
                         <div className="text-center">
                           <span className="text-[11px] font-black uppercase tracking-widest block text-amber-100">Аналітична Вертикаль</span>
-                          <span className="text-[8px] text-amber-400/70 font-mono mt-1 uppercase">Knowledge Maps & Patterns</span>
+                          <span className="text-[8px] text-amber-400/70 font-mono mt-1 uppercase">Карти Знань та Патерни</span>
                         </div>
                       </Button>
                       <Button 
@@ -861,7 +861,7 @@ export default function SystemFactoryView() {
                         </div>
                         <div className="text-center">
                           <span className="text-[11px] font-black uppercase tracking-widest block text-white">Комплексний Нагляд</span>
-                          <span className="text-[8px] text-fuchsia-400/70 font-mono mt-1 uppercase">Sovereign Deployment</span>
+                          <span className="text-[8px] text-fuchsia-400/70 font-mono mt-1 uppercase">Суверенне Розгортання</span>
                         </div>
                       </Button>
                   </div>
@@ -878,7 +878,7 @@ export default function SystemFactoryView() {
                                   <input type="checkbox" checked={techComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, techComponents, setTechComponents)} className="accent-indigo-500 w-4 h-4" />
                                   <div className="flex flex-col">
                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
-                                    {techComponents.includes(opt.id) && <span className="text-[8px] text-indigo-400 animate-pulse uppercase tracking-[0.2em]">Targeted for optimization</span>}
+                                    {techComponents.includes(opt.id) && <span className="text-[8px] text-indigo-400 animate-pulse uppercase tracking-[0.2em]">ПРИЗНАЧЕНО ДЛЯ ОПТИМІЗАЦІЇ</span>}
                                   </div>
                                </label>
                              ))}
@@ -886,8 +886,8 @@ export default function SystemFactoryView() {
                           <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
                              <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-indigo-600/20 text-indigo-400 border-indigo-500/50 font-black uppercase tracking-widest text-[10px] h-11"><Wrench size={14} className="mr-2"/> Оптимізувати Ядро</Button>
                              <div className="grid grid-cols-2 gap-2">
-                               <Button variant="cyber" className="text-[9px] h-9"><HistoryIcon size={12} className="mr-1"/> Rollback</Button>
-                               <Button variant="cyber" className="text-[9px] h-9 text-emerald-400 border-emerald-500/20"><Scan size={12} className="mr-1"/> Security Scan</Button>
+                               <Button variant="cyber" className="text-[9px] h-9"><HistoryIcon size={12} className="mr-1"/> Відкат (Rollback)</Button>
+                               <Button variant="cyber" className="text-[9px] h-9 text-emerald-400 border-emerald-500/20"><Scan size={12} className="mr-1"/> Сканування Безпеки</Button>
                              </div>
                           </div>
                         </div>
@@ -905,7 +905,7 @@ export default function SystemFactoryView() {
                                   <input type="checkbox" checked={analyticComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, analyticComponents, setAnalyticComponents)} className="accent-amber-500 w-4 h-4" />
                                   <div className="flex flex-col">
                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
-                                    {analyticComponents.includes(opt.id) && <span className="text-[8px] text-amber-400 animate-pulse uppercase tracking-[0.2em]">Pattern upgrade active</span>}
+                                    {analyticComponents.includes(opt.id) && <span className="text-[8px] text-amber-400 animate-pulse uppercase tracking-[0.2em]">ОНОВЛЕННЯ ПАТЕРНУ АКТИВНЕ</span>}
                                   </div>
                                </label>
                              ))}
@@ -927,7 +927,7 @@ export default function SystemFactoryView() {
                            </div>
                            <div className="flex-1">
                              <div className="text-[11px] font-black uppercase text-white">Google Workspace</div>
-                             <div className="text-[8px] text-emerald-500 font-mono">Syncing: Drive, Docs, Sheets</div>
+                             <div className="text-[8px] text-emerald-500 font-mono">Синхронізація: Drive, Docs, Sheets</div>
                            </div>
                            <Badge variant="cyber" className="bg-emerald-500/20 text-emerald-400 text-[8px]">{googleStatus.drive.toUpperCase()}</Badge>
                         </div>
@@ -938,7 +938,7 @@ export default function SystemFactoryView() {
                            </div>
                            <div className="flex-1">
                              <div className="text-[11px] font-black uppercase text-white">Gemini OSINT Agent</div>
-                             <div className="text-[8px] text-indigo-400 font-mono">Pro v1.5 API Layer</div>
+                             <div className="text-[8px] text-indigo-400 font-mono">Рівень API Pro v1.5</div>
                            </div>
                            <Badge variant="cyber" className="bg-indigo-500/20 text-indigo-400 text-[8px]">{googleStatus.gemini.toUpperCase()}</Badge>
                         </div>
@@ -949,7 +949,7 @@ export default function SystemFactoryView() {
                            </div>
                            <div className="flex-1">
                              <div className="text-[11px] font-black uppercase text-white">Google Analytics</div>
-                             <div className="text-[8px] text-amber-400 font-mono">Traffic & Conversion Insight</div>
+                             <div className="text-[8px] text-amber-400 font-mono">Аналіз трафіку та конверсії</div>
                            </div>
                            <Badge variant="neon" className="bg-amber-500/20 text-amber-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase()}</Badge>
                         </div>
@@ -984,25 +984,25 @@ export default function SystemFactoryView() {
                                <div className="bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center">
                                  <Microscope size={24} className="text-cyan-400 mb-2" />
                                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Аналіз</span>
-                                 <Badge variant="cyber" className="mt-1">COMPLETED</Badge>
+                                 <Badge variant="cyber" className="mt-1">ЗАВЕРШЕНО</Badge>
                                </div>
                                <div className="bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center">
                                  <Fingerprint size={24} className="text-indigo-400 mb-2" />
                                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Автентичність</span>
-                                 <Badge variant="cyber" className="mt-1">VERIFIED</Badge>
+                                 <Badge variant="cyber" className="mt-1">ПЕРЕВІРЕНО</Badge>
                                </div>
                              </div>
                           </div>
 
                           <div className="bg-slate-950/80 rounded-2xl p-4 border border-fuchsia-500/10 font-mono text-[10px] h-[200px] overflow-y-auto custom-scrollbar shadow-inner">
-                             <div className="text-fuchsia-400/60 mb-2 uppercase font-black tracking-widest">[ IMPROVEMENT_DAEMON_LOG ]</div>
+                             <div className="text-fuchsia-400/60 mb-2 uppercase font-black tracking-widest">[ ЛОГ_ДЕМОНА_ВДОСКОНАЛЕННЯ ]</div>
                              <div className="space-y-1">
-                                <div className="text-slate-500">SYNC: Starting vertical distribution...</div>
-                                <div className="text-indigo-400 animate-pulse">TECH: Optimizing Core API clusters...</div>
-                                {improvementProgress > 30 && <div className="text-amber-400">ANALYTIC: Ingesting Knowledge Map delta...</div>}
-                                {improvementProgress > 60 && <div className="text-emerald-400">GOOGLE: Linking Workspace documents...</div>}
-                                {improvementProgress > 80 && <div className="text-fuchsia-400">DONE: All modules synthesized.</div>}
-                                {improvementStatus === 'running' && <div className="text-white flex items-center gap-2 mt-2"><RotateCcw size={10} className="animate-spin" /> Processing artifacts...</div>}
+                                <div className="text-slate-500">СИНХ: Запуск вертикального розподілу...</div>
+                                <div className="text-indigo-400 animate-pulse">ТЕХ: Оптимізація кластерів Core API...</div>
+                                {improvementProgress > 30 && <div className="text-amber-400">АНАЛІТИКА: Інгестія дельти Карти Знань...</div>}
+                                {improvementProgress > 60 && <div className="text-emerald-400">GOOGLE: Зв'язування документів Workspace...</div>}
+                                {improvementProgress > 80 && <div className="text-fuchsia-400">ГОТОВО: Всі модулі синтезовано.</div>}
+                                {improvementStatus === 'running' && <div className="text-white flex items-center gap-2 mt-2"><RotateCcw size={10} className="animate-spin" /> Обробка артефактів...</div>}
                              </div>
                           </div>
                         </div>
@@ -1015,7 +1015,7 @@ export default function SystemFactoryView() {
                                </div>
                                <div>
                                  <h4 className="text-sm font-black uppercase tracking-widest text-white">ФІНАЛЬНИЙ ЗВІТ ПО ВЕРТИКАЛЯХ</h4>
-                                 <p className="text-[9px] text-emerald-500/70 font-mono uppercase">System Integrity: 100% | Quantum Consistency: Achieved</p>
+                                 <p className="text-[9px] text-emerald-500/70 font-mono uppercase">Цілісність Системи: 100% | Квантова Консистентність: Досягнута</p>
                                </div>
                              </div>
 
@@ -1031,19 +1031,19 @@ export default function SystemFactoryView() {
                                  <tbody>
                                    <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
                                      <td className="p-3 text-indigo-400 font-bold border-l-2 border-indigo-500">Технологічна</td>
-                                     <td className="p-3 text-slate-200">Refactoring API</td>
-                                     <td className="p-3 text-emerald-400 font-bold">STABLE</td>
+                                     <td className="p-3 text-slate-200">Рефакторинг API</td>
+                                     <td className="p-3 text-emerald-400 font-bold">СТАБІЛЬНО</td>
                                    </tr>
                                    <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
                                      <td className="p-3 text-amber-400 font-bold border-l-2 border-amber-500">Аналітична</td>
-                                     <td className="p-3 text-slate-200">Pattern upgrade</td>
-                                     <td className="p-3 text-emerald-400 font-bold">DONE</td>
+                                     <td className="p-3 text-slate-200">Оновлення патерну</td>
+                                     <td className="p-3 text-emerald-400 font-bold">ГОТОВО</td>
                                    </tr>
                                    {googleIntegrality && (
                                      <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
                                        <td className="p-3 text-emerald-400 font-bold border-l-2 border-emerald-500">Google Integrality</td>
                                        <td className="p-3 text-slate-200">GCP Cloud, Gemini v1.5 Pro, OSINT Layers</td>
-                                       <td className="p-3 text-emerald-400 font-bold">INTEGRATED</td>
+                                       <td className="p-3 text-emerald-400 font-bold">ІНТЕГРОВАНО</td>
                                      </tr>
                                    )}
                                  </tbody>
@@ -1073,7 +1073,7 @@ export default function SystemFactoryView() {
                                <th className="p-4 font-black">Підсистема (Pod)</th>
                                <th className="p-4 font-black">Статус</th>
                                <th className="p-4 font-black">Ресурси</th>
-                               <th className="p-4 font-black">Дії (Actions)</th>
+                               <th className="p-4 font-black">Дії</th>
                              </tr>
                            </thead>
                            <tbody className="divide-y divide-white/5">
@@ -1087,7 +1087,7 @@ export default function SystemFactoryView() {
                                               {pod.name} 
                                               <span className="text-[9px] font-black tracking-widest bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-indigo-400">×{pod.replicas}</span>
                                            </div>
-                                           <div className="text-[10px] text-slate-500 font-mono mt-1">ID: {pod.id} | Uptime: {pod.uptime}</div>
+                                           <div className="text-[10px] text-slate-500 font-mono mt-1">ID: {pod.id} | Аптайм: {pod.uptime}</div>
                                         </div>
                                      </div>
                                   </td>
@@ -1096,7 +1096,7 @@ export default function SystemFactoryView() {
                                         {pod.status === 'Restarting' ? <RefreshCw size={10} className="inline mr-1 animate-spin" /> : null}
                                         {pod.status}
                                      </Badge>
-                                     {pod.restarts > 0 && <div className="text-[9px] text-slate-500 mt-2 ml-1 cursor-help" title={`Restarts: ${pod.restarts}`}>↻ {pod.restarts}</div>}
+                                     {pod.restarts > 0 && <div className="text-[9px] text-slate-500 mt-2 ml-1 cursor-help" title={`Перезапуски: ${pod.restarts}`}>↻ {pod.restarts}</div>}
                                   </td>
                                   <td className="p-4 text-[11px] font-mono text-slate-300">
                                      <div className="flex items-center gap-2">
@@ -1244,18 +1244,18 @@ export default function SystemFactoryView() {
                      <div className="grid grid-cols-3 border-t border-white/5 bg-black/40 p-4">
                         <div className="flex flex-col gap-1 items-center border-r border-white/5">
                            <Key size={14} className="text-amber-400 mb-1" />
-                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">K8s Secrets</span>
-                           <span className="text-xs font-mono text-white">ACTIVE (Synced)</span>
+                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Секрети K8s</span>
+                           <span className="text-xs font-mono text-white">АКТИВНО (Синхронізовано)</span>
                         </div>
                         <div className="flex flex-col gap-1 items-center border-r border-white/5">
                            <HardDrive size={14} className="text-violet-400 mb-1" />
-                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Persistent Vol</span>
-                           <span className="text-xs font-mono text-white">4 / 4 Mounted</span>
+                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Постійні Томи (Vol)</span>
+                           <span className="text-xs font-mono text-white">4 / 4 Змонтовано</span>
                         </div>
                         <div className="flex flex-col gap-1 items-center">
                            <Shield size={14} className="text-emerald-400 mb-1" />
-                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Network Policies</span>
-                           <span className="text-xs font-mono text-white">Strict (Default Deny)</span>
+                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Мережеві Політики</span>
+                           <span className="text-xs font-mono text-white">Суворі (Заборона)</span>
                         </div>
                      </div>
                   </TacticalCard>
@@ -1308,7 +1308,7 @@ export default function SystemFactoryView() {
                           </div>
                           <div className="bg-slate-900/50 p-4 border border-rose-500/20 rounded-xl relative overflow-hidden group">
                              <div className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-1000" style={{ width: `${systemScore.security}%` }} />
-                             <div className="text-[10px] text-slate-500 uppercase font-black">Security (Trivy + OPA)</div>
+                             <div className="text-[10px] text-slate-500 uppercase font-black">Безпека (Trivy + OPA)</div>
                              <div className="text-2xl font-black text-rose-400 mt-1">{systemScore.security}%</div>
                           </div>
                        </div>
@@ -1325,7 +1325,7 @@ export default function SystemFactoryView() {
                         <Bug size={28} />
                       </div>
                       <div>
-                        <h3 className="text-sm font-black uppercase tracking-widest text-white">AUTONOMOUS BUG FIXING</h3>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-white">АВТОНОМНЕ ВИПРАВЛЕННЯ БАГІВ</h3>
                         <p className="text-[10px] font-mono text-slate-400 uppercase">
                           ВИЯВЛЕНО: {bugs.filter(b => b.status === 'detected').length} | ВИПРАВЛЯЄТЬСЯ: {bugs.filter(b => b.status === 'fixing').length} | ВИПРАВЛЕНО: {bugs.filter(b => b.status === 'fixed').length}
                         </p>
@@ -1390,7 +1390,7 @@ export default function SystemFactoryView() {
                             )}
                             {bug.status === 'fixing' && (
                               <div className="flex items-center gap-2 text-amber-400 text-[10px] font-mono">
-                                <Loader2 size={14} className="animate-spin" /> FIXING...
+                                <Loader2 size={14} className="animate-spin" /> ВИПРАВЛЕННЯ...
                               </div>
                             )}
                             {bug.status === 'fixed' && (
@@ -1493,7 +1493,7 @@ export default function SystemFactoryView() {
                      </div>
                      <div className="bg-slate-900/50 border border-cyan-500/20 p-4 rounded-xl flex items-center justify-between">
                        <div>
-                         <div className="text-[10px] text-slate-500 uppercase font-black uppercase tracking-widest">Ротація Proxy</div>
+                         <div className="text-[10px] text-slate-500 uppercase font-black uppercase tracking-widest">Ротація Проксі (Proxy)</div>
                          <div className="text-2xl text-cyan-400 font-mono font-bold mt-1">{ingestionMetrics.proxies}</div>
                        </div>
                        <Network className="text-cyan-500/50" size={32} />
@@ -1503,11 +1503,11 @@ export default function SystemFactoryView() {
                    <div className="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden">
                      <div className="bg-slate-900 py-3 px-4 border-b border-slate-800 flex items-center justify-between">
                        <span className="text-[11px] font-black tracking-widest uppercase text-slate-400 flex items-center gap-2">
-                         <Terminal size={14} className="text-orange-500" /> Live Ingestion Feed
+                         <Terminal size={14} className="text-orange-500" /> Жива Стрічка Інгестії
                        </span>
                        <div className="flex gap-2">
                          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                         <div className="text-[10px] text-red-400 font-mono font-bold uppercase">Recording</div>
+                         <div className="text-[10px] text-red-400 font-mono font-bold uppercase">Запис (Recording)</div>
                        </div>
                      </div>
                      <div className="divide-y divide-slate-800/50 h-[300px] overflow-y-auto custom-scrollbar">
@@ -1655,7 +1655,7 @@ export default function SystemFactoryView() {
                         </div>
                         <span className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest ml-2">
                           <Terminal size={11} className="inline mr-1 text-violet-400" />
-                          PREDATOR-OODA-LOOP -- live stream
+                          PREDATOR-OODA-LOOP -- жива трансляція
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
@@ -1669,7 +1669,7 @@ export default function SystemFactoryView() {
                             <span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> REC
                           </motion.div>
                         )}
-                        <span className="text-[9px] font-mono text-slate-600">logs: {infiniteLogs.length}/50</span>
+                        <span className="text-[9px] font-mono text-slate-600">логи: {infiniteLogs.length}/50</span>
                       </div>
                     </div>
                     <div className="h-[300px] overflow-y-auto p-4 font-mono text-[11px] space-y-1 custom-scrollbar" id="ooda-log-terminal">
@@ -1719,7 +1719,7 @@ export default function SystemFactoryView() {
              onClick={startEveryFunction}
              className="w-full h-14 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-black tracking-widest text-sm shadow-[0_0_30px_rgba(139,92,246,0.4)] border border-violet-400/20 uppercase transition-all hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(139,92,246,0.6)]"
            >
-              <Power size={18} className="mr-2" /> MASTER START 🚀
+              <Power size={18} className="mr-2" /> ГОЛОВНИЙ ЗАПУСК 🚀
            </Button>
 
            <TacticalCard title="АВТОНОМНИЙ ЧАТ-КООРДИНАТОР" variant="holographic" className="flex-1 flex flex-col min-h-[500px] relative">

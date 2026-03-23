@@ -175,10 +175,10 @@ const HolographicAccessGate: React.FC = () => {
 
             <div className="space-y-6">
               <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-6deg]">
-                ACCESS <span className="text-amber-500">RESTRICTED</span>
+                ДОСТУП <span className="text-amber-500">ОБМЕЖЕНО</span>
               </h1>
               <p className="text-xl text-slate-400 font-medium max-w-2xl mx-auto italic">
-                Вхід у Комерційний Хаб потребує авторизації рівня "SOVEREIGN". 
+                Вхід у Комерційний Хаб потребує авторизації рівня "СУВЕРЕН". 
                 Виявлено обмежений доступ. Активуйте статус PREMIUM для розблокування протоколів.
               </p>
             </div>
@@ -279,11 +279,11 @@ const PremiumHubView: React.FC = () => {
                         </div>
                         <div>
                             <h1 className="text-4xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
-                                PREMIUM <span className={cn(`text-${currentConfig.color}-500`)}>{persona}</span> HUB
+                                ПРЕМІУМ <span className={cn(`text-${currentConfig.color}-500`)}>{persona}</span> ХАБ
                             </h1>
                             <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
-                                <Gem size={12} className="text-amber-500" /> 
-                                COMMERCIAL_INTELLIGENCE_LEVEL_5
+                                <Gem size={12} className="text-amber-500 hover:scale-125 transition-transform" /> 
+                                КОМЕРЦІЙНА_РОЗВІДКА_РІВЕНЬ_5
                             </p>
                         </div>
                     </div>
@@ -383,7 +383,7 @@ const PremiumHubView: React.FC = () => {
                                             {currentConfig.subtitle}
                                         </h2>
                                         <div className="flex items-center gap-6">
-                                            <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 py-1.5 px-4 font-black">ACTIVE_PROTOCOLS</Badge>
+                                            <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 py-1.5 px-4 font-black shadow-[0_0_15px_rgba(16,185,129,0.3)]">АКТИВНІ_ПРОТОКОЛИ</Badge>
                                             <span className="text-xs text-slate-500 font-mono">v55.5.9-stable</span>
                                         </div>
                                     </div>
