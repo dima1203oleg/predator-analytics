@@ -17,19 +17,28 @@ jobs:
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          chmod +x scripts/check_remote_ssh.sh
           if [ -z "$SSH_HOST" ]; then
-            echo "SSH_HOST secret not set. Skipping check."
+            echo "::warning title=Missing Secret::SSH_HOST secret not set. Skipping connectivity check."
             exit 0
           fi
-          ./scripts/check_remote_ssh.sh "$SSH_HOST" 22 5 > ssh_check.log 2>&1 || true
+          
+          SCRIPT_PATH="scripts/archive/check_remote_ssh.sh"
+          if [ ! -f "$SCRIPT_PATH" ]; then
+            echo "::error title=Script Missing::Workflow script not found at $SCRIPT_PATH"
+            exit 1
+          fi
+          
+          chmod +x "$SCRIPT_PATH"
+          ./"$SCRIPT_PATH" "$SSH_HOST" 22 5 > ssh_check.log 2>&1 || true
           cat ssh_check.log
+          
           if grep -q "SUCCESS" ssh_check.log; then
             echo "status=success" >> $GITHUB_OUTPUT
           else
             echo "status=failure" >> $GITHUB_OUTPUT
             exit 1
           fi
+
 
       - name: Upload Diagnostics
         if: failure()

@@ -1,9 +1,9 @@
 # ═══════════════════════════════════════════════════════════════
-# 🦅 PREDATOR Analytics v56.0 — Unified CI/CD Pipeline
+# 🦅 PREDATOR Analytics v55.1 — Unified CI/CD Pipeline
 # Єдиний пайплайн: Lint → Build → GitOps → ArgoCD Sync
 # ═══════════════════════════════════════════════════════════════
 
-name: PREDATOR v56.0 Unified Pipeline
+name: PREDATOR v55.1 Unified Pipeline
 
 on:
   push:
@@ -46,10 +46,10 @@ jobs:
           pip install ruff mypy pytest pytest-asyncio
 
       - name: Ruff Linter (Python)
-        run: ruff check . --config pyproject.toml || ruff check . || true
+        run: ruff check . --config ruff.toml --exit-non-zero-on-fix
 
       - name: Mypy Type Checking
-        run: mypy services/ libs/ --ignore-missing-imports || true
+        run: mypy services/ libs/ --ignore-missing-imports
 
       - name: Frontend Lint & Type Check
         working-directory: ./apps/predator-analytics-ui
@@ -59,8 +59,8 @@ jobs:
           else
             npm install
           fi
-          npm run lint --if-present || true
-          npm run type-check --if-present || true
+          npm run lint --if-present
+          npx tsc --noEmit
 
   # ── 2. Helm Lint ───────────────────────────────────────────
   helm-lint:
@@ -75,13 +75,13 @@ jobs:
 
       - name: Lint Predator Base Chart
         run: |
-          helm lint deploy/helm/predator/ || true
+          helm lint deploy/helm/predator/
 
       - name: Lint Umbrella Chart
         run: |
           cd infra/helm/umbrella
-          helm dependency build || true
-          helm lint . || true
+          helm dependency build
+          helm lint .
 
   # ── 3. Build & Push Docker Images ──────────────────────────
   build-images:
@@ -197,12 +197,14 @@ jobs:
           ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
           if [ -n "$ARGOCD_SERVER" ] && [ -n "$ARGOCD_TOKEN" ]; then
-            echo "🚀 Triggering ArgoCD sync for predator-v56..."
+            echo "🚀 Triggering ArgoCD sync for predator-v55..."
             curl -sSL -X POST \
+              -k \
               -H "Authorization: Bearer $ARGOCD_TOKEN" \
-              "https://$ARGOCD_SERVER/api/v1/applications/predator-v56/sync" \
+              "https://$ARGOCD_SERVER/api/v1/applications/predator-v55/sync" \
               -H "Content-Type: application/json" \
               -d '{"prune": true}' || echo "⚠️ ArgoCD sync request failed"
           else
             echo "ℹ️ ArgoCD secrets not configured. Sync will happen via polling."
           fi
+
