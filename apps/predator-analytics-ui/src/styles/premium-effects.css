@@ -1,0 +1,215 @@
+/* ============================================================================
+   PREDATOR v55.1 — PREMIUM VISUAL EFFECTS
+   Консолідація всіх inline <style> блоків з 21+ компонентів.
+   Імпортується один раз у index.css.
+   ============================================================================ */
+
+/* ── PANEL 3D ── */
+.panel-3d {
+  transform: perspective(1000px) rotateX(0deg);
+  transition: all 0.5s var(--ease-spring, cubic-bezier(0.23, 1, 0.32, 1));
+}
+
+.panel-3d:hover {
+  transform: perspective(1000px) rotateX(1deg) translateY(-4px);
+  box-shadow:
+    0 24px 64px -12px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(99, 102, 241, 0.1);
+}
+
+/* ── SCROLLBAR — Єдина версія для всього проекту ── */
+.scrollbar-predator::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-predator::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-predator::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.2);
+  border-radius: 9999px;
+}
+
+.scrollbar-predator::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.4);
+}
+
+/* Варіанти кольору скролбару */
+.scrollbar-cyan::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.2);
+}
+.scrollbar-cyan::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.4);
+}
+
+.scrollbar-emerald::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.2);
+}
+.scrollbar-emerald::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.4);
+}
+
+/* ── SKEW TEXT ── */
+.skew-text {
+  transform: skewX(-4deg);
+}
+
+/* ── TACTICAL GLOW UTILITIES ── */
+.tactical-glow-indigo  { box-shadow: var(--glow-indigo); }
+.tactical-glow-cyan    { box-shadow: var(--glow-cyan); }
+.tactical-glow-rose    { box-shadow: var(--glow-rose); }
+.tactical-glow-emerald { box-shadow: var(--glow-emerald); }
+.tactical-glow-amber   { box-shadow: var(--glow-amber); }
+.tactical-glow-violet  { box-shadow: var(--glow-violet); }
+
+/* ── CARD HOVER LIFT ── */
+.card-hover-lift {
+  transition: all 0.3s var(--ease-default, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ── SIDEBAR ACTIVE ITEM ── */
+.sidebar-nav-active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(6, 182, 212, 0.06) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.20);
+  box-shadow:
+    0 0 20px rgba(99, 102, 241, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* ── GRADIENT HEADINGS ── */
+.gradient-text-indigo {
+  background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 50%, #818cf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-cyan {
+  background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 50%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-orange {
+  background: linear-gradient(135deg, #ffffff 0%, #fed7aa 50%, #fb923c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-rose {
+  background: linear-gradient(135deg, #ffffff 0%, #fecdd3 50%, #f43f5e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── NEON BORDERS ── */
+.neon-border-indigo {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.15), inset 0 0 15px rgba(99, 102, 241, 0.04);
+}
+
+.neon-border-cyan {
+  border-color: rgba(6, 182, 212, 0.5);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.15), inset 0 0 15px rgba(6, 182, 212, 0.04);
+}
+
+.neon-border-orange {
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.15), inset 0 0 15px rgba(249, 115, 22, 0.04);
+}
+
+.neon-border-rose {
+  border-color: rgba(244, 63, 94, 0.5);
+  box-shadow: 0 0 15px rgba(244, 63, 94, 0.15), inset 0 0 15px rgba(244, 63, 94, 0.04);
+}
+
+.neon-border-violet {
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.15), inset 0 0 15px rgba(139, 92, 246, 0.04);
+}
+
+/* ── FACTORY ANIMATIONS ── */
+@keyframes factory-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.2), 0 0 60px rgba(249, 115, 22, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(249, 115, 22, 0.4), 0 0 80px rgba(249, 115, 22, 0.15);
+  }
+}
+
+.factory-pulse {
+  animation: factory-glow 3s ease-in-out infinite;
+}
+
+@keyframes pipeline-flow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.pipeline-flow {
+  background: linear-gradient(90deg, #f97316, #f59e0b, #06b6d4, #f97316);
+  background-size: 300% 300%;
+  animation: pipeline-flow 3s ease infinite;
+}
+
+/* ── AZR PULSE ── */
+@keyframes azr-pulse {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(249, 115, 22, 0.6));
+  }
+  50% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 12px rgba(249, 115, 22, 0.9));
+  }
+}
+
+.azr-active {
+  animation: azr-pulse 2s ease-in-out infinite;
+}
+
+/* ── STATUS DOT ── */
+.status-dot {
+  position: relative;
+}
+
+.status-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  opacity: 0.5;
+  filter: blur(4px);
+  animation: pulse 2s ease-in-out infinite;
+  background: inherit;
+}
+
+/* ── DATA CAPSULE ── */
+.data-capsule-enhanced {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(2, 6, 23, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  transition: all 0.3s var(--ease-default, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+.data-capsule-enhanced:hover {
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow:
+    0 8px 32px rgba(6, 182, 212, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}

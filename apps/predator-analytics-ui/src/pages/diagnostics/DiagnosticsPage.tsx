@@ -1,218 +1,434 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { Activity, Server, Database, Brain, Play, CheckCircle, XCircle, ShieldCheck, Zap, RefreshCw, Terminal } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useMemo, useState } from 'react';
+import {
+  Activity,
+  AlertTriangle,
+  Brain,
+  Database,
+  Play,
+  RefreshCw,
+  Server,
+  ShieldCheck,
+  Terminal,
+} from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+
 import { AdvancedBackground } from '../../components/AdvancedBackground';
+import {
+  type ServiceCheck,
+  type SystemDiagnosticsResponse,
+  systemApi,
+} from '../../services/api/system';
 
-interface DiagnosticSubResult {
-  status: string;
-  [key: string]: string | number | boolean | null | undefined;
-}
+type DiagnosticSection = {
+  key: string;
+  title: string;
+  icon: React.ReactNode;
+  services: Array<{
+    key: string;
+    title: string;
+    check: ServiceCheck;
+  }>;
+};
 
-interface DiagnosticResult {
-  status: string;
-  results?: {
-    overall_status: string;
-    infrastructure: { redis?: DiagnosticSubResult; postgres?: DiagnosticSubResult };
-    ai_brain: { groq?: DiagnosticSubResult; ollama?: DiagnosticSubResult };
-    data_ingestion: { minio?: DiagnosticSubResult; opensearch?: DiagnosticSubResult };
-    voice_interface: { whisper?: DiagnosticSubResult };
-  };
-  report_markdown?: string;
-}
+const STATUS_STYLES: Record<string, { tone: string; badge: string; border: string }> = {
+  ok: {
+    tone: 'text-emerald-400',
+    badge: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+    border: 'border-emerald-500/30',
+  },
+  degraded: {
+    tone: 'text-amber-400',
+    badge: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+    border: 'border-amber-500/30',
+  },
+  offline: {
+    tone: 'text-amber-400',
+    badge: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+    border: 'border-amber-500/30',
+  },
+  error: {
+    tone: 'text-rose-400',
+    badge: 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+    border: 'border-rose-500/30',
+  },
+  unknown: {
+    tone: 'text-slate-300',
+    badge: 'bg-slate-500/15 text-slate-300 border-slate-500/20',
+    border: 'border-white/10',
+  },
+};
+
+const humanizeStatus = (status: string) => {
+  switch (status) {
+    case 'ok':
+      return 'В нормі';
+    case 'degraded':
+      return 'Деградовано';
+    case 'offline':
+      return 'Поза контуром';
+    case 'error':
+      return 'Критично';
+    default:
+      return 'Невідомо';
+  }
+};
+
+const formatLatency = (check: ServiceCheck) => {
+  if (typeof check.duration_seconds !== 'number') {
+    return 'н/д';
+  }
+  return `${Math.round(check.duration_seconds * 1000)} мс`;
+};
 
 const DiagnosticsPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<DiagnosticResult | null>(null);
+  const [result, setResult] = useState<SystemDiagnosticsResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const runDiagnostics = async () => {
     setLoading(true);
     setError(null);
+
     try {
-      const response = await axios.post('/api/v1/system/diagnostics/run');
-      setResult(response.data);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Квантове рукостискання не вдалося. Потрібне калібрування суб-нуля.';
-      setError(errorMessage);
-      if (import.meta.env.DEV) {
-          setResult({
-              status: "success",
-              results: {
-                  overall_status: "ДЕГРАДОВАНО ⚠️ (Симуляція)",
-                  infrastructure: { redis: { status: "OK" } },
-                  ai_brain: { groq: { status: "OK" } },
-                  data_ingestion: { minio: { status: "НЕДОСТУПНО" } },
-                  voice_interface: { whisper: { status: "OK" } }
-              },
-              report_markdown: "# Нейронний Звіт Діагностики\nРежим симуляції активний. Основні системи відповідають з високою точністю."
-          });
-      }
+      const response = await systemApi.runDiagnostics();
+      setResult(response);
+    } catch (diagnosticsError) {
+      const message =
+        diagnosticsError instanceof Error
+          ? diagnosticsError.message
+          : 'Не вдалося завершити системну діагностику.';
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
+  const sections = useMemo<DiagnosticSection[]>(() => {
+    if (!result) {
+      return [];
+    }
+
+    const toServices = (checks: Record<string, ServiceCheck>) =>
+      Object.entries(checks).map(([key, check]) => ({
+        key,
+        title: key.replace(/_/g, ' ').toUpperCase(),
+        check,
+      }));
+
+    return [
+      {
+        key: 'infrastructure',
+        title: 'Інфраструктурний контур',
+        icon: <Server size={20} />,
+        services: toServices(result.results.infrastructure),
+      },
+      {
+        key: 'data_ingestion',
+        title: 'Контур даних',
+        icon: <Database size={20} />,
+        services: toServices(result.results.data_ingestion),
+      },
+      {
+        key: 'ai_brain',
+        title: 'AI контур',
+        icon: <Brain size={20} />,
+        services: toServices(result.results.ai_brain),
+      },
+      {
+        key: 'observability',
+        title: 'Керуючий контур',
+        icon: <ShieldCheck size={20} />,
+        services: toServices(result.results.observability),
+      },
+    ];
+  }, [result]);
+
+  const summaryCards = useMemo(() => {
+    if (!result) {
+      return [];
+    }
+
+    const metrics = result.results.metrics;
+    return [
+      {
+        title: 'Загальний стан',
+        value: result.results.overall_status,
+        icon: <ShieldCheck size={26} />,
+        status: result.results.health_status,
+      },
+      {
+        title: 'CPU',
+        value: `${Number(metrics.cpu_percent || 0).toFixed(1)}%`,
+        icon: <Activity size={26} />,
+        status: Number(metrics.cpu_percent || 0) < 80 ? 'ok' : 'degraded',
+      },
+      {
+        title: "Пам'ять",
+        value: `${Number(metrics.memory_percent || 0).toFixed(1)}%`,
+        icon: <Server size={26} />,
+        status: Number(metrics.memory_percent || 0) < 85 ? 'ok' : 'degraded',
+      },
+      {
+        title: 'Диск',
+        value: `${Number(metrics.disk_percent || 0).toFixed(1)}%`,
+        icon: <Database size={26} />,
+        status: Number(metrics.disk_percent || 0) < 90 ? 'ok' : 'error',
+      },
+    ];
+  }, [result]);
+
   return (
-    <div className="min-h-screen bg-slate-950 p-6 md:p-12 font-sans text-white overflow-x-hidden relative">
-      <AdvancedBackground showStars={true} />
+    <div className="min-h-screen bg-slate-950 p-6 md:p-12 text-white overflow-x-hidden relative">
+      <AdvancedBackground showStars />
       <div className="fixed inset-0 bg-noise opacity-[0.03] pointer-events-none mix-blend-overlay z-[100]" />
 
-      <header className="relative z-10 mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+      <header className="relative z-10 mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
         <div>
-           <motion.h1
-             initial={{ x: -20, opacity: 0 }}
-             animate={{ x: 0, opacity: 1 }}
-             className="text-4xl md:text-6xl font-display font-black tracking-tighter flex items-center gap-6"
-           >
-             <div className="p-4 glass-ultra rounded-2xl border-blue-500/30 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
-               <Activity size={48} className="text-blue-500 icon-3d-blue" />
-             </div>
-             <span className="text-iridescent">ДІАГНОСТИКА СИСТЕМИ</span>
-           </motion.h1>
-           <div className="flex items-center gap-6 mt-6 ml-2">
-             <p className="text-slate-500 uppercase tracking-[0.4em] font-black text-[10px]">Predator Neural Core v45.0 // Системний Потік</p>
-             <div className="h-4 w-[1px] bg-slate-800" />
-             <div className="flex items-center gap-2">
-               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-               <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Квантове Ядро: Активне</span>
-             </div>
-           </div>
+          <motion.h1
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className="text-4xl md:text-6xl font-display font-black tracking-tighter flex items-center gap-6"
+          >
+            <div className="p-4 glass-ultra rounded-2xl border-cyan-500/30 shadow-[0_0_30px_rgba(34,211,238,0.15)]">
+              <Activity size={48} className="text-cyan-400" />
+            </div>
+            <span className="text-iridescent">СИСТЕМНА ДІАГНОСТИКА</span>
+          </motion.h1>
+
+          <div className="flex items-center gap-6 mt-6 ml-2">
+            <p className="text-slate-500 uppercase tracking-[0.35em] font-black text-[10px]">
+              Predator Core // Стан контурів та залежностей
+            </p>
+            <div className="h-4 w-px bg-slate-800" />
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">
+                API контроль активний
+              </span>
+            </div>
+          </div>
         </div>
+
         <motion.button
-          whileHover={{ scale: 1.05, y: -2 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03, y: -2 }}
+          whileTap={{ scale: 0.97 }}
           onClick={runDiagnostics}
           disabled={loading}
-          className={`group flex items-center gap-4 px-12 py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] md:text-xs transition-all duration-500 shadow-2xl relative overflow-hidden ${
+          className={`group flex items-center gap-4 px-10 py-5 rounded-2xl font-black uppercase tracking-[0.18em] text-[10px] md:text-xs transition-all duration-500 shadow-2xl relative overflow-hidden ${
             loading
-              ? 'bg-slate-900 text-slate-700 cursor-not-allowed border border-white/5'
-              : 'bg-blue-600 text-white shadow-blue-500/30 border border-blue-400/30 hover:shadow-blue-500/50 btn-3d'
+              ? 'bg-slate-900 text-slate-600 cursor-not-allowed border border-white/5'
+              : 'bg-cyan-600 text-white shadow-cyan-500/30 border border-cyan-400/30 hover:shadow-cyan-500/50'
           }`}
         >
-          {!loading && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />}
+          {!loading && (
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+          )}
           {loading ? <RefreshCw className="animate-spin" size={18} /> : <Play size={18} className="fill-white" />}
-          {loading ? 'Ініціалізація Флюктуацій...' : 'Запустити Глибокий Аналіз'}
+          {loading ? 'Виконується перевірка контурів...' : 'Запустити діагностику'}
         </motion.button>
       </header>
 
-      <AnimatePresence>
-      {result?.results && (
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-16 relative z-10">
-           <DiagnosticCard
-             title="Цілісність Флоту"
-             value={result.results.overall_status}
-             icon={<ShieldCheck size={28}/>}
-             status={result.results.overall_status.includes("HEALTHY") || result.results.overall_status.includes("В НОРМІ") ? "good" : "warning"}
-           />
-           <DiagnosticCard
-             title="Інфраструктура Мережі"
-             value={result.results.infrastructure?.redis?.status === "OK" ? "Стабільно" : "Осциляція"}
-             icon={<Server size={28}/>}
-             status={result.results.infrastructure?.redis?.status === "OK" ? "good" : "bad"}
-           />
-           <DiagnosticCard
-             title="Синаптичне Ядро"
-             value={result.results.ai_brain?.groq?.status === "OK" ? "Синхронізовано" : "Десинхрон"}
-             icon={<Brain size={28}/>}
-             status={result.results.ai_brain?.groq?.status === "OK" ? "good" : "bad"}
-           />
-           <DiagnosticCard
-             title="Квантові Дані"
-             value={result.results.data_ingestion?.minio?.status === "OK" ? "Когерентно" : "Фрагментовано"}
-             icon={<Database size={28}/>}
-             status={result.results.data_ingestion?.minio?.status === "OK" ? "good" : "bad"}
-           />
+      {summaryCards.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-12 relative z-10"
+        >
+          {summaryCards.map((card) => (
+            <StatusCard
+              key={card.title}
+              title={card.title}
+              value={card.value}
+              icon={card.icon}
+              status={card.status}
+            />
+          ))}
         </motion.div>
       )}
-      </AnimatePresence>
 
-       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 relative z-10">
-           <div className="lg:col-span-2">
-             <AnimatePresence mode="wait">
-             {result?.report_markdown && (
-                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="glass-ultra rounded-[40px] p-8 md:p-12 border-white/10 shadow-2xl overflow-hidden relative group transition-all duration-700">
-                   <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity"><Terminal size={120}/></div>
-                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500/50 via-cyan-500/50 to-blue-500/50 animate-pulse-glow" />
+      <div className="grid grid-cols-1 xl:grid-cols-[1.1fr,0.9fr] gap-10 relative z-10">
+        <div className="space-y-8">
+          {sections.map((section) => (
+            <motion.section
+              key={section.key}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="glass-ultra rounded-[32px] p-8 border border-white/10 shadow-2xl"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-11 h-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 flex items-center justify-center">
+                  {section.icon}
+                </div>
+                <div>
+                  <h2 className="text-xl font-black tracking-tight">{section.title}</h2>
+                  <p className="text-xs uppercase tracking-[0.22em] text-slate-500">
+                    Реальні відповіді від залежностей системи
+                  </p>
+                </div>
+              </div>
 
-                   <div className="flex items-center gap-4 mb-10">
-                     <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20">
-                       <Terminal size={20} />
-                     </div>
-                     <h3 className="text-xs font-black uppercase tracking-[0.4em] text-blue-500">Зашифрований Аналітичний Потік</h3>
-                   </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {section.services.map((service) => (
+                  <ServiceTile key={service.key} title={service.title} check={service.check} />
+                ))}
+              </div>
+            </motion.section>
+          ))}
+        </div>
 
-                   <div className="font-mono text-sm text-slate-300 bg-black/40 p-8 rounded-[32px] border border-white/5 overflow-auto max-h-[60vh] custom-scrollbar leading-relaxed backdrop-blur-md">
-                     <div className="mb-4 text-emerald-500/60 text-[10px] uppercase font-black tracking-widest flex items-center gap-2">
-                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Decryption_Successful // Stream_Open
-                     </div>
-                     {result.report_markdown}
-                   </div>
-                 </motion.div>
-             )}
-             </AnimatePresence>
-           </div>
+        <div className="space-y-8">
+          <motion.section
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="glass-ultra rounded-[32px] p-8 border border-white/10 shadow-2xl"
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-11 h-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 flex items-center justify-center">
+                <Terminal size={20} />
+              </div>
+              <div>
+                <h2 className="text-xl font-black tracking-tight">Звіт діагностики</h2>
+                <p className="text-xs uppercase tracking-[0.22em] text-slate-500">
+                  Консолідований аналітичний підсумок
+                </p>
+              </div>
+            </div>
 
-           <div className="space-y-12">
-               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="glass-ultra p-10 rounded-[40px] border-white/5 text-center flex flex-col items-center justify-center panel-3d shadow-2xl relative overflow-hidden group">
-                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                   <div className="w-24 h-24 glass-ultra rounded-full flex items-center justify-center mb-8 border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
-                     <Zap className="text-blue-500 icon-3d-blue" size={40}/>
-                   </div>
-                   <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2">Confidence_Rating</div>
-                   <div className="text-5xl font-display font-black text-white text-iridescent">99.82%</div>
-                   <div className="mt-8 pt-6 border-t border-white/5 w-full">
-                     <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-600 mb-3">
-                       <span>Neural_Sync</span>
-                       <span className="text-blue-400 italic">Phase_Aligned</span>
-                     </div>
-                     <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden border border-white/5">
-                        <motion.div initial={{ width: 0 }} animate={{ width: '99.82%' }} transition={{ duration: 2 }} className="h-full bg-blue-500 shadow-[0_0_15px_#3b82f6]" />
-                     </div>
-                   </div>
-               </motion.div>
-           </div>
-       </div>
+            <div className="font-mono text-sm text-slate-300 bg-black/40 p-6 rounded-[24px] border border-white/5 overflow-auto max-h-[60vh] leading-relaxed backdrop-blur-md whitespace-pre-wrap">
+              {result?.report_markdown || 'Запустіть діагностику, щоб побачити системний звіт.'}
+            </div>
+          </motion.section>
+
+          {result && (
+            <motion.section
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="glass-ultra rounded-[32px] p-8 border border-white/10 shadow-2xl"
+            >
+              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-4">
+                Операційний підсумок
+              </div>
+
+              <div className="space-y-3 text-sm text-slate-300">
+                <div className="flex items-center justify-between rounded-2xl bg-black/30 border border-white/5 px-4 py-3">
+                  <span>Перевірено сервісів</span>
+                  <span className="font-black text-white">{result.results.summary.total}</span>
+                </div>
+                <div className="flex items-center justify-between rounded-2xl bg-black/30 border border-white/5 px-4 py-3">
+                  <span>Здорові</span>
+                  <span className="font-black text-emerald-400">{result.results.summary.healthy}</span>
+                </div>
+                <div className="flex items-center justify-between rounded-2xl bg-black/30 border border-white/5 px-4 py-3">
+                  <span>Деградовані</span>
+                  <span className="font-black text-amber-400">{result.results.summary.degraded}</span>
+                </div>
+                <div className="flex items-center justify-between rounded-2xl bg-black/30 border border-white/5 px-4 py-3">
+                  <span>Критичні</span>
+                  <span className="font-black text-rose-400">{result.results.summary.failed}</span>
+                </div>
+              </div>
+            </motion.section>
+          )}
+        </div>
+      </div>
 
       <AnimatePresence>
-      {error && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="fixed bottom-8 right-8 bg-rose-600/10 border border-rose-500/30 text-rose-500 p-6 rounded-2xl flex items-center gap-4 backdrop-blur-xl shadow-2xl z-50">
-          <XCircle size={24}/>
-          <div className="text-xs font-bold uppercase tracking-widest leading-none">{error}</div>
-        </motion.div>
-      )}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="fixed bottom-8 right-8 bg-rose-600/10 border border-rose-500/30 text-rose-300 p-6 rounded-2xl flex items-start gap-4 backdrop-blur-xl shadow-2xl z-50 max-w-md"
+          >
+            <AlertTriangle size={22} className="shrink-0 mt-0.5" />
+            <div>
+              <div className="text-xs font-black uppercase tracking-widest mb-1">Помилка діагностики</div>
+              <div className="text-sm leading-relaxed">{error}</div>
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );
 };
 
-const DiagnosticCard = ({ title, value, icon, status }: { title: string, value: string, icon: React.ReactNode, status: 'good' | 'bad' | 'warning' }) => {
-    const variants = {
-        good: 'border-emerald-500/40 text-emerald-400 shadow-emerald-500/5',
-        bad: 'border-rose-500/40 text-rose-500 shadow-rose-500/5',
-        warning: 'border-amber-500/40 text-amber-500 shadow-amber-500/5',
-    };
+const StatusCard = ({
+  title,
+  value,
+  icon,
+  status,
+}: {
+  title: string;
+  value: string;
+  icon: React.ReactNode;
+  status: string;
+}) => {
+  const style = STATUS_STYLES[status] || STATUS_STYLES.unknown;
 
-    return (
-        <motion.div
-            whileHover={{ y: -6, scale: 1.02 }}
-            className={`p-8 rounded-[32px] border glass-ultra flex flex-col items-start gap-6 transition-all duration-500 shadow-2xl panel-3d ${variants[status] || 'border-white/10'}`}
-        >
-            <div className={`p-4 rounded-2xl bg-slate-950/50 border border-white/5 shadow-inner group-hover:scale-110 transition-transform duration-500`}>
-                <div className="animate-pulse-glow rounded-xl">
-                  {icon}
-                </div>
+  return (
+    <motion.div
+      whileHover={{ y: -4, scale: 1.01 }}
+      className={`p-7 rounded-[28px] border glass-ultra flex flex-col gap-5 transition-all duration-500 shadow-2xl ${style.border}`}
+    >
+      <div className={`w-12 h-12 rounded-2xl bg-black/30 border border-white/5 flex items-center justify-center ${style.tone}`}>
+        {icon}
+      </div>
+
+      <div>
+        <div className="text-[11px] uppercase font-black tracking-[0.18em] text-slate-500 mb-2">
+          {title}
+        </div>
+        <div className="text-2xl font-display font-black tracking-tight text-white">{value}</div>
+      </div>
+    </motion.div>
+  );
+};
+
+const ServiceTile = ({
+  title,
+  check,
+}: {
+  title: string;
+  check: ServiceCheck;
+}) => {
+  const style = STATUS_STYLES[check.status] || STATUS_STYLES.unknown;
+
+  return (
+    <div className={`rounded-[24px] border bg-black/25 p-5 ${style.border}`}>
+      <div className="flex items-start justify-between gap-3 mb-4">
+        <div>
+          <div className="text-sm font-black text-white tracking-tight">{title}</div>
+          <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500 mt-1">
+            Затримка: {formatLatency(check)}
+          </div>
+        </div>
+
+        <span className={`px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-[0.14em] ${style.badge}`}>
+          {humanizeStatus(check.status)}
+        </span>
+      </div>
+
+      {check.error ? (
+        <div className="text-sm text-rose-300 leading-relaxed">{check.error}</div>
+      ) : (
+        <div className="space-y-2 text-sm text-slate-300">
+          {Object.entries(check.details || {}).slice(0, 3).map(([key, value]) => (
+            <div key={key} className="flex items-center justify-between gap-4">
+              <span className="text-slate-500 uppercase text-[10px] tracking-[0.16em]">
+                {key.replace(/_/g, ' ')}
+              </span>
+              <span className="text-right break-all">
+                {typeof value === 'string' || typeof value === 'number' ? value : String(value)}
+              </span>
             </div>
-            <div>
-                <div className="text-[11px] uppercase font-black tracking-[0.2em] opacity-50 mb-2">{title}</div>
-                <div className="text-xl font-display font-black uppercase tracking-tighter whitespace-nowrap">{value}</div>
-                <div className="flex items-center gap-2 mt-3 text-[8px] font-mono font-black uppercase tracking-widest opacity-40">
-                  <Terminal size={10} />
-                  <span>Real_Time_Monitor</span>
-                </div>
-            </div>
-        </motion.div>
-    )
-}
+          ))}
+          {(!check.details || Object.keys(check.details).length === 0) && (
+            <div className="text-slate-500">Додаткових деталей немає.</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default DiagnosticsPage;

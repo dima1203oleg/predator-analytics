@@ -51,6 +51,7 @@ from .som import router as som_router
 from .warroom import router as warroom_router
 from .ml_studio import router as ml_studio_router
 from .system import router as system_router
+from .system import stats_router
 
 __all__ = [
     "alerts_router",
@@ -78,4 +79,5 @@ __all__ = [
     "warroom_router",
     "ml_studio_router",
     "system_router",
+    "stats_router",
 ]

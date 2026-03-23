@@ -49,6 +49,7 @@ from app.routers import (
     warroom_router,
     ml_studio_router,
     system_router,
+    stats_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.kafka_service import close_kafka, init_kafka
@@ -69,6 +70,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         "Ініціалізація Core API...",
         extra={"version": settings.APP_VERSION, "env": settings.ENV},
     )
+    app.state.started_at = datetime.now(UTC)
 
     # Перевірка безпеки при старті
     from app.core.security import validate_security_on_startup
@@ -172,12 +174,14 @@ ROUTERS = [
     ("/api/v1", osint_ua_router),
     ("/api/v1", ml_studio_router),
     ("/api/v1", system_router),
+    ("/api/v1", stats_router),
 ]
 
 for prefix, router in ROUTERS:
     app.include_router(router, prefix=prefix)
     logger.debug(f"Registered router: {prefix}{router.prefix}")
 
+@app.get("/api/v1/health", tags=["system"])
 @app.get("/health", tags=["system"])
 async def health_check() -> JSONResponse:
     """Комплексний health check для K8s probes."""
@@ -203,6 +207,7 @@ async def health_check() -> JSONResponse:
         }, status_code=503)
 
 
+@app.get("/api/v1/health/ready", tags=["system"])
 @app.get("/health/ready", tags=["system"])
 async def readiness_check() -> JSONResponse:
     """Readiness probe - перевіряє готовність до прийому трафіку."""
@@ -240,6 +245,7 @@ async def readiness_check() -> JSONResponse:
         }, status_code=503)
 
 
+@app.get("/api/v1/health/live", tags=["system"])
 @app.get("/health/live", tags=["system"])
 async def liveness_check() -> JSONResponse:
     """Liveness probe - перевіряє, чи додаток живий."""

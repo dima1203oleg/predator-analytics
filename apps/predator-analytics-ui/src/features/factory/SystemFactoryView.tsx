@@ -460,11 +460,28 @@ export default function SystemFactoryView() {
         handlePodRestart('graph-worker-2d1');
         return;
       }
-      if (lower.includes('всі') || lower.includes('all')) {
+      if (lower.includes('all') || lower.includes('всі')) {
          pods.forEach(p => handlePodRestart(p.id));
-         return;
+         return { action: 'kubectl', reply: 'Ініційовано перезапуск всіх системних подів.' };
       }
       return 'Не вказано конкретний сервіс. Уточніть (напр: "Перезапусти API").';
+    }
+
+    if (lower === 'force skip observe') {
+       if (infiniteRunning && infinitePhase === 'observe') {
+          setInfinitePhase('orient');
+          pushSystemMessage('⚠️ [DEBUG] FORCE SKIP OBSERVE. Перехід до фази ORIENT.', 'analyze');
+          return 'Форсуємо завершення обсервації...';
+       }
+       return 'Команда не застосовна. OODA Loop не в фазі Обсервації.';
+    }
+
+    if (lower === 'autofix status') {
+       const activeFixes = bugs.filter(b => b.status === 'fixing');
+       if (activeFixes.length > 0) {
+          return `🤖 [AUTOFIX STATUS] ${activeFixes.length} багів в процесі ремедіації. Прогрес: ${activeFixes[0].fixProgress}%`;
+       }
+       return '🤖 [AUTOFIX STATUS] Немає активних процесів виправлення коду.';
     }
 
     if (lower.includes('масштабуй') || lower.includes('скейл') || lower.includes('scale')) {

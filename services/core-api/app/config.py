@@ -103,6 +103,7 @@ class Settings(BaseSettings):
     AI_ENGINE_URL: str = "http://localhost:9050"
     OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
     COPILOT_STREAM_BUFFER: int = 100
+    MLFLOW_TRACKING_URL: str = "http://mlflow-internal.predator.svc:5000"
 
     # Modular Services
     GRAPH_SERVICE_URL: str = "http://localhost:9030"

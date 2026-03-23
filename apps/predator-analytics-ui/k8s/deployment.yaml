@@ -48,7 +48,7 @@ spec:
           containerPort: 3030
           protocol: TCP
         env:
-        - name: VITE_API_URL
+        - name: API_UPSTREAM
           value: "http://predator-core-api.predator.svc.cluster.local:8000"
         - name: NODE_ENV
           value: "production"
@@ -256,6 +256,7 @@ spec:
     ports:
     - protocol: TCP
       port: 53
+    - protocol: TCP
       port: 443
     - protocol: UDP
       port: 53
@@ -263,6 +264,7 @@ spec:
     ports:
     - protocol: TCP
       port: 80
+    - protocol: TCP
       port: 443
 
 ---
