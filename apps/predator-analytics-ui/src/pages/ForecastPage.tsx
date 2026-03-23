@@ -87,11 +87,13 @@ export default function ForecastPage() {
 function DemandForecastTab() {
     const [forecast, setForecast] = useState<ForecastResponse | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchForecast = async () => {
             try {
                 setLoading(true);
+                setError(null);
                 const data = await forecastApi.getDemandForecast({
                     product_code: '84713000',
                     months_ahead: 6,
@@ -100,6 +102,7 @@ function DemandForecastTab() {
                 setForecast(data);
             } catch (error) {
                 console.error('Failed to fetch forecast:', error);
+                setError('Не вдалося отримати прогноз. Спробуйте ще раз або перевірте бекенд.');
             } finally {
                 setLoading(false);
             }
@@ -112,6 +115,14 @@ function DemandForecastTab() {
             <div className="h-64 flex flex-col items-center justify-center text-gray-300 gap-4">
                 <Loader2 className="animate-spin text-emerald-500" size={32} />
                 <p className="animate-pulse">Розрахунок ML прогнозу...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="bg-red-500/10 border border-red-500/30 text-red-200 rounded-xl p-4">
+                {error}
             </div>
         );
     }
@@ -231,7 +242,16 @@ function DemandForecastTab() {
                         <h3 className="text-lg font-bold text-white tracking-tight">Графік прогнозу</h3>
                         <p className="text-xs text-gray-300 mt-1">{forecast.product_name} ({forecast.product_code})</p>
                     </div>
-                    <div className="text-xs text-gray-300 font-mono">Модель: {forecast.model_used}</div>
+                    <div className="flex items-center gap-3 text-xs text-gray-300 font-mono">
+                        <span className="px-2 py-1 rounded-full border border-white/10 bg-white/5 uppercase tracking-wide">{forecast.model_used}</span>
+                        <span className={
+                            `px-2 py-1 rounded-full border uppercase tracking-wide ${forecast.source === 'real'
+                                ? 'border-emerald-500/50 text-emerald-300 bg-emerald-500/10'
+                                : 'border-amber-500/50 text-amber-300 bg-amber-500/10'}`
+                        }>
+                            {forecast.source === 'real' ? 'Реальні дані' : 'Синтетичні'}
+                        </span>
+                    </div>
                 </div>
                 <div className="h-[350px] w-full">
                     <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
@@ -301,15 +321,18 @@ function DemandForecastTab() {
 function ModelsTab() {
     const [models, setModels] = useState<ForecastModel[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchModels = async () => {
             try {
                 setLoading(true);
+                setError(null);
                 const data = await forecastApi.getModels();
                 setModels(data.models || []);
             } catch (error) {
                 console.error('Failed to fetch models:', error);
+                setError('Не вдалося завантажити перелік моделей. Перевірте бекенд.');
             } finally {
                 setLoading(false);
             }
@@ -320,11 +343,21 @@ function ModelsTab() {
     return (
         <div className="space-y-6">
             <h3 className="text-lg font-bold text-white tracking-tight">Доступні алгоритми прогнозування</h3>
+            {error && (
+                <div className="bg-red-500/10 border border-red-500/30 text-red-200 rounded-xl p-4">
+                    {error}
+                </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {loading ? (
                     Array(3).fill(0).map((_, i) => (
                         <div key={i} className="h-40 bg-gray-900/60 rounded-2xl border border-white/5 animate-pulse" />
                     ))
+                ) : models.length === 0 ? (
+                    <div className="col-span-full text-gray-300 text-sm bg-gray-900/60 border border-white/5 rounded-xl p-4">
+                        Немає доступних моделей. Запустіть тренування або перевірте конфігурацію бекенду.
+                    </div>
                 ) : models.map((model, i) => (
                     <motion.div
                         key={model.key}

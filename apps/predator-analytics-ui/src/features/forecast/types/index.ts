@@ -21,6 +21,7 @@ export interface ForecastResponse {
     product_name: string;
     country_code?: string;
     model_used: string;
+    source: 'real' | 'synthetic';
     confidence_score: number;
     mape: number;
     data_points_used: number;

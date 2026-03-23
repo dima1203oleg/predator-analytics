@@ -1,10 +1,14 @@
-from fastapi import APIRouter, Depends, Query, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.database import get_db
-from app.schemas.forecast import ForecastDemandRequest, ForecastResponse, ForecastModelsResponse
-from datetime import datetime, timedelta
-import random
+from datetime import datetime
+from typing import List, Dict
 
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_db
+from app.core.settings import get_settings
+from app.models.declaration import Declaration
+from app.schemas.forecast import ForecastDemandRequest, ForecastResponse, ForecastModelsResponse
 from app.services.ml.forecast_service import get_forecast_service, ForecastService
 
 router = APIRouter(prefix="/forecast", tags=["Прогнозування"])
@@ -18,15 +22,43 @@ async def get_demand_forecast(
     """
     Отримати прогноз попиту для товару.
     """
-    # 1. Fetch historical data from DB if possible
-    # query = select(Declaration).where(Declaration.product_code == request.product_code)
-    # result = await db.execute(query)
-    # ... logic to convert to history_data list ...
-    
+    # 1. Historical data (без SELECT *)
+    stmt = (
+        select(
+            Declaration.declaration_date,
+            Declaration.quantity,
+            Declaration.product_name,
+            Declaration.country_code,
+        )
+        .where(Declaration.product_code == request.product_code)
+        .order_by(Declaration.declaration_date.desc())
+        .limit(24)
+    )
+
+    result = await db.execute(stmt)
+    rows = result.all()
+
+    history_data: List[Dict[str, str | float]] = []
+    product_name = None
+    country_code = None
+
+    for row in reversed(rows):
+        date, quantity, p_name, c_code = row
+        history_data.append({
+            "date": date.isoformat() if isinstance(date, datetime) else str(date),
+            "volume": float(quantity) if quantity is not None else 0.0,
+        })
+        if not product_name and p_name:
+            product_name = p_name
+        if not country_code and c_code:
+            country_code = c_code
+
     # 2. Use ML service
     forecast_result = forecast_service.predict_demand(
         product_code=request.product_code,
-        history_data=None, # In production: pass real historical rows here
+        product_name=product_name,
+        country_code=country_code,
+        history_data=history_data if history_data else None,
         months_ahead=request.months_ahead,
         model_key=request.model
     )
@@ -38,10 +70,5 @@ async def list_models():
     """
     Список доступних моделей прогнозування.
     """
-    return {
-        "models": [
-            {"key": "prophet", "name_uk": "FB Prophet (Base)", "description_uk": "Статистична модель часових рядів"},
-            {"key": "xgboost", "name_uk": "XGBoost Regressor", "description_uk": "Градієнтний бустинг для складних патернів"},
-            {"key": "ensemble", "name_uk": "Ensemble (Prophet + XGBoost)", "description_uk": "Ансамбль моделей з максимальною точністю"}
-        ]
-    }
+    settings = get_settings()
+    return {"models": settings.FORECAST_MODELS}

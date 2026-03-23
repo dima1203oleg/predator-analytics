@@ -31,11 +31,14 @@ class ForecastService:
         logger.info("ForecastService initialized with SKLearn backends")
 
     def predict_demand(
-        self, 
-        product_code: str, 
+        self,
+        product_code: str,
+        *,
+        product_name: Optional[str] = None,
+        country_code: Optional[str] = None,
         history_data: Optional[List[Dict[str, Any]]] = None,
         months_ahead: int = 6,
-        model_key: str = "xgboost"
+        model_key: str = "xgboost",
     ) -> Dict[str, Any]:
         """
         Generates a demand forecast for a product.
@@ -47,7 +50,12 @@ class ForecastService:
 
         if not history_data or len(history_data) < 3:
             # High-quality fallback/simulation if data is sparse
-            return self._generate_synthetic_forecast(product_code, months_ahead)
+            return self._generate_synthetic_forecast(
+                product_code=product_code,
+                product_name=product_name,
+                country_code=country_code,
+                months_ahead=months_ahead,
+            )
 
         try:
             df = pd.DataFrame(history_data)
@@ -68,7 +76,6 @@ class ForecastService:
             model.fit(X, y)
             
             # Predict future
-            future_dates = []
             last_date = df['date'].iloc[-1]
             last_t = df['t'].iloc[-1]
             
@@ -93,7 +100,10 @@ class ForecastService:
                 
             return {
                 "product_code": product_code,
+                "product_name": product_name or product_code,
+                "country_code": country_code,
                 "model_used": model_key,
+                "source": "real",
                 "confidence_score": 0.85, # Real score would be R2 or similar
                 "mape": 0.15,
                 "data_points_used": len(df),
@@ -103,9 +113,21 @@ class ForecastService:
 
         except Exception as e:
             logger.error(f"ML Forecasting failed for {product_code}: {e}")
-            return self._generate_synthetic_forecast(product_code, months_ahead)
+            return self._generate_synthetic_forecast(
+                product_code=product_code,
+                product_name=product_name,
+                country_code=country_code,
+                months_ahead=months_ahead,
+            )
 
-    def _generate_synthetic_forecast(self, product_code: str, months_ahead: int) -> Dict[str, Any]:
+    def _generate_synthetic_forecast(
+        self,
+        *,
+        product_code: str,
+        product_name: Optional[str],
+        country_code: Optional[str],
+        months_ahead: int,
+    ) -> Dict[str, Any]:
         """Generates a high-quality trend-aware synthetic forecast."""
         now = datetime.now()
         base_volume = 1500 + (hash(product_code) % 1000)
@@ -133,7 +155,10 @@ class ForecastService:
             
         return {
             "product_code": product_code,
+            "product_name": product_name or product_code,
+            "country_code": country_code,
             "model_used": "sovereign_fallback",
+            "source": "synthetic",
             "confidence_score": 0.91,
             "mape": 0.09,
             "data_points_used": 0,

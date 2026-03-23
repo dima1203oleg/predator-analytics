@@ -78,6 +78,27 @@ class Settings(BaseSettings):
     # ── MLflow ────────────────────────────────────────────────
     MLFLOW_TRACKING_URI: str = "http://localhost:5000"
 
+    # ── ML-моделі прогнозування ───────────────────────────────
+    FORECAST_MODELS: list[dict] = Field(
+        default_factory=lambda: [
+            {
+                "key": "prophet",
+                "name_uk": "FB Prophet (Base)",
+                "description_uk": "Статистична модель часових рядів",
+            },
+            {
+                "key": "xgboost",
+                "name_uk": "XGBoost Regressor",
+                "description_uk": "Градієнтний бустинг для складних патернів",
+            },
+            {
+                "key": "ensemble",
+                "name_uk": "Ensemble (Prophet + XGBoost)",
+                "description_uk": "Ансамбль моделей з максимальною точністю",
+            },
+        ]
+    )
+
     # ── Проєкт ────────────────────────────────────────────────
     PROJECT_NAME: str = "PREDATOR Analytics"
     API_V1_STR: str = "/api/v1"

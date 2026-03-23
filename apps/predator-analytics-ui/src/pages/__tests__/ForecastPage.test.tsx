@@ -43,6 +43,7 @@ describe('ForecastPage Component', () => {
             product_name: 'Ноутбуки',
             months_ahead: 6,
             model_used: 'prophet',
+            source: 'real',
             forecast: [
                 { date: '2024-06-01', predicted_volume: 1000, confidence_lower: 900, confidence_upper: 1100 },
                 { date: '2024-07-01', predicted_volume: 1100, confidence_lower: 950, confidence_upper: 1250 },
@@ -123,5 +124,59 @@ describe('ForecastPage Component', () => {
         expect(await screen.findByText('What-If Симулятор')).toBeInTheDocument();
         expect(await screen.findByText(/Моделювання впливу зовнішніх факторів/i)).toBeInTheDocument();
         expect(await screen.findByText('Phase 2: Modeling Engine')).toBeInTheDocument();
+    });
+
+    it('displays error when forecast API fails', async () => {
+        (forecastApi.getDemandForecast as any).mockRejectedValue(new Error('Network error'));
+        renderWithClient(<ForecastPage />);
+
+        await waitFor(() => {
+            expect(screen.getByText('Не вдалося отримати прогноз. Спробуйте ще раз або перевірте бекенд.')).toBeInTheDocument();
+        });
+    });
+
+    it('displays synthetic badge when source is synthetic', async () => {
+        (forecastApi.getDemandForecast as any).mockResolvedValue({
+            product_code: '84713000',
+            product_name: 'Ноутбуки',
+            months_ahead: 6,
+            model_used: 'prophet',
+            source: 'synthetic',
+            forecast: [
+                { date: '2024-06-01', predicted_volume: 950, confidence_lower: 855, confidence_upper: 1064 },
+            ],
+            confidence_score: 0.91,
+            mape: 0.09,
+            interpretation_uk: 'Синтетичний прогноз.',
+        });
+
+        renderWithClient(<ForecastPage />);
+
+        await waitFor(() => {
+            expect(screen.getByText('Синтетичні')).toBeInTheDocument();
+            expect(screen.queryByText('Реальні дані')).not.toBeInTheDocument();
+        });
+    });
+
+    it('displays empty state when models list is empty', async () => {
+        (forecastApi.getModels as any).mockResolvedValue({ models: [] });
+        renderWithClient(<ForecastPage />);
+
+        fireEvent.click(screen.getByText('ML Моделі'));
+
+        await waitFor(() => {
+            expect(screen.getByText('Немає доступних моделей. Запустіть тренування або перевірте конфігурацію бекенду.')).toBeInTheDocument();
+        });
+    });
+
+    it('displays error when models API fails', async () => {
+        (forecastApi.getModels as any).mockRejectedValue(new Error('API error'));
+        renderWithClient(<ForecastPage />);
+
+        fireEvent.click(screen.getByText('ML Моделі'));
+
+        await waitFor(() => {
+            expect(screen.getByText('Не вдалося завантажити перелік моделей. Перевірте бекенд.')).toBeInTheDocument();
+        });
     });
 });

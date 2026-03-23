@@ -52,6 +52,7 @@ class ForecastResponse(BaseModel):
     product_name: str
     country_code: str | None = None
     model_used: str
+    source: str = Field(description="Походження даних: real або synthetic")
     confidence_score: float = Field(ge=0, le=1)
     mape: float = Field(ge=0, le=1)
     data_points_used: int

@@ -1,0 +1,168 @@
+# ═══════════════════════════════════════════════════════════════
+# 🦅 PREDATOR Analytics v55.0 — Frontend CI/CD Pipeline
+# Lint → Test → Build → Push → GitOps → ArgoCD Sync
+# ═══════════════════════════════════════════════════════════════
+
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "apps/predator-analytics-ui/**"
+      - ".github/workflows/frontend-ci-cd-v55.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/predator-analytics-ui/**"
+  workflow_dispatch: {}
+
+env:
+  REGISTRY: ghcr.io
+  OWNER: ${{ github.repository_owner }}
+
+jobs:
+  # ── 1. Code Quality & Testing ──────────────────────────────
+  lint-test:
+    name: "🔍 Lint & Test"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/predator-analytics-ui
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'npm'
+          cache-dependency-path: './apps/predator-analytics-ui/package-lock.json'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint --if-present
+
+      - name: TypeScript check
+        run: npx tsc --noEmit --skipLibCheck
+
+      - name: Vitest Unit Tests
+        run: npm run test:unit --if-present
+
+      - name: Playwright E2E Tests
+        run: |
+          npx playwright install --with-deps
+          npm run test --if-present
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: apps/predator-analytics-ui/playwright-report/
+          retention-days: 7
+
+  # ── 2. Build & Push Docker Image ────────────────────────────
+  build-push:
+    name: "🐳 Build Frontend"
+    needs: lint-test
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.OWNER }}/predator-frontend
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+            type=raw,value=v55.0.0,enable={{is_default_branch}}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/predator-analytics-ui
+          file: ./apps/predator-analytics-ui/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+  # ── 3. GitOps Update Helm Values ──────────────────────────
+  gitops-update:
+    name: "🔄 GitOps Update"
+    needs: build-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Update Frontend Image Tag
+        run: |
+          SHA="${{ github.sha }}"
+          VALUES="deploy/helm/predator/values.yaml"
+          yq -i ".frontend.image.tag = \"$SHA\"" "$VALUES"
+
+      - name: Commit & Push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add deploy/helm/predator/values.yaml
+          git diff --staged --quiet || git commit -m "chore(gitops): оновити фронтенд образ до ${{ github.sha }} [skip ci]"
+          git push
+
+  # ── 4. ArgoCD Sync ─────────────────────────────────────────
+  argocd-sync:
+    name: "🚀 ArgoCD Sync"
+    needs: gitops-update
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Trigger ArgoCD Refresh
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+        run: |
+          if [ -n "$ARGOCD_SERVER" ] && [ -n "$ARGOCD_TOKEN" ]; then
+            echo "🚀 Triggering ArgoCD sync for predator-frontend..."
+            curl -sSL -X POST \
+              -k \
+              -H "Authorization: Bearer $ARGOCD_TOKEN" \
+              "https://$ARGOCD_SERVER/api/v1/applications/predator-frontend/sync" \
+              -H "Content-Type: application/json" \
+              -d '{"prune": true}' || echo "⚠️ ArgoCD sync request failed"
+          else
+            echo "ℹ️ ArgoCD secrets not configured. Sync will happen via polling."
+          fi

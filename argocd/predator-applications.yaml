@@ -1,0 +1,124 @@
+# ═══════════════════════════════════════════════════════════════
+# 🦅 PREDATOR Analytics v55.0 — ArgoCD Applications
+# GitOps: автоматичний синхронізація Helm чартів
+# ═══════════════════════════════════════════════════════════════
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-backend
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/component: backend
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/dima1203oleg/predator-analytics.git
+    targetRevision: main
+    path: deploy/helm/predator
+    helm:
+      valueFiles:
+        - values.yaml
+      parameters:
+        - name: coreApi.enabled
+          value: "true"
+        - name: graphService.enabled
+          value: "true"
+        - name: ingestionWorker.enabled
+          value: "true"
+        - name: frontend.enabled
+          value: "false"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: predator-v55
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-frontend
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/component: frontend
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/dima1203oleg/predator-analytics.git
+    targetRevision: main
+    path: deploy/helm/predator
+    helm:
+      valueFiles:
+        - values.yaml
+      parameters:
+        - name: coreApi.enabled
+          value: "false"
+        - name: graphService.enabled
+          value: "false"
+        - name: ingestionWorker.enabled
+          value: "false"
+        - name: frontend.enabled
+          value: "true"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: predator-v55
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-infrastructure
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/component: infrastructure
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/dima1203oleg/predator-analytics.git
+    targetRevision: main
+    path: infra/helm/umbrella
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: predator-v55
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

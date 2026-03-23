@@ -31,8 +31,8 @@ frontend:
   enabled: true
   replicaCount: 2
   image:
-    repository: ghcr.io/dima1203oleg/predator-analytics-ui
-    tag: v55.1.0
+    repository: ghcr.io/dima1203oleg/predator-frontend
+    tag: v55.0.0
     pullPolicy: IfNotPresent
   service:
     type: LoadBalancer
@@ -43,11 +43,16 @@ frontend:
     className: traefik
     annotations:
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      traefik.ingress.kubernetes.io/router.middlewares: "predator-https-redirect@kubernetescrd"
     hosts:
       - host: "{{ .Values.global.domain }}"
         paths:
           - path: /
             pathType: Prefix
+    tls:
+      - secretName: predator-tls
+        hosts:
+          - "{{ .Values.global.domain }}"
   resources:
     limits:
       cpu: 500m
@@ -60,6 +65,9 @@ frontend:
     minReplicas: 2
     maxReplicas: 5
     targetCPUUtilizationPercentage: 70
+  env:
+    VITE_API_URL: "https://api.{{ .Values.global.domain }}/api/v1"
+    NODE_ENV: "production"
   persistence:
     enabled: false
     size: 1Gi
@@ -70,7 +78,7 @@ coreApi:
   replicaCount: 2
   image:
     repository: ghcr.io/dima1203oleg/predator-core-api
-    tag: v55.1.0
+    tag: v55.0.0
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -80,16 +88,47 @@ coreApi:
       cpu: 1000m
       memory: 1Gi
     requests:
-      cpu: 100m
+      cpu: 250m
       memory: 256Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 70
+  env:
+    ENV: "production"
+    DATABASE_URL: "postgresql+asyncpg://predator:{{ .Values.postgresql.global.postgresql.auth.password }}@{{ .Values.global.postgres.host }}:5432/{{ .Values.global.postgresql.auth.database }}"
+    REDIS_URL: "redis://{{ .Values.global.redis.host }}:6379/0"
+    NEO4J_URI: "bolt://{{ .Values.global.neo4j.host }}:7687"
+    NEO4J_USER: "neo4j"
+    NEO4J_PASSWORD: "{{ .Values.neo4j.neo4j.password }}"
+    OPENSEARCH_URL: "http://{{ .Values.global.opensearch.host }}:9200"
+    QDRANT_URL: "http://{{ .Values.global.qdrant.host }}:6333"
+    KAFKA_BOOTSTRAP_SERVERS: "predator-v55-redpanda:9092"
+    LITELLM_GATEWAY_URL: "http://predator-v55-litellm:4000"
+    SECRET_KEY: "{{ .Values.global.secretKey | default \"changeme-production-secret-key-32-chars\" }}"
+    DEBUG: "false"
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: 8000
+    initialDelaySeconds: 5
+    periodSeconds: 5
 
 # Graph Service
 graphService:
   replicaCount: 1
   image:
     repository: ghcr.io/dima1203oleg/predator-graph-service
-    tag: v55.1.0
+    tag: v55.0.0
   service:
+    type: ClusterIP
     port: 8002
   resources:
     limits:
@@ -97,25 +136,69 @@ graphService:
       memory: 512Mi
     requests:
       cpu: 100m
-      memory: 256Mi
+      memory: 128Mi
+  env:
+    NEO4J_URI: "bolt://{{ .Values.global.neo4j.host }}:7687"
+    NEO4J_USER: "neo4j"
+    NEO4J_PASSWORD: "{{ .Values.neo4j.neo4j.password }}"
+    DEBUG: "false"
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8002
+    initialDelaySeconds: 15
+    periodSeconds: 10
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: 8002
+    initialDelaySeconds: 5
+    periodSeconds: 5
 
 # Ingestion Worker
 ingestionWorker:
+  replicaCount: 2
   image:
     repository: ghcr.io/dima1203oleg/predator-ingestion-worker
-    tag: v55.1.0
-  keda:
-    enabled: true
-    minReplicaCount: 0
-    maxReplicaCount: 10
-    kafkaTopic: ingestion-triggers
+    tag: v55.0.0
+    pullPolicy: IfNotPresent
   resources:
     limits:
-      cpu: 1000m
-      memory: 1Gi
+      cpu: 750m
+      memory: 768Mi
     requests:
-      cpu: 100m
+      cpu: 200m
       memory: 256Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 70
+  env:
+    KAFKA_BOOTSTRAP_SERVERS: "predator-v55-redpanda:9092"
+    DATABASE_URL: "postgresql+asyncpg://predator:{{ .Values.postgresql.global.postgresql.auth.password }}@{{ .Values.global.postgres.host }}:5432/{{ .Values.global.postgresql.auth.database }}"
+    OPENSEARCH_URL: "http://{{ .Values.global.opensearch.host }}:9200"
+    QDRANT_URL: "http://{{ .Values.global.qdrant.host }}:6333"
+    MINIO_ENDPOINT: "predator-v55-minio:9000"
+    MINIO_ACCESS_KEY: "{{ .Values.global.minio.accessKey | default \"minioadmin\" }}"
+    MINIO_SECRET_KEY: "{{ .Values.global.minio.secretKey | default \"minioadmin\" }}"
+    DEBUG: "false"
+  livenessProbe:
+    exec:
+      command:
+        - /bin/sh
+        - -c
+        - "ps aux | grep '[p]ython' || exit 1"
+    initialDelaySeconds: 30
+    periodSeconds: 30
+  readinessProbe:
+    exec:
+      command:
+        - /bin/sh
+        - -c
+        - "python -c 'import kafka; print(\"ok\")' || exit 1"
+    initialDelaySeconds: 10
+    periodSeconds: 10
 
 # Security
 security:
@@ -123,8 +206,65 @@ security:
     enabled: false
   networkPolicy:
     enabled: true
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 2000
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
 
 # Monitoring
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    path: /metrics
+  prometheusRule:
+    enabled: true
+    groups:
+      - name: predator.rules
+        rules:
+          - alert: PredatorDown
+            expr: up{job="predator"} == 0
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "PREDATOR service is down"
+              description: "PREDATOR {{ $labels.service }} has been down for more than 5 minutes."
+
+# Global defaults
+global:
+  postgres:
+    host: predator-v55-postgresql
+    port: 5432
+    auth:
+      database: predator
+      username: predator
+      password: predator_db_secret
+  redis:
+    host: predator-v55-redis
+    port: 6379
+  neo4j:
+    host: predator-v55-neo4j
+    port: 7687
+  opensearch:
+    host: predator-v55-opensearch
+    port: 9200
+  qdrant:
+    host: predator-v55-qdrant
+    port: 6333
+  minio:
+    accessKey: minioadmin
+    secretKey: minioadmin
+  secretKey: changeme-production-secret-key-32-chars
+
+# Additional Monitoring (legacy compatibility)
 monitoring:
   prometheus:
     enabled: true
