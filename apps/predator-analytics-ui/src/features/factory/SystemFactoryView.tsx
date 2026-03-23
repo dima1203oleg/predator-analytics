@@ -1300,10 +1300,7 @@ export default function SystemFactoryView() {
                </motion.div>
              )}
 
-             {/* ═══════════════════════════════════════════════════ */}
-             {/* 🛠 AUTONOMOUS FIX */}
-             {/* ═══════════════════════════════════════════════════ */}
-             {activeTab === 'bugfix' && (
+              {activeTab === 'bugfix' && (
                 <motion.div key="fix" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
                   <div className="flex items-center justify-between p-5 bg-gradient-to-r from-red-950/40 to-slate-900/40 border border-red-500/20 rounded-2xl backdrop-blur-md">
                     <div className="flex items-center gap-4">
@@ -1317,6 +1314,9 @@ export default function SystemFactoryView() {
                         </p>
                       </div>
                     </div>
+                    <Button variant="neon" className="bg-rose-600/20 text-rose-300 border-rose-500/50 text-[9px] uppercase font-black" onClick={() => bugs.filter(b => b.status === 'detected').forEach(b => handleFixBug(b.id))}>
+                      <Zap size={12} className="mr-1" /> Автовиправити все
+                    </Button>
                   </div>
 
                   <div className="space-y-3">
@@ -1389,9 +1389,6 @@ export default function SystemFactoryView() {
                 </motion.div>
               )}
 
-              {/* ═══════════════════════════════════════════════════ */}
-              {/* 🏥 HEALTH CHECK */}
-              {/* ═══════════════════════════════════════════════════ */}
               {activeTab === 'health' && (
                 <motion.div key="health" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
                   <div className="flex items-center justify-between p-5 bg-gradient-to-r from-teal-950/40 to-cyan-950/40 border border-teal-500/30 rounded-2xl backdrop-blur-md">
@@ -1402,7 +1399,7 @@ export default function SystemFactoryView() {
                       <div>
                         <h3 className="text-sm font-black uppercase tracking-widest text-white">СИСТЕМНИЙ HEALTH CHECK</h3>
                         <p className="text-[10px] font-mono text-teal-400 uppercase">
-                          СЕРВІСІВ АКТИВНИХ: {healthChecks.filter(h => h.status === 'healthy').length}/{healthChecks.length} | ОНОВЛЕННЯ КОЖНІ 3 СЕК
+                          СЕРВІСІВ АКТИВНИХ: {healthChecks.filter(h => h.status === 'healthy').length}/{healthChecks.length} | ОНОВЛЕННЯ КОЖНІ 30 СЕК
                         </p>
                       </div>
                     </div>
@@ -1632,171 +1629,7 @@ export default function SystemFactoryView() {
 
                   {/* ── Живий Термінал з логами ── */}
                   <div className="rounded-2xl border border-slate-800 bg-slate-950/90 overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800 bg-slate-900/60">
-                      <div className="flex items-center gap-2">
-                        <div className="flex gap-1.5">
-                          <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                          <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                        </div>
-                        <span className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest ml-2">
-                          <Terminal size={11} className="inline mr-1 text-violet-400" />
-                          PREDATOR-OODA-LOOP -- live stream
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        {infiniteRunning && (
-                          <motion.div
-                            key="rec"
-                            animate={{ opacity: [1, 0.3, 1] }}
-                            transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5 }}
-                            className="flex items-center gap-1.5 text-rose-400 text-[9px] font-black uppercase"
-                          >
-                            <span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> REC
-                          </motion.div>
-                        )}
-                        <span className="text-[9px] font-mono text-slate-600">logs: {infiniteLogs.length}/50</span>
-                      </div>
-                    </div>
-                    <div className="h-[300px] overflow-y-auto p-4 font-mono text-[11px] space-y-1 custom-scrollbar" id="ooda-log-terminal">
-                      {infiniteLogs.length === 0 && (
-                        <div className="text-slate-600 flex items-center gap-2 py-4 justify-center">
-                          <Terminal size={16} />
-                          <span>Окуй, запустіть OODA цикл...
-                          </span>
-                        </div>
-                      )}
-                      {infiniteLogs.map((log, i) => {
-                        let cls = 'text-slate-400';
-                        if (log.includes('OBSERVE')) cls = 'text-cyan-400';
-                        else if (log.includes('ORIENT')) cls = 'text-fuchsia-400';
-                        else if (log.includes('DECIDE')) cls = 'text-amber-400';
-                        else if (log.includes('ACT') || log.includes('✅')) cls = 'text-emerald-400';
-                        else if (log.includes('SYSTEM')) cls = 'text-violet-300 font-black';
-                        else if (log.includes('❌') || log.includes('ERROR')) cls = 'text-rose-400';
-                        return (
-                          <motion.div
-                            key={i}
-                            initial={i === infiniteLogs.length - 1 ? { opacity: 0, x: -8 } : {}}
-                            animate={{ opacity: 1, x: 0 }}
-                            className={cn('flex gap-2 leading-relaxed', cls)}
-                          >
-                            <span className="shrink-0 text-slate-700 select-none">{String(i + 1).padStart(3, '0')}</span>
-                            <span className="break-all">{log}</span>
-                          </motion.div>
-                        );
-                      })}
-                      {infiniteRunning && (
-                        <div className="flex items-center gap-2 text-violet-400 mt-2">
-                          <Loader2 size={11} className="animate-spin" />
-                          <span className="animate-pulse">Обробка...
-                          </span>
-                          <span className="inline-block w-1 h-3 bg-violet-400 animate-ping ml-1" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {activeTab === 'bugfix' && (
-                <motion.div key="fix" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
-                  <div className="flex items-center justify-between p-5 bg-gradient-to-r from-red-950/40 to-slate-900/40 border border-red-500/20 rounded-2xl backdrop-blur-md">
-                    <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
-                        <Bug size={28} />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-black uppercase tracking-widest text-white">AUTONOMOUS BUG FIXING</h3>
-                        <p className="text-[10px] font-mono text-slate-400 uppercase">
-                          ВИЯВЛЕНО: {bugs.filter(b => b.status === 'detected').length} | ВИПРАВЛЯЄТЬСЯ: {bugs.filter(b => b.status === 'fixing').length} | ВИПРАВЛЕНО: {bugs.filter(b => b.status === 'fixed').length}
-                        </p>
-                      </div>
-                    </div>
-                    <Button variant="neon" className="bg-rose-600/20 text-rose-300 border-rose-500/50 text-[9px] uppercase font-black" onClick={() => bugs.filter(b => b.status === 'detected').forEach(b => handleFixBug(b.id))}>
-                      <Zap size={12} className="mr-1" /> Автовиправити все
-                    </Button>
-                  </div>
-
-                  <div className="space-y-3">
-                    {bugs.map(bug => (
-                      <motion.div key={bug.id} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className={cn(
-                        "p-4 rounded-xl border backdrop-blur-md flex items-center justify-between transition-all",
-                        bug.status === 'fixed' && "bg-emerald-950/20 border-emerald-500/20",
-                        bug.status === 'fixing' && "bg-amber-950/20 border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.1)]",
-                        bug.status === 'detected' && "bg-red-950/20 border-red-500/20",
-                      )}>
-                        <div className="flex items-center gap-4 w-full">
-                          <div className={cn(
-                            "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border",
-                            bug.severity === 'critical' ? "bg-red-500/20 text-red-400 border-red-500/50" : 
-                            bug.severity === 'high' ? "bg-orange-500/20 text-orange-400 border-orange-500/50" : 
-                            bug.severity === 'medium' ? "bg-amber-500/20 text-amber-400 border-amber-500/50" : "bg-blue-500/20 text-blue-400 border-blue-500/50"
-                          )}>
-                             {bug.severity === 'critical' || bug.severity === 'high' ? <Flame size={18} /> : <Bug size={18} />}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-[10px] font-mono text-slate-500">{bug.id}</span>
-                              <Badge variant={bug.severity === 'critical' ? 'destructive' : bug.severity === 'high' ? 'outline' : 'default'} className={cn("text-[9px]", 
-                                  bug.severity === 'critical' && "bg-red-500/20 text-red-400",
-                                  bug.severity === 'high' && "bg-orange-500/20 text-orange-400",
-                                  bug.severity === 'medium' && "bg-amber-500/20 text-amber-400",
-                                  bug.severity === 'low' && "bg-blue-500/20 text-blue-400"
-                              )}>{bug.severity}</Badge>
-                              <span className="text-[10px] text-slate-500 font-mono">{bug.component}</span>
-                            </div>
-                            <p className="text-sm text-white/90 mb-1">{bug.description}</p>
-                            <p className="text-[10px] text-slate-500 font-mono">{bug.file}</p>
-                            
-                            <div className="mt-2">
-                              {bug.status === 'fixing' && (
-                                <div className="flex items-center gap-2 flex-1 max-w-[200px]">
-                                  <span className="text-amber-400 font-mono font-black">{bug.fixProgress}%</span>
-                                  <div className="h-1.5 flex-1 bg-black/50 rounded-full overflow-hidden border border-white/5">
-                                    <motion.div 
-                                      className="h-full bg-gradient-to-r from-amber-500 to-emerald-500 rounded-full"
-                                      animate={{ width: `${bug.fixProgress}%` }}
-                                      transition={{ duration: 0.5 }}
-                                    />
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          <div className="shrink-0">
-                            {bug.status === 'detected' && (
-                              <Button variant="neon" size="sm" className="bg-red-600/20 text-red-300 border-red-500/50 text-[9px] uppercase font-black" onClick={() => handleFixBug(bug.id)}>
-                                <Wrench size={12} className="mr-1" /> Виправити
-                              </Button>
-                            )}
-                            {bug.status === 'fixing' && (
-                              <div className="flex items-center gap-2 text-amber-400 text-[10px] font-mono">
-                                <Loader2 size={14} className="animate-spin" /> FIXING...
-                              </div>
-                            )}
-                            {bug.status === 'fixed' && (
-                              <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase">
-                                <CheckCircle2 size={16} /> ВИПРАВЛЕНО
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {activeTab === 'health' && (
-                <motion.div key="health" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
-                  <div className="flex items-center justify-between p-5 bg-gradient-to-r from-teal-950/40 to-cyan-950/40 border border-teal-500/30 rounded-2xl backdrop-blur-md">
-                    <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400">
-                        <HeartPulse size={28} />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-black uppercase tracking-widest text-white">СИСТЕМНИЙ HEALTH CHECK</h3>
+                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-lassName="text-sm font-black uppercase tracking-widest text-white">СИСТЕМНИЙ HEALTH CHECK</h3>
                         <p className="text-[10px] font-mono text-teal-400 uppercase">
                           СЕРВІСІВ АКТИВНИХ: {healthChecks.filter(h => h.status === 'healthy').length}/{healthChecks.length} | ОНОВЛЕННЯ КОЖНІ 30 СЕК
                         </p>
