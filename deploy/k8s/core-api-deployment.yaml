@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: predator-v55
+    app.kubernetes.io/name: core-api
+  name: predator-v55-core-api
+  namespace: predator-v55
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: predator-v55
+      app.kubernetes.io/name: core-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: predator-v55
+        app.kubernetes.io/name: core-api
+    spec:
+      initContainers:
+      - name: install-deps
+        image: europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/core-api:fix-risk-perm-7b98e001
+        command: ["/bin/sh", "-c"]
+        args:
+          - pip install --user httpx && cp -r ~/.local/lib/python3.12/site-packages/* /shared-deps/ || true
+        volumeMounts:
+        - name: shared-deps
+          mountPath: /shared-deps
+      containers:
+      - env:
+        - name: DATABASE_URL
+          value: postgresql+asyncpg://predator:predator_password@predator-v55-postgres:5432/predator_db
+        - name: REDIS_URL
+          value: redis://predator-v55-redis-master:6379/0
+        - name: QDRANT_URL
+          value: http://predator-v55-qdrant:6333
+        - name: OPENSEARCH_URL
+          value: http://predator-v55-opensearch:9200
+        - name: NEO4J_URI
+          value: bolt://predator-v55-neo4j:7687
+        - name: ENV
+          value: production
+        - name: SECRET_KEY
+          value: "a7f8c9d2e3b4f501a6b7c8d9e0f1a2b3c4d5e6f70819293a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8"
+        - name: PYTHONPATH
+          value: "/app:/libs/predator-common:/app/services/shared:/shared-deps"
+        image: europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/core-api:fix-risk-perm-7b98e001
+        imagePullPolicy: Always
+        name: core-api
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health/live
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        volumeMounts:
+        - name: shared-deps
+          mountPath: /shared-deps
+      volumes:
+      - name: shared-deps
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: predator-v55-core-api
+  namespace: predator-v55
+  labels:
+    app.kubernetes.io/instance: predator-v55
+    app.kubernetes.io/name: core-api
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app.kubernetes.io/instance: predator-v55
+    app.kubernetes.io/name: core-api

@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predator-v55-redpanda
+  namespace: predator-v55
+  labels:
+    app.kubernetes.io/name: redpanda
+    app.kubernetes.io/component: messaging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: redpanda
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: redpanda
+    spec:
+      containers:
+      - name: redpanda
+        image: redpandadata/redpanda:v23.3.1
+        command:
+        - /usr/bin/rpk
+        - redpanda
+        - start
+        - --smp
+        - "1"
+        - --memory
+        - "512M"
+        - --reserve-memory
+        - "0M"
+        - --overprovisioned
+        - --node-id
+        - "0"
+        - --kafka-addr
+        - "PLAINTEXT://0.0.0.0:9092"
+        - --advertise-kafka-addr
+        - "PLAINTEXT://predator-v55-redpanda:9092"
+        ports:
+        - containerPort: 9092
+          name: kafka
+        - containerPort: 9644
+          name: admin
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          tcpSocket:
+            port: 9092
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 9092
+          initialDelaySeconds: 10
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: predator-v55-redpanda
+  namespace: predator-v55
+  labels:
+    app.kubernetes.io/name: redpanda
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9092
+    targetPort: 9092
+    name: kafka
+  - port: 9644
+    targetPort: 9644
+    name: admin
+  selector:
+    app.kubernetes.io/name: redpanda
