@@ -1629,61 +1629,66 @@ export default function SystemFactoryView() {
 
                   {/* ── Живий Термінал з логами ── */}
                   <div className="rounded-2xl border border-slate-800 bg-slate-950/90 overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-lassName="text-sm font-black uppercase tracking-widest text-white">СИСТЕМНИЙ HEALTH CHECK</h3>
-                        <p className="text-[10px] font-mono text-teal-400 uppercase">
-                          СЕРВІСІВ АКТИВНИХ: {healthChecks.filter(h => h.status === 'healthy').length}/{healthChecks.length} | ОНОВЛЕННЯ КОЖНІ 30 СЕК
-                        </p>
+                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800 bg-slate-900/60">
+                      <div className="flex items-center gap-2">
+                        <div className="flex gap-1.5">
+                          <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                        </div>
+                        <span className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest ml-2">
+                          <Terminal size={11} className="inline mr-1 text-violet-400" />
+                          PREDATOR-OODA-LOOP -- live stream
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        {infiniteRunning && (
+                          <motion.div
+                            key="rec"
+                            animate={{ opacity: [1, 0.3, 1] }}
+                            transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5 }}
+                            className="flex items-center gap-1.5 text-rose-400 text-[9px] font-black uppercase"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> REC
+                          </motion.div>
+                        )}
+                        <span className="text-[9px] font-mono text-slate-600">logs: {infiniteLogs.length}/50</span>
                       </div>
                     </div>
-                    <div className={cn(
-                      "px-6 py-2 rounded-xl border text-sm font-black uppercase",
-                      healthChecks.every(h => h.status === 'healthy')
-                        ? "bg-emerald-500/20 border-emerald-400/50 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-                        : "bg-amber-500/20 border-amber-400/50 text-amber-400"
-                    )}>
-                      {healthChecks.every(h => h.status === 'healthy') ? '✅ ВСЕ ЗДОРОВО' : '⚠️ Є ДЕГРАДАЦІЇ'}
+                    <div className="h-[300px] overflow-y-auto p-4 font-mono text-[11px] space-y-1 custom-scrollbar" id="ooda-log-terminal">
+                      {infiniteLogs.length === 0 && (
+                        <div className="text-slate-600 flex items-center gap-2 py-4 justify-center">
+                          <Terminal size={16} />
+                          <span>Очікуємо запуску OODA циклу...</span>
+                        </div>
+                      )}
+                      {infiniteLogs.map((log, i) => {
+                        let cls = 'text-slate-400';
+                        if (log.includes('OBSERVE')) cls = 'text-cyan-400';
+                        else if (log.includes('ORIENT')) cls = 'text-fuchsia-400';
+                        else if (log.includes('DECIDE')) cls = 'text-amber-400';
+                        else if (log.includes('ACT') || log.includes('✅')) cls = 'text-emerald-400';
+                        else if (log.includes('SYSTEM')) cls = 'text-violet-300 font-black';
+                        else if (log.includes('❌') || log.includes('ERROR')) cls = 'text-rose-400';
+                        return (
+                          <motion.div
+                            key={i}
+                            initial={i === infiniteLogs.length - 1 ? { opacity: 0, x: -8 } : {}}
+                            animate={{ opacity: 1, x: 0 }}
+                            className={cn('flex gap-2 leading-relaxed', cls)}
+                          >
+                            <span className="shrink-0 text-slate-700 select-none">{String(i + 1).padStart(3, '0')}</span>
+                            <span className="break-all">{log}</span>
+                          </motion.div>
+                        );
+                      })}
+                      {infiniteRunning && (
+                        <div className="flex items-center gap-2 text-violet-400 mt-2">
+                          <Loader2 size={11} className="animate-spin" />
+                          <span className="animate-pulse">Обробка...</span>
+                        </div>
+                      )}
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {healthChecks.map(hc => (
-                      <motion.div key={hc.id} layout className={cn(
-                        "p-4 rounded-xl border backdrop-blur-md flex items-center gap-4 transition-all",
-                        hc.status === 'healthy' && "bg-emerald-950/10 border-emerald-500/20",
-                        hc.status === 'degraded' && "bg-amber-950/10 border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.1)]",
-                        hc.status === 'down' && "bg-red-950/10 border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.1)]",
-                      )}>
-                        <div className={cn(
-                          "w-10 h-10 rounded-lg border flex items-center justify-center shrink-0",
-                          hc.status === 'healthy' && "bg-emerald-500/20 border-emerald-400/50 text-emerald-400",
-                          hc.status === 'degraded' && "bg-amber-500/20 border-amber-400/50 text-amber-400",
-                          hc.status === 'down' && "bg-red-500/20 border-red-400/50 text-red-400",
-                        )}>
-                           {hc.status === 'healthy' ? <CheckCircle2 size={20} /> : hc.status === 'degraded' ? <AlertTriangle size={20} /> : <XCircle size={20} />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-baseline gap-2 mb-0.5">
-                            <span className="text-sm font-black text-white">{hc.service}</span>
-                            <span className="text-[10px] font-mono text-slate-500 truncate">{hc.endpoint}</span>
-                          </div>
-                          <div className="flex items-center gap-4 text-[10px] font-mono">
-                            <span className={cn(
-                              hc.latency < 20 ? 'text-emerald-400' : hc.latency < 50 ? 'text-amber-400' : 'text-red-400'
-                            )}>⚡ {hc.latency}ms</span>
-                            <span className="text-slate-500">Uptime: {hc.uptime}</span>
-                            <span className="text-slate-600">{hc.lastCheck.toLocaleTimeString('uk-UA', { hour12: false })}</span>
-                          </div>
-                        </div>
-                        <div className={cn(
-                          "px-3 py-1 rounded-lg text-[9px] font-black uppercase",
-                          hc.status === 'healthy' && "bg-emerald-500/20 text-emerald-400",
-                          hc.status === 'degraded' && "bg-amber-500/20 text-amber-400",
-                          hc.status === 'down' && "bg-red-500/20 text-red-400",
-                        )}>
-                          {hc.status === 'healthy' ? 'ЗДОРОВИЙ' : hc.status === 'degraded' ? 'ДЕГРАДАЦІЯ' : 'НЕДОСТУПНИЙ'}
-                        </div>
-                      </motion.div>
-                    ))}
                   </div>
                 </motion.div>
               )}
