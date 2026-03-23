@@ -138,7 +138,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
             </div>
             <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white">ШІ_ІНСАЙТИ_v55</span>
           </div>
-          <Badge className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] animate-pulse">LIVE</Badge>
+          <Badge className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] animate-pulse">НАЖИВО</Badge>
         </div>
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-5">
           {loading ? (
@@ -191,7 +191,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                 <div>
                     <div className="flex items-center gap-3 mb-2">
                         <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.4em] animate-pulse">ЛАБОРАТОРІЯ_ІНСАЙТІВ_v55.2</span>
-                        <Badge variant="outline" className="text-[8px] bg-indigo-500/10 text-indigo-400 border-indigo-500/20">PREMIUM_AI</Badge>
+                        <Badge variant="outline" className="text-[8px] bg-indigo-500/10 text-indigo-400 border-indigo-500/20">PREMIUM_ШІ</Badge>
                     </div>
                     <h1 className="text-5xl font-black text-white italic tracking-tighter uppercase leading-tight font-display">
                         СВЯТИЛИЩЕ <span className="text-indigo-400 drop-shadow-[0_0_20px_rgba(99,102,241,0.4)]">ІНСАЙТІВ</span>

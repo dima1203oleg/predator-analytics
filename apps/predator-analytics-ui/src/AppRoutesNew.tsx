@@ -86,6 +86,12 @@ const DataIngestionHub = lazy(() => import('./features/platform/DataIngestionHub
 const ScenarioModeling = lazy(() => import('./features/intelligence/ScenarioModeling'));
 const ForecastView = lazy(() => import('./features/ai/ForecastView'));
 
+// Клієнтський арсенал — Газета та Компромат
+const NewspaperView = lazy(() => import('./features/newspaper/NewspaperView'));
+const ComprompatPersonView = lazy(() => import('./features/newspaper/ComprompatPersonView'));
+const FirmDossierView = lazy(() => import('./features/newspaper/FirmDossierView'));
+const PowerStructureView = lazy(() => import('./features/newspaper/PowerStructureView'));
+
 // Canonical v4.2.0 Pages
 const MarketPage = lazy(() => import('./pages/MarketPage'));
 const ForecastPage = lazy(() => import('./pages/ForecastPage'));
@@ -141,12 +147,12 @@ export const AppRoutesNew = () => {
   const { userRole, setRole } = useAppStore();
   const { user } = useUser();
 
-  // Sync role from context to store
-  useEffect(() => {
-    if (user?.role && user.role !== userRole) {
-      setRole(user.role);
-    }
-  }, [user?.role, userRole, setRole]);
+  // Sync role from context to store — DISABLED: This was breaking the manual role toggle in the sidebar
+  // useEffect(() => {
+  //   if (user?.role && user.role !== userRole) {
+  //     setRole(user.role);
+  //   }
+  // }, [user?.role, userRole, setRole]);
 
   return (
     <MainLayout>
@@ -258,6 +264,12 @@ export const AppRoutesNew = () => {
             <Route path="/security" element={<SecurityView />} />
             <Route path="/deployment" element={<DeploymentView />} />
             <Route path="/settings" element={<SettingsView />} />
+
+            {/* Клієнтський арсенал — нові маршрути v55.1 */}
+            <Route path="/newspaper" element={<NewspaperView />} />
+            <Route path="/compromat-person" element={<ComprompatPersonView />} />
+            <Route path="/compromat-firm" element={<FirmDossierView />} />
+            <Route path="/power-structure" element={<PowerStructureView />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
