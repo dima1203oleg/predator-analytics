@@ -3728,29 +3728,64 @@ app.post('/api/v1/factory/bugs/:bugId/fix', (req, res) => {
 // --- Infinite Improvement (OODA Loop) Endpoints ---
 app.get('/api/v1/factory/infinite/status', (req, res) => {
     if (SYSTEM_IMPROVEMENT_STATE.is_running) {
-        // Simulate phase transitions and logs
         const phases = ['observe', 'orient', 'decide', 'act'];
         const currentIdx = phases.indexOf(SYSTEM_IMPROVEMENT_STATE.current_phase);
         
-        // Randomly advance phase (1 in 3 calls)
-        if (Math.random() > 0.6) {
+        // Randomly advance phase (1 in 2 calls for faster testing, or 1 in 3)
+        // Let's make it 1 in 2 to see the cycle moving more clearly
+        if (Math.random() > 0.5) {
             const nextIdx = (currentIdx + 1) % phases.length;
-            SYSTEM_IMPROVEMENT_STATE.current_phase = phases[nextIdx];
+            const nextPhase = phases[nextIdx];
+            SYSTEM_IMPROVEMENT_STATE.current_phase = nextPhase;
             
-            if (nextIdx === 0) {
-                SYSTEM_IMPROVEMENT_STATE.cycles_completed += 1;
-                SYSTEM_IMPROVEMENT_STATE.improvements_made += Math.floor(Math.random() * 3);
+            const ts = new Date().toLocaleTimeString();
+            let logMsg = '';
+            
+            switch (nextPhase) {
+                case 'observe':
+                    SYSTEM_IMPROVEMENT_STATE.cycles_completed += 1;
+                    logMsg = `[${ts}] 🔍 OBSERVE: Сканування системних метрик... healthy=47/47. avg CPU=24%, avg MEM=42%.`;
+                    break;
+                case 'orient':
+                    logMsg = `[${ts}] 🧠 ORIENT: Аналіз логів та метрик. Порівняння з Gold Patterns. Відхилення: 1.2%`;
+                    const detectedBugs = DB_BUGS.filter(b => b.status === 'detected');
+                    if (detectedBugs.length > 0) {
+                        logMsg += `\n[${ts}] 🧠 ORIENT: Виявлено активний дефект [${detectedBugs[0].id}] у ${detectedBugs[0].component}`;
+                    }
+                    break;
+                case 'decide':
+                    logMsg = `[${ts}] 📋 DECIDE: Прийнято рішення про оптимізацію індексів та рестарт сервісів.`;
+                    const bugsToFix = DB_BUGS.filter(b => b.status === 'detected');
+                    if (bugsToFix.length > 0) {
+                        logMsg += `\n[${ts}] 📋 DECIDE: Призначено авто-патч для [${bugsToFix[0].id}]`;
+                    }
+                    break;
+                case 'act':
+                    SYSTEM_IMPROVEMENT_STATE.improvements_made += 1;
+                    logMsg = `[${ts}] 🚀 ACT: Автономне вдосконалення завершено. System health score: 99%.`;
+                    const bugToResolve = DB_BUGS.find(b => b.status === 'detected');
+                    if (bugToResolve) {
+                        bugToResolve.status = 'fixed';
+                        bugToResolve.fixed_at = new Date().toISOString();
+                        logMsg += `\n[${ts}] ✅ ACT: Дефект [${bugToResolve.id}] успішно виправлено!`;
+                    } else if (SYSTEM_IMPROVEMENT_STATE.cycles_completed % 3 === 2) {
+                        // Add new bug occasionally
+                        const newId = `bug-${Date.now().toString().slice(-4)}`;
+                        DB_BUGS.push({
+                            id: newId,
+                            description: 'Нова аномалія виявлена сканером',
+                            component: 'Analytics',
+                            severity: 'medium',
+                            status: 'detected',
+                            detected_at: new Date().toISOString()
+                        });
+                        logMsg += `\n[${ts}] 🔎 ACT: Виявлено новий дефект [${newId}]`;
+                    }
+                    break;
             }
             
-            const logMsg = {
-                observe: `[${new Date().toLocaleTimeString()}] Phase: OBSERVE. Scanning system metrics and logs...`,
-                orient: `[${new Date().toLocaleTimeString()}] Phase: ORIENT. Analyzing correlations and anomalies...`,
-                decide: `[${new Date().toLocaleTimeString()}] Phase: DECIDE. Planning optimization strategies...`,
-                act: `[${new Date().toLocaleTimeString()}] Phase: ACT. Applying autonomous improvements to core modules...`
-            }[phases[nextIdx]];
-            
             SYSTEM_IMPROVEMENT_STATE.logs.push(logMsg);
-            if (SYSTEM_IMPROVEMENT_STATE.logs.length > 20) SYSTEM_IMPROVEMENT_STATE.logs.shift();
+            if (SYSTEM_IMPROVEMENT_STATE.logs.length > 50) SYSTEM_IMPROVEMENT_STATE.logs.shift();
         }
     }
     res.json(SYSTEM_IMPROVEMENT_STATE);
