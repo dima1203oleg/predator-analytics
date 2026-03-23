@@ -276,7 +276,7 @@ export function OsintGraphExplorer() {
                 const edgeId = `${nodeId}-UBO-${uboUeid}`;
                 if (!edges.some(e => e.id === edgeId)) {
                     newEdges.push({
-                         id: edgeId, source: uboUeid, target: nodeId, type: 'UBO_CONTROLS', label: 'UBO Керівник'
+                         id: edgeId, source: uboUeid, target: nodeId, type: 'CONTROLS', label: 'UBO Керівник'
                     });
                 }
             });

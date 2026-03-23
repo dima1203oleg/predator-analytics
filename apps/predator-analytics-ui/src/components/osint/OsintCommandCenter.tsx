@@ -17,7 +17,7 @@ import {
     FileWarning, Skull, Bot, Home, Receipt, Ban, GitBranch,
     Target, Radar, Zap, TrendingUp, Lock, Crosshair,
     BarChart3, PieChart, Server, Clock, Check, X,
-    ArrowUpRight, Layers, CircleDot, RefreshCw, Cpu
+    ArrowUpRight, Layers, CircleDot, RefreshCw, Cpu, Share2
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { apiClient } from '@/services/api/config';
@@ -767,7 +767,7 @@ export const OsintCommandCenter: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="flex flex-wrap gap-1">
-                                        {categories.flatMap(c => c.registries).map((r, i) => (
+                                        {registryCategories.flatMap((c: any) => c.registries).map((r: any, i: number) => (
                                             <div key={i} title={r.name} className={cn(
                                                 "w-3 h-3 rounded-full border border-black/50 transition-all",
                                                 r.status === 'ACTIVE' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-700'

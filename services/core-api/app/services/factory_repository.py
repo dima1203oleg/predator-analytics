@@ -2,7 +2,7 @@
 Персистентність паттернів у GraphDB
 """
 
-from datetime import datetime
+from datetime import datetime, UTC
 import logging
 
 from app.models.factory import (
@@ -212,7 +212,7 @@ class FactoryRepository:
                     file=record["b"]["file"],
                     status=record["b"]["status"],
                     fix_progress=record["b"]["fix_progress"],
-                    detected_at=datetime.fromisoformat(record["b"]["detected_at"]),
+                    detected_at=datetime.fromisoformat(str(record["b"]["detected_at"])) if isinstance(record["b"]["detected_at"], str) else record["b"]["detected_at"],
                 )
                 for record in records
             ]
@@ -247,7 +247,7 @@ class FactoryRepository:
                 cycles_completed=i["cycles_completed"],
                 improvements_made=i["improvements_made"],
                 logs=i.get("logs", []),
-                last_update=datetime.fromisoformat(i["last_update"]),
+                last_update=datetime.fromisoformat(str(i["last_update"]).replace("Z", "+00:00")),
             )
 
     async def update_improvement(self, imp: SystemImprovement) -> bool:
@@ -262,7 +262,7 @@ class FactoryRepository:
                     cycles_completed: $cycles_completed,
                     improvements_made: $improvements_made,
                     logs: $logs,
-                    last_update: datetime($last_update)
+                    last_update: $last_update
                 }
                 """,
                 is_running=imp.is_running,
@@ -273,3 +273,15 @@ class FactoryRepository:
                 last_update=imp.last_update.isoformat(),
             )
             return True
+
+    async def add_factory_log(self, message: str, service: str, level: str) -> None:
+        """Додати запис у лог вдосконалення"""
+        async with self.driver.session() as session:
+            await session.run(
+                """
+                MERGE (i:SystemImprovement)
+                SET i.logs = COALESCE(i.logs, []) + [$log]
+                SET i.last_update = datetime()
+                """,
+                log=f"[{datetime.now(UTC).strftime('%H:%M:%S')}] {level.upper()}({service}): {message}"
+            )

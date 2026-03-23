@@ -87,4 +87,9 @@ export const factoryApi = {
   stopInfinite: async () => {
     return (await apiClient.post('/factory/infinite/stop')).data;
   },
+
+  /** Отримати останні логи вдосконалення */
+  getLogs: async () => {
+    return (await apiClient.get('/factory/logs')).data;
+  },
 };

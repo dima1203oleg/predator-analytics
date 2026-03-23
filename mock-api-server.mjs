@@ -1350,12 +1350,16 @@ function runRssPipeline(jobId, feedUrl) {
 // Universal Health
 app.get(['/api/v1/health', '/api/v1/monitoring/health', '/v1/monitoring/health'], (req, res) => {
   res.json({
-    status: 'healthy', timestamp: new Date().toISOString(), databases: {
-      postgresql: DB_FACTS.length,
-      opensearch: DB_SEARCH_INDEX.length,
-      qdrant: DB_VECTORS.length,
-      graph_nodes: DB_GRAPH.nodes.length,
-      files: DB_FILES.length
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    services: {
+      postgresql: { status: 'ok', duration_seconds: 0.005 + Math.random() * 0.01 },
+      neo4j: { status: 'ok', duration_seconds: 0.012 + Math.random() * 0.02 },
+      redis: { status: 'ok', duration_seconds: 0.002 + Math.random() * 0.005 },
+      kafka: { status: 'ok', duration_seconds: 0.008 + Math.random() * 0.015 },
+      opensearch: { status: 'ok', duration_seconds: 0.015 + Math.random() * 0.03 },
+      qdrant: { status: 'ok', duration_seconds: 0.020 + Math.random() * 0.04 },
+      minio: { status: 'ok', duration_seconds: 0.007 + Math.random() * 0.01 }
     }
   });
 });

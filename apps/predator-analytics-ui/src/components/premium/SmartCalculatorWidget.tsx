@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calculator, DollarSign, Globe, Percent, ArrowRight, RefreshCw, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';
+import { intelligenceApi } from '../../services/api/intelligence';
 
 export const SmartCalculatorWidget: React.FC<{ persona: string }> = ({ persona }) => {
   const [value, setValue] = useState<string>('');

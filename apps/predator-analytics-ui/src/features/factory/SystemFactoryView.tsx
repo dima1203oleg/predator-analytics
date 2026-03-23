@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Factory, Zap, GitBranch, Cpu, Activity, Database, CheckCircle2,
@@ -15,7 +16,7 @@ import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { factoryApi, monitoringApi } from '@/services/api';
+import { factoryApi, monitoringApi, apiClient } from '@/services/api';
 
 const SearchIcon = (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>;
 const ArrowUpIcon = (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>;
@@ -39,6 +40,18 @@ interface K8sPod {
   uptime: string;
 }
 
+type HealthStatus = 'healthy' | 'degraded' | 'down' | 'recovering';
+
+interface HealthCheck {
+  id: string;
+  service: string;
+  endpoint: string;
+  status: HealthStatus;
+  latency: number;
+  uptime: string;
+  lastCheck: Date;
+}
+
 export default function SystemFactoryView() {
   const [messages, setMessages] = useState<FactoryMessage[]>([
     {
@@ -55,7 +68,7 @@ export default function SystemFactoryView() {
   // Stats
   const [pipelineProgress, setPipelineProgress] = useState(100);
   const [systemScore, setSystemScore] = useState({ quality: 98, coverage: 94, security: 100 });
-  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s' | 'network' | 'improve' | 'ingestion' | 'bugfix' | 'infinite' | 'health'>('improve');
+  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s' | 'network' | 'improve' | 'ingestion' | 'bugfix' | 'infinite' | 'health'>('infinite');
 
 
   // ═══ Ingestion State ═══
@@ -169,17 +182,100 @@ export default function SystemFactoryView() {
   };
 
   // ═══ Health Check State ═══
-  type HealthStatus = 'healthy' | 'degraded' | 'down';
-  const [healthChecks] = useState<Array<{ id: string, service: string, endpoint: string, status: HealthStatus, latency: number, uptime: string, lastCheck: Date }>>([
-    { id: 'hc-1', service: 'Core API', endpoint: ':8000/health', status: 'healthy', latency: 12, uptime: '99.99%', lastCheck: new Date() },
-    { id: 'hc-2', service: 'Graph Service', endpoint: ':8001/health', status: 'healthy', latency: 8, uptime: '99.98%', lastCheck: new Date() },
-    { id: 'hc-3', service: 'PostgreSQL', endpoint: ':5432', status: 'healthy', latency: 3, uptime: '99.99%', lastCheck: new Date() },
-    { id: 'hc-4', service: 'Neo4j', endpoint: ':7687', status: 'healthy', latency: 15, uptime: '99.95%', lastCheck: new Date() },
-    { id: 'hc-5', service: 'Redis', endpoint: ':6379', status: 'healthy', latency: 1, uptime: '100%', lastCheck: new Date() },
-    { id: 'hc-6', service: 'Kafka', endpoint: ':9092', status: 'degraded', latency: 45, uptime: '99.87%', lastCheck: new Date() },
-    { id: 'hc-7', service: 'OpenSearch', endpoint: ':9200', status: 'healthy', latency: 22, uptime: '99.96%', lastCheck: new Date() },
-    { id: 'hc-8', service: 'MinIO', endpoint: ':9000', status: 'healthy', latency: 5, uptime: '99.99%', lastCheck: new Date() },
-  ]);
+  const [healthChecks, setHealthChecks] = useState<HealthCheck[]>([]);
+
+  const refreshHealth = async () => {
+    try {
+      // Core API Health Check
+      const res = await apiClient.get('/health');
+      const data = res.data;
+      
+      const newChecks: HealthCheck[] = [
+        { 
+          id: 'hc-1', 
+          service: 'Core API Gateway', 
+          endpoint: '/api/v1/health', 
+          status: (data.status === 'ok' ? 'healthy' : 'degraded') as HealthStatus, 
+          latency: Math.floor(Math.random() * 8) + 4, 
+          uptime: '99.99%', 
+          lastCheck: new Date() 
+        },
+        { 
+          id: 'hc-2', 
+          service: 'PostgreSQL (Facts)', 
+          endpoint: 'Internal (Port 5432)', 
+          status: (data.services?.postgresql?.status === 'ok' ? 'healthy' : 'down') as HealthStatus, 
+          latency: Math.floor((data.services?.postgresql?.duration_seconds || 0) * 1000), 
+          uptime: '99.99%', 
+          lastCheck: new Date() 
+        },
+        { 
+          id: 'hc-3', 
+          service: 'Neo4j (Knowledge Graph)', 
+          endpoint: 'Internal (Port 7687)', 
+          status: (data.services?.neo4j?.status === 'ok' ? 'healthy' : 'down') as HealthStatus, 
+          latency: Math.floor((data.services?.neo4j?.duration_seconds || 0) * 1000), 
+          uptime: '99.95%', 
+          lastCheck: new Date() 
+        },
+        { 
+          id: 'hc-4', 
+          service: 'Redis (Tactical Cache)', 
+          endpoint: 'Internal (Port 6379)', 
+          status: (data.services?.redis?.status === 'ok' ? 'healthy' : 'down') as HealthStatus, 
+          latency: Math.floor((data.services?.redis?.duration_seconds || 0) * 1000), 
+          uptime: '100%', 
+          lastCheck: new Date() 
+        },
+        { 
+           id: 'hc-5', 
+           service: 'Kafka (Ingestion Bus)', 
+           endpoint: 'Internal (Port 9092)', 
+           status: (data.services?.kafka?.status === 'ok' ? 'healthy' : 'degraded') as HealthStatus, 
+           latency: Math.floor((data.services?.kafka?.duration_seconds || 0) * 1000), 
+           uptime: '99.87%', 
+           lastCheck: new Date() 
+        },
+        { 
+           id: 'hc-6', 
+           service: 'OpenSearch (Vector Search)', 
+           endpoint: 'Internal (Port 9200)', 
+           status: (data.services?.opensearch?.status === 'ok' ? 'healthy' : 'down') as HealthStatus, 
+           latency: Math.floor((data.services?.opensearch?.duration_seconds || 0) * 1000), 
+           uptime: '99.98%', 
+           lastCheck: new Date() 
+        },
+        { 
+           id: 'hc-7', 
+           service: 'Qdrant (Neural Store)', 
+           endpoint: 'Internal (Port 6333)', 
+           status: (data.services?.qdrant?.status === 'ok' ? 'healthy' : 'down') as HealthStatus, 
+           latency: Math.floor((data.services?.qdrant?.duration_seconds || 0) * 1000), 
+           uptime: '99.99%', 
+           lastCheck: new Date() 
+        },
+        { 
+           id: 'hc-8', 
+           service: 'MinIO (File Storage)', 
+           endpoint: 'Internal (Port 9000)', 
+           status: (data.services?.minio?.status === 'ok' ? 'healthy' : 'down') as HealthStatus, 
+           latency: Math.floor((data.services?.minio?.duration_seconds || 0) * 1000), 
+           uptime: '99.99%', 
+           lastCheck: new Date() 
+        },
+      ];
+      setHealthChecks(newChecks);
+    } catch (e) {
+      console.error("Health refresh failed:", e);
+      setHealthChecks(prev => prev.map(hc => ({ ...hc, status: 'down' as HealthStatus })));
+    }
+  };
+
+  useEffect(() => {
+    refreshHealth();
+    const interval = setInterval(refreshHealth, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Improvements State
   const [improvementMode, setImprovementMode] = useState<'tech' | 'analytic' | 'complex' | null>('complex');
@@ -403,47 +499,30 @@ export default function SystemFactoryView() {
       setPipelineProgress(0);
       return { action: 'build', reply: 'Ініційовано процес збірки Docker образів та CI. Контекст оновлено.' };
     } 
+
     if (lower.includes('деплой') || lower.includes('запусти')) {
       if (lower.includes('все') || lower.includes('всі') || lower.includes('функції')) {
         startEveryFunction();
-        return 'Ініціюю МАЙСТЕР-ЗАПУСК всієї системи...';
+        return 'Ініційовано автоматичний запуск всіх системних функцій...';
       }
-      return { action: 'deploy', reply: 'Синхронізація з ArgoCD. GitOps update активовано.' };
-    }
-    
-    if (lower.includes('вдосконалення') || lower.includes('improve')) {
-      handleInfiniteCycle();
-      return 'Активовано режим безконечного вдосконалення усієї програми.';
+      return { action: 'deploy', reply: 'Розгортаю нову версію мікросервісів у Kubernetes кластер (k3s).' };
     }
 
-    if (lower.includes('баг') || lower.includes('виправ')) {
-      const detected = bugs.filter(b => b.status === 'detected');
-      if (detected.length > 0) {
-        detected.forEach(b => handleFixBug(b.id));
-        return { action: 'analyze', reply: `Запущено масове виправлення ${detected.length} багів у системі.` };
-      }
-      return 'Всі відомі дефекти вже виправлено.';
+    // Bug remediation
+    if (lower.includes('bug') || lower.includes('помил')) {
+       const detectedBugs = bugs.filter(b => b.status === 'detected');
+       if (detectedBugs.length > 0) {
+          handleFixBug(detectedBugs[0].id);
+          return 'ЗНАЙДЕНО БУГ. Автономна ремедіація активована. Перевіряю логи...';
+       }
+       return 'Активних багів не виявлено. Система стабільна.';
     }
 
-    // Generic chat response
-    setSystemScore(prev => ({ ...prev, quality: Math.min(100, prev.quality + 1) }));
-    return { action: 'analyze', reply: 'Команда прийнята. Аналізую топологію кластера та конфігурації для оптимізації.' };
+    return 'Команда прийнята. Аналізую контекст...';
   };
 
-  const handleCommand = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputText.trim() || isProcessing) return;
-
-    const newMsg: FactoryMessage = {
-      id: `msg-${Date.now()}`,
-      sender: 'user',
-      text: inputText,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, newMsg]);
-    const cmdText = inputText;
-    setInputText('');
+  const handleCommand = (cmdText: string) => {
+    setMessages(prev => [...prev, { id: `user-${Date.now()}`, sender: 'user', text: cmdText, timestamp: new Date() }]);
     setIsProcessing(true);
 
     setTimeout(() => {
@@ -451,7 +530,7 @@ export default function SystemFactoryView() {
       
       if (typeof result === 'string') {
         const sysMsg: FactoryMessage = {
-          id: `sys-${Date.now()}`,
+          id: `msg-${Date.now()}`,
           sender: 'system',
           text: result,
           timestamp: new Date()
@@ -459,14 +538,14 @@ export default function SystemFactoryView() {
         setMessages(prev => [...prev, sysMsg]);
       } else if (result) {
         setMessages(prev => [...prev, {
-          id: `sys-${Date.now()}`,
+          id: `msg-${Date.now()}`,
           sender: 'system',
-          text: result.reply,
+          text: (result as any).reply,
           timestamp: new Date(),
-          action: result.action as any
+          action: (result as any).action as any
         }]);
 
-        if (result.action === 'build') {
+        if ((result as any).action === 'build') {
           const iv = setInterval(() => {
             setPipelineProgress(p => {
               if (p >= 100) {
@@ -488,19 +567,25 @@ export default function SystemFactoryView() {
     }, 1200);
   };
 
-  // ═══ OODA Loop Implementation ═══
   const handleInfiniteCycle = async () => {
-    if (infiniteRunning) {
-      await factoryApi.stopInfinite();
-      setInfiniteRunning(false);
-      pushSystemMessage('🛑 ЦИКЛ ВДОСКОНАЛЕННЯ ЗУПИНЕНО НА БЕКЕНДІ.', 'system');
-    } else {
-      await factoryApi.startInfinite();
-      setInfiniteRunning(true);
-      pushSystemMessage('🚀 ЦИКЛ АВТОНОМНОГО ВДОСКОНАЛЕННЯ PREDATOR ЗАПУЩЕНО. OODA LOOP АКТИВОВАНО НА БЕКЕНДІ.', 'bot');
+    try {
+      if (infiniteRunning) {
+        await factoryApi.stopInfinite();
+        setInfiniteRunning(false);
+        pushSystemMessage('🛑 OODA LOOP ЗУПИНЕНО. Автономне вдосконалення вимкнено.', 'analyze');
+      } else {
+        await factoryApi.startInfinite();
+        setInfiniteRunning(true);
+        setInfinitePhase('observe');
+        pushSystemMessage('🚀 ВДОСКОНАЛЕННЯ PREDATOR ЗАПУЩЕНО. OODA LOOP АКТИВОВАНО НА БЕКЕНДІ.', 'bot');
+      }
+    } catch (e) {
+      console.error("Failed to toggle infinite cycle:", e);
+      pushSystemMessage('❌ Помилка зв\'язку з бекендом при управлінні OODA циклом.', 'analyze');
     }
   };
 
+  // ═══ OODA Loop Sync with Backend ═══
   useEffect(() => {
     let interval: any;
     if (infiniteRunning) {
@@ -509,42 +594,32 @@ export default function SystemFactoryView() {
           const status = await factoryApi.getInfiniteStatus();
           if (status) {
             setInfinitePhase(status.current_phase as any);
+            
+            // Синхронізація логів
             if (status.logs && status.logs.length > 0) {
-              setInfiniteLogs(prev => {
-                const logsFromBackend = status.logs || [];
-                const newLogs = [...prev, ...logsFromBackend.filter((l: string) => !prev.includes(l))];
-                return newLogs.slice(-15);
-              });
+              setInfiniteLogs(status.logs.slice(-15));
             }
+            
+            // Синхронізація статистики
             setInfiniteStats(prev => ({
               ...prev,
               improvements: status.improvements_made,
               cycles: status.cycles_completed
             }));
+
+            // Оновлення списку багів якщо ми в фазі ACT
+            if (status.current_phase === 'act') {
+              const updatedBugs = await factoryApi.getBugs();
+              setBugs(updatedBugs);
+            }
           }
         } catch (e) {
           console.error("Infinite sync failed:", e);
         }
-
-        setInfinitePhase(prev => {
-          const phases: Array<'observe' | 'orient' | 'decide' | 'act'> = ['observe', 'orient', 'decide', 'act'];
-          const currentIndex = phases.indexOf(prev);
-          const nextIndex = (currentIndex + 1) % phases.length;
-          const nextPhase = phases[nextIndex];
-          
-          if (nextPhase === 'decide') {
-            const detectedBugs = bugs.filter(b => b.status === 'detected');
-            if (detectedBugs.length > 0) {
-              handleFixBug(detectedBugs[0].id);
-              setInfiniteStats(s => ({ ...s, bugs: s.bugs + 1 }));
-            }
-          }
-          return nextPhase;
-        });
-      }, 4000);
+      }, 5000);
     }
     return () => clearInterval(interval);
-  }, [infiniteRunning, bugs]);
+  }, [infiniteRunning]);
 
   const startEveryFunction = async () => {
     setActiveTab('infinite');
@@ -561,86 +636,126 @@ export default function SystemFactoryView() {
     });
   };
 
+  // ── Tab config ──────────────────────────────────────────────────────────────
+  const TABS = [
+    { id: 'infinite',  label: 'OODA Loop',       icon: Infinity,    color: 'violet',  glow: 'rgba(139,92,246,0.4)' },
+    { id: 'improve',   label: 'Вдосконалення',   icon: Sparkles,    color: 'fuchsia', glow: 'rgba(217,70,239,0.4)' },
+    { id: 'bugfix',    label: 'Автофікс',         icon: Bug,         color: 'rose',    glow: 'rgba(239,68,68,0.4)'  },
+    { id: 'health',    label: 'Health Check',     icon: HeartPulse,  color: 'teal',    glow: 'rgba(20,184,166,0.4)' },
+    { id: 'k8s',       label: 'Kubernetes',       icon: Layers,      color: 'indigo',  glow: 'rgba(79,70,229,0.4)'  },
+    { id: 'cicd',      label: 'CI/CD Pipeline',   icon: GitBranch,   color: 'emerald', glow: 'rgba(16,185,129,0.4)' },
+    { id: 'ingestion', label: 'Інгестія',         icon: Scan,        color: 'orange',  glow: 'rgba(249,115,22,0.4)' },
+    { id: 'network',   label: 'Мережа',           icon: Network,     color: 'cyan',    glow: 'rgba(6,182,212,0.4)'  },
+  ] as const;
+
   return (
     <div className="min-h-screen pb-20 animate-in fade-in duration-700">
       <AdvancedBackground />
       
       <ViewHeader 
-        title="СУВЕРЕННИЙ ЗАВОД (FACTORY)"
-        subtitle="Інтерактивне управління Kubernetes кластером, CI/CD конвеєром та AI Координатор."
-        icon={<Factory size={24} className="text-indigo-400" />}
+        title="СУВЕРЕННИЙ ЗАВОД PREDATOR"
+        subtitle="Автономне вдосконалення · Kubernetes · CI/CD · Моніторинг інфраструктури"
+        icon={<Factory size={24} className="text-violet-400" />}
         breadcrumbs={['ПРЕДАТОР', 'АДМІНІСТРУВАННЯ', 'ЗАВОД']}
         stats={[
-          { label: 'Стан кластера', value: pods.some(p => p.status !== 'Running') ? 'СИНХРОНІЗАЦІЯ' : 'ЗДОРОВИЙ', icon: <Server size={14} />, color: pods.some(p => p.status !== 'Running') ? 'warning' : 'success' },
-          { label: 'Quality Shore', value: `${systemScore.quality}%`, icon: <CheckCircle2 size={14}/>, color: 'primary' },
-          { label: 'Рівень Безпеки', value: `HR-00`, icon: <Shield size={14}/>, color: 'danger' }
+          { label: 'Кластер', value: pods.some(p => p.status !== 'Running') ? 'DEGRAD' : 'HEALTHY', icon: <Server size={14} />, color: pods.some(p => p.status !== 'Running') ? 'warning' : 'success' },
+          { label: 'Code Quality', value: `${systemScore.quality}%`, icon: <CheckCircle2 size={14}/>, color: 'primary' },
+          { label: 'OODA Цикл', value: infiniteRunning ? 'ACTIVE' : 'IDLE', icon: <Infinity size={14}/>, color: infiniteRunning ? 'success' : 'danger' }
         ]}
       />
 
-      <div className="max-w-7xl mx-auto px-6 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+      {/* ── Основна 3-колонна сітка ──────────────────────────────────────── */}
+      <div className="max-w-[1600px] mx-auto px-6 mt-6 flex gap-6 relative z-10">
         
-        {/* Left Column: Factory Dashboards */}
-        <div className="lg:col-span-8 space-y-6">
-          
-          {/* Custom Tabs */}
-          <div className="flex gap-4 border-b border-white/10 pb-4 overflow-x-auto custom-scrollbar">
-             <Button 
-               onClick={() => setActiveTab('improve')}
-               variant={activeTab === 'improve' ? "neon" : "ghost"}
-               className={cn("px-6 py-6 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'improve' && "bg-fuchsia-600/20 text-fuchsia-400 border-fuchsia-500/50 shadow-[0_0_20px_rgba(217,70,239,0.3)]")}
-             >
-                <Sparkles size={16} className="mr-2" /> СОВЕРЕННИЙ ЗАВОД (IMPROVE)
-             </Button>
-             <Button 
-               onClick={() => setActiveTab('k8s')}
-               variant={activeTab === 'k8s' ? "neon" : "ghost"}
-               className={cn("px-6 py-6 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'k8s' && "bg-indigo-600/20 text-indigo-400 border-indigo-500/50 shadow-[0_0_20px_rgba(79,70,229,0.3)]")}
-             >
-                <Layers size={16} className="mr-2" /> KUBERNETES КЛАСТЕР 
-             </Button>
-             <Button 
-               onClick={() => setActiveTab('network')}
-               variant={activeTab === 'network' ? "neon" : "ghost"}
-               className={cn("px-6 py-6 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'network' && "bg-cyan-600/20 text-cyan-400 border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.3)]")}
-             >
-                <Wifi size={16} className="mr-2" /> МЕРЕЖА / ТОПОЛОГІЯ
-             </Button>
-             <Button 
-               onClick={() => setActiveTab('cicd')}
-               variant={activeTab === 'cicd' ? "neon" : "ghost"}
-               className={cn("px-6 py-6 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'cicd' && "bg-emerald-600/20 text-emerald-400 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]")}
-             >
-                <GitBranch size={16} className="mr-2" /> CI/CD КОНВЕЄР
-              </Button>
-              <Button 
-                onClick={() => setActiveTab('ingestion')}
-                variant={activeTab === 'ingestion' ? "neon" : "ghost"}
-                className={cn("px-6 py-6 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'ingestion' && "bg-orange-600/20 text-orange-400 border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.3)]")}
+        {/* ── Вертикальний Sidebar-Навігатор ── */}
+        <div className="hidden lg:flex flex-col gap-1.5 w-52 shrink-0">
+          {/* Логотип Factory */}
+          <div className="mb-4 p-3 rounded-xl bg-gradient-to-br from-violet-900/40 to-fuchsia-900/20 border border-violet-500/20">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-7 h-7 rounded-lg bg-violet-500/20 border border-violet-500/40 flex items-center justify-center">
+                <Factory size={14} className="text-violet-400" />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-violet-300">Factory v55</span>
+            </div>
+            <div className="text-[9px] text-slate-500 font-mono">
+              {infiniteRunning ? (
+                <span className="text-emerald-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />OODA ACTIVE</span>
+              ) : (
+                <span className="text-slate-500">OODA IDLE</span>
+              )}
+            </div>
+          </div>
+
+          {TABS.map(tab => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            const colorMap: Record<string, string> = {
+              violet: 'text-violet-400 bg-violet-500/15 border-violet-500/40',
+              fuchsia: 'text-fuchsia-400 bg-fuchsia-500/15 border-fuchsia-500/40',
+              rose: 'text-rose-400 bg-rose-500/15 border-rose-500/40',
+              teal: 'text-teal-400 bg-teal-500/15 border-teal-500/40',
+              indigo: 'text-indigo-400 bg-indigo-500/15 border-indigo-500/40',
+              emerald: 'text-emerald-400 bg-emerald-500/15 border-emerald-500/40',
+              orange: 'text-orange-400 bg-orange-500/15 border-orange-500/40',
+              cyan: 'text-cyan-400 bg-cyan-500/15 border-cyan-500/40',
+            };
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                style={isActive ? { boxShadow: `0 0 16px ${tab.glow}` } : {}}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-200 border text-[11px] font-bold w-full',
+                  isActive
+                    ? `${colorMap[tab.color]} shadow-lg`
+                    : 'text-slate-500 hover:text-slate-300 bg-transparent border-transparent hover:bg-white/5'
+                )}
               >
-                 <Scan size={16} className="mr-2" /> ПАРСИНГ ТА ІНГЕСТІЯ
-              </Button>
-              <Button 
-                onClick={() => setActiveTab('infinite')}
-                variant={activeTab === 'infinite' ? "neon" : "ghost"}
-                className={cn("px-6 py-6 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'infinite' && "bg-violet-600/20 text-violet-400 border-violet-500/50 shadow-[0_0_20px_rgba(139,92,246,0.3)]")}
-              >
-                 <Infinity size={16} className="mr-2" /> ♾️ БЕЗКОНЕЧНЕ ВДОСКОНАЛЕННЯ
-              </Button>
-              <Button 
-                onClick={() => setActiveTab('bugfix')}
-                variant={activeTab === 'bugfix' ? "neon" : "ghost"}
-                className={cn("px-6 py-6 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'bugfix' && "bg-red-600/20 text-red-400 border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.3)]")}
-              >
-                 <Bug size={16} className="mr-2" /> 🐛 АВТОФІКС БАГІВ
-              </Button>
-              <Button 
-                onClick={() => setActiveTab('health')}
-                variant={activeTab === 'health' ? "neon" : "ghost"}
-                className={cn("px-6 py-6 h-14 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all", activeTab === 'health' && "bg-teal-600/20 text-teal-400 border-teal-500/50 shadow-[0_0_20px_rgba(20,184,166,0.3)]")}
-              >
-                 <HeartPulse size={16} className="mr-2" /> 🏥 HEALTH CHECK
-              </Button>
-           </div>
+                <Icon size={14} className="shrink-0" />
+                <span className="truncate uppercase tracking-wider">{tab.label}</span>
+                {tab.id === 'bugfix' && bugs.filter(b => b.status === 'detected').length > 0 && (
+                  <span className="ml-auto shrink-0 w-4 h-4 rounded-full bg-rose-500 text-white text-[8px] font-black flex items-center justify-center">
+                    {bugs.filter(b => b.status === 'detected').length}
+                  </span>
+                )}
+                {tab.id === 'infinite' && infiniteRunning && (
+                  <span className="ml-auto shrink-0 w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                )}
+              </button>
+            );
+          })}
+
+          {/* Quick Stats */}
+          <div className="mt-4 pt-4 border-t border-white/5 space-y-2">
+            {[
+              { label: 'Цикли OODA', value: infiniteStats.cycles, color: 'text-violet-400' },
+              { label: 'Покращень', value: infiniteStats.improvements, color: 'text-emerald-400' },
+              { label: 'Відкритих багів', value: bugs.filter(b => b.status !== 'fixed').length, color: 'text-rose-400' },
+            ].map(s => (
+              <div key={s.label} className="flex items-center justify-between px-1">
+                <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">{s.label}</span>
+                <span className={cn('text-sm font-black font-mono', s.color)}>{s.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Головний контент ── */}
+        <div className="flex-1 min-w-0 space-y-0">
+          {/* Mobile tabs (тільки для малих екранів) */}
+          <div className="lg:hidden flex gap-2 mb-4 overflow-x-auto pb-2">
+            {TABS.map(tab => {
+              const Icon = tab.icon;
+              return (
+                <button key={tab.id} onClick={() => setActiveTab(tab.id as any)}
+                  className={cn('flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] font-black uppercase whitespace-nowrap border transition-all',
+                    activeTab === tab.id ? 'bg-white/10 border-white/30 text-white' : 'border-transparent text-slate-500')}
+                >
+                  <Icon size={12} /> {tab.label}
+                </button>
+              );
+            })}
+          </div>
 
           <AnimatePresence mode="wait">
              {activeTab === 'improve' && (
@@ -1406,166 +1521,355 @@ export default function SystemFactoryView() {
                </motion.div>
              )}
 
-             {activeTab === 'infinite' && (
-               <motion.div key="infinite" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
-                 <TacticalCard title="OODA ЦИКЛ: БЕЗКОНЕЧНЕ ВДОСКОНАЛЕННЯ" variant="glass">
-                   <div className="flex items-center justify-between mb-8 p-6 bg-slate-900/50 border border-violet-500/20 rounded-2xl relative overflow-hidden">
-                     <div className="absolute top-0 left-0 w-1 p-0.5 h-full bg-gradient-to-b from-violet-500 to-fuchsia-500 shadow-[0_0_15px_rgba(139,92,246,0.6)]" />
-                     <div className="flex items-center gap-6 z-10">
-                       <div className="relative">
-                         <div className={cn("w-16 h-16 rounded-full flex items-center justify-center border-2 z-10 relative bg-slate-950", infiniteRunning ? "border-violet-500 text-violet-400 child-spin" : "border-slate-700 text-slate-500")}>
-                           <Infinity size={32} className={infiniteRunning ? "animate-spin-slow" : ""} />
-                         </div>
-                         {infiniteRunning && <div className="absolute inset-0 rounded-full border border-violet-500/50 animate-ping opacity-20" />}
-                       </div>
-                       <div>
-                         <h3 className="text-lg font-black uppercase text-white tracking-wider flex items-center gap-3">
-                           Автономний цикл {infiniteRunning ? <span className="text-violet-400 animate-pulse">АКТИВНИЙ</span> : <span className="text-slate-500">ЗУПИНЕНИЙ</span>}
-                         </h3>
-                         <p className="text-xs text-slate-400 mt-1 max-w-sm">Система безперервно аналізує власний код, архітектуру та лог виконання, щоб генерувати самовдосконалення.</p>
-                       </div>
-                     </div>
-                     <Button 
-                       onClick={handleInfiniteCycle}
-                       className={cn("h-12 px-8 font-black tracking-widest uppercase transition-all", infiniteRunning ? "bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_20px_rgba(225,29,72,0.4)]" : "bg-violet-600 hover:bg-violet-500 text-white shadow-[0_0_20px_rgba(139,92,246,0.4)]")}
-                     >
-                       {infiniteRunning ? <> <Power size={18} className="mr-2" /> ЗУПИНИТИ ЦИКЛ</> : <> <Play size={18} className="mr-2" /> ЗАПУСТИТИ ♾️</>}
-                     </Button>
-                   </div>
+              {activeTab === 'infinite' && (
+                <motion.div key="infinite" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-5">
 
-                   <div className="grid grid-cols-4 gap-4 mb-6">
-                     {[
-                       { id: 'observe', label: 'ОБСЕРВАЦІЯ', icon: Eye, color: 'text-cyan-400', border: 'border-cyan-500/30' },
-                       { id: 'orient', label: 'ОРІЄНТАЦІЯ', icon: Network, color: 'text-fuchsia-400', border: 'border-fuchsia-500/30' },
-                       { id: 'decide', label: 'РІШЕННЯ', icon: BrainCircuit, color: 'text-orange-400', border: 'border-orange-500/30' },
-                       { id: 'act', label: 'ДІЯ/ДЕПЛОЙ', icon: Zap, color: 'text-emerald-400', border: 'border-emerald-500/30' },
-                     ].map((phase, idx) => {
-                       const isActive = infinitePhase === phase.id && infiniteRunning;
-                       return (
-                         <div key={phase.id} className={cn("relative p-4 rounded-xl border flex flex-col items-center gap-3 transition-all duration-500", isActive ? `${phase.border} bg-slate-900 shadow-[0_0_15px_rgba(255,255,255,0.05)]` : "border-slate-800 bg-slate-950/50 opacity-50")}>
-                           <phase.icon size={24} className={isActive ? phase.color : "text-slate-600"} />
-                           <span className={cn("text-[10px] font-black tracking-widest", isActive ? phase.color : "text-slate-500")}>{phase.label}</span>
-                           {isActive && <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-current opacity-50 rounded-full blur-[2px]" />}
-                         </div>
-                       )
-                     })}
-                   </div>
+                  {/* ── Головний блок ── */}
+                  <div className="relative overflow-hidden rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-950/60 via-slate-950/80 to-fuchsia-950/40 backdrop-blur-xl p-6">
+                    {/* Animated background pulse */}
+                    {infiniteRunning && (
+                      <div className="absolute inset-0 pointer-events-none">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-violet-500/5 animate-ping" style={{ animationDuration: '3s' }} />
+                      </div>
+                    )}
+                    <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-5">
+                        <div className="relative">
+                          <div className={cn('w-16 h-16 rounded-2xl border-2 flex items-center justify-center transition-all duration-500',
+                            infiniteRunning ? 'bg-violet-500/20 border-violet-400 shadow-[0_0_30px_rgba(139,92,246,0.6)]' : 'bg-slate-900/80 border-slate-600'
+                          )}>
+                            <Infinity size={30} className={cn('transition-all', infiniteRunning ? 'text-violet-300 animate-pulse' : 'text-slate-500')} />
+                          </div>
+                          {infiniteRunning && <div className="absolute -inset-1 rounded-2xl border border-violet-400/30 animate-ping opacity-40" />}
+                        </div>
+                        <div>
+                          <div className="text-xs text-violet-400 font-black uppercase tracking-[0.2em] mb-1">♥️ OODA LOOP • AUTONOMOUS IMPROVEMENT ENGINE</div>
+                          <h2 className="text-xl font-black text-white">
+                            {infiniteRunning ? (
+                              <><span className="text-violet-300">АКТИВНИЙ</span> — Цикл #{infiniteStats.cycles + 1}</>
+                            ) : (
+                              <><span className="text-slate-400">ЗУПИНЕНО</span> — Очікує команди</>
+                            )}
+                          </h2>
+                          <p className="text-xs text-slate-400 mt-1 max-w-md">
+                            Автономна система аналізує код, архітектуру та логи для генерації патчів і вдосконалень.
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={handleInfiniteCycle}
+                        className={cn('h-12 px-8 font-black tracking-widest uppercase text-sm transition-all shrink-0',
+                          infiniteRunning
+                            ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_25px_rgba(225,29,72,0.5)] border border-rose-400/30'
+                            : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white shadow-[0_0_25px_rgba(139,92,246,0.5)] border border-violet-400/30'
+                        )}
+                      >
+                        {infiniteRunning ? <><Power size={16} className="mr-2" />ЗУПИНИТИ</> : <><Play size={16} className="mr-2" />ЗАПУСТИТИ ♾️</>}
+                      </Button>
+                    </div>
 
-                   <div className="bg-slate-950 border border-violet-500/20 rounded-xl p-4 font-mono text-[11px] h-[200px] overflow-y-auto custom-scrollbar flex flex-col gap-2 relative">
-                     {infiniteLogs.map((log, i) => (
-                       <div key={i} className={cn("text-slate-400", log.includes('[SUCCESS]') && "text-emerald-400 font-bold", log.includes('[SYSTEM]') && "text-violet-400 font-black", log.includes('>') && "ml-4 text-slate-300 border-l border-violet-500/30 pl-3")}>
-                         {log}
-                       </div>
-                     ))}
-                     {infiniteRunning && <div className="flex items-center gap-2 mt-4 text-violet-500"><Loader2 size={12} className="animate-spin" /> Обробка поточного блоку даних...</div>}
-                   </div>
-                   
-                   <div className="flex gap-4 mt-6">
-                     <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 py-2">
-                       Введено покращень: {infiniteStats.improvements}
-                     </Badge>
-                     <Badge variant="outline" className="bg-violet-500/10 text-violet-400 border-violet-500/20 py-2">
-                       Циклів OODA: {infiniteStats.cycles}
-                     </Badge>
-                   </div>
-                 </TacticalCard>
-               </motion.div>
-             )}
+                    {/* Stats row */}
+                    <div className="mt-6 grid grid-cols-3 gap-3">
+                      {[
+                        { label: 'Циклів OODA', value: infiniteStats.cycles, icon: RefreshCw, color: 'text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20' },
+                        { label: 'Покращень', value: infiniteStats.improvements, icon: Zap, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+                        { label: 'Багів виправлено', value: bugs.filter(b => b.status === 'fixed').length, icon: CheckCircle2, color: 'text-teal-400', bg: 'bg-teal-500/10 border-teal-500/20' },
+                      ].map(s => {
+                        const Icon = s.icon;
+                        return (
+                          <div key={s.label} className={cn('rounded-xl border p-4 flex items-center gap-3', s.bg)}>
+                            <Icon size={18} className={s.color} />
+                            <div>
+                              <div className={cn('text-2xl font-black font-mono', s.color)}>{s.value}</div>
+                              <div className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">{s.label}</div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
 
-             {activeTab === 'bugfix' && (
-               <motion.div key="bugfix" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
-                 <TacticalCard title="СИСТЕМА АВТОМАТИЧНОГО ВИПРАВЛЕННЯ БАГІВ" variant="cyber">
-                   <div className="space-y-4">
-                     {bugs.map((bug) => (
-                       <div key={bug.id} className={cn("p-4 rounded-xl border relative overflow-hidden transition-all", bug.status === 'fixed' ? 'bg-emerald-950/30 border-emerald-500/30' : bug.status === 'fixing' ? 'bg-amber-950/30 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.1)]' : 'bg-slate-900 border-slate-700 hover:border-slate-500')}>
-                         {bug.status === 'fixing' && (
-                           <div className="absolute top-0 left-0 h-1 bg-amber-500 transition-all duration-300" style={{ width: `${bug.fixProgress}%` }} />
-                         )}
-                         <div className="flex items-start justify-between">
-                           <div>
-                             <div className="flex items-center gap-3 mb-1">
-                                <Badge variant={bug.severity === 'critical' ? 'destructive' : bug.severity === 'high' ? 'outline' : 'default'} className="uppercase text-[9px] font-black h-5">
-                                 {bug.severity}
-                               </Badge>
-                               <span className="text-slate-400 text-[11px] font-mono">{bug.id}</span>
-                               <span className="text-slate-500 text-[10px]">|</span>
-                               <span className="text-emerald-400 text-[10px] font-mono">{bug.component}</span>
-                             </div>
-                             <h4 className="text-[13px] font-bold text-white mb-2">{bug.description}</h4>
-                             <div className="text-[11px] font-mono text-slate-500 flex items-center gap-1">
-                               <FileText size={12} /> {bug.file}
-                             </div>
-                           </div>
-                           <div>
-                             {bug.status === 'detected' && (
-                               <Button size="sm" onClick={() => handleFixBug(bug.id)} className="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/50 text-[10px] font-black uppercase tracking-widest">
-                                 <Wrench size={14} className="mr-2" /> Фікс AI
-                               </Button>
-                             )}
-                             {bug.status === 'fixing' && (
-                               <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/30 px-3 py-1.5 uppercase tracking-wider text-[10px] animate-pulse flex items-center gap-2">
-                                 <Repeat size={12} className="animate-spin" /> Генерація Патчу... {bug.fixProgress}%
-                               </Badge>
-                             )}
-                             {bug.status === 'fixed' && (
-                               <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 px-3 py-1.5 uppercase tracking-wider text-[10px] flex items-center gap-2">
-                                 <CheckCircle2 size={12} /> ВИПРАВЛЕНО
-                               </Badge>
-                             )}
-                           </div>
-                         </div>
-                       </div>
-                     ))}
-                   </div>
-                 </TacticalCard>
-               </motion.div>
-             )}
+                  {/* ── OODA Фази ── */}
+                  <div className="grid grid-cols-4 gap-3">
+                    {[
+                      { id: 'observe', label: 'ОБСЕРВАЦІЯ', sub: 'Збір метрик', icon: Eye, color: 'cyan' },
+                      { id: 'orient', label: 'ОРІЄНТАЦІЯ', sub: 'Аналіз даних', icon: BrainCircuit, color: 'fuchsia' },
+                      { id: 'decide', label: 'РІШЕННЯ', sub: 'Вибір стратегії', icon: Cog, color: 'amber' },
+                      { id: 'act', label: 'ДІЯ', sub: 'Деплой / Фікс', icon: Zap, color: 'emerald' },
+                    ].map((phase, idx) => {
+                      const Icon = phase.icon;
+                      const isActive = infinitePhase === phase.id && infiniteRunning;
+                      const colorStyles: Record<string, { border: string; text: string; bg: string; glow: string }> = {
+                        cyan:    { border: 'border-cyan-500/60',    text: 'text-cyan-300',    bg: 'bg-cyan-900/30',    glow: '0 0 20px rgba(6,182,212,0.5)' },
+                        fuchsia: { border: 'border-fuchsia-500/60', text: 'text-fuchsia-300', bg: 'bg-fuchsia-900/30', glow: '0 0 20px rgba(217,70,239,0.5)' },
+                        amber:   { border: 'border-amber-500/60',   text: 'text-amber-300',   bg: 'bg-amber-900/30',   glow: '0 0 20px rgba(245,158,11,0.5)' },
+                        emerald: { border: 'border-emerald-500/60', text: 'text-emerald-300', bg: 'bg-emerald-900/30', glow: '0 0 20px rgba(16,185,129,0.5)' },
+                      };
+                      const cs = colorStyles[phase.color];
+                      return (
+                        <div
+                          key={phase.id}
+                          style={isActive ? { boxShadow: cs.glow } : {}}
+                          className={cn(
+                            'relative rounded-xl border p-4 flex flex-col items-center gap-2 text-center transition-all duration-500',
+                            isActive ? `${cs.border} ${cs.bg}` : 'border-slate-800/60 bg-slate-950/40 opacity-40'
+                          )}
+                        >
+                          {isActive && <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-current animate-ping opacity-60" style={{ color: 'inherit' }} />}
+                          <Icon size={22} className={isActive ? cs.text : 'text-slate-600'} />
+                          <div className={cn('text-[10px] font-black tracking-widest uppercase', isActive ? cs.text : 'text-slate-600')}>{phase.label}</div>
+                          <div className="text-[9px] text-slate-600">{phase.sub}</div>
+                          {/* Номер фази дальше */}
+                          {idx < 3 && (
+                            <div className="absolute -right-4 top-1/2 -translate-y-1/2 z-10">
+                              <ChevronRight size={14} className={isActive ? cs.text : 'text-slate-700'} />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
 
-             {activeTab === 'health' && (
-               <motion.div key="health" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
-                 <TacticalCard title="СТАТУС HEALTH CHECK МІКРОСЕРВІСІВ" variant="minimal">
-                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                     {healthChecks.map((service) => (
-                       <div key={service.id} className={cn("p-4 rounded-xl border flex flex-col shadow-inner", service.status === 'healthy' ? "bg-slate-900 border-emerald-500/20" : service.status === 'degraded' ? "bg-amber-950/30 border-amber-500/40" : "bg-rose-950/30 border-rose-500/40")}>
-                         <div className="flex items-center justify-between mb-3">
-                           <div className="font-bold text-[13px] text-white tracking-wide">{service.service}</div>
-                           {service.status === 'healthy' ? <CheckCircle2 size={16} className="text-emerald-500" /> : <AlertTriangle size={16} className="text-amber-500 animate-pulse" />}
-                         </div>
-                         <div className="text-[10px] font-mono text-slate-500 mb-4">{service.endpoint}</div>
-                         
-                         <div className="mt-auto grid grid-cols-2 gap-2 text-[11px]">
-                           <div>
-                             <div className="text-slate-600 uppercase font-black text-[9px]">Latency</div>
-                             <div className={cn("font-mono font-bold mt-0.5", service.latency < 20 ? "text-emerald-400" : service.latency < 50 ? "text-amber-400" : "text-rose-400")}>{service.latency}ms</div>
-                           </div>
-                           <div>
-                             <div className="text-slate-600 uppercase font-black text-[9px]">Uptime</div>
-                             <div className="font-mono text-slate-300 mt-0.5">{service.uptime}</div>
-                           </div>
-                         </div>
-                       </div>
-                     ))}
-                   </div>
-                 </TacticalCard>
-               </motion.div>
-             )}
-          </AnimatePresence>
+                  {/* ── Живий Термінал з логами ── */}
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/90 overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800 bg-slate-900/60">
+                      <div className="flex items-center gap-2">
+                        <div className="flex gap-1.5">
+                          <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                        </div>
+                        <span className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest ml-2">
+                          <Terminal size={11} className="inline mr-1 text-violet-400" />
+                          PREDATOR-OODA-LOOP -- live stream
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        {infiniteRunning && (
+                          <motion.div
+                            key="rec"
+                            animate={{ opacity: [1, 0.3, 1] }}
+                            transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5 }}
+                            className="flex items-center gap-1.5 text-rose-400 text-[9px] font-black uppercase"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> REC
+                          </motion.div>
+                        )}
+                        <span className="text-[9px] font-mono text-slate-600">logs: {infiniteLogs.length}/50</span>
+                      </div>
+                    </div>
+                    <div className="h-[300px] overflow-y-auto p-4 font-mono text-[11px] space-y-1 custom-scrollbar" id="ooda-log-terminal">
+                      {infiniteLogs.length === 0 && (
+                        <div className="text-slate-600 flex items-center gap-2 py-4 justify-center">
+                          <Terminal size={16} />
+                          <span>Окуй, запустіть OODA цикл...
+                          </span>
+                        </div>
+                      )}
+                      {infiniteLogs.map((log, i) => {
+                        let cls = 'text-slate-400';
+                        if (log.includes('OBSERVE')) cls = 'text-cyan-400';
+                        else if (log.includes('ORIENT')) cls = 'text-fuchsia-400';
+                        else if (log.includes('DECIDE')) cls = 'text-amber-400';
+                        else if (log.includes('ACT') || log.includes('✅')) cls = 'text-emerald-400';
+                        else if (log.includes('SYSTEM')) cls = 'text-violet-300 font-black';
+                        else if (log.includes('❌') || log.includes('ERROR')) cls = 'text-rose-400';
+                        return (
+                          <motion.div
+                            key={i}
+                            initial={i === infiniteLogs.length - 1 ? { opacity: 0, x: -8 } : {}}
+                            animate={{ opacity: 1, x: 0 }}
+                            className={cn('flex gap-2 leading-relaxed', cls)}
+                          >
+                            <span className="shrink-0 text-slate-700 select-none">{String(i + 1).padStart(3, '0')}</span>
+                            <span className="break-all">{log}</span>
+                          </motion.div>
+                        );
+                      })}
+                      {infiniteRunning && (
+                        <div className="flex items-center gap-2 text-violet-400 mt-2">
+                          <Loader2 size={11} className="animate-spin" />
+                          <span className="animate-pulse">Обробка...
+                          </span>
+                          <span className="inline-block w-1 h-3 bg-violet-400 animate-ping ml-1" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
 
+              {activeTab === 'bugfix' && (
+                <motion.div key="fix" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+                  <div className="flex items-center justify-between p-5 bg-gradient-to-r from-red-950/40 to-slate-900/40 border border-red-500/20 rounded-2xl backdrop-blur-md">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
+                        <Bug size={28} />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-white">AUTONOMOUS BUG FIXING</h3>
+                        <p className="text-[10px] font-mono text-slate-400 uppercase">
+                          ВИЯВЛЕНО: {bugs.filter(b => b.status === 'detected').length} | ВИПРАВЛЯЄТЬСЯ: {bugs.filter(b => b.status === 'fixing').length} | ВИПРАВЛЕНО: {bugs.filter(b => b.status === 'fixed').length}
+                        </p>
+                      </div>
+                    </div>
+                    <Button variant="neon" className="bg-rose-600/20 text-rose-300 border-rose-500/50 text-[9px] uppercase font-black" onClick={() => bugs.filter(b => b.status === 'detected').forEach(b => handleFixBug(b.id))}>
+                      <Zap size={12} className="mr-1" /> Автовиправити все
+                    </Button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {bugs.map(bug => (
+                      <motion.div key={bug.id} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className={cn(
+                        "p-4 rounded-xl border backdrop-blur-md flex items-center justify-between transition-all",
+                        bug.status === 'fixed' && "bg-emerald-950/20 border-emerald-500/20",
+                        bug.status === 'fixing' && "bg-amber-950/20 border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.1)]",
+                        bug.status === 'detected' && "bg-red-950/20 border-red-500/20",
+                      )}>
+                        <div className="flex items-center gap-4 w-full">
+                          <div className={cn(
+                            "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border",
+                            bug.severity === 'critical' ? "bg-red-500/20 text-red-400 border-red-500/50" : 
+                            bug.severity === 'high' ? "bg-orange-500/20 text-orange-400 border-orange-500/50" : 
+                            bug.severity === 'medium' ? "bg-amber-500/20 text-amber-400 border-amber-500/50" : "bg-blue-500/20 text-blue-400 border-blue-500/50"
+                          )}>
+                             {bug.severity === 'critical' || bug.severity === 'high' ? <Flame size={18} /> : <Bug size={18} />}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[10px] font-mono text-slate-500">{bug.id}</span>
+                              <Badge variant={bug.severity === 'critical' ? 'destructive' : bug.severity === 'high' ? 'outline' : 'default'} className={cn("text-[9px]", 
+                                  bug.severity === 'critical' && "bg-red-500/20 text-red-400",
+                                  bug.severity === 'high' && "bg-orange-500/20 text-orange-400",
+                                  bug.severity === 'medium' && "bg-amber-500/20 text-amber-400",
+                                  bug.severity === 'low' && "bg-blue-500/20 text-blue-400"
+                              )}>{bug.severity}</Badge>
+                              <span className="text-[10px] text-slate-500 font-mono">{bug.component}</span>
+                            </div>
+                            <p className="text-sm text-white/90 mb-1">{bug.description}</p>
+                            <p className="text-[10px] text-slate-500 font-mono">{bug.file}</p>
+                            
+                            <div className="mt-2">
+                              {bug.status === 'fixing' && (
+                                <div className="flex items-center gap-2 flex-1 max-w-[200px]">
+                                  <span className="text-amber-400 font-mono font-black">{bug.fixProgress}%</span>
+                                  <div className="h-1.5 flex-1 bg-black/50 rounded-full overflow-hidden border border-white/5">
+                                    <motion.div 
+                                      className="h-full bg-gradient-to-r from-amber-500 to-emerald-500 rounded-full"
+                                      animate={{ width: `${bug.fixProgress}%` }}
+                                      transition={{ duration: 0.5 }}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="shrink-0">
+                            {bug.status === 'detected' && (
+                              <Button variant="neon" size="sm" className="bg-red-600/20 text-red-300 border-red-500/50 text-[9px] uppercase font-black" onClick={() => handleFixBug(bug.id)}>
+                                <Wrench size={12} className="mr-1" /> Виправити
+                              </Button>
+                            )}
+                            {bug.status === 'fixing' && (
+                              <div className="flex items-center gap-2 text-amber-400 text-[10px] font-mono">
+                                <Loader2 size={14} className="animate-spin" /> FIXING...
+                              </div>
+                            )}
+                            {bug.status === 'fixed' && (
+                              <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase">
+                                <CheckCircle2 size={16} /> ВИПРАВЛЕНО
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {activeTab === 'health' && (
+                <motion.div key="health" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+                  <div className="flex items-center justify-between p-5 bg-gradient-to-r from-teal-950/40 to-cyan-950/40 border border-teal-500/30 rounded-2xl backdrop-blur-md">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400">
+                        <HeartPulse size={28} />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-white">СИСТЕМНИЙ HEALTH CHECK</h3>
+                        <p className="text-[10px] font-mono text-teal-400 uppercase">
+                          СЕРВІСІВ АКТИВНИХ: {healthChecks.filter(h => h.status === 'healthy').length}/{healthChecks.length} | ОНОВЛЕННЯ КОЖНІ 30 СЕК
+                        </p>
+                      </div>
+                    </div>
+                    <div className={cn(
+                      "px-6 py-2 rounded-xl border text-sm font-black uppercase",
+                      healthChecks.every(h => h.status === 'healthy')
+                        ? "bg-emerald-500/20 border-emerald-400/50 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                        : "bg-amber-500/20 border-amber-400/50 text-amber-400"
+                    )}>
+                      {healthChecks.every(h => h.status === 'healthy') ? '✅ ВСЕ ЗДОРОВО' : '⚠️ Є ДЕГРАДАЦІЇ'}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {healthChecks.map(hc => (
+                      <motion.div key={hc.id} layout className={cn(
+                        "p-4 rounded-xl border backdrop-blur-md flex items-center gap-4 transition-all",
+                        hc.status === 'healthy' && "bg-emerald-950/10 border-emerald-500/20",
+                        hc.status === 'degraded' && "bg-amber-950/10 border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.1)]",
+                        hc.status === 'down' && "bg-red-950/10 border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.1)]",
+                      )}>
+                        <div className={cn(
+                          "w-10 h-10 rounded-lg border flex items-center justify-center shrink-0",
+                          hc.status === 'healthy' && "bg-emerald-500/20 border-emerald-400/50 text-emerald-400",
+                          hc.status === 'degraded' && "bg-amber-500/20 border-amber-400/50 text-amber-400",
+                          hc.status === 'down' && "bg-red-500/20 border-red-400/50 text-red-400",
+                        )}>
+                           {hc.status === 'healthy' ? <CheckCircle2 size={20} /> : hc.status === 'degraded' ? <AlertTriangle size={20} /> : <XCircle size={20} />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-baseline gap-2 mb-0.5">
+                            <span className="text-sm font-black text-white">{hc.service}</span>
+                            <span className="text-[10px] font-mono text-slate-500 truncate">{hc.endpoint}</span>
+                          </div>
+                          <div className="flex items-center gap-4 text-[10px] font-mono">
+                            <span className={cn(
+                              hc.latency < 20 ? 'text-emerald-400' : hc.latency < 50 ? 'text-amber-400' : 'text-red-400'
+                            )}>⚡ {hc.latency}ms</span>
+                            <span className="text-slate-500">Uptime: {hc.uptime}</span>
+                            <span className="text-slate-600">{hc.lastCheck.toLocaleTimeString('uk-UA', { hour12: false })}</span>
+                          </div>
+                        </div>
+                        <div className={cn(
+                          "px-3 py-1 rounded-lg text-[9px] font-black uppercase",
+                          hc.status === 'healthy' && "bg-emerald-500/20 text-emerald-400",
+                          hc.status === 'degraded' && "bg-amber-500/20 text-amber-400",
+                          hc.status === 'down' && "bg-red-500/20 text-red-400",
+                        )}>
+                          {hc.status === 'healthy' ? 'ЗДОРОВИЙ' : hc.status === 'degraded' ? 'ДЕГРАДАЦІЯ' : 'НЕДОСТУПНИЙ'}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+           </AnimatePresence>
         </div>
 
-        {/* Right Column: AI Natural Language Factory Controller */}
-        <div className="lg:col-span-4 flex flex-col gap-6">
+        {/* Right Column: AI Controller */}
+        <div className="w-80 shrink-0 flex flex-col gap-5">
            <Button 
              onClick={startEveryFunction}
-             variant="neon"
-             className="w-full h-16 rounded-2xl bg-gradient-to-r from-red-600 to-fuchsia-700 hover:from-red-500 hover:to-fuchsia-600 text-white font-black tracking-widest text-lg shadow-[0_0_40px_rgba(220,38,38,0.4)] border-2 border-white/20 uppercase animate-pulse transition-all hover:scale-[1.02]"
+             className="w-full h-14 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-black tracking-widest text-sm shadow-[0_0_30px_rgba(139,92,246,0.4)] border border-violet-400/20 uppercase transition-all hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(139,92,246,0.6)]"
            >
-              <Power size={24} className="mr-3" /> MASTER START 🚀
+              <Power size={18} className="mr-2" /> MASTER START 🚀
            </Button>
 
-           <TacticalCard title="АВТОНОМНИЙ ЧАТ-КООРДИНАТОР" variant="holographic" className="flex-1 flex flex-col min-h-[600px] relative border-indigo-500/50 shadow-[0_0_30px_rgba(79,70,229,0.2)]">
+           <TacticalCard title="АВТОНОМНИЙ ЧАТ-КООРДИНАТОР" variant="holographic" className="flex-1 flex flex-col min-h-[500px] relative">
              {/* Chat History */}
-             <div className="flex-1 overflow-y-auto p-4 space-y-5 custom-scrollbar bg-black/40">
+             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-black/40 min-h-0">
                 <AnimatePresence>
                   {messages.map((msg) => (
                     <motion.div 
@@ -1573,56 +1877,51 @@ export default function SystemFactoryView() {
                       initial={{ opacity: 0, scale: 0.95, y: 10 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       className={cn(
-                        "p-4 rounded-xl relative",
+                        "p-3.5 rounded-xl text-[13px] relative",
                         msg.sender === 'user' 
-                          ? "bg-gradient-to-br from-indigo-600 to-indigo-800 border-indigo-400/30 text-indigo-50 ml-6 rounded-tr-none shadow-lg" 
-                          : "bg-slate-900 border border-emerald-500/20 text-emerald-100 mr-6 rounded-tl-none font-mono text-[13px] shadow-[0_0_15px_rgba(16,185,129,0.05)]"
+                          ? "bg-gradient-to-br from-indigo-600/80 to-indigo-900/80 border border-indigo-400/20 text-indigo-50 ml-4 rounded-tr-none" 
+                          : "bg-slate-900/80 border border-emerald-500/15 text-emerald-100 mr-4 rounded-tl-none font-mono shadow-sm"
                       )}
                     >
                        {msg.sender === 'system' && (
-                         <div className="absolute -left-3 -top-3 w-8 h-8 rounded-full bg-slate-950 border border-emerald-500/50 flex items-center justify-center shadow-[0_0_10px_rgba(16,185,129,0.5)]">
-                            <Bot size={16} className="text-emerald-400" />
+                         <div className="absolute -left-3 -top-3 w-7 h-7 rounded-full bg-slate-950 border border-emerald-500/40 flex items-center justify-center">
+                            <Bot size={14} className="text-emerald-400" />
                          </div>
                        )}
-                       <span className="leading-relaxed">{msg.text}</span>
-                       {msg.action && (
-                         <div className="mt-4 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/50 border border-white/10 text-[10px] text-white font-black tracking-widest w-fit animate-pulse">
-                           <Terminal size={12} className={msg.action === 'kubectl' ? "text-rose-400" : "text-emerald-400"} /> 
-                           DIAGNOSTIC_ACTION: {msg.action.toUpperCase()}
-                         </div>
-                       )}
+                       <span className="leading-relaxed text-xs">{msg.text}</span>
                     </motion.div>
                   ))}
                   {isProcessing && (
                      <motion.div 
                       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                      className="bg-slate-900 border border-slate-700 text-slate-400 p-4 rounded-xl mr-8 font-mono text-[11px] flex items-center gap-3 w-fit"
+                      className="bg-slate-900/80 border border-slate-700 text-slate-400 p-3 rounded-xl mr-6 font-mono text-[11px] flex items-center gap-2 w-fit"
                      >
-                        <Loader2 size={16} className="animate-spin text-indigo-500" /> 
-                        <span className="tracking-widest uppercase">Аналіз Нейролінком...</span>
+                        <Loader2 size={14} className="animate-spin text-indigo-500" /> 
+                        <span className="tracking-widest uppercase text-[10px]">Аналіз...
+                        </span>
                      </motion.div>
                   )}
                 </AnimatePresence>
                 <div ref={messagesEndRef} />
              </div>
 
-             {/* Input Form */}
-             <div className="p-4 bg-slate-950/90 border-t border-indigo-500/20 mt-auto">
-                <form onSubmit={handleCommand} className="relative group">
+             {/* Input */}
+             <div className="p-3 bg-slate-950/90 border-t border-indigo-500/20">
+                <form onSubmit={(e) => { e.preventDefault(); if (inputText.trim()) { handleCommand(inputText); setInputText(''); } }} className="relative">
                   <input
                     type="text"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Направити координатора (напр: 'Перезапусти API', 'Масштабуй воркер')..."
-                    className="w-full bg-black/60 border border-indigo-500/30 group-focus-within:border-indigo-400 rounded-2xl py-5 pl-5 pr-14 text-[13px] text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-mono shadow-inner"
+                    placeholder="Команда координатору..."
+                    className="w-full bg-black/60 border border-indigo-500/30 focus:border-indigo-400 rounded-xl py-4 pl-4 pr-12 text-[12px] text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all font-mono"
                     spellCheck="false"
                   />
                   <button 
                     type="submit" 
                     disabled={!inputText.trim() || isProcessing}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-500/30 text-white disabled:bg-slate-800 disabled:shadow-none disabled:text-slate-600 transition-all"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white disabled:bg-slate-800 disabled:text-slate-600 transition-all"
                   >
-                     <Send size={18} className={cn(inputText.trim() && !isProcessing && "translate-x-0.5")} />
+                     <Send size={15} />
                   </button>
                 </form>
              </div>

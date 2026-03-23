@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, X, Send, Bot, Sparkles, Paperclip, Mic, ChevronDown, Zap, Settings } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';
+import { intelligenceApi } from '../../services/api/intelligence';
 
 interface Message {
   id: string;

@@ -1,6 +1,6 @@
-\"\"\"Cache Core — Декоратор для кешування відповідей FastAPI в Redis.
+"""Cache Core — Декоратор для кешування відповідей FastAPI в Redis.
 Покращує продуктивність аналітичних ендпоїнтів.
-\"\"\"
+"""
 import functools
 import hashlib
 from typing import Any, Callable
@@ -15,13 +15,13 @@ logger = get_logger("core.cache")
 
 
 def cache_response(ttl: int = 300, key_prefix: str = "api_cache"):
-    \"\"\"Декоратор для кешування результатів асинхронних функцій роутера.
+    """Декоратор для кешування результатів асинхронних функцій роутера.
 
     Кешує результат на основі:
     - Шляху (URL path)
     - Query параметрів
     - Тіла запиту (якщо є)
-    \"\"\"
+    """
 
     def decorator(func: Callable):
         @functools.wraps(func)
@@ -71,7 +71,7 @@ def cache_response(ttl: int = 300, key_prefix: str = "api_cache"):
 
 
 def _generate_cache_key(request: Request, prefix: str, func_name: str) -> str:
-    \"\"\"Генерує детермінований ключ кешу на основі параметрів запиту.\"\"\"
+    """Генерує детермінований ключ кешу на основі параметрів запиту."""
     path = request.url.path
     query_params = str(sorted(request.query_params.items()))
     
@@ -80,3 +80,4 @@ def _generate_cache_key(request: Request, prefix: str, func_name: str) -> str:
     key_hash = hashlib.md5(key_content.encode()).hexdigest()
     
     return f"{prefix}:{key_hash}"
+
