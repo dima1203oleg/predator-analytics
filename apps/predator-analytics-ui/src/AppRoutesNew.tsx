@@ -85,6 +85,7 @@ const SystemVerificationSuite = lazy(() => import('./features/dashboard/SystemVe
 const DataIngestionHub = lazy(() => import('./features/platform/DataIngestionHub'));
 const ScenarioModeling = lazy(() => import('./features/intelligence/ScenarioModeling'));
 const ForecastView = lazy(() => import('./features/ai/ForecastView'));
+const ReferralControlView = lazy(() => import('./features/intelligence/ReferralControlView'));
 
 // Клієнтський арсенал — Газета та Компромат
 const NewspaperView = lazy(() => import('./features/newspaper/NewspaperView'));
@@ -263,6 +264,7 @@ export const AppRoutesNew = () => {
             <Route path="/admin" element={<MonitoringView />} />
             <Route path="/compliance" element={<ComplianceView />} />
             <Route path="/monitoring" element={<MonitoringView />} />
+            <Route path="/referral-control" element={<ReferralControlView />} />
             <Route path="/governance" element={<SovereignGovernanceDashboard />} />
             <Route path="/security" element={<SecurityView />} />
             <Route path="/deployment" element={<DeploymentView />} />

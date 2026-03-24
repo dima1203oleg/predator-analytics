@@ -72,6 +72,9 @@ import {
   Share2,
   PieChart,
   Navigation,
+  ShieldX,
+  StarOff,
+  Ghost,
 } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAppStore } from '../../store/useAppStore';
@@ -472,6 +475,55 @@ const buildNavGroups = (): NavGroup[] => [
         icon: Activity,
         premium: true,
         hook: 'Сигнали прямо з митного посту — кожні 5 хв',
+      },
+    ],
+  },
+
+  /* ─────────────────────────────────────────────────────────
+     ⑦.5 КОНТРОЛЬ ТА ЗРАДА — Business Weapons
+     ───────────────────────────────────────────────────────── */
+  {
+    title: 'КОНТРОЛЬ ТА ЗРАДА',
+    subtitle: 'Реферали · Зрада · Шахраї · Тіньові схеми',
+    icon: ShieldX,
+    accent: 'rose',
+    isNew: true,
+    items: [
+      {
+        name: 'Реферальний Контроль',
+        path: '/referral-control',
+        icon: Share2,
+        premium: true,
+        badgeType: 'pulse',
+        hook: 'Хто з клієнтів привів нового? Виявляй приховані зв’язки',
+      },
+      {
+        name: 'Зрада-Контроль',
+        path: '/betrayal-control',
+        icon: ShieldX,
+        premium: true,
+        hook: 'Хто з твоїх партнерів вже працює на конкурента?',
+      },
+      {
+        name: 'Чорний Рейтинг',
+        path: '/black-rating',
+        icon: StarOff,
+        premium: true,
+        hook: 'Топ-10 фірм яким не давай клієнтів — не платять, зраджують',
+      },
+      {
+        name: 'Бізнес-Шахрай',
+        path: '/business-fraud',
+        icon: Ghost,
+        premium: true,
+        hook: 'Судові справи, штрафи, фіктивні угоди партнера — за 1 клік',
+      },
+      {
+        name: 'Тіньовий Кеш',
+        path: '/shadow-cash',
+        icon: ShieldAlert,
+        premium: true,
+        hook: 'Shell-компанії, офшори, cash-out — де гроші зникають',
       },
     ],
   },
