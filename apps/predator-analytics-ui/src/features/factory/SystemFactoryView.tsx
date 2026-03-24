@@ -782,11 +782,11 @@ export default function SystemFactoryView() {
         ]}
       />
 
-      {/* ── Основна 2-колонна сітка ──────────────────────────────────────── */}
-      <div className="max-w-[1700px] mx-auto px-6 mt-6 flex gap-6 relative z-10">
+      {/* ── Основна сітка ──────────────────────────────────────────── */}
+      <div className="max-w-[1800px] mx-auto px-4 lg:px-6 mt-6 flex gap-5 relative z-10">
         
         {/* ── Вертикальний Sidebar-Навігатор ── */}
-        <div className="hidden lg:flex flex-col gap-1.5 w-52 shrink-0">
+        <div className="hidden xl:flex flex-col gap-1.5 w-48 shrink-0">
           {/* Логотип Factory */}
           <div className="mb-4 p-3 rounded-xl bg-gradient-to-br from-violet-900/40 to-fuchsia-900/20 border border-violet-500/20">
             <div className="flex items-center gap-2 mb-1">
@@ -859,9 +859,9 @@ export default function SystemFactoryView() {
         </div>
 
         {/* ── Головний контент ── */}
-        <div className="flex-1 min-w-0 max-w-full space-y-0">
+        <div className="flex-1 min-w-0 space-y-0">
           {/* Mobile tabs (тільки для малих екранів) */}
-          <div className="lg:hidden flex gap-2 mb-4 overflow-x-auto pb-2">
+          <div className="xl:hidden flex gap-2 mb-4 overflow-x-auto pb-2">
             {TABS.map(tab => {
               const Icon = tab.icon;
               return (
@@ -1657,55 +1657,56 @@ export default function SystemFactoryView() {
              )}
 
               {activeTab === 'infinite' && (
-                <motion.div key="infinite" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-5">
+                <motion.div key="infinite" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
 
-                  {/* ── Головний блок ── */}
-                  <div className="relative overflow-hidden rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-950/60 via-slate-950/80 to-fuchsia-950/40 backdrop-blur-xl p-6">
-                    {/* Animated background pulse */}
+                  {/* ═══ 1. ЗАГОЛОВОК OODA ═══ */}
+                  <div className="relative rounded-3xl border border-violet-500/30 bg-gradient-to-br from-violet-950/60 via-slate-950/80 to-fuchsia-950/40 backdrop-blur-xl p-6 lg:p-8">
                     {infiniteRunning && (
-                      <div className="absolute inset-0 pointer-events-none">
+                      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-violet-500/5 animate-ping" style={{ animationDuration: '3s' }} />
                       </div>
                     )}
                     <div className="relative z-10 flex flex-col gap-6">
-                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                        <div className="flex items-center gap-5">
+                      {/* Рядок: Іконка + Назва + Кнопка */}
+                      <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] items-center gap-6">
+                        <div className="flex items-center gap-5 min-w-0">
                           <div className="relative shrink-0">
-                            <div className={cn('w-16 h-16 rounded-2xl border-2 flex items-center justify-center transition-all duration-500',
+                            <div className={cn('w-14 h-14 lg:w-16 lg:h-16 rounded-2xl border-2 flex items-center justify-center transition-all duration-500',
                               infiniteRunning ? 'bg-violet-500/20 border-violet-400 shadow-[0_0_30px_rgba(139,92,246,0.6)]' : 'bg-slate-900/80 border-slate-600'
                             )}>
-                              <Infinity size={30} className={cn('transition-all', infiniteRunning ? 'text-violet-300 animate-pulse' : 'text-slate-500')} />
+                              <Infinity size={28} className={cn('transition-all', infiniteRunning ? 'text-violet-300 animate-pulse' : 'text-slate-500')} />
                             </div>
                             {infiniteRunning && <div className="absolute -inset-1 rounded-2xl border border-violet-400/30 animate-ping opacity-40" />}
                           </div>
-                          <div className="min-w-0">
-                            <div className="text-[10px] text-violet-400 font-black uppercase tracking-[0.2em] mb-1 truncate">♥️ OODA LOOP • AUTONOMOUS IMPROVEMENT ENGINE</div>
-                            <h2 className="text-xl lg:text-2xl font-black text-white truncate">
+                          <div className="min-w-0 flex-1">
+                            <div className="text-[10px] text-violet-400 font-black uppercase tracking-[0.15em] mb-1">🔄 ЦИКЛ OODA • АВТОНОМНИЙ ДВИГУН ВДОСКОНАЛЕННЯ</div>
+                            <h2 className="text-lg lg:text-2xl font-black text-white leading-tight">
                               {infiniteRunning ? (
-                                <><span className="text-violet-300">АКТИВНИЙ</span> — Цикл #{infiniteStats.cycles + 1}</>
+                                <><span className="text-violet-300">АКТИВНИЙ</span> <span className="text-slate-500">—</span> Цикл <span className="text-violet-200 font-mono">#{infiniteStats.cycles + 1}</span></>
                               ) : (
-                                <><span className="text-slate-400">ЗУПИНЕНО</span> — Очікує команди</>
+                                <><span className="text-slate-400">ЗУПИНЕНО</span> <span className="text-slate-600">—</span> <span className="text-slate-500">Очікує команди</span></>
                               )}
                             </h2>
-                            <p className="text-xs text-slate-400 mt-1 max-w-md line-clamp-2">
+                            <p className="text-[11px] text-slate-500 mt-1.5">
                               Автономна система аналізує код, архітектуру та логи для генерації патчів і вдосконалень.
                             </p>
                           </div>
                         </div>
 
-                        <Button 
+                        <Button
                           onClick={handleInfiniteCycle}
-                          className={cn('h-12 px-8 font-black tracking-widest uppercase text-sm transition-all shrink-0 w-full lg:w-auto',
+                          className={cn('h-12 px-8 font-black tracking-widest uppercase text-sm transition-all shrink-0 w-full lg:w-auto rounded-xl',
                             infiniteRunning
                               ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_25px_rgba(225,29,72,0.5)] border border-rose-400/30'
                               : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white shadow-[0_0_25px_rgba(139,92,246,0.5)] border border-violet-400/30'
                           )}
                         >
-                          {infiniteRunning ? <><Power size={16} className="mr-2" />ЗУПИНИТИ НА БЕКЕНДІ</> : <><Play size={16} className="mr-2" />ЗАПУСТИТИ НА БЕКЕНДІ</>}
+                          {infiniteRunning ? <><Power size={16} className="mr-2" />ЗУПИНИТИ</> : <><Play size={16} className="mr-2" />ЗАПУСТИТИ</>}
                         </Button>
                       </div>
 
-                      <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 items-center bg-violet-500/5 border border-violet-500/20 rounded-2xl p-4">
+                      {/* Рядок бейджів */}
+                      <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 items-center bg-violet-500/5 border border-violet-500/15 rounded-2xl p-4">
                         <div className="flex flex-wrap items-center gap-2">
                           <Badge className={cn(
                             'border text-[10px] font-black uppercase tracking-widest px-3 py-1',
@@ -1716,41 +1717,43 @@ export default function SystemFactoryView() {
                             Сервер: {infiniteRunning ? 'АКТИВНИЙ' : 'ЗУПИНЕНИЙ'}
                           </Badge>
                           <Badge className="border border-violet-400/20 bg-violet-500/10 text-violet-200 text-[10px] font-black uppercase tracking-widest px-3 py-1">
-                            Автовідновлення після рестарту
+                            Автовідновлення
                           </Badge>
                           <Badge className="border border-sky-400/20 bg-sky-500/10 text-sky-200 text-[10px] font-black uppercase tracking-widest px-3 py-1">
-                            Після переходу між розділами стан не губиться
+                            Збереження стану
                           </Badge>
                         </div>
                         <div className="text-[10px] font-mono text-slate-500 lg:text-right flex flex-col gap-0.5">
-                          <span>Остання синхронізація: {infiniteSyncedAt}</span>
-                          <span>Оновлення з бекенду: {infiniteLastUpdate}</span>
+                          <span>Синхр: {infiniteSyncedAt}</span>
+                          <span>Бекенд: {infiniteLastUpdate}</span>
                         </div>
                       </div>
                     </div>
-
-                  {/* Stats row */}
-                  <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {[
-                        { label: 'Циклів OODA', value: infiniteStats.cycles, icon: RefreshCw, color: 'text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20' },
-                        { label: 'Покращень', value: infiniteStats.improvements, icon: Zap, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
-                        { label: 'Багів виправлено', value: bugs.filter(b => b.status === 'fixed').length, icon: CheckCircle2, color: 'text-teal-400', bg: 'bg-teal-500/10 border-teal-500/20' },
-                      ].map(s => {
-                        const Icon = s.icon;
-                        return (
-                          <div key={s.label} className={cn('rounded-xl border p-4 flex items-center gap-3', s.bg)}>
-                            <Icon size={18} className={s.color} />
-                            <div>
-                              <div className={cn('text-2xl font-black font-mono', s.color)}>{s.value}</div>
-                              <div className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">{s.label}</div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
                   </div>
 
-                  {/* ── OODA Фази ── */}
+                  {/* ═══ 2. СТАТИСТИКА ═══ */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {[
+                      { label: 'Циклів OODA', value: infiniteStats.cycles, icon: RefreshCw, color: 'text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20' },
+                      { label: 'Покращень', value: infiniteStats.improvements, icon: Zap, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+                      { label: 'Багів виправлено', value: bugs.filter(b => b.status === 'fixed').length, icon: CheckCircle2, color: 'text-teal-400', bg: 'bg-teal-500/10 border-teal-500/20' },
+                    ].map(s => {
+                      const Icon = s.icon;
+                      return (
+                        <div key={s.label} className={cn('rounded-2xl border p-5 flex items-center gap-4', s.bg)}>
+                          <div className="w-10 h-10 rounded-xl bg-black/20 flex items-center justify-center shrink-0">
+                            <Icon size={20} className={s.color} />
+                          </div>
+                          <div>
+                            <div className={cn('text-2xl font-black font-mono', s.color)}>{s.value}</div>
+                            <div className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">{s.label}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* ═══ 3. OODA ФАЗИ ═══ */}
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
                       { id: 'observe', label: 'ОБСЕРВАЦІЯ', sub: 'Збір метрик', icon: Eye, color: 'cyan' },
@@ -1772,17 +1775,18 @@ export default function SystemFactoryView() {
                           key={phase.id}
                           style={isActive ? { boxShadow: cs.glow } : {}}
                           className={cn(
-                            'relative rounded-xl border p-4 flex flex-col items-center gap-2 text-center transition-all duration-500',
+                            'relative rounded-2xl border p-5 flex flex-col items-center gap-3 text-center transition-all duration-500',
                             isActive ? `${cs.border} ${cs.bg}` : 'border-slate-800/60 bg-slate-950/40 opacity-40'
                           )}
                         >
-                          {isActive && <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-current animate-ping opacity-60" style={{ color: 'inherit' }} />}
-                          <Icon size={22} className={isActive ? cs.text : 'text-slate-600'} />
+                          {isActive && <div className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-current animate-ping opacity-60" style={{ color: 'inherit' }} />}
+                          <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center', isActive ? 'bg-black/20' : 'bg-transparent')}>
+                            <Icon size={24} className={isActive ? cs.text : 'text-slate-600'} />
+                          </div>
                           <div className={cn('text-[10px] font-black tracking-widest uppercase', isActive ? cs.text : 'text-slate-600')}>{phase.label}</div>
                           <div className="text-[9px] text-slate-600">{phase.sub}</div>
-                          {/* Номер фази дальше */}
                           {idx < 3 && (
-                            <div className="absolute -right-4 top-1/2 -translate-y-1/2 z-10">
+                            <div className="hidden lg:block absolute -right-3.5 top-1/2 -translate-y-1/2 z-10">
                               <ChevronRight size={14} className={isActive ? cs.text : 'text-slate-700'} />
                             </div>
                           )}
@@ -1791,21 +1795,21 @@ export default function SystemFactoryView() {
                     })}
                   </div>
 
-                  {/* ── Живий Термінал з логами ── */}
+                  {/* ═══ 4. ЖИВИЙ ТЕРМІНАЛ ═══ */}
                   <div className="rounded-2xl border border-slate-800 bg-slate-950/90 overflow-hidden">
                     <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800 bg-slate-900/60">
-                      <div className="flex items-center gap-2">
-                        <div className="flex gap-1.5">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="flex gap-1.5 shrink-0">
                           <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
                           <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                           <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                         </div>
-                        <span className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest ml-2">
+                        <span className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest ml-2 truncate">
                           <Terminal size={11} className="inline mr-1 text-violet-400" />
-                          PREDATOR-OODA-LOOP -- жива трансляція
+                          PREDATOR-OODA — ЖИВА ТРАНСЛЯЦІЯ
                         </span>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 shrink-0">
                         {infiniteRunning && (
                           <motion.div
                             key="rec"
@@ -1861,7 +1865,7 @@ export default function SystemFactoryView() {
         </div>
 
         {/* Right Column: AI Controller */}
-        <div className="w-80 shrink-0 flex flex-col gap-5">
+        <div className="hidden 2xl:flex w-72 shrink-0 flex-col gap-5">
            <Button 
              onClick={startEveryFunction}
              className="w-full h-14 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-black tracking-widest text-sm shadow-[0_0_30px_rgba(139,92,246,0.4)] border border-violet-400/20 uppercase transition-all hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(139,92,246,0.6)]"
