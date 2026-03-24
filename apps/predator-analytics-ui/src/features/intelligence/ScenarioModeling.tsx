@@ -4,15 +4,21 @@
  * Ультрапреміальний інструмент бізнес-прогнозування з 3D HUD та голографічними графіками
  */
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    TrendingUp, TrendingDown, RefreshCw, Save,
-    Play, Activity, Shield, Zap, Target, Layers,
-    Globe, Crosshair, BarChart3, ArrowUpRight, Flame, Brain
+  Play, Pause, RotateCcw, Download, Upload,
+  TrendingUp, TrendingDown, AlertTriangle,
+  Settings, BarChart3, Activity, Zap,
+  ChevronDown, Info, Target, Shield, RefreshCw,
+  Globe, Flame, Save, Brain, Crosshair
 } from 'lucide-react';
 import ReactECharts from '@/components/ECharts';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { TacticalCard } from '@/components/TacticalCard';
+import { ViewHeader } from '@/components/ViewHeader';
 import { cn } from '@/utils/cn';
+import { apiClient } from '@/services/api/config';
 import { useAppStore } from '@/store/useAppStore';
 
 // --- CONFIG ---
@@ -44,38 +50,64 @@ const ScenarioModeling: React.FC = () => {
         competitorActivity: 50,
     });
     const [scanProgress, setScanProgress] = useState(0);
+    const [simulationResult, setSimulationResult] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const handleParamChange = (name: string, val: number) => {
         setParams(prev => ({ ...prev, [name]: val }));
     };
 
-    const runSimulation = () => {
+    const runSimulation = async () => {
         setIsSimulating(true);
         setScanProgress(0);
-        const interval = setInterval(() => {
+        setError(null);
+        
+        // Simulate progress
+        const progressInterval = setInterval(() => {
             setScanProgress(p => {
-                if (p >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => setIsSimulating(false), 200);
-                    return 100;
-                }
-                return p + 2.5;
+                if (p >= 90) return 90;
+                return p + 3;
             });
-        }, 40);
+        }, 100);
+
+        try {
+            const scenario = {
+                globalDemand: params.globalDemand,
+                importDuty: params.importDuty,
+                competition: params.competitorActivity,
+                inflation: ((params.currencyRate - 40) / 40) * 100, // Convert currency to inflation proxy
+            };
+            
+            const res = await apiClient.post('/modeling/scenario', { scenario });
+            setSimulationResult(res.data);
+            setScanProgress(100);
+        } catch (err) {
+            setError('Не вдалося виконати моделювання сценарію');
+            console.error('Scenario modeling error:', err);
+        } finally {
+            clearInterval(progressInterval);
+            setTimeout(() => setIsSimulating(false), 500);
+        }
     };
 
     const getChartOption = () => {
         const baseData = [120, 132, 121, 134, 150, 140, 160, 155, 170, 165, 180, 190];
         const xAxis = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-        // Complex mock calculation
-        const multiplier =
-            (params.globalDemand / 100) *
-            (1 - (params.importDuty / 100) * 0.4) *
-            (40 / params.currencyRate) *
-            (1 - (params.competitorActivity / 100) * 0.2);
-
-        const simData = baseData.map((v, i) => i > 5 ? Math.round(v * multiplier) + Math.sin(i) * 10 : v);
+        let forecastData = baseData;
+        
+        // Use real API data if available
+        if (simulationResult?.forecast) {
+            forecastData = simulationResult.forecast.map((f: any) => f.forecast);
+        } else {
+            // Fallback calculation
+            const multiplier =
+                (params.globalDemand / 100) *
+                (1 - (params.importDuty / 100) * 0.4) *
+                (40 / params.currencyRate) *
+                (1 - (params.competitorActivity / 100) * 0.2);
+            forecastData = baseData.map((v, i) => i > 5 ? Math.round(v * multiplier) + Math.sin(i) * 10 : v);
+        }
 
         return {
             backgroundColor: 'transparent',
@@ -113,7 +145,7 @@ const ScenarioModeling: React.FC = () => {
                     smooth: true,
                     symbol: 'none',
                     lineStyle: { width: 3, color: '#475569' },
-                    data: baseData.map((v, i) => i <= 5 ? v : null)
+                    data: baseData.map((v: any, i: number) => i <= 5 ? v : null)
                 },
                 {
                     name: 'ШІ Прогноз (V55)',
@@ -122,17 +154,8 @@ const ScenarioModeling: React.FC = () => {
                     symbol: 'circle',
                     symbolSize: 8,
                     itemStyle: { color: '#8b5cf6', borderColor: '#000', borderWidth: 2 },
-                    lineStyle: { width: 4, color: '#8b5cf6', shadowColor: 'rgba(139,92,246,0.5)', shadowBlur: 10 },
-                    areaStyle: {
-                        color: {
-                            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-                            colorStops: [
-                                { offset: 0, color: 'rgba(139,92,246,0.3)' },
-                                { offset: 1, color: 'rgba(139,92,246,0)' }
-                            ]
-                        }
-                    },
-                    data: simData.map((v, i) => i >= 5 ? v : null)
+                    lineStyle: { width: 4, color: '#8b5cf6' },
+                    data: forecastData
                 }
             ]
         };

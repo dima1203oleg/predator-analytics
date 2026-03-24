@@ -25,6 +25,7 @@ import { TacticalCard } from '@/components/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/lib/utils';
+import { apiClient } from '@/services/api/config';
 
 // ========================
 // Types
@@ -228,11 +229,11 @@ const HistoryRow: React.FC<{ result: ScreeningResult; isSelected: boolean; onCli
 // Main Component
 // ========================
 const SanctionsScreening: React.FC = () => {
-    const [history, setHistory] = useState<ScreeningResult[]>(MOCK_HISTORY);
+    const [history, setHistory] = useState<ScreeningResult[]>([]);
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
-    const [selected, setSelected] = useState<ScreeningResult | null>(MOCK_HISTORY[0]);
+    const [selected, setSelected] = useState<ScreeningResult | null>(null);
     const [entityType, setEntityType] = useState<EntityType>('company');
     const [liveTime, setLiveTime] = useState(new Date().toLocaleTimeString('uk'));
     const [selectedLists, setSelectedLists] = useState<ListType[]>(['OFAC', 'EU', 'UN', 'UK', 'РНБО', 'PEP']);
@@ -246,28 +247,16 @@ const SanctionsScreening: React.FC = () => {
         if (!searchQuery.trim()) return;
         setIsSearching(true);
         try {
-            await new Promise(r => setTimeout(r, 1800));
-            // Simulated result
-            const mockResult: ScreeningResult = {
-                id: `scr-${Date.now()}`,
-                entityName: searchQuery.toUpperCase(),
-                entityType,
-                status: 'warning',
-                timestamp: new Date().toISOString(),
-                searchId: `AX-${Math.floor(Math.random() * 9000 + 1000)}`,
-                riskScore: Math.floor(Math.random() * 60 + 20),
-                matches: selectedLists.length > 0 ? [{
-                    id: `m-${Date.now()}`,
-                    list: selectedLists[0],
-                    program: 'Автоматичний OSINT-скрінінг',
-                    target: searchQuery.toUpperCase(),
-                    details: 'Виявлено потенційний збіг у реєстрі. Потребує ручної верифікації аналітиком.',
-                    severity: 'medium',
-                    score: Math.floor(Math.random() * 30 + 50),
-                }] : [],
-            };
-            setHistory(prev => [mockResult, ...prev]);
-            setSelected(mockResult);
+            const res = await apiClient.post('/sanctions/screen', {
+                query: searchQuery.trim(),
+                entity_type: entityType,
+                lists: selectedLists,
+            });
+            const result: ScreeningResult = res.data;
+            setHistory(prev => [result, ...prev]);
+            setSelected(result);
+        } catch (err) {
+            console.error('Sanctions screening error:', err);
         } finally {
             setIsSearching(false);
         }

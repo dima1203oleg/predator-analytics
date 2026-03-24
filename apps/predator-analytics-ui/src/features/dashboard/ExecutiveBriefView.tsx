@@ -20,7 +20,7 @@ import {
     Info, ExternalLink, Calendar, Clock, User, Layers,
     FileText, ZapOff, ShieldAlert, Target, Star
 } from 'lucide-react';
-import { api } from '@/services/api';
+import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';
 import { Badge } from '@/components/ui/badge';
@@ -62,44 +62,8 @@ const ExecutiveBriefView: React.FC = () => {
     const fetchBrief = async () => {
         setLoading(true);
         try {
-            // Simulated delay for "Generating" effect
-            await new Promise(r => setTimeout(r, 1200));
-            // In production: const res = await api.get(`/intelligence/brief?persona=${persona}`);
-            setBrief({
-                title: "СТРАТЕГІЧНИЙ ДАЙДЖЕСТ: ЧОРНОМОРСЬКИЙ РЕГІОН",
-                summary: "Спостерігається аномальна активність у портах Одеси та Констанци. Семантичний аналіз вказує на приховану передислокацію комерційного флоту під прапорами офшорних зон.",
-                sections: [
-                    {
-                        id: 'TOP_SITUATION',
-                        title: 'ГОЛОВНИЙ ЗВІТ СИТУАЦІЇ',
-                        priority: 'CRITICAL',
-                        content: "Ризики блокування зернового коридору зросли на 15.4%. Аналітичні моделі PREDATOR прогнозують спроби обходу санкцій через нові ланцюги постачання в ОАЕ та КНР. Виявлено 12 нових суден-фантомів, що не мали активних AIS-сигналів протягом останніх 48 годин.",
-                        impact: "Критичний вплив на експортну логістику та валютну виручку.",
-                        confidence: 96.8
-                    },
-                    {
-                        id: 'MARKET',
-                        title: 'РИНКОВА РОЗВІДКА',
-                        priority: 'HIGH',
-                        content: "Ціни на каботажні перевезення стабілізувалися, проте спостерігається дефіцит танкерів класу Suezmax. Митний департамент Румунії ввів додаткові перевірки для вантажів з кодом UKTZED 2710.",
-                        impact: "Помірне зростання вартості фрахту в наступні 14 днів.",
-                        confidence: 89.2
-                    },
-                    {
-                        id: 'SECURITY',
-                        title: 'КІБЕР-ЗАГРОЗИ',
-                        priority: 'CRITICAL',
-                        content: "Виявлено спроби зондування API митних терміналів з IP-адрес, що належать до 'сірих' VPN-провайдерів. Семантичний профіль атак збігається з діями угруповання APT-41. Ціль: маніпуляція даними про походження вантажів.",
-                        impact: "Загроза цілісності даних у митній базі.",
-                        confidence: 98.1
-                    }
-                ],
-                alerts: [
-                    "ТЕРМІНОВО: Зміна митних правил у Туреччині з 00:00 завтра.",
-                    "Виявлено судно-фантом AIS-1293 у закритій зоні Констанци.",
-                    "Критичне оновлення Neo4j GDS алгоритмів [LOUVAIN-4] завершено."
-                ]
-            });
+            const res = await apiClient.get(`/intelligence/brief?persona=${persona}`);
+            setBrief(res.data);
         } catch (err) {
             console.error('Failed to fetch executive brief:', err);
         } finally {

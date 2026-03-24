@@ -5,13 +5,14 @@
  * Об'єднує Радар, Компромат, Мережу, Конкуренцію та Прогнози в єдину систему.
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Truck, Ship, BarChart3, Map as MapIcon, ShieldAlert, Anchor,
   TrendingUp, Search, Filter, Play, Zap, Globe, Navigation,
   Clock, Package, AlertTriangle, Fingerprint, Activity,
-  ArrowRight, Layers, DollarSign, Target, ChevronRight
+  ArrowRight, Layers, DollarSign, Target, ChevronRight,
+  RefreshCw, Loader2
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { TacticalCard } from '@/components/TacticalCard';
@@ -20,16 +21,70 @@ import { HoloContainer } from '@/components/HoloContainer';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { apiClient } from '@/services/api/config';
 
 // --- Types ---
 type SectionType = 'radar' | 'tracking' | 'routing' | 'ships' | 'risks' | 'forecasts';
 
+interface StatItem {
+  label: string;
+  value: string;
+  sub: string;
+  icon: any;
+  color: string;
+}
+
 const SupplyChainAnalyticsView = () => {
   const [activeSection, setActiveSection] = useState<SectionType>('radar');
   const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [globalStats, setGlobalStats] = useState<StatItem[]>([]);
+  const [trackingData, setTrackingData] = useState<any>(null);
+  const [routesData, setRoutesData] = useState<any>(null);
 
-  // --- Mock Data ---
-  const globalStats = [
+  // --- Fetch Real Data ---
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [statsRes, trackingRes, routesRes] = await Promise.all([
+        apiClient.get('/supply-chain/stats'),
+        apiClient.get('/supply-chain/tracking'),
+        apiClient.get('/supply-chain/routes'),
+      ]);
+
+      // Map API stats to component format
+      const apiStats = statsRes.data?.globalStats || [];
+      const iconMap: Record<string, any> = { Package, ShieldAlert, DollarSign };
+      const mappedStats = apiStats.map((s: any) => ({
+        label: s.label,
+        value: s.value,
+        sub: s.sub,
+        icon: iconMap[s.icon] || Package,
+        color: s.color,
+      }));
+
+      setGlobalStats(mappedStats.length > 0 ? mappedStats : defaultStats);
+      setTrackingData(trackingRes.data);
+      setRoutesData(routesRes.data);
+    } catch (err) {
+      setError('Не вдалося завантажити дані ланцюгів постачання');
+      console.error('Supply chain error:', err);
+      setGlobalStats(defaultStats);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // --- Default Stats (fallback) ---
+  const defaultStats: StatItem[] = [
     { label: 'ТОВАРИ В РУСІ', value: '23 ОБ\'ЄКТИ', sub: '12 кораблів, 8 фур, 3 поїзди', icon: Package, color: 'text-cyan-400' },
     { label: 'РИЗИК ЛАНЦЮГА', value: 'HIGH', sub: '6 критичних аномалій виявлено', icon: ShieldAlert, color: 'text-rose-500' },
     { label: 'ЕКОНОМІЯ AI', value: '$240K', sub: 'Завдяки оптимізації маршрутів', icon: DollarSign, color: 'text-emerald-400' },

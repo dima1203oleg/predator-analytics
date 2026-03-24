@@ -2281,6 +2281,21 @@ app.get('/api/v1/graph/search', (req, res) => {
   res.json({ nodes: DB_GRAPH.nodes.slice(0, 30), edges: DB_GRAPH.edges.slice(0, 50), total_nodes: DB_GRAPH.nodes.length, total_edges: DB_GRAPH.edges.length });
 });
 
+// Graph summary — для RegistryStats (Neo4j метрики)
+app.get('/api/v1/graph/summary', (req, res) => {
+  res.json({
+    node_count: DB_GRAPH.nodes.length,
+    relationship_count: DB_GRAPH.edges.length,
+    labels: ['Company', 'Person', 'Declaration', 'PhoneNumber', 'Address'],
+    status: 'online',
+    version: '5.0',
+    db_size_mb: Math.round(DB_GRAPH.nodes.length * 0.48 + DB_GRAPH.edges.length * 0.12),
+    indexes: 12,
+    constraints: 8
+  });
+});
+
+
 // Connectors / Sources — тепер повертає ВСІ типи джерел
 app.get(['/api/v1/sources/connectors', '/api/v1/ingest/connectors'], (req, res) => {
   // Map all etlJobs to connectors
@@ -2860,74 +2875,967 @@ app.get('/api/v1/premium/market-trends', (req, res) => {
 });
 
 app.get('/api/v1/newspaper', (req, res) => {
-  const highRiskCount = DB_FACTS.filter(d => d.risk_score > 70).length;
   const totalVolume = DB_FACTS.reduce((acc, d) => acc + d.customs_value_usd, 0);
+  const highRisk = DB_FACTS.filter(d => d.risk_score > 70).sort((a, b) => b.risk_score - a.risk_score);
+  const medRisk = DB_FACTS.filter(d => d.risk_score > 50 && d.risk_score <= 70);
+
+  // --- ГОЛОВНИЙ МАТЕРІАЛ: найризикованіша декларація ---
+  const topRiskDecl = highRisk[0] || DB_FACTS[0];
+  const headline = {
+    title: `${topRiskDecl.company_name} — аномальна декларація на $${(topRiskDecl.customs_value_usd / 1000).toFixed(0)}K`,
+    subtitle: `Товар: ${topRiskDecl.goods_description}. Країна: ${topRiskDecl.country_origin}. Митниця: ${topRiskDecl.customs_office}. Категорія: ${topRiskDecl.goods_category}. Операція: ${topRiskDecl.operation_type}. Вага: ${topRiskDecl.weight_kg} кг.`,
+    riskScore: topRiskDecl.risk_score,
+    tag: topRiskDecl.risk_score > 80 ? 'КРИТИЧНИЙ РИЗИК' : 'МИТНА РОЗВІДКА',
+    hook: topRiskDecl.risk_score > 80
+      ? 'Потенційне порушення митних правил — рекомендовано перевірку'
+      : 'Рекомендовано додатковий аналіз декларації',
+    edrpou: topRiskDecl.edrpou || '—',
+    declarationNumber: topRiskDecl.declaration_number,
+    date: topRiskDecl.date,
+  };
+
+  // --- КОМПРОМАТ: високоризикові компанії ---
+  const companyRisk = {};
+  DB_FACTS.forEach(d => {
+    if (!companyRisk[d.company_name]) {
+      companyRisk[d.company_name] = { totalRisk: 0, count: 0, maxRisk: 0, totalValue: 0, edrpou: d.edrpou, categories: new Set(), countries: new Set() };
+    }
+    const c = companyRisk[d.company_name];
+    c.totalRisk += d.risk_score;
+    c.count++;
+    c.maxRisk = Math.max(c.maxRisk, d.risk_score);
+    c.totalValue += d.customs_value_usd;
+    c.categories.add(d.goods_category);
+    c.countries.add(d.country_origin);
+  });
+  const compromat = Object.entries(companyRisk)
+    .map(([name, c]) => ({ name, avgRisk: Math.round(c.totalRisk / c.count), ...c, categories: [...c.categories], countries: [...c.countries] }))
+    .filter(c => c.maxRisk > 60)
+    .sort((a, b) => b.maxRisk - a.maxRisk)
+    .slice(0, 6)
+    .map((c, i) => {
+      const sources = ['ЄДРПОУ / Митна база', 'ДПС / Судовий реєстр', 'РНБО / OFAC', 'OpenSearch / Qdrant', 'Прозорро / ДПСУ', 'Offshore Leaks / ЄДРПОУ'];
+      const riskTypes = ['Аномальна вартість декларацій', 'Підозра на заниження вартості', 'Кримінальне провадження', 'Санкційний ризик', 'Фіктивні угоди', 'Офшорний бенефіціар'];
+      return {
+        id: `comp-${i}`,
+        title: `${c.name} — ризик ${c.maxRisk}%`,
+        subtitle: `ЄДРПОУ: ${c.edrpou || '—'}. ${c.count} декларацій на $${(c.totalValue / 1000).toFixed(0)}K. Країни: ${c.countries.join(', ')}.`,
+        risk: riskTypes[i % riskTypes.length],
+        hook: `Середній ризик ${c.avgRisk}%. Категорії: ${c.categories.join(', ')}`,
+        riskLevel: c.maxRisk > 80 ? 'high' : 'medium',
+        source: sources[i % sources.length],
+      };
+    });
+
+  // --- ТРЕНДИ ПО КАТЕГОРІЯХ ---
+  const catStats = {};
+  DB_FACTS.forEach(d => {
+    if (!catStats[d.goods_category]) {
+      catStats[d.goods_category] = { totalValue: 0, count: 0, avgRisk: 0, totalRisk: 0 };
+    }
+    const s = catStats[d.goods_category];
+    s.totalValue += d.customs_value_usd;
+    s.count++;
+    s.totalRisk += d.risk_score;
+  });
+  const trends = Object.entries(catStats)
+    .map(([cat, s]) => ({
+      id: `trend-${cat}`,
+      title: `${cat} — $${(s.totalValue / 1000000).toFixed(1)}M`,
+      subtitle: `${s.count} декларацій. Середній ризик: ${Math.round(s.totalRisk / s.count)}%.`,
+      hook: s.totalValue > 3000000 ? 'Зростаючий сегмент — рекомендовано аналіз' : 'Стабільний обсяг торгівлі',
+      direction: s.totalValue > 2000000 ? 'up' : 'down',
+      percent: Math.round((s.totalValue / totalVolume) * 100),
+      hsCode: cat,
+      count: s.count,
+      totalValue: s.totalValue,
+    }))
+    .sort((a, b) => b.totalValue - a.totalValue)
+    .slice(0, 5);
+
+  // --- МИТНІ ПОДІЇ ---
+  const officeStats = {};
+  DB_FACTS.forEach(d => {
+    if (!officeStats[d.customs_office]) {
+      officeStats[d.customs_office] = { count: 0, totalValue: 0, avgRisk: 0, totalRisk: 0, companies: new Set(), countries: new Set() };
+    }
+    const o = officeStats[d.customs_office];
+    o.count++;
+    o.totalValue += d.customs_value_usd;
+    o.totalRisk += d.risk_score;
+    o.companies.add(d.company_name);
+    o.countries.add(d.country_origin);
+  });
+  const customs = Object.entries(officeStats)
+    .map(([office, o]) => ({
+      id: `cust-${office}`,
+      title: `${office} — ${o.count} декларацій`,
+      subtitle: `Обсяг: $${(o.totalValue / 1000).toFixed(0)}K. Компаній: ${o.companies.size}. Країни: ${[...o.countries].slice(0, 3).join(', ')}.`,
+      hook: Math.round(o.totalRisk / o.count) > 55 ? 'Підвищений ризик на цій митниці' : 'Стабільний потік декларацій',
+      type: Math.round(o.totalRisk / o.count) > 55 ? 'risk' : 'opportunity',
+      avgRisk: Math.round(o.totalRisk / o.count),
+    }))
+    .sort((a, b) => b.avgRisk - a.avgRisk)
+    .slice(0, 4);
+
+  // --- АЛЕРТИ ---
+  const urgencyMap = { high: 'high', medium: 'medium', low: 'info' };
+  const alerts = highRisk.slice(0, 4).map((d, i) => ({
+    id: `alert-${i}`,
+    text: `${d.company_name}: ${d.goods_description} — ризик ${d.risk_score}%, вартість $${(d.customs_value_usd / 1000).toFixed(0)}K (${d.country_origin})`,
+    urgency: d.risk_score > 80 ? 'high' : 'medium',
+    time: `${(i + 1) * 12} хв тому`,
+  }));
+  // Додаємо інфо-алерти з середнього ризику
+  medRisk.slice(0, 3).forEach((d, i) => {
+    alerts.push({
+      id: `alert-info-${i}`,
+      text: `${d.goods_category}: ${d.goods_description} — ${d.operation_type} з ${d.country_origin}, $${(d.customs_value_usd / 1000).toFixed(0)}K`,
+      urgency: 'info',
+      time: `${(i + 1)} год тому`,
+    });
+  });
+
+  // --- МЕТРИКИ ---
+  const importCount = DB_FACTS.filter(d => d.operation_type === 'Імпорт').length;
+  const exportCount = DB_FACTS.filter(d => d.operation_type === 'Експорт').length;
+  const metrics = {
+    materials: compromat.length + trends.length + customs.length,
+    riskAlerts: highRisk.length,
+    trends: trends.length,
+    customsEvents: customs.length,
+    totalDeclarations: DB_FACTS.length,
+    totalValueUsd: totalVolume,
+    importCount,
+    exportCount,
+  };
 
   res.json({
-    metrics: [
-      { label: 'Активні алерти', value: highRiskCount.toString(), change: -2, trend: 'down' },
-      { label: 'Можливості ринку', value: '12', change: 3, trend: 'up' },
-      { label: 'Ринковий скор', value: '78%', change: 5, trend: 'up' },
-      { label: 'Рівень ризику', value: highRiskCount > 10 ? 'ВИСОКИЙ' : 'НИЗЬКИЙ', change: -8, trend: 'down' }
-    ],
-    stats: {
-      total_documents: DB_FACTS.length,
-      new_documents_24h: 42,
-      system_health: 'Optimal'
-    },
-    recommendations: [
-      'Переглянути постачальників у секторі електроніки',
-      'Звернути увагу на ріст цін на логістику в Чорному морі',
-      'Оптимізувати податкове навантаження через нові пільги'
-    ],
-    news: DB_FACTS.slice(0, 5).map(d => ({
-      id: d.id,
-      title: d.goods_description,
-      type: d.operation_type,
-      time: d.created_at,
-      risk: d.risk_score
-    })),
-    sections: [
-      {
-        id: 'critical',
-        title: '🚨 Критичні події',
-        priority: 'critical',
-        items: [
-          {
-            id: 'c-1',
-            type: 'alert',
-            title: 'Аномальна концентрація імпорту',
-            summary: `Виявлено завантаження від нових постачальників на суму $${(totalVolume / 10).toFixed(1)}M`,
-            impact: 'Потенційний демпінг на ринку електроніки',
-            timestamp: '2 години тому',
-            tags: ['імпорт', 'ризик', 'електроніка'],
-            actionable: true
-          }
-        ]
-      },
-      {
-        id: 'opportunities',
-        title: '📈 Можливості та Тренди',
-        priority: 'high',
-        items: [
-          {
-            id: 'o-1',
-            type: 'opportunity',
-            title: 'Нова ніша: С/Г техніка',
-            summary: 'Попит на запчастини зріс на 45% за останній тиждень',
-            value: '$2.4М',
-            timestamp: '6 годин тому',
-            tags: ['сг-техніка', 'тренд'],
-            actionable: true
-          }
-        ]
-      }
-    ],
-    summary: `Сьогодні система PREDATOR зафіксувала ${highRiskCount} критичних алерти та 12 нових можливостей. Загальний стан ринку оцінюється як стабільний.`
+    headline,
+    compromat,
+    trends,
+    customs,
+    alerts,
+    metrics,
+    summary: `Система PREDATOR обробила ${DB_FACTS.length} декларацій на суму $${(totalVolume / 1000000).toFixed(1)}M. Виявлено ${highRisk.length} високоризикових операцій, ${trends.length} товарних трендів та ${customs.length} митних подій.`,
+    generated_at: new Date().toISOString(),
   });
 });
 
+// =============================================
+// 📋 EXECUTIVE BRIEF — Стратегічний Брифінг
+// =============================================
+app.get('/api/v1/intelligence/brief', (req, res) => {
+  const persona = (req.query.persona || 'BUSINESS').toString().toUpperCase();
+  const totalVolume = DB_FACTS.reduce((acc, d) => acc + d.customs_value_usd, 0);
+  const highRisk = DB_FACTS.filter(d => d.risk_score > 70);
+  const importFacts = DB_FACTS.filter(d => d.operation_type === 'Імпорт');
+  const exportFacts = DB_FACTS.filter(d => d.operation_type === 'Експорт');
 
+  // Аналіз по країнах
+  const countryStats = {};
+  DB_FACTS.forEach(d => {
+    if (!countryStats[d.country_origin]) countryStats[d.country_origin] = { count: 0, value: 0, risk: 0 };
+    countryStats[d.country_origin].count++;
+    countryStats[d.country_origin].value += d.customs_value_usd;
+    countryStats[d.country_origin].risk += d.risk_score;
+  });
+  const topCountries = Object.entries(countryStats)
+    .map(([c, s]) => ({ name: c, ...s, avgRisk: Math.round(s.risk / s.count) }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 5);
+
+  // Аналіз по категоріях
+  const catStats = {};
+  DB_FACTS.forEach(d => {
+    if (!catStats[d.goods_category]) catStats[d.goods_category] = { count: 0, value: 0, risk: 0 };
+    catStats[d.goods_category].count++;
+    catStats[d.goods_category].value += d.customs_value_usd;
+    catStats[d.goods_category].risk += d.risk_score;
+  });
+  const topCategories = Object.entries(catStats)
+    .map(([c, s]) => ({ name: c, ...s, avgRisk: Math.round(s.risk / s.count) }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 5);
+
+  // Генеруємо секції в залежності від персони
+  const sections = [];
+
+  if (persona === 'BUSINESS' || persona === 'GOVERNMENT') {
+    sections.push({
+      id: 'MARKET_OVERVIEW',
+      title: 'ОГЛЯД РИНКУ ТА ТОРГІВЛІ',
+      priority: totalVolume > 20000000 ? 'CRITICAL' : 'HIGH',
+      content: `Загальний обсяг торгівлі: $${(totalVolume / 1000000).toFixed(1)}M. Імпорт: ${importFacts.length} операцій ($${(importFacts.reduce((a, d) => a + d.customs_value_usd, 0) / 1000000).toFixed(1)}M). Експорт: ${exportFacts.length} операцій ($${(exportFacts.reduce((a, d) => a + d.customs_value_usd, 0) / 1000000).toFixed(1)}M). Топ-країни: ${topCountries.map(c => c.name).join(', ')}.`,
+      impact: `Найбільший обсяг торгівлі з ${topCountries[0]?.name || 'невідомою'} країною ($${((topCountries[0]?.value || 0) / 1000000).toFixed(1)}M). Рекомендовано диверсифікацію.`,
+      confidence: 94.2,
+    });
+  }
+
+  sections.push({
+    id: 'RISK_ANALYSIS',
+    title: 'АНАЛІЗ РИЗИКІВ ТА ЗАГРОЗ',
+    priority: highRisk.length > 20 ? 'CRITICAL' : 'HIGH',
+    content: `Виявлено ${highRisk.length} високоризикових операцій з ${DB_FACTS.length} декларацій (${Math.round(highRisk.length / DB_FACTS.length * 100)}%). Середній ризик: ${Math.round(DB_FACTS.reduce((a, d) => a + d.risk_score, 0) / DB_FACTS.length)}%. Найвищий ризик: ${highRisk[0]?.company_name || '—'} (${highRisk[0]?.risk_score || 0}%). Категорії з підвищеним ризиком: ${topCategories.filter(c => c.avgRisk > 50).map(c => c.name).join(', ') || 'немає'}.`,
+    impact: `${highRisk.length > 20 ? 'Критичний' : 'Помірний'} вплив на стабільність ланцюгів постачання. Рекомендовано додатковий аудит.`,
+    confidence: 97.1,
+  });
+
+  if (persona === 'SECURITY' || persona === 'CYBER') {
+    sections.push({
+      id: 'SECURITY_THREATS',
+      title: 'КІБЕР-ЗАГРОЗИ ТА БЕЗПЕКА',
+      priority: 'HIGH',
+      content: `Аналіз ${DB_FACTS.length} транзакцій виявив ${highRisk.filter(d => d.risk_score > 85).length} аномальних патернів. Підозрілі компанії: ${highRisk.slice(0, 3).map(d => d.company_name).join(', ')}. Географія ризику: ${[...new Set(highRisk.map(d => d.country_origin))].slice(0, 4).join(', ')}.`,
+      impact: 'Рекомендовано посилити моніторинг митних терміналів та перевірити цілісність даних.',
+      confidence: 91.8,
+    });
+  }
+
+  sections.push({
+    id: 'CATEGORY_INTELLIGENCE',
+    title: 'ТОВАРНА РОЗВІДКА',
+    priority: 'MEDIUM',
+    content: `Аналіз ${topCategories.length} товарних категорій. Лідер: ${topCategories[0]?.name || '—'} ($${((topCategories[0]?.value || 0) / 1000000).toFixed(1)}M, ${topCategories[0]?.count || 0} декларацій). ${topCategories.map(c => `${c.name}: $${(c.value / 1000000).toFixed(1)}M`).join('. ')}.`,
+    impact: `Зростання обсягів у категорії "${topCategories[0]?.name || '—'}". Рекомендовано аналіз цінових аномалій.`,
+    confidence: 88.5,
+  });
+
+  const alerts = [
+    `АНАЛІТИКА: ${highRisk.length} високоризикових декларацій потребують уваги.`,
+    `РИНОК: Загальний обсяг торгівлі $${(totalVolume / 1000000).toFixed(1)}M (${DB_FACTS.length} операцій).`,
+    `ТРЕНД: ${topCategories[0]?.name || '—'} — лідер за обсягом ($${((topCategories[0]?.value || 0) / 1000000).toFixed(1)}M).`,
+  ];
+
+  res.json({
+    title: `СТРАТЕГІЧНИЙ ДАЙДЖЕСТ: ${persona === 'BUSINESS' ? 'БІЗНЕС-РОЗВІДКА' : persona === 'SECURITY' ? 'БЕЗПЕКА ТА ЗАГРОЗИ' : persona === 'GOVERNMENT' ? 'ДЕРЖАВНЕ УПРАВЛІННЯ' : 'АНАЛІТИЧНИЙ ЗВІТ'}`,
+    summary: `Комплексний аналіз ${DB_FACTS.length} митних декларацій на суму $${(totalVolume / 1000000).toFixed(1)}M. Виявлено ${highRisk.length} ризикових операцій. Топ-країни: ${topCountries.slice(0, 3).map(c => c.name).join(', ')}.`,
+    sections,
+    alerts,
+    persona,
+    generated_at: new Date().toISOString(),
+    stats: {
+      totalDeclarations: DB_FACTS.length,
+      totalValueUsd: totalVolume,
+      highRiskCount: highRisk.length,
+      countriesCount: Object.keys(countryStats).length,
+      categoriesCount: Object.keys(catStats).length,
+    },
+  });
+});
+
+// =============================================
+// 📢 NOTIFICATIONS — Системні сповіщення для ActivityView
+// =============================================
+app.get(['/api/v45/monitoring/notifications', '/api/v1/monitoring/notifications'], (req, res) => {
+  const highRisk = DB_FACTS.filter(d => d.risk_score > 70).sort((a, b) => b.risk_score - a.risk_score);
+  const notifications = [];
+
+  // Генеруємо нотифікації з реальних даних
+  highRisk.slice(0, 8).forEach((d, i) => {
+    notifications.push({
+      id: `notif-risk-${i}`,
+      type: d.risk_score > 85 ? 'error' : 'warning',
+      title: `Високий ризик: ${d.company_name}`,
+      message: `Декларація №${d.declaration_number}: ${d.goods_description} — ризик ${d.risk_score}%, вартість $${(d.customs_value_usd / 1000).toFixed(0)}K (${d.country_origin}, ${d.customs_office})`,
+      timestamp: new Date(Date.now() - i * 900000).toISOString(),
+      read: i > 3,
+    });
+  });
+
+  // Системні нотифікації
+  notifications.push(
+    { id: 'notif-sys-1', type: 'info', title: 'Оновлення даних', message: `Завантажено ${DB_FACTS.length} декларацій в базу OpenSearch`, timestamp: new Date(Date.now() - 3600000).toISOString(), read: true },
+    { id: 'notif-sys-2', type: 'ai', title: 'ШІ-аналіз завершено', message: `Аналіз ${DB_FACTS.length} декларацій: виявлено ${highRisk.length} ризикових операцій`, timestamp: new Date(Date.now() - 7200000).toISOString(), read: true },
+    { id: 'notif-sys-3', type: 'info', title: 'Qdrant індексація', message: `Проіндексовано ${DB_FACTS.length} векторів з розмірністю 384`, timestamp: new Date(Date.now() - 10800000).toISOString(), read: true },
+  );
+
+  res.json(notifications);
+});
+
+// =============================================
+// 📋 AZR AUDIT — Журнал аудиту для ActivityView
+// =============================================
+app.get(['/api/v45/azr/audit', '/api/v1/azr/audit'], (req, res) => {
+  const limit = parseInt(req.query.limit) || 50;
+  const auditEntries = [];
+  const actions = ['АНАЛІЗ_РИЗИКУ', 'ОНОВЛЕННЯ_ІНДЕКСУ', 'КЛАСИФІКАЦІЯ', 'ДЕТЕКЦІЯ_АНОМАЛІЙ', 'ГРАФ_РОЗШИРЕННЯ', 'КОРЕЛЯЦІЯ'];
+
+  DB_FACTS.slice(0, Math.min(limit, 20)).forEach((d, i) => {
+    auditEntries.push({
+      id: `azr-${i}`,
+      intent: actions[i % actions.length],
+      request_text: `${actions[i % actions.length]}: ${d.company_name} — ${d.goods_description} (${d.country_origin})`,
+      created_at: new Date(Date.now() - i * 1800000).toISOString(),
+      status: 'completed',
+      confidence: 0.7 + Math.random() * 0.3,
+    });
+  });
+
+  res.json(auditEntries.slice(0, limit));
+});
+
+// =============================================
+// 📊 DATAGOV — Портал відкритих даних для DataGovView
+// =============================================
+app.get('/api/v1/osint_ua/datagov/search', (req, res) => {
+  const q = (req.query.q || '').toString().toLowerCase();
+  const rows = parseInt(req.query.rows) || 15;
+
+  // Генеруємо датасети на основі реальних даних з DB_FACTS
+  const categories = {};
+  DB_FACTS.forEach(d => {
+    if (!categories[d.goods_category]) categories[d.goods_category] = { count: 0, value: 0 };
+    categories[d.goods_category].count++;
+    categories[d.goods_category].value += d.customs_value_usd;
+  });
+
+  const datasets = [
+    { id: 'ds-customs-declarations', title: 'Реєстр митних декларацій', description: `Містить ${DB_FACTS.length} записів митних декларацій. Оновлюється щодня.`, organization: 'Державна митна служба України', format: 'CSV', created: '2024-01-15', modified: new Date().toISOString().split('T')[0], tags: ['митниця', 'декларації', 'імпорт', 'експорт'], records_count: DB_FACTS.length, resources: [{ id: 'r-1', name: 'declarations_2024.csv', format: 'CSV', size: `${(DB_FACTS.length * 0.5).toFixed(0)} KB`, url: '#' }] },
+    { id: 'ds-risk-entities', title: 'Реєстр ризикових суб\'єктів', description: `Список ${DB_FACTS.filter(d => d.risk_score > 70).length} суб\'єктів з підвищеним ризиком.`, organization: 'ДПСУ', format: 'JSON', created: '2024-03-01', modified: new Date().toISOString().split('T')[0], tags: ['ризик', 'суб\'єкти', 'ДПСУ'], records_count: DB_FACTS.filter(d => d.risk_score > 70).length, resources: [{ id: 'r-2', name: 'risk_entities.json', format: 'JSON', size: '128 KB', url: '#' }] },
+    { id: 'ds-trade-stats', title: 'Статистика зовнішньої торгівлі', description: `Агреговані дані по ${Object.keys(categories).length} товарних категоріях.`, organization: 'Держстат України', format: 'XLSX', created: '2024-02-10', modified: new Date().toISOString().split('T')[0], tags: ['торгівля', 'статистика', 'імпорт', 'експорт'], records_count: Object.keys(categories).length, resources: [{ id: 'r-3', name: 'trade_stats_2024.xlsx', format: 'XLSX', size: '2.4 MB', url: '#' }] },
+    { id: 'ds-edrpou', title: 'Єдиний державний реєстр юридичних осіб (ЄДРПОУ)', description: 'Відкриті дані реєстру підприємств України.', organization: 'Мін\'юст України', format: 'CSV', created: '2023-06-01', modified: new Date().toISOString().split('T')[0], tags: ['ЄДРПОУ', 'підприємства', 'реєстр'], records_count: 1500000, resources: [{ id: 'r-4', name: 'edrpou_full.csv', format: 'CSV', size: '890 MB', url: '#' }] },
+    { id: 'ds-sanctions', title: 'Санкційні списки РНБО', description: 'Перелік фізичних та юридичних осіб під санкціями РНБО України.', organization: 'РНБО України', format: 'JSON', created: '2024-01-20', modified: new Date().toISOString().split('T')[0], tags: ['санкції', 'РНБО', 'обмеження'], records_count: 12450, resources: [{ id: 'r-5', name: 'sanctions_rnbo.json', format: 'JSON', size: '45 MB', url: '#' }] },
+    { id: 'ds-prozorro', title: 'Дані системи ProZorro', description: 'Публічні закупівлі — тендери та контракти.', organization: 'ProZorro', format: 'API', created: '2023-01-01', modified: new Date().toISOString().split('T')[0], tags: ['prozorro', 'тендери', 'закупівлі'], records_count: 3200000, resources: [{ id: 'r-6', name: 'API endpoint', format: 'API', size: '—', url: 'https://public.api.openprocurement.org' }] },
+    { id: 'ds-court-registry', title: 'Єдиний державний реєстр судових рішень', description: 'Судові рішення по господарським та адміністративним справам.', organization: 'Судова влада України', format: 'XML', created: '2023-03-15', modified: new Date().toISOString().split('T')[0], tags: ['суд', 'рішення', 'реєстр'], records_count: 98000000, resources: [{ id: 'r-7', name: 'court_decisions.xml', format: 'XML', size: '—', url: 'https://reyestr.court.gov.ua' }] },
+    { id: 'ds-tax-debt', title: 'Реєстр податкового боргу', description: 'Перелік платників з податковим боргом.', organization: 'ДПС України', format: 'CSV', created: '2024-04-01', modified: new Date().toISOString().split('T')[0], tags: ['податки', 'борг', 'ДПС'], records_count: 450000, resources: [{ id: 'r-8', name: 'tax_debt_2024.csv', format: 'CSV', size: '120 MB', url: '#' }] },
+  ];
+
+  // Фільтруємо по запиту
+  const filtered = q ? datasets.filter(d =>
+    d.title.toLowerCase().includes(q) ||
+    d.description.toLowerCase().includes(q) ||
+    d.tags.some(t => t.toLowerCase().includes(q))
+  ) : datasets;
+
+  res.json({
+    count: filtered.length,
+    results: filtered.slice(0, rows),
+  });
+});
+
+// =============================================
+// 👤 PERSON DOSSIER — Досьє на особу
+// =============================================
+app.post('/api/v1/person/dossier', (req, res) => {
+  const { pib, region } = req.body || {};
+  if (!pib || pib.length < 3) return res.status(400).json({ error: 'ПІБ обов\'язкове (мін. 3 символи)' });
+
+  // Знаходимо релевантні декларації з DB_FACTS
+  const related = DB_FACTS.filter(d => d.customs_office?.includes(region || '') || !region).slice(0, 5);
+  const riskScore = 30 + Math.floor(Math.random() * 60);
+
+  res.json({
+    pib,
+    region: region || 'Невизначено',
+    riskScore,
+    status: riskScore > 70 ? 'HIGH_RISK' : riskScore > 40 ? 'MEDIUM_RISK' : 'LOW_RISK',
+    sources_checked: 24,
+    court_cases: Math.floor(Math.random() * 5),
+    tax_debts: Math.floor(Math.random() * 3),
+    sanctions_hits: riskScore > 80 ? 1 : 0,
+    criminal_records: riskScore > 85 ? Math.floor(Math.random() * 2) + 1 : 0,
+    related_companies: related.map(d => ({
+      name: d.company_name,
+      edrpou: d.edrpou,
+      role: ['Директор', 'Засновник', 'Бенефіціар', 'Підписант'][Math.floor(Math.random() * 4)],
+      riskScore: d.risk_score,
+    })),
+    connections: [
+      { type: 'Пов\'язана особа', name: `${pib.split(' ')[0]}енко А.В.`, relation: 'Родич' },
+      { type: 'Бізнес-партнер', name: related[0]?.company_name || 'ТОВ "Партнер"', relation: 'Засновник' },
+    ],
+    social_profiles: [
+      { platform: 'Facebook', found: Math.random() > 0.3 },
+      { platform: 'LinkedIn', found: Math.random() > 0.5 },
+      { platform: 'Telegram', found: Math.random() > 0.4 },
+    ],
+    generated_at: new Date().toISOString(),
+  });
+});
+
+// =============================================
+// 🏢 COMPANY DOSSIER — Досьє на фірму
+// =============================================
+app.get('/api/v1/company/dossier/:edrpou', (req, res) => {
+  const edrpou = req.params.edrpou;
+  const companyFacts = DB_FACTS.filter(d => d.edrpou === edrpou);
+  const anyFact = companyFacts[0] || DB_FACTS[Math.floor(Math.random() * DB_FACTS.length)];
+
+  const totalValue = companyFacts.reduce((a, d) => a + d.customs_value_usd, 0);
+  const avgRisk = companyFacts.length > 0
+    ? Math.round(companyFacts.reduce((a, d) => a + d.risk_score, 0) / companyFacts.length)
+    : anyFact.risk_score;
+
+  res.json({
+    name: anyFact.company_name,
+    edrpou,
+    status: 'Активне',
+    riskScore: avgRisk,
+    totalDeclarations: companyFacts.length || Math.floor(Math.random() * 20) + 1,
+    totalValueUsd: totalValue || anyFact.customs_value_usd * 5,
+    threats: [
+      avgRisk > 70 ? `Високий ризик митних операцій (${avgRisk}%)` : null,
+      companyFacts.some(d => d.country_origin === 'КИТАЙ') ? 'Великі обсяги імпорту з КНР' : null,
+      avgRisk > 50 ? 'Підозра на заниження митної вартості' : null,
+      totalValue > 1000000 ? `Великий обіг ($${(totalValue / 1000000).toFixed(1)}M)` : null,
+    ].filter(Boolean),
+    connections: Math.floor(Math.random() * 15) + 3,
+    owners: [
+      `${anyFact.company_name.includes('ТОВ') ? 'Петренко О.М.' : 'Іваненко І.В.'} (${40 + Math.floor(Math.random() * 30)}%)`,
+      `${Math.random() > 0.5 ? 'Shell-company "Vector Ltd"' : 'Сидоренко А.К.'} (${20 + Math.floor(Math.random() * 20)}%)`,
+    ],
+    lastCustomsActivity: companyFacts[0]
+      ? `${anyFact.customs_office}, ${anyFact.goods_category}`
+      : 'Немає даних',
+    categories: [...new Set(companyFacts.map(d => d.goods_category))],
+    countries: [...new Set(companyFacts.map(d => d.country_origin))],
+    generated_at: new Date().toISOString(),
+  });
+});
+
+app.post('/api/v1/company/dossier', (req, res) => {
+  const { query } = req.body || {};
+  if (!query || query.length < 5) return res.status(400).json({ error: 'Запит занадто короткий' });
+
+  // Пошук по ЄДРПОУ або назві
+  const found = DB_FACTS.find(d => d.edrpou === query || d.company_name.toLowerCase().includes(query.toLowerCase()));
+  if (found) {
+    return res.redirect(307, `/api/v1/company/dossier/${found.edrpou}`);
+  }
+  // Генеруємо результат для невідомої компанії
+  const riskScore = 30 + Math.floor(Math.random() * 50);
+  res.json({
+    name: query,
+    edrpou: query.replace(/\D/g, '').padEnd(8, '0').substring(0, 8),
+    status: 'Активне',
+    riskScore,
+    totalDeclarations: 0,
+    totalValueUsd: 0,
+    threats: riskScore > 50 ? ['Недостатньо даних для повного аналізу'] : [],
+    connections: 0,
+    owners: ['Дані відсутні'],
+    lastCustomsActivity: 'Немає даних у базі PREDATOR',
+    categories: [],
+    countries: [],
+    generated_at: new Date().toISOString(),
+  });
+});
+
+// =============================================
+// 🛡️ SANCTIONS SCREENING — Санкційний скринінг
+// =============================================
+app.post('/api/v1/sanctions/screen', (req, res) => {
+  const { query, entity_type, lists } = req.body || {};
+  if (!query || query.length < 2) return res.status(400).json({ error: 'Запит занадто короткий' });
+
+  const sanctionedEntities = [
+    { name: 'ГАЗПРОМ', lists: ['EU', 'OFAC', 'РНБО'], type: 'company', score: 99 },
+    { name: 'РОСНЕФТЬ', lists: ['EU', 'OFAC'], type: 'company', score: 97 },
+    { name: 'СБЕРБАНК', lists: ['EU', 'OFAC', 'UK', 'РНБО'], type: 'company', score: 100 },
+    { name: 'ПУТІН', lists: ['EU', 'OFAC', 'UK', 'UN', 'РНБО'], type: 'person', score: 100 },
+    { name: 'ЛАВРОВ', lists: ['EU', 'OFAC', 'UK', 'РНБО'], type: 'person', score: 98 },
+    { name: 'МЕДВЕДЧУК', lists: ['РНБО', 'EU'], type: 'person', score: 95 },
+    { name: 'ВАГНЕР', lists: ['EU', 'OFAC', 'UK'], type: 'company', score: 100 },
+  ];
+
+  const q = query.toUpperCase();
+  const matches = sanctionedEntities
+    .filter(e => e.name.includes(q) || q.includes(e.name))
+    .map(e => ({
+      id: `m-${Math.random().toString(36).substr(2, 6)}`,
+      list: e.lists[0],
+      program: `Санкційна програма (${e.lists.join(', ')})`,
+      target: e.name,
+      details: `Суб'єкт під санкціями ${e.lists.length} міжнародних списків`,
+      severity: e.score > 90 ? 'high' : 'medium',
+      score: e.score,
+      dateAdded: '24.02.2022',
+      allLists: e.lists,
+    }));
+
+  // Також перевіряємо DB_FACTS на компанії
+  const dbMatches = DB_FACTS
+    .filter(d => d.company_name.toUpperCase().includes(q) && d.risk_score > 70)
+    .slice(0, 3)
+    .map(d => ({
+      id: `db-${d.declaration_number}`,
+      list: 'PREDATOR',
+      program: 'Внутрішній ризик-аналіз PREDATOR',
+      target: d.company_name,
+      details: `Ризик ${d.risk_score}%: ${d.goods_description} (${d.country_origin})`,
+      severity: d.risk_score > 85 ? 'high' : 'medium',
+      score: d.risk_score,
+      dateAdded: new Date().toISOString().split('T')[0],
+      allLists: ['PREDATOR'],
+    }));
+
+  const allMatches = [...matches, ...dbMatches];
+  const status = allMatches.some(m => m.severity === 'high') ? 'blocked' : allMatches.length > 0 ? 'warning' : 'clean';
+
+  res.json({
+    id: `scr-${Date.now()}`,
+    entityName: query.toUpperCase(),
+    entityType: entity_type || 'company',
+    status,
+    timestamp: new Date().toISOString(),
+    matches: allMatches,
+    searchId: `AX-${Math.floor(Math.random() * 9000) + 1000}`,
+    riskScore: allMatches.length > 0 ? Math.max(...allMatches.map(m => m.score)) : 0,
+    listsChecked: lists || ['OFAC', 'EU', 'UN', 'UK', 'РНБО', 'PEP'],
+    generated_at: new Date().toISOString(),
+  });
+});
+
+// Також потрібні ендпоінти для AML та Registries що вже використовуються
+app.get('/api/v1/analytics/aml/risk-levels', (req, res) => {
+  res.json({
+    levels: [
+      { level: 'critical', range: '80-100', description: 'Критичний ризик — негайні дії', color: '#ef4444' },
+      { level: 'high', range: '60-79', description: 'Високий ризик — посилений моніторинг', color: '#f97316' },
+      { level: 'medium', range: '30-59', description: 'Помірний ризик — стандартна перевірка', color: '#eab308' },
+      { level: 'low', range: '0-29', description: 'Низький ризик — автоматичне затвердження', color: '#22c55e' },
+    ]
+  });
+});
+
+app.post('/api/v1/analytics/aml/score', (req, res) => {
+  const { entity_id, entity_name, entity_type } = req.body || {};
+  const found = DB_FACTS.find(d => d.edrpou === entity_id || d.company_name.toLowerCase().includes((entity_name || '').toLowerCase()));
+  const riskScore = found ? found.risk_score : 20 + Math.floor(Math.random() * 60);
+
+  res.json({
+    entity_id: entity_id || 'unknown',
+    entity_name: entity_name || found?.company_name || 'Невідомий',
+    entity_type: entity_type || 'company',
+    aml_score: riskScore,
+    risk_level: riskScore > 80 ? 'critical' : riskScore > 60 ? 'high' : riskScore > 30 ? 'medium' : 'low',
+    factors: [
+      { name: 'Обсяг операцій', weight: 0.25, score: Math.min(100, riskScore + 10) },
+      { name: 'Географія контрагентів', weight: 0.20, score: Math.min(100, riskScore - 5) },
+      { name: 'Структура власності', weight: 0.20, score: Math.min(100, riskScore + 15) },
+      { name: 'Історія порушень', weight: 0.15, score: Math.min(100, riskScore - 10) },
+      { name: 'Зв\'язки з PEP', weight: 0.10, score: Math.floor(Math.random() * 40) },
+      { name: 'Санкційний статус', weight: 0.10, score: riskScore > 70 ? 60 : 10 },
+    ],
+    recommendations: riskScore > 60
+      ? ['Посилений моніторинг транзакцій', 'Перевірка бенефіціарів', 'Аудит ланцюга постачання']
+      : ['Стандартний моніторинг'],
+    generated_at: new Date().toISOString(),
+  });
+});
+
+app.post('/api/v1/analytics/aml/batch', (req, res) => {
+  const { entities } = req.body || {};
+  if (!Array.isArray(entities)) return res.status(400).json({ error: 'entities array required' });
+
+  const results = entities.map((e) => {
+    const found = DB_FACTS.find(d => d.edrpou === e.entity_id);
+    const score = found ? found.risk_score : 20 + Math.floor(Math.random() * 60);
+    return {
+      entity_id: e.entity_id,
+      entity_name: e.entity_name || found?.company_name,
+      aml_score: score,
+      risk_level: score > 80 ? 'critical' : score > 60 ? 'high' : score > 30 ? 'medium' : 'low',
+    };
+  });
+
+  res.json({ results, processed: results.length, generated_at: new Date().toISOString() });
+});
+
+// Registries endpoints
+app.get('/api/v1/osint/registries', (req, res) => {
+  const categories = [
+    { id: 'edr', name: 'ЄДР (Реєстр юридичних осіб)', icon: 'Building2', color: '#3b82f6', registries: [
+      { id: 'edrpou', name: 'ЄДРПОУ', status: 'online', records: 1500000 },
+      { id: 'fop', name: 'Реєстр ФОП', status: 'online', records: 2800000 },
+    ]},
+    { id: 'court', name: 'Судовий реєстр', icon: 'Scale', color: '#ef4444', registries: [
+      { id: 'court-decisions', name: 'Судові рішення', status: 'online', records: 98000000 },
+      { id: 'court-cases', name: 'Справи у провадженні', status: 'online', records: 5200000 },
+    ]},
+    { id: 'tax', name: 'Податкова служба', icon: 'Receipt', color: '#f97316', registries: [
+      { id: 'tax-debt', name: 'Податковий борг', status: 'online', records: 450000 },
+      { id: 'tax-payers', name: 'Платники ПДВ', status: 'online', records: 320000 },
+    ]},
+    { id: 'sanctions', name: 'Санкційні списки', icon: 'Shield', color: '#dc2626', registries: [
+      { id: 'rnbo', name: 'Санкції РНБО', status: 'online', records: 12450 },
+      { id: 'ofac', name: 'OFAC SDN List', status: 'online', records: 15200 },
+      { id: 'eu-sanctions', name: 'EU Consolidated', status: 'online', records: 8900 },
+    ]},
+    { id: 'customs', name: 'Митна служба', icon: 'Package', color: '#22c55e', registries: [
+      { id: 'customs-decl', name: 'Митні декларації', status: 'online', records: DB_FACTS.length },
+      { id: 'uktzed', name: 'Довідник УКТ ЗЕД', status: 'online', records: 22000 },
+    ]},
+    { id: 'property', name: 'Реєстр нерухомості', icon: 'Home', color: '#8b5cf6', registries: [
+      { id: 'property-rights', name: 'Речові права', status: 'online', records: 45000000 },
+      { id: 'land-cadastre', name: 'Земельний кадастр', status: 'online', records: 32000000 },
+    ]},
+  ];
+
+  res.json({
+    categories,
+    totalRegistries: categories.reduce((a, c) => a + c.registries.length, 0),
+    connected: categories.reduce((a, c) => a + c.registries.filter(r => r.status === 'online').length, 0),
+  });
+});
+
+app.get('/api/v1/registries/search', (req, res) => {
+  const q = (req.query.q || '').toString().toLowerCase();
+  const matches = DB_FACTS
+    .filter(d => d.company_name.toLowerCase().includes(q) || d.edrpou.includes(q))
+    .slice(0, 10)
+    .map(d => ({
+      name: d.company_name,
+      edrpou: d.edrpou,
+      status: 'Активне',
+      riskScore: d.risk_score,
+      category: d.goods_category,
+      lastActivity: d.customs_office,
+    }));
+
+  res.json({ results: matches, total: matches.length });
+});
+
+app.get('/api/v1/registries/company/:edrpou', (req, res) => {
+  const edrpou = req.params.edrpou;
+  const facts = DB_FACTS.filter(d => d.edrpou === edrpou);
+  const fact = facts[0] || DB_FACTS[0];
+
+  res.json({
+    name: fact.company_name,
+    edrpou,
+    status: 'Зареєстровано',
+    address: `м. Київ, вул. Хрещатик, ${Math.floor(Math.random() * 100) + 1}`,
+    director: `${fact.company_name.includes('ТОВ') ? 'Петренко О.М.' : 'Іваненко І.В.'}`,
+    registrationDate: '2019-03-15',
+    capitalUah: Math.floor(Math.random() * 5000000) + 100000,
+    employees: Math.floor(Math.random() * 200) + 5,
+    kved: '46.90 — Неспеціалізована оптова торгівля',
+    taxStatus: 'Платник ПДВ',
+    sanctions: fact.risk_score > 80 ? ['РНБО — моніторинг'] : [],
+    courtCases: Math.floor(Math.random() * 5),
+    declarations: facts.length,
+    totalTradeUsd: facts.reduce((a, d) => a + d.customs_value_usd, 0),
+    riskScore: fact.risk_score,
+  });
+});
+
+// =============================================
+// 🏛️ POWER STRUCTURE — Карта впливу та влади
+// =============================================
+app.get('/api/v1/power-structure', (req, res) => {
+  // Групуємо компанії за ризиком та обсягом операцій
+  const highRiskCompanies = DB_FACTS.filter(d => d.risk_score > 70);
+  const topCompanies = highRiskCompanies
+    .sort((a, b) => b.customs_value_usd - a.customs_value_usd)
+    .slice(0, 30);
+
+  // Генеруємо ієрархію впливу на основі даних
+  const level1 = topCompanies.slice(0, 3).map((d, i) => ({
+    id: `l1-${i}`,
+    name: d.company_name,
+    role: 'Холдинг / Ключовий імпортер',
+    power: 85 + Math.floor(Math.random() * 10),
+    status: 'ТОП-РІВЕНЬ',
+    edrpou: d.edrpou,
+    riskScore: d.risk_score,
+    totalValue: d.customs_value_usd,
+    category: d.goods_category,
+    connections: Math.floor(Math.random() * 15) + 5,
+  }));
+
+  const level2 = topCompanies.slice(3, 12).map((d, i) => ({
+    id: `l2-${i}`,
+    name: d.company_name,
+    role: 'Оперативний імпортер / Дистриб\'ютор',
+    power: 60 + Math.floor(Math.random() * 20),
+    status: 'АКТИВНО',
+    edrpou: d.edrpou,
+    riskScore: d.risk_score,
+    totalValue: d.customs_value_usd,
+    category: d.goods_category,
+    connections: Math.floor(Math.random() * 8) + 2,
+  }));
+
+  const level3 = topCompanies.slice(12, 25).map((d, i) => ({
+    id: `l3-${i}`,
+    name: d.company_name,
+    role: 'Фронт / Прокладка',
+    power: 20 + Math.floor(Math.random() * 30),
+    status: 'МОНІТОРИНГ',
+    edrpou: d.edrpou,
+    riskScore: d.risk_score,
+    totalValue: d.customs_value_usd,
+    category: d.goods_category,
+    connections: Math.floor(Math.random() * 5) + 1,
+  }));
+
+  // Інсайти на основі аналізу даних
+  const insights = [
+    {
+      question: "Хто домінує в імпорті?",
+      answer: `${level1[0]?.name || 'Невідомо'} (${(level1[0]?.totalValue / 1000000).toFixed(1)}M USD)`,
+      type: "critical"
+    },
+    {
+      question: "Найризикованіша категорія?",
+      answer: (() => {
+        const categories = {};
+        highRiskCompanies.forEach(d => {
+          categories[d.goods_category] = (categories[d.goods_category] || 0) + 1;
+        });
+        const top = Object.entries(categories).sort((a, b) => b[1] - a[1])[0];
+        return top ? `${top[0]} (${top[1]} компаній)` : 'Немає даних';
+      })(),
+      type: "warning"
+    },
+    {
+      question: "Ризик перехоплення?",
+      answer: `${Math.round(highRiskCompanies.length / DB_FACTS.length * 100)}% компаній під ризиком`,
+      type: "info"
+    },
+  ];
+
+  const recentChanges = [
+    `Зміна бенефіціара в ${level2[0]?.name || 'ТОВ "Лідер"'} (втрата 12% впливу)`,
+    `Новий зв'язок: ${level2[1]?.name || 'ТОВ "Партнер"'} → ${level1[0]?.name || 'Група "Альянс"'} (підтверджено)`,
+    `Ліквідація ${level3[0]?.name || 'ТОВ "Проксі"'} (прокладка рівня 3)`,
+    `Санкції РНБО: ${highRiskCompanies.filter(d => d.risk_score > 90).length} компаній під моніторингом`,
+  ];
+
+  res.json({
+    levels: {
+      level1: { name: 'Охрещувачі', nodes: level1 },
+      level2: { name: 'Операційні Власники', nodes: level2 },
+      level3: { name: 'Фроновики / Прокладки', nodes: level3 },
+    },
+    insights,
+    recentChanges,
+    summary: {
+      totalNodes: level1.length + level2.length + level3.length,
+      highRiskCount: highRiskCompanies.length,
+      totalValue: topCompanies.reduce((a, d) => a + d.customs_value_usd, 0),
+      avgRisk: Math.round(highRiskCompanies.reduce((a, d) => a + d.risk_score, 0) / highRiskCompanies.length),
+      topCategory: (() => {
+        const counts = {};
+        DB_FACTS.forEach(d => {
+          counts[d.goods_category] = (counts[d.goods_category] || 0) + 1;
+        });
+        return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'Немає даних';
+      })(),
+    },
+    generated_at: new Date().toISOString(),
+  });
+});
+
+// =============================================
+// 🧠 AI INTELLIGENCE INSIGHTS
+// =============================================
+app.get('/api/v1/intelligence/insights', (req, res) => {
+  const insights = [
+    {
+      id: 'ins-1',
+      type: 'opportunity',
+      title: 'Аномальне зростання імпорту електроніки',
+      description: 'Зафіксовано 378% зростання імпорту мікросхем з Китаю через нові канали. Можлива несподівана ніша.',
+      confidence: 92,
+      impact: 'high',
+      entities: ['ТОВ "ТехноСвіт"', 'Shenzhen Microelectronics'],
+      timestamp: new Date().toISOString(),
+      tags: ['electronics', 'china', 'opportunity'],
+    },
+    {
+      id: 'ins-2',
+      type: 'risk',
+      title: 'Концентрація постачальників сталі',
+      description: '87% імпорту сталі йде через 3 компанії з РФ. Ризик перебоїв через санкції.',
+      confidence: 88,
+      impact: 'critical',
+      entities: ['Метал Імпорт LLC', 'Steel Trade Co'],
+      timestamp: new Date(Date.now() - 3600000).toISOString(),
+      tags: ['steel', 'russia', 'risk', 'sanctions'],
+    },
+    {
+      id: 'ins-3',
+      type: 'pattern',
+      title: 'Сезонний патерн: агросектор',
+      description: 'Виявлено повторюваний патерн: імпорт добрив зростає на 45% у березні-квітні.',
+      confidence: 76,
+      impact: 'medium',
+      entities: ['АгроСтandard', 'UkrChemicals'],
+      timestamp: new Date(Date.now() - 7200000).toISOString(),
+      tags: ['agriculture', 'seasonal', 'fertilizers'],
+    },
+    {
+      id: 'ins-4',
+      type: 'anomaly',
+      title: 'Цінова аномалія: медичне обладнання',
+      description: 'Ціни на рентгенівські апарати впали на 34% при стабільному попиті. Можливий демпінг.',
+      confidence: 81,
+      impact: 'medium',
+      entities: ['MedTech Ukraine', 'Global Medical Supplies'],
+      timestamp: new Date(Date.now() - 10800000).toISOString(),
+      tags: ['medical', 'pricing', 'anomaly'],
+    },
+  ];
+
+  res.json(insights);
+});
+
+// =============================================
+// 🎯 SCENARIO MODELING
+// =============================================
+app.post('/api/v1/modeling/scenario', (req, res) => {
+  const { scenario } = req.body || {};
+  
+  // Базові дані з DB_FACTS для моделювання
+  const baseImports = DB_FACTS.slice(0, 100).map(d => d.customs_value_usd);
+  const avgBase = baseImports.reduce((a, b) => a + b, 0) / baseImports.length;
+  
+  // Симуляція сценарію
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  let multiplier = 1.0;
+  if (scenario?.globalDemand) multiplier *= (scenario.globalDemand / 100);
+  if (scenario?.importDuty) multiplier *= (1 - (scenario.importDuty / 100) * 0.4);
+  if (scenario?.competition) multiplier *= (1 - (scenario.competition / 100) * 0.3);
+  if (scenario?.inflation) multiplier *= (1 + (scenario.inflation / 100) * 0.2);
+  
+  const forecast = months.map((month, i) => {
+    const seasonal = 1 + 0.3 * Math.sin((i / 12) * 2 * Math.PI - Math.PI / 2);
+    const random = 0.9 + Math.random() * 0.2;
+    const value = Math.round(avgBase * multiplier * seasonal * random);
+    
+    return {
+      month,
+      baseline: Math.round(avgBase * seasonal),
+      forecast: value,
+      change: Math.round(((value - (avgBase * seasonal)) / (avgBase * seasonal)) * 100),
+      confidence: Math.round(75 + Math.random() * 20),
+    };
+  });
+
+  const summary = {
+    totalImpact: Math.round((multiplier - 1) * 100),
+    riskLevel: multiplier > 1.2 ? 'high' : multiplier < 0.8 ? 'medium' : 'low',
+    recommendation: multiplier > 1.1 
+      ? 'Рекомендується розширити імпортні квоти'
+      : multiplier < 0.9 
+      ? 'Необхідно диверсифікувати ринки збуту'
+      : 'Поточна стратегія є оптимальною',
+    keyFactors: [
+      { factor: 'Глобальний попит', impact: scenario?.globalDemand || 100 },
+      { factor: 'Митні збори', impact: scenario?.importDuty || 20 },
+      { factor: 'Конкуренція', impact: scenario?.competition || 50 },
+      { factor: 'Інфляція', impact: scenario?.inflation || 8 },
+    ],
+  };
+
+  res.json({
+    scenario: scenario || { name: 'Baseline' },
+    forecast,
+    summary,
+    generated_at: new Date().toISOString(),
+  });
+});
+
+// =============================================
+// 🚢 SUPPLY CHAIN ANALYTICS — Ланцюги постачання
+// =============================================
+app.get('/api/v1/supply-chain/stats', (req, res) => {
+  // Рахуємо статистику на основі DB_FACTS
+  const vesselCount = Math.floor(DB_FACTS.length * 0.3);
+  const truckCount = Math.floor(DB_FACTS.length * 0.2);
+  const trainCount = Math.floor(DB_FACTS.length * 0.05);
+  
+  const highRiskItems = DB_FACTS.filter(d => d.risk_score > 75);
+  const riskLevel = highRiskItems.length > 20 ? 'CRITICAL' : highRiskItems.length > 10 ? 'HIGH' : 'MEDIUM';
+  
+  // Розрахунок економії (імітація AI-оптимізації)
+  const totalValue = DB_FACTS.reduce((a, d) => a + d.customs_value_usd, 0);
+  const savings = Math.round(totalValue * 0.02); // 2% економії
+
+  res.json({
+    globalStats: [
+      { 
+        label: 'ТОВАРИ В РУСІ', 
+        value: `${vesselCount + truckCount + trainCount} ОБ'ЄКТИ`, 
+        sub: `${vesselCount} кораблів, ${truckCount} фур, ${trainCount} поїздів`, 
+        icon: 'Package', 
+        color: 'text-cyan-400' 
+      },
+      { 
+        label: 'РИЗИК ЛАНЦЮГА', 
+        value: riskLevel, 
+        sub: `${highRiskItems.length} критичних аномалій виявлено`, 
+        icon: 'ShieldAlert', 
+        color: riskLevel === 'CRITICAL' ? 'text-rose-600' : riskLevel === 'HIGH' ? 'text-rose-500' : 'text-amber-400'
+      },
+      { 
+        label: 'ЕКОНОМІЯ AI', 
+        value: `$${(savings / 1000).toFixed(0)}K`, 
+        sub: 'Завдяки оптимізації маршрутів', 
+        icon: 'DollarSign', 
+        color: 'text-emerald-400' 
+      },
+    ],
+    generated_at: new Date().toISOString(),
+  });
+});
+
+app.get('/api/v1/supply-chain/tracking', (req, res) => {
+  const { container_id, hs_code } = req.query;
+  
+  // Генеруємо трекінг на основі DB_FACTS
+  const trackingEvents = DB_FACTS.slice(0, 8).map((d, i) => ({
+    id: `evt-${i}`,
+    timestamp: new Date(Date.now() - i * 3600000 * 6).toISOString(),
+    location: d.customs_office,
+    status: ['В порту', 'На митниці', 'В дорозі', 'Доставлено'][i % 4],
+    description: `${d.goods_description} (${d.goods_category})`,
+    risk_score: d.risk_score,
+    country: d.country_origin,
+    value_usd: d.customs_value_usd,
+  }));
+
+  res.json({
+    tracking_id: container_id || hs_code || `TRK-${Date.now()}`,
+    events: trackingEvents,
+    current_status: trackingEvents[0]?.status || 'Невідомо',
+    estimated_arrival: new Date(Date.now() + 86400000 * 3).toISOString(),
+    generated_at: new Date().toISOString(),
+  });
+});
+
+app.get('/api/v1/supply-chain/routes', (req, res) => {
+  // AI-оптимізовані маршрути на основі даних
+  const topCountries = [...new Set(DB_FACTS.map(d => d.country_origin))].slice(0, 5);
+  
+  const routes = topCountries.map((country, i) => {
+    const countryData = DB_FACTS.filter(d => d.country_origin === country);
+    const avgRisk = Math.round(countryData.reduce((a, d) => a + d.risk_score, 0) / countryData.length);
+    const totalValue = countryData.reduce((a, d) => a + d.customs_value_usd, 0);
+    
+    return {
+      id: `route-${i}`,
+      origin: country,
+      destination: 'Україна',
+      via: ['Порт Одеса', 'Порт Чорноморськ', 'Порт Южний'][i % 3],
+      risk_score: avgRisk,
+      total_value_usd: totalValue,
+      transit_time_days: 14 + Math.floor(Math.random() * 21),
+      cost_per_kg: 0.5 + Math.random() * 2,
+      reliability: 70 + Math.floor(Math.random() * 25),
+      ai_recommendation: avgRisk > 60 ? 'Змінити маршрут' : 'Оптимальний',
+    };
+  });
+
+  res.json({
+    routes: routes.sort((a, b) => a.risk_score - b.risk_score),
+    generated_at: new Date().toISOString(),
+  });
+});
 
 // =============================================
 // 🌐 SERVER START
@@ -3804,6 +4712,18 @@ app.post('/api/v1/factory/infinite/stop', (req, res) => {
     res.json({ status: 'stopped', state: SYSTEM_IMPROVEMENT_STATE });
 });
 
+// --- Factory Logs Endpoint ---
+app.get('/api/v1/factory/logs', (req, res) => {
+    const limit = parseInt(req.query.limit) || 50;
+    const logs = SYSTEM_IMPROVEMENT_STATE.logs.slice(-limit);
+    res.json({
+        logs: logs,
+        total: SYSTEM_IMPROVEMENT_STATE.logs.length,
+        is_running: SYSTEM_IMPROVEMENT_STATE.is_running,
+        current_phase: SYSTEM_IMPROVEMENT_STATE.current_phase
+    });
+});
+
 
 // --- Analytics Endpoints ---
 app.get('/api/v1/analytics/forecast', (req, res) => {
@@ -4205,6 +5125,145 @@ app.get('/api/v1/registries/search', (req, res) => {
             { source: 'ЄДР', matches: 1 },
             { source: 'Prozorro', matches: 3 }
         ]
+    });
+});
+
+// =============================================
+// 📊 Dashboard Overview — Агрегований ендпоінт
+// =============================================
+app.get('/api/v1/dashboard/overview', (req, res) => {
+    const totalDeclarations = DB_FACTS.length;
+    const totalValue = DB_FACTS.reduce((sum, d) => sum + (d.customs_value_usd || 0), 0);
+    const highRiskCount = DB_FACTS.filter(d => d.risk_score > 80).length;
+    const mediumRiskCount = DB_FACTS.filter(d => d.risk_score > 40 && d.risk_score <= 80).length;
+    const importCount = DB_FACTS.filter(d => d.operation_type === 'Імпорт').length;
+    const exportCount = DB_FACTS.filter(d => d.operation_type === 'Експорт').length;
+
+    // Агрегація за категоріями товарів
+    const categoryStats = {};
+    DB_FACTS.forEach(d => {
+        const cat = d.goods_category || 'Інше';
+        if (!categoryStats[cat]) categoryStats[cat] = { count: 0, value: 0, avgRisk: 0, risks: [] };
+        categoryStats[cat].count++;
+        categoryStats[cat].value += d.customs_value_usd || 0;
+        categoryStats[cat].risks.push(d.risk_score || 0);
+    });
+    Object.values(categoryStats).forEach(s => {
+        s.avgRisk = s.risks.length ? Math.round(s.risks.reduce((a, b) => a + b, 0) / s.risks.length) : 0;
+        delete s.risks;
+    });
+
+    // Агрегація за країнами
+    const countryStats = {};
+    DB_FACTS.forEach(d => {
+        const c = d.country_origin || 'Невідомо';
+        if (!countryStats[c]) countryStats[c] = { count: 0, value: 0 };
+        countryStats[c].count++;
+        countryStats[c].value += d.customs_value_usd || 0;
+    });
+
+    // Агрегація за митницями
+    const officeStats = {};
+    DB_FACTS.forEach(d => {
+        const o = d.customs_office || 'Невідомо';
+        if (!officeStats[o]) officeStats[o] = { count: 0, value: 0, highRisk: 0 };
+        officeStats[o].count++;
+        officeStats[o].value += d.customs_value_usd || 0;
+        if (d.risk_score > 80) officeStats[o].highRisk++;
+    });
+
+    // Топ-5 ризикових компаній
+    const companyRisk = {};
+    DB_FACTS.forEach(d => {
+        const key = d.company_name;
+        if (!companyRisk[key]) companyRisk[key] = { name: key, edrpou: d.company_edrpou, maxRisk: 0, totalValue: 0, count: 0 };
+        companyRisk[key].maxRisk = Math.max(companyRisk[key].maxRisk, d.risk_score || 0);
+        companyRisk[key].totalValue += d.customs_value_usd || 0;
+        companyRisk[key].count++;
+    });
+    const topRiskCompanies = Object.values(companyRisk)
+        .sort((a, b) => b.maxRisk - a.maxRisk)
+        .slice(0, 5);
+
+    // Останні алерти (реальні з даних)
+    const recentAlerts = DB_FACTS
+        .filter(d => d.risk_score > 75)
+        .sort((a, b) => new Date(b.ingested_at) - new Date(a.ingested_at))
+        .slice(0, 8)
+        .map((d, i) => ({
+            id: `dash-alert-${i}`,
+            type: d.risk_score > 90 ? 'КРИТИЧНА_АНОМАЛІЯ' : 'РИЗИК_СИГНАЛ',
+            message: `${d.company_name}: ${d.goods_description} з ${d.country_origin} — ризик ${d.risk_score}%`,
+            severity: d.risk_score > 90 ? 'critical' : 'warning',
+            timestamp: d.ingested_at,
+            sector: d.goods_category || 'ІМПОРТ',
+            company: d.company_name,
+            value: d.customs_value_usd
+        }));
+
+    // Radar: ризик по секторах (обчислюємо з реальних даних)
+    const sectorRiskMap = {
+        'Електроніка': { label: 'Електроніка', risks: [] },
+        'Метал': { label: 'Металургія', risks: [] },
+        'Фармацевтика': { label: 'Фармацевтика', risks: [] },
+        'Текстиль': { label: 'Текстиль', risks: [] },
+        'Продовольство': { label: 'Продовольство', risks: [] },
+        'Паливо': { label: 'Паливо', risks: [] },
+    };
+    DB_FACTS.forEach(d => {
+        const cat = d.goods_category;
+        if (sectorRiskMap[cat]) sectorRiskMap[cat].risks.push(d.risk_score || 0);
+    });
+    const radarData = Object.values(sectorRiskMap).map(s => ({
+        name: s.label,
+        value: s.risks.length ? Math.round(s.risks.reduce((a, b) => a + b, 0) / s.risks.length) : 0,
+        count: s.risks.length
+    }));
+
+    // Інфраструктура
+    const infra = {
+        postgresql: { status: 'UP', records: DB_FACTS.length },
+        opensearch: { status: 'UP', documents: DB_SEARCH_INDEX.length },
+        qdrant: { status: 'UP', vectors: DB_VECTORS.length },
+        neo4j: { status: 'UP', nodes: DB_GRAPH.nodes.length, edges: DB_GRAPH.edges.length },
+        minio: { status: 'UP', files: DB_FILES.length },
+        redis: { status: 'UP', keys: Object.keys(DB_PIPELINE_STATE).length },
+    };
+
+    // Активні пайплайни
+    const activePipelines = etlJobs.filter(j => j.state !== 'READY' && j.state !== 'FAILED').length;
+    const completedPipelines = etlJobs.filter(j => j.state === 'READY').length;
+
+    res.json({
+        summary: {
+            total_declarations: totalDeclarations,
+            total_value_usd: totalValue,
+            high_risk_count: highRiskCount,
+            medium_risk_count: mediumRiskCount,
+            import_count: importCount,
+            export_count: exportCount,
+            graph_nodes: DB_GRAPH.nodes.length,
+            graph_edges: DB_GRAPH.edges.length,
+            search_documents: DB_SEARCH_INDEX.length,
+            vectors: DB_VECTORS.length,
+            active_pipelines: activePipelines,
+            completed_pipelines: completedPipelines,
+        },
+        radar: radarData,
+        top_risk_companies: topRiskCompanies,
+        alerts: recentAlerts,
+        categories: categoryStats,
+        countries: countryStats,
+        customs_offices: officeStats,
+        infrastructure: infra,
+        engines: {
+            'neural_behavioral': { id: 'behavioral', name: 'Поведінковий Аналіз', score: 89, trend: '+2.1%', status: 'optimal', throughput: 42400, latency: 12, load: 45 },
+            'institutional_core': { id: 'institutional', name: 'Інституційне Ядро', score: 94, trend: '+0.5%', status: 'optimal', throughput: 38200, latency: 8, load: 22 },
+            'influence_mapping': { id: 'influence', name: 'Мапа Впливу', score: 68, trend: '-3.2%', status: 'calibrating', throughput: 12500, latency: 45, load: 88 },
+            'structural_vault': { id: 'structural', name: 'Структурний Аналіз', score: 97, trend: '+1.4%', status: 'optimal', throughput: 28900, latency: 5, load: 12 },
+            'predictive_matrix': { id: 'predictive', name: 'Предиктивна Матриця', score: 85, trend: '+4.7%', status: 'optimal', throughput: 15400, latency: 18, load: 35 }
+        },
+        generated_at: new Date().toISOString()
     });
 });
 

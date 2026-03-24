@@ -5,13 +5,6 @@ permissions:
   packages: write
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'services/**'
-      - 'apps/predator-analytics-ui/**'
-      - 'environments/oracle/**'
   workflow_dispatch:
 
 jobs:

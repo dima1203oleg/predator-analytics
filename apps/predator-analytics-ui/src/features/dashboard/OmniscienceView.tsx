@@ -191,6 +191,33 @@ const OmniscienceView: React.FC = () => {
     setMetrics(prev => ({ ...prev, activeAgents: liveAgents.length }));
   }, [liveAgents.length]);
 
+  // Завантажити реальні метрики з API
+  useEffect(() => {
+    const loadMetrics = async () => {
+      try {
+        const [health, status] = await Promise.all([
+          api.v45.getSystemStatus().catch(() => null),
+          api.getClusterStatus().catch(() => null),
+        ]);
+        if (health) {
+          setV45Status(health);
+          setMetrics(prev => ({
+            ...prev,
+            health: health.cpu?.percent ? Math.round(100 - health.cpu.percent) : prev.health,
+            memoryUsage: health.memory?.percent ? Math.round(health.memory.percent) : prev.memoryUsage,
+            processingPower: health.cpu?.percent ? Math.round(health.cpu.percent) : prev.processingPower,
+            activeContainers: health.containers || status?.nodes || prev.activeContainers,
+          }));
+        }
+      } catch (err) {
+        console.error('Omniscience metrics fetch error:', err);
+      }
+    };
+    loadMetrics();
+    const interval = setInterval(loadMetrics, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col p-10 gap-10 relative z-10 animate-in fade-in duration-1000">
       <AdvancedBackground />

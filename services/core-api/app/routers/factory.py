@@ -24,6 +24,10 @@ from app.models.factory import (
     SystemImprovement,
 )
 from app.services.factory_repository import FactoryRepository
+from app.services.factory_runtime import (
+    cancel_factory_improvement_task,
+    ensure_factory_improvement_task,
+)
 from app.services.factory_scorer import (
     calculate_score,
     classify_pattern_type,
@@ -468,12 +472,15 @@ async def _run_ooda_task(driver) -> None:
             if len(status.logs) > 50:
                 status.logs = status.logs[-50:]
 
-            status.last_update = datetime.now()
+            status.last_update = datetime.now(UTC)
             await repo.update_improvement(status)
 
             # Пауза між циклами (15-25 секунд)
             await asyncio.sleep(random.uniform(15, 25))
 
+        except asyncio.CancelledError:
+            logger.info("OODA Loop: фонове завдання скасовано.")
+            raise
         except Exception as e:
             logger.error(f"Error in OODA Loop: {e}", exc_info=True)
             await asyncio.sleep(15)
@@ -481,40 +488,43 @@ async def _run_ooda_task(driver) -> None:
 
 @router.post("/infinite/start")
 async def start_infinite_cycle(
+    request: Request,
     repo: FactoryRepository = Depends(get_factory_repo),
 ):
     """Запустити цикл вдосконалення"""
     status = await repo.get_improvement()
     if status.is_running:
+        await ensure_factory_improvement_task(request.app)
         return {"status": "already_running"}
 
     status.is_running = True
     status.current_phase = ImprovementPhase.OBSERVE
-    status.last_update = datetime.now()
+    status.last_update = datetime.now(UTC)
     status.logs.append(
         f"[{datetime.now().strftime('%H:%M:%S')}] 🟢 SYSTEM: "
         "Цикл автономного вдосконалення ПРЕДАТОР активовано. "
-        f"Версія: v55.2 | Алгоритм: OODA-Loop | Режим: FULLy autonomous."
+        f"Версія: v55.2 | Алгоритм: OODA-Loop | Режим: повністю автономний."
     )
     await repo.update_improvement(status)
 
-    # Запускаємо фонову задачу
-    asyncio.create_task(_run_ooda_task(repo.driver))
+    await ensure_factory_improvement_task(request.app)
 
     return {"status": "started"}
 
 
 @router.post("/infinite/stop")
 async def stop_infinite_cycle(
+    request: Request,
     repo: FactoryRepository = Depends(get_factory_repo),
 ):
     """Зупинити цикл вдосконалення"""
     status = await repo.get_improvement()
     status.is_running = False
-    status.last_update = datetime.now()
+    status.last_update = datetime.now(UTC)
     status.logs.append(
         f"[{datetime.now().strftime('%H:%M:%S')}] 🔴 SYSTEM: "
         "Цикл автономного вдосконалення зупинено за командою оператора."
     )
     await repo.update_improvement(status)
+    await cancel_factory_improvement_task(request.app)
     return {"status": "stopped"}

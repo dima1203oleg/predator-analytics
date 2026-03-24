@@ -6,7 +6,10 @@ permissions:
 
 on:
   push:
-    branches: [main]
+    paths:
+      - 'apps/predator-analytics-ui/**'
+      - 'environments/nvidia/**'
+      - '.github/workflows/build-nvidia.yml'
   workflow_dispatch:
 
 jobs:
@@ -16,35 +19,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-        if: ${{ hashFiles('apps/backend/requirements.txt') != '' }}
-
-      - name: Install backend dependencies
-        if: ${{ hashFiles('apps/backend/requirements.txt') != '' }}
-        run: |
-          cd apps/backend
-          pip install -r requirements.txt
-
-      - name: Test backend
-        if: ${{ hashFiles('apps/backend/requirements.txt') != '' }}
-        run: |
-          cd apps/backend
-          python -m pytest
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-        if: ${{ hashFiles('apps/frontend/package.json') != '' }}
+        if: ${{ hashFiles('apps/predator-analytics-ui/package.json') != '' }}
 
       - name: Install frontend dependencies
-        if: ${{ hashFiles('apps/frontend/package.json') != '' }}
+        if: ${{ hashFiles('apps/predator-analytics-ui/package.json') != '' }}
         run: |
-          cd apps/frontend
+          cd apps/predator-analytics-ui
           npm install
+
+      - name: Build frontend
+        if: ${{ hashFiles('apps/predator-analytics-ui/package.json') != '' }}
+        run: |
+          cd apps/predator-analytics-ui
+          npm run build
 
   build-and-push:
     needs: test
@@ -67,27 +58,18 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push frontend
-        if: ${{ hashFiles('apps/frontend/Dockerfile') != '' }}
+        if: ${{ hashFiles('apps/predator-analytics-ui/Dockerfile') != '' }}
         uses: docker/build-push-action@v5
         with:
-          context: ./apps/frontend
+          context: ./apps/predator-analytics-ui
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository }}/frontend:v45.0.${{ github.run_number }}
-
-      - name: Build and push backend
-        if: ${{ hashFiles('apps/backend/Dockerfile') != '' }}
-        uses: docker/build-push-action@v5
-        with:
-          context: ./apps/backend
-          platforms: linux/amd64
-          push: true
-          tags: ghcr.io/${{ github.repository }}/backend:v45.0.${{ github.run_number }}
+          tags: ghcr.io/${{ github.repository }}/frontend:v55.1.${{ github.run_number }}
 
       - name: Update Helm values for nvidia
         run: |
           if [ -f environments/nvidia/values.yaml ]; then
-            sed -i "s|tag:.*|tag: v45.0.${{ github.run_number }}|" environments/nvidia/values.yaml
+            sed -i "s|tag:.*|tag: v55.1.${{ github.run_number }}|" environments/nvidia/values.yaml
           fi
 
       - name: Commit updated values
@@ -95,7 +77,7 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add environments/nvidia/values.yaml
-          git commit -m "Update image tags to v45.0.${{ github.run_number }}" || echo "No changes"
+          git commit -m "chore(nvidia): оновити frontend образ до v55.1.${{ github.run_number }}" || echo "No changes"
           if ! git push; then
             echo "git push failed (probably no write permission). Skipping push." >&2
           fi

@@ -26,7 +26,7 @@ spec:
         - --smp
         - "1"
         - --memory
-        - "512M"
+        - "256M"
         - --reserve-memory
         - "0M"
         - --overprovisioned
@@ -43,11 +43,11 @@ spec:
           name: admin
         resources:
           limits:
-            cpu: 1000m
-            memory: 1Gi
-          requests:
             cpu: 500m
             memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
         livenessProbe:
           tcpSocket:
             port: 9092

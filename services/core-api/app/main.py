@@ -21,12 +21,16 @@ from app.core.middleware_optimization import (
     SecurityHeadersMiddleware,
 )
 from app.database import close_db, init_db
+from app.services.factory_runtime import (
+    cancel_factory_improvement_task,
+    ensure_factory_improvement_task,
+)
 
 # Імпортуємо всі роутери через __init__.py
 from app.routers import (
     alerts_router,
     analytics_router,
-    auth_router,
+    auth_test as auth_router,
     cases_router,
     companies_router,
     competitors_router,
@@ -103,7 +107,13 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
         # 6. Init Factory Repository
         app.state.factory_repo = FactoryRepository(graph_db.driver)
+        from app.routers.factory import _run_ooda_task
+
+        app.state.factory_improvement_runner = _run_ooda_task
+        app.state.factory_improvement_task = None
         logger.info("Factory Repository initialized")
+
+        await ensure_factory_improvement_task(app)
 
         logger.info("Core API успішно ініціалізовано")
 
@@ -112,6 +122,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Зупинка Core API...")
     # Graceful shutdown
     if not settings.TESTING:
+        await cancel_factory_improvement_task(app)
         await close_redis()
         await close_kafka()
         await close_minio()
@@ -212,19 +223,38 @@ async def health_check() -> JSONResponse:
 async def readiness_check() -> JSONResponse:
     """Readiness probe - перевіряє готовність до прийому трафіку."""
     from app.core.health import health_service
+    from app.config import get_settings
+    import asyncpg
+    import os
 
     try:
-        # Швидка перевірка critical сервісів
-        postgres_status = await health_service.check_postgresql()
+        # Пряма перевірка PostgreSQL з правильним DSN
+        settings = get_settings()
+        dsn = settings.DATABASE_URL or ""
+        # Конвертуємо postgresql+asyncpg:// в postgres:// для прямого підключення
+        dsn = dsn.replace("postgresql+asyncpg://", "postgres://")
+        dsn = dsn.replace("postgresql://", "postgres://")
+        
+        postgres_ok = False
+        try:
+            conn = await asyncpg.connect(dsn=dsn, command_timeout=3.0)
+            await conn.fetchval("SELECT 1")
+            await conn.close()
+            postgres_ok = True
+        except Exception:
+            pass
+        
+        # Перевірка Redis
         redis_status = await health_service.check_redis()
+        redis_ok = redis_status.get("status") == "ok"
 
-        if postgres_status["status"] == "ok" and redis_status["status"] == "ok":
+        if postgres_ok and redis_ok:
             return JSONResponse({
                 "status": "ready",
                 "timestamp": datetime.now(UTC).isoformat(),
                 "checks": {
-                    "postgresql": postgres_status["status"],
-                    "redis": redis_status["status"],
+                    "postgresql": "ok" if postgres_ok else "error",
+                    "redis": "ok" if redis_ok else "error",
                 }
             })
         else:
@@ -232,8 +262,8 @@ async def readiness_check() -> JSONResponse:
                 "status": "not_ready",
                 "timestamp": datetime.now(UTC).isoformat(),
                 "checks": {
-                    "postgresql": postgres_status["status"],
-                    "redis": redis_status["status"],
+                    "postgresql": "ok" if postgres_ok else "error",
+                    "redis": "ok" if redis_ok else "error",
                 }
             }, status_code=503)
 

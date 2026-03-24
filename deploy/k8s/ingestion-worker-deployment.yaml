@@ -25,7 +25,7 @@ spec:
         - name: KAFKA_BOOTSTRAP_SERVERS
           value: "predator-v55-redpanda:9092"
         - name: DATABASE_URL
-          value: "postgresql+asyncpg://predator:predator123@predator-v55-postgres:5432/predator"
+          value: "postgresql+asyncpg://predator:predator_password@predator-v55-postgres:5432/predator"
         - name: REDIS_URL
           value: "redis://predator-v55-redis-master:6379/0"
         - name: MINIO_URL

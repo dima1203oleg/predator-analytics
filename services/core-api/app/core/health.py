@@ -83,8 +83,12 @@ class HealthCheckService:
 
         start_time = datetime.now(UTC)
         try:
+            # Використовуємо DATABASE_URL напряму, asyncpg не підтримує postgresql+asyncpg://
+            dsn = self.settings.DATABASE_URL or self.settings.async_database_url
+            if dsn and "+asyncpg" in dsn:
+                dsn = dsn.replace("+asyncpg", "")
             conn = await asyncpg.connect(
-                dsn=self.settings.async_database_url,
+                dsn=dsn,
                 server_settings={"application_name": "health_check"},
                 command_timeout=5.0,
             )

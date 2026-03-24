@@ -11,7 +11,7 @@ global:
 
 # ============ Backend ============
 backend:
-  enabled: true
+  enabled: false
   image:
     repository: ghcr.io/dima1203oleg/predator-backend
     tag: "latest"

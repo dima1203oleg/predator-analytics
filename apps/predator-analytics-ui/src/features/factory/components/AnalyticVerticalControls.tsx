@@ -40,7 +40,7 @@ export function AnalyticVerticalControls({
                 />
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
-                  {analyticComponents.includes(opt.id) && <span className="text-[8px] text-amber-400 animate-pulse uppercase tracking-[0.2em]">Pattern upgrade active</span>}
+                  {analyticComponents.includes(opt.id) && <span className="text-[8px] text-amber-400 animate-pulse uppercase tracking-[0.2em]">ОНОВЛЕННЯ ПАТЕРНУ АКТИВНЕ</span>}
                 </div>
              </label>
            ))}

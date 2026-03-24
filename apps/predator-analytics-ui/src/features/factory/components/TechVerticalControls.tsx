@@ -38,7 +38,7 @@ export function TechVerticalControls({
                 />
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
-                  {techComponents.includes(opt.id) && <span className="text-[8px] text-indigo-400 animate-pulse uppercase tracking-[0.2em]">Targeted for optimization</span>}
+                  {techComponents.includes(opt.id) && <span className="text-[8px] text-indigo-400 animate-pulse uppercase tracking-[0.2em]">ПРИЗНАЧЕНО ДЛЯ ОПТИМІЗАЦІЇ</span>}
                 </div>
              </label>
            ))}
@@ -46,8 +46,8 @@ export function TechVerticalControls({
         <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
            <Button onClick={onOptimize} variant="neon" className="w-full bg-indigo-600/20 text-indigo-400 border-indigo-500/50 font-black uppercase tracking-widest text-[10px] h-11"><Wrench size={14} className="mr-2"/> Оптимізувати Ядро</Button>
            <div className="grid grid-cols-2 gap-2">
-             <Button variant="cyber" className="text-[9px] h-9"><History size={12} className="mr-1"/> Rollback</Button>
-             <Button variant="cyber" className="text-[9px] h-9 text-emerald-400 border-emerald-500/20"><Scan size={12} className="mr-1"/> Security Scan</Button>
+             <Button variant="cyber" className="text-[9px] h-9"><History size={12} className="mr-1"/> Відкат (Rollback)</Button>
+             <Button variant="cyber" className="text-[9px] h-9 text-emerald-400 border-emerald-500/20"><Scan size={12} className="mr-1"/> Сканування Безпеки</Button>
            </div>
         </div>
       </div>

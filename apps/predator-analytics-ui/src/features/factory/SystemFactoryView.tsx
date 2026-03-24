@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -7,7 +7,8 @@ import {
   Server, Shield, Power, ActivitySquare, AlertTriangle, Layers, RefreshCw, AlignLeft, X, XCircle, Plus, Minus, Key, HardDrive, Wifi, Sparkles, BarChart, Cog, Wrench, ChevronRight,
   Bug, HeartPulse, Flame, Eye, Infinity, Repeat,
   Cloud, Globe, Share2, FileText, BarChart3, Binary, BrainCircuit, 
-  CircleDot, Fingerprint, Microscope, Scan, ShieldCheck, History as HistoryIcon
+  CircleDot, Fingerprint, Microscope, Scan, ShieldCheck, History as HistoryIcon,
+  ServerCrash, ShieldAlert
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -16,7 +17,10 @@ import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { factoryApi, monitoringApi, apiClient } from '@/services/api';
+import { factoryApi, monitoringApi, apiClient, api } from '@/services/api';
+import { RegistryStats } from './components/RegistryStats';
+
+const graphApi = api.graph;
 
 const SearchIcon = (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>;
 const ArrowUpIcon = (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>;
@@ -83,25 +87,86 @@ export default function SystemFactoryView() {
 
   type BugSeverity = 'critical' | 'high' | 'medium' | 'low';
   type BugStatus = 'detected' | 'fixing' | 'fixed';
+  type InfinitePhase = 'observe' | 'orient' | 'decide' | 'act';
+
+  interface InfiniteStatusPayload {
+    is_running: boolean;
+    current_phase: InfinitePhase;
+    cycles_completed: number;
+    improvements_made: number;
+    logs?: string[];
+    last_update?: string | null;
+  }
 
   // ═══ Infinite Improvement State ═══
   const [infiniteRunning, setInfiniteRunning] = useState(false);
-  const [infinitePhase, setInfinitePhase] = useState<'observe' | 'orient' | 'decide' | 'act'>('observe');
+  const [infinitePhase, setInfinitePhase] = useState<InfinitePhase>('observe');
   const [infiniteLogs, setInfiniteLogs] = useState<string[]>(["[SYSTEM] Цикл OODA ініціалізовано. Очікую команди запуску."]);
   const [infiniteStats, setInfiniteStats] = useState({ improvements: 0, bugs: 0, cycles: 0 });
+  const [infiniteLastUpdate, setInfiniteLastUpdate] = useState<string>('Ще не синхронізовано');
+  const [infiniteSyncedAt, setInfiniteSyncedAt] = useState<string>('—');
   const [bugs, setBugs] = useState<Array<{ id: string, description: string, severity: BugSeverity, component: string, file: string, status: BugStatus, fixProgress: number }>>([]);
   const [goldPatterns, setGoldPatterns] = useState<any[]>([]);
   const [factoryStats, setFactoryStats] = useState<any>(null);
+
+  const applyInfiniteStatus = useCallback((status: InfiniteStatusPayload) => {
+    setInfiniteRunning(status.is_running);
+    setInfinitePhase(status.current_phase ?? 'observe');
+
+    if (Array.isArray(status.logs) && status.logs.length > 0) {
+      setInfiniteLogs(status.logs.slice(-50));
+    }
+
+    setInfiniteStats(prev => ({
+      ...prev,
+      improvements: Number(status.improvements_made ?? prev.improvements),
+      cycles: Number(status.cycles_completed ?? prev.cycles),
+    }));
+
+    setInfiniteLastUpdate(
+      status.last_update ? new Date(status.last_update).toLocaleString('uk-UA') : 'Ще не синхронізовано'
+    );
+    setInfiniteSyncedAt(new Date().toLocaleTimeString('uk-UA'));
+  }, []);
+
+  const refreshInfiniteStatus = useCallback(async (includeBugs: boolean = false) => {
+    try {
+      const status = await factoryApi.getInfiniteStatus() as InfiniteStatusPayload;
+      applyInfiniteStatus(status);
+
+      if (includeBugs && status.current_phase === 'act') {
+        const updatedBugs = await factoryApi.getBugs();
+        setBugs(updatedBugs);
+      }
+
+      return status;
+    } catch (error) {
+      console.error('Failed to refresh infinite status:', error);
+      return null;
+    }
+  }, [applyInfiniteStatus]);
+
+  // ═══ Registry Stats State ═══
+  const [registryStats, setRegistryStats] = useState({
+    postgres: { rows: 1245000, size: '4.2GB', status: 'online' as const },
+    neo4j: { nodes: 842000, edges: 2154000, status: 'online' as const },
+    opensearch: { docs: 5120000, indices: 124, status: 'online' as const },
+    qdrant: { points: 850000, collections: 12, status: 'online' as const },
+    redis: { keys: 45200, memory: '1.2GB', status: 'online' as const },
+    kafka: { topics: 42, messages_sec: 2450, status: 'online' as const }
+  });
 
   // ═══ Real Data Loading ═══
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsData, patternsData, bugsData, clusterData] = await Promise.all([
+        const [statsData, patternsData, bugsData, clusterData, graphSummary, infiniteStatus] = await Promise.all([
           factoryApi.getStats(),
           factoryApi.getGoldPatterns(),
           factoryApi.getBugs(),
-          monitoringApi.getClusterStatus()
+          monitoringApi.getClusterStatus(),
+          graphApi.getSummary().catch(() => null),
+          factoryApi.getInfiniteStatus()
         ]);
 
         if (statsData) {
@@ -119,12 +184,40 @@ export default function SystemFactoryView() {
           setBugs(bugsData);
         } else {
           // Default mock bugs if backend is empty
-          setBugs([
-            { id: 'BUG-001', description: 'Memory leak у graph-service при batch запитах', severity: 'critical', component: 'graph-service', file: 'services/graph-service/batch.py:142', status: 'detected', fixProgress: 0 },
-            { id: 'BUG-002', description: 'N+1 query у /risk/company endpoint', severity: 'high', component: 'core-api', file: 'services/core-api/routers/risk.py:87', status: 'detected', fixProgress: 0 },
-            { id: 'BUG-005', description: 'Застарілі залежності в Docker шарах (HR-14)', severity: 'medium', component: 'infra', file: 'deploy/Dockerfile', status: 'detected', fixProgress: 0 },
-            { id: 'BUG-006', description: 'Відсутність лімітів CPU для worker поду (HR-08)', severity: 'high', component: 'infra', file: 'deploy/helm/values.yaml', status: 'detected', fixProgress: 0 },
-          ]);
+          if (bugs.length === 0) {
+            setBugs([
+              { id: 'BUG-001', description: 'Memory leak у graph-service при batch запитах', severity: 'critical', component: 'graph-service', file: 'services/graph-service/batch.py:142', status: 'detected' as const, fixProgress: 0 },
+              { id: 'BUG-002', description: 'N+1 query у /risk/company endpoint', severity: 'high', component: 'core-api', file: 'services/core-api/routers/risk.py:87', status: 'detected' as const, fixProgress: 0 },
+              { id: 'BUG-005', description: 'Застарілі залежності в Docker шарах (HR-14)', severity: 'medium', component: 'infra', file: 'deploy/Dockerfile', status: 'detected' as const, fixProgress: 0 },
+              { id: 'BUG-006', description: 'Відсутність лімітів CPU для worker поду (HR-08)', severity: 'high', component: 'infra', file: 'deploy/helm/values.yaml', status: 'detected' as const, fixProgress: 0 },
+            ]);
+          }
+        }
+
+        if (graphSummary) {
+          setRegistryStats(prev => ({
+            ...prev,
+            neo4j: {
+              nodes: graphSummary.node_count || prev.neo4j.nodes,
+              edges: graphSummary.relationship_count || prev.neo4j.edges,
+              status: 'online'
+            }
+          }));
+        }
+
+        // Simulating some variability
+        setRegistryStats(prev => ({
+          ...prev,
+          postgres: { ...prev.postgres, rows: prev.postgres.rows + Math.floor(Math.random() * 5) },
+          kafka: { ...prev.kafka, messages_sec: 2300 + Math.floor(Math.random() * 300) }
+        }));
+
+        if (infiniteStatus) {
+          applyInfiniteStatus(infiniteStatus as InfiniteStatusPayload);
+          if (infiniteStatus.current_phase === 'act') {
+            const updatedBugs = await factoryApi.getBugs();
+            setBugs(updatedBugs);
+          }
         }
 
         if (clusterData && clusterData.pods) {
@@ -586,62 +679,76 @@ export default function SystemFactoryView() {
 
   const handleInfiniteCycle = async () => {
     try {
-      if (infiniteRunning) {
+      let currentRunning = infiniteRunning;
+
+      try {
+        const backendStatus = await factoryApi.getInfiniteStatus() as InfiniteStatusPayload;
+        currentRunning = Boolean(backendStatus.is_running);
+        applyInfiniteStatus(backendStatus);
+      } catch (statusError) {
+        console.error('Failed to read backend OODA state:', statusError);
+      }
+
+      if (currentRunning) {
         await factoryApi.stopInfinite();
-        setInfiniteRunning(false);
         pushSystemMessage('🛑 OODA LOOP ЗУПИНЕНО. Автономне вдосконалення вимкнено.', 'analyze');
       } else {
         await factoryApi.startInfinite();
-        setInfiniteRunning(true);
-        setInfinitePhase('observe');
         pushSystemMessage('🚀 ВДОСКОНАЛЕННЯ PREDATOR ЗАПУЩЕНО. OODA LOOP АКТИВОВАНО НА БЕКЕНДІ.', 'bot');
       }
+
+      await refreshInfiniteStatus(true);
     } catch (e) {
       console.error("Failed to toggle infinite cycle:", e);
       pushSystemMessage('❌ Помилка зв\'язку з бекендом при управлінні OODA циклом.', 'analyze');
     }
   };
 
+  const ensureInfiniteRunning = async () => {
+    try {
+      let currentRunning = infiniteRunning;
+
+      try {
+        const backendStatus = await factoryApi.getInfiniteStatus() as InfiniteStatusPayload;
+        currentRunning = Boolean(backendStatus.is_running);
+        applyInfiniteStatus(backendStatus);
+      } catch (statusError) {
+        console.error('Failed to read backend OODA state:', statusError);
+      }
+
+      if (!currentRunning) {
+        await factoryApi.startInfinite();
+        pushSystemMessage('🚀 ВДОСКОНАЛЕННЯ PREDATOR ЗАПУЩЕНО. OODA LOOP АКТИВОВАНО НА БЕКЕНДІ.', 'bot');
+      } else {
+        pushSystemMessage('♾️ OODA-цикл уже активний на бекенді. Продовжую без перезапуску.', 'deploy');
+      }
+
+      await refreshInfiniteStatus(true);
+    } catch (error) {
+      console.error('Failed to ensure infinite cycle is running:', error);
+      pushSystemMessage('❌ Не вдалося синхронізувати OODA-цикл із бекендом.', 'analyze');
+    }
+  };
+
   // ═══ OODA Loop Sync with Backend ═══
   useEffect(() => {
-    let interval: any;
+    let interval: ReturnType<typeof setInterval> | undefined;
     if (infiniteRunning) {
-      interval = setInterval(async () => {
-        try {
-          const status = await factoryApi.getInfiniteStatus();
-          if (status) {
-            setInfinitePhase(status.current_phase as any);
-            
-            // Синхронізація логів
-            if (status.logs && status.logs.length > 0) {
-              setInfiniteLogs(status.logs.slice(-15));
-            }
-            
-            // Синхронізація статистики
-            setInfiniteStats(prev => ({
-              ...prev,
-              improvements: status.improvements_made,
-              cycles: status.cycles_completed
-            }));
-
-            // Оновлення списку багів якщо ми в фазі ACT
-            if (status.current_phase === 'act') {
-              const updatedBugs = await factoryApi.getBugs();
-              setBugs(updatedBugs);
-            }
-          }
-        } catch (e) {
-          console.error("Infinite sync failed:", e);
-        }
+      interval = setInterval(() => {
+        void refreshInfiniteStatus(true);
       }, 5000);
     }
-    return () => clearInterval(interval);
-  }, [infiniteRunning]);
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [infiniteRunning, refreshInfiniteStatus]);
 
   const startEveryFunction = async () => {
     setActiveTab('infinite');
     handleStartImprovement();
-    await handleInfiniteCycle();
+    await ensureInfiniteRunning();
     setGoogleIntegrality(true);
     pushSystemMessage('🚀 MASTER START: Запущено всі управлінські функції та безконечне вдосконалення!', 'deploy');
     
@@ -810,7 +917,13 @@ export default function SystemFactoryView() {
                            variant="cyber" 
                            size="sm" 
                            className="bg-rose-600/20 text-rose-400 border-rose-500/50 text-[9px] uppercase font-black"
-                           onClick={() => { setImprovementStatus('idle'); setImprovementProgress(0); setActiveCycle('idle'); setInfiniteRunning(false); }}
+                           onClick={async () => {
+                             setImprovementStatus('idle');
+                             setImprovementProgress(0);
+                             setActiveCycle('idle');
+                             await factoryApi.stopInfinite();
+                             await refreshInfiniteStatus(true);
+                           }}
                          >
                            <AlertTriangle size={12} className="mr-1" /> Аварійна Зупинка
                          </Button>
@@ -1084,7 +1197,7 @@ export default function SystemFactoryView() {
                                         <div className={cn("w-2 h-2 rounded-full", pod.status === 'Running' ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" : "bg-amber-500 animate-pulse")} />
                                         <div>
                                            <div className="text-[13px] font-bold text-white flex items-center gap-2">
-                                              {pod.name} 
+                                              {pod.name}
                                               <span className="text-[9px] font-black tracking-widest bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-indigo-400">×{pod.replicas}</span>
                                            </div>
                                            <div className="text-[10px] text-slate-500 font-mono mt-1">ID: {pod.id} | Аптайм: {pod.uptime}</div>
@@ -1100,7 +1213,7 @@ export default function SystemFactoryView() {
                                   </td>
                                   <td className="p-4 text-[11px] font-mono text-slate-300">
                                      <div className="flex items-center gap-2">
-                                        <Cpu size={12} className="text-blue-400" /> {pod.cpu}%
+                                        <Cpu size={12} className="text-blue-400" /> {pod.cpu}
                                         <HardDrive size={12} className="text-purple-400 ml-2" /> {pod.mem}
                                      </div>
                                   </td>
@@ -1129,7 +1242,7 @@ export default function SystemFactoryView() {
                                             disabled={pod.replicas <= 1}
                                             variant="ghost"
                                             size="icon"
-                                            className="p-2 h-10 w-10 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-inherit" title="Зменшити (Scale Down)"
+                                            className="p-2 h-10 w-10 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all" title="Зменшити (Scale Down)"
                                           >
                                              <Minus size={14} />
                                           </Button>
@@ -1186,6 +1299,7 @@ export default function SystemFactoryView() {
 
              {activeTab === 'network' && (
                <motion.div key="network" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+                  <RegistryStats stats={registryStats} />
                   <TacticalCard title="ТОПОЛОГІЯ МЕРЕЖІ ТА ІНФРАСТРУКТУРА" variant="cyber">
                      <div className="p-8 relative min-h-[300px] flex items-center justify-center">
                         <div className="absolute inset-0 bg-cyber-grid opacity-20 pointer-events-none" />
@@ -1477,6 +1591,7 @@ export default function SystemFactoryView() {
                <motion.div key="ingestion" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
                  <TacticalCard title="КОНТРОЛЕР ПАРСИНГУ ТА ІНГЕСТІЇ" variant="cyber">
                    <div className="grid grid-cols-3 gap-4 mb-6">
+                  <RegistryStats stats={registryStats} />
                      <div className="bg-slate-900/50 border border-orange-500/20 p-4 rounded-xl flex items-center justify-between">
                        <div>
                          <div className="text-[10px] text-slate-500 uppercase font-black uppercase tracking-widest">Пропускна здатність</div>
@@ -1570,6 +1685,28 @@ export default function SystemFactoryView() {
                           </p>
                         </div>
                       </div>
+                      <div className="mt-5 grid gap-3 rounded-2xl border border-violet-500/20 bg-violet-500/5 p-4 lg:grid-cols-[1fr_auto] lg:items-center">
+                        <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-widest">
+                          <Badge className={cn(
+                            'border text-[10px] font-black uppercase tracking-widest',
+                            infiniteRunning
+                              ? 'border-emerald-400/30 bg-emerald-500/15 text-emerald-300'
+                              : 'border-slate-500/30 bg-slate-500/10 text-slate-300'
+                          )}>
+                            Сервер: {infiniteRunning ? 'АКТИВНИЙ' : 'ЗУПИНЕНИЙ'}
+                          </Badge>
+                          <Badge className="border border-violet-400/20 bg-violet-500/10 text-violet-200 text-[10px] font-black uppercase tracking-widest">
+                            Автовідновлення після рестарту
+                          </Badge>
+                          <Badge className="border border-sky-400/20 bg-sky-500/10 text-sky-200 text-[10px] font-black uppercase tracking-widest">
+                            Після переходу між розділами стан не губиться
+                          </Badge>
+                        </div>
+                        <div className="text-[10px] font-mono text-slate-400 lg:text-right space-y-1">
+                          <div>Остання синхронізація: {infiniteSyncedAt}</div>
+                          <div>Оновлення з бекенду: {infiniteLastUpdate}</div>
+                        </div>
+                      </div>
                       <Button
                         onClick={handleInfiniteCycle}
                         className={cn('h-12 px-8 font-black tracking-widest uppercase text-sm transition-all shrink-0',
@@ -1578,7 +1715,7 @@ export default function SystemFactoryView() {
                             : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white shadow-[0_0_25px_rgba(139,92,246,0.5)] border border-violet-400/30'
                         )}
                       >
-                        {infiniteRunning ? <><Power size={16} className="mr-2" />ЗУПИНИТИ</> : <><Play size={16} className="mr-2" />ЗАПУСТИТИ ♾️</>}
+                        {infiniteRunning ? <><Power size={16} className="mr-2" />ЗУПИНИТИ НА БЕКЕНДІ</> : <><Play size={16} className="mr-2" />ЗАПУСТИТИ НА БЕКЕНДІ</>}
                       </Button>
                     </div>
 

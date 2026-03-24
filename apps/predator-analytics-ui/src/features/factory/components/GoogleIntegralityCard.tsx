@@ -22,7 +22,7 @@ export function GoogleIntegralityCard({
   setGoogleIntegrality
 }: GoogleIntegralityCardProps) {
   return (
-    <TacticalCard title="GOOGLE INTEGRALITY" variant="holographic" className="border-emerald-500/30 bg-emerald-500/5">
+    <TacticalCard title="ІНТЕГРАЦІЯ GOOGLE" variant="holographic" className="border-emerald-500/30 bg-emerald-500/5">
       <div className="p-4 space-y-4">
         <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-emerald-500/20">
            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
@@ -30,9 +30,9 @@ export function GoogleIntegralityCard({
            </div>
            <div className="flex-1">
              <div className="text-[11px] font-black uppercase text-white">Google Workspace</div>
-             <div className="text-[8px] text-emerald-500 font-mono">Syncing: Drive, Docs, Sheets</div>
+             <div className="text-[8px] text-emerald-500 font-mono">Синхронізація: Drive, Docs, Sheets</div>
            </div>
-           <Badge variant="cyber" className="bg-emerald-500/20 text-emerald-400 text-[8px]">{googleStatus.drive.toUpperCase()}</Badge>
+           <Badge variant="cyber" className="bg-emerald-500/20 text-emerald-400 text-[8px]">{googleStatus.drive.toUpperCase() === 'CONNECTED' ? 'ПІДКЛЮЧЕНО' : googleStatus.drive.toUpperCase()}</Badge>
         </div>
 
         <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-indigo-500/20">
@@ -40,10 +40,10 @@ export function GoogleIntegralityCard({
              <Scan size={20} />
            </div>
            <div className="flex-1">
-             <div className="text-[11px] font-black uppercase text-white">Gemini OSINT Agent</div>
-             <div className="text-[8px] text-indigo-400 font-mono">Pro v1.5 API Layer</div>
+             <div className="text-[11px] font-black uppercase text-white">Агент Gemini OSINT</div>
+             <div className="text-[8px] text-indigo-400 font-mono">Шар API Pro v1.5</div>
            </div>
-           <Badge variant="cyber" className="bg-indigo-500/20 text-indigo-400 text-[8px]">{googleStatus.gemini.toUpperCase()}</Badge>
+           <Badge variant="cyber" className="bg-indigo-500/20 text-indigo-400 text-[8px]">{googleStatus.gemini.toUpperCase() === 'ACTIVE' ? 'АКТИВНИЙ' : googleStatus.gemini.toUpperCase()}</Badge>
         </div>
 
         <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-amber-500/20">
@@ -52,9 +52,9 @@ export function GoogleIntegralityCard({
            </div>
            <div className="flex-1">
              <div className="text-[11px] font-black uppercase text-white">Google Analytics</div>
-             <div className="text-[8px] text-amber-400 font-mono">Traffic & Conversion Insight</div>
+             <div className="text-[8px] text-amber-400 font-mono">Аналіз трафіку та конверсії</div>
            </div>
-           <Badge variant="neon" className="bg-amber-500/20 text-amber-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase()}</Badge>
+           <Badge variant="neon" className="bg-amber-500/20 text-amber-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase() === 'SYNCING' ? 'СИНХРОНІЗАЦІЯ' : googleStatus.analytics.toUpperCase()}</Badge>
         </div>
 
         <div className="pt-4 border-t border-white/10">

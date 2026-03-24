@@ -10,6 +10,7 @@ import {
   Info,
   Layers,
   Link2,
+  Loader2,
   Lock,
   Search,
   ShieldAlert,
@@ -19,40 +20,35 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '../../utils/cn';
+import { apiClient } from '@/services/api/config';
 
 /* ═══════════════════════════════════════════════════════════════
-   КОМПРОМАТ НА ФІРМУ — Досьє ЄДРПОУ / Митниця
-   Розширення: підключити до core-api /api/v1/company/{ueid}
+   КОМПРОМАТ НА ФІРМУ — Досьє з реальних даних API
    ═══════════════════════════════════════════════════════════════ */
 
 export default function FirmDossierView() {
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (query.length < 5) return;
     setIsSearching(true);
-    // Мок затримки
-    setTimeout(() => {
-      setResult({
-        name: "ТОВ 'ТоргІнвест Лтд'",
-        edrpou: "44567890",
-        riskScore: 94,
-        status: "Активне",
-        threats: [
-          "Виявлено зв'язки з офшорами (Кіпр, Беліз)",
-          "Заниження митної вартості на 28% (УКТ ЗЕД 3923 10)",
-          "Податковий борг: 1,4 млн грн",
-          "3 кримінальні провадження (шахрайство, ухилення)",
-        ],
-        connections: 12,
-        owners: ["Сидоренко О.М. (40%)", "Shell-company 'Vector' (60%)"],
-        lastCustoms: "23.03.2026, Львівська митниця, відділ №7",
-      });
+    setError(null);
+    try {
+      const isEdrpou = /^\d{8,10}$/.test(query.trim());
+      const res = isEdrpou
+        ? await apiClient.get(`/company/dossier/${query.trim()}`)
+        : await apiClient.post('/company/dossier', { query: query.trim() });
+      setResult(res.data);
+    } catch (err) {
+      setError('Не вдалося завантажити досьє. Спробуйте ще раз.');
+      console.error('Firm dossier error:', err);
+    } finally {
       setIsSearching(false);
-    }, 1500);
+    }
   };
 
   return (

@@ -1,3 +1,8 @@
+/**
+ * PREDATOR v55.5 | Газета PREDATOR — Реальні дані з API
+ * Дайджест: компромат, тренди, митниця, алерти — все з реальної БД.
+ */
+
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   AlertTriangle,
@@ -5,14 +10,13 @@ import {
   Bell,
   ChevronRight,
   Clock,
-  DollarSign,
   ExternalLink,
   FileText,
   Flame,
   Globe,
+  Loader2,
   Network,
   RefreshCw,
-  Shield,
   Siren,
   Sparkles,
   TrendingDown,
@@ -21,162 +25,16 @@ import {
   UserX,
   Zap,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { cn } from '../../utils/cn';
-
-/* ═══════════════════════════════════════════════════════════════
-   ТИПИ ДАНИХ
-   ═══════════════════════════════════════════════════════════════ */
-
-interface ComprommatItem {
-  id: string;
-  title: string;
-  subtitle: string;
-  risk: string;
-  hook: string;
-  riskLevel: 'high' | 'medium' | 'low';
-  source: string;
-}
-
-interface TrendItem {
-  id: string;
-  title: string;
-  subtitle: string;
-  hook: string;
-  direction: 'up' | 'down';
-  percent: number;
-  hsCode: string;
-}
-
-interface CustomsItem {
-  id: string;
-  title: string;
-  subtitle: string;
-  hook: string;
-  type: 'opportunity' | 'risk';
-}
-
-interface AlertItem {
-  id: string;
-  text: string;
-  urgency: 'high' | 'medium' | 'info';
-  time: string;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   МОКАНІ ДАНІ — реалістичний україський OSINT-контекст 2026
-   ═══════════════════════════════════════════════════════════════ */
-
-const MAIN_HEADLINE = {
-  title: "Конкурент «ЕкоТранс Лтд» перейшов на Львівську митницю — ціна впала на 32%",
-  subtitle: "Фірма різко збільшила імпорт пластикових виробів (УКТ ЗЕД 3923 10) через відділ №7 Львівської митниці. Растаможка через митника Петренка В.А. — відомі затримки та підозри в «спрощеному» режимі. Ваш маршрут через Одесу коштує на 1,8 млн грн дорожче за місяць.",
-  riskScore: 92,
-  tag: "МИТНА РОЗВІДКА",
-  hook: "Перехопити маршрут чи нагнати перевірку на Петренка?",
-  edrpou: "44567890",
-};
-
-const COMPROMMAT: ComprommatItem[] = [
-  {
-    id: '1',
-    title: "Бенефіціар «ТоргСвіт» — під слідством ДБР",
-    subtitle: "Сидоренко О.М., 17.08.1979, Харків. Фіктивні угоди на 8,7 млн грн, неоплачений ПДВ.",
-    risk: "Кримінальне провадження + 8,7 млн",
-    hook: "Він — постачальник вашого конкурента. Затушити угоду?",
-    riskLevel: 'high',
-    source: 'ДБР / Судовий реєстр',
-  },
-  {
-    id: '2',
-    title: "Директор «Логістика Про» — санкції ЄС",
-    subtitle: "Кравець Д.В., пов'язаний з російським бізнесом через сестру.",
-    risk: "Санкції ЄС + РНБО",
-    hook: "Ваш партнер працює з ними. Ризик блокування рахунків 78%.",
-    riskLevel: 'high',
-    source: 'РНБО / OFAC',
-  },
-  {
-    id: '3',
-    title: "«АгроТрейд Плюс» — штраф ДПС 4,2 млн грн",
-    subtitle: "Петренко І.С., 12.05.1982, Київ. Неоплачені податки + 14 фіктивних угод.",
-    risk: "Податкові порушення + фіктивні угоди",
-    hook: "Ця фірма — в реєстрі налаштуйте перевірку?",
-    riskLevel: 'medium',
-    source: 'ДПС України',
-  },
-  {
-    id: '4',
-    title: "Власник «ПраймЛогістик» — офшор на Кіпрі",
-    subtitle: "Ширяєв В.О, ЄДРПОУ 32456789. Бенефіціар через кіпрську структуру.",
-    risk: "Відмивка + офшор",
-    hook: "Перевірити на реальне походження грошей?",
-    riskLevel: 'medium',
-    source: 'ЄДРПОУ / Offshore Leaks',
-  },
-];
-
-const TRENDS: TrendItem[] = [
-  {
-    id: '1',
-    title: "Електросамокати та аксесуари — +214%",
-    subtitle: "УКТ ЗЕД 8711 60: обсяг імпорту з Китаю зріс удвічі. Середня ціна 320 USD/шт.",
-    hook: "Рухатися в цю нішу? Прогноз +45% до кінця року.",
-    direction: 'up',
-    percent: 214,
-    hsCode: '8711 60',
-  },
-  {
-    id: '2',
-    title: "Функціональні напої — +187% за I кв. 2026",
-    subtitle: "УКТ ЗЕД 2202 99: аксесуари та функціональні напої з Китаю. Ціна 4,2 USD/л.",
-    hook: "Вчорашні сіки вже не продаються. Переорієнтуватися?",
-    direction: 'up',
-    percent: 187,
-    hsCode: '2202 99',
-  },
-  {
-    id: '3',
-    title: "Сонячні панелі та інвертори — спад -41%",
-    subtitle: "УКТ ЗЕД 8541 40: зростання вичерпано. Рекомендація: перейти на акумулятори.",
-    hook: "Не встигнете — втратите 30% маржі.",
-    direction: 'down',
-    percent: 41,
-    hsCode: '8541 40',
-  },
-];
-
-const CUSTOMS: CustomsItem[] = [
-  {
-    id: '1',
-    title: "Через митника Іванова О.П. — дешевше на 18%",
-    subtitle: "Постачальник: Guangzhou Export Co, порт Одеса, митниця №3, відділ 5. Конкурент економить 2,1 млн грн/міс.",
-    hook: "Перейти на цей маршрут?",
-    type: 'opportunity',
-  },
-  {
-    id: '2',
-    title: "Ризикований відділ №5 Київської митниці",
-    subtitle: "22 затримки за лютий–березень, підозри в «ручному» розмитненні. Зв'язок з фірмою 'Вектор Плюс'.",
-    hook: "Уникати або знайти «свій» контакт?",
-    type: 'risk',
-  },
-  {
-    id: '3',
-    title: "Shenzhen Tech Ltd — постачальник конкурента",
-    subtitle: "Ціна 15$/кг при вашій ціні 22$/кг. Порт Одеса, декларант ТОВ 'МегаТранс'.",
-    hook: "Прямий контракт з постачальником — реально?",
-    type: 'opportunity',
-  },
-];
-
-const ALERTS: AlertItem[] = [
-  { id: '1', text: "Відмивка 3,1 млн грн через shell-компанію «Вектор Плюс» — зв'язок з вашим постачальником", urgency: 'high', time: '2 хв тому' },
-  { id: '2', text: "Цей чиновник ДПСУ може закрити перевірку в Одеській обл. — контакти готові", urgency: 'medium', time: '14 хв тому' },
-  { id: '3', text: "Конкурент затушив постачальника — тепер контролює 45% ринку. План дій?", urgency: 'high', time: '31 хв тому' },
-  { id: '4', text: "Аксесуари для електросамокатів — +320% за I кв. 2026. Незайнята ніша", urgency: 'info', time: '1 год тому' },
-  { id: '5', text: "«АльфаМед» отримало нову ліцензію — розширення на 3 нові регіони", urgency: 'info', time: '2 год тому' },
-  { id: '6', text: "Санкції ЄС: 14 нових фізичних осіб, пов'язаних з митними схемами", urgency: 'medium', time: '3 год тому' },
-];
+import { newspaperApi } from '../../services/api/newspaper';
+import type {
+  NewspaperData,
+  ComprommatItem,
+  TrendItem,
+  CustomsItem,
+  AlertItem,
+} from '../../services/api/newspaper';
 
 /* ═══════════════════════════════════════════════════════════════
    АНІМАЦІЇ — Framer Motion правила
@@ -234,21 +92,19 @@ const UrgencyDot = ({ urgency }: { urgency: AlertItem['urgency'] }) => {
    ГОЛОВНИЙ МАТЕРІАЛ
    ═══════════════════════════════════════════════════════════════ */
 
-const MainHeadline = () => (
+const MainHeadline = ({ headline }: { headline: NewspaperData['headline'] }) => (
   <motion.div
     {...fadeInUp}
     transition={{ duration: 0.25, delay: 0.05 }}
     className="relative overflow-hidden rounded-2xl border border-rose-500/20 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 p-6 shadow-[0_0_60px_-20px_rgba(244,63,94,0.15)]"
   >
-    {/* Фоновий пульс */}
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(244,63,94,0.06),transparent_60%)] pointer-events-none" />
 
-    {/* Тег секції */}
     <div className="flex items-center gap-3 mb-4">
       <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/15 border border-rose-500/30">
         <Flame className="w-3 h-3 text-rose-400" />
         <span className="text-[9px] font-black text-rose-400 tracking-[0.2em] uppercase">
-          {MAIN_HEADLINE.tag}
+          {headline.tag}
         </span>
       </div>
       <div className="flex items-center gap-1.5">
@@ -260,35 +116,35 @@ const MainHeadline = () => (
       </div>
     </div>
 
-    {/* Заголовок з пульсом */}
     <motion.h2
       animate={{ opacity: [1, 0.85, 1] }}
       transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       className="font-['Courier_Prime',monospace] text-xl font-bold text-white leading-snug mb-3"
     >
-      {MAIN_HEADLINE.title}
+      {headline.title}
     </motion.h2>
 
-    {/* Ризик-бейдж + ЄДРПОУ */}
     <div className="flex items-center gap-3 mb-4">
-      <RiskBadge score={MAIN_HEADLINE.riskScore} />
+      <RiskBadge score={headline.riskScore} />
       <span className="text-[10px] font-mono text-slate-500">
-        ЄДРПОУ: {MAIN_HEADLINE.edrpou}
+        ЄДРПОУ: {headline.edrpou}
       </span>
+      {headline.declarationNumber && (
+        <span className="text-[10px] font-mono text-slate-600">
+          №{headline.declarationNumber}
+        </span>
+      )}
     </div>
 
-    {/* Текст матеріалу */}
     <p className="text-[13px] text-slate-400 leading-relaxed mb-4 font-['Courier_Prime',monospace]">
-      {MAIN_HEADLINE.subtitle}
+      {headline.subtitle}
     </p>
 
-    {/* Гачок */}
     <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-500/8 border border-rose-500/15 mb-5">
       <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
-      <span className="text-[12px] font-semibold text-rose-300">{MAIN_HEADLINE.hook}</span>
+      <span className="text-[12px] font-semibold text-rose-300">{headline.hook}</span>
     </div>
 
-    {/* Кнопки дій */}
     <div className="flex items-center gap-3">
       <motion.button
         whileHover={{ scale: 1.03 }}
@@ -482,13 +338,18 @@ const CustomsCard = ({ item, delay }: { item: CustomsItem; delay: number }) => {
    СТРІЧКА АЛЕРТІВ
    ═══════════════════════════════════════════════════════════════ */
 
-const AlertsStrip = () => {
-  const [newAlerts, setNewAlerts] = useState<Set<string>>(new Set(['1', '3']));
+const AlertsStrip = ({ alerts }: { alerts: AlertItem[] }) => {
+  const [newAlerts, setNewAlerts] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    const t = setTimeout(() => setNewAlerts(new Set()), 3000);
-    return () => clearTimeout(t);
-  }, []);
+    if (alerts.length > 0) {
+      setNewAlerts(new Set(alerts.slice(0, 2).map(a => a.id)));
+      const t = setTimeout(() => setNewAlerts(new Set()), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [alerts]);
+
+  if (alerts.length === 0) return null;
 
   return (
     <motion.div
@@ -503,12 +364,12 @@ const AlertsStrip = () => {
           Алерти та удари
         </span>
         <span className="ml-auto text-[9px] font-mono text-slate-600">
-          Оновлено: щой но
+          {alerts.length} сигналів
         </span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-        {ALERTS.map((alert, i) => {
+        {alerts.map((alert: AlertItem) => {
           const isNew = newAlerts.has(alert.id);
           const borderColor =
             alert.urgency === 'high' ? 'border-rose-500/25 bg-rose-500/6' :
@@ -551,10 +412,32 @@ const AlertsStrip = () => {
 
 export default function NewspaperView() {
   const [issueTime, setIssueTime] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<NewspaperData | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastRefresh, setLastRefresh] = useState(new Date());
 
-  // Оновлення часу кожні 30 секунд
+  const fetchData = useCallback(async () => {
+    try {
+      setIsRefreshing(true);
+      setError(null);
+      const result = await newspaperApi.getData();
+      setData(result);
+    } catch (err) {
+      console.error('Newspaper fetch error:', err);
+      setError('Не вдалося завантажити дані газети. Перевірте з\'єднання з сервером.');
+    } finally {
+      setLoading(false);
+      setIsRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 120000);
+    return () => clearInterval(interval);
+  }, [fetchData]);
+
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -571,15 +454,42 @@ export default function NewspaperView() {
     updateTime();
     const interval = setInterval(updateTime, 30000);
     return () => clearInterval(interval);
-  }, [lastRefresh]);
+  }, []);
 
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => {
-      setLastRefresh(new Date());
-      setIsRefreshing(false);
-    }, 1200);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-full bg-[#010b18] text-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 text-indigo-400 animate-spin" />
+          <p className="text-[12px] font-mono text-slate-500 uppercase tracking-wider">
+            Завантаження газети...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !data) {
+    return (
+      <div className="min-h-full bg-[#010b18] text-white flex items-center justify-center p-6">
+        <div className="flex flex-col items-center gap-4 max-w-md text-center">
+          <AlertTriangle className="w-10 h-10 text-rose-400" />
+          <p className="text-[13px] text-slate-400">{error}</p>
+          <button
+            onClick={fetchData}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-[12px] font-semibold hover:bg-indigo-500/30 transition-colors"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            Спробувати знову
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) return null;
+
+  const { headline, compromat, trends, customs, alerts, metrics, summary } = data;
 
   return (
     <motion.div
@@ -595,7 +505,6 @@ export default function NewspaperView() {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            {/* Назва газети */}
             <motion.div
               className="flex items-center gap-3 mb-2"
               animate={{ opacity: [1, 0.7, 1] }}
@@ -606,7 +515,6 @@ export default function NewspaperView() {
               </span>
             </motion.div>
 
-            {/* Дата та підзаголовок */}
             <div className="flex items-center gap-3 flex-wrap">
               <div className="flex items-center gap-1.5">
                 <Clock className="w-3 h-3 text-slate-600" />
@@ -616,7 +524,7 @@ export default function NewspaperView() {
               </div>
               <span className="text-slate-700">·</span>
               <span className="text-[12px] text-slate-500">
-                Сьогоднішній компромат, тренди та удари по конкурентам
+                {summary}
               </span>
               <div className="flex items-center gap-1">
                 <span className="relative flex h-1.5 w-1.5">
@@ -628,10 +536,9 @@ export default function NewspaperView() {
             </div>
           </div>
 
-          {/* Кнопки управління */}
           <div className="flex items-center gap-2 shrink-0">
             <motion.button
-              onClick={handleRefresh}
+              onClick={fetchData}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/[0.06] text-slate-400 hover:text-white text-[11px] font-semibold transition-all"
@@ -650,13 +557,15 @@ export default function NewspaperView() {
           </div>
         </div>
 
-        {/* Статистика випуску */}
+        {/* Статистика випуску — реальні дані з API */}
         <div className="flex items-center gap-6 mt-4 pt-4 border-t border-white/[0.04]">
           {[
-            { label: 'Матеріалів', value: '24', color: 'text-white' },
-            { label: 'Ризик-алертів', value: '12', color: 'text-rose-400' },
-            { label: 'Трендів', value: '8', color: 'text-cyan-400' },
-            { label: 'Митних подій', value: '6', color: 'text-indigo-400' },
+            { label: 'Декларацій', value: String(metrics.totalDeclarations), color: 'text-white' },
+            { label: 'Ризик-алертів', value: String(metrics.riskAlerts), color: 'text-rose-400' },
+            { label: 'Трендів', value: String(metrics.trends), color: 'text-cyan-400' },
+            { label: 'Митних подій', value: String(metrics.customsEvents), color: 'text-indigo-400' },
+            { label: 'Імпорт', value: String(metrics.importCount), color: 'text-emerald-400' },
+            { label: 'Експорт', value: String(metrics.exportCount), color: 'text-amber-400' },
           ].map((stat) => (
             <div key={stat.label} className="flex items-center gap-1.5">
               <span className={cn('text-[15px] font-black tracking-tight', stat.color)}>{stat.value}</span>
@@ -667,7 +576,7 @@ export default function NewspaperView() {
       </motion.header>
 
       {/* ── ГОЛОВНИЙ МАТЕРІАЛ (above the fold) ── */}
-      <MainHeadline />
+      <MainHeadline headline={headline} />
 
       {/* ── 3 КОЛОНКИ ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -685,16 +594,16 @@ export default function NewspaperView() {
               Компромат дня
             </span>
             <span className="ml-auto text-[8px] font-mono text-slate-600">
-              {COMPROMMAT.length} матеріали
+              {compromat.length} матеріалів
             </span>
           </motion.div>
 
-          {COMPROMMAT.map((item, i) => (
+          {compromat.map((item: ComprommatItem, i: number) => (
             <ComprommatCard key={item.id} item={item} delay={0.15 + i * 0.06} />
           ))}
         </div>
 
-        {/* ── ЦЕНТР: Мода та тренди ── */}
+        {/* ── ЦЕНТР: Тренди по категоріях ── */}
         <div className="space-y-3">
           <motion.div
             initial={{ opacity: 0, y: -8 }}
@@ -704,18 +613,17 @@ export default function NewspaperView() {
           >
             <div className="w-1 h-4 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400">
-              Мода та тренди
+              Тренди по категоріях
             </span>
             <span className="ml-auto text-[8px] font-mono text-slate-600">
-              УКТ ЗЕД 2026
+              ${(metrics.totalValueUsd / 1000000).toFixed(1)}M загалом
             </span>
           </motion.div>
 
-          {TRENDS.map((item, i) => (
+          {trends.map((item: TrendItem, i: number) => (
             <TrendCard key={item.id} item={item} delay={0.2 + i * 0.06} />
           ))}
 
-          {/* Мікро-блок: пояснення */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -724,10 +632,10 @@ export default function NewspaperView() {
           >
             <div className="flex items-center gap-1.5 mb-1">
               <Sparkles className="w-3 h-3 text-indigo-400" />
-              <span className="text-[9px] font-black text-indigo-400 uppercase tracking-wider">ШІ-прогноз</span>
+              <span className="text-[9px] font-black text-indigo-400 uppercase tracking-wider">ШІ-аналіз</span>
             </div>
             <p className="text-[10px] text-slate-500 leading-snug font-['Courier_Prime',monospace]">
-              На основі 847K митних декларацій за I кв. 2026. Оновлення щодоби.
+              На основі {metrics.totalDeclarations} митних декларацій на суму ${(metrics.totalValueUsd / 1000000).toFixed(1)}M. Оновлення кожні 2 хвилини.
             </p>
           </motion.div>
         </div>
@@ -746,11 +654,10 @@ export default function NewspaperView() {
             </span>
           </motion.div>
 
-          {CUSTOMS.map((item, i) => (
+          {customs.map((item: CustomsItem, i: number) => (
             <CustomsCard key={item.id} item={item} delay={0.25 + i * 0.06} />
           ))}
 
-          {/* Мікро-блок: довідка */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -758,18 +665,18 @@ export default function NewspaperView() {
             className="rounded-xl border border-indigo-500/10 bg-indigo-500/5 p-3"
           >
             <p className="text-[10px] text-indigo-400/70 leading-snug">
-              Дані митних декларацій оновлюються щодня після 18:00 за київським часом.
+              Дані митних декларацій оновлюються автоматично. Обробка {metrics.totalDeclarations} записів.
             </p>
             <button className="flex items-center gap-1 mt-2 text-[10px] text-indigo-400 hover:text-indigo-300 transition-colors">
               <ArrowRight className="w-3 h-3" />
-              Усі 847 митних подій
+              Усі {metrics.customsEvents} митних подій
             </button>
           </motion.div>
         </div>
       </div>
 
       {/* ── НИЖНЯ СТРІЧКА АЛЕРТІВ ── */}
-      <AlertsStrip />
+      <AlertsStrip alerts={alerts} />
 
       {/* ── ПІДВАЛ ГАЗЕТИ ── */}
       <motion.footer
@@ -781,11 +688,11 @@ export default function NewspaperView() {
         <div className="flex items-center gap-2">
           <Zap className="w-3 h-3 text-indigo-400" />
           <span className="text-[9px] font-['Courier_Prime',monospace] text-slate-600">
-            PREDATOR Analytics · Випуск №{Math.floor(Math.random() * 900) + 100} · 23 березня 2026
+            PREDATOR Analytics · {issueTime} · {metrics.totalDeclarations} декларацій
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[9px] text-slate-700">Джерела: ЄДРПОУ · ДПС · ДБР · РНБО · OFAC · Митниця UA</span>
+          <span className="text-[9px] text-slate-700">Джерела: ЄДРПОУ · ДПС · Митниця UA · OpenSearch</span>
           <button className="text-[9px] text-indigo-400/60 hover:text-indigo-400 transition-colors flex items-center gap-1">
             <ExternalLink className="w-2.5 h-2.5" />
             Архів
