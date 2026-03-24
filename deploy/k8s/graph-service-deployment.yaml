@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predator-v55-graph-service
+  namespace: predator-v55
+  labels:
+    app.kubernetes.io/name: graph-service
+    app.kubernetes.io/component: analytics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: graph-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: graph-service
+        app.kubernetes.io/component: analytics
+    spec:
+      containers:
+      - name: graph-service
+        image: europe-west3-docker.pkg.dev/project-b63e383c-4a98-418d-837/predator-repo/graph-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8002
+          name: http
+        env:
+        - name: NEO4J_URI
+          value: "bolt://predator-v55-neo4j:7687"
+        - name: NEO4J_USER
+          value: "neo4j"
+        - name: NEO4J_PASSWORD
+          value: "predator-neo4j-secure"
+        - name: CORE_API_URL
+          value: "http://predator-v55-core-api:8000"
+        - name: LOG_LEVEL
+          value: "INFO"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8002
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8002
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: predator-v55-graph-service
+  namespace: predator-v55
+spec:
+  selector:
+    app.kubernetes.io/name: graph-service
+  ports:
+  - port: 8002
+    name: http
