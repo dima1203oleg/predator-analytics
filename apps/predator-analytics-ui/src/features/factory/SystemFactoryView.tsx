@@ -1655,66 +1655,70 @@ export default function SystemFactoryView() {
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-violet-500/5 animate-ping" style={{ animationDuration: '3s' }} />
                       </div>
                     )}
-                    <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                      <div className="flex items-center gap-5">
-                        <div className="relative">
-                          <div className={cn('w-16 h-16 rounded-2xl border-2 flex items-center justify-center transition-all duration-500',
-                            infiniteRunning ? 'bg-violet-500/20 border-violet-400 shadow-[0_0_30px_rgba(139,92,246,0.6)]' : 'bg-slate-900/80 border-slate-600'
-                          )}>
-                            <Infinity size={30} className={cn('transition-all', infiniteRunning ? 'text-violet-300 animate-pulse' : 'text-slate-500')} />
+                    <div className="relative z-10 flex flex-col gap-6">
+                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                        <div className="flex items-center gap-5">
+                          <div className="relative shrink-0">
+                            <div className={cn('w-16 h-16 rounded-2xl border-2 flex items-center justify-center transition-all duration-500',
+                              infiniteRunning ? 'bg-violet-500/20 border-violet-400 shadow-[0_0_30px_rgba(139,92,246,0.6)]' : 'bg-slate-900/80 border-slate-600'
+                            )}>
+                              <Infinity size={30} className={cn('transition-all', infiniteRunning ? 'text-violet-300 animate-pulse' : 'text-slate-500')} />
+                            </div>
+                            {infiniteRunning && <div className="absolute -inset-1 rounded-2xl border border-violet-400/30 animate-ping opacity-40" />}
                           </div>
-                          {infiniteRunning && <div className="absolute -inset-1 rounded-2xl border border-violet-400/30 animate-ping opacity-40" />}
+                          <div className="min-w-0">
+                            <div className="text-[10px] text-violet-400 font-black uppercase tracking-[0.2em] mb-1 truncate">♥️ OODA LOOP • AUTONOMOUS IMPROVEMENT ENGINE</div>
+                            <h2 className="text-xl lg:text-2xl font-black text-white truncate">
+                              {infiniteRunning ? (
+                                <><span className="text-violet-300">АКТИВНИЙ</span> — Цикл #{infiniteStats.cycles + 1}</>
+                              ) : (
+                                <><span className="text-slate-400">ЗУПИНЕНО</span> — Очікує команди</>
+                              )}
+                            </h2>
+                            <p className="text-xs text-slate-400 mt-1 max-w-md line-clamp-2">
+                              Автономна система аналізує код, архітектуру та логи для генерації патчів і вдосконалень.
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <div className="text-xs text-violet-400 font-black uppercase tracking-[0.2em] mb-1">♥️ OODA LOOP • AUTONOMOUS IMPROVEMENT ENGINE</div>
-                          <h2 className="text-xl font-black text-white">
-                            {infiniteRunning ? (
-                              <><span className="text-violet-300">АКТИВНИЙ</span> — Цикл #{infiniteStats.cycles + 1}</>
-                            ) : (
-                              <><span className="text-slate-400">ЗУПИНЕНО</span> — Очікує команди</>
-                            )}
-                          </h2>
-                          <p className="text-xs text-slate-400 mt-1 max-w-md">
-                            Автономна система аналізує код, архітектуру та логи для генерації патчів і вдосконалень.
-                          </p>
-                        </div>
+
+                        <Button 
+                          onClick={handleInfiniteCycle}
+                          className={cn('h-12 px-8 font-black tracking-widest uppercase text-sm transition-all shrink-0 w-full lg:w-auto',
+                            infiniteRunning
+                              ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_25px_rgba(225,29,72,0.5)] border border-rose-400/30'
+                              : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white shadow-[0_0_25px_rgba(139,92,246,0.5)] border border-violet-400/30'
+                          )}
+                        >
+                          {infiniteRunning ? <><Power size={16} className="mr-2" />ЗУПИНИТИ НА БЕКЕНДІ</> : <><Play size={16} className="mr-2" />ЗАПУСТИТИ НА БЕКЕНДІ</>}
+                        </Button>
                       </div>
-                      <div className="mt-5 grid gap-3 rounded-2xl border border-violet-500/20 bg-violet-500/5 p-4 lg:grid-cols-[1fr_auto] lg:items-center">
-                        <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-widest">
+
+                      <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 items-center bg-violet-500/5 border border-violet-500/20 rounded-2xl p-4">
+                        <div className="flex flex-wrap items-center gap-2">
                           <Badge className={cn(
-                            'border text-[10px] font-black uppercase tracking-widest',
+                            'border text-[10px] font-black uppercase tracking-widest px-3 py-1',
                             infiniteRunning
                               ? 'border-emerald-400/30 bg-emerald-500/15 text-emerald-300'
                               : 'border-slate-500/30 bg-slate-500/10 text-slate-300'
                           )}>
                             Сервер: {infiniteRunning ? 'АКТИВНИЙ' : 'ЗУПИНЕНИЙ'}
                           </Badge>
-                          <Badge className="border border-violet-400/20 bg-violet-500/10 text-violet-200 text-[10px] font-black uppercase tracking-widest">
+                          <Badge className="border border-violet-400/20 bg-violet-500/10 text-violet-200 text-[10px] font-black uppercase tracking-widest px-3 py-1">
                             Автовідновлення після рестарту
                           </Badge>
-                          <Badge className="border border-sky-400/20 bg-sky-500/10 text-sky-200 text-[10px] font-black uppercase tracking-widest">
+                          <Badge className="border border-sky-400/20 bg-sky-500/10 text-sky-200 text-[10px] font-black uppercase tracking-widest px-3 py-1">
                             Після переходу між розділами стан не губиться
                           </Badge>
                         </div>
-                        <div className="text-[10px] font-mono text-slate-400 lg:text-right space-y-1">
-                          <div>Остання синхронізація: {infiniteSyncedAt}</div>
-                          <div>Оновлення з бекенду: {infiniteLastUpdate}</div>
+                        <div className="text-[10px] font-mono text-slate-500 lg:text-right flex flex-col gap-0.5">
+                          <span>Остання синхронізація: {infiniteSyncedAt}</span>
+                          <span>Оновлення з бекенду: {infiniteLastUpdate}</span>
                         </div>
                       </div>
-                      <Button
-                        onClick={handleInfiniteCycle}
-                        className={cn('h-12 px-8 font-black tracking-widest uppercase text-sm transition-all shrink-0',
-                          infiniteRunning
-                            ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_25px_rgba(225,29,72,0.5)] border border-rose-400/30'
-                            : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white shadow-[0_0_25px_rgba(139,92,246,0.5)] border border-violet-400/30'
-                        )}
-                      >
-                        {infiniteRunning ? <><Power size={16} className="mr-2" />ЗУПИНИТИ НА БЕКЕНДІ</> : <><Play size={16} className="mr-2" />ЗАПУСТИТИ НА БЕКЕНДІ</>}
-                      </Button>
                     </div>
 
-                    {/* Stats row */}
-                    <div className="mt-6 grid grid-cols-3 gap-3">
+                  {/* Stats row */}
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                       {[
                         { label: 'Циклів OODA', value: infiniteStats.cycles, icon: RefreshCw, color: 'text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20' },
                         { label: 'Покращень', value: infiniteStats.improvements, icon: Zap, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
@@ -1735,7 +1739,7 @@ export default function SystemFactoryView() {
                   </div>
 
                   {/* ── OODA Фази ── */}
-                  <div className="grid grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
                       { id: 'observe', label: 'ОБСЕРВАЦІЯ', sub: 'Збір метрик', icon: Eye, color: 'cyan' },
                       { id: 'orient', label: 'ОРІЄНТАЦІЯ', sub: 'Аналіз даних', icon: BrainCircuit, color: 'fuchsia' },
