@@ -2,7 +2,7 @@ name: Nightly re-run important workflows
 
 on:
   schedule:
-    # Run daily at 03:00 UTC to re-check stability of key workflows
+    # Щоденно о 03:00 UTC для перевірки стабільності
     - cron: '0 3 * * *'
   workflow_dispatch:
 
@@ -30,7 +30,15 @@ jobs:
             const owner = context.repo.owner
             const repo = context.repo.repo
             const branch = process.env.TARGET_BRANCH || 'main'
-            const workflows = ['deploy.yml','deploy-mac.yml','deploy-nvidia.yml','deploy-oracle.yml']
+            // Тільки активні workflow файли (не _archived)
+            const workflows = [
+              'ci-cd-unified.yml',
+              'backend-ci-cd.yml',
+              'frontend-ci-cd-v55.yml',
+              'deploy-mac.yml',
+              'deploy-nvidia-self-hosted.yml',
+              'deploy-oracle.yml',
+            ]
 
             const allowedBadConclusions = new Set(['failure','timed_out','cancelled','action_required','startup_failure'])
             const retryLimit = 3 // max attempts for the same run
@@ -38,41 +46,42 @@ jobs:
             const summary = []
 
             for (const wf of workflows) {
-              core.info(`Checking latest completed runs for workflow ${wf} on branch ${branch}`)
-              const runsResp = await github.rest.actions.listWorkflowRuns({
-                owner,
-                repo,
-                workflow_id: wf,
-                branch,
-                per_page: 10,
-                status: 'completed',
-              })
-              const runs = runsResp.data.workflow_runs || []
+              try {
+                core.info(`Checking latest completed runs for workflow ${wf} on branch ${branch}`)
+                const runsResp = await github.rest.actions.listWorkflowRuns({
+                  owner,
+                  repo,
+                  workflow_id: wf,
+                  branch,
+                  per_page: 10,
+                  status: 'completed',
+                })
+                const runs = runsResp.data.workflow_runs || []
 
-              // choose the most recent non-successful run
-              const lastFailed = runs.find(r => r.conclusion !== 'success')
+                // choose the most recent non-successful run
+                const lastFailed = runs.find(r => r.conclusion !== 'success')
 
-              if (!lastFailed) {
-                summary.push({ workflow: wf, status: 'ok', reran: 0 })
-                continue
-              }
+                if (!lastFailed) {
+                  summary.push({ workflow: wf, status: 'ok', reran: 0 })
+                  continue
+                }
 
-              const runAttempt = lastFailed.run_attempt || 1
-              if (!allowedBadConclusions.has(lastFailed.conclusion)) {
-                core.info(`Found failure of type ${lastFailed.conclusion}, skipping rerun for ${wf}`)
-                summary.push({ workflow: wf, status: 'problem', reran: 0, reason: `conclusion=${lastFailed.conclusion}` })
-                continue
-              }
+                const runAttempt = lastFailed.run_attempt || 1
+                if (!allowedBadConclusions.has(lastFailed.conclusion)) {
+                  core.info(`Found failure of type ${lastFailed.conclusion}, skipping rerun for ${wf}`)
+                  summary.push({ workflow: wf, status: 'problem', reran: 0, reason: `conclusion=${lastFailed.conclusion}` })
+                  continue
+                }
 
-              if (runAttempt >= retryLimit) {
-                core.info(`Run ${lastFailed.id} for ${wf} already tried ${runAttempt} times (>=${retryLimit}), not re-running`)
-                summary.push({ workflow: wf, status: 'problem', reran: 0, reason: `attempts=${runAttempt}` })
-                continue
-              }
+                if (runAttempt >= retryLimit) {
+                  core.info(`Run ${lastFailed.id} for ${wf} already tried ${runAttempt} times (>=${retryLimit}), not re-running`)
+                  summary.push({ workflow: wf, status: 'problem', reran: 0, reason: `attempts=${runAttempt}` })
+                  continue
+                }
 
-              // Re-run the single most-recent failed run
-              core.info(`Re-running run ${lastFailed.id} for ${wf} (conclusion=${lastFailed.conclusion}, attempt=${runAttempt})`)
-              await github.rest.actions.reRunWorkflowRun({ owner, repo, run_id: lastFailed.id })
+                // Re-run the single most-recent failed run
+                core.info(`Re-running run ${lastFailed.id} for ${wf} (conclusion=${lastFailed.conclusion}, attempt=${runAttempt})`)
+                await github.rest.actions.reRunWorkflowRun({ owner, repo, run_id: lastFailed.id })
 
                 summary.push({
                   workflow: wf,
@@ -82,6 +91,10 @@ jobs:
                   conclusion: lastFailed.conclusion,
                   url: lastFailed.html_url,
                 })
+              } catch (e) {
+                core.warning(`Failed to check/rerun workflow ${wf}: ${e.message}`)
+                summary.push({ workflow: wf, status: 'error', reran: 0, reason: e.message })
+              }
             }
 
             return JSON.stringify(summary)
@@ -115,7 +128,7 @@ jobs:
               if (s.status === 'ok') {
                 bodyLines.push(`- ${s.workflow}: ✅ OK — no recent failures`)
               } else if (s.status === 're-ran') {
-                bodyLines.push(`- ${s.workflow}: 🔁 Re-ran run <${s.url}|#${s.run_id}> (previous conclusion: ${s.conclusion})`)
+                bodyLines.push(`- ${s.workflow}: 🔁 Re-ran run [#${s.run_id}](${s.url}) (previous conclusion: ${s.conclusion})`)
               } else {
                 bodyLines.push(`- ${s.workflow}: ⚠️ Problem — ${s.reason || 'see details'}`)
               }

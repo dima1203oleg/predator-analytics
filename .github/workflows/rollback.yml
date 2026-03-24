@@ -1,11 +1,10 @@
-
 name: Emergency Rollback
 
 on:
   workflow_dispatch:
     inputs:
       target_tag:
-        description: 'Version tag to revert to (e.g. v18.4.10)'
+        description: 'Version tag to revert to (e.g. v55.1.0)'
         required: true
 
 jobs:
@@ -15,14 +14,39 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Revert Helm Value
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install yq
         run: |
-          sed -i "s|tag: .*|tag: \"${{ inputs.target_tag }}\"|g" charts/predator/values.yaml
-          
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Revert Helm Values
+        run: |
+          TAG="${{ inputs.target_tag }}"
+          # Оновити deploy/helm/predator values
+          VALUES="deploy/helm/predator/values.yaml"
+          if [ -f "$VALUES" ]; then
+            yq -i ".coreApi.image.tag = \"$TAG\"" "$VALUES"
+            yq -i ".frontend.image.tag = \"$TAG\"" "$VALUES"
+            yq -i ".graphService.image.tag = \"$TAG\"" "$VALUES"
+            yq -i ".ingestionWorker.image.tag = \"$TAG\"" "$VALUES"
+          fi
+          # Оновити infra/helm/umbrella values
+          UMBRELLA="infra/helm/umbrella/values.yaml"
+          if [ -f "$UMBRELLA" ]; then
+            yq -i ".core-api.image.tag = \"$TAG\"" "$UMBRELLA"
+            yq -i ".frontend.image.tag = \"$TAG\"" "$UMBRELLA"
+            yq -i ".graph-service.image.tag = \"$TAG\"" "$UMBRELLA"
+            yq -i ".ingestion-worker.image.tag = \"$TAG\"" "$UMBRELLA"
+          fi
+
       - name: Commit & Push
         run: |
           git config user.name "Predator Rollback"
           git config user.email "bot@predator.system"
-          git add charts/predator/values.yaml
-          git commit -m "HOTFIX: Rollback to ${{ inputs.target_tag }}"
+          git add -A
+          git diff --staged --quiet || git commit -m "fix(rollback): відкат до ${{ inputs.target_tag }} [skip ci]"
           git push
