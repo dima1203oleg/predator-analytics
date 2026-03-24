@@ -43,7 +43,9 @@ const queryClient = new QueryClient({
 
 function App() {
   // Звичайний життєвий цикл: boot → login → ready
-  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>('BOOTING');
+  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>(() => {
+    return sessionStorage.getItem('predator_auth_token') ? 'READY' : 'BOOTING';
+  });
   const highVisibility = useAppStore((state) => state.highVisibility);
 
   useEffect(() => {

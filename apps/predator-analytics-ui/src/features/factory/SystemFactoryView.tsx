@@ -157,120 +157,99 @@ export default function SystemFactoryView() {
   });
 
   // ═══ Real Data Loading ═══
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [statsData, patternsData, bugsData, clusterData, graphSummary, infiniteStatus] = await Promise.all([
-          factoryApi.getStats(),
-          factoryApi.getGoldPatterns(),
-          factoryApi.getBugs(),
-          monitoringApi.getClusterStatus(),
-          graphApi.getSummary().catch(() => null),
-          factoryApi.getInfiniteStatus()
-        ]);
+  const refreshData = useCallback(async () => {
+    try {
+      const [statsData, patternsData, bugsData, clusterData, graphSummary, infiniteStatus] = await Promise.all([
+        factoryApi.getStats(),
+        factoryApi.getGoldPatterns(),
+        factoryApi.getBugs(),
+        monitoringApi.getClusterStatus().catch(() => null),
+        graphApi.getSummary().catch(() => null),
+        factoryApi.getInfiniteStatus()
+      ]);
 
-        if (statsData) {
-          setFactoryStats(statsData);
-          setSystemScore({
-            quality: Math.round(statsData.avg_score) || 98,
-            coverage: 94,
-            security: 100
-          });
+      if (statsData) {
+        setFactoryStats(statsData);
+        setSystemScore({
+          quality: Math.round(statsData.avg_score) || 98,
+          coverage: 94,
+          security: 100
+        });
+      }
+
+      if (patternsData) setGoldPatterns(patternsData);
+      
+      if (bugsData && bugsData.length > 0) {
+        setBugs(bugsData);
+      } else {
+        if (bugs.length === 0) {
+          setBugs([
+            { id: 'BUG-001', description: 'Memory leak у graph-service при batch запитах', severity: 'critical', component: 'graph-service', file: 'services/graph-service/batch.py:142', status: 'detected' as const, fixProgress: 0 },
+            { id: 'BUG-002', description: 'N+1 query у /risk/company endpoint', severity: 'high', component: 'core-api', file: 'services/core-api/routers/risk.py:87', status: 'detected' as const, fixProgress: 0 },
+            { id: 'BUG-005', description: 'Застарілі залежності в Docker шарах (HR-14)', severity: 'medium', component: 'infra', file: 'deploy/Dockerfile', status: 'detected' as const, fixProgress: 0 },
+            { id: 'BUG-006', description: 'Відсутність лімітів CPU для worker поду (HR-08)', severity: 'high', component: 'infra', file: 'deploy/helm/values.yaml', status: 'detected' as const, fixProgress: 0 },
+          ]);
         }
+      }
 
-        if (patternsData) setGoldPatterns(patternsData);
-        
-        if (bugsData && bugsData.length > 0) {
-          setBugs(bugsData);
-        } else {
-          // Default mock bugs if backend is empty
-          if (bugs.length === 0) {
-            setBugs([
-              { id: 'BUG-001', description: 'Memory leak у graph-service при batch запитах', severity: 'critical', component: 'graph-service', file: 'services/graph-service/batch.py:142', status: 'detected' as const, fixProgress: 0 },
-              { id: 'BUG-002', description: 'N+1 query у /risk/company endpoint', severity: 'high', component: 'core-api', file: 'services/core-api/routers/risk.py:87', status: 'detected' as const, fixProgress: 0 },
-              { id: 'BUG-005', description: 'Застарілі залежності в Docker шарах (HR-14)', severity: 'medium', component: 'infra', file: 'deploy/Dockerfile', status: 'detected' as const, fixProgress: 0 },
-              { id: 'BUG-006', description: 'Відсутність лімітів CPU для worker поду (HR-08)', severity: 'high', component: 'infra', file: 'deploy/helm/values.yaml', status: 'detected' as const, fixProgress: 0 },
-            ]);
-          }
-        }
-
-        if (graphSummary) {
-          setRegistryStats(prev => ({
-            ...prev,
-            neo4j: {
-              nodes: graphSummary.node_count || prev.neo4j.nodes,
-              edges: graphSummary.relationship_count || prev.neo4j.edges,
-              status: 'online'
-            }
-          }));
-        }
-
-        // Simulating some variability
+      if (graphSummary) {
         setRegistryStats(prev => ({
           ...prev,
-          postgres: { ...prev.postgres, rows: prev.postgres.rows + Math.floor(Math.random() * 5) },
-          kafka: { ...prev.kafka, messages_sec: 2300 + Math.floor(Math.random() * 300) }
+          neo4j: {
+            nodes: graphSummary.node_count || prev.neo4j.nodes,
+            edges: graphSummary.relationship_count || prev.neo4j.edges,
+            status: 'online'
+          }
         }));
-
-        if (infiniteStatus) {
-          applyInfiniteStatus(infiniteStatus as InfiniteStatusPayload);
-          if (infiniteStatus.current_phase === 'act') {
-            const updatedBugs = await factoryApi.getBugs();
-            setBugs(updatedBugs);
-          }
-        }
-
-        if (clusterData && clusterData.pods) {
-          setPods(clusterData.pods.map((p: any) => ({
-            id: p.name,
-            name: p.name,
-            status: p.status,
-            restarts: p.restarts || 0,
-            replicas: 1,
-            cpu: p.cpu || '120m',
-            mem: p.memory || '256Mi',
-            uptime: p.age || '4d 12h'
-          })));
-        } else {
-          // Keep current pods if clusterData is empty
-          if (pods.length === 0) {
-             setPods([
-               { id: 'core-api-8f4b', name: 'predator-core-api', status: 'Running', restarts: 0, replicas: 2, cpu: '112m', mem: '450Mi', uptime: '4d 12h' },
-               { id: 'graph-worker-2d1', name: 'predator-graph-worker', status: 'Running', restarts: 1, replicas: 1, cpu: '8m', mem: '210Mi', uptime: '1d 4h' },
-               { id: 'ingest-5c9a', name: 'predator-ingestion', status: 'Running', restarts: 0, replicas: 3, cpu: '340m', mem: '1.2Gi', uptime: '4d 12h' },
-               { id: 'ui-front-v55', name: 'predator-ui-frontend', status: 'Running', restarts: 0, replicas: 1, cpu: '12m', mem: '80Mi', uptime: '8h' },
-             ]);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching factory data:', error);
       }
-    };
 
-    fetchData();
-    const interval = setInterval(fetchData, 30000); 
+      if (infiniteStatus) {
+        applyInfiniteStatus(infiniteStatus as InfiniteStatusPayload);
+      }
+
+      if (clusterData && clusterData.pods) {
+        setPods(clusterData.pods.map((p: any) => ({
+          id: p.name,
+          name: p.name,
+          status: p.status,
+          restarts: p.restarts || 0,
+          replicas: 1,
+          cpu: p.cpu || '120m',
+          mem: p.memory || '256Mi',
+          uptime: p.age || '4d 12h'
+        })));
+      }
+    } catch (error) {
+      console.error('Error fetching factory data:', error);
+    }
+  }, [applyInfiniteStatus, bugs.length]);
+
+  useEffect(() => {
+    refreshData();
+    const interval = setInterval(refreshData, 10000); 
     return () => clearInterval(interval);
-  }, []);
+  }, [refreshData]);
 
   const handleFixBug = async (bugId: string) => {
     try {
       await factoryApi.fixBug(bugId);
-      setBugs(prev => prev.map(b => b.id === bugId ? { ...b, status: 'fixing', fixProgress: 5 } : b));
-      pushSystemMessage(`🐛 АВТОФІКС: Запит відправлено на бекенд [${bugId}]. Аналіз коду...`, 'analyze');
+      setBugs(prev => prev.map(b => b.id === bugId ? { ...b, status: 'fixing', fixProgress: 10 } : b));
+      pushSystemMessage(`🐛 АВТОФІКС: Запит на виправлення [${bugId}] відправлено на сервер.`, 'analyze');
       
-      let progress = 5;
+      // Ми не імітуємо прогрес інтервалом, а чекаємо наступного циклу refreshData або події
+      // Але для UI залишимо невелику імітацію руху, щоб юзер бачив активність
+      let progress = 10;
       const interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 20);
-        if (progress >= 100) {
+        progress += 5;
+        if (progress >= 95) {
           clearInterval(interval);
-          setBugs(prev => prev.map(b => b.id === bugId ? { ...b, status: 'fixed', fixProgress: 100 } : b));
-          pushSystemMessage(`✅ АВТОФІКС: Дефект [${bugId}] успішно виправлено на стороні сервера.`, 'build');
+          refreshData(); // Реальне оновлення з бекенду
         } else {
-          setBugs(prev => prev.map(b => b.id === bugId ? { ...b, fixProgress: progress } : b));
+          setBugs(prev => prev.map(b => b.id === bugId && b.status === 'fixing' ? { ...b, fixProgress: progress } : b));
         }
-      }, 800);
+      }, 1000);
     } catch (e) {
-      pushSystemMessage(`❌ Помилка при виклику автофіксу на бекенді: ${e}`, 'analyze');
+      pushSystemMessage(`❌ Помилка при виклику автофіксу: ${e}`, 'analyze');
     }
   };
 
@@ -409,20 +388,29 @@ export default function SystemFactoryView() {
     else setList([...list, id]);
   };
 
-  const handleStartImprovement = () => {
-    setImprovementStatus('running');
-    setImprovementProgress(0);
-    const id = setInterval(() => {
-      setImprovementProgress(p => {
-        if (p >= 100) {
-          clearInterval(id);
-          setImprovementStatus('done');
-          setSystemScore({ quality: 99, coverage: 96, security: 100 });
-          return 100;
-        }
-        return p + 5;
-      });
-    }, 400);
+  const handleStartImprovement = async () => {
+    try {
+      setImprovementStatus('running');
+      setImprovementProgress(10);
+      
+      // Насправді запускаємо OODA Loop на бекенді
+      await factoryApi.startInfinite();
+      await refreshInfiniteStatus(true);
+      
+      pushSystemMessage('🚀 Ініційовано цикл автономного вдосконалення системи на бекенді.', 'build');
+      
+      // Відображаємо прогрес відповідно до фаз OODA (імітація для візуалізації всередині таби)
+      const phasesMap: Record<InfinitePhase, number> = {
+        'observe': 25,
+        'orient': 50,
+        'decide': 75,
+        'act': 100
+      };
+      
+      setImprovementProgress(phasesMap[infinitePhase] || 10);
+    } catch (e) {
+      console.error("Помилка запуску вдосконалення:", e);
+    }
   };
 
 
@@ -439,7 +427,10 @@ export default function SystemFactoryView() {
   const logsEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = messagesEndRef.current;
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   useEffect(() => {
@@ -447,7 +438,10 @@ export default function SystemFactoryView() {
   }, [messages]);
 
   useEffect(() => {
-    if (logsEndRef.current) logsEndRef.current.scrollIntoView();
+    const el = logsEndRef.current;
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView();
+    }
   }, [liveLogs]);
 
   useEffect(() => {
@@ -788,8 +782,8 @@ export default function SystemFactoryView() {
         ]}
       />
 
-      {/* ── Основна 3-колонна сітка ──────────────────────────────────────── */}
-      <div className="max-w-[1600px] mx-auto px-6 mt-6 flex gap-6 relative z-10">
+      {/* ── Основна 2-колонна сітка ──────────────────────────────────────── */}
+      <div className="max-w-[1700px] mx-auto px-6 mt-6 flex gap-6 relative z-10">
         
         {/* ── Вертикальний Sidebar-Навігатор ── */}
         <div className="hidden lg:flex flex-col gap-1.5 w-52 shrink-0">
@@ -865,7 +859,7 @@ export default function SystemFactoryView() {
         </div>
 
         {/* ── Головний контент ── */}
-        <div className="flex-1 min-w-0 space-y-0">
+        <div className="flex-1 min-w-0 max-w-full space-y-0">
           {/* Mobile tabs (тільки для малих екранів) */}
           <div className="lg:hidden flex gap-2 mb-4 overflow-x-auto pb-2">
             {TABS.map(tab => {
@@ -883,7 +877,7 @@ export default function SystemFactoryView() {
 
           <AnimatePresence mode="wait">
              {activeTab === 'improve' && (
-                <motion.div key="improve" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+                <motion.div key="improve" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                   
                   {/* Sovereign Control Center Header */}
                   <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4 bg-slate-900/40 border border-white/10 rounded-2xl backdrop-blur-md">
@@ -893,7 +887,7 @@ export default function SystemFactoryView() {
                       </div>
                       <div>
                         <h3 className="text-sm font-black uppercase tracking-widest text-white">ГОЛОВНИЙ ПУЛЬТ УПРАВЛІННЯ ЦИКЛОМ</h3>
-                        <p className="text-[10px] text-slate-500 font-mono text-fuchsia-500 uppercase">STATUS: {improvementStatus.toUpperCase()} | CYCLE: {activeCycle.toUpperCase()}</p>
+                        <p className="text-[10px] text-slate-500 font-mono text-fuchsia-500 uppercase">СТАТУС: {infiniteRunning ? 'АКТИВНИЙ' : 'ОЧІКУВАННЯ'} | ФАЗА: {infinitePhase.toUpperCase()}</p>
                       </div>
                     </div>
                       <div className="flex gap-2">
@@ -931,7 +925,7 @@ export default function SystemFactoryView() {
                   </div>
 
                   {/* Mode Selection Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
                       <Button 
                         onClick={() => setImprovementMode('tech')}
                         variant={improvementMode === 'tech' ? 'neon' : 'cyber'}
@@ -1082,10 +1076,10 @@ export default function SystemFactoryView() {
                   </div>
 
                   {/* Realtime Progress & Results UI */}
-                  {(improvementStatus === 'running' || improvementStatus === 'done') && (
+                  {(improvementStatus === 'running' || improvementStatus === 'done' || infiniteRunning) && (
                     <TacticalCard title="КАНАЛ ПОДІЙ ЗАВОДУ (EVENTS)" variant="cyber" className="border-fuchsia-500/20">
                       <div className="p-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-center">
                           <div>
                              <div className="flex items-center justify-between mb-3">
                                <span className="text-[11px] font-black uppercase tracking-wider text-fuchsia-400">ПОТОЧНИЙ ПРОГРЕС ЦИКЛУ</span>
@@ -1176,7 +1170,7 @@ export default function SystemFactoryView() {
              )}
 
              {activeTab === 'k8s' && (
-               <motion.div key="k8s" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+               <motion.div key="k8s" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                   
                   <TacticalCard title="ІНТЕРАКТИВНА ТОПОЛОГІЯ ПОДІВ (PODS)" variant="cyber">
                      <div className="p-0">
@@ -1298,7 +1292,7 @@ export default function SystemFactoryView() {
              )}
 
              {activeTab === 'network' && (
-               <motion.div key="network" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+               <motion.div key="network" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                   <RegistryStats stats={registryStats} />
                   <TacticalCard title="ТОПОЛОГІЯ МЕРЕЖІ ТА ІНФРАСТРУКТУРА" variant="cyber">
                      <div className="p-8 relative min-h-[300px] flex items-center justify-center">
@@ -1377,7 +1371,7 @@ export default function SystemFactoryView() {
              )}
 
              {activeTab === 'cicd' && (
-               <motion.div key="cicd" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+               <motion.div key="cicd" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                   <TacticalCard title="КОНВЕЄР ВДОСКОНАЛЕННЯ СИСТЕМИ" variant="cyber">
                     <div className="p-6 relative overflow-hidden">
                        <div className="absolute inset-0 bg-cyber-grid opacity-10 pointer-events-none" />
@@ -1432,7 +1426,7 @@ export default function SystemFactoryView() {
              )}
 
               {activeTab === 'bugfix' && (
-                <motion.div key="fix" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+                <motion.div key="fix" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                   <div className="flex items-center justify-between p-5 bg-gradient-to-r from-red-950/40 to-slate-900/40 border border-red-500/20 rounded-2xl backdrop-blur-md">
                     <div className="flex items-center gap-4">
                       <div className="w-14 h-14 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
@@ -1521,7 +1515,7 @@ export default function SystemFactoryView() {
               )}
 
               {activeTab === 'health' && (
-                <motion.div key="health" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+                <motion.div key="health" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                   <div className="flex items-center justify-between p-5 bg-gradient-to-r from-teal-950/40 to-cyan-950/40 border border-teal-500/30 rounded-2xl backdrop-blur-md">
                     <div className="flex items-center gap-4">
                       <div className="w-14 h-14 rounded-xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400">
@@ -1588,10 +1582,10 @@ export default function SystemFactoryView() {
               )}
 
              {activeTab === 'ingestion' && (
-               <motion.div key="ingestion" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-6">
+               <motion.div key="ingestion" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
+                 <RegistryStats stats={registryStats} />
                  <TacticalCard title="КОНТРОЛЕР ПАРСИНГУ ТА ІНГЕСТІЇ" variant="cyber">
                    <div className="grid grid-cols-3 gap-4 mb-6">
-                  <RegistryStats stats={registryStats} />
                      <div className="bg-slate-900/50 border border-orange-500/20 p-4 rounded-xl flex items-center justify-between">
                        <div>
                          <div className="text-[10px] text-slate-500 uppercase font-black uppercase tracking-widest">Пропускна здатність</div>
@@ -1651,7 +1645,7 @@ export default function SystemFactoryView() {
              )}
 
               {activeTab === 'infinite' && (
-                <motion.div key="infinite" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-5">
+                <motion.div key="infinite" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-5">
 
                   {/* ── Головний блок ── */}
                   <div className="relative overflow-hidden rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-950/60 via-slate-950/80 to-fuchsia-950/40 backdrop-blur-xl p-6">
