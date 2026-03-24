@@ -880,95 +880,107 @@ export default function SystemFactoryView() {
                 <motion.div key="improve" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                   
                   {/* Sovereign Control Center Header */}
-                  <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4 bg-slate-900/40 border border-white/10 rounded-2xl backdrop-blur-md">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/30 flex items-center justify-center text-fuchsia-400 shadow-[0_0_15px_rgba(217,70,239,0.2)]">
-                        <Factory size={24} />
+                  <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] items-center gap-6 p-6 bg-slate-900/40 border border-white/10 rounded-3xl backdrop-blur-md shadow-2xl relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-500/5 to-transparent pointer-events-none" />
+                    <div className="relative z-10 flex items-center gap-5">
+                      <div className="w-14 h-14 rounded-2xl bg-fuchsia-500/10 border border-fuchsia-500/30 flex items-center justify-center text-fuchsia-400 shadow-[0_0_20px_rgba(217,70,239,0.3)] shrink-0">
+                        <Factory size={28} />
                       </div>
-                      <div>
-                        <h3 className="text-sm font-black uppercase tracking-widest text-white">ГОЛОВНИЙ ПУЛЬТ УПРАВЛІННЯ ЦИКЛОМ</h3>
-                        <p className="text-[10px] text-slate-500 font-mono text-fuchsia-500 uppercase">СТАТУС: {infiniteRunning ? 'АКТИВНИЙ' : 'ОЧІКУВАННЯ'} | ФАЗА: {infinitePhase.toUpperCase()}</p>
+                      <div className="min-w-0">
+                        <h3 className="text-base lg:text-lg font-black uppercase tracking-widest text-white truncate">ГОЛОВНИЙ ПУЛЬТ УПРАВЛІННЯ ЦИКЛОМ</h3>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 font-mono text-[10px] uppercase">
+                          <span className={cn(infiniteRunning ? "text-emerald-400" : "text-fuchsia-500")}>
+                             <span className="opacity-50 text-slate-400 mr-1.5">СТАТУС:</span>
+                             {infiniteRunning ? 'АКТИВНИЙ ЦИКЛ' : 'РЕЖИМ ОЧІКУВАННЯ'}
+                          </span>
+                          <span className="text-slate-500">|</span>
+                          <span className="text-sky-400">
+                             <span className="opacity-50 text-slate-400 mr-1.5">ФАЗА:</span>
+                             {infinitePhase.toUpperCase()}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                      <div className="flex gap-2">
-                         <Button 
-                           variant="neon" 
-                           size="sm" 
-                           className="bg-emerald-600/20 text-emerald-400 border-emerald-500/50 text-[9px] uppercase font-black"
-                           onClick={() => { startEveryFunction(); }}
-                         >
-                           <Zap size={12} className="mr-1 shadow-[0_0_10px_#10b981]" /> МАЙСТЕР ЗАПУСК (ВСЕ)
-                         </Button>
-                         <Button 
-                           variant="neon" 
-                           size="sm" 
-                           className="bg-indigo-600/20 text-indigo-400 border-indigo-500/50 text-[9px] uppercase font-black"
-                           onClick={() => { setImprovementStatus('running'); setActiveCycle('building'); handleStartImprovement(); }}
-                         >
-                           <Play size={12} className="mr-1" /> Запустити Цикл
-                         </Button>
-                         <Button 
-                           variant="cyber" 
-                           size="sm" 
-                           className="bg-rose-600/20 text-rose-400 border-rose-500/50 text-[9px] uppercase font-black"
-                           onClick={async () => {
-                             setImprovementStatus('idle');
-                             setImprovementProgress(0);
-                             setActiveCycle('idle');
-                             await factoryApi.stopInfinite();
-                             await refreshInfiniteStatus(true);
-                           }}
-                         >
-                           <AlertTriangle size={12} className="mr-1" /> Аварійна Зупинка
-                         </Button>
-                      </div>
+                    
+                    <div className="relative z-10 flex flex-wrap lg:flex-nowrap items-center gap-3">
+                       <Button 
+                         variant="neon" 
+                         size="sm" 
+                         className="flex-1 lg:flex-none px-6 bg-emerald-600/20 text-emerald-400 border-emerald-500/50 text-[10px] uppercase font-black h-11"
+                         onClick={() => { startEveryFunction(); }}
+                       >
+                         <Zap size={14} className="mr-2" /> МАЙСТЕР ЗАПУСК
+                       </Button>
+                       <Button 
+                         variant="neon" 
+                         size="sm" 
+                         className="flex-1 lg:flex-none px-6 bg-indigo-600/20 text-indigo-400 border-indigo-500/50 text-[10px] uppercase font-black h-11"
+                         onClick={() => { setImprovementStatus('running'); setActiveCycle('building'); handleStartImprovement(); }}
+                       >
+                         <Play size={14} className="mr-2" /> ЗАПУСТИТИ
+                       </Button>
+                       <Button 
+                         variant="cyber" 
+                         size="sm" 
+                         className="flex-1 lg:flex-none px-4 bg-rose-600/10 text-rose-500 border-rose-500/40 text-[10px] uppercase font-black h-11"
+                         onClick={async () => {
+                           setImprovementStatus('idle');
+                           setImprovementProgress(0);
+                           setActiveCycle('idle');
+                           await factoryApi.stopInfinite();
+                           await refreshData();
+                         }}
+                       >
+                         <AlertTriangle size={14} className="mr-2" /> ЗУПИНКА
+                       </Button>
+                    </div>
                   </div>
 
                   {/* Mode Selection Grid */}
-                  <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                       <Button 
                         onClick={() => setImprovementMode('tech')}
                         variant={improvementMode === 'tech' ? 'neon' : 'cyber'}
-                        className={cn("h-auto py-8 rounded-xl flex flex-col items-center gap-4 transition-all relative overflow-hidden", 
-                          improvementMode === 'tech' ? 'border-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.3)] bg-indigo-500/10' : 'border-white/5 text-slate-400 opacity-60')}
+                        className={cn("h-auto py-10 rounded-2xl flex flex-col items-center gap-5 transition-all relative overflow-hidden group", 
+                          improvementMode === 'tech' ? 'border-indigo-500/60 shadow-[0_0_30px_rgba(79,70,229,0.3)] bg-indigo-500/10' : 'border-white/5 text-slate-500 opacity-60 hover:opacity-100')}
                       >
                         {improvementMode === 'tech' && <div className="absolute inset-0 bg-indigo-500/5 animate-pulse" />}
-                        <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
-                          <Binary size={24} className="text-indigo-400" />
+                        <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30 group-hover:scale-110 transition-transform">
+                          <Binary size={32} className="text-indigo-400" />
                         </div>
                         <div className="text-center">
-                          <span className="text-[11px] font-black uppercase tracking-widest block">Технологічна Вертикаль</span>
-                          <span className="text-[8px] text-indigo-400/70 font-mono mt-1 uppercase">Інфраструктура та Core API</span>
+                          <span className="text-[13px] font-black uppercase tracking-[0.15em] block">Технологічна Вертикаль</span>
+                          <span className="text-[9px] text-indigo-400/80 font-mono mt-2 uppercase tracking-wide">Інфраструктура та Core API</span>
                         </div>
                       </Button>
                       <Button 
                         onClick={() => setImprovementMode('analytic')}
                         variant={improvementMode === 'analytic' ? 'neon' : 'cyber'}
-                        className={cn("h-auto py-8 rounded-xl flex flex-col items-center gap-4 transition-all relative overflow-hidden", 
-                          improvementMode === 'analytic' ? 'border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.3)] bg-amber-500/10' : 'border-white/5 text-slate-400 opacity-60')}
+                        className={cn("h-auto py-10 rounded-2xl flex flex-col items-center gap-5 transition-all relative overflow-hidden group", 
+                          improvementMode === 'analytic' ? 'border-amber-500/60 shadow-[0_0_30px_rgba(245,158,11,0.3)] bg-amber-500/10' : 'border-white/5 text-slate-500 opacity-60 hover:opacity-100')}
                       >
                         {improvementMode === 'analytic' && <div className="absolute inset-0 bg-amber-500/5 animate-pulse" />}
-                        <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/30">
-                          <BrainCircuit size={24} className="text-amber-400" />
+                        <div className="w-16 h-16 rounded-2xl bg-amber-500/20 flex items-center justify-center border border-amber-500/30 group-hover:scale-110 transition-transform">
+                          <BrainCircuit size={32} className="text-amber-400" />
                         </div>
                         <div className="text-center">
-                          <span className="text-[11px] font-black uppercase tracking-widest block text-amber-100">Аналітична Вертикаль</span>
-                          <span className="text-[8px] text-amber-400/70 font-mono mt-1 uppercase">Карти Знань та Патерни</span>
+                          <span className="text-[13px] font-black uppercase tracking-[0.15em] block text-amber-100">Аналітична Вертикаль</span>
+                          <span className="text-[9px] text-amber-400/80 font-mono mt-2 uppercase tracking-wide">Карти Знань та Патерни</span>
                         </div>
                       </Button>
                       <Button 
                         onClick={() => setImprovementMode('complex')}
                         variant={improvementMode === 'complex' ? 'neon' : 'cyber'}
-                        className={cn("h-auto py-8 rounded-xl flex flex-col items-center gap-4 transition-all relative overflow-hidden", 
-                          improvementMode === 'complex' ? 'border-fuchsia-500 shadow-[0_0_20px_rgba(217,70,239,0.3)] bg-fuchsia-500/10' : 'border-white/5 text-slate-400 opacity-60')}
+                        className={cn("h-auto py-10 rounded-2xl flex flex-col items-center gap-5 transition-all relative overflow-hidden group", 
+                          improvementMode === 'complex' ? 'border-fuchsia-500/60 shadow-[0_0_30px_rgba(217,70,239,0.3)] bg-fuchsia-500/10' : 'border-white/5 text-slate-500 opacity-60 hover:opacity-100')}
                       >
                         {improvementMode === 'complex' && <div className="absolute inset-0 bg-fuchsia-500/5 animate-pulse" />}
-                        <div className="w-12 h-12 rounded-full bg-fuchsia-500/20 flex items-center justify-center border border-fuchsia-500/30">
-                          <Sparkles size={24} className="text-fuchsia-400" />
+                        <div className="w-16 h-16 rounded-2xl bg-fuchsia-500/20 flex items-center justify-center border border-fuchsia-500/30 group-hover:scale-110 transition-transform">
+                          <Sparkles size={32} className="text-fuchsia-400" />
                         </div>
                         <div className="text-center">
-                          <span className="text-[11px] font-black uppercase tracking-widest block text-white">Комплексний Нагляд</span>
-                          <span className="text-[8px] text-fuchsia-400/70 font-mono mt-1 uppercase">Суверенне Розгортання</span>
+                          <span className="text-[13px] font-black uppercase tracking-[0.15em] block text-white">Комплексний Нагляд</span>
+                          <span className="text-[9px] text-fuchsia-400/80 font-mono mt-2 uppercase tracking-wide">Суверенне Розгортання</span>
                         </div>
                       </Button>
                   </div>
