@@ -17,7 +17,11 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { ServiceStatusGrid } from './components/ServiceStatusGrid';
 import { GpuGauge } from './components/GpuGauge';
 import { StorageChart } from './components/StorageChart';
+import { OODALoopPanel } from './components/OODALoopPanel';
+import { OODAStatus, OODAStep } from './ooda-types';
 import { infraApi } from '@/services/api/infra';
+import { useAgents } from '@/context/AgentContext';
+import { cn } from '@/utils/cn';
 
 export default function InfraView() {
   const { data: infrastructure, isLoading, error } = useQuery({
@@ -25,6 +29,60 @@ export default function InfraView() {
     queryFn: infraApi.getInfrastructure,
     refetchInterval: 15000,
   });
+
+  const [oodaStatus, setOodaStatus] = React.useState<OODAStatus>('OBSERVING');
+  const [activeIncidents, setActiveIncidents] = React.useState<OODAStep[]>([]);
+  const { agents } = useAgents();
+
+  const alertLevel = React.useMemo(() => {
+    if (!infrastructure) return 'NORMAL';
+    const issues = Object.values(infrastructure.components).filter((c: any) => c.status !== 'UP').length;
+    if (issues > 2) return 'CRITICAL';
+    if (issues > 0) return 'ELEVATED';
+    return 'NORMAL';
+  }, [infrastructure]);
+
+  // Simple OODA Cycle Simulation based on infra status
+  React.useEffect(() => {
+    if (!infrastructure) return;
+
+    const issues = Object.entries(infrastructure.components)
+      .filter(([_, comp]) => (comp as any).status !== 'UP')
+      .map(([key, comp], idx) => {
+        const c = comp as any;
+        const agent = agents[idx % agents.length] || { id: 'agent-01', name: 'PREDATOR_CORE', type: 'SYSTEM' };
+        
+        return {
+          id: `inc-${key}-${Date.now()}`,
+          timestamp: new Date().toLocaleTimeString(),
+          status: oodaStatus,
+          component: key.toUpperCase(),
+          finding: c.status === 'DOWN' ? 'Вузол не відповідає на запити.' : 'Спостерігається висока затримка (>50ms).',
+          action_plan: c.status === 'DOWN' ? ['Restart service container', 'Check resource limits', 'Notify SRE team'] : ['Optimize queries', 'Flush buffers'],
+          automated: true,
+          human_approval_required: false,
+          assigned_agent: {
+            id: agent.id,
+            name: (agent as any).name,
+            type: (agent as any).type || 'WATCHER'
+          }
+        };
+      });
+
+    setActiveIncidents(issues as any);
+    
+    if (issues.length > 0) {
+      const cycle = ['OBSERVING', 'ORIENTING', 'DECIDING', 'ACTING'];
+      let idx = 0;
+      const interval = setInterval(() => {
+        setOodaStatus(cycle[idx] as OODAStatus);
+        idx = (idx + 1) % cycle.length;
+      }, 5000);
+      return () => clearInterval(interval);
+    } else {
+      setOodaStatus('OBSERVING');
+    }
+  }, [infrastructure, agents, oodaStatus]);
 
   return (
     <PageTransition>
@@ -69,138 +127,89 @@ export default function InfraView() {
                 {/* KPI Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {[
-                    {
-                      icon: Activity,
-                      label: 'Статус Сервісів',
-                      value: '6/6 Онлайн',
-                      color: 'emerald',
-                    },
-                    {
-                      icon: Cpu,
-                      label: 'GPU Утилізація',
-                      value: '72%',
-                      color: 'amber',
-                    },
-                    {
-                      icon: DatabaseIcon,
-                      label: 'Диски: Використано',
-                      value: '2.4 TB',
-                      color: 'indigo',
-                    },
-                    {
-                      icon: ShieldCheck,
-                      label: 'Час безперебійної роботи',
-                      value: '30 дн.',
-                      color: 'violet',
-                    },
+                    { icon: Activity, label: 'Статус Сервісів', value: 'Online', color: 'emerald' },
+                    { icon: Cpu, label: 'GPU Утилізація', value: '72%', color: 'amber' },
+                    { icon: DatabaseIcon, label: 'Диски: Використано', value: '2.4 TB', color: 'indigo' },
+                    { icon: ShieldCheck, label: 'Uptime', value: '30 дн.', color: 'violet' },
                   ].map((stat, idx) => (
                     <motion.div
                       key={idx}
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.1 }}
-                      className={`bg-${stat.color}-500/10 border border-${stat.color}-500/20 rounded-lg p-5`}
+                      className={cn("bg-white/5 border border-white/10 rounded-lg p-5", `border-${stat.color}-500/20`)}
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className={`text-${stat.color}-400 text-xs font-bold uppercase tracking-wider`}>
-                            {stat.label}
-                          </div>
-                          <div className="text-2xl font-bold text-white mt-1">
-                            {stat.value}
-                          </div>
+                          <div className="text-slate-400 text-xs font-bold uppercase tracking-wider">{stat.label}</div>
+                          <div className="text-2xl font-bold text-white mt-1">{stat.value}</div>
                         </div>
-                        <div className={`p-3 bg-${stat.color}-500/20 rounded-full`}>
-                          <stat.icon className={`w-6 h-6 text-${stat.color}-400`} />
+                        <div className={cn("p-3 rounded-full bg-white/5", `text-${stat.color}-400`)}>
+                          <stat.icon className="w-6 h-6" />
                         </div>
                       </div>
                     </motion.div>
                   ))}
                 </div>
 
-                {/* Main Views */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  
-                  {/* Left Column (Services) */}
+                  {/* Left Column */}
                   <div className="lg:col-span-2 space-y-6">
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm"
-                    >
+                    <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
                       <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                         <DatabaseIcon className="w-5 h-5 text-indigo-400" /> БД та Сховища
                       </h3>
                       {infrastructure?.components ? (
                         <ServiceStatusGrid data={infrastructure.components} />
                       ) : (
-                        <div className="text-slate-500 text-sm">Дані про сервіси відсутні</div>
+                        <div className="text-slate-500 text-sm">Дані відсутні</div>
                       )}
-                    </motion.div>
+                    </div>
 
-                    {/* Storage Distribution */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm"
-                    >
+                    <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
                       <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                         <DatabaseIcon className="w-5 h-5 text-indigo-400" /> Розподіл Сховища
                       </h3>
                       <StorageChart />
-                    </motion.div>
+                    </div>
                   </div>
 
-                  {/* Right Column (GPU) */}
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm space-y-6"
-                  >
-                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                      <Cpu className="w-5 h-5 text-amber-400" /> Кластер NVIDIA RTX
-                    </h3>
-                    
-                    <div className="space-y-4">
-                      <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-bold text-white">node-gpu-01</span>
-                          <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">Active</span>
-                        </div>
-                        <GpuGauge utilization={85} label="RTX 4090" />
-                        <div className="flex justify-between text-xs text-slate-400 px-4 mt-2">
-                          <span>Temp: 68°C</span>
-                          <span>21.4 / 24 GB</span>
-                        </div>
-                      </div>
+                  {/* Right Column */}
+                  <div className="space-y-6">
+                    <div className="bg-black/60 border border-white/10 rounded-xl p-6 backdrop-blur-md shadow-2xl">
+                      <OODALoopPanel 
+                        currentStatus={oodaStatus} 
+                        activeIncidents={activeIncidents} 
+                        alertLevel={alertLevel as any}
+                      />
+                    </div>
 
-                      <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-bold text-white">node-gpu-02</span>
-                          <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">Active</span>
-                        </div>
-                        <GpuGauge utilization={42} label="RTX 4090" />
-                        <div className="flex justify-between text-xs text-slate-400 px-4 mt-2">
-                          <span>Temp: 54°C</span>
-                          <span>11.2 / 24 GB</span>
-                        </div>
-                      </div>
-
-                      <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-bold text-white">node-gpu-03 (LLM)</span>
-                          <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-1 rounded">High Load</span>
-                        </div>
-                        <GpuGauge utilization={98} label="RTX A6000" />
-                        <div className="flex justify-between text-xs text-slate-400 px-4 mt-2">
-                          <span>Temp: 78°C</span>
-                          <span>46.1 / 48 GB</span>
-                        </div>
+                    <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm space-y-6">
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <Cpu className="w-5 h-5 text-amber-400" /> Кластер NVIDIA RTX
+                      </h3>
+                      
+                      <div className="space-y-4">
+                        {[
+                          { id: 'gpu-01', label: 'node-gpu-01', model: 'RTX 4090', usage: 85, temp: '68°C', vram: '21.4/24' },
+                          { id: 'gpu-02', label: 'node-gpu-02', model: 'RTX 4090', usage: 42, temp: '54°C', vram: '11.2/24' },
+                          { id: 'gpu-03', label: 'node-gpu-03', model: 'RTX A6000', usage: 98, temp: '78°C', vram: '46.1/48' },
+                        ].map(gpu => (
+                          <div key={gpu.id} className="bg-white/5 border border-white/10 rounded-lg p-4">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-sm font-bold text-white">{gpu.label}</span>
+                              <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">Active</span>
+                            </div>
+                            <GpuGauge utilization={gpu.usage} label={gpu.model} />
+                            <div className="flex justify-between text-xs text-slate-400 px-4 mt-2">
+                              <span>Temp: {gpu.temp}</span>
+                              <span>{gpu.vram} GB</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 </div>
               </div>
             )}
