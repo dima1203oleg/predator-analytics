@@ -8,9 +8,17 @@ interface OODALoopPanelProps {
   currentStatus: OODAStatus;
   activeIncidents: OODAStep[];
   alertLevel?: 'NORMAL' | 'ELEVATED' | 'CRITICAL';
+  onApprove?: (id: string) => void;
+  onDecline?: (id: string) => void;
 }
 
-export function OODALoopPanel({ currentStatus, activeIncidents, alertLevel = 'NORMAL' }: OODALoopPanelProps) {
+export function OODALoopPanel({ 
+  currentStatus, 
+  activeIncidents, 
+  alertLevel = 'NORMAL',
+  onApprove,
+  onDecline 
+}: OODALoopPanelProps) {
   const steps = [
     { id: 'OBSERVING', label: 'OBSERVE', icon: <Eye className="w-4 h-4" />, color: 'blue' },
     { id: 'ORIENTING', label: 'ORIENT', icon: <Compass className="w-4 h-4" />, color: 'indigo' },
@@ -116,7 +124,6 @@ export function OODALoopPanel({ currentStatus, activeIncidents, alertLevel = 'NO
                       ))}
                     </div>
                   )}
-
                   {/* Assigned Agent */}
                   {incident.assigned_agent && (
                     <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between">
@@ -130,6 +137,29 @@ export function OODALoopPanel({ currentStatus, activeIncidents, alertLevel = 'NO
                       </div>
                       <div className="text-[7px] text-slate-500 uppercase tracking-widest font-black">
                         {incident.assigned_agent.type}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Human Approval UI */}
+                  {incident.human_approval_required && incident.status === 'DECIDING' && (
+                    <div className="mt-4 p-2 bg-white/5 rounded-lg border border-white/10 space-y-2">
+                       <div className="flex items-center gap-2 text-[8px] font-black text-amber-500 uppercase tracking-widest">
+                        <ShieldOff className="w-2.5 h-2.5" /> ТРЕБУЄТЬСЯ ПІДТВЕРДЖЕННЯ
+                      </div>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => onApprove?.(incident.id)}
+                          className="flex-1 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-400 text-[9px] font-black rounded-md transition-colors uppercase"
+                        >
+                          ПІДТВЕРДИТИ
+                        </button>
+                        <button 
+                          onClick={() => onDecline?.(incident.id)}
+                          className="flex-1 py-1.5 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 text-[9px] font-black rounded-md transition-colors uppercase"
+                        >
+                          ВІДХИЛИТИ
+                        </button>
                       </div>
                     </div>
                   )}

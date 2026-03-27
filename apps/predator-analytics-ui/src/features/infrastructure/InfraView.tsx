@@ -30,6 +30,12 @@ export default function InfraView() {
     refetchInterval: 15000,
   });
 
+  const { data: predictions } = useQuery({
+    queryKey: ['system', 'predictions'],
+    queryFn: infraApi.getPredictions,
+    refetchInterval: 30000,
+  });
+
   const [oodaStatus, setOodaStatus] = React.useState<OODAStatus>('OBSERVING');
   const [activeIncidents, setActiveIncidents] = React.useState<OODAStep[]>([]);
   const { agents } = useAgents();
@@ -41,6 +47,18 @@ export default function InfraView() {
     if (issues > 0) return 'ELEVATED';
     return 'NORMAL';
   }, [infrastructure]);
+
+  const handleApprove = (id: string) => {
+    setActiveIncidents(prev => prev.map(inc => 
+      inc.id === id ? { ...inc, human_approval_required: false, status: 'ACTING' } : inc
+    ));
+    setOodaStatus('ACTING');
+  };
+
+  const handleDecline = (id: string) => {
+    setActiveIncidents(prev => prev.filter(inc => inc.id !== id));
+    setOodaStatus('OBSERVING');
+  };
 
   // Simple OODA Cycle Simulation based on infra status
   React.useEffect(() => {
@@ -60,7 +78,7 @@ export default function InfraView() {
           finding: c.status === 'DOWN' ? 'Вузол не відповідає на запити.' : 'Спостерігається висока затримка (>50ms).',
           action_plan: c.status === 'DOWN' ? ['Restart service container', 'Check resource limits', 'Notify SRE team'] : ['Optimize queries', 'Flush buffers'],
           automated: true,
-          human_approval_required: false,
+          human_approval_required: idx === 0 && oodaStatus === 'DECIDING', // Simulate HITL for the first incident
           assigned_agent: {
             id: agent.id,
             name: (agent as any).name,
@@ -181,6 +199,8 @@ export default function InfraView() {
                         currentStatus={oodaStatus} 
                         activeIncidents={activeIncidents} 
                         alertLevel={alertLevel as any}
+                        onApprove={handleApprove}
+                        onDecline={handleDecline}
                       />
                     </div>
 
