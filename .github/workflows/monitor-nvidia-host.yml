@@ -33,9 +33,9 @@ jobs:
           cat ssh_check.log
           
           if grep -q "SUCCESS" ssh_check.log; then
-            echo "status=success" >> $GITHUB_OUTPUT
+            echo "status=success" >> "$GITHUB_OUTPUT"
           else
-            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "status=failure" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
