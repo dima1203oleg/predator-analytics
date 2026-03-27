@@ -65,8 +65,8 @@ venv_fix/
 # Data files
 *.csv
 *.xlsx
-data/
-uploads/
+/data/
+/uploads/
 data_staging/
 
 # Media / test artifacts
