@@ -3,12 +3,10 @@
 # GPU-лабораторія для NAS/AutoML, важких моделей, staging
 
 namespace: predator-nvidia
-
 global:
   env: "lab-gpu"
   imageRegistry: ghcr.io/dima1203oleg
   # Trigger deployment: 2025-12-02
-
 # ============ Backend ============
 backend:
   enabled: false
@@ -38,13 +36,12 @@ backend:
       value: "false"
     - name: CUDA_VISIBLE_DEVICES
       value: "0"
-
 # ============ Frontend ============
 frontend:
   enabled: true
   image:
     repository: ghcr.io/dima1203oleg/predator-frontend
-    tag: "latest"
+    tag: "v55.1.360"
     pullPolicy: Always
   replicas: 1
   resources:
@@ -57,7 +54,6 @@ frontend:
   service:
     type: ClusterIP
     port: 3030
-
 # ============ NAS / AutoML ============
 nas:
   enabled: false # Disabled until backend images are ready
@@ -73,7 +69,6 @@ nas:
     requests:
       cpu: "2"
       memory: "4Gi"
-
 # ============ PostgreSQL ============
 postgresql:
   enabled: true
@@ -88,7 +83,6 @@ postgresql:
       limits:
         cpu: "1"
         memory: "1Gi"
-
 # ============ Redis ============
 redis:
   enabled: true
@@ -103,7 +97,6 @@ redis:
       limits:
         cpu: "0.5"
         memory: "512Mi"
-
 # ============ MinIO (S3 Storage) ============
 minio:
   enabled: true
@@ -122,7 +115,6 @@ minio:
     ports:
       api: 9000
       console: 9001
-
 # ============ OpenSearch ============
 opensearch:
   enabled: true
@@ -140,7 +132,6 @@ opensearch:
   service:
     type: ClusterIP
     port: 9200
-
 # ============ MLOps Pipeline ============
 mlOps:
   enabled: true
@@ -153,7 +144,6 @@ mlOps:
     enabled: true
     persistence:
       size: 5Gi
-
 # ============ Qdrant (Vector DB) ============
 qdrant:
   enabled: true
@@ -171,7 +161,6 @@ qdrant:
   service:
     type: ClusterIP
     port: 6333
-
 # ============ Ollama (LLM Runtime) ============
 ollama:
   enabled: true
@@ -197,7 +186,6 @@ ollama:
   service:
     type: ClusterIP
     port: 11434
-
 # ============ Monitoring ============
 monitoring:
   enabled: true
@@ -214,16 +202,13 @@ monitoring:
     enabled: true
     persistence:
       size: 5Gi
-
 # ============ Node Selector ============
 nodeSelector:
   gpu: "true"
-
 # ============ Tolerations ============
 tolerations:
   - key: "nvidia.com/gpu"
     operator: "Exists"
     effect: "NoSchedule"
-
 # ============ Affinity ============
 affinity: {}
