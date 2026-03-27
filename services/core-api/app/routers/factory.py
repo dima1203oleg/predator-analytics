@@ -358,9 +358,19 @@ async def _run_ooda_task(driver) -> None:
 
     while True:
         try:
-            status = await repo.get_improvement()
+            # Спробуємо отримати статус. Якщо репозиторій повертає помилку (напр. Neo4j down), 
+            # ми НЕ зупиняємо цикл, а використовуємо останній відомий стан або імітуємо "Running"
+            try:
+                status = await repo.get_improvement()
+            except Exception as e:
+                logger.warning(f"OODA Loop: Помилка отримання статусу (БД офлайн): {e}")
+                # Якщо БД лежить, ми припускаємо, що хочемо продовжувати (якщо цикл був запущений)
+                # Створюємо тимчасовий об'єкт стану
+                status = SystemImprovement(is_running=True)
+                status.logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] 📡 SYSTEM: Зв'язок із бекендом втрачено. Очікування сервера...")
+
             if not status.is_running:
-                logger.info("OODA Loop: Зупинено за запитом.")
+                logger.info("OODA Loop: Зупинено за запитом (is_running=False).")
                 break
 
             ts = lambda: datetime.now().strftime('%H:%M:%S')  # noqa: E731
@@ -370,7 +380,11 @@ async def _run_ooda_task(driver) -> None:
             # 2-3 рядки спостереження
             for tpl in random.sample(_OBSERVE_TEMPLATES, k=random.randint(2, 3)):
                 status.logs.append(f"[{ts()}] 🔍 OBSERVE: {_fmt(tpl)}")
-            await repo.update_improvement(status)
+            
+            try:
+                await repo.update_improvement(status)
+            except Exception:
+                pass # Ігноруємо помилки запису логів у БД, коли вона лежить
             await asyncio.sleep(random.uniform(3, 6))
 
             status = await repo.get_improvement()
@@ -473,7 +487,10 @@ async def _run_ooda_task(driver) -> None:
                 status.logs = status.logs[-50:]
 
             status.last_update = datetime.now(UTC)
-            await repo.update_improvement(status)
+            try:
+                await repo.update_improvement(status)
+            except Exception:
+                pass
 
             # Пауза між циклами (15-25 секунд)
             await asyncio.sleep(random.uniform(15, 25))

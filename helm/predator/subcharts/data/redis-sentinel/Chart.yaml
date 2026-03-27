@@ -1,0 +1,4 @@
+apiVersion: v2
+appVersion: 30.0.0
+name: data-redis-sentinel
+version: 0.1.0

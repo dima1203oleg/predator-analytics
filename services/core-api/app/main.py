@@ -30,7 +30,7 @@ from app.services.factory_runtime import (
 from app.routers import (
     alerts_router,
     analytics_router,
-    auth_test as auth_router,
+    auth_router,
     cases_router,
     companies_router,
     competitors_router,
@@ -91,31 +91,49 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         logger.info("TESTING режим: пропускаємо підключення зовнішніх сервісів")
     else:
         # 1. Init DB connections
-        init_db()
+        try:
+            init_db()
+        except Exception as e:
+            logger.warning(f"PostgreSQL connection failed: {e}. Running in degraded mode.")
 
         # 2. Init Graph Driver
-        graph_db.init_driver()
+        try:
+            graph_db.init_driver()
+        except Exception as e:
+            logger.warning(f"Neo4j driver init failed: {e}")
 
         # 3. Init Kafka Producer (§2.4)
-        await init_kafka()
+        try:
+            await init_kafka()
+        except Exception as e:
+            logger.warning(f"Kafka connection failed: {e}. Service will be limited.")
 
         # 4. Init MinIO/S3 (§2.5)
-        await init_minio()
+        try:
+            await init_minio()
+        except Exception as e:
+            logger.warning(f"MinIO connection failed: {e}")
 
         # 5. Init Redis (§2.6)
-        await init_redis()
+        try:
+            await init_redis()
+        except Exception as e:
+            logger.warning(f"Redis connection failed: {e}")
 
         # 6. Init Factory Repository
-        app.state.factory_repo = FactoryRepository(graph_db.driver)
-        from app.routers.factory import _run_ooda_task
+        try:
+            app.state.factory_repo = FactoryRepository(graph_db.driver)
+            from app.routers.factory import _run_ooda_task
 
-        app.state.factory_improvement_runner = _run_ooda_task
-        app.state.factory_improvement_task = None
-        logger.info("Factory Repository initialized")
+            app.state.factory_improvement_runner = _run_ooda_task
+            app.state.factory_improvement_task = None
+            logger.info("Factory Repository initialized")
 
-        await ensure_factory_improvement_task(app)
+            await ensure_factory_improvement_task(app)
+        except Exception as e:
+            logger.warning(f"Factory OODA initialization failed: {e}. System Factory features will be unavailable.")
 
-        logger.info("Core API успішно ініціалізовано")
+        logger.info("Core API ініціалізовано (можливо, в обмеженому режимі)")
 
     yield
 

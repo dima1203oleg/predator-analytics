@@ -17,9 +17,8 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': {
-        // Mock API Server (порт 9080) для локальної розробки
-        // Для продакшену: target: 'http://localhost:8000'
-        target: 'http://localhost:9080',
+        // Реальний API Server (порт 8000) замість Mock
+        target: 'http://localhost:8000',
         changeOrigin: true,
         ws: true,
       }

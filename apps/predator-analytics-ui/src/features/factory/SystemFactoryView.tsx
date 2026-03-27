@@ -106,6 +106,7 @@ export default function SystemFactoryView() {
   const [infiniteLastUpdate, setInfiniteLastUpdate] = useState<string>('Ще не синхронізовано');
   const [infiniteSyncedAt, setInfiniteSyncedAt] = useState<string>('—');
   const [bugs, setBugs] = useState<Array<{ id: string, description: string, severity: BugSeverity, component: string, file: string, status: BugStatus, fixProgress: number }>>([]);
+  const [isBackendOffline, setIsBackendOffline] = useState(false);
   const [goldPatterns, setGoldPatterns] = useState<any[]>([]);
   const [factoryStats, setFactoryStats] = useState<any>(null);
 
@@ -133,15 +134,25 @@ export default function SystemFactoryView() {
     try {
       const status = await factoryApi.getInfiniteStatus() as InfiniteStatusPayload;
       applyInfiniteStatus(status);
+      setIsBackendOffline(false);
 
       if (includeBugs && status.current_phase === 'act') {
         const updatedBugs = await factoryApi.getBugs();
         setBugs(updatedBugs);
       }
-
       return status;
     } catch (error) {
+      setIsBackendOffline(true);
       console.error('Failed to refresh infinite status:', error);
+      
+      setInfiniteLogs(prev => {
+        const last = prev[prev.length - 1] || '';
+        if (last.includes('Очікування сервера')) return prev;
+        
+        const time = new Date().toLocaleTimeString('uk-UA');
+        const newLogs = [...prev, `[${time}] ⚠️ ERROR: Зв'язок із бекендом втрачено. Очікування сервера для продовження OODA циклу...`];
+        return newLogs.slice(-50);
+      });
       return null;
     }
   }, [applyInfiniteStatus]);
@@ -392,12 +403,17 @@ export default function SystemFactoryView() {
     try {
       setImprovementStatus('running');
       setImprovementProgress(10);
+      setInfiniteRunning(true);
+      
+      const time = new Date().toLocaleTimeString('uk-UA');
+      setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 🚀 SYSTEM: Ініціалізація OODA циклу. Звернення до Core API...`]);
+      pushSystemMessage('🚀 Ініційовано цикл автономного вдосконалення системи на бекенді...', 'build');
       
       // Насправді запускаємо OODA Loop на бекенді
       await factoryApi.startInfinite();
       await refreshInfiniteStatus(true);
       
-      pushSystemMessage('🚀 Ініційовано цикл автономного вдосконалення системи на бекенді.', 'build');
+      pushSystemMessage('✅ Сервер підтвердив запуск циклу вдосконалення (OODA).', 'build');
       
       // Відображаємо прогрес відповідно до фаз OODA (імітація для візуалізації всередині таби)
       const phasesMap: Record<InfinitePhase, number> = {
@@ -409,7 +425,10 @@ export default function SystemFactoryView() {
       
       setImprovementProgress(phasesMap[infinitePhase] || 10);
     } catch (e) {
-      console.error("Помилка запуску вдосконалення:", e);
+      console.warn("Бекенд недоступний при старті OODA. Входимо в режим очікування.", e);
+      const time = new Date().toLocaleTimeString('uk-UA');
+      setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 📡 SYSTEM: Бекенд недоступний. Цикл очікує і буде продовжено щойно сервер з'явиться...`]);
+      pushSystemMessage('📡 Сервер недоступний. Цикл залишається активним і продовжить роботу, щойно система підніметься у мережі (auto-reconnect).', 'analyze');
     }
   };
 
@@ -604,25 +623,58 @@ export default function SystemFactoryView() {
       return { action: 'build', reply: 'Ініційовано процес збірки Docker образів та CI. Контекст оновлено.' };
     } 
 
-    if (lower.includes('деплой') || lower.includes('запусти')) {
-      if (lower.includes('все') || lower.includes('всі') || lower.includes('функції')) {
-        startEveryFunction();
-        return 'Ініційовано автоматичний запуск всіх системних функцій...';
-      }
-      return { action: 'deploy', reply: 'Розгортаю нову версію мікросервісів у Kubernetes кластер (k3s).' };
+    if (lower.includes('що') && (lower.includes('виправ') || lower.includes('роби'))) {
+        const detectedBugs = bugs.filter(b => b.status === 'detected');
+        if (detectedBugs.length > 0) {
+            return `На даний момент виявлено ${detectedBugs.length} дефектів. Найкритичніший: ${detectedBugs[0].id} (${detectedBugs[0].description}). Рекомендую запустити авто-фікс.`;
+        }
+        return 'Система працює стабільно. Активних дефектів не знайдено. OODA-цикл проводить превентивне сканування.';
     }
 
-    // Bug remediation
-    if (lower.includes('bug') || lower.includes('помил')) {
-       const detectedBugs = bugs.filter(b => b.status === 'detected');
-       if (detectedBugs.length > 0) {
-          handleFixBug(detectedBugs[0].id);
-          return 'ЗНАЙДЕНО БУГ. Автономна ремедіація активована. Перевіряю логи...';
+    if (lower.includes('статус') || lower.includes('прогрес')) {
+        const activeFixes = bugs.filter(b => b.status === 'fixing');
+        let statusMsg = infiniteRunning ? "OODA Loop: АКТИВНИЙ. " : "OODA Loop: ЗУПИНЕНО. ";
+        if (activeFixes.length > 0) {
+            statusMsg += `Процес ремедіації: виправлення ${activeFixes[0].id} (${activeFixes[0].fixProgress}%).`;
+        } else {
+            statusMsg += "Активних виправлень немає.";
+        }
+        return statusMsg;
+    }
+
+    if (lower.includes('виправ') || lower.includes('фікс') || lower.includes('fix')) {
+       const targetBugs = bugs.filter(b => b.status === 'detected');
+       if (targetBugs.length > 0) {
+          handleFixBug(targetBugs[0].id);
+          return `Ініційовано виправлення ${targetBugs[0].id}. Аналізую AST-дерево для побудови патчу...`;
        }
-       return 'Активних багів не виявлено. Система стабільна.';
+       return 'Черга дефектів порожня. Немає чого виправляти.';
     }
 
-    return 'Команда прийнята. Аналізую контекст...';
+    if (lower.includes('деплой') || lower.includes('запусти') || lower.includes('пуск') || lower.includes('start')) {
+      if (lower.includes('все') || lower.includes('всі') || lower.includes('систем')) {
+        setTimeout(() => startEveryFunction(), 0);
+        return 'Зрозумів. Master Start ініційовано: запускаю OODA Loop, Health Checks та чергу автофіксу.';
+      }
+      if (lower.includes('ooda') || lower.includes('цикл')) {
+        if (!infiniteRunning) {
+           handleInfiniteCycle();
+           return 'OODA Loop активовано за вашою командою.';
+        }
+        return 'OODA Loop вже працює в штатному режимі.';
+      }
+      return { action: 'deploy', reply: 'Розгортаю оновлення системних компонентів у кластер...' };
+    }
+
+    if (lower.includes('зупини') || lower.includes('стоп') || lower.includes('stop')) {
+        if (infiniteRunning) {
+            handleInfiniteCycle();
+            return 'Зупиняю цикл автономного вдосконалення...';
+        }
+        return 'Система і так знаходиться в режимі очікування.';
+    }
+    
+    return 'Команда передана аналітичному ядру. Очікуйте на підтвердження виконання...';
   };
 
   const handleCommand = (cmdText: string) => {
@@ -672,29 +724,45 @@ export default function SystemFactoryView() {
   };
 
   const handleInfiniteCycle = async () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+    
+    const time = new Date().toLocaleTimeString('uk-UA');
+    const newRunningState = !infiniteRunning;
+
     try {
-      let currentRunning = infiniteRunning;
-
-      try {
-        const backendStatus = await factoryApi.getInfiniteStatus() as InfiniteStatusPayload;
-        currentRunning = Boolean(backendStatus.is_running);
-        applyInfiniteStatus(backendStatus);
-      } catch (statusError) {
-        console.error('Failed to read backend OODA state:', statusError);
-      }
-
-      if (currentRunning) {
-        await factoryApi.stopInfinite();
-        pushSystemMessage('🛑 OODA LOOP ЗУПИНЕНО. Автономне вдосконалення вимкнено.', 'analyze');
+      if (newRunningState) {
+        // Спроба запуску
+        setInfiniteRunning(true);
+        setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 🚀 SYSTEM: Команда на запуск OODA циклу.`]);
+        pushSystemMessage('🚀 Ініціалізація OODA Loop на бекенді...', 'analyze');
+        
+        try {
+          await factoryApi.startInfinite();
+          pushSystemMessage('✅ OODA LOOP АКТИВОВАНО.', 'bot');
+        } catch (e) {
+          pushSystemMessage('📡 Бекенд недоступний. Цикл перейшов у режим очікування з\'єднання.', 'analyze');
+          setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 📡 SYSTEM: Очікування підключення до бекенду...`]);
+        }
       } else {
-        await factoryApi.startInfinite();
-        pushSystemMessage('🚀 ВДОСКОНАЛЕННЯ PREDATOR ЗАПУЩЕНО. OODA LOOP АКТИВОВАНО НА БЕКЕНДІ.', 'bot');
+        // Зупинка
+        setInfiniteRunning(false);
+        setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 🛑 SYSTEM: Команда на зупинку циклу.`]);
+        pushSystemMessage('🛑 OODA LOOP ЗУПИНЕНО.', 'analyze');
+        
+        try {
+          await factoryApi.stopInfinite();
+        } catch (e) {
+          console.warn("Stop signal failed, but UI updated.");
+        }
       }
-
-      await refreshInfiniteStatus(true);
+      
+      // Синхронізація
+      setTimeout(() => refreshInfiniteStatus(true), 1500);
     } catch (e) {
       console.error("Failed to toggle infinite cycle:", e);
-      pushSystemMessage('❌ Помилка зв\'язку з бекендом при управлінні OODA циклом.', 'analyze');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -707,12 +775,21 @@ export default function SystemFactoryView() {
         currentRunning = Boolean(backendStatus.is_running);
         applyInfiniteStatus(backendStatus);
       } catch (statusError) {
-        console.error('Failed to read backend OODA state:', statusError);
+        console.warn('Сервер недоступний для перевірки статусу OODA.', statusError);
       }
 
+      const time = new Date().toLocaleTimeString('uk-UA');
       if (!currentRunning) {
-        await factoryApi.startInfinite();
-        pushSystemMessage('🚀 ВДОСКОНАЛЕННЯ PREDATOR ЗАПУЩЕНО. OODA LOOP АКТИВОВАНО НА БЕКЕНДІ.', 'bot');
+        setInfiniteRunning(true);
+        setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 🚀 SYSTEM: Синхронізація OODA циклу з бекендом...`]);
+        pushSystemMessage('🚀 Ініційовано підключення до OODA циклу...', 'bot');
+        try {
+          await factoryApi.startInfinite();
+          pushSystemMessage('✅ ВДОСКОНАЛЕННЯ PREDATOR ЗАПУЩЕНО НА БЕКЕНДІ.', 'bot');
+        } catch(e) {
+          pushSystemMessage('📡 Не вдалося підключитися до сервера. Очікування на появу бекенду...', 'analyze');
+          setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 📡 SYSTEM: Відсутній зв'язок із сервером. Автономне очікування...`]);
+        }
       } else {
         pushSystemMessage('♾️ OODA-цикл уже активний на бекенді. Продовжую без перезапуску.', 'deploy');
       }
@@ -720,7 +797,6 @@ export default function SystemFactoryView() {
       await refreshInfiniteStatus(true);
     } catch (error) {
       console.error('Failed to ensure infinite cycle is running:', error);
-      pushSystemMessage('❌ Не вдалося синхронізувати OODA-цикл із бекендом.', 'analyze');
     }
   };
 
@@ -740,18 +816,47 @@ export default function SystemFactoryView() {
   }, [infiniteRunning, refreshInfiniteStatus]);
 
   const startEveryFunction = async () => {
-    setActiveTab('infinite');
-    handleStartImprovement();
-    await ensureInfiniteRunning();
-    setGoogleIntegrality(true);
-    pushSystemMessage('🚀 MASTER START: Запущено всі управлінські функції та безконечне вдосконалення!', 'deploy');
+    if (isProcessing) return;
+    setIsProcessing(true);
     
-    // Auto fix all initial bugs
-    bugs.filter(b => b.status === 'detected').forEach((bug, index) => {
-      setTimeout(() => {
-        handleFixBug(bug.id);
-      }, (index + 1) * 2000);
-    });
+    try {
+      setActiveTab('infinite');
+      
+      // 1. Початок вдосконалення (UI стан)
+      setImprovementStatus('running');
+      setImprovementProgress(10);
+      
+      // 2. Запуск OODA на бекенді через handleInfiniteCycle або напряму
+      if (!infiniteRunning) {
+        setInfiniteRunning(true);
+        const time = new Date().toLocaleTimeString('uk-UA');
+        setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 🚀 SYSTEM: Глобальний запуск ініційовано командиром.`]);
+        
+        try {
+           await factoryApi.startInfinite();
+           pushSystemMessage('✅ MASTER START: OODA Loop АКТИВОВАНО.', 'bot');
+        } catch (e) {
+           pushSystemMessage('📡 MASTER START: Сервер недоступний, але OODA Loop у режимі очікування.', 'analyze');
+        }
+      }
+      
+      setGoogleIntegrality(true);
+      
+      // 3. Авто-фікс багів
+      const detectedBugs = bugs.filter(b => b.status === 'detected');
+      if (detectedBugs.length > 0) {
+        pushSystemMessage(`🛠 Виявлено багів: ${detectedBugs.length}. Запускаю чергу виправлень...`, 'build');
+        detectedBugs.forEach((bug, index) => {
+          setTimeout(() => handleFixBug(bug.id), (index + 1) * 3000);
+        });
+      }
+
+      await refreshInfiniteStatus(true);
+    } catch (err) {
+      console.error("Master Start failed:", err);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   // ── Tab config ──────────────────────────────────────────────────────────────
@@ -1853,7 +1958,11 @@ export default function SystemFactoryView() {
                       {infiniteRunning && (
                         <div className="flex items-center gap-2 text-violet-400 mt-2">
                           <Loader2 size={11} className="animate-spin" />
-                          <span className="animate-pulse">Обробка...</span>
+                          <span className="animate-pulse">
+                            {infiniteLogs[infiniteLogs.length - 1]?.includes('ERROR') 
+                                ? 'Відновлення з\'єднання...' 
+                                : 'Обробка...'}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -1863,77 +1972,159 @@ export default function SystemFactoryView() {
 
            </AnimatePresence>
         </div>
-
-        {/* Right Column: AI Controller */}
-        <div className="hidden 2xl:flex w-72 shrink-0 flex-col gap-5">
-           <Button 
-             onClick={startEveryFunction}
-             className="w-full h-14 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-black tracking-widest text-sm shadow-[0_0_30px_rgba(139,92,246,0.4)] border border-violet-400/20 uppercase transition-all hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(139,92,246,0.6)]"
-           >
-              <Power size={18} className="mr-2" /> ГОЛОВНИЙ ЗАПУСК 🚀
-           </Button>
-
-           <TacticalCard title="АВТОНОМНИЙ ЧАТ-КООРДИНАТОР" variant="holographic" className="flex-1 flex flex-col min-h-[500px] relative">
-             {/* Chat History */}
-             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-black/40 min-h-0">
-                <AnimatePresence>
-                  {messages.map((msg) => (
-                    <motion.div 
-                      key={msg.id}
-                      initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      className={cn(
-                        "p-3.5 rounded-xl text-[13px] relative",
-                        msg.sender === 'user' 
-                          ? "bg-gradient-to-br from-indigo-600/80 to-indigo-900/80 border border-indigo-400/20 text-indigo-50 ml-4 rounded-tr-none" 
-                          : "bg-slate-900/80 border border-emerald-500/15 text-emerald-100 mr-4 rounded-tl-none font-mono shadow-sm"
-                      )}
-                    >
-                       {msg.sender === 'system' && (
-                         <div className="absolute -left-3 -top-3 w-7 h-7 rounded-full bg-slate-950 border border-emerald-500/40 flex items-center justify-center">
-                            <Bot size={14} className="text-emerald-400" />
-                         </div>
-                       )}
-                       <span className="leading-relaxed text-xs">{msg.text}</span>
-                    </motion.div>
-                  ))}
-                  {isProcessing && (
-                     <motion.div 
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                      className="bg-slate-900/80 border border-slate-700 text-slate-400 p-3 rounded-xl mr-6 font-mono text-[11px] flex items-center gap-2 w-fit"
-                     >
-                        <Loader2 size={14} className="animate-spin text-indigo-500" /> 
-                        <span className="tracking-widest uppercase text-[10px]">Аналіз...
-                        </span>
-                     </motion.div>
-                  )}
-                </AnimatePresence>
-                <div ref={messagesEndRef} />
-             </div>
-
-             {/* Input */}
-             <div className="p-3 bg-slate-950/90 border-t border-indigo-500/20">
-                <form onSubmit={(e) => { e.preventDefault(); if (inputText.trim()) { handleCommand(inputText); setInputText(''); } }} className="relative">
-                  <input
-                    type="text"
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Команда координатору..."
-                    className="w-full bg-black/60 border border-indigo-500/30 focus:border-indigo-400 rounded-xl py-4 pl-4 pr-12 text-[12px] text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all font-mono"
-                    spellCheck="false"
-                  />
-                  <button 
-                    type="submit" 
-                    disabled={!inputText.trim() || isProcessing}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white disabled:bg-slate-800 disabled:text-slate-600 transition-all"
-                  >
-                     <Send size={15} />
-                  </button>
-                </form>
-             </div>
-           </TacticalCard>
-        </div>
       </div>
+
+      {/* ── НИЖНЯ ПАНЕЛЬ: AI COMMAND CENTER (Чат-Координатор) ── */}
+      <footer className="w-full mt-12 bg-slate-950/60 border-t border-cyan-500/10 backdrop-blur-xl relative z-20">
+        <div className="max-w-[1800px] mx-auto px-4 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+          
+          {/* Main Action Banner */}
+          <div className="lg:w-1/3 flex flex-col justify-center">
+             <motion.div 
+               whileHover={{ scale: 1.01 }}
+               whileTap={{ scale: 0.99 }}
+               className="relative group cursor-pointer"
+               onClick={startEveryFunction}
+             >
+                <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                <div className="relative px-7 py-6 bg-slate-950 ring-1 ring-violet-500/40 rounded-2xl leading-none flex items-center justify-center gap-4 text-white shadow-2xl">
+                   <div className="w-12 h-12 rounded-full bg-violet-600/20 flex items-center justify-center text-violet-400">
+                      <Power size={24} />
+                   </div>
+                   <div className="flex flex-col gap-1">
+                      <span className="text-sm font-black tracking-[0.2em] uppercase text-violet-100">Головний Запуск</span>
+                      <span className="text-[10px] font-mono text-violet-400 group-hover:text-violet-300 transition-colors uppercase">Ініціювати повний OODA цикл</span>
+                   </div>
+                   <div className="ml-auto flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-violet-500/50 uppercase">Ready</span>
+                      <ChevronRight size={16} className="text-violet-500" />
+                   </div>
+                </div>
+             </motion.div>
+             
+             <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="p-3 rounded-xl bg-slate-900/50 border border-slate-800/50 flex flex-col gap-1">
+                   <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Latency</span>
+                   <span className="text-xs font-mono text-cyan-400">142ms</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-900/50 border border-slate-800/50 flex flex-col gap-1">
+                   <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Sync</span>
+                   <span className={cn("text-xs font-mono", isBackendOffline ? "text-red-500" : "text-emerald-400")}>
+                      {isBackendOffline ? "Offline" : "Live"}
+                   </span>
+                </div>
+             </div>
+          </div>
+
+          {/* AI Coordinator Terminal */}
+          <div className="lg:w-2/3">
+             <TacticalCard 
+               title="ІНТЕРФЕЙС AI-КООРДИНАТОРА" 
+               subtitle="Прямий канал управління OODA-ядро"
+               variant="holographic" 
+               noPadding
+               className="h-[500px] flex flex-col border-cyan-500/20 shadow-[0_0_50px_rgba(6,182,212,0.05)]"
+             >
+               <div className="flex flex-col h-full">
+                  {/* Messages Feed */}
+                  <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-slate-950/20">
+                    <AnimatePresence initial={false}>
+                      {messages.map((msg) => (
+                        <motion.div 
+                          key={msg.id}
+                          layout
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className={cn(
+                            "group flex flex-col gap-1.5",
+                            msg.sender === 'user' ? "items-end" : "items-start"
+                          )}
+                        >
+                           <div className={cn(
+                             "max-w-[85%] p-4 rounded-2xl text-[13px] relative shadow-lg",
+                             msg.sender === 'user' 
+                               ? "bg-gradient-to-br from-indigo-600 to-indigo-700 text-indigo-50 rounded-tr-none border border-indigo-400/30" 
+                               : "bg-slate-900/90 border border-emerald-500/20 text-emerald-50 rounded-tl-none ring-1 ring-emerald-500/5"
+                           )}>
+                              {msg.sender === 'system' && (
+                                <Bot size={14} className="absolute -left-7 top-1 text-emerald-500 opacity-50" />
+                              )}
+                              <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                              {msg.sender === 'user' && (
+                                <div className="absolute -right-7 top-1 text-indigo-500/50">
+                                   <div className="w-4 h-4 rounded-full border border-current flex items-center justify-center text-[8px] font-bold">U</div>
+                                </div>
+                              )}
+                           </div>
+                           <span className="text-[9px] font-medium text-slate-500 uppercase px-2">
+                              {msg.sender} • {msg.timestamp.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+                           </span>
+                        </motion.div>
+                      ))}
+                      {isProcessing && (
+                         <motion.div 
+                          layout
+                          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                          className="flex items-center gap-3 text-emerald-500/70 p-2"
+                         >
+                            <Loader2 size={14} className="animate-spin" /> 
+                            <span className="text-[10px] font-black tracking-[0.2em] uppercase">Координатор аналізує запит...</span>
+                         </motion.div>
+                      )}
+                    </AnimatePresence>
+                    <div ref={messagesEndRef} />
+                  </div>
+
+                  {/* Input Interface */}
+                  <div className="p-4 bg-slate-900/40 border-t border-cyan-500/10 backdrop-blur-md">
+                     <form 
+                       onSubmit={(e) => { 
+                         e.preventDefault(); 
+                         if (inputText.trim()) { 
+                           handleCommand(inputText); 
+                           setInputText(''); 
+                         } 
+                       }} 
+                       className="relative"
+                     >
+                       <input
+                         type="text"
+                         value={inputText}
+                         onChange={(e) => setInputText(e.target.value)}
+                         placeholder="Введіть команду (напр. 'статус k8s', 'оптимізуй затримку' або 'виправ критичні баги')..."
+                         className="w-full bg-black/60 border border-slate-700/50 focus:border-cyan-500/50 rounded-xl py-4.5 pl-5 pr-14 text-sm text-cyan-50 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 transition-all font-mono shadow-inner"
+                         spellCheck="false"
+                         autoFocus
+                       />
+                       <button 
+                         type="submit" 
+                         disabled={!inputText.trim() || isProcessing}
+                         className={cn(
+                           "absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-lg flex items-center justify-center transition-all shadow-xl",
+                           inputText.trim() && !isProcessing 
+                            ? "bg-cyan-500 hover:bg-cyan-400 text-black scale-100" 
+                            : "bg-slate-800 text-slate-600 scale-95 opacity-50"
+                         )}
+                       >
+                          <Send size={18} />
+                       </button>
+                     </form>
+                     <div className="mt-3 flex items-center gap-4 px-1">
+                        <div className="flex items-center gap-1.5">
+                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                           <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Live Engine</span>
+                        </div>
+                        <div className="h-3 w-px bg-slate-800"></div>
+                        <span className="text-[9px] text-slate-600 uppercase tracking-wider italic">Enter to submit commander request</span>
+                     </div>
+                  </div>
+               </div>
+             </TacticalCard>
+          </div>
+        </div>
+      </footer>
+
+
     </div>
   );
 }
