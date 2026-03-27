@@ -8,7 +8,8 @@ import {
   Database as DatabaseIcon, 
   ShieldCheck, 
   RefreshCw,
-  AlertCircle 
+  AlertCircle,
+  Bot 
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -38,6 +39,7 @@ export default function InfraView() {
 
   const [oodaStatus, setOodaStatus] = React.useState<OODAStatus>('OBSERVING');
   const [activeIncidents, setActiveIncidents] = React.useState<OODAStep[]>([]);
+  const [isFullyAutomated, setIsFullyAutomated] = React.useState<boolean>(true);
   const { agents } = useAgents();
 
   const alertLevel = React.useMemo(() => {
@@ -60,6 +62,19 @@ export default function InfraView() {
     setOodaStatus('OBSERVING');
   };
 
+  // Auto-approval in fully automated mode
+  React.useEffect(() => {
+    if (isFullyAutomated && activeIncidents.length > 0) {
+      const pending = activeIncidents.filter(inc => inc.human_approval_required && inc.status === 'DECIDING');
+      if (pending.length > 0) {
+        const timer = setTimeout(() => {
+          pending.forEach(inc => handleApprove(inc.id));
+        }, 3000); // 3 seconds "thinking" before auto-acting
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isFullyAutomated, activeIncidents]);
+
   // Simple OODA Cycle Simulation based on infra status
   React.useEffect(() => {
     if (!infrastructure) return;
@@ -78,7 +93,7 @@ export default function InfraView() {
           finding: c.status === 'DOWN' ? 'Вузол не відповідає на запити.' : 'Спостерігається висока затримка (>50ms).',
           action_plan: c.status === 'DOWN' ? ['Restart service container', 'Check resource limits', 'Notify SRE team'] : ['Optimize queries', 'Flush buffers'],
           automated: true,
-          human_approval_required: idx === 0 && oodaStatus === 'DECIDING', // Simulate HITL for the first incident
+          human_approval_required: !isFullyAutomated && idx === 0 && oodaStatus === 'DECIDING', 
           assigned_agent: {
             id: agent.id,
             name: (agent as any).name,
@@ -114,13 +129,32 @@ export default function InfraView() {
           transition={{ duration: 0.5 }}
           className="relative z-10 h-full w-full flex flex-col"
         >
-          {/* Header */}
-          <div className="p-6 border-b border-white/10 bg-black/40 backdrop-blur-xl">
+          <div className="p-6 border-b border-white/10 bg-black/40 backdrop-blur-xl flex items-center justify-between">
             <ViewHeader
               title="Інфраструктура"
               subtitle="Моніторинг NVIDIA Server, GPU та Кластерів"
               icon={Server}
             />
+            
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col items-end">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">РЕЖИМ АВТОМАТИЗАЦІЇ</span>
+                <div 
+                  onClick={() => setIsFullyAutomated(!isFullyAutomated)}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-1.5 rounded-lg border cursor-pointer transition-all duration-300",
+                    isFullyAutomated 
+                      ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400" 
+                      : "bg-amber-500/20 border-amber-500/30 text-amber-400"
+                  )}
+                >
+                  <Bot className={cn("w-4 h-4", isFullyAutomated && "animate-pulse")} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">
+                    {isFullyAutomated ? "Fully Automated" : "Human in the Loop"}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Content */}
