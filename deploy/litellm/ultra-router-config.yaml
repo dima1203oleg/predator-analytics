@@ -1,0 +1,103 @@
+# ================================================================
+# Ultra-Router для Google Antigravity Coder
+# PREDATOR Analytics v55.1 — Тільки безплатні моделі 2026
+# ================================================================
+# Провайдери: DeepSeek, Groq, Gemini, Together AI, Mistral
+# Стратегія: least-busy з fallback між групами
+# ================================================================
+
+model_list:
+  # ==============================================================
+  # CODING — Кодинг-спеціалізовані моделі
+  # ==============================================================
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: ${MISTRAL_API_KEY}
+      api_base: https://api.mistral.ai/v1
+      timeout: 120
+      stream_timeout: 300
+
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: deepseek/deepseek-coder
+      api_key: ${DEEPSEEK_API_KEY}
+      api_base: https://api.deepseek.com/v1
+      timeout: 120
+      stream_timeout: 300
+
+  # ==============================================================
+  # FAST — Швидкі відповіді, низька латентність
+  # ==============================================================
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: gemini/gemini-3.1-flash-lite
+      api_key: ${GEMINI_API_KEY}
+      api_base: https://generativelanguage.googleapis.com/v1beta
+      timeout: 30
+      stream_timeout: 60
+
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama3-405b
+      api_key: ${GROQ_API_KEY}
+      api_base: https://api.groq.com/openai/v1
+      timeout: 30
+      stream_timeout: 60
+
+  # ==============================================================
+  # REASONING — Глибокий аналіз та міркування
+  # ==============================================================
+  - model_name: ultra-router-reasoning
+    litellm_params:
+      model: together/qwen2.5-72b-instruct
+      api_key: ${TOGETHER_API_KEY}
+      api_base: https://api.together.xyz/v1
+      timeout: 180
+      stream_timeout: 600
+
+  # ==============================================================
+  # CHAT — Загальний чат
+  # ==============================================================
+  - model_name: ultra-router-chat
+    litellm_params:
+      model: gemini/gemini-3.1-flash-lite
+      api_key: ${GEMINI_API_KEY}
+      timeout: 60
+      stream_timeout: 120
+
+# ================================================================
+# Загальні налаштування LiteLLM
+# ================================================================
+general_settings:
+  master_key: ${LITELLM_MASTER_KEY}
+  database_url: null
+  store_model_in_db: false
+
+litellm_settings:
+  # Стратегія маршрутизації: вибирає найменш завантажену модель
+  routing_strategy: "least-busy"
+  num_retries: 3
+  request_timeout: 15
+
+  # Fallback ланцюжки: якщо coding недоступний → fast, і навпаки
+  fallbacks:
+    - {"ultra-router-coding": ["ultra-router-fast"]}
+    - {"ultra-router-fast": ["ultra-router-coding"]}
+    - {"ultra-router-reasoning": ["ultra-router-coding"]}
+    - {"ultra-router-chat": ["ultra-router-fast"]}
+
+  # Без зовнішніх SaaS (HR-15)
+  log_level: INFO
+  success_callback: []
+  failure_callback: []
+  set_verbose: false
+
+# ================================================================
+# Router налаштування
+# ================================================================
+router_settings:
+  routing_strategy: "least-busy"
+  num_retries: 3
+  timeout: 120
+  retry_after: 3

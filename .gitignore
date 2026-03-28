@@ -30,6 +30,8 @@ dist-ssr/
 .env.local
 .env.production
 .env.nvidia
+.env.ultra-router
+deploy/litellm/.env.ultra-router
 ua-sources/.env
 
 # Python
