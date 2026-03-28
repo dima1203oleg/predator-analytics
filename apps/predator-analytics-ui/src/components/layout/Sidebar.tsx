@@ -75,6 +75,7 @@ import {
   ShieldX,
   StarOff,
   Ghost,
+  Skull,
 } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAppStore } from '../../store/useAppStore';
@@ -894,37 +895,43 @@ export const Sidebar = () => {
       }}
       className={cn(
         'fixed left-0 top-0 h-screen flex flex-col',
-        'border-r border-white/[0.05] bg-[#010b18]/95 backdrop-blur-2xl',
-        'shadow-[20px_0_60px_-20px_rgba(0,0,0,0.95)]',
+        'border-r border-cyan-500/10 bg-[#010409]/98 backdrop-blur-3xl',
+        'shadow-[20px_0_100px_-40px_rgba(0,0,0,0.9)]',
         'z-[var(--z-sidebar,300)]'
       )}
     >
       {/* ── LOGO ── */}
-      <div className="h-16 flex items-center px-4 border-b border-white/[0.04] shrink-0 group">
-        <div className="flex items-center gap-3">
-          {/* Пульсуюча іконка */}
+      <div className="h-16 flex items-center px-5 border-b border-cyan-500/10 shrink-0 group relative overflow-hidden">
+        {/* Animated background pulse */}
+        <div className="absolute inset-0 bg-cyan-500/5 animate-pulse opacity-0 group-hover:opacity-100 transition-opacity" />
+        
+        <div className="flex items-center gap-4 relative z-10">
+          {/* Predator Insignia */}
           <div className="relative shrink-0">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-500 via-indigo-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:rotate-6 transition-transform duration-500">
-              <Zap className="text-white w-5 h-5 fill-white/20" />
+            <div className="w-10 h-10 rounded bg-slate-900 border border-cyan-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.2)] group-hover:border-cyan-400 transition-all duration-500">
+              <Skull className="text-cyan-400 w-6 h-6 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
             </div>
-            {/* Пульс-ореол */}
-            <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-rose-500/20 via-indigo-500/20 to-cyan-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            {/* Online marker */}
+            <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-[#010409] animate-pulse shadow-[0_0_8px_#10b981]" />
           </div>
 
           <AnimatePresence mode="wait">
             {isSidebarOpen && (
               <motion.div
-                initial={{ opacity: 0, x: -8 }}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -8 }}
-                transition={{ duration: 0.2 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.3 }}
                 className="flex flex-col min-w-0"
               >
-                <span className="text-[15px] font-black text-white tracking-tighter leading-none">
-                  PREDATOR
-                </span>
-                <span className="text-[8px] font-bold text-rose-400/80 tracking-[0.25em] uppercase mt-0.5">
-                  Analytics v55.1
+                <div className="flex items-center gap-2">
+                  <span className="text-[16px] font-black text-white tracking-[0.1em] leading-none">
+                    PREDATOR
+                  </span>
+                  <div className="px-1.5 py-0.5 bg-cyan-500/10 border border-cyan-500/30 rounded text-[7px] font-black text-cyan-400 tracking-widest">v56</div>
+                </div>
+                <span className="text-[8px] font-black text-slate-500 tracking-[0.35em] uppercase mt-1">
+                  NEXUS_PROTOCOL
                 </span>
               </motion.div>
             )}
@@ -951,71 +958,19 @@ export const Sidebar = () => {
             <div key={group.title} className="flex flex-col">
               {/* === ЗАГОЛОВОК СЕКЦІЇ === */}
               {isSidebarOpen ? (
-                <button
-                  onClick={() => toggleGroup(group.title)}
-                  className={cn(
-                    'w-full flex items-center justify-between px-2 py-2 rounded-lg mb-1 transition-all duration-300 group',
-                    isGroupExpanded
-                      ? cn('border border-white/[0.04]', accentBg)
-                      : 'hover:bg-white/[0.02] border border-transparent'
-                  )}
-                >
-                  <div className="flex items-center gap-2">
-                    {/* Акцентна смужка + іконка секції */}
-                    <div className={cn('flex items-center gap-1.5')}>
-                      <div
-                        className={cn(
-                          'w-[3px] h-4 rounded-full transition-all duration-300',
-                          isGroupExpanded
-                            ? cn(accentBar, 'shadow-[0_0_8px_rgba(255,255,255,0.15)]')
-                            : 'bg-white/[0.06] group-hover:bg-white/20'
-                        )}
-                      />
-                      {group.icon && (
-                        <group.icon
-                          className={cn(
-                            'w-3 h-3 transition-all duration-300',
-                            isGroupExpanded ? cn(accentColor, accentGlow) : 'text-slate-600 group-hover:text-slate-400'
-                          )}
-                          strokeWidth={2.5}
-                        />
-                      )}
-                    </div>
-
-                    <div className="flex flex-col items-start">
-                      <span
-                        className={cn(
-                          'text-[9px] font-black uppercase tracking-[0.18em] transition-colors duration-300',
-                          isGroupExpanded ? accentColor : 'text-slate-500 group-hover:text-slate-300'
-                        )}
-                      >
-                        {group.title}
-                      </span>
-                      {group.subtitle && isGroupExpanded && (
-                        <span className="text-[7px] text-slate-600 tracking-wide mt-0.5 font-medium">
-                          {group.subtitle}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* NEW badge */}
-                    {group.isNew && (
-                      <span className="text-[6px] font-black text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-1 py-0.5 rounded tracking-wider">
-                        NEW
-                      </span>
-                    )}
-                  </div>
-
-                  <ChevronDown
-                    className={cn(
-                      'w-3 h-3 transition-transform duration-300',
-                      isGroupExpanded ? cn('rotate-0', accentColor, 'opacity-60') : '-rotate-90 text-slate-600 opacity-50'
-                    )}
-                  />
-                </button>
+                <div className="px-3 mt-6 mb-2 flex items-center gap-3">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-500/20" />
+                  <span className={cn(
+                    "text-[8px] font-black uppercase tracking-[0.4em] whitespace-nowrap",
+                    isGroupExpanded ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]" : "text-slate-600"
+                  )}>
+                    {group.title}
+                  </span>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-cyan-500/20" />
+                </div>
               ) : (
                 // Collapsed sidebar — тільки крапка
-                <div className="flex justify-center py-2 mb-1">
+                <div className="flex justify-center py-4 mb-1 opacity-20 group-hover:opacity-100 transition-opacity">
                   <div className={cn('w-1.5 h-1.5 rounded-full', accentBar)} />
                 </div>
               )}
@@ -1047,12 +1002,9 @@ export const Sidebar = () => {
                                 to={item.path}
                                 title={!isSidebarOpen ? item.name : undefined}
                                 className={cn(
-                                  'relative flex items-center justify-between w-full px-3 py-2 rounded-lg transition-all duration-200 border',
+                                  'relative flex items-center justify-between w-full px-3 py-2.5 rounded transition-all duration-300 border-l-[3px]',
                                   isActivePrimary
-                                    ? cn(
-                                        'bg-white/[0.05] border-white/[0.06]',
-                                        'shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04),0_1px_6px_-2px_rgba(0,0,0,0.5)]'
-                                      )
+                                    ? 'bg-cyan-500/10 border-cyan-500 shadow-[0_0_20px_rgba(6,182,212,0.1)]'
                                     : 'border-transparent hover:bg-white/[0.03] hover:border-white/[0.02]'
                                 )}
                               >
@@ -1231,51 +1183,49 @@ export const Sidebar = () => {
       </div>
 
       {/* ── STATUS FOOTER ── */}
-      <div className="p-3 border-t border-white/[0.04] bg-black/40 shrink-0">
+      <div className="p-4 border-t border-cyan-500/10 bg-black/40 shrink-0">
         <div
           className={cn(
-            'flex items-center gap-2.5',
+            'flex items-center gap-3',
             isSidebarOpen ? 'justify-between' : 'justify-center'
           )}
         >
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             {/* Пульсуючий онлайн-індикатор */}
-            <div className="relative cursor-pointer" onClick={() => {
-              const nextRole = userRole === UserRole.ADMIN ? UserRole.CLIENT_BASIC : UserRole.ADMIN;
-              useAppStore.getState().setRole(nextRole);
-            }} title="Toggle Admin/Client Mode">
-              <div className={cn("w-2 h-2 rounded-full", userRole === UserRole.ADMIN ? "bg-rose-500" : "bg-emerald-500")} />
-              <div className={cn("absolute inset-0 w-2 h-2 rounded-full blur-sm opacity-60 animate-pulse", userRole === UserRole.ADMIN ? "bg-rose-500" : "bg-emerald-500")} />
+            <div className="relative group/status cursor-help" title="Системна діагностика: OK">
+              <div className={cn("w-2.5 h-2.5 rounded-full transition-colors", userRole === UserRole.ADMIN ? "bg-rose-500" : "bg-cyan-500")} />
+              <div className={cn("absolute inset-0 w-2.5 h-2.5 rounded-full blur-[4px] opacity-60 animate-pulse", userRole === UserRole.ADMIN ? "bg-rose-500" : "bg-cyan-500")} />
             </div>
+
             <AnimatePresence mode="wait">
               {isSidebarOpen && (
                 <motion.div
-                  initial={{ opacity: 0, x: -8 }}
+                  initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0 }}
                   className="flex flex-col"
                 >
-                  <span className="text-[8px] font-black text-white/80 uppercase tracking-[0.15em] leading-none">
-                    СИСТЕМА {userRole === UserRole.ADMIN ? 'ROOT' : 'ОНЛАЙН'}
+                  <span className="text-[9px] font-black text-white/90 uppercase tracking-[0.2em] leading-none mb-0.5">
+                    {userRole === UserRole.ADMIN ? 'ROOT_ACCESS' : 'USER_ONLINE'}
                   </span>
-                  <span className="text-[8px] font-mono text-emerald-500/50 mt-0.5 tracking-tight">
-                    v55.1 {userRole === UserRole.ADMIN ? 'DEVELOPER' : 'SOVEREIGN'}
+                  <span className="text-[7px] font-black text-cyan-500/40 tracking-[0.1em] uppercase">
+                    v56_NEXUS_MASTER
                   </span>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
           
-          {/* Рольовий індикатор (тільки для розробника) */}
           {isSidebarOpen && (
              <div 
-               className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[7px] font-black text-slate-500 uppercase tracking-widest cursor-pointer hover:bg-white/10 transition-colors"
-               onClick={() => {
-                 const nextRole = userRole === UserRole.ADMIN ? UserRole.CLIENT_BASIC : UserRole.ADMIN;
-                 useAppStore.getState().setRole(nextRole);
-               }}
+               className={cn(
+                 "px-2 py-0.5 rounded border text-[7px] font-black uppercase tracking-widest transition-all",
+                 userRole === UserRole.ADMIN 
+                   ? "bg-rose-950/30 border-rose-500/40 text-rose-400" 
+                   : "bg-cyan-950/30 border-cyan-500/40 text-cyan-400"
+               )}
              >
-               {userRole === UserRole.ADMIN ? 'ADMIN' : 'CLIENT'}
+               {userRole === UserRole.ADMIN ? 'ENFORCEMENT' : 'ANALYST'}
              </div>
           )}
         </div>
@@ -1286,16 +1236,15 @@ export const Sidebar = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-3 pt-3 border-t border-white/[0.03]"
+              className="mt-4 pt-4 border-t border-white/5 space-y-2"
             >
-              <div className="text-[7px] text-slate-600 uppercase tracking-[0.2em] font-bold mb-0.5">
-                ЛІЦЕНЗІЯ
+              <div className="flex justify-between items-center">
+                <span className="text-[7px] text-slate-600 uppercase tracking-widest font-black">Оператор</span>
+                <span className="text-[9px] text-slate-300 font-bold tracking-tight">D. Kizima</span>
               </div>
-              <div className="text-[10px] text-slate-400 font-semibold truncate">
-                Кізима Дмитро Миколайович
-              </div>
-              <div className="text-[8px] text-rose-400/40 font-mono mt-0.5 italic">
-                Повністю Функціональний
+              <div className="flex justify-between items-center">
+                <span className="text-[7px] text-slate-600 uppercase tracking-widest font-black">Статус</span>
+                <span className="text-[8px] text-cyan-500 font-mono animate-pulse">AUTORIZED_OK</span>
               </div>
             </motion.div>
           )}

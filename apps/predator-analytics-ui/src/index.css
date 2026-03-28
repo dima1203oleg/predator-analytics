@@ -38,33 +38,43 @@
     --sal: env(safe-area-inset-left);
     --vh: 11vh;
 
-    /* Role Specific Palettes */
+    /* PREDATOR Tactical HUD Palette */
+    --tactical-blue: #000c1f;
+    --tactical-bg: #010409;
+    --neon-cyan: #00f3ff;
+    --neon-magenta: #ff00ff;
+    --neon-yellow: #fff300;
+    --neon-green: #39ff14; /* Matrix Green */
+    --neon-orange: #ff6600;
+    --nato-red: #ff3333;
+    --nato-blue: #004494;
+
+    /* Role Colors */
     --color-explorer: #3b82f6;
     --color-operator: #10b981;
     --color-commander: #f59e0b;
     --color-forbidden: #ef4444;
 
-    /* Role Specific Glows */
-    --glow-explorer: rgba(59, 130, 246, 0.4);
-    --glow-operator: rgba(16, 185, 129, 0.4);
-    --glow-commander: rgba(245, 158, 11, 0.4);
-
-    /* Holographic Glows */
-    --glow-blue: rgba(6, 182, 212, 0.4);
-    --glow-purple: rgba(168, 85, 247, 0.4);
-    --glow-indigo: rgba(99, 102, 241, 0.4);
-    --glow-orange: rgba(249, 115, 22, 0.4);
-    --glow-amber: rgba(245, 158, 11, 0.35);
-
-    /* God-Mode Neon Palette */
-    --neon-cyan: #00f3ff;
-    --neon-magenta: #ff00ff;
-    --neon-yellow: #fff300;
-    --neon-green: #39ff14;
-    --neon-orange: #ff6600;
-    
+    /* Glows */
     --glow-neon-cyan: rgba(0, 243, 255, 0.5);
-    --glow-neon-magenta: rgba(255, 0, 255, 0.5);
+    --glow-neon-magenta: rgba(255, 0, 255, 0.4);
+    --glow-neon-green: rgba(57, 255, 20, 0.4);
+    --glow-nato-red: rgba(255, 51, 51, 0.5);
+}
+
+/* THEME MODES */
+.theme-nato-secure {
+    --background: 222 100% 3%;
+    --primary: 348 100% 60%;
+    --accent: 348 100% 50%;
+    background-color: #00020a;
+}
+
+.theme-matrix-ai {
+    --background: 144 100% 2%;
+    --primary: 142 100% 50%;
+    --accent: 142 100% 40%;
+    background-color: #000500;
 }
 
 :root.high-visibility {
@@ -230,14 +240,66 @@ textarea:focus-visible,
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3Cfilter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-/* Glassmorphism Ultra Premium */
+/* Tactical Glass Effects */
 .glass-ultra {
-    background: rgba(2, 6, 23, 0.7);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+    background: rgba(2, 6, 23, 0.65);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 
+        0 8px 32px 0 rgba(0, 0, 0, 0.8),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.glass-tactical {
+    background: rgba(0, 12, 31, 0.8);
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+}
+
+/* Background Effects */
+.bg-matrix {
+    position: relative;
+    overflow: hidden;
+}
+
+.bg-matrix::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(0, 255, 65, 0.05) 50%, transparent 50%);
+    background-size: 100% 4px;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.bg-agency-grid {
+    background-image: radial-gradient(circle at center, transparent 0%, #000c1f 100%);
+    background-size: cover;
+}
+
+/* Tactical Scanline CSS-only */
+.scanline-tactical {
+    width: 100%;
+    height: 100px;
+    z-index: 100;
+    background: linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 243, 255, 0.1) 50%,
+        rgba(0, 0, 0, 0) 100%
+    );
+    opacity: 0.1;
+    position: absolute;
+    bottom: 100%;
+    animation: scanline-move 10s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes scanline-move {
+    0% { bottom: 110%; }
+    100% { bottom: -10%; }
 }
 
 /* Iridescent Text Effect */
