@@ -15,7 +15,7 @@ const DynamicSystemAura: React.FC = () => {
         const metrics = await api.v45.getRealtimeMetrics();
         if (metrics) {
             if (metrics.cpu_usage > 70) setSystemState('alert');
-            else if (metrics.requests_per_second > 20) setSystemState('learning');
+            else if (metrics.search_rate > 20) setSystemState('learning');
             else if (metrics.memory_usage > 50) setSystemState('evolving');
             else setSystemState('idle');
         }

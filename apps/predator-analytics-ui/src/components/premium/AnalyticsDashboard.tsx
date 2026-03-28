@@ -261,22 +261,22 @@ export const AnalyticsDashboard: React.FC = () => {
       const now = new Date();
       const timeStr = now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-      if (health.status === 'fulfilled' && health.value?.data) {
-        const h = health.value.data;
+      if (health.status === 'fulfilled' && health.value) {
+        const h = health.value as any;
         setSystemMetrics({
-          cpu_percent: h.cpu_load || 0,
-          memory_percent: h.memory_usage || 0,
-          disk_usage: h.disk_usage || 0,
+          cpu_percent: h.cpu_percent || 0,
+          memory_percent: h.memory_percent || 0,
+          disk_usage: h.disk_percent || 0,
           network_io: h.network_io || 0,
           active_containers: h.active_containers || 0,
           uptime_seconds: h.uptime_seconds || 0
         });
 
-        setCpuHistory(prev => [...prev.slice(-29), { time: timeStr, value: h.cpu_load || 0 }]);
+        setCpuHistory(prev => [...prev.slice(-29), { time: timeStr, value: h.cpu_percent || 0 }]);
       }
 
-      if (stats.status === 'fulfilled' && stats.value?.data) {
-        const s = stats.value.data;
+      if (stats.status === 'fulfilled' && stats.value) {
+        const s = stats.value as any;
         setStorageMetrics({
           opensearch_docs: s.documents_total || s.total_documents || 0,
           qdrant_vectors: s.qdrant_vectors || 0,
@@ -286,8 +286,8 @@ export const AnalyticsDashboard: React.FC = () => {
         });
       }
 
-      if (status.status === 'fulfilled' && status.value?.data) {
-        const st = status.value.data;
+      if (status.status === 'fulfilled' && status.value) {
+        const st = status.value as any;
         setSearchMetrics({
           total_queries: st.total_queries || 0,
           avg_latency_ms: st.avg_latency || 45,

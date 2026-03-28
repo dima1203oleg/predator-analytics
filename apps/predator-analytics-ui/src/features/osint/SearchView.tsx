@@ -41,7 +41,9 @@ import {
     Terminal as TerminalIcon,
     BarChart3,
     Layers,
-    History
+    History,
+    Ship,
+    Scale
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
