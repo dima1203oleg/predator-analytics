@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Suspense, lazy, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { MainLayout } from './components/layout/MainLayout';
+import MainLayout from './components/layout/MainLayout';
 import { useAppStore } from './store/useAppStore';
 import { useUser } from './context/UserContext';
 import { UserRole } from './config/roles';
@@ -11,6 +11,7 @@ import ActivityView from './features/dashboard/ActivityView';
 import DashboardView from './features/dashboard/DashboardView';
 import IntelligenceView from './features/intelligence/IntelligenceView';
 import OmniscienceView from './features/dashboard/OmniscienceView';
+import PredatorV24 from './pages/PredatorV24';
 
 // Lazy loaded views - Named exports need .then() mapping
 const SearchView = lazy(() => import('./features/osint/SearchView').then(m => ({ default: m.SearchView })));
@@ -109,7 +110,7 @@ const FactorsView = lazy(() => import('./features/factors/FactorsView'));
 const FactoryStudio = lazy(() => import('./features/factory/FactoryStudio'));
 const SystemFactoryView = lazy(() => import('./features/factory/SystemFactoryView'));
 const SystemPromptsView = lazy(() => import('./features/ai/SystemPromptsView'));
-
+const AIControlPlane = lazy(() => import('./features/ai/AIControlPlane'));
 
 
 const LoadingFallback = () => (
@@ -147,15 +148,8 @@ const LoadingFallback = () => (
 
 export const AppRoutesNew = () => {
   const location = useLocation();
-  const { userRole, setRole } = useAppStore();
   const { user } = useUser();
-
-  // Sync role from context to store — DISABLED: This was breaking the manual role toggle in the sidebar
-  // useEffect(() => {
-  //   if (user?.role && user.role !== userRole) {
-  //     setRole(user.role);
-  //   }
-  // }, [user?.role, userRole, setRole]);
+  const effectiveRole = user?.role || UserRole.VIEWER;
 
   return (
     <MainLayout>
@@ -163,7 +157,8 @@ export const AppRoutesNew = () => {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             {/* 🎯 CANONICAL v4.2.0 MODES */}
-            <Route path="/" element={<DashboardView />} />
+            <Route path="/" element={<PredatorV24 />} />
+            <Route path="/predator-v24" element={<PredatorV24 />} />
             <Route path="/overview" element={<DashboardView />} />
             <Route path="/market" element={<MarketPage />} />
             <Route path="/forecast" element={<ForecastPage />} />
@@ -196,8 +191,8 @@ export const AppRoutesNew = () => {
             <Route path="/data" element={<DataView />} />
             <Route path="/databases" element={<DatabasesView />} />
             <Route path="/datasets" element={<DatasetStudio />} />
-            <Route path="/sr" element={userRole === UserRole.ADMIN ? <SRView /> : <Navigate to="/overview" replace />} />
-            <Route path="/azr" element={userRole === UserRole.ADMIN ? <SRView /> : <Navigate to="/overview" replace />} />
+            <Route path="/sr" element={effectiveRole === UserRole.ADMIN ? <SRView /> : <Navigate to="/overview" replace />} />
+            <Route path="/azr" element={effectiveRole === UserRole.ADMIN ? <SRView /> : <Navigate to="/overview" replace />} />
 
             <Route path="/datasets-manager" element={<DatasetsPage />} />
 
@@ -229,7 +224,7 @@ export const AppRoutesNew = () => {
 
             <Route path="/entity-graph" element={<GraphAnalyticsPage />} />
             <Route path="/knowledge" element={<KnowledgeEngineeringView />} />
-            <Route path="/autonomy" element={userRole === UserRole.ADMIN ? <AutonomyDashboard /> : <Navigate to="/overview" replace />} />
+            <Route path="/autonomy" element={effectiveRole === UserRole.ADMIN ? <AutonomyDashboard /> : <Navigate to="/overview" replace />} />
             <Route path="/factory" element={<FactorsView />} />
             <Route path="/factory-studio" element={<FactoryStudio />} />
             <Route path="/system-factory" element={<SystemFactoryView />} />
@@ -265,6 +260,8 @@ export const AppRoutesNew = () => {
             <Route path="/compliance" element={<ComplianceView />} />
             <Route path="/monitoring" element={<MonitoringView />} />
             <Route path="/referral-control" element={<ReferralControlView />} />
+            <Route path="/admin/ai-control" element={<AIControlPlane />} />
+            <Route path="/admin/security" element={<SovereignGovernanceDashboard />} />
             <Route path="/governance" element={<SovereignGovernanceDashboard />} />
             <Route path="/security" element={<SecurityView />} />
             <Route path="/deployment" element={<DeploymentView />} />

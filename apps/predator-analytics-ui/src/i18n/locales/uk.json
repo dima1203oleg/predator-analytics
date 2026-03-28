@@ -1,0 +1,33 @@
+{
+  "translation": {
+    "welcome": "Вітаємо, Адміністраторе",
+    "theme": {
+      "light": "Світла тема",
+      "dark": "Темна тема"
+    },
+    "nav": {
+      "dashboard": "Дашборд",
+      "analytics": "Аналітика",
+      "settings": "Налаштування"
+    },
+    "table": {
+      "amount": "Сума",
+      "status": "Статус",
+      "product": "Продукт",
+      "date": "Дата",
+      "paid": "оплачено",
+      "pending": "очікує",
+      "filter_status": "Фільтр за статусом",
+      "sort_amount": "Сортувати за сумою"
+    },
+    "chat": {
+      "title": "AI Помічник",
+      "placeholder": "Введіть повідомлення...",
+      "typing": "Друк...",
+      "greeting": "Привіт! Я AI Copilot Predator Analytics. Чим можу допомогти?"
+    },
+    "footer": {
+      "built_with": "Створено з використанням сучасних технологій"
+    }
+  }
+}
