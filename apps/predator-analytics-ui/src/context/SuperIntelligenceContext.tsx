@@ -24,10 +24,11 @@ interface SuperIntelligenceContextType {
 // Initial Brain Configuration - Models participating in Debate
 const INITIAL_BRAIN_NODES: BrainNodeState[] = [
     { id: 'gemini', name: 'Gemini 2.0 Flash', role: 'Архітектор', avatar: 'G', color: '#3b82f6', status: 'IDLE' },
-    { id: 'deepseek', name: 'DeepSeek R1', role: 'Критик', avatar: 'D', color: '#a855f7', status: 'IDLE' },
-    { id: 'mistral', name: 'Mistral Large', role: 'Безпека', avatar: 'M', color: '#eab308', status: 'IDLE' },
-    { id: 'qwen', name: 'Qwen 2.5', role: 'Дані', avatar: 'Q', color: '#ef4444', status: 'IDLE' },
-    { id: 'llama', name: 'Llama 3 (Local)', role: 'Приватність', avatar: 'L', color: '#22c55e', status: 'IDLE' },
+    { id: 'deepseek-v3', name: 'DeepSeek V3', role: 'Аналітик', avatar: 'DV', color: '#a855f7', status: 'IDLE' },
+    { id: 'qwen-2-5', name: 'Qwen 2.5', role: 'Дата-саєнтист', avatar: 'Q', color: '#ef4444', status: 'IDLE' },
+    { id: 'gpt-4o', name: 'GPT-4o', role: 'Критик', avatar: 'O', color: '#10b981', status: 'IDLE' },
+    { id: 'claude-3-5', name: 'Claude 3.5 Sonnet', role: 'Безпека', avatar: 'C', color: '#f97316', status: 'IDLE' },
+    { id: 'llama-3-1', name: 'Llama 3.1 (Local)', role: 'Приватність', avatar: 'L', color: '#22c55e', status: 'IDLE' },
     { id: 'arbiter', name: 'Gemini 3 Ultra', role: 'АРБІТР', avatar: 'A', color: '#ffffff', status: 'IDLE' }
 ];
 
@@ -299,19 +300,18 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
                 const sysMetrics = await api.v45.getLiveHealth().catch(() => null);
 
                 if (providers && providers.length > 0) {
-                    const realBrainNodes: BrainNodeState[] = providers.map((p: any, idx: number) => ({
-                        id: p.id,
-                        name: p.name,
-                        role: idx === 0 ? 'АРБІТР' : 'ЕКСПЕРТ',
-                        avatar: p.name[0],
-                        color: p.id === 'google' ? '#3b82f6' : p.id === 'openai' ? '#10b981' : '#a855f7',
-                        status: 'IDLE',
-                        load: sysMetrics ? (idx === 0 ? sysMetrics.cpu_usage : Math.max(10, sysMetrics.cpu_usage - 15)) : 0
-                    }));
-                    // Ensure we have at least one Arbiter
-                    if (!realBrainNodes.find(n => n.role === 'АРБІТР')) {
-                        if (realBrainNodes.length > 0) realBrainNodes[0].role = 'АРБІТР';
-                    }
+                    const realBrainNodes: BrainNodeState[] = providers.map((p: any, idx: number) => {
+                        const existing = INITIAL_BRAIN_NODES.find(n => n.id === p.id || n.name.toLowerCase().includes(p.name.toLowerCase()));
+                        return {
+                            id: p.id,
+                            name: p.name,
+                            role: existing?.role || (idx === 0 ? 'АРБІТР' : 'ЕКСПЕРТ'),
+                            avatar: p.name[0],
+                            color: existing?.color || (p.id === 'google' ? '#3b82f6' : p.id === 'openai' ? '#10b981' : '#a855f7'),
+                            status: 'IDLE',
+                            load: sysMetrics ? (idx === 0 ? sysMetrics.cpu_usage : Math.max(10, sysMetrics.cpu_usage - 15)) : 0
+                        };
+                    });
                     setBrainNodes(realBrainNodes);
                 }
 
