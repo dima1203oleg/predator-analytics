@@ -118,20 +118,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
   if (!context) {
-    // Return safe defaults instead of crashing
-    console.warn('useUser used outside of UserProvider - returning defaults');
-    return {
-      user: null,
-      isLoading: true,
-      isAuthenticated: false,
-      isAdmin: false,
-      isClient: false,
-      canAccess: () => true, // safe default: allow all when outside provider
-      setUser: () => { },
-      logout: () => { },
-      updateTier: () => { },
-    };
-
+    throw new Error('useUser must be used within a UserProvider');
   }
   return context;
 };
