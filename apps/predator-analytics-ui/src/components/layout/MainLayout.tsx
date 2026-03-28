@@ -165,7 +165,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <CyberTerminal />
 
       {/* CyberDeck Status Footer — LIVE DATA */}
-      <div className="fixed bottom-0 left-0 right-0 h-6 bg-black/85 backdrop-blur-md border-t border-indigo-500/20 z-[100] flex items-center px-4 gap-6 overflow-hidden">
+      <div className="fixed bottom-0 left-0 right-0 h-6 bg-[#010409]/95 backdrop-blur-md border-t border-cyan-500/15 z-[100] flex items-center px-4 gap-6 overflow-hidden">
         <div className="flex items-center gap-2 shrink-0">
           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Ядро_Активне</span>
@@ -183,12 +183,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
             className="whitespace-nowrap text-[9px] font-mono text-slate-400 tracking-tight"
           >
-            {` >> СИСТЕМА_V55_СУВЕРЕН >> OODA_ЦИКЛ: ${liveStats.ooda} >> СТАТУС: ${liveStats.stage} >> ЦП: ${liveStats.cpu}% >> ОЗП: ${liveStats.memory}% >> БД_ЗАПИСІВ: ${liveStats.records.toLocaleString()} >> КОЕФ_ДОВІРИ: 0.9982 >> ІНДЕКС_АНОМАЛІЙ: 0.002 >> СИСТЕМА_ГОТОВА_ДО_ДІЙ >> СИСТЕМА_V55_СУВЕРЕН >> OODA_ЦИКЛ: ${liveStats.ooda} >> СТАТУС: ${liveStats.stage} `}
+            {` >> СИСТЕМА_V56_NEXUS >> OODA_ЦИКЛ: ${liveStats.ooda} >> СТАТУС: ${liveStats.stage} >> ЦП: ${liveStats.cpu}% >> ОЗП: ${liveStats.memory}% >> БД_ЗАПИСІВ: ${liveStats.records.toLocaleString()} >> КОЕФ_ДОВІРИ: 0.9982 >> ІНДЕКС_АНОМАЛІЙ: 0.002 >> СИСТЕМА_ГОТОВА_ДО_ДІЙ >> СИСТЕМА_V56_NEXUS >> OODA_ЦИКЛ: ${liveStats.ooda} >> СТАТУС: ${liveStats.stage} `}
           </motion.div>
         </div>
 
         <div className="flex items-center gap-4 shrink-0 border-l border-white/10 pl-4 h-full">
-          <span className="text-[9px] font-mono text-indigo-400">ЗАТРИМКА: 12ms</span>
+          <span className="text-[9px] font-mono text-cyan-400">ЗАТРИМКА: 12ms</span>
           <span className="text-[9px] font-mono text-slate-500">{new Date().toLocaleTimeString()}</span>
         </div>
       </div>

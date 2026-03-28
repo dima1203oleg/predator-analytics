@@ -85,7 +85,7 @@ import { SIDEBAR } from '../../lib/motion';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 
 /* ═══════════════════════════════════════════════════════════════════
-   TYPES — Типізація навігації (PREDATOR Analytics v55.1)
+   TYPES — Типізація навігації (PREDATOR Analytics v56)
    ═══════════════════════════════════════════════════════════════════ */
 
 interface NavItem {
@@ -134,7 +134,7 @@ interface NavGroup {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   NAVIGATION — PREDATOR v55.1 КЛІЄНТ
+   NAVIGATION — PREDATOR v56 NEXUS
    ═══════════════════════════════════════════════════════════════════ */
 const buildNavGroups = (): NavGroup[] => [
   /* ─────────────────────────────────────────────────────────
@@ -807,7 +807,7 @@ const BadgeIndicator = ({
 };
 
 /* ═══════════════════════════════════════════════════════════════════
-   SIDEBAR COMPONENT — PREDATOR v55.1
+   SIDEBAR COMPONENT — PREDATOR v56 NEXUS
    ═══════════════════════════════════════════════════════════════════ */
 
 export const Sidebar = () => {
@@ -958,16 +958,27 @@ export const Sidebar = () => {
             <div key={group.title} className="flex flex-col">
               {/* === ЗАГОЛОВОК СЕКЦІЇ === */}
               {isSidebarOpen ? (
-                <div className="px-3 mt-6 mb-2 flex items-center gap-3">
-                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-500/20" />
-                  <span className={cn(
-                    "text-[8px] font-black uppercase tracking-[0.4em] whitespace-nowrap",
-                    isGroupExpanded ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]" : "text-slate-600"
-                  )}>
-                    {group.title}
-                  </span>
-                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-cyan-500/20" />
-                </div>
+                <button
+                  onClick={() => toggleGroup(group.title)}
+                  className="w-full px-3 mt-6 mb-2 flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity group/header"
+                >
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-500/20 group-hover/header:to-cyan-500/40 transition-all" />
+                  <div className="flex items-center gap-2">
+                    <span className={cn(
+                      "text-[8px] font-black uppercase tracking-[0.4em] whitespace-nowrap transition-all",
+                      isGroupExpanded ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]" : "text-slate-600 group-hover/header:text-slate-400"
+                    )}>
+                      {group.title}
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        "w-2.5 h-2.5 transition-transform duration-300",
+                        isGroupExpanded ? "text-cyan-500/50 rotate-0" : "text-slate-700 -rotate-90"
+                      )}
+                    />
+                  </div>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-cyan-500/20 group-hover/header:to-cyan-500/40 transition-all" />
+                </button>
               ) : (
                 // Collapsed sidebar — тільки крапка
                 <div className="flex justify-center py-4 mb-1 opacity-20 group-hover:opacity-100 transition-opacity">
@@ -992,7 +1003,7 @@ export const Sidebar = () => {
                         const filteredSubItems = item.subItems?.filter(hasAccess) ?? [];
                         const isActivePrimary =
                           location.pathname === item.path ||
-                          (hasSubItems && isSubItemActive(item));
+                          !!(hasSubItems && isSubItemActive(item));
 
                         return (
                           <div key={item.path} className="flex flex-col">

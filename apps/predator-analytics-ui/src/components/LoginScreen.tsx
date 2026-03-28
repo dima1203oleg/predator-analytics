@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Fingerprint, Monitor, Radar, ShieldAlert, Skull, Terminal, Zap, ShieldCheck, Activity, Globe, Lock } from 'lucide-react';
+import { Fingerprint, Monitor, Radar, ShieldAlert, Skull, Terminal, Zap, ShieldCheck, Activity, Globe, Lock, ScanLine } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { UserRole } from '../config/roles';
@@ -291,7 +291,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 whileHover={{ y: -12, scale: 1.02 }}
                                 className="group relative glass-tactical border border-red-500/50 p-1 transition-all duration-500 hover:border-red-500 hover:shadow-[0_0_50px_rgba(239,68,68,0.3)] overflow-hidden"
                             >
-                                <div className="absolute top-0 left-0 px-4 py-1.5 bg-red-600 text-[9px] font-black text-white uppercase tracking-[0.2em] z-20 shadow-[0_5px_15px_rgba(239,68,68,0.4)]">TOP SECRET / CLASSIFIED</div>
+                                <div className="absolute top-0 left-0 px-4 py-1.5 bg-red-600 text-[9px] font-black text-white uppercase tracking-[0.2em] z-20 shadow-[0_5px_15px_rgba(239,68,68,0.4)]">ЦІЛКОМ ТАЄМНО / SCI</div>
                                 
                                 <div className="p-10 flex flex-col items-center text-center h-full space-y-7 relative z-10 overflow-hidden">
                                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.05)_0%,transparent_70%)] animate-pulse" />
@@ -316,7 +316,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         className="w-full py-5 bg-red-950/50 border border-red-600/80 text-red-100 text-xs font-black uppercase tracking-[0.4em] hover:bg-red-600 hover:text-white hover:border-red-500 transition-all duration-300 relative overflow-hidden group/btn shadow-[0_0_20px_rgba(239,68,68,0.4)]"
                                     >
                                         <div className="absolute inset-0 bg-white/10 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
-                                        EXECUTE OVERRIDE
+                                        ІНІЦІЮВАТИ_ДОСТУП
                                     </button>
                                 </div>
                             </motion.div>
