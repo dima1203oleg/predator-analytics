@@ -201,7 +201,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 </div>
                                 <div className="p-2 bg-black/60 border border-white/5 flex flex-col">
                                     <span className="text-slate-700 text-[7px] font-black mb-1">ЯДРО</span>
-                                    PREDATOR_CORE_V56
+                                    NEXUS_SOVEREIGN_V56.1
                                 </div>
                             </div>
                         </div>
@@ -218,7 +218,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         <div className="text-center space-y-3">
                             <h2 className="text-4xl font-black text-white tracking-[0.5em] uppercase drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">Виберіть Рівень Доступу</h2>
                             <div className="h-[2px] w-80 mx-auto bg-gradient-to-r from-transparent via-cyan-500/70 to-transparent" />
-                            <p className="text-[11px] text-cyan-400 tracking-[0.3em] font-black uppercase">Авторизація через суверенний вузол PREDATOR_NEXUS</p>
+                            <p className="text-[11px] text-cyan-400 tracking-[0.3em] font-black uppercase">Авторизація через суверенний вузол NEXUS_v56.1</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -359,7 +359,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
             {/* Version Footer */}
             <div className="absolute bottom-6 right-8 text-[8px] font-black text-slate-700 tracking-[1em] uppercase select-none pointer-events-none">
-               Predator Intelligence Systems © 2026
+               NEXUS SOVEREIGN SYSTEMS © 2026
             </div>
         </div>
     );

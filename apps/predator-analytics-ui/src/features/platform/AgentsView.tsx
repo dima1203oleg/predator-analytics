@@ -450,7 +450,7 @@ const AgentsView: React.FC = () => {
             <ViewHeader
                 title={premiumLocales.agentsView.title}
                 icon={<Bot size={20} className={themeColor} />}
-                breadcrumbs={['СИНАПСИС', 'УПРАВЛІННЯ', 'МЕНЕДЖЕР ФЛОТУ']}
+                breadcrumbs={['СИНАПСИС', 'NEXUS v56.1', 'МЕНЕДЖЕР ФЛОТУ']}
                 stats={[
                     { label: 'Агенти', value: String(agents.length), icon: <Bot size={14} />, color: 'primary' },
                     { label: 'Активних', value: String(workingCount), icon: <Activity size={14} />, color: 'success' },
@@ -469,12 +469,12 @@ const AgentsView: React.FC = () => {
                             flex items-center gap-2 px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300
                             ${activeTab === tab.id
                                 ? tab.id === 'osint'
-                                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-[0_0_20px_rgba(139,92,246,0.3)]'
+                                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-[0_0_20px_rgba(34,211,238,0.3)]'
                                     : isCommanderShell
-                                        ? 'bg-amber-500 text-black shadow-[0_0_20px_rgba(245,158,11,0.3)]'
+                                        ? 'bg-cyan-500 text-black shadow-[0_0_20px_rgba(34,211,238,0.4)]'
                                         : isOperatorShell
                                             ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.3)]'
-                                            : 'bg-blue-600 text-white shadow-[0_0_20px_rgba(59,130,246,0.3)]'
+                                            : 'bg-cyan-600 text-white shadow-[0_0_20px_rgba(34,211,238,0.3)]'
                                 : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
                             }
                         `}
@@ -494,7 +494,9 @@ const AgentsView: React.FC = () => {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
                 {/* ── ЛІВА ОБЛАСТЬ (2/3 ширини) ── */}
-                <div className="xl:col-span-2 space-y-4">
+                <div className="xl:col-span-2 space-y-4 relative">
+                    <div className="hud-corner-nexus hud-corner-tl !border-cyan-500/20" />
+                    <div className="hud-corner-nexus hud-corner-br !border-cyan-500/20" />
                     <AnimatePresence mode="wait">
 
                         {/* ТЕЛЕМЕТРІЯ — СІТКА АГЕНТІВ */}

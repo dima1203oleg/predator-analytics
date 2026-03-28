@@ -1,15 +1,15 @@
 /**
- * BootScreen — "ОКО ХИЖАКА" (OMNISCIENT PREDATOR EYE)
- * Система масового стеження, перехоплення даних і виявлення загроз.
- * Страх, могуть, військовий / спецслужбовий контроль.
+ * BootScreen — "ЯДРО NEXUS v56.1" (SOVEREIGN NEXUS CORE)
+ * Система стратегічної автономії, квантової аналітики та суверенного контролю.
+ * Технологічна домінація, швидкість, майбутнє.
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 type Phase = 0 | 1 | 2 | 3;
-// 0: ПОТОКОВИЙ ПЕРЕХОПЛЕННЯ (Мережа камер)
-// 1: ФОРМУВАННЯ ОКА
-// 2: СКАНУВАННЯ (Зіниця шукає, червоні спалахи)
-// 3: PREDATOR ONLINE (Кривавий лог-аут, підготовка до входу)
+// 0: КВАНТОВИЙ ПЕРЕХОПЛЕННЯ (Мережа даних)
+// 1: ФОРМУВАННЯ ЯДРА NEXUS
+// 2: СИНХРОНІЗАЦІЯ (Пошук патернів, неонові спалахи)
+// 3: NEXUS ONLINE (Суверенний лог-ін, готовність системи)
 
 const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -26,10 +26,10 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
   // Constants
   const PHASE_DURATIONS: Record<Phase, number> = {
-    0: 2500, // Грід камер та чисел
-    1: 1500, // Стягування ока
-    2: 3000, // Сканування
-    3: 1500, // PREDATOR RED ONLINE
+    0: 2000, // Грід даних
+    1: 1200, // Стягування ядра
+    2: 2500, // Синхронізація
+    3: 1200, // NEXUS NEON ONLINE
   };
 
   /* ─ HUD Лічильники ─ */
@@ -67,7 +67,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
     /* ФАЗА 0: SURVEILLANCE GRID */
     if (currentPhase === 0) {
-      ctx.strokeStyle = `rgba(16, 185, 129, 0.15)`; // toxic green
+      ctx.strokeStyle = `rgba(34, 211, 238, 0.15)`; // Nexus Cyan
       ctx.lineWidth = 1;
       const gridSize = 80;
       for (let x = 0; x < w; x += gridSize) {
@@ -76,11 +76,11 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
              ctx.strokeRect(x, y, gridSize - 4, gridSize - 4);
              // Рандомний шум камери
              if (Math.random() > 0.8) {
-               ctx.fillStyle = `rgba(34, 197, 94, ${Math.random() * 0.3})`;
+               ctx.fillStyle = `rgba(34, 211, 238, ${Math.random() * 0.3})`;
                ctx.fillRect(x + 2, y + 2, gridSize - 8, gridSize - 8);
              }
              // Координати
-             ctx.fillStyle = 'rgba(16, 185, 129, 0.4)';
+             ctx.fillStyle = 'rgba(34, 211, 238, 0.4)';
              ctx.font = '8px monospace';
              ctx.fillText(`GEO:${Math.floor(Math.random()*99)}.${Math.floor(Math.random()*99)}`, x + 5, y + gridSize - 10);
           }
@@ -89,9 +89,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       
       // Гігантський скануючий промінь
       const scanY = (elapsed / PHASE_DURATIONS[0]) * h;
-      ctx.fillStyle = 'rgba(239, 68, 68, 0.2)'; // blood red scan
+      ctx.fillStyle = 'rgba(34, 211, 238, 0.2)'; // Nexus Cyan scan
       ctx.fillRect(0, scanY, w, 4);
-      ctx.fillStyle = 'rgba(239, 68, 68, 0.05)';
+      ctx.fillStyle = 'rgba(34, 211, 238, 0.05)';
       ctx.fillRect(0, scanY - 40, w, 40);
     }
 
@@ -116,11 +116,11 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         const pupilY = currentPhase === 2 ? cy + Math.cos(now * 0.0025) * 15 : cy;
 
         const eyeGradient = ctx.createRadialGradient(pupilX, pupilY, eyeRadius * 0.1, pupilX, pupilY, eyeRadius);
-        eyeGradient.addColorStop(0, '#000000'); // чорна зіниця
-        // Криваво-помаранчева або токсично-зелена райдужка
-        eyeGradient.addColorStop(0.3, currentPhase === 3 ? '#ef4444' : '#f59e0b'); 
-        eyeGradient.addColorStop(0.7, currentPhase === 3 ? '#991b1b' : '#1e3a8a');
-        eyeGradient.addColorStop(1, '#000000');
+        eyeGradient.addColorStop(0, '#010409'); // чорна зіниця
+        // Nexus Cyan райдужка
+        eyeGradient.addColorStop(0.3, currentPhase === 3 ? '#22d3ee' : '#0ea5e9'); 
+        eyeGradient.addColorStop(0.7, currentPhase === 3 ? '#0369a1' : '#1e3a8a');
+        eyeGradient.addColorStop(1, '#010409');
 
         ctx.beginPath();
         ctx.ellipse(cx, cy, eyeRadius * 1.5, eyeRadius * openRatio, 0, 0, Math.PI * 2);
@@ -128,7 +128,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         ctx.fill();
         
         ctx.lineWidth = 2;
-        ctx.strokeStyle = currentPhase === 3 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(16, 185, 129, 0.5)';
+        ctx.strokeStyle = currentPhase === 3 ? 'rgba(34, 211, 238, 0.8)' : 'rgba(34, 211, 238, 0.5)';
         ctx.stroke();
 
         // Світлові спалахи від зіниці (шукає жертву)
@@ -140,7 +140,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         }
 
         // Кровоносні/Нейронні судини навколо ока
-        ctx.strokeStyle = currentPhase === 3 ? 'rgba(239, 68, 68, 0.3)' : 'rgba(245, 158, 11, 0.2)';
+        ctx.strokeStyle = currentPhase === 3 ? 'rgba(34, 211, 238, 0.3)' : 'rgba(14, 165, 233, 0.2)';
         ctx.lineWidth = 1;
         for(let i=0; i<30; i++) {
            const angle = (Math.PI * 2 / 30) * i + now * 0.0001;
@@ -159,7 +159,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     /* ФАЗА 3: PREDATOR ONLINE (Кривава заливка) */
     if (currentPhase === 3) {
       const p = Math.min(1, elapsed / PHASE_DURATIONS[3]);
-      ctx.fillStyle = `rgba(220, 38, 38, ${p * 0.3})`;
+      ctx.fillStyle = `rgba(34, 211, 238, ${p * 0.2})`;
       ctx.fillRect(0, 0, w, h);
     }
 
@@ -221,15 +221,15 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       {/* HUD (З'являється зФази 1) */}
       <div className={`absolute inset-0 pointer-events-none transition-opacity duration-1000 ${phase >= 1 ? 'opacity-100' : 'opacity-0'}`}>
         {/* Верхній лівий: Статуси */}
-        <div className="absolute top-8 left-8 text-red-500 space-y-1">
+        <div className="absolute top-8 left-8 text-cyan-500 space-y-1">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-red-600 animate-pulse" />
-            <span className="text-xs font-bold tracking-widest uppercase">RESTRICTED PREDATOR CORE</span>
+            <div className="w-3 h-3 bg-cyan-600 animate-pulse shadow-[0_0_10px_#22d3ee]" />
+            <span className="text-xs font-bold tracking-widest uppercase">SOVEREIGN NEXUS CORE v56.1</span>
           </div>
-          <p className="text-[10px] text-red-400/70">AUTORIZATION LEVEL: BLACK</p>
-          <p className="text-[10px] text-red-400/70 mt-4">ОПЕРАТИВНЕ ПЕРЕХОПЛЕННЯ УПРАВЛІННЯ</p>
-          <div className="font-mono text-xl text-red-500 font-bold mt-2">
-            Z-[{Math.floor(Math.random() * 9999).toString().padStart(4, '0')}] A-SEC
+          <p className="text-[10px] text-cyan-400/70">AUTORIZATION LEVEL: OVERLORD</p>
+          <p className="text-[10px] text-cyan-400/70 mt-4">КВАНТОВА СИНХРОНІЗАЦІЯ ЯДРА</p>
+          <div className="font-mono text-xl text-cyan-500 font-bold mt-2">
+            NEXUS-[{Math.floor(Math.random() * 9999).toString().padStart(4, '0')}] SYNC_OK
           </div>
         </div>
 
@@ -238,12 +238,12 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
           <div className="text-[10px] text-emerald-500 tracking-widest uppercase mb-1 border-b border-emerald-900/50 pb-1">
             Моніторинг Глобальної Мережі
           </div>
-          <div className="text-xs text-slate-400 uppercase">Дані перехоплено:</div>
-          <div className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">
-            {interceptCount.toLocaleString()} TB
+          <div className="text-xs text-slate-400 uppercase">Дані оброблено:</div>
+          <div className="text-2xl font-black text-cyan-400 font-mono tracking-tighter">
+            {interceptCount.toLocaleString()} PB
           </div>
-          <div className="text-xs text-slate-400 uppercase mt-2">Загроз виявлено:</div>
-          <div className="text-3xl font-black text-red-500 font-mono tracking-tighter">
+          <div className="text-xs text-slate-400 uppercase mt-2">Патернів виявлено:</div>
+          <div className="text-3xl font-black text-white font-mono tracking-tighter shadow-cyan-500/50 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">
             {threatCount.toLocaleString()}
           </div>
         </div>
@@ -253,15 +253,15 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       <div className={`absolute inset-0 pointer-events-none flex flex-col items-center justify-center transition-opacity duration-500 ${phase === 3 ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}>
          <h1 className="text-7xl md:text-9xl font-black tracking-[0.2em] text-transparent bg-clip-text"
              style={{
-               backgroundImage: 'linear-gradient(to bottom, #ef4444, #7f1d1d)',
-               WebkitTextStroke: '2px #dc2626',
-               filter: 'drop-shadow(0 0 30px rgba(220, 38, 38, 0.8))'
+               backgroundImage: 'linear-gradient(to bottom, #22d3ee, #0369a1)',
+               WebkitTextStroke: '2px #0ea5e9',
+               filter: 'drop-shadow(0 0 30px rgba(34, 211, 238, 0.8))'
              }}>
-           PREDATOR
+           NEXUS
          </h1>
-         <p className="mt-4 text-sm md:text-lg text-red-500 font-bold tracking-[0.5em] uppercase"
-            style={{ textShadow: '0 0 10px rgba(239, 68, 68, 0.5)' }}>
-           Всебачне Око. Ніхто не сховається.
+         <p className="mt-4 text-sm md:text-lg text-cyan-500 font-bold tracking-[0.5em] uppercase"
+            style={{ textShadow: '0 0 10px rgba(34, 211, 238, 0.5)' }}>
+           СТРАТЕГІЧНЕ ЯДРО v56.1. МАЙБУТНЄ ТУТ.
          </p>
       </div>
       
