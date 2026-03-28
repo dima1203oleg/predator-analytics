@@ -109,13 +109,13 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <ShellProvider>
-            <AgentProvider>
-              <DisplayModeProvider>
-                <SensitiveDataProvider>
-                  <ToastProvider>
-                    <GlobalProvider>
-                      <UserProvider>
+          <UserProvider>
+            <ShellProvider>
+              <AgentProvider>
+                <DisplayModeProvider>
+                  <SensitiveDataProvider>
+                    <ToastProvider>
+                      <GlobalProvider>
                         <SuperIntelligenceProvider>
                         <AdvancedBackground />
                         <NeuralPulse />
@@ -140,13 +140,13 @@ function App() {
                           </>
                         )}
                         </SuperIntelligenceProvider>
-                      </UserProvider>
-                    </GlobalProvider>
-                  </ToastProvider>
-                </SensitiveDataProvider>
-              </DisplayModeProvider>
-            </AgentProvider>
-          </ShellProvider>
+                      </GlobalProvider>
+                    </ToastProvider>
+                  </SensitiveDataProvider>
+                </DisplayModeProvider>
+              </AgentProvider>
+            </ShellProvider>
+          </UserProvider>
         </BrowserRouter>
       </QueryClientProvider>
       {/* Global runtime error overlay (helps capture crashes during user actions) */}
