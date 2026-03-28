@@ -925,13 +925,13 @@ export const Sidebar = () => {
                 className="flex flex-col min-w-0"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-[16px] font-black text-white tracking-[0.1em] leading-none">
+                  <span className="text-[16px] font-black text-white tracking-[0.1em] leading-none uppercase">
                     PREDATOR
                   </span>
-                  <div className="px-1.5 py-0.5 bg-cyan-500/10 border border-cyan-500/30 rounded text-[7px] font-black text-cyan-400 tracking-widest">v56</div>
+                  <div className="px-1.5 py-0.5 bg-cyan-500/10 border border-cyan-500/30 rounded text-[7px] font-black text-cyan-400 tracking-widest uppercase">v56.1 NEXUS</div>
                 </div>
-                <span className="text-[8px] font-black text-slate-500 tracking-[0.35em] uppercase mt-1">
-                  NEXUS_PROTOCOL
+                <span className="text-[8px] font-black text-cyan-500/50 tracking-[0.35em] uppercase mt-1 animate-pulse">
+                  STRATEGIC_CORE
                 </span>
               </motion.div>
             )}

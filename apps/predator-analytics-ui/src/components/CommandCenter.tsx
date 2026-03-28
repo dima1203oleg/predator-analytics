@@ -17,8 +17,14 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
   const [logs, setLogs] = useState<CommandLog[]>([
     {
       id: 'init',
-      command: 'system info',
-      output: <span className="text-slate-400">Predator v45 | Neural Analytics<br />Kernel: Linux 5.15.0-generic (x86_64)<br />Node: k3s-master-01 [ONLINE]<br />Локаль: uk_UA.UTF-8<br />Використовуйте 'go [view]' для навігації.</span>,
+      command: 'nexus --version',
+      output: <span className="text-cyan-500 font-black tracking-widest uppercase">
+        PREDATOR v56.1 NEXUS | ЯДРО СТРАТЕГІЧНОЇ АНАЛІТИКИ<br />
+        <span className="text-white/40 text-[10px]">КЕРНЕЛЬ: NEXUS-OS 1.0.4-PREDATOR (x86_64)</span><br />
+        <span className="text-white/40 text-[10px]">ВУЗОЛ: NEXUS-PRIME-01 [ACTIVE]</span><br />
+        <span className="text-white/40 text-[10px]">МОВА: uk_UA.UTF-8</span><br />
+        <span className="text-cyan-400 mt-2 block italic">Введіть 'help' для переліку доступних команд.</span>
+      </span>,
       timestamp: new Date().toLocaleTimeString()
     }
   ]);
@@ -190,20 +196,19 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
     }
 
     switch (cmd) {
-      case 'help': return <span className="text-primary-400">
-        Доступні Команди:<br />
-        - go [view]: Навігація (напр., 'go god', 'go brain')<br />
-        - status: Перевірка здоров'я системи<br />
-        - scan: Швидке сканування загроз<br />
-        - lock: Блокування сесії<br />
-        - matrix: Перемикання візуального ефекту<br />
-        - clear: Очищення терміналу
+      case 'help': return <span className="text-cyan-500 font-bold uppercase tracking-widest text-[10px]">
+        ДОСТУПНІ ПРОТОКОЛИ NEXUS:<br />
+        - go [target]: СТРАТЕГІЧНА НАВІГАЦІЯ (напр., 'go analytics')<br />
+        - status: АУДИТ ЯДРА ТА СИСТЕМИ<br />
+        - scan: ГЛИБИННЕ ПОШУКОВЕ СКАНУВАННЯ<br />
+        - lock: МИТТЄВЕ БЛОКУВАННЯ ЯДРА<br />
+        - clear: ОЧИЩЕННЯ БУФЕРУ ЛОГІВ
       </span>;
       case 'clear': setLogs([]); return null;
-      case 'status': return <span className="text-success-500">ВСІ СИСТЕМИ ПРАЦЮЮТЬ. G-01 ПРОТОКОЛ АКТИВНИЙ.</span>;
+      case 'status': return <span className="text-cyan-400 font-black tracking-widest uppercase">БОЙОВА ГОТОВНІСТЬ 100%. ВСІ МОДУЛІ NEXUS ПІДКЛЮЧЕНО.</span>;
       case 'lock': onLock && onLock(); onClose(); return "Блокування...";
       case 'reboot': onReboot && onReboot(); onClose(); return "Перезавантаження...";
-      default: return <span className="text-red-500">Команду не знайдено: {cmd}</span>;
+      default: return <span className="text-red-500 font-black uppercase tracking-widest">ПОМИЛКА: НЕВІДОМИЙ ПРОТОКОЛ {cmd}</span>;
     }
   };
 
@@ -211,26 +216,30 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-safe pb-safe"
+      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl flex items-start justify-center pt-safe pb-safe"
       onClick={onClose}
     >
       <div
-        className={`w-full h-[100dvh] md:h-auto md:max-w-4xl border rounded-xl shadow-2xl  flex flex-col md:max-h-[700px] mt-0 md:mt-16 transition-all duration-300 panel-3d ${matrixMode ? 'bg-black border-green-500/50 shadow-[0_0_50px_rgba(0,255,0,0.2)]' : 'bg-slate-900 border-slate-700'}`}
+        className={`w-full h-[100dvh] md:h-auto md:max-w-4xl border rounded-2xl shadow-[0_0_100px_rgba(0,243,255,0.15)] flex flex-col md:max-h-[700px] mt-0 md:mt-16 transition-all duration-300 panel-3d overflow-hidden ${matrixMode ? 'bg-black border-cyan-500/50' : 'bg-[#010409] border-cyan-500/20'}`}
         onClick={e => e.stopPropagation()}
       >
+        <div className="hud-corner-nexus hud-corner-tl" />
+        <div className="hud-corner-nexus hud-corner-tr" />
+        <div className="hud-corner-nexus hud-corner-bl" />
+        <div className="hud-corner-nexus hud-corner-br" />
         {/* Matrix Canvas Background */}
         <div className="absolute inset-0 pointer-events-none z-0">
           {matrixMode && <canvas ref={canvasRef} className="w-full h-full opacity-30" />}
         </div>
 
         {/* Header */}
-        <div className={`p-3 flex items-center justify-between border-b shrink-0 select-none relative z-10 ${matrixMode ? 'bg-black border-green-900 text-green-500' : 'bg-slate-900 border-slate-800'}`}>
-          <div className="flex items-center gap-3 px-2">
-            <div className={`p-1.5 rounded ${matrixMode ? 'bg-green-900/20 text-green-500' : 'bg-slate-800 text-slate-400 icon-3d'}`}>
-              <Terminal size={16} />
+        <div className={`p-4 flex items-center justify-between border-b shrink-0 select-none relative z-10 ${matrixMode ? 'bg-black border-cyan-900 text-cyan-500' : 'bg-[#020817] border-cyan-500/10'}`}>
+          <div className="flex items-center gap-4 px-2">
+            <div className={`p-2 rounded-lg ${matrixMode ? 'bg-cyan-900/20 text-cyan-400' : 'bg-cyan-500/10 text-cyan-400'}`}>
+              <Terminal size={18} />
             </div>
-            <span className={`text-xs font-mono font-bold ${matrixMode ? 'text-green-500' : 'text-slate-200'}`}>
-              root@predator-core:~ {matrixMode ? '[MATRIX_MODE]' : ''}
+            <span className={`text-[11px] font-mono font-black uppercase tracking-widest ${matrixMode ? 'text-cyan-500' : 'text-slate-100'}`}>
+              root@nexus-core:~ {matrixMode ? '[NEXUS_MATRIX]' : ''}
             </span>
           </div>
           <div className="flex gap-2">

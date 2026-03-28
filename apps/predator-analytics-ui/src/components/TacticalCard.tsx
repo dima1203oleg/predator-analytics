@@ -95,7 +95,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
 
   const getVariantClass = () => {
     switch (variant) {
-      case 'glass': return 'glass-ultra';
+      case 'glass': return 'glass-hud';
       case 'minimal': return 'bg-transparent border-slate-800 hover:bg-slate-900/20 shadow-none';
       case 'holographic': return 'bg-gradient-to-br from-slate-900/90 via-[#0a1224] to-slate-950/90 border-cyan-500/30 backdrop-blur-2xl shadow-[0_0_20px_rgba(6,182,212,0.05)]';
       default: return 'bg-[#0a0f1c]/90 border-slate-800/80 backdrop-blur-3xl shadow-2xl glass-ultra'; // Cyber
@@ -120,23 +120,11 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
       {/* Decorative Elements */}
       {(variant === 'cyber' || variant === 'holographic') && (
         <>
-          {/* Corner Brackets */}
-          <div className="absolute top-0 left-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
-            <div className="absolute top-0 left-0 w-3 h-[1.5px] bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
-            <div className="absolute top-0 left-0 w-[1.5px] h-3 bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
-          </div>
-          <div className="absolute top-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
-            <div className="absolute top-0 right-0 w-3 h-[1.5px] bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
-            <div className="absolute top-0 right-0 w-[1.5px] h-3 bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
-          </div>
-          <div className="absolute bottom-0 left-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
-            <div className="absolute bottom-0 left-0 w-3 h-[1.5px] bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
-            <div className="absolute bottom-0 left-0 w-[1.5px] h-3 bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
-          </div>
-          <div className="absolute bottom-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
-            <div className="absolute bottom-0 right-0 w-3 h-[1.5px] bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
-            <div className="absolute bottom-0 right-0 w-[1.5px] h-3 bg-cyan-500 shadow-[0_0_8px_cyan]"></div>
-          </div>
+          {/* Nexus Corner Brackets */}
+          <div className="hud-corner-nexus hud-corner-tl" />
+          <div className="hud-corner-nexus hud-corner-tr" />
+          <div className="hud-corner-nexus hud-corner-bl" />
+          <div className="hud-corner-nexus hud-corner-br" />
 
           {/* Sweeping Reflective Stripe */}
           <motion.div
@@ -150,9 +138,11 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
           <div className="absolute inset-0 bg-cyber-noise opacity-[0.05] pointer-events-none z-0 rounded-[inherit]"></div>
 
           {variant === 'cyber' && <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none z-0"></div>}
-          {variant === 'holographic' && (
-            <div className="absolute -top-[100%] left-0 right-0 h-1/2 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent animate-scanline-fast opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity"></div>
-          )}
+          
+          {/* v56 Nexus Scanline */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="scanline-nexus" />
+          </div>
         </>
       )}
 

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { UserRole } from '../config/roles';
 import { SubscriptionTier, useUser } from '../context/UserContext';
-import { MatrixBackground } from './ui/MatrixBackground';
 
 interface LoginScreenProps {
     onLogin: () => void;
@@ -57,8 +56,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
     return (
         <div className="min-h-screen bg-[#010409] flex flex-col items-center justify-center p-6 relative overflow-hidden font-mono text-slate-200">
-            {/* Ambient Background & Matrix */}
-            <MatrixBackground />
+            {/* HUD Corners Nexus Style */}
+            <div className="hud-corner-nexus hud-corner-tl !border-cyan-500/40" />
+            <div className="hud-corner-nexus hud-corner-tr !border-cyan-500/40" />
+            <div className="hud-corner-nexus hud-corner-bl !border-cyan-500/40" />
+            <div className="hud-corner-nexus hud-corner-br !border-cyan-500/40" />
             
             {/* Tactical Grid Overlay */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#010409_100%),linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[length:100%_100%,45px_45px,45px_45px] opacity-20 pointer-events-none" />
@@ -103,7 +105,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         <h1 className="text-7xl font-black tracking-[0.2em] text-white mb-2 drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
                             PREDATOR <span className="text-cyan-400">ANALYTICS</span>
                         </h1>
-                        <p className="text-cyan-500/60 text-base tracking-[0.4em] uppercase font-bold mb-10">СУВЕРЕННИЙ ЦЕНТР УПРАВЛІННЯ ДАНИМИ • v56.Nexus</p>
+                        <p className="text-cyan-500/60 text-base tracking-[0.4em] uppercase font-bold mb-10">СУВЕРЕННИЙ ЦЕНТР УПРАВЛІННЯ ДАНИМИ • v56.1 NEXUS</p>
                         
                         <motion.div 
                             initial={{ width: 0 }}

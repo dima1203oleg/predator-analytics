@@ -1,5 +1,5 @@
 /**
- * PREDATOR v55.5 | Стратегічна Панель Управління — Реальні дані
+ * PREDATOR v56.1 NEXUS | Стратегічна Панель Управління — Реальні дані
  * Головний дашборд із підключенням до API: декларації, ризики, двигуни, алерти.
  */
 
@@ -331,10 +331,10 @@ const DashboardView: React.FC = () => {
   if (loading) {
     return (
       <PageTransition>
-        <div className="w-full min-h-screen flex items-center justify-center bg-[#020617]">
+        <div className="w-full min-h-screen flex items-center justify-center bg-[#010409]">
           <div className="flex flex-col items-center gap-6">
-            <Loader2 size={48} className="text-indigo-500 animate-spin" />
-            <p className="text-slate-400 text-sm uppercase tracking-widest font-black">Завантаження даних...</p>
+            <Loader2 size={48} className="text-cyan-500 animate-spin" />
+            <p className="text-cyan-500/60 text-sm uppercase tracking-[0.5em] font-black animate-pulse">ЗІСТАВЛЕННЯ НЕЙРОМЕРЕЖІ...</p>
           </div>
         </div>
       </PageTransition>
@@ -343,11 +343,11 @@ const DashboardView: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="w-full p-8 flex flex-col gap-10 relative bg-[#020617] font-sans pb-32">
+      <div className="w-full p-8 flex flex-col gap-10 relative bg-[#010409] font-sans pb-32">
         <AdvancedBackground />
-        <NeuralPulse color="rgba(99, 102, 241, 0.12)" size={1200} />
+        <NeuralPulse color="rgba(0, 243, 255, 0.08)" size={1200} />
         
-        <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-indigo-500/40 to-transparent z-50 opacity-20" />
+        <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-cyan-500/40 to-transparent z-50 opacity-20" />
         
         <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-12">
           
@@ -355,39 +355,39 @@ const DashboardView: React.FC = () => {
             title={
               <div className="flex items-center gap-8">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-indigo-500/30 blur-[60px] rounded-full scale-150 animate-pulse" />
-                  <div className="relative w-16 h-16 bg-slate-900 border border-white/10 rounded-3xl flex items-center justify-center panel-3d shadow-2xl overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/20 to-transparent" />
-                    <Satellite size={36} className="text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,1)] relative z-10" />
+                  <div className="absolute inset-0 bg-cyan-500/30 blur-[60px] rounded-full scale-150 animate-pulse" />
+                  <div className="relative w-16 h-16 bg-slate-900 border border-cyan-500/30 rounded-3xl flex items-center justify-center panel-3d shadow-2xl overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 to-transparent" />
+                    <Satellite size={36} className="text-cyan-400 drop-shadow-[0_0_15px_rgba(0,243,255,1)] relative z-10" />
                   </div>
                 </div>
                 <div>
                   <h1 className="text-5xl font-black text-white tracking-widest uppercase leading-none font-display skew-x-[-4deg]">
-                    АНАЛІТИЧНА <span className="text-rose-500">ПАНЕЛЬ</span>
+                    АНАЛІТИЧНА <span className="text-cyan-500">ПАНЕЛЬ</span>
                   </h1>
-                  <p className="text-[11px] font-mono font-black text-rose-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
+                  <p className="text-[11px] font-mono font-black text-cyan-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                     <Radio size={12} className="animate-pulse" /> 
-                    PREDATOR v55.5 // РЕАЛЬНІ_ДАНІ
+                    PREDATOR v56.1 NEXUS // LIVE_FEED
                   </p>
                 </div>
               </div>
             }
-            icon={<LayoutDashboard size={22} className="text-indigo-500" />}
-            breadcrumbs={['PREDATOR', 'АНАЛІТИКА', 'ДАШБОРД']}
+            icon={<LayoutDashboard size={22} className="text-cyan-500" />}
+            breadcrumbs={['PREDATOR', 'АНАЛІТИКА', 'NEXUS_CORE']}
             stats={[
               { label: 'ПОТУЖНІСТЬ', value: totalOPS > 0 ? `${formatNumber(totalOPS)} оп/с` : 'Н/Д', color: 'success', icon: <Cpu size={14} />, animate: true },
               { label: 'ТОП РИЗИК', value: topRisk > 0 ? `${topRisk}%` : 'Н/Д', color: topRisk > 80 ? 'danger' : 'warning', icon: <Flame size={14} /> },
-              { label: 'ДЕКЛАРАЦІЙ', value: hasData ? formatNumber(overview!.summary.total_declarations) : '0', color: 'primary', icon: <FileText size={14} /> }
+              { label: 'ДЕКЛАРАЦІЙ', value: hasData ? formatNumber(overview!.summary.total_declarations) : '0', color: 'cyan', icon: <FileText size={14} /> }
             ]}
             actions={
               <div className="flex gap-4">
                 <button 
                   onClick={fetchData}
                   disabled={refreshing}
-                  className="px-6 py-3.5 bg-white/5 border border-white/10 text-white rounded-[24px] text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-4 disabled:opacity-50 panel-3d"
+                  className="px-6 py-3.5 bg-black/40 border border-cyan-500/30 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-cyan-500/10 transition-all flex items-center gap-4 disabled:opacity-50 panel-3d"
                 >
-                  <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
-                  <span>ОНОВИТИ</span>
+                  <RefreshCw size={18} className={refreshing ? 'animate-spin text-cyan-400' : 'text-cyan-400'} />
+                  <span>ОНОВИТИ ЯДРО</span>
                 </button>
               </div>
             }
@@ -707,9 +707,9 @@ const DashboardView: React.FC = () => {
         </div>
 
         {/* Інформаційний тікер з реальними даними */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#02040a]/95 backdrop-blur-3xl border-t border-white/10 h-12 flex items-center overflow-hidden">
-          <div className="px-10 bg-indigo-600 h-full flex items-center shrink-0 border-r border-white/20 shadow-[10px_0_30px_rgba(79,70,229,0.5)] relative z-10">
-            <span className="text-[11px] font-black text-white uppercase tracking-[0.3em] whitespace-nowrap">СТРАТЕГІЧНИЙ ПРОТОКОЛ</span>
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-3xl border-t border-cyan-500/20 h-12 flex items-center overflow-hidden">
+          <div className="px-10 bg-cyan-600 h-full flex items-center shrink-0 border-r border-cyan-400/20 shadow-[10px_0_30px_rgba(0,243,255,0.3)] relative z-10">
+            <span className="text-[11px] font-black text-black uppercase tracking-[0.3em] whitespace-nowrap">NEXUS_STRATEGIC_LINK</span>
           </div>
           <div className="flex-1 flex items-center">
             <motion.div 

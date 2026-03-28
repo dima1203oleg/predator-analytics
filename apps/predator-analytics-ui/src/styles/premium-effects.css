@@ -213,3 +213,75 @@
     0 8px 32px rgba(6, 182, 212, 0.1),
     inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
+
+/* ============================================================================
+   PREDATOR v56 NEXUS — NEW CORE EFFECTS
+   ============================================================================ */
+
+/* ── NEXUS HUD CORNERS ── */
+.hud-corner-nexus {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+  z-index: 30;
+  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  opacity: 0.6;
+}
+
+.group:hover .hud-corner-nexus {
+  opacity: 1;
+  width: 16px;
+  height: 16px;
+}
+
+.hud-corner-tl { top: -1px; left: -1px; border-top: 2px solid var(--neon-cyan); border-left: 2px solid var(--neon-cyan); }
+.hud-corner-tr { top: -1px; right: -1px; border-top: 2px solid var(--neon-cyan); border-right: 2px solid var(--neon-cyan); }
+.hud-corner-bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--neon-cyan); border-left: 2px solid var(--neon-cyan); }
+.hud-corner-br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--neon-cyan); border-right: 2px solid var(--neon-cyan); }
+
+/* ── SCANLINE v56 ── */
+@keyframes nexus-scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+.scanline-nexus {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 243, 255, 0.03) 50%,
+    rgba(0, 243, 255, 0.08) 50.5%,
+    rgba(0, 243, 255, 0.03) 51%,
+    transparent 100%
+  );
+  height: 200%;
+  width: 100%;
+  z-index: 10;
+  pointer-events: none;
+  animation: nexus-scan 8s linear infinite;
+  opacity: 0.4;
+}
+
+/* ── GLOW NEON INTENSE ── */
+.glow-nexus-cyan {
+  box-shadow: 0 0 30px rgba(0, 243, 255, 0.1), inset 0 0 20px rgba(0, 243, 255, 0.05);
+}
+
+.glow-nexus-cyan:hover {
+  box-shadow: 0 0 50px rgba(0, 243, 255, 0.2), inset 0 0 30px rgba(0, 243, 255, 0.1);
+}
+
+/* ── GLASS HUD BASE ── */
+.glass-hud {
+  background: rgba(1, 4, 9, 0.75);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 243, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.glass-hud:hover {
+  border-color: rgba(0, 243, 255, 0.3);
+}

@@ -28,6 +28,8 @@ import QuickActionsBar from './components/premium/QuickActionsBar';
 import { ToasterProvider } from './components/premium/ToasterProvider';
 import { OfflineBanner } from './components/shared/OfflineBanner';
 import { CyberTerminal } from './components/ui/CyberTerminal';
+import AdvancedBackground from './components/AdvancedBackground';
+import NeuralPulse from './components/NeuralPulse';
 
 // Setup Query Client with optimized settings
 const queryClient = new QueryClient({
@@ -115,6 +117,8 @@ function App() {
                     <GlobalProvider>
                       <UserProvider>
                         <SuperIntelligenceProvider>
+                        <AdvancedBackground />
+                        <NeuralPulse />
                         {appState === 'BOOTING' && (
                           <BootScreen onComplete={handleBootComplete} />
                         )}

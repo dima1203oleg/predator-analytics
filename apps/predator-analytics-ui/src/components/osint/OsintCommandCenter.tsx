@@ -1,5 +1,5 @@
 /**
- * 🛰️ OSINT COMMAND CENTER v2.0
+ * 🛰️ OSINT COMMAND CENTER v3.0 NEXUS
  *
  * Потужна візуалізація OSINT-модуля PREDATOR Analytics.
  * Включає: 12 інструментів, 250+ реєстрів України, live feed, risk heatmap,
@@ -105,7 +105,7 @@ const RadarBackground: React.FC = () => {
             {[1, 2, 3, 4].map(i => (
                 <motion.div
                     key={i}
-                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-500/5"
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-500/10"
                     style={{ width: `${i * 25}%`, height: `${i * 25}%` }}
                     animate={{ scale: [1, 1.05, 1], opacity: [0.3, 0.15, 0.3] }}
                     transition={{ duration: 4 + i, repeat: Infinity, ease: 'easeInOut' }}
@@ -124,7 +124,7 @@ const RadarBackground: React.FC = () => {
             {Array.from({ length: 12 }).map((_, i) => (
                 <motion.div
                     key={`dot-${i}`}
-                    className="absolute w-1 h-1 rounded-full bg-emerald-400/30"
+                    className="absolute w-1 h-1 rounded-full bg-cyan-400/30"
                     style={{
                         left: `${15 + Math.random() * 70}%`,
                         top: `${10 + Math.random() * 80}%`,
@@ -427,15 +427,15 @@ export const OsintCommandCenter: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center h-[600px] gap-4">
+            <div className="flex flex-col items-center justify-center h-[600px] gap-4 bg-[#010409]">
                 <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
                 >
-                    <Radar size={48} className="text-emerald-500/60" />
+                    <Radar size={48} className="text-cyan-500/60" />
                 </motion.div>
-                <span className="text-[11px] uppercase font-black tracking-[0.3em] text-emerald-500/50 animate-pulse">
-                    ІНІЦІАЛІЗАЦІЯ OSINT ЯДРА...
+                <span className="text-[11px] uppercase font-black tracking-[0.3em] text-cyan-500/50 animate-pulse font-mono">
+                    ІНІЦІАЛІЗАЦІЯ OSINT NEXUS ЯДРА...
                 </span>
             </div>
         );
