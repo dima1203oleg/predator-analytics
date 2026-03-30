@@ -1,84 +1,76 @@
+# ================================================================
+# Ultra-Router v4.4 — Antigravity / Cline
+# PREDATOR Analytics — 2×Mistral + 2×Groq + 1×Gemini
+# Mistral = глобальний fallback ("останній рятівник")
+# ================================================================
+
 model_list:
-  # API
+  # ── CHAT (Gemini — стабільний для укр)
   - model_name: ultra-router-chat
     litellm_params:
       model: gemini/gemini-2.5-flash
-      api_key: ${GEMINI_API_KEY}
-      api_base: https://generativelanguage.googleapis.com/v1beta
+      api_key: os.environ/GEMINI_API_KEY
+
+  # ── FAST (два Groq — load-balance + failover між ключами)
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_1
 
   - model_name: ultra-router-fast
     litellm_params:
       model: groq/llama-3.3-70b-versatile
-      api_key: ${GROQ_API_KEY_1}
-      api_base: https://api.groq.com/openai/v1
+      api_key: os.environ/GROQ_API_KEY_2
 
-  - model_name: ultra-router-fast
+  # ── CODING (два Mistral — load-balance + глобальний рятівник)
+  - model_name: ultra-router-coding
     litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: ${GROQ_API_KEY_2}
-      api_base: https://api.groq.com/openai/v1
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_API_KEY_1
 
   - model_name: ultra-router-coding
     litellm_params:
       model: mistral/codestral-latest
-      api_key: ${MISTRAL_API_KEY_1}
-      api_base: https://api.mistral.ai/v1
+      api_key: os.environ/MISTRAL_API_KEY_2
 
-  - model_name: ultra-router-coding
-    litellm_params:
-      model: mistral/codestral-latest
-      api_key: ${MISTRAL_API_KEY_2}
-      api_base: https://api.mistral.ai/v1
-
-  # Локальний безлімітний режим (Ollama NVIDIA 194.177.1.240)
-  - model_name: ultra-router-local
-    litellm_params:
-      model: ollama/qwen3:8b
-      api_base: http://194.177.1.240:11434
-      timeout: 45
-
-  - model_name: ultra-router-local
-    litellm_params:
-      model: ollama/deepseek-r1:7b
-      api_base: http://194.177.1.240:11434
-      timeout: 45
-
-  - model_name: ultra-router-local
-    litellm_params:
-      model: ollama/gemma3:4b
-      api_base: http://194.177.1.240:11434
-      timeout: 45
-
-  # Auto
+  # ── AUTO (Gemini → Mistral → Groq, least-busy)
   - model_name: ultra-router-auto
     litellm_params:
-      model: complexity-router
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_API_KEY_1
+
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_1
 
 litellm_settings:
   routing_strategy: "least-busy"
-  num_retries: 5
-  request_timeout: 30
+  num_retries: 3
+  request_timeout: 25
+  allowed_fails: 3
+  cooldown_time: 30
+  success_callback: []
+  failure_callback: []
   fallbacks:
-    - {"ultra-router-chat": ["ultra-router-local"]}
-    - {"ultra-router-fast": ["ultra-router-local"]}
-    - {"ultra-router-coding": ["ultra-router-local"]}
-  default_fallbacks: ultra-router-local
+    - {"ultra-router-chat": ["ultra-router-coding"]}
+    - {"ultra-router-fast": ["ultra-router-coding"]}
+    - {"ultra-router-auto": ["ultra-router-coding"]}
+  default_fallbacks: ["ultra-router-coding"]
 
-complexity_router_config:
-  tiers:
-    SIMPLE: ultra-router-chat
-    MEDIUM: ultra-router-coding
-    COMPLEX: ultra-router-fast
-    REASONING: ultra-router-fast
-  custom_markers:
-    - "покроково"
-    - "розбери"
-    - "аналізуй"
-    - "що буде якщо"
-    - "напиши код"
-    - "рефактори"
-  default_model: ultra-router-chat
+router_settings:
+  routing_strategy: "least-busy"
+  num_retries: 3
+  timeout: 25
+  retry_after: 3
+  cooldown_time: 30
 
 general_settings:
-  master_key: ${LITELLM_MASTER_KEY}
-  enable_health_check: true
+  store_model_in_db: false
+  disable_spend_logs: true
+  disable_reset_budget: true
