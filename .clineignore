@@ -42,3 +42,8 @@ coverage/
 .ruff_cache/
 .mypy_cache/
 .eslintcache/
+
+# Захист LiteLLM/Ultra-Router конфігів (Cline не повинен їх редагувати)
+deploy/litellm/docker-compose-router.yml
+deploy/litellm/config-antigravity.yaml
+deploy/litellm/.env.ultra-router
