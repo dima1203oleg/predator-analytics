@@ -1,7 +1,10 @@
 services:
   ultra-router:
-    image: ghcr.io/berriai/litellm:main-stable
-    container_name: ultra-router-v4.4
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ultra-router:v5.0
+    container_name: ultra-router-v5.0
     ports:
       - "4000:4000"
     environment:

@@ -1,85 +1,77 @@
-# ================================================================
-# Ultra-Router v4.4 — Antigravity / Cline
-# PREDATOR Analytics v55.3 — 2×Mistral + 2×Groq + 1×Gemini
-# Mistral = глобальний fallback ("останній рятівник")
-# ================================================================
-
 model_list:
-  # ── CHAT (один Gemini — стабільний для укр)
+  # 🟢 API Group: CHAT (Gemini)
   - model_name: ultra-router-chat
     litellm_params:
       model: gemini/gemini-2.5-flash
-      api_key: os.environ/GEMINI_API_KEY
+      api_key: ${GEMINI_API_KEY}
+      api_base: https://generativelanguage.googleapis.com/v1beta
+      timeout: 10
 
-  # ── FAST = VIBE CODING (два Groq — load-balance + auto failover між ключами)
+  # 🟠 API Group: FAST (Groq x2)
   - model_name: ultra-router-fast
     litellm_params:
       model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_1
+      api_key: ${GROQ_API_KEY_1}
+      api_base: https://api.groq.com/openai/v1
+      timeout: 10
 
   - model_name: ultra-router-fast
     litellm_params:
       model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_2
+      api_key: ${GROQ_API_KEY_2}
+      api_base: https://api.groq.com/openai/v1
+      timeout: 10
 
-  # ── CODING (два Mistral — load-balance + fallback; також глобальний рятівник)
+  # 🔵 API Group: CODING (Mistral x2)
   - model_name: ultra-router-coding
     litellm_params:
       model: mistral/codestral-latest
-      api_key: os.environ/MISTRAL_API_KEY_1
+      api_key: ${MISTRAL_API_KEY_1}
+      api_base: https://api.mistral.ai/v1
+      timeout: 15
 
   - model_name: ultra-router-coding
     litellm_params:
       model: mistral/codestral-latest
-      api_key: os.environ/MISTRAL_API_KEY_2
+      api_key: ${MISTRAL_API_KEY_2}
+      api_base: https://api.mistral.ai/v1
+      timeout: 15
 
-  # ── AUTO: complexity-based routing (порядок = тір складності)
-  #   SIMPLE  (<500 токенів)  → Gemini  ("привіт", "поясни")
-  #   MEDIUM  (500–2000)      → Mistral ("напиши функцію", код)
-  #   COMPLEX (>2000)         → Groq    ("покроково", "аналізуй")
+  # 🟣 LOCAL Group: Unlimited (Ollama x3 from NVIDIA Server)
+  - model_name: ultra-router-local
+    litellm_params:
+      model: ollama/qwen3:8b
+      api_base: http://194.177.1.240:11434
+      timeout: 30
+
+  - model_name: ultra-router-local
+    litellm_params:
+      model: ollama/deepseek-r1:7b
+      api_base: http://194.177.1.240:11434
+      timeout: 30
+
+  - model_name: ultra-router-local
+    litellm_params:
+      model: ollama/gemma3:4b
+      api_base: http://194.177.1.240:11434
+      timeout: 30
+
+  # 🤖 AUTO: Complexity Router (selects group based on query)
   - model_name: ultra-router-auto
     litellm_params:
-      model: gemini/gemini-2.5-flash
-      api_key: os.environ/GEMINI_API_KEY
-  - model_name: ultra-router-auto
-    litellm_params:
-      model: mistral/codestral-latest
-      api_key: os.environ/MISTRAL_API_KEY_1
-  - model_name: ultra-router-auto
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_1
+      model: router
 
 litellm_settings:
-  routing_strategy: "least-busy"
+  master_key: ${LITELLM_MASTER_KEY}
+  routing_strategy: least-busy
   num_retries: 5
-  request_timeout: 25
-  allowed_fails: 4
-  cooldown_time: 60
-  success_callback: []
-  failure_callback: []
+  request_timeout: 30
+  fallback_strategy: exponential_backoff
+  
   fallbacks:
-    - {"ultra-router-chat": ["ultra-router-coding"]}
-    - {"ultra-router-fast": ["ultra-router-coding"]}
-    - {"ultra-router-auto": ["ultra-router-coding"]}
-  default_fallbacks: ["ultra-router-coding"]
-
-router_settings:
-  routing_strategy: "least-busy"
-  num_retries: 5
-  timeout: 25
-  retry_after: 3
-  cooldown_time: 60
-
-# ── Маркери складності (документація / майбутнє middleware)
-# COMPLEX/REASONING: покроково, розбери, аналізуй, що буде якщо
-# MEDIUM/CODING:     напиши код, рефактори
-# SIMPLE:            привіт, поясни, що таке
-# default_model: ultra-router-chat
-
-general_settings:
-  store_model_in_db: false
-  disable_spend_logs: true
-  disable_reset_budget: true
-  # master_key не потрібен для локального запуску без БД
-  # Cline / Antigravity: використовуй будь-який ключ, наприклад sk-antigravity-master-2026
+    - {"ultra-router-chat": ["ultra-router-local"]}
+    - {"ultra-router-fast": ["ultra-router-local"]}
+    - {"ultra-router-coding": ["ultra-router-local"]}
+  
+  default_fallbacks:
+    - ultra-router-local

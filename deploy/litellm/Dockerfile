@@ -37,10 +37,7 @@ RUN groupadd -r predator && useradd -r -g predator predator
 COPY --from=base /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
 # Копіювати конфіг
-COPY config-stateless.yaml ./config.yaml
-COPY config_py.py ./config_py.py
-
-# Копіювати скрипт запуску
+COPY config-antigravity.yaml ./config.yaml
 COPY run-proxy.py ./run-proxy.py
 
 # Директорія логів
