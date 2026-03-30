@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
 import logging
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Dict # Додано Dict для більш точної типізації
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ class RiskFactor:
     description: str
     weight: int  # 0-100
     detected: bool = False
-    details: dict[str, Any] = field(default_factory=dict)
+    details: Dict[str, Any] = field(default_factory=dict)
     source: str = ""
 
 
@@ -190,7 +190,7 @@ class AMLScoringService:
         entity_id: str,
         entity_name: str,
         entity_type: str,
-        data: dict[str, Any],
+        data: Dict[str, Any], # Властивості словника можуть бути довільними
     ) -> RiskScore:
         """Розрахунок AML-скору для сутності."""
         factors = []
@@ -265,7 +265,7 @@ class AMLScoringService:
 
         return min(100, normalized_score)
 
-    async def _check_sanctions(self, data: dict[str, Any]) -> RiskFactor:
+    async def _check_sanctions(self, data: Dict[str, Any]) -> RiskFactor: # Властивості словника можуть бути довільними
         """Перевірка санкційних списків."""
         sanctions_data = data.get("sanctions", {})
         is_sanctioned = sanctions_data.get("is_sanctioned", False)
@@ -284,7 +284,7 @@ class AMLScoringService:
             source="sanctions_registry",
         )
 
-    async def _check_criminal_cases(self, data: dict[str, Any]) -> RiskFactor:
+    async def _check_criminal_cases(self, data: Dict[str, Any]) -> RiskFactor: # Властивості словника можуть бути довільними
         """Перевірка кримінальних справ."""
         court_cases = data.get("court_cases", [])
 
@@ -309,7 +309,7 @@ class AMLScoringService:
             source="court_registry",
         )
 
-    async def _check_tax_debts(self, data: dict[str, Any]) -> RiskFactor:
+    async def _check_tax_debts(self, data: Dict[str, Any]) -> RiskFactor: # Властивості словника можуть бути довільними
         """Перевірка податкових боргів."""
         tax_data = data.get("tax", {})
         debt_amount = tax_data.get("debt_amount", 0)
@@ -330,7 +330,7 @@ class AMLScoringService:
             source="tax_registry",
         )
 
-    async def _check_offshore_connections(self, data: dict[str, Any]) -> RiskFactor:
+    async def _check_offshore_connections(self, data: Dict[str, Any]) -> RiskFactor: # Властивості словника можуть бути довільними
         """Перевірка офшорних зв'язків."""
         founders = data.get("founders", [])
         beneficiaries = data.get("beneficiaries", [])
@@ -361,7 +361,7 @@ class AMLScoringService:
             source="edr",
         )
 
-    async def _check_shell_company_signs(self, data: dict[str, Any]) -> RiskFactor:
+    async def _check_shell_company_signs(self, data: Dict[str, Any]) -> RiskFactor: # Властивості словника можуть бути довільними
         """Перевірка ознак фіктивної компанії."""
         signs = []
 
@@ -400,7 +400,7 @@ class AMLScoringService:
             source="edr",
         )
 
-    async def _check_management_changes(self, data: dict[str, Any]) -> RiskFactor:
+    async def _check_management_changes(self, data: Dict[str, Any]) -> RiskFactor: # Властивості словника можуть бути довільними
         """Перевірка частоти зміни керівництва."""
         management_history = data.get("management_history", [])
 
@@ -424,7 +424,7 @@ class AMLScoringService:
             source="edr",
         )
 
-    async def _check_mass_registration(self, data: dict[str, Any]) -> RiskFactor:
+    async def _check_mass_registration(self, data: Dict[str, Any]) -> RiskFactor: # Властивості словника можуть бути довільними
         """Перевірка масової реєстрації на одну адресу."""
         address_data = data.get("address", {})
         companies_at_address = address_data.get("companies_count", 1)
@@ -443,7 +443,7 @@ class AMLScoringService:
             source="edr",
         )
 
-    async def _check_pep_status(self, data: dict[str, Any]) -> RiskFactor:
+    async def _check_pep_status(self, data: Dict[str, Any]) -> RiskFactor: # Властивості словника можуть бути довільними
         """Перевірка статусу PEP (Politically Exposed Person)."""
         pep_data = data.get("pep", {})
         is_pep = pep_data.get("is_pep", False)
@@ -462,7 +462,7 @@ class AMLScoringService:
             source="pep_registry",
         )
 
-    async def _check_beneficial_ownership(self, data: dict[str, Any]) -> RiskFactor:
+    async def _check_beneficial_ownership(self, data: Dict[str, Any]) -> RiskFactor: # Властивості словника можуть бути довільними
         """Перевірка бенефіціарної власності."""
         beneficiaries = data.get("beneficiaries", [])
 
@@ -496,7 +496,7 @@ class AMLScoringService:
             source="edr",
         )
 
-    async def _check_financial_indicators(self, data: dict[str, Any]) -> RiskFactor:
+    async def _check_financial_indicators(self, data: Dict[str, Any]) -> RiskFactor: # Властивості словника можуть бути довільними
         """Перевірка фінансових показників."""
         financial = data.get("financial", {})
 
@@ -536,7 +536,7 @@ class AMLScoringService:
 
     async def batch_calculate(
         self,
-        entities: list[dict[str, Any]],
+        entities: list[Dict[str, Any]], # Властивості словника можуть бути довільними
     ) -> list[RiskScore]:
         """Пакетний розрахунок скорів."""
         results = []
@@ -552,7 +552,7 @@ class AMLScoringService:
 
         return results
 
-    def get_risk_distribution(self, scores: list[RiskScore]) -> dict[str, int]:
+    def get_risk_distribution(self, scores: list[RiskScore]) -> Dict[str, int]: # Властивості словника можуть бути довільними
         """Розподіл ризиків."""
         distribution = {level.value: 0 for level in RiskLevel}
 

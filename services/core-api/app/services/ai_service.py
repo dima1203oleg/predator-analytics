@@ -2,7 +2,7 @@
 
 LiteLLM wrapper for Copilot, RAG, and automated insights.
 """
-from typing import Any
+from typing import Any, Dict # Додано Dict для більш точної типізації
 
 import httpx
 
@@ -13,7 +13,7 @@ settings = get_settings()
 class AIService:
     @staticmethod
     async def chat_completion(
-        messages: list[dict[str, str]],
+        messages: list[Dict[str, str]], # Властивості словника можуть бути довільними
         model: str | None = None
     ) -> str:
         """Виклик LiteLLM для отримання відповіді."""
@@ -42,7 +42,7 @@ class AIService:
         return "AI Error: Unexpected path"
 
     @staticmethod
-    async def generate_insight(prompt: str, context: dict[str, Any] | None = None) -> str:
+    async def generate_insight(prompt: str, context: Dict[str, Any] | None = None) -> str: # Властивості словника можуть бути довільними
         """Виклик Sovereign Advisor через MCP Router (v55.2).
         Використовується для складної аналітики та інтерпретації ризиків.
         """

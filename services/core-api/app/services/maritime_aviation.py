@@ -11,7 +11,7 @@ from datetime import UTC, datetime
 from enum import StrEnum
 import logging
 import os
-from typing import Any
+from typing import Any, Dict # Додано Dict для більш точної типізації
 
 import httpx
 
@@ -639,7 +639,7 @@ class MaritimeAviationService:
         self.marine_client = MarineTrafficClient()
         self.flight_client = FlightRadarClient()
 
-    async def track_vessel(self, mmsi: str) -> dict[str, Any]:
+    async def track_vessel(self, mmsi: str) -> Dict[str, Any]: # Властивості словника можуть бути довільними
         """Повне відстеження судна."""
         position = await self.marine_client.get_vessel_position(mmsi)
         info = await self.marine_client.get_vessel_info(mmsi)
@@ -674,7 +674,7 @@ class MaritimeAviationService:
             ],
         }
 
-    async def track_aircraft(self, registration: str) -> dict[str, Any]:
+    async def track_aircraft(self, registration: str) -> Dict[str, Any]: # Властивості словника можуть бути довільними
         """Повне відстеження літака."""
         position = await self.flight_client.get_aircraft_position(registration)
         history = await self.flight_client.get_flight_history(registration)
@@ -704,9 +704,9 @@ class MaritimeAviationService:
         lon_max: float,
         include_vessels: bool = True,
         include_aircraft: bool = True,
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]: # Властивості словника можуть бути довільними
         """Пошук суден та літаків у заданому районі."""
-        result: dict[str, Any] = {
+        result: Dict[str, Any] = { # Властивості словника можуть бути довільними
             "bounds": {
                 "lat_min": lat_min,
                 "lat_max": lat_max,

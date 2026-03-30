@@ -5,7 +5,7 @@ from datetime import UTC, date, datetime
 from enum import StrEnum
 import logging
 import os
-from typing import Any
+from typing import Any, Dict # Додано Dict для більш точної типізації
 
 import httpx
 
@@ -282,7 +282,7 @@ class UkraineRegistriesService:
         self.prozorro_api_url = settings.PROZORRO_API_URL
         self.dps_api_url = "https://cabinet.tax.gov.ua/api"
 
-    async def get_registries_status(self) -> dict[str, Any]:
+    async def get_registries_status(self) -> Dict[str, Any]: # Властивості словника можуть бути довільними
         """Отримати статус підключення до всіх реєстрів у форматі для UI."""
         edr_status = "online" if self.edr_api_key and "mock" not in self.edr_api_key.lower() else "mock"
         court_status = "online" if self.court_api_key and "mock" not in self.court_api_key.lower() else "mock"
@@ -339,7 +339,7 @@ class UkraineRegistriesService:
             }
         ]
 
-        all_registries: list[dict[str, Any]] = []
+        all_registries: list[Dict[str, Any]] = [] # Властивості словника можуть бути довільними
         for cat in categories:
             reg_list = cat.get("registries", [])
             if isinstance(reg_list, list):
@@ -652,7 +652,7 @@ class UkraineRegistriesService:
 
     # ======================== КОМПЛЕКСНЕ РОЗСЛІДУВАННЯ ========================
 
-    async def investigate_company(self, edrpou: str) -> dict[str, Any]:
+    async def investigate_company(self, edrpou: str) -> Dict[str, Any]: # Властивості словника можуть бути довільними
         """Повне розслідування компанії."""
         company = await self.get_company(edrpou)
         vat = await self.check_vat_status(edrpou)
@@ -710,7 +710,7 @@ class UkraineRegistriesService:
             },
         }
 
-    async def investigate_person(self, rnokpp: str, name: str) -> dict[str, Any]:
+    async def investigate_person(self, rnokpp: str, name: str) -> Dict[str, Any]: # Властивості словника можуть бути довільними
         """Повне розслідування фізичної особи."""
         sanctions = await self.check_sanctions(name, rnokpp=rnokpp)
         real_estate = await self.search_real_estate(owner_rnokpp=rnokpp)
