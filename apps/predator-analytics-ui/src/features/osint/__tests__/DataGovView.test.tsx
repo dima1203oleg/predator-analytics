@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import DataGovView from '../DataGovView';
 import { apiClient } from '@/services/api/config';
 
@@ -59,6 +59,17 @@ vi.mock('@/services/api/config', () => ({
     }
 }));
 
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        isTruthOnly: true,
+        modeLabel: 'Режим правдивих даних',
+        sourceLabel: 'localhost:9080/api/v1',
+        sourceType: 'local',
+        statusLabel: 'Зʼєднання активне',
+    }),
+}));
+
 vi.mock('@/components/layout/PageTransition', () => ({
     PageTransition: ({ children }: any) => <div>{children}</div>
 }));
@@ -107,6 +118,7 @@ describe('DataGovView', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         // Default success mock - ensuring it matches the exact data structure expected by the component
         (apiClient.get as any).mockResolvedValue({ 
             data: { 
@@ -116,12 +128,19 @@ describe('DataGovView', () => {
         });
     });
 
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
     it('повинен відмальовувати основні елементи інтерфейсу', async () => {
         render(<DataGovView />);
         
         expect(screen.getByText(/ВІДКРИТІ/i)).toBeInTheDocument();
         expect(screen.getByText(/ДАНІ/i)).toBeInTheDocument();
         expect(screen.getByPlaceholderText(/ПОШУК ПО МІЛЬЙОНАХ/i)).toBeInTheDocument();
+        await waitFor(() => {
+            expect(apiClient.get).toHaveBeenCalled();
+        });
     });
 
     it('повинен завантажувати та відображати лічильник результатів', async () => {
@@ -208,7 +227,17 @@ describe('DataGovView', () => {
         
         render(<DataGovView />);
 
-        const errorMessage = await screen.findByText(/Не вдалося отримати дані/i);
+        const errorMessage = await screen.findByText(/Не вдалося отримати.*дані/i);
         expect(errorMessage).toBeInTheDocument();
+    });
+
+    it('не підмінює дані локальними реєстрами при збої API', async () => {
+        (apiClient.get as any).mockRejectedValueOnce(new Error('Network Error'));
+
+        render(<DataGovView />);
+
+        expect(await screen.findByText(/НЕМАЄ ПІДТВЕРДЖЕНИХ ДАНИХ/i)).toBeInTheDocument();
+        expect(screen.queryByText('DATASET_ALPHA')).not.toBeInTheDocument();
+        expect(screen.getByText(/Локальні датасети не підставляються/i)).toBeInTheDocument();
     });
 });

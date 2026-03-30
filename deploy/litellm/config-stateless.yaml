@@ -1,0 +1,111 @@
+# ═══════════════════════════════════════════════════════════════
+# 🔥 ULTRA-ROUTER v55.3 — STATELESS MODE (БЕЗПЛАТНІ ПРОВАЙДЕРИ)
+# ═══════════════════════════════════════════════════════════════
+
+port: 4000
+host: "0.0.0.0"
+
+# ❌ БД ВИМКНЕНО
+# database_url: ""
+# callbacks: []
+
+# ═══════════════════════════════════════════════════════════════
+# МОДЕЛІ (тільки безплатні)
+# ═══════════════════════════════════════════════════════════════
+
+model_list:
+  # 🚀 GROQ (ОСНОВНА) — 10 ключів
+  - model_name: "groq-fast"
+    litellm_params:
+      model: "groq/llama-3.3-70b-versatile"
+      api_key: "gsk_test_1"
+      timeout: 30
+      temperature: 0.7
+      max_tokens: 2048
+
+  - model_name: "groq-fast-2"
+    litellm_params:
+      model: "groq/llama-3.3-70b-versatile"
+      api_key: "gsk_test_2"
+      timeout: 30
+
+  - model_name: "groq-fast-3"
+    litellm_params:
+      model: "groq/llama-3.3-70b-versatile"
+      api_key: "gsk_test_3"
+      timeout: 30
+
+  - model_name: "groq-fast-4"
+    litellm_params:
+      model: "groq/llama-3.3-70b-versatile"
+      api_key: "gsk_test_4"
+      timeout: 30
+
+  - model_name: "groq-fast-5"
+    litellm_params:
+      model: "groq/llama-3.3-70b-versatile"
+      api_key: "gsk_test_5"
+      timeout: 30
+
+  # 📚 HUGGINGFACE (резерв)
+  - model_name: "hf-llama2"
+    litellm_params:
+      model: "huggingface/meta-llama/Llama-2-70b-chat-hf"
+      api_key: "hf_test_key"
+      timeout: 60
+      temperature: 0.7
+
+  # 🤝 TOGETHER AI
+  - model_name: "together-llama3"
+    litellm_params:
+      model: "together_ai/meta-llama/Llama-3-70b-chat-hf"
+      api_key: "together_test_key"
+      timeout: 45
+      temperature: 0.7
+
+  # 🖥️ OLLAMA (локально)
+  - model_name: "ollama-llama2"
+    litellm_params:
+      model: "ollama/llama2"
+      api_base: "http://194.177.1.240:11434"
+      timeout: 120
+      temperature: 0.7
+
+# ═══════════════════════════════════════════════════════════════
+# ROUTER (маршрутизація)
+# ═══════════════════════════════════════════════════════════════
+
+router_settings:
+  enable_model_routing: true
+  track_cost_per_token: false  # ❌ БЕЗ ПІДКЛЮЧЕННЯ ДО БД
+  track_all_requests: false    # ❌ БЕЗ ПІДКЛЮЧЕННЯ ДО БД
+  enable_rotation: true
+  rotation_strategy: "round_robin"
+
+# ═══════════════════════════════════════════════════════════════
+# ЛОГУВАННЯ (в файл, без БД)
+# ═══════════════════════════════════════════════════════════════
+
+logging_config:
+  version: 1
+  disable_existing_loggers: false
+  formatters:
+    standard:
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  handlers:
+    file:
+      class: logging.handlers.RotatingFileHandler
+      level: INFO
+      formatter: standard
+      filename: /var/log/litellm/router.log
+      maxBytes: 10485760
+      backupCount: 5
+    console:
+      class: logging.StreamHandler
+      level: INFO
+      formatter: standard
+  root:
+    level: INFO
+    handlers:
+      - file
+      - console

@@ -15,35 +15,101 @@ model_list:
       model: mistral/codestral-latest
       api_key: ${MISTRAL_API_KEY}
       api_base: https://api.mistral.ai/v1
-      timeout: 120
-      stream_timeout: 300
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: ${MISTRAL_API_KEY_2}
+      api_base: https://api.mistral.ai/v1
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: ${MISTRAL_API_KEY_3}
+      api_base: https://api.mistral.ai/v1
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: ${MISTRAL_API_KEY_4}
+      api_base: https://api.mistral.ai/v1
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: ${MISTRAL_API_KEY_5}
+      api_base: https://api.mistral.ai/v1
 
   - model_name: ultra-router-coding
     litellm_params:
       model: deepseek/deepseek-coder
       api_key: ${DEEPSEEK_API_KEY}
       api_base: https://api.deepseek.com/v1
-      timeout: 120
-      stream_timeout: 300
 
   # ==============================================================
   # FAST — Швидкі відповіді, низька латентність
   # ==============================================================
   - model_name: ultra-router-fast
     litellm_params:
-      model: gemini/gemini-3.1-flash-lite
+      model: gemini/gemini-1.5-flash
       api_key: ${GEMINI_API_KEY}
-      api_base: https://generativelanguage.googleapis.com/v1beta
-      timeout: 30
-      stream_timeout: 60
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: gemini/gemini-1.5-flash
+      api_key: ${GEMINI_API_KEY_2}
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: gemini/gemini-1.5-flash
+      api_key: ${GEMINI_API_KEY_3}
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: gemini/gemini-1.5-flash
+      api_key: ${GEMINI_API_KEY_4}
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: gemini/gemini-1.5-flash
+      api_key: ${GEMINI_API_KEY_5}
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: gemini/gemini-1.5-flash
+      api_key: ${GEMINI_API_KEY_6}
 
   - model_name: ultra-router-fast
     litellm_params:
-      model: groq/llama3-405b
+      model: groq/llama-3.3-70b-versatile
       api_key: ${GROQ_API_KEY}
-      api_base: https://api.groq.com/openai/v1
-      timeout: 30
-      stream_timeout: 60
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: ${GROQ_API_KEY_2}
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: ${GROQ_API_KEY_3}
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: ${GROQ_API_KEY_4}
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: ${GROQ_API_KEY_5}
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: ${GROQ_API_KEY_6}
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: ${GROQ_API_KEY_7}
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: ${GROQ_API_KEY_8}
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: ${GROQ_API_KEY_9}
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: ${GROQ_API_KEY_10}
 
   # ==============================================================
   # REASONING — Глибокий аналіз та міркування
@@ -53,21 +119,17 @@ model_list:
       model: together_ai/Qwen/Qwen2.5-72B-Instruct-Turbo
       api_key: ${TOGETHER_API_KEY}
       api_base: https://api.together.xyz/v1
-      timeout: 180
-      stream_timeout: 600
 
   # ==============================================================
   # CHAT — Загальний чат
   # ==============================================================
   - model_name: ultra-router-chat
     litellm_params:
-      model: gemini/gemini-3.1-flash-lite
+      model: gemini/gemini-1.5-flash
       api_key: ${GEMINI_API_KEY}
-      timeout: 60
-      stream_timeout: 120
 
 # ================================================================
-# Загальні налаштування LiteLLM
+# Загальні налаштування LiteLLM (Без БД)
 # ================================================================
 general_settings:
   master_key: ${LITELLM_MASTER_KEY}
@@ -75,29 +137,25 @@ general_settings:
   store_model_in_db: false
 
 litellm_settings:
-  # Стратегія маршрутизації: вибирає найменш завантажену модель
   routing_strategy: "least-busy"
-  num_retries: 3
-  request_timeout: 15
-
-  # Fallback ланцюжки: якщо coding недоступний → fast, і навпаки
+  num_retries: 5
+  request_timeout: 45
+  fallbacks_verbose: false
+  
+  # ВИМКНЕНО БАЗУ ДАНИХ ТА ЛОГУВАННЯ (Fixing 400 error)
+  success_callback: []
+  failure_callback: []
+  metadata_callback: []
+  
   fallbacks:
     - {"ultra-router-coding": ["ultra-router-fast"]}
     - {"ultra-router-fast": ["ultra-router-coding"]}
     - {"ultra-router-reasoning": ["ultra-router-coding"]}
     - {"ultra-router-chat": ["ultra-router-fast"]}
 
-  # Без зовнішніх SaaS (HR-15)
-  log_level: INFO
-  success_callback: []
-  failure_callback: []
-  set_verbose: false
-
-# ================================================================
-# Router налаштування
-# ================================================================
 router_settings:
   routing_strategy: "least-busy"
-  num_retries: 3
+  num_retries: 5
   timeout: 120
   retry_after: 3
+  cooldown_time: 1
