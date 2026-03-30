@@ -1,0 +1,40 @@
+# ===========================================
+# PREDATOR Analytics - Performance Tuning
+# ===========================================
+
+# Ігноруємо важкі папки для прискорення Checkpoints
+node_modules/
+**/node_modules/
+.venv/
+**/.venv/
+dist/
+**/dist/
+build/
+**/build/
+__pycache__/
+**/__pycache__/
+.git/
+.idea/
+.vscode/
+.next/
+
+# Медіа та бінарні файли
+*.mp4
+*.mov
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+*.zip
+*.tar.gz
+
+# Тимчасові файли
+tmp/
+logs/
+*.log
+coverage/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.eslintcache/
