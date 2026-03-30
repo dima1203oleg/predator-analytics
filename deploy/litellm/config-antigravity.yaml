@@ -11,7 +11,7 @@ model_list:
       model: gemini/gemini-2.5-flash
       api_key: os.environ/GEMINI_API_KEY
 
-  # ── FAST (два Groq — load-balance + failover між ключами)
+  # ── FAST (3 Groq від різних акаунтів — незалежні rate-limit)
   - model_name: ultra-router-fast
     litellm_params:
       model: groq/llama-3.3-70b-versatile
@@ -21,6 +21,31 @@ model_list:
     litellm_params:
       model: groq/llama-3.3-70b-versatile
       api_key: os.environ/GROQ_API_KEY_2
+
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_3
+
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_4
+
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_5
+
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_6
+
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_7
 
   # ── CODING (два Mistral — load-balance + глобальний рятівник)
   - model_name: ultra-router-coding
@@ -58,6 +83,31 @@ model_list:
     litellm_params:
       model: groq/llama-3.3-70b-versatile
       api_key: os.environ/GROQ_API_KEY_2
+
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_3
+
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_4
+
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_5
+
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_6
+
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_7
 
 litellm_settings:
   routing_strategy: "least-busy"
