@@ -7,6 +7,10 @@ node_modules/
 **/node_modules/
 .venv/
 **/.venv/
+venv/
+**/venv/
+heavy_module/
+**/heavy_module/
 dist/
 **/dist/
 build/
