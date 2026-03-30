@@ -1,0 +1,77 @@
+model_list:
+  # 🟢 API Group: CHAT (Mock - для тестування)
+  - model_name: ultra-router-chat
+    litellm_params:
+      model: openai/gpt-3.5-turbo
+      api_key: sk-test-chat-key
+      api_base: https://api.openai.com/v1
+      timeout: 5  # Короткий timeout для форсування fallback
+
+  # 🟠 API Group: FAST (Mock x2)
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: openai/gpt-3.5-turbo
+      api_key: sk-test-fast-1
+      api_base: https://api.openai.com/v1
+      timeout: 5
+
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: openai/gpt-3.5-turbo
+      api_key: sk-test-fast-2
+      api_base: https://api.openai.com/v1
+      timeout: 5
+
+  # 🔵 API Group: CODING (Mock x2)
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: openai/gpt-4
+      api_key: sk-test-coding-1
+      api_base: https://api.openai.com/v1
+      timeout: 5
+
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: openai/gpt-4
+      api_key: sk-test-coding-2
+      api_base: https://api.openai.com/v1
+      timeout: 5
+
+  # 🟣 LOCAL Group: Mock Ollama (Localhost)
+  - model_name: ultra-router-local
+    litellm_params:
+      model: ollama/qwen3:8b
+      api_base: http://localhost:11434
+      timeout: 10
+
+  - model_name: ultra-router-local
+    litellm_params:
+      model: ollama/deepseek-r1:7b
+      api_base: http://localhost:11434
+      timeout: 10
+
+  - model_name: ultra-router-local
+    litellm_params:
+      model: ollama/gemma3:4b
+      api_base: http://localhost:11434
+      timeout: 10
+
+  # 🤖 AUTO: Complexity Router
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: router
+
+litellm_settings:
+  master_key: ${LITELLM_MASTER_KEY:-sk-antigravity-master-2026}
+  routing_strategy: least-busy
+  num_retries: 3
+  request_timeout: 15
+  fallback_strategy: exponential_backoff
+  
+  fallbacks:
+    - {"ultra-router-chat": ["ultra-router-local"]}
+    - {"ultra-router-fast": ["ultra-router-local"]}
+    - {"ultra-router-coding": ["ultra-router-local"]}
+  
+  default_fallbacks:
+    - ultra-router-local

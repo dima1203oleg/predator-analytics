@@ -18,6 +18,8 @@ services:
     volumes:
       - ./config-antigravity.yaml:/app/config.yaml:ro
       - ./logs:/app/logs
+    networks:
+      - default
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4000/health"]

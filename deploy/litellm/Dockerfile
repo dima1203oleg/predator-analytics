@@ -36,8 +36,7 @@ RUN groupadd -r predator && useradd -r -g predator predator
 # Копіювати бібліотеки з builder
 COPY --from=base /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
-# Копіювати конфіг
-COPY config-antigravity.yaml ./config.yaml
+# Конфіг буде змонтований з volumes (docker-compose)
 COPY run-proxy.py ./run-proxy.py
 
 # Директорія логів
